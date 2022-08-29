@@ -1,0 +1,276 @@
+/* global describe, test, expect, jest, beforeEach, afterEach */
+import React from 'react';
+import { MemoryRouter, Route} from 'react-router-dom';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import { screen, cleanup, waitForElementToBeRemoved, waitFor } from '@testing-library/react';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import userEvent from '@testing-library/user-event';
+import * as reactRedux from 'react-redux';
+import { renderWithProviders } from '../../../test/test-utils';
+import InstallBase from '.';
+import { runServer } from '../../../test/api/server';
+import { getCreatedStore } from '../../../store';
+import actions from '../../../actions';
+
+let initialStore;
+
+function store(connectors, connectorInstallBase, connectorLicenses) {
+  initialStore.getState().data.resources.connectors = [
+    {
+      _id: '12345',
+      name: connectors.name,
+      contactEmail: 'testuser@celigo.com',
+      _integrationId: connectors._integrationId,
+    },
+  ];
+  initialStore.getState().user.preferences = {
+    environment: 'production',
+    dateFormat: 'MM/DD/YYYY',
+  };
+  initialStore.getState().data.resources.connectorInstallBase = connectorInstallBase;
+  initialStore.getState().data.resources.connectorLicenses = connectorLicenses;
+}
+
+async function initInstallBase(props) {
+  const ui = (
+    <MemoryRouter initialEntries={[{pathname: '/connectors/12345/installBase'}]}>
+      <Route>
+        <InstallBase {...props} />
+      </Route>
+    </MemoryRouter>
+  );
+  const { store, utils } = await renderWithProviders(ui, { initialStore });
+
+  return {
+    store,
+    utils,
+  };
+}
+describe('Install Base', () => {
+  runServer();
+  let mockDispatchFn;
+  let useDispatchSpy;
+
+  beforeEach(() => {
+    initialStore = getCreatedStore();
+    jest.useFakeTimers();
+    jest.setTimeout(100000);
+    initialStore = getCreatedStore();
+    useDispatchSpy = jest.spyOn(reactRedux, 'useDispatch');
+    mockDispatchFn = jest.fn(action => {
+      switch (action.type) {
+        default: initialStore.dispatch(action);
+      }
+    });
+    useDispatchSpy.mockReturnValue(mockDispatchFn);
+    jest.clearAllMocks();
+  });
+  afterEach(() => {
+    jest.runOnlyPendingTimers();
+    jest.useRealTimers();
+    jest.clearAllTimers();
+    useDispatchSpy.mockClear();
+    mockDispatchFn.mockClear();
+    cleanup();
+  });
+  test('Should able to test the Install Base heading which has connector name attached', async () => {
+    const props = {
+      match: {
+        params: {connectorId: '12345'},
+      },
+    };
+    const connectors = {
+      name: 'Test',
+      _integrationId: '123454321',
+    };
+
+    store(connectors);
+    await initInstallBase(props);
+    const installBaseHeadingNode = screen.getByRole('heading', {name: 'View / Update Install Base: Test'});
+
+    expect(installBaseHeadingNode).toBeInTheDocument();
+  });
+  test('Should able to test the Install Base heading which doesn/t have any connector name', async () => {
+    const props = {
+      match: {
+        params: {connectorId: '12345'},
+      },
+    };
+    const connectors = {
+      name: '',
+      _integrationId: '123454321',
+    };
+
+    store(connectors);
+    await initInstallBase(props);
+    const installBaseHeadingNode = screen.getByRole('heading', {name: 'View / Update Install Base:'});
+
+    expect(installBaseHeadingNode).toBeInTheDocument();
+  });
+  test('Should able to test the Install Base update button', async () => {
+    const props = {
+      match: {
+        params: {connectorId: '12345'},
+      },
+    };
+    const connectors = {
+      name: 'Test',
+      _integrationId: '123454321',
+    };
+
+    store(connectors);
+    await initInstallBase(props);
+    const installBaseUpdateNode = screen.getByRole('button', {name: 'Update'});
+
+    expect(installBaseUpdateNode).toBeInTheDocument();
+    userEvent.click(installBaseUpdateNode);
+    expect(mockDispatchFn).toHaveBeenCalledWith(actions.connectors.installBase.update({
+      _integrationIds: [],
+      connectorId: '12345',
+    }));
+    expect(mockDispatchFn).toHaveBeenCalledWith(actions.resource.requestCollection('connectors/12345/installBase'));
+  });
+  test('Should able to test the Install Base with no connectors', async () => {
+    const props = {
+      match: {
+        params: {connectorId: ''},
+      },
+    };
+    const connectors = {
+      name: '',
+      _integrationId: '123454321',
+    };
+
+    store(connectors);
+    const { utils } = await initInstallBase(props);
+
+    expect(utils.container.firstChild).toBeNull();
+    screen.debug(null, Infinity);
+  });
+  test('Should able to test the Install Base search option', async () => {
+    const props = {
+      match: {
+        params: {connectorId: '12345'},
+      },
+    };
+    const connectors = {
+      name: 'Test',
+      _integrationId: '123454321',
+    };
+    const connectorInstallBase = [
+      {
+        _id: '11111',
+        name: 'Testing Install Base Table',
+        email: 'testuser@test.com',
+        sandbox: false,
+        updateInProgress: false,
+        version: 1,
+        _integrationId: '123454321',
+      },
+    ];
+    const connectorLicenses = [
+      {
+        _id: '22222',
+        _integrationId: '123454321',
+        expires: '2022-08-26',
+      },
+    ];
+
+    store(connectors, connectorInstallBase, connectorLicenses);
+    await initInstallBase(props);
+    const searchTextBoxNode = screen.getByRole('textbox', {name: 'search'});
+
+    expect(searchTextBoxNode).toBeInTheDocument();
+    userEvent.type(searchTextBoxNode, 'jhjdsh');
+    await waitForElementToBeRemoved(() => screen.queryByText(/Testing Install Base Table/i));
+    const noMatchingResultNode = await waitFor(() => screen.queryByText(/Your search didn’t return any matching results. Try expanding your search criteria./i));
+
+    expect(noMatchingResultNode).toBeInTheDocument();
+    userEvent.clear(searchTextBoxNode);
+    await waitFor(() => expect(noMatchingResultNode).not.toBeInTheDocument());
+    expect(screen.queryByText(/Testing Install Base Table/i)).toBeInTheDocument();
+  });
+  test('Should able to test the Install Base with the sandbox account and when the version is in progress', async () => {
+    const props = {
+      match: {
+        params: {connectorId: '12345'},
+      },
+    };
+    const connectors = {
+      name: 'Test',
+      _integrationId: '123454321',
+    };
+    const connectorInstallBase = [
+      {
+        _id: '11111',
+        name: 'Testing Install Base Table',
+        email: 'testuser@test.com',
+        sandbox: true,
+        updateInProgress: true,
+        version: 1,
+        _integrationId: '123454321',
+      },
+    ];
+    const connectorLicenses = [
+      {
+        _id: '22222',
+        _integrationId: '123454321',
+        expires: '2022-08-26',
+      },
+    ];
+
+    store(connectors, connectorInstallBase, connectorLicenses);
+    await initInstallBase(props);
+    const sandboxTextNode = screen.getByRole('cell', {name: 'Sandbox'});
+
+    expect(sandboxTextNode).toBeInTheDocument();
+    const inProgressTextNode = screen.getByRole('cell', {name: 'In progress...'});
+
+    expect(inProgressTextNode).toBeInTheDocument();
+  });
+  test('Should able to test the Install Base handle select change and click on update 1 user button node', async () => {
+    const props = {
+      match: {
+        params: {connectorId: '12345'},
+      },
+    };
+    const connectors = {
+      name: 'Test',
+      _integrationId: '123454321',
+    };
+
+    const connectorInstallBase = [
+      {
+        _id: '11111',
+        name: 'Testing Install Base Table',
+        email: 'testuser@test.com',
+        sandbox: true,
+        updateInProgress: true,
+        version: 1,
+        _integrationId: '123454321',
+      },
+    ];
+    const connectorLicenses = [
+      {
+        _id: '22222',
+        _integrationId: '123454321',
+        expires: '2022-08-26',
+      },
+    ];
+
+    store(connectors, connectorInstallBase, connectorLicenses);
+    await initInstallBase(props);
+    const checkBoxNode = screen.getAllByRole('checkbox');
+
+    userEvent.click(checkBoxNode[0]);
+    const update1userButtonNode = screen.getByRole('button', {name: 'Update 1 user(s)'});
+
+    expect(update1userButtonNode).toBeInTheDocument();
+    userEvent.click(update1userButtonNode);
+    expect(mockDispatchFn).toHaveBeenCalledWith(actions.connectors.installBase.update({
+      _integrationIds: ['123454321'],
+      connectorId: '12345',
+    }));
+    expect(mockDispatchFn).toHaveBeenCalledWith(actions.resource.requestCollection('connectors/12345/installBase'));
+  });
+});
