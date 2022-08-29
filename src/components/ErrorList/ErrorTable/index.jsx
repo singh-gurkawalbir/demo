@@ -1,4 +1,5 @@
 import { makeStyles } from '@material-ui/core/styles';
+import { Divider } from '@material-ui/core';
 import clsx from 'clsx';
 import React, { useMemo, useCallback, useEffect } from 'react';
 import { useSelector, shallowEqual, useDispatch } from 'react-redux';
@@ -37,19 +38,25 @@ const useStyles = makeStyles(theme => ({
     flexBasis: '40%',
   },
   errorTable: {
+    wordBreak: 'break-word',
+    '& th': {
+      wordBreak: 'normal',
+    },
     flexGrow: 1,
     display: 'flex',
     flexDirection: 'row',
+    flexBasis: '60%',
+    overflow: 'auto',
   },
   errorDetailsPanel: {
     flexGrow: 1,
     display: 'flex',
-    flexDirection: 'row',
+    flexDirection: 'column',
   },
   baseFormWithPreview: {
     display: 'grid',
-    gridTemplateColumns: '60% 38%',
-    gridColumnGap: theme.spacing(1),
+    gridTemplateColumns: '60% 2% 38%',
+    gridColumnGap: theme.spacing(0.5),
   },
   resourceFormWrapper: {
     width: '100%',
@@ -58,6 +65,10 @@ const useStyles = makeStyles(theme => ({
   panelWrapper: {
     width: '100%',
     overflow: 'auto',
+  },
+  divider: {
+    margin: theme.spacing(1, 1, 1),
+    marginLeft: theme.spacing(0),
   },
 }));
 
@@ -75,30 +86,42 @@ const ErrorTableWithPanel = ({
   resourceId,
   isResolved,
   flowId,
+  keydownListener,
 }) => {
   const classes = useStyles();
 
   return isSplitView && !isResolved
     ? (
       <div className={classes.baseFormWithPreview}>
-        <ResourceTable
-          resources={errorsInCurrPage}
-          className={classes.resourceFormWrapper}
-          resourceType="splitViewOpenErrors"
-          actionProps={actionProps} />
-
-        <ErrorDetailsPanel
-          flowId={flowId}
-          resourceId={resourceId}
-          className={classes.panelWrapper}
-          isResolved={isResolved} />
+        <div className={classes.errorTable}>
+          <ResourceTable
+            resources={errorsInCurrPage}
+            className={classes.resourceFormWrapper}
+            resourceType="splitViewOpenErrors"
+            actionProps={actionProps}
+            keydownListener={keydownListener}
+          />
+        </div>
+        <Divider
+          orientation="vertical"
+          className={clsx(classes.divider)}
+        />
+        <div className={classes.errorDetailsPanel}>
+          <ErrorDetailsPanel
+            flowId={flowId}
+            resourceId={resourceId}
+            isResolved={isResolved}
+          />
+        </div>
       </div>
     )
     : (
       <ResourceTable
         resources={errorsInCurrPage}
         resourceType={filterKey}
-        actionProps={actionProps} />
+        actionProps={actionProps}
+        className={classes.errorDetailsTable}
+      />
     );
 };
 export default function ErrorTable({ flowId, resourceId, isResolved, flowJobId }) {
@@ -141,7 +164,7 @@ export default function ErrorTable({ flowId, resourceId, isResolved, flowJobId }
     state => selectors.hasResourceErrors(state, { flowId, resourceId, isResolved })
   );
   const keydownListener = useCallback(event => {
-    event?.stopPropagation();
+    // event?.stopPropagation();
     if (!isSplitView) {
       return;
     }
@@ -188,13 +211,13 @@ export default function ErrorTable({ flowId, resourceId, isResolved, flowJobId }
     }
   }, [errorFilter.currentNavItem, dispatch, errorsInCurrPage, isSplitView]);
 
-  useEffect(() => {
-    if (isSplitView) {
-      window.addEventListener('keydown', keydownListener, true);
-    }
+  // useEffect(() => {
+  //   if (isSplitView) {
+  //     window.addEventListener('keydown', keydownListener, true);
+  //   }
 
-    return () => window.removeEventListener('keydown', keydownListener, true);
-  }, [isSplitView, keydownListener]);
+  //   return () => window.removeEventListener('keydown', keydownListener, true);
+  // }, [isSplitView, keydownListener]);
 
   useEffect(() => {
     const currIndex = errorsInCurrPage.findIndex(eachError => eachError.errorId === errorFilter.activeErrorId);
@@ -237,6 +260,7 @@ export default function ErrorTable({ flowId, resourceId, isResolved, flowJobId }
               isSplitView={isSplitView}
               flowId={flowId}
               isResolved={isResolved}
+              keydownListener={keydownListener}
             />
           ) : (
             <NoResultTypography>There don’t seem to be any more errors. You may have already retried or resolved them.
