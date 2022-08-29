@@ -3430,6 +3430,19 @@ Object {
       "dynamodb.tableName": Object {
         "fieldId": "dynamodb.tableName",
       },
+      "groupByFields": Object {
+        "defaultValue": [Function],
+        "fieldId": "groupByFields",
+        "resourceSubType": "rdbms",
+        "visibleWhenAll": Array [
+          Object {
+            "field": "outputMode",
+            "is": Array [
+              "records",
+            ],
+          },
+        ],
+      },
       "once.booleanField": Object {
         "fieldId": "once.booleanField",
         "label": "Once boolean field",
@@ -3511,6 +3524,13 @@ Object {
                 "dynamodb.onceExportSortKey",
               ],
               "label": "Configure export type",
+            },
+            Object {
+              "collapsed": true,
+              "fields": Array [
+                "groupByFields",
+              ],
+              "label": "Would you like to group records?",
             },
             Object {
               "collapsed": true,
@@ -3947,6 +3967,19 @@ Object {
       "formView": Object {
         "fieldId": "formView",
       },
+      "groupByFields": Object {
+        "defaultValue": [Function],
+        "fieldId": "groupByFields",
+        "resourceSubType": "http",
+        "visibleWhenAll": Array [
+          Object {
+            "field": "outputMode",
+            "is": Array [
+              "records",
+            ],
+          },
+        ],
+      },
       "http._asyncHelperId": Object {
         "fieldId": "http._asyncHelperId",
       },
@@ -4268,6 +4301,13 @@ Object {
             Object {
               "collapsed": true,
               "fields": Array [
+                "groupByFields",
+              ],
+              "label": "Would you like to group records?",
+            },
+            Object {
+              "collapsed": true,
+              "fields": Array [
                 "configureAsyncHelper",
                 "http._asyncHelperId",
                 "advancedSettings",
@@ -4308,6 +4348,19 @@ Object {
       },
       "exportOneToMany": Object {
         "formId": "exportOneToMany",
+      },
+      "groupByFields": Object {
+        "defaultValue": [Function],
+        "fieldId": "groupByFields",
+        "resourceSubType": "rdbms",
+        "visibleWhenAll": Array [
+          Object {
+            "field": "outputMode",
+            "is": Array [
+              "records",
+            ],
+          },
+        ],
       },
       "mongodb.collection": Object {
         "fieldId": "mongodb.collection",
@@ -4383,6 +4436,13 @@ Object {
                 "once.booleanField",
               ],
               "label": "Configure export type",
+            },
+            Object {
+              "collapsed": true,
+              "fields": Array [
+                "groupByFields",
+              ],
+              "label": "Would you like to group records?",
             },
             Object {
               "collapsed": true,
@@ -7718,6 +7778,19 @@ Object {
       "exportOneToMany": Object {
         "formId": "exportOneToMany",
       },
+      "groupByFields": Object {
+        "defaultValue": [Function],
+        "fieldId": "groupByFields",
+        "resourceSubType": "rdbms",
+        "visibleWhenAll": Array [
+          Object {
+            "field": "outputMode",
+            "is": Array [
+              "records",
+            ],
+          },
+        ],
+      },
       "rdbms.once.query": Object {
         "fieldId": "rdbms.once.query",
         "visibleWhen": Array [
@@ -7791,6 +7864,13 @@ Object {
                 "rdbms.once.query",
               ],
               "label": "Configure export type",
+            },
+            Object {
+              "collapsed": true,
+              "fields": Array [
+                "groupByFields",
+              ],
+              "label": "Would you like to group records?",
             },
             Object {
               "collapsed": true,
@@ -7831,6 +7911,19 @@ Object {
       "exportOneToMany": Object {
         "formId": "exportOneToMany",
       },
+      "groupByFields": Object {
+        "defaultValue": [Function],
+        "fieldId": "groupByFields",
+        "resourceSubType": "rdbms",
+        "visibleWhenAll": Array [
+          Object {
+            "field": "outputMode",
+            "is": Array [
+              "records",
+            ],
+          },
+        ],
+      },
       "rdbms.once.query": Object {
         "fieldId": "rdbms.once.query",
         "visibleWhen": Array [
@@ -7904,6 +7997,13 @@ Object {
                 "rdbms.once.query",
               ],
               "label": "Configure export type",
+            },
+            Object {
+              "collapsed": true,
+              "fields": Array [
+                "groupByFields",
+              ],
+              "label": "Would you like to group records?",
             },
             Object {
               "collapsed": true,

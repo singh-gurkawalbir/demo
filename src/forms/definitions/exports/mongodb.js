@@ -72,6 +72,17 @@ export default {
     'once.booleanField': {
       fieldId: 'once.booleanField',
     },
+    groupByFields: {
+      fieldId: 'groupByFields',
+      defaultValue: r => r.groupByFields,
+      resourceSubType: 'rdbms',
+      visibleWhenAll: [
+        {
+          field: 'outputMode',
+          is: ['records'],
+        },
+      ],
+    },
     advancedSettings: { formId: 'advancedSettings' },
   },
   layout: {
@@ -95,6 +106,11 @@ export default {
         collapsed: true,
         label: 'Configure export type',
         fields: ['type', 'delta.dateField', 'once.booleanField'],
+      },
+      {
+        collapsed: true,
+        label: 'Would you like to group records?',
+        fields: ['groupByFields'],
       },
       { collapsed: true, label: 'Advanced', fields: ['advancedSettings'] },
     ],

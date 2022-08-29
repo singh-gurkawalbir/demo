@@ -110,6 +110,17 @@ export default {
         },
       ],
     },
+    groupByFields: {
+      fieldId: 'groupByFields',
+      defaultValue: r => r.groupByFields,
+      resourceSubType: 'rdbms',
+      visibleWhenAll: [
+        {
+          field: 'outputMode',
+          is: ['records'],
+        },
+      ],
+    },
     advancedSettings: { formId: 'advancedSettings' },
   },
   layout: {
@@ -144,6 +155,11 @@ export default {
           'dynamodb.onceExportPartitionKey',
           'dynamodb.onceExportSortKey',
         ],
+      },
+      {
+        collapsed: true,
+        label: 'Would you like to group records?',
+        fields: ['groupByFields'],
       },
       { collapsed: true, label: 'Advanced', fields: ['advancedSettings'] },
     ],

@@ -1145,6 +1145,8 @@ if you're using a production account, you'll find your API keys under the 'API M
 'System generated date/time to track the last time this resource was modified.',
   'export.apiIdentifier':
 "Every export that you create is assigned a unique handle that you can then use in your own application logic to invoke the export programmatically via the integrator.io API.  For example, your export identifier might be 'e762db96', and you could invoke this export with a simple HTTP POST to https://api.integrator.io/e762db96",
+  'export.groupByFields':
+  'Select the source record fields to use for grouping such that each group of records returned by the source application will be treated as a single record downstream in your flow. For example, export records from a SQL database, and group the records based on a column value, and then import each group as a journal entry in NetSuite where each journal entry contains all the records in the group as line items. When grouping, the page size property dictates the max number of groups that will be included in a single page. If the source application does not sort the exported data, then grouping may not work as expected.',
   'export._integrationId':
 'If this export was installed as part of an Integration App app (i.e. from the integrator.io marketplace), then this value will be hold the _id value of the specific integration instance (a.k.a. integration tile) that owns the export.  Please note that for security reasons exports owned by an Integration App cannot be referenced outside the context of the specific integration tile that they belong to, meaning that you cannot use these exports in the data flows that you build yourself, nor can the same Integration App reference exports across different integration tiles.',
   'export._connectorId':
@@ -1353,7 +1355,7 @@ if you're using a production account, you'll find your API keys under the 'API M
   'export.hooks.preSavePage._scriptId':
 'The script record that contains your preSavePage hook function.',
   'export.file.rowsPerRecord': 'This setting has been deprecated in favor of the more powerful options in the <b>Sorting and grouping</b> section.',
-  'export.file.groupByFields': 'Select one or more fields to use for grouping records together.',
+  'export.file.groupByFields': 'Select the source record fields to use for grouping such that each group of records returned by the source application will be treated as a single record downstream in your flow. For example, export records from a SQL database, and group the records based on a column value, and then import each group as a journal entry in NetSuite where each journal entry contains all the records in the group as line items. When grouping, the page size property dictates the max number of groups that will be included in a single page. If the source application does not sort the exported data, then grouping may not work as expected.',
   'export.file.sortByFields': 'Enter one or more fields to use for sorting records.',
   'export.file.filedefinition.rules':
 'File definition rules are used by our platform to understand how to parse custom files. The file parser helper allows you to modify our templated rules to solve more specific file parsing requirements. Within the editor, you can use the rules panel to describe how a custom file should be parsed into JSON records, and then you can use the sample file and output panels to test your rules.',
