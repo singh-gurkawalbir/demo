@@ -73,7 +73,7 @@ export default {
     lookups,
     importResource = {},
   }) => {
-    const {key, lookupName, dataType: propDataType, copySource, isRequired } = node;
+    const {key, lookupName, dataType: propDataType, copySource, isRequired, combinedExtract, extract, hardCodedValue, disabled} = node;
 
     const {_connectionId: connectionId, adaptorType, _id: resourceId } = importResource;
 
@@ -247,6 +247,17 @@ export default {
             { field: 'dataType', is: ['string', 'number'] },
             { field: 'fieldMappingType', is: ['standard'] },
           ],
+        },
+        sourceField: {
+          id: 'sourceField',
+          name: 'sourceField',
+          type: 'mapper2sourcefield',
+          defaultValue: combinedExtract || extract || (hardCodedValue ? `"${hardCodedValue}"` : undefined),
+          label: 'Source field',
+          noApi: true,
+          nodeKey: key,
+          disabled,
+          resourceId,
         },
         standardAction: {
           id: 'standardAction',
@@ -648,6 +659,7 @@ export default {
           label: 'Description',
           defaultValue: node.description,
           noApi: true,
+          helpKey: 'mapping.v2.description',
         },
       },
       layout: {
@@ -669,10 +681,6 @@ export default {
                   'extractDateTimezone',
                   'generateDateFormat',
                   'generateDateTimezone',
-                  'objectAction',
-                  'standardAction',
-                  'default',
-                  'boolDefault',
                   'hardcodedAction',
                   'hardcodedDefault',
                   'boolHardcodedDefault',
@@ -689,6 +697,24 @@ export default {
                   'lookup.name',
                   'lookupAction',
                   'lookupDefault',
+                ],
+              },
+            ],
+          },
+          {
+            fields: [
+              'sourceField',
+            ],
+          },
+          {
+            type: 'indent',
+            containers: [
+              {
+                fields: [
+                  'objectAction',
+                  'standardAction',
+                  'default',
+                  'boolDefault',
                 ],
               },
             ],

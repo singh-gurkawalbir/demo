@@ -105,6 +105,7 @@ export default function Pagination(props) {
         <TextButton
           onClick={handlePrevPage}
           className={classes.arrowBtn}
+          data-testid="prevPage"
           disabled={page === 0}
           startIcon={<ArrowLeftIcon />} />
         <span className={classes.label}>{label}</span>
@@ -120,6 +121,7 @@ export default function Pagination(props) {
             onClick={handleNextPage}
             className={clsx(classes.arrowBtn, classes.arrowBtnRight)}
             disabled={disableNextPage}
+            data-testid="nextPage"
             startIcon={<ArrowRightIcon />} />
         )}
       </div>
