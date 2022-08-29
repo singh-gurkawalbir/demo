@@ -21,7 +21,7 @@ module.exports = {
     'src/sagas/**/*.{js,jsx}',
     'src/utils/**/*.{js,jsx}',
   ],
-  setupFilesAfterEnv: ['<rootDir>/jest/setup.js', 'jest-date-mock', 'core-js'],
+  setupFilesAfterEnv: ['<rootDir>/jest/setup.js', 'jest-date-mock', 'core-js', 'jest-canvas-mock'],
   coverageThreshold: {
     global: {
       statements: 84,

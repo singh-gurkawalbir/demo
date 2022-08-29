@@ -57,7 +57,7 @@ export default function NameCell({al, actionProps}) {
   }
 
   if (resourceType === 'users') {
-    return resourceName || al._resourceId;
+    return resourceName || al._resourceId || '';
   }
 
   return (

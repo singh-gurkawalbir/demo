@@ -19,7 +19,7 @@ import PanelHeader from '../../../components/PanelHeader';
 import UpgradeDrawer from './drawers/Upgrade';
 import { TextButton, FilledButton } from '../../../components/Buttons';
 import { drawerPaths, buildDrawerUrl } from '../../../utils/rightDrawer';
-import infoText from '../infoText';
+import infoText from '../../../components/Help/infoText';
 
 const useStyles = makeStyles(theme => ({
   itemsList: {
