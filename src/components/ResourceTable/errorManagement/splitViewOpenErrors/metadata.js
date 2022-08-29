@@ -12,7 +12,6 @@ import TextOverflowCell from '../../../TextOverflowCell';
 import ErrorMessage from '../cells/ErrorMessage';
 import { useGetTableContext } from '../../../CeligoTable/TableContext';
 import { FILTER_KEYS } from '../../../../utils/errorManagement';
-import actions from '../../../../actions';
 
 export default {
   rowKey: 'errorId',
@@ -32,14 +31,6 @@ export default {
 
       return errorFilter?.currentNavItem === rowData.errorId;
     },
-  },
-  onRowClick: ({ rowData, dispatch, event }) => {
-    if (event?.target?.type !== 'checkbox') {
-      dispatch(actions.patchFilter(FILTER_KEYS.OPEN, {
-        activeErrorId: rowData.errorId,
-        currentNavItem: rowData.errorId,
-      }));
-    }
   },
   useColumns: () => [
     {

@@ -68,6 +68,9 @@ const useStyles = makeStyles(theme => ({
     borderTop: 'none',
     padding: 'none',
   },
+  drawerContent: {
+    height: 500,
+  },
 }));
 
 const ERROR_DETAILS_TABS = {
@@ -193,7 +196,7 @@ export default function ErrorDetails({
         />
       </DrawerHeader>
 
-      <DrawerContent noPadding>
+      <DrawerContent noPadding className={classes.drawerContent}>
         <div className={classes.detailsContainer}>
           <Tabs
             value={mode}
