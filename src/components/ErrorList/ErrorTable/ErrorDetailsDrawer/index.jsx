@@ -92,10 +92,9 @@ export default function ErrorDetailsDrawer({ flowId, resourceId, isResolved }) {
   const errorsInPage = useSelectorMemo(selectors.mkResourceFilteredErrorsInCurrPageSelector, errorConfig);
 
   const activeErrorId = useSelector(state => {
-    const defaultError = errorsInPage?.[0]?.errorId;
     const e = selectors.filter(state, 'openErrors');
 
-    return e.activeErrorId || defaultError;
+    return e.activeErrorId;
   });
 
   const handleNextOrPrev = useCallback(newErrorId => {
@@ -119,6 +118,7 @@ export default function ErrorDetailsDrawer({ flowId, resourceId, isResolved }) {
   return (
     <RightDrawer path={drawerPaths.ERROR_MANAGEMENT.V2.VIEW_ERROR_DETAILS} width="large" >
       <DrawerHeader title="View error details" handleClose={onClose}>
+        {!isResolved && (
         <ErrorControls
           retryId={retryId}
           flowId={flowId}
@@ -126,8 +126,8 @@ export default function ErrorDetailsDrawer({ flowId, resourceId, isResolved }) {
           errorsInPage={errorsInPage}
           activeErrorId={activeErrorId}
           handlePrev={handleNextOrPrev}
-          handleNext={handleNextOrPrev}
-          isDrawer />
+          handleNext={handleNextOrPrev} />
+        )}
       </DrawerHeader>
       <ErrorDetails
         flowId={flowId}
