@@ -1,6 +1,6 @@
 /* global describe, test, expect, jest, beforeEach */
 import React from 'react';
-import { screen } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import { MemoryRouter, Route, Router } from 'react-router-dom';
 import userEvent from '@testing-library/user-event';
 import * as reactredux from 'react-redux';
@@ -8,106 +8,11 @@ import * as reactredux from 'react-redux';
 import { createMemoryHistory } from 'history';
 import { renderWithProviders} from '../../../../../test/test-utils';
 import { getCreatedStore } from '../../../../../store';
+import { runServer } from '../../../../../test/api/server';
+import actions from '../../../../../actions';
 import SettingsForm from '.';
 import * as utils from '../../../../../utils/resource';
 
-const integrations = [
-  {
-    _id: '5ff579d745ceef7dcd797c15',
-    lastModified: '2021-01-19T06:34:17.222Z',
-    name: " AFE 2.0 refactoring for DB's",
-    install: [],
-    sandbox: false,
-    _registeredConnectionIds: [
-      '5cd51efd3607fe7d8eda9c97',
-      '5ff57a8345ceef7dcd797c21',
-    ],
-    installSteps: [],
-    uninstallSteps: [],
-    createdAt: '2021-01-06T08:50:31.935Z',
-  },
-  {
-    _id: '61dedf725c907e4eac13af03',
-    lastModified: '2022-01-12T17:27:49.551Z',
-    name: 'Clone - Employee Onboarding and Offboarding for SAP SuccessFactors@new',
-    description: 'For companies using SAP SuccessFactors as the central hub, this Business Process Automation provides a seamless onboarding and offboarding employee experience to multiple applications like Microsoft Azure AD, Okta, SAP Concur, and ServiceNow.',
-    install: [],
-    mode: 'settings',
-    version: '1.0.0',
-    tag: 'Clone - Employee Onboarding and Offboarding for SAP SuccessFactors@new',
-    sandbox: false,
-    _templateId: '61b9d5d2f1447d5e7f8e0c6f',
-    preSave: {
-      function: 'processHire2RetireSAPSFSettingSave',
-      _scriptId: '61dedf725c907e4eac13af00',
-    },
-    uninstallSteps: [],
-    flowGroupings: [
-      {
-        name: 'Provisioning',
-        _id: '61b9d5803deb5437e2dfaadc',
-        settingsForm: {
-          init: {
-            _scriptId: '61dedf725c907e4eac13af00',
-            function: 'initProvisionSettings',
-          },
-        },
-      },
-      {
-        name: 'Deprovisioning',
-        _id: '61b9d5803deb5437e2dfaadd',
-        settingsForm: {
-          init: {
-            _scriptId: '61dedf725c907e4eac13af00',
-            function: 'initDeprovisionSettings',
-          },
-        },
-      },
-    ],
-    createdAt: '2022-01-12T14:02:26.330Z',
-  },
-  {
-    _id: '61dedf725c907e4eac13af04',
-    lastModified: '2022-01-12T17:27:49.551Z',
-    name: 'Clone - Employee Onboarding and Offboarding for SAP SuccessFactors@new',
-    description: 'SomeDescription',
-    install: [],
-    installSteps: ['2'],
-    mode: 'settings',
-    version: '1.0.0',
-    tag: 'Clone - Employee Onboarding and Offboarding for SAP SuccessFactors@new',
-    sandbox: false,
-    _templateId: '61b9d5d2f1447d5e7f8e0c6f',
-    preSave: {
-      function: 'processHire2RetireSAPSFSettingSave',
-      _scriptId: '61dedf725c907e4eac13af00',
-    },
-    uninstallSteps: [],
-    flowGroupings: [
-      {
-        name: 'Provisioning',
-        _id: '61b9d5803deb5437e2dfaadc',
-        settingsForm: {
-          init: {
-            _scriptId: '61dedf725c907e4eac13af00',
-            function: 'initProvisionSettings',
-          },
-        },
-      },
-      {
-        name: 'Deprovisioning',
-        _id: '61b9d5803deb5437e2dfaadd',
-        settingsForm: {
-          init: {
-            _scriptId: '61dedf725c907e4eac13af00',
-            function: 'initDeprovisionSettings',
-          },
-        },
-      },
-    ],
-    createdAt: '2022-01-12T14:02:26.330Z',
-  },
-];
 const customSettings = {
   status: 'received',
   meta: {
@@ -116,7 +21,6 @@ const customSettings = {
         id: 'selectApp_offboard',
         name: 'selectApp',
         type: 'select',
-        helpText: 'Select one or many applications where SAP SuccessFactors can deprovision employee or user access using the Deprovision user access from SAP SuccessFactors flow. Examples: Azure AD, NetSuite, and Salesforce.',
         label: 'Add application',
         required: false,
         options: [
@@ -146,11 +50,16 @@ const customSettings = {
 };
 
 describe('SettingsForm UI tests', () => {
+  runServer();
   beforeEach(() => {
     jest.resetAllMocks();
   });
+  async function addInteration(initialStore) {
+    initialStore.dispatch(actions.resource.requestCollection('integrations'));
+    await waitFor(() => expect(initialStore?.getState()?.data?.resources?.integrations).toBeDefined());
+  }
 
-  function initStoreAndRender(integrationId, pathname) {
+  async function initStoreAndRender(integrationId, pathname) {
     const initialStore = getCreatedStore();
     const mockDispatch = jest.fn(action => {
       switch (action.type) {
@@ -161,7 +70,8 @@ describe('SettingsForm UI tests', () => {
     jest.spyOn(reactredux, 'useDispatch').mockReturnValue(mockDispatch);
 
     initialStore.getState().user.preferences = {defaultAShareId: 'own'};
-    initialStore.getState().data.resources.integrations = integrations;
+    await addInteration(initialStore);
+
     initialStore.getState().session.customSettings['61dedf725c907e4eac13af03'] = customSettings;
     initialStore.getState().session.customSettings['61dedf725c907e4eac13af04'] = customSettings;
 
@@ -186,16 +96,16 @@ describe('SettingsForm UI tests', () => {
 
     expect(utils.container.textContent).toBe('SettingsSave');
   });
-  test('should test the case when integration has no flow groupings', () => {
-    const {utils} = initStoreAndRender('5ff579d745ceef7dcd797c15', '/someID');
+  test('should test the case when integration has no flow groupings', async () => {
+    const {utils} = await initStoreAndRender('5ff579d745ceef7dcd797c15', '/someID');
 
     expect(screen.getByText('Settings')).toBeInTheDocument();
     expect(screen.getByText('Save')).toBeInTheDocument();
     expect(utils.container.textContent).toBe('SettingsSave');
   });
 
-  test('should test dispatch call when clicked on Save', () => {
-    const {mockDispatch} = initStoreAndRender('61dedf725c907e4eac13af03', '/61b9d5803deb5437e2dfaadd');
+  test('should test dispatch call when clicked on Save', async () => {
+    const {mockDispatch} = await initStoreAndRender('61dedf725c907e4eac13af03', '/61b9d5803deb5437e2dfaadd');
 
     userEvent.click(screen.getByText('Deprovisioning'));
     userEvent.click(screen.getByText('Please select'));
@@ -218,8 +128,8 @@ describe('SettingsForm UI tests', () => {
       }
     );
   });
-  test('should click on Save when isFrameWork2 is true', () => {
-    const {mockDispatch} = initStoreAndRender('61dedf725c907e4eac13af04', '/61b9d5803deb5437e2dfaadd');
+  test('should click on Save when isFrameWork2 is true', async () => {
+    const {mockDispatch} = await initStoreAndRender('61dedf725c907e4eac13af04', '/61b9d5803deb5437e2dfaadd');
 
     userEvent.click(screen.getByText('Deprovisioning'));
     userEvent.click(screen.getByText('Please select'));
@@ -247,7 +157,7 @@ describe('SettingsForm UI tests', () => {
     );
   });
 
-  test('should test the case when invalid section id is provided through URL', () => {
+  test('should test the case when invalid section id is provided through URL', async () => {
     const initialStore = getCreatedStore();
 
     const history = createMemoryHistory({ initialEntries: ['/wrongsectionId'] });
@@ -264,7 +174,7 @@ describe('SettingsForm UI tests', () => {
 
     initialStore.getState().user.preferences = {defaultAShareId: 'own'};
 
-    initialStore.getState().data.resources.integrations = integrations;
+    await addInteration(initialStore);
     initialStore.getState().session.customSettings['61dedf725c907e4eac13af03'] = customSettings;
     renderWithProviders(
       <Router history={history}>
