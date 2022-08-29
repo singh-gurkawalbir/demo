@@ -1,7 +1,7 @@
 import { makeStyles } from '@material-ui/core/styles';
 import { Divider } from '@material-ui/core';
 import clsx from 'clsx';
-import React, { useMemo, useCallback, useEffect } from 'react';
+import React, { useMemo, useCallback, useEffect, useRef } from 'react';
 import { useSelector, shallowEqual, useDispatch } from 'react-redux';
 import actions from '../../../actions';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
@@ -13,6 +13,7 @@ import Spinner from '../../Spinner';
 import ErrorDetailsPanel from './ErrorDetailsPanel';
 import ErrorTableFilters from './ErrorTableFilters';
 import FetchErrorsHook from './hooks/useFetchErrors';
+import { useEditRetryConfirmDialog } from './hooks/useEditRetryConfirmDialog';
 
 const useStyles = makeStyles(theme => ({
   hide: {
@@ -47,6 +48,9 @@ const useStyles = makeStyles(theme => ({
     flexDirection: 'row',
     flexBasis: '60%',
     overflow: 'auto',
+    '&:focus': {
+      outline: 'inherit',
+    },
   },
   errorDetailsPanel: {
     flexGrow: 1,
@@ -87,19 +91,35 @@ const ErrorTableWithPanel = ({
   isResolved,
   flowId,
   keydownListener,
+  onRowClick,
+
 }) => {
   const classes = useStyles();
+  const tableRef = useRef();
+
+  useEffect(() => {
+    const refEle = tableRef?.current;
+
+    if (isSplitView) {
+      refEle?.addEventListener('keydown', keydownListener, true);
+    }
+
+    return () => {
+      refEle?.removeEventListener('keydown', keydownListener, true);
+    };
+  }, [isSplitView, keydownListener, tableRef]);
 
   return isSplitView && !isResolved
     ? (
       <div className={classes.baseFormWithPreview}>
-        <div className={classes.errorTable}>
+        {/* eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex */}
+        <div className={classes.errorTable} ref={tableRef} tabIndex={0}>
           <ResourceTable
             resources={errorsInCurrPage}
             className={classes.resourceFormWrapper}
             resourceType="splitViewOpenErrors"
             actionProps={actionProps}
-            keydownListener={keydownListener}
+            onRowClick={onRowClick}
           />
         </div>
         <Divider
@@ -121,6 +141,7 @@ const ErrorTableWithPanel = ({
         resourceType={filterKey}
         actionProps={actionProps}
         className={classes.errorDetailsTable}
+        tableRef={tableRef}
       />
     );
 };
@@ -163,8 +184,13 @@ export default function ErrorTable({ flowId, resourceId, isResolved, flowJobId }
   const hasErrors = useSelector(
     state => selectors.hasResourceErrors(state, { flowId, resourceId, isResolved })
   );
+  const errorDoc = useSelector(state =>
+    selectors.resourceError(state, { flowId, resourceId, errorId: errorFilter?.activeErrorId, isResolved })
+  ) || {};
+  const { retryDataKey: retryId} = errorDoc || {};
+  const showRetryDataChangedConfirmDialog = useEditRetryConfirmDialog({flowId, resourceId, retryId});
+
   const keydownListener = useCallback(event => {
-    // event?.stopPropagation();
     if (!isSplitView) {
       return;
     }
@@ -179,9 +205,12 @@ export default function ErrorTable({ flowId, resourceId, isResolved, flowJobId }
     }
     // enter key
     if (event.keyCode === 13) {
-      dispatch(actions.patchFilter(FILTER_KEYS.OPEN, {
-        activeErrorId: errorFilter.currentNavItem,
-      }));
+      event.preventDefault();
+      showRetryDataChangedConfirmDialog(() => {
+        dispatch(actions.patchFilter(FILTER_KEYS.OPEN, {
+          activeErrorId: errorFilter.currentNavItem,
+        }));
+      });
 
       return;
     }
@@ -209,15 +238,18 @@ export default function ErrorTable({ flowId, resourceId, isResolved, flowJobId }
         currentNavItem: errorsInCurrPage[currIndex + 1]?.errorId,
       }));
     }
-  }, [errorFilter.currentNavItem, dispatch, errorsInCurrPage, isSplitView]);
+  }, [errorFilter.currentNavItem, dispatch, errorsInCurrPage, isSplitView, showRetryDataChangedConfirmDialog]);
 
-  // useEffect(() => {
-  //   if (isSplitView) {
-  //     window.addEventListener('keydown', keydownListener, true);
-  //   }
-
-  //   return () => window.removeEventListener('keydown', keydownListener, true);
-  // }, [isSplitView, keydownListener]);
+  const onRowClick = useCallback(({ rowData, dispatch, event }) => {
+    if (event?.target?.type !== 'checkbox' && errorFilter?.activeErrorId !== rowData.errorId) {
+      showRetryDataChangedConfirmDialog(() => {
+        dispatch(actions.patchFilter(FILTER_KEYS.OPEN, {
+          activeErrorId: rowData.errorId,
+          currentNavItem: rowData.errorId,
+        }));
+      });
+    }
+  }, [errorFilter?.activeErrorId, showRetryDataChangedConfirmDialog]);
 
   useEffect(() => {
     const currIndex = errorsInCurrPage.findIndex(eachError => eachError.errorId === errorFilter.activeErrorId);
@@ -249,6 +281,7 @@ export default function ErrorTable({ flowId, resourceId, isResolved, flowJobId }
             resourceId={resourceId}
             isResolved={isResolved}
             filterKey={filterKey}
+            showRetryDataChangedConfirmDialog={showRetryDataChangedConfirmDialog}
           />
 
           {hasErrors ? (
@@ -261,13 +294,15 @@ export default function ErrorTable({ flowId, resourceId, isResolved, flowJobId }
               flowId={flowId}
               isResolved={isResolved}
               keydownListener={keydownListener}
+              onRowClick={onRowClick}
             />
-          ) : (
+          ) : (!isResolved && (
             <NoResultTypography>There don’t seem to be any more errors. You may have already retried or resolved them.
               <br />
               <br />
               If “Refresh errors” is enabled, you can click it to retrieve additional errors.
             </NoResultTypography>
+          )
           )}
         </>
       )}

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import CeligPagination from '../../../CeligoPagination';
@@ -69,7 +69,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function ErrorTableFilters({flowId, resourceId, isResolved, filterKey}) {
+export default function ErrorTableFilters({ flowId, resourceId, isResolved, filterKey, showRetryDataChangedConfirmDialog }) {
   const classes = useStyles();
   const [selectedComponent, setSelectedComponent] = useState(null);
   const dispatch = useDispatch();
@@ -88,15 +88,17 @@ export default function ErrorTableFilters({flowId, resourceId, isResolved, filte
 
   const useRowActions = () => [DownloadAction];
 
-  const handleToggleChange = event => {
-    dispatch(actions.patchFilter(filterKey, {
-      view: event.target.value,
-      activeErrorId: '',
-    }));
-    dispatch(
-      actions.analytics.gainsight.trackEvent('ERROR_MANAGEMENT_VIEW_CHANGED')
-    );
-  };
+  const handleToggleChange = useCallback(event => {
+    showRetryDataChangedConfirmDialog(() => {
+      dispatch(actions.patchFilter(filterKey, {
+        view: event.target.value,
+        activeErrorId: '',
+      }));
+      dispatch(
+        actions.analytics.gainsight.trackEvent('OPEN_ERRORS_VIEW_CHANGED')
+      );
+    });
+  }, [dispatch, filterKey, showRetryDataChangedConfirmDialog]);
 
   return (
 
@@ -113,7 +115,6 @@ export default function ErrorTableFilters({flowId, resourceId, isResolved, filte
         {
           !!errorObj.errors.length &&
           <ErrorActions flowId={flowId} resourceId={resourceId} isResolved={isResolved} className={classes.errorActions} />
-
         }
         <div className={classes.refreshBtn}>
           <RefreshCard onRefresh={fetchErrors} disabled={!errorObj.updated || isFreshDataLoad} />

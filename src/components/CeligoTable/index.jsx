@@ -25,13 +25,12 @@ export default function CeligoTable({
   size,
   actionProps = emptyObj,
   additionalConfigs,
-  keydownListener,
 }) {
   // if no useColumns hook no means to generate table
   if (!useColumns) { return null; }
 
   return (
-    <div className={className} onKeyDownCapture={keydownListener}>
+    <div className={className}>
       <TableContextWrapper value={actionProps}>
         <Table size={size || 'medium'}>
           <TableHeader

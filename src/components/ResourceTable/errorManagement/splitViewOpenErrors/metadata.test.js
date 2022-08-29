@@ -1,17 +1,9 @@
-/* global describe, test, expect, jest */
+/* global describe, test, expect */
 import React from 'react';
-import {
-  screen,
-} from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
 import splitViewOpenErrors from './metadata';
 import { runServer } from '../../../../test/api/server';
 import { renderWithProviders } from '../../../../test/test-utils';
 import { TableContextWrapper } from '../../../CeligoTable/TableContext';
-import actions from '../../../../actions';
-import { FILTER_KEYS } from '../../../../utils/errorManagement';
-
-const dispatch = jest.fn();
 
 async function initDownloadErrors() {
   const MockComponent = ({ actions }) => {
@@ -54,12 +46,6 @@ async function initDownloadErrors() {
     });
     const isActive = actions.additionalConfigs.IsActiveRow({ rowData: {}});
     const isNavItem = actions.additionalConfigs.IsThisCurrentNavItem({ rowData: {}});
-    const handleButton = () => {
-      actions.onRowClick({dispatch,
-        rowData: {
-          errorId: 'error_id',
-        }});
-    };
 
     return (
       <>
@@ -93,7 +79,6 @@ async function initDownloadErrors() {
         <div data-testid="selectDateValue">
           {selectDateValue}
         </div>
-        <button type="button" onClick={handleButton}>mock onRowClick</button>
         <span>isActive: {isActive}</span>
         <span>isNavItem: {isNavItem}</span>
       </>
@@ -113,14 +98,8 @@ describe('ActionMenu component Test cases', () => {
   runServer();
 
   test('should pass the calling of the functions', async () => {
-    await initDownloadErrors();
-    const buttonRef = screen.getByRole('button', {name: 'mock onRowClick'});
+    const { utils } = await initDownloadErrors();
 
-    expect(buttonRef).toBeInTheDocument();
-    userEvent.click(buttonRef);
-    expect(dispatch).toBeCalledWith(actions.patchFilter(FILTER_KEYS.OPEN, {
-      activeErrorId: 'error_id',
-      currentNavItem: 'error_id',
-    }));
+    expect(utils.container).not.toBeEmptyDOMElement();
   });
 });
