@@ -135,6 +135,7 @@ export const updateDataType = (draft, node, oldDataType, newDataType) => {
   // handle the primitive data types
   if (PRIMITIVE_DATA_TYPES.includes(newDataType)) {
     delete newNode.children;
+    newNode.extract = newNode.extract || newNode.combinedExtract;
     delete newNode.combinedExtract;
   }
 

@@ -467,6 +467,7 @@ export default {
           label: 'Description',
           defaultValue: node.description,
           noApi: true,
+          helpKey: 'mapping.v2.description',
         },
       },
       layout: {
