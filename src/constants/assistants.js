@@ -116,6 +116,7 @@ export const CONNECTORS_TO_IGNORE = [
   'constantcontactv2',
   'constantcontactv3',
   'amazonsellingpartner',
+  'googlecontacts',
   'ebayfinance',
   'recurlyv3',
   'loopreturnsv2',
