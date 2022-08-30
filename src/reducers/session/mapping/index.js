@@ -894,7 +894,8 @@ export default (state = {}, action) => {
         inputValues = inputValues.map(i => i.replace(/(\$\.)|(\$\[\*\]\.)/g, '').toUpperCase());
 
         // pass the first index of tree as the tree length is always 1 because the parent is either $ or $[*]
-        draft.mapping.extractsTree[0] = recursivelySearchExtracts(extractsTree[0], inputValues, inputValue === propValue);
+        // also, skipFilter if last char of input is , or input and selected values are same
+        draft.mapping.extractsTree[0] = recursivelySearchExtracts(extractsTree[0], inputValues, inputValue.slice(-1) === ',' || inputValue === propValue);
 
         break;
       }
