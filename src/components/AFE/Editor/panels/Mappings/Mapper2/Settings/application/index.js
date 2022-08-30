@@ -88,12 +88,13 @@ export default {
     return fieldMeta;
   },
   getFormattedValue: (node, formVal, importResource) => {
-    const { generate, extract, lookup } = node;
+    const { generate, lookup } = node;
     const settings = {};
     let updatedLookup;
 
     settings.generate = generate;
     settings.description = formVal.description;
+    settings.extract = formVal.sourceField;
 
     if ('dataType' in formVal) {
       // default data type is always string
@@ -101,25 +102,6 @@ export default {
     }
 
     settings.copySource = formVal.copySource;
-
-    // setting extract value
-    if (formVal.copySource !== 'yes') {
-      if (
-        formVal.fieldMappingType === 'standard' &&
-        extract &&
-        extract.indexOf('{{') !== -1
-      ) {
-        settings.extract = '';
-      } else if (formVal.fieldMappingType === 'multifield') {
-        settings.extract = formVal.expression;
-      } else if (formVal.fieldMappingType !== 'hardCoded') {
-        settings.extract = extract;
-      }
-    }
-
-    if ((settings.dataType === MAPPING_DATA_TYPES.OBJECT || settings.dataType === MAPPING_DATA_TYPES.OBJECTARRAY) && formVal.copySource === 'no') {
-      settings.extract = '';
-    }
 
     if (formVal.copySource === 'yes') {
       switch (formVal.objectAction) {
@@ -178,6 +160,7 @@ export default {
           break;
         default:
       }
+      settings.extract = '';
     } else if (formVal.fieldMappingType === 'multifield') {
       switch (formVal.multifieldAction) {
         case 'useEmptyString':
@@ -195,6 +178,7 @@ export default {
           break;
         default:
       }
+      settings.extract = formVal.expression;
     } else if (formVal.fieldMappingType === 'lookup') {
       if (formVal._mode === 'static' || isFileAdaptor(importResource) || isAS2Resource(importResource)) {
         const {_mapList = []} = formVal;
