@@ -2,8 +2,7 @@
 import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { renderWithProviders} from '../../../../test/test-utils';
-import { getCreatedStore } from '../../../../store';
+import { renderWithProviders, reduxStore} from '../../../../test/test-utils';
 import scheduleAction from './schedule';
 import * as cancelContext from '../../../../components/FormOnCancelContext';
 
@@ -33,7 +32,7 @@ const resource = {_id: 'resourceId'};
 
 describe('scheduleAction UI tests', () => {
   async function initStoreAndRender() {
-    const initialStore = getCreatedStore();
+    const initialStore = reduxStore;
 
     initialStore.getState().data.resources.flows = [{
       _id: '5ea16c600e2fab71928a6155',

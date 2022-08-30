@@ -2,7 +2,7 @@
 import React from 'react';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { renderWithProviders} from '../../../test/test-utils';
+import { renderWithProviders, reduxStore} from '../../../test/test-utils';
 import { getCreatedStore } from '../../../store';
 import actions from '../../../actions';
 import { runServer } from '../../../test/api/server';
@@ -103,7 +103,7 @@ describe('PageGenerator UI tests', () => {
       _connectionId: '5e7068331c056a75e6df19b2',
     };
 
-    const initialStore = getCreatedStore();
+    const initialStore = reduxStore;
 
     await initStore(initialStore);
 
@@ -138,7 +138,7 @@ describe('PageGenerator UI tests', () => {
       _connectionId: '5e7068331c056a75e6df19b2',
     };
 
-    const initialStore = getCreatedStore();
+    const initialStore = reduxStore;
 
     await initStore(initialStore);
 
@@ -173,7 +173,7 @@ describe('PageGenerator UI tests', () => {
       _connectionId: '5e3338331c056a75e6df19b2',
     };
 
-    const initialStore = getCreatedStore();
+    const initialStore = reduxStore;
 
     await initStore(initialStore);
 
@@ -188,7 +188,7 @@ describe('PageGenerator UI tests', () => {
       application: 'activecampaign',
     };
 
-    const initialStore = getCreatedStore();
+    const initialStore = reduxStore;
 
     renderFunction(pg, history, initialStore);
 
@@ -202,7 +202,7 @@ describe('PageGenerator UI tests', () => {
       application: 'dataLoader',
     };
 
-    const initialStore = getCreatedStore();
+    const initialStore = reduxStore;
 
     await initStore(initialStore);
 
@@ -260,7 +260,7 @@ describe('PageGenerator UI tests', () => {
       _exportId: '5eddd8331c056a75e6df19b2',
     };
 
-    const initialStore = getCreatedStore();
+    const initialStore = reduxStore;
 
     await initStore(initialStore);
 
@@ -287,7 +287,7 @@ describe('PageGenerator UI tests', () => {
       _exportId: '5e5558331c056a75e6df19b2',
     };
 
-    const initialStore = getCreatedStore();
+    const initialStore = reduxStore;
 
     await initStore(initialStore);
 
@@ -311,7 +311,7 @@ describe('PageGenerator UI tests', () => {
       _exportId: '5ebbb8331c056a75e6df19b2',
     };
 
-    const initialStore = getCreatedStore();
+    const initialStore = reduxStore;
 
     await initStore(initialStore);
 
@@ -383,7 +383,7 @@ describe('PageGenerator UI tests', () => {
       _connectionId: '5e7068331c056a75e6df19b2',
     };
 
-    const initialStore = getCreatedStore();
+    const initialStore = reduxStore;
 
     await initStore(initialStore);
 

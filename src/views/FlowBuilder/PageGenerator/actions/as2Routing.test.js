@@ -1,20 +1,14 @@
-/* global describe, test, expect, jest, beforeEach */
+/* global describe, test, expect, jest, afterEach */
 import React from 'react';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { renderWithProviders} from '../../../../test/test-utils';
-import { getCreatedStore } from '../../../../store';
+import * as reactRedux from 'react-redux';
+import { renderWithProviders, reduxStore } from '../../../../test/test-utils';
 import actions from '../../../../actions';
-import { runServer } from '../../../../test/api/server';
+import { runServer} from '../../../../test/api/server';
 import as2Routing from './as2Routing';
 
-const mockDispatch = jest.fn();
-
-jest.mock('react-redux', () => ({
-  __esModule: true,
-  ...jest.requireActual('react-redux'),
-  useDispatch: () => mockDispatch,
-}));
+const initialStore = reduxStore;
 
 jest.mock('../../../../components/SaveAndCloseButtonGroup/SaveAndCloseButtonGroupForm', () => ({
   __esModule: true,
@@ -64,7 +58,30 @@ const resource = {_connectionId: '5e7068331c056a75e6df19b2'};
 
 describe('ExportHooks UI tests', () => {
   runServer();
-  beforeEach(() => {
+  let mockDispatch;
+  let useDispatchSpy;
+
+  function mockingCompleteDispatch() {
+    useDispatchSpy = jest.spyOn(reactRedux, 'useDispatch');
+    mockDispatch = jest.fn(action => {
+      switch (action.type) {
+        default:
+      }
+    });
+    useDispatchSpy.mockReturnValue(mockDispatch);
+  }
+  function mockingDispatchExpectFormInit() {
+    useDispatchSpy = jest.spyOn(reactRedux, 'useDispatch');
+    mockDispatch = jest.fn(action => {
+      switch (action.type) {
+        case 'FORM_INIT':
+          initialStore.dispatch(action); break;
+        default:
+      }
+    });
+    useDispatchSpy.mockReturnValue(mockDispatch);
+  }
+  afterEach(() => {
     jest.resetAllMocks();
   });
   test('should test name, position and helpKey', () => {
@@ -91,10 +108,9 @@ describe('ExportHooks UI tests', () => {
     expect(onClose).toHaveBeenCalled();
   });
   test('should click on submit button', () => {
+    mockingCompleteDispatch();
     const {Component} = as2Routing;
     const onClose = jest.fn();
-
-    const initialStore = getCreatedStore();
 
     initialStore.getState().session.form.as2Routing = {value: {contentBasedFlowRouter: {_scriptId: 'someScriptId', function: 'someFunction'}}};
 
@@ -130,16 +146,14 @@ describe('ExportHooks UI tests', () => {
     );
   });
   test('should text onRemount button', async () => {
+    mockingDispatchExpectFormInit();
     const {Component} = as2Routing;
     const onClose = jest.fn();
 
-    const initialStore = getCreatedStore();
-
-    // initialStore.getState().data.resources.connections = as2connections;
     initialStore.dispatch(actions.resource.requestCollection('connections'));
     await waitFor(() => expect(initialStore?.getState()?.data?.resources?.connections).toBeDefined());
 
-    renderWithProviders(
+    const {store} = renderWithProviders(
       <Component
         resource={as2resource}
         open
@@ -147,62 +161,9 @@ describe('ExportHooks UI tests', () => {
         onClose={onClose}
     />, {initialStore});
 
-    expect(mockDispatch).toHaveBeenCalledWith(
-      {
-        type: 'FORM_INIT',
-        formKey: 'as2Routing',
-        formSpecificProps: {conditionalUpdate: undefined,
-          disabled: false,
-          fieldMeta: {fieldMap: {'as2.contentBasedFlowRouter':
-           {defaultValue: {
-             _scriptId: 'some_scriptId',
-           },
-           editorResultMode: 'text',
-           hookStage: 'contentBasedFlowRouter',
-           hookType: 'script',
-           id: 'as2.contentBasedFlowRouter',
-           label: 'Choose a script and function name to use for determining AS2 message routing',
-           name: 'contentBasedFlowRouter',
-           preHookData: {httpHeaders:
-              {'as2-from': 'OpenAS2_appA', 'as2-to': 'OpenAS2_appB'},
-           mimeHeaders: {'content-disposition': 'Attachment; filename=rfc1767.dat', 'content-type': 'application/edi-x12'},
-           rawMessageBody: 'sample message'},
-           type: 'hook'}},
-          layout: {fields: ['as2.contentBasedFlowRouter']}},
-          optionsHandler: undefined,
-          parentContext: {},
-          showValidationBeforeTouched: undefined,
-          validationHandler: undefined},
-        remountKey: 0}
-    );
+    expect(store?.getState()?.session.form.as2Routing.remountKey).toBe(0);
+
     userEvent.click(screen.getByText('RemountAfterSaveButton'));
-    expect(mockDispatch).toHaveBeenCalledWith(
-      {
-        type: 'FORM_INIT',
-        formKey: 'as2Routing',
-        formSpecificProps: {conditionalUpdate: undefined,
-          disabled: false,
-          fieldMeta: {fieldMap: {'as2.contentBasedFlowRouter':
-           {defaultValue: {
-             _scriptId: 'some_scriptId',
-           },
-           editorResultMode: 'text',
-           hookStage: 'contentBasedFlowRouter',
-           hookType: 'script',
-           id: 'as2.contentBasedFlowRouter',
-           label: 'Choose a script and function name to use for determining AS2 message routing',
-           name: 'contentBasedFlowRouter',
-           preHookData: {httpHeaders:
-              {'as2-from': 'OpenAS2_appA', 'as2-to': 'OpenAS2_appB'},
-           mimeHeaders: {'content-disposition': 'Attachment; filename=rfc1767.dat', 'content-type': 'application/edi-x12'},
-           rawMessageBody: 'sample message'},
-           type: 'hook'}},
-          layout: {fields: ['as2.contentBasedFlowRouter']}},
-          optionsHandler: undefined,
-          parentContext: {},
-          showValidationBeforeTouched: undefined,
-          validationHandler: undefined},
-        remountKey: 1}
-    );
+    expect(store?.getState()?.session.form.as2Routing.remountKey).toBe(1);
   });
 });
