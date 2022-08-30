@@ -5,10 +5,11 @@ import { makeStyles } from '@material-ui/core/styles';
 import actions from '../../../../actions';
 import { selectors } from '../../../../reducers';
 import { TextButton, FilledButton, OutlinedButton } from '../../../Buttons';
-import SaveAndCloseMiniButtonGroup from '../../../SaveAndCloseButtonGroup/SaveAndCloseMiniButtonGroup';
 import { useHandleNextAndPreviousError } from '../../ErrorTable/hooks/useHandleNextAndPreviousError';
 import { ERROR_DETAIL_ACTIONS_ASYNC_KEY } from '../../../../constants';
 import useHandleCancelBasic from '../../../SaveAndCloseButtonGroup/hooks/useHandleCancelBasic';
+import useClearAsyncStateOnUnmount from '../../../SaveAndCloseButtonGroup/hooks/useClearAsyncStateOnUnmount';
+import useTriggerCancelFromContext from '../../../SaveAndCloseButtonGroup/hooks/useTriggerCancelFromContext';
 
 const useStyles = makeStyles(theme => ({
   action: {
@@ -27,7 +28,7 @@ export default function Actions({
   mode = 'view',
   isResolved = false,
   errorsInPage,
-  activeErrorId,
+  handleNext,
 }) {
   const dispatch = useDispatch();
   const classes = useStyles();
@@ -53,11 +54,12 @@ export default function Actions({
     // disableNext,
   } = useHandleNextAndPreviousError({
     errorsInPage,
-    activeErrorId,
+    activeErrorId: errorId,
     flowId,
     isResolved,
     resourceId,
     retryId,
+    handleNext,
   });
   const s3BlobKey = useSelector(state => {
     if (!['request', 'response'].includes(mode)) {
@@ -70,7 +72,7 @@ export default function Actions({
 
   const retryData = useSelector(state => selectors.retryData(state, retryId));
 
-  const updateRetry = useCallback(() => {
+  const updateRetry = useCallback(closeAfterSave => {
     dispatch(
       actions.errorManager.retryData.updateRequest({
         flowId,
@@ -79,9 +81,8 @@ export default function Actions({
         retryData: updatedRetryData,
       })
     );
-    handleNextError();
-    if (onClose) onClose();
-  }, [dispatch, flowId, resourceId, retryId, updatedRetryData, handleNextError, onClose]);
+    closeAfterSave ? onClose() : handleNextError(true);
+  }, [dispatch, flowId, resourceId, retryId, updatedRetryData, onClose, handleNextError]);
 
   const resolve = useCallback(() => {
     dispatch(
@@ -91,9 +92,8 @@ export default function Actions({
         errorIds: [errorId],
       })
     );
-    handleNextError();
-    if (onClose) onClose();
-  }, [dispatch, errorId, flowId, handleNextError, onClose, resourceId]);
+    handleNextError(true);
+  }, [dispatch, errorId, flowId, handleNextError, resourceId]);
 
   const handleSaveAndRetry = useCallback(() => {
     dispatch(
@@ -104,9 +104,8 @@ export default function Actions({
         retryData: updatedRetryData,
       })
     );
-    handleNextError();
-    if (onClose) onClose();
-  }, [dispatch, flowId, handleNextError, onClose, resourceId, retryId, updatedRetryData]);
+    handleNextError(true);
+  }, [dispatch, flowId, handleNextError, resourceId, retryId, updatedRetryData]);
 
   const handleDownloadBlob = useCallback(
     () => {
@@ -116,7 +115,16 @@ export default function Actions({
   );
 
   const isRetryDataChanged = updatedRetryData && !isEqual(retryData, updatedRetryData);
-  const handleCancel = useHandleCancelBasic({isDirty: isRetryDataChanged, onClose, handleSave: updateRetry});
+
+  const handleClose = useCallback(() => {
+    dispatch(actions.errorManager.retryData.updateUserRetryData({retryId, retryData: undefined}));
+    onClose && onClose();
+  }, [dispatch, onClose, retryId]);
+
+  const handleCancel = useHandleCancelBasic({isDirty: isRetryDataChanged, onClose: handleClose, handleSave: updateRetry});
+
+  useClearAsyncStateOnUnmount(ERROR_DETAIL_ACTIONS_ASYNC_KEY);
+  useTriggerCancelFromContext(ERROR_DETAIL_ACTIONS_ASYNC_KEY, handleCancel);
 
   if (mode === 'editRetry' && !isFlowDisabled) {
     return (
@@ -125,13 +133,9 @@ export default function Actions({
           <FilledButton onClick={handleSaveAndRetry}>
             {isRetryDataChanged ? 'Save, retry & next' : 'Retry & next'}
           </FilledButton>
-          <SaveAndCloseMiniButtonGroup
-            isDirty={isRetryDataChanged}
-            handleSave={updateRetry}
-            handleClose={handleCancel}
-            submitButtonLabel="Save & next"
-            shouldNotShowCancelButton
-            asyncKey={ERROR_DETAIL_ACTIONS_ASYNC_KEY} />
+          <FilledButton disabled={!isRetryDataChanged} onClick={updateRetry}>
+            Save &amp; next
+          </FilledButton>
           { !isResolved && (
           <OutlinedButton onClick={resolve}>
             Resolve &amp; next

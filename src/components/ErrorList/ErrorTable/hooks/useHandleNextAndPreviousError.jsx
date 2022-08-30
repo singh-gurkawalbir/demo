@@ -13,7 +13,6 @@ export const useHandleNextAndPreviousError = ({
   isResolved,
   resourceId,
   filterKey = 'openErrors',
-  retryId,
   handlePrev,
   handleNext,
 }) => {
@@ -27,7 +26,7 @@ export const useHandleNextAndPreviousError = ({
   const indexOfCurrentError = errorsInPage?.findIndex(e => e.errorId === activeErrorId);
   const indexOfCurrentErrorInAllErrors = allErrors?.findIndex(e => e.errorId === activeErrorId);
 
-  const showRetryDataChangedConfirmDialog = useEditRetryConfirmDialog({flowId, resourceId, retryId});
+  const showRetryDataChangedConfirmDialog = useEditRetryConfirmDialog({flowId, resourceId, isResolved});
 
   const {
     count,
@@ -74,9 +73,11 @@ export const useHandleNextAndPreviousError = ({
     });
   }, [showRetryDataChangedConfirmDialog, indexOfCurrentErrorInAllErrors, currPage, indexOfCurrentError, rowsPerPage, allErrors, dispatch, filterKey, handlePrev, handlePrevPage]);
 
-  const handleNextError = useCallback(() => {
+  const handleNextError = useCallback(isSave => {
     showRetryDataChangedConfirmDialog(() => {
-      const newIndex = indexOfCurrentErrorInAllErrors + 1;
+      if (!allErrors || !Array.isArray(allErrors)) return;
+
+      const newIndex = allErrors.findIndex(e => e.errorId === activeErrorId) + 1;
 
       if (indexOfCurrentError === errorsInPage?.length - 1 || indexOfCurrentError === (currPage + 1) * rowsPerPage - 1) {
         handleNextPage();
@@ -90,8 +91,8 @@ export const useHandleNextAndPreviousError = ({
       }));
 
       typeof handleNext === 'function' && handleNext(newErrorId);
-    });
-  }, [showRetryDataChangedConfirmDialog, indexOfCurrentErrorInAllErrors, indexOfCurrentError, errorsInPage?.length, currPage, rowsPerPage, allErrors, dispatch, handleNext, handleNextPage]);
+    }, isSave);
+  }, [showRetryDataChangedConfirmDialog, allErrors, indexOfCurrentError, errorsInPage?.length, currPage, rowsPerPage, dispatch, handleNext, activeErrorId, handleNextPage]);
 
   const disabledPrevious = currPage === 0 && indexOfCurrentError === 0;
 

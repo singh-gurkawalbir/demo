@@ -10,6 +10,7 @@ import actions from '../../../../actions';
 import useConfirmDialog from '../../../ConfirmDialog';
 import { MAX_ERRORS_TO_RETRY_OR_RESOLVE } from '../../../../utils/errorManagement';
 import Spinner from '../../../Spinner';
+import { useEditRetryConfirmDialog } from '../hooks/useEditRetryConfirmDialog';
 
 const useStyles = makeStyles(theme => ({
   flexContainer: {
@@ -226,16 +227,19 @@ export default function ErrorActions({ flowId, resourceId, isResolved, className
     return !!errorFilter.keyword?.length;
   });
 
+  const showRetryDataChangedConfirmDialog = useEditRetryConfirmDialog({flowId, resourceId, isResolved});
   const retryErrors = useCallback(type => {
-    dispatch(
-      actions.errorManager.flowErrorDetails.retry({
-        flowId,
-        resourceId,
-        isResolved,
-        retryAll: type === 'all',
-      })
+    showRetryDataChangedConfirmDialog(
+      () => dispatch(
+        actions.errorManager.flowErrorDetails.retry({
+          flowId,
+          resourceId,
+          isResolved,
+          retryAll: type === 'all',
+        })
+      )
     );
-  }, [dispatch, flowId, isResolved, resourceId]);
+  }, [dispatch, flowId, isResolved, resourceId, showRetryDataChangedConfirmDialog]);
 
   const handleRetryAction = useCallback(e => {
     if (!isResolved) {

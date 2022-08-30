@@ -184,11 +184,8 @@ export default function ErrorTable({ flowId, resourceId, isResolved, flowJobId }
   const hasErrors = useSelector(
     state => selectors.hasResourceErrors(state, { flowId, resourceId, isResolved })
   );
-  const errorDoc = useSelector(state =>
-    selectors.resourceError(state, { flowId, resourceId, errorId: errorFilter?.activeErrorId, isResolved })
-  ) || {};
-  const { retryDataKey: retryId} = errorDoc || {};
-  const showRetryDataChangedConfirmDialog = useEditRetryConfirmDialog({flowId, resourceId, retryId});
+
+  const showRetryDataChangedConfirmDialog = useEditRetryConfirmDialog({flowId, resourceId, isResolved});
 
   const keydownListener = useCallback(event => {
     if (!isSplitView) {
@@ -281,7 +278,6 @@ export default function ErrorTable({ flowId, resourceId, isResolved, flowJobId }
             resourceId={resourceId}
             isResolved={isResolved}
             filterKey={filterKey}
-            showRetryDataChangedConfirmDialog={showRetryDataChangedConfirmDialog}
           />
 
           {hasErrors ? (

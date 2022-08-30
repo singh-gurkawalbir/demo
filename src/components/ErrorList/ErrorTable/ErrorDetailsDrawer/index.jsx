@@ -134,7 +134,8 @@ export default function ErrorDetailsDrawer({ flowId, resourceId, isResolved }) {
         resourceId={resourceId}
         isResolved={isResolved}
         onClose={handleClose}
-        onTabChange={handleTabChange} />
+        onTabChange={handleTabChange}
+        handleNext={handleNextOrPrev} />
     </RightDrawer>
   );
 }

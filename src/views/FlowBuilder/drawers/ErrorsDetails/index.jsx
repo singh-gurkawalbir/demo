@@ -13,6 +13,7 @@ import CeligoTimeAgo from '../../../../components/CeligoTimeAgo';
 import DrawerHeaderSubTitle from '../../../../components/DrawerHeaderSubTitle';
 import Tabs from './Tabs';
 import { buildDrawerUrl, drawerPaths } from '../../../../utils/rightDrawer';
+import { useEditRetryConfirmDialog } from '../../../../components/ErrorList/ErrorTable/hooks/useEditRetryConfirmDialog';
 
 const emptySet = [];
 
@@ -108,6 +109,11 @@ export default function ErrorDetailsDrawer({ flowId }) {
     }
   }, [history, match.url]);
 
+  const showRetryDataChangedConfirmDialog = useEditRetryConfirmDialog({flowId, resourceId, isResolved: errorType !== 'open'});
+  const handleDrawerClose = useCallback(() => {
+    showRetryDataChangedConfirmDialog(handleClose);
+  }, [handleClose, showRetryDataChangedConfirmDialog]);
+
   const handleErrorTypeChange = useCallback(errorType => {
     if (matchErrorDrawerPathWithFilter) {
       const changedFilteredErrorUrl = buildDrawerUrl({
@@ -161,10 +167,10 @@ export default function ErrorDetailsDrawer({ flowId }) {
       ]}
       width="full"
       onClose={handleClose}>
-      <DrawerHeader className={classes.removeBottomLine} title={<Title />} hideBackButton>
+      <DrawerHeader className={classes.removeBottomLine} title={<Title />} handleClose={handleDrawerClose} hideBackButton>
         <ErrorDrawerAction flowId={flowId} onChange={handleErrorTypeChange} />
       </DrawerHeader>
-      <Tabs onChange={handleErrorTypeChange} />
+      <Tabs flowId={flowId} onChange={handleErrorTypeChange} />
 
       <DrawerContent>
         {flowJobId ? (

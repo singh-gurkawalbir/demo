@@ -250,7 +250,6 @@ export default function ErrorDetails({
           errorId={activeErrorId}
           mode={mode}
           isResolved={isResolved}
-          activeErrorId={activeErrorId}
         />
       </DrawerFooter>
     </div>

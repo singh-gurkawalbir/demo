@@ -37,11 +37,11 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const ERROR_DETAILS_TABS = {
-  VIEW_FIELDS: { type: 'view', label: 'View error fields' },
+  VIEW_FIELDS: { type: 'view', label: 'Error fields' },
   EDIT_RETRY_DATA: { type: 'editRetry', label: 'Edit retry data' },
   VIEW_RETRY_DATA: { type: 'viewRetry', label: 'Retry data' },
-  REQUEST: { type: 'request', label: 'View HTTP request' },
-  RESPONSE: { type: 'response', label: 'View HTTP response' },
+  REQUEST: { type: 'request', label: 'HTTP request' },
+  RESPONSE: { type: 'response', label: 'HTTP response' },
   NETSUITE_REQUEST: { type: 'request', label: 'View request' },
   NETSUITE_RESPONSE: { type: 'response', label: 'View response' },
 };
@@ -65,7 +65,7 @@ function TabPanel({ children, value, type }) {
   );
 }
 
-export default function ErrorDetails({ flowId, resourceId, isResolved, onClose, onTabChange}) {
+export default function ErrorDetails({ flowId, resourceId, isResolved, onClose, onTabChange, handleNext}) {
   const match = useRouteMatch();
   const classes = useStyles();
   const dispatch = useDispatch();
@@ -92,7 +92,7 @@ export default function ErrorDetails({ flowId, resourceId, isResolved, onClose, 
   const isResourceNetsuite = useSelector(state => selectors.isResourceNetsuite(state, resourceId));
 
   const availableTabs = useMemo(() => {
-    const tabs = [ERROR_DETAILS_TABS.VIEW_FIELDS];
+    const tabs = [];
 
     if (retryId) {
       if (isFlowDisabled) {
@@ -108,6 +108,8 @@ export default function ErrorDetails({ flowId, resourceId, isResolved, onClose, 
     } else {
       tabs.push(ERROR_DETAILS_TABS.REQUEST, ERROR_DETAILS_TABS.RESPONSE);
     }
+
+    tabs.push(ERROR_DETAILS_TABS.VIEW_FIELDS);
 
     return tabs;
   }, [retryId, reqAndResKey, isResourceNetsuite, isFlowDisabled]);
@@ -190,7 +192,8 @@ export default function ErrorDetails({ flowId, resourceId, isResolved, onClose, 
           errorId={errorId}
           onClose={onClose}
           mode={mode}
-          isResolved={isResolved} />
+          isResolved={isResolved}
+          handleNext={handleNext} />
       </DrawerFooter>
     </>
   );

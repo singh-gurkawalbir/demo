@@ -11,6 +11,7 @@ import CeligoDivider from '../../../CeligoDivider';
 import ToggleViewSelect from '../../../AFE/Drawer/actions/ToggleView';
 import { useHandleNextAndPreviousErrorPage } from '../hooks/useHandleNextAndPreviousErrorPage';
 import actions from '../../../../actions';
+import { useEditRetryConfirmDialog } from '../hooks/useEditRetryConfirmDialog';
 
 const rowsPerPageOptions = [10, 25, 50];
 
@@ -69,10 +70,15 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function ErrorTableFilters({ flowId, resourceId, isResolved, filterKey, showRetryDataChangedConfirmDialog }) {
+export default function ErrorTableFilters({ flowId, resourceId, isResolved, filterKey }) {
   const classes = useStyles();
   const [selectedComponent, setSelectedComponent] = useState(null);
   const dispatch = useDispatch();
+
+  const showRetryDataChangedConfirmDialog = useEditRetryConfirmDialog({flowId, resourceId, isResolved});
+  const onSearchClick = useCallback(() => {
+    showRetryDataChangedConfirmDialog();
+  }, [showRetryDataChangedConfirmDialog]);
 
   const {
     hasErrors,
@@ -84,7 +90,7 @@ export default function ErrorTableFilters({ flowId, resourceId, isResolved, filt
     rowsPerPage,
     handleChangePage,
     handleChangeRowsPerPage,
-  } = useHandleNextAndPreviousErrorPage({flowId, resourceId, isResolved, filterKey});
+  } = useHandleNextAndPreviousErrorPage({flowId, resourceId, isResolved, filterKey, showRetryDataChangedConfirmDialog});
 
   const useRowActions = () => [DownloadAction];
 
@@ -109,7 +115,7 @@ export default function ErrorTableFilters({ flowId, resourceId, isResolved, filt
         hasErrors &&
           (
             <div className={classes.errorsKeywordSearch}>
-              <KeywordSearch filterKey={filterKey} />
+              <KeywordSearch filterKey={filterKey} onClick={onSearchClick} />
             </div>
           )
         }

@@ -11,7 +11,7 @@ const emptySet = [];
 const emptyObj = {};
 
 export const useHandleNextAndPreviousErrorPage = ({
-  flowId, resourceId, isResolved, filterKey,
+  flowId, resourceId, isResolved, filterKey, showRetryDataChangedConfirmDialog,
 }) => {
   const dispatch = useDispatch();
   const fetchErrors = useFetchErrors({
@@ -43,25 +43,28 @@ export const useHandleNextAndPreviousErrorPage = ({
     state => selectors.hasResourceErrors(state, { flowId, resourceId, isResolved })
   );
   const handleChangeRowsPerPage = useCallback(e => {
-    dispatch(
+    showRetryDataChangedConfirmDialog(() => dispatch(
       actions.patchFilter(filterKey, {
         paging: {
           ...errorFilter.paging,
           rowsPerPage: parseInt(e.target.value, 10),
         },
       })
-    );
-  }, [dispatch, filterKey, errorFilter.paging]);
+    ));
+  }, [showRetryDataChangedConfirmDialog, dispatch, filterKey, errorFilter.paging]);
+
   const handleChangePage = useCallback(
-    (e, newPage) => dispatch(
-      actions.patchFilter(filterKey, {
-        paging: {
-          ...errorFilter.paging,
-          currPage: newPage,
-        },
-      })
-    ),
-    [dispatch, filterKey, errorFilter.paging]
+    (e, newPage) => {
+      showRetryDataChangedConfirmDialog(() => dispatch(
+        actions.patchFilter(filterKey, {
+          paging: {
+            ...errorFilter.paging,
+            currPage: newPage,
+          },
+        })
+      ));
+    },
+    [showRetryDataChangedConfirmDialog, dispatch, filterKey, errorFilter.paging]
   );
 
   const paginationOptions = useMemo(
