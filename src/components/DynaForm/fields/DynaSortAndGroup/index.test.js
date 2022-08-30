@@ -59,7 +59,7 @@ describe('UI test cases for DynaSortAndGroup', () => {
     mockDispatchFn.mockClear();
   });
 
-  test('should display the options in the select component for a http or file type export', async () => {
+  test('should display the options in the select component for a export which is not of type http or rdbms', async () => {
     renderWithProviders(<DynaSortAndGroup resourceId={resourceId} formKey={formKey} />, {initialStore});
     userEvent.click(screen.queryByText(/Select.../i));
     await waitFor(() => expect(screen.queryByText(/randomString/i)).toBeInTheDocument());
