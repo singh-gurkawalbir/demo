@@ -156,6 +156,7 @@ import DynaMFAMobileCode from './DynaMFAMobileCode';
 import DynaMFASecretKey from './DynaMFASecretKey';
 import DynaConnectionFormView from './DynaConnectionFormView';
 import DynaSwitch from './DynaSwitch';
+import DynaMapper2SourceField from './DynaMapper2SourceField';
 
 export default {
   updateoptions: DynaUpdateOptions,
@@ -322,5 +323,9 @@ export default {
   mfamobilecode: DynaMFAMobileCode,
   mfasecretkey: DynaMFASecretKey,
   connectionFormView: DynaConnectionFormView,
+<<<<<<< HEAD
   switch: DynaSwitch,
+=======
+  mapper2sourcefield: DynaMapper2SourceField,
+>>>>>>> 58809c6affde6c5f8b7610bb6fb39284bbf3fd80
 };

@@ -225,7 +225,7 @@ const Mapper2Row = React.memo(props => {
             id={`fieldMappingExtract-${nodeKey}`}
             nodeKey={nodeKey}
             value={extractValue}
-            disabled={disabled}
+            disabled={(isLookup && !isStaticLookup) || disabled}
             dataType={dataType}
             onBlur={handleExtractBlur}
             isDynamicLookup={isLookup && !isStaticLookup}
