@@ -27,6 +27,9 @@ const useStyles = makeStyles(theme => ({
     borderLeft: `6px solid ${theme.palette.primary.main}`,
     backgroundColor: '#F0F5F9',
   },
+  pointer: {
+    cursor: 'pointer',
+  },
 }));
 
 export default function DataRow({ children, rowData, onRowOver, onRowOut, className, additionalConfigs, onRowClick }) {
@@ -55,6 +58,7 @@ export default function DataRow({ children, rowData, onRowOver, onRowOut, classN
       hover
       className={clsx(classes.tableRow, className, {
         [classes.currentNavItem]: isCurrentNavItem,
+        [classes.pointer]: !!onRowClick,
       })}
       classes={{
         root: classes.rowSelected,
