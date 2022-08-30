@@ -56,9 +56,6 @@ const useStyles = makeStyles(theme => ({
       color: theme.palette.text.hint,
     },
   },
-  selectedField: {
-    border: '1px solid red',
-  },
 }));
 
 export default function Mapper2Generates(props) {
@@ -122,7 +119,6 @@ export default function Mapper2Generates(props) {
 
   return (
     <FormControl
-      className={{[classes.selectedField]: isHighlighted}}
       data-test={id}
       key={id}
       ref={containerRef} >

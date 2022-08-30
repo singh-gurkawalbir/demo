@@ -55,6 +55,7 @@ const useStyles = makeStyles(theme => ({
   },
   extractListPopperCompact: {
     width: theme.spacing(38),
+    marginLeft: 0,
   },
   extractPopperArrow: {
     display: 'none',

@@ -141,7 +141,6 @@ export default function MapperPanelTitle({editorId, title, helpKey}) {
           onClick={handleToggleSearch} >
           <SearchIcon />
         </IconButton>
-        <CeligoDivider position="right" />
 
         <MoreActions importId={importId} disabled={disabled} />
 

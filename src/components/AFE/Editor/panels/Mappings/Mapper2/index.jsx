@@ -66,7 +66,9 @@ const useStyles = makeStyles(theme => ({
       },
     },
     '& .filter-node': {
-      border: '1px solid blue',
+      '& .rc-tree-title>div>div:first-child>.MuiFormControl-root': {
+        borderColor: theme.palette.primary.lightest,
+      },
     },
     '& .rc-tree-switcher,.rc-tree-draggable-icon': {
       alignSelf: 'center',

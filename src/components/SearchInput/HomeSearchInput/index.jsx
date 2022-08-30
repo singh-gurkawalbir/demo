@@ -85,7 +85,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const PLACEHOLDER = 'Search integrations & flows';
-export default function HomeSearchInput({value, onChange, placeHolder}) {
+export default function HomeSearchInput({value, onChange, placeHolder, className}) {
   const inputRef = useRef();
   const classes = useStyles();
   const [searchBoxState, dispatchLocalAction] = useReducer(reducer, {
@@ -119,7 +119,7 @@ export default function HomeSearchInput({value, onChange, placeHolder}) {
   }, []);
 
   return (
-    <div className={clsx(classes.search, {[classes.searchActive]: isSearchFocused})}>
+    <div className={clsx(classes.search, {[classes.searchActive]: isSearchFocused}, className)}>
       {!isSearchIconHidden && (
         <div className={clsx(classes.searchIcon, {[classes.hideSearchIcon]: isSearchIconHidden})}>
           <SearchIcon />
