@@ -1,7 +1,6 @@
 import React, { useCallback } from 'react';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { isEqual } from 'lodash';
-import { makeStyles } from '@material-ui/core/styles';
 import actions from '../../../../actions';
 import { selectors } from '../../../../reducers';
 import { TextButton, FilledButton, OutlinedButton } from '../../../Buttons';
@@ -9,14 +8,7 @@ import SaveAndCloseMiniButtonGroup from '../../../SaveAndCloseButtonGroup/SaveAn
 import { useHandleNextAndPreviousError } from '../../ErrorTable/hooks/useHandleNextAndPreviousError';
 import { ERROR_DETAIL_ACTIONS_ASYNC_KEY } from '../../../../constants';
 import useHandleCancelBasic from '../../../SaveAndCloseButtonGroup/hooks/useHandleCancelBasic';
-
-const useStyles = makeStyles(theme => ({
-  action: {
-    '& button': {
-      margin: theme.spacing(1),
-    },
-  },
-}));
+import ActionGroup from '../../../ActionGroup';
 
 export default function Actions({
   errorId,
@@ -30,8 +22,6 @@ export default function Actions({
   activeErrorId,
 }) {
   const dispatch = useDispatch();
-  const classes = useStyles();
-
   const isFlowDisabled = useSelector(state =>
     !!(selectors.resource(state, 'flows', flowId)?.disabled)
   );
@@ -120,54 +110,50 @@ export default function Actions({
 
   if (mode === 'editRetry' && !isFlowDisabled) {
     return (
-      <>
-        <div className={classes.action}>
-          <FilledButton onClick={handleSaveAndRetry}>
-            {isRetryDataChanged ? 'Save, retry & next' : 'Retry & next'}
-          </FilledButton>
-          <SaveAndCloseMiniButtonGroup
-            isDirty={isRetryDataChanged}
-            handleSave={updateRetry}
-            handleClose={handleCancel}
-            submitButtonLabel="Save & next"
-            shouldNotShowCancelButton
-            asyncKey={ERROR_DETAIL_ACTIONS_ASYNC_KEY} />
-          { !isResolved && (
+      <ActionGroup>
+        <FilledButton onClick={handleSaveAndRetry}>
+          {isRetryDataChanged ? 'Save, retry & next' : 'Retry & next'}
+        </FilledButton>
+        <SaveAndCloseMiniButtonGroup
+          isDirty={isRetryDataChanged}
+          handleSave={updateRetry}
+          handleClose={handleCancel}
+          submitButtonLabel="Save & next"
+          shouldNotShowCancelButton
+          asyncKey={ERROR_DETAIL_ACTIONS_ASYNC_KEY} />
+        {!isResolved && (
           <OutlinedButton onClick={resolve}>
             Resolve &amp; next
           </OutlinedButton>
-          )}
-          {!!onClose && (
+        )}
+        {!!onClose && (
           <TextButton onClick={handleCancel}>
             Close
           </TextButton>
-          )}
-        </div>
-      </>
+        )}
+      </ActionGroup>
     );
   }
 
   return (
-    <>
-      <div className={classes.action}>
-        {!isResolved && (
+    <ActionGroup>
+      {!isResolved && (
         <OutlinedButton onClick={resolve}>
           Resolve &amp; next
         </OutlinedButton>
-        )}
-        {
+      )}
+      {
         !!s3BlobKey && (
         <OutlinedButton color="secondary" onClick={handleDownloadBlob}>
           Download file
         </OutlinedButton>
         )
       }
-        {!!onClose && (
+      {!!onClose && (
         <TextButton onClick={onClose}>
           Close
         </TextButton>
-        )}
-      </div>
-    </>
+      )}
+    </ActionGroup>
   );
 }

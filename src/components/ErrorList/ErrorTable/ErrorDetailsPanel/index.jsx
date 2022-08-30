@@ -20,10 +20,19 @@ import EmptyErrorDetails from './EmptyErrorDetails';
 
 const useStyles = makeStyles(theme => ({
   detailsContainer: {
-    height: '100%',
+    height: '56vh',
     // padding: theme.spacing(0, 3),
     display: 'flex',
     flexDirection: 'column',
+    [theme.breakpoints.down('sm')]: {
+      height: '58vh',
+    },
+    [theme.breakpoints.down('lg')]: {
+      height: '58vh',
+    },
+    [theme.breakpoints.up('lg')]: {
+      height: '57vh',
+    },
   },
   tabContent: {
     flexGrow: 1,
@@ -31,13 +40,15 @@ const useStyles = makeStyles(theme => ({
     flexDirection: 'column',
     borderTop: 'none',
     borderBottom: 'none',
+    border: '1px solid',
+    borderColor: theme.palette.secondary.lightest,
   },
   tabHeader: {
     borderBottom: `1px solid ${theme.palette.secondary.lightest}`,
   },
   wrapper: {
-    display: 'flex',
-    flexDirection: 'column',
+    width: '100%',
+    overflow: 'hidden',
   },
   title: {
     color: theme.palette.secondary.main,
@@ -63,14 +74,10 @@ const useStyles = makeStyles(theme => ({
     borderBottom: 'none',
     padding: theme.spacing(0, 0),
   },
-  drawerFooter: {
+  errorDetailsDrawerFooter: {
     flexDirection: 'column',
     background: 'inherit',
-    borderTop: 'none',
-    padding: 'none',
-  },
-  drawerContent: {
-    height: 500,
+    padding: 0,
   },
 }));
 
@@ -177,7 +184,7 @@ export default function ErrorDetails({
   }
 
   return (
-    <div>
+    <div className={classes.wrapper}>
       <DrawerHeader title="Error details" showCloseButton={false} className={classes.draweHeader}>
         <ErrorControls
           retryId={retryId}
@@ -188,7 +195,7 @@ export default function ErrorDetails({
         />
       </DrawerHeader>
 
-      <DrawerContent noPadding className={classes.drawerContent}>
+      <DrawerContent noPadding>
         <div className={classes.detailsContainer}>
           <Tabs
             value={mode}
@@ -235,7 +242,7 @@ export default function ErrorDetails({
         </div>
       </DrawerContent>
 
-      <DrawerFooter className={classes.drawerFooter}>
+      <DrawerFooter className={classes.errorDetailsDrawerFooter}>
         <AddToBatch
           error={errorDoc}
           flowId={flowId}
