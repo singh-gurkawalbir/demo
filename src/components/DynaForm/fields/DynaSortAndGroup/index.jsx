@@ -24,6 +24,10 @@ export default function DynaSortAndGroup(props) {
     const sampleData = Array.isArray(data) ? data[0] : data;
     const options = Object.keys(sampleData || {});
 
+    if (resourceSubType !== 'http' && resourceSubType !== 'rdbms') {
+      return options;
+    }
+
     return options.map((name, index) =>
       resourceSubType === 'rdbms' ? `Column${index}` : name
     ).filter(opt =>

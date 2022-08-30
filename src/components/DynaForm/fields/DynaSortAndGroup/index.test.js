@@ -60,6 +60,12 @@ describe('UI test cases for DynaSortAndGroup', () => {
   });
 
   test('should display the options in the select component for a http or file type export', async () => {
+    renderWithProviders(<DynaSortAndGroup resourceId={resourceId} formKey={formKey} />, {initialStore});
+    userEvent.click(screen.queryByText(/Select.../i));
+    await waitFor(() => expect(screen.queryByText(/randomString/i)).toBeInTheDocument());
+    await waitFor(() => expect(screen.queryByText(/randomObject/i)).toBeInTheDocument());
+  });
+  test('should display the options in the select component for a http or file type export', async () => {
     renderWithProviders(<DynaSortAndGroup resourceId={resourceId} formKey={formKey} resourceSubType="http" />, {initialStore});
     userEvent.click(screen.queryByText(/Select.../i));
     await waitFor(() => expect(screen.queryByText(/randomString/i)).toBeInTheDocument());
