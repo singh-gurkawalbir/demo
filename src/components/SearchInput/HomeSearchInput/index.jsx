@@ -1,4 +1,4 @@
-import React, { useRef, useCallback, useReducer} from 'react';
+import React, { useRef, useCallback, useReducer, useEffect} from 'react';
 import clsx from 'clsx';
 import {InputBase, IconButton} from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
@@ -85,7 +85,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const PLACEHOLDER = 'Search integrations & flows';
-export default function HomeSearchInput({value, onChange, placeHolder, className}) {
+export default function HomeSearchInput({value, onChange, placeHolder, openWithFocus, className}) {
   const inputRef = useRef();
   const classes = useStyles();
   const [searchBoxState, dispatchLocalAction] = useReducer(reducer, {
@@ -117,6 +117,14 @@ export default function HomeSearchInput({value, onChange, placeHolder, className
   const focusHandler = useCallback(() => {
     dispatchLocalAction({type: 'onFocus'});
   }, []);
+
+  useEffect(() => {
+    if (openWithFocus) {
+      inputRef.current.firstChild.focus();
+      inputRef.current.firstChild.placeholder = placeHolder || PLACEHOLDER;
+      dispatchLocalAction({type: 'onInputChange', value: ''});
+    }
+  }, [openWithFocus, placeHolder]);
 
   return (
     <div className={clsx(classes.search, {[classes.searchActive]: isSearchFocused}, className)}>

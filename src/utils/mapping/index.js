@@ -1251,7 +1251,7 @@ const objectSearch = (node, key, filterFunc) => {
     tabChange: [],
   };
   // eslint-disable-next-line no-use-before-define
-  const newItems = searchTree(node.mappings, key, filterFunc);
+  const newItems = searchTree(node.children, key, filterFunc);
 
   items.firstIndex = newItems.firstIndex;
   items.expandedKeys = [...newItems.expandedKeys];
@@ -1261,7 +1261,6 @@ const objectSearch = (node, key, filterFunc) => {
   if (items.firstIndex !== -1) {
     items.expandedKeys = [node.key, ...newItems.expandedKeys];
   }
-  // console.log('Object search', items);
 
   return items;
 };
@@ -1282,7 +1281,6 @@ const objectArraySearch = (node, key, filterFunc) => {
   items.selectedFields = [...newItems.selectedFields];
   items.tabChange = [...newItems.tabChange];
 
-  // console.log('objectArray newItems', newItems);
   if (newItems.firstIndex !== -1) {
     items.firstIndex = newItems.firstIndex;
     const childNode = node.children[items.firstIndex];
@@ -1301,7 +1299,6 @@ const objectArraySearch = (node, key, filterFunc) => {
     }
     items.expandedKeys = [node.key, ...newItems.expandedKeys];
   }
-  // console.log('object array end', items);
 
   return items;
 };

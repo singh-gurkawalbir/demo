@@ -126,6 +126,8 @@ export default function Mapper2ExtractsTypeableSelect({
   isHardCodedValue,
   isHandlebarExp,
   editorLayout,
+  className,
+  popperClassName,
 }) {
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = useState(null);
@@ -198,7 +200,7 @@ export default function Mapper2ExtractsTypeableSelect({
           id={`${nodeKey}-mapper2SourceTextField`}
           isLoggable
           onMouseMove={handleMouseOver}
-          className={classes.customTextField}
+          className={clsx(classes.customTextField, className)}
           variant="filled"
           autoFocus={isFocused}
           value={inputValue}
@@ -237,7 +239,7 @@ export default function Mapper2ExtractsTypeableSelect({
         classes={{
           popper: clsx(classes.extractListPopper, {
             [classes.extractListPopperCompact]: editorLayout === 'compact2',
-          }),
+          }, popperClassName),
           arrow: classes.extractPopperArrow,
           paper: classes.extractPopperPaper,
         }}
