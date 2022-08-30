@@ -6,6 +6,14 @@ import { createMemoryHistory } from 'history';
 import { renderWithProviders} from '../../../../test/test-utils';
 import exportFilter from './exportFilter_afe';
 
+const mockDispatch = jest.fn();
+
+jest.mock('react-redux', () => ({
+  __esModule: true,
+  ...jest.requireActual('react-redux'),
+  useDispatch: () => mockDispatch,
+}));
+
 describe('ExportHooks UI tests', () => {
   test('should test name, position and helpKey', () => {
     const {helpKey, name, position} = exportFilter;
@@ -35,5 +43,18 @@ describe('ExportHooks UI tests', () => {
       </Router>);
     expect(history.location.pathname).toBe('/someInitialURL/editor/eFilter-resourceId');
     expect(onClose).toHaveBeenCalled();
+    expect(mockDispatch).toHaveBeenCalledWith(
+      {
+        type: 'EDITOR_INIT',
+        id: 'eFilter-resourceId',
+        editorType: 'exportFilter',
+        options: {
+          flowId: undefined,
+          resourceId: 'resourceId',
+          resourceType: 'resourceType',
+          stage: 'outputFilter',
+        },
+      }
+    );
   });
 });
