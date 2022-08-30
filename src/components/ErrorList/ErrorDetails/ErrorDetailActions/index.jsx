@@ -71,8 +71,8 @@ export default function Actions({
         retryData: updatedRetryData,
       })
     );
-    closeAfterSave ? onClose() : handleNextError(true);
-  }, [dispatch, flowId, resourceId, retryId, updatedRetryData, onClose, handleNextError]);
+    closeAfterSave === true || isResolved ? onClose && onClose() : handleNextError(true);
+  }, [dispatch, flowId, resourceId, retryId, updatedRetryData, isResolved, onClose, handleNextError]);
 
   const resolve = useCallback(() => {
     dispatch(
@@ -82,8 +82,8 @@ export default function Actions({
         errorIds: [errorId],
       })
     );
-    handleNextError(true);
-  }, [dispatch, errorId, flowId, handleNextError, resourceId]);
+    isResolved ? onClose && onClose() : handleNextError(true);
+  }, [dispatch, errorId, flowId, handleNextError, isResolved, onClose, resourceId]);
 
   const handleSaveAndRetry = useCallback(() => {
     dispatch(
@@ -94,8 +94,8 @@ export default function Actions({
         retryData: updatedRetryData,
       })
     );
-    handleNextError(true);
-  }, [dispatch, flowId, handleNextError, resourceId, retryId, updatedRetryData]);
+    isResolved ? onClose && onClose() : handleNextError(true);
+  }, [dispatch, flowId, handleNextError, isResolved, onClose, resourceId, retryId, updatedRetryData]);
 
   const handleDownloadBlob = useCallback(
     () => {
@@ -116,14 +116,19 @@ export default function Actions({
   useClearAsyncStateOnUnmount(ERROR_DETAIL_ACTIONS_ASYNC_KEY);
   useTriggerCancelFromContext(ERROR_DETAIL_ACTIONS_ASYNC_KEY, handleCancel);
 
+  let retryButtonLabel = 'Retry & next';
+
+  if (isResolved) retryButtonLabel = 'Save & retry';
+  else if (isRetryDataChanged) retryButtonLabel = 'Save, retry & next';
+
   if (mode === 'editRetry' && !isFlowDisabled) {
     return (
       <ActionGroup>
-        <FilledButton onClick={handleSaveAndRetry}>
-          {isRetryDataChanged ? 'Save, retry & next' : 'Retry & next'}
+        <FilledButton disabled={isResolved && !isRetryDataChanged} onClick={handleSaveAndRetry}>
+          {retryButtonLabel}
         </FilledButton>
         <FilledButton disabled={!isRetryDataChanged} onClick={updateRetry}>
-          Save &amp; next
+          {isResolved ? 'Save & close' : 'Save & next'}
         </FilledButton>
         {!isResolved && (
           <OutlinedButton onClick={resolve}>
