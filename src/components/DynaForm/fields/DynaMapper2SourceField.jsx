@@ -10,7 +10,7 @@ import useFormContext from '../../Form/FormContext';
 import { useSelectorMemo } from '../../../hooks';
 import { isFileAdaptor, isAS2Resource } from '../../../utils/resource';
 
-const useStyles = makeStyles({
+const useStyles = makeStyles(theme => ({
   fieldWrapper: {
     display: 'flex',
     alignItems: 'flex-start',
@@ -18,7 +18,17 @@ const useStyles = makeStyles({
   dynaWrapper: {
     width: '100%',
   },
-});
+  typeableSelectWrapper: {
+    '&>div': {
+      minHeight: theme.spacing(5),
+    },
+  },
+  popperWrapper: {
+    width: 774,
+    left: '-6px !important',
+    margin: 0,
+  },
+}));
 
 export default function DynaMapper2SourceField(props) {
   const {
@@ -73,6 +83,8 @@ export default function DynaMapper2SourceField(props) {
           dataType={dataType}
           onBlur={handleExtractBlur}
           editorLayout={editorLayout}
+          className={classes.typeableSelectWrapper}
+          popperClassName={classes.popperWrapper}
             />
       </FormControl>
     </>
