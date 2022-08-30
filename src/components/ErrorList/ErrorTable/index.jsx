@@ -24,10 +24,6 @@ const useStyles = makeStyles(theme => ({
     '& th': {
       wordBreak: 'normal',
     },
-    flexGrow: 1,
-    display: 'flex',
-    flexDirection: 'row',
-    flexBasis: '60%',
   },
   errorTableWrapper: {
     position: 'relative',
@@ -39,6 +35,7 @@ const useStyles = makeStyles(theme => ({
     flexBasis: '40%',
   },
   errorTable: {
+    height: '68vh',
     wordBreak: 'break-word',
     '& th': {
       wordBreak: 'normal',
@@ -59,7 +56,7 @@ const useStyles = makeStyles(theme => ({
   },
   baseFormWithPreview: {
     display: 'grid',
-    gridTemplateColumns: '60% 2% 38%',
+    gridTemplateColumns: '60% 1% 39%',
     gridColumnGap: theme.spacing(0.5),
   },
   resourceFormWrapper: {
@@ -70,9 +67,12 @@ const useStyles = makeStyles(theme => ({
     width: '100%',
     overflow: 'auto',
   },
+  partition: {
+    display: 'flex',
+    justifyContent: 'center',
+  },
   divider: {
-    margin: theme.spacing(1, 1, 1),
-    marginLeft: theme.spacing(0),
+    backgroundColor: theme.palette.secondary.lightest,
   },
 }));
 
@@ -122,10 +122,12 @@ const ErrorTableWithPanel = ({
             onRowClick={onRowClick}
           />
         </div>
-        <Divider
-          orientation="vertical"
-          className={clsx(classes.divider)}
-        />
+        <div className={classes.partition}>
+          <Divider
+            orientation="vertical"
+            className={clsx(classes.divider)}
+          />
+        </div>
         <div className={classes.errorDetailsPanel}>
           <ErrorDetailsPanel
             flowId={flowId}
