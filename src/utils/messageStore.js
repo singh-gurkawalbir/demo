@@ -88,6 +88,7 @@ href="/marketplace"><u>Check out our Marketplace</u></a> to jumpstart your  inte
   ACCOUNT_SSO_OR_MFA_REQUIRED_TOOLTIP: 'You can’t require both MFA and SSO for a user.',
   MFA_OWNER_OTP_INFO: 'You are signing in from a new device. Enter your passcode to verify your account.',
   MFA_USER_OTP_INFO: 'Your account owner or admin has required you to sign in using multifactor authentication (MFA). Enter your passcode to verify your account.',
+  MFA_USER_OTP_INFO_FOR_TRUSTED_NUMBER_OF_DAYS: 'Your account owner or admin has required you to sign in using multifactor authentication (MFA) after {{noOfDays}} days. Enter your passcode to verify your account.',
   // #endregion
   MAX_ROUTERS_LIMIT_REACHED: 'You have reached the maximum of 25 branchings in a flow',
   MAX_BRANCHES_LIMIT_REACHED: 'You have reached the maximum of 25 branches in a branching',

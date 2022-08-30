@@ -85,7 +85,7 @@ const useStyles = makeStyles(theme => ({
 
 const Title = ({ isMFAAuthRequired }) => {
   const classes = useStyles();
-  const { isAccountUser } = useSelector(selectors.mfaAuthInfo);
+  const { isAccountUser, noOfDays } = useSelector(selectors.mfaAuthInfo);
 
   if (!isMFAAuthRequired) {
     return (
@@ -95,6 +95,14 @@ const Title = ({ isMFAAuthRequired }) => {
     );
   }
 
+  let infoMessage;
+
+  if (isAccountUser) {
+    infoMessage = messageStore(noOfDays ? 'MFA_USER_OTP_INFO_FOR_TRUSTED_NUMBER_OF_DAYS' : 'MFA_USER_OTP_INFO', { noOfDays });
+  } else {
+    infoMessage = messageStore('MFA_OWNER_OTP_INFO');
+  }
+
   return (
     <>
       <Typography variant="h3" className={classes.mfaTitle}>
@@ -102,7 +110,7 @@ const Title = ({ isMFAAuthRequired }) => {
       </Typography>
       <div className={classes.mfaInfo}>
         <InfoIcon color="primary" width="16.5" height="16.5" />
-        <span className={classes.infoText}>{messageStore(isAccountUser ? 'MFA_USER_OTP_INFO' : 'MFA_OWNER_OTP_INFO')}</span>
+        <span className={classes.infoText}>{infoMessage}</span>
       </div>
     </>
 
