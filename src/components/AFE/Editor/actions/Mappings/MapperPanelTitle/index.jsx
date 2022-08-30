@@ -43,6 +43,7 @@ export default function MapperPanelTitle({editorId, title, helpKey}) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const disabled = useSelector(state => selectors.isEditorDisabled(state, editorId));
+  const isSearchVisible = useSelector(state => selectors.isSearchVisible(state));
   const {mappingVersion, flowId, importId} = useSelector(state => {
     const mapping = selectors.mapping(state);
 
@@ -134,14 +135,18 @@ export default function MapperPanelTitle({editorId, title, helpKey}) {
           </IconButton>
         </Tooltip>
 
-        <CeligoDivider position="right" />
-        <IconButton
-          size="small"
-          date-test="showSearch"
-          onClick={handleToggleSearch} >
-          <SearchIcon />
-        </IconButton>
-        <CeligoDivider position="right" />
+        {!isSearchVisible && (
+        <>
+          <CeligoDivider position="right" />
+          <IconButton
+            size="small"
+            date-test="showSearch"
+            onClick={handleToggleSearch} >
+            <SearchIcon />
+          </IconButton>
+          <CeligoDivider position="right" />
+        </>
+        )}
 
         <MoreActions importId={importId} disabled={disabled} />
 

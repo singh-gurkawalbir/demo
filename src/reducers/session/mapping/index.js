@@ -970,7 +970,7 @@ export default (state = {}, action) => {
 
         if (!mapping) break;
 
-        if (!showKey && searchKey) {
+        if (!showKey) {
           items = searchTree(draft.mapping.v2TreeData, searchKey, filterNode);
           draft.mapping.expandedKeys = items.expandedKeys;
           draft.mapping.selectedFields = items.selectedFields;
