@@ -11,7 +11,7 @@ import messageStore from '../../../utils/messageStore';
 import actions from '../../../actions';
 import { getCreatedStore } from '../../../store';
 
-let mockHistoryPush = jest.fn();
+const mockHistoryPush = jest.fn();
 
 jest.mock('react-router-dom', () => ({
   __esModule: true,
@@ -22,9 +22,8 @@ jest.mock('react-router-dom', () => ({
 }));
 
 async function initUseHandleDelete(props = {}, initialStore) {
-  let cb;
   const DummyComponent = () => {
-    cb = useHandleDelete(props._integrationId, props.ops);
+    const cb = useHandleDelete(props._integrationId, props.ops);
 
     return (
       <>
@@ -45,8 +44,6 @@ async function initUseHandleDelete(props = {}, initialStore) {
   );
 
   renderWithProviders(ui, {initialStore});
-
-  return cb;
 }
 
 describe('test suite for useHandleDelete hook', () => {
@@ -61,13 +58,11 @@ describe('test suite for useHandleDelete hook', () => {
       }
     });
     useDispatchSpy.mockReturnValue(mockDispatchFn);
-    mockHistoryPush = jest.fn();
   });
 
   afterEach(() => {
     useDispatchSpy.mockClear();
     mockDispatchFn.mockClear();
-    mockHistoryPush.mockClear();
   });
 
   test('should opt for delete when connector id not given', async () => {

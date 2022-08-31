@@ -32,6 +32,15 @@ async function initUseAvailableTabs(initialStore) {
 }
 
 describe('test suite for useAvailableTabs hook', () => {
+  const commonTabs = [
+    'Flows',
+    'Dashboard',
+    'Connections',
+    'Notifications',
+    'Audit log',
+    'Users',
+  ];
+
   beforeEach(() => {
     mockMatch = {
       path: '/integrations/:integrationId([a-f\\d]{24}|none)/:tab',
@@ -46,12 +55,7 @@ describe('test suite for useAvailableTabs hook', () => {
   test('should render the initial set of tabs', async () => {
     await initUseAvailableTabs();
     [
-      'Flows',
-      'Dashboard',
-      'Connections',
-      'Notifications',
-      'Audit log',
-      'Users',
+      ...commonTabs,
       'Admin',
       'Aliases',
       'Revisions',
@@ -70,13 +74,8 @@ describe('test suite for useAvailableTabs hook', () => {
     initialStore.getState().user.profile.useErrMgtTwoDotZero = true;
     await initUseAvailableTabs(initialStore);
     [
-      'Flows',
-      'Dashboard',
-      'Connections',
-      'Notifications',
-      'Audit log',
+      ...commonTabs,
       'Analytics',
-      'Users',
       'Admin',
       'Aliases',
       'Revisions',
@@ -97,13 +96,8 @@ describe('test suite for useAvailableTabs hook', () => {
     initialStore.getState().user.profile.useErrMgtTwoDotZero = true;
     await initUseAvailableTabs(initialStore);
     [
-      'Flows',
-      'Dashboard',
-      'Connections',
-      'Notifications',
-      'Audit log',
+      ...commonTabs,
       'Analytics',
-      'Users',
     ].forEach(tabName => {
       expect(screen.getByRole('tab', {name: tabName})).toBeInTheDocument();
     });
@@ -122,12 +116,7 @@ describe('test suite for useAvailableTabs hook', () => {
     }];
     await initUseAvailableTabs(initialStore);
     [
-      'Flows',
-      'Dashboard',
-      'Connections',
-      'Notifications',
-      'Audit log',
-      'Users',
+      ...commonTabs,
       'Admin',
     ].forEach(tabName => {
       expect(screen.getByRole('tab', {name: tabName})).toBeInTheDocument();
@@ -151,14 +140,9 @@ describe('test suite for useAvailableTabs hook', () => {
     };
     await initUseAvailableTabs(initialStore);
     [
+      ...commonTabs,
       'Settings',
-      'Flows',
-      'Dashboard',
-      'Connections',
-      'Notifications',
-      'Audit log',
       'Analytics',
-      'Users',
       'Admin',
       'Aliases',
       'Revisions',
