@@ -66,7 +66,6 @@ async function initBottomDrawer(props = {}, initialStore) {
 describe('test suite for BottomDrawer', () => {
   test('should pass initial rendering', async () => {
     await initBottomDrawer();
-    screen.debug(null, Infinity);
     const tabList = screen.getByRole('tablist');
     const { getByRole, getAllByRole } = within(tabList);
 
@@ -193,7 +192,6 @@ describe('test suite for BottomDrawer', () => {
 
     expect(scriptTab).toBeInTheDocument();
     userEvent.click(scriptTab);
-    screen.debug(null, Infinity);
     expect(screen.getByRole('tabpanel')).toHaveTextContent('Script Panel');
   });
 });
