@@ -4936,6 +4936,7 @@ describe('mapping utils', () => {
 
       const newNode = {
         key: 'key1',
+        extract: '$.fname[*]',
         generate: 'fname',
         dataType: MAPPING_DATA_TYPES.NUMBER,
       };

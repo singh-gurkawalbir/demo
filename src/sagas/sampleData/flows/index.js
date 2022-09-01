@@ -191,13 +191,14 @@ export function* requestSampleData({
 export function* fetchPageProcessorPreview({
   flowId,
   _pageProcessorId,
+  routerId,
   previewType,
   editorId,
   hidden,
   refresh,
   resourceType = 'exports',
 }) {
-  if (!flowId || !_pageProcessorId) return;
+  if (!flowId || (!_pageProcessorId && !routerId)) return;
   const { formKey, refresh: flowDataRefresh } = (yield select(selectors.getFlowDataState, flowId)) || {};
   let resource = yield call(getConstructedResourceObj, {
     resourceId: _pageProcessorId,
@@ -209,6 +210,7 @@ export function* fetchPageProcessorPreview({
   const previewData = yield call(pageProcessorPreview, {
     flowId,
     _pageProcessorId,
+    routerId,
     _pageProcessorDoc: formKey ? resource : undefined,
     previewType,
     resourceType,
@@ -236,7 +238,7 @@ export function* fetchPageProcessorPreview({
   yield put(
     actions.flowData.receivedPreviewData(
       flowId,
-      _pageProcessorId,
+      _pageProcessorId || routerId,
       previewData,
       previewType
     )

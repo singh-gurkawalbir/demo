@@ -85,15 +85,15 @@ export default {
       equal: 'equals',
       not_equal: 'not equals',
 
-      greater: 'is greater-than',
-      greater_or_equal: 'is greater-than or equals',
-      less: 'is less-than',
-      less_or_equal: 'is less-than or equals',
+      greater: 'is greater than',
+      greater_or_equal: 'is greater than or equals',
+      less: 'is less than',
+      less_or_equal: 'is less than or equals',
 
       begins_with: 'starts with',
       ends_with: 'ends with',
       contains: 'contains',
-      not_contains: 'does not contains',
+      not_contains: 'does not contain',
 
       matches: 'matches',
     },
