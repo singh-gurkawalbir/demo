@@ -83,13 +83,12 @@ function SomeComponent({hook, params, callHookWith}) {
 
 function HandleDelete({type}) {
   const handleDelete = useHandleDelete('5ea16c600e2fab71928a6152');
-  const m = handleDelete(type);
 
-  function f() {
-    m()(1);
+  function onClick() {
+    handleDelete(type)()(1);
   }
 
-  return <button type="button" onClick={f}>Delete button</button>;
+  return <button type="button" onClick={onClick}>Delete button</button>;
 }
 
 describe('FlowBuilder hooks UI tests', () => {
