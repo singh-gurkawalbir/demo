@@ -678,7 +678,10 @@ export default {
         return null;
       }
 
-      if ((authTypeField?.value === 'token' && locationField?.value !== '') || authTypeField?.value === 'custom') {
+      if (
+        (authTypeField?.value === 'token' && locationField?.value !== '' && configureTokenRefreshField?.value) ||
+        (authTypeField?.value === 'custom' && configureCutomAuthTokenRefreshField?.value)
+      ) {
         return null;
       }
 
