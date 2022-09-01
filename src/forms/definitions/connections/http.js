@@ -434,7 +434,6 @@ export default {
     },
     configureCutomAuthTokenRefresh: {
       fieldId: 'configureCutomAuthTokenRefresh',
-      refreshOptionsOnChangesTo: ['http.auth.type'],
     },
   },
   layout: {

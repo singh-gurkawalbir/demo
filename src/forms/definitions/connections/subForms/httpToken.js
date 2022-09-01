@@ -54,7 +54,6 @@ export default {
         { field: 'http.auth.token.location', isNot: [''] },
         { field: 'http.auth.type', is: ['token'] },
       ],
-      refreshOptionsOnChangesTo: ['http.auth.type', 'http.auth.token.location'],
     },
   },
   layout: {
