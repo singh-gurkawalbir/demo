@@ -118,6 +118,7 @@ export default function HomeSearchInput({value, onChange, placeHolder, openWithF
     dispatchLocalAction({type: 'onFocus'});
   }, []);
 
+  // to bring cursor and focus in search field when it is opened for first time
   useEffect(() => {
     if (openWithFocus) {
       inputRef.current.firstChild.focus();

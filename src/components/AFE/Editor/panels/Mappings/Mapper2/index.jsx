@@ -156,6 +156,7 @@ export default function Mapper2({editorId}) {
   const expandedKeys = useSelector(state => selectors.v2MappingExpandedKeys(state));
   const activeKey = useSelector(state => selectors.v2ActiveKey(state));
   const searchKey = useSelector(state => selectors.filter(state, 'tree')?.keyword);
+  // searchBar to be shown or not
   const isSearchVisible = useSelector(state => selectors.isSearchVisible(state));
 
   useEffect(() => {

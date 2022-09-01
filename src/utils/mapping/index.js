@@ -1194,6 +1194,7 @@ export const findNodeInTree = (data, prop, value) => {
   return {node, nodeSubArray, nodeIndexInSubArray};
 };
 
+// to search the generate of the field mapping
 export const filterNode = (node, searchKey) => {
   if (!searchKey) return false;
   if (node?.generate?.toUpperCase().indexOf(searchKey.toUpperCase()) > -1) {
@@ -1203,6 +1204,7 @@ export const filterNode = (node, searchKey) => {
   return false;
 };
 
+// to search the key value of a field mapping
 export const filterKey = (node, searchKey) => {
   if (!searchKey) return false;
   if (node?.key === searchKey) {
@@ -1212,14 +1214,7 @@ export const filterKey = (node, searchKey) => {
   return false;
 };
 
-// export const getExtractTabValue = extractId => {
-//   const pipeIndex = extractId?.indexOf('|');
-
-//   if (pipeIndex > 0) {
-//     return parseInt(extractId.substring(pipeIndex + 1), 10);
-//   }
-// };
-
+// get tab value from combinedExtract value
 export const getExtractTabValue = (extractId, combinedExtract) => {
   const pipeIndex = extractId?.indexOf('|');
   let knownExtract = extractId;
@@ -1243,6 +1238,7 @@ export const getExtractTabValue = (extractId, combinedExtract) => {
   }
 };
 
+// to search in object type of mapping
 const objectSearch = (node, key, filterFunc) => {
   const items = {
     firstIndex: -1,
@@ -1253,11 +1249,13 @@ const objectSearch = (node, key, filterFunc) => {
   // eslint-disable-next-line no-use-before-define
   const newItems = searchTree(node.children, key, filterFunc);
 
+  // copying all the newItems in the items as it is
   items.firstIndex = newItems.firstIndex;
   items.expandedKeys = [...newItems.expandedKeys];
   items.selectedFields = [...newItems.selectedFields];
   items.tabChange = [...newItems.tabChange];
 
+  // if children mappings contained a search then adding the node to expandKeys list
   if (items.firstIndex !== -1) {
     items.expandedKeys = [node.key, ...newItems.expandedKeys];
   }
@@ -1265,6 +1263,7 @@ const objectSearch = (node, key, filterFunc) => {
   return items;
 };
 
+// to search in objectArray type of mapping
 const objectArraySearch = (node, key, filterFunc) => {
   const items = {
     firstIndex: -1,
@@ -1276,16 +1275,19 @@ const objectArraySearch = (node, key, filterFunc) => {
   const newItems = searchTree(node.children, key, filterFunc);
   const extractList = node.combinedExtract.split(',');
 
+  // copying all the newItems in the items as it is
   items.firstIndex = newItems.firstIndex;
   items.expandedKeys = [...newItems.expandedKeys];
   items.selectedFields = [...newItems.selectedFields];
   items.tabChange = [...newItems.tabChange];
 
+  // if match found in the mappings then setting tabChange list to contain the current tabChange object
   if (newItems.firstIndex !== -1) {
-    items.firstIndex = newItems.firstIndex;
     const childNode = node.children[items.firstIndex];
 
+    // checking if tabs are present or not
     if (extractList.length > 1) {
+      // to get the correct tabValue from the combinedExtract
       const tabValue = getExtractTabValue(childNode.parentExtract, node.combinedExtract);
 
       items.tabChange = [
@@ -1305,14 +1307,16 @@ const objectArraySearch = (node, key, filterFunc) => {
 
 export const searchTree = (mappings, key, filterFunc) => {
   const items = {
-    firstIndex: -1,
-    expandedKeys: [],
-    selectedFields: [],
-    tabChange: [],
+    firstIndex: -1,   // stores the first index where match was found
+    expandedKeys: [],   // stores which fields need to be expanded
+    selectedFields: [],   // stores the list of key of all the matched fields
+    tabChange: [],    // stores the all tab changes required in case of objectArray field
   };
 
+  // looping through all the children fields of the node
   mappings.forEach((node, index) => {
     if (node.isTabNode) return;
+    // set it when search if found for the first time
     let found = false;
     let newItems;
 
@@ -1321,6 +1325,7 @@ export const searchTree = (mappings, key, filterFunc) => {
       items.selectedFields.push(node.key);
     }
 
+    // calling required function according to the mappings dataType
     if (node.dataType === 'object') {
       newItems = objectSearch(node, key, filterFunc);
     } else if (node.dataType === 'objectarray') {
@@ -1328,17 +1333,20 @@ export const searchTree = (mappings, key, filterFunc) => {
     }
 
     if (newItems) {
+      // setting firstIndex if no matches found before and match is found inside the mapping
       if (newItems?.firstIndex !== -1 && !found) items.firstIndex = index;
       items.expandedKeys = [...items.expandedKeys, ...newItems.expandedKeys];
       items.selectedFields = [...items.selectedFields, ...newItems.selectedFields];
       items.tabChange = [...items.tabChange, ...newItems.tabChange];
     }
 
+    // setting firstIndex if match was found in the current field
     if (items.firstIndex === -1 && found) {
       items.firstIndex = index;
     }
   });
 
+  // returning an object which contains firstIndex, expandedFields, selectedFields and tabChange
   return items;
 };
 

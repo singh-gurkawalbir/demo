@@ -35,14 +35,15 @@ const SearchBar = () => {
   const classes = useStyles();
   const dispatch = useDispatch();
   const highlightedIndex = useSelector(state => selectors.highlightedIndex(state));
-  const fieldsLen = useSelector(state => selectors.selectedFields(state).length);
   const fields = useSelector(state => selectors.selectedFields(state));
+  const fieldsLen = fields.length;
   const searchKey = useSelector(state => selectors.filter(state, 'tree')?.keyword);
 
   useEffect(() => {
     dispatch(actions.mapping.v2.searchTree(searchKey, false));
   }, [dispatch, searchKey]);
 
+  // clear the filter and selectedFields and index
   useEffect(() => () => {
     dispatch(actions.clearFilter('tree'));
     dispatch(actions.mapping.v2.updateHighlightedIndex(-1));
@@ -50,6 +51,7 @@ const SearchBar = () => {
 
   const downClickHandler = useCallback(() => {
     if (highlightedIndex < 0 || !fieldsLen) return;
+    // using tempHighlightIndex to select the correct selected field after updating highlightIndex state
     let tempHighlightedIndex;
 
     if (highlightedIndex >= 0 && highlightedIndex < fieldsLen - 1) {
@@ -65,6 +67,7 @@ const SearchBar = () => {
 
   const upClickHandler = useCallback(() => {
     if (highlightedIndex < 0 || !fieldsLen) return;
+    // using tempHighlightIndex to select the correct selected field after updating highlightIndex state
     let tempHighlightedIndex;
 
     if (highlightedIndex > 0 && highlightedIndex < fieldsLen) {
@@ -82,9 +85,11 @@ const SearchBar = () => {
     dispatch(actions.mapping.v2.toggleSearch());
   }, [dispatch]);
 
+  // display the number of matches found
   const matches = fieldsLen ? (<Typography variant="body2">{highlightedIndex + 1} of {fieldsLen} matches</Typography>)
     : (<Typography variant="body2" className={classes.searchCount}>0 of 0 matches</Typography>);
 
+  // display when search has been done
   const ShowAfterSearch = () => (
     <div className={classes.showSearchCount}>
       {matches}

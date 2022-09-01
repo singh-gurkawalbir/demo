@@ -25,6 +25,9 @@ const useStyles = makeStyles(theme => ({
       border: 'none',
     },
   },
+  selectedField: {
+    borderColor: `${theme.palette.primary.main} !important`,
+  },
   mapField: {
     display: 'flex',
     position: 'relative',
@@ -78,6 +81,7 @@ export default function Mapper2Generates(props) {
   const inputFieldRef = useRef();
   const [isHighlighted, setIsHighlighted] = useState(false);
 
+  // to set if key is being highlighted or not
   useEffect(() => {
     if (nodeKey === highlightedKey) {
       setIsHighlighted(true);
@@ -86,6 +90,7 @@ export default function Mapper2Generates(props) {
     }
   }, [nodeKey, highlightedKey]);
 
+  // bring the highlighted key into focus
   useScrollIntoView(containerRef, isHighlighted);
 
   const handleChange = useCallback(event => {
@@ -119,6 +124,7 @@ export default function Mapper2Generates(props) {
 
   return (
     <FormControl
+      className={{[classes.selectedField]: isHighlighted}}
       data-test={id}
       key={id}
       ref={containerRef} >

@@ -83,6 +83,7 @@ export default function MapperPanelTitle({editorId, title, helpKey}) {
     dispatch(actions.mapping.v2.toggleRows(shouldExpand));
   }, [dispatch]);
 
+  // to toggle if SearchBar to be shown
   const handleToggleSearch = useCallback(() => {
     dispatch(actions.mapping.v2.toggleSearch());
   }, [dispatch]);
