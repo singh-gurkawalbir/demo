@@ -1122,6 +1122,7 @@ describe('v2 mapping utils', () => {
         title: '',
         disabled: false,
         generate: 'my_first_name',
+        jsonPath: 'my_first_name',
         dataType: 'string',
         extract: '$.fName',
       }, {
@@ -1129,6 +1130,7 @@ describe('v2 mapping utils', () => {
         title: '',
         disabled: false,
         generate: 'my_full_name',
+        jsonPath: 'my_full_name',
         dataType: 'string',
         extract: '{{record.fName}} {{record.lName}}',
       }, {
@@ -1136,6 +1138,7 @@ describe('v2 mapping utils', () => {
         title: '',
         disabled: false,
         generate: 'my_mothers_name',
+        jsonPath: 'my_mothers_name',
         dataType: 'object',
         mappings: [{
           generate: 'first_name',
@@ -1152,6 +1155,7 @@ describe('v2 mapping utils', () => {
           parentKey: 'new_key',
           disabled: false,
           generate: 'first_name',
+          jsonPath: 'my_mothers_name.first_name',
           dataType: 'string',
           hardCodedValue: 'some mothers name',
         }, {
@@ -1160,6 +1164,7 @@ describe('v2 mapping utils', () => {
           parentKey: 'new_key',
           disabled: false,
           generate: 'last_name',
+          jsonPath: 'my_mothers_name.last_name',
           dataType: 'string',
           extract: '$.mother.lName',
         }],
@@ -1168,6 +1173,7 @@ describe('v2 mapping utils', () => {
         title: '',
         disabled: false,
         generate: 'my_many_first_names',
+        jsonPath: 'my_many_first_names',
         dataType: 'stringarray',
         buildArrayHelper: [{
           extract: '$.fname',
@@ -1182,6 +1188,7 @@ describe('v2 mapping utils', () => {
         title: '',
         disabled: false,
         generate: 'two_of_my_fav_names',
+        jsonPath: 'two_of_my_fav_names',
         dataType: 'objectarray',
         buildArrayHelper: [{
           mappings: [{
@@ -1208,6 +1215,7 @@ describe('v2 mapping utils', () => {
           parentExtract: '$|0',
           disabled: false,
           generate: 'my_first_name',
+          jsonPath: 'two_of_my_fav_names[*].my_first_name',
           dataType: 'string',
           extract: '$.fName',
         }, {
@@ -1219,6 +1227,7 @@ describe('v2 mapping utils', () => {
           hidden: true,
           className: 'hideRow',
           generate: 'my_last_name',
+          jsonPath: 'two_of_my_fav_names[*].my_last_name',
           dataType: 'string',
           extract: '$.lName',
         }],
@@ -1229,6 +1238,7 @@ describe('v2 mapping utils', () => {
         disabled: false,
         generate: 'all_the_children',
         dataType: 'objectarray',
+        jsonPath: 'all_the_children',
         buildArrayHelper: [{
           extract: '$.siblings[*].children[*]',
           mappings: [{
@@ -1256,6 +1266,7 @@ describe('v2 mapping utils', () => {
           parentExtract: '$.siblings[*].children[*]',
           disabled: false,
           generate: 'full_name',
+          jsonPath: 'all_the_children[*].full_name',
           dataType: 'string',
           extract: '{{record.siblings.children.fName}} {{record.siblings.lName}}',
         }, {
@@ -1267,6 +1278,7 @@ describe('v2 mapping utils', () => {
           hidden: true,
           className: 'hideRow',
           generate: 'my_child_first_name',
+          jsonPath: 'all_the_children[*].my_child_first_name',
           dataType: 'string',
           extract: '$.children.firstName',
         }],
@@ -1276,6 +1288,7 @@ describe('v2 mapping utils', () => {
         title: '',
         disabled: false,
         generate: 'family_tree_from_mom_perspective',
+        jsonPath: 'family_tree_from_mom_perspective',
         dataType: 'object',
         mappings: [{
           generate: 'children',
@@ -1328,6 +1341,7 @@ describe('v2 mapping utils', () => {
           parentKey: 'new_key',
           disabled: false,
           generate: 'children',
+          jsonPath: 'family_tree_from_mom_perspective.children',
           dataType: 'objectarray',
           buildArrayHelper: [{
             extract: '$.siblings[*]',
@@ -1382,6 +1396,7 @@ describe('v2 mapping utils', () => {
             parentExtract: '$.siblings[*]',
             disabled: false,
             generate: 'last_name',
+            jsonPath: 'family_tree_from_mom_perspective.children[*].last_name',
             dataType: 'string',
             extract: '$.siblings.lName',
           }, {
@@ -1392,6 +1407,7 @@ describe('v2 mapping utils', () => {
             disabled: false,
             description: 'grand children mappings',
             generate: 'grandchildren',
+            jsonPath: 'family_tree_from_mom_perspective.children[*].grandchildren',
             dataType: 'objectarray',
             buildArrayHelper: [{
               extract: '$.siblings.children[*]',
@@ -1408,6 +1424,7 @@ describe('v2 mapping utils', () => {
               parentExtract: '$.siblings.children[*]',
               disabled: false,
               generate: 'first_name',
+              jsonPath: 'family_tree_from_mom_perspective.children[*].grandchildren[*].first_name',
               dataType: 'string',
               extract: '$.siblings.children.fName',
             }],
@@ -1421,6 +1438,7 @@ describe('v2 mapping utils', () => {
             hidden: true,
             className: 'hideRow',
             generate: 'first_name',
+            jsonPath: 'family_tree_from_mom_perspective.children[*].first_name',
             dataType: 'string',
             extract: '$.fName',
           }, {
@@ -1432,6 +1450,7 @@ describe('v2 mapping utils', () => {
             hidden: true,
             className: 'hideRow',
             generate: 'grandchildren',
+            jsonPath: 'family_tree_from_mom_perspective.children[*].grandchildren',
             dataType: 'objectarray',
             buildArrayHelper: [{
               extract: '$.children[*]',
@@ -1454,6 +1473,7 @@ describe('v2 mapping utils', () => {
               hidden: true,
               className: 'hideRow',
               generate: 'first_name',
+              jsonPath: 'family_tree_from_mom_perspective.children[*].grandchildren[*].first_name',
               dataType: 'string',
               extract: '$.children.firstName',
             }, {
@@ -1465,6 +1485,7 @@ describe('v2 mapping utils', () => {
               hidden: true,
               className: 'hideRow',
               generate: 'last_name',
+              jsonPath: 'family_tree_from_mom_perspective.children[*].grandchildren[*].last_name',
               dataType: 'string',
               extract: '$.lName',
             }],
@@ -1478,6 +1499,7 @@ describe('v2 mapping utils', () => {
         title: '',
         disabled: false,
         generate: 'items',
+        jsonPath: 'items',
         dataType: 'objectarray',
         buildArrayHelper: [{
           extract: '$.items[*]',
@@ -1490,6 +1512,7 @@ describe('v2 mapping utils', () => {
         title: '',
         disabled: false,
         generate: 'test',
+        jsonPath: 'test',
         dataType: 'objectarray',
         buildArrayHelper: [
           {
@@ -1535,6 +1558,7 @@ describe('v2 mapping utils', () => {
           parentExtract: '$.children[*]',
           disabled: false,
           generate: 'a',
+          jsonPath: 'test[*].a',
           dataType: 'string',
           extract: 'a',
         }, {
@@ -1546,6 +1570,7 @@ describe('v2 mapping utils', () => {
           hidden: true,
           className: 'hideRow',
           generate: 'b',
+          jsonPath: 'test[*].b',
           dataType: 'string',
           extract: 'b',
         },
@@ -1558,6 +1583,7 @@ describe('v2 mapping utils', () => {
           hidden: true,
           className: 'hideRow',
           generate: 'c',
+          jsonPath: 'test[*].c',
           dataType: 'string',
           extract: 'c',
         }],
@@ -1568,6 +1594,7 @@ describe('v2 mapping utils', () => {
         title: '',
         disabled: false,
         generate: 'test12',
+        jsonPath: 'test12',
         dataType: 'objectarray',
         combinedExtract: '$.abc,$.test',
         buildArrayHelper: [
@@ -1636,6 +1663,7 @@ describe('v2 mapping utils', () => {
             default: '',
             extract: '1',
             generate: '1',
+            jsonPath: 'test12[*].1',
             key: 'new_key',
             parentExtract: '$.abc',
             parentKey: 'new_key',
@@ -1648,6 +1676,7 @@ describe('v2 mapping utils', () => {
             dataType: 'objectarray',
             disabled: false,
             generate: '2',
+            jsonPath: 'test12[*].2',
             hidden: true,
             key: 'new_key',
             parentExtract: '$.test',
@@ -1700,6 +1729,7 @@ describe('v2 mapping utils', () => {
                 disabled: false,
                 extract: 'a',
                 generate: 'a',
+                jsonPath: 'test12[*].2[*].a',
                 hidden: true,
                 key: 'new_key',
                 parentExtract: '$|0',
@@ -1712,6 +1742,7 @@ describe('v2 mapping utils', () => {
                 disabled: false,
                 extract: 'b',
                 generate: 'b',
+                jsonPath: 'test12[*].2[*].b',
                 hidden: true,
                 key: 'new_key',
                 parentExtract: '$|1',
@@ -1724,6 +1755,7 @@ describe('v2 mapping utils', () => {
                 disabled: false,
                 extract: 'c',
                 generate: 'c',
+                jsonPath: 'test12[*].2[*].c',
                 hidden: true,
                 key: 'new_key',
                 parentExtract: '$|2',
@@ -1793,6 +1825,7 @@ describe('v2 mapping utils', () => {
           disabled: true,
           extract: '$.fName',
           generate: 'first_name',
+          jsonPath: 'first_name',
           key: 'new_key',
           parentExtract: '$[*]|0',
           parentKey: 'new_key',
@@ -1802,6 +1835,7 @@ describe('v2 mapping utils', () => {
           disabled: true,
           extract: '$.lName',
           generate: 'last_name',
+          jsonPath: 'last_name',
           key: 'new_key',
           parentExtract: '$[*]|0',
           parentKey: 'new_key',
@@ -1811,6 +1845,7 @@ describe('v2 mapping utils', () => {
           disabled: true,
           extract: '$.childFName',
           generate: 'child_first_name',
+          jsonPath: 'child_first_name',
           key: 'new_key',
           parentExtract: '$[*]|0',
           parentKey: 'new_key',
@@ -1818,6 +1853,7 @@ describe('v2 mapping utils', () => {
         }],
         combinedExtract: '$[*]',
         dataType: 'objectarray',
+        jsonPath: '',
         disabled: true,
         key: 'new_key',
         title: '',
@@ -2825,7 +2861,7 @@ describe('v2 mapping utils', () => {
           dataType: 'objectarray',
           generate: 'files',
           isRequired: false,
-          jsonPath: 'files[*]',
+          jsonPath: 'files',
           key: 'new_key',
           title: '',
         },
@@ -2900,7 +2936,7 @@ describe('v2 mapping utils', () => {
           dataType: 'objectarray',
           generate: 'details',
           isRequired: true,
-          jsonPath: 'details[*]',
+          jsonPath: 'details',
           key: 'new_key',
           title: '',
         },
