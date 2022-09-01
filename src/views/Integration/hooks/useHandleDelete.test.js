@@ -63,6 +63,7 @@ describe('test suite for useHandleDelete hook', () => {
   afterEach(() => {
     useDispatchSpy.mockClear();
     mockDispatchFn.mockClear();
+    mockHistoryPush.mockClear();
   });
 
   test('should opt for delete when connector id not given', async () => {
