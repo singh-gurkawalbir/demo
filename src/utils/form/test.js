@@ -280,9 +280,9 @@ describe('rule evaluation', () => {
   const eIs5 = { field: 'e', is: ['5'] };
 
   const aIs1_or_bIs2_AND_cIs3_or_dIs4 = {
-    all: [
-      {some: [aIs1, bIs2]},
-      {some: [cIs3, dIs4]},
+    AND: [
+      {OR: [aIs1, bIs2]},
+      {OR: [cIs3, dIs4]},
     ],
   };
   // Create some fields to be tested (fieldC is expected to fail)...
@@ -346,9 +346,9 @@ describe('rule evaluation', () => {
 
     test('passes when all rules pass of combinations1', () => {
       const rules = [{
-        all: [
-          {some: [aIs1, bIs2]},
-          {some: [cIs3, dIs4]},
+        AND: [
+          {OR: [aIs1, bIs2]},
+          {OR: [cIs3, dIs4]},
         ],
       }];
       const fieldsById = {
@@ -366,9 +366,9 @@ describe('rule evaluation', () => {
 
     test('passes when all rules pass of combinations2', () => {
       const rules = [{
-        some: [
-          {some: [aIs1, bIs2]},
-          {all: [cIs3, dIs4]},
+        OR: [
+          {OR: [aIs1, bIs2]},
+          {AND: [cIs3, dIs4]},
         ],
       }];
       const fieldsById = {
@@ -386,9 +386,9 @@ describe('rule evaluation', () => {
 
     test('passes when all rules pass of combinations4', () => {
       const rules = [{
-        some: [
-          {all: [aIs1, bIs2]},
-          {all: [cIs3, dIs4]},
+        OR: [
+          {AND: [aIs1, bIs2]},
+          {AND: [cIs3, dIs4]},
         ],
       }];
       const fieldsById = {
@@ -406,9 +406,9 @@ describe('rule evaluation', () => {
 
     test('passes when all rules pass of combinations4', () => {
       const rules = [{
-        all: [
-          {all: [aIs1, bIs2]},
-          {some: [cIs3, dIs4]},
+        AND: [
+          {AND: [aIs1, bIs2]},
+          {OR: [cIs3, dIs4]},
         ],
       }];
       const fieldsById = {
@@ -442,9 +442,9 @@ describe('rule evaluation', () => {
       ).toEqual(true);
       expect(
         evaluateAllRules({ rules: [{
-          all: [
-            {some: [aIs1, bIs2]},
-            {some: [cIs3, eIs5]},
+          AND: [
+            {OR: [aIs1, bIs2]},
+            {OR: [cIs3, eIs5]},
           ],
         }],
         fieldsById,

@@ -119,17 +119,17 @@ export const evaluateAllRules = ({
       if (rule.field && fieldsById.hasOwnProperty(rule.field)) {
         return evaluateRule(rule, fieldsById[rule.field].value);
       }
-      if (rule.some && Array.isArray(rule.some)) {
+      if (rule.OR && Array.isArray(rule.OR)) {
         // eslint-disable-next-line no-use-before-define
         return evaluateSomeRules({
-          rules: rule.some,
+          rules: rule.OR,
           fieldsById,
           defaultResult,
         });
       }
-      if (rule.all && Array.isArray(rule.all)) {
+      if (rule.AND && Array.isArray(rule.AND)) {
         return evaluateAllRules({
-          rules: rule.all,
+          rules: rule.AND,
           fieldsById,
           defaultResult,
         });
@@ -155,16 +155,16 @@ export const evaluateSomeRules = ({
         return evaluateRule(rule, fieldsById[rule.field].value);
       }
 
-      if (rule.some && Array.isArray(rule.some)) {
+      if (rule.OR && Array.isArray(rule.OR)) {
         return evaluateSomeRules({
-          rules: rule.some,
+          rules: rule.OR,
           fieldsById,
           defaultResult,
         });
       }
-      if (rule.all && Array.isArray(rule.all)) {
+      if (rule.AND && Array.isArray(rule.AND)) {
         return evaluateAllRules({
-          rules: rule.all,
+          rules: rule.AND,
           fieldsById,
           defaultResult,
         });
