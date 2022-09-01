@@ -536,7 +536,7 @@ export default {
         fallsWithinNumericalRange: {
           min: 1,
           max: 100,
-          message: 'The value must be more than 1 and less than 100',
+          message: 'The value must be more than 0 and less than 101',
         },
         matchesRegEx: {
           pattern: '^[\\d]+$',
