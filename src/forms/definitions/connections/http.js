@@ -311,9 +311,23 @@ export default {
     },
     httpRefreshToken: {
       formId: 'httpRefreshToken',
-      visibleWhenAll: [
-        {field: 'http.auth.type', is: ['custom', 'token']},
-      ],
+      visibleWhenAll: [{
+        OR: [
+          {
+            AND: [
+              { field: 'http.auth.type', is: ['token'] },
+              { field: 'http.auth.token.location', isNot: [''] },
+              { field: 'configureTokenRefresh', is: [true] },
+            ],
+          },
+          {
+            AND: [
+              { field: 'http.auth.type', is: ['custom'] },
+              { field: 'configureCutomAuthTokenRefresh', is: [true] },
+            ],
+          },
+        ],
+      }],
     },
     httpCookie: {
       formId: 'httpCookie',
@@ -635,66 +649,4 @@ export default {
       ],
     },
   ],
-  optionsHandler: (fieldId, fields) => {
-    const authTypeField = fields.find(field => field.id === 'http.auth.type');
-    const tokenPathsField = fields.find(field => field.id === 'http.auth.token.tokenPaths');
-    const configureCutomAuthTokenRefreshField = fields.find(field => field.id === 'configureCutomAuthTokenRefresh');
-    const configureTokenRefreshField = fields.find(field => field.id === 'configureTokenRefresh');
-
-    const fieldsToUpdate = [
-      'http.auth.token.refreshToken',
-      'http.auth.token.refreshMethod',
-      'http.auth.token.refreshRelativeURI',
-      'http.auth.token.refreshHeaders',
-      'http.auth.token.refreshMediaType',
-      'http.auth.token.refreshBody',
-      'http.auth.token.refreshTokenPath',
-      'http.auth.token.tokenPaths',
-    ];
-
-    if (
-      fieldId === 'configureTokenRefresh' ||
-      fieldId === 'configureCutomAuthTokenRefresh' ||
-      fieldId === 'http.auth.token.tokenPaths'
-    ) {
-      const locationField = fields.find(field => field.id === 'http.auth.token.location');
-
-      if (authTypeField?.value !== 'custom') {
-        configureCutomAuthTokenRefreshField.value = false;
-        tokenPathsField.visible = false;
-      }
-      if (authTypeField?.value !== 'token') {
-        configureTokenRefreshField.value = false;
-      }
-      if (configureCutomAuthTokenRefreshField?.value) {
-        configureTokenRefreshField.value = false;
-
-        return null;
-      }
-
-      if (configureTokenRefreshField?.value) {
-        configureCutomAuthTokenRefreshField.value = false;
-
-        return null;
-      }
-
-      if (
-        (authTypeField?.value === 'token' && locationField?.value !== '' && configureTokenRefreshField?.value) ||
-        (authTypeField?.value === 'custom' && configureCutomAuthTokenRefreshField?.value)
-      ) {
-        return null;
-      }
-
-      configureTokenRefreshField.value = false;
-      configureCutomAuthTokenRefreshField.value = false;
-
-      fieldsToUpdate.forEach(field => {
-        const updateField = fields.find(f => f.id === field);
-
-        updateField.visible = false;
-      });
-    }
-
-    return null;
-  },
 };
