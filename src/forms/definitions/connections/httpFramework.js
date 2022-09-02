@@ -357,11 +357,8 @@ export default {
     },
   },
   layout: {
-    type: 'collapse',
     containers: [
       {
-        collapsed: true,
-        label: 'General',
         fields: [
           'name',
           'connectionFormView',
@@ -371,10 +368,21 @@ export default {
         ],
       },
       {
-        collapsed: true,
-        label: 'Application details',
+        containers: [
+          {
+            fields: [
+              'http.baseURI',
+            ],
+          },
+          {
+            type: 'indent',
+            containers: [{
+              fields: [],
+            }],
+          }],
+      },
+      {
         fields: [
-          'http.baseURI',
           'http.headers',
           'http.mediaType',
           'http.successMediaType',
@@ -382,78 +390,26 @@ export default {
         ],
       },
       {
-        collapsed: true,
-        label: 'Configure authentication',
         containers: [
           {
             fields: ['http.auth.type'],
           },
           {
-            type: 'collapse',
-            containers: [
-              {
-                collapsed: true,
-                label: 'Configure basic auth',
-                fields: [
-                  'httpBasic',
-                ],
-              },
-              {
-                collapsed: true,
-                label: 'Configure cookie auth',
-                fields: [
-                  'httpCookie',
-                ],
-              },
-              {
-                collapsed: false,
-                label: 'Configure custom auth',
-                fields: [
-                  'http.custom.encrypted',
-                  'http.custom.unencrypted',
-                ],
-              },
-              {
-                collapsed: true,
-                label: 'Configure digest auth',
-                fields: [
-                  'httpDigest',
-                ],
-              },
-              {
-                collapsed: true,
-                label: 'Configure OAuth 2.0',
-                fields: [
-                  'httpOAuth',
-                ],
-              },
-              {
-                collapsed: true,
-                label: 'OAuth 2.0 overrides',
-                fields: [
-                  'httpOAuthOverrides',
-                ],
-              },
-              {
-                collapsed: true,
-                label: 'Configure token auth',
-                fields: [
-                  'httpToken',
-                ],
-              },
-              {
-                collapsed: true,
-                label: 'Configure refresh token',
-                fields: ['httpRefreshToken'],
-              },
-              {
-                collapsed: true,
-                label: 'Configure WSSE auth',
-                fields: [
-                  'httpWsse',
-                ],
-              },
-            ],
+            type: 'indent',
+            containers: [{
+              fields: [
+                'httpBasic',
+                'httpCookie',
+                'http.custom.encrypted',
+                'http.custom.unencrypted',
+                'httpDigest',
+                'httpOAuth',
+                'httpOAuthOverrides',
+                'httpToken',
+                'httpRefreshToken',
+                'httpWsse',
+              ],
+            }],
           },
           {
             fields: [
@@ -465,8 +421,6 @@ export default {
         ],
       },
       {
-        collapsed: true,
-        label: 'Non-standard API rate limiter',
         fields: [
           'http.rateLimit.limit',
           'http.rateLimit.failStatusCode',
@@ -476,11 +430,9 @@ export default {
         ],
       },
       {
-        collapsed: true,
-        label: 'How to test this connection?',
         fields: [
           'http.ping.method',
-          'http.ping.relativeURI',
+          // 'http.ping.relativeURI',
           'http.ping.body',
           'http.ping.failPath',
           'http.ping.failValues',
@@ -490,8 +442,6 @@ export default {
         ],
       },
       {
-        collapsed: true,
-        label: 'Advanced',
         fields: [
           'http.disableStrictSSL',
           'httpAdvanced',
