@@ -2546,4 +2546,29 @@ export default {
       },
     ],
   },
+  configureCutomAuthTokenRefresh: {
+    id: 'configureCutomAuthTokenRefresh',
+    type: 'checkbox',
+    label: 'Configure refresh token',
+    helpKey: 'connection.configureTokenRefresh',
+    // Refresh token is mandatory when Configure refresh token is enabled, hence we check if this value is provided or not
+    defaultValue: r => !!(r?.http?.auth?.token?.refreshToken),
+    visibleWhenAll: [
+      { field: 'http.auth.type', is: ['custom'] },
+    ],
+  },
+  'http.auth.token.tokenPaths': {
+    id: 'http.auth.token.tokenPaths',
+    type: 'text',
+    label: 'Paths to encrypted field in the response body',
+    defaultValue: r => {
+      const values = r?.http?.auth?.token?.tokenPaths;
+
+      if (Array.isArray(values)) {
+        return values.join(',');
+      }
+
+      return values;
+    },
+  },
 };
