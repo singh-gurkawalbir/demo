@@ -809,6 +809,8 @@ if you're using a production account, you'll find your API keys under the 'API M
 'Check this box if your token expires after a period of time. A series of new fields will appear in the form.',
   'connection.http.auth.token.refreshMediaType':
 'Use this field to handle the use case where the HTTP request requires a different media type than what is configured on the connection.',
+  'http.auth.token.tokenPaths':
+'Use this field to handle the use case where the HTTP request requires a different media type than what is configured on the connection.',
   'connection.http.auth.cookie.method':
 'Select GET or POST for the session cookie request.',
   'connection.http.auth.cookie.uri':
