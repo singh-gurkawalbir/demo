@@ -105,14 +105,11 @@ export const getTopLevelTabs = (options = {}) => {
   //   excludeTabs.push('flows');
   //   excludeTabs.push('dashboard');
   // }
-  if (isStandalone) {
+  if (!showAdminTabs || isStandalone) {
     excludeTabs.push('admin');
   }
   if (isStandalone || hideSettingsTab) {
     excludeTabs.push('settings');
-  }
-  if (!showAdminTabs) {
-    excludeTabs.push('admin');
   }
 
   return allTabs.filter(tab => !excludeTabs.includes(tab.path));
