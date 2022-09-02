@@ -39,7 +39,7 @@ export default function SalesforceMappingAssistant({
     return (
       <div id="salesforceMappingFormMainDiv" className="salesforce-form">
         <h2 className="pageDescription">
-          {sObjectType || sObjectType} is a non-layoutable entity.
+          {sObjectLabel || sObjectType} is a non-layoutable entity.
         </h2>
       </div>
     );

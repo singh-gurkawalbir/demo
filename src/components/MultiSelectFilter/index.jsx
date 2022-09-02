@@ -212,11 +212,10 @@ export default function MultiSelectFilter({ items = [], selected = [], onSave, I
                 <FormControl component="fieldset" className={classes.formControl}>
                   <FormGroup className={classes.formGroup}>
                     {items.map(m => (
-                      <>
-                        <ul key={m._id} className={classes.checkAction}>
-                          {isChildExists && (
+                      <ul key={m._id} className={classes.checkAction}>
+                        {isChildExists && (
                           <li>
-                            { m?.children?.length && (
+                            { m?.children?.length > 0 && (
                             <IconButton
                               data-test="toggleJobDetail"
                               className={classes.moreIcon}
@@ -226,29 +225,27 @@ export default function MultiSelectFilter({ items = [], selected = [], onSave, I
                             </IconButton>
                           )}
                           </li>
-                          )}
-                          <li>
-                            <FormControlLabel
-                              className={classes.selectResourceItem}
-                              control={(
-                                <Checkbox
-                                  color="primary"
-                                  checked={checked.includes(m._id)}
-                                  onChange={handleSelect(m._id)}
-                                  value="required"
-                                  className={classes.selectResourceCheck} />
+                        )}
+                        <li>
+                          <FormControlLabel
+                            className={classes.selectResourceItem}
+                            control={(
+                              <Checkbox
+                                color="primary"
+                                checked={checked.includes(m._id)}
+                                onChange={handleSelect(m._id)}
+                                value="required"
+                                className={classes.selectResourceCheck} />
                                   )}
-                              label={SelectedLabelImp ? <SelectedLabelImp name={m.name} id={m._id} /> : m.name}
-                              key={m._id} />
-                            {expanded[m._id] && m.children && m.children.map(c => (
-                              <ChildDetails
-                                key={c._id} current={c} parentId={m._id} handleSelect={handleChildSelect}
-                                checked={checked} />
-                            ))}
-                          </li>
-                        </ul>
-
-                      </>
+                            label={SelectedLabelImp ? <SelectedLabelImp name={m.name} id={m._id} /> : m.name}
+                            key={m._id} />
+                          {expanded[m._id] && m.children && m.children.map(c => (
+                            <ChildDetails
+                              key={c._id} current={c} parentId={m._id} handleSelect={handleChildSelect}
+                              checked={checked} />
+                          ))}
+                        </li>
+                      </ul>
                     ))}
                   </FormGroup>
                 </FormControl>
