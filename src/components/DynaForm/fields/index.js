@@ -155,6 +155,7 @@ import DynaAmazonmwsType from './DynaAmazonmwsType';
 import DynaMFAMobileCode from './DynaMFAMobileCode';
 import DynaMFASecretKey from './DynaMFASecretKey';
 import DynaConnectionFormView from './DynaConnectionFormView';
+import DynaMapper2SourceField from './DynaMapper2SourceField';
 
 export default {
   updateoptions: DynaUpdateOptions,
@@ -321,4 +322,5 @@ export default {
   mfamobilecode: DynaMFAMobileCode,
   mfasecretkey: DynaMFASecretKey,
   connectionFormView: DynaConnectionFormView,
+  mapper2sourcefield: DynaMapper2SourceField,
 };

@@ -4727,6 +4727,36 @@ Object {
           },
         ],
       },
+      "netsuite.restlet.markExportedBatchSize": Object {
+        "defaultValue": [Function],
+        "id": "netsuite.restlet.markExportedBatchSize",
+        "label": "Mark exported batch size",
+        "type": "text",
+        "validWhen": Object {
+          "fallsWithinNumericalRange": Object {
+            "max": 100,
+            "min": 1,
+          },
+          "matchesRegEx": Object {
+            "message": "Only numbers allowed",
+            "pattern": "^[\\\\d]+$",
+          },
+        },
+        "visibleWhen": Array [
+          Object {
+            "field": "type",
+            "is": Array [
+              "once",
+            ],
+          },
+          Object {
+            "field": "restlet.type",
+            "is": Array [
+              "once",
+            ],
+          },
+        ],
+      },
       "netsuite.restlet.useSS2Restlets": Object {
         "connectionId": [Function],
         "defaultDisabled": [Function],
@@ -5233,6 +5263,7 @@ Object {
                     "netsuite.distributed.forceReload",
                     "netsuite.restlet.batchSize",
                     "advancedSettings",
+                    "netsuite.restlet.markExportedBatchSize",
                   ],
                 },
               ],
