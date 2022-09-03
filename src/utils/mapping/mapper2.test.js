@@ -840,6 +840,97 @@ describe('v2 mapping utils', () => {
 
       expect(rebuildObjectArrayNode(node, extract)).toEqual(newNode);
     });
+
+    test('should correctly update the node with empty generates with child nodes for the new source incase the first source has an object mapping', () => {
+      generateUniqueKey.mockReturnValue('new_key');
+
+      const node = {
+        combinedExtract: '$[*].feeds[*]',
+        dataType: 'objectarray',
+        disabled: false,
+        generate: 'family_tree',
+        key: '3SC9pqVz-S2n-PQyVDhsS',
+        title: '',
+        children: [
+          {
+            children: [
+              {
+                dataType: 'string',
+                extract: 'e1',
+                generate: 'd1',
+                key: 'CZkNYxALFVMdgT7fbJz9n',
+                parentKey: 'ccnkqcWvwImG8yLZYYvsh',
+                title: '',
+              },
+            ],
+            dataType: 'object',
+            generate: 'map1',
+            key: 'ccnkqcWvwImG8yLZYYvsh',
+            parentExtract: '$[*].feeds[*]',
+            parentKey: 'emT65729Ai5IiXpbQhnxv',
+            title: '',
+          },
+        ],
+      };
+
+      const extract = '$[*].feeds[*],$.test[*]';
+      const newNode = {
+        combinedExtract: '$[*].feeds[*],$.test[*]',
+        dataType: 'objectarray',
+        disabled: false,
+        generate: 'family_tree',
+        key: '3SC9pqVz-S2n-PQyVDhsS',
+        title: '',
+        activeTab: 0,
+        children: [
+          {
+            isTabNode: true,
+            key: 'new_key',
+            parentKey: '3SC9pqVz-S2n-PQyVDhsS',
+            title: '',
+          },
+          {
+            children: [
+              {
+                dataType: 'string',
+                extract: 'e1',
+                generate: 'd1',
+                key: 'CZkNYxALFVMdgT7fbJz9n',
+                parentKey: 'ccnkqcWvwImG8yLZYYvsh',
+                title: '',
+              },
+            ],
+            dataType: 'object',
+            generate: 'map1',
+            key: 'ccnkqcWvwImG8yLZYYvsh',
+            parentExtract: '$[*].feeds[*]',
+            parentKey: 'emT65729Ai5IiXpbQhnxv',
+            title: '',
+          },
+          {
+            className: 'hideRow',
+            dataType: 'object',
+            generate: 'map1',
+            hidden: true,
+            key: 'new_key',
+            parentExtract: '$.test[*]',
+            parentKey: '3SC9pqVz-S2n-PQyVDhsS',
+            title: '',
+            children: [
+              {
+                dataType: 'string',
+                generate: 'd1',
+                key: 'new_key',
+                parentKey: 'new_key',
+                title: '',
+              },
+            ],
+          },
+        ],
+      };
+
+      expect(rebuildObjectArrayNode(node, extract)).toEqual(newNode);
+    });
   });
   describe('buildTreeFromV2Mappings util', () => {
     test('should not throw exception for invalid args', () => {
