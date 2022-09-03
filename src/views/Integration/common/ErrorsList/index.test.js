@@ -248,8 +248,12 @@ describe('ErrorsListDrawer UI tests', () => {
 
     const rows = screen.getAllByRole('row');
 
-    expect(rows[0].textContent).toBe('ApplicationTypeFlow step nameErrorsLast open error');
-    expect(rows[1].textContent).toBe('ImportPost customer to HubSpot companies4 errors08/04/2022 4:39:35 pm');
+    const header = rows.find(({textContent}) => textContent === 'ApplicationTypeFlow step nameErrorsLast open error');
+
+    expect(header).toBeInTheDocument();
+    const rowContent = rows.find(({textContent}) => textContent === 'ImportPost customer to HubSpot companies4 errors08/04/2022 4:39:35 pm');
+
+    expect(rowContent).toBeInTheDocument();
   });
 
   test('should test the celigo table when integrationId is not provided', () => {
@@ -263,7 +267,7 @@ describe('ErrorsListDrawer UI tests', () => {
   test('should click the close button', () => {
     iniStoreAndRender(0);
 
-    const closeButton = screen.getAllByRole('button')[0];
+    const closeButton = screen.getByRole('button', {name: /close/i});
 
     userEvent.click(closeButton);
     expect(mockHistoryPush).toHaveBeenCalledWith('/initialURL');
@@ -271,7 +275,11 @@ describe('ErrorsListDrawer UI tests', () => {
   test('should click on the error when error count < 9999', () => {
     iniStoreAndRender(4);
 
-    userEvent.click(screen.getByText('4 errors'));
+    const errors = screen.getByText('4 errors');
+
+    expect(errors).toBeInTheDocument();
+
+    userEvent.click(errors);
     expect(mockHistoryPush).toHaveBeenCalledWith(
       '/integrations/60c9b4a7a4004f2e4cfe72b6/flowBuilder/60c9b551a4004f2e4cfe730e/errors/60c9b550a4004f2e4cfe72fc/open'
     );
@@ -279,7 +287,11 @@ describe('ErrorsListDrawer UI tests', () => {
   test('should click on the error  when error count > 9999', () => {
     iniStoreAndRender(10000);
 
-    userEvent.click(screen.getByText('9999+ errors'));
+    const errors = screen.getByText('9999+ errors');
+
+    expect(errors).toBeInTheDocument();
+
+    userEvent.click(errors);
     expect(mockHistoryPush).toHaveBeenCalledWith(
       '/integrations/60c9b4a7a4004f2e4cfe72b6/flowBuilder/60c9b551a4004f2e4cfe730e/errors/60c9b550a4004f2e4cfe72fc/open'
     );
