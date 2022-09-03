@@ -575,6 +575,7 @@ describe('v2 mapping utils', () => {
             parentExtract: '$.siblings[*]',
             parentKey: '3SC9pqVz-S2n-PQyVDhsS',
             title: '',
+            generate: 'child1',
           },
         ],
       };
@@ -661,6 +662,7 @@ describe('v2 mapping utils', () => {
           {
             className: 'hideRow',
             dataType: 'string',
+            generate: 'child1',
             hidden: true,
             key: 'new_key',
             parentExtract: '$.test[*].nested[*]',

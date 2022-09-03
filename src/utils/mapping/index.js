@@ -625,6 +625,26 @@ export const hideOtherTabRows = (node, newTabExtract, hidden) => {
   return clonedNode;
 };
 
+const constructEmptyMappingWithGenerates = (rows, defaultProps, hidden, parentKey) => rows.map(row => {
+  const { children, generate, dataType, ...rest } = row;
+  let updatedChildren;
+  const key = generateUniqueKey();
+
+  if (children?.length) {
+    updatedChildren = constructEmptyMappingWithGenerates(children, defaultProps, hidden, key);
+  }
+
+  return {
+    key,
+    title: '',
+    generate,
+    dataType,
+    ...(updatedChildren ? { children: updatedChildren } : {}), // updates children if present with new key and generates
+    ...(rest?.parentKey ? {parentKey} : {}), // if the row has parent key, then update with new parent key
+    ...(!parentKey ? { ...defaultProps } : {}), // for only first level
+  };
+});
+
 // this util is for object array data type nodes when multiple extracts are given,
 // to reconstruct the whole children array
 export const rebuildObjectArrayNode = (node, extract = '') => {
@@ -687,6 +707,9 @@ export const rebuildObjectArrayNode = (node, extract = '') => {
     return false;
   });
 
+  const firstParentExtract = getUniqueExtractId(splitExtracts[0], 0);
+  const firstTabRows = clonedNode.children.filter(c => c.parentExtract === firstParentExtract);
+
   // find left over extracts so that new children rows can be pushed
   splitExtracts.forEach((e, i) => {
     if (!e) return;
@@ -697,17 +720,15 @@ export const rebuildObjectArrayNode = (node, extract = '') => {
     }
 
     const hidden = i > 0;
-    const newRow = {
-      key: generateUniqueKey(),
-      title: '',
+    const defaultProps = {
       parentKey,
       parentExtract: extract,
-      dataType: MAPPING_DATA_TYPES.STRING,
-      hidden, // hiding the new rows if those are not in 0th tab
       className: hidden && 'hideRow',
+      hidden,
     };
+    const generatesMapping = constructEmptyMappingWithGenerates(firstTabRows, defaultProps, hidden);
 
-    clonedNode.children.push(newRow);
+    clonedNode.children = [...clonedNode.children, ...generatesMapping];
   });
 
   if (splitExtracts.length === 1) {
