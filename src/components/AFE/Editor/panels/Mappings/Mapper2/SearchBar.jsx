@@ -31,11 +31,29 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const SearchBar = () => {
+// display when search has been done
+const ShowAfterSearch = ({
+  className,
+  matches,
+  downClickHandler,
+  upClickHandler,
+}) => (
+  <div className={className}>
+    {matches}
+    <IconButton size="small" onClick={downClickHandler}>
+      <ArrowDownIcon />
+    </IconButton>
+    <IconButton size="small" onClick={upClickHandler}>
+      <ArrowUpIcon />
+    </IconButton>
+  </div>
+);
+
+export default function SearchBar() {
   const classes = useStyles();
   const dispatch = useDispatch();
   const highlightedIndex = useSelector(state => selectors.highlightedIndex(state));
-  const fields = useSelector(state => selectors.selectedFields(state));
+  const fields = useSelector(state => selectors.filteredKeys(state));
   const fieldsLen = fields.length;
   const searchKey = useSelector(state => selectors.filter(state, 'tree')?.keyword);
 
@@ -43,7 +61,7 @@ const SearchBar = () => {
     dispatch(actions.mapping.v2.searchTree(searchKey, false));
   }, [dispatch, searchKey]);
 
-  // clear the filter and selectedFields and index
+  // clear the filter and filteredKeys and index
   useEffect(() => () => {
     dispatch(actions.clearFilter('tree'));
     dispatch(actions.mapping.v2.updateHighlightedIndex(-1));
@@ -89,26 +107,24 @@ const SearchBar = () => {
   const matches = fieldsLen ? (<Typography variant="body2">{highlightedIndex + 1} of {fieldsLen} matches</Typography>)
     : (<Typography variant="body2" className={classes.searchCount}>0 of 0 matches</Typography>);
 
-  // display when search has been done
-  const ShowAfterSearch = () => (
-    <div className={classes.showSearchCount}>
-      {matches}
-      <IconButton size="small" onClick={downClickHandler}>
-        <ArrowDownIcon />
-      </IconButton>
-      <IconButton size="small" onClick={upClickHandler}>
-        <ArrowUpIcon />
-      </IconButton>
-    </div>
-  );
-
   return (
     <div className={classes.searchWrapper}>
       <ActionGroup>
         <KeywordSearch
-          isHomeSearch filterKey="tree" className={classes.searchField} placeHolder="Search destination fields"
-          openWithFocus />
-        {searchKey && <ShowAfterSearch />}
+          isHomeSearch
+          filterKey="tree"
+          className={classes.searchField}
+          placeHolder="Search destination fields"
+          openWithFocus
+        />
+        {searchKey && (
+        <ShowAfterSearch
+          className={classes.showSearchCount}
+          matches={matches}
+          upClickHandler={upClickHandler}
+          downClickHandler={downClickHandler}
+        />
+        )}
       </ActionGroup>
       <ActionGroup position="right">
         <IconButtonWithTooltip
@@ -121,6 +137,4 @@ const SearchBar = () => {
       </ActionGroup>
     </div>
   );
-};
-
-export default SearchBar;
+}

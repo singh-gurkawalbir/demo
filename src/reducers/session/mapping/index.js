@@ -970,8 +970,8 @@ export default (state = {}, action) => {
 
         // clear the state if searchKey is empty
         if (searchKey === '') {
-          draft.mapping.selectedFields = [];
-          draft.mapping.highlightedIndex = -1;
+          delete draft.mapping.filteredKeys;
+          delete draft.mapping.highlightedIndex;
           break;
         }
 
@@ -982,9 +982,9 @@ export default (state = {}, action) => {
           items = searchTree(draft.mapping.v2TreeData, searchKey, filterNode);
           draft.mapping.expandedKeys = items.expandedKeys;
           // list of all the field key that matched
-          draft.mapping.selectedFields = items.selectedFields;
+          draft.mapping.filteredKeys = items.filteredKeys;
           // index for the field to be highlightied
-          items.selectedFields ? draft.mapping.highlightedIndex = 0 : draft.mapping.highlightedIndex = -1;
+          draft.mapping.highlightedIndex = items.filteredKeys ? 0 : -1;
           items.tabChange.forEach(item => {
             const {key, tabValue, parentExtract} = item;
             const {node, nodeIndexInSubArray, nodeSubArray} = findNodeInTree(mapping, 'key', key);
@@ -996,7 +996,7 @@ export default (state = {}, action) => {
         // if showKey is true then search for unique key of the field to be shown
         } else if (showKey && searchKey) {
           items = searchTree(draft.mapping.v2TreeData, searchKey, filterKey);
-          draft.mapping.expandedKeys = items.expandedKeys;
+          draft.mapping.expandedKeys = [...new Set([...draft.mapping.expandedKeys, ...items.expandedKeys])];
           items.tabChange.forEach(item => {
             const {key, tabValue, parentExtract} = item;
             const {node, nodeIndexInSubArray, nodeSubArray} = findNodeInTree(mapping, 'key', key);
@@ -1014,7 +1014,7 @@ export default (state = {}, action) => {
 
         draft.mapping.highlightedIndex = index;
         // clearing the seleteFields list if index is -1
-        if (index === -1) draft.mapping.selectedFields = [];
+        if (index === -1) draft.mapping.filteredKeys = [];
         break;
       }
 
@@ -1059,29 +1059,28 @@ selectors.highlightedKey = state => {
   if (!state || !state.mapping) {
     return '';
   }
-  const {highlightedIndex, selectedFields} = state.mapping;
+  const {highlightedIndex, filteredKeys} = state.mapping;
 
-  return selectedFields?.[highlightedIndex] || '';
+  return filteredKeys?.[highlightedIndex] || '';
 };
 
 selectors.highlightedIndex = state => {
   if (!state || !state.mapping) {
     return -1;
   }
-  if (state.mapping.highlightedIndex === undefined) return -1;
 
   return state.mapping.highlightedIndex;
 };
 
-selectors.selectedFields = state => {
+selectors.filteredKeys = state => {
   if (!state || !state.mapping) {
     return emptyArr;
   }
 
-  return state.mapping.selectedFields || emptyArr;
+  return state.mapping.filteredKeys || emptyArr;
 };
 
-selectors.isSearchVisible = state => state?.mapping?.isSearchVisible;
+selectors.isSearchVisible = state => !!state?.mapping?.isSearchVisible;
 
 selectors.mappingChanged = state => {
   if (!state || !state.mapping) {

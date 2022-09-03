@@ -1,4 +1,4 @@
-import React, { useState, useRef, useCallback, useEffect } from 'react';
+import React, { useState, useRef, useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import { FormControl, TextField, Tooltip } from '@material-ui/core';
@@ -25,7 +25,7 @@ const useStyles = makeStyles(theme => ({
       border: 'none',
     },
   },
-  selectedField: {
+  highlightedField: {
     borderColor: `${theme.palette.primary.main} !important`,
   },
   mapField: {
@@ -79,19 +79,9 @@ export default function Mapper2Generates(props) {
   const [anchorEl, setAnchorEl] = useState(null);
   const containerRef = useRef();
   const inputFieldRef = useRef();
-  const [isHighlighted, setIsHighlighted] = useState(false);
-
-  // to set if key is being highlighted or not
-  useEffect(() => {
-    if (nodeKey === highlightedKey) {
-      setIsHighlighted(true);
-    } else {
-      setIsHighlighted(false);
-    }
-  }, [nodeKey, highlightedKey]);
 
   // bring the highlighted key into focus
-  useScrollIntoView(containerRef, isHighlighted);
+  useScrollIntoView(containerRef, nodeKey === highlightedKey);
 
   const handleChange = useCallback(event => {
     setInputValue(event.target.value);
@@ -124,7 +114,7 @@ export default function Mapper2Generates(props) {
 
   return (
     <FormControl
-      className={{[classes.selectedField]: isHighlighted}}
+      className={{[classes.highlightedField]: nodeKey === highlightedKey}}
       data-test={id}
       key={id}
       ref={containerRef} >

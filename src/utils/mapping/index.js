@@ -1243,7 +1243,7 @@ const objectSearch = (node, key, filterFunc) => {
   const items = {
     firstIndex: -1,
     expandedKeys: [],
-    selectedFields: [],
+    filteredKeys: [],
     tabChange: [],
   };
   // eslint-disable-next-line no-use-before-define
@@ -1252,7 +1252,7 @@ const objectSearch = (node, key, filterFunc) => {
   // copying all the newItems in the items as it is
   items.firstIndex = newItems.firstIndex;
   items.expandedKeys = [...newItems.expandedKeys];
-  items.selectedFields = [...newItems.selectedFields];
+  items.filteredKeys = [...newItems.filteredKeys];
   items.tabChange = [...newItems.tabChange];
 
   // if children mappings contained a search then adding the node to expandKeys list
@@ -1268,17 +1268,16 @@ const objectArraySearch = (node, key, filterFunc) => {
   const items = {
     firstIndex: -1,
     expandedKeys: [],
-    selectedFields: [],
+    filteredKeys: [],
     tabChange: [],
   };
   // eslint-disable-next-line no-use-before-define
   const newItems = searchTree(node.children, key, filterFunc);
-  const extractList = node.combinedExtract.split(',');
 
   // copying all the newItems in the items as it is
   items.firstIndex = newItems.firstIndex;
   items.expandedKeys = [...newItems.expandedKeys];
-  items.selectedFields = [...newItems.selectedFields];
+  items.filteredKeys = [...newItems.filteredKeys];
   items.tabChange = [...newItems.tabChange];
 
   // if match found in the mappings then setting tabChange list to contain the current tabChange object
@@ -1286,7 +1285,7 @@ const objectArraySearch = (node, key, filterFunc) => {
     const childNode = node.children[items.firstIndex];
 
     // checking if tabs are present or not
-    if (extractList.length > 1) {
+    if (node.children[0].isTabNode) {
       // to get the correct tabValue from the combinedExtract
       const tabValue = getExtractTabValue(childNode.parentExtract, node.combinedExtract);
 
@@ -1309,20 +1308,21 @@ export const searchTree = (mappings, key, filterFunc) => {
   const items = {
     firstIndex: -1,   // stores the first index where match was found
     expandedKeys: [],   // stores which fields need to be expanded
-    selectedFields: [],   // stores the list of key of all the matched fields
+    filteredKeys: [],   // stores the list of key of all the matched fields
     tabChange: [],    // stores the all tab changes required in case of objectArray field
   };
+
+  // set it when search if found for the first time
+  let found = false;
 
   // looping through all the children fields of the node
   mappings.forEach((node, index) => {
     if (node.isTabNode) return;
-    // set it when search if found for the first time
-    let found = false;
     let newItems;
 
     if (filterFunc(node, key)) {
       found = true;
-      items.selectedFields.push(node.key);
+      items.filteredKeys.push(node.key);
     }
 
     // calling required function according to the mappings dataType
@@ -1336,7 +1336,7 @@ export const searchTree = (mappings, key, filterFunc) => {
       // setting firstIndex if no matches found before and match is found inside the mapping
       if (newItems?.firstIndex !== -1 && !found) items.firstIndex = index;
       items.expandedKeys = [...items.expandedKeys, ...newItems.expandedKeys];
-      items.selectedFields = [...items.selectedFields, ...newItems.selectedFields];
+      items.filteredKeys = [...items.filteredKeys, ...newItems.filteredKeys];
       items.tabChange = [...items.tabChange, ...newItems.tabChange];
     }
 
@@ -1346,7 +1346,7 @@ export const searchTree = (mappings, key, filterFunc) => {
     }
   });
 
-  // returning an object which contains firstIndex, expandedFields, selectedFields and tabChange
+  // returning an object which contains firstIndex, expandedFields, filteredKeys and tabChange
   return items;
 };
 
