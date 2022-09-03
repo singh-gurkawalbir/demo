@@ -3001,6 +3001,7 @@ describe('Flow sample data utility sagas', () => {
             [call(pageProcessorPreview, {
               flowId,
               _pageProcessorId,
+              routerId: undefined,
               _pageProcessorDoc: undefined,
               previewType,
               editorId: undefined,
@@ -3016,6 +3017,7 @@ describe('Flow sample data utility sagas', () => {
             flowId,
             _pageProcessorId,
             _pageProcessorDoc: undefined,
+            routerId: undefined,
             previewType,
             editorId: undefined,
             resourceType: 'imports',

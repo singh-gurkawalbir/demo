@@ -196,7 +196,7 @@ export function* requestSampleDataForRouters({
 }) {
   yield call(fetchPageProcessorPreview, {
     flowId,
-    _pageProcessorId: routerId,
+    routerId,
     hidden,
     editorId,
     previewType: 'router',
