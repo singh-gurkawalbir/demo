@@ -31,12 +31,12 @@ export default
         {
           application: 'webhook',
           webhookOnly: true,
-          id: 'none-L-lbJ5',
+          id: 'new-L-lbJ5',
         },
         {
           _connectionId: '5c723d770f188667b7a06b35',
           webhookOnly: false,
-          id: 'none-Fcu_fo',
+          id: 'new-Fcu_fo',
         },
       ],
       createdAt: '2019-06-25T14:49:35.756Z',
@@ -74,7 +74,7 @@ export default
                   },
                   type: 'export',
                   _connectionId: '5c761d715ceb7e3c6a89eada',
-                  id: 'none-19C2Ac',
+                  id: 'new-19C2Ac',
                 },
                 {
                   responseMapping: {
@@ -92,7 +92,7 @@ export default
                   },
                   type: 'export',
                   _connectionId: '5ce822237c95546b15c487a3',
-                  id: 'none-480dqm',
+                  id: 'new-480dqm',
                 },
                 {
                   responseMapping: {
@@ -101,7 +101,7 @@ export default
                   },
                   type: 'import',
                   _connectionId: '5c828dd4098e287f6479faff',
-                  id: 'none-uZyPfr',
+                  id: 'new-uZyPfr',
                 },
               ],
             },

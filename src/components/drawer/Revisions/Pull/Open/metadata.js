@@ -6,6 +6,7 @@ export default function getMetadata({integrationId}) {
         name: 'description',
         type: 'text',
         label: 'Description',
+        helpKey: 'pull.description',
         required: true,
       },
       integration: {

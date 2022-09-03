@@ -89,7 +89,6 @@ export const updateDataType = (draft, node, oldDataType, newDataType) => {
 
     delete newNode.hardCodedValue;
     delete newNode.lookupName;
-    delete newNode.default;
 
     if (newDataType === MAPPING_DATA_TYPES.OBJECTARRAY) {
       if (newNode.copySource === 'yes') {
@@ -101,7 +100,7 @@ export const updateDataType = (draft, node, oldDataType, newDataType) => {
       delete newNode.extract;
       delete newNode.mappings;
     } else {
-      newNode.extract = newNode.copySource === 'yes' ? newNode.combinedExtract.split(',')?.[0] : undefined;
+      newNode.extract = newNode.copySource === 'yes' ? newNode.combinedExtract?.split(',')?.[0] : undefined;
       // combinedExtract is used only for array data types to store comma separated values
       delete newNode.combinedExtract;
       // delete existing children if new data type is object
@@ -135,6 +134,7 @@ export const updateDataType = (draft, node, oldDataType, newDataType) => {
   // handle the primitive data types
   if (PRIMITIVE_DATA_TYPES.includes(newDataType)) {
     delete newNode.children;
+    newNode.extract = newNode.extract || newNode.combinedExtract;
     delete newNode.combinedExtract;
   }
 
@@ -779,7 +779,7 @@ export default (state = {}, action) => {
                   delete nodeSubArray[nodeIndexInSubArray].hardCodedValue;
                   nodeSubArray[nodeIndexInSubArray].combinedExtract = value;
                 }
-              } else {
+              } else if (node.dataType !== MAPPING_DATA_TYPES.OBJECT || node.copySource === 'yes') {
                 node.extract = value;
               }
             }
@@ -787,6 +787,13 @@ export default (state = {}, action) => {
             // do nothing as no changes can be made to 'generate' of a required mapping
           } else {
             node[field] = value;
+            node.jsonPath = value;
+
+            const {node: parentNode} = findNodeInTree(draft.mapping.v2TreeData, 'key', node.parentKey);
+
+            if (parentNode && parentNode.jsonPath) {
+              node.jsonPath = parentNode.dataType === MAPPING_DATA_TYPES.OBJECTARRAY ? `${parentNode.jsonPath}[*].${value}` : `${parentNode.jsonPath}.${value}`;
+            }
           }
 
           delete node.isEmptyRow;
@@ -847,10 +854,9 @@ export default (state = {}, action) => {
                   dataType: MAPPING_DATA_TYPES.STRING,
                 }];
               }
-
-              if (newDataType === MAPPING_DATA_TYPES.OBJECT) {
-                delete node.combinedExtract;
-              }
+            }
+            if (newDataType === MAPPING_DATA_TYPES.OBJECT) {
+              delete node.combinedExtract;
             }
           }
         }
@@ -938,6 +944,8 @@ export default (state = {}, action) => {
           !draft.mapping.v2TreeData[0].generate &&
           draft.mapping.v2TreeData[0].generateDisabled) {
           draft.mapping.isGroupedOutput = true;
+        } else {
+          draft.mapping.isGroupedOutput = false;
         }
 
         draft.mapping.autoCreated = true;

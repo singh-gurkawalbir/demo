@@ -13,7 +13,7 @@ export const importHooksList = [
   'postAggregate',
 ];
 
-const externalScripts = ['transform', 'filter', 'handleRequest'];
+const externalScripts = ['transform', 'filter', 'handleRequest', 'router'];
 /*
  * Used for showing suggestions to select hook type in the application
  */
@@ -21,7 +21,7 @@ export const hooksList = [
   'preSavePage' /* Used for Exports */,
   ...importHooksList,
   'contentBasedFlowRouter' /* Used in AS2 Connection */,
-  ...externalScripts /* Used in transformation and filters Scripts */,
+  ...externalScripts, /* Used in transformation and filters Scripts */
 ];
 
 export const getImportSuiteScriptHooksList = isNSApiVersion2Selected => {

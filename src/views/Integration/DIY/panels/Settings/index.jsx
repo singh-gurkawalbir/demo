@@ -14,6 +14,7 @@ import useFormInitWithPermissions from '../../../../../hooks/useFormInitWithPerm
 import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
 import redirectToCorrectGroupingRoute from '../../../../../utils/flowgroupingsRedirectTo';
 import CeligoTruncate from '../../../../../components/CeligoTruncate';
+import infoText from '../../../../../components/Help/infoText';
 
 const useStyles = makeStyles(theme => ({
   form: {
@@ -176,7 +177,7 @@ function CustomSettings({ integrationId, sectionId }) {
 
   return (
     <>
-      <PanelHeader title="Settings" >
+      <PanelHeader title="Settings" infoText={infoText.Settings}>
         <FormBuilderButton
           resourceType="integrations" resourceId={integrationId}
           integrationId={integrationId} sectionId={sectionId} />

@@ -75,4 +75,26 @@ export default API.get('/api/integrations', [
     uninstallSteps: [],
     flowGroupings: [],
     createdAt: '2021-01-10T10:15:45.184Z',
+  },
+  {
+    _id: '6248835cd68e2457e3b105ff',
+    lastModified: '2022-06-12T09:27:23.722Z',
+    name: 'DEMO TEST',
+    description: 'This is netsuite- ftp integration',
+    install: [],
+    _registeredConnectionIds: [
+      '62178fb30f36bf7cbd9d990f',
+      '6217d0d778f2387da20f9287',
+      '62176b9b78f2387da20f7553',
+      '62166b4f97769c75085a0060',
+    ],
+    installSteps: [],
+    uninstallSteps: [],
+    flowGroupings: [
+      {
+        name: 'dummy1',
+        _id: '62a5b17bd92aff47b2eba399',
+      },
+    ],
+    createdAt: '2022-04-02T17:09:48.912Z',
   }]);

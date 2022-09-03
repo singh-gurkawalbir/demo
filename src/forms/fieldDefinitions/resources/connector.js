@@ -167,6 +167,7 @@ export default {
     isLoggable: true,
     type: 'select',
     label: 'Trial period',
+    helpKey: 'license.trialPeriod',
     defaultValue: r => r?.trialPeriod || 30,
     options: [
       {

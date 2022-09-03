@@ -9,7 +9,8 @@ export default {
 'Open <a href="https://docs.celigo.com/hc/en-us/articles/360058595552-Create-forms" target="_blank">Form builder</a> to create or edit user-friendly fields that prompt for text entry or selections that will be returned as settings applied to this resource. Your forms can include any <a href="https://docs.celigo.com/hc/en-us/articles/360059205112-Common-form-fields" target="_blank">field types</a> that you see elsewhere in integrator.io. Forms fields make it much easier for less technical users to work with your settings.',
   settings:
 'This same JSON settings field is exposed on many of the core resource types: integration, flow, export, import, connection, etc... Generally speaking, this settings field can be used to parameterize the logic within your resource. Hooks, filters, handlebars, etc... are all given access to the settings fields when they run, and can incorporate the settings values into their logic. It is worth highlighting that the settings fields stored on linked/related resources are also accessible at runtime. For example, the settings field defined at the integration tile level will be accessible to all flows running within the same integration tile. \n\nIt is recommended that you create a custom form to expose and manage your settings fields, so that less technical users do not need to work with raw JSON. Be sure to check out the "Launch form builder" button!.',
-  'license._trialLicenseId': 'Create or select a license record that would serve as the default license configuration for any trial licenses.',
+  'license._trialLicenseId': 'Enter a license value that will be the default license configuration for any trial licenses.',
+  'license.trialPeriod': 'Choose a trial period for this integration: 14 days, 30 days, or 60 days.',
   'license.trialEnabled': 'You must create the integration app listing before you can enable the trials.',
   // fieldDefinitions
   'connection.as2.partnerStationInfo.mdn.verifyMDNSignature':
@@ -281,7 +282,7 @@ export default {
   'liquidplanner.connection.http.auth.token.token':
 'The API token of your LiquidPlanner account when using the Token authentication.',
   'magento.connection.http.baseURI':
-'Enter the Base URI for Magento 2. You can find this URL in the address bar where you log in to your account. For example, <b> http://123.12.12.1/community231/rest</b>',
+'Enter the Base URI for Magento 2. You can find this URL in the address bar when you sign in to your account. For example, if the URL is <b> http://123.12.12.1/xyz/admin</b>, then enter <b> http://123.12.12.1/xyz/rest</b> <br> Note: In the URL, you have to replace admin with rest while providing the Base URI.',
   'magento.connection.http.auth.token.token':
 'Click the <b>Generate token</b> button to have integrator.io fill in an encrypted access token or enter the token generated for you by Magento 2. <br>Multiple layers of protection are in place, including AES 256 encryption, to keep your connection\'s token safe. When editing this form later, you must generate this value again; it is stored only when the connection is saved and never displayed as text.',
   'connection.http.mailchimpDataCenter':
@@ -339,7 +340,7 @@ export default {
 'Please enter your API key here. This can be obtained by Navigating to Admin >> API from the left hand panel.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your API key safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'hubspot.connection.http.auth.type': 'Please select Authentication Type',
   'hubspot.connection.http.auth.token.token':
-'Please enter API Key of your Hubspot Account.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your API key safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
+'Enter the access token provided to you by HubSpot.<br><b>Steps to retrieve the access token:</b><br>1. Sign in to your HubSpot account.<br>2. Navigate to <b>Settings > Integrations > Private apps</b>.<br>3. Click your private app and copy your access token. (To create an access token, click <b>Create app</b>).<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your Access token safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'insightly.connection.http.auth.basic.username':
 'The API key of your Insightly account. This can be obtained from the Settings section and API Keys subsection.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your API key safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'connection.http.freshdeskSubdomain':
@@ -531,6 +532,10 @@ export default {
   'breezyhr.connection.http.auth.token.token': 'Click the <b>Generate token</b> button to have integrator.io fill in an encrypted access token or enter the token generated for you by Breezy HR. <br>Multiple layers of protection are in place, including AES 256 encryption, to keep your connection\'s token safe. When editing this form later, you must generate this value again; it is stored only when the connection is saved and never displayed as text.',
   'mercadolibre.connection.http._iClientId': 'Save your client ID and client secret in iClient for an added layer of security.<br><br><b>Steps to get the client ID and client secret:<br></b>1. Sign in to your MercadoLibre developer account.<br>2. Navigate to <b>Profile → My Apps</b>.<br>3. Click on <b>Edit</b> after selecting the app to copy <b>Client ID</b> and <b>Client Select</b>.(If none exists yet,click to <b>Create new app</b> option to create a new pair.)',
   'mercadolibre.connection.http.unencrypted.region': 'Select the region of your MercadoLibre account.',
+  'bundleb2b.connection.http.unencrypted.storeHash': 'Enter the unique Store hash of your BigCommerce store. For example, if your BigCommerce store URL is https://store-a123456bc.mybigcommerce.com/, then provide <i>a123456bc</i> for the Store hash.',
+  'bundleb2b.connection.http.unencrypted.email': 'Enter the email of your BundleB2B app.',
+  'bundleb2b.connection.http.encrypted.password': 'Enter the password of your BundleB2B app. <br> Multiple layers of protection, including AES 256 encryption, are in place to keep your password safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
+  'bundleb2b.connection.http.auth.token.token': 'Click the <b>Generate token</b> button to have integrator.io fill in an encrypted access token or enter the token generated for you by BundleB2B. <br>Multiple layers of protection are in place, including AES 256 encryption, to keep your connection\'s token safe. When editing this form later, you must generate this value again; it is stored only when the connection is saved and never displayed as text.',
   'constantcontact.connection.http._iClientId': 'Save your client ID and client secret in this field for an extra layer of security.<br><br><b>Steps to get the client ID and secret:<br></b>1. Open the V3 API Developer Portal and click the <b>My Applications</b> tab.<br>2. Enter your <b>username</b> and <b>password</b> and click <b>Login</b>.<br>3. Select the app you’re using to copy the client ID and secret. If none exist, click <b>New Application</b> to create a new client ID and secret.',
   'connection.http.marketoSubdomain':
 "Please enter your Marketo subdomain. For example, in https://591-vse-736.mktohttp.com/http/v1/activities/types.json '591-vse-736.mktohttp.com' is the subdomain.",
@@ -664,6 +669,7 @@ export default {
 'Please select the environment of your LogiSense account.',
   'logisense.connection.storeURL':
 'Please enter the Store URL of your LogiSense account, provided by LogiSense team.',
+  'logisense.connection.http.unencrypted.version': 'Please enter your current LogiSense version.',
   'logisense.connection.http.unencrypted.username':
 'Please enter the Username of your LogiSense account.',
   'logisense.connection.http.encrypted.password':
@@ -732,6 +738,8 @@ if you're using a production account, you'll find your API keys under the 'API M
 'Provide an optional description, or any information you like that will help you keep track of this agent. This information is displayed when viewing/editing an agent or in the Agent List page.',
   'api.name': 'Name your API so that you can easily reference it from other parts of the application.',
   'api.description': 'Describe your API in more detail here so that other users can understand the problem you are solving, and also how your API works. Be sure to highlight any nuances that a user making changes in the future might want to know.',
+  'api.function': 'Enter the name of the function that will get called when a request is sent to this <a href="https://docs.celigo.com/hc/en-us/articles/360047267771-What-is-My-API-" target="_blank">My API</a>. Although your script may contain additional functions, only the single entry point specified here is initially called and receives any data passed in the HTTP header and body.<br /> The name of the function in the default <b>Handle request</b> stub is <tt>handleRequest</tt>. If you used a different name, you can click the <b>Edit script</b> button to open it and copy the exact name (without parentheses).',
+  'api.scripts': 'Select a <a href="https://docs.celigo.com/hc/en-us/articles/360047267771-What-is-My-API-" target="_blank">My API</a> script from the list that you’ve already written, or click <b>+</b> to start writing your own code. The easiest way to start from scratch is to select the <b>Handle request</b> function stub, which fully documents the options passed to the function and the expected response object.',
   'api.shipworks.username': 'Enter the username that was entered during the ShipWorks store setup.',
   'api.shipworks.password': 'Enter the password that was entered during the ShipWorks store setup.',
   'asynchelper._id': 'System generated unique identifier for this asynchelper.',
@@ -800,6 +808,8 @@ if you're using a production account, you'll find your API keys under the 'API M
   'connection.configureTokenRefresh':
 'Check this box if your token expires after a period of time. A series of new fields will appear in the form.',
   'connection.http.auth.token.refreshMediaType':
+'Use this field to handle the use case where the HTTP request requires a different media type than what is configured on the connection.',
+  'http.auth.token.tokenPaths':
 'Use this field to handle the use case where the HTTP request requires a different media type than what is configured on the connection.',
   'connection.http.auth.cookie.method':
 'Select GET or POST for the session cookie request.',
@@ -1098,21 +1108,18 @@ if you're using a production account, you'll find your API keys under the 'API M
   'connector.handle': '.',
   'connector.legacyId': '.',
   'connector.published': '.',
-  'connector.description': 'Brief description on the connector.',
-  'connector.applications':
-  'Choose an application to which you wish to connect. You can integrate with an application, database, or an universal connector.',
-  'connector.contactEmail': 'Enter the email address of the integration admin.',
+  'connector.description': 'The description of the integration app.',
+  'connector.applications': 'Displays the source and destination applications to which this integration can be connected. You can integrate with an application, database, or  universal connector.',
+  'connector.contactEmail': 'Enter one or many email addresses for the integration admin. The integration admin is notified when the user requests a demo, integration upgrade, add-on installation, or a subscription extension. ',
   'connector.imageURL': '.',
-  'connector._integrationId':
-'If this flow is part of an integration, this value will hold the id of that integration. ',
-  'connector.websiteURL': 'Enter the website URL of the application to which you wish to connect. Example: <a href="https://www.google.com/" target="_blank">https://www.google.com/</a>',
+  'connector._integrationId': 'Select the source integration ID. The selected integration is used as a source copy to create integrations to user accounts.',
+  'connector.websiteURL': 'Enter the website URL of the integration.',
   'connector.oauth2ResultsURL': '.',
   'connector.managed': '.',
-  'connector._stackId':
-  'You can use stacks to host code for hooks, wrappers, connector installers and settings pages. <a href="https://docs.celigo.com/hc/en-us/articles/227055868" target="_blank">Stacks</a> are simple server environments which can be implemented in any coding language and are always invoked via HTTP. Every stack is assigned a system token that should be used to authenticate HTTP requests. You own the IP for all of your stacks, and can optionally choose to share a stack with other integrator.io users.',
-  'connector.installerFunction': '.',
-  'connector.updateFunction': '.',
-  'connector.uninstallerFunction': '.',
+  'connector._stackId': 'You can use stacks to host code for hooks, wrappers, connector installers, and settings pages. <a href="https://docs.celigo.com/hc/en-us/articles/227055868" target="_blank">Stacks</a> are simple server environments that can be implemented in any coding language and are always invoked via HTTP. Every stack is assigned a system token that should be used to authenticate HTTP requests. You own the IP for all of your stacks and can optionally choose to share a stack with other integrator.io users.',
+  'connector.installerFunction': 'This function creates an integration when a license is provided and passes control to the installer function with the required information. The relevant resources required by the integration are created and the install steps can be updated on the integration document. In this field, enter the function name as <b>installerFunction</b>.',
+  'connector.updateFunction': 'This function is used to do an update for the integrations belonging to a connector. Whenever new versions of the integration app need to be released or new features added to an integration app, use the update function to make the required changes for integrations installed in user accounts. This function can be invoked only by the owner of the connector. In this field, enter the function name as <b>updateFunction</b>.',
+  'connector.uninstallerFunction': 'This function removes all of the documents that are not removed while uninstalling the integration, or it completes any uninstallation steps. On completion, the integration is deleted from integrator.io and the license is dissociated for future use. In this field, enter the function name as <b>uninstallerFunction</b>.',
   'connector.sharedImportIds': '.',
   'connector.sharedExportIds': '.',
   'connector.oAuthServerFlow._iClientId': '.',
@@ -1472,10 +1479,10 @@ if you're using a production account, you'll find your API keys under the 'API M
 'Select one or more flows that you would like to run automatically whenever this flow completes. The next flow must be enabled, and it cannot be a realtime flow. (Note that the current flow may run again even though the next flow is in progress.) ',
   'flow.autoResolveMatchingTraceKeys': 'Enable <b>Auto-resolve errors with matching trace key</b> to resolve other open errors with the same <a href="https://docs.celigo.com/hc/en-us/articles/360060740672" target="_blank">trace key</a> (unique field identifier).',
   'flow.manageAliases': 'Use this page to see all of your aliases for this flow, as well as any integration-level aliases (inherited aliases). You can create a new alias for this flow (top right), or use the Actions menu to edit, copy, delete, or view details for a flow-level alias.  Inherited aliases are passed down to the flow from the integration. However, keep in mind that if you reference both a flow-level alias and an integration-level alias for a resource in a script, the flow-level alias will take precedence. Use the Actions menu for Inherited aliases to copy an alias or view its details. To create, edit, or delete one of these aliases, navigate to the integration instead and use the Alias tab. <a href="https://docs.celigo.com/hc/en-us/articles/4454740861979" target="_blank">Learn more about aliases</a>.',
-  'flow.router.branchType': `Select the <u>type of branching</u> based on how you want records to flow through the branches:
-  <ul><li>If you select First matching branch, the branching conditions will be applied to a record sequentially based on the order of the branches. The record will only go through the first branch where the conditions are met.</li>
-  <li>If you select All matching branches, the branching conditions will be applied to a record for all branches. The record will go through all the branches where the conditions are met.</li></ul>`,
-  'flow.routers.branches': 'Add branches and define branching conditions. You can also change the order of a branch by dragging it up or down.',
+  'flow.router.branchType': `Select the <a href="https://docs.celigo.com/hc/en-us/articles/7287177264795-Branch-flows-Add-flow-branching-" target="_blank">type of branching</a> based on how you want records to flow through the branches:
+  <ul><li>If you select <b>First matching branch</b>, the branching conditions will be applied to a record sequentially based on the order of the branches. The record will only go through the first branch where the conditions are met.</li>
+  <li>If you select <b>All matching branches</b>, the branching conditions will be applied to a record for all branches. The record will go through all the branches where the conditions are met.</li></ul>`,
+  'flow.routers.branches': 'Add branches and define branching conditions. You can change the order of a branch by dragging it up or down, except when <b>All matching branches</b> is selected.',
   'alias.aliasId': 'Enter a descriptive, unique name to use as the Alias ID. This is what you will use in scripts to refer to the resource. Use only letters, numbers, hyphens(-) and/or underscores(_). For example, shopify_flow_neworders or netsuite-connection2_prod',
   'alias.description': 'Enter a description that provides more context on how the resource is used in your integration.',
   'alias.resourceType': 'Select the type of resource this alias will reference (such as a flow or import). Once you select the type, you can choose from a list of resources matching this type.',
@@ -1642,6 +1649,8 @@ if you're using a production account, you'll find your API keys under the 'API M
 'Boolean value, when set all the values in the file are wrapped with quotes (Default is false)',
   'import.file.csv.replaceTabWithSpace':
 'Boolean value, when set tabs in the content of the data (except columnDelimiters) are replaced with a space (Default is false)',
+  'import.file.csv.truncateLastRowDelimiter':
+'Select this option to prevent errors that may occur if a string value in the CSV file exceeds the maximum allowed length.',
   'import.file.csv.replaceNewlineWithSpace':
 'Boolean value, when set new lines in the content of the data (except rowDelimiters) are replaced with a space (Default is false)',
   'import.as2.fileNameTemplate':
@@ -1802,6 +1811,8 @@ if you're using a production account, you'll find your API keys under the 'API M
 'Please name your script record so that you can easily reference it from other parts of the application.',
   'script.description':
 'Please describe your script so that other integrator.io users can quickly understand what it does and how it works.',
+  'stack.name':
+'Enter a distinguishable name for the stack you are creating.',
   'stack.type':
 'The environment in which your integrator-extension code is hosted. Currently, you can run your code in two different ways i.e. on your own server environment or as a micro-service on AWS Lambda. The server environment could be a single server or a set of servers behind a load balancer.',
   'stack.server.hostURI':
@@ -1852,6 +1863,7 @@ if you're using a production account, you'll find your API keys under the 'API M
   'export.netsuite.api.type': 'NetSuite supports two different API types: RESTlet and Web Services. The RESTlet API is recommended because it is newer, more user friendly, and much easier to get started with. It also supports greater levels of concurrency when using just a regular NetSuite license (i.e. a license that does not have NetSuite\'s SuiteCloud Plus enabled), and the RESTlet API enables more advanced capabilities like the ability to define a preSend hook in NetSuite using SuiteScript, or to support more performant and robust \'Once\' type exports. The Web Services API is a good fit when you\'ve purchased a NetSuite SuiteCloud Plus license and you also need to export very large amounts of data. The Web Services API is the only option available if you cannot install our integrator.io bundle in your NetSuite account. To completely maximize the amount of data that can be exported from a single NetSuite license you would use a combination of both RESTlet and Web Services API based exports.',
   'export.netsuite.distributed.useSS2Framework': 'Select which NetSuite SuiteScript API version you’d like to configure your real-time export for. If selecting SuiteScript 1.0, you need to have Celigo’s integrator.io bundle installed in your NetSuite account. If selecting SuiteScript 2.0, you need to have installed Celigo’s integrator.io SuiteApp in your NetSuite account. In order to integrate with NetSuite, you must have one of these installed in your NetSuite account. Read more about the new SuiteSript 2.0 APIs <a href="https://docs.celigo.com/hc/en-us/articles/360047138512" target="_blank">here</a>.',
   'export.netsuite.restlet.useSS2Restlets': 'Select which NetSuite SuiteScript API version you’d like to configure your export for. If selecting SuiteScript 1.0, you need to have Celigo’s integrator.io bundle installed in your NetSuite account. If selecting SuiteScript 2.0, you need to have installed Celigo’s integrator.io SuiteApp in your NetSuite account. In order to integrate with NetSuite, you must have one of these installed in your NetSuite account. Read more about the new SuiteSript 2.0 APIs <a href="https://docs.celigo.com/hc/en-us/articles/360047138512" target="_blank">here</a>.',
+  'export.netsuite.restlet.markExportedBatchSize': 'This is only applicable for Export type Once. The recommended range is 1 to 100 (100 is the default). Set the value to a lower number in case Export type once is failing due to slow NetSuite account/connection',
   'import.netsuite_da.useSS2Restlets': 'Select which NetSuite SuiteScript API version you’d like to configure your import for. If selecting SuiteScript 1.0, you need to have Celigo’s integrator.io bundle installed in your NetSuite account. If selecting SuiteScript 2.0, you need to have installed Celigo’s integrator.io SuiteApp in your NetSuite account. In order to integrate with NetSuite, you must have one of these installed in your NetSuite account. Read more about the new SuiteSript 2.0 APIs <a href="https://docs.celigo.com/hc/en-us/articles/360047138512" target="_blank">here</a>',
   'export.netsuite.recordType':
 'Use this field to specify the NetSuite record type you would like to export. You can choose any standard record type (i.e. customer, sales order, journal entry) or any custom record type that has been defined in your NetSuite account. Please note that this list of record types is dependent on the permissions associated with the NetSuite connection being used. Also, if you add any new custom record types to your NetSuite account, or if there are any changes to the permissions associated with the connection being used, then you can use the refresh icon to regenerate the list.',
@@ -1880,6 +1892,7 @@ if you're using a production account, you'll find your API keys under the 'API M
   'export.salesforce.sObjectType': 'Use this field to specify which Salesforce sObject type you would like to export.  You can choose any standard sObject type (i.e. account, opportunity, contact) or any custom sObject type as long as the sObject type supports Salesforce triggers. Please note that this list of sObject types is also dependent on the permissions associated with the Salesforce connection being used. Also, if you add any new custom sObject types to your Salesforce account, or if there are any changes to the permissions associated with the connection being used, you can use the refresh icon to regenerate the list.',
   'export.webhook.url': 'If a URL has not been generated yet, please use the \'Generate URL\' link to generate a public URL for this webhook listener, and then you will need to share this URL with the webhook provider (i.e. through that provider\'s UI or API).  Saying this another way, each webhook provider like GitHub, Shopify, etc... will support a mechanism to configure a URL where you want webhook data sent, and please provide them with this generated URL here.',
   'export.webhook.sampledata': 'Use this field to provide sample data so that integrator.io can help you map your webhook data later. For brand new webhook exports, if you can trigger the webhook to send test data right now (against the URL above) then you can use the \'Click To Show\' link below to see the live data that actually got sent. If this is not a brand new export (in which case it is not possible anymore for integrator.io to intercept test data), or if the webhook provider does not support a test send, then you will need to manually copy and paste the expected webhook data into this field.',
+  'webhook.sampleData': 'Use the Click to show button to populate the sample data field with the webhook data most recently received by the public URL endpoint. If the public URL endpoint has not yet received any data, you can manually enter sample JSON data in the field provided. NOTE: XML is supported for webhooks, but the sample data in the webhook allows only JSON. You can convert XML to JSON in the Dev playground with the XML parser helper. <a href="https://docs.celigo.com/hc/en-us/articles/360043040652-Advanced-field-editors-AFEs-and-the-Dev-playground" target="_blank">Learn more</a>',
   'export.hookType':
 "Please select 'Script' if you want to use the native integrator.io JavaScript runtime engine (where all your code is managed and executed by integrator.io), or choose 'Stack' if you prefer to host your code outside integrator.io (either on your own servers, or on AWS Lambda).",
   'export.skipRetries': 'Check this box if you do NOT want <a href="http://integrator.io" target="_blank" data-saferedirecturl="https://www.google.com/url?q=http://integrator.io&amp;source=gmail&amp;ust=1590556088890000&amp;usg=AFQjCNFM_k8PAvITBLyHS0Wg3n3N_M_dNw">integrator.io</a> to store retry data for records that fail in your flow. Storing retry data can slow down your flow\'s overall performance if you are processing very large numbers of records that are failing. Storing retry data also means that anyone with access to your flow\'s dashboard can see the retry data in clear text.',
@@ -2237,6 +2250,7 @@ if you're using a production account, you'll find your API keys under the 'API M
   'mapping.v2.standardAction': 'Select one of the following options when the mappings return an empty value:<br><b>• Use empty string as default value</b>: The value will be set to an empty string (\'\').<br><b>• Use null as default value</b>: The value will be set to "null".<br><b>• Use custom default value</b>: The value will be set to the custom value you define. Only use TRUE or FALSE as the custom value as the destination field is a boolean data type.<br><b>• Do nothing</b>: The record will be skipped.',
   'mapping.v2.staticLookupAction': 'Action to take if the source field value does not match any field values in the lookup record<br><b>• Fail record</b>: Records without any match will fail without generating errors.<br><b>• Use empty string as default value</b>: The value will be set to an empty string (\'\').<br><b>• Use null as default value</b>: The value will be set to "null".<br><b>• Use custom default value</b>: The value will be set to the custom value you define. Only use TRUE or FALSE as the custom value as the destination field is a boolean data type.<br><b>• Do nothing</b>: The record will be skipped.',
   'mapping.v2.dynamicLookupAction': 'Action to take if the dynamic lookup fails to return a record<br><b>• Fail record</b>: Records without any match will fail without generating errors.<br><b>• Use empty string as default value</b>: The value will be set to an empty string (\'\').<br><b>• Use null as default value</b>: The value will be set to "null".<br><b>• Use custom default value</b>: The value will be set to the custom value you define. Only use TRUE or FALSE as the custom value as the destination field is a boolean data type.<br><b>• Do nothing</b>: The record will be skipped.',
+  'mapping.v2.description': 'Describe your mappings so that other users can quickly understand the logic without having to read through the configurations. It\'s a good idea to highlight any nuances that you or someone else might need to know for later revisions. Also, as you make changes to the mappings, remember to keep this setting up to date.',
   'mapping.dataType':
 'Select the data type of the import field, such as Boolean, string, or number array.',
   'mapping.discardIfEmpty':
@@ -2435,8 +2449,8 @@ use the custom option.`,
   'import.netsuite.file.folder': 'Specify the internal ID for the Netsuite File Cabinet folder where you want to import  your files. If the folder internal ID should be dynamic based on the data you are integrating, you can specify the JSON path to the field in your data containing the folder internal id values instead. For example, {{{myFileField.fileName}}}.',
   'import.netsuite.file.internalId': 'Enter a reference ID or expression to identify reference IDs of files to replace in the NetSuite File Cabinet.',
   'auditlogs.download': 'Download up to 1000 records from the last year.',
-  'revisions.pull': 'Pulling changes from one linked integration to another lets you see conflicts, review changes, and merge them from one integration to another. You can only pull data from a direct clone or source integration.. For example, clone Integration A as Integration B, then B to C, and B to D. You can create a pull between integrations A and B, B and C, B and D; but not between A and C, or C and D',
   'pull.integration': 'Select the remote production or sandbox integration from which you pull changes. All linked integrations are displayed, which includes clones of this integration and the integration from which it was cloned.',
+  'pull.description': 'Enter text describing the changes you are pulling into your integration.',
   'pull.reviewChanges': 'Review the changes between the current and remote integration. You can see all your integration resource changes, except for sensitive resources like API tokens and connections. You must resolve conflicts before you can continue to merge your changes. You’ll configure any new connections in the Merge changes step.',
   'pull.mergeChanges': 'You must first configure any new connections that are coming from the remote integration. There may be additional installations steps depending on the type of connection, including installing remote packages. You can cancel your merge at any time, or close the window and resume your merge later.',
   'revert.create': 'When creating a revert, you are restoring to a revision of an integration. The revert action will also generate a revision',
@@ -2445,7 +2459,6 @@ use the custom option.`,
   'revert.revisionId': 'The revision you are reverting to.',
   'revert.reviewChanges': 'Review the changes between your current revision and the revision that you are reverting to. This is a list of every change you’ve made to your exports, imports, flows, and scripts.',
   'revert.finalRevertChanges': ' You can make changes to a source or cloned integration, then revert them. You must reconfigure your connections to revert your changes and there may be additional revert steps depending on necessary packages',
-  'snapshot.create': 'A snapshot is a saved capture of your integration that you can use to revert your integration at any point.',
   'snapshot.description': 'Describe your snapshot so you can quickly identify the revision and any important details.',
   'http.parseSuccessResponses': 'The integrator.io works on JSON internally. If your API returns success data in a different format than JSON, parse HTTP response data using available parsers for CSV and XML.',
   'mfa.enable':
@@ -2469,4 +2482,12 @@ use the custom option.`,
     'View the secret key that was used to enable MFA for your profile.',
   'mfa.trustedDevices':
     'Click <b>Manage devices</b> to see a list of all trusted devices for your profile.',
+  'template.name': 'Enter a logical name for this template so that potential users can identify it in the Marketplace.',
+  'template.description': 'Provide additional information about the purpose of this template.',
+  'template.applications': 'Search for the name of each third-party application you are integrating using this template, and select it to add it to the applications list. This helps potential users find your template when they search the Marketplace.',
+  'template.contactEmail': 'Enter one or more email addresses, separated by commas, to make available for potential users to contact you with any questions.',
+  'template.websiteURL': 'Provide the website for your organization.',
+  'flowGroup.name': 'Provide a logical name for the new flow group and select the flows to include in this group. Keep in mind that flow groups are simply a tool to categorize flows within an integration.',
+  'flowGroup.flows': 'Assigning a flow to a group does not impact scheduling or other flow configuration settings that determine when a flow runs. <a href="https://docs.celigo.com/hc/en-us/articles/4416660353819-Organize-flows-into-groups" target="_blank">Learn more</a>.',
+  'dynaFormField.subrecord': 'Within the parent record shown, select a subrecord to map the source field to in the import. (Subrecords hold information about a parent record and are meaningful only within that context.) <a href="https://docs.celigo.com/hc/en-us/articles/360016510891-Configure-and-map-NetSuite-subrecords" target="_blank">Learn more</a>.',
 };

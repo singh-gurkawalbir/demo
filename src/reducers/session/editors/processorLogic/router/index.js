@@ -3,6 +3,38 @@ import { hooksToFunctionNamesMap } from '../../../../../utils/hooks';
 import filter from '../filter';
 import javascript from '../javascript';
 
+const moveArrayItem = (arr, oldIndex, newIndex) => {
+  const newArr = [...arr];
+  const element = newArr.splice(oldIndex, 1)[0];
+
+  newArr.splice(newIndex, 0, element);
+
+  return newArr;
+};
+
+const BranchNameRegex = /Branch \d+\.(\d+)/;
+
+function getBranchNameIndex(branches, routerNameIndex) {
+  let highestIndex = 0;
+  const branchNames = branches.map(branch => branch.name);
+
+  branches.forEach(branch => {
+    if (BranchNameRegex.test(branch.name)) {
+      const [, index] = branch.name.match(BranchNameRegex);
+
+      if (+index > highestIndex) {
+        highestIndex = +index;
+      }
+    }
+  });
+
+  while (branchNames.includes(`Branch ${routerNameIndex}.${highestIndex + 1}`)) {
+    highestIndex += 1;
+  }
+
+  return highestIndex + 1;
+}
+
 export default {
   init: ({ options }) => {
     const activeProcessor = 'filter';
@@ -79,20 +111,24 @@ export default {
   },
   processResult: (editor, result) => {
     let outputMessage = '';
+    let logs;
 
-    if (result?.data) {
-      if (result.data[0].length === 1) {
-        const branch = editor.rule.branches[result.data[0][0]]?.name;
+    if (Array.isArray(result?.data)) {
+      const { data } = result.data[0];
 
-        outputMessage = `The record will pass through branch ${result.data[0][0]}: ${branch} `;
-      } else if (!result.data[0].length) {
+      logs = result.data[0].logs;
+      if (data.length === 1) {
+        const branch = editor.rule.branches[data[0]]?.name;
+
+        outputMessage = `The record will pass through branch ${data[0]}: ${branch} `;
+      } else if (!data.length) {
         outputMessage = 'The record will not pass through any of the branches.';
       } else {
-        outputMessage = `The record will pass through branches:\n${result.data[0].map(branchIndex => `branch ${branchIndex}: ${editor.rule.branches[branchIndex]?.name}`).join('\n')}`;
+        outputMessage = `The record will pass through branches:\n${data.map(branchIndex => `branch ${branchIndex}: ${editor.rule.branches[branchIndex]?.name}`).join('\n')}`;
       }
     }
 
-    return {data: outputMessage};
+    return { data: outputMessage, logs };
   },
   patchSet: editor => {
     const patches = {
@@ -146,5 +182,23 @@ export default {
     }
 
     return patches;
+  },
+  updateRule: (draft, action, shouldReplace) => {
+    const { actionType, oldIndex, newIndex, rulePatch } = action;
+
+    if (actionType === 'reorder') {
+      draft.rule.branches = moveArrayItem(draft.rule.branches, oldIndex, newIndex);
+    } else if (actionType === 'addBranch') {
+      const branchNameIndex = getBranchNameIndex(draft.rule.branches, draft.branchNamingIndex);
+
+      draft.rule.branches = [...draft.rule.branches, {
+        name: `Branch ${draft.branchNamingIndex}.${branchNameIndex}`,
+        pageProcessors: [{setupInProgress: true}],
+      }];
+    } else if (!shouldReplace) {
+      Object.assign(draft.rule, cloneDeep(rulePatch));
+    } else {
+      draft.rule = rulePatch;
+    }
   },
 };

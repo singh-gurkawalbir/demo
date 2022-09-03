@@ -202,6 +202,11 @@ export default {
       }
 
       expression.push({ _connectorId: { $exists: false } });
+      const andingExpressions = { $and: expression };
+
+      if (app._httpConnectorId) {
+        return { filter: andingExpressions, appType: app.name };
+      }
 
       if (app.assistant) {
         return {
@@ -209,8 +214,6 @@ export default {
           appType: app.assistant,
         };
       }
-
-      const andingExpressions = { $and: expression };
 
       return { filter: andingExpressions, appType };
     }

@@ -3,10 +3,9 @@
 import { cloneDeep, uniq, uniqBy } from 'lodash';
 import jsonPatch from 'fast-json-patch';
 import { BranchPathRegex, GRAPH_ELEMENTS_TYPE, PageProcessorPathRegex } from '../../constants';
-import { generateId } from '../string';
+import { shortId } from '../string';
 import { setObjectValue } from '../json';
 
-export const shortId = () => generateId(6);
 export const isVirtualRouter = (router = {}) => !router.routeRecordsTo && !router.routeRecordsUsing && (!router.branches || router.branches.length <= 1);
 
 export const generateEmptyRouter = isVirtual => isVirtual ? {
@@ -65,8 +64,10 @@ export const addPageGenerators = flow => {
   flow.pageGenerators.push({setupInProgress: true});
 };
 
-export const addPageProcessor = (flow, insertAtIndex, branchPath) => {
+export const addPageProcessor = (flow, insertAtIndex, branchPath, ppData) => {
   if (!flow) return;
+  const pageProcessor = ppData || {setupInProgress: true};
+
   if (flow.routers?.length) {
     const [, routerIndex, branchIndex] = BranchPathRegex.exec(branchPath);
 
@@ -76,34 +77,35 @@ export const addPageProcessor = (flow, insertAtIndex, branchPath) => {
       const firstRouter = flow.routers[0];
 
       if (isVirtualRouter(firstRouter) && !firstRouter.branches[0].pageProcessors?.length) {
-        flow.routers[0].branches[0].pageProcessors = [{setupInProgress: true}];
+        flow.routers[0].branches[0].pageProcessors = [pageProcessor];
       } else {
         const newRouter = generateEmptyRouter(true);
 
         newRouter.branches[0].nextRouterId = flow.routers[0].id;
+        newRouter.branches[0].pageProcessors = [pageProcessor];
         flow.routers = [newRouter, ...flow.routers];
       }
     } else {
       const pageProcessors = jsonPatch.getValueByPointer(flow, `${branchPath}/pageProcessors`);
 
       if (insertAtIndex === -1) {
-        setObjectValue(flow, `${branchPath}/pageProcessors`, [...pageProcessors, {setupInProgress: true}]);
+        setObjectValue(flow, `${branchPath}/pageProcessors`, [...pageProcessors, pageProcessor]);
       } else {
-        pageProcessors.splice(insertAtIndex, 0, {setupInProgress: true});
+        pageProcessors.splice(insertAtIndex, 0, pageProcessor);
         setObjectValue(flow, `${branchPath}/pageProcessors`, pageProcessors);
       }
     }
   } else {
     // If flow is in orchestration structure
-    if (!flow.pageProcessors || !flow.pageProcessors.length) {
-      flow.pageProcessors = [{setupInProgress: true}];
+    if (!flow.pageProcessors) {
+      flow.pageProcessors = [];
     }
     if (insertAtIndex === -1) {
-      flow.pageProcessors.push({setupInProgress: true});
+      flow.pageProcessors.push(pageProcessor);
     } else {
       const pageProcessors = jsonPatch.getValueByPointer(flow, '/pageProcessors');
 
-      pageProcessors.splice(insertAtIndex, 0, {setupInProgress: true});
+      pageProcessors.splice(insertAtIndex, 0, pageProcessor);
       flow.pageProcessors = pageProcessors;
     }
   }
@@ -223,7 +225,7 @@ export const initializeFlowForReactFlow = flowDoc => {
     flow.pageProcessors = [{setupInProgress: true}];
   }
   flow.pageGenerators.forEach(pg => {
-    pg.id = pg._exportId || `none-${shortId()}`;
+    pg.id = pg._exportId || `new-${shortId()}`;
   });
   if (flow.pageProcessors?.length && !flow.routers?.length) {
     flow.routers = [{
@@ -237,7 +239,7 @@ export const initializeFlowForReactFlow = flowDoc => {
       const {pageProcessors = []} = branch;
 
       pageProcessors.forEach(pp => {
-        pp.id = pp._importId || pp._exportId || `none-${shortId()}`;
+        pp.id = pp._importId || pp._exportId || `new-${shortId()}`;
       });
     });
   });
@@ -518,7 +520,7 @@ export const generateReactFlowGraph = (flow, isViewMode) => {
   return generateNodesAndEdgesFromBranchedFlow(flow, isViewMode);
 };
 
-const mergeBetweenPPAndRouter = ({edgeSource, patchSet, sourceElement, edgeTarget}) => {
+export const mergeBetweenPPAndRouter = ({edgeSource, patchSet, sourceElement, edgeTarget}) => {
   const [, sourceRouterIndex, sourceBranchIndex] = BranchPathRegex.exec(sourceElement.data.path);
   const [, edgeSourceRouterIndex, edgeSourceBranchIndex] = BranchPathRegex.exec(edgeSource.data.path);
 
@@ -545,7 +547,7 @@ const mergeBetweenPPAndRouter = ({edgeSource, patchSet, sourceElement, edgeTarge
   ]);
 };
 
-const mergeTerminalNodes = ({ patchSet, sourceElement, targetElement }) => {
+export const mergeTerminalNodes = ({ patchSet, sourceElement, targetElement }) => {
   const [, sourceRouterIndex, sourceBranchIndex] = BranchPathRegex.exec(sourceElement.data.path);
   // merging two terminal nodes
   const [, targetRouterIndex, targetBranchIndex] = BranchPathRegex.exec(targetElement.data.path);
@@ -569,7 +571,7 @@ const mergeTerminalNodes = ({ patchSet, sourceElement, targetElement }) => {
     }]);
 };
 
-const mergeBetweenRouterAndPP = ({flowDoc, edgeTarget, patchSet, sourceElement}) => {
+export const mergeBetweenRouterAndPP = ({flowDoc, edgeTarget, patchSet, sourceElement}) => {
   const [, sourceRouterIndex, sourceBranchIndex] = BranchPathRegex.exec(sourceElement.data.path);
 
   const [, targetRouterIndex, targetBranchIndex] = BranchPathRegex.exec(edgeTarget.data.path);
@@ -604,7 +606,7 @@ const mergeBetweenRouterAndPP = ({flowDoc, edgeTarget, patchSet, sourceElement})
     },
   ]);
 };
-const splitPPArray = (ar, index) => {
+export const splitPPArray = (ar, index) => {
   const firstHalf = ar.slice(0, index);
   const secondHalf = ar.slice(index, ar.length);
 
@@ -643,7 +645,7 @@ const mergeBetweenTwoPPSteps = ({flowDoc, targetElement, sourceElement, patchSet
   ]);
 };
 
-const mergeTerminalToAnEdge = ({ flowDoc, elements, patchSet, sourceElement, targetElement }) => {
+export const mergeTerminalToAnEdge = ({ flowDoc, elements, patchSet, sourceElement, targetElement }) => {
   // Merging terminal node to an edge
 
   const edgeSource = elements[targetElement.source];

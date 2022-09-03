@@ -23,6 +23,7 @@ import Spinner from '../../components/Spinner';
 import { TextButton } from '../../components/Buttons';
 import ActionGroup from '../../components/ActionGroup';
 import { buildDrawerUrl, drawerPaths } from '../../utils/rightDrawer';
+import NoResultTypography from '../../components/NoResultTypography';
 
 const useStyles = makeStyles(theme => ({
   actions: {
@@ -43,9 +44,6 @@ const useStyles = makeStyles(theme => ({
       marginRight: theme.spacing(-2),
     },
   },
-  noDataMessage: {
-    padding: theme.spacing(2),
-  },
   resultData: {
     margin: theme.spacing(3),
     background: theme.palette.common.white,
@@ -58,6 +56,10 @@ const useStyles = makeStyles(theme => ({
   },
   reportsHeading: {
     display: 'flex',
+    alignItems: 'center',
+  },
+  reportsRefreshSpinner: {
+    margin: 20,
   },
 }));
 const defaultFilter = {
@@ -225,7 +227,7 @@ export default function Reports() {
       <ResourceDrawer />
       <ViewReportDetails />
       <CeligoPageBar
-        title="Reports">
+        title="Reports" infoText={infoText.reports}>
         <div>
           <CeligoSelect
             className={classes.reportTypes}
@@ -274,13 +276,13 @@ export default function Reports() {
                 resourceType={resourceType} />
             </ActionGroup>
           </div>
-          {!isDataReadyAfterUserRefresh && <Spinner centerAll />}
+          {!isDataReadyAfterUserRefresh && <Spinner loading size="large" className={classes.reportsRefreshSpinner} />}
           <div className={classes.reportsTable}>
             <LoadResources required resources={`${resourceType},integrations,flows`}>
               {list.total === 0 ? (
-                <Typography className={classes.noDataMessage}>
+                <NoResultTypography>
                   {'You don\'t have any report results'}
-                </Typography>
+                </NoResultTypography>
               ) : (
                 <ResourceTable
                   resourceType={resourceType}

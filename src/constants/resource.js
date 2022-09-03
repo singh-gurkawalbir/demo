@@ -21,6 +21,7 @@ export const RESOURCE_TYPE_SINGULAR_TO_PLURAL = Object.freeze({
   eventreport: 'eventreports',
   revision: 'revisions',
   user: 'users',
+  notification: 'notifications',
 });
 export const RESOURCE_TYPE_PLURAL_TO_SINGULAR = Object.freeze(
   invert(RESOURCE_TYPE_SINGULAR_TO_PLURAL)
