@@ -625,33 +625,45 @@ export const hideOtherTabRows = (node, newTabExtract, hidden) => {
   return clonedNode;
 };
 
-const constructEmptyMappingWithGenerates = (rows, defaultProps, parentKey) => rows.map(row => {
-  const { children, generate, dataType, jsonPath } = row;
-  let updatedChildren;
-  const key = generateUniqueKey();
+const constructEmptyMappingWithGenerates = (rows, props = {}, parentKey) => {
+  console.log(rows);
+  const { combinedExtract: parentCombinedExtract, ...defaultProps } = props;
 
-  if (children?.length) {
-    updatedChildren = constructEmptyMappingWithGenerates(children, {}, key);
+  let nodes = rows.filter(row => !row.isTabNode);
+
+  if (parentCombinedExtract) {
+    const splitExtracts = parentCombinedExtract.split(',');
+    const firstParentExtract = getUniqueExtractId(splitExtracts[0], 0);
+
+    nodes = nodes.filter(c => c.parentExtract === firstParentExtract);
   }
 
-  const additionalProps = {
-    ...(parentKey ? { parentExtract: ''} : { combinedExtract: ''}), // todo: check why we need this
-    ...(updatedChildren ? { children: updatedChildren} : {}), // updates children if present with new key and generates
-  };
+  return nodes.map(row => {
+    const { children, generate, dataType, jsonPath, combinedExtract } = row;
+    let updatedChildren;
+    const key = generateUniqueKey();
 
-  // TODO: PENDING - Multiple extracts object array child - only fetch first source children with empty generates mapping
+    if (children?.length) {
+      updatedChildren = constructEmptyMappingWithGenerates(children, { combinedExtract }, key);
+    }
 
-  return {
-    key,
-    title: '',
-    generate,
-    jsonPath,
-    dataType,
-    parentKey, // if the row has parent key, then update with new parent key
-    ...defaultProps,
-    ...additionalProps,
-  };
-});
+    const additionalProps = {
+      ...(parentKey ? { parentExtract: ''} : { combinedExtract: ''}), // todo: check why we need this
+      ...(updatedChildren ? { children: updatedChildren} : {}), // updates children if present with new key and generates
+    };
+
+    return {
+      key,
+      title: '',
+      generate,
+      jsonPath,
+      dataType,
+      parentKey, // if the row has parent key, then update with new parent key
+      ...defaultProps,
+      ...additionalProps,
+    };
+  });
+};
 
 // this util is for object array data type nodes when multiple extracts are given,
 // to reconstruct the whole children array
