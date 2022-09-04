@@ -626,7 +626,6 @@ export const hideOtherTabRows = (node, newTabExtract, hidden) => {
 };
 
 const constructEmptyMappingWithGenerates = (rows, props = {}, parentKey) => {
-  console.log(rows);
   const { combinedExtract: parentCombinedExtract, ...defaultProps } = props;
 
   let nodes = rows.filter(row => !row.isTabNode);
@@ -644,6 +643,7 @@ const constructEmptyMappingWithGenerates = (rows, props = {}, parentKey) => {
     const key = generateUniqueKey();
 
     if (children?.length) {
+      // todo: shall we have a strict check of object/objectarray datatypes to pass through the below function?
       updatedChildren = constructEmptyMappingWithGenerates(children, { combinedExtract }, key);
     }
 
