@@ -569,6 +569,7 @@ describe('v2 mapping utils', () => {
           },
           {
             className: 'hideRow',
+            combinedExtract: '',
             dataType: 'string',
             hidden: true,
             key: 'new_key',
@@ -661,6 +662,7 @@ describe('v2 mapping utils', () => {
           },
           {
             className: 'hideRow',
+            combinedExtract: '',
             dataType: 'string',
             generate: 'child1',
             hidden: true,
@@ -784,6 +786,7 @@ describe('v2 mapping utils', () => {
           },
           {
             className: 'hideRow',
+            combinedExtract: '',
             dataType: 'string',
             hidden: true,
             key: 'new_key',
@@ -914,12 +917,112 @@ describe('v2 mapping utils', () => {
             hidden: true,
             key: 'new_key',
             parentExtract: '$.test[*]',
+            combinedExtract: '',
             parentKey: '3SC9pqVz-S2n-PQyVDhsS',
             title: '',
             children: [
               {
                 dataType: 'string',
                 generate: 'd1',
+                parentExtract: '',
+                key: 'new_key',
+                parentKey: 'new_key',
+                title: '',
+              },
+            ],
+          },
+        ],
+      };
+
+      expect(rebuildObjectArrayNode(node, extract)).toEqual(newNode);
+    });
+    test('should correctly update the node with empty generates with child nodes incase of Object array mapping for the first source ', () => {
+      generateUniqueKey.mockReturnValue('new_key');
+
+      const node = {
+        combinedExtract: '$[*].feeds[*]',
+        dataType: 'objectarray',
+        disabled: false,
+        generate: 'family_tree',
+        key: '3SC9pqVz-S2n-PQyVDhsS',
+        title: '',
+        children: [
+          {
+            children: [
+              {
+                dataType: 'string',
+                extract: 'e1',
+                generate: 'd1',
+                key: 'CZkNYxALFVMdgT7fbJz9n',
+                parentKey: 'ccnkqcWvwImG8yLZYYvsh',
+                parentExtract: 'pe1',
+                title: '',
+              },
+            ],
+            dataType: 'objectarray',
+            extract: 'pe1',
+            combinedExtract: 'pe1',
+            generate: 'map1',
+            key: 'ccnkqcWvwImG8yLZYYvsh',
+            parentExtract: '$[*].feeds[*]',
+            parentKey: 'emT65729Ai5IiXpbQhnxv',
+            title: '',
+          },
+        ],
+      };
+
+      const extract = '$[*].feeds[*],$.test[*]';
+      const newNode = {
+        combinedExtract: '$[*].feeds[*],$.test[*]',
+        dataType: 'objectarray',
+        disabled: false,
+        generate: 'family_tree',
+        key: '3SC9pqVz-S2n-PQyVDhsS',
+        title: '',
+        activeTab: 0,
+        children: [
+          {
+            isTabNode: true,
+            key: 'new_key',
+            parentKey: '3SC9pqVz-S2n-PQyVDhsS',
+            title: '',
+          },
+          {
+            children: [
+              {
+                dataType: 'string',
+                extract: 'e1',
+                generate: 'd1',
+                key: 'CZkNYxALFVMdgT7fbJz9n',
+                parentKey: 'ccnkqcWvwImG8yLZYYvsh',
+                parentExtract: 'pe1',
+                title: '',
+              },
+            ],
+            dataType: 'objectarray',
+            extract: 'pe1',
+            combinedExtract: 'pe1',
+            generate: 'map1',
+            key: 'ccnkqcWvwImG8yLZYYvsh',
+            parentExtract: '$[*].feeds[*]',
+            parentKey: 'emT65729Ai5IiXpbQhnxv',
+            title: '',
+          },
+          {
+            className: 'hideRow',
+            dataType: 'objectarray',
+            generate: 'map1',
+            hidden: true,
+            key: 'new_key',
+            parentExtract: '$.test[*]',
+            combinedExtract: '',
+            parentKey: '3SC9pqVz-S2n-PQyVDhsS',
+            title: '',
+            children: [
+              {
+                dataType: 'string',
+                generate: 'd1',
+                parentExtract: '',
                 key: 'new_key',
                 parentKey: 'new_key',
                 title: '',

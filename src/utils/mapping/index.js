@@ -625,23 +625,31 @@ export const hideOtherTabRows = (node, newTabExtract, hidden) => {
   return clonedNode;
 };
 
-const constructEmptyMappingWithGenerates = (rows, defaultProps, hidden, parentKey) => rows.map(row => {
-  const { children, generate, dataType, ...rest } = row;
+const constructEmptyMappingWithGenerates = (rows, defaultProps, parentKey) => rows.map(row => {
+  const { children, generate, dataType, jsonPath } = row;
   let updatedChildren;
   const key = generateUniqueKey();
 
   if (children?.length) {
-    updatedChildren = constructEmptyMappingWithGenerates(children, defaultProps, hidden, key);
+    updatedChildren = constructEmptyMappingWithGenerates(children, {}, key);
   }
+
+  const additionalProps = {
+    ...(parentKey ? { parentExtract: ''} : { combinedExtract: ''}), // todo: check why we need this
+    ...(updatedChildren ? { children: updatedChildren} : {}), // updates children if present with new key and generates
+  };
+
+  // TODO: PENDING - Multiple extracts object array child - only fetch first source children with empty generates mapping
 
   return {
     key,
     title: '',
     generate,
+    jsonPath,
     dataType,
-    ...(updatedChildren ? { children: updatedChildren } : {}), // updates children if present with new key and generates
-    ...(rest?.parentKey ? {parentKey} : {}), // if the row has parent key, then update with new parent key
-    ...(!parentKey ? { ...defaultProps } : {}), // for only first level
+    parentKey, // if the row has parent key, then update with new parent key
+    ...defaultProps,
+    ...additionalProps,
   };
 });
 
@@ -726,7 +734,7 @@ export const rebuildObjectArrayNode = (node, extract = '') => {
       className: hidden && 'hideRow',
       hidden,
     };
-    const generatesMapping = constructEmptyMappingWithGenerates(firstTabRows, defaultProps, hidden);
+    const generatesMapping = constructEmptyMappingWithGenerates(firstTabRows, defaultProps);
 
     clonedNode.children = [...clonedNode.children, ...generatesMapping];
   });
