@@ -8,6 +8,7 @@ import CloseButton from './CloseButton';
 import { isNewId } from '../../../../utils/resource';
 import { selectors } from '../../../../reducers';
 import TitleActions from './TitleActions';
+import DynaFormView from '../../../DynaForm/fields/DynaFormView';
 import FormView from '../../../DynaForm/fields/DynaConnectionFormView';
 
 const useStyles = makeStyles(theme => ({
@@ -97,7 +98,13 @@ export default function TitleBar({ flowId, formKey, onClose }) {
       title={<ResourceTitle flowId={flowId} />}
       CloseButton={ResourceCloseButton}
       handleBack={onClose} >
-      <FormView formKey={formKey} resourceType={resourceType} resourceId={id} defaultValue="false" />
+      {['imports', 'exports'].includes(resourceType) && (
+      <DynaFormView
+        formKey={formKey} resourceType={resourceType} resourceId={id} flowId={flowId}
+        defaultValue="false"
+        isTitleBar />
+      )}
+      {resourceType === 'connections' && <FormView formKey={formKey} resourceType={resourceType} resourceId={id} defaultValue="false" /> }
       <TitleActions flowId={flowId} />
     </DrawerHeader>
   );

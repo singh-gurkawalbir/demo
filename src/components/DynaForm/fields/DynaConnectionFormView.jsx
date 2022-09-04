@@ -42,7 +42,7 @@ export default function FormView(props) {
     if (!stagedResource.http.formType) return defaultValue;
 
     return stagedResource?.http?.formType === 'assistant' ? 'false' : 'true';
-  }, [stagedResource]);
+  }, [stagedResource, defaultValue]);
 
   const resourceFormState = useSelector(
     state =>

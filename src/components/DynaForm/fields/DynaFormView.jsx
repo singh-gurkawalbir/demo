@@ -1,5 +1,6 @@
 import React, { useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { makeStyles } from '@material-ui/core';
 import actions from '../../../actions';
 import { getAssistantConnectorType, getApp, getHttpConnector} from '../../../constants/applications';
 import { selectors } from '../../../reducers';
@@ -13,12 +14,23 @@ import { emptyObject } from '../../../constants';
 import getResourceFormAssets from '../../../forms/formFactory/getResourceFromAssets';
 import { defaultPatchSetConverter, sanitizePatchSet } from '../../../forms/formFactory/utils';
 import { isAmazonHybridConnection, isLoopReturnsv2Connection, isAcumaticaEcommerceConnection, isMicrosoftBusinessCentralOdataConnection, isEbayFinanceConnection } from '../../../utils/assistant';
+import TextToggle from '../../TextToggle';
+import Help from '../../Help';
 
+const useStyles = makeStyles({
+  helpTextButton: {
+    padding: 0,
+  },
+  connectorTextToggle: {
+    marginRight: '0px !important',
+  },
+});
 const emptyObj = {};
 const isParent = true;
 
 export default function FormView(props) {
-  const { resourceType, flowId, resourceId, value, formKey } = props;
+  const classes = useStyles();
+  const { resourceType, flowId, resourceId, value: containerValue, formKey, defaultValue, isTitleBar } = props;
   const formContext = useFormContext(formKey);
   const dispatch = useDispatch();
   const { merged } =
@@ -28,6 +40,14 @@ export default function FormView(props) {
       resourceId
     ) || {};
   const staggedResource = merged || emptyObject;
+  const value = useMemo(() => {
+    if (!isTitleBar) return containerValue;
+    if (!staggedResource) return defaultValue;
+    if (!staggedResource.http) return defaultValue;
+    if (!staggedResource.http.formType) return defaultValue;
+
+    return staggedResource?.http?.formType === 'assistant' ? 'false' : 'true';
+  }, [staggedResource, containerValue, isTitleBar, defaultValue]);
   const resourceFormState = useSelector(
     state =>
       selectors.resourceFormState(state, resourceType, resourceId) || emptyObj
@@ -37,7 +57,6 @@ export default function FormView(props) {
       selectors.resource(state, 'connections', staggedResource._connectionId) ||
       emptyObj
   );
-
   const connectorMetaData = useSelector(state =>
     selectors.httpConnectorMetaData(state, connection?.http?._httpConnectorId, connection?.http?._httpConnectorVersionId, connection?.http?._httpConnectorApiId)
   );
@@ -62,7 +81,16 @@ export default function FormView(props) {
     if (matchingApplication) {
       const { name, type } = matchingApplication;
 
-      // all types are lower case...lets upper case them
+      if (_httpConnectorId) {
+        // all types are lower case...lets upper case them
+        return [
+        // if type is REST then we should show REST API
+          { label: (isGraphql || _httpConnectorId) ? 'HTTP' : type && (type.toUpperCase() === 'REST' ? 'REST API' : type.toUpperCase()), value: `${isParent}` },
+          { label: 'Simple', value: `${!isParent}` },
+
+        ];
+      }
+
       return [
         {
           items: [
@@ -82,12 +110,12 @@ export default function FormView(props) {
   useHFSetInitializeFormData({...props, isHTTPFramework: _httpConnectorId});
   useSetInitializeFormData({...props, isHTTPFramework: _httpConnectorId});
 
-  const onFieldChangeFn = (id, selectedApplication) => {
+  const onFieldChangeFn = selectedApplication => {
     // first get the previously selected application values
     // stagged state we will break up the scope to selected application and actual value
 
     // selecting the other option
-
+    const {id} = props;
     const staggedRes = Object.keys(staggedResource).reduce((acc, curr) => {
       acc[`/${curr}`] = staggedResource[curr];
 
@@ -174,13 +202,33 @@ export default function FormView(props) {
   if (_httpConnectorId && !isHttpFramework && !isGraphql) {
     return null;
   }
-
-  return isFlowBuilderAssistant ? (
+  const titleBarFormView = isTitleBar ? (
+    <>
+      <TextToggle
+        value={value}
+        onChange={onFieldChangeFn}
+        exclusive
+        options={options}
+        className={classes.connectorTextToggle}
+      />
+      <Help
+        title="Formview"
+        className={classes.helpTextButton}
+        helpKey="formView"
+      />
+    </>
+  ) : null;
+  const containerFormView = !isTitleBar ? (
     <DynaSelect
       {...props}
-      onFieldChange={onFieldChangeFn}
+      onFieldChange={(id, selectedApplication) => onFieldChangeFn(selectedApplication)}
       value={value}
       options={options}
-    />
+/>
   ) : null;
+  const showFormView = _httpConnectorId
+    ? titleBarFormView : containerFormView;
+
+  return isFlowBuilderAssistant
+    ? showFormView : null;
 }
