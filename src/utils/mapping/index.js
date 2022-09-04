@@ -744,7 +744,7 @@ export const rebuildObjectArrayNode = (node, extract = '') => {
       parentKey,
       parentExtract: extract,
       className: hidden && 'hideRow',
-      hidden,
+      hidden, // hiding the new rows if those are not in 0th tab
     };
     const generatesMapping = constructEmptyMappingWithGenerates(firstTabRows, defaultProps);
 
