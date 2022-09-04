@@ -1,16 +1,24 @@
-/* global describe, expect, jest, test */
+/* global describe, expect, jest, test, beforeEach, afterEach */
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { renderWithProviders } from '../../test/test-utils';
 import { getCreatedStore } from '../../store';
+import actions from '../../actions';
 import { ERROR_MANAGEMENT_DOC_URL } from '../../constants';
 import { ConfirmDialogProvider } from '../../components/ConfirmDialog';
 import { runServer } from '../../test/api/server';
 import UpgradeErrorManagement from '.';
 
+let initialStore;
+
 const mockReplaceFn = jest.fn();
+const mockDispatchFn = jest.fn(action => {
+  switch (action.type) {
+    default: initialStore.dispatch(action);
+  }
+});
 
 async function initUpgradeErrorManagement(initialStore, renderFun) {
   const ui = (
@@ -32,8 +40,22 @@ jest.mock('react-router-dom', () => ({
   }),
 }));
 
+jest.mock('react-redux', () => ({
+  __esModule: true,
+  ...jest.requireActual('react-redux'),
+  useDispatch: () => mockDispatchFn,
+}));
+
 describe('test suite for UpgradeErrorManagement', () => {
   runServer();
+
+  beforeEach(() => {
+    initialStore = getCreatedStore();
+  });
+
+  afterEach(() => {
+    mockDispatchFn.mockClear();
+  });
 
   test('should redirect to Home Page if not an account owner', async () => {
     await initUpgradeErrorManagement();
@@ -41,8 +63,6 @@ describe('test suite for UpgradeErrorManagement', () => {
   });
 
   test('should redirect to Home Page if account owner but already in EM2.0', async () => {
-    const initialStore = getCreatedStore();
-
     initialStore.getState().user.org.accounts.push({ accessLevel: 'owner' });
     initialStore.getState().user.profile.useErrMgtTwoDotZero = true;
     await initUpgradeErrorManagement(initialStore);
@@ -50,8 +70,6 @@ describe('test suite for UpgradeErrorManagement', () => {
   });
 
   test('should show the consequences of upgrading and the option to upgrade or cancel', async () => {
-    const initialStore = getCreatedStore();
-
     initialStore.getState().user.org.accounts.push({ accessLevel: 'owner' });
     await initUpgradeErrorManagement(initialStore);
     const Title = screen.getByRole('heading', { name: "We've a new and enhanced way to manage errors!" });
@@ -74,8 +92,6 @@ describe('test suite for UpgradeErrorManagement', () => {
   });
 
   test('should redirect to Home Page on cancelling', async () => {
-    const initialStore = getCreatedStore();
-
     initialStore.getState().user.org.accounts.push({ accessLevel: 'owner' });
     await initUpgradeErrorManagement(initialStore);
     const cancelButton = document.querySelector('[data-test="em2.0_later"]');
@@ -85,8 +101,6 @@ describe('test suite for UpgradeErrorManagement', () => {
   });
 
   test('should display a dialog on attempting upgrade', async () => {
-    const initialStore = getCreatedStore();
-
     initialStore.getState().user.org.accounts.push({ accessLevel: 'owner' });
     await initUpgradeErrorManagement(initialStore);
     const upgradeButton = screen.getByRole('button', {name: 'Upgrade'});
@@ -110,8 +124,6 @@ describe('test suite for UpgradeErrorManagement', () => {
   });
 
   test('dialog should disappear on clicking close button', async () => {
-    const initialStore = getCreatedStore();
-
     initialStore.getState().user.org.accounts.push({ accessLevel: 'owner' });
     await initUpgradeErrorManagement(initialStore);
     const upgradeButton = screen.getByRole('button', {name: 'Upgrade'});
@@ -128,8 +140,6 @@ describe('test suite for UpgradeErrorManagement', () => {
   });
 
   test('dialog should disappear on clicking "No, Cancel" option', async () => {
-    const initialStore = getCreatedStore();
-
     initialStore.getState().user.org.accounts.push({ accessLevel: 'owner' });
     await initUpgradeErrorManagement(initialStore);
     const upgradeButton = screen.getByRole('button', {name: 'Upgrade'});
@@ -147,7 +157,6 @@ describe('test suite for UpgradeErrorManagement', () => {
 
   test('dialog should disappear on clicking "Yes, upgrade" option', async () => {
     const userId = '626qwerty';
-    const initialStore = getCreatedStore();
 
     initialStore.getState().user.preferences.defaultAShareId = userId;
     initialStore.getState().user.org.accounts.push({
@@ -168,5 +177,6 @@ describe('test suite for UpgradeErrorManagement', () => {
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
     expect(upgradeButton).toHaveTextContent('Upgrading...');
     await waitFor(() => expect(upgradeButton).toHaveTextContent('Upgrade'));
+    expect(mockDispatchFn).toHaveBeenCalledWith(actions.user.profile.update({ useErrMgtTwoDotZero: true }));
   });
 });
