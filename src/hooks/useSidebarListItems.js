@@ -11,6 +11,7 @@ const integrationsFilterConfig = {
 export default function useResourceListItems() {
   const userProfile = useSelector(state => selectors.userProfile(state));
   const canUserPublish = useSelector(state => selectors.canUserPublish(state));
+  const isMFASetupIncomplete = useSelector(selectors.isMFASetupIncomplete);
   const accessLevel = useSelector(
     state => selectors.resourcePermissions(state).accessLevel
   );
@@ -33,13 +34,24 @@ export default function useResourceListItems() {
   );
 
   const listItemsMemo = useMemo(() => menuItems(
+    {
+      userProfile,
+      accessLevel,
+      integrations,
+      canUserPublish,
+      marketplaceConnectors,
+      isUserInErrMgtTwoDotZero,
+      isMFASetupIncomplete,
+    }),
+  [
     userProfile,
     accessLevel,
     integrations,
     canUserPublish,
     marketplaceConnectors,
-    isUserInErrMgtTwoDotZero),
-  [userProfile, accessLevel, integrations, canUserPublish, marketplaceConnectors, isUserInErrMgtTwoDotZero]);
+    isUserInErrMgtTwoDotZero,
+    isMFASetupIncomplete,
+  ]);
 
   return listItemsMemo;
 }
