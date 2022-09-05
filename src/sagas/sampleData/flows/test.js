@@ -478,6 +478,7 @@ describe('flow sample data sagas', () => {
         .call(pageProcessorPreview, {
           flowId,
           _pageProcessorId,
+          routerId: undefined,
           _pageProcessorDoc: undefined,
           previewType: 'raw',
           resourceType: 'exports',
@@ -514,6 +515,7 @@ describe('flow sample data sagas', () => {
         .call(pageProcessorPreview, {
           flowId,
           _pageProcessorId,
+          routerId: undefined,
           _pageProcessorDoc: resourceObj,
           previewType: 'raw',
           resourceType: 'exports',
@@ -536,6 +538,7 @@ describe('flow sample data sagas', () => {
       return expectSaga(fetchPageProcessorPreview, {
         flowId,
         _pageProcessorId,
+        routerId: undefined,
         previewType: 'raw',
         resourceType,
         hidden: true,
@@ -551,6 +554,7 @@ describe('flow sample data sagas', () => {
         .call(pageProcessorPreview, {
           flowId,
           _pageProcessorId,
+          routerId: undefined,
           _pageProcessorDoc: undefined,
           previewType: 'raw',
           resourceType,
