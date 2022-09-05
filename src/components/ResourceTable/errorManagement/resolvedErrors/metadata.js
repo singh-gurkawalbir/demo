@@ -4,7 +4,7 @@ import Retry from '../actions/Retry';
 import ViewErrorDetails from '../actions/ViewErrorDetails';
 import ViewHttpRequest from '../actions/ViewHttpRequest';
 import ViewHttpResponse from '../actions/ViewHttpResponse';
-import SelectError from '../cells/SelectError';
+import SelectError from '../../../ErrorList/ErrorDetails/ErrorDetailActions/SelectError';
 import SelectAllErrors from '../cells/SelectAllErrors';
 import UserName from '../cells/UserName';
 import CeligoTimeAgo from '../../../CeligoTimeAgo';

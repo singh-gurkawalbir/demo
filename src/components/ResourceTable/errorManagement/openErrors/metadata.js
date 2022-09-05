@@ -8,7 +8,7 @@ import ViewHttpRequest from '../actions/ViewHttpRequest';
 import ViewHttpResponse from '../actions/ViewHttpResponse';
 import EditRetryData from '../actions/EditRetry';
 import DownloadRetryData from '../actions/DownloadRetry';
-import SelectError from '../cells/SelectError';
+import SelectError from '../../../ErrorList/ErrorDetails/ErrorDetailActions/SelectError';
 import SelectSource from '../cells/SelectSource';
 import SelectClassification from '../cells/SelectClassification';
 import SelectDate from '../cells/SelectDate';

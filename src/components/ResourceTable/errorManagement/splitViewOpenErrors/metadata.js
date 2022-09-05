@@ -1,7 +1,7 @@
 import React from 'react';
 import { useSelector, shallowEqual } from 'react-redux';
 import {selectors} from '../../../../reducers';
-import SelectError from '../cells/SelectError';
+import SelectError from '../../../ErrorList/ErrorDetails/ErrorDetailActions/SelectError';
 import SelectSource from '../cells/SelectSource';
 import SelectClassification from '../cells/SelectClassification';
 import SelectDate from '../cells/SelectDate';

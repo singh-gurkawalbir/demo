@@ -1,6 +1,6 @@
 import { makeStyles } from '@material-ui/core/styles';
 import React from 'react';
-import SelectError from '../../../ResourceTable/errorManagement/cells/SelectError';
+import SelectError from './SelectError';
 
 const useStyles = makeStyles(theme => ({
   action: {
