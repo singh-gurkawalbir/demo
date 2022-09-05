@@ -1083,15 +1083,7 @@ selectors.filteredKeys = state => {
   return state.mapping.filteredKeys || emptyArr;
 };
 
-selectors.isSearchVisible = state => !!state?.mapping?.isSearchVisible;
-
-selectors.searchKey = state => {
-  if (!state || !state.mapping) {
-    return -1;
-  }
-
-  return state.mapping.searchKey;
-};
+selectors.searchKey = state => state.mapping.searchKey;
 
 selectors.mappingChanged = state => {
   if (!state || !state.mapping) {

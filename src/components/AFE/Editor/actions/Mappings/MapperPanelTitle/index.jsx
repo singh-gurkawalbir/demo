@@ -43,7 +43,7 @@ export default function MapperPanelTitle({editorId, title, helpKey}) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const disabled = useSelector(state => selectors.isEditorDisabled(state, editorId));
-  const isSearchVisible = useSelector(state => selectors.isSearchVisible(state));
+  const searchKey = useSelector(state => selectors.searchKey(state));
   const {mappingVersion, flowId, importId} = useSelector(state => {
     const mapping = selectors.mapping(state);
 
@@ -85,7 +85,8 @@ export default function MapperPanelTitle({editorId, title, helpKey}) {
 
   // to toggle if SearchBar to be shown
   const handleToggleSearch = useCallback(() => {
-    dispatch(actions.mapping.v2.toggleSearch());
+    // dispatch(actions.mapping.v2.toggleSearch());
+    dispatch(actions.mapping.v2.searchTree({ searchKey: '', showKey: false }));
   }, [dispatch]);
 
   // return the old title if its not mapper2 view
@@ -136,7 +137,7 @@ export default function MapperPanelTitle({editorId, title, helpKey}) {
           </IconButton>
         </Tooltip>
 
-        {!isSearchVisible && (
+        {searchKey === undefined && (
         <>
           <CeligoDivider position="right" />
           <IconButton

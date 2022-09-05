@@ -1263,7 +1263,7 @@ export const searchTree = (mappings, key, filterFunc) => {
     }
 
     // calling required function according to the mappings dataType
-    if (node.dataType === 'object') {
+    if (node.dataType === MAPPING_DATA_TYPES.OBJECT) {
       tempItems = searchTree(node.children, key, filterFunc);
       newItems = deepClone(tempItems);
 
@@ -1271,7 +1271,7 @@ export const searchTree = (mappings, key, filterFunc) => {
       if (newItems.firstIndex !== -1) {
         newItems.expandedKeys = [node.key, ...tempItems.expandedKeys];
       }
-    } else if (node.dataType === 'objectarray') {
+    } else if (node.dataType === MAPPING_DATA_TYPES.OBJECTARRAY) {
       tempItems = searchTree(node.children, key, filterFunc);
       newItems = deepClone(tempItems);
 

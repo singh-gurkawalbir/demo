@@ -156,8 +156,6 @@ export default function Mapper2({editorId}) {
   const expandedKeys = useSelector(state => selectors.v2MappingExpandedKeys(state));
   const activeKey = useSelector(state => selectors.v2ActiveKey(state));
   const searchKey = useSelector(state => selectors.searchKey(state));
-  // searchBar to be shown or not
-  const isSearchVisible = useSelector(state => selectors.isSearchVisible(state));
 
   useEffect(() => {
     if (isAutoCreateSuccess) {
@@ -193,7 +191,7 @@ export default function Mapper2({editorId}) {
 
   return (
     <>
-      {isSearchVisible && <SearchBar />}
+      {searchKey !== undefined && <SearchBar />}
       <div className={classes.mappingDrawerContent}>
         <Tree
           className={classes.treeRoot}

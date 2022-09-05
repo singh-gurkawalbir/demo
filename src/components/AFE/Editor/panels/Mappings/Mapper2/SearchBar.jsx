@@ -38,8 +38,12 @@ const ShowAfterSearch = ({
   matches,
   downClickHandler,
   upClickHandler,
+  fieldsLen,
+  highlightedIndex,
 }) => (
   <div className={className}>
+    { fieldsLen ? (<Typography variant="body2">{highlightedIndex + 1} of {fieldsLen} matches</Typography>)
+      : (<Typography variant="body2" className={className.searchCount}>0 of 0 matches</Typography>)}
     {matches}
     <IconButton size="small" onClick={downClickHandler}>
       <ArrowDownIcon />
@@ -55,8 +59,7 @@ export default function SearchBar() {
   const dispatch = useDispatch();
   const highlightedIndex = useSelector(state => selectors.highlightedIndex(state));
   const fieldsLen = useSelector(state => selectors.filteredKeys(state).length);
-  const searchKey = useSelector(state => selectors.searchKey(state));
-  const [text, setText] = useDebouncedValue(searchKey || '', value => {
+  const [text, setText] = useDebouncedValue('', value => {
     dispatch(actions.mapping.v2.searchTree({ searchKey: value, showKey: false }));
   });
 
@@ -72,34 +75,36 @@ export default function SearchBar() {
   const downClickHandler = useCallback(() => {
     if (highlightedIndex < 0 || !fieldsLen) return;
 
+    // increase highlighIndex if in range 0 to fieldsLen - 2
     if (highlightedIndex >= 0 && highlightedIndex < fieldsLen - 1) {
       dispatch(actions.mapping.v2.updateHighlightedIndex(highlightedIndex + 1));
     }
+    // set to 0 if highlightIndex is fieldslen - 1
     if (highlightedIndex === fieldsLen - 1) {
       dispatch(actions.mapping.v2.updateHighlightedIndex(0));
     }
+    // finding the specific highlighted key
     dispatch(actions.mapping.v2.searchTree({ showKey: true }));
   }, [dispatch, fieldsLen, highlightedIndex]);
 
   const upClickHandler = useCallback(() => {
     if (highlightedIndex < 0 || !fieldsLen) return;
 
+    // decrease highlighIndex if in range 1 to fieldsLen - 1
     if (highlightedIndex > 0 && highlightedIndex < fieldsLen) {
       dispatch(actions.mapping.v2.updateHighlightedIndex(highlightedIndex - 1));
     }
+    // set to fieldsLen - 1 if highlightIndex is 0
     if (highlightedIndex === 0) {
       dispatch(actions.mapping.v2.updateHighlightedIndex(fieldsLen - 1));
     }
+    // finding the specific highlighted key
     dispatch(actions.mapping.v2.searchTree({ showKey: true }));
   }, [dispatch, fieldsLen, highlightedIndex]);
 
   const onCloseHandler = useCallback(() => {
-    dispatch(actions.mapping.v2.toggleSearch());
+    dispatch(actions.mapping.v2.searchTree({ searchKey: undefined, showKey: false }));
   }, [dispatch]);
-
-  // display the number of matches found
-  const matches = fieldsLen ? (<Typography variant="body2">{highlightedIndex + 1} of {fieldsLen} matches</Typography>)
-    : (<Typography variant="body2" className={classes.searchCount}>0 of 0 matches</Typography>);
 
   return (
     <div className={classes.searchWrapper}>
@@ -111,10 +116,11 @@ export default function SearchBar() {
           placeHolder="Search destination fields"
           openWithFocus
         />
-        {searchKey && (
+        {text && (
         <ShowAfterSearch
           className={classes.showSearchCount}
-          matches={matches}
+          fieldsLen={fieldsLen}
+          highlightedIndex={highlightedIndex}
           upClickHandler={upClickHandler}
           downClickHandler={downClickHandler}
         />
