@@ -1,7 +1,8 @@
 import { matchPath } from 'react-router-dom';
 import { PING_STATES } from '../../reducers/comms/ping';
-import { CONSTANT_CONTACT_VERSIONS, EBAY_TYPES, GOOGLE_CONTACTS_API, emptyObject, MULTIPLE_AUTH_TYPE_ASSISTANTS, RDBMS_TYPES } from '../constants';
-import { rdbmsAppTypeToSubType, rdbmsSubTypeToAppType } from '../resource';
+import { CONSTANT_CONTACT_VERSIONS, EBAY_TYPES, GOOGLE_CONTACTS_API, emptyObject, MULTIPLE_AUTH_TYPE_ASSISTANTS, RDBMS_TYPES } from '../../constants';
+import { rdbmsSubTypeToAppType } from '../resource';
+import {getHttpConnector} from '../../constants/applications';
 
 export const getStatusVariantAndMessage = ({
   resourceType,
@@ -88,14 +89,22 @@ export const getReplaceConnectionExpression = (connection, isFrameWork2, childId
 
   if (hideOwnConnection) { expression.push({ _id: {$ne: _id} }); }
 
-  if (RDBMS_TYPES.includes(rdbmsSubTypeToAppType(type))) {
+  if (type === 'rdbms' && RDBMS_TYPES.includes(rdbmsSubTypeToAppType(connection?.rdbms?.type))) {
     // rdbms subtype is required to filter the connections
-    expression.push({ 'rdbms.type': rdbmsAppTypeToSubType(type) });
+    expression.push({ 'rdbms.type': connection.rdbms.type });
   } else if (type === 'rest' || (type === 'http' && connection?.http?.formType === 'rest')) {
     expression.push({ $or: [{ 'http.formType': 'rest' }, { type: 'rest' }] });
   } else if (type === 'graph_ql' || (type === 'http' && connection?.http?.formType === 'graph_ql')) {
     expression.push({ $or: [{ 'http.formType': 'graph_ql' }] });
   } else if (type === 'http') {
+    if (getHttpConnector(connection?.http?._httpConnectorId)) {
+      if (connection.http?._httpConnectorId) {
+        expression.push({ 'http._httpConnectorId': connection.http._httpConnectorId });
+      }
+      if (connection.http?._httpConnectorVersionId) {
+        expression.push({ 'http._httpConnectorVersionId': connection.http._httpConnectorVersionId });
+      }
+    }
     expression.push({ 'http.formType': { $ne: 'rest' } });
     expression.push({ type });
   } else {
@@ -112,15 +121,25 @@ export const getReplaceConnectionExpression = (connection, isFrameWork2, childId
   } else {
     expression.push({ _connectorId: { $exists: false } });
   }
+  const andingExpressions = { $and: expression };
+  const connector = getHttpConnector(connection?.http?._httpConnectorId);
+
+  if (connector) {
+    return {
+      filter: andingExpressions,
+      appType: connector.name,
+    };
+  }
 
   if (assistant) {
     const filterExpression = getFilterExpressionForAssistant(assistant, expression);
 
     options = { filter: filterExpression, appType: assistant };
   } else {
-    const andingExpressions = { $and: expression };
-
-    options = { filter: andingExpressions, appType: type };
+    options = {
+      filter: andingExpressions,
+      appType: type === 'rdbms' ? rdbmsSubTypeToAppType(connection?.rdbms?.type) : type,
+    };
   }
 
   return options;
@@ -209,6 +228,7 @@ export const KBDocumentation = {
   as2: 'https://docs.celigo.com/hc/en-us/articles/360029551372-Set-up-an-AS2-connection',
   mongodb: 'https://docs.celigo.com/hc/en-us/articles/360039632032-Set-up-a-connection-to-MongoDB',
   mysql: 'https://docs.celigo.com/hc/en-us/articles/360038611852-Set-up-a-connection-to-MySQL',
+  mssql: 'https://docs.celigo.com/hc/en-us/articles/360039003951-Set-up-a-connection-to-Microsoft-SQL',
   oracle: 'https://docs.celigo.com/hc/en-us/articles/360050360312-Set-up-a-connection-to-Oracle-DB-SQL-',
   postgresql: 'https://docs.celigo.com/hc/en-us/articles/360038997991-Set-up-a-connection-to-PostgreSQL',
   snowflake: 'https://docs.celigo.com/hc/en-us/articles/360048048792-Set-up-a-connection-to-Snowflake',

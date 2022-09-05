@@ -11,7 +11,10 @@ import { generateNewId } from '../../../../../utils/resource';
 import jsonUtil from '../../../../../utils/json';
 import { SCOPES } from '../../../../../sagas/resourceForm';
 import openExternalUrl from '../../../../../utils/window';
-import { INSTALL_STEP_TYPES, REVISION_TYPES } from '../../../../../utils/constants';
+import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
+import useEnqueueSnackbar from '../../../../../hooks/enqueueSnackbar';
+import { INSTALL_STEP_TYPES, REVISION_TYPES } from '../../../../../constants';
+import messageStore from '../../../../../utils/messageStore';
 import { buildDrawerUrl, drawerPaths } from '../../../../../utils/rightDrawer';
 
 const useStyles = makeStyles(theme => ({
@@ -32,6 +35,7 @@ export default function InstallSteps({ integrationId, revisionId, onClose }) {
   const dispatch = useDispatch();
   const match = useRouteMatch();
   const history = useHistory();
+  const [enqueueSnackbar] = useEnqueueSnackbar();
 
   const installSteps = useSelector(state =>
     selectors.currentRevisionInstallSteps(state, integrationId, revisionId)
@@ -44,8 +48,40 @@ export default function InstallSteps({ integrationId, revisionId, onClose }) {
     selectors.revisionType(state, integrationId, revisionId)
   );
 
+  const oAuthConnectionId = useSelector(state =>
+    selectors.revisionInstallStepOAuthConnectionId(state, revisionId)
+  );
+  const hasOpenedOAuthConnection = useSelector(state =>
+    selectors.hasOpenedOAuthRevisionInstallStep(state, revisionId)
+  );
+
+  const oAuthConnection = useSelectorMemo(selectors.makeResourceSelector, 'connections', oAuthConnectionId);
+
+  useEffect(() => {
+    if (hasOpenedOAuthConnection && oAuthConnection) {
+      dispatch(actions.integrationLCM.installSteps.setOauthConnectionMode({
+        connectionId: oAuthConnectionId,
+        revisionId,
+        openOauthConnection: false,
+      }));
+      history.push(buildDrawerUrl({
+        path: drawerPaths.INSTALL.CONFIGURE_RESOURCE_SETUP,
+        baseUrl: match.url,
+        params: { resourceType: 'connections', resourceId: oAuthConnectionId },
+      }));
+    }
+  }, [
+    hasOpenedOAuthConnection,
+    oAuthConnection,
+    oAuthConnectionId,
+    dispatch,
+    history,
+    match.url,
+    revisionId]);
+
   useEffect(() => {
     if (areAllRevisionInstallStepsCompleted) {
+      enqueueSnackbar({ message: messageStore(revisionType === REVISION_TYPES.PULL ? 'PULL_MERGE_SUCCESS' : 'REVERT_SUCCESS') });
       onClose();
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -88,6 +124,7 @@ export default function InstallSteps({ integrationId, revisionId, onClose }) {
     } else if (type === INSTALL_STEP_TYPES.URL) {
       if (!step.isTriggered) {
         dispatch(actions.integrationLCM.installSteps.updateStep(revisionId, 'inProgress'));
+        // If user hits url step for the first time, redirect him to the url to let him login and install
         openExternalUrl({ url });
       } else {
         if (step.verifying) {
@@ -95,7 +132,15 @@ export default function InstallSteps({ integrationId, revisionId, onClose }) {
         }
 
         dispatch(actions.integrationLCM.installSteps.updateStep(revisionId, 'verify')); // status changes to verifying
-        dispatch(actions.integrationLCM.installSteps.installStep(integrationId, revisionId)); // makes api call to update steps
+        if (step.connectionId) {
+          // Incase of url step, step is expected to have a linked connectionId for which the bundle install is verified
+          // If step is already triggered, first verify if package is installed and further install the step else show error
+          dispatch(actions.integrationLCM.installSteps.verifyBundleOrPackageInstall({
+            integrationId,
+            connectionId: step.connectionId,
+            revisionId,
+          }));
+        }
       }
     } else if (!step.isTriggered) {
       // For Merge and Revert steps
@@ -128,7 +173,7 @@ export default function InstallSteps({ integrationId, revisionId, onClose }) {
             index={index + 1}
             step={step}
             integrationId={integrationId}
-          />
+            revisionId={revisionId} />
         ))}
       </div>
       <ResourceSetupDrawer

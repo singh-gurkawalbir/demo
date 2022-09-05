@@ -13,13 +13,15 @@ import useFormInitWithPermissions from '../../hooks/useFormInitWithPermissions';
 const useStyles = makeStyles(theme => ({
   container: {
     padding: 10,
-    backgroundColor: theme.palette.background.default,
     overflowY: 'auto',
     height: '100%',
     width: '100%',
     '& > div:first-child': {
       flexDirection: 'column',
     },
+  },
+  changePasswordInfo: {
+    marginBottom: theme.spacing(2),
   },
 }));
 const changePasswordFieldMeta = {
@@ -44,6 +46,7 @@ const changePasswordFieldMeta = {
   layout: {
     fields: ['currentPassword', 'newPassword'],
   },
+
 };
 
 export default function ChangePassword({ show, onClose }) {
@@ -107,7 +110,7 @@ export default function ChangePassword({ show, onClose }) {
 
         {!success && (
         <div className={classes.container}>
-          <Typography variant="body2">
+          <Typography variant="body2" className={classes.changePasswordInfo}>
             {`Please note that clicking 'Change Password' will sign you out of the
           application, and you will need to sign back in with your new password.`}
           </Typography>

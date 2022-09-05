@@ -7,8 +7,18 @@ const messages = {
   NO_ALIASES_MESSAGE: 'You don’t have any aliases.',
   NO_CUSTOM_ALIASES_MESSAGE: 'You don’t have any custom aliases.',
   NO_INHERITED_ALIASES_MESSAGE: 'You don’t have any inherited aliases.',
-  DUPLICATE_ALIAS_ERROR_MESSAGE: 'Use a different alias ID. You already have an alias ID registered with the same name.',
-  ALIAS_VALIDATION_ERROR_MESSAGE: 'Your alias ID must contain string type field, alphanumeric, hyphen and underscore characters only.',
+  DUPLICATE_ALIAS_ERROR_MESSAGE: 'An alias with the same ID already exists. Provide a different ID.',
+  ALIAS_VALIDATION_ERROR_MESSAGE: 'Aliases can only contain alphanumeric, hyphen (-), or underscore (_) characters.',
+  // #region mapper error messages
+  MAPPER1_DUP_GENERATE: 'Mapper 1.0: Duplicate mappings exist for destination field(s): {{{fields}}}',
+  MAPPER1_MISSING_GENERATE: 'Mapper 1.0: One or more destination field values not entered.',
+  MAPPER1_MISSING_EXTRACT: 'Mapper 1.0: Source field value not entered for destination field(s): {{{fields}}}',
+  MAPPER2_DUP_GENERATE: 'Mapper 2.0: Duplicate mappings exist for destination field(s): {{{fields}}}',
+  MAPPER2_MISSING_GENERATE: 'Mapper 2.0: One or more destination field values not entered.',
+  MAPPER2_MISSING_EXTRACT: 'Mapper 2.0: Source field value not entered for destination field(s): {{{fields}}}',
+  MAPPER2_EXPRESSION_NOT_SUPPORTED: 'Mapper 2.0: You could only use valid JSONPath expression or hard-coded value for destination field(s): {{{fields}}}',
+  MAPPER2_ONLY_JSON_PATH_SUPPORT: 'Mapper 2.0: You could only use valid JSONPath expression for destination field(s): {{{fields}}}',
+  // #endregion
 };
 
 export default function errorMessageStore(key, argsObj) {

@@ -1,4 +1,6 @@
-import { INSTALL_STEP_TYPES, CLONING_SUPPORTED_IAS, STANDALONE_INTEGRATION, FORM_SAVE_STATUS, CATEGORY_MAPPING_SAVE_STATUS } from '../constants';
+import isEmpty from 'lodash/isEmpty';
+import { INSTALL_STEP_TYPES, CLONING_SUPPORTED_IAS, STANDALONE_INTEGRATION, FORM_SAVE_STATUS, CATEGORY_MAPPING_SAVE_STATUS } from '../../constants';
+import { capitalizeFirstLetter } from '../string';
 
 export const getIntegrationAppUrlName = integrationAppName => {
   if (!integrationAppName || typeof integrationAppName !== 'string') {
@@ -41,7 +43,7 @@ export const getEmptyMessage = (storeLabel = '', action) => {
   }
 };
 
-export const getAdminLevelTabs = ({integrationId, isIntegrationApp, isParent, supportsChild, children, isMonitorLevelUser}) => {
+export const getAdminLevelTabs = ({integrationId, isIntegrationApp, isParent, supportsChild, children, isMonitorLevelUser, isManageLevelUser}) => {
   const tabs = [
     'general',
     'readme',
@@ -62,7 +64,7 @@ export const getAdminLevelTabs = ({integrationId, isIntegrationApp, isParent, su
   } else {
     sectionsToHide.push('readme');
     sectionsToHide.push('general');
-    if (!isParent) {
+    if (isManageLevelUser || !isParent) {
       sectionsToHide.push('apitoken');
     } else if (supportsChild && children && children.length > 1) {
       sectionsToHide.push('uninstall');
@@ -103,14 +105,11 @@ export const getTopLevelTabs = (options = {}) => {
   //   excludeTabs.push('flows');
   //   excludeTabs.push('dashboard');
   // }
-  if (isStandalone) {
+  if (!showAdminTabs || isStandalone) {
     excludeTabs.push('admin');
   }
   if (isStandalone || hideSettingsTab) {
     excludeTabs.push('settings');
-  }
-  if (!showAdminTabs) {
-    excludeTabs.push('admin');
   }
 
   return allTabs.filter(tab => !excludeTabs.includes(tab.path));
@@ -121,6 +120,26 @@ export const getIntegrationApp = ({ _connectorId, name }) => {
 
   const integrationAppId = {
     'staging.integrator.io': {
+      '5666865f67c1650309224904': 'zendesk',
+      '5656f5e3bebf89c03f5dd77e': 'shopify',
+      '568e4843d997f2b705f44082': 'jira',
+      '56d3e8d3e24d0cf5090e5a18': 'magento2',
+      '570222ce6c99305e0beff026': 'adp',
+      '56fbb1176691821844de2721': 'bigcommerce',
+      '57b5c79c61314b461e1515b1': 'walmart',
+      '5773b7378910c875334053ba': 'openair',
+      '57c8199e8489cc1a298cc6ea': 'cashapp',
+      '57e10364a0047c23baeffa09': 'jet',
+      '58777a2b1008fb325e6c0953': 'amazon',
+      '5829bce6069ccb4460cdb34e': 'eBay',
+      '58ee6029319bd30cc2fee160': 'salesforceSubscription',
+      '58d3b1b7822f16187f873177': 'vendorPaymentManager',
+      '5b61ae4aeb538642c26bdbe6': 'sfnsio',
+      '5811aeea2095951e76c6ce64': 'salesforceCommerce',
+      '5d84891a2af6196b2e0be90c': 'square',
+      '5b4f5b8ab3122842c1be0314': 'amazonmcf',
+    },
+    'iaqa.staging.integrator.io': {
       '5666865f67c1650309224904': 'zendesk',
       '5656f5e3bebf89c03f5dd77e': 'shopify',
       '568e4843d997f2b705f44082': 'jira',
@@ -173,7 +192,7 @@ export const getIntegrationApp = ({ _connectorId, name }) => {
     },
     'localhost.io': {
       'Zendesk - NetSuite Connector': 'zendesk',
-      'Shopify - NetSuite Connector': 'shopify',
+      'Shopify - NetSuite': 'shopify',
       'JIRA - NetSuite Connector': 'jira',
       'ADP - NetSuite Connector': 'adp',
       'Magento 2 - NetSuite Connector': 'magento2',
@@ -192,6 +211,7 @@ export const getIntegrationApp = ({ _connectorId, name }) => {
   };
 
   integrationAppId['qa.staging.integrator.io'] = integrationAppId['staging.integrator.io'];
+
   let integrationApp;
 
   if (domain.indexOf('localhost') > -1) {
@@ -230,7 +250,9 @@ export default {
       step.type === 'connection' ||
       step.type === 'ssConnection' ||
       step.sourceConnection ||
-      step.type === INSTALL_STEP_TYPES.FORM
+      step.type === INSTALL_STEP_TYPES.FORM ||
+      // IA1.0 doesnt have type on their step scheam, instead check for 'form' property populated
+      !isEmpty(step.form)
     ) {
       if (step.completed) {
         stepText = isUninstall ? 'Uninstalled' : 'Configured';
@@ -278,9 +300,10 @@ export default {
 
     if (['jet', 'salesforceCommerce'].indexOf(integrationApp) !== -1) {
       highestEdition = 'enterprise';
+    } else if (integrationApp === 'shopify') {
+      highestEdition = 'shopifymarkets';
     } else if (
       [
-        'shopify',
         'bigcommerce',
         'magento2',
         'amazon',
@@ -302,6 +325,14 @@ export default {
   },
   isCloningSupported: (_connectorId, name) =>
     CLONING_SUPPORTED_IAS.includes(getIntegrationApp({ _connectorId, name })),
+};
+
+export const getTitleFromEdition = edition => {
+  if (edition.toLowerCase() === 'shopifymarkets') {
+    return 'Shopify Markets';
+  }
+
+  return capitalizeFirstLetter(edition);
 };
 
 export const getTitleIdFromSection = sec => sec.title ? sec.title.replace(/\s/g, '').replace(/\W/g, '_') : '';

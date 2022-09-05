@@ -14,6 +14,7 @@ import {
   generateFileParserOptionsFromResource,
   parseFileData,
   parseFileDefinition,
+  shouldGroupEmptyValues,
 } from './fileParserUtils';
 import {
   fetchPageProcessorPreview,
@@ -43,6 +44,56 @@ import { commitStagedChanges } from '../../resources';
 
 describe('Flow sample data utility sagas', () => {
   describe('fileParserUtils sagas', () => {
+    describe('shouldGroupEmptyValues util', () => {
+      test('should return undefined if there are no newGroupByFields and keyColumns', () => {
+        expect(shouldGroupEmptyValues([], {}, 'json', [])).toBeUndefined();
+        expect(shouldGroupEmptyValues([], {}, 'csv', [])).toBeUndefined();
+      });
+      test('should return true if there are newGroupByFields and oldResourceDoc has no groupByFields or keyColumns', () => {
+        const newGroupByFields = ['column0', 'column1'];
+        const newKeyColumns = ['column0', 'column1'];
+        const oldResourceDoc = {
+          file: {
+            type: 'csv',
+            csv: {
+            },
+          },
+        };
+
+        expect(shouldGroupEmptyValues(newGroupByFields, oldResourceDoc, 'json', [])).toBeTruthy();
+        expect(shouldGroupEmptyValues([], oldResourceDoc, 'csv', newKeyColumns)).toBeTruthy();
+      });
+      test('should return boolean groupEmptyValues if there are newGroupByFields and oldResourceDoc has groupByFields', () => {
+        const newGroupByFields = ['column0', 'column1'];
+        const newKeyColumns = ['column0', 'column1'];
+        const oldResourceDoc1 = {
+          file: {
+            type: 'json',
+            groupByFields: ['column0'],
+          },
+        };
+        const oldResourceDoc2 = {
+          file: {
+            type: 'csv',
+            csv: {
+              keyColumns: ['column0'],
+            },
+            groupEmptyValues: false,
+          },
+        };
+        const oldResourceDoc3 = {
+          file: {
+            type: 'csv',
+            groupByFields: ['column0'],
+            groupEmptyValues: true,
+          },
+        };
+
+        expect(shouldGroupEmptyValues(newGroupByFields, oldResourceDoc1, 'json', [])).toBeFalsy();
+        expect(shouldGroupEmptyValues([], oldResourceDoc2, 'csv', newKeyColumns)).toBeFalsy();
+        expect(shouldGroupEmptyValues(newGroupByFields, oldResourceDoc3, 'csv', [])).toBeTruthy();
+      });
+    });
     describe('generateFileParserOptionsFromResource util', () => {
       test('should return undefined if the resource is not of file type', () => {
         const resource = { _id: 'id-123', adaptorType: 'RESTSExport', name: 'test'};
@@ -104,6 +155,7 @@ describe('Flow sample data utility sagas', () => {
           trimSpaces: true,
           sortByFields: [],
           groupByFields: ['column0'],
+          groupEmptyValues: true,
         };
 
         expect(generateFileParserOptionsFromResource(ftpCsvResource)).toEqual(expectedOptions);
@@ -133,6 +185,7 @@ describe('Flow sample data utility sagas', () => {
           trimSpaces: true,
           sortByFields: [],
           groupByFields: ['column0'],
+          groupEmptyValues: true,
         };
 
         expect(generateFileParserOptionsFromResource(ftpCsvResource)).toEqual(expectedOptions);
@@ -258,6 +311,7 @@ describe('Flow sample data utility sagas', () => {
           resourcePath: 'test',
           sortByFields: ['users'],
           groupByFields: ['users'],
+          groupEmptyValues: true,
         };
 
         expect(generateFileParserOptionsFromResource(ftpJsonResource)).toEqual(expectedOptions);
@@ -321,6 +375,146 @@ describe('Flow sample data utility sagas', () => {
 
         expect(generateFileParserOptionsFromResource(ftpFileDefResource)).toEqual(expectedOptions);
       });
+      test('should return correct csv parse rules object incase of csv file resource which has group by fields and oldResource doc also has groupByFields with no groupEmptyValues', () => {
+        const ftpCsvResource = {
+          _id: 'export-123',
+          name: 'FTP export',
+          adaptorType: 'FTPExport',
+          file: {
+            type: 'csv',
+            csv: {
+              columnDelimiter: ',',
+              rowDelimiter: ' ',
+              hasHeaderRow: false,
+              trimSpaces: true,
+              rowsToSkip: 0,
+            },
+            groupByFields: ['column0'],
+          },
+        };
+        const oldFtpResource = {
+          _id: 'export-123',
+          name: 'FTP export',
+          adaptorType: 'FTPExport',
+          file: {
+            type: 'csv',
+            csv: {
+              columnDelimiter: ',',
+              rowDelimiter: ' ',
+              hasHeaderRow: false,
+              trimSpaces: true,
+              rowsToSkip: 0,
+            },
+            groupByFields: ['column0', 'column1'],
+          },
+        };
+        const expectedOptions = {
+          columnDelimiter: ',',
+          hasHeaderRow: false,
+          rowDelimiter: ' ',
+          rowsToSkip: 0,
+          trimSpaces: true,
+          sortByFields: [],
+          groupByFields: ['column0'],
+          groupEmptyValues: false,
+        };
+
+        expect(generateFileParserOptionsFromResource(ftpCsvResource, oldFtpResource)).toEqual(expectedOptions);
+      });
+      test('should return correct csv parse rules object incase of csv file resource which has group by fields and oldResource doc also has groupByFields with groupEmptyValues as false', () => {
+        const ftpCsvResource = {
+          _id: 'export-123',
+          name: 'FTP export',
+          adaptorType: 'FTPExport',
+          file: {
+            type: 'csv',
+            csv: {
+              columnDelimiter: ',',
+              rowDelimiter: ' ',
+              hasHeaderRow: false,
+              trimSpaces: true,
+              rowsToSkip: 0,
+            },
+            groupByFields: ['column0'],
+          },
+        };
+        const oldFtpResource = {
+          _id: 'export-123',
+          name: 'FTP export',
+          adaptorType: 'FTPExport',
+          file: {
+            type: 'csv',
+            csv: {
+              columnDelimiter: ',',
+              rowDelimiter: ' ',
+              hasHeaderRow: false,
+              trimSpaces: true,
+              rowsToSkip: 0,
+            },
+            groupByFields: ['column0', 'column1'],
+            groupEmptyValues: false,
+          },
+        };
+        const expectedOptions = {
+          columnDelimiter: ',',
+          hasHeaderRow: false,
+          rowDelimiter: ' ',
+          rowsToSkip: 0,
+          trimSpaces: true,
+          sortByFields: [],
+          groupByFields: ['column0'],
+          groupEmptyValues: false,
+        };
+
+        expect(generateFileParserOptionsFromResource(ftpCsvResource, oldFtpResource)).toEqual(expectedOptions);
+      });
+      test('should return correct csv parse rules object incase of csv file resource which has group by fields and oldResource doc also has groupByFields with groupEmptyValues as true', () => {
+        const ftpCsvResource = {
+          _id: 'export-123',
+          name: 'FTP export',
+          adaptorType: 'FTPExport',
+          file: {
+            type: 'csv',
+            csv: {
+              columnDelimiter: ',',
+              rowDelimiter: ' ',
+              hasHeaderRow: false,
+              trimSpaces: true,
+              rowsToSkip: 0,
+            },
+            groupByFields: ['column0'],
+          },
+        };
+        const oldFtpResource = {
+          _id: 'export-123',
+          name: 'FTP export',
+          adaptorType: 'FTPExport',
+          file: {
+            type: 'csv',
+            csv: {
+              columnDelimiter: ',',
+              rowDelimiter: ' ',
+              hasHeaderRow: false,
+              trimSpaces: true,
+              rowsToSkip: 0,
+            },
+            groupByFields: ['column0', 'column1'],
+            groupEmptyValues: true,
+          },
+        };
+        const expectedOptions = {
+          columnDelimiter: ',',
+          hasHeaderRow: false,
+          rowDelimiter: ' ',
+          rowsToSkip: 0,
+          trimSpaces: true,
+          sortByFields: [],
+          groupByFields: ['column0'],
+          groupEmptyValues: true,
+        };
+
+        expect(generateFileParserOptionsFromResource(ftpCsvResource, oldFtpResource)).toEqual(expectedOptions);
+      });
     });
     describe('parseFileData saga', () => {
       test('should not call evaluateExternalProcessor saga if the resource is empty/null', () =>
@@ -373,6 +567,21 @@ describe('Flow sample data utility sagas', () => {
             },
           },
         };
+        const oldFtpCsvResource = {
+          _id: 'export-123',
+          name: 'FTP export',
+          adaptorType: 'FTPExport',
+          file: {
+            type: 'csv',
+            csv: {
+              columnDelimiter: ',',
+              rowDelimiter: ' ',
+              hasHeaderRow: false,
+              trimSpaces: true,
+              rowsToSkip: 0,
+            },
+          },
+        };
         const sampleData = "occurredAt,source,code,message,traceKey,exportDataURI,importDataURI,oIndex,retryDataKey,errorId,legacyId,_flowJobId,classification,classifiedBy,retryAt\n09/30/2020 12:08:47 pm,connection,DOWNLOAD_ERROR,File object doesn't exist: ftp://unittest@ftp.celigo.com:************@ftp.celigo.com/TEST,,,,0,,840452691,,5f7427f5f874d353bd4bd6f7,missing,autopilot\n";
         const processedData = {
           occurredAt: '09/30/2020 12:08:47 pm',
@@ -395,10 +604,12 @@ describe('Flow sample data utility sagas', () => {
           data: sampleData,
           editorType: 'csvParser',
           rule: generateFileParserOptionsFromResource(ftpCsvResource),
+          resourceType: 'exports',
         };
 
         return expectSaga(parseFileData, {sampleData, resource: ftpCsvResource })
           .provide([
+            [select(selectors.resource, 'exports', ftpCsvResource._id), oldFtpCsvResource],
             [call(evaluateExternalProcessor, { processorData }), processedData],
           ])
           .call.fn(evaluateExternalProcessor)
@@ -418,11 +629,24 @@ describe('Flow sample data utility sagas', () => {
             },
           },
         };
+        const oldFtpCsvResource = {
+          _id: 'export-123',
+          name: 'FTP export',
+          adaptorType: 'FTPExport',
+          file: {
+            type: 'csv',
+            csv: {
+              columnDelimiter: ',',
+              rowDelimiter: '\n',
+            },
+          },
+        };
         const sampleData = { test: 5 };
         const processorData = {
           data: sampleData,
           editorType: 'csvParser',
           rule: generateFileParserOptionsFromResource(ftpCsvResource),
+          resourceType: 'exports',
         };
         const error = JSON.stringify({
           errors: [{status: 404, message: '{"code":"Not a valid data to process"}'}],
@@ -430,6 +654,7 @@ describe('Flow sample data utility sagas', () => {
 
         return expectSaga(parseFileData, {sampleData, resource: ftpCsvResource })
           .provide([
+            [select(selectors.resource, 'exports', ftpCsvResource._id), oldFtpCsvResource],
             [call(evaluateExternalProcessor, { processorData }), throwError(error)],
           ])
           .call.fn(evaluateExternalProcessor)
@@ -945,9 +1170,9 @@ describe('Flow sample data utility sagas', () => {
                 flow,
                 refresh: undefined,
                 runOffline: undefined,
-                isMockInput: undefined,
                 addMockData: undefined,
-                _pageProcessorId: undefined}
+                resourceType: 'exports',
+              }
             ), {}],
             [call(
               getPreviewOptionsForResource,
@@ -955,9 +1180,9 @@ describe('Flow sample data utility sagas', () => {
                 flow,
                 refresh: undefined,
                 runOffline: undefined,
-                isMockInput: undefined,
                 addMockData: undefined,
-                _pageProcessorId: undefined}
+                resourceType: 'exports',
+              }
             ), {}],
           ])
           .returns(flowResourcesMap)
@@ -1027,9 +1252,9 @@ describe('Flow sample data utility sagas', () => {
                 flow,
                 refresh: undefined,
                 runOffline: undefined,
-                _pageProcessorId: undefined,
-                isMockInput: undefined,
-                addMockData: undefined }
+                addMockData: undefined,
+                resourceType: 'exports',
+              }
             ), {}],
             [call(
               getPreviewOptionsForResource,
@@ -1037,9 +1262,19 @@ describe('Flow sample data utility sagas', () => {
                 flow,
                 refresh: undefined,
                 runOffline: undefined,
-                _pageProcessorId: undefined,
-                isMockInput: undefined,
-                addMockData: undefined }
+                addMockData: undefined,
+                resourceType: 'exports',
+              }
+            ), {}],
+            [call(
+              getPreviewOptionsForResource,
+              { resource: pp3,
+                flow,
+                refresh: undefined,
+                runOffline: undefined,
+                addMockData: undefined,
+                _pageProcessorId: pp3._id,
+              }
             ), {}],
           ])
           .returns(flowResourcesMap)
@@ -1092,9 +1327,9 @@ describe('Flow sample data utility sagas', () => {
                 flow,
                 refresh: undefined,
                 runOffline: undefined,
-                _pageProcessorId: undefined,
-                isMockInput: undefined,
-                addMockData: undefined }
+                addMockData: undefined,
+                resourceType: 'exports',
+              }
             ), pg1Options],
             [call(
               getPreviewOptionsForResource,
@@ -1102,14 +1337,68 @@ describe('Flow sample data utility sagas', () => {
                 flow,
                 refresh: undefined,
                 runOffline: undefined,
-                _pageProcessorId: undefined,
-                isMockInput: undefined,
-                addMockData: undefined }
+                addMockData: undefined,
+                resourceType: 'exports',
+              }
             ), pg2Options],
           ])
           .run();
 
         expect(returnValue).toEqual(flowResourcesMap);
+      });
+      test('should return map of pgs with inputData in the options when type is pageGenerators for lookup export', () => {
+        const flow = {
+          _id: 'flow-123',
+          name: 'test flow',
+          pageGenerators: [{ _exportId: 'export-123'}, { _exportId: 'export-456'}],
+          pageProcessors: [{ type: 'import', _importId: 'import-123'}],
+        };
+        const pg1 = { _id: 'export-123', name: 'pg1', adaptorType: 'RESTExport'};
+        const pg2 = { _id: 'export-456', name: 'pg2', adaptorType: 'HTTPExport'};
+        const resourceType = 'exports';
+        const inputData = {id: '123', demo: 'demo'};
+        const flowResourcesMap = {
+          'export-123': {doc: pg1, options: {}},
+          'export-456': {doc: pg2, options: {inputData}},
+        };
+
+        return expectSaga(fetchFlowResources, { flow, type: 'pageGenerators', addMockData: true })
+          .provide([
+            [select(
+              selectors.resourceData,
+              resourceType,
+              'export-123',
+              SCOPES.VALUE
+            ), { merged: pg1}],
+            [select(
+              selectors.resourceData,
+              resourceType,
+              'export-456',
+              SCOPES.VALUE
+            ), { merged: pg2}],
+            [call(
+              getPreviewOptionsForResource,
+              { resource: pg1,
+                flow,
+                refresh: undefined,
+                runOffline: undefined,
+                addMockData: true,
+                resourceType: 'exports',
+              }
+            ), {}],
+            [call(
+              getPreviewOptionsForResource,
+              { resource: pg2,
+                flow,
+                refresh: undefined,
+                runOffline: undefined,
+                addMockData: true,
+                resourceType: 'exports',
+              }
+            ), {inputData}],
+          ])
+          .returns(flowResourcesMap)
+          .run();
       });
       test('should return runOfflineOptions for PGs incase runOffline is true and PG has rawData, should also pass refresh prop to getPreviewOptionsForResource saga if passed true ', async () => {
         const flow = {
@@ -1175,9 +1464,9 @@ describe('Flow sample data utility sagas', () => {
                 flow,
                 refresh,
                 runOffline,
-                _pageProcessorId: undefined,
-                isMockInput: undefined,
-                addMockData: undefined }
+                addMockData: undefined,
+                resourceType: 'exports',
+              }
             ), pg1Options],
             [call(
               getPreviewOptionsForResource,
@@ -1185,9 +1474,9 @@ describe('Flow sample data utility sagas', () => {
                 flow,
                 refresh,
                 runOffline,
-                _pageProcessorId: undefined,
-                isMockInput: undefined,
-                addMockData: undefined }
+                addMockData: undefined,
+                resourceType: 'exports',
+              }
             ), pg2OptionsWithRunOffline],
           ])
           .run();
@@ -1270,9 +1559,9 @@ describe('Flow sample data utility sagas', () => {
                 flow,
                 refresh: undefined,
                 runOffline: undefined,
-                _pageProcessorId: undefined,
-                isMockInput: undefined,
-                addMockData: undefined }
+                addMockData: undefined,
+                resourceType: 'exports',
+              }
             ), { uiData: pg1.sampleData }],
             [call(
               getPreviewOptionsForResource,
@@ -1280,9 +1569,9 @@ describe('Flow sample data utility sagas', () => {
                 flow,
                 refresh: undefined,
                 runOffline: undefined,
-                _pageProcessorId: undefined,
-                isMockInput: undefined,
-                addMockData: undefined }
+                addMockData: undefined,
+                resourceType: 'exports',
+              }
             ), { uiData: undefined }],
           ])
           .returns(flowResourcesMap)
@@ -2018,17 +2307,14 @@ describe('Flow sample data utility sagas', () => {
             [call(fetchFlowResources, {
               flow,
               type: 'pageProcessors',
-              _pageProcessorId,
-              isMockInput: undefined,
               addMockData: undefined,
             }), pageProcessorMap],
             [call(fetchResourceDataForNewFlowResource, {
               resourceId: _pageProcessorId,
               resourceType: 'imports',
             }), newPpDoc],
-            [call(apiCallWithRetry, apiOptions), previewData],
+            [matchers.call.fn(apiCallWithRetry, apiOptions), previewData],
           ])
-          .call(apiCallWithRetry, apiOptions)
           .returns(previewData)
           .run();
       });
@@ -2110,8 +2396,6 @@ describe('Flow sample data utility sagas', () => {
             [call(fetchFlowResources, {
               flow,
               type: 'pageProcessors',
-              _pageProcessorId,
-              isMockInput: undefined,
               addMockData: undefined,
             }), previousPageProcessorMap],
             [call(apiCallWithRetry, apiOptions), previewData],
@@ -2180,8 +2464,6 @@ describe('Flow sample data utility sagas', () => {
             [call(fetchFlowResources, {
               flow,
               type: 'pageProcessors',
-              _pageProcessorId,
-              isMockInput: undefined,
               addMockData: undefined,
             }), pageProcessorMap],
             [call(apiCallWithRetry, apiOptions), previewData],
@@ -2289,8 +2571,6 @@ describe('Flow sample data utility sagas', () => {
             [call(fetchFlowResources, {
               flow,
               type: 'pageProcessors',
-              _pageProcessorId,
-              isMockInput: undefined,
               addMockData: undefined,
             }), pageProcessorMap],
             [call(apiCallWithRetry, apiOptions), previewData],
@@ -2411,8 +2691,6 @@ describe('Flow sample data utility sagas', () => {
             [call(fetchFlowResources, {
               flow,
               type: 'pageProcessors',
-              _pageProcessorId,
-              isMockInput: undefined,
               addMockData: undefined,
             }), pageProcessorMapWithoutPageProcessorDoc],
             [call(apiCallWithRetry, apiOptions), previewData],
@@ -2490,8 +2768,6 @@ describe('Flow sample data utility sagas', () => {
             [call(fetchFlowResources, {
               flow,
               type: 'pageProcessors',
-              _pageProcessorId,
-              isMockInput: undefined,
               addMockData: undefined,
             }), pageProcessorMap],
             [call(apiCallWithRetry, apiOptions), previewData],
@@ -2565,8 +2841,6 @@ describe('Flow sample data utility sagas', () => {
             [call(fetchFlowResources, {
               flow,
               type: 'pageProcessors',
-              _pageProcessorId,
-              isMockInput: undefined,
               addMockData: undefined,
             }), pageProcessorMap],
             [call(apiCallWithRetry, apiOptions), previewData],
@@ -2640,8 +2914,6 @@ describe('Flow sample data utility sagas', () => {
             [call(fetchFlowResources, {
               flow,
               type: 'pageProcessors',
-              _pageProcessorId,
-              isMockInput: undefined,
               addMockData: undefined,
             }), pageProcessorMap],
             [call(apiCallWithRetry, apiOptions), throwError(error)],
@@ -2723,16 +2995,16 @@ describe('Flow sample data utility sagas', () => {
             [call(fetchFlowResources, {
               flow,
               type: 'pageProcessors',
-              _pageProcessorId,
-              isMockInput: undefined,
               addMockData: undefined,
             }), pageProcessorMap],
             [call(apiCallWithRetry, apiOptions), throwError(error)],
             [call(pageProcessorPreview, {
               flowId,
               _pageProcessorId,
+              routerId: undefined,
               _pageProcessorDoc: undefined,
               previewType,
+              editorId: undefined,
               resourceType: 'imports',
               hidden: false,
               throwOnError,
@@ -2745,7 +3017,9 @@ describe('Flow sample data utility sagas', () => {
             flowId,
             _pageProcessorId,
             _pageProcessorDoc: undefined,
+            routerId: undefined,
             previewType,
+            editorId: undefined,
             resourceType: 'imports',
             hidden: false,
             throwOnError,

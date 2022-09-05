@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState, useCallback} from 'react';
 import PropTypes from 'prop-types';
 import IconButton from '@material-ui/core/IconButton';
 import SnackbarContent from '@material-ui/core/SnackbarContent';
@@ -104,7 +104,7 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     alignItems: 'center',
     color: theme.palette.secondary.main,
-    fontSize: props => props.transparent ? 13 : 'inherit',
+    fontSize: props => props.transparent ? 13 : 17,
   },
   actionButton: {
     padding: 0,
@@ -168,6 +168,16 @@ export default function NotificationToaster(props) {
     ...other
   } = props;
   const Icon = variantIcon[variant];
+  const [showSnackbar, setShowSnackbar] = useState(true);
+
+  const onCloseHandler = useCallback(() => {
+    if (typeof onClose === 'function') {
+      return onClose();
+    }
+    setShowSnackbar(false);
+  }, [onClose]);
+
+  if (!showSnackbar) return null;
 
   return (
     <SnackbarContent
@@ -194,7 +204,7 @@ export default function NotificationToaster(props) {
               key="close"
               aria-label="close"
               color="inherit"
-              onClick={onClose}
+              onClick={onCloseHandler}
               className={classes.actionButton}>
               <CloseIcon className={classes.icon} />
             </IconButton>,

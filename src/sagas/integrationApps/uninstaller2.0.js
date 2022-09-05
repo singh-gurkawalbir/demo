@@ -59,7 +59,7 @@ export function* uninstallStep({ id, formVal }) {
       )
     );
     yield put(actions.resource.requestCollection('integrations'));
-    yield put(actions.resource.requestCollection('licenses'));
+    yield put(actions.license.refreshCollection());
 
     // once all steps are done, mark state as complete
     return yield put(

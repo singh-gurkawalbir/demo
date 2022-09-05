@@ -424,9 +424,18 @@ export const isValidPathToMany = (sampleData, pathSegments) => {
  */
 export const processOneToManySampleData = (sampleData, resource) => {
   const { pathToMany } = resource || {};
+
+  if (!sampleData) return sampleData;
+
+  if (!pathToMany) {
+    if (Array.isArray(sampleData)) return sampleData[0];
+
+    return sampleData;
+  }
+
   const pathSegments = getPathSegments(pathToMany);
 
-  if (!sampleData || !pathSegments || !pathSegments.length) return sampleData;
+  if (!pathSegments || !pathSegments.length) return sampleData;
 
   if (!isValidPathToMany(sampleData, pathSegments)) return { _PARENT: sampleData };
   let pathPointer = sampleData;
@@ -451,33 +460,6 @@ export const processOneToManySampleData = (sampleData, resource) => {
   };
 
   return processedSampleData;
-};
-
-export const extractRawSampleDataFromOneToManySampleData = (sampleData, resource) => {
-  const { oneToMany, pathToMany } = resource || {};
-
-  if (!sampleData || !sampleData._PARENT || !oneToMany || !pathToMany) return sampleData;
-
-  const { _PARENT: parentSampleData, ...rest} = deepClone(sampleData);
-
-  const pathSegments = getPathSegments(pathToMany);
-
-  let pathPointer = parentSampleData;
-
-  for (let i = 0; i < pathSegments.length - 1; i += 1) {
-    pathPointer = pathPointer[pathSegments[i]];
-    if (!pathPointer) break;
-  }
-  if (!pathPointer) {
-    return parentSampleData;
-  }
-  const targetPath = pathSegments[pathSegments.length - 1];
-
-  if (!Array.isArray(pathPointer) && typeof pathPointer === 'object') {
-    pathPointer[targetPath] = isEmpty(rest) ? [] : [rest];
-  }
-
-  return parentSampleData;
 };
 
 /**
@@ -536,7 +518,7 @@ export const unwrapExportFileSampleData = sampleData => {
 
     if (record) {
       records.push(record);
-    } else if (rows) {
+    } else if (Array.isArray(rows)) {
       rows.forEach(row => {
         rowRecords.push(row);
       });
@@ -664,6 +646,7 @@ export const wrapSampleDataWithContext = ({
               fileMeta:
                 {
                   fileName: 'sampleFileName',
+                  fileSize: resource.adaptorType === 'FTPExport' ? 1234 : undefined,
                 },
             },
           ],

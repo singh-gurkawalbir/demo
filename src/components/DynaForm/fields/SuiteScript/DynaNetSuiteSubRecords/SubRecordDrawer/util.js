@@ -18,8 +18,7 @@ export function getFormFieldMetadata(
       referenceFieldId: {
         id: 'referenceFieldId',
         name: 'referenceFieldId',
-        // TODO: helpText is needed
-        helpText: 'Sample helptext for the subrecord set',
+        helpKey: 'dynaFormField.subrecord',
         type: 'select',
         label: `Which ${recordLabel} field should this subrecord set?`,
         options: [

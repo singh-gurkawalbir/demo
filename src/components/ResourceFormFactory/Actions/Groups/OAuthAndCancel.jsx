@@ -32,7 +32,7 @@ export default function OAuthAndCancel({
     <SaveAndCloseMiniResourceForm
       formKey={formKey}
       submitTransientLabel="Authorizing..."
-      submitButtonLabel="Save & Authorize"
+      submitButtonLabel="Save & authorize"
       formSaveStatus={formSaveStatus}
       handleSave={handleSave}
       handleCancel={onCancel}

@@ -9,9 +9,9 @@ import server from './api/server';
 import { API } from './api/utils';
 
 const theme = themeProvider();
-export const renderWithProviders = ui => {
-  const reduxStore = getCreatedStore();
-  const utils = render(
+export const renderWithProviders = (ui, { initialStore, renderFun = render } = {}) => {
+  const reduxStore = initialStore || getCreatedStore();
+  const utils = renderFun(
     <Provider store={reduxStore}>
       <MuiThemeProvider theme={theme}>
         <SnackbarProvider>
@@ -26,6 +26,8 @@ export const renderWithProviders = ui => {
     store: reduxStore,
   };
 };
+
+export const reduxStore = getCreatedStore();
 
 export const mockGetRequestOnce = (url, resolver) => {
   server.use(API.getOnce(url, resolver));

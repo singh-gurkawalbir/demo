@@ -1,5 +1,6 @@
 /* eslint-disable camelcase */
 import { original, produce } from 'immer';
+import { set } from 'lodash';
 import deepClone from 'lodash/cloneDeep';
 import actionTypes from '../../../actions/types';
 import processorLogic from './processorLogic';
@@ -14,6 +15,7 @@ export default function reducer(state = {}, action) {
     options,
     featuresPatch,
     rulePatch,
+    rulePath,
     dataPatch,
     result,
     error,
@@ -76,6 +78,12 @@ export default function reducer(state = {}, action) {
           }
         } else {
           draft[id].data = sampleData;
+          // for file definition generator where post map data needs to be shown
+          // this action gets called so we add the originalData here
+          // ref IO-27516
+          if (draft[id].editorType === 'structuredFileGenerator' && draft[id].stage) {
+            draft[id].originalData = sampleData;
+          }
         }
         draft[id].dataVersion = templateVersion;
         draft[id].sampleDataStatus = 'received';
@@ -125,7 +133,11 @@ export default function reducer(state = {}, action) {
           Array.isArray(rulePatch) ||
           draftRule === undefined;
 
-        if (!shouldReplace) {
+        if (rulePath) {
+          set(draftRule, rulePath, rulePatch);
+        } else if (processorLogic.updateRule(draft[id])) {
+          processorLogic.updateRule(draft[id])(draft[id], action, shouldReplace);
+        } else if (!shouldReplace) {
           Object.assign(draftRule, deepClone(rulePatch));
         } else if (ap) {
           draft[id].rule[ap] = rulePatch;
@@ -153,6 +165,9 @@ export default function reducer(state = {}, action) {
         const mode = draft[id].activeProcessor;
 
         if (mode) {
+          if (!draft[id].data) {
+            draft[id].data = {};
+          }
           draft[id].data[mode] = dataPatch;
         } else {
           draft[id].data = dataPatch;
@@ -181,7 +196,16 @@ export default function reducer(state = {}, action) {
             // if metadata is updated, reset form output
             delete draft[id].formOutput;
           }
+        } else if (draft[id].editorType === 'router') {
+          if (mode) {
+            delete draft[id].activeProcessor;
+            draft[id].rule.activeProcessor = mode;
+            draft[id].layout = `${mode === 'filter' ? 'json' : 'script'}FormBuilder`;
+            // clear the output panel
+            delete draft[id].result;
+          }
         }
+
         break;
       }
 
@@ -323,6 +347,12 @@ selectors.editorResult = (state, id) => {
   const editor = state[id];
 
   return editor?.result || emptyObj;
+};
+
+selectors.editorActiveProcessor = (state, id) => {
+  if (!state[id]) return;
+
+  return state[id].activeProcessor || state[id].rule?.activeProcessor;
 };
 
 selectors.editorRule = (state, id) => {

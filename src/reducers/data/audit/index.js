@@ -71,6 +71,10 @@ selectors.auditLogs = (state, resourceType, resourceId, filters) => {
       return false;
     }
 
+    if (filters.event && filters.event !== al.event) {
+      return false;
+    }
+
     return true;
   });
 

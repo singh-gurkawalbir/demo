@@ -14,12 +14,13 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function AuditPanel({ flowId }) {
+export default function AuditPanel({ flowId, integrationId }) {
   const classes = useStyles();
 
   return (
     <AuditLog
       resourceType="flows"
+      integrationId={integrationId}
       resourceId={flowId}
       className={classes.auditLog}
       isFixed={false}

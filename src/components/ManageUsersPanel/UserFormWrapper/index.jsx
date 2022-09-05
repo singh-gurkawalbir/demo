@@ -1,31 +1,49 @@
 import React, { useCallback, useMemo, useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import UserForm from './UserForm';
 import {
   USER_ACCESS_LEVELS,
   INTEGRATION_ACCESS_LEVELS,
   INVITE_USER_DRAWER_FORM_KEY,
-} from '../../../utils/constants';
+} from '../../../constants';
 import actions from '../../../actions';
 import actionTypes from '../../../actions/types';
 import { COMM_STATES } from '../../../reducers/comms/networkComms';
 import useCommStatus from '../../../hooks/useCommStatus';
+import { selectors } from '../../../reducers';
 
 export default function UserFormWrapper({ userId }) {
   const dispatch = useDispatch();
   const history = useHistory();
   const [actionsToClear, setActionsToClear] = useState();
   const [disableSave, setDisableSave] = useState(false);
+  const { name, email: userEmail } = useSelector(selectors.userProfile);
   const handleSaveClick = useCallback(
-    ({ email, accessLevel, integrationsToMonitor, integrationsToManage, accountSSORequired }) => {
+    ({ email, accessLevel, integrationsToMonitor, integrationsToManage, accountSSORequired, accountMFARequired }) => {
       const aShareData = {
         _id: userId,
         email,
         accessLevel,
         integrationAccessLevel: [],
         accountSSORequired,
+        accountMFARequired,
       };
+
+      // track event if fresh invite was sent
+      if (!userId) {
+        dispatch(
+          actions.analytics.gainsight.trackEvent('MY_ACCOUNT', {
+            operation: 'Invite sent',
+            timestamp: new Date(),
+            recipient: email,
+            senderName: name,
+            senderEmail: userEmail,
+            permission: accessLevel,
+            tab: 'User',
+          })
+        );
+      }
 
       if (accessLevel === USER_ACCESS_LEVELS.ACCOUNT_MONITOR) {
         integrationsToManage.forEach(_integrationId =>
@@ -59,7 +77,7 @@ export default function UserFormWrapper({ userId }) {
       }
       setDisableSave(true);
     },
-    [userId, dispatch]
+    [userId, name, userEmail, dispatch]
   );
 
   const handleClose = useCallback(() => history.goBack(), [history]);
@@ -95,6 +113,7 @@ export default function UserFormWrapper({ userId }) {
       id={userId}
       onSaveClick={handleSaveClick}
       onCancelClick={handleClose}
+      disableSave={disableSave}
     />
   );
 }

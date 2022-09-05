@@ -16,7 +16,7 @@ import ApplicationImg from '../../../../components/icons/ApplicationImg';
 import { resourceCategory } from '../../../../utils/resource';
 import TextOverflowCell from '../../../../components/TextOverflowCell';
 import ResourceButton from '../../../FlowBuilder/ResourceButton';
-import { emptyObject } from '../../../../utils/constants';
+import { emptyObject } from '../../../../constants';
 import CeligoTimeAgo from '../../../../components/CeligoTimeAgo';
 import { getTextAfterCount } from '../../../../utils/string';
 import { buildDrawerUrl, drawerPaths } from '../../../../utils/rightDrawer';
@@ -107,7 +107,6 @@ const metadata = {
             baseUrl: flowBuilderTo,
             params: { resourceId: id, errorType: 'open'},
           }));
-          history.push();
         }, [flowBuilderTo, history, id]);
 
         if (!count) {
@@ -168,7 +167,7 @@ const ErrorsList = ({integrationId, childId}) => {
     return <Typography>No flow exists with id: {flowId}</Typography>;
   }
   if (status !== 'received') {
-    return <Spinner centerAll />;
+    return <Spinner centerAll withDrawerHeader />;
   }
 
   return (
@@ -196,7 +195,7 @@ export default function ErrorsListDrawer({ integrationId, childId }) {
   }, [match.url, history]);
 
   return (
-    <LoadResources required="true" resources="imports, exports, connections">
+    <LoadResources required="true" integrationId={integrationId} resources="imports,exports,connections">
       <RightDrawer
         path={drawerPaths.ERROR_MANAGEMENT.V2.FLOW_ERROR_LIST}
         height="tall"

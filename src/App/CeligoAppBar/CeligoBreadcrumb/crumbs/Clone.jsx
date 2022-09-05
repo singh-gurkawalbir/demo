@@ -17,10 +17,10 @@ export default function CloneCrumb({ resourceId, resourceType }) {
 
   switch (resourceType) {
     case 'integrations':
-      path = getRoutePath(`/integrations/${resource._id}`);
+      path = getRoutePath(`/integrations/${resourceId}`);
       break;
     case 'flows':
-      path = getRoutePath(`/integrations/${resource._integrationId}/flowBuilder/${resourceId}`);
+      path = resource ? getRoutePath(`/integrations/${resource._integrationId}/flowBuilder/${resourceId}`) : 'goBack';
       break;
     case 'exports':
       path = getRoutePath(`/exports/edit/exports/${resourceId}`);
@@ -40,7 +40,7 @@ export default function CloneCrumb({ resourceId, resourceType }) {
     } else {
       history.push(path);
     }
-  }, [history]);
+  }, [history, path]);
 
   return (
     <LoadResources resources={resourceType}>

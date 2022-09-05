@@ -4088,6 +4088,18 @@ Object {
         "type": "mode",
         "visible": false,
       },
+      "parsers": Object {
+        "fieldId": "parsers",
+        "required": false,
+        "visibleWhenAll": Array [
+          Object {
+            "field": "outputMode",
+            "is": Array [
+              "records",
+            ],
+          },
+        ],
+      },
       "semiassistantoperationselect": Object {
         "fieldId": "semiassistantoperationselect",
         "visibleWhenAll": Array [
@@ -4236,8 +4248,11 @@ Object {
                   "containers": Array [
                     Object {
                       "fields": Array [
+                        "parsers",
                         "file.csv",
                       ],
+                      "header": [Function],
+                      "helpKey": "http.parseSuccessResponses",
                     },
                   ],
                   "type": "indent",
@@ -4708,6 +4723,36 @@ Object {
             "field": "outputMode",
             "is": Array [
               "records",
+            ],
+          },
+        ],
+      },
+      "netsuite.restlet.markExportedBatchSize": Object {
+        "defaultValue": [Function],
+        "id": "netsuite.restlet.markExportedBatchSize",
+        "label": "Mark exported batch size",
+        "type": "text",
+        "validWhen": Object {
+          "fallsWithinNumericalRange": Object {
+            "max": 100,
+            "min": 1,
+          },
+          "matchesRegEx": Object {
+            "message": "Only numbers allowed",
+            "pattern": "^[\\\\d]+$",
+          },
+        },
+        "visibleWhen": Array [
+          Object {
+            "field": "type",
+            "is": Array [
+              "once",
+            ],
+          },
+          Object {
+            "field": "restlet.type",
+            "is": Array [
+              "once",
             ],
           },
         ],
@@ -5218,6 +5263,7 @@ Object {
                     "netsuite.distributed.forceReload",
                     "netsuite.restlet.batchSize",
                     "advancedSettings",
+                    "netsuite.restlet.markExportedBatchSize",
                   ],
                 },
               ],
@@ -8392,6 +8438,7 @@ Object {
       },
       "file.xml.body": Object {
         "connectionId": [Function],
+        "helpKey": "import.ftp.XMLDocument",
         "id": "file.xml.body",
         "label": "XML document",
         "refreshOptionsOnChangesTo": Array [
@@ -9324,6 +9371,9 @@ Object {
       "unencrypted.apiType": Object {
         "fieldId": "unencrypted.apiType",
       },
+      "unencrypted.feedType": Object {
+        "fieldId": "unencrypted.feedType",
+      },
       "uploadFile": Object {
         "fieldId": "uploadFile",
         "helpKey": "import.uploadFile",
@@ -9436,6 +9486,7 @@ Object {
                 "http.requestMediaType",
                 "http.lookups",
                 "http.batchSize",
+                "unencrypted.feedType",
                 "http.body",
                 "uploadFile",
               ],
@@ -10396,6 +10447,7 @@ Object {
       },
       "file.xml.body": Object {
         "connectionId": [Function],
+        "helpKey": "import.ftp.XMLDocument",
         "id": "file.xml.body",
         "label": "XML document",
         "refreshOptionsOnChangesTo": Array [

@@ -13,7 +13,7 @@ import SearchInput from '../../components/SearchInput';
 import LoadResources from '../../components/LoadResources';
 import infoText from '../ResourceList/infoText';
 import CheckPermissions from '../../components/CheckPermissions';
-import { NO_RESULT_SEARCH_MESSAGE, PERMISSIONS } from '../../utils/constants';
+import { NO_RESULT_SEARCH_MESSAGE, PERMISSIONS } from '../../constants';
 import { generateNewId } from '../../utils/resource';
 import { buildDrawerUrl, drawerPaths } from '../../utils/rightDrawer';
 import { TextButton } from '../../components/Buttons';

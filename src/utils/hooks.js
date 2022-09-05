@@ -13,7 +13,7 @@ export const importHooksList = [
   'postAggregate',
 ];
 
-const externalScripts = ['transform', 'filter', 'handleRequest'];
+const externalScripts = ['transform', 'filter', 'handleRequest', 'router'];
 /*
  * Used for showing suggestions to select hook type in the application
  */
@@ -21,7 +21,7 @@ export const hooksList = [
   'preSavePage' /* Used for Exports */,
   ...importHooksList,
   'contentBasedFlowRouter' /* Used in AS2 Connection */,
-  ...externalScripts /* Used in transformation and filters Scripts */,
+  ...externalScripts, /* Used in transformation and filters Scripts */
 ];
 
 export const getImportSuiteScriptHooksList = isNSApiVersion2Selected => {
@@ -45,6 +45,7 @@ export const hooksToFunctionNamesMap = {
   transform: 'transform',
   filter: 'filter',
   handleRequest: 'handleRequest',
+  router: 'branchRouter',
 };
 
 export const hooksToHelpKeyMap = {
@@ -71,6 +72,7 @@ export const hooksLabelMap = {
   filter: 'Filter',
   formInit: 'Form init',
   handleRequest: 'Handle request',
+  router: 'Router',
 };
 export function getSupportedHooksForResource(resource) {
   let unSupportedHooks = [];
@@ -84,6 +86,7 @@ export function getSupportedHooksForResource(resource) {
     case 'snowflake':
     case 'mongodb':
     case 'bigquerydatawarehouse':
+    case 'redshiftdatawarehouse':
       unSupportedHooks = [];
       break;
     case 'ftp':

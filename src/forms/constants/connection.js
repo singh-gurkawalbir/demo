@@ -137,8 +137,10 @@ export default {
     'jazzhr',
     'segment',
     'bigquerydatawarehouse',
+    'redshiftdatawarehouse',
     'happyreturns',
     'brex',
+    'bundleb2b',
   ],
   OAUTH_APPLICATIONS: [
     'azureactivedirectory',

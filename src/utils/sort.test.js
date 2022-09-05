@@ -36,6 +36,69 @@ describe('Sort util function test', () => {
         },
       ]);
     });
+
+    test('should return correct sorted data for array of objects with compare property as array and type number', () => {
+      const users = [
+        { user: 'fred', age: 48 },
+        { user: 'barney', age: 36 },
+        { user: 'fred', age: 40 },
+        { user: 'barney', age: 34 },
+      ];
+
+      users.sort(stringCompare(['user', 'age']));
+      expect(users).toEqual([
+        { user: 'barney', age: 34 },
+        { user: 'barney', age: 36 },
+        { user: 'fred', age: 40 },
+        { user: 'fred', age: 48 },
+      ]);
+    });
+
+    test('should return correct sorted data for array of objects with compare property as array and type number', () => {
+      const users = [
+        { user: 'fred', age: 48 },
+        { user: 'barney', age: 36 },
+        { user: 'fred', age: 40 },
+        { user: 'barney', age: 34 },
+        { user: 'Barney', age: 30 },
+        { user: 'Generic', age: 20 },
+        { user: 'GHR', age: 22 },
+      ];
+
+      users.sort(stringCompare(['user', 'age']));
+      expect(users).toEqual([
+        { user: 'barney', age: 34 },
+        { user: 'barney', age: 36 },
+        { user: 'Barney', age: 30 },
+        { user: 'fred', age: 40 },
+        { user: 'fred', age: 48 },
+        { user: 'Generic', age: 20 },
+        { user: 'GHR', age: 22 },
+      ]);
+    });
+
+    test('should return correct sorted data for array of objects with multiple compare properties', () => {
+      const users = [
+        { user: 'fred', age: 48, experience: 30},
+        { user: 'barney', age: 36, experience: 23 },
+        { user: 'fred', age: 40, experience: 13 },
+        { user: 'barney', age: 34, experience: 3 },
+        { user: 'Barney', age: 30, experience: 3 },
+        { user: 'Generic', age: 20, experience: 4 },
+        { user: 'GHR', age: 22, experience: 15 },
+      ];
+
+      users.sort(stringCompare(['experience', 'age', 'user'], true));
+      expect(users).toEqual([
+        { user: 'fred', age: 48, experience: 30},
+        { user: 'barney', age: 36, experience: 23 },
+        { user: 'GHR', age: 22, experience: 15 },
+        { user: 'fred', age: 40, experience: 13 },
+        { user: 'Generic', age: 20, experience: 4 },
+        { user: 'barney', age: 34, experience: 3 },
+        { user: 'Barney', age: 30, experience: 3 },
+      ]);
+    });
     test('should return correct sorted data for array of strings with all Capitals', () => {
       const sampleArray = ['Canada', 'USA', 'India', 'China', 'Australia', 'Swden', 'Sri Lanka', 'Germany'];
 
@@ -897,7 +960,7 @@ describe('Sort util function test', () => {
 
       expect(sortJsonByKeys(sample)).toEqual(expected);
     });
-    test('should also sort the nested arrays/objects and return the sorted result', () => {
+    test('should also sort the objects inside nested arrays with their keys', () => {
       const sample = {
         b: 50,
         c: 10,
@@ -921,6 +984,34 @@ describe('Sort util function test', () => {
             nestedArray: { x: 2, y: 1, z: 3 },
           },
         ],
+      };
+
+      const result = sortJsonByKeys(sample);
+      const resultNestedObj = result.f[0].nestedArray;
+      const expectedNestedObj = expected.f[0].nestedArray;
+
+      expect(Object.keys(resultNestedObj)).toEqual(Object.keys(expectedNestedObj));
+    });
+    test('should sort the nested objects with their keys', () => {
+      const sample = {
+        b: 50,
+        c: 10,
+        a: { r: 12, p: 10, s: 23, q: 11 },
+        d: 4,
+        f: {
+          g: { y: 1, x: 2, z: 3 },
+          e: { m: 1, n: 2, l: 3},
+        },
+      };
+      const expected = {
+        a: { p: 10, q: 11, r: 12, s: 23 },
+        b: 50,
+        c: 10,
+        d: 4,
+        f: {
+          e: { l: 3, m: 1, n: 2},
+          g: { x: 2, y: 1, z: 3 },
+        },
       };
 
       expect(sortJsonByKeys(sample)).toEqual(expected);

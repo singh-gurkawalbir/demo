@@ -9,7 +9,7 @@ import FormGenerator from '..';
 import { selectors } from '../../../../reducers';
 import ExpandMoreIcon from '../../../icons/ArrowDownIcon';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
-import { emptyObject } from '../../../../utils/constants';
+import { emptyObject } from '../../../../constants';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -49,6 +49,8 @@ export default function CollapsedComponents(props) {
           header={header}
           fieldMap={fieldMap}
           formKey={formKey}
+          resourceType={resourceType}
+          resourceId={resourceId}
         />
       );
     });

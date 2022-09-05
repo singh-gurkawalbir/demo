@@ -6,7 +6,7 @@ import { selectors } from '../../reducers';
 import { getIntegrationAppUrlName } from '../../utils/integrationApps';
 import LoadResources from '../../components/LoadResources';
 import getRoutePath from '../../utils/routePaths';
-import {HOME_PAGE_PATH} from '../../utils/constants';
+import {HOME_PAGE_PATH} from '../../constants';
 import { buildDrawerUrl, drawerPaths } from '../../utils/rightDrawer';
 import { generateNewId } from '../../utils/resource';
 
@@ -26,7 +26,7 @@ export default function AmpersandRoutesHandler({ match }) {
   const integrationAppName = getIntegrationAppUrlName(integrationName);
 
   if (integrationId && !integrationName) {
-    return <LoadResources required resources="integrations,flows" />;
+    return <LoadResources required resources="integrations" />;
   }
 
   switch (match.path) {

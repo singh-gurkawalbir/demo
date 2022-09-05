@@ -6,7 +6,7 @@ import { useSelector } from 'react-redux';
 import { components } from 'react-select';
 import { useSelectorMemo } from '../../../../../hooks';
 import { selectors } from '../../../../../reducers';
-import { UNASSIGNED_SECTION_NAME } from '../../../../../utils/constants';
+import { UNASSIGNED_SECTION_NAME } from '../../../../../constants';
 import ArrowDownIcon from '../../../../icons/ArrowDownIcon';
 import LoadResources from '../../../../LoadResources';
 import { useResetWhenParentIntegrationChanges } from '../hooks';
@@ -145,7 +145,7 @@ export default function DynaFlowsTiedToIntegration(props) {
 
   return (
 
-    <LoadResources required resources="flows" >
+    <LoadResources required integrationId={integrationId} resources="flows" >
       <TypeableSelect {...props} disabled={!(selectedIntegrationId || integrationId)} options={options} />
     </LoadResources>
 

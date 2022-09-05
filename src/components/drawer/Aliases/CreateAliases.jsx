@@ -11,7 +11,7 @@ import SaveAndCloseButtonGroupForm from '../../SaveAndCloseButtonGroup/SaveAndCl
 import useFormInitWithPermissions from '../../../hooks/useFormInitWithPermissions';
 import DynaForm from '../../DynaForm';
 import TextButton from '../../Buttons/TextButton';
-import { ALIAS_FORM_KEY } from '../../../utils/constants';
+import { ALIAS_FORM_KEY } from '../../../constants';
 import actions from '../../../actions';
 import InstallationGuideIcon from '../../icons/InstallationGuideIcon';
 import ActionGroup from '../../ActionGroup';
@@ -50,7 +50,7 @@ const AliasForm = ({ resourceId, resourceType, isEdit, parentUrl }) => {
   }, [history]);
 
   useEffect(() => {
-    if (!isFormSaveTriggered || !(isAliasActionCompleted === 'save')) {
+    if (!isFormSaveTriggered || !(isAliasActionCompleted === 'save' || isAliasActionCompleted === 'edit')) {
       return;
     }
 

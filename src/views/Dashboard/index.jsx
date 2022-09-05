@@ -8,38 +8,40 @@ import LoadResources from '../../components/LoadResources';
 import CeligoPageBar from '../../components/CeligoPageBar';
 import PanelHeader from '../../components/PanelHeader';
 import getRoutePath from '../../utils/routePaths';
-import {HOME_PAGE_PATH} from '../../utils/constants';
+import {HOME_PAGE_PATH} from '../../constants';
 import QueuedJobsDrawer from '../../components/JobDashboard/QueuedJobs/QueuedJobsDrawer';
 import {FILTER_KEYS_AD, DEFAULT_RANGE, getDashboardIntegrationId} from '../../utils/accountDashboard';
 import { hashCode } from '../../utils/string';
+import infoText from '../Integration/DIY/panels/infoText';
+
+infoText;
 
 export default function Dashboard() {
   const history = useHistory();
   const dispatch = useDispatch();
   const match = useRouteMatch();
-  let { integrationId } = match.params;
+  const { integrationId } = match.params;
   const { childId } = match.params;
   const isIntegrationAppV1 = useSelector(state => selectors.isIntegrationAppV1(state, integrationId));
 
-  integrationId = getDashboardIntegrationId(integrationId, childId, isIntegrationAppV1);
+  const dashboardIntegrationId = getDashboardIntegrationId(integrationId, childId, isIntegrationAppV1);
 
   const isUserInErrMgtTwoDotZero = useSelector(state =>
     selectors.isOwnerUserInErrMgtTwoDotZero(state)
   );
 
-  const filters = useSelector(state => selectors.filter(state, `${integrationId || ''}${FILTER_KEYS_AD.COMPLETED}`));
+  const filters = useSelector(state => selectors.filter(state, `${dashboardIntegrationId || ''}${FILTER_KEYS_AD.COMPLETED}`));
 
   const { paging, sort, ...nonPagingFilters } = filters || {};
   const filterHash = hashCode(nonPagingFilters);
-  const infoTextDashboard = integrationId ? 'This dashboard offers a comprehensive view of all running and completed flows in each integration.'
-    : 'This dashboard offers a comprehensive view of all running and completed flows in your account.';
+  const infoTextDashboard = integrationId ? infoText.integrationDashboard : infoText.accountDashboard;
 
   useEffect(() => {
     dispatch(
-      actions.job.dashboard.completed.requestCollection({ integrationId})
+      actions.job.dashboard.completed.requestCollection({ integrationId: dashboardIntegrationId})
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dispatch, filterHash, integrationId]);
+  }, [dispatch, filterHash, dashboardIntegrationId]);
 
   useEffect(
     () => () => {
@@ -47,7 +49,7 @@ export default function Dashboard() {
       // To DO: Ashok to research on this and try to get better logic than below one.
       if (!(window.location.href.includes('/integrations') || window.location.href.includes('/integrationapps')) || window.location.href.includes('/new-')) {
         dispatch(
-          actions.patchFilter(`${integrationId || ''}${FILTER_KEYS_AD.COMPLETED}`, {
+          actions.patchFilter(`${dashboardIntegrationId || ''}${FILTER_KEYS_AD.COMPLETED}`, {
             range: DEFAULT_RANGE,
           })
         );
@@ -64,10 +66,10 @@ export default function Dashboard() {
   }
 
   return (
-    <LoadResources required resources="flows,integrations">
+    <LoadResources integrationId={integrationId} required resources="flows,integrations,tiles">
       {integrationId ? <PanelHeader title="Dashboard" infoText={infoTextDashboard} /> : <CeligoPageBar title="Dashboard" infoText={infoTextDashboard} />}
       <Tabs />
-      <QueuedJobsDrawer />
+      <QueuedJobsDrawer integrationId={integrationId} />
     </LoadResources>
   );
 }

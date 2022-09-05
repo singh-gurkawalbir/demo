@@ -26,7 +26,7 @@ import { selectors } from '../../../reducers';
 import GroupOfUsersIcon from '../../../components/icons/GroupOfUsersIcon';
 import GraphIcon from '../../../components/icons/GraphIcon';
 import { getTopLevelTabs } from '../../../utils/integrationApps';
-import { STANDALONE_INTEGRATION } from '../../../utils/constants';
+import { STANDALONE_INTEGRATION } from '../../../constants';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 
 const getTabs = ({ isUserInErrMgtTwoDotZero, isStandaloneIntegration, isAnyIntegrationConnectionOffline, isIntegrationApp }) => [
@@ -79,13 +79,12 @@ const getTabs = ({ isUserInErrMgtTwoDotZero, isStandaloneIntegration, isAnyInteg
     Icon: SingleUserIcon,
     Panel: AdminPanel,
   },
-  ...(!isStandaloneIntegration
-    ? [{
-      path: 'aliases',
-      label: 'Aliases',
-      Icon: InstallationGuideIcon,
-      Panel: AliasesPanel }]
-    : []),
+  ...((!isStandaloneIntegration && !isIntegrationApp) ? [{
+    path: 'aliases',
+    label: 'Aliases',
+    Icon: InstallationGuideIcon,
+    Panel: AliasesPanel,
+  }] : []),
   ...((!isStandaloneIntegration && !isIntegrationApp) ? [{
     path: 'revisions',
     label: 'Revisions',

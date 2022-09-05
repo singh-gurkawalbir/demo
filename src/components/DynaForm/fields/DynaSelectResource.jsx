@@ -13,13 +13,14 @@ import DynaMultiSelect from './DynaMultiSelect';
 import actions from '../../../actions';
 import resourceMeta from '../../../forms/definitions';
 import { generateNewId } from '../../../utils/resource';
-import ActionButton from '../../ActionButton';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 import useIntegration from '../../../hooks/useIntegration';
 import { stringCompare } from '../../../utils/sort';
 import { defaultPatchSetConverter, getMissingPatchSet } from '../../../forms/formFactory/utils';
 import OnlineStatus from '../../OnlineStatus';
 import { drawerPaths, buildDrawerUrl } from '../../../utils/rightDrawer';
+import Spinner from '../../Spinner';
+import IconButtonWithTooltip from '../../IconButtonWithTooltip';
 
 const emptyArray = [];
 const handleAddNewResource = args => {
@@ -125,10 +126,12 @@ const useStyles = makeStyles(theme => ({
     alignItems: 'flex-start',
   },
   dynaSelectMultiSelectActions: {
-    flexDirection: 'row !important',
     display: 'flex',
-    alignItems: 'flex-start',
-    marginTop: theme.spacing(4),
+    marginTop: 26,
+    marginLeft: theme.spacing(0.5),
+    '& >* button': {
+      padding: theme.spacing(0.5),
+    },
   },
   menuItem: {
     maxWidth: '95%',
@@ -139,7 +142,6 @@ const useStyles = makeStyles(theme => ({
     width: '100%',
   },
   dynaSelectWithStatusWrapper: {
-    maxWidth: '90%',
     position: 'relative',
     '& > div:last-child': {
       position: 'absolute',
@@ -175,7 +177,6 @@ function ConnectionLoadingChip(props) {
     <OnlineStatus offline={isConnectionOffline} />
   );
 }
-
 export default function DynaSelectResource(props) {
   const {
     disabled,
@@ -213,6 +214,7 @@ export default function DynaSelectResource(props) {
     [ignoreEnvironmentFilter, resourceType]
   );
 
+  const hasResourceTypeLoaded = useSelector(state => selectors.hasResourcesLoaded(state, resourceType));
   const { resources = emptyArray } = useSelectorMemo(
     selectors.makeResourceListSelector,
     filterConfig
@@ -366,59 +368,70 @@ export default function DynaSelectResource(props) {
       value: i.value,
     }));
 
-  if (!resourceItems.length && hideOnEmptyList) {
+  if (!resourceItems.length && hideOnEmptyList && hasResourceTypeLoaded) {
     return null;
   }
 
   return (
     <div className={classes.root}>
-      <LoadResources required resources={resourceType !== 'connectorLicenses' ? resourceType : []}>
-        {multiselect ? (
-          <DynaMultiSelect
-            {...props}
-            disabled={disableSelect}
-            options={[{ items: resourceItems || [] }]}
-          />
-        ) : (
-          <div className={clsx(classes.dynaSelectWrapper, {[classes.dynaSelectWithStatusWrapper]: resourceType === 'connections' && !!value && !skipPingConnection})}>
-            <DynaSelect
+      <LoadResources
+        required
+        spinner={<Spinner size="medium" />}
+        resources={resourceType !== 'connectorLicenses' ? resourceType : []}
+      >
+        <>
+          {multiselect ? (
+            <DynaMultiSelect
               {...props}
               disabled={disableSelect}
-              removeHelperText={isAddingANewResource}
-              options={[{ items: truncatedItems(resourceItems || []) }]}
+              options={[{ items: resourceItems || [] }]}
           />
-            {resourceType === 'connections' && !!value && !skipPingConnection && (
-            <ConnectionLoadingChip
-              connectionId={value}
-              flowId={flowId}
-              integrationId={integrationId || integrationIdFromUrl}
-              parentType={resourceContext.resourceType}
-              parentId={resourceContext.resourceId} />
+          ) : (
+            <div className={clsx(classes.dynaSelectWrapper, {[classes.dynaSelectWithStatusWrapper]: resourceType === 'connections' && !!value && !skipPingConnection})}>
+              <DynaSelect
+                {...props}
+                disabled={disableSelect}
+                removeHelperText={isAddingANewResource}
+                options={[{ items: truncatedItems(resourceItems || []) }]}
+          />
+              {resourceType === 'connections' && !!value && !skipPingConnection && (
+              <ConnectionLoadingChip
+                connectionId={value}
+                flowId={flowId}
+                integrationId={integrationId || integrationIdFromUrl}
+                parentType={resourceContext.resourceType}
+                parentId={resourceContext.resourceId} />
+              )}
+            </div>
+
+          )}
+          <div className={classes.dynaSelectMultiSelectActions}>
+            {allowNew && (
+            <IconButtonWithTooltip
+              tooltipProps={{title: 'Create connection'}}
+              data-test="addNewResource"
+              onClick={handleAddNewResourceMemo}
+              buttonSize="small">
+              <AddIcon />
+            </IconButtonWithTooltip>
             )}
+
+            {allowEdit && (
+            // Disable adding a new resource when the user has selected an existing resource
+            <IconButtonWithTooltip
+              tooltipProps={{title: 'Edit connection'}}
+              disabled={!value}
+              data-test="editNewResource"
+              onClick={handleEditResource}
+              buttonSize="small">
+              <EditIcon />
+            </IconButtonWithTooltip>
+            )}
+
           </div>
-
-        )}
+        </>
       </LoadResources>
-      <div className={classes.dynaSelectMultiSelectActions}>
-        {allowNew && (
-          <ActionButton
-            data-test="addNewResource"
-            onClick={handleAddNewResourceMemo}>
-            <AddIcon />
-          </ActionButton>
-        )}
 
-        {allowEdit && (
-          // Disable adding a new resource when the user has selected an existing resource
-          <ActionButton
-            disabled={!value}
-            data-test="editNewResource"
-            onClick={handleEditResource}>
-            <EditIcon />
-          </ActionButton>
-        )}
-
-      </div>
     </div>
   );
 }

@@ -19,6 +19,7 @@ export default {
     rules: {
       function: rule.entryFunction,
       code: rule.code,
+      _scriptId: rule.scriptId,
     },
     options: context,
     data: typeof data === 'string' ? JSON.parse(data) : data,
@@ -56,7 +57,7 @@ export default {
     const { code, scriptId } = editor.rule || {};
 
     const patches = {
-      foregroundPatches: [{
+      backgroundPatches: [{
         patch: [
           {
             op: 'replace',

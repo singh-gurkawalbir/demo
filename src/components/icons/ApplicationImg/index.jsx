@@ -44,6 +44,8 @@ function iconMap(type = '') {
 
   if (type.toLowerCase().includes('bigquery')) return 'bigquery';
 
+  if (type.toLowerCase().includes('redshift')) return 'redshift';
+
   if (['restexport', 'restimport'].includes(type.toLocaleLowerCase())) return 'rest';
   // 's3' are too few words that it could be contained in lot more words. In current list of applications, it matches with 'msdynamics360'.
   // Hence expilicity check for S3Export and S3Import for S3 type.
@@ -51,7 +53,7 @@ function iconMap(type = '') {
   if (['ftpexport', 'ftpimport'].includes(type.toLowerCase())) return 'ftp';
 
   // remove all whitespaces and dots
-  return type.replace(/\.|\s/g, '');
+  return type.replace(/\.|\s/g, '') && type.toLowerCase();
 }
 
 function imageName(assistant) {
@@ -60,7 +62,17 @@ function imageName(assistant) {
     return 'small-googleads';
   }
 
-  return assistant;
+  // For both the Google BigQuery and Google BigQuery (REST API) applications, we have the same image
+  if (assistant === 'bigquerydatawarehouse') {
+    return 'bigquery';
+  }
+
+  // Similarly for both Amazon Redshift and Amazon Redshift (REST API) applications, we have same image
+  if (assistant === 'redshiftdatawarehouse') {
+    return 'redshift';
+  }
+
+  return assistant.toLowerCase();
 }
 
 export default function ApplicationImg({
@@ -72,6 +84,9 @@ export default function ApplicationImg({
   className,
 }) {
   const classes = useStyles();
+
+  // eslint-disable-next-line no-param-reassign
+  if (!type) type = '';
   let path;
 
   if (!assistant) {
@@ -83,7 +98,7 @@ export default function ApplicationImg({
   } else if (markOnly) {
     path = getImageUrl(`images/react/application-logos/small/${imageName(assistant)}.png`);
   } else {
-    path = getImageUrl(`images/react/application-logos/large/${assistant}.png`);
+    path = getImageUrl(`images/react/application-logos/large/${imageName(assistant)}.png`);
   }
 
   return (

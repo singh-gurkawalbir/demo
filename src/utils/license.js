@@ -27,6 +27,7 @@ export function upgradeStatus(license, integration = {}) {
     'premium',
     'enterprise',
     'custom fba',
+    'shopifymarkets',
   ];
   const connectorEdition = editionArray.indexOf(
     license.opts &&
@@ -135,13 +136,13 @@ export function platformLicenseActionDetails(license) {
     if (license.status === 'TRIAL_EXPIRED') {
       licenseActionDetails = {
         action: 'upgrade',
-        label: 'Request Upgrade now',
+        label: 'Request upgrade now',
       };
     } else if (license.status === 'IN_TRIAL') {
       if (license.expiresInDays < 1) {
         licenseActionDetails = {
           action: 'upgrade',
-          label: 'Request Upgrade now',
+          label: 'Request upgrade now',
         };
       } else {
         licenseActionDetails = {

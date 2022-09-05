@@ -24,6 +24,7 @@ export default {
       toggle: colors.celigoNeutral7,
     },
     primary: {
+      lightest: colors.celigoAccent5,
       light: colors.celigoAccent3,
       main: colors.celigoAccent2,
       dark: colors.celigoAccent1,
@@ -33,6 +34,7 @@ export default {
       light: colors.celigoNeutral6,
       main: colors.celigoNeutral8,
       dark: colors.celigoNeutral9,
+      darkest: colors.celigoNeutral10,
       contrastText: colors.celigoNeutral4,
     },
     text: {
@@ -153,9 +155,9 @@ export default {
         borderColor: colors.celigoNeutral3,
         color: colors.celigoNeutral6,
         '&:hover': {
-          color: colors.celigoNeutral6,
+          color: colors.celigoAccent3,
           backgroundColor: colors.celigoWhite,
-          borderColor: colors.celigoNeutral3,
+          borderColor: colors.celigoAccent3,
         },
         '&:disabled': {
           color: colors.celigoNeutral4,
@@ -373,6 +375,7 @@ export default {
         fontSize: '14px',
         lineHeight: '18px',
         letterSpacing: 'normal',
+        fontWeight: 'normal',
       },
       overline: {
         fontFamily: 'source sans pro',
@@ -788,19 +791,19 @@ export default {
         display: 'inline-flex',
         minHeight: 'unset',
         '&.Mui-expanded': {
-          minHeight: '42px',
+          minHeight: '40px',
 
         },
       },
       expandIcon: {
         padding: 0,
-        margin: [[-2, 4, 0, 0]],
+        margin: [[1, 4, 0, 0]],
       },
 
       content: {
-        margin: [[10, 0, 8, 0]],
+        margin: [[10, 0, 10, 0]],
         '&.Mui-expanded': {
-          margin: [[10, 0, 8, 0]],
+          margin: [[10, 0, 10, 0]],
         },
       },
     },

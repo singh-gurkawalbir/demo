@@ -73,9 +73,9 @@ function OpenRevertDrawerContent({ integrationId, parentUrl }) {
           Next
         </DynaSubmit>
         <TextButton
-          data-test="cancelCreatePull"
+          data-test="cancelCreateRevert"
           onClick={onClose}>
-          Cancel
+          Close
         </TextButton>
       </DrawerFooter>
     </>

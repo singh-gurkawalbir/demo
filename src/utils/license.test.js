@@ -1,7 +1,7 @@
 /* global describe, test, expect */
 import moment from 'moment';
 import { selectors } from '../reducers';
-import { ACCOUNT_IDS, USER_ACCESS_LEVELS } from './constants';
+import { ACCOUNT_IDS, USER_ACCESS_LEVELS } from '../constants';
 
 const { upgradeStatus, upgradeButtonText, expiresInfo, platformLicenseActionDetails } = require('./license');
 
@@ -350,7 +350,7 @@ describe('platformLicenseActionDetails function test', () => {
       };
     const expected = {
       action: 'upgrade',
-      label: 'Request Upgrade now',
+      label: 'Request upgrade now',
     };
     const license = selectors.platformLicense(state);
 

@@ -2,6 +2,7 @@ import { useHistory } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { selectors } from '../reducers';
 import { isIntegrationAppVersion2 } from '../utils/integrationApps';
+import { STANDALONE_INTEGRATION } from '../constants';
 
 // returns context of the resource
 export default function useResourceSettingsContext(resourceType, resourceId, integrationId) {
@@ -12,6 +13,11 @@ export default function useResourceSettingsContext(resourceType, resourceId, int
   const resourceContext = {
     type: 'settings',
   };
+
+  if (!integrationId || integrationId === STANDALONE_INTEGRATION.id) {
+    return {};
+  }
+
   const url = history.location.pathname;
   const urlExtractFields = url.split('/');
 

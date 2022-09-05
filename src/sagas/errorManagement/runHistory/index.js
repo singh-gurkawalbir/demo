@@ -47,7 +47,6 @@ export function* requestRunHistory({ flowId }) {
     );
   } catch (error) {
     // handle errors
-    // TODO @Raghu: Check how to handle errors if exist
   }
 }
 export default [

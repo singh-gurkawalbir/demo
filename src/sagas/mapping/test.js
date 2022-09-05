@@ -1,4 +1,4 @@
-/* global describe, test, jest */
+/* global describe, test, jest, expect */
 import { expectSaga } from 'redux-saga-test-plan';
 import { call, select } from 'redux-saga/effects';
 import shortid from 'shortid';
@@ -25,6 +25,11 @@ import {requestSampleData as requestFlowSampleData} from '../sampleData/flows';
 import { SCOPES } from '../resourceForm';
 import { commitStagedChanges } from '../resources';
 import { autoEvaluateProcessorWithCancel } from '../editor';
+import {generateUniqueKey} from '../../utils/string';
+import { MAPPING_DATA_TYPES } from '../../utils/mapping';
+import errorMessageStore from '../../utils/errorStore';
+
+jest.mock('../../utils/string');
 
 describe('fetchRequiredMappingData saga', () => {
   test('should trigger mapping initFailed in case of invalid import id', () => {
@@ -335,7 +340,7 @@ describe('mappingInit saga', () => {
     const flowId = 'flow22';
     const importId = 'import22';
 
-    expectSaga(mappingInit, {flowId, importId})
+    return expectSaga(mappingInit, {flowId, importId})
       .call(fetchRequiredMappingData, {
         flowId,
         importId,
@@ -348,7 +353,7 @@ describe('mappingInit saga', () => {
     const flowId = 'flow23';
     const importId = 'import23';
 
-    expectSaga(mappingInit, {flowId, importId})
+    return expectSaga(mappingInit, {flowId, importId})
       .provide([
         [select(selectors.resource, 'imports', importId), null],
       ])
@@ -356,14 +361,16 @@ describe('mappingInit saga', () => {
       .run();
   });
 
-  test('should trigger mapping init correctly for FTPImport', () => {
+  test('should trigger mapping init correctly for FTPImport', async () => {
     const flowId = 'flow24';
     const importId = 'import24';
     const exportId = 'export24';
     const mock = jest.spyOn(shortid, 'generate');  // spy on otherFn
 
     mock.mockReturnValue('mock_key');
-    expectSaga(mappingInit, {flowId, importId})
+    generateUniqueKey.mockReturnValue('unique-key');
+
+    const saga1 = await expectSaga(mappingInit, {flowId, importId})
       .provide([
         [call(fetchRequiredMappingData, {flowId, importId}), {}],
         [select(selectors.resource, 'imports', importId), {_id: importId, adaptorType: 'FTPImport', lookups: [], mapping: {fields: [{extract: 'e1', generate: 'g1'}], lists: [{generate: 'l1', fields: [{extract: 'x', generate: 'y'}]}]}}],
@@ -385,19 +392,36 @@ describe('mappingInit saga', () => {
         importId,
         subRecordMappingId: undefined,
         isGroupedSampleData: true,
+        version: 1,
+        requiredMappings: [],
+        importSampleData: undefined,
+        v2TreeData: [{key: 'unique-key', isEmptyRow: true, title: '', disabled: false, dataType: 'string'}],
+        extractsTree: [
+          {key: 'unique-key',
+            title: '',
+            dataType: '[object]',
+            propName: '$',
+            children: [
+              {key: 'unique-key', parentKey: 'unique-key', title: '', jsonPath: 'id', propName: 'id', dataType: 'string'},
+            ]}],
+        isMonitorLevelAccess: false,
       }))
       .run();
+
+    expect(saga1).toBeTruthy();
     mock.mockRestore();
   });
 
-  test('should trigger mapping init correctly for Netsuite import', () => {
+  test('should trigger mapping init correctly for Netsuite import', async () => {
     const mock = jest.spyOn(shortid, 'generate');  // spy on otherFn
+
     const flowId = 'flow25';
     const importId = 'import25';
     const exportId = 'export25';
 
     mock.mockReturnValue('mock_key');
-    expectSaga(mappingInit, {flowId, importId})
+
+    const saga2 = await expectSaga(mappingInit, {flowId, importId})
       .provide([
         [call(fetchRequiredMappingData, {flowId, importId}), {}],
         [select(selectors.resource, 'imports', importId), {_id: importId, adaptorType: 'NetSuiteDistributedImport', lookups: [], netsuite_da: {mapping: {fields: [{extract: 'e1', generate: 'g1'}], lists: [{generate: 'l1', fields: [{extract: 'x', generate: 'y'}]}]}}}],
@@ -417,23 +441,32 @@ describe('mappingInit saga', () => {
         ],
         lookups: [],
         flowId,
+        version: 1,
+        requiredMappings: [],
+        importSampleData: undefined,
+        v2TreeData: undefined,
+        extractsTree: undefined,
+        isMonitorLevelAccess: false,
         importId,
         subRecordMappingId: undefined,
         isGroupedSampleData: true,
       }))
       .run();
+
+    expect(saga2).toBeTruthy();
     mock.mockRestore();
   });
 
-  test('should trigger mapping init correctly for Netsuite subrecord import mapping', () => {
+  test('should trigger mapping init correctly for Netsuite subrecord import mapping', async () => {
     const subRecordMappingId = 'item[*].celigo_inventorydetail';
     const mock = jest.spyOn(shortid, 'generate');  // spy on otherFn
+
     const flowId = 'flow26';
     const importId = 'import26';
     const exportId = 'export26';
 
     mock.mockReturnValue('mock_key');
-    expectSaga(mappingInit, {flowId, importId, subRecordMappingId})
+    const saga3 = await expectSaga(mappingInit, {flowId, importId, subRecordMappingId})
       .provide([
         [call(fetchRequiredMappingData, {flowId, importId}), {}],
         [select(selectors.resource, 'imports', importId), {_id: importId, adaptorType: 'NetSuiteDistributedImport', lookups: [], netsuite_da: {mapping: {fields: [{extract: 'e1', generate: 'g1'}], lists: [{generate: 'item', fields: [{generate: 'celigo_inventorydetail', subRecordMapping: {jsonPath: '$', lookups: [], mapping: {recordType: 'inventorydetail', fields: [{extract: 'a', generate: 'b'}], lists: []}}}]}]}}}],
@@ -455,19 +488,29 @@ describe('mappingInit saga', () => {
         importId,
         subRecordMappingId,
         isGroupedSampleData: true,
+        version: 1,
+        requiredMappings: [],
+        importSampleData: undefined,
+        v2TreeData: undefined,
+        extractsTree: undefined,
+        isMonitorLevelAccess: false,
       }))
       .run();
+
+    expect(saga3).toBeTruthy();
     mock.mockRestore();
   });
 
-  test('should trigger mapping init correctly for assistants', () => {
+  test('should trigger mapping init correctly for assistants', async () => {
     const mock = jest.spyOn(shortid, 'generate');  // spy on otherFn
+
+    generateUniqueKey.mockReturnValue('unique-key');
     const flowId = 'flow27';
     const importId = 'import27';
     const exportId = 'export27';
 
     mock.mockReturnValue('mock_key');
-    expectSaga(mappingInit, {flowId, importId})
+    const saga4 = await expectSaga(mappingInit, {flowId, importId})
       .provide([
         [call(fetchRequiredMappingData, {flowId, importId}), {}],
         [call(apiCallWithRetry, {path: '/ui/assistants/3dcart', opts: {method: 'GET'}}), {export: {}, import: {}}],
@@ -504,7 +547,6 @@ describe('mappingInit saga', () => {
       .put(actions.flowData.receivedPreviewData(flowId, 'import27', undefined, 'flowInput'))
       .put(actions.flowData.receivedProcessorData(flowId, 'import27', 'processedFlowInput', {data: []}))
       .put(actions.flowData.receivedProcessorData(flowId, 'import27', 'preMap', {data: []}))
-
       .put(actions.mapping.initComplete({
         mappings: [{ generate: 'a', extract: 'b', key: 'mock_key' }],
         lookups: [],
@@ -512,20 +554,40 @@ describe('mappingInit saga', () => {
         importId: 'import27',
         subRecordMappingId: undefined,
         isGroupedSampleData: true,
+        version: 1,
+        requiredMappings: [],
+        importSampleData: undefined,
+        v2TreeData: [{
+          key: 'unique-key',
+          isEmptyRow: true,
+          title: '',
+          disabled: false,
+          dataType: MAPPING_DATA_TYPES.STRING,
+        }],
+        extractsTree: [
+          {key: 'unique-key',
+            title: '',
+            dataType: '[object]',
+            propName: '$',
+            children: [
+              {key: 'unique-key', parentKey: 'unique-key', title: '', jsonPath: 'id', propName: 'id', dataType: 'string'},
+            ]}],
+        isMonitorLevelAccess: false,
       }))
-
       .run();
+
+    expect(saga4).toBeTruthy();
     mock.mockRestore();
   });
 
-  test('should trigger mapping init correctly for IA', () => {
+  test('should trigger mapping init correctly for IA', async () => {
     const mock = jest.spyOn(shortid, 'generate');  // spy on otherFn
     const flowId = 'flow28';
     const importId = 'import28';
     const exportId = 'export28';
 
     mock.mockReturnValue('mock_key');
-    expectSaga(mappingInit, {flowId, importId})
+    const saga5 = await expectSaga(mappingInit, {flowId, importId})
       .provide([
         [call(fetchRequiredMappingData, {flowId, importId}), {}],
         [call(apiCallWithRetry, {path: '/integrations/_i1/settings/getMappingMetadata',
@@ -571,9 +633,186 @@ describe('mappingInit saga', () => {
         importId,
         subRecordMappingId: undefined,
         isGroupedSampleData: true,
+        version: 1,
+        requiredMappings: [],
+        importSampleData: undefined,
+        v2TreeData: undefined,
+        extractsTree: undefined,
+        isMonitorLevelAccess: false,
       }))
       .run();
+
+    expect(saga5).toBeTruthy();
     mock.mockRestore();
+  });
+  test('should not save v2 mappings in the state for non file and http/rest import', async () => {
+    const flowId = 'flow24';
+    const importId = 'import24';
+    const exportId = 'export24';
+    const mock = jest.spyOn(shortid, 'generate');  // spy on otherFn
+
+    mock.mockReturnValue('mock_key');
+    const dbSaga = await expectSaga(mappingInit, {flowId, importId})
+      .provide([
+        [call(fetchRequiredMappingData, {flowId, importId}), {}],
+        [select(selectors.resource, 'imports', importId), {_id: importId,
+          adaptorType: 'RDBMSImport',
+          lookups: [],
+          mapping: {fields: [{extract: 'e1', generate: 'g1'}], lists: [{generate: 'l1', fields: [{extract: 'x', generate: 'y'}]}]},
+          mappings: [{extract: 'id', generate: 'id', dataType: 'string'}],
+        }],
+        [select(selectors.firstFlowPageGenerator, flowId), {_id: exportId}],
+        [select(selectors.getSampleDataContext, {
+          flowId,
+          resourceId: importId,
+          stage: 'importMappingExtract',
+          resourceType: 'imports',
+        }), {data: [{id: 'a'}]}],
+      ])
+      .put(actions.mapping.initComplete({
+        mappings: [
+          {extract: 'e1', generate: 'g1', key: 'mock_key'},
+          {extract: 'x', generate: 'l1[*].y', useFirstRow: true, key: 'mock_key'},
+        ],
+        lookups: [],
+        flowId,
+        importId,
+        subRecordMappingId: undefined,
+        isGroupedSampleData: true,
+        version: 1,
+        requiredMappings: [],
+        importSampleData: undefined,
+        v2TreeData: undefined,
+        extractsTree: undefined,
+        isMonitorLevelAccess: false,
+      }))
+      .run();
+
+    expect(dbSaga).toBeTruthy();
+    mock.mockRestore();
+  });
+  test('should save v2 mappings in the state for file import with csv file type', async () => {
+    const flowId = 'flow24';
+    const importId = 'import24';
+    const exportId = 'export24';
+    const mock = jest.spyOn(shortid, 'generate');  // spy on otherFn
+
+    mock.mockReturnValue('mock_key');
+    generateUniqueKey.mockReturnValue('unique-key');
+
+    const as2Saga = await expectSaga(mappingInit, {flowId, importId})
+      .provide([
+        [call(fetchRequiredMappingData, {flowId, importId}), {}],
+        [select(selectors.resource, 'imports', importId), {_id: importId,
+          adaptorType: 'AS2Import',
+          file: {type: 'csv'},
+          lookups: [],
+          mapping: {fields: [{extract: 'e1', generate: 'g1'}], lists: [{generate: 'l1', fields: [{extract: 'x', generate: 'y'}]}]},
+        }],
+        [select(selectors.firstFlowPageGenerator, flowId), {_id: exportId}],
+        [select(selectors.getSampleDataContext, {
+          flowId,
+          resourceId: importId,
+          stage: 'importMappingExtract',
+          resourceType: 'imports',
+        }), {data: [{id: 'a'}]}],
+      ])
+      .put(actions.mapping.initComplete({
+        mappings: [
+          {extract: 'e1', generate: 'g1', key: 'mock_key'},
+          {extract: 'x', generate: 'l1[*].y', useFirstRow: true, key: 'mock_key'},
+        ],
+        lookups: [],
+        flowId,
+        importId,
+        subRecordMappingId: undefined,
+        isGroupedSampleData: true,
+        version: 1,
+        requiredMappings: [],
+        importSampleData: undefined,
+        v2TreeData: [
+          {key: 'unique-key',
+            generateDisabled: true,
+            title: '',
+            disabled: false,
+            dataType: 'objectarray',
+            children: [
+              {
+                key: 'unique-key', isEmptyRow: true, title: '', disabled: false, dataType: 'string',
+              },
+            ]}],
+        extractsTree: [
+          {key: 'unique-key',
+            title: '',
+            dataType: '[object]',
+            propName: '$',
+            children: [
+              {key: 'unique-key', parentKey: 'unique-key', title: '', jsonPath: 'id', propName: 'id', dataType: 'string'},
+            ]}],
+        isMonitorLevelAccess: false,
+      }))
+      .run();
+
+    expect(as2Saga).toBeTruthy();
+    mock.mockRestore();
+  });
+  test('should save v2 mappings in the state for http/rest import', () => {
+    const flowId = 'flow24';
+    const importId = 'import24';
+    const exportId = 'export24';
+
+    generateUniqueKey.mockReturnValue('unique-key');
+
+    return expectSaga(mappingInit, {flowId, importId})
+      .provide([
+        [call(fetchRequiredMappingData, {flowId, importId}), {}],
+        [select(selectors.resource, 'imports', importId), {_id: importId,
+          adaptorType: 'HTTPImport',
+          lookups: [],
+          mappings: [{extract: 'id', generate: 'id', dataType: 'string'}],
+        }],
+        [select(selectors.firstFlowPageGenerator, flowId), {_id: exportId}],
+        [select(selectors.getSampleDataContext, {
+          flowId,
+          resourceId: importId,
+          stage: 'importMappingExtract',
+          resourceType: 'imports',
+        }), {data: [{id: 'a'}]}],
+      ])
+      .put(actions.mapping.initComplete({
+        mappings: [],
+        lookups: [],
+        flowId,
+        importId,
+        subRecordMappingId: undefined,
+        isGroupedSampleData: true,
+        version: 2,
+        requiredMappings: [],
+        importSampleData: undefined,
+        v2TreeData: [{
+          key: 'unique-key',
+          title: '',
+          parentKey: undefined,
+          parentExtract: undefined,
+          disabled: false,
+          hidden: undefined,
+          className: undefined,
+          extract: 'id',
+          generate: 'id',
+          jsonPath: 'id',
+          dataType: 'string',
+        }],
+        extractsTree: [
+          {key: 'unique-key',
+            title: '',
+            dataType: '[object]',
+            propName: '$',
+            children: [
+              {key: 'unique-key', parentKey: 'unique-key', title: '', jsonPath: 'id', propName: 'id', dataType: 'string'},
+            ]}],
+        isMonitorLevelAccess: false,
+      }))
+      .run();
   });
 });
 
@@ -582,124 +821,118 @@ describe('saveMappings saga', () => {
   const importId = 'i1';
   const exportId = 'e1';
 
-  test('should trigger mapping saveFailed action in case of incorrect importId', () => {
-    expectSaga(saveMappings)
-      .provide([
-        [select(selectors.mapping), {
-          mappings: [{extract: 'e1', generate: 'g1', lookupName: 'l1'}],
-          lookups: [{name: 'l1'}],
-          importId,
-          flowId,
-        }],
-        [select(selectors.mappingGenerates, importId, undefined), []],
-        [select(selectors.resource, 'imports', importId), null],
-      ])
-      .put(actions.mapping.saveFailed())
-      .run();
-  });
+  test('should trigger mapping saveFailed action in case of incorrect importId', () => expectSaga(saveMappings)
+    .provide([
+      [select(selectors.mapping), {
+        mappings: [{extract: 'e1', generate: 'g1', lookupName: 'l1'}],
+        lookups: [{name: 'l1'}],
+        importId,
+        flowId,
+      }],
+      [select(selectors.mappingGenerates, importId, undefined), []],
+      [select(selectors.resource, 'imports', importId), null],
+    ])
+    .put(actions.mapping.saveFailed())
+    .run());
 
-  test('should trigger mapping save correctly for Netsuite Import', () => {
-    expectSaga(saveMappings)
-      .provide([
-        [select(selectors.mapping), {
-          mappings: [{extract: 'e1', generate: 'g1'}],
-          lookups: [{name: 'lookup1', isConditionalLookup: true}, {name: 'lookup2'}],
-          importId,
-          flowId,
-        }],
-        [select(selectors.resource, 'imports', importId), {_id: importId, name: 'n1', lookups: [], adaptorType: 'NetSuiteDistributedImport', netsuite_da: {recordType: 'account', mapping: {fields: [], lists: []}}}],
-        [select(selectors.mappingGenerates, importId, undefined), []],
-        [select(selectors.mappingNSRecordType, importId), 'account'],
-        [select(selectors.firstFlowPageGenerator, flowId), {_id: exportId}],
-        [call(commitStagedChanges, {
-          resourceType: 'imports',
-          id: importId,
-          scope: SCOPES.VALUE,
-          context: { flowId },
-        }), {}],
-        [select(selectors.getSampleDataContext, {
-          flowId,
-          resourceId: importId,
-          stage: 'importMappingExtract',
-          resourceType: 'imports',
-        }), {data: []}],
-
-      ])
-      .put(actions.resource.patchStaged(importId, [
-        {
-          op: 'replace',
-          path: '/netsuite_da/mapping',
-          value: {fields: [{generate: 'g1', extract: 'e1', internalId: false}], lists: []},
-        },
-        {
-          op: 'replace',
-          path: '/netsuite_da/lookups',
-          value: [{ name: 'lookup2' }],
-        },
-      ], SCOPES.VALUE))
-      .call(commitStagedChanges, {
+  test('should trigger mapping save correctly for Netsuite Import', () => expectSaga(saveMappings)
+    .provide([
+      [select(selectors.mapping), {
+        mappings: [{extract: 'e1', generate: 'g1'}],
+        lookups: [{name: 'lookup1', isConditionalLookup: true}, {name: 'lookup2'}],
+        importId,
+        flowId,
+      }],
+      [select(selectors.resource, 'imports', importId), {_id: importId, name: 'n1', lookups: [], adaptorType: 'NetSuiteDistributedImport', netsuite_da: {recordType: 'account', mapping: {fields: [], lists: []}}}],
+      [select(selectors.mappingGenerates, importId, undefined), []],
+      [select(selectors.mappingNSRecordType, importId), 'account'],
+      [select(selectors.firstFlowPageGenerator, flowId), {_id: exportId}],
+      [call(commitStagedChanges, {
         resourceType: 'imports',
         id: importId,
         scope: SCOPES.VALUE,
         context: { flowId },
-      })
-      .put(actions.mapping.saveComplete())
-      .run();
-  });
+      }), {}],
+      [select(selectors.getSampleDataContext, {
+        flowId,
+        resourceId: importId,
+        stage: 'importMappingExtract',
+        resourceType: 'imports',
+      }), {data: []}],
 
-  test('should trigger mapping save failed action when api fails to save', () => {
-    expectSaga(saveMappings)
-      .provide([
-        [select(selectors.mapping), {
-          mappings: [{extract: 'e1', generate: 'g1'}],
-          lookups: [],
-          importId,
-          flowId,
-        }],
-        [select(selectors.resource, 'imports', importId), {_id: importId, name: 'n1', lookups: [], adaptorType: 'NetSuiteDistributedImport', netsuite_da: {recordType: 'account', mapping: {fields: [], lists: []}}}],
-        [select(selectors.mappingGenerates, importId, undefined), []],
-        [select(selectors.mappingNSRecordType, importId), 'account'],
-        [select(selectors.firstFlowPageGenerator, flowId), {_id: exportId}],
-        [call(commitStagedChanges, {
-          resourceType: 'imports',
-          id: importId,
-          scope: SCOPES.VALUE,
-          context: { flowId },
-        }), {error: {}}],
-        [select(selectors.getSampleDataContext, {
-          flowId,
-          resourceId: importId,
-          stage: 'importMappingExtract',
-          resourceType: 'imports',
-        }), {data: []}],
+    ])
+    .put(actions.resource.patchStaged(importId, [
+      {
+        op: 'replace',
+        path: '/netsuite_da/mapping',
+        value: {fields: [{generate: 'g1', extract: 'e1', internalId: false}], lists: []},
+      },
+      {
+        op: 'replace',
+        path: '/netsuite_da/lookups',
+        value: [{ name: 'lookup2' }],
+      },
+    ], SCOPES.VALUE))
+    .call(commitStagedChanges, {
+      resourceType: 'imports',
+      id: importId,
+      scope: SCOPES.VALUE,
+      context: { flowId },
+    })
+    .put(actions.mapping.saveComplete())
+    .run());
 
-      ])
-      .put(actions.resource.patchStaged(importId, [
-        {
-          op: 'replace',
-          path: '/netsuite_da/mapping',
-          value: {fields: [{generate: 'g1', extract: 'e1', internalId: false}], lists: []},
-        },
-        {
-          op: 'replace',
-          path: '/netsuite_da/lookups',
-          value: [],
-        },
-      ], SCOPES.VALUE))
-      .call(commitStagedChanges, {
+  test('should trigger mapping save failed action when api fails to save', () => expectSaga(saveMappings)
+    .provide([
+      [select(selectors.mapping), {
+        mappings: [{extract: 'e1', generate: 'g1'}],
+        lookups: [],
+        importId,
+        flowId,
+      }],
+      [select(selectors.resource, 'imports', importId), {_id: importId, name: 'n1', lookups: [], adaptorType: 'NetSuiteDistributedImport', netsuite_da: {recordType: 'account', mapping: {fields: [], lists: []}}}],
+      [select(selectors.mappingGenerates, importId, undefined), []],
+      [select(selectors.mappingNSRecordType, importId), 'account'],
+      [select(selectors.firstFlowPageGenerator, flowId), {_id: exportId}],
+      [call(commitStagedChanges, {
         resourceType: 'imports',
         id: importId,
         scope: SCOPES.VALUE,
         context: { flowId },
-      })
-      .put(actions.mapping.saveFailed())
-      .run();
-  });
+      }), {error: {}}],
+      [select(selectors.getSampleDataContext, {
+        flowId,
+        resourceId: importId,
+        stage: 'importMappingExtract',
+        resourceType: 'imports',
+      }), {data: []}],
+
+    ])
+    .put(actions.resource.patchStaged(importId, [
+      {
+        op: 'replace',
+        path: '/netsuite_da/mapping',
+        value: {fields: [{generate: 'g1', extract: 'e1', internalId: false}], lists: []},
+      },
+      {
+        op: 'replace',
+        path: '/netsuite_da/lookups',
+        value: [],
+      },
+    ], SCOPES.VALUE))
+    .call(commitStagedChanges, {
+      resourceType: 'imports',
+      id: importId,
+      scope: SCOPES.VALUE,
+      context: { flowId },
+    })
+    .put(actions.mapping.saveFailed())
+    .run());
 
   test('should trigger mapping save correctly for Netsuite subrecord import', () => {
     const subRecordMappingId = 'item[*].celigo_inventorydetail';
 
-    expectSaga(saveMappings)
+    return expectSaga(saveMappings)
       .provide([
         [select(selectors.mapping), {
           subRecordMappingId,
@@ -793,6 +1026,120 @@ describe('saveMappings saga', () => {
       .put(actions.mapping.saveComplete())
       .run();
   });
+  test('should trigger patch staged action for v2 mappings as well if adaptor supports v2 mappings and v2 mappings are changed', () => expectSaga(saveMappings)
+    .provide([
+      [select(selectors.mapping), {
+        mappings: [{extract: 'e1', generate: 'g1'}],
+        lookups: [{name: 'lookup1', isConditionalLookup: true}, {name: 'lookup2'}],
+        v2TreeData: [{extract: 'id', generate: 'new-id', dataType: 'string', key: 'unique'}],
+        v2TreeDataCopy: [{extract: 'id', generate: 'id', dataType: 'string', key: 'unique'}],
+        importId,
+        flowId,
+      }],
+      [select(selectors.resource, 'imports', importId), {_id: importId, name: 'n1', lookups: [], adaptorType: 'HTTPImport'}],
+      [select(selectors.mappingGenerates, importId, undefined), []],
+      [select(selectors.firstFlowPageGenerator, flowId), {_id: exportId}],
+      [select(selectors.isMapper2Supported), true],
+      [select(selectors.v2MappingChanged), true],
+      [call(commitStagedChanges, {
+        resourceType: 'imports',
+        id: importId,
+        scope: SCOPES.VALUE,
+        context: { flowId },
+      }), {}],
+      [select(selectors.getSampleDataContext, {
+        flowId,
+        resourceId: importId,
+        stage: 'importMappingExtract',
+        resourceType: 'imports',
+      }), {data: []}],
+    ])
+    .put(actions.resource.patchStaged(importId, [
+      {
+        op: 'replace',
+        path: '/mapping',
+        value: {fields: [{generate: 'g1', extract: 'e1'}], lists: []},
+      },
+      {
+        op: 'replace',
+        path: '/http/lookups',
+        value: [{ name: 'lookup2' }],
+      },
+      {
+        op: 'replace',
+        path: '/mappings',
+        value: [{
+          generate: 'new-id',
+          dataType: 'string',
+          extract: 'id',
+          description: undefined,
+          extractDateFormat: undefined,
+          extractDateTimezone: undefined,
+          generateDateFormat: undefined,
+          generateDateTimezone: undefined,
+          hardCodedValue: undefined,
+          lookupName: undefined,
+          default: undefined,
+          conditional: {when: undefined},
+        }],
+      },
+    ], SCOPES.VALUE))
+    .call(commitStagedChanges, {
+      resourceType: 'imports',
+      id: importId,
+      scope: SCOPES.VALUE,
+      context: { flowId },
+    })
+    .put(actions.mapping.saveComplete())
+    .run());
+  test('should not trigger patch staged action for v2 mappings path if adaptor supports v2 mappings and no v2 mappings are changed', () => expectSaga(saveMappings)
+    .provide([
+      [select(selectors.mapping), {
+        mappings: [{extract: 'e1', generate: 'g1'}],
+        lookups: [{name: 'lookup1', isConditionalLookup: true}, {name: 'lookup2'}],
+        v2TreeData: [{extract: 'id', generate: 'id', dataType: 'string', key: 'unique'}],
+        v2TreeDataCopy: [{extract: 'id', generate: 'id', dataType: 'string', key: 'unique'}],
+        importId,
+        flowId,
+      }],
+      [select(selectors.resource, 'imports', importId), {_id: importId, name: 'n1', lookups: [], adaptorType: 'HTTPImport'}],
+      [select(selectors.mappingGenerates, importId, undefined), []],
+      [select(selectors.firstFlowPageGenerator, flowId), {_id: exportId}],
+      [select(selectors.isMapper2Supported), true],
+      [select(selectors.v2MappingChanged), false],
+      [call(commitStagedChanges, {
+        resourceType: 'imports',
+        id: importId,
+        scope: SCOPES.VALUE,
+        context: { flowId },
+      }), {}],
+      [select(selectors.getSampleDataContext, {
+        flowId,
+        resourceId: importId,
+        stage: 'importMappingExtract',
+        resourceType: 'imports',
+      }), {data: []}],
+    ])
+    .put(actions.resource.patchStaged(importId, [
+      {
+        op: 'replace',
+        path: '/mapping',
+        value: {fields: [{generate: 'g1', extract: 'e1'}], lists: []},
+      },
+      {
+        op: 'replace',
+        path: '/http/lookups',
+        value: [{ name: 'lookup2' }],
+      },
+    ], SCOPES.VALUE))
+    .call(commitStagedChanges, {
+      resourceType: 'imports',
+      id: importId,
+      scope: SCOPES.VALUE,
+      context: { flowId },
+    })
+    .put(actions.mapping.saveComplete())
+    .run());
 });
 
 describe('previewMappings saga', () => {
@@ -801,26 +1148,24 @@ describe('previewMappings saga', () => {
   const exportId = 'e1';
   const connectionId = 'conn1';
 
-  test('should trigger mapping preview failed action in case of incorrect importId', () => {
-    expectSaga(previewMappings)
-      .provide([
-        [select(selectors.mapping), {
-          mappings: [{extract: 'e1', generate: 'g1', lookupName: 'l1'}],
-          lookups: [{name: 'l1'}],
-          importId,
-          flowId,
-        }],
-        [select(selectors.mappingGenerates, importId, undefined), []],
-        [select(selectors.resource, 'imports', importId), null],
-      ])
-      .put(actions.mapping.previewFailed())
-      .run();
-  });
+  test('should trigger mapping preview failed action in case of incorrect importId', () => expectSaga(previewMappings, {})
+    .provide([
+      [select(selectors.mapping), {
+        mappings: [{extract: 'e1', generate: 'g1', lookupName: 'l1'}],
+        lookups: [{name: 'l1'}],
+        importId,
+        flowId,
+      }],
+      [select(selectors.mappingGenerates, importId, undefined), []],
+      [select(selectors.resource, 'imports', importId), null],
+    ])
+    .put(actions.mapping.previewFailed())
+    .run());
 
   test('should trigger mapping preview correctly for Netsuite Import', () => {
     const importRes = {_id: importId, _connectionId: connectionId, name: 'n1', lookups: [], adaptorType: 'NetSuiteDistributedImport', netsuite_da: {recordType: 'account', mapping: {fields: [], lists: []}}};
 
-    expectSaga(previewMappings)
+    return expectSaga(previewMappings, {})
       .provide([
         [select(selectors.mapping), {
           mappings: [{extract: 'e1', generate: 'g1'}],
@@ -871,7 +1216,7 @@ describe('previewMappings saga', () => {
   test('should trigger mapping preview failed action correctly for Netsuite Import', () => {
     const importRes = {_id: importId, _connectionId: connectionId, name: 'n1', lookups: [], adaptorType: 'NetSuiteDistributedImport', netsuite_da: {recordType: 'account', mapping: {fields: [], lists: []}}};
 
-    expectSaga(previewMappings)
+    return expectSaga(previewMappings, {})
       .provide([
         [select(selectors.mapping), {
           mappings: [{extract: 'e1', generate: 'g1'}],
@@ -934,7 +1279,7 @@ describe('previewMappings saga', () => {
       },
     };
 
-    expectSaga(previewMappings)
+    return expectSaga(previewMappings, {})
       .provide([
         [select(selectors.mapping), {
           mappings: [{extract: 'e1', generate: 'g1'}],
@@ -984,8 +1329,22 @@ describe('previewMappings saga', () => {
   });
   test('should trigger mapping preview correctly for Netsuite subrecord import', () => {
     const subRecordMappingId = 'item[*].celigo_inventorydetail';
+    const requestBody = {
+      data: [[]],
+      celigo_resource: 'previewImportMappingFields',
+      importConfig: {
+        mapping: {fields: [{extract: 'e1', generate: 'g1'}],
+          lists: [
+            {generate: 'item',
+              fields: [
+                {generate: 'celigo_inventorydetail',
+                  subRecordMapping: {
+                    jsonPath: '$',
+                    lookups: [{name: 'lookup2'}],
+                    mapping: {fields: [{extract: 'e1', generate: 'g1', internalId: false}], lists: []},
+                  }}]}]}}};
 
-    expectSaga(previewMappings)
+    return expectSaga(previewMappings, {})
       .provide([
         [select(selectors.mapping), {
           subRecordMappingId,
@@ -1030,7 +1389,10 @@ describe('previewMappings saga', () => {
         [select(selectors.firstFlowPageGenerator, flowId), {_id: exportId}],
         [call(apiCallWithRetry, {
           path: `/netsuiteDA/previewImportMappingFields?_connectionId=${connectionId}`,
-          opts: {method: 'PUT', body: {data: [[]], celigo_resource: 'previewImportMappingFields', importConfig: {mapping: {fields: [{extract: 'e1', generate: 'g1'}], lists: [{generate: 'item', fields: [{generate: 'celigo_inventorydetail', subRecordMapping: {jsonPath: '$', lookups: [], mapping: {fields: [{extract: 'e1', generate: 'g1', internalId: false}], lists: []}}}]}]}}}},
+          opts: {
+            method: 'PUT',
+            body: requestBody,
+          },
           message: 'Loading',
         }), {previewData: 'xyz'}],
         [select(selectors.getSampleDataContext, {
@@ -1042,9 +1404,9 @@ describe('previewMappings saga', () => {
       ])
       .call(apiCallWithRetry, {
         path: `/netsuiteDA/previewImportMappingFields?_connectionId=${connectionId}`,
-        opts: {method: 'PUT', body: {data: [[]], celigo_resource: 'previewImportMappingFields', importConfig: {mapping: {fields: [{extract: 'e1', generate: 'g1'}], lists: [{generate: 'item', fields: [{generate: 'celigo_inventorydetail', subRecordMapping: {jsonPath: '$', lookups: [], mapping: {fields: [{extract: 'e1', generate: 'g1', internalId: false}], lists: []}}}]}]}}}},
-        message: 'Loading',
-      })
+        opts: {method: 'PUT',
+          body: requestBody},
+        message: 'Loading'})
       .put(actions.mapping.previewReceived({previewData: 'xyz'}))
       .run();
   });
@@ -1064,8 +1426,86 @@ describe('previewMappings saga', () => {
         sObjectType: 'account',
       },
     };
+    const requestBody = {
+      data: [],
+      importConfig: {
+        _id: 'i1',
+        _connectionId: 'conn11',
+        name: 'n1',
+        lookups: [],
+        adaptorType: 'SalesforceImport',
+        mapping: {
+          fields: [
+            {
+              extract: 'e1',
+              generate: 'g1',
+            },
+          ],
+          lists: [],
+        },
+        salesforce: {
+          sObjectType: 'account',
+          lookups: [{name: 'lookup2'}],
+        },
+      },
+    };
 
-    expectSaga(previewMappings)
+    return expectSaga(previewMappings, {})
+      .provide([
+        [select(selectors.mapping), {
+          mappings: [{extract: 'e1', generate: 'g1'}],
+          lookups: [{name: 'lookup1', isConditionalLookup: true}, {name: 'lookup2'}],
+          importId,
+          flowId,
+        }],
+        [select(selectors.resource, 'imports', importId), importRes],
+        [select(selectors.mappingGenerates, importId, undefined), []],
+        [select(selectors.firstFlowPageGenerator, flowId), {_id: exportId}],
+        [call(apiCallWithRetry, {
+          path: '/connections/conn11/mappingPreview',
+          opts: {
+            method: 'PUT',
+            body: requestBody,
+          },
+          message: 'Loading',
+        }), {previewData: 'xyz'}],
+        [select(selectors.getSampleDataContext, {
+          flowId,
+          resourceId: importId,
+          stage: 'importMappingExtract',
+          resourceType: 'imports',
+        }), {data: []}],
+
+      ])
+      .call(apiCallWithRetry, {
+        path: '/connections/conn11/mappingPreview',
+        opts: {
+          method: 'PUT',
+          body: requestBody,
+        },
+        message: 'Loading',
+      })
+      .put(actions.mapping.previewReceived({previewData: 'xyz'}))
+      .run();
+  });
+  test('should trigger mapping preview success action correctly with editor sample data', () => {
+    const importRes = {
+      _id: importId,
+      _connectionId: 'conn11',
+      name: 'n1',
+      lookups: [],
+      adaptorType: 'SalesforceImport',
+      mapping: {
+        fields: [],
+        lists: [],
+      },
+      salesforce: {
+        sObjectType: 'account',
+      },
+    };
+    const editorId = '123';
+
+    expectSaga(previewMappings, {editorId})
       .provide([
         [select(selectors.mapping), {
           mappings: [{extract: 'e1', generate: 'g1'}],
@@ -1112,16 +1552,14 @@ describe('previewMappings saga', () => {
           stage: 'importMappingExtract',
           resourceType: 'imports',
         }), {data: []}],
-
+        [select(selectors.editor, editorId), {data: [{id: '1'}]}],
       ])
       .call(apiCallWithRetry, {
         path: '/connections/conn11/mappingPreview',
         opts: {
           method: 'PUT',
           body: {
-            data: [
-
-            ],
+            data: [{id: '1'}],
             importConfig: {
               _id: 'i1',
               _connectionId: 'conn11',
@@ -1149,7 +1587,6 @@ describe('previewMappings saga', () => {
       .put(actions.mapping.previewReceived({previewData: 'xyz'}))
       .run();
   });
-
   test('should trigger mapping preview success action correctly for HTTPImport Import', () => {
     const importRes = {
       _id: importId,
@@ -1164,8 +1601,29 @@ describe('previewMappings saga', () => {
         lists: [],
       },
     };
+    const requestBody = {
+      data: [],
+      importConfig: {
+        _id: 'i1',
+        _connectionId: 'connection2',
+        name: 'n1',
+        http: {
+          lookups: [{name: 'lookup2'}],
+        },
+        adaptorType: 'HTTPImport',
+        mapping: {
+          fields: [
+            {
+              extract: 'e1',
+              generate: 'g1',
+            },
+          ],
+          lists: [],
+        },
+      },
+    };
 
-    expectSaga(previewMappings)
+    return expectSaga(previewMappings, {})
       .provide([
         [select(selectors.mapping), {
           mappings: [{extract: 'e1', generate: 'g1'}],
@@ -1180,27 +1638,7 @@ describe('previewMappings saga', () => {
           path: '/connections/connection2/mappingPreview',
           opts: {
             method: 'PUT',
-            body: {
-              data: [],
-              importConfig: {
-                _id: 'i1',
-                _connectionId: 'connection2',
-                name: 'n1',
-                adaptorType: 'HTTPImport',
-                http: {
-                  lookups: [],
-                },
-                mapping: {
-                  fields: [
-                    {
-                      extract: 'e1',
-                      generate: 'g1',
-                    },
-                  ],
-                  lists: [],
-                },
-              },
-            },
+            body: requestBody,
           },
           message: 'Loading',
         }), {previewData: 'xyz'}],
@@ -1216,29 +1654,7 @@ describe('previewMappings saga', () => {
         path: '/connections/connection2/mappingPreview',
         opts: {
           method: 'PUT',
-          body: {
-            data: [
-
-            ],
-            importConfig: {
-              _id: 'i1',
-              _connectionId: 'connection2',
-              name: 'n1',
-              http: {
-                lookups: [],
-              },
-              adaptorType: 'HTTPImport',
-              mapping: {
-                fields: [
-                  {
-                    extract: 'e1',
-                    generate: 'g1',
-                  },
-                ],
-                lists: [],
-              },
-            },
-          },
+          body: requestBody,
         },
         message: 'Loading',
       })
@@ -1259,8 +1675,31 @@ describe('previewMappings saga', () => {
         lists: [],
       },
     };
+    const requestBody = {
+      data: [
 
-    expectSaga(previewMappings)
+      ],
+      importConfig: {
+        _id: 'i1',
+        _connectionId: 'conn3',
+        name: 'n1',
+        http: {
+          lookups: [{name: 'lookup2'}],
+        },
+        adaptorType: 'HTTPImport',
+        mapping: {
+          fields: [
+            {
+              extract: 'e1',
+              generate: 'g1',
+            },
+          ],
+          lists: [],
+        },
+      },
+    };
+
+    return expectSaga(previewMappings, {})
       .provide([
         [select(selectors.mapping), {
           mappings: [{extract: 'e1', generate: 'g1'}],
@@ -1275,27 +1714,7 @@ describe('previewMappings saga', () => {
           path: '/connections/conn3/mappingPreview',
           opts: {
             method: 'PUT',
-            body: {
-              data: [],
-              importConfig: {
-                _id: 'i1',
-                _connectionId: 'conn3',
-                name: 'n1',
-                adaptorType: 'HTTPImport',
-                http: {
-                  lookups: [],
-                },
-                mapping: {
-                  fields: [
-                    {
-                      extract: 'e1',
-                      generate: 'g1',
-                    },
-                  ],
-                  lists: [],
-                },
-              },
-            },
+            body: requestBody,
           },
           message: 'Loading',
         }), throwError('api failure')],
@@ -1311,29 +1730,7 @@ describe('previewMappings saga', () => {
         path: '/connections/conn3/mappingPreview',
         opts: {
           method: 'PUT',
-          body: {
-            data: [
-
-            ],
-            importConfig: {
-              _id: 'i1',
-              _connectionId: 'conn3',
-              name: 'n1',
-              http: {
-                lookups: [],
-              },
-              adaptorType: 'HTTPImport',
-              mapping: {
-                fields: [
-                  {
-                    extract: 'e1',
-                    generate: 'g1',
-                  },
-                ],
-                lists: [],
-              },
-            },
-          },
+          body: requestBody,
         },
         message: 'Loading',
       })
@@ -1379,7 +1776,7 @@ describe('validateMappings saga', () => {
       }],
       [call(autoEvaluateProcessorWithCancel, { id: 'mappings-123' }), undefined],
     ])
-    .put(actions.mapping.setValidationMsg('Extract Fields missing for field(s): g2'))
+    .put(actions.mapping.setValidationMsg(errorMessageStore('MAPPER1_MISSING_EXTRACT', {fields: 'g2'})))
     .call(autoEvaluateProcessorWithCancel, { id: 'mappings-123' })
     .run());
 });
@@ -1465,7 +1862,7 @@ describe('checkForIncompleteSFGenerateWhilePatch saga', () => {
       adaptorType: 'SalesforceImport',
     };
 
-    expectSaga(checkForIncompleteSFGenerateWhilePatch, {field: 'generate', value: '_child_Emails'})
+    return expectSaga(checkForIncompleteSFGenerateWhilePatch, {field: 'generate', value: '_child_Emails'})
       .provide([
         [call(validateMappings), undefined],
         [select(selectors.mappingGenerates, importId, undefined), [
@@ -1528,7 +1925,7 @@ describe('patchGenerateThroughAssistant saga', () => {
   test('should not do anything if lastModifiedRowKey = undefined', () => {
     const lastModifiedRowKey = undefined;
 
-    expectSaga(patchGenerateThroughAssistant, {value: 'abc'})
+    return expectSaga(patchGenerateThroughAssistant, {value: 'abc'})
       .provide([
         [select(selectors.mapping), {lastModifiedRowKey}],
       ])
@@ -1539,7 +1936,7 @@ describe('patchGenerateThroughAssistant saga', () => {
   test('should trigger mapping patchField action if lastModifiedRowKey != undefined', () => {
     const lastModifiedRowKey = 'k1';
 
-    expectSaga(patchGenerateThroughAssistant, {value: 'abc'})
+    return expectSaga(patchGenerateThroughAssistant, {value: 'abc'})
       .provide([
         [select(selectors.mapping), { lastModifiedRowKey}],
       ])
@@ -1554,22 +1951,20 @@ describe('getAutoMapperSuggestion saga', () => {
   const exportId = 'export51';
   const subRecordMappingId = undefined;
 
-  test('should trigger autoMapper fail action in case of incorrect import id', () => {
-    expectSaga(getAutoMapperSuggestion, {importId, flowId})
-      .provide([
-        [select(selectors.mapping), {mappings: [], flowId, importId, subRecordMappingId}],
-        [select(selectors.firstFlowPageGenerator, flowId), {name: 'a'}],
-        [select(selectors.resource, 'imports', importId), null],
-      ])
-      .put(actions.mapping.autoMapper.failed('error', 'Failed to fetch mapping suggestions.'))
-      .run();
-  });
+  test('should trigger autoMapper fail action in case of incorrect import id', () => expectSaga(getAutoMapperSuggestion, {importId, flowId})
+    .provide([
+      [select(selectors.mapping), {mappings: [], flowId, importId, subRecordMappingId}],
+      [select(selectors.firstFlowPageGenerator, flowId), {name: 'a'}],
+      [select(selectors.resource, 'imports', importId), null],
+    ])
+    .put(actions.mapping.autoMapper.failed('error', 'Failed to fetch mapping suggestions.'))
+    .run());
 
-  test('should trigger autoMapper received action correctly', () => {
+  test('should trigger autoMapper received action correctly', async () => {
     const mock = jest.spyOn(shortid, 'generate');  // spy on otherFn
 
     mock.mockReturnValue('mock_key');
-    expectSaga(getAutoMapperSuggestion, {importId, flowId})
+    const mapperSaga = await expectSaga(getAutoMapperSuggestion, {importId, flowId})
       .provide([
         [select(selectors.mapping), {mappings: [], flowId, importId, subRecordMappingId}],
         [select(selectors.firstFlowPageGenerator, flowId), {adaptorType: 'RESTExport', assistant: 'chargify', _id: exportId}],
@@ -1652,13 +2047,15 @@ describe('getAutoMapperSuggestion saga', () => {
         ]
       ))
       .run();
+
+    expect(mapperSaga).toBeTruthy();
     mock.mockRestore();
   });
-  test('should not consider mapping if already present trigger autoMapper received action correctly', () => {
+  test('should not consider mapping if already present trigger autoMapper received action correctly', async () => {
     const mock = jest.spyOn(shortid, 'generate');  // spy on otherFn
 
     mock.mockReturnValue('mock_key');
-    expectSaga(getAutoMapperSuggestion, {importId, flowId})
+    const autoMapSaga = await expectSaga(getAutoMapperSuggestion, {importId, flowId})
       .provide([
         [select(selectors.mapping), {mappings: [{extract: 'xyz', generate: 'g1'}], flowId, importId, subRecordMappingId}],
         [select(selectors.firstFlowPageGenerator, flowId), {adaptorType: 'RESTExport', assistant: 'jira', _id: exportId}],
@@ -1742,14 +2139,16 @@ describe('getAutoMapperSuggestion saga', () => {
         ]
       ))
       .run();
+
+    expect(autoMapSaga).toBeTruthy();
     mock.mockRestore();
   });
 
-  test('should trigger autoMapper failed action with warning correctly', () => {
+  test('should trigger autoMapper failed action with warning correctly', async () => {
     const mock = jest.spyOn(shortid, 'generate');  // spy on otherFn
 
     mock.mockReturnValue('mock_key');
-    expectSaga(getAutoMapperSuggestion, {importId, flowId})
+    const autoMapSaga1 = await expectSaga(getAutoMapperSuggestion, {importId, flowId})
       .provide([
         [select(selectors.mapping), {mappings: [{extract: 'xyz', generate: 'g1'}], flowId, importId, subRecordMappingId}],
         [select(selectors.firstFlowPageGenerator, flowId), {adaptorType: 'RESTExport', assistant: 'zendesk', _id: exportId}],
@@ -1818,14 +2217,16 @@ describe('getAutoMapperSuggestion saga', () => {
       })
       .put(actions.mapping.autoMapper.failed('warning', 'There are no new fields to auto-map.'))
       .run();
+
+    expect(autoMapSaga1).toBeTruthy();
     mock.mockRestore();
   });
 
-  test('should trigger autoMapper failed action if no response is returned from api call', () => {
+  test('should trigger autoMapper failed action if no response is returned from api call', async () => {
     const mock = jest.spyOn(shortid, 'generate');  // spy on otherFn
 
     mock.mockReturnValue('mock_key');
-    expectSaga(getAutoMapperSuggestion, {importId, flowId})
+    const autoMapSaga2 = await expectSaga(getAutoMapperSuggestion, {importId, flowId})
       .provide([
         [select(selectors.mapping), {mappings: [{extract: 'xyz', generate: 'g1'}], flowId, importId, subRecordMappingId}],
         [select(selectors.firstFlowPageGenerator, flowId), {adaptorType: 'RESTExport', assistant: 'zendesk', _id: exportId}],
@@ -1886,13 +2287,15 @@ describe('getAutoMapperSuggestion saga', () => {
       })
       .put(actions.mapping.autoMapper.failed('error', 'Failed to fetch mapping suggestions.'))
       .run();
+
+    expect(autoMapSaga2).toBeTruthy();
     mock.mockRestore();
   });
-  test('should should trigger autoMapper failed action on api error', () => {
+  test('should should trigger autoMapper failed action on api error', async () => {
     const mock = jest.spyOn(shortid, 'generate');  // spy on otherFn
 
     mock.mockReturnValue('mock_key');
-    expectSaga(getAutoMapperSuggestion, {importId, flowId})
+    const autoMapSaga3 = await expectSaga(getAutoMapperSuggestion, {importId, flowId})
       .provide([
         [select(selectors.mapping), {mappings: [{extract: 'xyz', generate: 'g1'}], flowId, importId, subRecordMappingId}],
         [select(selectors.firstFlowPageGenerator, flowId), {adaptorType: 'RESTExport', assistant: 'shopify', _id: exportId}],
@@ -1953,6 +2356,8 @@ describe('getAutoMapperSuggestion saga', () => {
       })
       .put(actions.mapping.autoMapper.failed('error', 'Failed to fetch mapping suggestions.'))
       .run();
+
+    expect(autoMapSaga3).toBeTruthy();
     mock.mockRestore();
   });
 });

@@ -1,7 +1,7 @@
-import { isNewId } from '../../../utils/resource';
+import { isNewId, finalSuccessMediaType } from '../../../utils/resource';
 
 export default {
-  preSave: formValues => {
+  preSave: (formValues, _, { connection } = {}) => {
     const retValues = { ...formValues };
 
     if (retValues['/http/successMediaType'] === 'csv') {
@@ -225,6 +225,28 @@ export default {
     delete retValues['/http/paging/urlPath'];
     delete retValues['/http/paging/tokenPath'];
 
+    if (connection?.http?.type === 'Amazon-SP-API') {
+      retValues['/unencrypted/apiType'] = 'Amazon-SP-API';
+    }
+
+    if (finalSuccessMediaType(formValues, connection) === 'xml' && retValues['/parsers']?.resourcePath !== '') {
+      retValues['/http/response/resourcePath'] = retValues['/parsers'].resourcePath;
+    }
+    const parseStrategy = retValues['/parsers']?.[0]?.rules?.['V0_json'];
+
+    if (finalSuccessMediaType(formValues, connection) !== 'xml' || parseStrategy) {
+      retValues['/parsers'] = undefined;
+    }
+    if (finalSuccessMediaType(formValues, connection) === 'csv') {
+      delete retValues['/http/response/resourcePath'];
+      retValues['/http/response'] = undefined;
+    }
+
+    if (!retValues['/configureAsyncHelper']) {
+      retValues['/http/_asyncHelperId'] = undefined;
+    }
+    retValues['/adaptorType'] = 'HTTPExport';
+
     return {
       ...retValues,
     };
@@ -262,6 +284,16 @@ export default {
   },
 
   fieldMap: {
+    parsers: {
+      fieldId: 'parsers',
+      required: false,
+      visibleWhenAll: [
+        {
+          field: 'outputMode',
+          is: ['records'],
+        },
+      ],
+    },
     common: { formId: 'common' },
     outputMode: {
       id: 'outputMode',
@@ -431,9 +463,18 @@ export default {
     'http._asyncHelperId': {
       fieldId: 'http._asyncHelperId',
     },
-    formView: { fieldId: 'formView' },
-    semiassistantoperationselect: {fieldId: 'semiassistantoperationselect', visibleWhenAll: [{field: 'formView', isNot: ['true']}]},
-    'unencrypted.apiType': {fieldId: 'unencrypted.apiType'},
+    formView: {
+      fieldId: 'formView',
+    },
+    semiassistantoperationselect: {
+      fieldId: 'semiassistantoperationselect',
+      visibleWhenAll: [{
+        field: 'formView', isNot: ['true'],
+      }],
+    },
+    'unencrypted.apiType': {
+      fieldId: 'unencrypted.apiType',
+    },
   },
 
   layout: {
@@ -517,9 +558,18 @@ export default {
           {
             type: 'indent',
             containers: [
-              {fields: [
-                'file.csv',
-              ]},
+              {
+                fields: [
+                  'parsers',
+                  'file.csv',
+                ],
+                header: (_, connection, formValues) => {
+                  const isParserVisible = ['csv', 'xml'].some(parser => finalSuccessMediaType(formValues, connection) === parser);
+
+                  return isParserVisible && 'Parse success responses';
+                },
+                helpKey: 'http.parseSuccessResponses',
+              },
             ],
           },
           {
