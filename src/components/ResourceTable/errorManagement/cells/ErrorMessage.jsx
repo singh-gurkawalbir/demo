@@ -11,7 +11,6 @@ const useStyles = makeStyles(theme => ({
   wrapper: {
     position: 'relative',
     overflowY: 'auto',
-    maxHeight: 90,
     wordBreak: 'break-word',
   },
   message: {
