@@ -23,9 +23,11 @@ export default {
         baseUrl: match.url,
         params: { errorId, mode: 'response' },
       }));
-      dispatch(actions.patchFilter(filterKey, {
-        activeErrorId: errorId,
-      }));
+      if (filterKey === FILTER_KEYS.OPEN) {
+        dispatch(actions.patchFilter(filterKey, {
+          activeErrorId: errorId,
+        }));
+      }
     }, [dispatch, filterKey, errorId, history, match.url]);
 
     return handleClick;

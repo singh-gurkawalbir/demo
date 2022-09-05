@@ -16,16 +16,16 @@ const useStyles = makeStyles(theme => ({
   rowSelected: {
     '&$selected': {
       borderLeft: `6px solid ${theme.palette.primary.main}`,
-      backgroundColor: '#A9D1F5',
+      backgroundColor: theme.palette.primary.lightest,
       '&:hover': {
-        backgroundColor: '#A9D1F5',
+        backgroundColor: theme.palette.primary.lightest,
       },
     },
   },
   selected: {},
   currentNavItem: {
     borderLeft: `6px solid ${theme.palette.primary.main}`,
-    backgroundColor: '#F0F5F9',
+    backgroundColor: theme.palette.background.paper2,
   },
   pointer: {
     cursor: 'pointer',
