@@ -13,6 +13,7 @@ export default function SelectError({
   isResolved,
   actionInProgress,
   label,
+  tooltip,
 }) {
   const dispatch = useDispatch();
 
@@ -38,7 +39,7 @@ export default function SelectError({
     useMemo(() => (
       <FormControlLabel
         control={(
-          <Tooltip title={messageStore('SELECT_ERROR_HOVER_MESSAGE')}>
+          <Tooltip title={tooltip || messageStore('SELECT_ERROR_HOVER_MESSAGE')}>
             <Checkbox
               icon={(
                 <span>
@@ -59,6 +60,6 @@ export default function SelectError({
          )}
         label={label}
      />
-    ), [error.selected, handleChange, isDisabled, label])
+    ), [error.selected, handleChange, isDisabled, label, tooltip])
   );
 }

@@ -94,6 +94,7 @@ href="/marketplace"><u>Check out our Marketplace</u></a> to jumpstart your  inte
   SELECT_ERROR_HOVER_MESSAGE: 'Selected errors are added to a batch, on which you can perform bulk retry and resolve actions',
   VIEW_ACTIONS_HOVER_MESSAGE: 'View actions for this error',
   RETRY_ACTION_HOVER_MESSAGE: 'Before retrying, you must save your edits for each error in the batch. Click “Save & next” on this error to continue.',
+  ADD_TO_BATCH_HOVER_MESSAGE: 'Selected errors are added to a batch, on which you can perform bulk retry and resolve actions. Before retrying, you must save your edits for each error in the batch. Click “Save & next” on this error to continue.',
   // #endregion
   MAX_ROUTERS_LIMIT_REACHED: 'You have reached the maximum of 25 branchings in a flow',
   MAX_BRANCHES_LIMIT_REACHED: 'You have reached the maximum of 25 branches in a branching',
