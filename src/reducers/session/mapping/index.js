@@ -964,6 +964,8 @@ export default (state = {}, action) => {
 
       case actionTypes.MAPPING.V2.SEARCH_TREE: {
         if (!draft.mapping) break;
+        // set the searchKey when showKey is false
+        if (!showKey) draft.mapping.searchKey = searchKey;
         if (searchKey === undefined && !showKey) break;
         let items;
         const mapping = draft.mapping.v2TreeData;
@@ -1012,7 +1014,10 @@ export default (state = {}, action) => {
 
         draft.mapping.highlightedIndex = index;
         // clearing the seleteFields list if index is -1
-        if (index === -1) draft.mapping.filteredKeys = [];
+        if (index === -1) {
+          draft.mapping.filteredKeys = [];
+          delete draft.mapping.searchKey;
+        }
         break;
       }
 
@@ -1079,6 +1084,14 @@ selectors.filteredKeys = state => {
 };
 
 selectors.isSearchVisible = state => !!state?.mapping?.isSearchVisible;
+
+selectors.searchKey = state => {
+  if (!state || !state.mapping) {
+    return -1;
+  }
+
+  return state.mapping.searchKey;
+};
 
 selectors.mappingChanged = state => {
   if (!state || !state.mapping) {

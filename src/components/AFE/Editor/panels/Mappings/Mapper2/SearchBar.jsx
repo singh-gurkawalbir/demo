@@ -55,21 +55,13 @@ export default function SearchBar() {
   const dispatch = useDispatch();
   const highlightedIndex = useSelector(state => selectors.highlightedIndex(state));
   const fieldsLen = useSelector(state => selectors.filteredKeys(state).length);
-  const filter = useSelector(state => selectors.filter(state, 'tree'));
-  const searchKey = filter?.keyword;
-  const [text, setText] = useDebouncedValue(filter?.keyword || '', value => {
-    // need this dispatch as searchkey is also being used in main Mapper component
-    dispatch(
-      actions.patchFilter('tree', {
-        keyword: value,
-      })
-    );
+  const searchKey = useSelector(state => selectors.searchKey(state));
+  const [text, setText] = useDebouncedValue(searchKey || '', value => {
     dispatch(actions.mapping.v2.searchTree({ searchKey: value, showKey: false }));
   });
 
   // clear the filter and filteredKeys and index
   useEffect(() => () => {
-    dispatch(actions.clearFilter('tree'));
     dispatch(actions.mapping.v2.updateHighlightedIndex(-1));
   }, [dispatch]);
 
