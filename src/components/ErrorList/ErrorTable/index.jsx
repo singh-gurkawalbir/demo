@@ -261,7 +261,6 @@ export default function ErrorTable({ flowId, resourceId, isResolved, flowJobId }
     }
   }, [errorsInCurrPage, errorFilter.activeErrorId, dispatch, isSplitView]);
 
-  // TODO @Raghu: Refactor the pagination related code
   return (
     <div className={clsx(classes.errorTableWrapper)}>
       <FetchErrorsHook

@@ -16,19 +16,18 @@ export default {
     const match = useRouteMatch();
     const dispatch = useDispatch();
     const { errorType } = match.params;
-    const filterKey = errorType === 'resolved' ? FILTER_KEYS.RESOLVED : FILTER_KEYS.OPEN;
     const handleClick = useCallback(() => {
       history.push(buildDrawerUrl({
         path: drawerPaths.ERROR_MANAGEMENT.V2.VIEW_ERROR_DETAILS,
         baseUrl: match.url,
         params: { errorId, mode: 'response' },
       }));
-      if (filterKey === FILTER_KEYS.OPEN) {
-        dispatch(actions.patchFilter(filterKey, {
+      if (errorType === 'open') {
+        dispatch(actions.patchFilter(FILTER_KEYS.OPEN, {
           activeErrorId: errorId,
         }));
       }
-    }, [dispatch, filterKey, errorId, history, match.url]);
+    }, [history, match.url, errorId, errorType, dispatch]);
 
     return handleClick;
   },
