@@ -9,6 +9,7 @@ import getRoutePath from '../../../utils/routePaths';
 function EnvironmentToggle() {
   const dispatch = useDispatch();
   const history = useHistory();
+  const isMFASetupIncomplete = useSelector(selectors.isMFASetupIncomplete);
   const { environment = 'production' } = useSelector(state =>
     selectors.userPreferences(state)
   );
@@ -23,7 +24,7 @@ function EnvironmentToggle() {
     [dispatch, history]
   );
 
-  if (!selectedAccountHasSandbox) return null;
+  if (isMFASetupIncomplete || !selectedAccountHasSandbox) return null;
 
   return (
     <TextToggle

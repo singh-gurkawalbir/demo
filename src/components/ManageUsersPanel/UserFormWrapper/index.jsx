@@ -20,13 +20,14 @@ export default function UserFormWrapper({ userId }) {
   const [disableSave, setDisableSave] = useState(false);
   const { name, email: userEmail } = useSelector(selectors.userProfile);
   const handleSaveClick = useCallback(
-    ({ email, accessLevel, integrationsToMonitor, integrationsToManage, accountSSORequired }) => {
+    ({ email, accessLevel, integrationsToMonitor, integrationsToManage, accountSSORequired, accountMFARequired }) => {
       const aShareData = {
         _id: userId,
         email,
         accessLevel,
         integrationAccessLevel: [],
         accountSSORequired,
+        accountMFARequired,
       };
 
       // track event if fresh invite was sent
