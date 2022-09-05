@@ -1,9 +1,8 @@
-import React, { useCallback, useRef } from 'react';
+import React, { useCallback, useRef, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import clsx from 'clsx';
 import {makeStyles } from '@material-ui/core/styles';
 import { TableRow } from '@material-ui/core';
-import useScrollIntoView from '../../../hooks/useScrollIntoView';
 
 const useStyles = makeStyles(theme => ({
   tableRow: {
@@ -39,7 +38,11 @@ export default function DataRow({ children, rowData, onRowOver, onRowOut, classN
   const isCurrentNavItem = additionalConfigs?.IsThisCurrentNavItem && additionalConfigs?.IsThisCurrentNavItem({ rowData });
   const rowRef = useRef();
 
-  useScrollIntoView(rowRef, isActiveRow);
+  useEffect(() => {
+    if (rowRef?.current && isActiveRow) {
+      rowRef?.current?.scrollIntoView({behavior: 'smooth', block: 'nearest'});
+    }
+  }, [rowRef, isActiveRow]);
 
   const handleMouseOver = useCallback(() => {
     onRowOver(rowData, dispatch);
