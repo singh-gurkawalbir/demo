@@ -15,11 +15,10 @@ export const useEditRetryConfirmDialog = ({
   const { saveDiscardDialog } = useConfirmDialog();
   const errorId = useSelector(state => selectors.filter(state, FILTER_KEYS.OPEN)?.activeErrorId);
 
-  const errorDoc = useSelector(state =>
-    selectors.resourceError(state, { flowId, resourceId, errorId, isResolved })
-  ) || {};
+  const retryId = useSelector(state =>
+    selectors.resourceError(state, { flowId, resourceId, errorId, isResolved })?.retryDataKey
+  );
 
-  const { retryDataKey: retryId} = errorDoc;
   const retryData = useSelector(state => selectors.retryData(state, retryId));
   const userRetryData = useSelector(state => selectors.userRetryData(state, retryId));
 
