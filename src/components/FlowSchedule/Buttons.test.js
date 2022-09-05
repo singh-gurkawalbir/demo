@@ -7,7 +7,6 @@ import * as reactRedux from 'react-redux';
 import { renderWithProviders, reduxStore } from '../../test/test-utils';
 import FlowScheduleButtons from './Buttons';
 import { runServer } from '../../test/api/server';
-import { session, form} from './test-state';
 
 function customSchedule(props) {
   const initialStore = reduxStore;
@@ -86,11 +85,75 @@ function customSchedule(props) {
       _sourceId: '626bd993987bb423914b484f',
     },
   ];
-  initialStore.getState().session = session;
-  initialStore.getState()['flow-schedule'] = {};
-  initialStore.getState()['flow-schedule'] = form;
-  // eslint-disable-next-line no-param-reassign
-  props.testFlag = true;
+  // initialStore.getState().session = session;
+  // initialStore.getState()['flow-schedule'] = {};
+  // initialStore.getState()['flow-schedule'] = form;
+  initialStore.getState().session.form = {'flow-schedule': {
+    fields: { timeZone: {
+      id: 'timeZone',
+      name: 'timeZone',
+      type: 'select',
+      label: 'Time zone',
+      helpKey: 'flow.timezone',
+      defaultValue: 'Asia/Calcutta',
+      options: [
+        {
+          items: [
+            {
+              label: '(GMT-12:00) International Date Line West',
+              value: 'Etc/GMT+12',
+            },
+            {
+              label: '(GMT-11:00) Midway Island, Samoa',
+              value: 'Pacific/Samoa',
+            },
+
+          ],
+        },
+      ],
+      visible: true,
+      defaultVisible: true,
+      value: 'Asia/Calcutta',
+      touched: false,
+      required: false,
+      disabled: false,
+      isValid: true,
+      isDiscretelyInvalid: false,
+      errorMessages: '',
+    },
+    activeTab: {
+      id: 'activeTab',
+      name: 'activeTab',
+      type: 'radiogroup',
+      helpKey: 'flow.type',
+      label: 'Type',
+      fullWidth: true,
+      defaultValue: 'preset',
+      options: [
+        {
+          items: [
+            {
+              label: 'Use preset',
+              value: 'preset',
+            },
+            {
+              label: 'Use cron expression',
+              value: 'advanced',
+            },
+          ],
+        },
+      ],
+      value: 'preset',
+      touched: props.touched,
+      visible: true,
+      required: false,
+      disabled: false,
+      isValid: true,
+      isDiscretelyInvalid: false,
+      errorMessages: '',
+    }}},
+  };
+  initialStore.getState().session.asyncTask['flow-schedule'] = {status: props.loadingStatus};
   const ui = (
     <MemoryRouter>
       <FlowScheduleButtons {...props} />
@@ -100,13 +163,9 @@ function customSchedule(props) {
   return renderWithProviders(ui, { initialStore });
 }
 
-jest.mock('../SaveAndCloseButtonGroup/SaveAndCloseButtonGroupForm', () => ({
-  __esModule: true,
-  ...jest.requireActual('../SaveAndCloseButtonGroup/SaveAndCloseButtonGroupForm'),
-  default: props => (
-    // eslint-disable-next-line react/button-has-type
-    <div><button onClick={props.onSave}>Save</button> <button>Close</button></div>
-  ),
+jest.mock('./util', () => ({
+  ...jest.requireActual('./util'),
+  getScheduleStartMinute: () => 0,
 }));
 describe('Flow schedule buttons UI tests', () => {
   runServer();
@@ -126,7 +185,7 @@ describe('Flow schedule buttons UI tests', () => {
   afterEach(() => {
     useDispatchSpy.mockClear();
   });
-  test('checking initial render of buttons', async () => {
+  test('should render the  save and close buttons initially', async () => {
     const mockOnClose = jest.fn();
 
     customSchedule({
@@ -136,10 +195,56 @@ describe('Flow schedule buttons UI tests', () => {
       pg: {_exportId: '626bdab2987bb423914b4879'},
       index: null,
       testFlag: true,
+      touched: false,
     });
-    expect(screen.queryByText('Save')).toBeInTheDocument();
-    userEvent.click(screen.queryByText('Save'));
-    expect(mockDispatchFn).toHaveBeenCalledTimes(1);
-    screen.debug();
+    expect(screen.getByText('Save')).toBeInTheDocument();
+    expect(screen.getByText('Close')).toBeInTheDocument();
+  });
+  test('should display the saving... meessage on the button when form asyncStatus is loading', () => {
+    const mockOnClose = jest.fn();
+
+    customSchedule({
+      formKey: 'flow-schedule',
+      flow: null,
+      onClose: mockOnClose,
+      pg: {_exportId: '626bdab2987bb423914b4879'},
+      index: null,
+      testFlag: true,
+      touched: false,
+      loadingStatus: 'loading',
+    });
+    expect(screen.getByText('Saving...')).toBeInTheDocument();
+  });
+  test('should display the "Save & Close" button when form has been modified', () => {
+    const mockOnClose = jest.fn();
+
+    customSchedule({
+      formKey: 'flow-schedule',
+      flow: null,
+      onClose: mockOnClose,
+      pg: {_exportId: '626bdab2987bb423914b4879'},
+      index: null,
+      testFlag: true,
+      touched: true,
+    });
+    expect(screen.getByText('Save & close')).toBeInTheDocument();
+  });
+  test('should make a dispatch call when clicked on the save button', () => {
+    const mockOnClose = jest.fn();
+
+    customSchedule({
+      formKey: 'flow-schedule',
+      flow: null,
+      onClose: mockOnClose,
+      pg: {_exportId: '626bdab2987bb423914b4879'},
+      index: null,
+      testFlag: true,
+      touched: true,
+    });
+    const saveButton = screen.getByText('Save');
+
+    expect(saveButton).toBeInTheDocument();
+    userEvent.click(saveButton);
+    expect(mockDispatchFn).toBeCalledTimes(1);
   });
 });

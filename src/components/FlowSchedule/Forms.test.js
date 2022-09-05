@@ -1,41 +1,41 @@
-/* eslint-disable no-param-reassign */
-/* global test, expect,describe */
+/* global test, expect, describe, jest */
 import React from 'react';
 import { screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { renderWithProviders, reduxStore } from '../../test/test-utils';
-import { session } from './test-state';
 import FlowScheduleForm from './Form';
+
+const demoFlows = [
+  {
+    _id: '626bdab2987bb423914b487d',
+    lastModified: '2022-06-23T03:40:44.315Z',
+    name: 'New flow',
+    disabled: false,
+    schedule: '? 5 0 ? * 1',
+    timezone: 'Asia/Calcutta',
+    _integrationId: '626bda66987bb423914b486f',
+    skipRetries: false,
+    pageProcessors: [
+      {
+        responseMapping: { fields: [], lists: [] },
+        _importId: '626bdab2987bb423914b487b',
+        type: 'import',
+      },
+    ],
+    pageGenerators: [
+      { _exportId: '626bdab2987bb423914b4879', skipRetries: false },
+    ],
+    createdAt: '2022-04-29T12:31:46.612Z',
+    free: false,
+    _sourceId: '626bda35987bb423914b4868',
+    autoResolveMatchingTraceKeys: true,
+  },
+];
 
 function customSchedule(props) {
   const initialStore = reduxStore;
 
-  initialStore.getState().data.resources.flows = [
-    {
-      _id: '626bdab2987bb423914b487d',
-      lastModified: '2022-06-23T03:40:44.315Z',
-      name: 'New flow',
-      disabled: false,
-      schedule: '? 5 0 ? * 1',
-      timezone: 'Asia/Calcutta',
-      _integrationId: '626bda66987bb423914b486f',
-      skipRetries: false,
-      pageProcessors: [
-        {
-          responseMapping: { fields: [], lists: [] },
-          _importId: '626bdab2987bb423914b487b',
-          type: 'import',
-        },
-      ],
-      pageGenerators: [
-        { _exportId: '626bdab2987bb423914b4879', skipRetries: false },
-      ],
-      createdAt: '2022-04-29T12:31:46.612Z',
-      free: false,
-      _sourceId: '626bda35987bb423914b4868',
-      autoResolveMatchingTraceKeys: true,
-    },
-  ];
+  initialStore.getState().data.resources.flows = demoFlows;
   initialStore.getState().data.resources.integrations = [
     {
       _id: '626bda66987bb423914b486f',
@@ -84,10 +84,6 @@ function customSchedule(props) {
       _sourceId: '626bd993987bb423914b484f',
     },
   ];
-  props.formKey = 'flow-schedule';
-  // eslint-disable-next-line prefer-destructuring
-  props.flow = initialStore.getState().data.resources.flows[0];
-  initialStore.getState().session = session;
   const ui = (
     <MemoryRouter>
       <FlowScheduleForm {...props} />
@@ -97,26 +93,22 @@ function customSchedule(props) {
   return renderWithProviders(ui, { initialStore });
 }
 
+jest.mock('./util', () => ({
+  ...jest.requireActual('./util'),
+  getScheduleStartMinute: () => 0,
+}));
+
 describe('Flow schedule form UI tests', () => {
-  test('testing the initial render of form', () => {
-    customSchedule({formKey: null,
-      flow: null,
+  test('should render the fields of form initially', () => {
+    customSchedule({
+      flow: demoFlows[0],
       disabled: null,
       pg: null,
       index: null,
       testFlag: true,
+      formKey: 'flow-schedule',
     });
     expect(screen.getByText('Time zone')).toBeInTheDocument();
-    expect(screen.getByText('Type')).toBeInTheDocument();
-  });
-  test('testing the initial render of form', () => {
-    customSchedule({formKey: null,
-      flow: null,
-      disabled: null,
-      pg: {_exportId: '626bdab2987bb423914b4879'},
-      index: null,
-      testFlag: true,
-    });
     expect(screen.getByText('Type')).toBeInTheDocument();
   });
 });

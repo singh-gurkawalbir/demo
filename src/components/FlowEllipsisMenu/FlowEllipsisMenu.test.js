@@ -1,7 +1,7 @@
 /* global test, expect, jest,describe,beforeEach,afterEach */
 import React from 'react';
 import { screen, waitFor } from '@testing-library/react';
-import { MemoryRouter, Router } from 'react-router-dom';
+import { Router } from 'react-router-dom';
 import userEvent from '@testing-library/user-event';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { createMemoryHistory } from 'history';
@@ -13,8 +13,7 @@ import actions from '../../actions';
 
 const history = createMemoryHistory();
 
-// eslint-disable-next-line no-unused-vars
-async function FlowMenu(customState = {}, props = {}) {
+async function FlowMenu(props = {}) {
   const initialStore = reduxStore;
 
   initialStore.getState().data.resources.flows = [
@@ -52,7 +51,6 @@ async function FlowMenu(customState = {}, props = {}) {
     name: 'Production',
     _templateId: '5d9eb2c7224c6042d7a2fc98',
     description: 'demo integration',
-    // _connectorId: customState.connectorId,
     install: [],
     sandbox: false,
     _registeredConnectionIds: [
@@ -82,20 +80,13 @@ async function FlowMenu(customState = {}, props = {}) {
     },
     profile: {
       _id: '625e84b4a2bca9036eb61252',
-      name: 'Prashanth Nesa',
-      email: 'prashanthkumar.nesa@celigo.com',
-      role: 'Engineering intern',
+      name: 'demo user',
+      email: 'demoUser@celigo.com',
+      role: 'CEO',
       company: 'celigo',
-      phone: '7995045186',
-      auth_type_google: {},
-      timezone: 'Asia/Calcutta',
-      developer: true,
-      allowedToPublish: true,
-      agreeTOSAndPP: true,
       createdAt: '2022-04-19T09:45:25.111Z',
       useErrMgtTwoDotZero: true,
       authTypeSSO: null,
-      emailHash: '087e41a1843139c27bce730b99664a84',
     },
     notifications: {
       accounts: [],
@@ -119,29 +110,6 @@ async function FlowMenu(customState = {}, props = {}) {
                 trialEndDate: '2022-05-28T05:05:45.740Z',
                 supportTier: 'essential',
                 sandbox: false,
-                endpoint: {
-                  production: {
-                    numEndpoints: 2,
-                    numAddOnEndpoints: 0,
-                    numFlows: 1,
-                    numAddOnFlows: 0,
-                    numTradingPartners: 0,
-                    numAddOnTradingPartners: 0,
-                    numAgents: 0,
-                    numAddOnAgents: 0,
-                  },
-                  sandbox: {
-                    numEndpoints: 0,
-                    numAddOnEndpoints: 0,
-                    numFlows: 0,
-                    numAddOnFlows: 0,
-                    numTradingPartners: 0,
-                    numAddOnTradingPartners: 0,
-                    numAgents: 0,
-                    numAddOnAgents: 0,
-                  },
-                  apiManagement: false,
-                },
                 resumable: false,
               },
             ],
@@ -160,8 +128,6 @@ async function FlowMenu(customState = {}, props = {}) {
     },
     lastModified: '2019-10-18T06:59:48.542Z',
   }];
-  // eslint-disable-next-line no-param-reassign
-  props.flowId = initialStore.getState().data.resources.flows[0]._id;
   const ui = (
     <Router history={history}>
       <ConfirmDialogProvider>
@@ -190,15 +156,14 @@ describe('Flow ellipsis menu ui tests', () => {
   afterEach(() => {
     useDispatchSpy.mockClear();
   });
-  test('presence of ellipsis menu icon', async () => {
-    await FlowMenu({ exclude: [] });
+  test('should render the ellipsis menu icon', async () => {
+    await FlowMenu({ flowId: '62677c19737f015ed4aff4fd', exclude: [] });
     const icon = screen.getByRole('button');
 
     expect(icon).toBeInTheDocument();
-    screen.debug();
   });
-  test('checking whether the menu is appearing on clicking the icon', async () => {
-    await FlowMenu({}, { exclude: [] });
+  test('should display the menu when clicked on the menu icon', async () => {
+    await FlowMenu({ flowId: '62677c19737f015ed4aff4fd', exclude: [] });
     const icon = screen.getByRole('button');
 
     userEvent.click(icon);
@@ -206,11 +171,10 @@ describe('Flow ellipsis menu ui tests', () => {
 
     expect(menuItems).toHaveLength(8);
   });
-  test('checking the presence and functioning of clone flow button', async () => {
+  test('should display and perform the functionality of clone flow button', async () => {
     history.push = jest.fn();
     await FlowMenu(
-      {},
-      { flowId: null, exclude: ['mapping', 'detach', 'audit', 'schedule'] }
+      { flowId: '62677c19737f015ed4aff4fd', exclude: ['mapping', 'detach', 'audit', 'schedule'] }
     );
     const icon = screen.getByRole('button');
 
@@ -220,14 +184,15 @@ describe('Flow ellipsis menu ui tests', () => {
     userEvent.click(cloneFlowButton);
     await waitFor(() => expect(history.push).toHaveBeenCalledTimes(1));
   });
-  test('checking the presence and functioning of delete flow button', async () => {
+  test('should display and perform the functionality of delete flow button', async () => {
     history.replace = jest.fn();
-    await FlowMenu({}, { flowId: null, exclude: ['mapping', 'detach', 'audit', 'schedule'] });
+    await FlowMenu({ flowId: '62677c19737f015ed4aff4fd', exclude: ['mapping', 'detach', 'audit', 'schedule'] });
     const icon = screen.getByRole('button');
 
     userEvent.click(icon);
     const deleteFlowButton = screen.getByText('Delete flow');
 
+    expect(deleteFlowButton).toBeInTheDocument();
     userEvent.click(deleteFlowButton);
     const confirmDelete = screen.getByRole('button', {name: 'Delete'});
 
@@ -235,81 +200,89 @@ describe('Flow ellipsis menu ui tests', () => {
     await waitFor(() => expect(mockDispatchFn).toBeCalledWith(actions.resource.delete('flows', '62677c19737f015ed4aff4fd')));
     await waitFor(() => expect(history.replace).toHaveBeenCalledTimes(1));
   });
-  test('checking the presence and functioning of download flow button', async () => {
+  test('should display and perform the functionality of download flow button', async () => {
     history.replace = jest.fn();
-    await FlowMenu({}, { flowId: null, exclude: [] });
+    await FlowMenu({ flowId: '62677c19737f015ed4aff4fd', exclude: [] });
     const icon = screen.getByRole('button');
 
+    expect(icon).toBeInTheDocument();
     userEvent.click(icon);
     const downloadFlowButton = screen.getByText('Download flow');
 
+    expect(downloadFlowButton).toBeInTheDocument();
     userEvent.click(downloadFlowButton);
     await waitFor(() => expect(mockDispatchFn).toBeCalledWith(actions.resource.downloadFile('62677c19737f015ed4aff4fd', 'flows')));
   });
-  test('checking the presence and functioning of detach flow button', async () => {
+  test('should display and perform the functionality of detach flow button', async () => {
     history.replace = jest.fn();
     const patchSet = [{ op: 'replace', path: '/_integrationId', value: undefined }];
 
-    await FlowMenu({}, { flowId: null, exclude: [] });
+    await FlowMenu({ flowId: '62677c19737f015ed4aff4fd', exclude: [] });
     const icon = screen.getByRole('button');
 
+    expect(icon).toBeInTheDocument();
     userEvent.click(icon);
     const detachFlowButton = screen.getByText('Detach flow');
 
+    expect(detachFlowButton).toBeInTheDocument();
     userEvent.click(detachFlowButton);
     const confirmButton = screen.getByText('Detach');
 
+    expect(confirmButton).toBeInTheDocument();
     userEvent.click(confirmButton);
     await waitFor(() => expect(mockDispatchFn).toBeCalledWith(actions.resource.patchAndCommitStaged('flows', '62677c19737f015ed4aff4fd', patchSet)));
   });
-  test('checking the presence and functioning of edit mapping button', async () => {
+  test('should display and perform the functionality of delete EditMapping button', async () => {
     history.push = jest.fn();
-    await FlowMenu({}, { flowId: null, exclude: [] });
+    await FlowMenu({ flowId: '62677c19737f015ed4aff4fd', exclude: [] });
     const icon = screen.getByRole('button');
 
+    expect(icon).toBeInTheDocument();
     userEvent.click(icon);
     const mappingButton = screen.getByText('Edit mapping');
 
+    expect(mappingButton).toBeInTheDocument();
     userEvent.click(mappingButton);
     expect(history.push).toHaveBeenCalledTimes(1);
   });
-  test('testing the functionality of Schedule button', async () => {
+  test('should display and perform the functionality of schedule flow button', async () => {
     history.push = jest.fn();
-    await FlowMenu({}, { flowId: null, exclude: [] });
+    await FlowMenu({ flowId: '62677c19737f015ed4aff4fd', exclude: [] });
     const icon = screen.getByRole('button');
 
+    expect(icon).toBeInTheDocument();
     userEvent.click(icon);
     const scheduleButton = screen.getByText('Schedule');
 
+    expect(scheduleButton).toBeInTheDocument();
     userEvent.click(scheduleButton);
     expect(history.push).toHaveBeenCalledTimes(1);
   });
-  test('testing the functionality of Audit log button', async () => {
+  test('should display and perform the functionality of Audit Log button', async () => {
     history.push = jest.fn();
-    await FlowMenu({}, { flowId: null, exclude: [] });
+    await FlowMenu({ flowId: '62677c19737f015ed4aff4fd', exclude: [] });
     const icon = screen.getByRole('button');
 
+    expect(icon).toBeInTheDocument();
     userEvent.click(icon);
-    const auditlogButton = screen.getByText('Schedule');
+    const auditlogButton = screen.getByText('View audit log');
 
+    expect(auditlogButton).toBeInTheDocument();
     userEvent.click(auditlogButton);
     waitFor(() => expect(screen.getByText('/Audit Log/i').toBeInTheDocument()));
   });
-  test('testing the functionality of Used by(references) button', async () => {
+  test('should display and perform the functionality of Usedby references button', async () => {
     history.push = jest.fn();
-    await FlowMenu({}, { flowId: null, exclude: [] });
+    await FlowMenu({ flowId: '62677c19737f015ed4aff4fd', exclude: [] });
     const icon = screen.getByRole('button');
 
+    expect(icon).toBeInTheDocument();
     userEvent.click(icon);
     const referencesButton = screen.getByText('Used by');
 
+    expect(referencesButton).toBeInTheDocument();
     userEvent.click(referencesButton);
     waitFor(() => expect(screen.getByText('/This resource is not being used anywhere/i').toBeInTheDocument()));
-  });
-  test('covering of various scenarios', async () => {
-    const props = {flowId: null, exclude: []};
-
-    renderWithProviders(<MemoryRouter><FlowEllipsisMenu {...props} /></MemoryRouter>);
   });
 });
 
