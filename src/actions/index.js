@@ -98,7 +98,7 @@ const auth = {
   linkWithGoogle: returnTo =>
     action(actionTypes.AUTH.LINK_WITH_GOOGLE, { returnTo }),
   complete: () => action(actionTypes.AUTH.SUCCESSFUL),
-  mfaRequired: () => action(actionTypes.AUTH.MFA_REQUIRED),
+  mfaRequired: mfaAuthInfo => action(actionTypes.AUTH.MFA_REQUIRED, { mfaAuthInfo }),
   mfaVerify: {
     request: payload => action(actionTypes.AUTH.MFA_VERIFY.REQUEST, { payload }),
     failed: mfaError => action(actionTypes.AUTH.MFA_VERIFY.FAILED, { mfaError }),
@@ -2395,13 +2395,13 @@ const mfa = {
   showQrCode: () => action(actionTypes.MFA.QR_CODE.SHOW),
   secretCodeError: secretCodeError => action(actionTypes.MFA.SECRET_CODE.ERROR, { secretCodeError }),
   resetMFA: ({ password, aShareId }) => action(actionTypes.MFA.RESET, { aShareId, password }),
-  updateDevice: deviceInfo => action(actionTypes.MFA.UPDATE_DEVICE, { deviceInfo }),
   deleteDevice: deviceId => action(actionTypes.MFA.DELETE_DEVICE, { deviceId }),
   verifyMobileCode: code => action(actionTypes.MFA.MOBILE_CODE.VERIFY, { code }),
   mobileCodeVerified: (status, error) => action(actionTypes.MFA.MOBILE_CODE.STATUS, { status, error }),
   resetMobileCodeStatus: () => action(actionTypes.MFA.MOBILE_CODE.RESET),
   requestSessionInfo: () => action(actionTypes.MFA.SESSION_INFO.REQUEST),
   receivedSessionInfo: sessionInfo => action(actionTypes.MFA.SESSION_INFO.RECEIVED, { sessionInfo }),
+  clearSessionInfo: () => action(actionTypes.MFA.SESSION_INFO.CLEAR),
   addSetupContext: context => action(actionTypes.MFA.ADD_SETUP_CONTEXT, { context }),
   clearSetupContext: () => action(actionTypes.MFA.CLEAR_SETUP_CONTEXT),
   clear: () => action(actionTypes.MFA.CLEAR),
