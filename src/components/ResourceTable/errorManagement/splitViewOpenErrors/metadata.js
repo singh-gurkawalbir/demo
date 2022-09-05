@@ -1,13 +1,6 @@
 import React from 'react';
 import { useSelector, shallowEqual } from 'react-redux';
 import {selectors} from '../../../../reducers';
-import Retry from '../actions/Retry';
-import Resolve from '../actions/Resolve';
-import ViewErrorDetails from '../actions/ViewErrorDetails';
-import ViewHttpRequest from '../actions/ViewHttpRequest';
-import ViewHttpResponse from '../actions/ViewHttpResponse';
-import EditRetryData from '../actions/EditRetry';
-import DownloadRetryData from '../actions/DownloadRetry';
 import SelectError from '../../../ErrorList/ErrorDetails/ErrorDetailActions/SelectError';
 import SelectSource from '../cells/SelectSource';
 import SelectClassification from '../cells/SelectClassification';
@@ -18,21 +11,24 @@ import CeligoTimeAgo from '../../../CeligoTimeAgo';
 import TextOverflowCell from '../../../TextOverflowCell';
 import ErrorMessage from '../cells/ErrorMessage';
 import { useGetTableContext } from '../../../CeligoTable/TableContext';
-import ViewNetsuiteRequest from '../actions/ViewNetsuiteRequest';
-import ViewNetsuiteResponse from '../actions/ViewNetsuiteResponse';
 import { FILTER_KEYS } from '../../../../utils/errorManagement';
-import messageStore from '../../../../utils/messageStore';
 
 export default {
   rowKey: 'errorId',
   additionalConfigs: {
-    actionMenuTooltip: messageStore('VIEW_ACTIONS_HOVER_MESSAGE'),
     IsActiveRow: ({ rowData }) => {
       const errorFilter = useSelector(
         state => selectors.filter(state, FILTER_KEYS.OPEN), shallowEqual
       );
 
       return errorFilter?.activeErrorId === rowData.errorId;
+    },
+    IsThisCurrentNavItem: ({ rowData }) => {
+      const errorFilter = useSelector(
+        state => selectors.filter(state, FILTER_KEYS.OPEN), shallowEqual
+      );
+
+      return errorFilter?.currentNavItem === rowData.errorId;
     },
   },
   useColumns: () => [
@@ -45,7 +41,7 @@ export default {
       },
       heading: 'Select All',
       isLoggable: true,
-      Value: ({rowData: error}) => {
+      Value: ({ rowData: error }) => {
         const tableContext = useGetTableContext();
 
         return <SelectError error={error} {...tableContext} />;
@@ -66,7 +62,7 @@ export default {
             resourceId={resourceId}
             exportDataURI={r.exportDataURI}
             importDataURI={r.importDataURI}
-      />
+        />
         );
       },
     },
@@ -109,27 +105,4 @@ export default {
       Value: ({rowData: r}) => <CeligoTimeAgo date={r.occurredAt} />,
     },
   ],
-  useRowActions: ({retryDataKey, source, reqAndResKey}) => {
-    const {actionInProgress, resourceId} = useGetTableContext();
-    const isResourceNetsuite = useSelector(state => selectors.isResourceNetsuite(state, resourceId));
-
-    if (actionInProgress) return [];
-    const actions = [
-      ...(retryDataKey ? [EditRetryData] : []),
-      Resolve,
-      ...(retryDataKey ? [Retry] : []),
-      ViewErrorDetails,
-      // IO-19304, for errors occuring at FTP bridge, retry data returned will be metadata and not actual retry data,
-      // hence show download option
-      ...(retryDataKey && source === 'ftp_bridge' ? [DownloadRetryData] : []),
-    ];
-
-    if (reqAndResKey) {
-      isResourceNetsuite
-        ? actions.push(ViewNetsuiteRequest, ViewNetsuiteResponse)
-        : actions.push(ViewHttpRequest, ViewHttpResponse);
-    }
-
-    return actions;
-  },
 };
