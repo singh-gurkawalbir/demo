@@ -76,7 +76,7 @@ export default function ErrorTableFilters({ flowId, resourceId, isResolved, filt
   const dispatch = useDispatch();
 
   const showRetryDataChangedConfirmDialog = useEditRetryConfirmDialog({flowId, resourceId, isResolved});
-  const onSearchClick = useCallback(() => {
+  const onSearchFocus = useCallback(() => {
     showRetryDataChangedConfirmDialog();
   }, [showRetryDataChangedConfirmDialog]);
 
@@ -115,7 +115,7 @@ export default function ErrorTableFilters({ flowId, resourceId, isResolved, filt
         hasErrors &&
           (
             <div className={classes.errorsKeywordSearch}>
-              <KeywordSearch filterKey={filterKey} onClick={onSearchClick} />
+              <KeywordSearch filterKey={filterKey} onFocus={onSearchFocus} />
             </div>
           )
         }
