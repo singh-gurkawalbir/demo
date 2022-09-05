@@ -85,7 +85,7 @@ export const getJSONContentFromString = data => {
  * @returns {object} CSV Data
  */
 export async function getCsvFromXlsx(data) {
-  const { default: XLSX } = await retry(() => import(/* webpackChunkName: "XLSX" */'xlsx'));
+  const { default: XLSX } = await retry(() => import(/* webpackChunkName: "XLSX" */'xlsx/xlsx.js'));
   let workBook;
   let result;
 
