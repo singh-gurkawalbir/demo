@@ -102,9 +102,9 @@ export default function ErrorDetailsDrawer({ flowId, resourceId, isResolved }) {
     history.replace(buildDrawerUrl({
       path: drawerPaths.ERROR_MANAGEMENT.V2.VIEW_ERROR_DETAILS,
       baseUrl: match.url,
-      params: { errorId: newErrorId, mode },
+      params: { errorId: newErrorId, mode: 'editRetry' },
     }));
-  }, [history, match.url, mode]);
+  }, [history, match.url]);
 
   const errorDoc = useSelector(state =>
     selectors.resourceError(state, { flowId, resourceId, errorId: activeErrorId, isResolved })
