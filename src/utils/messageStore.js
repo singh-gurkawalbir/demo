@@ -84,13 +84,21 @@ href="/marketplace"><u>Check out our Marketplace</u></a> to jumpstart your  inte
   SSO_LICENSE_UPGRADE_REQUEST_SUBMITTED_MESSAGE: 'Thanks for your request! We will be in touch soon.',
   CONFIRM_LEAVE_MFA: 'Are you sure you want to leave? Your MFA settings will be disabled unless you connect your device successfully.',
   MFA_AUTH_FAILED: 'Verification failed. Please try again',
+  SSO_LINKED_TO_ANOTHER_ACCOUNT_TOOLTIP: 'This user is already linked to another account’s SSO',
+  ACCOUNT_SSO_OR_MFA_REQUIRED_TOOLTIP: 'You can’t require both MFA and SSO for a user.',
+  MFA_OWNER_OTP_INFO: 'You are signing in from a new device. Enter your passcode to verify your account.',
+  MFA_USER_OTP_INFO: 'Your account owner or admin has required you to sign in using multifactor authentication (MFA). Enter your passcode to verify your account.',
+  MFA_USER_OTP_INFO_FOR_TRUSTED_NUMBER_OF_DAYS: 'Your account owner or admin has required you to sign in using multifactor authentication (MFA) after {{noOfDays}} days. Enter your passcode to verify your account.',
   // #endregion
-
   MAX_ROUTERS_LIMIT_REACHED: 'You have reached the maximum of 25 branchings in a flow',
   MAX_BRANCHES_LIMIT_REACHED: 'You have reached the maximum of 25 branches in a branching',
   TERMINAL_NODE_TOOLTIP: 'Drag to merge with other branch',
   MERGE_NODE_TOOLTIP: 'Merge point (records from branches are merged here)',
   TERMINAL_NODE_FROZEN_TOOLTIP: 'Merging to another branch is not possible here because your flow does not contain any branches or because there are no merge targets available. Add branching to your flow or modify your current flow layout to allow merging.',
+  CLONE_DESCRIPTION: 'Cloning an integration enables you to keep an original integration unchanged while modifying the configuration settings for a duplicate version of it. <a href="https://docs.celigo.com/hc/en-us/articles/115000757512-Clone-integrations-and-flows" target="_blank">Learn more</a>',
+  CREATE_SNAPSHOT_FORM_HELPINFO: 'A snapshot is a saved capture of your integration that you can use to revert your integration at any point.',
+  CREATE_PULL_FORM_HELPINFO: 'Pulling changes from one linked integration to another lets you see conflicts, review changes, and merge them from one integration to another. You can only pull data from a direct clone or source integration.. For example, clone Integration A as Integration B, then B to C, and B to D. You can create a pull between integrations A and B, B and C, B and D; but not between A and C, or C and D',
+
 };
 
 export default function messageStore(key, argsObj) {

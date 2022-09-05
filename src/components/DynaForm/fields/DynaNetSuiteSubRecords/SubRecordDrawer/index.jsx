@@ -15,6 +15,7 @@ import DrawerHeader from '../../../../drawer/Right/DrawerHeader';
 import DrawerContent from '../../../../drawer/Right/DrawerContent';
 import DrawerFooter from '../../../../drawer/Right/DrawerFooter';
 import { drawerPaths } from '../../../../../utils/rightDrawer';
+import ActionGroup from '../../../../ActionGroup';
 
 function SubRecordDrawer(props) {
   const history = useHistory();
@@ -126,17 +127,19 @@ function SubRecordDrawer(props) {
         <DynaForm formKey={formKey} />
       </DrawerContent>
       <DrawerFooter>
-        <DynaSubmit
-          formKey={formKey}
-          data-test="save-subrecord"
-          onClick={handleSubmit}>
-          Save
-        </DynaSubmit>
-        <TextButton
-          data-test="cancel-subrecord"
-          onClick={handleClose}>
-          Cancel
-        </TextButton>
+        <ActionGroup>
+          <DynaSubmit
+            formKey={formKey}
+            data-test="save-subrecord"
+            onClick={handleSubmit}>
+            Save
+          </DynaSubmit>
+          <TextButton
+            data-test="cancel-subrecord"
+            onClick={handleClose}>
+            Cancel
+          </TextButton>
+        </ActionGroup>
       </DrawerFooter>
     </>
   );

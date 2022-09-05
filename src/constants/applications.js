@@ -309,7 +309,12 @@ const connectors = [
 ];
 // These can be removed once metadata gets updated.
 const newConnections = [
-  {id: 'googledrive', name: 'Google Drive', type: 'http', assistant: 'googledrive'},
+  {id: 'googledrive',
+    name: 'Google Drive',
+    type: 'http',
+    assistant: 'googledrive',
+    helpURL: 'https://docs.celigo.com/hc/en-us/articles/360056026892-Set-up-a-connection-to-Google-Drive',
+  },
   {id: 'azurestorageaccount', name: 'Azure Blob Storage', type: 'http', assistant: 'azurestorageaccount'},
   {
     id: 'constantcontact',

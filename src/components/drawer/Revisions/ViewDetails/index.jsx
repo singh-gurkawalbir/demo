@@ -24,7 +24,7 @@ const allTabs = {
 
 const useStyles = makeStyles(theme => ({
   detailsContainer: {
-    height: '100%',
+    height: `calc(100% - ${theme.spacing(2)}px)`,
     backgroundColor: 'white',
     border: `1px solid ${theme.palette.secondary.lightest}`,
     color: theme.palette.text.hint,

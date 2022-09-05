@@ -24,6 +24,9 @@ const useStyles = makeStyles(theme => ({
     lineHeight: '22px',
     whiteSpace: 'normal',
     wordBreak: 'break-word',
+    '&>div': {
+      maxHeight: 300,
+    },
     '& > div > pre': {
       background: theme.palette.background.paper2,
       border: '1px solid',
