@@ -615,7 +615,11 @@ export const hideOtherTabRows = (node, newTabExtract, hidden) => {
       const childParentExtract = clonedChild.combinedExtract?.split(',') || [];
 
       // update children and un-hide only first tab
-      return hideOtherTabRows(clonedChild, getUniqueExtractId(childParentExtract[0], 0));
+      const updatedChild = hideOtherTabRows(clonedChild, getUniqueExtractId(childParentExtract[0], 0));
+
+      updatedChild.activeTab = 0;
+
+      return updatedChild;
     }
 
     // update children as well
@@ -763,6 +767,7 @@ function recursivelyBuildTreeFromV2Mappings({mappings, treeData, parentKey, pare
           mappings: objMappings,
           treeData: children,
           parentKey: currNodeKey,
+          hidden,
           disabled,
           isGroupedSampleData,
           parentJsonPath: jsonPath});
