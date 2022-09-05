@@ -34,12 +34,9 @@ describe('Celigopagebar UI tests', () => {
 
     const infobutton = screen.getByRole('button');
 
-    let infotext = screen.queryByText('infotext');
-
-    expect(infotext).not.toBeInTheDocument();
-
     userEvent.click(infobutton);
-    infotext = screen.queryByText('infotext');
+    const infotext = screen.queryByText('infotext');
+
     expect(infotext).toBeInTheDocument();
   });
 

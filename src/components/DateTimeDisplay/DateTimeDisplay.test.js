@@ -6,7 +6,7 @@ import {renderWithProviders} from '../../test/test-utils';
 import actions from '../../actions';
 
 describe('Date and time UI tests', () => {
-  function renderFunction(date, dateTime) {
+  function renderFunction(date = null, dateTime = null) {
     const {store} = renderWithProviders(<DateTimeDisplay date={date} dateTime={dateTime} />);
     const resourceType = 'preferences';
     const profile = {timezone: 'Asia/Kolkata'};
@@ -15,14 +15,14 @@ describe('Date and time UI tests', () => {
     store.dispatch(actions.resource.received(resourceType, {}));
   }
   test('should run when no date is provided ', () => {
-    renderFunction(null, null);
+    renderFunction();
     const dateTime = screen.queryByText('05/18/2022 11:46:31 pm');
 
     expect(dateTime).not.toBeInTheDocument();
   });
 
   test('should test only when date is provided', () => {
-    renderFunction('2022-05-18', null);
+    renderFunction('2022-05-18');
     const date = screen.getByText('05/18/2022');
 
     expect(date).toHaveTextContent('05/18/2022');

@@ -7,7 +7,7 @@ import {renderWithProviders} from '../../test/test-utils';
 import actions from '../../actions';
 
 describe('CeligoTimeAgo UI tests', () => {
-  function renderFunction(date, showRelativeDateTime) {
+  function renderFunction(date = null, showRelativeDateTime = null) {
     const {store} = renderWithProviders(<CeligoTimeAgo date={date} />);
     const profile = {timezone: 'Asia/Kolkata'};
 
@@ -21,20 +21,20 @@ describe('CeligoTimeAgo UI tests', () => {
     return store;
   }
   test('should run when date is not provided', () => {
-    renderFunction(null);
+    renderFunction();
 
-    const RelativeDateTime = screen.queryByLabelText('relative date time');
-    const LocalDateTime = screen.queryByLabelText('local date time');
+    const relativeDateTime = screen.queryByLabelText('relative date time');
+    const localDateTime = screen.queryByLabelText('local date time');
 
-    expect(RelativeDateTime).not.toBeInTheDocument();
-    expect(LocalDateTime).not.toBeInTheDocument();
+    expect(relativeDateTime).not.toBeInTheDocument();
+    expect(localDateTime).not.toBeInTheDocument();
   });
 
   test('should test the relative time date', () => {
     renderFunction('2022-05-18T18:16:31.989Z');
-    const RelativeDateTime = screen.getByLabelText('relative date time');
+    const relativeDateTime = screen.getByLabelText('relative date time');
 
-    expect(RelativeDateTime).toBeInTheDocument();
+    expect(relativeDateTime).toBeInTheDocument();
 
     const relativeTime = screen.getByText('05/18/2022 11:46:31 pm');
 
