@@ -4,6 +4,7 @@ import { Checkbox, FormControlLabel, Tooltip } from '@material-ui/core';
 import CheckboxUnselectedIcon from '../../../icons/CheckboxUnselectedIcon';
 import CheckboxSelectedIcon from '../../../icons/CheckboxSelectedIcon';
 import actions from '../../../../actions';
+import messageStore from '../../../../utils/messageStore';
 
 export default function SelectError({
   flowId,
@@ -37,7 +38,7 @@ export default function SelectError({
     useMemo(() => (
       <FormControlLabel
         control={(
-          <Tooltip title="Selected errors are added to a batch, on which you can perform bulk retry and resolve actions">
+          <Tooltip title={messageStore('SELECT_ERROR_HOVER_MESSAGE')}>
             <Checkbox
               icon={(
                 <span>

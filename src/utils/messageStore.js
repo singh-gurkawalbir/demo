@@ -85,6 +85,10 @@ href="/marketplace"><u>Check out our Marketplace</u></a> to jumpstart your  inte
   CONFIRM_LEAVE_MFA: 'Are you sure you want to leave? Your MFA settings will be disabled unless you connect your device successfully.',
   MFA_AUTH_FAILED: 'Verification failed. Please try again',
   // #endregion
+  // #region EM2.0 messages
+  SELECT_ERROR_HOVER_MESSAGE: 'Selected errors are added to a batch, on which you can perform bulk retry and resolve actions',
+  VIEW_ACTIONS_HOVER_MESSAGE: 'View actions for this error',
+  // #endregion
 
   MAX_ROUTERS_LIMIT_REACHED: 'You have reached the maximum of 25 branchings in a flow',
   MAX_BRANCHES_LIMIT_REACHED: 'You have reached the maximum of 25 branches in a branching',

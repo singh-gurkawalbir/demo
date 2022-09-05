@@ -18,12 +18,13 @@ import EditRetryData from '../actions/EditRetry';
 import { selectors } from '../../../../reducers';
 import ViewNetsuiteRequest from '../actions/ViewNetsuiteRequest';
 import ViewNetsuiteResponse from '../actions/ViewNetsuiteResponse';
+import messageStore from '../../../../utils/messageStore';
 
 const options = {allowedTags: ['a']};
 export default {
   rowKey: 'errorId',
   additionalConfigs: {
-    actionMenuTooltip: 'View actions for this error',
+    actionMenuTooltip: messageStore('VIEW_ACTIONS_HOVER_MESSAGE'),
   },
   useColumns: () => [
     {

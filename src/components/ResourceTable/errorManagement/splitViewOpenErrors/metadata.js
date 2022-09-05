@@ -16,7 +16,6 @@ import { FILTER_KEYS } from '../../../../utils/errorManagement';
 export default {
   rowKey: 'errorId',
   additionalConfigs: {
-    actionMenuTooltip: 'View actions for this error',
     IsActiveRow: ({ rowData }) => {
       const errorFilter = useSelector(
         state => selectors.filter(state, FILTER_KEYS.OPEN), shallowEqual
