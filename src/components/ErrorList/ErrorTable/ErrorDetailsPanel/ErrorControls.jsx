@@ -2,6 +2,7 @@ import { Typography } from '@material-ui/core';
 import { useStyles } from '@material-ui/pickers/views/Calendar/SlideTransition';
 import clsx from 'clsx';
 import React from 'react';
+import { FILTER_KEYS } from '../../../../utils/errorManagement';
 import TextButton from '../../../Buttons/TextButton';
 import ArrowLeftIcon from '../../../icons/ArrowLeftIcon';
 import ArrowRightIcon from '../../../icons/ArrowRightIcon';
@@ -13,7 +14,7 @@ export default function ErrorControls({
   flowId,
   isResolved,
   resourceId,
-  filterKey = 'openErrors',
+  filterKey = FILTER_KEYS.OPEN,
   retryId,
   handlePrev,
   handleNext,

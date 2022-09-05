@@ -42,18 +42,16 @@ export default function ToggleViewSelect({ variant, filterKey, defaultView = '',
   };
 
   return (
-    <>
-      <Select
-        labelId="toggle-view-label"
-        id="toggle-view"
-        value={view}
-        className={classes.toggleViewSelect}
-        onChange={handleToggle} >
-        {toggleOptions[variant]?.map(item => (
-          <MenuItem key={item.value} className={classes.item} value={item.value}>{item.Icon}</MenuItem>
-        ))}
-      </Select>
-    </>
+    <Select
+      labelId="toggle-view-label"
+      id="toggle-view"
+      value={view}
+      className={classes.toggleViewSelect}
+      onChange={handleToggle} >
+      {toggleOptions[variant]?.map(item => (
+        <MenuItem key={item.value} className={classes.item} value={item.value}>{item.Icon}</MenuItem>
+      ))}
+    </Select>
   );
 }
 

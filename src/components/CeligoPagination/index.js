@@ -9,7 +9,7 @@ import ArrowLeftIcon from '../icons/ArrowLeftIcon';
 import ArrowDownIcon from '../icons/ArrowDownIcon';
 import Spinner from '../Spinner';
 import { TextButton } from '../Buttons';
-import useHandeNextAndPreviousPage from '../../hooks/useHandleNextAndPreviousPage';
+import useHandleNextAndPreviousPage from '../../hooks/useHandleNextAndPreviousPage';
 
 const useStyles = makeStyles(theme => ({
   label: {
@@ -55,23 +55,22 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function Pagination(props) {
-  const {
-    className,
-    count,
-    rowsPerPageOptions = [],
-    rowsPerPage,
-    page,
-    onChangePage,
-    onChangeRowsPerPage,
-    hasMore,
-    loading,
-    loadMoreHandler,
-    resultPerPageLabel = 'Results per page:',
-  } = props;
+export default function Pagination({
+  className,
+  count,
+  rowsPerPageOptions = [],
+  rowsPerPage,
+  page,
+  onChangePage,
+  onChangeRowsPerPage,
+  hasMore,
+  loading,
+  loadMoreHandler,
+  resultPerPageLabel = 'Results per page:',
+}) {
   const classes = useStyles();
 
-  const {label, disableNextPage, handlePrevPage, handleNextPage} = useHandeNextAndPreviousPage({
+  const {label, disableNextPage, handlePrevPage, handleNextPage} = useHandleNextAndPreviousPage({
     count,
     rowsPerPage,
     page,

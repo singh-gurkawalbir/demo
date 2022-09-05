@@ -39,9 +39,6 @@ export default function Actions({
   const {retryDataKey: retryId, reqAndResKey} = error || {};
   const {
     handleNextError,
-    // handlePreviousError,
-    // disabledPrevious,
-    // disableNext,
   } = useHandleNextAndPreviousError({
     errorsInPage,
     activeErrorId: errorId,
@@ -71,7 +68,12 @@ export default function Actions({
         retryData: updatedRetryData,
       })
     );
-    closeAfterSave === true || isResolved ? onClose && onClose() : handleNextError(true);
+
+    if (closeAfterSave === true || isResolved) {
+      onClose?.();
+    } else {
+      handleNextError(true);
+    }
   }, [dispatch, flowId, resourceId, retryId, updatedRetryData, isResolved, onClose, handleNextError]);
 
   const resolve = useCallback(() => {
@@ -82,7 +84,12 @@ export default function Actions({
         errorIds: [errorId],
       })
     );
-    isResolved ? onClose && onClose() : handleNextError(true);
+
+    if (isResolved) {
+      onClose?.();
+    } else {
+      handleNextError(true);
+    }
   }, [dispatch, errorId, flowId, handleNextError, isResolved, onClose, resourceId]);
 
   const handleSaveAndRetry = useCallback(() => {
@@ -94,7 +101,12 @@ export default function Actions({
         retryData: updatedRetryData,
       })
     );
-    isResolved ? onClose && onClose() : handleNextError(true);
+
+    if (isResolved) {
+      onClose?.();
+    } else {
+      handleNextError(true);
+    }
   }, [dispatch, flowId, handleNextError, isResolved, onClose, resourceId, retryId, updatedRetryData]);
 
   const handleDownloadBlob = useCallback(
@@ -107,8 +119,8 @@ export default function Actions({
   const isRetryDataChanged = updatedRetryData && !isEqual(retryData, updatedRetryData);
 
   const handleClose = useCallback(() => {
-    dispatch(actions.errorManager.retryData.updateUserRetryData({retryId, retryData: undefined}));
-    onClose && onClose();
+    dispatch(actions.errorManager.retryData.updateUserRetryData({retryId}));
+    onClose?.();
   }, [dispatch, onClose, retryId]);
 
   const handleCancel = useHandleCancelBasic({isDirty: isRetryDataChanged, onClose: handleClose, handleSave: updateRetry});

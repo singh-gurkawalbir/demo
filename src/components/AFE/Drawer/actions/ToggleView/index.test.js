@@ -9,6 +9,7 @@ import userEvent from '@testing-library/user-event';
 import ToggleViewSelect from '.';
 import { runServer } from '../../../../../test/api/server';
 import { renderWithProviders} from '../../../../../test/test-utils';
+import { FILTER_KEYS } from '../../../../../utils/errorManagement';
 
 async function initToggleViewSelect({ props = {}} = {}) {
   const ui = (
@@ -53,7 +54,7 @@ describe('ToggleViewSelect component Test cases', () => {
     await initToggleViewSelect({
       props: {
         variant: 'openErrorViews',
-        filterKey: 'openErrors',
+        filterKey: FILTER_KEYS.OPEN,
         defaultView: 'split',
         handleToggleChange,
       },

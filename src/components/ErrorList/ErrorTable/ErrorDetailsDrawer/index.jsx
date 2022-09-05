@@ -92,7 +92,7 @@ export default function ErrorDetailsDrawer({ flowId, resourceId, isResolved }) {
   const errorsInPage = useSelectorMemo(selectors.mkResourceFilteredErrorsInCurrPageSelector, errorConfig);
 
   const activeErrorId = useSelector(state => {
-    const e = selectors.filter(state, 'openErrors');
+    const e = selectors.filter(state, FILTER_KEYS.OPEN);
 
     return e.activeErrorId;
   });

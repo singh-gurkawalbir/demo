@@ -3,6 +3,7 @@ import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 import actions from '../../../../actions';
 import useHandeNextAndPreviousPage from '../../../../hooks/useHandleNextAndPreviousPage';
 import { selectors } from '../../../../reducers';
+import { FILTER_KEYS } from '../../../../utils/errorManagement';
 import { useEditRetryConfirmDialog } from './useEditRetryConfirmDialog';
 import { useHandleNextAndPreviousErrorPage } from './useHandleNextAndPreviousErrorPage';
 
@@ -12,7 +13,7 @@ export const useHandleNextAndPreviousError = ({
   flowId,
   isResolved,
   resourceId,
-  filterKey = 'openErrors',
+  filterKey = FILTER_KEYS.OPEN,
   handlePrev,
   handleNext,
 }) => {
@@ -85,7 +86,7 @@ export const useHandleNextAndPreviousError = ({
 
       const newErrorId = allErrors?.[newIndex]?.errorId;
 
-      dispatch(actions.patchFilter('openErrors', {
+      dispatch(actions.patchFilter(FILTER_KEYS.OPEN, {
         activeErrorId: newErrorId,
         currentNavItem: newErrorId,
       }));

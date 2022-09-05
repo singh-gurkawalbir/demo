@@ -35,7 +35,7 @@ const useStyles = makeStyles(theme => ({
     flexBasis: '40%',
   },
   errorTable: {
-    height: '68vh',
+    height: '75vh',
     wordBreak: 'break-word',
     '& th': {
       wordBreak: 'normal',

@@ -24,7 +24,7 @@ export const useEditRetryConfirmDialog = ({
   const userRetryData = useSelector(state => selectors.userRetryData(state, retryId));
 
   const clearUserRetryData = useCallback(() => {
-    dispatch(actions.errorManager.retryData.updateUserRetryData({retryId, retryData: undefined}));
+    dispatch(actions.errorManager.retryData.updateUserRetryData({retryId}));
   }, [dispatch, retryId]);
 
   const onSave = useCallback(() => {

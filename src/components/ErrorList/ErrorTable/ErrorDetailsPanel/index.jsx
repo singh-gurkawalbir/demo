@@ -17,22 +17,24 @@ import actions from '../../../../actions';
 import { useSelectorMemo } from '../../../../hooks';
 import AddToBatch from '../../ErrorDetails/ErrorDetailActions/AddToBatch';
 import EmptyErrorDetails from './EmptyErrorDetails';
+import { FILTER_KEYS } from '../../../../utils/errorManagement';
 
 const useStyles = makeStyles(theme => ({
   detailsContainer: {
-    height: '56vh',
+    height: '67vh',
     // padding: theme.spacing(0, 3),
     display: 'flex',
     flexDirection: 'column',
-    [theme.breakpoints.down('sm')]: {
-      height: '58vh',
-    },
-    [theme.breakpoints.down('lg')]: {
-      height: '58vh',
-    },
-    [theme.breakpoints.up('lg')]: {
-      height: '57vh',
-    },
+    // @Azhar to check on below commented css
+    // [theme.breakpoints.down('sm')]: {
+    //   height: '67vh',
+    // },
+    // [theme.breakpoints.down('lg')]: {
+    //   height: '67vh',
+    // },
+    // [theme.breakpoints.up('lg')]: {
+    //   height: '57vh',
+    // },
   },
   tabContent: {
     flexGrow: 1,
@@ -128,7 +130,7 @@ export default function ErrorDetails({
   const errorsInPage = useSelectorMemo(selectors.mkResourceFilteredErrorsInCurrPageSelector, errorConfig);
 
   const activeErrorId = useSelector(state => {
-    const e = selectors.filter(state, 'openErrors');
+    const e = selectors.filter(state, FILTER_KEYS.OPEN);
 
     return e.activeErrorId;
   });

@@ -5,13 +5,14 @@ import actions from '../../../../actions';
 import { useSelectorMemo } from '../../../../hooks';
 import { selectors } from '../../../../reducers';
 import { DEFAULT_ROWS_PER_PAGE } from '../../../../utils/errorManagement';
+import { useEditRetryConfirmDialog } from './useEditRetryConfirmDialog';
 import { useFetchErrors } from './useFetchErrors';
 
 const emptySet = [];
 const emptyObj = {};
 
 export const useHandleNextAndPreviousErrorPage = ({
-  flowId, resourceId, isResolved, filterKey, showRetryDataChangedConfirmDialog,
+  flowId, resourceId, isResolved, filterKey,
 }) => {
   const dispatch = useDispatch();
   const fetchErrors = useFetchErrors({
@@ -42,6 +43,9 @@ export const useHandleNextAndPreviousErrorPage = ({
   const hasErrors = useSelector(
     state => selectors.hasResourceErrors(state, { flowId, resourceId, isResolved })
   );
+
+  const showRetryDataChangedConfirmDialog = useEditRetryConfirmDialog({flowId, resourceId, isResolved});
+
   const handleChangeRowsPerPage = useCallback(e => {
     showRetryDataChangedConfirmDialog(() => dispatch(
       actions.patchFilter(filterKey, {
