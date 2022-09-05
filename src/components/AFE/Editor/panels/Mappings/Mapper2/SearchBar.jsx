@@ -4,12 +4,13 @@ import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import ArrowDownIcon from '../../../../../icons/ArrowDownIcon';
 import ArrowUpIcon from '../../../../../icons/ArrowUpIcon';
-import KeywordSearch from '../../../../../KeywordSearch';
 import { selectors } from '../../../../../../reducers';
 import actions from '../../../../../../actions';
 import ActionGroup from '../../../../../ActionGroup';
 import CloseIcon from '../../../../../icons/CloseIcon';
 import IconButtonWithTooltip from '../../../../../IconButtonWithTooltip';
+import HomeSearchInput from '../../../../../SearchInput/HomeSearchInput';
+import useDebouncedValue from '../../../../../../hooks/useDebouncedInput';
 
 const useStyles = makeStyles(theme => ({
   searchWrapper: {
@@ -53,13 +54,18 @@ export default function SearchBar() {
   const classes = useStyles();
   const dispatch = useDispatch();
   const highlightedIndex = useSelector(state => selectors.highlightedIndex(state));
-  const fields = useSelector(state => selectors.filteredKeys(state));
-  const fieldsLen = fields.length;
-  const searchKey = useSelector(state => selectors.filter(state, 'tree')?.keyword);
-
-  useEffect(() => {
-    dispatch(actions.mapping.v2.searchTree(searchKey, false));
-  }, [dispatch, searchKey]);
+  const fieldsLen = useSelector(state => selectors.filteredKeys(state).length);
+  const filter = useSelector(state => selectors.filter(state, 'tree'));
+  const searchKey = filter?.keyword;
+  const [text, setText] = useDebouncedValue(filter?.keyword || '', value => {
+    // need this dispatch as searchkey is also being used in main Mapper component
+    dispatch(
+      actions.patchFilter('tree', {
+        keyword: value,
+      })
+    );
+    dispatch(actions.mapping.v2.searchTree({ searchKey: value, showKey: false }));
+  });
 
   // clear the filter and filteredKeys and index
   useEffect(() => () => {
@@ -67,37 +73,33 @@ export default function SearchBar() {
     dispatch(actions.mapping.v2.updateHighlightedIndex(-1));
   }, [dispatch]);
 
+  const handleKeywordChange = useCallback(e => {
+    setText(e.target.value);
+  }, [setText]);
+
   const downClickHandler = useCallback(() => {
     if (highlightedIndex < 0 || !fieldsLen) return;
-    // using tempHighlightIndex to select the correct selected field after updating highlightIndex state
-    let tempHighlightedIndex;
 
     if (highlightedIndex >= 0 && highlightedIndex < fieldsLen - 1) {
       dispatch(actions.mapping.v2.updateHighlightedIndex(highlightedIndex + 1));
-      tempHighlightedIndex = highlightedIndex + 1;
     }
     if (highlightedIndex === fieldsLen - 1) {
       dispatch(actions.mapping.v2.updateHighlightedIndex(0));
-      tempHighlightedIndex = 0;
     }
-    dispatch(actions.mapping.v2.searchTree(fields[tempHighlightedIndex], true));
-  }, [dispatch, fields, fieldsLen, highlightedIndex]);
+    dispatch(actions.mapping.v2.searchTree({ showKey: true }));
+  }, [dispatch, fieldsLen, highlightedIndex]);
 
   const upClickHandler = useCallback(() => {
     if (highlightedIndex < 0 || !fieldsLen) return;
-    // using tempHighlightIndex to select the correct selected field after updating highlightIndex state
-    let tempHighlightedIndex;
 
     if (highlightedIndex > 0 && highlightedIndex < fieldsLen) {
       dispatch(actions.mapping.v2.updateHighlightedIndex(highlightedIndex - 1));
-      tempHighlightedIndex = highlightedIndex - 1;
     }
     if (highlightedIndex === 0) {
       dispatch(actions.mapping.v2.updateHighlightedIndex(fieldsLen - 1));
-      tempHighlightedIndex = fieldsLen - 1;
     }
-    dispatch(actions.mapping.v2.searchTree(fields[tempHighlightedIndex], true));
-  }, [dispatch, fields, fieldsLen, highlightedIndex]);
+    dispatch(actions.mapping.v2.searchTree({ showKey: true }));
+  }, [dispatch, fieldsLen, highlightedIndex]);
 
   const onCloseHandler = useCallback(() => {
     dispatch(actions.mapping.v2.toggleSearch());
@@ -110,9 +112,9 @@ export default function SearchBar() {
   return (
     <div className={classes.searchWrapper}>
       <ActionGroup>
-        <KeywordSearch
-          isHomeSearch
-          filterKey="tree"
+        <HomeSearchInput
+          value={text}
+          onChange={handleKeywordChange}
           className={classes.searchField}
           placeHolder="Search destination fields"
           openWithFocus

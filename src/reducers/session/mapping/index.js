@@ -964,7 +964,7 @@ export default (state = {}, action) => {
 
       case actionTypes.MAPPING.V2.SEARCH_TREE: {
         if (!draft.mapping) break;
-        if (searchKey === undefined) break;
+        if (searchKey === undefined && !showKey) break;
         let items;
         const mapping = draft.mapping.v2TreeData;
 
@@ -985,27 +985,25 @@ export default (state = {}, action) => {
           draft.mapping.filteredKeys = items.filteredKeys;
           // index for the field to be highlightied
           draft.mapping.highlightedIndex = items.filteredKeys ? 0 : -1;
-          items.tabChange.forEach(item => {
-            const {key, tabValue, parentExtract} = item;
-            const {node, nodeIndexInSubArray, nodeSubArray} = findNodeInTree(mapping, 'key', key);
+        // if showKey is true then search for the highlighted key to be shown
+        } else if (showKey) {
+          // current highlighted key
+          const key = draft.mapping.filteredKeys[draft.mapping.highlightedIndex];
 
-            if (isEmpty(node)) return;
-            nodeSubArray[nodeIndexInSubArray] = hideOtherTabRows(original(node), parentExtract);
-            nodeSubArray[nodeIndexInSubArray].activeTab = tabValue;
-          });
-        // if showKey is true then search for unique key of the field to be shown
-        } else if (showKey && searchKey) {
-          items = searchTree(draft.mapping.v2TreeData, searchKey, filterKey);
+          items = searchTree(draft.mapping.v2TreeData, key, filterKey);
+          // merging two lists then
+          // removing duplicates by converting to set and then to list
           draft.mapping.expandedKeys = [...new Set([...draft.mapping.expandedKeys, ...items.expandedKeys])];
-          items.tabChange.forEach(item => {
-            const {key, tabValue, parentExtract} = item;
-            const {node, nodeIndexInSubArray, nodeSubArray} = findNodeInTree(mapping, 'key', key);
-
-            if (isEmpty(node)) return;
-            nodeSubArray[nodeIndexInSubArray] = hideOtherTabRows(original(node), parentExtract);
-            nodeSubArray[nodeIndexInSubArray].activeTab = tabValue;
-          });
         }
+        // all tab changes if required in objectarray
+        items.tabChange.forEach(item => {
+          const {key, tabValue, parentExtract} = item;
+          const {node, nodeIndexInSubArray, nodeSubArray} = findNodeInTree(mapping, 'key', key);
+
+          if (isEmpty(node)) return;
+          nodeSubArray[nodeIndexInSubArray] = hideOtherTabRows(original(node), parentExtract);
+          nodeSubArray[nodeIndexInSubArray].activeTab = tabValue;
+        });
         break;
       }
 

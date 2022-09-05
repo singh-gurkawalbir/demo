@@ -1238,72 +1238,6 @@ export const getExtractTabValue = (extractId, combinedExtract) => {
   }
 };
 
-// to search in object type of mapping
-const objectSearch = (node, key, filterFunc) => {
-  const items = {
-    firstIndex: -1,
-    expandedKeys: [],
-    filteredKeys: [],
-    tabChange: [],
-  };
-  // eslint-disable-next-line no-use-before-define
-  const newItems = searchTree(node.children, key, filterFunc);
-
-  // copying all the newItems in the items as it is
-  items.firstIndex = newItems.firstIndex;
-  items.expandedKeys = [...newItems.expandedKeys];
-  items.filteredKeys = [...newItems.filteredKeys];
-  items.tabChange = [...newItems.tabChange];
-
-  // if children mappings contained a search then adding the node to expandKeys list
-  if (items.firstIndex !== -1) {
-    items.expandedKeys = [node.key, ...newItems.expandedKeys];
-  }
-
-  return items;
-};
-
-// to search in objectArray type of mapping
-const objectArraySearch = (node, key, filterFunc) => {
-  const items = {
-    firstIndex: -1,
-    expandedKeys: [],
-    filteredKeys: [],
-    tabChange: [],
-  };
-  // eslint-disable-next-line no-use-before-define
-  const newItems = searchTree(node.children, key, filterFunc);
-
-  // copying all the newItems in the items as it is
-  items.firstIndex = newItems.firstIndex;
-  items.expandedKeys = [...newItems.expandedKeys];
-  items.filteredKeys = [...newItems.filteredKeys];
-  items.tabChange = [...newItems.tabChange];
-
-  // if match found in the mappings then setting tabChange list to contain the current tabChange object
-  if (newItems.firstIndex !== -1) {
-    const childNode = node.children[items.firstIndex];
-
-    // checking if tabs are present or not
-    if (node.children[0].isTabNode) {
-      // to get the correct tabValue from the combinedExtract
-      const tabValue = getExtractTabValue(childNode.parentExtract, node.combinedExtract);
-
-      items.tabChange = [
-        {
-          key: node.key,
-          tabValue,
-          parentExtract: childNode.parentExtract,
-        },
-        ...newItems.tabChange,
-      ];
-    }
-    items.expandedKeys = [node.key, ...newItems.expandedKeys];
-  }
-
-  return items;
-};
-
 export const searchTree = (mappings, key, filterFunc) => {
   const items = {
     firstIndex: -1,   // stores the first index where match was found
@@ -1312,6 +1246,8 @@ export const searchTree = (mappings, key, filterFunc) => {
     tabChange: [],    // stores the all tab changes required in case of objectArray field
   };
 
+  if (!mappings || !key || !filterFunc) return items;
+
   // set it when search if found for the first time
   let found = false;
 
@@ -1319,6 +1255,7 @@ export const searchTree = (mappings, key, filterFunc) => {
   mappings.forEach((node, index) => {
     if (node.isTabNode) return;
     let newItems;
+    let tempItems;
 
     if (filterFunc(node, key)) {
       found = true;
@@ -1327,9 +1264,37 @@ export const searchTree = (mappings, key, filterFunc) => {
 
     // calling required function according to the mappings dataType
     if (node.dataType === 'object') {
-      newItems = objectSearch(node, key, filterFunc);
+      tempItems = searchTree(node.children, key, filterFunc);
+      newItems = deepClone(tempItems);
+
+      // if children mappings contained a search then adding the node to expandKeys list
+      if (newItems.firstIndex !== -1) {
+        newItems.expandedKeys = [node.key, ...tempItems.expandedKeys];
+      }
     } else if (node.dataType === 'objectarray') {
-      newItems = objectArraySearch(node, key, filterFunc);
+      tempItems = searchTree(node.children, key, filterFunc);
+      newItems = deepClone(tempItems);
+
+      // if match found in the mappings then setting tabChange list to contain the current tabChange object
+      if (tempItems.firstIndex !== -1) {
+        const childNode = node.children[newItems.firstIndex];
+
+        // checking if tabs are present or not
+        if (node.children[0].isTabNode) {
+          // to get the correct tabValue from the combinedExtract
+          const tabValue = getExtractTabValue(childNode.parentExtract, node.combinedExtract);
+
+          newItems.tabChange = [
+            {
+              key: node.key,
+              tabValue,
+              parentExtract: childNode.parentExtract,
+            },
+            ...tempItems.tabChange,
+          ];
+        }
+        newItems.expandedKeys = [node.key, ...tempItems.expandedKeys];
+      }
     }
 
     if (newItems) {
