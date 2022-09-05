@@ -177,11 +177,13 @@ export default function ErrorDetails({ flowId, resourceId, isResolved, onClose, 
             />
           </TabPanel>
         </div>
+        { !isResolved && (
         <AddToBatch
           error={errorDoc}
           flowId={flowId}
           resourceI={resourceId}
           isResolved={isResolved} />
+        )}
       </DrawerContent>
 
       <DrawerFooter>

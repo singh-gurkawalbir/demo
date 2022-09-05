@@ -112,7 +112,7 @@ function TabPanel({ children, value, type }) {
   );
 }
 
-export default function ErrorDetails({
+export default function ErrorDetailsPanel({
   flowId,
   resourceId,
   isResolved,
