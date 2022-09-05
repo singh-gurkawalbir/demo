@@ -181,7 +181,7 @@ export default function ErrorDetails({ flowId, resourceId, isResolved, onClose, 
         <AddToBatch
           error={errorDoc}
           flowId={flowId}
-          resourceI={resourceId}
+          resourceId={resourceId}
           isResolved={isResolved} />
         )}
       </DrawerContent>
