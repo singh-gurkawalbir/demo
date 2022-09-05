@@ -85,9 +85,6 @@ function customSchedule(props) {
       _sourceId: '626bd993987bb423914b484f',
     },
   ];
-  // initialStore.getState().session = session;
-  // initialStore.getState()['flow-schedule'] = {};
-  // initialStore.getState()['flow-schedule'] = form;
   initialStore.getState().session.form = {'flow-schedule': {
     fields: { timeZone: {
       id: 'timeZone',

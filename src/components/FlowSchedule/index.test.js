@@ -1,7 +1,6 @@
 /* global test, expect, jest */
 import React from 'react';
 import { screen } from '@testing-library/react';
-import { MemoryRouter } from 'react-router-dom';
 import { renderWithProviders } from '../../test/test-utils';
 import FlowSchedule from '.';
 
@@ -10,13 +9,29 @@ const newprops = {flow: {_integrationId: '626bda66987bb423914b486f'}, resources:
 jest.mock('../LoadResources', () => ({
   __esModule: true,
   ...jest.requireActual('../LoadResources'),
-  // eslint-disable-next-line no-unused-vars
-  default: newprops => (
-    <div>LoadResources called</div>
+  default: props => (
+    props.children
   ),
 }));
 
-test('checking render of Flow schedule', () => {
-  renderWithProviders(<MemoryRouter><FlowSchedule {...newprops} /></MemoryRouter>);
-  expect(screen.getByText(/LoadResources called/i)).toBeInTheDocument();
+jest.mock('./Buttons', () => ({
+  __esModule: true,
+  ...jest.requireActual('./Buttons'),
+  default: () => (
+    <div>FlowSchedule Buttons</div>
+  ),
+}));
+
+jest.mock('./Form', () => ({
+  __esModule: true,
+  ...jest.requireActual('./Form'),
+  default: () => (
+    <div>Flowschedule Form</div>
+  ),
+}));
+
+test('should render the Flow schedule component', () => {
+  renderWithProviders(<FlowSchedule {...newprops} />);
+  expect(screen.getByText(/FlowSchedule Buttons/i)).toBeInTheDocument();
+  expect(screen.getByText(/Flowschedule Form/i)).toBeInTheDocument();
 });
