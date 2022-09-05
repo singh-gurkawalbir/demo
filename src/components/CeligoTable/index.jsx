@@ -13,6 +13,7 @@ export default function CeligoTable({
   useColumns,
   onRowOver,
   onRowOut,
+  onRowClick,
   rowKey,
   useRowActions,
   data = emptySet,
@@ -23,12 +24,14 @@ export default function CeligoTable({
   className,
   size,
   actionProps = emptyObj,
+  additionalConfigs,
+  keydownListener,
 }) {
   // if no useColumns hook no means to generate table
   if (!useColumns) { return null; }
 
   return (
-    <div className={className}>
+    <div className={className} onKeyDownCapture={keydownListener}>
       <TableContextWrapper value={actionProps}>
         <Table size={size || 'medium'}>
           <TableHeader
@@ -45,12 +48,14 @@ export default function CeligoTable({
             data={data}
             onRowOver={onRowOver}
             onRowOut={onRowOut}
+            onRowClick={onRowClick}
             selectableRows={selectableRows}
             isSelectableRow={isSelectableRow}
             useColumns={useColumns}
             useRowActions={useRowActions}
             filterKey={filterKey}
             onSelectChange={onSelectChange}
+            additionalConfigs={additionalConfigs}
           />
         </Table>
       </TableContextWrapper>

@@ -2048,6 +2048,11 @@ const errorManager = {
         retryId,
         retryData,
       }),
+    updateUserRetryData: ({retryId, retryData}) =>
+      action(actionTypes.ERROR_MANAGER.RETRY_DATA.UPDATE_USER_RETRY_DATA, {
+        retryId,
+        retryData,
+      }),
     receivedError: ({ flowId, resourceId, retryId, error }) =>
       action(actionTypes.ERROR_MANAGER.RETRY_DATA.RECEIVED_ERROR, {
         flowId,

@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React from 'react';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
@@ -9,6 +9,7 @@ import ArrowLeftIcon from '../icons/ArrowLeftIcon';
 import ArrowDownIcon from '../icons/ArrowDownIcon';
 import Spinner from '../Spinner';
 import { TextButton } from '../Buttons';
+import useHandeNextAndPreviousPage from '../../hooks/useHandleNextAndPreviousPage';
 
 const useStyles = makeStyles(theme => ({
   label: {
@@ -54,19 +55,6 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const getPaginationLabel = (page, rowsPerPage, count, hasMore) => {
-  const start = page * rowsPerPage + 1;
-  const end = (page + 1) * rowsPerPage;
-  const total = `${count}${hasMore ? '+' : ''}`;
-
-  return `${start} - ${end < count ? end : count} of ${total}`;
-};
-
-const isDisableNext = (page, rowsPerPage, count, hasMore) => {
-  const end = (page + 1) * rowsPerPage;
-
-  return (end >= count && !hasMore);
-};
 export default function Pagination(props) {
   const {
     className,
@@ -83,35 +71,14 @@ export default function Pagination(props) {
   } = props;
   const classes = useStyles();
 
-  const label = getPaginationLabel(page, rowsPerPage, count, hasMore);
-  const disableNextPage = isDisableNext(page, rowsPerPage, count, hasMore);
-
-  const handlePrevPage = useCallback(
-    event => {
-      if (typeof onChangePage === 'function') {
-        onChangePage(event, page - 1);
-      }
-    },
-    [onChangePage, page]
-  );
-  const handleNextPage = useCallback(
-    event => {
-      const nextPage = page + 1;
-      const startOfNextPage = nextPage * rowsPerPage + 1;
-      const endOfNextPage = (nextPage + 1) * rowsPerPage;
-      const shouldLoadMore = hasMore && endOfNextPage > count;
-      const canNavigateToNextPage = startOfNextPage <= count;
-
-      if (shouldLoadMore && typeof loadMoreHandler === 'function') {
-        loadMoreHandler();
-      }
-
-      if (canNavigateToNextPage && typeof onChangePage === 'function') {
-        onChangePage(event, nextPage);
-      }
-    },
-    [count, hasMore, loadMoreHandler, onChangePage, page, rowsPerPage]
-  );
+  const {label, disableNextPage, handlePrevPage, handleNextPage} = useHandeNextAndPreviousPage({
+    count,
+    rowsPerPage,
+    page,
+    onChangePage,
+    hasMore,
+    loadMoreHandler,
+  });
 
   return (
     <div className={className}>
