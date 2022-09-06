@@ -1,6 +1,7 @@
 import React, { useCallback } from 'react';
 import { useRouteMatch } from 'react-router-dom';
 import { makeStyles, Tabs, Tab } from '@material-ui/core';
+import { useEditRetryConfirmDialog } from '../../../../components/ErrorList/ErrorTable/hooks/useEditRetryConfirmDialog';
 
 const useStyles = makeStyles(theme => ({
   tabContainer: {
@@ -32,22 +33,25 @@ const tabs = [
     dataTest: 'flow-builder-resolved-errors',
   }];
 
-export default function ErrorDetailsTabs({onChange}) {
+export default function ErrorDetailsTabs({flowId, onChange}) {
   const classes = useStyles();
   const match = useRouteMatch();
+  const { errorType, resourceId } = match.params;
 
-  const { errorType } = match.params;
+  const showRetryDataChangedConfirmDialog = useEditRetryConfirmDialog({flowId, resourceId, isResolved: errorType !== 'open'});
 
   let currentTabIndex = tabs.findIndex(t => t.path === errorType);
 
   currentTabIndex = currentTabIndex === -1 ? 0 : currentTabIndex;
   const handleTabChange = useCallback(
     (event, newTabIndex) => {
-      const newTab = tabs[newTabIndex].path;
+      showRetryDataChangedConfirmDialog(() => {
+        const newTab = tabs[newTabIndex].path;
 
-      onChange(newTab);
+        onChange(newTab);
+      });
     },
-    [onChange]
+    [onChange, showRetryDataChangedConfirmDialog]
   );
 
   return (

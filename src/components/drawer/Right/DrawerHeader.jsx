@@ -63,6 +63,7 @@ export default function DrawerHeader({
   className,
   handleClose,
   closeDataTest,
+  showCloseButton = true,
 }) {
   const classes = useStyles();
   const history = useHistory();
@@ -99,7 +100,7 @@ export default function DrawerHeader({
 
       {/* Typically children are the action icons/buttons */}
       {children}
-      <CloseIconButton closeDataTest={closeDataTest} CloseButton={CloseButton} disableClose={disableClose} onClose={handleClose || onClose} />
+      {showCloseButton && <CloseIconButton closeDataTest={closeDataTest} CloseButton={CloseButton} disableClose={disableClose} onClose={handleClose || onClose} />}
     </div>
   );
 }

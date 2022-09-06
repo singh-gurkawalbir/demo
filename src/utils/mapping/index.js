@@ -824,9 +824,9 @@ function recursivelyBuildTreeFromV2Mappings({mappings, treeData, parentKey, pare
 
       if (dataType === MAPPING_DATA_TYPES.OBJECTARRAY) {
         buildArrayHelper.forEach((obj, index) => {
-          const {extract = getDefaultExtractPath(isGroupedSampleData), mappings} = obj;
+          const {extract = '', mappings} = obj;
 
-          combinedExtract = `${combinedExtract ? `${combinedExtract},` : ''}${extract}`;
+          combinedExtract = `${combinedExtract ? `${combinedExtract}${extract ? ',' : ''}` : ''}${extract}`;
 
           if (!mappings) {
             nodeToPush.copySource = 'yes';
@@ -1029,7 +1029,6 @@ const recursivelyBuildV2MappingsFromTree = ({v2TreeData, _mappingsToSave, lookup
       isTabNode} = mapping;
 
     if (isTabNode || (!generateDisabled && !generate)) return;
-    if (isMappingWithoutExtract(mapping, lookups)) return;
 
     const newMapping = {
       description,
@@ -1046,6 +1045,7 @@ const recursivelyBuildV2MappingsFromTree = ({v2TreeData, _mappingsToSave, lookup
       conditional: {
         when: conditional.when,
       },
+      status: isMappingWithoutExtract(mapping, lookups) ? 'Draft' : 'Active',
     };
 
     if (PRIMITIVE_DATA_TYPES.includes(dataType)) {
@@ -1060,9 +1060,11 @@ const recursivelyBuildV2MappingsFromTree = ({v2TreeData, _mappingsToSave, lookup
         newMapping.mappings = [];
         recursivelyBuildV2MappingsFromTree({v2TreeData: children, _mappingsToSave: newMapping.mappings, lookups});
 
-        // if no valid children mappings are present, then do not save the parent as well
-        if (newMapping.mappings.length === 0) {
-          return;
+        // if no valid children mappings are present, then parent is also marked as Draft
+        const isAnyChildActive = newMapping.mappings.some(m => m.status === 'Active');
+
+        if (!isAnyChildActive) {
+          newMapping.status = 'Draft';
         }
       }
       _mappingsToSave.push(newMapping);
@@ -1077,9 +1079,18 @@ const recursivelyBuildV2MappingsFromTree = ({v2TreeData, _mappingsToSave, lookup
 
         newMapping.buildArrayHelper = buildArrayHelper;
 
-        if (!splitExtracts.length) {
-          // invalid mapping as no combinedExtracts are given
-          // each extract is mandatory for now
+        if (!splitExtracts.length && children?.length) {
+          // if no extracts are present, just save the sub mappings
+          const subMappings = [];
+          const newHelper = {
+            mappings: subMappings,
+          };
+
+          recursivelyBuildV2MappingsFromTree({v2TreeData: children, _mappingsToSave: subMappings, lookups});
+
+          buildArrayHelper.push(newHelper);
+          _mappingsToSave.push(newMapping);
+
           return;
         }
 
@@ -1112,20 +1123,25 @@ const recursivelyBuildV2MappingsFromTree = ({v2TreeData, _mappingsToSave, lookup
           const newHelper = {
             extract,
             mappings: subMappings,
+            status: 'Active',
           };
 
           recursivelyBuildV2MappingsFromTree({v2TreeData: matchingChildren, _mappingsToSave: subMappings, lookups});
 
-          // if no valid children mappings are present, then do not push that source to the parent
-          if (newHelper.mappings.length === 0) {
-            return;
+          // if no valid children mappings are present, then parent is also marked as Draft
+          const isAnyChildActive = newHelper.mappings.some(m => m.status === 'Active');
+
+          if (!isAnyChildActive) {
+            newHelper.status = 'Draft';
           }
           buildArrayHelper.push(newHelper);
         });
 
-        // if no sources children are present, then no need to save the parent mapping as well
-        if (newMapping.buildArrayHelper.length === 0) {
-          return;
+        // if no sources children are present, then parent is also marked as Draft
+        const isAnySourceActive = newMapping.buildArrayHelper.some(m => m.status === 'Active');
+
+        if (!isAnySourceActive) {
+          newMapping.status = 'Draft';
         }
         _mappingsToSave.push(newMapping);
 
@@ -1150,7 +1166,8 @@ const recursivelyBuildV2MappingsFromTree = ({v2TreeData, _mappingsToSave, lookup
         });
         _mappingsToSave.push(newMapping);
       } else {
-        // invalid mapping
+        // invalid mapping, save without buildArrayHelper
+        _mappingsToSave.push(newMapping);
       }
     }
   });
