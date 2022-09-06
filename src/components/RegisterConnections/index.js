@@ -6,7 +6,7 @@ import CeligoTable from '../CeligoTable';
 import { selectors } from '../../reducers';
 import metadata from './metadata';
 import ModalDialog from '../ModalDialog';
-import { OutlinedButton } from '../Buttons';
+import { FilledButton } from '../Buttons';
 
 export default function RegisterConnections({ onClose, integrationId }) {
   const tableConfig = useSelector(state => selectors.filter(state, 'registerConnections'));
@@ -48,12 +48,12 @@ export default function RegisterConnections({ onClose, integrationId }) {
         </LoadResources>
       </div>
       <div>
-        <OutlinedButton
+        <FilledButton
           data-test="registerConnections"
           onClick={handleRegisterClick}
           >
           Register
-        </OutlinedButton>
+        </FilledButton>
       </div>
     </ModalDialog>
   );
