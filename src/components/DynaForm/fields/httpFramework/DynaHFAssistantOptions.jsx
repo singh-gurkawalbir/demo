@@ -87,8 +87,8 @@ function DynaAssistantOptions(props) {
     () =>
       [
         'adaptorType',
-        'version',
         'resource',
+        'version',
         'operation',
         'exportType',
       ].reduce(
@@ -168,17 +168,32 @@ function DynaAssistantOptions(props) {
         assistantFieldType
       )
     ) {
-      const fieldDependencyMap = {
+      const versions = (resourceType === 'imports' ? assistantData?.import?.versions : assistantData?.export?.versions);
+      let fieldDependencyMap = {
         exports: {
-          version: ['resource', 'operation', 'exportType'],
           resource: ['operation', 'exportType'],
+          version: ['operation', 'exportType'],
           operation: ['exportType'],
         },
         imports: {
-          version: ['resource', 'operation'],
           resource: ['operation'],
+          version: ['operation'],
         },
       };
+
+      if (versions?.length > 1) {
+        fieldDependencyMap = {
+          exports: {
+            resource: ['version', 'operation', 'exportType'],
+            version: ['operation', 'exportType'],
+            operation: ['exportType'],
+          },
+          imports: {
+            resource: ['version', 'operation'],
+            version: ['operation'],
+          },
+        };
+      }
       const patch = [];
 
       patch.push({
