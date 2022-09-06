@@ -2,7 +2,7 @@
 import React from 'react';
 import { MemoryRouter, Route } from 'react-router-dom';
 // eslint-disable-next-line import/no-extraneous-dependencies
-import { screen } from '@testing-library/react';
+import { cleanup, screen } from '@testing-library/react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import userEvent from '@testing-library/user-event';
 import * as reactRedux from 'react-redux';
@@ -104,6 +104,8 @@ describe('Script Logs Drawer Route', () => {
 
   beforeEach(done => {
     initialStore = getCreatedStore();
+    jest.useFakeTimers();
+    jest.setTimeout(100000);
     useDispatchSpy = jest.spyOn(reactRedux, 'useDispatch');
     mockDispatchFn = jest.fn(action => {
       switch (action.type) {
@@ -111,11 +113,16 @@ describe('Script Logs Drawer Route', () => {
       }
     });
     useDispatchSpy.mockReturnValue(mockDispatchFn);
+    jest.clearAllMocks();
     done();
   });
   afterEach(async () => {
+    jest.runOnlyPendingTimers();
+    jest.useRealTimers();
+    jest.clearAllTimers();
     useDispatchSpy.mockClear();
     mockDispatchFn.mockClear();
+    cleanup();
   });
   test('Should able to test the Script logs drawer header text', async () => {
     const scriptname = 'Test Script';

@@ -2,7 +2,7 @@
 import React from 'react';
 import { MemoryRouter, Route } from 'react-router-dom';
 // eslint-disable-next-line import/no-extraneous-dependencies
-import { screen, waitFor } from '@testing-library/react';
+import { cleanup, screen, waitFor } from '@testing-library/react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import userEvent from '@testing-library/user-event';
 import * as reactRedux from 'react-redux';
@@ -338,6 +338,8 @@ describe('Script logs', () => {
 
   beforeEach(done => {
     initialStore = getCreatedStore();
+    jest.useFakeTimers();
+    jest.setTimeout(100000);
     dateSpy = jest.spyOn(global.Date, 'now').mockImplementation(() => mockDate);
     useDispatchSpy = jest.spyOn(reactRedux, 'useDispatch');
     mockDispatchFn = jest.fn(action => {
@@ -346,12 +348,17 @@ describe('Script logs', () => {
       }
     });
     useDispatchSpy.mockReturnValue(mockDispatchFn);
+    jest.clearAllMocks();
     done();
   });
   afterEach(async () => {
+    jest.runOnlyPendingTimers();
+    jest.useRealTimers();
+    jest.clearAllTimers();
     dateSpy.mockRestore();
     useDispatchSpy.mockClear();
     mockDispatchFn.mockClear();
+    cleanup();
   });
 
   test('Should able to test the run now button', async () => {
