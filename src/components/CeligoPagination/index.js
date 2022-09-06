@@ -106,7 +106,6 @@ export default function Pagination({
           className={classes.arrowBtn}
           data-testid="prevPage"
           disabled={page === 0}
-          data-testid="prevPage"
           startIcon={<ArrowLeftIcon />} />
         <span className={classes.label}>{label}</span>
         {loading ? (
@@ -122,7 +121,6 @@ export default function Pagination({
             className={clsx(classes.arrowBtn, classes.arrowBtnRight)}
             data-testid="nextPage"
             disabled={disableNextPage}
-            data-testid="nextPage"
             startIcon={<ArrowRightIcon />} />
         )}
       </div>
