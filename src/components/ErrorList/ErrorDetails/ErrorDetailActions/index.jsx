@@ -1,21 +1,16 @@
 import React, { useCallback } from 'react';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { isEqual } from 'lodash';
-import { makeStyles } from '@material-ui/core/styles';
 import actions from '../../../../actions';
 import { selectors } from '../../../../reducers';
-import useHandleCancelBasic from '../../../SaveAndCloseButtonGroup/hooks/useHandleCancelBasic';
-import SaveAndCloseMiniButtonGroup from '../../../SaveAndCloseButtonGroup/SaveAndCloseMiniButtonGroup';
-import { ERROR_DETAIL_ACTIONS_ASYNC_KEY } from '../../../../constants';
 import { TextButton, FilledButton, OutlinedButton } from '../../../Buttons';
+import { useHandleNextAndPreviousError } from '../../ErrorTable/hooks/useHandleNextAndPreviousError';
+import { ERROR_DETAIL_ACTIONS_ASYNC_KEY } from '../../../../constants';
+import useHandleCancelBasic from '../../../SaveAndCloseButtonGroup/hooks/useHandleCancelBasic';
+import useClearAsyncStateOnUnmount from '../../../SaveAndCloseButtonGroup/hooks/useClearAsyncStateOnUnmount';
+import useTriggerCancelFromContext from '../../../SaveAndCloseButtonGroup/hooks/useTriggerCancelFromContext';
+import ActionGroup from '../../../ActionGroup';
 
-const useStyles = makeStyles(theme => ({
-  action: {
-    '& button': {
-      margin: theme.spacing(1),
-    },
-  },
-}));
 export default function Actions({
   errorId,
   updatedRetryData,
@@ -24,15 +19,15 @@ export default function Actions({
   onClose,
   mode = 'view',
   isResolved = false,
+  errorsInPage,
+  handleNext,
 }) {
   const dispatch = useDispatch();
-  const classes = useStyles();
-
   const isFlowDisabled = useSelector(state =>
     !!(selectors.resource(state, 'flows', flowId)?.disabled)
   );
 
-  const {retryDataKey: retryId, reqAndResKey} = useSelector(state =>
+  const error = useSelector(state =>
     selectors.resourceError(state, {
       flowId,
       resourceId,
@@ -41,7 +36,18 @@ export default function Actions({
     }),
   shallowEqual
   );
-
+  const {retryDataKey: retryId, reqAndResKey} = error || {};
+  const {
+    handleNextError,
+  } = useHandleNextAndPreviousError({
+    errorsInPage,
+    activeErrorId: errorId,
+    flowId,
+    isResolved,
+    resourceId,
+    retryId,
+    handleNext,
+  });
   const s3BlobKey = useSelector(state => {
     if (!['request', 'response'].includes(mode)) {
       return;
@@ -53,7 +59,7 @@ export default function Actions({
 
   const retryData = useSelector(state => selectors.retryData(state, retryId));
 
-  const updateRetry = useCallback(() => {
+  const updateRetry = useCallback(closeAfterSave => {
     dispatch(
       actions.errorManager.retryData.updateRequest({
         flowId,
@@ -63,8 +69,12 @@ export default function Actions({
       })
     );
 
-    if (onClose) onClose();
-  }, [dispatch, flowId, onClose, resourceId, updatedRetryData, retryId]);
+    if (closeAfterSave === true || isResolved) {
+      onClose?.();
+    } else {
+      handleNextError(true);
+    }
+  }, [dispatch, flowId, resourceId, retryId, updatedRetryData, isResolved, onClose, handleNextError]);
 
   const resolve = useCallback(() => {
     dispatch(
@@ -75,8 +85,12 @@ export default function Actions({
       })
     );
 
-    if (onClose) onClose();
-  }, [dispatch, errorId, flowId, onClose, resourceId]);
+    if (isResolved) {
+      onClose?.();
+    } else {
+      handleNextError(true);
+    }
+  }, [dispatch, errorId, flowId, handleNextError, isResolved, onClose, resourceId]);
 
   const handleSaveAndRetry = useCallback(() => {
     dispatch(
@@ -88,8 +102,12 @@ export default function Actions({
       })
     );
 
-    if (onClose) onClose();
-  }, [dispatch, flowId, onClose, resourceId, retryId, updatedRetryData]);
+    if (isResolved) {
+      onClose?.();
+    } else {
+      handleNextError(true);
+    }
+  }, [dispatch, flowId, handleNextError, isResolved, onClose, resourceId, retryId, updatedRetryData]);
 
   const handleDownloadBlob = useCallback(
     () => {
@@ -99,38 +117,50 @@ export default function Actions({
   );
 
   const isRetryDataChanged = updatedRetryData && !isEqual(retryData, updatedRetryData);
-  const handleCancel = useHandleCancelBasic({isDirty: isRetryDataChanged, onClose, handleSave: updateRetry});
+
+  const handleClose = useCallback(() => {
+    dispatch(actions.errorManager.retryData.updateUserRetryData({retryId}));
+    onClose?.();
+  }, [dispatch, onClose, retryId]);
+
+  const handleCancel = useHandleCancelBasic({isDirty: isRetryDataChanged, onClose: handleClose, handleSave: updateRetry});
+
+  useClearAsyncStateOnUnmount(ERROR_DETAIL_ACTIONS_ASYNC_KEY);
+  useTriggerCancelFromContext(ERROR_DETAIL_ACTIONS_ASYNC_KEY, handleCancel);
+
+  let retryButtonLabel = 'Retry & next';
+
+  if (isResolved) retryButtonLabel = 'Save & retry';
+  else if (isRetryDataChanged) retryButtonLabel = 'Save, retry & next';
 
   if (mode === 'editRetry' && !isFlowDisabled) {
     return (
-      <div className={classes.action}>
-        <FilledButton disabled={!isRetryDataChanged} onClick={handleSaveAndRetry}>
-          Save &amp; retry
+      <ActionGroup>
+        <FilledButton disabled={isResolved && !isRetryDataChanged} onClick={handleSaveAndRetry}>
+          {retryButtonLabel}
         </FilledButton>
-        <SaveAndCloseMiniButtonGroup
-          isDirty={isRetryDataChanged}
-          handleSave={updateRetry}
-          handleClose={onClose}
-          shouldNotShowCancelButton
-          asyncKey={ERROR_DETAIL_ACTIONS_ASYNC_KEY}
-        />
-        { !isResolved && (
+        <FilledButton disabled={!isRetryDataChanged} onClick={updateRetry}>
+          {isResolved ? 'Save & close' : 'Save & next'}
+        </FilledButton>
+        {!isResolved && (
           <OutlinedButton onClick={resolve}>
-            Resolve
+            Resolve &amp; next
           </OutlinedButton>
         )}
-        <TextButton onClick={handleCancel}>
-          Close
-        </TextButton>
-      </div>
+        {!!onClose && (
+          <TextButton onClick={handleCancel}>
+            Close
+          </TextButton>
+        )}
+      </ActionGroup>
     );
   }
 
   return (
-    <div className={classes.action}>
+    <ActionGroup>
       {!isResolved && (
         <OutlinedButton onClick={resolve}>
-          Resolve
+          Resolve &amp; next
         </OutlinedButton>
       )}
       {
@@ -140,9 +170,11 @@ export default function Actions({
         </OutlinedButton>
         )
       }
-      <TextButton onClick={onClose}>
-        Close
-      </TextButton>
-    </div>
+      {!!onClose && (
+        <TextButton onClick={onClose}>
+          Close
+        </TextButton>
+      )}
+    </ActionGroup>
   );
 }

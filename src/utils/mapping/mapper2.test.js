@@ -1212,7 +1212,7 @@ describe('v2 mapping utils', () => {
           key: 'new_key',
           title: '',
           parentKey: 'new_key',
-          parentExtract: '$|0',
+          parentExtract: '',
           disabled: false,
           generate: 'my_first_name',
           jsonPath: 'two_of_my_fav_names[*].my_first_name',
@@ -1222,7 +1222,7 @@ describe('v2 mapping utils', () => {
           key: 'new_key',
           title: '',
           parentKey: 'new_key',
-          parentExtract: '$|1',
+          parentExtract: '',
           disabled: false,
           hidden: true,
           className: 'hideRow',
@@ -1231,7 +1231,7 @@ describe('v2 mapping utils', () => {
           dataType: 'string',
           extract: '$.lName',
         }],
-        combinedExtract: '$,$',
+        combinedExtract: '',
       }, {
         key: 'new_key',
         title: '',
@@ -1433,7 +1433,7 @@ describe('v2 mapping utils', () => {
             key: 'new_key',
             title: '',
             parentKey: 'new_key',
-            parentExtract: '$|1',
+            parentExtract: '',
             disabled: false,
             hidden: true,
             className: 'hideRow',
@@ -1445,7 +1445,7 @@ describe('v2 mapping utils', () => {
             key: 'new_key',
             title: '',
             parentKey: 'new_key',
-            parentExtract: '$|1',
+            parentExtract: '',
             disabled: false,
             hidden: true,
             className: 'hideRow',
@@ -1491,7 +1491,7 @@ describe('v2 mapping utils', () => {
             }],
             combinedExtract: '$.children[*]',
           }],
-          combinedExtract: '$.siblings[*],$',
+          combinedExtract: '$.siblings[*]',
         }],
       },
       {
@@ -2314,38 +2314,50 @@ describe('v2 mapping utils', () => {
       const mappingsToSave = [
         {
           conditional: {when: undefined},
+          generate: 'dummy_generate',
+          dataType: 'string',
+          status: 'Draft',
+        },
+        {
+          conditional: {when: undefined},
           generate: 'arraynames',
           dataType: 'stringarray',
           hardCodedValue: null,
+          status: 'Active',
         },
         {
           conditional: {when: undefined},
           generate: 'my_first_name',
           dataType: 'string',
           hardCodedValue: 'hard coded value',
+          status: 'Active',
         },
         {
           conditional: {when: undefined},
           generate: 'my_full_name',
           dataType: 'string',
           extract: '{{record.fName}} {{record.lName}}',
+          status: 'Active',
         },
         {
           conditional: {when: undefined},
           generate: 'my_mothers_name',
           dataType: 'object',
+          status: 'Active',
           mappings: [
             {
               conditional: {when: undefined},
               generate: 'first_name',
               dataType: 'string',
               hardCodedValue: 'some mother name',
+              status: 'Active',
             },
             {
               conditional: {when: undefined},
               generate: 'last_name',
               dataType: 'string',
               extract: '$.mother.lName',
+              status: 'Active',
             },
           ],
         },
@@ -2353,6 +2365,7 @@ describe('v2 mapping utils', () => {
           conditional: {when: undefined},
           generate: 'my_many_first_names',
           dataType: 'stringarray',
+          status: 'Active',
           buildArrayHelper: [
             { extract: '$.fname' },
             { extract: '$.altFirstName'},
@@ -2363,26 +2376,31 @@ describe('v2 mapping utils', () => {
           conditional: {when: undefined},
           generate: 'two_of_my_fav_names',
           dataType: 'objectarray',
+          status: 'Active',
           buildArrayHelper: [
             {
               extract: '$',
+              status: 'Active',
               mappings: [
                 {
                   conditional: {when: undefined},
                   generate: 'my_first_name',
                   dataType: 'string',
                   extract: '$.fName',
+                  status: 'Active',
                 },
               ],
             },
             {
               extract: '$',
+              status: 'Active',
               mappings: [
                 {
                   conditional: {when: undefined},
                   generate: 'my_last_name',
                   dataType: 'string',
                   extract: '$.lName',
+                  status: 'Active',
                 },
               ],
             },
@@ -2392,26 +2410,31 @@ describe('v2 mapping utils', () => {
           conditional: {when: undefined},
           generate: 'all_the_children',
           dataType: 'objectarray',
+          status: 'Active',
           buildArrayHelper: [
             {
               extract: '$.siblings[*].children[*]',
+              status: 'Active',
               mappings: [
                 {
                   conditional: {when: undefined},
                   generate: 'full_name',
                   dataType: 'string',
                   extract: '{{record.siblings.children.fName}} {{record.siblings.lName}}',
+                  status: 'Active',
                 },
               ],
             },
             {
               extract: '$.children[*]',
+              status: 'Active',
               mappings: [
                 {
                   conditional: {when: undefined},
                   generate: 'my_child_first_name',
                   dataType: 'string',
                   extract: '$.children.firstName',
+                  status: 'Active',
                 },
               ],
             },
@@ -2421,34 +2444,41 @@ describe('v2 mapping utils', () => {
           conditional: {when: undefined},
           generate: 'family_tree_from_mom_perspective',
           dataType: 'object',
+          status: 'Active',
           mappings: [
             {
               conditional: {when: undefined},
               generate: 'children',
               dataType: 'objectarray',
+              status: 'Active',
               buildArrayHelper: [
                 {
                   extract: '$.siblings[*]',
+                  status: 'Active',
                   mappings: [
                     {
                       conditional: {when: undefined},
                       generate: 'last_name',
                       dataType: 'string',
                       extract: '$.siblings.lName',
+                      status: 'Active',
                     },
                     {
                       conditional: {when: undefined},
                       generate: 'grandchildren',
                       dataType: 'objectarray',
+                      status: 'Active',
                       buildArrayHelper: [
                         {
                           extract: '$.siblings.children[*]',
+                          status: 'Active',
                           mappings: [
                             {
                               conditional: {when: 'extract_not_empty'},
                               generate: 'first_name',
                               dataType: 'string',
                               hardCodedValue: 'new hard coded',
+                              status: 'Active',
                             },
                           ],
                         },
@@ -2458,33 +2488,39 @@ describe('v2 mapping utils', () => {
                 },
                 {
                   extract: '$',
+                  status: 'Active',
                   mappings: [
                     {
                       conditional: {when: undefined},
                       generate: 'first_name',
                       dataType: 'string',
                       extract: '$.fName',
+                      status: 'Active',
                     },
                     {
                       conditional: {when: undefined},
                       generate: 'grandchildren',
                       dataType: 'objectarray',
                       description: 'grand children mappings',
+                      status: 'Active',
                       buildArrayHelper: [
                         {
                           extract: '$.children[*]',
+                          status: 'Active',
                           mappings: [
                             {
                               conditional: {when: undefined},
                               generate: 'first_name',
                               dataType: 'string',
                               lookupName: 'lookup1',
+                              status: 'Active',
                             },
                             {
                               conditional: {when: undefined},
                               generate: 'last_name',
                               dataType: 'string',
                               extract: '$.lName',
+                              status: 'Active',
                             },
                           ],
                         },
@@ -2560,27 +2596,32 @@ describe('v2 mapping utils', () => {
           dataType: 'objectarray',
           conditional: {when: undefined},
           description: 'root mappings',
+          status: 'Active',
           buildArrayHelper: [
             {
               extract: '$[*]',
+              status: 'Active',
               mappings: [
                 {
                   generate: 'first_name',
                   dataType: 'string',
                   extract: '$.fName',
                   conditional: {when: undefined},
+                  status: 'Active',
                 },
                 {
                   generate: 'last_name',
                   dataType: 'string',
                   conditional: {when: undefined},
                   hardCodedValue: 'last name',
+                  status: 'Active',
                 },
                 {
                   generate: 'child_first_name',
                   dataType: 'string',
                   extract: '$.childFName',
                   conditional: {when: undefined},
+                  status: 'Active',
                 },
               ],
             },
