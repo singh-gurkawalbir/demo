@@ -27,6 +27,7 @@ import OperandSettingsDialog from './OperandSettingsDialog';
 import { fieldTypeMap } from './operators';
 import actions from '../../../../../actions';
 import { useIsLoggable } from '../../../../IsLoggableContextProvider';
+import Spinner from '../../../../Spinner';
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -39,7 +40,7 @@ const useStyles = makeStyles(theme => ({
 const defaultData = [];
 const defaultFilters = [];
 const isLoggableStr = isLoggable => isLoggable ? '' : 'data-private=true';
-export default function NetSuiteLookupFilterPanel({ id, editorId, filters: propFilters, onFieldChange }) {
+export function NetSuiteLookupFilterPanelData({ id, editorId, filters: propFilters, onFieldChange }) {
   const qbuilder = useRef(null);
   const classes = useStyles();
   const [showOperandSettingsFor, setShowOperandSettingsFor] = useState();
@@ -547,4 +548,10 @@ export default function NetSuiteLookupFilterPanel({ id, editorId, filters: propF
       )}
     </div>
   );
+}
+
+export default function NetSuiteLookupFilterPanel(props) {
+  const { sampleDataStatus } = useSelector(state => selectors.editor(state, props.editorId));
+
+  return sampleDataStatus === 'requested' ? <Spinner /> : <NetSuiteLookupFilterPanelData {...props} />;
 }
