@@ -19,7 +19,6 @@ function initStore(integrationSession, integrationApps) {
       lastModified: '2022-07-27T11:14:41.700Z',
       name: '3PL Central',
       description: 'Testing Integration description',
-      readme: 'https://staging.integrator.io/integrations/5fc5e0e66cfe5b44bb95de70/admin/readme/edit/readme ',
       install: [],
       sandbox: false,
       _registeredConnectionIds: [
@@ -47,9 +46,6 @@ function initStore(integrationSession, integrationApps) {
           connectionType: '3plcentral',
         },
       }],
-      uninstallSteps: [],
-      flowGroupings: [],
-      createdAt: '2020-12-01T06:21:26.538Z',
     },
     {
       _id: '619249e805f85b2022e086bd',
@@ -116,20 +112,8 @@ function initStore(integrationSession, integrationApps) {
       lastModified: '2021-06-30T02:36:49.734Z',
       name: '3PL Central - FTP',
       description: 'Testing Flows Description',
-      disabled: false,
-      // _integrationId: '5fc5e0e66cfe5b44bb95de70',
-      sandbox: false,
-      skipRetries: false,
       pageProcessors: [
         {
-          responseMapping: {
-            fields: [
-
-            ],
-            lists: [
-
-            ],
-          },
           type: 'import',
           _importId: '605b30767904202f31742092',
         },
@@ -140,8 +124,6 @@ function initStore(integrationSession, integrationApps) {
           skipRetries: false,
         },
       ],
-      createdAt: '2021-06-29T16:13:35.071Z',
-      lastExecutedAt: '2021-06-30T01:55:17.721Z',
     },
     {
       _id: '60db46af9433830f8f0e0fe8',
@@ -153,14 +135,6 @@ function initStore(integrationSession, integrationApps) {
       skipRetries: false,
       pageProcessors: [
         {
-          responseMapping: {
-            fields: [
-
-            ],
-            lists: [
-
-            ],
-          },
           type: 'import',
           _importId: '605b30767904202f31742092',
         },
@@ -184,10 +158,6 @@ function initStore(integrationSession, integrationApps) {
       skipRetries: false,
       pageProcessors: [
         {
-          responseMapping: {
-            fields: [],
-            lists: [],
-          },
           type: 'import',
           _importId: '61924a47aba738048023c0f7',
         },
@@ -229,7 +199,6 @@ function initStore(integrationSession, integrationApps) {
         errorMediaType: 'json',
         formType: 'assistant',
       },
-      rawData: '5d4010e14cd24a7c773122ef5d92fdf3fcca446b9e5ac853c6287f70',
       adaptorType: 'HTTPExport',
     },
     {
@@ -359,15 +328,7 @@ function initStore(integrationSession, integrationApps) {
               discardIfEmpty: false,
             },
           ],
-          lists: [],
         },
-      },
-      filter: {
-        type: 'expression',
-        expression: {
-          version: '1',
-        },
-        version: '1',
       },
       adaptorType: 'NetSuiteDistributedImport',
     },
@@ -393,12 +354,6 @@ function initStore(integrationSession, integrationApps) {
         useImplicitFtps: true,
         requireSocketReUse: false,
       },
-      queues: [
-        {
-          name: '5d529bfbdb0c7b14a6011a57',
-          size: 0,
-        },
-      ],
     },
     {
       _id: '5fc5e4a46cfe5b44bb95df44',
@@ -419,11 +374,6 @@ function initStore(integrationSession, integrationApps) {
         ping: {
           relativeURI: 'orders',
           method: 'GET',
-          failValues: [],
-          successValues: [],
-        },
-        rateLimit: {
-          failValues: [],
         },
         unencrypted: {
           tpl: 'b779b82f-f5e5-4d59-a2c9-ea2c5eb8eec3',
@@ -449,12 +399,6 @@ function initStore(integrationSession, integrationApps) {
           },
         },
       },
-      queues: [
-        {
-          name: '5fc5e4a46cfe5b44bb95df44',
-          size: 0,
-        },
-      ],
     },
     {
       _id: '5d4017fb5663022451fdf1ad',
@@ -664,14 +608,6 @@ describe('Clone Setup', () => {
                   skipRetries: false,
                   pageProcessors: [
                     {
-                      responseMapping: {
-                        fields: [
-
-                        ],
-                        lists: [
-
-                        ],
-                      },
                       type: 'import',
                       _importId: '605b30767904202f31742092',
                     },
@@ -706,9 +642,6 @@ describe('Clone Setup', () => {
                     version: 'latest',
                     operation: 'get_packages_details',
                   },
-                  parsers: [
-
-                  ],
                   http: {
                     relativeURI: '/orders/3862/packages',
                     method: 'GET',
@@ -791,17 +724,6 @@ describe('Clone Setup', () => {
                     ping: {
                       relativeURI: 'orders',
                       method: 'GET',
-                      failValues: [
-
-                      ],
-                      successValues: [
-
-                      ],
-                    },
-                    rateLimit: {
-                      failValues: [
-
-                      ],
                     },
                     unencrypted: {
                       tpl: 'b779b82f-f5e5-4d59-a2c9-ea2c5eb8eec3',
@@ -809,14 +731,8 @@ describe('Clone Setup', () => {
                     },
                     auth: {
                       type: 'oauth',
-                      failValues: [
-
-                      ],
                       oauth: {
                         tokenURI: 'https://secure-wms.com/AuthServer/api/Token',
-                        scope: [
-
-                        ],
                         grantType: 'clientcredentials',
                         clientCredentialsLocation: 'basicauthheader',
                         accessTokenBody: '{"grant_type": "client_credentials","tpl":"{b779b82f-f5e5-4d59-a2c9-ea2c5eb8eec3}", "user_login_id":"Celigo_SandBox"}',
@@ -903,17 +819,8 @@ describe('Clone Setup', () => {
               ping: {
                 relativeURI: 'orders',
                 method: 'GET',
-                failValues: [
-
-                ],
-                successValues: [
-
-                ],
               },
               rateLimit: {
-                failValues: [
-
-                ],
               },
               unencrypted: {
                 tpl: 'b779b82f-f5e5-4d59-a2c9-ea2c5eb8eec3',
@@ -921,14 +828,8 @@ describe('Clone Setup', () => {
               },
               auth: {
                 type: 'oauth',
-                failValues: [
-
-                ],
                 oauth: {
                   tokenURI: 'https://secure-wms.com/AuthServer/api/Token',
-                  scope: [
-
-                  ],
                   grantType: 'clientcredentials',
                   clientCredentialsLocation: 'basicauthheader',
                   accessTokenBody: '{"grant_type": "client_credentials","tpl":"{b779b82f-f5e5-4d59-a2c9-ea2c5eb8eec3}", "user_login_id":"Celigo_SandBox"}',
@@ -1021,14 +922,6 @@ describe('Clone Setup', () => {
                   skipRetries: false,
                   pageProcessors: [
                     {
-                      responseMapping: {
-                        fields: [
-
-                        ],
-                        lists: [
-
-                        ],
-                      },
                       type: 'import',
                       _importId: '605b30767904202f31742092',
                     },
@@ -1063,9 +956,6 @@ describe('Clone Setup', () => {
                     version: 'latest',
                     operation: 'get_packages_details',
                   },
-                  parsers: [
-
-                  ],
                   http: {
                     relativeURI: '/orders/3862/packages',
                     method: 'GET',
@@ -1148,17 +1038,6 @@ describe('Clone Setup', () => {
                     ping: {
                       relativeURI: 'orders',
                       method: 'GET',
-                      failValues: [
-
-                      ],
-                      successValues: [
-
-                      ],
-                    },
-                    rateLimit: {
-                      failValues: [
-
-                      ],
                     },
                     unencrypted: {
                       tpl: 'b779b82f-f5e5-4d59-a2c9-ea2c5eb8eec3',
@@ -1166,14 +1045,8 @@ describe('Clone Setup', () => {
                     },
                     auth: {
                       type: 'oauth',
-                      failValues: [
-
-                      ],
                       oauth: {
                         tokenURI: 'https://secure-wms.com/AuthServer/api/Token',
-                        scope: [
-
-                        ],
                         grantType: 'clientcredentials',
                         clientCredentialsLocation: 'basicauthheader',
                         accessTokenBody: '{"grant_type": "client_credentials","tpl":"{b779b82f-f5e5-4d59-a2c9-ea2c5eb8eec3}", "user_login_id":"Celigo_SandBox"}',
@@ -1260,17 +1133,6 @@ describe('Clone Setup', () => {
               ping: {
                 relativeURI: 'orders',
                 method: 'GET',
-                failValues: [
-
-                ],
-                successValues: [
-
-                ],
-              },
-              rateLimit: {
-                failValues: [
-
-                ],
               },
               unencrypted: {
                 tpl: 'b779b82f-f5e5-4d59-a2c9-ea2c5eb8eec3',
@@ -1278,14 +1140,8 @@ describe('Clone Setup', () => {
               },
               auth: {
                 type: 'oauth',
-                failValues: [
-
-                ],
                 oauth: {
                   tokenURI: 'https://secure-wms.com/AuthServer/api/Token',
-                  scope: [
-
-                  ],
                   grantType: 'clientcredentials',
                   clientCredentialsLocation: 'basicauthheader',
                   accessTokenBody: '{"grant_type": "client_credentials","tpl":"{b779b82f-f5e5-4d59-a2c9-ea2c5eb8eec3}", "user_login_id":"Celigo_SandBox"}',
@@ -1358,10 +1214,6 @@ describe('Clone Setup', () => {
                   skipRetries: false,
                   pageProcessors: [
                     {
-                      responseMapping: {
-                        fields: [],
-                        lists: [],
-                      },
                       type: 'import',
                       _importId: '605b30767904202f31742092',
                     },
@@ -1396,7 +1248,6 @@ describe('Clone Setup', () => {
                     version: 'latest',
                     operation: 'get_packages_details',
                   },
-                  parsers: [],
                   http: {
                     relativeURI: '/orders/3862/packages',
                     method: 'GET',
@@ -1479,11 +1330,6 @@ describe('Clone Setup', () => {
                     ping: {
                       relativeURI: 'orders',
                       method: 'GET',
-                      failValues: [],
-                      successValues: [],
-                    },
-                    rateLimit: {
-                      failValues: [],
                     },
                     unencrypted: {
                       tpl: 'b779b82f-f5e5-4d59-a2c9-ea2c5eb8eec3',
@@ -1580,11 +1426,6 @@ describe('Clone Setup', () => {
               ping: {
                 relativeURI: 'orders',
                 method: 'GET',
-                failValues: [],
-                successValues: [],
-              },
-              rateLimit: {
-                failValues: [],
               },
               unencrypted: {
                 tpl: 'b779b82f-f5e5-4d59-a2c9-ea2c5eb8eec3',
@@ -1592,7 +1433,6 @@ describe('Clone Setup', () => {
               },
               auth: {
                 type: 'oauth',
-                failValues: [],
                 oauth: {
                   tokenURI: 'https://secure-wms.com/AuthServer/api/Token',
                   scope: [],
@@ -1656,10 +1496,6 @@ describe('Clone Setup', () => {
                   skipRetries: false,
                   pageProcessors: [
                     {
-                      responseMapping: {
-                        fields: [],
-                        lists: [],
-                      },
                       type: 'import',
                       _importId: '61924a47aba738048023c0f7',
                     },
@@ -1691,7 +1527,6 @@ describe('Clone Setup', () => {
                   asynchronous: true,
                   type: 'delta',
                   _templateId: '5c261974e53d9a2ecf6ad887',
-                  parsers: [],
                   delta: {
                     dateField: 'CreatedDate',
                   },
@@ -1702,10 +1537,7 @@ describe('Clone Setup', () => {
                       query: 'SELECT CreatedById,CreatedDate,Description,DisplayUrl,ExternalDataSourceId,ExternalId,Family,Id,IsActive,IsDeleted,LastModifiedById,LastModifiedDate,LastReferencedDate,LastViewedDate,Name,ProductCode,QuantityUnitOfMeasure,SystemModstamp FROM Product2',
                     },
                     distributed: {
-                      referencedFields: [],
                       disabled: false,
-                      userDefinedReferencedFields: [],
-                      relatedLists: [],
                     },
                   },
                   transform: {
@@ -1786,7 +1618,6 @@ describe('Clone Setup', () => {
                           discardIfEmpty: false,
                         },
                       ],
-                      lists: [],
                     },
                   },
                   filter: {
@@ -1816,7 +1647,6 @@ describe('Clone Setup', () => {
                     bearerToken: '******',
                     refreshToken: '******',
                     packagedOAuth: true,
-                    scope: [],
                     concurrencyLevel: 5,
                     info: {
                       sub: 'https://login.salesforce.com/id/00D6F000001oricUAA/0056F000009uZUlQAM',
@@ -2666,14 +2496,6 @@ describe('Clone Setup', () => {
                   skipRetries: false,
                   pageProcessors: [
                     {
-                      responseMapping: {
-                        fields: [
-
-                        ],
-                        lists: [
-
-                        ],
-                      },
                       type: 'import',
                       _importId: '605b30767904202f31742092',
                     },
@@ -2708,9 +2530,6 @@ describe('Clone Setup', () => {
                     version: 'latest',
                     operation: 'get_packages_details',
                   },
-                  parsers: [
-
-                  ],
                   http: {
                     relativeURI: '/orders/3862/packages',
                     method: 'GET',
@@ -2793,17 +2612,6 @@ describe('Clone Setup', () => {
                     ping: {
                       relativeURI: 'orders',
                       method: 'GET',
-                      failValues: [
-
-                      ],
-                      successValues: [
-
-                      ],
-                    },
-                    rateLimit: {
-                      failValues: [
-
-                      ],
                     },
                     unencrypted: {
                       tpl: 'b779b82f-f5e5-4d59-a2c9-ea2c5eb8eec3',
@@ -2816,9 +2624,6 @@ describe('Clone Setup', () => {
                       ],
                       oauth: {
                         tokenURI: 'https://secure-wms.com/AuthServer/api/Token',
-                        scope: [
-
-                        ],
                         grantType: 'clientcredentials',
                         clientCredentialsLocation: 'basicauthheader',
                         accessTokenBody: '{"grant_type": "client_credentials","tpl":"{b779b82f-f5e5-4d59-a2c9-ea2c5eb8eec3}", "user_login_id":"Celigo_SandBox"}',
@@ -2905,17 +2710,6 @@ describe('Clone Setup', () => {
               ping: {
                 relativeURI: 'orders',
                 method: 'GET',
-                failValues: [
-
-                ],
-                successValues: [
-
-                ],
-              },
-              rateLimit: {
-                failValues: [
-
-                ],
               },
               unencrypted: {
                 tpl: 'b779b82f-f5e5-4d59-a2c9-ea2c5eb8eec3',
@@ -2923,14 +2717,8 @@ describe('Clone Setup', () => {
               },
               auth: {
                 type: 'oauth',
-                failValues: [
-
-                ],
                 oauth: {
                   tokenURI: 'https://secure-wms.com/AuthServer/api/Token',
-                  scope: [
-
-                  ],
                   grantType: 'clientcredentials',
                   clientCredentialsLocation: 'basicauthheader',
                   accessTokenBody: '{"grant_type": "client_credentials","tpl":"{b779b82f-f5e5-4d59-a2c9-ea2c5eb8eec3}", "user_login_id":"Celigo_SandBox"}',
