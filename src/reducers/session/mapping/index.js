@@ -15,6 +15,7 @@ import {
   MAPPING_DATA_TYPES,
   getUniqueExtractId,
   autoCreateDestinationStructure,
+  verifyIfSameLevel,
   deleteNonRequiredMappings} from '../../../utils/mapping';
 import { generateUniqueKey } from '../../../utils/string';
 
@@ -681,7 +682,6 @@ export default (state = {}, action) => {
         const {node: dropNode = {}, dragNode = {}} = dragDropInfo;
         const dropKey = dropNode.key;
         const dragKey = dragNode.key;
-        const dragParentKey = dragNode.parentKey;
         const dropPos = dropNode.pos?.split('-') || [];
         const dragPos = dragNode.pos?.split('-') || [];
         const dragNodeIndex = Number(dragPos[dragPos.length - 1]);
@@ -696,16 +696,23 @@ export default (state = {}, action) => {
         // find drop position
         const {nodeSubArray: dropSubArr, nodeIndexInSubArray: dropSubArrIndex } = findNodeInTree(v2TreeData, 'key', dropKey);
 
-        // non 0th child node is being dragged and dropped at top (0th index) of the children list
-        if (dropPosition === 0 && dragParentKey === dropKey && dragNodeIndex !== 0) {
-          const {children = []} = dropSubArr[dropNodeIndex];
+        // drag obj is inserted as the 0th child of a parent
+        if (dropPosition === 0) {
+          // It is the parent node which is also the drop node.
+          const {children = [], key: parentKey, combinedExtract, dataType: parentDataType, jsonPath: parentJsonPath } = dropSubArr[dropNodeIndex];
           const hasTabbedRow = children[0]?.isTabNode;
 
-          // if child is already at 0th position, nothing to do
-          if (dragNodeIndex === 0 || (hasTabbedRow && dragNodeIndex === 1)) return;
+          if (verifyIfSameLevel(dropPosition, dragNode, dropNode, dropSubArrIndex, dragNodeIndex, hasTabbedRow)) return;
 
           // remove dragged node from its curr pos
           dragSubArr.splice(dragSubArrIndex, 1);
+
+          dragObj.parentKey = parentKey;
+          dragObj.jsonPath = parentDataType === MAPPING_DATA_TYPES.OBJECTARRAY ? `${parentJsonPath}[*].${dragObj.generate}` : `${parentJsonPath}.${dragObj.generate}`;
+          // only array fields have combinedExtract property, hence here it is for object arrays only
+          if (combinedExtract) {
+            dragObj.parentExtract = combinedExtract;
+          }
 
           // retain the tabbed row and add dragged node to new pos
           if (hasTabbedRow) {
@@ -714,25 +721,51 @@ export default (state = {}, action) => {
             children.unshift(dragObj);
           }
         } else if (dropPosition === -1) { // drag obj inserted before drop node
-          if (dropSubArrIndex === dragNodeIndex) return;
+          if (verifyIfSameLevel(dropPosition, dragNode, dropNode, dropSubArrIndex, dragNodeIndex)) return;
 
           // remove dragged node from its curr pos
           dragSubArr.splice(dragSubArrIndex, 1);
 
           // after the dragged node was removed, find the drop node index again as it could have been changed
           const {nodeIndexInSubArray} = findNodeInTree(v2TreeData, 'key', dropKey);
+
+          const { parentKey, parentExtract } = dropSubArr[nodeIndexInSubArray];
+
+          dragObj.parentKey = parentKey;
+          dragObj.parentExtract = parentExtract;
+          dragObj.jsonPath = dragObj.generate;
 
           // add dragged node to new pos
           dropSubArr.splice(nodeIndexInSubArray, 0, dragObj);
-        } else if (dropPosition === 1) {
-          // drag obj inserted after drop node
-          if (dropSubArrIndex + 1 === dragNodeIndex) return;
+        } else if (dropPosition === 1) { // drag obj inserted after drop node
+          if (verifyIfSameLevel(dropPosition, dragNode, dropNode, dropSubArrIndex, dragNodeIndex)) return;
 
           // remove dragged node from its curr pos
           dragSubArr.splice(dragSubArrIndex, 1);
 
           // after the dragged node was removed, find the drop node index again as it could have been changed
           const {nodeIndexInSubArray} = findNodeInTree(v2TreeData, 'key', dropKey);
+
+          const { parentKey, parentExtract, isTabNode } = dropSubArr[nodeIndexInSubArray];
+
+          dragObj.parentKey = parentKey;
+          if (isTabNode) {
+            // finding the parent node
+            const { node: { combinedExtract, dataType: parentDataType, jsonPath: parentJsonPath } } = findNodeInTree(v2TreeData, 'key', parentKey);
+
+            dragObj.parentExtract = combinedExtract?.split(',')[0];
+            dragObj.jsonPath = parentDataType === MAPPING_DATA_TYPES.OBJECTARRAY ? `${parentJsonPath}[*].${dragObj.generate}` : `${parentJsonPath}.${dragObj.generate}`;
+          } else {
+            dragObj.parentExtract = parentExtract;
+            if (parentKey) {
+              // finding the parent node
+              const { node: { dataType: parentDataType, jsonPath: parentJsonPath } } = findNodeInTree(v2TreeData, 'key', parentKey);
+
+              dragObj.jsonPath = parentDataType === MAPPING_DATA_TYPES.OBJECTARRAY ? `${parentJsonPath}[*].${dragObj.generate}` : `${parentJsonPath}.${dragObj.generate}`;
+            } else {
+              dragObj.jsonPath = dragObj.generate;
+            }
+          }
 
           // add dragged node to new pos
           dropSubArr.splice(nodeIndexInSubArray + 1, 0, dragObj);

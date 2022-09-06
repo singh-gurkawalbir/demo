@@ -1146,10 +1146,14 @@ export const buildV2MappingsFromTree = ({v2TreeData, lookups}) => {
 
 // handles drag/drop logic for tree data
 export function allowDrop({ dragNode, dropNode, dropPosition }) {
+  if (!dropNode.children) {
+    if (dropPosition === 0) return false;
+  }
+
   if (!dragNode || !dropNode) return false;
 
-  const {parentKey: dragNodeParentKey, isTabNode: dragNodeIsTab, hidden: dragNodeIsHidden} = dragNode;
-  const {key: dropNodeKey, parentKey: dropNodeParentKey, isTabNode: dropNodeIsTab, hidden: dropNodeIsHidden} = dropNode;
+  const {isTabNode: dragNodeIsTab, hidden: dragNodeIsHidden} = dragNode;
+  const {hidden: dropNodeIsHidden} = dropNode;
 
   if (dragNodeIsHidden || dropNodeIsHidden) return false;
 
@@ -1158,24 +1162,40 @@ export function allowDrop({ dragNode, dropNode, dropPosition }) {
   // can't drop above tab node
   if (dropNode?.children?.[0]?.isTabNode && dropPosition === 0) return false;
 
-  // dropping a child node at the 0th position in the children list
-  if (dropPosition === 0 && dragNodeParentKey === dropNodeKey) return true;
-
-  // nodes can only be dropped at same level
-  if ((dragNodeParentKey && !dropNodeParentKey) ||
-    (!dragNodeParentKey && dropNodeParentKey)) {
-    return false;
-  }
-
-  if (dragNodeParentKey && dropNodeParentKey && dragNodeParentKey !== dropNodeParentKey) {
-    return false;
-  }
-
-  // can drop just below tab node
-  if (dropNodeIsTab && dropPosition === 1) return true;
-  if (dropNodeIsTab) return false;
-
   return true;
+}
+
+// verify if drag position and drop position are same
+export function verifyIfSameLevel(dropPosition, dragNode, dropNode, dropSubArrIndex, dragNodeIndex, hasTabbedRow = false) {
+  const dragParentKey = dragNode.parentKey;
+  const dropParentKey = dropNode.parentKey;
+
+  if (dropPosition === 1) { // drag obj inserted after drop node
+    if ((!dragParentKey && dropParentKey) || (dragParentKey && !dropParentKey)) return false;
+
+    // when no parent keys present or parent keys matches, drag and drop nodes are of same level
+    if ((dragParentKey === dropParentKey) && (dropSubArrIndex + 1 === dragNodeIndex)) return true;
+  }
+  if (dropPosition === 0) { // drag obj is inserted as the 0th child of a parent
+    // when dropPosition is 0, dropNode points to parent node
+    if (dragParentKey === dropNode.key) {
+      // if child is already at 0th position, nothing to do
+      if (dragNodeIndex === 0 || (hasTabbedRow && dragNodeIndex === 1)) {
+        return true;
+      }
+    }
+  } else if (dropPosition === -1) {
+    if ((!dragParentKey && dropParentKey) || (dragParentKey && !dropParentKey)) {
+      return false;
+    } if (dragParentKey === dropParentKey) {
+      // when no parent keys present or parent keys matches, drag and drop nodes are of same level
+      if (dropSubArrIndex === dragNodeIndex) {
+        return true;
+      }
+    }
+  }
+
+  return false;
 }
 
 // given a tree data, some prop and its value
