@@ -1214,105 +1214,70 @@ export const filterKey = (node, searchKey) => {
   return false;
 };
 
-// get tab value from combinedExtract value
-export const getExtractTabValue = (extractId, combinedExtract) => {
-  const pipeIndex = extractId?.indexOf('|');
-  let knownExtract = extractId;
-  let knownIndex = 0;
+export const searchTree = (mappings, key, filterFunc, items) => {
+  if (!mappings || !key || !filterFunc) return;
 
-  if (pipeIndex > 0) {
-    knownExtract = extractId.substring(0, pipeIndex);
-    knownIndex = parseInt(extractId.substring(pipeIndex + 1), 10);
-  }
-  if (knownIndex) {
-    return knownIndex;
-  }
-  let i = 0;
-
-  // eslint-disable-next-line no-restricted-syntax
-  for (const key of combinedExtract.split(',')) {
-    if (key === knownExtract) {
-      return i;
-    }
-    i += 1;
-  }
-};
-
-export const searchTree = (mappings, key, filterFunc) => {
-  const items = {
-    firstIndex: -1,   // stores the first index where match was found
-    expandedKeys: [],   // stores which fields need to be expanded
-    filteredKeys: [],   // stores the list of key of all the matched fields
-    tabChange: [],    // stores the all tab changes required in case of objectArray field
-  };
-
-  if (!mappings || !key || !filterFunc) return items;
-
-  // set it when search if found for the first time
-  let found = false;
+  // for storing first index where search is found
+  let firstIndex = -1;
 
   // looping through all the children fields of the node
   mappings.forEach((node, index) => {
     if (node.isTabNode) return;
-    let newItems;
-    let tempItems;
 
     if (filterFunc(node, key)) {
-      found = true;
       items.filteredKeys.push(node.key);
+      // updating when found for first time
+      if (firstIndex === -1) firstIndex = index;
     }
+
+    // eslint-disable-next-line no-param-reassign
+    items.firstIndex = -1;    // before sending it to searchTree set items.firstIndex to -1
 
     // calling required function according to the mappings dataType
     if (node.dataType === MAPPING_DATA_TYPES.OBJECT) {
-      tempItems = searchTree(node.children, key, filterFunc);
-      newItems = deepClone(tempItems);
+      searchTree(node.children, key, filterFunc, items);
 
       // if children mappings contained a search then adding the node to expandKeys list
-      if (newItems.firstIndex !== -1) {
-        newItems.expandedKeys = [node.key, ...tempItems.expandedKeys];
+      if (items.firstIndex !== -1) {
+        items.expandedKeys.push(node.key);
       }
     } else if (node.dataType === MAPPING_DATA_TYPES.OBJECTARRAY) {
-      tempItems = searchTree(node.children, key, filterFunc);
-      newItems = deepClone(tempItems);
+      searchTree(node.children, key, filterFunc, items);
 
       // if match found in the mappings then setting tabChange list to contain the current tabChange object
-      if (tempItems.firstIndex !== -1) {
-        const childNode = node.children[newItems.firstIndex];
+      if (items.firstIndex !== -1) {
+        const childNode = node.children[items.firstIndex];
 
         // checking if tabs are present or not
         if (node.children[0].isTabNode) {
           // to get the correct tabValue from the combinedExtract
-          const tabValue = getExtractTabValue(childNode.parentExtract, node.combinedExtract);
+          let tabValue;
+          const pipeIndex = childNode.parentExtract.indexOf('|');
 
-          newItems.tabChange = [
+          if (pipeIndex > 0) {
+            tabValue = parseInt(childNode.parentExtract.substring(pipeIndex + 1), 10);
+          } else {
+            tabValue = node.combinedExtract.split(',').indexOf(childNode.parentExtract);
+          }
+
+          items.tabChange.push(
             {
               key: node.key,
               tabValue,
               parentExtract: childNode.parentExtract,
-            },
-            ...tempItems.tabChange,
-          ];
+            }
+          );
         }
-        newItems.expandedKeys = [node.key, ...tempItems.expandedKeys];
+        items.expandedKeys.push(node.key);
       }
     }
 
-    if (newItems) {
-      // setting firstIndex if no matches found before and match is found inside the mapping
-      if (newItems?.firstIndex !== -1 && !found) items.firstIndex = index;
-      items.expandedKeys = [...items.expandedKeys, ...newItems.expandedKeys];
-      items.filteredKeys = [...items.filteredKeys, ...newItems.filteredKeys];
-      items.tabChange = [...items.tabChange, ...newItems.tabChange];
-    }
-
-    // setting firstIndex if match was found in the current field
-    if (items.firstIndex === -1 && found) {
-      items.firstIndex = index;
-    }
+    // setting firstIndex if no matches found before and match is found inside the mapping
+    if (items.firstIndex !== -1 && firstIndex === -1) firstIndex = index;
   });
 
-  // returning an object which contains firstIndex, expandedFields, filteredKeys and tabChange
-  return items;
+  // eslint-disable-next-line no-param-reassign
+  items.firstIndex = firstIndex;    // setting the firstIndex before returning
 };
 
 export const TYPEOF_TO_DATA_TYPE = {

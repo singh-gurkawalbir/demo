@@ -963,12 +963,11 @@ export default (state = {}, action) => {
         break;
 
       case actionTypes.MAPPING.V2.SEARCH_TREE: {
-        if (!draft.mapping) break;
+        if (!draft.mapping || !draft.mapping.v2TreeData) break;
+
         // set the searchKey when showKey is false
         if (!showKey) draft.mapping.searchKey = searchKey;
         if (searchKey === undefined && !showKey) break;
-        let items;
-        const mapping = draft.mapping.v2TreeData;
 
         // clear the state if searchKey is empty
         if (searchKey === '') {
@@ -976,12 +975,16 @@ export default (state = {}, action) => {
           delete draft.mapping.highlightedIndex;
           break;
         }
-
-        if (!mapping) break;
+        const items = {
+          firstIndex: -1,   // stores the first index where match was found
+          expandedKeys: [],   // stores which fields need to be expanded
+          filteredKeys: [],   // stores the list of key of all the matched fields
+          tabChange: [],    // stores the all tab changes required in case of objectArray field
+        };
 
         // search for the matching values in the generate of the mapping fields
         if (!showKey && searchKey) {
-          items = searchTree(draft.mapping.v2TreeData, searchKey, filterNode);
+          searchTree(draft.mapping.v2TreeData, searchKey, filterNode, items);
           draft.mapping.expandedKeys = items.expandedKeys;
           // list of all the field key that matched
           draft.mapping.filteredKeys = items.filteredKeys;
@@ -992,7 +995,7 @@ export default (state = {}, action) => {
           // current highlighted key
           const key = draft.mapping.filteredKeys[draft.mapping.highlightedIndex];
 
-          items = searchTree(draft.mapping.v2TreeData, key, filterKey);
+          searchTree(draft.mapping.v2TreeData, key, filterKey, items);
           // merging two lists then
           // removing duplicates by converting to set and then to list
           draft.mapping.expandedKeys = [...new Set([...draft.mapping.expandedKeys, ...items.expandedKeys])];
@@ -1000,7 +1003,7 @@ export default (state = {}, action) => {
         // all tab changes if required in objectarray
         items.tabChange.forEach(item => {
           const {key, tabValue, parentExtract} = item;
-          const {node, nodeIndexInSubArray, nodeSubArray} = findNodeInTree(mapping, 'key', key);
+          const {node, nodeIndexInSubArray, nodeSubArray} = findNodeInTree(draft.mapping.v2TreeData, 'key', key);
 
           if (isEmpty(node)) return;
           nodeSubArray[nodeIndexInSubArray] = hideOtherTabRows(original(node), parentExtract);
@@ -1083,7 +1086,13 @@ selectors.filteredKeys = state => {
   return state.mapping.filteredKeys || emptyArr;
 };
 
-selectors.searchKey = state => state.mapping.searchKey;
+selectors.searchKey = state => {
+  if (!state || !state.mapping) {
+    return;
+  }
+
+  return state.mapping.searchKey;
+};
 
 selectors.mappingChanged = state => {
   if (!state || !state.mapping) {

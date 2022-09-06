@@ -4,6 +4,7 @@ import Tree from 'rc-tree';
 import { useSelector, useDispatch } from 'react-redux';
 import { IconButton } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
+import clsx from 'clsx';
 import ArrowUpIcon from '../../../../../icons/ArrowUpIcon';
 import ArrowDownIcon from '../../../../../icons/ArrowDownIcon';
 import {SortableDragHandle} from '../../../../../Sortable/SortableHandle';
@@ -119,6 +120,9 @@ const useStyles = makeStyles(theme => ({
     paddingTop: theme.spacing(3),
     overflow: 'auto',
   },
+  addSearchBar: {
+    paddingTop: theme.spacing(6),
+  },
 })
 );
 
@@ -192,7 +196,7 @@ export default function Mapper2({editorId}) {
   return (
     <>
       {searchKey !== undefined && <SearchBar />}
-      <div className={classes.mappingDrawerContent}>
+      <div className={clsx(classes.mappingDrawerContent, {[classes.addSearchBar]: searchKey !== undefined})}>
         <Tree
           className={classes.treeRoot}
           titleRender={Row}

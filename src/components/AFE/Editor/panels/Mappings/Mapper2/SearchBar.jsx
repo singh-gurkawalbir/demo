@@ -17,6 +17,9 @@ const useStyles = makeStyles(theme => ({
     backgroundColor: theme.palette.secondary.lightest,
     display: 'flex',
     padding: theme.spacing(1, 2),
+    position: 'absolute',
+    width: '100%',
+    zIndex: theme.zIndex.drawer,
   },
   searchField: {
     backgroundColor: theme.palette.background.paper,
@@ -75,13 +78,15 @@ export default function SearchBar() {
   const downClickHandler = useCallback(() => {
     if (highlightedIndex < 0 || !fieldsLen) return;
 
-    // increase highlighIndex if in range 0 to fieldsLen - 2
-    if (highlightedIndex >= 0 && highlightedIndex < fieldsLen - 1) {
-      dispatch(actions.mapping.v2.updateHighlightedIndex(highlightedIndex + 1));
-    }
-    // set to 0 if highlightIndex is fieldslen - 1
-    if (highlightedIndex === fieldsLen - 1) {
-      dispatch(actions.mapping.v2.updateHighlightedIndex(0));
+    if (fieldsLen !== 1) {
+      // increase highlighIndex if in range 0 to fieldsLen - 2
+      if (highlightedIndex >= 0 && highlightedIndex < fieldsLen - 1) {
+        dispatch(actions.mapping.v2.updateHighlightedIndex(highlightedIndex + 1));
+      }
+      // set to 0 if highlightIndex is fieldslen - 1
+      if (highlightedIndex === fieldsLen - 1) {
+        dispatch(actions.mapping.v2.updateHighlightedIndex(0));
+      }
     }
     // finding the specific highlighted key
     dispatch(actions.mapping.v2.searchTree({ showKey: true }));
@@ -90,13 +95,15 @@ export default function SearchBar() {
   const upClickHandler = useCallback(() => {
     if (highlightedIndex < 0 || !fieldsLen) return;
 
-    // decrease highlighIndex if in range 1 to fieldsLen - 1
-    if (highlightedIndex > 0 && highlightedIndex < fieldsLen) {
-      dispatch(actions.mapping.v2.updateHighlightedIndex(highlightedIndex - 1));
-    }
-    // set to fieldsLen - 1 if highlightIndex is 0
-    if (highlightedIndex === 0) {
-      dispatch(actions.mapping.v2.updateHighlightedIndex(fieldsLen - 1));
+    if (fieldsLen !== 1) {
+      // decrease highlighIndex if in range 1 to fieldsLen - 1
+      if (highlightedIndex > 0 && highlightedIndex < fieldsLen) {
+        dispatch(actions.mapping.v2.updateHighlightedIndex(highlightedIndex - 1));
+      }
+      // set to fieldsLen - 1 if highlightIndex is 0
+      if (highlightedIndex === 0) {
+        dispatch(actions.mapping.v2.updateHighlightedIndex(fieldsLen - 1));
+      }
     }
     // finding the specific highlighted key
     dispatch(actions.mapping.v2.searchTree({ showKey: true }));
