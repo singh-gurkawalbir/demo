@@ -4737,10 +4737,6 @@ Object {
             "max": 100,
             "min": 1,
           },
-          "matchesRegEx": Object {
-            "message": "Only numbers allowed",
-            "pattern": "^[\\\\d]+$",
-          },
         },
         "visibleWhen": Array [
           Object {
