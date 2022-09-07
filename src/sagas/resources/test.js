@@ -100,7 +100,7 @@ describe('isDataLoaderFlow saga', () => {
 describe('resourceConflictDetermination saga', () => {
   const _400Exception = new APIException({
     status: 400,
-    message: 'Session Expired',
+    message: 'Session expired',
   });
   const path = '/somePath';
   const someMaster = {
@@ -189,7 +189,7 @@ describe('resourceConflictDetermination saga', () => {
       value: {
         error: {
           status: 400,
-          message: 'Session Expired',
+          message: 'Session expired',
         },
       },
     });
