@@ -33,8 +33,12 @@ const useStyles = makeStyles(theme => ({
     },
     '&>div': {
       width: '100%',
+      border: '3px solid transparent',
     },
     '&:nth-of-type(2)': {
+      '&>div': {
+        border: 'none',
+      },
       flex: 1,
       '& .MuiFilledInput-multiline': {
         minHeight: theme.spacing(5),
@@ -225,7 +229,7 @@ const Mapper2Row = React.memo(props => {
             id={`fieldMappingExtract-${nodeKey}`}
             nodeKey={nodeKey}
             value={extractValue}
-            disabled={disabled}
+            disabled={(isLookup && !isStaticLookup) || disabled}
             dataType={dataType}
             onBlur={handleExtractBlur}
             isDynamicLookup={isLookup && !isStaticLookup}

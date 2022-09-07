@@ -6,7 +6,7 @@ import { selectors } from '../../reducers';
 import HomeSearchInput from '../SearchInput/HomeSearchInput';
 import useDebouncedValue from '../../hooks/useDebouncedInput';
 
-export default function KeywordSearch({ filterKey, isHomeSearch }) {
+export default function KeywordSearch({ filterKey, isHomeSearch, onFocus}) {
   const dispatch = useDispatch();
   const filter =
     useSelector(state => selectors.filter(state, filterKey));
@@ -41,6 +41,7 @@ export default function KeywordSearch({ filterKey, isHomeSearch }) {
       <SearchInput
         value={text}
         onChange={handleKeywordChange}
+        onFocus={onFocus}
     />
     );
 }
