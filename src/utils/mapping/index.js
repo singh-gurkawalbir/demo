@@ -677,9 +677,8 @@ export const rebuildObjectArrayNode = (node, extract = '') => {
     if (child.isTabNode) {
       return true;
     }
-    const uniqueExtract = getExtractFromUniqueId(parentExtract);
 
-    const newIndex = splitExtracts.findIndex(s => uniqueExtract === s);
+    const newIndex = splitExtracts.findIndex((s, i) => parentExtract === getUniqueExtractId(s, i));
 
     // only keep the children which have matching parentExtract
     if (newIndex !== -1) {
