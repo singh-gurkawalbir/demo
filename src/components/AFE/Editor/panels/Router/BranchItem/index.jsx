@@ -119,11 +119,12 @@ export default function BranchItem({
 }) {
   const classes = useStyles(allowSorting);
   const dispatch = useDispatch();
-  const hasRules = useSelector(state => {
+  const rules = useSelector(state => {
     const editorRule = selectors.editorRule(state, editorId);
 
-    return !!editorRule?.branches?.[position]?.inputFilter?.rules?.length;
+    return editorRule?.branches?.[position]?.inputFilter?.rules;
   });
+  const hasRules = !!rules?.length;
   const branchType = useSelector(state => {
     const editorRule = selectors.editorRule(state, editorId);
 
@@ -215,7 +216,10 @@ export default function BranchItem({
               <div className={classes.headerContainer}>
                 <Typography variant="subtitle2">Record flow conditions:</Typography>
               </div>
-              <BranchFilter editorId={editorId} position={position} />
+              <BranchFilter
+                editorId={editorId} position={position}
+                key={rules} // to force remount when rules change as querybuilder is not being updated in render phase
+               />
               {infoMessage && (
                 <div className={classes.infoMsgContainer}>
                   <InfoIcon />
