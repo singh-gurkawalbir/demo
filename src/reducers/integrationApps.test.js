@@ -3375,7 +3375,6 @@ describe('integrationApps selector testcases', () => {
     });
 
     test('should return if license expired for the integration app for owner user for non-expired', () => {
-      const expires = moment(new Date()).add(10, 'days').toISOString();
       const state = reducer(
         {
           user: {
@@ -3441,7 +3440,6 @@ describe('integrationApps selector testcases', () => {
     });
 
     test('should return if license expired for the integration app for non owner user for non-expired', () => {
-      const expires = moment(new Date()).add(10, 'days').toISOString();
       const state = reducer(
         {
           user: {
