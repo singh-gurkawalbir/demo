@@ -167,7 +167,6 @@ describe('FlowBuilder UI tests', () => {
       </MemoryRouter>, {initialStore});
 
     expect(screen.getAllByText('Loadresource integrationId: 5ff579d745ceef7dcd797c15')[0]).toBeInTheDocument();
-    expect(screen.getAllByText('Loadresource integrationId: 5ff579d745ceef7dcd797c15')[1]).toBeInTheDocument();
 
     await waitFor(() => expect(screen.queryByText('Redirection')).toBeInTheDocument());
     await waitFor(() => expect(screen.queryByText('FlowBuilderBody')).toBeInTheDocument());
