@@ -14,6 +14,7 @@ async function initActionMenu({
   rowData,
   setSelectedComponent = jest.fn(),
   iconLabel,
+  tooltip,
 } = {}) {
   const ui = (
     <MemoryRouter>
@@ -22,6 +23,7 @@ async function initActionMenu({
         rowData={rowData}
         setSelectedComponent={setSelectedComponent}
         iconLabel={iconLabel}
+        tooltip={tooltip}
        />
     </MemoryRouter>
   );
@@ -120,5 +122,16 @@ describe('ActionMenu component Test cases', () => {
     userEvent.click(listButton);
 
     expect(screen.queryByText('Test Child')).not.toBeInTheDocument();
+  });
+
+  test('should pass initial render with tooltip action icon', async () => {
+    await initActionMenu({
+      tooltip: 'mock tooltip tooltip',
+    });
+    const iconButton = screen.getAllByRole('button').find(eachButton => eachButton.hasAttribute('aria-label', 'more'));
+
+    expect(iconButton).toBeInTheDocument();
+    userEvent.hover(iconButton);
+    await waitFor(() => expect(screen.queryByText('mock tooltip tooltip')).toBeInTheDocument());
   });
 });

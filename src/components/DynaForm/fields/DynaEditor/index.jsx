@@ -179,6 +179,7 @@ export default function DynaEditor(props) {
       <ActionButton
         data-test={id}
         onClick={handleEditorClick}
+        tooltip="Expand window"
         className={classes.dynaEditorButton}>
         <ExpandWindowIcon />
       </ActionButton>
