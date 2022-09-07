@@ -109,8 +109,13 @@ const useStyles = makeStyles(theme => ({
       flexWrap: 'nowrap',
       display: 'flex',
       minHeight: '100%',
+      maxWidth: '1050px',
+      width: '1050px',
       '&>div': {
         flex: '0 0 auto',
+        width: '100%',
+        overflow: 'visible!important',
+        whiteSpace: 'nowrap',
       },
     },
   },
@@ -169,6 +174,19 @@ export default function Mapper2({editorId}) {
       });
       dispatch(actions.mapping.v2.toggleAutoCreateFlag());
     }
+    const handleWheelEvent = event => {
+      if (event.deltaX) {
+        event.preventDefault();
+        const delta = Math.sign(event.deltaX);
+        const scrollWidth = `${delta}2`;
+
+        document.querySelector('.rc-tree-list-holder').scrollLeft += scrollWidth;
+      }
+    };
+
+    document.addEventListener('wheel', handleWheelEvent);
+
+    return () => window.removeEventListener('wheel', handleWheelEvent);
   }, [dispatch, enqueueSnackbar, isAutoCreateSuccess]);
 
   const onDropHandler = useCallback(info => {
@@ -199,12 +217,15 @@ export default function Mapper2({editorId}) {
       <div className={clsx(classes.mappingDrawerContent, {[classes.addSearchBar]: searchKey !== undefined})}>
         <Tree
           className={classes.treeRoot}
+          height={600}
+          itemHeight={20}
           titleRender={Row}
           treeData={treeData}
           showLine
           selectable={false}
           defaultExpandAll={false}
           expandedKeys={expandedKeys}
+          defaultExpandParent={false}
           onExpand={onExpandHandler}
           switcherIcon={SwitcherIcon}
           allowDrop={allowDrop}
