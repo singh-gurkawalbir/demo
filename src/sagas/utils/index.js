@@ -136,6 +136,7 @@ export const getExportMetadata = (connectorMetadata, connectionVersion) => {
     }
     exportData.resources[i].versions = deepClone(exportData.resources[i].versions.filter(r => r.endpoints?.length));
   });
+  exportData.resources = deepClone(exportData.resources.filter(r => r.versions?.length));
 
   return exportData;
 };
@@ -286,6 +287,7 @@ export const getImportMetadata = (connectorMetadata, connectionVersion) => {
     }
     importData.resources[i].versions = deepClone(importData.resources[i].versions.filter(r => r.operations?.length));
   });
+  importData.resources = deepClone(importData.resources.filter(r => r.versions?.length));
 
   return importData;
 };
