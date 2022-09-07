@@ -62,6 +62,7 @@ function DynaText(props) {
     disabled,
     errorMessages,
     id,
+    autoFocus = false,
     isValid = true,
     name,
     onFieldChange,
@@ -165,6 +166,7 @@ function DynaText(props) {
         autoComplete="off"
         key={id}
         data-test={id}
+        autoFocus={autoFocus}
         name={name}
         InputProps={InputProps}
         type={inputType}
