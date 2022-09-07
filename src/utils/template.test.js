@@ -69,6 +69,15 @@ describe('template util function test', () => {
     test('should return correct application details when graph_ql connection is passed', () => {
       expect(getApplication({type: 'http', http: {formType: 'graph_ql'}})).toEqual({id: 'graph_ql', name: 'GraphQL'});
     });
+    test('should return empty object if http connector id is defined and assistant is not defined and form type is not graphql', () => {
+      expect(getApplication({type: 'http', http: {_httpConnectorId: '123'}})).toEqual({});
+    });
+    test('should return  correct application details if http connector id and graphql is used', () => {
+      expect(getApplication({type: 'http', http: {_httpConnectorId: '123', formType: 'graph_ql'}})).toEqual({
+        id: 'graph_ql',
+        name: 'GraphQL',
+      });
+    });
   });
 
   describe('getDependentResources function test', () => {

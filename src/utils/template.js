@@ -31,6 +31,9 @@ export const getApplication = conn => {
     if (conn.assistant) {
       return a.id === conn.assistant;
     }
+    if (conn.http?._httpConnectorId && conn.http?.formType !== 'graph_ql') {
+      return a._httpConnectorId === conn.http._httpConnectorId;
+    }
 
     if (conn.type === 'rdbms' && conn.rdbms) {
       return a.id === rdbmsSubTypeToAppType(conn.rdbms.type);

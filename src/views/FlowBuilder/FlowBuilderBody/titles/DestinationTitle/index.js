@@ -2,7 +2,7 @@ import React from 'react';
 import { makeStyles } from '@material-ui/core';
 import { useStoreState } from 'react-flow-renderer';
 import { useHistory, useRouteMatch } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import Title from '../Title';
 import BranchMenuPopper from './BranchMenuPopper';
 import { FB_SOURCE_COLUMN_WIDTH } from '../../../../../constants';
@@ -31,6 +31,7 @@ const DestinationTitle = () => {
   const flowOriginal =
     useSelectorMemo(selectors.makeResourceDataSelector, 'flows', flowId)
       ?.merged || {};
+  const isDataLoaderFlow = useSelector(state => selectors.isDataLoaderFlow(state, flowId));
 
   // we dont care about the y axis since we always want 100% y axis coverage,
   // regardless of pan or zoom settings.
@@ -70,7 +71,7 @@ const DestinationTitle = () => {
   return (
     <>
       <Title onClick={handleOpenMenu} className={classes.title}>
-        DESTINATIONS & LOOKUPS
+        {isDataLoaderFlow ? 'DESTINATION APPLICATION' : 'DESTINATIONS & LOOKUPS'}
       </Title>
 
       <BranchMenuPopper anchorEl={anchorEl} handleClose={handleCloseMenu} />
