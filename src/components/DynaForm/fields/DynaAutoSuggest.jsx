@@ -29,7 +29,7 @@ const useStyles = makeStyles(theme => ({
     left: 0,
     right: 0,
     maxHeight: 300,
-    overflow: 'scroll',
+    overflow: 'auto',
     borderRadius: '0px 0px 4px 4px',
     marginTop: theme.spacing(0.5),
   },
