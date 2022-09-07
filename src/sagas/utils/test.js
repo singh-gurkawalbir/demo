@@ -1662,9 +1662,9 @@ describe('updateFinalMetadataWithHttpFramework saga', () => {
         showExtract: false,
         showLookup: false,
         type: 'relativeuri',
+        visible: false,
       },
       'http.unencrypted.version': {
-        defaultValue: undefined,
         fieldId: 'http.unencrypted.version',
         id: 'http.unencrypted.version',
         label: 'API Version',
@@ -1684,7 +1684,7 @@ describe('updateFinalMetadataWithHttpFramework saga', () => {
 
         ],
         type: 'select',
-        required: true,
+        visible: false,
       },
       settings: {
         defaultValue: {

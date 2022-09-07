@@ -1689,6 +1689,12 @@ export function convertFromImport({ importDoc: importDocOrig, assistantData: ass
   const assistantData = cloneDeep(assistantDataOrig);
   let { version, resource, operation, lookupType } =
     importDoc.assistantMetadata || {};
+
+  if (importDoc?.http) {
+    operation = importDoc.http._httpConnectorEndpointId || operation;
+    resource = importDoc.http._httpConnectorResourceId || resource;
+    version = importDoc.http._httpConnectorVersionId || version;
+  }
   const { dontConvert, lookups } = importDoc.assistantMetadata || {};
   let sampleData;
   let { ignoreExisting, ignoreMissing } = importDoc;
