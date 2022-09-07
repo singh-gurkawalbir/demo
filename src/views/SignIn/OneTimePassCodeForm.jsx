@@ -89,7 +89,7 @@ export default function OneTimePassCodeForm({ dialogOpen }) {
     const payload = { code };
 
     if (!dontAllowTrustedDevices) {
-      payload.trustDevice = e.target.trustDevice.checked;
+      payload.trustDevice = e?.target?.trustDevice?.checked || e?.target?.elements?.trustDevice?.checked;
     }
     dispatch(actions.auth.mfaVerify.request(payload));
   }, [dispatch, dontAllowTrustedDevices]);

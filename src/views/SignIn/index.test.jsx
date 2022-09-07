@@ -91,14 +91,11 @@ describe('Signin', () => {
     const titleText = screen.getByText('Celigo Inc.');
 
     expect(titleText).toBeInTheDocument();
-    const signinText = screen.getAllByText('Sign in');
+    const signinHeadingNode = screen.getByRole('heading', {name: 'Sign in'});
 
-    expect(signinText[0]).toBeInTheDocument();
+    expect(signinHeadingNode).toBeInTheDocument();
     const email = screen.getByRole('textbox', {id: 'email'});
     const password = screen.getByPlaceholderText('Password');
-    const signin = screen.getAllByText('Sign in');
-
-    expect(signin[1]).toBeInTheDocument();
 
     expect(email).toBeInTheDocument();
     expect(password).toBeInTheDocument();
@@ -107,7 +104,10 @@ describe('Signin', () => {
     await userEvent.type(password, 'xbsbxsxazl223xbsbixi');
     expect(email.value).toBe('testuser@test.com');
     expect(password.value).toBe('xbsbxsxazl223xbsbixi');
-    userEvent.click(signin[1]);
+    const signinButtonNode = screen.getByRole('button', {name: 'Sign in'});
+
+    expect(signinButtonNode).toBeInTheDocument();
+    userEvent.click(signinButtonNode);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.auth.request('testuser@test.com', 'xbsbxsxazl223xbsbixi', true));
   });
   test('Should able to test the signup link', async () => {
@@ -136,12 +136,10 @@ describe('Signin', () => {
 
     store(auth);
     await initSignIn();
-    const headingNode = screen.getByRole('heading', {name: 'Authenticate with one-time passcode'});
 
-    expect(headingNode).toBeInTheDocument();
-    const mfaSigninText = screen.getByText(/You are signing in from a new device. Enter your passcode to verify your account./i);
+    expect(screen.getByRole('heading', {name: 'Authenticate with one-time passcode'})).toBeInTheDocument();
 
-    expect(mfaSigninText).toBeInTheDocument();
+    expect(screen.getByText(/You are signing in from a new device. Enter your passcode to verify your account./i)).toBeInTheDocument();
     const oneTimePassword = screen.getByPlaceholderText('One-time passcode*');
 
     expect(oneTimePassword).toBeInTheDocument();
@@ -170,12 +168,10 @@ describe('Signin', () => {
 
     store(auth);
     await initSignIn();
-    const headingNode = screen.getByRole('heading', {name: 'Authenticate with one-time passcode'});
 
-    expect(headingNode).toBeInTheDocument();
-    const mfaSigninText = screen.getByText(/You are signing in from a new device. Enter your passcode to verify your account./i);
+    expect(screen.getByRole('heading', {name: 'Authenticate with one-time passcode'})).toBeInTheDocument();
 
-    expect(mfaSigninText).toBeInTheDocument();
+    expect(screen.getByText(/You are signing in from a new device. Enter your passcode to verify your account./i)).toBeInTheDocument();
     const oneTimePassword = screen.getByPlaceholderText('One-time passcode*');
 
     expect(oneTimePassword).toBeInTheDocument();
@@ -217,17 +213,5 @@ describe('Signin', () => {
     const warningMessageNode = screen.getByText(/Invalid one time passcode/i);
 
     expect(warningMessageNode).toBeInTheDocument();
-  });
-  test('Should able to test Re-Signin using google', async () => {
-    const auth = {
-    };
-    const profile = {
-      email: 'testuser@test.com',
-      auth_type_google: {id: 'testuser@test.com'},
-    };
-
-    store(auth, profile);
-    await initSignIn();
-    screen.debug(null, Infinity);
   });
 });

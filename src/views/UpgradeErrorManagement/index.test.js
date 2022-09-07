@@ -51,9 +51,12 @@ describe('test suite for UpgradeErrorManagement', () => {
 
   beforeEach(() => {
     initialStore = getCreatedStore();
+    jest.useFakeTimers();
+    jest.advanceTimersByTime(1000);
   });
 
   afterEach(() => {
+    jest.clearAllTimers();
     mockDispatchFn.mockClear();
   });
 
