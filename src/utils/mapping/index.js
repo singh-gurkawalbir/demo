@@ -1880,6 +1880,27 @@ export const getAllKeys = data => {
   return flattenDeep(nestedKeys);
 };
 
+// if the parent jsonPath has updated,
+// we need to update all its children jsonPaths as well
+export const updateChildrenJSONPath = parentNode => {
+  const {jsonPath: parentJsonPath, dataType: parentDataType, children} = parentNode;
+
+  if (isEmpty(children) || !parentJsonPath) return parentNode;
+
+  children.forEach(child => {
+    if (!child.generate || child.isTabNode) return;
+    // eslint-disable-next-line no-param-reassign
+    child.jsonPath = parentDataType === MAPPING_DATA_TYPES.OBJECTARRAY ? `${parentJsonPath}[*].${child.generate}` : `${parentJsonPath}.${child.generate}`;
+
+    if (child.children?.length) {
+      // eslint-disable-next-line no-param-reassign
+      child = updateChildrenJSONPath(child);
+    }
+  });
+
+  return parentNode;
+};
+
 // #endregion
 
 export default {
