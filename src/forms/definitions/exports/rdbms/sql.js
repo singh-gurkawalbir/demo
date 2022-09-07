@@ -49,17 +49,7 @@ export default {
         },
       ],
     },
-    groupByFields: {
-      fieldId: 'groupByFields',
-      defaultValue: r => r.groupByFields,
-      resourceSubType: 'rdbms',
-      visibleWhenAll: [
-        {
-          field: 'outputMode',
-          is: ['records'],
-        },
-      ],
-    },
+    rdbmsGrouping: {formId: 'rdbmsGrouping'},
     'rdbms.once.query': {
       fieldId: 'rdbms.once.query',
       visibleWhen: [{ field: 'type', is: ['once'] }],
@@ -84,7 +74,7 @@ export default {
       {
         collapsed: true,
         label: 'Would you like to group records?',
-        fields: ['groupByFields'],
+        fields: ['rdbmsGrouping'],
       },
       {
         collapsed: true,

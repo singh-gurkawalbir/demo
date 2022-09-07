@@ -72,17 +72,7 @@ export default {
     'once.booleanField': {
       fieldId: 'once.booleanField',
     },
-    groupByFields: {
-      fieldId: 'groupByFields',
-      defaultValue: r => r.groupByFields,
-      resourceSubType: 'rdbms',
-      visibleWhenAll: [
-        {
-          field: 'outputMode',
-          is: ['records'],
-        },
-      ],
-    },
+    rdbmsGrouping: { formId: 'rdbmsGrouping' },
     advancedSettings: { formId: 'advancedSettings' },
   },
   layout: {
@@ -110,7 +100,7 @@ export default {
       {
         collapsed: true,
         label: 'Would you like to group records?',
-        fields: ['groupByFields'],
+        fields: ['rdbmsGrouping'],
       },
       { collapsed: true, label: 'Advanced', fields: ['advancedSettings'] },
     ],
