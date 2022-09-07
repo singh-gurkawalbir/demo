@@ -2405,90 +2405,7 @@ describe('generateReactFlowGraph util function test', () => {
         type: 'router',
         data: {
           path: '/routers/1',
-          router: {
-            routeRecordsUsing: 'input_filters',
-            id: 'Ko7qmy',
-            routeRecordsTo: 'first_matching_branch',
-            branches: [
-              {
-                name: 'Branch 1.0',
-                pageProcessors: [
-                  {
-                    responseMapping: {
-                      fields: [
-                        {
-                          extract: 'id',
-                          generate: 'id1',
-                        },
-                      ],
-                      lists: [
-
-                      ],
-                    },
-                    type: 'import',
-                    _importId: '62cbc0908c8337627f657872',
-                    id: '62cbc0908c8337627f657872',
-                  },
-                  {
-                    responseMapping: {
-                      fields: [
-                        {
-                          extract: 'errors',
-                          generate: 'errors21',
-                        },
-                      ],
-                      lists: [
-
-                      ],
-                    },
-                    type: 'import',
-                    _importId: '62cda4fb80c105471745f0f1',
-                    id: '62cda4fb80c105471745f0f1',
-                  },
-                ],
-                nextRouterId: 'VlrnY7',
-              },
-              {
-                name: 'Branch 1.1',
-                pageProcessors: [
-                  {
-                    responseMapping: {
-                      fields: [
-
-                      ],
-                      lists: [
-
-                      ],
-                    },
-                    type: 'import',
-                    _importId: '62cda0873d0dab426139b793',
-                    id: '62cda0873d0dab426139b793',
-                  },
-                ],
-                nextRouterId: 'VlrnY7',
-              },
-              {
-                name: 'Branch 3.2',
-                pageProcessors: [
-                  {
-                    responseMapping: {
-                      fields: [
-
-                      ],
-                      lists: [
-
-                      ],
-                    },
-                    setupInProgress: true,
-                    id: anyPPId,
-                  },
-                ],
-              },
-            ],
-            script: {
-              function: 'branchRouter',
-            },
-          },
+          routeRecordsTo: 'first_matching_branch',
         },
       },
       {
@@ -2520,18 +2437,6 @@ describe('generateReactFlowGraph util function test', () => {
         type: 'merge',
         data: {
           path: '/routers/3',
-          router: {
-            id: 'VlrnY7',
-            branches: [
-              {
-                name: '',
-                nextRouterId: 'xwELf2',
-                pageProcessors: [
-
-                ],
-              },
-            ],
-          },
           mergableTerminals: [
             anyShortId,
           ],
@@ -2542,10 +2447,6 @@ describe('generateReactFlowGraph util function test', () => {
         type: 'empty',
         data: {
           name: '',
-          nextRouterId: 'xwELf2',
-          pageProcessors: [
-
-          ],
           path: '/routers/3/branches/0/pageProcessors/-',
         },
       },
@@ -2577,50 +2478,7 @@ describe('generateReactFlowGraph util function test', () => {
         type: 'router',
         data: {
           path: '/routers/2',
-          router: {
-            id: 'xwELf2',
-            branches: [
-              {
-                name: 'Branch 2.0',
-                pageProcessors: [
-                  {
-                    responseMapping: {
-                      fields: [
-
-                      ],
-                      lists: [
-
-                      ],
-                    },
-                    setupInProgress: true,
-                    id: expect.any(String),
-                  },
-                ],
-              },
-              {
-                name: 'Branch 2.1',
-                pageProcessors: [
-                  {
-                    responseMapping: {
-                      fields: [
-
-                      ],
-                      lists: [
-
-                      ],
-                    },
-                    setupInProgress: true,
-                    id: expect.any(String),
-                  },
-                ],
-              },
-            ],
-            routeRecordsUsing: 'input_filters',
-            routeRecordsTo: 'first_matching_branch',
-            script: {
-              function: 'branchRouter',
-            },
-          },
+          routeRecordsTo: 'first_matching_branch',
         },
       },
       {
@@ -2643,20 +2501,6 @@ describe('generateReactFlowGraph util function test', () => {
         draggable: true,
         data: {
           name: 'Branch 2.0',
-          pageProcessors: [
-            {
-              responseMapping: {
-                fields: [
-
-                ],
-                lists: [
-
-                ],
-              },
-              setupInProgress: true,
-              id: anyPPId,
-            },
-          ],
           path: '/routers/2/branches/0/pageProcessors/1',
           draggable: true,
         },
@@ -2731,20 +2575,6 @@ describe('generateReactFlowGraph util function test', () => {
         draggable: true,
         data: {
           name: 'Branch 2.1',
-          pageProcessors: [
-            {
-              responseMapping: {
-                fields: [
-
-                ],
-                lists: [
-
-                ],
-              },
-              setupInProgress: true,
-              id: 'new-vYHBhY',
-            },
-          ],
           path: '/routers/2/branches/1/pageProcessors/1',
           draggable: true,
         },
@@ -3026,20 +2856,6 @@ describe('generateReactFlowGraph util function test', () => {
         draggable: true,
         data: {
           name: 'Branch 3.2',
-          pageProcessors: [
-            {
-              responseMapping: {
-                fields: [
-
-                ],
-                lists: [
-
-                ],
-              },
-              setupInProgress: true,
-              id: anyPPId,
-            },
-          ],
           path: '/routers/1/branches/2/pageProcessors/1',
           draggable: true,
         },

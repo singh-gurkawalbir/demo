@@ -69,7 +69,7 @@ export default function HelpContent({ children, title, caption, fieldId, resourc
         dispatch(actions.app.postFeedback(resourceType, fieldId, helpful));
       } else {
         setFeedbackText(true);
-        updatePosition();
+        updatePosition && updatePosition();
       }
     },
 

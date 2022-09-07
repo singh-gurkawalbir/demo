@@ -153,7 +153,7 @@ describe('FlowBuilder UI tests', () => {
   test('should test when integration is not loaded', () => {
     const {utils} = renderWithProviders(<MemoryRouter><FlowBuilder /></MemoryRouter>);
 
-    expect(utils.container.textContent).toBe('');
+    expect(utils.container.textContent).toBe('Loadresource integrationId: undefined');
   });
   test('should test when integration is of version 1', async () => {
     const initialStore = getCreatedStore();
@@ -166,7 +166,9 @@ describe('FlowBuilder UI tests', () => {
         </Route>
       </MemoryRouter>, {initialStore});
 
-    expect(screen.getByText('Loadresource integrationId: 5ff579d745ceef7dcd797c15')).toBeInTheDocument();
+    expect(screen.getAllByText('Loadresource integrationId: 5ff579d745ceef7dcd797c15')[0]).toBeInTheDocument();
+    expect(screen.getAllByText('Loadresource integrationId: 5ff579d745ceef7dcd797c15')[1]).toBeInTheDocument();
+
     await waitFor(() => expect(screen.queryByText('Redirection')).toBeInTheDocument());
     await waitFor(() => expect(screen.queryByText('FlowBuilderBody')).toBeInTheDocument());
     expect(screen.getByText('ResourceDrawer flowId: flowId integrationId: 5ff579d745ceef7dcd797c15')).toBeInTheDocument();
