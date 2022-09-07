@@ -19,6 +19,7 @@ import CloseIcon from '../../../components/icons/CloseIcon';
 import ErrorStatus from '../ErrorStatus';
 import CeligoTruncate from '../../../components/CeligoTruncate';
 import actions from '../../../actions';
+import {getHttpConnector} from '../../../constants/applications';
 
 const blockHeight = 170;
 const blockWidth = 275;
@@ -35,7 +36,7 @@ const useStyles = makeStyles(theme => ({
     position: 'relative',
     zIndex: theme.zIndex.bubble,
   },
-  draggable: { cursor: 'move' },
+  // draggable: { cursor: 'move' },
   name: {
     height: 150,
     overflow: 'hidden',
@@ -170,6 +171,7 @@ export default function AppBlock({
   schedule,
   index,
   openErrorCount,
+  id,
   ...rest
 }) {
   const classes = useStyles();
@@ -185,7 +187,7 @@ export default function AppBlock({
 
     return activeConn === resource?._id || activeConn === resource?._connectionId;
   });
-
+  const isFlowSaveInProgress = useSelector(state => selectors.isFlowSaveInProgress(state, flowId));
   const iconType = useSelector(state => {
     if (blockType === 'dataLoader') return;
 
@@ -226,6 +228,12 @@ export default function AppBlock({
 
     if (assistant) return assistant;
     if (http?.formType === 'graph_ql') return 'graph_ql';
+
+    if (getHttpConnector(http?._httpConnectorId)) {
+      const publishedConnector = getHttpConnector(http._httpConnectorId);
+
+      return publishedConnector?.name;
+    }
   });
 
   useEffect(() => {
@@ -241,7 +249,7 @@ export default function AppBlock({
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const handleDelete = useCallback(index => () => onDelete(index), [onDelete]);
+  const handleDelete = useCallback(id => () => onDelete(id), [onDelete]);
   const handleExpandClick = useCallback(() => setExpanded(true), []);
   const handleMouseOver = useCallback(
     isOver => () => {
@@ -298,6 +306,9 @@ export default function AppBlock({
           resourceId={resource._id}
           resourceType={resourceType}
           index={index}
+          routerIndex={rest.routerIndex}
+          branchIndex={rest.branchIndex}
+          pageProcessorIndex={rest.pageProcessorIndex}
           onClose={handleActionClose}
           schedule={schedule}
         />
@@ -320,7 +331,7 @@ export default function AppBlock({
             <IconButton
               size="small"
               className={classes.deleteButton}
-              onClick={handleDelete(index)}
+              onClick={handleDelete(id)}
               data-test={`remove-${isPageGenerator ? 'pg' : 'pp'}`}>
               <CloseIcon />
             </IconButton>
@@ -353,7 +364,7 @@ export default function AppBlock({
           )}
         </div>
         <div className={classes.buttonContainer}>
-          <ResourceButton onClick={onBlockClick} variant={blockType} />
+          <ResourceButton onClick={onBlockClick} variant={blockType} disabled={isFlowSaveInProgress} />
           <div className={classes.middleActionContainer}>
             {renderActions(middleActions)}
             {!expanded && hasActions ? (

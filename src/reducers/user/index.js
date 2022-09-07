@@ -7,7 +7,7 @@ import preferences, { selectors as fromPreferences } from './preferences';
 import notifications, { selectors as fromNotifications } from './notifications';
 import profile, { selectors as fromProfile } from './profile';
 import debug, { selectors as fromDebug } from './debug';
-import { ACCOUNT_IDS, INTEGRATION_ACCESS_LEVELS, USER_ACCESS_LEVELS } from '../../utils/constants';
+import { ACCOUNT_IDS, INTEGRATION_ACCESS_LEVELS, USER_ACCESS_LEVELS } from '../../constants';
 import { genSelectors } from '../util';
 
 export const DEFAULT_EDITOR_THEME = 'tomorrow';
@@ -56,7 +56,7 @@ selectors.userPreferences = createSelector(
 
     // eslint-disable-next-line max-len
     /* When the user belongs to an org, we need to return the ssConnectionIds from org owner preferences. */
-    const { accounts: orgAccounts = {} } = org;
+    const { accounts: orgAccounts = [] } = org;
     const currentAccount = orgAccounts.find(
       a => a._id === preferences.defaultAShareId
     );

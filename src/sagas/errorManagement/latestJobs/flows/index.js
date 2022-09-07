@@ -4,24 +4,33 @@ import actionTypes from '../../../../actions/types';
 import { apiCallWithRetry } from '../../../index';
 import getRequestOptions from '../../../../utils/requestOptions';
 import { selectors } from '../../../../reducers';
-import { JOB_STATUS } from '../../../../utils/constants';
+import { JOB_STATUS } from '../../../../constants';
 import { pollApiRequests } from '../../../app';
 
 const FINISHED_JOB_STATUSES = [JOB_STATUS.COMPLETED, JOB_STATUS.FAILED, JOB_STATUS.CANCELED];
 const IN_PROGRESS_JOB_STATUSES = [JOB_STATUS.QUEUED, JOB_STATUS.RUNNING];
 
 export function* refreshForMultipleFlowJobs({ flowId, job, latestJobs }) {
-  const exportChildJob = job?.children?.find(cJob => cJob?.type === 'export') || {};
   const prevStateOfJob = latestJobs?.find(prevJob => prevJob._id === job._id) || {};
+
+  const exportChildJob = job?.children?.find(cJob => cJob?.type === 'export') || {};
   const prevStateOfExportChildJob = prevStateOfJob.children?.find(cJob => cJob?.type === 'export') || {};
 
+  const isExportChildJobFinished = FINISHED_JOB_STATUSES.includes(exportChildJob.status);
+  const isPrevStateOfExportChildJobInProgress = IN_PROGRESS_JOB_STATUSES.includes(prevStateOfExportChildJob.status);
+
   // if the export job is not completed or this job is the last pg job, no need to refresh
-  if (!FINISHED_JOB_STATUSES.includes(exportChildJob.status) || prevStateOfJob.__lastPageGeneratorJob) {
+  if (!isExportChildJobFinished || prevStateOfJob.__lastPageGeneratorJob) {
     return;
   }
-  // if export job is finished and previously in progress,
+
+  const isCurrentJobFinished = FINISHED_JOB_STATUSES.includes(job.status);
+  const isPrevStateOfJobInProgress = !prevStateOfJob.status || IN_PROGRESS_JOB_STATUSES.includes(prevStateOfJob.status);
+
+  // if the current job status is completed and was previously in progress or immediately it was completed or
+  // if export job is finished and was previously in progress,
   // then request as we can assume one more job is to be running for another PG
-  if (IN_PROGRESS_JOB_STATUSES.includes(prevStateOfExportChildJob.status)) {
+  if ((isCurrentJobFinished && isPrevStateOfJobInProgress) || isPrevStateOfExportChildJobInProgress) {
     yield put(actions.errorManager.latestFlowJobs.request({ flowId }));
   }
 }

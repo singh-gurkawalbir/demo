@@ -6,7 +6,7 @@ import clsx from 'clsx';
 import WarningIcon from '../../icons/WarningIcon';
 import ExpiredIcon from '../../icons/ErrorIcon';
 import actions from '../../../actions';
-import { INTEGRATION_ACCESS_LEVELS, USER_ACCESS_LEVELS, TILE_STATUS } from '../../../utils/constants';
+import { INTEGRATION_ACCESS_LEVELS, USER_ACCESS_LEVELS, TILE_STATUS } from '../../../constants';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import ActionGroup from '../../ActionGroup';
 import { FilledButton, TextButton} from '../../Buttons';
@@ -97,7 +97,7 @@ export default function TileNotification({
           label: 'Submit request',
           onClick: () => {
             setUpgradeRequested(true);
-            dispatch(actions.license.requestUpdate('connectorRenewal', connectorId, licenseId));
+            dispatch(actions.license.requestUpdate('connectorRenewal', {connectorId, licenseId}));
           },
         },
         {
@@ -114,22 +114,7 @@ export default function TileNotification({
       if (![INTEGRATION_ACCESS_LEVELS.OWNER, USER_ACCESS_LEVELS.ACCOUNT_ADMIN].includes(accessLevel)) {
         enquesnackbar({ message: 'Contact your account owner to reactivate this integration app.', variant: 'error' });
       } else {
-        confirmDialog({
-          title: 'Request to reactivate subscription',
-          message: 'We will contact you to reactivate your subscription.',
-          buttons: [
-            {
-              label: 'Submit request',
-              onClick: () => {
-                dispatch(actions.integrationApp.license.resume(integrationId));
-              },
-            },
-            {
-              label: 'Cancel',
-              variant: 'text',
-            },
-          ],
-        });
+        return dispatch(actions.integrationApp.license.resume(integrationId));
       }
     } else if (showTrialLicenseMessage) {
       onClickBuyButton();
@@ -141,7 +126,7 @@ export default function TileNotification({
           {
             label: 'Submit request',
             onClick: () => {
-              dispatch(actions.license.requestUpdate('connectorRenewal', connectorId, licenseId));
+              dispatch(actions.license.requestUpdate('connectorRenewal', {connectorId, licenseId}));
             },
           },
           {
@@ -173,7 +158,7 @@ export default function TileNotification({
             onClick={onClickRenewOrReactivateButton}
             data-test="RenewOrReactivate"
            >
-            {resumable ? 'Request to reactivate' : 'Request to renew'}
+            {resumable ? 'Reactivate' : 'Request to renew'}
           </FilledButton>
         )}
         {single && showTrialLicenseMessage && (

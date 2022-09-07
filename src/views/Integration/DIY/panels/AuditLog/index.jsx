@@ -5,6 +5,8 @@ import AuditLog from '../../../../../components/AuditLog';
 import PanelHeader from '../../../../../components/PanelHeader';
 import actions from '../../../../../actions';
 import { selectors } from '../../../../../reducers';
+import { STANDALONE_INTEGRATION } from '../../../../../constants';
+import infoText from '../infoText';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -24,17 +26,16 @@ function useLoadRevisions(integrationId) {
   const isIntegrationApp = useSelector(state => selectors.isIntegrationApp(state, integrationId));
 
   useEffect(() => {
-    if (!revisionsFetchStatus && !isIntegrationApp) {
+    if (!revisionsFetchStatus && !isIntegrationApp && integrationId && STANDALONE_INTEGRATION.id !== integrationId) {
       dispatch(actions.integrationLCM.revisions.request(integrationId));
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [integrationId, dispatch, revisionsFetchStatus]);
 
   return !revisionsFetchStatus || revisionsFetchStatus === 'requested';
 }
 
 export default function AuditLogSection({ integrationId, childId }) {
-  const infoTextAuditLog =
-    'Keep track of changes to your integration, enabling you to track down problems based on changes to your integration or its flows. Know exactly who made the change, what the change was, and when it happened.';
   const classes = useStyles();
 
   // Loads revision list to show the details in the Audit log
@@ -42,7 +43,7 @@ export default function AuditLogSection({ integrationId, childId }) {
 
   return (
     <div className={classes.root}>
-      <PanelHeader title="Audit log" infoText={infoTextAuditLog} />
+      <PanelHeader title="Audit log" infoText={infoText.AuditLog} />
       <AuditLog
         resourceType="integrations"
         resourceId={childId || integrationId}

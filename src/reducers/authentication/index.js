@@ -1,5 +1,6 @@
 import produce from 'immer';
 import actionTypes from '../../actions/types';
+import { emptyObject } from '../../constants';
 import { COMM_STATES } from '../comms/networkComms/index';
 
 const defaultState = { initialized: false, commStatus: COMM_STATES.LOADING };
@@ -17,12 +18,11 @@ export default function (state = defaultState, action) {
     };
   }
 
-  const {type, showAuthError} = action;
+  const {type, showAuthError, mfaError, mfaAuthInfo} = action;
 
   return produce(state, draft => {
     switch (type) {
       case actionTypes.AUTH.INIT_SESSION:
-
         delete draft.showAuthError;
         draft.authenticated = false;
         draft.commStatus = COMM_STATES.LOADING;
@@ -45,6 +45,16 @@ export default function (state = defaultState, action) {
         draft.commStatus = COMM_STATES.SUCCESS;
         delete draft.sessionExpired;
         delete draft.failure;
+        break;
+
+      case actionTypes.AUTH.MFA_REQUIRED:
+        draft.mfaRequired = true;
+        draft.mfaAuthInfo = mfaAuthInfo;
+        delete draft.authTimestamp;
+        delete draft.warning;
+        draft.commStatus = COMM_STATES.SUCCESS;
+        draft.initialized = true;
+        draft.authenticated = false;
         break;
 
       case actionTypes.AUTH.FAILURE:
@@ -80,6 +90,23 @@ export default function (state = defaultState, action) {
 
         break;
 
+      case actionTypes.AUTH.MFA_VERIFY.REQUEST:
+        draft.mfaAuth = {};
+        draft.mfaAuth.status = 'requested';
+        break;
+
+      case actionTypes.AUTH.MFA_VERIFY.FAILED:
+        if (!draft.mfaAuth) break;
+        draft.mfaAuth.status = 'failed';
+        draft.mfaAuth.error = mfaError;
+        break;
+
+      case actionTypes.AUTH.MFA_VERIFY.SUCCESS:
+        if (!draft.mfaAuth) break;
+        delete draft.mfaRequired;
+        delete draft.mfaAuthInfo;
+        draft.mfaAuth = { status: 'success' };
+        break;
       default:
     }
   });
@@ -105,5 +132,24 @@ selectors.showSessionStatus = state => {
   if (sessionExpired) {
     return 'expired';
   }
+};
+
+selectors.isMFAAuthRequired = state => !!state?.mfaRequired;
+selectors.mfaAuthInfo = state => state?.mfaAuthInfo || emptyObject;
+selectors.isMFAAuthRequested = state => {
+  if (!state?.mfaAuth) return false;
+
+  return state.mfaAuth.status === 'requested';
+};
+selectors.isMFAAuthFailed = state => {
+  if (!state?.mfaAuth) return false;
+
+  return state.mfaAuth.status === 'failed';
+};
+selectors.mfaError = state => state?.mfaAuth?.error;
+selectors.isMFAAuthVerified = state => {
+  if (!state?.mfaAuth) return false;
+
+  return state.mfaAuth.status === 'success';
 };
 // #endregion Selectors

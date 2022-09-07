@@ -1,7 +1,7 @@
 /* global describe, test, expect */
 import reducer, { selectors } from '.';
 import actions from '../../../actions';
-import { LICENSE_UPGRADE_REQUEST_SUBMITTED_MESSAGE} from '../../../utils/constants';
+import { LICENSE_REACTIVATED_MESSAGE, LICENSE_UPGRADE_REQUEST_SUBMITTED_MESSAGE} from '../../../constants';
 
 describe('session.resource reducers', () => {
   test('reducer should return previous state if action is not handled.', () => {
@@ -87,6 +87,17 @@ describe('session.resource reducers', () => {
         actions.license.licenseUpgradeRequestSubmitted()
       );
       const expected = {platformLicenseActionMessage: LICENSE_UPGRADE_REQUEST_SUBMITTED_MESSAGE};
+
+      expect(state).toEqual(expected);
+    });
+  });
+  describe('actionTypes.LICENSE.REACTIVATED action', () => {
+    test('should store the license reactivated message', () => {
+      const state = reducer(
+        undefined,
+        actions.license.licenseReactivated()
+      );
+      const expected = {platformLicenseActionMessage: LICENSE_REACTIVATED_MESSAGE};
 
       expect(state).toEqual(expected);
     });
@@ -227,6 +238,23 @@ describe('session.resource reducers', () => {
       const expected = {platformLicenseActionMessage: LICENSE_UPGRADE_REQUEST_SUBMITTED_MESSAGE};
 
       expect(selectors.platformLicenseActionMessage(state)).toEqual(expected.platformLicenseActionMessage);
+    });
+  });
+  describe('ssoLicenseUpgradeRequested', () => {
+    test('should return undefined when no match found.', () => {
+      expect(selectors.ssoLicenseUpgradeRequested(undefined)).toEqual(
+        undefined
+      );
+      expect(selectors.ssoLicenseUpgradeRequested({})).toEqual(undefined);
+    });
+    test('should return true when sso license is upgrade requested', () => {
+      const state = reducer(
+        undefined,
+        actions.license.ssoLicenseUpgradeRequested()
+      );
+      const expected = {ssoLicenseUpgradeRequested: true};
+
+      expect(selectors.ssoLicenseUpgradeRequested(state)).toEqual(expected.ssoLicenseUpgradeRequested);
     });
   });
   describe('getChildIntegrationId', () => {

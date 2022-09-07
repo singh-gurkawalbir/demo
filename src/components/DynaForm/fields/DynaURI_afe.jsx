@@ -36,6 +36,7 @@ export default function DynaURI_afe(props) {
     description,
     formKey,
     stage,
+    mapper2RowKey,
   } = props;
   const classes = useStyles();
   const dispatch = useDispatch();
@@ -61,6 +62,7 @@ export default function DynaURI_afe(props) {
       onSave: handleSave,
       parentType,
       parentId,
+      mapper2RowKey,
     }));
 
     history.push(buildDrawerUrl({
@@ -68,7 +70,7 @@ export default function DynaURI_afe(props) {
       baseUrl: match.url,
       params: { editorId },
     }));
-  }, [dispatch, flowDataStage, editorId, formKey, flowId, resourceId, resourceType, id, handleSave, parentType, parentId, history, match.url]);
+  }, [dispatch, flowDataStage, editorId, formKey, flowId, resourceId, resourceType, id, handleSave, parentType, parentId, history, match.url, mapper2RowKey]);
 
   return (
     <>

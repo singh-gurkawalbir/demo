@@ -5,7 +5,7 @@ import actions from '../../../../actions';
 import LoadResources from '../../../../components/LoadResources';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import { selectors } from '../../../../reducers';
-import { HOME_PAGE_PATH } from '../../../../utils/constants';
+import { HOME_PAGE_PATH } from '../../../../constants';
 import { getIntegrationAppUrlName } from '../../../../utils/integrationApps';
 import getRoutePath from '../../../../utils/routePaths';
 import { getTemplateUrlName } from '../../../../utils/template';

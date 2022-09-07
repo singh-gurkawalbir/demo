@@ -375,6 +375,7 @@ export default {
         fontSize: '14px',
         lineHeight: '18px',
         letterSpacing: 'normal',
+        fontWeight: 'normal',
       },
       overline: {
         fontFamily: 'source sans pro',
@@ -790,19 +791,19 @@ export default {
         display: 'inline-flex',
         minHeight: 'unset',
         '&.Mui-expanded': {
-          minHeight: '42px',
+          minHeight: '40px',
 
         },
       },
       expandIcon: {
         padding: 0,
-        margin: [[-2, 4, 0, 0]],
+        margin: [[1, 4, 0, 0]],
       },
 
       content: {
-        margin: [[10, 0, 8, 0]],
+        margin: [[10, 0, 10, 0]],
         '&.Mui-expanded': {
-          margin: [[10, 0, 8, 0]],
+          margin: [[10, 0, 10, 0]],
         },
       },
     },

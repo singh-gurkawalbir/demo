@@ -5,7 +5,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import { Typography } from '@material-ui/core';
 import integrationAppsUtil from '../../utils/integrationApps';
 import SuccessIcon from '../icons/SuccessIcon';
-import { INSTALL_STEP_TYPES } from '../../utils/constants';
+import { INSTALL_STEP_TYPES } from '../../constants';
 import ApplicationImg from '../icons/ApplicationImg';
 import { selectors } from '../../reducers';
 import actions from '../../actions';
@@ -263,7 +263,7 @@ export default function InstallationStep(props) {
             <ApplicationImg
               size="small"
               type={
-                step?.options?.connectionType?.toLowerCase() || step?.sourceConnection?.http?.formType || step?.sourceConnection?.type || ''
+                step?.options?.connectionType?.toLowerCase() || (step?.name === 'workday' ? 'workday' : step?.sourceConnection?.http?.formType) || step?.sourceConnection?.type || ''
               }
               assistant={step?.sourceConnection?.assistant || step?.sourceConnection?.rdbms?.type}
             />

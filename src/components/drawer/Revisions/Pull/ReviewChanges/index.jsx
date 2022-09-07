@@ -90,7 +90,7 @@ function ReviewChangesDrawerContent({ integrationId, parentUrl }) {
           { isRevisionCreationInProgress ? <Spinner size="small" className={classes.inProgressSpinner} /> : null } Next
         </FilledButton>
         <TextButton
-          data-test="cancelCreatePull"
+          data-test="cancelReviewPulll"
           disabled={isRevisionCreationInProgress}
           onClick={onClose}>
           Close

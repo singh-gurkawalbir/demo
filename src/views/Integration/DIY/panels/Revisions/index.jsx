@@ -25,6 +25,7 @@ import FinalRevertDrawer from '../../../../../components/drawer/Revisions/Revert
 import CreateSnapshotDrawer from '../../../../../components/drawer/Revisions/CreateSnapshot';
 import LoadResources from '../../../../../components/LoadResources';
 import useOpenRevisionWhenValid from '../../../../../components/drawer/Revisions/hooks/useOpenRevisionWhenValid';
+import infoText from '../infoText';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -125,6 +126,12 @@ export default function Revisions({ integrationId }) {
     }
   }, [integrationId, dispatch, isRevisionsCollectionRequested]);
 
+  useEffect(() => {
+    dispatch(actions.integrationLCM.cloneFamily.request(integrationId));
+
+    return () => dispatch(actions.integrationLCM.cloneFamily.clear(integrationId));
+  }, [dispatch, integrationId]);
+
   const handleCreatePull = useOpenRevisionWhenValid({
     integrationId,
     drawerURL: buildDrawerUrl({
@@ -132,6 +139,7 @@ export default function Revisions({ integrationId }) {
       baseUrl: match.url,
       params: { revId: nanoid() },
     }),
+    isCreatePull: true,
   });
   const handleCreateSnapshot = useOpenRevisionWhenValid({
     integrationId,
@@ -144,7 +152,7 @@ export default function Revisions({ integrationId }) {
 
   return (
     <div className={classes.root}>
-      <PanelHeader title="Revisions" className={classes.flowPanelTitle}>
+      <PanelHeader title="Revisions" className={classes.flowPanelTitle} infoText={infoText.Revisions}>
         { !hasMonitorLevelAccess && (
         <ActionGroup>
           <TextButton

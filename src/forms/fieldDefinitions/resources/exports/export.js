@@ -76,6 +76,12 @@ export default {
 
         return r.http.formType === 'graph_ql' ? 'false' : 'true';
       }
+      if (r.isHttpConnector || r.http?._httpConnectorResourceId || !(r.assistant || (r.http && r.http.formType === 'graph_ql'))) {
+        if (!r.http) return 'false';
+        if (!r.http.formType) return 'false';
+
+        return r.http.formType === 'assistant' ? 'false' : 'true';
+      }
 
       return `${r.assistant || (r.http && r.http.formType === 'graph_ql') ? 'false' : 'true'}`;
     },
@@ -228,6 +234,11 @@ export default {
     label: 'XML parser helper',
     type: 'xmlparse',
     required: true,
+  },
+  groupByFields: {
+    isLoggable: true,
+    label: 'Group records by fields',
+    type: 'sortandgroup',
   },
   // #endregion common
   // #region inputFilter

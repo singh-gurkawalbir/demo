@@ -52,7 +52,7 @@ import {
 import actionTypes from '../../actions/types';
 import commKeyGenerator from '../../utils/commKeyGenerator';
 import { COMM_STATES } from '../../reducers/comms/networkComms';
-import {HOME_PAGE_PATH} from '../../utils/constants';
+import {HOME_PAGE_PATH} from '../../constants';
 import { APIException } from '../api/requestInterceptors/utils';
 import getRequestOptions from '../../utils/requestOptions';
 import openExternalUrl from '../../utils/window';
@@ -483,6 +483,7 @@ describe('commitStagedChanges saga', () => {
       expect(saga.next(updated).value).toEqual(put(actions.resource.requestCollection('connections', null, true)));
       expect(saga.next(updated).value).toEqual(put(actions.resource.requestCollection('exports', null, true)));
       expect(saga.next(updated).value).toEqual(put(actions.resource.requestCollection('imports', null, true)));
+      expect(saga.next(updated).value).toEqual(put(actions.resource.requestCollection('asynchelpers', null, true)));
       expect(saga.next(updated).value).toEqual(put(actions.resource.clearStaged(id)));
       const putEffect = saga.next(updated).value;
 
@@ -1948,7 +1949,7 @@ describe('patchResource saga', () => {
       [select(selectors.resource, 'exports', '123'), {}],
     ])
     .call.fn(apiCallWithRetry)
-    .put(actions.resource.request('integrations', '123'))
+    .put(actions.resource.request('exports', '123'))
     .put(actions.asyncTask.success(undefined))
     .run());
   test('should make api call and dispatch resource request and asynctask success action if doNotRefetch is true and asyncKey is present', () => expectSaga(patchResource, { resourceType: 'exports', id: '123', patchSet: {}, options: {doNotRefetch: true}, asyncKey: 'some-key' })
@@ -1957,7 +1958,7 @@ describe('patchResource saga', () => {
       [select(selectors.resource, 'exports', '123'), {}],
     ])
     .call.fn(apiCallWithRetry)
-    .put(actions.resource.request('integrations', '123'))
+    .put(actions.resource.request('exports', '123'))
     .put(actions.asyncTask.success('some-key'))
     .run());
   test('should not dispatch any action and do nothing if api call fails', () => expectSaga(patchResource, { resourceType: 'exports', id: '123', patchSet: {}, options: {doNotRefetch: true} })
@@ -2728,12 +2729,14 @@ describe('tests for metadata sagas', () => {
             path: `/${metaPath}`,
             opts: {},
             message: 'Loading',
+            hidden: false,
           }), metadata],
         ])
         .call(apiCallWithRetry, {
           path: `/${metaPath}`,
           opts: {},
           message: 'Loading',
+          hidden: false,
         })
         .put(actions.metadata.receivedCollection(
           metadata,
@@ -2761,6 +2764,7 @@ describe('tests for metadata sagas', () => {
         addInfo: {
           refreshCache: true,
           query,
+          hidden: true,
         },
       })
         .provide([
@@ -2772,12 +2776,14 @@ describe('tests for metadata sagas', () => {
             path: newpath,
             opts: {},
             message: 'Loading',
+            hidden: true,
           }), metadata],
         ])
         .call(apiCallWithRetry, {
           path: newpath,
           opts: {},
           message: 'Loading',
+          hidden: true,
         })
         .put(actions.metadata.receivedCollection(
           metadata,
@@ -2809,12 +2815,14 @@ describe('tests for metadata sagas', () => {
             path: `/${metaPath}`,
             opts: {},
             message: 'Loading',
+            hidden: false,
           }), metadata],
         ])
         .call(apiCallWithRetry, {
           path: `/${metaPath}`,
           opts: {},
           message: 'Loading',
+          hidden: false,
         })
         .put(actions.metadata.receivedError(
           metadata.errors[0].message,
@@ -2837,12 +2845,14 @@ describe('tests for metadata sagas', () => {
           path: `/${metaPath}`,
           opts: {},
           message: 'Loading',
+          hidden: false,
         }), throwError({status: 404, message: '[{"message":"error msg"}]'})],
       ])
       .call(apiCallWithRetry, {
         path: `/${metaPath}`,
         opts: {},
         message: 'Loading',
+        hidden: false,
       })
       .put(actions.metadata.receivedError(
         'error msg',
@@ -3069,6 +3079,34 @@ describe('downloadAuditlogs saga', () => {
     const filters = {
       fromDate: yesterdayDate.toISOString(),
       toDate: new Date().toISOString(),
+    };
+    const requestOptions = getRequestOptions(
+      actionTypes.RESOURCE.DOWNLOAD_AUDIT_LOGS,
+      { resourceType, resourceId, filters }
+    );
+
+    const response = { signedURL: 'http://mockUrl.com/SHA256/2345sdcv' };
+
+    return expectSaga(downloadAuditlogs, { resourceType, resourceId, filters })
+      .provide([
+        [matchers.call.fn(apiCallWithRetry), response],
+      ])
+      .call(apiCallWithRetry, {
+        path: requestOptions.path,
+        opts: requestOptions.opts,
+      })
+      .call(openExternalUrl, { url: response.signedURL })
+      .run();
+  });
+  test('should invoke audit logs api with date and user selected filters', () => {
+    const filters = {
+      fromDate: yesterdayDate.toISOString(),
+      toDate: new Date().toISOString(),
+      byUser: 'user',
+      resourceType: 'integrations',
+      source: 'ui',
+      event: 'create',
+      _resourceId: 'i1',
     };
     const requestOptions = getRequestOptions(
       actionTypes.RESOURCE.DOWNLOAD_AUDIT_LOGS,

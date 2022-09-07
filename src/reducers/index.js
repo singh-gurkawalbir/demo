@@ -23,7 +23,6 @@ import {
   getUsedActionsMapForResource,
   isPageGeneratorResource,
   getImportsFromFlow,
-  getPageProcessorImportsFromFlow,
   getAllConnectionIdsUsedInTheFlow,
   getFlowListWithMetadata,
   getNextDataFlows,
@@ -41,6 +40,7 @@ import {
   isRealtimeExport,
   addLastExecutedAtSortableProp,
   shouldHaveUnassignedSection,
+  getPageProcessorFromFlow,
 } from '../utils/flows';
 import {
   PASSWORD_MASK,
@@ -58,7 +58,8 @@ import {
   NO_ENVIRONMENT_MODELS_FOR_BIN, HOME_PAGE_PATH,
   AFE_SAVE_STATUS,
   UNASSIGNED_SECTION_NAME,
-} from '../utils/constants';
+  emptyList,
+} from '../constants';
 import messageStore from '../utils/messageStore';
 import { upgradeButtonText, expiresInfo } from '../utils/license';
 import commKeyGen from '../utils/commKeyGenerator';
@@ -74,6 +75,7 @@ import {
   getUserAccessLevelOnConnection,
   rdbmsSubTypeToAppType,
   getResourceFromAlias,
+  finalSuccessMediaType,
 } from '../utils/resource';
 import { convertFileDataToJSON, wrapSampleDataWithContext } from '../utils/sampleData';
 import {
@@ -81,7 +83,7 @@ import {
   isPreviewPanelAvailable,
 } from '../utils/exportPanel';
 import getRoutePath from '../utils/routePaths';
-import { getIntegrationAppUrlName, getTitleIdFromSection, isIntegrationAppVersion2 } from '../utils/integrationApps';
+import { getIntegrationAppUrlName, getTitleFromEdition, getTitleIdFromSection, isIntegrationAppVersion2 } from '../utils/integrationApps';
 import mappingUtil from '../utils/mapping';
 import responseMappingUtil from '../utils/responseMapping';
 import { suiteScriptResourceKey, isJavaFlow } from '../utils/suiteScript';
@@ -97,9 +99,9 @@ import {
   getParentJobSteps,
 } from '../utils/latestJobs';
 import getJSONPaths from '../utils/jsonPaths';
-import { getApp } from '../constants/applications';
+import { getApp, getHttpConnector, applicationsList} from '../constants/applications';
 import { HOOK_STAGES } from '../utils/editor';
-import { getTextAfterCount, capitalizeFirstLetter } from '../utils/string';
+import { getTextAfterCount } from '../utils/string';
 import { remainingDays } from './user/org/accounts';
 import { FILTER_KEY as FLOWSTEP_LOG_FILTER_KEY, DEFAULT_ROWS_PER_PAGE as FLOWSTEP_LOG_DEFAULT_ROWS_PER_PAGE } from '../utils/flowStepLogs';
 import { AUTO_MAPPER_ASSISTANTS_SUPPORTING_RECORD_TYPE, isAmazonSellingPartnerConnection } from '../utils/assistant';
@@ -111,6 +113,8 @@ import { filterMap } from '../components/GlobalSearch/filterMeta';
 import { getRevisionFilterKey, getFilteredRevisions, getPaginatedRevisions, REVISION_DIFF_ACTIONS } from '../utils/revisions';
 import { buildDrawerUrl, drawerPaths } from '../utils/rightDrawer';
 import { GRAPHQL_HTTP_FIELDS, isGraphqlResource } from '../utils/graphql';
+import { initializeFlowForReactFlow } from '../utils/flows/flowbuilder';
+import { HTTP_BASED_ADAPTORS } from '../utils/http';
 
 const emptyArray = [];
 const emptyObject = {};
@@ -206,6 +210,8 @@ selectors.userProfilePreferencesProps = createSelector(
       scheduleShiftForFlowsCreatedAfter,
       // eslint-disable-next-line camelcase
       auth_type_google,
+      _ssoAccountId,
+      authTypeSSO,
     } = { ...profile, ...preferences };
 
     return {
@@ -222,6 +228,8 @@ selectors.userProfilePreferencesProps = createSelector(
       scheduleShiftForFlowsCreatedAfter,
       auth_type_google,
       showRelativeDateTime,
+      _ssoAccountId,
+      authTypeSSO,
     };
   });
 
@@ -1557,6 +1565,15 @@ selectors.matchingConnectionList = (state, connection = {}, environment, manageO
     ignoreEnvironmentFilter: true,
     filter: {
       $where() {
+        if (getHttpConnector(connection.http?._httpConnectorId)) {
+          return (
+            this.http?._httpConnectorId === connection.http?._httpConnectorId &&
+            this.http?._httpConnectorVersionId === connection.http?._httpConnectorVersionId &&
+            this.http?._httpConnectorApiId === connection.http?._httpConnectorApiId &&
+            !this._connectorId &&
+            (!environment || !!this.sandbox === (environment === 'sandbox'))
+          );
+        }
         if (connection.assistant) {
           return (
             this.assistant === connection.assistant &&
@@ -1573,6 +1590,15 @@ selectors.matchingConnectionList = (state, connection = {}, environment, manageO
         }
 
         if (connection.type === 'http') {
+          if (connection.http?.formType) {
+            return (
+            this.http?.formType === connection.http?.formType &&
+            this.type === 'http' &&
+            !this._connectorId &&
+            (!environment || !!this.sandbox === (environment === 'sandbox'))
+            );
+          }
+
           return (
             this.http?.formType !== 'rest' &&
             this.type === 'http' &&
@@ -1818,8 +1844,15 @@ selectors.mkFilteredHomeTiles = () => {
       let filteredTiles = filterAndSortResources(homeTiles, filterConfig, !isListView, comparer);
 
       if (isListView && applications && !applications.includes('all')) {
-        // filter on applications
-        filteredTiles = filteredTiles.filter(t => t.applications?.some(a => applications.includes(a)));
+        // filter on applications, for applications which have multiple versions/metadata, temporary assistant name
+        // will be a substring of the actual assistant name
+        // for e.g, user selects 'constantcontact' in the filters (which is a temporary assistant),
+        // resources will have assistants 'constantcontactv2' or 'constantcontactv3',
+        // below filter will ensure that all versions of constant contact are filtered as 'constantcontact' is a substring of
+        // both 'constantcontactv2' or 'constantcontactv3'
+        filteredTiles = filteredTiles.filter(
+          tile => tile.applications?.some(tileApp => applications.some(app => tileApp.includes(app)))
+        );
       }
 
       if (isListView && pinnedIntegrations?.length && filteredTiles.length) {
@@ -2134,6 +2167,20 @@ selectors.makeResourceDataSelector = () => {
     (resourceIdState, stagedIdState, resourceType, id) => selectors.resourceDataModified(resourceIdState, stagedIdState, resourceType, id)
   );
 };
+
+selectors.makeFlowDataForFlowBuilder = () => {
+  const cachedResourceSelector = selectors.makeResourceDataSelector();
+
+  return createSelector(
+    (state, flowId) => cachedResourceSelector(
+      state,
+      'flows',
+      flowId
+    )?.merged,
+    flow => initializeFlowForReactFlow(flow)
+  );
+};
+selectors.flowDataForFlowBuilder = selectors.makeFlowDataForFlowBuilder();
 // Please use makeResourceDataSelector in JSX as it is cached selector.
 // For sagas we can use resourceData which points to cached selector.
 selectors.resourceData = selectors.makeResourceDataSelector();
@@ -2542,7 +2589,7 @@ selectors.getResourceType = (state, { resourceType, resourceId }) => {
 selectors.mappingHasLookupOption = (state, resourceType, connectionId) => {
   const connection = selectors.resource(state, resourceType, connectionId) || {};
 
-  return !['bigquery', 'snowflake'].includes(connection?.rdbms?.type);
+  return !['bigquery', 'redshift', 'snowflake'].includes(connection?.rdbms?.type);
 };
 
 // this selector updates the field options based on the
@@ -2806,7 +2853,7 @@ selectors.integrationAppEdition = (state, integrationId) => {
             (editions.find(ed => ed._id === license._editionId) || {})?.displayName;
 
   const plan = `${
-    edition ? capitalizeFirstLetter(edition) : 'Standard'
+    edition ? getTitleFromEdition(edition) : 'Standard'
   } plan`;
 
   return plan;
@@ -3768,10 +3815,10 @@ selectors.resourcePermissionsForTile = (
       );
     }
     if (resourceId) {
-      let value = permissions[resourceType][resourceId];
+      let value = permissions.integrations[resourceId] || permissions.integrations.all;
 
-      if (!value && resourceType === 'integrations') {
-        value = permissions[resourceType].all;
+      if (!value) {
+        return emptyObject;
       }
 
       // remove tile level permissions added to connector while are not valid.
@@ -3865,10 +3912,10 @@ selectors.resourcePermissions = (
       );
     }
     if (resourceId) {
-      let value = permissions[resourceType][resourceId];
+      let value = permissions.integrations[resourceId] || permissions.integrations.all;
 
-      if (!value && resourceType === 'integrations') {
-        value = permissions[resourceType].all;
+      if (!value) {
+        return emptyObject;
       }
 
       // remove tile level permissions added to connector while are not valid.
@@ -3920,6 +3967,24 @@ selectors.isFormAMonitorLevelAccess = (state, integrationId) => {
   );
 
   if (accessLevelIntegration === 'monitor') return true;
+
+  return false;
+};
+
+selectors.isFormAManageLevelAccess = (state, integrationId) => {
+  const { accessLevel } = selectors.resourcePermissions(state);
+
+  // if all forms is manage level
+  if (accessLevel === 'manage') return true;
+
+  // check integration level is monitor level
+  const { accessLevel: accessLevelIntegration } = selectors.resourcePermissions(
+    state,
+    'integrations',
+    integrationId
+  );
+
+  if (accessLevelIntegration === 'manage') return true;
 
   return false;
 };
@@ -4222,8 +4287,9 @@ selectors.getImportSampleData = (state, resourceId, options = {}) => {
   const resource = selectors.resourceData(state, 'imports', resourceId)?.merged || emptyObject;
   const { assistant, adaptorType, sampleData, _connectorId } = resource;
   const isIntegrationApp = !!_connectorId;
+  const connection = selectors.resource(state, 'connections', resource._connectionId) || emptyObject;
 
-  if (assistant && assistant !== 'financialforce' && !(FILE_PROVIDER_ASSISTANTS.includes(assistant))) {
+  if (getHttpConnector(connection.http?._httpConnectorId) || (assistant && assistant !== 'financialforce' && !(FILE_PROVIDER_ASSISTANTS.includes(assistant)))) {
     // get assistants sample data
     return selectors.assistantPreviewData(state, resourceId);
   }
@@ -4286,12 +4352,12 @@ selectors.sampleDataWrapper = createSelector(
     (state, params) => params.sampleData || selectors.getSampleDataContext(state, params),
     (state, params) => {
       if (['postMap', 'postSubmit'].includes(params.stage)) {
-        return selectors.getSampleDataContext(state, { ...params, stage: 'preMap' });
+        return selectors.getSampleDataContext(state, { ...params, stage: 'importMappingExtract' });
       }
     },
     (state, params) => {
       if (params.stage === 'postSubmit') {
-        return selectors.getSampleDataContext(state, { ...params, stage: 'postMap' });
+        return selectors.getSampleDataContext(state, { ...params, stage: 'postMapOutput' });
       }
     },
     (state, { flowId }) => selectors.resource(state, 'flows', flowId) || emptyObject,
@@ -4426,7 +4492,7 @@ selectors.isRequestUrlAvailableForPreviewPanel = (state, resourceId, resourceTyp
   // for rest and http
   const appType = adaptorTypeMap[resourceObj?.adaptorType];
 
-  return ['http', 'rest'].includes(appType);
+  return HTTP_BASED_ADAPTORS.includes(appType);
 };
 
 // #endregion SAMPLE DATA selectors
@@ -5180,7 +5246,7 @@ selectors.flowMappingsImportsList = () => createSelector(
     if (importId) {
       const subRecordResource = imports.find(i => i._id === importId);
 
-      return [subRecordResource];
+      return (subRecordResource ? [subRecordResource] : []);
     }
 
     const flowImports = getImportsFromFlow(flow, imports);
@@ -5188,14 +5254,6 @@ selectors.flowMappingsImportsList = () => createSelector(
     return flowImports.filter(i => isImportMappingAvailable(i) || isQueryBuilderSupported(i));
   }
 );
-
-// TODO: The selector below should be deprecated and the above selector
-// should be used instead.
-selectors.getAllPageProcessorImports = (state, pageProcessors) => {
-  const imports = selectors.resourceList(state, { type: 'imports' }).resources;
-
-  return getPageProcessorImportsFromFlow(imports, pageProcessors);
-};
 
 selectors.httpAssistantSupportsMappingPreview = (state, importId) => {
   const importResource = selectors.resource(state, 'imports', importId) || emptyObject;
@@ -5327,6 +5385,20 @@ selectors.applicationType = (state, resourceType, id) => {
 
     return connection && connection.rdbms && rdbmsSubTypeToAppType(connection.rdbms.type);
   }
+  if ((adaptorType?.toUpperCase().startsWith('HTTP') || adaptorType?.toUpperCase().startsWith('REST')) && !assistant) {
+    const connection = resourceType === 'connections' ? resourceObj : selectors.resource(
+      state,
+      'connections',
+      getStagedValue('/_connectionId') || (resourceObj?._connectionId)
+    );
+    const httpConnectorId = getStagedValue('/_httpConnectorId') || connection?._httpConnectorId || connection?.http?._httpConnectorId;
+    const applications = applicationsList();
+    const httpApp = applications.find(a => a._httpConnectorId === httpConnectorId);
+
+    if (httpConnectorId && httpApp) {
+      return httpApp._legacyId || httpApp.name;
+    }
+  }
 
   if (adaptorType?.toUpperCase().startsWith('HTTP') && resourceObj?.http?.formType === 'rest' && !assistant) {
     adaptorType = adaptorType.replace(/HTTP/, 'REST');
@@ -5413,7 +5485,9 @@ selectors.responseMappingExtracts = (state, resourceId, flowId) => {
     'flows',
     flowId
   )?.merged || emptyObject;
-  const pageProcessor = flow?.pageProcessors && flow?.pageProcessors.find(({_importId, _exportId}) => _exportId === resourceId || _importId === resourceId);
+
+  if (!flow) return emptyArray;
+  const pageProcessor = getPageProcessorFromFlow(flow, resourceId);
 
   if (!pageProcessor) {
     return emptyArray;
@@ -5468,7 +5542,12 @@ selectors.isMapper2Supported = state => {
   // IAs don't support mapper2
   if (!resource || resource._connectorId) return false;
 
-  return !!((resource.adaptorType === 'HTTPImport' || resource.adaptorType === 'RESTImport') && resource.http?.type !== 'file');
+  return !!(
+    isFileAdaptor(resource) ||
+    isAS2Resource(resource) ||
+    resource.adaptorType === 'HTTPImport' ||
+    resource.adaptorType === 'RESTImport'
+  );
 };
 
 selectors.resourceHasMappings = (state, importId) => {
@@ -5614,9 +5693,7 @@ selectors.flowJobs = (state, options = {}) => {
       // eslint-disable-next-line no-param-reassign
       job.children = job.children.map(cJob => {
         const additionalChildProps = {
-          name: cJob._exportId
-            ? resourceMap.exports && resourceMap.exports[cJob._exportId]?.name
-            : resourceMap.imports && resourceMap.imports[cJob._importId]?.name,
+          name: resourceMap[cJob.type === 'export' ? 'exports' : 'imports']?.[cJob._expOrImpId || cJob._exportId || cJob._importId]?.name,
           flowDisabled: resourceMap.flows && resourceMap.flows[job._flowId]?.disabled,
         };
 
@@ -5688,9 +5765,7 @@ selectors.accountDashboardRunningJobs = createSelector(
         // eslint-disable-next-line no-param-reassign
         job.children = job.children.map(cJob => {
           const additionalChildProps = {
-            name: cJob._exportId
-              ? resourceMap.exports && resourceMap.exports[cJob._exportId]?.name
-              : resourceMap.imports && resourceMap.imports[cJob._importId]?.name,
+            name: resourceMap[cJob.type === 'export' ? 'exports' : 'imports']?.[cJob._expOrImpId || cJob._exportId || cJob._importId]?.name,
             flowDisabled: resourceMap.flows && resourceMap.flows[job._flowId]?.disabled,
           };
 
@@ -5749,7 +5824,7 @@ selectors.job = (state, { type, jobId, parentJobId }) => {
 
   return {
     ...j,
-    name: resourceMap?.flows[j._flowId] && resourceMap?.flows[j._flowId].name,
+    name: resourceMap?.flows ? resourceMap?.flows[j._flowId] && resourceMap?.flows[j._flowId].name : j._flowd,
   };
 };
 
@@ -6078,7 +6153,8 @@ selectors.isStandaloneExport = (state, flowId, exportId) => {
 
   const { merged: flow = {} } = selectors.resourceData(state, 'flows', flowId, 'value');
 
-  return !flow.pageProcessors?.find(pp => pp._exportId === exportId);
+  return !flow.pageProcessors?.find(pp => pp._exportId === exportId) &&
+  !flow.routers?.some(r => !r.branches?.some(b => b.pageProcessors?.some(pp => pp._exportId === exportId)));
 };
 
 /*
@@ -6277,9 +6353,10 @@ selectors.isLookUpExport = (state, { flowId, resourceId, resourceType }) => {
 
   // If it is an existing export with a flow context, search in pps to match this resource id
   const flow = selectors.resource(state, 'flows', flowId);
-  const { pageProcessors = [] } = flow || {};
+  const { pageProcessors = [], routers = [] } = flow || {};
 
-  return !!pageProcessors.find(pp => pp._exportId === resourceId);
+  return !!pageProcessors.find(pp => pp._exportId === resourceId) ||
+    routers.some(router => router.branches?.some(branch => branch.pageProcessors?.some(pp => pp._exportId === resourceId)));
 };
 
 /*
@@ -6416,7 +6493,7 @@ selectors.editorSupportsOnlyV2Data = (state, editorId) => {
     return true;
   }
 
-  if (['outputFilter', 'exportFilter', 'inputFilter'].includes(editorType)) {
+  if (['outputFilter', 'exportFilter', 'inputFilter', 'router'].includes(editorType)) {
     return true;
   }
 
@@ -6517,7 +6594,7 @@ selectors.isEditorLookupSupported = (state, editorId) => {
     return false;
   }
 
-  if (connection.rdbms?.type === 'bigquery') {
+  if (['bigquery', 'redshift'].includes(connection?.rdbms?.type)) {
     return false;
   }
 
@@ -6542,7 +6619,7 @@ selectors.shouldGetContextFromBE = (state, editorId, sampleData) => {
 
   // all afe fields for mapper2 should only support v2 AFE
   if (mappingVersion === 2) {
-    return {shouldGetContextFromBE: true};
+    return {shouldGetContextFromBE: true, isMapperField: true};
   }
 
   // for lookup fields, BE doesn't support v1/v2 yet
@@ -6573,7 +6650,7 @@ selectors.shouldGetContextFromBE = (state, editorId, sampleData) => {
   }
 
   if (
-    ['flowTransform', 'responseTransform', 'netsuiteLookupFilter', 'salesforceLookupFilter'].includes(editorType) ||
+    ['structuredFileGenerator', 'flowTransform', 'responseTransform', 'netsuiteLookupFilter', 'salesforceLookupFilter'].includes(editorType) ||
   HOOK_STAGES.includes(stage)
   ) {
     return {shouldGetContextFromBE: false, sampleData};
@@ -6793,6 +6870,18 @@ selectors.isUserAllowedOnlySSOSignIn = state => {
   return !!ssoLinkedAccount?.accountSSORequired;
 };
 
+selectors.primaryAccounts = createSelector(
+  state => selectors.isAccountOwner(state),
+  state => state?.user?.org?.accounts?.filter(acc => acc._id !== ACCOUNT_IDS.OWN),
+  (isAccountOwner, orgAccounts) => {
+    if (isAccountOwner) {
+      return emptyList;
+    }
+
+    return orgAccounts || emptyList;
+  }
+);
+
 selectors.isUserAllowedOptionalSSOSignIn = state => {
   if (selectors.isAccountOwner(state)) {
     return selectors.isSSOEnabled(state);
@@ -6852,6 +6941,25 @@ selectors.showAmazonRestrictedReportType = (state, formKey) => {
   return ((connectionType === 'Amazon-Hybrid' && apiType === 'Amazon-SP-API') ||
           connectionType === 'Amazon-SP-API') &&
           relativeURI?.startsWith('/reports/2021-06-30/documents/');
+};
+
+selectors.isParserSupported = (state, formKey, parser) => {
+  const formDetails = selectors.formState(state, formKey);
+  const exportId = formDetails?.parentContext?.resourceId;
+
+  // selectors.resource won't work in case of new exports, so using selectors.resourceData here.
+  const { adaptorType, assistant } = selectors.resourceData(state, 'exports', exportId)?.merged || {};
+
+  //  At present, we are checking only for HTTP export. Using the assistant property to exclude other exports with adaptorType as "HTTPExport".
+  //  For remaining, we are returning true so that it does not affect the existing functionality, as it has been used as a conditional.
+
+  if (adaptorType !== 'HTTPExport' || FILE_PROVIDER_ASSISTANTS.includes(assistant)) return true;
+
+  const formValues = formDetails?.value;
+  const connectionId = selectors.fieldState(state, formKey, '_connectionId')?.value;
+  const connection = selectors.resource(state, 'connections', connectionId);
+
+  return finalSuccessMediaType(formValues, connection) === parser;
 };
 
 const resourceListSelector = selectors.makeResourceListSelector();

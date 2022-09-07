@@ -10,7 +10,7 @@ import Spinner from '../../../../Spinner';
 import { TextButton, FilledButton } from '../../../../Buttons';
 import actions from '../../../../../actions';
 import { selectors } from '../../../../../reducers';
-import { REVISION_DRAWER_MODES } from '../../../../../utils/revisions';
+import { REVISION_DRAWER_MODES, hasInvalidRevertResourceDiff } from '../../../../../utils/revisions';
 import RevisionHeader from '../../components/RevisionHeader';
 import ResourceDiffDrawerContent from '../../components/ResourceDiffContent';
 import useHandleInvalidNewRevision from '../../hooks/useHandleInvalidNewRevision';
@@ -37,6 +37,11 @@ function ReviewRevertChangesDrawerContent({ integrationId, parentUrl }) {
   const createdRevisionId = useSelector(state => selectors.createdResourceId(state, revisionId));
   const isRevisionCreationInProgress = useSelector(state => selectors.isRevisionCreationInProgress(state, integrationId, revisionId));
   const hasReceivedResourceDiff = useSelector(state => selectors.hasReceivedResourceDiff(state, integrationId));
+  const hasInvalidResourceDiff = useSelector(state => {
+    const revisionResourceDiff = selectors.revisionResourceDiff(state, integrationId);
+
+    return hasReceivedResourceDiff && hasInvalidRevertResourceDiff(revisionResourceDiff);
+  });
   // end selectors
 
   const onClose = () => {
@@ -62,6 +67,8 @@ function ReviewRevertChangesDrawerContent({ integrationId, parentUrl }) {
     return () => dispatch(actions.integrationLCM.compare.clear(integrationId));
   }, [dispatch, integrationId, revisionId]);
 
+  const isRevisionCreationDisabled = isRevisionCreationInProgress || !hasReceivedResourceDiff || hasInvalidResourceDiff;
+
   return (
     <>
       <DrawerHeader
@@ -80,14 +87,14 @@ function ReviewRevertChangesDrawerContent({ integrationId, parentUrl }) {
         <ResourceDiffDrawerContent integrationId={integrationId} type="revert" />
       </DrawerContent>
       <DrawerFooter>
-        <FilledButton disabled={isRevisionCreationInProgress || !hasReceivedResourceDiff} onClick={handleCreateRevision} >
+        <FilledButton disabled={isRevisionCreationDisabled} onClick={handleCreateRevision} >
           Next { isRevisionCreationInProgress ? <Spinner size={12} /> : null }
         </FilledButton>
         <TextButton
-          data-test="cancelCreatePull"
+          data-test="cancelReviewRevert"
           disabled={isRevisionCreationInProgress}
           onClick={onClose}>
-          Cancel
+          Close
         </TextButton>
       </DrawerFooter>
     </>

@@ -1,8 +1,5 @@
-import { REVISION_STATUS, REVISION_TYPES } from '../constants';
-import messageStore from '../messageStore';
+import { REVISION_STATUS, REVISION_TYPES } from '../../constants';
 import { comparer, sortJsonByKeys } from '../sort';
-
-export const INTEGRATION_CLONE_ERROR = `${messageStore('REQUIRED_MESSAGE')}.You don't have any data to pull`;
 
 export const DEFAULT_ROWS_PER_PAGE = 50;
 export const ROWS_PER_PAGE_OPTIONS = [10, 25, 50];
@@ -55,8 +52,6 @@ export const REVISION_STATUS_LABELS = {
   [REVISION_STATUS.CANCELED]: 'Canceled',
 };
 
-export const REVISION_IN_PROGRESS_ERROR = 'You have a pull, snapshot, or revert in progress.';
-
 export const REVISION_DIFF_ACTIONS = {
   ADD: 'add',
   NEW: 'new',
@@ -74,6 +69,16 @@ export const REVISION_DIFF_ACTION_LABELS = {
   [REVISION_DIFF_ACTIONS.UPDATE]: 'Update',
   [REVISION_DIFF_ACTIONS.CONFLICT]: 'Conflict',
 };
+
+export const SUPPORTED_RESOURCE_TYPES = [
+  'export',
+  'import',
+  'flow',
+  'integration',
+  'script',
+  'asynchelper',
+  'filedefinition',
+];
 
 export const getRevisionFilterKey = integrationId => `${integrationId}-revisions`;
 
@@ -189,8 +194,20 @@ export const getRevisionResourceLevelChanges = (overallDiff, type, ignoreSort = 
 };
 
 export const shouldShowReferences = (resourceType, action) => {
-  const VALID_RESOURCE_TYPES_WITH_REFERENCES = ['exports', 'imports'];
+  const VALID_RESOURCE_TYPES_WITH_REFERENCES = ['exports', 'imports', 'scripts'];
 
   // We do not show references if the resource is a newly created one or not one of the above resource types
   return VALID_RESOURCE_TYPES_WITH_REFERENCES.includes(resourceType) && action !== REVISION_DIFF_ACTIONS.NEW;
+};
+
+export const hasInvalidRevertResourceDiff = resourceDiff => {
+  const { reverted, current } = resourceDiff || {};
+  const revertedResourceTypes = Object.keys(reverted || {});
+  const currentResourceTypes = Object.keys(current || {});
+
+  // when either of current/reverted has valid resource changes, then revert is a valid action
+  const hasValidResourceTypes = currentResourceTypes.some(type => SUPPORTED_RESOURCE_TYPES.includes(type)) ||
+  revertedResourceTypes.some(type => SUPPORTED_RESOURCE_TYPES.includes(type));
+
+  return !hasValidResourceTypes;
 };

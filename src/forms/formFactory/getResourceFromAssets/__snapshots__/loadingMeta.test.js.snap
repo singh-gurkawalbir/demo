@@ -3443,6 +3443,9 @@ Object {
           },
         ],
       },
+      "rdbmsGrouping": Object {
+        "formId": "rdbmsGrouping",
+      },
       "settings": Object {
         "fieldId": "settings",
       },
@@ -3511,6 +3514,13 @@ Object {
                 "dynamodb.onceExportSortKey",
               ],
               "label": "Configure export type",
+            },
+            Object {
+              "collapsed": true,
+              "fields": Array [
+                "rdbmsGrouping",
+              ],
+              "label": "Would you like to group records?",
             },
             Object {
               "collapsed": true,
@@ -3947,6 +3957,19 @@ Object {
       "formView": Object {
         "fieldId": "formView",
       },
+      "groupByFields": Object {
+        "defaultValue": [Function],
+        "fieldId": "groupByFields",
+        "resourceSubType": "http",
+        "visibleWhenAll": Array [
+          Object {
+            "field": "outputMode",
+            "is": Array [
+              "records",
+            ],
+          },
+        ],
+      },
       "http._asyncHelperId": Object {
         "fieldId": "http._asyncHelperId",
       },
@@ -4087,6 +4110,18 @@ Object {
         "required": true,
         "type": "mode",
         "visible": false,
+      },
+      "parsers": Object {
+        "fieldId": "parsers",
+        "required": false,
+        "visibleWhenAll": Array [
+          Object {
+            "field": "outputMode",
+            "is": Array [
+              "records",
+            ],
+          },
+        ],
       },
       "semiassistantoperationselect": Object {
         "fieldId": "semiassistantoperationselect",
@@ -4236,8 +4271,11 @@ Object {
                   "containers": Array [
                     Object {
                       "fields": Array [
+                        "parsers",
                         "file.csv",
                       ],
+                      "header": [Function],
+                      "helpKey": "http.parseSuccessResponses",
                     },
                   ],
                   "type": "indent",
@@ -4249,6 +4287,13 @@ Object {
                 },
               ],
               "label": "Non-standard API response patterns",
+            },
+            Object {
+              "collapsed": true,
+              "fields": Array [
+                "groupByFields",
+              ],
+              "label": "Would you like to group records?",
             },
             Object {
               "collapsed": true,
@@ -4305,6 +4350,9 @@ Object {
       },
       "once.booleanField": Object {
         "fieldId": "once.booleanField",
+      },
+      "rdbmsGrouping": Object {
+        "formId": "rdbmsGrouping",
       },
       "settings": Object {
         "fieldId": "settings",
@@ -4368,6 +4416,13 @@ Object {
                 "once.booleanField",
               ],
               "label": "Configure export type",
+            },
+            Object {
+              "collapsed": true,
+              "fields": Array [
+                "rdbmsGrouping",
+              ],
+              "label": "Would you like to group records?",
             },
             Object {
               "collapsed": true,
@@ -4708,6 +4763,32 @@ Object {
             "field": "outputMode",
             "is": Array [
               "records",
+            ],
+          },
+        ],
+      },
+      "netsuite.restlet.markExportedBatchSize": Object {
+        "defaultValue": [Function],
+        "id": "netsuite.restlet.markExportedBatchSize",
+        "label": "Mark exported batch size",
+        "type": "text",
+        "validWhen": Object {
+          "fallsWithinNumericalRange": Object {
+            "max": 100,
+            "min": 1,
+          },
+        },
+        "visibleWhen": Array [
+          Object {
+            "field": "type",
+            "is": Array [
+              "once",
+            ],
+          },
+          Object {
+            "field": "restlet.type",
+            "is": Array [
+              "once",
             ],
           },
         ],
@@ -5218,6 +5299,7 @@ Object {
                     "netsuite.distributed.forceReload",
                     "netsuite.restlet.batchSize",
                     "advancedSettings",
+                    "netsuite.restlet.markExportedBatchSize",
                   ],
                 },
               ],
@@ -7717,6 +7799,9 @@ Object {
       "rdbms.query": Object {
         "fieldId": "rdbms.query",
       },
+      "rdbmsGrouping": Object {
+        "formId": "rdbmsGrouping",
+      },
       "settings": Object {
         "fieldId": "settings",
       },
@@ -7776,6 +7861,13 @@ Object {
                 "rdbms.once.query",
               ],
               "label": "Configure export type",
+            },
+            Object {
+              "collapsed": true,
+              "fields": Array [
+                "rdbmsGrouping",
+              ],
+              "label": "Would you like to group records?",
             },
             Object {
               "collapsed": true,
@@ -7830,6 +7922,9 @@ Object {
       "rdbms.query": Object {
         "fieldId": "rdbms.query",
       },
+      "rdbmsGrouping": Object {
+        "formId": "rdbmsGrouping",
+      },
       "settings": Object {
         "fieldId": "settings",
       },
@@ -7889,6 +7984,13 @@ Object {
                 "rdbms.once.query",
               ],
               "label": "Configure export type",
+            },
+            Object {
+              "collapsed": true,
+              "fields": Array [
+                "rdbmsGrouping",
+              ],
+              "label": "Would you like to group records?",
             },
             Object {
               "collapsed": true,

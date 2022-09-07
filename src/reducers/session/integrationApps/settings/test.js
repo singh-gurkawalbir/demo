@@ -3,7 +3,7 @@ import shortid from 'shortid';
 import cloneDeep from 'lodash/cloneDeep';
 import reducer, {selectors} from '.';
 import actions from '../../../../actions';
-import {HOME_PAGE_PATH} from '../../../../utils/constants';
+import {HOME_PAGE_PATH} from '../../../../constants';
 import errorMessageStore from '../../../../utils/errorStore';
 
 const amazonCategoryMappings = {
@@ -2730,7 +2730,7 @@ describe('integrationApps reducer test cases', () => {
                     key: 'key2',
                   },
                 ],
-                validationErrMsg: errorMessageStore('MAPPER_MISSING_GENERATE'),
+                validationErrMsg: errorMessageStore('MAPPER1_MISSING_GENERATE'),
               },
             },
           },
@@ -3294,7 +3294,7 @@ describe('integrationApps reducer test cases', () => {
                   generate: undefined,
                   key: 'mock_key',
                 }],
-                validationErrMsg: errorMessageStore('MAPPER_MISSING_GENERATE'),
+                validationErrMsg: errorMessageStore('MAPPER1_MISSING_GENERATE'),
               },
             },
           },

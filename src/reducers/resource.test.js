@@ -3,7 +3,7 @@ import each from 'jest-each';
 import moment from 'moment';
 import reducer, { selectors } from '.';
 import actions from '../actions';
-import { ACCOUNT_IDS, INTEGRATION_ACCESS_LEVELS, UNASSIGNED_SECTION_ID, TILE_STATUS, USER_ACCESS_LEVELS } from '../utils/constants';
+import { ACCOUNT_IDS, INTEGRATION_ACCESS_LEVELS, UNASSIGNED_SECTION_ID, TILE_STATUS, USER_ACCESS_LEVELS } from '../constants';
 import { FILTER_KEY, LIST_VIEW, TILE_VIEW } from '../utils/home';
 import getRoutePath from '../utils/routePaths';
 import { COMM_STATES } from './comms/networkComms';
@@ -612,6 +612,7 @@ describe('resource region selector testcases', () => {
         disableRunFlow: true,
         disableSlider: true,
         hasSettings: false,
+        isSetupInProgress: false,
         isDeltaFlow: true,
         isRealtime: false,
         isRunnable: true,
@@ -758,6 +759,7 @@ describe('resource region selector testcases', () => {
         isDeltaFlow: true,
         isRealtime: false,
         isRunnable: true,
+        isSetupInProgress: false,
         isSimpleImport: false,
         pageGenerators: [
           {
@@ -992,7 +994,7 @@ describe('resource region selector testcases', () => {
             disableRunFlow: true,
             isFlowEnableLocked: false,
             allowSchedule: false,
-            type: 'Data Loader',
+            type: 'Data loader',
             supportsSettings: false,
           },
           f2: {
@@ -1139,7 +1141,7 @@ describe('resource region selector testcases', () => {
             disableRunFlow: false,
             isFlowEnableLocked: true,
             allowSchedule: false,
-            type: 'Data Loader',
+            type: 'Data loader',
             supportsSettings: false,
           },
           f2: {
@@ -1239,7 +1241,7 @@ describe('resource region selector testcases', () => {
         actions.resource.received('exports', exp)
       );
 
-      expect(selectors.flowType(state, 'f1')).toEqual('Data Loader');
+      expect(selectors.flowType(state, 'f1')).toEqual('Data loader');
     });
 
     test('should return Scheduled for normal flow', () => {
@@ -4204,56 +4206,107 @@ describe('resource region selector testcases', () => {
 
       expect(filteredHomeTiles(newState)).toEqual(expected);
     });
-    test('should return tiles filtered by applications for list view', () => {
-      const initialState = reducer(state, actions.patchFilter(FILTER_KEY,
-        {
-          applications: [
-            'http',
-          ],
-        }));
-      const newState = reducer(initialState, actions.user.preferences.update({dashboard: {view: LIST_VIEW}}));
-      const expected = {
-        filteredCount: 1,
-        filteredTiles: [
+    describe('should return tiles filtered by applications for list view ', () => {
+      test('for applications with single version', () => {
+        const initialState = reducer(state, actions.patchFilter(FILTER_KEY,
           {
-            _connectorId: 'connector1',
-            _integrationId: 'connector1',
             applications: [
               'http',
-              'app2',
             ],
-            connector: {
+          }));
+        const newState = reducer(initialState, actions.user.preferences.update({dashboard: {view: LIST_VIEW}}));
+        const expected = {
+          filteredCount: 1,
+          filteredTiles: [
+            {
+              _connectorId: 'connector1',
+              _integrationId: 'connector1',
               applications: [
                 'http',
                 'app2',
               ],
-              owner: 'Company 1',
-            },
-            flowsNameAndDescription: '',
-            integration: {
-              mode: undefined,
-              permissions: {
-                accessLevel: 'owner',
-                connections: {
-                  edit: true,
+              connector: {
+                applications: [
+                  'http',
+                  'app2',
+                ],
+                owner: 'Company 1',
+              },
+              flowsNameAndDescription: '',
+              integration: {
+                mode: undefined,
+                permissions: {
+                  accessLevel: 'owner',
+                  connections: {
+                    edit: true,
+                  },
                 },
               },
+              key: 'connector1',
+              lastErrorAt: 1,
+              name: 'Integration Two',
+              numError: 4,
+              numFlows: 3,
+              pinned: false,
+              sortablePropType: -1,
+              status: 'has_errors',
             },
-            key: 'connector1',
-            lastErrorAt: 1,
-            name: 'Integration Two',
-            numError: 4,
-            numFlows: 3,
-            pinned: false,
-            sortablePropType: -1,
-            status: 'has_errors',
-          },
-        ],
-        perPageCount: 1,
-        totalCount: 4,
-      };
+          ],
+          perPageCount: 1,
+          totalCount: 4,
+        };
 
-      expect(filteredHomeTiles(newState)).toEqual(expected);
+        expect(filteredHomeTiles(newState)).toEqual(expected);
+      });
+      test('for applications with multiple versions', () => {
+        const stateWithNewConnections = reducer(state,
+          actions.resource.receivedCollection('connections', [
+            ...connections,
+            {
+              _id: 'connection5',
+              assistant: 'constantcontactv3',
+            },
+          ]));
+        const stateWithNewApps = reducer(stateWithNewConnections,
+          actions.resource.receivedCollection('tiles', [
+            ...standaloneTiles,
+            ...tiles,
+            {
+              _integrationId: 'integration1',
+              _registeredConnectionIds: ['connection5'],
+            },
+          ]));
+        const initialState = reducer(stateWithNewApps, actions.patchFilter(FILTER_KEY,
+          {
+            applications: [
+              'constantcontact',
+            ],
+          }));
+        const newState = reducer(initialState, actions.user.preferences.update({dashboard: {view: LIST_VIEW}}));
+        const expected = {
+          filteredCount: 1,
+          filteredTiles: [
+            {
+              _integrationId: 'integration1',
+              _registeredConnectionIds: ['connection5'],
+              applications: ['constantcontactv3'],
+              flowsNameAndDescription: '',
+              integration: {
+                permissions:
+                  {
+                    accessLevel: 'owner',
+                    connections: {edit: true}},
+              },
+              key: 'integration1',
+              pinned: false,
+              sortablePropType: 0,
+              status: 'success'}],
+          perPageCount: 1,
+          totalCount: 5,
+        };
+
+        expect(filteredHomeTiles(newState)).toEqual(expected);
+      });
     });
     describe('should return tiles filtered by the search filter applied', () => {
       const newState = reducer(state, actions.patchFilter(FILTER_KEY,
@@ -7714,12 +7767,17 @@ describe('resource region selector testcases', () => {
             {
               _id: 'connection3',
               type: 'rdbms',
-              rdbms: {type: 'snowflake'},
+              rdbms: {type: 'redshift'},
             },
             {
               _id: 'connection4',
               type: 'rdbms',
-              rdbms: {type: 'mysql'},
+              rdbms: {type: 'snowflake'},
+            },
+            {
+              _id: 'connection5',
+              type: 'rdbms',
+              rdbms: {type: 'oracle'},
             },
           ],
         },
@@ -7729,11 +7787,14 @@ describe('resource region selector testcases', () => {
     test('should return false if the connection is of bigquery rdbms subtype', () => {
       expect(selectors.mappingHasLookupOption(state, 'connections', 'connection2')).toEqual(false);
     });
-    test('should return false if the connection is of snowflake rdbms subtype', () => {
+    test('should return false if the connection is of redshift rdbms subtype', () => {
       expect(selectors.mappingHasLookupOption(state, 'connections', 'connection3')).toEqual(false);
     });
-    test('should return true if the connection is not of bigquery or snowflake rdbms subtype', () => {
-      expect(selectors.mappingHasLookupOption(state, 'connections', 'connection4')).toEqual(true);
+    test('should return false if the connection is of snowflake rdbms subtype', () => {
+      expect(selectors.mappingHasLookupOption(state, 'connections', 'connection4')).toEqual(false);
+    });
+    test('should return true if the connection is not of bigquery, redshift or snowflake rdbms subtype', () => {
+      expect(selectors.mappingHasLookupOption(state, 'connections', 'connection5')).toEqual(true);
     });
     test('should return true if the connection is of not rdbms type', () => {
       expect(selectors.mappingHasLookupOption(state, 'connections', 'connection1')).toEqual(true);
@@ -7876,5 +7937,309 @@ describe('resource region selector testcases', () => {
         ],
       })).toEqual(expectedOutput);
     });
+  });
+});
+
+describe('selectors.isParserSupported test cases', () => {
+  test('should not throw any exception for invalid arguments', () => {
+    expect(selectors.isParserSupported()).toEqual(true);
+  });
+
+  test("should return false if it's a new HTTP export and final success media type is not xml or csv", () => {
+    const parser = 'xml';
+    const conn = {
+      _id: 'c1',
+      type: 'HTTP',
+    };
+    const fieldMeta = {
+      fieldMap: {
+        _connectionId: {
+          id: '_connectionId',
+          value: 'c1',
+        },
+      },
+    };
+
+    const formKey = 'new-xyz123';
+
+    let state = reducer(
+      undefined,
+      actions.resource.received('connections', conn)
+    );
+
+    state = reducer(state, actions.form.init(formKey, '', { fieldMeta, parentContext: {resourceId: 'c1'} }));
+    const resource = selectors.resourceData(state, 'exports', formKey);
+
+    resource.merged.adaptorType = 'HTTPExport';
+
+    expect(selectors.isParserSupported(state, formKey, parser)).toEqual(false);
+  });
+
+  test("should return true if it's a new export but not an HTTP Export", () => {
+    const parser = 'xml';
+    const conn = {
+      _id: 'c1',
+      type: 'FTP',
+    };
+    const fieldMeta = {
+      fieldMap: {
+        _connectionId: {
+          id: '_connectionId',
+          value: 'c1',
+        },
+      },
+    };
+
+    const formKey = 'new-hadh';
+
+    let state = reducer(
+      undefined,
+      actions.resource.received('connections', conn)
+    );
+
+    state = reducer(state, actions.form.init(formKey, '', { fieldMeta, parentContext: {resourceId: 'c1'} }));
+    const resource = selectors.resourceData(state, 'exports', formKey);
+
+    resource.merged.adaptorType = 'FTPExport';
+
+    expect(selectors.isParserSupported(state, formKey, parser)).toEqual(true);
+  });
+
+  test("should return true if it's a new export with adaptorType as 'HTTPExport' but not an HTTP Export", () => {
+    const parser = 'xml';
+    const conn = {
+      _id: 'c1',
+      type: 'HTTP',
+    };
+    const fieldMeta = {
+      fieldMap: {
+        _connectionId: {
+          id: '_connectionId',
+          value: 'c1',
+        },
+      },
+    };
+
+    const formKey = 'new-hadh';
+
+    let state = reducer(
+      undefined,
+      actions.resource.received('connections', conn)
+    );
+
+    state = reducer(state, actions.form.init(formKey, '', { fieldMeta, parentContext: {resourceId: 'c1'} }));
+    const resource = selectors.resourceData(state, 'exports', formKey);
+
+    resource.merged.adaptorType = 'HTTPExport';
+    resource.merged.assistant = 'googledrive';
+
+    expect(selectors.isParserSupported(state, formKey, parser)).toEqual(true);
+  });
+
+  test('should return true if not an HTTP export but adaptorType as "HTTPExport"', () => {
+    const parser = 'xml';
+    const exp = {
+      _id: 'e1',
+      type: 'HTTP',
+      adaptorType: 'HTTPExport',
+      assistant: 'googledrive',
+    };
+    const fieldMeta = {
+      fieldMap: {},
+    };
+    const formKey = 'exports-e1';
+
+    let state = reducer(
+      undefined,
+      actions.resource.received('exports', exp)
+    );
+
+    state = reducer(state, actions.form.init(formKey, '', { fieldMeta, parentContext: {resourceId: 'e1'} }));
+
+    expect(selectors.isParserSupported(state, formKey, parser)).toEqual(true);
+  });
+
+  test('should return true if not an HTTP export', () => {
+    const parser = 'xml';
+    const exp = {
+      _id: 'e1',
+      type: 'FTP',
+      adaptorType: 'FTPExport',
+    };
+    const fieldMeta = {
+      fieldMap: {},
+    };
+    const formKey = 'exports-e1';
+
+    let state = reducer(
+      undefined,
+      actions.resource.received('exports', exp)
+    );
+
+    state = reducer(state, actions.form.init(formKey, '', { fieldMeta, parentContext: {resourceId: 'e1'} }));
+
+    expect(selectors.isParserSupported(state, formKey, parser)).toEqual(true);
+  });
+
+  test('should return true for HTTP export with overridden success media type as parser', () => {
+    const parser = 'xml';
+    const exp = {
+      _id: 'e1',
+      type: 'HTTP',
+      adaptorType: 'HTTPExport',
+    };
+    const fieldMeta = {
+      fieldMap: {
+      },
+    };
+    const formKey = 'exports-e1';
+
+    let state = reducer(
+      undefined,
+      actions.resource.received('exports', exp)
+    );
+
+    state = reducer(state, actions.form.init(formKey, '', { fieldMeta, parentContext: {resourceId: 'e1'} }));
+    state.session.form[formKey].value = { '/http/successMediaType': parser };
+
+    expect(selectors.isParserSupported(state, formKey, parser)).toEqual(true);
+  });
+
+  test('should return false for HTTP export with overridden success media type different from parser', () => {
+    const parser = 'xml';
+    const exp = {
+      _id: 'e1',
+      type: 'HTTP',
+      adaptorType: 'HTTPExport',
+    };
+    const fieldMeta = {
+      fieldMap: {
+      },
+    };
+    const formKey = 'exports-e1';
+
+    let state = reducer(
+      undefined,
+      actions.resource.received('exports', exp)
+    );
+
+    state = reducer(state, actions.form.init(formKey, '', { fieldMeta, parentContext: {resourceId: 'e1'} }));
+    state.session.form[formKey].value = { '/http/successMediaType': 'csv' };
+
+    expect(selectors.isParserSupported(state, formKey, parser)).toEqual(false);
+  });
+
+  test('should not rely on success media type of connection', () => {
+    const parser = 'xml';
+    const exp = {
+      _id: 'e1',
+      type: 'HTTP',
+      adaptorType: 'HTTPExport',
+      _connectionId: 'c1',
+    };
+    const conn = {
+      _id: 'c1',
+      type: 'HTTP',
+      http: { successMediaType: parser },
+    };
+    const fieldMeta = {
+      fieldMap: {
+        _connectionId: {
+          id: '_connectionId',
+          value: 'c1',
+        },
+      },
+    };
+    const formKey = 'exports-e1';
+
+    let state = reducer(
+      undefined,
+      actions.resource.received('exports', exp)
+    );
+
+    state = reducer(
+      state,
+      actions.resource.received('connections', conn)
+    );
+
+    state = reducer(state, actions.form.init(formKey, '', { fieldMeta, parentContext: {resourceId: 'e1'} }));
+
+    expect(selectors.isParserSupported(state, formKey, parser)).toEqual(false);
+  });
+
+  test('should return true for HTTP export with media type as parser', () => {
+    const parser = 'xml';
+    const exp = {
+      _id: 'e1',
+      type: 'HTTP',
+      adaptorType: 'HTTPExport',
+      _connectionId: 'c1',
+    };
+    const conn = {
+      _id: 'c1',
+      type: 'HTTP',
+      http: { mediaType: parser },
+    };
+    const fieldMeta = {
+      fieldMap: {
+        _connectionId: {
+          id: '_connectionId',
+          value: 'c1',
+        },
+      },
+    };
+    const formKey = 'exports-e1';
+
+    let state = reducer(
+      undefined,
+      actions.resource.received('exports', exp)
+    );
+
+    state = reducer(
+      state,
+      actions.resource.received('connections', conn)
+    );
+
+    state = reducer(state, actions.form.init(formKey, '', { fieldMeta, parentContext: {resourceId: 'e1'} }));
+
+    expect(selectors.isParserSupported(state, formKey, parser)).toEqual(true);
+  });
+
+  test('should return false for HTTP export with media different from parser', () => {
+    const parser = 'xml';
+    const exp = {
+      _id: 'e1',
+      type: 'HTTP',
+      adaptorType: 'HTTPExport',
+      _connectionId: 'c1',
+    };
+    const conn = {
+      _id: 'c1',
+      type: 'HTTP',
+      http: { mediaType: 'form-data' },
+    };
+    const fieldMeta = {
+      fieldMap: {
+        _connectionId: {
+          id: '_connectionId',
+          value: 'c1',
+        },
+      },
+    };
+    const formKey = 'exports-e1';
+
+    let state = reducer(
+      undefined,
+      actions.resource.received('exports', exp)
+    );
+
+    state = reducer(
+      state,
+      actions.resource.received('connections', conn)
+    );
+
+    state = reducer(state, actions.form.init(formKey, '', { fieldMeta, parentContext: {resourceId: 'e1'} }));
+
+    expect(selectors.isParserSupported(state, formKey, parser)).toEqual(false);
   });
 });

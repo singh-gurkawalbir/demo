@@ -2,6 +2,7 @@ import React from 'react';
 import AccessLevel from '../cells/AccessLevel';
 import EnableUser from '../cells/EnableUser';
 import RequireAccountSSO from '../cells/RequireAccountSSO';
+import RequireMFA from '../cells/RequireMFA';
 import ReinviteUser from '../cells/ReinviteUser';
 import UserStatus from '../cells/UserStatus';
 import Notifications from '../cells/Notifications';
@@ -9,10 +10,11 @@ import AccessLevelHeader from '../cells/AccessLevelHeader';
 import EnableUserHeader from '../cells/EnableUserHeader';
 import StatusHeader from '../cells/StatusHeader';
 import HeaderWithHelpText from '../../commonCells/HeaderWithHelpText';
-import { ACCOUNT_IDS, USER_ACCESS_LEVELS, ACCOUNT_SSO_STATUS } from '../../../../utils/constants';
+import { ACCOUNT_IDS, USER_ACCESS_LEVELS, ACCOUNT_SSO_STATUS } from '../../../../constants';
 import ManagePermissions from '../actions/ManagePermissions';
 import MakeAccountOwner from '../actions/MakeAccountOwner';
 import DeleteFromAccount from '../actions/DeleteFromAccount';
+import ResetMFA from '../actions/ResetMFA';
 import { useGetTableContext } from '../../../CeligoTable/TableContext';
 
 export default {
@@ -55,7 +57,10 @@ export default {
           return <ReinviteUser user={r} />;
         },
       },
-      ...((integrationId && isUserInErrMgtTwoDotZero) ? [{
+    ];
+
+    if (integrationId && isUserInErrMgtTwoDotZero) {
+      columns.push({
         key: 'notifications',
         heading: 'Notifications',
         align: 'center',
@@ -66,9 +71,12 @@ export default {
           return <Notifications user={r} integrationId={integrationId} />;
         },
 
-      }] : []),
-      ...((!integrationId && isSSOEnabled) ? [
-        {
+      });
+    }
+
+    if (!integrationId) {
+      if (isSSOEnabled) {
+        columns.push({
           key: 'accountSSOLinked',
           isLoggable: true,
           HeaderValue: () => <HeaderWithHelpText title="Account SSO linked?" helpKey="users.accountSSOLinked" />,
@@ -82,22 +90,29 @@ export default {
             if (!sharedWithUser.accountSSOLinked || sharedWithUser.accountSSOLinked === ACCOUNT_SSO_STATUS.NOT_LINKED) return 'No';
 
             return 'Yes';
-          }},
-        {
+          },
+        }, {
           key: 'requireAccountSSO',
           HeaderValue: () => <HeaderWithHelpText title="Require account SSO?" helpKey="users.requireAccountSSO" />,
           // will this redact enqueue snackbar notification
           Value: ({rowData: r}) => <RequireAccountSSO user={r} />,
           align: 'center',
-        },
-      ] : []),
-    ];
+        });
+      }
+      columns.push({
+        key: 'requireMFA',
+        HeaderValue: () => <HeaderWithHelpText title="Require MFA?" helpKey="users.requireAccountMFA" />,
+        Value: ({rowData: r}) => <RequireMFA user={r} />,
+        align: 'center',
+      });
+    }
 
     return columns;
   },
   useRowActions: user => {
     const tableContext = useGetTableContext();
     const { integrationId, accessLevel } = tableContext;
+    const { sharedWithUser } = user;
     const actions = [];
 
     if ([USER_ACCESS_LEVELS.ACCOUNT_ADMIN, USER_ACCESS_LEVELS.ACCOUNT_OWNER].includes(accessLevel) && user._id === ACCOUNT_IDS.OWN) {
@@ -109,6 +124,9 @@ export default {
     }
     if (!integrationId) {
       actions.push(ManagePermissions);
+      if (sharedWithUser?.allowedToResetMFA) {
+        actions.push(ResetMFA);
+      }
       if (user.accepted && accessLevel === USER_ACCESS_LEVELS.ACCOUNT_OWNER) {
         actions.push(MakeAccountOwner);
       }

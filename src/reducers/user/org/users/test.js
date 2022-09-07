@@ -4,7 +4,7 @@ import actions from '../../../../actions';
 import {
   USER_ACCESS_LEVELS,
   INTEGRATION_ACCESS_LEVELS,
-} from '../../../../utils/constants';
+} from '../../../../constants';
 import { COMM_STATES as REINVITE_STATES } from '../../../comms/networkComms';
 
 describe('users (ashares) reducers', () => {

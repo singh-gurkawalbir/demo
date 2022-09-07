@@ -24,10 +24,12 @@ describe('javascript processor logic', () => {
         fetchScriptContent: true,
         code: 'some code',
         _init_code: 'some code',
+        scriptId: '123',
       },
       originalRule: {
         entryFunction: 'someFunc',
         fetchScriptContent: true,
+        scriptId: '123',
       },
     };
   });
@@ -38,6 +40,7 @@ describe('javascript processor logic', () => {
         rules: {
           function: 'someFunc',
           code: 'some code',
+          _scriptId: '123',
         },
         data: {id: 123},
       };
@@ -52,6 +55,7 @@ describe('javascript processor logic', () => {
         rules: {
           function: 'someFunc',
           code: 'some code',
+          _scriptId: '123',
         },
         data: {name: 'Bob'},
       };

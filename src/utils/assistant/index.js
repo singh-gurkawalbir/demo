@@ -399,7 +399,7 @@ export function getVersionDetails({ version, assistantData }) {
   }
 
   if (version) {
-    versionDetails = assistantData.versions.find(v => v.version === version);
+    versionDetails = assistantData.versions.find(v => (v.version === version || v._id === version));
   } else if (assistantData.versions.length === 1) {
     [versionDetails] = assistantData.versions;
   }
@@ -605,6 +605,12 @@ export function convertFromExport({ exportDoc: exportDocOrig, assistantData: ass
   const exportDoc = cloneDeep(exportDocOrig);
   const assistantData = cloneDeep(assistantDataOrig);
   let { version, resource, operation } = exportDoc.assistantMetadata || {};
+
+  if (exportDoc?.http) {
+    operation = exportDoc.http._httpConnectorEndpointId || operation;
+    resource = exportDoc.http._httpConnectorResourceId || resource;
+    version = exportDoc.http._httpConnectorVersionId || version;
+  }
   const { exportType, dontConvert } = exportDoc.assistantMetadata || {};
   const assistantMetadata = {
     pathParams: {},
@@ -770,7 +776,7 @@ export function convertToExport({ assistantConfig, assistantData, headers = [] }
     bodyParams,
   } = assistantConfig;
 
-  if (!assistant || !resource || !operation || !assistantData) {
+  if (!resource || !operation || !assistantData) {
     return undefined;
   }
 
@@ -820,7 +826,7 @@ export function convertToExport({ assistantConfig, assistantData, headers = [] }
 
   let pagingRelativeURI = operationDetails.paging?.nextPageRelativeURI || operationDetails.paging?.relativeURI;
 
-  operationDetails.pathParameters.forEach(pathParam => {
+  operationDetails.pathParameters?.forEach(pathParam => {
     if (pathParams) {
       let pathParamValue = pathParams[pathParam.id];
 
@@ -850,7 +856,7 @@ export function convertToExport({ assistantConfig, assistantData, headers = [] }
   let exportType;
   const allQueryParams = {};
 
-  operationDetails.queryParameters.forEach(queryParam => {
+  operationDetails.queryParameters?.forEach(queryParam => {
     allQueryParams[queryParam.id] = queryParam.defaultValue;
 
     if (!queryParam.readOnly) {
@@ -1494,6 +1500,12 @@ export function convertFromImport({ importDoc: importDocOrig, assistantData: ass
   const assistantData = cloneDeep(assistantDataOrig);
   let { version, resource, operation, lookupType } =
     importDoc.assistantMetadata || {};
+
+  if (importDoc?.http) {
+    operation = importDoc.http._httpConnectorEndpointId || operation;
+    resource = importDoc.http._httpConnectorResourceId || resource;
+    version = importDoc.http._httpConnectorVersionId || version;
+  }
   const { dontConvert, lookups } = importDoc.assistantMetadata || {};
   let sampleData;
   let { ignoreExisting, ignoreMissing } = importDoc;
@@ -1846,7 +1858,7 @@ export function convertToImport({ assistantConfig, assistantData, headers }) {
   } = assistantConfig;
   let { lookupQueryParams = {} } = assistantConfig;
 
-  if (!assistant || !resource || !operation || !assistantData) {
+  if (!resource || !operation || !assistantData) {
     return undefined;
   }
 
@@ -2023,8 +2035,13 @@ export function convertToImport({ assistantConfig, assistantData, headers }) {
           ...(lookupOperationDetails.resource ? {resource: lookupOperationDetails.resource} : {}),
         };
       }
-
-      importDoc.ignoreLookupName = luConfig.name;
+      if (ignoreExisting || ignoreMissing) {
+        importDoc.ignoreLookupName = luConfig.name;
+        importDoc.existingLookupName = undefined;
+      } else {
+        importDoc.existingLookupName = luConfig.name;
+        importDoc.ignoreLookupName = undefined;
+      }
     }
   }
   if (operationDetails.howToIdentifyExistingRecords) {
@@ -2046,7 +2063,13 @@ export function convertToImport({ assistantConfig, assistantData, headers }) {
   ) {
     if (identifiers && identifiers.length > 0) {
       if (lookupType === 'source') {
-        importDoc.ignoreExtract = pathParams[identifiers[0].id];
+        if (ignoreMissing) {
+          importDoc.ignoreExtract = pathParams[identifiers[0].id];
+          importDoc.existingExtract = undefined;
+        } else {
+          importDoc.existingExtract = pathParams[identifiers[0].id];
+          importDoc.ignoreExtract = undefined;
+        }
       } else if (lookupType === 'lookup') {
         if (operationDetails.howToIdentifyExistingRecords) {
           importDoc.existingLookupName = identifiers[0].id;
@@ -2068,7 +2091,7 @@ export function convertToImport({ assistantConfig, assistantData, headers }) {
         if (adaptorType === 'rest') {
           paramValue = `{{{${paramValue}}}}`;
         } else if (adaptorType === 'http') {
-          if (importDoc.ignoreLookupName) {
+          if (importDoc.ignoreLookupName || importDoc.existingLookupName) {
             paramValue = `{{{lookup.${paramValue}}}}`;
           } else {
             paramValue = `{{{data.0.${paramValue}}}}`;

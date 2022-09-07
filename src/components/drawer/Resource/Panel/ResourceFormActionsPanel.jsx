@@ -127,7 +127,7 @@ export default function ResourceFormActionsPanel(props) {
       return [{id: 'testandsavegroup', mode: 'group' }];
     } if (resourceType === 'eventreports') {
       // should close after saving
-      return [{id: 'nextandcancel', mode: 'group', submitButtonLabel: 'Run Report', closeAfterSave: true}];
+      return [{id: 'nextandcancel', mode: 'group', submitButtonLabel: 'Run report', closeAfterSave: true}];
     } if (!isNew || (isNew && !isMultiStepSaveResource)) {
       return [{id: 'saveandclosegroup', mode: 'group'}];
     }

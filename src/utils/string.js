@@ -1,5 +1,6 @@
 import stableStringify from 'fast-json-stable-stringify';
-import { nanoid } from 'nanoid';
+import { customAlphabet, nanoid } from 'nanoid';
+import { URL_SAFE_CHARACTERS } from '../constants';
 
 export const safeParse = o => {
   if (typeof o === 'object' || !o) return o;
@@ -10,6 +11,18 @@ export const safeParse = o => {
     return undefined;
   }
 };
+export function generateId(num) {
+  const length = +num;
+  const nanoidforUrl = customAlphabet(URL_SAFE_CHARACTERS, 10);
+
+  if (num === 24) {
+    // If length is 24, probably needed a mongodb ObjectId, generate one randomly
+    return `${Math.floor(new Date().getTime() / 1000).toString(16)}0000000000000000`;
+  }
+
+  return !Number.isNaN(length) && length < 24 && length > 0 ? nanoidforUrl(length) : nanoidforUrl();
+}
+export const shortId = () => generateId(6);
 
 export const camelCase = (str = '') => {
   if (typeof str === 'string' && str.length) {

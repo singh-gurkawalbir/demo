@@ -1,7 +1,7 @@
 import produce from 'immer';
 import actionTypes from '../../../actions/types';
 import { stringCompare } from '../../../utils/sort';
-import { SUITESCRIPT_CONNECTORS, SUITESCRIPT_CONNECTOR_IDS } from '../../../utils/constants';
+import { SUITESCRIPT_CONNECTORS, SUITESCRIPT_CONNECTOR_IDS } from '../../../constants';
 import { isEuRegion } from '../../../forms/formFactory/utils';
 import { isAppConstantContact } from '../../../utils/assistant';
 
@@ -9,7 +9,7 @@ const emptySet = [];
 const sfConnector = SUITESCRIPT_CONNECTORS.find(s => s._id === SUITESCRIPT_CONNECTOR_IDS.salesforce);
 
 export default (state = {}, action) => {
-  const { type, connectors, templates } = action;
+  const { type, connectors = [], templates } = action;
 
   return produce(state, draft => {
     switch (type) {
@@ -78,6 +78,23 @@ selectors.connectors = (state, application, sandbox, licenses, isAccountOwnerOrA
 
     if (unusedPaidLicenseExists) {
       canInstall = true;
+      // a parentChild connector can be installed only if it has a child license
+      if (c.twoDotZero?.isParentChild) {
+        canInstall = licenses.some(
+          license => {
+            const parentLicense = connectorLicenses.some(connectorLicense => license._parentId === connectorLicense._id);
+
+            if (!parentLicense) return false;
+
+            if (license.expires && new Date(license.expires).getTime() > Date.now()) {
+              return true;
+            }
+
+            return !license.expires;
+          }
+        );
+        canRequestDemo = !canInstall;
+      }
     } else if (!usedPaidLicenseExists && conn.trialEnabled && isAccountOwnerOrAdmin) {
       canStartTrial = true;
     } else {

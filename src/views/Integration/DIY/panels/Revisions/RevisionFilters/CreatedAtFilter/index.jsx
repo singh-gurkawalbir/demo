@@ -45,6 +45,7 @@ export default function RevisionFilters() {
       clearValue={DEFAULT_REVISION_FILTERS.createdAt}
       onSave={handleDateFilter}
       value={selectedCreatedAt}
+      showCustomRangeValue
     />
   );
 }

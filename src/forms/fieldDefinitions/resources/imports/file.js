@@ -58,7 +58,7 @@ export default {
           },
           {
             matchesRegEx: {
-              pattern: '{{timestamp "(?=.*x).*"}}|{{timestamp "(?=.*X).*"}}|{{timestamp "(?=.*mm)(?=.*ss).*"}}',
+              pattern: '{{timestamp}}|{{timestamp "(?=.*x).*"}}|{{timestamp "(?=.*X).*"}}|{{timestamp "(?=.*mm)(?=.*ss).*"}}',
             },
           },
           {
@@ -159,7 +159,7 @@ export default {
     visibleWhenAll: [
       {
         field: 'file.type',
-        is: ['csv', 'json', 'xlsx'],
+        is: ['csv', 'json', 'xlsx', 'xml'],
       },
       {
         field: 'inputMode',
@@ -304,6 +304,7 @@ export default {
     isLoggable: true,
     type: 'checkbox',
     label: 'Skip aggregation',
+    defaultValue: r => !!(r && r.file && r.file.skipAggregation),
     refreshOptionsOnChangesTo: 'file.type',
     visibleWhenAll: [
       {

@@ -2,7 +2,7 @@
 import moment from 'moment';
 import reducer, { selectors } from '.';
 import actions from '../../../actions';
-import { SUITESCRIPT_CONNECTORS, SUITESCRIPT_CONNECTOR_IDS } from '../../../utils/constants';
+import { SUITESCRIPT_CONNECTORS, SUITESCRIPT_CONNECTOR_IDS } from '../../../constants';
 
 const sfConnector = SUITESCRIPT_CONNECTORS.find(s => s._id === SUITESCRIPT_CONNECTOR_IDS.salesforce);
 
@@ -178,6 +178,139 @@ describe('marketplace selectors', () => {
         { _id: '2', applications: ['constantcontactv3'], canInstall: false, usedTrialLicenseExists: true, canRequestDemo: true, canStartTrial: false },
         { _id: '3', applications: ['constantcontact'], canInstall: false, usedTrialLicenseExists: true, canRequestDemo: true, canStartTrial: false },
       ]);
+    });
+    test('should return canInstall as false for connectors which require child license but dont have it', () => {
+      const state = reducer(
+        undefined,
+        actions.marketplace.receivedConnectors({connectors: [{
+          _id: '5fa92bc18dc7b35176afb994',
+          applications: ['amazonmws'],
+          framework: 'twoDotZero',
+          twoDotZero: {
+            _integrationId: '5fa92b3ef037b6559a8b27f9',
+            isParentChild: true,
+          },
+        }]})
+      );
+      const newLicenses = [
+        ...licenses,
+        {
+          _id: '5fa92bc18dc7b35176afb994',
+          expires: '3000-03-02T18:29:59.999Z',
+          type: 'integrationApp',
+          _connectorId: '5fa92bc18dc7b35176afb994',
+        },
+      ];
+
+      expect(
+        selectors.connectors(state, 'amazonmws', false, newLicenses)
+      ).toEqual(
+        [{_id: '5fa92bc18dc7b35176afb994', applications: ['amazonmws'], canInstall: false, canRequestDemo: true, canStartTrial: false, framework: 'twoDotZero', twoDotZero: {_integrationId: '5fa92b3ef037b6559a8b27f9', isParentChild: true}, usedTrialLicenseExists: false}]
+      );
+    });
+    test('should return canInstall as true for connectors which have active child license', () => {
+      const state = reducer(
+        undefined,
+        actions.marketplace.receivedConnectors({connectors: [{
+          _id: '5fa92bc18dc7b35176afb994',
+          applications: ['amazonmws'],
+          framework: 'twoDotZero',
+          twoDotZero: {
+            _integrationId: '5fa92b3ef037b6559a8b27f9',
+            isParentChild: true,
+          },
+        }]})
+      );
+      const newLicenses = [
+        ...licenses,
+        {
+          _id: '5fa92bc18dc7b35176afb994',
+          expires: '3000-03-02T18:29:59.999Z',
+          type: 'integrationApp',
+          _connectorId: '5fa92bc18dc7b35176afb994',
+        },
+        {
+          _id: '61f8bf69c34a8c55a22a0644',
+          type: 'integrationAppChild',
+          _parentId: '5fa92bc18dc7b35176afb994',
+        },
+      ];
+
+      expect(
+        selectors.connectors(state, 'amazonmws', false, newLicenses)
+      ).toEqual(
+        [{_id: '5fa92bc18dc7b35176afb994', applications: ['amazonmws'], canInstall: true, canRequestDemo: false, canStartTrial: false, framework: 'twoDotZero', twoDotZero: {_integrationId: '5fa92b3ef037b6559a8b27f9', isParentChild: true}, usedTrialLicenseExists: false}]
+      );
+    });
+    test('should return canInstall as false for connectors which have expired child license', () => {
+      const state = reducer(
+        undefined,
+        actions.marketplace.receivedConnectors({connectors: [{
+          _id: '5fa92bc18dc7b35176afb994',
+          applications: ['amazonmws'],
+          framework: 'twoDotZero',
+          twoDotZero: {
+            _integrationId: '5fa92b3ef037b6559a8b27f9',
+            isParentChild: true,
+          },
+        }]})
+      );
+      const newLicenses = [
+        ...licenses,
+        {
+          _id: '5fa92bc18dc7b35176afb994',
+          expires: '3000-03-02T18:29:59.999Z',
+          type: 'integrationApp',
+          _connectorId: '5fa92bc18dc7b35176afb994',
+        },
+        {
+          _id: '61f8bf69c34a8c55a22a0644',
+          type: 'integrationAppChild',
+          expires: '2000-03-02T18:29:59.999Z',
+          _parentId: '5fa92bc18dc7b35176afb994',
+        },
+      ];
+
+      expect(
+        selectors.connectors(state, 'amazonmws', false, newLicenses)
+      ).toEqual(
+        [{_id: '5fa92bc18dc7b35176afb994', applications: ['amazonmws'], canInstall: false, canRequestDemo: true, canStartTrial: false, framework: 'twoDotZero', twoDotZero: {_integrationId: '5fa92b3ef037b6559a8b27f9', isParentChild: true}, usedTrialLicenseExists: false}]
+      );
+    });
+    test('should return canInstall as true for connectors which have child license which is not expired', () => {
+      const state = reducer(
+        undefined,
+        actions.marketplace.receivedConnectors({connectors: [{
+          _id: '5fa92bc18dc7b35176afb994',
+          applications: ['amazonmws'],
+          framework: 'twoDotZero',
+          twoDotZero: {
+            _integrationId: '5fa92b3ef037b6559a8b27f9',
+            isParentChild: true,
+          },
+        }]})
+      );
+      const newLicenses = [
+        ...licenses,
+        {
+          _id: '5fa92bc18dc7b35176afb994',
+          expires: '3000-03-02T18:29:59.999Z',
+          type: 'integrationApp',
+          _connectorId: '5fa92bc18dc7b35176afb994',
+        },
+        {
+          _id: '61f8bf69c34a8c55a22a0644',
+          type: 'integrationAppChild',
+          expires: '3000-03-02T18:29:59.999Z',
+          _parentId: '5fa92bc18dc7b35176afb994',
+        },
+      ];
+
+      expect(
+        selectors.connectors(state, 'amazonmws', false, newLicenses)
+      ).toEqual(
+        [{_id: '5fa92bc18dc7b35176afb994', applications: ['amazonmws'], canInstall: true, canRequestDemo: false, canStartTrial: false, framework: 'twoDotZero', twoDotZero: {_integrationId: '5fa92b3ef037b6559a8b27f9', isParentChild: true}, usedTrialLicenseExists: false}]
+      );
     });
   });
   describe('marketplaceTemplatesByApp', () => {

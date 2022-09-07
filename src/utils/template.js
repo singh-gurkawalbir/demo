@@ -5,7 +5,7 @@ import {
   NETSUITE_BUNDLE_URL,
   SALESFORCE_DA_PACKAGE_URL,
   INSTALL_STEP_TYPES,
-} from './constants';
+} from '../constants';
 import { rdbmsSubTypeToAppType } from './resource';
 import { capitalizeFirstLetter } from './string';
 
@@ -31,13 +31,16 @@ export const getApplication = conn => {
     if (conn.assistant) {
       return a.id === conn.assistant;
     }
+    if (conn.http?._httpConnectorId && conn.http?.formType !== 'graph_ql') {
+      return a._httpConnectorId === conn.http._httpConnectorId;
+    }
 
     if (conn.type === 'rdbms' && conn.rdbms) {
       return a.id === rdbmsSubTypeToAppType(conn.rdbms.type);
     }
 
-    if (conn.type === 'http' && conn.http?.formType === 'rest') {
-      return a.id === 'rest';
+    if (conn.type === 'http' && conn.http?.formType) {
+      return a.id === conn.http.formType;
     }
 
     return a.id === conn.type;

@@ -465,6 +465,7 @@ describe('editor sagas', () => {
               generate: 'new-obj',
               dataType: 'object',
               extract: 'parents',
+              status: 'Active',
               description: undefined,
               extractDateFormat: undefined,
               extractDateTimezone: undefined,
@@ -1407,8 +1408,7 @@ describe('editor sagas', () => {
           [matchers.call.fn(getFlowSampleData), {}],
           [matchers.call.fn(apiCallWithRetry), {}],
         ])
-        .call(getFlowSampleData, {flowId, resourceId, resourceType: 'imports', stage: 'transform'})
-        .returns({data: undefined, templateVersion: undefined})
+        .call(getFlowSampleData, {flowId, routerId: undefined, resourceId, resourceType: 'imports', stage: 'transform', editorId: 'tx-123'})
         .run();
     });
     test('should not make apiCallWithRetry if BE does not support the editor', () => {
@@ -1428,7 +1428,7 @@ describe('editor sagas', () => {
           [matchers.call.fn(requestSampleData), {}],
           [matchers.select.selector(selectors.shouldGetContextFromBE), {shouldGetContextFromBE: false}],
         ])
-        .call(getFlowSampleData, {flowId, resourceId, resourceType: 'imports', stage: 'transform'})
+        .call(getFlowSampleData, {flowId, routerId: undefined, resourceId, resourceType: 'imports', stage: 'transform', editorId: 'tx-123'})
         .not.call.fn(apiCallWithRetry)
         .run();
     });
@@ -1453,7 +1453,7 @@ describe('editor sagas', () => {
           }))],
           [matchers.select.selector(selectors.shouldGetContextFromBE), {shouldGetContextFromBE: true, sampleData: {name: 'Bob'}}],
         ])
-        .call(getFlowSampleData, {flowId, resourceId, resourceType: 'exports', stage: 'exportFilter'})
+        .call(getFlowSampleData, {flowId, routerId: undefined, resourceId, resourceType: 'exports', stage: 'exportFilter', editorId: 'eFilter'})
         .call.fn(apiCallWithRetry)
         .put(actions.editor.sampleDataFailed('eFilter', '{"message":"invalid processor", "code":"code"}'))
         .run();
@@ -1476,7 +1476,7 @@ describe('editor sagas', () => {
           [matchers.select.selector(selectors.shouldGetContextFromBE), {shouldGetContextFromBE: true, sampleData: {name: 'Bob'}}],
           [matchers.call.fn(apiCallWithRetry), {context: {record: {name: 'Bob'}}, templateVersion: 2}],
         ])
-        .call(getFlowSampleData, {flowId, resourceId, resourceType: 'exports', stage: 'exportFilter'})
+        .call(getFlowSampleData, {flowId, routerId: undefined, resourceId, resourceType: 'exports', stage: 'exportFilter', editorId: 'eFilter'})
         .call.fn(apiCallWithRetry)
         .not.put(actions.editor.sampleDataFailed('eFilter', '{"message":"invalid processor", "code":"code"}'))
         .returns({ data: { record: { name: 'Bob' } }, templateVersion: 2 })
@@ -1667,6 +1667,167 @@ describe('editor sagas', () => {
           hidden: false,
         })
         .returns({ data: {connection: {name: 'HTTP connection'}}, templateVersion: undefined })
+        .run();
+    });
+    test('should add uiContext in the request body when the field type is from mappings', () => {
+      const editor = {
+        id: 'expression',
+        editorType: 'handlebars',
+        flowId,
+        resourceType: 'imports',
+        resourceId,
+        stage: 'importMappingExtract',
+        fieldId: 'expression',
+      };
+
+      return expectSaga(requestEditorSampleData, { id: 'expression' })
+        .provide([
+          [select(selectors.editor, 'expression'), editor],
+          [matchers.call.fn(constructResourceFromFormValues), {}],
+          [matchers.select.selector(selectors.getSampleDataContext), {data: {id: 999}, status: 'received'}],
+          [matchers.select.selector(selectors.shouldGetContextFromBE), {shouldGetContextFromBE: true, isMapperField: true}],
+          [matchers.call.fn(apiCallWithRetry), {context: {record: {id: 999}}, templateVersion: 2}],
+          [select(selectors.resource, 'flows', flowId), {_integrationId: 'Integration-1234'}],
+        ])
+        .call(apiCallWithRetry, {
+          path: '/processors/handleBar/getContext',
+          opts: {
+            method: 'POST',
+            body: {
+              sampleData: {id: 999},
+              templateVersion: undefined,
+              flowId,
+              integrationId: 'Integration-1234',
+              import: { oneToMany: false },
+              fieldPath: 'expression',
+              uiContext: 'mapper2_0',
+            },
+          },
+          message: 'Loading',
+          hidden: false,
+        })
+        .returns({ data: { record: {id: 999}}, templateVersion: 2 })
+        .run();
+    });
+    test('should add mapper2_0 in the request body when the field type is from mappings and row has parent extracts', () => {
+      const editor = {
+        id: 'expression',
+        editorType: 'handlebars',
+        flowId,
+        resourceType: 'imports',
+        resourceId,
+        stage: 'importMappingExtract',
+        fieldId: 'expression',
+        mapper2RowKey: 'c2',
+      };
+
+      return expectSaga(requestEditorSampleData, { id: 'expression' })
+        .provide([
+          [select(selectors.editor, 'expression'), editor],
+          [matchers.call.fn(constructResourceFromFormValues), {}],
+          [matchers.select.selector(selectors.getSampleDataContext), {data: {id: 999}, status: 'received'}],
+          [matchers.select.selector(selectors.shouldGetContextFromBE), {shouldGetContextFromBE: true, isMapperField: true}],
+          [matchers.call.fn(apiCallWithRetry), {context: {record: {id: 999}}, templateVersion: 2}],
+          [select(selectors.resource, 'flows', flowId), {_integrationId: 'Integration-1234'}],
+          [select(selectors.mapping), {
+            v2TreeData: [
+              {
+                key: 'k1',
+                combinedExtract: '$.siblings[*]',
+                dataType: 'objectarray',
+                children: [{
+                  key: 'c1',
+                  combinedExtract: '$.siblings.children[*]',
+                  parentKey: 'k1',
+                  parentExtract: '$.siblings[*]',
+                  dataType: 'objectarray',
+                  children: [{
+                    key: 'c2',
+                    extract: '$.siblings.children.qty',
+                    parentExtract: '$.siblings.children[*]',
+                    parentKey: 'c1',
+                    dataType: 'string',
+                  }],
+                }],
+              },
+            ]}],
+        ])
+        .call(apiCallWithRetry, {
+          path: '/processors/handleBar/getContext',
+          opts: {
+            method: 'POST',
+            body: {
+              sampleData: {id: 999},
+              templateVersion: undefined,
+              flowId,
+              integrationId: 'Integration-1234',
+              import: { oneToMany: false },
+              fieldPath: 'expression',
+              uiContext: 'mapper2_0',
+              mapper2_0: {
+                arrayExtracts: ['$.siblings[*]', '$.siblings.children[*]'],
+                outputFormat: 'RECORD',
+              },
+            },
+          },
+          message: 'Loading',
+          hidden: false,
+        })
+        .returns({ data: { record: {id: 999}}, templateVersion: 2 })
+        .run();
+    });
+    test('should add mapper2_0 in the request body when the field type is from mappings and output format is rows', () => {
+      const editor = {
+        id: 'expression',
+        editorType: 'handlebars',
+        flowId,
+        resourceType: 'imports',
+        resourceId,
+        stage: 'importMappingExtract',
+        fieldId: 'expression',
+        mapper2RowKey: 'k1',
+      };
+
+      return expectSaga(requestEditorSampleData, { id: 'expression' })
+        .provide([
+          [select(selectors.editor, 'expression'), editor],
+          [matchers.call.fn(constructResourceFromFormValues), {}],
+          [matchers.select.selector(selectors.getSampleDataContext), {data: {id: 999}, status: 'received'}],
+          [matchers.select.selector(selectors.shouldGetContextFromBE), {shouldGetContextFromBE: true, isMapperField: true}],
+          [matchers.call.fn(apiCallWithRetry), {context: {record: {id: 999}}, templateVersion: 2}],
+          [select(selectors.resource, 'flows', flowId), {_integrationId: 'Integration-1234'}],
+          [select(selectors.mapping), {
+            isGroupedOutput: true,
+            v2TreeData: [
+              {
+                key: 'k1',
+                extract: '$.siblings',
+                generate: 'siblings',
+                dataType: 'string',
+              },
+            ]}],
+        ])
+        .call(apiCallWithRetry, {
+          path: '/processors/handleBar/getContext',
+          opts: {
+            method: 'POST',
+            body: {
+              sampleData: {id: 999},
+              templateVersion: undefined,
+              flowId,
+              integrationId: 'Integration-1234',
+              import: { oneToMany: false },
+              fieldPath: 'expression',
+              uiContext: 'mapper2_0',
+              mapper2_0: {
+                outputFormat: 'ROWS',
+              },
+            },
+          },
+          message: 'Loading',
+          hidden: false,
+        })
+        .returns({ data: { record: {id: 999}}, templateVersion: 2 })
         .run();
     });
   });
@@ -1894,7 +2055,6 @@ describe('editor sagas', () => {
         formKey: 'new-123',
         layout: 'jsonFormBuilder',
         autoEvaluate: true,
-        previewOnSave: true,
         sampleDataStatus: 'requested',
         insertStubKey: 'formInit',
         activeProcessor: 'json',
@@ -1976,7 +2136,6 @@ describe('editor sagas', () => {
         integrationId: 'intId',
         sectionId: 'Cus-1234567',
         autoEvaluate: true,
-        previewOnSave: true,
         sampleDataStatus: 'requested',
         insertStubKey: 'formInit',
         activeProcessor: 'json',
@@ -2088,7 +2247,6 @@ describe('editor sagas', () => {
         integrationId: 'intId',
         sectionId: 'Cus-1234567',
         autoEvaluate: true,
-        previewOnSave: true,
         sampleDataStatus: 'requested',
         insertStubKey: 'formInit',
         activeProcessor: 'script',

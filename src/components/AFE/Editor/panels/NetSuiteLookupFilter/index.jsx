@@ -475,7 +475,6 @@ export default function NetSuiteLookupFilterPanel({ id, editorId, filters: propF
           rule.filter.valueGetter(rule);
         }
       });
-
       qbContainer.queryBuilder({
         ...config,
         filters: filtersConfig,

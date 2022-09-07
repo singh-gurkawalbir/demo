@@ -1,4 +1,4 @@
-import { URI_VALIDATION_PATTERN, RDBMS_TYPES} from '../../../utils/constants';
+import { URI_VALIDATION_PATTERN, RDBMS_TYPES, AWS_REGIONS_LIST} from '../../../constants';
 import { isNewId, getDomainUrl, getAssistantFromResource, rdbmsSubTypeToAppType, rdbmsAppTypeToSubType } from '../../../utils/resource';
 import { applicationsList} from '../../../constants/applications';
 import { getConstantContactVersion } from '../../../utils/connections';
@@ -108,16 +108,12 @@ export default {
     isLoggable: true,
     type: 'text',
     label: 'Port',
-    validWhen: [
-      {
-        fallsWithinNumericalRange: {
-          min: 0,
-          max: 65535,
-          message: 'The value must be more than 0 and less than 65535',
-        },
-        matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
+    validWhen: {
+      fallsWithinNumericalRange: {
+        min: 0,
+        max: 65535,
       },
-    ],
+    },
   },
   'rdbms.database': {
     isLoggable: true,
@@ -259,6 +255,40 @@ export default {
     fieldId: 'rdbms.bigquery.dataset',
     label: 'Dataset',
     type: 'text',
+    required: true,
+  },
+  'rdbms.redshift.region': {
+    isLoggable: true,
+    type: 'select',
+    label: 'Region',
+    required: true,
+    defaultValue: r => r.rdbms?.redshift?.region || 'us-east-1',
+    options: [
+      {
+        items: AWS_REGIONS_LIST,
+      },
+    ],
+  },
+  'rdbms.redshift.aws.accessKeyId': {
+    id: 'rdbms.redshift.aws.accessKeyId',
+    type: 'text',
+    label: 'Access Key Id',
+    required: true,
+  },
+  'rdbms.redshift.aws.secretAccessKey': {
+    id: 'rdbms.redshift.aws.secretAccessKey',
+    type: 'text',
+    label: 'Secret Access Key',
+    defaultValue: '',
+    required: true,
+    inputType: 'password',
+    description:
+      'Note: for security reasons this field must always be re-entered.',
+  },
+  'rdbms.redshift.clusterIdentifier': {
+    isLoggable: true,
+    type: 'text',
+    label: 'Cluster name',
     required: true,
   },
   // #endregion rdbms
@@ -1020,11 +1050,41 @@ export default {
     label: 'Encrypted',
     description: 'Note: for security reasons this field must always be re-entered.',
   },
+  'http.clientCertificates.type': {
+    type: 'select',
+    label: 'SSL certificate type',
+    helpKey: 'connection.http.clientCertificates.type',
+    options: [
+      {
+        items: [
+          { label: 'PFX', value: 'pfx' },
+          { label: 'PEM', value: 'pem' },
+        ],
+      },
+    ],
+    defaultValue: r => {
+      let val = '';
+
+      if (r?.http?.clientCertificates?.pfx) {
+        val = 'pfx';
+      } else if (r?.http?.clientCertificates?.cert || r?.http?.clientCertificates?.key) {
+        val = 'pem';
+      }
+
+      return val;
+    },
+  },
   'http.clientCertificates.cert': {
     type: 'uploadfile',
     placeholder: 'SSL certificate',
     label: 'SSL certificate',
     helpKey: 'connection.http.clientCertificates.cert',
+  },
+  'http.clientCertificates.pfx': {
+    type: 'uploadfile',
+    placeholder: 'SSL certificate',
+    label: 'SSL certificate',
+    helpKey: 'connection.http.clientCertificates.pfx',
   },
   'http.clientCertificates.key': {
     type: 'uploadfile',
@@ -1101,9 +1161,7 @@ export default {
       fallsWithinNumericalRange: {
         min: 0,
         max: 65535,
-        message: 'The value must be more than 0 and less than 65535',
       },
-      matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
     },
   },
   'ftp.usePassiveMode': {
@@ -1704,17 +1762,9 @@ export default {
         is: [true],
       },
     ],
-    validWhen: [
-      {
-        matchesRegEx: { pattern: '^[\\d]$', message: 'Only numbers allowed' },
-      },
-      {
-        fallsWithinNumericalRange: {
-          message:
-            'The value must be greater than undefined and  lesser than undefined',
-        },
-      },
-    ],
+    validWhen: {
+      matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
+    },
   },
   'as2.partnerStationInfo.encryptionType': {
     isLoggable: true,
@@ -2481,5 +2531,47 @@ export default {
         ],
       },
     ],
+  },
+  connectionFormView: {
+    isLoggable: true,
+    id: 'connectionFormView',
+    type: 'connectionFormView',
+    label: 'Form view',
+    required: true,
+    resourceType: 'connections',
+    visible: r => r?._httpConnectorId || r?.http?._httpConnectorId,
+    defaultValue: r => {
+      if (!r) return 'false';
+      if (!r.http) return 'false';
+      if (!r.http.formType) return 'false';
+
+      return r.http?.formType === 'assistant' ? 'false' : 'true';
+    },
+    helpKey: 'formView',
+  },
+  configureCutomAuthTokenRefresh: {
+    id: 'configureCutomAuthTokenRefresh',
+    type: 'checkbox',
+    label: 'Configure refresh token',
+    helpKey: 'connection.configureTokenRefresh',
+    // Refresh token is mandatory when Configure refresh token is enabled, hence we check if this value is provided or not
+    defaultValue: r => !!(r?.http?.auth?.token?.refreshToken),
+    visibleWhenAll: [
+      { field: 'http.auth.type', is: ['custom'] },
+    ],
+  },
+  'http.auth.token.tokenPaths': {
+    id: 'http.auth.token.tokenPaths',
+    type: 'text',
+    label: 'Paths to encrypted field in the response body',
+    defaultValue: r => {
+      const values = r?.http?.auth?.token?.tokenPaths;
+
+      if (Array.isArray(values)) {
+        return values.join(',');
+      }
+
+      return values;
+    },
   },
 };

@@ -4,6 +4,7 @@ import { makeStyles, Typography } from '@material-ui/core';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import AddIcon from '../../../components/icons/AddIcon';
+import AddEmptyStep from '../../../components/icons/AddEmptyStepIcon';
 import AutoRetryIcon from '../../../components/icons/AutoRetryIcon';
 import HardCodedIcon from '../../../components/icons/HardCodedIcon';
 import LookupLetterIcon from '../../../components/icons/LookupLetterIcon';
@@ -103,6 +104,7 @@ import PermissionsMonitorIcon from '../../../components/icons/PermissionsMonitor
 import PermissionExplorerIcon from '../../../components/icons/PermissionExplorerIcon';
 import PentagonIcon from '../../../components/icons/PentagonIcon';
 import PinIntegrationIcon from '../../../components/icons/PinIntegrationIcon';
+import PortalIcon from '../../../components/icons/PortalIcon';
 import RadioBtnSelectedIcon from '../../../components/icons/RadioBtnSelectedIcon';
 import RadioBtnUnselectedIcon from '../../../components/icons/RadioBtnUnselectedIcon';
 import ResourcesIcon from '../../../components/icons/ResourcesIcon';
@@ -133,6 +135,7 @@ import SquareIcon from '../../../components/icons/SquareIcon';
 import StarIcon from '../../../components/icons/StarIcon';
 import TilesViewIcon from '../../../components/icons/TilesViewIcon';
 import TransferOrderIcon from '../../../components/icons/TransferOrderIcon';
+import ToggleMapIcon from '../../../components/icons/ToggleMapIcon';
 import ToolsIcon from '../../../components/icons/ToolsIcon';
 import TokensApiIcon from '../../../components/icons/TokensApiIcon';
 import TransferIcon from '../../../components/icons/TransferIcon';
@@ -154,159 +157,161 @@ import VerticalLayoutIcon from '../../../components/icons/VerticalLayoutIcon';
 import WarningIcon from '../../../components/icons/WarningIcon';
 import WhatsNewIcon from '../../../components/icons/WhatsNewIcon';
 
-const icons =
-    {
-      AddIcon,
-      AutoRetryIcon,
-      HardCodedIcon,
-      LookupLetterIcon,
-      MultiFieldIcon,
-      ReplaceIcon,
-      AdjustInventoryIcon,
-      AdminIcon,
-      AppBuilderIcon,
-      ArrowLeftIcon,
-      AgentsIcon,
-      ArrowRightIcon,
-      ArrowDownIcon,
-      ArrowUpIcon,
-      AuditLogIcon,
-      BackArrowIcon,
-      BranchIcon,
-      CalendarIcon,
-      CancelIcon,
-      CheckboxUnselectedIcon,
-      CheckboxSelectedIcon,
-      CheckmarkIcon,
-      ConditionalIcon,
-      CloseIcon,
-      CopyIcon,
-      ConnectorIcon,
-      CollapseWindowIcon,
-      CloudTransferIcon,
-      CeligoMarkIcon,
-      ConnectionsIcon,
-      ConfigureSettingIcon,
-      CommunityIcon,
-      TransformIcon,
-      DataLoaderIcon,
-      DashboardIcon,
-      DebugIcon,
-      DownloadIcon,
-      DownloadIntegrationIcon,
-      DiamondIcon,
-      EditIcon,
-      EditScriptIcon,
-      EditorsPlaygroundIcon,
-      ErrorIcon,
-      EllipsisHorizontalIcon,
-      EllipsisVerticalIcon,
-      ExitIcon,
-      ExportsIcon,
-      ExpandWindowIcon,
-      FilterIcon,
-      FileIcon,
-      FlowBuilderIcon,
-      FlowsIcon,
-      FlowBuilderAppIcon,
-      FullScreenOpenIcon,
-      FullScreenCloseIcon,
-      GettingStartedIcon,
-      GroupOfUsersIcon,
-      GraphIcon,
-      GripperIcon,
-      GeneralIcon,
-      HelpIcon,
-      HideContentIcon,
-      HomeIcon,
-      HookIcon,
-      InfoIcon,
-      InviteUsersIcon,
-      InstallIcon,
-      InstallationGuideIcon,
-      InstallIntegrationIcon,
-      IntegrationAppsIcon,
-      ImportsIcon,
-      IntegrationPinnedIcon,
-      InputFilterIcon,
-      KnowledgeBaseIcon,
-      LayoutFourPanelIcon,
-      LayoutTriVerticalIcon,
-      LayoutLgLeftSmrightIcon,
-      LayoutLgTopSmBottomIcon,
-      ListenerIcon,
-      LicensesIcon,
-      ListViewIcon,
-      LookUpIcon,
-      LockIcon,
-      MapDataIcon,
-      MappingConnectorIcon,
-      MarketplaceIcon,
-      MergeIcon,
-      MyAPIIcon,
-      NotificationsIcon,
-      OutputFilterIcon,
-      OptionalIcon,
-      PublishIcon,
-      PublishedIcon,
-      PermissionsManageIcon,
-      PurgeIcon,
-      PreferredIcon,
-      PermissionsMonitorIcon,
-      PermissionExplorerIcon,
-      PentagonIcon,
-      PinIntegrationIcon,
-      RadioBtnSelectedIcon,
-      RadioBtnUnselectedIcon,
-      ResourcesIcon,
-      RegenerateTokenIcon,
-      RegisterConnectionIcon,
-      RefreshIcon,
-      RestoreIcon,
-      RevokeTokenIcon,
-      ReactivateTokenIcon,
-      ReactivateIcon,
-      RenewIcon,
-      RequiredIcon,
-      RunIcon,
-      RecycleBinIcon,
-      StacksIcon,
-      ShowContentIcon,
-      SuccessIcon,
-      ScriptsIcon,
-      SearchIcon,
-      SecurityIcon,
-      ShareStackIcon,
-      SettingsIcon,
-      SubtractIcon,
-      SupportIcon,
-      SubmitTicketIcon,
-      SingleUserIcon,
-      SquareIcon,
-      StarIcon,
-      TilesViewIcon,
-      TransferOrderIcon,
-      ToolsIcon,
-      TokensApiIcon,
-      TransferIcon,
-      TransferDownIcon,
-      TransferUpIcon,
-      TrashIcon,
-      TransfersIcon,
-      TriangleIcon,
-      UnlockIcon,
-      UnlinkedIcon,
-      UploadIcon,
-      UnpublishedIcon,
-      UniversityIcon,
-      UnpinIntegrationIcon,
-      ViewReferencesIcon,
-      VerticalLayoutIcon,
-      ViewResolvedHistoryIcon,
-      ViewDetailsIcon,
-      WarningIcon,
-      WhatsNewIcon,
-    };
+const icons = {
+  AddIcon,
+  AddEmptyStep,
+  AutoRetryIcon,
+  HardCodedIcon,
+  LookupLetterIcon,
+  MultiFieldIcon,
+  ReplaceIcon,
+  AdjustInventoryIcon,
+  AdminIcon,
+  AppBuilderIcon,
+  ArrowLeftIcon,
+  AgentsIcon,
+  ArrowRightIcon,
+  ArrowDownIcon,
+  ArrowUpIcon,
+  AuditLogIcon,
+  BackArrowIcon,
+  BranchIcon,
+  CalendarIcon,
+  CancelIcon,
+  CheckboxUnselectedIcon,
+  CheckboxSelectedIcon,
+  CheckmarkIcon,
+  ConditionalIcon,
+  CloseIcon,
+  CopyIcon,
+  ConnectorIcon,
+  CollapseWindowIcon,
+  CloudTransferIcon,
+  CeligoMarkIcon,
+  ConnectionsIcon,
+  ConfigureSettingIcon,
+  CommunityIcon,
+  TransformIcon,
+  DataLoaderIcon,
+  DashboardIcon,
+  DebugIcon,
+  DownloadIcon,
+  DownloadIntegrationIcon,
+  DiamondIcon,
+  EditIcon,
+  EditScriptIcon,
+  EditorsPlaygroundIcon,
+  ErrorIcon,
+  EllipsisHorizontalIcon,
+  EllipsisVerticalIcon,
+  ExitIcon,
+  ExportsIcon,
+  ExpandWindowIcon,
+  FilterIcon,
+  FileIcon,
+  FlowBuilderIcon,
+  FlowsIcon,
+  FlowBuilderAppIcon,
+  FullScreenOpenIcon,
+  FullScreenCloseIcon,
+  GettingStartedIcon,
+  GroupOfUsersIcon,
+  GraphIcon,
+  GripperIcon,
+  GeneralIcon,
+  HelpIcon,
+  HideContentIcon,
+  HomeIcon,
+  HookIcon,
+  InfoIcon,
+  InviteUsersIcon,
+  InstallIcon,
+  InstallationGuideIcon,
+  InstallIntegrationIcon,
+  IntegrationAppsIcon,
+  ImportsIcon,
+  IntegrationPinnedIcon,
+  InputFilterIcon,
+  KnowledgeBaseIcon,
+  LayoutFourPanelIcon,
+  LayoutTriVerticalIcon,
+  LayoutLgLeftSmrightIcon,
+  LayoutLgTopSmBottomIcon,
+  ListenerIcon,
+  LicensesIcon,
+  ListViewIcon,
+  LookUpIcon,
+  LockIcon,
+  MapDataIcon,
+  MappingConnectorIcon,
+  MarketplaceIcon,
+  MergeIcon,
+  MyAPIIcon,
+  NotificationsIcon,
+  OutputFilterIcon,
+  OptionalIcon,
+  PublishIcon,
+  PublishedIcon,
+  PermissionsManageIcon,
+  PurgeIcon,
+  PreferredIcon,
+  PermissionsMonitorIcon,
+  PermissionExplorerIcon,
+  PentagonIcon,
+  PinIntegrationIcon,
+  PortalIcon,
+  RadioBtnSelectedIcon,
+  RadioBtnUnselectedIcon,
+  ResourcesIcon,
+  RegenerateTokenIcon,
+  RegisterConnectionIcon,
+  RefreshIcon,
+  RestoreIcon,
+  RevokeTokenIcon,
+  ReactivateTokenIcon,
+  ReactivateIcon,
+  RenewIcon,
+  RequiredIcon,
+  RunIcon,
+  RecycleBinIcon,
+  StacksIcon,
+  ShowContentIcon,
+  SuccessIcon,
+  ScriptsIcon,
+  SearchIcon,
+  SecurityIcon,
+  ShareStackIcon,
+  SettingsIcon,
+  SubtractIcon,
+  SupportIcon,
+  SubmitTicketIcon,
+  SingleUserIcon,
+  SquareIcon,
+  StarIcon,
+  TilesViewIcon,
+  TransferOrderIcon,
+  ToggleMapIcon,
+  ToolsIcon,
+  TokensApiIcon,
+  TransferIcon,
+  TransferDownIcon,
+  TransferUpIcon,
+  TrashIcon,
+  TransfersIcon,
+  TriangleIcon,
+  UnlockIcon,
+  UnlinkedIcon,
+  UploadIcon,
+  UnpublishedIcon,
+  UniversityIcon,
+  UnpinIntegrationIcon,
+  ViewReferencesIcon,
+  VerticalLayoutIcon,
+  ViewResolvedHistoryIcon,
+  ViewDetailsIcon,
+  WarningIcon,
+  WhatsNewIcon,
+};
 
 export default {
   title: 'Branding/Icons/All Icons',
@@ -320,13 +325,7 @@ export default {
     color: {
       control: {
         type: 'select',
-        options: [
-          'primary',
-          'secondary',
-          'action',
-          'disabled',
-          'error',
-        ],
+        options: ['primary', 'secondary', 'action', 'disabled', 'error'],
       },
     },
   },
@@ -351,7 +350,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const IconTemplate = ({Icon, iconName, args}) => {
+const IconTemplate = ({ Icon, iconName, args }) => {
   const classes = useStyles();
   const [enquesnackbar] = useEnqueueSnackbar();
 
@@ -360,11 +359,7 @@ const IconTemplate = ({Icon, iconName, args}) => {
   };
 
   return (
-    <CopyToClipboard
-      onCopy={handleCopy}
-      text={`<${iconName}/>`}
-      key={iconName}>
-
+    <CopyToClipboard onCopy={handleCopy} text={`<${iconName}/>`} key={iconName}>
       <div className={classes.iconContainer}>
         <Icon {...args} />
         <Typography variant="body2">{iconName.replace('Icon', '')}</Typography>
@@ -378,15 +373,14 @@ export function All(args) {
 
   return (
     <div className={classes.allIconContainer}>
-      {
-        Object.keys(icons).map(iconName => (
-          <IconTemplate
-            key={iconName}
-            Icon={icons[iconName]}
-            iconName={iconName}
-            args={args} />
-        ))
-      }
+      {Object.keys(icons).map(iconName => (
+        <IconTemplate
+          key={iconName}
+          Icon={icons[iconName]}
+          iconName={iconName}
+          args={args}
+        />
+      ))}
     </div>
   );
 }

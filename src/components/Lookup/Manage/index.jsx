@@ -1,5 +1,5 @@
 import React, { useMemo, useCallback } from 'react';
-import shortid from 'shortid';
+// import shortid from 'shortid';
 import Typography from '@material-ui/core/Typography';
 import { selectors } from '../../../reducers';
 import DynaForm from '../../DynaForm';
@@ -10,7 +10,7 @@ import salesforceMetadata from './metadata/salesforce';
 import rdbmsMetadata from './metadata/rdbms';
 import useFormInitWithPermissions from '../../../hooks/useFormInitWithPermissions';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
-import { emptyObject } from '../../../utils/constants';
+import { emptyObject } from '../../../constants';
 import { TextButton } from '../../Buttons';
 
 export default function ManageLookup({
@@ -40,10 +40,11 @@ export default function ManageLookup({
     let lookupObj = {};
     const lookupTmp = {};
 
-    if (isEdit) {
-      lookupTmp.name = value.name;
-    } else {
-      lookupTmp.name = shortid.generate();
+    if (formVal._mode === 'static') {
+      lookupObj.map = {};
+      (formVal._mapList || []).forEach(obj => {
+        if (obj.import && obj.export) lookupObj.map[obj.export] = obj.import;
+      });
     }
 
     if (['NetSuiteImport', 'NetSuiteDistributedImport'].includes(resource.adaptorType)) {
@@ -51,35 +52,18 @@ export default function ManageLookup({
         lookupTmp.recordType = formVal._recordType;
         lookupTmp.resultField = formVal._resultField;
         lookupTmp.expression = formVal._expression;
-      } else {
-        lookupTmp.map = {};
-        (formVal._mapList || []).forEach(obj => {
-          if (obj.import && obj.export) lookupTmp.map[obj.export] = obj.import;
-        });
+        lookupObj = lookupTmp;
       }
-
-      lookupObj = lookupTmp;
     } else if (resource.adaptorType === 'SalesforceImport') {
       if (formVal._mode === 'dynamic') {
         lookupTmp.whereClause = formVal._whereClause;
         lookupTmp.sObjectType = formVal._sObjectType;
         lookupTmp.resultField = formVal._resultField;
         lookupTmp.expression = formVal._expression;
-      } else {
-        lookupTmp.map = {};
-        (formVal._mapList || []).forEach(obj => {
-          if (obj.import && obj.export) lookupTmp.map[obj.export] = obj.import;
-        });
+        lookupObj = lookupTmp;
       }
-
-      lookupObj = lookupTmp;
     } else {
-      if (formVal._mode === 'static') {
-        lookupObj.map = {};
-        (formVal._mapList || []).forEach(obj => {
-          lookupObj.map[obj.export] = obj.import;
-        });
-      } else {
+      if (formVal._mode !== 'static') {
         lookupObj.query = formVal._query;
         lookupObj.method = formVal._method;
         lookupObj.relativeURI = formVal._relativeURI;
@@ -110,7 +94,7 @@ export default function ManageLookup({
     }
     lookupObj.name = formVal._name;
     onSave(isEdit, lookupObj);
-  }, [isEdit, onSave, resource.adaptorType, value.name]);
+  }, [isEdit, onSave, resource.adaptorType]);
 
   const fieldMeta = useMemo(() => {
     if (['NetSuiteDistributedImport', 'NetSuiteImport'].includes(resource.adaptorType)) {

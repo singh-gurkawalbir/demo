@@ -13,8 +13,12 @@ import {
   rebuildObjectArrayNode,
   hideOtherTabRows,
   MAPPING_DATA_TYPES,
-  getDefaultExtractPath,
-  getUniqueExtractId} from '../../../utils/mapping';
+  getUniqueExtractId,
+  autoCreateDestinationStructure,
+  deleteNonRequiredMappings,
+  searchTree,
+  filterKey,
+  filterNode} from '../../../utils/mapping';
 import { generateUniqueKey } from '../../../utils/string';
 
 export const expandRow = (draft, key) => {
@@ -84,11 +88,10 @@ export const updateDataType = (draft, node, oldDataType, newDataType) => {
   if (newDataType === MAPPING_DATA_TYPES.OBJECT || newDataType === MAPPING_DATA_TYPES.OBJECTARRAY) {
     expandRow(draft, newNode.key);
 
-    newNode.combinedExtract = newNode.combinedExtract || newNode.extract || getDefaultExtractPath(draft.mapping.isGroupedSampleData);
+    newNode.combinedExtract = newNode.combinedExtract || newNode.extract;
 
     delete newNode.hardCodedValue;
     delete newNode.lookupName;
-    delete newNode.default;
 
     if (newDataType === MAPPING_DATA_TYPES.OBJECTARRAY) {
       if (newNode.copySource === 'yes') {
@@ -100,7 +103,7 @@ export const updateDataType = (draft, node, oldDataType, newDataType) => {
       delete newNode.extract;
       delete newNode.mappings;
     } else {
-      newNode.extract = newNode.copySource === 'yes' ? newNode.combinedExtract.split(',')?.[0] : undefined;
+      newNode.extract = newNode.copySource === 'yes' ? newNode.combinedExtract?.split(',')?.[0] : undefined;
       // combinedExtract is used only for array data types to store comma separated values
       delete newNode.combinedExtract;
       // delete existing children if new data type is object
@@ -134,10 +137,74 @@ export const updateDataType = (draft, node, oldDataType, newDataType) => {
   // handle the primitive data types
   if (PRIMITIVE_DATA_TYPES.includes(newDataType)) {
     delete newNode.children;
+    newNode.extract = newNode.extract || newNode.combinedExtract;
     delete newNode.combinedExtract;
   }
 
   return newNode;
+};
+
+const recursivelySearchExtracts = (currNode, inputValues, skipFilter) => {
+  let anyChildMatchFound = false;
+
+  const clonedNode = {...currNode};
+
+  clonedNode.children = currNode.children.map(childNode => {
+    let clonedChild = {...childNode};
+
+    if (childNode.children) {
+      clonedChild = recursivelySearchExtracts(childNode, inputValues, skipFilter);
+    }
+
+    const {jsonPath = ''} = clonedChild;
+    let matchFound = false;
+
+    // if typed input is empty, or skipFilter is true
+    // then do not hide any node
+    if (!inputValues.length || skipFilter) {
+      delete clonedChild.hidden;
+      delete clonedChild.className;
+
+      return clonedChild;
+    }
+
+    inputValues.forEach(i => {
+      if (i && jsonPath && jsonPath.toUpperCase().indexOf(i) > -1) {
+        matchFound = true;
+      }
+    });
+
+    if (!matchFound) {
+    // if no match found, hide the node only if all its children were also not matched
+    // else do not hide this parent node (if any child match was found)
+      if (!clonedChild.childMatchFound) {
+        clonedChild.hidden = true;
+        clonedChild.className = 'hideRow';
+      } else {
+        // match is found so do not hide
+        anyChildMatchFound = true;
+        delete clonedChild.hidden;
+        delete clonedChild.className;
+      }
+    } else {
+      // match is found so do not hide
+      anyChildMatchFound = true;
+      delete clonedChild.hidden;
+      delete clonedChild.className;
+    }
+
+    return clonedChild;
+  });
+
+  // if any children was matched, then set a flag on parent node to indicate some child was matched
+  if (anyChildMatchFound) {
+    // don't hide parent
+    clonedNode.childMatchFound = true;
+  } else {
+    delete clonedNode.childMatchFound;
+  }
+
+  return clonedNode;
 };
 
 const emptyObj = {};
@@ -148,6 +215,9 @@ export default (state = {}, action) => {
     type,
     key,
     field,
+    index,
+    searchKey,
+    showKey,
     shiftIndex,
     value,
     mappings,
@@ -164,6 +234,8 @@ export default (state = {}, action) => {
     outputFormat,
     newVersion,
     v2TreeData,
+    requiredMappings,
+    extractsTree,
     v2Key,
     newDataType,
     isMonitorLevelAccess,
@@ -174,6 +246,11 @@ export default (state = {}, action) => {
     errors,
     newTabValue,
     newTabExtractId,
+    importSampleData,
+    uploadedData,
+    isCSVOrXLSX,
+    inputValue,
+    propValue,
   } = action;
 
   return produce(state, draft => {
@@ -206,6 +283,9 @@ export default (state = {}, action) => {
           isGroupedSampleData,
           isMonitorLevelAccess,
           version,
+          requiredMappings,
+          extractsTree,
+          importSampleData,
           isGroupedOutput,
           mappingsCopy: deepClone(mappings),
           lookupsCopy: deepClone(lookups),
@@ -486,8 +566,6 @@ export default (state = {}, action) => {
           // top disabled row already exists
           if (draft.mapping.v2TreeData[0]?.generateDisabled) break;
 
-          const defaultExtract = getDefaultExtractPath(draft.mapping.isGroupedSampleData);
-
           const newRowKey = generateUniqueKey();
 
           const node = {
@@ -496,7 +574,6 @@ export default (state = {}, action) => {
             dataType: MAPPING_DATA_TYPES.OBJECTARRAY,
             generateDisabled: true,
             disabled: draft.mapping.isMonitorLevelAccess,
-            combinedExtract: defaultExtract,
           };
 
           node.children = updateChildrenProps(draft.mapping.v2TreeData, node, MAPPING_DATA_TYPES.OBJECTARRAY);
@@ -517,13 +594,13 @@ export default (state = {}, action) => {
           if (isEmpty(draft.mapping.v2TreeData)) {
             const emptyRowKey = generateUniqueKey();
 
-            draft.mapping.v2TreeData.push({
+            draft.mapping.v2TreeData = [{
               key: emptyRowKey,
               title: '',
               dataType: MAPPING_DATA_TYPES.STRING,
               disabled: draft.mapping.isMonitorLevelAccess,
               isEmptyRow: true,
-            });
+            }];
           }
         }
 
@@ -678,6 +755,8 @@ export default (state = {}, action) => {
           if (field === 'extract') {
             if (value.indexOf('"') === 0) {
               delete node.extract;
+              delete node.combinedExtract;
+              delete node.default;
               node.hardCodedValue = value.replace(/(^")|("$)/g, '');
             } else {
               delete node.hardCodedValue;
@@ -693,6 +772,7 @@ export default (state = {}, action) => {
                     title: '',
                     parentKey: node.key,
                     dataType: MAPPING_DATA_TYPES.STRING,
+                    isEmptyRow: true,
                   }];
                 } else if (value && node.dataType === MAPPING_DATA_TYPES.OBJECTARRAY) {
                   // handle tab view
@@ -705,7 +785,7 @@ export default (state = {}, action) => {
                   delete nodeSubArray[nodeIndexInSubArray].hardCodedValue;
                   nodeSubArray[nodeIndexInSubArray].combinedExtract = value;
                 }
-              } else {
+              } else if (node.dataType !== MAPPING_DATA_TYPES.OBJECT || node.copySource === 'yes') {
                 node.extract = value;
               }
             }
@@ -713,6 +793,13 @@ export default (state = {}, action) => {
             // do nothing as no changes can be made to 'generate' of a required mapping
           } else {
             node[field] = value;
+            node.jsonPath = value;
+
+            const {node: parentNode} = findNodeInTree(draft.mapping.v2TreeData, 'key', node.parentKey);
+
+            if (parentNode && parentNode.jsonPath) {
+              node.jsonPath = parentNode.dataType === MAPPING_DATA_TYPES.OBJECTARRAY ? `${parentNode.jsonPath}[*].${value}` : `${parentNode.jsonPath}.${value}`;
+            }
           }
 
           delete node.isEmptyRow;
@@ -737,6 +824,9 @@ export default (state = {}, action) => {
           }
           if (!value.conditional?.when && node?.conditional?.when) {
             delete node.conditional.when;
+          }
+          if (value?.conditional?.when === 'extract_not_empty') {
+            delete node.default;
           }
 
           if ('hardCodedValue' in value) {
@@ -770,10 +860,9 @@ export default (state = {}, action) => {
                   dataType: MAPPING_DATA_TYPES.STRING,
                 }];
               }
-
-              if (newDataType === MAPPING_DATA_TYPES.OBJECT) {
-                delete node.combinedExtract;
-              }
+            }
+            if (newDataType === MAPPING_DATA_TYPES.OBJECT) {
+              delete node.combinedExtract;
             }
           }
         }
@@ -799,6 +888,148 @@ export default (state = {}, action) => {
         break;
       }
 
+      case actionTypes.MAPPING.V2.PATCH_EXTRACTS_FILTER: {
+        if (!draft.mapping) break;
+        const {extractsTree} = draft.mapping;
+
+        if (!extractsTree || !extractsTree.length || !extractsTree[0].children) break;
+        let inputValues = inputValue === '' ? [] : inputValue.split(',');
+
+        // replace '$.' and '$[*].' for better searching,
+        // as we are not storing these prefixes in each node jsonPath as well
+        inputValues = inputValues.map(i => i.replace(/(\$\.)|(\$\[\*\]\.)/g, '').toUpperCase());
+
+        // pass the first index of tree as the tree length is always 1 because the parent is either $ or $[*]
+        draft.mapping.extractsTree[0] = recursivelySearchExtracts(extractsTree[0], inputValues, inputValue === propValue);
+
+        break;
+      }
+
+      case actionTypes.MAPPING.V2.DELETE_ALL:
+        if (!draft.mapping) break;
+
+        draft.mapping.v2TreeData = deleteNonRequiredMappings(draft.mapping.v2TreeData);
+        if (isEmpty(draft.mapping.v2TreeData)) {
+          if (isCSVOrXLSX) {
+            draft.mapping.v2TreeData = [{
+              key: generateUniqueKey(),
+              title: '',
+              dataType: MAPPING_DATA_TYPES.OBJECTARRAY,
+              generateDisabled: true,
+              disabled: draft.mapping.isMonitorLevelAccess,
+              children: [
+                {
+                  key: generateUniqueKey(),
+                  title: '',
+                  dataType: MAPPING_DATA_TYPES.STRING,
+                  disabled: draft.mapping.isMonitorLevelAccess,
+                  isEmptyRow: true,
+                },
+              ],
+            }];
+          } else {
+            draft.mapping.v2TreeData = [{
+              key: generateUniqueKey(),
+              title: '',
+              dataType: MAPPING_DATA_TYPES.STRING,
+              disabled: draft.mapping.isMonitorLevelAccess,
+              isEmptyRow: true,
+            }];
+          }
+        }
+
+        break;
+
+      case actionTypes.MAPPING.V2.AUTO_CREATE_STRUCTURE:
+        if (!draft.mapping) break;
+        draft.mapping.v2TreeData = [];
+        draft.mapping.v2TreeData = autoCreateDestinationStructure(uploadedData, draft.mapping.requiredMappings, isCSVOrXLSX);
+
+        if (draft.mapping.v2TreeData.length === 1 &&
+          draft.mapping.v2TreeData[0].dataType === MAPPING_DATA_TYPES.OBJECTARRAY &&
+          !draft.mapping.v2TreeData[0].generate &&
+          draft.mapping.v2TreeData[0].generateDisabled) {
+          draft.mapping.isGroupedOutput = true;
+        } else {
+          draft.mapping.isGroupedOutput = false;
+        }
+
+        draft.mapping.autoCreated = true;
+        break;
+
+      case actionTypes.MAPPING.V2.TOGGLE_AUTO_CREATE_FLAG:
+        if (!draft.mapping) break;
+        draft.mapping.autoCreated = !draft.mapping.autoCreated;
+        break;
+
+      case actionTypes.MAPPING.V2.SEARCH_TREE: {
+        if (!draft.mapping || !draft.mapping.v2TreeData) break;
+
+        // set the searchKey when showKey is false
+        if (!showKey) draft.mapping.searchKey = searchKey;
+        if (searchKey === undefined && !showKey) break;
+
+        // clear the state if searchKey is empty
+        if (searchKey === '') {
+          delete draft.mapping.filteredKeys;
+          delete draft.mapping.highlightedIndex;
+          break;
+        }
+        const items = {
+          firstIndex: -1,   // stores the first index where match was found
+          expandedKeys: [],   // stores which fields need to be expanded
+          filteredKeys: [],   // stores the list of key of all the matched fields
+          tabChange: [],    // stores the all tab changes required in case of objectArray field
+        };
+
+        // search for the matching values in the generate of the mapping fields
+        if (!showKey && searchKey) {
+          searchTree(draft.mapping.v2TreeData, searchKey, filterNode, items);
+          draft.mapping.expandedKeys = items.expandedKeys;
+          // list of all the field key that matched
+          draft.mapping.filteredKeys = items.filteredKeys;
+          // index for the field to be highlightied
+          draft.mapping.highlightedIndex = items.filteredKeys ? 0 : -1;
+        // if showKey is true then search for the highlighted key to be shown
+        } else if (showKey) {
+          // current highlighted key
+          const key = draft.mapping.filteredKeys[draft.mapping.highlightedIndex];
+
+          searchTree(draft.mapping.v2TreeData, key, filterKey, items);
+          // merging two lists then
+          // removing duplicates by converting to set and then to list
+          draft.mapping.expandedKeys = [...new Set([...draft.mapping.expandedKeys, ...items.expandedKeys])];
+        }
+        // all tab changes if required in objectarray
+        items.tabChange.forEach(item => {
+          const {key, tabValue, parentExtract} = item;
+          const {node, nodeIndexInSubArray, nodeSubArray} = findNodeInTree(draft.mapping.v2TreeData, 'key', key);
+
+          if (isEmpty(node)) return;
+          nodeSubArray[nodeIndexInSubArray] = hideOtherTabRows(original(node), parentExtract);
+          nodeSubArray[nodeIndexInSubArray].activeTab = tabValue;
+        });
+        break;
+      }
+
+      case actionTypes.MAPPING.V2.UPDATE_HIGHLIGHTED_INDEX: {
+        if (!draft.mapping) break;
+
+        draft.mapping.highlightedIndex = index;
+        // clearing the seleteFields list if index is -1
+        if (index === -1) {
+          draft.mapping.filteredKeys = [];
+          delete draft.mapping.searchKey;
+        }
+        break;
+      }
+
+      case actionTypes.MAPPING.V2.TOGGLE_SEARCH: {
+        if (!draft.mapping) break;
+
+        draft.mapping.isSearchVisible = !draft.mapping.isSearchVisible;
+        break;
+      }
       default:
     }
   });
@@ -820,6 +1051,47 @@ selectors.v2MappingsTreeData = state => {
   }
 
   return state.mapping.v2TreeData || emptyArr;
+};
+
+selectors.v2MappingsExtractsTree = state => {
+  if (!state || !state.mapping) {
+    return emptyArr;
+  }
+
+  return state.mapping.extractsTree || emptyArr;
+};
+
+selectors.highlightedKey = state => {
+  if (!state || !state.mapping) {
+    return '';
+  }
+  const {highlightedIndex, filteredKeys} = state.mapping;
+
+  return filteredKeys?.[highlightedIndex] || '';
+};
+
+selectors.highlightedIndex = state => {
+  if (!state || !state.mapping) {
+    return -1;
+  }
+
+  return state.mapping.highlightedIndex;
+};
+
+selectors.filteredKeys = state => {
+  if (!state || !state.mapping) {
+    return emptyArr;
+  }
+
+  return state.mapping.filteredKeys || emptyArr;
+};
+
+selectors.searchKey = state => {
+  if (!state || !state.mapping) {
+    return;
+  }
+
+  return state.mapping.searchKey;
 };
 
 selectors.mappingChanged = state => {
@@ -902,4 +1174,12 @@ selectors.v2ActiveKey = state => {
   }
 
   return state.mapping.v2ActiveKey;
+};
+
+selectors.mappingImportSampleData = state => {
+  if (!state || !state.mapping) {
+    return;
+  }
+
+  return state.mapping.importSampleData;
 };

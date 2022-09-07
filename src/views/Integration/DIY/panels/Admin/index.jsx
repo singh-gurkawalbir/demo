@@ -37,7 +37,7 @@ const useStyles = makeStyles(theme => ({
   content: {
     width: '100%',
     height: '100%',
-    padding: theme.spacing(0, 3, 3, 0),
+    padding: theme.spacing(0, 2, 3, 0),
     overflowX: 'auto',
   },
   listItem: {
@@ -98,6 +98,7 @@ export default function AdminPanel({ integrationId, childId }) {
   const match = useRouteMatch();
   const isParent = !childId || (childId === integrationId);
   const isMonitorLevelUser = useSelector(state => selectors.isFormAMonitorLevelAccess(state, integrationId));
+  const isManageLevelUser = useSelector(state => selectors.isFormAManageLevelAccess(state, integrationId));
   const {
     isIntegrationApp,
     supportsChild,
@@ -127,12 +128,13 @@ export default function AdminPanel({ integrationId, childId }) {
       isParent,
       supportsChild,
       isMonitorLevelUser,
+      isManageLevelUser,
     });
 
     return allSections.filter(
       sec => sectionsToShow.includes(sec.id)
     );
-  }, [children, integrationId, isIntegrationApp, isMonitorLevelUser, isParent, supportsChild]);
+  }, [children, integrationId, isIntegrationApp, isMonitorLevelUser, isManageLevelUser, isParent, supportsChild]);
 
   // if someone arrives at this view without requesting a section, then we
   // handle this by redirecting them to the first available section. We can

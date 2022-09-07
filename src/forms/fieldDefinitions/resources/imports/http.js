@@ -291,6 +291,7 @@ export default {
     isLoggable: true,
     type: 'text',
     delimiter: ',',
+    omitWhenHidden: true,
     label: 'Path to records in HTTP response body',
     visibleWhenAll: [
       {
@@ -739,7 +740,7 @@ export default {
   },
   'unencrypted.feedType': {
     type: 'select',
-    label: 'Feed content type',
+    label: 'Feed type',
     helpKey: 'import.unencrypted.feedType',
     noApi: true,
     visibleWhenAll: [

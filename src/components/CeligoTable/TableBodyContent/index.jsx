@@ -29,6 +29,7 @@ const useStyles = makeStyles(({
 // through rowKey you can explicitly declare the rowData property to be considered as a unique key
 const getRowKey = (rowData, rowKey) => (rowKey && rowData[rowKey]) || rowData.key || rowData._id;
 
+/* istanbul ignore next */
 const TableMetaSanitizer = ({data, rowKey, useColumns, useRowActions = () => null}) => {
   // check for only for first rowData
   const firstRowData = data[0];
@@ -78,12 +79,14 @@ export default function TableBodyContent({
   data,
   onRowOver,
   onRowOut,
+  onRowClick,
   selectableRows,
   isSelectableRow,
   useColumns,
   useRowActions,
   filterKey,
   onSelectChange,
+  additionalConfigs,
 }
 ) {
   const classes = useStyles();
@@ -92,7 +95,7 @@ export default function TableBodyContent({
   return (
     <>
       {selectedComponent}
-      {
+      {/* istanbul ignore next */
         (process.env.NODE_ENV === 'development' || process.env.NODE_ENV === 'staging') &&
       data.length
           ? (
@@ -111,7 +114,9 @@ export default function TableBodyContent({
             rowData={rowData}
             onRowOver={onRowOver}
             onRowOut={onRowOut}
+            onRowClick={onRowClick}
             className={classes.row}
+            additionalConfigs={additionalConfigs}
         >
             <SelectableCheckBoxCell
               selectableRows={selectableRows}
@@ -131,6 +136,7 @@ export default function TableBodyContent({
                 setSelectedComponent={setSelectedComponent}
                 useRowActions={useRowActions}
                 rowData={rowData}
+                tooltip={additionalConfigs?.actionMenuTooltip}
               />
             </TableCell>
             )}

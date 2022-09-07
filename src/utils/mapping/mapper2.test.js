@@ -3,9 +3,13 @@ import util, {
   MAPPING_DATA_TYPES,
   getAllKeys,
   compareV2Mappings,
+  findAllParentExtractsForNode,
+  findNearestParentExtractForNode,
   getFinalSelectedExtracts,
-  filterExtractsNode,
+  autoCreateDestinationStructure,
+  deleteNonRequiredMappings,
   buildExtractsTree,
+  getSelectedKeys,
   findNodeInTree,
   allowDrop,
   buildV2MappingsFromTree,
@@ -13,6 +17,7 @@ import util, {
   hasV2MappingsInTreeData,
   rebuildObjectArrayNode,
   hideOtherTabRows,
+  isCsvOrXlsxResourceForMapper2,
 } from '.';
 import {generateUniqueKey} from '../string';
 
@@ -50,6 +55,22 @@ describe('v2 mapping utils', () => {
     });
   });
 
+  describe('isCsvOrXlsxResourceForMapper2 util', () => {
+    test('should not throw exception for invalid args', () => {
+      expect(isCsvOrXlsxResourceForMapper2()).toEqual(false);
+      expect(isCsvOrXlsxResourceForMapper2({})).toEqual(false);
+      expect(isCsvOrXlsxResourceForMapper2(null)).toEqual(false);
+    });
+    test('should correctly return the expected outcome', () => {
+      expect(isCsvOrXlsxResourceForMapper2({_id: 'id1', adaptorType: 'RDBMSImport'})).toEqual(false);
+      expect(isCsvOrXlsxResourceForMapper2({_id: 'id1', adaptorType: 'NetSuiteImport'})).toEqual(false);
+      expect(isCsvOrXlsxResourceForMapper2({_id: 'id1', adaptorType: 'FTPImport', file: {type: 'xml'}})).toEqual(false);
+      expect(isCsvOrXlsxResourceForMapper2({_id: 'id1', adaptorType: 'AS2Import', file: {type: 'filedefinition'}})).toEqual(false);
+      expect(isCsvOrXlsxResourceForMapper2({_id: 'id1', adaptorType: 'FTPImport', file: {type: 'csv'}})).toEqual(true);
+      expect(isCsvOrXlsxResourceForMapper2({_id: 'id1', adaptorType: 'S3Import', file: {type: 'xlsx'}})).toEqual(true);
+      expect(isCsvOrXlsxResourceForMapper2({_id: 'id1', adaptorType: 'AS2Import', file: {type: 'csv'}})).toEqual(true);
+    });
+  });
   describe('hideOtherTabRows util', () => {
     test('should not throw exception for invalid args', () => {
       expect(hideOtherTabRows()).toBeUndefined();
@@ -468,6 +489,8 @@ describe('v2 mapping utils', () => {
                 parentExtract: '$.siblings[*]',
                 parentKey: 'Ej0Ek_nw6BOxreTjsJHNH',
                 title: '',
+                hidden: true,
+                className: 'hideRow',
               },
             ],
           },
@@ -751,10 +774,8 @@ describe('v2 mapping utils', () => {
             title: '',
           },
           {
-            className: false,
             dataType: 'string',
-            hidden: false,
-            key: 'new_key',
+            key: '4UB7OJokF5bGpvc8osHYT',
             parentExtract: '$|0',
             parentKey: 'vlVDP3cjaN2cGmcSW1RCq',
             title: '',
@@ -767,6 +788,50 @@ describe('v2 mapping utils', () => {
             parentExtract: '$|1',
             parentKey: 'vlVDP3cjaN2cGmcSW1RCq',
             title: '',
+          },
+        ],
+      };
+
+      expect(rebuildObjectArrayNode(node, extract)).toEqual(newNode);
+    });
+    test('should correctly update the node children and link to first source if they were not linked already', () => {
+      const node = {
+        combinedExtract: '',
+        dataType: 'objectarray',
+        disabled: false,
+        generate: 'family_tree',
+        key: 'vlVDP3cjaN2cGmcSW1RCq',
+        title: '',
+        children: [
+          {
+            dataType: 'string',
+            key: '4UB7OJokF5bGpvc8osHYT',
+            parentKey: 'vlVDP3cjaN2cGmcSW1RCq',
+            title: '',
+            generate: 'id',
+            extract: '$.id',
+          },
+        ],
+      };
+
+      const extract = '$';
+      const newNode = {
+        combinedExtract: '$',
+        dataType: 'objectarray',
+        disabled: false,
+        generate: 'family_tree',
+        key: 'vlVDP3cjaN2cGmcSW1RCq',
+        title: '',
+        activeTab: 0,
+        children: [
+          {
+            dataType: 'string',
+            key: '4UB7OJokF5bGpvc8osHYT',
+            parentExtract: '$|0',
+            parentKey: 'vlVDP3cjaN2cGmcSW1RCq',
+            title: '',
+            generate: 'id',
+            extract: '$.id',
           },
         ],
       };
@@ -991,6 +1056,64 @@ describe('v2 mapping utils', () => {
               },
             ],
           },
+          {
+            generate: 'test12',
+            dataType: 'objectarray',
+            buildArrayHelper: [
+              {
+                extract: '$.abc',
+                mappings: [
+                  {
+                    extract: '1',
+                    generate: '1',
+                    dataType: 'string',
+                    default: '',
+                  },
+                ],
+              },
+              {
+                extract: '$.test',
+                mappings: [
+                  {
+                    generate: '2',
+                    dataType: 'objectarray',
+                    buildArrayHelper: [
+                      {
+                        extract: '$',
+                        mappings: [
+                          {
+                            extract: 'a',
+                            generate: 'a',
+                            dataType: 'string',
+                          },
+                        ],
+                      },
+                      {
+                        extract: '$',
+                        mappings: [
+                          {
+                            extract: 'b',
+                            generate: 'b',
+                            dataType: 'string',
+                          },
+                        ],
+                      },
+                      {
+                        extract: '$',
+                        mappings: [
+                          {
+                            extract: 'c',
+                            generate: 'c',
+                            dataType: 'string',
+                          },
+                        ],
+                      },
+                    ],
+                  },
+                ],
+              },
+            ],
+          },
         ],
       };
 
@@ -999,6 +1122,7 @@ describe('v2 mapping utils', () => {
         title: '',
         disabled: false,
         generate: 'my_first_name',
+        jsonPath: 'my_first_name',
         dataType: 'string',
         extract: '$.fName',
       }, {
@@ -1006,6 +1130,7 @@ describe('v2 mapping utils', () => {
         title: '',
         disabled: false,
         generate: 'my_full_name',
+        jsonPath: 'my_full_name',
         dataType: 'string',
         extract: '{{record.fName}} {{record.lName}}',
       }, {
@@ -1013,6 +1138,7 @@ describe('v2 mapping utils', () => {
         title: '',
         disabled: false,
         generate: 'my_mothers_name',
+        jsonPath: 'my_mothers_name',
         dataType: 'object',
         mappings: [{
           generate: 'first_name',
@@ -1029,6 +1155,7 @@ describe('v2 mapping utils', () => {
           parentKey: 'new_key',
           disabled: false,
           generate: 'first_name',
+          jsonPath: 'my_mothers_name.first_name',
           dataType: 'string',
           hardCodedValue: 'some mothers name',
         }, {
@@ -1037,6 +1164,7 @@ describe('v2 mapping utils', () => {
           parentKey: 'new_key',
           disabled: false,
           generate: 'last_name',
+          jsonPath: 'my_mothers_name.last_name',
           dataType: 'string',
           extract: '$.mother.lName',
         }],
@@ -1045,6 +1173,7 @@ describe('v2 mapping utils', () => {
         title: '',
         disabled: false,
         generate: 'my_many_first_names',
+        jsonPath: 'my_many_first_names',
         dataType: 'stringarray',
         buildArrayHelper: [{
           extract: '$.fname',
@@ -1059,6 +1188,7 @@ describe('v2 mapping utils', () => {
         title: '',
         disabled: false,
         generate: 'two_of_my_fav_names',
+        jsonPath: 'two_of_my_fav_names',
         dataType: 'objectarray',
         buildArrayHelper: [{
           mappings: [{
@@ -1082,30 +1212,33 @@ describe('v2 mapping utils', () => {
           key: 'new_key',
           title: '',
           parentKey: 'new_key',
-          parentExtract: '$|0',
+          parentExtract: '',
           disabled: false,
           generate: 'my_first_name',
+          jsonPath: 'two_of_my_fav_names[*].my_first_name',
           dataType: 'string',
           extract: '$.fName',
         }, {
           key: 'new_key',
           title: '',
           parentKey: 'new_key',
-          parentExtract: '$|1',
+          parentExtract: '',
           disabled: false,
           hidden: true,
           className: 'hideRow',
           generate: 'my_last_name',
+          jsonPath: 'two_of_my_fav_names[*].my_last_name',
           dataType: 'string',
           extract: '$.lName',
         }],
-        combinedExtract: '$,$',
+        combinedExtract: '',
       }, {
         key: 'new_key',
         title: '',
         disabled: false,
         generate: 'all_the_children',
         dataType: 'objectarray',
+        jsonPath: 'all_the_children',
         buildArrayHelper: [{
           extract: '$.siblings[*].children[*]',
           mappings: [{
@@ -1133,6 +1266,7 @@ describe('v2 mapping utils', () => {
           parentExtract: '$.siblings[*].children[*]',
           disabled: false,
           generate: 'full_name',
+          jsonPath: 'all_the_children[*].full_name',
           dataType: 'string',
           extract: '{{record.siblings.children.fName}} {{record.siblings.lName}}',
         }, {
@@ -1144,6 +1278,7 @@ describe('v2 mapping utils', () => {
           hidden: true,
           className: 'hideRow',
           generate: 'my_child_first_name',
+          jsonPath: 'all_the_children[*].my_child_first_name',
           dataType: 'string',
           extract: '$.children.firstName',
         }],
@@ -1153,6 +1288,7 @@ describe('v2 mapping utils', () => {
         title: '',
         disabled: false,
         generate: 'family_tree_from_mom_perspective',
+        jsonPath: 'family_tree_from_mom_perspective',
         dataType: 'object',
         mappings: [{
           generate: 'children',
@@ -1205,6 +1341,7 @@ describe('v2 mapping utils', () => {
           parentKey: 'new_key',
           disabled: false,
           generate: 'children',
+          jsonPath: 'family_tree_from_mom_perspective.children',
           dataType: 'objectarray',
           buildArrayHelper: [{
             extract: '$.siblings[*]',
@@ -1259,6 +1396,7 @@ describe('v2 mapping utils', () => {
             parentExtract: '$.siblings[*]',
             disabled: false,
             generate: 'last_name',
+            jsonPath: 'family_tree_from_mom_perspective.children[*].last_name',
             dataType: 'string',
             extract: '$.siblings.lName',
           }, {
@@ -1269,6 +1407,7 @@ describe('v2 mapping utils', () => {
             disabled: false,
             description: 'grand children mappings',
             generate: 'grandchildren',
+            jsonPath: 'family_tree_from_mom_perspective.children[*].grandchildren',
             dataType: 'objectarray',
             buildArrayHelper: [{
               extract: '$.siblings.children[*]',
@@ -1285,6 +1424,7 @@ describe('v2 mapping utils', () => {
               parentExtract: '$.siblings.children[*]',
               disabled: false,
               generate: 'first_name',
+              jsonPath: 'family_tree_from_mom_perspective.children[*].grandchildren[*].first_name',
               dataType: 'string',
               extract: '$.siblings.children.fName',
             }],
@@ -1293,22 +1433,24 @@ describe('v2 mapping utils', () => {
             key: 'new_key',
             title: '',
             parentKey: 'new_key',
-            parentExtract: '$|1',
+            parentExtract: '',
             disabled: false,
             hidden: true,
             className: 'hideRow',
             generate: 'first_name',
+            jsonPath: 'family_tree_from_mom_perspective.children[*].first_name',
             dataType: 'string',
             extract: '$.fName',
           }, {
             key: 'new_key',
             title: '',
             parentKey: 'new_key',
-            parentExtract: '$|1',
+            parentExtract: '',
             disabled: false,
             hidden: true,
             className: 'hideRow',
             generate: 'grandchildren',
+            jsonPath: 'family_tree_from_mom_perspective.children[*].grandchildren',
             dataType: 'objectarray',
             buildArrayHelper: [{
               extract: '$.children[*]',
@@ -1331,6 +1473,7 @@ describe('v2 mapping utils', () => {
               hidden: true,
               className: 'hideRow',
               generate: 'first_name',
+              jsonPath: 'family_tree_from_mom_perspective.children[*].grandchildren[*].first_name',
               dataType: 'string',
               extract: '$.children.firstName',
             }, {
@@ -1342,12 +1485,13 @@ describe('v2 mapping utils', () => {
               hidden: true,
               className: 'hideRow',
               generate: 'last_name',
+              jsonPath: 'family_tree_from_mom_perspective.children[*].grandchildren[*].last_name',
               dataType: 'string',
               extract: '$.lName',
             }],
             combinedExtract: '$.children[*]',
           }],
-          combinedExtract: '$.siblings[*],$',
+          combinedExtract: '$.siblings[*]',
         }],
       },
       {
@@ -1355,6 +1499,7 @@ describe('v2 mapping utils', () => {
         title: '',
         disabled: false,
         generate: 'items',
+        jsonPath: 'items',
         dataType: 'objectarray',
         buildArrayHelper: [{
           extract: '$.items[*]',
@@ -1367,6 +1512,7 @@ describe('v2 mapping utils', () => {
         title: '',
         disabled: false,
         generate: 'test',
+        jsonPath: 'test',
         dataType: 'objectarray',
         buildArrayHelper: [
           {
@@ -1412,6 +1558,7 @@ describe('v2 mapping utils', () => {
           parentExtract: '$.children[*]',
           disabled: false,
           generate: 'a',
+          jsonPath: 'test[*].a',
           dataType: 'string',
           extract: 'a',
         }, {
@@ -1423,6 +1570,7 @@ describe('v2 mapping utils', () => {
           hidden: true,
           className: 'hideRow',
           generate: 'b',
+          jsonPath: 'test[*].b',
           dataType: 'string',
           extract: 'b',
         },
@@ -1435,10 +1583,188 @@ describe('v2 mapping utils', () => {
           hidden: true,
           className: 'hideRow',
           generate: 'c',
+          jsonPath: 'test[*].c',
           dataType: 'string',
           extract: 'c',
         }],
         combinedExtract: '$.children[*],$.mother,$.father',
+      },
+      {
+        key: 'new_key',
+        title: '',
+        disabled: false,
+        generate: 'test12',
+        jsonPath: 'test12',
+        dataType: 'objectarray',
+        combinedExtract: '$.abc,$.test',
+        buildArrayHelper: [
+          {
+            extract: '$.abc',
+            mappings: [
+              {
+                extract: '1',
+                generate: '1',
+                dataType: 'string',
+                default: '',
+              },
+            ],
+          },
+          {
+            extract: '$.test',
+            mappings: [
+              {
+                generate: '2',
+                dataType: 'objectarray',
+                buildArrayHelper: [
+                  {
+                    extract: '$',
+                    mappings: [
+                      {
+                        extract: 'a',
+                        generate: 'a',
+                        dataType: 'string',
+                      },
+                    ],
+                  },
+                  {
+                    extract: '$',
+                    mappings: [
+                      {
+                        extract: 'b',
+                        generate: 'b',
+                        dataType: 'string',
+                      },
+                    ],
+                  },
+                  {
+                    extract: '$',
+                    mappings: [
+                      {
+                        extract: 'c',
+                        generate: 'c',
+                        dataType: 'string',
+                      },
+                    ],
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+        children: [
+          {
+            isTabNode: true,
+            key: 'new_key',
+            parentKey: 'new_key',
+            title: '',
+          },
+          {
+            dataType: 'string',
+            default: '',
+            extract: '1',
+            generate: '1',
+            jsonPath: 'test12[*].1',
+            key: 'new_key',
+            parentExtract: '$.abc',
+            parentKey: 'new_key',
+            title: '',
+            disabled: false,
+          },
+          {
+            className: 'hideRow',
+            combinedExtract: '$,$,$',
+            dataType: 'objectarray',
+            disabled: false,
+            generate: '2',
+            jsonPath: 'test12[*].2',
+            hidden: true,
+            key: 'new_key',
+            parentExtract: '$.test',
+            parentKey: 'new_key',
+            title: '',
+            buildArrayHelper: [
+              {
+                extract: '$',
+                mappings: [
+                  {
+                    extract: 'a',
+                    generate: 'a',
+                    dataType: 'string',
+                  },
+                ],
+              },
+              {
+                extract: '$',
+                mappings: [
+                  {
+                    extract: 'b',
+                    generate: 'b',
+                    dataType: 'string',
+                  },
+                ],
+              },
+              {
+                extract: '$',
+                mappings: [
+                  {
+                    extract: 'c',
+                    generate: 'c',
+                    dataType: 'string',
+                  },
+                ],
+              },
+            ],
+            children: [
+              {
+                className: 'hideRow',
+                hidden: true,
+                isTabNode: true,
+                key: 'new_key',
+                parentKey: 'new_key',
+                title: '',
+              },
+              {
+                className: 'hideRow',
+                dataType: 'string',
+                disabled: false,
+                extract: 'a',
+                generate: 'a',
+                jsonPath: 'test12[*].2[*].a',
+                hidden: true,
+                key: 'new_key',
+                parentExtract: '$|0',
+                parentKey: 'new_key',
+                title: '',
+              },
+              {
+                className: 'hideRow',
+                dataType: 'string',
+                disabled: false,
+                extract: 'b',
+                generate: 'b',
+                jsonPath: 'test12[*].2[*].b',
+                hidden: true,
+                key: 'new_key',
+                parentExtract: '$|1',
+                parentKey: 'new_key',
+                title: '',
+              },
+              {
+                className: 'hideRow',
+                dataType: 'string',
+                disabled: false,
+                extract: 'c',
+                generate: 'c',
+                jsonPath: 'test12[*].2[*].c',
+                hidden: true,
+                key: 'new_key',
+                parentExtract: '$|2',
+                parentKey: 'new_key',
+                title: '',
+              },
+            ],
+          },
+        ],
       },
       ];
 
@@ -1499,6 +1825,7 @@ describe('v2 mapping utils', () => {
           disabled: true,
           extract: '$.fName',
           generate: 'first_name',
+          jsonPath: 'first_name',
           key: 'new_key',
           parentExtract: '$[*]|0',
           parentKey: 'new_key',
@@ -1508,6 +1835,7 @@ describe('v2 mapping utils', () => {
           disabled: true,
           extract: '$.lName',
           generate: 'last_name',
+          jsonPath: 'last_name',
           key: 'new_key',
           parentExtract: '$[*]|0',
           parentKey: 'new_key',
@@ -1517,6 +1845,7 @@ describe('v2 mapping utils', () => {
           disabled: true,
           extract: '$.childFName',
           generate: 'child_first_name',
+          jsonPath: 'child_first_name',
           key: 'new_key',
           parentExtract: '$[*]|0',
           parentKey: 'new_key',
@@ -1524,6 +1853,7 @@ describe('v2 mapping utils', () => {
         }],
         combinedExtract: '$[*]',
         dataType: 'objectarray',
+        jsonPath: '',
         disabled: true,
         key: 'new_key',
         title: '',
@@ -1531,18 +1861,77 @@ describe('v2 mapping utils', () => {
 
       expect(buildTreeFromV2Mappings({importResource, isGroupedSampleData: true, disabled: true})).toEqual(v2TreeData);
     });
+    test('should correctly generate default tree structure for csv/xlsx resource with no existing mappings', () => {
+      generateUniqueKey.mockReturnValue('new_key');
+
+      const importResource = {
+        _id: 'id1',
+        adaptorType: 'FTPImport',
+        file: {type: 'csv'},
+      };
+
+      const v2TreeData = [{
+        key: 'new_key',
+        title: '',
+        dataType: MAPPING_DATA_TYPES.OBJECTARRAY,
+        generateDisabled: true,
+        disabled: false,
+        children: [
+          {
+            key: 'new_key',
+            title: '',
+            dataType: MAPPING_DATA_TYPES.STRING,
+            disabled: false,
+            isEmptyRow: true,
+          },
+        ],
+      }];
+
+      expect(buildTreeFromV2Mappings({importResource, isGroupedSampleData: false, disabled: false})).toEqual(v2TreeData);
+    });
   });
   describe('hasV2MappingsInTreeData util', () => {
     test('should not throw exception for invalid args', () => {
       expect(hasV2MappingsInTreeData()).toEqual(false);
-      expect(hasV2MappingsInTreeData(null)).toEqual(false);
-      expect(hasV2MappingsInTreeData([])).toEqual(false);
+      expect(hasV2MappingsInTreeData([], [])).toEqual(false);
     });
-    test('should return false if only one default row exists', () => {
-      expect(hasV2MappingsInTreeData([{key: 'key1', isEmptyRow: true}])).toEqual(false);
-    });
-    test('should return true if tree data exists', () => {
+    test('should return true if no required mappings exist and any extract is present', () => {
+      const mappings1 = [{key: 'key1', extract: '$.test'}];
+      const mappings2 = [{key: 'key1', generateDisabled: true, extract: '$.test', children: [{key: 'c1', isEmptyRow: true}]}];
+
+      expect(hasV2MappingsInTreeData(mappings1)).toEqual(true);
+      expect(hasV2MappingsInTreeData(mappings2)).toEqual(true);
       expect(hasV2MappingsInTreeData([{key: 'key1', extract: 'e1', generate: 'g1', dataType: 'string'}])).toEqual(true);
+    });
+    test('should return true if no required mappings exist and any generate is present', () => {
+      const mappings1 = [{key: 'key1', generate: 'test'}];
+      const mappings2 = [{key: 'key1', children: [{key: 'c1', generate: 'test'}]}];
+
+      expect(hasV2MappingsInTreeData(mappings1)).toEqual(true);
+      expect(hasV2MappingsInTreeData(mappings2)).toEqual(true);
+    });
+    test('should return true if required mappings exist and any extra generate is present', () => {
+      const mappings1 = [{key: 'key1', isRequired: true, generate: 'test'}, {key: 'key2', generate: 'address'}];
+      const mappings2 = [{key: 'key1', isRequired: true, generate: 'test', children: [{key: 'c1', generate: 'address'}]}];
+
+      expect(hasV2MappingsInTreeData(mappings1)).toEqual(true);
+      expect(hasV2MappingsInTreeData(mappings2)).toEqual(true);
+    });
+    test('should return true if required mappings exist and extract is present in those', () => {
+      const mappings = [{key: 'key1', isRequired: true, generate: 'test', extract: '$.abc'}];
+
+      expect(hasV2MappingsInTreeData(mappings)).toEqual(true);
+    });
+    test('should return false if no valid mappings exist', () => {
+      const mappings1 = [{key: 'key1'}];
+      const mappings2 = [{key: 'key1', isRequired: true, generate: 'test'}];
+      const mappings3 = [{key: 'key1', isRequired: true, generate: 'test', children: [{key: 'c1', isEmptyRow: true}]}];
+
+      expect(hasV2MappingsInTreeData(mappings1)).toEqual(false);
+      expect(hasV2MappingsInTreeData(mappings2)).toEqual(false);
+      expect(hasV2MappingsInTreeData(mappings3)).toEqual(false);
+      expect(hasV2MappingsInTreeData([{key: 'key1', isEmptyRow: true}])).toEqual(false);
+      expect(hasV2MappingsInTreeData([{key: 'key1', generateDisabled: true, children: [{key: 'c1', isEmptyRow: true}]}])).toEqual(false);
     });
   });
   describe('buildV2MappingsFromTree util', () => {
@@ -1552,6 +1941,21 @@ describe('v2 mapping utils', () => {
     });
     test('should correctly return the v2 mappings structure based on passed tree data for record based output', () => {
       const v2TreeData = [{
+        key: 'new_key',
+        title: '',
+        disabled: false,
+        generate: 'dummy_generate',
+        dataType: 'string',
+      },
+      {
+        key: 'new_key',
+        title: '',
+        disabled: false,
+        generate: 'arraynames',
+        dataType: 'stringarray',
+        hardCodedValue: null,
+      },
+      {
         key: 'new_key',
         title: '',
         disabled: false,
@@ -1910,32 +2314,50 @@ describe('v2 mapping utils', () => {
       const mappingsToSave = [
         {
           conditional: {when: undefined},
+          generate: 'dummy_generate',
+          dataType: 'string',
+          status: 'Draft',
+        },
+        {
+          conditional: {when: undefined},
+          generate: 'arraynames',
+          dataType: 'stringarray',
+          hardCodedValue: null,
+          status: 'Active',
+        },
+        {
+          conditional: {when: undefined},
           generate: 'my_first_name',
           dataType: 'string',
           hardCodedValue: 'hard coded value',
+          status: 'Active',
         },
         {
           conditional: {when: undefined},
           generate: 'my_full_name',
           dataType: 'string',
           extract: '{{record.fName}} {{record.lName}}',
+          status: 'Active',
         },
         {
           conditional: {when: undefined},
           generate: 'my_mothers_name',
           dataType: 'object',
+          status: 'Active',
           mappings: [
             {
               conditional: {when: undefined},
               generate: 'first_name',
               dataType: 'string',
               hardCodedValue: 'some mother name',
+              status: 'Active',
             },
             {
               conditional: {when: undefined},
               generate: 'last_name',
               dataType: 'string',
               extract: '$.mother.lName',
+              status: 'Active',
             },
           ],
         },
@@ -1943,6 +2365,7 @@ describe('v2 mapping utils', () => {
           conditional: {when: undefined},
           generate: 'my_many_first_names',
           dataType: 'stringarray',
+          status: 'Active',
           buildArrayHelper: [
             { extract: '$.fname' },
             { extract: '$.altFirstName'},
@@ -1953,26 +2376,31 @@ describe('v2 mapping utils', () => {
           conditional: {when: undefined},
           generate: 'two_of_my_fav_names',
           dataType: 'objectarray',
+          status: 'Active',
           buildArrayHelper: [
             {
               extract: '$',
+              status: 'Active',
               mappings: [
                 {
                   conditional: {when: undefined},
                   generate: 'my_first_name',
                   dataType: 'string',
                   extract: '$.fName',
+                  status: 'Active',
                 },
               ],
             },
             {
               extract: '$',
+              status: 'Active',
               mappings: [
                 {
                   conditional: {when: undefined},
                   generate: 'my_last_name',
                   dataType: 'string',
                   extract: '$.lName',
+                  status: 'Active',
                 },
               ],
             },
@@ -1982,26 +2410,31 @@ describe('v2 mapping utils', () => {
           conditional: {when: undefined},
           generate: 'all_the_children',
           dataType: 'objectarray',
+          status: 'Active',
           buildArrayHelper: [
             {
               extract: '$.siblings[*].children[*]',
+              status: 'Active',
               mappings: [
                 {
                   conditional: {when: undefined},
                   generate: 'full_name',
                   dataType: 'string',
                   extract: '{{record.siblings.children.fName}} {{record.siblings.lName}}',
+                  status: 'Active',
                 },
               ],
             },
             {
               extract: '$.children[*]',
+              status: 'Active',
               mappings: [
                 {
                   conditional: {when: undefined},
                   generate: 'my_child_first_name',
                   dataType: 'string',
                   extract: '$.children.firstName',
+                  status: 'Active',
                 },
               ],
             },
@@ -2011,34 +2444,41 @@ describe('v2 mapping utils', () => {
           conditional: {when: undefined},
           generate: 'family_tree_from_mom_perspective',
           dataType: 'object',
+          status: 'Active',
           mappings: [
             {
               conditional: {when: undefined},
               generate: 'children',
               dataType: 'objectarray',
+              status: 'Active',
               buildArrayHelper: [
                 {
                   extract: '$.siblings[*]',
+                  status: 'Active',
                   mappings: [
                     {
                       conditional: {when: undefined},
                       generate: 'last_name',
                       dataType: 'string',
                       extract: '$.siblings.lName',
+                      status: 'Active',
                     },
                     {
                       conditional: {when: undefined},
                       generate: 'grandchildren',
                       dataType: 'objectarray',
+                      status: 'Active',
                       buildArrayHelper: [
                         {
                           extract: '$.siblings.children[*]',
+                          status: 'Active',
                           mappings: [
                             {
                               conditional: {when: 'extract_not_empty'},
                               generate: 'first_name',
                               dataType: 'string',
                               hardCodedValue: 'new hard coded',
+                              status: 'Active',
                             },
                           ],
                         },
@@ -2048,33 +2488,39 @@ describe('v2 mapping utils', () => {
                 },
                 {
                   extract: '$',
+                  status: 'Active',
                   mappings: [
                     {
                       conditional: {when: undefined},
                       generate: 'first_name',
                       dataType: 'string',
                       extract: '$.fName',
+                      status: 'Active',
                     },
                     {
                       conditional: {when: undefined},
                       generate: 'grandchildren',
                       dataType: 'objectarray',
                       description: 'grand children mappings',
+                      status: 'Active',
                       buildArrayHelper: [
                         {
                           extract: '$.children[*]',
+                          status: 'Active',
                           mappings: [
                             {
                               conditional: {when: undefined},
                               generate: 'first_name',
                               dataType: 'string',
                               lookupName: 'lookup1',
+                              status: 'Active',
                             },
                             {
                               conditional: {when: undefined},
                               generate: 'last_name',
                               dataType: 'string',
                               extract: '$.lName',
+                              status: 'Active',
                             },
                           ],
                         },
@@ -2088,7 +2534,7 @@ describe('v2 mapping utils', () => {
         },
       ];
 
-      expect(buildV2MappingsFromTree({v2TreeData})).toEqual(mappingsToSave);
+      expect(buildV2MappingsFromTree({v2TreeData, lookups: [{name: 'lookup1'}]})).toEqual(mappingsToSave);
     });
     test('should correctly return the v2 mappings structure based on passed tree data for row based output', () => {
       const v2TreeData = [{
@@ -2150,27 +2596,32 @@ describe('v2 mapping utils', () => {
           dataType: 'objectarray',
           conditional: {when: undefined},
           description: 'root mappings',
+          status: 'Active',
           buildArrayHelper: [
             {
               extract: '$[*]',
+              status: 'Active',
               mappings: [
                 {
                   generate: 'first_name',
                   dataType: 'string',
                   extract: '$.fName',
                   conditional: {when: undefined},
+                  status: 'Active',
                 },
                 {
                   generate: 'last_name',
                   dataType: 'string',
                   conditional: {when: undefined},
                   hardCodedValue: 'last name',
+                  status: 'Active',
                 },
                 {
                   generate: 'child_first_name',
                   dataType: 'string',
                   extract: '$.childFName',
                   conditional: {when: undefined},
+                  status: 'Active',
                 },
               ],
             },
@@ -2408,6 +2859,392 @@ describe('v2 mapping utils', () => {
       expect(findNodeInTree(treeData, 'key', 'dummy')).toEqual({});
     });
   });
+  describe('autoCreateDestinationStructure util', () => {
+    test('should correctly return tree data for non csv/xlsx resource with required mappings', () => {
+      generateUniqueKey.mockReturnValue('new_key');
+      const importSampleData = {
+        id: '123',
+        rowNumber: 3,
+        files: [],
+        custom: {},
+        customerId: {value: 'abcd'},
+        details: [{description: 'desc', orderType: {value: 'SO'}}],
+      };
+      const requiredMappings = ['id', 'details[*].orderType.value', 'customerId.value'];
+
+      const treeData = [
+        {
+          dataType: 'string',
+          generate: 'id',
+          isRequired: true,
+          jsonPath: 'id',
+          key: 'new_key',
+          title: '',
+        },
+        {
+          dataType: 'number',
+          generate: 'rowNumber',
+          isRequired: false,
+          jsonPath: 'rowNumber',
+          key: 'new_key',
+          title: '',
+        },
+        {
+          children: [
+            {
+              dataType: 'string',
+              isEmptyRow: true,
+              key: 'new_key',
+              parentKey: 'new_key',
+              title: '',
+            },
+          ],
+          dataType: 'objectarray',
+          generate: 'files',
+          isRequired: false,
+          jsonPath: 'files',
+          key: 'new_key',
+          title: '',
+        },
+        {
+          children: [
+            {
+              dataType: 'string',
+              isEmptyRow: true,
+              key: 'new_key',
+              parentKey: 'new_key',
+              title: '',
+            },
+          ],
+          dataType: 'object',
+          generate: 'custom',
+          isRequired: false,
+          jsonPath: 'custom',
+          key: 'new_key',
+          title: '',
+        },
+        {
+          children: [
+            {
+              dataType: 'string',
+              generate: 'value',
+              isRequired: true,
+              jsonPath: 'customerId.value',
+              key: 'new_key',
+              parentKey: 'new_key',
+              title: '',
+            },
+          ],
+          dataType: 'object',
+          generate: 'customerId',
+          isRequired: true,
+          jsonPath: 'customerId',
+          key: 'new_key',
+          title: '',
+        },
+        {
+          children: [
+            {
+              dataType: 'string',
+              generate: 'description',
+              isRequired: false,
+              jsonPath: 'details[*].description',
+              key: 'new_key',
+              parentKey: 'new_key',
+              title: '',
+            },
+            {
+              children: [
+                {
+                  dataType: 'string',
+                  generate: 'value',
+                  isRequired: true,
+                  jsonPath: 'details[*].orderType.value',
+                  key: 'new_key',
+                  parentKey: 'new_key',
+                  title: '',
+                },
+              ],
+              dataType: 'object',
+              generate: 'orderType',
+              isRequired: true,
+              jsonPath: 'details[*].orderType',
+              key: 'new_key',
+              parentKey: 'new_key',
+              title: '',
+            },
+          ],
+          dataType: 'objectarray',
+          generate: 'details',
+          isRequired: true,
+          jsonPath: 'details',
+          key: 'new_key',
+          title: '',
+        },
+      ];
+
+      expect(autoCreateDestinationStructure(importSampleData, requiredMappings)).toEqual(treeData);
+    });
+    test('should correctly return tree data for csv/xlsx resource', () => {
+      generateUniqueKey.mockReturnValue('new_key');
+      const importSampleData = {
+        id: '123',
+        rowNumber: 3,
+        code: null};
+
+      const treeData = [
+        {
+          children: [
+            {
+              dataType: 'string',
+              generate: 'id',
+              isRequired: false,
+              jsonPath: 'id',
+              key: 'new_key',
+              title: '',
+            },
+            {
+              dataType: 'number',
+              generate: 'rowNumber',
+              isRequired: false,
+              jsonPath: 'rowNumber',
+              key: 'new_key',
+              title: '',
+            },
+            {
+              dataType: 'string',
+              generate: 'code',
+              isRequired: false,
+              jsonPath: 'code',
+              key: 'new_key',
+              title: '',
+            },
+          ],
+          dataType: 'objectarray',
+          generateDisabled: true,
+          key: 'new_key',
+          title: '',
+        },
+      ];
+
+      expect(autoCreateDestinationStructure(importSampleData, [], true)).toEqual(treeData);
+    });
+  });
+  describe('deleteNonRequiredMappings util', () => {
+    test('should correctly delete all mappings if no required mappings exist', () => {
+      const treeData = [
+        {
+          dataType: 'string',
+          generate: 'id',
+          isRequired: false,
+          jsonPath: 'id',
+          key: 'new_key',
+          title: '',
+        },
+        {
+          dataType: 'number',
+          generate: 'rowNumber',
+          isRequired: false,
+          jsonPath: 'rowNumber',
+          key: 'new_key',
+          title: '',
+        },
+        {
+          children: [
+            {
+              dataType: 'string',
+              isEmptyRow: true,
+              key: 'new_key',
+              parentKey: 'new_key',
+              title: '',
+            },
+          ],
+          dataType: 'objectarray',
+          generate: 'files',
+          isRequired: false,
+          jsonPath: 'files[*]',
+          key: 'new_key',
+          title: '',
+        },
+      ];
+
+      expect(deleteNonRequiredMappings(treeData)).toEqual([]);
+    });
+    test('should correctly delete only non-required mappings if required mappings also exist', () => {
+      const treeData = [
+        {
+          dataType: 'string',
+          generate: 'id',
+          isRequired: true,
+          jsonPath: 'id',
+          key: 'new_key',
+          title: '',
+        },
+        {
+          dataType: 'number',
+          generate: 'rowNumber',
+          isRequired: false,
+          jsonPath: 'rowNumber',
+          key: 'new_key',
+          title: '',
+        },
+        {
+          children: [
+            {
+              dataType: 'string',
+              isEmptyRow: true,
+              key: 'new_key',
+              parentKey: 'new_key',
+              title: '',
+            },
+          ],
+          dataType: 'objectarray',
+          generate: 'files',
+          isRequired: false,
+          jsonPath: 'files[*]',
+          key: 'new_key',
+          title: '',
+        },
+        {
+          children: [
+            {
+              dataType: 'string',
+              isEmptyRow: true,
+              key: 'new_key',
+              parentKey: 'new_key',
+              title: '',
+            },
+          ],
+          dataType: 'object',
+          generate: 'custom',
+          isRequired: false,
+          jsonPath: 'custom',
+          key: 'new_key',
+          title: '',
+        },
+        {
+          children: [
+            {
+              dataType: 'string',
+              generate: 'value',
+              isRequired: true,
+              jsonPath: 'customerId.value',
+              key: 'new_key',
+              parentKey: 'new_key',
+              title: '',
+            },
+          ],
+          dataType: 'object',
+          generate: 'customerId',
+          isRequired: true,
+          jsonPath: 'customerId',
+          key: 'new_key',
+          title: '',
+        },
+        {
+          children: [
+            {
+              dataType: 'string',
+              generate: 'description',
+              isRequired: false,
+              jsonPath: 'details[*].description',
+              key: 'new_key',
+              parentKey: 'new_key',
+              title: '',
+            },
+            {
+              children: [
+                {
+                  dataType: 'string',
+                  generate: 'value',
+                  isRequired: true,
+                  jsonPath: 'details[*].orderType.value',
+                  key: 'new_key',
+                  parentKey: 'new_key',
+                  title: '',
+                },
+              ],
+              dataType: 'object',
+              generate: 'orderType',
+              isRequired: true,
+              jsonPath: 'details[*].orderType',
+              key: 'new_key',
+              parentKey: 'new_key',
+              title: '',
+            },
+          ],
+          dataType: 'objectarray',
+          generate: 'details',
+          isRequired: true,
+          jsonPath: 'details[*]',
+          key: 'new_key',
+          title: '',
+        },
+      ];
+
+      const newTreeData = [
+        {
+          dataType: 'string',
+          generate: 'id',
+          isRequired: true,
+          jsonPath: 'id',
+          key: 'new_key',
+          title: '',
+        },
+        {
+          children: [
+            {
+              dataType: 'string',
+              generate: 'value',
+              isRequired: true,
+              jsonPath: 'customerId.value',
+              key: 'new_key',
+              parentKey: 'new_key',
+              title: '',
+            },
+          ],
+          dataType: 'object',
+          generate: 'customerId',
+          isRequired: true,
+          jsonPath: 'customerId',
+          key: 'new_key',
+          title: '',
+        },
+        {
+          children: [
+            {
+              children: [
+                {
+                  dataType: 'string',
+                  generate: 'value',
+                  isRequired: true,
+                  jsonPath: 'details[*].orderType.value',
+                  key: 'new_key',
+                  parentKey: 'new_key',
+                  title: '',
+                },
+              ],
+              dataType: 'object',
+              generate: 'orderType',
+              isRequired: true,
+              jsonPath: 'details[*].orderType',
+              key: 'new_key',
+              parentKey: 'new_key',
+              title: '',
+            },
+          ],
+          dataType: 'objectarray',
+          generate: 'details',
+          isRequired: true,
+          jsonPath: 'details[*]',
+          key: 'new_key',
+          title: '',
+        },
+      ];
+
+      expect(deleteNonRequiredMappings(treeData)).toEqual(newTreeData);
+    });
+  });
   describe('buildExtractsTree util', () => {
     test('should not throw exception for invalid args', () => {
       expect(buildExtractsTree()).toEqual([]);
@@ -2633,7 +3470,7 @@ describe('v2 mapping utils', () => {
         },
       ];
 
-      expect(buildExtractsTree(sampleData)).toEqual({treeData, selectedKeys: []});
+      expect(buildExtractsTree(sampleData)).toEqual(treeData);
     });
     test('should correctly return the tree structure based on passed sample data', () => {
       generateUniqueKey.mockReturnValue('new_key');
@@ -2722,36 +3559,194 @@ describe('v2 mapping utils', () => {
         },
       ];
 
-      const selectedValues = ['motherFName'];
-
-      expect(buildExtractsTree(sampleData, selectedValues)).toEqual({treeData, selectedKeys: ['new_key']});
+      expect(buildExtractsTree(sampleData)).toEqual(treeData);
     });
   });
-  describe('filterExtractsNode util', () => {
+  describe('getSelectedKeys util', () => {
     test('should not throw exception for invalid args', () => {
-      expect(filterExtractsNode()).toEqual(false);
+      expect(getSelectedKeys()).toEqual([]);
+      expect(getSelectedKeys(null, null, null)).toEqual(null);
     });
-    test('should return false if node is already selected', () => {
-      expect(filterExtractsNode({selected: true, jsonPath: 'lname'}, '', 'lname')).toEqual(false);
+    test('should correctly return the selected keys based on selected values', () => {
+      const extractsTreeNode = {
+        dataType: '[object]',
+        key: 'key1',
+        propName: '$',
+        children: [
+          {
+            dataType: 'string',
+            jsonPath: 'fName',
+            key: 'c1',
+            parentKey: 'key1',
+            propName: 'fName',
+          },
+          {
+            dataType: 'string',
+            jsonPath: 'lName',
+            key: 'c2',
+            parentKey: 'key1',
+            propName: 'lName',
+          },
+          {
+            dataType: 'string',
+            jsonPath: 'motherFName',
+            key: 'c3',
+            parentKey: 'key1',
+            propName: 'motherFName',
+          },
+          {
+            dataType: 'string',
+            jsonPath: 'motherLName',
+            key: 'c4',
+            parentKey: 'key1',
+            propName: 'motherLName',
+          },
+          {
+            dataType: 'string',
+            jsonPath: 'childFName',
+            key: 'c5',
+            parentKey: 'key1',
+            propName: 'childFName',
+            children: [{
+              dataType: 'string',
+              jsonPath: 'finalChild',
+              key: 'c5-1',
+              parentKey: 'c5',
+              propName: 'finalChild',
+            }],
+          },
+        ],
+      };
+
+      expect(getSelectedKeys(extractsTreeNode, ['motherFName', 'finalChild'])).toEqual(['c3', 'c5-1']);
     });
-    test('should return false if extract value and new input value is ame', () => {
-      expect(filterExtractsNode({jsonPath: 'lname'}, 'lname', 'lname')).toEqual(false);
+  });
+  describe('findAllParentExtractsForNode util', () => {
+    const treeData = [
+      {
+        key: 'k1',
+        extract: '$.name',
+        dataType: 'string',
+      },
+      {
+        key: 'k2',
+        combinedExtract: '$.siblings[*]',
+        dataType: 'objectarray',
+        children: [{
+          key: 'c1',
+          combinedExtract: '$.siblings.children[*]',
+          parentKey: 'k2',
+          parentExtract: '$.siblings[*]',
+          dataType: 'objectarray',
+          children: [{
+            key: 'c2',
+            extract: '$.siblings.children.qty',
+            parentExtract: '$.siblings.children[*]',
+            parentKey: 'c1',
+            dataType: 'string',
+          }],
+        }],
+      },
+      {
+        key: 'k3',
+        combinedExtract: '$.items[*]',
+        dataType: 'objectarray',
+        children: [{
+          key: 'k3-c1',
+          parentKey: 'k3',
+          parentExtract: '$.items[*]',
+          dataType: 'object',
+          children: [{
+            key: 'k3-c2',
+            extract: '$.items.qty',
+            parentKey: 'k3-c1',
+            dataType: 'string',
+          }],
+        }],
+      },
+      {
+        key: 'k4',
+        combinedExtract: '$[*]',
+        dataType: 'objectarray',
+        children: [{
+          key: 'k4-c1',
+          parentKey: 'k4',
+          parentExtract: '$[*]|0',
+          dataType: 'object',
+          children: [{
+            key: 'k4-c2',
+            extract: '$.qty',
+            parentKey: 'k4-c1',
+            dataType: 'string',
+          }],
+        }],
+      },
+    ];
+
+    test('should not throw exception for invalid args', () => {
+      expect(findAllParentExtractsForNode()).toEqual([]);
+      expect(findAllParentExtractsForNode(null, null, null)).toEqual(null);
     });
-    test('should return false if no match is found', () => {
-      expect(filterExtractsNode({jsonPath: 'lname'}, '', '$.firstname')).toEqual(false);
-      expect(filterExtractsNode({jsonPath: 'object.name'}, '', 'firstname')).toEqual(false);
-      expect(filterExtractsNode({jsonPath: 'sports'}, '', 'name,$.lname,$[*].age')).toEqual(false);
+    test('should correctly return parent extracts for give node', () => {
+      expect(findAllParentExtractsForNode(treeData, [], 'k1')).toEqual([]);
+      expect(findAllParentExtractsForNode(treeData, [], 'c2')).toEqual(['$.siblings[*]', '$.siblings.children[*]']);
+      expect(findAllParentExtractsForNode(treeData, [], 'k3-c2')).toEqual(['$.items[*]']);
+      expect(findAllParentExtractsForNode(treeData, [], 'k4-c2')).toEqual(['$[*]']);
     });
-    test('should return true if any match is found in multiple input values', () => {
-      expect(filterExtractsNode({jsonPath: 'age'}, '', 'name,$.lname,$[*].age')).toEqual(true);
-      expect(filterExtractsNode({jsonPath: 'firstname'}, '', 'name,$.lname,$[*].age')).toEqual(true);
-      expect(filterExtractsNode({jsonPath: 'object.LNAME'}, '', 'name,$.lname,$[*].age')).toEqual(true);
+  });
+  describe('findNearestParentExtractForNode util', () => {
+    const v2TreeData = [
+      {
+        key: 'k1',
+        extract: '$.name',
+        dataType: 'string',
+      },
+      {
+        key: 'k2',
+        combinedExtract: '$.siblings[*]',
+        dataType: 'objectarray',
+        children: [{
+          key: 'c1',
+          combinedExtract: '$.siblings.children[*]',
+          parentKey: 'k2',
+          parentExtract: '$.siblings[*]',
+          dataType: 'objectarray',
+          children: [{
+            key: 'c2',
+            extract: '$.siblings.children.qty',
+            parentExtract: '$.siblings.children[*]',
+            parentKey: 'c1',
+            dataType: 'string',
+          }],
+        }],
+      },
+      {
+        key: 'k3',
+        combinedExtract: '$.items[*]',
+        dataType: 'objectarray',
+        children: [{
+          key: 'k3-c1',
+          parentKey: 'k3',
+          parentExtract: '$.items[*]',
+          dataType: 'object',
+          children: [{
+            key: 'k3-c2',
+            extract: '$.items.qty',
+            parentKey: 'k3-c1',
+            dataType: 'string',
+          }],
+        }],
+      },
+    ];
+
+    test('should not throw exception for invalid args', () => {
+      expect(findNearestParentExtractForNode()).toEqual('');
+      expect(findNearestParentExtractForNode(null, null)).toEqual('');
     });
-    test('should return false for child node if input value ends with [*]', () => {
-      expect(filterExtractsNode({jsonPath: 'siblings[*].lname'}, '', '$.siblings[*]')).toEqual(false);
-    });
-    test('should return true for parent node if input value ends with [*]', () => {
-      expect(filterExtractsNode({jsonPath: 'siblings[*]'}, '', '$.siblings[*]')).toEqual(true);
+    test('should correctly return parent extracts for give node', () => {
+      expect(findNearestParentExtractForNode(v2TreeData, 'k1')).toEqual('');
+      expect(findNearestParentExtractForNode(v2TreeData, 'c2')).toEqual('$.siblings.children[*]');
+      expect(findNearestParentExtractForNode(v2TreeData, 'k3-c2')).toEqual('$.items[*]');
     });
   });
   describe('getFinalSelectedExtracts util', () => {
@@ -2864,7 +3859,7 @@ describe('v2 mapping utils', () => {
 
       expect(compareV2Mappings(newData, origData)).toEqual(true);
     });
-    test('should return true if children were removed', () => {
+    test('should return true if all children were removed', () => {
       const origData = [
         {
           key: 'key1',
@@ -2888,6 +3883,48 @@ describe('v2 mapping utils', () => {
           generate: 'fname',
           dataType: MAPPING_DATA_TYPES.OBJECT,
           copySource: 'yes',
+        },
+      ];
+
+      expect(compareV2Mappings(newData, origData)).toEqual(true);
+    });
+    test('should return true if some children were removed', () => {
+      const origData = [
+        {
+          key: 'key1',
+          combinedExtract: '$.fname[*]',
+          generate: 'fname',
+          dataType: MAPPING_DATA_TYPES.OBJECT,
+          children: [
+            {
+              key: 'c1',
+              extract: '$.child1',
+              generate: 'child1',
+              dataType: MAPPING_DATA_TYPES.STRING,
+            },
+            {
+              key: 'c2',
+              extract: '$.child2',
+              generate: 'child2',
+              dataType: MAPPING_DATA_TYPES.STRING,
+            },
+          ],
+        },
+      ];
+      const newData = [
+        {
+          key: 'key1',
+          combinedExtract: '$.fname[*]',
+          generate: 'fname',
+          dataType: MAPPING_DATA_TYPES.OBJECT,
+          children: [
+            {
+              key: 'c1',
+              extract: '$.child1',
+              generate: 'child1',
+              dataType: MAPPING_DATA_TYPES.STRING,
+            },
+          ],
         },
       ];
 

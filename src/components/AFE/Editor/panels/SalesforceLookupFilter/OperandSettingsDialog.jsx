@@ -4,7 +4,7 @@ import DynaForm from '../../../../DynaForm';
 import DynaSubmit from '../../../../DynaForm/DynaSubmit';
 import useFormInitWithPermissions from '../../../../../hooks/useFormInitWithPermissions';
 import { TextButton } from '../../../../Buttons';
-import { emptyObject } from '../../../../../utils/constants';
+import { emptyObject } from '../../../../../constants';
 import ActionGroup from '../../../../ActionGroup';
 
 export default function OperandSettingsDialog({

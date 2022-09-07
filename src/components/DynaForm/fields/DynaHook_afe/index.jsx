@@ -19,11 +19,11 @@ import ScriptView from './ScriptView';
 const useStyles = makeStyles(theme => ({
   wrapper: {
     display: 'flex',
+    alignItems: 'flex-start',
   },
   field: {
     width: '50%',
     paddingRight: theme.spacing(1),
-    overflow: 'hidden',
     '& >.MuiFormControl-root': {
       width: '100%',
     },
@@ -162,6 +162,7 @@ export default function DynaHook_afe({
               isValid={isValidHookField('function')}
               value={value.function}
               onFieldChange={handleFieldChange('function')}
+              helpKey="api.function"
             />
           </div>
           {hookType === 'stack' && (

@@ -29,7 +29,7 @@ export function* checkHasIntegrations({ connectionId }) {
   if (response) {
     yield put(
       actions.suiteScript.account.receivedHasIntegrations(
-        connection.netsuite.account,
+        connection?.netsuite?.account,
         response.hasIntegrations
       )
     );
