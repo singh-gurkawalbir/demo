@@ -2036,6 +2036,17 @@ const errorManager = {
       filters,
     }),
   },
+  retries: {
+    request: ({ flowId, resourceId }) =>
+      action(actionTypes.ERROR_MANAGER.RETRIES.REQUEST, { flowId, resourceId }),
+    received: ({ resourceId, retries }) =>
+      action(actionTypes.ERROR_MANAGER.RETRIES.RECEIVED, {
+        resourceId,
+        retries,
+      }),
+    clear: () =>
+      action(actionTypes.ERROR_MANAGER.RETRIES.CLEAR),
+  },
   retryData: {
     request: ({ flowId, resourceId, retryId }) =>
       action(actionTypes.ERROR_MANAGER.RETRY_DATA.REQUEST, {

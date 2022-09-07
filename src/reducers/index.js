@@ -7196,3 +7196,26 @@ selectors.allAliases = createSelector(
 
     return aliasesFilter?.sort ? allAliases.sort(comparer(aliasesFilter.sort)) : allAliases;
   });
+
+selectors.retryUsersList = createSelector(
+  selectors.allUsersList,
+  (state, resourceId) => state?.[resourceId]?.data || emptyList,
+  (allUsersList, retryJobs) => {
+    const allUsersTriggeredRetry = retryJobs.reduce((job, users) => {
+      if (!job.triggeredBy) {
+        return users;
+      }
+
+      return users.includes(job.triggeredBy) ? users : [...users, job.triggeredBy];
+    }, []);
+
+    return allUsersTriggeredRetry.map(user => {
+      const userObject = allUsersList.find(userOb => userOb.sharedWithUser?._id === user);
+
+      return ({
+        _id: user,
+        name: userObject?.sharedWithUser?.name,
+      });
+    });
+  }
+);

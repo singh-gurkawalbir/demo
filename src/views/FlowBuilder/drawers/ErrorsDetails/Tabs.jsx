@@ -1,6 +1,8 @@
 import React, { useCallback } from 'react';
 import { useRouteMatch } from 'react-router-dom';
 import { makeStyles, Tabs, Tab } from '@material-ui/core';
+import InfoIconButton from '../../../../components/InfoIconButton';
+import messageStore from '../../../../utils/messageStore';
 import { useEditRetryConfirmDialog } from '../../../../components/ErrorList/ErrorTable/hooks/useEditRetryConfirmDialog';
 
 const useStyles = makeStyles(theme => ({
@@ -31,6 +33,16 @@ const tabs = [
     path: 'resolved',
     label: 'Resolved errors',
     dataTest: 'flow-builder-resolved-errors',
+  },
+  {
+    path: 'retries',
+    label: (
+      <div>
+        <span>Retries</span>
+        <InfoIconButton info={messageStore('RETRIES_TAB_INFO')} placement="bottom" />
+      </div>
+    ),
+    dataTest: 'flow-builder-retried-errors',
   }];
 
 export default function ErrorDetailsTabs({flowId, onChange}) {

@@ -33,7 +33,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function ErrorDrawerAction({ flowId }) {
+export default function ErrorDrawerAction({ flowId, onChange }) {
   const classes = useStyles();
   const match = useRouteMatch();
   const { resourceId } = match?.params || {};
@@ -56,7 +56,8 @@ export default function ErrorDrawerAction({ flowId }) {
       <div className={classes.retryContainer}>
         <Divider orientation className={classes.divider} />
         <Typography variant="body2" component="div" className={classes.status}>
-          Retrying complete
+          <span>Retrying complete. </span>
+          <span onClick={() => onChange('retries')}>View results</span>
         </Typography>
       </div>
       )}
