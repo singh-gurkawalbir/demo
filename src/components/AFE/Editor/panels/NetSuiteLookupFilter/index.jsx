@@ -24,7 +24,6 @@ import {
 } from './util';
 import { selectors } from '../../../../../reducers';
 import OperandSettingsDialog from './OperandSettingsDialog';
-import { fieldTypeMap } from './operators';
 import actions from '../../../../../actions';
 import { useIsLoggable } from '../../../../IsLoggableContextProvider';
 
@@ -297,7 +296,7 @@ export default function NetSuiteLookupFilterPanel({ id, editorId, filters: propF
       filters.push({
         id: v.id,
         label: v.name,
-        type: fieldTypeMap[v.type],
+        type: 'string',
         input(rule, name) {
           const ruleId = getFilterRuleId(rule);
 

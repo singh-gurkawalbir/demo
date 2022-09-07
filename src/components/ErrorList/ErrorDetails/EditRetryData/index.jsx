@@ -4,10 +4,12 @@ import { makeStyles } from '@material-ui/core';
 import CodeEditor from '../../../CodeEditor';
 import actions from '../../../../actions';
 import { selectors } from '../../../../reducers';
+import Spinner from '../../../Spinner';
 
 const useStyles = makeStyles(() => ({
   container: {
     flexGrow: 1,
+    position: 'relative',
   },
 }));
 
@@ -41,13 +43,19 @@ export default function EditRetryData({
 
   return (
     <div className={classes.container} data-private>
-      <CodeEditor
-        name={`${retryId}-edit`}
-        value={retryData}
-        mode="json"
-        onChange={onChange}
-        readOnly={isFlowDisabled}
-    />
+      {
+        retryStatus === 'requested'
+          ? (<Spinner centerAll size="large" />)
+          : (
+            <CodeEditor
+              name={`${retryId}-edit`}
+              value={retryData}
+              mode="json"
+              onChange={onChange}
+              readOnly={isFlowDisabled}
+            />
+          )
+      }
     </div>
   );
 }

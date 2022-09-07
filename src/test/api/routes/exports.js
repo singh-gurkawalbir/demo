@@ -40,4 +40,21 @@ export default API.get('/api/exports',
       },
       adaptorType: 'NetSuiteExport',
     },
+    {
+      _id: '5e5558331c056a75e6df19b2',
+      name: 'Export Name',
+      _connectionId: '62f24d45f8b63672312cd561',
+    },
+    {
+      _id: '5eddd8331c056a75e6df19b2',
+      name: 'Export Name',
+      type: 'distributed',
+      webhook: { provider: 'someprovider'},
+    },
+    {
+      _id: '5ebbb8331c056a75e6df19b2',
+      name: 'Export Name',
+      type: 'WebhookExport',
+      webhook: { provider: 'someprovider'},
+    },
   ]);
