@@ -69,7 +69,6 @@ export default function Help({ className, helpKey, helpText, escapeUnsecuredDoma
         placement="right"
         id="helpBubble"
         open={open}
-        disablePortal
         popperRef={popperRef}
         anchorEl={anchorEl}>
         <HelpContent {...rest} updatePosition={() => { popperRef.current.update(); }}>
