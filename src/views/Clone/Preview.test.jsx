@@ -2,13 +2,14 @@
 import React from 'react';
 import { MemoryRouter, Route } from 'react-router-dom';
 // eslint-disable-next-line import/no-extraneous-dependencies
-import { screen, cleanup, waitForElementToBeRemoved } from '@testing-library/react';
+import { screen, cleanup, waitForElementToBeRemoved, waitFor } from '@testing-library/react';
 import * as reactRedux from 'react-redux';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import userEvent from '@testing-library/user-event';
 import ClonePreview from './Preview';
-import { reduxStore, renderWithProviders } from '../../test/test-utils';
+import { renderWithProviders } from '../../test/test-utils';
 import { runServer } from '../../test/api/server';
+import { getCreatedStore } from '../../store';
 
 let initialStore;
 
@@ -236,7 +237,7 @@ describe('Clone Preview', () => {
   let useDispatchSpy;
 
   beforeEach(() => {
-    initialStore = reduxStore;
+    initialStore = getCreatedStore();
     useDispatchSpy = jest.spyOn(reactRedux, 'useDispatch');
     mockDispatchFn = jest.fn(action => {
       switch (action.type) {
@@ -529,6 +530,7 @@ describe('Clone Preview', () => {
 
     expect(cloneIntegrationButtonNode).toBeInTheDocument();
     userEvent.click(cloneIntegrationButtonNode);
+    await waitFor(() => expect(cloneIntegrationButtonNode).not.toBeInTheDocument());
   }, 30000);
   test('Should able to access the Flow clone preview page', async () => {
     const props = {
@@ -686,10 +688,6 @@ describe('Clone Preview', () => {
     expect(connectionsButtonNode).toHaveAttribute('aria-expanded', 'false');
     userEvent.click(connectionsButtonNode);
     expect(connectionsButtonNode).toHaveAttribute('aria-expanded', 'true');
-    const cloneFlowButtonNode = screen.getByRole('button', {name: 'Clone flow'});
-
-    expect(cloneFlowButtonNode).toBeInTheDocument();
-    userEvent.click(cloneFlowButtonNode);
   }, 30000);
   test('Should able to access the Integration App clone preview page', async () => {
     const props = {
@@ -897,6 +895,7 @@ describe('Clone Preview', () => {
 
     expect(cloneIntegrationButtonNode).toBeInTheDocument();
     userEvent.click(cloneIntegrationButtonNode);
+    await waitFor(() => expect(cloneIntegrationButtonNode).not.toBeInTheDocument());
   }, 30000);
   test('Should able to access the Integration clone preview page of type sandbox', async () => {
     const props = {
@@ -1069,6 +1068,7 @@ describe('Clone Preview', () => {
 
     expect(cloneIntegrationButtonNode).toBeInTheDocument();
     userEvent.click(cloneIntegrationButtonNode);
+    await waitFor(() => expect(cloneIntegrationButtonNode).not.toBeInTheDocument());
   }, 30000);
   test('Should able to acess the Integration Clone preview page by using created components which has Integrations', async () => {
     const props = {
