@@ -291,6 +291,7 @@ export default {
     isLoggable: true,
     type: 'text',
     delimiter: ',',
+    omitWhenHidden: true,
     label: 'Path to records in HTTP response body',
     visibleWhenAll: [
       {

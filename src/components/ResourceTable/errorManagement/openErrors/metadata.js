@@ -1,5 +1,5 @@
 import React from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, shallowEqual } from 'react-redux';
 import {selectors} from '../../../../reducers';
 import Retry from '../actions/Retry';
 import Resolve from '../actions/Resolve';
@@ -8,7 +8,7 @@ import ViewHttpRequest from '../actions/ViewHttpRequest';
 import ViewHttpResponse from '../actions/ViewHttpResponse';
 import EditRetryData from '../actions/EditRetry';
 import DownloadRetryData from '../actions/DownloadRetry';
-import SelectError from '../cells/SelectError';
+import SelectError from '../../../ErrorList/ErrorDetails/ErrorDetailActions/SelectError';
 import SelectSource from '../cells/SelectSource';
 import SelectClassification from '../cells/SelectClassification';
 import SelectDate from '../cells/SelectDate';
@@ -20,9 +20,21 @@ import ErrorMessage from '../cells/ErrorMessage';
 import { useGetTableContext } from '../../../CeligoTable/TableContext';
 import ViewNetsuiteRequest from '../actions/ViewNetsuiteRequest';
 import ViewNetsuiteResponse from '../actions/ViewNetsuiteResponse';
+import { FILTER_KEYS } from '../../../../utils/errorManagement';
+import messageStore from '../../../../utils/messageStore';
 
 export default {
   rowKey: 'errorId',
+  additionalConfigs: {
+    actionMenuTooltip: messageStore('VIEW_ACTIONS_HOVER_MESSAGE'),
+    IsActiveRow: ({ rowData }) => {
+      const errorFilter = useSelector(
+        state => selectors.filter(state, FILTER_KEYS.OPEN), shallowEqual
+      );
+
+      return errorFilter?.activeErrorId === rowData.errorId;
+    },
+  },
   useColumns: () => [
     {
       key: 'selectAll',

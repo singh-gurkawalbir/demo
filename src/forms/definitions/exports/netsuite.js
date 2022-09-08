@@ -537,10 +537,6 @@ export default {
           min: 1,
           max: 100,
         },
-        matchesRegEx: {
-          pattern: '^[\\d]+$',
-          message: 'Only numbers allowed',
-        },
       },
     },
   },
