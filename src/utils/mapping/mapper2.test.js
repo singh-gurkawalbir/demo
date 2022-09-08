@@ -465,7 +465,6 @@ describe('v2 mapping utils', () => {
             parentExtract: '$.siblings[*]',
             parentKey: 'Zl1hv7Mhjejx9aFNASGFB',
             title: '',
-            activeTab: 0,
             children: [
               {
                 isTabNode: true,

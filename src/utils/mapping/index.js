@@ -613,13 +613,10 @@ export const hideOtherTabRows = (node, newTabExtract, hidden) => {
     // for child object-array nodes, only make first tab visible
     if (clonedChild.dataType === MAPPING_DATA_TYPES.OBJECTARRAY) {
       const childParentExtract = clonedChild.combinedExtract?.split(',') || [];
+      const extractIndex = clonedChild.activeTab || 0;
 
       // update children and un-hide only first tab
-      const updatedChild = hideOtherTabRows(clonedChild, getUniqueExtractId(childParentExtract[0], 0));
-
-      updatedChild.activeTab = 0;
-
-      return updatedChild;
+      return hideOtherTabRows(clonedChild, getUniqueExtractId(childParentExtract[extractIndex], extractIndex));
     }
 
     // update children as well
@@ -1882,6 +1879,8 @@ export const getAllKeys = data => {
 // if the parent jsonPath has updated,
 // we need to update all its children jsonPaths as well
 export const updateChildrenJSONPath = parentNode => {
+  if (!parentNode) return parentNode;
+
   const {jsonPath: parentJsonPath, dataType: parentDataType, children} = parentNode;
 
   if (isEmpty(children) || !parentJsonPath) return parentNode;
