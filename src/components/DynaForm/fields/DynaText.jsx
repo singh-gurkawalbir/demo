@@ -72,6 +72,7 @@ function DynaText(props) {
     multiline,
     delimiter,
     rowsMax,
+    maxLength,
     startAdornment,
     endAdornment,
     readOnly,
@@ -142,6 +143,9 @@ function DynaText(props) {
         step: '1',
       };
     }
+    if (maxLength) {
+      props.inputProps = { maxLength };
+    }
 
     return props;
   }, [
@@ -150,6 +154,7 @@ function DynaText(props) {
     inputType,
     readOnly,
     startAdornment,
+    maxLength,
   ]);
 
   return (

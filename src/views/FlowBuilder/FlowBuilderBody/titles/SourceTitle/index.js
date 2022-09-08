@@ -1,9 +1,12 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core';
 import { useStoreState } from 'react-flow-renderer';
+import { useSelector } from 'react-redux';
 import Title from '../Title';
+import { useFlowContext } from '../../Context';
 import { FB_SOURCE_COLUMN_WIDTH } from '../../../../../constants';
 import { useHandleAddGenerator } from '../../../hooks';
+import { selectors } from '../../../../../reducers';
 
 const minTitleWidth = 140;
 
@@ -32,16 +35,14 @@ const SourceTitle = () => {
     xOffset = columnWidth - titleWidth;
   }
 
+  const { flowId } = useFlowContext();
+  const isDataLoaderFlow = useSelector(state => selectors.isDataLoaderFlow(state, flowId));
   const classes = useStyles({ xOffset, titleWidth });
   const handleAddGenerator = useHandleAddGenerator();
 
   return (
-    <Title
-      className={classes.sourceTitle}
-      onClick={handleAddGenerator}
-      type="generator"
-    >
-      SOURCES
+    <Title className={classes.sourceTitle} onClick={handleAddGenerator} type="generator">
+      {isDataLoaderFlow ? 'SOURCE' : 'SOURCES'}
     </Title>
   );
 };

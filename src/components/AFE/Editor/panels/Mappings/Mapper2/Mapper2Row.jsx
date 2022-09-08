@@ -33,8 +33,12 @@ const useStyles = makeStyles(theme => ({
     },
     '&>div': {
       width: '100%',
+      border: '3px solid transparent',
     },
     '&:nth-of-type(2)': {
+      '&>div': {
+        border: 'none',
+      },
       flex: 1,
       '& .MuiFilledInput-multiline': {
         minHeight: theme.spacing(5),

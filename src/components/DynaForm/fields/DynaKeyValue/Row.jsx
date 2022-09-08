@@ -165,6 +165,7 @@ export default function KeyValueRow(props) {
           disabled={disabled || (!(r[keyName] || r[valueName]))}
           id={`delete-${index}`}
           data-test={`delete-${index}`}
+          tooltip="Delete"
           onClick={handleDelete(r.key)}>
           <TrashIcon />
         </ActionButton>
