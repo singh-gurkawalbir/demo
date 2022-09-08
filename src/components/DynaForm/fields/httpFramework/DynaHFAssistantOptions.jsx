@@ -162,13 +162,14 @@ function DynaAssistantOptions(props) {
   }, [id, value]);
   function onFieldChange(id, value) {
     onFieldChangeFn(id, value);
+    const resourceTypeSingular = resourceType === 'imports' ? 'import' : 'export';
+    const versions = assistantData?.[resourceTypeSingular]?.versions;
 
     if (
       ['version', 'resource', 'operation', 'exportType'].includes(
         assistantFieldType
       )
     ) {
-      const versions = (resourceType === 'imports' ? assistantData?.import?.versions : assistantData?.export?.versions);
       let fieldDependencyMap = {
         exports: {
           resource: ['operation', 'exportType'],
@@ -226,6 +227,14 @@ function DynaAssistantOptions(props) {
           op: 'replace',
           path: '/assistantMetadata/operationChanged',
           value: true,
+        });
+      }
+
+      if (assistantFieldType === 'resource' && versions.length === 1) {
+        patch.push({
+          op: 'replace',
+          path: '/assistantMetadata/version',
+          value: versions[0]._id,
         });
       }
 

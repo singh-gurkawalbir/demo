@@ -41,7 +41,7 @@ function basicFieldsMeta({ assistant, assistantConfig, assistantData }) {
 
   return Object.keys(fieldDefinitions).map(fieldId => {
     if (fieldId === 'version') {
-      // fieldDefinitions[fieldId].visible = versions.length > 1;
+      fieldDefinitions[fieldId].visible = versions.length > 1;
 
       if (!fieldDefinitions[fieldId].value && versions.length === 1) {
         fieldDefinitions[fieldId].value = versions[0]._id;

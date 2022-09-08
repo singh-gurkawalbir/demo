@@ -68,6 +68,8 @@ export const getExportMetadata = (connectorMetadata, connectionVersion) => {
   if (connectionVersion) {
     versions = versions.filter(v => v.version === connectionVersion);
   }
+  exportData.versions = versions;
+
   if (!versions || !versions.length) {
     versions = [
       {
