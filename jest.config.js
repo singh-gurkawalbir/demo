@@ -27,7 +27,7 @@ module.exports = {
     'src/components/RawHtml/**/*.{js,jsx}',
     'src/components/PanelHeader/**/*.{js,jsx}',
   ],
-  setupFilesAfterEnv: ['<rootDir>/jest/setup.js', 'jest-date-mock', 'core-js'],
+  setupFilesAfterEnv: ['<rootDir>/jest/setup.js', 'jest-date-mock', 'core-js', 'jest-canvas-mock'],
   coverageThreshold: {
     global: {
       statements: 84,

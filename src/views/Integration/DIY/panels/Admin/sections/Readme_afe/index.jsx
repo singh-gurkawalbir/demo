@@ -9,6 +9,7 @@ import actions from '../../../../../../../actions';
 import EditorDrawer from '../../../../../../../components/AFE/Drawer';
 import { TextButton } from '../../../../../../../components/Buttons';
 import { buildDrawerUrl, drawerPaths } from '../../../../../../../utils/rightDrawer';
+import infoText from '../../../../../../../components/Help/infoText';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -27,7 +28,7 @@ const useStyles = makeStyles(theme => ({
     paddingRight: 0,
   },
   editReadmebutton: {
-    marginRight: -20,
+    marginRight: -theme.spacing(1),
   },
 }));
 
@@ -62,7 +63,7 @@ export default function ReadmeSection({ integrationId }) {
 
   return (
     <>
-      <PanelHeader title="Readme" className={classes.panelHeaderReadme}>
+      <PanelHeader title="Readme" infoText={infoText.Readme} className={classes.panelHeaderReadme}>
         <TextButton
           className={classes.editReadmebutton}
           data-test="form-editor-action"

@@ -1,6 +1,6 @@
 import { makeStyles, useTheme } from '@material-ui/core';
-import React, { useCallback, useEffect, useMemo } from 'react';
-import ReactFlow, { MiniMap, Controls, ReactFlowProvider} from 'react-flow-renderer';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import ReactFlow, { MiniMap, ReactFlowProvider } from 'react-flow-renderer';
 import { useDispatch, useSelector } from 'react-redux';
 import actions from '../../../actions';
 import { selectors } from '../../../reducers';
@@ -19,10 +19,11 @@ import SourceTitle from './titles/SourceTitle';
 import DestinationTitle from './titles/DestinationTitle';
 import { useSelectorMemo } from '../../../hooks';
 import useMenuDrawerWidth from '../../../hooks/useMenuDrawerWidth';
-import { ExportFlowStateButton } from './ExportFlowStateButton';
+// import { ExportFlowStateButton } from './ExportFlowStateButton';
 import EmptyNode from './CustomNodes/EmptyNode';
 import LoadingNotification from '../../../App/LoadingNotification';
 import { GRAPH_ELEMENTS_TYPE } from '../../../constants';
+import { CanvasControls } from './CanvasControls';
 
 const useCalcCanvasStyle = fullscreen => {
   const theme = useTheme();
@@ -30,9 +31,12 @@ const useCalcCanvasStyle = fullscreen => {
   const height = fullscreen
     ? 0
     : bottomDrawerHeight + theme.appBarHeight + theme.pageBarHeight;
-  const calcCanvasStyle = useMemo(() => ({
-    height: `calc(100vh - ${height}px)`,
-  }), [height]);
+  const calcCanvasStyle = useMemo(
+    () => ({
+      height: `calc(100vh - ${height}px)`,
+    }),
+    [height]
+  );
 
   return calcCanvasStyle;
 };
@@ -93,6 +97,12 @@ const useStyles = makeStyles(theme => ({
   sourceTitle: {
     marginLeft: -100,
   },
+  canPan: {
+    cursor: 'grab',
+  },
+  isPanning: {
+    cursor: 'grabbing',
+  },
 }));
 
 const nodeTypes = {
@@ -113,23 +123,42 @@ export function Canvas({ flowId, fullscreen }) {
   const menuDrawerWidth = useMenuDrawerWidth();
   const drawerWidth = fullscreen ? 0 : menuDrawerWidth;
   const classes = useStyles(drawerWidth);
+  const [showMiniMap, setShowMiniMap] = useState(true);
+  const [isPanning, setIsPanning] = useState(false);
   const calcCanvasStyle = useCalcCanvasStyle(fullscreen);
-  const mergedFlow = useSelectorMemo(selectors.makeFlowDataForFlowBuilder, flowId);
+  const mergedFlow = useSelectorMemo(
+    selectors.makeFlowDataForFlowBuilder,
+    flowId
+  );
 
-  const elements = useSelector(state => selectors.fbGraphElements(state, flowId));
-  const dragStepId = useSelector(state => selectors.fbDragStepId(state, flowId));
-  const dragStepIdInProgress = useSelector(state => selectors.fbDragStepIdInProgress(state, flowId));
-  const elementsMap = useSelector(state => selectors.fbGraphElementsMap(state, flowId));
-  const isViewMode = useSelector(state => selectors.isFlowViewMode(state, mergedFlow._integrationId, flowId));
-  const isDataLoaderFlow = useSelector(state => selectors.isDataLoaderFlow(state, flowId));
-  const isFlowSaveInProgress = useSelector(state => selectors.isFlowSaveInProgress(state, flowId));
+  const elements = useSelector(state =>
+    selectors.fbGraphElements(state, flowId)
+  );
+  const dragStepId = useSelector(state =>
+    selectors.fbDragStepId(state, flowId)
+  );
+  const dragStepIdInProgress = useSelector(state =>
+    selectors.fbDragStepIdInProgress(state, flowId)
+  );
+  const elementsMap = useSelector(state =>
+    selectors.fbGraphElementsMap(state, flowId)
+  );
+  const isViewMode = useSelector(state =>
+    selectors.isFlowViewMode(state, mergedFlow._integrationId, flowId)
+  );
+  const isDataLoaderFlow = useSelector(state =>
+    selectors.isDataLoaderFlow(state, flowId)
+  );
+  const isFlowSaveInProgress = useSelector(state =>
+    selectors.isFlowSaveInProgress(state, flowId)
+  );
 
-  const updatedLayout = useMemo(() =>
-    layoutElements(elements, 'LR'),
-  [elements]);
+  const updatedLayout = useMemo(() => layoutElements(elements, 'LR'), [
+    elements,
+  ]);
 
   useEffect(() => {
-    dispatch(actions.flow.initializeFlowGraph(flowId, mergedFlow, isViewMode || isDataLoaderFlow));
+    dispatch(actions.flow.initializeFlowGraph(flowId, mergedFlow, isViewMode, isDataLoaderFlow));
   }, [mergedFlow, dispatch, flowId, isViewMode, isDataLoaderFlow]);
 
   const handleNodeDragStart = (evt, source) => {
@@ -139,6 +168,7 @@ export function Canvas({ flowId, fullscreen }) {
   const handleNodeDragStop = () => {
     dispatch(actions.flow.mergeBranch(flowId));
   };
+
   const handleNodeDrag = () => {
     if (dragStepIdInProgress) {
       dispatch(actions.flow.setDragInProgress(flowId));
@@ -149,11 +179,18 @@ export function Canvas({ flowId, fullscreen }) {
     dispatch(actions.flow.addNewPGStep(flowId));
   }, [dispatch, flowId]);
 
+  const handleMoveEnd = () => setIsPanning(false);
+  const handleMove = () => {
+    if (!isPanning) {
+      setIsPanning(true);
+    }
+  };
+
   return (
-    <div
-      className={classes.canvasContainer}
-      style={calcCanvasStyle}>
-      <LoadingNotification message={isFlowSaveInProgress ? 'Saving flow' : ''} />
+    <div className={classes.canvasContainer} style={calcCanvasStyle}>
+      <LoadingNotification
+        message={isFlowSaveInProgress ? 'Saving flow' : ''}
+      />
       <div className={classes.canvas}>
         {/* CANVAS START */}
         <ReactFlowProvider>
@@ -166,11 +203,13 @@ export function Canvas({ flowId, fullscreen }) {
             flowId={flowId}
             dragNodeId={dragStepId}
           >
-
             <ReactFlow
+              className={isPanning ? classes.isPanning : classes.canPan}
               onNodeDragStart={handleNodeDragStart}
               onNodeDragStop={handleNodeDragStop}
               onNodeDrag={handleNodeDrag}
+              onMoveEnd={handleMoveEnd}
+              onMove={handleMove}
               nodesDraggable={false}
               minZoom={0.4}
               panOnScroll
@@ -178,28 +217,33 @@ export function Canvas({ flowId, fullscreen }) {
               nodeTypes={nodeTypes}
               edgeTypes={edgeTypes}
               preventScrolling={false}
+              onlyRenderVisibleElements
             >
               <SourceTitle onClick={handleAddNewSource} />
               <DestinationTitle />
               <BackgroundPanel />
-              <MiniMap
-                nodeClassName={node => {
-                  switch (node.type) {
-                    case GRAPH_ELEMENTS_TYPE.TERMINAL:
-                    case GRAPH_ELEMENTS_TYPE.ROUTER:
-                    case GRAPH_ELEMENTS_TYPE.MERGE:
-                    case GRAPH_ELEMENTS_TYPE.EMPTY:
+              {showMiniMap && (
+                <MiniMap
+                  nodeClassName={node => {
+                    switch (node.type) {
+                      case GRAPH_ELEMENTS_TYPE.TERMINAL:
+                      case GRAPH_ELEMENTS_TYPE.ROUTER:
+                      case GRAPH_ELEMENTS_TYPE.MERGE:
+                      case GRAPH_ELEMENTS_TYPE.EMPTY:
+                        return classes.minimap;
 
-                      return classes.minimap;
-
-                    default:
-                      return classes.terminal;
-                  }
-                }}
-                nodeBorderRadius={75}
+                      default:
+                        return classes.terminal;
+                    }
+                  }}
+                  nodeBorderRadius={75}
+                />
+              )}
+              {/* <ExportFlowStateButton flowId={flowId} /> */}
+              <CanvasControls
+                showMiniMap={showMiniMap}
+                toggleMiniMap={() => setShowMiniMap(oldState => !oldState)}
               />
-              <ExportFlowStateButton flowId={flowId} />
-              <Controls showInteractive={false} />
             </ReactFlow>
           </FlowProvider>
         </ReactFlowProvider>
@@ -212,9 +256,12 @@ export function Canvas({ flowId, fullscreen }) {
 export default function FlowBuilderBody({ flowId, integrationId }) {
   const dispatch = useDispatch();
 
-  useEffect(() => (() => {
-    dispatch(actions.bottomDrawer.clear());
-  }), [dispatch]);
+  useEffect(
+    () => () => {
+      dispatch(actions.bottomDrawer.clear());
+    },
+    [dispatch]
+  );
 
   return (
     <>

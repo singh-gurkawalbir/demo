@@ -1,16 +1,19 @@
+/* eslint-disable no-restricted-syntax */
 import React, {useCallback, useEffect} from 'react';
 import Tree from 'rc-tree';
 import { useSelector, useDispatch } from 'react-redux';
 import { IconButton } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
+import clsx from 'clsx';
 import ArrowUpIcon from '../../../../../icons/ArrowUpIcon';
 import ArrowDownIcon from '../../../../../icons/ArrowDownIcon';
 import {SortableDragHandle} from '../../../../../Sortable/SortableHandle';
-import {allowDrop} from '../../../../../../utils/mapping';
+import {allowDrop, filterNode} from '../../../../../../utils/mapping';
 import {selectors} from '../../../../../../reducers';
 import Mapper2Row from './Mapper2Row';
 import actions from '../../../../../../actions';
 import useEnqueueSnackbar from '../../../../../../hooks/enqueueSnackbar';
+import SearchBar from './SearchBar';
 
 const useStyles = makeStyles(theme => ({
   treeRoot: {
@@ -63,6 +66,11 @@ const useStyles = makeStyles(theme => ({
         },
       },
     },
+    '& .filter-node': {
+      '& .rc-tree-title>div>div:first-child>.MuiFormControl-root': {
+        borderColor: theme.palette.primary.lightest,
+      },
+    },
     '& .rc-tree-switcher,.rc-tree-draggable-icon': {
       alignSelf: 'center',
       margin: theme.spacing(1, 0),
@@ -112,6 +120,9 @@ const useStyles = makeStyles(theme => ({
     paddingTop: theme.spacing(3),
     overflow: 'auto',
   },
+  addSearchBar: {
+    paddingTop: theme.spacing(6),
+  },
 })
 );
 
@@ -148,6 +159,7 @@ export default function Mapper2({editorId}) {
   const isAutoCreateSuccess = useSelector(state => selectors.mapping(state).autoCreated);
   const expandedKeys = useSelector(state => selectors.v2MappingExpandedKeys(state));
   const activeKey = useSelector(state => selectors.v2ActiveKey(state));
+  const searchKey = useSelector(state => selectors.searchKey(state));
 
   useEffect(() => {
     if (isAutoCreateSuccess) {
@@ -162,6 +174,8 @@ export default function Mapper2({editorId}) {
   const onDropHandler = useCallback(info => {
     dispatch(actions.mapping.v2.dropRow(info));
   }, [dispatch]);
+
+  const filterTreeNode = useCallback(node => filterNode(node, searchKey), [searchKey]);
 
   // this function ensures the row can be dragged via the drag handle only
   // and not from any other place
@@ -180,24 +194,28 @@ export default function Mapper2({editorId}) {
   }, [dispatch]);
 
   return (
-    <div className={classes.mappingDrawerContent}>
-      <Tree
-        className={classes.treeRoot}
-        titleRender={Row}
-        treeData={treeData}
-        showLine
-        selectable={false}
-        defaultExpandAll={false}
-        expandedKeys={expandedKeys}
-        onExpand={onExpandHandler}
-        switcherIcon={SwitcherIcon}
-        allowDrop={allowDrop}
-        onDrop={onDropHandler}
-        activeKey={activeKey}
-        draggable={dragConfig}
-        onDragStart={onDragStart}
-        disabled={disabled}
-            />
-    </div>
+    <>
+      {searchKey !== undefined && <SearchBar />}
+      <div className={clsx(classes.mappingDrawerContent, {[classes.addSearchBar]: searchKey !== undefined})}>
+        <Tree
+          className={classes.treeRoot}
+          titleRender={Row}
+          treeData={treeData}
+          showLine
+          selectable={false}
+          defaultExpandAll={false}
+          expandedKeys={expandedKeys}
+          onExpand={onExpandHandler}
+          switcherIcon={SwitcherIcon}
+          allowDrop={allowDrop}
+          onDrop={onDropHandler}
+          activeKey={activeKey}
+          draggable={dragConfig}
+          onDragStart={onDragStart}
+          disabled={disabled}
+          filterTreeNode={filterTreeNode}
+              />
+      </div>
+    </>
   );
 }

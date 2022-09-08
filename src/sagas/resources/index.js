@@ -647,7 +647,7 @@ export function* patchResource({ resourceType, id, patchSet, options = {}, async
 
       yield put(actions.resource.received(resourceType, resourceUpdated));
     } else {
-      yield put(actions.resource.request('integrations', id));
+      yield put(actions.resource.request(resourceType, id));
     }
   } catch (error) {
     // TODO: What should we do for 4xx errors? where the resource to put/post
