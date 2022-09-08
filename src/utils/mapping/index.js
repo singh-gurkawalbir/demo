@@ -1338,6 +1338,148 @@ export const searchTree = (mappings, key, filterFunc, items) => {
   items.firstIndex = firstIndex;    // setting the firstIndex before returning
 };
 
+const getNewNode = (defaultProps = {}) => {
+  const { key, generate, jsonPath, dataType = MAPPING_DATA_TYPES.STRING, parentKey, parentExtract, children: defaultChildren } = defaultProps;
+  const newKey = key || generateUniqueKey();
+  const needEmptyChildNode = [MAPPING_DATA_TYPES.OBJECTARRAY, MAPPING_DATA_TYPES.OBJECT].includes(defaultProps.dataType);
+  const newChildNode = {
+    key: generateUniqueKey(),
+    title: '',
+    parentKey: newKey,
+    parentExtract: '',
+    dataType: MAPPING_DATA_TYPES.STRING,
+    hidden: true,
+    className: 'hideRow',
+  };
+  const node = {
+    key: newKey,
+    title: '',
+    generate,
+    jsonPath,
+    dataType,
+    ...(needEmptyChildNode ? { children: defaultChildren || [newChildNode] } : {}),
+    parentKey,
+    parentExtract,
+    className: 'hideRow',
+    hidden: true,
+  };
+
+  return node;
+};
+
+export const constructNodeWithEmptyGenerates = node => {
+  if (!node) return getNewNode();
+  const { combinedExtract = '', children, dataType, jsonPath, generate, parentKey, parentExtract } = node;
+  const defaultProps = { generate, jsonPath, dataType, parentKey, parentExtract };
+  const newKey = generateUniqueKey();
+
+  if (!children) {
+    // node is a non object/objectarray type
+    // so construct a new empty node with node props
+    return getNewNode(defaultProps);
+  }
+  const splitExtracts = combinedExtract.split(',');
+  const firstExtract = getUniqueExtractId(splitExtracts[0], 0);
+  const firstExtractChildNodes = children.filter(child => child.parentExtract === firstExtract);
+  const emptyChildren = firstExtractChildNodes.map(child => constructNodeWithEmptyGenerates({...child, parentKey: newKey, parentExtract: firstExtract}));
+
+  // Incase of children, replace children with empty children
+  return getNewNode({...defaultProps, children: emptyChildren, key: newKey });
+};
+
+export const hasEmptyRow = node => !node.generate && !node.extract && node.dataType === 'string';
+
+const getNewChildrenToUpdate = (parentNode, destinationNode) => {
+  if (!parentNode || !destinationNode || !destinationNode.parentKey || !destinationNode.generate) {
+    return [];
+  }
+
+  const splitExtracts = parentNode.combinedExtract?.split(',') || [];
+
+  if (splitExtracts.length) {
+    const extractsToAddEmptyDestinationNode = [];
+
+    splitExtracts.forEach(extract => {
+      const hasDestNode = parentNode.children.some(childNode => {
+        const { dataType, generate, parentExtract } = childNode;
+
+        return dataType === destinationNode.dataType && generate === destinationNode.generate && parentExtract === extract;
+      });
+
+      if (!hasDestNode) {
+        extractsToAddEmptyDestinationNode.push(extract);
+      }
+    });
+    const newChildren = extractsToAddEmptyDestinationNode.map(e => {
+      const newGenNode = constructNodeWithEmptyGenerates({...destinationNode, parentExtract: e, parentKey: parentNode.key});
+
+      return newGenNode;
+    });
+
+    return newChildren;
+  }
+
+  // check  for no extracts
+  const hasDestNode = parentNode.children.some(childNode => {
+    const { dataType, generate } = childNode;
+
+    return dataType === destinationNode.dataType && generate === destinationNode.generate;
+  });
+
+  if (!hasDestNode) {
+    return [constructNodeWithEmptyGenerates({...destinationNode, parentKey: parentNode.key})];
+  }
+
+  return [];
+};
+
+// recursively look for all parentNodes for a given node
+export const findAllParentNodesForNode = (treeData, nodeKey, output = []) => {
+  const {node} = findNodeInTree(treeData, 'key', nodeKey);
+
+  if (!node) return output;
+
+  findAllParentNodesForNode(treeData, node.parentKey, output);
+
+  output.push(node);
+
+  return output;
+};
+
+export const findAllPossibleDestinationMatchingLeafNodes = (matchingNodes = [], leafNodes = []) => {
+  if (!matchingNodes.length || !leafNodes.length) return leafNodes;
+
+  const [currentNodeMatch] = matchingNodes;
+
+  let nextLevelLeafNodes = [];
+
+  leafNodes.forEach(node => {
+    const matchedChildren = node.children.filter(childNode => childNode.generate === currentNodeMatch.generate && childNode.dataType === currentNodeMatch.dataType);
+
+    nextLevelLeafNodes = [...nextLevelLeafNodes, ...matchedChildren];
+  });
+
+  return findAllPossibleDestinationMatchingLeafNodes(matchingNodes.slice(1), nextLevelLeafNodes);
+};
+
+export const rebuildMappingOnDestinationUpdate = (treeData, newNode) => {
+  const clonedTreeData = deepClone(treeData);
+
+  // fetch all parent nodes from top to bottom
+  const [topNode, ...restOfParentNodes] = findAllParentNodesForNode(clonedTreeData, newNode.parentKey);
+
+  const matchingLeafNodes = findAllPossibleDestinationMatchingLeafNodes(restOfParentNodes, [topNode]);
+
+  matchingLeafNodes.forEach(parentNode => {
+    const newChildren = getNewChildrenToUpdate(parentNode, newNode);
+
+    // eslint-disable-next-line no-param-reassign
+    parentNode.children = [...parentNode.children, ...newChildren];
+  });
+
+  return clonedTreeData;
+};
+
 export const TYPEOF_TO_DATA_TYPE = {
   '[object String]': MAPPING_DATA_TYPES.STRING,
   '[object Number]': MAPPING_DATA_TYPES.NUMBER,

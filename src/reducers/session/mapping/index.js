@@ -11,6 +11,7 @@ import {
   ARRAY_DATA_TYPES,
   getAllKeys,
   rebuildObjectArrayNode,
+  rebuildMappingOnDestinationUpdate,
   hideOtherTabRows,
   MAPPING_DATA_TYPES,
   getUniqueExtractId,
@@ -803,6 +804,13 @@ export default (state = {}, action) => {
           }
 
           delete node.isEmptyRow;
+
+          if (field === 'generate' && value.length) {
+            const treeData = JSON.parse(JSON.stringify(draft.mapping.v2TreeData));
+            const destinationNode = JSON.parse(JSON.stringify(node));
+
+            draft.mapping.v2TreeData = rebuildMappingOnDestinationUpdate(treeData, destinationNode);
+          }
         }
 
         break;
