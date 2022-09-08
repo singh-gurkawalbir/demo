@@ -85,14 +85,14 @@ export const getJSONContentFromString = data => {
  * @returns {object} CSV Data
  */
 export async function getCsvFromXlsx(data) {
-  const { default: XLSX } = await retry(() => import(/* webpackChunkName: "XLSX" */'xlsx/xlsx.js'));
+  const { read, utils } = await retry(() => import(/* webpackChunkName: "XLSX" */'xlsx'));
   let workBook;
   let result;
 
   try {
     const typedArray = String.fromCharCode.apply(null, new Uint8Array(data));
 
-    workBook = XLSX.read(window.btoa(typedArray), { type: 'base64' });
+    workBook = read(window.btoa(typedArray), { type: 'base64' });
   } catch (ex) {
     try {
       const base64 = window.btoa(
@@ -102,7 +102,7 @@ export async function getCsvFromXlsx(data) {
         )
       );
 
-      workBook = XLSX.read(base64, { type: 'base64' });
+      workBook = read(base64, { type: 'base64' });
     } catch (ex) {
       return {
         success: false,
@@ -113,7 +113,7 @@ export async function getCsvFromXlsx(data) {
 
   workBook.SheetNames.forEach(sheetName => {
     try {
-      result = XLSX.utils.sheet_to_csv(workBook.Sheets[sheetName]);
+      result = utils.sheet_to_csv(workBook.Sheets[sheetName]);
     } catch (e) {
       return {
         success: false,
