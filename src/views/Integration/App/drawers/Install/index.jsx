@@ -250,6 +250,7 @@ export default function ConnectorInstallation() {
       dispatch(actions.license.refreshCollection());
       dispatch(actions.resource.requestCollection('imports', undefined, undefined, integrationId));
       dispatch(actions.resource.requestCollection('connections', undefined, undefined, integrationId));
+      dispatch(actions.resource.requestCollection('asynchelpers', undefined, undefined, integrationId));
 
       if (mode === 'settings') {
         if (

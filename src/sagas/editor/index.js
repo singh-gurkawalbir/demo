@@ -654,7 +654,7 @@ export function* requestEditorSampleData({
 
       delete body.sampleData;
       delete body.templateVersion;
-    } else {
+    } else if (resourceType !== 'flows') {
       // As UI does oneToMany processing and we do not need BE changes w.r.to oneToMany, we make oneToMany prop as false  for getContext API
       resource = { ...resource, oneToMany: false };
       if (isOldRestResource && resource?.rest?.pagingMethod && !resource?.http?.paging?.method) {

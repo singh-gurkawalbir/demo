@@ -27,6 +27,7 @@ import { selectors } from '../../../../../reducers';
 import OperandSettingsDialog from './OperandSettingsDialog';
 import actions from '../../../../../actions';
 import { stringCompare } from '../../../../../utils/sort';
+import Spinner from '../../../../Spinner';
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -39,7 +40,7 @@ const useStyles = makeStyles(theme => ({
 const defaultData = [];
 const defaultFilters = [];
 
-export default function SalesforceLookupFilterPanel({
+export function SalesforceLookupFilterPanelData({
   id,
   filters: propFilters,
   editorId,
@@ -459,3 +460,10 @@ export default function SalesforceLookupFilterPanel({
     </div>
   );
 }
+
+export default function NetSuiteLookupFilterPanel(props) {
+  const { sampleDataStatus } = useSelector(state => selectors.editor(state, props.editorId));
+
+  return sampleDataStatus === 'requested' ? <Spinner centerAll /> : <SalesforceLookupFilterPanelData {...props} />;
+}
+

@@ -1,5 +1,4 @@
 import React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
 import { useSelector, useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { selectors } from '../../reducers';
@@ -19,15 +18,8 @@ import { buildDrawerUrl, drawerPaths } from '../../utils/rightDrawer';
 import { TextButton } from '../../components/Buttons';
 import NoResultTypography from '../../components/NoResultTypography';
 import ResourceEmptyState from '../ResourceList/ResourceEmptyState';
-
-const useStyles = makeStyles(theme => ({
-  actions: {
-    display: 'flex',
-  },
-  resultContainer: {
-    padding: theme.spacing(3, 3, 12, 3),
-  },
-}));
+import ActionGroup from '../../components/ActionGroup';
+import PageContent from '../../components/PageContent';
 
 const defaultFilter = {
   take: parseInt(process.env.DEFAULT_TABLE_ROW_COUNT, 10) || 10,
@@ -41,7 +33,7 @@ export default function AccessTokenList(props) {
   const list = useSelector(state =>
     selectors.accessTokenList(state, { integrationId, ...filter })
   );
-  const classes = useStyles();
+
   const dispatch = useDispatch();
   const newProps = { ...props, resourceType: 'accesstokens' };
   const handleKeywordChange = e => {
@@ -49,6 +41,8 @@ export default function AccessTokenList(props) {
       actions.patchFilter('accesstokens', { keyword: e.target.value })
     );
   };
+  const showPagingBar = list.count >= 100;
+  const hidePagingBar = list.count === list.filtered;
 
   return (
     <>
@@ -61,7 +55,7 @@ export default function AccessTokenList(props) {
         <ResourceDrawer {...newProps} />
 
         <CeligoPageBar title="API tokens" infoText={infoText.accesstokens}>
-          <div className={classes.actions}>
+          <ActionGroup>
             <SearchInput onChange={handleKeywordChange} />
             <TextButton
               data-test="newAccessToken"
@@ -74,16 +68,17 @@ export default function AccessTokenList(props) {
               })} >
               Create API token
             </TextButton>
-          </div>
+          </ActionGroup>
         </CeligoPageBar>
 
-        <div className={classes.resultContainer}>
+        <PageContent showPagingBar={showPagingBar} hidePagingBar={hidePagingBar}>
           <LoadResources required resources="accesstokens">
             {list.count > 0 ? (
               <ResourceTable
                 resourceType="accesstokens"
                 resources={list.resources}
               />
+
             ) : (
               <div>
                 {list.total === 0
@@ -93,7 +88,7 @@ export default function AccessTokenList(props) {
               </div>
             )}
           </LoadResources>
-        </div>
+        </PageContent>
         <ShowMoreDrawer
           filterKey="accesstokens"
           count={list.count}

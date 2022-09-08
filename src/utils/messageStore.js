@@ -84,8 +84,20 @@ href="/marketplace"><u>Check out our Marketplace</u></a> to jumpstart your  inte
   SSO_LICENSE_UPGRADE_REQUEST_SUBMITTED_MESSAGE: 'Thanks for your request! We will be in touch soon.',
   CONFIRM_LEAVE_MFA: 'Are you sure you want to leave? Your MFA settings will be disabled unless you connect your device successfully.',
   MFA_AUTH_FAILED: 'Verification failed. Please try again',
+  SSO_LINKED_TO_ANOTHER_ACCOUNT_TOOLTIP: 'This user is already linked to another account’s SSO',
+  ACCOUNT_SSO_OR_MFA_REQUIRED_TOOLTIP: 'You can’t require both MFA and SSO for a user.',
+  MFA_OWNER_OTP_INFO: 'You are signing in from a new device. Enter your passcode to verify your account.',
+  MFA_USER_OTP_INFO: 'Your account owner or admin has required you to sign in using multifactor authentication (MFA). Enter your passcode to verify your account.',
+  MFA_USER_OTP_INFO_FOR_TRUSTED_NUMBER_OF_DAYS: 'Your account owner or admin has required you to sign in using multifactor authentication (MFA) after {{noOfDays}} days. Enter your passcode to verify your account.',
+  // #endregion
+  // #region EM2.0 messages
+  SELECT_ERROR_HOVER_MESSAGE: 'Selected errors are added to a batch, on which you can perform bulk retry and resolve actions',
+  VIEW_ACTIONS_HOVER_MESSAGE: 'View actions for this error',
+  RETRY_ACTION_HOVER_MESSAGE: 'Before retrying, you must save your edits for each error in the batch. Click “Save & next” on this error to continue.',
+  ADD_TO_BATCH_HOVER_MESSAGE: 'Selected errors are added to a batch, on which you can perform bulk retry and resolve actions. Before retrying, you must save your edits for each error in the batch. Click “Save & next” on this error to continue.',
   // #endregion
 
+  DATALOADER_PP_MESSAGE: 'You can add a destination application once you complete the configuration of your data loader.',
   MAX_ROUTERS_LIMIT_REACHED: 'You have reached the maximum of 25 branchings in a flow',
   MAX_BRANCHES_LIMIT_REACHED: 'You have reached the maximum of 25 branches in a branching',
   TERMINAL_NODE_TOOLTIP: 'Drag to merge with other branch',

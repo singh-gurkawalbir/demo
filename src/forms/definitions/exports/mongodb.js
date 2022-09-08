@@ -72,6 +72,7 @@ export default {
     'once.booleanField': {
       fieldId: 'once.booleanField',
     },
+    rdbmsGrouping: { formId: 'rdbmsGrouping' },
     advancedSettings: { formId: 'advancedSettings' },
   },
   layout: {
@@ -95,6 +96,11 @@ export default {
         collapsed: true,
         label: 'Configure export type',
         fields: ['type', 'delta.dateField', 'once.booleanField'],
+      },
+      {
+        collapsed: true,
+        label: 'Would you like to group records?',
+        fields: ['rdbmsGrouping'],
       },
       { collapsed: true, label: 'Advanced', fields: ['advancedSettings'] },
     ],

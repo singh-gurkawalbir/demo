@@ -1,3 +1,4 @@
+// visibleWhen is not supported for subForms, hence added to each field
 export default {
   fieldMap: {
     'http.auth.token.refreshToken': {
@@ -25,6 +26,13 @@ export default {
     'http.auth.token.refreshHeaders': {
       fieldId: 'http.auth.token.refreshHeaders',
     },
+    'http.auth.token.tokenPaths': {
+      fieldId: 'http.auth.token.tokenPaths',
+      visibleWhenAll: [
+        { field: 'configureCutomAuthTokenRefresh', is: [true] },
+        { field: 'http.auth.type', is: ['custom'] },
+      ],
+    },
   },
   layout: {
     fields: [
@@ -35,6 +43,7 @@ export default {
       'http.auth.token.refreshMediaType',
       'http.auth.token.refreshBody',
       'http.auth.token.refreshTokenPath',
+      'http.auth.token.tokenPaths',
     ],
   },
 };

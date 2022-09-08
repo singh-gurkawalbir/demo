@@ -783,9 +783,9 @@ function recursivelyBuildTreeFromV2Mappings({mappings, treeData, parentKey, pare
 
       if (dataType === MAPPING_DATA_TYPES.OBJECTARRAY) {
         buildArrayHelper.forEach((obj, index) => {
-          const {extract = getDefaultExtractPath(isGroupedSampleData), mappings} = obj;
+          const {extract = '', mappings} = obj;
 
-          combinedExtract = `${combinedExtract ? `${combinedExtract},` : ''}${extract}`;
+          combinedExtract = `${combinedExtract ? `${combinedExtract}${extract ? ',' : ''}` : ''}${extract}`;
 
           if (!mappings) {
             nodeToPush.copySource = 'yes';
@@ -988,7 +988,6 @@ const recursivelyBuildV2MappingsFromTree = ({v2TreeData, _mappingsToSave, lookup
       isTabNode} = mapping;
 
     if (isTabNode || (!generateDisabled && !generate)) return;
-    if (isMappingWithoutExtract(mapping, lookups)) return;
 
     const newMapping = {
       description,
@@ -1005,6 +1004,7 @@ const recursivelyBuildV2MappingsFromTree = ({v2TreeData, _mappingsToSave, lookup
       conditional: {
         when: conditional.when,
       },
+      status: isMappingWithoutExtract(mapping, lookups) ? 'Draft' : 'Active',
     };
 
     if (PRIMITIVE_DATA_TYPES.includes(dataType)) {
@@ -1019,9 +1019,11 @@ const recursivelyBuildV2MappingsFromTree = ({v2TreeData, _mappingsToSave, lookup
         newMapping.mappings = [];
         recursivelyBuildV2MappingsFromTree({v2TreeData: children, _mappingsToSave: newMapping.mappings, lookups});
 
-        // if no valid children mappings are present, then do not save the parent as well
-        if (newMapping.mappings.length === 0) {
-          return;
+        // if no valid children mappings are present, then parent is also marked as Draft
+        const isAnyChildActive = newMapping.mappings.some(m => m.status === 'Active');
+
+        if (!isAnyChildActive) {
+          newMapping.status = 'Draft';
         }
       }
       _mappingsToSave.push(newMapping);
@@ -1036,9 +1038,18 @@ const recursivelyBuildV2MappingsFromTree = ({v2TreeData, _mappingsToSave, lookup
 
         newMapping.buildArrayHelper = buildArrayHelper;
 
-        if (!splitExtracts.length) {
-          // invalid mapping as no combinedExtracts are given
-          // each extract is mandatory for now
+        if (!splitExtracts.length && children?.length) {
+          // if no extracts are present, just save the sub mappings
+          const subMappings = [];
+          const newHelper = {
+            mappings: subMappings,
+          };
+
+          recursivelyBuildV2MappingsFromTree({v2TreeData: children, _mappingsToSave: subMappings, lookups});
+
+          buildArrayHelper.push(newHelper);
+          _mappingsToSave.push(newMapping);
+
           return;
         }
 
@@ -1071,20 +1082,25 @@ const recursivelyBuildV2MappingsFromTree = ({v2TreeData, _mappingsToSave, lookup
           const newHelper = {
             extract,
             mappings: subMappings,
+            status: 'Active',
           };
 
           recursivelyBuildV2MappingsFromTree({v2TreeData: matchingChildren, _mappingsToSave: subMappings, lookups});
 
-          // if no valid children mappings are present, then do not push that source to the parent
-          if (newHelper.mappings.length === 0) {
-            return;
+          // if no valid children mappings are present, then parent is also marked as Draft
+          const isAnyChildActive = newHelper.mappings.some(m => m.status === 'Active');
+
+          if (!isAnyChildActive) {
+            newHelper.status = 'Draft';
           }
           buildArrayHelper.push(newHelper);
         });
 
-        // if no sources children are present, then no need to save the parent mapping as well
-        if (newMapping.buildArrayHelper.length === 0) {
-          return;
+        // if no sources children are present, then parent is also marked as Draft
+        const isAnySourceActive = newMapping.buildArrayHelper.some(m => m.status === 'Active');
+
+        if (!isAnySourceActive) {
+          newMapping.status = 'Draft';
         }
         _mappingsToSave.push(newMapping);
 
@@ -1109,7 +1125,8 @@ const recursivelyBuildV2MappingsFromTree = ({v2TreeData, _mappingsToSave, lookup
         });
         _mappingsToSave.push(newMapping);
       } else {
-        // invalid mapping
+        // invalid mapping, save without buildArrayHelper
+        _mappingsToSave.push(newMapping);
       }
     }
   });
@@ -1192,6 +1209,92 @@ export const findNodeInTree = (data, prop, value) => {
   });
 
   return {node, nodeSubArray, nodeIndexInSubArray};
+};
+
+// to search the generate of the field mapping
+export const filterNode = (node, searchKey) => {
+  if (!searchKey) return false;
+  if (node?.generate?.toUpperCase().indexOf(searchKey.toUpperCase()) > -1) {
+    return true;
+  }
+
+  return false;
+};
+
+// to search the key value of a field mapping
+export const filterKey = (node, searchKey) => {
+  if (!searchKey) return false;
+  if (node?.key === searchKey) {
+    return true;
+  }
+
+  return false;
+};
+
+export const searchTree = (mappings, key, filterFunc, items) => {
+  if (!mappings || !key || !filterFunc) return;
+
+  // for storing first index where search is found
+  let firstIndex = -1;
+
+  // looping through all the children fields of the node
+  mappings.forEach((node, index) => {
+    if (node.isTabNode) return;
+
+    if (filterFunc(node, key)) {
+      items.filteredKeys.push(node.key);
+      // updating when found for first time
+      if (firstIndex === -1) firstIndex = index;
+    }
+
+    // eslint-disable-next-line no-param-reassign
+    items.firstIndex = -1;    // before sending it to searchTree set items.firstIndex to -1
+
+    // calling required function according to the mappings dataType
+    if (node.dataType === MAPPING_DATA_TYPES.OBJECT) {
+      searchTree(node.children, key, filterFunc, items);
+
+      // if children mappings contained a search then adding the node to expandKeys list
+      if (items.firstIndex !== -1) {
+        items.expandedKeys.push(node.key);
+      }
+    } else if (node.dataType === MAPPING_DATA_TYPES.OBJECTARRAY) {
+      searchTree(node.children, key, filterFunc, items);
+
+      // if match found in the mappings then setting tabChange list to contain the current tabChange object
+      if (items.firstIndex !== -1) {
+        const childNode = node.children[items.firstIndex];
+
+        // checking if tabs are present or not
+        if (node.children[0].isTabNode) {
+          // to get the correct tabValue from the combinedExtract
+          let tabValue;
+          const pipeIndex = childNode.parentExtract.indexOf('|');
+
+          if (pipeIndex > 0) {
+            tabValue = parseInt(childNode.parentExtract.substring(pipeIndex + 1), 10);
+          } else {
+            tabValue = node.combinedExtract.split(',').indexOf(childNode.parentExtract);
+          }
+
+          items.tabChange.push(
+            {
+              key: node.key,
+              tabValue,
+              parentExtract: childNode.parentExtract,
+            }
+          );
+        }
+        items.expandedKeys.push(node.key);
+      }
+    }
+
+    // setting firstIndex if no matches found before and match is found inside the mapping
+    if (items.firstIndex !== -1 && firstIndex === -1) firstIndex = index;
+  });
+
+  // eslint-disable-next-line no-param-reassign
+  items.firstIndex = firstIndex;    // setting the firstIndex before returning
 };
 
 export const TYPEOF_TO_DATA_TYPE = {
