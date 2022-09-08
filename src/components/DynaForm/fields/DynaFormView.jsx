@@ -84,10 +84,9 @@ export default function FormView(props) {
       if (_httpConnectorId) {
         // all types are lower case...lets upper case them
         return [
-        // if type is REST then we should show REST API
-          { label: (isGraphql || _httpConnectorId) ? 'HTTP' : type && (type.toUpperCase() === 'REST' ? 'REST API' : type.toUpperCase()), value: `${isParent}` },
           { label: 'Simple', value: `${!isParent}` },
-
+          // if type is REST then we should show REST API
+          { label: (isGraphql || _httpConnectorId) ? 'HTTP' : type && (type.toUpperCase() === 'REST' ? 'REST API' : type.toUpperCase()), value: `${isParent}` },
         ];
       }
 
@@ -226,9 +225,10 @@ export default function FormView(props) {
       options={options}
 />
   ) : null;
-  const showFormView = _httpConnectorId
-    ? titleBarFormView : containerFormView;
+  const insideFormView = isFlowBuilderAssistant
+    ? containerFormView : null;
 
-  return isFlowBuilderAssistant
-    ? showFormView : null;
+  // Show form view for both flow builder and standalone export/import when _httpConnectorId is present.
+  return _httpConnectorId
+    ? titleBarFormView : insideFormView;
 }

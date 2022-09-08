@@ -412,6 +412,9 @@ export const updateFinalMetadataWithHttpFramework = (finalFieldMeta, connector, 
 
           tempFiledMeta.fieldMap[key] = {...tempFiledMeta.fieldMap[key], options, type: 'select'};
         }
+        if (!tempFiledMeta.fieldMap[key].defaultValue.includes('{{')) {
+          tempFiledMeta.fieldMap[key].visible = false;
+        }
       }
 
       return tempFiledMeta.fieldMap[key];
@@ -541,22 +544,44 @@ export const updateFinalMetadataWithHttpFramework = (finalFieldMeta, connector, 
           (new RegExp(`{{{(.)*(${field})(.)*}}}`)).test(baseURIValue) ? baseURIFields.push(field) : authFields.push(field);
         });
         if (baseURIFields.length > 0) {
+              tempFiledMeta?.fieldMap['http.baseURI']?.refreshOptionsOnChangesTo.push(...baseURIFields);
               tempFiledMeta?.layout?.containers[1]?.containers[1].containers.splice(0, 1, {fields: baseURIFields});
         } else {
               tempFiledMeta?.layout?.containers[1]?.containers?.splice(1, 1);
         }
         if (authFields.length > 0) {
-              tempFiledMeta?.layout?.containers[3]?.containers[1]?.containers[0]?.fields.push(...authFields);
+          // when there is only one authentication type then side bar is not required for authentication related fields which are coming from custom setting
+          if (tempFiledMeta?.fieldMap['http.auth.type']?.visible === false) {
+            delete tempFiledMeta?.layout?.containers[3]?.containers[1]?.type;
+          }
+
+          tempFiledMeta?.layout?.containers[3]?.containers[1]?.containers[0]?.fields.push(...authFields);
         }
       }
     }
   } else if (!isGenericHTTP) {
-        tempFiledMeta?.layout?.containers[1]?.containers?.splice(1, 1);
+  // when there is only one authentication type then side bar is not required for authentication related fields
+    if (tempFiledMeta?.fieldMap['http.auth.type']?.visible === false) {
+      delete tempFiledMeta?.layout?.containers[3]?.containers[1]?.type;
+    }
+    tempFiledMeta?.layout?.containers[1]?.containers?.splice(1, 1);
   }
 
   return tempFiledMeta;
 };
+export const updateExportAndImportFinalMetadata = (finalFieldMeta, connector, resource, isGenericHTTP) => {
+  const tempFiledMeta = _.cloneDeep(finalFieldMeta);
 
+  if (!isGenericHTTP && tempFiledMeta?.fieldMap['name']) {
+    const dataResourceType = (resource?.isLookup === true) ? 'lookup' : tempFiledMeta?.fieldMap['name']?.resourceType.slice(0, 6);
+    const application = resource?.assistant;
+
+    tempFiledMeta.fieldMap.name.label = `Name your ${dataResourceType}`;
+    tempFiledMeta.fieldMap.name.placeholder = `${application} ${dataResourceType}`;
+  }
+
+  return tempFiledMeta;
+};
 export function resourceConflictResolution({ merged, master, origin }) {
   if (origin?.lastModified === master?.lastModified) {
     // no conflict here

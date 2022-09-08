@@ -175,11 +175,15 @@ export default {
       newValues = updateHTTPFrameworkFormValues(newValues, resource, options?.httpConnector);
     }
     newValues['/http/formType'] = 'assistant';
+    newValues['/http/baseURI'] = resource?.http?.baseURI;
 
     return newValues;
   },
   fieldMap: {
-    name: { fieldId: 'name' },
+    name: {
+      fieldId: 'name',
+      label: 'Name your connection',
+    },
     connectionFormView: {
       fieldId: 'connectionFormView',
     },
@@ -216,6 +220,14 @@ export default {
     },
     'http.baseURI': {
       fieldId: 'http.baseURI',
+      readOnly: true,
+      refreshOptionsOnChangesTo: [],
+      defaultDisabled: true,
+      defaultValue: r => {
+        if (!r?.http?.baseURI) { return null; }
+
+        return r?.http?.baseURI;
+      },
     },
     'http.mediaType': {
       fieldId: 'http.mediaType',
@@ -498,5 +510,22 @@ export default {
       ],
     },
   ],
+  // refresh the baseURI as per the user input
+  optionsHandler(fieldId, fields) {
+    if (fieldId === 'http.baseURI') {
+      const baseURIField = fields.find(field => field.id === 'http.baseURI');
+      let baseURIValue = baseURIField.defaultValue;
+
+      baseURIField.refreshOptionsOnChangesTo.forEach(fieldId => {
+        const fieldValue = fields.find(field => field.id === fieldId)?.value;
+
+        if (fieldValue) {
+          baseURIValue = baseURIValue.replace(new RegExp(`{{{(.)*${fieldId}}}}`), fieldValue);
+        }
+      });
+
+      return baseURIValue;
+    }
+  },
 };
 
