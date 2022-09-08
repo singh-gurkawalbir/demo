@@ -122,7 +122,7 @@ export default function EditMFAConfiguration() {
   const primaryAccountOptions = useMemo(() => (
     [{
       items: primaryAccounts.map(
-        acc => ({label: acc.ownerUser?.name, value: acc.ownerUser?._id})
+        acc => ({label: acc.ownerUser?.company, value: acc.ownerUser?._id})
       ),
     }]
   ), [primaryAccounts]);
