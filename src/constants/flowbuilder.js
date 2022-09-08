@@ -4,6 +4,7 @@ export const RouterPathRegex = /\/routers\/(-?\d+)/;
 export const BranchPathRegex = /\/routers\/(-?\d+)\/branches\/(-?\d+)/;
 export const PageProcessorPathRegex = /\/routers\/(-?\d+)\/branches\/(-?\d+)\/pageProcessors\/(-?\d+)/;
 export const PageProcessorRegex = /\/pageProcessors\/(-?\d+)/;
+export const PageGeneratorRegex = /\/pageGenerators\/(-?\d+)/;
 export const GRAPH_ELEMENTS_TYPE = {
   ROUTER: 'router',
   MERGE: 'merge',

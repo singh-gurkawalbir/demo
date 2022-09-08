@@ -394,6 +394,33 @@ describe('resource util tests', () => {
         'https://api.localhost/v1/exports/123/data'
       );
     });
+
+    test('should include token in webhook url if verify is of secret_url type', () => {
+      expect(getWebhookUrl({
+        webHookProvider: 'custom',
+        webHookToken: 'abcd',
+        webHookVerify: 'secret_url'}, '123')).toEqual(
+        'https://api.localhost/v1/exports/123/abcd/data'
+      );
+    });
+
+    test('should not include token in webhook url if verify is of hmac type', () => {
+      expect(getWebhookUrl({
+        webHookProvider: 'custom',
+        webHookToken: 'abcd',
+        webHookVerify: 'hmac'}, '123')).toEqual(
+        'https://api.localhost/v1/exports/123/data'
+      );
+    });
+
+    test('should not include token in webhook url if verify is of basic type', () => {
+      expect(getWebhookUrl({
+        webHookProvider: 'custom',
+        webHookToken: 'abcd',
+        webHookVerify: 'basic'}, '123')).toEqual(
+        'https://api.localhost/v1/exports/123/data'
+      );
+    });
   });
 
   describe('tests for util getDomain, getDomainUrl, getApiUrl', () => {

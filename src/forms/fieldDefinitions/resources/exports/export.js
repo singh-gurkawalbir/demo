@@ -235,6 +235,11 @@ export default {
     type: 'xmlparse',
     required: true,
   },
+  groupByFields: {
+    isLoggable: true,
+    label: 'Group records by fields',
+    type: 'sortandgroup',
+  },
   // #endregion common
   // #region inputFilter
   'inputFilter.expression.version': {

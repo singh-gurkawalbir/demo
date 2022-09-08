@@ -67,7 +67,7 @@ export default function RouterMenu({ editorId }) {
   return (
     <>
       <ClickAwayListener onClickAway={handleCloseMenu}>
-        <IconButton size="small" onClick={handleOpenMenu}>
+        <IconButton data-test="routerMenu" size="small" onClick={handleOpenMenu}>
           <EllipsisHorizontalIcon />
         </IconButton>
       </ClickAwayListener>
@@ -79,7 +79,7 @@ export default function RouterMenu({ editorId }) {
         placement="bottom-end"
         onClose={handleCloseMenu}
       >
-        <MenuItem disabled={isViewMode} onClick={handleDelete}>
+        <MenuItem data-test="deleteBranching" disabled={isViewMode} onClick={handleDelete}>
           <TrashIcon /> Delete branching
         </MenuItem>
       </ArrowPopper>

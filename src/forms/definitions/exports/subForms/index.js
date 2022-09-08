@@ -6,6 +6,7 @@ import netsuite from './netsuite';
 import fileAdvanced from './fileAdvanced';
 import graphql from './graphql';
 import pagingGraphql from './pagingGraphql';
+import rdbmsGrouping from './rdbmsGrouping';
 
 export default {
   common,
@@ -16,4 +17,5 @@ export default {
   ...netsuite,
   graphql,
   pagingGraphql,
+  rdbmsGrouping,
 };
