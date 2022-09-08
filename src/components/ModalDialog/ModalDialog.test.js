@@ -4,8 +4,8 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import ModalDialog from '.';
 
-describe('ModalDialog testing', () => {
-  test('should test when show is false', () => {
+describe('ModalDialog UI tests', () => {
+  test('should not show the modal dialog when the prop "show" is false', () => {
     const {container} = render(
       <ModalDialog show={false}>
         <div>child-1</div>
@@ -16,7 +16,7 @@ describe('ModalDialog testing', () => {
     expect(container).toBeEmptyDOMElement();
   });
 
-  test('should test when show porp is true', () => {
+  test('should show the modal when the prop "show" is true', () => {
     render(
       <ModalDialog show>
         <div>child-1</div>
@@ -28,7 +28,7 @@ describe('ModalDialog testing', () => {
     expect(screen.getByText('child-3')).toBeInTheDocument();
   });
 
-  test('onclose button testing', () => {
+  test('should click the close button', () => {
     const onclose = jest.fn();
 
     render(
@@ -48,7 +48,7 @@ describe('ModalDialog testing', () => {
     expect(onclose).toHaveBeenCalled();
   });
 
-  test('onclose button disable', () => {
+  test('should disable the close button', () => {
     const onclose = jest.fn();
 
     render(
@@ -66,7 +66,7 @@ describe('ModalDialog testing', () => {
     expect(button).toBeDisabled();
   });
 
-  test('actionhanlder testing', () => {
+  test('should click on the action handler function provided through prop', () => {
     const actionhanlder = jest.fn();
 
     render(

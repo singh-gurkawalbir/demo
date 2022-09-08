@@ -4,8 +4,8 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import NotificationToaster from '.';
 
-describe('NotifcationToaster testing', () => {
-  test('should test when onclose button is visble', () => {
+describe('NotifcationToaster UI tests', () => {
+  test('should click on the close button', () => {
     const onClose = jest.fn();
 
     render(
@@ -18,7 +18,7 @@ describe('NotifcationToaster testing', () => {
     userEvent.click(button);
     expect(onClose).toHaveBeenCalled();
   });
-  test('should test when onclose button is invisble', () => {
+  test('should not show the close button as the onClose function is not passed as prop', () => {
     render(
       <NotificationToaster variant="info" transparent><div>message</div>
       </NotificationToaster>);

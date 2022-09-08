@@ -4,7 +4,7 @@ import { render, screen } from '@testing-library/react';
 import SearchInput from '.';
 
 describe('SearchInput testing', () => {
-  test('should do check for place holder', () => {
+  test('should check the presence of placeholder text', () => {
     render(<SearchInput />);
     const input = screen.getByDisplayValue('');
 

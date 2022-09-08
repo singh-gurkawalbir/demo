@@ -14,8 +14,8 @@ jest.mock('react', () => {
     useReducer: mUseReducer,
   };
 });
-describe('HomeSearchInput testing', () => {
-  test('onchange should be called', () => {
+describe('HomeSearchInput UI tests', () => {
+  test('should call the onChange and dispatch function when input is changed', () => {
     const mockdispatch = jest.fn();
     const onchange = jest.fn();
 
@@ -33,7 +33,7 @@ describe('HomeSearchInput testing', () => {
     expect(onchange).toHaveBeenCalled();
   });
 
-  test('onblur should be called', () => {
+  test('should call dispatch action with "blur" as type when the text field is set to blur', () => {
     const mockdispatch = jest.fn();
     const onchange = jest.fn();
 
@@ -53,7 +53,7 @@ describe('HomeSearchInput testing', () => {
     input.blur();
     expect(mockdispatch).toHaveBeenNthCalledWith(10, {type: 'onBlur', value: 'sometext'});
   });
-  test('onfocus should be called here', () => {
+  test('should call dispatch with focus as type when text field is set to focus', () => {
     const mockdispatch = jest.fn();
     const onchange = jest.fn();
 
@@ -73,10 +73,8 @@ describe('HomeSearchInput testing', () => {
     input.blur();
     input.focus();
     expect(mockdispatch).toHaveBeenNthCalledWith(11, {type: 'onFocus'});
-
-    screen.debug();
   });
-  test('on clear should be called here', () => {
+  test('should clear the test field and placeholder text should appear', () => {
     const mockdispatch = jest.fn();
     const onchange = jest.fn();
 
@@ -94,7 +92,5 @@ describe('HomeSearchInput testing', () => {
     expect(input).toHaveFocus();
 
     expect(input).toHaveAttribute('placeholder', 'Search integrations & flows');
-
-    screen.debug();
   });
 });

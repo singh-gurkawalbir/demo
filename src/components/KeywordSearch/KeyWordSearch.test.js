@@ -6,8 +6,8 @@ import KeywordSearch from '.';
 import {renderWithProviders} from '../../test/test-utils';
 import actions from '../../actions';
 
-describe('KeyWordSearch testing', () => {
-  test('should test when isHomeSearch props is not provided', async () => {
+describe('KeyWordSearch UI tests', () => {
+  test('should update the state correctly when an user input is provided and isHomeSearch is false', async () => {
     const keyWord = {keyword: 'keyword'};
     const {store} = renderWithProviders(<KeywordSearch filterKey="name" />);
 
@@ -19,7 +19,7 @@ describe('KeyWordSearch testing', () => {
     await waitFor(() => expect(store.getState().session.filters.name.keyword).toBe('somtext'));
   });
 
-  test('should test when isHomeSearch is true', async () => {
+  test('should update the state correctly when an user input is provided when isHomeSearch is true', async () => {
     const keyWord = {keyword: 'keyword'};
     const {store} = renderWithProviders(<KeywordSearch filterKey="name" isHomeSearch />);
 
