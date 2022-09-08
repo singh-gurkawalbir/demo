@@ -5385,7 +5385,7 @@ selectors.applicationType = (state, resourceType, id) => {
 
     return connection && connection.rdbms && rdbmsSubTypeToAppType(connection.rdbms.type);
   }
-  if (adaptorType?.toUpperCase().startsWith('HTTP') && !assistant) {
+  if ((adaptorType?.toUpperCase().startsWith('HTTP') || adaptorType?.toUpperCase().startsWith('REST')) && !assistant) {
     const connection = resourceType === 'connections' ? resourceObj : selectors.resource(
       state,
       'connections',

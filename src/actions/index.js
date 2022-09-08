@@ -1325,6 +1325,8 @@ const license = {
     action(actionTypes.LICENSE.UPDATE_REQUEST, { actionType, connectorId, licenseId, feature }),
   licenseUpgradeRequestSubmitted: (message, feature) =>
     action(actionTypes.LICENSE.UPGRADE_REQUEST_SUBMITTED, { message, feature }),
+  licenseReactivated: () =>
+    action(actionTypes.LICENSE.REACTIVATED),
   ssoLicenseUpgradeRequested: () =>
     action(actionTypes.LICENSE.SSO.UPGRADE_REQUESTED),
   requestLicenseEntitlementUsage: () =>
@@ -2125,7 +2127,7 @@ const flow = {
   deleteStep: (flowId, stepId) => action(actionTypes.FLOW.DELETE_STEP, { flowId, stepId }),
   deleteEdge: (flowId, edgeId) => action(actionTypes.FLOW.DELETE_EDGE, { flowId, edgeId }),
   deleteRouter: (flowId, routerId) => action(actionTypes.FLOW.DELETE_ROUTER, { flowId, routerId }),
-  initializeFlowGraph: (flowId, flow, isViewMode) => action(actionTypes.FLOW.INIT_FLOW_GRAPH, { flowId, flow, isViewMode }),
+  initializeFlowGraph: (flowId, flow, isViewMode, isDataLoader) => action(actionTypes.FLOW.INIT_FLOW_GRAPH, { flowId, flow, isViewMode, isDataLoader }),
   setSaveStatus: (flowId, status) => action(actionTypes.FLOW.SET_SAVE_STATUS, { flowId, status }),
   run: ({ flowId, customStartDate, options }) =>
     action(actionTypes.FLOW.RUN, { flowId, customStartDate, options }),

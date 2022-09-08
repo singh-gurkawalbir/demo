@@ -39,7 +39,7 @@ export default {
       },
       {
         name: 'Accept',
-        value: 'application/json',
+        value: 'application/xml',
       },
     ],
   }),
