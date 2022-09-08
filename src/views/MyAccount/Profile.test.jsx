@@ -59,6 +59,7 @@ describe('Profile', () => {
 
   beforeEach(() => {
     initialStore = getCreatedStore();
+    store();
     jest.useFakeTimers();
     jest.setTimeout(100000);
     jest.clearAllMocks();
@@ -78,31 +79,27 @@ describe('Profile', () => {
 
       return res(ctx.json([]));
     });
-    store();
     await initProfile();
-    screen.debug(null, Infinity);
-    const passwordTextNode = screen.getByText('Password');
 
-    expect(passwordTextNode).toBeInTheDocument();
-    const passwordEditButton = screen.queryAllByRole('button', {name: 'tooltip'});
+    expect(screen.getByText('Password')).toBeInTheDocument();
+    const passwordEditButton = screen.queryAllByRole('button', {name: 'tooltip'}).find(eachOption => eachOption.getAttribute('data-test') === 'editPassword');
 
-    expect(passwordEditButton[1]).toBeInTheDocument();
-    userEvent.click(passwordEditButton[1]);
+    expect(passwordEditButton).toBeInTheDocument();
+    userEvent.click(passwordEditButton);
     const passwordModalText = screen.getAllByText('Change password');
 
     expect(passwordModalText[0]).toBeInTheDocument();
-    const changePasswordHelpText = screen.getByText('Please note that clicking \'Change Password\' will sign you out of the application, and you will need to sign back in with your new password.');
 
-    expect(changePasswordHelpText).toBeInTheDocument();
+    expect(screen.getByText('Please note that clicking \'Change Password\' will sign you out of the application, and you will need to sign back in with your new password.')).toBeInTheDocument();
 
     const changeCurrentPasswordNode = document.querySelectorAll('input[name="currentPassword"]');
 
-    expect(changeCurrentPasswordNode[0]).toBeInTheDocument();
+    expect(changeCurrentPasswordNode).toHaveLength(1);
     userEvent.type(changeCurrentPasswordNode[0], 'test@123');
     expect(changeCurrentPasswordNode[0]).toHaveValue('test@123');
     const changeNewPasswordNode = document.querySelectorAll('input[name="newPassword"]');
 
-    expect(changeNewPasswordNode[0]).toBeInTheDocument();
+    expect(changeNewPasswordNode).toHaveLength(1);
     userEvent.type(changeNewPasswordNode[0], 'test@12345');
     expect(changeNewPasswordNode[0]).toHaveValue('test@12345');
 
@@ -135,22 +132,19 @@ describe('Profile', () => {
 
       return res(ctx.json([]));
     });
-    store();
     await initProfile();
     const profileText = screen.getByText('Profile');
 
     expect(profileText).toBeInTheDocument();
-    const nameText = screen.getByText('Name');
 
-    expect(nameText).toBeInTheDocument();
+    expect(screen.getByText('Name')).toBeInTheDocument();
     const textBox = screen.getAllByRole('textbox');
 
     expect(textBox[0]).toHaveValue('test user');
 
     userEvent.type(textBox[0], 'test user1');
-    const companyLabelNode = screen.getByText('Company');
 
-    expect(companyLabelNode).toBeInTheDocument();
+    expect(screen.getByText('Company')).toBeInTheDocument();
     const companyTextBoxNode = screen.getAllByRole('textbox');
 
     expect(companyTextBoxNode[2]).toHaveValue('test');
@@ -158,17 +152,14 @@ describe('Profile', () => {
     await userEvent.type(companyTextBoxNode[2], 'test company');
     expect(companyTextBoxNode[2]).toHaveValue('test company');
 
-    const roleLabelNode = screen.getByText('Role');
-
-    expect(roleLabelNode).toBeInTheDocument();
+    expect(screen.getByText('Role')).toBeInTheDocument();
     const roleLabelTextBoxNode = screen.getAllByRole('textbox');
 
     expect(roleLabelTextBoxNode[3]).toHaveValue('');
     await userEvent.type(roleLabelTextBoxNode[3], 'test role');
     expect(roleLabelTextBoxNode[3]).toHaveValue('test role');
-    const phoneLabelNode = screen.getByText('Phone');
 
-    expect(phoneLabelNode).toBeInTheDocument();
+    expect(screen.getByText('Phone')).toBeInTheDocument();
     const phoneLabelTextNode = screen.getAllByRole('textbox');
 
     expect(phoneLabelTextNode[4]).toHaveValue('1234567890');
@@ -191,10 +182,10 @@ describe('Profile', () => {
     const dateFormatLabelNode = screen.getByText('Date format', { selector: 'label' });
 
     expect(dateFormatLabelNode).toBeInTheDocument();
-    const dateFormatButtonNode = screen.queryAllByRole('button', {name: 'Please select'});
+    const dateFormatButtonNode = screen.queryAllByRole('button', {name: 'Please select'}).find(eachOption => eachOption.getAttribute('id') === 'mui-component-select-dateFormat');
 
-    expect(dateFormatButtonNode[0]).toBeInTheDocument();
-    userEvent.click(dateFormatButtonNode[0]);
+    expect(dateFormatButtonNode).toBeInTheDocument();
+    userEvent.click(dateFormatButtonNode);
     const dateFormatMenuItemNode = screen.getByRole('menuitem', {name: '12/31/1900'});
 
     expect(dateFormatMenuItemNode).toBeInTheDocument();
@@ -204,10 +195,10 @@ describe('Profile', () => {
     const timeFormatLabelNode = screen.getByText('Time format');
 
     expect(timeFormatLabelNode).toBeInTheDocument();
-    const timeFormatButtonNode = screen.queryAllByRole('button', {name: 'Please select'});
+    const timeFormatButtonNode = screen.queryAllByRole('button', {name: 'Please select'}).find(eachOption => eachOption.getAttribute('id') === 'mui-component-select-timeFormat');
 
-    expect(timeFormatButtonNode[0]).toBeInTheDocument();
-    userEvent.click(timeFormatButtonNode[0]);
+    expect(timeFormatButtonNode).toBeInTheDocument();
+    userEvent.click(timeFormatButtonNode);
     const timeMenuItemNode = screen.getByRole('menuitem', {name: '2:34:25 pm'});
 
     expect(timeMenuItemNode).toBeInTheDocument();
@@ -242,12 +233,11 @@ describe('Profile', () => {
 
       return res(ctx.json([]));
     });
-    store();
     await initProfile();
-    const emailText = screen.queryAllByRole('button', {name: 'tooltip'});
+    const emailText = screen.queryAllByRole('button', {name: 'tooltip'}).find(eachOption => eachOption.getAttribute('data-test') === 'editEmail');
 
-    expect(emailText[0]).toBeInTheDocument();
-    userEvent.click(emailText[0]);
+    expect(emailText).toBeInTheDocument();
+    userEvent.click(emailText);
     const changeEmailText = screen.getAllByText('Change email');
 
     expect(changeEmailText[0]).toBeInTheDocument();
@@ -261,23 +251,21 @@ describe('Profile', () => {
 
     expect(emailPasswordText[0]).toBeInTheDocument();
     userEvent.type(emailPasswordText[0], 'test@123');
-    const passwordNote = screen.getByText('Note: we require your current password again to help safeguard your integrator.io account.');
 
-    expect(passwordNote).toBeInTheDocument();
+    expect(screen.getByText('Note: we require your current password again to help safeguard your integrator.io account.')).toBeInTheDocument();
     const changeEmailButton = screen.queryAllByRole('button');
 
     expect(changeEmailButton[1]).toBeInTheDocument();
     userEvent.click(changeEmailButton[1]);
     await waitFor(() => expect(mockResolverFunction).toHaveBeenCalledTimes(1));
     await waitForElementToBeRemoved(changeEmailText[0]);
-    const snackbarSuccessText = screen.getByText('Verification link sent to new email address.');
 
-    expect(snackbarSuccessText).toBeInTheDocument();
-    const closeSnackbar = screen.queryAllByRole('button');
+    expect(screen.getByText('Verification link sent to new email address.')).toBeInTheDocument();
+    const closeSnackbar = screen.queryByRole('button', {name: 'Close'});
 
-    expect(closeSnackbar[19]).toBeInTheDocument();
-    userEvent.click(closeSnackbar[19]);
-    await waitForElementToBeRemoved(closeSnackbar[19]);
+    expect(closeSnackbar).toBeInTheDocument();
+    userEvent.click(closeSnackbar);
+    await waitForElementToBeRemoved(closeSnackbar);
     done();
   });
 });
