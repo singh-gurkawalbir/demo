@@ -1724,12 +1724,14 @@ export const compareV2Mappings = (tree1 = [], tree2 = []) => {
 const recursivelyValidateV2Mappings = ({
   v2TreeData,
   lookups,
+  isRows,
   dupMap = {},
   duplicateMappings = [],
   mappingsWithoutGenerates = [],
   missingExtractGenerateNames = [],
   expressionNotSupported = [],
   onlyJsonPathSupported = [],
+  wrongHandlebarExp = [],
 }) => {
   v2TreeData.forEach(mapping => {
     const {
@@ -1791,35 +1793,55 @@ const recursivelyValidateV2Mappings = ({
       }
     }
 
+    if (isRows !== undefined && PRIMITIVE_DATA_TYPES.includes(dataType)) {
+      // wrong rows or record based handlebars not supported
+      const extractString = extract || '';
+
+      const rowOrRecordRegEx = isRows
+        ? /(\{\{((.*?\s+record)|(\s*record))\..*\}\})/i
+        : /(\{\{((.*?\s+rows)|(\s*rows))\..*\}\})/i;
+
+      if (rowOrRecordRegEx.test(extractString)) {
+        wrongHandlebarExp.push(mapping.jsonPath || mapping.generate);
+      }
+    }
+
     if (mapping.children?.length) {
       recursivelyValidateV2Mappings({
         v2TreeData: mapping.children,
         lookups,
+        isRows,
         dupMap,
         duplicateMappings,
         mappingsWithoutGenerates,
         missingExtractGenerateNames,
         expressionNotSupported,
-        onlyJsonPathSupported});
+        onlyJsonPathSupported,
+        wrongHandlebarExp,
+      });
     }
   });
 };
 
-const validateV2Mappings = (v2TreeData, lookups) => {
+const validateV2Mappings = (v2TreeData, lookups, isRows) => {
   const duplicateMappings = [];
   const mappingsWithoutGenerates = [];
   const missingExtractGenerateNames = [];
   const expressionNotSupported = [];
   const onlyJsonPathSupported = [];
+  const wrongHandlebarExp = [];
 
   recursivelyValidateV2Mappings({
     v2TreeData,
     lookups,
+    isRows,
     duplicateMappings,
     mappingsWithoutGenerates,
     missingExtractGenerateNames,
     expressionNotSupported,
-    onlyJsonPathSupported});
+    onlyJsonPathSupported,
+    wrongHandlebarExp,
+  });
 
   if (duplicateMappings.length) {
     return {
@@ -1853,6 +1875,17 @@ const validateV2Mappings = (v2TreeData, lookups) => {
     return {
       isSuccess: false,
       errMessage: errorMessageStore('MAPPER2_ONLY_JSON_PATH_SUPPORT', {fields: onlyJsonPathSupported.join(',')}),
+    };
+  }
+
+  if (wrongHandlebarExp.length) {
+    const errMessage = isRows
+      ? errorMessageStore('MAPPER2_WRONG_HANDLEBAR_FOR_ROWS', {fields: wrongHandlebarExp.join(',')})
+      : errorMessageStore('MAPPER2_WRONG_HANDLEBAR_FOR_RECORD', {fields: wrongHandlebarExp.join(',')});
+
+    return {
+      isSuccess: false,
+      errMessage,
     };
   }
 
@@ -2826,10 +2859,10 @@ export default {
       return mappings;
   },
 
-  validateMappings: (mappings, lookups, v2TreeData) => {
+  validateMappings: (mappings, lookups, v2TreeData, isGroupedSampleData) => {
     // validate only v2 mappings if exist
     if (hasV2MappingsInTreeData(v2TreeData, lookups)) {
-      return validateV2Mappings(v2TreeData, lookups);
+      return validateV2Mappings(v2TreeData, lookups, isGroupedSampleData);
     }
 
     const duplicateMappings = mappings
