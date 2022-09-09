@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { isEmpty } from 'lodash';
-import { useSelector, shallowEqual, useDispatch } from 'react-redux';
+import { useSelector, shallowEqual } from 'react-redux';
 import { makeStyles, Typography } from '@material-ui/core';
 import { useHistory, useRouteMatch, useLocation, matchPath } from 'react-router-dom';
 import { selectors } from '../../../../reducers';
@@ -15,7 +15,6 @@ import Tabs from './Tabs';
 import { buildDrawerUrl, drawerPaths } from '../../../../utils/rightDrawer';
 import { useEditRetryConfirmDialog } from '../../../../components/ErrorList/ErrorTable/hooks/useEditRetryConfirmDialog';
 import RetryList from '../../../../components/JobDashboard/RetryList';
-import actions from '../../../../actions';
 import { FILTER_KEYS } from '../../../../utils/errorManagement';
 
 const emptySet = [];
@@ -39,7 +38,6 @@ const useStyles = makeStyles(theme => ({
 export default function ErrorDetailsDrawer({ flowId }) {
   const history = useHistory();
   const classes = useStyles();
-  const dispatch = useDispatch();
   const match = useRouteMatch();
   const { pathname } = useLocation();
   const [changeTab, setChangeTab] = useState(true);
@@ -148,18 +146,6 @@ export default function ErrorDetailsDrawer({ flowId }) {
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpenErrorsLoaded]);
-
-  useEffect(() => {
-    dispatch(actions.errorManager.retryStatus.requestPoll({ flowId, resourceId}));
-
-    return () => {
-      dispatch(actions.errorManager.retryStatus.stopPoll());
-      dispatch(actions.errorManager.flowErrorDetails.clear({ flowId, resourceId }));
-      dispatch(actions.clearFilter(FILTER_KEYS.OPEN));
-      dispatch(actions.clearFilter(FILTER_KEYS.RESOLVED));
-      dispatch(actions.clearFilter(FILTER_KEYS.RETRIES));
-    };
-  }, [dispatch, flowId, resourceId]);
 
   // Child job information will not be available if we reload the page. Page should be redirected to old url for this case.
   if (flowJobId && (!childJob || isEmpty(childJob))) {

@@ -1,12 +1,17 @@
-import React, { useCallback } from 'react';
-import { useSelector } from 'react-redux';
+import React, { useCallback, useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import { useHistory, useRouteMatch } from 'react-router-dom';
+import { Typography } from '@material-ui/core';
 import { selectors } from '../../../reducers';
 import { buildDrawerUrl, drawerPaths } from '../../../utils/rightDrawer';
 import Status from '../../../components/Buttons/Status';
+import Spinner from '../../../components/Spinner';
+import actions from '../../../actions';
+import { FILTER_KEYS } from '../../../utils/errorManagement';
+import TextButton from '../../../components/Buttons/TextButton';
 
-const useStyles = makeStyles(({
+const useStyles = makeStyles(theme => ({
   statusAppBlock: {
     display: 'flex',
     justifyContent: 'center',
@@ -14,29 +19,53 @@ const useStyles = makeStyles(({
       fontSize: 14,
     },
   },
+  spinner: {
+    marginRight: theme.spacing(1),
+  },
 }));
 
 export default function ErrorStatus({ count, isNew, flowId, resourceId }) {
   const classes = useStyles();
   const match = useRouteMatch();
   const history = useHistory();
+  const dispatch = useDispatch();
   const shouldErrorStatusBeShown = useSelector(state => {
     const isUserInErrMgtTwoDotZero = selectors.isOwnerUserInErrMgtTwoDotZero(state);
     const latestFlowJobs = selectors.latestFlowJobsList(state, flowId)?.data || [];
 
     return !isNew && isUserInErrMgtTwoDotZero && latestFlowJobs.length;
   });
+  const retryStatus = useSelector(
+    state => selectors.retryStatus(state, flowId, resourceId)
+  );
 
   const handleStatus = useCallback(
-    () => {
+    errorType => {
       history.push(buildDrawerUrl({
         path: drawerPaths.ERROR_MANAGEMENT.V2.ERROR_DETAILS,
         baseUrl: match.url,
-        params: { resourceId, errorType: 'open'},
+        params: { resourceId, errorType},
       }));
     },
     [history, match.url, resourceId],
   );
+
+  /**
+   * Fetches the retries status to display on the resource node
+   * clears the errorDetails, retryStatus and respective tab filters on unmount
+  */
+  useEffect(() => {
+    dispatch(actions.errorManager.retryStatus.requestPoll({ flowId, resourceId}));
+
+    return () => {
+      dispatch(actions.errorManager.retryStatus.stopPoll());
+      dispatch(actions.errorManager.flowErrorDetails.clear({ flowId, resourceId }));
+      dispatch(actions.errorManager.retries.clear({flowId, resourceId}));
+      dispatch(actions.clearFilter(FILTER_KEYS.OPEN));
+      dispatch(actions.clearFilter(FILTER_KEYS.RESOLVED));
+      dispatch(actions.clearFilter(FILTER_KEYS.RETRIES));
+    };
+  }, [dispatch, flowId, resourceId]);
 
   /**
    * Error status ( error / success ) is shown only if the user is in EM 2.0
@@ -49,9 +78,22 @@ export default function ErrorStatus({ count, isNew, flowId, resourceId }) {
   return (
     <div className={classes.statusAppBlock}>
       <Status
-        onClick={handleStatus}
+        onClick={() => handleStatus(FILTER_KEYS.OPEN)}
         variant={count ? 'error' : 'success'}> { count ? `${count} errors` : 'Success'}
       </Status>
+      { retryStatus === 'inProgress' && (
+      <div >
+        <Spinner size={16} className={classes.spinner} />
+        <Typography variant="body2" component="div" >
+          Retrying
+        </Typography>
+      </div>
+      )}
+      { retryStatus === 'completed' && (
+      <TextButton size="large" onClick={() => handleStatus(FILTER_KEYS.RETRIES)}>
+        Retrying complete.
+      </TextButton>
+      )}
     </div>
   );
 }

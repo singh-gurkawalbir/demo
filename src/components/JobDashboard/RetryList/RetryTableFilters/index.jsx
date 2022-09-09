@@ -33,7 +33,7 @@ export default function RetryTableFilters({flowId, resourceId, filterKey}) {
     state => selectors.filter(state, filterKey), shallowEqual
   );
   const users = useSelector(
-    state => selectors.retryUsersList(state, resourceId)
+    state => selectors.retryUsersList(state, flowId, resourceId)
   );
   const retryStatus = useSelector(
     state => selectors.retryStatus(state, flowId, resourceId)

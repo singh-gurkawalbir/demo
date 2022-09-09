@@ -24,6 +24,7 @@ import { isNewFlowFn, useHandleExitClick, usePatchFlow, usePushOrReplaceHistory 
 import LastRun from '../../LastRun';
 import LineGraphButton from '../../LineGraphButton';
 import messageStore from '../../../../utils/messageStore';
+import RetryStatus from '../../RetryStatus';
 
 const calcPageBarTitleStyles = makeStyles(theme => ({
   editableTextInput: {
@@ -98,6 +99,7 @@ const CalcPageBarSubtitle = ({flowId}) => {
         <CeligoTimeAgo date={flow.lastModified} />
       )}
       {isUserInErrMgtTwoDotZero && <LastRun flowId={flowId} />}
+      {isUserInErrMgtTwoDotZero && <RetryStatus flowId={flowId} />}
     </div>
   );
 };

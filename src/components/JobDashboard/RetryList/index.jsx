@@ -13,8 +13,8 @@ export default function RetryList({ flowId, resourceId }) {
   const dispatch = useDispatch();
 
   const filters = useSelector(state => selectors.filter(state, FILTER_KEYS.RETRIES));
-  const retries = useSelector(state => selectors.retryList(state, resourceId, filters));
-  const retryListStatus = useSelector(state => selectors.retryListStatus(state, resourceId));
+  const retries = useSelector(state => selectors.retryList(state, flowId, resourceId, filters));
+  const retryListStatus = useSelector(state => selectors.retryListStatus(state, flowId, resourceId));
 
   const actionProps = useMemo(() => ({
     resourceId,

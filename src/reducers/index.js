@@ -7200,7 +7200,7 @@ selectors.allAliases = createSelector(
 selectors.retryUsersList = createSelector(
   selectors.userProfile,
   selectors.usersList,
-  (state, resourceId) => selectors.retryList(state, resourceId),
+  (state, flowId, resourceId) => selectors.retryList(state, flowId, resourceId),
   (profile, availableUsersList, retryJobs) => {
     const allUsersTriggeredRetry = retryJobs.reduce((users, job) => {
       if (!job.triggeredBy) {
@@ -7221,3 +7221,28 @@ selectors.retryUsersList = createSelector(
     });
   }
 );
+
+selectors.mkFlowResourcesRetryStatus = () => {
+  const flowResources = selectors.mkFlowResources();
+
+  return createSelector(
+    state => state?.session?.errorManagement?.retryData?.retryStatus,
+    (_1, flowId) => flowId,
+    (state, flowId) => flowResources(state, flowId)?.filter(res => res.type === 'exports' || res.type === 'imports'),
+    (resourcesRetryStatus, flowId, flowResources) => {
+      const finalResourcesRetryStatus = {
+        isAnyRetryInProgress: false,
+        resourcesWithRetryCompleted: [],
+      };
+
+      if (!resourcesRetryStatus || !resourcesRetryStatus[flowId]) {
+        return finalResourcesRetryStatus;
+      }
+
+      finalResourcesRetryStatus.isAnyRetryInProgress = flowResources.find(res => resourcesRetryStatus?.[flowId]?.[res._id] === 'inProgress');
+      finalResourcesRetryStatus.resourcesWithRetryCompleted = flowResources.filter(res => resourcesRetryStatus?.[flowId]?.[res._id] === 'completed');
+
+      return finalResourcesRetryStatus;
+    }
+  );
+};

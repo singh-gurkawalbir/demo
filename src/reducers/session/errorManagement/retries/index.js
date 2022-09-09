@@ -8,6 +8,7 @@ import { getJobDuration } from '../../../../utils/errorManagement';
 export default (state = {}, action) => {
   const {
     type,
+    flowId,
     resourceId,
     retries,
   } = action;
@@ -15,31 +16,32 @@ export default (state = {}, action) => {
   return produce(state, draft => {
     switch (type) {
       case actionTypes.ERROR_MANAGER.RETRIES.REQUEST:
-        if (!resourceId) {
+        if (!flowId || !resourceId) {
           break;
         }
-        if (!draft[resourceId]) {
-          draft[resourceId] = {};
+        if (!draft[flowId] || !draft[flowId][resourceId]) {
+          draft[flowId] = {};
+          draft[flowId][resourceId] = {};
         }
-        draft[resourceId].status = 'requested';
+        draft[flowId][resourceId].status = 'requested';
         break;
       case actionTypes.ERROR_MANAGER.RETRIES.RECEIVED: {
-        if (!resourceId || !draft[resourceId]) {
+        if (!resourceId || !draft[flowId]?.[resourceId]) {
           break;
         }
 
-        draft[resourceId].status = 'received';
-        if (!draft[resourceId].data || !isEqual(draft[resourceId].data, retries)) {
-          draft[resourceId].data = retries;
+        draft[flowId][resourceId].status = 'received';
+        if (!draft[flowId][resourceId].data || !isEqual(draft[resourceId].data, retries)) {
+          draft[flowId][resourceId].data = retries;
         }
         break;
       }
       case actionTypes.ERROR_MANAGER.RETRIES.CLEAR: {
-        if (!resourceId || !draft[resourceId]) {
+        if (!resourceId || !draft[flowId]?.[resourceId]) {
           break;
         }
 
-        delete draft[resourceId];
+        delete draft[flowId][resourceId];
         break;
       }
 
@@ -50,11 +52,11 @@ export default (state = {}, action) => {
 
 export const selectors = {};
 
-selectors.retryListStatus = (state, resourceId) => state?.[resourceId]?.status;
+selectors.retryListStatus = (state, flowId, resourceId) => state?.[flowId]?.[resourceId]?.status;
 
 selectors.retryList = createSelector(
-  (state, resourceId) => state?.[resourceId]?.data || emptyList,
-  (_1, _2, filters) => filters?.selectedUsers || emptyList,
+  (state, flowId, resourceId) => state?.[flowId]?.[resourceId]?.data || emptyList,
+  (_1, _2, _3, filters) => filters?.selectedUsers || emptyList,
   (retryJobs, selectedUsers) => {
     const allRetryJobs = selectedUsers.length ? retryJobs.filter(job => selectedUsers.includes(job.triggeredBy)) : retryJobs;
 

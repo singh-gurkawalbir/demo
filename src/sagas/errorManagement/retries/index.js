@@ -24,6 +24,7 @@ export function* getRetryJobCollection({flowId, resourceId}) {
 
     yield put(
       actions.errorManager.retries.received({
+        flowId,
         resourceId,
         retries: retryList,
       })

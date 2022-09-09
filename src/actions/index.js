@@ -2041,13 +2041,14 @@ const errorManager = {
   retries: {
     request: ({ flowId, resourceId }) =>
       action(actionTypes.ERROR_MANAGER.RETRIES.REQUEST, { flowId, resourceId }),
-    received: ({ resourceId, retries }) =>
+    received: ({ flowId, resourceId, retries }) =>
       action(actionTypes.ERROR_MANAGER.RETRIES.RECEIVED, {
+        flowId,
         resourceId,
         retries,
       }),
-    clear: () =>
-      action(actionTypes.ERROR_MANAGER.RETRIES.CLEAR),
+    clear: ({ flowId, resourceId }) =>
+      action(actionTypes.ERROR_MANAGER.RETRIES.CLEAR, { flowId, resourceId }),
   },
   retryData: {
     request: ({ flowId, resourceId, retryId }) =>
