@@ -7198,10 +7198,11 @@ selectors.allAliases = createSelector(
   });
 
 selectors.retryUsersList = createSelector(
-  selectors.allUsersList,
-  (state, resourceId) => state?.[resourceId]?.data || emptyList,
-  (allUsersList, retryJobs) => {
-    const allUsersTriggeredRetry = retryJobs.reduce((job, users) => {
+  selectors.userProfile,
+  selectors.usersList,
+  (state, resourceId) => selectors.retryList(state, resourceId),
+  (profile, availableUsersList, retryJobs) => {
+    const allUsersTriggeredRetry = retryJobs.reduce((users, job) => {
       if (!job.triggeredBy) {
         return users;
       }
@@ -7210,11 +7211,12 @@ selectors.retryUsersList = createSelector(
     }, []);
 
     return allUsersTriggeredRetry.map(user => {
-      const userObject = allUsersList.find(userOb => userOb.sharedWithUser?._id === user);
+      const userObject = availableUsersList.find(userOb => userOb.sharedWithUser?._id === user);
+      const name = profile._id === user ? (profile.name || profile.email) : userObject?.sharedWithUser?.name;
 
       return ({
         _id: user,
-        name: userObject?.sharedWithUser?.name,
+        name,
       });
     });
   }

@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectors } from '../../../reducers';
 import actions from '../../../actions';
@@ -7,25 +7,23 @@ import { isNewId } from '../../../utils/resource';
 import RetryTableFilters from './RetryTableFilters';
 import Spinner from '../../Spinner';
 import NoResultTypography from '../../NoResultTypography';
+import { DEFAULT_FILTERS, FILTER_KEYS } from '../../../utils/errorManagement';
 
 export default function RetryList({ flowId, resourceId }) {
-  const filterKey = 'retryJobs';
   const dispatch = useDispatch();
 
-  const filters = useSelector(state => selectors.filter(state, filterKey));
+  const filters = useSelector(state => selectors.filter(state, FILTER_KEYS.RETRIES));
   const retries = useSelector(state => selectors.retryList(state, resourceId, filters));
   const retryListStatus = useSelector(state => selectors.retryListStatus(state, resourceId));
 
-  const clearFilter = useCallback(() => {
-    dispatch(actions.clearFilter(filterKey));
-  }, [dispatch]);
+  const actionProps = useMemo(() => ({
+    resourceId,
+    flowId,
+  }), [flowId, resourceId]);
 
-  useEffect(
-    () => () => {
-      clearFilter();
-    },
-    [clearFilter]
-  );
+  useEffect(() => {
+    dispatch(actions.patchFilter(FILTER_KEYS.RETRIES, DEFAULT_FILTERS.RETRIES));
+  }, [dispatch]);
 
   useEffect(() => {
     if (flowId && !isNewId(flowId)) {
@@ -41,12 +39,16 @@ export default function RetryList({ flowId, resourceId }) {
 
   return (
     <>
-      <RetryTableFilters flowId={flowId} resourceId={resourceId} />
+      <RetryTableFilters flowId={flowId} resourceId={resourceId} filterKey={FILTER_KEYS.RETRIES} />
       {retryListStatus === 'requested' ? (
         <Spinner centerAll />
       ) : (
         <div>
-          <ResourceTable resources={retries} resourceType="retries" />
+          <ResourceTable
+            resources={retries}
+            filterKey={FILTER_KEYS.RETRIES}
+            resourceType="retries"
+            actionProps={actionProps} />
           {!retries.length && (
           <div>
             <NoResultTypography>You don’t have any retries.</NoResultTypography>

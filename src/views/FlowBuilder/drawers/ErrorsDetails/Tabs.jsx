@@ -22,7 +22,25 @@ const useStyles = makeStyles(theme => ({
     color: theme.palette.secondary.main,
     fontSize: 14,
   },
+  tabInfoIcon: {
+    alignItems: 'end',
+  },
 }));
+
+const RetriesTabLabel = () => {
+  const classes = useStyles();
+
+  return (
+    <>
+      <span>Retries</span>
+      <InfoIconButton
+        className={classes.tabInfoIcon}
+        info={messageStore('RETRIES_TAB_INFO')} size="xs" placement="right-start"
+        preventOverflow={false} />
+    </>
+  );
+};
+
 const tabs = [
   {
     path: 'open',
@@ -36,15 +54,9 @@ const tabs = [
   },
   {
     path: 'retries',
-    label: (
-      <div>
-        <span>Retries</span>
-        <InfoIconButton info={messageStore('RETRIES_TAB_INFO')} placement="bottom" />
-      </div>
-    ),
+    label: (<RetriesTabLabel />),
     dataTest: 'flow-builder-retried-errors',
   }];
-
 export default function ErrorDetailsTabs({flowId, onChange}) {
   const classes = useStyles();
   const match = useRouteMatch();

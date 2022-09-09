@@ -5,6 +5,8 @@ import { makeStyles, Divider, Typography } from '@material-ui/core';
 import { selectors } from '../../../../reducers';
 import Spinner from '../../../../components/Spinner';
 import ErrorActionStatus from './ErrorActionStatus';
+import TextButton from '../../../../components/Buttons/TextButton';
+import { FILTER_KEYS } from '../../../../utils/errorManagement';
 
 const useStyles = makeStyles(theme => ({
   divider: {
@@ -33,7 +35,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function ErrorDrawerAction({ flowId, onChange }) {
+export default function ErrorDrawerAction({ flowId, onChange, errorType }) {
   const classes = useStyles();
   const match = useRouteMatch();
   const { resourceId } = match?.params || {};
@@ -56,9 +58,13 @@ export default function ErrorDrawerAction({ flowId, onChange }) {
       <div className={classes.retryContainer}>
         <Divider orientation className={classes.divider} />
         <Typography variant="body2" component="div" className={classes.status}>
-          <span>Retrying complete. </span>
-          <span onClick={() => onChange('retries')}>View results</span>
+          Retrying complete.
         </Typography>
+        {errorType !== FILTER_KEYS.RETRIES ? (
+          <TextButton size="large" onClick={() => onChange(FILTER_KEYS.RETRIES)}>
+            View results
+          </TextButton>
+        ) : ''}
       </div>
       )}
       {

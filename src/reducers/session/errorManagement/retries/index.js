@@ -54,9 +54,9 @@ selectors.retryListStatus = (state, resourceId) => state?.[resourceId]?.status;
 
 selectors.retryList = createSelector(
   (state, resourceId) => state?.[resourceId]?.data || emptyList,
-  (_1, _2, filters) => filters,
-  (retryJobs, filters) => {
-    const allRetryJobs = filters.triggeredBy ? retryJobs.filter(job => filters.selectedUsers.includes(job.triggeredBy)) : retryJobs;
+  (_1, _2, filters) => filters?.selectedUsers || emptyList,
+  (retryJobs, selectedUsers) => {
+    const allRetryJobs = selectedUsers.length ? retryJobs.filter(job => selectedUsers.includes(job.triggeredBy)) : retryJobs;
 
     return allRetryJobs.map(job => {
       const additionalProps = {

@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback } from 'react';
+import React, { useCallback } from 'react';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import { selectors } from '../../../../reducers';
@@ -21,9 +21,6 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const defaultFilter = {
-  selectedUsers: [],
-};
 const resourceType = 'users';
 const defaultButtonName = 'Select retry started by';
 const labelName = 'Select retry started by';
@@ -48,10 +45,6 @@ export default function RetryTableFilters({flowId, resourceId, filterKey}) {
   const onSave = useCallback(val => {
     // setSelectedResources(val);
     dispatch(actions.patchFilter(filterKey, { selectedUsers: val}));
-  }, [dispatch, filterKey]);
-
-  useEffect(() => {
-    dispatch(actions.patchFilter(filterKey, defaultFilter));
   }, [dispatch, filterKey]);
 
   return (

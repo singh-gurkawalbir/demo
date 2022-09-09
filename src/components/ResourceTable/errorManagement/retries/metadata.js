@@ -2,6 +2,8 @@ import React from 'react';
 import FlowStepStatus from '../../latestJobs/cells/FlowStepStatus';
 import CeligoTimeAgo from '../../../CeligoTimeAgo';
 import ErrorCell from '../../../JobDashboard/RunHistory/ErrorCell';
+import UserName from '../cells/UserName';
+import { useGetTableContext } from '../../../CeligoTable/TableContext';
 
 export default {
   useColumns: () => [
@@ -50,7 +52,11 @@ export default {
       key: 'startedBy',
       heading: 'Retry started by',
       isLoggable: true,
-      Value: ({rowData: r}) => r.triggeredBy,
+      Value: ({rowData: r}) => {
+        const {flowId} = useGetTableContext;
+
+        return <UserName userId={r.triggeredBy} flowId={flowId} />;
+      },
     },
   ],
 };

@@ -8,6 +8,7 @@ import openExternalUrl from '../../../utils/window';
 import { safeParse } from '../../../utils/string';
 import { pollApiRequests } from '../../app';
 import { emptyObject } from '../../../constants';
+import { getRetryJobCollection } from '../retries';
 
 export function* downloadRetryData({flowId, resourceId, retryDataKey}) {
   let response;
@@ -128,9 +129,12 @@ export function* _requestRetryStatus({ flowId, resourceId }) {
 
     yield put(actions.errorManager.retryStatus.received({ flowId, resourceId, status}));
     // stop polling if there are no retry jobs in progress
+    // and refresh retries collection if retries are previously inProgress
     if (!pendingRetryList || !pendingRetryList.length) {
+      if (prevStatus) {
+        yield call(getRetryJobCollection, {flowId, resourceId});
+      }
       yield put(actions.errorManager.retryStatus.stopPoll());
-      yield put(actions.errorManager.retries.request());
     }
   } catch (e) {
     // errors
