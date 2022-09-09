@@ -53,9 +53,6 @@ describe('Install Base', () => {
 
   beforeEach(() => {
     initialStore = getCreatedStore();
-    jest.useFakeTimers();
-    jest.setTimeout(100000);
-    initialStore = getCreatedStore();
     useDispatchSpy = jest.spyOn(reactRedux, 'useDispatch');
     mockDispatchFn = jest.fn(action => {
       switch (action.type) {
@@ -66,9 +63,6 @@ describe('Install Base', () => {
     jest.clearAllMocks();
   });
   afterEach(() => {
-    jest.runOnlyPendingTimers();
-    jest.useRealTimers();
-    jest.clearAllTimers();
     useDispatchSpy.mockClear();
     mockDispatchFn.mockClear();
     cleanup();
@@ -144,8 +138,7 @@ describe('Install Base', () => {
     store(connectors);
     const { utils } = await initInstallBase(props);
 
-    expect(utils.container.firstChild).toBeNull();
-    screen.debug(null, Infinity);
+    expect(utils.container).toBeEmptyDOMElement();
   });
   test('Should able to test the Install Base search option', async () => {
     const props = {
@@ -263,6 +256,7 @@ describe('Install Base', () => {
     const checkBoxNode = screen.getAllByRole('checkbox');
 
     userEvent.click(checkBoxNode[0]);
+    expect(checkBoxNode).toBeTruthy();
     const update1userButtonNode = screen.getByRole('button', {name: 'Update 1 user(s)'});
 
     expect(update1userButtonNode).toBeInTheDocument();

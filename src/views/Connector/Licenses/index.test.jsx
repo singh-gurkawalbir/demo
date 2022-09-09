@@ -80,9 +80,6 @@ describe('Licenses', () => {
 
   beforeEach(() => {
     initialStore = getCreatedStore();
-    jest.useFakeTimers();
-    jest.setTimeout(100000);
-    initialStore = getCreatedStore();
     useDispatchSpy = jest.spyOn(reactRedux, 'useDispatch');
     mockDispatchFn = jest.fn(action => {
       switch (action.type) {
@@ -94,13 +91,102 @@ describe('Licenses', () => {
     jest.clearAllMocks();
   });
   afterEach(() => {
-    jest.runOnlyPendingTimers();
-    jest.useRealTimers();
-    jest.clearAllTimers();
     useDispatchSpy.mockClear();
     mockDispatchFn.mockClear();
     cleanup();
   });
+
+  test('Should able to test the license page with status as installed and environment as production', async () => {
+    const props = {
+      match: {
+        path: '/connectors/:connectorId/connectorLicenses',
+        url: '/connectors/12345/connectorLicenses',
+        isExact: true,
+        params: {
+          connectorId: '12345',
+        },
+      },
+      history: {
+        length: 50,
+        action: 'POP',
+        push: mockHistoryPush,
+        location: {
+          pathname: '/connectors/12345/connectorLicenses',
+          search: '',
+          hash: '',
+          key: 'jndug8',
+        },
+      },
+      location: {
+        pathname: '/connectors/12345/connectorLicenses',
+        search: '',
+        hash: '',
+        key: 'jndug8',
+      },
+    };
+    const connectors = {
+      name: 'Test',
+      _integrationId: '123454321',
+    };
+    const connectorLicenses = [
+      {
+        _id: '654321',
+        expires: '2022-01-10T18:29:59.999Z',
+        created: '2022-08-28T19:09:16.164Z',
+        sandbox: false,
+        user: {
+          email: 'testuser@test.com',
+        },
+        _connectorId: '12345',
+        _integrationId: '123454321',
+      },
+    ];
+
+    store(connectors, connectorLicenses);
+    await initLicenses(props);
+
+    expect(screen.getByRole('columnheader', {name: 'Email'})).toBeInTheDocument();
+
+    expect(screen.getByRole('columnheader', {name: 'Status'})).toBeInTheDocument();
+
+    expect(screen.getByRole('columnheader', {name: 'Created'})).toBeInTheDocument();
+
+    expect(screen.getByRole('columnheader', {name: 'Integration ID'})).toBeInTheDocument();
+
+    expect(screen.getByRole('columnheader', {name: 'Expires sorted descending'})).toBeInTheDocument();
+
+    expect(screen.getByRole('columnheader', {name: 'Trial expires sorted descending'})).toBeInTheDocument();
+
+    expect(screen.getByRole('columnheader', {name: 'Environment'})).toBeInTheDocument();
+
+    expect(screen.getByRole('columnheader', {name: 'Actions'})).toBeInTheDocument();
+
+    expect(screen.getAllByRole('columnheader')).toHaveLength(8);
+
+    expect(screen.getAllByRole('cell')).toHaveLength(8);
+
+    expect(screen.getByRole('cell', {name: 'Production'})).toBeInTheDocument();
+
+    expect(screen.getByRole('cell', {name: 'Installed'})).toBeInTheDocument();
+    const moreButtonNode = screen.getByRole('button', {name: 'more'});
+
+    expect(moreButtonNode).toBeInTheDocument();
+    userEvent.click(moreButtonNode);
+    const editLicenseButtonNode = await waitFor(() => screen.getByRole('menuitem', {name: 'Edit license'}));
+
+    expect(editLicenseButtonNode).toBeInTheDocument();
+    userEvent.click(editLicenseButtonNode);
+    expect(editLicenseButtonNode).not.toBeInTheDocument();
+    const linkNode = document.querySelector('[href="//edit/connectorLicenses/654321"]');
+
+    expect(linkNode).toBeInTheDocument();
+    userEvent.click(moreButtonNode);
+    const deleteLicenseButtonNode = await waitFor(() => screen.getByRole('menuitem', {name: 'Delete license'}));
+
+    expect(deleteLicenseButtonNode).toBeInTheDocument();
+    userEvent.click(deleteLicenseButtonNode);
+    expect(deleteLicenseButtonNode).not.toBeInTheDocument();
+  }, 30000);
   test('Should able to test the licenses page with no license', async () => {
     const props = {
       match: {
@@ -309,109 +395,6 @@ describe('Licenses', () => {
     const { utils } = await initLicenses(props);
 
     expect(utils.container.firstChild).toBeEmptyDOMElement();
-  });
-  test('Should able to test the license page with status as installed and environment as production', async () => {
-    const props = {
-      match: {
-        path: '/connectors/:connectorId/connectorLicenses',
-        url: '/connectors/12345/connectorLicenses',
-        isExact: true,
-        params: {
-          connectorId: '12345',
-        },
-      },
-      history: {
-        length: 50,
-        action: 'POP',
-        push: mockHistoryPush,
-        location: {
-          pathname: '/connectors/12345/connectorLicenses',
-          search: '',
-          hash: '',
-          key: 'jndug8',
-        },
-      },
-      location: {
-        pathname: '/connectors/12345/connectorLicenses',
-        search: '',
-        hash: '',
-        key: 'jndug8',
-      },
-    };
-    const connectors = {
-      name: 'Test',
-      _integrationId: '123454321',
-    };
-    const connectorLicenses = [
-      {
-        _id: '654321',
-        expires: '2022-01-10T18:29:59.999Z',
-        created: '2022-08-28T19:09:16.164Z',
-        sandbox: false,
-        user: {
-          email: 'testuser@test.com',
-        },
-        _connectorId: '12345',
-        _integrationId: '123454321',
-      },
-    ];
-
-    store(connectors, connectorLicenses);
-    await initLicenses(props);
-    const emailColumnNode = screen.getByRole('columnheader', {name: 'Email'});
-
-    expect(emailColumnNode).toBeInTheDocument();
-    const statusColumnNode = screen.getByRole('columnheader', {name: 'Status'});
-
-    expect(statusColumnNode).toBeInTheDocument();
-    const createdColumnNode = screen.getByRole('columnheader', {name: 'Created'});
-
-    expect(createdColumnNode).toBeInTheDocument();
-    const integrationIdColumnNode = screen.getByRole('columnheader', {name: 'Integration ID'});
-
-    expect(integrationIdColumnNode).toBeInTheDocument();
-    const expiresColumnNode = screen.getByRole('columnheader', {name: 'Expires sorted descending'});
-
-    expect(expiresColumnNode).toBeInTheDocument();
-    const trialColumnNode = screen.getByRole('columnheader', {name: 'Trial expires sorted descending'});
-
-    expect(trialColumnNode).toBeInTheDocument();
-    const environmentNode = screen.getByRole('columnheader', {name: 'Environment'});
-
-    expect(environmentNode).toBeInTheDocument();
-    const actionsNode = screen.getByRole('columnheader', {name: 'Actions'});
-
-    expect(actionsNode).toBeInTheDocument();
-    const columnHeaderCountNode = screen.getAllByRole('columnheader');
-
-    expect(columnHeaderCountNode).toHaveLength(8);
-    const cellCountNode = screen.getAllByRole('cell');
-
-    expect(cellCountNode).toHaveLength(8);
-    const productionCellNode = screen.getByRole('cell', {name: 'Production'});
-
-    expect(productionCellNode).toBeInTheDocument();
-    const statusCellNode = screen.getByRole('cell', {name: 'Installed'});
-
-    expect(statusCellNode).toBeInTheDocument();
-    const moreButtonNode = screen.getByRole('button', {name: 'more'});
-
-    expect(moreButtonNode).toBeInTheDocument();
-    userEvent.click(moreButtonNode);
-    const editLicenseButtonNode = await waitFor(() => screen.getByRole('menuitem', {name: 'Edit license'}));
-
-    expect(editLicenseButtonNode).toBeInTheDocument();
-    userEvent.click(editLicenseButtonNode);
-    expect(editLicenseButtonNode).not.toBeInTheDocument();
-    const linkNode = document.querySelector('[href="//edit/connectorLicenses/654321"]');
-
-    expect(linkNode).toBeInTheDocument();
-    userEvent.click(moreButtonNode);
-    const deleteLicenseButtonNode = await waitFor(() => screen.getByRole('menuitem', {name: 'Delete license'}));
-
-    expect(deleteLicenseButtonNode).toBeInTheDocument();
-    userEvent.click(deleteLicenseButtonNode);
-    expect(deleteLicenseButtonNode).not.toBeInTheDocument();
   });
   test('Should able to test the license page with the license type as integrationAppChild', async () => {
     const props = {
