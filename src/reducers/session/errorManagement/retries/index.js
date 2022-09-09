@@ -31,13 +31,13 @@ export default (state = {}, action) => {
         }
 
         draft[flowId][resourceId].status = 'received';
-        if (!draft[flowId][resourceId].data || !isEqual(draft[resourceId].data, retries)) {
+        if (!draft[flowId][resourceId].data || !isEqual(draft[flowId][resourceId].data, retries)) {
           draft[flowId][resourceId].data = retries;
         }
         break;
       }
       case actionTypes.ERROR_MANAGER.RETRIES.CLEAR: {
-        if (!resourceId || !draft[flowId]?.[resourceId]) {
+        if (!draft[flowId] || !draft[flowId][resourceId]) {
           break;
         }
 

@@ -10,6 +10,7 @@ import { emptyObject } from '../../../constants';
 import { RETRY_JOB_UI_STATUS } from '../../../utils/jobdashboard';
 import TextButton from '../../../components/Buttons/TextButton';
 import { FILTER_KEYS } from '../../../utils/errorManagement';
+import RetryListPopper from './RetryListPopper';
 
 const useStyles = makeStyles(theme => ({
   divider: {
@@ -58,12 +59,16 @@ export default function RetryStatus({ flowId }) {
         <Typography variant="body2" component="div" className={classes.status}>
           Retrying complete.
         </Typography>
-        <TextButton size="large" onClick={handleClick}>
-          View results
-        </TextButton>
+        {resourcesWithRetryCompleted.length > 1 ? (
+          <RetryListPopper resources={resourcesWithRetryCompleted} />
+        ) : (
+          <TextButton size="large" onClick={handleClick}>
+            View results
+          </TextButton>
+        )}
       </>
     );
-  }, [isAnyRetryInProgress, classes.status, classes.icon, handleClick]);
+  }, [isAnyRetryInProgress, classes.status, classes.icon, resourcesWithRetryCompleted, handleClick]);
 
   if (!isAnyRetryInProgress && !resourcesWithRetryCompleted.length) {
     return null;

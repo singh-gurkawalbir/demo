@@ -321,16 +321,10 @@ function getRetryJobStatusDetails(job) {
 
       return {
         showStatusTag: true,
-        variant:
-          job.numSuccess > 0 ||
-          job.numError > 0 ||
-          job.numResolved > 0 ||
-          [JOB_STATUS.COMPLETED, JOB_STATUS.FAILED].includes(job.status)
-            ? 'success'
-            : 'warning',
+        variant: [JOB_STATUS.COMPLETED, JOB_STATUS.FAILED].includes(job.status) ? 'success' : 'warning',
         status: JOB_UI_STATUS[job.uiStatus],
-        errorValue: errorPercentage,
-        resolvedValue: resolvedPercentage,
+        errorValue: job.uiStatus === JOB_STATUS.CANCELED ? 0 : errorPercentage,
+        resolvedValue: job.uiStatus === JOB_STATUS.CANCELED ? 0 : resolvedPercentage,
       };
     }
   }
