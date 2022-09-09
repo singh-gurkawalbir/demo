@@ -17,12 +17,18 @@ const useStyles = makeStyles(theme => ({
     textTransform: 'none',
     color: theme.palette.text.secondary,
   },
+  infoText: {
+    position: 'fixed',
+    bottom: 15,
+    width: 400,
+    textTransform: 'none',
+  },
 }));
 
 export default function EmptyNode({ data = {} }) {
   const classes = useStyles();
 
-  const branchName = data.name;
+  const {infoText, name: branchName} = data;
 
   return (
     <div>
@@ -30,6 +36,11 @@ export default function EmptyNode({ data = {} }) {
       { branchName && (
       <Typography variant="overline" className={classes.branchName}>
         {branchName}
+      </Typography>
+      )}
+      { infoText && (
+      <Typography variant="h5" className={classes.infoText}>
+        {infoText}
       </Typography>
       )}
       <div className={classes.emptyNode} />

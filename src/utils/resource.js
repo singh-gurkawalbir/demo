@@ -322,7 +322,7 @@ export const getWebhookUrl = (options = {}, resourceId) => {
         'sapariba',
       ].indexOf(webHookProvider) > -1
     ) {
-      if (webHookToken && webHookVerify !== 'token') whURL += `/${webHookToken}`;
+      if (webHookToken && (webHookVerify === 'secret_url' || !webHookVerify)) whURL += `/${webHookToken}`;
     }
 
     whURL += '/data';

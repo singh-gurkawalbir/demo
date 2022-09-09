@@ -4,7 +4,7 @@ import { useHistory, useRouteMatch } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import FormLabel from '@material-ui/core/FormLabel';
 import CodeEditor from '../../../CodeEditor';
-import ActionButton from '../../../ActionButton';
+import IconButtonWithTooltip from '../../../IconButtonWithTooltip';
 import ExpandWindowIcon from '../../../icons/ExpandWindowIcon';
 import FieldMessage from '../FieldMessage';
 import FieldHelp from '../../FieldHelp';
@@ -19,7 +19,8 @@ const useStyles = makeStyles(theme => ({
   },
   dynaEditorButton: {
     float: 'right',
-    marginTop: theme.spacing(4),
+    padding: theme.spacing(1),
+    marginTop: theme.spacing(2),
   },
   inlineEditorContainer: {
     border: '1px solid rgb(0,0,0,0.1)',
@@ -176,12 +177,13 @@ export default function DynaEditor(props) {
           isValid={isValid}
         />
       </div>
-      <ActionButton
+      <IconButtonWithTooltip
         data-test={id}
         onClick={handleEditorClick}
+        tooltipProps={{title: 'Expand', placement: 'bottom'}}
         className={classes.dynaEditorButton}>
         <ExpandWindowIcon />
-      </ActionButton>
+      </IconButtonWithTooltip>
     </div>
   );
 }

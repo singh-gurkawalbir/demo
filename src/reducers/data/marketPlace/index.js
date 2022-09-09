@@ -9,7 +9,7 @@ const emptySet = [];
 const sfConnector = SUITESCRIPT_CONNECTORS.find(s => s._id === SUITESCRIPT_CONNECTOR_IDS.salesforce);
 
 export default (state = {}, action) => {
-  const { type, connectors, templates } = action;
+  const { type, connectors = [], templates } = action;
 
   return produce(state, draft => {
     switch (type) {
@@ -81,7 +81,17 @@ selectors.connectors = (state, application, sandbox, licenses, isAccountOwnerOrA
       // a parentChild connector can be installed only if it has a child license
       if (c.twoDotZero?.isParentChild) {
         canInstall = licenses.some(
-          license => connectorLicenses.some(connectorLicense => license._parentId === connectorLicense._id)
+          license => {
+            const parentLicense = connectorLicenses.some(connectorLicense => license._parentId === connectorLicense._id);
+
+            if (!parentLicense) return false;
+
+            if (license.expires && new Date(license.expires).getTime() > Date.now()) {
+              return true;
+            }
+
+            return !license.expires;
+          }
         );
         canRequestDemo = !canInstall;
       }

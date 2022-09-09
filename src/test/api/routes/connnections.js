@@ -309,4 +309,60 @@ export default API.get('/api/connections',
           successStatusCode: 204,
         },
       },
-    }]);
+    },
+    {
+      _id: '62f24d45f8b63672312cd561',
+      createdAt: '2022-08-09T12:04:21.456Z',
+      lastModified: '2022-08-09T12:04:21.551Z',
+      type: 'as2',
+      name: 'weev',
+      sandbox: false,
+      as2: {
+        as2Id: 'awrvrv',
+        contentBasedFlowRouter: {_scriptId: 'some_scriptId'},
+        partnerId: 'wqefwef',
+        unencrypted: {
+          partnerCertificate: 'qd3d',
+          userPublicKey: 'q3FDWF',
+        },
+        preventCanonicalization: false,
+        partnerStationInfo: {
+          as2URI: 'https://www.qwrvre.com',
+          mdn: {
+            mdnSigning: 'NONE',
+          },
+          signing: 'MD5',
+          encryptionType: 'AES128',
+          encoding: 'base64',
+          signatureEncoding: 'base64',
+          auth: {
+            type: 'basic',
+            basic: {
+              username: 'qed3w',
+              password: '******',
+            },
+          },
+        },
+        userStationInfo: {
+          mdn: {
+            mdnSigning: 'MD5',
+            mdnEncoding: 'base64',
+          },
+          signing: 'MD5',
+          encryptionType: '3DES',
+          encoding: 'base64',
+        },
+      },
+    },
+    {
+      _id: '5e3338331c056a75e6df19b2',
+      createdAt: '2020-03-17T06:03:31.798Z',
+      lastModified: '2020-03-19T23:47:55.181Z',
+      adaptorType: 'HTTPExport',
+      http: {type: 'file'},
+      name: '3D Cart Staging delete',
+      assistant: '3dcart',
+      offline: true,
+      sandbox: false,
+    },
+  ]);

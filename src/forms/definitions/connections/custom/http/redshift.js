@@ -39,7 +39,7 @@ export default {
       label: 'Access Key Id',
       helpKey: 'redshift.connection.http.unencrypted.accessKeyId',
       helpText:
-        "Many of Amazon's APIs require an access key, and this field stores the 'id' for the access key that you want this connection to use.  Please check the AWS guides if you need more info about access keys and how to generate and/or find them in your AWS account.",
+        'Many Amazon APIs require an access key, and you must enter its ID in this setting for Redshift authentication. Refer to the AWS guides for more info about access keys and how to generate or find them in your AWS account.',
       required: true,
     },
     'http.encrypted.secretAccessKey': {
@@ -49,7 +49,7 @@ export default {
       label: 'Secret Access Key',
       defaultValue: '',
       helpText:
-        'When you create a new access key in your Amazon Redshift account, AWS will display both the access key id and the secret access key.  The secret access key will only be available once, and you should store it immediately in integrator.io (i.e. in this field).  Please note that there are multiple layers of protection in place (including AES 256 encryption) to keep your secret access key safe.',
+        'When you create an access key in your Amazon Redshift account, AWS will display both the access key ID and the secret access key. The secret access key will be available only once, and you should immediately copy it to a secure location and paste it into this setting. Multiple layers of protection, including AES 256 encryption, are in place to keep your secret access key safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
       required: true,
       inputType: 'password',
       description:

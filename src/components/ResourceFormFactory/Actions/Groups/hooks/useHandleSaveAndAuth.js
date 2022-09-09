@@ -103,24 +103,6 @@ export default function useHandleSaveAndAuth({formKey, resourceType, resourceId,
           ) {
             showError = true;
           }
-        } else if (resource.assistant === 'googlecontacts') {
-          if (values['/http/unencrypted/apiType'] === 'googlecontactspeople') {
-            if (
-              !(
-                values['/http/scopePeople'] &&
-                    values['/http/scopePeople'].length
-              )
-            ) {
-              showError = true;
-            }
-          } else if (
-            !(
-              values['/http/auth/oauth/scope'] &&
-                  values['/http/auth/oauth/scope'].length
-            )
-          ) {
-            showError = true;
-          }
         } else if (
           !(
             values['/http/auth/oauth/scope'] &&
