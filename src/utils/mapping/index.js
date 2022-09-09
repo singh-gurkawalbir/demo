@@ -613,9 +613,10 @@ export const hideOtherTabRows = (node, newTabExtract, hidden) => {
     // for child object-array nodes, only make first tab visible
     if (clonedChild.dataType === MAPPING_DATA_TYPES.OBJECTARRAY) {
       const childParentExtract = clonedChild.combinedExtract?.split(',') || [];
+      const extractIndex = clonedChild.activeTab || 0;
 
       // update children and un-hide only first tab
-      return hideOtherTabRows(clonedChild, getUniqueExtractId(childParentExtract[0], 0));
+      return hideOtherTabRows(clonedChild, getUniqueExtractId(childParentExtract[extractIndex], extractIndex));
     }
 
     // update children as well
@@ -713,9 +714,8 @@ export const rebuildObjectArrayNode = (node, extract = '') => {
     if (child.isTabNode) {
       return true;
     }
-    const uniqueExtract = getExtractFromUniqueId(parentExtract);
 
-    const newIndex = splitExtracts.findIndex(s => uniqueExtract === s);
+    const newIndex = splitExtracts.findIndex((s, i) => parentExtract === getUniqueExtractId(s, i));
 
     // only keep the children which have matching parentExtract
     if (newIndex !== -1) {
@@ -804,6 +804,7 @@ function recursivelyBuildTreeFromV2Mappings({mappings, treeData, parentKey, pare
           mappings: objMappings,
           treeData: children,
           parentKey: currNodeKey,
+          hidden,
           disabled,
           isGroupedSampleData,
           parentJsonPath: jsonPath});
@@ -2056,6 +2057,29 @@ export const getAllKeys = data => {
   });
 
   return flattenDeep(nestedKeys);
+};
+
+// if the parent jsonPath has updated,
+// we need to update all its children jsonPaths as well
+export const updateChildrenJSONPath = parentNode => {
+  if (!parentNode) return parentNode;
+
+  const {jsonPath: parentJsonPath, dataType: parentDataType, children} = parentNode;
+
+  if (isEmpty(children) || !parentJsonPath) return parentNode;
+
+  children.forEach(child => {
+    if (!child.generate || child.isTabNode) return;
+    // eslint-disable-next-line no-param-reassign
+    child.jsonPath = parentDataType === MAPPING_DATA_TYPES.OBJECTARRAY ? `${parentJsonPath}[*].${child.generate}` : `${parentJsonPath}.${child.generate}`;
+
+    if (child.children?.length) {
+      // eslint-disable-next-line no-param-reassign
+      child = updateChildrenJSONPath(child);
+    }
+  });
+
+  return parentNode;
 };
 
 // #endregion

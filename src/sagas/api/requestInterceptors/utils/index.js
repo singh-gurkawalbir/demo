@@ -8,7 +8,7 @@ import { getCSRFToken } from '../../../../utils/session';
 import { isJsonString } from '../../../../utils/string';
 
 const sessionExpired = {
-  message: 'Session Expired',
+  message: 'Session expired',
   status: 401,
 };
 
