@@ -717,7 +717,6 @@ describe('getHTTPConnectorMetadata saga', () => {
 
           ],
           createdAt: '2022-07-14T11:20:24.000Z',
-          exportPreConfiguredFields: undefined,
           id: '62cffbf70c804009663faa2b',
           lastModified: '2022-07-14T11:20:24.003Z',
           name: 'Customers : Customer',
@@ -867,6 +866,13 @@ describe('getHTTPConnectorMetadata saga', () => {
         },
 
       ],
+      versions: [
+        {
+          _id: '62cffbf79b51830e4d641d6d',
+          version: '2022-01',
+        },
+
+      ],
 
     },
     import: {
@@ -915,7 +921,6 @@ describe('getHTTPConnectorMetadata saga', () => {
             },
 
           ],
-          resourceFieldsUserMustSet: undefined,
           resourcePreConfiguredFields: [],
           sampleData: {
             customer: [
@@ -988,41 +993,6 @@ describe('getHTTPConnectorMetadata saga', () => {
       versions: [
         {
           _id: '62cffbf79b51830e4d641d6d',
-          operations: [
-            {
-              howToFindIdentifier: {
-                lookup: {
-                  extract: 'customers[0].id',
-                  id: '62cffbff0c804009663faa60',
-                  url: '/customers/search.json',
-
-                },
-
-              },
-              id: '62cffc149b51830e4d641e51',
-              ignoreExisting: true,
-              method: 'POST',
-              name: 'Creates a customer',
-              parameters: [
-                {
-                  id: 'customerId',
-                  in: 'path',
-                  isIdentifier: true,
-                  required: true,
-
-                },
-
-              ],
-              requiredMappings: [
-                'customer.email',
-
-              ],
-              supportIgnoreExisting: true,
-              url: '/2022-01/customers.json',
-
-            },
-
-          ],
           version: '2022-01',
 
         },
@@ -1056,7 +1026,6 @@ describe('getHTTPConnectorMetadata saga', () => {
 
           ],
           createdAt: '2022-07-14T11:20:24.000Z',
-          exportPreConfiguredFields: undefined,
           id: '62cffbf70c804009663faa2b',
           lastModified: '2022-07-14T11:20:24.003Z',
           name: 'Customers : Customer',
@@ -1087,12 +1056,8 @@ describe('getHTTPConnectorMetadata saga', () => {
           ],
           supportedBy: {
             import: {
-              preConfiguredFields: [
-
-              ],
-
+              preConfiguredFields: [],
             },
-
           },
           versions: [
             {
@@ -1103,9 +1068,7 @@ describe('getHTTPConnectorMetadata saga', () => {
                     dateFormat: 'YYYY-MM-DDTHH:mm:ss[Z]',
                     defaults: {
                       updated_at_min: '{{{lastExportDateTime}}}',
-
                     },
-
                   },
                   doesNotSupportPaging: false,
                   id: '62cffbff0c804009663faa5c',
@@ -1117,21 +1080,16 @@ describe('getHTTPConnectorMetadata saga', () => {
                       id: 'ids',
                       name: 'ids',
                       required: false,
-
                     },
-
                   ],
                   response: {
                     resourcePath: 'customers',
-
                   },
                   supportedExportTypes: [
                     'delta',
                     'test',
-
                   ],
                   url: '/customers.json',
-
                 },
                 {
                   doesNotSupportPaging: false,
@@ -1197,24 +1155,23 @@ describe('getHTTPConnectorMetadata saga', () => {
                   url: '/customers/:_customerId/metafields.json',
 
                 },
-
               ],
               version: '2022-01',
-
             },
-
           ],
-
         },
-
       ],
-
+      versions: [
+        {
+          _id: '62cffbf79b51830e4d641d6d',
+          version: '2022-01',
+        },
+      ],
     },
     import: {
       errorMediaType: 'json',
       labels: {
         version: 'API Version',
-
       },
       requestMediaType: 'json',
       resources: [
@@ -1225,7 +1182,6 @@ describe('getHTTPConnectorMetadata saga', () => {
             '62cffbf79b51830e4d641d6d',
             '62cffbf79b51830e4d641d6e',
             '62cffbf79b51830e4d641d6f',
-
           ],
           createdAt: '2022-07-14T11:20:24.000Z',
           id: '62cffbf70c804009663faa2b',
@@ -1244,43 +1200,26 @@ describe('getHTTPConnectorMetadata saga', () => {
                     {
                       dataType: 'string',
                       id: 'province_code',
-
                     },
-
                   ],
-
                 },
-
               ],
-
             },
-
           ],
-          resourceFieldsUserMustSet: undefined,
-          resourcePreConfiguredFields: [
-
-          ],
+          resourcePreConfiguredFields: [],
           sampleData: {
             customer: [
               {
                 default_address: {
                   province_code: 'province_code',
-
                 },
-
               },
-
             ],
-
           },
           supportedBy: {
             import: {
-              preConfiguredFields: [
-
-              ],
-
+              preConfiguredFields: [],
             },
-
           },
           versions: [
             {
@@ -1292,9 +1231,7 @@ describe('getHTTPConnectorMetadata saga', () => {
                       extract: 'customers[0].id',
                       id: '62cffbff0c804009663faa60',
                       url: '/customers/search.json',
-
                     },
-
                   },
                   id: '62cffc149b51830e4d641e51',
                   ignoreExisting: true,
@@ -1306,76 +1243,28 @@ describe('getHTTPConnectorMetadata saga', () => {
                       in: 'path',
                       isIdentifier: true,
                       required: true,
-
                     },
-
                   ],
                   requiredMappings: [
                     'customer.email',
-
                   ],
                   supportIgnoreExisting: true,
                   url: '/customers.json',
-
                 },
-
               ],
               version: '2022-01',
-
             },
-
           ],
-
         },
-
       ],
       successMediaType: 'json',
       versions: [
         {
           _id: '62cffbf79b51830e4d641d6d',
-          operations: [
-            {
-              howToFindIdentifier: {
-                lookup: {
-                  extract: 'customers[0].id',
-                  id: '62cffbff0c804009663faa60',
-                  url: '/customers/search.json',
-
-                },
-
-              },
-              id: '62cffc149b51830e4d641e51',
-              ignoreExisting: true,
-              method: 'POST',
-              name: 'Creates a customer',
-              parameters: [
-                {
-                  id: 'customerId',
-                  in: 'path',
-                  isIdentifier: true,
-                  required: true,
-
-                },
-
-              ],
-              requiredMappings: [
-                'customer.email',
-
-              ],
-              supportIgnoreExisting: true,
-              url: '/customers.json',
-
-            },
-
-          ],
           version: '2022-01',
-
         },
-
       ],
-
     },
-
   };
 
   test('should return correct metadata', () => {

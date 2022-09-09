@@ -68,7 +68,7 @@ export const getExportMetadata = (connectorMetadata, connectionVersion) => {
   if (connectionVersion) {
     versions = versions.filter(v => v.version === connectionVersion);
   }
-  exportData.versions = versions;
+  exportData.versions = _.cloneDeep(versions);
 
   if (!versions || !versions.length) {
     versions = [
@@ -169,7 +169,7 @@ export const getImportMetadata = (connectorMetadata, connectionVersion) => {
       }];
   }
 
-  importData.versions = versions;
+  importData.versions = _.cloneDeep(versions);
   importData.resources = httpResources.map(httpResource => {
     const resourcePreConfiguredFields = _.cloneDeep(httpResource.supportedBy?.import?.preConfiguredFields);
     const resourceFieldsUserMustSet = _.cloneDeep(httpResource.supportedBy?.import?.fieldsUserMustSet);
