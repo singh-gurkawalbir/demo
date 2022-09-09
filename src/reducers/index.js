@@ -1896,6 +1896,7 @@ selectors.mkFilteredHomeTiles = () => {
 
 selectors.mkHomeTileRedirectUrl = () => {
   const marketplaceResourceSel = selectors.makeResourceSelector();
+  const integrationAppSettings = selectors.mkIntegrationAppSettings();
 
   return createSelector(
     (_, tile) => tile,
@@ -1909,7 +1910,8 @@ selectors.mkHomeTileRedirectUrl = () => {
 
       return null;
     },
-    (tile, isUserInErrMgtTwoDotZero, templateName) => {
+    (state, tile) => integrationAppSettings(state, tile._integrationId),
+    (tile, isUserInErrMgtTwoDotZero, templateName, integration) => {
       // separate logic for suitescript tiles
       if (tile.ssLinkedConnectionId) {
         let urlToIntegrationSettings = `/suitescript/${tile.ssLinkedConnectionId}/integrations/${tile._integrationId}`;
@@ -1962,6 +1964,10 @@ selectors.mkHomeTileRedirectUrl = () => {
       } else if (tile._connectorId) {
         urlToIntegrationSettings = `/integrationapps/${integrationAppTileName}/${tile._integrationId}`;
         urlToIntegrationUsers = `/integrationapps/${integrationAppTileName}/${tile._integrationId}/users`;
+
+        if (!tile.iaV2 && integration?.children?.length === 1) {
+          urlToIntegrationSettings = `/integrationapps/${integrationAppTileName}/${tile._integrationId}/child/${integration?.children[0]?.value}`;
+        }
       }
 
       if (tile._connectorId) {
