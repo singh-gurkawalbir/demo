@@ -4,7 +4,7 @@ import CeligoTimeAgo from '../../../CeligoTimeAgo';
 import ErrorCell from '../../../JobDashboard/RunHistory/ErrorCell';
 import UserName from '../cells/UserName';
 import { useGetTableContext } from '../../../CeligoTable/TableContext';
-import RetryCancel from '../cells/RetryCancel';
+import CancelRetryJob from '../cells/CancelRetryJob';
 
 export default {
   useColumns: () => [
@@ -65,7 +65,7 @@ export default {
       Value: ({rowData: r}) => {
         const {flowId, resourceId} = useGetTableContext();
 
-        return <RetryCancel flowId={flowId} resourceId={resourceId} retryJob={r} />;
+        return <CancelRetryJob flowId={flowId} resourceId={resourceId} retryJob={r} />;
       },
     },
   ],
