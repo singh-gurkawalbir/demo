@@ -12,7 +12,7 @@ describe('Loader UI tests', () => {
     expect(messsage).toBeVisible();
   });
   test('should not show message when "open" prop is not passed to Loader component', async () => {
-    renderWithProviders(<Loader hideBackDrop ><div>message</div></Loader>);
+    renderWithProviders(<Loader hideBackDrop open={false} ><div>message</div></Loader>);
     const messsage = screen.queryByText('message');
 
     expect(messsage).not.toBeInTheDocument();
