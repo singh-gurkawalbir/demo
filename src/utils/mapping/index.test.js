@@ -3298,6 +3298,7 @@ describe('mapping utils', () => {
       {resource: {adaptorType: 'RDBMSImport'}, connection: {rdbms: {type: 'oracle'}}, appName: 'Oracle DB (SQL)'},
       {resource: {adaptorType: 'RDBMSImport'}, connection: {rdbms: {type: 'postgresql'}}, appName: 'PostgreSQL'},
       {resource: {adaptorType: 'RDBMSImport'}, connection: {}, appName: 'Snowflake'},
+      {resource: {adaptorType: 'HTTPImport'}, connection: {http: {_httpConnecorId: '123'}}, appName: 'HTTP'},
 
     ];
 
@@ -3468,6 +3469,44 @@ describe('mapping utils', () => {
           {
             key: 'key2',
             generate: 'lname',
+            jsonPath: 'lname',
+            dataType: MAPPING_DATA_TYPES.OBJECT,
+            children: [{
+              key: 'c1',
+              extract: 'child1',
+              generate: 'fname',
+              jsonPath: 'lname.fname',
+              parentKey: 'key2',
+              dataType: MAPPING_DATA_TYPES.STRING,
+            },
+            {
+              key: 'c2',
+              extract: 'child2',
+              generate: 'fname',
+              jsonPath: 'lname.fname',
+              parentKey: 'key2',
+              dataType: MAPPING_DATA_TYPES.STRING,
+            }],
+          },
+        ],
+        result: {
+          isSuccess: false,
+          errMessage: errorMessageStore('MAPPER2_DUP_GENERATE', {fields: 'lname.fname'}),
+        },
+      },
+      {
+        mappings: [],
+        lookups: [],
+        v2TreeData: [
+          {
+            key: 'key1',
+            extract: '$.fname',
+            generate: 'fname',
+            dataType: MAPPING_DATA_TYPES.STRING,
+          },
+          {
+            key: 'key2',
+            generate: 'lname',
             dataType: MAPPING_DATA_TYPES.OBJECT,
             children: [{
               key: 'c1',
@@ -3548,13 +3587,54 @@ describe('mapping utils', () => {
             key: 'key2',
             generate: 'lname',
             dataType: MAPPING_DATA_TYPES.OBJECTARRAY,
-            copySource: 'yes',
             isRequired: true,
+            children: [
+              {
+                key: 'c1',
+                generate: 'fname',
+                dataType: MAPPING_DATA_TYPES.STRING,
+                parentKey: 'key2',
+                isRequired: true,
+                jsonPath: 'lname[*].fname',
+              },
+            ],
           },
         ],
         result: {
           isSuccess: false,
-          errMessage: errorMessageStore('MAPPER2_MISSING_EXTRACT', {fields: 'lname'}),
+          errMessage: errorMessageStore('MAPPER2_MISSING_EXTRACT', {fields: 'lname,lname[*].fname'}),
+        },
+      },
+      {
+        mappings: [],
+        lookups: [],
+        v2TreeData: [
+          {
+            key: 'key1',
+            hardCodedValue: 'test',
+            generate: 'fname',
+            dataType: MAPPING_DATA_TYPES.OBJECT,
+          },
+        ],
+        result: {
+          isSuccess: false,
+          errMessage: errorMessageStore('MAPPER2_ONLY_JSON_PATH_SUPPORT', {fields: 'fname'}),
+        },
+      },
+      {
+        mappings: [],
+        lookups: [],
+        v2TreeData: [
+          {
+            key: 'key1',
+            extract: '{{record.test}}',
+            generate: 'fname',
+            dataType: MAPPING_DATA_TYPES.STRINGARRAY,
+          },
+        ],
+        result: {
+          isSuccess: false,
+          errMessage: errorMessageStore('MAPPER2_EXPRESSION_NOT_SUPPORTED', {fields: 'fname'}),
         },
       },
       {

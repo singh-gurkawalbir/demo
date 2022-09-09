@@ -17,7 +17,7 @@ import reducer from '../../reducers';
 import getRoutePath from '../../utils/routePaths';
 import themeProvider from '../../theme/themeProvider';
 import { PageContentComponents as AppRouting } from '..';
-import {HOME_PAGE_PATH} from '../../utils/constants';
+import {HOME_PAGE_PATH} from '../../constants';
 
 // fireEvent
 // Ok, so here's what your tests might look like
@@ -227,6 +227,20 @@ describe('AppRoutingWith authentication redirection behavior', () => {
         ],
       });
 
+      const sessionState = {
+        mfa: {
+          sessionInfo:
+          {
+            status: 'received',
+            data: {
+              mfaVerified: true, mfaRequired: true, mfaSetupRequired: true,
+            },
+          },
+        },
+      };
+
+      const store = createStore(reducer, { session: sessionState });
+
       render(
         reduxRouterWrappedComponent({
           Component: wrappedHistory,
@@ -258,6 +272,20 @@ describe('AppRoutingWith authentication redirection behavior', () => {
         },
       ],
     });
+
+    const sessionState = {
+      mfa: {
+        sessionInfo:
+        {
+          status: 'received',
+          data: {
+            mfaVerified: true, mfaRequired: true, mfaSetupRequired: true,
+          },
+        },
+      },
+    };
+
+    const store = createStore(reducer, { session: sessionState });
 
     render(
       reduxRouterWrappedComponent({

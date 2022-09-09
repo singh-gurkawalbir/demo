@@ -8,7 +8,7 @@ import DrawerHeader from '../../Right/DrawerHeader';
 import DrawerFooter from '../../Right/DrawerFooter';
 import RightDrawer from '../../Right';
 import { selectors } from '../../../../reducers';
-import { REVISION_STATUS, REVISION_TYPES } from '../../../../utils/constants';
+import { REVISION_STATUS, REVISION_TYPES } from '../../../../constants';
 import ViewResourceChanged from './ResourcesChanged';
 import ViewDetails from './RevisionDetails';
 import ExpandAllResourceDiff from '../components/ExpandAllResourceDiff';
@@ -24,7 +24,7 @@ const allTabs = {
 
 const useStyles = makeStyles(theme => ({
   detailsContainer: {
-    height: '100%',
+    height: `calc(100% - ${theme.spacing(2)}px)`,
     backgroundColor: 'white',
     border: `1px solid ${theme.palette.secondary.lightest}`,
     color: theme.palette.text.hint,

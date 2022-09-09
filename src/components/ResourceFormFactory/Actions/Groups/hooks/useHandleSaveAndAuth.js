@@ -6,7 +6,7 @@ import actions from '../../../../../actions';
 import { useSelectorMemo } from '../../../../../hooks';
 import { selectors } from '../../../../../reducers';
 import useEnqueueSnackbar from '../../../../../hooks/enqueueSnackbar';
-import { emptyObject } from '../../../../../utils/constants';
+import { emptyObject } from '../../../../../constants';
 import { useLoadIClientOnce } from '../../../../DynaForm/fields/DynaIclient';
 
 export default function useHandleSaveAndAuth({formKey, resourceType, resourceId, parentContext}) {
@@ -99,24 +99,6 @@ export default function useHandleSaveAndAuth({formKey, resourceType, resourceId,
             !(
               values['/http/scopeProduction'] &&
                   values['/http/scopeProduction'].length
-            )
-          ) {
-            showError = true;
-          }
-        } else if (resource.assistant === 'googlecontacts') {
-          if (values['/http/unencrypted/apiType'] === 'googlecontactspeople') {
-            if (
-              !(
-                values['/http/scopePeople'] &&
-                    values['/http/scopePeople'].length
-              )
-            ) {
-              showError = true;
-            }
-          } else if (
-            !(
-              values['/http/auth/oauth/scope'] &&
-                  values['/http/auth/oauth/scope'].length
             )
           ) {
             showError = true;

@@ -25,6 +25,7 @@ export default (
         }
         draft.retryObjects[retryId].status = 'received';
         draft.retryObjects[retryId].data = retryData;
+        draft.retryObjects[retryId].userData = undefined;
         break;
       case actionTypes.ERROR_MANAGER.RETRY_DATA.RECEIVED_ERROR:
         if (!retryId || !draft.retryObjects[retryId]) {
@@ -32,6 +33,13 @@ export default (
         }
         draft.retryObjects[retryId].status = 'error';
         draft.retryObjects[retryId].error = error;
+        draft.retryObjects[retryId].userData = undefined;
+        break;
+      case actionTypes.ERROR_MANAGER.RETRY_DATA.UPDATE_USER_RETRY_DATA:
+        if (!retryId || !draft.retryObjects[retryId]) {
+          break;
+        }
+        draft.retryObjects[retryId].userData = retryData;
         break;
       case actionTypes.ERROR_MANAGER.RETRY_STATUS.REQUEST:
         if (flowId && !draft.retryStatus[flowId]) {
@@ -57,4 +65,6 @@ selectors.retryStatus = (state, flowId, resourceId) =>
   state?.retryStatus?.[flowId]?.[resourceId];
 
 selectors.retryData = (state, retryId) => state?.retryObjects?.[retryId]?.data?.data;
+
+selectors.userRetryData = (state, retryId) => state?.retryObjects?.[retryId]?.userData;
 

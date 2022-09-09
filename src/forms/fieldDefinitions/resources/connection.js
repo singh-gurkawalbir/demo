@@ -1,4 +1,4 @@
-import { URI_VALIDATION_PATTERN, RDBMS_TYPES, AWS_REGIONS_LIST} from '../../../utils/constants';
+import { URI_VALIDATION_PATTERN, RDBMS_TYPES, AWS_REGIONS_LIST} from '../../../constants';
 import { isNewId, getDomainUrl, getAssistantFromResource, rdbmsSubTypeToAppType, rdbmsAppTypeToSubType } from '../../../utils/resource';
 import { applicationsList} from '../../../constants/applications';
 import { getConstantContactVersion } from '../../../utils/connections';
@@ -108,16 +108,12 @@ export default {
     isLoggable: true,
     type: 'text',
     label: 'Port',
-    validWhen: [
-      {
-        fallsWithinNumericalRange: {
-          min: 0,
-          max: 65535,
-          message: 'The value must be more than 0 and less than 65535',
-        },
-        matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
+    validWhen: {
+      fallsWithinNumericalRange: {
+        min: 0,
+        max: 65535,
       },
-    ],
+    },
   },
   'rdbms.database': {
     isLoggable: true,
@@ -1165,9 +1161,7 @@ export default {
       fallsWithinNumericalRange: {
         min: 0,
         max: 65535,
-        message: 'The value must be more than 0 and less than 65535',
       },
-      matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
     },
   },
   'ftp.usePassiveMode': {
@@ -1768,17 +1762,9 @@ export default {
         is: [true],
       },
     ],
-    validWhen: [
-      {
-        matchesRegEx: { pattern: '^[\\d]$', message: 'Only numbers allowed' },
-      },
-      {
-        fallsWithinNumericalRange: {
-          message:
-            'The value must be greater than undefined and  lesser than undefined',
-        },
-      },
-    ],
+    validWhen: {
+      matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
+    },
   },
   'as2.partnerStationInfo.encryptionType': {
     isLoggable: true,
@@ -2562,5 +2548,30 @@ export default {
       return r.http?.formType === 'assistant' ? 'false' : 'true';
     },
     helpKey: 'formView',
+  },
+  configureCutomAuthTokenRefresh: {
+    id: 'configureCutomAuthTokenRefresh',
+    type: 'checkbox',
+    label: 'Configure refresh token',
+    helpKey: 'connection.configureTokenRefresh',
+    // Refresh token is mandatory when Configure refresh token is enabled, hence we check if this value is provided or not
+    defaultValue: r => !!(r?.http?.auth?.token?.refreshToken),
+    visibleWhenAll: [
+      { field: 'http.auth.type', is: ['custom'] },
+    ],
+  },
+  'http.auth.token.tokenPaths': {
+    id: 'http.auth.token.tokenPaths',
+    type: 'text',
+    label: 'Paths to encrypted field in the response body',
+    defaultValue: r => {
+      const values = r?.http?.auth?.token?.tokenPaths;
+
+      if (Array.isArray(values)) {
+        return values.join(',');
+      }
+
+      return values;
+    },
   },
 };

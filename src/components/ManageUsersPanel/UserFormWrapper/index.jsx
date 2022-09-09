@@ -6,7 +6,7 @@ import {
   USER_ACCESS_LEVELS,
   INTEGRATION_ACCESS_LEVELS,
   INVITE_USER_DRAWER_FORM_KEY,
-} from '../../../utils/constants';
+} from '../../../constants';
 import actions from '../../../actions';
 import actionTypes from '../../../actions/types';
 import { COMM_STATES } from '../../../reducers/comms/networkComms';
@@ -20,13 +20,14 @@ export default function UserFormWrapper({ userId }) {
   const [disableSave, setDisableSave] = useState(false);
   const { name, email: userEmail } = useSelector(selectors.userProfile);
   const handleSaveClick = useCallback(
-    ({ email, accessLevel, integrationsToMonitor, integrationsToManage, accountSSORequired }) => {
+    ({ email, accessLevel, integrationsToMonitor, integrationsToManage, accountSSORequired, accountMFARequired }) => {
       const aShareData = {
         _id: userId,
         email,
         accessLevel,
         integrationAccessLevel: [],
         accountSSORequired,
+        accountMFARequired,
       };
 
       // track event if fresh invite was sent

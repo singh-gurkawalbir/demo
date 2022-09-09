@@ -1,8 +1,8 @@
 import { values, keyBy, cloneDeep } from 'lodash';
 import shortid from 'shortid';
 import parseLinkHeader from 'parse-link-header';
-import { isPageGeneratorResource } from './flows';
-import { USER_ACCESS_LEVELS, HELP_CENTER_BASE_URL, INTEGRATION_ACCESS_LEVELS, emptyList, emptyObject } from './constants';
+import { getAllPageProcessors, isPageGeneratorResource } from './flows';
+import { USER_ACCESS_LEVELS, HELP_CENTER_BASE_URL, INTEGRATION_ACCESS_LEVELS, emptyList, emptyObject } from '../constants';
 import { stringCompare } from './sort';
 import messageStore from './messageStore';
 import errorMessageStore from './errorStore';
@@ -77,6 +77,19 @@ export const rdbmsAppTypeToSubType = appType => {
   }
 
   return appType;
+};
+
+// should return correct resourceType for given notification audit log
+export const getNotificationResourceType = auditLog => {
+  if (auditLog.fieldChange?.fieldPath === '_connectionId') {
+    return 'connections';
+  }
+
+  if (auditLog.fieldChange?.fieldPath === '_flowId') {
+    return 'flows';
+  }
+
+  return 'integrations';
 };
 
 export const adaptorTypeMap = {
@@ -309,7 +322,7 @@ export const getWebhookUrl = (options = {}, resourceId) => {
         'sapariba',
       ].indexOf(webHookProvider) > -1
     ) {
-      if (webHookToken && webHookVerify !== 'token') whURL += `/${webHookToken}`;
+      if (webHookToken && (webHookVerify === 'secret_url' || !webHookVerify)) whURL += `/${webHookToken}`;
     }
 
     whURL += '/data';
@@ -490,7 +503,7 @@ export const isRestCsvMediaTypeExport = (resource, connection) => {
 };
 
 export const isFlowResource = (flow, resourceId, resourceType) => {
-  const { pageProcessors = [] } = flow || {};
+  const pageProcessors = getAllPageProcessors(flow);
 
   // If resource type is imports search in pps
   if (resourceType === 'imports') {
@@ -1086,7 +1099,7 @@ export const finalSuccessMediaType = (formValues, connection) => {
   const overridenSuccessMediaType = formValues?.['/http/successMediaType'];
 
   if (overridenSuccessMediaType) return overridenSuccessMediaType;
-  const { mediaType, successMediaType } = connection?.http || emptyObject;
+  const { mediaType } = connection?.http || emptyObject;
 
-  return successMediaType || mediaType;
+  return mediaType;
 };

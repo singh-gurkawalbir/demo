@@ -11,13 +11,15 @@ import getRequestOptions, { pingConnectionParentContext } from '../../utils/requ
 import { defaultPatchSetConverter } from '../../forms/formFactory/utils';
 import conversionUtil from '../../utils/httpToRestConnectionConversionUtil';
 import importConversionUtil from '../../utils/restToHttpImportConversionUtil';
-import { NON_ARRAY_RESOURCE_TYPES, REST_ASSISTANTS, HOME_PAGE_PATH, INTEGRATION_DEPENDENT_RESOURCES, STANDALONE_INTEGRATION } from '../../utils/constants';
+import { NON_ARRAY_RESOURCE_TYPES, REST_ASSISTANTS, HOME_PAGE_PATH, INTEGRATION_DEPENDENT_RESOURCES, STANDALONE_INTEGRATION } from '../../constants';
 import { resourceConflictResolution } from '../utils';
 import { isIntegrationApp } from '../../utils/flows';
+import { deleteUnUsedRouters } from '../../utils/flows/flowbuilder';
 import { updateFlowDoc } from '../resourceForm';
 import openExternalUrl from '../../utils/window';
 import { pingConnectionWithId } from '../resourceForm/connections';
 import httpConnectorSagas from './httpConnectors';
+import { getHttpConnector} from '../../constants/applications';
 
 export function* isDataLoaderFlow(flow) {
   if (!flow) return false;
@@ -207,7 +209,7 @@ export function* commitStagedChanges({ resourceType, id, scope, options, context
   if (
     // if it matches integrations/<id>/connections when creating a connection
     (resourceType === 'connections' || (resourceType.startsWith('integrations/') && resourceType.endsWith('connections'))) &&
-    merged.assistant &&
+    merged.assistant && !getHttpConnector(merged?.http?._httpConnectorId) &&
     REST_ASSISTANTS.indexOf(merged.assistant) > -1
   ) {
     merged = conversionUtil.convertConnJSONObjHTTPtoREST(merged);
@@ -243,6 +245,7 @@ export function* commitStagedChanges({ resourceType, id, scope, options, context
   let resourceIsDataLoaderFlow = false;
 
   if (resourceType === 'flows') {
+    deleteUnUsedRouters(merged);
     resourceIsDataLoaderFlow = yield call(isDataLoaderFlow, merged);
     // this value 'flowConvertedToNewSchema' has been set at the time of caching a flow collection.... we convert it to the new schema
     // and set this flag 'flowConvertedToNewSchema' to true if we find it to be in the old schema...now when we are actually commiting the resource
@@ -288,6 +291,12 @@ export function* commitStagedChanges({ resourceType, id, scope, options, context
       // this patch is being attached to it even if it had faied. So we are removing this patch
       yield put(actions.resource.undoStaged(id));
       yield put(actions.flow.isOnOffActionInprogress(false, id));
+    }
+    if (resourceType === 'flows') {
+      yield put(actions.flow.setSaveStatus(id));
+      if (options?.revertChangesOnFailure) {
+        yield put(actions.resource.clearStaged(id, scope));
+      }
     }
 
     return { error };
@@ -406,6 +415,9 @@ export function* commitStagedChanges({ resourceType, id, scope, options, context
       { connectionId: merged._id,
         link: merged.netsuite.linkSuiteScriptIntegrator }
     );
+  }
+  if (resourceType === 'flows') {
+    yield put(actions.flow.setSaveStatus(id));
   }
 }
 
@@ -635,7 +647,7 @@ export function* patchResource({ resourceType, id, patchSet, options = {}, async
 
       yield put(actions.resource.received(resourceType, resourceUpdated));
     } else {
-      yield put(actions.resource.request('integrations', id));
+      yield put(actions.resource.request(resourceType, id));
     }
   } catch (error) {
     // TODO: What should we do for 4xx errors? where the resource to put/post

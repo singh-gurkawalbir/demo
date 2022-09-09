@@ -6,7 +6,8 @@ import {
   USER_ACCESS_LEVELS,
   INTEGRATION_ACCESS_LEVELS,
   EMAIL_REGEX,
-} from '../../../../utils/constants';
+} from '../../../../constants';
+import messageStore from '../../../../utils/messageStore';
 import useFormInitWithPermissions from '../../../../hooks/useFormInitWithPermissions';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import LoadResources from '../../../LoadResources';
@@ -73,8 +74,8 @@ export default function UserForm({
         defaultValue: isEditMode && isValidUser ? data.sharedWithUser.email : '',
         required: true,
         defaultDisabled: isEditMode,
-        helpText:
-          'Enter the email of the user you would like to invite to manage and/or monitor selected integrations.',
+        helpKey: 'userForm.email',
+        noApi: true,
         validWhen: {
           matchesRegEx: {
             pattern: EMAIL_REGEX,
@@ -114,6 +115,7 @@ export default function UserForm({
           },
         ],
         helpKey: 'users.accesslevel',
+        noApi: true,
       },
       integrationsToManage: {
         isLoggable: true,
@@ -151,8 +153,8 @@ export default function UserForm({
             })),
           },
         ],
-        helpText:
-          'The invited user will have permissions to manage the integrations selected here.',
+        helpKey: 'userForm.integrationsToManage',
+        noApi: true,
       },
       integrationsToMonitor: {
         isLoggable: true,
@@ -182,20 +184,36 @@ export default function UserForm({
             })),
           },
         ],
-        helpText:
-          'The invited user will have permissions to monitor the integrations selected here.',
+        helpKey: 'userForm.integrationsToMonitor',
+        noApi: true,
       },
       accountSSORequired: {
         isLoggable: true,
-        type: 'checkbox',
+        type: 'switch',
         id: 'accountSSORequired',
         name: 'accountSSORequired',
-        label: 'Require account Single sign-on(SSO)?',
-        defaultValue: isEditMode && isValidUser ? !!data.accountSSORequired : true,
+        label: 'Require SSO?',
+        tooltip: messageStore('ACCOUNT_SSO_OR_MFA_REQUIRED_TOOLTIP'),
+        defaultValue: isEditMode && isValidUser ? !!data.accountSSORequired : false,
         visible: !isEditMode && isAccountOwnerOrAdmin && isSSOEnabled,
         // Incase of invite, this field should not be passed if the owner has not enabled SSO
         omitWhenHidden: !isEditMode,
-        helpText: 'Check this box to require single sign-on (SSO) authentication for this user.',
+        disabledWhen: [{ field: 'accountMFARequired', is: [true] }],
+        helpKey: 'userForm.accountSSORequired',
+        noApi: true,
+      },
+      accountMFARequired: {
+        isLoggable: true,
+        type: 'switch',
+        id: 'accountMFARequired',
+        name: 'accountMFARequired',
+        label: 'Require MFA?',
+        defaultValue: isEditMode && isValidUser ? !!data.accountMFARequired : false,
+        visible: !isEditMode && isAccountOwnerOrAdmin,
+        disabledWhen: [{ field: 'accountSSORequired', is: [true] }],
+        tooltip: messageStore('ACCOUNT_SSO_OR_MFA_REQUIRED_TOOLTIP'),
+        helpKey: 'userForm.accountMFARequired',
+        noApi: true,
       },
     },
     layout: {
@@ -205,6 +223,7 @@ export default function UserForm({
         'integrationsToManage',
         'integrationsToMonitor',
         'accountSSORequired',
+        'accountMFARequired',
       ],
     },
   };

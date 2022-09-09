@@ -140,6 +140,7 @@ export default {
     'redshiftdatawarehouse',
     'happyreturns',
     'brex',
+    'bundleb2b',
   ],
   OAUTH_APPLICATIONS: [
     'azureactivedirectory',
@@ -169,7 +170,6 @@ export default {
     'exacterp',
     'campaignmonitor',
     'googlesheets',
-    'googlecontacts',
     'googlecontactspeople',
     'googlemail',
     'googledrive',
@@ -241,7 +241,6 @@ export default {
     'campaignmonitor',
     'wrike',
     'googlesheets',
-    'googlecontacts',
     'googlemail',
     'acumatica',
     'googleanalytics',

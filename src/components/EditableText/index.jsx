@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import clsx from 'clsx';
 import { fade } from '@material-ui/core/styles';
 import { makeStyles, Input } from '@material-ui/core';
@@ -53,6 +53,11 @@ export default function EditableText({
   const [isEdit, setIsEdit] = useState(false);
   const [value, setValue] = useState(text);
 
+  useEffect(() => {
+    // update internal state value when text is updated from outside the component.
+    setValue(text);
+  }, [text]);
+
   function handleCancel() {
     setIsEdit(false);
     setValue(text);
@@ -82,6 +87,8 @@ export default function EditableText({
     if (!disabled) setIsEdit(true);
   };
 
+  const handleInputClick = e => e.stopPropagation();
+
   return (
     <>
       {isEdit ? (
@@ -91,6 +98,7 @@ export default function EditableText({
           onChange={e => setValue(e.target.value)}
           onKeyDown={handleKeyDown}
           onBlur={handleChange}
+          onClick={handleInputClick}
           value={value}
           className={clsx(
             classes.input,

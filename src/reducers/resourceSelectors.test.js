@@ -4,7 +4,7 @@ import actions from '../actions';
 import {
   USER_ACCESS_LEVELS,
   INTEGRATION_ACCESS_LEVELS,
-} from '../utils/constants';
+} from '../constants';
 
 describe('tests for reducer selectors', () => {
   describe('resourceList', () => {
@@ -2226,7 +2226,6 @@ describe('tests for reducer selectors', () => {
         actions.resource.received('RANDEOM')
       );
 
-      console.log('state', state.user.preferences.ssConnectionIds);
       expect(selectors.canLinkSuiteScriptIntegrator(state, 'c1')).toEqual(true);
     });
 

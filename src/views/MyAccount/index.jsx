@@ -3,7 +3,7 @@ import { makeStyles } from '@material-ui/core/';
 import { useSelector } from 'react-redux';
 import loadable from '../../utils/loadable';
 import { selectors } from '../../reducers';
-import { USER_ACCESS_LEVELS } from '../../utils/constants';
+import { USER_ACCESS_LEVELS } from '../../constants';
 import CeligoPageBar from '../../components/CeligoPageBar';
 import TransfersIcon from '../../components/icons/TransfersIcon';
 import SecurityIcon from '../../components/icons/SecurityIcon';
@@ -32,6 +32,13 @@ const Security = loadable(() =>
   retry(() => import(/* webpackChunkName: 'MyAccount.Security' */ './Security/index'))
 );
 
+const SECURITY_TAB = {
+  path: 'security',
+  label: 'Security',
+  Icon: SecurityIcon,
+  Panel: Security,
+};
+
 const tabs = [
   {
     path: 'profile',
@@ -58,12 +65,7 @@ const tabs = [
     Icon: TransfersIcon,
     Panel: Transfers,
   },
-  {
-    path: 'security',
-    label: 'Security',
-    Icon: SecurityIcon,
-    Panel: Security,
-  },
+  SECURITY_TAB,
 ];
 
 const useStyles = makeStyles(theme => ({
@@ -84,9 +86,10 @@ export default function MyAccount({ match }) {
   const classes = useStyles();
   const permissions = useSelector(state => selectors.userPermissions(state));
   const isAccountOwnerOrAdmin = useSelector(state => selectors.isAccountOwnerOrAdmin(state));
-
+  const isMFASetupIncomplete = useSelector(selectors.isMFASetupIncomplete);
   const tabsForManageOrMonitorUser = tabs.filter(tab => tab.path === 'profile' || tab.path === 'security');
   const availableTabs = isAccountOwnerOrAdmin ? tabs : tabsForManageOrMonitorUser;
+  const myAccountTabs = isMFASetupIncomplete ? [SECURITY_TAB] : availableTabs;
 
   return (
     <>
@@ -98,7 +101,7 @@ export default function MyAccount({ match }) {
           }
         />
       <ResourceDrawer match={match} />
-      <Tabs tabs={availableTabs} match={match} className={classes.tabsAccount} />
+      <Tabs tabs={myAccountTabs} match={match} className={classes.tabsAccount} />
     </>
   );
 }

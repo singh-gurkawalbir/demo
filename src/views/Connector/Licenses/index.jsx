@@ -1,6 +1,5 @@
 import React, { useCallback, useEffect, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { makeStyles } from '@material-ui/core/styles';
 import CeligoPageBar from '../../../components/CeligoPageBar';
 import AddIcon from '../../../components/icons/AddIcon';
 import { selectors } from '../../../reducers';
@@ -16,18 +15,11 @@ import LoadResources from '../../../components/LoadResources';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 import { SCOPES } from '../../../sagas/resourceForm';
 import { TextButton } from '../../../components/Buttons';
-import { NO_RESULT_SEARCH_MESSAGE } from '../../../utils/constants';
+import { NO_RESULT_SEARCH_MESSAGE } from '../../../constants';
 import NoResultTypography from '../../../components/NoResultTypography';
 import { buildDrawerUrl, drawerPaths } from '../../../utils/rightDrawer';
-
-const useStyles = makeStyles(theme => ({
-  actions: {
-    display: 'flex',
-  },
-  resultContainer: {
-    padding: theme.spacing(3, 3, 12, 3),
-  },
-}));
+import ActionGroup from '../../../components/ActionGroup';
+import PageContent from '../../../components/PageContent';
 
 const defaultFilter = {
   take: parseInt(process.env.DEFAULT_TABLE_ROW_COUNT, 10) || 10,
@@ -45,7 +37,6 @@ const defaultFilter = {
 export default function Licenses(props) {
   const { match, location, history } = props;
   const { connectorId } = match.params;
-  const classes = useStyles();
   const resourceStatus = useSelectorMemo(
     selectors.makeAllResourceStatusSelector,
     'connectorLicenses'
@@ -117,6 +108,9 @@ export default function Licenses(props) {
     return <LoadResources required resources="connectors" />;
   }
 
+  const showPagingBar = list.count >= 100;
+  const hidePagingBar = list.count === list.filtered;
+
   return (
     <>
       {resourceLoaded && <ResourceDrawer {...props} />}
@@ -124,7 +118,7 @@ export default function Licenses(props) {
         parentUrl="/connectors"
         title={`Licenses: ${connector.name}`}
         infoText={infoText.licenses}>
-        <div className={classes.actions}>
+        <ActionGroup>
           <KeywordSearch
             filterKey={filterKey}
           />
@@ -133,9 +127,9 @@ export default function Licenses(props) {
             startIcon={<AddIcon />}>
             New license
           </TextButton>
-        </div>
+        </ActionGroup>
       </CeligoPageBar>
-      <div className={classes.resultContainer}>
+      <PageContent showPagingBar={showPagingBar} hidePagingBar={hidePagingBar}>
         <LoadResources required resources="integrations" >
           {list.count === 0 ? (
             <div>
@@ -154,7 +148,7 @@ export default function Licenses(props) {
           />
           )}
         </LoadResources>
-      </div>
+      </PageContent>
       <ShowMoreDrawer
         filterKey={filterKey}
         count={list.count}

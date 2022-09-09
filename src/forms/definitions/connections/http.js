@@ -93,8 +93,8 @@ export default {
     }
 
     if (
-      newValues['/http/auth/type'] !== 'token' ||
-      !formValues['/configureTokenRefresh']
+      (newValues['/http/auth/type'] !== 'token' && newValues['/http/auth/type'] !== 'custom') ||
+      (!newValues['/configureTokenRefresh'] && !newValues['/configureCutomAuthTokenRefresh'])
     ) {
       newValues['/http/auth/token/refreshMethod'] = undefined;
       newValues['/http/auth/token/refreshTokenPath'] = undefined;
@@ -103,8 +103,16 @@ export default {
       newValues['/http/auth/token/refreshBody'] = undefined;
       newValues['/http/auth/token/refreshRelativeURI'] = undefined;
       newValues['/http/auth/token/refreshMediaType'] = undefined;
+      newValues['/http/auth/token/tokenPaths'] = undefined;
     }
+    if (newValues['/http/auth/token/tokenPaths']) {
+      const values = newValues['/http/auth/token/tokenPaths'];
 
+      newValues['/http/auth/token/tokenPaths'] = values.split(',');
+    }
+    if (newValues['/configureTokenRefresh']) {
+      newValues['/http/auth/token/tokenPaths'] = undefined;
+    }
     if (newValues['/http/auth/type'] === 'token' || newValues['/http/auth/type'] === 'oauth') {
       if (newValues['/http/auth/token/scheme'] === 'Custom') {
         newValues['/http/auth/token/scheme'] = newValues['/http/customAuthScheme'];
@@ -177,13 +185,27 @@ export default {
     if (resource?._httpConnectorId || resource?.http?._httpConnectorId) {
       newValues = updateHTTPFrameworkFormValues(newValues, resource, options?.httpConnector);
     }
-    newValues['/http/formType'] = 'http';
+
+    if (newValues['/http/formType'] !== 'graph_ql') {
+      newValues['/http/formType'] = 'http';
+    }
+
+    if (newValues['/http/clientCertificates/type'] === 'pem') {
+      delete newValues['/http/clientCertificates/pfx'];
+    }
 
     if (newValues['/http/clientCertificates/type'] === 'pfx') {
       delete newValues['/http/clientCertificates/cert'];
+      delete newValues['/http/clientCertificates/key'];
+      if (newValues['/http/clientCertificates/pfx'].includes('data:application/x-pkcs12;base64,')) {
+        newValues['/http/clientCertificates/pfx'] = newValues['/http/clientCertificates/pfx'].slice(33);
+      }
     }
 
     delete newValues['/http/clientCertificates/type'];
+
+    newValues['/configureTokenRefresh'] = undefined;
+    newValues['/configureCutomAuthTokenRefresh'] = undefined;
 
     return newValues;
   },
@@ -289,11 +311,23 @@ export default {
     },
     httpRefreshToken: {
       formId: 'httpRefreshToken',
-      visibleWhenAll: [
-        { field: 'http.auth.type', is: ['token'] },
-        { field: 'http.auth.token.location', isNot: [''] },
-        { field: 'configureTokenRefresh', is: [true] },
-      ],
+      visibleWhenAll: [{
+        OR: [
+          {
+            AND: [
+              { field: 'http.auth.type', is: ['token'] },
+              { field: 'http.auth.token.location', isNot: [''] },
+              { field: 'configureTokenRefresh', is: [true] },
+            ],
+          },
+          {
+            AND: [
+              { field: 'http.auth.type', is: ['custom'] },
+              { field: 'configureCutomAuthTokenRefresh', is: [true] },
+            ],
+          },
+        ],
+      }],
     },
     httpCookie: {
       formId: 'httpCookie',
@@ -398,6 +432,9 @@ export default {
     application: {
       fieldId: 'application',
     },
+    configureCutomAuthTokenRefresh: {
+      fieldId: 'configureCutomAuthTokenRefresh',
+    },
   },
   layout: {
     type: 'collapse',
@@ -454,6 +491,7 @@ export default {
                 fields: [
                   'http.custom.encrypted',
                   'http.custom.unencrypted',
+                  'configureCutomAuthTokenRefresh',
                 ],
               },
               {

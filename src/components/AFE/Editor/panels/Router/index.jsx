@@ -1,23 +1,18 @@
-import produce from 'immer';
-import { useSelector } from 'react-redux';
-import React, { useMemo, useState } from 'react';
-import { makeStyles, Divider, Typography } from '@material-ui/core';
+import { shallowEqual, useDispatch, useSelector } from 'react-redux';
+import React, { useMemo } from 'react';
+import { makeStyles, Divider, Typography, Tooltip } from '@material-ui/core';
 import { sortableContainer, sortableElement } from 'react-sortable-hoc';
-import DynaForm from '../../../../DynaForm';
-import useFormInitWithPermissions from '../../../../../hooks/useFormInitWithPermissions';
-import BranchItem from './BranchItem';
-import fieldMetadata from './fieldMeta';
 import Help from '../../../../Help';
 import { selectors } from '../../../../../reducers';
-
-const moveArrayItem = (arr, oldIndex, newIndex) => {
-  const newArr = [...arr];
-  const element = newArr.splice(oldIndex, 1)[0];
-
-  newArr.splice(newIndex, 0, element);
-
-  return newArr;
-};
+import { TextButton } from '../../../../Buttons';
+import AddIcon from '../../../../icons/AddIcon';
+import actions from '../../../../../actions';
+import DynaRadioGroup from '../../../../DynaForm/fields/radiogroup/DynaRadioGroup';
+import BranchDrawer from './BranchDrawer';
+import BranchItem from './BranchItem';
+import messageStore from '../../../../../utils/messageStore';
+import Spinner from '../../../../Spinner';
+import { shortId } from '../../../../../utils/string';
 
 const useStyles = makeStyles(theme => ({
   panelContent: {
@@ -29,56 +24,55 @@ const useStyles = makeStyles(theme => ({
     listStyle: 'none',
     marginLeft: 0,
     paddingLeft: 0,
+    marginBottom: 0,
   },
   heading: {
     marginBottom: theme.spacing(1),
     display: 'flex',
   },
+  branchingType: {
+    marginBottom: theme.spacing(1),
+  },
   helpButton: {
     padding: 0,
-    marginLeft: theme.spacing(1),
   },
   grabbing: {
     cursor: 'grabbing',
   },
 }));
 
-// This is a mock and should match branch schema of the data-layer.
-const mockBranchData = [
-  { id: '1', name: 'Branch 1.0', description: 'sample description'},
-  { id: '2', name: 'Branch 1.1', description: 'sample description that is really really long, to see how things render when the text wraps to another line.'},
-  { id: '3', name: 'Branch 1.2' },
-];
+const SortableItem = sortableElement(props => <BranchItem {...props} />);
+
+const SortableContainer = sortableContainer(({children, className}) => (
+  <ul className={className}>
+    {children}
+  </ul>
+));
 
 export default function RouterPanel({ editorId }) {
   const classes = useStyles();
-  const [branchData, setBranchData] = useState(mockBranchData);
-  const fieldMeta = useMemo(() => (fieldMetadata), []);
-  const formKey = useFormInitWithPermissions({ fieldMeta });
-  const activeProcessor = useSelector(state =>
-    selectors.editor(state, editorId).activeProcessor);
+  const dispatch = useDispatch();
+  const branchesLength = useSelector(state => selectors.editorRule(state, editorId).branches?.length);
+  const branches = useMemo(() => Array(branchesLength).fill().map(() => ({id: shortId()})), [branchesLength]);
+  const isLoading = useSelector(state => selectors.editor(state, editorId).sampleDataStatus === 'requested');
+  const maxBranchesLimitReached = branches.length >= 25;
+  const routeRecordsTo = useSelector(state => selectors.editorRule(state, editorId)?.routeRecordsTo || 'first_matching_branch');
+  const { flowId } = useSelector(state => selectors.editor(state, editorId), shallowEqual);
+  const flow = useSelector(state => selectors.fbFlow(state, flowId));
+  const isViewMode = useSelector(state => selectors.isFlowViewMode(state, flow?._integrationId, flowId));
+  const allowSorting = routeRecordsTo === 'first_matching_branch' && !isViewMode;
+  const activeProcessor = useSelector(state => selectors.editorActiveProcessor(state, editorId));
 
-  const handleNameChange = (title, position) => {
-    setBranchData(
-      produce(branchData, draft => {
-        draft[position].name = title;
-      }));
-  };
-
-  const handleToggleExpand = (expanded, position) => {
-    setBranchData(
-      produce(branchData, draft => {
-        draft[position].expanded = expanded;
-      }));
-  };
-
-  const SortableContainer = sortableContainer(({children}) => (
-    <ul className={classes.branchList}>
-      {children}
-    </ul>
-  ));
-
-  const SortableItem = sortableElement(props => <BranchItem {...props} />);
+  const BranchHeading = ({ helpKey, children }) => (
+    <div className={classes.heading}>
+      <Typography variant="h5">{children}</Typography>
+      <Help
+        title={children}
+        className={classes.helpButton}
+        helpKey={helpKey}
+    />
+    </div>
+  );
 
   const handleSortStart = (_, event) => {
     // we only want mouse events (not keyboard navigation) to trigger
@@ -90,48 +84,79 @@ export default function RouterPanel({ editorId }) {
 
   const handleSortEnd = ({oldIndex, newIndex}) => {
     document.body.classList.remove(classes.grabbing);
-    setBranchData(items => (moveArrayItem(items, oldIndex, newIndex)));
+    dispatch(actions.editor.patchRule(editorId, undefined, {actionType: 'reorder', oldIndex, newIndex}));
   };
 
-  const BranchHeading = ({helpText, children}) => (
-    <div className={classes.heading}>
-      <Typography variant="h5">{children}</Typography>
-      <Help
-        title={children}
-        className={classes.helpButton}
-        helpText={helpText}
-    />
-    </div>
-  );
+  const handleAddBranch = () => {
+    dispatch(actions.editor.patchRule(editorId, undefined, {actionType: 'addBranch'}));
+  };
+
+  const updatedOnFieldChange = (id, val) => {
+    dispatch(actions.editor.patchRule(editorId, val, {rulePath: 'routeRecordsTo'}));
+  };
 
   return (
     <div className={classes.panelContent}>
-      <BranchHeading helpText="Missing branch type help!">Branching type</BranchHeading>
+      <BranchDrawer editorId={editorId} />
 
-      <DynaForm formKey={formKey} />
+      <BranchHeading helpKey="flow.router.branchType">Branching type</BranchHeading>
 
-      <BranchHeading helpText="Missing branches help text">Branches</BranchHeading>
+      <div className={classes.branchingType}>
+        <DynaRadioGroup
+          id="branchType"
+          name="branchType"
+          isValid // there are no validations on this field, hence always valid
+          type="radiogroup"
+          disabled={isViewMode}
+          label="Records will flow through:"
+          options={[
+            {
+              items: [
+                { value: 'first_matching_branch', label: 'First matching branch' },
+                { value: 'all_matching_branches', label: 'All matching branches' },
+              ],
+            },
+          ]}
+          defaultValue={routeRecordsTo}
+          onFieldChange={updatedOnFieldChange}
+      />
+      </div>
+
+      <BranchHeading helpKey="flow.routers.branches">Branches</BranchHeading>
 
       <Divider orientation="horizontal" className={classes.divider} />
 
-      <SortableContainer
-        lockAxis="y"
-        onSortStart={handleSortStart}
-        onSortEnd={handleSortEnd}
-        useDragHandle>
-        { branchData.map((b, i) => (
-          <SortableItem
-            expandable={activeProcessor === 'filter'}
-            expanded={b.expanded}
-            onToggleExpand={handleToggleExpand}
-            key={b.name}
-            index={i} // The HOC does not proxy index to child, so we need `position` as well.
-            position={i}
-            branchName={b.name}
-            description={b.description}
-            onNameChange={handleNameChange} />
-        ))}
-      </SortableContainer>
+      {isLoading ? (
+        <Spinner centerAll />
+      ) : (
+        <SortableContainer
+          className={classes.branchList}
+          lockAxis="y"
+          onSortStart={handleSortStart}
+          onSortEnd={handleSortEnd}
+          useDragHandle>
+          {branches.map((b, i) => (
+            <SortableItem
+              expandable={activeProcessor === 'filter'}
+              key={b.id}
+              index={i} // The HOC does not proxy index to child, so we need `position` as well.
+              position={i}
+              isViewMode={isViewMode}
+              editorId={editorId}
+              allowSorting={allowSorting}
+              allowDeleting={branches.length > 1} />
+          ))}
+        </SortableContainer>
+      )}
+      {!isViewMode && !isLoading && (
+      <Tooltip key="key" title={maxBranchesLimitReached ? messageStore('MAX_BRANCHES_LIMIT_REACHED') : ''} placement="bottom">
+        <span>
+          <TextButton data-test="addBranch" disabled={maxBranchesLimitReached} onClick={handleAddBranch}>
+            <AddIcon />Add branch
+          </TextButton>
+        </span>
+      </Tooltip>
+      )}
     </div>
   );
 }

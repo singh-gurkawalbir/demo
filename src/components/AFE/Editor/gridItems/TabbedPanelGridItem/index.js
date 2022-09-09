@@ -34,7 +34,8 @@ export default function TabbedPanelGridItem({ editorId, area, panelGroup }) {
     key: activeKey,
     Panel: ActivePanel,
     isLoggable,
-    props: activePanelProps } = panelGroup.panels[tabValue];
+    props: activePanelProps,
+  } = panelGroup.panels[tabValue];
 
   return (
     <PanelGridItem gridArea={area}>

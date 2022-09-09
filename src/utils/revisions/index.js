@@ -1,4 +1,4 @@
-import { REVISION_STATUS, REVISION_TYPES } from '../constants';
+import { REVISION_STATUS, REVISION_TYPES } from '../../constants';
 import { comparer, sortJsonByKeys } from '../sort';
 
 export const DEFAULT_ROWS_PER_PAGE = 50;
@@ -205,7 +205,8 @@ export const hasInvalidRevertResourceDiff = resourceDiff => {
   const revertedResourceTypes = Object.keys(reverted || {});
   const currentResourceTypes = Object.keys(current || {});
 
-  const hasValidResourceTypes = currentResourceTypes.some(type => SUPPORTED_RESOURCE_TYPES.includes(type)) &&
+  // when either of current/reverted has valid resource changes, then revert is a valid action
+  const hasValidResourceTypes = currentResourceTypes.some(type => SUPPORTED_RESOURCE_TYPES.includes(type)) ||
   revertedResourceTypes.some(type => SUPPORTED_RESOURCE_TYPES.includes(type));
 
   return !hasValidResourceTypes;

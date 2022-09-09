@@ -175,6 +175,7 @@ describe('Mappings region selector testcases', () => {
     {_id: 6, rdbms: {type: 'rdbmsconnection'}},
     {_id: 7, type: 'http'},
     {_id: 8, type: 'rdbms', rdbms: {type: 'rdbmsconnection'}},
+    {_id: 9, type: 'http', http: {_httpConnectorId: 'id2'}},
   ];
   let state = reducer(
     undefined,
@@ -238,21 +239,6 @@ describe('Mappings region selector testcases', () => {
     });
     test('should return all imports used in the flow which have query builder supported', () => {
       expect(selector(state, 4)).toEqual([{ _id: 12, adaptorType: 'MongoDbImport' }]);
-    });
-  });
-
-  describe('selectors.getAllPageProcessorImports test cases', () => {
-    test('should not throw any exception for invalid arguments', () => {
-      expect(selectors.getAllPageProcessorImports()).toEqual([]);
-    });
-    test('should return all pageprocessor imports used in a flow', () => {
-      expect(selectors.getAllPageProcessorImports(state, flows[2].pageProcessors)).toEqual([
-        { _id: 10 },
-        { _id: 11, adaptorType: 'MongodbExport' },
-      ]);
-    });
-    test('should return empty array if pageprocessor imports are not in state', () => {
-      expect(selectors.getAllPageProcessorImports(state, flows[1].pageProcessors)).toEqual([]);
     });
   });
 
@@ -464,6 +450,9 @@ describe('Mappings region selector testcases', () => {
       });
       test('should return connection rdbms type if connection is of type rdbms', () => {
         expect(selectors.applicationType(newState, 'connections', 8)).toEqual('rdbmsconnection');
+      });
+      test('should return connection http type if connection is of type http and http connectorId exists', () => {
+        expect(selectors.applicationType(newState, 'connections', 9)).toEqual('http');
       });
     });
 
@@ -920,6 +909,96 @@ describe('Mappings region selector testcases', () => {
       };
 
       expect(selectors.isMapper2Supported(state)).toEqual(true);
+    });
+  });
+
+  describe('selectors.resourceHasMappings test cases', () => {
+    test('should not throw any exception for invalid arguments', () => {
+      expect(selectors.resourceHasMappings()).toEqual(false);
+      expect(selectors.resourceHasMappings(null, null)).toEqual(false);
+    });
+    test('should return false if neither v1 nor v2 mappings exist', () => {
+      const state = {
+        data: {
+          resources: {
+            imports: [{
+              _id: 'imp-123',
+              name: 'Test import',
+              mapping: {},
+              mappings: [],
+            }],
+          },
+        },
+      };
+
+      expect(selectors.resourceHasMappings(state, 'imp-123')).toEqual(false);
+    });
+    test('should return true if both v1 and v2 mappings exist', () => {
+      const state = {
+        data: {
+          resources: {
+            imports: [{
+              _id: 'imp-123',
+              name: 'Test import',
+              mapping: {
+                fields: [{
+                  generate: 'a',
+                  extract: 'a',
+                }],
+              },
+              mappings: [{
+                generate: 'a',
+                extract: 'a',
+                dataType: 'string',
+              }],
+            }],
+          },
+        },
+      };
+
+      expect(selectors.resourceHasMappings(state, 'imp-123')).toEqual(true);
+    });
+    test('should return true if only v1 mappings exist', () => {
+      const state = {
+        data: {
+          resources: {
+            imports: [{
+              _id: 'imp-123',
+              name: 'Test import',
+              mapping: {
+                fields: [{
+                  generate: 'a',
+                  extract: 'a',
+                }],
+              },
+            }],
+          },
+        },
+      };
+
+      expect(selectors.resourceHasMappings(state, 'imp-123')).toEqual(true);
+    });
+    test('should return true if only v2 mappings exist', () => {
+      const state = {
+        data: {
+          resources: {
+            imports: [{
+              _id: 'imp-123',
+              name: 'Test import',
+              mapping: {
+                fields: [],
+              },
+              mappings: [{
+                generate: 'a',
+                extract: 'a',
+                dataType: 'string',
+              }],
+            }],
+          },
+        },
+      };
+
+      expect(selectors.resourceHasMappings(state, 'imp-123')).toEqual(true);
     });
   });
 

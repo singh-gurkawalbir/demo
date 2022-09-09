@@ -98,6 +98,12 @@ const auth = {
   linkWithGoogle: returnTo =>
     action(actionTypes.AUTH.LINK_WITH_GOOGLE, { returnTo }),
   complete: () => action(actionTypes.AUTH.SUCCESSFUL),
+  mfaRequired: mfaAuthInfo => action(actionTypes.AUTH.MFA_REQUIRED, { mfaAuthInfo }),
+  mfaVerify: {
+    request: payload => action(actionTypes.AUTH.MFA_VERIFY.REQUEST, { payload }),
+    failed: mfaError => action(actionTypes.AUTH.MFA_VERIFY.FAILED, { mfaError }),
+    success: () => action(actionTypes.AUTH.MFA_VERIFY.SUCCESS),
+  },
   failure: message => action(actionTypes.AUTH.FAILURE, { message }),
   warning: () => action(actionTypes.AUTH.WARNING),
   logout: isExistingSessionInvalid =>
@@ -314,7 +320,17 @@ const resource = {
   undoStaged: (id, scope) =>
     action(actionTypes.RESOURCE.STAGE_UNDO, { id, scope }),
 
-  patchAndCommitStaged: (resourceType, resourceId, patch, { scope, context, asyncKey, parentContext, options } = {}) => action(actionTypes.RESOURCE.STAGE_PATCH_AND_COMMIT, {
+  patchAndCommitStaged: (
+    resourceType,
+    resourceId,
+    patch,
+    {
+      scope,
+      context,
+      asyncKey,
+      parentContext,
+      options,
+    } = {}) => action(actionTypes.RESOURCE.STAGE_PATCH_AND_COMMIT, {
     resourceType,
     id: resourceId,
     patch,
@@ -1309,6 +1325,8 @@ const license = {
     action(actionTypes.LICENSE.UPDATE_REQUEST, { actionType, connectorId, licenseId, feature }),
   licenseUpgradeRequestSubmitted: (message, feature) =>
     action(actionTypes.LICENSE.UPGRADE_REQUEST_SUBMITTED, { message, feature }),
+  licenseReactivated: () =>
+    action(actionTypes.LICENSE.REACTIVATED),
   ssoLicenseUpgradeRequested: () =>
     action(actionTypes.LICENSE.SSO.UPGRADE_REQUESTED),
   requestLicenseEntitlementUsage: () =>
@@ -1397,10 +1415,12 @@ const flowData = {
       stagesToReset,
     }),
   updateFlow: flowId => action(actionTypes.FLOW_DATA.FLOW_UPDATE, { flowId }),
-  updateResponseMapping: (flowId, resourceIndex, responseMapping) =>
+  updateResponseMapping: (flowId, resourceIndex, responseMapping, {routerIndex, branchIndex} = {}) =>
     action(actionTypes.FLOW_DATA.FLOW_RESPONSE_MAPPING_UPDATE, {
       flowId,
       resourceIndex,
+      routerIndex,
+      branchIndex,
       responseMapping,
     }),
 };
@@ -1456,7 +1476,7 @@ const editor = {
   initComplete: (id, options) => action(actionTypes.EDITOR.INIT_COMPLETE, { id, options }),
   changeLayout: (id, newLayout) => action(actionTypes.EDITOR.CHANGE_LAYOUT, { id, newLayout }),
   patchFeatures: (id, featuresPatch) => action(actionTypes.EDITOR.PATCH.FEATURES, { id, featuresPatch }),
-  patchRule: (id, rulePatch) => action(actionTypes.EDITOR.PATCH.RULE, { id, rulePatch }),
+  patchRule: (id, rulePatch, options) => action(actionTypes.EDITOR.PATCH.RULE, { id, rulePatch, ...options }),
   patchData: (id, dataPatch) => action(actionTypes.EDITOR.PATCH.DATA, { id, dataPatch }),
   patchFileKeyColumn: (id, fileKeyPatchType, fileKeyPatch) => action(actionTypes.EDITOR.PATCH.FILE_KEY_COLUMN, { id, fileKeyPatchType, fileKeyPatch }),
   clear: id => action(actionTypes.EDITOR.CLEAR, { id }),
@@ -1533,6 +1553,11 @@ const mapping = {
     patchField: (field, v2Key, value) => action(actionTypes.MAPPING.V2.PATCH_FIELD, { field, v2Key, value }),
     patchSettings: (v2Key, value) => action(actionTypes.MAPPING.V2.PATCH_SETTINGS, { v2Key, value }),
     patchExtractsFilter: (inputValue, propValue) => action(actionTypes.MAPPING.V2.PATCH_EXTRACTS_FILTER, { inputValue, propValue }),
+    deleteAll: isCSVOrXLSX => action(actionTypes.MAPPING.V2.DELETE_ALL, { isCSVOrXLSX }),
+    autoCreateStructure: (uploadedData, isCSVOrXLSX) => action(actionTypes.MAPPING.V2.AUTO_CREATE_STRUCTURE, { uploadedData, isCSVOrXLSX }),
+    toggleAutoCreateFlag: () => action(actionTypes.MAPPING.V2.TOGGLE_AUTO_CREATE_FLAG, {}),
+    updateHighlightedIndex: index => action(actionTypes.MAPPING.V2.UPDATE_HIGHLIGHTED_INDEX, {index}),
+    searchTree: ({ searchKey, showKey }) => action(actionTypes.MAPPING.V2.SEARCH_TREE, { searchKey, showKey }),
   },
 };
 
@@ -2027,6 +2052,11 @@ const errorManager = {
         retryId,
         retryData,
       }),
+    updateUserRetryData: ({retryId, retryData}) =>
+      action(actionTypes.ERROR_MANAGER.RETRY_DATA.UPDATE_USER_RETRY_DATA, {
+        retryId,
+        retryData,
+      }),
     receivedError: ({ flowId, resourceId, retryId, error }) =>
       action(actionTypes.ERROR_MANAGER.RETRY_DATA.RECEIVED_ERROR, {
         flowId,
@@ -2072,6 +2102,22 @@ const errorManager = {
   },
 };
 const flow = {
+  addNewPGStep: flowId => action(actionTypes.FLOW.ADD_NEW_PG_STEP, { flowId }),
+  addNewPPStep: (flowId, path, processorIndex) => action(actionTypes.FLOW.ADD_NEW_PP_STEP, { flowId, path, processorIndex }),
+  addNewPPStepInfo: (flowId, info) => action(actionTypes.FLOW.ADD_NEW_PP_STEP_INFO, { flowId, info }),
+  clearPPStepInfo: flowId => action(actionTypes.FLOW.CLEAR_PP_STEP_INFO, { flowId }),
+  addNewRouter: (flowId, router) => action(actionTypes.FLOW.ADD_NEW_ROUTER, { flowId, router }),
+  dragStart: (flowId, stepId) => action(actionTypes.FLOW.DRAG_START, { flowId, stepId }),
+  setDragInProgress: flowId => action(actionTypes.FLOW.SET_DRAG_IN_PROGRESS, { flowId }),
+  dragEnd: flowId => action(actionTypes.FLOW.DRAG_END, { flowId }),
+  mergeTargetSet: (flowId, targetType, targetId) => action(actionTypes.FLOW.MERGE_TARGET_SET, { flowId, targetType, targetId }),
+  mergeTargetClear: flowId => action(actionTypes.FLOW.MERGE_TARGET_CLEAR, { flowId }),
+  mergeBranch: flowId => action(actionTypes.FLOW.MERGE_BRANCH, { flowId }),
+  deleteStep: (flowId, stepId) => action(actionTypes.FLOW.DELETE_STEP, { flowId, stepId }),
+  deleteEdge: (flowId, edgeId) => action(actionTypes.FLOW.DELETE_EDGE, { flowId, edgeId }),
+  deleteRouter: (flowId, routerId) => action(actionTypes.FLOW.DELETE_ROUTER, { flowId, routerId }),
+  initializeFlowGraph: (flowId, flow, isViewMode, isDataLoader) => action(actionTypes.FLOW.INIT_FLOW_GRAPH, { flowId, flow, isViewMode, isDataLoader }),
+  setSaveStatus: (flowId, status) => action(actionTypes.FLOW.SET_SAVE_STATUS, { flowId, status }),
   run: ({ flowId, customStartDate, options }) =>
     action(actionTypes.FLOW.RUN, { flowId, customStartDate, options }),
   runDataLoader: ({ flowId, customStartDate, fileContent, fileType, fileName }) =>
@@ -2358,13 +2404,13 @@ const mfa = {
   showQrCode: () => action(actionTypes.MFA.QR_CODE.SHOW),
   secretCodeError: secretCodeError => action(actionTypes.MFA.SECRET_CODE.ERROR, { secretCodeError }),
   resetMFA: ({ password, aShareId }) => action(actionTypes.MFA.RESET, { aShareId, password }),
-  updateDevice: deviceInfo => action(actionTypes.MFA.UPDATE_DEVICE, { deviceInfo }),
   deleteDevice: deviceId => action(actionTypes.MFA.DELETE_DEVICE, { deviceId }),
   verifyMobileCode: code => action(actionTypes.MFA.MOBILE_CODE.VERIFY, { code }),
   mobileCodeVerified: (status, error) => action(actionTypes.MFA.MOBILE_CODE.STATUS, { status, error }),
   resetMobileCodeStatus: () => action(actionTypes.MFA.MOBILE_CODE.RESET),
   requestSessionInfo: () => action(actionTypes.MFA.SESSION_INFO.REQUEST),
   receivedSessionInfo: sessionInfo => action(actionTypes.MFA.SESSION_INFO.RECEIVED, { sessionInfo }),
+  clearSessionInfo: () => action(actionTypes.MFA.SESSION_INFO.CLEAR),
   addSetupContext: context => action(actionTypes.MFA.ADD_SETUP_CONTEXT, { context }),
   clearSetupContext: () => action(actionTypes.MFA.CLEAR_SETUP_CONTEXT),
   clear: () => action(actionTypes.MFA.CLEAR),

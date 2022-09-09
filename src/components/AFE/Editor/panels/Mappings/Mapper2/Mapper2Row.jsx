@@ -33,8 +33,12 @@ const useStyles = makeStyles(theme => ({
     },
     '&>div': {
       width: '100%',
+      border: '3px solid transparent',
     },
     '&:nth-of-type(2)': {
+      '&>div': {
+        border: 'none',
+      },
       flex: 1,
       '& .MuiFilledInput-multiline': {
         minHeight: theme.spacing(5),
@@ -54,7 +58,7 @@ const useStyles = makeStyles(theme => ({
     alignItems: 'center',
     margin: theme.spacing(1, 0),
     '&:hover': {
-      '&>div:last-child': {
+      '&>div>div:last-child': {
         '&>button:last-child': {
           visibility: 'visible',
         },
@@ -188,7 +192,7 @@ const Mapper2Row = React.memo(props => {
   const isLookup = !!lookupName;
   const isStaticLookup = !!(lookup.name && lookup.map);
   const isHardCodedValue = hardCodedValue !== undefined;
-  const isHandlebarExp = handlebarRegex.test(extractValue);
+  const isHandlebarExp = handlebarRegex.test(extractValue) || (extractValue && !isHardCodedValue && !extractValue?.startsWith('$'));
   const hideExtractField = dataType === MAPPING_DATA_TYPES.OBJECT && !extractValue && copySource === 'no';
 
   // this prop is used for object array tab view
@@ -214,7 +218,7 @@ const Mapper2Row = React.memo(props => {
           disabled={generateDisabled || isRequired || disabled}
           dataType={dataType}
           onBlur={handleGenerateBlur}
-          // isRequired={isRequired}
+          isRequired={isRequired}
           />
       </div>
 
@@ -225,7 +229,7 @@ const Mapper2Row = React.memo(props => {
             id={`fieldMappingExtract-${nodeKey}`}
             nodeKey={nodeKey}
             value={extractValue}
-            disabled={disabled}
+            disabled={(isLookup && !isStaticLookup) || disabled}
             dataType={dataType}
             onBlur={handleExtractBlur}
             isDynamicLookup={isLookup && !isStaticLookup}
@@ -268,22 +272,22 @@ const Mapper2Row = React.memo(props => {
           <AddIcon />
         </ActionButton>
 
-        {/* todo ashu delete button not visible after tooltip */}
-        {/* <Tooltip
+        <Tooltip
           placement="bottom"
           title={isRequired ? 'This field is required by the application you are importing into' : ''}>
-          <div > */}
-        <ActionButton
-          data-test={`fieldMappingRemove-${nodeKey}`}
-          aria-label="delete"
-          disabled={isEmptyRow || generateDisabled || isRequired || disabled}
-          onClick={handleDeleteClick}
-          key="delete_button"
-          className={classes.deleteMapping}>
-          <TrashIcon />
-        </ActionButton>
-        {/* </div>
-        </Tooltip> */}
+          {/* this div needs to be added to render the tooltip correctly when delete is disabled */}
+          <div>
+            <ActionButton
+              data-test={`fieldMappingRemove-${nodeKey}`}
+              aria-label="delete"
+              disabled={isEmptyRow || generateDisabled || isRequired || disabled}
+              onClick={handleDeleteClick}
+              key="delete_button"
+              className={classes.deleteMapping}>
+              <TrashIcon />
+            </ActionButton>
+          </div>
+        </Tooltip>
 
       </div>
     </div>

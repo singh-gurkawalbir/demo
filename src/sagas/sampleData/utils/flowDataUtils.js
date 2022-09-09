@@ -1,6 +1,6 @@
 import { deepClone } from 'fast-json-patch';
 import { put, select, call } from 'redux-saga/effects';
-import { isEmpty } from 'lodash';
+import { flattenDeep, isEmpty } from 'lodash';
 import { selectors } from '../../../reducers';
 import { SCOPES } from '../../resourceForm';
 import actions from '../../../actions';
@@ -15,9 +15,9 @@ import {
   generateDefaultExtractsObject,
   getFormattedResourceForPreview,
 } from '../../../utils/flowData';
-import { isIntegrationApp } from '../../../utils/flows';
+import { getAllPageProcessors, isIntegrationApp } from '../../../utils/flows';
 import { isJsonString } from '../../../utils/string';
-import { emptyObject } from '../../../utils/constants';
+import { emptyObject } from '../../../constants';
 import { isFileAdaptor } from '../../../utils/resource';
 
 /*
@@ -40,8 +40,8 @@ export function* getFlowResourceNode({ flowId, resourceId, resourceType }) {
     resourceId,
     resourceType
   );
-  const flowResourceList =
-    flow[isPageGeneratorExport ? 'pageGenerators' : 'pageProcessors'] || [];
+
+  const flowResourceList = isPageGeneratorExport ? flow.pageGenerators : getAllPageProcessors(flow);
 
   // returns specific resource based on resource id match
   return flowResourceList.find(
@@ -58,16 +58,24 @@ export function filterPendingResources({ flow }) {
   if (!flow) {
     return;
   }
-  const { pageGenerators: pgs = [], pageProcessors: pps = [], ...rest } = flow;
+  const { pageGenerators: pgs = [], pageProcessors: pps = [], routers, ...rest } = flow;
   const filteredPageGenerators = pgs.filter(pg => !!pg._exportId);
-  const filteredPageProcessors = pps.filter(
+  const filteredPageProcessors = pps.length ? pps.filter(
     pp => !!pp[pp.type === 'import' ? '_importId' : '_exportId']
-  );
+  ) : undefined;
+
+  (routers || []).forEach(router => {
+    router.branches.forEach(branch => {
+      // eslint-disable-next-line no-param-reassign
+      branch.pageProcessors = branch.pageProcessors?.filter(pp => !!pp[pp.type === 'import' ? '_importId' : '_exportId']);
+    });
+  });
 
   return {
     ...rest,
     pageGenerators: filteredPageGenerators,
     pageProcessors: filteredPageProcessors,
+    ...(routers ? {routers} : {}),
   };
 }
 
@@ -105,12 +113,19 @@ export function* fetchFlowResources({
   type,
   refresh,
   runOffline,
-  _pageProcessorId,
-  isMockInput,
   addMockData,
 }) {
   const resourceMap = {};
-  const resourceList = flow?.[type];
+  let resourceList = flow?.[type];
+
+  if (flow?.routers?.length && type === 'pageProcessors') {
+    resourceList = flattenDeep(
+      flow.routers
+        .map(router => (router.branches || [])
+          .map(branch => branch.pageProcessors || [])
+        )
+    );
+  }
 
   if (resourceList?.length) {
     for (let index = 0; index < resourceList.length; index += 1) {
@@ -147,7 +162,13 @@ export function* fetchFlowResources({
           // Gets required uiData (for real time exports - FTP, NS, SF, Web hook) and postData to pass for Page processors
           resourceMap[resourceId].options = yield call(
             getPreviewOptionsForResource,
-            { resource, flow, refresh, runOffline}
+            { resource,
+              flow,
+              refresh,
+              runOffline,
+              addMockData,
+              resourceType,
+            }
           );
         } else if (resourceType === 'imports') {
           resourceMap[resourceId].options = yield call(
@@ -156,9 +177,7 @@ export function* fetchFlowResources({
               flow,
               refresh,
               runOffline,
-              isMockInput,
               addMockData,
-              _pageProcessorId,
             }
           );
         }
@@ -167,6 +186,21 @@ export function* fetchFlowResources({
   }
 
   return resourceMap;
+}
+
+export function* requestSampleDataForRouters({
+  flowId,
+  routerId,
+  editorId,
+  hidden = true,
+}) {
+  yield call(fetchPageProcessorPreview, {
+    flowId,
+    routerId,
+    hidden,
+    editorId,
+    previewType: 'router',
+  });
 }
 
 export function* requestSampleDataForImports({
@@ -362,6 +396,7 @@ export function* getFlowStageData({
   flowId,
   resourceId,
   resourceType,
+  routerId,
   stage,
   isInitialized,
   noWrap,
@@ -384,6 +419,7 @@ export function* getFlowStageData({
     yield call(requestSampleData, {
       flowId,
       resourceId,
+      routerId,
       resourceType,
       stage,
       isInitialized,

@@ -24,6 +24,9 @@ const useStyles = makeStyles(theme => ({
     lineHeight: '22px',
     whiteSpace: 'normal',
     wordBreak: 'break-word',
+    '&>div': {
+      maxHeight: 300,
+    },
     '& > div > pre': {
       background: theme.palette.background.paper2,
       border: '1px solid',
@@ -55,7 +58,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function HelpContent({ children, title, caption, fieldId, resourceType }) {
+export default function HelpContent({ children, title, caption, fieldId, resourceType, updatePosition }) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const [feedbackText, setFeedbackText] = useState(false);
@@ -66,10 +69,11 @@ export default function HelpContent({ children, title, caption, fieldId, resourc
         dispatch(actions.app.postFeedback(resourceType, fieldId, helpful));
       } else {
         setFeedbackText(true);
+        updatePosition && updatePosition();
       }
     },
 
-    [dispatch, fieldId, resourceType]
+    [dispatch, fieldId, resourceType, updatePosition]
   );
   const handleSendFeedbackText = useCallback(() => {
     dispatch(
@@ -95,7 +99,7 @@ export default function HelpContent({ children, title, caption, fieldId, resourc
           <TextField
             data-private
             name="feedbackText"
-            placeholder="Please let us know how we can improve the text area."
+            placeholder="How can we make this information more helpful?"
             multiline
             onChange={onChange}
             variant="outlined"

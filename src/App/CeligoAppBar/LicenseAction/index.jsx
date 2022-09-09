@@ -11,7 +11,7 @@ import {PillButton, TextButton} from '../../../components/Buttons';
 import useConfirmDialog from '../../../components/ConfirmDialog';
 import RawHtml from '../../../components/RawHtml';
 import messageStore from '../../../utils/messageStore';
-import { LICENSE_UPGRADE_REQUEST_SUBMITTED_MESSAGE } from '../../../utils/constants';
+import { LICENSE_REACTIVATED_MESSAGE, LICENSE_UPGRADE_REQUEST_SUBMITTED_MESSAGE } from '../../../constants';
 
 const useStyles = makeStyles(theme => ({
   inTrial: {
@@ -228,23 +228,9 @@ function LicenseAction() {
       return submitUpgradeDialog();
     }
     if (licenseActionDetails.action === 'resume') {
-      return confirmDialog({
-        title: 'Request to reactivate subscription',
-        message: 'We will contact you to reactivate your subscription.',
-        buttons: [
-          {
-            label: 'Submit request',
-            onClick: () => {
-              setUpgradeRequested(true);
-              dispatch(actions.license.requestUpdate('ioResume'));
-            },
-          },
-          {
-            label: 'Cancel',
-            variant: 'text',
-          },
-        ],
-      });
+      setUpgradeRequested(true);
+
+      return dispatch(actions.license.requestUpdate('ioResume', {}));
     }
     if (licenseActionDetails.action === 'expired') {
       confirmDialog({
@@ -255,7 +241,7 @@ function LicenseAction() {
             label: 'Submit request',
             onClick: () => {
               setSubscriptionRenew(false);
-              dispatch(actions.license.requestUpdate('ioRenewal'));
+              dispatch(actions.license.requestUpdate('ioRenewal', {}));
             },
           },
           {
@@ -302,6 +288,9 @@ function LicenseAction() {
     if (platformLicenseActionMessage === LICENSE_UPGRADE_REQUEST_SUBMITTED_MESSAGE) {
       enquesnackbar({message: <RawHtml html={messageStore('LICENSE_UPGRADE_SUCCESS_MESSAGE')} />, variant: 'success'});
       dispatch(actions.license.clearActionMessage());
+    } else if (platformLicenseActionMessage === LICENSE_REACTIVATED_MESSAGE) {
+      enquesnackbar({message: LICENSE_REACTIVATED_MESSAGE});
+      dispatch(actions.license.clearActionMessage());
     }
   }, [dispatch, enquesnackbar, platformLicenseActionMessage]);
 
@@ -328,7 +317,7 @@ function LicenseAction() {
             data-test="renewOrResumeNow"
             color="primary"
             onClick={handleClick}>
-            {licenseActionDetails.action === 'expired' ? 'Request to renew now.' : 'Request to reactivate.'}
+            {licenseActionDetails.action === 'expired' ? 'Request to renew now.' : 'Reactivate.'}
           </TextButton>
 
         </NotificationToaster>

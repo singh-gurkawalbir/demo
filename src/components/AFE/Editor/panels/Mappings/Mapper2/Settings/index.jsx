@@ -10,7 +10,7 @@ import DrawerContent from '../../../../../../drawer/Right/DrawerContent';
 import DynaForm from '../../../../../../DynaForm';
 import DrawerFooter from '../../../../../../drawer/Right/DrawerFooter';
 import SaveAndCloseResourceForm from '../../../../../../SaveAndCloseButtonGroup/SaveAndCloseResourceForm';
-import { FORM_SAVE_STATUS } from '../../../../../../../utils/constants';
+import { FORM_SAVE_STATUS } from '../../../../../../../constants';
 import actions from '../../../../../../../actions';
 import { findNodeInTree } from '../../../../../../../utils/mapping';
 import ApplicationMappingSettings from './application';
@@ -62,7 +62,12 @@ function MappingSettingsV2({
   [dispatch, history]);
 
   const patchSettings = useCallback(settings => {
-    dispatch(actions.mapping.v2.patchSettings(nodeKey, settings));
+    const {extract, ...rest} = settings || {};
+
+    dispatch(actions.mapping.v2.patchSettings(nodeKey, rest));
+    if (!('hardCodedValue' in rest)) {
+      dispatch(actions.mapping.v2.patchField('extract', nodeKey, extract || ''));
+    }
   }, [dispatch, nodeKey]);
 
   const handleLookupUpdate = useCallback((oldLookup, newLookup) => {

@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { MFA_SETUP_ASYNC_KEY, FORM_SAVE_STATUS } from '../../../../utils/constants';
+import { MFA_SETUP_ASYNC_KEY, FORM_SAVE_STATUS } from '../../../../constants';
 import useEnqueueSnackbar from '../../../../hooks/enqueueSnackbar';
 import messageStore from '../../../../utils/messageStore';
 import { selectors } from '../../../../reducers';

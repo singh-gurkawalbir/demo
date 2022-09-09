@@ -1,7 +1,7 @@
 import dateTimezones from '../../../../../../../../../utils/dateTimezones';
 import mappingUtil, {ARRAY_DATA_TYPES, MAPPING_DATA_TYPES} from '../../../../../../../../../utils/mapping';
 import dateFormats from '../../../../../../../../../utils/dateFormats';
-import { emptyObject } from '../../../../../../../../../utils/constants';
+import { emptyObject } from '../../../../../../../../../constants';
 import { getDefaultActionOptions } from '../http';
 
 export default {
@@ -11,7 +11,7 @@ export default {
     lookups,
     importResource = {},
   }) => {
-    const {key, lookupName, dataType: propDataType, copySource } = node;
+    const {key, lookupName, dataType: propDataType, copySource, isRequired, combinedExtract, extract, hardCodedValue, disabled} = node;
 
     const {_connectionId: connectionId, _id: resourceId } = importResource;
 
@@ -22,10 +22,13 @@ export default {
         dataType: {
           id: 'dataType',
           name: 'dataType',
-          type: 'select',
+          type: 'selectforsetfields',
+          setFieldIds: ['fieldMappingType'],
           skipSort: true,
           label: 'Destination data type',
           defaultValue: propDataType,
+          defaultDisabled: isRequired,
+          description: isRequired ? 'Data type of a required field cannot be edited.' : '',
           helpKey: 'mapping.v2.dataType',
           noApi: true,
           options: [
@@ -180,6 +183,17 @@ export default {
             { field: 'fieldMappingType', is: ['standard'] },
           ],
         },
+        sourceField: {
+          id: 'sourceField',
+          name: 'sourceField',
+          type: 'mapper2sourcefield',
+          defaultValue: combinedExtract || extract || (hardCodedValue ? `"${hardCodedValue}"` : undefined),
+          label: 'Source field',
+          noApi: true,
+          nodeKey: key,
+          disabled,
+          resourceId,
+        },
         standardAction: {
           id: 'standardAction',
           name: 'standardAction',
@@ -204,11 +218,36 @@ export default {
           visibleWhenAll: [
             { field: 'standardAction', is: ['default'] },
             { field: 'fieldMappingType', is: ['standard'] },
-            { field: 'dataType', isNot: ['object', 'objectarray'] },
+            { field: 'dataType', isNot: ['boolean', 'object', 'objectarray'] },
           ],
           helpKey: 'mapping.v2.default',
           noApi: true,
           defaultValue: node.default,
+        },
+        boolDefault: {
+          id: 'boolDefault',
+          name: 'boolDefault',
+          type: 'select',
+          label: 'Custom value',
+          skipDefault: true,
+          skipSort: true,
+          required: true,
+          visibleWhenAll: [
+            { field: 'standardAction', is: ['default'] },
+            { field: 'fieldMappingType', is: ['standard'] },
+            { field: 'dataType', is: ['boolean'] },
+          ],
+          helpKey: 'mapping.v2.default',
+          noApi: true,
+          defaultValue: node.default || 'true',
+          options: [
+            {
+              items: [
+                { label: 'True', value: 'true' },
+                { label: 'False', value: 'false' },
+              ],
+            },
+          ],
         },
         objectAction: {
           id: 'objectAction',
@@ -250,11 +289,36 @@ export default {
           visibleWhenAll: [
             { field: 'hardcodedAction', is: ['default'] },
             { field: 'fieldMappingType', is: ['hardCoded'] },
-            { field: 'dataType', isNot: ['object', 'objectarray'] },
+            { field: 'dataType', isNot: ['boolean', 'object', 'objectarray'] },
           ],
           helpKey: 'mapping.v2.default',
           noApi: true,
           defaultValue: node.hardCodedValue,
+        },
+        boolHardcodedDefault: {
+          id: 'boolHardcodedDefault',
+          name: 'boolHardcodedDefault',
+          type: 'select',
+          label: 'Custom value',
+          skipDefault: true,
+          skipSort: true,
+          required: true,
+          visibleWhenAll: [
+            { field: 'hardcodedAction', is: ['default'] },
+            { field: 'fieldMappingType', is: ['hardCoded'] },
+            { field: 'dataType', is: ['boolean'] },
+          ],
+          helpKey: 'mapping.v2.default',
+          noApi: true,
+          defaultValue: node.hardCodedValue || 'true',
+          options: [
+            {
+              items: [
+                { label: 'True', value: 'true' },
+                { label: 'False', value: 'false' },
+              ],
+            },
+          ],
         },
         expression: {
           id: 'expression',
@@ -302,11 +366,36 @@ export default {
           visibleWhenAll: [
             { field: 'multifieldAction', is: ['default'] },
             { field: 'fieldMappingType', is: ['multifield'] },
-            { field: 'dataType', is: ['string', 'number', 'boolean'] },
+            { field: 'dataType', is: ['string', 'number'] },
           ],
           helpKey: 'mapping.v2.default',
           noApi: true,
           defaultValue: node.default,
+        },
+        boolMultifieldDefault: {
+          id: 'boolMultifieldDefault',
+          name: 'boolMultifieldDefault',
+          type: 'select',
+          label: 'Custom value',
+          skipDefault: true,
+          skipSort: true,
+          required: true,
+          visibleWhenAll: [
+            { field: 'multifieldAction', is: ['default'] },
+            { field: 'fieldMappingType', is: ['multifield'] },
+            { field: 'dataType', is: ['boolean'] },
+          ],
+          helpKey: 'mapping.v2.default',
+          noApi: true,
+          defaultValue: node.default || 'true',
+          options: [
+            {
+              items: [
+                { label: 'True', value: 'true' },
+                { label: 'False', value: 'false' },
+              ],
+            },
+          ],
         },
         'lookup.mapList': {
           id: 'lookup.mapList',
@@ -317,6 +406,22 @@ export default {
           keyLabel: 'Source field value',
           valueName: 'import',
           valueLabel: 'Destination field value',
+          columns: [
+            {
+              id: 'import',
+              label: 'Destination field value',
+              required: false,
+              type: 'input',
+              supportsRefresh: false,
+            },
+            {
+              id: 'export',
+              label: 'Source field value',
+              required: false,
+              type: 'input',
+              supportsRefresh: false,
+            },
+          ],
           defaultValue:
               lookup.map &&
               Object.keys(lookup.map).map(key => ({
@@ -389,6 +494,7 @@ export default {
           label: 'Description',
           defaultValue: node.description,
           noApi: true,
+          helpKey: 'mapping.v2.description',
         },
       },
       layout: {
@@ -410,18 +516,35 @@ export default {
                   'extractDateTimezone',
                   'generateDateFormat',
                   'generateDateTimezone',
-                  'objectAction',
-                  'standardAction',
-                  'default',
                   'hardcodedAction',
                   'hardcodedDefault',
+                  'boolHardcodedDefault',
                   'expression',
                   'multifieldAction',
                   'multifieldDefault',
+                  'boolMultifieldDefault',
                   'lookup.mapList',
                   'lookup.name',
                   'lookupAction',
                   'lookupDefault',
+                ],
+              },
+            ],
+          },
+          {
+            fields: [
+              'sourceField',
+            ],
+          },
+          {
+            type: 'indent',
+            containers: [
+              {
+                fields: [
+                  'objectAction',
+                  'standardAction',
+                  'default',
+                  'boolDefault',
                 ],
               },
             ],

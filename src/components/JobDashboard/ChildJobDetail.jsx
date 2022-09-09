@@ -7,7 +7,7 @@ import Checkbox from '@material-ui/core/Checkbox';
 import { getPages, getSuccess } from '../../utils/jobdashboard';
 import JobStatus from './JobStatus';
 import JobActionsMenu from './JobActionsMenu';
-import { JOB_STATUS } from '../../utils/constants';
+import { JOB_STATUS } from '../../constants';
 import DateTimeDisplay from '../DateTimeDisplay';
 import ErrorCountCell from './ErrorCountCell';
 

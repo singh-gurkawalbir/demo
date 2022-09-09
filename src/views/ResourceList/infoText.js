@@ -1,4 +1,4 @@
-import { FLOW_EVENT_REPORTS_DOC_URL, HELP_CENTER_BASE_URL } from '../../utils/constants';
+import { FLOW_EVENT_REPORTS_DOC_URL, HELP_CENTER_BASE_URL } from '../../constants';
 // make sure the dictionary key matches the "model plural" name.
 export default {
   exports: `Exports are used to extract data from an application. 
@@ -72,4 +72,6 @@ export default {
     and take effect.`,
   eventreports: `The <a href=${FLOW_EVENT_REPORTS_DOC_URL} rel="noreferrer" target="_blank">reports</a> that you have created are shown in this list. To add a report, click <b>+ Run report</b> at the right. To review an existing report’s details or download its CSV file, click the options in the <b>Actions</b> overflow (…) menu. Reports older than 30 days are no longer available.`,
   apis: 'My APIs are custom HTTP endpoints built directly in integrator.io.  These APIs are powered by script functions that have full access to the integrator.io API.  Within your script logic, you can support any content-type (i.e. JSON, XML, etc…), any HTTP request method (GET, PUT, POST, etc…), and you can invoke any number of external APIs.  To provision access to your custom APIs, simply create one or more integrator.io API tokens.',
+  reports: 'Use this page to generate CSV reports that show all events that have run through one or more flows during a specified time period. Each report is available for download for up to 30 days from the creation date. <a href="https://docs.celigo.com/hc/en-us/articles/4402565285389" traget="_black">Learn more</a>',
+  developerPlayground: 'Parser helpers, a Handlebars editor, and several other tools are available here to help you edit and test integration data in Advanced field editors (AFEs). Keep in mind that the editors do not save any information to your integrations. Copy and paste the data you want to preserve in an integration field or an external file. <a href="https://docs.celigo.com/hc/en-us/articles/360043040652-Advanced-field-editors-AFEs-and-the-Dev-playground">Learn more</a>',
 };

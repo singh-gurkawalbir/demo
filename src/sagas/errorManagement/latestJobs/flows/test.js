@@ -7,7 +7,7 @@ import { apiCallWithRetry } from '../../..';
 import actions from '../../../../actions';
 import actionTypes from '../../../../actions/types';
 import { selectors } from '../../../../reducers';
-import { JOB_STATUS, JOB_TYPES } from '../../../../utils/constants';
+import { JOB_STATUS, JOB_TYPES } from '../../../../constants';
 import getRequestOptions from '../../../../utils/requestOptions';
 import {
   refreshForMultipleFlowJobs,
@@ -268,6 +268,63 @@ describe('refreshForMultipleFlowJobs saga', () => {
     ];
 
     return expectSaga(refreshForMultipleFlowJobs, { flowId, job: jobState2, latestJobs})
+      .put(actions.errorManager.latestFlowJobs.request({ flowId }))
+      .run();
+  });
+  test('should dispatch request action if the job is completed and previous state of the job is in running status', () => {
+    const latestJobs = [
+      {
+        _id: 'j1',
+        type: JOB_TYPES.FLOW,
+        status: JOB_STATUS.RUNNING,
+        startedAt: '2019-08-11T10:50:00.000Z',
+        _integrationId: 'i1',
+        duration: undefined,
+        doneExporting: false,
+        uiStatus: JOB_STATUS.RUNNING,
+        _lastPageGeneratorJob: false,
+        children: [],
+      },
+    ];
+    const job = {
+      _id: 'j1',
+      type: JOB_TYPES.FLOW,
+      status: JOB_STATUS.COMPLETED,
+      startedAt: '2019-08-11T10:50:00.000Z',
+      _integrationId: 'i1',
+      duration: undefined,
+      doneExporting: false,
+      children: [
+        {
+          type: JOB_TYPES.EXPORT,
+          status: JOB_STATUS.COMPLETED,
+        },
+      ],
+    };
+
+    return expectSaga(refreshForMultipleFlowJobs, { flowId, job, latestJobs })
+      .put(actions.errorManager.latestFlowJobs.request({ flowId }))
+      .run();
+  });
+  test('should dispatch request action if the job is completed and previous state of job doest not exist', () => {
+    const latestJobs = [];
+    const job = {
+      _id: 'j1',
+      type: JOB_TYPES.FLOW,
+      status: JOB_STATUS.COMPLETED,
+      startedAt: '2019-08-11T10:50:00.000Z',
+      _integrationId: 'i1',
+      duration: undefined,
+      doneExporting: false,
+      children: [
+        {
+          type: JOB_TYPES.EXPORT,
+          status: JOB_STATUS.COMPLETED,
+        },
+      ],
+    };
+
+    return expectSaga(refreshForMultipleFlowJobs, { flowId, job, latestJobs})
       .put(actions.errorManager.latestFlowJobs.request({ flowId }))
       .run();
   });

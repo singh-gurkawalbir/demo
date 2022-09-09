@@ -7,7 +7,7 @@ import {
   USER_ACCESS_LEVELS,
   INTEGRATION_ACCESS_LEVELS,
   emptyList,
-} from '../../../../utils/constants';
+} from '../../../../constants';
 
 // this could be moved into some common place... just testing this now.
 expect.extend({
@@ -282,7 +282,7 @@ describe('account (ashares) reducers', () => {
           name: 'Celigo Test',
           licenses: [
             { type: 'connector' },
-            { type: 'integrator', sandbox: false },
+            { type: 'integrator', sandbox: false, sso: false },
           ],
           ssConnectionIds: ['9'],
         },
@@ -295,7 +295,7 @@ describe('account (ashares) reducers', () => {
           email: 'playground@celigo.com',
           name: 'Playground Management',
           company: 'Celigo Playground',
-          licenses: [{ type: 'integrator', sandbox: true }],
+          licenses: [{ type: 'integrator', sandbox: true, sso: true }],
         },
       },
       {
@@ -307,7 +307,7 @@ describe('account (ashares) reducers', () => {
           name: 'ghi 789',
           company: 'ghi 789 company',
           licenses: [
-            { type: 'integrator', sandbox: false, numSandboxAddOnFlows: 2 },
+            { type: 'integrator', sandbox: false, numSandboxAddOnFlows: 2, sso: false },
           ],
         },
       },
@@ -319,7 +319,107 @@ describe('account (ashares) reducers', () => {
           email: 'ignoreme@celigo.com',
           name: 'Ignore Management',
           company: 'skip',
-          licenses: [{ type: 'integrator', sandbox: true }],
+          licenses: [{ type: 'integrator', sandbox: true, sso: false }],
+        },
+      },
+    ];
+    const testAccountsWithExpireDates = [
+      {
+        _id: 'a1',
+        accepted: true,
+        ownerUser: {
+          _id: 'user1',
+          company: 'Testacc1',
+          email: 'Testacc1@gmail.com',
+          name: 'Celigo Test',
+          licenses: [
+            { type: 'connector' },
+            {
+              _id: 'license1',
+              type: 'integrator',
+              tier: 'free',
+              sso: false,
+              trialEndDate: moment()
+                .add(10, 'days')
+                .toISOString(),
+            },
+          ],
+        },
+      },
+      {
+        _id: 'a2',
+        accepted: true,
+        ownerUser: {
+          _id: 'user2',
+          email: 'Testacc2@celigo.com',
+          name: 'Playground Management',
+          company: 'Testacc2',
+          licenses: [{
+            _id: 'license2',
+            type: 'integrator',
+            tier: 'free',
+            sso: false,
+            trialEndDate: moment()
+              .subtract(2, 'days')
+              .toISOString(),
+          }],
+        },
+      },
+      {
+        _id: 'a3',
+        accepted: true,
+        ownerUser: {
+          _id: 'user3',
+          email: 'Testacc3@celigo.com',
+          name: 'Playground Management',
+          company: 'Testacc3',
+          licenses: [{
+            _id: 'license3',
+            type: 'integrator',
+            tier: 'standard',
+            sso: true,
+            expires: moment()
+              .add(60, 'days')
+              .toISOString(),
+          }],
+        },
+      },
+      {
+        _id: 'a4',
+        accepted: true,
+        ownerUser: {
+          _id: 'user4',
+          email: 'Testacc4@celigo.com',
+          name: 'Playground Management',
+          company: 'Testacc4',
+          licenses: [{
+            _id: 'license4',
+            type: 'integrator',
+            tier: 'standard',
+            sso: false,
+            expires: moment()
+              .subtract(1, 'days')
+              .toISOString(),
+          }],
+        },
+      },
+      {
+        _id: 'a5',
+        accepted: true,
+        ownerUser: {
+          _id: 'user5',
+          email: 'Testacc5@celigo.com',
+          name: 'Playground Management',
+          company: 'Testacc5',
+          licenses: [{
+            _id: 'license5',
+            type: 'integrator',
+            tier: 'standard',
+            sso: true,
+            expires: moment()
+              .subtract(1, 'days')
+              .toISOString(),
+          }],
         },
       },
     ];
@@ -349,6 +449,7 @@ describe('account (ashares) reducers', () => {
             company: 'Celigo Inc',
             email: 'name@gmail.com',
             id: 'abc',
+            hasSSO: false,
             hasSandbox: false,
             hasConnectorSandbox: false,
           },
@@ -356,6 +457,7 @@ describe('account (ashares) reducers', () => {
             company: 'Celigo Playground',
             email: 'playground@celigo.com',
             id: 'def',
+            hasSSO: false,
             hasSandbox: true,
             hasConnectorSandbox: false,
           },
@@ -363,8 +465,60 @@ describe('account (ashares) reducers', () => {
             company: 'ghi 789 company',
             email: 'ghi789@celigo.com',
             id: 'ghi',
+            hasSSO: false,
             hasSandbox: true,
             hasConnectorSandbox: false,
+          },
+        ];
+        const result = selectors.sharedAccounts(state);
+
+        expect(result).toEqual(expectedResult);
+      });
+      test('should return correct sso state for every shared account', () => {
+        const state = reducer(
+          undefined,
+          actions.resource.receivedCollection('shared/ashares', testAccountsWithExpireDates)
+        );
+        const expectedResult = [
+          {
+            company: 'Testacc1',
+            email: 'Testacc1@gmail.com',
+            hasConnectorSandbox: false,
+            hasSSO: true,
+            hasSandbox: false,
+            id: 'a1',
+          },
+          {
+            company: 'Testacc2',
+            email: 'Testacc2@celigo.com',
+            hasConnectorSandbox: false,
+            hasSSO: false,
+            hasSandbox: false,
+            id: 'a2',
+          },
+          {
+            company: 'Testacc3',
+            email: 'Testacc3@celigo.com',
+            hasConnectorSandbox: false,
+            hasSSO: true,
+            hasSandbox: false,
+            id: 'a3',
+          },
+          {
+            company: 'Testacc4',
+            email: 'Testacc4@celigo.com',
+            hasConnectorSandbox: false,
+            hasSSO: false,
+            hasSandbox: false,
+            id: 'a4',
+          },
+          {
+            company: 'Testacc5',
+            email: 'Testacc5@celigo.com',
+            hasConnectorSandbox: false,
+            hasSSO: false,
+            hasSandbox: false,
+            id: 'a5',
           },
         ];
         const result = selectors.sharedAccounts(state);
@@ -403,7 +557,7 @@ describe('account (ashares) reducers', () => {
           sandbox: true,
           hasSandbox: true,
           sso: true,
-          hasSSO: true,
+          hasSSO: false,
           hasConnectorSandbox: false,
         });
 
@@ -414,6 +568,8 @@ describe('account (ashares) reducers', () => {
 
         expect(selectors.platformLicense(state2, 'abc')).toEqual({
           type: 'integrator',
+          sso: false,
+          hasSSO: false,
           sandbox: false,
           hasSandbox: false,
           hasConnectorSandbox: false,
@@ -422,12 +578,16 @@ describe('account (ashares) reducers', () => {
         expect(selectors.platformLicense(state2, 'def')).toEqual({
           type: 'integrator',
           sandbox: true,
+          hasSSO: false,
+          sso: true,
           hasSandbox: true,
           hasConnectorSandbox: false,
         });
         expect(selectors.platformLicense(state2, 'ghi')).toEqual({
           type: 'integrator',
           sandbox: false,
+          sso: false,
+          hasSSO: false,
           numSandboxAddOnFlows: 2,
           hasSandbox: true,
           hasConnectorSandbox: false,
@@ -445,6 +605,7 @@ describe('account (ashares) reducers', () => {
           _id: 'license1',
           type: 'integrator',
           tier: 'none',
+          hasSSO: false,
           hasSandbox: false,
           hasConnectorSandbox: false,
         });
@@ -456,6 +617,7 @@ describe('account (ashares) reducers', () => {
               _id: 'license1',
               type: 'integrator',
               tier: 'free',
+              sso: false,
               trialEndDate: moment()
                 .add(10, 'days')
                 .toISOString(),
@@ -468,6 +630,7 @@ describe('account (ashares) reducers', () => {
             _id: 'license1',
             type: 'integrator',
             tier: 'free',
+            hasSSO: true,
             hasSandbox: false,
             trialEndDate: expect.any(String),
             status: 'IN_TRIAL',
@@ -482,6 +645,7 @@ describe('account (ashares) reducers', () => {
               _id: 'license1',
               type: 'integrator',
               tier: 'free',
+              sso: false,
               trialEndDate: moment()
                 .subtract(2, 'days')
                 .toISOString(),
@@ -494,6 +658,7 @@ describe('account (ashares) reducers', () => {
             _id: 'license1',
             type: 'integrator',
             tier: 'free',
+            hasSSO: false,
             hasSandbox: false,
             trialEndDate: expect.any(String),
             status: 'TRIAL_EXPIRED',
@@ -507,6 +672,7 @@ describe('account (ashares) reducers', () => {
               _id: 'license1',
               type: 'integrator',
               tier: 'free',
+              sso: false,
               trialEndDate: moment()
                 .subtract(1, 'hours')
                 .toISOString(),
@@ -519,6 +685,7 @@ describe('account (ashares) reducers', () => {
             _id: 'license1',
             type: 'integrator',
             tier: 'free',
+            hasSSO: false,
             hasSandbox: false,
             trialEndDate: expect.any(String),
             status: 'TRIAL_EXPIRED',
@@ -532,6 +699,7 @@ describe('account (ashares) reducers', () => {
               _id: 'license1',
               type: 'integrator',
               tier: 'standard',
+              sso: false,
               expires: moment()
                 .add(60, 'days')
                 .toISOString(),
@@ -545,6 +713,7 @@ describe('account (ashares) reducers', () => {
             _id: 'license1',
             type: 'integrator',
             tier: 'standard',
+            hasSSO: false,
             hasSandbox: false,
             expires: expect.any(String),
             status: 'ACTIVE',
@@ -563,6 +732,7 @@ describe('account (ashares) reducers', () => {
               _id: 'license1',
               type: 'integrator',
               tier: 'standard',
+              sso: true,
               expires: moment()
                 .add(1, 'days')
                 .toISOString(),
@@ -575,6 +745,7 @@ describe('account (ashares) reducers', () => {
             _id: 'license1',
             type: 'integrator',
             tier: 'standard',
+            hasSSO: true,
             hasSandbox: false,
             expires: expect.any(String),
             status: 'ACTIVE',
@@ -589,6 +760,7 @@ describe('account (ashares) reducers', () => {
               _id: 'license1',
               type: 'integrator',
               tier: 'standard',
+              sso: false,
               expires: moment()
                 .subtract(1, 'days')
                 .toISOString(),
@@ -601,6 +773,34 @@ describe('account (ashares) reducers', () => {
             _id: 'license1',
             type: 'integrator',
             tier: 'standard',
+            hasSSO: false,
+            hasSandbox: false,
+            expires: expect.any(String),
+            status: 'EXPIRED',
+          })
+        );
+
+        const state8 = reducer(
+          [],
+          actions.resource.receivedCollection('licenses', [
+            {
+              _id: 'license1',
+              type: 'integrator',
+              tier: 'standard',
+              sso: true,
+              expires: moment()
+                .subtract(1, 'days')
+                .toISOString(),
+            },
+          ])
+        );
+
+        expect(selectors.platformLicense(state8, ACCOUNT_IDS.OWN)).toEqual(
+          expect.objectContaining({
+            _id: 'license1',
+            type: 'integrator',
+            tier: 'standard',
+            hasSSO: false,
             hasSandbox: false,
             expires: expect.any(String),
             status: 'EXPIRED',
@@ -644,6 +844,57 @@ describe('account (ashares) reducers', () => {
 
         expect(result).toEqual(expectedResult);
       });
+      test('should return correct set of account options when account has sso enabled/disabled.', () => {
+        const state = reducer(
+          [],
+          actions.resource.receivedCollection('shared/ashares', testAccountsWithExpireDates)
+        );
+        const expectedResult = [
+          {
+            canLeave: true,
+            company: 'Testacc1',
+            hasConnectorSandbox: false,
+            hasSSO: true,
+            hasSandbox: false,
+            id: 'a1',
+          },
+          {
+            canLeave: true,
+            company: 'Testacc2',
+            hasConnectorSandbox: false,
+            hasSSO: false,
+            hasSandbox: false,
+            id: 'a2',
+          },
+          {
+            canLeave: true,
+            company: 'Testacc3',
+            hasConnectorSandbox: false,
+            hasSSO: true,
+            hasSandbox: false,
+            id: 'a3',
+          },
+          {
+            canLeave: true,
+            company: 'Testacc4',
+            hasConnectorSandbox: false,
+            hasSSO: false,
+            hasSandbox: false,
+            id: 'a4',
+          },
+          {
+            canLeave: true,
+            company: 'Testacc5',
+            hasConnectorSandbox: false,
+            hasSSO: false,
+            hasSandbox: false,
+            id: 'a5',
+          },
+        ];
+        const result = selectors.accountSummary(state);
+
+        expect(result).toEqual(expectedResult);
+      });
       test('should return empty array if received state is undefined.', () => {
         const state = reducer(undefined, 'some action');
         const result = selectors.accountSummary(state);
@@ -660,7 +911,7 @@ describe('account (ashares) reducers', () => {
           {
             id: ACCOUNT_IDS.OWN,
             hasSandbox: true,
-            hasSSO: true,
+            hasSSO: false,
             hasConnectorSandbox: false,
           },
         ];

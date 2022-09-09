@@ -19,6 +19,7 @@ import PanelHeader from '../../../components/PanelHeader';
 import UpgradeDrawer from './drawers/Upgrade';
 import { TextButton, FilledButton } from '../../../components/Buttons';
 import { drawerPaths, buildDrawerUrl } from '../../../utils/rightDrawer';
+import infoText from '../../../components/Help/infoText';
 
 const useStyles = makeStyles(theme => ({
   itemsList: {
@@ -171,7 +172,7 @@ export default function Endpoint() {
       ],
     });
 
-    return dispatch(actions.license.requestUpdate('upgrade'));
+    return dispatch(actions.license.requestUpdate('upgrade', {}));
   }, [dispatch, confirmDialog]);
 
   const onRequestUpgradeClick = useCallback(() => {
@@ -185,7 +186,7 @@ export default function Endpoint() {
               actions.analytics.gainsight.trackEvent('GO_UNLIMITED_BUTTON_CLICKED')
             );
             setUpgradeRequested(true);
-            dispatch(actions.license.requestUpdate('upgrade'));
+            dispatch(actions.license.requestUpdate('upgrade', {}));
           },
         },
         { label: 'Cancel',
@@ -205,7 +206,7 @@ export default function Endpoint() {
               actions.analytics.gainsight.trackEvent('GO_UNLIMITED_BUTTON_CLICKED')
             );
             setUpgradeRequested(true);
-            dispatch(actions.license.requestUpdate('upgrade'));
+            dispatch(actions.license.requestUpdate('upgrade', {}));
           },
         },
         { label: 'Cancel',
@@ -293,7 +294,7 @@ export default function Endpoint() {
       </div>
       )}
       <div className={classes.root}>
-        <PanelHeader title="Subscription" className={classes.heading} />
+        <PanelHeader title="Subscription" className={classes.heading} infoText={infoText.Subscription} />
         <div className={classes.subscriptionBox}>
           <div className={classes.subscriptionBoxInner}>
             <div className={classes.subscriptionBoxInnerLeft}>
