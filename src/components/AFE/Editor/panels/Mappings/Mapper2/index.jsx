@@ -223,7 +223,7 @@ export default function Mapper2({editorId}) {
   }, [dispatch]);
 
   const onScrollHandler = e => {
-    e.currentTarget.addEventListener('mousemove', event => {
+    window.addEventListener('mousemove', event => {
       event.stopImmediatePropagation();
     }, true);
     if (settingDrawerActive.current && settingDrawerActive.current.wasActive) {
