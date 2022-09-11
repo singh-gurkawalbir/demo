@@ -96,6 +96,8 @@ href="/marketplace"><u>Check out our Marketplace</u></a> to jumpstart your  inte
   RETRY_ACTION_HOVER_MESSAGE: 'Before retrying, you must save your edits for each error in the batch. Click “Save & next” on this error to continue.',
   ADD_TO_BATCH_HOVER_MESSAGE: 'Selected errors are added to a batch, on which you can perform bulk retry and resolve actions. Before retrying, you must save your edits for each error in the batch. Click “Save & next” on this error to continue.',
   // #endregion
+
+  DATALOADER_PP_MESSAGE: 'You can add a destination application once you complete the configuration of your data loader.',
   MAX_ROUTERS_LIMIT_REACHED: 'You have reached the maximum of 25 branchings in a flow',
   MAX_BRANCHES_LIMIT_REACHED: 'You have reached the maximum of 25 branches in a branching',
   TERMINAL_NODE_TOOLTIP: 'Drag to merge with other branch',

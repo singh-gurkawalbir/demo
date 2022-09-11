@@ -21,20 +21,9 @@ import { FILTER_KEYS } from '../../../../utils/errorManagement';
 
 const useStyles = makeStyles(theme => ({
   detailsContainer: {
-    height: '67vh',
-    // padding: theme.spacing(0, 3),
+    height: 'calc(100vh - 420px)',
     display: 'flex',
     flexDirection: 'column',
-    // @Azhar to check on below commented css
-    // [theme.breakpoints.down('sm')]: {
-    //   height: '67vh',
-    // },
-    // [theme.breakpoints.down('lg')]: {
-    //   height: '67vh',
-    // },
-    // [theme.breakpoints.up('lg')]: {
-    //   height: '57vh',
-    // },
   },
   tabContent: {
     flexGrow: 1,

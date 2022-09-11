@@ -21,7 +21,7 @@ import { sendRequest } from '..';
 
 const status401 = new APIException({
   status: 401,
-  message: 'Session Expired',
+  message: 'Session expired',
 });
 
 describe('request interceptors...testing the various stages of an api request on how it is handled  ', () => {

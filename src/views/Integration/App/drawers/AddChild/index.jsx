@@ -117,6 +117,8 @@ export default function IntegrationAppAddNewChild() {
       dispatch(actions.resource.requestCollection('exports', undefined, undefined, integrationId));
       dispatch(actions.resource.requestCollection('imports', undefined, undefined, integrationId));
       dispatch(actions.resource.requestCollection('connections', undefined, undefined, integrationId));
+      dispatch(actions.resource.requestCollection('asynchelpers', undefined, undefined, integrationId));
+
       if (integrationChildren && initialChildren && integrationChildren.length > initialChildren.length) {
         const newChild = differenceBy(integrationChildren, initialChildren, 'value');
 
