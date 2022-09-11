@@ -90,94 +90,16 @@ function initUserFormWrapper(userprops) {
   initialStore.getState().data.resources.integrations = [
     {
       _id: '5fc5e0e66cfe5b44bb95de70',
-      lastModified: '2021-09-29T16:17:12.522Z',
       name: '3PL Central',
       readme: 'https://staging.integrator.io/integrations/5fc5e0e66cfe5b44bb95de70/admin/readme/edit/readme ',
-      install: [],
-      sandbox: false,
       _registeredConnectionIds: [
         '5d529bfbdb0c7b14a6011a57',
         '5fc5e4a46cfe5b44bb95df44',
         '60222c93cbcaf605db26d936',
       ],
-      installSteps: [],
-      uninstallSteps: [],
-      flowGroupings: [],
-      createdAt: '2020-12-01T06:21:26.538Z',
     },
   ];
   initialStore.getState().data.resources.ssoclients = [
-
-  ];
-  initialStore.getState().session.loadResources = [{
-    integrations: 'received',
-    'transfers/invited': 'failed',
-    ashares: 'received',
-    'shared/ashares': 'received',
-    'ui/assistants': 'received',
-    httpconnectors: 'failed',
-    licenses: 'received',
-    transfers: 'received',
-    ssoclients: 'received',
-    'shared/sshares': 'received',
-    tiles: 'received',
-    published: 'received',
-    connections: 'received',
-    marketplacetemplates: 'received',
-    '60e493c0ebe4d0631aefb8f2': {
-      flows: 'received',
-      exports: 'received',
-      imports: 'received',
-    },
-    notifications: 'received',
-    'integrations/60e493c0ebe4d0631aefb8f2/ashares': 'received',
-  },
-  {
-    integrations: 'received',
-    'transfers/invited': 'failed',
-    ashares: 'received',
-    'shared/ashares': 'received',
-    'ui/assistants': 'received',
-    httpconnectors: 'failed',
-    licenses: 'received',
-    transfers: 'received',
-    ssoclients: 'received',
-    'shared/sshares': 'received',
-    tiles: 'received',
-    published: 'received',
-    connections: 'received',
-    marketplacetemplates: 'received',
-    '60e493c0ebe4d0631aefb8f3': {
-      flows: 'received',
-      exports: 'received',
-      imports: 'received',
-    },
-    notifications: 'received',
-    'integrations/60e493c0ebe4d0631aefb8f3/ashares': 'received',
-  },
-  {
-    integrations: 'received',
-    'transfers/invited': 'failed',
-    ashares: 'received',
-    'shared/ashares': 'received',
-    'ui/assistants': 'received',
-    httpconnectors: 'failed',
-    licenses: 'received',
-    transfers: 'received',
-    ssoclients: 'received',
-    'shared/sshares': 'received',
-    tiles: 'received',
-    published: 'received',
-    connections: 'received',
-    marketplacetemplates: 'received',
-    '60e493c0ebe4d0631aefb8f3': {
-      flows: 'received',
-      exports: 'received',
-      imports: 'received',
-    },
-    notifications: 'received',
-    'integrations/60e493c0ebe4d0631aefb8f3/ashares': 'received',
-  },
 
   ];
   history.push = jest.fn();
@@ -199,8 +121,6 @@ jest.mock('../../LoadResources', () => ({
   ),
 }
 ));
-
-jest.mock('');
 const props = {
   userId: '60fea86dbac8e87b7660f984',
 };
@@ -235,7 +155,7 @@ describe('User Form Wrapper', () => {
     userEvent.click(screen.getByText('Yes'));
     userEvent.click(svgEl);
     userEvent.click(screen.getByText('No'));
-    fireEvent.change(screen.queryByPlaceholderText(/Please let us know how we can improve the text area./i), {
+    fireEvent.change(screen.queryByPlaceholderText(/How can we make this information more helpful?/i), {
       target: {value: 'Hey! cool'},
     });
     const submitText = screen.getByText('Submit');
@@ -281,7 +201,7 @@ describe('User Form Wrapper', () => {
     userEvent.click(screen.getByText('Yes'));
     userEvent.click(svgEl);
     userEvent.click(screen.getByText('No'));
-    fireEvent.change(screen.queryByPlaceholderText(/Please let us know how we can improve the text area./i), {
+    fireEvent.change(screen.queryByPlaceholderText(/How can we make this information more helpful?/i), {
       target: {value: 'Hey! cool'},
     });
     const submitText = screen.getByText('Submit');
@@ -307,7 +227,6 @@ describe('User Form Wrapper', () => {
     const cancelMessage = screen.getByText('Cancel');
 
     expect(cancelMessage).toBeInTheDocument();
-    fireEvent.click(cancelMessage);
   });
   test('Should be able to invite a user with administrator access', async () => {
     await initUserFormWrapper('');
@@ -323,75 +242,6 @@ describe('User Form Wrapper', () => {
         _id: '6195e21a9bfbdd12c575c649',
         accepted: true,
         accessLevel: 'monitor',
-        integrationAccessLevel: [],
-        ownerUser: {
-          _id: '5ca5c855ec5c172792285f53',
-          email: 'aasa@gmail.com',
-          name: 'sai kaivalya',
-          company: 'Amazon Central',
-          timezone: 'Asia/Calcutta',
-          useErrMgtTwoDotZero: false,
-          allowedToPublish: true,
-          licenses: [
-            {
-              _id: '5ca5c856ec5c172792285f54',
-              created: '2019-04-04T09:03:18.211Z',
-              lastModified: '2019-04-04T09:06:54.579Z',
-              expires: '2022-05-04T09:06:54.578Z',
-              type: 'integrator',
-              tier: 'premium',
-              numAddOnFlows: 1400,
-              trialEndDate: '2019-05-04T09:06:54.578Z',
-              supportTier: 'essential',
-              numSandboxAddOnFlows: 500,
-              resumable: false,
-            },
-            {
-              _id: '61baae033f236054eee504bd',
-              created: '2021-12-16T03:09:55.371Z',
-              lastModified: '2022-01-15T03:57:21.820Z',
-              type: 'connector',
-              _connectorId: '5d1ef1765f96fa1577cf251f',
-              opts: {
-                addonLicenses: [
-                  {
-                    licenses: [
-                      {
-                        addOnEdition: 'premium',
-                      },
-                      {
-                        addOnEdition: 'premium',
-                      },
-                      {
-                        addOnEdition: 'premium',
-                      },
-                    ],
-                    type: 'store',
-                  },
-                  {
-                    type: 'addon',
-                    licenses: [
-                      {
-                        addOnId: 'transferOrder',
-                      },
-                      {
-                        addOnId: 'transferOrder',
-                      },
-                      {
-                        addOnId: 'fbaInventoryAdjustment',
-                      },
-                    ],
-                  },
-                ],
-                connectorEdition: 'premium',
-              },
-              _integrationId: '61baae033f236054eee504c3',
-              sandbox: false,
-              resumable: false,
-              trialEndDate: '2022-01-15T03:09:55.368Z',
-            },
-          ],
-        },
       },
     ]);
     expect(screen.queryByText(/Email/i)).toBeInTheDocument();
@@ -406,7 +256,7 @@ describe('User Form Wrapper', () => {
     userEvent.click(screen.getByText('Yes'));
     userEvent.click(svgEl);
     userEvent.click(screen.getByText('No'));
-    fireEvent.change(screen.queryByPlaceholderText(/Please let us know how we can improve the text area./i), {
+    fireEvent.change(screen.queryByPlaceholderText(/How can we make this information more helpful?/i), {
       target: {value: 'Hey! cool'},
     });
     const submitText = screen.getByText('Submit');
@@ -427,14 +277,14 @@ describe('User Form Wrapper', () => {
 
     expect(accessLevelMessage).toBeInTheDocument();
 
-    const accessLevelText = await screen.findByRole('button', { name: 'Please select', hidden: true });
+    const accessLevelText = await screen.queryAllByRole('button', { name: 'Please select' }).find(eachOption => eachOption.getAttribute('id') === 'mui-component-select-accessLevel');
 
     expect(accessLevelText).toBeInTheDocument();
     userEvent.click(accessLevelText);
-    const administratorMessage = screen.getAllByRole('menuitem');
+    const administratorMessage = screen.queryAllByRole('menuitem').find(eachOption => eachOption.getAttribute('data-value') === 'administrator');
 
-    expect(administratorMessage[0]).toBeInTheDocument();
-    fireEvent.click(administratorMessage[1]);
+    expect(administratorMessage).toBeInTheDocument();
+    fireEvent.click(administratorMessage);
     const saveMessage = await screen.findByText('Save');
 
     expect(saveMessage).toBeInTheDocument();
@@ -448,7 +298,6 @@ describe('User Form Wrapper', () => {
     fireEvent.click(cancelMessage);
     expect(history.goBack).toBeCalled();
   });
-
   test('Should be able to invite a user with manage access', async () => {
     await initUserFormWrapper('');
     mockGetRequestOnce('/api/shared/ashares', [
@@ -456,75 +305,6 @@ describe('User Form Wrapper', () => {
         _id: '6195e21a9bfbdd12c575c649',
         accepted: true,
         accessLevel: 'monitor',
-        integrationAccessLevel: [],
-        ownerUser: {
-          _id: '5ca5c855ec5c172792285f53',
-          email: 'aasa@gmail.com',
-          name: 'sai kaivalya',
-          company: 'Amazon Central',
-          timezone: 'Asia/Calcutta',
-          useErrMgtTwoDotZero: false,
-          allowedToPublish: true,
-          licenses: [
-            {
-              _id: '5ca5c856ec5c172792285f54',
-              created: '2019-04-04T09:03:18.211Z',
-              lastModified: '2019-04-04T09:06:54.579Z',
-              expires: '2022-05-04T09:06:54.578Z',
-              type: 'integrator',
-              tier: 'premium',
-              numAddOnFlows: 1400,
-              trialEndDate: '2019-05-04T09:06:54.578Z',
-              supportTier: 'essential',
-              numSandboxAddOnFlows: 500,
-              resumable: false,
-            },
-            {
-              _id: '61baae033f236054eee504bd',
-              created: '2021-12-16T03:09:55.371Z',
-              lastModified: '2022-01-15T03:57:21.820Z',
-              type: 'connector',
-              _connectorId: '5d1ef1765f96fa1577cf251f',
-              opts: {
-                addonLicenses: [
-                  {
-                    licenses: [
-                      {
-                        addOnEdition: 'premium',
-                      },
-                      {
-                        addOnEdition: 'premium',
-                      },
-                      {
-                        addOnEdition: 'premium',
-                      },
-                    ],
-                    type: 'store',
-                  },
-                  {
-                    type: 'addon',
-                    licenses: [
-                      {
-                        addOnId: 'transferOrder',
-                      },
-                      {
-                        addOnId: 'transferOrder',
-                      },
-                      {
-                        addOnId: 'fbaInventoryAdjustment',
-                      },
-                    ],
-                  },
-                ],
-                connectorEdition: 'premium',
-              },
-              _integrationId: '61baae033f236054eee504c3',
-              sandbox: false,
-              resumable: false,
-              trialEndDate: '2022-01-15T03:09:55.368Z',
-            },
-          ],
-        },
       },
     ]);
     expect(screen.queryByText(/Email/i)).toBeInTheDocument();
@@ -539,7 +319,7 @@ describe('User Form Wrapper', () => {
     userEvent.click(screen.getByText('Yes'));
     userEvent.click(svgEl);
     userEvent.click(screen.getByText('No'));
-    fireEvent.change(screen.queryByPlaceholderText(/Please let us know how we can improve the text area./i), {
+    fireEvent.change(screen.queryByPlaceholderText(/How can we make this information more helpful?/i), {
       target: {value: 'Hey! cool'},
     });
     const submitText = screen.getByText('Submit');
@@ -560,14 +340,14 @@ describe('User Form Wrapper', () => {
 
     expect(accessLevelMessage).toBeInTheDocument();
 
-    const accessLevelText = await screen.findByRole('button', { name: 'Please select', hidden: true });
+    const accessLevelText = await screen.queryAllByRole('button', { name: 'Please select' }).find(eachOption => eachOption.getAttribute('id') === 'mui-component-select-accessLevel');
 
     expect(accessLevelText).toBeInTheDocument();
     userEvent.click(accessLevelText);
-    const administratorMessage = screen.getAllByRole('menuitem');
+    const administratorMessage = screen.queryAllByRole('menuitem').find(eachOption => eachOption.getAttribute('data-value') === 'manage');
 
-    expect(administratorMessage[0]).toBeInTheDocument();
-    fireEvent.click(administratorMessage[2]);
+    expect(administratorMessage).toBeInTheDocument();
+    fireEvent.click(administratorMessage);
     const saveMessage = await screen.getByText('Save');
 
     expect(saveMessage).toBeInTheDocument();
@@ -585,75 +365,6 @@ describe('User Form Wrapper', () => {
         _id: '6195e21a9bfbdd12c575c649',
         accepted: true,
         accessLevel: 'monitor',
-        integrationAccessLevel: [],
-        ownerUser: {
-          _id: '5ca5c855ec5c172792285f53',
-          email: 'aasa@gmail.com',
-          name: 'sai kaivalya',
-          company: 'Amazon Central',
-          timezone: 'Asia/Calcutta',
-          useErrMgtTwoDotZero: false,
-          allowedToPublish: true,
-          licenses: [
-            {
-              _id: '5ca5c856ec5c172792285f54',
-              created: '2019-04-04T09:03:18.211Z',
-              lastModified: '2019-04-04T09:06:54.579Z',
-              expires: '2022-05-04T09:06:54.578Z',
-              type: 'integrator',
-              tier: 'premium',
-              numAddOnFlows: 1400,
-              trialEndDate: '2019-05-04T09:06:54.578Z',
-              supportTier: 'essential',
-              numSandboxAddOnFlows: 500,
-              resumable: false,
-            },
-            {
-              _id: '61baae033f236054eee504bd',
-              created: '2021-12-16T03:09:55.371Z',
-              lastModified: '2022-01-15T03:57:21.820Z',
-              type: 'connector',
-              _connectorId: '5d1ef1765f96fa1577cf251f',
-              opts: {
-                addonLicenses: [
-                  {
-                    licenses: [
-                      {
-                        addOnEdition: 'premium',
-                      },
-                      {
-                        addOnEdition: 'premium',
-                      },
-                      {
-                        addOnEdition: 'premium',
-                      },
-                    ],
-                    type: 'store',
-                  },
-                  {
-                    type: 'addon',
-                    licenses: [
-                      {
-                        addOnId: 'transferOrder',
-                      },
-                      {
-                        addOnId: 'transferOrder',
-                      },
-                      {
-                        addOnId: 'fbaInventoryAdjustment',
-                      },
-                    ],
-                  },
-                ],
-                connectorEdition: 'premium',
-              },
-              _integrationId: '61baae033f236054eee504c3',
-              sandbox: false,
-              resumable: false,
-              trialEndDate: '2022-01-15T03:09:55.368Z',
-            },
-          ],
-        },
       },
     ]);
     expect(screen.queryByText(/Email/i)).toBeInTheDocument();
@@ -668,7 +379,7 @@ describe('User Form Wrapper', () => {
     userEvent.click(screen.getByText('Yes'));
     userEvent.click(svgEl);
     userEvent.click(screen.getByText('No'));
-    fireEvent.change(screen.queryByPlaceholderText(/Please let us know how we can improve the text area./i), {
+    fireEvent.change(screen.queryByPlaceholderText(/How can we make this information more helpful?/i), {
       target: {value: 'Hey! cool'},
     });
     const submitText = screen.getByText('Submit');
@@ -689,26 +400,25 @@ describe('User Form Wrapper', () => {
 
     expect(accessLevelMessage).toBeInTheDocument();
 
-    const accessLevelText = await screen.findByRole('button', { name: 'Please select', hidden: true });
+    const accessLevelText = await screen.queryAllByRole('button', { name: 'Please select' }).find(eachOption => eachOption.getAttribute('id') === 'mui-component-select-accessLevel');
 
     expect(accessLevelText).toBeInTheDocument();
     userEvent.click(accessLevelText);
-    const administratorMessage = screen.getAllByRole('menuitem');
+    const administratorMessage = screen.queryAllByRole('menuitem').find(eachOption => eachOption.getAttribute('data-value') === 'monitor');
 
-    expect(administratorMessage[0]).toBeInTheDocument();
-    fireEvent.click(administratorMessage[3]);
-    const pleaseSelectMessage = screen.getAllByText('Please select');
+    expect(administratorMessage).toBeInTheDocument();
+    fireEvent.click(administratorMessage);
+    const pleaseSelectMessage = screen.getByRole('button', {name: 'Please select'});
 
-    expect(pleaseSelectMessage[0]).toBeInTheDocument();
-    userEvent.click(pleaseSelectMessage[0]);
-    const integration = screen.getAllByRole('option');
+    expect(pleaseSelectMessage).toBeInTheDocument();
+    userEvent.click(pleaseSelectMessage);
+    const integration = screen.getByRole('option', {name: '3PL Central'});
 
-    expect(integration[0]).toBeInTheDocument();
-    userEvent.click(integration[0]);
+    expect(integration).toBeInTheDocument();
+    userEvent.click(integration);
     const saveMessage = await screen.getByText('Save');
 
     expect(saveMessage).toBeInTheDocument();
-    fireEvent.click(saveMessage);
   });
   test('Should be able to invite a user with manage integration access to a tile', async () => {
     await initUserFormWrapper('');
@@ -717,75 +427,6 @@ describe('User Form Wrapper', () => {
         _id: '6195e21a9bfbdd12c575c649',
         accepted: true,
         accessLevel: 'monitor',
-        integrationAccessLevel: [],
-        ownerUser: {
-          _id: '5ca5c855ec5c172792285f53',
-          email: 'aasa@gmail.com',
-          name: 'sai kaivalya',
-          company: 'Amazon Central',
-          timezone: 'Asia/Calcutta',
-          useErrMgtTwoDotZero: false,
-          allowedToPublish: true,
-          licenses: [
-            {
-              _id: '5ca5c856ec5c172792285f54',
-              created: '2019-04-04T09:03:18.211Z',
-              lastModified: '2019-04-04T09:06:54.579Z',
-              expires: '2022-05-04T09:06:54.578Z',
-              type: 'integrator',
-              tier: 'premium',
-              numAddOnFlows: 1400,
-              trialEndDate: '2019-05-04T09:06:54.578Z',
-              supportTier: 'essential',
-              numSandboxAddOnFlows: 500,
-              resumable: false,
-            },
-            {
-              _id: '61baae033f236054eee504bd',
-              created: '2021-12-16T03:09:55.371Z',
-              lastModified: '2022-01-15T03:57:21.820Z',
-              type: 'connector',
-              _connectorId: '5d1ef1765f96fa1577cf251f',
-              opts: {
-                addonLicenses: [
-                  {
-                    licenses: [
-                      {
-                        addOnEdition: 'premium',
-                      },
-                      {
-                        addOnEdition: 'premium',
-                      },
-                      {
-                        addOnEdition: 'premium',
-                      },
-                    ],
-                    type: 'store',
-                  },
-                  {
-                    type: 'addon',
-                    licenses: [
-                      {
-                        addOnId: 'transferOrder',
-                      },
-                      {
-                        addOnId: 'transferOrder',
-                      },
-                      {
-                        addOnId: 'fbaInventoryAdjustment',
-                      },
-                    ],
-                  },
-                ],
-                connectorEdition: 'premium',
-              },
-              _integrationId: '61baae033f236054eee504c3',
-              sandbox: false,
-              resumable: false,
-              trialEndDate: '2022-01-15T03:09:55.368Z',
-            },
-          ],
-        },
       },
     ]);
     expect(screen.queryByText(/Email/i)).toBeInTheDocument();
@@ -800,7 +441,7 @@ describe('User Form Wrapper', () => {
     userEvent.click(screen.getByText('Yes'));
     userEvent.click(svgEl);
     userEvent.click(screen.getByText('No'));
-    fireEvent.change(screen.queryByPlaceholderText(/Please let us know how we can improve the text area./i), {
+    fireEvent.change(screen.queryByPlaceholderText(/How can we make this information more helpful?/i), {
       target: {value: 'Hey! cool'},
     });
     const submitText = screen.getByText('Submit');
@@ -854,75 +495,6 @@ describe('User Form Wrapper', () => {
         _id: '6195e21a9bfbdd12c575c649',
         accepted: true,
         accessLevel: 'monitor',
-        integrationAccessLevel: [],
-        ownerUser: {
-          _id: '5ca5c855ec5c172792285f53',
-          email: 'aasa@gmail.com',
-          name: 'sai kaivalya',
-          company: 'Amazon Central',
-          timezone: 'Asia/Calcutta',
-          useErrMgtTwoDotZero: false,
-          allowedToPublish: true,
-          licenses: [
-            {
-              _id: '5ca5c856ec5c172792285f54',
-              created: '2019-04-04T09:03:18.211Z',
-              lastModified: '2019-04-04T09:06:54.579Z',
-              expires: '2022-05-04T09:06:54.578Z',
-              type: 'integrator',
-              tier: 'premium',
-              numAddOnFlows: 1400,
-              trialEndDate: '2019-05-04T09:06:54.578Z',
-              supportTier: 'essential',
-              numSandboxAddOnFlows: 500,
-              resumable: false,
-            },
-            {
-              _id: '61baae033f236054eee504bd',
-              created: '2021-12-16T03:09:55.371Z',
-              lastModified: '2022-01-15T03:57:21.820Z',
-              type: 'connector',
-              _connectorId: '5d1ef1765f96fa1577cf251f',
-              opts: {
-                addonLicenses: [
-                  {
-                    licenses: [
-                      {
-                        addOnEdition: 'premium',
-                      },
-                      {
-                        addOnEdition: 'premium',
-                      },
-                      {
-                        addOnEdition: 'premium',
-                      },
-                    ],
-                    type: 'store',
-                  },
-                  {
-                    type: 'addon',
-                    licenses: [
-                      {
-                        addOnId: 'transferOrder',
-                      },
-                      {
-                        addOnId: 'transferOrder',
-                      },
-                      {
-                        addOnId: 'fbaInventoryAdjustment',
-                      },
-                    ],
-                  },
-                ],
-                connectorEdition: 'premium',
-              },
-              _integrationId: '61baae033f236054eee504c3',
-              sandbox: false,
-              resumable: false,
-              trialEndDate: '2022-01-15T03:09:55.368Z',
-            },
-          ],
-        },
       },
     ]);
     expect(screen.queryByText(/Email/i)).toBeInTheDocument();
@@ -937,7 +509,7 @@ describe('User Form Wrapper', () => {
     userEvent.click(screen.getByText('Yes'));
     userEvent.click(svgEl);
     userEvent.click(screen.getByText('No'));
-    fireEvent.change(screen.queryByPlaceholderText(/Please let us know how we can improve the text area./i), {
+    fireEvent.change(screen.queryByPlaceholderText(/How can we make this information more helpful?/i), {
       target: {value: 'Hey! cool'},
     });
     const submitText = screen.getByText('Submit');
@@ -998,7 +570,7 @@ describe('User Form Wrapper', () => {
     userEvent.click(screen.getByText('Yes'));
     userEvent.click(svgEl);
     userEvent.click(screen.getByText('No'));
-    fireEvent.change(screen.queryByPlaceholderText(/Please let us know how we can improve the text area./i), {
+    fireEvent.change(screen.queryByPlaceholderText(/How can we make this information more helpful?/i), {
       target: {value: 'Hey! cool'},
     });
     const submitText = screen.getByText('Submit');
@@ -1019,14 +591,14 @@ describe('User Form Wrapper', () => {
 
     expect(accessLevelMessage).toBeInTheDocument();
 
-    const accessLevelText = await screen.findByRole('button', { name: 'Please select', hidden: true });
+    const accessLevelText = await screen.getByRole('button', { name: 'Please select' });
 
     expect(accessLevelText).toBeInTheDocument();
     userEvent.click(accessLevelText);
-    const integration = screen.getAllByRole('option');
+    const integration = screen.getByRole('option', {name: '3PL Central'});
 
-    expect(integration[0]).toBeInTheDocument();
-    userEvent.click(integration[0]);
+    expect(integration).toBeInTheDocument();
+    userEvent.click(integration);
     const doneMessage = screen.getByText('Done');
 
     userEvent.click(doneMessage);
@@ -1035,7 +607,6 @@ describe('User Form Wrapper', () => {
     const saveMessage = await screen.getByText('Save');
 
     expect(saveMessage).toBeInTheDocument();
-    fireEvent.click(saveMessage);
   });
   test('Should be able to verify the manage integration access to a tile', async () => {
     await initUserFormWrapper('60fea86dbac8e87b7660f986');
@@ -1051,7 +622,7 @@ describe('User Form Wrapper', () => {
     userEvent.click(screen.getByText('Yes'));
     userEvent.click(svgEl);
     userEvent.click(screen.getByText('No'));
-    fireEvent.change(screen.queryByPlaceholderText(/Please let us know how we can improve the text area./i), {
+    fireEvent.change(screen.queryByPlaceholderText(/How can we make this information more helpful?/i), {
       target: {value: 'Hey! cool'},
     });
     const submitText = screen.getByText('Submit');
@@ -1072,14 +643,14 @@ describe('User Form Wrapper', () => {
 
     expect(accessLevelMessage).toBeInTheDocument();
 
-    const accessLevelText = await screen.findByRole('button', { name: 'Please select', hidden: true });
+    const accessLevelText = await screen.getByRole('button', { name: 'Please select' });
 
     expect(accessLevelText).toBeInTheDocument();
     userEvent.click(accessLevelText);
-    const integration = screen.getAllByRole('option');
+    const integration = screen.getByRole('option', {name: '3PL Central'});
 
-    expect(integration[0]).toBeInTheDocument();
-    userEvent.click(integration[0]);
+    expect(integration).toBeInTheDocument();
+    userEvent.click(integration);
     const doneMessage = screen.getByText('Done');
 
     userEvent.click(doneMessage);
@@ -1088,6 +659,5 @@ describe('User Form Wrapper', () => {
     const saveMessage = await screen.getByText('Save');
 
     expect(saveMessage).toBeInTheDocument();
-    fireEvent.click(saveMessage);
   });
 });

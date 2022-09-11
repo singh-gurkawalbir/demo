@@ -117,7 +117,9 @@ describe('Invite Users UI tests', () => {
     });
     expect(screen.queryByText(/Invite user/i)).toBeInTheDocument();
     expect(screen.queryByText(/Email/i)).toBeInTheDocument();
-    const input = screen.queryByRole('textbox');
+    const input = screen.queryAllByRole('textbox').find(eachOption => eachOption.getAttribute('name') === 'email');
+
+    expect(input).toBeInTheDocument();
 
     fireEvent.change(input, { target: { value: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.' }});
     expect(input.value).toBeTruthy();
@@ -135,10 +137,10 @@ describe('Invite Users UI tests', () => {
 
     expect(pleaseSelectText).toBeInTheDocument();
     userEvent.click(pleaseSelectText);
-    const administratorMessage = screen.getAllByRole('menuitem');
+    const administratorMessage = screen.getByRole('menuitem', {name: 'Administer account'});
 
-    expect(administratorMessage[0]).toBeInTheDocument();
-    fireEvent.click(administratorMessage[1]);
+    expect(administratorMessage).toBeInTheDocument();
+    fireEvent.click(administratorMessage);
     const saveMessage = await screen.findByText('Save');
 
     expect(saveMessage).toBeInTheDocument();

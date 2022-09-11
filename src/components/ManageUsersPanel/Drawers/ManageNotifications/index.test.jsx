@@ -17,48 +17,19 @@ const initialStore = reduxStore;
 
 initialStore.getState().data.resources.connections = [{
   _id: '606aca53ba723015469f04aa',
-  createdAt: '2021-04-05T08:29:07.804Z',
-  lastModified: '2021-05-17T16:17:31.020Z',
   type: 'ftp',
   name: 'Test Connection',
   offline: false,
   _connectorId: '57c8199e8489cc1a298cc6ea',
   _integrationId: '602aac4c53b612272ca1f54b',
-  ftp: {
-    type: 'sftp',
-    hostURI: 'Celigo.files.com',
-    username: 'testuser+1@celigo.com',
-    password: '******',
-    port: 22,
-    usePassiveMode: true,
-    userDirectoryIsRoot: false,
-    useImplicitFtps: false,
-    requireSocketReUse: false,
-  },
 }];
 initialStore.getState().data.resources.flows = [
   {
     _id: '5aabd0fdc69b4508218f832b',
-    lastModified: '2021-03-10T06:46:32.095Z',
     name: 'FTP to FTP Quoted CSV',
     disabled: true,
     timezone: 'Asia/Calcutta',
     _integrationId: '602aac4c53b612272ca1f54b',
-    skipRetries: false,
-    createdAt: '2018-03-16T14:13:17.315Z',
-    pageGenerators: [
-      {
-        type: 'export',
-        _exportId: '5aabd0fbc69b4508218f8329',
-      },
-    ],
-    pageProcessors: [
-      {
-        type: 'import',
-        _importId: '5aabd0fca6b0755406d963b4',
-      },
-    ],
-    flowConvertedToNewSchema: true,
   },
   {
     _id: '5aaba8b53f358a48a041aa34',
@@ -66,8 +37,6 @@ initialStore.getState().data.resources.flows = [
     name: 'Sample1',
     disabled: true,
     _integrationId: '602aac4c53b612272ca1f54b',
-    skipRetries: false,
-    createdAt: '2018-03-16T11:21:25.969Z',
   },
 ];
 initialStore.getState().data.integrationAShares = {
@@ -109,13 +78,8 @@ initialStore.getState().user.profile = {
   role: 'Developer',
   company: 'cccc celigoooo 1',
   phone: '9898989897',
-  auth_type_google: {},
   timezone: 'Asia/Calcutta',
   developer: true,
-  agreeTOSAndPP: true,
-  createdAt: '2020-01-17T06:56:03.401Z',
-  useErrMgtTwoDotZero: false,
-  authTypeSSO: null,
   emailHash: 'a05d538c141fb4987d925d8426be895d',
 };
 initialStore.getState().user.preferences = {
@@ -177,15 +141,10 @@ initialStore.getState().data.resources.integrations = [{
   lastModified: '2018-07-03T12:08:00.302Z',
   name: 'Dummy1',
   description: 'Add this',
-  install: [],
   sandbox: false,
   _registeredConnectionIds: [
     '606aca53ba723015469f04aa',
   ],
-  installSteps: [],
-  uninstallSteps: [],
-  flowGroupings: [],
-  createdAt: '2018-03-16T11:09:29.430Z',
 }];
 initialStore.getState().comms.networkComms = {
   'put:/notifications': {
@@ -278,19 +237,16 @@ describe('Manage Notifications', () => {
     });
 
     await initManageNotification(props);
-    const notifyUserOnFlowErrorMessage = screen.getByText('Notify user on flow error');
 
-    expect(notifyUserOnFlowErrorMessage).toBeInTheDocument();
+    expect(screen.getByText('Notify user on flow error')).toBeInTheDocument();
     const svg = document.querySelector("[viewBox='0 0 24 24']");
 
     expect(svg).toBeInTheDocument();
     userEvent.click(svg);
-    const notifyUserOnFlowHelpText = screen.getByText("Please choose 'All flows' to receive an email notification whenever any flow in this integration has a job error, or select individual flows to focus your email traffic to just higher priority data flows.");
 
-    expect(notifyUserOnFlowHelpText).toBeInTheDocument();
-    const wasThisHelpfulText = screen.getByText('Was this helpful?');
+    expect(screen.getByText("Please choose 'All flows' to receive an email notification whenever any flow in this integration has a job error, or select individual flows to focus your email traffic to just higher priority data flows.")).toBeInTheDocument();
 
-    expect(wasThisHelpfulText).toBeInTheDocument();
+    expect(screen.getByText('Was this helpful?')).toBeInTheDocument();
     const helpTextYesButton = screen.getByText('Yes');
 
     expect(helpTextYesButton).toBeInTheDocument();
@@ -300,7 +256,7 @@ describe('Manage Notifications', () => {
 
     expect(helpTextNoButton).toBeInTheDocument();
     userEvent.click(helpTextNoButton);
-    fireEvent.change(screen.queryByPlaceholderText(/Please let us know how we can improve the text area./i), {
+    fireEvent.change(screen.queryByPlaceholderText(/How can we make this information more helpful?/i), {
       target: {value: 'Hey! cool'},
     });
     const submitText = screen.getByText('Submit');
@@ -310,14 +266,14 @@ describe('Manage Notifications', () => {
     await waitFor(() => {
       expect(mockResolverFunction).toHaveBeenCalledTimes(2);
     });
-    const pleaseSelectText = await screen.findAllByRole('button', { name: 'Please select', hidden: true });
+    const pleaseSelectText = await screen.queryAllByRole('button', { name: 'Please select'}).find(eachOption => eachOption.getAttribute('id') === 'mui-component-select-flows');
 
-    expect(pleaseSelectText[0]).toBeInTheDocument();
-    userEvent.click(pleaseSelectText[0]);
-    const checkboxMessage = screen.getAllByRole('option');
+    expect(pleaseSelectText).toBeInTheDocument();
+    userEvent.click(pleaseSelectText);
+    const checkboxMessage = screen.getByRole('option', {name: 'All flows'});
 
-    expect(checkboxMessage[0]).toBeInTheDocument();
-    fireEvent.click(checkboxMessage[0]);
+    expect(checkboxMessage).toBeInTheDocument();
+    fireEvent.click(checkboxMessage);
     const doneMessage = screen.getByText('Done');
 
     expect(doneMessage).toBeInTheDocument();
@@ -325,14 +281,14 @@ describe('Manage Notifications', () => {
     const notifyUserWhenConnectionGoesOfflineText = screen.getByText('Notify user when connection goes offline');
 
     expect(notifyUserWhenConnectionGoesOfflineText).toBeInTheDocument();
-    const pleaseSelectText1 = await screen.findByRole('button', { name: 'Please select', hidden: true });
+    const pleaseSelectText1 = await screen.queryAllByRole('button', { name: 'Please select'}).find(eachOption => eachOption.getAttribute('id') === 'mui-component-select-connections');
 
     expect(pleaseSelectText1).toBeInTheDocument();
     userEvent.click(pleaseSelectText1);
-    const checkboxMessage1 = screen.getAllByRole('listbox');
+    const checkboxMessage1 = screen.queryAllByRole('listbox').find(eachOption => eachOption.getAttribute('role') === 'listbox');
 
-    expect(checkboxMessage1[0]).toBeInTheDocument();
-    fireEvent.click(checkboxMessage1[0]);
+    expect(checkboxMessage1).toBeInTheDocument();
+    fireEvent.click(checkboxMessage1);
     const saveMessage = screen.getByText('Save');
 
     expect(saveMessage).toBeInTheDocument();
@@ -346,19 +302,16 @@ describe('Manage Notifications', () => {
       integrationId: '602aac4c53b612272ca1f54b',
     };
     const { store } = await initManageNotification(props);
-    const notifyUserOnFlowErrorMessage = screen.getByText('Notify user on flow error');
 
-    expect(notifyUserOnFlowErrorMessage).toBeInTheDocument();
+    expect(screen.getByText('Notify user on flow error')).toBeInTheDocument();
     const svg = document.querySelector("[viewBox='0 0 24 24']");
 
     expect(svg).toBeInTheDocument();
     userEvent.click(svg);
-    const notifyUserOnFlowHelpText = screen.getByText("Please choose 'All flows' to receive an email notification whenever any flow in this integration has a job error, or select individual flows to focus your email traffic to just higher priority data flows.");
 
-    expect(notifyUserOnFlowHelpText).toBeInTheDocument();
-    const wasThisHelpfulText = screen.getByText('Was this helpful?');
+    expect(screen.getByText("Please choose 'All flows' to receive an email notification whenever any flow in this integration has a job error, or select individual flows to focus your email traffic to just higher priority data flows.")).toBeInTheDocument();
 
-    expect(wasThisHelpfulText).toBeInTheDocument();
+    expect(screen.getByText('Was this helpful?')).toBeInTheDocument();
     const helpTextYesButton = screen.getByText('Yes');
 
     expect(helpTextYesButton).toBeInTheDocument();
@@ -368,24 +321,23 @@ describe('Manage Notifications', () => {
 
     expect(helpTextNoButton).toBeInTheDocument();
     userEvent.click(helpTextNoButton);
-    fireEvent.change(screen.queryByPlaceholderText(/Please let us know how we can improve the text area./i), {
+    fireEvent.change(screen.queryByPlaceholderText(/How can we make this information more helpful?/i), {
       target: {value: 'Hey! cool'},
     });
     const submitText = screen.getByText('Submit');
 
     expect(submitText).toBeInTheDocument();
     userEvent.click(submitText);
-    const notifyUserWhenConnectionGoesOfflineText = screen.getByText('Notify user when connection goes offline');
 
-    expect(notifyUserWhenConnectionGoesOfflineText).toBeInTheDocument();
-    const pleaseSelectText = await screen.findAllByRole('button', { name: 'Please select', hidden: true });
+    expect(screen.getByText('Notify user when connection goes offline')).toBeInTheDocument();
+    const pleaseSelectText = await screen.queryAllByRole('button', { name: 'Please select'}).find(eachOption => eachOption.getAttribute('id') === 'mui-component-select-connections');
 
-    expect(pleaseSelectText[0]).toBeInTheDocument();
-    userEvent.click(pleaseSelectText[1]);
-    const checkboxMessage = screen.getAllByRole('option');
+    expect(pleaseSelectText).toBeInTheDocument();
+    userEvent.click(pleaseSelectText);
+    const checkboxMessage = screen.getByRole('option', {name: 'Test Connection'});
 
-    expect(checkboxMessage[0]).toBeInTheDocument();
-    fireEvent.click(checkboxMessage[0]);
+    expect(checkboxMessage).toBeInTheDocument();
+    fireEvent.click(checkboxMessage);
     const doneMessage = screen.getByText('Done');
 
     expect(doneMessage).toBeInTheDocument();
@@ -422,19 +374,16 @@ describe('Manage Notifications', () => {
     };
 
     await initManageNotification(props);
-    const notifyUserOnFlowErrorMessage = screen.getByText('Notify user on flow error');
 
-    expect(notifyUserOnFlowErrorMessage).toBeInTheDocument();
+    expect(screen.getByText('Notify user on flow error')).toBeInTheDocument();
     const svg = document.querySelector("[viewBox='0 0 24 24']");
 
     expect(svg).toBeInTheDocument();
     userEvent.click(svg);
-    const notifyUserOnFlowHelpText = screen.getByText("Please choose 'All flows' to receive an email notification whenever any flow in this integration has a job error, or select individual flows to focus your email traffic to just higher priority data flows.");
 
-    expect(notifyUserOnFlowHelpText).toBeInTheDocument();
-    const wasThisHelpfulText = screen.getByText('Was this helpful?');
+    expect(screen.getByText("Please choose 'All flows' to receive an email notification whenever any flow in this integration has a job error, or select individual flows to focus your email traffic to just higher priority data flows.")).toBeInTheDocument();
 
-    expect(wasThisHelpfulText).toBeInTheDocument();
+    expect(screen.getByText('Was this helpful?')).toBeInTheDocument();
     const helpTextYesButton = screen.getByText('Yes');
 
     expect(helpTextYesButton).toBeInTheDocument();
@@ -444,29 +393,24 @@ describe('Manage Notifications', () => {
 
     expect(helpTextNoButton).toBeInTheDocument();
     userEvent.click(helpTextNoButton);
-    fireEvent.change(screen.queryByPlaceholderText(/Please let us know how we can improve the text area./i), {
+    fireEvent.change(screen.queryByPlaceholderText(/How can we make this information more helpful?/i), {
       target: {value: 'Hey! cool'},
     });
     const submitText = screen.getByText('Submit');
 
     expect(submitText).toBeInTheDocument();
     userEvent.click(submitText);
-    const flowMessage = screen.getByText('Notify user on flow error');
 
-    expect(flowMessage).toBeInTheDocument();
-    const flowSelected = screen.getByText('Sample1');
+    expect(screen.getByText('Notify user on flow error')).toBeInTheDocument();
 
-    expect(flowSelected).toBeInTheDocument();
-    const connectionText = screen.getByText('Notify user when connection goes offline');
+    expect(screen.getByText('Sample1')).toBeInTheDocument();
 
-    expect(connectionText).toBeInTheDocument();
-    const connectionSelected = screen.getByText('Test Connection');
+    expect(screen.getByText('Notify user when connection goes offline')).toBeInTheDocument();
 
-    expect(connectionSelected).toBeInTheDocument();
-    const cancelText = screen.getByText('Close');
+    expect(screen.getByText('Test Connection')).toBeInTheDocument();
+    const cancelText = screen.getByRole('button', {name: 'Close'});
 
     expect(cancelText).toBeInTheDocument();
-    userEvent.click(cancelText);
   });
   test('Should able to access the Notification Drawer and remove the saved connection and flow which have been selected by the user and save', async () => {
     initialStore.getState().data.resources.notifications = [
@@ -501,19 +445,16 @@ describe('Manage Notifications', () => {
     };
 
     await initManageNotification(props);
-    const notifyUserOnFlowErrorMessage = screen.getByText('Notify user on flow error');
 
-    expect(notifyUserOnFlowErrorMessage).toBeInTheDocument();
+    expect(screen.getByText('Notify user on flow error')).toBeInTheDocument();
     const svg = document.querySelector("[viewBox='0 0 24 24']");
 
     expect(svg).toBeInTheDocument();
     userEvent.click(svg);
-    const notifyUserOnFlowHelpText = screen.getByText("Please choose 'All flows' to receive an email notification whenever any flow in this integration has a job error, or select individual flows to focus your email traffic to just higher priority data flows.");
 
-    expect(notifyUserOnFlowHelpText).toBeInTheDocument();
-    const wasThisHelpfulText = screen.getByText('Was this helpful?');
+    expect(screen.getByText("Please choose 'All flows' to receive an email notification whenever any flow in this integration has a job error, or select individual flows to focus your email traffic to just higher priority data flows.")).toBeInTheDocument();
 
-    expect(wasThisHelpfulText).toBeInTheDocument();
+    expect(screen.getByText('Was this helpful?')).toBeInTheDocument();
     const helpTextYesButton = screen.getByText('Yes');
 
     expect(helpTextYesButton).toBeInTheDocument();
@@ -523,44 +464,45 @@ describe('Manage Notifications', () => {
 
     expect(helpTextNoButton).toBeInTheDocument();
     userEvent.click(helpTextNoButton);
-    fireEvent.change(screen.queryByPlaceholderText(/Please let us know how we can improve the text area./i), {
+    fireEvent.change(screen.queryByPlaceholderText(/How can we make this information more helpful?/i), {
       target: {value: 'Hey! cool'},
     });
     const submitText = screen.getByText('Submit');
 
     expect(submitText).toBeInTheDocument();
     userEvent.click(submitText);
-    const flowMessage = screen.getByText('Notify user on flow error');
 
-    expect(flowMessage).toBeInTheDocument();
+    expect(screen.getByText('Notify user on flow error')).toBeInTheDocument();
     const flowSelected = screen.getByText('Sample1');
 
     expect(flowSelected).toBeInTheDocument();
     userEvent.click(flowSelected);
-    const checkboxMessage = screen.getAllByRole('option');
+    const checkboxMessage = screen.getByRole('option', {name: 'Sample1'});
 
-    expect(checkboxMessage[0]).toBeInTheDocument();
-    fireEvent.click(checkboxMessage[2]);
+    expect(checkboxMessage).toBeInTheDocument();
+    fireEvent.click(checkboxMessage);
     const doneMessage = screen.getByText('Done');
 
     expect(doneMessage).toBeInTheDocument();
     userEvent.click(doneMessage);
 
-    const connectionText = screen.getByText('Notify user when connection goes offline');
-
-    expect(connectionText).toBeInTheDocument();
+    expect(screen.getByText('Notify user when connection goes offline')).toBeInTheDocument();
     const connectionSelected = screen.getByText('Test Connection');
 
     expect(connectionSelected).toBeInTheDocument();
     userEvent.click(connectionSelected);
-    const checkboxMessage1 = screen.getAllByRole('option');
+    const checkboxMessage1 = screen.getByRole('option', {name: 'Test Connection'});
 
-    expect(checkboxMessage1[0]).toBeInTheDocument();
-    fireEvent.click(checkboxMessage1[0]);
-    const saveText = screen.getByText('Save');
+    expect(checkboxMessage1).toBeInTheDocument();
+    fireEvent.click(checkboxMessage1);
+    const doneButtonNode = screen.getByRole('button', {name: 'Done'});
+
+    expect(doneButtonNode).toBeInTheDocument();
+    userEvent.click(doneButtonNode);
+    await waitFor(() => expect(doneButtonNode).not.toBeInTheDocument());
+    const saveText = screen.getByRole('button', {name: 'Save'});
 
     expect(saveText).toBeInTheDocument();
-    userEvent.click(saveText);
   });
   test('Should able to access the Notification Drawer and remove the unsaved selected connection and flow which have been selected by the user and save', async () => {
     const mockNotificationUpdateFunction = jest.fn();
@@ -577,19 +519,16 @@ describe('Manage Notifications', () => {
     };
 
     await initManageNotification(props);
-    const notifyUserOnFlowErrorMessage = screen.getByText('Notify user on flow error');
 
-    expect(notifyUserOnFlowErrorMessage).toBeInTheDocument();
+    expect(screen.getByText('Notify user on flow error')).toBeInTheDocument();
     const svg = document.querySelector("[viewBox='0 0 24 24']");
 
     expect(svg).toBeInTheDocument();
     userEvent.click(svg);
-    const notifyUserOnFlowHelpText = screen.getByText("Please choose 'All flows' to receive an email notification whenever any flow in this integration has a job error, or select individual flows to focus your email traffic to just higher priority data flows.");
 
-    expect(notifyUserOnFlowHelpText).toBeInTheDocument();
-    const wasThisHelpfulText = screen.getByText('Was this helpful?');
+    expect(screen.getByText("Please choose 'All flows' to receive an email notification whenever any flow in this integration has a job error, or select individual flows to focus your email traffic to just higher priority data flows.")).toBeInTheDocument();
 
-    expect(wasThisHelpfulText).toBeInTheDocument();
+    expect(screen.getByText('Was this helpful?')).toBeInTheDocument();
     const helpTextYesButton = screen.getByText('Yes');
 
     expect(helpTextYesButton).toBeInTheDocument();
@@ -599,33 +538,31 @@ describe('Manage Notifications', () => {
 
     expect(helpTextNoButton).toBeInTheDocument();
     userEvent.click(helpTextNoButton);
-    fireEvent.change(screen.queryByPlaceholderText(/Please let us know how we can improve the text area./i), {
+    fireEvent.change(screen.queryByPlaceholderText(/How can we make this information more helpful?/i), {
       target: {value: 'Hey! cool'},
     });
     const submitText = screen.getByText('Submit');
 
     expect(submitText).toBeInTheDocument();
     userEvent.click(submitText);
-    const flowMessage = screen.getByText('Notify user on flow error');
 
-    expect(flowMessage).toBeInTheDocument();
-    const flowSelected = screen.getAllByText('Please select');
+    expect(screen.getByText('Notify user on flow error')).toBeInTheDocument();
+    const flowSelected = await screen.queryAllByRole('button', { name: 'Please select'}).find(eachOption => eachOption.getAttribute('id') === 'mui-component-select-flows');
 
-    expect(flowSelected[0]).toBeInTheDocument();
-    userEvent.click(flowSelected[0]);
-    const checkboxMessage = screen.getAllByRole('option');
+    expect(flowSelected).toBeInTheDocument();
+    userEvent.click(flowSelected);
+    const checkboxMessage = screen.queryAllByRole('option').find(eachOption => eachOption.getAttribute('data-value') === '5aabd0fdc69b4508218f832b');
 
-    expect(checkboxMessage[0]).toBeInTheDocument();
-    fireEvent.click(checkboxMessage[1]);
-    fireEvent.click(checkboxMessage[1]);
-    const doneMessage = screen.getByText('Done');
+    expect(checkboxMessage).toBeInTheDocument();
+    fireEvent.click(checkboxMessage);
+    const doneMessage = screen.getByRole('button', {name: 'Done'});
 
     expect(doneMessage).toBeInTheDocument();
     userEvent.click(doneMessage);
-    const saveText = screen.getByText('Save');
+    await waitFor(() => expect(doneMessage).not.toBeInTheDocument());
+    const saveText = screen.getByRole('button', {name: 'Save'});
 
     expect(saveText).toBeInTheDocument();
-    userEvent.click(saveText);
   });
   test('Should able to access the Notification Drawer and test it by using an invalid user and check when', async () => {
     const props = {
