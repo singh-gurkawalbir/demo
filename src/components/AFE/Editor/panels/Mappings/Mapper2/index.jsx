@@ -185,9 +185,18 @@ export default function Mapper2({editorId}) {
       }
     };
 
+    const handleMouseMove = event => {
+      event.stopImmediatePropagation();
+    };
+
+    window.addEventListener('mousemove', handleMouseMove, true);
+
     document.addEventListener('wheel', handleWheelEvent, {passive: false});
 
-    return () => window.removeEventListener('wheel', handleWheelEvent);
+    return () => {
+      document.removeEventListener('wheel', handleWheelEvent);
+      window.removeEventListener('mousemove', handleMouseMove);
+    };
   }, [dispatch, enqueueSnackbar, isAutoCreateSuccess]);
 
   const onDropHandler = useCallback(info => {
@@ -223,9 +232,6 @@ export default function Mapper2({editorId}) {
   }, [dispatch]);
 
   const onScrollHandler = e => {
-    window.addEventListener('mousemove', event => {
-      event.stopImmediatePropagation();
-    }, true);
     if (settingDrawerActive.current && settingDrawerActive.current.wasActive) {
       const currentEle = e.currentTarget;
 
