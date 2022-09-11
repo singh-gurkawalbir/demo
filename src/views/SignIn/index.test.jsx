@@ -62,20 +62,15 @@ describe('Signin', () => {
   });
 
   test('Should able to test the signin with google', async () => {
-    const auth = {};
-
-    store(auth);
+    store({...{}});
     await initSignIn();
     const signInWithGoogle = screen.getByRole('button', {name: 'Sign in with Google'});
 
     expect(signInWithGoogle).toBeInTheDocument();
-    await userEvent.click(signInWithGoogle);
   });
 
   test('Should able to test the forgot password link', async () => {
-    const auth = {};
-
-    store(auth);
+    store({...{}});
     await initSignIn();
     const forgotPasswordLinkNode = screen.getByRole('link', {name: 'Forgot password?'});
 
@@ -84,9 +79,7 @@ describe('Signin', () => {
     expect(forgotPasswordLinkNode.closest('a')).toHaveAttribute('href', '/request-reset');
   });
   test('Should able to test the login form by entering the email and password', async () => {
-    const auth = {};
-
-    store(auth);
+    store({...{}});
     await initSignIn();
     const titleText = screen.getByText('Celigo Inc.');
 
@@ -111,9 +104,7 @@ describe('Signin', () => {
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.auth.request('testuser@test.com', 'xbsbxsxazl223xbsbixi', true));
   });
   test('Should able to test the signup link', async () => {
-    const auth = {};
-
-    store(auth);
+    store({...{}});
     await initSignIn();
     const dontHaveAnAccountTextNode = screen.getByText("Don't have an account?");
 
@@ -125,16 +116,14 @@ describe('Signin', () => {
     expect(signUpLinkNode.closest('a')).toHaveAttribute('href', '/signup');
   });
   test('Should able to test the signin page when MFA enabled and trusted device is enabled', async () => {
-    const auth = {
+    store({...{
       initialized: true,
       commStatus: 'success',
       authenticated: true,
       authTimestamp: 1661250286856,
       defaultAccountSet: true,
       mfaRequired: true,
-    };
-
-    store(auth);
+    }});
     await initSignIn();
 
     expect(screen.getByRole('heading', {name: 'Authenticate with one-time passcode'})).toBeInTheDocument();
@@ -157,16 +146,14 @@ describe('Signin', () => {
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.auth.mfaVerify.request({ code: '123456', trustDevice: true }));
   });
   test('Should able to test MFA without passcode', async () => {
-    const auth = {
+    store({...{
       initialized: true,
       commStatus: 'success',
       authenticated: true,
       authTimestamp: 1661250286856,
       defaultAccountSet: true,
       mfaRequired: true,
-    };
-
-    store(auth);
+    }});
     await initSignIn();
 
     expect(screen.getByRole('heading', {name: 'Authenticate with one-time passcode'})).toBeInTheDocument();
@@ -185,16 +172,14 @@ describe('Signin', () => {
     expect(warningMessageNode).toBeInTheDocument();
   });
   test('Should able to test MFA with an invalid passcode', async () => {
-    const auth = {
+    store({...{
       initialized: true,
       commStatus: 'success',
       authenticated: true,
       authTimestamp: 1661250286856,
       defaultAccountSet: true,
       mfaRequired: true,
-    };
-
-    store(auth);
+    }});
     await initSignIn();
     const headingNode = screen.getByRole('heading', {name: 'Authenticate with one-time passcode'});
 
