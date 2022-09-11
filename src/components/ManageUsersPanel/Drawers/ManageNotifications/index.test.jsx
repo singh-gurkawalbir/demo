@@ -500,7 +500,7 @@ describe('Manage Notifications', () => {
     expect(doneButtonNode).toBeInTheDocument();
     userEvent.click(doneButtonNode);
     await waitFor(() => expect(doneButtonNode).not.toBeInTheDocument());
-    const saveText = screen.getByRole('button', {name: 'Save'});
+    const saveText = await waitFor(() => screen.findByRole('button', {name: 'Save'}));
 
     expect(saveText).toBeInTheDocument();
   });
