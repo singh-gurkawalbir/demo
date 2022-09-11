@@ -151,7 +151,7 @@ export default function RouterPanel({ editorId }) {
       {!isViewMode && !isLoading && (
       <Tooltip key="key" title={maxBranchesLimitReached ? messageStore('MAX_BRANCHES_LIMIT_REACHED') : ''} placement="bottom">
         <span>
-          <TextButton disabled={maxBranchesLimitReached} onClick={handleAddBranch}>
+          <TextButton data-test="addBranch" disabled={maxBranchesLimitReached} onClick={handleAddBranch}>
             <AddIcon />Add branch
           </TextButton>
         </span>
