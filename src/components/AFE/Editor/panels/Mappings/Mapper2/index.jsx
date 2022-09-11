@@ -1,5 +1,5 @@
 /* eslint-disable no-restricted-syntax */
-import React, {useCallback, useEffect} from 'react';
+import React, {useCallback, useEffect, useRef} from 'react';
 import Tree from 'rc-tree';
 import { useSelector, useDispatch } from 'react-redux';
 import { IconButton } from '@material-ui/core';
@@ -147,9 +147,6 @@ export const SwitcherIcon = ({isLeaf, expanded}) => {
   );
 };
 
-const Row = props => (
-  <Mapper2Row {...props} key={`row-${props.key}`} nodeKey={props.key} />
-);
 const dragConfig = {
   icon: <SortableDragHandle isVisible draggable />,
   nodeDraggable: node => (!node.isTabNode && !node.disabled),
@@ -165,6 +162,8 @@ export default function Mapper2({editorId}) {
   const expandedKeys = useSelector(state => selectors.v2MappingExpandedKeys(state));
   const activeKey = useSelector(state => selectors.v2ActiveKey(state));
   const searchKey = useSelector(state => selectors.searchKey(state));
+  const settingDrawerActive = useRef();
+  const currentScrollPosition = useRef();
 
   useEffect(() => {
     if (isAutoCreateSuccess) {
@@ -180,11 +179,13 @@ export default function Mapper2({editorId}) {
         const delta = Math.sign(event.deltaX);
         const scrollWidth = `${delta}2`;
 
-        document.querySelector('.rc-tree-list-holder').scrollLeft += scrollWidth;
+        if (document.querySelector('.rc-tree-list-holder')) {
+          document.querySelector('.rc-tree-list-holder').scrollLeft += scrollWidth;
+        }
       }
     };
 
-    document.addEventListener('wheel', handleWheelEvent);
+    document.addEventListener('wheel', handleWheelEvent, {passive: false});
 
     return () => window.removeEventListener('wheel', handleWheelEvent);
   }, [dispatch, enqueueSnackbar, isAutoCreateSuccess]);
@@ -206,10 +207,38 @@ export default function Mapper2({editorId}) {
 
     event.dataTransfer.setDragImage(parent, 0, 0);
   }, []);
-
+  const settingDrawerHandler = () => {
+    sessionStorage.setItem('scrollPosition', currentScrollPosition.current);
+  };
+  const Row = props => (
+    <Mapper2Row
+      {...props}
+      key={`row-${props.key}`}
+      nodeKey={props.key}
+      settingDrawerHandler={settingDrawerHandler}
+      settingDrawerActive={settingDrawerActive} />
+  );
   const onExpandHandler = useCallback(expandedKeys => {
     dispatch(actions.mapping.v2.updateExpandedKeys(expandedKeys));
   }, [dispatch]);
+
+  const onScrollHandler = e => {
+    e.currentTarget.addEventListener('mousemove', event => {
+      event.stopImmediatePropagation();
+    }, true);
+    if (settingDrawerActive.current && settingDrawerActive.current.wasActive) {
+      const currentEle = e.currentTarget;
+
+      setTimeout(() => {
+        const scrollPos = sessionStorage.getItem('scrollPosition');
+
+        currentEle.scrollTo(0, parseInt(scrollPos, 10));
+        sessionStorage.removeItem('scrollPosition');
+      }, 10);
+      settingDrawerActive.current.wasActive = false;
+    }
+    currentScrollPosition.current = e.currentTarget.scrollTop;
+  };
 
   return (
     <>
@@ -235,6 +264,7 @@ export default function Mapper2({editorId}) {
           onDragStart={onDragStart}
           disabled={disabled}
           filterTreeNode={filterTreeNode}
+          onScroll={onScrollHandler}
               />
       </div>
     </>
