@@ -1910,7 +1910,13 @@ selectors.mkHomeTileRedirectUrl = () => {
 
       return null;
     },
-    (state, tile) => integrationAppSettings(state, tile._integrationId),
+    (state, tile) => {
+      if (!tile.iaV2 && tile._connectorId && tile.supportsChild) {
+        return integrationAppSettings(state, tile._integrationId);
+      }
+
+      return {};
+    },
     (tile, isUserInErrMgtTwoDotZero, templateName, integration) => {
       // separate logic for suitescript tiles
       if (tile.ssLinkedConnectionId) {
@@ -1962,11 +1968,11 @@ selectors.mkHomeTileRedirectUrl = () => {
         urlToIntegrationSettings = `/integrationapps/${integrationAppTileName}/${tile._integrationId}/uninstall`;
         urlToIntegrationUsers = urlToIntegrationSettings;
       } else if (tile._connectorId) {
-        urlToIntegrationSettings = `/integrationapps/${integrationAppTileName}/${tile._integrationId}`;
         urlToIntegrationUsers = `/integrationapps/${integrationAppTileName}/${tile._integrationId}/users`;
-
         if (!tile.iaV2 && integration?.children?.length === 1) {
           urlToIntegrationSettings = `/integrationapps/${integrationAppTileName}/${tile._integrationId}/child/${integration?.children[0]?.value}`;
+        } else {
+          urlToIntegrationSettings = `/integrationapps/${integrationAppTileName}/${tile._integrationId}`;
         }
       }
 
