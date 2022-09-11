@@ -4,11 +4,13 @@ import { screen, waitFor } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import userEvent from '@testing-library/user-event';
 import * as reactRedux from 'react-redux';
-import { renderWithProviders, reduxStore} from '../../test/test-utils';
+import { renderWithProviders} from '../../test/test-utils';
 import RegisterConnections from './index';
+import { getCreatedStore } from '../../store';
+import actions from '../../actions';
 
 async function customFunc(props = {}) {
-  const initialStore = reduxStore;
+  const initialStore = getCreatedStore();
 
   initialStore.getState().data.resources.connections = [{
     _id: '5f084bff6da99c0abdacb731',
@@ -104,9 +106,9 @@ const mockHandleSubmit = jest.fn().mockReturnValue({
   },
 });
 
-jest.mock('../Buttons/OutlinedButton', () => ({         // OutlinedButton Mock//
+jest.mock('../Buttons/FilledButton', () => ({         // OutlinedButton Mock//
   __esModule: true,
-  ...jest.requireActual('../Buttons/OutlinedButton'),
+  ...jest.requireActual('../Buttons/FilledButton'),
   default: props => {
     const handleRegisterClick = () => {
       const { selected } = mockHandleSubmit();
@@ -141,25 +143,24 @@ describe('Register Connections UI tests', () => {
   afterEach(() => {
     useDispatchSpy.mockClear();
   });
-  test('Initial render', async () => {
+  test('should pass the initial render', async () => {
     const mockOnClose = jest.fn();
 
     await customFunc({onClose: mockOnClose, integrationId: '5f5f09aded5b6f5f6c851f23'});
     expect(screen.getByText(/Register Connections/i)).toBeInTheDocument();
     expect(screen.getByText(/RegisterButton/i)).toBeInTheDocument();
   });
-  test('Checking the functioning of Register Button', async () => {
+  test('should make the respective dispatch calls when clicked on Register Button', async () => {
     const mockOnClose = jest.fn();
 
     await customFunc({onClose: mockOnClose, integrationId: '5f5f09aded5b6f5f6c851f23'});
     const buton = screen.getByText(/RegisterButton/i);
 
     userEvent.click(buton);
-    await waitFor(() => expect(mockDispatchFn).toHaveBeenCalled());
+    await waitFor(() => expect(mockDispatchFn).toBeCalledWith(actions.connection.requestRegister([], '5f5f09aded5b6f5f6c851f23')));
     expect(mockOnClose).toBeCalledTimes(1);
-    screen.debug();
   });
-  test('Checking the functioning of handle select change option', async () => {
+  test('should make the dispatch call with selected connections when some are selected', async () => {
     const mockOnClose = jest.fn();
 
     await customFunc({onClose: mockOnClose, integrationId: '5f5f09aded5b6f5f6c851f23'});
@@ -170,7 +171,7 @@ describe('Register Connections UI tests', () => {
 
     userEvent.click(button);
     userEvent.click(screen.getByText(/RegisterButton/i));
-    screen.debug();
+    await waitFor(() => expect(mockDispatchFn).toBeCalledWith(actions.connection.requestRegister(['62543ffed68e2457e3b35315', '5dcd2e3d3791751318970ef9'], '5f5f09aded5b6f5f6c851f23')));
   });
 });
 

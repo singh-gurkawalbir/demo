@@ -1,42 +1,32 @@
 /* global describe, test, expect, */
 import React from 'react';
 import { screen } from '@testing-library/react';
-import { MemoryRouter } from 'react-router-dom';
 import RawHtml from '.';
 import {renderWithProviders} from '../../test/test-utils';
 
 describe('RawHtml UI tests', () => {
-  test('normal render', () => {
+  test('should pass the initial render', () => {
     const props = {
-      html: {errors: [{message: 'You exceeded your quota for the requested resource.', code: 'QuotaExceeded'}]},
       options: {
         allowedTags: ['a'],
       },
     };
 
-    renderWithProviders(<MemoryRouter><RawHtml {...props} /></MemoryRouter>);
-    expect(screen.getByText(/[object Object]/i)).toBeInTheDocument();
+    renderWithProviders(<RawHtml html={<>This is <strong>not</strong> working.</>} {...props} />);
     screen.debug();
+    expect(screen.getByText(/[object Object]/i)).toBeInTheDocument(); // '[object Object]' is the text displayed when the html passed as props is displayed on browser//
   });
-  test('use case 1 where allowedTags prop is null', () => {
+  test('should pass the render when allowedTags prop is null', () => {
     const props = {
-      html: {errors: [{message: 'You exceeded your quota for the requested resource.', code: 'QuotaExceeded'}]},
       options: {allowedTags: null},
     };
 
-    renderWithProviders(<MemoryRouter><RawHtml {...props} /></MemoryRouter>);
+    renderWithProviders(<RawHtml html={<>This is <strong>not</strong> working.</>} {...props} />);
     expect(screen.getByText(/[object Object]/i)).toBeInTheDocument();
-    screen.debug();
   });
-  test('use case 2 where options is an empty object', () => {
-    const props = {
-      html: {errors: [{message: 'You exceeded your quota for the requested resource.', code: 'QuotaExceeded'}]},
-
-    };
-
-    renderWithProviders(<MemoryRouter><RawHtml {...props} /></MemoryRouter>);
+  test('should pass the render when options is an empty object', () => {
+    renderWithProviders(<RawHtml html={<>This is <strong>not</strong> working.</>} />);
     expect(screen.getByText(/[object Object]/i)).toBeInTheDocument();
-    screen.debug();
   });
 });
 

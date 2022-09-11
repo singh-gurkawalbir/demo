@@ -7,7 +7,7 @@ import TestConnectionSnackbar from '.';
 describe('TestConnectionSnackBar UI tests', () => {
   const mockOnCancel = jest.fn();
 
-  test('Normal render', () => {
+  test('should pass the initial render and call the callback function when clicked on cancel', () => {
     render(<TestConnectionSnackbar onCancel={mockOnCancel} />);
     expect(screen.getByText(/Testing your connection/i, {exact: false})).toBeInTheDocument();
     expect(screen.getByText(/Cancel/i, {exact: false})).toBeInTheDocument();

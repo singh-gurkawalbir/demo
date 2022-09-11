@@ -7,7 +7,7 @@ import PingMessageSnackbar from '.';
 import { renderWithProviders} from '../../test/test-utils';
 
 describe('PingMessageSnackbar UI tests', () => {
-  test('For comm status equal to error', () => {
+  test('should pass the initial render for comm status equal to success', () => {
     const mockOnClose = jest.fn();
     const mockOnCancel = jest.fn();
     const props = {
@@ -20,7 +20,7 @@ describe('PingMessageSnackbar UI tests', () => {
 
     expect(utils.container).toBeEmptyDOMElement();
   });
-  test('For comm status loading', () => {
+  test('should pass the initial render for comm status loading', () => {
     const mockOnClose = jest.fn();
     const mockOnCancel = jest.fn();
     const props = {
@@ -35,9 +35,8 @@ describe('PingMessageSnackbar UI tests', () => {
     expect(screen.getByText(/Cancel/i, {exact: false})).toBeInTheDocument();
     userEvent.click(screen.getByText(/Cancel/i, {exact: false}));
     expect(mockOnCancel).toBeCalled();
-    screen.debug();
   });
-  test('For comm status loading', () => {
+  test('should pass the initial render for comm status error', () => {
     const mockOnClose = jest.fn();
     const mockOnCancel = jest.fn();
     const props = {
@@ -50,7 +49,7 @@ describe('PingMessageSnackbar UI tests', () => {
 
     expect(utils.container).toBeEmptyDOMElement();
   });
-  test('For comm status loading', () => {
+  test('should display the error message when comm status is error', () => {
     const mockOnClose = jest.fn();
     const mockOnCancel = jest.fn();
     const props = {
@@ -63,7 +62,7 @@ describe('PingMessageSnackbar UI tests', () => {
 
     expect(screen.getByText(/This is the error/i, {exact: false})).toBeInTheDocument();
   });
-  test('Use case in which commState is not passed', () => {
+  test('should render empty DOM when comm status is not passed', () => {
     const mockOnClose = jest.fn();
     const mockOnCancel = jest.fn();
     const props = {

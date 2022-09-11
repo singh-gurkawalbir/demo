@@ -47,8 +47,17 @@ function DebugEnhanced(props = {}) {
   return renderWithProviders(ui, {initialStore});
 }
 
+jest.mock('../Buttons/index', () => ({
+  __esModule: true,
+  ...jest.requireActual('../Buttons/index'),
+  default: props => (
+    // eslint-disable-next-line react/button-has-type
+    <button onClick={props.onClick()}>Apply</button>
+  ),
+}));
+
 describe('StartDebugEnhanced UI tests', () => {
-  test('initial render', async () => {
+  test('should pass the initial render', async () => {
     DebugEnhanced({
       resourceId: '5f084bff6da99c0abdacb731',
       resourceType: 'connections',
@@ -63,9 +72,8 @@ describe('StartDebugEnhanced UI tests', () => {
 
     userEvent.click(screenspace);
     expect(screen.queryByText(/Last Debug/i)).not.toBeInTheDocument();
-    screen.debug();
   });
-  test('checking the render of the popover', async () => {
+  test('should render the popover when clicked on Start Debug button', async () => {
     DebugEnhanced({
       resourceId: '5f084bff6da99c0abdacb731',
       resourceType: 'connections',
@@ -81,7 +89,7 @@ describe('StartDebugEnhanced UI tests', () => {
     expect(screen.getByRole('button', {name: 'Apply'})).toBeInTheDocument();
     expect(screen.getByRole('button', {name: 'Close'})).toBeInTheDocument();
   });
-  test('checking the contents of popover menu', async () => {
+  test('should display the contents of popover menu correctly', async () => {
     DebugEnhanced({
       resourceId: '5f084bff6da99c0abdacb731',
       resourceType: 'connections',
@@ -100,7 +108,7 @@ describe('StartDebugEnhanced UI tests', () => {
     expect(screen.getByText(/Next 45 minutes/i, {exact: false})).toBeInTheDocument();
     expect(screen.getByText(/Next 60 minutes/i, {exact: false})).toBeInTheDocument();
   });
-  test('checking the functionality of the apply button', async () => {
+  test('should call the respective callback functions when clicked on apply button', async () => {
     DebugEnhanced({
       resourceId: '5f084bff6da99c0abdacb731',
       resourceType: 'connections',
@@ -120,7 +128,7 @@ describe('StartDebugEnhanced UI tests', () => {
     expect(mockStartHandler).toBeCalledTimes(1);
     expect(mockStartHandler).toHaveBeenCalledWith('30');
   });
-  test('checking the functionality of the cancel button', async () => {
+  test('should close the popover when clicked on close button', async () => {
     DebugEnhanced({
       resourceId: '5f084bff6da99c0abdacb731',
       resourceType: 'connections',
@@ -139,7 +147,7 @@ describe('StartDebugEnhanced UI tests', () => {
   });
 });
 describe('Use cases where debug date is after current moment', () => {
-  test('initial render and functionality of buttons', () => {
+  test('should call the respective callback function when clicked on Stop Debug button', () => {
     DebugEnhanced({
       resourceId: '5f084bff6da99c0abdacb731',
       resourceType: 'connections',
@@ -152,39 +160,7 @@ describe('Use cases where debug date is after current moment', () => {
     waitFor(() => userEvent.click(screen.getByText(/Stop Debug/i)));
     waitFor(() => expect(mockStartHandler).toBeCalledTimes(1));
   });
-  test('Blank Render', () => {
-    const props = {
-      resourceId: '5f084bff6da99c0abdacb731',
-      resourceType: 'connections',
-      startDebugHandler: mockStartHandler,
-      stopDebugHandler: mockStopHandler,
-    };
-
-    DebugEnhanced(props);
-    screen.debug();
-    expect(screen.getByText(/Start Debug/i)).toBeInTheDocument();
-  });
-  test('Blank Render', () => {
-    const props = {
-      resourceId: '5f084bff6da99c0abdmnb731',
-      resourceType: 'connections',
-      disabled: true,
-      startDebugHandler: mockStartHandler,
-      stopDebugHandler: mockStopHandler,
-    };
-
-    DebugEnhanced(props);
-    expect(screen.queryByRole('button', {name: 'Start Debug'})).toBeNull();
-  });
-  test('covering formatter function statements', async () => {
-    jest.mock('../Buttons/index', () => ({
-      __esModule: true,
-      ...jest.requireActual('../Buttons/index'),
-      default: props => (
-        // eslint-disable-next-line react/button-has-type
-        <button onClick={props.onClick()}>Apply</button>
-      ),
-    }));
+  test('should hide the other options when clicked on an option and theen on apply button', async () => {
     const props = {
       resourceId: '5f084bff6da99c0abdmnb731',
       resourceType: 'connections',
@@ -202,6 +178,7 @@ describe('Use cases where debug date is after current moment', () => {
     userEvent.click(option);
     userEvent.click(screen.getByRole('option', {name: 'Next 30 minutes'}));
     userEvent.click(screen.getByRole('button', {name: 'Apply'}));
+    expect(screen.queryByText('Next 15 minutes')).toBeNull();
   });
 });
 

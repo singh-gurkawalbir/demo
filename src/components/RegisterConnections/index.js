@@ -24,6 +24,7 @@ export default function RegisterConnections({ onClose, integrationId }) {
       key => selected[key] === true
     );
 
+    console.log(connectionIds);
     dispatch(actions.connection.requestRegister(connectionIds, integrationId));
     onClose();
   };
