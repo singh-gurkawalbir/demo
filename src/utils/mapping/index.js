@@ -1497,9 +1497,15 @@ export const insertSiblingsOnDestinationUpdate = (treeData, newNode) => {
   if (!newNode.parentKey) return treeData;
 
   // fetch all parent nodes from top to bottom
-  const [topNode, ...restOfParentNodes] = findAllParentNodesForNode(clonedTreeData, newNode.parentKey);
+  const parentNodes = findAllParentNodesForNode(clonedTreeData, newNode.parentKey);
 
-  if (!topNode) return treeData;
+  const objArrayParentNodeIndex = parentNodes.findIndex(node => node.dataType === MAPPING_DATA_TYPES.OBJECTARRAY);
+
+  // if there is no object array parent, do nothing
+  if (objArrayParentNodeIndex === -1) return treeData;
+  // fetches the first parent from top which is Object array, as we need to process nodes which are children of an object array node
+  const [topNode, ...restOfParentNodes] = parentNodes.slice(objArrayParentNodeIndex);
+
   const matchingLeafNodes = findAllPossibleDestinationMatchingLeafNodes(restOfParentNodes, [topNode]);
 
   matchingLeafNodes.forEach(parentNode => {
