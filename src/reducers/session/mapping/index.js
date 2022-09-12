@@ -810,10 +810,8 @@ export default (state = {}, action) => {
           delete node.isEmptyRow;
 
           if (field === 'generate' && value.length) {
-            const treeData = JSON.parse(JSON.stringify(draft.mapping.v2TreeData));
-            const destinationNode = JSON.parse(JSON.stringify(node));
-
-            draft.mapping.v2TreeData = insertSiblingsOnDestinationUpdate(treeData, destinationNode);
+            // updates tree data with new nodes added at eligible parent nodes for object array
+            insertSiblingsOnDestinationUpdate(draft.mapping.v2TreeData, node);
           }
         }
 

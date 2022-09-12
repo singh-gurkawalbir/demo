@@ -1487,13 +1487,11 @@ export const findAllPossibleDestinationMatchingLeafNodes = (matchingNodes = [], 
  * which matches destination structure with multiple extracts
  */
 export const insertSiblingsOnDestinationUpdate = (treeData, newNode) => {
-  const clonedTreeData = deepClone(treeData);
-
   // do nothing if the node itself is the top node
-  if (!newNode.parentKey) return treeData;
+  if (!newNode.parentKey) return;
 
   // fetch all parent nodes from top to bottom
-  const parentNodes = findAllParentNodesForNode(clonedTreeData, newNode.parentKey);
+  const parentNodes = findAllParentNodesForNode(treeData, newNode.parentKey);
 
   const objArrayParentNodeIndex = parentNodes.findIndex(node => node.dataType === MAPPING_DATA_TYPES.OBJECTARRAY);
 
@@ -1515,8 +1513,6 @@ export const insertSiblingsOnDestinationUpdate = (treeData, newNode) => {
       parentNode.children = [...parentNode.children, ...newChildren];
     }
   });
-
-  return clonedTreeData;
 };
 
 export const TYPEOF_TO_DATA_TYPE = {
