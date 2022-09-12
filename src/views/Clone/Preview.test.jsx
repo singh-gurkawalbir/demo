@@ -59,19 +59,6 @@ function initStore(integrationSession) {
       asynchronous: true,
       assistant: '3plcentral',
       sandbox: false,
-      assistantMetadata: {
-        resource: 'orders',
-        version: 'latest',
-        operation: 'get_packages_details',
-      },
-      http: {
-        relativeURI: '/orders/3862/packages',
-        method: 'GET',
-        successMediaType: 'json',
-        errorMediaType: 'json',
-        formType: 'assistant',
-      },
-      rawData: '5d4010e14cd24a7c773122ef5d92fdf3fcca446b9e5ac853c6287f70',
       adaptorType: 'HTTPExport',
     },
     {
@@ -98,17 +85,7 @@ function initStore(integrationSession) {
       description: 'Test FTP import description',
       _connectionId: '5d529bfbdb0c7b14a6011a57',
       distributed: false,
-      apiIdentifier: 'if1d74ac06',
-      oneToMany: false,
       sandbox: false,
-      file: {
-        fileName: 'walmart-canada-pagination.json',
-        type: 'json',
-      },
-      ftp: {
-        directoryPath: '/ChaitanyaReddyMule/Connector_dev',
-        fileName: 'walmart-canada-pagination.json',
-      },
       adaptorType: 'FTPImport',
     },
     {
