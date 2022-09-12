@@ -158,13 +158,7 @@ export function Canvas({ flowId, fullscreen }) {
   ]);
 
   useEffect(() => {
-    dispatch(
-      actions.flow.initializeFlowGraph(
-        flowId,
-        mergedFlow,
-        isViewMode || isDataLoaderFlow
-      )
-    );
+    dispatch(actions.flow.initializeFlowGraph(flowId, mergedFlow, isViewMode, isDataLoaderFlow));
   }, [mergedFlow, dispatch, flowId, isViewMode, isDataLoaderFlow]);
 
   const handleNodeDragStart = (evt, source) => {
@@ -223,6 +217,7 @@ export function Canvas({ flowId, fullscreen }) {
               nodeTypes={nodeTypes}
               edgeTypes={edgeTypes}
               preventScrolling={false}
+              onlyRenderVisibleElements
             >
               <SourceTitle onClick={handleAddNewSource} />
               <DestinationTitle />

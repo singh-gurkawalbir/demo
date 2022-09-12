@@ -19,6 +19,7 @@ import retry from '../../utils/retry';
 import { selectors } from '../../reducers';
 import IsLoggableContextProvider from '../../components/IsLoggableContextProvider';
 import actions from '../../actions';
+import { STANDALONE_INTEGRATION } from '../../constants';
 
 const FlowBuilderBody = loadable(() =>
   retry(() => import(/* webpackChunkName: 'FlowBuilderBody' */ './FlowBuilderBody'))
@@ -58,10 +59,16 @@ export default function FlowBuilder() {
 
     return isIAV2 ? (childId || integrationId) : integrationId;
   });
-  const integrationLoaded = useSelector(state => !!selectors.resource(state, 'integrations', integrationId));
+  const integrationLoaded = useSelector(state => {
+    if (!integrationId || integrationId === STANDALONE_INTEGRATION.id) return true;
+
+    return !!selectors.resource(state, 'integrations', integrationId);
+  });
 
   useEffect(() => {
-    dispatch(actions.resource.request('integrations', integrationId));
+    if (integrationId && integrationId !== STANDALONE_INTEGRATION.id) {
+      dispatch(actions.resource.request('integrations', integrationId));
+    }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [integrationLoaded]);
 

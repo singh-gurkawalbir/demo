@@ -59,8 +59,9 @@ const PageProcessor = ({
   const rdbmsAppType = useSelector(
     state => pending && selectors.rdbmsConnectionType(state, pp._connectionId)
   );
-
-  const blockType = pending ? 'newPP' : resourceCategory(resource, !!pp._exportId, !!pp._importId);
+  const isDataLoaderFlow = useSelector(state => selectors.isDataLoaderFlow(state, flowId));
+  const pendingBlockType = isDataLoaderFlow ? 'newImport' : 'newPP';
+  const blockType = pending ? pendingBlockType : resourceCategory(resource, !!pp._exportId, !!pp._importId);
 
   const showMapping = flowDetails._connectorId ? flowDetails.showMapping : true;
 
