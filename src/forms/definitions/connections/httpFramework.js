@@ -444,7 +444,6 @@ export default {
       {
         fields: [
           'http.ping.method',
-          // 'http.ping.relativeURI',
           'http.ping.body',
           'http.ping.failPath',
           'http.ping.failValues',

@@ -37,9 +37,7 @@ export default function FormView(props) {
     ) || {};
   const stagedResource = merged || emptyObject;
   const value = useMemo(() => {
-    if (!stagedResource) return defaultValue;
-    if (!stagedResource.http) return defaultValue;
-    if (!stagedResource.http.formType) return defaultValue;
+    if (!stagedResource || !stagedResource.http || !stagedResource.http.formType) return defaultValue;
 
     return stagedResource?.http?.formType === 'assistant' ? 'false' : 'true';
   }, [stagedResource, defaultValue]);

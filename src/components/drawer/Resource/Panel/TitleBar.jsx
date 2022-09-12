@@ -9,7 +9,7 @@ import { isNewId } from '../../../../utils/resource';
 import { selectors } from '../../../../reducers';
 import TitleActions from './TitleActions';
 import DynaFormView from '../../../DynaForm/fields/DynaFormView';
-import FormView from '../../../DynaForm/fields/DynaConnectionFormView';
+import DynaConnectionFormView from '../../../DynaForm/fields/DynaConnectionFormView';
 
 const useStyles = makeStyles(theme => ({
   backButton: {
@@ -104,7 +104,7 @@ export default function TitleBar({ flowId, formKey, onClose }) {
         defaultValue="false"
         isTitleBar />
       )}
-      {resourceType === 'connections' && <FormView formKey={formKey} resourceType={resourceType} resourceId={id} defaultValue="false" /> }
+      {resourceType === 'connections' && <DynaConnectionFormView formKey={formKey} resourceType={resourceType} resourceId={id} defaultValue="false" /> }
       <TitleActions flowId={flowId} />
     </DrawerHeader>
   );

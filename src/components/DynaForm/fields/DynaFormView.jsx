@@ -42,9 +42,7 @@ export default function FormView(props) {
   const staggedResource = merged || emptyObject;
   const value = useMemo(() => {
     if (!isTitleBar) return containerValue;
-    if (!staggedResource) return defaultValue;
-    if (!staggedResource.http) return defaultValue;
-    if (!staggedResource.http.formType) return defaultValue;
+    if (!staggedResource || !staggedResource.http || !staggedResource.http.formType) return defaultValue;
 
     return staggedResource?.http?.formType === 'assistant' ? 'false' : 'true';
   }, [staggedResource, containerValue, isTitleBar, defaultValue]);
