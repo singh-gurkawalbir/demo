@@ -1,6 +1,6 @@
 /* global describe, test, expect, */
 import React from 'react';
-import {screen, waitFor} from '@testing-library/react';
+import {screen} from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import {renderWithProviders} from '../../../../test/test-utils';
 import { getCreatedStore } from '../../../../store';
@@ -193,11 +193,5 @@ describe('HomeCard UI tests', () => {
     const statusMssg = screen.getAllByText(/Continue setup >/i);
 
     expect(statusMssg).toHaveLength(3);
-  });
-  test('should render empty DOM when no props are passed', async () => {
-    const props = {sortedTiles: []};
-    const {utils} = renderWithProviders(<MemoryRouter><HomeCard {...props} /></MemoryRouter>);
-
-    await waitFor(() => expect(utils.container).toContainHTML('<div><div class="makeStyles-pageWrapper-56"><ul class="makeStyles-listContainer-59 makeStyles-container-55" /></div></div>')); // blank html tags//
   });
 });

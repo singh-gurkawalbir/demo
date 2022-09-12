@@ -1,10 +1,11 @@
-/* global describe, test, expect, afterEach, jest */
+/* global describe, test, expect, beforeEach, afterEach, jest */
 import React from 'react';
-import {screen} from '@testing-library/react';
+import {screen, waitFor} from '@testing-library/react';
 import * as reactRedux from 'react-redux';
 import Dashboard from './index';
 import {renderWithProviders} from '../../test/test-utils';
 import { getCreatedStore } from '../../store';
+import actions from '../../actions';
 
 jest.mock('./InstallZip', () => ({
   __esModule: true,
@@ -130,23 +131,23 @@ function initDashboard() {
   return renderWithProviders(<Dashboard />, {initialStore});
 }
 describe('dashboard UI tests', () => {
-  let useDispatchSpy;
   let mockDispatchFn;
+  let useDispatchSpy;
 
-  // eslint-disable-next-line prefer-const
-  useDispatchSpy = jest.spyOn(reactRedux, 'useDispatch');
-  // eslint-disable-next-line prefer-const
-  mockDispatchFn = jest.fn(action => {
-    switch (action.type) {
-      default:
-    }
+  beforeEach(() => {
+    useDispatchSpy = jest.spyOn(reactRedux, 'useDispatch');
+    mockDispatchFn = jest.fn(action => {
+      switch (action.type) {
+        default:
+      }
+    });
+    useDispatchSpy.mockReturnValue(mockDispatchFn);
   });
-  useDispatchSpy.mockReturnValue(mockDispatchFn);
 
   afterEach(() => {
     useDispatchSpy.mockClear();
   });
-  test('should render the respective subComponents', () => {
+  test('should render the respective subComponents', async () => {
     initDashboard();
     expect(screen.getByText('InstallZip')).toBeInTheDocument();
     expect(screen.getByText('ResourceDrawer')).toBeInTheDocument();
@@ -154,6 +155,9 @@ describe('dashboard UI tests', () => {
     expect(screen.getByText('OfflineConnectionDrawer')).toBeInTheDocument();
     expect(screen.getByText('PageBar')).toBeInTheDocument();
     expect(screen.getByText('HomeView')).toBeInTheDocument();
-    expect(mockDispatchFn).toBeCalledTimes(2);
+    await waitFor(() => expect(mockDispatchFn).toBeCalledWith(actions.resource.requestCollection('tiles')));
+    await waitFor(() => expect(mockDispatchFn).toBeCalledWith(actions.resource.requestCollection(
+      'suitescript/connections/62beb2c2a0f5f2144816f818/tiles'
+    )));
   });
 });

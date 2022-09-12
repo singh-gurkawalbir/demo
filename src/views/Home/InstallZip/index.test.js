@@ -8,16 +8,14 @@ import InstallZip from '.';
 jest.mock('../../InstallIntegration', () => ({
   __esModule: true,
   ...jest.requireActual('../../InstallIntegration'),
-  // eslint-disable-next-line no-unused-vars
-  default: props => (
+  default: () => (
     <>
       <div>SearchBar</div>
     </>
   ),
 }));
 describe('InstallZip UI tests', () => {
-  test('should', () => {
-    // const history = createMemoryHistory();
+  test('should pass the initial render', () => {
     const ui = (
       <MemoryRouter initialEntries={[{pathname: '/home/installZip'}]}>
         <Route path="/home">
@@ -26,7 +24,6 @@ describe('InstallZip UI tests', () => {
       </MemoryRouter>
     );
 
-    // console.log(history.location.pathname);
     renderWithProviders(ui);
     expect(screen.getByText(/SearchBar/i)).toBeInTheDocument();     // Searchbar text is rendered by the mocked component//
     screen.debug();

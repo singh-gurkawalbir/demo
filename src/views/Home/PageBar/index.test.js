@@ -1,6 +1,6 @@
 /* global describe, test, expect, beforeEach, afterEach, jest */
 import React from 'react';
-import {screen} from '@testing-library/react';
+import {screen, waitFor} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Router } from 'react-router-dom';
 import * as reactRedux from 'react-redux';
@@ -9,6 +9,7 @@ import {createMemoryHistory} from 'history';
 import IntegrationCeligoPageBar from '.';
 import {renderWithProviders} from '../../../test/test-utils';
 import { getCreatedStore } from '../../../store';
+import actions from '../../../actions';
 
 const history = createMemoryHistory();
 
@@ -170,22 +171,19 @@ describe('Celigo Home Pagebar UI tests', () => {
     expect(screen.getByText(/My integrations/i)).toBeInTheDocument();
     expect(screen.getByText(/Create flow/i)).toBeInTheDocument();
     expect(screen.getByText(/Create integration/i)).toBeInTheDocument();
+    expect(screen.getByText(/SearchBar/i)).toBeInTheDocument();               // SearchBar text comes from the mocked component//
     expect(screen.getByText(/Install integration/i)).toBeInTheDocument();
   });
-  test('should redirect to the respective component url when clicked on create flow button', () => {
+  test('should redirect to the respective component url when clicked on create flow button', async () => {
     initPagebar();
     userEvent.click(screen.getByText(/Create flow/i));
-    // expect(history.location.pathname).toBe('/integrations/none/flowBuilder/new');
+    await waitFor(() => expect(history.location.pathname).toBe('/integrations/none/flowBuilder/new'));   // checking for redirection to new url //
   });
-  test('should render the globalsearch bar', () => {
-    initPagebar();
-    expect(screen.getByText(/SearchBar/i)).toBeInTheDocument();         // SearchBar text comes from the mocked component//
-  });
-  test('should make the respective dispatch calls for the listview and gridview iconbuttons', () => {
+  test('should make the respective dispatch calls for the listview and gridview iconbuttons', async () => {
     initPagebar();
     userEvent.click(screen.getByText('TileButton'));
-    expect(mockDispatchFn).toBeCalled();
+    await waitFor(() => expect(mockDispatchFn).toBeCalledWith(actions.user.preferences.update({ dashboard: {view: 'tile'}})));
     userEvent.click(screen.getByText('ListButton'));
-    expect(mockDispatchFn).toBeCalled();
+    await waitFor(() => expect(mockDispatchFn).toBeCalledWith(actions.user.preferences.update({ dashboard: {view: 'list'} })));
   });
 });

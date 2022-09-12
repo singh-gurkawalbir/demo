@@ -121,7 +121,6 @@ describe('ListView UI tests', () => {
     expect(screen.getByText(/Last open error/i)).toBeInTheDocument();
     expect(screen.getByText(/Type/i)).toBeInTheDocument();
     expect(screen.getByText(/Actions/i)).toBeInTheDocument();
-    screen.debug();
   });
   test('should render the tile info', () => {
     const props = {tiles: tile};
