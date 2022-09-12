@@ -1355,7 +1355,7 @@ const getNewNode = (defaultProps = {}) => {
     className: 'hideRow',
   };
 
-  let childNodes = defaultChildren || [newChildNode];
+  let childNodes = defaultChildren || [newChildNode]; // if the children are not passed, adds default empty child node
 
   if (childNodes.length > 1) {
     // Strips off any empty nodes present in the child nodes when there are multiple children
@@ -1400,12 +1400,14 @@ export const constructNodeWithEmptyGenerates = node => {
 export const hasEmptyRow = node => !node.generate && !node.extract && node.dataType === 'string';
 
 const getNewChildrenToUpdate = (parentNode, destinationNode) => {
+  // the destination node is expected to be a child - so checks for parentKey and generate field
   if (!parentNode || !destinationNode || !destinationNode.parentKey || !destinationNode.generate) {
     return [];
   }
 
   const splitExtracts = parentNode.combinedExtract?.split(',') || [];
 
+  // when there are extracts for the parentNodes, populate the destination in all the extracts where this node does not exist
   if (splitExtracts.length) {
     const extractsToAddEmptyDestinationNode = [];
 
@@ -1413,13 +1415,16 @@ const getNewChildrenToUpdate = (parentNode, destinationNode) => {
       const hasDestNode = parentNode.children.some(childNode => {
         const { dataType, generate, parentExtract } = childNode;
 
+        // checks for datatype, generate to check if the node exist for this extract
         return dataType === destinationNode.dataType && generate === destinationNode.generate && parentExtract === extract;
       });
 
       if (!hasDestNode) {
+        // make a list of extracts where the destination node does not exist
         extractsToAddEmptyDestinationNode.push(extract);
       }
     });
+    // fill the node under all the extracts that does not have
     const newChildren = extractsToAddEmptyDestinationNode.map(e => {
       const newChildNode = constructNodeWithEmptyGenerates({...destinationNode, parentExtract: e, parentKey: parentNode.key});
 
@@ -1429,7 +1434,6 @@ const getNewChildrenToUpdate = (parentNode, destinationNode) => {
     return newChildren;
   }
 
-  // check  for no extracts
   const hasDestNode = parentNode.children.some(childNode => {
     const { dataType, generate } = childNode;
 
@@ -1437,13 +1441,15 @@ const getNewChildrenToUpdate = (parentNode, destinationNode) => {
   });
 
   if (!hasDestNode) {
-    return [constructNodeWithEmptyGenerates({...destinationNode, parentKey: parentNode.key})];
+    // Incase the parent has no extracts and does not contain this node, add the new node directly as a child
+    return [constructNodeWithEmptyGenerates({...destinationNode, parentKey: parentNode.key, parentExtract: ''})];
   }
 
   return [];
 };
 
 // recursively look for all parentNodes for a given node
+// Ex: For a node with jsonPath - a[*].b[*].c.d, the parent nodes returned are in the order of [a,b,c]
 export const findAllParentNodesForNode = (treeData, nodeKey, output = []) => {
   const {node} = findNodeInTree(treeData, 'key', nodeKey);
 
@@ -1456,19 +1462,25 @@ export const findAllParentNodesForNode = (treeData, nodeKey, output = []) => {
   return output;
 };
 
+// Fetches all possible parent nodes that contain the same pattern of mapping as given in the order of matchingNodes
+// Ex: For a node with jsonPath - a[*].b[*].c.d, this fn is called with fn([b,c], [a]) as 'a' is the first parentNode and b,c are the pattern nodes to reach node 'd'
 export const findAllPossibleDestinationMatchingLeafNodes = (matchingNodes = [], leafNodes = []) => {
+  // when there are no more nodes to match or no leaf nodes to go through return the leaf nodes
   if (!matchingNodes.length || !leafNodes.length) return leafNodes;
 
+  // always fetch the first node from matchingNodes and perform match
   const [currentNodeMatch] = matchingNodes;
 
   let nextLevelLeafNodes = [];
 
   leafNodes.forEach(node => {
+    // filters all children that matches the currentNodeMatch destination and adds that to the list
     const matchedChildren = node.children.filter(childNode => childNode.generate === currentNodeMatch.generate && childNode.dataType === currentNodeMatch.dataType);
 
     nextLevelLeafNodes = [...nextLevelLeafNodes, ...matchedChildren];
   });
 
+  // recursively pass the above list with the next available node from matchingNodes to match
   return findAllPossibleDestinationMatchingLeafNodes(matchingNodes.slice(1), nextLevelLeafNodes);
 };
 
@@ -1483,8 +1495,13 @@ export const rebuildMappingOnDestinationUpdate = (treeData, newNode) => {
   matchingLeafNodes.forEach(parentNode => {
     const newChildren = getNewChildrenToUpdate(parentNode, newNode);
 
-    // eslint-disable-next-line no-param-reassign
-    parentNode.children = [...parentNode.children, ...newChildren];
+    if (parentNode.children?.length === 1 && isEmptyNode(parentNode.children[0])) {
+      // eslint-disable-next-line no-param-reassign
+      parentNode.children = newChildren;
+    } else {
+      // eslint-disable-next-line no-param-reassign
+      parentNode.children = [...parentNode.children, ...newChildren];
+    }
   });
 
   return clonedTreeData;
