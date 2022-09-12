@@ -11,7 +11,7 @@ import {
   ARRAY_DATA_TYPES,
   getAllKeys,
   rebuildObjectArrayNode,
-  rebuildMappingOnDestinationUpdate,
+  insertSiblingsOnDestinationUpdate,
   hideOtherTabRows,
   MAPPING_DATA_TYPES,
   getUniqueExtractId,
@@ -813,7 +813,7 @@ export default (state = {}, action) => {
             const treeData = JSON.parse(JSON.stringify(draft.mapping.v2TreeData));
             const destinationNode = JSON.parse(JSON.stringify(node));
 
-            draft.mapping.v2TreeData = rebuildMappingOnDestinationUpdate(treeData, destinationNode);
+            draft.mapping.v2TreeData = insertSiblingsOnDestinationUpdate(treeData, destinationNode);
           }
         }
 
