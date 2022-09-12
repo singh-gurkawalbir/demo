@@ -67,16 +67,11 @@ describe('Signin', () => {
   });
 
   test('Should able to test Re-Signin using google', async () => {
-    const auth = {
-    };
-    const props = { dialogOpen: true };
-    const profile = {
+    store({}, {
       email: 'testuser@test.com',
       auth_type_google: { id: 'testuser@test.com' },
-    };
-
-    store(auth, profile);
-    await initSignIn(props);
+    });
+    await initSignIn({ dialogOpen: true });
     const signInWithGoogleNode = screen.getByRole('button', { name: 'Sign in with Google' });
 
     expect(signInWithGoogleNode).toBeInTheDocument();
@@ -84,15 +79,7 @@ describe('Signin', () => {
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.auth.reSignInWithGoogle('testuser@test.com'));
   });
   test('Should able to test Re-Signin using SSO', async () => {
-    const auth = {
-    };
-    const profile = {};
-    const props = { dialogOpen: true };
-    const accounts = [{
-      _id: 'own',
-      accessLevel: 'owner',
-    }];
-    const ssoclients = [{
+    store({}, {}, [{
       _id: '6097fdaf86c0c5190bb3babc',
       type: 'oidc',
       orgId: 'celigo1235',
@@ -102,13 +89,13 @@ describe('Signin', () => {
         clientId: 'sampleClientId',
         clientSecret: '******',
       },
-    }];
-    const preferences = {
+    }], [{
+      _id: 'own',
+      accessLevel: 'owner',
+    }], {
       defaultAShareId: 'own',
-    };
-
-    store(auth, profile, ssoclients, accounts, preferences);
-    await initSignIn(props);
+    });
+    await initSignIn({ dialogOpen: true });
     const signInWithSSONode = screen.getByRole('button', {name: 'Sign in with SSO'});
 
     expect(signInWithSSONode).toBeInTheDocument();
@@ -116,14 +103,11 @@ describe('Signin', () => {
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.auth.reSignInWithSSO());
   });
   test('Should able to test error messages on signin form', async () => {
-    const auth = {
+    store({
       showAuthError: true,
       failure: 'Authentication Failure',
-    };
-    const props = { dialogOpen: false };
-
-    store(auth);
-    await initSignIn(props);
+    });
+    await initSignIn({ dialogOpen: false });
     const signinErrorMessage = screen.getByText(/Sign in failed. Please try again./i);
 
     expect(signinErrorMessage).toBeInTheDocument();
