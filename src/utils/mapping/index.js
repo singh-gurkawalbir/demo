@@ -1495,12 +1495,7 @@ export const insertSiblingsOnDestinationUpdate = (treeData, newNode) => {
 
   // do nothing if the node itself is the top node
   if (!newNode.parentKey) return treeData;
-  const {node: parentNode} = findNodeInTree(treeData, 'key', newNode.parentKey);
 
-  // do nothing if the new node's parent is not object array
-  if (parentNode?.dataType !== MAPPING_DATA_TYPES.OBJECTARRAY) {
-    return treeData;
-  }
   // fetch all parent nodes from top to bottom
   const [topNode, ...restOfParentNodes] = findAllParentNodesForNode(clonedTreeData, newNode.parentKey);
 
