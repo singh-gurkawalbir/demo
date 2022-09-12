@@ -564,6 +564,8 @@ export const getExtractFromUniqueId = extractId => {
   return extractId;
 };
 
+export const isEmptyNode = node => !node.generate && !node.extract && node.dataType === MAPPING_DATA_TYPES.STRING;
+
 // for object array multiple extracts view,
 // mark non active tabs children as hidden
 export const hideOtherTabRows = (node, newTabExtract, hidden) => {
@@ -1352,13 +1354,20 @@ const getNewNode = (defaultProps = {}) => {
     hidden: true,
     className: 'hideRow',
   };
+
+  let childNodes = defaultChildren || [newChildNode];
+
+  if (childNodes.length > 1) {
+    // Strips off any empty nodes present in the child nodes when there are multiple children
+    childNodes = childNodes.filter(childNode => !isEmptyNode(childNode));
+  }
   const node = {
     key: newKey,
     title: '',
     generate,
     jsonPath,
     dataType,
-    ...(needEmptyChildNode ? { children: defaultChildren || [newChildNode] } : {}),
+    ...(needEmptyChildNode ? { children: childNodes } : {}),
     parentKey,
     parentExtract,
     className: 'hideRow',
@@ -1382,7 +1391,7 @@ export const constructNodeWithEmptyGenerates = node => {
   const splitExtracts = combinedExtract.split(',');
   const firstExtract = getUniqueExtractId(splitExtracts[0], 0);
   const firstExtractChildNodes = children.filter(child => child.parentExtract === firstExtract);
-  const emptyChildren = firstExtractChildNodes.map(child => constructNodeWithEmptyGenerates({...child, parentKey: newKey, parentExtract: firstExtract}));
+  const emptyChildren = firstExtractChildNodes.map(child => constructNodeWithEmptyGenerates({...child, parentKey: newKey, parentExtract: ''}));
 
   // Incase of children, replace children with empty children
   return getNewNode({...defaultProps, children: emptyChildren, key: newKey });
@@ -1412,9 +1421,9 @@ const getNewChildrenToUpdate = (parentNode, destinationNode) => {
       }
     });
     const newChildren = extractsToAddEmptyDestinationNode.map(e => {
-      const newGenNode = constructNodeWithEmptyGenerates({...destinationNode, parentExtract: e, parentKey: parentNode.key});
+      const newChildNode = constructNodeWithEmptyGenerates({...destinationNode, parentExtract: e, parentKey: parentNode.key});
 
-      return newGenNode;
+      return newChildNode;
     });
 
     return newChildren;
