@@ -4996,13 +4996,13 @@ describe('resource region selector testcases', () => {
       },
     ];
     const standaloneTile =
-    {
-      _integrationId: 'none',
-      name: 'Standalone flows',
-      numError: 0,
-      offlineConnections: ['conn1', 'conn2'],
-      numFlows: 5,
-    };
+      {
+        _integrationId: 'none',
+        name: 'Standalone flows',
+        numError: 0,
+        offlineConnections: ['conn1', 'conn2'],
+        numFlows: 5,
+      };
 
     const state = reducer(
       undefined,
