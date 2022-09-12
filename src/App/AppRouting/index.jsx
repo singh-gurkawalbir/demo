@@ -205,7 +205,7 @@ export default function AppRouting() {
         exact
         render={({ history, match }) =>
           history.replace(
-            getRoutePath(`/integrations/${match.params.integrationId}/flows`)
+            getRoutePath(`/integrationapps/${match.params.integrationAppName}/${match.params.integrationId}/flows`)
           )}
         />
 
