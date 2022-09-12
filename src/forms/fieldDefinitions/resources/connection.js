@@ -2532,23 +2532,6 @@ export default {
       },
     ],
   },
-  connectionFormView: {
-    isLoggable: true,
-    id: 'connectionFormView',
-    type: 'connectionFormView',
-    label: 'Form view',
-    required: true,
-    resourceType: 'connections',
-    visible: r => r?._httpConnectorId || r?.http?._httpConnectorId,
-    defaultValue: r => {
-      if (!r) return 'false';
-      if (!r.http) return 'false';
-      if (!r.http.formType) return 'false';
-
-      return r.http?.formType === 'assistant' ? 'false' : 'true';
-    },
-    helpKey: 'formView',
-  },
   configureCutomAuthTokenRefresh: {
     id: 'configureCutomAuthTokenRefresh',
     type: 'checkbox',
