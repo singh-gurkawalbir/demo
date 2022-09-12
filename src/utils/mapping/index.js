@@ -629,7 +629,7 @@ export const hideOtherTabRows = (node, newTabExtract, hidden) => {
 const constructEmptyMappingWithGenerates = (rows, props = {}, parentKey) => {
   const { combinedExtract: parentCombinedExtract, ...defaultProps } = props;
 
-  let nodes = rows.filter(row => !row.isTabNode);
+  let nodes = rows || [];
 
   if (parentCombinedExtract) {
     const splitExtracts = parentCombinedExtract.split(',');
