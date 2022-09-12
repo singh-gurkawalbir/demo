@@ -327,7 +327,7 @@ export function* auth({ email, password }) {
       // Once login is success, incase of mfaRequired, user has to enter OTP to successfully authenticate
       // So , we redirect him to OTP (/mfa/verify) page
 
-      return yield put(actions.auth.mfaRequired());
+      return yield put(actions.auth.mfaRequired(apiAuthentications));
     }
     const isExpired = yield select(selectors.isSessionExpired);
 

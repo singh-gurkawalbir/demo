@@ -3443,6 +3443,9 @@ Object {
           },
         ],
       },
+      "rdbmsGrouping": Object {
+        "formId": "rdbmsGrouping",
+      },
       "settings": Object {
         "fieldId": "settings",
       },
@@ -3511,6 +3514,13 @@ Object {
                 "dynamodb.onceExportSortKey",
               ],
               "label": "Configure export type",
+            },
+            Object {
+              "collapsed": true,
+              "fields": Array [
+                "rdbmsGrouping",
+              ],
+              "label": "Would you like to group records?",
             },
             Object {
               "collapsed": true,
@@ -3947,6 +3957,19 @@ Object {
       "formView": Object {
         "fieldId": "formView",
       },
+      "groupByFields": Object {
+        "defaultValue": [Function],
+        "fieldId": "groupByFields",
+        "resourceSubType": "http",
+        "visibleWhenAll": Array [
+          Object {
+            "field": "outputMode",
+            "is": Array [
+              "records",
+            ],
+          },
+        ],
+      },
       "http._asyncHelperId": Object {
         "fieldId": "http._asyncHelperId",
       },
@@ -4268,6 +4291,13 @@ Object {
             Object {
               "collapsed": true,
               "fields": Array [
+                "groupByFields",
+              ],
+              "label": "Would you like to group records?",
+            },
+            Object {
+              "collapsed": true,
+              "fields": Array [
                 "configureAsyncHelper",
                 "http._asyncHelperId",
                 "advancedSettings",
@@ -4320,6 +4350,9 @@ Object {
       },
       "once.booleanField": Object {
         "fieldId": "once.booleanField",
+      },
+      "rdbmsGrouping": Object {
+        "formId": "rdbmsGrouping",
       },
       "settings": Object {
         "fieldId": "settings",
@@ -4383,6 +4416,13 @@ Object {
                 "once.booleanField",
               ],
               "label": "Configure export type",
+            },
+            Object {
+              "collapsed": true,
+              "fields": Array [
+                "rdbmsGrouping",
+              ],
+              "label": "Would you like to group records?",
             },
             Object {
               "collapsed": true,
@@ -4736,10 +4776,6 @@ Object {
           "fallsWithinNumericalRange": Object {
             "max": 100,
             "min": 1,
-          },
-          "matchesRegEx": Object {
-            "message": "Only numbers allowed",
-            "pattern": "^[\\\\d]+$",
           },
         },
         "visibleWhen": Array [
@@ -7763,6 +7799,9 @@ Object {
       "rdbms.query": Object {
         "fieldId": "rdbms.query",
       },
+      "rdbmsGrouping": Object {
+        "formId": "rdbmsGrouping",
+      },
       "settings": Object {
         "fieldId": "settings",
       },
@@ -7822,6 +7861,13 @@ Object {
                 "rdbms.once.query",
               ],
               "label": "Configure export type",
+            },
+            Object {
+              "collapsed": true,
+              "fields": Array [
+                "rdbmsGrouping",
+              ],
+              "label": "Would you like to group records?",
             },
             Object {
               "collapsed": true,
@@ -7876,6 +7922,9 @@ Object {
       "rdbms.query": Object {
         "fieldId": "rdbms.query",
       },
+      "rdbmsGrouping": Object {
+        "formId": "rdbmsGrouping",
+      },
       "settings": Object {
         "fieldId": "settings",
       },
@@ -7935,6 +7984,13 @@ Object {
                 "rdbms.once.query",
               ],
               "label": "Configure export type",
+            },
+            Object {
+              "collapsed": true,
+              "fields": Array [
+                "rdbmsGrouping",
+              ],
+              "label": "Would you like to group records?",
             },
             Object {
               "collapsed": true,

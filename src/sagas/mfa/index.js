@@ -19,20 +19,20 @@ export function* requestUserSettings() {
     return undefined;
   }
 }
-// export function* requestAccountSettings() {
-//   try {
-//     const response = yield call(apiCallWithRetry, {
-//       path: '/trustedDevices/settings',
-//       opts: {
-//         method: 'GET',
-//       },
-//     });
+export function* requestAccountSettings() {
+  try {
+    const response = yield call(apiCallWithRetry, {
+      path: '/trustedDevices/settings',
+      opts: {
+        method: 'GET',
+      },
+    });
 
-//     yield put(actions.mfa.receivedAccountSettings(response));
-//   } catch (error) {
-//     return undefined;
-//   }
-// }
+    yield put(actions.mfa.receivedAccountSettings(response));
+  } catch (error) {
+    return undefined;
+  }
+}
 export function* setupMFA({ mfaConfig }) {
   yield put(actions.asyncTask.start(MFA_SETUP_ASYNC_KEY));
   try {
@@ -47,6 +47,12 @@ export function* setupMFA({ mfaConfig }) {
 
     yield put(actions.mfa.receivedUserSettings(response));
     yield put(actions.mfa.addSetupContext(context));
+    const isMFASetupIncomplete = yield select(selectors.isMFASetupIncomplete);
+
+    if (isMFASetupIncomplete) {
+      // If mfa setup is incomplete, fetch latest session info once mfa setup is successful to update UI layout for the user
+      yield put(actions.mfa.requestSessionInfo());
+    }
     yield put(actions.asyncTask.success(MFA_SETUP_ASYNC_KEY));
   } catch (error) {
     yield put(actions.asyncTask.failed(MFA_SETUP_ASYNC_KEY));
@@ -54,24 +60,23 @@ export function* setupMFA({ mfaConfig }) {
     return undefined;
   }
 }
-// export function* updateAccountSettings({ accountSettings }) {
-//   yield delay(500);
-//   const response = accountSettings;
-//   // const path = '/trustedDevices/settings';
+export function* updateAccountSettings({ accountSettings }) {
+  const { dontAllowTrustedDevices, trustDeviceForPeriod } = accountSettings;
 
-//   // try {
-//   //   response = yield call(apiCallWithRetry, {
-//   //     path,
-//   //     opts: {
-//   //       body: { allowTrustedDevices, trustDeviceForPeriod },
-//   //       method: 'PUT',
-//   //     },
-//   //   });
-//   // } catch (error) {
-//   //   return undefined;
-//   // }
-//   yield put(actions.mfa.receivedAccountSettings(response));
-// }
+  try {
+    const response = yield call(apiCallWithRetry, {
+      path: '/trustedDevices/settings',
+      opts: {
+        body: { dontAllowTrustedDevices, ...(!dontAllowTrustedDevices ? {trustDeviceForPeriod} : {}) },
+        method: 'PUT',
+      },
+    });
+
+    yield put(actions.mfa.receivedAccountSettings(response));
+  } catch (error) {
+    return undefined;
+  }
+}
 export function* requestSecretCode({ password, isQRCode }) {
   const isSecretCodeGenerated = yield select(selectors.isSecretCodeGenerated);
 
@@ -121,28 +126,6 @@ export function* resetMFA({ password, aShareId }) {
     return undefined;
   }
 }
-// export function* updateTrustedDevice({ deviceInfo }) {
-//   yield delay(500);
-//   const response = {allowTrustedDevices: true, trustDeviceForPeriod: 20};
-//   // const path = '/trustedDevices/settings';
-
-//   // try {
-//   //   response = yield call(apiCallWithRetry, {
-//   //     path,
-//   //     opts: {
-//   //       body: {
-//   //   allowTrustedDevices: true/false,
-//   //   trustDeviceForPeriod: <Number>/undefined
-//   // },
-//   //       method: 'PUT',
-//   //     },
-//   //   });
-//   // } catch (error) {
-//   //   return undefined;
-//   // }
-
-//   yield put(actions.mfa.receivedAccountSettings(response));
-// }
 export function* deleteTrustedDevice({ deviceId }) {
   try {
     yield put(actions.asyncTask.start(MFA_DELETE_DEVICE_ASYNC_KEY));
@@ -183,38 +166,29 @@ export function* verifyMobileCode({ code }) {
     return undefined;
   }
 }
-// export function* requestMFASessionInfo() {
-//   yield delay(500);
-//   const response = {
-//     mfaRequired: true,
-//     mfaSetupRequired: false,
-//     mfaVerified: true,
-//   };
-//   // const path = '/mfa/sessionInfo';
+export function* requestMFASessionInfo() {
+  try {
+    const response = yield call(apiCallWithRetry, {
+      path: '/mfa/sessionInfo',
+      opts: {
+        method: 'GET',
+      },
+    });
 
-//   // try {
-//   //   response = yield call(apiCallWithRetry, {
-//   //     path,
-//   //     opts: {
-//   //       method: 'GET',
-//   //     },
-//   //   });
-//   // } catch (error) {
-//   //   return undefined;
-//   // }
-
-//   yield put(actions.mfa.receivedSessionInfo(response));
-// }
+    yield put(actions.mfa.receivedSessionInfo(response));
+  } catch (error) {
+    return undefined;
+  }
+}
 
 export default [
   takeLatest(actionTypes.MFA.USER_SETTINGS.REQUEST, requestUserSettings),
-  // takeLatest(actionTypes.MFA.ACCOUNT_SETTINGS.REQUEST, requestAccountSettings),
+  takeLatest(actionTypes.MFA.ACCOUNT_SETTINGS.REQUEST, requestAccountSettings),
   takeLatest(actionTypes.MFA.USER_SETTINGS.SETUP, setupMFA),
-  // takeLatest(actionTypes.MFA.ACCOUNT_SETTINGS.UPDATE, updateAccountSettings),
+  takeLatest(actionTypes.MFA.ACCOUNT_SETTINGS.UPDATE, updateAccountSettings),
   takeLatest(actionTypes.MFA.SECRET_CODE.REQUEST, requestSecretCode),
   takeLatest(actionTypes.MFA.RESET, resetMFA),
-  // takeLatest(actionTypes.MFA.UPDATE_DEVICE, updateTrustedDevice),
   takeLatest(actionTypes.MFA.DELETE_DEVICE, deleteTrustedDevice),
   takeLatest(actionTypes.MFA.MOBILE_CODE.VERIFY, verifyMobileCode),
-  // takeLatest(actionTypes.MFA.SESSION_INFO.REQUEST, requestMFASessionInfo),
+  takeLatest(actionTypes.MFA.SESSION_INFO.REQUEST, requestMFASessionInfo),
 ];

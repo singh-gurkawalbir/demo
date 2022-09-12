@@ -66,7 +66,8 @@ export default function TitleActions({ flowId }) {
     ) || {};
 
   applicationType = merged?.http?.formType === 'http' ? 'http' : applicationType;
-  const app = applications.find(a => a.id === applicationType) || {};
+  const app = applications.find(a => [a.id, a.assistant].includes(applicationType)) || {};
+
   const flowStepDrawerHandler = useCallback(() => {
     history.push(buildDrawerUrl({ path: drawerPaths.LOGS.FLOW_STEP_DEBUG, baseUrl: match.url }));
   }, [match.url, history]);

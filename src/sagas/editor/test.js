@@ -465,6 +465,7 @@ describe('editor sagas', () => {
               generate: 'new-obj',
               dataType: 'object',
               extract: 'parents',
+              status: 'Active',
               description: undefined,
               extractDateFormat: undefined,
               extractDateTimezone: undefined,

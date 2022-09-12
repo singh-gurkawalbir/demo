@@ -51,7 +51,7 @@ export default function assistantDefinition(
       });
 
       if (importDoc?.['/http']) { importDoc['/http'].formType = 'assistant'; }
-      if (!importDoc?.['/assistant']) {
+      if (importDoc && !importDoc['/assistant']) {
         importDoc['/assistant'] = undefined;
         delete importDoc['/assistant'];
       }

@@ -100,7 +100,7 @@ describe('isDataLoaderFlow saga', () => {
 describe('resourceConflictDetermination saga', () => {
   const _400Exception = new APIException({
     status: 400,
-    message: 'Session Expired',
+    message: 'Session expired',
   });
   const path = '/somePath';
   const someMaster = {
@@ -189,7 +189,7 @@ describe('resourceConflictDetermination saga', () => {
       value: {
         error: {
           status: 400,
-          message: 'Session Expired',
+          message: 'Session expired',
         },
       },
     });
@@ -1949,7 +1949,7 @@ describe('patchResource saga', () => {
       [select(selectors.resource, 'exports', '123'), {}],
     ])
     .call.fn(apiCallWithRetry)
-    .put(actions.resource.request('integrations', '123'))
+    .put(actions.resource.request('exports', '123'))
     .put(actions.asyncTask.success(undefined))
     .run());
   test('should make api call and dispatch resource request and asynctask success action if doNotRefetch is true and asyncKey is present', () => expectSaga(patchResource, { resourceType: 'exports', id: '123', patchSet: {}, options: {doNotRefetch: true}, asyncKey: 'some-key' })
@@ -1958,7 +1958,7 @@ describe('patchResource saga', () => {
       [select(selectors.resource, 'exports', '123'), {}],
     ])
     .call.fn(apiCallWithRetry)
-    .put(actions.resource.request('integrations', '123'))
+    .put(actions.resource.request('exports', '123'))
     .put(actions.asyncTask.success('some-key'))
     .run());
   test('should not dispatch any action and do nothing if api call fails', () => expectSaga(patchResource, { resourceType: 'exports', id: '123', patchSet: {}, options: {doNotRefetch: true} })
