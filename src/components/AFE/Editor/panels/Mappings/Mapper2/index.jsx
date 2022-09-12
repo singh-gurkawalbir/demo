@@ -189,8 +189,11 @@ export default function Mapper2({editorId}) {
       event.stopImmediatePropagation();
     };
 
+    // Add mouse move event listner to stop the default behaviour
+    // of mouse move by rc-tree library
     window.addEventListener('mousemove', handleMouseMove, true);
 
+    // Add wheel event listner to handle horizontal scroll
     document.addEventListener('wheel', handleWheelEvent, {passive: false});
 
     return () => {
@@ -231,6 +234,8 @@ export default function Mapper2({editorId}) {
     dispatch(actions.mapping.v2.updateExpandedKeys(expandedKeys));
   }, [dispatch]);
 
+  // Add scroll handling for navigating back to the user scroll previous scroll position
+  // when virtaulization is enabled for rc-tree
   const onScrollHandler = e => {
     if (settingDrawerActive.current && settingDrawerActive.current.wasActive) {
       const currentEle = e.currentTarget;
@@ -240,7 +245,7 @@ export default function Mapper2({editorId}) {
 
         currentEle.scrollTo(0, parseInt(scrollPos, 10));
         sessionStorage.removeItem('scrollPosition');
-      }, 10);
+      }, 100);
       settingDrawerActive.current.wasActive = false;
     }
     currentScrollPosition.current = e.currentTarget.scrollTop;
