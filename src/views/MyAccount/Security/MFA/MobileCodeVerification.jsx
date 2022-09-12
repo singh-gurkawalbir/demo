@@ -21,6 +21,7 @@ const fieldMeta = {
       type: 'mfamobilecode',
       label: 'Verify mobile device',
       required: true,
+      maxLength: 6,
       validWhen: {
         matchesRegEx: {
           pattern: '^[\\d]+$',

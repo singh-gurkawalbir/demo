@@ -1,4 +1,5 @@
 import React, { useState, useRef, useCallback } from 'react';
+import { useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import { FormControl, TextField, Tooltip } from '@material-ui/core';
 import clsx from 'clsx';
@@ -8,6 +9,8 @@ import { MAPPING_DATA_TYPES } from '../../../../../../../utils/mapping';
 import { TooltipTitle } from '../Source/Mapper2ExtractsTypeableSelect';
 import DestinationDataType from './DestinationDataType';
 import LockIcon from '../../../../../../icons/LockIcon';
+import { selectors } from '../../../../../../../reducers';
+import useScrollIntoView from '../../../../../../../hooks/useScrollIntoView';
 
 const useStyles = makeStyles(theme => ({
   customTextField: {
@@ -21,6 +24,9 @@ const useStyles = makeStyles(theme => ({
     '& .MuiFilledInput-multiline': {
       border: 'none',
     },
+  },
+  highlightedField: {
+    borderColor: `${theme.palette.primary.main} !important`,
   },
   mapField: {
     display: 'flex',
@@ -65,6 +71,7 @@ export default function Mapper2Generates(props) {
     nodeKey,
     isRequired,
   } = props;
+  const highlightedKey = useSelector(state => selectors.highlightedKey(state));
   const classes = useStyles();
   const [isFocused, setIsFocused] = useState(false);
   const [inputValue, setInputValue] = useState(propValue);
@@ -72,6 +79,9 @@ export default function Mapper2Generates(props) {
   const [anchorEl, setAnchorEl] = useState(null);
   const containerRef = useRef();
   const inputFieldRef = useRef();
+
+  // bring the highlighted key into focus
+  useScrollIntoView(containerRef, nodeKey === highlightedKey);
 
   const handleChange = useCallback(event => {
     setInputValue(event.target.value);
@@ -104,6 +114,7 @@ export default function Mapper2Generates(props) {
 
   return (
     <FormControl
+      className={{[classes.highlightedField]: nodeKey === highlightedKey}}
       data-test={id}
       key={id}
       ref={containerRef} >

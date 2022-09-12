@@ -2,6 +2,7 @@ import React, { useCallback, useMemo } from 'react';
 import clsx from 'clsx';
 import { makeStyles, TextField } from '@material-ui/core';
 import DynaSelect from '../../../DynaSelect';
+import DynaMultiSelect from '../../../DynaMultiSelect';
 import DeleteIcon from '../../../../../icons/TrashIcon';
 import ActionButton from '../../../../../ActionButton';
 import actionTypes from '../actionTypes';
@@ -94,7 +95,7 @@ const RowCell = ({ fieldValue, optionsMap, op, isValid, rowIndex, colIndex, setT
 
     const items = convertToSelectOptions(options);
 
-    if (type === 'select') {
+    if (type === 'select' || type === 'multiselect') {
       return [{items}];
     }
 
@@ -119,6 +120,17 @@ const RowCell = ({ fieldValue, optionsMap, op, isValid, rowIndex, colIndex, setT
   if (type === 'select') {
     return (
       <DynaSelect
+        {...basicProps}
+        value={fieldValue}
+        errorMessages={errorMessages}
+        onFieldChange={onFieldChange}
+        className={clsx(classes.root, classes.menuItemsWrapper)}
+    />
+    );
+  }
+  if (type === 'multiselect') {
+    return (
+      <DynaMultiSelect
         {...basicProps}
         value={fieldValue}
         errorMessages={errorMessages}

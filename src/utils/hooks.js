@@ -45,7 +45,7 @@ export const hooksToFunctionNamesMap = {
   transform: 'transform',
   filter: 'filter',
   handleRequest: 'handleRequest',
-  router: 'branchRouter',
+  router: 'branching',
 };
 
 export const hooksToHelpKeyMap = {
@@ -72,7 +72,7 @@ export const hooksLabelMap = {
   filter: 'Filter',
   formInit: 'Form init',
   handleRequest: 'Handle request',
-  router: 'Router',
+  router: 'Branching',
 };
 export function getSupportedHooksForResource(resource) {
   let unSupportedHooks = [];
