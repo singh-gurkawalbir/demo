@@ -1591,7 +1591,23 @@ describe('updateFinalMetadataWithHttpFramework saga', () => {
         type: 'settings',
 
       },
-
+      'settings.storeName': {
+        defaultValue: undefined,
+        fieldId: 'settings.storeName',
+        helpText: 'Enter the unique portion of your Shopify store’s URL. For example, if your Shopify store URL is https://demo-store.myshopify.com, then provide <i>demo-store</i> for the store URL.',
+        id: 'settings.storeName',
+        label: 'Store Name',
+        name: '/settings/storeName',
+        options: undefined,
+        required: true,
+        type: 'text',
+        validWhen: {
+          matchesRegEx: {
+            message: 'Subdomain should not contain spaces.',
+            pattern: '^[\\S]+$',
+          },
+        },
+      },
     },
 
   };

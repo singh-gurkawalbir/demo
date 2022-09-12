@@ -26,7 +26,6 @@ const useStyles = makeStyles(theme => ({
     },
   },
   errorTableWrapper: {
-    position: 'relative',
     height: '100%',
   },
   errorList: {
@@ -35,7 +34,7 @@ const useStyles = makeStyles(theme => ({
     flexBasis: '40%',
   },
   errorTable: {
-    height: '75vh',
+    height: 'calc(100vh - 320px)',
     wordBreak: 'break-word',
     '& th': {
       wordBreak: 'normal',

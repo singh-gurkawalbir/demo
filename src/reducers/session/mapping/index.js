@@ -18,7 +18,8 @@ import {
   deleteNonRequiredMappings,
   searchTree,
   filterKey,
-  filterNode} from '../../../utils/mapping';
+  filterNode,
+  updateChildrenJSONPath} from '../../../utils/mapping';
 import { generateUniqueKey } from '../../../utils/string';
 
 export const expandRow = (draft, key) => {
@@ -111,6 +112,8 @@ export const updateDataType = (draft, node, oldDataType, newDataType) => {
       delete newNode.buildArrayHelper;
       delete newNode.activeTab;
     }
+
+    newNode.children = updateChildrenJSONPath(newNode)?.children;
 
     const parentExtract = getUniqueExtractId(newNode.combinedExtract?.split(',')?.[0], 0);
 
@@ -800,6 +803,7 @@ export default (state = {}, action) => {
             if (parentNode && parentNode.jsonPath) {
               node.jsonPath = parentNode.dataType === MAPPING_DATA_TYPES.OBJECTARRAY ? `${parentNode.jsonPath}[*].${value}` : `${parentNode.jsonPath}.${value}`;
             }
+            node.children = updateChildrenJSONPath(node)?.children;
           }
 
           delete node.isEmptyRow;
@@ -900,7 +904,8 @@ export default (state = {}, action) => {
         inputValues = inputValues.map(i => i.replace(/(\$\.)|(\$\[\*\]\.)/g, '').toUpperCase());
 
         // pass the first index of tree as the tree length is always 1 because the parent is either $ or $[*]
-        draft.mapping.extractsTree[0] = recursivelySearchExtracts(extractsTree[0], inputValues, inputValue === propValue);
+        // also, skipFilter if last char of input is , or input and selected values are same
+        draft.mapping.extractsTree[0] = recursivelySearchExtracts(extractsTree[0], inputValues, inputValue.slice(-1) === ',' || inputValue === propValue);
 
         break;
       }
