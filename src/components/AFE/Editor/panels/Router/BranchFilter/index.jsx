@@ -914,7 +914,6 @@ export default function BranchFilter({ editorId, position }) {
   return (
     <>
       <div ref={qbuilder} />
-      <p>{position}</p>
       {showOperandSettingsFor && (
         <OperandSettingsDialog
           ruleData={
