@@ -217,7 +217,7 @@ export default {
       defaultValue: '',
       label: 'Password',
       required: true,
-      helpKey: 'shopify.connection.http.auth.token.password',
+      helpKey: 'shopify.connection.http.auth.token.token',
       visibleWhen: [{ field: 'http.auth.type', is: ['token'] }],
     },
     'http.auth.oauth.scope': {
