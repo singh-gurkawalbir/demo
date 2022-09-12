@@ -126,3 +126,51 @@ describe('flowGroupStatus selector test', () => {
     expect(selectors.flowGroupStatus(state, 'i1')).toEqual(state.i1.flowGroupStatus);
   });
 });
+
+describe('Integration isTileClick action', () => {
+  test('should clear isTileClick from the state and should not clear other data', () => {
+    const state = reducer({
+      integration_id_1: { initComplete: true},
+      integration_id_2: { formSaveStatus: 'loading'},
+      integration_id_3: { redirectTo: '/request', isTileClick: true},
+    }, actions.resource.integrations.clearIsTileClick('integration_id_3'));
+
+    expect(state).toEqual({
+      integration_id_1: { initComplete: true},
+      integration_id_2: { formSaveStatus: 'loading'},
+      integration_id_3: { redirectTo: '/request' },
+    });
+  });
+
+  test('should add isTileClick to the state and should not clear/add other data', () => {
+    const state = reducer({
+      integration_id_1: { initComplete: true},
+      integration_id_2: { formSaveStatus: 'loading'},
+      integration_id_3: { redirectTo: '/request'},
+    }, actions.resource.integrations.isTileClick('integration_id_3', true));
+
+    expect(state).toEqual({
+      integration_id_1: { initComplete: true},
+      integration_id_2: { formSaveStatus: 'loading'},
+      integration_id_3: { redirectTo: '/request', isTileClick: true},
+    });
+  });
+});
+
+describe('isTileClick selector test', () => {
+  test('should not throw exception for bad params', () => {
+    expect(selectors.isTileClick()).toEqual(null);
+    expect(selectors.isTileClick({})).toEqual(null);
+    expect(selectors.isTileClick(null)).toEqual(null);
+  });
+
+  test('should return correct saveStatus value for valid integration and flow', () => {
+    const state = {
+      integration_id_1: {
+        isTileClick: true,
+      },
+    };
+
+    expect(selectors.isTileClick(state, 'integration_id_1')).toBeTruthy();
+  });
+});

@@ -1960,8 +1960,8 @@ selectors.mkHomeTileRedirectUrl = () => {
         urlToIntegrationSettings = `/integrationapps/${integrationAppTileName}/${tile._integrationId}/uninstall`;
         urlToIntegrationUsers = urlToIntegrationSettings;
       } else if (tile._connectorId) {
-        urlToIntegrationUsers = `/integrationapps/${integrationAppTileName}/${tile._integrationId}/users`;
         urlToIntegrationSettings = `/integrationapps/${integrationAppTileName}/${tile._integrationId}`;
+        urlToIntegrationUsers = `/integrationapps/${integrationAppTileName}/${tile._integrationId}/users`;
       }
 
       if (tile._connectorId) {

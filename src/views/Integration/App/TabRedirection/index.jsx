@@ -85,7 +85,9 @@ export default function TabRedirection({children}) {
   useEffect(() => {
     if (isTileClick) {
       dispatch(actions.resource.integrations.clearIsTileClick(integrationId));
-      history.push(`/integrationapps/${integrationAppName}/${integrationId}/child/${integration?.children[0]?.value}`);
+      if (integration?.children?.length === 1) {
+        history.push(`/integrationapps/${integrationAppName}/${integrationId}/child/${integration?.children[0]?.value}`);
+      }
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

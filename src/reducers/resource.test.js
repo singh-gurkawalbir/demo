@@ -4995,7 +4995,8 @@ describe('resource region selector testcases', () => {
         ssLinkedConnectionId: 'suitescript0',
       },
     ];
-    const standaloneTile = {
+    const standaloneTile =
+    {
       _integrationId: 'none',
       name: 'Standalone flows',
       numError: 0,
