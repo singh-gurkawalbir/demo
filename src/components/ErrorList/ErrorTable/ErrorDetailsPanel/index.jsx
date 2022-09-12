@@ -158,17 +158,16 @@ export default function ErrorDetailsPanel({
     const tabs = [];
 
     if (retryId) {
-      if (!isFlowDisabled) {
-        tabs.push(ERROR_DETAILS_TABS.EDIT_RETRY_DATA);
-      } else {
+      if (isFlowDisabled) {
         tabs.push(ERROR_DETAILS_TABS.VIEW_RETRY_DATA);
+      } else {
+        tabs.push(ERROR_DETAILS_TABS.EDIT_RETRY_DATA);
       }
     }
-    if (!reqAndResKey) return tabs;
 
-    if (isResourceNetsuite) {
+    if (reqAndResKey && isResourceNetsuite) {
       tabs.push(ERROR_DETAILS_TABS.NETSUITE_REQUEST, ERROR_DETAILS_TABS.NETSUITE_RESPONSE);
-    } else {
+    } else if (reqAndResKey) {
       tabs.push(ERROR_DETAILS_TABS.REQUEST, ERROR_DETAILS_TABS.RESPONSE);
     }
 
@@ -184,6 +183,11 @@ export default function ErrorDetailsPanel({
   useEffect(() => {
     setMode('editRetry');
   }, [activeErrorId]);
+
+  if (!mode || !availableTabs.map(tab => tab.type).includes(mode)) {
+    // Incase of invalid mode, redirects user to first available tab
+    setMode(availableTabs[0].type);
+  }
 
   if (!activeErrorId || activeErrorId === '') {
     return <EmptyErrorDetails classes={classes} />;
