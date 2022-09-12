@@ -1411,17 +1411,18 @@ const getNewChildrenToAdd = (parentNode, destinationNode) => {
   if (splitExtracts.length) {
     const extractsToAddEmptyDestinationNode = [];
 
-    splitExtracts.forEach(extract => {
+    splitExtracts.forEach((extract, extractIndex) => {
+      const currentExtract = getUniqueExtractId(extract, extractIndex);
       const hasDestNode = parentNode.children.some(childNode => {
         const { dataType, generate, parentExtract } = childNode;
 
         // checks for datatype, generate to check if the node exist for this extract
-        return dataType === destinationNode.dataType && generate === destinationNode.generate && parentExtract === extract;
+        return dataType === destinationNode.dataType && generate === destinationNode.generate && parentExtract === currentExtract;
       });
 
       if (!hasDestNode) {
         // make a list of extracts where the destination node does not exist
-        extractsToAddEmptyDestinationNode.push(extract);
+        extractsToAddEmptyDestinationNode.push(currentExtract);
       }
     });
     // fill the node under all the extracts that does not have
@@ -1484,6 +1485,11 @@ export const findAllPossibleDestinationMatchingLeafNodes = (matchingNodes = [], 
   return findAllPossibleDestinationMatchingLeafNodes(matchingNodes.slice(1), nextLevelParentNodes);
 };
 
+/**
+ * This util deals with destination node additions/updates inside an Object array node's children
+ * It updates the children with accommodating the added/updated node with destination at all possible places
+ * which matches destination structure with multiple extracts
+ */
 export const insertSiblingsOnDestinationUpdate = (treeData, newNode) => {
   const clonedTreeData = deepClone(treeData);
 
@@ -1491,7 +1497,7 @@ export const insertSiblingsOnDestinationUpdate = (treeData, newNode) => {
   if (!newNode.parentKey) return treeData;
   const {node: parentNode} = findNodeInTree(treeData, 'key', newNode.parentKey);
 
-  // do nothing if the new node's parent is not objarray
+  // do nothing if the new node's parent is not object array
   if (parentNode?.dataType !== MAPPING_DATA_TYPES.OBJECTARRAY) {
     return treeData;
   }
