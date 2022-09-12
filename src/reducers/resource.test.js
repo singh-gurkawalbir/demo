@@ -5002,77 +5002,10 @@ describe('resource region selector testcases', () => {
       offlineConnections: ['conn1', 'conn2'],
       numFlows: 5,
     };
-    const integrations = [
-      {
-        _id: 'integration_id_1',
-        settings: {
-          sections: [],
-        },
-      },
-      {
-        _id: 'integration_id_2',
-        settings: {
-          sections: [
-            {
-              title: 'Title1',
-              id: 'some_id_1',
-              sections: [],
-            },
-          ],
-          supportsMultiStore: true,
-        },
-      },
-      {
-        _id: 'integration_id_3',
-        settings: {
-          sections: [
-            {
-              title: 'Title 1',
-              id: 'some_id_1',
-              sections: [],
-            },
-            {
-              title: 'Title 2',
-              id: 'some_id_2',
-              sections: [],
-            },
-          ],
-          supportsMultiStore: true,
-        },
-      },
-    ];
-    const iaTiles = [
-      {
-        _connectorId: 'connector_id_1',
-        iaV2: false,
-        supportsChild: false,
-        _integrationId: 'integration_id_1',
-        name: 'Single store name',
-      },
-      {
-        _connectorId: 'connector_id_1',
-        iaV2: false,
-        supportsChild: true,
-        _integrationId: 'integration_id_2',
-        name: 'multi store name',
-      },
-      {
-        _connectorId: 'connector_id_1',
-        iaV2: false,
-        supportsChild: true,
-        _integrationId: 'integration_id_3',
-        name: 'multi store name',
-      },
-    ];
 
-    let state = reducer(
+    const state = reducer(
       undefined,
       actions.resource.receivedCollection('tiles', tiles)
-    );
-
-    state = reducer(
-      state,
-      actions.resource.receivedCollection('integrations', integrations)
     );
 
     test('should return correct values for standalone tiles', () => {
@@ -5234,40 +5167,6 @@ describe('resource region selector testcases', () => {
             }
           );
         });
-      });
-    });
-    describe('IA test cases for 1.0 IA', () => {
-      test('should return single store IA urls', () => {
-        expect(homeTileRedirectUrl(state, iaTiles[0])).toEqual(
-          {
-            urlToIntegrationConnections: '/integrationapps/Singlestorename/integration_id_1/connections',
-            urlToIntegrationSettings: '/integrationapps/Singlestorename/integration_id_1',
-            urlToIntegrationStatus: '/integrationapps/Singlestorename/integration_id_1/dashboard',
-            urlToIntegrationUsers: '/integrationapps/Singlestorename/integration_id_1/users',
-          }
-        );
-      });
-
-      test('should return multi store IA urls when there is single store', () => {
-        expect(homeTileRedirectUrl(state, iaTiles[1])).toEqual(
-          {
-            urlToIntegrationConnections: '/integrationapps/multistorename/integration_id_2/connections',
-            urlToIntegrationSettings: '/integrationapps/multistorename/integration_id_2/child/some_id_1',
-            urlToIntegrationStatus: '/integrationapps/multistorename/integration_id_2/dashboard',
-            urlToIntegrationUsers: '/integrationapps/multistorename/integration_id_2/users',
-          }
-        );
-      });
-
-      test('should return multi store IA urls when there more than one store', () => {
-        expect(homeTileRedirectUrl(state, iaTiles[2])).toEqual(
-          {
-            urlToIntegrationConnections: '/integrationapps/multistorename/integration_id_3/connections',
-            urlToIntegrationSettings: '/integrationapps/multistorename/integration_id_3',
-            urlToIntegrationStatus: '/integrationapps/multistorename/integration_id_3/dashboard',
-            urlToIntegrationUsers: '/integrationapps/multistorename/integration_id_3/users',
-          }
-        );
       });
     });
   });

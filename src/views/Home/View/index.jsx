@@ -19,8 +19,8 @@ export default function HomeView() {
   const searchInput = useSelector(state => selectors.filter(state, FILTER_KEY)?.keyword);
 
   // lazily load flows, only if search input is entered
-  const resourcesToLoad = searchInput ? 'published,connections,marketplacetemplates,flows,integrations'
-    : 'published,connections,marketplacetemplates,integrations';
+  const resourcesToLoad = searchInput ? 'published,connections,marketplacetemplates,flows'
+    : 'published,connections,marketplacetemplates';
 
   useEffect(() => {
     dispatch(actions.patchFilter(FILTER_KEY, DEFAULT_FILTERS));

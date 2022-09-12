@@ -1896,7 +1896,6 @@ selectors.mkFilteredHomeTiles = () => {
 
 selectors.mkHomeTileRedirectUrl = () => {
   const marketplaceResourceSel = selectors.makeResourceSelector();
-  const integrationAppSettings = selectors.mkIntegrationAppSettings();
 
   return createSelector(
     (_, tile) => tile,
@@ -1910,14 +1909,7 @@ selectors.mkHomeTileRedirectUrl = () => {
 
       return null;
     },
-    (state, tile) => {
-      if (!tile.iaV2 && tile._connectorId && tile.supportsChild) {
-        return integrationAppSettings(state, tile._integrationId);
-      }
-
-      return {};
-    },
-    (tile, isUserInErrMgtTwoDotZero, templateName, integration) => {
+    (tile, isUserInErrMgtTwoDotZero, templateName) => {
       // separate logic for suitescript tiles
       if (tile.ssLinkedConnectionId) {
         let urlToIntegrationSettings = `/suitescript/${tile.ssLinkedConnectionId}/integrations/${tile._integrationId}`;
@@ -1969,11 +1961,7 @@ selectors.mkHomeTileRedirectUrl = () => {
         urlToIntegrationUsers = urlToIntegrationSettings;
       } else if (tile._connectorId) {
         urlToIntegrationUsers = `/integrationapps/${integrationAppTileName}/${tile._integrationId}/users`;
-        if (!tile.iaV2 && integration?.children?.length === 1) {
-          urlToIntegrationSettings = `/integrationapps/${integrationAppTileName}/${tile._integrationId}/child/${integration?.children[0]?.value}`;
-        } else {
-          urlToIntegrationSettings = `/integrationapps/${integrationAppTileName}/${tile._integrationId}`;
-        }
+        urlToIntegrationSettings = `/integrationapps/${integrationAppTileName}/${tile._integrationId}`;
       }
 
       if (tile._connectorId) {
