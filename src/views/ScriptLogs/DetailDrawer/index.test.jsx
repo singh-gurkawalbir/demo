@@ -12,8 +12,6 @@ import { getCreatedStore } from '../../../store';
 import { integrations, flows, exports, imports, scripts } from '../index.test';
 
 let initialStore;
-let logs;
-let scriptlogs;
 
 function store(logs, scriptlogs) {
   initialStore.getState().data.resources.integrations = integrations;
@@ -58,7 +56,7 @@ describe('Script Logs Drawer Route', () => {
     done();
   });
   test('Should able to test the Script logs drawer by clicking on close button', async () => {
-    logs = {
+    store({
       time: new Date('2022-08-13'),
       _resourceId: '62e59e0c76ce554057c07abc',
       functionType: 'Function type',
@@ -66,8 +64,7 @@ describe('Script Logs Drawer Route', () => {
       message: 'test message',
       index: 76,
       name: 'Test Script',
-    };
-    scriptlogs = {
+    }, {
       connections: {},
       scripts: {
         scripts: {
@@ -85,27 +82,20 @@ describe('Script Logs Drawer Route', () => {
       },
       flowStep: {},
       id: '62e59df376ce554057c07abc-62e59e1176ce554057c07abc',
-    };
-    store(logs, scriptlogs);
+    });
     initViewLogDetailDrawer();
-    const headingNode = screen.getByRole('heading', {name: 'View execution log details: Test Script'});
 
-    expect(headingNode).toBeInTheDocument();
-    const TimestampLabelNode = screen.getByText(/Timestamp:/i);
+    expect(screen.getByRole('heading', {name: 'View execution log details: Test Script'})).toBeInTheDocument();
 
-    expect(TimestampLabelNode).toBeInTheDocument();
-    const typeNode = screen.getByText(/Type: debug/i);
+    expect(screen.getByText(/Timestamp:/i)).toBeInTheDocument();
 
-    expect(typeNode).toBeInTheDocument();
-    const functionTypeNode = screen.getByText(/Function type: Function type/i);
+    expect(screen.getByText(/Type: debug/i)).toBeInTheDocument();
 
-    expect(functionTypeNode).toBeInTheDocument();
-    const messageLabelNode = screen.getByText(/Message:/i);
+    expect(screen.getByText(/Function type: Function type/i)).toBeInTheDocument();
 
-    expect(messageLabelNode).toBeInTheDocument();
-    const testMessageNode = screen.getByText(/test message/i);
+    expect(screen.getByText(/Message:/i)).toBeInTheDocument();
 
-    expect(testMessageNode).toBeInTheDocument();
+    expect(screen.getByText(/test message/i)).toBeInTheDocument();
     const closeButtonNode = screen.getByRole('button', {name: 'Close'});
 
     expect(closeButtonNode).toBeInTheDocument();
@@ -113,9 +103,7 @@ describe('Script Logs Drawer Route', () => {
     expect(mockHistoryBack).toHaveBeenCalledTimes(1);
   });
   test('Should able to test the Script logs drawer with no logs and with no name', async () => {
-    logs = {
-    };
-    scriptlogs = {
+    store({}, {
       connections: {},
       scripts: {
         scripts: {
@@ -133,11 +121,8 @@ describe('Script Logs Drawer Route', () => {
       },
       flowStep: {},
       id: '62e59df376ce554057c07abc-62e59e1176ce554057c07abc',
-    };
-    store(logs, scriptlogs);
+    });
     initViewLogDetailDrawer();
-    const headingNode = screen.getByText(/View execution log details:/i);
-
-    expect(headingNode).toBeInTheDocument();
+    expect(screen.getByText(/View execution log details:/i)).toBeInTheDocument();
   });
 });

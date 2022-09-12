@@ -14,7 +14,6 @@ import { runServer } from '../../test/api/server';
 import { getCreatedStore } from '../../store';
 
 let initialStore;
-let sessionLogs;
 export const integrations = [{
   _id: '62e59dbf76ce554057c07abc',
   lastModified: '2022-08-10T14:15:32.569Z',
@@ -362,40 +361,31 @@ describe('Script logs', () => {
   });
 
   test('Should able to test the run now button', async () => {
-    const props = {
+    store({});
+    await initScriptLogs({
       flowId: '62e59e1176ce554057c07abc',
       scriptId: '62e59df376ce554057c07abc',
-    };
-
-    sessionLogs = {};
-    store(sessionLogs);
-    await initScriptLogs(props);
+    });
     const runNode = screen.getByText('Run now');
 
     expect(runNode).toBeInTheDocument();
   });
   test('Should able to test the start debug button', async () => {
-    const props = {
+    store({});
+    await initScriptLogs({
       flowId: '62e59e1176ce554057c07abc',
       scriptId: '62e59df376ce554057c07abc',
-    };
-
-    sessionLogs = {};
-    store(sessionLogs);
-    await initScriptLogs(props);
+    });
     const startDebugButton = screen.getByText('Start debug');
 
     expect(startDebugButton).toBeInTheDocument();
   });
   test('Should able to test the today date range select button', async () => {
-    const props = {
+    store({});
+    await initScriptLogs({
       flowId: '62e59e1176ce554057c07abc',
       scriptId: '62e59df376ce554057c07abc',
-    };
-
-    sessionLogs = {};
-    store(sessionLogs);
-    await initScriptLogs(props);
+    });
 
     const last15ButtonNode = screen.queryByRole('button', { name: 'Last 15 minutes' });
 
@@ -429,15 +419,11 @@ describe('Script logs', () => {
     expect(applyButtonNode).not.toBeInTheDocument();
   }, 30000);
   test('Should able to test the last 15 minutes date range select button with no execution logs', async () => {
-    const props = {
+    store({});
+    await initScriptLogs({
       flowId: '62e59e1176ce554057c07abc',
       scriptId: '62e59df376ce554057c07abc',
-    };
-
-    sessionLogs = {};
-
-    store(sessionLogs);
-    await initScriptLogs(props);
+    });
 
     const last15ButtonNode = screen.queryByRole('button', { name: 'Last 15 minutes' });
 
@@ -467,14 +453,11 @@ describe('Script logs', () => {
     expect(applyButtonNode).not.toBeInTheDocument();
   }, 30000);
   test('Should able to test the last 24 hours date range select button', async () => {
-    const props = {
+    store({});
+    await initScriptLogs({
       flowId: '62e59e1176ce554057c07abc',
       scriptId: '62e59df376ce554057c07abc',
-    };
-
-    sessionLogs = {};
-    store(sessionLogs);
-    await initScriptLogs(props);
+    });
 
     const last15ButtonNode = screen.queryByRole('button', { name: 'Last 15 minutes' });
 
@@ -508,15 +491,11 @@ describe('Script logs', () => {
     expect(applyButtonNode).not.toBeInTheDocument();
   }, 30000);
   test('Should able to test the last 30 minutes date range select button', async () => {
-    const props = {
+    store({});
+    await initScriptLogs({
       flowId: '62e59e1176ce554057c07abc',
       scriptId: '62e59df376ce554057c07abc',
-    };
-
-    sessionLogs = {};
-
-    store(sessionLogs);
-    await initScriptLogs(props);
+    });
 
     const last15ButtonNode = screen.queryByRole('button', { name: 'Last 15 minutes' });
 
@@ -550,14 +529,11 @@ describe('Script logs', () => {
     expect(applyButtonNode).not.toBeInTheDocument();
   }, 30000);
   test('Should able to test the last hour date range select button', async () => {
-    const props = {
+    store({});
+    await initScriptLogs({
       flowId: '62e59e1176ce554057c07abc',
       scriptId: '62e59df376ce554057c07abc',
-    };
-
-    sessionLogs = {};
-    store(sessionLogs);
-    await initScriptLogs(props);
+    });
 
     const last15ButtonNode = screen.queryByRole('button', { name: 'Last 15 minutes' });
 
@@ -591,14 +567,11 @@ describe('Script logs', () => {
     expect(applyButtonNode).not.toBeInTheDocument();
   }, 30000);
   test('Should able to test the yesterday date range select button', async () => {
-    const props = {
+    store({});
+    await initScriptLogs({
       flowId: '62e59e1176ce554057c07abc',
       scriptId: '62e59df376ce554057c07abc',
-    };
-
-    sessionLogs = {};
-    store(sessionLogs);
-    await initScriptLogs(props);
+    });
 
     const last15ButtonNode = screen.queryByRole('button', { name: 'Last 15 minutes' });
 
@@ -632,15 +605,12 @@ describe('Script logs', () => {
     expect(applyButtonNode).not.toBeInTheDocument();
   }, 30000);
   test('Should able to test the last 4 hours date range select button', async () => {
-    const props = {
+    store({});
+    await initScriptLogs({
       flowId: '62e59e1176ce554057c07abc',
       scriptId: '62e59df376ce554057c07abc',
       logs: [],
-    };
-
-    sessionLogs = {};
-    store(sessionLogs);
-    await initScriptLogs(props);
+    });
 
     const last15ButtonNode = screen.queryByRole('button', { name: 'Last 15 minutes' });
 
@@ -674,12 +644,7 @@ describe('Script logs', () => {
     expect(applyButtonNode).not.toBeInTheDocument();
   }, 30000);
   test('Should able to test the step button drop-down by selecting a flow', async () => {
-    const props = {
-      flowId: '62e59e1176ce554057c07abc',
-      scriptId: '62e59df376ce554057c07abc',
-    };
-
-    sessionLogs = {
+    store({
       connections: {},
       scripts: {
         scripts: {
@@ -712,9 +677,11 @@ describe('Script logs', () => {
         },
       },
       flowStep: {},
-    };
-    store(sessionLogs);
-    await initScriptLogs(props);
+    });
+    await initScriptLogs({
+      flowId: '62e59e1176ce554057c07abc',
+      scriptId: '62e59df376ce554057c07abc',
+    });
 
     const stepDropDownNode = screen.getByRole('button', { name: 'Step' });
 
@@ -744,14 +711,11 @@ describe('Script logs', () => {
     expect(applyButtonNode).not.toBeInTheDocument();
   });
   test('Should able to test the function type button drop-down', async () => {
-    const props = {
+    store({});
+    await initScriptLogs({
       flowId: '62e59e1176ce554057c07abc',
       scriptId: '62e59df376ce554057c07abc',
-    };
-
-    sessionLogs = {};
-    store(sessionLogs);
-    await initScriptLogs(props);
+    });
     const functionTypeDropDownNode = screen.getByRole('button', { name: 'Function type' });
 
     expect(functionTypeDropDownNode).toBeInTheDocument();
@@ -803,14 +767,11 @@ describe('Script logs', () => {
     expect(preSavePageButtonNode).toBeInTheDocument();
   }, 30000);
   test('Should able to test the log level button drop-down', async () => {
-    const props = {
+    store({});
+    await initScriptLogs({
       flowId: '62e59e1176ce554057c07abc',
       scriptId: '62e59df376ce554057c07abc',
-    };
-
-    sessionLogs = {};
-    store(sessionLogs);
-    await initScriptLogs(props);
+    });
     const logLevelDropDownNode = screen.getByRole('button', { name: 'Log level' });
 
     expect(logLevelDropDownNode).toBeInTheDocument();
@@ -840,12 +801,7 @@ describe('Script logs', () => {
     expect(debugButtonNode).toBeInTheDocument();
   });
   test('Should able to test the refresh button', async () => {
-    const props = {
-      flowId: '62e59e1176ce554057c07abc',
-      scriptId: '62e59df376ce554057c07abc',
-    };
-
-    sessionLogs = {
+    store({
       connections: {},
       scripts: {
         scripts: {
@@ -870,9 +826,11 @@ describe('Script logs', () => {
         },
       },
       flowStep: {},
-    };
-    store(sessionLogs);
-    await initScriptLogs(props);
+    });
+    await initScriptLogs({
+      flowId: '62e59e1176ce554057c07abc',
+      scriptId: '62e59df376ce554057c07abc',
+    });
     const refreshButtonNode = screen.getByRole('button', {name: 'Refresh'});
 
     expect(refreshButtonNode).toBeInTheDocument();
@@ -883,12 +841,7 @@ describe('Script logs', () => {
     }));
   });
   test('Should able to test the rows button with no execution logs', async () => {
-    const props = {
-      flowId: '62e59e1176ce554057c07abc',
-      scriptId: '62e59df376ce554057c07abc',
-    };
-
-    sessionLogs = {
+    store({
       connections: {},
       scripts: {
         scripts: {
@@ -906,9 +859,11 @@ describe('Script logs', () => {
         },
       },
       flowStep: {},
-    };
-    store(sessionLogs);
-    await initScriptLogs(props);
+    });
+    await initScriptLogs({
+      flowId: '62e59e1176ce554057c07abc',
+      scriptId: '62e59df376ce554057c07abc',
+    });
     const rowsTextNode = screen.getByText(/Rows/i);
 
     expect(rowsTextNode).toBeInTheDocument();
@@ -932,12 +887,7 @@ describe('Script logs', () => {
     expect(noExecutionLogsNode).toBeInTheDocument();
   });
   test('Should able to test the pagination button', async () => {
-    const props = {
-      flowId: '62e59e1176ce554057c07abc',
-      scriptId: '62e59df376ce554057c07abc',
-    };
-
-    sessionLogs = {
+    store({
       connections: {},
       scripts: {
         scripts: {
@@ -1033,9 +983,11 @@ describe('Script logs', () => {
         },
       },
       flowStep: {},
-    };
-    store(sessionLogs);
-    await initScriptLogs(props);
+    });
+    await initScriptLogs({
+      flowId: '62e59e1176ce554057c07abc',
+      scriptId: '62e59df376ce554057c07abc',
+    });
 
     const rowsTextNode = screen.getByText(/Rows/i);
 
@@ -1067,12 +1019,7 @@ describe('Script logs', () => {
     expect(pageNode).toBeInTheDocument();
   }, 30000);
   test('Should able to test the logs when the status is inprogress and clicking on pause and resume button', async () => {
-    const props = {
-      flowId: '62e59e1176ce554057c07abc',
-      scriptId: '62e59df376ce554057c07abc',
-    };
-
-    sessionLogs = {
+    store({
       connections: {},
       scripts: {
         scripts: {
@@ -1091,9 +1038,11 @@ describe('Script logs', () => {
         },
       },
       flowStep: {},
-    };
-    store(sessionLogs);
-    await initScriptLogs(props);
+    });
+    await initScriptLogs({
+      flowId: '62e59e1176ce554057c07abc',
+      scriptId: '62e59df376ce554057c07abc',
+    });
     const fetchingLogsNode = screen.getByText(/Fetching logs... 0% completed/i);
 
     expect(fetchingLogsNode).toBeInTheDocument();
@@ -1108,14 +1057,11 @@ describe('Script logs', () => {
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.logs.scripts.loadMore({scriptId: '62e59df376ce554057c07abc', flowId: '62e59e1176ce554057c07abc', fetchNextPage: true}));
   });
   test('Should able to test the function type drop-down button when there is no flow id', async () => {
-    const props = {
+    store({});
+    await initScriptLogs({
       flowId: '',
       scriptId: '62e59df376ce554057c07abc',
-    };
-
-    sessionLogs = {};
-    store(sessionLogs);
-    await initScriptLogs(props);
+    });
     const functionTypeButtonNode = screen.getByRole('button', {name: 'Function type'});
 
     expect(functionTypeButtonNode).toBeInTheDocument();

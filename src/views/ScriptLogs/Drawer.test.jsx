@@ -125,18 +125,14 @@ describe('Script Logs Drawer Route', () => {
     cleanup();
   });
   test('Should able to test the Script logs drawer header text', async () => {
-    const scriptname = 'Test Script';
-
-    store(scriptname);
+    store('Test Script');
     initScriptLogsDrawerRoute();
     const headerTextNode = screen.getByRole('heading', {name: 'Execution log: Test Script'});
 
     expect(headerTextNode).toBeInTheDocument();
   });
   test('Should able to test the Script logs drawer close button', async () => {
-    const scriptname = 'Test Script';
-
-    store(scriptname);
+    store('Test Script');
     initScriptLogsDrawerRoute();
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.logs.scripts.request({scriptId: '62e59df376ce554057c07abc', isInit: true}));
     const closeButtonNode = screen.getByRole('button', {name: 'Close'});
@@ -146,9 +142,7 @@ describe('Script Logs Drawer Route', () => {
     expect(mockHistoryBack).toHaveBeenCalledTimes(1);
   });
   test('Should able to test the Script logs drawer header with empty script name', async () => {
-    const scriptname = '';
-
-    store(scriptname);
+    store('');
     initScriptLogsDrawerRoute();
     const headerTextNode = screen.getByRole('heading', {name: 'Execution log:'});
 
