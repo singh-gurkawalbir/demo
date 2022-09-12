@@ -4,7 +4,6 @@ import { MemoryRouter, Route} from 'react-router-dom';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { screen, cleanup } from '@testing-library/react';
 // eslint-disable-next-line import/no-extraneous-dependencies
-import userEvent from '@testing-library/user-event';
 import { renderWithProviders } from '../../test/test-utils';
 import MyAccount from '.';
 import { getCreatedStore } from '../../store';
@@ -739,35 +738,19 @@ describe('MyAccount', () => {
     };
 
     await initMyAccount(match, match.params.tab);
-    const myAccountText = screen.getByText('My account');
+    expect(screen.getByText('My account')).toBeInTheDocument();
 
-    expect(myAccountText).toBeInTheDocument();
-    const profileText = screen.getByText('Profile');
+    expect(screen.getByText('Profile')).toBeInTheDocument();
 
-    expect(profileText).toBeInTheDocument();
-    userEvent.click(profileText);
-    const usersText = screen.getByText('Users');
+    expect(screen.getByText('Users')).toBeInTheDocument();
 
-    expect(usersText).toBeInTheDocument();
-    userEvent.click(usersText);
-    expect(profileText).toBeInTheDocument();
-    userEvent.click(profileText);
-    const subscriptionText = screen.getByText('Subscription');
+    expect(screen.getByText('Subscription')).toBeInTheDocument();
 
-    expect(subscriptionText).toBeInTheDocument();
-    userEvent.click(subscriptionText);
-    const auditlogText = screen.getByText('Audit log');
+    expect(screen.getByText('Audit log')).toBeInTheDocument();
 
-    expect(auditlogText).toBeInTheDocument();
-    userEvent.click(auditlogText);
-    const transferText = screen.getByText('Transfers');
+    expect(screen.getByText('Transfers')).toBeInTheDocument();
 
-    expect(transferText).toBeInTheDocument();
-    userEvent.click(transferText);
-    const securityText = screen.getByText('Security');
-
-    expect(securityText).toBeInTheDocument();
-    userEvent.click(securityText);
+    expect(screen.getByText('Security')).toBeInTheDocument();
   });
   test('Should able to acess the subscription tab', async () => {
     const match = {
@@ -793,7 +776,6 @@ describe('MyAccount', () => {
     const subscriptionText = screen.getByRole('tab', {name: 'Subscription'});
 
     expect(subscriptionText).toBeInTheDocument();
-    userEvent.click(subscriptionText);
   });
   test('Should able to access the Myaccount tab with the account which has manage access', async () => {
     const accounts = [
@@ -824,5 +806,80 @@ describe('MyAccount', () => {
     const tabCount = screen.getAllByRole('tab');
 
     expect(tabCount).toHaveLength(2);
+  });
+  test('Should able to acess the audit tab', async () => {
+    const match = {
+      path: '/myAccount/:tab',
+      url: '/myAccount/audit',
+      isExact: true,
+      params: {
+        tab: 'audit',
+      },
+    };
+
+    const accounts = [
+      {
+        _id: 'own',
+        accessLevel: 'owner',
+        defaultAShareId: 'own',
+      },
+    ];
+
+    store(accounts);
+    await initMyAccount(match, match.params.tab);
+
+    const auditText = screen.getByRole('tab', {name: 'Audit log'});
+
+    expect(auditText).toBeInTheDocument();
+  });
+  test('Should able to acess the transfers tab', async () => {
+    const match = {
+      path: '/myAccount/:tab',
+      url: '/myAccount/transfers',
+      isExact: true,
+      params: {
+        tab: 'transfers',
+      },
+    };
+
+    const accounts = [
+      {
+        _id: 'own',
+        accessLevel: 'owner',
+        defaultAShareId: 'own',
+      },
+    ];
+
+    store(accounts);
+    await initMyAccount(match, match.params.tab);
+
+    const transfersText = screen.getByRole('tab', {name: 'Transfers'});
+
+    expect(transfersText).toBeInTheDocument();
+  });
+  test('Should able to acess the security tab', async () => {
+    const match = {
+      path: '/myAccount/:tab',
+      url: '/myAccount/security',
+      isExact: true,
+      params: {
+        tab: 'security',
+      },
+    };
+
+    const accounts = [
+      {
+        _id: 'own',
+        accessLevel: 'owner',
+        defaultAShareId: 'own',
+      },
+    ];
+
+    store(accounts);
+    await initMyAccount(match, match.params.tab);
+
+    const securityText = screen.getByRole('tab', {name: 'Security'});
+
+    expect(securityText).toBeInTheDocument();
   });
 });
