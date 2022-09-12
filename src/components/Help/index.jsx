@@ -25,7 +25,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function Help({ className, helpKey, helpText, escapeUnsecuredDomains, ...rest }) {
+export default function Help({ className, helpKey, helpText, escapeUnsecuredDomains, disablePortal = 'true', ...rest }) {
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = useState(null);
   const popperRef = React.useRef(null);
@@ -69,6 +69,7 @@ export default function Help({ className, helpKey, helpText, escapeUnsecuredDoma
         placement="right"
         id="helpBubble"
         open={open}
+        disablePortal={disablePortal}
         popperRef={popperRef}
         anchorEl={anchorEl}>
         <HelpContent {...rest} updatePosition={() => { popperRef.current.update(); }}>
