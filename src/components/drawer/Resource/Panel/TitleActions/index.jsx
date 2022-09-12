@@ -65,7 +65,7 @@ export default function TitleActions({ flowId }) {
       id
     ) || {};
 
-  applicationType = merged?.http?.formType === 'http' ? 'http' : applicationType;
+  applicationType = merged.http?.formType === 'http' ? 'http' : applicationType;
   const app = applications.find(a => [a.id, a.assistant].includes(applicationType)) || {};
 
   const flowStepDrawerHandler = useCallback(() => {

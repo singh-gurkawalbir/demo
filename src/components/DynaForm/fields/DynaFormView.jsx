@@ -44,7 +44,7 @@ export default function FormView(props) {
     if (!isTitleBar) return containerValue;
     if (!staggedResource || !staggedResource.http || !staggedResource.http.formType) return defaultValue;
 
-    return staggedResource?.http?.formType === 'assistant' ? 'false' : 'true';
+    return staggedResource.http?.formType === 'assistant' ? 'false' : 'true';
   }, [staggedResource, containerValue, isTitleBar, defaultValue]);
   const resourceFormState = useSelector(
     state =>

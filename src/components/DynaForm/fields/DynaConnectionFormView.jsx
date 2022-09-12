@@ -39,7 +39,7 @@ export default function FormView(props) {
   const value = useMemo(() => {
     if (!stagedResource || !stagedResource.http || !stagedResource.http.formType) return defaultValue;
 
-    return stagedResource?.http?.formType === 'assistant' ? 'false' : 'true';
+    return stagedResource.http?.formType === 'assistant' ? 'false' : 'true';
   }, [stagedResource, defaultValue]);
 
   const resourceFormState = useSelector(
