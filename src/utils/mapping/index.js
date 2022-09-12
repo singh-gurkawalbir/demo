@@ -564,8 +564,6 @@ export const getExtractFromUniqueId = extractId => {
   return extractId;
 };
 
-export const isEmptyNode = node => !node.generate && !node.extract && node.dataType === MAPPING_DATA_TYPES.STRING;
-
 // for object array multiple extracts view,
 // mark non active tabs children as hidden
 export const hideOtherTabRows = (node, newTabExtract, hidden) => {
@@ -1359,7 +1357,7 @@ const getNewNode = (defaultProps = {}) => {
 
   if (childNodes.length > 1) {
     // Strips off any empty nodes present in the child nodes when there are multiple children
-    childNodes = childNodes.filter(childNode => !isEmptyNode(childNode));
+    childNodes = childNodes.filter(childNode => !childNode.isEmptyRow);
   }
   const node = {
     key: newKey,
@@ -1396,8 +1394,6 @@ export const constructNodeWithEmptySource = node => {
   // Incase of children, replace children with empty children
   return getNewNode({...defaultProps, children: emptyChildren, key: newKey });
 };
-
-export const hasEmptyRow = node => !node.generate && !node.extract && node.dataType === 'string';
 
 const getNewChildrenToAdd = (parentNode, destinationNode) => {
   // the destination node is expected to be a child - so checks for parentKey and generate field
@@ -1511,7 +1507,7 @@ export const insertSiblingsOnDestinationUpdate = (treeData, newNode) => {
   matchingLeafNodes.forEach(parentNode => {
     const newChildren = getNewChildrenToAdd(parentNode, newNode);
 
-    if (parentNode.children?.length === 1 && isEmptyNode(parentNode.children[0])) {
+    if (parentNode.children?.length === 1 && parentNode.children[0]?.isEmptyRow) {
       // eslint-disable-next-line no-param-reassign
       parentNode.children = newChildren;
     } else {
