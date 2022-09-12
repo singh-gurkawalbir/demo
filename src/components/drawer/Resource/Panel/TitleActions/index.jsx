@@ -10,6 +10,7 @@ import { drawerPaths, buildDrawerUrl } from '../../../../../utils/rightDrawer';
 import {applicationsList} from '../../../../../constants/applications';
 import ApplicationImg from '../../../../icons/ApplicationImg';
 import { TextButton } from '../../../../Buttons';
+import { useSelectorMemo } from '../../../../../hooks';
 
 const useStyles = makeStyles(theme => ({
   appLogo: {
@@ -53,10 +54,18 @@ export default function TitleActions({ flowId }) {
   const applications = applicationsList();
   const isNew = operation === 'add';
   const hasFlowStepLogsAccess = useSelector(state => selectors.hasLogsAccess(state, id, resourceType, isNew, flowId));
-  const applicationType = useSelector(state => selectors.applicationType(state, resourceType, id));
+  let applicationType = useSelector(state => selectors.applicationType(state, resourceType, id));
   const showApplicationLogo =
     ['exports', 'imports', 'connections'].includes(resourceType) &&
     !!applicationType;
+  const { merged } =
+    useSelectorMemo(
+      selectors.makeResourceDataSelector,
+      resourceType,
+      id
+    ) || {};
+
+  applicationType = merged.http?.formType === 'http' ? 'http' : applicationType;
   const app = applications.find(a => [a.id, a.assistant].includes(applicationType)) || {};
 
   const flowStepDrawerHandler = useCallback(() => {
