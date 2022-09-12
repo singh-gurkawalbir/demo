@@ -78,6 +78,12 @@ export default function reducer(state = {}, action) {
           }
         } else {
           draft[id].data = sampleData;
+          // for file definition generator where post map data needs to be shown
+          // this action gets called so we add the originalData here
+          // ref IO-27516
+          if (draft[id].editorType === 'structuredFileGenerator' && draft[id].stage) {
+            draft[id].originalData = sampleData;
+          }
         }
         draft[id].dataVersion = templateVersion;
         draft[id].sampleDataStatus = 'received';
@@ -129,6 +135,8 @@ export default function reducer(state = {}, action) {
 
         if (rulePath) {
           set(draftRule, rulePath, rulePatch);
+        } else if (processorLogic.updateRule(draft[id])) {
+          processorLogic.updateRule(draft[id])(draft[id], action, shouldReplace);
         } else if (!shouldReplace) {
           Object.assign(draftRule, deepClone(rulePatch));
         } else if (ap) {
@@ -324,7 +332,7 @@ selectors.editorData = (state, id) => {
   const editor = state[id];
 
   if (!editor) return;
-  const mode = editor.activeProcessor;
+  const mode = editor.activeProcessor || editor.rule?.activeProcessor;
 
   if (mode) {
     return editor.data?.[mode];

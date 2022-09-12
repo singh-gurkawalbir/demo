@@ -121,11 +121,23 @@ export default {
     },
     httpRefreshToken: {
       formId: 'httpRefreshToken',
-      visibleWhenAll: [
-        { field: 'http.auth.type', is: ['token'] },
-        { field: 'http.auth.token.location', isNot: [''] },
-        { field: 'configureTokenRefresh', is: [true] },
-      ],
+      visibleWhenAll: [{
+        OR: [
+          {
+            AND: [
+              { field: 'http.auth.type', is: ['token'] },
+              { field: 'http.auth.token.location', isNot: [''] },
+              { field: 'configureTokenRefresh', is: [true] },
+            ],
+          },
+          {
+            AND: [
+              { field: 'http.auth.type', is: ['custom'] },
+              { field: 'configureCutomAuthTokenRefresh', is: [true] },
+            ],
+          },
+        ],
+      }],
     },
     httpCookie: {
       formId: 'httpCookie',
@@ -188,6 +200,9 @@ export default {
     graphql: {
       formId: 'graphql',
     },
+    configureCutomAuthTokenRefresh: {
+      fieldId: 'configureCutomAuthTokenRefresh',
+    },
   },
   layout: {
     type: 'collapse',
@@ -240,6 +255,7 @@ export default {
                 fields: [
                   'http.custom.encrypted',
                   'http.custom.unencrypted',
+                  'configureCutomAuthTokenRefresh',
                 ],
               },
               {

@@ -232,11 +232,11 @@ export default {
     if (finalSuccessMediaType(formValues, connection) === 'xml' && retValues['/parsers']?.resourcePath !== '') {
       retValues['/http/response/resourcePath'] = retValues['/parsers'].resourcePath;
     }
+    const parseStrategy = retValues['/parsers']?.[0]?.rules?.['V0_json'];
 
-    if (finalSuccessMediaType(formValues, connection) !== 'xml') {
+    if (finalSuccessMediaType(formValues, connection) !== 'xml' || parseStrategy) {
       retValues['/parsers'] = undefined;
     }
-
     if (finalSuccessMediaType(formValues, connection) === 'csv') {
       delete retValues['/http/response/resourcePath'];
       retValues['/http/response'] = undefined;
@@ -314,6 +314,17 @@ export default {
 
         return 'records';
       },
+    },
+    groupByFields: {
+      fieldId: 'groupByFields',
+      defaultValue: r => r.groupByFields,
+      resourceSubType: 'http',
+      visibleWhenAll: [
+        {
+          field: 'outputMode',
+          is: ['records'],
+        },
+      ],
     },
     'http.method': { fieldId: 'http.method' },
     'http.blobMethod': { fieldId: 'http.blobMethod' },
@@ -578,6 +589,11 @@ export default {
             ],
           },
         ],
+      },
+      {
+        collapsed: true,
+        label: 'Would you like to group records?',
+        fields: ['groupByFields'],
       },
       {
         collapsed: true,

@@ -227,6 +227,20 @@ describe('AppRoutingWith authentication redirection behavior', () => {
         ],
       });
 
+      const sessionState = {
+        mfa: {
+          sessionInfo:
+          {
+            status: 'received',
+            data: {
+              mfaVerified: true, mfaRequired: true, mfaSetupRequired: true,
+            },
+          },
+        },
+      };
+
+      const store = createStore(reducer, { session: sessionState });
+
       render(
         reduxRouterWrappedComponent({
           Component: wrappedHistory,
@@ -258,6 +272,20 @@ describe('AppRoutingWith authentication redirection behavior', () => {
         },
       ],
     });
+
+    const sessionState = {
+      mfa: {
+        sessionInfo:
+        {
+          status: 'received',
+          data: {
+            mfaVerified: true, mfaRequired: true, mfaSetupRequired: true,
+          },
+        },
+      },
+    };
+
+    const store = createStore(reducer, { session: sessionState });
 
     render(
       reduxRouterWrappedComponent({

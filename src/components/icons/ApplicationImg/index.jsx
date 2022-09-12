@@ -53,7 +53,7 @@ function iconMap(type = '') {
   if (['ftpexport', 'ftpimport'].includes(type.toLowerCase())) return 'ftp';
 
   // remove all whitespaces and dots
-  return type.replace(/\.|\s/g, '');
+  return type.replace(/\.|\s/g, '') && type.toLowerCase();
 }
 
 function imageName(assistant) {
@@ -72,7 +72,7 @@ function imageName(assistant) {
     return 'redshift';
   }
 
-  return assistant;
+  return assistant.toLowerCase();
 }
 
 export default function ApplicationImg({

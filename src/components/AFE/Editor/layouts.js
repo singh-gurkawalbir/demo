@@ -37,8 +37,8 @@ export default {
   },
   readme: {
     gridTemplateColumns: '1fr',
-    gridTemplateRows: '1fr auto 1fr',
-    gridTemplateAreas: '"rule" "dragBar_h_0" "result" "dragBar_h_1"',
+    gridTemplateRows: '1fr auto 1fr auto 0fr',
+    gridTemplateAreas: '"rule" "dragBar_h_0" "result" "dragBar_h_1" "error"',
   },
   lookupFilter: {
     gridTemplateColumns: '1fr',

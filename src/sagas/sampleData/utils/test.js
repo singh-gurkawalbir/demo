@@ -2313,9 +2313,8 @@ describe('Flow sample data utility sagas', () => {
               resourceId: _pageProcessorId,
               resourceType: 'imports',
             }), newPpDoc],
-            [call(apiCallWithRetry, apiOptions), previewData],
+            [matchers.call.fn(apiCallWithRetry, apiOptions), previewData],
           ])
-          .call(apiCallWithRetry, apiOptions)
           .returns(previewData)
           .run();
       });
@@ -3002,6 +3001,7 @@ describe('Flow sample data utility sagas', () => {
             [call(pageProcessorPreview, {
               flowId,
               _pageProcessorId,
+              routerId: undefined,
               _pageProcessorDoc: undefined,
               previewType,
               editorId: undefined,
@@ -3017,6 +3017,7 @@ describe('Flow sample data utility sagas', () => {
             flowId,
             _pageProcessorId,
             _pageProcessorDoc: undefined,
+            routerId: undefined,
             previewType,
             editorId: undefined,
             resourceType: 'imports',

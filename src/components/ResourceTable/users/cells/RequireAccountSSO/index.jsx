@@ -8,9 +8,10 @@ import { COMM_STATES } from '../../../../../reducers/comms/networkComms';
 import useEnqueueSnackbar from '../../../../../hooks/enqueueSnackbar';
 import useCommStatus from '../../../../../hooks/useCommStatus';
 import { ACCOUNT_IDS, ACCOUNT_SSO_STATUS, USER_ACCESS_LEVELS } from '../../../../../constants';
+import messageStore from '../../../../../utils/messageStore';
 
 export default function RequireAccountSSO({ user }) {
-  const { accountSSORequired, _id: userId, sharedWithUser = {} } = user;
+  const { accountSSORequired, _id: userId, sharedWithUser = {}, accountMFARequired } = user;
   const dispatch = useDispatch();
   const [enquesnackbar] = useEnqueueSnackbar();
   const [switchInProgress, setSwitchInProgress] = useState(false);
@@ -62,9 +63,11 @@ export default function RequireAccountSSO({ user }) {
     return null;
   }
 
-  if (disableSwitch) {
+  if (disableSwitch || accountMFARequired) {
+    const tooltip = disableSwitch ? messageStore('SSO_LINKED_TO_ANOTHER_ACCOUNT_TOOLTIP') : messageStore('ACCOUNT_SSO_OR_MFA_REQUIRED_TOOLTIP');
+
     return (
-      <Tooltip placement="bottom" title="This user is already linked to another account’s SSO">
+      <Tooltip placement="bottom" title={tooltip}>
         <div>
           <CeligoSwitch
             data-test="ssoRequired"

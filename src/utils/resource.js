@@ -79,6 +79,19 @@ export const rdbmsAppTypeToSubType = appType => {
   return appType;
 };
 
+// should return correct resourceType for given notification audit log
+export const getNotificationResourceType = auditLog => {
+  if (auditLog.fieldChange?.fieldPath === '_connectionId') {
+    return 'connections';
+  }
+
+  if (auditLog.fieldChange?.fieldPath === '_flowId') {
+    return 'flows';
+  }
+
+  return 'integrations';
+};
+
 export const adaptorTypeMap = {
   NetSuiteExport: 'netsuite',
   NetSuiteImport: 'netsuite',
@@ -309,7 +322,7 @@ export const getWebhookUrl = (options = {}, resourceId) => {
         'sapariba',
       ].indexOf(webHookProvider) > -1
     ) {
-      if (webHookToken && webHookVerify !== 'token') whURL += `/${webHookToken}`;
+      if (webHookToken && (webHookVerify === 'secret_url' || !webHookVerify)) whURL += `/${webHookToken}`;
     }
 
     whURL += '/data';

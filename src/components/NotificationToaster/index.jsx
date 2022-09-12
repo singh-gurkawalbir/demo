@@ -104,7 +104,7 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     alignItems: 'center',
     color: theme.palette.secondary.main,
-    fontSize: props => props.transparent ? 13 : 'inherit',
+    fontSize: props => props.transparent ? 13 : 17,
   },
   actionButton: {
     padding: 0,

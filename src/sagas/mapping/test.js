@@ -799,6 +799,7 @@ describe('mappingInit saga', () => {
           className: undefined,
           extract: 'id',
           generate: 'id',
+          jsonPath: 'id',
           dataType: 'string',
         }],
         extractsTree: [
@@ -1071,6 +1072,7 @@ describe('saveMappings saga', () => {
           generate: 'new-id',
           dataType: 'string',
           extract: 'id',
+          status: 'Active',
           description: undefined,
           extractDateFormat: undefined,
           extractDateTimezone: undefined,

@@ -99,7 +99,7 @@ import {
   getParentJobSteps,
 } from '../utils/latestJobs';
 import getJSONPaths from '../utils/jsonPaths';
-import { getApp, getHttpConnector } from '../constants/applications';
+import { getApp, getHttpConnector, applicationsList} from '../constants/applications';
 import { HOOK_STAGES } from '../utils/editor';
 import { getTextAfterCount } from '../utils/string';
 import { remainingDays } from './user/org/accounts';
@@ -5385,6 +5385,20 @@ selectors.applicationType = (state, resourceType, id) => {
 
     return connection && connection.rdbms && rdbmsSubTypeToAppType(connection.rdbms.type);
   }
+  if ((adaptorType?.toUpperCase().startsWith('HTTP') || adaptorType?.toUpperCase().startsWith('REST')) && !assistant) {
+    const connection = resourceType === 'connections' ? resourceObj : selectors.resource(
+      state,
+      'connections',
+      getStagedValue('/_connectionId') || (resourceObj?._connectionId)
+    );
+    const httpConnectorId = getStagedValue('/_httpConnectorId') || connection?._httpConnectorId || connection?.http?._httpConnectorId;
+    const applications = applicationsList();
+    const httpApp = applications.find(a => a._httpConnectorId === httpConnectorId);
+
+    if (httpConnectorId && httpApp) {
+      return httpApp._legacyId || httpApp.name;
+    }
+  }
 
   if (adaptorType?.toUpperCase().startsWith('HTTP') && resourceObj?.http?.formType === 'rest' && !assistant) {
     adaptorType = adaptorType.replace(/HTTP/, 'REST');
@@ -5534,6 +5548,26 @@ selectors.isMapper2Supported = state => {
     resource.adaptorType === 'HTTPImport' ||
     resource.adaptorType === 'RESTImport'
   );
+};
+
+selectors.resourceHasMappings = (state, importId) => {
+  const resource = selectors.resource(state, 'imports', importId);
+
+  if (!resource) return false;
+
+  // v2 mappings
+  if (resource.mappings?.length) {
+    return true;
+  }
+
+  // v1 mappings
+  const mappings = mappingUtil.getMappingFromResource({
+    importResource: resource,
+    isFieldMapping: true,
+  });
+  const { fields = [], lists = [] } = mappings || {};
+
+  return !!(fields.length || lists.length);
 };
 
 selectors.mappingEditorNotification = (state, editorId) => {
@@ -6616,7 +6650,7 @@ selectors.shouldGetContextFromBE = (state, editorId, sampleData) => {
   }
 
   if (
-    ['flowTransform', 'responseTransform', 'netsuiteLookupFilter', 'salesforceLookupFilter'].includes(editorType) ||
+    ['structuredFileGenerator', 'flowTransform', 'responseTransform', 'netsuiteLookupFilter', 'salesforceLookupFilter'].includes(editorType) ||
   HOOK_STAGES.includes(stage)
   ) {
     return {shouldGetContextFromBE: false, sampleData};

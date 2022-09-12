@@ -28,15 +28,27 @@ import IntegrationAppsIcon from '../../components/icons/IntegrationAppsIcon';
 import getRoutePath from '../../utils/routePaths';
 import PortalIcon from '../../components/icons/PortalIcon';
 
-export default function menuItems(
+export default function menuItems({
   userProfile,
   accessLevel,
   integrations,
   canUserPublish,
   marketplaceConnectors,
   isUserInErrMgtTwoDotZero,
+  isMFASetupIncomplete,
+}
 ) {
   const isDeveloper = userProfile && userProfile.developer;
+
+  if (isMFASetupIncomplete) {
+    return [{
+      label: 'Help center',
+      Icon: HelpCenterIcon,
+      component: 'a',
+      href: getHelpUrl(integrations, marketplaceConnectors),
+      dataTest: 'help_center',
+    }];
+  }
   let items = [
     {
       label: 'Home',

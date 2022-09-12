@@ -75,7 +75,7 @@ function OpenPullDrawerContent({ integrationId, parentUrl }) {
 
   return (
     <>
-      <DrawerHeader title="Create pull" helpKey="revisions.pull" className={classes.drawerHeader} handleClose={onClose}>
+      <DrawerHeader title="Create pull" infoText={messageStore('CREATE_PULL_FORM_HELPINFO')} className={classes.drawerHeader} handleClose={onClose}>
         <RevisionHeader />
       </DrawerHeader>
       <DrawerContent>

@@ -23,6 +23,7 @@ const useStyles = makeStyles(theme => ({
   previewPanelWrapper: {
     border: '1px solid',
     borderColor: theme.palette.secondary.lightest,
+    marginBottom: theme.spacing(2),
   },
   label: {
     marginBottom: 6,
@@ -35,7 +36,7 @@ const useStyles = makeStyles(theme => ({
   container: {
     background: theme.palette.common.white,
     padding: theme.spacing(2),
-    height: `calc(100vh - ${250}px)`,
+    height: `calc((100vh - ${250}px) - ${theme.spacing(2)}px)`,
     overflowY: 'auto',
     display: 'flex',
     flexDirection: 'column',

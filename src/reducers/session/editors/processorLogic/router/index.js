@@ -1,7 +1,40 @@
-import { cloneDeep, pick } from 'lodash';
+import { cloneDeep, isEqual, pick } from 'lodash';
 import { hooksToFunctionNamesMap } from '../../../../../utils/hooks';
+import { safeParse } from '../../../../../utils/string';
 import filter from '../filter';
 import javascript from '../javascript';
+
+const moveArrayItem = (arr, oldIndex, newIndex) => {
+  const newArr = [...arr];
+  const element = newArr.splice(oldIndex, 1)[0];
+
+  newArr.splice(newIndex, 0, element);
+
+  return newArr;
+};
+
+const BranchNameRegex = /Branch \d+\.(\d+)/;
+
+function getBranchNameIndex(branches, routerNameIndex) {
+  let highestIndex = 0;
+  const branchNames = branches.map(branch => branch.name);
+
+  branches.forEach(branch => {
+    if (BranchNameRegex.test(branch.name)) {
+      const [, index] = branch.name.match(BranchNameRegex);
+
+      if (+index > highestIndex) {
+        highestIndex = +index;
+      }
+    }
+  });
+
+  while (branchNames.includes(`Branch ${routerNameIndex}.${highestIndex + 1}`)) {
+    highestIndex += 1;
+  }
+
+  return highestIndex + 1;
+}
 
 export default {
   init: ({ options }) => {
@@ -44,11 +77,13 @@ export default {
   processor: 'branchFilter',
 
   requestBody: editor => {
-    const {rules, data, options} = filter.requestBody({
-      data: editor.data,
+    const { activeProcessor } = editor.rule;
+    const editorData = editor.data[activeProcessor];
+    const { rules, data, options } = filter.requestBody({
+      data: editorData,
       rule: editor.rule,
     });
-
+    const javascriptData = safeParse(editorData) || {};
     const router = { ...rules.rules };
 
     router.routeRecordsUsing = router.activeProcessor === 'javascript' ? 'script' : 'input_filters';
@@ -59,7 +94,7 @@ export default {
     return {
       data: [{
         router: pick(router, ['id', 'branches', 'routeRecordsTo', 'routeRecordsUsing', 'script']),
-        record: data[0],
+        record: router.activeProcessor === 'javascript' ? javascriptData.record : data[0],
         options,
       }],
     };
@@ -68,31 +103,44 @@ export default {
   validate: editor => {
     if (editor.rule.activeProcessor === 'filter') {
       return filter.validate({
-        data: editor.data,
+        data: editor.data?.filter,
         rule: editor.rule,
       });
     }
 
     return javascript.validate({
-      data: editor.data,
+      data: editor.data?.javascript,
     });
+  },
+  dirty: editor => {
+    const { activeProcessor } = editor.rule;
+
+    if (activeProcessor === 'javascript') {
+      return javascript.dirty(editor);
+    }
+
+    return !isEqual(editor.originalRule, editor.rule);
   },
   processResult: (editor, result) => {
     let outputMessage = '';
+    let logs;
 
-    if (result?.data) {
-      if (result.data[0].length === 1) {
-        const branch = editor.rule.branches[result.data[0][0]]?.name;
+    if (Array.isArray(result?.data)) {
+      const { data } = result.data[0];
 
-        outputMessage = `The record will pass through branch ${result.data[0][0]}: ${branch} `;
-      } else if (!result.data[0].length) {
+      logs = result.data[0].logs;
+      if (data.length === 1) {
+        const branch = editor.rule.branches[data[0]]?.name;
+
+        outputMessage = `The record will pass through branch ${data[0]}: ${branch} `;
+      } else if (!data.length) {
         outputMessage = 'The record will not pass through any of the branches.';
       } else {
-        outputMessage = `The record will pass through branches:\n${result.data[0].map(branchIndex => `branch ${branchIndex}: ${editor.rule.branches[branchIndex]?.name}`).join('\n')}`;
+        outputMessage = `The record will pass through branches:\n${data.map(branchIndex => `branch ${branchIndex}: ${editor.rule.branches[branchIndex]?.name}`).join('\n')}`;
       }
     }
 
-    return {data: outputMessage};
+    return { data: outputMessage, logs };
   },
   patchSet: editor => {
     const patches = {
@@ -118,7 +166,7 @@ export default {
       routeRecordsTo: rule.routeRecordsTo,
       branches: rule.branches,
       script: {
-        _scriptId: scriptId,
+        _scriptId: scriptId || undefined,
         function: entryFunction,
       },
     };
@@ -147,4 +195,38 @@ export default {
 
     return patches;
   },
+  updateRule: (draft, action, shouldReplace) => {
+    const { actionType, oldIndex, newIndex, rulePatch } = action;
+
+    if (actionType === 'reorder') {
+      draft.rule.branches = moveArrayItem(draft.rule.branches, oldIndex, newIndex);
+    } else if (actionType === 'addBranch') {
+      const branchNameIndex = getBranchNameIndex(draft.rule.branches, draft.branchNamingIndex);
+
+      draft.rule.branches = [...draft.rule.branches, {
+        name: `Branch ${draft.branchNamingIndex}.${branchNameIndex}`,
+        pageProcessors: [{setupInProgress: true}],
+      }];
+    } else if (!shouldReplace) {
+      Object.assign(draft.rule, cloneDeep(rulePatch));
+    } else {
+      draft.rule = rulePatch;
+    }
+  },
+  buildData: (_, sampleData) => {
+    const data = {};
+    const parsedData = safeParse(sampleData);
+
+    delete parsedData.settings;
+    data.filter = JSON.stringify(parsedData, null, 2);
+    // for JS panel, 'rows' is also represented as 'record'
+    if (parsedData?.rows) {
+      parsedData.record = parsedData.rows;
+      delete parsedData.rows;
+    }
+    data.javascript = JSON.stringify(parsedData, null, 2);
+
+    return data;
+  },
+
 };

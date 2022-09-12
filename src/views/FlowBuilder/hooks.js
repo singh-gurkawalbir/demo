@@ -257,13 +257,24 @@ export function useHandleAddProcessor() {
 
 export const useHandleAddNode = edgeId => {
   const { elementsMap, flowId } = useFlowContext();
+  const match = useRouteMatch();
   const dispatch = useDispatch();
+  const pushOrReplaceHistory = usePushOrReplaceHistory();
 
   return () => {
     const edge = elementsMap[edgeId];
 
     if (!edge) return;
-    dispatch(actions.flow.addNewPPStep(flowId, edge.data?.path, edge.data?.processorIndex));
+    const newTempProcessorId = generateNewId();
+
+    dispatch(actions.flow.addNewPPStepInfo(flowId, {branchPath: edge.data?.path, processorIndex: edge.data?.processorIndex}));
+    const addPPUrl = buildDrawerUrl({
+      path: drawerPaths.RESOURCE.ADD,
+      baseUrl: match.url,
+      params: { resourceType: 'pageProcessor', id: newTempProcessorId },
+    });
+
+    pushOrReplaceHistory(addPPUrl);
   };
 };
 

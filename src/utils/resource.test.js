@@ -35,6 +35,7 @@ import {
   getNextLinkRelativeUrl,
   rdbmsSubTypeToAppType,
   rdbmsAppTypeToSubType,
+  getNotificationResourceType,
 } from './resource';
 
 describe('resource util tests', () => {
@@ -210,6 +211,30 @@ describe('resource util tests', () => {
     });
   });
 
+  describe('tests for util getNotificationResourceType', () => {
+    test('should return connections for a given connection notification audit log', () => {
+      expect(getNotificationResourceType({
+        fieldChange: {
+          fieldPath: '_connectionId',
+        },
+      })).toEqual('connections');
+    });
+    test('should return flows for a given flow notification audit log', () => {
+      expect(getNotificationResourceType({
+        fieldChange: {
+          fieldPath: '_flowId',
+        },
+      })).toEqual('flows');
+    });
+    test('should return integrations for a given intgeration notification audit log', () => {
+      expect(getNotificationResourceType({
+        fieldChange: {
+          fieldPath: '_integrationId',
+        },
+      })).toEqual('integrations');
+    });
+  });
+
   describe('tests for util getResourceSubTypeFromAdaptorType', () => {
     test('should return resourceType for connections', () => {
       expect(getResourceSubTypeFromAdaptorType(undefined)).toEqual({
@@ -366,6 +391,33 @@ describe('resource util tests', () => {
         webHookProvider: 'aha',
         webHookToken: 'abcd',
         webHookVerify: 'token'}, '123')).toEqual(
+        'https://api.localhost/v1/exports/123/data'
+      );
+    });
+
+    test('should include token in webhook url if verify is of secret_url type', () => {
+      expect(getWebhookUrl({
+        webHookProvider: 'custom',
+        webHookToken: 'abcd',
+        webHookVerify: 'secret_url'}, '123')).toEqual(
+        'https://api.localhost/v1/exports/123/abcd/data'
+      );
+    });
+
+    test('should not include token in webhook url if verify is of hmac type', () => {
+      expect(getWebhookUrl({
+        webHookProvider: 'custom',
+        webHookToken: 'abcd',
+        webHookVerify: 'hmac'}, '123')).toEqual(
+        'https://api.localhost/v1/exports/123/data'
+      );
+    });
+
+    test('should not include token in webhook url if verify is of basic type', () => {
+      expect(getWebhookUrl({
+        webHookProvider: 'custom',
+        webHookToken: 'abcd',
+        webHookVerify: 'basic'}, '123')).toEqual(
         'https://api.localhost/v1/exports/123/data'
       );
     });

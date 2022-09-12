@@ -1,6 +1,6 @@
 import { matchPath } from 'react-router-dom';
 import { PING_STATES } from '../../reducers/comms/ping';
-import { CONSTANT_CONTACT_VERSIONS, EBAY_TYPES, GOOGLE_CONTACTS_API, emptyObject, MULTIPLE_AUTH_TYPE_ASSISTANTS, RDBMS_TYPES } from '../../constants';
+import { CONSTANT_CONTACT_VERSIONS, EBAY_TYPES, emptyObject, MULTIPLE_AUTH_TYPE_ASSISTANTS, RDBMS_TYPES } from '../../constants';
 import { rdbmsSubTypeToAppType } from '../resource';
 import {getHttpConnector} from '../../constants/applications';
 
@@ -57,17 +57,6 @@ export const getFilterExpressionForAssistant = (assistant, expression) => {
     const resultExpression = { $or: [] };
 
     EBAY_TYPES.forEach(type => {
-      const finalExpression = [...expression, {assistant: type}];
-
-      resultExpression.$or.push({$and: finalExpression});
-    });
-
-    return resultExpression;
-  }
-  if (assistant === 'googlecontacts' || assistant === 'googlecontactspeople') {
-    const resultExpression = { $or: [] };
-
-    GOOGLE_CONTACTS_API.forEach(type => {
       const finalExpression = [...expression, {assistant: type}];
 
       resultExpression.$or.push({$and: finalExpression});
@@ -148,8 +137,6 @@ export const getConstantContactVersion = connection =>
   connection?.http?.baseURI?.includes('api.cc.email') ? 'constantcontactv3' : 'constantcontactv2';
 export const getEbayType = connection =>
   connection?.http?.baseURI?.includes('apiz') ? 'ebayfinance' : 'ebay';
-export const getGoogleContactsAPI = connection =>
-  connection?.http?.baseURI?.includes('people.googleapis') ? 'googlecontactspeople' : 'googlecontacts';
 const getRecurlyType = connection => {
   const addversion = connection?.http?.unencrypted?.version;
 
@@ -203,9 +190,6 @@ export const getAssistantFromConnection = (assistant, connection) => {
   if (assistant === ('ebay' || 'ebayfinance')) {
     return getEbayType(connection);
   }
-  if (assistant === ('googlecontacts' || 'googlecontactspeople')) {
-    return getGoogleContactsAPI(connection);
-  }
   if (assistant === 'amazonmws') {
     return getAmazonMWSType(connection);
   }
@@ -228,6 +212,7 @@ export const KBDocumentation = {
   as2: 'https://docs.celigo.com/hc/en-us/articles/360029551372-Set-up-an-AS2-connection',
   mongodb: 'https://docs.celigo.com/hc/en-us/articles/360039632032-Set-up-a-connection-to-MongoDB',
   mysql: 'https://docs.celigo.com/hc/en-us/articles/360038611852-Set-up-a-connection-to-MySQL',
+  mssql: 'https://docs.celigo.com/hc/en-us/articles/360039003951-Set-up-a-connection-to-Microsoft-SQL',
   oracle: 'https://docs.celigo.com/hc/en-us/articles/360050360312-Set-up-a-connection-to-Oracle-DB-SQL-',
   postgresql: 'https://docs.celigo.com/hc/en-us/articles/360038997991-Set-up-a-connection-to-PostgreSQL',
   snowflake: 'https://docs.celigo.com/hc/en-us/articles/360048048792-Set-up-a-connection-to-Snowflake',
