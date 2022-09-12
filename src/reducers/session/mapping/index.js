@@ -703,6 +703,7 @@ export default (state = {}, action) => {
         // Find dragObject
         const {node: tempDragObj, nodeSubArray: dragSubArr, nodeIndexInSubArray: dragSubArrIndex} = findNodeInTree(v2TreeData, 'key', dragKey);
         let dragObj = tempDragObj;
+        const dragParentExtract = dragObj.parentExtract;
 
         // find drop position
         const {nodeSubArray: dropSubArr, nodeIndexInSubArray: dropSubArrIndex } = findNodeInTree(v2TreeData, 'key', dropKey);
@@ -718,26 +719,12 @@ export default (state = {}, action) => {
           // remove dragged node from its curr pos
           dragSubArr.splice(dragSubArrIndex, 1);
 
-          // add a new empty child node when the parent is left with no children
-          if (dragParentKey && isEmpty(dragSubArr)) {
-            const newChild = {
-              key: generateUniqueKey(),
-              title: '',
-              parentKey: dragParentKey,
-              dataType: MAPPING_DATA_TYPES.STRING,
-              isEmptyRow: true,
-            };
-
-            if (dragObj.parentExtract) newChild.parentExtract = dragObj.parentExtract;
-            dragSubArr.push(newChild);
-          }
-
           dragObj.parentKey = parentKey;
           dragObj.jsonPath = parentDataType === MAPPING_DATA_TYPES.OBJECTARRAY ? `${parentJsonPath}[*].${dragObj.generate}` : `${parentJsonPath}.${dragObj.generate}`;
           dragObj = updateChildrenJSONPath(dragObj);
           // only array fields have combinedExtract property, hence here it is for object arrays only
           if (combinedExtract) {
-            dragObj.parentExtract = combinedExtract;
+            dragObj.parentExtract = combinedExtract?.split(',')?.[0];
           }
 
           // retain the tabbed row and add dragged node to new pos
@@ -751,20 +738,6 @@ export default (state = {}, action) => {
 
           // remove dragged node from its curr pos
           dragSubArr.splice(dragSubArrIndex, 1);
-
-          // add a new empty child node when the parent is left with no children
-          if (dragParentKey && isEmpty(dragSubArr)) {
-            const newChild = {
-              key: generateUniqueKey(),
-              title: '',
-              parentKey: dragParentKey,
-              dataType: MAPPING_DATA_TYPES.STRING,
-              isEmptyRow: true,
-            };
-
-            if (dragObj.parentExtract) newChild.parentExtract = dragObj.parentExtract;
-            dragSubArr.push(newChild);
-          }
 
           // after the dragged node was removed, find the drop node index again as it could have been changed
           const {nodeIndexInSubArray} = findNodeInTree(v2TreeData, 'key', dropKey);
@@ -783,20 +756,6 @@ export default (state = {}, action) => {
 
           // remove dragged node from its curr pos
           dragSubArr.splice(dragSubArrIndex, 1);
-
-          // add a new empty child node when the parent is left with no children
-          if (dragParentKey && (isEmpty(dragSubArr) || !dragSubArr.some(item => item.parentExtract === dragObj.parentExtract))) {
-            const newChild = {
-              key: generateUniqueKey(),
-              title: '',
-              parentKey: dragParentKey,
-              dataType: MAPPING_DATA_TYPES.STRING,
-              isEmptyRow: true,
-            };
-
-            if (dragObj.parentExtract) newChild.parentExtract = dragObj.parentExtract;
-            dragSubArr.push(newChild);
-          }
 
           // after the dragged node was removed, find the drop node index again as it could have been changed
           const {nodeIndexInSubArray} = findNodeInTree(v2TreeData, 'key', dropKey);
@@ -823,6 +782,21 @@ export default (state = {}, action) => {
 
           // add dragged node to new pos
           dropSubArr.splice(nodeIndexInSubArray + 1, 0, dragObj);
+        }
+
+        // add a new empty child node when the parent is left with no children
+        // sometimes child array wouldn't be empty (in case of tabbed object arrays), in that case, checking the parentExtract
+        if (dragParentKey && (isEmpty(dragSubArr) || !dragSubArr.some(item => item.parentExtract === dragParentExtract))) {
+          const newChild = {
+            key: generateUniqueKey(),
+            title: '',
+            parentKey: dragParentKey,
+            dataType: MAPPING_DATA_TYPES.STRING,
+            isEmptyRow: true,
+          };
+
+          if (dragParentExtract) newChild.parentExtract = dragParentExtract;
+          dragSubArr.push(newChild);
         }
 
         break;
