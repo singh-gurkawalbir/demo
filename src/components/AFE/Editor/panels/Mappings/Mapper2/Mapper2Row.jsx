@@ -182,8 +182,10 @@ const Mapper2Row = React.memo(props => {
 
   const handleSettingsClick = useCallback(() => {
     dispatch(actions.mapping.v2.updateActiveKey(nodeKey));
-    settingDrawerHandler();
-    settingDrawerActive.current = { wasActive: nodeKey };
+    if (settingDrawerActive && settingDrawerHandler) {
+      settingDrawerHandler();
+      settingDrawerActive.current = { wasActive: nodeKey };
+    }
     history.push(buildDrawerUrl({
       path: drawerPaths.MAPPINGS.V2_SETTINGS,
       baseUrl: history.location.pathname,

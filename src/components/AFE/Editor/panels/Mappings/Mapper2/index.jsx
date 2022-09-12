@@ -1,5 +1,5 @@
 /* eslint-disable no-restricted-syntax */
-import React, {useCallback, useEffect, useRef} from 'react';
+import React, {useCallback, useEffect, useMemo, useRef } from 'react';
 import Tree from 'rc-tree';
 import { useSelector, useDispatch } from 'react-redux';
 import { IconButton } from '@material-ui/core';
@@ -8,7 +8,7 @@ import clsx from 'clsx';
 import ArrowUpIcon from '../../../../../icons/ArrowUpIcon';
 import ArrowDownIcon from '../../../../../icons/ArrowDownIcon';
 import {SortableDragHandle} from '../../../../../Sortable/SortableHandle';
-import {allowDrop, filterNode} from '../../../../../../utils/mapping';
+import {allowDrop, filterNode, getAllKeys} from '../../../../../../utils/mapping';
 import {selectors} from '../../../../../../reducers';
 import Mapper2Row from './Mapper2Row';
 import actions from '../../../../../../actions';
@@ -109,6 +109,16 @@ const useStyles = makeStyles(theme => ({
       flexWrap: 'nowrap',
       display: 'flex',
       minHeight: '100%',
+      '&>div': {
+        flex: '0 0 auto',
+      },
+    },
+  },
+  virtualTree: {
+    '& .rc-tree-list-holder': {
+      flexWrap: 'nowrap',
+      display: 'flex',
+      minHeight: '100%',
       maxWidth: '1050px',
       width: '1050px',
       '&>div': {
@@ -165,15 +175,9 @@ export default function Mapper2({editorId}) {
   const settingDrawerActive = useRef();
   const currentScrollPosition = useRef();
 
-  useEffect(() => {
-    if (isAutoCreateSuccess) {
-      enqueueSnackbar({
-        message: 'Destination fields successfully auto-populated.',
-        variant: 'success',
-      });
-      dispatch(actions.mapping.v2.toggleAutoCreateFlag());
-    }
-    const handleWheelEvent = event => {
+  const allNodes = useMemo(() => getAllKeys(treeData), [treeData]);
+  const handleWheelEvent = useCallback(event => {
+    if (allNodes.length > 50) {
       if (event.deltaX) {
         event.preventDefault();
         const delta = Math.sign(event.deltaX);
@@ -183,18 +187,21 @@ export default function Mapper2({editorId}) {
           document.querySelector('.rc-tree-list-holder').scrollLeft += scrollWidth;
         }
       }
-    };
+    }
+  }, []);
 
-    const handleMouseMove = event => {
-      event.stopImmediatePropagation();
-    };
+  const handleMouseMove = useCallback(event => {
+    event.stopImmediatePropagation();
+  }, []);
 
-    // Add mouse move event listner to stop the default behaviour
-    // of mouse move by rc-tree library
-    window.addEventListener('mousemove', handleMouseMove, true);
-
-    // Add wheel event listner to handle horizontal scroll
-    document.addEventListener('wheel', handleWheelEvent, {passive: false});
+  useEffect(() => {
+    if (isAutoCreateSuccess) {
+      enqueueSnackbar({
+        message: 'Destination fields successfully auto-populated.',
+        variant: 'success',
+      });
+      dispatch(actions.mapping.v2.toggleAutoCreateFlag());
+    }
 
     return () => {
       document.removeEventListener('wheel', handleWheelEvent);
@@ -236,36 +243,44 @@ export default function Mapper2({editorId}) {
 
   // Add scroll handling for navigating back to the user scroll previous scroll position
   // when virtaulization is enabled for rc-tree
-  const onScrollHandler = e => {
-    if (settingDrawerActive.current && settingDrawerActive.current.wasActive) {
-      const currentEle = e.currentTarget;
+  const onScrollHandler = useCallback(e => {
+    if (allNodes.length > 50) {
+      // Add mouse move event listner to stop the default behaviour
+      // of mouse move by rc-tree library
+      window.addEventListener('mousemove', handleMouseMove, true);
 
-      setTimeout(() => {
-        const scrollPos = sessionStorage.getItem('scrollPosition');
+      // Add wheel event listner to handle horizontal scroll
+      document.addEventListener('wheel', handleWheelEvent, {passive: false});
 
-        currentEle.scrollTo(0, parseInt(scrollPos, 10));
-        sessionStorage.removeItem('scrollPosition');
-      }, 100);
-      settingDrawerActive.current.wasActive = false;
+      if (settingDrawerActive.current && settingDrawerActive.current.wasActive) {
+        const currentEle = e.currentTarget;
+
+        setTimeout(() => {
+          const scrollPos = sessionStorage.getItem('scrollPosition');
+
+          currentEle.scrollTo(0, parseInt(scrollPos, 10));
+          sessionStorage.removeItem('scrollPosition');
+        }, 10);
+        settingDrawerActive.current.wasActive = false;
+      }
+      currentScrollPosition.current = e.currentTarget.scrollTop;
     }
-    currentScrollPosition.current = e.currentTarget.scrollTop;
-  };
+  }, []);
 
   return (
     <>
       {searchKey !== undefined && <SearchBar />}
       <div className={clsx(classes.mappingDrawerContent, {[classes.addSearchBar]: searchKey !== undefined})}>
         <Tree
-          className={classes.treeRoot}
-          height={600}
-          itemHeight={20}
+          className={`${classes.treeRoot} ${allNodes.length > 50 ? classes.virtualTree : ''}`}
+          height={allNodes.length > 50 ? 600 : undefined}
+          itemHeight={allNodes.length > 50 ? 20 : undefined}
           titleRender={Row}
           treeData={treeData}
           showLine
           selectable={false}
           defaultExpandAll={false}
           expandedKeys={expandedKeys}
-          defaultExpandParent={false}
           onExpand={onExpandHandler}
           switcherIcon={SwitcherIcon}
           allowDrop={allowDrop}
@@ -275,7 +290,7 @@ export default function Mapper2({editorId}) {
           onDragStart={onDragStart}
           disabled={disabled}
           filterTreeNode={filterTreeNode}
-          onScroll={onScrollHandler}
+          onScroll={allNodes.length > 50 ? onScrollHandler : ''}
               />
       </div>
     </>
