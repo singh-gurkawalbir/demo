@@ -96,7 +96,7 @@ describe('Testing Tile Notification Component', () => {
     const content = screen.getByText('Your subscription has been renewed. Click Reactivate to continue.');
 
     expect(content).toBeInTheDocument();
-    const reactivate = screen.getByText('Request to reactivate');
+    const reactivate = screen.getByText('Reactivate');
 
     expect(reactivate).toBeInTheDocument();
 
@@ -195,18 +195,7 @@ describe('Testing Tile Notification Component', () => {
 
     expect(errorMessage).toBeInTheDocument();
     userEvent.click(message);
-    const dialogMessage = screen.getByText('We will contact you to reactivate your subscription.');
-
-    expect(dialogMessage).toBeInTheDocument();
-    const dialogSubmitButton = screen.getByText('Submit request');
-
-    expect(dialogSubmitButton).toBeInTheDocument();
-    const dialogCancelButton = screen.getByText('Cancel');
-
-    expect(dialogCancelButton).toBeInTheDocument();
-    userEvent.click(dialogSubmitButton);
     await expect(mockDispatchFn).toBeCalledWith(actions.integrationApp.license.resume(integrationId));
-    expect(dialogMessage).not.toBeInTheDocument();
   });
 
   test('Should able to request to Renew single button', async () => {

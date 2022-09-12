@@ -1,5 +1,6 @@
 import React, { useCallback, useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import clsx from 'clsx';
 import TextField from '@material-ui/core/TextField';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import Checkbox from '@material-ui/core/Checkbox';
@@ -53,6 +54,9 @@ const useStyles = makeStyles(theme => ({
     justifyContent: 'space-between',
     marginTop: theme.spacing(1),
   },
+  flexRight: {
+    flexDirection: 'row-reverse',
+  },
   errorIcon: {
     marginRight: theme.spacing(0.5),
     fontSize: theme.spacing(2),
@@ -63,6 +67,7 @@ export default function OneTimePassCodeForm({ dialogOpen }) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const isMFAAuthRequestInProgress = useSelector(selectors.isMFAAuthRequested);
+  const { dontAllowTrustedDevices } = useSelector(selectors.mfaAuthInfo);
   const mfaError = useSelector(selectors.mfaError);
   const [error, setError] = useState();
   const [trustDevice, setTrustDevice] = useState(false);
@@ -80,10 +85,14 @@ export default function OneTimePassCodeForm({ dialogOpen }) {
 
       return;
     }
-    const trustDevice = e.target.trustDevice.checked;
 
-    dispatch(actions.auth.mfaVerify.request({ code, trustDevice }));
-  }, [dispatch]);
+    const payload = { code };
+
+    if (!dontAllowTrustedDevices) {
+      payload.trustDevice = e.target.trustDevice.checked;
+    }
+    dispatch(actions.auth.mfaVerify.request(payload));
+  }, [dispatch, dontAllowTrustedDevices]);
 
   useEffect(() => {
     setError(mfaError);
@@ -108,7 +117,8 @@ export default function OneTimePassCodeForm({ dialogOpen }) {
               </FormHelperText>
             )
           }
-        <div className={classes.flexWrapper}>
+        <div className={clsx(classes.flexWrapper, { [classes.flexRight]: dontAllowTrustedDevices })}>
+          {!dontAllowTrustedDevices && (
           <FormControlLabel
             control={(
               <Checkbox
@@ -120,6 +130,7 @@ export default function OneTimePassCodeForm({ dialogOpen }) {
             />
           )}
             label="Trust this device" />
+          )}
           {!dialogOpen && (
           <Link href="/mfa/help" className={classes.forgotPass} variant="body2">
             Need help?

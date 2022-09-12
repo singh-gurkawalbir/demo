@@ -1,79 +1,41 @@
 export default {
-  preSave: formValues => {
-    const retValues = { ...formValues };
-
-    if (retValues['/http/auth/type'] === 'oauth') {
-      retValues['/http/auth/oauth/scopeDelimiter'] = ' ';
-      retValues['/http/auth/oauth/clientCredentialsLocation'] = 'body';
-      retValues['/http/auth/oauth/grantType'] = 'clientcredentials';
-      retValues['/http/auth/oauth/tokenURI'] = `https://${formValues['/http/coupaSubdomain']}.com/oauth2/token`;
-      retValues['/http/auth/oauth/accessTokenBody'] = '{"grant_type": "client_credentials","scope":"{{{join connection.http.auth.oauth.scopeDelimiter connection.http.auth.oauth.scope}}}","client_id":"{{{clientId}}}","client_secret":"{{{clientSecret}}}"}';
-      retValues['/http/auth/oauth/accessTokenHeaders'] = [
-        {
-          name: 'Content-Type',
-          value: 'application/x-www-form-urlencoded',
-        },
-      ];
-      retValues['/http/auth/token/refreshBody'] = '{"grant_type": "client_credentials","scope":"{{{join connection.http.auth.oauth.scopeDelimiter connection.http.auth.oauth.scope}}}","client_id":"{{{clientId}}}","client_secret":"{{{clientSecret}}}"}';
-      retValues['/http/auth/token/refreshMethod'] = 'POST';
-      retValues['/http/auth/token/refreshMediaType'] = 'urlencoded';
-      retValues['/http/auth/token/refreshTokenPath'] = 'access_token';
-      retValues['/http/auth/token/location'] = 'header';
-      retValues['/http/auth/token/headerName'] = 'Authorization';
-      retValues['/http/auth/token/scheme'] = 'Bearer';
-      retValues['/http/auth/token/token'] = undefined;
-    } else {
-      retValues['/http/auth/token/location'] = 'header';
-      retValues['/http/auth/token/headerName'] = 'X-COUPA-API-KEY';
-      retValues['/http/auth/token/scheme'] = ' ';
-      delete retValues['/http/auth/oauth/tokenURI'];
-      delete retValues['/http/auth/oauth/scopeDelimiter'];
-      delete retValues['/http/auth/oauth/scope'];
-      delete retValues['/http/auth/oauth/callbackURL'];
-      delete retValues['/http/_iClientId'];
-      delete retValues['/http/auth/token/refreshBody'];
-      delete retValues['/http/auth/token/refreshMethod'];
-      delete retValues['/http/auth/token/refreshMediaType'];
-      delete retValues['/http/auth/token/refreshTokenPath'];
-      delete retValues['/http/auth/oauth/accessTokenBody'];
-      delete retValues['/http/auth/oauth/accessTokenHeaders'];
-      delete retValues['/http/auth/oauth/clientCredentialsLocation'];
-      delete retValues['/http/auth/oauth/grantType'];
-    }
-
-    return {
-      ...retValues,
-      '/type': 'http',
-      '/assistant': 'coupa',
-      '/http/mediaType': 'json',
-      '/http/ping/relativeURI': '/users',
-      '/http/baseURI': `https://${formValues['/http/coupaSubdomain']}.com/api`,
-      '/http/ping/method': 'GET',
-      '/http/headers': [
-        {
-          name: 'ACCEPT',
-          value: 'application/json',
-        },
-      ],
-    };
-  },
+  preSave: formValues => ({
+    ...formValues,
+    '/type': 'http',
+    '/assistant': 'coupa',
+    '/http/auth/type': 'oauth',
+    '/http/mediaType': 'json',
+    '/http/ping/relativeURI': '/users',
+    '/http/baseURI': `https://${formValues['/http/coupaSubdomain']}.com/api`,
+    '/http/ping/method': 'GET',
+    '/http/headers': [
+      {
+        name: 'ACCEPT',
+        value: 'application/json',
+      },
+    ],
+    '/http/auth/oauth/scopeDelimiter': ' ',
+    '/http/auth/oauth/clientCredentialsLocation': 'body',
+    '/http/auth/oauth/grantType': 'clientcredentials',
+    '/http/auth/oauth/tokenURI': `https://${formValues['/http/coupaSubdomain']}.com/oauth2/token`,
+    '/http/auth/oauth/accessTokenBody': '{"grant_type": "client_credentials","scope":"{{{join connection.http.auth.oauth.scopeDelimiter connection.http.auth.oauth.scope}}}","client_id":"{{{clientId}}}","client_secret":"{{{clientSecret}}}"}',
+    '/http/auth/oauth/accessTokenHeaders': [
+      {
+        name: 'Content-Type',
+        value: 'application/x-www-form-urlencoded',
+      },
+    ],
+    '/http/auth/token/refreshBody': '{"grant_type": "client_credentials","scope":"{{{join connection.http.auth.oauth.scopeDelimiter connection.http.auth.oauth.scope}}}","client_id":"{{{clientId}}}","client_secret":"{{{clientSecret}}}"}',
+    '/http/auth/token/refreshMethod': 'POST',
+    '/http/auth/token/refreshMediaType': 'urlencoded',
+    '/http/auth/token/refreshTokenPath': 'access_token',
+    '/http/auth/token/location': 'header',
+    '/http/auth/token/headerName': 'Authorization',
+    '/http/auth/token/scheme': 'Bearer',
+    '/http/auth/token/token': undefined,
+  }),
   fieldMap: {
     name: { fieldId: 'name' },
-    'http.auth.type': {
-      id: 'http.auth.type',
-      required: true,
-      type: 'select',
-      label: 'Authentication type',
-      helpKey: 'coupa.connection.http.auth.type',
-      options: [
-        {
-          items: [
-            { label: 'Token (Deprecated)', value: 'token' },
-            { label: 'OAuth 2.0 (Client credentials)', value: 'oauth' },
-          ],
-        },
-      ],
-    },
     'http.coupaSubdomain': {
       type: 'text',
       id: 'http.coupaSubdomain',
@@ -99,15 +61,6 @@ export default {
         return subdomain;
       },
     },
-    'http.auth.token.token': {
-      fieldId: 'http.auth.token.token',
-      label: 'API key',
-      required: true,
-      helpKey: 'coupa.connection.http.auth.token.token',
-      visibleWhen: [
-        { field: 'http.auth.type', is: ['token'] },
-      ],
-    },
     'http._iClientId': {
       fieldId: 'http._iClientId',
       required: true,
@@ -117,16 +70,10 @@ export default {
       connectionId: r => r && r._id,
       connectorId: r => r && r._connectorId,
       ignoreEnvironmentFilter: true,
-      visibleWhen: [
-        { field: 'http.auth.type', is: ['oauth'] },
-      ],
     },
     'http.auth.oauth.callbackURL': {
       fieldId: 'http.auth.oauth.callbackURL',
       copyToClipboard: true,
-      visibleWhen: [
-        { field: 'http.auth.type', is: ['oauth'] },
-      ],
     },
     'http.auth.oauth.scope': {
       fieldId: 'http.auth.oauth.scope',
@@ -256,9 +203,6 @@ export default {
         },
       ],
       defaultValue: r => r?.auth?.oauth?.scope || ['core.user.read'],
-      visibleWhen: [
-        { field: 'http.auth.type', is: ['oauth'] },
-      ],
     },
     application: {
       fieldId: 'application',
@@ -271,7 +215,7 @@ export default {
       { collapsed: true, label: 'General', fields: ['name', 'application'] },
       { collapsed: true,
         label: 'Application details',
-        fields: ['http.auth.type', 'http.coupaSubdomain', 'http._iClientId', 'http.auth.token.token', 'http.auth.oauth.callbackURL', 'http.auth.oauth.scope'] },
+        fields: ['http.coupaSubdomain', 'http._iClientId', 'http.auth.oauth.callbackURL', 'http.auth.oauth.scope'] },
       { collapsed: true, label: 'Advanced', fields: ['httpAdvanced'] },
     ],
   },

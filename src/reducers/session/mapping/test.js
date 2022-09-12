@@ -2718,7 +2718,108 @@ describe('mapping reducer', () => {
             key: 'key1',
             dataType: MAPPING_DATA_TYPES.STRING,
             generate: 'new-fname',
+            jsonPath: 'new-fname',
             extract: '$.fname',
+          }],
+        },
+      };
+
+      expect(state).toEqual(expectedState);
+    });
+    test('should correctly update the generate field with jsonPath', () => {
+      const initialState = {
+        mapping: {
+          importId: 'imp-123',
+          flowId: 'flow-123',
+          version: 2,
+          v2TreeData: [{
+            key: 'key1',
+            dataType: MAPPING_DATA_TYPES.OBJECTARRAY,
+            generate: 'siblings',
+            jsonPath: 'siblings',
+            extract: '$.siblings[*]',
+            children: [
+              {
+                key: 'c1',
+                dataType: MAPPING_DATA_TYPES.STRING,
+                parentKey: 'key1',
+              },
+            ],
+          }],
+        },
+      };
+      const state = reducer(initialState, actions.mapping.v2.patchField('generate', 'c1', 'child-name'));
+      const expectedState = {
+        mapping: {
+          importId: 'imp-123',
+          flowId: 'flow-123',
+          version: 2,
+          v2TreeData: [{
+            key: 'key1',
+            dataType: MAPPING_DATA_TYPES.OBJECTARRAY,
+            generate: 'siblings',
+            jsonPath: 'siblings',
+            extract: '$.siblings[*]',
+            children: [
+              {
+                key: 'c1',
+                dataType: MAPPING_DATA_TYPES.STRING,
+                generate: 'child-name',
+                jsonPath: 'siblings[*].child-name',
+                parentKey: 'key1',
+              },
+            ],
+          }],
+        },
+      };
+
+      expect(state).toEqual(expectedState);
+    });
+    test('should correctly update the generate field with jsonPath for children also', () => {
+      const initialState = {
+        mapping: {
+          importId: 'imp-123',
+          flowId: 'flow-123',
+          version: 2,
+          v2TreeData: [{
+            key: 'key1',
+            dataType: MAPPING_DATA_TYPES.OBJECTARRAY,
+            generate: 'siblings',
+            jsonPath: 'siblings',
+            extract: '$.siblings[*]',
+            children: [
+              {
+                key: 'c1',
+                dataType: MAPPING_DATA_TYPES.STRING,
+                parentKey: 'key1',
+                generate: 'abc',
+                jsonPath: 'siblings[*].abc',
+              },
+            ],
+          }],
+        },
+      };
+      const state = reducer(initialState, actions.mapping.v2.patchField('generate', 'key1', 'new-value'));
+      const expectedState = {
+        mapping: {
+          importId: 'imp-123',
+          flowId: 'flow-123',
+          version: 2,
+          v2TreeData: [{
+            key: 'key1',
+            dataType: MAPPING_DATA_TYPES.OBJECTARRAY,
+            generate: 'new-value',
+            jsonPath: 'new-value',
+            extract: '$.siblings[*]',
+            children: [
+              {
+                key: 'c1',
+                dataType: MAPPING_DATA_TYPES.STRING,
+                parentKey: 'key1',
+                generate: 'abc',
+                jsonPath: 'new-value[*].abc',
+              },
+            ],
           }],
         },
       };
@@ -4082,7 +4183,7 @@ describe('mapping reducer', () => {
               dataType: 'objectarray',
               generate: 'siblings',
               isRequired: true,
-              jsonPath: 'siblings[*]',
+              jsonPath: 'siblings',
               key: 'new_key',
               title: '',
             },
@@ -4886,6 +4987,7 @@ describe('mapping utils', () => {
 
       const newNode = {
         key: 'key1',
+        extract: '$.fname[*]',
         generate: 'fname',
         dataType: MAPPING_DATA_TYPES.NUMBER,
       };
