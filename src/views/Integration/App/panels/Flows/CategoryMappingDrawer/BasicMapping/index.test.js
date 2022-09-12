@@ -14,7 +14,7 @@ jest.mock('react-redux', () => ({
   useDispatch: () => mockDispatch,
 }));
 
-describe('ev', () => {
+describe('MappingWrapper UI tests', () => {
   beforeEach(() => {
     jest.resetAllMocks();
   });

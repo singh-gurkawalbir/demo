@@ -46,10 +46,12 @@ describe('ImportMapping(of VariationMapping) UI tests', () => {
     const mappingtext = screen.getByText('sometext');
 
     expect(mappingtext).toBeInTheDocument();
-    const textbox = screen.getAllByRole('textbox')[0];
+    const allTextBox = screen.getAllByRole('textbox');
+
+    expect(allTextBox.length).toBeGreaterThan(0);
+    const textbox = allTextBox[0];
 
     fireEvent.focusIn(textbox);
-    fireEvent.focusOut(textbox);
     userEvent.click(screen.getByText('sometext2'));
     expect(mockDispatch).toHaveBeenCalledWith(
       {
@@ -64,7 +66,9 @@ describe('ImportMapping(of VariationMapping) UI tests', () => {
   });
   test('should test the delete button', () => {
     initStoreAndRender();
-    const deletebutton = screen.getAllByRole('button', { label: 'delete'})[0];
+    const buttons = screen.getAllByRole('button');
+
+    const deletebutton = buttons.find(each => each.getAttribute('data-test') === 'fieldMappingRemove-someKey');
 
     userEvent.click(deletebutton);
 
@@ -85,10 +89,13 @@ describe('ImportMapping(of VariationMapping) UI tests', () => {
     expect(screen.getByTitle('This field is required by the application you are importing into')).toBeInTheDocument();
 
     expect(mappingtext).toBeInTheDocument();
-    const textbox = screen.getAllByRole('textbox')[1];
+    const allTextBox = screen.getAllByRole('textbox');
+
+    expect(allTextBox.length).toBeGreaterThan(0);
+    const textbox = allTextBox[1];
 
     fireEvent.focusIn(textbox);
-    fireEvent.focusOut(textbox);
+
     userEvent.click(screen.getByText('sometext2'));
     expect(mockDispatch).toHaveBeenCalledWith(
       {

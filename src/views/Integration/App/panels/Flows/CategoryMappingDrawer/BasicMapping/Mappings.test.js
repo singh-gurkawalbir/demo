@@ -3,6 +3,7 @@ import React from 'react';
 import { screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import userEvent from '@testing-library/user-event';
+import shortId from 'shortid';
 import { renderWithProviders} from '../../../../../../../test/test-utils';
 import { getCreatedStore } from '../../../../../../../store';
 import ImportMapping from './Mappings';
@@ -16,7 +17,7 @@ jest.mock('react-redux', () => ({
 }));
 
 describe('Mappings UI tests', () => {
-  test('should', () => {
+  test('should check the dispatch call when a field is selected', () => {
     const initialStore = getCreatedStore();
 
     initialStore.getState().session.integrationApps.settings['5ea16c600e2fab71928a6152-5ff579d745ceef7dcd797c15'] = {
@@ -31,7 +32,8 @@ describe('Mappings UI tests', () => {
           generateFields={[{name: 'sometext2', id: 'sometext2', filterType: 'field'}]}
         />
       </MemoryRouter>, {initialStore});
-    const input = screen.getAllByRole('textbox')[0];
+    const allInputs = screen.getAllByRole('textbox');
+    const input = allInputs.find(each => each.getAttribute('id') === 'fieldMappingGenerate-key');
 
     userEvent.click(input);
     userEvent.click(screen.getByText('sometext2'));
@@ -47,7 +49,7 @@ describe('Mappings UI tests', () => {
       }
     );
   });
-  test('delete', () => {
+  test('should delete the category mapping', () => {
     const initialStore = getCreatedStore();
 
     initialStore.getState().session.integrationApps.settings['5ea16c600e2fab71928a6152-5ff579d745ceef7dcd797c15'] = {
@@ -62,8 +64,9 @@ describe('Mappings UI tests', () => {
           generateFields={[{name: 'sometext2', id: 'sometext2', filterType: 'preferred'}]}
         />
       </MemoryRouter>, {initialStore});
-    // const deleteButton = screen.getByTestId('delete-key');
-    const deleteButton = screen.getAllByRole('button')[1];
+    const allButton = screen.getAllByRole('button');
+
+    const deleteButton = allButton.find(each => each.getAttribute('data-test') === 'fieldMappingRemove-key');
 
     userEvent.click(deleteButton);
 
@@ -77,7 +80,8 @@ describe('Mappings UI tests', () => {
       }
     );
   });
-  test('shourvfrlde', () => {
+  test('should choose a field mapping generate option', () => {
+    jest.spyOn(shortId, 'generate').mockReturnValue('someGeneratedId');
     const initialStore = getCreatedStore();
 
     initialStore.getState().session.integrationApps.settings['5ea16c600e2fab71928a6152-5ff579d745ceef7dcd797c15'] = {
@@ -91,8 +95,9 @@ describe('Mappings UI tests', () => {
           integrationId="5ff579d745ceef7dcd797c15" flowId="5ea16c600e2fab71928a6152" editorId="editorId"
           generateFields={[{name: 'sometext2', id: 'sometext2', filterType: 'field'}, '']}
         />
-      </MemoryRouter>, {initialStore});
-    const input = screen.getAllByRole('textbox')[0];
+      </MemoryRouter>, {initialStore}); screen.debug(null, Infinity);
+    const allInput = screen.getAllByRole('textbox');
+    const input = allInput.find(each => each.getAttribute('id') === 'fieldMappingGenerate-someGeneratedId');
 
     userEvent.click(input);
     const emptystring = screen.getAllByRole('option')[1];
@@ -101,7 +106,9 @@ describe('Mappings UI tests', () => {
 
     expect(mockDispatch).toHaveBeenCalled();
   });
-  test('extractsMetaData', () => {
+  test('should choose a Field mapping extract option', () => {
+    jest.spyOn(shortId, 'generate').mockReturnValue('someGeneratedId');
+
     const initialStore = getCreatedStore();
 
     initialStore.getState().session.integrationApps.settings['5ea16c600e2fab71928a6152-5ff579d745ceef7dcd797c15'] = {
@@ -116,8 +123,9 @@ describe('Mappings UI tests', () => {
           integrationId="5ff579d745ceef7dcd797c15" flowId="5ea16c600e2fab71928a6152" editorId="editorId"
           generateFields={[{name: 'sometext2', id: 'sometext2', filterType: 'optional'}, '']}
         />
-      </MemoryRouter>, {initialStore});
-    const input = screen.getAllByRole('textbox')[1];
+      </MemoryRouter>, {initialStore}); screen.debug(null, Infinity);
+    const allInput = screen.getAllByRole('textbox');
+    const input = allInput.find(each => each.getAttribute('id') === 'fieldMappingExtract-someGeneratedId');
 
     userEvent.click(input);
 
@@ -127,7 +135,9 @@ describe('Mappings UI tests', () => {
 
     expect(mockDispatch).toHaveBeenCalled();
   });
-  test('icons', () => {
+  test('should check different icon for different filters', () => {
+    jest.spyOn(shortId, 'generate').mockReturnValue('someGeneratedId');
+
     const initialStore = getCreatedStore();
 
     initialStore.getState().session.integrationApps.settings['5ea16c600e2fab71928a6152-5ff579d745ceef7dcd797c15'] = {
@@ -147,7 +157,8 @@ describe('Mappings UI tests', () => {
             {name: 'sometext5', id: 'sometext5', filterType: 'conditional'}]}
         />
       </MemoryRouter>, {initialStore});
-    const input = screen.getAllByRole('textbox')[0];
+    const allInput = screen.getAllByRole('textbox');
+    const input = allInput.find(each => each.getAttribute('id') === 'fieldMappingGenerate-someGeneratedId');
 
     userEvent.click(input);
 

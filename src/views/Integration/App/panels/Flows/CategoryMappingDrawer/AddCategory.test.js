@@ -168,11 +168,11 @@ describe('AddCategoryMappingDrawerRoute UI tests', () => {
 
     userEvent.click(screen.getByText('Please select'));
     userEvent.click(screen.getByText('name1'));
-    userEvent.click(screen.getAllByText('Please select')[0]);
+    userEvent.click(screen.getByRole('button', {name: 'Please select'}));
     userEvent.click(screen.getByText('child'));
 
     expect(screen.getByText('Choose nested-category')).toBeInTheDocument();
-    userEvent.click(screen.getAllByText('Please select')[0]);
+    userEvent.click(screen.getByRole('button', {name: 'Please select'}));
     userEvent.click(screen.getByText('grandchild'));
     userEvent.click(screen.getByText('Add category'));
 
