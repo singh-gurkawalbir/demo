@@ -119,8 +119,8 @@ export default function Pagination({
           <TextButton
             onClick={handleNextPage}
             className={clsx(classes.arrowBtn, classes.arrowBtnRight)}
-            data-testid="nextPage"
             disabled={disableNextPage}
+            data-testid="nextPage"
             startIcon={<ArrowRightIcon />} />
         )}
       </div>
