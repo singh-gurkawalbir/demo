@@ -14,6 +14,8 @@ import DrawerHeaderSubTitle from '../../../../components/DrawerHeaderSubTitle';
 import Tabs from './Tabs';
 import { buildDrawerUrl, drawerPaths } from '../../../../utils/rightDrawer';
 import { useEditRetryConfirmDialog } from '../../../../components/ErrorList/ErrorTable/hooks/useEditRetryConfirmDialog';
+import RetryList from '../../../../components/JobDashboard/RetryList';
+import { FILTER_KEYS } from '../../../../utils/errorManagement';
 
 const emptySet = [];
 
@@ -168,7 +170,7 @@ export default function ErrorDetailsDrawer({ flowId }) {
       width="full"
       onClose={handleClose}>
       <DrawerHeader className={classes.removeBottomLine} title={<Title />} handleClose={handleDrawerClose} hideBackButton>
-        <ErrorDrawerAction flowId={flowId} onChange={handleErrorTypeChange} />
+        <ErrorDrawerAction flowId={flowId} onChange={handleErrorTypeChange} errorType={errorType} />
       </DrawerHeader>
       <Tabs flowId={flowId} onChange={handleErrorTypeChange} />
 
@@ -179,7 +181,7 @@ export default function ErrorDetailsDrawer({ flowId }) {
             {childJob?.numOpenError <= 1000 ? (<span><span>: {allErrors.length} open  |  </span><span>{childJob?.numOpenError - allErrors.length} resolved</span></span>) : ''}
           </Typography>
         ) : ''}
-        <ErrorList flowId={flowId} />
+        {errorType === FILTER_KEYS.RETRIES ? <RetryList flowId={flowId} resourceId={resourceId} /> : <ErrorList flowId={flowId} />}
       </DrawerContent>
     </RightDrawer>
   );

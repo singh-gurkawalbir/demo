@@ -26,7 +26,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const FLOW_RUNNING_STATUS = 'In progress';
+const FLOW_RUNNING_STATUS = 'Run in progress';
 const FLOW_IN_QUEUE_STATUS = 'Waiting in queue';
 
 export default function LastRun({ flowId }) {

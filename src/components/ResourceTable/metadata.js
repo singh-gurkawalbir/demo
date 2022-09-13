@@ -16,6 +16,7 @@ import auditLogs from './auditLog/metadata';
 import openErrors from './errorManagement/openErrors/metadata';
 import splitViewOpenErrors from './errorManagement/splitViewOpenErrors/metadata';
 import resolvedErrors from './errorManagement/resolvedErrors/metadata';
+import retries from './errorManagement/retries/metadata';
 import latestJobs from './latestJobs/metadata';
 import runHistory from './runHistory/metadata';
 import orgOwnerUsers from './users/Metadata/orgOwnerUsers';
@@ -44,6 +45,7 @@ const metadata = {
   openErrors,
   splitViewOpenErrors,
   resolvedErrors,
+  retries,
   latestJobs,
   runHistory,
   orgOwnerUsers,
