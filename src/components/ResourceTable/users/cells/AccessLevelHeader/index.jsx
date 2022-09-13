@@ -18,6 +18,7 @@ export default function AccessLevelHeader() {
         title="Access level"
         helpKey="users.accesslevel"
         className={classes.helpIcon}
+        disablePortal={false}
         />
     </span>
   );
