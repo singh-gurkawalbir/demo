@@ -1,10 +1,10 @@
 /* eslint-disable camelcase */
 import React, { useEffect, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { selectors } from '../../../reducers';
-import actions from '../../../actions';
-import DynaKeyValue from './DynaKeyValue';
-import DynaSelectMultiApplication from './DynaSelectMultiApplication';
+import { selectors } from '../../../../reducers';
+import actions from '../../../../actions';
+import DynaKeyValue from '../DynaKeyValue';
+import DynaSelectMultiApplication from '../DynaSelectMultiApplication';
 
 const emptySet = [];
 export default function DynaSortAndGroup(props) {
@@ -13,13 +13,28 @@ export default function DynaSortAndGroup(props) {
     formKey,
     value = emptySet,
     enableSorting,
+    resourceSubType,
   } = props;
   const dispatch = useDispatch();
 
   const { data, status} = useSelector(state =>
     selectors.getResourceSampleDataWithStatus(state, resourceId, 'parse'),
   );
-  const sampleData = Array.isArray(data) ? data[0] : data;
+  const finalOptions = useMemo(() => {
+    const sampleData = Array.isArray(data) ? data[0] : data;
+    const options = Object.keys(sampleData || {});
+
+    if (resourceSubType !== 'http' && resourceSubType !== 'rdbms') {
+      return options;
+    }
+
+    return options.filter(opt =>
+      !sampleData[opt] || (
+        typeof sampleData[opt] === 'string' ||
+        typeof sampleData[opt] === 'number' ||
+        typeof sampleData[opt] === 'boolean'
+      ));
+  }, [data, resourceSubType]);
 
   useEffect(() => {
     if (!status) {
@@ -28,20 +43,16 @@ export default function DynaSortAndGroup(props) {
   }, [dispatch, formKey, status]);
 
   const suggestionConfig = useMemo(() => {
-    let options = Object.keys(sampleData || {});
-
-    options = options.map(name => ({ id: name}));
+    const options = finalOptions.map(name => ({ id: name}));
 
     return { keyConfig: {
       suggestions: options,
       labelName: 'id',
       valueName: 'id',
     } };
-  }, [sampleData]);
+  }, [finalOptions]);
   const multiSelectOptions = useMemo(() => {
-    let options = Object.keys(sampleData || {});
-
-    options = options.map(name => ({ label: name, value: name}));
+    const options = finalOptions.map(name => ({ label: name, value: name}));
 
     if (Array.isArray(value)) {
       value.forEach(val => {
@@ -52,7 +63,7 @@ export default function DynaSortAndGroup(props) {
     }
 
     return [{ items: options }];
-  }, [sampleData, value]);
+  }, [finalOptions, value]);
 
   if (enableSorting) {
     return (

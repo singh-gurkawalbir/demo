@@ -1,4 +1,5 @@
 import { omitBy } from 'lodash';
+import { updateExportAndImportFinalMetadata } from '../../../../../sagas/utils';
 import { convertToImport } from '../../../../../utils/assistant';
 import { fieldMeta } from './util';
 
@@ -8,6 +9,8 @@ export default function assistantDefinition(
   assistantData
 ) {
   return {
+    init: (fieldMeta, resource, flow, httpConnector) => updateExportAndImportFinalMetadata(fieldMeta, httpConnector, resource),
+
     ...fieldMeta({ resource, assistantData }),
     preSave: (formValues = {}) => {
       const assistantMetadata = {
@@ -48,7 +51,7 @@ export default function assistantDefinition(
       });
 
       if (importDoc?.['/http']) { importDoc['/http'].formType = 'assistant'; }
-      if (!importDoc?.['/assistant']) {
+      if (importDoc && !importDoc['/assistant']) {
         importDoc['/assistant'] = undefined;
         delete importDoc['/assistant'];
       }

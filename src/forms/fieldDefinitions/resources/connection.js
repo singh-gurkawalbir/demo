@@ -108,16 +108,12 @@ export default {
     isLoggable: true,
     type: 'text',
     label: 'Port',
-    validWhen: [
-      {
-        fallsWithinNumericalRange: {
-          min: 0,
-          max: 65535,
-          message: 'The value must be more than 0 and less than 65535',
-        },
-        matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
+    validWhen: {
+      fallsWithinNumericalRange: {
+        min: 0,
+        max: 65535,
       },
-    ],
+    },
   },
   'rdbms.database': {
     isLoggable: true,
@@ -1165,9 +1161,7 @@ export default {
       fallsWithinNumericalRange: {
         min: 0,
         max: 65535,
-        message: 'The value must be more than 0 and less than 65535',
       },
-      matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
     },
   },
   'ftp.usePassiveMode': {
@@ -1768,17 +1762,9 @@ export default {
         is: [true],
       },
     ],
-    validWhen: [
-      {
-        matchesRegEx: { pattern: '^[\\d]$', message: 'Only numbers allowed' },
-      },
-      {
-        fallsWithinNumericalRange: {
-          message:
-            'The value must be greater than undefined and  lesser than undefined',
-        },
-      },
-    ],
+    validWhen: {
+      matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
+    },
   },
   'as2.partnerStationInfo.encryptionType': {
     isLoggable: true,
@@ -2545,23 +2531,6 @@ export default {
         ],
       },
     ],
-  },
-  connectionFormView: {
-    isLoggable: true,
-    id: 'connectionFormView',
-    type: 'connectionFormView',
-    label: 'Form view',
-    required: true,
-    resourceType: 'connections',
-    visible: r => r?._httpConnectorId || r?.http?._httpConnectorId,
-    defaultValue: r => {
-      if (!r) return 'false';
-      if (!r.http) return 'false';
-      if (!r.http.formType) return 'false';
-
-      return r.http?.formType === 'assistant' ? 'false' : 'true';
-    },
-    helpKey: 'formView',
   },
   configureCutomAuthTokenRefresh: {
     id: 'configureCutomAuthTokenRefresh',
