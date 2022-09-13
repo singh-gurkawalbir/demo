@@ -208,6 +208,7 @@ describe('v2 mapping utils', () => {
             parentExtract: '$.siblings[*]',
             parentKey: 'Zl1hv7Mhjejx9aFNASGFB',
             title: '',
+            activeTab: 0,
             children: [
               {
                 isTabNode: true,
@@ -289,6 +290,7 @@ describe('v2 mapping utils', () => {
             title: '',
             className: 'hideRow',
             hidden: true,
+            activeTab: 0,
             children: [
               {
                 isTabNode: true,
@@ -945,6 +947,38 @@ describe('v2 mapping utils', () => {
             ],
           },
           {
+            generate: 'images',
+            dataType: 'objectarray',
+            buildArrayHelper: [
+              {
+                extract: '$',
+                mappings: [
+                  {
+                    generate: 'test1',
+                    dataType: 'string',
+                    hardCodedValue: 'first_source',
+                  },
+                ],
+              },
+              {
+                extract: '$',
+                mappings: [
+                  {
+                    generate: 'test2',
+                    dataType: 'object',
+                    mappings: [
+                      {
+                        generate: 'map',
+                        dataType: 'string',
+                        hardCodedValue: 'second_source',
+                      },
+                    ],
+                  },
+                ],
+              },
+            ],
+          },
+          {
             generate: 'family_tree_from_mom_perspective',
             dataType: 'object',
             mappings: [
@@ -1284,6 +1318,89 @@ describe('v2 mapping utils', () => {
         }],
         combinedExtract: '$.siblings[*].children[*],$.children[*]',
       }, {
+        key: 'new_key',
+        title: '',
+        disabled: false,
+        generate: 'images',
+        dataType: 'objectarray',
+        jsonPath: 'images',
+        buildArrayHelper: [
+          {
+            extract: '$',
+            mappings: [
+              {
+                generate: 'test1',
+                dataType: 'string',
+                hardCodedValue: 'first_source',
+              },
+            ],
+          },
+          {
+            extract: '$',
+            mappings: [
+              {
+                generate: 'test2',
+                dataType: 'object',
+                mappings: [
+                  {
+                    generate: 'map',
+                    dataType: 'string',
+                    hardCodedValue: 'second_source',
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+        children: [{
+          key: 'new_key',
+          parentKey: 'new_key',
+          title: '',
+          isTabNode: true,
+        }, {
+          key: 'new_key',
+          title: '',
+          parentKey: 'new_key',
+          parentExtract: '$|0',
+          disabled: false,
+          jsonPath: 'images[*].test1',
+          generate: 'test1',
+          dataType: 'string',
+          hardCodedValue: 'first_source',
+        }, {
+          key: 'new_key',
+          title: '',
+          parentKey: 'new_key',
+          parentExtract: '$|1',
+          disabled: false,
+          hidden: true,
+          className: 'hideRow',
+          generate: 'test2',
+          jsonPath: 'images[*].test2',
+          dataType: 'object',
+          mappings: [
+            {
+              generate: 'map',
+              dataType: 'string',
+              hardCodedValue: 'second_source',
+            },
+          ],
+          children: [{
+            key: 'new_key',
+            title: '',
+            parentKey: 'new_key',
+            disabled: false,
+            generate: 'map',
+            jsonPath: 'images[*].test2.map',
+            dataType: 'string',
+            hardCodedValue: 'second_source',
+            hidden: true,
+            className: 'hideRow',
+          }],
+        }],
+        combinedExtract: '$,$',
+      },
+      {
         key: 'new_key',
         title: '',
         disabled: false,
@@ -2696,7 +2813,7 @@ describe('v2 mapping utils', () => {
 
       expect(allowDrop({dragNode, dropNode, dropPosition: 0})).toEqual(true);
     });
-    test('should return false if nodes are not at the same hierarchal level', () => {
+    test('should return true if nodes are not at the same hierarchical level', () => {
       const dragNode = {
         key: 'c1',
         extract: '$.fname',
@@ -2722,7 +2839,7 @@ describe('v2 mapping utils', () => {
         ],
       };
 
-      expect(allowDrop({dragNode, dropNode, dropPosition: 2})).toEqual(false);
+      expect(allowDrop({dragNode, dropNode, dropPosition: 2})).toEqual(true);
       expect(allowDrop({dragNode: {
         key: 'c2',
         extract: '$.lname',
@@ -2730,7 +2847,7 @@ describe('v2 mapping utils', () => {
         parentKey: 'key1',
       },
       dropNode,
-      dropPosition: 2})).toEqual(false);
+      dropPosition: 2})).toEqual(true);
     });
     test('should return true if drop node is tab and drop position is 1', () => {
       const dragNode = {

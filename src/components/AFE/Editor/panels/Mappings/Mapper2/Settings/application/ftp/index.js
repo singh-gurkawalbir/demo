@@ -406,6 +406,22 @@ export default {
           keyLabel: 'Source field value',
           valueName: 'import',
           valueLabel: 'Destination field value',
+          columns: [
+            {
+              id: 'import',
+              label: 'Destination field value',
+              required: false,
+              type: 'input',
+              supportsRefresh: false,
+            },
+            {
+              id: 'export',
+              label: 'Source field value',
+              required: false,
+              type: 'input',
+              supportsRefresh: false,
+            },
+          ],
           defaultValue:
               lookup.map &&
               Object.keys(lookup.map).map(key => ({
