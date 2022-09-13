@@ -176,7 +176,7 @@ describe('test suite for UpgradeErrorManagement', () => {
     userEvent.click(confirmButton);
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
     expect(upgradeButton).toHaveTextContent('Upgrading...');
-    await waitFor(() => expect(upgradeButton).toHaveTextContent('Upgrade'));
+    await waitFor(() => expect(upgradeButton).toHaveTextContent('Upgrading...'));
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.user.profile.update({ useErrMgtTwoDotZero: true }));
   });
 });
