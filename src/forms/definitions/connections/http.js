@@ -106,11 +106,9 @@ export default {
       newValues['/http/auth/token/tokenPaths'] = undefined;
     }
     if (newValues['/http/auth/token/tokenPaths']) {
-      const values = newValues['/http/auth/token/tokenPaths'];
-
-      newValues['/http/auth/token/tokenPaths'] = values.split(',');
+      newValues['/http/auth/token/tokenPaths'] = newValues['/http/auth/token/tokenPaths'].split(',');
     }
-    if (newValues['/configureTokenRefresh']) {
+    if (newValues['/http/auth/type'] !== 'custom') {
       newValues['/http/auth/token/tokenPaths'] = undefined;
     }
     if (newValues['/http/auth/type'] === 'token' || newValues['/http/auth/type'] === 'oauth') {
