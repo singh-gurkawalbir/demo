@@ -101,11 +101,10 @@ export default function ErrorDetails({ flowId, resourceId, isResolved, onClose, 
         tabs.push(ERROR_DETAILS_TABS.EDIT_RETRY_DATA);
       }
     }
-    if (!reqAndResKey) return tabs;
 
-    if (isResourceNetsuite) {
+    if (reqAndResKey && isResourceNetsuite) {
       tabs.push(ERROR_DETAILS_TABS.NETSUITE_REQUEST, ERROR_DETAILS_TABS.NETSUITE_RESPONSE);
-    } else {
+    } else if (reqAndResKey) {
       tabs.push(ERROR_DETAILS_TABS.REQUEST, ERROR_DETAILS_TABS.RESPONSE);
     }
 
@@ -115,8 +114,8 @@ export default function ErrorDetails({ flowId, resourceId, isResolved, onClose, 
   }, [retryId, reqAndResKey, isResourceNetsuite, isFlowDisabled]);
 
   if (!mode || !availableTabs.map(tab => tab.type).includes(mode)) {
-    // Incase of invalid url , redirects user to View Error fields tab
-    onTabChange(errorId, 'view');
+    // Incase of invalid url , redirects user to first available tab
+    onTabChange(errorId, availableTabs[0].type);
   }
 
   const handleModeChange = (evt, newValue) => onTabChange(errorId, newValue);
