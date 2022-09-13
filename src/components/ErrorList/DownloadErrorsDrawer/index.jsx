@@ -11,7 +11,7 @@ import RightDrawer from '../../drawer/Right';
 import DrawerHeader from '../../drawer/Right/DrawerHeader';
 import DrawerContent from '../../drawer/Right/DrawerContent';
 import DrawerFooter from '../../drawer/Right/DrawerFooter';
-import {OutlinedButton, TextButton} from '../../Buttons';
+import {FilledButton, TextButton} from '../../Buttons';
 import ActionGroup from '../../ActionGroup';
 import { selectors } from '../../../reducers';
 import { FILTER_KEYS } from '../../../utils/errorManagement';
@@ -111,12 +111,12 @@ function DownloadErrors({ flowId, resourceId, onClose }) {
 
       <DrawerFooter>
         <ActionGroup>
-          <OutlinedButton
+          <FilledButton
             data-test="downloadErrors"
             disabled={!isValidForm}
             onClick={handleDownload}>
             Download
-          </OutlinedButton>
+          </FilledButton>
           <TextButton data-test="cancelDownload" onClick={onClose}>
             Cancel
           </TextButton>
