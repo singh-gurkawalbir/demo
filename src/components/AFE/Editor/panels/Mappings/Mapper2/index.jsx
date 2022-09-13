@@ -208,6 +208,7 @@ export default function Mapper2({editorId}) {
     };
   }, [dispatch, enqueueSnackbar, isAutoCreateSuccess]);
 
+  // Add virtualization dynamically based on nodes added by user
   useEffect(() => {
     if (allNodes.length <= 50) {
       setVirtual(false);
