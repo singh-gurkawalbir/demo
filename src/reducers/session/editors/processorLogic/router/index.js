@@ -126,7 +126,7 @@ export default {
     let logs;
 
     if (Array.isArray(result?.data)) {
-      const { data } = result.data[0];
+      const { data = [] } = result.data[0] || {};
 
       logs = result.data[0].logs;
       if (data.length === 1) {
