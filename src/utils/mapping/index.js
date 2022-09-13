@@ -1725,7 +1725,7 @@ export const compareV2Mappings = (tree1 = [], tree2 = []) => {
 const recursivelyValidateV2Mappings = ({
   v2TreeData,
   lookups,
-  isRows,
+  isGroupedSampleData,
   dupMap = {},
   duplicateMappings = [],
   mappingsWithoutGenerates = [],
@@ -1794,11 +1794,12 @@ const recursivelyValidateV2Mappings = ({
       }
     }
 
-    if (isRows !== undefined && PRIMITIVE_DATA_TYPES.includes(dataType)) {
+    // HandleBar Expressions are allowed in case of string, number or boolean data type only
+    if (PRIMITIVE_DATA_TYPES.includes(dataType)) {
       // wrong rows or record based handlebars not supported
       const extractString = extract || '';
 
-      const rowOrRecordRegEx = isRows
+      const rowOrRecordRegEx = isGroupedSampleData
         ? /(\{\{((.*?\s+record)|(\s*record))\..*\}\})/i
         : /(\{\{((.*?\s+rows)|(\s*rows))\..*\}\})/i;
 
@@ -1811,7 +1812,7 @@ const recursivelyValidateV2Mappings = ({
       recursivelyValidateV2Mappings({
         v2TreeData: mapping.children,
         lookups,
-        isRows,
+        isGroupedSampleData,
         dupMap,
         duplicateMappings,
         mappingsWithoutGenerates,
@@ -1824,7 +1825,7 @@ const recursivelyValidateV2Mappings = ({
   });
 };
 
-const validateV2Mappings = (v2TreeData, lookups, isRows) => {
+const validateV2Mappings = (v2TreeData, lookups, isGroupedSampleData) => {
   const duplicateMappings = [];
   const mappingsWithoutGenerates = [];
   const missingExtractGenerateNames = [];
@@ -1835,7 +1836,7 @@ const validateV2Mappings = (v2TreeData, lookups, isRows) => {
   recursivelyValidateV2Mappings({
     v2TreeData,
     lookups,
-    isRows,
+    isGroupedSampleData,
     duplicateMappings,
     mappingsWithoutGenerates,
     missingExtractGenerateNames,
@@ -1880,7 +1881,7 @@ const validateV2Mappings = (v2TreeData, lookups, isRows) => {
   }
 
   if (wrongHandlebarExp.length) {
-    const errMessage = isRows
+    const errMessage = isGroupedSampleData
       ? errorMessageStore('MAPPER2_WRONG_HANDLEBAR_FOR_ROWS', {fields: wrongHandlebarExp.join(',')})
       : errorMessageStore('MAPPER2_WRONG_HANDLEBAR_FOR_RECORD', {fields: wrongHandlebarExp.join(',')});
 
