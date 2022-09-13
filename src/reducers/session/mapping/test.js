@@ -3031,6 +3031,8 @@ describe('mapping reducer', () => {
                 key: 'new_key',
                 title: '',
                 parentKey: 'key1',
+                combinedExtract: '',
+                generate: 'child1',
                 parentExtract: '$.lname[*]',
                 dataType: MAPPING_DATA_TYPES.STRING,
                 hidden: true,
