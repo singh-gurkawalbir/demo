@@ -30,6 +30,9 @@ export const useHandleNextAndPreviousErrorPage = ({
   const errorObj = useSelectorMemo(selectors.mkResourceFilteredErrorDetailsSelector, errorConfig);
 
   const isFreshDataLoad = useIsFreshLoadData(errorConfig);
+  const retryStatus = useSelector(
+    state => selectors.retryStatus(state, flowId, resourceId)
+  );
 
   if (!errorObj.errors) {
     errorObj.errors = emptySet;
@@ -85,6 +88,7 @@ export const useHandleNextAndPreviousErrorPage = ({
     hasErrors,
     errorObj,
     count: errorObj?.errors?.length,
+    retryStatus,
     fetchErrors,
     isFreshDataLoad,
     paginationOptions,
