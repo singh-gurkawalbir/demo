@@ -17,9 +17,6 @@ const useStyles = makeStyles(theme => ({
       margin: theme.spacing(0, 1),
     },
   },
-  spinner: {
-    marginRight: theme.spacing(1),
-  },
   status: {
     color: theme.palette.secondary.main,
   },
