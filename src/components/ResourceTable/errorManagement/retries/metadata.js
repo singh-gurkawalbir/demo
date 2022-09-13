@@ -55,7 +55,7 @@ export default {
       Value: ({rowData: r}) => {
         const {flowId} = useGetTableContext();
 
-        return <UserName userId={r.triggeredBy} flowId={flowId} />;
+        return <UserName userId={r.triggeredBy} flowId={flowId} jobType={r.type} />;
       },
     },
     {
