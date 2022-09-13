@@ -1,5 +1,5 @@
 /* eslint-disable no-restricted-syntax */
-import React, {useCallback, useEffect, useMemo, useRef } from 'react';
+import React, {useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import Tree from 'rc-tree';
 import { useSelector, useDispatch } from 'react-redux';
 import { IconButton } from '@material-ui/core';
@@ -174,6 +174,7 @@ export default function Mapper2({editorId}) {
   const searchKey = useSelector(state => selectors.searchKey(state));
   const settingDrawerActive = useRef();
   const currentScrollPosition = useRef();
+  const [virtual, setVirtual] = useState(true);
 
   const allNodes = useMemo(() => getAllKeys(treeData), [treeData]);
   const handleWheelEvent = useCallback(event => {
@@ -206,6 +207,16 @@ export default function Mapper2({editorId}) {
       window.removeEventListener('mousemove', handleMouseMove, true);
     };
   }, [dispatch, enqueueSnackbar, isAutoCreateSuccess]);
+
+  useEffect(() => {
+    if (allNodes.length <= 50) {
+      setVirtual(false);
+      document.removeEventListener('wheel', handleWheelEvent);
+      window.removeEventListener('mousemove', handleMouseMove, true);
+    } else if (allNodes.length >= 51) {
+      setVirtual(true);
+    }
+  }, [allNodes.length]);
 
   const onDropHandler = useCallback(info => {
     dispatch(actions.mapping.v2.dropRow(info));
@@ -242,27 +253,25 @@ export default function Mapper2({editorId}) {
   // Add scroll handling for navigating back to the user scroll previous scroll position
   // when virtaulization is enabled for rc-tree
   const onScrollHandler = useCallback(e => {
-    if (allNodes.length > 50) {
-      // Add mouse move event listner to stop the default behaviour
-      // of mouse move by rc-tree library
-      window.addEventListener('mousemove', handleMouseMove, true);
+    // Add mouse move event listner to stop the default behaviour
+    // of mouse move by rc-tree library
+    window.addEventListener('mousemove', handleMouseMove, true);
 
-      // Add wheel event listner to handle horizontal scroll
-      document.addEventListener('wheel', handleWheelEvent, {passive: false});
+    // Add wheel event listner to handle horizontal scroll
+    document.addEventListener('wheel', handleWheelEvent, {passive: false});
 
-      if (settingDrawerActive.current && settingDrawerActive.current.wasActive) {
-        const currentEle = e.currentTarget;
+    if (settingDrawerActive.current && settingDrawerActive.current.wasActive) {
+      const currentEle = e.currentTarget;
 
-        setTimeout(() => {
-          const scrollPos = sessionStorage.getItem('scrollPosition');
+      setTimeout(() => {
+        const scrollPos = sessionStorage.getItem('scrollPosition');
 
-          currentEle.scrollTo(0, parseInt(scrollPos, 10));
-          sessionStorage.removeItem('scrollPosition');
-        }, 10);
-        settingDrawerActive.current.wasActive = false;
-      }
-      currentScrollPosition.current = e.currentTarget.scrollTop;
+        currentEle.scrollTo(0, parseInt(scrollPos, 10));
+        sessionStorage.removeItem('scrollPosition');
+      }, 10);
+      settingDrawerActive.current.wasActive = false;
     }
+    currentScrollPosition.current = e.currentTarget.scrollTop;
   }, []);
 
   return (
@@ -273,6 +282,7 @@ export default function Mapper2({editorId}) {
           className={`${classes.treeRoot} ${allNodes.length > 50 ? classes.virtualTree : ''}`}
           height={allNodes.length > 50 ? 600 : undefined}
           itemHeight={allNodes.length > 50 ? 20 : undefined}
+          virtual={virtual}
           titleRender={Row}
           treeData={treeData}
           showLine
