@@ -1,5 +1,5 @@
-import React, { useState, useRef, useCallback } from 'react';
-import { useSelector } from 'react-redux';
+import React, { useState, useRef, useCallback, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import { FormControl, TextField, Tooltip } from '@material-ui/core';
 import clsx from 'clsx';
@@ -11,6 +11,7 @@ import DestinationDataType from './DestinationDataType';
 import LockIcon from '../../../../../../icons/LockIcon';
 import { selectors } from '../../../../../../../reducers';
 import useScrollIntoView from '../../../../../../../hooks/useScrollIntoView';
+import actions from '../../../../../../../actions';
 
 const useStyles = makeStyles(theme => ({
   customTextField: {
@@ -71,7 +72,9 @@ export default function Mapper2Generates(props) {
     nodeKey,
     isRequired,
   } = props;
+  const dispatch = useDispatch();
   const highlightedKey = useSelector(state => selectors.highlightedKey(state));
+  const newRowKey = useSelector(state => selectors.newRowKey(state));
   const classes = useStyles();
   const [isFocused, setIsFocused] = useState(false);
   const [inputValue, setInputValue] = useState(propValue);
@@ -79,6 +82,15 @@ export default function Mapper2Generates(props) {
   const [anchorEl, setAnchorEl] = useState(null);
   const containerRef = useRef();
   const inputFieldRef = useRef();
+
+  // run only at mount to bring focus in the new row
+  useEffect(() => {
+    if (newRowKey && `fieldMappingGenerate-${newRowKey}` === id) {
+      setIsFocused(true);
+      dispatch(actions.mapping.v2.deleteNewRowKey());
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // bring the highlighted key into focus
   useScrollIntoView(containerRef, nodeKey === highlightedKey);
