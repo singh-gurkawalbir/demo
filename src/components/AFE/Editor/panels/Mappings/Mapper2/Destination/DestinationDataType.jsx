@@ -21,7 +21,8 @@ const useStyles = makeStyles(theme => ({
     fontStyle: 'italic',
     color: theme.palette.primary.main,
     width: theme.spacing(9),
-    padding: 0,
+    justifyContent: 'flex-end',
+    padding: theme.spacing(0, 0.5),
     '& svg': {
       marginLeft: theme.spacing(-1),
     },
