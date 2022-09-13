@@ -177,15 +177,13 @@ export default function Mapper2({editorId}) {
 
   const allNodes = useMemo(() => getAllKeys(treeData), [treeData]);
   const handleWheelEvent = useCallback(event => {
-    if (allNodes.length > 50) {
-      if (event.deltaX) {
-        event.preventDefault();
-        const delta = Math.sign(event.deltaX);
-        const scrollWidth = `${delta}2`;
+    if (event.deltaX) {
+      event.preventDefault();
+      const delta = Math.sign(event.deltaX);
+      const scrollWidth = `${delta}2`;
 
-        if (document.querySelector('.rc-tree-list-holder')) {
-          document.querySelector('.rc-tree-list-holder').scrollLeft += scrollWidth;
-        }
+      if (document.querySelector('.rc-tree-list-holder')) {
+        document.querySelector('.rc-tree-list-holder').scrollLeft += scrollWidth;
       }
     }
   }, []);
@@ -205,7 +203,7 @@ export default function Mapper2({editorId}) {
 
     return () => {
       document.removeEventListener('wheel', handleWheelEvent);
-      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('mousemove', handleMouseMove, true);
     };
   }, [dispatch, enqueueSnackbar, isAutoCreateSuccess]);
 
@@ -290,7 +288,7 @@ export default function Mapper2({editorId}) {
           onDragStart={onDragStart}
           disabled={disabled}
           filterTreeNode={filterTreeNode}
-          onScroll={allNodes.length > 50 ? onScrollHandler : ''}
+          onScroll={onScrollHandler}
               />
       </div>
     </>
