@@ -108,6 +108,7 @@ href="/marketplace"><u>Check out our Marketplace</u></a> to jumpstart your  inte
   CREATE_PULL_FORM_HELPINFO: 'Pulling changes from one linked integration to another lets you see conflicts, review changes, and merge them from one integration to another. You can only pull data from a direct clone or source integration.. For example, clone Integration A as Integration B, then B to C, and B to D. You can create a pull between integrations A and B, B and C, B and D; but not between A and C, or C and D',
   RETRIES_TAB_INFO: 'When you retry error(s) in a step, it will display as a single job run (i.e. row) in the \'Retries\' tab for that particular step.\nWhen you triggered a retry in a step, but it resulted in errors in the follow-up steps, then to locate the new errors, you can look into the \'Open errors\' tab of the respective follow-up step.\nHere, you will also find auto-retry runs. When retries were triggered by auto-retry, a single row will appear for each retry job in the ‘Retries’ tab and the column ‘Retry started by’ will show ‘Auto-retry’.',
   CANCEL_RETRY_CONFIRM: 'Cancelling will abort the retrying of any errors not yet processed in this operation; those errors already processed will not be reverted, maintaining their current state (failed or resolved).',
+  RETRIES_TAB_ERRORS_UPDATED_INFO: 'Retries that were initated from previous steps in your flow cannot be shown on any subsequent steps whose errors/success were changed by the retries in a previous step.',
 };
 
 export default function messageStore(key, argsObj) {

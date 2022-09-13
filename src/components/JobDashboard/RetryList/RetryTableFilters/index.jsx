@@ -6,6 +6,8 @@ import actions from '../../../../actions';
 import Icon from '../../../icons/RefreshIcon';
 import TextButton from '../../../Buttons/TextButton';
 import SelectResource from '../../../LineGraph/SelectResource';
+import InfoIcon from '../../../icons/InfoIcon';
+import messageStore from '../../../../utils/messageStore';
 
 const useStyles = makeStyles(theme => ({
   header: {
@@ -38,6 +40,16 @@ export default function RetryTableFilters({flowId, resourceId, filterKey}) {
   const retryStatus = useSelector(
     state => selectors.retryStatus(state, flowId, resourceId)
   );
+  const isOpenErrorsUpdated = useSelector(state => {
+    const openErrorDetails = selectors.allResourceErrorDetails(state, { flowId, resourceId});
+
+    return !!openErrorDetails.updated;
+  });
+  const isResolvedErrorsUpdated = useSelector(state => {
+    const openErrorDetails = selectors.allResourceErrorDetails(state, { flowId, resourceId, isResolved: true});
+
+    return !!openErrorDetails.updated;
+  });
   const fetchRetries = useCallback(() => {
     dispatch(actions.errorManager.retries.request({flowId, resourceId}));
   }, [dispatch, flowId, resourceId]);
@@ -69,6 +81,12 @@ export default function RetryTableFilters({flowId, resourceId, filterKey}) {
             </TextButton>
           </div>
         </div>
+        { (!retryStatus && (isOpenErrorsUpdated || isResolvedErrorsUpdated)) ? (
+          <div>
+            <InfoIcon size="xs" />
+            {messageStore('RETRIES_TAB_ERRORS_UPDATED_INFO')}
+          </div>
+        ) : ''}
       </div>
     </div>
   );

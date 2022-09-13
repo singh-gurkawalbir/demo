@@ -53,7 +53,7 @@ export default function CancelRetryJob({retryJob}) {
       <TextButton
         startIcon={<CancelIcon />}
         onClick={handleCallBack}
-        disabled={retryJob.status !== JOB_STATUS.RUNNING}
+        disabled={![JOB_STATUS.QUEUED, JOB_STATUS.RUNNING].includes(retryJob.status)}
         >
         Cancel retry
       </TextButton>

@@ -91,7 +91,7 @@ export default function ErrorStatus({ count, isNew, flowId, resourceId }) {
       )}
       { retryStatus === 'completed' && (
       <TextButton size="large" onClick={() => handleStatus(FILTER_KEYS.RETRIES)}>
-        Retrying complete.
+        Retrying completed.
       </TextButton>
       )}
     </div>

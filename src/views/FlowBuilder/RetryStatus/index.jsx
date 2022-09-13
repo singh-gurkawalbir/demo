@@ -57,7 +57,7 @@ export default function RetryStatus({ flowId }) {
     return (
       <>
         <Typography variant="body2" component="div" className={classes.status}>
-          Retrying complete.
+          Retrying completed.
         </Typography>
         {resourcesWithRetryCompleted.length > 1 ? (
           <RetryListPopper resources={resourcesWithRetryCompleted} />

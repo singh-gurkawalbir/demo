@@ -58,7 +58,7 @@ export default function ErrorDrawerAction({ flowId, onChange, errorType }) {
       <div className={classes.retryContainer}>
         <Divider orientation className={classes.divider} />
         <Typography variant="body2" component="div" className={classes.status}>
-          Retrying complete.
+          Retrying completed.
         </Typography>
         {errorType !== FILTER_KEYS.RETRIES ? (
           <TextButton size="large" onClick={() => onChange(FILTER_KEYS.RETRIES)}>
