@@ -10,19 +10,9 @@ import { FILTER_KEYS } from '../../../../utils/errorManagement';
 
 const useStyles = makeStyles(theme => ({
   currentContainer: {
-    color: theme.palette.secondary.main,
-    padding: 0,
-    paddingRight: theme.spacing(1),
-    marginRight: theme.spacing(-1),
-    '& svg': {
-      marginLeft: theme.spacing(0.5),
-    },
-    '&:hover': {
-      background: 'none',
-      color: theme.palette.text.secondary,
-      '& svg': {
-        color: theme.palette.text.secondary,
-      },
+    padding: theme.spacing(0, 0.5),
+    '& .MuiButton-endIcon': {
+      color: theme.palette.secondary.main,
     },
   },
   content: {
@@ -30,6 +20,17 @@ const useStyles = makeStyles(theme => ({
   },
   menuItem: {
     borderBottom: 0,
+  },
+  viewResultsPopper: {
+    '& .MuiMenuItem-root': {
+      padding: theme.spacing(1, 2),
+    },
+    '& .MuiMenuItem-root+.MuiMenuItem-root': {
+      borderTop: `1px solid ${theme.palette.secondary.lightest}`,
+    },
+  },
+  viewResultsPopperArrow: {
+    left: '183px !important',
   },
 }));
 
@@ -68,7 +69,8 @@ export default function RetryListPopper({resources}) {
         endIcon={<ArrowDownIcon />}
         className={classes.currentContainer}
         aria-owns={open ? 'accountList' : null}
-        aria-haspopup="true">
+        aria-haspopup="true"
+        color="primary">
         View results
       </TextButton>
 
@@ -76,8 +78,12 @@ export default function RetryListPopper({resources}) {
         id="accountList"
         open={open}
         anchorEl={anchorEl}
-        placement="bottom-end"
-        onClose={handleClose}>
+        placement="bottom"
+        onClose={handleClose}
+        classes={{
+          popper: classes.viewResultsPopper,
+          arrow: classes.viewResultsPopperArrow,
+        }}>
 
         <ClickAwayListener onClickAway={handleClose}>
           <div className={classes.content}>

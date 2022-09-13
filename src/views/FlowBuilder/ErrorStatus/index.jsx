@@ -2,7 +2,7 @@ import React, { useCallback, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import { useHistory, useRouteMatch } from 'react-router-dom';
-import { Typography } from '@material-ui/core';
+import { Divider, Typography } from '@material-ui/core';
 import { selectors } from '../../../reducers';
 import { buildDrawerUrl, drawerPaths } from '../../../utils/rightDrawer';
 import Status from '../../../components/Buttons/Status';
@@ -20,7 +20,23 @@ const useStyles = makeStyles(theme => ({
     },
   },
   spinner: {
-    marginRight: theme.spacing(1),
+    marginRight: theme.spacing(0.5),
+    display: 'flex',
+  },
+  divider: {
+    height: theme.spacing(3),
+    margin: theme.spacing(0, 1),
+  },
+  retryContainer: {
+    display: 'flex',
+    alignItems: 'center',
+    zIndex: 1,
+  },
+  retryCompleteButton: {
+    width: theme.spacing(8),
+    padding: 0,
+    textAlign: 'left',
+    lineHeight: 1,
   },
 }));
 
@@ -82,17 +98,21 @@ export default function ErrorStatus({ count, isNew, flowId, resourceId }) {
         variant={count ? 'error' : 'success'}> { count ? `${count} errors` : 'Success'}
       </Status>
       { retryStatus === 'inProgress' && (
-      <div >
+      <div className={classes.retryContainer}>
+        <Divider orientation="vertical" className={classes.divider} />
         <Spinner size={16} className={classes.spinner} />
-        <Typography variant="body2" component="div" >
+        <Typography variant="caption" component="div" >
           Retrying
         </Typography>
       </div>
       )}
       { retryStatus === 'completed' && (
-      <TextButton size="large" onClick={() => handleStatus(FILTER_KEYS.RETRIES)}>
-        Retrying completed.
-      </TextButton>
+        <div className={classes.retryContainer}>
+          <Divider orientation="vertical" className={classes.divider} />
+          <TextButton size="small" color="primary" className={classes.retryCompleteButton} onClick={() => handleStatus(FILTER_KEYS.RETRIES)}>
+            Retry completed
+          </TextButton>
+        </div>
       )}
     </div>
   );

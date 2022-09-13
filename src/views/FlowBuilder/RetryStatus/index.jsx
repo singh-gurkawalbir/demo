@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { useHistory, useRouteMatch } from 'react-router-dom';
-import { Typography } from '@material-ui/core';
+import { Divider, Typography } from '@material-ui/core';
 import { selectors } from '../../../reducers';
 import { buildDrawerUrl, drawerPaths } from '../../../utils/rightDrawer';
 import Spinner from '../../../components/Spinner';
@@ -13,16 +13,20 @@ import { FILTER_KEYS } from '../../../utils/errorManagement';
 import RetryListPopper from './RetryListPopper';
 
 const useStyles = makeStyles(theme => ({
-  divider: {
-    borderLeft: `1px solid ${theme.palette.secondary.lightest}`,
-    margin: theme.spacing(0, 1, 0, 1),
-  },
   flexContainer: {
     display: 'flex',
     alignItems: 'center',
   },
   spinner: {
-    marginRight: theme.spacing(1),
+    marginRight: theme.spacing(0.5),
+    display: 'flex',
+  },
+  viewResultButton: {
+    padding: theme.spacing(0, 0.5),
+  },
+  divider: {
+    height: theme.spacing(3),
+    margin: theme.spacing(0, 1),
   },
 }));
 
@@ -48,7 +52,7 @@ export default function RetryStatus({ flowId }) {
     if (isAnyRetryInProgress) {
       return (
         <>
-          <Spinner size={16} className={classes.icon} />
+          <Spinner size={16} className={classes.spinner} />
           <span>{RETRY_JOB_UI_STATUS.running}</span>
         </>
       );
@@ -56,13 +60,13 @@ export default function RetryStatus({ flowId }) {
 
     return (
       <>
-        <Typography variant="body2" component="div" className={classes.status}>
-          Retrying completed.
+        <Typography variant="caption" component="div" className={classes.status}>
+          Retry completed.
         </Typography>
         {resourcesWithRetryCompleted.length > 1 ? (
           <RetryListPopper resources={resourcesWithRetryCompleted} />
         ) : (
-          <TextButton size="large" onClick={handleClick}>
+          <TextButton size="small" color="primary" className={classes.viewResultButton} onClick={handleClick}>
             View results
           </TextButton>
         )}
@@ -76,7 +80,7 @@ export default function RetryStatus({ flowId }) {
 
   return (
     <>
-      <div className={classes.divider} />
+      <Divider orientation="vertical" className={classes.divider} />
       <span className={classes.flexContainer}>
         {retriesStatusLabel}
       </span>
