@@ -193,7 +193,7 @@ export default function Mapper2({editorId}) {
   const activeKey = useSelector(state => selectors.v2ActiveKey(state));
   const searchKey = useSelector(state => selectors.searchKey(state));
   const importId = useSelector(state => selectors.mapping(state).importId, shallowEqual);
-  const editorLayout = useSelector(state => selectors.editorLayout(state, getMappingsEditorId(importId)));
+  const editorLayout = useSelector(state => selectors.editorLayout(state, getMappingsEditorId(importId)));// editorlayout is required for adjusting horizontal scroll in both layouts
   const settingDrawerActive = useRef();
   const currentScrollPosition = useRef();
 
@@ -241,6 +241,7 @@ export default function Mapper2({editorId}) {
     }
   }, [allNodes]);
 
+  // based on activekey we are tracking the cursor position when drawer is opened
   useEffect(() => {
     if (activeKey) {
       localStorage.setItem('scrollPosition', currentScrollPosition.current);
@@ -282,6 +283,11 @@ export default function Mapper2({editorId}) {
 
     if (settingDrawerActive.current && settingDrawerActive.current.wasActive) {
       const currentEle = e.currentTarget;
+      // NOTE: rc-tree by default is reseting the scroll to top postion when virtualization is enabled
+      // inorder to set the user position back on close of drawer we are adding this time out for now
+      // to handle this scenario.
+      // TODO: There is be a slight delay in scroll animation when the scroll
+      // is returning back to current position.this needs to be fixed
 
       setTimeout(() => {
         const scrollPos = localStorage.getItem('scrollPosition');
