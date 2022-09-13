@@ -192,13 +192,13 @@ export default function Mapper2({editorId}) {
   const expandedKeys = useSelector(state => selectors.v2MappingExpandedKeys(state));
   const activeKey = useSelector(state => selectors.v2ActiveKey(state));
   const searchKey = useSelector(state => selectors.searchKey(state));
-  const importId = useSelector(state => selectors.mapping(state).importId, shallowEqual);
+  const importId = useSelector(state => selectors.mapping(state).importId);
   const editorLayout = useSelector(state => selectors.editorLayout(state, getMappingsEditorId(importId)));// editorlayout is required for adjusting horizontal scroll in both layouts
   const settingDrawerActive = useRef();
   const currentScrollPosition = useRef();
 
   // using memo here since getAllKeys will be expensive if the number of nodes increases
-  const allNodes = useMemo(() => getAllKeys(treeData), [treeData]).length;
+  const allNodes = useMemo(() => getAllKeys(treeData).length, [treeData]);
 
   // rc-tree does not support horizontal scroll hence
   // handling horizontal scroll if number of child nodes are more
