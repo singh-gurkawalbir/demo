@@ -91,10 +91,10 @@ export default {
       newValues['/http/auth/basic/username'] = newValues['/http/auth/digest/username'];
       newValues['/http/auth/basic/password'] = newValues['/http/auth/digest/password'];
     }
-
     if (
-      (newValues['/http/auth/type'] !== 'token' && newValues['/http/auth/type'] !== 'custom') ||
-      (!newValues['/configureTokenRefresh'] && !newValues['/configureCutomAuthTokenRefresh'])
+      !['custom', 'token'].includes(newValues['/http/auth/type']) ||
+      (newValues['/http/auth/type'] === 'custom' && !newValues['/configureCutomAuthTokenRefresh']) ||
+      (newValues['/http/auth/type'] === 'token' && !newValues['/configureTokenRefresh'])
     ) {
       newValues['/http/auth/token/refreshMethod'] = undefined;
       newValues['/http/auth/token/refreshTokenPath'] = undefined;
@@ -105,11 +105,12 @@ export default {
       newValues['/http/auth/token/refreshMediaType'] = undefined;
       newValues['/http/auth/token/tokenPaths'] = undefined;
     }
-    if (newValues['/http/auth/token/tokenPaths']) {
-      newValues['/http/auth/token/tokenPaths'] = newValues['/http/auth/token/tokenPaths'].split(',');
-    }
     if (newValues['/http/auth/type'] !== 'custom') {
+      // tokenPaths are only supported for custom auth type refresh token
       newValues['/http/auth/token/tokenPaths'] = undefined;
+    }
+    if (newValues['/http/auth/token/tokenPaths']) {
+      newValues['/http/auth/token/tokenPaths'] = newValues['/http/auth/token/tokenPaths'].split(',').map(path => path.trim());
     }
     if (newValues['/http/auth/type'] === 'token' || newValues['/http/auth/type'] === 'oauth') {
       if (newValues['/http/auth/token/scheme'] === 'Custom') {
