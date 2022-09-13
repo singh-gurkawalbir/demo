@@ -16,18 +16,18 @@ function hiddenFieldsMeta({ values }) {
 
 function basicFieldsMeta({ assistant, assistantConfig, assistantData }) {
   const fieldDefinitions = {
-    version: {
-      fieldId: 'assistantMetadata.version',
-      value: assistantConfig.version,
-      type: 'hfoptions',
-      required: true,
-    },
     resource: {
       fieldId: 'assistantMetadata.resource',
       value: assistantConfig.resource,
       required: true,
       type: 'hfoptions',
       label: 'Resources',
+    },
+    version: {
+      fieldId: 'assistantMetadata.version',
+      value: assistantConfig.version,
+      type: 'hfoptions',
+      required: true,
     },
     operation: {
       fieldId: 'assistantMetadata.operation',
@@ -44,7 +44,7 @@ function basicFieldsMeta({ assistant, assistantConfig, assistantData }) {
       fieldDefinitions[fieldId].visible = versions.length > 1;
 
       if (!fieldDefinitions[fieldId].value && versions.length === 1) {
-        fieldDefinitions[fieldId].value = versions[0].version;
+        fieldDefinitions[fieldId].value = versions[0]._id;
       }
     }
 
