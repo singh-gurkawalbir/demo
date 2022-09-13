@@ -1,7 +1,7 @@
 /* eslint-disable no-restricted-syntax */
 import React, {useCallback, useEffect, useMemo, useRef } from 'react';
 import Tree from 'rc-tree';
-import { useSelector, useDispatch, shallowEqual } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { IconButton } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
