@@ -40,14 +40,13 @@ export function* cancelRetry({flowId, resourceId, jobId}) {
     yield call(apiCallWithRetry, {
       path,
       opts: {
-        body: {},
         method: 'PUT',
       },
     });
 
     yield call(getRetryJobCollection, {flowId, resourceId});
   } catch (error) {
-    yield put(actions.api.failure(path, 'PUT', error?.message, false));
+    // errors
   }
 }
 

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import { useRouteMatch } from 'react-router-dom';
 import { makeStyles, Divider, Typography } from '@material-ui/core';
@@ -39,6 +39,7 @@ export default function ErrorDrawerAction({ flowId, onChange, errorType }) {
   const retryStatus = useSelector(
     state => selectors.retryStatus(state, flowId, resourceId)
   );
+  const handleClick = useCallback(() => onChange(FILTER_KEYS.RETRIES), [onChange]);
 
   return (
     <>
@@ -58,7 +59,7 @@ export default function ErrorDrawerAction({ flowId, onChange, errorType }) {
           Retry completed.
         </Typography>
         {errorType !== FILTER_KEYS.RETRIES ? (
-          <TextButton size="large" color="primary" onClick={() => onChange(FILTER_KEYS.RETRIES)}>
+          <TextButton size="large" color="primary" onClick={handleClick}>
             View results
           </TextButton>
         ) : ''}
