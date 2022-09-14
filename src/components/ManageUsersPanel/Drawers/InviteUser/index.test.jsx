@@ -141,7 +141,7 @@ describe('Invite Users UI tests', () => {
 
     expect(administratorMessage).toBeInTheDocument();
     fireEvent.click(administratorMessage);
-    const saveMessage = await screen.findByText('Save');
+    const saveMessage = await waitFor(() => screen.getByText('Save'));
 
     expect(saveMessage).toBeInTheDocument();
     fireEvent.click(saveMessage);

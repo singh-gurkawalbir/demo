@@ -1,7 +1,7 @@
-/* global describe, test, expect, afterEach, beforeEach, jest */
+/* global describe, test, expect, afterEach, jest */
 import React from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
-import { cleanup, screen, fireEvent } from '@testing-library/react';
+import { cleanup, waitFor, screen, fireEvent } from '@testing-library/react';
 import { MemoryRouter, Route } from 'react-router-dom';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import userEvent from '@testing-library/user-event';
@@ -127,10 +127,7 @@ jest.mock('../../../LoadResources', () => ({
 
 describe('Manage Permissions', () => {
   runServer();
-  beforeEach(() => {
-    jest.useFakeTimers();
-  });
-  afterEach(() => { jest.clearAllTimers(); cleanup; });
+  afterEach(() => { cleanup; });
   test('Should be able to access the Manage Permission drawer', async () => {
     const mockResolverFunction = jest.fn();
 
@@ -163,7 +160,7 @@ describe('Manage Permissions', () => {
 
     expect(administratorMessage).toBeInTheDocument();
     fireEvent.click(administratorMessage);
-    const saveMessage = await screen.findByText('Save');
+    const saveMessage = await waitFor(() => screen.getByText('Save'));
 
     expect(saveMessage).toBeInTheDocument();
   });

@@ -2,7 +2,7 @@
 import React from 'react';
 import {Router} from 'react-router-dom';
 // eslint-disable-next-line import/no-extraneous-dependencies
-import { screen, fireEvent, waitFor } from '@testing-library/react';
+import { screen, fireEvent, waitFor, cleanup } from '@testing-library/react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import userEvent from '@testing-library/user-event';
 // eslint-disable-next-line import/no-extraneous-dependencies
@@ -131,7 +131,6 @@ describe('User Form Wrapper', () => {
   let useDispatchSpy;
 
   beforeEach(done => {
-    jest.useFakeTimers();
     initialStore = getCreatedStore();
     useDispatchSpy = jest.spyOn(reactRedux, 'useDispatch');
     mockDispatchFn = jest.fn(action => {
@@ -145,7 +144,7 @@ describe('User Form Wrapper', () => {
   afterEach(async () => {
     useDispatchSpy.mockClear();
     mockDispatchFn.mockClear();
-    jest.clearAllTimers();
+    cleanup();
   });
 
   test('Should able to access the User Form Wrapper and need to verify the administrator access level by saving the form', async () => {
@@ -193,7 +192,7 @@ describe('User Form Wrapper', () => {
     expect(accessLevelText).toBeInTheDocument();
     userEvent.click(accessLevelText);
     expect(screen.getByText('Administer account')).toBeInTheDocument();
-    const saveMessage = await screen.getByText('Save');
+    const saveMessage = await screen.findByText('Save');
 
     expect(saveMessage).toBeInTheDocument();
     fireEvent.click(saveMessage);
@@ -292,7 +291,7 @@ describe('User Form Wrapper', () => {
 
     expect(accessLevelMessage).toBeInTheDocument();
 
-    const accessLevelText = await screen.queryAllByRole('button', { name: 'Please select' }).find(eachOption => eachOption.getAttribute('id') === 'mui-component-select-accessLevel');
+    const accessLevelText = await waitFor(() => screen.queryAllByRole('button', { name: 'Please select' }).find(eachOption => eachOption.getAttribute('id') === 'mui-component-select-accessLevel'));
 
     expect(accessLevelText).toBeInTheDocument();
     userEvent.click(accessLevelText);
@@ -355,7 +354,7 @@ describe('User Form Wrapper', () => {
 
     expect(accessLevelMessage).toBeInTheDocument();
 
-    const accessLevelText = await screen.queryAllByRole('button', { name: 'Please select' }).find(eachOption => eachOption.getAttribute('id') === 'mui-component-select-accessLevel');
+    const accessLevelText = await waitFor(() => screen.queryAllByRole('button', { name: 'Please select' }).find(eachOption => eachOption.getAttribute('id') === 'mui-component-select-accessLevel'));
 
     expect(accessLevelText).toBeInTheDocument();
     userEvent.click(accessLevelText);
@@ -363,7 +362,7 @@ describe('User Form Wrapper', () => {
 
     expect(administratorMessage).toBeInTheDocument();
     fireEvent.click(administratorMessage);
-    const saveMessage = await screen.getByText('Save');
+    const saveMessage = await screen.findByText('Save');
 
     expect(saveMessage).toBeInTheDocument();
     fireEvent.click(saveMessage);
@@ -415,7 +414,7 @@ describe('User Form Wrapper', () => {
 
     expect(accessLevelMessage).toBeInTheDocument();
 
-    const accessLevelText = await screen.queryAllByRole('button', { name: 'Please select' }).find(eachOption => eachOption.getAttribute('id') === 'mui-component-select-accessLevel');
+    const accessLevelText = await waitFor(() => screen.queryAllByRole('button', { name: 'Please select' }).find(eachOption => eachOption.getAttribute('id') === 'mui-component-select-accessLevel'));
 
     expect(accessLevelText).toBeInTheDocument();
     userEvent.click(accessLevelText);
@@ -431,7 +430,7 @@ describe('User Form Wrapper', () => {
 
     expect(integration).toBeInTheDocument();
     userEvent.click(integration);
-    const saveMessage = await screen.getByText('Save');
+    const saveMessage = await screen.findByText('Save');
 
     expect(saveMessage).toBeInTheDocument();
 
@@ -453,7 +452,7 @@ describe('User Form Wrapper', () => {
       },
       asyncKey: 'inviteUserDrawerFormKey',
     }));
-  });
+  }, 30000);
   test('Should be able to invite a user with manage integration access to a tile', async () => {
     await initUserFormWrapper('');
     mockGetRequestOnce('/api/shared/ashares', [
@@ -463,7 +462,7 @@ describe('User Form Wrapper', () => {
         accessLevel: 'monitor',
       },
     ]);
-    expect(screen.queryByText(/Email/i)).toBeInTheDocument();
+    expect(await screen.findByText(/Email/i)).toBeInTheDocument();
     const svgEl = document.querySelector("[viewBox='0 0 24 24']");
 
     expect(svgEl).toBeInTheDocument();
@@ -496,7 +495,7 @@ describe('User Form Wrapper', () => {
 
     expect(accessLevelMessage).toBeInTheDocument();
 
-    const accessLevelText = await screen.findByRole('button', { name: 'Please select', hidden: true });
+    const accessLevelText = await waitFor(() => screen.getByRole('button', { name: 'Please select', hidden: true }));
 
     expect(accessLevelText).toBeInTheDocument();
     userEvent.click(accessLevelText);
@@ -512,12 +511,12 @@ describe('User Form Wrapper', () => {
 
     expect(integration).toBeInTheDocument();
     userEvent.click(integration);
-    const doneMessage = screen.getByText('Done');
+    const doneMessage = await screen.findByText('Done');
 
     userEvent.click(doneMessage);
 
     expect(doneMessage).toBeInTheDocument();
-    const saveMessage = await screen.getByText('Save');
+    const saveMessage = await screen.findByText('Save');
 
     expect(saveMessage).toBeInTheDocument();
     userEvent.click(saveMessage);
@@ -548,7 +547,7 @@ describe('User Form Wrapper', () => {
         accessLevel: 'monitor',
       },
     ]);
-    expect(screen.queryByText(/Email/i)).toBeInTheDocument();
+    expect(await screen.findByText(/Email/i)).toBeInTheDocument();
     const svgEl = document.querySelector("[viewBox='0 0 24 24']");
 
     expect(svgEl).toBeInTheDocument();
@@ -581,7 +580,7 @@ describe('User Form Wrapper', () => {
 
     expect(accessLevelMessage).toBeInTheDocument();
 
-    const accessLevelText = await screen.findByRole('button', { name: 'Please select', hidden: true });
+    const accessLevelText = await waitFor(() => screen.getByRole('button', { name: 'Please select', hidden: true }));
 
     expect(accessLevelText).toBeInTheDocument();
     userEvent.click(accessLevelText);
@@ -597,12 +596,12 @@ describe('User Form Wrapper', () => {
 
     expect(integration).toBeInTheDocument();
     userEvent.click(integration);
-    const doneMessage = screen.getByText('Done');
+    const doneMessage = await screen.findByText('Done');
 
     userEvent.click(doneMessage);
 
     expect(doneMessage).toBeInTheDocument();
-    const saveMessage = await screen.getByText('Save');
+    const saveMessage = await screen.findByText('Save');
 
     expect(saveMessage).toBeInTheDocument();
     userEvent.click(saveMessage);
@@ -626,7 +625,7 @@ describe('User Form Wrapper', () => {
   }, 30000);
   test('Should be able to verify the monitor integration access to a tile', async () => {
     await initUserFormWrapper('60fea86dbac8e87b7660f985');
-    expect(screen.queryByText(/Email/i)).toBeInTheDocument();
+    expect(await screen.findByText(/Email/i)).toBeInTheDocument();
     const svgEl = document.querySelector("[viewBox='0 0 24 24']");
 
     expect(svgEl).toBeInTheDocument();
@@ -659,7 +658,7 @@ describe('User Form Wrapper', () => {
 
     expect(accessLevelMessage).toBeInTheDocument();
 
-    const accessLevelText = await screen.getByRole('button', { name: 'Please select' });
+    const accessLevelText = await waitFor(() => screen.getByRole('button', { name: 'Please select' }));
 
     expect(accessLevelText).toBeInTheDocument();
     userEvent.click(accessLevelText);
@@ -667,18 +666,18 @@ describe('User Form Wrapper', () => {
 
     expect(integration).toBeInTheDocument();
     userEvent.click(integration);
-    const doneMessage = screen.getByText('Done');
+    const doneMessage = await screen.findByText('Done');
 
     userEvent.click(doneMessage);
 
     expect(doneMessage).toBeInTheDocument();
-    const saveMessage = await screen.getByText('Save');
+    const saveMessage = await screen.findByText('Save');
 
     expect(saveMessage).toBeInTheDocument();
   }, 30000);
   test('Should be able to verify the manage integration access to a tile', async () => {
     await initUserFormWrapper('60fea86dbac8e87b7660f986');
-    expect(screen.queryByText(/Email/i)).toBeInTheDocument();
+    expect(await screen.findByText(/Email/i)).toBeInTheDocument();
     const svgEl = document.querySelector("[viewBox='0 0 24 24']");
 
     expect(svgEl).toBeInTheDocument();
@@ -711,7 +710,7 @@ describe('User Form Wrapper', () => {
 
     expect(accessLevelMessage).toBeInTheDocument();
 
-    const accessLevelText = await screen.getByRole('button', { name: 'Please select' });
+    const accessLevelText = await waitFor(() => screen.getByRole('button', { name: 'Please select' }));
 
     expect(accessLevelText).toBeInTheDocument();
     userEvent.click(accessLevelText);
@@ -719,12 +718,12 @@ describe('User Form Wrapper', () => {
 
     expect(integration).toBeInTheDocument();
     userEvent.click(integration);
-    const doneMessage = screen.getByText('Done');
+    const doneMessage = await screen.findByText('Done');
 
     userEvent.click(doneMessage);
 
     expect(doneMessage).toBeInTheDocument();
-    const saveMessage = await screen.getByText('Save');
+    const saveMessage = await screen.findByText('Save');
 
     expect(saveMessage).toBeInTheDocument();
   }, 30000);

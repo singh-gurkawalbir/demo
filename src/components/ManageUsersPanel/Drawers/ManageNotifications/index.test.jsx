@@ -219,7 +219,6 @@ describe('Manage Notifications', () => {
   let useDispatchSpy;
 
   beforeEach(done => {
-    jest.useFakeTimers();
     initialStore = getCreatedStore();
     useDispatchSpy = jest.spyOn(reactRedux, 'useDispatch');
     mockDispatchFn = jest.fn(action => {
@@ -233,7 +232,6 @@ describe('Manage Notifications', () => {
   afterEach(async () => {
     useDispatchSpy.mockClear();
     mockDispatchFn.mockClear();
-    jest.clearAllTimers();
   });
   test('Should able to access the Notification Drawer and notify the user when a flow throws error by selecting a flow and save the notication drawer', async () => {
     const mockResolverFunction = jest.fn();
@@ -522,7 +520,7 @@ describe('Manage Notifications', () => {
     expect(doneButtonNode).toBeInTheDocument();
     userEvent.click(doneButtonNode);
     await waitFor(() => expect(doneButtonNode).not.toBeInTheDocument());
-    const saveText = await waitFor(() => screen.findByRole('button', {name: 'Save'}));
+    const saveText = await waitFor(() => screen.getByRole('button', {name: 'Save'}));
 
     expect(saveText).toBeInTheDocument();
   });

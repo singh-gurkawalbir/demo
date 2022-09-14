@@ -1,4 +1,4 @@
-/* global describe, test, afterEach, beforeEach, jest, expect */
+/* global describe, test, afterEach, jest, expect */
 import React from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { cleanup, screen } from '@testing-library/react';
@@ -278,10 +278,7 @@ jest.mock('../../../drawer/Right/DrawerHeader', () => ({
 }));
 describe('View Notifications', () => {
   runServer();
-  beforeEach(() => {
-    jest.useFakeTimers();
-  });
-  afterEach(() => { jest.clearAllTimers(); cleanup; });
+  afterEach(() => { cleanup; });
   test('Should render the view notification right drawer', async () => {
     await initViewNotification({
       integrationId: '62c17d1a2a8ce51203950e51',
