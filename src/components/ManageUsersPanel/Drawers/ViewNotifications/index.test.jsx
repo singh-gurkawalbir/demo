@@ -1,4 +1,4 @@
-/* global describe, test, afterEach, jest, expect */
+/* global describe, test, afterEach, beforeEach, jest, expect */
 import React from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { cleanup, screen } from '@testing-library/react';
@@ -235,11 +235,11 @@ function initViewNotification(props = {}) {
 
   const ui = (
     <MemoryRouter
-      initialEntries={[{ pathname: 'integrations/62c17d1a2a8ce51203950e51/users/ui-drawer/testuser+1@celigo.com/notifications' }]}
+      initialEntries={[{ pathname: props.url }]}
     >
       <Route
         path="integrations/62c17d1a2a8ce51203950e51/users/ui-drawer/:userEmail/notifications"
-        params={{userEmail: 'testuser+1@celigo.com'}}
+        params={{userEmail: props.userEmail}}
       >
         <ViewNotificationsDrawer {...props} />
       </Route>
@@ -278,13 +278,16 @@ jest.mock('../../../drawer/Right/DrawerHeader', () => ({
 }));
 describe('View Notifications', () => {
   runServer();
-  afterEach(cleanup);
+  beforeEach(() => {
+    jest.useFakeTimers();
+  });
+  afterEach(() => { jest.clearAllTimers(); cleanup; });
   test('Should render the view notification right drawer', async () => {
-    const props = {
+    await initViewNotification({
       integrationId: '62c17d1a2a8ce51203950e51',
-    };
-
-    await initViewNotification(props);
+      userEmail: 'testuser+1@celigo.com',
+      url: 'integrations/62c17d1a2a8ce51203950e51/users/ui-drawer/testuser+1@celigo.com/notifications',
+    });
 
     expect(screen.getByText('Subscribed flows')).toBeInTheDocument();
 
@@ -294,5 +297,14 @@ describe('View Notifications', () => {
     const connections = screen.getByText('JIRA Automation');
 
     expect(connections).toBeInTheDocument();
+  });
+  test('Should render the view notification right drawer with in valid user email', async () => {
+    const { utils } = await initViewNotification({
+      integrationId: '62c17d1a2a8ce51203950e51',
+      userEmail: 'testuser+2@test.com',
+      url: 'integrations/62c17d1a2a8ce51203950e51/users/ui-drawer/testuser+2@celigo.com/notifications',
+    });
+
+    expect(utils.container).toBeEmptyDOMElement();
   });
 });

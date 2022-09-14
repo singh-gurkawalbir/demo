@@ -1,4 +1,4 @@
-/* global describe, test, expect, afterEach */
+/* global describe, test, expect, afterEach, jest, beforeEach */
 import React from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { screen, cleanup, waitFor } from '@testing-library/react';
@@ -8,17 +8,16 @@ import { runServer } from '../../../test/api/server';
 import { renderWithProviders } from '../../../test/test-utils';
 import actions from '../../../actions';
 
-const props = {
-  integrationId: '5ffad3d1f08d35214ed200f7',
-};
-
 describe('Users List Test Cases', () => {
   runServer();
-  afterEach(cleanup);
+  beforeEach(() => {
+    jest.useFakeTimers();
+  });
+  afterEach(() => { jest.clearAllTimers(); cleanup; });
   test('Test cases for the UsersList', async () => {
     const {store} = renderWithProviders(
       <MemoryRouter>
-        <UsersList {...props} />
+        <UsersList integrationId="5ffad3d1f08d35214ed200f7" />
       </MemoryRouter>
     );
 

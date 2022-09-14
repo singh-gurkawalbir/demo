@@ -133,7 +133,7 @@ describe('Invite Users UI tests', () => {
 
     expect(accessLevelText).toBeInTheDocument();
 
-    const pleaseSelectText = await screen.findByRole('button', { name: 'Please select', hidden: true });
+    const pleaseSelectText = await screen.getByRole('button', { name: 'Please select' });
 
     expect(pleaseSelectText).toBeInTheDocument();
     userEvent.click(pleaseSelectText);

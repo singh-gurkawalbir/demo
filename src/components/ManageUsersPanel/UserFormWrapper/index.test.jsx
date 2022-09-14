@@ -1,22 +1,22 @@
-/* global describe, test, expect, jest, afterEach, afterAll, server */
+/* global describe, test, expect, jest, afterEach, beforeEach */
 import React from 'react';
 import {Router} from 'react-router-dom';
 // eslint-disable-next-line import/no-extraneous-dependencies
-import { screen, cleanup, fireEvent, waitFor } from '@testing-library/react';
+import { screen, fireEvent, waitFor } from '@testing-library/react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import userEvent from '@testing-library/user-event';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import {createMemoryHistory} from 'history';
+import * as reactRedux from 'react-redux';
 import UserFormWrapper from '.';
 import { mockGetRequestOnce, mockPostRequestOnce, mockPutRequestOnce, renderWithProviders } from '../../../test/test-utils';
 import { runServer } from '../../../test/api/server';
-import reduxStore from '../../../store';
+import { getCreatedStore } from '../../../store';
 
 const history = createMemoryHistory();
+let initialStore;
 
 function initUserFormWrapper(userprops) {
-  const initialStore = reduxStore;
-
   initialStore.getState().user.org.users = [
     {
       _id: '60fea86dbac8e87b7660f984',
@@ -127,10 +127,25 @@ const props = {
 
 describe('User Form Wrapper', () => {
   runServer();
-  afterEach(cleanup);
-  afterAll(done => {
-    server.close();
+  let mockDispatchFn;
+  let useDispatchSpy;
+
+  beforeEach(done => {
+    jest.useFakeTimers();
+    initialStore = getCreatedStore();
+    useDispatchSpy = jest.spyOn(reactRedux, 'useDispatch');
+    mockDispatchFn = jest.fn(action => {
+      switch (action.type) {
+        default: initialStore.dispatch(action);
+      }
+    });
+    useDispatchSpy.mockReturnValue(mockDispatchFn);
     done();
+  });
+  afterEach(async () => {
+    useDispatchSpy.mockClear();
+    mockDispatchFn.mockClear();
+    jest.clearAllTimers();
   });
 
   test('Should able to access the User Form Wrapper and need to verify the administrator access level by saving the form', async () => {
@@ -419,6 +434,25 @@ describe('User Form Wrapper', () => {
     const saveMessage = await screen.getByText('Save');
 
     expect(saveMessage).toBeInTheDocument();
+
+    userEvent.click(saveMessage);
+    await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith({
+      type: 'USER_CREATE',
+      user: {
+        _id: '',
+        email: 'Celigo+1@celigo.com',
+        accessLevel: 'monitor',
+        integrationAccessLevel: [
+          {
+            _integrationId: '5fc5e0e66cfe5b44bb95de70',
+            accessLevel: 'manage',
+          },
+        ],
+        accountSSORequired: undefined,
+        accountMFARequired: false,
+      },
+      asyncKey: 'inviteUserDrawerFormKey',
+    }));
   });
   test('Should be able to invite a user with manage integration access to a tile', async () => {
     await initUserFormWrapper('');
@@ -466,18 +500,18 @@ describe('User Form Wrapper', () => {
 
     expect(accessLevelText).toBeInTheDocument();
     userEvent.click(accessLevelText);
-    const administratorMessage = screen.getAllByRole('menuitem');
+    const administratorMessage = screen.getByRole('menuitem', {name: 'Manage/monitor select integrations'});
 
-    expect(administratorMessage[0]).toBeInTheDocument();
-    fireEvent.click(administratorMessage[4]);
-    const pleaseSelectMessage = screen.getAllByText('Please select');
+    expect(administratorMessage).toBeInTheDocument();
+    fireEvent.click(administratorMessage);
+    const pleaseSelectMessage = screen.queryAllByRole('button', {name: 'Please select'}).find(eachOption => eachOption.getAttribute('id') === 'mui-component-select-integrationsToManage');
 
-    expect(pleaseSelectMessage[0]).toBeInTheDocument();
-    userEvent.click(pleaseSelectMessage[0]);
-    const integration = screen.getAllByRole('option');
+    expect(pleaseSelectMessage).toBeInTheDocument();
+    userEvent.click(pleaseSelectMessage);
+    const integration = screen.getByRole('option', {name: '3PL Central'});
 
-    expect(integration[0]).toBeInTheDocument();
-    userEvent.click(integration[0]);
+    expect(integration).toBeInTheDocument();
+    userEvent.click(integration);
     const doneMessage = screen.getByText('Done');
 
     userEvent.click(doneMessage);
@@ -486,8 +520,25 @@ describe('User Form Wrapper', () => {
     const saveMessage = await screen.getByText('Save');
 
     expect(saveMessage).toBeInTheDocument();
-    fireEvent.click(saveMessage);
-  });
+    userEvent.click(saveMessage);
+    await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith({
+      type: 'USER_CREATE',
+      user: {
+        _id: '',
+        email: 'Celigo+1@celigo.com',
+        accessLevel: undefined,
+        integrationAccessLevel: [
+          {
+            _integrationId: '5fc5e0e66cfe5b44bb95de70',
+            accessLevel: 'manage',
+          },
+        ],
+        accountSSORequired: undefined,
+        accountMFARequired: false,
+      },
+      asyncKey: 'inviteUserDrawerFormKey',
+    }));
+  }, 30000);
   test('Should be able to invite a user with monitor integration access to a tile', async () => {
     await initUserFormWrapper('');
     mockGetRequestOnce('/api/shared/ashares', [
@@ -534,18 +585,18 @@ describe('User Form Wrapper', () => {
 
     expect(accessLevelText).toBeInTheDocument();
     userEvent.click(accessLevelText);
-    const administratorMessage = screen.getAllByRole('menuitem');
+    const administratorMessage = screen.getByRole('menuitem', {name: 'Manage/monitor select integrations'});
 
-    expect(administratorMessage[0]).toBeInTheDocument();
-    fireEvent.click(administratorMessage[4]);
-    const pleaseSelectMessage = screen.getAllByText('Please select');
+    expect(administratorMessage).toBeInTheDocument();
+    fireEvent.click(administratorMessage);
+    const pleaseSelectMessage = screen.queryAllByRole('button', {name: 'Please select'}).find(eachOption => eachOption.getAttribute('id') === 'mui-component-select-integrationsToMonitor');
 
-    expect(pleaseSelectMessage[0]).toBeInTheDocument();
-    userEvent.click(pleaseSelectMessage[1]);
-    const integration = screen.getAllByRole('option');
+    expect(pleaseSelectMessage).toBeInTheDocument();
+    userEvent.click(pleaseSelectMessage);
+    const integration = screen.getByRole('option', {name: '3PL Central'});
 
-    expect(integration[0]).toBeInTheDocument();
-    userEvent.click(integration[0]);
+    expect(integration).toBeInTheDocument();
+    userEvent.click(integration);
     const doneMessage = screen.getByText('Done');
 
     userEvent.click(doneMessage);
@@ -554,8 +605,25 @@ describe('User Form Wrapper', () => {
     const saveMessage = await screen.getByText('Save');
 
     expect(saveMessage).toBeInTheDocument();
-    fireEvent.click(saveMessage);
-  });
+    userEvent.click(saveMessage);
+    await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith({
+      type: 'USER_CREATE',
+      user: {
+        _id: '',
+        email: 'Celigo+1@celigo.com',
+        accessLevel: undefined,
+        integrationAccessLevel: [
+          {
+            _integrationId: '5fc5e0e66cfe5b44bb95de70',
+            accessLevel: 'monitor',
+          },
+        ],
+        accountSSORequired: undefined,
+        accountMFARequired: false,
+      },
+      asyncKey: 'inviteUserDrawerFormKey',
+    }));
+  }, 30000);
   test('Should be able to verify the monitor integration access to a tile', async () => {
     await initUserFormWrapper('60fea86dbac8e87b7660f985');
     expect(screen.queryByText(/Email/i)).toBeInTheDocument();
@@ -607,7 +675,7 @@ describe('User Form Wrapper', () => {
     const saveMessage = await screen.getByText('Save');
 
     expect(saveMessage).toBeInTheDocument();
-  });
+  }, 30000);
   test('Should be able to verify the manage integration access to a tile', async () => {
     await initUserFormWrapper('60fea86dbac8e87b7660f986');
     expect(screen.queryByText(/Email/i)).toBeInTheDocument();
@@ -659,5 +727,5 @@ describe('User Form Wrapper', () => {
     const saveMessage = await screen.getByText('Save');
 
     expect(saveMessage).toBeInTheDocument();
-  });
+  }, 30000);
 });

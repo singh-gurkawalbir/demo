@@ -1,4 +1,4 @@
-/* global describe, test, expect, afterEach, jest */
+/* global describe, test, expect, afterEach, beforeEach, jest */
 import React from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { cleanup, screen, fireEvent } from '@testing-library/react';
@@ -127,7 +127,10 @@ jest.mock('../../../LoadResources', () => ({
 
 describe('Manage Permissions', () => {
   runServer();
-  afterEach(cleanup);
+  beforeEach(() => {
+    jest.useFakeTimers();
+  });
+  afterEach(() => { jest.clearAllTimers(); cleanup; });
   test('Should be able to access the Manage Permission drawer', async () => {
     const mockResolverFunction = jest.fn();
 
@@ -136,14 +139,12 @@ describe('Manage Permissions', () => {
 
       return res(ctx.json([]));
     });
-    const props = {
+
+    await initManagePermission({
       integrationId: '5fc5e0e66cfe5b44bb95de70',
-    };
+    });
 
-    await initManagePermission(props);
-    const emailText = screen.getByText('Email');
-
-    expect(emailText).toBeInTheDocument();
+    expect(screen.getByText('Email')).toBeInTheDocument();
     const inputEmail = document.querySelector("[name='email']");
 
     fireEvent.change(inputEmail, {target: {value: 'testuser.com'}});
@@ -152,20 +153,18 @@ describe('Manage Permissions', () => {
     expect(emailWarningText).toBeInTheDocument();
     fireEvent.change(inputEmail, {target: {value: 'testuser+1@celigo.com'}});
     expect(emailWarningText).not.toBeInTheDocument();
-    const accessLevelText = screen.getByText('Access level');
 
-    expect(accessLevelText).toBeInTheDocument();
-    const pleaseSelectText = await screen.findByRole('button', { name: 'Please select', hidden: true });
+    expect(screen.getByText('Access level')).toBeInTheDocument();
+    const pleaseSelectText = await screen.getByRole('button', { name: 'Please select' });
 
     expect(pleaseSelectText).toBeInTheDocument();
     userEvent.click(pleaseSelectText);
-    const administratorMessage = screen.getAllByRole('menuitem');
+    const administratorMessage = screen.getByRole('menuitem', {name: 'Administer account'});
 
-    expect(administratorMessage[0]).toBeInTheDocument();
-    fireEvent.click(administratorMessage[1]);
+    expect(administratorMessage).toBeInTheDocument();
+    fireEvent.click(administratorMessage);
     const saveMessage = await screen.findByText('Save');
 
     expect(saveMessage).toBeInTheDocument();
-    userEvent.click(saveMessage);
   });
 });
