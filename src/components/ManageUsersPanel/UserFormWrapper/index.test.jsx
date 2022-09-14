@@ -311,7 +311,7 @@ describe('User Form Wrapper', () => {
     expect(cancelMessage).toBeInTheDocument();
     fireEvent.click(cancelMessage);
     expect(history.goBack).toBeCalled();
-  });
+  }, 30000);
   test('Should be able to invite a user with manage access', async () => {
     await initUserFormWrapper('');
     mockGetRequestOnce('/api/shared/ashares', [
@@ -371,7 +371,7 @@ describe('User Form Wrapper', () => {
     expect(cancelMessage).toBeInTheDocument();
     fireEvent.click(cancelMessage);
     expect(history.goBack).toBeCalledTimes(1);
-  });
+  }, 30000);
   test('Should be able to invite a user with monitor access', async () => {
     await initUserFormWrapper('');
     mockGetRequestOnce('/api/shared/ashares', [
