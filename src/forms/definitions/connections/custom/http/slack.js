@@ -36,6 +36,20 @@ export default {
       retValues['/settings'] = settings;
     }
 
+    const userScopes = ['admin', 'channels:write', 'dnd:write', 'identify', 'search:read', 'stars:read', 'stars:write', 'users.profile:write', 'reminders:read', 'reminders:write', 'chat:write', 'files:write', 'files:read'];
+    let isUserScopeSelected = false;
+
+    userScopes.forEach(userScope => {
+      if (retValues['/http/unencrypted/userScopes'].includes(userScope)) {
+        isUserScopeSelected = true;
+      }
+    });
+    if (isUserScopeSelected) {
+      retValues['/http/auth/oauth/accessTokenPath'] = 'authed_user.access_token';
+    } else {
+      retValues['/http/auth/oauth/accessTokenPath'] = 'access_token';
+    }
+
     return {
       ...retValues,
       '/type': 'http',
@@ -72,12 +86,9 @@ export default {
         'calls:write',
         'channels:history',
         'channels:read',
-        'chat:write',
         'commands',
         'dnd:read',
         'emoji:read',
-        'files:read',
-        'files:write',
         'groups:history',
         'groups:read',
         'groups:write',
@@ -94,8 +105,6 @@ export default {
         'reactions:write',
         'pins:read',
         'pins:write',
-        'reminders:read',
-        'reminders:write',
         'remote_files:read',
         'remote_files:share',
         'team.billing:read',
@@ -114,12 +123,17 @@ export default {
       fieldId: 'http.unencrypted.userScopes',
       label: 'user_scope',
       type: 'multiselect',
-      helpKey: 'connection.http.auth.oauth.scope',
+      helpKey: 'slack.connection.http.unencrypted.userScopes',
       visibleWhen: [{ field: 'http.auth.type', is: ['oauth'] }],
       options: [
         {
           items: [
             { label: 'admin', value: 'admin' },
+            { label: 'files:read', value: 'files:read' },
+            { label: 'files:write', value: 'files:write' },
+            { label: 'chat:write', value: 'chat:write' },
+            { label: 'reminders:read', value: 'reminders:read' },
+            { label: 'reminders:write', value: 'reminders:write' },
             { label: 'identify', value: 'identify' },
             { label: 'dnd:write', value: 'dnd:write' },
             { label: 'search:read', value: 'search:read' },
