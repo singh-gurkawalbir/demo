@@ -11,6 +11,7 @@ import {
   ARRAY_DATA_TYPES,
   getAllKeys,
   rebuildObjectArrayNode,
+  insertSiblingsOnDestinationUpdate,
   hideOtherTabRows,
   MAPPING_DATA_TYPES,
   getUniqueExtractId,
@@ -859,6 +860,11 @@ export default (state = {}, action) => {
           }
 
           delete node.isEmptyRow;
+
+          if (field === 'generate' && value.length) {
+            // updates tree data with new nodes added at eligible parent nodes for object array
+            insertSiblingsOnDestinationUpdate(draft.mapping.v2TreeData, node);
+          }
         }
 
         break;
