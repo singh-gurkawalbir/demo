@@ -3140,7 +3140,7 @@ describe('v2 mapping utils', () => {
 
       expect(allowDrop({dragNode, dropNode, dropPosition: 0})).toEqual(true);
     });
-    test('should return false if nodes are not at the same hierarchal level', () => {
+    test('should return true if nodes are not at the same hierarchical level', () => {
       const dragNode = {
         key: 'c1',
         extract: '$.fname',
@@ -3166,7 +3166,7 @@ describe('v2 mapping utils', () => {
         ],
       };
 
-      expect(allowDrop({dragNode, dropNode, dropPosition: 2})).toEqual(false);
+      expect(allowDrop({dragNode, dropNode, dropPosition: 2})).toEqual(true);
       expect(allowDrop({dragNode: {
         key: 'c2',
         extract: '$.lname',
@@ -3174,7 +3174,7 @@ describe('v2 mapping utils', () => {
         parentKey: 'key1',
       },
       dropNode,
-      dropPosition: 2})).toEqual(false);
+      dropPosition: 2})).toEqual(true);
     });
     test('should return true if drop node is tab and drop position is 1', () => {
       const dragNode = {
