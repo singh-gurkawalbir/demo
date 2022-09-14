@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useSelector, shallowEqual } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
+import { Divider } from '@material-ui/core';
 import { selectors } from '../../../reducers';
 import { JOB_STATUS } from '../../../constants';
 import CeligoTimeAgo from '../../../components/CeligoTimeAgo';
@@ -9,8 +10,8 @@ import Spinner from '../../../components/Spinner';
 
 const useStyles = makeStyles(theme => ({
   divider: {
-    borderLeft: `1px solid ${theme.palette.secondary.lightest}`,
-    margin: theme.spacing(0, 1, 0, 1),
+    height: theme.spacing(3),
+    margin: theme.spacing(0, 1),
   },
   flexContainer: {
     display: 'flex',
@@ -81,7 +82,7 @@ export default function LastRun({ flowId }) {
 
   return (
     <>
-      <div className={classes.divider} />
+      <Divider orientation="vertical" className={classes.divider} />
       <span className={classes.flexContainer}>
         {lastRunStatusLabel}
       </span>

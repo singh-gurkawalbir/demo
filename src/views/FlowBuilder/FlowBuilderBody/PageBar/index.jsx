@@ -1,4 +1,4 @@
-import { IconButton, makeStyles } from '@material-ui/core';
+import { Divider, IconButton, makeStyles } from '@material-ui/core';
 import clsx from 'clsx';
 import React, { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -72,9 +72,14 @@ const CalcPageBarTitle = ({integrationId, flowId}) => {
 const calcPageBarSubtitleStyles = makeStyles(theme => ({
   subtitle: {
     display: 'flex',
+    alignItems: 'center',
   },
   celigoTimeAgo: {
     marginRight: theme.spacing(0.5),
+  },
+  divider: {
+    height: theme.spacing(3),
+    margin: theme.spacing(0, 1),
   },
 }));
 const CalcPageBarSubtitle = ({flowId}) => {
@@ -122,13 +127,6 @@ const pageChildreUseStyles = makeStyles(theme => ({
     display: 'flex',
     alignItems: 'center',
     margin: [[-7, 0]],
-  },
-
-  divider: {
-    width: 1,
-    height: 30,
-    borderLeft: `1px solid ${theme.palette.secondary.lightest}`,
-    margin: 5,
   },
   flowToggle: {
     marginRight: 12,
@@ -242,7 +240,7 @@ const PageBarChildren = ({integrationId, flowId}) => {
           exclude={excludes}
         />
       )}
-      <div className={classes.divider} />
+      <Divider orientation="vertical" className={classes.divider} />
       <IconButton onClick={handleExitClick} size="small">
         <CloseIcon />
       </IconButton>
