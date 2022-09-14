@@ -158,7 +158,7 @@ export default function LineGraphDrawer({ integrationId, childId }) {
           <SelectResource
             integrationId={integrationId}
             selectedResources={selectedResources}
-            resources={filteredFlowResources}
+            flowResources={filteredFlowResources}
             onSave={handleResourcesChange}
         />
         </ActionGroup>

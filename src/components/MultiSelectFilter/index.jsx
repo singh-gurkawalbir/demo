@@ -1,4 +1,4 @@
-import { FormControl, FormGroup, FormControlLabel, Checkbox } from '@material-ui/core';
+import { FormControl, FormGroup, FormControlLabel, Checkbox, FormLabel } from '@material-ui/core';
 import IconButton from '@material-ui/core/IconButton';
 import { makeStyles } from '@material-ui/core/styles';
 import { isEqual } from 'lodash';
@@ -10,6 +10,7 @@ import ArrowUpIcon from '../icons/ArrowUpIcon';
 import ChildDetails from './ChildDetails';
 import { TextButton, FilledButton } from '../Buttons';
 import ActionGroup from '../ActionGroup';
+import OutlinedButton from '../Buttons/OutlinedButton';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -55,6 +56,21 @@ const useStyles = makeStyles(theme => ({
       maxWidth: 'inherit',
     },
   },
+  dateRangePopperBtn: {
+    borderColor: theme.palette.secondary.lightest,
+    minHeight: 36,
+    color: theme.palette.secondary.main,
+    fontFamily: 'source sans pro',
+    fontSize: 15,
+    justifyContent: 'space-between',
+    '&:hover': {
+      borderColor: theme.palette.primary.main,
+      color: theme.palette.secondary.dark,
+    },
+    '& .MuiButton-label': {
+      width: theme.spacing(19),
+    },
+  },
   actions: {
     marginTop: theme.spacing(2),
   },
@@ -91,7 +107,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function MultiSelectFilter({ items = [], selected = [], onSave, Icon, onSelect, SelectedLabelImp}) {
+export default function MultiSelectFilter({ items = [], selected = [], onSave, Icon, onSelect, SelectedLabelImp, ButtonLabel, headerLabel}) {
   const [initialValue, setInitialValue] = useState(selected);
   const [checked, setChecked] = useState(selected);
   const [anchorEl, setAnchorEl] = useState(null);
@@ -192,9 +208,19 @@ export default function MultiSelectFilter({ items = [], selected = [], onSave, I
 
   return (
     <>
-      <ActionButton onClick={toggleClick}>
-        <Icon />
-      </ActionButton>
+      {ButtonLabel ? (
+        <OutlinedButton
+          onClick={toggleClick}
+          endIcon={<ArrowDownIcon />}
+          color="secondary"
+          className={classes.dateRangePopperBtn}>
+          {ButtonLabel}
+        </OutlinedButton>
+      ) : (
+        <ActionButton onClick={toggleClick}>
+          <Icon />
+        </ActionButton>
+      )}
       <ArrowPopper
         open={!!anchorEl}
         anchorEl={anchorEl}
@@ -210,6 +236,11 @@ export default function MultiSelectFilter({ items = [], selected = [], onSave, I
             <div className={classes.filter}>
               <div className={classes.wrapper}>
                 <FormControl component="fieldset" className={classes.formControl}>
+                  {headerLabel && (
+                  <FormLabel component="legend" className={classes.heading}>
+                    {headerLabel}
+                  </FormLabel>
+                  )}
                   <FormGroup className={classes.formGroup}>
                     {items.map(m => (
                       <ul key={m._id} className={classes.checkAction}>

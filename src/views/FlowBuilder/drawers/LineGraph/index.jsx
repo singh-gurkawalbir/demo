@@ -167,7 +167,7 @@ export default function LineGraphDrawer({ flowId }) {
           }} />
         <SelectResource
           selectedResources={selectedResources}
-          resources={flowResources}
+          flowResources={flowResources}
           isFlow
           onSave={handleResourcesChange}
         />

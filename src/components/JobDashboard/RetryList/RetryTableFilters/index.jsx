@@ -1,13 +1,13 @@
 import React, { useCallback } from 'react';
-import { useDispatch, useSelector, shallowEqual } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import { selectors } from '../../../../reducers';
 import actions from '../../../../actions';
 import Icon from '../../../icons/RefreshIcon';
 import TextButton from '../../../Buttons/TextButton';
-import SelectResource from '../../../LineGraph/SelectResource';
 import InfoIcon from '../../../icons/InfoIcon';
 import messageStore from '../../../../utils/messageStore';
+import MultiSelectUsersFilter from './MultiSelectUsersFilter';
 
 const useStyles = makeStyles(theme => ({
   header: {
@@ -23,20 +23,10 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const resourceType = 'users';
-const defaultButtonName = 'Select retry started by';
-const labelName = 'Select retry started by';
-
 export default function RetryTableFilters({flowId, resourceId, filterKey}) {
   const classes = useStyles();
   const dispatch = useDispatch();
 
-  const retryFilter = useSelector(
-    state => selectors.filter(state, filterKey), shallowEqual
-  );
-  const users = useSelector(
-    state => selectors.retryUsersList(state, flowId, resourceId)
-  );
   const retryStatus = useSelector(
     state => selectors.retryStatus(state, flowId, resourceId)
   );
@@ -54,22 +44,14 @@ export default function RetryTableFilters({flowId, resourceId, filterKey}) {
     dispatch(actions.errorManager.retries.request({flowId, resourceId}));
   }, [dispatch, flowId, resourceId]);
 
-  const onSave = useCallback(val => {
-    // setSelectedResources(val);
-    dispatch(actions.patchFilter(filterKey, { selectedUsers: val}));
-  }, [dispatch, filterKey]);
-
   return (
 
     <div className={classes.filtersErrorTable}>
       <div className={classes.header}>
-        <SelectResource
-          resources={users}
-          selectedResources={retryFilter.selectedUsers}
-          onSave={onSave}
-          resourceType={resourceType}
-          defaultButtonName={defaultButtonName}
-          labelName={labelName}
+        <MultiSelectUsersFilter
+          flowId={flowId}
+          resourceId={resourceId}
+          filterKey={filterKey}
         />
         <div className={classes.refreshBtn}>
           <div className={classes.card} >

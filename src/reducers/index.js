@@ -7207,18 +7207,16 @@ selectors.retryUsersList = createSelector(
         return users;
       }
 
-      return users.includes(job.triggeredBy) ? users : [...users, job.triggeredBy];
+      const userObject = availableUsersList.find(userOb => userOb.sharedWithUser?._id === job.triggeredBy);
+      const name = profile._id === job.triggeredBy ? (profile.name || profile.email) : userObject?.sharedWithUser?.name;
+
+      return users.find(user => user._id === job.triggeredBy) ? users : [...users, {
+        _id: job.triggeredBy,
+        name,
+      }];
     }, []);
 
-    return allUsersTriggeredRetry.map(user => {
-      const userObject = availableUsersList.find(userOb => userOb.sharedWithUser?._id === user);
-      const name = profile._id === user ? (profile.name || profile.email) : userObject?.sharedWithUser?.name;
-
-      return ({
-        _id: user,
-        name,
-      });
-    });
+    return [{ _id: 'all', name: 'All users'}, ...allUsersTriggeredRetry];
   }
 );
 

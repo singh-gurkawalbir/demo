@@ -11,7 +11,7 @@ describe('SelectResource UI Tests', () => {
   test('should select one more flow through checkbox', () => {
     const onSave = jest.fn();
 
-    render(<SelectResource resources={flowResources} selectedResources={selectedResources} onSave={onSave} />);
+    render(<SelectResource flowResources={flowResources} selectedResources={selectedResources} onSave={onSave} />);
 
     const button = screen.getByText('2 flows selected');
 
@@ -42,7 +42,7 @@ describe('SelectResource UI Tests', () => {
   test('should click on the checked flow twice', () => {
     const onSave = jest.fn();
 
-    render(<SelectResource resources={flowResources} selectedResources={selectedResources} onSave={onSave} />);
+    render(<SelectResource flowResources={flowResources} selectedResources={selectedResources} onSave={onSave} />);
 
     const button = screen.getByText('2 flows selected');
 
@@ -72,7 +72,7 @@ describe('SelectResource UI Tests', () => {
   test('should click the cancel button after selecting', () => {
     const onSave = jest.fn();
 
-    render(<SelectResource resources={flowResources} selectedResources={selectedResources} onSave={onSave} />);
+    render(<SelectResource flowResources={flowResources} selectedResources={selectedResources} onSave={onSave} />);
 
     const button = screen.getByText('2 flows selected');
 
@@ -112,7 +112,7 @@ describe('SelectResource UI Tests', () => {
   test('should select one item in start', () => {
     const onSave = jest.fn();
 
-    render(<SelectResource resources={flowResources} selectedResources={['s1']} onSave={onSave} />);
+    render(<SelectResource flowResources={flowResources} selectedResources={['s1']} onSave={onSave} />);
 
     const button = screen.getByText('name');
 
@@ -133,7 +133,7 @@ describe('SelectResource UI Tests', () => {
   test('should select all 8 flows', () => {
     const onSave = jest.fn();
 
-    render(<SelectResource resources={flowResources} selectedResources={['s1']} onSave={onSave} />);
+    render(<SelectResource flowResources={flowResources} selectedResources={['s1']} onSave={onSave} />);
 
     const button = screen.getByText('name');
 

@@ -18,7 +18,7 @@ export const DEFAULT_FILTERS = {
     searchBy: ['message', 'source', 'classification', 'code', 'occurredAt', 'traceKey', 'errorId', 'resolvedAt', 'resolvedBy'],
   },
   RETRIES: {
-    selectedUsers: [],
+    selectedUsers: ['all'],
   },
 };
 

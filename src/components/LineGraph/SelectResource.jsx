@@ -70,15 +70,8 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function SelectResource({
-  resources = [],
-  selectedResources = [],
-  resourceType,
-  onSave,
-  isFlow,
-  defaultButtonName,
-  labelName,
-}) {
+export default function SelectResource(props) {
+  const { flowResources = [], selectedResources = [], onSave, isFlow } = props;
   const [initalValue, setInitialValue] = useState(selectedResources);
   const [checked, setChecked] = useState(selectedResources);
   const [anchorEl, setAnchorEl] = useState(null);
@@ -102,27 +95,27 @@ export default function SelectResource({
     setAnchorEl(null);
   }, [initalValue]);
 
-  const validResources = useMemo(() => Array.isArray(checked) ? checked.filter(item => resources.find(r => r._id === item)) : emptyList,
-    [checked, resources]);
+  const validResources = useMemo(() => Array.isArray(checked) ? checked.filter(item => flowResources.find(r => r._id === item)) : emptyList,
+    [checked, flowResources]);
 
   const buttonName = useMemo(() => {
     if (!checked || !validResources.length) {
-      return (defaultButtonName || 'No flows selected');
+      return 'No flows selected';
     }
     if (validResources.length === 1) {
-      return resources.find(r => r._id === validResources[0])?.name;
+      return flowResources.find(r => r._id === validResources[0])?.name;
     }
 
-    return `${validResources.length} ${isFlow ? 'resources' : (resourceType || 'flows')} selected`;
-  }, [checked, defaultButtonName, isFlow, resourceType, resources, validResources]);
+    return `${validResources.length} ${isFlow ? 'resources' : 'flows'} selected`;
+  }, [checked, isFlow, flowResources, validResources]);
 
   const getTooltip = useCallback(id => {
     if (checked.includes(id) || isFlow || validResources.length < 8) {
       return '';
     }
 
-    return resourceType ? '' : 'Only 8 flows can be selected at the same time';
-  }, [checked, isFlow, resourceType, validResources.length]);
+    return 'Only 8 flows can be selected at the same time';
+  }, [checked, isFlow, validResources]);
   const handleFlowSelect = id => event => {
     event.stopPropagation();
     setChecked(checked => {
@@ -157,11 +150,11 @@ export default function SelectResource({
                 <FormControl component="fieldset" className={classes.formControl}>
                   {!isFlow && (
                   <FormLabel component="legend" className={classes.heading}>
-                    {labelName || 'Select up to 8 flows'}
+                    Select up to 8 flows
                   </FormLabel>
                   )}
                   <FormGroup className={classes.formGroup}>
-                    {resources.map(m => (
+                    {flowResources.map(m => (
                       <Tooltip key={m._id} title={getTooltip(m._id)} placement="left-start">
                         <FormControlLabel
                           className={classes.selectResourceItem}
