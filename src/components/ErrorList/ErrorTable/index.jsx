@@ -41,7 +41,7 @@ const useStyles = makeStyles(theme => ({
     },
     flexGrow: 1,
     display: 'flex',
-    flexDirection: 'row',
+    flexDirection: 'column',
     flexBasis: '60%',
     overflow: 'auto',
     '&:focus': {
@@ -95,6 +95,9 @@ const ErrorTableWithPanel = ({
 }) => {
   const classes = useStyles();
   const tableRef = useRef();
+  const hasErrors = useSelector(
+    state => selectors.hasResourceErrors(state, { flowId, resourceId, isResolved })
+  );
 
   useEffect(() => {
     const refEle = tableRef?.current;
@@ -120,6 +123,7 @@ const ErrorTableWithPanel = ({
             actionProps={actionProps}
             onRowClick={onRowClick}
           />
+          {!isResolved && !hasErrors && <EmptyErrorMessage />}
         </div>
         <div className={classes.partition}>
           <Divider
@@ -137,15 +141,31 @@ const ErrorTableWithPanel = ({
       </div>
     )
     : (
-      <ResourceTable
-        resources={errorsInCurrPage}
-        resourceType={filterKey}
-        actionProps={actionProps}
-        className={classes.errorDetailsTable}
-        tableRef={tableRef}
-      />
+      <>
+        <ResourceTable
+          resources={errorsInCurrPage}
+          resourceType={filterKey}
+          actionProps={actionProps}
+          className={classes.errorDetailsTable}
+          tableRef={tableRef}
+        />
+        {!isResolved && !hasErrors && <EmptyErrorMessage />}
+      </>
+
     );
 };
+
+const EmptyErrorMessage = () => (
+  <NoResultTypography>
+    <br />
+    <br />
+    There don’t seem to be any more errors. You may have already retried or resolved them.
+    <br />
+    <br />
+    If “Refresh errors” is enabled, you can click it to retrieve additional errors.
+  </NoResultTypography>
+);
+
 export default function ErrorTable({ flowId, resourceId, isResolved, flowJobId }) {
   const classes = useStyles();
   const filterKey = isResolved ? FILTER_KEYS.RESOLVED : FILTER_KEYS.OPEN;
@@ -182,9 +202,6 @@ export default function ErrorTable({ flowId, resourceId, isResolved, flowJobId }
     state => selectors.filter(state, FILTER_KEYS.OPEN), shallowEqual
   );
   const isSplitView = (filterKey === FILTER_KEYS.OPEN && errorFilter.view !== 'drawer');
-  const hasErrors = useSelector(
-    state => selectors.hasResourceErrors(state, { flowId, resourceId, isResolved })
-  );
 
   const showRetryDataChangedConfirmDialog = useEditRetryConfirmDialog({flowId, resourceId, isResolved});
 
@@ -280,26 +297,17 @@ export default function ErrorTable({ flowId, resourceId, isResolved, flowJobId }
             filterKey={filterKey}
           />
 
-          {hasErrors ? (
-            <ErrorTableWithPanel
-              errorsInCurrPage={errorsInCurrPage}
-              filterKey={filterKey}
-              actionProps={actionProps}
-              resourceId={resourceId}
-              isSplitView={isSplitView}
-              flowId={flowId}
-              isResolved={isResolved}
-              keydownListener={keydownListener}
-              onRowClick={onRowClick}
-            />
-          ) : (!isResolved && (
-            <NoResultTypography>There don’t seem to be any more errors. You may have already retried or resolved them.
-              <br />
-              <br />
-              If “Refresh errors” is enabled, you can click it to retrieve additional errors.
-            </NoResultTypography>
-          )
-          )}
+          <ErrorTableWithPanel
+            errorsInCurrPage={errorsInCurrPage}
+            filterKey={filterKey}
+            actionProps={actionProps}
+            resourceId={resourceId}
+            isSplitView={isSplitView}
+            flowId={flowId}
+            isResolved={isResolved}
+            keydownListener={keydownListener}
+            onRowClick={onRowClick}
+          />
         </>
       )}
     </div>
