@@ -181,7 +181,7 @@ export default function ErrorDetailsDrawer({ flowId }) {
             {childJob?.numOpenError <= 1000 ? (<span><span>: {allErrors.length} open  |  </span><span>{childJob?.numOpenError - allErrors.length} resolved</span></span>) : ''}
           </Typography>
         ) : ''}
-        {errorType === FILTER_KEYS.RETRIES ? <RetryList flowId={flowId} resourceId={resourceId} /> : <ErrorList flowId={flowId} />}
+        {errorType === FILTER_KEYS.RETRIES ? <RetryList flowId={flowId} /> : <ErrorList flowId={flowId} />}
       </DrawerContent>
     </RightDrawer>
   );

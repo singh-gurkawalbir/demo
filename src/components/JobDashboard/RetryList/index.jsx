@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useRouteMatch } from 'react-router-dom';
 import { selectors } from '../../../reducers';
 import actions from '../../../actions';
 import ResourceTable from '../../ResourceTable';
@@ -9,8 +10,10 @@ import Spinner from '../../Spinner';
 import NoResultTypography from '../../NoResultTypography';
 import { DEFAULT_FILTERS, FILTER_KEYS } from '../../../utils/errorManagement';
 
-export default function RetryList({ flowId, resourceId }) {
+export default function RetryList({ flowId }) {
   const dispatch = useDispatch();
+  const match = useRouteMatch();
+  const { resourceId } = match.params;
 
   const filters = useSelector(state => selectors.filter(state, FILTER_KEYS.RETRIES));
   const retries = useSelector(state => selectors.retryList(state, flowId, resourceId, filters));

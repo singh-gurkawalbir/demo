@@ -289,7 +289,7 @@ function getRetryJobStatusDetails(job) {
   if (job.uiStatus === JOB_STATUS.RETRYING) {
     return {
       showSpinner: true,
-      status: JOB_UI_STATUS[job.uiStatus],
+      status: RETRY_JOB_UI_STATUS[job.uiStatus],
     };
   }
   if (job.uiStatus !== JOB_STATUS.RUNNING) {
@@ -322,7 +322,7 @@ function getRetryJobStatusDetails(job) {
       return {
         showStatusTag: true,
         variant: [JOB_STATUS.COMPLETED, JOB_STATUS.FAILED].includes(job.status) ? 'success' : 'warning',
-        status: JOB_UI_STATUS[job.uiStatus],
+        status: RETRY_JOB_UI_STATUS[job.uiStatus],
         errorValue: job.uiStatus === JOB_STATUS.CANCELED ? 0 : errorPercentage,
         resolvedValue: job.uiStatus === JOB_STATUS.CANCELED ? 0 : resolvedPercentage,
       };
@@ -331,7 +331,7 @@ function getRetryJobStatusDetails(job) {
 
   return {
     showSpinner: true,
-    status: JOB_UI_STATUS[job.uiStatus],
+    status: RETRY_JOB_UI_STATUS[job.uiStatus],
   };
 }
 
