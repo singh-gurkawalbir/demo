@@ -1882,8 +1882,8 @@ const validateV2Mappings = (v2TreeData, lookups, isGroupedSampleData) => {
 
   if (wrongHandlebarExp.length) {
     const errMessage = isGroupedSampleData
-      ? errorMessageStore('MAPPER2_WRONG_HANDLEBAR_FOR_ROWS', {fields: wrongHandlebarExp.join(',')})
-      : errorMessageStore('MAPPER2_WRONG_HANDLEBAR_FOR_RECORD', {fields: wrongHandlebarExp.join(',')});
+      ? errorMessageStore('MAPPER2_WRONG_HANDLEBAR_FOR_ROWS')
+      : errorMessageStore('MAPPER2_WRONG_HANDLEBAR_FOR_RECORD');
 
     return {
       isSuccess: false,
