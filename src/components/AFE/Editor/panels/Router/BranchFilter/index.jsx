@@ -867,7 +867,7 @@ export default function BranchFilter({ editorId, position }) {
         typeof state.data.rhs === 'object'
       ) {
         // console.log('both lhs and rhs have data');
-        if (state.data.rhs.value) return;
+        if (state.data.rhs.value || state.rule?.operator?.type === 'is_not_empty') return;
 
         const $emptyRule = state.rule;
 
