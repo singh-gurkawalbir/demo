@@ -9,13 +9,9 @@ import TextButton from '../../../../components/Buttons/TextButton';
 import { FILTER_KEYS } from '../../../../utils/errorManagement';
 
 const useStyles = makeStyles(theme => ({
-  divider: {
-    width: 1,
-    height: 24,
-    margin: theme.spacing(0.5, 1, 0.5, 0),
-    spinnerWrapper: {
-      margin: theme.spacing(0, 1),
-    },
+  spinner: {
+    marginRight: theme.spacing(0.5),
+    display: 'flex',
   },
   status: {
     color: theme.palette.secondary.main,
@@ -29,6 +25,10 @@ const useStyles = makeStyles(theme => ({
     '& > button': {
       whiteSpace: 'nowrap',
     },
+  },
+  divider: {
+    height: theme.spacing(3),
+    marginRight: theme.spacing(2),
   },
 }));
 
@@ -45,7 +45,7 @@ export default function ErrorDrawerAction({ flowId, onChange, errorType }) {
     <>
       { retryStatus === 'inProgress' && (
       <div className={classes.retryContainer}>
-        <Divider orientation className={classes.divider} />
+        <Divider orientation="vertical" className={classes.divider} />
         <Spinner size={16} className={classes.spinner} />
         <Typography variant="body2" component="div" className={classes.status}>
           Retrying errors...
@@ -54,12 +54,12 @@ export default function ErrorDrawerAction({ flowId, onChange, errorType }) {
       )}
       { retryStatus === 'completed' && (
       <div className={classes.retryContainer}>
-        <Divider orientation className={classes.divider} />
+        <Divider orientation="vertical" className={classes.divider} />
         <Typography variant="body2" component="div" className={classes.status}>
-          Retrying completed.
+          Retry completed.
         </Typography>
         {errorType !== FILTER_KEYS.RETRIES ? (
-          <TextButton size="large" onClick={handleClick}>
+          <TextButton size="large" color="primary" onClick={handleClick}>
             View results
           </TextButton>
         ) : ''}
