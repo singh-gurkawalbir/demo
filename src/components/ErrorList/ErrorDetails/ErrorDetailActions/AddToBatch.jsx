@@ -1,6 +1,5 @@
 import { makeStyles } from '@material-ui/core/styles';
 import React from 'react';
-import messageStore from '../../../../utils/messageStore';
 import SelectError from './SelectError';
 
 const useStyles = makeStyles(theme => ({
@@ -21,8 +20,8 @@ export default function AddToBatch({
     <div className={classes.action}>
       <SelectError
         error={error} flowId={flowId} resourceId={resourceId} isResolved={isResolved}
-        tooltip={messageStore('ADD_TO_BATCH_HOVER_MESSAGE')}
-        label="Add to batch" />
+        label="Add to batch"
+      />
     </div>
   );
 }
