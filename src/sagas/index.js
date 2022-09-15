@@ -51,6 +51,7 @@ import latestIntegrationJobsSagas from './errorManagement/latestJobs/integration
 import latestFlowJobsSagas from './errorManagement/latestJobs/flows';
 import errorMetadataSagas from './errorManagement/metadata';
 import runHistorySagas from './errorManagement/runHistory';
+import retriesSagas from './errorManagement/retries';
 import { customSettingsSagas } from './customSettings';
 import lifecycleManagementSagas from './lifecycleManagement';
 import exportDataSagas from './exportData';
@@ -219,6 +220,7 @@ export function* allSagas() {
     ...latestFlowJobsSagas,
     ...errorMetadataSagas,
     ...runHistorySagas,
+    ...retriesSagas,
     ...customSettingsSagas,
     ...exportDataSagas,
     ...logsSagas,

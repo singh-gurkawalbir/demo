@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Icon from '../../../icons/RefreshIcon';
 import { TextButton } from '../../../Buttons';
@@ -14,7 +14,14 @@ const useStyles = makeStyles(theme => ({
 
 export default function RefreshCard(props) {
   const classes = useStyles();
-  const { onRefresh, disabled } = props;
+  const { onRefresh, disabled, retryStatus } = props;
+
+  useEffect(() => {
+    if (!disabled && retryStatus === 'completed' && onRefresh) {
+      onRefresh();
+    }
+  }, [disabled, onRefresh, retryStatus]);
+
   const handleClick = useCallback(() => {
     if (onRefresh) onRefresh();
   }, [onRefresh]);
