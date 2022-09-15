@@ -7,14 +7,14 @@ import { apiCallWithRetry } from '../index';
 
 export function* requestUserSettings() {
   try {
-    // const response = yield call(apiCallWithRetry, {
-    //   path: '/mfa/setup',
-    //   opts: {
-    //     method: 'GET',
-    //   },
-    // });
+    const response = yield call(apiCallWithRetry, {
+      path: '/mfa/setup',
+      opts: {
+        method: 'GET',
+      },
+    });
 
-    yield put(actions.mfa.receivedUserSettings({}));
+    yield put(actions.mfa.receivedUserSettings(response));
   } catch (error) {
     return undefined;
   }
