@@ -126,7 +126,7 @@ export default {
     let logs;
 
     if (Array.isArray(result?.data)) {
-      const { data } = result.data[0];
+      const { data = [] } = result.data[0] || {};
 
       logs = result.data[0].logs;
       if (data.length === 1) {
@@ -217,14 +217,13 @@ export default {
     const data = {};
     const parsedData = safeParse(sampleData);
 
-    delete parsedData.settings;
-    data.filter = JSON.stringify(parsedData, null, 2);
+    data.filter = JSON.stringify(parsedData, null, 2) || '';
     // for JS panel, 'rows' is also represented as 'record'
     if (parsedData?.rows) {
       parsedData.record = parsedData.rows;
       delete parsedData.rows;
     }
-    data.javascript = JSON.stringify(parsedData, null, 2);
+    data.javascript = JSON.stringify(parsedData, null, 2) || '';
 
     return data;
   },
