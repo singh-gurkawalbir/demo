@@ -91,13 +91,20 @@ const ErrorTableWithPanel = ({
   flowId,
   keydownListener,
   onRowClick,
-
 }) => {
   const classes = useStyles();
   const tableRef = useRef();
+  let hasFilter;
   const hasErrors = useSelector(
     state => selectors.hasResourceErrors(state, { flowId, resourceId, isResolved })
   );
+  const filter = useSelector(state => selectors.filter(state, filterKey));
+
+  if ((filter.classifications && filter.classifications.length > 0 && filter.classifications.indexOf('all') === -1) ||
+      (filter.sources && filter.sources.length > 0 && filter.sources.indexOf('all') === -1) ||
+      filter.keyword) {
+    hasFilter = true;
+  }
 
   useEffect(() => {
     const refEle = tableRef?.current;
@@ -123,7 +130,8 @@ const ErrorTableWithPanel = ({
             actionProps={actionProps}
             onRowClick={onRowClick}
           />
-          {!isResolved && !hasErrors && <EmptyErrorMessage />}
+          {!hasFilter && !isResolved && !hasErrors && <EmptyErrorMessage />}
+          {hasFilter && !isResolved && (!hasErrors || errorsInCurrPage.length === 0) && <NoFiltersMessage />}
         </div>
         <div className={classes.partition}>
           <Divider
@@ -133,6 +141,7 @@ const ErrorTableWithPanel = ({
         </div>
         <div className={classes.errorDetailsPanel}>
           <ErrorDetailsPanel
+            errorsInCurrPage={errorsInCurrPage}
             flowId={flowId}
             resourceId={resourceId}
             isResolved={isResolved}
@@ -149,7 +158,8 @@ const ErrorTableWithPanel = ({
           className={classes.errorDetailsTable}
           tableRef={tableRef}
         />
-        {!isResolved && !hasErrors && <EmptyErrorMessage />}
+        {!hasFilter && !isResolved && !hasErrors && <EmptyErrorMessage />}
+        {hasFilter && !isResolved && !hasErrors && <NoFiltersMessage />}
       </>
 
     );
@@ -158,11 +168,18 @@ const ErrorTableWithPanel = ({
 const EmptyErrorMessage = () => (
   <NoResultTypography>
     <br />
-    <br />
     There don’t seem to be any more errors. You may have already retried or resolved them.
     <br />
     <br />
     If “Refresh errors” is enabled, you can click it to retrieve additional errors.
+  </NoResultTypography>
+);
+
+const NoFiltersMessage = () => (
+  <NoResultTypography>
+    <br />
+    You don’t have any errors that match the filters you applied.<br />
+    Clear all filters to see any errors for this step.
   </NoResultTypography>
 );
 

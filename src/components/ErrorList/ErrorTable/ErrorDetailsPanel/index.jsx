@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useMemo, useEffect } from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
@@ -14,7 +14,6 @@ import DrawerFooter from '../../../drawer/Right/DrawerFooter';
 import ErrorDetailActions from '../../ErrorDetails/ErrorDetailActions';
 import ErrorControls from './ErrorControls';
 import actions from '../../../../actions';
-import { useSelectorMemo } from '../../../../hooks';
 import AddToBatch from '../../ErrorDetails/ErrorDetailActions/AddToBatch';
 import EmptyErrorDetails from './EmptyErrorDetails';
 import { FILTER_KEYS } from '../../../../utils/errorManagement';
@@ -102,6 +101,7 @@ function TabPanel({ children, value, type }) {
 }
 
 export default function ErrorDetailsPanel({
+  errorsInCurrPage,
   flowId,
   resourceId,
   isResolved,
@@ -109,15 +109,6 @@ export default function ErrorDetailsPanel({
   const classes = useStyles();
   const [mode, setMode] = useState('editRetry');
   const dispatch = useDispatch();
-
-  const errorConfig = useMemo(() => ({
-    flowId,
-    resourceId,
-    isResolved,
-  }), [isResolved, flowId, resourceId]);
-
-  const errorsInPage = useSelectorMemo(selectors.mkResourceFilteredErrorsInCurrPageSelector, errorConfig);
-
   const activeErrorId = useSelector(state => {
     const e = selectors.filter(state, FILTER_KEYS.OPEN);
 
@@ -169,17 +160,13 @@ export default function ErrorDetailsPanel({
     setMode(newValue);
   }, []);
 
-  useEffect(() => {
-    setMode('editRetry');
-  }, [activeErrorId]);
-
   if (!mode || !availableTabs.map(tab => tab.type).includes(mode)) {
     // Incase of invalid mode, redirects user to first available tab
     setMode(availableTabs[0].type);
   }
 
   if (!activeErrorId || activeErrorId === '') {
-    return <EmptyErrorDetails classes={classes} />;
+    return <EmptyErrorDetails showMessage={errorsInCurrPage.length !== 0} classes={classes} />;
   }
 
   return (
@@ -189,7 +176,7 @@ export default function ErrorDetailsPanel({
           retryId={retryId}
           flowId={flowId}
           resourceId={resourceId}
-          errorsInPage={errorsInPage}
+          errorsInPage={errorsInCurrPage}
           activeErrorId={activeErrorId}
         />
       </DrawerHeader>
@@ -249,7 +236,7 @@ export default function ErrorDetailsPanel({
           isResolved={isResolved}
         />
         <ErrorDetailActions
-          errorsInPage={errorsInPage}
+          errorsInPage={errorsInCurrPage}
           updatedRetryData={userRetryData}
           flowId={flowId}
           resourceId={resourceId}
