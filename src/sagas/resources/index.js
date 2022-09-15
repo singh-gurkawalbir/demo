@@ -1,4 +1,4 @@
-import { call, put, takeEvery, select, take, cancel, fork, takeLatest, delay } from 'redux-saga/effects';
+import { call, put, takeEvery, select, take, cancel, fork, takeLatest } from 'redux-saga/effects';
 import jsonPatch, { deepClone } from 'fast-json-patch';
 import { isEqual, isBoolean, isEmpty } from 'lodash';
 import actions from '../../actions';
@@ -483,19 +483,10 @@ export function* getResource({ resourceType, id, message, hidden }) {
   const path = id ? `/${resourceType}/${id}` : `/${resourceType}`;
 
   try {
-    let resource;
+    let resource = yield call(apiCallWithRetry, { path, message, hidden });
 
     if (resourceType === 'flows') {
       resource = yield call(normalizeFlow, resource);
-    }
-
-    if (path.includes('profile')) {
-      yield delay(200);
-      resource = {_id: '60d1e0b1eb0b6b207d23ae99', name: 'Raghuvamsi Chandrabhatla + 1', email: 'raghuvamsi.chandrabhatla+1@celigo.com', role: '', company: 'celigo', phone: '', auth_type_google: {}, agreeTOSAndPP: true, createdAt: '2021-06-22T13:08:01.883Z', authTypeSSO: null, emailHash: '03303b0760008c24fe76829f56287336'};
-    } else if (path.includes('preferences')) {
-      resource = {environment: 'production', dateFormat: 'MM/DD/YYYY', timeFormat: 'h:mm:ss a', scheduleShiftForFlowsCreatedAfter: '2018-06-06T00:00:00.000Z', showReactSneakPeekFromDate: '2019-11-05', showReactBetaFromDate: '2019-12-26', defaultAShareId: 'own', expand: 'Tools', drawerOpened: true, fbBottomDrawerHeight: 22};
-    } else {
-      resource = yield call(apiCallWithRetry, { path, message, hidden });
     }
 
     yield put(actions.resource.received(resourceType, resource));
