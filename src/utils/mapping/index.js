@@ -626,6 +626,46 @@ export const hideOtherTabRows = (node, newTabExtract, hidden) => {
   return clonedNode;
 };
 
+const constructEmptyMappingWithGenerates = (rows, props = {}, parentKey) => {
+  const { combinedExtract: parentCombinedExtract, ...defaultProps } = props;
+
+  let nodes = rows || [];
+
+  if (parentCombinedExtract) {
+    const splitExtracts = parentCombinedExtract.split(',');
+    const firstParentExtract = getUniqueExtractId(splitExtracts[0], 0);
+
+    nodes = nodes.filter(c => c.parentExtract === firstParentExtract);
+  }
+
+  return nodes.map(row => {
+    const { children, generate, dataType, jsonPath, combinedExtract } = row;
+    let updatedChildren;
+    const key = generateUniqueKey();
+
+    if (children?.length) {
+      // todo: shall we have a strict check of object/objectarray datatypes to pass through the below function?
+      updatedChildren = constructEmptyMappingWithGenerates(children, { combinedExtract }, key);
+    }
+
+    const additionalProps = {
+      ...(parentKey ? { parentExtract: ''} : { combinedExtract: ''}), // todo: check why we need this
+      ...(updatedChildren ? { children: updatedChildren} : {}), // updates children if present with new key and generates
+    };
+
+    return {
+      key,
+      title: '',
+      generate,
+      jsonPath,
+      dataType,
+      parentKey, // if the row has parent key, then update with new parent key
+      ...defaultProps,
+      ...additionalProps,
+    };
+  });
+};
+
 // this util is for object array data type nodes when multiple extracts are given,
 // to reconstruct the whole children array
 export const rebuildObjectArrayNode = (node, extract = '') => {
@@ -687,6 +727,9 @@ export const rebuildObjectArrayNode = (node, extract = '') => {
     return false;
   });
 
+  const firstParentExtract = getUniqueExtractId(splitExtracts[0], 0);
+  const firstTabRows = clonedNode.children.filter(c => c.parentExtract === firstParentExtract);
+
   // find left over extracts so that new children rows can be pushed
   splitExtracts.forEach((e, i) => {
     if (!e) return;
@@ -697,17 +740,15 @@ export const rebuildObjectArrayNode = (node, extract = '') => {
     }
 
     const hidden = i > 0;
-    const newRow = {
-      key: generateUniqueKey(),
-      title: '',
+    const defaultProps = {
       parentKey,
       parentExtract: extract,
-      dataType: MAPPING_DATA_TYPES.STRING,
-      hidden, // hiding the new rows if those are not in 0th tab
       className: hidden && 'hideRow',
+      hidden, // hiding the new rows if those are not in 0th tab
     };
+    const generatesMapping = constructEmptyMappingWithGenerates(firstTabRows, defaultProps);
 
-    clonedNode.children.push(newRow);
+    clonedNode.children = [...clonedNode.children, ...generatesMapping];
   });
 
   if (splitExtracts.length === 1) {
@@ -1148,9 +1189,10 @@ export const buildV2MappingsFromTree = ({v2TreeData, lookups}) => {
 // handles drag/drop logic for tree data
 export function allowDrop({ dragNode, dropNode, dropPosition }) {
   if (!dragNode || !dropNode) return false;
+  if (!dropNode.children && (dropPosition === 0)) return false;
 
-  const {parentKey: dragNodeParentKey, isTabNode: dragNodeIsTab, hidden: dragNodeIsHidden} = dragNode;
-  const {key: dropNodeKey, parentKey: dropNodeParentKey, isTabNode: dropNodeIsTab, hidden: dropNodeIsHidden} = dropNode;
+  const {isTabNode: dragNodeIsTab, hidden: dragNodeIsHidden} = dragNode;
+  const {isTabNode: dropNodeIsTab, hidden: dropNodeIsHidden} = dropNode;
 
   if (dragNodeIsHidden || dropNodeIsHidden) return false;
 
@@ -1159,24 +1201,40 @@ export function allowDrop({ dragNode, dropNode, dropPosition }) {
   // can't drop above tab node
   if (dropNode?.children?.[0]?.isTabNode && dropPosition === 0) return false;
 
-  // dropping a child node at the 0th position in the children list
-  if (dropPosition === 0 && dragNodeParentKey === dropNodeKey) return true;
-
-  // nodes can only be dropped at same level
-  if ((dragNodeParentKey && !dropNodeParentKey) ||
-    (!dragNodeParentKey && dropNodeParentKey)) {
-    return false;
-  }
-
-  if (dragNodeParentKey && dropNodeParentKey && dragNodeParentKey !== dropNodeParentKey) {
-    return false;
-  }
-
   // can drop just below tab node
   if (dropNodeIsTab && dropPosition === 1) return true;
   if (dropNodeIsTab) return false;
 
   return true;
+}
+
+// verify if drag position and drop position are same
+export function isDropDragPositionSame({ dropPosition, dragNode, dropNode, dropSubArrIndex, dragNodeIndex, hasTabbedRow = false }) {
+  const dragParentKey = dragNode.parentKey;
+  const dropParentKey = dropNode.parentKey;
+
+  if (dropPosition === 0) { // drag obj is inserted as the 0th child of a parent
+    // when dropPosition is 0, dropNode points to parent node
+    if (dragParentKey === dropNode.key) {
+      // if child is already at 0th position, nothing to do
+      if (dragNodeIndex === 0 || (hasTabbedRow && dragNodeIndex === 1)) {
+        return true;
+      }
+    }
+  } else if (dropPosition === -1) {
+    if ((!dragParentKey && dropParentKey) || (dragParentKey && !dropParentKey)) {
+      return false;
+    }
+    // when no parent keys present or parent keys matches, drag and drop nodes are of same level
+    if ((dragParentKey === dropParentKey) && (dropSubArrIndex === dragNodeIndex)) return true;
+  } else if (dropPosition === 1) { // drag obj inserted after drop node
+    if ((!dragParentKey && dropParentKey) || (dragParentKey && !dropParentKey)) return false;
+
+    // when no parent keys present or parent keys matches, drag and drop nodes are of same level
+    if ((dragParentKey === dropParentKey) && (dropSubArrIndex + 1 === dragNodeIndex)) return true;
+  }
+
+  return false;
 }
 
 // given a tree data, some prop and its value
@@ -1296,6 +1354,182 @@ export const searchTree = (mappings, key, filterFunc, items) => {
 
   // eslint-disable-next-line no-param-reassign
   items.firstIndex = firstIndex;    // setting the firstIndex before returning
+};
+
+const getNewNode = (defaultProps = {}) => {
+  const { key, generate, jsonPath, dataType = MAPPING_DATA_TYPES.STRING, parentKey, parentExtract, children: defaultChildren } = defaultProps;
+  const newKey = key || generateUniqueKey();
+  const needEmptyChildNode = [MAPPING_DATA_TYPES.OBJECTARRAY, MAPPING_DATA_TYPES.OBJECT].includes(defaultProps.dataType);
+  const newChildNode = {
+    key: generateUniqueKey(),
+    title: '',
+    parentKey: newKey,
+    parentExtract: '',
+    dataType: MAPPING_DATA_TYPES.STRING,
+    hidden: true,
+    className: 'hideRow',
+  };
+
+  let childNodes = defaultChildren || [newChildNode]; // if the children are not passed, adds default empty child node
+
+  if (childNodes.length > 1) {
+    // Strips off any empty nodes present in the child nodes when there are multiple children
+    childNodes = childNodes.filter(childNode => !childNode.isEmptyRow);
+  }
+  const node = {
+    key: newKey,
+    title: '',
+    generate,
+    jsonPath,
+    dataType,
+    ...(needEmptyChildNode ? { children: childNodes } : {}),
+    parentKey,
+    parentExtract,
+    className: 'hideRow',
+    hidden: true,
+  };
+
+  return node;
+};
+
+export const constructNodeWithEmptySource = node => {
+  if (!node) return getNewNode();
+  const { combinedExtract = '', children, dataType, jsonPath, generate, parentKey, parentExtract } = node;
+  const defaultProps = { generate, jsonPath, dataType, parentKey, parentExtract };
+  const newKey = generateUniqueKey();
+
+  if (!children) {
+    // node is a non object/objectarray type
+    // so construct a new empty node with node props
+    return getNewNode(defaultProps);
+  }
+  const splitExtracts = combinedExtract.split(',');
+  const firstExtract = getUniqueExtractId(splitExtracts[0], 0);
+  const firstExtractChildNodes = children.filter(child => child.parentExtract === firstExtract);
+  const emptyChildren = firstExtractChildNodes.map(child => constructNodeWithEmptySource({...child, parentKey: newKey, parentExtract: ''}));
+
+  // Incase of children, replace children with empty children
+  return getNewNode({...defaultProps, children: emptyChildren, key: newKey });
+};
+
+const getNewChildrenToAdd = (parentNode, destinationNode) => {
+  // the destination node is expected to be a child - so checks for parentKey and generate field
+  if (!parentNode || !destinationNode || !destinationNode.parentKey || !destinationNode.generate) {
+    return [];
+  }
+
+  const splitExtracts = parentNode.combinedExtract?.split(',') || [];
+
+  // when there are extracts for the parentNodes, populate the destination in all the extracts where this node does not exist
+  if (splitExtracts.length) {
+    const extractsToAddEmptyDestinationNode = [];
+
+    splitExtracts.forEach((extract, extractIndex) => {
+      const currentExtract = getUniqueExtractId(extract, extractIndex);
+      const hasDestNode = parentNode.children.some(childNode => {
+        const { dataType, generate, parentExtract } = childNode;
+
+        // checks for datatype, generate to check if the node exist for this extract
+        return dataType === destinationNode.dataType && generate === destinationNode.generate && parentExtract === currentExtract;
+      });
+
+      if (!hasDestNode) {
+        // make a list of extracts where the destination node does not exist
+        extractsToAddEmptyDestinationNode.push(currentExtract);
+      }
+    });
+    // fill the node under all the extracts that does not have
+    const newChildren = extractsToAddEmptyDestinationNode.map(e => {
+      const newChildNode = constructNodeWithEmptySource({...destinationNode, parentExtract: e, parentKey: parentNode.key});
+
+      return newChildNode;
+    });
+
+    return newChildren;
+  }
+
+  const hasDestNode = parentNode.children.some(childNode => {
+    const { dataType, generate } = childNode;
+
+    return dataType === destinationNode.dataType && generate === destinationNode.generate;
+  });
+
+  if (!hasDestNode) {
+    // Incase the parent has no extracts and does not contain this node, add the new node directly as a child
+    return [constructNodeWithEmptySource({...destinationNode, parentKey: parentNode.key, parentExtract: ''})];
+  }
+
+  return [];
+};
+
+// recursively look for all parentNodes for a given node
+// Ex: For a node with jsonPath - a[*].b[*].c.d, the parent nodes returned are in the order of [a,b,c]
+export const findAllParentNodesForNode = (treeData, nodeKey, output = []) => {
+  const {node} = findNodeInTree(treeData, 'key', nodeKey);
+
+  if (!node) return output;
+
+  findAllParentNodesForNode(treeData, node.parentKey, output);
+
+  output.push(node);
+
+  return output;
+};
+
+// Fetches all possible parent nodes that contain the same pattern of mapping as given in the order of matchingNodes
+// Ex: For a node with jsonPath - a[*].b[*].c.d, this fn is called with fn([b,c], [a]) as 'a' is the first parentNode and b,c are the pattern nodes to reach node 'd'
+export const findAllPossibleDestinationMatchingLeafNodes = (matchingNodes = [], parentNodes = []) => {
+  // when there are no more nodes to match or no leaf nodes to go through return the leaf nodes
+  if (!matchingNodes.length || !parentNodes.length) return parentNodes;
+
+  // always fetch the first node from matchingNodes and perform match
+  const [currentNodeMatch] = matchingNodes;
+
+  let nextLevelParentNodes = [];
+
+  parentNodes.forEach(node => {
+    // filters all children that matches the currentNodeMatch destination and adds that to the list
+    const matchedChildren = node.children.filter(childNode => childNode.generate === currentNodeMatch.generate && childNode.dataType === currentNodeMatch.dataType);
+
+    nextLevelParentNodes = [...nextLevelParentNodes, ...matchedChildren];
+  });
+
+  // recursively pass the above list with the next available node from matchingNodes to match
+  return findAllPossibleDestinationMatchingLeafNodes(matchingNodes.slice(1), nextLevelParentNodes);
+};
+
+/**
+ * This util deals with destination node additions/updates inside an Object array node's children
+ * It updates the children with accommodating the added/updated node with destination at all possible places
+ * which matches destination structure with multiple extracts
+ */
+export const insertSiblingsOnDestinationUpdate = (treeData, newNode) => {
+  // do nothing if the node itself is the top node
+  if (!newNode.parentKey) return;
+
+  // fetch all parent nodes from top to bottom
+  const parentNodes = findAllParentNodesForNode(treeData, newNode.parentKey);
+
+  const objArrayParentNodeIndex = parentNodes.findIndex(node => node.dataType === MAPPING_DATA_TYPES.OBJECTARRAY);
+
+  // if there is no object array parent, do nothing
+  if (objArrayParentNodeIndex === -1) return treeData;
+  // fetches the first parent from top which is Object array, as we need to process nodes which are children of an object array node
+  const [topNode, ...restOfParentNodes] = parentNodes.slice(objArrayParentNodeIndex);
+
+  const matchingLeafNodes = findAllPossibleDestinationMatchingLeafNodes(restOfParentNodes, [topNode]);
+
+  matchingLeafNodes.forEach(parentNode => {
+    const newChildren = getNewChildrenToAdd(parentNode, newNode);
+
+    if (parentNode.children?.length === 1 && parentNode.children[0]?.isEmptyRow) {
+      // eslint-disable-next-line no-param-reassign
+      parentNode.children = newChildren;
+    } else {
+      // eslint-disable-next-line no-param-reassign
+      parentNode.children = [...parentNode.children, ...newChildren];
+    }
+  });
 };
 
 export const TYPEOF_TO_DATA_TYPE = {
