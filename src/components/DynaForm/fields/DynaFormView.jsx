@@ -22,7 +22,7 @@ const useStyles = makeStyles({
     padding: 0,
   },
   connectorTextToggle: {
-    marginRight: '0px !important',
+    flexGrow: 100,
   },
 });
 const emptyObj = {};
@@ -200,20 +200,19 @@ export default function FormView(props) {
     return null;
   }
   const titleBarFormView = isTitleBar ? (
-    <>
+    <div className={classes.connectorTextToggle}>
       <TextToggle
         value={value}
         onChange={onFieldChangeFn}
         exclusive
         options={options}
-        className={classes.connectorTextToggle}
       />
       <Help
         title="Formview"
         className={classes.helpTextButton}
         helpKey="formView"
       />
-    </>
+    </div>
   ) : null;
   const containerFormView = !isTitleBar ? (
     <DynaSelect
