@@ -18,6 +18,7 @@ const getFieldMeta = branch => ({
       name: 'name',
       id: 'name',
       type: 'text',
+      autoFocus: true,
       label: 'Name',
       required: true,
       defaultValue: branch.name,

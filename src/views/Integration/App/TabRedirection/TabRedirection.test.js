@@ -62,7 +62,44 @@ describe('TabRedirectiion(App) UI tests', () => {
       children,
       mode,
       createdAt: '2021-01-06T08:50:31.935Z',
+    }, {
+      _id: 'integration_id_1',
+      settings: {
+        sections: [
+          {
+            title: 'Title 1',
+            id: 'id_1',
+            sections: [],
+          },
+        ],
+        supportsMultiStore: true,
+      },
+    }, {
+      _id: 'integration_id_2',
+      settings: {
+        sections: [
+          {
+            title: 'Title 1',
+            id: 'id_1',
+            sections: [],
+          },
+          {
+            title: 'Title 2',
+            id: 'id_2',
+            sections: [],
+          },
+        ],
+        supportsMultiStore: true,
+      },
     }];
+    initialStore.getState().session.integrations = {
+      integration_id_1: {
+        isTileClick: true,
+      },
+      integration_id_2: {
+        isTileClick: true,
+      },
+    };
 
     return initialStore;
   }
@@ -224,5 +261,22 @@ describe('TabRedirectiion(App) UI tests', () => {
         type: 'ADDON_LICENSES_METADATA',
         integrationId: '5ff579d745ceef7dcd797c15',
       });
+  });
+
+  test('should redirect to store URL when there is only one store available in tile', () => {
+    const initialStore = initStore(null, 'settings');
+
+    renderFunction(initialStore, '/integration_id_1', '/:integrationId');
+    expect(mockHistoryPush).toBeCalledWith('/integrationapps/integrationApp/integration_id_1/child/id_1');
+  });
+
+  test('should redirect to store URL when there is only multiple stores available in tile', () => {
+    const initialStore = initStore(null, 'settings');
+
+    renderFunction(initialStore, '/integration_id_2', '/:integrationId');
+    expect(mockDispatch).toHaveBeenCalledWith({
+      type: 'INTEGRATION_CLEAR_CLICK',
+      integrationId: 'integration_id_2',
+    });
   });
 });

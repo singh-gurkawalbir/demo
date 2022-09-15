@@ -390,6 +390,15 @@ const resource = {
       action(actionTypes.INTEGRATION.CLEAR_REDIRECT, {
         integrationId,
       }),
+    isTileClick: (integrationId, isTileClick) =>
+      action(actionTypes.INTEGRATION.TILE_CLICK, {
+        integrationId,
+        isTileClick,
+      }),
+    clearIsTileClick: integrationId =>
+      action(actionTypes.INTEGRATION.CLEAR_TILE_CLICK, {
+        integrationId,
+      }),
     flowGroups: {
       createOrUpdate: (integrationId, flowGroupId, formKey) =>
         action(actionTypes.INTEGRATION.FLOW_GROUPS.CREATE_OR_UPDATE, {

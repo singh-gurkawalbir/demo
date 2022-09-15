@@ -23,6 +23,7 @@ export default {
         title: activeProcessor === 'javascript' ? 'Function input' : 'Input',
         area: 'form',
         Panel: DataPanel,
+        props: {mode: 'json'},
       },
       {
         title: activeProcessor === 'javascript' ? 'Function output' : 'Output',
