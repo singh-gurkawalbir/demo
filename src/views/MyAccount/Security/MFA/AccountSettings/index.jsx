@@ -66,7 +66,7 @@ export default function AccountSettings() {
   const updateAccountSettings = useCallback(values => {
     const { dontAllowTrustedDevices, trustDeviceForPeriod } = values;
 
-    dispatch(actions.mfa.updateAccountSettings({ dontAllowTrustedDevices, trustDeviceForPeriod }));
+    dispatch(actions.mfa.updateAccountSettings({ dontAllowTrustedDevices, trustDeviceForPeriod: +trustDeviceForPeriod }));
   }, [dispatch]);
 
   useEffect(() => {
