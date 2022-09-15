@@ -41,6 +41,8 @@ function Notifications() {
   const isAccountOwner = useSelector(state =>
     selectors.isAccountOwner(state)
   );
+  const isMFASetupIncomplete = useSelector(selectors.isMFASetupIncomplete);
+
   const handleClick = useCallback(
     event => {
       setAnchorEl(!anchorEl ? event.currentTarget : null);
@@ -70,6 +72,9 @@ function Notifications() {
   );
   const open = !!anchorEl;
 
+  if (isMFASetupIncomplete) {
+    return null;
+  }
   if (!notifications || notifications.length === 0) {
     return (
       <>
