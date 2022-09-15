@@ -51,7 +51,7 @@ export function* setupMFA({ mfaConfig }) {
 
     if (isMFASetupIncomplete) {
       // If mfa setup is incomplete, fetch latest session info once mfa setup is successful to update UI layout for the user
-      yield put(actions.mfa.requestSessionInfo());
+      yield put(actions.auth.initSession());
     }
     yield put(actions.asyncTask.success(MFA_SETUP_ASYNC_KEY));
   } catch (error) {

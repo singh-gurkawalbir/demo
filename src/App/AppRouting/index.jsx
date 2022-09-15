@@ -1,5 +1,5 @@
-import React, { useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import React from 'react';
+import { useSelector } from 'react-redux';
 import { Switch, Route } from 'react-router-dom';
 import loadable from '../../utils/loadable';
 import ClonePreview from '../../views/Clone/Preview';
@@ -8,7 +8,6 @@ import getRoutePath from '../../utils/routePaths';
 import AmpersandRoutesHandler from './AmpersandRoutesHandler';
 import { AMPERSAND_ROUTES, HOME_PAGE_PATH } from '../../constants';
 import { selectors } from '../../reducers';
-import actions from '../../actions';
 import retry from '../../utils/retry';
 import ResourceListInfo from '../../views/ResourceList/infoText';
 
@@ -116,22 +115,12 @@ function ResourceListRouteCatcher(props) {
 
 export default function AppRouting() {
   // console.log('render: <AppRouting>');
-  const dispatch = useDispatch();
-  const sessionInfoStatus = useSelector(selectors.sessionInfoStatus);
   const isMFASetupIncomplete = useSelector(selectors.isMFASetupIncomplete);
 
-  useEffect(() => {
-    if (!sessionInfoStatus) {
-      dispatch(actions.mfa.requestSessionInfo());
-    }
-  }, [dispatch, sessionInfoStatus]);
-
-  if (!sessionInfoStatus || sessionInfoStatus === 'requested') return null;
-
-  if (isMFASetupIncomplete) {
+  if (!isMFASetupIncomplete) {
     return (
       <Switch>
-        <Route path={getRoutePath('myAccount/:tab')} component={MyAccount} />
+        <Route path={getRoutePath('myAccount/security')} component={MyAccount} />
         <Route
           path="*"
           render={({ history }) => history.replace(getRoutePath('myAccount/security/mfa'))}
