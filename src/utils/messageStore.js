@@ -73,6 +73,7 @@ href="/marketplace"><u>Check out our Marketplace</u></a> to jumpstart your  inte
   BRANCH_EMPTY_FILTER: 'No conditions defined.',
   // #region MFA
   MFA_SETUP_SUCCESS: 'MFA enabled and device connected successfully.',
+  MFA_ACCOUNT_SETTINGS_UPDATED: 'MFA account settings saved successfully.',
   MFA_ENABLED: 'MFA enabled successfully.',
   MFA_DISABLED: 'MFA disabled successfully.',
   MFA_PRIMARY_ACCOUNT_UPDATED: 'Primary account to reset updated successfully',
