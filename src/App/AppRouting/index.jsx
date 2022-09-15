@@ -117,7 +117,7 @@ export default function AppRouting() {
   // console.log('render: <AppRouting>');
   const isMFASetupIncomplete = useSelector(selectors.isMFASetupIncomplete);
 
-  if (!isMFASetupIncomplete) {
+  if (isMFASetupIncomplete) {
     return (
       <Switch>
         <Route path={getRoutePath('myAccount/security')} component={MyAccount} />
