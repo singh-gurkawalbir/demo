@@ -226,7 +226,7 @@ function constructExtractsArray(formKey, newOptions, currArray, dataType) {
     return c;
   }) || [];
 
-  // if source was not present before, add it to array
+  // if source was not present before,add it to array
   if (!found) {
     toReturn.push(newExtractObj);
   }
