@@ -72,8 +72,8 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const ERROR_DETAILS_TABS = {
-  VIEW_FIELDS: { type: 'view', label: 'Error fields' },
   EDIT_RETRY_DATA: { type: 'editRetry', label: 'Edit retry data' },
+  VIEW_FIELDS: { type: 'view', label: 'Error fields' },
   VIEW_RETRY_DATA: { type: 'viewRetry', label: 'Retry data' },
   REQUEST: { type: 'request', label: 'HTTP request' },
   RESPONSE: { type: 'response', label: 'HTTP response' },
@@ -160,13 +160,13 @@ export default function ErrorDetailsPanel({
     setMode(newValue);
   }, []);
 
+  if (!activeErrorId || activeErrorId === '') {
+    return <EmptyErrorDetails showMessage={errorsInCurrPage.length !== 0} classes={classes} />;
+  }
+
   if (!mode || !availableTabs.map(tab => tab.type).includes(mode)) {
     // Incase of invalid mode, redirects user to first available tab
     setMode(availableTabs[0].type);
-  }
-
-  if (!activeErrorId || activeErrorId === '') {
-    return <EmptyErrorDetails showMessage={errorsInCurrPage.length !== 0} classes={classes} />;
   }
 
   return (
