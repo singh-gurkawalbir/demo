@@ -2,7 +2,7 @@ import React, { useMemo, useCallback, useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import CollapsableContainer from '../../../../../components/CollapsableContainer';
-import useFormInitWithPermissions from '../../../../../hooks/useFormInitWithPermissions';
+import useForm from '../../../../../components/Form';
 import DynaForm from '../../../../../components/DynaForm';
 import Spinner from '../../../../../components/Spinner';
 import DynaSubmit from '../../../../../components/DynaForm/DynaSubmit';
@@ -61,7 +61,7 @@ export default function AccountSettings() {
     setRemountKey(key => key + 1);
   }, [mfaAccountSettings]);
 
-  const formKey = useFormInitWithPermissions({ fieldMeta, remount: remountKey });
+  const formKey = useForm({ fieldMeta, remount: remountKey });
 
   const updateAccountSettings = useCallback(values => {
     const { dontAllowTrustedDevices, trustDeviceForPeriod } = values;

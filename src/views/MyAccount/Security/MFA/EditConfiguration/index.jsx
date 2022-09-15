@@ -6,7 +6,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import DynaForm from '../../../../../components/DynaForm';
 import DynaSubmit from '../../../../../components/DynaForm/DynaSubmit';
 import OutlinedButton from '../../../../../components/Buttons/OutlinedButton';
-import useFormInitWithPermissions from '../../../../../hooks/useFormInitWithPermissions';
+import useForm from '../../../../../components/Form';
 import ReAuthModal from '../ReAuthModal';
 import HeaderWithHelpText from '../HeaderWithHelpText';
 import ResetAuthorizeModal from './MFAResetAuthorization';
@@ -168,7 +168,7 @@ export default function EditMFAConfiguration() {
     [isAccountOwner, primaryAccountOptions, selectedPrimaryAccount]
   );
 
-  const formKey = useFormInitWithPermissions({ fieldMeta, remountKey });
+  const formKey = useForm({ fieldMeta, remountKey });
   const updateMFA = useCallback(values => {
     const { _allowResetByUserId } = values;
 

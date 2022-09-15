@@ -41,6 +41,7 @@ function Notifications() {
   const isAccountOwner = useSelector(state =>
     selectors.isAccountOwner(state)
   );
+  const mfaSessionInfoStatus = useSelector(selectors.mfaSessionInfoStatus);
   const isMFASetupIncomplete = useSelector(selectors.isMFASetupIncomplete);
 
   const handleClick = useCallback(
@@ -71,6 +72,9 @@ function Notifications() {
     [dispatch]
   );
   const open = !!anchorEl;
+
+  // we proceed further only when mfa sessionInfo is received
+  if (!mfaSessionInfoStatus || mfaSessionInfoStatus === 'requested') return null;
 
   if (isMFASetupIncomplete) {
     return null;

@@ -49,11 +49,11 @@ export function* setupMFA({ mfaConfig }) {
     yield put(actions.mfa.addSetupContext(context));
     const isMFASetupIncomplete = yield select(selectors.isMFASetupIncomplete);
 
+    yield put(actions.asyncTask.success(MFA_SETUP_ASYNC_KEY));
     if (isMFASetupIncomplete) {
       // If mfa setup is incomplete, fetch latest session info once mfa setup is successful to update UI layout for the user
       yield put(actions.auth.initSession());
     }
-    yield put(actions.asyncTask.success(MFA_SETUP_ASYNC_KEY));
   } catch (error) {
     yield put(actions.asyncTask.failed(MFA_SETUP_ASYNC_KEY));
 
