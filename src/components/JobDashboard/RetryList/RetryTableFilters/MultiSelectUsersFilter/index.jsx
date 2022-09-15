@@ -14,7 +14,6 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const filterBy = 'selectedUsers';
-const headerLabel = 'Select retry started by';
 
 export default function MultiSelectUsersFilter({flowId, resourceId, resourceType, filterKey}) {
   const classes = useStyles();
@@ -42,7 +41,6 @@ export default function MultiSelectUsersFilter({flowId, resourceId, resourceType
     <MultiSelectColumnFilter
       className={classes.multiSelectUserWrapper}
       title={CustomLabel}
-      headerLabel={headerLabel}
       filterBy="selectedUsers"
       filterKey={filterKey}
       options={users}

@@ -29,7 +29,6 @@ export default function MultiSelectColumnFilter({
   helpKey,
   SelectedLabelImp,
   ButtonLabel,
-  headerLabel,
   className,
 }) {
   const classes = useStyles();
@@ -98,7 +97,6 @@ export default function MultiSelectColumnFilter({
       <MultiSelectFilter
         Icon={FilterIcon}
         ButtonLabel={ButtonLabel}
-        headerLabel={headerLabel}
         items={options}
         selected={selected}
         onSave={onSaveHandler}

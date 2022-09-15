@@ -58,6 +58,10 @@ selectors.retryList = createSelector(
   (state, flowId, resourceId) => state?.[flowId]?.[resourceId]?.data || emptyList,
   (_1, _2, _3, filters) => filters?.selectedUsers || emptyList,
   (retryJobs, selectedUsers) => {
+    if (!Array.isArray(retryJobs)) {
+      return emptyList;
+    }
+
     const allRetryJobs = selectedUsers.length && !selectedUsers.includes('all') ? retryJobs.filter(job => selectedUsers.includes(job.triggeredBy)) : retryJobs;
 
     return allRetryJobs.map(job => {

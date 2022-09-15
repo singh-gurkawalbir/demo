@@ -7202,6 +7202,10 @@ selectors.retryUsersList = createSelector(
   selectors.usersList,
   (state, flowId, resourceId) => selectors.retryList(state, flowId, resourceId),
   (profile, availableUsersList, retryJobs) => {
+    if (!Array.isArray(retryJobs)) {
+      return [{ _id: 'all', name: 'All users'}];
+    }
+
     const allUsersTriggeredRetry = retryJobs.reduce((users, job) => {
       if (!job.triggeredBy) {
         return users;

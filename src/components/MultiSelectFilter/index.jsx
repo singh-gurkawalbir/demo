@@ -1,4 +1,4 @@
-import { FormControl, FormGroup, FormControlLabel, Checkbox, FormLabel } from '@material-ui/core';
+import { FormControl, FormGroup, FormControlLabel, Checkbox } from '@material-ui/core';
 import IconButton from '@material-ui/core/IconButton';
 import { makeStyles } from '@material-ui/core/styles';
 import { isEqual } from 'lodash';
@@ -107,7 +107,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function MultiSelectFilter({ items = [], selected = [], onSave, Icon, onSelect, SelectedLabelImp, ButtonLabel, headerLabel}) {
+export default function MultiSelectFilter({ items = [], selected = [], onSave, Icon, onSelect, SelectedLabelImp, ButtonLabel}) {
   const [initialValue, setInitialValue] = useState(selected);
   const [checked, setChecked] = useState(selected);
   const [anchorEl, setAnchorEl] = useState(null);
@@ -236,11 +236,6 @@ export default function MultiSelectFilter({ items = [], selected = [], onSave, I
             <div className={classes.filter}>
               <div className={classes.wrapper}>
                 <FormControl component="fieldset" className={classes.formControl}>
-                  {headerLabel && (
-                  <FormLabel component="legend" className={classes.heading}>
-                    {headerLabel}
-                  </FormLabel>
-                  )}
                   <FormGroup className={classes.formGroup}>
                     {items.map(m => (
                       <ul key={m._id} className={classes.checkAction}>

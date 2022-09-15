@@ -34,9 +34,7 @@ export default function CancelRetryJob({retryJob}) {
         buttons: [
           {
             label: 'Cancel retry',
-            onClick: () => {
-              handleCancelRetryJob();
-            },
+            onClick: handleCancelRetryJob,
           },
           {
             label: 'No, go back',
