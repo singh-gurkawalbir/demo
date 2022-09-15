@@ -176,14 +176,16 @@ export function* retrieveAppInitializationResources() {
   yield call(requestMFASessionInfo);
   const isMFASetupIncomplete = yield select(selectors.isMFASetupIncomplete);
 
+  yield call(retrievingUserDetails);
+
   if (isMFASetupIncomplete) {
-    yield call(retrievingUserDetails); // replace once BE allows preferences
+    // Incase the account user has not yet setup mfa and owner has enforced require mfa, then we only fetch ashare accounts
+    // all other APIs are evaded
     yield call(
       getResourceCollection,
       actions.user.org.accounts.requestCollection('Retrieving user\'s accounts')
     );
   } else {
-    yield call(retrievingUserDetails);
     yield all([
       call(retrievingOrgDetails),
       call(retrievingAssistantDetails),
