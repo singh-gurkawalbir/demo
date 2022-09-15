@@ -7,6 +7,7 @@ export default (state = {}, action) => {
     redirectTo,
     integrationId,
     error,
+    isTileClick,
   } = action;
 
   return produce(state, draft => {
@@ -21,6 +22,15 @@ export default (state = {}, action) => {
         }
 
         draft[integrationId].redirectTo = redirectTo;
+        break;
+      case actionTypes.INTEGRATION.TILE_CLICK:
+        if (!draft[integrationId]) {
+          draft[integrationId] = {};
+        }
+        draft[integrationId].isTileClick = isTileClick;
+        break;
+      case actionTypes.INTEGRATION.CLEAR_TILE_CLICK:
+        if (draft[integrationId]) delete draft[integrationId].isTileClick;
         break;
       case actionTypes.INTEGRATION.FLOW_GROUPS.CREATE_OR_UPDATE_FAILED:
       case actionTypes.INTEGRATION.FLOW_GROUPS.DELETE_FAILED:
@@ -47,6 +57,14 @@ selectors.shouldRedirect = (state, integrationId) => {
   }
 
   return state[integrationId].redirectTo;
+};
+
+selectors.isTileClick = (state, integrationId) => {
+  if (!state || !state[integrationId]) {
+    return null;
+  }
+
+  return state[integrationId].isTileClick;
 };
 
 selectors.flowGroupStatus = (state, integrationId) => {
