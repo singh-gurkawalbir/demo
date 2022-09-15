@@ -150,10 +150,13 @@ function Tile({
   const handleTileClick = useCallback(
     event => {
       event.stopPropagation();
+      if (!tile.iaV2 && tile._connectorId && tile.supportsChild) {
+        dispatch(actions.resource.integrations.isTileClick(tile?._integrationId, true));
+      }
 
       history.push(getRoutePath(urlToIntegrationSettings));
     },
-    [history, urlToIntegrationSettings]
+    [history, urlToIntegrationSettings, dispatch, tile?._integrationId, tile._connectorId, tile.iaV2, tile.supportsChild]
   );
 
   return (
