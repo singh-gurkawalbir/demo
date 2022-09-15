@@ -2047,6 +2047,20 @@ const errorManager = {
       filters,
     }),
   },
+  retries: {
+    request: ({ flowId, resourceId }) =>
+      action(actionTypes.ERROR_MANAGER.RETRIES.REQUEST, { flowId, resourceId }),
+    received: ({ flowId, resourceId, retries }) =>
+      action(actionTypes.ERROR_MANAGER.RETRIES.RECEIVED, {
+        flowId,
+        resourceId,
+        retries,
+      }),
+    clear: ({ flowId, resourceId }) =>
+      action(actionTypes.ERROR_MANAGER.RETRIES.CLEAR, { flowId, resourceId }),
+    cancelRequest: ({ flowId, resourceId, jobId}) =>
+      action(actionTypes.ERROR_MANAGER.RETRIES.CANCEL.REQUEST, {flowId, resourceId, jobId}),
+  },
   retryData: {
     request: ({ flowId, resourceId, retryId }) =>
       action(actionTypes.ERROR_MANAGER.RETRY_DATA.REQUEST, {

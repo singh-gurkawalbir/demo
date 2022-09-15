@@ -1,9 +1,9 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { JOB_STATUS } from '../../../../../constants';
+import { JOB_STATUS, JOB_TYPES } from '../../../../../constants';
 import Spinner from '../../../../Spinner';
 import JobStatus from '../../../../JobDashboard/JobStatus';
-import { JOB_UI_STATUS } from '../../../../../utils/jobdashboard';
+import { JOB_UI_STATUS, RETRY_JOB_UI_STATUS } from '../../../../../utils/jobdashboard';
 
 const useStyles = makeStyles(theme => ({
   flexContainer: {
@@ -26,7 +26,7 @@ export default function FlowStepStatus({ job }) {
         <div className={classes.spinnerWrapper}>
           <Spinner size={18} />
         </div>
-        {JOB_UI_STATUS[job.status]}
+        {job.type === JOB_TYPES.RETRY ? RETRY_JOB_UI_STATUS[job.status] : JOB_UI_STATUS[job.status]}
       </div>
     );
   }
