@@ -1,7 +1,7 @@
 import React, {useMemo, useCallback} from 'react';
-import { makeStyles, Tabs, Tab } from '@material-ui/core';
+import { makeStyles, Tabs, Tab, Tooltip } from '@material-ui/core';
 import { useSelector, useDispatch } from 'react-redux';
-import {findNodeInTree, getUniqueExtractId} from '../../../../../../utils/mapping';
+import {findNodeInTree, getExtractFromUniqueId} from '../../../../../../utils/mapping';
 import {selectors} from '../../../../../../reducers';
 import actions from '../../../../../../actions';
 
@@ -23,19 +23,25 @@ const useStyles = makeStyles(theme => ({
 
 function generateTabs(parentNode) {
   const tabs = [];
+  let anyExtractHasMappings = false;
 
-  if (parentNode?.combinedExtract) {
-    const splitExtracts = parentNode.combinedExtract.split(',');
-
-    splitExtracts.forEach((extract, index) => {
-      if (!extract) return;
+  if (parentNode?.extractsArrayHelper) {
+    parentNode.extractsArrayHelper.forEach(extractConfig => {
+      if (!extractConfig.extract) return;
+      if (extractConfig.copySource !== 'yes') {
+        anyExtractHasMappings = true;
+      }
 
       tabs.push({
-        id: getUniqueExtractId(extract, index),
-        label: extract,
+        id: extractConfig.extract,
+        label: getExtractFromUniqueId(extractConfig.extract),
+        disabled: extractConfig.copySource === 'yes',
       });
     });
   }
+
+  // if all sources have copy source setting as yes, then no tab is shown
+  if (!anyExtractHasMappings) return [];
 
   return tabs;
 }
@@ -62,13 +68,32 @@ function TabbedRow({parentKey}) {
         textColor="primary"
         variant="scrollable"
         scrollButtons="auto" >
-        {tabs.map(({ id, label }) => (
-          <Tab
-            className={classes.tab}
-            key={id}
-            label={label}
+        {tabs.map(({ id, label, disabled }) =>
+          disabled ? (
+            <Tooltip
+              key={id}
+              title={disabled ? 'No fields need to be configured because this source has the setting "Copy an object array from the source as-is" set to “Yes”.' : ''}
+              placement="bottom">
+              {/* this div needs to be added to render the tooltip correctly */}
+              <div>
+                <Tab
+                  className={classes.tab}
+                  key={id}
+                  label={label}
+                  disabled={disabled}
           />
-        ))}
+              </div>
+            </Tooltip>
+          )
+            : (
+              <Tab
+                className={classes.tab}
+                key={id}
+                label={label}
+                disabled={disabled}
+    />
+            )
+        )}
       </Tabs>
     </div>
   );

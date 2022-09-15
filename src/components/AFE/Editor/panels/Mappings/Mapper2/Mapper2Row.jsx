@@ -18,7 +18,7 @@ import Mapper2Generates from './Destination/Mapper2Generates';
 import actions from '../../../../../../actions';
 import useConfirmDialog from '../../../../../ConfirmDialog';
 import { buildDrawerUrl, drawerPaths } from '../../../../../../utils/rightDrawer';
-import { MAPPING_DATA_TYPES, handlebarRegex } from '../../../../../../utils/mapping';
+import { MAPPING_DATA_TYPES, handlebarRegex, getCombinedExtract } from '../../../../../../utils/mapping';
 import messageStore from '../../../../../../utils/messageStore';
 import TabRow from './TabbedRow';
 import { getMappingsEditorId } from '../../../../../../utils/editor';
@@ -109,7 +109,7 @@ const Mapper2Row = React.memo(props => {
   const {
     nodeKey,
     isTabNode,
-    combinedExtract,
+    extractsArrayHelper,
     extract,
     copySource = 'no',
     generate,
@@ -188,7 +188,7 @@ const Mapper2Row = React.memo(props => {
     }));
   }, [dispatch, history, nodeKey, generate]);
 
-  const extractValue = combinedExtract || extract || (hardCodedValue ? `"${hardCodedValue}"` : undefined);
+  const extractValue = getCombinedExtract(extractsArrayHelper).join(',') || extract || (hardCodedValue ? `"${hardCodedValue}"` : undefined);
   const isLookup = !!lookupName;
   const isStaticLookup = !!(lookup.name && lookup.map);
   const isHardCodedValue = hardCodedValue !== undefined;

@@ -14,14 +14,15 @@ import {
   insertSiblingsOnDestinationUpdate,
   hideOtherTabRows,
   MAPPING_DATA_TYPES,
-  getUniqueExtractId,
   autoCreateDestinationStructure,
   isDropDragPositionSame,
   deleteNonRequiredMappings,
   searchTree,
   filterKey,
   filterNode,
-  updateChildrenJSONPath} from '../../../utils/mapping';
+  updateChildrenJSONPath,
+  getCombinedExtract,
+  buildExtractsHelperFromExtract} from '../../../utils/mapping';
 import { generateUniqueKey } from '../../../utils/string';
 
 export const expandRow = (draft, key) => {
@@ -41,8 +42,8 @@ export const updateChildrenProps = (children, parentNode, dataType) => {
   if (!children || !children.length) return children;
   const childrenCopy = deepClone(children);
 
-  const {key, combinedExtract = ''} = parentNode;
-  const newParentExtract = getUniqueExtractId(combinedExtract.split(',')[0], 0);
+  const {key, extractsArrayHelper} = parentNode;
+  const newParentExtract = getCombinedExtract(extractsArrayHelper)[0];
 
   // only for object array data type, add parent reference fields
   if (dataType === MAPPING_DATA_TYPES.OBJECTARRAY) {
@@ -91,24 +92,20 @@ export const updateDataType = (draft, node, oldDataType, newDataType) => {
   if (newDataType === MAPPING_DATA_TYPES.OBJECT || newDataType === MAPPING_DATA_TYPES.OBJECTARRAY) {
     expandRow(draft, newNode.key);
 
-    newNode.combinedExtract = newNode.combinedExtract || newNode.extract;
+    newNode.extractsArrayHelper = newNode.extractsArrayHelper || buildExtractsHelperFromExtract([], newNode.extract);
 
     delete newNode.hardCodedValue;
     delete newNode.lookupName;
 
     if (newDataType === MAPPING_DATA_TYPES.OBJECTARRAY) {
-      if (newNode.copySource === 'yes') {
-        delete newNode.children;
-      } else {
-        newNode.children = updateChildrenProps(newNode.children, newNode, MAPPING_DATA_TYPES.OBJECTARRAY);
-      }
+      newNode.children = updateChildrenProps(newNode.children, newNode, MAPPING_DATA_TYPES.OBJECTARRAY);
 
       delete newNode.extract;
       delete newNode.mappings;
     } else {
-      newNode.extract = newNode.copySource === 'yes' ? newNode.combinedExtract?.split(',')?.[0] : undefined;
-      // combinedExtract is used only for array data types to store comma separated values
-      delete newNode.combinedExtract;
+      newNode.extract = newNode.copySource === 'yes' ? newNode.extractsArrayHelper?.[0]?.extract : undefined;
+      // extractsArrayHelper is used only for array data types to store each source config
+      delete newNode.extractsArrayHelper;
       // delete existing children if new data type is object
       delete newNode.children;
       delete newNode.buildArrayHelper;
@@ -117,9 +114,9 @@ export const updateDataType = (draft, node, oldDataType, newDataType) => {
 
     newNode.children = updateChildrenJSONPath(newNode)?.children;
 
-    const parentExtract = getUniqueExtractId(newNode.combinedExtract?.split(',')?.[0], 0);
+    const parentExtract = newNode.extractsArrayHelper?.[0]?.extract;
 
-    if (isEmpty(newNode.children) && newNode.copySource !== 'yes') {
+    if (isEmpty(newNode.children) && (newDataType === MAPPING_DATA_TYPES.OBJECTARRAY || newNode.copySource !== 'yes')) {
       newNode.children = [{
         key: newRowKey,
         title: '',
@@ -134,7 +131,7 @@ export const updateDataType = (draft, node, oldDataType, newDataType) => {
   // now handle other primitive arrays which can not have children
   if (ARRAY_DATA_TYPES.includes(newDataType)) {
     delete newNode.children;
-    newNode.combinedExtract = newNode.combinedExtract || newNode.extract;
+    newNode.extractsArrayHelper = newNode.extractsArrayHelper || buildExtractsHelperFromExtract([], newNode.extract);
     delete newNode.extract;
 
     return newNode;
@@ -142,8 +139,8 @@ export const updateDataType = (draft, node, oldDataType, newDataType) => {
   // handle the primitive data types
   if (PRIMITIVE_DATA_TYPES.includes(newDataType)) {
     delete newNode.children;
-    newNode.extract = newNode.extract || newNode.combinedExtract;
-    delete newNode.combinedExtract;
+    newNode.extract = newNode.extract || getCombinedExtract(newNode.extractsArrayHelper).join(',');
+    delete newNode.extractsArrayHelper;
   }
 
   return newNode;
@@ -591,7 +588,7 @@ export default (state = {}, action) => {
 
           draft.mapping.v2TreeData = updateChildrenProps(draft.mapping.v2TreeData[0].children,
             {
-              combinedExtract: draft.mapping.v2TreeData[0].combinedExtract, // pass old node combinedExtract to pick first extract
+              extractsArrayHelper: draft.mapping.v2TreeData[0].extractsArrayHelper, // pass old node extractsArrayHelper to pick first extract
             },
             MAPPING_DATA_TYPES.OBJECT);
 
@@ -712,7 +709,7 @@ export default (state = {}, action) => {
         // drag obj is inserted as the 0th child of a parent
         if (dropPosition === 0) {
           // It is the parent node which is also the drop node.
-          const {children = [], key: parentKey, combinedExtract, dataType: parentDataType, jsonPath: parentJsonPath } = dropSubArr[dropNodeIndex];
+          const {children = [], key: parentKey, extractsArrayHelper, dataType: parentDataType, jsonPath: parentJsonPath } = dropSubArr[dropNodeIndex];
           const hasTabbedRow = children[0]?.isTabNode;
 
           if (isDropDragPositionSame({ dropPosition, dragNode, dropNode, dropSubArrIndex, dragNodeIndex, hasTabbedRow })) return;
@@ -723,9 +720,9 @@ export default (state = {}, action) => {
           dragObj.parentKey = parentKey;
           dragObj.jsonPath = parentDataType === MAPPING_DATA_TYPES.OBJECTARRAY ? `${parentJsonPath}[*].${dragObj.generate}` : `${parentJsonPath}.${dragObj.generate}`;
           dragObj = updateChildrenJSONPath(dragObj);
-          // only array fields have combinedExtract property, hence here it is for object arrays only
-          if (combinedExtract) {
-            dragObj.parentExtract = combinedExtract?.split(',')?.[0];
+          // only array fields have extractsArrayHelper property, hence here it is for object arrays only
+          if (extractsArrayHelper?.length) {
+            dragObj.parentExtract = extractsArrayHelper[0]?.extract;
           }
 
           // retain the tabbed row and add dragged node to new pos
@@ -768,9 +765,9 @@ export default (state = {}, action) => {
           // when there is a parentKey, drop is happening at a child level
           if (parentKey) {
             // finding the parent node
-            const { node: { combinedExtract, dataType: parentDataType, jsonPath: parentJsonPath } } = findNodeInTree(v2TreeData, 'key', parentKey);
+            const { node: { extractsArrayHelper, dataType: parentDataType, jsonPath: parentJsonPath } } = findNodeInTree(v2TreeData, 'key', parentKey);
 
-            dragObj.parentExtract = isTabNode ? combinedExtract?.split(',')?.[0] : parentExtract;
+            dragObj.parentExtract = isTabNode ? extractsArrayHelper?.[0]?.extract : parentExtract;
 
             // jsonPath is decided based on the parent's jsonPath as the drop is happening at child level
             dragObj.jsonPath = parentDataType === MAPPING_DATA_TYPES.OBJECTARRAY ? `${parentJsonPath}[*].${dragObj.generate}` : `${parentJsonPath}.${dragObj.generate}`;
@@ -811,15 +808,13 @@ export default (state = {}, action) => {
           if (field === 'extract') {
             if (value.indexOf('"') === 0) {
               delete node.extract;
-              delete node.combinedExtract;
+              delete node.extractsArrayHelper;
               delete node.default;
               node.hardCodedValue = value.replace(/(^")|("$)/g, '');
             } else {
               delete node.hardCodedValue;
               if (ARRAY_DATA_TYPES.includes(node.dataType)) {
-                if (node.copySource === 'yes') {
-                  node.children = [];
-                } else if (!value && (node.dataType === MAPPING_DATA_TYPES.OBJECT || node.dataType === MAPPING_DATA_TYPES.OBJECTARRAY)) {
+                if (!value && (node.dataType === MAPPING_DATA_TYPES.OBJECT || node.dataType === MAPPING_DATA_TYPES.OBJECTARRAY)) {
                   // delete all children if extract is empty
                   const newRowKey = generateUniqueKey();
 
@@ -839,7 +834,10 @@ export default (state = {}, action) => {
                 if (nodeSubArray[nodeIndexInSubArray]) {
                   delete nodeSubArray[nodeIndexInSubArray].extract;
                   delete nodeSubArray[nodeIndexInSubArray].hardCodedValue;
-                  nodeSubArray[nodeIndexInSubArray].combinedExtract = value;
+                  // object array is already handled in rebuildObjectArrayNode
+                  if (node.dataType !== MAPPING_DATA_TYPES.OBJECTARRAY) {
+                    nodeSubArray[nodeIndexInSubArray].extractsArrayHelper = buildExtractsHelperFromExtract(original(nodeSubArray[nodeIndexInSubArray].extractsArrayHelper), value);
+                  }
                 }
               } else if (node.dataType !== MAPPING_DATA_TYPES.OBJECT || node.copySource === 'yes') {
                 node.extract = value;
@@ -893,7 +891,7 @@ export default (state = {}, action) => {
 
           if ('hardCodedValue' in value) {
             delete node.extract;
-            delete node.combinedExtract;
+            delete node.extractsArrayHelper;
             delete node.default;
           } else {
             delete node.hardCodedValue;
@@ -902,7 +900,9 @@ export default (state = {}, action) => {
           // handle if data type changed
           if (oldDataType !== newDataType) {
             nodeSubArray[nodeIndexInSubArray] = updateDataType(draft, node, oldDataType, newDataType);
-          } else if (newDataType === MAPPING_DATA_TYPES.OBJECT || newDataType === MAPPING_DATA_TYPES.OBJECTARRAY) {
+          } else if (newDataType === MAPPING_DATA_TYPES.OBJECT) {
+            delete node.extractsArrayHelper;
+
             if (value.copySource === 'yes') {
               // delete child rows if object is to be copied as is
               delete node.children;
@@ -918,13 +918,54 @@ export default (state = {}, action) => {
                   key: generateUniqueKey(),
                   title: '',
                   parentKey: node.key,
-                  parentExtract: getUniqueExtractId(node.combinedExtract?.split(',')?.[0], 0),
                   dataType: MAPPING_DATA_TYPES.STRING,
+                  isEmptyRow: true,
                 }];
               }
             }
-            if (newDataType === MAPPING_DATA_TYPES.OBJECT) {
-              delete node.combinedExtract;
+          } else if (newDataType === MAPPING_DATA_TYPES.OBJECTARRAY) {
+            if (node.extractsArrayHelper?.length) {
+              let anyExtractHasMappings = false;
+
+              node.extractsArrayHelper.forEach(extractConfig => {
+                if (extractConfig.copySource === 'yes') {
+                  // delete all children for this extract
+                  node.children = node.children?.filter(c => c.isTabNode || c.parentExtract !== extractConfig.extract);
+                } else {
+                  // copySource is no
+                  anyExtractHasMappings = true;
+                  // expand parent node
+                  expandRow(draft, node.key);
+
+                  delete node.extract;
+                  const matchingChildren = node.children?.filter(c => c.parentExtract === extractConfig.extract);
+
+                  if (isEmpty(matchingChildren)) {
+                    node.children.push({
+                      key: generateUniqueKey(),
+                      title: '',
+                      parentKey: node.key,
+                      parentExtract: extractConfig.extract,
+                      dataType: MAPPING_DATA_TYPES.STRING,
+                      isEmptyRow: true,
+                    });
+                  }
+                }
+              });
+
+              // if no extract has children mappings, remove the complete children from main node
+              if (!anyExtractHasMappings) {
+                node.children = [];
+              }
+            } else {
+              node.children = [{
+                key: generateUniqueKey(),
+                title: '',
+                parentKey: node.key,
+                parentExtract: '',
+                dataType: MAPPING_DATA_TYPES.STRING,
+                isEmptyRow: true,
+              }];
             }
           }
         }
@@ -973,9 +1014,11 @@ export default (state = {}, action) => {
 
         draft.mapping.v2TreeData = deleteNonRequiredMappings(draft.mapping.v2TreeData);
         if (isEmpty(draft.mapping.v2TreeData)) {
+          const key = generateUniqueKey();
+
           if (isCSVOrXLSX) {
             draft.mapping.v2TreeData = [{
-              key: generateUniqueKey(),
+              key,
               title: '',
               dataType: MAPPING_DATA_TYPES.OBJECTARRAY,
               generateDisabled: true,
@@ -987,12 +1030,13 @@ export default (state = {}, action) => {
                   dataType: MAPPING_DATA_TYPES.STRING,
                   disabled: draft.mapping.isMonitorLevelAccess,
                   isEmptyRow: true,
+                  parentKey: key,
                 },
               ],
             }];
           } else {
             draft.mapping.v2TreeData = [{
-              key: generateUniqueKey(),
+              key,
               title: '',
               dataType: MAPPING_DATA_TYPES.STRING,
               disabled: draft.mapping.isMonitorLevelAccess,
