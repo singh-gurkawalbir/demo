@@ -10,7 +10,7 @@ import {
   PRIMITIVE_DATA_TYPES,
   ARRAY_DATA_TYPES,
   getAllKeys,
-  rebuildObjectArrayNode,
+  rebuildObjectArrayNode1,
   insertSiblingsOnDestinationUpdate,
   hideOtherTabRows,
   MAPPING_DATA_TYPES,
@@ -819,7 +819,7 @@ export default (state = {}, action) => {
               if (ARRAY_DATA_TYPES.includes(node.dataType)) {
                 if (node.copySource === 'yes') {
                   node.children = [];
-                } else if (!value && (node.dataType === MAPPING_DATA_TYPES.OBJECT || node.dataType === MAPPING_DATA_TYPES.OBJECTARRAY)) {
+                } else if (!value && node.dataType === MAPPING_DATA_TYPES.OBJECT) {
                   // delete all children if extract is empty
                   const newRowKey = generateUniqueKey();
 
@@ -830,9 +830,9 @@ export default (state = {}, action) => {
                     dataType: MAPPING_DATA_TYPES.STRING,
                     isEmptyRow: true,
                   }];
-                } else if (value && node.dataType === MAPPING_DATA_TYPES.OBJECTARRAY) {
+                } else if (node.dataType === MAPPING_DATA_TYPES.OBJECTARRAY) {
                   // handle tab view
-                  nodeSubArray[nodeIndexInSubArray] = rebuildObjectArrayNode(original(node), value);
+                  nodeSubArray[nodeIndexInSubArray] = rebuildObjectArrayNode1(original(node), value);
                 }
 
                 // array data types do not have direct 'extract' prop
