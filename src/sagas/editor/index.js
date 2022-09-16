@@ -161,8 +161,8 @@ export function* requestPreview({ id }) {
   // since mappings are stored in separate state
   // we validate the same here
   if (editor.editorType === 'mappings') {
-    const {mappings, lookups, v2TreeData} = yield select(selectors.mapping);
-    const {errMessage} = mappingUtil.validateMappings(mappings, lookups, v2TreeData);
+    const {mappings, lookups, v2TreeData, isGroupedSampleData} = yield select(selectors.mapping);
+    const {errMessage} = mappingUtil.validateMappings(mappings, lookups, v2TreeData, isGroupedSampleData);
 
     if (errMessage) {
       const violations = {
