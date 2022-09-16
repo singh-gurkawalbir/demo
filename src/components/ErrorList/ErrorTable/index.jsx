@@ -1,88 +1,88 @@
-import { makeStyles } from "@material-ui/core/styles";
-import { Divider } from "@material-ui/core";
-import clsx from "clsx";
-import React, { useMemo, useCallback, useEffect, useRef } from "react";
-import { useSelector, shallowEqual, useDispatch } from "react-redux";
-import actions from "../../../actions";
-import useSelectorMemo from "../../../hooks/selectors/useSelectorMemo";
-import { selectors } from "../../../reducers";
-import { FILTER_KEYS } from "../../../utils/errorManagement";
-import NoResultTypography from "../../NoResultTypography";
-import ResourceTable from "../../ResourceTable";
-import Spinner from "../../Spinner";
-import ErrorDetailsPanel from "./ErrorDetailsPanel";
-import ErrorTableFilters from "./ErrorTableFilters";
-import FetchErrorsHook from "./hooks/useFetchErrors";
-import { useEditRetryConfirmDialog } from "./hooks/useEditRetryConfirmDialog";
+import { makeStyles } from '@material-ui/core/styles';
+import { Divider } from '@material-ui/core';
+import clsx from 'clsx';
+import React, { useMemo, useCallback, useEffect, useRef } from 'react';
+import { useSelector, shallowEqual, useDispatch } from 'react-redux';
+import actions from '../../../actions';
+import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
+import { selectors } from '../../../reducers';
+import { FILTER_KEYS } from '../../../utils/errorManagement';
+import NoResultTypography from '../../NoResultTypography';
+import ResourceTable from '../../ResourceTable';
+import Spinner from '../../Spinner';
+import ErrorDetailsPanel from './ErrorDetailsPanel';
+import ErrorTableFilters from './ErrorTableFilters';
+import FetchErrorsHook from './hooks/useFetchErrors';
+import { useEditRetryConfirmDialog } from './hooks/useEditRetryConfirmDialog';
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(theme => ({
   hide: {
-    display: "none",
+    display: 'none',
   },
   errorDetailsTable: {
-    wordBreak: "break-word",
-    "& th": {
-      wordBreak: "normal",
+    wordBreak: 'break-word',
+    '& th': {
+      wordBreak: 'normal',
     },
   },
   errorTableWrapper: {
-    height: "100%",
+    height: '100%',
   },
   errorList: {
-    display: "flex",
-    flexDirection: "row",
-    flexBasis: "40%",
+    display: 'flex',
+    flexDirection: 'row',
+    flexBasis: '40%',
   },
   errorTable: {
-    height: "calc(100vh - 320px)",
-    wordBreak: "break-word",
-    "& th": {
-      wordBreak: "normal",
+    height: 'calc(100vh - 320px)',
+    wordBreak: 'break-word',
+    '& th': {
+      wordBreak: 'normal',
     },
     flexGrow: 1,
-    display: "flex",
-    flexDirection: "column",
-    flexBasis: "60%",
-    overflow: "auto",
-    "&:focus": {
-      outline: "inherit",
+    display: 'flex',
+    flexDirection: 'column',
+    flexBasis: '60%',
+    overflow: 'auto',
+    '&:focus': {
+      outline: 'inherit',
     },
   },
   errorDetailsPanel: {
     flexGrow: 1,
-    display: "flex",
-    flexDirection: "column",
+    display: 'flex',
+    flexDirection: 'column',
   },
   baseFormWithPreview: {
-    display: "grid",
-    gridTemplateColumns: "60% 1% 39%",
+    display: 'grid',
+    gridTemplateColumns: '60% 1% 39%',
     gridColumnGap: theme.spacing(0.5),
   },
   resourceFormWrapper: {
-    width: "100%",
-    overflow: "auto",
+    width: '100%',
+    overflow: 'auto',
   },
   panelWrapper: {
-    width: "100%",
-    overflow: "auto",
+    width: '100%',
+    overflow: 'auto',
   },
   partition: {
-    display: "flex",
-    justifyContent: "center",
+    display: 'flex',
+    justifyContent: 'center',
   },
   divider: {
     backgroundColor: theme.palette.secondary.lightest,
   },
 }));
 
-export const useIsFreshLoadData = (errorConfig) => {
+export const useIsFreshLoadData = errorConfig => {
   const errorObj = useSelectorMemo(
     selectors.mkResourceFilteredErrorDetailsSelector,
     errorConfig
   );
 
   return !!(
-    (!errorObj.status || errorObj.status === "requested") &&
+    (!errorObj.status || errorObj.status === 'requested') &&
     !errorObj.nextPageURL
   );
 };
@@ -101,18 +101,18 @@ const ErrorTableWithPanel = ({
   const classes = useStyles();
   const tableRef = useRef();
   let hasFilter;
-  const hasErrors = useSelector((state) =>
+  const hasErrors = useSelector(state =>
     selectors.hasResourceErrors(state, { flowId, resourceId, isResolved })
   );
-  const filter = useSelector((state) => selectors.filter(state, filterKey));
+  const filter = useSelector(state => selectors.filter(state, filterKey));
 
   if (
     (filter.classifications &&
       filter.classifications.length > 0 &&
-      filter.classifications.indexOf("all") === -1) ||
+      filter.classifications.indexOf('all') === -1) ||
     (filter.sources &&
       filter.sources.length > 0 &&
-      filter.sources.indexOf("all") === -1) ||
+      filter.sources.indexOf('all') === -1) ||
     filter.keyword
   ) {
     hasFilter = true;
@@ -123,11 +123,11 @@ const ErrorTableWithPanel = ({
     const refEle = tableRef?.current;
 
     if (isSplitView) {
-      refEle?.addEventListener("keydown", keydownListener, true);
+      refEle?.addEventListener('keydown', keydownListener, true);
     }
 
     return () => {
-      refEle?.removeEventListener("keydown", keydownListener, true);
+      refEle?.removeEventListener('keydown', keydownListener, true);
     };
   }, [isSplitView, keydownListener, tableRef]);
 
@@ -204,11 +204,11 @@ export default function ErrorTable({
   const classes = useStyles();
   const filterKey = isResolved ? FILTER_KEYS.RESOLVED : FILTER_KEYS.OPEN;
 
-  const isAnyActionInProgress = useSelector((state) =>
+  const isAnyActionInProgress = useSelector(state =>
     selectors.isAnyActionInProgress(state, { flowId, resourceId })
   );
   const isFlowDisabled = useSelector(
-    (state) => selectors.resource(state, "flows", flowId)?.disabled
+    state => selectors.resource(state, 'flows', flowId)?.disabled
   );
 
   const errorConfig = useMemo(
@@ -239,11 +239,11 @@ export default function ErrorTable({
   );
   const dispatch = useDispatch();
   const errorFilter = useSelector(
-    (state) => selectors.filter(state, FILTER_KEYS.OPEN),
+    state => selectors.filter(state, FILTER_KEYS.OPEN),
     shallowEqual
   );
   const isSplitView =
-    filterKey === FILTER_KEYS.OPEN && errorFilter.view !== "drawer";
+    filterKey === FILTER_KEYS.OPEN && errorFilter.view !== 'drawer';
 
   const showRetryDataChangedConfirmDialog = useEditRetryConfirmDialog({
     flowId,
@@ -252,12 +252,12 @@ export default function ErrorTable({
   });
 
   const keydownListener = useCallback(
-    (event) => {
+    event => {
       if (!isSplitView) {
         return;
       }
       const currIndex = errorsInCurrPage.findIndex(
-        (eachError) => eachError.errorId === errorFilter.currentNavItem
+        eachError => eachError.errorId === errorFilter.currentNavItem
       );
 
       if (!errorFilter.currentNavItem && currIndex < 0) {
@@ -285,7 +285,7 @@ export default function ErrorTable({
       // up arrow key
       if (event.keyCode === 38) {
         const currIndex = errorsInCurrPage.findIndex(
-          (eachError) => eachError.errorId === errorFilter.currentNavItem
+          eachError => eachError.errorId === errorFilter.currentNavItem
         );
 
         if (currIndex === 0) {
@@ -302,7 +302,7 @@ export default function ErrorTable({
       // down arrow key
       if (event.keyCode === 40) {
         const currIndex = errorsInCurrPage.findIndex(
-          (eachError) => eachError.errorId === errorFilter.currentNavItem
+          eachError => eachError.errorId === errorFilter.currentNavItem
         );
 
         if (currIndex === errorsInCurrPage.length - 1) {
@@ -327,7 +327,7 @@ export default function ErrorTable({
   const onRowClick = useCallback(
     ({ rowData, dispatch, event }) => {
       if (
-        event?.target?.type !== "checkbox" &&
+        event?.target?.type !== 'checkbox' &&
         errorFilter?.activeErrorId !== rowData.errorId
       ) {
         showRetryDataChangedConfirmDialog(() => {
@@ -345,10 +345,10 @@ export default function ErrorTable({
 
   useEffect(() => {
     const currIndex = errorsInCurrPage.findIndex(
-      (eachError) => eachError.errorId === errorFilter.activeErrorId
+      eachError => eachError.errorId === errorFilter.activeErrorId
     );
 
-    if (errorFilter?.activeErrorId !== "" && currIndex < 0 && isSplitView) {
+    if (errorFilter?.activeErrorId !== '' && currIndex < 0 && isSplitView) {
       dispatch(
         actions.patchFilter(FILTER_KEYS.OPEN, {
           activeErrorId: errorsInCurrPage[0]?.errorId,

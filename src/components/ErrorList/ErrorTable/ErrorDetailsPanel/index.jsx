@@ -1,48 +1,48 @@
-import React, { useState, useCallback, useMemo, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import Tabs from "@material-ui/core/Tabs";
-import Tab from "@material-ui/core/Tab";
-import { makeStyles } from "@material-ui/core/styles";
-import EditRetryData from "../../ErrorDetails/EditRetryData";
-import ViewErrorDetails from "../../ErrorDetails/ViewErrorDetails";
-import ViewErrorRequestResponse from "../../ErrorDetails/ViewErrorRequestResponse";
-import { selectors } from "../../../../reducers";
-import { safeParse } from "../../../../utils/string";
-import DrawerContent from "../../../drawer/Right/DrawerContent";
-import DrawerHeader from "../../../drawer/Right/DrawerHeader";
-import DrawerFooter from "../../../drawer/Right/DrawerFooter";
-import ErrorDetailActions from "../../ErrorDetails/ErrorDetailActions";
-import ErrorControls from "./ErrorControls";
-import actions from "../../../../actions";
-import AddToBatch from "../../ErrorDetails/ErrorDetailActions/AddToBatch";
-import EmptyErrorDetails from "./EmptyErrorDetails";
-import { FILTER_KEYS } from "../../../../utils/errorManagement";
+import React, { useState, useCallback, useMemo, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import Tabs from '@material-ui/core/Tabs';
+import Tab from '@material-ui/core/Tab';
+import { makeStyles } from '@material-ui/core/styles';
+import EditRetryData from '../../ErrorDetails/EditRetryData';
+import ViewErrorDetails from '../../ErrorDetails/ViewErrorDetails';
+import ViewErrorRequestResponse from '../../ErrorDetails/ViewErrorRequestResponse';
+import { selectors } from '../../../../reducers';
+import { safeParse } from '../../../../utils/string';
+import DrawerContent from '../../../drawer/Right/DrawerContent';
+import DrawerHeader from '../../../drawer/Right/DrawerHeader';
+import DrawerFooter from '../../../drawer/Right/DrawerFooter';
+import ErrorDetailActions from '../../ErrorDetails/ErrorDetailActions';
+import ErrorControls from './ErrorControls';
+import actions from '../../../../actions';
+import AddToBatch from '../../ErrorDetails/ErrorDetailActions/AddToBatch';
+import EmptyErrorDetails from './EmptyErrorDetails';
+import { FILTER_KEYS } from '../../../../utils/errorManagement';
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(theme => ({
   detailsContainer: {
-    height: "calc(100vh - 420px)",
-    display: "flex",
-    flexDirection: "column",
+    height: 'calc(100vh - 420px)',
+    display: 'flex',
+    flexDirection: 'column',
   },
   tabContent: {
     flexGrow: 1,
-    display: "flex",
-    flexDirection: "column",
-    borderTop: "none",
-    borderBottom: "none",
-    border: "1px solid",
+    display: 'flex',
+    flexDirection: 'column',
+    borderTop: 'none',
+    borderBottom: 'none',
+    border: '1px solid',
     borderColor: theme.palette.secondary.lightest,
   },
   tabHeader: {
     borderBottom: `1px solid ${theme.palette.secondary.lightest}`,
   },
   wrapper: {
-    width: "100%",
-    overflow: "hidden",
+    width: '100%',
+    overflow: 'hidden',
   },
   title: {
     color: theme.palette.secondary.main,
-    wordBreak: "break-word",
+    wordBreak: 'break-word',
   },
   tabContainer: {
     padding: theme.spacing(0, 3),
@@ -50,35 +50,35 @@ const useStyles = makeStyles((theme) => ({
   },
   tabPanel: {
     background: theme.palette.background.paper,
-    border: "1px solid",
+    border: '1px solid',
     borderColor: theme.palette.secondary.lightest,
     padding: theme.spacing(1, 2),
-    overflow: "visible",
+    overflow: 'visible',
   },
   tab: {
-    minWidth: "auto",
+    minWidth: 'auto',
     color: theme.palette.secondary.main,
     fontSize: 14,
   },
   draweHeader: {
-    borderBottom: "none",
+    borderBottom: 'none',
     padding: theme.spacing(0, 0),
   },
   errorDetailsDrawerFooter: {
-    flexDirection: "column",
-    background: "inherit",
+    flexDirection: 'column',
+    background: 'inherit',
     padding: 0,
   },
 }));
 
 const ERROR_DETAILS_TABS = {
-  EDIT_RETRY_DATA: { type: "editRetry", label: "Edit retry data" },
-  VIEW_FIELDS: { type: "view", label: "Error fields" },
-  VIEW_RETRY_DATA: { type: "viewRetry", label: "Retry data" },
-  REQUEST: { type: "request", label: "HTTP request" },
-  RESPONSE: { type: "response", label: "HTTP response" },
-  NETSUITE_REQUEST: { type: "request", label: "View request" },
-  NETSUITE_RESPONSE: { type: "response", label: "View response" },
+  EDIT_RETRY_DATA: { type: 'editRetry', label: 'Edit retry data' },
+  VIEW_FIELDS: { type: 'view', label: 'Error fields' },
+  VIEW_RETRY_DATA: { type: 'viewRetry', label: 'Retry data' },
+  REQUEST: { type: 'request', label: 'HTTP request' },
+  RESPONSE: { type: 'response', label: 'HTTP response' },
+  NETSUITE_REQUEST: { type: 'request', label: 'View request' },
+  NETSUITE_RESPONSE: { type: 'response', label: 'View response' },
 };
 
 function TabPanel({ children, value, type }) {
@@ -108,19 +108,19 @@ export default function ErrorDetailsPanel({
   isResolved,
 }) {
   const classes = useStyles();
-  const [mode, setMode] = useState("editRetry");
+  const [mode, setMode] = useState('editRetry');
   const dispatch = useDispatch();
-  const activeErrorId = useSelector((state) => {
+  const activeErrorId = useSelector(state => {
     const e = selectors.filter(state, FILTER_KEYS.OPEN);
 
     return e.activeErrorId;
   });
 
   const isFlowDisabled = useSelector(
-    (state) => selectors.resource(state, "flows", flowId)?.disabled
+    state => selectors.resource(state, 'flows', flowId)?.disabled
   );
   const errorDoc =
-    useSelector((state) =>
+    useSelector(state =>
       selectors.resourceError(state, {
         flowId,
         resourceId,
@@ -130,12 +130,12 @@ export default function ErrorDetailsPanel({
     ) || {};
 
   const { retryDataKey: retryId, reqAndResKey } = errorDoc || {};
-  const userRetryData = useSelector((state) =>
+  const userRetryData = useSelector(state =>
     selectors.userRetryData(state, retryId)
   );
 
   const onRetryDataChange = useCallback(
-    (data) =>
+    data =>
       // Editor onChange returns string format, so parse it to get updated retryData
       dispatch(
         actions.errorManager.retryData.updateUserRetryData({
@@ -146,7 +146,7 @@ export default function ErrorDetailsPanel({
     [dispatch, retryId]
   );
 
-  const isResourceNetsuite = useSelector((state) =>
+  const isResourceNetsuite = useSelector(state =>
     selectors.isResourceNetsuite(state, resourceId)
   );
 
@@ -180,7 +180,7 @@ export default function ErrorDetailsPanel({
   }, []);
 
   useEffect(() => {
-    setMode("editRetry");
+    setMode('editRetry');
   }, [activeErrorId]);
 
   if (!activeErrorId) {
@@ -192,7 +192,7 @@ export default function ErrorDetailsPanel({
     );
   }
 
-  if (!mode || !availableTabs.map((tab) => tab.type).includes(mode)) {
+  if (!mode || !availableTabs.map(tab => tab.type).includes(mode)) {
     // Incase of invalid mode, redirects user to first available tab
     setMode(availableTabs[0].type);
   }
