@@ -1103,7 +1103,7 @@ selectors.searchKey = state => {
 
 selectors.newRowKey = state => {
   if (!state || !state.mapping) {
-    return '';
+    return;
   }
 
   return state.mapping.newRowKey;

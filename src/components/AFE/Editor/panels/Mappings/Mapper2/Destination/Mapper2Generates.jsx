@@ -85,7 +85,7 @@ export default function Mapper2Generates(props) {
 
   // run only at mount to bring focus in the new row
   useEffect(() => {
-    if (newRowKey && `fieldMappingGenerate-${newRowKey}` === id) {
+    if (newRowKey && id.includes(newRowKey)) {
       setIsFocused(true);
       dispatch(actions.mapping.v2.deleteNewRowKey());
     }
