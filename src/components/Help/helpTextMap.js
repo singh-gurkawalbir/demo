@@ -2,6 +2,7 @@ import { HELP_CENTER_BASE_URL } from '../../constants';
 // uncomment eslint-disable no-dupe-keys this to expose dupe keys
 export default {
   formView: 'The application specific form is customized to help configure your resource for this particular application. However, if you would like more flexibility, choose the universal connector form (e.g. REST or HTTP) instead, which is a generic form.',
+  connectionFormView: '<b>•</b> Simple form helps you to quickly configure the resources by displaying only the required minimum fields.<br><b>•</b> HTTP form allows you to view and/or modify application specific resources at the universal HTTP connector level.',
   'afe.handlebar.data': 'This is sample help for handlebar afe, data panel',
   'afe.handlebar.rule.relaviveUri': 'This is sample help for handlebar afe, rule panel, relativeUri fieldId',
   previewPanelRecords: 'Enter or select the maximum number of records – up to 100 – to preview. Then, click <b>Preview</b> to see the records that match your query in the order that they’re received.',
