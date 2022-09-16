@@ -3,13 +3,16 @@ import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import MenuItem from '@material-ui/core/MenuItem';
 import clsx from 'clsx';
-import { Typography } from '@material-ui/core';
+import { Tooltip, Typography } from '@material-ui/core';
+import { isEqual } from 'lodash';
 import { selectors } from '../../../../reducers';
 import CeligoSelect from '../../../CeligoSelect';
 import actions from '../../../../actions';
 import useConfirmDialog from '../../../ConfirmDialog';
-import { MAX_ERRORS_TO_RETRY_OR_RESOLVE } from '../../../../utils/errorManagement';
+import { FILTER_KEYS, MAX_ERRORS_TO_RETRY_OR_RESOLVE } from '../../../../utils/errorManagement';
 import Spinner from '../../../Spinner';
+import { useEditRetryConfirmDialog } from '../hooks/useEditRetryConfirmDialog';
+import messageStore from '../../../../utils/messageStore';
 
 const useStyles = makeStyles(theme => ({
   flexContainer: {
@@ -226,16 +229,19 @@ export default function ErrorActions({ flowId, resourceId, isResolved, className
     return !!errorFilter.keyword?.length;
   });
 
+  const showRetryDataChangedConfirmDialog = useEditRetryConfirmDialog({flowId, resourceId, isResolved});
   const retryErrors = useCallback(type => {
-    dispatch(
-      actions.errorManager.flowErrorDetails.retry({
-        flowId,
-        resourceId,
-        isResolved,
-        retryAll: type === 'all',
-      })
+    showRetryDataChangedConfirmDialog(
+      () => dispatch(
+        actions.errorManager.flowErrorDetails.retry({
+          flowId,
+          resourceId,
+          isResolved,
+          retryAll: type === 'all',
+        })
+      )
     );
-  }, [dispatch, flowId, isResolved, resourceId]);
+  }, [dispatch, flowId, isResolved, resourceId, showRetryDataChangedConfirmDialog]);
 
   const handleRetryAction = useCallback(e => {
     if (!isResolved) {
@@ -270,7 +276,17 @@ export default function ErrorActions({ flowId, resourceId, isResolved, className
     );
   }, [dispatch, flowId, resourceId]);
 
-  const disableRetryAction = isFlowDisabled || isAnyActionInProgress;
+  const errorId = useSelector(state => selectors.filter(state, FILTER_KEYS.OPEN)?.activeErrorId);
+
+  const retryId = useSelector(state =>
+    selectors.resourceError(state, { flowId, resourceId, errorId, isResolved })?.retryDataKey
+  );
+
+  const retryData = useSelector(state => selectors.retryData(state, retryId));
+  const userRetryData = useSelector(state => selectors.userRetryData(state, retryId));
+  const isRetryDataChanged = userRetryData && !isEqual(retryData, userRetryData);
+
+  const disableRetryAction = isFlowDisabled || isAnyActionInProgress || isRetryDataChanged;
   const disableResolveAction = isAnyActionInProgress;
 
   return (
@@ -284,13 +300,17 @@ export default function ErrorActions({ flowId, resourceId, isResolved, className
           isSearchFilterApplied={isSearchFilterApplied}
           disable={disableResolveAction} />
         )}
-        <RetryAction
-          onClick={handleRetryAction}
-          flowId={flowId}
-          resourceId={resourceId}
-          isResolved={isResolved}
-          isSearchFilterApplied={isSearchFilterApplied}
-          disable={disableRetryAction} />
+        <Tooltip title={isRetryDataChanged ? messageStore('RETRY_ACTION_HOVER_MESSAGE') : ''} placement="bottom" >
+          <div>
+            <RetryAction
+              onClick={handleRetryAction}
+              flowId={flowId}
+              resourceId={resourceId}
+              isResolved={isResolved}
+              isSearchFilterApplied={isSearchFilterApplied}
+              disable={disableRetryAction} />
+          </div>
+        </Tooltip>
       </div>
     </div>
   );

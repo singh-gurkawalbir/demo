@@ -284,7 +284,7 @@ describe('apiCallWithRetry saga', () => {
   const opts = {method: 'GET'};
   const _400Exception = new APIException({
     status: 400,
-    message: 'Session Expired',
+    message: 'Session expired',
   });
 
   describe('non signout requests', () => {

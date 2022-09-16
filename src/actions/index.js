@@ -98,7 +98,7 @@ const auth = {
   linkWithGoogle: returnTo =>
     action(actionTypes.AUTH.LINK_WITH_GOOGLE, { returnTo }),
   complete: () => action(actionTypes.AUTH.SUCCESSFUL),
-  mfaRequired: () => action(actionTypes.AUTH.MFA_REQUIRED),
+  mfaRequired: mfaAuthInfo => action(actionTypes.AUTH.MFA_REQUIRED, { mfaAuthInfo }),
   mfaVerify: {
     request: payload => action(actionTypes.AUTH.MFA_VERIFY.REQUEST, { payload }),
     failed: mfaError => action(actionTypes.AUTH.MFA_VERIFY.FAILED, { mfaError }),
@@ -388,6 +388,15 @@ const resource = {
       }),
     clearRedirect: integrationId =>
       action(actionTypes.INTEGRATION.CLEAR_REDIRECT, {
+        integrationId,
+      }),
+    isTileClick: (integrationId, isTileClick) =>
+      action(actionTypes.INTEGRATION.TILE_CLICK, {
+        integrationId,
+        isTileClick,
+      }),
+    clearIsTileClick: integrationId =>
+      action(actionTypes.INTEGRATION.CLEAR_TILE_CLICK, {
         integrationId,
       }),
     flowGroups: {
@@ -1325,6 +1334,8 @@ const license = {
     action(actionTypes.LICENSE.UPDATE_REQUEST, { actionType, connectorId, licenseId, feature }),
   licenseUpgradeRequestSubmitted: (message, feature) =>
     action(actionTypes.LICENSE.UPGRADE_REQUEST_SUBMITTED, { message, feature }),
+  licenseReactivated: () =>
+    action(actionTypes.LICENSE.REACTIVATED),
   ssoLicenseUpgradeRequested: () =>
     action(actionTypes.LICENSE.SSO.UPGRADE_REQUESTED),
   requestLicenseEntitlementUsage: () =>
@@ -1554,6 +1565,8 @@ const mapping = {
     deleteAll: isCSVOrXLSX => action(actionTypes.MAPPING.V2.DELETE_ALL, { isCSVOrXLSX }),
     autoCreateStructure: (uploadedData, isCSVOrXLSX) => action(actionTypes.MAPPING.V2.AUTO_CREATE_STRUCTURE, { uploadedData, isCSVOrXLSX }),
     toggleAutoCreateFlag: () => action(actionTypes.MAPPING.V2.TOGGLE_AUTO_CREATE_FLAG, {}),
+    updateHighlightedIndex: index => action(actionTypes.MAPPING.V2.UPDATE_HIGHLIGHTED_INDEX, {index}),
+    searchTree: ({ searchKey, showKey }) => action(actionTypes.MAPPING.V2.SEARCH_TREE, { searchKey, showKey }),
   },
 };
 
@@ -2034,6 +2047,20 @@ const errorManager = {
       filters,
     }),
   },
+  retries: {
+    request: ({ flowId, resourceId }) =>
+      action(actionTypes.ERROR_MANAGER.RETRIES.REQUEST, { flowId, resourceId }),
+    received: ({ flowId, resourceId, retries }) =>
+      action(actionTypes.ERROR_MANAGER.RETRIES.RECEIVED, {
+        flowId,
+        resourceId,
+        retries,
+      }),
+    clear: ({ flowId, resourceId }) =>
+      action(actionTypes.ERROR_MANAGER.RETRIES.CLEAR, { flowId, resourceId }),
+    cancelRequest: ({ flowId, resourceId, jobId}) =>
+      action(actionTypes.ERROR_MANAGER.RETRIES.CANCEL.REQUEST, {flowId, resourceId, jobId}),
+  },
   retryData: {
     request: ({ flowId, resourceId, retryId }) =>
       action(actionTypes.ERROR_MANAGER.RETRY_DATA.REQUEST, {
@@ -2045,6 +2072,11 @@ const errorManager = {
       action(actionTypes.ERROR_MANAGER.RETRY_DATA.RECEIVED, {
         flowId,
         resourceId,
+        retryId,
+        retryData,
+      }),
+    updateUserRetryData: ({retryId, retryData}) =>
+      action(actionTypes.ERROR_MANAGER.RETRY_DATA.UPDATE_USER_RETRY_DATA, {
         retryId,
         retryData,
       }),
@@ -2107,7 +2139,7 @@ const flow = {
   deleteStep: (flowId, stepId) => action(actionTypes.FLOW.DELETE_STEP, { flowId, stepId }),
   deleteEdge: (flowId, edgeId) => action(actionTypes.FLOW.DELETE_EDGE, { flowId, edgeId }),
   deleteRouter: (flowId, routerId) => action(actionTypes.FLOW.DELETE_ROUTER, { flowId, routerId }),
-  initializeFlowGraph: (flowId, flow, isViewMode) => action(actionTypes.FLOW.INIT_FLOW_GRAPH, { flowId, flow, isViewMode }),
+  initializeFlowGraph: (flowId, flow, isViewMode, isDataLoader) => action(actionTypes.FLOW.INIT_FLOW_GRAPH, { flowId, flow, isViewMode, isDataLoader }),
   setSaveStatus: (flowId, status) => action(actionTypes.FLOW.SET_SAVE_STATUS, { flowId, status }),
   run: ({ flowId, customStartDate, options }) =>
     action(actionTypes.FLOW.RUN, { flowId, customStartDate, options }),
@@ -2395,13 +2427,13 @@ const mfa = {
   showQrCode: () => action(actionTypes.MFA.QR_CODE.SHOW),
   secretCodeError: secretCodeError => action(actionTypes.MFA.SECRET_CODE.ERROR, { secretCodeError }),
   resetMFA: ({ password, aShareId }) => action(actionTypes.MFA.RESET, { aShareId, password }),
-  updateDevice: deviceInfo => action(actionTypes.MFA.UPDATE_DEVICE, { deviceInfo }),
   deleteDevice: deviceId => action(actionTypes.MFA.DELETE_DEVICE, { deviceId }),
   verifyMobileCode: code => action(actionTypes.MFA.MOBILE_CODE.VERIFY, { code }),
   mobileCodeVerified: (status, error) => action(actionTypes.MFA.MOBILE_CODE.STATUS, { status, error }),
   resetMobileCodeStatus: () => action(actionTypes.MFA.MOBILE_CODE.RESET),
   requestSessionInfo: () => action(actionTypes.MFA.SESSION_INFO.REQUEST),
   receivedSessionInfo: sessionInfo => action(actionTypes.MFA.SESSION_INFO.RECEIVED, { sessionInfo }),
+  clearSessionInfo: () => action(actionTypes.MFA.SESSION_INFO.CLEAR),
   addSetupContext: context => action(actionTypes.MFA.ADD_SETUP_CONTEXT, { context }),
   clearSetupContext: () => action(actionTypes.MFA.CLEAR_SETUP_CONTEXT),
   clear: () => action(actionTypes.MFA.CLEAR),

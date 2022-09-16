@@ -68,7 +68,7 @@ export default function RefreshSearchFilters({ editorId }) {
 
   if (!filters) {
     return (
-      <Spinner centerAll />
+      <Spinner />
     );
   }
 

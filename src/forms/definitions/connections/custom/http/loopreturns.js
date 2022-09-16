@@ -6,7 +6,7 @@ export default {
     '/http/auth/type': 'token',
     '/http/mediaType': 'json',
     '/http/baseURI': `https://api.loopreturns.com/api/${formValues['/http/unencrypted/version'] === 'v1' ? 'v1' : 'v2'}`,
-    '/http/ping/relativeURI': `${formValues['/http/unencrypted/version'] === 'v1' ? '/blacklists' : '/returns'}`,
+    '/http/ping/relativeURI': `${formValues['/http/unencrypted/version'] === 'v1' ? '/warehouse/return/list' : '/returns'}`,
     '/http/ping/method': 'GET',
     '/http/auth/token/location': 'header',
     '/http/auth/token/headerName': 'X-Authorization',

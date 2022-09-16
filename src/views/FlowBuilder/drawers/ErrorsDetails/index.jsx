@@ -13,6 +13,9 @@ import CeligoTimeAgo from '../../../../components/CeligoTimeAgo';
 import DrawerHeaderSubTitle from '../../../../components/DrawerHeaderSubTitle';
 import Tabs from './Tabs';
 import { buildDrawerUrl, drawerPaths } from '../../../../utils/rightDrawer';
+import { useEditRetryConfirmDialog } from '../../../../components/ErrorList/ErrorTable/hooks/useEditRetryConfirmDialog';
+import RetryList from '../../../../components/JobDashboard/RetryList';
+import { FILTER_KEYS } from '../../../../utils/errorManagement';
 
 const emptySet = [];
 
@@ -108,6 +111,11 @@ export default function ErrorDetailsDrawer({ flowId }) {
     }
   }, [history, match.url]);
 
+  const showRetryDataChangedConfirmDialog = useEditRetryConfirmDialog({flowId, resourceId, isResolved: errorType !== 'open'});
+  const handleDrawerClose = useCallback(() => {
+    showRetryDataChangedConfirmDialog(handleClose);
+  }, [handleClose, showRetryDataChangedConfirmDialog]);
+
   const handleErrorTypeChange = useCallback(errorType => {
     if (matchErrorDrawerPathWithFilter) {
       const changedFilteredErrorUrl = buildDrawerUrl({
@@ -161,10 +169,10 @@ export default function ErrorDetailsDrawer({ flowId }) {
       ]}
       width="full"
       onClose={handleClose}>
-      <DrawerHeader className={classes.removeBottomLine} title={<Title />} hideBackButton>
-        <ErrorDrawerAction flowId={flowId} onChange={handleErrorTypeChange} />
+      <DrawerHeader className={classes.removeBottomLine} title={<Title />} handleClose={handleDrawerClose} hideBackButton>
+        <ErrorDrawerAction flowId={flowId} onChange={handleErrorTypeChange} errorType={errorType} />
       </DrawerHeader>
-      <Tabs onChange={handleErrorTypeChange} />
+      <Tabs flowId={flowId} onChange={handleErrorTypeChange} />
 
       <DrawerContent>
         {flowJobId ? (
@@ -173,7 +181,7 @@ export default function ErrorDetailsDrawer({ flowId }) {
             {childJob?.numOpenError <= 1000 ? (<span><span>: {allErrors.length} open  |  </span><span>{childJob?.numOpenError - allErrors.length} resolved</span></span>) : ''}
           </Typography>
         ) : ''}
-        <ErrorList flowId={flowId} />
+        {errorType === FILTER_KEYS.RETRIES ? <RetryList flowId={flowId} /> : <ErrorList flowId={flowId} />}
       </DrawerContent>
     </RightDrawer>
   );

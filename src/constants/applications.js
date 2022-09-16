@@ -309,7 +309,12 @@ const connectors = [
 ];
 // These can be removed once metadata gets updated.
 const newConnections = [
-  {id: 'googledrive', name: 'Google Drive', type: 'http', assistant: 'googledrive'},
+  {id: 'googledrive',
+    name: 'Google Drive',
+    type: 'http',
+    assistant: 'googledrive',
+    helpURL: 'https://docs.celigo.com/hc/en-us/articles/360056026892-Set-up-a-connection-to-Google-Drive',
+  },
   {id: 'azurestorageaccount', name: 'Azure Blob Storage', type: 'http', assistant: 'azurestorageaccount'},
   {
     id: 'constantcontact',
@@ -530,7 +535,7 @@ export const getApp = (type, assistant, _httpConnectorId) => {
     return applications.find(c => c._httpConnectorId === _httpConnectorId) || {};
   }
 
-  return applications.find(c => c.id === id) || {};
+  return applications.find(c => [c.id, c.assistant].includes(id)) || {};
 };
 
 export function getImportAdaptorType(resource) {
@@ -566,7 +571,12 @@ export const applicationsPlaceHolderText = () => {
 
 export const connectorsList = () => {
   const connectors = [];
-  const applications = applicationsList();
+  let applications = applicationsList();
+  const publishedConnectors = getPublishedHttpConnectors();
+
+  applications = applications.filter(app =>
+    !publishedConnectors?.find(pc => pc.name === app.name)
+  );
 
   applications.forEach(asst => {
     if (
@@ -581,6 +591,16 @@ export const connectorsList = () => {
       });
     }
   });
+
+  publishedConnectors?.forEach(pc => {
+    connectors.push({
+      value: pc.legacyId || pc.name,
+      label: pc.name,
+      icon: pc.legacyId || pc.name,
+      type: 'http',
+    });
+  });
+
   connectors.sort(stringCompare('label'));
 
   return connectors;

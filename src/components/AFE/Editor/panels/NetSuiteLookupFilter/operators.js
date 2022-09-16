@@ -7,6 +7,8 @@ const supportedOperatorsByFieldType = {
   string: ['contains', 'doesnotcontain', 'doesnotstartwith', 'equalto', 'haskeywords', 'is', 'isempty', 'isnot', 'isnotempty', 'startswith'],
   number: ['between', 'equalto', 'greaterthan', 'greaterthanorequalto', 'isempty', 'isnotempty', 'lessthan', 'lessthanorequalto', 'notbetween', 'notequalto', 'notgreaterthan', 'notgreaterthanorequalto', 'notlessthan', 'notlessthanorequalto'],
   datetime: ['after', 'before', 'isempty', 'isnotempty', 'notafter', 'notbefore', 'noton', 'notonorafter', 'notonorbefore', 'notwithin', 'on', 'onorafter', 'onorbefore', 'within'],
+  // we are using boolean datatype for select/multiselect types as  qb supports these 4 data types
+  boolean: ['allof', 'anyof', 'noneof', 'notallof'],
 };
 
 // string, integer, double, date, time, datetime and boolean are supported field types for filters passed to queryBuilder while initialization
@@ -15,9 +17,9 @@ export const fieldTypeMap = {
   checkbox: 'string',
   text: 'string',
   date: 'datetime',
-  select: 'string',
+  select: 'boolean',
   currency: 'integer',
-  multiselect: 'string',
+  multiselect: 'boolean',
   ccnumber: 'string',
   textarea: 'string',
   phone: 'string',
@@ -54,6 +56,9 @@ const operatorsAppliedToFieldTypeMap = operators.reduce((operatorMap, op) => {
   }
   if (supportedOperatorsByFieldType.datetime.includes(operator)) {
     supportedFieldTypes.push('datetime');
+  }
+  if (supportedOperatorsByFieldType.boolean.includes(operator)) {
+    supportedFieldTypes.push('boolean');
   }
 
   return {...operatorMap, [operator]: supportedFieldTypes};

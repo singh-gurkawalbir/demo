@@ -42,7 +42,7 @@ const useStyles = makeStyles(theme => ({
 const defaultData = [];
 const defaultFilters = [];
 const isLoggableStr = isLoggable => isLoggable ? '' : 'data-private=true';
-export default function NetSuiteLookupFilterPanel({ id, editorId, filters: propFilters, onFieldChange }) {
+export function NetSuiteLookupFilterPanelData({ id, editorId, filters: propFilters, onFieldChange }) {
   const qbuilder = useRef(null);
   const classes = useStyles();
   const [showOperandSettingsFor, setShowOperandSettingsFor] = useState();
@@ -571,4 +571,10 @@ export default function NetSuiteLookupFilterPanel({ id, editorId, filters: propF
       )}
     </div>
   );
+}
+
+export default function NetSuiteLookupFilterPanel(props) {
+  const { sampleDataStatus } = useSelector(state => selectors.editor(state, props.editorId));
+
+  return sampleDataStatus === 'requested' ? <Spinner centerAll /> : <NetSuiteLookupFilterPanelData {...props} />;
 }

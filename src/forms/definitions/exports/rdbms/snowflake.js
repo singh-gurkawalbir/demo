@@ -53,6 +53,7 @@ export default {
       fieldId: 'rdbms.once.query',
       visibleWhen: [{ field: 'type', is: ['once'] }],
     },
+    rdbmsGrouping: {formId: 'rdbmsGrouping'},
     exportOneToMany: { formId: 'exportOneToMany' },
     advancedSettings: { formId: 'advancedSettings' },
   },
@@ -69,6 +70,11 @@ export default {
         collapsed: true,
         label: 'Configure export type',
         fields: ['type', 'rdbms.once.query'],
+      },
+      {
+        collapsed: true,
+        label: 'Would you like to group records?',
+        fields: ['rdbmsGrouping'],
       },
       {
         collapsed: true,

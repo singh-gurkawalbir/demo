@@ -5385,7 +5385,7 @@ selectors.applicationType = (state, resourceType, id) => {
 
     return connection && connection.rdbms && rdbmsSubTypeToAppType(connection.rdbms.type);
   }
-  if (adaptorType?.toUpperCase().startsWith('HTTP') && !assistant) {
+  if ((adaptorType?.toUpperCase().startsWith('HTTP') || adaptorType?.toUpperCase().startsWith('REST')) && !assistant) {
     const connection = resourceType === 'connections' ? resourceObj : selectors.resource(
       state,
       'connections',
@@ -7196,3 +7196,55 @@ selectors.allAliases = createSelector(
 
     return aliasesFilter?.sort ? allAliases.sort(comparer(aliasesFilter.sort)) : allAliases;
   });
+
+selectors.retryUsersList = createSelector(
+  selectors.userProfile,
+  selectors.usersList,
+  (state, flowId, resourceId) => selectors.retryList(state, flowId, resourceId),
+  (profile, availableUsersList, retryJobs) => {
+    if (!Array.isArray(retryJobs)) {
+      return [{ _id: 'all', name: 'All users'}];
+    }
+
+    const allUsersTriggeredRetry = retryJobs.reduce((users, job) => {
+      if (!job.triggeredBy) {
+        return users;
+      }
+
+      const userObject = availableUsersList.find(userOb => userOb.sharedWithUser?._id === job.triggeredBy);
+      const name = profile._id === job.triggeredBy ? (profile.name || profile.email) : userObject?.sharedWithUser?.name;
+
+      return users.find(user => user._id === job.triggeredBy) ? users : [...users, {
+        _id: job.triggeredBy,
+        name,
+      }];
+    }, []);
+
+    return [{ _id: 'all', name: 'All users'}, ...allUsersTriggeredRetry];
+  }
+);
+
+selectors.mkFlowResourcesRetryStatus = () => {
+  const flowResources = selectors.mkFlowResources();
+
+  return createSelector(
+    state => state?.session?.errorManagement?.retryData?.retryStatus,
+    (_1, flowId) => flowId,
+    (state, flowId) => flowResources(state, flowId)?.filter(res => res.type === 'exports' || res.type === 'imports'),
+    (resourcesRetryStatus, flowId, flowResources) => {
+      const finalResourcesRetryStatus = {
+        isAnyRetryInProgress: false,
+        resourcesWithRetryCompleted: [],
+      };
+
+      if (!resourcesRetryStatus || !resourcesRetryStatus[flowId]) {
+        return finalResourcesRetryStatus;
+      }
+
+      finalResourcesRetryStatus.isAnyRetryInProgress = flowResources.find(res => resourcesRetryStatus?.[flowId]?.[res._id] === 'inProgress');
+      finalResourcesRetryStatus.resourcesWithRetryCompleted = flowResources.filter(res => resourcesRetryStatus?.[flowId]?.[res._id] === 'completed');
+
+      return finalResourcesRetryStatus;
+    }
+  );
+};
