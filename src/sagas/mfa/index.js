@@ -1,6 +1,6 @@
 import { call, put, takeLatest, select } from 'redux-saga/effects';
 import actions from '../../actions';
-import { MFA_RESET_ASYNC_KEY, MFA_SETUP_ASYNC_KEY, MFA_DELETE_DEVICE_ASYNC_KEY } from '../../constants';
+import { MFA_RESET_ASYNC_KEY, MFA_SETUP_ASYNC_KEY, MFA_DELETE_DEVICE_ASYNC_KEY, MFA_ACCOUNT_SETTINGS_ASYNC_KEY } from '../../constants';
 import { selectors } from '../../reducers';
 import actionTypes from '../../actions/types';
 import { apiCallWithRetry } from '../index';
@@ -49,11 +49,11 @@ export function* setupMFA({ mfaConfig }) {
     yield put(actions.mfa.addSetupContext(context));
     const isMFASetupIncomplete = yield select(selectors.isMFASetupIncomplete);
 
+    yield put(actions.asyncTask.success(MFA_SETUP_ASYNC_KEY));
     if (isMFASetupIncomplete) {
       // If mfa setup is incomplete, fetch latest session info once mfa setup is successful to update UI layout for the user
-      yield put(actions.mfa.requestSessionInfo());
+      yield put(actions.auth.initSession());
     }
-    yield put(actions.asyncTask.success(MFA_SETUP_ASYNC_KEY));
   } catch (error) {
     yield put(actions.asyncTask.failed(MFA_SETUP_ASYNC_KEY));
 
@@ -63,6 +63,7 @@ export function* setupMFA({ mfaConfig }) {
 export function* updateAccountSettings({ accountSettings }) {
   const { dontAllowTrustedDevices, trustDeviceForPeriod } = accountSettings;
 
+  yield put(actions.asyncTask.start(MFA_ACCOUNT_SETTINGS_ASYNC_KEY));
   try {
     const response = yield call(apiCallWithRetry, {
       path: '/trustedDevices/settings',
@@ -73,7 +74,10 @@ export function* updateAccountSettings({ accountSettings }) {
     });
 
     yield put(actions.mfa.receivedAccountSettings(response));
+    yield put(actions.asyncTask.success(MFA_ACCOUNT_SETTINGS_ASYNC_KEY));
   } catch (error) {
+    yield put(actions.asyncTask.failed(MFA_ACCOUNT_SETTINGS_ASYNC_KEY));
+
     return undefined;
   }
 }

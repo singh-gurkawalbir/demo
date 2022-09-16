@@ -7,7 +7,7 @@ import ModalDialog from '../../../../../../components/ModalDialog';
 import DynaForm from '../../../../../../components/DynaForm';
 import DynaSubmit from '../../../../../../components/DynaForm/DynaSubmit';
 import useEnqueueSnackbar from '../../../../../../hooks/enqueueSnackbar';
-import useFormInitWithPermissions from '../../../../../../hooks/useFormInitWithPermissions';
+import useForm from '../../../../../../components/Form';
 import { TextButton } from '../../../../../../components/Buttons';
 import ActionGroup from '../../../../../../components/ActionGroup';
 import { MFA_RESET_ASYNC_KEY, FORM_SAVE_STATUS } from '../../../../../../constants';
@@ -76,7 +76,7 @@ export default function ResetAuthorizationModal({ onClose }) {
 
   useEffect(() => () => dispatch(actions.asyncTask.clear(MFA_RESET_ASYNC_KEY)), [dispatch]);
 
-  const formKey = useFormInitWithPermissions({ fieldMeta: metadata });
+  const formKey = useForm({ fieldMeta: metadata });
 
   return (
     <ModalDialog show onClose={onClose} className={classes.authModalContainer}>
