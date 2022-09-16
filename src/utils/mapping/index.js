@@ -583,6 +583,8 @@ export const getCombinedExtract = helper => {
 };
 
 export const buildExtractsHelperFromExtract = (existingExtractsArray, newExtracts) => {
+  if (!newExtracts) return [];
+
   const combinedExtract = newExtracts?.split(',') || [];
 
   if (!existingExtractsArray || !existingExtractsArray.length) {
@@ -595,12 +597,14 @@ export const buildExtractsHelperFromExtract = (existingExtractsArray, newExtract
     }, []);
   }
 
+  const copiedSettings = {};
   // remove extracts from existingExtractsArray if deleted by the user
   const modifiedHelper = existingExtractsArray.reduce((acc, e, index) => {
     const matchedIndex = combinedExtract.findIndex((c, i) => e.extract === getUniqueExtractId(c, i));
 
     if (matchedIndex === -1) {
       acc.splice(index, 1);
+      copiedSettings[index] = e; // copy the existing settings so if a new source is added at same index, we copy same settings
     }
 
     return acc;
@@ -611,7 +615,7 @@ export const buildExtractsHelperFromExtract = (existingExtractsArray, newExtract
     const {extract} = findMatchingExtract(acc, getUniqueExtractId(e, i));
 
     if (!extract) {
-      acc.splice(i, 0, {extract: getUniqueExtractId(e, i)});
+      acc.splice(i, 0, {...copiedSettings[i], extract: getUniqueExtractId(e, i)});
     }
 
     return acc;
@@ -666,11 +670,11 @@ export const hideOtherTabRows = (node, newTabExtract, hidden) => {
 
     // for child object-array nodes, retain the original tab index
     if (clonedChild.dataType === MAPPING_DATA_TYPES.OBJECTARRAY) {
-      const childParentExtract = getCombinedExtract(clonedChild.extractsArrayHelper);
       const extractIndex = clonedChild.activeTab || 0;
+      const extractAtActiveIndex = clonedChild.extractsArrayHelper?.[extractIndex]?.extract;
 
       // update children and un-hide only first tab
-      return hideOtherTabRows(clonedChild, getUniqueExtractId(childParentExtract[extractIndex], extractIndex));
+      return hideOtherTabRows(clonedChild, extractAtActiveIndex);
     }
 
     // update children as well
@@ -720,7 +724,7 @@ const constructEmptyMappingWithGenerates = (rows, props = {}, parentKey, node) =
     }
 
     const additionalProps = {
-      ...(parentKey ? { parentExtract: ''} : { extractsArrayHelper: []}), // todo: check why we need this
+      ...(parentKey ? { parentExtract: ''} : { }), // todo: check why we need this
       ...(updatedChildren ? { children: updatedChildren} : {}), // updates children if present with new key and generates
     };
 
@@ -914,7 +918,9 @@ function recursivelyBuildTreeFromV2Mappings({mappings = [], treeData, parentKey,
             copySource: mappings ? 'no' : 'yes',
           };
 
-          extractsArrayHelper.push(extractObj);
+          if (extract) {
+            extractsArrayHelper.push(extractObj);
+          }
 
           if (mappings) {
             anyExtractHasMappings = true;
@@ -1035,11 +1041,6 @@ const isMappingWithoutExtract = (mapping, lookups) => {
   let missingExtract;
 
   if (ARRAY_DATA_TYPES.includes(dataType)) {
-    // todo verify this condition, may not be applicable anymore
-    // if (copySource === 'yes' && !combinedExtract) {
-    //   missingExtract = true;
-    // }
-
     if (!('hardCodedValue' in mapping || extractsArrayHelper.length)) {
       missingExtract = true;
     }
@@ -1123,7 +1124,7 @@ const recursivelyBuildV2MappingsFromTree = ({v2TreeData, _mappingsToSave, lookup
       generate,
       dataType,
       extract,
-      sourceDataType,
+      sourceDataType: sourceDataType || 'string',
       extractDateFormat,
       extractDateTimezone,
       generateDateFormat,
@@ -1146,6 +1147,8 @@ const recursivelyBuildV2MappingsFromTree = ({v2TreeData, _mappingsToSave, lookup
       // if extract is empty and children exists, then we add sub mappings
       // else if extract exists, then no sub mappings are needed as we copy from source as is
       if (!extract && children?.length) {
+        delete newMapping.sourceDataType;
+
         newMapping.mappings = [];
         recursivelyBuildV2MappingsFromTree({v2TreeData: children, _mappingsToSave: newMapping.mappings, lookups});
 

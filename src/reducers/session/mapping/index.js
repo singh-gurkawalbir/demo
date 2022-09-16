@@ -43,7 +43,7 @@ export const updateChildrenProps = (children, parentNode, dataType) => {
   const childrenCopy = deepClone(children);
 
   const {key, extractsArrayHelper} = parentNode;
-  const newParentExtract = getCombinedExtract(extractsArrayHelper)[0];
+  const newParentExtract = extractsArrayHelper?.[0]?.extract;
 
   // only for object array data type, add parent reference fields
   if (dataType === MAPPING_DATA_TYPES.OBJECTARRAY) {
@@ -102,7 +102,11 @@ export const updateDataType = (draft, node, oldDataType, newDataType) => {
 
       delete newNode.extract;
       delete newNode.mappings;
+      delete newNode.copySource;
+      delete newNode.default;
+      delete newNode.sourceDataType;
     } else {
+      newNode.copySource = newNode.extractsArrayHelper?.[0]?.copySource;
       newNode.extract = newNode.copySource === 'yes' ? newNode.extractsArrayHelper?.[0]?.extract : undefined;
       // extractsArrayHelper is used only for array data types to store each source config
       delete newNode.extractsArrayHelper;
@@ -815,6 +819,8 @@ export default (state = {}, action) => {
               delete node.hardCodedValue;
               if (ARRAY_DATA_TYPES.includes(node.dataType)) {
                 if (!value && (node.dataType === MAPPING_DATA_TYPES.OBJECT || node.dataType === MAPPING_DATA_TYPES.OBJECTARRAY)) {
+                  delete node.extractsArrayHelper;
+
                   // delete all children if extract is empty
                   const newRowKey = generateUniqueKey();
 

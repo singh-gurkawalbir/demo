@@ -72,7 +72,7 @@ function TabbedRow({parentKey}) {
           disabled ? (
             <Tooltip
               key={id}
-              title={disabled ? 'No fields need to be configured because this source has the setting "Copy an object array from the source as-is" set to “Yes”.' : ''}
+              title={disabled ? 'No fields need to be configured because this source has the setting "Copy an object array from the source as-is" set to "Yes".' : ''}
               placement="bottom">
               {/* this div needs to be added to render the tooltip correctly */}
               <div>
@@ -80,8 +80,7 @@ function TabbedRow({parentKey}) {
                   className={classes.tab}
                   key={id}
                   label={label}
-                  disabled={disabled}
-          />
+                  disabled={disabled} />
               </div>
             </Tooltip>
           )
@@ -89,9 +88,7 @@ function TabbedRow({parentKey}) {
               <Tab
                 className={classes.tab}
                 key={id}
-                label={label}
-                disabled={disabled}
-    />
+                label={label} />
             )
         )}
       </Tabs>

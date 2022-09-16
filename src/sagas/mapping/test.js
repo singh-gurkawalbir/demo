@@ -738,7 +738,7 @@ describe('mappingInit saga', () => {
             dataType: 'objectarray',
             children: [
               {
-                key: 'unique-key', isEmptyRow: true, title: '', disabled: false, dataType: 'string',
+                key: 'unique-key', parentKey: 'unique-key', isEmptyRow: true, title: '', disabled: false, dataType: 'string',
               },
             ]}],
         extractsTree: [
@@ -1073,6 +1073,7 @@ describe('saveMappings saga', () => {
           dataType: 'string',
           extract: 'id',
           status: 'Active',
+          sourceDataType: 'string',
           description: undefined,
           extractDateFormat: undefined,
           extractDateTimezone: undefined,
