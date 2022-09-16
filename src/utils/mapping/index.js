@@ -626,46 +626,6 @@ export const hideOtherTabRows = (node, newTabExtract, hidden) => {
   return clonedNode;
 };
 
-const constructEmptyMappingWithGenerates = (rows, props = {}, parentKey) => {
-  const { combinedExtract: parentCombinedExtract, ...defaultProps } = props;
-
-  let nodes = rows || [];
-
-  if (parentCombinedExtract) {
-    const splitExtracts = parentCombinedExtract.split(',');
-    const firstParentExtract = getUniqueExtractId(splitExtracts[0], 0);
-
-    nodes = nodes.filter(c => c.parentExtract === firstParentExtract);
-  }
-
-  return nodes.map(row => {
-    const { children, generate, dataType, jsonPath, combinedExtract } = row;
-    let updatedChildren;
-    const key = generateUniqueKey();
-
-    if (children?.length) {
-      // todo: shall we have a strict check of object/objectarray datatypes to pass through the below function?
-      updatedChildren = constructEmptyMappingWithGenerates(children, { combinedExtract }, key);
-    }
-
-    const additionalProps = {
-      ...(parentKey ? { parentExtract: ''} : { combinedExtract: ''}), // todo: check why we need this
-      ...(updatedChildren ? { children: updatedChildren} : {}), // updates children if present with new key and generates
-    };
-
-    return {
-      key,
-      title: '',
-      generate,
-      jsonPath,
-      dataType,
-      parentKey, // if the row has parent key, then update with new parent key
-      ...defaultProps,
-      ...additionalProps,
-    };
-  });
-};
-
 const getNewNode = (defaultProps = {}) => {
   const { key, generate, jsonPath, dataType = MAPPING_DATA_TYPES.STRING, parentKey, parentExtract, children: defaultChildren } = defaultProps;
   const newKey = key || generateUniqueKey();
@@ -725,108 +685,6 @@ export const constructNodeWithEmptySource = node => {
 // this util is for object array data type nodes when multiple extracts are given,
 // to reconstruct the whole children array
 export const rebuildObjectArrayNode = (node, extract = '') => {
-  const splitExtracts = extract.split(',');
-
-  // if no extract, return
-  if (isEmpty(node) || !splitExtracts || !splitExtracts.length) return node;
-
-  if (node.dataType !== MAPPING_DATA_TYPES.OBJECTARRAY) return node;
-
-  let clonedNode = {...node};
-
-  // if the children was not linked before, then link it to first source
-  clonedNode.children = clonedNode.children?.map(child => {
-    const clonedChild = {...child};
-    const {parentExtract} = clonedChild;
-
-    if (clonedChild.isTabNode) {
-      return child;
-    }
-    if (!parentExtract) {
-      clonedChild.parentExtract = getUniqueExtractId(splitExtracts[0], 0);
-    }
-
-    return clonedChild;
-  });
-
-  // update hidden prop and only show first extract children
-  clonedNode = hideOtherTabRows(clonedNode, getUniqueExtractId(splitExtracts[0], 0));
-
-  // set active tab to 0th
-  clonedNode.activeTab = 0;
-  clonedNode.combinedExtract = extract;
-
-  const {key: parentKey} = clonedNode;
-
-  const foundExtractsUniqueId = [];
-
-  if (!clonedNode.children) {
-    clonedNode.children = [];
-  }
-
-  clonedNode.children = clonedNode.children.filter(child => {
-    const {parentExtract} = child;
-
-    if (child.isTabNode) {
-      return true;
-    }
-
-    const newIndex = splitExtracts.findIndex((s, i) => parentExtract === getUniqueExtractId(s, i));
-
-    // only keep the children which have matching parentExtract
-    if (newIndex !== -1) {
-      foundExtractsUniqueId.push(parentExtract);
-
-      return true;
-    }
-
-    return false;
-  });
-
-  const firstParentExtract = getUniqueExtractId(splitExtracts[0], 0);
-  const firstTabRows = clonedNode.children.filter(c => c.parentExtract === firstParentExtract);
-
-  // find left over extracts so that new children rows can be pushed
-  splitExtracts.forEach((e, i) => {
-    if (!e) return;
-    const extract = getUniqueExtractId(e, i);
-
-    if (foundExtractsUniqueId.includes(extract)) {
-      return;
-    }
-
-    const hidden = i > 0;
-    const defaultProps = {
-      parentKey,
-      parentExtract: extract,
-      className: hidden && 'hideRow',
-      hidden, // hiding the new rows if those are not in 0th tab
-    };
-    const generatesMapping = constructEmptyMappingWithGenerates(firstTabRows, defaultProps);
-
-    clonedNode.children = [...clonedNode.children, ...generatesMapping];
-  });
-
-  if (splitExtracts.length === 1) {
-    // remove tab node
-    if (clonedNode.children[0]?.isTabNode) {
-      clonedNode.children.shift();
-    }
-  } else if (splitExtracts.length > 1 && !clonedNode.children[0]?.isTabNode) {
-    // add tab node
-    clonedNode.children.unshift({
-      key: generateUniqueKey(),
-      parentKey,
-      title: '',
-      isTabNode: true,
-    });
-  }
-  delete clonedNode.buildArrayHelper; // this will be rebuilt when saving to BE
-
-  return clonedNode;
-};
-
-export const rebuildObjectArrayNode1 = (node, extract = '') => {
   if (isEmpty(node) || node.dataType !== MAPPING_DATA_TYPES.OBJECTARRAY) return node;
 
   let clonedNode = {...node};
@@ -843,9 +701,6 @@ export const rebuildObjectArrayNode1 = (node, extract = '') => {
     if (previousFirstExtract) {
       // we have children previously, move those mappings under empty parentExtract
       clonedNode.children = prevFirstExtractChildren.map(c => ({ ...c, parentExtract: ''}));
-    } else {
-      // no children previously, so add empty node
-      clonedNode.children = [getNewNode({ parentKey })];
     }
   } else {
     // multiple extracts
@@ -875,7 +730,8 @@ export const rebuildObjectArrayNode1 = (node, extract = '') => {
       // if all the extracts are new, then map prev first source's child mapping to current first source's child
       if (prevFirstExtractChildren.length) {
         // fetch first source's mapping of previous extract and map those mappings to current extract's first source
-        const firstSourceChildren = prevFirstExtractChildren.map(c => ({ ...c, parentExtract: getUniqueExtractId(splitExtracts[0], 0)}));
+        // todo: replace with active tab
+        const firstSourceChildren = prevFirstExtractChildren.map(c => ({ ...c, parentExtract: getUniqueExtractId(splitExtracts[0], 0), key: generateUniqueKey()}));
 
         // append those mappings
         clonedNode.children = [...clonedNode.children, ...firstSourceChildren];
@@ -896,13 +752,14 @@ export const rebuildObjectArrayNode1 = (node, extract = '') => {
       if (foundExtractsUniqueId.includes(extract)) {
         return;
       }
-      // we mapped for the first extract above with prevFirstExtractChildren
-      if (!foundExtractsUniqueId.length && prevFirstExtractChildren.length) return;
+      // we mapped for the first extract above with prevFirstExtractChildren, so ignore first extract
+      // todo: replace this with first active tab after copySource enhancement
+      if (!foundExtractsUniqueId.length && prevFirstExtractChildren.length && i === 0) return;
       let childrenForCurrentExtract = [getNewNode({ parentKey, parentExtract: extract, jsonPath: node.jsonPath })];
 
       if (childNodesWithEmptySources.length) {
         // if the child refs are present from prev extracts, map them with this extract
-        childrenForCurrentExtract = childNodesWithEmptySources.map(c => ({ ...c, parentExtract: extract}));
+        childrenForCurrentExtract = childNodesWithEmptySources.map(c => ({ ...c, parentExtract: extract, key: generateUniqueKey()}));
       }
       clonedNode.children = [...clonedNode.children, ...childrenForCurrentExtract];
     });
