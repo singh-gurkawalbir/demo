@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useMemo } from 'react';
+import React, { useState, useCallback, useMemo, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
@@ -159,6 +159,10 @@ export default function ErrorDetailsPanel({
   const handleModeChange = useCallback((evt, newValue) => {
     setMode(newValue);
   }, []);
+
+  useEffect(() => {
+    setMode('editRetry');
+  }, [activeErrorId]);
 
   if (!activeErrorId || activeErrorId === '') {
     return <EmptyErrorDetails showMessage={errorsInCurrPage.length !== 0} classes={classes} />;
