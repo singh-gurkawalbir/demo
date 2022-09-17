@@ -692,7 +692,7 @@ export const rebuildObjectArrayNode = (node, extract = '') => {
   const splitExtracts = extract.split(',');
   const hasNoExtract = extract.trim().length === 0;
   const previousFirstExtract = getUniqueExtractId(clonedNode.combinedExtract?.split(',')[0], 0);
-  const prevFirstExtractChildren = clonedNode.children.filter(childNode => childNode.parentExtract === previousFirstExtract);
+  const prevFirstExtractChildren = clonedNode.children?.filter(childNode => childNode.parentExtract === previousFirstExtract) || [];
 
   // no extracts
   if (hasNoExtract) {
@@ -700,7 +700,7 @@ export const rebuildObjectArrayNode = (node, extract = '') => {
     // no extracts with tab node and multiple source children
     if (previousFirstExtract) {
       // we have children previously, move those mappings under empty parentExtract
-      clonedNode.children = prevFirstExtractChildren.map(c => ({ ...c, parentExtract: ''}));
+      clonedNode.children = prevFirstExtractChildren.map(c => ({ ...c, parentExtract: '', key: generateUniqueKey()}));
     }
   } else {
     // multiple extracts
@@ -765,6 +765,9 @@ export const rebuildObjectArrayNode = (node, extract = '') => {
     });
   }
 
+  if (!clonedNode.children) {
+    clonedNode.children = [];
+  }
   // update hidden prop and only show first extract children
   clonedNode = hideOtherTabRows(clonedNode, getUniqueExtractId(splitExtracts[0], 0));
   // set active tab to 0th

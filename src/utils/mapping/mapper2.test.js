@@ -571,7 +571,6 @@ describe('v2 mapping utils', () => {
           },
           {
             className: 'hideRow',
-            combinedExtract: '',
             dataType: 'string',
             hidden: true,
             key: 'new_key',
@@ -664,7 +663,6 @@ describe('v2 mapping utils', () => {
           },
           {
             className: 'hideRow',
-            combinedExtract: '',
             dataType: 'string',
             generate: 'child1',
             hidden: true,
@@ -781,14 +779,13 @@ describe('v2 mapping utils', () => {
           },
           {
             dataType: 'string',
-            key: '4UB7OJokF5bGpvc8osHYT',
+            key: 'new_key',
             parentExtract: '$|0',
             parentKey: 'vlVDP3cjaN2cGmcSW1RCq',
             title: '',
           },
           {
             className: 'hideRow',
-            combinedExtract: '',
             dataType: 'string',
             hidden: true,
             key: 'new_key',
