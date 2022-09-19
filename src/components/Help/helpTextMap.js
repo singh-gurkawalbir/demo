@@ -888,7 +888,7 @@ if you're using a production account, you'll find your API keys under the 'API M
   'connection.http.auth.token.refreshToken':
 'This field is used if you have a refresh token that can be used in refresh expired auth tokens. You can place this token in the body, headers or url simply by using referencing it with the placeholder: {{{connection.http.auth.token.refreshToken}}}. <br>Multiple layers of protection, including AES 256 encryption, are in place to keep your token safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'connection.http.auth.token.tokenPaths':
-'This is just a dummy help text',
+'If the service you’re connecting to responds with one or more encrypted fields containing refresh tokens, then enter the JSON paths contained in the HTTP response where the new tokens can be extracted. Separate multiple fields with a comma. If no values are found at these paths, then the token request is considered a failure',
   'connection.http.rateLimit.failStatusCode':
 'This field only needs to be set if the HTTP status code for rate-limit errors is not 429.  For example, an API could return a generic 400 status code instead, and then use a field in the HTTP response body to indicate rate-limit errors.',
   'connection.http.rateLimit.failPath':
