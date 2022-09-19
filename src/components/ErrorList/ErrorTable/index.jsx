@@ -48,6 +48,9 @@ const useStyles = makeStyles(theme => ({
       outline: 'inherit',
     },
   },
+  errorTableWithErrorsInRun: {
+    height: 'calc(100vh - 351px)',
+  },
   errorDetailsPanel: {
     flexGrow: 1,
     display: 'flex',
@@ -91,6 +94,7 @@ const ErrorTableWithPanel = ({
   flowId,
   keydownListener,
   onRowClick,
+  errorsInRun,
 
 }) => {
   const classes = useStyles();
@@ -112,7 +116,7 @@ const ErrorTableWithPanel = ({
     ? (
       <div className={classes.baseFormWithPreview}>
         {/* eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex */}
-        <div className={classes.errorTable} ref={tableRef} tabIndex={0}>
+        <div className={clsx(classes.errorTable, {[classes.errorTableWithErrorsInRun]: errorsInRun})} ref={tableRef} tabIndex={0}>
           <ResourceTable
             resources={errorsInCurrPage}
             className={classes.resourceFormWrapper}
@@ -132,6 +136,7 @@ const ErrorTableWithPanel = ({
             flowId={flowId}
             resourceId={resourceId}
             isResolved={isResolved}
+            errorsInRun={errorsInRun}
           />
         </div>
       </div>
@@ -146,7 +151,7 @@ const ErrorTableWithPanel = ({
       />
     );
 };
-export default function ErrorTable({ flowId, resourceId, isResolved, flowJobId }) {
+export default function ErrorTable({ flowId, resourceId, isResolved, flowJobId, errorsInRun }) {
   const classes = useStyles();
   const filterKey = isResolved ? FILTER_KEYS.RESOLVED : FILTER_KEYS.OPEN;
 
@@ -291,6 +296,7 @@ export default function ErrorTable({ flowId, resourceId, isResolved, flowJobId }
               isResolved={isResolved}
               keydownListener={keydownListener}
               onRowClick={onRowClick}
+              errorsInRun={errorsInRun}
             />
           ) : (!isResolved && (
             <NoResultTypography>There don’t seem to be any more errors. You may have already retried or resolved them.

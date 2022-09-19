@@ -34,6 +34,9 @@ const useStyles = makeStyles(theme => ({
     color: theme.palette.secondary.main,
     wordBreak: 'break-word',
   },
+  errorListWrapper: {
+    background: 'green',
+  },
 }));
 export default function ErrorDetailsDrawer({ flowId }) {
   const history = useHistory();
@@ -181,7 +184,7 @@ export default function ErrorDetailsDrawer({ flowId }) {
             {childJob?.numOpenError <= 1000 ? (<span><span>: {allErrors.length} open  |  </span><span>{childJob?.numOpenError - allErrors.length} resolved</span></span>) : ''}
           </Typography>
         ) : ''}
-        {errorType === FILTER_KEYS.RETRIES ? <RetryList flowId={flowId} /> : <ErrorList flowId={flowId} />}
+        {errorType === FILTER_KEYS.RETRIES ? <RetryList flowId={flowId} /> : <ErrorList flowId={flowId} errorsInRun={flowJobId} />}
       </DrawerContent>
     </RightDrawer>
   );
