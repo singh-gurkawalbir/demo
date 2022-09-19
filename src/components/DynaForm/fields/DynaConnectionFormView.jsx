@@ -145,7 +145,7 @@ export default function FormView(props) {
       <Help
         title="Formview"
         className={classes.helpTextButton}
-        helpKey="formView"
+        helpKey="connectionFormView"
       />
     </>
   );
