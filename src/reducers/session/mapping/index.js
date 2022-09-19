@@ -669,6 +669,8 @@ export default (state = {}, action) => {
             parentExtract: node.parentExtract,
             dataType: MAPPING_DATA_TYPES.STRING,
           });
+          // adding the newKey to state so that new row can be focused
+          draft.mapping.newRowKey = newRowKey;
         }
 
         break;
@@ -1088,10 +1090,10 @@ export default (state = {}, action) => {
         break;
       }
 
-      case actionTypes.MAPPING.V2.TOGGLE_SEARCH: {
+      case actionTypes.MAPPING.V2.DELETE_NEW_ROW_KEY: {
         if (!draft.mapping) break;
 
-        draft.mapping.isSearchVisible = !draft.mapping.isSearchVisible;
+        delete draft.mapping.newRowKey;
         break;
       }
       default:
@@ -1156,6 +1158,14 @@ selectors.searchKey = state => {
   }
 
   return state.mapping.searchKey;
+};
+
+selectors.newRowKey = state => {
+  if (!state || !state.mapping) {
+    return;
+  }
+
+  return state.mapping.newRowKey;
 };
 
 selectors.mappingChanged = state => {
