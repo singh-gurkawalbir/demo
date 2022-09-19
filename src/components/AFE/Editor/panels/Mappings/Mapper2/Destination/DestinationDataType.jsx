@@ -98,7 +98,7 @@ const useStyles = makeStyles(theme => ({
   },
   listWrapper: {
     minWidth: theme.spacing(20),
-    maxHeight: theme.spacing(32),
+    maxHeight: theme.spacing(37),
     overflowY: 'auto',
   },
   itemRootName: {
