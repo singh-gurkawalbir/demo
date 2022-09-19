@@ -448,6 +448,8 @@ export function wrapTextForSpecialChars(extract, flowSampleData) {
 }
 
 // #region Mapper2 utils
+export const isMapper2HandlebarExpression = (extractValue, isHardCodedValue) => handlebarRegex.test(extractValue) || (extractValue && !isHardCodedValue && !extractValue?.startsWith('$'));
+
 export const isCsvOrXlsxResourceForMapper2 = resource => {
   if (!resource) return false;
 
@@ -2014,7 +2016,7 @@ const recursivelyValidateV2Mappings = ({
       // handlebars not supported
       const splitExtracts = (extract || combinedExtract)?.split(',') || [];
       const invalidSource = splitExtracts.filter(e => {
-        if (handlebarRegex.test(e)) return true;
+        if (isMapper2HandlebarExpression(e, hardCodedValue)) return true;
 
         return false;
       });
@@ -2288,7 +2290,6 @@ export default {
 
     return 'standard';
   },
-
   getHardCodedActionValue: value => {
     if ('hardCodedValue' in value) {
       switch (value.hardCodedValue) {
@@ -3235,6 +3236,19 @@ export default {
   },
 
   // #region default Mapper2 utils
+  getV2FieldMappingType: value => {
+    if (value.lookupName) {
+      return 'lookup';
+    }
+    if ('hardCodedValue' in value) {
+      return 'hardCoded';
+    }
+    if (isMapper2HandlebarExpression(value.extract, value.hardCodedValue)) {
+      return 'multifield';
+    }
+
+    return 'standard';
+  },
   getV2DefaultActionValue: value => {
     if (value.conditional?.when === 'extract_not_empty') {
       return 'discardIfEmpty';
@@ -3274,7 +3288,7 @@ export default {
     }
   },
   getV2DefaultExpression: value => {
-    if (value.extract?.indexOf('{{') !== -1) {
+    if (isMapper2HandlebarExpression(value.extract, value.hardCodedValue)) {
       return value.extract;
     }
   },
