@@ -1438,7 +1438,7 @@ export const findAllParentNodesForNode = (treeData, nodeKey, output = []) => {
 
 // Fetches all possible parent nodes that contain the same pattern of mapping as given in the order of matchingNodes
 // Ex: For a node with jsonPath - a[*].b[*].c.d, this fn is called with fn([b,c], [a]) as 'a' is the first parentNode and b,c are the pattern nodes to reach node 'd'
-export const findAllPossibleDestinationMatchingLeafNodes = (matchingNodes = [], parentNodes = []) => {
+export const findAllPossibleDestinationMatchingParentNodes = (matchingNodes = [], parentNodes = []) => {
   // when there are no more nodes to match or no leaf nodes to go through return the leaf nodes
   if (!matchingNodes.length || !parentNodes.length) return parentNodes;
 
@@ -1455,7 +1455,7 @@ export const findAllPossibleDestinationMatchingLeafNodes = (matchingNodes = [], 
   });
 
   // recursively pass the above list with the next available node from matchingNodes to match
-  return findAllPossibleDestinationMatchingLeafNodes(matchingNodes.slice(1), nextLevelParentNodes);
+  return findAllPossibleDestinationMatchingParentNodes(matchingNodes.slice(1), nextLevelParentNodes);
 };
 
 /**
@@ -1477,7 +1477,7 @@ export const insertSiblingsOnDestinationUpdate = (treeData, newNode) => {
   // fetches the first parent from top which is Object array, as we need to process nodes which are children of an object array node
   const [topNode, ...restOfParentNodes] = parentNodes.slice(objArrayParentNodeIndex);
 
-  const matchingLeafNodes = findAllPossibleDestinationMatchingLeafNodes(restOfParentNodes, [topNode]);
+  const matchingLeafNodes = findAllPossibleDestinationMatchingParentNodes(restOfParentNodes, [topNode]);
 
   matchingLeafNodes.forEach(parentNode => {
     const newChildren = getNewChildrenToAdd(parentNode, newNode);

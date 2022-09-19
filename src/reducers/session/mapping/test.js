@@ -2975,7 +2975,7 @@ describe('mapping reducer', () => {
             activeTab: 0,
             children: [
               {
-                key: 'new_key',
+                key: 'c1',
                 parentKey: 'key1',
                 generate: 'child1',
                 extract: '$.child1',
