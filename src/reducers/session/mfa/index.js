@@ -69,7 +69,7 @@ selectors.qrCode = state => state?.codes?.secretCode?.keyURI;
 selectors.secretCode = state => state?.codes?.secretCode?.secret;
 selectors.secretCodeError = state => state?.codes?.secretCodeError;
 
-selectors.sessionInfoStatus = state => state?.sessionInfo?.status;
+selectors.mfaSessionInfoStatus = state => state?.sessionInfo?.status;
 selectors.sessionInfo = state => state?.sessionInfo?.data;
 selectors.isMFASetupIncomplete = state => {
   if (!state || !state.sessionInfo || !state.sessionInfo.data) return false;

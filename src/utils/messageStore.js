@@ -73,6 +73,7 @@ href="/marketplace"><u>Check out our Marketplace</u></a> to jumpstart your  inte
   BRANCH_EMPTY_FILTER: 'No conditions defined.',
   // #region MFA
   MFA_SETUP_SUCCESS: 'MFA enabled and device connected successfully.',
+  MFA_ACCOUNT_SETTINGS_UPDATED: 'MFA account settings saved successfully.',
   MFA_ENABLED: 'MFA enabled successfully.',
   MFA_DISABLED: 'MFA disabled successfully.',
   MFA_PRIMARY_ACCOUNT_UPDATED: 'Primary account to reset updated successfully',
@@ -106,7 +107,9 @@ href="/marketplace"><u>Check out our Marketplace</u></a> to jumpstart your  inte
   CLONE_DESCRIPTION: 'Cloning an integration enables you to keep an original integration unchanged while modifying the configuration settings for a duplicate version of it. <a href="https://docs.celigo.com/hc/en-us/articles/115000757512-Clone-integrations-and-flows" target="_blank">Learn more</a>',
   CREATE_SNAPSHOT_FORM_HELPINFO: 'A snapshot is a saved capture of your integration that you can use to revert your integration at any point.',
   CREATE_PULL_FORM_HELPINFO: 'Pulling changes from one linked integration to another lets you see conflicts, review changes, and merge them from one integration to another. You can only pull data from a direct clone or source integration.. For example, clone Integration A as Integration B, then B to C, and B to D. You can create a pull between integrations A and B, B and C, B and D; but not between A and C, or C and D',
-
+  RETRIES_TAB_INFO: 'When you retry errors in a flow step, a new row in the <b>Retries</b> tab under that step will display its progress. When a retry results in errors in later flow steps, you can locate the new errors in their <b>Open errors tab</b>. <br>Here you will also find auto-retry runs. When retries were triggered by auto-retry, a single row will appear for each retry job in the <b>Retries</b> tab and the column <b>Retry started by</b> will contain <b>Auto-retried</b>.',
+  CANCEL_RETRY_CONFIRM: 'Cancelling will abort the retrying of any errors not yet processed in this operation; those errors already processed will not be reverted, maintaining their current state (failed or resolved).',
+  RETRIES_TAB_ERRORS_UPDATED_INFO: 'Retries that were initated from previous steps in your flow cannot be shown on any subsequent steps whose errors/success were changed by the retries in a previous step.',
 };
 
 export default function messageStore(key, argsObj) {
