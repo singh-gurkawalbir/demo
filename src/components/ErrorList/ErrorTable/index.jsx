@@ -239,7 +239,7 @@ export default function ErrorTable({ flowId, resourceId, isResolved, flowJobId }
   }, [errorFilter.currentNavItem, dispatch, errorsInCurrPage, isSplitView, showRetryDataChangedConfirmDialog]);
 
   const onRowClick = useCallback(({ rowData, dispatch, event }) => {
-    if (event?.target?.type !== 'checkbox' && errorFilter?.activeErrorId !== rowData.errorId) {
+    if (event?.target?.type !== 'checkbox' && errorFilter.activeErrorId !== rowData.errorId) {
       showRetryDataChangedConfirmDialog(() => {
         dispatch(actions.patchFilter(FILTER_KEYS.OPEN, {
           activeErrorId: rowData.errorId,
@@ -247,18 +247,29 @@ export default function ErrorTable({ flowId, resourceId, isResolved, flowJobId }
         }));
       });
     }
-  }, [errorFilter?.activeErrorId, showRetryDataChangedConfirmDialog]);
+  }, [errorFilter.activeErrorId, showRetryDataChangedConfirmDialog]);
 
   useEffect(() => {
     const currIndex = errorsInCurrPage.findIndex(eachError => eachError.errorId === errorFilter.activeErrorId);
 
-    if (errorFilter?.activeErrorId !== '' && currIndex < 0 && isSplitView) {
+    if (errorFilter.activeErrorId !== '' && currIndex < 0 && isSplitView) {
       dispatch(actions.patchFilter(FILTER_KEYS.OPEN, {
         activeErrorId: errorsInCurrPage[0]?.errorId,
         currentNavItem: errorsInCurrPage[0]?.errorId,
       }));
     }
   }, [errorsInCurrPage, errorFilter.activeErrorId, dispatch, isSplitView]);
+
+  useEffect(() => {
+    // when search keyword changes, first error in the page should be selected
+    if (isSplitView) {
+      dispatch(actions.patchFilter(FILTER_KEYS.OPEN, {
+        activeErrorId: errorsInCurrPage[0]?.errorId,
+        currentNavItem: errorsInCurrPage[0]?.errorId,
+      }));
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dispatch, errorFilter.keyword]);
 
   return (
     <div className={clsx(classes.errorTableWrapper)}>

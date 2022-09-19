@@ -86,6 +86,8 @@ export const useHandleNextAndPreviousError = ({
 
       const newErrorId = allErrors?.[newIndex]?.errorId;
 
+      if (!newErrorId) return;
+
       dispatch(actions.patchFilter(FILTER_KEYS.OPEN, {
         activeErrorId: newErrorId,
         currentNavItem: newErrorId,
@@ -102,5 +104,6 @@ export const useHandleNextAndPreviousError = ({
     handlePreviousError,
     disabledPrevious,
     disableNext: disableNextPage && (indexOfCurrentError >= errorsInPage?.length - 1),
+    loading: paginationOptions.loading,
   };
 };
