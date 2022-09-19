@@ -1834,6 +1834,7 @@ describe('mapping reducer', () => {
           importId: 'imp-123',
           flowId: 'flow-123',
           version: 2,
+          newRowKey: 'new_key',
           v2TreeData: [{
             key: 'key1',
             dataType: MAPPING_DATA_TYPES.STRING,
@@ -4404,6 +4405,40 @@ describe('mapping reducer', () => {
       };
 
       expect(state).toEqual(newState);
+    });
+  });
+  describe('MAPPING.V2.DELETE_NEW_ROW_KEY action', () => {
+    test('delete the newRowKey from mappings', () => {
+      const initialState = {
+        mapping: {
+          importId: 'imp-123',
+          flowId: 'flow-123',
+          version: 2,
+          newRowKey: 'key1',
+          v2TreeData: [{
+            key: 'key1',
+            dataType: MAPPING_DATA_TYPES.STRING,
+            generate: 'fname',
+            extract: '$.fname',
+          }],
+        },
+      };
+      const state = reducer(initialState, actions.mapping.v2.deleteNewRowKey());
+      const expectedState = {
+        mapping: {
+          importId: 'imp-123',
+          flowId: 'flow-123',
+          version: 2,
+          v2TreeData: [{
+            key: 'key1',
+            dataType: MAPPING_DATA_TYPES.STRING,
+            generate: 'fname',
+            extract: '$.fname',
+          }],
+        },
+      };
+
+      expect(state).toEqual(expectedState);
     });
   });
 
