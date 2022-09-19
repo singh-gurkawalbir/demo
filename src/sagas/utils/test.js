@@ -1153,6 +1153,14 @@ describe('updateFinalMetadataWithHttpFramework saga', () => {
       defaultValue: 'https://{{{connection.settings.environmenttype}}}.com',
       helpKey: 'connection.http.baseURI',
     },
+    'http.updateBaseURI': {
+      type: 'text',
+      visible: false,
+      fieldId: 'http.updateBaseURI',
+      id: 'http.updateBaseURI',
+      name: '/http/updateBaseURI',
+      defaultValue: 'https://{{{connection.settings.environmenttype}}}.com',
+    },
     'http.ping.method': {
       type: 'select',
       label: 'HTTP method',
@@ -1236,7 +1244,14 @@ describe('updateFinalMetadataWithHttpFramework saga', () => {
         name: '/http/baseURI',
         required: true,
         type: 'text',
-
+      },
+      'http.updateBaseURI': {
+        type: 'text',
+        visible: false,
+        fieldId: 'http.updateBaseURI',
+        id: 'http.updateBaseURI',
+        name: '/http/updateBaseURI',
+        defaultValue: 'https://{{{connection.settings.environmenttype}}}.com',
       },
       'http.ping.body': {
         defaultValue: '',
