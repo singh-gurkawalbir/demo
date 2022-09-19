@@ -694,13 +694,15 @@ export const rebuildObjectArrayNode = (node, extract = '') => {
   const previousFirstExtract = getUniqueExtractId(clonedNode.combinedExtract?.split(',')[0], 0);
   const prevFirstExtractChildren = clonedNode.children?.filter(childNode => childNode.parentExtract === previousFirstExtract) || [];
 
-  // no extracts
+  if (!clonedNode.children) {
+    clonedNode.children = [];
+  }
+
+  // no extracts now with at least 1 source children before
   if (hasNoExtract) {
-    // no extracts with 1 source children
-    // no extracts with tab node and multiple source children
     if (previousFirstExtract) {
       // we have children previously, move those mappings under empty parentExtract
-      clonedNode.children = prevFirstExtractChildren.map(c => ({ ...c, parentExtract: '', key: generateUniqueKey()}));
+      clonedNode.children = prevFirstExtractChildren.map(c => ({ ...c, parentExtract: ''}));
     }
   } else {
     // multiple extracts
@@ -726,18 +728,13 @@ export const rebuildObjectArrayNode = (node, extract = '') => {
       return false;
     });
 
-    if (!foundExtractsUniqueId.length) {
+    if (!foundExtractsUniqueId.length && prevFirstExtractChildren.length) {
       // if all the extracts are new, then map prev first source's child mapping to current first source's child
-      if (prevFirstExtractChildren.length) {
-        // fetch first source's mapping of previous extract and map those mappings to current extract's first source
-        // todo: replace with active tab
-        const firstSourceChildren = prevFirstExtractChildren.map(c => ({ ...c, parentExtract: getUniqueExtractId(splitExtracts[0], 0), key: generateUniqueKey()}));
-
-        // append those mappings
-        clonedNode.children = [...clonedNode.children, ...firstSourceChildren];
-      }
+      // fetch first source's mapping of previous extract and map those mappings to current extract's first source
+      // todo: replace with active tab
+      clonedNode.children = prevFirstExtractChildren.map(c => ({ ...c, parentExtract: getUniqueExtractId(splitExtracts[0], 0), key: generateUniqueKey()}));
     }
-    // we take previous child refs and construct new children with empty generates
+    // we take previous child refs and construct new children with empty source
     // we map these children to those left over extracts
     const childNodesWithEmptySources = prevFirstExtractChildren.filter(c => !!c.generate).map(c =>
       // we only fetch nodes with generates filled. empty generate mappings are ignored
@@ -763,10 +760,6 @@ export const rebuildObjectArrayNode = (node, extract = '') => {
       }
       clonedNode.children = [...clonedNode.children, ...childrenForCurrentExtract];
     });
-  }
-
-  if (!clonedNode.children) {
-    clonedNode.children = [];
   }
   // update hidden prop and only show first extract children
   clonedNode = hideOtherTabRows(clonedNode, getUniqueExtractId(splitExtracts[0], 0));
