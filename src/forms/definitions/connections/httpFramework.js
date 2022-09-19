@@ -171,11 +171,14 @@ export default {
     delete newValues['/http/auth/wsse/username'];
     delete newValues['/http/auth/wsse/password'];
     delete newValues['/http/auth/wsse/headerName'];
+    newValues['/http/formType'] = 'assistant';
+    if (newValues['/http/updateBaseURI']) {
+      newValues['/http/baseURI'] = newValues['/http/updateBaseURI'];
+      delete newValues['/http/updateBaseURI'];
+    }
     if (resource?._httpConnectorId || resource?.http?._httpConnectorId) {
       newValues = updateHTTPFrameworkFormValues(newValues, resource, options?.httpConnector);
     }
-    newValues['/http/formType'] = 'assistant';
-    newValues['/http/baseURI'] = resource?.http?.baseURI;
 
     return newValues;
   },
@@ -223,6 +226,15 @@ export default {
       readOnly: true,
       refreshOptionsOnChangesTo: [],
       defaultDisabled: true,
+      defaultValue: r => {
+        if (!r?.http?.baseURI) { return null; }
+
+        return r?.http?.baseURI;
+      },
+    },
+    'http.updateBaseURI': {
+      fieldId: 'http.updateBaseURI',
+      visible: false,
       defaultValue: r => {
         if (!r?.http?.baseURI) { return null; }
 
@@ -309,7 +321,7 @@ export default {
     'http.rateLimit.failPath': { fieldId: 'http.rateLimit.failPath' },
     'http.rateLimit.failValues': { fieldId: 'http.rateLimit.failValues' },
     'http.retryHeader': { fieldId: 'http.retryHeader' },
-    'http.ping.relativeURI': { fieldId: 'http.ping.relativeURI' },
+    'http.ping.relativeURI': { fieldId: 'http.ping.relativeURI', visible: false },
     'http.ping.method': { fieldId: 'http.ping.method' },
     'http.ping.body': {
       fieldId: 'http.ping.body',
@@ -384,6 +396,7 @@ export default {
           {
             fields: [
               'http.baseURI',
+              'http.updateBaseURI',
             ],
           },
           {
@@ -444,6 +457,7 @@ export default {
       {
         fields: [
           'http.ping.method',
+          'http.ping.relativeURI',
           'http.ping.body',
           'http.ping.failPath',
           'http.ping.failValues',
