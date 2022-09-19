@@ -118,6 +118,7 @@ const ErrorTableWithPanel = ({
     hasFilter = true;
   }
   const emptyErrorMessage = !hasFilter && !isResolved && !hasErrors;
+  const emptyFilterMessage = hasFilter && !isResolved && (!hasErrors || errorsInCurrPage.length === 0);
 
   useEffect(() => {
     const refEle = tableRef?.current;
@@ -143,9 +144,7 @@ const ErrorTableWithPanel = ({
           onRowClick={onRowClick}
         />
         {emptyErrorMessage && <EmptyErrorMessage />}
-        {hasFilter &&
-          !isResolved &&
-          (!hasErrors || errorsInCurrPage.length === 0) && <NoFiltersMessage />}
+        {emptyFilterMessage && <NoFiltersMessage />}
       </div>
       <div className={classes.partition}>
         <Divider orientation="vertical" className={clsx(classes.divider)} />
@@ -169,7 +168,7 @@ const ErrorTableWithPanel = ({
         tableRef={tableRef}
       />
       {emptyErrorMessage && <EmptyErrorMessage />}
-      {hasFilter && !isResolved && !hasErrors && <NoFiltersMessage />}
+      {emptyFilterMessage && <NoFiltersMessage />}
     </>
   );
 };
