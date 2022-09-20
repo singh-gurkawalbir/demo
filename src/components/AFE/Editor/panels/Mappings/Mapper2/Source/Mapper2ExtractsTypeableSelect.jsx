@@ -11,6 +11,7 @@ import messageStore from '../../../../../../../utils/messageStore';
 import ArrowPopper from '../../../../../../ArrowPopper';
 import useDebouncedValue from '../../../../../../../hooks/useDebouncedInput';
 import actions from '../../../../../../../actions';
+import SourceDataType from './SourceDataType';
 
 const useStyles = makeStyles(theme => ({
   customTextField: {
@@ -128,6 +129,7 @@ export default function Mapper2ExtractsTypeableSelect({
   editorLayout,
   className,
   popperClassName,
+  sourceDataType,
 }) {
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = useState(null);
@@ -141,6 +143,7 @@ export default function Mapper2ExtractsTypeableSelect({
   });
   const [isTruncated, setIsTruncated] = useState(false);
   const inputFieldRef = useRef();
+  const [dataTypeSelector, selectDataType] = useState(false);
 
   const handleChange = useCallback(event => {
     setInputValue(event.target.value);
@@ -222,7 +225,17 @@ export default function Mapper2ExtractsTypeableSelect({
           }}
            />
       </Tooltip >
-
+      {sourceDataType && sourceDataType.length ? sourceDataType.map(dataType =>
+        (
+          <SourceDataType
+            anchorEl={dataTypeSelector}
+            setAnchorEl={selectDataType}
+            handleBlur={() => { console.log('blur'); } }
+            dataType={dataType}
+            disabled={disabled}
+            nodeKey={nodeKey}
+          />
+        )) : ''}
       {/* only render tree component if field is focussed and not disabled.
       Here we are wrapping tree component with ArrowPopper to correctly handle the
       dropdown placement logic

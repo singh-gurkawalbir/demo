@@ -77,6 +77,18 @@ export const updateChildrenProps = (children, parentNode, dataType) => {
   }, []);
 };
 
+export const updateSourceDataType = (draft, node, oldSourceDataType, newDataType) => {
+  if (!node) return node;
+
+  const newNode = deepClone(node);
+  const newRowKey = generateUniqueKey();
+
+  if (oldSourceDataType === newDataType) return node;
+  newNode.sourceDataType = newDataType;
+  
+  return newNode;
+}
+
 // updates specific to data type change
 export const updateDataType = (draft, node, oldDataType, newDataType) => {
   if (!node) return node;
@@ -243,6 +255,7 @@ export default (state = {}, action) => {
     requiredMappings,
     extractsTree,
     v2Key,
+    isSource,
     newDataType,
     isMonitorLevelAccess,
     dragDropInfo,
@@ -680,10 +693,12 @@ export default (state = {}, action) => {
         const {node, nodeIndexInSubArray, nodeSubArray} = findNodeInTree(draft.mapping.v2TreeData, 'key', v2Key);
 
         if (isEmpty(node)) break;
-
-        nodeSubArray[nodeIndexInSubArray] = updateDataType(draft, node, node.dataType, newDataType);
-        delete nodeSubArray[nodeIndexInSubArray].isEmptyRow;
-
+        if(isSource) {
+          nodeSubArray[nodeIndexInSubArray] = updateSourceDataType(draft, node, node.sourceDataType, newDataType)
+        }else {
+          nodeSubArray[nodeIndexInSubArray] = updateDataType(draft, node, node.dataType, newDataType);
+          delete nodeSubArray[nodeIndexInSubArray].isEmptyRow;
+        }
         break;
       }
 

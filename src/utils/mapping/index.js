@@ -582,6 +582,18 @@ export const getCombinedExtract = helper => {
   }, []);
 };
 
+export const getExtractDataType = helper =>{
+  if (!helper || !helper.length) return [];
+
+  return helper.reduce((combinedSourceDataType, obj) => {
+    if (obj.extract) {
+      combinedSourceDataType.push(obj.sourceDataType);
+    }
+
+    return combinedSourceDataType;
+  }, []);
+}
+
 export const buildExtractsHelperFromExtract = (existingExtractsArray, newExtracts) => {
   if (!newExtracts) return [];
 

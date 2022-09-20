@@ -18,7 +18,7 @@ import Mapper2Generates from './Destination/Mapper2Generates';
 import actions from '../../../../../../actions';
 import useConfirmDialog from '../../../../../ConfirmDialog';
 import { buildDrawerUrl, drawerPaths } from '../../../../../../utils/rightDrawer';
-import { MAPPING_DATA_TYPES, handlebarRegex, getCombinedExtract } from '../../../../../../utils/mapping';
+import { MAPPING_DATA_TYPES, handlebarRegex, getCombinedExtract, getExtractDataType } from '../../../../../../utils/mapping';
 import messageStore from '../../../../../../utils/messageStore';
 import TabRow from './TabbedRow';
 import { getMappingsEditorId } from '../../../../../../utils/editor';
@@ -122,6 +122,7 @@ const Mapper2Row = React.memo(props => {
     isEmptyRow,
     hidden,
     children,
+    sourceDataType,
   } = props;
   const classes = useStyles();
   const history = useHistory();
@@ -189,6 +190,11 @@ const Mapper2Row = React.memo(props => {
   }, [dispatch, history, nodeKey, generate]);
 
   const extractValue = getCombinedExtract(extractsArrayHelper).join(',') || extract || (hardCodedValue ? `"${hardCodedValue}"` : undefined);
+  const extractDataTypes = getExtractDataType(extractsArrayHelper);
+
+  if (extractDataTypes.length === 0) {
+    extractDataTypes.push(sourceDataType);
+  }
   const isLookup = !!lookupName;
   const isStaticLookup = !!(lookup.name && lookup.map);
   const isHardCodedValue = hardCodedValue !== undefined;
@@ -231,6 +237,7 @@ const Mapper2Row = React.memo(props => {
             value={extractValue}
             disabled={(isLookup && !isStaticLookup) || disabled}
             dataType={dataType}
+            sourceDataType={extractDataTypes}
             onBlur={handleExtractBlur}
             isDynamicLookup={isLookup && !isStaticLookup}
             isHardCodedValue={isHardCodedValue}
