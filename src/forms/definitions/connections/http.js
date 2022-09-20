@@ -1,6 +1,7 @@
 import {
   updateFinalMetadataWithHttpFramework,
 } from '../../../sagas/utils';
+import { safeParse } from '../../../utils/string';
 import { updateHTTPFrameworkFormValues } from '../../metaDataUtils/fileUtil';
 
 export default {
@@ -44,16 +45,6 @@ export default {
         newValues['/http/encrypted'] = JSON.parse(newValues['/http/encrypted']);
       } catch (ex) {
         newValues['/http/encrypted'] = undefined;
-      }
-    }
-
-    if (newValues['/http/custom/encrypted']) {
-      try {
-        newValues['/http/custom/encrypted'] = JSON.parse(
-          newValues['/http/custom/encrypted']
-        );
-      } catch (ex) {
-        newValues['/http/custom/encrypted'] = undefined;
       }
     }
 
@@ -117,7 +108,20 @@ export default {
         newValues['/http/auth/token/scheme'] = newValues['/http/customAuthScheme'];
       }
     }
+    const tokenPaths = newValues['/http/auth/token/tokenPaths']?.reduce((a, v) => ({ ...a, [v]: '******'}), {});
 
+    if (newValues['/http/custom/encrypted']) {
+      const encryptedField = safeParse(newValues['/http/custom/encrypted']) || {};
+
+      newValues['/http/custom/encrypted'] = tokenPaths;
+
+      if (typeof encryptedField === 'object') {
+        newValues['/http/custom/encrypted'] = {
+          ...newValues['/http/custom/encrypted'],
+          ...encryptedField,
+        };
+      }
+    }
     if (newValues['/http/auth/type'] !== 'token' && newValues['/http/auth/type'] !== 'oauth') {
       newValues['/http/auth/oauth'] = undefined;
       delete newValues['/http/auth/oauth/callbackURL'];
