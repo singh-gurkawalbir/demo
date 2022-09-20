@@ -84,7 +84,13 @@ export const updateSourceDataType = (draft, node, oldSourceDataType, newDataType
   const newRowKey = generateUniqueKey();
 
   if (oldSourceDataType === newDataType) return node;
-  newNode.sourceDataType = newDataType;
+  console.log(newNode);
+  if(newNode.extractsArrayHelper) {
+    if (newNode.extractsArrayHelper[0].sourceDataType === newDataType) return node;
+    newNode.extractsArrayHelper[0].sourceDataType = newDataType;
+  }else {
+    newNode.sourceDataType = newDataType;
+  }
   
   return newNode;
 }
@@ -694,7 +700,7 @@ export default (state = {}, action) => {
 
         if (isEmpty(node)) break;
         if(isSource) {
-          nodeSubArray[nodeIndexInSubArray] = updateSourceDataType(draft, node, node.sourceDataType, newDataType)
+          nodeSubArray[nodeIndexInSubArray] = updateSourceDataType(draft, node, node.sourceDataType, newDataType);
         }else {
           nodeSubArray[nodeIndexInSubArray] = updateDataType(draft, node, node.dataType, newDataType);
           delete nodeSubArray[nodeIndexInSubArray].isEmptyRow;

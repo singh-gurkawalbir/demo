@@ -234,6 +234,7 @@ export default function Mapper2ExtractsTypeableSelect({
             dataType={dataType}
             disabled={disabled}
             nodeKey={nodeKey}
+            sourceDataTypes={sourceDataType}
           />
         )) : ''}
       {/* only render tree component if field is focussed and not disabled.

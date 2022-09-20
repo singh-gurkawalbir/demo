@@ -14,6 +14,8 @@ import actions from '../../../../../../../actions';
 import { TextButton } from '../../../../../../Buttons';
 import ArrowPopper from '../../../../../../ArrowPopper';
 import ArrowDownFilledIcon from '../../../../../../icons/ArrowDownFilledIcon';
+import { buildDrawerUrl, drawerPaths } from '../../../../../../../utils/rightDrawer';
+import { useHistory } from 'react-router-dom';
 
 const useStyles = makeStyles(theme => ({
   dataType: {
@@ -112,21 +114,33 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function SourceDataType({
-  dataType,
+  dataType = 'string',
   disabled,
   nodeKey,
   className,
   anchorEl,
   setAnchorEl,
   handleBlur,
+  sourceDataTypes,
 }) {
   const classes = useStyles();
   const dispatch = useDispatch();
+  const history = useHistory();
 
   const open = !!anchorEl;
   const handleMenu = useCallback(
     event => {
+      if (sourceDataTypes && sourceDataTypes.length > 1 ) {
+        dispatch(actions.mapping.v2.updateActiveKey(nodeKey));
+
+        history.push(buildDrawerUrl({
+          path: drawerPaths.MAPPINGS.V2_SETTINGS,
+          baseUrl: history.location.pathname,
+          params: { nodeKey, 'test':'test' },
+        }));
+      } else {
       setAnchorEl(anchorEl ? null : event.currentTarget);
+      }
     },
     [anchorEl, setAnchorEl]
   );
@@ -152,7 +166,7 @@ export default function SourceDataType({
           <TextButton
             onClick={handleMenu}
             disabled={disabled}
-            endIcon={<ArrowDownFilledIcon />}
+            endIcon={sourceDataTypes && sourceDataTypes.length > 1 ? '' : <ArrowDownFilledIcon />}
             className={classes.dataType} >
             {selectedDataTypeLabel}
           </TextButton>
