@@ -2967,11 +2967,12 @@ describe('mapping reducer', () => {
             generate: 'fname',
             children: [
               {
-                key: 'new_key',
-                title: '',
+                key: 'c1',
                 parentKey: 'key1',
+                generate: 'child1',
+                extract: '$.child1',
+                parentExtract: '',
                 dataType: MAPPING_DATA_TYPES.STRING,
-                isEmptyRow: true,
               },
             ],
           }],

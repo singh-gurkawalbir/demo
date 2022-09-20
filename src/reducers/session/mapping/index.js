@@ -634,9 +634,10 @@ export default (state = {}, action) => {
 
         if (nodeIndexInSubArray >= 0) {
           nodeSubArray.splice(nodeIndexInSubArray, 1);
+          const matchingChildren = nodeSubArray?.filter(c => c.parentExtract === node.parentExtract);
 
           // add empty row if all the mappings have been deleted
-          if (isEmpty(nodeSubArray)) {
+          if (isEmpty(nodeSubArray) || isEmpty(matchingChildren)) {
             const emptyRowKey = generateUniqueKey();
 
             nodeSubArray.push({
@@ -820,9 +821,8 @@ export default (state = {}, action) => {
             } else {
               delete node.hardCodedValue;
               if (ARRAY_DATA_TYPES.includes(node.dataType)) {
-                if (!value && (node.dataType === MAPPING_DATA_TYPES.OBJECT || node.dataType === MAPPING_DATA_TYPES.OBJECTARRAY)) {
+                if (!value && node.dataType === MAPPING_DATA_TYPES.OBJECT) {
                   delete node.extractsArrayHelper;
-
                   // delete all children if extract is empty
                   const newRowKey = generateUniqueKey();
 
@@ -833,7 +833,7 @@ export default (state = {}, action) => {
                     dataType: MAPPING_DATA_TYPES.STRING,
                     isEmptyRow: true,
                   }];
-                } else if (value && node.dataType === MAPPING_DATA_TYPES.OBJECTARRAY) {
+                } else if (node.dataType === MAPPING_DATA_TYPES.OBJECTARRAY) {
                   // handle tab view
                   nodeSubArray[nodeIndexInSubArray] = rebuildObjectArrayNode(original(node), value);
                 }

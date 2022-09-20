@@ -21,6 +21,9 @@ const useStyles = makeStyles(theme => ({
     border: '1px solid rgb(0,0,0,0.1)',
     height: 82,
     flexGrow: 1,
+    '& .ace_gutter': {
+      zIndex: 1,
+    },
   },
   editorContainer: {
     width: '100%',
