@@ -192,58 +192,42 @@ export default function ErrorTable({ flowId, resourceId, isResolved, flowJobId }
     if (!isSplitView) {
       return;
     }
-    const currIndex = errorsInCurrPage.findIndex(eachError => eachError.errorId === errorFilter.currentNavItem);
+    const currIndex = errorsInCurrPage.findIndex(eachError => eachError.errorId === errorFilter.activeErrorId);
 
-    if (!errorFilter.currentNavItem && currIndex < 0) {
-      dispatch(actions.patchFilter(FILTER_KEYS.OPEN, {
-        currentNavItem: errorsInCurrPage[0].errorId,
-      }));
-
-      return;
-    }
-    // enter key
-    if (event.keyCode === 13) {
+    // up arrow key
+    if (event.keyCode === 38) {
       event.preventDefault();
+      if (currIndex === 0) {
+        return;
+      }
       showRetryDataChangedConfirmDialog(() => {
         dispatch(actions.patchFilter(FILTER_KEYS.OPEN, {
-          activeErrorId: errorFilter.currentNavItem,
+          activeErrorId: errorsInCurrPage[currIndex - 1]?.errorId,
         }));
       });
 
       return;
     }
-    // up arrow key
-    if (event.keyCode === 38) {
-      const currIndex = errorsInCurrPage.findIndex(eachError => eachError.errorId === errorFilter.currentNavItem);
 
-      if (currIndex === 0) {
-        return;
-      }
-      dispatch(actions.patchFilter(FILTER_KEYS.OPEN, {
-        currentNavItem: errorsInCurrPage[currIndex - 1]?.errorId,
-      }));
-
-      return;
-    }
     // down arrow key
     if (event.keyCode === 40) {
-      const currIndex = errorsInCurrPage.findIndex(eachError => eachError.errorId === errorFilter.currentNavItem);
-
+      event.preventDefault();
       if (currIndex === errorsInCurrPage.length - 1) {
         return;
       }
-      dispatch(actions.patchFilter(FILTER_KEYS.OPEN, {
-        currentNavItem: errorsInCurrPage[currIndex + 1]?.errorId,
-      }));
+      showRetryDataChangedConfirmDialog(() => {
+        dispatch(actions.patchFilter(FILTER_KEYS.OPEN, {
+          activeErrorId: errorsInCurrPage[currIndex + 1]?.errorId,
+        }));
+      });
     }
-  }, [errorFilter.currentNavItem, dispatch, errorsInCurrPage, isSplitView, showRetryDataChangedConfirmDialog]);
+  }, [errorFilter.activeErrorId, dispatch, errorsInCurrPage, isSplitView, showRetryDataChangedConfirmDialog]);
 
   const onRowClick = useCallback(({ rowData, dispatch, event }) => {
     if (event?.target?.type !== 'checkbox' && errorFilter.activeErrorId !== rowData.errorId) {
       showRetryDataChangedConfirmDialog(() => {
         dispatch(actions.patchFilter(FILTER_KEYS.OPEN, {
           activeErrorId: rowData.errorId,
-          currentNavItem: rowData.errorId,
         }));
       });
     }
@@ -255,7 +239,6 @@ export default function ErrorTable({ flowId, resourceId, isResolved, flowJobId }
     if (errorFilter.activeErrorId !== '' && currIndex < 0 && isSplitView) {
       dispatch(actions.patchFilter(FILTER_KEYS.OPEN, {
         activeErrorId: errorsInCurrPage[0]?.errorId,
-        currentNavItem: errorsInCurrPage[0]?.errorId,
       }));
     }
   }, [errorsInCurrPage, errorFilter.activeErrorId, dispatch, isSplitView]);
@@ -265,7 +248,6 @@ export default function ErrorTable({ flowId, resourceId, isResolved, flowJobId }
     if (isSplitView) {
       dispatch(actions.patchFilter(FILTER_KEYS.OPEN, {
         activeErrorId: errorsInCurrPage[0]?.errorId,
-        currentNavItem: errorsInCurrPage[0]?.errorId,
       }));
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps

@@ -67,7 +67,6 @@ export const useHandleNextAndPreviousError = ({
 
       dispatch(actions.patchFilter(filterKey, {
         activeErrorId: newErrorId,
-        currentNavItem: newErrorId,
       }));
 
       typeof handlePrev === 'function' && handlePrev(newErrorId);
@@ -90,7 +89,6 @@ export const useHandleNextAndPreviousError = ({
 
       dispatch(actions.patchFilter(FILTER_KEYS.OPEN, {
         activeErrorId: newErrorId,
-        currentNavItem: newErrorId,
       }));
 
       typeof handleNext === 'function' && handleNext(newErrorId);
