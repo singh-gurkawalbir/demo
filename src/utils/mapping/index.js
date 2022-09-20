@@ -586,7 +586,7 @@ export const getExtractDataType = helper =>{
   if (!helper || !helper.length) return [];
 
   return helper.reduce((combinedSourceDataType, obj) => {
-    if (obj.extract) {
+    if (obj.sourceDataType) {
       combinedSourceDataType.push(obj.sourceDataType);
     }
 
