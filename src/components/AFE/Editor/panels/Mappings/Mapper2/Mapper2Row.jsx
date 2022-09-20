@@ -18,7 +18,7 @@ import Mapper2Generates from './Destination/Mapper2Generates';
 import actions from '../../../../../../actions';
 import useConfirmDialog from '../../../../../ConfirmDialog';
 import { buildDrawerUrl, drawerPaths } from '../../../../../../utils/rightDrawer';
-import { MAPPING_DATA_TYPES, isMapper2HandlebarExpression, getCombinedExtract } from '../../../../../../utils/mapping';
+import { MAPPING_DATA_TYPES, isMapper2HandlebarExpression, getCombinedExtract, getExtractDataType } from '../../../../../../utils/mapping';
 import messageStore from '../../../../../../utils/messageStore';
 import TabRow from './TabbedRow';
 import { getMappingsEditorId } from '../../../../../../utils/editor';
