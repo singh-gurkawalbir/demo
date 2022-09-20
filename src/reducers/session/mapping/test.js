@@ -2965,6 +2965,7 @@ describe('mapping reducer', () => {
             key: 'key1',
             dataType: MAPPING_DATA_TYPES.OBJECTARRAY,
             generate: 'fname',
+            extractsArrayHelper: [],
             children: [
               {
                 key: 'c1',
@@ -3226,7 +3227,7 @@ describe('mapping reducer', () => {
               key: 'key1',
               dataType: MAPPING_DATA_TYPES.OBJECTARRAY,
               generate: 'mothers_side',
-              extractsArrayHelper: [{extract: '$.siblings[*],$.children[*]'}],
+              extractsArrayHelper: [{extract: '$.siblings[*]'}, {extract: '$.children[*]'}],
               activeTab: 0,
               children: [
                 {
@@ -3302,7 +3303,7 @@ describe('mapping reducer', () => {
               key: 'key1',
               dataType: MAPPING_DATA_TYPES.OBJECTARRAY,
               generate: 'mothers_side',
-              extractsArrayHelper: [{extract: '$.siblings[*],$.children[*]'}],
+              extractsArrayHelper: [{extract: '$.siblings[*]'}, {extract: '$.children[*]'}],
               activeTab: 0,
               children: [
                 {
@@ -3339,7 +3340,7 @@ describe('mapping reducer', () => {
           ],
         },
       };
-      const settings = { dataType: MAPPING_DATA_TYPES.OBJECTARRAY, extractsArrayHelper: [{extract: '$.siblings[*],$.children[*]', copySource: 'yes'}] };
+      const settings = { extract: '$.siblings[*],$.children[*]', dataType: MAPPING_DATA_TYPES.OBJECTARRAY, extractsArrayHelper: [{extract: '$.siblings[*]', copySource: 'yes'}, {extract: '$.children[*]', copySource: 'yes'}] };
       const state = reducer(initialState, actions.mapping.v2.patchSettings('key1', settings));
       const expectedState = {
         mapping: {
@@ -3351,8 +3352,7 @@ describe('mapping reducer', () => {
               key: 'key1',
               dataType: MAPPING_DATA_TYPES.OBJECTARRAY,
               generate: 'mothers_side',
-              extractsArrayHelper: [{extract: '$.siblings[*],$.children[*]', copySource: 'yes'}],
-              activeTab: 0,
+              extractsArrayHelper: [{extract: '$.siblings[*]', copySource: 'yes'}, {extract: '$.children[*]', copySource: 'yes'}],
               children: [],
             },
           ],

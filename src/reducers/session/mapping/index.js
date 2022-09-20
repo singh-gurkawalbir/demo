@@ -11,6 +11,7 @@ import {
   ARRAY_DATA_TYPES,
   getAllKeys,
   rebuildObjectArrayNode,
+  getFirstActiveTab,
   insertSiblingsOnDestinationUpdate,
   hideOtherTabRows,
   MAPPING_DATA_TYPES,
@@ -791,7 +792,7 @@ export default (state = {}, action) => {
 
         // add a new empty child node when the parent is left with no children
         // sometimes child array wouldn't be empty (in case of tabbed object arrays), in that case, checking the parentExtract
-        if (dragParentKey && (isEmpty(dragSubArr) || !dragSubArr.some(item => item.parentExtract === dragParentExtract))) {
+        if (dragParentKey && (isEmpty(dragSubArr) || !dragSubArr.some(item => (item.parentExtract || '') === (dragParentExtract || '')))) {
           const newChild = {
             key: generateUniqueKey(),
             title: '',
@@ -883,6 +884,7 @@ export default (state = {}, action) => {
         if (node) {
           const oldDataType = node.dataType;
           const newDataType = value.dataType;
+          const {activeExtract: prevActiveExtract} = getFirstActiveTab(node);
 
           Object.assign(node, value);
 
@@ -932,9 +934,8 @@ export default (state = {}, action) => {
               }
             }
           } else if (newDataType === MAPPING_DATA_TYPES.OBJECTARRAY) {
-            nodeSubArray[nodeIndexInSubArray] = rebuildObjectArrayNode(node, node.extract);
+            nodeSubArray[nodeIndexInSubArray] = rebuildObjectArrayNode(node, node.extract, prevActiveExtract);
             delete nodeSubArray[nodeIndexInSubArray].extract;
-            delete nodeSubArray[nodeIndexInSubArray].default;
             delete nodeSubArray[nodeIndexInSubArray].hardCodedValue;
             if (!value.conditional?.when && nodeSubArray[nodeIndexInSubArray]?.conditional?.when) {
               delete nodeSubArray[nodeIndexInSubArray].conditional.when;

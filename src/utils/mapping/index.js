@@ -628,7 +628,7 @@ export const buildExtractsHelperFromExtract = (existingExtractsArray, newExtract
 
 // for object array multiple extracts view,
 // mark non active tabs children as hidden
-export const hideOtherTabRows = (node, newTabExtract, hidden) => {
+export const hideOtherTabRows = (node, newTabExtract = '', hidden) => {
   const clonedNode = deepClone(node);
 
   if (!clonedNode || !clonedNode.children?.length) return clonedNode;
@@ -662,7 +662,7 @@ export const hideOtherTabRows = (node, newTabExtract, hidden) => {
     }
 
     // else if hidden is undefined, then check on the parent extract
-    if (clonedChild.parentExtract !== newTabExtract) {
+    if ((clonedChild.parentExtract || '') !== newTabExtract) {
       clonedChild.hidden = true;
       clonedChild.className = 'hideRow';
 
@@ -688,7 +688,7 @@ export const hideOtherTabRows = (node, newTabExtract, hidden) => {
   return clonedNode;
 };
 
-const getFirstActiveTab = node => {
+export const getFirstActiveTab = node => {
   if (!node || !node.extractsArrayHelper) return {};
   let activeTab;
   let activeExtract;
@@ -753,8 +753,8 @@ export const constructNodeWithEmptySource = node => {
     // so construct a new empty node with node props
     return getNewNode(defaultProps);
   }
-  const {activeExtract} = getFirstActiveTab(node);
-  const firstExtractChildNodes = children.filter(child => child.parentExtract === activeExtract);
+  const {activeExtract = ''} = getFirstActiveTab(node);
+  const firstExtractChildNodes = children.filter(child => (child.parentExtract || '') === activeExtract);
   const emptyChildren = firstExtractChildNodes.map(child => constructNodeWithEmptySource({...child, parentKey: newKey, parentExtract: ''}));
 
   // Incase of children, replace children with empty children
@@ -763,20 +763,19 @@ export const constructNodeWithEmptySource = node => {
 
 // this util is for object array data type nodes when multiple extracts are given,
 // to reconstruct the whole children array
-export const rebuildObjectArrayNode = (node, extract = '') => {
+export const rebuildObjectArrayNode = (node, extract = '', prevActiveExtract) => {
   if (isEmpty(node) || node.dataType !== MAPPING_DATA_TYPES.OBJECTARRAY) return node;
 
   let clonedNode = {...node};
   const { key: parentKey } = node;
-  const {activeExtract: prevActiveExtract} = getFirstActiveTab(clonedNode);
 
-  const previousFirstExtract = prevActiveExtract;
+  const previousFirstExtract = prevActiveExtract || getFirstActiveTab(clonedNode).activeExtract || '';
   const prevFirstExtractChildren = clonedNode.children?.filter(childNode => {
     if (!previousFirstExtract) {
       return true;
     }
 
-    return childNode.parentExtract === previousFirstExtract;
+    return (childNode.parentExtract || '') === previousFirstExtract;
   }) || [];
 
   clonedNode.extractsArrayHelper = buildExtractsHelperFromExtract(clonedNode.extractsArrayHelper, extract);
@@ -827,6 +826,7 @@ export const rebuildObjectArrayNode = (node, extract = '') => {
       // fetch first source's mapping of previous extract and map those mappings to current extract's first source
       clonedNode.children = prevFirstExtractChildren.map(c => ({ ...c, parentExtract: activeExtract}));
     }
+
     // we take previous child refs and construct new children with empty source
     // we map these children to those left over extracts
     const childNodesWithEmptySources = prevFirstExtractChildren.filter(c => !!c.generate).map(c =>
@@ -858,8 +858,7 @@ export const rebuildObjectArrayNode = (node, extract = '') => {
   }
 
   // update hidden prop and only show first active extract children
-  // if active extract is empty, meaning all children should be shown
-  clonedNode = hideOtherTabRows(clonedNode, activeExtract, activeExtract ? undefined : false);
+  clonedNode = hideOtherTabRows(clonedNode, activeExtract);
 
   if (hasNoExtract || clonedNode.extractsArrayHelper.length === 1 || !anyExtractHasMappings) {
     // remove tab node
@@ -1475,7 +1474,7 @@ export const searchTree = (mappings, key, filterFunc, items) => {
           if (pipeIndex > 0) {
             tabValue = parseInt(childNode.parentExtract.substring(pipeIndex + 1), 10);
           } else {
-            tabValue = node.extractsArrayHelper?.findIndex(obj => childNode.parentExtract === obj.extract);
+            tabValue = node.extractsArrayHelper?.findIndex(obj => (childNode.parentExtract || '') === (obj.extract || ''));
           }
 
           items.tabChange.push(
