@@ -80,6 +80,7 @@ export const useSnackbarStyles = makeStyles({
     marginLeft: 40,
     display: 'grid',
     gridTemplateColumns: 'auto 1fr',
+    wordBreak: 'break-word',
     '& > svg': {
       position: 'fixed',
       left: 16,
