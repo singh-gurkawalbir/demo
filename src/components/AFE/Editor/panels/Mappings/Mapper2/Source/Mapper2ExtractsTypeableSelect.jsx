@@ -225,18 +225,18 @@ export default function Mapper2ExtractsTypeableSelect({
           }}
            />
       </Tooltip >
-      {sourceDataType && sourceDataType.length ? sourceDataType.map(dataType =>
-        (
+     {/* // {sourceDataType && sourceDataType.length ? sourceDataType.map(dataType =>
+       // ( */}
           <SourceDataType
             anchorEl={dataTypeSelector}
             setAnchorEl={selectDataType}
             handleBlur={() => { console.log('blur'); } }
-            dataType={dataType}
+           // dataType={dataType}
             disabled={disabled}
             nodeKey={nodeKey}
-            sourceDataTypes={sourceDataType}
+            sourceDataTypes={sourceDataType && sourceDataType.length ? [...sourceDataType] : undefined}
           />
-        )) : ''}
+       {/* // )) : ''} */}
       {/* only render tree component if field is focussed and not disabled.
       Here we are wrapping tree component with ArrowPopper to correctly handle the
       dropdown placement logic

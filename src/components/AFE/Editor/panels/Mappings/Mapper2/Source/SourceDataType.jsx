@@ -121,7 +121,7 @@ export default function SourceDataType({
   anchorEl,
   setAnchorEl,
   handleBlur,
-  sourceDataTypes,
+  sourceDataTypes = ['string'],
 }) {
   const classes = useStyles();
   const dispatch = useDispatch();
@@ -147,8 +147,11 @@ export default function SourceDataType({
   const handleClose = useCallback(() => {
     setAnchorEl(null);
   }, [setAnchorEl]);
-
-  const selectedDataTypeLabel = DATA_TYPES_DROPDOWN_OPTIONS.find(opt => opt.id === dataType)?.label;
+  const selectedDataTypeLabels = []; 
+  sourceDataTypes.forEach( datatype => {
+    selectedDataTypeLabels.push(DATA_TYPES_DROPDOWN_OPTIONS.find(opt => opt.id === datatype)?.label);
+  })
+ 
 
   const onDataTypeChange = useCallback(newDataType => {
     handleClose();
@@ -159,7 +162,7 @@ export default function SourceDataType({
   return (
     <div className={className}>
       <Tooltip
-        title={disabled || open ? '' : `Data type: ${selectedDataTypeLabel} - Click to change`}
+        title={disabled || open ? '' : `Data type: - Click to change`}
         placement="bottom" >
         {/* this div needs to be added to render the tooltip correctly */}
         <div>
@@ -168,7 +171,7 @@ export default function SourceDataType({
             disabled={disabled}
             endIcon={sourceDataTypes && sourceDataTypes.length > 1 ? '' : <ArrowDownFilledIcon />}
             className={classes.dataType} >
-            {selectedDataTypeLabel}
+            {selectedDataTypeLabels.join()}
           </TextButton>
         </div>
       </Tooltip>

@@ -192,7 +192,7 @@ const Mapper2Row = React.memo(props => {
   const extractValue = getCombinedExtract(extractsArrayHelper).join(',') || extract || (hardCodedValue ? `"${hardCodedValue}"` : undefined);
   const extractDataTypes = getExtractDataType(extractsArrayHelper);
 
-  if (extractDataTypes.length === 0) {
+  if (sourceDataType && extractDataTypes.length === 0) {
     extractDataTypes.push(sourceDataType);
   }
   const isLookup = !!lookupName;
