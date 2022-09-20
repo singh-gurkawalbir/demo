@@ -2,7 +2,7 @@
 import { adaptorTypeMap, isFileAdaptor, isAS2Resource } from '../../../../../../../../utils/resource';
 import httpMappingSettings from './http';
 import ftpMappingSettings from './ftp';
-import { MAPPING_DATA_TYPES, ARRAY_DATA_TYPES } from '../../../../../../../../utils/mapping';
+import { MAPPING_DATA_TYPES, ARRAY_DATA_TYPES, buildExtractsHelperFromExtract } from '../../../../../../../../utils/mapping';
 import { generateUniqueKey } from '../../../../../../../../utils/string';
 
 const getFormattedLookup = (lookup, formVal, settings) => {
@@ -96,7 +96,7 @@ export default {
     settings.description = formVal.description;
     settings.extract = formVal.sourceField;
     settings.sourceDataType = formVal.sourceDataType;
-    settings.extractsArrayHelper = formVal.extractsArrayHelper;
+    settings.extractsArrayHelper = buildExtractsHelperFromExtract(formVal.extractsArrayHelper, formVal.sourceField);
 
     if ('dataType' in formVal) {
       // default data type is always string

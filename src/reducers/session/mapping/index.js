@@ -11,6 +11,7 @@ import {
   ARRAY_DATA_TYPES,
   getAllKeys,
   rebuildObjectArrayNode,
+  getFirstActiveTab,
   insertSiblingsOnDestinationUpdate,
   hideOtherTabRows,
   MAPPING_DATA_TYPES,
@@ -653,9 +654,10 @@ export default (state = {}, action) => {
 
         if (nodeIndexInSubArray >= 0) {
           nodeSubArray.splice(nodeIndexInSubArray, 1);
+          const matchingChildren = nodeSubArray?.filter(c => c.parentExtract === node.parentExtract);
 
           // add empty row if all the mappings have been deleted
-          if (isEmpty(nodeSubArray)) {
+          if (isEmpty(nodeSubArray) || isEmpty(matchingChildren)) {
             const emptyRowKey = generateUniqueKey();
 
             nodeSubArray.push({
@@ -688,6 +690,8 @@ export default (state = {}, action) => {
             parentExtract: node.parentExtract,
             dataType: MAPPING_DATA_TYPES.STRING,
           });
+          // adding the newKey to state so that new row can be focused
+          draft.mapping.newRowKey = newRowKey;
         }
 
         break;
@@ -809,7 +813,7 @@ export default (state = {}, action) => {
 
         // add a new empty child node when the parent is left with no children
         // sometimes child array wouldn't be empty (in case of tabbed object arrays), in that case, checking the parentExtract
-        if (dragParentKey && (isEmpty(dragSubArr) || !dragSubArr.some(item => item.parentExtract === dragParentExtract))) {
+        if (dragParentKey && (isEmpty(dragSubArr) || !dragSubArr.some(item => (item.parentExtract || '') === (dragParentExtract || '')))) {
           const newChild = {
             key: generateUniqueKey(),
             title: '',
@@ -839,9 +843,8 @@ export default (state = {}, action) => {
             } else {
               delete node.hardCodedValue;
               if (ARRAY_DATA_TYPES.includes(node.dataType)) {
-                if (!value && (node.dataType === MAPPING_DATA_TYPES.OBJECT || node.dataType === MAPPING_DATA_TYPES.OBJECTARRAY)) {
+                if (!value && node.dataType === MAPPING_DATA_TYPES.OBJECT) {
                   delete node.extractsArrayHelper;
-
                   // delete all children if extract is empty
                   const newRowKey = generateUniqueKey();
 
@@ -852,9 +855,9 @@ export default (state = {}, action) => {
                     dataType: MAPPING_DATA_TYPES.STRING,
                     isEmptyRow: true,
                   }];
-                } else if (value && node.dataType === MAPPING_DATA_TYPES.OBJECTARRAY) {
+                } else if (node.dataType === MAPPING_DATA_TYPES.OBJECTARRAY) {
                   // handle tab view
-                  nodeSubArray[nodeIndexInSubArray] = rebuildObjectArrayNode(original(node), value);
+                  nodeSubArray[nodeIndexInSubArray] = rebuildObjectArrayNode(node, value);
                 }
 
                 // array data types do not have direct 'extract' prop
@@ -902,6 +905,7 @@ export default (state = {}, action) => {
         if (node) {
           const oldDataType = node.dataType;
           const newDataType = value.dataType;
+          const {activeExtract: prevActiveExtract} = getFirstActiveTab(node);
 
           Object.assign(node, value);
 
@@ -951,48 +955,11 @@ export default (state = {}, action) => {
               }
             }
           } else if (newDataType === MAPPING_DATA_TYPES.OBJECTARRAY) {
-            if (node.extractsArrayHelper?.length) {
-              let anyExtractHasMappings = false;
-
-              node.extractsArrayHelper.forEach(extractConfig => {
-                if (extractConfig.copySource === 'yes') {
-                  // delete all children for this extract
-                  node.children = node.children?.filter(c => c.isTabNode || c.parentExtract !== extractConfig.extract);
-                } else {
-                  // copySource is no
-                  anyExtractHasMappings = true;
-                  // expand parent node
-                  expandRow(draft, node.key);
-
-                  delete node.extract;
-                  const matchingChildren = node.children?.filter(c => c.parentExtract === extractConfig.extract);
-
-                  if (isEmpty(matchingChildren)) {
-                    node.children.push({
-                      key: generateUniqueKey(),
-                      title: '',
-                      parentKey: node.key,
-                      parentExtract: extractConfig.extract,
-                      dataType: MAPPING_DATA_TYPES.STRING,
-                      isEmptyRow: true,
-                    });
-                  }
-                }
-              });
-
-              // if no extract has children mappings, remove the complete children from main node
-              if (!anyExtractHasMappings) {
-                node.children = [];
-              }
-            } else {
-              node.children = [{
-                key: generateUniqueKey(),
-                title: '',
-                parentKey: node.key,
-                parentExtract: '',
-                dataType: MAPPING_DATA_TYPES.STRING,
-                isEmptyRow: true,
-              }];
+            nodeSubArray[nodeIndexInSubArray] = rebuildObjectArrayNode(node, node.extract, prevActiveExtract);
+            delete nodeSubArray[nodeIndexInSubArray].extract;
+            delete nodeSubArray[nodeIndexInSubArray].hardCodedValue;
+            if (!value.conditional?.when && nodeSubArray[nodeIndexInSubArray]?.conditional?.when) {
+              delete nodeSubArray[nodeIndexInSubArray].conditional.when;
             }
           }
         }
@@ -1158,10 +1125,10 @@ export default (state = {}, action) => {
         break;
       }
 
-      case actionTypes.MAPPING.V2.TOGGLE_SEARCH: {
+      case actionTypes.MAPPING.V2.DELETE_NEW_ROW_KEY: {
         if (!draft.mapping) break;
 
-        draft.mapping.isSearchVisible = !draft.mapping.isSearchVisible;
+        delete draft.mapping.newRowKey;
         break;
       }
       default:
@@ -1226,6 +1193,14 @@ selectors.searchKey = state => {
   }
 
   return state.mapping.searchKey;
+};
+
+selectors.newRowKey = state => {
+  if (!state || !state.mapping) {
+    return;
+  }
+
+  return state.mapping.newRowKey;
 };
 
 selectors.mappingChanged = state => {

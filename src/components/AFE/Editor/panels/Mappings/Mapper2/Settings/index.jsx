@@ -12,7 +12,7 @@ import DrawerFooter from '../../../../../../drawer/Right/DrawerFooter';
 import SaveAndCloseResourceForm from '../../../../../../SaveAndCloseButtonGroup/SaveAndCloseResourceForm';
 import { FORM_SAVE_STATUS } from '../../../../../../../constants';
 import actions from '../../../../../../../actions';
-import { findNodeInTree } from '../../../../../../../utils/mapping';
+import { findNodeInTree, MAPPING_DATA_TYPES } from '../../../../../../../utils/mapping';
 import ApplicationMappingSettings from './application';
 
 const emptyObject = {};
@@ -64,9 +64,13 @@ function MappingSettingsV2({
   const patchSettings = useCallback(settings => {
     const {extract, ...rest} = settings || {};
 
-    dispatch(actions.mapping.v2.patchSettings(nodeKey, rest));
-    if (!('hardCodedValue' in rest)) {
-      dispatch(actions.mapping.v2.patchField('extract', nodeKey, extract || ''));
+    if (rest.dataType === MAPPING_DATA_TYPES.OBJECTARRAY) {
+      dispatch(actions.mapping.v2.patchSettings(nodeKey, settings));
+    } else {
+      dispatch(actions.mapping.v2.patchSettings(nodeKey, rest));
+      if (!('hardCodedValue' in rest)) {
+        dispatch(actions.mapping.v2.patchField('extract', nodeKey, extract || ''));
+      }
     }
   }, [dispatch, nodeKey]);
 

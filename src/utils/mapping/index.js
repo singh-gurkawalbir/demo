@@ -448,6 +448,8 @@ export function wrapTextForSpecialChars(extract, flowSampleData) {
 }
 
 // #region Mapper2 utils
+export const isMapper2HandlebarExpression = (extractValue, isHardCodedValue) => handlebarRegex.test(extractValue) || (extractValue && !isHardCodedValue && !extractValue?.startsWith('$'));
+
 export const isCsvOrXlsxResourceForMapper2 = resource => {
   if (!resource) return false;
 
@@ -609,25 +611,27 @@ export const buildExtractsHelperFromExtract = (existingExtractsArray, newExtract
     }, []);
   }
 
-  const copiedSettings = {};
+  // const copiedSettings = {};
   // remove extracts from existingExtractsArray if deleted by the user
-  const modifiedHelper = existingExtractsArray.reduce((acc, e, index) => {
+  const modifiedHelper = existingExtractsArray.filter(e => {
     const matchedIndex = combinedExtract.findIndex((c, i) => e.extract === getUniqueExtractId(c, i));
 
     if (matchedIndex === -1) {
-      acc.splice(index, 1);
-      copiedSettings[index] = e; // copy the existing settings so if a new source is added at same index, we copy same settings
+      // copiedSettings[index] = e; // copy the existing settings so if a new source is added at same index, we copy same settings
+
+      return false;
     }
 
-    return acc;
-  }, existingExtractsArray);
+    return true;
+  });
 
   // now add missing extracts in existingExtractsArray which are newly added by the user
   return combinedExtract.reduce((acc, e, i) => {
     const {extract} = findMatchingExtract(acc, getUniqueExtractId(e, i));
 
     if (!extract) {
-      acc.splice(i, 0, {...copiedSettings[i], extract: getUniqueExtractId(e, i)});
+      // acc.splice(i, 0, {...copiedSettings[i], extract: getUniqueExtractId(e, i)});
+      acc.splice(i, 0, {extract: getUniqueExtractId(e, i)});
     }
 
     return acc;
@@ -636,7 +640,7 @@ export const buildExtractsHelperFromExtract = (existingExtractsArray, newExtract
 
 // for object array multiple extracts view,
 // mark non active tabs children as hidden
-export const hideOtherTabRows = (node, newTabExtract, hidden) => {
+export const hideOtherTabRows = (node, newTabExtract = '', hidden) => {
   const clonedNode = deepClone(node);
 
   if (!clonedNode || !clonedNode.children?.length) return clonedNode;
@@ -670,7 +674,7 @@ export const hideOtherTabRows = (node, newTabExtract, hidden) => {
     }
 
     // else if hidden is undefined, then check on the parent extract
-    if (clonedChild.parentExtract !== newTabExtract) {
+    if ((clonedChild.parentExtract || '') !== newTabExtract) {
       clonedChild.hidden = true;
       clonedChild.className = 'hideRow';
 
@@ -696,7 +700,7 @@ export const hideOtherTabRows = (node, newTabExtract, hidden) => {
   return clonedNode;
 };
 
-const getFirstActiveTab = node => {
+export const getFirstActiveTab = node => {
   if (!node || !node.extractsArrayHelper) return {};
   let activeTab;
   let activeExtract;
@@ -714,132 +718,161 @@ const getFirstActiveTab = node => {
   return {activeTab, activeExtract};
 };
 
-const constructEmptyMappingWithGenerates = (rows, props = {}, parentKey, node) => {
-  const { extractsArrayHelper: parentExtractsArrayHelper, ...defaultProps } = props;
+const getNewNode = (defaultProps = {}) => {
+  const { key, generate, jsonPath, dataType = MAPPING_DATA_TYPES.STRING, parentKey, parentExtract, children: defaultChildren } = defaultProps;
+  const newKey = key || generateUniqueKey();
+  const needEmptyChildNode = [MAPPING_DATA_TYPES.OBJECTARRAY, MAPPING_DATA_TYPES.OBJECT].includes(defaultProps.dataType);
+  const newChildNode = {
+    key: generateUniqueKey(),
+    title: '',
+    parentKey: newKey,
+    parentExtract: '',
+    dataType: MAPPING_DATA_TYPES.STRING,
+    hidden: true,
+    className: 'hideRow',
+  };
 
-  let nodes = rows || [];
+  let childNodes = defaultChildren || [newChildNode]; // if the children are not passed, adds default empty child node
 
-  if (parentExtractsArrayHelper?.length) {
-    const firstParentExtract = getFirstActiveTab(node).activeExtract;
-
-    nodes = nodes.filter(c => c.parentExtract === firstParentExtract);
+  if (childNodes.length > 1) {
+    // Strips off any empty nodes present in the child nodes when there are multiple children
+    childNodes = childNodes.filter(childNode => !childNode.isEmptyRow);
   }
+  const node = {
+    key: newKey,
+    title: '',
+    generate,
+    jsonPath,
+    dataType,
+    ...(needEmptyChildNode ? { children: childNodes } : {}),
+    parentKey,
+    parentExtract,
+    className: 'hideRow',
+    hidden: true,
+  };
 
-  return nodes.map(row => {
-    const { children, generate, dataType, jsonPath, extractsArrayHelper } = row;
-    let updatedChildren;
-    const key = generateUniqueKey();
+  return node;
+};
 
-    if (children?.length) {
-      // todo: shall we have a strict check of object/objectarray datatypes to pass through the below function?
-      updatedChildren = constructEmptyMappingWithGenerates(children, { extractsArrayHelper }, key, row);
-    }
+export const constructNodeWithEmptySource = node => {
+  if (!node) return getNewNode();
+  const { children, dataType, jsonPath, generate, parentKey, parentExtract } = node;
+  const defaultProps = { generate, jsonPath, dataType, parentKey, parentExtract };
+  const newKey = generateUniqueKey();
 
-    const additionalProps = {
-      ...(parentKey ? { parentExtract: ''} : { }), // todo: check why we need this
-      ...(updatedChildren ? { children: updatedChildren} : {}), // updates children if present with new key and generates
-    };
+  if (!children) {
+    // node is a non object/objectarray type
+    // so construct a new empty node with node props
+    return getNewNode(defaultProps);
+  }
+  const {activeExtract = ''} = getFirstActiveTab(node);
+  const firstExtractChildNodes = children.filter(child => (child.parentExtract || '') === activeExtract);
+  const emptyChildren = firstExtractChildNodes.map(child => constructNodeWithEmptySource({...child, parentKey: newKey, parentExtract: ''}));
 
-    return {
-      key,
-      title: '',
-      generate,
-      jsonPath,
-      dataType,
-      parentKey, // if the row has parent key, then update with new parent key
-      ...defaultProps,
-      ...additionalProps,
-    };
-  });
+  // Incase of children, replace children with empty children
+  return getNewNode({...defaultProps, children: emptyChildren, key: newKey });
 };
 
 // this util is for object array data type nodes when multiple extracts are given,
 // to reconstruct the whole children array
-export const rebuildObjectArrayNode = (node, extract = '') => {
-  // if no extract, return
-  if (isEmpty(node) || !extract) return node;
-
-  if (node.dataType !== MAPPING_DATA_TYPES.OBJECTARRAY) return node;
+export const rebuildObjectArrayNode = (node, extract = '', prevActiveExtract) => {
+  if (isEmpty(node) || node.dataType !== MAPPING_DATA_TYPES.OBJECTARRAY) return node;
 
   let clonedNode = {...node};
+  const { key: parentKey } = node;
+
+  const previousFirstExtract = prevActiveExtract || getFirstActiveTab(clonedNode).activeExtract || '';
+  const prevFirstExtractChildren = clonedNode.children?.filter(childNode => {
+    if (!previousFirstExtract) {
+      return true;
+    }
+
+    return (childNode.parentExtract || '') === previousFirstExtract;
+  }) || [];
 
   clonedNode.extractsArrayHelper = buildExtractsHelperFromExtract(clonedNode.extractsArrayHelper, extract);
+  const hasNoExtract = isEmpty(clonedNode.extractsArrayHelper);
+
   const {activeTab, activeExtract} = getFirstActiveTab(clonedNode);
 
+  // set active tab
   clonedNode.activeTab = activeTab;
-
-  // if the children was not linked before, then link it to first source active source
-  clonedNode.children = clonedNode.children?.map(child => {
-    const clonedChild = {...child};
-    const {parentExtract} = clonedChild;
-
-    if (clonedChild.isTabNode) {
-      return child;
-    }
-    if (!parentExtract) {
-      clonedChild.parentExtract = activeExtract;
-    }
-
-    return clonedChild;
-  });
-
-  // update hidden prop and only show first extract children
-  clonedNode = hideOtherTabRows(clonedNode, activeExtract);
-
-  const {key: parentKey} = clonedNode;
-
-  const foundExtractsUniqueId = [];
 
   if (!clonedNode.children) {
     clonedNode.children = [];
   }
-
-  clonedNode.children = clonedNode.children.filter(child => {
-    const {parentExtract} = child;
-
-    if (child.isTabNode) {
-      return true;
-    }
-
-    const extractConfig = findMatchingExtract(clonedNode.extractsArrayHelper, parentExtract);
-
-    // only keep the children which have matching parentExtract
-    if (extractConfig.extract) {
-      foundExtractsUniqueId.push(parentExtract);
-
-      return true;
-    }
-
-    return false;
-  });
-
-  const firstTabRows = clonedNode.children.filter(c => c.parentExtract === activeExtract);
   let anyExtractHasMappings = false;
 
-  // find left over extracts so that new children rows can be pushed
-  clonedNode.extractsArrayHelper.forEach((extractConfig, i) => {
-    const {extract, copySource} = extractConfig;
+  // no extracts now with at least 1 source children before
+  if (hasNoExtract) {
+    if (previousFirstExtract) {
+      // we have children previously, move those mappings under empty parentExtract
+      clonedNode.children = prevFirstExtractChildren.map(c => ({ ...c, parentExtract: ''}));
+    }
+  } else {
+    // multiple extracts
+    const foundExtractsUniqueId = [];
 
-    if (!extract) return;
-    if (copySource !== 'yes') { anyExtractHasMappings = true; }
+    // so all matched extract children are copied to new children list
+    clonedNode.children = clonedNode.children.filter(child => {
+      const {parentExtract} = child;
 
-    if (foundExtractsUniqueId.includes(extract) || copySource === 'yes') {
-      return;
+      if (child.isTabNode) {
+        return true;
+      }
+
+      const extractConfig = findMatchingExtract(clonedNode.extractsArrayHelper, parentExtract);
+
+      // only keep the children which have matching parentExtract and copy source setting as no
+      if (extractConfig.extract && extractConfig.copySource !== 'yes') {
+        foundExtractsUniqueId.push(parentExtract);
+
+        return true;
+      }
+
+      return false;
+    });
+
+    if (!foundExtractsUniqueId.length && prevFirstExtractChildren.length && activeExtract) {
+      // if all the extracts are new (and there is activeExtract present, meaning it has copy source as no), then map prev first active source's child mapping to current first active source's child
+      // fetch first source's mapping of previous extract and map those mappings to current extract's first source
+      clonedNode.children = prevFirstExtractChildren.map(c => ({ ...c, parentExtract: activeExtract}));
     }
 
-    const hidden = i > activeTab;
-    const defaultProps = {
-      parentKey,
-      parentExtract: extract,
-      className: hidden && 'hideRow',
-      hidden, // hiding the new rows if those are not in first active tab
-    };
-    const generatesMapping = constructEmptyMappingWithGenerates(firstTabRows, defaultProps);
+    // we take previous child refs and construct new children with empty source
+    // we map these children to those left over extracts
+    const childNodesWithEmptySources = prevFirstExtractChildren.filter(c => !!c.generate).map(c =>
+      // we only fetch nodes with generates filled. empty generate mappings are ignored
+      constructNodeWithEmptySource(c)
+    );
 
-    clonedNode.children = [...clonedNode.children, ...generatesMapping];
-  });
+    // iterate this for all extracts and map children for the left over extracts
+    clonedNode.extractsArrayHelper.forEach((extractConfig, i) => {
+      const {extract, copySource} = extractConfig;
 
-  if (clonedNode.extractsArrayHelper.length === 1 || !anyExtractHasMappings) {
+      if (!extract) return;
+      if (copySource !== 'yes') { anyExtractHasMappings = true; }
+
+      if (foundExtractsUniqueId.includes(extract) || copySource === 'yes') {
+        return;
+      }
+      // we mapped for the first extract above with prevFirstExtractChildren, so ignore first extract
+      if (!foundExtractsUniqueId.length && prevFirstExtractChildren.length && i === activeTab) return;
+
+      let childrenForCurrentExtract = [getNewNode({ parentKey, parentExtract: extract, jsonPath: node.jsonPath })];
+
+      if (childNodesWithEmptySources.length) {
+        // if the child refs are present from prev extracts, map them with this extract
+        childrenForCurrentExtract = childNodesWithEmptySources.map(c => ({ ...c, parentExtract: extract, key: generateUniqueKey()}));
+      }
+      clonedNode.children = [...clonedNode.children, ...childrenForCurrentExtract];
+    });
+  }
+
+  // update hidden prop and only show first active extract children
+  clonedNode = hideOtherTabRows(clonedNode, activeExtract);
+
+  if (hasNoExtract || clonedNode.extractsArrayHelper.length === 1 || !anyExtractHasMappings) {
     // remove tab node
     if (clonedNode.children[0]?.isTabNode) {
       clonedNode.children.shift();
@@ -1453,7 +1486,7 @@ export const searchTree = (mappings, key, filterFunc, items) => {
           if (pipeIndex > 0) {
             tabValue = parseInt(childNode.parentExtract.substring(pipeIndex + 1), 10);
           } else {
-            tabValue = node.extractsArrayHelper?.findIndex(obj => childNode.parentExtract === obj.extract);
+            tabValue = node.extractsArrayHelper?.findIndex(obj => (childNode.parentExtract || '') === (obj.extract || ''));
           }
 
           items.tabChange.push(
@@ -1474,61 +1507,6 @@ export const searchTree = (mappings, key, filterFunc, items) => {
 
   // eslint-disable-next-line no-param-reassign
   items.firstIndex = firstIndex;    // setting the firstIndex before returning
-};
-
-const getNewNode = (defaultProps = {}) => {
-  const { key, generate, jsonPath, dataType = MAPPING_DATA_TYPES.STRING, parentKey, parentExtract, children: defaultChildren } = defaultProps;
-  const newKey = key || generateUniqueKey();
-  const needEmptyChildNode = [MAPPING_DATA_TYPES.OBJECTARRAY, MAPPING_DATA_TYPES.OBJECT].includes(defaultProps.dataType);
-  const newChildNode = {
-    key: generateUniqueKey(),
-    title: '',
-    parentKey: newKey,
-    parentExtract: '',
-    dataType: MAPPING_DATA_TYPES.STRING,
-    hidden: true,
-    className: 'hideRow',
-  };
-
-  let childNodes = defaultChildren || [newChildNode]; // if the children are not passed, adds default empty child node
-
-  if (childNodes.length > 1) {
-    // Strips off any empty nodes present in the child nodes when there are multiple children
-    childNodes = childNodes.filter(childNode => !childNode.isEmptyRow);
-  }
-  const node = {
-    key: newKey,
-    title: '',
-    generate,
-    jsonPath,
-    dataType,
-    ...(needEmptyChildNode ? { children: childNodes } : {}),
-    parentKey,
-    parentExtract,
-    className: 'hideRow',
-    hidden: true,
-  };
-
-  return node;
-};
-
-export const constructNodeWithEmptySource = node => {
-  if (!node) return getNewNode();
-  const { children, dataType, jsonPath, generate, parentKey, parentExtract } = node;
-  const defaultProps = { generate, jsonPath, dataType, parentKey, parentExtract };
-  const newKey = generateUniqueKey();
-
-  if (!children) {
-    // node is a non object/objectarray type
-    // so construct a new empty node with node props
-    return getNewNode(defaultProps);
-  }
-  const firstExtract = getFirstActiveTab(node).activeExtract;
-  const firstExtractChildNodes = children.filter(child => child.parentExtract === firstExtract);
-  const emptyChildren = firstExtractChildNodes.map(child => constructNodeWithEmptySource({...child, parentKey: newKey, parentExtract: ''}));
-
-  // Incase of children, replace children with empty children
-  return getNewNode({...defaultProps, children: emptyChildren, key: newKey });
 };
 
 const getNewChildrenToAdd = (parentNode, destinationNode) => {
@@ -1595,7 +1573,7 @@ export const findAllParentNodesForNode = (treeData, nodeKey, output = []) => {
 
 // Fetches all possible parent nodes that contain the same pattern of mapping as given in the order of matchingNodes
 // Ex: For a node with jsonPath - a[*].b[*].c.d, this fn is called with fn([b,c], [a]) as 'a' is the first parentNode and b,c are the pattern nodes to reach node 'd'
-export const findAllPossibleDestinationMatchingLeafNodes = (matchingNodes = [], parentNodes = []) => {
+export const findAllPossibleDestinationMatchingParentNodes = (matchingNodes = [], parentNodes = []) => {
   // when there are no more nodes to match or no leaf nodes to go through return the leaf nodes
   if (!matchingNodes.length || !parentNodes.length) return parentNodes;
 
@@ -1612,7 +1590,7 @@ export const findAllPossibleDestinationMatchingLeafNodes = (matchingNodes = [], 
   });
 
   // recursively pass the above list with the next available node from matchingNodes to match
-  return findAllPossibleDestinationMatchingLeafNodes(matchingNodes.slice(1), nextLevelParentNodes);
+  return findAllPossibleDestinationMatchingParentNodes(matchingNodes.slice(1), nextLevelParentNodes);
 };
 
 /**
@@ -1634,7 +1612,7 @@ export const insertSiblingsOnDestinationUpdate = (treeData, newNode) => {
   // fetches the first parent from top which is Object array, as we need to process nodes which are children of an object array node
   const [topNode, ...restOfParentNodes] = parentNodes.slice(objArrayParentNodeIndex);
 
-  const matchingLeafNodes = findAllPossibleDestinationMatchingLeafNodes(restOfParentNodes, [topNode]);
+  const matchingLeafNodes = findAllPossibleDestinationMatchingParentNodes(restOfParentNodes, [topNode]);
 
   matchingLeafNodes.forEach(parentNode => {
     const newChildren = getNewChildrenToAdd(parentNode, newNode);
@@ -2133,7 +2111,7 @@ const recursivelyValidateV2Mappings = ({
       // handlebars not supported
       const splitExtracts = extract?.split(',') || getCombinedExtract(extractsArrayHelper) || [];
       const invalidSource = splitExtracts.filter(e => {
-        if (handlebarRegex.test(e)) return true;
+        if (isMapper2HandlebarExpression(e, hardCodedValue)) return true;
 
         return false;
       });
@@ -2407,7 +2385,6 @@ export default {
 
     return 'standard';
   },
-
   getHardCodedActionValue: value => {
     if ('hardCodedValue' in value) {
       switch (value.hardCodedValue) {
@@ -3354,6 +3331,19 @@ export default {
   },
 
   // #region default Mapper2 utils
+  getV2FieldMappingType: value => {
+    if (value.lookupName) {
+      return 'lookup';
+    }
+    if ('hardCodedValue' in value) {
+      return 'hardCoded';
+    }
+    if (isMapper2HandlebarExpression(value.extract, value.hardCodedValue)) {
+      return 'multifield';
+    }
+
+    return 'standard';
+  },
   getV2DefaultActionValue: value => {
     if (value.conditional?.when === 'extract_not_empty') {
       return 'discardIfEmpty';
@@ -3393,7 +3383,7 @@ export default {
     }
   },
   getV2DefaultExpression: value => {
-    if (value.extract?.indexOf('{{') !== -1) {
+    if (isMapper2HandlebarExpression(value.extract, value.hardCodedValue)) {
       return value.extract;
     }
   },

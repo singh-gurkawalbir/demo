@@ -1830,6 +1830,7 @@ describe('mapping reducer', () => {
           importId: 'imp-123',
           flowId: 'flow-123',
           version: 2,
+          newRowKey: 'new_key',
           v2TreeData: [{
             key: 'key1',
             dataType: MAPPING_DATA_TYPES.STRING,
@@ -2964,13 +2965,15 @@ describe('mapping reducer', () => {
             key: 'key1',
             dataType: MAPPING_DATA_TYPES.OBJECTARRAY,
             generate: 'fname',
+            extractsArrayHelper: [],
             children: [
               {
-                key: 'new_key',
-                title: '',
+                key: 'c1',
                 parentKey: 'key1',
+                generate: 'child1',
+                extract: '$.child1',
+                parentExtract: '',
                 dataType: MAPPING_DATA_TYPES.STRING,
-                isEmptyRow: true,
               },
             ],
           }],
@@ -3224,7 +3227,7 @@ describe('mapping reducer', () => {
               key: 'key1',
               dataType: MAPPING_DATA_TYPES.OBJECTARRAY,
               generate: 'mothers_side',
-              extractsArrayHelper: [{extract: '$.siblings[*],$.children[*]'}],
+              extractsArrayHelper: [{extract: '$.siblings[*]'}, {extract: '$.children[*]'}],
               activeTab: 0,
               children: [
                 {
@@ -3300,7 +3303,7 @@ describe('mapping reducer', () => {
               key: 'key1',
               dataType: MAPPING_DATA_TYPES.OBJECTARRAY,
               generate: 'mothers_side',
-              extractsArrayHelper: [{extract: '$.siblings[*],$.children[*]'}],
+              extractsArrayHelper: [{extract: '$.siblings[*]'}, {extract: '$.children[*]'}],
               activeTab: 0,
               children: [
                 {
@@ -3337,7 +3340,7 @@ describe('mapping reducer', () => {
           ],
         },
       };
-      const settings = { dataType: MAPPING_DATA_TYPES.OBJECTARRAY, extractsArrayHelper: [{extract: '$.siblings[*],$.children[*]', copySource: 'yes'}] };
+      const settings = { extract: '$.siblings[*],$.children[*]', dataType: MAPPING_DATA_TYPES.OBJECTARRAY, extractsArrayHelper: [{extract: '$.siblings[*]', copySource: 'yes'}, {extract: '$.children[*]', copySource: 'yes'}] };
       const state = reducer(initialState, actions.mapping.v2.patchSettings('key1', settings));
       const expectedState = {
         mapping: {
@@ -3349,8 +3352,7 @@ describe('mapping reducer', () => {
               key: 'key1',
               dataType: MAPPING_DATA_TYPES.OBJECTARRAY,
               generate: 'mothers_side',
-              extractsArrayHelper: [{extract: '$.siblings[*],$.children[*]', copySource: 'yes'}],
-              activeTab: 0,
+              extractsArrayHelper: [{extract: '$.siblings[*]', copySource: 'yes'}, {extract: '$.children[*]', copySource: 'yes'}],
               children: [],
             },
           ],
@@ -4398,6 +4400,40 @@ describe('mapping reducer', () => {
       };
 
       expect(state).toEqual(newState);
+    });
+  });
+  describe('MAPPING.V2.DELETE_NEW_ROW_KEY action', () => {
+    test('delete the newRowKey from mappings', () => {
+      const initialState = {
+        mapping: {
+          importId: 'imp-123',
+          flowId: 'flow-123',
+          version: 2,
+          newRowKey: 'key1',
+          v2TreeData: [{
+            key: 'key1',
+            dataType: MAPPING_DATA_TYPES.STRING,
+            generate: 'fname',
+            extract: '$.fname',
+          }],
+        },
+      };
+      const state = reducer(initialState, actions.mapping.v2.deleteNewRowKey());
+      const expectedState = {
+        mapping: {
+          importId: 'imp-123',
+          flowId: 'flow-123',
+          version: 2,
+          v2TreeData: [{
+            key: 'key1',
+            dataType: MAPPING_DATA_TYPES.STRING,
+            generate: 'fname',
+            extract: '$.fname',
+          }],
+        },
+      };
+
+      expect(state).toEqual(expectedState);
     });
   });
 
