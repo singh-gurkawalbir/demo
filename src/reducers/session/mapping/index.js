@@ -835,7 +835,7 @@ export default (state = {}, action) => {
                   }];
                 } else if (node.dataType === MAPPING_DATA_TYPES.OBJECTARRAY) {
                   // handle tab view
-                  nodeSubArray[nodeIndexInSubArray] = rebuildObjectArrayNode(original(node), value);
+                  nodeSubArray[nodeIndexInSubArray] = rebuildObjectArrayNode(node, value);
                 }
 
                 // array data types do not have direct 'extract' prop
@@ -932,48 +932,12 @@ export default (state = {}, action) => {
               }
             }
           } else if (newDataType === MAPPING_DATA_TYPES.OBJECTARRAY) {
-            if (node.extractsArrayHelper?.length) {
-              let anyExtractHasMappings = false;
-
-              node.extractsArrayHelper.forEach(extractConfig => {
-                if (extractConfig.copySource === 'yes') {
-                  // delete all children for this extract
-                  node.children = node.children?.filter(c => c.isTabNode || c.parentExtract !== extractConfig.extract);
-                } else {
-                  // copySource is no
-                  anyExtractHasMappings = true;
-                  // expand parent node
-                  expandRow(draft, node.key);
-
-                  delete node.extract;
-                  const matchingChildren = node.children?.filter(c => c.parentExtract === extractConfig.extract);
-
-                  if (isEmpty(matchingChildren)) {
-                    node.children.push({
-                      key: generateUniqueKey(),
-                      title: '',
-                      parentKey: node.key,
-                      parentExtract: extractConfig.extract,
-                      dataType: MAPPING_DATA_TYPES.STRING,
-                      isEmptyRow: true,
-                    });
-                  }
-                }
-              });
-
-              // if no extract has children mappings, remove the complete children from main node
-              if (!anyExtractHasMappings) {
-                node.children = [];
-              }
-            } else {
-              node.children = [{
-                key: generateUniqueKey(),
-                title: '',
-                parentKey: node.key,
-                parentExtract: '',
-                dataType: MAPPING_DATA_TYPES.STRING,
-                isEmptyRow: true,
-              }];
+            nodeSubArray[nodeIndexInSubArray] = rebuildObjectArrayNode(node, node.extract);
+            delete nodeSubArray[nodeIndexInSubArray].extract;
+            delete nodeSubArray[nodeIndexInSubArray].default;
+            delete nodeSubArray[nodeIndexInSubArray].hardCodedValue;
+            if (!value.conditional?.when && nodeSubArray[nodeIndexInSubArray]?.conditional?.when) {
+              delete nodeSubArray[nodeIndexInSubArray].conditional.when;
             }
           }
         }

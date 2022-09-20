@@ -13,7 +13,7 @@ const messages = {
   MAPPER1_DUP_GENERATE: 'Mapper 1.0: Duplicate mappings exist for destination field(s): {{{fields}}}',
   MAPPER1_MISSING_GENERATE: 'Mapper 1.0: One or more destination field values not entered.',
   MAPPER1_MISSING_EXTRACT: 'Mapper 1.0: Source field value not entered for destination field(s): {{{fields}}}',
-  MAPPER2_DUP_GENERATE: 'Mapper 2.0: Duplicate mappings exist for destination field(s): {{{fields}}}',
+  MAPPER2_DUP_GENERATE: 'Mapper 2.0: Duplicate destination field(s): {{{fields}}}',
   MAPPER2_MISSING_GENERATE: 'Mapper 2.0: One or more destination field values not entered.',
   MAPPER2_MISSING_EXTRACT: 'Mapper 2.0: Source field value not entered for destination field(s): {{{fields}}}',
   MAPPER2_EXPRESSION_NOT_SUPPORTED: 'Mapper 2.0: You could only use valid JSONPath expression or hard-coded value for destination field(s): {{{fields}}}',

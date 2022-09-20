@@ -599,25 +599,27 @@ export const buildExtractsHelperFromExtract = (existingExtractsArray, newExtract
     }, []);
   }
 
-  const copiedSettings = {};
+  // const copiedSettings = {};
   // remove extracts from existingExtractsArray if deleted by the user
-  const modifiedHelper = existingExtractsArray.reduce((acc, e, index) => {
+  const modifiedHelper = existingExtractsArray.filter(e => {
     const matchedIndex = combinedExtract.findIndex((c, i) => e.extract === getUniqueExtractId(c, i));
 
     if (matchedIndex === -1) {
-      acc.splice(index, 1);
-      copiedSettings[index] = e; // copy the existing settings so if a new source is added at same index, we copy same settings
+      // copiedSettings[index] = e; // copy the existing settings so if a new source is added at same index, we copy same settings
+
+      return false;
     }
 
-    return acc;
-  }, existingExtractsArray);
+    return true;
+  });
 
   // now add missing extracts in existingExtractsArray which are newly added by the user
   return combinedExtract.reduce((acc, e, i) => {
     const {extract} = findMatchingExtract(acc, getUniqueExtractId(e, i));
 
     if (!extract) {
-      acc.splice(i, 0, {...copiedSettings[i], extract: getUniqueExtractId(e, i)});
+      // acc.splice(i, 0, {...copiedSettings[i], extract: getUniqueExtractId(e, i)});
+      acc.splice(i, 0, {extract: getUniqueExtractId(e, i)});
     }
 
     return acc;
@@ -742,7 +744,7 @@ const getNewNode = (defaultProps = {}) => {
 
 export const constructNodeWithEmptySource = node => {
   if (!node) return getNewNode();
-  const { combinedExtract = '', children, dataType, jsonPath, generate, parentKey, parentExtract } = node;
+  const { children, dataType, jsonPath, generate, parentKey, parentExtract } = node;
   const defaultProps = { generate, jsonPath, dataType, parentKey, parentExtract };
   const newKey = generateUniqueKey();
 
@@ -751,9 +753,8 @@ export const constructNodeWithEmptySource = node => {
     // so construct a new empty node with node props
     return getNewNode(defaultProps);
   }
-  const splitExtracts = combinedExtract.split(',');
-  const firstExtract = getUniqueExtractId(splitExtracts[0], 0);
-  const firstExtractChildNodes = children.filter(child => child.parentExtract === firstExtract);
+  const {activeExtract} = getFirstActiveTab(node);
+  const firstExtractChildNodes = children.filter(child => child.parentExtract === activeExtract);
   const emptyChildren = firstExtractChildNodes.map(child => constructNodeWithEmptySource({...child, parentKey: newKey, parentExtract: ''}));
 
   // Incase of children, replace children with empty children
@@ -767,14 +768,29 @@ export const rebuildObjectArrayNode = (node, extract = '') => {
 
   let clonedNode = {...node};
   const { key: parentKey } = node;
-  const splitExtracts = extract.split(',');
-  const hasNoExtract = extract.trim().length === 0;
-  const previousFirstExtract = getUniqueExtractId(clonedNode.combinedExtract?.split(',')[0], 0);
-  const prevFirstExtractChildren = clonedNode.children?.filter(childNode => childNode.parentExtract === previousFirstExtract) || [];
+  const {activeExtract: prevActiveExtract} = getFirstActiveTab(clonedNode);
+
+  const previousFirstExtract = prevActiveExtract;
+  const prevFirstExtractChildren = clonedNode.children?.filter(childNode => {
+    if (!previousFirstExtract) {
+      return true;
+    }
+
+    return childNode.parentExtract === previousFirstExtract;
+  }) || [];
+
+  clonedNode.extractsArrayHelper = buildExtractsHelperFromExtract(clonedNode.extractsArrayHelper, extract);
+  const hasNoExtract = isEmpty(clonedNode.extractsArrayHelper);
+
+  const {activeTab, activeExtract} = getFirstActiveTab(clonedNode);
+
+  // set active tab
+  clonedNode.activeTab = activeTab;
 
   if (!clonedNode.children) {
     clonedNode.children = [];
   }
+  let anyExtractHasMappings = false;
 
   // no extracts now with at least 1 source children before
   if (hasNoExtract) {
@@ -794,10 +810,10 @@ export const rebuildObjectArrayNode = (node, extract = '') => {
         return true;
       }
 
-      const newIndex = splitExtracts.findIndex((s, i) => parentExtract === getUniqueExtractId(s, i));
+      const extractConfig = findMatchingExtract(clonedNode.extractsArrayHelper, parentExtract);
 
-      // only keep the children which have matching parentExtract
-      if (newIndex !== -1) {
+      // only keep the children which have matching parentExtract and copy source setting as no
+      if (extractConfig.extract && extractConfig.copySource !== 'yes') {
         foundExtractsUniqueId.push(parentExtract);
 
         return true;
@@ -806,11 +822,10 @@ export const rebuildObjectArrayNode = (node, extract = '') => {
       return false;
     });
 
-    if (!foundExtractsUniqueId.length && prevFirstExtractChildren.length) {
-      // if all the extracts are new, then map prev first source's child mapping to current first source's child
+    if (!foundExtractsUniqueId.length && prevFirstExtractChildren.length && activeExtract) {
+      // if all the extracts are new (and there is activeExtract present, meaning it has copy source as no), then map prev first active source's child mapping to current first active source's child
       // fetch first source's mapping of previous extract and map those mappings to current extract's first source
-      // todo: replace with active tab
-      clonedNode.children = prevFirstExtractChildren.map(c => ({ ...c, parentExtract: getUniqueExtractId(splitExtracts[0], 0), key: generateUniqueKey()}));
+      clonedNode.children = prevFirstExtractChildren.map(c => ({ ...c, parentExtract: activeExtract}));
     }
     // we take previous child refs and construct new children with empty source
     // we map these children to those left over extracts
@@ -820,16 +835,18 @@ export const rebuildObjectArrayNode = (node, extract = '') => {
     );
 
     // iterate this for all extracts and map children for the left over extracts
-    splitExtracts.forEach((e, i) => {
-      if (!e) return;
-      const extract = getUniqueExtractId(e, i);
+    clonedNode.extractsArrayHelper.forEach((extractConfig, i) => {
+      const {extract, copySource} = extractConfig;
 
-      if (foundExtractsUniqueId.includes(extract)) {
+      if (!extract) return;
+      if (copySource !== 'yes') { anyExtractHasMappings = true; }
+
+      if (foundExtractsUniqueId.includes(extract) || copySource === 'yes') {
         return;
       }
       // we mapped for the first extract above with prevFirstExtractChildren, so ignore first extract
-      // todo: replace this with first active tab after copySource enhancement
-      if (!foundExtractsUniqueId.length && prevFirstExtractChildren.length && i === 0) return;
+      if (!foundExtractsUniqueId.length && prevFirstExtractChildren.length && i === activeTab) return;
+
       let childrenForCurrentExtract = [getNewNode({ parentKey, parentExtract: extract, jsonPath: node.jsonPath })];
 
       if (childNodesWithEmptySources.length) {
@@ -839,13 +856,12 @@ export const rebuildObjectArrayNode = (node, extract = '') => {
       clonedNode.children = [...clonedNode.children, ...childrenForCurrentExtract];
     });
   }
-  // update hidden prop and only show first extract children
-  clonedNode = hideOtherTabRows(clonedNode, getUniqueExtractId(splitExtracts[0], 0));
-  // set active tab to 0th
-  clonedNode.activeTab = 0;
-  clonedNode.combinedExtract = extract;
 
-  if (hasNoExtract || splitExtracts.length === 1) {
+  // update hidden prop and only show first active extract children
+  // if active extract is empty, meaning all children should be shown
+  clonedNode = hideOtherTabRows(clonedNode, activeExtract, activeExtract ? undefined : false);
+
+  if (hasNoExtract || clonedNode.extractsArrayHelper.length === 1 || !anyExtractHasMappings) {
     // remove tab node
     if (clonedNode.children[0]?.isTabNode) {
       clonedNode.children.shift();

@@ -172,7 +172,7 @@ function getSubFormMetadata(value, formKey, dataType) {
 
 const SUB_FORM_KEY = 'extractsArrayKey';
 
-function constructExtractsArray(formKey, newOptions, currArray, dataType) {
+function constructExtractsArray(formKey, newOptions, currArray, dataType, sourceField) {
   let toReturn = [];
 
   // no source selected
@@ -228,19 +228,21 @@ function constructExtractsArray(formKey, newOptions, currArray, dataType) {
 
   // if source was not present before,add it to array
   if (!found) {
-    toReturn.push(newExtractObj);
+    const splitSources = sourceField?.split(',') || [];
+
+    toReturn.splice(splitSources.indexOf(formKey), 0, newExtractObj);
   }
 
   return toReturn;
 }
 
-function EachTabContainer({id, value, parentFormKey, formKey, dataType, isCurrentTab, onFieldChange}) {
+function EachTabContainer({id, value, parentFormKey, formKey, dataType, isCurrentTab, onFieldChange, sourceField}) {
   const handleFormChange = useCallback(
     (newOptions, isValid, touched) => {
-      const extractsArrayHelper = constructExtractsArray(formKey, newOptions, value, dataType);
+      const extractsArrayHelper = constructExtractsArray(formKey, newOptions, value, dataType, sourceField);
 
       onFieldChange(id, extractsArrayHelper, touched);
-    }, [formKey, id, onFieldChange, value, dataType]);
+    }, [formKey, id, onFieldChange, value, dataType, sourceField]);
 
   useUpdateParentForm(formKey, handleFormChange);
   useSetSubFormShowValidations(parentFormKey, formKey);
@@ -280,6 +282,7 @@ export default function DynaMapper2TabbedExtracts(props) {
             formKey={tabs?.[0]?.id || SUB_FORM_KEY}
             parentFormKey={parentFormKey}
             dataType={dataType}
+            sourceField={sourceField}
             isCurrentTab
         />
         )
@@ -311,6 +314,7 @@ export default function DynaMapper2TabbedExtracts(props) {
                   formKey={id}
                   parentFormKey={parentFormKey}
                   dataType={dataType}
+                  sourceField={sourceField}
                   isCurrentTab={selectedTab === index}
                 />
 
