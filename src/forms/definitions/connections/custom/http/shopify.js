@@ -27,19 +27,6 @@ export default {
       ) {
         retValues['/http/_iClientId'] = undefined;
       }
-    } else if (retValues['/http/auth/type'] === 'token') {
-      retValues['/http/auth/token/location'] = 'header';
-      retValues['/http/auth/token/headerName'] = 'X-Shopify-Access-Token';
-      retValues['/http/auth/token/scheme'] = ' ';
-      retValues['/http/auth/basic/username'] = undefined;
-      retValues['/http/auth/basic/password'] = undefined;
-      retValues['/http/auth/oauth/authURI'] = undefined;
-      retValues['/http/auth/oauth/tokenURI'] = undefined;
-      retValues['/http/auth/oauth/scopeDelimiter'] = undefined;
-      retValues['/http/auth/oauth/scope'] = undefined;
-      retValues['/http/ping/relativeURI'] = '/orders.json';
-      retValues['/http/ping/method'] = 'GET';
-      retValues['/http/ping/successPath'] = '';
     } else {
       retValues['/http/auth/basic/username'] = `${
         formValues['/http/auth/basic/username']
@@ -140,7 +127,6 @@ export default {
         {
           items: [
             { label: 'Basic', value: 'basic' },
-            { label: 'Token', value: 'token' },
             { label: 'OAuth 2.0', value: 'oauth' },
           ],
         },
@@ -211,14 +197,6 @@ export default {
       fieldId: 'http.auth.basic.password',
       helpKey: 'shopify.connection.http.auth.basic.password',
       visibleWhen: [{ field: 'http.auth.type', is: ['basic'] }],
-    },
-    'http.auth.token.token': {
-      fieldId: 'http.auth.token.token',
-      defaultValue: '',
-      label: 'Password',
-      required: true,
-      helpKey: 'shopify.connection.http.auth.token.token',
-      visibleWhen: [{ field: 'http.auth.type', is: ['token'] }],
     },
     'http.auth.oauth.scope': {
       fieldId: 'http.auth.oauth.scope',
@@ -306,7 +284,6 @@ export default {
           'http.unencrypted.version',
           'http.auth.basic.username',
           'http.auth.basic.password',
-          'http.auth.token.token',
           'http.auth.oauth.scope'] },
       { collapsed: true, label: 'Advanced', fields: ['httpAdvanced'] },
     ],
@@ -336,7 +313,7 @@ export default {
       visibleWhen: [
         {
           field: 'http.auth.type',
-          is: ['token', 'basic'],
+          is: ['basic'],
         },
       ],
     },
