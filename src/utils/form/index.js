@@ -1,6 +1,11 @@
+/* eslint-disable no-continue */
+/* eslint-disable no-plusplus */
 /* eslint-disable no-prototype-builtins */
 /* eslint-disable no-param-reassign */
 import set from 'lodash/set';
+import _ from 'lodash';
+import moment from 'moment';
+
 import {
   fieldDefIsValidUpdated,
   getFirstDefinedValue,
@@ -23,6 +28,301 @@ const adjustDefaultVisibleRequiredValue = field => {
     field.defaultRequired = field.required;
   }
 };
+
+function and(opArguments) {
+  return (opArguments[0] === true && opArguments[1] === true);
+}
+
+function or(opArguments) {
+  return (opArguments[0] === true || opArguments[1] === true);
+}
+
+function empty(opArguments) {
+  if (opArguments[0] !== null && opArguments[0] !== undefined && opArguments[0] !== '') return false;
+
+  return true;
+}
+
+function not(opArguments) {
+  return !opArguments[0];
+}
+
+function notEmpty(opArguments) {
+  return !empty(opArguments);
+}
+
+function equals(opArguments) {
+  return opArguments[0] === opArguments[1];
+}
+
+function notEquals(opArguments) {
+  return opArguments[0] !== opArguments[1];
+}
+
+function greaterThan(opArguments) {
+  return opArguments[0] > opArguments[1];
+}
+
+function lessThan(opArguments) {
+  return opArguments[0] < opArguments[1];
+}
+
+function greaterThanEquals(opArguments) {
+  return opArguments[0] >= opArguments[1];
+}
+
+function lessThanEquals(opArguments) {
+  return opArguments[0] <= opArguments[1];
+}
+
+function startsWith(opArguments) {
+  opArguments[0] = opArguments[0] === null ? '' : opArguments[0];
+  opArguments[1] = opArguments[1] === null ? '' : opArguments[1];
+
+  return String(opArguments[0]).startsWith(String(opArguments[1]));
+}
+
+function endsWith(opArguments) {
+  opArguments[0] = opArguments[0] === null ? '' : opArguments[0];
+  opArguments[1] = opArguments[1] === null ? '' : opArguments[1];
+
+  return String(opArguments[0]).endsWith(String(opArguments[1]));
+}
+
+function matches(opArguments) {
+  const re = new RegExp(opArguments[1], 'ig');
+
+  return re.test(String(opArguments[0]));
+}
+
+// evals to true if opArguments[0] contains opArguments[1]
+function contains(opArguments) {
+  opArguments[0] = opArguments[0] === null ? '' : opArguments[0];
+  opArguments[1] = opArguments[1] === null ? '' : opArguments[1];
+
+  return String(opArguments[0]).indexOf(String(opArguments[1])) > -1;
+}
+
+// evals to true if opArguments[0] not contains opArguments[1]
+function doesNotContain(opArguments) {
+  return !contains(opArguments);
+}
+
+// // Methods that return strings, numbers, etc
+// function runRegEx(opArguments) {
+//   const re = new RegExp(opArguments[1], 'ig');
+
+//   return re.exec(String(opArguments[0]));
+// }
+
+function replace(opArguments) {
+  if (!opArguments || !_.isArray(opArguments) || opArguments.length === 0 || opArguments[0] === null || opArguments[0] === undefined) return null;
+
+  return opArguments[0].replace(opArguments[1], opArguments[2]);
+}
+
+function upperCase(opArguments) {
+  if (!opArguments || !_.isArray(opArguments) || opArguments.length === 0 || opArguments[0] === null || opArguments[0] === undefined) return null;
+
+  return opArguments[0].toUpperCase();
+}
+
+function lowerCase(opArguments) {
+  if (!opArguments || !_.isArray(opArguments) || opArguments.length === 0 || opArguments[0] === null || opArguments[0] === undefined) return null;
+
+  return opArguments[0].toLowerCase();
+}
+
+function floor(opArguments) {
+  return Math.floor(opArguments[0]);
+}
+
+function ceiling(opArguments) {
+  return Math.ceil(opArguments[0]);
+}
+
+function add(opArguments) {
+  return opArguments[0] + opArguments[1];
+}
+
+function subtract(opArguments) {
+  return opArguments[0] - opArguments[1];
+}
+
+function multiply(opArguments) {
+  return opArguments[0] * opArguments[1];
+}
+
+function divide(opArguments) {
+  if (opArguments[1] === 0) return NaN;
+
+  return opArguments[0] / opArguments[1];
+}
+
+function modulo(opArguments) {
+  return opArguments[0] % opArguments[1];
+}
+
+const GET_FIELD_REGEX = RegExp(/^\[\d+\]\.|^\d+\./);
+
+function getPathSegments(path) {
+  const segments = [];
+  let buffer = [];
+  let inLiteral = false;
+  let escaped = false;
+  let wasLiteral = false;
+  let i;
+
+  if (!path) return [];
+
+  for (i = 0; i < path.length; i++) {
+    const ch = path[i];
+
+    if (escaped) {
+      escaped = false;
+      if (ch === ']') {
+        buffer[buffer.length - 1] = ch;
+        continue;
+      }
+    }
+
+    if (ch === '\\') escaped = true;
+    if (!inLiteral && ch === ' ' && (buffer.length === 0 || wasLiteral)) continue;
+
+    if (!inLiteral && ch === '[' && buffer.length === 0) {
+      inLiteral = true;
+      continue;
+    }
+
+    if (inLiteral && ch === ']') {
+      inLiteral = false;
+      wasLiteral = true;
+      continue;
+    }
+
+    if (!inLiteral && (ch === '.' || ch === '[')) {
+      segments.push(buffer.join(''));
+      buffer = [];
+      inLiteral = ch === '[';
+      wasLiteral = false;
+      continue;
+    }
+
+    buffer.push(ch);
+  }
+
+  // dont forget about the final segment...
+  if (buffer.length) segments.push(buffer.join(''));
+
+  // logger.info(segments)
+
+  return segments;
+}
+
+function getValue(obj, path) {
+  if (!obj) return;
+  if (!path) return obj;
+  if (typeof path !== 'string') return;
+
+  if (obj.hasOwnProperty(path)) return obj[path];
+
+  const segments = getPathSegments(path);
+
+  let value = obj;
+
+  for (let i = 0; i < segments.length; i++) {
+    // logger.info('segment: ' + segments[i])
+    // logger.info(value[segments[i]])
+    // if the last iteration resulted in no value, and yet the path
+    // indicates that there still should be another node in the object heirarchy, return.
+    // also, if we DO have an object, but no child object exists in the next path, return.
+    // otherwise set the value to the new node and iterate.
+    if (!value || value[segments[i]] === undefined) return;
+    value = value[segments[i]];
+  }
+
+  return value;
+}
+
+function getField(fieldId, recordData) {
+  let correctedFieldId = fieldId;
+
+  if (_.isArray(recordData) && !GET_FIELD_REGEX.test(correctedFieldId)) {
+    correctedFieldId = `[0].${correctedFieldId}`;
+  }
+
+  return getValue(recordData, correctedFieldId);
+}
+
+function getFromContext(fieldId, recordData, contextData) {
+  return getValue(contextData, fieldId);
+}
+
+function getFromSettings(fieldId, recordData, contextData, settings) {
+  return getValue(settings, fieldId);
+}
+
+function toString(opArguments) {
+  if (!opArguments || !_.isArray(opArguments) || opArguments.length === 0 || opArguments[0] === null || opArguments[0] === undefined) return null;
+
+  return opArguments[0].toString();
+}
+
+function toBoolean(opArguments) {
+  if (!opArguments || !_.isArray(opArguments) || opArguments.length === 0 || opArguments[0] === null || opArguments[0] === undefined) return null;
+  if (!opArguments[0]) return null;
+  if (_.isString(opArguments[0])) {
+    if (opArguments[0] === 'true') return true;
+    if (opArguments[0] === 'false') return false;
+  }
+
+  return Boolean(opArguments[0]);
+}
+
+function toNumber(opArguments) {
+  if (!opArguments || !_.isArray(opArguments) || opArguments.length === 0 || opArguments[0] === null || opArguments[0] === undefined) return null;
+  let strValue = opArguments[0].toString();
+
+  strValue = strValue.replace(/[^-\d.]/g, '');
+  if (!strValue) return 0;
+  const parsedNum = +strValue;
+
+  return Number.isNaN(parsedNum) ? 0 : parsedNum;
+}
+
+function toAbsoluteNumber(opArguments) {
+  if (!opArguments || !_.isArray(opArguments) || opArguments.length === 0 || opArguments[0] === null || opArguments[0] === undefined) return null;
+  let strValue = opArguments[0].toString();
+
+  strValue = strValue.replace(/[^\d.]/g, '');
+  if (!strValue) return 0;
+  const parsedNum = +strValue;
+
+  return Number.isNaN(parsedNum) ? 0 : parsedNum;
+}
+
+/**
+ * converts a given string to date and returns a number representing the milliseconds
+ * elapsed between 1 January 1970 00:00:00 UTC and the given date.
+ * @param {Array} opArguments
+ * @returns number
+ */
+function toEpochTime(opArguments) {
+  if (!opArguments || !_.isArray(opArguments) || opArguments.length === 0 || opArguments[0] === null || opArguments[0] === undefined) return null;
+  if (opArguments[0] instanceof Date) {
+    return opArguments[0].getTime();
+  }
+  const dateInput = opArguments[0];
+
+  if (!_.isNumber(dateInput) && !_.isString(dateInput)) {
+    throw Error('Invalid date. Date should be either string or number.');
+  }
+  const mmt = moment(dateInput);
+
+  if (!mmt.isValid()) throw Error('Invalid date. Cannot convert given string or number to date time.');
+
+  return mmt.toDate().getTime();
+}
 
 export const registerField = (field, formValue = {}) => {
   const { defaultValue, name, value, valueDelimiter } = field;
@@ -212,16 +512,321 @@ const evaluateAnyAndAllRules = ({
 
   return defaultResult;
 };
+const filterOperatorsHashMap = {
+  and: {
+    variatic: true, // takes unlimited arguments
+    argSize: 2,
+    argDataType: 'boolean',
+    returnDataType: 'boolean',
+    op: and,
+  },
+  or: {
+    variatic: true, // takes unlimited arguments
+    argSize: 2,
+    argDataType: 'boolean',
+    returnDataType: 'boolean',
+    op: or,
+  },
+  empty: {
+    argSize: 1,
+    returnDataType: 'boolean',
+    op: empty,
+  },
+  notempty: {
+    argSize: 1,
+    returnDataType: 'boolean',
+    op: notEmpty,
+  },
+  not: {
+    argSize: 1,
+    argDataType: 'boolean',
+    returnDataType: 'boolean',
+    op: not,
+  },
+  string: {
+    dataTypeOp: true,
+    argSize: 1,
+    returnDataType: 'string',
+    op: toString,
+  },
+  boolean: {
+    dataTypeOp: true,
+    argSize: 1,
+    returnDataType: 'boolean',
+    op: toBoolean,
+  },
+  number: {
+    dataTypeOp: true,
+    argSize: 1,
+    returnDataType: 'number',
+    op: toNumber,
+  },
+  abs: {
+    dataTypeOp: true,
+    argSize: 1,
+    returnDataType: 'number',
+    op: toAbsoluteNumber,
+  },
+  epochtime: {
+    dataTypeOp: true,
+    argSize: 1,
+    returnDataType: 'number',
+    op: toEpochTime,
+  },
+  equals: {
+    argSize: 2,
+    returnDataType: 'boolean',
+    op: equals,
+  },
+  notequals: {
+    argSize: 2,
+    returnDataType: 'boolean',
+    op: notEquals,
+  },
+  greaterthan: {
+    argSize: 2,
+    returnDataType: 'boolean',
+    op: greaterThan,
+  },
+  lessthan: {
+    argSize: 2,
+    returnDataType: 'boolean',
+    op: lessThan,
+  },
+  greaterthanequals: {
+    argSize: 2,
+    returnDataType: 'boolean',
+    op: greaterThanEquals,
+  },
+  lessthanequals: {
+    argSize: 2,
+    returnDataType: 'boolean',
+    op: lessThanEquals,
+  },
+  startswith: {
+    argSize: 2,
+    argDataType: 'string',
+    returnDataType: 'boolean',
+    op: startsWith,
+  },
+  endswith: {
+    argSize: 2,
+    argDataType: 'string',
+    returnDataType: 'boolean',
+    op: endsWith,
+  },
+  matches: {
+    argSize: 2,
+    argDataType: 'string',
+    returnDataType: 'boolean',
+    op: matches,
+  },
+  contains: {
+    argSize: 2,
+    argDataType: 'string',
+    returnDataType: 'boolean',
+    op: contains,
+  },
+  doesnotcontain: {
+    argSize: 2,
+    argDataType: 'string',
+    returnDataType: 'boolean',
+    op: doesNotContain,
+  },
+  replace: {
+    argSize: 3,
+    argDataType: 'string',
+    returnDataType: 'string',
+    op: replace,
+  },
+  uppercase: {
+    argSize: 1,
+    argDataType: 'string',
+    returnDataType: 'string',
+    op: upperCase,
+  },
+  lowercase: {
+    argSize: 1,
+    argDataType: 'string',
+    returnDataType: 'string',
+    op: lowerCase,
+  },
+  floor: {
+    argSize: 1,
+    argDataType: 'number',
+    returnDataType: 'number',
+    op: floor,
+  },
+  ceiling: {
+    argSize: 1,
+    argDataType: 'number',
+    returnDataType: 'number',
+    op: ceiling,
+  },
+  add: {
+    argSize: 2,
+    argDataType: 'number',
+    returnDataType: 'number',
+    op: add,
+  },
+  subtract: {
+    argSize: 2,
+    argDataType: 'number',
+    returnDataType: 'number',
+    op: subtract,
+  },
+  multiply: {
+    argSize: 2,
+    argDataType: 'number',
+    returnDataType: 'number',
+    op: multiply,
+  },
+  divide: {
+    argSize: 2,
+    argDataType: 'number',
+    returnDataType: 'number',
+    op: divide,
+  },
+  modulo: {
+    argSize: 2,
+    argDataType: 'number',
+    returnDataType: 'number',
+    op: modulo,
+  },
+};
+export const fieldOperationsHashMap = {
+  extract: getField,
+  context: getFromContext,
+  options: getFromContext,
+  settings: getFromSettings,
+};
 
+function isSubTree(leaf) {
+  return _.isArray(leaf) && leaf.length;
+}
+
+function getOperandFromTree(operand, recordData, contextData, settings) {
+  // eslint-disable-next-line no-use-before-define
+  if (isSubTree(operand)) return evaluateRecursive(operand, recordData, contextData, settings);
+
+  return operand;
+}
+export const evaluateFieldOp = (OPERATION_NAME, fieldId, recordData, contextData, settings) => {
+  const opFunc = fieldOperationsHashMap[OPERATION_NAME];
+
+  return opFunc(fieldId.trim(), recordData, contextData, settings);
+};
+
+function evaluateRecursive(filtersTree, recordData, contextData, settings) {
+  const OPERATION_NAME = filtersTree[0].toLowerCase().trim();
+
+  if (OPERATION_NAME === 'extract' && filtersTree?.[2]) {
+    const result = evaluateFieldOp(OPERATION_NAME, `${filtersTree[1]}.${filtersTree[2]}`, recordData, contextData, settings);
+
+    return result;
+  }
+
+  if (fieldOperationsHashMap[OPERATION_NAME]) {
+    const result = evaluateFieldOp(OPERATION_NAME, filtersTree[1], recordData, contextData, settings);
+
+    return result;
+  }
+
+  const FILTER_OP = filterOperatorsHashMap[OPERATION_NAME].op;
+  let ctr = 1;
+  let argsToRun = [];
+
+  while (ctr <= filterOperatorsHashMap[OPERATION_NAME].argSize) {
+    argsToRun.push(
+      getOperandFromTree(filtersTree[ctr++], recordData, contextData, settings)
+    );
+  }
+
+  let result = FILTER_OP(argsToRun);
+
+  if (filterOperatorsHashMap[OPERATION_NAME].variatic) {
+    while (ctr < filtersTree.length) {
+      // little optimization for and/or
+      if (FILTER_OP === filterOperatorsHashMap.and.op && result !== true) {
+        return false;
+      }
+      if (FILTER_OP === filterOperatorsHashMap.or.op && result === true) {
+        return true;
+      }
+      argsToRun = [result, getOperandFromTree(filtersTree[ctr++], recordData, contextData, settings)];
+
+      result = FILTER_OP(argsToRun);
+    }
+  }
+
+  return result;
+}
+export const evaluate = (filter, recordData, contextData, settings) => {
+  const objectToReturn = {
+    success: false,
+  };
+
+  if (!filter.rules || (Array.isArray(filter.rules) && !filter.rules.length)) {
+    objectToReturn.success = true;
+
+    return objectToReturn;
+  }
+
+  try {
+    objectToReturn.success = evaluateRecursive(filter.rules, recordData, contextData, settings);
+  } catch (ex) {
+    objectToReturn.error = {
+      code: ex.code || 'FILTER_EVALUATION_FAILED',
+      source: 'connector',
+      path: 'filter',
+      message: `${(ex.message || 'Unexpected Error during filter execution.')}; record=${JSON.stringify(recordData)}`,
+    };
+  }
+
+  return objectToReturn;
+};
+export const evaluateConditionalRules = ({
+  _conditionIds = [], conditions = [], fieldsById,
+}) => {
+  // convert fileds by if to record data
+  // Evalute condition to show or not
+  const record = {...fieldsById};
+
+  Object.keys(fieldsById).forEach(key => {
+    record[key] = fieldsById[key]?.value;
+  });
+  const tempConditions = conditions.filter(cond => _conditionIds.includes(cond._id));
+  let returnData = true;
+
+  tempConditions.forEach(temp => {
+    const data = evaluate(temp.condition.expression, record);
+
+    returnData = returnData && !!data?.success;
+  });
+
+  return returnData;
+};
 export const isVisible = (field, fieldsById) => {
-  const { defaultVisible, visibleWhen = [], visibleWhenAll = [] } = field;
+  const { defaultVisible, visibleWhen = [], visibleWhenAll = [], _conditionIds = [], conditions = [] } = field;
 
-  return evaluateAnyAndAllRules({
+  const isVisible = evaluateAnyAndAllRules({
     anyRules: visibleWhen,
     allRules: visibleWhenAll,
     fieldsById,
     defaultState: defaultVisible,
     defaultResult: true,
+    conditions,
+    _conditionIds,
+  });
+
+  if (!_conditionIds.length || !conditions.length || !isVisible) {
+    return isVisible;
+  }
+
+  return evaluateConditionalRules({
+    fieldsById,
+    conditions,
+    _conditionIds,
   });
 };
 
@@ -249,6 +854,34 @@ export const isRequired = (field, fieldsById) => {
   });
 };
 
+export const setValue = (field, fieldsById) => {
+  const { _conditionIdValuesMap = [], conditions = [] } = field;
+  // return evaluateConditionalRules({
+  //   fieldsById,
+  //   conditions,
+  //   _conditionIds,
+  // });
+
+  let value;
+
+  _conditionIdValuesMap.every(condMap => {
+    const evaluateCondition = evaluateConditionalRules({
+      fieldsById,
+      conditions,
+      _conditionIds: condMap._conditionIds,
+    });
+
+    if (evaluateCondition) {
+      value = condMap.values?.[0];
+
+      return false;
+    }
+
+    return true;
+  });
+
+  return value;
+};
 export const isValueForceComputed = (forceComputation, stateProp) =>
   forceComputation && forceComputation.includes(stateProp);
 // const fieldHash = fieldProps => JSON.stringify(fieldProps);
@@ -269,7 +902,9 @@ export const processFields = (
 
   Object.keys(fieldsById).forEach(key => {
     const field = fieldsById[key];
-    const { touched = false, forceComputation } = field;
+    const { touched = false, forceComputation, _conditionIdValuesMap } = field;
+
+    // console.log('filed 904 ****', field);
 
     field.touched = getTouchedStateForField(touched, resetTouchedState);
 
@@ -278,6 +913,11 @@ export const processFields = (
     if (!isValueForceComputed(forceComputation, 'required')) { field.required = isRequired(field, fieldsById); }
 
     if (!isValueForceComputed(forceComputation, 'disabled')) { field.disabled = formIsDisabled || isDisabled(field, fieldsById); }
+    if (_conditionIdValuesMap?.length && !isValueForceComputed(forceComputation, 'value')) {
+      field.value = setValue(field, fieldsById);
+    }
+
+    // Here i need to do changes
   });
 };
 

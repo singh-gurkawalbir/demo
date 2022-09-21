@@ -1,6 +1,7 @@
 import jsonPatch, { deepClone, applyPatch } from 'fast-json-patch';
 import * as _ from 'lodash';
 import { select, call } from 'redux-saga/effects';
+import { isEmpty } from 'lodash';
 import util from '../../utils/array';
 import { isNewId } from '../../utils/resource';
 import { selectors } from '../../reducers';
@@ -310,9 +311,21 @@ export const updateFinalMetadataWithHttpFramework = (finalFieldMeta, connector, 
     Object.keys(tempFiledMeta.fieldMap).map(key => {
       const preConfiguredField = connectionTemplate.preConfiguredFields?.find(field => key === field.path);
       const fieldUserMustSet = connectionTemplate.fieldsUserMustSet?.find(field => key === field.path);
+      const preConfiguredFieldLists = connectionTemplate.preConfiguredFields?.filter(field => key === field.path);
+      const _conditionIdValuesMap = [];
 
-      if (isNewId(resource?._id) && preConfiguredField) {
+      preConfiguredFieldLists.forEach(field => {
+        _conditionIdValuesMap.push({_conditionIds: field._conditionIds, values: field.values});
+      });
+      if (preConfiguredField && preConfiguredFieldLists?.length) {
+        tempFiledMeta.fieldMap[key]._conditionIdValuesMap = _conditionIdValuesMap;
+        tempFiledMeta.fieldMap[key].conditions = connectionTemplate?.conditions;
+      } else if (isNewId(resource?._id) && preConfiguredField) {
         tempFiledMeta.fieldMap[key].defaultValue = preConfiguredField?.values?.[0];
+      }
+      if (fieldUserMustSet && fieldUserMustSet?._conditionIds && fieldUserMustSet?._conditionIds.length > 0) {
+        tempFiledMeta.fieldMap[key]._conditionIds = fieldUserMustSet?._conditionIds;
+        tempFiledMeta.fieldMap[key].conditions = connectionTemplate?.conditions;
       }
 
       if (key === 'http.ping.relativeURI') {
@@ -349,13 +362,14 @@ export const updateFinalMetadataWithHttpFramework = (finalFieldMeta, connector, 
           return f;
         }) || emptyObject;
 
-        if (scopes) {
+        if (!isEmpty(scopes)) {
           tempFiledMeta.fieldMap[key].type = 'selectscopes';
+          tempFiledMeta.fieldMap[key] = {...tempFiledMeta.fieldMap[key], scopes};
+        } else {
+          tempFiledMeta.fieldMap[key] = {...tempFiledMeta.fieldMap[key], visible: false};
         }
-
-        tempFiledMeta.fieldMap[key] = {...tempFiledMeta.fieldMap[key], scopes};
       } else if (fieldUserMustSet) {
-        tempFiledMeta.fieldMap[key] = {...tempFiledMeta.fieldMap[key], required: true};
+        tempFiledMeta.fieldMap[key] = {...tempFiledMeta.fieldMap[key], required: true, visible: true};
         if (fieldUserMustSet.values?.length > 1) {
           const options = [
             {
@@ -389,7 +403,7 @@ export const updateFinalMetadataWithHttpFramework = (finalFieldMeta, connector, 
       } else if (!tempFiledMeta.fieldMap[key].required && key !== 'settings') {
         tempFiledMeta.fieldMap[key] = {...tempFiledMeta.fieldMap[key], visible: isGenericHTTP || false};
       } else if (key === 'http._iClientId') {
-        tempFiledMeta.fieldMap[key] = {...tempFiledMeta.fieldMap[key], required: false};
+        tempFiledMeta.fieldMap[key] = {...tempFiledMeta.fieldMap[key], required: !!fieldUserMustSet};
       } else if (key === 'http.baseURI') {
         if (!tempFiledMeta.fieldMap[key].defaultValue) { tempFiledMeta.fieldMap[key] = {...tempFiledMeta.fieldMap[key], defaultValue: connector?.baseURIs?.[0]?.replace('/:_version', '') }; } else if (resource.http?.unencrypted?.version) {
           tempFiledMeta.fieldMap[key].defaultValue = tempFiledMeta.fieldMap[key].defaultValue.replace(`/${resource.http?.unencrypted?.version}`, '');
@@ -497,26 +511,26 @@ export const updateFinalMetadataWithHttpFramework = (finalFieldMeta, connector, 
     }
   }
 
-  const settingFields = connectionTemplate.preConfiguredFields?.find(field => field.path === 'settingsForm');
+  const settingFields = connectionTemplate.preConfiguredFields?.filter(field => field.path === 'settingsForm');
+  const fields = [];
 
-  if (settingFields) {
-    const fieldMap = settingFields.values?.[0].fieldMap;
-    const fields = [];
+  if (settingFields && settingFields.length) {
+    settingFields.forEach(settingField => {
+      const fieldMap = settingField.values?.[0].fieldMap;
 
-    Object.entries(fieldMap).forEach(([, value]) => {
-      fields.push({
-        field: {
-          label: value.label,
-          name: `/settings/${value.id}`,
-          id: `settings.${value.id}`,
-          fieldId: `settings.${value.id}`,
-          helpText: value.helpText,
-          type: value.type || 'text',
-          defaultValue: resource?.settings?.[value.id] || value.defaultValue,
-          required: !!value.required,
-          options: value.options,
-          validWhen: value.validWhen,
-        },
+      Object.entries(fieldMap).forEach(([, value]) => {
+        fields.push({
+          field: {
+            ...value,
+            name: `/settings/${value.id}`,
+            id: `settings.${value.id}`,
+            fieldId: `settings.${value.id}`,
+            type: value.type || 'text',
+            defaultValue: resource?.settings?.[value.id] || value.defaultValue,
+            _conditionIds: settingField._conditionIds,
+            conditions: connectionTemplate?.conditions,
+          },
+        });
       });
     });
 

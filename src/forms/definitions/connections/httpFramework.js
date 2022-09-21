@@ -184,6 +184,10 @@ export default {
       fieldId: 'name',
       label: 'Name your connection',
     },
+    'http.type': {
+      fieldId: 'http.type',
+      visible: false,
+    },
     connectionFormView: {
       fieldId: 'connectionFormView',
     },
@@ -396,6 +400,7 @@ export default {
       {
         fields: [
           'http.headers',
+          'http.type',
           'http.mediaType',
           'http.successMediaType',
           'http.errorMediaType',

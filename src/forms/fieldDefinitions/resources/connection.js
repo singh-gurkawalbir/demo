@@ -1038,6 +1038,16 @@ export default {
     defaultValue: r => (r && r.http && r.http.headers) || '',
     label: 'Configure HTTP headers',
   },
+  'http.type': {
+    label: 'API type',
+    type: 'amazonmwstype',
+    required: true,
+    helpKey: 'amazonmws.connection.http.type',
+    defaultDisabled: r => !isNewId(r?._id),
+    defaultValue: r => isNewId(r?._id) ? '' : (r?.http?.type || 'Amazon-MWS'),
+    skipSort: true,
+    resourceId: r => r?._id,
+  },
   'http.unencrypted': {
     isLoggable: true,
     type: 'editor',
