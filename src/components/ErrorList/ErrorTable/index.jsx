@@ -41,7 +41,7 @@ const useStyles = makeStyles(theme => ({
     },
     flexGrow: 1,
     display: 'flex',
-    flexDirection: 'row',
+    flexDirection: 'column',
     flexBasis: '60%',
     overflow: 'auto',
     '&:focus': {
@@ -79,9 +79,15 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export const useIsFreshLoadData = errorConfig => {
-  const errorObj = useSelectorMemo(selectors.mkResourceFilteredErrorDetailsSelector, errorConfig);
+  const errorObj = useSelectorMemo(
+    selectors.mkResourceFilteredErrorDetailsSelector,
+    errorConfig
+  );
 
-  return !!((!errorObj.status || errorObj.status === 'requested') && !errorObj.nextPageURL);
+  return !!(
+    (!errorObj.status || errorObj.status === 'requested') &&
+    !errorObj.nextPageURL
+  );
 };
 
 const ErrorTableWithPanel = ({
@@ -99,6 +105,25 @@ const ErrorTableWithPanel = ({
 }) => {
   const classes = useStyles();
   const tableRef = useRef();
+  let hasFilter;
+  const hasErrors = useSelector(state =>
+    selectors.hasResourceErrors(state, { flowId, resourceId, isResolved })
+  );
+  const filter = useSelector(state => selectors.filter(state, filterKey));
+
+  if (
+    (filter.classifications &&
+      filter.classifications.length > 0 &&
+      filter.classifications.indexOf('all') === -1) ||
+    (filter.sources &&
+      filter.sources.length > 0 &&
+      filter.sources.indexOf('all') === -1) ||
+    filter.keyword
+  ) {
+    hasFilter = true;
+  }
+  const emptyErrorMessage = !hasFilter && !isResolved && !hasErrors;
+  const emptyFilterMessage = hasFilter && !isResolved && (!hasErrors || errorsInCurrPage.length === 0);
 
   useEffect(() => {
     const refEle = tableRef?.current;
@@ -124,6 +149,8 @@ const ErrorTableWithPanel = ({
             actionProps={actionProps}
             onRowClick={onRowClick}
           />
+          {emptyErrorMessage && <EmptyErrorMessage />}
+          {emptyFilterMessage && <NoFiltersMessage />}
         </div>
         <div className={classes.partition}>
           <Divider
@@ -133,42 +160,78 @@ const ErrorTableWithPanel = ({
         </div>
         <div className={classes.errorDetailsPanel}>
           <ErrorDetailsPanel
+            errorsInCurrPage={errorsInCurrPage}
             flowId={flowId}
             resourceId={resourceId}
             isResolved={isResolved}
-            errorsInRun={errorsInRun}
           />
         </div>
       </div>
     )
     : (
-      <ResourceTable
-        resources={errorsInCurrPage}
-        resourceType={filterKey}
-        actionProps={actionProps}
-        className={classes.errorDetailsTable}
-        tableRef={tableRef}
+      <>
+        <ResourceTable
+          resources={errorsInCurrPage}
+          resourceType={filterKey}
+          actionProps={actionProps}
+          className={classes.errorDetailsTable}
+          tableRef={tableRef}
       />
+        {emptyErrorMessage && <EmptyErrorMessage />}
+        {emptyFilterMessage && <NoFiltersMessage />}
+      </>
     );
 };
-export default function ErrorTable({ flowId, resourceId, isResolved, flowJobId, errorsInRun }) {
+const EmptyErrorMessage = () => (
+  <NoResultTypography>
+    <br />
+    There don’t seem to be any more errors. You may have already retried or
+    resolved them.
+    <br />
+    <br />
+    If “Refresh errors” is enabled, you can click it to retrieve additional
+    errors.
+  </NoResultTypography>
+);
+
+const NoFiltersMessage = () => (
+  <NoResultTypography>
+    <br />
+    You don’t have any errors that match the filters you applied.
+    <br />
+    Clear all filters to see any errors for this step.
+  </NoResultTypography>
+);
+
+export default function ErrorTable({
+  flowId,
+  resourceId,
+  isResolved,
+  flowJobId,
+}) {
   const classes = useStyles();
   const filterKey = isResolved ? FILTER_KEYS.RESOLVED : FILTER_KEYS.OPEN;
 
   const isAnyActionInProgress = useSelector(state =>
     selectors.isAnyActionInProgress(state, { flowId, resourceId })
   );
-  const isFlowDisabled = useSelector(state =>
-    selectors.resource(state, 'flows', flowId)?.disabled
+  const isFlowDisabled = useSelector(
+    state => selectors.resource(state, 'flows', flowId)?.disabled
   );
 
-  const errorConfig = useMemo(() => ({
-    flowId,
-    resourceId,
-    isResolved,
-  }), [isResolved, flowId, resourceId]);
+  const errorConfig = useMemo(
+    () => ({
+      flowId,
+      resourceId,
+      isResolved,
+    }),
+    [isResolved, flowId, resourceId]
+  );
 
-  const errorsInCurrPage = useSelectorMemo(selectors.mkResourceFilteredErrorsInCurrPageSelector, errorConfig);
+  const errorsInCurrPage = useSelectorMemo(
+    selectors.mkResourceFilteredErrorsInCurrPageSelector,
+    errorConfig
+  );
 
   const isFreshDataLoad = useIsFreshLoadData(errorConfig);
 
@@ -184,84 +247,122 @@ export default function ErrorTable({ flowId, resourceId, isResolved, flowJobId, 
   );
   const dispatch = useDispatch();
   const errorFilter = useSelector(
-    state => selectors.filter(state, FILTER_KEYS.OPEN), shallowEqual
+    state => selectors.filter(state, FILTER_KEYS.OPEN),
+    shallowEqual
   );
-  const isSplitView = (filterKey === FILTER_KEYS.OPEN && errorFilter.view !== 'drawer');
-  const hasErrors = useSelector(
-    state => selectors.hasResourceErrors(state, { flowId, resourceId, isResolved })
-  );
+  const isSplitView =
+    filterKey === FILTER_KEYS.OPEN && errorFilter.view !== 'drawer';
 
-  const showRetryDataChangedConfirmDialog = useEditRetryConfirmDialog({flowId, resourceId, isResolved});
+  const showRetryDataChangedConfirmDialog = useEditRetryConfirmDialog({
+    flowId,
+    resourceId,
+    isResolved,
+  });
 
-  const keydownListener = useCallback(event => {
-    if (!isSplitView) {
-      return;
-    }
-    const currIndex = errorsInCurrPage.findIndex(eachError => eachError.errorId === errorFilter.currentNavItem);
-
-    if (!errorFilter.currentNavItem && currIndex < 0) {
-      dispatch(actions.patchFilter(FILTER_KEYS.OPEN, {
-        currentNavItem: errorsInCurrPage[0].errorId,
-      }));
-
-      return;
-    }
-    // enter key
-    if (event.keyCode === 13) {
-      event.preventDefault();
-      showRetryDataChangedConfirmDialog(() => {
-        dispatch(actions.patchFilter(FILTER_KEYS.OPEN, {
-          activeErrorId: errorFilter.currentNavItem,
-        }));
-      });
-
-      return;
-    }
-    // up arrow key
-    if (event.keyCode === 38) {
-      const currIndex = errorsInCurrPage.findIndex(eachError => eachError.errorId === errorFilter.currentNavItem);
-
-      if (currIndex === 0) {
+  const keydownListener = useCallback(
+    event => {
+      if (!isSplitView) {
         return;
       }
-      dispatch(actions.patchFilter(FILTER_KEYS.OPEN, {
-        currentNavItem: errorsInCurrPage[currIndex - 1]?.errorId,
-      }));
+      const currIndex = errorsInCurrPage.findIndex(
+        eachError => eachError.errorId === errorFilter.currentNavItem
+      );
 
-      return;
-    }
-    // down arrow key
-    if (event.keyCode === 40) {
-      const currIndex = errorsInCurrPage.findIndex(eachError => eachError.errorId === errorFilter.currentNavItem);
+      if (!errorFilter.currentNavItem && currIndex < 0) {
+        dispatch(
+          actions.patchFilter(FILTER_KEYS.OPEN, {
+            currentNavItem: errorsInCurrPage[0].errorId,
+          })
+        );
 
-      if (currIndex === errorsInCurrPage.length - 1) {
         return;
       }
-      dispatch(actions.patchFilter(FILTER_KEYS.OPEN, {
-        currentNavItem: errorsInCurrPage[currIndex + 1]?.errorId,
-      }));
-    }
-  }, [errorFilter.currentNavItem, dispatch, errorsInCurrPage, isSplitView, showRetryDataChangedConfirmDialog]);
+      // enter key
+      if (event.keyCode === 13) {
+        event.preventDefault();
+        showRetryDataChangedConfirmDialog(() => {
+          dispatch(
+            actions.patchFilter(FILTER_KEYS.OPEN, {
+              activeErrorId: errorFilter.currentNavItem,
+            })
+          );
+        });
 
-  const onRowClick = useCallback(({ rowData, dispatch, event }) => {
-    if (event?.target?.type !== 'checkbox' && errorFilter?.activeErrorId !== rowData.errorId) {
-      showRetryDataChangedConfirmDialog(() => {
-        dispatch(actions.patchFilter(FILTER_KEYS.OPEN, {
-          activeErrorId: rowData.errorId,
-          currentNavItem: rowData.errorId,
-        }));
-      });
-    }
-  }, [errorFilter?.activeErrorId, showRetryDataChangedConfirmDialog]);
+        return;
+      }
+      // up arrow key
+      if (event.keyCode === 38) {
+        const currIndex = errorsInCurrPage.findIndex(
+          eachError => eachError.errorId === errorFilter.currentNavItem
+        );
+
+        if (currIndex === 0) {
+          return;
+        }
+        dispatch(
+          actions.patchFilter(FILTER_KEYS.OPEN, {
+            currentNavItem: errorsInCurrPage[currIndex - 1]?.errorId,
+          })
+        );
+
+        return;
+      }
+      // down arrow key
+      if (event.keyCode === 40) {
+        const currIndex = errorsInCurrPage.findIndex(
+          eachError => eachError.errorId === errorFilter.currentNavItem
+        );
+
+        if (currIndex === errorsInCurrPage.length - 1) {
+          return;
+        }
+        dispatch(
+          actions.patchFilter(FILTER_KEYS.OPEN, {
+            currentNavItem: errorsInCurrPage[currIndex + 1]?.errorId,
+          })
+        );
+      }
+    },
+    [
+      errorFilter.currentNavItem,
+      dispatch,
+      errorsInCurrPage,
+      isSplitView,
+      showRetryDataChangedConfirmDialog,
+    ]
+  );
+
+  const onRowClick = useCallback(
+    ({ rowData, dispatch, event }) => {
+      if (
+        event?.target?.type !== 'checkbox' &&
+        errorFilter?.activeErrorId !== rowData.errorId
+      ) {
+        showRetryDataChangedConfirmDialog(() => {
+          dispatch(
+            actions.patchFilter(FILTER_KEYS.OPEN, {
+              activeErrorId: rowData.errorId,
+              currentNavItem: rowData.errorId,
+            })
+          );
+        });
+      }
+    },
+    [errorFilter?.activeErrorId, showRetryDataChangedConfirmDialog]
+  );
 
   useEffect(() => {
-    const currIndex = errorsInCurrPage.findIndex(eachError => eachError.errorId === errorFilter.activeErrorId);
+    const currIndex = errorsInCurrPage.findIndex(
+      eachError => eachError.errorId === errorFilter.activeErrorId
+    );
 
     if (errorFilter?.activeErrorId !== '' && currIndex < 0 && isSplitView) {
-      dispatch(actions.patchFilter(FILTER_KEYS.OPEN, {
-        activeErrorId: errorsInCurrPage[0]?.errorId,
-        currentNavItem: errorsInCurrPage[0]?.errorId,
-      }));
+      dispatch(
+        actions.patchFilter(FILTER_KEYS.OPEN, {
+          activeErrorId: errorsInCurrPage[0]?.errorId,
+          currentNavItem: errorsInCurrPage[0]?.errorId,
+        })
+      );
     }
   }, [errorsInCurrPage, errorFilter.activeErrorId, dispatch, isSplitView]);
 
@@ -285,30 +386,19 @@ export default function ErrorTable({ flowId, resourceId, isResolved, flowJobId, 
             filterKey={filterKey}
           />
 
-          {hasErrors ? (
-            <ErrorTableWithPanel
-              errorsInCurrPage={errorsInCurrPage}
-              filterKey={filterKey}
-              actionProps={actionProps}
-              resourceId={resourceId}
-              isSplitView={isSplitView}
-              flowId={flowId}
-              isResolved={isResolved}
-              keydownListener={keydownListener}
-              onRowClick={onRowClick}
-              errorsInRun={errorsInRun}
-            />
-          ) : (!isResolved && (
-            <NoResultTypography>There don’t seem to be any more errors. You may have already retried or resolved them.
-              <br />
-              <br />
-              If “Refresh errors” is enabled, you can click it to retrieve additional errors.
-            </NoResultTypography>
-          )
-          )}
+          <ErrorTableWithPanel
+            errorsInCurrPage={errorsInCurrPage}
+            filterKey={filterKey}
+            actionProps={actionProps}
+            resourceId={resourceId}
+            isSplitView={isSplitView}
+            flowId={flowId}
+            isResolved={isResolved}
+            keydownListener={keydownListener}
+            onRowClick={onRowClick}
+          />
         </>
       )}
     </div>
   );
 }
-

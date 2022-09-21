@@ -34,9 +34,6 @@ const useStyles = makeStyles(theme => ({
     color: theme.palette.secondary.main,
     wordBreak: 'break-word',
   },
-  errorListWrapper: {
-    background: 'green',
-  },
 }));
 export default function ErrorDetailsDrawer({ flowId }) {
   const history = useHistory();
