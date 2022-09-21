@@ -131,11 +131,6 @@ const useStyles = makeStyles(theme => ({
     maxHeight: theme.spacing(4),
     pointerEvents: 'none',
   },
-  addButton: {
-    // padding: theme.spacing(2),
-    // marginTop: -theme.spacing(1),
-    // marginLeft: -theme.spacing(1),
-  },
   deleteButton: {
     position: 'absolute',
     right: -theme.spacing(0.5),
@@ -370,7 +365,6 @@ export default function AppBlock({
             {renderActions(middleActions)}
             {!expanded && hasActions ? (
               <ActionIconButton
-                className={classes.addButton}
                 onClick={handleExpandClick}
                 data-test="addDataProcessor"
                 helpText="Define options">
