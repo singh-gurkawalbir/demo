@@ -512,6 +512,8 @@ describe('v2 mapping utils', () => {
       expect(rebuildObjectArrayNode({key: 'k1', dataType: 'objectarray'})).toEqual({
         key: 'k1',
         dataType: 'objectarray',
+        children: [],
+        extractsArrayHelper: [],
       });
       expect(rebuildObjectArrayNode({key: 'k1', dataType: 'string'})).toEqual({key: 'k1', dataType: 'string'});
     });
@@ -776,7 +778,7 @@ describe('v2 mapping utils', () => {
           },
           {
             dataType: 'string',
-            key: 'new_key',
+            key: '4UB7OJokF5bGpvc8osHYT',
             parentExtract: '$|0',
             parentKey: 'vlVDP3cjaN2cGmcSW1RCq',
             title: '',
@@ -808,7 +810,7 @@ describe('v2 mapping utils', () => {
           {
             key: 'yFngPGWR0HW6a6JQ1pvkj',
             title: '',
-            parentKey: 'av3ZbXA57eoIofRKwQUFz',
+            parentKey: 'vlVDP3cjaN2cGmcSW1RCq',
             parentExtract: '',
             dataType: 'string',
             generate: 'id',
@@ -828,12 +830,11 @@ describe('v2 mapping utils', () => {
         generate: 'family_tree',
         key: 'vlVDP3cjaN2cGmcSW1RCq',
         title: '',
-        combinedExtract: '$',
         children: [
           {
-            key: 'new_key',
+            key: 'yFngPGWR0HW6a6JQ1pvkj',
             title: '',
-            parentKey: 'av3ZbXA57eoIofRKwQUFz',
+            parentKey: 'vlVDP3cjaN2cGmcSW1RCq',
             parentExtract: '$|0',
             dataType: 'string',
             generate: 'id',
@@ -855,7 +856,7 @@ describe('v2 mapping utils', () => {
         extractsArrayHelper: [{extract: '$[*].feeds[*]'}],
         dataType: 'objectarray',
         disabled: false,
-        combinedExtract: '$[*].feeds[*]',
+        key: 'LQL4eGSdYcfXiKm478tPQ',
         children: [
           {
             key: '8UXchy6vBsJiIXtStB0Dd',
@@ -890,7 +891,7 @@ describe('v2 mapping utils', () => {
         extractsArrayHelper: [{extract: '$[*].feeds[*]'}, {extract: '$.test[*]'}],
         dataType: 'objectarray',
         disabled: false,
-        combinedExtract: '$[*].feeds[*],$.test[*]',
+        key: 'LQL4eGSdYcfXiKm478tPQ',
         children: [
           {
             key: 'new_key',
@@ -959,9 +960,8 @@ describe('v2 mapping utils', () => {
         dataType: 'objectarray',
         disabled: false,
         generate: 'family_tree',
-        key: '3SC9pqVz-S2n-PQyVDhsS',
+        key: '21xmtiTyd7LezDTLMGobu',
         title: '',
-        combinedExtract: '$[*].feeds[*]',
         children: [
           {
             key: 'aZzxJ0WB6HZts74cbfgQx',
@@ -969,7 +969,6 @@ describe('v2 mapping utils', () => {
             parentKey: '21xmtiTyd7LezDTLMGobu',
             parentExtract: '$[*].feeds[*]',
             dataType: 'objectarray',
-            combinedExtract: 'pe1',
             children: [
               {
                 key: 'S7nTwK7VyorrJdOtmVMCC',
@@ -1000,9 +999,8 @@ describe('v2 mapping utils', () => {
         dataType: 'objectarray',
         disabled: false,
         generate: 'family_tree',
-        key: '3SC9pqVz-S2n-PQyVDhsS',
+        key: '21xmtiTyd7LezDTLMGobu',
         title: '',
-        combinedExtract: '$[*].feeds[*],$.test[*]',
         children: [
           {
             key: 'new_key',
@@ -1016,7 +1014,6 @@ describe('v2 mapping utils', () => {
             parentKey: '21xmtiTyd7LezDTLMGobu',
             parentExtract: '$[*].feeds[*]',
             dataType: 'objectarray',
-            combinedExtract: 'pe1',
             children: [
               {
                 key: 'S7nTwK7VyorrJdOtmVMCC',
@@ -1074,9 +1071,8 @@ describe('v2 mapping utils', () => {
         dataType: 'objectarray',
         disabled: false,
         generate: 'family_tree',
-        key: '3SC9pqVz-S2n-PQyVDhsS',
+        key: '21xmtiTyd7LezDTLMGobu',
         title: '',
-        combinedExtract: '$[*].feeds[*]',
         children: [
           {
             key: 'aZzxJ0WB6HZts74cbfgQx',
@@ -1084,7 +1080,6 @@ describe('v2 mapping utils', () => {
             parentKey: '21xmtiTyd7LezDTLMGobu',
             parentExtract: '$[*].feeds[*]',
             dataType: 'objectarray',
-            combinedExtract: 'pe1,pe2',
             children: [
               {
                 key: 'yTXmXKeo6d2dodgi-XDLh',
@@ -1130,9 +1125,8 @@ describe('v2 mapping utils', () => {
         extractsArrayHelper: [{extract: '$[*].feeds[*]'}, {extract: '$.test[*]'}],
         dataType: 'objectarray',
         disabled: false,
-        key: '3SC9pqVz-S2n-PQyVDhsS',
+        key: '21xmtiTyd7LezDTLMGobu',
         title: '',
-        combinedExtract: '$[*].feeds[*],$.test[*]',
         children: [
           {
             key: 'new_key',
@@ -1145,7 +1139,6 @@ describe('v2 mapping utils', () => {
             title: '',
             parentKey: '21xmtiTyd7LezDTLMGobu',
             parentExtract: '$[*].feeds[*]',
-            combinedExtract: 'pe1,pe2',
             children: [
               {
                 key: 'yTXmXKeo6d2dodgi-XDLh',
