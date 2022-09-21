@@ -3253,7 +3253,12 @@ export default {
       return value.extract;
     }
   },
-  getV2DefaultStaticMapValue: (staticMap = []) => {
+  /**
+   * Merges multiple sources mapping to same destination with a comma separated value
+   * Ex: staticMap = { s1 : d1, s2 : d1, s3 : d1, s4 : d2, s5 : d2, s6 : d3 }
+   * Output: { 's1,s2,s3': d1, 's4,s5': d2, s6: d3 }
+   */
+  getV2DefaultStaticMapValue: (staticMap = {}) => {
     const uniqueSources = uniq(Object.values(staticMap));
 
     return uniqueSources.reduce((res, src) => {
