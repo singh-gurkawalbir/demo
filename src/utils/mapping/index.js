@@ -2086,13 +2086,14 @@ export const compareV2Mappings = (tree1 = [], tree2 = []) => {
   return isV2MappingsChanged;
 };
 
-const validateSourceDataType = (
-  jsonPath,
-  dataType,
-  sourceDataType = MAPPING_DATA_TYPES.STRING,
-  extractsArrayHelper,
-  copySource,
-) => {
+const validateSourceDataType = mapping => {
+  const {
+    jsonPath,
+    dataType,
+    sourceDataType = MAPPING_DATA_TYPES.STRING,
+    extractsArrayHelper,
+    extract,
+  } = mapping;
   const errorArr = [];
   const wrongDataType = WRONG_SOURCE_DATA_TYPES_LIST[dataType];
 
@@ -2123,7 +2124,7 @@ const validateSourceDataType = (
       });
       break;
     case MAPPING_DATA_TYPES.OBJECT:
-      if (copySource === 'yes' && wrongDataType.has(sourceDataType)) {
+      if (extract && wrongDataType.has(sourceDataType)) {
         errorArr.push({
           jsonPath,
           dataType,
@@ -2164,8 +2165,6 @@ const recursivelyValidateV2Mappings = ({
       generateDisabled,
       jsonPath,
       isTabNode,
-      sourceDataType,
-      copySource,
     } = mapping;
 
     if (isTabNode) return;
@@ -2228,8 +2227,8 @@ const recursivelyValidateV2Mappings = ({
       }
     }
 
-    if (dataType in WRONG_SOURCE_DATA_TYPES_LIST) {
-      const tempWrongSourceDataType = validateSourceDataType(jsonPath, dataType, sourceDataType, extractsArrayHelper, copySource);
+    if (!mapping.generateDisabled && dataType in WRONG_SOURCE_DATA_TYPES_LIST) {
+      const tempWrongSourceDataType = validateSourceDataType(mapping);
 
       wrongSourceDataType.push(...tempWrongSourceDataType);
     }
