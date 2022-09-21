@@ -38,6 +38,7 @@ const useStyles = makeStyles(theme => ({
     '&:nth-of-type(2)': {
       '&>div': {
         border: 'none',
+        flexDirection: 'row',
       },
       flex: 1,
       '& .MuiFilledInput-multiline': {

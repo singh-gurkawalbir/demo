@@ -18,6 +18,7 @@ const useStyles = makeStyles(theme => ({
     padding: 0,
     display: 'flex',
     marginBottom: 0,
+    width: '100%',
     '& > .MuiFilledInput-multiline': {
       border: `1px solid ${theme.palette.secondary.lightest}`,
       paddingRight: 0,
@@ -29,6 +30,12 @@ const useStyles = makeStyles(theme => ({
       overflow: 'hidden',
       textOverflow: 'ellipsis',
       height: theme.spacing(5),
+      paddingRight: theme.spacing(14),
+    },
+  },
+  sourceCustomTextField: {
+    '& > * .MuiFilledInput-input': {
+      paddingRight: theme.spacing(10),
     },
   },
   autoSuggestDropdown: {
@@ -66,6 +73,12 @@ const useStyles = makeStyles(theme => ({
     borderRadius: 0,
     border: `1px solid ${theme.palette.secondary.lightest}`,
     '&:empty': {
+      display: 'none',
+    },
+  },
+  sourceDataTypeButton: {
+    marginLeft: -theme.spacing(10),
+    '&>.MuiDivider-root': {
       display: 'none',
     },
   },
@@ -203,7 +216,7 @@ export default function Mapper2ExtractsTypeableSelect({
           id={`${nodeKey}-mapper2SourceTextField`}
           isLoggable
           onMouseMove={handleMouseOver}
-          className={clsx(classes.customTextField, className)}
+          className={clsx(classes.customTextField, {[classes.sourceCustomTextField]: hideSourceDropdown}, className)}
           variant="filled"
           autoFocus={isFocused}
           value={inputValue}
@@ -225,18 +238,18 @@ export default function Mapper2ExtractsTypeableSelect({
           }}
            />
       </Tooltip >
-     {/* // {sourceDataType && sourceDataType.length ? sourceDataType.map(dataType =>
+      {/* // {sourceDataType && sourceDataType.length ? sourceDataType.map(dataType =>
        // ( */}
-          <SourceDataType
-            anchorEl={dataTypeSelector}
-            setAnchorEl={selectDataType}
-            handleBlur={() => { console.log('blur'); } }
+      <SourceDataType
+        anchorEl={dataTypeSelector}
+        setAnchorEl={selectDataType}
+        handleBlur={() => { console.log('blur'); }}
            // dataType={dataType}
-            disabled={disabled}
-            nodeKey={nodeKey}
-            sourceDataTypes={sourceDataType && sourceDataType.length ? [...sourceDataType] : undefined}
-          />
-       {/* // )) : ''} */}
+        disabled={disabled}
+        nodeKey={nodeKey}
+        sourceDataTypes={sourceDataType && sourceDataType.length ? [...sourceDataType] : undefined}
+        className={clsx({[classes.sourceDataTypeButton]: hideSourceDropdown})} />
+      {/* // )) : ''} */}
       {/* only render tree component if field is focussed and not disabled.
       Here we are wrapping tree component with ArrowPopper to correctly handle the
       dropdown placement logic
