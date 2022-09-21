@@ -75,7 +75,7 @@ export default {
           name: 'fieldMappingType',
           type: 'select',
           label: 'Field mapping type',
-          defaultValue: mappingUtil.getFieldMappingType(node),
+          defaultValue: mappingUtil.getV2FieldMappingType(node),
           helpKey: 'mapping.v2.fieldMappingType',
           noApi: true,
           skipSort: true,
