@@ -4778,7 +4778,7 @@ Object {
             "min": 1,
           },
         },
-        "visibleWhen": Array [
+        "visibleWhenAll": Array [
           Object {
             "field": "type",
             "is": Array [
