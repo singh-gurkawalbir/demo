@@ -2556,7 +2556,7 @@ export default {
   'http.auth.token.tokenPaths': {
     id: 'http.auth.token.tokenPaths',
     type: 'text',
-    label: 'Paths to encrypted field in the response body',
+    label: 'Paths to encrypted field in the HTTP response body',
     defaultValue: r => {
       const values = r?.http?.auth?.token?.tokenPaths;
 

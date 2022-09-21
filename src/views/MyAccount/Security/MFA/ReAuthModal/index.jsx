@@ -6,7 +6,7 @@ import actions from '../../../../../actions';
 import ModalDialog from '../../../../../components/ModalDialog';
 import DynaForm from '../../../../../components/DynaForm';
 import DynaSubmit from '../../../../../components/DynaForm/DynaSubmit';
-import useFormInitWithPermissions from '../../../../../hooks/useFormInitWithPermissions';
+import useForm from '../../../../../components/Form';
 import { TextButton } from '../../../../../components/Buttons';
 import ActionGroup from '../../../../../components/ActionGroup';
 
@@ -65,7 +65,7 @@ export default function ReAuthModal({ onClose, isQRCode }) {
     }
   }, [success, onClose]);
 
-  const formKey = useFormInitWithPermissions({ fieldMeta: metadata });
+  const formKey = useForm({ fieldMeta: metadata });
 
   const title = isQRCode ? 'View QR code' : 'View secret key';
   const description = isQRCode

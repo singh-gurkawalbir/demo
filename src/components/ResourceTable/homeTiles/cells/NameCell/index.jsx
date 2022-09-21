@@ -1,5 +1,5 @@
 import React from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import clsx from 'clsx';
 import { Link } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core';
@@ -10,6 +10,7 @@ import Tag from '../../../../tags/Tag';
 import { INTEGRATION_ACCESS_LEVELS } from '../../../../../constants';
 import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
 import IntegrationPinnedIcon from '../../../../icons/IntegrationPinnedIcon';
+import actions from '../../../../../actions';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -46,6 +47,7 @@ export default function NameCell({ tile }) {
     tag,
     ssLinkedConnectionId,
     pinned} = tile;
+  const dispatch = useDispatch();
   const classes = useStyles();
   const {urlToIntegrationSettings} = useSelectorMemo(selectors.mkHomeTileRedirectUrl, tile);
 
@@ -60,12 +62,17 @@ export default function NameCell({ tile }) {
   const integrationTag = tag || (ssAccountName && `NS Account #${ssAccountName}`) || '';
   const accessLevel = ssLinkedConnectionId ? ssAccessLevel
     : tile.integration?.permissions?.accessLevel;
+  const handleClick = () => {
+    if (!tile.iaV2 && tile._connectorId && tile.supportsChild) {
+      dispatch(actions.resource.integrations.isTileClick(tile?._integrationId, true));
+    }
+  };
 
   return (
     <div className={classes.root}>
       <div className={classes.nameCellDescription}>
         {pinned && <IntegrationPinnedIcon />}
-        <Link to={urlToIntegrationSettings} className={classes.nameCellLink}>{name}</Link>
+        <Link to={urlToIntegrationSettings} className={classes.nameCellLink} onClick={handleClick}>{name}</Link>
         <InfoIconButton info={description} escapeUnsecuredDomains size="xs" className={classes.nameCellInfoIcon} />
       </div>
       {(integrationTag || accessLevel) && (

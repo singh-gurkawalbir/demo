@@ -2,6 +2,7 @@ import { HELP_CENTER_BASE_URL } from '../../constants';
 // uncomment eslint-disable no-dupe-keys this to expose dupe keys
 export default {
   formView: 'The application specific form is customized to help configure your resource for this particular application. However, if you would like more flexibility, choose the universal connector form (e.g. REST or HTTP) instead, which is a generic form.',
+  connectionFormView: '<b>•</b> Simple form helps you to quickly configure the resources by displaying only the required minimum fields.<br><b>•</b> HTTP form allows you to view and/or modify application specific resources at the universal HTTP connector level.',
   'afe.handlebar.data': 'This is sample help for handlebar afe, data panel',
   'afe.handlebar.rule.relaviveUri': 'This is sample help for handlebar afe, rule panel, relativeUri fieldId',
   previewPanelRecords: 'Enter or select the maximum number of records – up to 100 – to preview. Then, click <b>Preview</b> to see the records that match your query in the order that they’re received.',
@@ -886,6 +887,8 @@ if you're using a production account, you'll find your API keys under the 'API M
 "In some cases, it may be necessary to include custom HTTP headers with your token refresh requests. As with the 'body' field, any value from the connection can be referenced using {{{placeholders}}} with a complete path matching the connection field.",
   'connection.http.auth.token.refreshToken':
 'This field is used if you have a refresh token that can be used in refresh expired auth tokens. You can place this token in the body, headers or url simply by using referencing it with the placeholder: {{{connection.http.auth.token.refreshToken}}}. <br>Multiple layers of protection, including AES 256 encryption, are in place to keep your token safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
+  'connection.http.auth.token.tokenPaths':
+'If the service you’re connecting to responds with one or more encrypted fields containing refresh tokens, then enter the JSON paths contained in the HTTP response where the new tokens can be extracted. Separate multiple fields with a comma. If no values are found at these paths, then the token request is considered a failure',
   'connection.http.rateLimit.failStatusCode':
 'This field only needs to be set if the HTTP status code for rate-limit errors is not 429.  For example, an API could return a generic 400 status code instead, and then use a field in the HTTP response body to indicate rate-limit errors.',
   'connection.http.rateLimit.failPath':
@@ -2486,6 +2489,8 @@ use the custom option.`,
     'View the secret key that was used to enable MFA for your profile.',
   'mfa.trustedDevices':
     'Click <b>Manage devices</b> to see a list of all trusted devices for your profile.',
+  'mfa.dontAllowTrustedDevices': 'Check this box to remove the ability for users to add <a href="https://docs.celigo.com/hc/en-us/articles/7127009384987-Set-up-multifactor-authentication-MFA-for-your-account#Trusted-devices-vs-auth-devices" target="_blank">trusted devices</a>. Allowing users to add their own computer/browser to the trusted device list eliminates the need for them to enter their six-digit authentication code every time they sign in from the computer and browser they commonly use. If checked, MFA users can’t add trusted devices and must enter the six-digit code from their authentication device every time they sign in regardless of which device they use.',
+  'mfa.trustDeviceForPeriod': 'If left blank, MFA users who sign in from <a href="https://docs.celigo.com/hc/en-us/articles/7127009384987-Set-up-multifactor-authentication-MFA-for-your-account#Trusted-devices-vs-auth-devices" target="_blank">trusted devices</a> are only required to enter their six-digit authentication code after 90 days of inactivity from the trusted device. To extend or reduce the default, enter the number of days of inactivity before re-authentication is required.',
   'template.name': 'Enter a logical name for this template so that potential users can identify it in the Marketplace.',
   'template.description': 'Provide additional information about the purpose of this template.',
   'template.applications': 'Search for the name of each third-party application you are integrating using this template, and select it to add it to the applications list. This helps potential users find your template when they search the Marketplace.',

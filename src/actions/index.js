@@ -390,6 +390,15 @@ const resource = {
       action(actionTypes.INTEGRATION.CLEAR_REDIRECT, {
         integrationId,
       }),
+    isTileClick: (integrationId, isTileClick) =>
+      action(actionTypes.INTEGRATION.TILE_CLICK, {
+        integrationId,
+        isTileClick,
+      }),
+    clearIsTileClick: integrationId =>
+      action(actionTypes.INTEGRATION.CLEAR_TILE_CLICK, {
+        integrationId,
+      }),
     flowGroups: {
       createOrUpdate: (integrationId, flowGroupId, formKey) =>
         action(actionTypes.INTEGRATION.FLOW_GROUPS.CREATE_OR_UPDATE, {
@@ -1558,6 +1567,7 @@ const mapping = {
     toggleAutoCreateFlag: () => action(actionTypes.MAPPING.V2.TOGGLE_AUTO_CREATE_FLAG, {}),
     updateHighlightedIndex: index => action(actionTypes.MAPPING.V2.UPDATE_HIGHLIGHTED_INDEX, {index}),
     searchTree: ({ searchKey, showKey }) => action(actionTypes.MAPPING.V2.SEARCH_TREE, { searchKey, showKey }),
+    deleteNewRowKey: () => action(actionTypes.MAPPING.V2.DELETE_NEW_ROW_KEY, {}),
   },
 };
 
@@ -2037,6 +2047,20 @@ const errorManager = {
       isResolved,
       filters,
     }),
+  },
+  retries: {
+    request: ({ flowId, resourceId }) =>
+      action(actionTypes.ERROR_MANAGER.RETRIES.REQUEST, { flowId, resourceId }),
+    received: ({ flowId, resourceId, retries }) =>
+      action(actionTypes.ERROR_MANAGER.RETRIES.RECEIVED, {
+        flowId,
+        resourceId,
+        retries,
+      }),
+    clear: ({ flowId, resourceId }) =>
+      action(actionTypes.ERROR_MANAGER.RETRIES.CLEAR, { flowId, resourceId }),
+    cancelRequest: ({ flowId, resourceId, jobId}) =>
+      action(actionTypes.ERROR_MANAGER.RETRIES.CANCEL.REQUEST, {flowId, resourceId, jobId}),
   },
   retryData: {
     request: ({ flowId, resourceId, retryId }) =>

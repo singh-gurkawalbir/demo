@@ -25,6 +25,9 @@ export default function TabRedirection({children}) {
   const redirectTo = useSelector(state =>
     selectors.shouldRedirect(state, integrationId)
   );
+  const isTileClick = useSelector(state =>
+    selectors.isTileClick(state, integrationId)
+  );
   const integrationAppName = getIntegrationAppUrlName(integration?.name);
   const queryParams = new URLSearchParams(location.search);
   const flowJobId = queryParams.get('_flowJobId');
@@ -78,6 +81,16 @@ export default function TabRedirection({children}) {
   }, [dispatch, history, integrationAppName, integrationId, match.path, redirectTo, childId, match.params]);
 
   const supportsMultiStore = integration?.settings?.supportsMultiStore;
+
+  useEffect(() => {
+    if (isTileClick) {
+      dispatch(actions.resource.integrations.clearIsTileClick(integrationId));
+      if (integration?.children?.length === 1) {
+        history.push(`/integrationapps/${integrationAppName}/${integrationId}/child/${integration?.children[0]?.value}`);
+      }
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // To support breadcrumbs, and also to have a more robust url interface,
   // we want to "self-heal" partial urls hitting this page.  If an integration app

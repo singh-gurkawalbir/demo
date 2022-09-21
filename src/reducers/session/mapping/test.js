@@ -1834,6 +1834,7 @@ describe('mapping reducer', () => {
           importId: 'imp-123',
           flowId: 'flow-123',
           version: 2,
+          newRowKey: 'new_key',
           v2TreeData: [{
             key: 'key1',
             dataType: MAPPING_DATA_TYPES.STRING,
@@ -2050,6 +2051,7 @@ describe('mapping reducer', () => {
               dataType: MAPPING_DATA_TYPES.STRING,
               generate: 'lname',
               extract: '$.lname',
+              jsonPath: 'lname',
             },
             {
               key: 'key1',
@@ -2135,6 +2137,7 @@ describe('mapping reducer', () => {
             dataType: MAPPING_DATA_TYPES.STRING,
             generate: 'test2',
             extract: '$.lname',
+            jsonPath: 'test2',
           },
           {
             key: 'key4',
@@ -2213,6 +2216,7 @@ describe('mapping reducer', () => {
             dataType: MAPPING_DATA_TYPES.STRING,
             generate: 'test3',
             extract: '$.fname',
+            jsonPath: 'test3',
           },
           {
             key: 'key2',
@@ -2323,6 +2327,7 @@ describe('mapping reducer', () => {
             key: 'key2',
             dataType: MAPPING_DATA_TYPES.OBJECT,
             generate: 'lname',
+            jsonPath: 'lname',
             children: [
               {
                 key: 'c1',
@@ -2389,6 +2394,7 @@ describe('mapping reducer', () => {
             key: 'key2',
             dataType: MAPPING_DATA_TYPES.OBJECT,
             generate: 'lname',
+            jsonPath: 'lname',
             children: [
               {
                 key: 'c1',
@@ -2404,7 +2410,8 @@ describe('mapping reducer', () => {
                 generate: 'child3',
                 extract: '$.child3',
                 parentExtract: '',
-                parentKey: 'key3',
+                parentKey: 'key2',
+                jsonPath: 'lname.child3',
               },
               {
                 key: 'c2',
@@ -2437,6 +2444,7 @@ describe('mapping reducer', () => {
             key: 'key2',
             dataType: MAPPING_DATA_TYPES.OBJECT,
             generate: 'lname',
+            jsonPath: 'lname',
             children: [
               {
                 key: 'c1',
@@ -2510,6 +2518,7 @@ describe('mapping reducer', () => {
             key: 'key2',
             dataType: MAPPING_DATA_TYPES.OBJECT,
             generate: 'lname',
+            jsonPath: 'lname',
             children: [
               {
                 key: 'c2',
@@ -2518,6 +2527,7 @@ describe('mapping reducer', () => {
                 extract: '$.child2',
                 parentExtract: '',
                 parentKey: 'key2',
+                jsonPath: 'lname.child2',
               },
               {
                 key: 'c1',
@@ -2552,6 +2562,7 @@ describe('mapping reducer', () => {
             generate: 'mothers_side',
             combinedExtract: '$.siblings[*],$.children[*]',
             activeTab: 0,
+            jsonPath: 'mothers_side',
             children: [
               {
                 key: 'c1',
@@ -2622,6 +2633,7 @@ describe('mapping reducer', () => {
             generate: 'mothers_side',
             combinedExtract: '$.siblings[*],$.children[*]',
             activeTab: 0,
+            jsonPath: 'mothers_side',
             children: [
               {
                 key: 'c1',
@@ -2635,6 +2647,7 @@ describe('mapping reducer', () => {
                 extract: '$.child2',
                 parentExtract: '$.siblings[*]',
                 parentKey: 'key2',
+                jsonPath: 'mothers_side[*].child2',
               },
               {
                 key: 'c1',
@@ -2959,13 +2972,15 @@ describe('mapping reducer', () => {
             dataType: MAPPING_DATA_TYPES.OBJECTARRAY,
             generate: 'fname',
             combinedExtract: '',
+            activeTab: 0,
             children: [
               {
-                key: 'new_key',
-                title: '',
+                key: 'c1',
                 parentKey: 'key1',
+                generate: 'child1',
+                extract: '$.child1',
+                parentExtract: '',
                 dataType: MAPPING_DATA_TYPES.STRING,
-                isEmptyRow: true,
               },
             ],
           }],
@@ -3031,6 +3046,7 @@ describe('mapping reducer', () => {
                 key: 'new_key',
                 title: '',
                 parentKey: 'key1',
+                generate: 'child1',
                 parentExtract: '$.lname[*]',
                 dataType: MAPPING_DATA_TYPES.STRING,
                 hidden: true,
@@ -4390,6 +4406,40 @@ describe('mapping reducer', () => {
       };
 
       expect(state).toEqual(newState);
+    });
+  });
+  describe('MAPPING.V2.DELETE_NEW_ROW_KEY action', () => {
+    test('delete the newRowKey from mappings', () => {
+      const initialState = {
+        mapping: {
+          importId: 'imp-123',
+          flowId: 'flow-123',
+          version: 2,
+          newRowKey: 'key1',
+          v2TreeData: [{
+            key: 'key1',
+            dataType: MAPPING_DATA_TYPES.STRING,
+            generate: 'fname',
+            extract: '$.fname',
+          }],
+        },
+      };
+      const state = reducer(initialState, actions.mapping.v2.deleteNewRowKey());
+      const expectedState = {
+        mapping: {
+          importId: 'imp-123',
+          flowId: 'flow-123',
+          version: 2,
+          v2TreeData: [{
+            key: 'key1',
+            dataType: MAPPING_DATA_TYPES.STRING,
+            generate: 'fname',
+            extract: '$.fname',
+          }],
+        },
+      };
+
+      expect(state).toEqual(expectedState);
     });
   });
 

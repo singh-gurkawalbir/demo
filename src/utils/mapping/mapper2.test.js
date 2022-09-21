@@ -577,6 +577,7 @@ describe('v2 mapping utils', () => {
             parentExtract: '$.siblings[*]',
             parentKey: '3SC9pqVz-S2n-PQyVDhsS',
             title: '',
+            generate: 'child1',
           },
         ],
       };
@@ -663,6 +664,7 @@ describe('v2 mapping utils', () => {
           {
             className: 'hideRow',
             dataType: 'string',
+            generate: 'child1',
             hidden: true,
             key: 'new_key',
             parentExtract: '$.test[*].nested[*]',
@@ -777,7 +779,7 @@ describe('v2 mapping utils', () => {
           },
           {
             dataType: 'string',
-            key: '4UB7OJokF5bGpvc8osHYT',
+            key: 'new_key',
             parentExtract: '$|0',
             parentKey: 'vlVDP3cjaN2cGmcSW1RCq',
             title: '',
@@ -797,45 +799,409 @@ describe('v2 mapping utils', () => {
       expect(rebuildObjectArrayNode(node, extract)).toEqual(newNode);
     });
     test('should correctly update the node children and link to first source if they were not linked already', () => {
+      generateUniqueKey.mockReturnValue('new_key');
       const node = {
-        combinedExtract: '',
-        dataType: 'objectarray',
-        disabled: false,
-        generate: 'family_tree',
-        key: 'vlVDP3cjaN2cGmcSW1RCq',
+        key: 'av3ZbXA57eoIofRKwQUFz',
         title: '',
+        disabled: false,
+        dataType: 'objectarray',
         children: [
           {
-            dataType: 'string',
-            key: '4UB7OJokF5bGpvc8osHYT',
-            parentKey: 'vlVDP3cjaN2cGmcSW1RCq',
+            key: 'yFngPGWR0HW6a6JQ1pvkj',
             title: '',
+            parentKey: 'av3ZbXA57eoIofRKwQUFz',
+            parentExtract: '',
+            dataType: 'string',
             generate: 'id',
+            jsonPath: 'family_tree[*].id',
             extract: '$.id',
           },
         ],
+        generate: 'family_tree',
+        jsonPath: 'family_tree',
       };
 
       const extract = '$';
+
       const newNode = {
-        combinedExtract: '$',
-        dataType: 'objectarray',
-        disabled: false,
-        generate: 'family_tree',
-        key: 'vlVDP3cjaN2cGmcSW1RCq',
+        key: 'av3ZbXA57eoIofRKwQUFz',
         title: '',
-        activeTab: 0,
+        disabled: false,
+        dataType: 'objectarray',
+        combinedExtract: '$',
         children: [
           {
-            dataType: 'string',
-            key: '4UB7OJokF5bGpvc8osHYT',
-            parentExtract: '$|0',
-            parentKey: 'vlVDP3cjaN2cGmcSW1RCq',
+            key: 'new_key',
             title: '',
+            parentKey: 'av3ZbXA57eoIofRKwQUFz',
+            parentExtract: '$|0',
+            dataType: 'string',
             generate: 'id',
+            jsonPath: 'family_tree[*].id',
             extract: '$.id',
           },
         ],
+        generate: 'family_tree',
+        jsonPath: 'family_tree',
+        activeTab: 0,
+      };
+
+      expect(rebuildObjectArrayNode(node, extract)).toEqual(newNode);
+    });
+
+    test('should correctly update the node with empty generates with child nodes for the new source incase the first source has an object mapping', () => {
+      generateUniqueKey.mockReturnValue('new_key');
+
+      const node = {
+        key: 'LQL4eGSdYcfXiKm478tPQ',
+        title: '',
+        dataType: 'objectarray',
+        disabled: false,
+        combinedExtract: '$[*].feeds[*]',
+        children: [
+          {
+            key: '8UXchy6vBsJiIXtStB0Dd',
+            title: '',
+            parentKey: 'LQL4eGSdYcfXiKm478tPQ',
+            parentExtract: '$[*].feeds[*]',
+            dataType: 'object',
+            children: [
+              {
+                key: 'Y66DS3Xpwh3GNqOjJJ84w',
+                title: '',
+                parentKey: '8UXchy6vBsJiIXtStB0Dd',
+                parentExtract: '',
+                dataType: 'string',
+                generate: 'd1',
+                jsonPath: 'family_tree[*].map1.d1',
+                extract: 'e1',
+              },
+            ],
+            generate: 'map1',
+            jsonPath: 'family_tree[*].map1',
+          },
+        ],
+        generate: 'family_tree',
+        jsonPath: 'family_tree',
+        activeTab: 0,
+      };
+
+      const extract = '$[*].feeds[*],$.test[*]';
+
+      const newNode = {
+        key: 'LQL4eGSdYcfXiKm478tPQ',
+        title: '',
+        dataType: 'objectarray',
+        disabled: false,
+        combinedExtract: '$[*].feeds[*],$.test[*]',
+        children: [
+          {
+            key: 'new_key',
+            parentKey: 'LQL4eGSdYcfXiKm478tPQ',
+            title: '',
+            isTabNode: true,
+          },
+          {
+            key: '8UXchy6vBsJiIXtStB0Dd',
+            title: '',
+            parentKey: 'LQL4eGSdYcfXiKm478tPQ',
+            parentExtract: '$[*].feeds[*]',
+            dataType: 'object',
+            children: [
+              {
+                key: 'Y66DS3Xpwh3GNqOjJJ84w',
+                title: '',
+                parentKey: '8UXchy6vBsJiIXtStB0Dd',
+                parentExtract: '',
+                dataType: 'string',
+                generate: 'd1',
+                jsonPath: 'family_tree[*].map1.d1',
+                extract: 'e1',
+              },
+            ],
+            generate: 'map1',
+            jsonPath: 'family_tree[*].map1',
+          },
+          {
+            key: 'new_key',
+            title: '',
+            generate: 'map1',
+            jsonPath: 'family_tree[*].map1',
+            dataType: 'object',
+            children: [
+              {
+                key: 'new_key',
+                title: '',
+                generate: 'd1',
+                jsonPath: 'family_tree[*].map1.d1',
+                dataType: 'string',
+                parentKey: 'new_key',
+                parentExtract: '',
+                hidden: true,
+                className: 'hideRow',
+              },
+            ],
+            parentKey: 'LQL4eGSdYcfXiKm478tPQ',
+            parentExtract: '$.test[*]',
+            hidden: true,
+            className: 'hideRow',
+          },
+        ],
+        generate: 'family_tree',
+        jsonPath: 'family_tree',
+        activeTab: 0,
+      };
+
+      expect(rebuildObjectArrayNode(node, extract)).toEqual(newNode);
+    });
+    test('should correctly update the node with empty generates with child nodes incase of Object array mapping for the first source ', () => {
+      generateUniqueKey.mockReturnValue('new_key');
+
+      const node = {
+        key: '21xmtiTyd7LezDTLMGobu',
+        title: '',
+        disabled: false,
+        dataType: 'objectarray',
+        combinedExtract: '$[*].feeds[*]',
+        children: [
+          {
+            key: 'aZzxJ0WB6HZts74cbfgQx',
+            title: '',
+            parentKey: '21xmtiTyd7LezDTLMGobu',
+            parentExtract: '$[*].feeds[*]',
+            dataType: 'objectarray',
+            combinedExtract: 'pe1',
+            children: [
+              {
+                key: 'S7nTwK7VyorrJdOtmVMCC',
+                title: '',
+                parentKey: 'aZzxJ0WB6HZts74cbfgQx',
+                parentExtract: 'pe1',
+                dataType: 'string',
+                generate: 'd1',
+                jsonPath: 'family_tree[*].map1[*].d1',
+                extract: 'e1',
+              },
+            ],
+            generate: 'map1',
+            jsonPath: 'family_tree[*].map1',
+            activeTab: 0,
+          },
+        ],
+        generate: 'family_tree',
+        jsonPath: 'family_tree',
+        activeTab: 0,
+      };
+
+      const extract = '$[*].feeds[*],$.test[*]';
+
+      const newNode = {
+        key: '21xmtiTyd7LezDTLMGobu',
+        title: '',
+        disabled: false,
+        dataType: 'objectarray',
+        combinedExtract: '$[*].feeds[*],$.test[*]',
+        children: [
+          {
+            key: 'new_key',
+            parentKey: '21xmtiTyd7LezDTLMGobu',
+            title: '',
+            isTabNode: true,
+          },
+          {
+            key: 'aZzxJ0WB6HZts74cbfgQx',
+            title: '',
+            parentKey: '21xmtiTyd7LezDTLMGobu',
+            parentExtract: '$[*].feeds[*]',
+            dataType: 'objectarray',
+            combinedExtract: 'pe1',
+            children: [
+              {
+                key: 'S7nTwK7VyorrJdOtmVMCC',
+                title: '',
+                parentKey: 'aZzxJ0WB6HZts74cbfgQx',
+                parentExtract: 'pe1',
+                dataType: 'string',
+                generate: 'd1',
+                jsonPath: 'family_tree[*].map1[*].d1',
+                extract: 'e1',
+              },
+            ],
+            generate: 'map1',
+            jsonPath: 'family_tree[*].map1',
+            activeTab: 0,
+          },
+          {
+            key: 'new_key',
+            title: '',
+            generate: 'map1',
+            jsonPath: 'family_tree[*].map1',
+            dataType: 'objectarray',
+            children: [
+              {
+                key: 'new_key',
+                title: '',
+                generate: 'd1',
+                jsonPath: 'family_tree[*].map1[*].d1',
+                dataType: 'string',
+                parentKey: 'new_key',
+                parentExtract: '',
+                className: 'hideRow',
+                hidden: true,
+              },
+            ],
+            parentKey: '21xmtiTyd7LezDTLMGobu',
+            parentExtract: '$.test[*]',
+            className: 'hideRow',
+            hidden: true,
+          },
+        ],
+        generate: 'family_tree',
+        jsonPath: 'family_tree',
+        activeTab: 0,
+      };
+
+      expect(rebuildObjectArrayNode(node, extract)).toEqual(newNode);
+    });
+    test('should correctly update node with object array mapped child nodes of first source when child has multiple sources incase of object array mapping for the first source', () => {
+      generateUniqueKey.mockReturnValue('new_key');
+
+      const node = {
+        key: '21xmtiTyd7LezDTLMGobu',
+        title: '',
+        disabled: false,
+        dataType: 'objectarray',
+        combinedExtract: '$[*].feeds[*]',
+        children: [
+          {
+            key: 'aZzxJ0WB6HZts74cbfgQx',
+            title: '',
+            parentKey: '21xmtiTyd7LezDTLMGobu',
+            parentExtract: '$[*].feeds[*]',
+            dataType: 'objectarray',
+            combinedExtract: 'pe1,pe2',
+            children: [
+              {
+                key: 'yTXmXKeo6d2dodgi-XDLh',
+                parentKey: 'aZzxJ0WB6HZts74cbfgQx',
+                title: '',
+                isTabNode: true,
+              },
+              {
+                key: 'S7nTwK7VyorrJdOtmVMCC',
+                title: '',
+                parentKey: 'aZzxJ0WB6HZts74cbfgQx',
+                parentExtract: 'pe1',
+                dataType: 'string',
+                generate: 'd1',
+                jsonPath: 'family_tree[*].map1[*].d1',
+                extract: 'e1',
+              },
+              {
+                key: 'NTAuBPI3iKoomufe2SLA-',
+                title: '',
+                generate: 'd1',
+                jsonPath: 'family_tree[*].map1[*].d1',
+                dataType: 'string',
+                parentKey: 'aZzxJ0WB6HZts74cbfgQx',
+                parentExtract: 'pe2',
+                className: 'hideRow',
+                hidden: true,
+              },
+            ],
+            generate: 'map1',
+            jsonPath: 'family_tree[*].map1',
+            activeTab: 0,
+          },
+        ],
+        generate: 'family_tree',
+        jsonPath: 'family_tree',
+        activeTab: 0,
+      };
+
+      const extract = '$[*].feeds[*],$.test[*]';
+
+      const newNode = {
+        key: '21xmtiTyd7LezDTLMGobu',
+        title: '',
+        disabled: false,
+        dataType: 'objectarray',
+        combinedExtract: '$[*].feeds[*],$.test[*]',
+        children: [
+          {
+            key: 'new_key',
+            parentKey: '21xmtiTyd7LezDTLMGobu',
+            title: '',
+            isTabNode: true,
+          },
+          {
+            key: 'aZzxJ0WB6HZts74cbfgQx',
+            title: '',
+            parentKey: '21xmtiTyd7LezDTLMGobu',
+            parentExtract: '$[*].feeds[*]',
+            dataType: 'objectarray',
+            combinedExtract: 'pe1,pe2',
+            children: [
+              {
+                key: 'yTXmXKeo6d2dodgi-XDLh',
+                parentKey: 'aZzxJ0WB6HZts74cbfgQx',
+                title: '',
+                isTabNode: true,
+              },
+              {
+                key: 'S7nTwK7VyorrJdOtmVMCC',
+                title: '',
+                parentKey: 'aZzxJ0WB6HZts74cbfgQx',
+                parentExtract: 'pe1',
+                dataType: 'string',
+                generate: 'd1',
+                jsonPath: 'family_tree[*].map1[*].d1',
+                extract: 'e1',
+              },
+              {
+                key: 'NTAuBPI3iKoomufe2SLA-',
+                title: '',
+                generate: 'd1',
+                jsonPath: 'family_tree[*].map1[*].d1',
+                dataType: 'string',
+                parentKey: 'aZzxJ0WB6HZts74cbfgQx',
+                parentExtract: 'pe2',
+                className: 'hideRow',
+                hidden: true,
+              },
+            ],
+            generate: 'map1',
+            jsonPath: 'family_tree[*].map1',
+            activeTab: 0,
+          },
+          {
+            key: 'new_key',
+            title: '',
+            generate: 'map1',
+            jsonPath: 'family_tree[*].map1',
+            dataType: 'objectarray',
+            children: [
+              {
+                key: 'new_key',
+                title: '',
+                generate: 'd1',
+                jsonPath: 'family_tree[*].map1[*].d1',
+                dataType: 'string',
+                parentKey: 'new_key',
+                parentExtract: '',
+                hidden: true,
+                className: 'hideRow',
+              },
+            ],
+            parentKey: '21xmtiTyd7LezDTLMGobu',
+            parentExtract: '$.test[*]',
+            hidden: true,
+            className: 'hideRow',
+          },
+        ],
+        generate: 'family_tree',
+        jsonPath: 'family_tree',
+        activeTab: 0,
       };
 
       expect(rebuildObjectArrayNode(node, extract)).toEqual(newNode);
@@ -2813,7 +3179,7 @@ describe('v2 mapping utils', () => {
 
       expect(allowDrop({dragNode, dropNode, dropPosition: 0})).toEqual(true);
     });
-    test('should return false if nodes are not at the same hierarchal level', () => {
+    test('should return true if nodes are not at the same hierarchical level', () => {
       const dragNode = {
         key: 'c1',
         extract: '$.fname',
@@ -2839,7 +3205,7 @@ describe('v2 mapping utils', () => {
         ],
       };
 
-      expect(allowDrop({dragNode, dropNode, dropPosition: 2})).toEqual(false);
+      expect(allowDrop({dragNode, dropNode, dropPosition: 2})).toEqual(true);
       expect(allowDrop({dragNode: {
         key: 'c2',
         extract: '$.lname',
@@ -2847,7 +3213,7 @@ describe('v2 mapping utils', () => {
         parentKey: 'key1',
       },
       dropNode,
-      dropPosition: 2})).toEqual(false);
+      dropPosition: 2})).toEqual(true);
     });
     test('should return true if drop node is tab and drop position is 1', () => {
       const dragNode = {
