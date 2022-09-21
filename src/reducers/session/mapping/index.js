@@ -280,7 +280,7 @@ export default (state = {}, action) => {
           mappings,
           lookups,
           v2TreeData,
-          expandedKeys: [],
+          expandedKeys: getAllKeys(v2TreeData),
           flowId,
           importId,
           subRecordMappingId,
