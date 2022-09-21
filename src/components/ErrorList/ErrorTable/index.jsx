@@ -164,6 +164,7 @@ const ErrorTableWithPanel = ({
             flowId={flowId}
             resourceId={resourceId}
             isResolved={isResolved}
+            errorsInRun={errorsInRun}
           />
         </div>
       </div>
@@ -208,6 +209,7 @@ export default function ErrorTable({
   resourceId,
   isResolved,
   flowJobId,
+  errorsInRun,
 }) {
   const classes = useStyles();
   const filterKey = isResolved ? FILTER_KEYS.RESOLVED : FILTER_KEYS.OPEN;
@@ -396,6 +398,7 @@ export default function ErrorTable({
             isResolved={isResolved}
             keydownListener={keydownListener}
             onRowClick={onRowClick}
+            errorsInRun={errorsInRun}
           />
         </>
       )}
