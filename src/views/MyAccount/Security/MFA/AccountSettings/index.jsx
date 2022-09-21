@@ -72,13 +72,7 @@ export default function AccountSettings() {
   const formKey = useForm({ fieldMeta, remount: remountKey });
 
   const updateAccountSettings = useCallback(values => {
-    const { dontAllowTrustedDevices, trustDeviceForPeriod } = values;
-    const payload = { dontAllowTrustedDevices };
-
-    if (!dontAllowTrustedDevices && trustDeviceForPeriod) {
-      payload.trustDeviceForPeriod = +trustDeviceForPeriod;
-    }
-    dispatch(actions.mfa.updateAccountSettings(payload));
+    dispatch(actions.mfa.updateAccountSettings(values));
   }, [dispatch]);
 
   useEffect(() => {
