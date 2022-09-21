@@ -315,9 +315,9 @@ export const updateFinalMetadataWithHttpFramework = (finalFieldMeta, connector, 
       const _conditionIdValuesMap = [];
 
       preConfiguredFieldLists.forEach(field => {
-        _conditionIdValuesMap.push({_conditionIds: field._conditionIds, values: field.values});
+        if (field._conditionIds?.length) { _conditionIdValuesMap.push({_conditionIds: field._conditionIds, values: field.values}); }
       });
-      if (preConfiguredField && preConfiguredFieldLists?.length) {
+      if (preConfiguredField && _conditionIdValuesMap.length) {
         tempFiledMeta.fieldMap[key]._conditionIdValuesMap = _conditionIdValuesMap;
         tempFiledMeta.fieldMap[key].conditions = connectionTemplate?.conditions;
       } else if (isNewId(resource?._id) && preConfiguredField) {
