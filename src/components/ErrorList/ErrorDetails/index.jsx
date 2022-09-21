@@ -1,5 +1,5 @@
-import React, { useState, useCallback, useMemo } from 'react';
-import { useSelector } from 'react-redux';
+import React, { useCallback, useMemo } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { useRouteMatch } from 'react-router-dom';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
@@ -12,6 +12,8 @@ import { safeParse } from '../../../utils/string';
 import DrawerContent from '../../drawer/Right/DrawerContent';
 import DrawerFooter from '../../drawer/Right/DrawerFooter';
 import ErrorDetailActions from './ErrorDetailActions';
+import actions from '../../../actions';
+import AddToBatch from './ErrorDetailActions/AddToBatch';
 
 const useStyles = makeStyles(theme => ({
   detailsContainer: {
@@ -35,11 +37,11 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const ERROR_DETAILS_TABS = {
-  VIEW_FIELDS: { type: 'view', label: 'View error fields' },
+  VIEW_FIELDS: { type: 'view', label: 'Error fields' },
   EDIT_RETRY_DATA: { type: 'editRetry', label: 'Edit retry data' },
   VIEW_RETRY_DATA: { type: 'viewRetry', label: 'Retry data' },
-  REQUEST: { type: 'request', label: 'View HTTP request' },
-  RESPONSE: { type: 'response', label: 'View HTTP response' },
+  REQUEST: { type: 'request', label: 'HTTP request' },
+  RESPONSE: { type: 'response', label: 'HTTP response' },
   NETSUITE_REQUEST: { type: 'request', label: 'View request' },
   NETSUITE_RESPONSE: { type: 'response', label: 'View response' },
 };
@@ -63,11 +65,13 @@ function TabPanel({ children, value, type }) {
   );
 }
 
-export default function ErrorDetails({ flowId, resourceId, isResolved, onClose, onTabChange }) {
+export default function ErrorDetails({ flowId, resourceId, isResolved, onClose, onTabChange, handleNext}) {
   const match = useRouteMatch();
   const classes = useStyles();
+  const dispatch = useDispatch();
+
   const { mode, errorId } = match.params;
-  const [retryData, setRetryData] = useState();
+
   const isFlowDisabled = useSelector(state =>
     selectors.resource(state, 'flows', flowId)?.disabled
   );
@@ -77,17 +81,18 @@ export default function ErrorDetails({ flowId, resourceId, isResolved, onClose, 
 
   const { retryDataKey: retryId, reqAndResKey} = errorDoc || {};
 
+  const retryData = useSelector(state => selectors.userRetryData(state, retryId));
+
   const onRetryDataChange = useCallback(
     data =>
       // Editor onChange returns string format, so parse it to get updated retryData
-      setRetryData(safeParse(data)),
-    []
+      dispatch(actions.errorManager.retryData.updateUserRetryData({retryId, retryData: safeParse(data)})),
+    [dispatch, retryId]
   );
-
   const isResourceNetsuite = useSelector(state => selectors.isResourceNetsuite(state, resourceId));
 
   const availableTabs = useMemo(() => {
-    const tabs = [ERROR_DETAILS_TABS.VIEW_FIELDS];
+    const tabs = [];
 
     if (retryId) {
       if (isFlowDisabled) {
@@ -96,20 +101,21 @@ export default function ErrorDetails({ flowId, resourceId, isResolved, onClose, 
         tabs.push(ERROR_DETAILS_TABS.EDIT_RETRY_DATA);
       }
     }
-    if (!reqAndResKey) return tabs;
 
-    if (isResourceNetsuite) {
+    if (reqAndResKey && isResourceNetsuite) {
       tabs.push(ERROR_DETAILS_TABS.NETSUITE_REQUEST, ERROR_DETAILS_TABS.NETSUITE_RESPONSE);
-    } else {
+    } else if (reqAndResKey) {
       tabs.push(ERROR_DETAILS_TABS.REQUEST, ERROR_DETAILS_TABS.RESPONSE);
     }
+
+    tabs.push(ERROR_DETAILS_TABS.VIEW_FIELDS);
 
     return tabs;
   }, [retryId, reqAndResKey, isResourceNetsuite, isFlowDisabled]);
 
   if (!mode || !availableTabs.map(tab => tab.type).includes(mode)) {
-    // Incase of invalid url , redirects user to View Error fields tab
-    onTabChange(errorId, 'view');
+    // Incase of invalid url , redirects user to first available tab
+    onTabChange(errorId, availableTabs[0].type);
   }
 
   const handleModeChange = (evt, newValue) => onTabChange(errorId, newValue);
@@ -170,6 +176,13 @@ export default function ErrorDetails({ flowId, resourceId, isResolved, onClose, 
             />
           </TabPanel>
         </div>
+        { !isResolved && (
+        <AddToBatch
+          error={errorDoc}
+          flowId={flowId}
+          resourceId={resourceId}
+          isResolved={isResolved} />
+        )}
       </DrawerContent>
 
       <DrawerFooter>
@@ -181,7 +194,7 @@ export default function ErrorDetails({ flowId, resourceId, isResolved, onClose, 
           onClose={onClose}
           mode={mode}
           isResolved={isResolved}
-        />
+          handleNext={handleNext} />
       </DrawerFooter>
     </>
   );

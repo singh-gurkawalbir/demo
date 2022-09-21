@@ -62,7 +62,12 @@ function MappingSettingsV2({
   [dispatch, history]);
 
   const patchSettings = useCallback(settings => {
-    dispatch(actions.mapping.v2.patchSettings(nodeKey, settings));
+    const {extract, ...rest} = settings || {};
+
+    dispatch(actions.mapping.v2.patchSettings(nodeKey, rest));
+    if (!('hardCodedValue' in rest)) {
+      dispatch(actions.mapping.v2.patchField('extract', nodeKey, extract || ''));
+    }
   }, [dispatch, nodeKey]);
 
   const handleLookupUpdate = useCallback((oldLookup, newLookup) => {

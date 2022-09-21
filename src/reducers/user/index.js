@@ -56,7 +56,7 @@ selectors.userPreferences = createSelector(
 
     // eslint-disable-next-line max-len
     /* When the user belongs to an org, we need to return the ssConnectionIds from org owner preferences. */
-    const { accounts: orgAccounts = {} } = org;
+    const { accounts: orgAccounts = [] } = org;
     const currentAccount = orgAccounts.find(
       a => a._id === preferences.defaultAShareId
     );

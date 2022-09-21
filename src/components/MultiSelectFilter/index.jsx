@@ -10,6 +10,7 @@ import ArrowUpIcon from '../icons/ArrowUpIcon';
 import ChildDetails from './ChildDetails';
 import { TextButton, FilledButton } from '../Buttons';
 import ActionGroup from '../ActionGroup';
+import OutlinedButton from '../Buttons/OutlinedButton';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -55,6 +56,21 @@ const useStyles = makeStyles(theme => ({
       maxWidth: 'inherit',
     },
   },
+  dateRangePopperBtn: {
+    borderColor: theme.palette.secondary.lightest,
+    minHeight: 36,
+    color: theme.palette.secondary.main,
+    fontFamily: 'source sans pro',
+    fontSize: 15,
+    justifyContent: 'space-between',
+    '&:hover': {
+      borderColor: theme.palette.primary.main,
+      color: theme.palette.secondary.dark,
+    },
+    '& .MuiButton-label': {
+      width: theme.spacing(19),
+    },
+  },
   actions: {
     marginTop: theme.spacing(2),
   },
@@ -91,7 +107,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function MultiSelectFilter({ items = [], selected = [], onSave, Icon, onSelect, SelectedLabelImp}) {
+export default function MultiSelectFilter({ items = [], selected = [], onSave, Icon, onSelect, SelectedLabelImp, ButtonLabel}) {
   const [initialValue, setInitialValue] = useState(selected);
   const [checked, setChecked] = useState(selected);
   const [anchorEl, setAnchorEl] = useState(null);
@@ -192,9 +208,19 @@ export default function MultiSelectFilter({ items = [], selected = [], onSave, I
 
   return (
     <>
-      <ActionButton onClick={toggleClick}>
-        <Icon />
-      </ActionButton>
+      {ButtonLabel ? (
+        <OutlinedButton
+          onClick={toggleClick}
+          endIcon={<ArrowDownIcon />}
+          color="secondary"
+          className={classes.dateRangePopperBtn}>
+          {ButtonLabel}
+        </OutlinedButton>
+      ) : (
+        <ActionButton onClick={toggleClick}>
+          <Icon />
+        </ActionButton>
+      )}
       <ArrowPopper
         open={!!anchorEl}
         anchorEl={anchorEl}
@@ -212,11 +238,10 @@ export default function MultiSelectFilter({ items = [], selected = [], onSave, I
                 <FormControl component="fieldset" className={classes.formControl}>
                   <FormGroup className={classes.formGroup}>
                     {items.map(m => (
-                      <>
-                        <ul key={m._id} className={classes.checkAction}>
-                          {isChildExists && (
+                      <ul key={m._id} className={classes.checkAction}>
+                        {isChildExists && (
                           <li>
-                            { m?.children?.length && (
+                            { m?.children?.length > 0 && (
                             <IconButton
                               data-test="toggleJobDetail"
                               className={classes.moreIcon}
@@ -226,29 +251,27 @@ export default function MultiSelectFilter({ items = [], selected = [], onSave, I
                             </IconButton>
                           )}
                           </li>
-                          )}
-                          <li>
-                            <FormControlLabel
-                              className={classes.selectResourceItem}
-                              control={(
-                                <Checkbox
-                                  color="primary"
-                                  checked={checked.includes(m._id)}
-                                  onChange={handleSelect(m._id)}
-                                  value="required"
-                                  className={classes.selectResourceCheck} />
+                        )}
+                        <li>
+                          <FormControlLabel
+                            className={classes.selectResourceItem}
+                            control={(
+                              <Checkbox
+                                color="primary"
+                                checked={checked.includes(m._id)}
+                                onChange={handleSelect(m._id)}
+                                value="required"
+                                className={classes.selectResourceCheck} />
                                   )}
-                              label={SelectedLabelImp ? <SelectedLabelImp name={m.name} id={m._id} /> : m.name}
-                              key={m._id} />
-                            {expanded[m._id] && m.children && m.children.map(c => (
-                              <ChildDetails
-                                key={c._id} current={c} parentId={m._id} handleSelect={handleChildSelect}
-                                checked={checked} />
-                            ))}
-                          </li>
-                        </ul>
-
-                      </>
+                            label={SelectedLabelImp ? <SelectedLabelImp name={m.name} id={m._id} /> : m.name}
+                            key={m._id} />
+                          {expanded[m._id] && m.children && m.children.map(c => (
+                            <ChildDetails
+                              key={c._id} current={c} parentId={m._id} handleSelect={handleChildSelect}
+                              checked={checked} />
+                          ))}
+                        </li>
+                      </ul>
                     ))}
                   </FormGroup>
                 </FormControl>

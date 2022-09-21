@@ -89,7 +89,7 @@ const useStyles = makeStyles(theme => ({
     background: theme.palette.background.paper,
     borderBottom: `1px solid ${theme.palette.secondary.lightest}`,
     marginBottom: theme.spacing(1),
-
+    width: '100%',
   },
   flowTitle: {
     position: 'relative',
@@ -111,7 +111,7 @@ const useStyles = makeStyles(theme => ({
     },
   },
   actions: {
-    padding: theme.spacing(2, 3),
+    padding: theme.spacing(2, 0),
     borderTop: `1px solid ${theme.palette.secondary.lightest}`,
     display: 'flex',
     justifyContent: 'space-between',

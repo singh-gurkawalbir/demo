@@ -1,9 +1,11 @@
 import React from 'react';
+import { useSelector } from 'react-redux';
 import { Switch, Route, useRouteMatch, useLocation, matchPath, useHistory } from 'react-router-dom';
 import { Grid, makeStyles } from '@material-ui/core';
 import MFA from './MFA';
 import SSO from './SSO';
 import LeftNav from './LeftNav';
+import { selectors } from '../../../reducers';
 
 const useStyles = makeStyles(theme => ({
   subNav: {
@@ -17,7 +19,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function Security() {
+function SecurityTabLayout() {
   const classes = useStyles();
   const match = useRouteMatch();
   const history = useHistory();
@@ -50,4 +52,18 @@ export default function Security() {
       </Grid>
     </>
   );
+}
+
+function IncompleteMFASetup() {
+  return <MFA />;
+}
+
+export default function Security() {
+  const isMFASetupIncomplete = useSelector(selectors.isMFASetupIncomplete);
+
+  if (isMFASetupIncomplete) {
+    return <IncompleteMFASetup />;
+  }
+
+  return <SecurityTabLayout />;
 }

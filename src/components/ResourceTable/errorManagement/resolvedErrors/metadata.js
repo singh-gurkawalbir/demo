@@ -4,7 +4,7 @@ import Retry from '../actions/Retry';
 import ViewErrorDetails from '../actions/ViewErrorDetails';
 import ViewHttpRequest from '../actions/ViewHttpRequest';
 import ViewHttpResponse from '../actions/ViewHttpResponse';
-import SelectError from '../cells/SelectError';
+import SelectError from '../../../ErrorList/ErrorDetails/ErrorDetailActions/SelectError';
 import SelectAllErrors from '../cells/SelectAllErrors';
 import UserName from '../cells/UserName';
 import CeligoTimeAgo from '../../../CeligoTimeAgo';
@@ -18,10 +18,14 @@ import EditRetryData from '../actions/EditRetry';
 import { selectors } from '../../../../reducers';
 import ViewNetsuiteRequest from '../actions/ViewNetsuiteRequest';
 import ViewNetsuiteResponse from '../actions/ViewNetsuiteResponse';
+import messageStore from '../../../../utils/messageStore';
 
 const options = {allowedTags: ['a']};
 export default {
   rowKey: 'errorId',
+  additionalConfigs: {
+    actionMenuTooltip: messageStore('VIEW_ACTIONS_HOVER_MESSAGE'),
+  },
   useColumns: () => [
     {
       key: 'selectAll',
@@ -90,7 +94,7 @@ export default {
       Value: ({rowData: r}) => {
         const {flowId} = useGetTableContext();
 
-        return <UserName userId={r.resolvedBy} flowId={flowId} />;
+        return <UserName userId={r.resolvedBy} flowId={flowId} jobType={r.type} />;
       },
     },
     {

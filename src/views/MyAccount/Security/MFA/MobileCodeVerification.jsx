@@ -2,7 +2,7 @@ import React, { useCallback } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { useDispatch } from 'react-redux';
 import DynaSubmit from '../../../../components/DynaForm/DynaSubmit';
-import useFormInitWithPermissions from '../../../../hooks/useFormInitWithPermissions';
+import useForm from '../../../../components/Form';
 import DynaForm from '../../../../components/DynaForm';
 import actions from '../../../../actions';
 
@@ -39,7 +39,7 @@ export default function MobileCodeVerification({className}) {
   const dispatch = useDispatch();
   const classes = useStyles();
 
-  const formKey = useFormInitWithPermissions({ fieldMeta });
+  const formKey = useForm({ fieldMeta });
 
   const verifyMobileCode = useCallback(values => {
     dispatch(actions.mfa.verifyMobileCode(values.mobileCode));

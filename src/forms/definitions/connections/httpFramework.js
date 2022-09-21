@@ -171,15 +171,22 @@ export default {
     delete newValues['/http/auth/wsse/username'];
     delete newValues['/http/auth/wsse/password'];
     delete newValues['/http/auth/wsse/headerName'];
+    newValues['/http/formType'] = 'assistant';
+    if (newValues['/http/updateBaseURI']) {
+      newValues['/http/baseURI'] = newValues['/http/updateBaseURI'];
+      delete newValues['/http/updateBaseURI'];
+    }
     if (resource?._httpConnectorId || resource?.http?._httpConnectorId) {
       newValues = updateHTTPFrameworkFormValues(newValues, resource, options?.httpConnector);
     }
-    newValues['/http/formType'] = 'assistant';
 
     return newValues;
   },
   fieldMap: {
-    name: { fieldId: 'name' },
+    name: {
+      fieldId: 'name',
+      label: 'Name your connection',
+    },
     connectionFormView: {
       fieldId: 'connectionFormView',
     },
@@ -216,6 +223,23 @@ export default {
     },
     'http.baseURI': {
       fieldId: 'http.baseURI',
+      readOnly: true,
+      refreshOptionsOnChangesTo: [],
+      defaultDisabled: true,
+      defaultValue: r => {
+        if (!r?.http?.baseURI) { return null; }
+
+        return r?.http?.baseURI;
+      },
+    },
+    'http.updateBaseURI': {
+      fieldId: 'http.updateBaseURI',
+      visible: false,
+      defaultValue: r => {
+        if (!r?.http?.baseURI) { return null; }
+
+        return r?.http?.baseURI;
+      },
     },
     'http.mediaType': {
       fieldId: 'http.mediaType',
@@ -297,7 +321,7 @@ export default {
     'http.rateLimit.failPath': { fieldId: 'http.rateLimit.failPath' },
     'http.rateLimit.failValues': { fieldId: 'http.rateLimit.failValues' },
     'http.retryHeader': { fieldId: 'http.retryHeader' },
-    'http.ping.relativeURI': { fieldId: 'http.ping.relativeURI' },
+    'http.ping.relativeURI': { fieldId: 'http.ping.relativeURI', visible: false },
     'http.ping.method': { fieldId: 'http.ping.method' },
     'http.ping.body': {
       fieldId: 'http.ping.body',
@@ -357,11 +381,8 @@ export default {
     },
   },
   layout: {
-    type: 'collapse',
     containers: [
       {
-        collapsed: true,
-        label: 'General',
         fields: [
           'name',
           'connectionFormView',
@@ -371,10 +392,22 @@ export default {
         ],
       },
       {
-        collapsed: true,
-        label: 'Application details',
+        containers: [
+          {
+            fields: [
+              'http.baseURI',
+              'http.updateBaseURI',
+            ],
+          },
+          {
+            type: 'indent',
+            containers: [{
+              fields: [],
+            }],
+          }],
+      },
+      {
         fields: [
-          'http.baseURI',
           'http.headers',
           'http.mediaType',
           'http.successMediaType',
@@ -382,78 +415,26 @@ export default {
         ],
       },
       {
-        collapsed: true,
-        label: 'Configure authentication',
         containers: [
           {
             fields: ['http.auth.type'],
           },
           {
-            type: 'collapse',
-            containers: [
-              {
-                collapsed: true,
-                label: 'Configure basic auth',
-                fields: [
-                  'httpBasic',
-                ],
-              },
-              {
-                collapsed: true,
-                label: 'Configure cookie auth',
-                fields: [
-                  'httpCookie',
-                ],
-              },
-              {
-                collapsed: false,
-                label: 'Configure custom auth',
-                fields: [
-                  'http.custom.encrypted',
-                  'http.custom.unencrypted',
-                ],
-              },
-              {
-                collapsed: true,
-                label: 'Configure digest auth',
-                fields: [
-                  'httpDigest',
-                ],
-              },
-              {
-                collapsed: true,
-                label: 'Configure OAuth 2.0',
-                fields: [
-                  'httpOAuth',
-                ],
-              },
-              {
-                collapsed: true,
-                label: 'OAuth 2.0 overrides',
-                fields: [
-                  'httpOAuthOverrides',
-                ],
-              },
-              {
-                collapsed: true,
-                label: 'Configure token auth',
-                fields: [
-                  'httpToken',
-                ],
-              },
-              {
-                collapsed: true,
-                label: 'Configure refresh token',
-                fields: ['httpRefreshToken'],
-              },
-              {
-                collapsed: true,
-                label: 'Configure WSSE auth',
-                fields: [
-                  'httpWsse',
-                ],
-              },
-            ],
+            type: 'indent',
+            containers: [{
+              fields: [
+                'httpBasic',
+                'httpCookie',
+                'http.custom.encrypted',
+                'http.custom.unencrypted',
+                'httpDigest',
+                'httpOAuth',
+                'httpOAuthOverrides',
+                'httpToken',
+                'httpRefreshToken',
+                'httpWsse',
+              ],
+            }],
           },
           {
             fields: [
@@ -465,8 +446,6 @@ export default {
         ],
       },
       {
-        collapsed: true,
-        label: 'Non-standard API rate limiter',
         fields: [
           'http.rateLimit.limit',
           'http.rateLimit.failStatusCode',
@@ -476,8 +455,6 @@ export default {
         ],
       },
       {
-        collapsed: true,
-        label: 'How to test this connection?',
         fields: [
           'http.ping.method',
           'http.ping.relativeURI',
@@ -490,8 +467,6 @@ export default {
         ],
       },
       {
-        collapsed: true,
-        label: 'Advanced',
         fields: [
           'http.disableStrictSSL',
           'httpAdvanced',
@@ -548,5 +523,22 @@ export default {
       ],
     },
   ],
+  // refresh the baseURI as per the user input
+  optionsHandler(fieldId, fields) {
+    if (fieldId === 'http.baseURI') {
+      const baseURIField = fields.find(field => field.id === 'http.baseURI');
+      let baseURIValue = baseURIField.defaultValue;
+
+      baseURIField.refreshOptionsOnChangesTo.forEach(fieldId => {
+        const fieldValue = fields.find(field => field.id === fieldId)?.value;
+
+        if (fieldValue) {
+          baseURIValue = baseURIValue.replace(new RegExp(`{{{(.)*${fieldId}}}}`), fieldValue);
+        }
+      });
+
+      return baseURIValue;
+    }
+  },
 };
 

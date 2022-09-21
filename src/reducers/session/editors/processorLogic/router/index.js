@@ -123,20 +123,24 @@ export default {
   },
   processResult: (editor, result) => {
     let outputMessage = '';
+    let logs;
 
-    if (result?.data) {
-      if (result.data[0].length === 1) {
-        const branch = editor.rule.branches[result.data[0][0]]?.name;
+    if (Array.isArray(result?.data)) {
+      const { data = [] } = result.data[0] || {};
 
-        outputMessage = `The record will pass through branch ${result.data[0][0]}: ${branch} `;
-      } else if (!result.data[0].length) {
+      logs = result.data[0].logs;
+      if (data.length === 1) {
+        const branch = editor.rule.branches[data[0]]?.name;
+
+        outputMessage = `The record will pass through branch ${data[0]}: ${branch} `;
+      } else if (!data.length) {
         outputMessage = 'The record will not pass through any of the branches.';
       } else {
-        outputMessage = `The record will pass through branches:\n${result.data[0].map(branchIndex => `branch ${branchIndex}: ${editor.rule.branches[branchIndex]?.name}`).join('\n')}`;
+        outputMessage = `The record will pass through branches:\n${data.map(branchIndex => `branch ${branchIndex}: ${editor.rule.branches[branchIndex]?.name}`).join('\n')}`;
       }
     }
 
-    return {data: outputMessage};
+    return { data: outputMessage, logs };
   },
   patchSet: editor => {
     const patches = {
@@ -213,14 +217,13 @@ export default {
     const data = {};
     const parsedData = safeParse(sampleData);
 
-    delete parsedData.settings;
-    data.filter = JSON.stringify(parsedData, null, 2);
+    data.filter = JSON.stringify(parsedData, null, 2) || '';
     // for JS panel, 'rows' is also represented as 'record'
     if (parsedData?.rows) {
       parsedData.record = parsedData.rows;
       delete parsedData.rows;
     }
-    data.javascript = JSON.stringify(parsedData, null, 2);
+    data.javascript = JSON.stringify(parsedData, null, 2) || '';
 
     return data;
   },

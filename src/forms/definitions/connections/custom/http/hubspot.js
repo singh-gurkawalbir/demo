@@ -3,8 +3,9 @@ export default {
     const retValues = { ...formValues };
 
     if (retValues['/http/auth/type'] === 'token') {
-      retValues['/http/auth/token/location'] = 'url';
-      retValues['/http/auth/token/paramName'] = 'hapikey';
+      retValues['/http/auth/token/location'] = 'header';
+      retValues['/http/auth/token/scheme'] = 'Bearer';
+      retValues['/http/auth/token/headerName'] = 'Authorization';
       retValues['/http/auth/oauth/authURI'] = undefined;
       retValues['/http/auth/oauth/tokenURI'] = undefined;
       retValues['/http/_iClientId'] = undefined;
@@ -63,7 +64,7 @@ export default {
     'http.auth.token.token': {
       fieldId: 'http.auth.token.token',
       defaultValue: '',
-      label: 'HAPI key',
+      label: 'Access token',
       required: true,
       helpKey: 'hubspot.connection.http.auth.token.token',
       visibleWhen: [{ field: 'http.auth.type', is: ['token'] }],

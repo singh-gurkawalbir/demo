@@ -18,7 +18,7 @@ import Mapper2Generates from './Destination/Mapper2Generates';
 import actions from '../../../../../../actions';
 import useConfirmDialog from '../../../../../ConfirmDialog';
 import { buildDrawerUrl, drawerPaths } from '../../../../../../utils/rightDrawer';
-import { MAPPING_DATA_TYPES, handlebarRegex } from '../../../../../../utils/mapping';
+import { MAPPING_DATA_TYPES, isMapper2HandlebarExpression } from '../../../../../../utils/mapping';
 import messageStore from '../../../../../../utils/messageStore';
 import TabRow from './TabbedRow';
 import { getMappingsEditorId } from '../../../../../../utils/editor';
@@ -33,8 +33,12 @@ const useStyles = makeStyles(theme => ({
     },
     '&>div': {
       width: '100%',
+      border: '3px solid transparent',
     },
     '&:nth-of-type(2)': {
+      '&>div': {
+        border: 'none',
+      },
       flex: 1,
       '& .MuiFilledInput-multiline': {
         minHeight: theme.spacing(5),
@@ -188,7 +192,7 @@ const Mapper2Row = React.memo(props => {
   const isLookup = !!lookupName;
   const isStaticLookup = !!(lookup.name && lookup.map);
   const isHardCodedValue = hardCodedValue !== undefined;
-  const isHandlebarExp = handlebarRegex.test(extractValue);
+  const isHandlebarExp = isMapper2HandlebarExpression(extractValue, hardCodedValue);
   const hideExtractField = dataType === MAPPING_DATA_TYPES.OBJECT && !extractValue && copySource === 'no';
 
   // this prop is used for object array tab view
@@ -225,7 +229,7 @@ const Mapper2Row = React.memo(props => {
             id={`fieldMappingExtract-${nodeKey}`}
             nodeKey={nodeKey}
             value={extractValue}
-            disabled={disabled}
+            disabled={(isLookup && !isStaticLookup) || disabled}
             dataType={dataType}
             onBlur={handleExtractBlur}
             isDynamicLookup={isLookup && !isStaticLookup}
