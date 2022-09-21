@@ -596,6 +596,34 @@ export const getExtractDataType = helper =>{
   }, []);
 }
 
+export const getSourceDataType = (treeData, nodeKey, currentInputs, extractsTreeData) => {
+  if(!treeData || !treeData.length) return [];
+  let sourceDataTypeList = [];
+  const requiredNode = treeData.filter(data => data.key === nodeKey);
+  if(requiredNode[0].extractsArrayHelper && requiredNode[0].extractsArrayHelper.length) {
+    requiredNode[0].extractsArrayHelper.forEach(extract => {
+      if(extract.sourceDataType) {
+        sourceDataTypeList.push(extract.sourceDataType);
+      }else {
+        let jsonPathExtract = extract.extract.replace(/(\$\.)|(\$\[\*\]\.)/g, '');
+        let datatypeList = getSelectedNodeDetails(extractsTreeData, jsonPathExtract);
+        sourceDataTypeList = [...sourceDataTypeList, ...datatypeList];
+      }
+    })
+  }else {
+    // if(requiredNode[0] && requiredNode[0].sourceDataType) {
+    //   sourceDataTypeList.push(requiredNode[0].sourceDataType)
+    // }else {
+      let datatypeList = getSelectedNodeDetails(extractsTreeData, currentInputs[0]);
+      if(!datatypeList.length) {
+        datatypeList = [requiredNode[0].sourceDataType];
+      }
+      sourceDataTypeList = [...datatypeList];
+    //}
+  }
+  return sourceDataTypeList;
+}
+
 export const buildExtractsHelperFromExtract = (existingExtractsArray, newExtracts) => {
   if (!newExtracts) return [];
 
