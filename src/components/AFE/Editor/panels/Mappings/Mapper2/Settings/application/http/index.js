@@ -268,7 +268,8 @@ export default {
           noApi: true,
           // todo: Kiran: confirm data type visibility for object
           visibleWhenAll: [
-            { field: 'dataType', isNot: ['object', 'objectarray', 'stringarray', 'numberarray', 'booleanarray'] },
+            { field: 'dataType', isNot: ['objectarray', 'stringarray', 'numberarray', 'booleanarray'] },
+            { field: 'copySource', is: ['yes'] },
           ],
           options: [
             {
