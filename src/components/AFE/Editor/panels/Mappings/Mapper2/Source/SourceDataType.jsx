@@ -132,7 +132,6 @@ export default function SourceDataType({
   className,
   anchorEl,
   setAnchorEl,
-  handleBlur,
   sourceDataTypes = ['string'],
 }) {
   const classes = useStyles();
@@ -168,8 +167,7 @@ export default function SourceDataType({
   const onDataTypeChange = useCallback(newDataType => {
     handleClose();
     dispatch(actions.mapping.v2.updateDataType(nodeKey, newDataType, true));
-    handleBlur();
-  }, [handleClose, dataType, handleBlur, dispatch, nodeKey]);
+  }, [handleClose, dataType, dispatch, nodeKey]);
 
   return (
     <div className={clsx(classes.sourceDataTypeDropDown, className)}>
