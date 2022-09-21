@@ -125,6 +125,7 @@ export default {
 'Click the <b>Generate token</b> button to have integrator.io fill in an encrypted access token or enter the token generated for you by Paypal. <br>Multiple layers of protection are in place, including AES 256 encryption, to keep your connection\'s token safe. When editing this form later, you must generate this value again; it is stored only when the connection is saved and never displayed as text.',
   'returnly.connection.http.encrypted.apiKey':
 'Please enter your API key here. This can be obtained from the Summary tab in Your Account section.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your API key safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
+  'returnly.connection.http.unencrypted.version': 'Enter the API version. For example 2020-08.',
   '4castplus.connection.http.subdomain':
 'The subdomain is the unique portion of the 4castplus.com address that you visit to log in to your portal.',
   '4castplus.connection.http.unencrypted.username':
