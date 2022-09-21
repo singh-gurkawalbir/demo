@@ -180,7 +180,7 @@ export default {
       options: [
         {
           items: [
-            { label: '2022-10', value: '2022-01' },
+            { label: '2022-01', value: '2022-01' },
             { label: '2022-04', value: '2022-04' },
             { label: '2022-07', value: '2022-07' },
           ],
