@@ -137,9 +137,10 @@ export default function SourceDataType({
   const history = useHistory();
 
   const open = !!anchorEl;
+  const selectedDataTypeLabels = [];
   const handleMenu = useCallback(
     event => {
-      if (sourceDataTypes && sourceDataTypes.length > 1) {
+      if (selectedDataTypeLabels && selectedDataTypeLabels.length > 1) {
         dispatch(actions.mapping.v2.updateActiveKey(nodeKey));
 
         history.push(buildDrawerUrl({
@@ -151,12 +152,11 @@ export default function SourceDataType({
         setAnchorEl(anchorEl ? null : event.currentTarget);
       }
     },
-    [anchorEl, setAnchorEl]
+    [anchorEl, setAnchorEl, selectedDataTypeLabels]
   );
   const handleClose = useCallback(() => {
     setAnchorEl(null);
   }, [setAnchorEl]);
-  const selectedDataTypeLabels = [];
 
   sourceDataTypes && sourceDataTypes.forEach(datatype => {
     selectedDataTypeLabels.push(DATA_TYPES_DROPDOWN_OPTIONS.find(opt => opt.id === datatype)?.label);
