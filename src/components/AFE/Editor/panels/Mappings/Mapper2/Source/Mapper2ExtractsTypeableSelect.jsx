@@ -1,17 +1,18 @@
 import React, { useState, useRef, useCallback } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import { FormControl, TextField, InputAdornment, Typography, Tooltip, Divider } from '@material-ui/core';
 import clsx from 'clsx';
 import ArrowDownIcon from '../../../../../../icons/ArrowDownIcon';
 import useKeyboardShortcut from '../../../../../../../hooks/useKeyboardShortcut';
 import ExtractsTree from './ExtractsTree';
-import { MAPPING_DATA_TYPES } from '../../../../../../../utils/mapping';
+import { getSourceDataType, MAPPING_DATA_TYPES } from '../../../../../../../utils/mapping';
 import messageStore from '../../../../../../../utils/messageStore';
 import ArrowPopper from '../../../../../../ArrowPopper';
 import useDebouncedValue from '../../../../../../../hooks/useDebouncedInput';
 import actions from '../../../../../../../actions';
 import SourceDataType from './SourceDataType';
+import { selectors } from '../../../../../../../reducers';
 
 const useStyles = makeStyles(theme => ({
   customTextField: {
@@ -148,10 +149,16 @@ export default function Mapper2ExtractsTypeableSelect({
   const [anchorEl, setAnchorEl] = useState(null);
   const dispatch = useDispatch();
   const [isFocused, setIsFocused] = useState(false);
+  const v2TreeData = useSelector(state => selectors.v2MappingsTreeData(state));
+  const extractsTreeData = useSelector(state => selectors.v2MappingsExtractsTree(state));
+  const sourceDataTypeRef = useRef(sourceDataType);
   const [inputValue, setInputValue] = useDebouncedValue(propValue, value => {
     // do not dispatch action if the field is empty as there can be
     // multiple rows and it will unnecessarily dispatch actions slowing down the UI
     if (value === '' && value === propValue) return;
+    const currentInputs = value.replace(/(\$\.)|(\$\[\*\]\.)/g, '').split(',');
+    const sourceDataTypesList = getSourceDataType(v2TreeData,nodeKey,currentInputs,extractsTreeData[0]);
+    sourceDataTypeRef.current = [...sourceDataTypesList];
     dispatch(actions.mapping.v2.patchExtractsFilter(value, propValue));
   });
   const [isTruncated, setIsTruncated] = useState(false);
@@ -244,7 +251,8 @@ export default function Mapper2ExtractsTypeableSelect({
         setAnchorEl={selectDataType}
         disabled={disabled}
         nodeKey={nodeKey}
-        sourceDataTypes={sourceDataType && sourceDataType.length ? [...sourceDataType] : undefined}
+        updateSourceDataType={type => {sourceDataTypeRef.current = [type]}}
+        sourceDataTypes={sourceDataTypeRef.current && sourceDataTypeRef.current.length ? [...sourceDataTypeRef.current] : undefined}
         className={clsx({[classes.sourceDataTypeButton]: hideSourceDropdown})} />
 
       {/* only render tree component if field is focussed and not disabled.

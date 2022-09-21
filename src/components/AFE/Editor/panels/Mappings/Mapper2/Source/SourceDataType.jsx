@@ -7,10 +7,7 @@ import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import { useHistory } from 'react-router-dom';
-import { DATA_TYPES_DROPDOWN_OPTIONS, MAPPING_DATA_TYPES } from '../../../../../../../utils/mapping';
-import RawHtml from '../../../../../../RawHtml';
-import messageStore from '../../../../../../../utils/messageStore';
-import useConfirmDialog from '../../../../../../ConfirmDialog';
+import { DATA_TYPES_DROPDOWN_OPTIONS } from '../../../../../../../utils/mapping';
 import actions from '../../../../../../../actions';
 import { TextButton } from '../../../../../../Buttons';
 import ArrowPopper from '../../../../../../ArrowPopper';
@@ -132,7 +129,8 @@ export default function SourceDataType({
   className,
   anchorEl,
   setAnchorEl,
-  sourceDataTypes = ['string'],
+  sourceDataTypes,
+  updateSourceDataType,
 }) {
   const classes = useStyles();
   const dispatch = useDispatch();
@@ -160,12 +158,13 @@ export default function SourceDataType({
   }, [setAnchorEl]);
   const selectedDataTypeLabels = [];
 
-  sourceDataTypes.forEach(datatype => {
+  sourceDataTypes && sourceDataTypes.forEach(datatype => {
     selectedDataTypeLabels.push(DATA_TYPES_DROPDOWN_OPTIONS.find(opt => opt.id === datatype)?.label);
   });
 
   const onDataTypeChange = useCallback(newDataType => {
     handleClose();
+    updateSourceDataType(newDataType)
     dispatch(actions.mapping.v2.updateDataType(nodeKey, newDataType, true));
   }, [handleClose, dataType, dispatch, nodeKey]);
 
