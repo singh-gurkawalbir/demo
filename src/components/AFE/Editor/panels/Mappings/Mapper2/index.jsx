@@ -312,7 +312,6 @@ export default function Mapper2({editorId}) {
           treeData={treeData}
           showLine
           selectable={false}
-          defaultExpandAll={false}
           expandedKeys={expandedKeys}
           onExpand={onExpandHandler}
           switcherIcon={SwitcherIcon}

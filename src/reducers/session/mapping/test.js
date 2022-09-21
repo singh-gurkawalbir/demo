@@ -68,6 +68,7 @@ describe('mapping reducer', () => {
       importId: resourceId,
       flowId,
       v2TreeData: [{
+        key: '123',
         dataType: MAPPING_DATA_TYPES.OBJECTARRAY,
         buildArrayHelper: [],
       }],
@@ -77,6 +78,7 @@ describe('mapping reducer', () => {
     const expectedState = {
       mapping: {
         v2TreeData: [{
+          key: '123',
           dataType: MAPPING_DATA_TYPES.OBJECTARRAY,
           generateDisabled: true,
           buildArrayHelper: [],
@@ -86,11 +88,12 @@ describe('mapping reducer', () => {
         importId: resourceId,
         status: 'received',
         v2TreeDataCopy: [{
+          key: '123',
           dataType: MAPPING_DATA_TYPES.OBJECTARRAY,
           generateDisabled: true,
           buildArrayHelper: [],
         }],
-        expandedKeys: [],
+        expandedKeys: ['123'],
       },
     };
 
