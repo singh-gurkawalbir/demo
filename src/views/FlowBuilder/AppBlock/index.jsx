@@ -129,6 +129,7 @@ const useStyles = makeStyles(theme => ({
     alignSelf: 'center',
     maxWidth: 101,
     maxHeight: theme.spacing(4),
+    pointerEvents: 'none',
   },
   addButton: {
     // padding: theme.spacing(2),
