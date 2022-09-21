@@ -1896,6 +1896,44 @@ export const getSelectedKeys = (extractsTreeNode, selectedValues = [], selectedK
   return selectedKeys;
 };
 
+export const getSelectedNodeDetails = (extractsTreeNode, selectedValue, selectedNodes = []) => {
+  if (isEmpty(extractsTreeNode) || !extractsTreeNode.children?.length) return selectedNodes;
+
+  extractsTreeNode.children.forEach(node => {
+    const {dataType, jsonPath} = node;
+
+    // if jsonPath matches the selected value, then add its key
+    //const selected = selectedValues.includes(jsonPath);
+
+    if (selectedValue === jsonPath) {
+      let dataTypeValue;
+      switch(dataType) {
+        case '[object]':
+          dataTypeValue = 'objectarray';
+          break;
+        case '[boolean]':
+          dataTypeValue = 'booleanarray';
+          break;
+        case '[number]':
+          dataTypeValue = 'numberarray';
+          break;
+        case '[string]':
+          dataTypeValue = 'stringarray';
+          break;
+        default:
+          dataTypeValue = dataType;     
+      }
+      selectedNodes.push(dataTypeValue);
+    }
+
+    if (node.children) {
+      getSelectedNodeDetails(node, selectedValue, selectedNodes);
+    }
+  });
+
+  return selectedNodes;
+};
+
 // recursively look for all parentExtracts for a given node
 export const findAllParentExtractsForNode = (treeData, output = [], nodeKey) => {
   const {node} = findNodeInTree(treeData, 'key', nodeKey);
