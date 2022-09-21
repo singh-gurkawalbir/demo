@@ -190,9 +190,9 @@ const getFormMeta = ({resourceType, isNew, resource, connection, assistantData})
   const { type } = getResourceSubType(resource);
   let isNewHTTPFramework = false;
 
-  if (['exports', 'imports'].includes(resourceType)) {
+  if (['exports', 'imports'].includes(resourceType) && connection?.http?.formType !== 'graph_ql') {
     isNewHTTPFramework = !!getHttpConnector(connection?.http?._httpConnectorId);
-  } else if (resourceType === 'connections') {
+  } else if (resourceType === 'connections' && resource?.http?.formType !== 'graph_ql') {
     isNewHTTPFramework = !!getHttpConnector(resource?._httpConnectorId || resource?.http?._httpConnectorId);
   }
 
@@ -252,7 +252,7 @@ const getFormMeta = ({resourceType, isNew, resource, connection, assistantData})
         if (isNew) {
           meta = meta.new;
         } else if (isNewHTTPFramework) {
-          const showAssistantView = assistantData?.import?.versions?.[0]?.resources?.length;
+          const showAssistantView = assistantData?.import?.resources?.[0]?.versions?.length;
 
           if (!resource?.useParentForm && resource?.http?.formType !== 'http' && showAssistantView) {
             meta = meta.custom.httpFramework.assistantDefinition(
@@ -320,7 +320,7 @@ const getFormMeta = ({resourceType, isNew, resource, connection, assistantData})
         if (isNew) {
           meta = meta.new;
         } else if (isNewHTTPFramework) {
-          const showAssistantView = assistantData?.export?.versions?.[0]?.resources?.length;
+          const showAssistantView = assistantData?.export?.resources?.[0]?.versions?.length;
 
           if (!resource?.useParentForm && resource?.http?.formType !== 'http' && showAssistantView) {
             meta = meta.custom.httpFramework.assistantDefinition(

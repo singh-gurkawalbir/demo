@@ -20,7 +20,7 @@ export function* bottomDrawerInit({flowId}) {
   if (flowScripts?.length) {
     tabs.push({label: 'Scripts', tabType: 'scripts'});
   }
-  tabs.push({label: 'Audit Log', tabType: 'auditLogs'});
+  tabs.push({label: 'Audit log', tabType: 'auditLogs'});
 
   return yield put(actions.bottomDrawer.initComplete(tabs));
 }

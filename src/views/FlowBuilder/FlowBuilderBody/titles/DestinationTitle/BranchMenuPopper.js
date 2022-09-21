@@ -1,10 +1,13 @@
 import React from 'react';
 import { MenuItem, Typography, makeStyles, Divider, ClickAwayListener } from '@material-ui/core';
+import { useHistory, useRouteMatch } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import ArrowPopper from '../../../../../components/ArrowPopper';
 import { useFlowContext } from '../../Context';
 import { getAllFlowBranches } from '../../lib';
+import { buildDrawerUrl, drawerPaths } from '../../../../../utils/rightDrawer';
 import actions from '../../../../../actions';
+import { generateNewId } from '../../../../../utils/resource';
 
 const useStyles = makeStyles(theme => ({
   titleBox: {
@@ -23,9 +26,10 @@ const useStyles = makeStyles(theme => ({
 
 export default function BranchMenuPopper({ anchorEl, handleClose }) {
   const classes = useStyles();
+  const match = useRouteMatch();
+  const history = useHistory();
   const dispatch = useDispatch();
-
-  const { flow, flowId, elements } = useFlowContext();
+  const { flowId, flow, elements } = useFlowContext();
   const open = Boolean(anchorEl);
 
   const branches = getAllFlowBranches(flow, elements);
@@ -33,7 +37,15 @@ export default function BranchMenuPopper({ anchorEl, handleClose }) {
   const handleCallback = branchId => () => {
     const branch = branches.find(s => s.id === branchId);
 
-    dispatch(actions.flow.addNewPPStep(flowId, branch.path));
+    dispatch(actions.flow.addNewPPStepInfo(flowId, { branchPath: branch.path }));
+    const newTempProcessorId = generateNewId();
+    const addPPUrl = buildDrawerUrl({
+      path: drawerPaths.RESOURCE.ADD,
+      baseUrl: match.url,
+      params: { resourceType: 'pageProcessor', id: newTempProcessorId },
+    });
+
+    history.push(addPPUrl);
     handleClose();
   };
 
@@ -48,7 +60,7 @@ export default function BranchMenuPopper({ anchorEl, handleClose }) {
         <div className={classes.content}>
           <div className={classes.titleBox}>
             <Typography className={classes.title} variant="h6">
-              Add destination/lookup to end of branch
+              Select branch to add to
             </Typography>
 
             <Divider />

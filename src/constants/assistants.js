@@ -103,7 +103,6 @@ export const REST_ASSISTANTS = [
   'sharepoint',
   'retailops',
   'concurall',
-  'skubana',
   'dunandbradstreet',
   'miva',
 ];
@@ -117,8 +116,8 @@ export const CONNECTORS_TO_IGNORE = [
   'constantcontactv2',
   'constantcontactv3',
   'amazonsellingpartner',
+  'googlecontacts',
   'ebayfinance',
-  'googlecontactspeople',
   'recurlyv3',
   'loopreturnsv2',
   'acumaticaecommerce',
@@ -138,8 +137,6 @@ export const MULTIPLE_AUTH_TYPE_ASSISTANTS = [
   'ebay',
   'ebayfinance',
   'amazonsellingpartner',
-  'googlecontacts',
-  'googlecontactspeople',
   'recurly',
   'recurlyv3',
   'loopreturns',
@@ -149,7 +146,6 @@ export const MULTIPLE_AUTH_TYPE_ASSISTANTS = [
 ];
 export const CONSTANT_CONTACT_VERSIONS = ['v2', 'v3'];
 export const EBAY_TYPES = ['ebay', 'ebayfinance'];
-export const GOOGLE_CONTACTS_API = ['googlecontacts', 'googlecontactspeople'];
 export const AUTHENTICATION_LABELS = Object.freeze({
   basic: 'Basic',
   token: 'Token',

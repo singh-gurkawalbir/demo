@@ -1,5 +1,6 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
+import clsx from 'clsx';
 import RawHtml from '../RawHtml';
 
 const useStyles = makeStyles({
@@ -24,11 +25,11 @@ const useStyles = makeStyles({
 
 });
 
-export default function TextOverflowCell({ message, containsHtml, rawHtmlOptions, style, maxWidth}) {
+export default function TextOverflowCell({ message, containsHtml, rawHtmlOptions, style, maxWidth, className}) {
   const classes = useStyles(maxWidth);
 
   return (
-    <div className={classes.wrapper} style={style}>
+    <div className={clsx(classes.wrapper, className)} style={style}>
       <div className={classes.message}>
         {containsHtml ? <RawHtml html={message} options={rawHtmlOptions} className={classes.htmlMessage} /> : message}
       </div>

@@ -1,4 +1,4 @@
-import { IconButton } from '@material-ui/core';
+import { IconButton, Tooltip } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import React, { useCallback, useState } from 'react';
 import ArrowPopper from '../../ArrowPopper';
@@ -13,7 +13,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function ActionMenu({ useRowActions, rowData, setSelectedComponent, iconLabel}) {
+export default function ActionMenu({ useRowActions, rowData, setSelectedComponent, iconLabel, tooltip }) {
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = useState(null);
   // We are passing state to action items where each Action item would check if it has got permission.
@@ -42,15 +42,11 @@ export default function ActionMenu({ useRowActions, rowData, setSelectedComponen
             {iconLabel}
           </TextButton>
         ) : (
-          <IconButton
-            data-test="openActionsMenu"
-            aria-label="more"
-            aria-controls={actionsPopoverId}
-            aria-haspopup="true"
-            size="small"
-            onClick={handleMenuClick}>
-            <EllipsisIcon />
-          </IconButton>
+          <ActionIconButton
+            tooltip={tooltip}
+            actionsPopoverId={actionsPopoverId}
+            handleMenuClick={handleMenuClick}
+          />
         )}
       {open && (
       <ArrowPopper
@@ -74,3 +70,27 @@ export default function ActionMenu({ useRowActions, rowData, setSelectedComponen
     </>
   );
 }
+
+const ActionIconButton = ({ tooltip, actionsPopoverId, handleMenuClick }) => tooltip ? (
+  <Tooltip title={tooltip}>
+    <IconButton
+      data-test="openActionsMenu"
+      aria-label="more"
+      aria-controls={actionsPopoverId}
+      aria-haspopup="true"
+      size="small"
+      onClick={handleMenuClick}>
+      <EllipsisIcon />
+    </IconButton>
+  </Tooltip>
+) : (
+  <IconButton
+    data-test="openActionsMenu"
+    aria-label="more"
+    aria-controls={actionsPopoverId}
+    aria-haspopup="true"
+    size="small"
+    onClick={handleMenuClick}>
+    <EllipsisIcon />
+  </IconButton>
+);

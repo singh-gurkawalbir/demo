@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import clsx from 'clsx';
 import { Tooltip } from '@material-ui/core';
@@ -13,6 +13,7 @@ import useConfirmDialog from '../../../../../../ConfirmDialog';
 import actions from '../../../../../../../actions';
 import { TextButton } from '../../../../../../Buttons';
 import ArrowPopper from '../../../../../../ArrowPopper';
+import ArrowDownFilledIcon from '../../../../../../icons/ArrowDownFilledIcon';
 
 const useStyles = makeStyles(theme => ({
   dataType: {
@@ -20,7 +21,11 @@ const useStyles = makeStyles(theme => ({
     fontStyle: 'italic',
     color: theme.palette.primary.main,
     width: theme.spacing(9),
-    padding: 0,
+    justifyContent: 'flex-end',
+    padding: theme.spacing(0, 0.5),
+    '& svg': {
+      marginLeft: theme.spacing(-1),
+    },
     '&:focus': {
       color: theme.palette.primary.main,
     },
@@ -106,22 +111,29 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function DestinationDataType({dataType, disabled, nodeKey, className}) {
+export default function DestinationDataType({
+  dataType,
+  disabled,
+  nodeKey,
+  className,
+  anchorEl,
+  setAnchorEl,
+  handleBlur,
+}) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const { confirmDialog } = useConfirmDialog();
-  const [anchorEl, setAnchorEl] = useState(null);
 
   const open = !!anchorEl;
   const handleMenu = useCallback(
     event => {
       setAnchorEl(anchorEl ? null : event.currentTarget);
     },
-    [anchorEl]
+    [anchorEl, setAnchorEl]
   );
   const handleClose = useCallback(() => {
     setAnchorEl(null);
-  }, []);
+  }, [setAnchorEl]);
 
   const selectedDataTypeLabel = DATA_TYPES_DROPDOWN_OPTIONS.find(opt => opt.id === dataType)?.label;
 
@@ -149,7 +161,8 @@ export default function DestinationDataType({dataType, disabled, nodeKey, classN
     } else {
       dispatch(actions.mapping.v2.updateDataType(nodeKey, newDataType));
     }
-  }, [confirmDialog, dataType, dispatch, nodeKey, handleClose]);
+    handleBlur();
+  }, [handleClose, dataType, handleBlur, confirmDialog, dispatch, nodeKey]);
 
   return (
     <div className={className}>
@@ -161,6 +174,7 @@ export default function DestinationDataType({dataType, disabled, nodeKey, classN
           <TextButton
             onClick={handleMenu}
             disabled={disabled}
+            endIcon={<ArrowDownFilledIcon />}
             className={classes.dataType} >
             {selectedDataTypeLabel}
           </TextButton>

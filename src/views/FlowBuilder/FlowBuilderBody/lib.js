@@ -1,9 +1,8 @@
-import { nanoid } from 'nanoid';
 import { isEdge, isNode } from 'react-flow-renderer';
 import dagre from 'dagre';
-import shortid from 'shortid';
 import { isVirtualRouter } from '../../../utils/flows/flowbuilder';
 import { GRAPH_ELEMENTS_TYPE } from '../../../constants';
+import { shortId } from '../../../utils/string';
 
 // react-flow handles by default sit just outside of the node boundary.
 // this offset is the number of pixels the left or right handle is offset from
@@ -49,12 +48,8 @@ const options = {
   marginy: 50,
 };
 
-export function generateId() {
-  return nanoid(6);
-}
-
 export function generateNewNode() {
-  const newId = generateId();
+  const newId = shortId();
 
   return {
     id: newId,
@@ -142,7 +137,7 @@ export function getAllFlowBranches(flow) {
       if (!isVirtualRouter(router)) {
         router.branches?.forEach((branch = {}, branchIndex) => {
           branches.push({
-            id: shortid(),
+            id: shortId(),
             name: branch.name,
             path: `/routers/${routerIndex}/branches/${branchIndex}`,
           });

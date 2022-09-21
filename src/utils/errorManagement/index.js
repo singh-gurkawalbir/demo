@@ -7,6 +7,7 @@ export const FILTER_KEYS = {
   OPEN: 'openErrors',
   RESOLVED: 'resolvedErrors',
   RUN_HISTORY: 'runHistory',
+  RETRIES: 'retries',
 };
 
 export const DEFAULT_FILTERS = {
@@ -15,6 +16,9 @@ export const DEFAULT_FILTERS = {
   },
   RESOLVED: {
     searchBy: ['message', 'source', 'classification', 'code', 'occurredAt', 'traceKey', 'errorId', 'resolvedAt', 'resolvedBy'],
+  },
+  RETRIES: {
+    selectedUsers: ['all'],
   },
 };
 

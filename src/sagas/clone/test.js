@@ -199,5 +199,36 @@ describe('clone sagas', () => {
         )
         .run();
     });
+
+    test('should dispatch failedInstall and vereceidIntegrationClonedStatus if api call fails and newTemplateInstaller is true without connectioMap', () => {
+      const resourceType = 'something';
+      const cloneData = {
+        cMap: { dummy: 'dummy' },
+        stackId: 'dummy',
+        data: {
+          name: 'dummy',
+          tag: 'dummy',
+          sandbox: true,
+          newTemplateInstaller: true,
+        },
+      };
+      const error = new Error('error');
+
+      return expectSaga(createComponents, { resourceType, resourceId })
+        .provide([
+          [select(selectors.template, `${resourceType}-${resourceId}`), cloneData],
+          [matchers.call.fn(apiCallWithRetry), throwError(error)],
+        ])
+        .call.fn(apiCallWithRetry)
+        .put(actions.template.failedInstall(`${resourceType}-${resourceId}`))
+        .put(
+          actions.integrationApp.clone.receivedIntegrationClonedStatus(
+            resourceId,
+            '',
+            error
+          )
+        )
+        .run();
+    });
   });
 });

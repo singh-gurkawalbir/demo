@@ -99,7 +99,7 @@ import {
   getParentJobSteps,
 } from '../utils/latestJobs';
 import getJSONPaths from '../utils/jsonPaths';
-import { getApp, getHttpConnector } from '../constants/applications';
+import { getApp, getHttpConnector, applicationsList} from '../constants/applications';
 import { HOOK_STAGES } from '../utils/editor';
 import { getTextAfterCount } from '../utils/string';
 import { remainingDays } from './user/org/accounts';
@@ -5385,6 +5385,20 @@ selectors.applicationType = (state, resourceType, id) => {
 
     return connection && connection.rdbms && rdbmsSubTypeToAppType(connection.rdbms.type);
   }
+  if ((adaptorType?.toUpperCase().startsWith('HTTP') || adaptorType?.toUpperCase().startsWith('REST')) && !assistant) {
+    const connection = resourceType === 'connections' ? resourceObj : selectors.resource(
+      state,
+      'connections',
+      getStagedValue('/_connectionId') || (resourceObj?._connectionId)
+    );
+    const httpConnectorId = getStagedValue('/_httpConnectorId') || connection?._httpConnectorId || connection?.http?._httpConnectorId;
+    const applications = applicationsList();
+    const httpApp = applications.find(a => a._httpConnectorId === httpConnectorId);
+
+    if (httpConnectorId && httpApp) {
+      return httpApp._legacyId || httpApp.name;
+    }
+  }
 
   if (adaptorType?.toUpperCase().startsWith('HTTP') && resourceObj?.http?.formType === 'rest' && !assistant) {
     adaptorType = adaptorType.replace(/HTTP/, 'REST');
@@ -5534,6 +5548,26 @@ selectors.isMapper2Supported = state => {
     resource.adaptorType === 'HTTPImport' ||
     resource.adaptorType === 'RESTImport'
   );
+};
+
+selectors.resourceHasMappings = (state, importId) => {
+  const resource = selectors.resource(state, 'imports', importId);
+
+  if (!resource) return false;
+
+  // v2 mappings
+  if (resource.mappings?.length) {
+    return true;
+  }
+
+  // v1 mappings
+  const mappings = mappingUtil.getMappingFromResource({
+    importResource: resource,
+    isFieldMapping: true,
+  });
+  const { fields = [], lists = [] } = mappings || {};
+
+  return !!(fields.length || lists.length);
 };
 
 selectors.mappingEditorNotification = (state, editorId) => {
@@ -6616,7 +6650,7 @@ selectors.shouldGetContextFromBE = (state, editorId, sampleData) => {
   }
 
   if (
-    ['flowTransform', 'responseTransform', 'netsuiteLookupFilter', 'salesforceLookupFilter'].includes(editorType) ||
+    ['structuredFileGenerator', 'flowTransform', 'responseTransform', 'netsuiteLookupFilter', 'salesforceLookupFilter'].includes(editorType) ||
   HOOK_STAGES.includes(stage)
   ) {
     return {shouldGetContextFromBE: false, sampleData};
@@ -7162,3 +7196,55 @@ selectors.allAliases = createSelector(
 
     return aliasesFilter?.sort ? allAliases.sort(comparer(aliasesFilter.sort)) : allAliases;
   });
+
+selectors.retryUsersList = createSelector(
+  selectors.userProfile,
+  selectors.usersList,
+  (state, flowId, resourceId) => selectors.retryList(state, flowId, resourceId),
+  (profile, availableUsersList, retryJobs) => {
+    if (!Array.isArray(retryJobs)) {
+      return [{ _id: 'all', name: 'All users'}];
+    }
+
+    const allUsersTriggeredRetry = retryJobs.reduce((users, job) => {
+      if (!job.triggeredBy) {
+        return users;
+      }
+
+      const userObject = availableUsersList.find(userOb => userOb.sharedWithUser?._id === job.triggeredBy);
+      const name = profile._id === job.triggeredBy ? (profile.name || profile.email) : userObject?.sharedWithUser?.name;
+
+      return users.find(user => user._id === job.triggeredBy) ? users : [...users, {
+        _id: job.triggeredBy,
+        name,
+      }];
+    }, []);
+
+    return [{ _id: 'all', name: 'All users'}, ...allUsersTriggeredRetry];
+  }
+);
+
+selectors.mkFlowResourcesRetryStatus = () => {
+  const flowResources = selectors.mkFlowResources();
+
+  return createSelector(
+    state => state?.session?.errorManagement?.retryData?.retryStatus,
+    (_1, flowId) => flowId,
+    (state, flowId) => flowResources(state, flowId)?.filter(res => res.type === 'exports' || res.type === 'imports'),
+    (resourcesRetryStatus, flowId, flowResources) => {
+      const finalResourcesRetryStatus = {
+        isAnyRetryInProgress: false,
+        resourcesWithRetryCompleted: [],
+      };
+
+      if (!resourcesRetryStatus || !resourcesRetryStatus[flowId]) {
+        return finalResourcesRetryStatus;
+      }
+
+      finalResourcesRetryStatus.isAnyRetryInProgress = flowResources.find(res => resourcesRetryStatus?.[flowId]?.[res._id] === 'inProgress');
+      finalResourcesRetryStatus.resourcesWithRetryCompleted = flowResources.filter(res => resourcesRetryStatus?.[flowId]?.[res._id] === 'completed');
+
+      return finalResourcesRetryStatus;
+    }
+  );
+};

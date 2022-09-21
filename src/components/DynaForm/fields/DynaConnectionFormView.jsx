@@ -1,20 +1,31 @@
-import React, { useMemo, useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { makeStyles } from '@material-ui/core';
 import actions from '../../../actions';
 import { getApp, getHttpConnector} from '../../../constants/applications';
 import { selectors } from '../../../reducers';
 import { SCOPES } from '../../../sagas/resourceForm';
 import useFormContext from '../../Form/FormContext';
 import {useHFSetInitializeFormData} from './httpFramework/DynaHFAssistantOptions';
-import DynaSelect from './DynaSelect';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 import { emptyObject } from '../../../constants';
 import getResourceFormAssets from '../../../forms/formFactory/getResourceFromAssets';
 import { defaultPatchSetConverter, sanitizePatchSet } from '../../../forms/formFactory/utils';
+import TextToggle from '../../TextToggle';
+import Help from '../../Help';
 
+const useStyles = makeStyles({
+  helpTextButton: {
+    padding: 0,
+  },
+  connectorTextToggle: {
+    marginRight: '0px !important',
+  },
+});
 const emptyObj = {};
 export default function FormView(props) {
-  const { resourceType, resourceId, value, formKey } = props;
+  const classes = useStyles();
+  const { resourceType, resourceId, defaultValue, formKey } = props;
 
   const formContext = useFormContext(formKey);
   const dispatch = useDispatch();
@@ -25,6 +36,12 @@ export default function FormView(props) {
       resourceId
     ) || {};
   const stagedResource = merged || emptyObject;
+  const value = useMemo(() => {
+    if (!stagedResource || !stagedResource.http || !stagedResource.http.formType) return defaultValue;
+
+    return stagedResource.http?.formType === 'assistant' ? 'false' : 'true';
+  }, [stagedResource, defaultValue]);
+
   const resourceFormState = useSelector(
     state =>
       selectors.resourceFormState(state, resourceType, resourceId) || emptyObj
@@ -38,15 +55,9 @@ export default function FormView(props) {
     const matchingApplication = getApp(null, null, _httpConnectorId);
 
     if (matchingApplication) {
-      const { name } = matchingApplication;
-
       return [
-        {
-          items: [
-            { label: 'HTTP', value: 'true' },
-            { label: name, value: 'false' },
-          ],
-        },
+        { label: 'Simple', value: 'false' },
+        { label: 'HTTP', value: 'true' },
       ];
     }
 
@@ -55,12 +66,12 @@ export default function FormView(props) {
 
   useHFSetInitializeFormData({...props, isHTTPFramework: _httpConnectorId});
 
-  const onFieldChangeFn = useCallback((id, selectedApplication) => {
+  const onFieldChangeFn = useCallback(selectedApplication => {
     // first get the previously selected application values
     // stagged state we will break up the scope to selected application and actual value
 
     // selecting the other option
-
+    const {id} = props;
     const stagedRes = Object.keys(stagedResource).reduce((acc, curr) => {
       acc[`/${curr}`] = stagedResource[curr];
 
@@ -123,11 +134,19 @@ export default function FormView(props) {
   }
 
   return (
-    <DynaSelect
-      {...props}
-      onFieldChange={onFieldChangeFn}
-      value={value}
-      options={options}
-    />
+    <>
+      <TextToggle
+        value={value}
+        onChange={onFieldChangeFn}
+        exclusive
+        options={options}
+        className={classes.connectorTextToggle}
+      />
+      <Help
+        title="Formview"
+        className={classes.helpTextButton}
+        helpKey="connectionFormView"
+      />
+    </>
   );
 }

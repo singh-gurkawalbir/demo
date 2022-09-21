@@ -19,6 +19,7 @@ import { updateFlowDoc } from '../resourceForm';
 import openExternalUrl from '../../utils/window';
 import { pingConnectionWithId } from '../resourceForm/connections';
 import httpConnectorSagas from './httpConnectors';
+import { getHttpConnector} from '../../constants/applications';
 
 export function* isDataLoaderFlow(flow) {
   if (!flow) return false;
@@ -208,7 +209,7 @@ export function* commitStagedChanges({ resourceType, id, scope, options, context
   if (
     // if it matches integrations/<id>/connections when creating a connection
     (resourceType === 'connections' || (resourceType.startsWith('integrations/') && resourceType.endsWith('connections'))) &&
-    merged.assistant &&
+    merged.assistant && !getHttpConnector(merged?.http?._httpConnectorId) &&
     REST_ASSISTANTS.indexOf(merged.assistant) > -1
   ) {
     merged = conversionUtil.convertConnJSONObjHTTPtoREST(merged);
@@ -646,7 +647,7 @@ export function* patchResource({ resourceType, id, patchSet, options = {}, async
 
       yield put(actions.resource.received(resourceType, resourceUpdated));
     } else {
-      yield put(actions.resource.request('integrations', id));
+      yield put(actions.resource.request(resourceType, id));
     }
   } catch (error) {
     // TODO: What should we do for 4xx errors? where the resource to put/post

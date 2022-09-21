@@ -59,7 +59,7 @@ const AddNodeMenuPopper = ({
         {[
           {
             Icon: AddEmptyStepIcon,
-            label: 'Add empty flow step',
+            label: 'Add destination / lookup',
             onClick: handleAddNode,
           },
           {
@@ -99,7 +99,7 @@ const AddNodeToolTip = ({ handleOpenMenu, handleAddNode, edgeId }) => {
   if (isConnectedToRouterOrTerminal || !isFlowBranchingEnabled) {
     return (
       <Tooltip
-        title={isConnectedToRouterOrTerminal ? 'Add empty flow step' : ''}
+        title={isConnectedToRouterOrTerminal ? 'Add destination / lookup' : ''}
         placement="top"
       >
         <IconButton onClick={handleAddNode} className={classes.addButton}>

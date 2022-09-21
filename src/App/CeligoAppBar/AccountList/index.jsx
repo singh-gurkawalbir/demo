@@ -7,6 +7,7 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import { useHistory } from 'react-router-dom';
+import { IconButton } from '@material-ui/core';
 import useConfirmDialog from '../../../components/ConfirmDialog';
 import ArrowPopper from '../../../components/ArrowPopper';
 import actions from '../../../actions';
@@ -107,13 +108,19 @@ const useStyles = makeStyles(theme => ({
   },
   listWrapper: {
     minWidth: 250,
-    maxHeight: 650,
+    maxHeight: 592,
     overflowY: 'auto',
   },
   itemRootName: {
     margin: 0,
     fontSize: 15,
     lineHeight: '18px',
+  },
+  deleteIcon: {
+    padding: 0,
+    '&:hover': {
+      color: theme.palette.primary.main,
+    },
   },
 }));
 
@@ -227,13 +234,15 @@ function AccountList() {
               <ListItemText data-private className={classes.itemRootName}>{a.company}</ListItemText>
               {a.company && a.canLeave && (
                 <ListItemSecondaryAction className={classes.secondaryAction}>
-                  <TextButton
+                  <IconButton
                     data-test="leaveAccount"
+                    className={classes.deleteIcon}
+                    size="small"
                     onClick={() => {
                       handleAccountLeaveClick(a);
                     }}>
                     <TrashIcon />
-                  </TextButton>
+                  </IconButton>
                 </ListItemSecondaryAction>
               )}
             </ListItem>

@@ -62,6 +62,7 @@ function DynaText(props) {
     disabled,
     errorMessages,
     id,
+    autoFocus = false,
     isValid = true,
     name,
     onFieldChange,
@@ -72,6 +73,7 @@ function DynaText(props) {
     multiline,
     delimiter,
     rowsMax,
+    maxLength,
     startAdornment,
     endAdornment,
     readOnly,
@@ -142,6 +144,9 @@ function DynaText(props) {
         step: '1',
       };
     }
+    if (maxLength) {
+      props.inputProps = { maxLength };
+    }
 
     return props;
   }, [
@@ -150,6 +155,7 @@ function DynaText(props) {
     inputType,
     readOnly,
     startAdornment,
+    maxLength,
   ]);
 
   return (
@@ -165,6 +171,7 @@ function DynaText(props) {
         autoComplete="off"
         key={id}
         data-test={id}
+        autoFocus={autoFocus}
         name={name}
         InputProps={InputProps}
         type={inputType}

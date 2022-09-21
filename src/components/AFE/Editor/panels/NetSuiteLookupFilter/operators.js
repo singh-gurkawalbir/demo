@@ -1,39 +1,4 @@
-const operators = [
-  { label: 'After', value: 'after' },
-  { label: 'any', value: 'any' },
-  { label: 'before', value: 'before' },
-  { label: 'between', value: 'between' },
-  { label: 'contains', value: 'contains' },
-  { label: 'does not contain', value: 'doesnotcontain' },
-  { label: 'does not start with', value: 'doesnotstartwith' },
-  { label: 'equal to', value: 'equalto' },
-  { label: 'greater than', value: 'greaterthan' },
-  { label: 'greater than or equal to', value: 'greaterthanorequalto' },
-  { label: 'has key words', value: 'haskeywords' },
-  { label: 'is', value: 'is' },
-  { label: 'is empty', value: 'isempty' },
-  { label: 'is not', value: 'isnot' },
-  { label: 'is not empty', value: 'isnotempty' },
-  { label: 'less than', value: 'lessthan' },
-  { label: 'less than or equal to', value: 'lessthanorequalto' },
-  { label: 'not after', value: 'notafter' },
-  { label: 'not before', value: 'notbefore' },
-  { label: 'not between', value: 'notbetween' },
-  { label: 'not equal to', value: 'notequalto' },
-  { label: 'not greater than', value: 'notgreaterthan' },
-  { label: 'not greater than or equal to', value: 'notgreaterthanorequalto' },
-  { label: 'not less than', value: 'notlessthan' },
-  { label: 'not less than or equal to', value: 'notlessthanorequalto' },
-  { label: 'not on', value: 'noton' },
-  { label: 'not on or after', value: 'notonorafter' },
-  { label: 'not on or before', value: 'notonorbefore' },
-  { label: 'not within', value: 'notwithin' },
-  { label: 'on', value: 'on' },
-  { label: 'on or after', value: 'onorafter' },
-  { label: 'on or before', value: 'onorbefore' },
-  { label: 'starts with', value: 'startswith' },
-  { label: 'within', value: 'within' },
-];
+import { operators } from '../../../../DynaForm/fields/DynaNSSearchCriteria/SearchCriteria/operators';
 
 const DEFAULT_FIELD_TYPES = ['boolean', 'number', 'string', 'datetime'];
 
@@ -42,6 +7,8 @@ const supportedOperatorsByFieldType = {
   string: ['contains', 'doesnotcontain', 'doesnotstartwith', 'equalto', 'haskeywords', 'is', 'isempty', 'isnot', 'isnotempty', 'startswith'],
   number: ['between', 'equalto', 'greaterthan', 'greaterthanorequalto', 'isempty', 'isnotempty', 'lessthan', 'lessthanorequalto', 'notbetween', 'notequalto', 'notgreaterthan', 'notgreaterthanorequalto', 'notlessthan', 'notlessthanorequalto'],
   datetime: ['after', 'before', 'isempty', 'isnotempty', 'notafter', 'notbefore', 'noton', 'notonorafter', 'notonorbefore', 'notwithin', 'on', 'onorafter', 'onorbefore', 'within'],
+  // we are using boolean datatype for select/multiselect types as  qb supports these 4 data types
+  boolean: ['allof', 'anyof', 'noneof', 'notallof'],
 };
 
 // string, integer, double, date, time, datetime and boolean are supported field types for filters passed to queryBuilder while initialization
@@ -50,9 +17,9 @@ export const fieldTypeMap = {
   checkbox: 'string',
   text: 'string',
   date: 'datetime',
-  select: 'string',
+  select: 'boolean',
   currency: 'integer',
-  multiselect: 'string',
+  multiselect: 'boolean',
   ccnumber: 'string',
   textarea: 'string',
   phone: 'string',
@@ -89,6 +56,9 @@ const operatorsAppliedToFieldTypeMap = operators.reduce((operatorMap, op) => {
   }
   if (supportedOperatorsByFieldType.datetime.includes(operator)) {
     supportedFieldTypes.push('datetime');
+  }
+  if (supportedOperatorsByFieldType.boolean.includes(operator)) {
+    supportedFieldTypes.push('boolean');
   }
 
   return {...operatorMap, [operator]: supportedFieldTypes};

@@ -55,6 +55,7 @@ const useStyles = makeStyles(theme => ({
   },
   extractListPopperCompact: {
     width: theme.spacing(38),
+    marginLeft: 0,
   },
   extractPopperArrow: {
     display: 'none',
@@ -125,12 +126,17 @@ export default function Mapper2ExtractsTypeableSelect({
   isHardCodedValue,
   isHandlebarExp,
   editorLayout,
+  className,
+  popperClassName,
 }) {
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = useState(null);
   const dispatch = useDispatch();
   const [isFocused, setIsFocused] = useState(false);
   const [inputValue, setInputValue] = useDebouncedValue(propValue, value => {
+    // do not dispatch action if the field is empty as there can be
+    // multiple rows and it will unnecessarily dispatch actions slowing down the UI
+    if (value === '' && value === propValue) return;
     dispatch(actions.mapping.v2.patchExtractsFilter(value, propValue));
   });
   const [isTruncated, setIsTruncated] = useState(false);
@@ -194,7 +200,7 @@ export default function Mapper2ExtractsTypeableSelect({
           id={`${nodeKey}-mapper2SourceTextField`}
           isLoggable
           onMouseMove={handleMouseOver}
-          className={classes.customTextField}
+          className={clsx(classes.customTextField, className)}
           variant="filled"
           autoFocus={isFocused}
           value={inputValue}
@@ -233,7 +239,7 @@ export default function Mapper2ExtractsTypeableSelect({
         classes={{
           popper: clsx(classes.extractListPopper, {
             [classes.extractListPopperCompact]: editorLayout === 'compact2',
-          }),
+          }, popperClassName),
           arrow: classes.extractPopperArrow,
           paper: classes.extractPopperPaper,
         }}
