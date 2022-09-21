@@ -75,6 +75,7 @@ function ProfileMenuButton() {
   const dispatch = useDispatch();
   const [anchorEl, setAnchorEl] = useState(null);
   const hasProfile = useSelector(state => selectors.hasProfile(state));
+  const isMFASetupIncomplete = useSelector(selectors.isMFASetupIncomplete);
   const hasPreferences = useSelector(state => selectors.hasPreferences(state));
   const profile = useSelector(state => selectors.userProfile(state)) || {};
   const avatarUrl = useSelector(state => selectors.avatarUrl(state));
@@ -153,6 +154,7 @@ function ProfileMenuButton() {
                   onClick={handleClose}
                   color="secondary"
                   component={Link}
+                  disabled={isMFASetupIncomplete}
                   to={getRoutePath('/myAccount/profile')}>
                   {isAccountOwner ? 'My account' : 'My profile'}
                 </OutlinedButton>
