@@ -36,7 +36,6 @@ const useStyles = makeStyles(theme => ({
     position: 'relative',
     zIndex: theme.zIndex.bubble,
   },
-  // draggable: { cursor: 'move' },
   name: {
     height: 150,
     overflow: 'hidden',
@@ -84,7 +83,6 @@ const useStyles = makeStyles(theme => ({
     top: 68,
   },
   isNotOverActions: {
-    // display: 'none',
     width: 0,
     height: 0,
     margin: 0,
@@ -96,7 +94,6 @@ const useStyles = makeStyles(theme => ({
     },
   },
   actionIsNew: {
-    // border: 'solid 1px',
     color: theme.palette.primary.main,
   },
   bubbleContainer: {
@@ -121,7 +118,6 @@ const useStyles = makeStyles(theme => ({
   appLogoContainer: {
     marginTop: theme.spacing(2),
     textAlign: 'center',
-    // width: 101,
     height: 41,
   },
   appLogo: {
