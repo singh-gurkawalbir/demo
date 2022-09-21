@@ -13,18 +13,20 @@ const useStyles = makeStyles(() => ({
     textAlign: 'center',
   },
 }));
-export default function EmptyErrorDetails({classes}) {
+export default function EmptyErrorDetails({ classes, showMessage }) {
   const styles = useStyles();
 
   return (
     <>
       <DrawerHeader title="Error details" showCloseButton={false} className={classes.draweHeader} />
-      <div className={styles.emptyErrorDetails}>
-        <Typography variant="body2" className={styles.content}>
-          Click an error row to view its details <br />
-          or select the checkboxes for batch actions.
-        </Typography>
-      </div>
+      {showMessage ? (
+        <div className={styles.emptyErrorDetails}>
+          <Typography variant="body2" className={styles.content}>
+            Click an error row to view its details <br />
+            or select the checkboxes for batch actions.
+          </Typography>
+        </div>
+      ) : null}
     </>
   );
 }
