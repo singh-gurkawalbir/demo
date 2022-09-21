@@ -1,11 +1,12 @@
 import React, { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import clsx from 'clsx';
-import { Tooltip } from '@material-ui/core';
+import { Divider, Tooltip } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
+import { useHistory } from 'react-router-dom';
 import { DATA_TYPES_DROPDOWN_OPTIONS, MAPPING_DATA_TYPES } from '../../../../../../../utils/mapping';
 import RawHtml from '../../../../../../RawHtml';
 import messageStore from '../../../../../../../utils/messageStore';
@@ -15,16 +16,15 @@ import { TextButton } from '../../../../../../Buttons';
 import ArrowPopper from '../../../../../../ArrowPopper';
 import ArrowDownFilledIcon from '../../../../../../icons/ArrowDownFilledIcon';
 import { buildDrawerUrl, drawerPaths } from '../../../../../../../utils/rightDrawer';
-import { useHistory } from 'react-router-dom';
+import CeligoTruncate from '../../../../../../CeligoTruncate';
 
 const useStyles = makeStyles(theme => ({
   dataType: {
     border: 'none',
     fontStyle: 'italic',
     color: theme.palette.primary.main,
-    width: theme.spacing(9),
-    justifyContent: 'flex-end',
-    padding: theme.spacing(0, 0.5),
+    justifyContent: 'end',
+    padding: 0,
     '& svg': {
       marginLeft: theme.spacing(-1),
     },
@@ -111,6 +111,18 @@ const useStyles = makeStyles(theme => ({
   actionsMenuPopperArrow: {
     left: '50px !important',
   },
+  divider: {
+    height: theme.spacing(3),
+    margin: theme.spacing(0, 0.5),
+  },
+  sourceDataTypeDropDown: {
+    display: 'flex',
+    alignItems: 'center',
+    width: theme.spacing(9),
+    marginLeft: -theme.spacing(13),
+    justifyContent: 'end',
+    zIndex: 1,
+  },
 }));
 
 export default function SourceDataType({
@@ -130,16 +142,16 @@ export default function SourceDataType({
   const open = !!anchorEl;
   const handleMenu = useCallback(
     event => {
-      if (sourceDataTypes && sourceDataTypes.length > 1 ) {
+      if (sourceDataTypes && sourceDataTypes.length > 1) {
         dispatch(actions.mapping.v2.updateActiveKey(nodeKey));
 
         history.push(buildDrawerUrl({
           path: drawerPaths.MAPPINGS.V2_SETTINGS,
           baseUrl: history.location.pathname,
-          params: { nodeKey, 'test':'test' },
+          params: { nodeKey, test: 'test' },
         }));
       } else {
-      setAnchorEl(anchorEl ? null : event.currentTarget);
+        setAnchorEl(anchorEl ? null : event.currentTarget);
       }
     },
     [anchorEl, setAnchorEl]
@@ -147,34 +159,37 @@ export default function SourceDataType({
   const handleClose = useCallback(() => {
     setAnchorEl(null);
   }, [setAnchorEl]);
-  const selectedDataTypeLabels = []; 
-  sourceDataTypes.forEach( datatype => {
+  const selectedDataTypeLabels = [];
+
+  sourceDataTypes.forEach(datatype => {
     selectedDataTypeLabels.push(DATA_TYPES_DROPDOWN_OPTIONS.find(opt => opt.id === datatype)?.label);
-  })
- 
+  });
 
   const onDataTypeChange = useCallback(newDataType => {
     handleClose();
-    dispatch(actions.mapping.v2.updateDataType(nodeKey, newDataType,true));
+    dispatch(actions.mapping.v2.updateDataType(nodeKey, newDataType, true));
     handleBlur();
   }, [handleClose, dataType, handleBlur, dispatch, nodeKey]);
 
   return (
-    <div className={className}>
+    <div className={clsx(classes.sourceDataTypeDropDown, className)}>
       <Tooltip
-        title={disabled || open ? '' : `Data type: - Click to change`}
+        title={disabled || open ? '' : 'Data type: - Click to change'}
         placement="bottom" >
         {/* this div needs to be added to render the tooltip correctly */}
-        <div>
+        <span>
           <TextButton
             onClick={handleMenu}
             disabled={disabled}
             endIcon={sourceDataTypes && sourceDataTypes.length > 1 ? '' : <ArrowDownFilledIcon />}
             className={classes.dataType} >
-            {selectedDataTypeLabels.join()}
+            <CeligoTruncate placement="bottom" disableHoverListener lines={1}>
+              {selectedDataTypeLabels.join()}
+            </CeligoTruncate>
           </TextButton>
-        </div>
+        </span>
       </Tooltip>
+      <Divider className={classes.divider} orientation="vertical" />
 
       <ArrowPopper
         id="dataTypesList"
