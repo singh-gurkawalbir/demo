@@ -1,158 +1,100 @@
-import React, { useEffect, useState } from 'react';
-import { FormLabel } from '@material-ui/core';
+import React, { useMemo, useCallback, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { isArray, isObject } from 'lodash';
+import { Typography } from '@material-ui/core';
 import { useDispatch } from 'react-redux';
-import ModalDialog from '../../../ModalDialog';
-import DynaForm from '../..';
-import DynaSubmit from '../../DynaSubmit';
-import {
-  convertToReactFormFields,
-  updateFormValues,
-  PARAMETER_LOCATION,
-  isMetaRequiredValuesMet,
-} from '../../../../utils/assistant';
-import { selectors } from '../../../../reducers/index';
-import { SCOPES } from '../../../../sagas/resourceForm';
-import FieldMessage from '../FieldMessage';
-import useFormInitWithPermissions from '../../../../hooks/useFormInitWithPermissions';
-import FieldHelp from '../../FieldHelp';
+import { useHistory, useRouteMatch } from 'react-router-dom';
+import { KeyValueComponent } from '../DynaKeyValue';
 import actions from '../../../../actions';
-import { OutlinedButton, TextButton } from '../../../Buttons';
-import { useSelectorMemo } from '../../../../hooks';
-import IsLoggableContextProvider from '../../../IsLoggableContextProvider';
+import { getValidRelativePath } from '../../../../utils/routePaths';
+import { buildDrawerUrl, drawerPaths } from '../../../../utils/rightDrawer';
+import { isMetaRequiredValuesMet, PARAMETER_LOCATION } from '../../../../utils/assistant';
 
-const useStyles = makeStyles({
-  dynaAssSearchParamsWrapper: {
+const useStyles = makeStyles(theme => ({
+  container: {
+    marginTop: theme.spacing(1),
     width: '100%',
   },
-  dynaAssistantbtn: {
-    maxWidth: 100,
-  },
-  dynaAssistantFormLabel: {
+  label: {
     marginBottom: 6,
   },
-  configureLabelWrapper: {
+  rowContainer: {
+    display: 'grid',
+    gridTemplateColumns: '1fr 1fr auto',
+    marginBottom: 6,
+  },
+  dynaField: {
+    flex: 1,
+  },
+  dynaKeyField: {
+    marginRight: theme.spacing(0.5),
+  },
+  dynaValueField: {
+    marginLeft: theme.spacing(1),
+    '& > div': {
+      lineHeight: '36px',
+    },
+  },
+  dynaKeyValueLabelWrapper: {
+    flexDirection: 'row',
     display: 'flex',
     alignItems: 'flex-start',
   },
-  searchParamForm: {
-    overflow: 'visible !important',
-    padding: '0px !important',
+  dynaValueTitle: {
+    paddingLeft: '28px',
+    width: `calc(100% - ${theme.spacing(2)}px)`,
   },
-  searchParamModalContent: {
-    overflow: 'visible !important',
-  },
-});
-const SearchParamsModal = props => {
-  const {
-    paramMeta,
-    onClose,
-    id,
-    onFieldChange,
-    value,
-    flowId,
-    resourceContext,
-  } = props;
-  const dispatch = useDispatch();
-  const classes = useStyles();
+}));
 
-  const { merged } =
-    useSelectorMemo(
-      selectors.makeResourceDataSelector,
-      resourceContext.resourceType,
-      resourceContext.resourceId
-    ) || {};
+const KeyLabel = ({id, description}) => (
+  <div>
+    <Typography>{id}</Typography>
+    <Typography variant="caption" color="textSecondary" >{description}</Typography>
+  </div>
+);
 
-  const { fieldMap, layout, fieldDetailsMap } = convertToReactFormFields({
-    paramMeta,
-    value,
-    flowId,
-    resourceContext,
-    operationChanged: merged.assistantMetadata?.operationChanged,
-  });
-
-  const onSaveClick = formValues => {
-    const updatedValues = updateFormValues({
-      formValues,
-      fieldDetailsMap,
-      paramLocation: paramMeta.paramLocation,
-    });
-
-    onFieldChange(id, updatedValues);
-
-    dispatch(
-      actions.resource.patchStaged(
-        resourceContext.resourceId,
-        [{
-          op: 'replace',
-          path: '/assistantMetadata/operationChanged',
-          value: false,
-        }],
-        SCOPES.VALUE
-      )
-    );
-    onClose();
-  };
-
-  const validationHandler = field => {
-    if (field?.id && fieldDetailsMap[field.id]) {
-      if (field.value) {
-        if (paramMeta.paramLocation === PARAMETER_LOCATION.BODY) {
-          if (fieldDetailsMap[field.id].type === 'array') {
-            if (!isArray(field.value)) {
-              return 'Must be an array.';
-            }
-          } else if (fieldDetailsMap[field.id].type === 'json') {
-            if (!isObject(field.value) || isArray(field.value)) {
-              return 'Must be an object.';
-            }
-          }
-        }
-      }
-    }
-  };
-
-  const formKey = useFormInitWithPermissions({
-    fieldMeta: {
-      fieldMap,
-      layout,
-    },
-    validationHandler,
-  });
-
-  return (
-    <ModalDialog show onClose={onClose} className={classes.searchParamModalContent} minWidth="sm">
-      <>
-        <span>Search parameters</span>
-      </>
-      <div>
-        <IsLoggableContextProvider isLoggable>
-          <DynaForm
-            formKey={formKey}
-            className={classes.searchParamForm} />
-        </IsLoggableContextProvider>
-      </div>
-      <div>
-        <DynaSubmit formKey={formKey} onClick={onSaveClick}>Save</DynaSubmit>
-        <TextButton
-          data-test="cancelSearchParams"
-          onClick={onClose}>
-          Cancel
-        </TextButton>
-      </div>
-
-    </ModalDialog>
-  );
-};
 // no user info mostly metadata releated values...can be loggable
 export default function DynaHFAssistantSearchParams(props) {
-  const classes = useStyles();
+  const {
+    id,
+    formKey,
+    paramMeta,
+    onFieldChange,
+    resourceType,
+    resourceId,
+    flowId,
+    value,
+    keyName,
+    valueName,
+    required,
+  } = props;
   let { label } = props;
-  const { value, disabled, onFieldChange, id, paramMeta = {}, required, formKey, isValid} = props;
-  const [showSearchParamsModal, setShowSearchParamsModal] = useState(false);
+  const classes = useStyles();
   const dispatch = useDispatch();
+  const history = useHistory();
+  const match = useRouteMatch();
+  const updatedValue = [];
+
+  const editorId = getValidRelativePath(id);
+  const flowDataStage = resourceType === 'exports' ? 'inputFilter' : 'importMappingExtract';
   const isMetaValid = isMetaRequiredValuesMet(paramMeta, value);
+
+  Object.keys(value).forEach(key => updatedValue.push({
+    name: key,
+    value: value[key],
+  }));
+  const dataFields = useMemo(() =>
+    paramMeta.fields.map(({id, description}) => ({
+      name: <KeyLabel id={id} description={description} />,
+      value: id,
+    })), [paramMeta.fields]);
+  const suggestionConfig = useMemo(() => ({
+    keyConfig: {
+      suggestions: dataFields,
+      labelName: 'name',
+      valueName: 'value',
+      showAllSuggestions: true,
+    },
+  }), [dataFields]);
 
   useEffect(() => {
     if (!required) {
@@ -167,6 +109,40 @@ export default function DynaHFAssistantSearchParams(props) {
     dispatch(actions.form.clearForceFieldState(formKey)(id));
   }, [dispatch, formKey, id]);
 
+  const handleSave = useCallback(editorValues => {
+    onFieldChange(id, editorValues.rule);
+  }, [id, onFieldChange]);
+
+  const handleEditorClick = useCallback(() => {
+    dispatch(actions.editor.init(editorId, 'handlebars', {
+      formKey,
+      flowId,
+      resourceId,
+      resourceType,
+      fieldId: id,
+      stage: flowDataStage,
+      onSave: handleSave,
+    }));
+
+    history.push(buildDrawerUrl({
+      path: drawerPaths.EDITOR,
+      baseUrl: match.url,
+      params: { editorId },
+    }));
+  }, [dispatch, flowDataStage, editorId, formKey, flowId, resourceId, resourceType, id, handleSave, history, match.url]);
+
+  const handleUpdate = useCallback(values => {
+    const finalValue = values.reduce((fv, val) => {
+      if (!val[keyName]) {
+        return fv;
+      }
+
+      return { ...fv, [val[keyName]]: val[valueName]};
+    }, {});
+
+    onFieldChange(id, finalValue);
+  }, [id, keyName, onFieldChange, valueName]);
+
   if (!label) {
     label =
       paramMeta.paramLocation === PARAMETER_LOCATION.BODY
@@ -175,45 +151,16 @@ export default function DynaHFAssistantSearchParams(props) {
   }
 
   return (
-    <>
-      {showSearchParamsModal && (
-        <SearchParamsModal
-          {...props}
-          id={id}
-          paramMeta={paramMeta}
-          value={value}
-          onFieldChange={onFieldChange}
-          onClose={() => {
-            setShowSearchParamsModal(false);
-          }}
-        />
-      )}
-      <div className={classes.dynaAssSearchParamsWrapper}>
-        <div className={classes.configureLabelWrapper}>
-          <FormLabel
-            disabled={disabled}
-            required={required}
-            error={!isValid}
-            className={classes.dynaAssistantFormLabel}>
-            {label}
-          </FormLabel>
-          {/* {Todo (shiva): we need helpText for the component} */}
-          <FieldHelp {...props} helpText="Configure search parameters" />
-        </div>
-        <OutlinedButton
-          color="secondary"
-          disabled={disabled}
-          data-test={id}
-          className={classes.dynaAssistantbtn}
-          onClick={() => setShowSearchParamsModal(true)}>
-          Launch
-        </OutlinedButton>
-      </div>
-      <FieldMessage
-        isValid={isValid}
-        description=""
-        errorMessages="Please enter required parameters"
-      />
-    </>
+    <KeyValueComponent
+      {...props}
+      label={label}
+      suggestionConfig={suggestionConfig}
+      dataTest="queryParameters"
+      helpText={paramMeta.paramLocation === PARAMETER_LOCATION.BODY ? 'Configure body parameters' : 'Configure query parameters'}
+      classes={classes}
+      value={updatedValue}
+      onUpdate={handleUpdate}
+      handleEditorClick={handleEditorClick}
+    />
   );
 }
