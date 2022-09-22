@@ -1,4 +1,4 @@
-import React, { useState, useRef, useCallback } from 'react';
+import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import { FormControl, TextField, InputAdornment, Typography, Tooltip, Divider } from '@material-ui/core';
@@ -6,7 +6,7 @@ import clsx from 'clsx';
 import ArrowDownIcon from '../../../../../../icons/ArrowDownIcon';
 import useKeyboardShortcut from '../../../../../../../hooks/useKeyboardShortcut';
 import ExtractsTree from './ExtractsTree';
-import { getSourceDataType, MAPPING_DATA_TYPES } from '../../../../../../../utils/mapping';
+import { MAPPING_DATA_TYPES } from '../../../../../../../utils/mapping';
 import messageStore from '../../../../../../../utils/messageStore';
 import ArrowPopper from '../../../../../../ArrowPopper';
 import useDebouncedValue from '../../../../../../../hooks/useDebouncedInput';
@@ -159,6 +159,10 @@ export default function Mapper2ExtractsTypeableSelect({
   const inputFieldRef = useRef();
   const [dataTypeSelector, selectDataType] = useState(false);
 
+  useEffect(() => {
+    sourceDataTypeRef.current = sourceDataType;
+  }, [sourceDataType]);
+
   const handleChange = useCallback(event => {
     setInputValue(event.target.value);
   }, [setInputValue]);
@@ -247,7 +251,7 @@ export default function Mapper2ExtractsTypeableSelect({
         isHardCodedValue={isHardCodedValue}
         isHandlebarExp={isHandlebarExp}
         nodeKey={nodeKey}
-        updateSourceDataType={type => {sourceDataTypeRef.current = [type]}}
+        updateSourceDataType={type => { sourceDataTypeRef.current = [type]; }}
         sourceDataTypes={sourceDataTypeRef.current && sourceDataTypeRef.current.length ? [...sourceDataTypeRef.current] : undefined}
         className={clsx({[classes.sourceDataTypeButton]: hideSourceDropdown})} />
 
