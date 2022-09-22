@@ -86,7 +86,7 @@ export const updateSourceDataType = (draft, node, oldSourceDataType, newDataType
 
   if (oldSourceDataType === newDataType) return node;
   console.log(newNode);
-  if(newNode.extractsArrayHelper) {
+  if(newNode.extractsArrayHelper && newNode.extractsArrayHelper.length) {
     if (newNode.extractsArrayHelper[0].sourceDataType === newDataType) return node;
     newNode.extractsArrayHelper[0].sourceDataType = newDataType;
   }else {
@@ -689,6 +689,7 @@ export default (state = {}, action) => {
             parentKey: node.parentKey,
             parentExtract: node.parentExtract,
             dataType: MAPPING_DATA_TYPES.STRING,
+            sourceDataType: MAPPING_DATA_TYPES.STRING,
           });
           // adding the newKey to state so that new row can be focused
           draft.mapping.newRowKey = newRowKey;
