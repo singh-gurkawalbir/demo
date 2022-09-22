@@ -118,7 +118,7 @@ const ErrorTableWithPanel = ({
     hasFilter = true;
   }
   const emptyErrorMessage = !hasFilter && !isResolved && !hasErrors;
-  const emptyFilterMessage = hasFilter && !isResolved && (!hasErrors || errorsInCurrPage.length === 0);
+  const emptyFilterMessage = hasFilter && errorsInCurrPage.length === 0;
 
   useEffect(() => {
     const refEle = tableRef?.current;
