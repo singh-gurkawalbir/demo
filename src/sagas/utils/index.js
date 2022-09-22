@@ -298,16 +298,6 @@ export const getImportMetadata = (connectorMetadata, connectionVersion) => {
       importData.versions[i].resources = deepClone(importData.versions[i].resources.filter(r => r.operations?.length));
     }
   });
-  if (connectorMetadata.httpConnectorEndpoints.length > 0) {
-    const httpResources = connectorMetadata?.httpConnectorResources;
-    // connectorMetadata?.httpConnectorEndpoints?.
-    // httpResources.forEach(field => {
-    //   const resourceId = field._id;
-    //   const httpEndpoints = connectorMetadata?.httpConnectorEndpoints;
-
-    // });
-    console.log(httpResources);
-  }
 
   return importData;
 };
