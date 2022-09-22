@@ -3652,7 +3652,10 @@ describe('mapping utils', () => {
             generate: 'lname',
             dataType: MAPPING_DATA_TYPES.OBJECTARRAY,
             copySource: 'yes',
-            extractsArrayHelper: [{extract: '$.siblings[*]'}],
+            extractsArrayHelper: [{
+              extract: '$.siblings[*]',
+              sourceDataType: MAPPING_DATA_TYPES.OBJECT,
+            }],
           },
         ],
         result: {isSuccess: true},
@@ -3703,6 +3706,8 @@ describe('mapping utils', () => {
             generate: 'lname',
             dataType: MAPPING_DATA_TYPES.OBJECT,
             copySource: 'yes',
+            extract: '$.siblings[*]',
+            sourceDataType: MAPPING_DATA_TYPES.OBJECT,
           },
         ],
         result: {isSuccess: true},
@@ -3875,6 +3880,93 @@ describe('mapping utils', () => {
         result: {
           isSuccess: false,
           errMessage: errorMessageStore('MAPPER2_WRONG_HANDLEBAR_FOR_RECORD'),
+        },
+      },
+      {
+        mappings: [],
+        lookups: [],
+        isGroupedSampleData: false,
+        v2TreeData: [
+          {
+            key: 'key1',
+            extract: 'isName',
+            generate: 'fname',
+            jsonPath: 'fname',
+            dataType: MAPPING_DATA_TYPES.STRING,
+            sourceDataType: MAPPING_DATA_TYPES.BOOLEAN,
+          },
+        ],
+        result: {
+          isSuccess: true,
+        },
+      },
+      {
+        mappings: [],
+        lookups: [],
+        isGroupedSampleData: false,
+        v2TreeData: [
+          {
+            key: 'key1',
+            extract: 'isName',
+            generate: 'fname',
+            jsonPath: 'fname',
+            dataType: MAPPING_DATA_TYPES.NUMBER,
+            sourceDataType: MAPPING_DATA_TYPES.BOOLEAN,
+          },
+        ],
+        result: {
+          isSuccess: false,
+          errMessage: "Mapper 2.0: fname:You can't map boolean (source) to number (destination)",
+        },
+      },
+      {
+        mappings: [],
+        lookups: [],
+        v2TreeData: [
+          {
+            key: 'key1',
+            generate: 'sibling',
+            jsonPath: 'sibling',
+            dataType: MAPPING_DATA_TYPES.OBJECT,
+            copySource: 'yes',
+            extract: '$.siblings[*]',
+            sourceDataType: MAPPING_DATA_TYPES.NUMBERARRAY,
+          },
+        ],
+        result: {
+          isSuccess: false,
+          errMessage: "Mapper 2.0: sibling:You can't map [number] (source) to object (destination)",
+        },
+      },
+      {
+        mappings: [],
+        lookups: [],
+        v2TreeData: [
+          {
+            jsonPath: 'quantity',
+            generate: 'quantity',
+            dataType: MAPPING_DATA_TYPES.NUMBERARRAY,
+            extractsArrayHelper: [
+              {
+                extract: '$[*].cartonQuantity',
+                conditional: {
+                  when: 'extract_not_empty',
+                },
+                sourceDataType: MAPPING_DATA_TYPES.NUMBER,
+              },
+              {
+                extract: '$[*].configuration',
+                conditional: {
+                  when: 'extract_not_empty',
+                },
+                sourceDataType: MAPPING_DATA_TYPES.BOOLEAN,
+              },
+            ],
+          },
+        ],
+        result: {
+          isSuccess: false,
+          errMessage: "Mapper 2.0: quantity:You can't map boolean (source) to [number] (destination)",
         },
       },
     ];
