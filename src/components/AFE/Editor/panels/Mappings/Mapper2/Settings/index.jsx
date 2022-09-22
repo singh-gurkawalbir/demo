@@ -65,6 +65,8 @@ function MappingSettingsV2({
     const {extract, ...rest} = settings || {};
 
     if (rest.dataType === MAPPING_DATA_TYPES.OBJECTARRAY) {
+      // all use cases of object array are handled in a single util 'rebuildObjectArrayNode'
+      // which gets called from patch settings action
       dispatch(actions.mapping.v2.patchSettings(nodeKey, settings));
     } else {
       dispatch(actions.mapping.v2.patchSettings(nodeKey, rest));

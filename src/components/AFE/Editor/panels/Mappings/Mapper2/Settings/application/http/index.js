@@ -121,7 +121,7 @@ export default {
           helpKey: 'mapping.v2.copyObject',
           fullWidth: true,
           defaultValue: copySource || 'no',
-          visibleWhenAll: [{ field: 'dataType', is: ['object'] }],
+          visibleWhen: [{ field: 'dataType', is: ['object'] }],
           noApi: true,
           options: [
             {
@@ -142,7 +142,7 @@ export default {
           noApi: true,
           skipSort: true,
           refreshOptionsOnChangesTo: ['dataType'],
-          visibleWhenAll: [
+          visibleWhen: [
             { field: 'dataType', isNot: ['object', 'objectarray'] },
           ],
         },
@@ -257,7 +257,6 @@ export default {
           resourceId,
         },
         sourceDataType: {
-          // todo Kiran: it should update automatically when value is selected from dropdown or hardcode/expression
           id: 'sourceDataType',
           name: 'sourceDataType',
           type: 'select',
@@ -267,8 +266,7 @@ export default {
           defaultValue: node.sourceDataType || 'string',
           helpKey: 'mapping.v2.sourceDataType',
           noApi: true,
-          // todo: Kiran: confirm data type visibility for object
-          visibleWhenAll: [
+          visibleWhen: [
             { field: 'dataType', isNot: ['object', 'objectarray', 'stringarray', 'numberarray', 'booleanarray'] },
           ],
           options: [
@@ -292,7 +290,7 @@ export default {
           type: 'mapper2tabbedextracts',
           defaultValue: node.extractsArrayHelper || [],
           nodeKey: key,
-          visibleWhenAll: [
+          visibleWhen: [
             { field: 'dataType', is: ['stringarray', 'numberarray', 'booleanarray', 'objectarray'] },
           ],
         },

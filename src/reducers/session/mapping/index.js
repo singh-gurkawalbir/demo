@@ -845,7 +845,7 @@ export default (state = {}, action) => {
                   delete nodeSubArray[nodeIndexInSubArray].hardCodedValue;
                   // object array is already handled in rebuildObjectArrayNode
                   if (node.dataType !== MAPPING_DATA_TYPES.OBJECTARRAY) {
-                    nodeSubArray[nodeIndexInSubArray].extractsArrayHelper = buildExtractsHelperFromExtract(original(nodeSubArray[nodeIndexInSubArray].extractsArrayHelper), value);
+                    nodeSubArray[nodeIndexInSubArray].extractsArrayHelper = buildExtractsHelperFromExtract(nodeSubArray[nodeIndexInSubArray].extractsArrayHelper, value);
                   }
                 }
               } else if (node.dataType !== MAPPING_DATA_TYPES.OBJECT || node.copySource === 'yes') {

@@ -585,46 +585,37 @@ export const getCombinedExtract = helper => {
   }, []);
 };
 
-export const buildExtractsHelperFromExtract = (existingExtractsArray, newExtracts) => {
-  if (!newExtracts) return [];
+export const buildExtractsHelperFromExtract = (existingExtractsArray, sourceField, formKey, newExtractObj) => {
+  if (!sourceField) return [];
 
-  const combinedExtract = newExtracts?.split(',') || [];
+  const splitExtracts = sourceField?.split(',') || [];
+  const toReturn = [];
+  const removedSources = {};
 
-  if (!existingExtractsArray || !existingExtractsArray.length) {
-    return combinedExtract.reduce((acc, e, i) => {
-      acc.push({
-        extract: getUniqueExtractId(e, i),
-      });
-
-      return acc;
-    }, []);
-  }
-
-  // const copiedSettings = {};
-  // remove extracts from existingExtractsArray if deleted by the user
-  const modifiedHelper = existingExtractsArray.filter(e => {
-    const matchedIndex = combinedExtract.findIndex((c, i) => e.extract === getUniqueExtractId(c, i));
-
-    if (matchedIndex === -1) {
-      // copiedSettings[index] = e; // copy the existing settings so if a new source is added at same index, we copy same settings
-
-      return false;
+  // copy the existing settings of removed source so if a new source is added at same index, we copy same settings
+  existingExtractsArray?.forEach(c => {
+    if (!splitExtracts.includes(getExtractFromUniqueId(c.extract))) {
+      removedSources[c.extract] = c;
     }
-
-    return true;
   });
 
-  // now add missing extracts in existingExtractsArray which are newly added by the user
-  return combinedExtract.reduce((acc, e, i) => {
-    const {extract} = findMatchingExtract(acc, getUniqueExtractId(e, i));
+  splitExtracts.forEach((e, i) => {
+    const uniqueExtract = getUniqueExtractId(e, i);
+    const extractConfig = findMatchingExtract(existingExtractsArray, uniqueExtract);
 
-    if (!extract) {
-      // acc.splice(i, 0, {...copiedSettings[i], extract: getUniqueExtractId(e, i)});
-      acc.splice(i, 0, {extract: getUniqueExtractId(e, i)});
+    if (extractConfig.extract) {
+      // found existing extract, use same config
+      toReturn.push(uniqueExtract === formKey ? newExtractObj : extractConfig);
+    } else if (removedSources[existingExtractsArray[i]?.extract]) {
+      // add missing extracts in existingExtractsArray which are newly added by the user and copy settings if found at same index
+      toReturn.push({...removedSources[existingExtractsArray[i].extract], extract: uniqueExtract});
+    } else {
+      // add extract
+      toReturn.push(formKey ? newExtractObj : {extract: uniqueExtract});
     }
+  });
 
-    return acc;
-  }, modifiedHelper);
+  return toReturn;
 };
 
 // for object array multiple extracts view,
@@ -882,7 +873,7 @@ export const rebuildObjectArrayNode = (node, extract = '', prevActiveExtract) =>
 
 function recursivelyBuildTreeFromV2Mappings({mappings = [], treeData, parentKey, parentExtract, disabled, hidden, isGroupedSampleData, parentJsonPath = ''}) {
   mappings.forEach(m => {
-    const {dataType, mappings: objMappings, buildArrayHelper, extract: currNodeExtract, generate} = m;
+    const {dataType, mappings: objMappings, buildArrayHelper, extract: currNodeExtract, generate, sourceDataType} = m;
     const children = [];
     const currNodeKey = generateUniqueKey();
     const jsonPath = `${parentJsonPath ? `${parentJsonPath}.` : ''}${generate || ''}`;
@@ -902,6 +893,8 @@ function recursivelyBuildTreeFromV2Mappings({mappings = [], treeData, parentKey,
     treeData.push(nodeToPush);
 
     if (PRIMITIVE_DATA_TYPES.includes(dataType)) {
+      nodeToPush.sourceDataType = sourceDataType || MAPPING_DATA_TYPES.STRING;
+
       // nothing to do
       return;
     }
@@ -919,6 +912,7 @@ function recursivelyBuildTreeFromV2Mappings({mappings = [], treeData, parentKey,
           isGroupedSampleData,
           parentJsonPath: jsonPath});
       } else if (currNodeExtract) { // if object mapping has extract, then it is copied from source as is with no children
+        nodeToPush.sourceDataType = sourceDataType || MAPPING_DATA_TYPES.STRING;
         nodeToPush.copySource = 'yes';
       }
 
@@ -946,7 +940,7 @@ function recursivelyBuildTreeFromV2Mappings({mappings = [], treeData, parentKey,
 
           const extractObj = {
             extract: newExtract,
-            sourceDataType: obj.sourceDataType,
+            sourceDataType: obj.sourceDataType || MAPPING_DATA_TYPES.STRING,
             default: obj.default,
             conditional: obj.conditional || {when: 'extract_not_empty'},
             copySource: mappings ? 'no' : 'yes',
@@ -998,7 +992,7 @@ function recursivelyBuildTreeFromV2Mappings({mappings = [], treeData, parentKey,
       buildArrayHelper.forEach((obj, index) => {
         const extractObj = {
           extract: getUniqueExtractId(obj.extract, index),
-          sourceDataType: obj.sourceDataType,
+          sourceDataType: obj.sourceDataType || MAPPING_DATA_TYPES.STRING,
           default: obj.default,
           conditional: obj.conditional || {when: 'extract_not_empty'},
         };
@@ -1037,6 +1031,7 @@ export const buildTreeFromV2Mappings = ({
     title: '',
     disabled,
     dataType: MAPPING_DATA_TYPES.STRING,
+    sourceDataType: MAPPING_DATA_TYPES.STRING,
   }];
 
   // for csv and xlsx file types, the output is generated in rows format
@@ -1055,6 +1050,7 @@ export const buildTreeFromV2Mappings = ({
           disabled,
           isEmptyRow: true,
           parentKey: emptyRowKey,
+          sourceDataType: MAPPING_DATA_TYPES.STRING,
         },
       ],
     }];
@@ -1158,7 +1154,7 @@ const recursivelyBuildV2MappingsFromTree = ({v2TreeData, _mappingsToSave, lookup
       generate,
       dataType,
       extract,
-      sourceDataType: sourceDataType || 'string',
+      sourceDataType: sourceDataType || MAPPING_DATA_TYPES.STRING,
       extractDateFormat,
       extractDateTimezone,
       generateDateFormat,
@@ -1232,7 +1228,7 @@ const recursivelyBuildV2MappingsFromTree = ({v2TreeData, _mappingsToSave, lookup
 
             buildArrayHelper.push({
               extract: getExtractFromUniqueId(extractObj.extract),
-              sourceDataType: extractObj.sourceDataType || 'string',
+              sourceDataType: extractObj.sourceDataType || MAPPING_DATA_TYPES.STRING,
               default: extractObj.default,
               conditional: extractObj.conditional,
             });
@@ -1258,7 +1254,7 @@ const recursivelyBuildV2MappingsFromTree = ({v2TreeData, _mappingsToSave, lookup
           const subMappings = [];
           const newHelper = {
             extract: getExtractFromUniqueId(extractObj.extract),
-            sourceDataType: extractObj.sourceDataType || 'string',
+            sourceDataType: extractObj.sourceDataType || MAPPING_DATA_TYPES.STRING,
             default: extractObj.default,
             conditional: extractObj.conditional,
             mappings: subMappings,
@@ -1301,7 +1297,7 @@ const recursivelyBuildV2MappingsFromTree = ({v2TreeData, _mappingsToSave, lookup
 
           return {
             extract: getExtractFromUniqueId(extractObj.extract),
-            sourceDataType: extractObj.sourceDataType || 'string',
+            sourceDataType: extractObj.sourceDataType || MAPPING_DATA_TYPES.STRING,
             default: extractObj.default,
             conditional: extractObj.conditional,
           };

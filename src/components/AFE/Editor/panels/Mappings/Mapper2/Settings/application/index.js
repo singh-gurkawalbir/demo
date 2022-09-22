@@ -102,11 +102,13 @@ export default {
     settings.description = formVal.description;
     settings.extract = formVal.sourceField;
     settings.sourceDataType = formVal.sourceDataType;
-    settings.extractsArrayHelper = buildExtractsHelperFromExtract(formVal.extractsArrayHelper, formVal.sourceField);
 
     if ('dataType' in formVal) {
       // default data type is always string
       settings.dataType = formVal.dataType || MAPPING_DATA_TYPES.STRING;
+    }
+    if (ARRAY_DATA_TYPES.includes(settings.dataType)) {
+      settings.extractsArrayHelper = buildExtractsHelperFromExtract(formVal.extractsArrayHelper, formVal.sourceField);
     }
 
     settings.copySource = formVal.copySource;

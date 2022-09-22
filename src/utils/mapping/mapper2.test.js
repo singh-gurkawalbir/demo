@@ -1216,6 +1216,7 @@ describe('v2 mapping utils', () => {
         isEmptyRow: true,
         title: '',
         dataType: MAPPING_DATA_TYPES.STRING,
+        sourceDataType: MAPPING_DATA_TYPES.STRING,
       }];
 
       expect(buildTreeFromV2Mappings({})).toEqual();
@@ -1525,6 +1526,7 @@ describe('v2 mapping utils', () => {
         jsonPath: 'my_first_name',
         dataType: 'string',
         extract: '$.fName',
+        sourceDataType: 'string',
       }, {
         key: 'new_key',
         title: '',
@@ -1533,6 +1535,7 @@ describe('v2 mapping utils', () => {
         jsonPath: 'my_full_name',
         dataType: 'string',
         extract: '{{record.fName}} {{record.lName}}',
+        sourceDataType: 'string',
       }, {
         key: 'new_key',
         title: '',
@@ -1558,6 +1561,7 @@ describe('v2 mapping utils', () => {
           jsonPath: 'my_mothers_name.first_name',
           dataType: 'string',
           hardCodedValue: 'some mothers name',
+          sourceDataType: 'string',
         }, {
           key: 'new_key',
           title: '',
@@ -1567,6 +1571,7 @@ describe('v2 mapping utils', () => {
           jsonPath: 'my_mothers_name.last_name',
           dataType: 'string',
           extract: '$.mother.lName',
+          sourceDataType: 'string',
         }],
       }, {
         key: 'new_key',
@@ -1582,7 +1587,8 @@ describe('v2 mapping utils', () => {
         }, {
           extract: '$.additionalFirstNames',
         }],
-        extractsArrayHelper: [{extract: '$.fname', conditional: {when: 'extract_not_empty'}}, {extract: '$.altFirstName', conditional: {when: 'extract_not_empty'}}, {extract: '$.additionalFirstNames', conditional: {when: 'extract_not_empty'}}],
+        extractsArrayHelper: [{
+          extract: '$.fname', sourceDataType: 'string', conditional: {when: 'extract_not_empty'}}, {extract: '$.altFirstName', sourceDataType: 'string', conditional: {when: 'extract_not_empty'}}, {extract: '$.additionalFirstNames', sourceDataType: 'string', conditional: {when: 'extract_not_empty'}}],
       }, {
         key: 'new_key',
         title: '',
@@ -1618,6 +1624,7 @@ describe('v2 mapping utils', () => {
           jsonPath: 'two_of_my_fav_names[*].my_first_name',
           dataType: 'string',
           extract: '$.fName',
+          sourceDataType: 'string',
         }, {
           key: 'new_key',
           title: '',
@@ -1630,6 +1637,7 @@ describe('v2 mapping utils', () => {
           jsonPath: 'two_of_my_fav_names[*].my_last_name',
           dataType: 'string',
           extract: '$.lName',
+          sourceDataType: 'string',
         }],
         extractsArrayHelper: [],
       }, {
@@ -1669,6 +1677,7 @@ describe('v2 mapping utils', () => {
           jsonPath: 'all_the_children[*].full_name',
           dataType: 'string',
           extract: '{{record.siblings.children.fName}} {{record.siblings.lName}}',
+          sourceDataType: 'string',
         }, {
           key: 'new_key',
           title: '',
@@ -1681,8 +1690,9 @@ describe('v2 mapping utils', () => {
           jsonPath: 'all_the_children[*].my_child_first_name',
           dataType: 'string',
           extract: '$.children.firstName',
+          sourceDataType: 'string',
         }],
-        extractsArrayHelper: [{extract: '$.siblings[*].children[*]', conditional: {when: 'extract_not_empty'}, copySource: 'no'}, {extract: '$.children[*]', conditional: {when: 'extract_not_empty'}, copySource: 'no'}],
+        extractsArrayHelper: [{extract: '$.siblings[*].children[*]', sourceDataType: 'string', conditional: {when: 'extract_not_empty'}, copySource: 'no'}, {extract: '$.children[*]', sourceDataType: 'string', conditional: {when: 'extract_not_empty'}, copySource: 'no'}],
         activeTab: 0,
       }, {
         key: 'new_key',
@@ -1734,6 +1744,7 @@ describe('v2 mapping utils', () => {
           generate: 'test1',
           dataType: 'string',
           hardCodedValue: 'first_source',
+          sourceDataType: 'string',
         }, {
           key: 'new_key',
           title: '',
@@ -1763,9 +1774,10 @@ describe('v2 mapping utils', () => {
             hardCodedValue: 'second_source',
             hidden: true,
             className: 'hideRow',
+            sourceDataType: 'string',
           }],
         }],
-        extractsArrayHelper: [{extract: '$|0', conditional: {when: 'extract_not_empty'}, copySource: 'no'}, {extract: '$|1', conditional: {when: 'extract_not_empty'}, copySource: 'no'}],
+        extractsArrayHelper: [{extract: '$|0', sourceDataType: 'string', conditional: {when: 'extract_not_empty'}, copySource: 'no'}, {extract: '$|1', sourceDataType: 'string', conditional: {when: 'extract_not_empty'}, copySource: 'no'}],
         activeTab: 0,
       },
       {
@@ -1884,6 +1896,7 @@ describe('v2 mapping utils', () => {
             jsonPath: 'family_tree_from_mom_perspective.children[*].last_name',
             dataType: 'string',
             extract: '$.siblings.lName',
+            sourceDataType: 'string',
           }, {
             key: 'new_key',
             title: '',
@@ -1912,8 +1925,9 @@ describe('v2 mapping utils', () => {
               jsonPath: 'family_tree_from_mom_perspective.children[*].grandchildren[*].first_name',
               dataType: 'string',
               extract: '$.siblings.children.fName',
+              sourceDataType: 'string',
             }],
-            extractsArrayHelper: [{extract: '$.siblings.children[*]', conditional: {when: 'extract_not_empty'}, copySource: 'no'}],
+            extractsArrayHelper: [{extract: '$.siblings.children[*]', sourceDataType: 'string', conditional: {when: 'extract_not_empty'}, copySource: 'no'}],
             activeTab: 0,
           }, {
             key: 'new_key',
@@ -1927,6 +1941,7 @@ describe('v2 mapping utils', () => {
             jsonPath: 'family_tree_from_mom_perspective.children[*].first_name',
             dataType: 'string',
             extract: '$.fName',
+            sourceDataType: 'string',
           }, {
             key: 'new_key',
             title: '',
@@ -1962,6 +1977,7 @@ describe('v2 mapping utils', () => {
               jsonPath: 'family_tree_from_mom_perspective.children[*].grandchildren[*].first_name',
               dataType: 'string',
               extract: '$.children.firstName',
+              sourceDataType: 'string',
             }, {
               key: 'new_key',
               title: '',
@@ -1974,11 +1990,12 @@ describe('v2 mapping utils', () => {
               jsonPath: 'family_tree_from_mom_perspective.children[*].grandchildren[*].last_name',
               dataType: 'string',
               extract: '$.lName',
+              sourceDataType: 'string',
             }],
-            extractsArrayHelper: [{extract: '$.children[*]', conditional: {when: 'extract_not_empty'}, copySource: 'no'}],
+            extractsArrayHelper: [{extract: '$.children[*]', sourceDataType: 'string', conditional: {when: 'extract_not_empty'}, copySource: 'no'}],
             activeTab: 0,
           }],
-          extractsArrayHelper: [{extract: '$.siblings[*]', conditional: {when: 'extract_not_empty'}, copySource: 'no'}],
+          extractsArrayHelper: [{extract: '$.siblings[*]', sourceDataType: 'string', conditional: {when: 'extract_not_empty'}, copySource: 'no'}],
           activeTab: 0,
         }],
       },
@@ -1993,7 +2010,7 @@ describe('v2 mapping utils', () => {
           extract: '$.items[*]',
         }],
         children: [],
-        extractsArrayHelper: [{extract: '$.items[*]', conditional: {when: 'extract_not_empty'}, copySource: 'yes'}],
+        extractsArrayHelper: [{extract: '$.items[*]', sourceDataType: 'string', conditional: {when: 'extract_not_empty'}, copySource: 'yes'}],
       },
       {
         key: 'new_key',
@@ -2049,6 +2066,7 @@ describe('v2 mapping utils', () => {
           jsonPath: 'test[*].a',
           dataType: 'string',
           extract: 'a',
+          sourceDataType: 'string',
         }, {
           key: 'new_key',
           title: '',
@@ -2061,6 +2079,7 @@ describe('v2 mapping utils', () => {
           jsonPath: 'test[*].b',
           dataType: 'string',
           extract: 'b',
+          sourceDataType: 'string',
         },
         {
           key: 'new_key',
@@ -2074,8 +2093,9 @@ describe('v2 mapping utils', () => {
           jsonPath: 'test[*].c',
           dataType: 'string',
           extract: 'c',
+          sourceDataType: 'string',
         }],
-        extractsArrayHelper: [{extract: '$.children[*]', conditional: {when: 'extract_not_empty'}, copySource: 'no'}, {extract: '$.mother', conditional: {when: 'extract_not_empty'}, copySource: 'no'}, {extract: '$.father', conditional: {when: 'extract_not_empty'}, copySource: 'no'}],
+        extractsArrayHelper: [{extract: '$.children[*]', sourceDataType: 'string', conditional: {when: 'extract_not_empty'}, copySource: 'no'}, {extract: '$.mother', sourceDataType: 'string', conditional: {when: 'extract_not_empty'}, copySource: 'no'}, {extract: '$.father', sourceDataType: 'string', conditional: {when: 'extract_not_empty'}, copySource: 'no'}],
         activeTab: 0,
       },
       {
@@ -2085,7 +2105,7 @@ describe('v2 mapping utils', () => {
         generate: 'test12',
         jsonPath: 'test12',
         dataType: 'objectarray',
-        extractsArrayHelper: [{extract: '$.abc', conditional: {when: 'extract_not_empty'}, copySource: 'no'}, {extract: '$.test', conditional: {when: 'extract_not_empty'}, copySource: 'no'}],
+        extractsArrayHelper: [{extract: '$.abc', sourceDataType: 'string', conditional: {when: 'extract_not_empty'}, copySource: 'no'}, {extract: '$.test', sourceDataType: 'string', conditional: {when: 'extract_not_empty'}, copySource: 'no'}],
         activeTab: 0,
         buildArrayHelper: [
           {
@@ -2159,10 +2179,11 @@ describe('v2 mapping utils', () => {
             parentKey: 'new_key',
             title: '',
             disabled: false,
+            sourceDataType: 'string',
           },
           {
             className: 'hideRow',
-            extractsArrayHelper: [{extract: '$|0', conditional: {when: 'extract_not_empty'}, copySource: 'no'}, {extract: '$|1', conditional: {when: 'extract_not_empty'}, copySource: 'no'}, {extract: '$|2', conditional: {when: 'extract_not_empty'}, copySource: 'no'}],
+            extractsArrayHelper: [{extract: '$|0', sourceDataType: 'string', conditional: {when: 'extract_not_empty'}, copySource: 'no'}, {extract: '$|1', sourceDataType: 'string', conditional: {when: 'extract_not_empty'}, copySource: 'no'}, {extract: '$|2', sourceDataType: 'string', conditional: {when: 'extract_not_empty'}, copySource: 'no'}],
             activeTab: 0,
             dataType: 'objectarray',
             disabled: false,
@@ -2226,6 +2247,7 @@ describe('v2 mapping utils', () => {
                 parentExtract: '$|0',
                 parentKey: 'new_key',
                 title: '',
+                sourceDataType: 'string',
               },
               {
                 className: 'hideRow',
@@ -2239,6 +2261,7 @@ describe('v2 mapping utils', () => {
                 parentExtract: '$|1',
                 parentKey: 'new_key',
                 title: '',
+                sourceDataType: 'string',
               },
               {
                 className: 'hideRow',
@@ -2252,6 +2275,7 @@ describe('v2 mapping utils', () => {
                 parentExtract: '$|2',
                 parentKey: 'new_key',
                 title: '',
+                sourceDataType: 'string',
               },
             ],
           },
@@ -2321,6 +2345,7 @@ describe('v2 mapping utils', () => {
           parentExtract: '$[*]|0',
           parentKey: 'new_key',
           title: '',
+          sourceDataType: 'string',
         }, {
           dataType: 'string',
           disabled: true,
@@ -2331,6 +2356,7 @@ describe('v2 mapping utils', () => {
           parentExtract: '$[*]|0',
           parentKey: 'new_key',
           title: '',
+          sourceDataType: 'string',
         }, {
           dataType: 'string',
           disabled: true,
@@ -2341,8 +2367,9 @@ describe('v2 mapping utils', () => {
           parentExtract: '$[*]|0',
           parentKey: 'new_key',
           title: '',
+          sourceDataType: 'string',
         }],
-        extractsArrayHelper: [{extract: '$[*]|0', copySource: 'no', conditional: {when: 'extract_not_empty'}}],
+        extractsArrayHelper: [{extract: '$[*]|0', sourceDataType: 'string', copySource: 'no', conditional: {when: 'extract_not_empty'}}],
         activeTab: 0,
         dataType: 'objectarray',
         jsonPath: '',
@@ -2376,6 +2403,7 @@ describe('v2 mapping utils', () => {
             dataType: MAPPING_DATA_TYPES.STRING,
             disabled: false,
             isEmptyRow: true,
+            sourceDataType: 'string',
           },
         ],
       }];
