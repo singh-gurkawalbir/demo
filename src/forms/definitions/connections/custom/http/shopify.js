@@ -215,7 +215,7 @@ export default {
     'http.auth.token.token': {
       fieldId: 'http.auth.token.token',
       defaultValue: '',
-      label: 'Password',
+      label: 'Access Token',
       required: true,
       helpKey: 'shopify.connection.http.auth.token.token',
       visibleWhen: [{ field: 'http.auth.type', is: ['token'] }],
