@@ -68,6 +68,7 @@ describe('mapping reducer', () => {
       importId: resourceId,
       flowId,
       v2TreeData: [{
+        key: '123',
         dataType: MAPPING_DATA_TYPES.OBJECTARRAY,
         buildArrayHelper: [],
       }],
@@ -77,6 +78,7 @@ describe('mapping reducer', () => {
     const expectedState = {
       mapping: {
         v2TreeData: [{
+          key: '123',
           dataType: MAPPING_DATA_TYPES.OBJECTARRAY,
           generateDisabled: true,
           buildArrayHelper: [],
@@ -86,11 +88,12 @@ describe('mapping reducer', () => {
         importId: resourceId,
         status: 'received',
         v2TreeDataCopy: [{
+          key: '123',
           dataType: MAPPING_DATA_TYPES.OBJECTARRAY,
           generateDisabled: true,
           buildArrayHelper: [],
         }],
-        expandedKeys: [],
+        expandedKeys: ['123'],
       },
     };
 
@@ -1834,6 +1837,7 @@ describe('mapping reducer', () => {
           importId: 'imp-123',
           flowId: 'flow-123',
           version: 2,
+          newRowKey: 'new_key',
           v2TreeData: [{
             key: 'key1',
             dataType: MAPPING_DATA_TYPES.STRING,
@@ -2050,6 +2054,7 @@ describe('mapping reducer', () => {
               dataType: MAPPING_DATA_TYPES.STRING,
               generate: 'lname',
               extract: '$.lname',
+              jsonPath: 'lname',
             },
             {
               key: 'key1',
@@ -2135,6 +2140,7 @@ describe('mapping reducer', () => {
             dataType: MAPPING_DATA_TYPES.STRING,
             generate: 'test2',
             extract: '$.lname',
+            jsonPath: 'test2',
           },
           {
             key: 'key4',
@@ -2213,6 +2219,7 @@ describe('mapping reducer', () => {
             dataType: MAPPING_DATA_TYPES.STRING,
             generate: 'test3',
             extract: '$.fname',
+            jsonPath: 'test3',
           },
           {
             key: 'key2',
@@ -2323,6 +2330,7 @@ describe('mapping reducer', () => {
             key: 'key2',
             dataType: MAPPING_DATA_TYPES.OBJECT,
             generate: 'lname',
+            jsonPath: 'lname',
             children: [
               {
                 key: 'c1',
@@ -2389,6 +2397,7 @@ describe('mapping reducer', () => {
             key: 'key2',
             dataType: MAPPING_DATA_TYPES.OBJECT,
             generate: 'lname',
+            jsonPath: 'lname',
             children: [
               {
                 key: 'c1',
@@ -2404,7 +2413,8 @@ describe('mapping reducer', () => {
                 generate: 'child3',
                 extract: '$.child3',
                 parentExtract: '',
-                parentKey: 'key3',
+                parentKey: 'key2',
+                jsonPath: 'lname.child3',
               },
               {
                 key: 'c2',
@@ -2437,6 +2447,7 @@ describe('mapping reducer', () => {
             key: 'key2',
             dataType: MAPPING_DATA_TYPES.OBJECT,
             generate: 'lname',
+            jsonPath: 'lname',
             children: [
               {
                 key: 'c1',
@@ -2510,6 +2521,7 @@ describe('mapping reducer', () => {
             key: 'key2',
             dataType: MAPPING_DATA_TYPES.OBJECT,
             generate: 'lname',
+            jsonPath: 'lname',
             children: [
               {
                 key: 'c2',
@@ -2518,6 +2530,7 @@ describe('mapping reducer', () => {
                 extract: '$.child2',
                 parentExtract: '',
                 parentKey: 'key2',
+                jsonPath: 'lname.child2',
               },
               {
                 key: 'c1',
@@ -2552,6 +2565,7 @@ describe('mapping reducer', () => {
             generate: 'mothers_side',
             combinedExtract: '$.siblings[*],$.children[*]',
             activeTab: 0,
+            jsonPath: 'mothers_side',
             children: [
               {
                 key: 'c1',
@@ -2622,6 +2636,7 @@ describe('mapping reducer', () => {
             generate: 'mothers_side',
             combinedExtract: '$.siblings[*],$.children[*]',
             activeTab: 0,
+            jsonPath: 'mothers_side',
             children: [
               {
                 key: 'c1',
@@ -2635,6 +2650,7 @@ describe('mapping reducer', () => {
                 extract: '$.child2',
                 parentExtract: '$.siblings[*]',
                 parentKey: 'key2',
+                jsonPath: 'mothers_side[*].child2',
               },
               {
                 key: 'c1',
@@ -2959,13 +2975,15 @@ describe('mapping reducer', () => {
             dataType: MAPPING_DATA_TYPES.OBJECTARRAY,
             generate: 'fname',
             combinedExtract: '',
+            activeTab: 0,
             children: [
               {
-                key: 'new_key',
-                title: '',
+                key: 'c1',
                 parentKey: 'key1',
+                generate: 'child1',
+                extract: '$.child1',
+                parentExtract: '',
                 dataType: MAPPING_DATA_TYPES.STRING,
-                isEmptyRow: true,
               },
             ],
           }],
@@ -3031,6 +3049,7 @@ describe('mapping reducer', () => {
                 key: 'new_key',
                 title: '',
                 parentKey: 'key1',
+                generate: 'child1',
                 parentExtract: '$.lname[*]',
                 dataType: MAPPING_DATA_TYPES.STRING,
                 hidden: true,
@@ -3664,6 +3683,135 @@ describe('mapping reducer', () => {
 
       expect(state).toEqual(initialState);
     });
+    test('should un-hide all nodes if input value has last character as comma', () => {
+      const initialState = {
+        mapping: {
+          importId: 'imp-123',
+          flowId: 'flow-123',
+          version: 2,
+          v2TreeData: [],
+          extractsTree,
+        },
+      };
+      const state = reducer(initialState, actions.mapping.v2.patchExtractsFilter('$.entity,', '$.new'));
+
+      expect(state).toEqual(initialState);
+    });
+    test('should correctly update extracts tree if input contain multiple comma separated value', () => {
+      const initialState = {
+        mapping: {
+          importId: 'imp-123',
+          flowId: 'flow-123',
+          version: 2,
+          v2TreeData: [],
+          extractsTree,
+        },
+      };
+      const expectedTree = [{
+        key: 'k1',
+        dataType: 'object',
+        propName: '$',
+        children: [
+          {
+            key: 'c1',
+            parentKey: 'k1',
+            jsonPath: 'entity',
+            propName: 'entity',
+            dataType: 'string',
+          },
+          {
+            key: 'c2',
+            parentKey: 'k1',
+            jsonPath: 'items[*]',
+            propName: 'items',
+            dataType: '[object]',
+            children: [
+              {
+                key: 'c2-1',
+                parentKey: 'c2',
+                jsonPath: 'items[*].celigo_inventorydetail',
+                propName: 'celigo_inventorydetail',
+                dataType: 'object',
+                children: [
+                  {
+                    key: 'c2-1-1',
+                    parentKey: 'c2-1',
+                    jsonPath: 'items[*].celigo_inventorydetail.inventoryassignment[*]',
+                    propName: 'inventoryassignment',
+                    dataType: '[object]',
+                    children: [
+                      {
+                        key: 'c2-1-1-1',
+                        parentKey: 'c2-1-1',
+                        jsonPath: 'items[*].celigo_inventorydetail.inventoryassignment[*].quantity',
+                        propName: 'quantity',
+                        dataType: 'number',
+                        hidden: true,
+                        className: 'hideRow',
+                      },
+                      {
+                        key: 'c2-1-1-2',
+                        parentKey: 'c2-1-1',
+                        jsonPath: 'items[*].celigo_inventorydetail.inventoryassignment[*].sno',
+                        propName: 'sno',
+                        dataType: 'string',
+                        hidden: true,
+                        className: 'hideRow',
+                      },
+                    ],
+                    hidden: true,
+                    className: 'hideRow',
+                  },
+                ],
+                hidden: true,
+                className: 'hideRow',
+              },
+              {
+                key: 'c2-2',
+                parentKey: 'c2',
+                jsonPath: 'items[*].item',
+                propName: 'item',
+                dataType: 'string',
+                hidden: true,
+                className: 'hideRow',
+              },
+              {
+                key: 'c2-3',
+                parentKey: 'c2',
+                jsonPath: 'items[*].quantity',
+                propName: 'quantity',
+                dataType: 'number',
+                hidden: true,
+                className: 'hideRow',
+              },
+            ],
+            hidden: true,
+            className: 'hideRow',
+          },
+          {
+            key: 'c3',
+            parentKey: 'k1',
+            jsonPath: 'location',
+            propName: 'location',
+            dataType: 'number',
+          },
+        ],
+        childMatchFound: true,
+      }];
+
+      const state = reducer(initialState, actions.mapping.v2.patchExtractsFilter('$.entity,$.location', '$.entity'));
+      const nextState = {
+        mapping: {
+          importId: 'imp-123',
+          flowId: 'flow-123',
+          version: 2,
+          v2TreeData: [],
+          extractsTree: expectedTree,
+        },
+      };
+
+      expect(state).toEqual(nextState);
+    });
     test('should correctly update extracts tree with parent hidden if no children are visible', () => {
       const initialState = {
         mapping: {
@@ -4261,6 +4409,40 @@ describe('mapping reducer', () => {
       };
 
       expect(state).toEqual(newState);
+    });
+  });
+  describe('MAPPING.V2.DELETE_NEW_ROW_KEY action', () => {
+    test('delete the newRowKey from mappings', () => {
+      const initialState = {
+        mapping: {
+          importId: 'imp-123',
+          flowId: 'flow-123',
+          version: 2,
+          newRowKey: 'key1',
+          v2TreeData: [{
+            key: 'key1',
+            dataType: MAPPING_DATA_TYPES.STRING,
+            generate: 'fname',
+            extract: '$.fname',
+          }],
+        },
+      };
+      const state = reducer(initialState, actions.mapping.v2.deleteNewRowKey());
+      const expectedState = {
+        mapping: {
+          importId: 'imp-123',
+          flowId: 'flow-123',
+          version: 2,
+          v2TreeData: [{
+            key: 'key1',
+            dataType: MAPPING_DATA_TYPES.STRING,
+            generate: 'fname',
+            extract: '$.fname',
+          }],
+        },
+      };
+
+      expect(state).toEqual(expectedState);
     });
   });
 

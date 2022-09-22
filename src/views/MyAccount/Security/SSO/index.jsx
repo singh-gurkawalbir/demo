@@ -24,7 +24,7 @@ export default function Security() {
 
   return (
     <div className={classes.root}>
-      <PanelHeader title="Single sign-on (SSO)" infoText={infoText.SSO} />
+      <PanelHeader title="Single sign-on (SSO)" infoText={isAccountOwnerOrAdmin ? infoText.OwnerAdminSSO : infoText.AccountUserSSO} />
       {!isAccountOwner && <SSOUserSettings />}
       {isAccountOwnerOrAdmin && <SSOAccountSettings />}
     </div>

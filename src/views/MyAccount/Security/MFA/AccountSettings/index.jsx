@@ -2,12 +2,15 @@ import React, { useMemo, useCallback, useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import CollapsableContainer from '../../../../../components/CollapsableContainer';
-import useFormInitWithPermissions from '../../../../../hooks/useFormInitWithPermissions';
+import useForm from '../../../../../components/Form';
 import DynaForm from '../../../../../components/DynaForm';
 import Spinner from '../../../../../components/Spinner';
 import DynaSubmit from '../../../../../components/DynaForm/DynaSubmit';
 import { selectors } from '../../../../../reducers';
 import actions from '../../../../../actions';
+import useEnqueueSnackbar from '../../../../../hooks/enqueueSnackbar';
+import messageStore from '../../../../../utils/messageStore';
+import { MFA_ACCOUNT_SETTINGS_ASYNC_KEY, FORM_SAVE_STATUS } from '../../../../../constants';
 
 const useStyles = makeStyles(theme => ({
   footer: {
@@ -21,11 +24,12 @@ const useStyles = makeStyles(theme => ({
 export default function AccountSettings() {
   const classes = useStyles();
   const dispatch = useDispatch();
+  const [enquesnackbar] = useEnqueueSnackbar();
   const [remountKey, setRemountKey] = useState(1);
 
   const areAccountSettingsLoaded = useSelector(selectors.areAccountSettingsLoaded);
   const mfaAccountSettings = useSelector(selectors.mfaAccountSettings);
-
+  const areAccountSettingsUpdated = useSelector(state => selectors.asyncTaskStatus(state, MFA_ACCOUNT_SETTINGS_ASYNC_KEY) === FORM_SAVE_STATUS.COMPLETE);
   const fieldMeta = useMemo(
     () => ({
       fieldMap: {
@@ -37,6 +41,7 @@ export default function AccountSettings() {
           type: 'checkbox',
           noApi: true,
           isLoggable: false,
+          helpKey: 'mfa.dontAllowTrustedDevices',
         },
         trustDeviceForPeriod: {
           id: 'trustDeviceForPeriod',
@@ -47,6 +52,13 @@ export default function AccountSettings() {
           disabledWhen: [{ field: 'dontAllowTrustedDevices', is: [true] }],
           noApi: true,
           isLoggable: false,
+          helpKey: 'mfa.trustDeviceForPeriod',
+          validWhen: {
+            matchesRegEx: {
+              pattern: '^[1-9]\\d*$',
+              message: 'Value must be numbers only',
+            },
+          },
         },
       },
     }),
@@ -57,12 +69,10 @@ export default function AccountSettings() {
     setRemountKey(key => key + 1);
   }, [mfaAccountSettings]);
 
-  const formKey = useFormInitWithPermissions({ fieldMeta, remount: remountKey });
+  const formKey = useForm({ fieldMeta, remount: remountKey });
 
   const updateAccountSettings = useCallback(values => {
-    const { dontAllowTrustedDevices, trustDeviceForPeriod } = values;
-
-    dispatch(actions.mfa.updateAccountSettings({ dontAllowTrustedDevices, trustDeviceForPeriod }));
+    dispatch(actions.mfa.updateAccountSettings(values));
   }, [dispatch]);
 
   useEffect(() => {
@@ -70,6 +80,16 @@ export default function AccountSettings() {
       dispatch(actions.mfa.requestAccountSettings());
     }
   }, [areAccountSettingsLoaded, dispatch]);
+
+  useEffect(() => {
+    if (areAccountSettingsUpdated) {
+      enquesnackbar({
+        message: messageStore('MFA_ACCOUNT_SETTINGS_UPDATED'),
+        variant: 'success',
+      });
+      dispatch(actions.asyncTask.clear(MFA_ACCOUNT_SETTINGS_ASYNC_KEY));
+    }
+  }, [areAccountSettingsUpdated, enquesnackbar, dispatch]);
 
   if (!areAccountSettingsLoaded) {
     return (

@@ -697,25 +697,73 @@ describe('getHTTPConnectorMetadata saga', () => {
     export: {
       labels: {
         version: 'API Version',
+
       },
       paging: {
         lastPageStatusCode: 404,
         linkHeaderRelation: 'next',
         method: 'linkheader',
+
       },
       requestMediaType: 'json',
-      versions: [
+      resources: [
         {
-          _id: '62cffbf79b51830e4d641d6d',
-          resources: [
+          _httpConnectorId: '62cffbf79b51830e4d641d6c',
+          _id: '62cffbf70c804009663faa2b',
+          _versionIds: [
+            '62cffbf79b51830e4d641d6d',
+            '62cffbf79b51830e4d641d6e',
+            '62cffbf79b51830e4d641d6f',
+
+          ],
+          createdAt: '2022-07-14T11:20:24.000Z',
+          id: '62cffbf70c804009663faa2b',
+          lastModified: '2022-07-14T11:20:24.003Z',
+          name: 'Customers : Customer',
+          published: true,
+          resourceFields: [
             {
+              dataType: 'objectarray',
+              id: 'customer',
+              resourceFields: [
+                {
+                  dataType: 'object',
+                  id: 'default_address',
+                  resourceFields: [
+                    {
+                      dataType: 'string',
+                      id: 'province_code',
+
+                    },
+
+                  ],
+
+                },
+
+              ],
+
+            },
+
+          ],
+          supportedBy: {
+            import: {
+              preConfiguredFields: [],
+
+            },
+
+          },
+          versions: [
+            {
+              _id: '62cffbf79b51830e4d641d6d',
               endpoints: [
                 {
                   delta: {
                     dateFormat: 'YYYY-MM-DDTHH:mm:ss[Z]',
                     defaults: {
                       updated_at_min: '{{{lastExportDateTime}}}',
+
                     },
+
                   },
                   doesNotSupportPaging: false,
                   id: '62cffbff0c804009663faa5c',
@@ -727,16 +775,21 @@ describe('getHTTPConnectorMetadata saga', () => {
                       id: 'ids',
                       name: 'ids',
                       required: false,
+
                     },
+
                   ],
                   response: {
                     resourcePath: 'customers',
+
                   },
                   supportedExportTypes: [
                     'delta',
                     'test',
+
                   ],
                   url: '/2022-01/customers.json',
+
                 },
                 {
                   doesNotSupportPaging: false,
@@ -749,12 +802,16 @@ describe('getHTTPConnectorMetadata saga', () => {
                       id: 'order',
                       name: 'order',
                       required: false,
+
                     },
+
                   ],
                   response: {
                     resourcePath: 'customers',
+
                   },
                   url: '/2022-01/customers/search.json',
+
                 },
                 {
                   doesNotSupportPaging: true,
@@ -766,12 +823,16 @@ describe('getHTTPConnectorMetadata saga', () => {
                       id: 'customerId',
                       name: 'customerId',
                       required: true,
+
                     },
+
                   ],
                   response: {
                     resourcePath: 'customer',
+
                   },
                   url: '/2022-01/customers/:_customerId.json',
+
                 },
                 {
                   doesNotSupportPaging: true,
@@ -783,36 +844,107 @@ describe('getHTTPConnectorMetadata saga', () => {
                       id: 'customerId',
                       name: 'customerId',
                       required: true,
+
                     },
+
                   ],
                   response: {
                     resourcePath: 'metafields',
+
                   },
                   url: '/2022-01/customers/:_customerId/metafields.json',
+
                 },
+
               ],
-              id: '62cffbf70c804009663faa2b',
-              name: 'Customers : Customer',
+              version: '2022-01',
+
             },
+
           ],
+
+        },
+
+      ],
+      versions: [
+        {
+          _id: '62cffbf79b51830e4d641d6d',
           version: '2022-01',
         },
+
       ],
+
     },
     import: {
       errorMediaType: 'json',
       labels: {
         version: 'API Version',
+
       },
       requestMediaType: 'json',
-      successMediaType: 'json',
-      versions: [
+      resources: [
         {
-          _id: '62cffbf79b51830e4d641d6d',
-          resources: [
+          _httpConnectorId: '62cffbf79b51830e4d641d6c',
+          _id: '62cffbf70c804009663faa2b',
+          _versionIds: [
+            '62cffbf79b51830e4d641d6d',
+            '62cffbf79b51830e4d641d6e',
+            '62cffbf79b51830e4d641d6f',
+
+          ],
+          createdAt: '2022-07-14T11:20:24.000Z',
+          id: '62cffbf70c804009663faa2b',
+          lastModified: '2022-07-14T11:20:24.003Z',
+          name: 'Customers : Customer',
+          published: true,
+          resourceFields: [
             {
-              id: '62cffbf70c804009663faa2b',
-              name: 'Customers : Customer',
+              dataType: 'objectarray',
+              id: 'customer',
+              resourceFields: [
+                {
+                  dataType: 'object',
+                  id: 'default_address',
+                  resourceFields: [
+                    {
+                      dataType: 'string',
+                      id: 'province_code',
+
+                    },
+
+                  ],
+
+                },
+
+              ],
+
+            },
+
+          ],
+          resourcePreConfiguredFields: [],
+          sampleData: {
+            customer: [
+              {
+                default_address: {
+                  province_code: 'province_code',
+
+                },
+
+              },
+
+            ],
+
+          },
+          supportedBy: {
+            import: {
+              preConfiguredFields: [],
+
+            },
+
+          },
+          versions: [
+            {
+              _id: '62cffbf79b51830e4d641d6d',
               operations: [
                 {
                   howToFindIdentifier: {
@@ -820,7 +952,9 @@ describe('getHTTPConnectorMetadata saga', () => {
                       extract: 'customers[0].id',
                       id: '62cffbff0c804009663faa60',
                       url: '/customers/search.json',
+
                     },
+
                   },
                   id: '62cffc149b51830e4d641e51',
                   ignoreExisting: true,
@@ -832,47 +966,102 @@ describe('getHTTPConnectorMetadata saga', () => {
                       in: 'path',
                       isIdentifier: true,
                       required: true,
+
                     },
+
                   ],
                   requiredMappings: [
                     'customer.email',
+
                   ],
                   supportIgnoreExisting: true,
                   url: '/2022-01/customers.json',
+
                 },
+
               ],
-              sampleData: {
-                customer: [
-                  {
-                    default_address: {
-                      province_code: 'province_code',
-                    },
-                  },
-                ],
-              },
+              version: '2022-01',
+
             },
+
           ],
-          version: '2022-01',
+
         },
+
       ],
+      successMediaType: 'json',
+      versions: [
+        {
+          _id: '62cffbf79b51830e4d641d6d',
+          version: '2022-01',
+
+        },
+
+      ],
+
     },
+
   };
   const output2 = {
     export: {
       labels: {
         version: 'API Version',
+
       },
       paging: {
         lastPageStatusCode: 404,
         linkHeaderRelation: 'next',
         method: 'linkheader',
+
       },
       requestMediaType: 'json',
-      versions: [
+      resources: [
         {
-          _id: '62cffbf79b51830e4d641d6d',
-          resources: [
+          _httpConnectorId: '62cffbf79b51830e4d641d6c',
+          _id: '62cffbf70c804009663faa2b',
+          _versionIds: [
+            '62cffbf79b51830e4d641d6d',
+            '62cffbf79b51830e4d641d6e',
+            '62cffbf79b51830e4d641d6f',
+
+          ],
+          createdAt: '2022-07-14T11:20:24.000Z',
+          id: '62cffbf70c804009663faa2b',
+          lastModified: '2022-07-14T11:20:24.003Z',
+          name: 'Customers : Customer',
+          published: true,
+          resourceFields: [
             {
+              dataType: 'objectarray',
+              id: 'customer',
+              resourceFields: [
+                {
+                  dataType: 'object',
+                  id: 'default_address',
+                  resourceFields: [
+                    {
+                      dataType: 'string',
+                      id: 'province_code',
+
+                    },
+
+                  ],
+
+                },
+
+              ],
+
+            },
+
+          ],
+          supportedBy: {
+            import: {
+              preConfiguredFields: [],
+            },
+          },
+          versions: [
+            {
+              _id: '62cffbf79b51830e4d641d6d',
               endpoints: [
                 {
                   delta: {
@@ -913,12 +1102,16 @@ describe('getHTTPConnectorMetadata saga', () => {
                       id: 'order',
                       name: 'order',
                       required: false,
+
                     },
+
                   ],
                   response: {
                     resourcePath: 'customers',
+
                   },
                   url: '/customers/search.json',
+
                 },
                 {
                   doesNotSupportPaging: true,
@@ -930,12 +1123,16 @@ describe('getHTTPConnectorMetadata saga', () => {
                       id: 'customerId',
                       name: 'customerId',
                       required: true,
+
                     },
+
                   ],
                   response: {
                     resourcePath: 'customer',
+
                   },
                   url: '/customers/:_customerId.json',
+
                 },
                 {
                   doesNotSupportPaging: true,
@@ -947,18 +1144,26 @@ describe('getHTTPConnectorMetadata saga', () => {
                       id: 'customerId',
                       name: 'customerId',
                       required: true,
+
                     },
+
                   ],
                   response: {
                     resourcePath: 'metafields',
+
                   },
                   url: '/customers/:_customerId/metafields.json',
+
                 },
               ],
-              id: '62cffbf70c804009663faa2b',
-              name: 'Customers : Customer',
+              version: '2022-01',
             },
           ],
+        },
+      ],
+      versions: [
+        {
+          _id: '62cffbf79b51830e4d641d6d',
           version: '2022-01',
         },
       ],
@@ -969,14 +1174,56 @@ describe('getHTTPConnectorMetadata saga', () => {
         version: 'API Version',
       },
       requestMediaType: 'json',
-      successMediaType: 'json',
-      versions: [
+      resources: [
         {
-          _id: '62cffbf79b51830e4d641d6d',
-          resources: [
+          _httpConnectorId: '62cffbf79b51830e4d641d6c',
+          _id: '62cffbf70c804009663faa2b',
+          _versionIds: [
+            '62cffbf79b51830e4d641d6d',
+            '62cffbf79b51830e4d641d6e',
+            '62cffbf79b51830e4d641d6f',
+          ],
+          createdAt: '2022-07-14T11:20:24.000Z',
+          id: '62cffbf70c804009663faa2b',
+          lastModified: '2022-07-14T11:20:24.003Z',
+          name: 'Customers : Customer',
+          published: true,
+          resourceFields: [
             {
-              id: '62cffbf70c804009663faa2b',
-              name: 'Customers : Customer',
+              dataType: 'objectarray',
+              id: 'customer',
+              resourceFields: [
+                {
+                  dataType: 'object',
+                  id: 'default_address',
+                  resourceFields: [
+                    {
+                      dataType: 'string',
+                      id: 'province_code',
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+          resourcePreConfiguredFields: [],
+          sampleData: {
+            customer: [
+              {
+                default_address: {
+                  province_code: 'province_code',
+                },
+              },
+            ],
+          },
+          supportedBy: {
+            import: {
+              preConfiguredFields: [],
+            },
+          },
+          versions: [
+            {
+              _id: '62cffbf79b51830e4d641d6d',
               operations: [
                 {
                   howToFindIdentifier: {
@@ -1005,17 +1252,15 @@ describe('getHTTPConnectorMetadata saga', () => {
                   url: '/customers.json',
                 },
               ],
-              sampleData: {
-                customer: [
-                  {
-                    default_address: {
-                      province_code: 'province_code',
-                    },
-                  },
-                ],
-              },
+              version: '2022-01',
             },
           ],
+        },
+      ],
+      successMediaType: 'json',
+      versions: [
+        {
+          _id: '62cffbf79b51830e4d641d6d',
           version: '2022-01',
         },
       ],

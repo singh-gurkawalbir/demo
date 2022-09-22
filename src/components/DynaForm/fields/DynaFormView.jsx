@@ -22,7 +22,7 @@ const useStyles = makeStyles({
     padding: 0,
   },
   connectorTextToggle: {
-    marginRight: '0px !important',
+    flexGrow: 100,
   },
 });
 const emptyObj = {};
@@ -69,8 +69,8 @@ export default function FormView(props) {
 
   const isGraphql = http?.formType === 'graph_ql';
   const _httpConnectorId = getHttpConnector(connection?.http?._httpConnectorId)?._id;
-  const showHTTPFrameworkImport = resourceType === 'imports' && connectorMetaData?.import?.versions?.[0]?.resources?.length;
-  const showHTTPFrameworkExport = resourceType === 'exports' && connectorMetaData?.export?.versions?.[0]?.resources?.length;
+  const showHTTPFrameworkImport = resourceType === 'imports' && connectorMetaData?.import?.resources?.[0]?.versions?.length;
+  const showHTTPFrameworkExport = resourceType === 'exports' && connectorMetaData?.export?.resources?.[0]?.versions?.length;
   const isHttpFramework = showHTTPFrameworkImport || showHTTPFrameworkExport;
 
   const options = useMemo(() => {
@@ -200,20 +200,19 @@ export default function FormView(props) {
     return null;
   }
   const titleBarFormView = isTitleBar ? (
-    <>
+    <div className={classes.connectorTextToggle}>
       <TextToggle
         value={value}
         onChange={onFieldChangeFn}
         exclusive
         options={options}
-        className={classes.connectorTextToggle}
       />
       <Help
         title="Formview"
         className={classes.helpTextButton}
         helpKey="connectionFormView"
       />
-    </>
+    </div>
   ) : null;
   const containerFormView = !isTitleBar ? (
     <DynaSelect

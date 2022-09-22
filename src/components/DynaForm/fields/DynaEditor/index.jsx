@@ -180,7 +180,7 @@ export default function DynaEditor(props) {
       <IconButtonWithTooltip
         data-test={id}
         onClick={handleEditorClick}
-        tooltipProps={{title: 'Expand', placement: 'bottom'}}
+        tooltipProps={{title: 'Expand Window', placement: 'bottom'}}
         className={classes.dynaEditorButton}>
         <ExpandWindowIcon />
       </IconButtonWithTooltip>

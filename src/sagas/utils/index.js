@@ -68,6 +68,8 @@ export const getExportMetadata = (connectorMetadata, connectionVersion) => {
   if (connectionVersion) {
     versions = versions.filter(v => v.version === connectionVersion);
   }
+  exportData.versions = _.cloneDeep(versions);
+
   if (!versions || !versions.length) {
     versions = [
       {
@@ -75,45 +77,39 @@ export const getExportMetadata = (connectorMetadata, connectionVersion) => {
         _id: '_v2id',
       }];
   }
-  exportData.versions = versions;
-  exportData.versions.forEach((v, i) => {
-    const filteredHttpResources = httpResources.filter(r => r._versionIds?.includes(v._id));
 
-    if (filteredHttpResources.length) {
-      if (!exportData.versions[i].resources) {
-        exportData.versions[i].resources = [];
-      }
-      exportData.versions[i].resources = filteredHttpResources.map(httpResource => {
-        const exportPreConfiguredFields = _.cloneDeep(httpResource.supportedBy?.export?.preConfiguredFields);
+  exportData.resources = httpResources.map(httpResource => {
+    const exportPreConfiguredFields = _.cloneDeep(httpResource.supportedBy?.export?.preConfiguredFields);
 
-        return {
-          id: httpResource._id, name: httpResource.name, exportPreConfiguredFields,
-        };
-      });
-      if (exportData.versions[i].resources.length) {
-        exportData.versions[i].resources.forEach((r, j) => {
-          const filteredHttpEndpoints = httpEndpoints.filter(e => e._httpConnectorResourceIds?.includes(r.id));
+    return {
+      ...httpResource, id: httpResource._id, exportPreConfiguredFields,
+    };
+  });
+  exportData.resources.forEach((r, i) => {
+    exportData.resources[i].versions = versions.filter(v => r._versionIds?.includes(v._id));
 
-          if (filteredHttpEndpoints.length) {
-            if (!exportData.versions[i].resources[j].endpoints) {
-              exportData.versions[i].resources[j].endpoints = [];
-            }
-            filteredHttpEndpoints.forEach(httpEndpoint => {
-              if (httpEndpoint.supportedBy?.type === 'export') {
-                const {fieldsUserMustSet} = httpEndpoint.supportedBy;
-                const supportedExportTypes = fieldsUserMustSet?.find(f => f.path === 'type')?.values;
+    if (exportData.resources[i].versions.length) {
+      exportData.resources[i].versions.forEach((v, j) => {
+        const filteredHttpEndpoints = httpEndpoints.filter(e => e._httpConnectorResourceIds?.includes(r.id));
 
-                const queryParameters = httpEndpoint.queryParameters?.map(qp => ({name: qp.name, id: qp.name, description: qp.description, required: qp.required, fieldType: qp.fieldType || 'textarea', defaultValue: qp.defaultValue, readOnly: qp.readOnly }));
-                const pathParameters = httpEndpoint.pathParameters?.map(pp => ({name: pp.name, id: pp.name, description: pp.description, required: pp.required !== false, fieldType: pp.fieldType || 'input' }));
-                let doesNotSupportPaging = false;
+        if (filteredHttpEndpoints.length) {
+          exportData.resources[i].versions[j].endpoints = [];
+          filteredHttpEndpoints.forEach(httpEndpoint => {
+            if (httpEndpoint.supportedBy?.type === 'export') {
+              const {fieldsUserMustSet} = httpEndpoint.supportedBy;
+              const supportedExportTypes = fieldsUserMustSet?.find(f => f.path === 'type')?.values;
 
-                if (httpEndpoint.supportedBy.fieldsToUnset?.includes('paging')) {
-                  doesNotSupportPaging = true;
-                }
+              const queryParameters = httpEndpoint.queryParameters?.map(qp => ({name: qp.name, id: qp.name, description: qp.description, required: qp.required, fieldType: qp.fieldType || 'textarea', defaultValue: qp.defaultValue, readOnly: qp.readOnly }));
+              const pathParameters = httpEndpoint.pathParameters?.map(pp => ({name: pp.name, id: pp.name, description: pp.description, required: pp.required !== false, fieldType: pp.fieldType || 'input' }));
+              let doesNotSupportPaging = false;
 
-                const ep = {
-                  id: httpEndpoint._id, name: httpEndpoint.name, url: httpEndpoint.relativeURI, supportedExportTypes, queryParameters, pathParameters, doesNotSupportPaging,
-                };
+              if (httpEndpoint.supportedBy.fieldsToUnset?.includes('paging')) {
+                doesNotSupportPaging = true;
+              }
+
+              const ep = {
+                id: httpEndpoint._id, name: httpEndpoint.name, url: httpEndpoint.relativeURI, supportedExportTypes, queryParameters, pathParameters, doesNotSupportPaging,
+              };
 
                 r.exportPreConfiguredFields?.forEach(field => {
                   ep[field.path] = field.values?.[0];
@@ -133,16 +129,16 @@ export const getExportMetadata = (connectorMetadata, connectionVersion) => {
                   ep.url = `/${v.version}${httpEndpoint.relativeURI}`;
                 }
 
-                exportData.versions[i].resources[j].endpoints.push(ep);
-              }
-            });
-          }
-          delete exportData.versions[i].resources[j].exportPreConfiguredFields;
-        });
-      }
-      exportData.versions[i].resources = deepClone(exportData.versions[i].resources.filter(r => r.endpoints?.length));
+                exportData.resources[i].versions[j].endpoints.push(deepClone(ep));
+            }
+          });
+        }
+        delete exportData.resources[i].versions[j].exportPreConfiguredFields;
+      });
     }
+    exportData.resources[i].versions = deepClone(exportData.resources[i].versions.filter(r => r.endpoints?.length));
   });
+  exportData.resources = deepClone(exportData.resources.filter(r => r.versions?.length));
 
   return exportData;
 };
@@ -173,39 +169,35 @@ export const getImportMetadata = (connectorMetadata, connectionVersion) => {
       }];
   }
 
-  importData.versions = versions;
-  importData.versions.forEach((v, i) => {
-    const filteredHttpResources = httpResources.filter(r => r._versionIds?.includes(v._id));
+  importData.versions = _.cloneDeep(versions);
+  importData.resources = httpResources.map(httpResource => {
+    const resourcePreConfiguredFields = _.cloneDeep(httpResource.supportedBy?.import?.preConfiguredFields);
+    const resourceFieldsUserMustSet = _.cloneDeep(httpResource.supportedBy?.import?.fieldsUserMustSet);
 
-    if (filteredHttpResources.length) {
-      if (!importData.versions[i].resources) {
-        importData.versions[i].resources = [];
-      }
-      importData.versions[i].resources = filteredHttpResources.map(httpResource => {
-        const resourcePreConfiguredFields = _.cloneDeep(httpResource.supportedBy?.import?.preConfiguredFields);
-        const resourceFieldsUserMustSet = _.cloneDeep(httpResource.supportedBy?.import?.fieldsUserMustSet);
+    const sampleData = httpResource.resourceFields && convertResourceFieldstoSampleData(httpResource.resourceFields);
 
-        const sampleData = httpResource.resourceFields && convertResourceFieldstoSampleData(httpResource.resourceFields);
+    return {
+      ...httpResource, id: httpResource._id, name: httpResource.name, resourcePreConfiguredFields, sampleData, resourceFieldsUserMustSet,
+    };
+  });
 
-        return {
-          id: httpResource._id, name: httpResource.name, resourcePreConfiguredFields, sampleData, resourceFieldsUserMustSet,
-        };
-      });
-      if (importData.versions[i].resources.length) {
-        importData.versions[i].resources.forEach((r, j) => {
-          const filteredHttpEndpoints = httpEndpoints.filter(e => e._httpConnectorResourceIds?.includes(r.id));
+  importData.resources.forEach((r, i) => {
+    importData.resources[i].versions = versions.filter(v => r._versionIds?.includes(v._id));
 
-          if (filteredHttpEndpoints.length) {
-            if (!importData.versions[i].resources[j].operations) {
-              importData.versions[i].resources[j].operations = [];
-            }
-            filteredHttpEndpoints.forEach(httpEndpoint => {
-              if (httpEndpoint?.supportedBy?.type === 'import') {
-                const requiredMappings = [];
-                const parameters = [];
-                let howToFindIdentifier;
+    if (importData.resources[i].versions.length) {
+      importData.resources[i].versions.forEach((v, j) => {
+        const filteredHttpEndpoints = httpEndpoints.filter(e => e._httpConnectorResourceIds?.includes(r.id));
 
-                if (httpEndpoint.pathParameters) {
+        if (filteredHttpEndpoints.length) {
+          importData.resources[i].versions[j].operations = [];
+
+          filteredHttpEndpoints.forEach(httpEndpoint => {
+            if (httpEndpoint?.supportedBy?.type === 'import') {
+              const requiredMappings = [];
+              const parameters = [];
+              let howToFindIdentifier;
+
+              if (httpEndpoint.pathParameters) {
                   httpEndpoint.pathParameters?.forEach(pp => {
                     parameters.push({
                       id: pp.name,
@@ -214,36 +206,36 @@ export const getImportMetadata = (connectorMetadata, connectionVersion) => {
                       required: true,
                     });
                   });
-                }
-                if (httpEndpoint.supportedBy.pathParameterToIdentifyExisting) {
-                  parameters.push({
-                    id: httpEndpoint.supportedBy.pathParameterToIdentifyExisting,
-                    in: 'path',
-                    required: true,
-                    isIdentifier: true,
-                  });
-                }
+              }
+              if (httpEndpoint.supportedBy.pathParameterToIdentifyExisting) {
+                parameters.push({
+                  id: httpEndpoint.supportedBy.pathParameterToIdentifyExisting,
+                  in: 'path',
+                  required: true,
+                  isIdentifier: true,
+                });
+              }
 
-                if (httpEndpoint.supportedBy?.lookupToIdentifyExisting) {
-                  const lookup = httpEndpoint.supportedBy.lookupToIdentifyExisting;
-                  const endpoint = lookup?._httpConnectorEndpointId;
-                  const lookupEndpoint = httpEndpoints.find(ep => ep._id === endpoint);
+              if (httpEndpoint.supportedBy?.lookupToIdentifyExisting) {
+                const lookup = httpEndpoint.supportedBy.lookupToIdentifyExisting;
+                const endpoint = lookup?._httpConnectorEndpointId;
+                const lookupEndpoint = httpEndpoints.find(ep => ep._id === endpoint);
 
-                  if (!howToFindIdentifier) {
-                    howToFindIdentifier = {};
-                  }
-                  if (lookupEndpoint) {
-                    howToFindIdentifier.lookup = {url: lookupEndpoint.relativeURI, id: lookupEndpoint._id, extract: lookup?.extract};
-                  }
+                if (!howToFindIdentifier) {
+                  howToFindIdentifier = {};
                 }
-
-                const ep = {
-                  id: httpEndpoint._id, name: httpEndpoint.name, url: httpEndpoint.relativeURI, method: httpEndpoint.method, howToFindIdentifier,
-                };
-
-                if (httpEndpoint.resourceFields) {
-                  ep.sampleData = convertResourceFieldstoSampleData(httpEndpoint.resourceFields);
+                if (lookupEndpoint) {
+                  howToFindIdentifier.lookup = {url: lookupEndpoint.relativeURI, id: lookupEndpoint._id, extract: lookup?.extract};
                 }
+              }
+
+              const ep = {
+                id: httpEndpoint._id, name: httpEndpoint.name, url: httpEndpoint.relativeURI, method: httpEndpoint.method, howToFindIdentifier,
+              };
+
+              if (httpEndpoint.resourceFields) {
+                ep.sampleData = convertResourceFieldstoSampleData(httpEndpoint.resourceFields);
+              }
 
                 r?.resourceFieldsUserMustSet?.forEach(f => {
                   ep[f.path] = f.values?.[0] || true;
@@ -287,17 +279,17 @@ export const getImportMetadata = (connectorMetadata, connectionVersion) => {
                   ep.parameters = parameters;
                 }
 
-                importData.versions[i].resources[j].operations.push(ep);
-              }
-            });
-          }
-          delete importData.versions[i].resources[j].resourcePreConfiguredFields;
-          delete importData.versions[i].resources[j].resourceFieldsUserMustSet;
-        });
-      }
-      importData.versions[i].resources = deepClone(importData.versions[i].resources.filter(r => r.operations?.length));
+                importData.resources[i].versions[j].operations.push(deepClone(ep));
+            }
+          });
+        }
+        delete importData.resources[i].versions[j].resourcePreConfiguredFields;
+        delete importData.resources[i].versions[j].resourceFieldsUserMustSet;
+      });
     }
+    importData.resources[i].versions = deepClone(importData.resources[i].versions.filter(r => r.operations?.length));
   });
+  importData.resources = deepClone(importData.resources.filter(r => r.versions?.length));
 
   return importData;
 };
@@ -471,7 +463,7 @@ export const updateFinalMetadataWithHttpFramework = (finalFieldMeta, connector, 
           required: !!fld.required,
           options: fld.options,
           validWhen: fld.validWhen,
-          defaultValue: resource?.http?.unencrypted?.[fld.id],
+          defaultValue: resource?.http?.unencrypted?.[fld.id] || fld.defaultValue,
           helpLink: fld.helpURL,
         },
       });

@@ -16,6 +16,7 @@ export default {
     const {_connectionId: connectionId, _id: resourceId } = importResource;
 
     const lookup = (lookupName && lookups.find(lookup => lookup.name === lookupName)) || emptyObject;
+    const formattedLookup = mappingUtil.getV2DefaultStaticMapValue(lookup.map);
 
     const fieldMeta = {
       fieldMap: {
@@ -75,7 +76,7 @@ export default {
           name: 'fieldMappingType',
           type: 'select',
           label: 'Field mapping type',
-          defaultValue: mappingUtil.getFieldMappingType(node),
+          defaultValue: mappingUtil.getV2FieldMappingType(node),
           helpKey: 'mapping.v2.fieldMappingType',
           noApi: true,
           skipSort: true,
@@ -422,13 +423,11 @@ export default {
               supportsRefresh: false,
             },
           ],
-          defaultValue:
-              lookup.map &&
-              Object.keys(lookup.map).map(key => ({
-                export: key,
-                import: lookup.map[key],
-              })),
-          map: lookup.map,
+          defaultValue: Object.keys(formattedLookup).map(key => ({
+            export: key,
+            import: formattedLookup[key],
+          })),
+          map: formattedLookup,
           visibleWhenAll: [
             { field: 'fieldMappingType', is: ['lookup'] },
             { field: 'dataType', is: ['string', 'number', 'boolean'] },

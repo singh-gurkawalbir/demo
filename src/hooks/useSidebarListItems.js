@@ -12,6 +12,8 @@ export default function useResourceListItems() {
   const userProfile = useSelector(state => selectors.userProfile(state));
   const canUserPublish = useSelector(state => selectors.canUserPublish(state));
   const isMFASetupIncomplete = useSelector(selectors.isMFASetupIncomplete);
+  const mfaSessionInfoStatus = useSelector(selectors.mfaSessionInfoStatus);
+
   const accessLevel = useSelector(
     state => selectors.resourcePermissions(state).accessLevel
   );
@@ -52,6 +54,9 @@ export default function useResourceListItems() {
     isUserInErrMgtTwoDotZero,
     isMFASetupIncomplete,
   ]);
+
+  // we proceed further only when mfa sessionInfo is received
+  if (!mfaSessionInfoStatus || mfaSessionInfoStatus === 'requested') return [];
 
   return listItemsMemo;
 }
