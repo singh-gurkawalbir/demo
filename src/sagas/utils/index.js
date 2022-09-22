@@ -468,16 +468,13 @@ export const updateFinalMetadataWithHttpFramework = (finalFieldMeta, connector, 
       unEncryptedFields.push({
         position: 1,
         field: {
-          label: fld.label,
+          ...fld,
           name: `/http/unencrypted/${fld.id}`,
           id: `http.unencrypted.${fld.id}`,
           fieldId: `http.unencrypted.${fld.id}`,
-          helpText: fld.helpText,
           type: fld.type || 'text',
-          required: !!fld.required,
-          options: fld.options,
-          validWhen: fld.validWhen,
           defaultValue: resource?.http?.unencrypted?.[fld.id] || fld.defaultValue,
+          conditions: connectionTemplate?.conditions,
         },
       });
     });
@@ -489,17 +486,14 @@ export const updateFinalMetadataWithHttpFramework = (finalFieldMeta, connector, 
       unEncryptedFields.push({
         position: 2,
         field: {
-          label: fld.label,
+          ...fld,
           name: `/http/encrypted/${fld.id}`,
           id: `http.encrypted.${fld.id}`,
           fieldId: `http.encrypted.${fld.id}`,
-          helpText: fld.helpText,
           inputType: 'password',
           type: fld.type || 'text',
-          required: !!fld.required,
-          options: fld.options,
-          validWhen: fld.validWhen,
           defaultValue: resource?.http?.encrypted?.[fld.id],
+          conditions: connectionTemplate?.conditions,
         },
       });
     });
