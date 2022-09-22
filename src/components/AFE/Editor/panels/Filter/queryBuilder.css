@@ -6,15 +6,20 @@
 }
 
 .query-builder .btn {
-  background-color: #007ec5;
-  border-color: #007ec5;
+  background-color: #1D76C7;
+  border-color: #1D76C7;
   border-radius: 0;
   border: solid 1px transparent;
   font-size: 12px;
-  line-height: 17px;
+  line-height: 18px;
   font-weight: 300;
   color: #fff;
   cursor: pointer;
+
+}
+
+.query-builder .btn-success {
+  border-radius: 2px;
 }
 
 .query-builder .btn.active {
@@ -53,17 +58,18 @@
 
 .query-builder .btn.btn-xs.btn-danger {
   background-color: #aaa;
+  border-radius: 2px;
 }
 
 .query-builder .rules-group-container .rules-group-header .btn-primary {
-  background-color: #bbb;
-  border-color: #bbb;
+  background-color: #677A89;
+  border-color: #677A89;
   padding: 2px;
 }
 
 .query-builder .rules-group-container .rules-group-header .btn-primary.active {
-  background-color: #4ed964;
-  border-color: #4ed964;
+  background-color: #4CBB02;
+  border-color: #4CBB02;
   padding: 2px;
 }
 
