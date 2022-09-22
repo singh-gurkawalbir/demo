@@ -22,6 +22,7 @@ const useStyles = makeStyles(theme => ({
     color: theme.palette.primary.main,
     justifyContent: 'end',
     padding: 0,
+    width: theme.spacing(9),
     '& svg': {
       marginLeft: theme.spacing(-1),
     },
@@ -30,7 +31,10 @@ const useStyles = makeStyles(theme => ({
     },
     '&.Mui-disabled': {
       height: 38,
-      backgroundColor: theme.palette.background.paper2,
+      paddingRight: theme.spacing(1),
+      '& .MuiButton-endIcon': {
+        display: 'none',
+      },
     },
   },
   listPopper: {
@@ -120,6 +124,11 @@ const useStyles = makeStyles(theme => ({
     justifyContent: 'end',
     zIndex: 1,
   },
+  dataTypeList: {
+    width: theme.spacing(8),
+    wordBreak: 'break-word',
+    textAlign: 'right',
+  },
 }));
 
 export default function SourceDataType({
@@ -164,7 +173,7 @@ export default function SourceDataType({
 
   const onDataTypeChange = useCallback(newDataType => {
     handleClose();
-    updateSourceDataType(newDataType)
+    updateSourceDataType(newDataType);
     dispatch(actions.mapping.v2.updateDataType(nodeKey, newDataType, true));
   }, [handleClose, dataType, dispatch, nodeKey]);
 
@@ -180,9 +189,12 @@ export default function SourceDataType({
             disabled={disabled}
             endIcon={sourceDataTypes && sourceDataTypes.length > 1 ? '' : <ArrowDownFilledIcon />}
             className={classes.dataType} >
-            <CeligoTruncate placement="bottom" disableHoverListener lines={1}>
-              {selectedDataTypeLabels.join()}
-            </CeligoTruncate>
+            { document.getElementById('extractPopper')
+              ? <span className={classes.dataTypeList}>{selectedDataTypeLabels.join()}</span> : (
+                <CeligoTruncate placement="bottom" disableHoverListener>
+                  {selectedDataTypeLabels.join()}
+                </CeligoTruncate>
+              )}
           </TextButton>
         </span>
       </Tooltip>
