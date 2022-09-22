@@ -596,35 +596,7 @@ export const getExtractDataType = helper =>{
   }, []);
 }
 
-export const getSourceDataType = (treeData, nodeKey, currentInputs, extractsTreeData) => {
-  if(!treeData || !treeData.length) return [];
-  let sourceDataTypeList = [];
-  const requiredNode = treeData.filter(data => data.key === nodeKey);
-  if(requiredNode[0].extractsArrayHelper && requiredNode[0].extractsArrayHelper.length) {
-    requiredNode[0].extractsArrayHelper.forEach(extract => {
-      if(extract.sourceDataType) {
-        sourceDataTypeList.push(extract.sourceDataType);
-      }else {
-        let jsonPathExtract = extract.extract.replace(/(\$\.)|(\$\[\*\]\.)/g, '');
-        let datatypeList = getSelectedNodeDetails(extractsTreeData, jsonPathExtract);
-        sourceDataTypeList = [...sourceDataTypeList, ...datatypeList];
-      }
-    })
-  }else {
-    // if(requiredNode[0] && requiredNode[0].sourceDataType) {
-    //   sourceDataTypeList.push(requiredNode[0].sourceDataType)
-    // }else {
-      let datatypeList = getSelectedNodeDetails(extractsTreeData, currentInputs[0]);
-      if(!datatypeList.length) {
-        datatypeList = [requiredNode[0].sourceDataType];
-      }
-      sourceDataTypeList = [...datatypeList];
-    //}
-  }
-  return sourceDataTypeList;
-}
-
-export const buildExtractsHelperFromExtract = (existingExtractsArray, newExtracts) => {
+export const buildExtractsHelperFromExtract = (existingExtractsArray, newExtracts, extractsTree) => {
   if (!newExtracts) return [];
 
   const combinedExtract = newExtracts?.split(',') || [];
@@ -633,6 +605,7 @@ export const buildExtractsHelperFromExtract = (existingExtractsArray, newExtract
     return combinedExtract.reduce((acc, e, i) => {
       acc.push({
         extract: getUniqueExtractId(e, i),
+        sourceDataType: extractsTree && extractsTree[0] ? getSelectedNodeDetails(extractsTree[0], e.replace(/(\$\.)|(\$\[\*\]\.)/g, ''))[0] || 'string': 'string',
       });
 
       return acc;
@@ -659,7 +632,8 @@ export const buildExtractsHelperFromExtract = (existingExtractsArray, newExtract
 
     if (!extract) {
       // acc.splice(i, 0, {...copiedSettings[i], extract: getUniqueExtractId(e, i)});
-      acc.splice(i, 0, {extract: getUniqueExtractId(e, i)});
+      acc.splice(i, 0, {extract: getUniqueExtractId(e, i),
+           sourceDataType: extractsTree && extractsTree[0] ? getSelectedNodeDetails(extractsTree[0], e.replace(/(\$\.)|(\$\[\*\]\.)/g, ''))[0] || 'string': 'string'});
     }
 
     return acc;
@@ -803,7 +777,7 @@ export const constructNodeWithEmptySource = node => {
 
 // this util is for object array data type nodes when multiple extracts are given,
 // to reconstruct the whole children array
-export const rebuildObjectArrayNode = (node, extract = '', prevActiveExtract) => {
+export const rebuildObjectArrayNode = (node, extract = '', prevActiveExtract, extractsTree) => {
   if (isEmpty(node) || node.dataType !== MAPPING_DATA_TYPES.OBJECTARRAY) return node;
 
   let clonedNode = {...node};
@@ -818,7 +792,7 @@ export const rebuildObjectArrayNode = (node, extract = '', prevActiveExtract) =>
     return (childNode.parentExtract || '') === previousFirstExtract;
   }) || [];
 
-  clonedNode.extractsArrayHelper = buildExtractsHelperFromExtract(clonedNode.extractsArrayHelper, extract);
+  clonedNode.extractsArrayHelper = buildExtractsHelperFromExtract(clonedNode.extractsArrayHelper, extract, extractsTree);
   const hasNoExtract = isEmpty(clonedNode.extractsArrayHelper);
 
   const {activeTab, activeExtract} = getFirstActiveTab(clonedNode);

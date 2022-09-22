@@ -23,7 +23,8 @@ import {
   filterNode,
   updateChildrenJSONPath,
   getCombinedExtract,
-  buildExtractsHelperFromExtract} from '../../../utils/mapping';
+  buildExtractsHelperFromExtract,
+  getSelectedNodeDetails} from '../../../utils/mapping';
 import { generateUniqueKey } from '../../../utils/string';
 
 export const expandRow = (draft, key) => {
@@ -858,7 +859,7 @@ export default (state = {}, action) => {
                   }];
                 } else if (node.dataType === MAPPING_DATA_TYPES.OBJECTARRAY) {
                   // handle tab view
-                  nodeSubArray[nodeIndexInSubArray] = rebuildObjectArrayNode(node, value);
+                  nodeSubArray[nodeIndexInSubArray] = rebuildObjectArrayNode(node, value, undefined, draft.mapping.extractsTree);
                 }
 
                 // array data types do not have direct 'extract' prop
@@ -867,11 +868,12 @@ export default (state = {}, action) => {
                   delete nodeSubArray[nodeIndexInSubArray].hardCodedValue;
                   // object array is already handled in rebuildObjectArrayNode
                   if (node.dataType !== MAPPING_DATA_TYPES.OBJECTARRAY) {
-                    nodeSubArray[nodeIndexInSubArray].extractsArrayHelper = buildExtractsHelperFromExtract(original(nodeSubArray[nodeIndexInSubArray].extractsArrayHelper), value);
+                    nodeSubArray[nodeIndexInSubArray].extractsArrayHelper = buildExtractsHelperFromExtract(original(nodeSubArray[nodeIndexInSubArray].extractsArrayHelper), value, draft.mapping.extractsTree);
                   }
                 }
               } else if (node.dataType !== MAPPING_DATA_TYPES.OBJECT || node.copySource === 'yes') {
                 node.extract = value;
+                node.sourceDataType =  draft.mapping.extractsTree && draft.mapping.extractsTree[0] ? getSelectedNodeDetails(draft.mapping.extractsTree[0], value.replace(/(\$\.)|(\$\[\*\]\.)/g, ''))[0] || 'string': 'string'
               }
             }
           } else if (node.isRequired) {

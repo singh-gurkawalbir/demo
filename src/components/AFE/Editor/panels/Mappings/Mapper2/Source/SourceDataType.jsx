@@ -181,7 +181,7 @@ export default function SourceDataType({
             endIcon={sourceDataTypes && sourceDataTypes.length > 1 ? '' : <ArrowDownFilledIcon />}
             className={classes.dataType} >
             <CeligoTruncate placement="bottom" disableHoverListener lines={1}>
-              {selectedDataTypeLabels.join()}
+              {selectedDataTypeLabels.join('')|| 'string'}
             </CeligoTruncate>
           </TextButton>
         </span>
