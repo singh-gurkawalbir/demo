@@ -1,5 +1,5 @@
 import deepClone from 'lodash/cloneDeep';
-import { uniqBy, isEmpty, isEqual, forEach, flattenDeep } from 'lodash';
+import { uniqBy, isEmpty, isEqual, forEach, flattenDeep, uniq } from 'lodash';
 import { adaptorTypeMap, isNetSuiteBatchExport, isFileAdaptor, isAS2Resource} from '../resource';
 // eslint-disable-next-line import/no-self-import
 import mappingUtil from '.';
@@ -13,6 +13,7 @@ import { getRecordTypeForAutoMapper } from '../assistant';
 import { isJsonString, generateUniqueKey } from '../string';
 import {applicationsList} from '../../constants/applications';
 import {generateCSVFields} from '../file';
+import jsonUtils from '../json';
 import { emptyList, emptyObject, FORM_SAVE_STATUS, MAPPING_SAVE_STATUS } from '../../constants';
 import errorMessageStore from '../errorStore';
 
@@ -3374,6 +3375,20 @@ export default {
     if (isMapper2HandlebarExpression(value.extract, value.hardCodedValue)) {
       return value.extract;
     }
+  },
+  /**
+   * Merges multiple sources mapping to same destination with a comma separated value
+   * Ex: staticMap = { s1 : d1, s2 : d1, s3 : d1, s4 : d2, s5 : d2, s6 : d3 }
+   * Output: { 's1,s2,s3': d1, 's4,s5': d2, s6: d3 }
+   */
+  getV2DefaultStaticMapValue: (staticMap = {}) => {
+    const uniqueSources = uniq(Object.values(staticMap));
+
+    return uniqueSources.reduce((res, src) => {
+      const key = jsonUtils.getObjectKeysFromValue(staticMap, src) || '';
+
+      return {...res, [key.join(',')]: src};
+    }, {});
   },
   // #endregion
 };

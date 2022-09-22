@@ -80,6 +80,7 @@ export default {
     const isComposite = !!((adaptorType === 'HTTPImport' && importResource?.http?.method && importResource.http.method.length > 1) || (adaptorType === 'RESTImport' && importResource?.rest?.method && importResource.rest.method.length > 1));
     const lookup = (lookupName && lookups.find(lookup => lookup.name === lookupName)) || emptyObject;
 
+    const formattedLookup = mappingUtil.getV2DefaultStaticMapValue(lookup.map);
     const conditionalWhenOptions = (isComposite && conditionalOptions) || [];
 
     const fieldMeta = {
@@ -546,13 +547,11 @@ export default {
               supportsRefresh: false,
             },
           ],
-          defaultValue:
-              lookup.map &&
-              Object.keys(lookup.map).map(key => ({
-                export: key,
-                import: lookup.map[key],
-              })),
-          map: lookup.map,
+          defaultValue: Object.keys(formattedLookup).map(key => ({
+            export: key,
+            import: formattedLookup[key],
+          })),
+          map: formattedLookup,
           visibleWhenAll: [
             { field: 'fieldMappingType', is: ['lookup'] },
             { field: 'lookup.mode', is: ['static'] },

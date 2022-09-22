@@ -37,7 +37,7 @@ export const nodeSize = {
 };
 
 const options = {
-  // align: 'UL',
+  align: 'DL',
   // acyclicer: 'greedy',  // default is undefined, dont know what this does.
   // ranker: 'network-simplex', // default
   ranker: 'tight-tree',

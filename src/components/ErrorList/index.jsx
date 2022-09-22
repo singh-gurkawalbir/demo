@@ -7,7 +7,7 @@ import DownloadErrorsDrawer from './DownloadErrorsDrawer';
 import ErrorDetailsDrawer from './ErrorTable/ErrorDetailsDrawer';
 import { selectors } from '../../reducers';
 
-export default function ErrorList({ flowId }) {
+export default function ErrorList({ flowId, errorsInRun }) {
   const match = useRouteMatch();
   const dispatch = useDispatch();
   const { resourceId, errorType, flowJobId } = match.params;
@@ -42,6 +42,7 @@ export default function ErrorList({ flowId }) {
   return (
     <>
       <ErrorTable
+        errorsInRun={errorsInRun}
         flowId={flowId}
         flowJobId={flowJobId}
         resourceId={resourceId}
