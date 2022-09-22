@@ -127,6 +127,7 @@ const useStyles = makeStyles(theme => ({
   dataTypeList: {
     width: theme.spacing(8),
     wordBreak: 'break-word',
+    textAlign: 'right',
   },
 }));
 
