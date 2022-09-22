@@ -540,6 +540,16 @@ const WRONG_SOURCE_DATA_TYPES_LIST = {
     MAPPING_DATA_TYPES.NUMBERARRAY,
   ]),
 };
+const DATA_TYPES_REPRESENTATION_LIST = {
+  [MAPPING_DATA_TYPES.STRING]: 'string',
+  [MAPPING_DATA_TYPES.NUMBER]: 'number',
+  [MAPPING_DATA_TYPES.BOOLEAN]: 'boolean',
+  [MAPPING_DATA_TYPES.OBJECT]: 'object',
+  [MAPPING_DATA_TYPES.STRINGARRAY]: '[string]',
+  [MAPPING_DATA_TYPES.NUMBERARRAY]: '[number]',
+  [MAPPING_DATA_TYPES.BOOLEANARRAY]: '[boolean]',
+  [MAPPING_DATA_TYPES.OBJECTARRAY]: '[object]',
+};
 export const DATA_TYPES_DROPDOWN_OPTIONS =
   [
     {
@@ -2087,7 +2097,7 @@ export const compareV2Mappings = (tree1 = [], tree2 = []) => {
 
 const validateSourceDataType = mapping => {
   const {
-    jsonPath,
+    jsonPath = '',
     dataType,
     sourceDataType = MAPPING_DATA_TYPES.STRING,
     extractsArrayHelper,
@@ -2102,8 +2112,8 @@ const validateSourceDataType = mapping => {
       if (wrongDataType.has(sourceDataType)) {
         errorArr.push({
           jsonPath,
-          dataType,
-          sourceDataType,
+          dataType: DATA_TYPES_REPRESENTATION_LIST[dataType],
+          sourceDataType: DATA_TYPES_REPRESENTATION_LIST[sourceDataType],
         });
       }
       break;
@@ -2116,8 +2126,8 @@ const validateSourceDataType = mapping => {
         if (wrongDataType.has(sourceDataType)) {
           errorArr.push({
             jsonPath,
-            dataType,
-            sourceDataType,
+            dataType: DATA_TYPES_REPRESENTATION_LIST[dataType],
+            sourceDataType: DATA_TYPES_REPRESENTATION_LIST[sourceDataType],
           });
         }
       });
@@ -2126,8 +2136,8 @@ const validateSourceDataType = mapping => {
       if (extract && wrongDataType.has(sourceDataType)) {
         errorArr.push({
           jsonPath,
-          dataType,
-          sourceDataType,
+          dataType: DATA_TYPES_REPRESENTATION_LIST[dataType],
+          sourceDataType: DATA_TYPES_REPRESENTATION_LIST[sourceDataType],
         });
       }
       break;
