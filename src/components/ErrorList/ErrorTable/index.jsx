@@ -21,6 +21,8 @@ const useStyles = makeStyles(theme => ({
   },
   errorDetailsTable: {
     wordBreak: 'break-word',
+    overflow: 'auto',
+    height: 'calc(100vh - 320px)',
     '& th': {
       wordBreak: 'normal',
     },
@@ -49,7 +51,7 @@ const useStyles = makeStyles(theme => ({
     },
   },
   errorTableWithErrorsInRun: {
-    height: 'calc(100vh - 351px)',
+    height: 'calc(100vh - 361px)',
   },
   errorDetailsPanel: {
     flexGrow: 1,
@@ -139,47 +141,60 @@ const ErrorTableWithPanel = ({
 
   return isSplitView && !isResolved
     ? (
-      <div className={classes.baseFormWithPreview}>
-        {/* eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex */}
-        <div className={clsx(classes.errorTable, {[classes.errorTableWithErrorsInRun]: errorsInRun})} ref={tableRef} tabIndex={0}>
-          <ResourceTable
-            resources={errorsInCurrPage}
-            className={classes.resourceFormWrapper}
-            resourceType="splitViewOpenErrors"
-            actionProps={actionProps}
-            onRowClick={onRowClick}
+      <>
+        <ErrorTableFilters
+          flowId={flowId}
+          resourceId={resourceId}
+          isResolved={isResolved}
+          filterKey={filterKey}
+    />
+        <div className={classes.baseFormWithPreview}>
+          {/* eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex */}
+          <div className={clsx(classes.errorTable, {[classes.errorTableWithErrorsInRun]: errorsInRun})} ref={tableRef} tabIndex={0}>
+            <ResourceTable
+              resources={errorsInCurrPage}
+              className={classes.resourceFormWrapper}
+              resourceType="splitViewOpenErrors"
+              actionProps={actionProps}
+              onRowClick={onRowClick}
           />
-          {emptyErrorMessage && <EmptyErrorMessage />}
-          {emptyFilterMessage && <NoFiltersMessage />}
-        </div>
-        <div className={classes.partition}>
-          <Divider
-            orientation="vertical"
-            className={clsx(classes.divider)}
+            {emptyErrorMessage && <EmptyErrorMessage />}
+            {emptyFilterMessage && <NoFiltersMessage />}
+          </div>
+          <div className={classes.partition}>
+            <Divider
+              orientation="vertical"
+              className={clsx(classes.divider)}
           />
-        </div>
-        <div className={classes.errorDetailsPanel}>
-          <ErrorDetailsPanel
-            errorsInCurrPage={errorsInCurrPage}
-            flowId={flowId}
-            resourceId={resourceId}
-            isResolved={isResolved}
-            errorsInRun={errorsInRun}
+          </div>
+          <div className={classes.errorDetailsPanel}>
+            <ErrorDetailsPanel
+              errorsInCurrPage={errorsInCurrPage}
+              flowId={flowId}
+              resourceId={resourceId}
+              isResolved={isResolved}
+              errorsInRun={errorsInRun}
           />
+          </div>
         </div>
-      </div>
+      </>
     )
     : (
       <>
-        <ResourceTable
-          resources={errorsInCurrPage}
-          resourceType={filterKey}
-          actionProps={actionProps}
-          className={classes.errorDetailsTable}
-          tableRef={tableRef}
-      />
-        {emptyErrorMessage && <EmptyErrorMessage />}
-        {emptyFilterMessage && <NoFiltersMessage />}
+        <ErrorTableFilters
+          flowId={flowId}
+          resourceId={resourceId}
+          isResolved={isResolved}
+          filterKey={filterKey} />
+        <div className={clsx(classes.errorDetailsTable, {[classes.errorTableWithErrorsInRun]: errorsInRun})}>
+          <ResourceTable
+            resources={errorsInCurrPage}
+            resourceType={filterKey}
+            actionProps={actionProps}
+            tableRef={tableRef} />
+          {emptyErrorMessage && <EmptyErrorMessage />}
+          {emptyFilterMessage && <NoFiltersMessage />}
+        </div>
       </>
     );
 };
@@ -381,13 +396,6 @@ export default function ErrorTable({
         <Spinner centerAll />
       ) : (
         <>
-          <ErrorTableFilters
-            flowId={flowId}
-            resourceId={resourceId}
-            isResolved={isResolved}
-            filterKey={filterKey}
-          />
-
           <ErrorTableWithPanel
             errorsInCurrPage={errorsInCurrPage}
             filterKey={filterKey}
