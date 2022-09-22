@@ -131,6 +131,8 @@ export default function SourceDataType({
   setAnchorEl,
   sourceDataTypes,
   updateSourceDataType,
+  isHardCodedValue,
+  isHandlebarExp,
 }) {
   const classes = useStyles();
   const dispatch = useDispatch();
@@ -170,8 +172,10 @@ export default function SourceDataType({
 
   return (
     <div className={clsx(classes.sourceDataTypeDropDown, className)}>
+
       <Tooltip
-        title={disabled || open ? '' : 'Data type: - Click to change'}
+        title={isHandlebarExp ? 'The data type of handlebars expressions is auto-set to “string” and cannot be changed.' : '' 
+                || isHardCodedValue ? 'The data type of hard-coded values is auto-set to “string” and cannot be changed.' : ''}
         placement="bottom" >
         {/* this div needs to be added to render the tooltip correctly */}
         <span>

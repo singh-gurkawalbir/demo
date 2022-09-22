@@ -244,6 +244,8 @@ export default function Mapper2ExtractsTypeableSelect({
         anchorEl={dataTypeSelector}
         setAnchorEl={selectDataType}
         disabled={isHardCodedValue || isHandlebarExp}
+        isHardCodedValue={isHardCodedValue}
+        isHandlebarExp={isHandlebarExp}
         nodeKey={nodeKey}
         updateSourceDataType={type => {sourceDataTypeRef.current = [type]}}
         sourceDataTypes={sourceDataTypeRef.current && sourceDataTypeRef.current.length ? [...sourceDataTypeRef.current] : undefined}

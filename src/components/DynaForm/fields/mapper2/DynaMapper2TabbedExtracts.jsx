@@ -248,7 +248,6 @@ function EachTabContainer({id, value, parentFormKey, formKey, dataType, isCurren
     }, [formKey, id, onFieldChange, value, dataType, sourceField]);
 
   useUpdateParentForm(formKey, handleFormChange);
-  console.log(extractsTreeData,value, formKey, dataType)
   const jsonPathValue = formKey.replace(/(\$\.)|(\$\[\*\]\.)/g, '');
   const sourceDataTypeVal = getSelectedNodeDetails(extractsTreeData[0],jsonPathValue);
 
