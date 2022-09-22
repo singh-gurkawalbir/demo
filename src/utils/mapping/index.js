@@ -2100,7 +2100,7 @@ const validateSourceDataType = mapping => {
     jsonPath = '',
     dataType,
     sourceDataType = MAPPING_DATA_TYPES.STRING,
-    extractsArrayHelper,
+    extractsArrayHelper = [],
     extract,
   } = mapping;
   const errorArr = [];
