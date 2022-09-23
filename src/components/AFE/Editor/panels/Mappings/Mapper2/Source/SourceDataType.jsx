@@ -7,7 +7,7 @@ import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import { useHistory } from 'react-router-dom';
-import { DATA_TYPES_DROPDOWN_OPTIONS } from '../../../../../../../utils/mapping';
+import { DATA_TYPES_DROPDOWN_OPTIONS, DATA_TYPES_REPRESENTATION_LIST } from '../../../../../../../utils/mapping';
 import actions from '../../../../../../../actions';
 import { TextButton } from '../../../../../../Buttons';
 import ArrowPopper from '../../../../../../ArrowPopper';
@@ -181,7 +181,7 @@ export default function SourceDataType({
   }, [setAnchorEl]);
 
   sourceDataTypeRef.current && sourceDataTypeRef.current.forEach(datatype => {
-    selectedDataTypeLabels.push(DATA_TYPES_DROPDOWN_OPTIONS.find(opt => opt.id === datatype)?.label);
+    selectedDataTypeLabels.push(DATA_TYPES_REPRESENTATION_LIST[[datatype]]);
   });
 
   const onDataTypeChange = useCallback(newDataType => {
