@@ -2,7 +2,7 @@ import React, { useState, useCallback, useMemo, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { makeStyles, Tabs, Tab, Divider } from '@material-ui/core';
 import isEmpty from 'lodash/isEmpty';
-import mappingUtil, {ARRAY_DATA_TYPES, getUniqueExtractId, findMatchingExtract, buildExtractsHelperFromExtract, getSelectedNodeDetails} from '../../../../utils/mapping';
+import mappingUtil, {ARRAY_DATA_TYPES, getUniqueExtractId, findMatchingExtract, buildExtractsHelperFromExtract, getSelectedExtractDataTypes} from '../../../../utils/mapping';
 import useFormContext from '../../../Form/FormContext';
 import DynaForm from '../..';
 import useFormInitWithPermissions from '../../../../hooks/useFormInitWithPermissions';
@@ -228,7 +228,7 @@ function EachTabContainer({id, value, formKey, dataType, isCurrentTab, onFieldCh
   // During initializing the tabs set the source datatype
   // depening on the source field selected
   const jsonPathValue = formKey.replace(/(\$\.)|(\$\[\*\]\.)/g, '');
-  const sourceDataTypeVal = getSelectedNodeDetails(extractsTreeData[0], jsonPathValue);
+  const sourceDataTypeVal = getSelectedExtractDataTypes(extractsTreeData[0], jsonPathValue);
 
   // useSetSubFormShowValidations(parentFormKey, formKey);
   const formKeyComponent = useFormInitWithPermissions({

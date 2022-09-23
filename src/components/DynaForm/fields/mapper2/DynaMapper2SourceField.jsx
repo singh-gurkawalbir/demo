@@ -5,7 +5,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import Mapper2ExtractsTypeableSelect from '../../../AFE/Editor/panels/Mappings/Mapper2/Source/Mapper2ExtractsTypeableSelect';
 import {selectors} from '../../../../reducers';
 import { getMappingsEditorId } from '../../../../utils/editor';
-import { getSelectedNodeDetails, MAPPING_DATA_TYPES } from '../../../../utils/mapping';
+import { getSelectedExtractDataTypes, MAPPING_DATA_TYPES } from '../../../../utils/mapping';
 import useFormContext from '../../../Form/FormContext';
 import { useSelectorMemo } from '../../../../hooks';
 import { isFileAdaptor, isAS2Resource } from '../../../../utils/resource';
@@ -58,7 +58,7 @@ export default function DynaMapper2SourceField(props) {
     // in case of source field change update the source datatype also
     const jsonPathExtract = value.replace(/(\$\.)|(\$\[\*\]\.)/g, '');
 
-    const sourceDataTypesList = getSelectedNodeDetails(extractsTreeData[0], jsonPathExtract);
+    const sourceDataTypesList = getSelectedExtractDataTypes(extractsTreeData[0], jsonPathExtract);
 
     onFieldChange('sourceDataType', sourceDataTypesList[0]);
   }, [id, onFieldChange]);

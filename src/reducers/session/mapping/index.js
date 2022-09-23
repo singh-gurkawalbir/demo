@@ -24,7 +24,7 @@ import {
   updateChildrenJSONPath,
   getCombinedExtract,
   buildExtractsHelperFromExtract,
-  getSelectedNodeDetails} from '../../../utils/mapping';
+  getSelectedExtractDataTypes} from '../../../utils/mapping';
 import { generateUniqueKey } from '../../../utils/string';
 
 export const expandRow = (draft, key) => {
@@ -79,21 +79,22 @@ export const updateChildrenProps = (children, parentNode, dataType) => {
   }, []);
 };
 
-export const updateSourceDataType = (draft, node, oldSourceDataType, newDataType) => {
+// TODO will remove this function and add logic directly
+/* eslint-disable no-param-reassign */
+export const updateSourceDataType = (node, oldSourceDataType, newDataType) => {
   if (!node) return node;
 
-  const newNode = deepClone(node);
-
   if (oldSourceDataType === newDataType) return node;
-  if (newNode.extractsArrayHelper && newNode.extractsArrayHelper.length) {
-    if (newNode.extractsArrayHelper[0].sourceDataType === newDataType) return node;
-    newNode.extractsArrayHelper[0].sourceDataType = newDataType;
+  if (node.extractsArrayHelper && node.extractsArrayHelper.length) {
+    if (node.extractsArrayHelper[0].sourceDataType === newDataType) return node;
+    node.extractsArrayHelper[0].sourceDataType = newDataType;
   } else {
-    newNode.sourceDataType = newDataType;
+    node.sourceDataType = newDataType;
   }
 
-  return newNode;
+  return node;
 };
+/* eslint-enable no-param-reassign */
 
 // updates specific to data type change
 export const updateDataType = (draft, node, oldDataType, newDataType) => {
@@ -704,11 +705,11 @@ export default (state = {}, action) => {
 
         if (isEmpty(node)) break;
         if (isSource) {
-          nodeSubArray[nodeIndexInSubArray] = updateSourceDataType(draft, node, node.sourceDataType, newDataType);
+          nodeSubArray[nodeIndexInSubArray] = updateSourceDataType(node, node.sourceDataType, newDataType);
         } else {
           nodeSubArray[nodeIndexInSubArray] = updateDataType(draft, node, node.dataType, newDataType);
-          delete nodeSubArray[nodeIndexInSubArray].isEmptyRow;
         }
+        delete nodeSubArray[nodeIndexInSubArray].isEmptyRow;
         break;
       }
 
@@ -871,7 +872,7 @@ export default (state = {}, action) => {
                 }
               } else if (node.dataType !== MAPPING_DATA_TYPES.OBJECT || node.copySource === 'yes') {
                 node.extract = value;
-                node.sourceDataType = draft.mapping.extractsTree && draft.mapping.extractsTree[0] ? getSelectedNodeDetails(draft.mapping.extractsTree[0], value.replace(/(\$\.)|(\$\[\*\]\.)/g, ''))[0] || 'string' : 'string';
+                node.sourceDataType = draft.mapping.extractsTree && draft.mapping.extractsTree[0] ? getSelectedExtractDataTypes(draft.mapping.extractsTree[0], value.replace(/(\$\.)|(\$\[\*\]\.)/g, ''))[0] || 'string' : 'string';
               }
             }
           } else if (node.isRequired) {

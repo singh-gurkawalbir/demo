@@ -14,6 +14,7 @@ import ArrowPopper from '../../../../../../ArrowPopper';
 import ArrowDownFilledIcon from '../../../../../../icons/ArrowDownFilledIcon';
 import { buildDrawerUrl, drawerPaths } from '../../../../../../../utils/rightDrawer';
 import CeligoTruncate from '../../../../../../CeligoTruncate';
+import useSyncedRef from '../../../../../../../hooks/useSyncedRef';
 
 const useStyles = makeStyles(theme => ({
   dataType: {
@@ -131,6 +132,17 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
+const getToolTipTitle = (isHandlebarExp, isHardCodedValue) => {
+  if (isHandlebarExp) {
+    return 'The data type of handlebars expressions is auto-set to "string" and cannot be changed.';
+  }
+  if (isHardCodedValue) {
+    return 'The data type of hard-coded values is auto-set to "string" and cannot be changed.';
+  }
+
+  return '';
+};
+
 export default function SourceDataType({
   dataType = 'string',
   disabled,
@@ -139,14 +151,13 @@ export default function SourceDataType({
   anchorEl,
   setAnchorEl,
   sourceDataTypes,
-  updateSourceDataType,
   isHardCodedValue,
   isHandlebarExp,
 }) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const history = useHistory();
-
+  const sourceDataTypeRef = useSyncedRef(sourceDataTypes);
   const open = !!anchorEl;
   const selectedDataTypeLabels = [];
   const handleMenu = useCallback(
@@ -169,32 +180,21 @@ export default function SourceDataType({
     setAnchorEl(null);
   }, [setAnchorEl]);
 
-  sourceDataTypes && sourceDataTypes.forEach(datatype => {
+  sourceDataTypeRef.current && sourceDataTypeRef.current.forEach(datatype => {
     selectedDataTypeLabels.push(DATA_TYPES_DROPDOWN_OPTIONS.find(opt => opt.id === datatype)?.label);
   });
 
   const onDataTypeChange = useCallback(newDataType => {
     handleClose();
-    updateSourceDataType(newDataType);
+    sourceDataTypeRef.current = [newDataType];
     dispatch(actions.mapping.v2.updateDataType(nodeKey, newDataType, true));
   }, [handleClose, dataType, dispatch, nodeKey]);
-
-  const getToolTipTitile = (isHandlebarExp, isHardCodedValue) => {
-    if (isHandlebarExp) {
-      return 'The data type of handlebars expressions is auto-set to “string” and cannot be changed.';
-    }
-    if (isHardCodedValue) {
-      return 'The data type of hard-coded values is auto-set to “string” and cannot be changed.';
-    }
-
-    return '';
-  };
 
   return (
     <div className={clsx(classes.sourceDataTypeDropDown, className)}>
 
       <Tooltip
-        title={getToolTipTitile(isHandlebarExp, isHardCodedValue)}
+        title={getToolTipTitle(isHandlebarExp, isHardCodedValue)}
         placement="bottom" >
         {/* this span needs to be added to render the tooltip correctly */}
         <span>

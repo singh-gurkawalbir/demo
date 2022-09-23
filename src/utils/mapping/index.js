@@ -653,7 +653,7 @@ export const getExtractDataType = helper => {
 };
 
 // util for fetching the the correct datatype value of a selected node
-export const getSelectedNodeDetails = (extractsTreeNode, selectedValue, selectedNodes = []) => {
+export const getSelectedExtractDataTypes = (extractsTreeNode, selectedValue, selectedNodes = []) => {
   if (isEmpty(extractsTreeNode) || !extractsTreeNode.children?.length) return selectedNodes;
 
   extractsTreeNode.children.forEach(node => {
@@ -682,7 +682,7 @@ export const getSelectedNodeDetails = (extractsTreeNode, selectedValue, selected
     }
 
     if (node.children) {
-      getSelectedNodeDetails(node, selectedValue, selectedNodes);
+      getSelectedExtractDataTypes(node, selectedValue, selectedNodes);
     }
   });
 
@@ -714,11 +714,11 @@ export const buildExtractsHelperFromExtract = (existingExtractsArray, sourceFiel
       // add missing extracts in existingExtractsArray which are newly added by the user and copy settings if found at same index
       toReturn.push({...removedSources[existingExtractsArray[i].extract],
         extract: uniqueExtract,
-        sourceDataType: extractsTree && extractsTree[0] ? getSelectedNodeDetails(extractsTree[0], e.replace(/(\$\.)|(\$\[\*\]\.)/g, ''))[0] || 'string' : 'string'});
+        sourceDataType: extractsTree && extractsTree[0] ? getSelectedExtractDataTypes(extractsTree[0], e.replace(/(\$\.)|(\$\[\*\]\.)/g, ''))[0] || 'string' : 'string'});
     } else {
       // add extract
       toReturn.push(formKey ? newExtractObj : {extract: uniqueExtract,
-        sourceDataType: extractsTree && extractsTree[0] ? getSelectedNodeDetails(extractsTree[0], e.replace(/(\$\.)|(\$\[\*\]\.)/g, ''))[0] || 'string' : 'string'});
+        sourceDataType: extractsTree && extractsTree[0] ? getSelectedExtractDataTypes(extractsTree[0], e.replace(/(\$\.)|(\$\[\*\]\.)/g, ''))[0] || 'string' : 'string'});
     }
   });
 

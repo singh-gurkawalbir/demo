@@ -1,4 +1,4 @@
-import React, { useState, useRef, useCallback, useEffect } from 'react';
+import React, { useState, useRef, useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import { FormControl, TextField, InputAdornment, Typography, Tooltip, Divider } from '@material-ui/core';
@@ -148,7 +148,6 @@ export default function Mapper2ExtractsTypeableSelect({
   const [anchorEl, setAnchorEl] = useState(null);
   const dispatch = useDispatch();
   const [isFocused, setIsFocused] = useState(false);
-  const sourceDataTypeRef = useRef(sourceDataType);
   const [inputValue, setInputValue] = useDebouncedValue(propValue, value => {
     // do not dispatch action if the field is empty as there can be
     // multiple rows and it will unnecessarily dispatch actions slowing down the UI
@@ -158,11 +157,6 @@ export default function Mapper2ExtractsTypeableSelect({
   const [isTruncated, setIsTruncated] = useState(false);
   const inputFieldRef = useRef();
   const [dataTypeSelector, selectDataType] = useState(false);
-
-  // in case of sourceDataType changes change the ref value
-  useEffect(() => {
-    sourceDataTypeRef.current = sourceDataType;
-  }, [sourceDataType]);
 
   const handleChange = useCallback(event => {
     setInputValue(event.target.value);
@@ -252,8 +246,7 @@ export default function Mapper2ExtractsTypeableSelect({
         isHardCodedValue={isHardCodedValue}
         isHandlebarExp={isHandlebarExp}
         nodeKey={nodeKey}
-        updateSourceDataType={type => { sourceDataTypeRef.current = [type]; }}
-        sourceDataTypes={sourceDataTypeRef.current && sourceDataTypeRef.current.length ? [...sourceDataTypeRef.current] : undefined}
+        sourceDataTypes={sourceDataType}
         className={clsx({[classes.sourceDataTypeButton]: hideSourceDropdown})} />
 
       {/* only render tree component if field is focussed and not disabled.
