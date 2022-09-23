@@ -256,7 +256,6 @@ export default {
           resourceId,
         },
         sourceDataType: {
-          // todo Kiran: it should update automatically when value is selected from dropdown or hardcode/expression
           id: 'sourceDataType',
           name: 'sourceDataType',
           type: 'select',
@@ -266,7 +265,6 @@ export default {
           defaultValue: node.sourceDataType || 'string',
           helpKey: 'mapping.v2.sourceDataType',
           noApi: true,
-          // todo: Kiran: confirm data type visibility for object
           visibleWhenAll: [
             { field: 'dataType', isNot: ['objectarray', 'stringarray', 'numberarray', 'booleanarray'] },
             { field: 'copySource', is: ['yes'] },

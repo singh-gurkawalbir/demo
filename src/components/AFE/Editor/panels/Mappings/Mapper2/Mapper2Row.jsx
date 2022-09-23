@@ -191,8 +191,11 @@ const Mapper2Row = React.memo(props => {
   }, [dispatch, history, nodeKey, generate]);
 
   const extractValue = getCombinedExtract(extractsArrayHelper).join(',') || extract || (hardCodedValue ? `"${hardCodedValue}"` : undefined);
+  // check if the extract array helper has any node
+  // and fetch the data types for the same
   const extractDataTypes = getExtractDataType(extractsArrayHelper);
 
+  // extractDataTypes will be the one which will be passed down hence add source datatype if available
   if (sourceDataType && extractDataTypes.length === 0) {
     extractDataTypes.push(sourceDataType);
   }

@@ -159,6 +159,7 @@ export default function Mapper2ExtractsTypeableSelect({
   const inputFieldRef = useRef();
   const [dataTypeSelector, selectDataType] = useState(false);
 
+  // in case of sourceDataType changes change the ref value
   useEffect(() => {
     sourceDataTypeRef.current = sourceDataType;
   }, [sourceDataType]);

@@ -584,7 +584,8 @@ export const getCombinedExtract = helper => {
   }, []);
 };
 
-export const getExtractDataType = helper =>{
+// fetch source datatype from the extracthelper Array
+export const getExtractDataType = helper => {
   if (!helper || !helper.length) return [];
 
   return helper.reduce((combinedSourceDataType, obj) => {
@@ -594,7 +595,44 @@ export const getExtractDataType = helper =>{
 
     return combinedSourceDataType;
   }, []);
-}
+};
+
+// util for fetching the the correct datatype value of a selected node
+export const getSelectedNodeDetails = (extractsTreeNode, selectedValue, selectedNodes = []) => {
+  if (isEmpty(extractsTreeNode) || !extractsTreeNode.children?.length) return selectedNodes;
+
+  extractsTreeNode.children.forEach(node => {
+    const {dataType, jsonPath} = node;
+
+    if (selectedValue === jsonPath) {
+      let dataTypeValue;
+
+      switch (dataType) {
+        case '[object]':
+          dataTypeValue = 'objectarray';
+          break;
+        case '[boolean]':
+          dataTypeValue = 'booleanarray';
+          break;
+        case '[number]':
+          dataTypeValue = 'numberarray';
+          break;
+        case '[string]':
+          dataTypeValue = 'stringarray';
+          break;
+        default:
+          dataTypeValue = dataType;
+      }
+      selectedNodes.push(dataTypeValue);
+    }
+
+    if (node.children) {
+      getSelectedNodeDetails(node, selectedValue, selectedNodes);
+    }
+  });
+
+  return selectedNodes;
+};
 
 export const buildExtractsHelperFromExtract = (existingExtractsArray, newExtracts, extractsTree) => {
   if (!newExtracts) return [];
@@ -605,7 +643,7 @@ export const buildExtractsHelperFromExtract = (existingExtractsArray, newExtract
     return combinedExtract.reduce((acc, e, i) => {
       acc.push({
         extract: getUniqueExtractId(e, i),
-        sourceDataType: extractsTree && extractsTree[0] ? getSelectedNodeDetails(extractsTree[0], e.replace(/(\$\.)|(\$\[\*\]\.)/g, ''))[0] || 'string': 'string',
+        sourceDataType: extractsTree && extractsTree[0] ? getSelectedNodeDetails(extractsTree[0], e.replace(/(\$\.)|(\$\[\*\]\.)/g, ''))[0] || 'string' : 'string',
       });
 
       return acc;
@@ -633,7 +671,7 @@ export const buildExtractsHelperFromExtract = (existingExtractsArray, newExtract
     if (!extract) {
       // acc.splice(i, 0, {...copiedSettings[i], extract: getUniqueExtractId(e, i)});
       acc.splice(i, 0, {extract: getUniqueExtractId(e, i),
-           sourceDataType: extractsTree && extractsTree[0] ? getSelectedNodeDetails(extractsTree[0], e.replace(/(\$\.)|(\$\[\*\]\.)/g, ''))[0] || 'string': 'string'});
+        sourceDataType: extractsTree && extractsTree[0] ? getSelectedNodeDetails(extractsTree[0], e.replace(/(\$\.)|(\$\[\*\]\.)/g, ''))[0] || 'string' : 'string'});
     }
 
     return acc;
@@ -1896,44 +1934,6 @@ export const getSelectedKeys = (extractsTreeNode, selectedValues = [], selectedK
   });
 
   return selectedKeys;
-};
-
-export const getSelectedNodeDetails = (extractsTreeNode, selectedValue, selectedNodes = []) => {
-  if (isEmpty(extractsTreeNode) || !extractsTreeNode.children?.length) return selectedNodes;
-
-  extractsTreeNode.children.forEach(node => {
-    const {dataType, jsonPath} = node;
-
-    // if jsonPath matches the selected value, then add its key
-    //const selected = selectedValues.includes(jsonPath);
-
-    if (selectedValue === jsonPath) {
-      let dataTypeValue;
-      switch(dataType) {
-        case '[object]':
-          dataTypeValue = 'objectarray';
-          break;
-        case '[boolean]':
-          dataTypeValue = 'booleanarray';
-          break;
-        case '[number]':
-          dataTypeValue = 'numberarray';
-          break;
-        case '[string]':
-          dataTypeValue = 'stringarray';
-          break;
-        default:
-          dataTypeValue = dataType;     
-      }
-      selectedNodes.push(dataTypeValue);
-    }
-
-    if (node.children) {
-      getSelectedNodeDetails(node, selectedValue, selectedNodes);
-    }
-  });
-
-  return selectedNodes;
 };
 
 // recursively look for all parentExtracts for a given node

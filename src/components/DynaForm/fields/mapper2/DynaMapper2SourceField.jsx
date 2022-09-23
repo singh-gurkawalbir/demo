@@ -54,9 +54,12 @@ export default function DynaMapper2SourceField(props) {
   const editorLayout = useSelector(state => selectors.editorLayout(state, getMappingsEditorId(resourceId)));
   const handleExtractBlur = useCallback(value => {
     onFieldChange(id, value);
+
+    // in case of source field change update the source datatype also
     const jsonPathExtract = value.replace(/(\$\.)|(\$\[\*\]\.)/g, '');
-    const sourceDataTypesList =  getSelectedNodeDetails(extractsTreeData[0], jsonPathExtract);
-    console.log(sourceDataTypesList);
+
+    const sourceDataTypesList = getSelectedNodeDetails(extractsTreeData[0], jsonPathExtract);
+
     onFieldChange('sourceDataType', sourceDataTypesList[0]);
   }, [id, onFieldChange]);
 

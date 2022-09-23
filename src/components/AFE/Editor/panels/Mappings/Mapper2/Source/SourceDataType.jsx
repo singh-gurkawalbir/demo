@@ -179,14 +179,24 @@ export default function SourceDataType({
     dispatch(actions.mapping.v2.updateDataType(nodeKey, newDataType, true));
   }, [handleClose, dataType, dispatch, nodeKey]);
 
+  const getToolTipTitile = (isHandlebarExp, isHardCodedValue) => {
+    if (isHandlebarExp) {
+      return 'The data type of handlebars expressions is auto-set to “string” and cannot be changed.';
+    }
+    if (isHardCodedValue) {
+      return 'The data type of hard-coded values is auto-set to “string” and cannot be changed.';
+    }
+
+    return '';
+  };
+
   return (
     <div className={clsx(classes.sourceDataTypeDropDown, className)}>
 
       <Tooltip
-        title={isHandlebarExp ? 'The data type of handlebars expressions is auto-set to “string” and cannot be changed.' : '' 
-                || isHardCodedValue ? 'The data type of hard-coded values is auto-set to “string” and cannot be changed.' : ''}
+        title={getToolTipTitile(isHandlebarExp, isHardCodedValue)}
         placement="bottom" >
-        {/* this div needs to be added to render the tooltip correctly */}
+        {/* this span needs to be added to render the tooltip correctly */}
         <span>
           <TextButton
             onClick={handleMenu}

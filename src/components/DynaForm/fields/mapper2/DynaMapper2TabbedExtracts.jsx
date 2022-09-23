@@ -1,4 +1,5 @@
 import React, { useState, useCallback, useMemo } from 'react';
+import { useSelector } from 'react-redux';
 import { makeStyles, Tabs, Tab, Divider } from '@material-ui/core';
 import isEmpty from 'lodash/isEmpty';
 import mappingUtil, {ARRAY_DATA_TYPES, getUniqueExtractId, findMatchingExtract, getSelectedNodeDetails} from '../../../../utils/mapping';
@@ -7,7 +8,6 @@ import DynaForm from '../..';
 import useFormInitWithPermissions from '../../../../hooks/useFormInitWithPermissions';
 import {useUpdateParentForm} from '../DynaCsvGenerate_afe';
 import useSetSubFormShowValidations from '../../../../hooks/useSetSubFormShowValidations';
-import { useSelector } from 'react-redux';
 import { selectors } from '../../../../reducers';
 
 const useStyles = makeStyles(theme => ({
@@ -38,18 +38,17 @@ function generateTabsForSettings(sourceField) {
   return tabs;
 }
 
-function getSubFormMetadata(value, formKey, dataType,sourceDataTypeVal) {
+function getSubFormMetadata(value, formKey, dataType, sourceDataTypeVal) {
   return {
     fieldMap: {
       sourceDataType: {
-        // todo Kiran: it should update automatically when value is selected from dropdown
         id: 'sourceDataType',
         name: 'sourceDataType',
         type: 'select',
         skipSort: true,
         skipDefault: true,
         label: 'Source data type',
-        defaultValue: findMatchingExtract(value, formKey).sourceDataType|| sourceDataTypeVal || 'string',
+        defaultValue: findMatchingExtract(value, formKey).sourceDataType || sourceDataTypeVal || 'string',
         helpKey: 'mapping.v2.sourceDataType',
         noApi: true,
         options: [
@@ -248,8 +247,11 @@ function EachTabContainer({id, value, parentFormKey, formKey, dataType, isCurren
     }, [formKey, id, onFieldChange, value, dataType, sourceField]);
 
   useUpdateParentForm(formKey, handleFormChange);
+
+  // During initializing the tabs set the source datatype
+  // depening on the source field selected
   const jsonPathValue = formKey.replace(/(\$\.)|(\$\[\*\]\.)/g, '');
-  const sourceDataTypeVal = getSelectedNodeDetails(extractsTreeData[0],jsonPathValue);
+  const sourceDataTypeVal = getSelectedNodeDetails(extractsTreeData[0], jsonPathValue);
 
   useSetSubFormShowValidations(parentFormKey, formKey);
   const formKeyComponent = useFormInitWithPermissions({
