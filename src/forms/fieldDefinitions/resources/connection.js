@@ -2547,14 +2547,6 @@ export default {
     id: 'http.auth.token.tokenPaths',
     type: 'text',
     label: 'Paths to encrypted field in the HTTP response body',
-    defaultValue: r => {
-      const values = r?.http?.auth?.token?.tokenPaths;
-
-      if (Array.isArray(values)) {
-        return values.join(',');
-      }
-
-      return values;
-    },
+    delimiter: ',',
   },
 };

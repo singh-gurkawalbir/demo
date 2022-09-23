@@ -1,3 +1,4 @@
+import { PASSWORD_MASK } from '../../../constants';
 import {
   updateFinalMetadataWithHttpFramework,
 } from '../../../sagas/utils';
@@ -96,29 +97,32 @@ export default {
       newValues['/http/auth/token/refreshMediaType'] = undefined;
       newValues['/http/auth/token/tokenPaths'] = undefined;
     }
-    if (newValues['/http/auth/type'] !== 'custom') {
+    if (newValues['/http/auth/type'] !== 'custom' || !newValues['/http/auth/token/tokenPaths']) {
       // tokenPaths are only supported for custom auth type refresh token
       newValues['/http/auth/token/tokenPaths'] = undefined;
-    }
-    if (newValues['/http/auth/token/tokenPaths']) {
-      newValues['/http/auth/token/tokenPaths'] = newValues['/http/auth/token/tokenPaths'].split(',').map(path => path.trim());
     }
     if (newValues['/http/auth/type'] === 'token' || newValues['/http/auth/type'] === 'oauth') {
       if (newValues['/http/auth/token/scheme'] === 'Custom') {
         newValues['/http/auth/token/scheme'] = newValues['/http/customAuthScheme'];
       }
     }
-    const tokenPaths = newValues['/http/auth/token/tokenPaths']?.reduce((a, v) => ({ ...a, [v]: '******'}), {});
 
     if (newValues['/http/custom/encrypted']) {
-      const encryptedField = safeParse(newValues['/http/custom/encrypted']) || {};
+      const tokenPathsDefaultObject = newValues['/http/auth/token/tokenPaths']?.reduce?.((a, v) => ({ ...a, [v]: PASSWORD_MASK}), {});
 
-      newValues['/http/custom/encrypted'] = tokenPaths;
+      const encryptedFieldValue = safeParse(newValues['/http/custom/encrypted']);
 
-      if (typeof encryptedField === 'object') {
+      newValues['/http/custom/encrypted'] = encryptedFieldValue;
+
+      if (typeof tokenPathsDefaultObject === 'object') {
+        newValues['/http/custom/encrypted'] = tokenPathsDefaultObject;
+      }
+
+      if (typeof encryptedFieldValue === 'object') {
+        // override the default token paths with user provided values
         newValues['/http/custom/encrypted'] = {
-          ...newValues['/http/custom/encrypted'],
-          ...encryptedField,
+          ...(newValues['/http/custom/encrypted'] || {}),
+          ...encryptedFieldValue,
         };
       }
     }
