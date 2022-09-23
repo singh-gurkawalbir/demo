@@ -34,6 +34,9 @@ const useStyles = makeStyles(theme => ({
     color: theme.palette.secondary.main,
     wordBreak: 'break-word',
   },
+  errorDetailsDrawerContent: {
+    overflowY: 'hidden',
+  },
 }));
 export default function ErrorDetailsDrawer({ flowId }) {
   const history = useHistory();
@@ -174,7 +177,7 @@ export default function ErrorDetailsDrawer({ flowId }) {
       </DrawerHeader>
       <Tabs flowId={flowId} onChange={handleErrorTypeChange} />
 
-      <DrawerContent>
+      <DrawerContent className={classes.errorDetailsDrawerContent}>
         {flowJobId ? (
           <Typography variant="body2" className={classes.errorsInRun}>
             <span className={classes.boldErrorsCount}>{childJob?.numOpenError} error{childJob?.numOpenError !== 1 ? 's' : ''} in this run </span>

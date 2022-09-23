@@ -464,6 +464,7 @@ export const updateFinalMetadataWithHttpFramework = (finalFieldMeta, connector, 
           options: fld.options,
           validWhen: fld.validWhen,
           defaultValue: resource?.http?.unencrypted?.[fld.id] || fld.defaultValue,
+          helpLink: fld.helpURL,
         },
       });
     });
@@ -486,6 +487,7 @@ export const updateFinalMetadataWithHttpFramework = (finalFieldMeta, connector, 
           options: fld.options,
           validWhen: fld.validWhen,
           defaultValue: resource?.http?.encrypted?.[fld.id],
+          helpLink: fld.helpURL,
         },
       });
     });
@@ -522,6 +524,7 @@ export const updateFinalMetadataWithHttpFramework = (finalFieldMeta, connector, 
           required: !!value.required,
           options: value.options,
           validWhen: value.validWhen,
+          helpLink: value.helpURL,
         },
       });
     });
@@ -557,6 +560,17 @@ export const updateFinalMetadataWithHttpFramework = (finalFieldMeta, connector, 
 
           tempFiledMeta?.layout?.containers[3]?.containers[1]?.containers[0]?.fields.push(...authFields);
         }
+        Object.keys(tempFiledMeta.fieldMap).map(key => {
+          const fieldUserMustSet = connectionTemplate.fieldsUserMustSet?.find(field => key === field.path);
+
+          if (fieldUserMustSet && fieldUserMustSet.helpURL) {
+            tempFiledMeta.fieldMap[key].helpLink = `${fieldUserMustSet.helpURL}`;
+          }
+
+          return tempFiledMeta.fieldMap[key];
+        }
+
+        );
       }
     }
   } else if (!isGenericHTTP) {
@@ -565,6 +579,17 @@ export const updateFinalMetadataWithHttpFramework = (finalFieldMeta, connector, 
       delete tempFiledMeta?.layout?.containers[3]?.containers[1]?.type;
     }
     tempFiledMeta?.layout?.containers[1]?.containers?.splice(1, 1);
+    Object.keys(tempFiledMeta.fieldMap).map(key => {
+      const fieldUserMustSet = connectionTemplate.fieldsUserMustSet?.find(field => key === field.path);
+
+      if (fieldUserMustSet && fieldUserMustSet.helpURL) {
+        tempFiledMeta.fieldMap[key].helpLink = `${fieldUserMustSet.helpURL}`;
+      }
+
+      return tempFiledMeta.fieldMap[key];
+    }
+
+    );
   }
 
   return tempFiledMeta;
