@@ -319,22 +319,19 @@ export default function Mapper2({editorId}) {
   }, [handleMouseMove, handleWheelEvent]);
 
   const isEmptyTree = isEmpty(treeData);
-  const isFilterApplied = !isEmpty(mapper2Filter) && !mapper2Filter?.includes('all');
-  const isRequiredFilter = isFilterApplied && mapper2Filter.includes('required');
-  const isMappedFilter = isFilterApplied && mapper2Filter.includes('mapped');
-  const isBothFilter = isRequiredFilter && isMappedFilter;
+  const isFilterApplied = !mapper2Filter.includes('all');
+  let filterInfo = 'Filtered by mapped fields (clear filter to enable editing)';
 
-  const filterInfo = `Filtered by
-    ${isRequiredFilter ? ' required fields ' : ''}
-    ${isBothFilter ? 'and' : ''}
-    ${isMappedFilter ? ' mapped fields ' : ''}
-    (clear filter to enable editing)
-  `;
+  if (mapper2Filter.includes('required') && mapper2Filter.includes('mapped')) {
+    filterInfo = 'Filtered by mapped fields and required fields (clear filter to enable editing)';
+  } else if (mapper2Filter.includes('required')) {
+    filterInfo = 'Filtered by required fields (clear filter to enable editing)';
+  }
 
   return (
     <>
       {searchKey !== undefined && <SearchBar />}
-      {isEmptyTree && <Typography variant="body2" className={classes.emptyMessage}>You don’t have any fields that match the filter you applied. <br /> Clear the filter by setting it to “All fields”.</Typography>}
+      {isFilterApplied && isEmptyTree && <Typography variant="body2" className={classes.emptyMessage}>You don&lsquo;t have any fields that match the filter you applied. <br /> Clear the filter by setting it to &quot;All fields&quot;.</Typography>}
       {isFilterApplied && !isEmptyTree && (
         <Typography component="div" variant="caption" className={classes.infoFilter}>
           <InfoIcon />

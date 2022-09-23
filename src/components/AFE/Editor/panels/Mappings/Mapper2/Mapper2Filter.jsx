@@ -32,13 +32,9 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const emptyArr = [];
+const options = [{_id: 'all', name: 'All fields'}, {_id: 'required', name: 'Required fields'}, {_id: 'mapped', name: 'Mapped fields'}];
 
-export default function Mapper2Filter({
-  options = emptyArr,
-  handleSave,
-  className,
-}) {
+export default function Mapper2Filter() {
   const classes = useStyles();
   const dispatch = useDispatch();
   const filterOptions = useSelector(selectors.mapper2Filter);
@@ -60,18 +56,15 @@ export default function Mapper2Filter({
     return [...selectedIds, id];
   }, []);
   const onSaveHandler = useCallback(
-    values => {
-      dispatch(actions.mapping.v2.updateFilter(values));
-      handleSave?.();
-    },
-    [dispatch, handleSave],
+    values => dispatch(actions.mapping.v2.updateFilter(values)),
+    [dispatch],
   );
   const selected = filterOptions?.length ? filterOptions : ['all'];
 
   const FilterIcon = () => <FilterIconWrapper />;
 
   return (
-    <div className={clsx(classes.wrapperSelectFilter, className, !selected.includes('all') && classes.circle)} >
+    <div className={clsx(classes.wrapperSelectFilter, !selected.includes('all') && classes.circle)} >
       <MultiSelectFilter
         Icon={FilterIcon}
         items={options}

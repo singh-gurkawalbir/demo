@@ -40,8 +40,6 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const filterOptions = [{_id: 'all', name: 'All fields'}, {_id: 'required', name: 'Required fields'}, {_id: 'mapped', name: 'Mapped fields'}];
-
 export default function MapperPanelTitle({editorId, title, helpKey}) {
   const classes = useStyles();
   const dispatch = useDispatch();
@@ -140,7 +138,7 @@ export default function MapperPanelTitle({editorId, title, helpKey}) {
         </Tooltip>
 
         <CeligoDivider position="right" />
-        <Mapper2Filter options={filterOptions} />
+        <Mapper2Filter />
 
         {searchKey === undefined && (
         <>

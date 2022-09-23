@@ -2279,13 +2279,13 @@ export const applyMappedFilter = (v2TreeData, lookups, isReqApplied = false) => 
 
   if (isTabNode) return true;
 
+  const canAddToTree = !isMappingWithoutExtract(mapping, lookups) || (isReqApplied && isRequired);
+
   // Any data type except object and object arrays
-  if (![MAPPING_DATA_TYPES.OBJECTARRAY, MAPPING_DATA_TYPES.OBJECT].includes(dataType)) {
-    return !isMappingWithoutExtract(mapping, lookups) || (isReqApplied && isRequired);
-  }
+  if (![MAPPING_DATA_TYPES.OBJECTARRAY, MAPPING_DATA_TYPES.OBJECT].includes(dataType)) return canAddToTree;
   if (dataType === MAPPING_DATA_TYPES.OBJECT) {
     // if extract exists, then generate is copied from source as is
-    if (extract) return !isMappingWithoutExtract(mapping, lookups) || (isReqApplied && isRequired);
+    if (extract) return canAddToTree;
     // if extract is empty and children exists, then make a recursive call to check the children
     if (mapping.children?.length) {
       // eslint-disable-next-line no-param-reassign

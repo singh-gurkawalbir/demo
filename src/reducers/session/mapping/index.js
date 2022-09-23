@@ -1197,8 +1197,6 @@ selectors.newRowKey = state => {
 
 selectors.mapper2Filter = state => state?.mapping?.filter || emptyArr;
 
-selectors.lookups = state => state?.mapping?.lookups || emptyArr;
-
 selectors.mappingChanged = state => {
   if (!state || !state.mapping) {
     return false;

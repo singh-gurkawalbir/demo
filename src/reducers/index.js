@@ -7251,17 +7251,22 @@ selectors.mkFlowResourcesRetryStatus = () => {
 };
 
 selectors.filteredV2TreeData = state => {
-  let filteredTreeData = selectors.v2MappingsTreeData(state);
-  const filterBy = selectors.mapper2Filter(state);
-  const lookups = selectors.lookups(state);
+  const v2TreeData = selectors.v2MappingsTreeData(state);
+  const mappings = selectors.mapping(state);
+  const filterBy = mappings.filter || [];
+  const lookups = mappings.lookups || [];
 
-  if (filterBy?.includes('required') && filterBy?.includes('mapped')) {
-    // ToDo: try replacing cloneDeep with something else
-    filteredTreeData = applyMappedFilter(cloneDeep(filteredTreeData), lookups, true);
-  } else if (filterBy?.includes('required')) {
-    filteredTreeData = applyRequiredFilter(cloneDeep(filteredTreeData));
-  } else if (filterBy?.includes('mapped')) {
-    filteredTreeData = applyMappedFilter(cloneDeep(filteredTreeData), lookups);
+  if (isEmpty(filterBy) || filterBy.includes('all')) return v2TreeData;
+
+  // ToDo: try replacing cloneDeep with something else
+  let filteredTreeData = cloneDeep(v2TreeData);
+
+  if (filterBy.includes('required') && filterBy.includes('mapped')) {
+    filteredTreeData = applyMappedFilter(filteredTreeData, lookups, true);
+  } else if (filterBy.includes('required')) {
+    filteredTreeData = applyRequiredFilter(filteredTreeData);
+  } else {
+    filteredTreeData = applyMappedFilter(filteredTreeData, lookups);
   }
 
   return filteredTreeData;
