@@ -3916,7 +3916,7 @@ describe('mapping utils', () => {
         ],
         result: {
           isSuccess: false,
-          errMessage: "Mapper 2.0: fname:You can't map boolean (source) to number (destination)",
+          errMessage: "Mapper 2.0: fname: You can't map boolean (source) to number (destination)",
         },
       },
       {
@@ -3935,7 +3935,7 @@ describe('mapping utils', () => {
         ],
         result: {
           isSuccess: false,
-          errMessage: "Mapper 2.0: sibling:You can't map [number] (source) to object (destination)",
+          errMessage: "Mapper 2.0: sibling: You can't map [number] (source) to object (destination)",
         },
       },
       {
@@ -3966,7 +3966,7 @@ describe('mapping utils', () => {
         ],
         result: {
           isSuccess: false,
-          errMessage: "Mapper 2.0: quantity:You can't map boolean (source) to [number] (destination)",
+          errMessage: "Mapper 2.0: quantity: You can't map boolean (source) to [number] (destination)",
         },
       },
     ];

@@ -2104,12 +2104,12 @@ const validateSourceDataType = mapping => {
     extract,
   } = mapping;
   const errorArr = [];
-  const wrongDataType = WRONG_SOURCE_DATA_TYPES_LIST[dataType];
+  const incorrectSourceDataTypes = WRONG_SOURCE_DATA_TYPES_LIST[dataType];
 
   switch (dataType) {
     case MAPPING_DATA_TYPES.NUMBER:
     case MAPPING_DATA_TYPES.BOOLEAN:
-      if (wrongDataType.has(sourceDataType)) {
+      if (incorrectSourceDataTypes.has(sourceDataType)) {
         errorArr.push({
           jsonPath,
           dataType: DATA_TYPES_REPRESENTATION_LIST[dataType],
@@ -2123,7 +2123,7 @@ const validateSourceDataType = mapping => {
       extractsArrayHelper.forEach(({
         sourceDataType = MAPPING_DATA_TYPES.STRING,
       }) => {
-        if (wrongDataType.has(sourceDataType)) {
+        if (incorrectSourceDataTypes.has(sourceDataType)) {
           errorArr.push({
             jsonPath,
             dataType: DATA_TYPES_REPRESENTATION_LIST[dataType],
@@ -2133,7 +2133,7 @@ const validateSourceDataType = mapping => {
       });
       break;
     case MAPPING_DATA_TYPES.OBJECT:
-      if (extract && wrongDataType.has(sourceDataType)) {
+      if (extract && incorrectSourceDataTypes.has(sourceDataType)) {
         errorArr.push({
           jsonPath,
           dataType: DATA_TYPES_REPRESENTATION_LIST[dataType],
@@ -2159,7 +2159,7 @@ const recursivelyValidateV2Mappings = ({
   expressionNotSupported = [],
   onlyJsonPathSupported = [],
   wrongHandlebarExp = [],
-  wrongSourceDataType = [],
+  dataTypeValidationErrors = [],
 }) => {
   v2TreeData.forEach(mapping => {
     const {
@@ -2236,10 +2236,16 @@ const recursivelyValidateV2Mappings = ({
       }
     }
 
-    if (!mapping.generateDisabled && dataType in WRONG_SOURCE_DATA_TYPES_LIST) {
-      const tempWrongSourceDataType = validateSourceDataType(mapping);
+    // Validate when both destination and source are present
+    if (
+      !mapping.generateDisabled &&
+      dataType in WRONG_SOURCE_DATA_TYPES_LIST &&
+      generate &&
+      (extract || hardCodedValue || extractsArrayHelper)
+    ) {
+      const errors = validateSourceDataType(mapping);
 
-      wrongSourceDataType.push(...tempWrongSourceDataType);
+      dataTypeValidationErrors.push(...errors);
     }
 
     if (mapping.children?.length) {
@@ -2254,7 +2260,7 @@ const recursivelyValidateV2Mappings = ({
         expressionNotSupported,
         onlyJsonPathSupported,
         wrongHandlebarExp,
-        wrongSourceDataType,
+        dataTypeValidationErrors,
       });
     }
   });
@@ -2267,7 +2273,7 @@ const validateV2Mappings = (v2TreeData, lookups, isGroupedSampleData) => {
   const expressionNotSupported = [];
   const onlyJsonPathSupported = [];
   const wrongHandlebarExp = [];
-  const wrongSourceDataType = [];
+  const dataTypeValidationErrors = [];
 
   recursivelyValidateV2Mappings({
     v2TreeData,
@@ -2279,7 +2285,7 @@ const validateV2Mappings = (v2TreeData, lookups, isGroupedSampleData) => {
     expressionNotSupported,
     onlyJsonPathSupported,
     wrongHandlebarExp,
-    wrongSourceDataType,
+    dataTypeValidationErrors,
   });
 
   if (duplicateMappings.length) {
@@ -2328,8 +2334,8 @@ const validateV2Mappings = (v2TreeData, lookups, isGroupedSampleData) => {
     };
   }
 
-  if (wrongSourceDataType.length) {
-    const errMessageList = wrongSourceDataType.map(item => errorMessageStore('MAPPER2_WRONG_SOURCE_DATA_TYPE', item));
+  if (dataTypeValidationErrors.length) {
+    const errMessageList = dataTypeValidationErrors.map(item => errorMessageStore('MAPPER2_WRONG_SOURCE_DATA_TYPE', item));
 
     return {
       isSuccess: false,

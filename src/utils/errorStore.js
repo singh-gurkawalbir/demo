@@ -20,7 +20,7 @@ const messages = {
   MAPPER2_ONLY_JSON_PATH_SUPPORT: 'Mapper 2.0: You could only use valid JSONPath expression for destination field(s): {{{fields}}}',
   MAPPER2_WRONG_HANDLEBAR_FOR_ROWS: "Mapper 2.0: The source field values should start with 'rows' since input data is of the type rows. For instance rows.field1, rows.field2, etc.",
   MAPPER2_WRONG_HANDLEBAR_FOR_RECORD: "Mapper 2.0: The source field values should start with 'record' since input data is of the type record. For instance record.field1, record.field2, etc.",
-  MAPPER2_WRONG_SOURCE_DATA_TYPE: "Mapper 2.0: {{{jsonPath}}}:You can't map {{{sourceDataType}}} (source) to {{{dataType}}} (destination)",
+  MAPPER2_WRONG_SOURCE_DATA_TYPE: "Mapper 2.0: {{{jsonPath}}}: You can't map {{{sourceDataType}}} (source) to {{{dataType}}} (destination)",
   // #endregion
 };
 
