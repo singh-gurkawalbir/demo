@@ -465,18 +465,27 @@ export const updateFinalMetadataWithHttpFramework = (finalFieldMeta, connector, 
 
   if (preConfiguredUnencryptedFields?.values?.length > 0) {
     preConfiguredUnencryptedFields.values.forEach(fld => {
-      unEncryptedFields.push({
-        position: 1,
-        field: {
-          ...fld,
-          name: `/http/unencrypted/${fld.id}`,
-          id: `http.unencrypted.${fld.id}`,
-          fieldId: `http.unencrypted.${fld.id}`,
-          type: fld.type || 'text',
-          defaultValue: resource?.http?.unencrypted?.[fld.id] || fld.defaultValue,
-          conditions: connectionTemplate?.conditions,
-        },
-      });
+      if (!unEncryptedFields.find(unEncryptedField => unEncryptedField.id === `http.unencrypted.${fld.id}`)) {
+        const preConfiguredFieldLists = preConfiguredUnencryptedFields?.values?.filter(field => field.id === fld.id);
+        const _conditionIdValuesMap = [];
+
+        preConfiguredFieldLists.forEach(field => {
+          if (field._conditionIds?.length && field.values?.length) { _conditionIdValuesMap.push({_conditionIds: field._conditionIds, values: field.values}); }
+        });
+        unEncryptedFields.push({
+          position: 1,
+          field: {
+            ...fld,
+            name: `/http/unencrypted/${fld.id}`,
+            id: `http.unencrypted.${fld.id}`,
+            fieldId: `http.unencrypted.${fld.id}`,
+            type: fld.type || 'text',
+            defaultValue: resource?.http?.unencrypted?.[fld.id] || fld.defaultValue,
+            conditions: connectionTemplate?.conditions,
+            _conditionIdValuesMap,
+          },
+        });
+      }
     });
   }
   const preConfiguredencryptedFields = connectionTemplate.preConfiguredFields.find(field => field.path === 'http.encryptedFields');
