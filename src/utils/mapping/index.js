@@ -658,7 +658,9 @@ export const buildExtractsHelperFromExtract = (existingExtractsArray, sourceFiel
       toReturn.push(uniqueExtract === formKey ? newExtractObj : extractConfig);
     } else if (removedSources[existingExtractsArray[i]?.extract]) {
       // add missing extracts in existingExtractsArray which are newly added by the user and copy settings if found at same index
-      toReturn.push({...removedSources[existingExtractsArray[i].extract], extract: uniqueExtract});
+      toReturn.push({...removedSources[existingExtractsArray[i].extract],
+        extract: uniqueExtract,
+        sourceDataType: extractsTree && extractsTree[0] ? getSelectedNodeDetails(extractsTree[0], e.replace(/(\$\.)|(\$\[\*\]\.)/g, ''))[0] || 'string' : 'string'});
     } else {
       // add extract
       toReturn.push(formKey ? newExtractObj : {extract: uniqueExtract,
