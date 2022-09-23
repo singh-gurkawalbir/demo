@@ -528,7 +528,7 @@ export default {
       label: 'Mark exported batch size',
       type: 'text',
       defaultValue: r => r?.netsuite?.restlet?.markExportedBatchSize || '100',
-      visibleWhen: [
+      visibleWhenAll: [
         { field: 'type', is: ['once'] },
         { field: 'restlet.type', is: ['once'] },
       ],
