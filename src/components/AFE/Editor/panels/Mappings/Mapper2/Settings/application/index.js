@@ -24,7 +24,13 @@ const getFormattedLookup = (lookup, formVal, settings) => {
   } else {
     lookupTmp.map = {};
     (formVal._mapList || []).forEach(obj => {
-      if (obj.import && obj.export) lookupTmp.map[obj.export] = obj.import;
+      if (obj.import && obj.export) {
+        const splitSourceValues = obj.export.split(',');
+
+        splitSourceValues.forEach(src => {
+          lookupTmp.map[src] = obj.import;
+        });
+      }
     });
   }
 
@@ -96,11 +102,13 @@ export default {
     settings.description = formVal.description;
     settings.extract = formVal.sourceField;
     settings.sourceDataType = formVal.sourceDataType;
-    settings.extractsArrayHelper = buildExtractsHelperFromExtract(formVal.extractsArrayHelper, formVal.sourceField);
 
     if ('dataType' in formVal) {
       // default data type is always string
       settings.dataType = formVal.dataType || MAPPING_DATA_TYPES.STRING;
+    }
+    if (ARRAY_DATA_TYPES.includes(settings.dataType)) {
+      settings.extractsArrayHelper = buildExtractsHelperFromExtract(formVal.extractsArrayHelper, formVal.sourceField);
     }
 
     settings.copySource = formVal.copySource;
@@ -197,12 +205,14 @@ export default {
           errorMessage = 'You need to map at least one value.';
         }
 
-        const duplicateKeys = _mapList
+        const formattedSourceValues = _mapList
           .filter(e => !!e.export)
           .map(e => e.export)
+          .reduce((values, src) => [...values, ...src.split(',')], []);
+        const duplicateKeys = formattedSourceValues
           .map((e, i, final) => final.indexOf(e) !== i && i)
-          .filter(obj => _mapList[obj])
-          .map(e => _mapList[e].export);
+          .filter(obj => formattedSourceValues[obj])
+          .map(e => formattedSourceValues[e]);
 
         if (duplicateKeys.length) {
           errorMessage = `You cannot have duplicate source field values: ${duplicateKeys.join(

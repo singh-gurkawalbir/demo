@@ -17,7 +17,7 @@ import AddToBatch from './ErrorDetailActions/AddToBatch';
 
 const useStyles = makeStyles(theme => ({
   detailsContainer: {
-    height: '100%',
+    height: 'calc(100vh - 315px)',
     backgroundColor: 'white',
     border: `1px solid ${theme.palette.secondary.lightest}`,
     color: theme.palette.text.hint,

@@ -7203,7 +7203,8 @@ selectors.retryUsersList = createSelector(
   (state, flowId, resourceId) => selectors.retryList(state, flowId, resourceId),
   (profile, availableUsersList, retryJobs) => {
     if (!Array.isArray(retryJobs)) {
-      return [{ _id: 'all', name: 'All users'}];
+      // When all users are selected we show the 'Select' as the placeholder text in the filter
+      return [{ _id: 'all', name: 'Select'}];
     }
 
     const allUsersTriggeredRetry = retryJobs.reduce((users, job) => {
@@ -7220,7 +7221,7 @@ selectors.retryUsersList = createSelector(
       }];
     }, []);
 
-    return [{ _id: 'all', name: 'All users'}, ...allUsersTriggeredRetry];
+    return [{ _id: 'all', name: 'Select'}, ...allUsersTriggeredRetry];
   }
 );
 

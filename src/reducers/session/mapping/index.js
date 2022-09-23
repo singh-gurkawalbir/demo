@@ -83,19 +83,17 @@ export const updateSourceDataType = (draft, node, oldSourceDataType, newDataType
   if (!node) return node;
 
   const newNode = deepClone(node);
-  const newRowKey = generateUniqueKey();
 
   if (oldSourceDataType === newDataType) return node;
-  console.log(newNode);
-  if(newNode.extractsArrayHelper && newNode.extractsArrayHelper.length) {
+  if (newNode.extractsArrayHelper && newNode.extractsArrayHelper.length) {
     if (newNode.extractsArrayHelper[0].sourceDataType === newDataType) return node;
     newNode.extractsArrayHelper[0].sourceDataType = newDataType;
-  }else {
+  } else {
     newNode.sourceDataType = newDataType;
   }
-  
+
   return newNode;
-}
+};
 
 // updates specific to data type change
 export const updateDataType = (draft, node, oldDataType, newDataType) => {
@@ -302,7 +300,7 @@ export default (state = {}, action) => {
           mappings,
           lookups,
           v2TreeData,
-          expandedKeys: [],
+          expandedKeys: getAllKeys(v2TreeData),
           flowId,
           importId,
           subRecordMappingId,
@@ -705,9 +703,9 @@ export default (state = {}, action) => {
         const {node, nodeIndexInSubArray, nodeSubArray} = findNodeInTree(draft.mapping.v2TreeData, 'key', v2Key);
 
         if (isEmpty(node)) break;
-        if(isSource) {
+        if (isSource) {
           nodeSubArray[nodeIndexInSubArray] = updateSourceDataType(draft, node, node.sourceDataType, newDataType);
-        }else {
+        } else {
           nodeSubArray[nodeIndexInSubArray] = updateDataType(draft, node, node.dataType, newDataType);
           delete nodeSubArray[nodeIndexInSubArray].isEmptyRow;
         }
@@ -868,12 +866,12 @@ export default (state = {}, action) => {
                   delete nodeSubArray[nodeIndexInSubArray].hardCodedValue;
                   // object array is already handled in rebuildObjectArrayNode
                   if (node.dataType !== MAPPING_DATA_TYPES.OBJECTARRAY) {
-                    nodeSubArray[nodeIndexInSubArray].extractsArrayHelper = buildExtractsHelperFromExtract(original(nodeSubArray[nodeIndexInSubArray].extractsArrayHelper), value, draft.mapping.extractsTree);
+                    nodeSubArray[nodeIndexInSubArray].extractsArrayHelper = buildExtractsHelperFromExtract(nodeSubArray[nodeIndexInSubArray].extractsArrayHelper, value, undefined, undefined, draft.mapping.extractsTree);
                   }
                 }
               } else if (node.dataType !== MAPPING_DATA_TYPES.OBJECT || node.copySource === 'yes') {
                 node.extract = value;
-                node.sourceDataType =  draft.mapping.extractsTree && draft.mapping.extractsTree[0] ? getSelectedNodeDetails(draft.mapping.extractsTree[0], value.replace(/(\$\.)|(\$\[\*\]\.)/g, ''))[0] || 'string': 'string'
+                node.sourceDataType = draft.mapping.extractsTree && draft.mapping.extractsTree[0] ? getSelectedNodeDetails(draft.mapping.extractsTree[0], value.replace(/(\$\.)|(\$\[\*\]\.)/g, ''))[0] || 'string' : 'string';
               }
             }
           } else if (node.isRequired) {
