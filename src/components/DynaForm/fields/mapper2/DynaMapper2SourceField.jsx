@@ -2,13 +2,13 @@ import React, { useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import { FormLabel, FormControl } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import Mapper2ExtractsTypeableSelect from '../../AFE/Editor/panels/Mappings/Mapper2/Source/Mapper2ExtractsTypeableSelect';
-import {selectors} from '../../../reducers';
-import { getMappingsEditorId } from '../../../utils/editor';
-import { MAPPING_DATA_TYPES } from '../../../utils/mapping';
-import useFormContext from '../../Form/FormContext';
-import { useSelectorMemo } from '../../../hooks';
-import { isFileAdaptor, isAS2Resource } from '../../../utils/resource';
+import Mapper2ExtractsTypeableSelect from '../../../AFE/Editor/panels/Mappings/Mapper2/Source/Mapper2ExtractsTypeableSelect';
+import {selectors} from '../../../../reducers';
+import { getMappingsEditorId } from '../../../../utils/editor';
+import { MAPPING_DATA_TYPES } from '../../../../utils/mapping';
+import useFormContext from '../../../Form/FormContext';
+import { useSelectorMemo } from '../../../../hooks';
+import { isFileAdaptor, isAS2Resource } from '../../../../utils/resource';
 
 const useStyles = makeStyles(theme => ({
   fieldWrapper: {

@@ -3652,7 +3652,7 @@ describe('mapping utils', () => {
             generate: 'lname',
             dataType: MAPPING_DATA_TYPES.OBJECTARRAY,
             copySource: 'yes',
-            combinedExtract: '$.siblings[*]',
+            extractsArrayHelper: [{extract: '$.siblings[*]'}],
           },
         ],
         result: {isSuccess: true},
