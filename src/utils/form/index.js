@@ -3,7 +3,12 @@
 /* eslint-disable no-prototype-builtins */
 /* eslint-disable no-param-reassign */
 import set from 'lodash/set';
-import _ from 'lodash';
+import {
+  isString,
+  isArray,
+  isNumber,
+
+} from 'lodash';
 import moment from 'moment';
 
 import {
@@ -109,19 +114,19 @@ function doesNotContain(opArguments) {
 }
 
 function replace(opArguments) {
-  if (!opArguments || !_.isArray(opArguments) || opArguments.length === 0 || opArguments[0] === null || opArguments[0] === undefined) return null;
+  if (!opArguments || !isArray(opArguments) || opArguments.length === 0 || opArguments[0] === null || opArguments[0] === undefined) return null;
 
   return opArguments[0].replace(opArguments[1], opArguments[2]);
 }
 
 function upperCase(opArguments) {
-  if (!opArguments || !_.isArray(opArguments) || opArguments.length === 0 || opArguments[0] === null || opArguments[0] === undefined) return null;
+  if (!opArguments || !isArray(opArguments) || opArguments.length === 0 || opArguments[0] === null || opArguments[0] === undefined) return null;
 
   return opArguments[0].toUpperCase();
 }
 
 function lowerCase(opArguments) {
-  if (!opArguments || !_.isArray(opArguments) || opArguments.length === 0 || opArguments[0] === null || opArguments[0] === undefined) return null;
+  if (!opArguments || !isArray(opArguments) || opArguments.length === 0 || opArguments[0] === null || opArguments[0] === undefined) return null;
 
   return opArguments[0].toLowerCase();
 }
@@ -234,7 +239,7 @@ function getValue(obj, path) {
 function getField(fieldId, recordData) {
   let correctedFieldId = fieldId;
 
-  if (_.isArray(recordData) && !GET_FIELD_REGEX.test(correctedFieldId)) {
+  if (isArray(recordData) && !GET_FIELD_REGEX.test(correctedFieldId)) {
     correctedFieldId = `[0].${correctedFieldId}`;
   }
 
@@ -250,15 +255,15 @@ function getFromSettings(fieldId, recordData, contextData, settings) {
 }
 
 function toString(opArguments) {
-  if (!opArguments || !_.isArray(opArguments) || opArguments.length === 0 || opArguments[0] === null || opArguments[0] === undefined) return null;
+  if (!opArguments || !isArray(opArguments) || opArguments.length === 0 || opArguments[0] === null || opArguments[0] === undefined) return null;
 
   return opArguments[0].toString();
 }
 
 function toBoolean(opArguments) {
-  if (!opArguments || !_.isArray(opArguments) || opArguments.length === 0 || opArguments[0] === null || opArguments[0] === undefined) return null;
+  if (!opArguments || !isArray(opArguments) || opArguments.length === 0 || opArguments[0] === null || opArguments[0] === undefined) return null;
   if (!opArguments[0]) return null;
-  if (_.isString(opArguments[0])) {
+  if (isString(opArguments[0])) {
     if (opArguments[0] === 'true') return true;
     if (opArguments[0] === 'false') return false;
   }
@@ -267,7 +272,7 @@ function toBoolean(opArguments) {
 }
 
 function toNumber(opArguments) {
-  if (!opArguments || !_.isArray(opArguments) || opArguments.length === 0 || opArguments[0] === null || opArguments[0] === undefined) return null;
+  if (!opArguments || !isArray(opArguments) || opArguments.length === 0 || opArguments[0] === null || opArguments[0] === undefined) return null;
   let strValue = opArguments[0].toString();
 
   strValue = strValue.replace(/[^-\d.]/g, '');
@@ -278,7 +283,7 @@ function toNumber(opArguments) {
 }
 
 function toAbsoluteNumber(opArguments) {
-  if (!opArguments || !_.isArray(opArguments) || opArguments.length === 0 || opArguments[0] === null || opArguments[0] === undefined) return null;
+  if (!opArguments || !isArray(opArguments) || opArguments.length === 0 || opArguments[0] === null || opArguments[0] === undefined) return null;
   let strValue = opArguments[0].toString();
 
   strValue = strValue.replace(/[^\d.]/g, '');
@@ -295,13 +300,13 @@ function toAbsoluteNumber(opArguments) {
  * @returns number
  */
 function toEpochTime(opArguments) {
-  if (!opArguments || !_.isArray(opArguments) || opArguments.length === 0 || opArguments[0] === null || opArguments[0] === undefined) return null;
+  if (!opArguments || !isArray(opArguments) || opArguments.length === 0 || opArguments[0] === null || opArguments[0] === undefined) return null;
   if (opArguments[0] instanceof Date) {
     return opArguments[0].getTime();
   }
   const dateInput = opArguments[0];
 
-  if (!_.isNumber(dateInput) && !_.isString(dateInput)) {
+  if (!isNumber(dateInput) && !isString(dateInput)) {
     throw Error('Invalid date. Date should be either string or number.');
   }
   const mmt = moment(dateInput);
@@ -689,7 +694,7 @@ export const fieldOperationsHashMap = {
 };
 
 function isSubTree(leaf) {
-  return _.isArray(leaf) && leaf.length;
+  return isArray(leaf) && leaf.length;
 }
 
 function getOperandFromTree(operand, recordData, contextData, settings) {

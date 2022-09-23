@@ -231,7 +231,7 @@ export default function Mapper2({editorId}) {
       document.removeEventListener('wheel', handleWheelEvent);
       window.removeEventListener('mousemove', handleMouseMove, true);
     };
-  }, [dispatch, enqueueSnackbar, isAutoCreateSuccess]);
+  }, [dispatch, enqueueSnackbar, handleMouseMove, handleWheelEvent, isAutoCreateSuccess]);
 
   // Add virtualization dynamically based on nodes added by user
   useEffect(() => {
@@ -239,7 +239,7 @@ export default function Mapper2({editorId}) {
       document.removeEventListener('wheel', handleWheelEvent);
       window.removeEventListener('mousemove', handleMouseMove, true);
     }
-  }, [allNodes]);
+  }, [allNodes, handleMouseMove, handleWheelEvent]);
 
   // based on activekey we are tracking the cursor position when drawer is opened
   useEffect(() => {
@@ -298,7 +298,7 @@ export default function Mapper2({editorId}) {
       settingDrawerActive.current.wasActive = false;
     }
     currentScrollPosition.current = e.currentTarget.scrollTop;
-  }, []);
+  }, [handleMouseMove, handleWheelEvent]);
 
   return (
     <>
