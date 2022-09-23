@@ -1047,6 +1047,8 @@ export default {
     defaultValue: r => isNewId(r?._id) ? '' : (r?.http?.type || 'Amazon-MWS'),
     skipSort: true,
     resourceId: r => r?._id,
+    omitWhenHidden: true,
+
   },
   'http.unencrypted': {
     isLoggable: true,
