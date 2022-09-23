@@ -108,13 +108,6 @@ function doesNotContain(opArguments) {
   return !contains(opArguments);
 }
 
-// // Methods that return strings, numbers, etc
-// function runRegEx(opArguments) {
-//   const re = new RegExp(opArguments[1], 'ig');
-
-//   return re.exec(String(opArguments[0]));
-// }
-
 function replace(opArguments) {
   if (!opArguments || !_.isArray(opArguments) || opArguments.length === 0 || opArguments[0] === null || opArguments[0] === undefined) return null;
 
@@ -231,12 +224,6 @@ function getValue(obj, path) {
   let value = obj;
 
   for (let i = 0; i < segments.length; i++) {
-    // logger.info('segment: ' + segments[i])
-    // logger.info(value[segments[i]])
-    // if the last iteration resulted in no value, and yet the path
-    // indicates that there still should be another node in the object heirarchy, return.
-    // also, if we DO have an object, but no child object exists in the next path, return.
-    // otherwise set the value to the new node and iterate.
     if (!value || value[segments[i]] === undefined) return;
     value = value[segments[i]];
   }
@@ -788,8 +775,6 @@ export const evaluate = (filter, recordData, contextData, settings) => {
 export const evaluateConditionalRules = ({
   _conditionIds = [], conditions = [], fieldsById,
 }) => {
-  // convert fileds by if to record data
-  // Evalute condition to show or not
   const record = {...fieldsById};
 
   Object.keys(fieldsById).forEach(key => {
@@ -856,11 +841,6 @@ export const isRequired = (field, fieldsById) => {
 
 export const setValue = (field, fieldsById) => {
   const { _conditionIdValuesMap = [], conditions = [] } = field;
-  // return evaluateConditionalRules({
-  //   fieldsById,
-  //   conditions,
-  //   _conditionIds,
-  // });
 
   let value;
 
@@ -904,8 +884,6 @@ export const processFields = (
     const field = fieldsById[key];
     const { touched = false, forceComputation, _conditionIdValuesMap } = field;
 
-    // console.log('filed 904 ****', field);
-
     field.touched = getTouchedStateForField(touched, resetTouchedState);
 
     if (!isValueForceComputed(forceComputation, 'visible')) { field.visible = isVisible(field, fieldsById); }
@@ -916,8 +894,6 @@ export const processFields = (
     if (_conditionIdValuesMap?.length && !isValueForceComputed(forceComputation, 'value')) {
       field.value = setValue(field, fieldsById);
     }
-
-    // Here i need to do changes
   });
 };
 
