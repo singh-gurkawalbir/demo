@@ -1567,6 +1567,7 @@ const mapping = {
     toggleAutoCreateFlag: () => action(actionTypes.MAPPING.V2.TOGGLE_AUTO_CREATE_FLAG, {}),
     updateHighlightedIndex: index => action(actionTypes.MAPPING.V2.UPDATE_HIGHLIGHTED_INDEX, {index}),
     searchTree: ({ searchKey, showKey }) => action(actionTypes.MAPPING.V2.SEARCH_TREE, { searchKey, showKey }),
+    updateFilter: filter => action(actionTypes.MAPPING.V2.UPDATE_FILTER, { filter }),
     deleteNewRowKey: () => action(actionTypes.MAPPING.V2.DELETE_NEW_ROW_KEY, {}),
   },
 };

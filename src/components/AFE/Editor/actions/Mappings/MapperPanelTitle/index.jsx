@@ -15,6 +15,7 @@ import Spinner from '../../../../../Spinner';
 import OutputFormatsList from './OutputFormatsList';
 import MoreActions from './MoreActions';
 import SearchIcon from '../../../../../icons/SearchIcon';
+import Mapper2Filter from '../../../panels/Mappings/Mapper2/Mapper2Filter';
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
@@ -38,6 +39,8 @@ const useStyles = makeStyles(theme => ({
     fontSize: 14,
   },
 }));
+
+const filterOptions = [{_id: 'all', name: 'All fields'}, {_id: 'required', name: 'Required fields'}, {_id: 'mapped', name: 'Mapped fields'}];
 
 export default function MapperPanelTitle({editorId, title, helpKey}) {
   const classes = useStyles();
@@ -136,9 +139,11 @@ export default function MapperPanelTitle({editorId, title, helpKey}) {
           </IconButton>
         </Tooltip>
 
+        <CeligoDivider position="right" />
+        <Mapper2Filter options={filterOptions} />
+
         {searchKey === undefined && (
         <>
-          <CeligoDivider position="right" />
           <IconButton
             size="small"
             date-test="showSearch"

@@ -84,7 +84,7 @@ import {
 } from '../utils/exportPanel';
 import getRoutePath from '../utils/routePaths';
 import { getIntegrationAppUrlName, getTitleFromEdition, getTitleIdFromSection, isIntegrationAppVersion2 } from '../utils/integrationApps';
-import mappingUtil from '../utils/mapping';
+import mappingUtil, { applyRequiredFilter, applyMappedFilter } from '../utils/mapping';
 import responseMappingUtil from '../utils/responseMapping';
 import { suiteScriptResourceKey, isJavaFlow } from '../utils/suiteScript';
 import { stringCompare, comparer } from '../utils/sort';
@@ -7248,4 +7248,21 @@ selectors.mkFlowResourcesRetryStatus = () => {
       return finalResourcesRetryStatus;
     }
   );
+};
+
+selectors.filteredV2TreeData = state => {
+  let filteredTreeData = selectors.v2MappingsTreeData(state);
+  const filterBy = selectors.mapper2Filter(state);
+  const lookups = selectors.lookups(state);
+
+  if (filterBy?.includes('required') && filterBy?.includes('mapped')) {
+    // ToDo: try replacing cloneDeep with something else
+    filteredTreeData = applyMappedFilter(cloneDeep(filteredTreeData), lookups, true);
+  } else if (filterBy?.includes('required')) {
+    filteredTreeData = applyRequiredFilter(cloneDeep(filteredTreeData));
+  } else if (filterBy?.includes('mapped')) {
+    filteredTreeData = applyMappedFilter(cloneDeep(filteredTreeData), lookups);
+  }
+
+  return filteredTreeData;
 };

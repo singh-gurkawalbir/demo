@@ -2,6 +2,7 @@ import React, { useCallback } from 'react';
 import { Tooltip } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
+import isEmpty from 'lodash/isEmpty';
 import { useSelector, shallowEqual, useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import ActionButton from '../../../../../ActionButton';
@@ -137,7 +138,9 @@ const Mapper2Row = React.memo(props => {
     };
   }, shallowEqual);
   const editorLayout = useSelector(state => selectors.editorLayout(state, getMappingsEditorId(importId)));
+  const mapper2Filter = useSelector(selectors.mapper2Filter);
 
+  const isFilterApplied = !isEmpty(mapper2Filter) && !mapper2Filter?.includes('all');
   const hasChildren = !!children?.length;
 
   const handleDeleteClick = useCallback(() => {
@@ -215,7 +218,7 @@ const Mapper2Row = React.memo(props => {
           id={`fieldMappingGenerate-${nodeKey}`}
           nodeKey={nodeKey}
           value={generate}
-          disabled={generateDisabled || isRequired || disabled}
+          disabled={isFilterApplied || generateDisabled || isRequired || disabled}
           dataType={dataType}
           onBlur={handleGenerateBlur}
           isRequired={isRequired}
@@ -229,7 +232,7 @@ const Mapper2Row = React.memo(props => {
             id={`fieldMappingExtract-${nodeKey}`}
             nodeKey={nodeKey}
             value={extractValue}
-            disabled={(isLookup && !isStaticLookup) || disabled}
+            disabled={isFilterApplied || (isLookup && !isStaticLookup) || disabled}
             dataType={dataType}
             onBlur={handleExtractBlur}
             isDynamicLookup={isLookup && !isStaticLookup}
@@ -252,7 +255,7 @@ const Mapper2Row = React.memo(props => {
           <div>
             <ActionButton
               data-test={`fieldMappingSettings-${nodeKey}`}
-              disabled={disabled || !generate}
+              disabled={isFilterApplied || disabled || !generate}
               aria-label="settings"
               onClick={handleSettingsClick}
               key="settings"
@@ -267,7 +270,7 @@ const Mapper2Row = React.memo(props => {
           aria-label="add"
           onClick={addNewRowHandler}
           key="add_button"
-          disabled={generateDisabled || disabled}
+          disabled={isFilterApplied || generateDisabled || disabled}
           className={classes.rowActionButton}>
           <AddIcon />
         </ActionButton>
@@ -280,7 +283,7 @@ const Mapper2Row = React.memo(props => {
             <ActionButton
               data-test={`fieldMappingRemove-${nodeKey}`}
               aria-label="delete"
-              disabled={isEmptyRow || generateDisabled || isRequired || disabled}
+              disabled={isFilterApplied || isEmptyRow || generateDisabled || isRequired || disabled}
               onClick={handleDeleteClick}
               key="delete_button"
               className={classes.deleteMapping}>
