@@ -267,8 +267,8 @@ export default {
           helpKey: 'mapping.v2.sourceDataType',
           noApi: true,
           visibleWhenAll: [
-            { field: 'dataType', isNot: ['objectarray', 'stringarray', 'numberarray', 'booleanarray'] },
-            { field: 'copySource', is: ['yes'] },
+            { field: 'dataType', isNot: ['object', 'objectarray', 'stringarray', 'numberarray', 'booleanarray'] },
+            { field: 'fieldMappingType', isNot: ['hardCoded', 'multifield'] },
           ],
           options: [
             {
