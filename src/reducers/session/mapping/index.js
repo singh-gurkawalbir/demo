@@ -23,7 +23,8 @@ import {
   filterNode,
   updateChildrenJSONPath,
   getCombinedExtract,
-  buildExtractsHelperFromExtract} from '../../../utils/mapping';
+  buildExtractsHelperFromExtract,
+  getSelectedExtractDataTypes} from '../../../utils/mapping';
 import { generateUniqueKey } from '../../../utils/string';
 
 export const expandRow = (draft, key) => {
@@ -77,6 +78,23 @@ export const updateChildrenProps = (children, parentNode, dataType) => {
     return acc;
   }, []);
 };
+
+// TODO will remove this function and add logic directly
+/* eslint-disable no-param-reassign */
+export const updateSourceDataType = (node, oldSourceDataType, newDataType) => {
+  if (!node) return node;
+
+  if (oldSourceDataType === newDataType) return node;
+  if (node.extractsArrayHelper && node.extractsArrayHelper.length) {
+    if (node.extractsArrayHelper[0].sourceDataType === newDataType) return node;
+    node.extractsArrayHelper[0].sourceDataType = newDataType;
+  } else {
+    node.sourceDataType = newDataType;
+  }
+
+  return node;
+};
+/* eslint-enable no-param-reassign */
 
 // updates specific to data type change
 export const updateDataType = (draft, node, oldDataType, newDataType) => {
@@ -245,6 +263,7 @@ export default (state = {}, action) => {
     requiredMappings,
     extractsTree,
     v2Key,
+    isSource,
     newDataType,
     isMonitorLevelAccess,
     dragDropInfo,
@@ -671,6 +690,7 @@ export default (state = {}, action) => {
             parentKey: node.parentKey,
             parentExtract: node.parentExtract,
             dataType: MAPPING_DATA_TYPES.STRING,
+            sourceDataType: MAPPING_DATA_TYPES.STRING,
           });
           // adding the newKey to state so that new row can be focused
           draft.mapping.newRowKey = newRowKey;
@@ -685,10 +705,12 @@ export default (state = {}, action) => {
         const {node, nodeIndexInSubArray, nodeSubArray} = findNodeInTree(draft.mapping.v2TreeData, 'key', v2Key);
 
         if (isEmpty(node)) break;
-
-        nodeSubArray[nodeIndexInSubArray] = updateDataType(draft, node, node.dataType, newDataType);
+        if (isSource) {
+          nodeSubArray[nodeIndexInSubArray] = updateSourceDataType(node, node.sourceDataType, newDataType);
+        } else {
+          nodeSubArray[nodeIndexInSubArray] = updateDataType(draft, node, node.dataType, newDataType);
+        }
         delete nodeSubArray[nodeIndexInSubArray].isEmptyRow;
-
         break;
       }
 
@@ -837,7 +859,7 @@ export default (state = {}, action) => {
                   }];
                 } else if (node.dataType === MAPPING_DATA_TYPES.OBJECTARRAY) {
                   // handle tab view
-                  nodeSubArray[nodeIndexInSubArray] = rebuildObjectArrayNode(node, value);
+                  nodeSubArray[nodeIndexInSubArray] = rebuildObjectArrayNode(node, value, undefined, draft.mapping.extractsTree);
                 }
 
                 // array data types do not have direct 'extract' prop
@@ -846,11 +868,12 @@ export default (state = {}, action) => {
                   delete nodeSubArray[nodeIndexInSubArray].hardCodedValue;
                   // object array is already handled in rebuildObjectArrayNode
                   if (node.dataType !== MAPPING_DATA_TYPES.OBJECTARRAY) {
-                    nodeSubArray[nodeIndexInSubArray].extractsArrayHelper = buildExtractsHelperFromExtract(nodeSubArray[nodeIndexInSubArray].extractsArrayHelper, value);
+                    nodeSubArray[nodeIndexInSubArray].extractsArrayHelper = buildExtractsHelperFromExtract(nodeSubArray[nodeIndexInSubArray].extractsArrayHelper, value, undefined, undefined, draft.mapping.extractsTree);
                   }
                 }
               } else if (node.dataType !== MAPPING_DATA_TYPES.OBJECT || node.copySource === 'yes') {
                 node.extract = value;
+                node.sourceDataType = draft.mapping.extractsTree && draft.mapping.extractsTree[0] ? getSelectedExtractDataTypes(draft.mapping.extractsTree[0], value.replace(/(\$\.)|(\$\[\*\]\.)/g, ''))[0] || 'string' : 'string';
               }
             }
           } else if (node.isRequired) {

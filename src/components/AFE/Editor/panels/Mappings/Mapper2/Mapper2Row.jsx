@@ -19,7 +19,7 @@ import Mapper2Generates from './Destination/Mapper2Generates';
 import actions from '../../../../../../actions';
 import useConfirmDialog from '../../../../../ConfirmDialog';
 import { buildDrawerUrl, drawerPaths } from '../../../../../../utils/rightDrawer';
-import { MAPPING_DATA_TYPES, isMapper2HandlebarExpression, getCombinedExtract } from '../../../../../../utils/mapping';
+import { MAPPING_DATA_TYPES, isMapper2HandlebarExpression, getCombinedExtract, getExtractDataType } from '../../../../../../utils/mapping';
 import messageStore from '../../../../../../utils/messageStore';
 import TabRow from './TabbedRow';
 import { getMappingsEditorId } from '../../../../../../utils/editor';
@@ -39,6 +39,7 @@ const useStyles = makeStyles(theme => ({
     '&:nth-of-type(2)': {
       '&>div': {
         border: 'none',
+        flexDirection: 'row',
       },
       flex: 1,
       '& .MuiFilledInput-multiline': {
@@ -123,6 +124,7 @@ const Mapper2Row = React.memo(props => {
     isEmptyRow,
     hidden,
     children,
+    sourceDataType,
   } = props;
   const classes = useStyles();
   const history = useHistory();
@@ -192,6 +194,14 @@ const Mapper2Row = React.memo(props => {
   }, [dispatch, history, nodeKey, generate]);
 
   const extractValue = getCombinedExtract(extractsArrayHelper).join(',') || extract || (hardCodedValue ? `"${hardCodedValue}"` : undefined);
+  // check if the extract array helper has any node
+  // and fetch the data types for the same
+  const extractDataTypes = getExtractDataType(extractsArrayHelper);
+
+  // extractDataTypes will be the one which will be passed down hence add source datatype if available
+  if (sourceDataType && extractDataTypes.length === 0) {
+    extractDataTypes.push(sourceDataType);
+  }
   const isLookup = !!lookupName;
   const isStaticLookup = !!(lookup.name && lookup.map);
   const isHardCodedValue = hardCodedValue !== undefined;
@@ -234,6 +244,7 @@ const Mapper2Row = React.memo(props => {
             value={extractValue}
             disabled={isFilterApplied || (isLookup && !isStaticLookup) || disabled}
             dataType={dataType}
+            sourceDataType={extractDataTypes}
             onBlur={handleExtractBlur}
             isDynamicLookup={isLookup && !isStaticLookup}
             isHardCodedValue={isHardCodedValue}

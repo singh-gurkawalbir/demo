@@ -266,8 +266,9 @@ export default {
           defaultValue: node.sourceDataType || 'string',
           helpKey: 'mapping.v2.sourceDataType',
           noApi: true,
-          visibleWhen: [
+          visibleWhenAll: [
             { field: 'dataType', isNot: ['object', 'objectarray', 'stringarray', 'numberarray', 'booleanarray'] },
+            { field: 'fieldMappingType', isNot: ['hardCoded', 'multifield'] },
           ],
           options: [
             {

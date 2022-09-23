@@ -1855,6 +1855,8 @@ describe('mapping reducer', () => {
               key: 'new_key',
               title: '',
               parentKey: 'key2',
+              parentExtract: undefined,
+              sourceDataType: 'string',
               dataType: MAPPING_DATA_TYPES.STRING,
             },
             {
@@ -2894,6 +2896,7 @@ describe('mapping reducer', () => {
             dataType: MAPPING_DATA_TYPES.STRING,
             generate: 'fname',
             extract: '$.fname',
+            sourceDataType: 'string',
           }],
         },
       };
@@ -2921,10 +2924,11 @@ describe('mapping reducer', () => {
           flowId: 'flow-123',
           version: 2,
           v2TreeData: [{
+            activeTab: undefined,
             key: 'key1',
             dataType: MAPPING_DATA_TYPES.OBJECTARRAY,
             generate: 'fname',
-            extractsArrayHelper: [{extract: '$.siblings[*]', copySource: 'yes'}],
+            extractsArrayHelper: [{extract: '$.siblings[*]', copySource: 'yes', sourceDataType: 'string'}],
             children: [],
           }],
         },
@@ -3021,7 +3025,7 @@ describe('mapping reducer', () => {
             key: 'key1',
             dataType: MAPPING_DATA_TYPES.OBJECTARRAY,
             generate: 'fname',
-            extractsArrayHelper: [{extract: '$.fname[*]'}, {extract: '$.lname[*]'}],
+            extractsArrayHelper: [{extract: '$.fname[*]'}, {extract: '$.lname[*]', sourceDataType: 'string'}],
             activeTab: 0,
             children: [
               {
@@ -3043,6 +3047,7 @@ describe('mapping reducer', () => {
                 title: '',
                 parentKey: 'key1',
                 generate: 'child1',
+                jsonPath: undefined,
                 parentExtract: '$.lname[*]',
                 dataType: MAPPING_DATA_TYPES.STRING,
                 hidden: true,
@@ -5037,7 +5042,7 @@ describe('mapping utils', () => {
       const newNode = {
         key: 'key1',
         generate: 'fname',
-        extractsArrayHelper: [{extract: '$.fname'}],
+        extractsArrayHelper: [{extract: '$.fname', sourceDataType: 'string'}],
         dataType: MAPPING_DATA_TYPES.OBJECTARRAY,
         children: [{
           key: 'new_key',
@@ -5063,7 +5068,7 @@ describe('mapping utils', () => {
       const newNode = {
         key: 'key1',
         generate: 'fname',
-        extractsArrayHelper: [{extract: '$.fname'}],
+        extractsArrayHelper: [{extract: '$.fname', sourceDataType: 'string'}],
         dataType: MAPPING_DATA_TYPES.OBJECTARRAY,
         children: [{
           key: 'new_key',
