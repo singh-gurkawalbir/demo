@@ -2382,6 +2382,76 @@ export const updateChildrenJSONPath = parentNode => {
   return parentNode;
 };
 
+export const applyRequiredFilter = nodes => {
+  if (isEmpty(nodes)) return nodes;
+
+  return nodes.filter(node => {
+    if (node.isTabNode) return true;
+
+    if (node.isRequired) {
+      // if the required node contains children, do recursive call to filter all its required children
+      // eslint-disable-next-line no-param-reassign
+      if (!isEmpty(node.children)) node.children = applyRequiredFilter(node.children);
+
+      return true;
+    }
+
+    return false;
+  });
+};
+
+export const applyMappedFilter = (v2TreeData, lookups, isReqApplied = false) => {
+  if (isEmpty(v2TreeData)) return v2TreeData;
+
+  return v2TreeData.filter(mapping => {
+    const {
+      dataType,
+      extract,
+      extractsArrayHelper = [],
+      isTabNode,
+      isRequired,
+    } = mapping;
+
+    if (isTabNode) return true;
+
+    const canAddToTree = !isMappingWithoutExtract(mapping, lookups) || (isReqApplied && isRequired);
+
+    // Any data type except object and object arrays
+    if (![MAPPING_DATA_TYPES.OBJECTARRAY, MAPPING_DATA_TYPES.OBJECT].includes(dataType)) return canAddToTree;
+    if (dataType === MAPPING_DATA_TYPES.OBJECT) {
+      // if extract exists, then generate is copied from source as is
+      if (extract) return canAddToTree;
+      // if extract is empty and children exists, then make a recursive call to check the children
+      if (mapping.children?.length) {
+        // eslint-disable-next-line no-param-reassign
+        mapping.children = applyMappedFilter(mapping.children, lookups, isReqApplied);
+
+        // if all children are filtered out, then remove the parent as well
+        return !!mapping.children?.length;
+      }
+    } else if (dataType === MAPPING_DATA_TYPES.OBJECTARRAY) {
+      // if no extracts but has children, then make a recursive call to check the children
+      if (!extractsArrayHelper.length && mapping.children?.length) {
+        // eslint-disable-next-line no-param-reassign
+        mapping.children = applyMappedFilter(mapping.children, lookups, isReqApplied);
+
+        // if all children are filtered out, then remove the parent as well
+        return !!mapping.children?.length;
+      }
+      // ToDo: iteration and set tab wise
+      if (mapping.children?.length) {
+        // eslint-disable-next-line no-param-reassign
+        mapping.children = applyMappedFilter(mapping.children, lookups, isReqApplied);
+
+        // if all children are filtered out, then remove the parent as well
+        return !!mapping.children?.length;
+      }
+    }
+
+    return false;
+  });
+};
+
 // #endregion
 
 export default {

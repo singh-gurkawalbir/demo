@@ -241,6 +241,7 @@ export default (state = {}, action) => {
     outputFormat,
     newVersion,
     v2TreeData,
+    filter,
     requiredMappings,
     extractsTree,
     v2Key,
@@ -1017,6 +1018,7 @@ export default (state = {}, action) => {
             }];
           }
         }
+        delete draft.mapping.filter;
 
         break;
 
@@ -1035,6 +1037,7 @@ export default (state = {}, action) => {
         }
 
         draft.mapping.autoCreated = true;
+        delete draft.mapping.filter;
         break;
 
       case actionTypes.MAPPING.V2.TOGGLE_AUTO_CREATE_FLAG:
@@ -1101,6 +1104,17 @@ export default (state = {}, action) => {
           draft.mapping.filteredKeys = [];
           delete draft.mapping.searchKey;
         }
+        break;
+      }
+
+      case actionTypes.MAPPING.V2.UPDATE_FILTER: {
+        if (!draft.mapping) break;
+        if (filter?.length) {
+          draft.mapping.filter = filter;
+        } else {
+          draft.mapping.filter = [];
+        }
+
         break;
       }
 
@@ -1181,6 +1195,8 @@ selectors.newRowKey = state => {
 
   return state.mapping.newRowKey;
 };
+
+selectors.mapper2Filter = state => state?.mapping?.filter || emptyArr;
 
 selectors.mappingChanged = state => {
   if (!state || !state.mapping) {
