@@ -497,6 +497,60 @@ export const MAPPING_DATA_TYPES = Object.freeze({
   OBJECTARRAY: 'objectarray',
   OBJECT: 'object',
 });
+const WRONG_SOURCE_DATA_TYPES_LIST = {
+  [MAPPING_DATA_TYPES.NUMBER]: new Set([
+    MAPPING_DATA_TYPES.BOOLEAN,
+    MAPPING_DATA_TYPES.BOOLEANARRAY,
+    MAPPING_DATA_TYPES.NUMBERARRAY,
+    MAPPING_DATA_TYPES.STRINGARRAY,
+    MAPPING_DATA_TYPES.OBJECT,
+    MAPPING_DATA_TYPES.OBJECTARRAY,
+  ]),
+  [MAPPING_DATA_TYPES.BOOLEAN]: new Set([
+    MAPPING_DATA_TYPES.BOOLEANARRAY,
+    MAPPING_DATA_TYPES.NUMBERARRAY,
+    MAPPING_DATA_TYPES.STRINGARRAY,
+    MAPPING_DATA_TYPES.OBJECT,
+    MAPPING_DATA_TYPES.OBJECTARRAY,
+  ]),
+  [MAPPING_DATA_TYPES.NUMBERARRAY]: new Set([
+    MAPPING_DATA_TYPES.BOOLEAN,
+    MAPPING_DATA_TYPES.BOOLEANARRAY,
+    MAPPING_DATA_TYPES.OBJECT,
+    MAPPING_DATA_TYPES.OBJECTARRAY,
+  ]),
+  [MAPPING_DATA_TYPES.BOOLEANARRAY]: new Set([
+    MAPPING_DATA_TYPES.OBJECT,
+    MAPPING_DATA_TYPES.OBJECTARRAY,
+  ]),
+  [MAPPING_DATA_TYPES.OBJECT]: new Set([
+    MAPPING_DATA_TYPES.STRING,
+    MAPPING_DATA_TYPES.NUMBER,
+    MAPPING_DATA_TYPES.BOOLEAN,
+    MAPPING_DATA_TYPES.STRINGARRAY,
+    MAPPING_DATA_TYPES.BOOLEANARRAY,
+    MAPPING_DATA_TYPES.NUMBERARRAY,
+    MAPPING_DATA_TYPES.OBJECTARRAY,
+  ]),
+  [MAPPING_DATA_TYPES.OBJECTARRAY]: new Set([
+    MAPPING_DATA_TYPES.STRING,
+    MAPPING_DATA_TYPES.NUMBER,
+    MAPPING_DATA_TYPES.BOOLEAN,
+    MAPPING_DATA_TYPES.STRINGARRAY,
+    MAPPING_DATA_TYPES.BOOLEANARRAY,
+    MAPPING_DATA_TYPES.NUMBERARRAY,
+  ]),
+};
+const DATA_TYPES_REPRESENTATION_LIST = {
+  [MAPPING_DATA_TYPES.STRING]: 'string',
+  [MAPPING_DATA_TYPES.NUMBER]: 'number',
+  [MAPPING_DATA_TYPES.BOOLEAN]: 'boolean',
+  [MAPPING_DATA_TYPES.OBJECT]: 'object',
+  [MAPPING_DATA_TYPES.STRINGARRAY]: '[string]',
+  [MAPPING_DATA_TYPES.NUMBERARRAY]: '[number]',
+  [MAPPING_DATA_TYPES.BOOLEANARRAY]: '[boolean]',
+  [MAPPING_DATA_TYPES.OBJECTARRAY]: '[object]',
+};
 export const DATA_TYPES_DROPDOWN_OPTIONS =
   [
     {
@@ -2038,6 +2092,59 @@ export const compareV2Mappings = (tree1 = [], tree2 = []) => {
   return isV2MappingsChanged;
 };
 
+const validateSourceDataType = mapping => {
+  const {
+    jsonPath = '',
+    dataType,
+    sourceDataType = MAPPING_DATA_TYPES.STRING,
+    extractsArrayHelper = [],
+    extract,
+  } = mapping;
+  const errorArr = [];
+  const incorrectSourceDataTypes = WRONG_SOURCE_DATA_TYPES_LIST[dataType];
+
+  switch (dataType) {
+    case MAPPING_DATA_TYPES.NUMBER:
+    case MAPPING_DATA_TYPES.BOOLEAN:
+      if (incorrectSourceDataTypes.has(sourceDataType)) {
+        errorArr.push({
+          jsonPath,
+          dataType: DATA_TYPES_REPRESENTATION_LIST[dataType],
+          sourceDataType: DATA_TYPES_REPRESENTATION_LIST[sourceDataType],
+        });
+      }
+      break;
+    case MAPPING_DATA_TYPES.NUMBERARRAY:
+    case MAPPING_DATA_TYPES.BOOLEANARRAY:
+    case MAPPING_DATA_TYPES.OBJECTARRAY:
+      extractsArrayHelper.forEach(({
+        sourceDataType = MAPPING_DATA_TYPES.STRING,
+      }) => {
+        if (incorrectSourceDataTypes.has(sourceDataType)) {
+          errorArr.push({
+            jsonPath,
+            dataType: DATA_TYPES_REPRESENTATION_LIST[dataType],
+            sourceDataType: DATA_TYPES_REPRESENTATION_LIST[sourceDataType],
+          });
+        }
+      });
+      break;
+    case MAPPING_DATA_TYPES.OBJECT:
+      if (extract && incorrectSourceDataTypes.has(sourceDataType)) {
+        errorArr.push({
+          jsonPath,
+          dataType: DATA_TYPES_REPRESENTATION_LIST[dataType],
+          sourceDataType: DATA_TYPES_REPRESENTATION_LIST[sourceDataType],
+        });
+      }
+      break;
+    default:
+      break;
+  }
+
+  return errorArr;
+};
+
 const recursivelyValidateV2Mappings = ({
   v2TreeData,
   lookups,
@@ -2049,6 +2156,7 @@ const recursivelyValidateV2Mappings = ({
   expressionNotSupported = [],
   onlyJsonPathSupported = [],
   wrongHandlebarExp = [],
+  dataTypeValidationErrors = [],
 }) => {
   v2TreeData.forEach(mapping => {
     const {
@@ -2062,7 +2170,8 @@ const recursivelyValidateV2Mappings = ({
       generate,
       generateDisabled,
       jsonPath,
-      isTabNode} = mapping;
+      isTabNode,
+    } = mapping;
 
     if (isTabNode) return;
     const missingSource = isMappingWithoutExtract(mapping, lookups);
@@ -2124,6 +2233,18 @@ const recursivelyValidateV2Mappings = ({
       }
     }
 
+    // Validate when both destination and source are present
+    if (
+      !mapping.generateDisabled &&
+      dataType in WRONG_SOURCE_DATA_TYPES_LIST &&
+      generate &&
+      !missingSource
+    ) {
+      const errors = validateSourceDataType(mapping);
+
+      dataTypeValidationErrors.push(...errors);
+    }
+
     if (mapping.children?.length) {
       recursivelyValidateV2Mappings({
         v2TreeData: mapping.children,
@@ -2136,6 +2257,7 @@ const recursivelyValidateV2Mappings = ({
         expressionNotSupported,
         onlyJsonPathSupported,
         wrongHandlebarExp,
+        dataTypeValidationErrors,
       });
     }
   });
@@ -2148,6 +2270,7 @@ const validateV2Mappings = (v2TreeData, lookups, isGroupedSampleData) => {
   const expressionNotSupported = [];
   const onlyJsonPathSupported = [];
   const wrongHandlebarExp = [];
+  const dataTypeValidationErrors = [];
 
   recursivelyValidateV2Mappings({
     v2TreeData,
@@ -2159,6 +2282,7 @@ const validateV2Mappings = (v2TreeData, lookups, isGroupedSampleData) => {
     expressionNotSupported,
     onlyJsonPathSupported,
     wrongHandlebarExp,
+    dataTypeValidationErrors,
   });
 
   if (duplicateMappings.length) {
@@ -2204,6 +2328,15 @@ const validateV2Mappings = (v2TreeData, lookups, isGroupedSampleData) => {
     return {
       isSuccess: false,
       errMessage,
+    };
+  }
+
+  if (dataTypeValidationErrors.length) {
+    const errMessageList = dataTypeValidationErrors.map(item => errorMessageStore('MAPPER2_WRONG_SOURCE_DATA_TYPE', item));
+
+    return {
+      isSuccess: false,
+      errMessage: errMessageList.join('\n'),
     };
   }
 
