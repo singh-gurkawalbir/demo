@@ -620,9 +620,8 @@ export const buildExtractsHelperFromExtract = (existingExtractsArray, sourceFiel
 
 // for object array multiple extracts view,
 // mark non active tabs children as hidden
-export const hideOtherTabRows = (node, newTabExtract, hidden, canDeepClone = true) => {
-  // ToDo: to check and remove the deepClone
-  const clonedNode = canDeepClone ? deepClone(node) : node;
+export const hideOtherTabRows = (node, newTabExtract = '', hidden) => {
+  const clonedNode = deepClone(node);
 
   if (!clonedNode || !clonedNode.children?.length) return clonedNode;
 
