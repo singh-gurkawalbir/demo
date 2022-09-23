@@ -80,6 +80,7 @@ export default {
     const isComposite = !!((adaptorType === 'HTTPImport' && importResource?.http?.method && importResource.http.method.length > 1) || (adaptorType === 'RESTImport' && importResource?.rest?.method && importResource.rest.method.length > 1));
     const lookup = (lookupName && lookups.find(lookup => lookup.name === lookupName)) || emptyObject;
 
+    const formattedLookup = mappingUtil.getV2DefaultStaticMapValue(lookup.map);
     const conditionalWhenOptions = (isComposite && conditionalOptions) || [];
 
     const fieldMeta = {
@@ -120,7 +121,7 @@ export default {
           helpKey: 'mapping.v2.copyObject',
           fullWidth: true,
           defaultValue: copySource || 'no',
-          visibleWhenAll: [{ field: 'dataType', is: ['object'] }],
+          visibleWhen: [{ field: 'dataType', is: ['object'] }],
           noApi: true,
           options: [
             {
@@ -141,7 +142,7 @@ export default {
           noApi: true,
           skipSort: true,
           refreshOptionsOnChangesTo: ['dataType'],
-          visibleWhenAll: [
+          visibleWhen: [
             { field: 'dataType', isNot: ['object', 'objectarray'] },
           ],
         },
@@ -256,7 +257,6 @@ export default {
           resourceId,
         },
         sourceDataType: {
-          // todo Kiran: it should update automatically when value is selected from dropdown or hardcode/expression
           id: 'sourceDataType',
           name: 'sourceDataType',
           type: 'select',
@@ -266,8 +266,7 @@ export default {
           defaultValue: node.sourceDataType || 'string',
           helpKey: 'mapping.v2.sourceDataType',
           noApi: true,
-          // todo: Kiran: confirm data type visibility for object
-          visibleWhenAll: [
+          visibleWhen: [
             { field: 'dataType', isNot: ['object', 'objectarray', 'stringarray', 'numberarray', 'booleanarray'] },
           ],
           options: [
@@ -291,7 +290,7 @@ export default {
           type: 'mapper2tabbedextracts',
           defaultValue: node.extractsArrayHelper || [],
           nodeKey: key,
-          visibleWhenAll: [
+          visibleWhen: [
             { field: 'dataType', is: ['stringarray', 'numberarray', 'booleanarray', 'objectarray'] },
           ],
         },
@@ -546,13 +545,11 @@ export default {
               supportsRefresh: false,
             },
           ],
-          defaultValue:
-              lookup.map &&
-              Object.keys(lookup.map).map(key => ({
-                export: key,
-                import: lookup.map[key],
-              })),
-          map: lookup.map,
+          defaultValue: Object.keys(formattedLookup).map(key => ({
+            export: key,
+            import: formattedLookup[key],
+          })),
+          map: formattedLookup,
           visibleWhenAll: [
             { field: 'fieldMappingType', is: ['lookup'] },
             { field: 'lookup.mode', is: ['static'] },

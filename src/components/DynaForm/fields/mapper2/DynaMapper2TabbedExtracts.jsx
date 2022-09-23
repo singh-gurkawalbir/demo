@@ -1,12 +1,11 @@
-import React, { useState, useCallback, useMemo } from 'react';
+import React, { useState, useCallback, useMemo, useEffect } from 'react';
 import { makeStyles, Tabs, Tab, Divider } from '@material-ui/core';
 import isEmpty from 'lodash/isEmpty';
-import mappingUtil, {ARRAY_DATA_TYPES, getUniqueExtractId, findMatchingExtract} from '../../../../utils/mapping';
+import mappingUtil, {ARRAY_DATA_TYPES, getUniqueExtractId, findMatchingExtract, buildExtractsHelperFromExtract} from '../../../../utils/mapping';
 import useFormContext from '../../../Form/FormContext';
 import DynaForm from '../..';
 import useFormInitWithPermissions from '../../../../hooks/useFormInitWithPermissions';
 import {useUpdateParentForm} from '../DynaCsvGenerate_afe';
-import useSetSubFormShowValidations from '../../../../hooks/useSetSubFormShowValidations';
 
 const useStyles = makeStyles(theme => ({
   panelContainer: {
@@ -36,18 +35,19 @@ function generateTabsForSettings(sourceField) {
   return tabs;
 }
 
-function getSubFormMetadata(value, formKey, dataType) {
+function getSubFormMetadata(value, formKey, dataType, sourceField) {
+  const newValue = buildExtractsHelperFromExtract(value, sourceField);
+
   return {
     fieldMap: {
       sourceDataType: {
-        // todo Kiran: it should update automatically when value is selected from dropdown
         id: 'sourceDataType',
         name: 'sourceDataType',
         type: 'select',
         skipSort: true,
         skipDefault: true,
         label: 'Source data type',
-        defaultValue: findMatchingExtract(value, formKey).sourceDataType || 'string',
+        defaultValue: findMatchingExtract(newValue, formKey).sourceDataType || 'string',
         helpKey: 'mapping.v2.sourceDataType',
         noApi: true,
         options: [
@@ -70,7 +70,7 @@ function getSubFormMetadata(value, formKey, dataType) {
         name: 'standardAction',
         type: 'select',
         skipDefault: true,
-        defaultValue: mappingUtil.getV2DefaultActionValue(findMatchingExtract(value, formKey)) || 'discardIfEmpty',
+        defaultValue: mappingUtil.getV2DefaultActionValue(findMatchingExtract(newValue, formKey)) || 'discardIfEmpty',
         label: 'Action to take if source field has no value',
         helpKey: 'mapping.v2.standardAction',
         noApi: true,
@@ -101,7 +101,7 @@ function getSubFormMetadata(value, formKey, dataType) {
         ],
         helpKey: 'mapping.v2.default',
         noApi: true,
-        defaultValue: findMatchingExtract(value, formKey).default,
+        defaultValue: findMatchingExtract(newValue, formKey).default,
       },
       copySource: {
         id: 'copySource',
@@ -110,7 +110,7 @@ function getSubFormMetadata(value, formKey, dataType) {
         label: 'Copy an object array from the source as-is?',
         helpKey: 'mapping.v2.copyObjectArray',
         fullWidth: true,
-        defaultValue: findMatchingExtract(value, formKey).copySource || 'no',
+        defaultValue: findMatchingExtract(newValue, formKey).copySource || 'no',
         noApi: true,
         visible: dataType === 'objectarray',
         options: [
@@ -127,7 +127,7 @@ function getSubFormMetadata(value, formKey, dataType) {
         name: 'objectAction',
         type: 'select',
         skipDefault: true,
-        defaultValue: mappingUtil.getV2DefaultActionValue(findMatchingExtract(value, formKey)) || 'discardIfEmpty',
+        defaultValue: mappingUtil.getV2DefaultActionValue(findMatchingExtract(newValue, formKey)) || 'discardIfEmpty',
         refreshOptionsOnChangesTo: ['dataType'],
         label: 'Action to take if source field has no value',
         helpKey: 'mapping.v2.objectAction',
@@ -172,12 +172,10 @@ function getSubFormMetadata(value, formKey, dataType) {
 
 const SUB_FORM_KEY = 'extractsArrayKey';
 
-function constructExtractsArray(formKey, newOptions, currArray, dataType, sourceField) {
-  let toReturn = [];
-
+function constructExtractsArray(formKey, newOptions, existingExtractsArray, dataType, sourceField) {
   // no source selected
   if (formKey === SUB_FORM_KEY) {
-    return toReturn;
+    return [];
   }
 
   const newExtractObj = {
@@ -188,12 +186,9 @@ function constructExtractsArray(formKey, newOptions, currArray, dataType, source
   };
 
   if (dataType === 'objectarray' && newOptions.copySource === 'yes') {
-    switch (newOptions.objectAction) {
-      case 'useNull':
-        newExtractObj.default = null;
-        delete newExtractObj.conditional;
-        break;
-      default:
+    if (newOptions.objectAction === 'useNull') {
+      newExtractObj.default = null;
+      delete newExtractObj.conditional;
     }
   } else {
     switch (newOptions.standardAction) {
@@ -213,30 +208,10 @@ function constructExtractsArray(formKey, newOptions, currArray, dataType, source
     }
   }
 
-  let found = false;
-
-  // find existing source if present and replace with the new values
-  toReturn = currArray?.map(c => {
-    if (c.extract === formKey) {
-      found = true;
-
-      return newExtractObj;
-    }
-
-    return c;
-  }) || [];
-
-  // if source was not present before,add it to array
-  if (!found) {
-    const splitSources = sourceField?.split(',') || [];
-
-    toReturn.splice(splitSources.indexOf(formKey), 0, newExtractObj);
-  }
-
-  return toReturn;
+  return buildExtractsHelperFromExtract(existingExtractsArray, sourceField, formKey, newExtractObj);
 }
 
-function EachTabContainer({id, value, parentFormKey, formKey, dataType, isCurrentTab, onFieldChange, sourceField}) {
+function EachTabContainer({id, value, formKey, dataType, isCurrentTab, onFieldChange, sourceField}) {
   const handleFormChange = useCallback(
     (newOptions, isValid, touched) => {
       const extractsArrayHelper = constructExtractsArray(formKey, newOptions, value, dataType, sourceField);
@@ -245,10 +220,10 @@ function EachTabContainer({id, value, parentFormKey, formKey, dataType, isCurren
     }, [formKey, id, onFieldChange, value, dataType, sourceField]);
 
   useUpdateParentForm(formKey, handleFormChange);
-  useSetSubFormShowValidations(parentFormKey, formKey);
+  // useSetSubFormShowValidations(parentFormKey, formKey);
   const formKeyComponent = useFormInitWithPermissions({
     formKey,
-    fieldMeta: getSubFormMetadata(value, formKey, dataType),
+    fieldMeta: getSubFormMetadata(value, formKey, dataType, sourceField),
   });
 
   if (!isCurrentTab) return null;
@@ -268,6 +243,10 @@ export default function DynaMapper2TabbedExtracts(props) {
 
   const tabs = useMemo(() => generateTabsForSettings(sourceField), [sourceField]);
 
+  useEffect(() => {
+    setSelectedTab(0);
+  }, [tabs.length]);
+
   // for primitive arrays only standard mapping will have tabs
   if ((dataType !== 'objectarray' && ARRAY_DATA_TYPES.includes(dataType) && !isStandardMapping)) {
     return null;
@@ -280,7 +259,6 @@ export default function DynaMapper2TabbedExtracts(props) {
           <EachTabContainer
             {...props}
             formKey={tabs?.[0]?.id || SUB_FORM_KEY}
-            parentFormKey={parentFormKey}
             dataType={dataType}
             sourceField={sourceField}
             isCurrentTab
@@ -312,7 +290,6 @@ export default function DynaMapper2TabbedExtracts(props) {
                   key={id}
                   {...props}
                   formKey={id}
-                  parentFormKey={parentFormKey}
                   dataType={dataType}
                   sourceField={sourceField}
                   isCurrentTab={selectedTab === index}
