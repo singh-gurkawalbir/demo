@@ -2241,7 +2241,7 @@ const recursivelyValidateV2Mappings = ({
       !mapping.generateDisabled &&
       dataType in WRONG_SOURCE_DATA_TYPES_LIST &&
       generate &&
-      (extract || hardCodedValue || extractsArrayHelper)
+      !missingSource
     ) {
       const errors = validateSourceDataType(mapping);
 
