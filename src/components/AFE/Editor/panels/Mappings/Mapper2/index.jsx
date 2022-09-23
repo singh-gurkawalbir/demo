@@ -318,8 +318,7 @@ export default function Mapper2({editorId}) {
     currentScrollPosition.current = e.currentTarget.scrollTop;
   }, [handleMouseMove, handleWheelEvent]);
 
-  const isEmptyTree = isEmpty(treeData);
-  const isFilterApplied = !mapper2Filter.includes('all');
+  const isFilterApplied = !isEmpty(mapper2Filter) && !mapper2Filter.includes('all');
   let filterInfo = 'Filtered by mapped fields (clear filter to enable editing)';
 
   if (mapper2Filter.includes('required') && mapper2Filter.includes('mapped')) {
@@ -331,13 +330,20 @@ export default function Mapper2({editorId}) {
   return (
     <>
       {searchKey !== undefined && <SearchBar />}
-      {isFilterApplied && isEmptyTree && <Typography variant="body2" className={classes.emptyMessage}>You don&lsquo;t have any fields that match the filter you applied. <br /> Clear the filter by setting it to &quot;All fields&quot;.</Typography>}
-      {isFilterApplied && !isEmptyTree && (
+
+      {isFilterApplied && isEmpty(treeData) && (
+        <Typography variant="body2" className={classes.emptyMessage}>
+          You don&lsquo;t have any fields that match the filter you applied. <br /> Clear the filter by setting it to &quot;All fields&quot;.
+        </Typography>
+      )}
+
+      {isFilterApplied && !isEmpty(treeData) && (
         <Typography component="div" variant="caption" className={classes.infoFilter}>
           <InfoIcon />
           {filterInfo}
         </Typography>
       )}
+
       <div className={clsx(classes.mappingDrawerContent, {[classes.addSearchBar]: searchKey !== undefined})}>
         <Tree
           className={clsx(classes.treeRoot, {[classes.virtualTree]: allNodes > 50}, {[classes.virtualTreeCompactRow]: allNodes > 50 && editorLayout === 'compactRow'})}

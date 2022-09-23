@@ -140,7 +140,7 @@ const Mapper2Row = React.memo(props => {
   const editorLayout = useSelector(state => selectors.editorLayout(state, getMappingsEditorId(importId)));
   const mapper2Filter = useSelector(selectors.mapper2Filter);
 
-  const isFilterApplied = !isEmpty(mapper2Filter) && !mapper2Filter?.includes('all');
+  const isFilterApplied = !isEmpty(mapper2Filter) && !mapper2Filter.includes('all');
   const hasChildren = !!children?.length;
 
   const handleDeleteClick = useCallback(() => {

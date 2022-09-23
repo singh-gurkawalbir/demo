@@ -1018,7 +1018,7 @@ export default (state = {}, action) => {
             }];
           }
         }
-        draft.mapping.filter = ['all'];
+        delete draft.mapping.filter;
 
         break;
 
@@ -1037,7 +1037,7 @@ export default (state = {}, action) => {
         }
 
         draft.mapping.autoCreated = true;
-        draft.mapping.filter = ['all'];
+        delete draft.mapping.filter;
         break;
 
       case actionTypes.MAPPING.V2.TOGGLE_AUTO_CREATE_FLAG:
@@ -1108,6 +1108,7 @@ export default (state = {}, action) => {
       }
 
       case actionTypes.MAPPING.V2.UPDATE_FILTER: {
+        if (!draft.mapping) break;
         if (filter?.length) {
           draft.mapping.filter = filter;
         } else {

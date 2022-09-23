@@ -7252,18 +7252,16 @@ selectors.mkFlowResourcesRetryStatus = () => {
 
 selectors.filteredV2TreeData = state => {
   const v2TreeData = selectors.v2MappingsTreeData(state);
-  const mappings = selectors.mapping(state);
-  const filterBy = mappings.filter || [];
-  const lookups = mappings.lookups || [];
+  const { filter = [], lookups = [] } = selectors.mapping(state);
 
-  if (isEmpty(filterBy) || filterBy.includes('all')) return v2TreeData;
+  if (isEmpty(v2TreeData) || isEmpty(filter) || filter.includes('all')) return v2TreeData;
 
   // ToDo: try replacing cloneDeep with something else
   let filteredTreeData = cloneDeep(v2TreeData);
 
-  if (filterBy.includes('required') && filterBy.includes('mapped')) {
+  if (filter.includes('required') && filter.includes('mapped')) {
     filteredTreeData = applyMappedFilter(filteredTreeData, lookups, true);
-  } else if (filterBy.includes('required')) {
+  } else if (filter.includes('required')) {
     filteredTreeData = applyRequiredFilter(filteredTreeData);
   } else {
     filteredTreeData = applyMappedFilter(filteredTreeData, lookups);

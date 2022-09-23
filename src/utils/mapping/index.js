@@ -2294,20 +2294,22 @@ export const applyMappedFilter = (v2TreeData, lookups, isReqApplied = false) => 
       return !!mapping.children?.length;
     }
   } else if (dataType === MAPPING_DATA_TYPES.OBJECTARRAY) {
-    // if no extracts, then make a recursive call to check the children
-    if (!extractsArrayHelper.length) {
+    // if no extracts but has children, then make a recursive call to check the children
+    if (!extractsArrayHelper.length && mapping.children?.length) {
       // eslint-disable-next-line no-param-reassign
       mapping.children = applyMappedFilter(mapping.children, lookups, isReqApplied);
 
       // if all children are filtered out, then remove the parent as well
       return !!mapping.children?.length;
     }
-    // do iteration and set tab wise
-    // eslint-disable-next-line no-param-reassign
-    mapping.children = applyMappedFilter(mapping.children, lookups, isReqApplied);
+    // ToDo: iteration and set tab wise
+    if (mapping.children?.length) {
+      // eslint-disable-next-line no-param-reassign
+      mapping.children = applyMappedFilter(mapping.children, lookups, isReqApplied);
 
-    // if all children are filtered out, then remove the parent as well
-    return !!mapping.children?.length;
+      // if all children are filtered out, then remove the parent as well
+      return !!mapping.children?.length;
+    }
   }
 
   return false;
