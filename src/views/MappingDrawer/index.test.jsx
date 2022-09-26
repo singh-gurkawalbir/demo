@@ -328,7 +328,7 @@ describe('Mapping Drawer', () => {
 
     expect(mapper1ButtonNode).toBeInTheDocument();
     userEvent.click(mapper1ButtonNode);
-    const mapper2ButtonNode = screen.getByRole('button', {name: 'Mapper 2.0 BETA'});
+    const mapper2ButtonNode = screen.getByRole('button', {name: 'Mapper 2.0'});
 
     expect(mapper2ButtonNode).toBeInTheDocument();
     userEvent.click(mapper2ButtonNode);

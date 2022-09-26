@@ -61,14 +61,19 @@ export function* setupMFA({ mfaConfig }) {
   }
 }
 export function* updateAccountSettings({ accountSettings }) {
-  const { dontAllowTrustedDevices, trustDeviceForPeriod } = accountSettings;
+  const payload = { dontAllowTrustedDevices: accountSettings.dontAllowTrustedDevices };
 
+  // we pass trustDeviceForPeriod only when dontAllowTrustedDevices is false
+  if (!accountSettings.dontAllowTrustedDevices && accountSettings.trustDeviceForPeriod) {
+    // converts trustDeviceForPeriod to a number
+    payload.trustDeviceForPeriod = +accountSettings.trustDeviceForPeriod;
+  }
   yield put(actions.asyncTask.start(MFA_ACCOUNT_SETTINGS_ASYNC_KEY));
   try {
     const response = yield call(apiCallWithRetry, {
       path: '/trustedDevices/settings',
       opts: {
-        body: { dontAllowTrustedDevices, ...(!dontAllowTrustedDevices ? {trustDeviceForPeriod} : {}) },
+        body: payload,
         method: 'PUT',
       },
     });

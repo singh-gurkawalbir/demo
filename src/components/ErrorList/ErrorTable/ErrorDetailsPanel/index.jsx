@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import { makeStyles } from '@material-ui/core/styles';
+import clsx from 'clsx';
 import EditRetryData from '../../ErrorDetails/EditRetryData';
 import ViewErrorDetails from '../../ErrorDetails/ViewErrorDetails';
 import ViewErrorRequestResponse from '../../ErrorDetails/ViewErrorRequestResponse';
@@ -14,7 +15,6 @@ import DrawerFooter from '../../../drawer/Right/DrawerFooter';
 import ErrorDetailActions from '../../ErrorDetails/ErrorDetailActions';
 import ErrorControls from './ErrorControls';
 import actions from '../../../../actions';
-import { useSelectorMemo } from '../../../../hooks';
 import AddToBatch from '../../ErrorDetails/ErrorDetailActions/AddToBatch';
 import EmptyErrorDetails from './EmptyErrorDetails';
 import { FILTER_KEYS } from '../../../../utils/errorManagement';
@@ -24,6 +24,9 @@ const useStyles = makeStyles(theme => ({
     height: 'calc(100vh - 420px)',
     display: 'flex',
     flexDirection: 'column',
+  },
+  detailsContainerWithErrorsInRun: {
+    height: 'calc(100vh - 470px)',
   },
   tabContent: {
     flexGrow: 1,
@@ -73,8 +76,8 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const ERROR_DETAILS_TABS = {
-  VIEW_FIELDS: { type: 'view', label: 'Error fields' },
   EDIT_RETRY_DATA: { type: 'editRetry', label: 'Edit retry data' },
+  VIEW_FIELDS: { type: 'view', label: 'Error fields' },
   VIEW_RETRY_DATA: { type: 'viewRetry', label: 'Retry data' },
   REQUEST: { type: 'request', label: 'HTTP request' },
   RESPONSE: { type: 'response', label: 'HTTP response' },
@@ -95,53 +98,62 @@ function TabPanel({ children, value, type }) {
       role="tabpanel"
       className={classes.tabContent}
       id={type}
-      aria-labelledby={type}>
+      aria-labelledby={type}
+    >
       {children}
     </div>
   );
 }
 
 export default function ErrorDetailsPanel({
+  errorsInCurrPage,
   flowId,
   resourceId,
   isResolved,
+  errorsInRun,
 }) {
   const classes = useStyles();
   const [mode, setMode] = useState('editRetry');
   const dispatch = useDispatch();
-
-  const errorConfig = useMemo(() => ({
-    flowId,
-    resourceId,
-    isResolved,
-  }), [isResolved, flowId, resourceId]);
-
-  const errorsInPage = useSelectorMemo(selectors.mkResourceFilteredErrorsInCurrPageSelector, errorConfig);
-
   const activeErrorId = useSelector(state => {
     const e = selectors.filter(state, FILTER_KEYS.OPEN);
 
     return e.activeErrorId;
   });
 
-  const isFlowDisabled = useSelector(state =>
-    selectors.resource(state, 'flows', flowId)?.disabled
+  const isFlowDisabled = useSelector(
+    state => selectors.resource(state, 'flows', flowId)?.disabled
   );
-  const errorDoc = useSelector(state =>
-    selectors.resourceError(state, { flowId, resourceId, errorId: activeErrorId, isResolved })
-  ) || {};
+  const errorDoc =
+    useSelector(state =>
+      selectors.resourceError(state, {
+        flowId,
+        resourceId,
+        errorId: activeErrorId,
+        isResolved,
+      })
+    ) || {};
 
-  const { retryDataKey: retryId, reqAndResKey} = errorDoc || {};
-  const userRetryData = useSelector(state => selectors.userRetryData(state, retryId));
+  const { retryDataKey: retryId, reqAndResKey } = errorDoc || {};
+  const userRetryData = useSelector(state =>
+    selectors.userRetryData(state, retryId)
+  );
 
   const onRetryDataChange = useCallback(
     data =>
       // Editor onChange returns string format, so parse it to get updated retryData
-      dispatch(actions.errorManager.retryData.updateUserRetryData({retryId, retryData: safeParse(data)})),
+      dispatch(
+        actions.errorManager.retryData.updateUserRetryData({
+          retryId,
+          retryData: safeParse(data),
+        })
+      ),
     [dispatch, retryId]
   );
 
-  const isResourceNetsuite = useSelector(state => selectors.isResourceNetsuite(state, resourceId));
+  const isResourceNetsuite = useSelector(state =>
+    selectors.isResourceNetsuite(state, resourceId)
+  );
 
   const availableTabs = useMemo(() => {
     const tabs = [];
@@ -155,7 +167,10 @@ export default function ErrorDetailsPanel({
     }
 
     if (reqAndResKey && isResourceNetsuite) {
-      tabs.push(ERROR_DETAILS_TABS.NETSUITE_REQUEST, ERROR_DETAILS_TABS.NETSUITE_RESPONSE);
+      tabs.push(
+        ERROR_DETAILS_TABS.NETSUITE_REQUEST,
+        ERROR_DETAILS_TABS.NETSUITE_RESPONSE
+      );
     } else if (reqAndResKey) {
       tabs.push(ERROR_DETAILS_TABS.REQUEST, ERROR_DETAILS_TABS.RESPONSE);
     }
@@ -173,70 +188,85 @@ export default function ErrorDetailsPanel({
     setMode('editRetry');
   }, [activeErrorId]);
 
+  if (!activeErrorId) {
+    return (
+      <EmptyErrorDetails
+        showMessage={errorsInCurrPage.length !== 0}
+        classes={classes}
+      />
+    );
+  }
+
   if (!mode || !availableTabs.map(tab => tab.type).includes(mode)) {
     // Incase of invalid mode, redirects user to first available tab
     setMode(availableTabs[0].type);
   }
 
-  if (!activeErrorId || activeErrorId === '') {
-    return <EmptyErrorDetails classes={classes} />;
-  }
-
   return (
     <div className={classes.wrapper}>
-      <DrawerHeader title="Error details" showCloseButton={false} className={classes.draweHeader}>
+      <DrawerHeader
+        title="Error details"
+        showCloseButton={false}
+        className={classes.draweHeader}
+      >
         <ErrorControls
           retryId={retryId}
           flowId={flowId}
           resourceId={resourceId}
-          errorsInPage={errorsInPage}
+          errorsInPage={errorsInCurrPage}
           activeErrorId={activeErrorId}
         />
       </DrawerHeader>
 
       <DrawerContent noPadding>
-        <div className={classes.detailsContainer}>
+        <div className={clsx(classes.detailsContainer, {[classes.detailsContainerWithErrorsInRun]: errorsInRun})}>
           <Tabs
             value={mode}
             onChange={handleModeChange}
             className={classes.tabHeader}
             textColor="primary"
-            indicatorColor="primary" >
-            { availableTabs.map(({ label, type }) => (
+            indicatorColor="primary"
+          >
+            {availableTabs.map(({ label, type }) => (
               <Tab
                 key={type}
                 label={label}
                 id={type}
                 value={type}
-                className={classes.tab} />
-            )) }
+                className={classes.tab}
+              />
+            ))}
           </Tabs>
           <TabPanel value={mode} type="view">
             <ViewErrorDetails
               errorId={activeErrorId}
               flowId={flowId}
               resourceId={resourceId}
-              isResolved={isResolved} />
+              isResolved={isResolved}
+            />
           </TabPanel>
           <TabPanel value={mode} type="editRetry">
             <EditRetryData
               retryId={retryId}
               onChange={onRetryDataChange}
               flowId={flowId}
-              resourceId={resourceId} />
+              resourceId={resourceId}
+            />
           </TabPanel>
           <TabPanel value={mode} type="request">
             <ViewErrorRequestResponse
               reqAndResKey={reqAndResKey}
               flowId={flowId}
               resourceId={resourceId}
-              isRequest />
+              isRequest
+            />
           </TabPanel>
           <TabPanel value={mode} type="response">
             <ViewErrorRequestResponse
               reqAndResKey={reqAndResKey}
               flowId={flowId}
-              resourceId={resourceId} />
+              resourceId={resourceId}
+            />
           </TabPanel>
         </div>
       </DrawerContent>
@@ -249,7 +279,7 @@ export default function ErrorDetailsPanel({
           isResolved={isResolved}
         />
         <ErrorDetailActions
-          errorsInPage={errorsInPage}
+          errorsInPage={errorsInCurrPage}
           updatedRetryData={userRetryData}
           flowId={flowId}
           resourceId={resourceId}

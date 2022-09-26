@@ -18,6 +18,9 @@ const useStyles = makeStyles(theme => ({
     '& > :not(:last-child)': {
       marginRight: theme.spacing(2),
     },
+    '& > :first-child': {
+      marginRight: 0,
+    },
   },
   title: {
     flexGrow: 1,

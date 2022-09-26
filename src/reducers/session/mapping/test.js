@@ -68,6 +68,7 @@ describe('mapping reducer', () => {
       importId: resourceId,
       flowId,
       v2TreeData: [{
+        key: '123',
         dataType: MAPPING_DATA_TYPES.OBJECTARRAY,
         buildArrayHelper: [],
       }],
@@ -77,6 +78,7 @@ describe('mapping reducer', () => {
     const expectedState = {
       mapping: {
         v2TreeData: [{
+          key: '123',
           dataType: MAPPING_DATA_TYPES.OBJECTARRAY,
           generateDisabled: true,
           buildArrayHelper: [],
@@ -86,11 +88,12 @@ describe('mapping reducer', () => {
         importId: resourceId,
         status: 'received',
         v2TreeDataCopy: [{
+          key: '123',
           dataType: MAPPING_DATA_TYPES.OBJECTARRAY,
           generateDisabled: true,
           buildArrayHelper: [],
         }],
-        expandedKeys: [],
+        expandedKeys: ['123'],
       },
     };
 
@@ -1417,7 +1420,6 @@ describe('mapping reducer', () => {
               extract: '$.fname',
               generate: 'fname',
               isEmptyRow: false,
-              parentExtract: '',
               parentKey: 'new-key',
             },
             {
@@ -1426,7 +1428,6 @@ describe('mapping reducer', () => {
               extract: '$.lname',
               generate: 'lname',
               isEmptyRow: false,
-              parentExtract: '',
               parentKey: 'new-key',
             }],
           }],
@@ -1481,7 +1482,7 @@ describe('mapping reducer', () => {
             key: 'new-key',
             dataType: MAPPING_DATA_TYPES.OBJECTARRAY,
             generateDisabled: true,
-            combinedExtract: '$',
+            extractsArrayHelper: [{extract: '$|0'}],
             title: '',
             children: [{
               key: 'key1',
@@ -1541,7 +1542,7 @@ describe('mapping reducer', () => {
             key: 'new-key',
             dataType: MAPPING_DATA_TYPES.OBJECTARRAY,
             generateDisabled: true,
-            combinedExtract: '',
+            extractsArrayHelper: [],
             title: '',
             children: [{
               key: 'key1',
@@ -1558,10 +1559,8 @@ describe('mapping reducer', () => {
           version: 2,
           isGroupedOutput: false,
           v2TreeData: [{
-            key: 'new-key',
-            title: '',
+            key: 'key1',
             dataType: MAPPING_DATA_TYPES.STRING,
-            isEmptyRow: true,
           }],
         },
       };
@@ -1856,6 +1855,8 @@ describe('mapping reducer', () => {
               key: 'new_key',
               title: '',
               parentKey: 'key2',
+              parentExtract: undefined,
+              sourceDataType: 'string',
               dataType: MAPPING_DATA_TYPES.STRING,
             },
             {
@@ -1913,6 +1914,7 @@ describe('mapping reducer', () => {
           version: 2,
           v2TreeData: [{
             key: 'key1',
+            extract: '',
             dataType: MAPPING_DATA_TYPES.NUMBER,
           }],
         },
@@ -1932,7 +1934,7 @@ describe('mapping reducer', () => {
             key: 'key1',
             dataType: MAPPING_DATA_TYPES.STRINGARRAY,
             generate: 'names',
-            combinedExtract: '$.name1,$.name2',
+            extractsArrayHelper: [{extract: '$.name1'}, {extract: '$.name2'}],
           }],
         },
       };
@@ -1951,7 +1953,6 @@ describe('mapping reducer', () => {
               key: 'new_key',
               title: '',
               parentKey: 'key1',
-              parentExtract: '',
               dataType: MAPPING_DATA_TYPES.STRING,
             }],
           }],
@@ -2560,7 +2561,7 @@ describe('mapping reducer', () => {
             key: 'key2',
             dataType: MAPPING_DATA_TYPES.OBJECTARRAY,
             generate: 'mothers_side',
-            combinedExtract: '$.siblings[*],$.children[*]',
+            extractsArrayHelper: [{extract: '$.siblings[*]'}, {extract: '$.children[*]'}],
             activeTab: 0,
             jsonPath: 'mothers_side',
             children: [
@@ -2631,7 +2632,7 @@ describe('mapping reducer', () => {
             key: 'key2',
             dataType: MAPPING_DATA_TYPES.OBJECTARRAY,
             generate: 'mothers_side',
-            combinedExtract: '$.siblings[*],$.children[*]',
+            extractsArrayHelper: [{extract: '$.siblings[*]'}, {extract: '$.children[*]'}],
             activeTab: 0,
             jsonPath: 'mothers_side',
             children: [
@@ -2895,6 +2896,7 @@ describe('mapping reducer', () => {
             dataType: MAPPING_DATA_TYPES.STRING,
             generate: 'fname',
             extract: '$.fname',
+            sourceDataType: 'string',
           }],
         },
       };
@@ -2910,9 +2912,8 @@ describe('mapping reducer', () => {
           v2TreeData: [{
             key: 'key1',
             dataType: MAPPING_DATA_TYPES.OBJECTARRAY,
-            copySource: 'yes',
             generate: 'fname',
-            extract: '$.fname[*]',
+            extractsArrayHelper: [{extract: '$.fname[*]', copySource: 'yes'}],
           }],
         },
       };
@@ -2923,11 +2924,11 @@ describe('mapping reducer', () => {
           flowId: 'flow-123',
           version: 2,
           v2TreeData: [{
+            activeTab: undefined,
             key: 'key1',
             dataType: MAPPING_DATA_TYPES.OBJECTARRAY,
-            copySource: 'yes',
             generate: 'fname',
-            combinedExtract: '$.siblings[*]',
+            extractsArrayHelper: [{extract: '$.siblings[*]', copySource: 'yes', sourceDataType: 'string'}],
             children: [],
           }],
         },
@@ -2947,7 +2948,7 @@ describe('mapping reducer', () => {
             key: 'key1',
             dataType: MAPPING_DATA_TYPES.OBJECTARRAY,
             generate: 'fname',
-            combinedExtract: '$.fname[*]',
+            extractsArrayHelper: [{extract: '$.fname[*]'}],
             children: [
               {
                 key: 'c1',
@@ -2971,14 +2972,15 @@ describe('mapping reducer', () => {
             key: 'key1',
             dataType: MAPPING_DATA_TYPES.OBJECTARRAY,
             generate: 'fname',
-            combinedExtract: '',
+            extractsArrayHelper: [],
             children: [
               {
-                key: 'new_key',
-                title: '',
+                key: 'c1',
                 parentKey: 'key1',
+                generate: 'child1',
+                extract: '$.child1',
+                parentExtract: '',
                 dataType: MAPPING_DATA_TYPES.STRING,
-                isEmptyRow: true,
               },
             ],
           }],
@@ -2999,7 +3001,7 @@ describe('mapping reducer', () => {
             key: 'key1',
             dataType: MAPPING_DATA_TYPES.OBJECTARRAY,
             generate: 'fname',
-            combinedExtract: '$.fname[*]',
+            extractsArrayHelper: [{extract: '$.fname[*]'}],
             children: [
               {
                 key: 'c1',
@@ -3023,7 +3025,7 @@ describe('mapping reducer', () => {
             key: 'key1',
             dataType: MAPPING_DATA_TYPES.OBJECTARRAY,
             generate: 'fname',
-            combinedExtract: '$.fname[*],$.lname[*]',
+            extractsArrayHelper: [{extract: '$.fname[*]'}, {extract: '$.lname[*]', sourceDataType: 'string'}],
             activeTab: 0,
             children: [
               {
@@ -3044,8 +3046,8 @@ describe('mapping reducer', () => {
                 key: 'new_key',
                 title: '',
                 parentKey: 'key1',
-                combinedExtract: '',
                 generate: 'child1',
+                jsonPath: undefined,
                 parentExtract: '$.lname[*]',
                 dataType: MAPPING_DATA_TYPES.STRING,
                 hidden: true,
@@ -3233,7 +3235,7 @@ describe('mapping reducer', () => {
               key: 'key1',
               dataType: MAPPING_DATA_TYPES.OBJECTARRAY,
               generate: 'mothers_side',
-              combinedExtract: '$.siblings[*],$.children[*]',
+              extractsArrayHelper: [{extract: '$.siblings[*]'}, {extract: '$.children[*]'}],
               activeTab: 0,
               children: [
                 {
@@ -3288,7 +3290,6 @@ describe('mapping reducer', () => {
                   key: 'new_key',
                   title: '',
                   parentKey: 'key1',
-                  parentExtract: '',
                   dataType: MAPPING_DATA_TYPES.STRING,
                 },
               ],
@@ -3310,7 +3311,7 @@ describe('mapping reducer', () => {
               key: 'key1',
               dataType: MAPPING_DATA_TYPES.OBJECTARRAY,
               generate: 'mothers_side',
-              combinedExtract: '$.siblings[*],$.children[*]',
+              extractsArrayHelper: [{extract: '$.siblings[*]'}, {extract: '$.children[*]'}],
               activeTab: 0,
               children: [
                 {
@@ -3347,7 +3348,7 @@ describe('mapping reducer', () => {
           ],
         },
       };
-      const settings = { dataType: MAPPING_DATA_TYPES.OBJECTARRAY, copySource: 'yes' };
+      const settings = { extract: '$.siblings[*],$.children[*]', dataType: MAPPING_DATA_TYPES.OBJECTARRAY, extractsArrayHelper: [{extract: '$.siblings[*]', copySource: 'yes'}, {extract: '$.children[*]', copySource: 'yes'}] };
       const state = reducer(initialState, actions.mapping.v2.patchSettings('key1', settings));
       const expectedState = {
         mapping: {
@@ -3359,9 +3360,8 @@ describe('mapping reducer', () => {
               key: 'key1',
               dataType: MAPPING_DATA_TYPES.OBJECTARRAY,
               generate: 'mothers_side',
-              combinedExtract: '$.siblings[*],$.children[*]',
-              activeTab: 0,
-              copySource: 'yes',
+              extractsArrayHelper: [{extract: '$.siblings[*]', copySource: 'yes'}, {extract: '$.children[*]', copySource: 'yes'}],
+              children: [],
             },
           ],
         },
@@ -3406,8 +3406,8 @@ describe('mapping reducer', () => {
                   key: 'new_key',
                   title: '',
                   parentKey: 'key1',
-                  parentExtract: '',
                   dataType: MAPPING_DATA_TYPES.STRING,
+                  isEmptyRow: true,
                 },
               ],
             },
@@ -3478,7 +3478,7 @@ describe('mapping reducer', () => {
               key: 'key1',
               dataType: MAPPING_DATA_TYPES.OBJECTARRAY,
               generate: 'mothers_side',
-              combinedExtract: '$.siblings[*],$.children[*]',
+              extractsArrayHelper: [{extract: '$.siblings[*]'}, {extract: '$.children[*]'}],
               activeTab: 0,
               children: [
                 {
@@ -3526,7 +3526,7 @@ describe('mapping reducer', () => {
               key: 'key1',
               dataType: MAPPING_DATA_TYPES.OBJECTARRAY,
               generate: 'mothers_side',
-              combinedExtract: '$.siblings[*],$.children[*]',
+              extractsArrayHelper: [{extract: '$.siblings[*]'}, {extract: '$.children[*]'}],
               activeTab: 1,
               children: [
                 {
@@ -4216,6 +4216,7 @@ describe('mapping reducer', () => {
                 title: '',
                 dataType: MAPPING_DATA_TYPES.STRING,
                 isEmptyRow: true,
+                parentKey: 'new_key',
               },
             ],
           }],
@@ -4383,6 +4384,7 @@ describe('mapping reducer', () => {
                 generate: 'id',
                 isRequired: false,
                 jsonPath: 'id',
+                parentKey: 'new_key',
                 key: 'new_key',
                 title: '',
               },
@@ -4391,6 +4393,7 @@ describe('mapping reducer', () => {
                 generate: 'name',
                 isRequired: false,
                 jsonPath: 'name',
+                parentKey: 'new_key',
                 key: 'new_key',
                 title: '',
               },
@@ -4944,7 +4947,7 @@ describe('mapping utils', () => {
       }];
       const parentNode = {
         key: 'key1',
-        combinedExtract: '$.siblings[*]',
+        extractsArrayHelper: [{extract: '$.siblings[*]'}],
         generate: 'siblings',
         dataType: MAPPING_DATA_TYPES.OBJECTARRAY,
       };
@@ -4984,7 +4987,7 @@ describe('mapping utils', () => {
       }];
       const parentNode = {
         key: 'key1',
-        combinedExtract: '$.siblings[*]',
+        extractsArrayHelper: [{extract: '$.siblings[*]'}],
         generate: 'siblings',
         dataType: MAPPING_DATA_TYPES.OBJECT,
       };
@@ -5024,22 +5027,30 @@ describe('mapping utils', () => {
 
       expect(updateDataType(state, node, MAPPING_DATA_TYPES.STRING, MAPPING_DATA_TYPES.STRING)).toBe(node);
     });
-    test('should remove children if new data type is object array with copy source as yes', () => {
+    test('should add empty row child if new data type is object array with copy source as yes', () => {
+      generateUniqueKey.mockReturnValue('new_key');
+
       const node = {
         key: 'key1',
         generate: 'fname',
         extract: '$.fname',
         copySource: 'yes',
         dataType: MAPPING_DATA_TYPES.OBJECT,
-        children: [{}],
+        children: [],
       };
 
       const newNode = {
         key: 'key1',
         generate: 'fname',
-        combinedExtract: '$.fname',
-        copySource: 'yes',
+        extractsArrayHelper: [{extract: '$.fname', sourceDataType: 'string'}],
         dataType: MAPPING_DATA_TYPES.OBJECTARRAY,
+        children: [{
+          key: 'new_key',
+          title: '',
+          parentKey: 'key1',
+          parentExtract: '$.fname',
+          dataType: MAPPING_DATA_TYPES.STRING,
+        }],
       };
 
       expect(updateDataType(state, node, MAPPING_DATA_TYPES.OBJECT, MAPPING_DATA_TYPES.OBJECTARRAY)).toEqual(newNode);
@@ -5057,7 +5068,7 @@ describe('mapping utils', () => {
       const newNode = {
         key: 'key1',
         generate: 'fname',
-        combinedExtract: '$.fname',
+        extractsArrayHelper: [{extract: '$.fname', sourceDataType: 'string'}],
         dataType: MAPPING_DATA_TYPES.OBJECTARRAY,
         children: [{
           key: 'new_key',
@@ -5074,9 +5085,8 @@ describe('mapping utils', () => {
       const node = {
         key: 'key1',
         generate: 'fname',
-        combinedExtract: '$.fname[*]',
+        extractsArrayHelper: [{extract: '$.fname[*]', copySource: 'yes'}],
         dataType: MAPPING_DATA_TYPES.OBJECTARRAY,
-        copySource: 'yes',
         children: [{
           key: 'c1',
           extract: '$.child1',
@@ -5101,7 +5111,7 @@ describe('mapping utils', () => {
       const node = {
         key: 'key1',
         generate: 'fname',
-        combinedExtract: '$.fname[*]',
+        extractsArrayHelper: [{extract: '$.fname[*]'}],
         dataType: MAPPING_DATA_TYPES.OBJECTARRAY,
         children: [{
           key: 'c1',
@@ -5119,7 +5129,6 @@ describe('mapping utils', () => {
           key: 'new_key',
           title: '',
           parentKey: 'key1',
-          parentExtract: '',
           dataType: MAPPING_DATA_TYPES.STRING,
         }],
       };
@@ -5130,7 +5139,7 @@ describe('mapping utils', () => {
       const node = {
         key: 'key1',
         generate: 'fname',
-        combinedExtract: '$.fname[*]',
+        extractsArrayHelper: [{extract: '$.fname[*]'}],
         dataType: MAPPING_DATA_TYPES.OBJECTARRAY,
         children: [{
           key: 'c1',
@@ -5144,7 +5153,7 @@ describe('mapping utils', () => {
         key: 'key1',
         generate: 'fname',
         dataType: MAPPING_DATA_TYPES.STRINGARRAY,
-        combinedExtract: '$.fname[*]',
+        extractsArrayHelper: [{extract: '$.fname[*]'}],
       };
 
       expect(updateDataType(state, node, MAPPING_DATA_TYPES.OBJECTARRAY, MAPPING_DATA_TYPES.STRINGARRAY)).toEqual(newNode);
@@ -5153,7 +5162,7 @@ describe('mapping utils', () => {
       const node = {
         key: 'key1',
         generate: 'fname',
-        combinedExtract: '$.fname[*]',
+        extractsArrayHelper: [{extract: '$.fname[*]'}],
         dataType: MAPPING_DATA_TYPES.OBJECTARRAY,
         children: [{
           key: 'c1',

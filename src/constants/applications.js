@@ -594,10 +594,11 @@ export const connectorsList = () => {
 
   publishedConnectors?.forEach(pc => {
     connectors.push({
-      value: pc.legacyId || pc.name,
+      value: pc._id,
       label: pc.name,
       icon: pc.legacyId || pc.name,
       type: 'http',
+      published: true,
     });
   });
 

@@ -201,6 +201,8 @@ function searchParameterFieldsMeta({
           : 'assistantMetadata.bodyParams',
       label,
       value: !isEmpty(value) ? value : defaultValue,
+      keyName: 'name',
+      valueName: 'value',
       paramMeta: {
         paramLocation,
         fields: parameters,
