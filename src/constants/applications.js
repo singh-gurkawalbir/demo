@@ -411,8 +411,8 @@ export const groupApplications = (
         type: 'http',
         export: true,
         import: true,
-        icon: pc.legacyId || pc.name,
-        assistant: pc.legacyId,
+        icon: pc.legacyId || pc.name.toLowerCase().replace(/\.|\s/g, ''),
+        assistant: pc.legacyId || pc.name.toLowerCase().replace(/\.|\s/g, ''),
         _httpConnectorId: pc._id,
         helpURL: pc.helpURL,
       });
@@ -509,7 +509,7 @@ export const applicationsList = () => {
       type: 'http',
       export: true,
       import: true,
-      assistant: pc.legacyId,
+      assistant: pc.legacyId || pc.name.toLowerCase().replace(/\.|\s/g, ''),
       _httpConnectorId: pc._id,
       helpURL: pc.helpURL,
     });
@@ -596,7 +596,7 @@ export const connectorsList = () => {
     connectors.push({
       value: pc.legacyId || pc.name,
       label: pc.name,
-      icon: pc.legacyId || pc.name,
+      icon: pc.legacyId || pc.name.toLowerCase().replace(/\.|\s/g, ''),
       type: 'http',
     });
   });
