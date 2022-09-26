@@ -14,6 +14,10 @@ export default {
         value: '{{{connection.http.encrypted.apiKey}}}',
       },
       {
+        name: 'X-Api-Version',
+        value: '{{{connection.http.unencrypted.version}}}',
+      },
+      {
         name: 'Content-Type',
         value: 'application/json',
       },
@@ -32,6 +36,15 @@ export default {
       description:
         'Note: for security reasons this field must always be re-entered.',
     },
+    'http.unencrypted.version': {
+      fieldId: 'http.unencrypted.version',
+      type: 'text',
+      label: 'Version',
+      helpKey: 'returnly.connection.http.unencrypted.version',
+      required: true,
+      defaultValue: r => (r && r.http && r.http.unencrypted && r.http.unencrypted.version) ||
+      '2020-08',
+    },
     application: {
       fieldId: 'application',
     },
@@ -43,7 +56,7 @@ export default {
       { collapsed: true, label: 'General', fields: ['name', 'application'] },
       { collapsed: true,
         label: 'Application details',
-        fields: ['http.encrypted.apiKey'] },
+        fields: ['http.encrypted.apiKey', 'http.unencrypted.version'] },
       { collapsed: true, label: 'Advanced', fields: ['httpAdvanced'] },
     ],
   },

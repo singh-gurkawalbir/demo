@@ -33,7 +33,7 @@ export default function MultiSelectUsersFilter({flowId, resourceId, resourceType
 
   const CustomLabel = useMemo(() => (
     <Typography className={classes.customUserLabel}>
-      Select retry started by:
+      Retry started by:
     </Typography>
   ), [classes.customUserLabel]);
 

@@ -1,6 +1,8 @@
+import { PASSWORD_MASK } from '../../../constants';
 import {
   updateFinalMetadataWithHttpFramework,
 } from '../../../sagas/utils';
+import { safeParse } from '../../../utils/string';
 import { updateHTTPFrameworkFormValues } from '../../metaDataUtils/fileUtil';
 
 export default {
@@ -44,16 +46,6 @@ export default {
         newValues['/http/encrypted'] = JSON.parse(newValues['/http/encrypted']);
       } catch (ex) {
         newValues['/http/encrypted'] = undefined;
-      }
-    }
-
-    if (newValues['/http/custom/encrypted']) {
-      try {
-        newValues['/http/custom/encrypted'] = JSON.parse(
-          newValues['/http/custom/encrypted']
-        );
-      } catch (ex) {
-        newValues['/http/custom/encrypted'] = undefined;
       }
     }
 
@@ -105,12 +97,9 @@ export default {
       newValues['/http/auth/token/refreshMediaType'] = undefined;
       newValues['/http/auth/token/tokenPaths'] = undefined;
     }
-    if (newValues['/http/auth/type'] !== 'custom') {
+    if (newValues['/http/auth/type'] !== 'custom' || !newValues['/http/auth/token/tokenPaths']) {
       // tokenPaths are only supported for custom auth type refresh token
       newValues['/http/auth/token/tokenPaths'] = undefined;
-    }
-    if (newValues['/http/auth/token/tokenPaths']) {
-      newValues['/http/auth/token/tokenPaths'] = newValues['/http/auth/token/tokenPaths'].split(',').map(path => path.trim());
     }
     if (newValues['/http/auth/type'] === 'token' || newValues['/http/auth/type'] === 'oauth') {
       if (newValues['/http/auth/token/scheme'] === 'Custom') {
@@ -118,6 +107,25 @@ export default {
       }
     }
 
+    if (newValues['/http/custom/encrypted']) {
+      const tokenPathsDefaultObject = newValues['/http/auth/token/tokenPaths']?.reduce?.((a, v) => ({ ...a, [v]: PASSWORD_MASK}), {});
+
+      const encryptedFieldValue = safeParse(newValues['/http/custom/encrypted']);
+
+      newValues['/http/custom/encrypted'] = encryptedFieldValue;
+
+      if (typeof tokenPathsDefaultObject === 'object') {
+        newValues['/http/custom/encrypted'] = tokenPathsDefaultObject;
+      }
+
+      if (typeof encryptedFieldValue === 'object') {
+        // override the default token paths with user provided values
+        newValues['/http/custom/encrypted'] = {
+          ...(newValues['/http/custom/encrypted'] || {}),
+          ...encryptedFieldValue,
+        };
+      }
+    }
     if (newValues['/http/auth/type'] !== 'token' && newValues['/http/auth/type'] !== 'oauth') {
       newValues['/http/auth/oauth'] = undefined;
       delete newValues['/http/auth/oauth/callbackURL'];

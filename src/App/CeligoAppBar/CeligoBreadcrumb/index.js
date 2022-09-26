@@ -397,10 +397,20 @@ export default function CeligoBreadcrumb() {
   const shouldShowAppRouting = useSelector(state =>
     selectors.shouldShowAppRouting(state)
   );
+  const hideBreadcrumbs = useSelector(state =>
+    // isMFASetupIncomplete - determines if the user is in incomplete mfa setup where he can only access Security/MFA page where we do not need breadcrumb
+    !selectors.mfaSessionInfoStatus(state) || selectors.isMFASetupIncomplete(state)
+  );
   const breadcrumbs = useMemo(() => [
     { url: getRoutePath(''), breadcrumb: 'Home' },
     ...parseUrl(pathname, shouldShowAppRouting ? routes : []),
   ], [pathname, shouldShowAppRouting]);
+
+  if (hideBreadcrumbs) {
+    // renders an empty Div so as to use classes.breadCrumb and handle UI to not distort due to flex
+    // todo:@Azhar/Karthik can be handled to not render from parent component itself
+    return <div className={classes.breadCrumb} />;
+  }
 
   return (
     <Breadcrumbs

@@ -41,6 +41,7 @@ export default function AccountSettings() {
           type: 'checkbox',
           noApi: true,
           isLoggable: false,
+          helpKey: 'mfa.dontAllowTrustedDevices',
         },
         trustDeviceForPeriod: {
           id: 'trustDeviceForPeriod',
@@ -51,6 +52,13 @@ export default function AccountSettings() {
           disabledWhen: [{ field: 'dontAllowTrustedDevices', is: [true] }],
           noApi: true,
           isLoggable: false,
+          helpKey: 'mfa.trustDeviceForPeriod',
+          validWhen: {
+            matchesRegEx: {
+              pattern: '^[1-9]\\d*$',
+              message: 'Value must be numbers only',
+            },
+          },
         },
       },
     }),
@@ -64,9 +72,7 @@ export default function AccountSettings() {
   const formKey = useForm({ fieldMeta, remount: remountKey });
 
   const updateAccountSettings = useCallback(values => {
-    const { dontAllowTrustedDevices, trustDeviceForPeriod } = values;
-
-    dispatch(actions.mfa.updateAccountSettings({ dontAllowTrustedDevices, trustDeviceForPeriod: +trustDeviceForPeriod }));
+    dispatch(actions.mfa.updateAccountSettings(values));
   }, [dispatch]);
 
   useEffect(() => {

@@ -84,7 +84,7 @@ import {
 } from '../utils/exportPanel';
 import getRoutePath from '../utils/routePaths';
 import { getIntegrationAppUrlName, getTitleFromEdition, getTitleIdFromSection, isIntegrationAppVersion2 } from '../utils/integrationApps';
-import mappingUtil from '../utils/mapping';
+import mappingUtil, { applyRequiredFilter, applyMappedFilter } from '../utils/mapping';
 import responseMappingUtil from '../utils/responseMapping';
 import { suiteScriptResourceKey, isJavaFlow } from '../utils/suiteScript';
 import { stringCompare, comparer } from '../utils/sort';
@@ -7203,7 +7203,8 @@ selectors.retryUsersList = createSelector(
   (state, flowId, resourceId) => selectors.retryList(state, flowId, resourceId),
   (profile, availableUsersList, retryJobs) => {
     if (!Array.isArray(retryJobs)) {
-      return [{ _id: 'all', name: 'All users'}];
+      // When all users are selected we show the 'Select' as the placeholder text in the filter
+      return [{ _id: 'all', name: 'Select'}];
     }
 
     const allUsersTriggeredRetry = retryJobs.reduce((users, job) => {
@@ -7220,7 +7221,7 @@ selectors.retryUsersList = createSelector(
       }];
     }, []);
 
-    return [{ _id: 'all', name: 'All users'}, ...allUsersTriggeredRetry];
+    return [{ _id: 'all', name: 'Select'}, ...allUsersTriggeredRetry];
   }
 );
 
@@ -7247,4 +7248,24 @@ selectors.mkFlowResourcesRetryStatus = () => {
       return finalResourcesRetryStatus;
     }
   );
+};
+
+selectors.filteredV2TreeData = state => {
+  const v2TreeData = selectors.v2MappingsTreeData(state);
+  const { filter = [], lookups = [] } = selectors.mapping(state);
+
+  if (isEmpty(v2TreeData) || isEmpty(filter) || filter.includes('all')) return v2TreeData;
+
+  // ToDo: try replacing cloneDeep with something else
+  let filteredTreeData = cloneDeep(v2TreeData);
+
+  if (filter.includes('required') && filter.includes('mapped')) {
+    filteredTreeData = applyMappedFilter(filteredTreeData, lookups, true);
+  } else if (filter.includes('required')) {
+    filteredTreeData = applyRequiredFilter(filteredTreeData);
+  } else {
+    filteredTreeData = applyMappedFilter(filteredTreeData, lookups);
+  }
+
+  return filteredTreeData;
 };
