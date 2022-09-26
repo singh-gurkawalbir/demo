@@ -7,10 +7,11 @@ import ActionButton from '../../../ActionButton';
 import SortableHandle from '../../../Sortable/SortableHandle';
 import isLoggableAttr from '../../../../utils/isLoggableAttr';
 import CeligoSelect from '../../../CeligoSelect';
+import AfeIcon from '../../../icons/AfeIcon';
 
 const emptySet = {};
 
-const useStyles = makeStyles({
+const useStyles = makeStyles(theme => ({
   rowWrapper: {
     display: 'flex',
   },
@@ -20,7 +21,14 @@ const useStyles = makeStyles({
   rowContainerWrapper: {
     display: 'flex !important',
   },
-});
+  dynaURIActionButton: {
+    float: 'right',
+    marginLeft: theme.spacing(1),
+    alignSelf: 'flex-start',
+    marginTop: theme.spacing(4),
+    background: 'transparent',
+  },
+}));
 
 export default function KeyValueRow(props) {
   const {
@@ -43,6 +51,7 @@ export default function KeyValueRow(props) {
     enableSorting,
     showSortOrder,
     isLoggable,
+    handleEditorClick,
   } = props;
 
   const {
@@ -94,6 +103,7 @@ export default function KeyValueRow(props) {
           labelName={suggestKeyConfig.labelName}
           valueName={suggestKeyConfig.valueName}
           options={{ suggestions: suggestKeyConfig.suggestions }}
+          showAllSuggestions={suggestKeyConfig.showAllSuggestions}
           fullWidth
               />
         )}
@@ -169,6 +179,16 @@ export default function KeyValueRow(props) {
           onClick={handleDelete(r.key)}>
           <TrashIcon />
         </ActionButton>
+        )}
+        {handleEditorClick && (
+          <ActionButton
+            id={`handleBar-${index}`}
+            data-test={`handleBar-${index}`}
+            tooltip="Open handlebars editor"
+            onClick={handleEditorClick}
+            className={classes.dynaURIActionButton}>
+            <AfeIcon />
+          </ActionButton>
         )}
       </div>
     </div>

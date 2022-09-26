@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import { makeStyles } from '@material-ui/core/styles';
+import clsx from 'clsx';
 import EditRetryData from '../../ErrorDetails/EditRetryData';
 import ViewErrorDetails from '../../ErrorDetails/ViewErrorDetails';
 import ViewErrorRequestResponse from '../../ErrorDetails/ViewErrorRequestResponse';
@@ -23,6 +24,9 @@ const useStyles = makeStyles(theme => ({
     height: 'calc(100vh - 420px)',
     display: 'flex',
     flexDirection: 'column',
+  },
+  detailsContainerWithErrorsInRun: {
+    height: 'calc(100vh - 470px)',
   },
   tabContent: {
     flexGrow: 1,
@@ -106,6 +110,7 @@ export default function ErrorDetailsPanel({
   flowId,
   resourceId,
   isResolved,
+  errorsInRun,
 }) {
   const classes = useStyles();
   const [mode, setMode] = useState('editRetry');
@@ -214,7 +219,7 @@ export default function ErrorDetailsPanel({
       </DrawerHeader>
 
       <DrawerContent noPadding>
-        <div className={classes.detailsContainer}>
+        <div className={clsx(classes.detailsContainer, {[classes.detailsContainerWithErrorsInRun]: errorsInRun})}>
           <Tabs
             value={mode}
             onChange={handleModeChange}

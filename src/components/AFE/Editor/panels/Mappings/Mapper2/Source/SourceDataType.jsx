@@ -1,27 +1,29 @@
 import React, { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import clsx from 'clsx';
-import { Tooltip } from '@material-ui/core';
+import { Divider, Tooltip } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
-import { DATA_TYPES_DROPDOWN_OPTIONS, MAPPING_DATA_TYPES } from '../../../../../../../utils/mapping';
-import RawHtml from '../../../../../../RawHtml';
-import messageStore from '../../../../../../../utils/messageStore';
-import useConfirmDialog from '../../../../../../ConfirmDialog';
+import { useHistory } from 'react-router-dom';
+import { DATA_TYPES_DROPDOWN_OPTIONS, DATA_TYPES_REPRESENTATION_LIST } from '../../../../../../../utils/mapping';
 import actions from '../../../../../../../actions';
 import { TextButton } from '../../../../../../Buttons';
 import ArrowPopper from '../../../../../../ArrowPopper';
 import ArrowDownFilledIcon from '../../../../../../icons/ArrowDownFilledIcon';
+import { buildDrawerUrl, drawerPaths } from '../../../../../../../utils/rightDrawer';
+import CeligoTruncate from '../../../../../../CeligoTruncate';
+import useSyncedRef from '../../../../../../../hooks/useSyncedRef';
 
 const useStyles = makeStyles(theme => ({
   dataType: {
     border: 'none',
     fontStyle: 'italic',
     color: theme.palette.primary.main,
-    justifyContent: 'flex-end',
-    padding: theme.spacing(0, 0.5),
+    justifyContent: 'end',
+    padding: 0,
+    width: theme.spacing(9),
     '& svg': {
       marginLeft: theme.spacing(-1),
     },
@@ -30,7 +32,10 @@ const useStyles = makeStyles(theme => ({
     },
     '&.Mui-disabled': {
       height: 38,
-      backgroundColor: theme.palette.background.paper2,
+      paddingRight: theme.spacing(1),
+      '& .MuiButton-endIcon': {
+        display: 'none',
+      },
     },
   },
   listPopper: {
@@ -108,77 +113,106 @@ const useStyles = makeStyles(theme => ({
   actionsMenuPopperArrow: {
     left: '50px !important',
   },
+  divider: {
+    height: theme.spacing(3),
+    margin: theme.spacing(0, 0.5),
+  },
+  sourceDataTypeDropDown: {
+    display: 'flex',
+    alignItems: 'center',
+    width: theme.spacing(9),
+    marginLeft: -theme.spacing(13),
+    justifyContent: 'end',
+    zIndex: 1,
+  },
+  dataTypeList: {
+    width: theme.spacing(8),
+    wordBreak: 'break-word',
+    textAlign: 'right',
+  },
 }));
 
-export default function DestinationDataType({
-  dataType,
+const getToolTipTitle = (isHandlebarExp, isHardCodedValue) => {
+  if (isHandlebarExp) {
+    return 'The data type of handlebars expressions is auto-set to "string" and cannot be changed.';
+  }
+  if (isHardCodedValue) {
+    return 'The data type of hard-coded values is auto-set to "string" and cannot be changed.';
+  }
+
+  return '';
+};
+
+export default function SourceDataType({
+  dataType = 'string',
   disabled,
   nodeKey,
   className,
   anchorEl,
   setAnchorEl,
-  handleBlur,
+  sourceDataTypes,
+  isHardCodedValue,
+  isHandlebarExp,
 }) {
   const classes = useStyles();
   const dispatch = useDispatch();
-  const { confirmDialog } = useConfirmDialog();
-
+  const history = useHistory();
+  const sourceDataTypeRef = useSyncedRef(sourceDataTypes);
   const open = !!anchorEl;
+  const selectedDataTypeLabels = [];
   const handleMenu = useCallback(
     event => {
-      setAnchorEl(anchorEl ? null : event.currentTarget);
+      if (selectedDataTypeLabels && selectedDataTypeLabels.length > 1) {
+        dispatch(actions.mapping.v2.updateActiveKey(nodeKey));
+
+        history.push(buildDrawerUrl({
+          path: drawerPaths.MAPPINGS.V2_SETTINGS,
+          baseUrl: history.location.pathname,
+          params: { nodeKey, test: 'test' },
+        }));
+      } else {
+        setAnchorEl(anchorEl ? null : event.currentTarget);
+      }
     },
-    [anchorEl, setAnchorEl]
+    [anchorEl, setAnchorEl, selectedDataTypeLabels]
   );
   const handleClose = useCallback(() => {
     setAnchorEl(null);
   }, [setAnchorEl]);
 
-  const selectedDataTypeLabel = DATA_TYPES_DROPDOWN_OPTIONS.find(opt => opt.id === dataType)?.label;
+  sourceDataTypeRef.current && sourceDataTypeRef.current.forEach(datatype => {
+    selectedDataTypeLabels.push(DATA_TYPES_REPRESENTATION_LIST[[datatype]]);
+  });
 
   const onDataTypeChange = useCallback(newDataType => {
     handleClose();
-
-    if ((dataType === MAPPING_DATA_TYPES.OBJECT || dataType === MAPPING_DATA_TYPES.OBJECTARRAY) &&
-      newDataType !== MAPPING_DATA_TYPES.OBJECT && newDataType !== MAPPING_DATA_TYPES.OBJECTARRAY) {
-      confirmDialog({
-        title: 'Confirm data type selection',
-        message: <RawHtml html={messageStore('MAPPER2_DATA_TYPE_WARNING')} />,
-        buttons: [
-          {
-            label: 'Confirm',
-            onClick: () => {
-              dispatch(actions.mapping.v2.updateDataType(nodeKey, newDataType));
-            },
-          },
-          {
-            label: 'Cancel',
-            variant: 'text',
-          },
-        ],
-      });
-    } else {
-      dispatch(actions.mapping.v2.updateDataType(nodeKey, newDataType));
-    }
-    handleBlur();
-  }, [handleClose, dataType, handleBlur, confirmDialog, dispatch, nodeKey]);
+    sourceDataTypeRef.current = [newDataType];
+    dispatch(actions.mapping.v2.updateDataType(nodeKey, newDataType, true));
+  }, [handleClose, dataType, dispatch, nodeKey]);
 
   return (
-    <div className={className}>
+    <div className={clsx(classes.sourceDataTypeDropDown, className)}>
+
       <Tooltip
-        title={disabled || open ? '' : `Data type: ${selectedDataTypeLabel} - Click to change`}
+        title={getToolTipTitle(isHandlebarExp, isHardCodedValue)}
         placement="bottom" >
-        {/* this div needs to be added to render the tooltip correctly */}
-        <div>
+        {/* this span needs to be added to render the tooltip correctly */}
+        <span>
           <TextButton
             onClick={handleMenu}
             disabled={disabled}
-            endIcon={<ArrowDownFilledIcon />}
+            endIcon={sourceDataTypes && sourceDataTypes.length > 1 ? '' : <ArrowDownFilledIcon />}
             className={classes.dataType} >
-            {selectedDataTypeLabel}
+            { document.getElementById('extractPopper')
+              ? <span className={classes.dataTypeList}>{selectedDataTypeLabels.join()}</span> : (
+                <CeligoTruncate placement="bottom" disableHoverListener>
+                  {selectedDataTypeLabels.join()}
+                </CeligoTruncate>
+              )}
           </TextButton>
-        </div>
+        </span>
       </Tooltip>
+      <Divider className={classes.divider} orientation="vertical" />
 
       <ArrowPopper
         id="dataTypesList"

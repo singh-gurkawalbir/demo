@@ -12,6 +12,7 @@ import FieldMessage from './FieldMessage';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import isLoggableAttr from '../../../utils/isLoggableAttr';
 import IconButtonWithTooltip from '../../IconButtonWithTooltip';
+import HelpLink from '../../HelpLink';
 
 const useStyles = makeStyles(theme => ({
   dynaFieldWrapper: {
@@ -165,6 +166,7 @@ function DynaText(props) {
           {label}
         </FormLabel>
         <FieldHelp {...props} />
+        <HelpLink helpLink={props.helpLink} />
       </div>
       <TextField
         {...isLoggableAttr(isLoggable)}

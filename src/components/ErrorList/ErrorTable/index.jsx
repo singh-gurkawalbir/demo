@@ -21,6 +21,8 @@ const useStyles = makeStyles(theme => ({
   },
   errorDetailsTable: {
     wordBreak: 'break-word',
+    overflow: 'auto',
+    height: 'calc(100vh - 320px)',
     '& th': {
       wordBreak: 'normal',
     },
@@ -47,6 +49,9 @@ const useStyles = makeStyles(theme => ({
     '&:focus': {
       outline: 'inherit',
     },
+  },
+  errorTableWithErrorsInRun: {
+    height: 'calc(100vh - 361px)',
   },
   errorDetailsPanel: {
     flexGrow: 1,
@@ -97,6 +102,8 @@ const ErrorTableWithPanel = ({
   flowId,
   keydownListener,
   onRowClick,
+  errorsInRun,
+
 }) => {
   const classes = useStyles();
   const tableRef = useRef();
@@ -118,7 +125,7 @@ const ErrorTableWithPanel = ({
     hasFilter = true;
   }
   const emptyErrorMessage = !hasFilter && !isResolved && !hasErrors;
-  const emptyFilterMessage = hasFilter && !isResolved && (!hasErrors || errorsInCurrPage.length === 0);
+  const emptyFilterMessage = hasFilter && errorsInCurrPage.length === 0;
 
   useEffect(() => {
     const refEle = tableRef?.current;
@@ -132,47 +139,65 @@ const ErrorTableWithPanel = ({
     };
   }, [isSplitView, keydownListener, tableRef]);
 
-  return isSplitView && !isResolved ? (
-    <div className={classes.baseFormWithPreview}>
-      {/* eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex */}
-      <div className={classes.errorTable} ref={tableRef} tabIndex={0}>
-        <ResourceTable
-          resources={errorsInCurrPage}
-          className={classes.resourceFormWrapper}
-          resourceType="splitViewOpenErrors"
-          actionProps={actionProps}
-          onRowClick={onRowClick}
-        />
-        {emptyErrorMessage && <EmptyErrorMessage />}
-        {emptyFilterMessage && <NoFiltersMessage />}
-      </div>
-      <div className={classes.partition}>
-        <Divider orientation="vertical" className={clsx(classes.divider)} />
-      </div>
-      <div className={classes.errorDetailsPanel}>
-        <ErrorDetailsPanel
-          errorsInCurrPage={errorsInCurrPage}
+  return isSplitView && !isResolved
+    ? (
+      <>
+        <ErrorTableFilters
           flowId={flowId}
           resourceId={resourceId}
           isResolved={isResolved}
-        />
-      </div>
-    </div>
-  ) : (
-    <>
-      <ResourceTable
-        resources={errorsInCurrPage}
-        resourceType={filterKey}
-        actionProps={actionProps}
-        className={classes.errorDetailsTable}
-        tableRef={tableRef}
-      />
-      {emptyErrorMessage && <EmptyErrorMessage />}
-      {emptyFilterMessage && <NoFiltersMessage />}
-    </>
-  );
+          filterKey={filterKey}
+    />
+        <div className={classes.baseFormWithPreview}>
+          {/* eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex */}
+          <div className={clsx(classes.errorTable, {[classes.errorTableWithErrorsInRun]: errorsInRun})} ref={tableRef} tabIndex={0}>
+            <ResourceTable
+              resources={errorsInCurrPage}
+              className={classes.resourceFormWrapper}
+              resourceType="splitViewOpenErrors"
+              actionProps={actionProps}
+              onRowClick={onRowClick}
+          />
+            {emptyErrorMessage && <EmptyErrorMessage />}
+            {emptyFilterMessage && <NoFiltersMessage />}
+          </div>
+          <div className={classes.partition}>
+            <Divider
+              orientation="vertical"
+              className={clsx(classes.divider)}
+          />
+          </div>
+          <div className={classes.errorDetailsPanel}>
+            <ErrorDetailsPanel
+              errorsInCurrPage={errorsInCurrPage}
+              flowId={flowId}
+              resourceId={resourceId}
+              isResolved={isResolved}
+              errorsInRun={errorsInRun}
+          />
+          </div>
+        </div>
+      </>
+    )
+    : (
+      <>
+        <ErrorTableFilters
+          flowId={flowId}
+          resourceId={resourceId}
+          isResolved={isResolved}
+          filterKey={filterKey} />
+        <div className={clsx(classes.errorDetailsTable, {[classes.errorTableWithErrorsInRun]: errorsInRun})}>
+          <ResourceTable
+            resources={errorsInCurrPage}
+            resourceType={filterKey}
+            actionProps={actionProps}
+            tableRef={tableRef} />
+          {emptyErrorMessage && <EmptyErrorMessage />}
+          {emptyFilterMessage && <NoFiltersMessage />}
+        </div>
+      </>
+    );
 };
-
 const EmptyErrorMessage = () => (
   <NoResultTypography>
     <br />
@@ -199,6 +224,7 @@ export default function ErrorTable({
   resourceId,
   isResolved,
   flowJobId,
+  errorsInRun,
 }) {
   const classes = useStyles();
   const filterKey = isResolved ? FILTER_KEYS.RESOLVED : FILTER_KEYS.OPEN;
@@ -370,13 +396,6 @@ export default function ErrorTable({
         <Spinner centerAll />
       ) : (
         <>
-          <ErrorTableFilters
-            flowId={flowId}
-            resourceId={resourceId}
-            isResolved={isResolved}
-            filterKey={filterKey}
-          />
-
           <ErrorTableWithPanel
             errorsInCurrPage={errorsInCurrPage}
             filterKey={filterKey}
@@ -387,6 +406,7 @@ export default function ErrorTable({
             isResolved={isResolved}
             keydownListener={keydownListener}
             onRowClick={onRowClick}
+            errorsInRun={errorsInRun}
           />
         </>
       )}

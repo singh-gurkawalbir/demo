@@ -15,6 +15,7 @@ const useStyles = makeStyles(theme => ({
   statusButtonContainer: {
     fontSize: '15px',
     justifyContent: 'flex-start',
+    textAlign: 'left',
     padding: theme.spacing(0, 0, 0, 0.5),
     '& > * .MuiButton-startIcon': {
       marginRight: 0,
