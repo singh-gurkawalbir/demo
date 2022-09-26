@@ -466,6 +466,7 @@ describe('editor sagas', () => {
               dataType: 'object',
               extract: 'parents',
               status: 'Active',
+              sourceDataType: 'string',
               description: undefined,
               extractDateFormat: undefined,
               extractDateTimezone: undefined,
@@ -1733,11 +1734,11 @@ describe('editor sagas', () => {
             v2TreeData: [
               {
                 key: 'k1',
-                combinedExtract: '$.siblings[*]',
+                extractsArrayHelper: [{extract: '$.siblings[*]'}],
                 dataType: 'objectarray',
                 children: [{
                   key: 'c1',
-                  combinedExtract: '$.siblings.children[*]',
+                  extractsArrayHelper: [{extract: '$.siblings.children[*]'}],
                   parentKey: 'k1',
                   parentExtract: '$.siblings[*]',
                   dataType: 'objectarray',

@@ -1,8 +1,6 @@
 import React, { useMemo } from 'react';
 import { useSelector } from 'react-redux';
-import { makeStyles, Typography } from '@material-ui/core';
 import { useLocation, useRouteMatch } from 'react-router-dom';
-import clsx from 'clsx';
 import DrawerHeader from '../../Right/DrawerHeader';
 import CloseButton from './CloseButton';
 import { isNewId } from '../../../../utils/resource';
@@ -11,32 +9,6 @@ import TitleActions from './TitleActions';
 import DynaFormView from '../../../DynaForm/fields/DynaFormView';
 import DynaConnectionFormView from '../../../DynaForm/fields/DynaConnectionFormView';
 
-const useStyles = makeStyles(theme => ({
-  backButton: {
-    marginRight: theme.spacing(1),
-    padding: 0,
-    '&:hover': {
-      backgroundColor: 'transparent',
-      color: theme.palette.secondary.dark,
-    },
-  },
-  titleImgBlock: {
-    width: '100%',
-    display: 'flex',
-    justifyContent: 'space-between',
-  },
-  title: {
-    display: 'flex',
-  },
-  titleText: {
-    wordBreak: 'break-word',
-    paddingRight: theme.spacing(2),
-    color: theme.palette.secondary.main,
-  },
-  nestedDrawerTitleText: {
-    maxWidth: '90%',
-  },
-}));
 const getTitle = ({ resourceType, resourceLabel, opTitle }) => {
   if (resourceType === 'eventreports') {
     return 'Run report';
@@ -55,7 +27,6 @@ const getTitle = ({ resourceType, resourceLabel, opTitle }) => {
 };
 
 const ResourceTitle = ({ flowId }) => {
-  const classes = useStyles();
   const location = useLocation();
   const match = useRouteMatch();
   const { id, resourceType } = match.params || {};
@@ -77,15 +48,7 @@ const ResourceTitle = ({ flowId }) => {
     [id, location.search, resourceLabel, resourceType]
   );
 
-  return (
-    <div className={classes.title}>
-      <div className={classes.titleImgBlock}>
-        <Typography variant="h4" className={clsx(classes.titleText)}>
-          {title}
-        </Typography>
-      </div>
-    </div>
-  );
+  return title;
 };
 
 export default function TitleBar({ flowId, formKey, onClose }) {
