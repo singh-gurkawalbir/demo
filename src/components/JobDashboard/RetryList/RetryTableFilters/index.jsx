@@ -5,14 +5,15 @@ import { selectors } from '../../../../reducers';
 import actions from '../../../../actions';
 import Icon from '../../../icons/RefreshIcon';
 import TextButton from '../../../Buttons/TextButton';
-import InfoIcon from '../../../icons/InfoIcon';
 import messageStore from '../../../../utils/messageStore';
 import MultiSelectUsersFilter from './MultiSelectUsersFilter';
+import InfoMessage from '../../../InfoMessage';
 
 const useStyles = makeStyles(theme => ({
   header: {
     paddingBottom: theme.spacing(3),
     display: 'flex',
+    alignItems: 'center',
   },
   refreshBtn: {
     marginLeft: theme.spacing(2),
@@ -64,10 +65,8 @@ export default function RetryTableFilters({flowId, resourceId, filterKey}) {
           </div>
         </div>
         { (!retryStatus && (isOpenErrorsUpdated || isResolvedErrorsUpdated)) ? (
-          <div>
-            <InfoIcon size="xs" />
-            {messageStore('RETRIES_TAB_ERRORS_UPDATED_INFO')}
-          </div>
+          <InfoMessage
+            infoMessage={messageStore('RETRIES_TAB_ERRORS_UPDATED_INFO')} />
         ) : ''}
       </div>
     </div>
