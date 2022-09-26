@@ -502,9 +502,11 @@ export const updateFinalMetadataWithHttpFramework = (finalFieldMeta, connector, 
       } else if (tempFiledMeta?.layout?.containers?.[0]?.containers?.[1]?.fields) {
         tempFiledMeta.layout.containers[0].containers[1]?.fields.push(unEncryptedFields[i].id);
       } else if (tempFiledMeta?.layout?.containers[2]?.fields) { tempFiledMeta.layout.containers[2].fields.push(unEncryptedFields[i].id); }
+      if (isGenericHTTP && unEncryptedFields[i].id.includes('http.encrypted')) {
+        tempFiledMeta?.layout?.containers[1]?.fields.push(unEncryptedFields[i].id);
+      }
     }
   }
-
   const settingFields = connectionTemplate.preConfiguredFields?.find(field => field.path === 'settingsForm');
 
   if (settingFields) {
