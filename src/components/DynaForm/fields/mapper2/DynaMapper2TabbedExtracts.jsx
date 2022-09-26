@@ -1,11 +1,13 @@
 import React, { useState, useCallback, useMemo, useEffect } from 'react';
+import { useSelector } from 'react-redux';
 import { makeStyles, Tabs, Tab, Divider } from '@material-ui/core';
 import isEmpty from 'lodash/isEmpty';
-import mappingUtil, {ARRAY_DATA_TYPES, getUniqueExtractId, findMatchingExtract, buildExtractsHelperFromExtract} from '../../../../utils/mapping';
+import mappingUtil, {ARRAY_DATA_TYPES, getUniqueExtractId, findMatchingExtract, buildExtractsHelperFromExtract, getSelectedExtractDataTypes} from '../../../../utils/mapping';
 import useFormContext from '../../../Form/FormContext';
 import DynaForm from '../..';
 import useFormInitWithPermissions from '../../../../hooks/useFormInitWithPermissions';
 import {useUpdateParentForm} from '../DynaCsvGenerate_afe';
+import { selectors } from '../../../../reducers';
 
 const useStyles = makeStyles(theme => ({
   panelContainer: {
@@ -35,7 +37,7 @@ function generateTabsForSettings(sourceField) {
   return tabs;
 }
 
-function getSubFormMetadata(value, formKey, dataType, sourceField) {
+function getSubFormMetadata(value, formKey, dataType, sourceField, sourceDataTypeVal) {
   const newValue = buildExtractsHelperFromExtract(value, sourceField);
 
   return {
@@ -47,7 +49,7 @@ function getSubFormMetadata(value, formKey, dataType, sourceField) {
         skipSort: true,
         skipDefault: true,
         label: 'Source data type',
-        defaultValue: findMatchingExtract(newValue, formKey).sourceDataType || 'string',
+        defaultValue: findMatchingExtract(newValue, formKey).sourceDataType || sourceDataTypeVal || 'string',
         helpKey: 'mapping.v2.sourceDataType',
         noApi: true,
         options: [
@@ -212,6 +214,8 @@ function constructExtractsArray(formKey, newOptions, existingExtractsArray, data
 }
 
 function EachTabContainer({id, value, formKey, dataType, isCurrentTab, onFieldChange, sourceField}) {
+  const extractsTreeData = useSelector(state => selectors.v2MappingsExtractsTree(state));
+
   const handleFormChange = useCallback(
     (newOptions, isValid, touched) => {
       const extractsArrayHelper = constructExtractsArray(formKey, newOptions, value, dataType, sourceField);
@@ -220,10 +224,16 @@ function EachTabContainer({id, value, formKey, dataType, isCurrentTab, onFieldCh
     }, [formKey, id, onFieldChange, value, dataType, sourceField]);
 
   useUpdateParentForm(formKey, handleFormChange);
+
+  // During initializing the tabs set the source datatype
+  // depening on the source field selected
+  const jsonPathValue = formKey.replace(/(\$\.)|(\$\[\*\]\.)/g, '');
+  const sourceDataTypeVal = getSelectedExtractDataTypes(extractsTreeData[0], jsonPathValue);
+
   // useSetSubFormShowValidations(parentFormKey, formKey);
   const formKeyComponent = useFormInitWithPermissions({
     formKey,
-    fieldMeta: getSubFormMetadata(value, formKey, dataType, sourceField),
+    fieldMeta: getSubFormMetadata(value, formKey, dataType, sourceField, sourceDataTypeVal[0]),
   });
 
   if (!isCurrentTab) return null;
