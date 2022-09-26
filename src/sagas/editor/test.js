@@ -483,6 +483,9 @@ describe('editor sagas', () => {
         data: [[{id: '123'}]],
         options: {
           connection: connRes,
+          _flowId: 'flow-123',
+          import: importRes,
+          _integrationId: 'in-123',
         },
       };
 
@@ -492,6 +495,7 @@ describe('editor sagas', () => {
           [select(selectors.mapping), {v2TreeData, mappings, lookups: []}],
           [select(selectors.editor, editorId), editorState],
           [select(selectors.resource, 'imports', 'res-123'), importRes],
+          [select(selectors.resource, 'flows', 'flow-123'), {_id: 'flow-123', _integrationId: 'in-123'}],
           [select(selectors.resource, 'connections', 'conn-123'), connRes],
         ])
         .call(apiCallWithRetry, {
