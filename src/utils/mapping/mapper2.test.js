@@ -2498,6 +2498,19 @@ describe('v2 mapping utils', () => {
         key: 'new_key',
         title: '',
         disabled: false,
+        dataType: 'object',
+        children: [{
+          key: 'new_key',
+          title: '',
+          parentKey: 'new_key',
+          disabled: false,
+          dataType: 'string',
+        }],
+      },
+      {
+        key: 'new_key',
+        title: '',
+        disabled: false,
         generate: 'my_mothers_name',
         dataType: 'object',
         mappings: [{
@@ -2869,6 +2882,19 @@ describe('v2 mapping utils', () => {
         },
         {
           conditional: {when: undefined},
+          dataType: 'object',
+          status: 'Draft',
+          mappings: [
+            {
+              conditional: {when: undefined},
+              dataType: 'string',
+              status: 'Draft',
+              sourceDataType: 'string',
+            },
+          ],
+        },
+        {
+          conditional: {when: undefined},
           generate: 'my_mothers_name',
           dataType: 'object',
           status: 'Active',
@@ -2910,7 +2936,6 @@ describe('v2 mapping utils', () => {
           buildArrayHelper: [
             {
               extract: '$',
-              status: 'Active',
               sourceDataType: 'string',
               mappings: [
                 {
@@ -2925,7 +2950,6 @@ describe('v2 mapping utils', () => {
             },
             {
               extract: '$',
-              status: 'Active',
               sourceDataType: 'string',
               mappings: [
                 {
@@ -2948,7 +2972,6 @@ describe('v2 mapping utils', () => {
           buildArrayHelper: [
             {
               extract: '$.siblings[*].children[*]',
-              status: 'Active',
               sourceDataType: 'string',
               mappings: [
                 {
@@ -2963,7 +2986,6 @@ describe('v2 mapping utils', () => {
             },
             {
               extract: '$.children[*]',
-              status: 'Active',
               sourceDataType: 'string',
               mappings: [
                 {
@@ -2992,7 +3014,6 @@ describe('v2 mapping utils', () => {
               buildArrayHelper: [
                 {
                   extract: '$.siblings[*]',
-                  status: 'Active',
                   sourceDataType: 'string',
                   mappings: [
                     {
@@ -3011,7 +3032,6 @@ describe('v2 mapping utils', () => {
                       buildArrayHelper: [
                         {
                           extract: '$.siblings.children[*]',
-                          status: 'Active',
                           sourceDataType: 'string',
                           mappings: [
                             {
@@ -3030,7 +3050,6 @@ describe('v2 mapping utils', () => {
                 },
                 {
                   extract: '$',
-                  status: 'Active',
                   sourceDataType: 'string',
                   mappings: [
                     {
@@ -3050,7 +3069,6 @@ describe('v2 mapping utils', () => {
                       buildArrayHelper: [
                         {
                           extract: '$.children[*]',
-                          status: 'Active',
                           sourceDataType: 'string',
                           mappings: [
                             {
@@ -3128,6 +3146,14 @@ describe('v2 mapping utils', () => {
           parentExtract: '$[*]|0',
           parentKey: 'new_key',
           title: '',
+        },
+        {
+          dataType: 'string',
+          disabled: true,
+          key: 'new_key',
+          parentExtract: '$[*]|0',
+          parentKey: 'new_key',
+          title: '',
         }],
         extractsArrayHelper: [{extract: '$[*]|0'}],
         dataType: 'objectarray',
@@ -3147,7 +3173,6 @@ describe('v2 mapping utils', () => {
           buildArrayHelper: [
             {
               extract: '$[*]',
-              status: 'Active',
               sourceDataType: 'string',
               mappings: [
                 {
@@ -3172,6 +3197,12 @@ describe('v2 mapping utils', () => {
                   extract: '$.childFName',
                   conditional: {when: undefined},
                   status: 'Active',
+                  sourceDataType: 'string',
+                },
+                {
+                  dataType: 'string',
+                  conditional: {when: undefined},
+                  status: 'Draft',
                   sourceDataType: 'string',
                 },
               ],
