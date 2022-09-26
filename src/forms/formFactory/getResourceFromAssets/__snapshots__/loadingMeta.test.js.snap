@@ -4778,17 +4778,35 @@ Object {
             "min": 1,
           },
         },
-        "visibleWhen": Array [
+        "visibleWhenAll": Array [
           Object {
-            "field": "type",
-            "is": Array [
-              "once",
+            "field": "netsuite.restlet.recordType",
+            "isNot": Array [
+              "",
             ],
           },
           Object {
             "field": "restlet.type",
             "is": Array [
               "once",
+            ],
+          },
+          Object {
+            "field": "outputMode",
+            "is": Array [
+              "records",
+            ],
+          },
+          Object {
+            "field": "netsuite.api.type",
+            "is": Array [
+              "restlet",
+            ],
+          },
+          Object {
+            "field": "netsuite.execution.type",
+            "is": Array [
+              "scheduled",
             ],
           },
         ],

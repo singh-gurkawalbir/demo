@@ -528,9 +528,12 @@ export default {
       label: 'Mark exported batch size',
       type: 'text',
       defaultValue: r => r?.netsuite?.restlet?.markExportedBatchSize || '100',
-      visibleWhen: [
-        { field: 'type', is: ['once'] },
+      visibleWhenAll: [
+        { field: 'netsuite.restlet.recordType', isNot: [''] },
         { field: 'restlet.type', is: ['once'] },
+        { field: 'outputMode', is: ['records'] },
+        { field: 'netsuite.api.type', is: ['restlet'] },
+        { field: 'netsuite.execution.type', is: ['scheduled'] },
       ],
       validWhen: {
         fallsWithinNumericalRange: {

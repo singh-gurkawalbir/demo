@@ -6,6 +6,7 @@ import { FILTER_KEYS } from '../../../../utils/errorManagement';
 import TextButton from '../../../Buttons/TextButton';
 import ArrowLeftIcon from '../../../icons/ArrowLeftIcon';
 import ArrowRightIcon from '../../../icons/ArrowRightIcon';
+import Spinner from '../../../Spinner';
 import { useHandleNextAndPreviousError } from '../hooks/useHandleNextAndPreviousError';
 
 export default function ErrorControls({
@@ -25,6 +26,7 @@ export default function ErrorControls({
     handlePreviousError,
     disabledPrevious,
     disableNext,
+    loading,
   } = useHandleNextAndPreviousError({
     errorsInPage,
     activeErrorId,
@@ -49,8 +51,8 @@ export default function ErrorControls({
       <TextButton
         onClick={handleNextError}
         className={clsx(classes.arrowBtn, classes.arrowBtnRight)}
-        disabled={disableNext}
-        endIcon={<ArrowRightIcon />} >
+        disabled={disableNext || loading}
+        endIcon={loading ? (<Spinner size="small" />) : <ArrowRightIcon />} >
         <span className={classes.label}>Next</span>
       </TextButton>
     </Typography>

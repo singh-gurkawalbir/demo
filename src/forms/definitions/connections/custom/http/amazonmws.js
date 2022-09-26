@@ -59,15 +59,7 @@ export default {
       visibleWhenAll: [{field: 'http.type', is: ['Amazon-MWS']}],
     },
     'http.type': {
-      id: 'http.type',
-      label: 'API type',
-      type: 'amazonmwstype',
-      required: true,
-      helpKey: 'amazonmws.connection.http.type',
-      defaultDisabled: r => !isNewId(r?._id),
-      defaultValue: r => isNewId(r?._id) ? '' : (r?.http?.type || 'Amazon-MWS'),
-      skipSort: true,
-      resourceId: r => r?._id,
+      filedId: 'http.type',
     },
     'http.unencrypted.sellingRegion': {
       id: 'http.unencrypted.sellingRegion',

@@ -178,10 +178,10 @@ export default function ErrorDetailsDrawer({ flowId }) {
       <Tabs flowId={flowId} onChange={handleErrorTypeChange} />
 
       <DrawerContent className={classes.errorDetailsDrawerContent}>
-        {flowJobId ? (
+        {flowJobId && allErrors.length < 1000 ? (
           <Typography variant="body2" className={classes.errorsInRun}>
             <span className={classes.boldErrorsCount}>{childJob?.numOpenError} error{childJob?.numOpenError !== 1 ? 's' : ''} in this run </span>
-            {childJob?.numOpenError <= 1000 ? (<span><span>: {allErrors.length} open  |  </span><span>{childJob?.numOpenError - allErrors.length} resolved</span></span>) : ''}
+            <span><span>: {allErrors.length} open  |  </span><span>{childJob?.numOpenError - allErrors.length} resolved</span></span>
           </Typography>
         ) : ''}
         {errorType === FILTER_KEYS.RETRIES ? <RetryList flowId={flowId} /> : <ErrorList flowId={flowId} errorsInRun={flowJobId} />}

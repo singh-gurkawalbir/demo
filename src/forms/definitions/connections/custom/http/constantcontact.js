@@ -34,7 +34,7 @@ export default {
       '/http/auth/oauth/tokenURI':
             'https://authz.constantcontact.com/oauth2/default/v1/token',
       '/http/auth/oauth/scopeDelimiter': '',
-      '/http/auth/oauth/scope': ['contact_data'],
+      '/http/auth/oauth/scope': ['contact_data', 'offline_access'],
       '/http/auth/token/refreshMethod': 'POST',
       '/http/auth/token/refreshMediaType': 'urlencoded',
     };

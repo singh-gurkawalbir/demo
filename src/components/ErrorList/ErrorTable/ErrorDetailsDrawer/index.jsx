@@ -117,7 +117,7 @@ export default function ErrorDetailsDrawer({ flowId, resourceId, isResolved }) {
 
   return (
     <RightDrawer path={drawerPaths.ERROR_MANAGEMENT.V2.VIEW_ERROR_DETAILS} width="large" >
-      <DrawerHeader title="View error details" handleClose={onClose}>
+      <DrawerHeader title="Error details" handleClose={onClose}>
         {!isResolved && (
         <ErrorControls
           retryId={retryId}

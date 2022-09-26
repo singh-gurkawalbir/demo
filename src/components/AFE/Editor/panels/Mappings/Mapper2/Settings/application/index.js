@@ -2,7 +2,7 @@
 import { adaptorTypeMap, isFileAdaptor, isAS2Resource } from '../../../../../../../../utils/resource';
 import httpMappingSettings from './http';
 import ftpMappingSettings from './ftp';
-import { MAPPING_DATA_TYPES } from '../../../../../../../../utils/mapping';
+import { MAPPING_DATA_TYPES, ARRAY_DATA_TYPES, buildExtractsHelperFromExtract } from '../../../../../../../../utils/mapping';
 import { generateUniqueKey } from '../../../../../../../../utils/string';
 
 const getFormattedLookup = (lookup, formVal, settings) => {
@@ -101,10 +101,14 @@ export default {
     settings.generate = generate;
     settings.description = formVal.description;
     settings.extract = formVal.sourceField;
+    settings.sourceDataType = formVal.sourceDataType;
 
     if ('dataType' in formVal) {
       // default data type is always string
       settings.dataType = formVal.dataType || MAPPING_DATA_TYPES.STRING;
+    }
+    if (ARRAY_DATA_TYPES.includes(settings.dataType)) {
+      settings.extractsArrayHelper = buildExtractsHelperFromExtract(formVal.extractsArrayHelper, formVal.sourceField);
     }
 
     settings.copySource = formVal.copySource;
@@ -238,6 +242,16 @@ export default {
     if (settings.dataType === MAPPING_DATA_TYPES.OBJECT || settings.dataType === MAPPING_DATA_TYPES.OBJECTARRAY) {
       delete settings.hardCodedValue;
       delete settings.lookupName;
+    }
+
+    // array data types don't have these properties at parent level
+    if (ARRAY_DATA_TYPES.includes(settings.dataType)) {
+      delete settings.default;
+      delete settings.sourceDataType;
+      delete settings.copySource;
+      if (settings?.conditional?.when === 'extract_not_empty') {
+        delete settings.conditional;
+      }
     }
 
     return {
