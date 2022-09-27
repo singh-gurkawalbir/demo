@@ -81,7 +81,6 @@ describe('DataRow component Test cases', () => {
       props: {
         additionalConfigs: {
           IsActiveRow: () => true,
-          IsThisCurrentNavItem: () => true,
         },
       },
     });

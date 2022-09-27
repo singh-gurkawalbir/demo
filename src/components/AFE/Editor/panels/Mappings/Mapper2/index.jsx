@@ -2,11 +2,13 @@
 import React, {useCallback, useEffect, useMemo, useRef } from 'react';
 import Tree from 'rc-tree';
 import { useSelector, useDispatch } from 'react-redux';
-import { IconButton } from '@material-ui/core';
+import { IconButton, Typography } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
+import isEmpty from 'lodash/isEmpty';
 import ArrowUpIcon from '../../../../../icons/ArrowUpIcon';
 import ArrowDownIcon from '../../../../../icons/ArrowDownIcon';
+import InfoIcon from '../../../../../icons/InfoIcon';
 import {SortableDragHandle} from '../../../../../Sortable/SortableHandle';
 import {allowDrop, filterNode, getAllKeys} from '../../../../../../utils/mapping';
 import {selectors} from '../../../../../../reducers';
@@ -154,6 +156,21 @@ const useStyles = makeStyles(theme => ({
   addSearchBar: {
     paddingTop: theme.spacing(6),
   },
+  emptyMessage: {
+    padding: theme.spacing(3),
+  },
+  infoFilter: {
+    fontStyle: 'italic',
+    display: 'flex',
+    margin: theme.spacing(2, 2, -2),
+    alignItems: 'center',
+    color: theme.palette.secondary.main,
+    '& > svg': {
+      marginRight: theme.spacing(0.5),
+      fontSize: theme.spacing(2),
+      color: theme.palette.text.hint,
+    },
+  },
 })
 );
 
@@ -187,7 +204,8 @@ export default function Mapper2({editorId}) {
   const [enqueueSnackbar] = useEnqueueSnackbar();
   const dispatch = useDispatch();
   const disabled = useSelector(state => selectors.isEditorDisabled(state, editorId));
-  const treeData = useSelector(state => selectors.v2MappingsTreeData(state));
+  const treeData = useSelector(state => selectors.filteredV2TreeData(state));
+  const mapper2Filter = useSelector(selectors.mapper2Filter);
   const isAutoCreateSuccess = useSelector(state => selectors.mapping(state).autoCreated);
   const expandedKeys = useSelector(state => selectors.v2MappingExpandedKeys(state));
   const activeKey = useSelector(state => selectors.v2ActiveKey(state));
@@ -231,7 +249,7 @@ export default function Mapper2({editorId}) {
       document.removeEventListener('wheel', handleWheelEvent);
       window.removeEventListener('mousemove', handleMouseMove, true);
     };
-  }, [dispatch, enqueueSnackbar, isAutoCreateSuccess]);
+  }, [dispatch, enqueueSnackbar, handleMouseMove, handleWheelEvent, isAutoCreateSuccess]);
 
   // Add virtualization dynamically based on nodes added by user
   useEffect(() => {
@@ -239,7 +257,7 @@ export default function Mapper2({editorId}) {
       document.removeEventListener('wheel', handleWheelEvent);
       window.removeEventListener('mousemove', handleMouseMove, true);
     }
-  }, [allNodes]);
+  }, [allNodes, handleMouseMove, handleWheelEvent]);
 
   // based on activekey we are tracking the cursor position when drawer is opened
   useEffect(() => {
@@ -298,11 +316,34 @@ export default function Mapper2({editorId}) {
       settingDrawerActive.current.wasActive = false;
     }
     currentScrollPosition.current = e.currentTarget.scrollTop;
-  }, []);
+  }, [handleMouseMove, handleWheelEvent]);
+
+  const isFilterApplied = !isEmpty(mapper2Filter) && !mapper2Filter.includes('all');
+  let filterInfo = 'Filtered by mapped fields (clear filter to enable editing)';
+
+  if (mapper2Filter.includes('required') && mapper2Filter.includes('mapped')) {
+    filterInfo = 'Filtered by mapped fields and required fields (clear filter to enable editing)';
+  } else if (mapper2Filter.includes('required')) {
+    filterInfo = 'Filtered by required fields (clear filter to enable editing)';
+  }
 
   return (
     <>
       {searchKey !== undefined && <SearchBar />}
+
+      {isFilterApplied && isEmpty(treeData) && (
+        <Typography variant="body2" className={classes.emptyMessage}>
+          You don&lsquo;t have any fields that match the filter you applied. <br /> Clear the filter by setting it to &quot;All fields&quot;.
+        </Typography>
+      )}
+
+      {isFilterApplied && !isEmpty(treeData) && (
+        <Typography component="div" variant="caption" className={classes.infoFilter}>
+          <InfoIcon />
+          {filterInfo}
+        </Typography>
+      )}
+
       <div className={clsx(classes.mappingDrawerContent, {[classes.addSearchBar]: searchKey !== undefined})}>
         <Tree
           className={clsx(classes.treeRoot, {[classes.virtualTree]: allNodes > 50}, {[classes.virtualTreeCompactRow]: allNodes > 50 && editorLayout === 'compactRow'})}
@@ -320,7 +361,7 @@ export default function Mapper2({editorId}) {
           activeKey={activeKey}
           draggable={dragConfig}
           onDragStart={onDragStart}
-          disabled={disabled}
+          disabled={isFilterApplied || disabled}
           filterTreeNode={filterTreeNode}
           onScroll={onScrollHandler}
               />

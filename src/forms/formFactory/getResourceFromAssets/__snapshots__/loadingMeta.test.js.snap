@@ -452,7 +452,7 @@ Object {
             href="https://integrator.io/zendesk/sso?return_to=https://docs.celigo.com/hc/en-us/articles/115003717028-Whitelist-integrator-io-IPs"
             target="_blank"
           >
-            here1
+            here
           </a>
            
           to see the list of IP Addresses
@@ -4778,17 +4778,35 @@ Object {
             "min": 1,
           },
         },
-        "visibleWhen": Array [
+        "visibleWhenAll": Array [
           Object {
-            "field": "type",
-            "is": Array [
-              "once",
+            "field": "netsuite.restlet.recordType",
+            "isNot": Array [
+              "",
             ],
           },
           Object {
             "field": "restlet.type",
             "is": Array [
               "once",
+            ],
+          },
+          Object {
+            "field": "outputMode",
+            "is": Array [
+              "records",
+            ],
+          },
+          Object {
+            "field": "netsuite.api.type",
+            "is": Array [
+              "restlet",
+            ],
+          },
+          Object {
+            "field": "netsuite.execution.type",
+            "is": Array [
+              "scheduled",
             ],
           },
         ],

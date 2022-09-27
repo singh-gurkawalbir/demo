@@ -6,7 +6,7 @@ import React, {
   useMemo,
   useCallback,
 } from 'react';
-import { shallowEqual, useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import 'jQuery-QueryBuilder';
 import 'jQuery-QueryBuilder/dist/css/query-builder.default.css';
@@ -24,11 +24,8 @@ import {
 } from './util';
 import { selectors } from '../../../../../reducers';
 import OperandSettingsDialog from './OperandSettingsDialog';
-import { fieldTypeMap } from './operators';
-import { operatorsByFieldType } from '../../../../DynaForm/fields/DynaNSSearchCriteria/SearchCriteria/operators';
 import actions from '../../../../../actions';
 import { useIsLoggable } from '../../../../IsLoggableContextProvider';
-import { useSelectorMemo } from '../../../../../hooks';
 import Spinner from '../../../../Spinner';
 
 const useStyles = makeStyles(theme => ({
@@ -49,26 +46,6 @@ export function NetSuiteLookupFilterPanelData({ id, editorId, filters: propFilte
   const [rules, setRules] = useState();
   const [filtersMetadata, setFiltersMetadata] = useState();
   const [rulesState, setRulesState] = useState({});
-  const {customOptions, resourceId, resourceType} = useSelector(state => {
-    const editor = selectors.editor(state, editorId) || {};
-
-    return {
-      customOptions: editor.customOptions,
-      resourceId: editor.resourceId,
-      resourceType: editor.resourceType,
-    };
-  }, shallowEqual);
-
-  const connectionId = useSelector(state => {
-    const { merged: resourceData} = selectors.resourceData(state, resourceType, resourceId);
-
-    return resourceData?._connectionId;
-  });
-
-  const {commMetaPath} = customOptions || {};
-
-  const isMetadataReceived = useSelectorMemo(selectors.makeOptionsFromMetadata, connectionId, commMetaPath, 'suitescript-bodyField')?.status === 'received';
-
   const disabled = useSelector(state => selectors.isEditorDisabled(state, editorId));
   const data = useSelector(state => selectors.editorData(state, editorId) || defaultData);
   const rule = useSelector(state => selectors.editorRule(state, editorId));
@@ -320,8 +297,7 @@ export function NetSuiteLookupFilterPanelData({ id, editorId, filters: propFilte
       filters.push({
         id: v.id,
         label: v.name,
-        type: fieldTypeMap[v.type],
-        operators: operatorsByFieldType[v.type],
+        type: 'string',
         input(rule, name) {
           const ruleId = getFilterRuleId(rule);
 
@@ -487,7 +463,7 @@ export function NetSuiteLookupFilterPanelData({ id, editorId, filters: propFilte
   };
 
   useEffect(() => {
-    if (filtersMetadata && isMetadataReceived) {
+    if (filtersMetadata) {
       const filtersConfig = generateFiltersConfig(filtersMetadata);
       const qbContainer = jQuery(qbuilder.current);
 
@@ -554,7 +530,7 @@ export function NetSuiteLookupFilterPanelData({ id, editorId, filters: propFilte
     handleCloseOperandSettings();
   };
 
-  return !isMetadataReceived ? (<Spinner centerAll />) : (
+  return (
     <div className={classes.container}>
       <div className="netsuite-lookup-filters" ref={qbuilder} />
       {showOperandSettingsFor && (
