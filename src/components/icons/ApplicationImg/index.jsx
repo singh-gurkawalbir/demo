@@ -51,9 +51,10 @@ function iconMap(type = '') {
   // Hence expilicity check for S3Export and S3Import for S3 type.
   if (['s3export', 's3import'].includes(type.toLowerCase())) return 's3';
   if (['ftpexport', 'ftpimport'].includes(type.toLowerCase())) return 'ftp';
+  const typeCheck = type.toLowerCase();
 
   // remove all whitespaces and dots
-  return type.replace(/\.|\s/g, '') && type.toLowerCase();
+  return typeCheck.replace(/\.|\s/g, '');
 }
 
 function imageName(assistant) {
