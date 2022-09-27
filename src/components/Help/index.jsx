@@ -25,9 +25,10 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function Help({ className, helpKey, helpText, escapeUnsecuredDomains, ...rest }) {
+export default function Help({ className, helpKey, helpText, escapeUnsecuredDomains, disablePortal = 'true', placement = 'right', ...rest }) {
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = useState(null);
+  const popperRef = React.useRef(null);
 
   const handleMenu = useCallback(
     event => {
@@ -65,12 +66,13 @@ export default function Help({ className, helpKey, helpText, escapeUnsecuredDoma
         </IconButton>
       </ClickAwayListener>
       <ArrowPopper
-        placement="right"
+        placement={placement}
         id="helpBubble"
         open={open}
-        disablePortal
+        disablePortal={disablePortal}
+        popperRef={popperRef}
         anchorEl={anchorEl}>
-        <HelpContent {...rest}>
+        <HelpContent {...rest} updatePosition={() => { popperRef.current.update(); }}>
           {/<\/?[a-z][\s\S]*>/i.test(helpTextValue) ? (
             <RawHtml
               html={helpTextValue}

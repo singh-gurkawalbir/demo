@@ -3375,7 +3375,6 @@ describe('integrationApps selector testcases', () => {
     });
 
     test('should return if license expired for the integration app for owner user for non-expired', () => {
-      const expires = moment(new Date()).add(10, 'days').toISOString();
       const state = reducer(
         {
           user: {
@@ -3388,7 +3387,7 @@ describe('integrationApps selector testcases', () => {
                       {
                         _id: 'l1',
                         _integrationId: 'i1',
-                        expires,
+                        expires: '2032-08-18T06:00:43.721Z',
                         created: '2018-07-10T10:03:02.169Z',
                       },
                     ],
@@ -3441,7 +3440,6 @@ describe('integrationApps selector testcases', () => {
     });
 
     test('should return if license expired for the integration app for non owner user for non-expired', () => {
-      const expires = moment(new Date()).add(10, 'days').toISOString();
       const state = reducer(
         {
           user: {
@@ -3454,7 +3452,7 @@ describe('integrationApps selector testcases', () => {
                       {
                         _id: 'l1',
                         _integrationId: 'i1',
-                        expires,
+                        expires: '2032-08-18T06:00:43.721Z',
                         created: '2018-07-10T10:03:02.169Z',
                       },
                     ],

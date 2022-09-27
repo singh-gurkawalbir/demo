@@ -395,14 +395,14 @@ describe('mappingInit saga', () => {
         version: 1,
         requiredMappings: [],
         importSampleData: undefined,
-        v2TreeData: [{key: 'unique-key', isEmptyRow: true, title: '', disabled: false, dataType: 'string'}],
+        v2TreeData: [{key: 'unique-key', isEmptyRow: true, title: '', disabled: false, dataType: MAPPING_DATA_TYPES.STRING, sourceDataType: MAPPING_DATA_TYPES.STRING}],
         extractsTree: [
           {key: 'unique-key',
             title: '',
             dataType: '[object]',
             propName: '$',
             children: [
-              {key: 'unique-key', parentKey: 'unique-key', title: '', jsonPath: 'id', propName: 'id', dataType: 'string'},
+              {key: 'unique-key', parentKey: 'unique-key', title: '', jsonPath: 'id', propName: 'id', dataType: MAPPING_DATA_TYPES.STRING},
             ]}],
         isMonitorLevelAccess: false,
       }))
@@ -563,6 +563,7 @@ describe('mappingInit saga', () => {
           title: '',
           disabled: false,
           dataType: MAPPING_DATA_TYPES.STRING,
+          sourceDataType: MAPPING_DATA_TYPES.STRING,
         }],
         extractsTree: [
           {key: 'unique-key',
@@ -570,7 +571,7 @@ describe('mappingInit saga', () => {
             dataType: '[object]',
             propName: '$',
             children: [
-              {key: 'unique-key', parentKey: 'unique-key', title: '', jsonPath: 'id', propName: 'id', dataType: 'string'},
+              {key: 'unique-key', parentKey: 'unique-key', title: '', jsonPath: 'id', propName: 'id', dataType: MAPPING_DATA_TYPES.STRING},
             ]}],
         isMonitorLevelAccess: false,
       }))
@@ -659,7 +660,7 @@ describe('mappingInit saga', () => {
           adaptorType: 'RDBMSImport',
           lookups: [],
           mapping: {fields: [{extract: 'e1', generate: 'g1'}], lists: [{generate: 'l1', fields: [{extract: 'x', generate: 'y'}]}]},
-          mappings: [{extract: 'id', generate: 'id', dataType: 'string'}],
+          mappings: [{extract: 'id', generate: 'id', dataType: MAPPING_DATA_TYPES.STRING}],
         }],
         [select(selectors.firstFlowPageGenerator, flowId), {_id: exportId}],
         [select(selectors.getSampleDataContext, {
@@ -738,7 +739,7 @@ describe('mappingInit saga', () => {
             dataType: 'objectarray',
             children: [
               {
-                key: 'unique-key', isEmptyRow: true, title: '', disabled: false, dataType: 'string',
+                key: 'unique-key', parentKey: 'unique-key', isEmptyRow: true, title: '', disabled: false, dataType: MAPPING_DATA_TYPES.STRING, sourceDataType: MAPPING_DATA_TYPES.STRING,
               },
             ]}],
         extractsTree: [
@@ -747,7 +748,7 @@ describe('mappingInit saga', () => {
             dataType: '[object]',
             propName: '$',
             children: [
-              {key: 'unique-key', parentKey: 'unique-key', title: '', jsonPath: 'id', propName: 'id', dataType: 'string'},
+              {key: 'unique-key', parentKey: 'unique-key', title: '', jsonPath: 'id', propName: 'id', dataType: MAPPING_DATA_TYPES.STRING},
             ]}],
         isMonitorLevelAccess: false,
       }))
@@ -769,7 +770,7 @@ describe('mappingInit saga', () => {
         [select(selectors.resource, 'imports', importId), {_id: importId,
           adaptorType: 'HTTPImport',
           lookups: [],
-          mappings: [{extract: 'id', generate: 'id', dataType: 'string'}],
+          mappings: [{extract: 'id', generate: 'id', dataType: MAPPING_DATA_TYPES.STRING}],
         }],
         [select(selectors.firstFlowPageGenerator, flowId), {_id: exportId}],
         [select(selectors.getSampleDataContext, {
@@ -800,7 +801,8 @@ describe('mappingInit saga', () => {
           extract: 'id',
           generate: 'id',
           jsonPath: 'id',
-          dataType: 'string',
+          dataType: MAPPING_DATA_TYPES.STRING,
+          sourceDataType: MAPPING_DATA_TYPES.STRING,
         }],
         extractsTree: [
           {key: 'unique-key',
@@ -808,7 +810,7 @@ describe('mappingInit saga', () => {
             dataType: '[object]',
             propName: '$',
             children: [
-              {key: 'unique-key', parentKey: 'unique-key', title: '', jsonPath: 'id', propName: 'id', dataType: 'string'},
+              {key: 'unique-key', parentKey: 'unique-key', title: '', jsonPath: 'id', propName: 'id', dataType: MAPPING_DATA_TYPES.STRING},
             ]}],
         isMonitorLevelAccess: false,
       }))
@@ -1031,8 +1033,8 @@ describe('saveMappings saga', () => {
       [select(selectors.mapping), {
         mappings: [{extract: 'e1', generate: 'g1'}],
         lookups: [{name: 'lookup1', isConditionalLookup: true}, {name: 'lookup2'}],
-        v2TreeData: [{extract: 'id', generate: 'new-id', dataType: 'string', key: 'unique'}],
-        v2TreeDataCopy: [{extract: 'id', generate: 'id', dataType: 'string', key: 'unique'}],
+        v2TreeData: [{extract: 'id', generate: 'new-id', dataType: MAPPING_DATA_TYPES.STRING, key: 'unique'}],
+        v2TreeDataCopy: [{extract: 'id', generate: 'id', dataType: MAPPING_DATA_TYPES.STRING, key: 'unique'}],
         importId,
         flowId,
       }],
@@ -1070,8 +1072,10 @@ describe('saveMappings saga', () => {
         path: '/mappings',
         value: [{
           generate: 'new-id',
-          dataType: 'string',
+          dataType: MAPPING_DATA_TYPES.STRING,
           extract: 'id',
+          status: 'Active',
+          sourceDataType: MAPPING_DATA_TYPES.STRING,
           description: undefined,
           extractDateFormat: undefined,
           extractDateTimezone: undefined,
@@ -1097,8 +1101,8 @@ describe('saveMappings saga', () => {
       [select(selectors.mapping), {
         mappings: [{extract: 'e1', generate: 'g1'}],
         lookups: [{name: 'lookup1', isConditionalLookup: true}, {name: 'lookup2'}],
-        v2TreeData: [{extract: 'id', generate: 'id', dataType: 'string', key: 'unique'}],
-        v2TreeDataCopy: [{extract: 'id', generate: 'id', dataType: 'string', key: 'unique'}],
+        v2TreeData: [{extract: 'id', generate: 'id', dataType: MAPPING_DATA_TYPES.STRING, key: 'unique'}],
+        v2TreeDataCopy: [{extract: 'id', generate: 'id', dataType: MAPPING_DATA_TYPES.STRING, key: 'unique'}],
         importId,
         flowId,
       }],

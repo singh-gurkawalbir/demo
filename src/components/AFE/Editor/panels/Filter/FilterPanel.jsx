@@ -577,6 +577,8 @@ export default function FilterPanel({editorId}) {
             }
           }
 
+          const lhsFieldType = filtersMetadata.find(metadata => metadata.id === lhsValue)?.type;
+
           if (r.lhs.type === 'field') {
             if (
               lhsValue &&
@@ -585,17 +587,16 @@ export default function FilterPanel({editorId}) {
             ) {
               r.lhs.dataType = 'epochtime';
             } else if (lhsValue?.endsWith('.length')) {
-              const fieldType = filtersMetadata.find(metadata => metadata.id === lhsValue).type;
-
-              if (fieldType === 'number') {
+              if (lhsFieldType === 'number') {
                 r.lhs.dataType = 'number';
                 r.rhs.dataType = 'number';
               }
             }
           }
-
-          if (!r.lhs.dataType) {
+          if (!r.lhs.dataType || !lhsFieldType) {
             r.lhs.dataType = 'string';
+          } else if (r.lhs.dataType !== lhsFieldType) {
+            r.lhs.dataType = lhsFieldType;
           }
 
           let rhsValue = rule.$el
@@ -612,6 +613,8 @@ export default function FilterPanel({editorId}) {
             rhsValue = r.rhs[r.rhs.type];
           }
 
+          const rhsFieldType = filtersMetadata.find(metadata => metadata.id === rhsValue)?.type;
+
           if (r.rhs.type === 'field') {
             if (
               rhsValue &&
@@ -620,17 +623,16 @@ export default function FilterPanel({editorId}) {
             ) {
               r.rhs.dataType = 'epochtime';
             } else if (rhsValue?.endsWith('.length')) {
-              const fieldType = filtersMetadata.find(metadata => metadata.id === rhsValue).type;
-
-              if (fieldType === 'number') {
+              if (rhsFieldType === 'number') {
                 r.lhs.dataType = 'number';
                 r.rhs.dataType = 'number';
               }
             }
           }
-
-          if (!r.rhs.dataType) {
+          if (!r.rhs.dataType || !rhsFieldType) {
             r.rhs.dataType = 'string';
+          } else if (r.rhs.dataType !== rhsFieldType) {
+            r.rhs.dataType = rhsFieldType;
           }
 
           // if the rule input is updated, reset the data type
@@ -660,6 +662,7 @@ export default function FilterPanel({editorId}) {
                 .find(`.rule-filter-container [name=${r.lhs.type}]`)
                 .val();
             }
+            const lhsFieldType = filtersMetadata.find(metadata => metadata.id === lhsValue)?.type;
 
             if (r.lhs.type === 'field') {
               if (
@@ -669,17 +672,17 @@ export default function FilterPanel({editorId}) {
               ) {
                 r.lhs.dataType = 'epochtime';
               } else if (lhsValue?.endsWith('.length')) {
-                const fieldType = filtersMetadata.find(metadata => metadata.id === lhsValue).type;
-
-                if (fieldType === 'number') {
+                if (lhsFieldType === 'number') {
                   r.lhs.dataType = 'number';
                   r.rhs.dataType = 'number';
                 }
               }
             }
 
-            if (!r.lhs.dataType) {
+            if (!r.lhs.dataType || !lhsFieldType) {
               r.lhs.dataType = 'string';
+            } else if (r.lhs.dataType !== lhsFieldType) {
+              r.lhs.dataType = lhsFieldType;
             }
 
             let rhsValue = rule.$el
@@ -692,6 +695,8 @@ export default function FilterPanel({editorId}) {
                 .val();
             }
 
+            const rhsFieldType = filtersMetadata.find(metadata => metadata.id === rhsValue)?.type;
+
             if (r.rhs.type === 'field') {
               if (
                 rhsValue &&
@@ -700,17 +705,17 @@ export default function FilterPanel({editorId}) {
               ) {
                 r.rhs.dataType = 'epochtime';
               } else if (rhsValue?.endsWith('.length')) {
-                const fieldType = filtersMetadata.find(metadata => metadata.id === rhsValue).type;
-
-                if (fieldType === 'number') {
+                if (rhsFieldType === 'number') {
                   r.lhs.dataType = 'number';
                   r.rhs.dataType = 'number';
                 }
               }
             }
 
-            if (!r.rhs.dataType) {
+            if (!r.rhs.dataType || !rhsFieldType) {
               r.rhs.dataType = 'string';
+            } else if (r.rhs.dataType !== rhsFieldType) {
+              r.rhs.dataType = rhsFieldType;
             }
 
             r.lhs[r.lhs.type || 'field'] = lhsValue;

@@ -12,6 +12,7 @@ import FieldMessage from './FieldMessage';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import isLoggableAttr from '../../../utils/isLoggableAttr';
 import IconButtonWithTooltip from '../../IconButtonWithTooltip';
+import HelpLink from '../../HelpLink';
 
 const useStyles = makeStyles(theme => ({
   dynaFieldWrapper: {
@@ -62,6 +63,7 @@ function DynaText(props) {
     disabled,
     errorMessages,
     id,
+    autoFocus = false,
     isValid = true,
     name,
     onFieldChange,
@@ -72,6 +74,7 @@ function DynaText(props) {
     multiline,
     delimiter,
     rowsMax,
+    maxLength,
     startAdornment,
     endAdornment,
     readOnly,
@@ -142,6 +145,9 @@ function DynaText(props) {
         step: '1',
       };
     }
+    if (maxLength) {
+      props.inputProps = { maxLength };
+    }
 
     return props;
   }, [
@@ -150,6 +156,7 @@ function DynaText(props) {
     inputType,
     readOnly,
     startAdornment,
+    maxLength,
   ]);
 
   return (
@@ -159,12 +166,14 @@ function DynaText(props) {
           {label}
         </FormLabel>
         <FieldHelp {...props} />
+        <HelpLink helpLink={props.helpLink} />
       </div>
       <TextField
         {...isLoggableAttr(isLoggable)}
         autoComplete="off"
         key={id}
         data-test={id}
+        autoFocus={autoFocus}
         name={name}
         InputProps={InputProps}
         type={inputType}

@@ -11,12 +11,14 @@ import messageStore from '../../../../../../../utils/messageStore';
 import ArrowPopper from '../../../../../../ArrowPopper';
 import useDebouncedValue from '../../../../../../../hooks/useDebouncedInput';
 import actions from '../../../../../../../actions';
+import SourceDataType from './SourceDataType';
 
 const useStyles = makeStyles(theme => ({
   customTextField: {
     padding: 0,
     display: 'flex',
     marginBottom: 0,
+    width: '100%',
     '& > .MuiFilledInput-multiline': {
       border: `1px solid ${theme.palette.secondary.lightest}`,
       paddingRight: 0,
@@ -28,6 +30,12 @@ const useStyles = makeStyles(theme => ({
       overflow: 'hidden',
       textOverflow: 'ellipsis',
       height: theme.spacing(5),
+      paddingRight: theme.spacing(14),
+    },
+  },
+  sourceCustomTextField: {
+    '& > * .MuiFilledInput-input': {
+      paddingRight: theme.spacing(10),
     },
   },
   autoSuggestDropdown: {
@@ -55,6 +63,7 @@ const useStyles = makeStyles(theme => ({
   },
   extractListPopperCompact: {
     width: theme.spacing(38),
+    marginLeft: 0,
   },
   extractPopperArrow: {
     display: 'none',
@@ -64,6 +73,12 @@ const useStyles = makeStyles(theme => ({
     borderRadius: 0,
     border: `1px solid ${theme.palette.secondary.lightest}`,
     '&:empty': {
+      display: 'none',
+    },
+  },
+  sourceDataTypeButton: {
+    marginLeft: -theme.spacing(10),
+    '&>.MuiDivider-root': {
       display: 'none',
     },
   },
@@ -127,6 +142,7 @@ export default function Mapper2ExtractsTypeableSelect({
   editorLayout,
   className,
   popperClassName,
+  sourceDataType,
 }) {
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = useState(null);
@@ -140,6 +156,7 @@ export default function Mapper2ExtractsTypeableSelect({
   });
   const [isTruncated, setIsTruncated] = useState(false);
   const inputFieldRef = useRef();
+  const [dataTypeSelector, selectDataType] = useState(false);
 
   const handleChange = useCallback(event => {
     setInputValue(event.target.value);
@@ -199,7 +216,7 @@ export default function Mapper2ExtractsTypeableSelect({
           id={`${nodeKey}-mapper2SourceTextField`}
           isLoggable
           onMouseMove={handleMouseOver}
-          className={clsx(classes.customTextField, className)}
+          className={clsx(classes.customTextField, {[classes.sourceCustomTextField]: hideSourceDropdown}, className)}
           variant="filled"
           autoFocus={isFocused}
           value={inputValue}
@@ -221,6 +238,16 @@ export default function Mapper2ExtractsTypeableSelect({
           }}
            />
       </Tooltip >
+
+      <SourceDataType
+        anchorEl={dataTypeSelector}
+        setAnchorEl={selectDataType}
+        disabled={isHardCodedValue || isHandlebarExp}
+        isHardCodedValue={isHardCodedValue}
+        isHandlebarExp={isHandlebarExp}
+        nodeKey={nodeKey}
+        sourceDataTypes={sourceDataType}
+        className={clsx({[classes.sourceDataTypeButton]: hideSourceDropdown})} />
 
       {/* only render tree component if field is focussed and not disabled.
       Here we are wrapping tree component with ArrowPopper to correctly handle the

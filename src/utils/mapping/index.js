@@ -1,5 +1,5 @@
 import deepClone from 'lodash/cloneDeep';
-import { uniqBy, isEmpty, isEqual, forEach, flattenDeep } from 'lodash';
+import { uniqBy, isEmpty, isEqual, forEach, flattenDeep, uniq } from 'lodash';
 import { adaptorTypeMap, isNetSuiteBatchExport, isFileAdaptor, isAS2Resource} from '../resource';
 // eslint-disable-next-line import/no-self-import
 import mappingUtil from '.';
@@ -13,6 +13,7 @@ import { getRecordTypeForAutoMapper } from '../assistant';
 import { isJsonString, generateUniqueKey } from '../string';
 import {applicationsList} from '../../constants/applications';
 import {generateCSVFields} from '../file';
+import jsonUtils from '../json';
 import { emptyList, emptyObject, FORM_SAVE_STATUS, MAPPING_SAVE_STATUS } from '../../constants';
 import errorMessageStore from '../errorStore';
 
@@ -448,6 +449,8 @@ export function wrapTextForSpecialChars(extract, flowSampleData) {
 }
 
 // #region Mapper2 utils
+export const isMapper2HandlebarExpression = (extractValue, isHardCodedValue) => handlebarRegex.test(extractValue) || (extractValue && !isHardCodedValue && !extractValue?.startsWith('$'));
+
 export const isCsvOrXlsxResourceForMapper2 = resource => {
   if (!resource) return false;
 
@@ -494,41 +497,96 @@ export const MAPPING_DATA_TYPES = Object.freeze({
   OBJECTARRAY: 'objectarray',
   OBJECT: 'object',
 });
+const WRONG_SOURCE_DATA_TYPES_LIST = {
+  [MAPPING_DATA_TYPES.NUMBER]: new Set([
+    MAPPING_DATA_TYPES.BOOLEAN,
+    MAPPING_DATA_TYPES.BOOLEANARRAY,
+    MAPPING_DATA_TYPES.NUMBERARRAY,
+    MAPPING_DATA_TYPES.STRINGARRAY,
+    MAPPING_DATA_TYPES.OBJECT,
+    MAPPING_DATA_TYPES.OBJECTARRAY,
+  ]),
+  [MAPPING_DATA_TYPES.BOOLEAN]: new Set([
+    MAPPING_DATA_TYPES.BOOLEANARRAY,
+    MAPPING_DATA_TYPES.NUMBERARRAY,
+    MAPPING_DATA_TYPES.STRINGARRAY,
+    MAPPING_DATA_TYPES.OBJECT,
+    MAPPING_DATA_TYPES.OBJECTARRAY,
+  ]),
+  [MAPPING_DATA_TYPES.NUMBERARRAY]: new Set([
+    MAPPING_DATA_TYPES.BOOLEAN,
+    MAPPING_DATA_TYPES.BOOLEANARRAY,
+    MAPPING_DATA_TYPES.OBJECT,
+    MAPPING_DATA_TYPES.OBJECTARRAY,
+  ]),
+  [MAPPING_DATA_TYPES.BOOLEANARRAY]: new Set([
+    MAPPING_DATA_TYPES.OBJECT,
+    MAPPING_DATA_TYPES.OBJECTARRAY,
+  ]),
+  [MAPPING_DATA_TYPES.OBJECT]: new Set([
+    MAPPING_DATA_TYPES.STRING,
+    MAPPING_DATA_TYPES.NUMBER,
+    MAPPING_DATA_TYPES.BOOLEAN,
+    MAPPING_DATA_TYPES.STRINGARRAY,
+    MAPPING_DATA_TYPES.BOOLEANARRAY,
+    MAPPING_DATA_TYPES.NUMBERARRAY,
+    MAPPING_DATA_TYPES.OBJECTARRAY,
+  ]),
+  [MAPPING_DATA_TYPES.OBJECTARRAY]: new Set([
+    MAPPING_DATA_TYPES.STRING,
+    MAPPING_DATA_TYPES.NUMBER,
+    MAPPING_DATA_TYPES.BOOLEAN,
+    MAPPING_DATA_TYPES.STRINGARRAY,
+    MAPPING_DATA_TYPES.BOOLEANARRAY,
+    MAPPING_DATA_TYPES.NUMBERARRAY,
+  ]),
+};
+export const DATA_TYPES_REPRESENTATION_LIST = {
+  [MAPPING_DATA_TYPES.STRING]: 'string',
+  [MAPPING_DATA_TYPES.NUMBER]: 'number',
+  [MAPPING_DATA_TYPES.BOOLEAN]: 'boolean',
+  [MAPPING_DATA_TYPES.OBJECT]: 'object',
+  [MAPPING_DATA_TYPES.STRINGARRAY]: '[string]',
+  [MAPPING_DATA_TYPES.NUMBERARRAY]: '[number]',
+  [MAPPING_DATA_TYPES.BOOLEANARRAY]: '[boolean]',
+  [MAPPING_DATA_TYPES.OBJECTARRAY]: '[object]',
+};
+
 export const DATA_TYPES_DROPDOWN_OPTIONS =
-[
-  {
-    id: 'string',
-    label: 'string',
-  },
-  {
-    id: 'number',
-    label: 'number',
-  },
-  {
-    id: 'boolean',
-    label: 'boolean',
-  },
-  {
-    id: 'object',
-    label: 'object',
-  },
-  {
-    id: 'stringarray',
-    label: '[string]',
-  },
-  {
-    id: 'numberarray',
-    label: '[number]',
-  },
-  {
-    id: 'booleanarray',
-    label: '[boolean]',
-  },
-  {
-    id: 'objectarray',
-    label: '[object]',
-  },
-];
+  [
+    {
+      id: 'string',
+      label: 'string',
+    },
+    {
+      id: 'number',
+      label: 'number',
+    },
+    {
+      id: 'boolean',
+      label: 'boolean',
+    },
+    {
+      id: 'object',
+      label: 'object',
+    },
+    {
+      id: 'stringarray',
+      label: '[string]',
+    },
+    {
+      id: 'numberarray',
+      label: '[number]',
+    },
+    {
+      id: 'booleanarray',
+      label: '[boolean]',
+    },
+    {
+      id: 'objectarray',
+      label: '[object]',
+    },
+  ];
 
 export const getInputOutputFormat = (isGroupedSampleData, isGroupedOutput) => {
   if (isGroupedSampleData) {
@@ -564,9 +622,113 @@ export const getExtractFromUniqueId = extractId => {
   return extractId;
 };
 
+export const findMatchingExtract = (helper, extract) => {
+  if (!helper || !extract) return {};
+
+  return helper.find(h => h.extract === extract) || {};
+};
+
+export const getCombinedExtract = helper => {
+  if (!helper || !helper.length) return [];
+
+  return helper.reduce((combinedExtract, obj) => {
+    if (obj.extract) {
+      combinedExtract.push(getExtractFromUniqueId(obj.extract));
+    }
+
+    return combinedExtract;
+  }, []);
+};
+
+// fetch source datatype from the extracthelper Array
+export const getExtractDataType = helper => {
+  if (!helper || !helper.length) return [];
+
+  return helper.reduce((combinedSourceDataType, obj) => {
+    if (obj.sourceDataType) {
+      combinedSourceDataType.push(obj.sourceDataType);
+    }
+
+    return combinedSourceDataType;
+  }, []);
+};
+
+// util for fetching the the correct datatype value of a selected node
+export const getSelectedExtractDataTypes = (extractsTreeNode, selectedValue, selectedNodes = []) => {
+  if (isEmpty(extractsTreeNode) || !extractsTreeNode.children?.length) return selectedNodes;
+
+  extractsTreeNode.children.forEach(node => {
+    const {dataType, jsonPath} = node;
+
+    if (selectedValue === jsonPath) {
+      let dataTypeValue;
+
+      switch (dataType) {
+        case '[object]':
+          dataTypeValue = 'objectarray';
+          break;
+        case '[boolean]':
+          dataTypeValue = 'booleanarray';
+          break;
+        case '[number]':
+          dataTypeValue = 'numberarray';
+          break;
+        case '[string]':
+          dataTypeValue = 'stringarray';
+          break;
+        default:
+          dataTypeValue = dataType;
+      }
+      selectedNodes.push(dataTypeValue);
+    }
+
+    if (node.children) {
+      getSelectedExtractDataTypes(node, selectedValue, selectedNodes);
+    }
+  });
+
+  return selectedNodes;
+};
+
+export const buildExtractsHelperFromExtract = (existingExtractsArray, sourceField, formKey, newExtractObj, extractsTree) => {
+  if (!sourceField) return [];
+
+  const splitExtracts = sourceField?.split(',') || [];
+  const toReturn = [];
+  const removedSources = {};
+
+  // copy the existing settings of removed source so if a new source is added at same index, we copy same settings
+  existingExtractsArray?.forEach(c => {
+    if (!splitExtracts.includes(getExtractFromUniqueId(c.extract))) {
+      removedSources[c.extract] = c;
+    }
+  });
+
+  splitExtracts.forEach((e, i) => {
+    const uniqueExtract = getUniqueExtractId(e, i);
+    const extractConfig = findMatchingExtract(existingExtractsArray, uniqueExtract);
+
+    if (extractConfig.extract) {
+      // found existing extract, use same config
+      toReturn.push(uniqueExtract === formKey ? newExtractObj : extractConfig);
+    } else if (removedSources[existingExtractsArray[i]?.extract]) {
+      // add missing extracts in existingExtractsArray which are newly added by the user and copy settings if found at same index
+      toReturn.push({...removedSources[existingExtractsArray[i].extract],
+        extract: uniqueExtract,
+        sourceDataType: extractsTree && extractsTree[0] ? getSelectedExtractDataTypes(extractsTree[0], e.replace(/(\$\.)|(\$\[\*\]\.)/g, ''))[0] || 'string' : 'string'});
+    } else {
+      // add extract
+      toReturn.push(formKey ? newExtractObj : {extract: uniqueExtract,
+        sourceDataType: extractsTree && extractsTree[0] ? getSelectedExtractDataTypes(extractsTree[0], e.replace(/(\$\.)|(\$\[\*\]\.)/g, ''))[0] || 'string' : 'string'});
+    }
+  });
+
+  return toReturn;
+};
+
 // for object array multiple extracts view,
 // mark non active tabs children as hidden
-export const hideOtherTabRows = (node, newTabExtract, hidden) => {
+export const hideOtherTabRows = (node, newTabExtract = '', hidden) => {
   const clonedNode = deepClone(node);
 
   if (!clonedNode || !clonedNode.children?.length) return clonedNode;
@@ -600,7 +762,7 @@ export const hideOtherTabRows = (node, newTabExtract, hidden) => {
     }
 
     // else if hidden is undefined, then check on the parent extract
-    if (clonedChild.parentExtract !== newTabExtract) {
+    if ((clonedChild.parentExtract || '') !== newTabExtract) {
       clonedChild.hidden = true;
       clonedChild.className = 'hideRow';
 
@@ -610,12 +772,13 @@ export const hideOtherTabRows = (node, newTabExtract, hidden) => {
     delete clonedChild.hidden;
     delete clonedChild.className;
 
-    // for child object-array nodes, only make first tab visible
+    // for child object-array nodes, retain the original tab index
     if (clonedChild.dataType === MAPPING_DATA_TYPES.OBJECTARRAY) {
-      const childParentExtract = clonedChild.combinedExtract?.split(',') || [];
+      const extractIndex = clonedChild.activeTab || 0;
+      const extractAtActiveIndex = clonedChild.extractsArrayHelper?.[extractIndex]?.extract;
 
       // update children and un-hide only first tab
-      return hideOtherTabRows(clonedChild, getUniqueExtractId(childParentExtract[0], 0));
+      return hideOtherTabRows(clonedChild, extractAtActiveIndex);
     }
 
     // update children as well
@@ -625,97 +788,184 @@ export const hideOtherTabRows = (node, newTabExtract, hidden) => {
   return clonedNode;
 };
 
-// this util is for object array data type nodes when multiple extracts are given,
-// to reconstruct the whole children array
-export const rebuildObjectArrayNode = (node, extract = '') => {
-  const splitExtracts = extract.split(',');
+export const getFirstActiveTab = node => {
+  if (!node || !node.extractsArrayHelper) return {};
+  let activeTab;
+  let activeExtract;
 
-  // if no extract, return
-  if (isEmpty(node) || !splitExtracts || !splitExtracts.length) return node;
+  forEach(node.extractsArrayHelper, (extractConfig, index) => {
+    if (extractConfig.copySource !== 'yes') {
+      activeTab = index;
+      activeExtract = extractConfig.extract;
 
-  if (node.dataType !== MAPPING_DATA_TYPES.OBJECTARRAY) return node;
-
-  let clonedNode = {...node};
-
-  // if the children was not linked before, then link it to first source
-  clonedNode.children = clonedNode.children?.map(child => {
-    const clonedChild = {...child};
-    const {parentExtract} = clonedChild;
-
-    if (clonedChild.isTabNode) {
-      return child;
+      // found first tab, exit from loop
+      return false;
     }
-    if (!parentExtract) {
-      clonedChild.parentExtract = getUniqueExtractId(splitExtracts[0], 0);
-    }
-
-    return clonedChild;
   });
 
-  // update hidden prop and only show first extract children
-  clonedNode = hideOtherTabRows(clonedNode, getUniqueExtractId(splitExtracts[0], 0));
+  return {activeTab, activeExtract};
+};
 
-  // set active tab to 0th
-  clonedNode.activeTab = 0;
-  clonedNode.combinedExtract = extract;
+const getNewNode = (defaultProps = {}) => {
+  const { key, generate, jsonPath, dataType = MAPPING_DATA_TYPES.STRING, parentKey, parentExtract, children: defaultChildren } = defaultProps;
+  const newKey = key || generateUniqueKey();
+  const needEmptyChildNode = [MAPPING_DATA_TYPES.OBJECTARRAY, MAPPING_DATA_TYPES.OBJECT].includes(defaultProps.dataType);
+  const newChildNode = {
+    key: generateUniqueKey(),
+    title: '',
+    parentKey: newKey,
+    parentExtract: '',
+    dataType: MAPPING_DATA_TYPES.STRING,
+    hidden: true,
+    className: 'hideRow',
+  };
 
-  const {key: parentKey} = clonedNode;
+  let childNodes = defaultChildren || [newChildNode]; // if the children are not passed, adds default empty child node
 
-  const foundExtractsUniqueId = [];
+  if (childNodes.length > 1) {
+    // Strips off any empty nodes present in the child nodes when there are multiple children
+    childNodes = childNodes.filter(childNode => !childNode.isEmptyRow);
+  }
+  const node = {
+    key: newKey,
+    title: '',
+    generate,
+    jsonPath,
+    dataType,
+    ...(needEmptyChildNode ? { children: childNodes } : {}),
+    parentKey,
+    parentExtract,
+    className: 'hideRow',
+    hidden: true,
+  };
+
+  return node;
+};
+
+export const constructNodeWithEmptySource = node => {
+  if (!node) return getNewNode();
+  const { children, dataType, jsonPath, generate, parentKey, parentExtract } = node;
+  const defaultProps = { generate, jsonPath, dataType, parentKey, parentExtract };
+  const newKey = generateUniqueKey();
+
+  if (!children) {
+    // node is a non object/objectarray type
+    // so construct a new empty node with node props
+    return getNewNode(defaultProps);
+  }
+  const {activeExtract = ''} = getFirstActiveTab(node);
+  const firstExtractChildNodes = children.filter(child => (child.parentExtract || '') === activeExtract);
+  const emptyChildren = firstExtractChildNodes.map(child => constructNodeWithEmptySource({...child, parentKey: newKey, parentExtract: ''}));
+
+  // Incase of children, replace children with empty children
+  return getNewNode({...defaultProps, children: emptyChildren, key: newKey });
+};
+
+// this util is for object array data type nodes when multiple extracts are given,
+// to reconstruct the whole children array
+export const rebuildObjectArrayNode = (node, extract = '', prevActiveExtract, extractsTree) => {
+  if (isEmpty(node) || node.dataType !== MAPPING_DATA_TYPES.OBJECTARRAY) return node;
+
+  let clonedNode = {...node};
+  const { key: parentKey } = node;
+
+  const previousFirstExtract = prevActiveExtract || getFirstActiveTab(clonedNode).activeExtract || '';
+  const prevFirstExtractChildren = clonedNode.children?.filter(childNode => {
+    if (!previousFirstExtract) {
+      return true;
+    }
+
+    return (childNode.parentExtract || '') === previousFirstExtract;
+  }) || [];
+
+  clonedNode.extractsArrayHelper = buildExtractsHelperFromExtract(clonedNode.extractsArrayHelper, extract, undefined, undefined, extractsTree);
+  const hasNoExtract = isEmpty(clonedNode.extractsArrayHelper);
+
+  const {activeTab, activeExtract} = getFirstActiveTab(clonedNode);
+
+  // set active tab
+  clonedNode.activeTab = activeTab;
 
   if (!clonedNode.children) {
     clonedNode.children = [];
   }
+  let anyExtractHasMappings = false;
 
-  clonedNode.children = clonedNode.children.filter(child => {
-    const {parentExtract} = child;
-
-    if (child.isTabNode) {
-      return true;
+  // no extracts now with at least 1 source children before
+  if (hasNoExtract) {
+    if (previousFirstExtract) {
+      // we have children previously, move those mappings under empty parentExtract
+      clonedNode.children = prevFirstExtractChildren.map(c => ({ ...c, parentExtract: ''}));
     }
-    const uniqueExtract = getExtractFromUniqueId(parentExtract);
+  } else {
+    // multiple extracts
+    const foundExtractsUniqueId = [];
 
-    const newIndex = splitExtracts.findIndex(s => uniqueExtract === s);
+    // so all matched extract children are copied to new children list
+    clonedNode.children = clonedNode.children.filter(child => {
+      const {parentExtract} = child;
 
-    // only keep the children which have matching parentExtract
-    if (newIndex !== -1) {
-      foundExtractsUniqueId.push(parentExtract);
+      if (child.isTabNode) {
+        return true;
+      }
 
-      return true;
+      const extractConfig = findMatchingExtract(clonedNode.extractsArrayHelper, parentExtract);
+
+      // only keep the children which have matching parentExtract and copy source setting as no
+      if (extractConfig.extract && extractConfig.copySource !== 'yes') {
+        foundExtractsUniqueId.push(parentExtract);
+
+        return true;
+      }
+
+      return false;
+    });
+
+    if (!foundExtractsUniqueId.length && prevFirstExtractChildren.length && activeExtract) {
+      // if all the extracts are new (and there is activeExtract present, meaning it has copy source as no), then map prev first active source's child mapping to current first active source's child
+      // fetch first source's mapping of previous extract and map those mappings to current extract's first source
+      clonedNode.children = prevFirstExtractChildren.map(c => ({ ...c, parentExtract: activeExtract}));
     }
 
-    return false;
-  });
+    // we take previous child refs and construct new children with empty source
+    // we map these children to those left over extracts
+    const childNodesWithEmptySources = prevFirstExtractChildren.filter(c => !!c.generate).map(c =>
+      // we only fetch nodes with generates filled. empty generate mappings are ignored
+      constructNodeWithEmptySource(c)
+    );
 
-  // find left over extracts so that new children rows can be pushed
-  splitExtracts.forEach((e, i) => {
-    if (!e) return;
-    const extract = getUniqueExtractId(e, i);
+    // iterate this for all extracts and map children for the left over extracts
+    clonedNode.extractsArrayHelper.forEach((extractConfig, i) => {
+      const {extract, copySource} = extractConfig;
 
-    if (foundExtractsUniqueId.includes(extract)) {
-      return;
-    }
+      if (!extract) return;
+      if (copySource !== 'yes') { anyExtractHasMappings = true; }
 
-    const hidden = i > 0;
-    const newRow = {
-      key: generateUniqueKey(),
-      title: '',
-      parentKey,
-      parentExtract: extract,
-      dataType: MAPPING_DATA_TYPES.STRING,
-      hidden, // hiding the new rows if those are not in 0th tab
-      className: hidden && 'hideRow',
-    };
+      if (foundExtractsUniqueId.includes(extract) || copySource === 'yes') {
+        return;
+      }
+      // we mapped for the first extract above with prevFirstExtractChildren, so ignore first extract
+      if (!foundExtractsUniqueId.length && prevFirstExtractChildren.length && i === activeTab) return;
 
-    clonedNode.children.push(newRow);
-  });
+      let childrenForCurrentExtract = [getNewNode({ parentKey, parentExtract: extract, jsonPath: node.jsonPath })];
 
-  if (splitExtracts.length === 1) {
+      if (childNodesWithEmptySources.length) {
+        // if the child refs are present from prev extracts, map them with this extract
+        childrenForCurrentExtract = childNodesWithEmptySources.map(c => ({ ...c, parentExtract: extract, key: generateUniqueKey()}));
+      }
+      clonedNode.children = [...clonedNode.children, ...childrenForCurrentExtract];
+    });
+  }
+
+  // update hidden prop and only show first active extract children
+  clonedNode = hideOtherTabRows(clonedNode, activeExtract);
+
+  if (hasNoExtract || clonedNode.extractsArrayHelper.length === 1 || !anyExtractHasMappings) {
     // remove tab node
     if (clonedNode.children[0]?.isTabNode) {
       clonedNode.children.shift();
     }
-  } else if (splitExtracts.length > 1 && !clonedNode.children[0]?.isTabNode) {
+  } else if (clonedNode.extractsArrayHelper.length > 1 && !clonedNode.children[0]?.isTabNode) {
     // add tab node
     clonedNode.children.unshift({
       key: generateUniqueKey(),
@@ -729,9 +979,9 @@ export const rebuildObjectArrayNode = (node, extract = '') => {
   return clonedNode;
 };
 
-function recursivelyBuildTreeFromV2Mappings({mappings, treeData, parentKey, parentExtract, disabled, hidden, isGroupedSampleData, parentJsonPath = ''}) {
+function recursivelyBuildTreeFromV2Mappings({mappings = [], treeData, parentKey, parentExtract, disabled, hidden, isGroupedSampleData, parentJsonPath = ''}) {
   mappings.forEach(m => {
-    const {dataType, mappings: objMappings, buildArrayHelper, extract: currNodeExtract, generate} = m;
+    const {dataType, mappings: objMappings, buildArrayHelper, extract: currNodeExtract, generate, sourceDataType} = m;
     const children = [];
     const currNodeKey = generateUniqueKey();
     const jsonPath = `${parentJsonPath ? `${parentJsonPath}.` : ''}${generate || ''}`;
@@ -751,6 +1001,8 @@ function recursivelyBuildTreeFromV2Mappings({mappings, treeData, parentKey, pare
     treeData.push(nodeToPush);
 
     if (PRIMITIVE_DATA_TYPES.includes(dataType)) {
+      nodeToPush.sourceDataType = sourceDataType || MAPPING_DATA_TYPES.STRING;
+
       // nothing to do
       return;
     }
@@ -763,10 +1015,12 @@ function recursivelyBuildTreeFromV2Mappings({mappings, treeData, parentKey, pare
           mappings: objMappings,
           treeData: children,
           parentKey: currNodeKey,
+          hidden,
           disabled,
           isGroupedSampleData,
           parentJsonPath: jsonPath});
       } else if (currNodeExtract) { // if object mapping has extract, then it is copied from source as is with no children
+        nodeToPush.sourceDataType = sourceDataType || MAPPING_DATA_TYPES.STRING;
         nodeToPush.copySource = 'yes';
       }
 
@@ -779,39 +1033,34 @@ function recursivelyBuildTreeFromV2Mappings({mappings, treeData, parentKey, pare
         return;
       }
 
-      let combinedExtract;
+      // to store individual source settings
+      const extractsArrayHelper = [];
+
+      nodeToPush.extractsArrayHelper = extractsArrayHelper;
 
       if (dataType === MAPPING_DATA_TYPES.OBJECTARRAY) {
+        let anyExtractHasMappings = false;
+        let extractIndexWithMappings = -1;
+
         buildArrayHelper.forEach((obj, index) => {
-          const {extract = getDefaultExtractPath(isGroupedSampleData), mappings} = obj;
+          const {extract = '', mappings} = obj;
+          const newExtract = getUniqueExtractId(extract, index);
 
-          combinedExtract = `${combinedExtract ? `${combinedExtract},` : ''}${extract}`;
+          const extractObj = {
+            extract: newExtract,
+            sourceDataType: obj.sourceDataType || MAPPING_DATA_TYPES.STRING,
+            default: obj.default,
+            conditional: obj.conditional || {when: 'extract_not_empty'},
+            copySource: mappings ? 'no' : 'yes',
+          };
 
-          if (!mappings) {
-            nodeToPush.copySource = 'yes';
-
-            return;
+          if (extract) {
+            extractsArrayHelper.push(extractObj);
           }
 
-          const newExtract = getUniqueExtractId(extract, index);
-          let isHidden = hidden;
-
-          if (index > 0) {
-            // since the first source is already pushed, all other children should
-            // be hidden now, as we show the first source tab by default
-            isHidden = true;
-
-            // found more than 1 extracts, insert a tab node if not already added
-            if (!children?.[0]?.isTabNode) {
-              children.unshift({
-                key: generateUniqueKey(),
-                parentKey: currNodeKey,
-                title: '',
-                isTabNode: true,
-                hidden,
-                className: hidden && 'hideRow',
-              });
-            }
+          if (mappings) {
+            anyExtractHasMappings = true;
+            extractIndexWithMappings += 1;
           }
 
           recursivelyBuildTreeFromV2Mappings({
@@ -820,7 +1069,7 @@ function recursivelyBuildTreeFromV2Mappings({mappings, treeData, parentKey, pare
             parentKey: currNodeKey,
             parentExtract: newExtract,
             disabled,
-            hidden: isHidden,
+            hidden: extractIndexWithMappings > 0 ? true : hidden, // since the first active source is already pushed, all other children should be hidden now, as we show the first source tab by default
             isGroupedSampleData,
             parentJsonPath: jsonPath ? `${jsonPath}[*]` : ''}
           );
@@ -828,17 +1077,36 @@ function recursivelyBuildTreeFromV2Mappings({mappings, treeData, parentKey, pare
           nodeToPush.children = children;
         });
 
-        nodeToPush.combinedExtract = combinedExtract;
+        // only insert tab node if any extract has children mappings
+        if (anyExtractHasMappings && buildArrayHelper.length > 1) {
+          // found more than 1 extracts, insert a tab node if not already added
+          if (!children?.[0]?.isTabNode) {
+            children.unshift({
+              key: generateUniqueKey(),
+              parentKey: currNodeKey,
+              title: '',
+              isTabNode: true,
+              hidden,
+              className: hidden && 'hideRow',
+            });
+          }
+        }
+        nodeToPush.activeTab = getFirstActiveTab(nodeToPush).activeTab;
 
         return;
       }
 
       // for primitive array types only extracts are supported, not 'mappings'
-      buildArrayHelper.forEach(obj => {
-        combinedExtract = `${combinedExtract ? `${combinedExtract},` : ''}${obj.extract}`;
-      });
+      buildArrayHelper.forEach((obj, index) => {
+        const extractObj = {
+          extract: getUniqueExtractId(obj.extract, index),
+          sourceDataType: obj.sourceDataType || MAPPING_DATA_TYPES.STRING,
+          default: obj.default,
+          conditional: obj.conditional || {when: 'extract_not_empty'},
+        };
 
-      nodeToPush.combinedExtract = combinedExtract;
+        extractsArrayHelper.push(extractObj);
+      });
     }
   });
 
@@ -871,6 +1139,7 @@ export const buildTreeFromV2Mappings = ({
     title: '',
     disabled,
     dataType: MAPPING_DATA_TYPES.STRING,
+    sourceDataType: MAPPING_DATA_TYPES.STRING,
   }];
 
   // for csv and xlsx file types, the output is generated in rows format
@@ -888,6 +1157,8 @@ export const buildTreeFromV2Mappings = ({
           dataType: MAPPING_DATA_TYPES.STRING,
           disabled,
           isEmptyRow: true,
+          parentKey: emptyRowKey,
+          sourceDataType: MAPPING_DATA_TYPES.STRING,
         },
       ],
     }];
@@ -903,16 +1174,12 @@ export const buildTreeFromV2Mappings = ({
 };
 
 const isMappingWithoutExtract = (mapping, lookups) => {
-  const {dataType, copySource, extract, combinedExtract} = mapping;
+  const {dataType, copySource, extract, extractsArrayHelper = []} = mapping;
 
   let missingExtract;
 
   if (ARRAY_DATA_TYPES.includes(dataType)) {
-    if (copySource === 'yes' && !combinedExtract) {
-      missingExtract = true;
-    }
-
-    if (!('hardCodedValue' in mapping || combinedExtract)) {
+    if (!('hardCodedValue' in mapping || extractsArrayHelper.length)) {
       missingExtract = true;
     }
   } else if (dataType === MAPPING_DATA_TYPES.OBJECT) {
@@ -984,17 +1251,18 @@ const recursivelyBuildV2MappingsFromTree = ({v2TreeData, _mappingsToSave, lookup
       default: mappingDefault,
       conditional = {},
       children,
-      combinedExtract,
+      sourceDataType,
+      extractsArrayHelper = [],
       isTabNode} = mapping;
 
     if (isTabNode || (!generateDisabled && !generate)) return;
-    if (isMappingWithoutExtract(mapping, lookups)) return;
 
     const newMapping = {
       description,
       generate,
       dataType,
       extract,
+      sourceDataType: sourceDataType || MAPPING_DATA_TYPES.STRING,
       extractDateFormat,
       extractDateTimezone,
       generateDateFormat,
@@ -1005,6 +1273,7 @@ const recursivelyBuildV2MappingsFromTree = ({v2TreeData, _mappingsToSave, lookup
       conditional: {
         when: conditional.when,
       },
+      status: isMappingWithoutExtract(mapping, lookups) ? 'Draft' : 'Active',
     };
 
     if (PRIMITIVE_DATA_TYPES.includes(dataType)) {
@@ -1016,12 +1285,16 @@ const recursivelyBuildV2MappingsFromTree = ({v2TreeData, _mappingsToSave, lookup
       // if extract is empty and children exists, then we add sub mappings
       // else if extract exists, then no sub mappings are needed as we copy from source as is
       if (!extract && children?.length) {
+        delete newMapping.sourceDataType;
+
         newMapping.mappings = [];
         recursivelyBuildV2MappingsFromTree({v2TreeData: children, _mappingsToSave: newMapping.mappings, lookups});
 
-        // if no valid children mappings are present, then do not save the parent as well
-        if (newMapping.mappings.length === 0) {
-          return;
+        // if no valid children mappings are present, then parent is also marked as Draft
+        const isAnyChildActive = newMapping.mappings.some(m => m.status === 'Active');
+
+        if (!isAnyChildActive) {
+          newMapping.status = 'Draft';
         }
       }
       _mappingsToSave.push(newMapping);
@@ -1029,25 +1302,43 @@ const recursivelyBuildV2MappingsFromTree = ({v2TreeData, _mappingsToSave, lookup
       return;
     }
     if (ARRAY_DATA_TYPES.includes(dataType)) {
-      const splitExtracts = combinedExtract?.split(',') || [];
+      // these values are not available at parent level
+      delete newMapping.sourceDataType;
+      delete newMapping.default;
+      if (newMapping.conditional.when === 'extract_not_empty') {
+        delete newMapping.conditional;
+      }
 
       if (dataType === MAPPING_DATA_TYPES.OBJECTARRAY) {
         const buildArrayHelper = [];
 
         newMapping.buildArrayHelper = buildArrayHelper;
 
-        if (!splitExtracts.length) {
-          // invalid mapping as no combinedExtracts are given
-          // each extract is mandatory for now
+        if (!extractsArrayHelper.length && children?.length) {
+          // if no extracts are present, just save the sub mappings
+          const subMappings = [];
+          const newHelper = {
+            mappings: subMappings,
+          };
+
+          recursivelyBuildV2MappingsFromTree({v2TreeData: children, _mappingsToSave: subMappings, lookups});
+
+          buildArrayHelper.push(newHelper);
+          _mappingsToSave.push(newMapping);
+
           return;
         }
 
         // no children exists, so only save extract
         if (!children?.length || (children.length === 1 && children[0].isTabNode)) {
-          splitExtracts.forEach(extract => {
-            if (!extract) return;
+          extractsArrayHelper.forEach(extractObj => {
+            if (!extractObj.extract) return;
+
             buildArrayHelper.push({
-              extract,
+              extract: getExtractFromUniqueId(extractObj.extract),
+              sourceDataType: extractObj.sourceDataType || MAPPING_DATA_TYPES.STRING,
+              default: extractObj.default,
+              conditional: extractObj.conditional,
             });
           });
           _mappingsToSave.push(newMapping);
@@ -1056,11 +1347,12 @@ const recursivelyBuildV2MappingsFromTree = ({v2TreeData, _mappingsToSave, lookup
         }
 
         // both extract and sub mappings exist
-        splitExtracts.forEach((extract, index) => {
-          if (!extract) return;
+        extractsArrayHelper.forEach(extractObj => {
+          if (!extractObj.extract) return;
+
           // find the children which matches the given extract index
           const matchingChildren = children.filter(c => {
-            if (c.parentExtract === getUniqueExtractId(extract, index)) {
+            if (c.parentExtract === extractObj.extract) {
               return true;
             }
 
@@ -1069,22 +1361,30 @@ const recursivelyBuildV2MappingsFromTree = ({v2TreeData, _mappingsToSave, lookup
 
           const subMappings = [];
           const newHelper = {
-            extract,
+            extract: getExtractFromUniqueId(extractObj.extract),
+            sourceDataType: extractObj.sourceDataType || MAPPING_DATA_TYPES.STRING,
+            default: extractObj.default,
+            conditional: extractObj.conditional,
             mappings: subMappings,
+            status: 'Active',
           };
 
           recursivelyBuildV2MappingsFromTree({v2TreeData: matchingChildren, _mappingsToSave: subMappings, lookups});
 
-          // if no valid children mappings are present, then do not push that source to the parent
-          if (newHelper.mappings.length === 0) {
-            return;
+          // if no valid children mappings are present, then parent is also marked as Draft
+          const isAnyChildActive = newHelper.mappings.some(m => m.status === 'Active');
+
+          if (!isAnyChildActive) {
+            newHelper.status = 'Draft';
           }
           buildArrayHelper.push(newHelper);
         });
 
-        // if no sources children are present, then no need to save the parent mapping as well
-        if (newMapping.buildArrayHelper.length === 0) {
-          return;
+        // if no sources children are present, then parent is also marked as Draft
+        const isAnySourceActive = newMapping.buildArrayHelper.some(m => m.status === 'Active');
+
+        if (!isAnySourceActive) {
+          newMapping.status = 'Draft';
         }
         _mappingsToSave.push(newMapping);
 
@@ -1099,17 +1399,21 @@ const recursivelyBuildV2MappingsFromTree = ({v2TreeData, _mappingsToSave, lookup
         return;
       }
       // no sub mappings are supported for primitive arrays
-      if (splitExtracts.length) {
-        newMapping.buildArrayHelper = splitExtracts.map(extract => {
-          if (!extract) return;
+      if (extractsArrayHelper.length) {
+        newMapping.buildArrayHelper = extractsArrayHelper.map(extractObj => {
+          if (!extractObj.extract) return;
 
           return {
-            extract,
+            extract: getExtractFromUniqueId(extractObj.extract),
+            sourceDataType: extractObj.sourceDataType || MAPPING_DATA_TYPES.STRING,
+            default: extractObj.default,
+            conditional: extractObj.conditional,
           };
         });
         _mappingsToSave.push(newMapping);
       } else {
-        // invalid mapping
+        // invalid mapping, save without buildArrayHelper
+        _mappingsToSave.push(newMapping);
       }
     }
   });
@@ -1123,6 +1427,7 @@ export const buildV2MappingsFromTree = ({v2TreeData, lookups}) => {
   }
 
   recursivelyBuildV2MappingsFromTree({v2TreeData, _mappingsToSave, lookups});
+  // console.log('_mappingsToSave', _mappingsToSave);
 
   return _mappingsToSave;
 };
@@ -1130,9 +1435,10 @@ export const buildV2MappingsFromTree = ({v2TreeData, lookups}) => {
 // handles drag/drop logic for tree data
 export function allowDrop({ dragNode, dropNode, dropPosition }) {
   if (!dragNode || !dropNode) return false;
+  if (!dropNode.children && (dropPosition === 0)) return false;
 
-  const {parentKey: dragNodeParentKey, isTabNode: dragNodeIsTab, hidden: dragNodeIsHidden} = dragNode;
-  const {key: dropNodeKey, parentKey: dropNodeParentKey, isTabNode: dropNodeIsTab, hidden: dropNodeIsHidden} = dropNode;
+  const {isTabNode: dragNodeIsTab, hidden: dragNodeIsHidden} = dragNode;
+  const {isTabNode: dropNodeIsTab, hidden: dropNodeIsHidden} = dropNode;
 
   if (dragNodeIsHidden || dropNodeIsHidden) return false;
 
@@ -1141,24 +1447,40 @@ export function allowDrop({ dragNode, dropNode, dropPosition }) {
   // can't drop above tab node
   if (dropNode?.children?.[0]?.isTabNode && dropPosition === 0) return false;
 
-  // dropping a child node at the 0th position in the children list
-  if (dropPosition === 0 && dragNodeParentKey === dropNodeKey) return true;
-
-  // nodes can only be dropped at same level
-  if ((dragNodeParentKey && !dropNodeParentKey) ||
-    (!dragNodeParentKey && dropNodeParentKey)) {
-    return false;
-  }
-
-  if (dragNodeParentKey && dropNodeParentKey && dragNodeParentKey !== dropNodeParentKey) {
-    return false;
-  }
-
   // can drop just below tab node
   if (dropNodeIsTab && dropPosition === 1) return true;
   if (dropNodeIsTab) return false;
 
   return true;
+}
+
+// verify if drag position and drop position are same
+export function isDropDragPositionSame({ dropPosition, dragNode, dropNode, dropSubArrIndex, dragNodeIndex, hasTabbedRow = false }) {
+  const dragParentKey = dragNode.parentKey;
+  const dropParentKey = dropNode.parentKey;
+
+  if (dropPosition === 0) { // drag obj is inserted as the 0th child of a parent
+    // when dropPosition is 0, dropNode points to parent node
+    if (dragParentKey === dropNode.key) {
+      // if child is already at 0th position, nothing to do
+      if (dragNodeIndex === 0 || (hasTabbedRow && dragNodeIndex === 1)) {
+        return true;
+      }
+    }
+  } else if (dropPosition === -1) {
+    if ((!dragParentKey && dropParentKey) || (dragParentKey && !dropParentKey)) {
+      return false;
+    }
+    // when no parent keys present or parent keys matches, drag and drop nodes are of same level
+    if ((dragParentKey === dropParentKey) && (dropSubArrIndex === dragNodeIndex)) return true;
+  } else if (dropPosition === 1) { // drag obj inserted after drop node
+    if ((!dragParentKey && dropParentKey) || (dragParentKey && !dropParentKey)) return false;
+
+    // when no parent keys present or parent keys matches, drag and drop nodes are of same level
+    if ((dragParentKey === dropParentKey) && (dropSubArrIndex + 1 === dragNodeIndex)) return true;
+  }
+
+  return false;
 }
 
 // given a tree data, some prop and its value
@@ -1192,6 +1514,210 @@ export const findNodeInTree = (data, prop, value) => {
   });
 
   return {node, nodeSubArray, nodeIndexInSubArray};
+};
+
+// to search the generate of the field mapping
+export const filterNode = (node, searchKey) => {
+  if (!searchKey) return false;
+  if (node?.generate?.toUpperCase().indexOf(searchKey.toUpperCase()) > -1) {
+    return true;
+  }
+
+  return false;
+};
+
+// to search the key value of a field mapping
+export const filterKey = (node, searchKey) => {
+  if (!searchKey) return false;
+  if (node?.key === searchKey) {
+    return true;
+  }
+
+  return false;
+};
+
+export const searchTree = (mappings, key, filterFunc, items) => {
+  if (!mappings || !key || !filterFunc) return;
+
+  // for storing first index where search is found
+  let firstIndex = -1;
+
+  // looping through all the children fields of the node
+  mappings.forEach((node, index) => {
+    if (node.isTabNode) return;
+
+    if (filterFunc(node, key)) {
+      items.filteredKeys.push(node.key);
+      // updating when found for first time
+      if (firstIndex === -1) firstIndex = index;
+    }
+
+    // eslint-disable-next-line no-param-reassign
+    items.firstIndex = -1;    // before sending it to searchTree set items.firstIndex to -1
+
+    // calling required function according to the mappings dataType
+    if (node.dataType === MAPPING_DATA_TYPES.OBJECT) {
+      searchTree(node.children, key, filterFunc, items);
+
+      // if children mappings contained a search then adding the node to expandKeys list
+      if (items.firstIndex !== -1) {
+        items.expandedKeys.push(node.key);
+      }
+    } else if (node.dataType === MAPPING_DATA_TYPES.OBJECTARRAY) {
+      searchTree(node.children, key, filterFunc, items);
+
+      // if match found in the mappings then setting tabChange list to contain the current tabChange object
+      if (items.firstIndex !== -1) {
+        const childNode = node.children[items.firstIndex];
+
+        // checking if tabs are present or not
+        if (node.children[0].isTabNode) {
+          // to get the correct tabValue from the extractsArrayHelper
+          let tabValue;
+          const pipeIndex = childNode.parentExtract.indexOf('|');
+
+          if (pipeIndex > 0) {
+            tabValue = parseInt(childNode.parentExtract.substring(pipeIndex + 1), 10);
+          } else {
+            tabValue = node.extractsArrayHelper?.findIndex(obj => (childNode.parentExtract || '') === (obj.extract || ''));
+          }
+
+          items.tabChange.push(
+            {
+              key: node.key,
+              tabValue,
+              parentExtract: childNode.parentExtract,
+            }
+          );
+        }
+        items.expandedKeys.push(node.key);
+      }
+    }
+
+    // setting firstIndex if no matches found before and match is found inside the mapping
+    if (items.firstIndex !== -1 && firstIndex === -1) firstIndex = index;
+  });
+
+  // eslint-disable-next-line no-param-reassign
+  items.firstIndex = firstIndex;    // setting the firstIndex before returning
+};
+
+const getNewChildrenToAdd = (parentNode, destinationNode) => {
+  // the destination node is expected to be a child - so checks for parentKey and generate field
+  if (!parentNode || !destinationNode || !destinationNode.parentKey || !destinationNode.generate) {
+    return [];
+  }
+
+  // when there are extracts for the parentNodes, populate the destination in all the extracts where this node does not exist
+  if (parentNode.extractsArrayHelper?.length) {
+    const extractsToAddEmptyDestinationNode = [];
+
+    parentNode.extractsArrayHelper.forEach(extractConfig => {
+      const currentExtract = extractConfig.extract;
+      const hasDestNode = parentNode.children.some(childNode => {
+        const { dataType, generate, parentExtract } = childNode;
+
+        // checks for datatype, generate to check if the node exist for this extract
+        return dataType === destinationNode.dataType && generate === destinationNode.generate && parentExtract === currentExtract;
+      });
+
+      if (!hasDestNode && extractConfig.copySource !== 'yes') {
+        // make a list of extracts where the destination node does not exist
+        extractsToAddEmptyDestinationNode.push(currentExtract);
+      }
+    });
+    // fill the node under all the extracts that does not have
+    const newChildren = extractsToAddEmptyDestinationNode.map(e => {
+      const newChildNode = constructNodeWithEmptySource({...destinationNode, parentExtract: e, parentKey: parentNode.key});
+
+      return newChildNode;
+    });
+
+    return newChildren;
+  }
+
+  const hasDestNode = parentNode.children.some(childNode => {
+    const { dataType, generate } = childNode;
+
+    return dataType === destinationNode.dataType && generate === destinationNode.generate;
+  });
+
+  if (!hasDestNode) {
+    // Incase the parent has no extracts and does not contain this node, add the new node directly as a child
+    return [constructNodeWithEmptySource({...destinationNode, parentKey: parentNode.key, parentExtract: ''})];
+  }
+
+  return [];
+};
+
+// recursively look for all parentNodes for a given node
+// Ex: For a node with jsonPath - a[*].b[*].c.d, the parent nodes returned are in the order of [a,b,c]
+export const findAllParentNodesForNode = (treeData, nodeKey, output = []) => {
+  const {node} = findNodeInTree(treeData, 'key', nodeKey);
+
+  if (!node) return output;
+
+  findAllParentNodesForNode(treeData, node.parentKey, output);
+
+  output.push(node);
+
+  return output;
+};
+
+// Fetches all possible parent nodes that contain the same pattern of mapping as given in the order of matchingNodes
+// Ex: For a node with jsonPath - a[*].b[*].c.d, this fn is called with fn([b,c], [a]) as 'a' is the first parentNode and b,c are the pattern nodes to reach node 'd'
+export const findAllPossibleDestinationMatchingParentNodes = (matchingNodes = [], parentNodes = []) => {
+  // when there are no more nodes to match or no leaf nodes to go through return the leaf nodes
+  if (!matchingNodes.length || !parentNodes.length) return parentNodes;
+
+  // always fetch the first node from matchingNodes and perform match
+  const [currentNodeMatch] = matchingNodes;
+
+  let nextLevelParentNodes = [];
+
+  parentNodes.forEach(node => {
+    // filters all children that matches the currentNodeMatch destination and adds that to the list
+    const matchedChildren = node.children.filter(childNode => childNode.generate === currentNodeMatch.generate && childNode.dataType === currentNodeMatch.dataType);
+
+    nextLevelParentNodes = [...nextLevelParentNodes, ...matchedChildren];
+  });
+
+  // recursively pass the above list with the next available node from matchingNodes to match
+  return findAllPossibleDestinationMatchingParentNodes(matchingNodes.slice(1), nextLevelParentNodes);
+};
+
+/**
+   * This util deals with destination node additions/updates inside an Object array node's children
+   * It updates the children with accommodating the added/updated node with destination at all possible places
+   * which matches destination structure with multiple extracts
+   */
+export const insertSiblingsOnDestinationUpdate = (treeData, newNode) => {
+  // do nothing if the node itself is the top node
+  if (!newNode.parentKey) return;
+
+  // fetch all parent nodes from top to bottom
+  const parentNodes = findAllParentNodesForNode(treeData, newNode.parentKey);
+
+  const objArrayParentNodeIndex = parentNodes.findIndex(node => node.dataType === MAPPING_DATA_TYPES.OBJECTARRAY);
+
+  // if there is no object array parent, do nothing
+  if (objArrayParentNodeIndex === -1) return treeData;
+  // fetches the first parent from top which is Object array, as we need to process nodes which are children of an object array node
+  const [topNode, ...restOfParentNodes] = parentNodes.slice(objArrayParentNodeIndex);
+
+  const matchingLeafNodes = findAllPossibleDestinationMatchingParentNodes(restOfParentNodes, [topNode]);
+
+  matchingLeafNodes.forEach(parentNode => {
+    const newChildren = getNewChildrenToAdd(parentNode, newNode);
+
+    if (parentNode.children?.length === 1 && parentNode.children[0]?.isEmptyRow) {
+      // eslint-disable-next-line no-param-reassign
+      parentNode.children = newChildren;
+    } else {
+      // eslint-disable-next-line no-param-reassign
+      parentNode.children = [...parentNode.children, ...newChildren];
+    }
+  });
 };
 
 export const TYPEOF_TO_DATA_TYPE = {
@@ -1228,7 +1754,7 @@ function recursivelyCreateDestinationStructure({dataObj, treeData, parentJsonPat
 
     // primitive type
     if (type !== '[object Array]' && type !== '[object Object]') {
-    // nothing to do
+      // nothing to do
       return;
     }
 
@@ -1311,10 +1837,11 @@ export const autoCreateDestinationStructure = (importSampleData, requiredMapping
   let treeData = [];
 
   if (!importSampleData) return treeData;
+  const parentKey = generateUniqueKey();
 
   if (isCSVOrXLSX) {
     treeData = [{
-      key: generateUniqueKey(),
+      key: parentKey,
       title: '',
       dataType: MAPPING_DATA_TYPES.OBJECTARRAY,
       generateDisabled: true,
@@ -1328,6 +1855,7 @@ export const autoCreateDestinationStructure = (importSampleData, requiredMapping
     dataObj,
     treeData: isCSVOrXLSX ? treeData[0].children : treeData,
     requiredMappings,
+    parentKey: isCSVOrXLSX ? parentKey : undefined,
   });
 
   return treeData;
@@ -1618,21 +2146,77 @@ export const compareV2Mappings = (tree1 = [], tree2 = []) => {
   return isV2MappingsChanged;
 };
 
+const validateSourceDataType = mapping => {
+  const {
+    jsonPath = '',
+    dataType,
+    sourceDataType = MAPPING_DATA_TYPES.STRING,
+    extractsArrayHelper = [],
+    extract,
+  } = mapping;
+  const errorArr = [];
+  const incorrectSourceDataTypes = WRONG_SOURCE_DATA_TYPES_LIST[dataType];
+
+  switch (dataType) {
+    case MAPPING_DATA_TYPES.NUMBER:
+    case MAPPING_DATA_TYPES.BOOLEAN:
+      if (incorrectSourceDataTypes.has(sourceDataType)) {
+        errorArr.push({
+          jsonPath,
+          dataType: DATA_TYPES_REPRESENTATION_LIST[dataType],
+          sourceDataType: DATA_TYPES_REPRESENTATION_LIST[sourceDataType],
+        });
+      }
+      break;
+    case MAPPING_DATA_TYPES.NUMBERARRAY:
+    case MAPPING_DATA_TYPES.BOOLEANARRAY:
+    case MAPPING_DATA_TYPES.OBJECTARRAY:
+      extractsArrayHelper.forEach(({
+        sourceDataType = MAPPING_DATA_TYPES.STRING,
+      }) => {
+        if (incorrectSourceDataTypes.has(sourceDataType)) {
+          errorArr.push({
+            jsonPath,
+            dataType: DATA_TYPES_REPRESENTATION_LIST[dataType],
+            sourceDataType: DATA_TYPES_REPRESENTATION_LIST[sourceDataType],
+          });
+        }
+      });
+      break;
+    case MAPPING_DATA_TYPES.OBJECT:
+      if (extract && incorrectSourceDataTypes.has(sourceDataType)) {
+        errorArr.push({
+          jsonPath,
+          dataType: DATA_TYPES_REPRESENTATION_LIST[dataType],
+          sourceDataType: DATA_TYPES_REPRESENTATION_LIST[sourceDataType],
+        });
+      }
+      break;
+    default:
+      break;
+  }
+
+  return errorArr;
+};
+
 const recursivelyValidateV2Mappings = ({
   v2TreeData,
   lookups,
+  isGroupedSampleData,
   dupMap = {},
   duplicateMappings = [],
   mappingsWithoutGenerates = [],
   missingExtractGenerateNames = [],
   expressionNotSupported = [],
   onlyJsonPathSupported = [],
+  wrongHandlebarExp = [],
+  dataTypeValidationErrors = [],
 }) => {
   v2TreeData.forEach(mapping => {
     const {
       dataType,
       extract,
-      combinedExtract,
+      extractsArrayHelper,
       hardCodedValue,
       isRequired,
       parentKey,
@@ -1640,7 +2224,8 @@ const recursivelyValidateV2Mappings = ({
       generate,
       generateDisabled,
       jsonPath,
-      isTabNode} = mapping;
+      isTabNode,
+    } = mapping;
 
     if (isTabNode) return;
     const missingSource = isMappingWithoutExtract(mapping, lookups);
@@ -1672,9 +2257,9 @@ const recursivelyValidateV2Mappings = ({
 
     if (ARRAY_DATA_TYPES.includes(dataType) || dataType === MAPPING_DATA_TYPES.OBJECT) {
       // handlebars not supported
-      const splitExtracts = (extract || combinedExtract)?.split(',') || [];
+      const splitExtracts = extract?.split(',') || getCombinedExtract(extractsArrayHelper) || [];
       const invalidSource = splitExtracts.filter(e => {
-        if (handlebarRegex.test(e)) return true;
+        if (isMapper2HandlebarExpression(e, hardCodedValue)) return true;
 
         return false;
       });
@@ -1688,35 +2273,71 @@ const recursivelyValidateV2Mappings = ({
       }
     }
 
+    // HandleBar Expressions are allowed in case of string, number or boolean data type only
+    if (PRIMITIVE_DATA_TYPES.includes(dataType)) {
+      // wrong rows or record based handlebars not supported
+      const extractString = extract || '';
+
+      const rowOrRecordRegEx = isGroupedSampleData
+        ? /(\{\{((.*?\s+record)|(\s*record))\..*\}\})/i
+        : /(\{\{((.*?\s+rows)|(\s*rows))\..*\}\})/i;
+
+      if (rowOrRecordRegEx.test(extractString)) {
+        wrongHandlebarExp.push(mapping.jsonPath || mapping.generate);
+      }
+    }
+
+    // Validate when both destination and source are present
+    if (
+      !mapping.generateDisabled &&
+      dataType in WRONG_SOURCE_DATA_TYPES_LIST &&
+      generate &&
+      !missingSource
+    ) {
+      const errors = validateSourceDataType(mapping);
+
+      dataTypeValidationErrors.push(...errors);
+    }
+
     if (mapping.children?.length) {
       recursivelyValidateV2Mappings({
         v2TreeData: mapping.children,
         lookups,
+        isGroupedSampleData,
         dupMap,
         duplicateMappings,
         mappingsWithoutGenerates,
         missingExtractGenerateNames,
         expressionNotSupported,
-        onlyJsonPathSupported});
+        onlyJsonPathSupported,
+        wrongHandlebarExp,
+        dataTypeValidationErrors,
+      });
     }
   });
 };
 
-const validateV2Mappings = (v2TreeData, lookups) => {
+const validateV2Mappings = (v2TreeData, lookups, isGroupedSampleData) => {
   const duplicateMappings = [];
   const mappingsWithoutGenerates = [];
   const missingExtractGenerateNames = [];
   const expressionNotSupported = [];
   const onlyJsonPathSupported = [];
+  const wrongHandlebarExp = [];
+  const dataTypeValidationErrors = [];
 
   recursivelyValidateV2Mappings({
     v2TreeData,
     lookups,
+    isGroupedSampleData,
     duplicateMappings,
     mappingsWithoutGenerates,
     missingExtractGenerateNames,
     expressionNotSupported,
-    onlyJsonPathSupported});
+    onlyJsonPathSupported,
+    wrongHandlebarExp,
+    dataTypeValidationErrors,
+  });
 
   if (duplicateMappings.length) {
     return {
@@ -1753,6 +2374,26 @@ const validateV2Mappings = (v2TreeData, lookups) => {
     };
   }
 
+  if (wrongHandlebarExp.length) {
+    const errMessage = isGroupedSampleData
+      ? errorMessageStore('MAPPER2_WRONG_HANDLEBAR_FOR_ROWS')
+      : errorMessageStore('MAPPER2_WRONG_HANDLEBAR_FOR_RECORD');
+
+    return {
+      isSuccess: false,
+      errMessage,
+    };
+  }
+
+  if (dataTypeValidationErrors.length) {
+    const errMessageList = dataTypeValidationErrors.map(item => errorMessageStore('MAPPER2_WRONG_SOURCE_DATA_TYPE', item));
+
+    return {
+      isSuccess: false,
+      errMessage: errMessageList.join('\n'),
+    };
+  }
+
   return { isSuccess: true };
 };
 
@@ -1770,6 +2411,99 @@ export const getAllKeys = data => {
   });
 
   return flattenDeep(nestedKeys);
+};
+
+// if the parent jsonPath has updated,
+// we need to update all its children jsonPaths as well
+export const updateChildrenJSONPath = parentNode => {
+  if (!parentNode) return parentNode;
+
+  const {jsonPath: parentJsonPath, dataType: parentDataType, children} = parentNode;
+
+  if (isEmpty(children) || !parentJsonPath) return parentNode;
+
+  children.forEach(child => {
+    if (!child.generate || child.isTabNode) return;
+    // eslint-disable-next-line no-param-reassign
+    child.jsonPath = parentDataType === MAPPING_DATA_TYPES.OBJECTARRAY ? `${parentJsonPath}[*].${child.generate}` : `${parentJsonPath}.${child.generate}`;
+
+    if (child.children?.length) {
+      // eslint-disable-next-line no-param-reassign
+      child = updateChildrenJSONPath(child);
+    }
+  });
+
+  return parentNode;
+};
+
+export const applyRequiredFilter = nodes => {
+  if (isEmpty(nodes)) return nodes;
+
+  return nodes.filter(node => {
+    if (node.isTabNode) return true;
+
+    if (node.isRequired) {
+      // if the required node contains children, do recursive call to filter all its required children
+      // eslint-disable-next-line no-param-reassign
+      if (!isEmpty(node.children)) node.children = applyRequiredFilter(node.children);
+
+      return true;
+    }
+
+    return false;
+  });
+};
+
+export const applyMappedFilter = (v2TreeData, lookups, isReqApplied = false) => {
+  if (isEmpty(v2TreeData)) return v2TreeData;
+
+  return v2TreeData.filter(mapping => {
+    const {
+      dataType,
+      extract,
+      extractsArrayHelper = [],
+      isTabNode,
+      isRequired,
+    } = mapping;
+
+    if (isTabNode) return true;
+
+    const canAddToTree = !isMappingWithoutExtract(mapping, lookups) || (isReqApplied && isRequired);
+
+    // Any data type except object and object arrays
+    if (![MAPPING_DATA_TYPES.OBJECTARRAY, MAPPING_DATA_TYPES.OBJECT].includes(dataType)) return canAddToTree;
+    if (dataType === MAPPING_DATA_TYPES.OBJECT) {
+      // if extract exists, then generate is copied from source as is
+      if (extract) return canAddToTree;
+      // if extract is empty and children exists, then make a recursive call to check the children
+      if (mapping.children?.length) {
+        // eslint-disable-next-line no-param-reassign
+        mapping.children = applyMappedFilter(mapping.children, lookups, isReqApplied);
+
+        // if all children are filtered out, then remove the parent as well
+        return !!mapping.children?.length;
+      }
+    } else if (dataType === MAPPING_DATA_TYPES.OBJECTARRAY) {
+      // if no extracts but has children, then make a recursive call to check the children
+      if (!extractsArrayHelper.length && mapping.children?.length) {
+        // eslint-disable-next-line no-param-reassign
+        mapping.children = applyMappedFilter(mapping.children, lookups, isReqApplied);
+
+        // if all children are filtered out, then remove the parent as well
+        return !!mapping.children?.length;
+      }
+      // ToDo: iteration and set tab wise
+      if (mapping.children?.length) {
+        // eslint-disable-next-line no-param-reassign
+        mapping.children = applyMappedFilter(mapping.children, lookups, isReqApplied);
+
+        // if all children are filtered out, then remove the parent as well
+        return !!mapping.children?.length;
+      }
+    }
+
+    return false;
+  });
 };
 
 // #endregion
@@ -1893,7 +2627,6 @@ export default {
 
     return 'standard';
   },
-
   getHardCodedActionValue: value => {
     if ('hardCodedValue' in value) {
       switch (value.hardCodedValue) {
@@ -2723,10 +3456,10 @@ export default {
       return mappings;
   },
 
-  validateMappings: (mappings, lookups, v2TreeData) => {
+  validateMappings: (mappings, lookups, v2TreeData, isGroupedSampleData) => {
     // validate only v2 mappings if exist
     if (hasV2MappingsInTreeData(v2TreeData, lookups)) {
-      return validateV2Mappings(v2TreeData, lookups);
+      return validateV2Mappings(v2TreeData, lookups, isGroupedSampleData);
     }
 
     const duplicateMappings = mappings
@@ -2840,11 +3573,24 @@ export default {
   },
 
   // #region default Mapper2 utils
+  getV2FieldMappingType: value => {
+    if (value.lookupName) {
+      return 'lookup';
+    }
+    if ('hardCodedValue' in value) {
+      return 'hardCoded';
+    }
+    if (isMapper2HandlebarExpression(value.extract, value.hardCodedValue)) {
+      return 'multifield';
+    }
+
+    return 'standard';
+  },
   getV2DefaultActionValue: value => {
     if (value.conditional?.when === 'extract_not_empty') {
       return 'discardIfEmpty';
     }
-    if ('default' in value) {
+    if ('default' in value && value.default !== undefined) {
       switch (value.default) {
         case '':
           return 'useEmptyString';
@@ -2879,9 +3625,23 @@ export default {
     }
   },
   getV2DefaultExpression: value => {
-    if (value.extract?.indexOf('{{') !== -1) {
+    if (isMapper2HandlebarExpression(value.extract, value.hardCodedValue)) {
       return value.extract;
     }
+  },
+  /**
+   * Merges multiple sources mapping to same destination with a comma separated value
+   * Ex: staticMap = { s1 : d1, s2 : d1, s3 : d1, s4 : d2, s5 : d2, s6 : d3 }
+   * Output: { 's1,s2,s3': d1, 's4,s5': d2, s6: d3 }
+   */
+  getV2DefaultStaticMapValue: (staticMap = {}) => {
+    const uniqueSources = uniq(Object.values(staticMap));
+
+    return uniqueSources.reduce((res, src) => {
+      const key = jsonUtils.getObjectKeysFromValue(staticMap, src) || '';
+
+      return {...res, [key.join(',')]: src};
+    }, {});
   },
   // #endregion
 };

@@ -1,6 +1,7 @@
 import React, { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import {makeStyles} from '@material-ui/core/styles';
+import clsx from 'clsx';
 import FilterIconWrapper from '../FilterIconWrapper';
 import { selectors } from '../../../../reducers';
 import MultiSelectFilter from '../../../MultiSelectFilter';
@@ -27,6 +28,8 @@ export default function MultiSelectColumnFilter({
   handleSave,
   helpKey,
   SelectedLabelImp,
+  ButtonLabel,
+  className,
 }) {
   const classes = useStyles();
   const dispatch = useDispatch();
@@ -90,9 +93,10 @@ export default function MultiSelectColumnFilter({
 
   return (
   // TODO:(Azhar) try to use the container wrapper component where same CSS needed
-    <div className={classes.wrapperSelectFilter}> {title}
+    <div className={clsx(className, classes.wrapperSelectFilter)} > {title}
       <MultiSelectFilter
         Icon={FilterIcon}
+        ButtonLabel={ButtonLabel}
         items={options}
         selected={selected}
         onSave={onSaveHandler}
@@ -105,7 +109,8 @@ export default function MultiSelectColumnFilter({
           helpKey={helpKey}
           caption={helpKey}
           className={classes.helpIcon}
-        />
+          disablePortal={false}
+          placement="left-end" />
       )}
     </div>
   );

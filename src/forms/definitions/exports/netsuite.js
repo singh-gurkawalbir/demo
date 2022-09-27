@@ -523,6 +523,25 @@ export default {
       fieldId: 'netsuite.blob.purgeFileAfterExport',
       visibleWhenAll: [{ field: 'outputMode', is: ['blob'] }],
     },
+    'netsuite.restlet.markExportedBatchSize': {
+      id: 'netsuite.restlet.markExportedBatchSize',
+      label: 'Mark exported batch size',
+      type: 'text',
+      defaultValue: r => r?.netsuite?.restlet?.markExportedBatchSize || '100',
+      visibleWhenAll: [
+        { field: 'netsuite.restlet.recordType', isNot: [''] },
+        { field: 'restlet.type', is: ['once'] },
+        { field: 'outputMode', is: ['records'] },
+        { field: 'netsuite.api.type', is: ['restlet'] },
+        { field: 'netsuite.execution.type', is: ['scheduled'] },
+      ],
+      validWhen: {
+        fallsWithinNumericalRange: {
+          min: 1,
+          max: 100,
+        },
+      },
+    },
   },
   layout: {
     type: 'collapse',
@@ -603,6 +622,7 @@ export default {
               'netsuite.distributed.forceReload',
               'netsuite.restlet.batchSize',
               'advancedSettings',
+              'netsuite.restlet.markExportedBatchSize',
             ],
           },
         ],

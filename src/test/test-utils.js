@@ -9,9 +9,9 @@ import server from './api/server';
 import { API } from './api/utils';
 
 const theme = themeProvider();
-export const renderWithProviders = (ui, { initialStore } = {}) => {
+export const renderWithProviders = (ui, { initialStore, renderFun = render } = {}) => {
   const reduxStore = initialStore || getCreatedStore();
-  const utils = render(
+  const utils = renderFun(
     <Provider store={reduxStore}>
       <MuiThemeProvider theme={theme}>
         <SnackbarProvider>
