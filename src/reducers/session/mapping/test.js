@@ -3417,6 +3417,313 @@ describe('mapping reducer', () => {
 
       expect(state).toEqual(expectedState);
     });
+    test('should add child nodes incase the data type is changed from string to object array with single source ', () => {
+      generateUniqueKey.mockReturnValue('new_key');
+
+      const initialState = {
+        mapping: {
+          importId: 'imp-123',
+          flowId: 'flow-123',
+          version: 2,
+          v2TreeData: [
+            {
+              key: 'key1',
+              dataType: MAPPING_DATA_TYPES.STRING,
+              generate: 'fname',
+              extract: '$.fname',
+            },
+          ],
+        },
+      };
+      const settings = {
+        dataType: MAPPING_DATA_TYPES.OBJECTARRAY,
+        extract: '$.fname',
+        extractsArrayHelper: [{
+          conditional: { when: 'extract_not_empty' },
+          copySource: 'no',
+          extract: '$.fname',
+          sourceDataType: 'string',
+        }],
+      };
+      const state = reducer(initialState, actions.mapping.v2.patchSettings('key1', settings));
+      const expectedState = {
+        mapping: {
+          importId: 'imp-123',
+          flowId: 'flow-123',
+          version: 2,
+          expandedKeys: ['key1'],
+          v2TreeData: [
+            {
+              key: 'key1',
+              dataType: MAPPING_DATA_TYPES.OBJECTARRAY,
+              activeTab: 0,
+              generate: 'fname',
+              extractsArrayHelper: [{
+                conditional: { when: 'extract_not_empty' },
+                copySource: 'no',
+                extract: '$.fname',
+                sourceDataType: 'string',
+              }],
+              children: [{
+                dataType: MAPPING_DATA_TYPES.STRING,
+                parentExtract: '$.fname',
+                parentKey: 'key1',
+                title: '',
+                key: 'new_key',
+              }],
+            },
+          ],
+        },
+      };
+
+      expect(state).toEqual(expectedState);
+    });
+    test('should add multiple child nodes with tab node incase the data type is changed from string to object array with multiple sources ', () => {
+      generateUniqueKey.mockReturnValue('new_key');
+
+      const initialState = {
+        mapping: {
+          importId: 'imp-123',
+          flowId: 'flow-123',
+          version: 2,
+          v2TreeData: [
+            {
+              key: 'key1',
+              dataType: MAPPING_DATA_TYPES.STRING,
+              generate: 'fname',
+              extract: '$.fname',
+            },
+          ],
+        },
+      };
+      const settings = {
+        dataType: MAPPING_DATA_TYPES.OBJECTARRAY,
+        extract: '$.fname,$.name,$.empName',
+        extractsArrayHelper: [{
+          extract: '$.fname',
+          sourceDataType: 'string',
+        }, {
+          extract: '$.name',
+          sourceDataType: 'string',
+        }, {
+          extract: '$.empName',
+          sourceDataType: 'string',
+        }],
+      };
+      const state = reducer(initialState, actions.mapping.v2.patchSettings('key1', settings));
+      const expectedState = {
+        mapping: {
+          importId: 'imp-123',
+          flowId: 'flow-123',
+          version: 2,
+          expandedKeys: ['key1'],
+          v2TreeData: [
+            {
+              key: 'key1',
+              dataType: MAPPING_DATA_TYPES.OBJECTARRAY,
+              activeTab: 0,
+              generate: 'fname',
+              extractsArrayHelper: settings.extractsArrayHelper,
+              children: [{
+                isTabNode: true,
+                parentKey: 'key1',
+                key: 'new_key',
+                title: '',
+              }, {
+                dataType: MAPPING_DATA_TYPES.STRING,
+                parentExtract: '$.fname',
+                parentKey: 'key1',
+                title: '',
+                key: 'new_key',
+              },
+              {
+                className: 'hideRow',
+                hidden: true,
+                dataType: MAPPING_DATA_TYPES.STRING,
+                parentExtract: '$.name',
+                parentKey: 'key1',
+                title: '',
+                key: 'new_key',
+              },
+              {
+                className: 'hideRow',
+                hidden: true,
+                dataType: MAPPING_DATA_TYPES.STRING,
+                parentExtract: '$.empName',
+                parentKey: 'key1',
+                title: '',
+                key: 'new_key',
+              }],
+            },
+          ],
+        },
+      };
+
+      expect(state).toEqual(expectedState);
+    });
+    test('should add child nodes incase the data type is changed from string to object array with multiple sources and multiple settings ', () => {
+      generateUniqueKey.mockReturnValue('new_key');
+
+      const initialState = {
+        mapping: {
+          importId: 'imp-123',
+          flowId: 'flow-123',
+          version: 2,
+          v2TreeData: [
+            {
+              key: 'key1',
+              dataType: MAPPING_DATA_TYPES.STRING,
+              generate: 'fname',
+              extract: '$.fname',
+            },
+          ],
+        },
+      };
+      const settings = {
+        dataType: MAPPING_DATA_TYPES.OBJECTARRAY,
+        extract: '$.fname,$.name,$.empName',
+        extractsArrayHelper: [{
+          conditional: { when: 'extract_not_empty' },
+          copySource: 'yes',
+          extract: '$.fname',
+          sourceDataType: 'string',
+        }, {
+          extract: '$.name',
+          sourceDataType: 'string',
+        }, {
+          conditional: { when: 'extract_not_empty' },
+          copySource: 'yes',
+          extract: '$.empName',
+          sourceDataType: 'string',
+        }],
+      };
+      const state = reducer(initialState, actions.mapping.v2.patchSettings('key1', settings));
+      const expectedState = {
+        mapping: {
+          importId: 'imp-123',
+          flowId: 'flow-123',
+          version: 2,
+          expandedKeys: ['key1'],
+          v2TreeData: [
+            {
+              key: 'key1',
+              dataType: MAPPING_DATA_TYPES.OBJECTARRAY,
+              activeTab: 1,
+              generate: 'fname',
+              extractsArrayHelper: settings.extractsArrayHelper,
+              children: [{
+                isTabNode: true,
+                parentKey: 'key1',
+                key: 'new_key',
+                title: '',
+              }, {
+                dataType: MAPPING_DATA_TYPES.STRING,
+                parentExtract: '$.name',
+                parentKey: 'key1',
+                title: '',
+                key: 'new_key',
+              }],
+            },
+          ],
+        },
+      };
+
+      expect(state).toEqual(expectedState);
+    });
+    test('should update child nodes properly if the node has children and data type is changed from Object to Object array with multiple sources ', () => {
+      generateUniqueKey.mockReturnValue('new_key');
+
+      const initialState = {
+        mapping: {
+          importId: 'imp-123',
+          flowId: 'flow-123',
+          version: 2,
+          v2TreeData: [{
+            key: 'key1',
+            dataType: MAPPING_DATA_TYPES.OBJECT,
+            generate: 'employee',
+            children: [{
+              key: 'cKey1',
+              parentKey: 'key1',
+              dataType: MAPPING_DATA_TYPES.STRING,
+              generate: 'name',
+              extract: '$.empName',
+              jsonPath: 'employee.name',
+            }],
+          }],
+        },
+      };
+      const settings = {
+        dataType: MAPPING_DATA_TYPES.OBJECTARRAY,
+        extract: '$.fname,$.name,$.empName',
+        extractsArrayHelper: [{
+          extract: '$.fname',
+        }, {
+          extract: '$.name',
+        }, {
+          extract: '$.empName',
+        }],
+      };
+      const state = reducer(initialState, actions.mapping.v2.patchSettings('key1', settings));
+      const expectedState = {
+        mapping: {
+          importId: 'imp-123',
+          flowId: 'flow-123',
+          version: 2,
+          expandedKeys: ['key1'],
+          v2TreeData: [
+            {
+              key: 'key1',
+              dataType: MAPPING_DATA_TYPES.OBJECTARRAY,
+              activeTab: 0,
+              generate: 'employee',
+              extractsArrayHelper: settings.extractsArrayHelper,
+              children: [
+                {
+                  isTabNode: true,
+                  parentKey: 'key1',
+                  key: 'new_key',
+                  title: '',
+                }, {
+                  dataType: MAPPING_DATA_TYPES.STRING,
+                  parentExtract: '$.fname',
+                  parentKey: 'key1',
+                  isEmptyRow: false,
+                  key: 'cKey1',
+                  generate: 'name',
+                  extract: '$.empName',
+                  jsonPath: 'employee.name',
+                },
+                {
+                  className: 'hideRow',
+                  hidden: true,
+                  dataType: MAPPING_DATA_TYPES.STRING,
+                  parentExtract: '$.name',
+                  parentKey: 'key1',
+                  title: '',
+                  key: 'new_key',
+                  generate: 'name',
+                  jsonPath: 'employee.name',
+                },
+                {
+                  className: 'hideRow',
+                  hidden: true,
+                  dataType: MAPPING_DATA_TYPES.STRING,
+                  parentExtract: '$.empName',
+                  parentKey: 'key1',
+                  title: '',
+                  key: 'new_key',
+                  generate: 'name',
+                  jsonPath: 'employee.name',
+                },
+              ],
+            },
+          ],
+        },
+      };
+
+      expect(state).toEqual(expectedState);
+    });
   });
   describe('MAPPING.V2.ACTIVE_KEY action', () => {
     test('should correctly update the active key', () => {
