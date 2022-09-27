@@ -227,8 +227,8 @@ function EachTabContainer({id, value, formKey, dataType, isCurrentTab, onFieldCh
 
   // During initializing the tabs set the source datatype
   // depening on the source field selected
-  const jsonPathValue = formKey.replace(/(\$\.)|(\$\[\*\]\.)/g, '');
-  const sourceDataTypeVal = getSelectedExtractDataTypes(extractsTreeData[0], jsonPathValue);
+
+  const sourceDataTypeVal = getSelectedExtractDataTypes(extractsTreeData, formKey);
 
   // useSetSubFormShowValidations(parentFormKey, formKey);
   const formKeyComponent = useFormInitWithPermissions({

@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import clsx from 'clsx';
 import { Divider, Tooltip } from '@material-ui/core';
@@ -160,6 +160,14 @@ export default function SourceDataType({
   const sourceDataTypeRef = useSyncedRef(sourceDataTypes);
   const open = !!anchorEl;
   const selectedDataTypeLabels = [];
+
+  useEffect(() => {
+    if (!sourceDataTypes || (sourceDataTypes && !sourceDataTypes.length)) {
+      sourceDataTypeRef.current = ['string'];
+      dispatch(actions.mapping.v2.updateDataType(nodeKey, 'string', true));
+    }
+  }, [dispatch, nodeKey, sourceDataTypeRef, sourceDataTypes]);
+
   const handleMenu = useCallback(
     event => {
       if (selectedDataTypeLabels && selectedDataTypeLabels.length > 1) {
@@ -174,7 +182,7 @@ export default function SourceDataType({
         setAnchorEl(anchorEl ? null : event.currentTarget);
       }
     },
-    [anchorEl, setAnchorEl, selectedDataTypeLabels]
+    [anchorEl, dispatch, history, setAnchorEl, nodeKey, selectedDataTypeLabels]
   );
   const handleClose = useCallback(() => {
     setAnchorEl(null);
@@ -188,7 +196,7 @@ export default function SourceDataType({
     handleClose();
     sourceDataTypeRef.current = [newDataType];
     dispatch(actions.mapping.v2.updateDataType(nodeKey, newDataType, true));
-  }, [handleClose, dataType, dispatch, nodeKey]);
+  }, [handleClose, dispatch, nodeKey, sourceDataTypeRef]);
 
   return (
     <div className={clsx(classes.sourceDataTypeDropDown, className)}>
