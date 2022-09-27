@@ -2483,21 +2483,38 @@ export const applyMappedFilter = (v2TreeData, lookups, isReqApplied = false) => 
       }
     } else if (dataType === MAPPING_DATA_TYPES.OBJECTARRAY) {
       // if no extracts but has children, then make a recursive call to check the children
-      if (!extractsArrayHelper.length && mapping.children?.length) {
-        // eslint-disable-next-line no-param-reassign
-        mapping.children = applyMappedFilter(mapping.children, lookups, isReqApplied);
+      if (!extractsArrayHelper.length) {
+        if (mapping.children?.length) {
+          // eslint-disable-next-line no-param-reassign
+          mapping.children = applyMappedFilter(mapping.children, lookups, isReqApplied);
 
-        // if all children are filtered out, then remove the parent as well
-        return !!mapping.children?.length;
+          // if all children are filtered out, then remove the parent as well
+          return !!mapping.children?.length;
+        }
+
+        return false;
       }
-      // ToDo: iteration and set tab wise
+      // if extracts and chldren exists
       if (mapping.children?.length) {
         // eslint-disable-next-line no-param-reassign
         mapping.children = applyMappedFilter(mapping.children, lookups, isReqApplied);
 
+        extractsArrayHelper.forEach(extractItem => {
+          const canDisable = !mapping.children.some(child => !child.isTabNode && (child.parentExtract === extractItem.extract));
+
+          if (canDisable) {
+            // eslint-disable-next-line no-param-reassign
+            if (!mapping.disableHelper) mapping.disableHelper = [extractItem.extract];
+            else if (!mapping.disableHelper?.includes(extractItem.extract)) mapping.disableHelper.push(extractItem.extract);
+          }
+        });
+
         // if all children are filtered out, then remove the parent as well
-        return !!mapping.children?.length;
+        return mapping.children?.length > 1;
       }
+
+      // if extract exists but no children, then generate is copied from source as is
+      return true;
     }
 
     return false;

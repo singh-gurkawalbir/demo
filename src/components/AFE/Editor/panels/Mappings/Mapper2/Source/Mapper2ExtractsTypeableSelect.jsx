@@ -242,7 +242,7 @@ export default function Mapper2ExtractsTypeableSelect({
       <SourceDataType
         anchorEl={dataTypeSelector}
         setAnchorEl={selectDataType}
-        disabled={isHardCodedValue || isHandlebarExp}
+        disabled={disabled || isHardCodedValue || isHandlebarExp}
         isHardCodedValue={isHardCodedValue}
         isHandlebarExp={isHandlebarExp}
         nodeKey={nodeKey}

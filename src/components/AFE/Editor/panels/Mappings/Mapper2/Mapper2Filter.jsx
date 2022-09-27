@@ -61,12 +61,10 @@ export default function Mapper2Filter() {
   );
   const selected = filterOptions?.length ? filterOptions : ['all'];
 
-  const FilterIcon = () => <FilterIconWrapper />;
-
   return (
     <div className={clsx(classes.wrapperSelectFilter, !selected.includes('all') && classes.circle)} >
       <MultiSelectFilter
-        Icon={FilterIcon}
+        Icon={FilterIconWrapper}
         items={options}
         selected={selected}
         onSave={onSaveHandler}
