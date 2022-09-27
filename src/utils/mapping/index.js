@@ -711,7 +711,7 @@ export const buildExtractsHelperFromExtract = (existingExtractsArray, sourceFiel
     if (extractConfig.extract) {
       // found existing extract, use same config
       toReturn.push(uniqueExtract === formKey ? newExtractObj : extractConfig);
-    } else if (removedSources[existingExtractsArray[i]?.extract]) {
+    } else if (existingExtractsArray && removedSources[existingExtractsArray[i]?.extract]) {
       // add missing extracts in existingExtractsArray which are newly added by the user and copy settings if found at same index
       toReturn.push({...removedSources[existingExtractsArray[i].extract],
         extract: uniqueExtract,
