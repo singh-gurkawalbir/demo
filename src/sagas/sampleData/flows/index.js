@@ -495,8 +495,12 @@ export function* requestProcessorData({
       resourceMappings = {mappings: cloneDeep(resource.mappings), lookups};
 
       const connection = yield select(selectors.resource, 'connections', resource?._connectionId);
+      const flow = yield select(selectors.resource, 'flows', flowId);
 
       options.connection = connection;
+      options._flowId = flowId;
+      options._integrationId = flow?._integrationId;
+      options.import = resource;
     } else {
       resourceMappings = mappingUtil.getMappingFromResource({
         importResource: resource,
