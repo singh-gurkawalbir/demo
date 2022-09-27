@@ -1600,7 +1600,7 @@ export const searchTree = (mappings, key, filterFunc, items) => {
   items.firstIndex = firstIndex;    // setting the firstIndex before returning
 };
 
-const getNewChildrenToAdd = (parentNode, destinationNode) => {
+export const getNewChildrenToAdd = (parentNode, destinationNode) => {
   // the destination node is expected to be a child - so checks for parentKey and generate field
   if (!parentNode || !destinationNode || !destinationNode.parentKey || !destinationNode.generate) {
     return [];
@@ -1684,10 +1684,10 @@ export const findAllPossibleDestinationMatchingParentNodes = (matchingNodes = []
   return findAllPossibleDestinationMatchingParentNodes(matchingNodes.slice(1), nextLevelParentNodes);
 };
 
-const isMappingRowTouched = node => {
+const isMappingRowTouched = (node, lookups) => {
   if (!node || isEmpty(node)) return false;
 
-  const isEmptyRow = (!node.generate && node.dataType === MAPPING_DATA_TYPES.STRING && isMappingWithoutExtract(node));
+  const isEmptyRow = (!node.generate && node.dataType === MAPPING_DATA_TYPES.STRING && isMappingWithoutExtract(node, lookups));
 
   return !isEmptyRow;
 };
@@ -1697,7 +1697,7 @@ const isMappingRowTouched = node => {
    * It updates the children with accommodating the added/updated node with destination at all possible places
    * which matches destination structure with multiple extracts
    */
-export const insertSiblingsOnDestinationUpdate = (treeData, newNode) => {
+export const insertSiblingsOnDestinationUpdate = (treeData, newNode, lookups) => {
   // do nothing if the node itself is the top node
   if (!newNode.parentKey) return;
 
@@ -1728,7 +1728,7 @@ export const insertSiblingsOnDestinationUpdate = (treeData, newNode) => {
         return isMappingRowTouched(childNode);
       });
     } else {
-      updatedChildren = updatedChildren.filter(childNode => isMappingRowTouched(childNode));
+      updatedChildren = updatedChildren.filter(childNode => isMappingRowTouched(childNode, lookups));
     }
     // eslint-disable-next-line no-param-reassign
     parentNode.children = updatedChildren;
