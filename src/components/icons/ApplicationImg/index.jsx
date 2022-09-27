@@ -3,6 +3,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import getImageUrl from '../../../utils/image';
+import { getHttpConnector } from '../../../constants/applications';
 
 const useStyles = makeStyles(theme => ({
   small: {
@@ -52,6 +53,12 @@ function iconMap(type = '') {
   if (['s3export', 's3import'].includes(type.toLowerCase())) return 's3';
   if (['ftpexport', 'ftpimport'].includes(type.toLowerCase())) return 'ftp';
 
+  const publishedConnector = getHttpConnector(type);
+
+  if (publishedConnector) {
+    return publishedConnector.legacyId || publishedConnector.name;
+  }
+
   // remove all whitespaces and dots
   return type.replace(/\.|\s/g, '') && type.toLowerCase();
 }
@@ -70,6 +77,12 @@ function imageName(assistant) {
   // Similarly for both Amazon Redshift and Amazon Redshift (REST API) applications, we have same image
   if (assistant === 'redshiftdatawarehouse') {
     return 'redshift';
+  }
+
+  const publishedConnector = getHttpConnector(assistant);
+
+  if (publishedConnector) {
+    return publishedConnector.legacyId || publishedConnector.name;
   }
 
   return assistant.toLowerCase();
