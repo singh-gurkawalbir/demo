@@ -105,6 +105,7 @@ export default function DynaFTPFileNameWithEditor_afe(props) {
         <ActionButton
           data-test={id}
           tooltip="Open handlebars editor"
+          placement="bottom"
           onClick={handleEditorClick}
           className={classes.dynaActionButton}>
           <AfeIcon />

@@ -935,6 +935,10 @@ export default (state = {}, action) => {
           // handle if data type changed
           if (oldDataType !== newDataType) {
             nodeSubArray[nodeIndexInSubArray] = updateDataType(draft, node, oldDataType, newDataType);
+            if (newDataType === MAPPING_DATA_TYPES.OBJECTARRAY) {
+              // Handles updates of mapper node incase the  data type is changed to Object array with source field settings
+              nodeSubArray[nodeIndexInSubArray] = rebuildObjectArrayNode(nodeSubArray[nodeIndexInSubArray], node.extract);
+            }
           } else if (newDataType === MAPPING_DATA_TYPES.OBJECT) {
             delete node.extractsArrayHelper;
 

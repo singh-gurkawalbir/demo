@@ -1,10 +1,8 @@
 import React, { useEffect, useState, useMemo, useCallback } from 'react';
-import { FormControl, InputAdornment, FormLabel } from '@material-ui/core';
+import { FormControl, InputAdornment, FormLabel, makeStyles } from '@material-ui/core';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import TextField from '@material-ui/core/TextField';
 import clsx from 'clsx';
-// eslint-disable-next-line import/no-extraneous-dependencies
-import { makeStyles } from '@material-ui/styles';
 import { isNaN } from 'lodash';
 import CopyIcon from '../../icons/CopyIcon';
 import FieldHelp from '../FieldHelp';
@@ -31,11 +29,11 @@ const useStyles = makeStyles(theme => ({
   },
   dynaFieldCopyClipboard: {
     display: 'flex',
-    alignItems: 'flex-end',
+    alignItems: 'flex-start',
   },
   copyButton: {
-    marginLeft: theme.spacing(1),
-    marginBottom: theme.spacing(0.5),
+    marginTop: theme.spacing(2),
+    padding: theme.spacing(1),
   },
   textFieldWithClipBoard: {
     width: '100%',

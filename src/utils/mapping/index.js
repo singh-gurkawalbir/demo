@@ -690,7 +690,7 @@ export const getSelectedExtractDataTypes = (extractsTreeNode, selectedValue, sel
   return selectedNodes;
 };
 
-export const buildExtractsHelperFromExtract = (existingExtractsArray, sourceField, formKey, newExtractObj, extractsTree) => {
+export const buildExtractsHelperFromExtract = (existingExtractsArray = [], sourceField, formKey, newExtractObj, extractsTree) => {
   if (!sourceField) return [];
 
   const splitExtracts = sourceField?.split(',') || [];
@@ -698,7 +698,7 @@ export const buildExtractsHelperFromExtract = (existingExtractsArray, sourceFiel
   const removedSources = {};
 
   // copy the existing settings of removed source so if a new source is added at same index, we copy same settings
-  existingExtractsArray?.forEach(c => {
+  existingExtractsArray.forEach(c => {
     if (!splitExtracts.includes(getExtractFromUniqueId(c.extract))) {
       removedSources[c.extract] = c;
     }
@@ -1239,7 +1239,6 @@ const recursivelyBuildV2MappingsFromTree = ({v2TreeData, _mappingsToSave, lookup
     const {
       description,
       generate,
-      generateDisabled,
       dataType,
       extract,
       extractDateFormat,
@@ -1255,7 +1254,7 @@ const recursivelyBuildV2MappingsFromTree = ({v2TreeData, _mappingsToSave, lookup
       extractsArrayHelper = [],
       isTabNode} = mapping;
 
-    if (isTabNode || (!generateDisabled && !generate)) return;
+    if (isTabNode) return;
 
     const newMapping = {
       description,
@@ -1346,6 +1345,8 @@ const recursivelyBuildV2MappingsFromTree = ({v2TreeData, _mappingsToSave, lookup
           return;
         }
 
+        let isAnyActiveSourcePresent = false;
+
         // both extract and sub mappings exist
         extractsArrayHelper.forEach(extractObj => {
           if (!extractObj.extract) return;
@@ -1366,7 +1367,6 @@ const recursivelyBuildV2MappingsFromTree = ({v2TreeData, _mappingsToSave, lookup
             default: extractObj.default,
             conditional: extractObj.conditional,
             mappings: subMappings,
-            status: 'Active',
           };
 
           recursivelyBuildV2MappingsFromTree({v2TreeData: matchingChildren, _mappingsToSave: subMappings, lookups});
@@ -1374,16 +1374,15 @@ const recursivelyBuildV2MappingsFromTree = ({v2TreeData, _mappingsToSave, lookup
           // if no valid children mappings are present, then parent is also marked as Draft
           const isAnyChildActive = newHelper.mappings.some(m => m.status === 'Active');
 
-          if (!isAnyChildActive) {
-            newHelper.status = 'Draft';
+          if (isAnyChildActive) {
+            isAnyActiveSourcePresent = true;
           }
+
           buildArrayHelper.push(newHelper);
         });
 
         // if no sources children are present, then parent is also marked as Draft
-        const isAnySourceActive = newMapping.buildArrayHelper.some(m => m.status === 'Active');
-
-        if (!isAnySourceActive) {
+        if (!isAnyActiveSourcePresent) {
           newMapping.status = 'Draft';
         }
         _mappingsToSave.push(newMapping);
@@ -1427,7 +1426,6 @@ export const buildV2MappingsFromTree = ({v2TreeData, lookups}) => {
   }
 
   recursivelyBuildV2MappingsFromTree({v2TreeData, _mappingsToSave, lookups});
-  // console.log('_mappingsToSave', _mappingsToSave);
 
   return _mappingsToSave;
 };
