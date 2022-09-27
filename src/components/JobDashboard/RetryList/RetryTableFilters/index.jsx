@@ -64,7 +64,7 @@ export default function RetryTableFilters({flowId, resourceId, filterKey}) {
             </TextButton>
           </div>
         </div>
-        {(retryStatus && (isOpenErrorsUpdated || isResolvedErrorsUpdated)) ? (
+        {!(retryStatus && (isOpenErrorsUpdated || isResolvedErrorsUpdated)) ? (
           <NotificationToaster variant="infoMessage" transparent >
             {messageStore('RETRIES_TAB_ERRORS_UPDATED_INFO')}
           </NotificationToaster>

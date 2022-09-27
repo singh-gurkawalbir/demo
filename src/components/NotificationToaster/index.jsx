@@ -94,9 +94,6 @@ const useStyles = makeStyles(theme => ({
       marginTop: 2,
       alignSelf: 'flex-start !important',
     },
-    '&:before': {
-      background: theme.palette.info.main,
-    },
   },
   warning: {
     borderColor: `${theme.palette.warning.main} !important`,
