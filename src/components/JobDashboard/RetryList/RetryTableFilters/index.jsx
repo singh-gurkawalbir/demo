@@ -7,7 +7,7 @@ import Icon from '../../../icons/RefreshIcon';
 import TextButton from '../../../Buttons/TextButton';
 import messageStore from '../../../../utils/messageStore';
 import MultiSelectUsersFilter from './MultiSelectUsersFilter';
-import InfoMessage from '../../../InfoMessage';
+import NotificationToaster from '../../../NotificationToaster';
 
 const useStyles = makeStyles(theme => ({
   header: {
@@ -64,9 +64,10 @@ export default function RetryTableFilters({flowId, resourceId, filterKey}) {
             </TextButton>
           </div>
         </div>
-        { (!retryStatus && (isOpenErrorsUpdated || isResolvedErrorsUpdated)) ? (
-          <InfoMessage
-            infoMessage={messageStore('RETRIES_TAB_ERRORS_UPDATED_INFO')} />
+        {!(retryStatus && (isOpenErrorsUpdated || isResolvedErrorsUpdated)) ? (
+          <NotificationToaster variant="infoMessage" transparent >
+            {messageStore('RETRIES_TAB_ERRORS_UPDATED_INFO')}
+          </NotificationToaster>
         ) : ''}
       </div>
     </div>

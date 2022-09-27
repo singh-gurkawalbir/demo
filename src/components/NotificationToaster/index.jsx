@@ -87,6 +87,17 @@ const useStyles = makeStyles(theme => ({
       background: theme.palette.info.main,
     },
   },
+  infoMessage: {
+    fontStyle: 'italic',
+    '& svg': {
+      color: theme.palette.text.hint,
+      marginTop: 2,
+      alignSelf: 'flex-start !important',
+    },
+    '&:before': {
+      background: theme.palette.info.main,
+    },
+  },
   warning: {
     borderColor: `${theme.palette.warning.main} !important`,
     '& svg': {
@@ -151,6 +162,7 @@ const variantIcon = {
   warning: WarningIcon,
   error: ErrorIcon,
   info: InfoIcon,
+  infoMessage: InfoIcon,
 };
 
 /**
@@ -219,7 +231,7 @@ NotificationToaster.propTypes = {
   children: PropTypes.string.isRequired,
   className: PropTypes.string,
   onClose: PropTypes.func,
-  variant: PropTypes.oneOf(['warning', 'error', 'success', 'info']),
+  variant: PropTypes.oneOf(['warning', 'error', 'success', 'info', 'infoMessage']),
   size: PropTypes.oneOf(['small', 'medium', 'large']),
 };
 
