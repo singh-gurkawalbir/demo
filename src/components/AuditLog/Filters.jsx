@@ -223,6 +223,7 @@ export default function Filters(props) {
             classes={classes}
             filters={filters}
             onChange={handleChange}
+            resource={resource}
           />
         </ActionGroup>
         <ActionGroup position="right" className={classes.downloadButton}>
