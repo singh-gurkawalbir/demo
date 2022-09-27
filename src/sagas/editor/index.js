@@ -102,10 +102,14 @@ export function* invokeProcessor({ editorId, processor, body }) {
       // give preference to v2 mappings always
       if (hasV2MappingsInTreeData(v2TreeData, lookups)) {
         const connection = yield select(selectors.resource, 'connections', importResource?._connectionId);
+        const flow = yield select(selectors.resource, 'flows', flowId);
         const _mappingsV2 = buildV2MappingsFromTree({v2TreeData, lookups});
 
         _mappings = {mappings: _mappingsV2, lookups};
         options.connection = connection;
+        options._flowId = flowId;
+        options._integrationId = flow?._integrationId;
+        options.import = importResource;
       } else {
         const mappings = (yield select(selectors.mapping))?.mappings;
         const exportResource = yield select(selectors.firstFlowPageGenerator, flowId);
