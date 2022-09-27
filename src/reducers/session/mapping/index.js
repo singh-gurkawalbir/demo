@@ -601,7 +601,6 @@ export default (state = {}, action) => {
             dataType: MAPPING_DATA_TYPES.OBJECTARRAY,
             generateDisabled: true,
             disabled: draft.mapping.isMonitorLevelAccess,
-            sourceDataType: MAPPING_DATA_TYPES.STRING,
           };
 
           node.children = updateChildrenProps(draft.mapping.v2TreeData, node, MAPPING_DATA_TYPES.OBJECTARRAY);
