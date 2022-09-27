@@ -1684,6 +1684,14 @@ export const findAllPossibleDestinationMatchingParentNodes = (matchingNodes = []
   return findAllPossibleDestinationMatchingParentNodes(matchingNodes.slice(1), nextLevelParentNodes);
 };
 
+const isMappingRowTouched = node => {
+  if (!node || isEmpty(node)) return false;
+
+  const isEmptyRow = (!node.generate && node.dataType === MAPPING_DATA_TYPES.STRING && isMappingWithoutExtract(node));
+
+  return !isEmptyRow;
+};
+
 /**
    * This util deals with destination node additions/updates inside an Object array node's children
    * It updates the children with accommodating the added/updated node with destination at all possible places
@@ -1707,14 +1715,23 @@ export const insertSiblingsOnDestinationUpdate = (treeData, newNode) => {
 
   matchingLeafNodes.forEach(parentNode => {
     const newChildren = getNewChildrenToAdd(parentNode, newNode);
+    let updatedChildren = [...parentNode.children, ...newChildren];
 
-    if (parentNode.children?.length === 1 && parentNode.children[0]?.isEmptyRow) {
-      // eslint-disable-next-line no-param-reassign
-      parentNode.children = newChildren;
+    if (parentNode.key === newNode.parentKey) {
+      updatedChildren = updatedChildren.filter(childNode => {
+        if (childNode.parentExtract === newNode.parentExtract) {
+          // ignore any filtering for the same tab's children
+          return true;
+        }
+
+        // for all other source tabs, filter out empty nodes
+        return isMappingRowTouched(childNode);
+      });
     } else {
-      // eslint-disable-next-line no-param-reassign
-      parentNode.children = [...parentNode.children, ...newChildren];
+      updatedChildren = updatedChildren.filter(childNode => isMappingRowTouched(childNode));
     }
+    // eslint-disable-next-line no-param-reassign
+    parentNode.children = updatedChildren;
   });
 };
 
