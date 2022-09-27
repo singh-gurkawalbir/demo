@@ -798,6 +798,7 @@ describe('mappingInit saga', () => {
           disabled: false,
           hidden: undefined,
           className: undefined,
+          isRequired: false,
           extract: 'id',
           generate: 'id',
           jsonPath: 'id',
