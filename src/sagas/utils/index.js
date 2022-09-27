@@ -412,7 +412,7 @@ export const updateFinalMetadataWithHttpFramework = (finalFieldMeta, connector, 
         tempFiledMeta.fieldMap['http.updateBaseURI'].defaultValue = tempFiledMeta.fieldMap[key].defaultValue;
       }
       if (tempFiledMeta?.fieldMap['name']) {
-        const application = resource?.assistant;
+        const application = resource?.application;
 
         tempFiledMeta.fieldMap.name.placeholder = `${application} connection`;
       }

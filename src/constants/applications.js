@@ -412,7 +412,8 @@ export const groupApplications = (
         export: true,
         import: true,
         icon: pc.legacyId || pc.name.toLowerCase().replace(/\.|\s/g, ''),
-        assistant: pc.legacyId || pc.name.toLowerCase().replace(/\.|\s/g, ''),
+        assistant: pc.legacyId,
+        application: pc.name,
         _httpConnectorId: pc._id,
         helpURL: pc.helpURL,
       });
@@ -509,7 +510,8 @@ export const applicationsList = () => {
       type: 'http',
       export: true,
       import: true,
-      assistant: pc.legacyId || pc.name.toLowerCase().replace(/\.|\s/g, ''),
+      assistant: pc.legacyId,
+      application: pc.name,
       _httpConnectorId: pc._id,
       helpURL: pc.helpURL,
     });
