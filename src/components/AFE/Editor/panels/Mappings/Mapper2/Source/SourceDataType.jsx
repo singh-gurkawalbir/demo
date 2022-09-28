@@ -129,9 +129,8 @@ const useStyles = makeStyles(theme => ({
   },
   dataTypeSelected: {
     width: theme.spacing(8),
+    textAlign: 'right',
     '& span': {
-      display: 'block',
-      textAlign: 'right',
       whiteSpace: 'nowrap',
     },
   },
