@@ -21,37 +21,26 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function generateTabs(parentNode, dispatch) {
+function generateTabs(parentNode) {
   const tabs = [];
   let anyExtractHasMappings = false;
 
   if (parentNode?.extractsArrayHelper) {
-    let isActiveTabDisabled = false;
-
-    parentNode.extractsArrayHelper.forEach((extractConfig, index) => {
+    parentNode.extractsArrayHelper.forEach(extractConfig => {
       if (!extractConfig.extract) return;
       if (extractConfig.copySource !== 'yes') {
         anyExtractHasMappings = true;
       }
 
-      const isNoChildren = parentNode?.disableHelper?.includes(extractConfig.extract);
-
-      if (isNoChildren && (parentNode?.activeTab === index)) isActiveTabDisabled = true;
+      const shouldDisableTab = parentNode.extractsWithoutMappings?.includes(extractConfig.extract);
 
       tabs.push({
         id: extractConfig.extract,
         label: getExtractFromUniqueId(extractConfig.extract),
-        disabled: (extractConfig.copySource === 'yes') || isNoChildren,
-        isNoChildren,
-        disabledInfo: isNoChildren ? 'No matching fields in this tab' : 'No fields need to be configured because this source has the setting "Copy an object array from the source as-is" set to "Yes".',
+        disabled: (extractConfig.copySource === 'yes') || shouldDisableTab,
+        disabledInfo: shouldDisableTab ? 'No matching fields in this tab' : 'No fields need to be configured because this source has the setting "Copy an object array from the source as-is" set to "Yes".',
       });
     });
-
-    if (isActiveTabDisabled) {
-      const newValue = tabs.findIndex(tab => !tab.isNoChildren);
-
-      if (newValue > -1) dispatch(actions.mapping.v2.changeArrayTab(parentNode.key, newValue, tabs[newValue].id));
-    }
   }
 
   // if all sources have copy source setting as yes, then no tab is shown
@@ -66,7 +55,7 @@ function TabbedRow({parentKey}) {
   const treeData = useSelector(state => selectors.filteredV2TreeData(state));
   const parentNode = useMemo(() => (findNodeInTree(treeData, 'key', parentKey)?.node), [parentKey, treeData]);
 
-  const tabs = useMemo(() => generateTabs(parentNode, dispatch), [parentNode, dispatch]);
+  const tabs = useMemo(() => generateTabs(parentNode), [parentNode]);
 
   const handleTabChange = useCallback((event, newValue) => {
     dispatch(actions.mapping.v2.changeArrayTab(parentKey, newValue, tabs[newValue].id));

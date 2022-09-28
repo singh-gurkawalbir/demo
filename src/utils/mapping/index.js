@@ -728,8 +728,8 @@ export const buildExtractsHelperFromExtract = (existingExtractsArray = [], sourc
 
 // for object array multiple extracts view,
 // mark non active tabs children as hidden
-export const hideOtherTabRows = (node, newTabExtract = '', hidden) => {
-  const clonedNode = deepClone(node);
+export const hideOtherTabRows = (node, newTabExtract = '', hidden, canDeepClone = true) => {
+  const clonedNode = canDeepClone ? deepClone(node) : node;
 
   if (!clonedNode || !clonedNode.children?.length) return clonedNode;
 
@@ -2452,6 +2452,7 @@ export const applyRequiredFilter = nodes => {
   });
 };
 
+/* eslint-disable no-param-reassign */
 export const applyMappedFilter = (v2TreeData, lookups, isReqApplied = false) => {
   if (isEmpty(v2TreeData)) return v2TreeData;
 
@@ -2475,51 +2476,55 @@ export const applyMappedFilter = (v2TreeData, lookups, isReqApplied = false) => 
       if (extract) return canAddToTree;
       // if extract is empty and children exists, then make a recursive call to check the children
       if (mapping.children?.length) {
-        // eslint-disable-next-line no-param-reassign
         mapping.children = applyMappedFilter(mapping.children, lookups, isReqApplied);
 
         // if all children are filtered out, then remove the parent as well
         return !!mapping.children?.length;
       }
     } else if (dataType === MAPPING_DATA_TYPES.OBJECTARRAY) {
-      // if no extracts but has children, then make a recursive call to check the children
-      if (!extractsArrayHelper.length) {
-        if (mapping.children?.length) {
-          // eslint-disable-next-line no-param-reassign
-          mapping.children = applyMappedFilter(mapping.children, lookups, isReqApplied);
-
-          // if all children are filtered out, then remove the parent as well
-          return !!mapping.children?.length;
-        }
-
-        return false;
-      }
-      // if extracts and chldren exists
+      // if children exist
       if (mapping.children?.length) {
-        // eslint-disable-next-line no-param-reassign
+        // make a recursive call to filter the children
         mapping.children = applyMappedFilter(mapping.children, lookups, isReqApplied);
 
-        extractsArrayHelper.forEach(extractItem => {
+        mapping.extractsWithoutMappings = [];
+        let isActiveTabDisabled = false;
+
+        extractsArrayHelper.forEach((extractItem, index) => {
           const canDisable = !mapping.children.some(child => !child.isTabNode && (child.parentExtract === extractItem.extract));
 
           if (canDisable) {
-            // eslint-disable-next-line no-param-reassign
-            if (!mapping.disableHelper) mapping.disableHelper = [extractItem.extract];
-            else if (!mapping.disableHelper?.includes(extractItem.extract)) mapping.disableHelper.push(extractItem.extract);
+            mapping.extractsWithoutMappings.push(extractItem.extract);
+            if (mapping.activeTab === index) isActiveTabDisabled = true;
           }
         });
 
+        // if Active tab is disabled, change the Active tab
+        if (isActiveTabDisabled) {
+          // finding the new non-empty tab index
+          const newIndex = extractsArrayHelper.findIndex(item => !mapping.extractsWithoutMappings.includes(item.extract));
+
+          if (newIndex > -1) {
+            mapping = hideOtherTabRows(mapping, extractsArrayHelper[newIndex].extract, undefined, false);
+            mapping.activeTab = newIndex;
+          }
+        }
+
         // if all children are filtered out, then remove the parent as well
-        return mapping.children?.length > 1;
+        return mapping.children.some(child => !child.isTabNode);
       }
 
-      // if extract exists but no children, then generate is copied from source as is
+      // if no children and no extract exist, remove the field
+      if (!extractsArrayHelper.length) return false;
+
+      // if no children exist but extract, then generate is copied from source as-is
       return true;
     }
 
     return false;
   });
 };
+/* eslint-enable */
 
 // #endregion
 
