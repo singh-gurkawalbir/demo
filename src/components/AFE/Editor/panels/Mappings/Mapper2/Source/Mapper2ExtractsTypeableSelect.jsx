@@ -247,7 +247,8 @@ export default function Mapper2ExtractsTypeableSelect({
         isHandlebarExp={isHandlebarExp}
         nodeKey={nodeKey}
         sourceDataTypes={sourceDataType}
-        className={clsx({[classes.sourceDataTypeButton]: hideSourceDropdown})} />
+        className={clsx({[classes.sourceDataTypeButton]: hideSourceDropdown})}
+        isFocused={isFocused} />
 
       {/* only render tree component if field is focussed and not disabled.
       Here we are wrapping tree component with ArrowPopper to correctly handle the
