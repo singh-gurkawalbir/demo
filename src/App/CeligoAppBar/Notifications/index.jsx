@@ -8,6 +8,7 @@ import actions from '../../../actions';
 import { selectors } from '../../../reducers';
 import InvitationItem from './InvitationItem';
 import LoadResources from '../../../components/LoadResources';
+import IconButtonWithTooltip from '../../../components/IconButtonWithTooltip';
 
 const useStyles = makeStyles(theme => ({
   notificationContainer: {
@@ -95,14 +96,20 @@ function Notifications() {
   return (
     <>
       <LoadResources resources={isAccountOwner ? 'transfers' : 'transfers/invited'} />
-      <IconButton aria-label="notifications" size="small" color="inherit" onClick={handleClick}>
+      <IconButtonWithTooltip
+        tooltipProps={{title: 'New notifications'}}
+        aria-label="notifications"
+        size="small"
+        color="inherit"
+        noPadding
+        onClick={handleClick}>
         <Badge
           badgeContent={notifications.length}
           color="primary"
           className={classes.badgeText}>
           <NotificationsIcon />
         </Badge>
-      </IconButton>
+      </IconButtonWithTooltip>
 
       <ArrowPopper
         id="notifications"
