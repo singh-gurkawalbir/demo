@@ -1,7 +1,7 @@
 import { makeStyles } from '@material-ui/core/styles';
 import { Divider } from '@material-ui/core';
 import clsx from 'clsx';
-import React, { useMemo, useCallback, useEffect, useRef } from 'react';
+import React, { useMemo, useCallback, useEffect, useRef, useState } from 'react';
 import { useSelector, shallowEqual, useDispatch } from 'react-redux';
 import actions from '../../../actions';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
@@ -36,16 +36,12 @@ const useStyles = makeStyles(theme => ({
     flexBasis: '40%',
   },
   errorTable: {
-    height: 'calc(100vh - 320px)',
     wordBreak: 'break-word',
+    overflow: 'auto',
+    height: 'calc(100vh - 320px)',
     '& th': {
       wordBreak: 'normal',
     },
-    flexGrow: 1,
-    display: 'flex',
-    flexDirection: 'column',
-    flexBasis: '60%',
-    overflow: 'auto',
     '&:focus': {
       outline: 'inherit',
     },
@@ -107,6 +103,8 @@ const ErrorTableWithPanel = ({
 }) => {
   const classes = useStyles();
   const tableRef = useRef();
+  const drawerRef = useRef();
+  const [scrollPosition, setScrollPosition] = useState(0);
   let hasFilter;
   const hasErrors = useSelector(state =>
     selectors.hasResourceErrors(state, { flowId, resourceId, isResolved })
@@ -139,6 +137,21 @@ const ErrorTableWithPanel = ({
     };
   }, [isSplitView, keydownListener, tableRef]);
 
+  const handleScrollPosition = event => {
+    if (!isResolved) {
+      setScrollPosition((event.target.scrollTop / (event.target.scrollHeight - event.target.offsetHeight)) * 100);
+    }
+  };
+
+  useEffect(() => {
+    if (isSplitView && !isResolved) {
+      tableRef?.current?.scrollTo(0, (scrollPosition / 100) * (tableRef?.current?.scrollHeight - tableRef?.current?.offsetHeight));
+    } else if (!isResolved) {
+      drawerRef?.current?.scrollTo(0, (scrollPosition / 100) * (drawerRef?.current?.scrollHeight - drawerRef?.current?.offsetHeight));
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isSplitView]);
+
   return isSplitView && !isResolved
     ? (
       <>
@@ -147,17 +160,17 @@ const ErrorTableWithPanel = ({
           resourceId={resourceId}
           isResolved={isResolved}
           filterKey={filterKey}
-    />
+        />
         <div className={classes.baseFormWithPreview}>
           {/* eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex */}
-          <div className={clsx(classes.errorTable, {[classes.errorTableWithErrorsInRun]: errorsInRun})} ref={tableRef} tabIndex={0}>
+          <div className={clsx(classes.errorTable, {[classes.errorTableWithErrorsInRun]: errorsInRun})} ref={tableRef} tabIndex={0} onScroll={handleScrollPosition}>
             <ResourceTable
               resources={errorsInCurrPage}
               className={classes.resourceFormWrapper}
               resourceType="splitViewOpenErrors"
               actionProps={actionProps}
               onRowClick={onRowClick}
-          />
+            />
             {emptyErrorMessage && <EmptyErrorMessage />}
             {emptyFilterMessage && <NoFiltersMessage />}
           </div>
@@ -186,7 +199,7 @@ const ErrorTableWithPanel = ({
           resourceId={resourceId}
           isResolved={isResolved}
           filterKey={filterKey} />
-        <div className={clsx(classes.errorDetailsTable, {[classes.errorTableWithErrorsInRun]: errorsInRun})}>
+        <div className={clsx(classes.errorDetailsTable, {[classes.errorTableWithErrorsInRun]: errorsInRun})} ref={drawerRef} onScroll={handleScrollPosition}>
           <ResourceTable
             resources={errorsInCurrPage}
             resourceType={filterKey}
