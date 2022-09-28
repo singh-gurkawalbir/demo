@@ -406,7 +406,7 @@ export const groupApplications = (
   );
     publishedConnectors?.forEach(pc => {
       assistantConnectors.push({
-        id: pc.name,
+        id: pc._id,
         name: pc.name,
         type: 'http',
         export: true,
@@ -505,7 +505,7 @@ export const applicationsList = () => {
   );
   publishedConnectors?.forEach(pc => {
     applications.push({
-      id: pc.name,
+      id: pc._id,
       name: pc.name,
       type: 'http',
       export: true,
