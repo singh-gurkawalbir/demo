@@ -29,7 +29,7 @@ const useStyles = makeStyles(theme => ({
     marginRight: theme.spacing(0.5),
   },
   dynaValueField: {
-    marginLeft: theme.spacing(1),
+    paddingLeft: theme.spacing(1),
     '& > div': {
       lineHeight: '36px',
     },

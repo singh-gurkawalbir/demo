@@ -690,7 +690,7 @@ export const getSelectedExtractDataTypes = (extractsTreeNode, selectedValue, sel
   return selectedNodes;
 };
 
-export const buildExtractsHelperFromExtract = (existingExtractsArray, sourceField, formKey, newExtractObj, extractsTree) => {
+export const buildExtractsHelperFromExtract = (existingExtractsArray = [], sourceField, formKey, newExtractObj, extractsTree) => {
   if (!sourceField) return [];
 
   const splitExtracts = sourceField?.split(',') || [];
@@ -698,7 +698,7 @@ export const buildExtractsHelperFromExtract = (existingExtractsArray, sourceFiel
   const removedSources = {};
 
   // copy the existing settings of removed source so if a new source is added at same index, we copy same settings
-  existingExtractsArray?.forEach(c => {
+  existingExtractsArray.forEach(c => {
     if (!splitExtracts.includes(getExtractFromUniqueId(c.extract))) {
       removedSources[c.extract] = c;
     }
@@ -979,12 +979,14 @@ export const rebuildObjectArrayNode = (node, extract = '', prevActiveExtract, ex
   return clonedNode;
 };
 
-function recursivelyBuildTreeFromV2Mappings({mappings = [], treeData, parentKey, parentExtract, disabled, hidden, isGroupedSampleData, parentJsonPath = ''}) {
+function recursivelyBuildTreeFromV2Mappings({mappings = [], treeData, parentKey, parentExtract, disabled, hidden, isGroupedSampleData, parentJsonPath = '', requiredMappings = []}) {
   mappings.forEach(m => {
     const {dataType, mappings: objMappings, buildArrayHelper, extract: currNodeExtract, generate, sourceDataType} = m;
     const children = [];
     const currNodeKey = generateUniqueKey();
     const jsonPath = `${parentJsonPath ? `${parentJsonPath}.` : ''}${generate || ''}`;
+
+    const isRequired = requiredMappings.includes(jsonPath);
 
     const nodeToPush = {
       key: currNodeKey,
@@ -995,6 +997,7 @@ function recursivelyBuildTreeFromV2Mappings({mappings = [], treeData, parentKey,
       hidden,
       className: hidden && 'hideRow',
       jsonPath,
+      isRequired,
       ...m,
     };
 
@@ -1008,6 +1011,11 @@ function recursivelyBuildTreeFromV2Mappings({mappings = [], treeData, parentKey,
     }
 
     if (dataType === MAPPING_DATA_TYPES.OBJECT) {
+      // suffix with . for object fields
+      const isRequired = requiredMappings.some(r => r.startsWith(`${jsonPath}.`));
+
+      nodeToPush.isRequired = isRequired;
+
       if (objMappings) {
         nodeToPush.children = children;
 
@@ -1018,7 +1026,8 @@ function recursivelyBuildTreeFromV2Mappings({mappings = [], treeData, parentKey,
           hidden,
           disabled,
           isGroupedSampleData,
-          parentJsonPath: jsonPath});
+          parentJsonPath: jsonPath,
+          requiredMappings});
       } else if (currNodeExtract) { // if object mapping has extract, then it is copied from source as is with no children
         nodeToPush.sourceDataType = sourceDataType || MAPPING_DATA_TYPES.STRING;
         nodeToPush.copySource = 'yes';
@@ -1028,6 +1037,11 @@ function recursivelyBuildTreeFromV2Mappings({mappings = [], treeData, parentKey,
     }
 
     if (ARRAY_DATA_TYPES.includes(dataType)) {
+      // suffix with [*] for object array fields
+      const isRequired = requiredMappings.some(r => r.startsWith(`${jsonPath}[*]`));
+
+      nodeToPush.isRequired = isRequired;
+
       // invalid mappings, nothing to do
       if (!buildArrayHelper) {
         return;
@@ -1071,7 +1085,8 @@ function recursivelyBuildTreeFromV2Mappings({mappings = [], treeData, parentKey,
             disabled,
             hidden: extractIndexWithMappings > 0 ? true : hidden, // since the first active source is already pushed, all other children should be hidden now, as we show the first source tab by default
             isGroupedSampleData,
-            parentJsonPath: jsonPath ? `${jsonPath}[*]` : ''}
+            parentJsonPath: jsonPath ? `${jsonPath}[*]` : '',
+            requiredMappings}
           );
 
           nodeToPush.children = children;
@@ -1117,6 +1132,7 @@ export const buildTreeFromV2Mappings = ({
   importResource,
   isGroupedSampleData,
   disabled,
+  requiredMappings,
 }) => {
   if (!importResource) {
     return;
@@ -1168,7 +1184,7 @@ export const buildTreeFromV2Mappings = ({
     return emptyMappingsTree;
   }
 
-  const mappingsTreeData = recursivelyBuildTreeFromV2Mappings({mappings: v2MappingsCopy, treeData, disabled, isGroupedSampleData});
+  const mappingsTreeData = recursivelyBuildTreeFromV2Mappings({mappings: v2MappingsCopy, treeData, disabled, isGroupedSampleData, requiredMappings});
 
   return mappingsTreeData;
 };
@@ -1239,7 +1255,6 @@ const recursivelyBuildV2MappingsFromTree = ({v2TreeData, _mappingsToSave, lookup
     const {
       description,
       generate,
-      generateDisabled,
       dataType,
       extract,
       extractDateFormat,
@@ -1255,7 +1270,7 @@ const recursivelyBuildV2MappingsFromTree = ({v2TreeData, _mappingsToSave, lookup
       extractsArrayHelper = [],
       isTabNode} = mapping;
 
-    if (isTabNode || (!generateDisabled && !generate)) return;
+    if (isTabNode) return;
 
     const newMapping = {
       description,
@@ -1346,6 +1361,8 @@ const recursivelyBuildV2MappingsFromTree = ({v2TreeData, _mappingsToSave, lookup
           return;
         }
 
+        let isAnyActiveSourcePresent = false;
+
         // both extract and sub mappings exist
         extractsArrayHelper.forEach(extractObj => {
           if (!extractObj.extract) return;
@@ -1366,7 +1383,6 @@ const recursivelyBuildV2MappingsFromTree = ({v2TreeData, _mappingsToSave, lookup
             default: extractObj.default,
             conditional: extractObj.conditional,
             mappings: subMappings,
-            status: 'Active',
           };
 
           recursivelyBuildV2MappingsFromTree({v2TreeData: matchingChildren, _mappingsToSave: subMappings, lookups});
@@ -1374,16 +1390,15 @@ const recursivelyBuildV2MappingsFromTree = ({v2TreeData, _mappingsToSave, lookup
           // if no valid children mappings are present, then parent is also marked as Draft
           const isAnyChildActive = newHelper.mappings.some(m => m.status === 'Active');
 
-          if (!isAnyChildActive) {
-            newHelper.status = 'Draft';
+          if (isAnyChildActive) {
+            isAnyActiveSourcePresent = true;
           }
+
           buildArrayHelper.push(newHelper);
         });
 
         // if no sources children are present, then parent is also marked as Draft
-        const isAnySourceActive = newMapping.buildArrayHelper.some(m => m.status === 'Active');
-
-        if (!isAnySourceActive) {
+        if (!isAnyActiveSourcePresent) {
           newMapping.status = 'Draft';
         }
         _mappingsToSave.push(newMapping);
@@ -1422,12 +1437,11 @@ const recursivelyBuildV2MappingsFromTree = ({v2TreeData, _mappingsToSave, lookup
 export const buildV2MappingsFromTree = ({v2TreeData, lookups}) => {
   const _mappingsToSave = [];
 
-  if (isEmpty(v2TreeData)) {
+  if (isEmpty(v2TreeData) || !hasV2MappingsInTreeData(v2TreeData, lookups)) {
     return _mappingsToSave;
   }
 
   recursivelyBuildV2MappingsFromTree({v2TreeData, _mappingsToSave, lookups});
-  // console.log('_mappingsToSave', _mappingsToSave);
 
   return _mappingsToSave;
 };

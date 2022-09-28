@@ -796,9 +796,9 @@ export function convertFromExport({ exportDoc: exportDocOrig, assistantData: ass
   let { version, resource, operation } = exportDoc.assistantMetadata || {};
 
   if (exportDoc?.http) {
-    operation = exportDoc.http._httpConnectorEndpointId || operation;
-    resource = exportDoc.http._httpConnectorResourceId || resource;
-    version = exportDoc.http._httpConnectorVersionId || version;
+    operation = operation || exportDoc.http._httpConnectorEndpointId;
+    resource = resource || exportDoc.http._httpConnectorResourceId;
+    version = version || exportDoc.http._httpConnectorVersionId;
   }
   const { exportType, dontConvert } = exportDoc.assistantMetadata || {};
   const assistantMetadata = {
@@ -1691,9 +1691,9 @@ export function convertFromImport({ importDoc: importDocOrig, assistantData: ass
     importDoc.assistantMetadata || {};
 
   if (importDoc?.http) {
-    operation = importDoc.http._httpConnectorEndpointId || operation;
-    resource = importDoc.http._httpConnectorResourceId || resource;
-    version = importDoc.http._httpConnectorVersionId || version;
+    operation = operation || importDoc.http._httpConnectorEndpointId;
+    resource = resource || importDoc.http._httpConnectorResourceId;
+    version = version || importDoc.http._httpConnectorVersionId;
   }
   const { dontConvert, lookups } = importDoc.assistantMetadata || {};
   let sampleData;

@@ -1,5 +1,4 @@
 /* eslint-disable no-param-reassign */
-
 import { cloneDeep, uniq, uniqBy } from 'lodash';
 import jsonPatch from 'fast-json-patch';
 import { BranchPathRegex, GRAPH_ELEMENTS_TYPE, PageProcessorPathRegex } from '../../constants';
@@ -87,13 +86,18 @@ export const addPageProcessor = (flow, insertAtIndex, branchPath, ppData) => {
         flow.routers = [newRouter, ...flow.routers];
       }
     } else {
-      const pageProcessors = jsonPatch.getValueByPointer(flow, `${branchPath}/pageProcessors`);
+      try {
+        const pageProcessors = jsonPatch.getValueByPointer(flow, `${branchPath}/pageProcessors`);
 
-      if (insertAtIndex === -1) {
-        setObjectValue(flow, `${branchPath}/pageProcessors`, [...pageProcessors, pageProcessor]);
-      } else {
-        pageProcessors.splice(insertAtIndex, 0, pageProcessor);
-        setObjectValue(flow, `${branchPath}/pageProcessors`, pageProcessors);
+        if (insertAtIndex === -1) {
+          setObjectValue(flow, `${branchPath}/pageProcessors`, [...pageProcessors, pageProcessor]);
+        } else {
+          pageProcessors.splice(insertAtIndex, 0, pageProcessor);
+          setObjectValue(flow, `${branchPath}/pageProcessors`, pageProcessors);
+        }
+      } catch (e) {
+        // eslint-disable-next-line no-console
+        console.warn('Getting unexpected error for branchPath: ', branchPath);
       }
     }
   } else {

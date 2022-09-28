@@ -111,7 +111,7 @@ export default function BranchFilter({ editorId, position }) {
     })
       .filter(p => p.id && !p.id.includes('[*].'))
       .forEach(p => {
-        jsonPaths.push({ id: `settings.${p.id}` });
+        jsonPaths.push({ id: `settings.${p.id}`, type: p.type });
       });
 
     return jsonPaths;
@@ -618,9 +618,9 @@ export default function BranchFilter({ editorId, position }) {
                 r.lhs.dataType = 'number';
                 r.rhs.dataType = 'number';
               }
-            } else if (fieldType === 'string') {
-              r.lhs.dataType = 'number';
-              r.rhs.dataType = 'number';
+            } else if (fieldType === 'string' || !fieldType) {
+              r.lhs.dataType = 'string';
+              r.rhs.dataType = 'string';
             }
           }
 
@@ -711,7 +711,7 @@ export default function BranchFilter({ editorId, position }) {
                   r.lhs.dataType = 'number';
                   r.rhs.dataType = 'number';
                 }
-              } else if (fieldType === 'string') {
+              } else if (fieldType === 'string' || !fieldType) {
                 r.lhs.dataType = 'string';
                 r.rhs.dataType = 'string';
               }
