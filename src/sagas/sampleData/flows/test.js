@@ -1147,7 +1147,7 @@ describe('flow sample data sagas', () => {
           mappings: {mappings, lookups: [{name: 'some-lookup'}]},
           stage,
           preProcessedData,
-          options: {connection: {_id: 'conn-123'}},
+          options: {connection: {_id: 'conn-123'}, _flowId: flowId, import: restImport, _integrationId: undefined},
         })
         .run();
     });

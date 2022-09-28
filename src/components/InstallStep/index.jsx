@@ -265,7 +265,7 @@ export default function InstallationStep(props) {
               type={
                 step?.options?.connectionType?.toLowerCase() || (step?.name === 'workday' ? 'workday' : step?.sourceConnection?.http?.formType) || step?.sourceConnection?.type || ''
               }
-              assistant={step?.sourceConnection?.assistant || step?.sourceConnection?.rdbms?.type}
+              assistant={step?.sourceConnection?.assistant || step?.sourceConnection?.rdbms?.type || step?.sourceConnection?.http?._httpConnectorId}
             />
             )}
           </div>

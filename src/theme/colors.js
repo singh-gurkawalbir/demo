@@ -12,6 +12,7 @@ export default {
   celigoAccent3: '#00A1E1',
   celigoAccent4: '#37B5ED',
   celigoAccent5: '#A9D1F5',
+  celigoAccent6: '#D4E8FA',
 
   celigoNeutral1: '#F8FAFF',
   celigoNeutral2: '#F0F5F9',
@@ -53,7 +54,8 @@ export default {
     2: '#1D76C7',
     3: '#00A1E1',
     4: '#37B5ED',
-    5: '#12C7FF',
+    5: '#A9D1F5',
+    6: '#D4E8FA',
   },
 
   neutral: {

@@ -392,6 +392,8 @@ export default function DynaRelatedList(props) {
                 <ActionButton
                   data-test="editRelatedList"
                   onClick={toggleFirstLevelModalOpen}
+                  tooltip="Edit"
+                  placement="bottom"
                   disabled={disabled}>
                   <EditIcon />
                 </ActionButton>
