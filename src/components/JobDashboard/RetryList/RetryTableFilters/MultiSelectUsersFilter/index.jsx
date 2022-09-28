@@ -15,7 +15,7 @@ const useStyles = makeStyles(theme => ({
 
 const filterBy = 'selectedUsers';
 const resourceType = 'users';
-const defaultUserName = 'All users';
+const defaultUserId = 'all';
 
 export default function MultiSelectUsersFilter({flowId, resourceId, filterKey}) {
   const classes = useStyles();
@@ -27,9 +27,9 @@ export default function MultiSelectUsersFilter({flowId, resourceId, filterKey}) 
 
   const ButtonLabel = useMemo(() => {
     if (selected.length === 1) {
-      const selectedUser = users.find(r => r._id === selected[0])?.name;
+      const selectedUser = users.find(r => r._id === selected[0]);
 
-      return selectedUser === defaultUserName ? 'Select' : selectedUser;
+      return selectedUser?._id === defaultUserId ? 'Select' : selectedUser?.name;
     }
 
     return `${selected.length} ${resourceType} selected`;
