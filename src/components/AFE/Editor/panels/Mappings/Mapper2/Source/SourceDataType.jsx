@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import clsx from 'clsx';
 import { Divider, Tooltip } from '@material-ui/core';
@@ -157,16 +157,9 @@ export default function SourceDataType({
   const classes = useStyles();
   const dispatch = useDispatch();
   const history = useHistory();
-  const sourceDataTypeRef = useSyncedRef(sourceDataTypes);
+  const sourceDataTypeRef = useSyncedRef(!sourceDataTypes || (sourceDataTypes && !sourceDataTypes.length) ? ['string'] : sourceDataTypes);
   const open = !!anchorEl;
   const selectedDataTypeLabels = [];
-
-  useEffect(() => {
-    if (!sourceDataTypes || (sourceDataTypes && !sourceDataTypes.length)) {
-      sourceDataTypeRef.current = ['string'];
-      dispatch(actions.mapping.v2.updateDataType(nodeKey, 'string', true));
-    }
-  }, [dispatch, nodeKey, sourceDataTypeRef, sourceDataTypes]);
 
   const handleMenu = useCallback(
     event => {

@@ -151,12 +151,12 @@ const ExtractsTree = React.memo((
   return (
     <div className={classes.dropdown}>
       <ul className={classes.message}>
-        <li>Type or select source record field</li>
+      <li>Type or select source field</li>
         {isArrayType &&
         (
-          <><li> Separate fields with a comma (,)</li>
-            <li>For sources that are not listed below, enter data types in Settings</li>
-          </>
+        <><li> Separate fields with a comma (,)</li>
+        <li>For sources that are not listed below, enter data types in Settings</li>
+        </>
         )}
       </ul>
       <Divider className={classes.messageDivider} />
