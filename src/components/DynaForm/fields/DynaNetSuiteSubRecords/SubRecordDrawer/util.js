@@ -47,6 +47,7 @@ export default function getFormFieldMetadata(
     fieldMeta.fieldMap[jsonPathFieldId] = {
       id: jsonPathFieldId,
       name: jsonPathFieldId,
+      helpKey: 'dynaFormField.pathToNode',
       isLoggable: true,
       type: 'netsuitesubrecordjsonpath',
       label: fld.subRecordJsonPathLabel,
