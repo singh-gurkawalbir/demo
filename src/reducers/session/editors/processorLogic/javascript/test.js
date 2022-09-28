@@ -89,16 +89,16 @@ describe('javascript processor logic', () => {
   });
   describe('processResult util', () => {
     test('should not throw exception for invalid arguments', () => {
-      expect(processResult(undefined, undefined)).toEqual({ data: undefined, logs: undefined });
+      expect(processResult()).toEqual({ data: '', logs: undefined });
     });
     test('should return correct data', () => {
       expect(processResult({}, {data: 'data'})).toEqual({ data: 'data', logs: undefined });
       expect(processResult({}, {data: {id: '123'}})).toEqual({ data: {id: '123'}, logs: undefined });
-      expect(processResult({}, {data: false})).toEqual({ data: false, logs: undefined });
+      expect(processResult({}, {data: false})).toEqual({ data: 'false', logs: undefined });
       expect(processResult({}, {data: true})).toEqual({ data: true, logs: undefined });
     });
     test('should return correct logs', () => {
-      expect(processResult({}, {logs: 'logs'})).toEqual({ data: undefined, logs: 'logs' });
+      expect(processResult({}, {logs: 'logs'})).toEqual({ data: '', logs: 'logs' });
     });
   });
   describe('patchSet util', () => {

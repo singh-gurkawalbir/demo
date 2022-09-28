@@ -53,8 +53,8 @@ export default {
     return false;
   },
   processResult: (editor, result) => ({
-    data: result?.data,
-    logs: result?.logs,
+    data: (result && (result.data || (result.data === false && 'false'))) || '',
+    logs: result && result.logs,
   }),
   patchSet: editor => {
     const { code, scriptId } = editor.rule || {};
