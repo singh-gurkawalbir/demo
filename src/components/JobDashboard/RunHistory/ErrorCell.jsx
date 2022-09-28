@@ -33,24 +33,22 @@ export default function ErrorCell({ job, disabled }) {
   });
 
   const handleErrorClick = useCallback(() => {
-    if (disabled) return;
-
     dispatch(actions.patchFilter(`${_flowId}-${flowJobId}-${id}`, {...job}));
     history.push(buildDrawerUrl({
       path: drawerPaths.ERROR_MANAGEMENT.V2.JOB_ERROR_DETAILS,
       baseUrl: flowBuilderTo,
       params: { resourceId: id, flowJobId, errorType: 'open'},
     }));
-  }, [disabled, dispatch, _flowId, flowJobId, id, job, history, flowBuilderTo]);
+  }, [dispatch, _flowId, flowJobId, id, job, history, flowBuilderTo]);
 
   if (!numOpenError) {
     return (
-      <Status variant="success" size="mini" onClick={handleErrorClick}>Success</Status>
+      <Status variant="success" size="mini" onClick={disabled ? null : handleErrorClick}>Success</Status>
     );
   }
 
   return (
-    <Status variant="error" size="mini" onClick={handleErrorClick}>
+    <Status variant="error" size="mini" onClick={disabled ? null : handleErrorClick}>
       {numOpenError > 9999 ? '9999+ errors' : getTextAfterCount('error', numOpenError)}
     </Status>
   );

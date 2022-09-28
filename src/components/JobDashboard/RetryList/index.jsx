@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useRouteMatch } from 'react-router-dom';
+import { makeStyles } from '@material-ui/core';
 import { selectors } from '../../../reducers';
 import actions from '../../../actions';
 import ResourceTable from '../../ResourceTable';
@@ -10,7 +11,15 @@ import Spinner from '../../Spinner';
 import NoResultTypography from '../../NoResultTypography';
 import { DEFAULT_FILTERS, FILTER_KEYS } from '../../../utils/errorManagement';
 
+const useStyles = makeStyles(() => ({
+  retriesList: {
+    maxHeight: 'calc(100vh - 320px)',
+    overflow: 'auto',
+  },
+}));
+
 export default function RetryList({ flowId }) {
+  const classes = useStyles();
   const dispatch = useDispatch();
   const match = useRouteMatch();
   const { resourceId } = match.params;
@@ -46,7 +55,7 @@ export default function RetryList({ flowId }) {
       {retryListStatus === 'requested' ? (
         <Spinner centerAll />
       ) : (
-        <div>
+        <div className={classes.retriesList}>
           <ResourceTable
             resources={retries}
             filterKey={FILTER_KEYS.RETRIES}
