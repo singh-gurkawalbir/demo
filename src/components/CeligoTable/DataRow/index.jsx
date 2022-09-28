@@ -16,9 +16,9 @@ const useStyles = makeStyles(theme => ({
   rowSelected: {
     '&$selected': {
       borderLeft: `6px solid ${theme.palette.primary.main}`,
-      backgroundColor: theme.palette.primary.lightest,
+      backgroundColor: theme.palette.primary.lightest2,
       '&:hover': {
-        backgroundColor: theme.palette.primary.lightest,
+        backgroundColor: theme.palette.primary.lightest2,
       },
     },
   },
