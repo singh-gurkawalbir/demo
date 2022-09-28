@@ -102,7 +102,7 @@ function MyUserSettings() {
       <div className={classes.mfaSwitch}>
         <Typography variant="body2" className={classes.content}> Enable MFA </Typography>
         <Help title="Enable MFA" helpKey="mfa.enable" className={classes.helpTextButton} />
-        <CeligoSwitch onChange={handleEnableMFA} checked={isMFASetupIncomplete || isMFAEnabled} disabled={isMFASetupIncomplete} />
+        <CeligoSwitch onChange={handleEnableMFA} checked={isMFASetupIncomplete || isMFAEnabled} disabled={isMFASetupIncomplete} data-test="mfa-switch-button" />
       </div>
       { isMFAEnabled || isMFASetupIncomplete ? (
         <div className={classes.mfaConfig}>

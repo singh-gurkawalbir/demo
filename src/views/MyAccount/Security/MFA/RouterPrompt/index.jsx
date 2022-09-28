@@ -15,7 +15,8 @@ export default function RouterPrompt({ show }) {
     // defining an empty call back would remove any blocking of route navigation
     history.block(() => {});
     history.push(currentPath);
-  }, [currentPath, history]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentPath]);
 
   const handleStay = useCallback(() => {
     setShowPrompt(false);
