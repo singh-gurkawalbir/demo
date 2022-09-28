@@ -138,7 +138,9 @@ const ErrorTableWithPanel = ({
   }, [isSplitView, keydownListener, tableRef]);
 
   const handleScrollPosition = event => {
-    setScrollPosition((event.target.scrollTop / (event.target.scrollHeight - event.target.offsetHeight)) * 100);
+    if (!isResolved) {
+      setScrollPosition((event.target.scrollTop / (event.target.scrollHeight - event.target.offsetHeight)) * 100);
+    }
   };
 
   useEffect(() => {
@@ -147,7 +149,6 @@ const ErrorTableWithPanel = ({
     } else if (!isResolved) {
       drawerRef?.current?.scrollTo(0, (scrollPosition / 100) * (drawerRef?.current?.scrollHeight - drawerRef?.current?.offsetHeight));
     }
-
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isSplitView]);
 
