@@ -97,7 +97,7 @@ function Notifications() {
     <>
       <LoadResources resources={isAccountOwner ? 'transfers' : 'transfers/invited'} />
       <IconButtonWithTooltip
-        tooltipProps={{title: 'New notifications'}}
+        tooltipProps={{title: 'Notifications'}}
         aria-label="notifications"
         size="small"
         color="inherit"
