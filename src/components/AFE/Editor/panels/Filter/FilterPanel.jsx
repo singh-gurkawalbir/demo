@@ -12,8 +12,7 @@ import 'jQuery-QueryBuilder';
 import 'jQuery-QueryBuilder/dist/css/query-builder.default.css';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import jQuery from 'jquery';
-import { isEmpty } from 'lodash';
-import { deepClone } from 'fast-json-patch';
+import { isEmpty, cloneDeep } from 'lodash';
 import config from './config';
 import './queryBuilder.css';
 import {
@@ -555,7 +554,7 @@ export default function FilterPanel({editorId}) {
         },
         valueGetter(rule, isTouched) {
           const ruleId = getFilterRuleId(rule);
-          const r = deepClone(rulesState[ruleId].data);
+          const r = cloneDeep(rulesState[ruleId].data);
           let lhsValue = rule.$el
             .find(`.rule-filter-container [name=${rule.id}_filter]`)
             .val();
