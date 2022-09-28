@@ -48,7 +48,7 @@ export default {
       heading: 'Errors',
       // these fields are numbers so it should be okay if they are loggable
       isLoggable: true,
-      Value: ({rowData: r}) => <ErrorCell job={r} clickDisabled /> },
+      Value: ({rowData: r}) => <ErrorCell job={r} disabled /> },
     {
       key: 'startedBy',
       heading: 'Retry started by',
