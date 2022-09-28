@@ -18,7 +18,7 @@ export default {
   requestBody: mappings.requestBody,
   validate: mappings.validate,
   processResult: (editor, result) => {
-    const {flowInputData, data} = editor;
+    const {flowInputData} = editor;
     const errors = result?.data?.[0]?.errors;
 
     if (errors) {
@@ -32,7 +32,6 @@ export default {
     const postResponseMapData = generatePostResponseMapData(
       safeParse(flowInputData),
       mappedData,
-      safeParse(data),
     );
 
     return {
