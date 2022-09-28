@@ -1653,11 +1653,13 @@ export const getNewChildrenToAdd = (parentNode, destinationNode) => {
 export const findAllParentNodesForNode = (treeData, nodeKey, output = []) => {
   const {node} = findNodeInTree(treeData, 'key', nodeKey);
 
-  if (!node) return output;
+  if (!node || !node.parentKey) return output;
 
   findAllParentNodesForNode(treeData, node.parentKey, output);
 
-  output.push(node);
+  const {node: parentNode} = findNodeInTree(treeData, 'key', node.parentKey);
+
+  output.push(parentNode);
 
   return output;
 };
@@ -1702,7 +1704,7 @@ export const insertSiblingsOnDestinationUpdate = (treeData, newNode, lookups) =>
   if (!newNode.parentKey) return;
 
   // fetch all parent nodes from top to bottom
-  const parentNodes = findAllParentNodesForNode(treeData, newNode.parentKey);
+  const parentNodes = findAllParentNodesForNode(treeData, newNode.key);
 
   const objArrayParentNodeIndex = parentNodes.findIndex(node => node.dataType === MAPPING_DATA_TYPES.OBJECTARRAY);
 
