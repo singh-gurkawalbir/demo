@@ -42,7 +42,6 @@ const useStyles = makeStyles(theme => ({
     marginLeft: 6,
   },
   actions: {
-    display: 'flex',
     paddingTop: 12,
     marginBottom: 14,
   },
@@ -147,7 +146,7 @@ function ProfileMenuButton() {
               </Typography>
             </span>
 
-            <ActionGroup>
+            <ActionGroup className={classes.actions}>
               <OutlinedButton
                 data-test="myAccountOrMyProfile"
                 onClick={handleClose}
