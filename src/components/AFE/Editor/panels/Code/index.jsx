@@ -37,14 +37,12 @@ export default function CodePanel({
 
   let safeValue = '';
 
-  if (value) {
-    if (typeof value === 'string') {
-      safeValue = value;
-    } else if (typeof value === 'object') {
-      safeValue = JSON.stringify(value, null, 2);
-    } else {
-      safeValue = `${value}`;
-    }
+  if (typeof value === 'string') {
+    safeValue = value;
+  } else if (typeof value === 'object') {
+    safeValue = JSON.stringify(value, null, 2);
+  } else if (value !== undefined) {
+    safeValue = `${value}`;
   }
 
   return (
