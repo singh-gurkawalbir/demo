@@ -406,13 +406,14 @@ export const groupApplications = (
   );
     publishedConnectors?.forEach(pc => {
       assistantConnectors.push({
-        id: pc.name,
+        id: pc._id,
         name: pc.name,
         type: 'http',
         export: true,
         import: true,
-        icon: pc.legacyId || pc.name,
+        icon: pc.legacyId || pc.name.toLowerCase().replace(/\.|\s/g, ''),
         assistant: pc.legacyId,
+        application: pc.name.toLowerCase().replace(/\.|\s/g, ''),
         _httpConnectorId: pc._id,
         helpURL: pc.helpURL,
       });
@@ -504,12 +505,13 @@ export const applicationsList = () => {
   );
   publishedConnectors?.forEach(pc => {
     applications.push({
-      id: pc.name,
+      id: pc._id,
       name: pc.name,
       type: 'http',
       export: true,
       import: true,
       assistant: pc.legacyId,
+      application: pc.name.toLowerCase().replace(/\.|\s/g, ''),
       _httpConnectorId: pc._id,
       helpURL: pc.helpURL,
     });
@@ -596,7 +598,7 @@ export const connectorsList = () => {
     connectors.push({
       value: pc._id,
       label: pc.name,
-      icon: pc.legacyId || pc.name,
+      icon: pc.legacyId || pc.name.toLowerCase().replace(/\.|\s/g, ''),
       type: 'http',
       published: true,
     });
