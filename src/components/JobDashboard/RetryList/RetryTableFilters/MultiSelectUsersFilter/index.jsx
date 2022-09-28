@@ -14,8 +14,10 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const filterBy = 'selectedUsers';
+const resourceType = 'users';
+const defaultUserId = 'all';
 
-export default function MultiSelectUsersFilter({flowId, resourceId, resourceType, filterKey}) {
+export default function MultiSelectUsersFilter({flowId, resourceId, filterKey}) {
   const classes = useStyles();
   const users = useSelector(
     state => selectors.retryUsersList(state, flowId, resourceId)
@@ -25,11 +27,13 @@ export default function MultiSelectUsersFilter({flowId, resourceId, resourceType
 
   const ButtonLabel = useMemo(() => {
     if (selected.length === 1) {
-      return users.find(r => r._id === selected[0])?.name;
+      const selectedUser = users.find(r => r._id === selected[0]);
+
+      return selectedUser?._id === defaultUserId ? 'Select' : selectedUser?.name;
     }
 
     return `${selected.length} ${resourceType} selected`;
-  }, [resourceType, selected, users]);
+  }, [selected, users]);
 
   const CustomLabel = useMemo(() => (
     <Typography className={classes.customUserLabel}>
