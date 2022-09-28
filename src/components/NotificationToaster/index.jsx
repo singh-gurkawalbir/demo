@@ -87,14 +87,6 @@ const useStyles = makeStyles(theme => ({
       background: theme.palette.info.main,
     },
   },
-  infoMessage: {
-    fontStyle: 'italic',
-    '& svg': {
-      color: theme.palette.text.hint,
-      marginTop: 2,
-      alignSelf: 'flex-start !important',
-    },
-  },
   warning: {
     borderColor: `${theme.palette.warning.main} !important`,
     '& svg': {
@@ -153,13 +145,23 @@ const useStyles = makeStyles(theme => ({
       width: '100%',
     },
   },
+  italic: {
+    fontStyle: 'italic',
+  },
+  noBorder: {
+    border: 'none',
+    '& svg': {
+      color: theme.palette.text.hint,
+      marginTop: 2,
+      alignSelf: 'flex-start',
+    },
+  },
 }));
 const variantIcon = {
   success: SuccessIcon,
   warning: WarningIcon,
   error: ErrorIcon,
   info: InfoIcon,
-  infoMessage: InfoIcon,
 };
 
 /**
@@ -173,6 +175,8 @@ export default function NotificationToaster(props) {
     onClose,
     variant,
     transparent = false,
+    italic = false,
+    noBorder = false,
     size = 'small',
     ...other
   } = props;
@@ -195,6 +199,8 @@ export default function NotificationToaster(props) {
         classes[size],
         classes.root,
         {[classes.transparent]: transparent},
+        {[classes.italic]: italic},
+        {[classes.noBorder]: noBorder},
         className
       )}
       aria-describedby="client-snackbar"
@@ -228,7 +234,7 @@ NotificationToaster.propTypes = {
   children: PropTypes.string.isRequired,
   className: PropTypes.string,
   onClose: PropTypes.func,
-  variant: PropTypes.oneOf(['warning', 'error', 'success', 'info', 'infoMessage']),
+  variant: PropTypes.oneOf(['warning', 'error', 'success', 'info']),
   size: PropTypes.oneOf(['small', 'medium', 'large']),
 };
 
