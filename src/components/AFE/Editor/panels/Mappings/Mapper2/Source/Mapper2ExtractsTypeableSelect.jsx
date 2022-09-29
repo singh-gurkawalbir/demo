@@ -149,9 +149,9 @@ export default function Mapper2ExtractsTypeableSelect({
   const dispatch = useDispatch();
   const [isFocused, setIsFocused] = useState(false);
   const [inputValue, setInputValue] = useDebouncedValue(propValue, value => {
-    // do not dispatch action if the field is empty as there can be
+    // do not dispatch action if the field is not clicked yet as there can be
     // multiple rows and it will unnecessarily dispatch actions slowing down the UI
-    if (value === '' && value === propValue) return;
+    if (!isFocused) return;
     dispatch(actions.mapping.v2.patchExtractsFilter(value, propValue));
   });
   const [isTruncated, setIsTruncated] = useState(false);
@@ -173,6 +173,13 @@ export default function Mapper2ExtractsTypeableSelect({
     setIsFocused(true);
   }, []);
 
+  const patchField = useCallback((propValue, newValue) => {
+    // on blur, patch the extracts tree with empty input so all values in the
+    // dropdown will be visible
+    dispatch(actions.mapping.v2.patchExtractsFilter('', ''));
+    if (propValue !== newValue) { onBlur(newValue); }
+  }, [dispatch, onBlur]);
+
   const handleBlur = useCallback(event => {
     // handleBlur gets called by ClickAwayListener inside ArrowPopper to close the dropdown
     // if a click was made outside the dropdown.
@@ -182,8 +189,8 @@ export default function Mapper2ExtractsTypeableSelect({
 
     setIsFocused(false);
     setAnchorEl(null);
-    if (propValue !== inputValue) { onBlur(inputValue); }
-  }, [nodeKey, propValue, inputValue, onBlur]);
+    patchField(propValue, inputValue);
+  }, [nodeKey, propValue, inputValue, patchField]);
 
   useKeyboardShortcut(['Escape'], handleBlur, {ignoreBlacklist: true});
 
@@ -278,7 +285,7 @@ export default function Mapper2ExtractsTypeableSelect({
             destDataType={destDataType}
             propValue={propValue}
             inputValue={inputValue}
-            onBlur={onBlur}
+            patchField={patchField}
             setInputValue={setInputValue}
             setIsFocused={setIsFocused}
           />
