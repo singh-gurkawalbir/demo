@@ -220,6 +220,35 @@ export default {
             },
           ],
         },
+        objectSourceDataType: {
+          id: 'objectSourceDataType',
+          name: 'objectSourceDataType',
+          type: 'select',
+          skipSort: true,
+          skipDefault: true,
+          label: 'Source data type',
+          defaultValue: node.sourceDataType || 'string',
+          helpKey: 'mapping.v2.sourceDataType',
+          noApi: true,
+          visibleWhenAll: [
+            { field: 'dataType', is: ['object'] },
+            { field: 'copySource', is: ['yes'] },
+          ],
+          options: [
+            {
+              items: [
+                { label: 'string', value: 'string' },
+                { label: 'number', value: 'number' },
+                { label: 'boolean', value: 'boolean' },
+                { label: 'object', value: 'object' },
+                { label: '[string]', value: 'stringarray' },
+                { label: '[number]', value: 'numberarray' },
+                { label: '[boolean]', value: 'booleanarray' },
+                { label: '[object]', value: 'objectarray' },
+              ],
+            },
+          ],
+        },
         extractsArrayHelper: {
           id: 'extractsArrayHelper',
           name: 'extractsArrayHelper',
@@ -569,6 +598,7 @@ export default {
             fields: [
               'sourceField',
               'sourceDataType',
+              'objectSourceDataType',
               'extractsArrayHelper',
             ],
           },
