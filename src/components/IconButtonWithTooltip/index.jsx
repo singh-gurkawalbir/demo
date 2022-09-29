@@ -1,6 +1,7 @@
 import React from 'react';
 import { IconButton, Tooltip, makeStyles } from '@material-ui/core';
 import clsx from 'clsx';
+import PropTypes from 'prop-types';
 
 const useStyles = makeStyles(theme => ({
   actionButtonWithTooltip: {
@@ -8,6 +9,9 @@ const useStyles = makeStyles(theme => ({
       background: 'none',
       color: theme.palette.primary.main,
     },
+  },
+  noPadding: {
+    padding: 0,
   },
 
 }));
@@ -17,6 +21,7 @@ export default function IconButtonWithTooltip({
   children,
   buttonSize,
   className,
+  noPadding,
   ...buttonProps
 }) {
   const classes = useStyles();
@@ -28,7 +33,7 @@ export default function IconButtonWithTooltip({
 
       <span>
         <IconButton
-          className={clsx(classes.actionButtonWithTooltip, className)}
+          className={clsx(classes.actionButtonWithTooltip, {[classes.noPadding]: noPadding}, className)}
           {...buttonProps}
           size={buttonSize?.size || 'medium'}>
           {children}
@@ -38,3 +43,16 @@ export default function IconButtonWithTooltip({
     </Tooltip>
   );
 }
+
+IconButtonWithTooltip.defaultProps = {
+  noPadding: 'false',
+  buttonSize: 'medium',
+};
+
+IconButtonWithTooltip.propTypes = {
+  noPadding: PropTypes.bool,
+  children: PropTypes.element.isRequired,
+  tooltipProps: PropTypes.object.isRequired,
+  className: PropTypes.string,
+  buttonSize: PropTypes.string.oneOf(['small', 'medium', 'large']),
+};

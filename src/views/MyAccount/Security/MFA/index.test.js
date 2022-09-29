@@ -177,9 +177,9 @@ describe('Testsuite for MFA', () => {
     const checkBoxNode = screen.getAllByRole('checkbox').find(eachOption => eachOption.getAttribute('data-test') === 'mfa-switch-button');
 
     expect(checkBoxNode).toBeInTheDocument();
-    expect(utils.container.querySelector('div > div > div:nth-child(2) > div > div:nth-child(2) > div > div > div > div > div > div > div').className).toEqual(expect.stringContaining('makeStyles-customSwitch-'));
+    expect(utils.container.querySelector('div > div > div:nth-child(2) > div > div:nth-child(2) > div > div > div > div > div > div > span > button > span > div').className).toEqual(expect.stringContaining('makeStyles-customSwitch-'));
     await userEvent.click(checkBoxNode);
-    expect(utils.container.querySelector('div > div > div:nth-child(2) > div > div:nth-child(2) > div > div > div > div > div > div > div').className).toEqual(expect.stringContaining('react-toggle--checked'));
+    expect(utils.container.querySelector('div > div > div:nth-child(2) > div > div:nth-child(2) > div > div > div > div > div > div > span > button > span > div').className).toEqual(expect.stringContaining('react-toggle--checked'));
     expect(screen.getByText(/Testing MFA Setup/i)).toBeInTheDocument();
   });
   test('should test the MFA when setup is completed and user settings are loaded and test the MFA edit configuration page', async () => {
@@ -211,7 +211,7 @@ describe('Testsuite for MFA', () => {
     const checkBoxNode = screen.getAllByRole('checkbox').find(eachOption => eachOption.getAttribute('data-test') === 'mfa-switch-button');
 
     expect(checkBoxNode).toBeInTheDocument();
-    expect(utils.container.querySelector('div > div > div:nth-child(2) > div > div:nth-child(2) > div > div > div > div > div > div > div').className).toEqual(expect.stringContaining('react-toggle--checked'));
+    expect(utils.container.querySelector('div > div > div:nth-child(2) > div > div:nth-child(2) > div > div > div > div > div > div > span > button > span > div').className).toEqual(expect.stringContaining('react-toggle--checked'));
     expect(screen.getByText(/Testing EditConfiguration/i)).toBeInTheDocument();
     await userEvent.click(checkBoxNode);
     expect(mockDispatchFn).toHaveBeenCalledWith({

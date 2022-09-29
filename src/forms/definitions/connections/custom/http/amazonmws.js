@@ -59,7 +59,7 @@ export default {
       visibleWhenAll: [{field: 'http.type', is: ['Amazon-MWS']}],
     },
     'http.type': {
-      filedId: 'http.type',
+      fieldId: 'http.type',
     },
     'http.unencrypted.sellingRegion': {
       id: 'http.unencrypted.sellingRegion',
