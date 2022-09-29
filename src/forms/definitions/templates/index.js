@@ -1,4 +1,4 @@
-import { getPublishedHttpConnectors } from '../../../constants/applications';
+import { getPublishedConnectorId } from '../../../utils/assistant';
 
 export default {
   preSave: formValues => {
@@ -8,13 +8,7 @@ export default {
 
     const applications = formValues['/applications'];
 
-    const publishedConnectors = getPublishedHttpConnectors();
-
-    newValues['/applications'] = applications.map(app => {
-      const publishedConnectorId = publishedConnectors?.find(pc => pc.name === app)?._id;
-
-      return publishedConnectorId || app;
-    });
+    newValues['/applications'] = applications.map(app => getPublishedConnectorId(app) || app);
 
     return newValues;
   },

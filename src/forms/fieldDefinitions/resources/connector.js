@@ -1,6 +1,7 @@
-import { connectorsList, getPublishedHttpConnectors } from '../../../constants/applications';
+import { connectorsList } from '../../../constants/applications';
 import { isNewId } from '../../../utils/resource';
 import { MULTIPLE_EMAILS, ABS_URL_VALIDATION_PATTERN } from '../../../constants';
+import { getPublishedConnectorName } from '../../../utils/assistant';
 
 export default {
   name: {
@@ -143,16 +144,7 @@ export default {
     type: 'selectmultiapplication',
     placeholder: 'Choose applications',
     label: 'Applications',
-    defaultValue: r => {
-      const applications = (r?.applications) || [];
-      const publishedConnectors = getPublishedHttpConnectors();
-
-      return applications.map(app => {
-        const publishedConnectorName = publishedConnectors?.find(pc => pc._id === app)?.name;
-
-        return publishedConnectorName || app;
-      });
-    },
+    defaultValue: r => (r?.applications || []).map(app => getPublishedConnectorName(app) || app),
     requiredWhen: [
       {
         field: 'framework',

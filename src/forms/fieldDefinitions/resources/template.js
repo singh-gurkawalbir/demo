@@ -1,5 +1,6 @@
-import { getPublishedHttpConnectors, templatesList } from '../../../constants/applications';
+import { templatesList } from '../../../constants/applications';
 import { ABS_URL_VALIDATION_PATTERN } from '../../../constants';
+import { getPublishedConnectorName } from '../../../utils/assistant';
 
 export default {
   name: {
@@ -41,16 +42,7 @@ export default {
     placeholder: 'Choose applications',
     label: 'Applications',
     valueDelimiter: ',',
-    defaultValue: r => {
-      const applications = (r?.applications) || [];
-      const publishedConnectors = getPublishedHttpConnectors();
-
-      return applications.map(app => {
-        const publishedConnectorName = publishedConnectors?.find(pc => pc._id === app)?.name;
-
-        return publishedConnectorName || app;
-      });
-    },
+    defaultValue: r => (r?.applications || []).map(app => getPublishedConnectorName(app) || app),
     options: [
       {
         items: templatesList(),
