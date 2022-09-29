@@ -44,7 +44,10 @@ const useStyles = makeStyles(theme => ({
       position: 'relative',
       border: '1px solid transparent',
       '&.hideRow': {
-        display: 'none',
+        // This css for virtualisation remove space ref: IO-28685
+        visibility: 'hidden',
+        height: 0,
+        marginTop: '-2px',
       },
       '&:hover': {
         '& .rc-tree-draggable-icon': {

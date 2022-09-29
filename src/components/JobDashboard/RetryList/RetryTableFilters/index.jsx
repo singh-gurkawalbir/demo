@@ -5,14 +5,15 @@ import { selectors } from '../../../../reducers';
 import actions from '../../../../actions';
 import Icon from '../../../icons/RefreshIcon';
 import TextButton from '../../../Buttons/TextButton';
-import InfoIcon from '../../../icons/InfoIcon';
 import messageStore from '../../../../utils/messageStore';
 import MultiSelectUsersFilter from './MultiSelectUsersFilter';
+import NotificationToaster from '../../../NotificationToaster';
 
 const useStyles = makeStyles(theme => ({
   header: {
     paddingBottom: theme.spacing(3),
     display: 'flex',
+    alignItems: 'center',
   },
   refreshBtn: {
     marginLeft: theme.spacing(2),
@@ -63,11 +64,10 @@ export default function RetryTableFilters({flowId, resourceId, filterKey}) {
             </TextButton>
           </div>
         </div>
-        { (!retryStatus && (isOpenErrorsUpdated || isResolvedErrorsUpdated)) ? (
-          <div>
-            <InfoIcon size="xs" />
+        {(!retryStatus && (isOpenErrorsUpdated || isResolvedErrorsUpdated)) ? (
+          <NotificationToaster variant="info" transparent italic noBorder >
             {messageStore('RETRIES_TAB_ERRORS_UPDATED_INFO')}
-          </div>
+          </NotificationToaster>
         ) : ''}
       </div>
     </div>

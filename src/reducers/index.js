@@ -7199,7 +7199,7 @@ selectors.allAliases = createSelector(
 
 selectors.retryUsersList = createSelector(
   selectors.userProfile,
-  selectors.usersList,
+  state => selectors.availableUsersList(state),
   (state, flowId, resourceId) => selectors.retryList(state, flowId, resourceId),
   (profile, availableUsersList, retryJobs) => {
     if (!Array.isArray(retryJobs)) {
@@ -7221,7 +7221,7 @@ selectors.retryUsersList = createSelector(
       }];
     }, []);
 
-    return [{ _id: 'all', name: 'Select'}, ...allUsersTriggeredRetry];
+    return [{ _id: 'all', name: 'All users'}, ...allUsersTriggeredRetry];
   }
 );
 

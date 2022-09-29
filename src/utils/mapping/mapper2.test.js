@@ -16,6 +16,10 @@ import util, {
   buildTreeFromV2Mappings,
   hasV2MappingsInTreeData,
   rebuildObjectArrayNode,
+  // insertSiblingsOnDestinationUpdate,
+  findAllParentNodesForNode,
+  findAllPossibleDestinationMatchingParentNodes,
+  // getNewChildrenToAdd,
   hideOtherTabRows,
   isCsvOrXlsxResourceForMapper2,
 } from '.';
@@ -1211,6 +1215,260 @@ describe('v2 mapping utils', () => {
       expect(rebuildObjectArrayNode(node, extract)).toEqual(newNode);
     });
   });
+
+  describe('insertSiblingsOnDestinationUpdate util', () => {
+
+  });
+  describe('findAllParentNodesForNode util', () => {
+    test('should return empty array incase of invalid node', () => {
+      expect(findAllParentNodesForNode()).toEqual([]);
+      expect(findAllParentNodesForNode(undefined, 'key')).toEqual([]);
+    });
+    test('should return empty array if the node has no parent', () => {
+      const v2TreeData = [{
+        key: 'key1',
+        title: '',
+        extract: '$.fname',
+        generate: 'fname',
+        dataType: MAPPING_DATA_TYPES.STRING,
+      }];
+
+      expect(findAllParentNodesForNode(v2TreeData, 'key1')).toEqual([]);
+    });
+    test('should return all the parent nodes where treeData has only object array nodes in the parent levels ', () => {
+      const v2TreeData = [
+        {
+          key: 'key1',
+          title: '',
+          generate: 'mothers_side',
+          dataType: MAPPING_DATA_TYPES.OBJECT,
+          children: [
+            {
+              key: 'c1',
+              title: '',
+              generate: 'child1',
+              parentKey: 'key1',
+              dataType: MAPPING_DATA_TYPES.OBJECT,
+              children: [
+                {
+                  key: 'c2',
+                  title: '',
+                  generate: 'child2',
+                  parentKey: 'c1',
+                  dataType: MAPPING_DATA_TYPES.OBJECT,
+                  children: [{
+                    key: 'c3',
+                    title: '',
+                    extract: '$.child3',
+                    generate: 'child3',
+                    parentKey: 'c2',
+                    dataType: MAPPING_DATA_TYPES.STRING,
+                  }],
+                },
+              ],
+            },
+          ],
+        },
+      ];
+
+      const expected = [v2TreeData[0], v2TreeData[0].children[0], v2TreeData[0].children[0].children[0]];
+
+      expect(findAllParentNodesForNode(v2TreeData, 'c3')).toEqual(expected);
+    });
+    test('should return all the parent nodes where treeData has both object and object array nodes in the parent levels', () => {
+      const v2TreeData = [
+        {
+          key: 'key1',
+          title: '',
+          generate: 'mothers_side',
+          extractsArrayHelper: [{ extract: 'e1' }],
+          dataType: MAPPING_DATA_TYPES.OBJECTARRAY,
+          children: [
+            {
+              key: 'c1',
+              title: '',
+              generate: 'child1',
+              parentExtract: 'e1',
+              parentKey: 'key1',
+              dataType: MAPPING_DATA_TYPES.OBJECT,
+              children: [
+                {
+                  key: 'c2',
+                  title: '',
+                  generate: 'child2',
+                  extractsArrayHelper: [{ extract: 'ce1' }],
+                  parentKey: 'c1',
+                  dataType: MAPPING_DATA_TYPES.OBJECTARRAY,
+                  children: [{
+                    key: 'c3',
+                    title: '',
+                    extract: '$.child3',
+                    generate: 'child3',
+                    parentExtract: 'ce1',
+                    parentKey: 'c2',
+                    dataType: MAPPING_DATA_TYPES.STRING,
+                  }],
+                },
+                {
+                  key: 'c4',
+                  title: '',
+                  generate: 'child4',
+                  extract: 'ce2',
+                  parentKey: 'c1',
+                },
+              ],
+            },
+          ],
+        },
+      ];
+
+      const expected = [v2TreeData[0], v2TreeData[0].children[0], v2TreeData[0].children[0].children[0]];
+
+      expect(findAllParentNodesForNode(v2TreeData, 'c3')).toEqual(expected);
+    });
+  });
+  describe('findAllPossibleDestinationMatchingParentNodes util', () => {
+    test('should return empty array incase of invalid params', () => {
+      expect(findAllPossibleDestinationMatchingParentNodes()).toEqual([]);
+    });
+    test('should return passed parent nodes if there are no matching nodes to match for', () => {
+      const v2TreeData = [{
+        key: 'key1',
+        title: '',
+        extract: '$.fname',
+        generate: 'fname',
+        dataType: MAPPING_DATA_TYPES.STRING,
+      }];
+
+      expect(findAllPossibleDestinationMatchingParentNodes([], v2TreeData)).toBe(v2TreeData);
+    });
+    test('should return empty array incase of partial match as this util need to return child nodes only after complete match of matchingNodes', () => {
+      const v2TreeData = [
+        {
+          key: 'key1',
+          title: '',
+          generate: 'mothers_side',
+          extractsArrayHelper: [{ extract: 'e1' }],
+          dataType: MAPPING_DATA_TYPES.OBJECTARRAY,
+          children: [
+            {
+              key: 'c1',
+              title: '',
+              generate: 'child1',
+              parentExtract: 'e1',
+              parentKey: 'key1',
+              dataType: MAPPING_DATA_TYPES.OBJECT,
+              children: [
+                {
+                  key: 'c2',
+                  title: '',
+                  generate: 'child2',
+                  extractsArrayHelper: [{ extract: 'ce1' }],
+                  parentKey: 'c1',
+                  dataType: MAPPING_DATA_TYPES.OBJECTARRAY,
+                  children: [{
+                    key: 'c3',
+                    title: '',
+                    extract: '$.child3',
+                    generate: 'child3',
+                    parentExtract: 'ce1',
+                    parentKey: 'c2',
+                    dataType: MAPPING_DATA_TYPES.STRING,
+                  }],
+                },
+                {
+                  key: 'c4',
+                  title: '',
+                  generate: 'child4',
+                  extract: 'ce2',
+                  parentKey: 'c1',
+                },
+              ],
+            },
+          ],
+        },
+      ];
+      const parentNodes = [v2TreeData[0]];
+      const unmatchedNode = {
+        key: 'c2',
+        title: '',
+        generate: 'unmatched_generate',
+        extractsArrayHelper: [{ extract: 'ce1' }],
+        parentKey: 'c1',
+        dataType: MAPPING_DATA_TYPES.OBJECTARRAY,
+        children: [{
+          key: 'c3',
+          title: '',
+          extract: '$.child3',
+          generate: 'child3',
+          parentExtract: 'ce1',
+          parentKey: 'c2',
+          dataType: MAPPING_DATA_TYPES.STRING,
+        }],
+      };
+      const matchingNodes = [v2TreeData[0].children[0], unmatchedNode];
+
+      expect(findAllPossibleDestinationMatchingParentNodes(matchingNodes, parentNodes)).toEqual([]);
+    });
+    // test('should ignore empty nodes with no generate and only match nodes with generate and data type match', () => {
+
+    // });
+    test('should return the target parent nodes after complete match of matchingNodes', () => {
+      const v2TreeData = [
+        {
+          key: 'key1',
+          title: '',
+          generate: 'mothers_side',
+          extractsArrayHelper: [{ extract: 'e1' }],
+          dataType: MAPPING_DATA_TYPES.OBJECTARRAY,
+          children: [
+            {
+              key: 'c1',
+              title: '',
+              generate: 'child1',
+              parentExtract: 'e1',
+              parentKey: 'key1',
+              dataType: MAPPING_DATA_TYPES.OBJECT,
+              children: [
+                {
+                  key: 'c2',
+                  title: '',
+                  generate: 'child2',
+                  extractsArrayHelper: [{ extract: 'ce1' }],
+                  parentKey: 'c1',
+                  dataType: MAPPING_DATA_TYPES.OBJECTARRAY,
+                  children: [{
+                    key: 'c3',
+                    title: '',
+                    extract: '$.child3',
+                    generate: 'child3',
+                    parentExtract: 'ce1',
+                    parentKey: 'c2',
+                    dataType: MAPPING_DATA_TYPES.STRING,
+                  }],
+                },
+                {
+                  key: 'c4',
+                  title: '',
+                  generate: 'child4',
+                  extract: 'ce2',
+                  parentKey: 'c1',
+                },
+              ],
+            },
+          ],
+        },
+      ];
+      const parentNodes = [v2TreeData[0]];
+      const matchingNodes = [v2TreeData[0].children[0], v2TreeData[0].children[0].children[0]];
+
+      expect(findAllPossibleDestinationMatchingParentNodes(matchingNodes, parentNodes)).toEqual([v2TreeData[0].children[0].children[0]]);
+    });
+  });
+  // describe('getNewChildrenToAdd util', () => {
+
+  // });
+
   describe('buildTreeFromV2Mappings util', () => {
     test('should not throw exception for invalid args', () => {
       generateUniqueKey.mockReturnValue('new_key');
