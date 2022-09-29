@@ -21,7 +21,7 @@ import {
 import { _fetchRawDataForFileAdaptors } from '../sampleData/rawDataUpdates/fileAdaptorUpdates';
 import { fileTypeToApplicationTypeMap } from '../../utils/file';
 import { uploadRawData } from '../uploadFile';
-import { UI_FIELD_VALUES, FORM_SAVE_STATUS, emptyObject, EMPTY_RAW_DATA, FLOW_SAVING_STATUS, PageProcessorRegex } from '../../constants';
+import { UI_FIELD_VALUES, FORM_SAVE_STATUS, emptyObject, EMPTY_RAW_DATA, PageProcessorRegex } from '../../constants';
 import { isIntegrationApp, isFlowUpdatedWithPgOrPP, shouldUpdateLastModified, flowLastModifiedPatch } from '../../utils/flows';
 import getResourceFormAssets from '../../forms/formFactory/getResourceFromAssets';
 import getFieldsWithDefaults from '../../forms/formFactory/getFieldsWithDefaults';
@@ -31,7 +31,7 @@ import { getAssistantConnectorType, getHttpConnector } from '../../constants/app
 import { constructResourceFromFormValues } from '../utils';
 import {getConnector, getConnectorMetadata} from '../resources/httpConnectors';
 import { setObjectValue } from '../../utils/json';
-import { addPageProcessor } from '../../utils/flows/flowbuilder';
+import { addPageProcessor, getFlowAsyncKey } from '../../utils/flows/flowbuilder';
 
 export const SCOPES = {
   META: 'meta',
@@ -636,8 +636,6 @@ export function* updateFlowDoc({ flowId, resourceType, resourceId, resourceValue
     flowId
   ))?.merged || emptyObject;
 
-  yield put(actions.flow.setSaveStatus(flowId, FLOW_SAVING_STATUS));
-
   if (isIntegrationApp(flow)) {
     // update the last modified time
     const resource = yield select(selectors.resource, resourceType, resourceId);
@@ -678,7 +676,8 @@ export function* updateFlowDoc({ flowId, resourceType, resourceId, resourceValue
     yield put(actions.resource.patchStaged(flowId, skipRetryPatches, SCOPES.VALUE));
   }
 
-  yield call(commitStagedChanges, {
+  yield call(commitStagedChangesWrapper, {
+    asyncKey: getFlowAsyncKey(flowId),
     resourceType: 'flows',
     id: flowId,
     scope: SCOPES.VALUE,
