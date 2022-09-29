@@ -20,7 +20,7 @@ const useStyles = makeStyles(theme => ({
   },
   connectorTextToggle: {
     flexGrow: 100,
-    marginLeft: -theme.spacing(1),
+    marginLeft: theme.spacing(-1),
   },
 }));
 const emptyObj = {};
