@@ -9,6 +9,7 @@ import { renderWithProviders } from '../../../../test/test-utils';
 import { runServer } from '../../../../test/api/server';
 import { getCreatedStore } from '../../../../store';
 import * as dynaSubmitMock from '../../../../components/DynaForm/DynaSubmit';
+import { ConfirmDialogProvider } from '../../../../components/ConfirmDialog';
 
 let initialStore;
 
@@ -20,9 +21,11 @@ async function initSSOAccountSettings({defaultAShareIdValue, accountsValue, ssoC
   };
   initialStore.getState().comms.networkComms[commsURL] = commsStatus;
   const ui = (
-    <MemoryRouter>
-      <SSOAccountSettings />
-    </MemoryRouter>
+    <ConfirmDialogProvider>
+      <MemoryRouter>
+        <SSOAccountSettings />
+      </MemoryRouter>
+    </ConfirmDialogProvider>
   );
 
   return renderWithProviders(ui, { initialStore });
@@ -155,6 +158,53 @@ describe('Testsuite for SSO Account Settings', () => {
       },
     });
     expect(document.querySelector('circle').getAttribute('class')).toEqual(expect.stringContaining('MuiCircularProgress-'));
+  });
+  test('Should test the SSO and enable OIDC-based switch and should test the form', async () => {
+    await initSSOAccountSettings({
+      defaultAShareIdValue: 'own',
+      accountsValue: [{
+        _id: 'own',
+        accessLevel: 'owner',
+        ownerUser: {
+          licenses: [{
+            _id: '65477',
+            type: 'endpoint',
+            tier: 'premium',
+            expires: '2023-12-31T00:00:00.000Z',
+            trialEndDate: '2019-09-13T11:22:55.872Z',
+            supportTier: 'preferred',
+            sandbox: true,
+            resumable: false,
+            sso: true,
+          }],
+        },
+      }],
+      ssoClientsValues: [{
+        _id: '12345',
+        type: 'oidc',
+        orgId: 'testorg',
+        oidc: {
+          issuerURL: 'https://test.com',
+          clientId: 'sampleClientId',
+          clientSecret: '******',
+        },
+      }],
+      commsURL: 'PATCH:/ssoclients/12345',
+      commsStatus: {
+        status: 'success',
+      },
+    });
+    const switchButtonNode = document.querySelector('div > div > div > div:nth-child(2) > div > div > div > div > div > div > div');
+
+    expect(switchButtonNode.className).toEqual(expect.stringContaining('makeStyles-customSwitch-'));
+    await userEvent.click(switchButtonNode);
+    expect(mockDispatchFn).toHaveBeenCalledWith({
+      type: 'RESOURCE_PATCH',
+      resourceType: 'ssoclients',
+      id: '12345',
+      patchSet: [{ op: 'add', path: '/disabled', value: true }],
+      asyncKey: undefined,
+    });
   });
   test('Should test the SSO when OIDC-based is enabled and should test the form', async () => {
     await initSSOAccountSettings({
@@ -396,6 +446,49 @@ describe('Testsuite for SSO Account Settings', () => {
     const requestUpgradeButton = screen.getByRole('button', {name: /request upgrade/i});
 
     expect(requestUpgradeButton).toBeInTheDocument();
-    userEvent.click(requestUpgradeButton);
+    await userEvent.click(requestUpgradeButton);
+    await waitFor(() => expect(screen.getByText(/we will contact you to discuss your business needs and recommend an ideal subscription plan\./i)).toBeInTheDocument());
+    const cancelButtonNode = screen.getAllByRole('button').find(eachOption => eachOption.getAttribute('data-test') === 'Cancel');
+
+    expect(cancelButtonNode).toBeInTheDocument();
+    userEvent.click(cancelButtonNode);
+    await waitFor(() => expect(cancelButtonNode).not.toBeInTheDocument());
+    await userEvent.click(requestUpgradeButton);
+    const submitRequestButtonNode = screen.getAllByRole('button').find(eachOption => eachOption.getAttribute('data-test') === 'Submit request');
+
+    expect(submitRequestButtonNode).toBeInTheDocument();
+    await userEvent.click(submitRequestButtonNode);
+    await waitFor(() => expect(screen.getByText(/upgrade requested/i)).toBeInTheDocument());
+    expect(mockDispatchFn).toHaveBeenCalledWith({
+      type: 'LICENSE_UPDATE_REQUEST',
+      actionType: 'upgrade',
+      connectorId: undefined,
+      licenseId: undefined,
+      feature: 'SSO',
+    });
+    expect(mockDispatchFn).toHaveBeenCalledWith({ type: 'SSO_LICENSE_UPGRADE_REQUESTED' });
+  });
+  test('Should test the SSO page when licence is requested', async () => {
+    initialStore.getState().session.resource = {
+      platformLicenseActionMessage: 'Thanks for your request! We will be in touch soon.',
+      ssoLicenseUpgradeRequested: true,
+    };
+    await initSSOAccountSettings({
+      defaultAShareIdValue: 'own',
+      accountsValue: [{
+        _id: 'own',
+        accessLevel: 'owner',
+        ownerUser: {
+          licenses: [{}],
+        },
+      }],
+    });
+    expect(screen.getByText(/thanks for your request! we will be in touch soon\./i)).toBeInTheDocument();
+    const closeButtonNode = screen.getByRole('button', {name: /close/i});
+
+    expect(closeButtonNode).toBeInTheDocument();
+    userEvent.click(closeButtonNode);
+    await waitFor(() => expect(closeButtonNode).not.toBeInTheDocument());
+    expect(mockDispatchFn).toHaveBeenCalledWith({ type: 'LICENSE_CLEAR_ACTION_MESSAGE' });
   });
 });
