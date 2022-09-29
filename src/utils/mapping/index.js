@@ -728,8 +728,9 @@ export const buildExtractsHelperFromExtract = (existingExtractsArray = [], sourc
 
 // for object array multiple extracts view,
 // mark non active tabs children as hidden
-export const hideOtherTabRows = (node, newTabExtract = '', hidden, canDeepClone = true) => {
-  const clonedNode = canDeepClone ? deepClone(node) : node;
+export const hideOtherTabRows = (node, newTabExtract = '', hidden, useOriginalNode) => {
+  // ToDo (Yaser): check if we can remove the deep clone completely
+  const clonedNode = useOriginalNode ? node : deepClone(node);
 
   if (!clonedNode || !clonedNode.children?.length) return clonedNode;
 
@@ -2505,7 +2506,9 @@ export const applyMappedFilter = (v2TreeData, lookups, isReqApplied = false) => 
           const newIndex = extractsArrayHelper.findIndex(item => !mapping.extractsWithoutMappings.includes(item.extract));
 
           if (newIndex > -1) {
-            mapping = hideOtherTabRows(mapping, extractsArrayHelper[newIndex].extract, undefined, false);
+            // Passing the useOriginalNode argument as true so as to avoid deep cloning of the node
+            // as deep cloning is not updating the data properly because the mapping argument cannot be modified inside the filter method
+            hideOtherTabRows(mapping, extractsArrayHelper[newIndex].extract, undefined, true);
             mapping.activeTab = newIndex;
           }
         }
