@@ -1,4 +1,4 @@
-import { templatesList } from '../../../constants/applications';
+import { getPublishedHttpConnectors, templatesList } from '../../../constants/applications';
 import { ABS_URL_VALIDATION_PATTERN } from '../../../constants';
 
 export default {
@@ -41,7 +41,16 @@ export default {
     placeholder: 'Choose applications',
     label: 'Applications',
     valueDelimiter: ',',
-    defaultValue: r => (r?.applications) || [],
+    defaultValue: r => {
+      const applications = (r?.applications) || [];
+      const publishedConnectors = getPublishedHttpConnectors();
+
+      return applications.map(app => {
+        const publishedConnectorName = publishedConnectors?.find(pc => pc._id === app)?.name;
+
+        return publishedConnectorName || app;
+      });
+    },
     options: [
       {
         items: templatesList(),

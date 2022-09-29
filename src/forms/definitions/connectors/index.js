@@ -1,8 +1,20 @@
+import { getPublishedHttpConnectors } from '../../../constants/applications';
+
 export default {
   preSave: formValues => {
     const newValues = {
       ...formValues,
     };
+
+    const applications = formValues['/applications'];
+
+    const publishedConnectors = getPublishedHttpConnectors();
+
+    newValues['/applications'] = applications.map(app => {
+      const publishedConnectorId = publishedConnectors?.find(pc => pc.name === app)?._id;
+
+      return publishedConnectorId || app;
+    });
 
     if (!newValues['/trialEnabled']) {
       newValues['/trialPeriod'] = undefined;

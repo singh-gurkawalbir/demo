@@ -4,6 +4,7 @@ import { stringCompare } from '../../../utils/sort';
 import { SUITESCRIPT_CONNECTORS, SUITESCRIPT_CONNECTOR_IDS } from '../../../constants';
 import { isEuRegion } from '../../../forms/formFactory/utils';
 import { isAppConstantContact } from '../../../utils/assistant';
+import { getPublishedHttpConnectors } from '../../../constants/applications';
 
 const emptySet = [];
 const sfConnector = SUITESCRIPT_CONNECTORS.find(s => s._id === SUITESCRIPT_CONNECTOR_IDS.salesforce);
@@ -105,9 +106,13 @@ selectors.connectors = (state, application, sandbox, licenses, isAccountOwnerOrA
   });
 
   if (application) {
+    const publishedConnectorId = getPublishedHttpConnectors()?.find(pc =>
+      pc.name === application
+    )?._id;
+
     connectors = connectors.filter(
       c => c.applications?.some(app =>
-        isAppConstantContact(application) ? app.includes(application) : app === application)
+        isAppConstantContact(application) ? app.includes(application) : (app === application || app === publishedConnectorId))
     );
   }
 
@@ -128,9 +133,13 @@ selectors.marketplaceTemplatesByApp = (state, application) => {
   let templates = state.templates || emptySet;
 
   if (application) {
+    const publishedConnectorId = getPublishedHttpConnectors()?.find(pc =>
+      pc.name === application
+    )?._id;
+
     templates = templates
       .filter(t => t.applications?.some(app =>
-        isAppConstantContact(application) ? app.includes(application) : app === application))
+        isAppConstantContact(application) ? app.includes(application) : (app === application || app === publishedConnectorId)))
       .sort(stringCompare('name'));
   }
 

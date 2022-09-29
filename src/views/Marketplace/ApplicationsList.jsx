@@ -9,7 +9,7 @@ import actions from '../../actions';
 import getRoutePath from '../../utils/routePaths';
 import {CONNECTORS_TO_IGNORE, NO_RESULT_SEARCH_MESSAGE, WEBHOOK_ONLY_APPLICATIONS} from '../../constants';
 import ApplicationImg from '../../components/icons/ApplicationImg';
-import {applicationsList} from '../../constants/applications';
+import {applicationsList, getPublishedHttpConnectors} from '../../constants/applications';
 import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
 import NoResultTypography from '../../components/NoResultTypography';
 import PageContent from '../../components/PageContent';
@@ -61,6 +61,7 @@ export default function ApplicationsList({ filter }) {
     undefined,
     sandbox
   );
+  const publishedConnectors = getPublishedHttpConnectors();
   const connectorsMetadata = applicationsList();
   const templates = useSelector(state => selectors.marketplaceTemplatesByApp(state));
 
@@ -72,6 +73,11 @@ export default function ApplicationsList({ filter }) {
     connectors.forEach(c => { applications = applications.concat(c.applications); });
     templates.forEach(t => { applications = applications.concat(t.applications); });
     connectorsMetadata.forEach(c => { applications = applications.concat(c.id); });
+    applications = applications.map(app => {
+      const publishedConnectorName = publishedConnectors?.find(pc => pc._id === app)?.name;
+
+      return publishedConnectorName || app;
+    });
     applications = applications.filter(a => !CONNECTORS_TO_IGNORE.includes(a) && !WEBHOOK_ONLY_APPLICATIONS.includes(a));
     applications = uniq(applications.filter(Boolean));
 
@@ -99,7 +105,7 @@ export default function ApplicationsList({ filter }) {
     }
 
     return applications;
-  }, [connectors, connectorsMetadata, filter?.keyword, templates]);
+  }, [connectors, connectorsMetadata, filter?.keyword, publishedConnectors, templates]);
 
   useEffect(() => {
     dispatch(actions.marketplace.requestConnectors());
