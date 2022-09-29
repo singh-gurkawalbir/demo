@@ -17,14 +17,15 @@ import { isAmazonHybridConnection, isLoopReturnsv2Connection, isAcumaticaEcommer
 import TextToggle from '../../TextToggle';
 import Help from '../../Help';
 
-const useStyles = makeStyles({
+const useStyles = makeStyles(theme => ({
   helpTextButton: {
     padding: 0,
   },
   connectorTextToggle: {
     flexGrow: 100,
+    marginLeft: -theme.spacing(2),
   },
-});
+}));
 const emptyObj = {};
 const isParent = true;
 
