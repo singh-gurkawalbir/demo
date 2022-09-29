@@ -7,7 +7,7 @@ import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import { useHistory } from 'react-router-dom';
-import { DATA_TYPES_DROPDOWN_OPTIONS, DATA_TYPES_REPRESENTATION_LIST } from '../../../../../../../utils/mapping';
+import { DATA_TYPES_DROPDOWN_OPTIONS, DATA_TYPES_REPRESENTATION_LIST, MAPPING_DATA_TYPES } from '../../../../../../../utils/mapping';
 import actions from '../../../../../../../actions';
 import { TextButton } from '../../../../../../Buttons';
 import ArrowPopper from '../../../../../../ArrowPopper';
@@ -162,7 +162,7 @@ export default function SourceDataType({
   const classes = useStyles();
   const dispatch = useDispatch();
   const history = useHistory();
-  const sourceDataTypeRef = useSyncedRef(!sourceDataTypes || (sourceDataTypes && !sourceDataTypes.length) ? ['string'] : sourceDataTypes);
+  const sourceDataTypeRef = useSyncedRef(!sourceDataTypes?.length ? [MAPPING_DATA_TYPES.STRING] : sourceDataTypes);
   const open = !!anchorEl;
   const selectedDataTypeLabels = [];
 

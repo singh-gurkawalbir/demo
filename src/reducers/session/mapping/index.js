@@ -873,7 +873,7 @@ export default (state = {}, action) => {
                 }
               } else if (node.dataType !== MAPPING_DATA_TYPES.OBJECT || node.copySource === 'yes') {
                 node.extract = value;
-                node.sourceDataType = getSelectedExtractDataTypes(draft.mapping.extractsTree, value)[0] || 'string';
+                node.sourceDataType = getSelectedExtractDataTypes(draft.mapping.extractsTree, value)[0] || MAPPING_DATA_TYPES.STRING;
               }
             }
           } else if (node.isRequired) {

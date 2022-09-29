@@ -663,9 +663,9 @@ export const getSelectedExtractDataTypes = (extractsTreeNodeArr, selectedValuePa
   if (isEmpty(extractsTreeNode) || !extractsTreeNode.children?.length) return selectedDataType;
 
   if (selectedValuePath === '$') {
-    selectedDataType.push('object');
-  } else if (selectedValuePath === '$.*') {
-    selectedDataType.push('objectarray');
+    selectedDataType.push(MAPPING_DATA_TYPES.OBJECT);
+  } else if (selectedValuePath === '$[*]') {
+    selectedDataType.push(MAPPING_DATA_TYPES.OBJECTARRAY);
   } else {
     const selectedValue = selectedValuePath.replace(/(\$\.)|(\$\[\*\]\.)/g, '');
 
@@ -677,16 +677,16 @@ export const getSelectedExtractDataTypes = (extractsTreeNodeArr, selectedValuePa
 
         switch (dataType) {
           case '[object]':
-            dataTypeValue = 'objectarray';
+            dataTypeValue = MAPPING_DATA_TYPES.OBJECTARRAY;
             break;
           case '[boolean]':
-            dataTypeValue = 'booleanarray';
+            dataTypeValue = MAPPING_DATA_TYPES.BOOLEANARRAY;
             break;
           case '[number]':
-            dataTypeValue = 'numberarray';
+            dataTypeValue = MAPPING_DATA_TYPES.NUMBERARRAY;
             break;
           case '[string]':
-            dataTypeValue = 'stringarray';
+            dataTypeValue = MAPPING_DATA_TYPES.STRINGARRAY;
             break;
           default:
             dataTypeValue = dataType;
