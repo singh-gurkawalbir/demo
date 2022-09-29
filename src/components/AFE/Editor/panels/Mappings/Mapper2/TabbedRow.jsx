@@ -32,10 +32,13 @@ function generateTabs(parentNode) {
         anyExtractHasMappings = true;
       }
 
+      const shouldDisableTab = parentNode.extractsWithoutMappings?.includes(extractConfig.extract);
+
       tabs.push({
         id: extractConfig.extract,
         label: getExtractFromUniqueId(extractConfig.extract),
-        disabled: extractConfig.copySource === 'yes',
+        disabled: (extractConfig.copySource === 'yes') || shouldDisableTab,
+        disabledInfo: shouldDisableTab ? 'No matching fields in this tab' : 'No fields need to be configured because this source has the setting "Copy an object array from the source as-is" set to "Yes".',
       });
     });
   }
@@ -49,7 +52,7 @@ function generateTabs(parentNode) {
 function TabbedRow({parentKey}) {
   const classes = useStyles();
   const dispatch = useDispatch();
-  const treeData = useSelector(state => selectors.v2MappingsTreeData(state));
+  const treeData = useSelector(state => selectors.filteredV2TreeData(state));
   const parentNode = useMemo(() => (findNodeInTree(treeData, 'key', parentKey)?.node), [parentKey, treeData]);
 
   const tabs = useMemo(() => generateTabs(parentNode), [parentNode]);
@@ -68,11 +71,11 @@ function TabbedRow({parentKey}) {
         textColor="primary"
         variant="scrollable"
         scrollButtons="auto" >
-        {tabs.map(({ id, label, disabled }) =>
+        {tabs.map(({ id, label, disabled, disabledInfo }) =>
           disabled ? (
             <Tooltip
               key={id}
-              title={disabled ? 'No fields need to be configured because this source has the setting "Copy an object array from the source as-is" set to "Yes".' : ''}
+              title={disabled ? disabledInfo : ''}
               placement="bottom">
               {/* this div needs to be added to render the tooltip correctly */}
               <div>
