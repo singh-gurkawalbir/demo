@@ -117,6 +117,8 @@ export const TooltipTitle = ({
     }
   }
 
+  // Adding condition for length since we need to show the tooltip
+  // if their are two source field since dataType is truncated
   if (isTruncated || (inputValue.split(',').length > 1)) {
     const selectedDataTypeLabels = [];
 
