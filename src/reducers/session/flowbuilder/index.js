@@ -85,7 +85,6 @@ selectors.fbInfo = (state, flowId) => state?.[flowId]?.info || emptyObject;
 selectors.fbMergeTargetType = (state, flowId) => state?.[flowId]?.mergeTargetType;
 selectors.fbMergeTargetId = (state, flowId) => state?.[flowId]?.mergeTargetId;
 selectors.fbDragStepIdInProgress = (state, flowId) => state?.[flowId]?.dragStepIdInProgress;
-// selectors.isFlowSaveInProgress = (state, flowId) => state?.[flowId]?.status === 'saving';
 
 selectors.fbRouterStepsInfo = (state, flowId, routerId) => {
   let configuredCount = 0;

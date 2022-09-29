@@ -9,7 +9,7 @@ import {
   sanitizePatchSet,
   defaultPatchSetConverter,
 } from '../../forms/formFactory/utils';
-import { commitStagedChanges, commitStagedChangesWrapper } from '../resources';
+import { commitStagedChangesWrapper } from '../resources';
 import connectionSagas, { createPayload, pingConnectionWithId } from './connections';
 import { requestAssistantMetadata } from '../resources/meta';
 import {
@@ -622,7 +622,8 @@ function* updateIAFlowDoc({flow, resource }) {
 
   yield put(actions.resource.patchStaged(flow._id, patch, SCOPES.VALUE));
 
-  yield call(commitStagedChanges, {
+  yield call(commitStagedChangesWrapper, {
+    asyncKey: getFlowAsyncKey(flow._id),
     resourceType: 'flows',
     id: flow._id,
     scope: SCOPES.VALUE,
