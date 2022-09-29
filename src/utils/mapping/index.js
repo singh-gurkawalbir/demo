@@ -656,7 +656,7 @@ export const getExtractDataType = helper => {
 // util for fetching the the correct datatype value of a selected node
 export const getSelectedExtractDataTypes = (extractsTreeNodeArr, selectedValuePath, selectedDataType = []) => {
   if (!extractsTreeNodeArr || !extractsTreeNodeArr[0]) {
-    return [MAPPING_DATA_TYPES.STRING];
+    return selectedDataType;
   }
   const extractsTreeNode = extractsTreeNodeArr[0];
 

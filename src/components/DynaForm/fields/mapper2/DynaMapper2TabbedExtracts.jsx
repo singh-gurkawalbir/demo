@@ -37,8 +37,8 @@ function generateTabsForSettings(sourceField) {
   return tabs;
 }
 
-function getSubFormMetadata(value, formKey, dataType, sourceField, sourceDataTypeVal) {
-  const newValue = buildExtractsHelperFromExtract(value, sourceField);
+function getSubFormMetadata(value, formKey, dataType, sourceField, sourceDataTypeVal, extractsTreeData) {
+  const newValue = buildExtractsHelperFromExtract(value, sourceField, undefined, undefined, extractsTreeData);
 
   return {
     fieldMap: {
@@ -233,7 +233,7 @@ function EachTabContainer({id, value, formKey, dataType, isCurrentTab, onFieldCh
   // useSetSubFormShowValidations(parentFormKey, formKey);
   const formKeyComponent = useFormInitWithPermissions({
     formKey,
-    fieldMeta: getSubFormMetadata(value, formKey, dataType, sourceField, sourceDataTypeVal[0]),
+    fieldMeta: getSubFormMetadata(value, formKey, dataType, sourceField, sourceDataTypeVal[0], extractsTreeData),
   });
 
   if (!isCurrentTab) return null;
