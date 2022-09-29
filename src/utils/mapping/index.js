@@ -992,12 +992,14 @@ export const rebuildObjectArrayNode = (node, extract = '', prevActiveExtract, ex
   return clonedNode;
 };
 
-function recursivelyBuildTreeFromV2Mappings({mappings = [], treeData, parentKey, parentExtract, disabled, hidden, isGroupedSampleData, parentJsonPath = ''}) {
+function recursivelyBuildTreeFromV2Mappings({mappings = [], treeData, parentKey, parentExtract, disabled, hidden, isGroupedSampleData, parentJsonPath = '', requiredMappings = []}) {
   mappings.forEach(m => {
     const {dataType, mappings: objMappings, buildArrayHelper, extract: currNodeExtract, generate, sourceDataType} = m;
     const children = [];
     const currNodeKey = generateUniqueKey();
     const jsonPath = `${parentJsonPath ? `${parentJsonPath}.` : ''}${generate || ''}`;
+
+    const isRequired = requiredMappings.includes(jsonPath);
 
     const nodeToPush = {
       key: currNodeKey,
@@ -1008,6 +1010,7 @@ function recursivelyBuildTreeFromV2Mappings({mappings = [], treeData, parentKey,
       hidden,
       className: hidden && 'hideRow',
       jsonPath,
+      isRequired,
       ...m,
     };
 
@@ -1021,6 +1024,11 @@ function recursivelyBuildTreeFromV2Mappings({mappings = [], treeData, parentKey,
     }
 
     if (dataType === MAPPING_DATA_TYPES.OBJECT) {
+      // suffix with . for object fields
+      const isRequired = requiredMappings.some(r => r.startsWith(`${jsonPath}.`));
+
+      nodeToPush.isRequired = isRequired;
+
       if (objMappings) {
         nodeToPush.children = children;
 
@@ -1031,7 +1039,8 @@ function recursivelyBuildTreeFromV2Mappings({mappings = [], treeData, parentKey,
           hidden,
           disabled,
           isGroupedSampleData,
-          parentJsonPath: jsonPath});
+          parentJsonPath: jsonPath,
+          requiredMappings});
       } else if (currNodeExtract) { // if object mapping has extract, then it is copied from source as is with no children
         nodeToPush.sourceDataType = sourceDataType || MAPPING_DATA_TYPES.STRING;
         nodeToPush.copySource = 'yes';
@@ -1041,6 +1050,11 @@ function recursivelyBuildTreeFromV2Mappings({mappings = [], treeData, parentKey,
     }
 
     if (ARRAY_DATA_TYPES.includes(dataType)) {
+      // suffix with [*] for object array fields
+      const isRequired = requiredMappings.some(r => r.startsWith(`${jsonPath}[*]`));
+
+      nodeToPush.isRequired = isRequired;
+
       // invalid mappings, nothing to do
       if (!buildArrayHelper) {
         return;
@@ -1084,7 +1098,8 @@ function recursivelyBuildTreeFromV2Mappings({mappings = [], treeData, parentKey,
             disabled,
             hidden: extractIndexWithMappings > 0 ? true : hidden, // since the first active source is already pushed, all other children should be hidden now, as we show the first source tab by default
             isGroupedSampleData,
-            parentJsonPath: jsonPath ? `${jsonPath}[*]` : ''}
+            parentJsonPath: jsonPath ? `${jsonPath}[*]` : '',
+            requiredMappings}
           );
 
           nodeToPush.children = children;
@@ -1130,6 +1145,7 @@ export const buildTreeFromV2Mappings = ({
   importResource,
   isGroupedSampleData,
   disabled,
+  requiredMappings,
 }) => {
   if (!importResource) {
     return;
@@ -1181,7 +1197,7 @@ export const buildTreeFromV2Mappings = ({
     return emptyMappingsTree;
   }
 
-  const mappingsTreeData = recursivelyBuildTreeFromV2Mappings({mappings: v2MappingsCopy, treeData, disabled, isGroupedSampleData});
+  const mappingsTreeData = recursivelyBuildTreeFromV2Mappings({mappings: v2MappingsCopy, treeData, disabled, isGroupedSampleData, requiredMappings});
 
   return mappingsTreeData;
 };
@@ -1434,7 +1450,7 @@ const recursivelyBuildV2MappingsFromTree = ({v2TreeData, _mappingsToSave, lookup
 export const buildV2MappingsFromTree = ({v2TreeData, lookups}) => {
   const _mappingsToSave = [];
 
-  if (isEmpty(v2TreeData)) {
+  if (isEmpty(v2TreeData) || !hasV2MappingsInTreeData(v2TreeData, lookups)) {
     return _mappingsToSave;
   }
 

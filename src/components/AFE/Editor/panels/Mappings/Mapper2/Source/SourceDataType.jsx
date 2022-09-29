@@ -18,12 +18,9 @@ import useSyncedRef from '../../../../../../../hooks/useSyncedRef';
 
 const useStyles = makeStyles(theme => ({
   dataType: {
-    border: 'none',
-    fontStyle: 'italic',
     color: theme.palette.primary.main,
     justifyContent: 'end',
     padding: 0,
-    width: theme.spacing(9),
     '& svg': {
       marginLeft: theme.spacing(-1),
     },
@@ -130,6 +127,13 @@ const useStyles = makeStyles(theme => ({
     wordBreak: 'break-word',
     textAlign: 'right',
   },
+  dataTypeSelected: {
+    width: theme.spacing(8),
+    textAlign: 'right',
+    '& span': {
+      whiteSpace: 'nowrap',
+    },
+  },
 }));
 
 const getToolTipTitle = (isHandlebarExp, isHardCodedValue) => {
@@ -153,6 +157,7 @@ export default function SourceDataType({
   sourceDataTypes,
   isHardCodedValue,
   isHandlebarExp,
+  isFocused,
 }) {
   const classes = useStyles();
   const dispatch = useDispatch();
@@ -204,12 +209,11 @@ export default function SourceDataType({
             disabled={disabled}
             endIcon={sourceDataTypes && sourceDataTypes.length > 1 ? '' : <ArrowDownFilledIcon />}
             className={classes.dataType} >
-            { document.getElementById('extractPopper')
-              ? <span className={classes.dataTypeList}>{selectedDataTypeLabels.join()}</span> : (
-                <CeligoTruncate placement="bottom" disableHoverListener>
-                  {selectedDataTypeLabels.join()}
-                </CeligoTruncate>
-              )}
+            { isFocused ? <span className={classes.dataTypeList}>{selectedDataTypeLabels.join()}</span> : (
+              <CeligoTruncate placement="bottom" className={classes.dataTypeSelected} disableHoverListener>
+                {selectedDataTypeLabels.join()}
+              </CeligoTruncate>
+            )}
           </TextButton>
         </span>
       </Tooltip>
