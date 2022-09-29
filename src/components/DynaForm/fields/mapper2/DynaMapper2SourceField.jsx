@@ -56,12 +56,15 @@ export default function DynaMapper2SourceField(props) {
     onFieldChange(id, value);
 
     // in case of source field change update the source datatype also
-    const jsonPathExtract = value.replace(/(\$\.)|(\$\[\*\]\.)/g, '');
 
-    const sourceDataTypesList = getSelectedExtractDataTypes(extractsTreeData[0], jsonPathExtract);
+    const sourceDataTypesList = getSelectedExtractDataTypes(extractsTreeData, value);
 
-    onFieldChange('sourceDataType', sourceDataTypesList[0]);
-  }, [id, onFieldChange]);
+    if (dataType === MAPPING_DATA_TYPES.OBJECT) {
+      onFieldChange('objectSourceDataType', sourceDataTypesList[0]);
+    } else {
+      onFieldChange('sourceDataType', sourceDataTypesList[0]);
+    }
+  }, [id, onFieldChange, dataType, extractsTreeData]);
 
   const hideSourceField = (dataType === MAPPING_DATA_TYPES.OBJECT && copySource === 'no') ||
   (isDynamicLookup && !isFileAdaptorLookup) || noSourceField;
