@@ -45,8 +45,8 @@ export default function IconButtonWithTooltip({
 }
 
 IconButtonWithTooltip.defaultProps = {
-  noPadding: 'false',
   buttonSize: 'medium',
+  noPadding: false,
 };
 
 IconButtonWithTooltip.propTypes = {
