@@ -545,7 +545,7 @@ describe('v2 mapping utils', () => {
 
       const extract = '$.children[*],$.siblings[*]';
       const newNode = {
-        extractsArrayHelper: [{extract: '$.children[*]'}, {extract: '$.siblings[*]'}],
+        extractsArrayHelper: [{extract: '$.children[*]'}, {extract: '$.siblings[*]', sourceDataType: 'string'}],
         dataType: 'objectarray',
         disabled: false,
         generate: 'family_tree',
@@ -627,7 +627,7 @@ describe('v2 mapping utils', () => {
 
       const extract = '$.children[*],$.test[*].nested[*],$.siblings[*]';
       const newNode = {
-        extractsArrayHelper: [{extract: '$.children[*]'}, {extract: '$.test[*].nested[*]'}, {extract: '$.siblings[*]'}],
+        extractsArrayHelper: [{extract: '$.children[*]'}, {extract: '$.test[*].nested[*]', sourceDataType: 'string'}, {extract: '$.siblings[*]'}],
         dataType: 'objectarray',
         disabled: false,
         generate: 'family_tree',
@@ -764,7 +764,7 @@ describe('v2 mapping utils', () => {
 
       const extract = '$,$';
       const newNode = {
-        extractsArrayHelper: [{extract: '$|0'}, {extract: '$|1'}],
+        extractsArrayHelper: [{extract: '$|0', sourceDataType: 'string'}, {extract: '$|1', sourceDataType: 'string'}],
         dataType: 'objectarray',
         disabled: false,
         generate: 'family_tree',
@@ -828,7 +828,7 @@ describe('v2 mapping utils', () => {
       const extract = '$';
 
       const newNode = {
-        extractsArrayHelper: [{extract: '$|0'}],
+        extractsArrayHelper: [{extract: '$|0', sourceDataType: 'string'}],
         dataType: 'objectarray',
         disabled: false,
         generate: 'family_tree',
@@ -892,7 +892,7 @@ describe('v2 mapping utils', () => {
       const extract = '$[*].feeds[*],$.test[*]';
 
       const newNode = {
-        extractsArrayHelper: [{extract: '$[*].feeds[*]'}, {extract: '$.test[*]'}],
+        extractsArrayHelper: [{extract: '$[*].feeds[*]'}, {extract: '$.test[*]', sourceDataType: 'string'}],
         dataType: 'objectarray',
         disabled: false,
         key: 'LQL4eGSdYcfXiKm478tPQ',
@@ -999,7 +999,7 @@ describe('v2 mapping utils', () => {
       const extract = '$[*].feeds[*],$.test[*]';
 
       const newNode = {
-        extractsArrayHelper: [{extract: '$[*].feeds[*]'}, {extract: '$.test[*]'}],
+        extractsArrayHelper: [{extract: '$[*].feeds[*]'}, {extract: '$.test[*]', sourceDataType: 'string'}],
         dataType: 'objectarray',
         disabled: false,
         generate: 'family_tree',
@@ -1126,7 +1126,7 @@ describe('v2 mapping utils', () => {
       const extract = '$[*].feeds[*],$.test[*]';
 
       const newNode = {
-        extractsArrayHelper: [{extract: '$[*].feeds[*]'}, {extract: '$.test[*]'}],
+        extractsArrayHelper: [{extract: '$[*].feeds[*]'}, {extract: '$.test[*]', sourceDataType: 'string'}],
         dataType: 'objectarray',
         disabled: false,
         key: '21xmtiTyd7LezDTLMGobu',

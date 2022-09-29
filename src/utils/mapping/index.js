@@ -656,7 +656,7 @@ export const getExtractDataType = helper => {
 // util for fetching the the correct datatype value of a selected node
 export const getSelectedExtractDataTypes = (extractsTreeNodeArr, selectedValuePath, selectedDataType = []) => {
   if (!extractsTreeNodeArr || !extractsTreeNodeArr[0]) {
-    return selectedDataType;
+    return [MAPPING_DATA_TYPES.STRING];
   }
   const extractsTreeNode = extractsTreeNodeArr[0];
 
@@ -728,11 +728,11 @@ export const buildExtractsHelperFromExtract = (existingExtractsArray = [], sourc
       // add missing extracts in existingExtractsArray which are newly added by the user and copy settings if found at same index
       toReturn.push({...removedSources[existingExtractsArray[i].extract],
         extract: uniqueExtract,
-        sourceDataType: getSelectedExtractDataTypes(extractsTree, e)[0]});
+        sourceDataType: getSelectedExtractDataTypes(extractsTree, e)[0] || MAPPING_DATA_TYPES.STRING});
     } else {
       // add extract
       toReturn.push(formKey ? newExtractObj : {extract: uniqueExtract,
-        sourceDataType: getSelectedExtractDataTypes(extractsTree, e)[0]});
+        sourceDataType: getSelectedExtractDataTypes(extractsTree, e)[0] || MAPPING_DATA_TYPES.STRING});
     }
   });
 
