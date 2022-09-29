@@ -170,9 +170,13 @@ export function getPreviewStageData(previewData, previewStage = 'parse') {
     return stageData && stageData.data;
   }
 
+  // Group stage is present when the groupByFields of export is configured
+  // If groupStage is present, we return the groupStage instead of parse stage to get the grouped data
+  // NOTE: As of now, the group stage is available for http and DB adaptors only
+  const groupStage = stages.find(stage => stage.name === 'group');
   const parseStage = stages.find(stage => stage.name === previewStage);
 
-  return parseStage && parseStage.data && parseStage.data[0];
+  return previewStage === 'parse' ? groupStage?.data?.[0] || parseStage?.data?.[0] : parseStage?.data?.[0];
 }
 
 export const getSampleDataStage = (stage, resourceType = 'exports') =>
