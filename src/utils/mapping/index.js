@@ -1616,7 +1616,7 @@ export const searchTree = (mappings, key, filterFunc, items) => {
   items.firstIndex = firstIndex;    // setting the firstIndex before returning
 };
 
-const getNewChildrenToAdd = (parentNode, destinationNode) => {
+export const getNewChildrenToAdd = (parentNode, destinationNode) => {
   // the destination node is expected to be a child - so checks for parentKey and generate field
   if (!parentNode || !destinationNode || !destinationNode.parentKey || !destinationNode.generate) {
     return [];
@@ -1669,11 +1669,13 @@ const getNewChildrenToAdd = (parentNode, destinationNode) => {
 export const findAllParentNodesForNode = (treeData, nodeKey, output = []) => {
   const {node} = findNodeInTree(treeData, 'key', nodeKey);
 
-  if (!node) return output;
+  if (!node || !node.parentKey) return output;
 
   findAllParentNodesForNode(treeData, node.parentKey, output);
 
-  output.push(node);
+  const {node: parentNode} = findNodeInTree(treeData, 'key', node.parentKey);
+
+  output.push(parentNode);
 
   return output;
 };
@@ -1700,17 +1702,25 @@ export const findAllPossibleDestinationMatchingParentNodes = (matchingNodes = []
   return findAllPossibleDestinationMatchingParentNodes(matchingNodes.slice(1), nextLevelParentNodes);
 };
 
+const isMappingRowTouched = (node, lookups) => {
+  if (!node || isEmpty(node)) return false;
+
+  const isEmptyRow = (!node.generate && node.dataType === MAPPING_DATA_TYPES.STRING && isMappingWithoutExtract(node, lookups));
+
+  return !isEmptyRow;
+};
+
 /**
    * This util deals with destination node additions/updates inside an Object array node's children
    * It updates the children with accommodating the added/updated node with destination at all possible places
    * which matches destination structure with multiple extracts
    */
-export const insertSiblingsOnDestinationUpdate = (treeData, newNode) => {
+export const insertSiblingsOnDestinationUpdate = (treeData, newNode, lookups) => {
   // do nothing if the node itself is the top node
   if (!newNode.parentKey) return;
 
   // fetch all parent nodes from top to bottom
-  const parentNodes = findAllParentNodesForNode(treeData, newNode.parentKey);
+  const parentNodes = findAllParentNodesForNode(treeData, newNode.key);
 
   const objArrayParentNodeIndex = parentNodes.findIndex(node => node.dataType === MAPPING_DATA_TYPES.OBJECTARRAY);
 
@@ -1723,14 +1733,23 @@ export const insertSiblingsOnDestinationUpdate = (treeData, newNode) => {
 
   matchingLeafNodes.forEach(parentNode => {
     const newChildren = getNewChildrenToAdd(parentNode, newNode);
+    let updatedChildren = [...parentNode.children, ...newChildren];
 
-    if (parentNode.children?.length === 1 && parentNode.children[0]?.isEmptyRow) {
-      // eslint-disable-next-line no-param-reassign
-      parentNode.children = newChildren;
+    if (parentNode.key === newNode.parentKey) {
+      updatedChildren = updatedChildren.filter(childNode => {
+        if (childNode.parentExtract === newNode.parentExtract) {
+          // ignore any filtering for the same tab's children
+          return true;
+        }
+
+        // for all other source tabs, filter out empty nodes
+        return isMappingRowTouched(childNode);
+      });
     } else {
-      // eslint-disable-next-line no-param-reassign
-      parentNode.children = [...parentNode.children, ...newChildren];
+      updatedChildren = updatedChildren.filter(childNode => isMappingRowTouched(childNode, lookups));
     }
+    // eslint-disable-next-line no-param-reassign
+    parentNode.children = updatedChildren;
   });
 };
 

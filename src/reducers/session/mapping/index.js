@@ -894,7 +894,7 @@ export default (state = {}, action) => {
 
           if (field === 'generate' && value.length) {
             // updates tree data with new nodes added at eligible parent nodes for object array
-            insertSiblingsOnDestinationUpdate(draft.mapping.v2TreeData, node);
+            insertSiblingsOnDestinationUpdate(draft.mapping.v2TreeData, node, draft.mapping.lookups);
           }
         }
 
