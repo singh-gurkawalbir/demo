@@ -14,6 +14,7 @@ import ErrorDetailsPanel from './ErrorDetailsPanel';
 import ErrorTableFilters from './ErrorTableFilters';
 import FetchErrorsHook from './hooks/useFetchErrors';
 import { useEditRetryConfirmDialog } from './hooks/useEditRetryConfirmDialog';
+import { NO_RESULT_SEARCH_MESSAGE } from '../../../constants';
 
 const useStyles = makeStyles(theme => ({
   hide: {
@@ -226,9 +227,7 @@ const EmptyErrorMessage = () => (
 const NoFiltersMessage = () => (
   <NoResultTypography>
     <br />
-    You don’t have any errors that match the filters you applied.
-    <br />
-    Clear all filters to see any errors for this step.
+    {NO_RESULT_SEARCH_MESSAGE}
   </NoResultTypography>
 );
 
