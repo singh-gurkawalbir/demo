@@ -403,7 +403,7 @@ export const updateFinalMetadataWithHttpFramework = (finalFieldMeta, connector, 
           ];
 
           tempFiledMeta.fieldMap[key] = {...tempFiledMeta.fieldMap[key], options};
-        } else {
+        } else if (key !== 'http.baseURI' || !tempFiledMeta.fieldMap[key]?._conditionIdValuesMap?.length) {
           tempFiledMeta.fieldMap[key] = {...tempFiledMeta.fieldMap[key], visible: false};
         }
         if (!tempFiledMeta.fieldMap[key].defaultValue) { tempFiledMeta.fieldMap[key] = {...tempFiledMeta.fieldMap[key], defaultValue: preConfiguredField.values?.[0]}; }
