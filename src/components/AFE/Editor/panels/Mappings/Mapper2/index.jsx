@@ -350,8 +350,8 @@ export default function Mapper2({editorId}) {
       <div className={clsx(classes.mappingDrawerContent, {[classes.addSearchBar]: searchKey !== undefined})}>
         <Tree
           className={clsx(classes.treeRoot, {[classes.virtualTree]: allNodes > 50}, {[classes.virtualTreeCompactRow]: allNodes > 50 && editorLayout === 'compactRow'})}
-          height={allNodes > 70 ? 'calc(100vh - 262px)' : undefined}
-          itemHeight={allNodes > 70 ? 20 : undefined}
+          height={allNodes > 50 ? 'calc(100vh - 262px)' : undefined}
+          itemHeight={allNodes > 50 ? 20 : undefined}
           titleRender={Row}
           treeData={treeData}
           showLine
