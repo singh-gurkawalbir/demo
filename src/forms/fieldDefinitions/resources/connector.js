@@ -1,6 +1,7 @@
 import { connectorsList } from '../../../constants/applications';
 import { isNewId } from '../../../utils/resource';
 import { MULTIPLE_EMAILS, ABS_URL_VALIDATION_PATTERN } from '../../../constants';
+import { getPublishedConnectorName } from '../../../utils/assistant';
 
 export default {
   name: {
@@ -143,7 +144,7 @@ export default {
     type: 'selectmultiapplication',
     placeholder: 'Choose applications',
     label: 'Applications',
-    defaultValue: r => (r?.applications) || [],
+    defaultValue: r => (r?.applications || []).map(app => getPublishedConnectorName(app) || app),
     requiredWhen: [
       {
         field: 'framework',
