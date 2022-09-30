@@ -15,6 +15,7 @@ import {
   get,
 } from 'lodash';
 import { getPathParams } from './pathParamUtils';
+import { getPublishedHttpConnectors } from '../../constants/applications';
 
 const OVERWRITABLE_PROPERTIES = Object.freeze([
   'allowUndefinedResource',
@@ -2272,4 +2273,16 @@ export function shouldLoadAssistantFormForExports(resource, connection) {
 
 export function isEbayFinanceConnection(connection) {
   return connection?.assistant === 'ebayfinance';
+}
+
+export function getPublishedConnectorName(httpConnectorId) {
+  const publishedConnectors = getPublishedHttpConnectors();
+
+  return publishedConnectors?.find(pc => pc._id === httpConnectorId)?.name;
+}
+
+export function getPublishedConnectorId(httpConnectorName) {
+  const publishedConnectors = getPublishedHttpConnectors();
+
+  return publishedConnectors?.find(pc => pc.name === httpConnectorName)?._id;
 }

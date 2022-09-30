@@ -94,7 +94,7 @@ export default function AccountSettings() {
   if (!areAccountSettingsLoaded) {
     return (
       <CollapsableContainer title="Account settings" forceExpand>
-        <Spinner centerAll />
+        <Spinner loading size="large" />
       </CollapsableContainer>
     );
   }
