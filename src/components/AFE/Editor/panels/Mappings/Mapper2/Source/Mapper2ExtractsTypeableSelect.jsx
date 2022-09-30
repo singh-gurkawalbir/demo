@@ -6,7 +6,7 @@ import clsx from 'clsx';
 import ArrowDownIcon from '../../../../../../icons/ArrowDownIcon';
 import useKeyboardShortcut from '../../../../../../../hooks/useKeyboardShortcut';
 import ExtractsTree from './ExtractsTree';
-import { MAPPING_DATA_TYPES } from '../../../../../../../utils/mapping';
+import { DATA_TYPES_REPRESENTATION_LIST, MAPPING_DATA_TYPES } from '../../../../../../../utils/mapping';
 import messageStore from '../../../../../../../utils/messageStore';
 import ArrowPopper from '../../../../../../ArrowPopper';
 import useDebouncedValue from '../../../../../../../hooks/useDebouncedInput';
@@ -82,6 +82,14 @@ const useStyles = makeStyles(theme => ({
       display: 'none',
     },
   },
+  sourceDataToolTip: {
+    display: 'flex',
+    flexDirection: 'column',
+    padding: theme.spacing(1),
+    '&>div': {
+      marginBottom: theme.spacing(1),
+    },
+  },
 })
 );
 
@@ -93,12 +101,12 @@ export const TooltipTitle = ({
   isHardCodedValue,
   isHandlebarExp,
   fieldType,
+  sourceDataTypes,
+  isSource,
 }) => {
   const classes = useStyles();
   let title = '';
   let hideDropdownMsgKey = '';
-
-  if (!isTruncated && !hideSourceDropdown) return fieldType;
 
   if (hideSourceDropdown) {
     if (isDynamicLookup) {
@@ -110,12 +118,30 @@ export const TooltipTitle = ({
     }
   }
 
-  if (isTruncated) {
-    if (hideSourceDropdown) {
-      title = inputValue;
-    } else {
-      title = `${fieldType}: ${inputValue}`;
-    }
+  // Adding condition for length since we need to show the tooltip
+  // if their are two source field since dataType is truncated
+  const sourceInputs = inputValue?.split(',');
+
+  if ((isTruncated || (sourceInputs.length > 1)) && isSource) {
+    const selectedDataTypeLabels = [];
+
+    sourceDataTypes?.forEach(datatype => {
+      selectedDataTypeLabels.push(DATA_TYPES_REPRESENTATION_LIST[[datatype]]);
+    });
+    const inputValArr = sourceInputs;
+
+    title = (
+      <div className={classes.sourceDataToolTip}>
+        <div>Source field / data type:</div>
+        {// eslint-disable-next-line react/no-array-index-key
+        inputValArr.map((input, i) => <span key={`${input}${i}`}> {input} / {selectedDataTypeLabels[i]} </span>)
+        }
+      </div>
+    );
+  } else if (!isTruncated && !hideSourceDropdown) {
+    return fieldType;
+  } else {
+    title = `${fieldType}: ${inputValue}`;
   }
 
   if (!hideSourceDropdown) return title;
@@ -216,7 +242,9 @@ export default function Mapper2ExtractsTypeableSelect({
             isDynamicLookup={isDynamicLookup}
             isHardCodedValue={isHardCodedValue}
             isHandlebarExp={isHandlebarExp}
+            isSource
             fieldType="Source field"
+            sourceDataTypes={sourceDataType}
         />
         )} >
         <TextField
