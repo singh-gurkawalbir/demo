@@ -1,43 +1,57 @@
-/* global describe, test */
+/* global describe, test, jest, beforeEach */
 
 import { select } from 'redux-saga/effects';
 import { expectSaga } from 'redux-saga-test-plan';
-import * as matchers from 'redux-saga-test-plan/matchers';
-// import { throwError } from 'redux-saga-test-plan/providers';
 import { createNewPGStep, createNewPPStep, deleteEdge, deleteRouter, deleteStep, mergeBranch } from '.';
 import actions from '../../actions';
-import { FLOW_SAVING_STATUS, GRAPH_ELEMENTS_TYPE } from '../../constants';
+import { GRAPH_ELEMENTS_TYPE } from '../../constants';
 import { selectors } from '../../reducers';
 import { getChangesPatchSet } from '../../utils/json';
+import { getFlowAsyncKey } from '../../utils/flows/flowbuilder';
+
+jest.mock('../../utils/flows/flowbuilder');
+jest.mock('../../utils/json');
+
+const MOCK_FLOW_ASYNC_KEY = 'flow-async-key';
 
 describe('flowbuilder sagas', () => {
+  beforeEach(() => {
+    getFlowAsyncKey.mockReturnValue(MOCK_FLOW_ASYNC_KEY);
+    getChangesPatchSet.mockReturnValue([]);
+  });
   describe('createNewPGStep saga', () => {
     const flowId = '123';
 
-    test('should dispatch setSaveStatus action if there are no changes', () =>
-      expectSaga(createNewPGStep, {flowId})
+    test('should pass async key in patchAndCommitStaged action even if there are no changes', () => expectSaga(createNewPGStep, {flowId})
+      .provide([
+        [select(selectors.resourceData, 'flows', flowId), {merged: undefined}],
+      ])
+      .put(actions.resource.patchAndCommitStaged('flows', flowId, [], {
+        asyncKey: MOCK_FLOW_ASYNC_KEY,
+        options: {
+          revertChangesOnFailure: true,
+        },
+      }))
+      .run());
+    test('should dispatch patchAndCommitStaged action if there are changes', () => {
+      const mockPatchSet = [{ op: 'add', path: '/pageGenerators', value: [{ setupInProgress: true }, { setupInProgress: true }] }];
+
+      getChangesPatchSet.mockReturnValue(mockPatchSet);
+
+      return expectSaga(createNewPGStep, {flowId})
         .provide([
-          [matchers.call.fn(getChangesPatchSet), []],
-          [select(selectors.resourceData, 'flows', flowId), {merged: undefined}],
-        ])
-        .put(actions.flow.setSaveStatus(flowId, FLOW_SAVING_STATUS))
-        .put(actions.flow.setSaveStatus(flowId))
-        .run()
-    );
-    test('should dispatch patchAndCommitStaged action if there are changes', () =>
-      expectSaga(createNewPGStep, {flowId})
-        .provide([
-          [matchers.call.fn(getChangesPatchSet), []],
           [select(selectors.resourceData, 'flows', flowId), {merged: {}}],
         ])
-        .put(actions.flow.setSaveStatus(flowId, FLOW_SAVING_STATUS))
         .put(actions.resource.patchAndCommitStaged(
           'flows', flowId,
-          [{ op: 'add', path: '/pageGenerators', value: [{ setupInProgress: true }, { setupInProgress: true }] }],
-          {options: {revertChangesOnFailure: true}})
+          mockPatchSet,
+          {
+            asyncKey: MOCK_FLOW_ASYNC_KEY,
+            options: {revertChangesOnFailure: true},
+          })
         )
-        .run()
-    );
+        .run();
+    });
   });
   describe('deleteStep saga', () => {
     const flowId = '62d561f648a4303c75f7dca2';
@@ -119,14 +133,15 @@ describe('flowbuilder sagas', () => {
         },
       ];
 
+      getChangesPatchSet.mockReturnValue(patchSet);
+
       return expectSaga(deleteStep, {flowId, stepId})
         .provide([
           [select(selectors.fbGraphElementsMap, flowId), elementsMap],
           [select(selectors.fbFlow, flowId), flow],
           [select(selectors.resourceData, 'flows', flowId), {merged: originalFlow}],
         ])
-        .put(actions.flow.setSaveStatus(flowId, FLOW_SAVING_STATUS))
-        .put(actions.resource.patchAndCommitStaged('flows', flowId, patchSet))
+        .put(actions.resource.patchAndCommitStaged('flows', flowId, patchSet, { asyncKey: MOCK_FLOW_ASYNC_KEY }))
         .run();
     });
 
@@ -287,14 +302,15 @@ describe('flowbuilder sagas', () => {
         },
       ];
 
+      getChangesPatchSet.mockReturnValue(patchSet);
+
       return expectSaga(deleteStep, {flowId, stepId})
         .provide([
           [select(selectors.fbGraphElementsMap, flowId), elementsMap],
           [select(selectors.fbFlow, flowId), flow],
           [select(selectors.resourceData, 'flows', flowId), {merged: originalFlow}],
         ])
-        .put(actions.flow.setSaveStatus(flowId, FLOW_SAVING_STATUS))
-        .put(actions.resource.patchAndCommitStaged('flows', flowId, patchSet))
+        .put(actions.resource.patchAndCommitStaged('flows', flowId, patchSet, { asyncKey: MOCK_FLOW_ASYNC_KEY }))
         .run();
     });
 
@@ -639,34 +655,39 @@ describe('flowbuilder sagas', () => {
         },
       ];
 
+      getChangesPatchSet.mockReturnValue(patchSet);
+
       return expectSaga(deleteStep, {flowId, stepId})
         .provide([
           [select(selectors.fbGraphElementsMap, flowId), elementsMap],
           [select(selectors.fbFlow, flowId), flow],
           [select(selectors.resourceData, 'flows', flowId), {merged: originalFlow}],
         ])
-        .put(actions.flow.setSaveStatus(flowId, FLOW_SAVING_STATUS))
-        .put(actions.resource.patchAndCommitStaged('flows', flowId, patchSet))
+        .put(actions.resource.patchAndCommitStaged('flows', flowId, patchSet, { asyncKey: MOCK_FLOW_ASYNC_KEY }))
         .run();
     });
   });
   describe('createNewPPStep saga', () => {
     const flowId = '123';
 
-    test('should dispatch setSaveStatus and patchAndCommitStaged action if there are changes to flow doc', () =>
-      expectSaga(createNewPPStep, {flowId, path: undefined, processorIndex: undefined})
+    test('should dispatch setSaveStatus and patchAndCommitStaged action if there are changes to flow doc', () => {
+      const patchSet = [{ op: 'add', path: '/pageProcessors', value: [{ setupInProgress: true }] }];
+
+      getChangesPatchSet.mockReturnValue(patchSet);
+
+      return expectSaga(createNewPPStep, {flowId, path: undefined, processorIndex: undefined})
         .provide([
           [select(selectors.resourceData, 'flows', flowId), {merged: {}}],
         ])
-        .put(actions.flow.setSaveStatus(flowId, FLOW_SAVING_STATUS))
-        .put(actions.resource.patchAndCommitStaged('flows', flowId, [{ op: 'add', path: '/pageProcessors', value: [{ setupInProgress: true }] }], {options: {revertChangesOnFailure: true}}))
-        .run());
+        .put(actions.resource.patchAndCommitStaged('flows', flowId, patchSet, {asyncKey: MOCK_FLOW_ASYNC_KEY, options: {revertChangesOnFailure: true}}))
+        .run();
+    });
     test('should dispatch patchAndCommitStaged action if there are no changes to flow doc', () =>
       expectSaga(createNewPPStep, {flowId, path: undefined, processorIndex: undefined})
         .provide([
           [select(selectors.resourceData, 'flows', flowId), {merged: undefined}],
         ])
-        .put(actions.resource.patchAndCommitStaged('flows', flowId, [], {options: {revertChangesOnFailure: true}}))
+        .put(actions.resource.patchAndCommitStaged('flows', flowId, [], {asyncKey: MOCK_FLOW_ASYNC_KEY, options: {revertChangesOnFailure: true}}))
         .run());
   });
   describe('mergeBranch saga', () => {
@@ -677,34 +698,31 @@ describe('flowbuilder sagas', () => {
         .provide([
           [select(selectors.fbMergeTargetId, flowId), undefined],
         ])
-        .not.put(actions.flow.setSaveStatus(flowId, FLOW_SAVING_STATUS))
-        .not.put(actions.resource.patchAndCommitStaged('flows', flowId, []))
+        .not.put(actions.resource.patchAndCommitStaged('flows', flowId, [], { asyncKey: MOCK_FLOW_ASYNC_KEY }))
         .put(actions.flow.dragEnd(flowId))
         .put(actions.flow.mergeTargetClear(flowId))
         .run());
-    test('should not dispatch setSaveStatus and patchAndCommitStaged actions if mergeTargetType does not exist', () =>
+    test('should not dispatch patchAndCommitStaged actions if mergeTargetType does not exist', () =>
       expectSaga(mergeBranch, {flowId})
         .provide([
           [select(selectors.fbMergeTargetId, flowId), '43'],
         ])
-        .not.put(actions.flow.setSaveStatus(flowId, FLOW_SAVING_STATUS))
-        .not.put(actions.resource.patchAndCommitStaged('flows', flowId, []))
+        .not.put(actions.resource.patchAndCommitStaged('flows', flowId, [], { asyncKey: MOCK_FLOW_ASYNC_KEY }))
         .put(actions.flow.dragEnd(flowId))
         .put(actions.flow.mergeTargetClear(flowId))
         .run());
-    test('should not dispatch setSaveStatus and patchAndCommitStaged actions if branch is not mergable', () =>
+    test('should not dispatch patchAndCommitStaged actions if branch is not mergable', () =>
       expectSaga(mergeBranch, {flowId})
         .provide([
           [select(selectors.fbMergeTargetId, flowId), '43'],
           [select(selectors.fbGraphElementsMap, flowId), {43: {type: 'merge'}}],
           [select(selectors.fbMergeTargetType, flowId), 'pp'],
         ])
-        .not.put(actions.flow.setSaveStatus(flowId, FLOW_SAVING_STATUS))
-        .not.put(actions.resource.patchAndCommitStaged('flows', flowId, []))
+        .not.put(actions.resource.patchAndCommitStaged('flows', flowId, [], { asyncKey: MOCK_FLOW_ASYNC_KEY }))
         .put(actions.flow.dragEnd(flowId))
         .put(actions.flow.mergeTargetClear(flowId))
         .run());
-    describe('should dispatch setSaveStatus and patchAndCommitStaged actions if branch is mergable', () => {
+    describe('should dispatch patchAndCommitStaged actions if branch is mergable', () => {
       test('if mergeTarget type is not merge', () =>
         expectSaga(mergeBranch, {flowId})
           .provide([
@@ -712,8 +730,7 @@ describe('flowbuilder sagas', () => {
             [select(selectors.fbMergeTargetId, flowId), '43'],
             [select(selectors.fbMergeTargetType, flowId), 'merge'],
           ])
-          .put(actions.flow.setSaveStatus(flowId, FLOW_SAVING_STATUS))
-          .put(actions.resource.patchAndCommitStaged('flows', flowId, []))
+          .put(actions.resource.patchAndCommitStaged('flows', flowId, [], { asyncKey: MOCK_FLOW_ASYNC_KEY }))
           .put(actions.flow.dragEnd(flowId))
           .put(actions.flow.mergeTargetClear(flowId))
           .run()
@@ -726,8 +743,7 @@ describe('flowbuilder sagas', () => {
             [select(selectors.fbMergeTargetId, flowId), '43'],
             [select(selectors.fbMergeTargetType, flowId), 'merge'],
           ])
-          .put(actions.flow.setSaveStatus(flowId, FLOW_SAVING_STATUS))
-          .put(actions.resource.patchAndCommitStaged('flows', flowId, []))
+          .put(actions.resource.patchAndCommitStaged('flows', flowId, [], { asyncKey: MOCK_FLOW_ASYNC_KEY }))
           .put(actions.flow.dragEnd(flowId))
           .put(actions.flow.mergeTargetClear(flowId))
           .run()
@@ -745,24 +761,28 @@ describe('flowbuilder sagas', () => {
         .provide([
           [select(selectors.fbGraphElementsMap, flowId), elementsMap],
         ])
-        .not.put(actions.flow.setSaveStatus(flowId, FLOW_SAVING_STATUS))
         .run());
 
-    test('should dispatch setSaveStatus and patchAndCommitStaged action if edge exists on flow', () =>
-      expectSaga(deleteEdge, {flowId, edgeId})
+    test('should dispatch patchAndCommitStaged action if edge exists on flow', () => {
+      const patchSet = [{
+        op: 'remove',
+        path: `${edge.data.path}/nextRouterId`,
+      }];
+
+      getChangesPatchSet.mockReturnValue(patchSet);
+
+      return expectSaga(deleteEdge, {flowId, edgeId})
         .provide([
           [select(selectors.fbGraphElementsMap, flowId), elementsMap],
         ])
-        .put(actions.flow.setSaveStatus(flowId, FLOW_SAVING_STATUS))
         .put(actions.resource.patchAndCommitStaged(
           'flows',
           flowId,
-          [{
-            op: 'remove',
-            path: `${edge.data.path}/nextRouterId`,
-          }]
+          patchSet,
+          { asyncKey: MOCK_FLOW_ASYNC_KEY }
         ))
-        .run());
+        .run();
+    });
   });
   describe('deleteRouter saga', () => {
     test('should dispatch patchAndCommitStaged action with correct patch set if preceeding router exists', () => {
@@ -901,13 +921,13 @@ describe('flowbuilder sagas', () => {
         .provide([
           [select(selectors.fbFlow, flowId), flow],
         ])
-        .put(actions.flow.setSaveStatus(flowId, FLOW_SAVING_STATUS))
-        .put(actions.resource.patchAndCommitStaged('flows', flowId, patchSet))
+        .put(actions.resource.patchAndCommitStaged('flows', flowId, patchSet, { asyncKey: MOCK_FLOW_ASYNC_KEY}))
         .run();
     });
     test('should dispatch patchAndCommitStaged action with correct patch set if preceeding router exists and deleting current router results in orphan routers', () => {
       const flowId = '62de216043d10d1a0dbea17d';
       const prePatches = undefined;
+
       const routerId = 'xgYGp_';
       const flow = {
         _id: '62de216043d10d1a0dbea17d',
@@ -1081,13 +1101,13 @@ describe('flowbuilder sagas', () => {
         .provide([
           [select(selectors.fbFlow, flowId), flow],
         ])
-        .put(actions.flow.setSaveStatus(flowId, FLOW_SAVING_STATUS))
-        .put(actions.resource.patchAndCommitStaged('flows', flowId, patchSet))
+        .put(actions.resource.patchAndCommitStaged('flows', flowId, patchSet, { asyncKey: MOCK_FLOW_ASYNC_KEY}))
         .run();
     });
     test('should dispatch patchAndCommitStaged action with correct patch set if it is first router', () => {
       const flowId = '62de216043d10d1a0dbea17d';
       const prePatches = undefined;
+
       const routerId = 'fOUq6p';
       const flow = {
         _id: '62de216043d10d1a0dbea17d',
@@ -1146,38 +1166,22 @@ describe('flowbuilder sagas', () => {
         ],
       };
       const patchSet = [
-        {
-          op: 'remove',
-          path: '/routers',
-        },
-        {
-          op: 'add',
-          path: '/pageProcessors',
-          value: [
-            {
-              responseMapping: {
-                fields: [],
-                lists: [],
-              },
-              type: 'import',
-              _importId: '62583031cc5d605c05cb89d9',
-              id: '62583031cc5d605c05cb89d9',
-            },
-          ],
-        },
+        { op: 'remove', path: '/routers/0/branches/1' },
+        { op: 'remove', path: '/routers/0/routeRecordsTo' },
+        { op: 'remove', path: '/routers/0/routeRecordsUsing' },
       ];
 
       return expectSaga(deleteRouter, {flowId, routerId, prePatches})
         .provide([
           [select(selectors.fbFlow, flowId), flow],
         ])
-        .put(actions.flow.setSaveStatus(flowId, FLOW_SAVING_STATUS))
-        .put(actions.resource.patchAndCommitStaged('flows', flowId, patchSet))
+        .put(actions.resource.patchAndCommitStaged('flows', flowId, patchSet, { asyncKey: MOCK_FLOW_ASYNC_KEY }))
         .run();
     });
     test('should dispatch patchAndCommitStaged action with correct patch set if it is first router and its deletion may lead to orphan routers', () => {
       const flowId = '62de216043d10d1a0dbea17d';
       const prePatches = undefined;
+
       const routerId = 'v8pyFv';
       const flow = {
         _id: '62de216043d10d1a0dbea17d',
@@ -1291,8 +1295,7 @@ describe('flowbuilder sagas', () => {
         .provide([
           [select(selectors.fbFlow, flowId), flow],
         ])
-        .put(actions.flow.setSaveStatus(flowId, FLOW_SAVING_STATUS))
-        .put(actions.resource.patchAndCommitStaged('flows', flowId, patchSet))
+        .put(actions.resource.patchAndCommitStaged('flows', flowId, patchSet, { asyncKey: MOCK_FLOW_ASYNC_KEY }))
         .run();
     });
   });

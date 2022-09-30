@@ -87,8 +87,8 @@ function DynaAssistantOptions(props) {
     () =>
       [
         'adaptorType',
-        'resource',
         'version',
+        'resource',
         'operation',
         'exportType',
       ].reduce(
@@ -162,39 +162,23 @@ function DynaAssistantOptions(props) {
   }, [id, value]);
   function onFieldChange(id, value) {
     onFieldChangeFn(id, value);
-    const resourceTypeSingular = resourceType === 'imports' ? 'import' : 'export';
-    const versions = assistantData?.[resourceTypeSingular]?.versions;
-
     if (
       ['version', 'resource', 'operation', 'exportType'].includes(
         assistantFieldType
       )
     ) {
-      let fieldDependencyMap = {
+      const fieldDependencyMap = {
         exports: {
+          version: ['resource', 'operation', 'exportType'],
           resource: ['operation', 'exportType'],
-          version: ['operation', 'exportType'],
           operation: ['exportType'],
         },
         imports: {
+          version: ['resource', 'operation'],
           resource: ['operation'],
-          version: ['operation'],
         },
       };
 
-      if (versions?.length > 1) {
-        fieldDependencyMap = {
-          exports: {
-            resource: ['version', 'operation', 'exportType'],
-            version: ['operation', 'exportType'],
-            operation: ['exportType'],
-          },
-          imports: {
-            resource: ['version', 'operation'],
-            version: ['operation'],
-          },
-        };
-      }
       const patch = [];
 
       patch.push({
@@ -227,14 +211,6 @@ function DynaAssistantOptions(props) {
           op: 'replace',
           path: '/assistantMetadata/operationChanged',
           value: true,
-        });
-      }
-
-      if (assistantFieldType === 'resource' && versions.length === 1) {
-        patch.push({
-          op: 'replace',
-          path: '/assistantMetadata/version',
-          value: versions[0]._id,
         });
       }
 
