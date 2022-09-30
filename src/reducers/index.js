@@ -2997,7 +2997,7 @@ selectors.hasGeneralSettings = (state, integrationId, childId) => {
   const { supportsMultiStore, general } = integrationResource.settings || {};
 
   if (supportsMultiStore) {
-    return !!(general || []).find(s => s.id === childId);
+    return !!((Array.isArray(general) && general) || []).find(s => s.id === childId);
   }
   if (Array.isArray(general)) {
     return !!general.find(s => s.title === 'General');
