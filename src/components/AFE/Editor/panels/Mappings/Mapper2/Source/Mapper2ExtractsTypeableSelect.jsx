@@ -102,6 +102,7 @@ export const TooltipTitle = ({
   isHandlebarExp,
   fieldType,
   sourceDataTypes,
+  isSource,
 }) => {
   const classes = useStyles();
   let title = '';
@@ -119,18 +120,22 @@ export const TooltipTitle = ({
 
   // Adding condition for length since we need to show the tooltip
   // if their are two source field since dataType is truncated
-  if (isTruncated || (inputValue.split(',').length > 1)) {
+  const sourceInputs = inputValue?.split(',');
+
+  if ((isTruncated || (sourceInputs.length > 1)) && isSource) {
     const selectedDataTypeLabels = [];
 
     sourceDataTypes?.forEach(datatype => {
       selectedDataTypeLabels.push(DATA_TYPES_REPRESENTATION_LIST[[datatype]]);
     });
-    const inputValArr = inputValue.split(',');
+    const inputValArr = sourceInputs;
 
     title = (
       <div className={classes.sourceDataToolTip}>
         <div>Source field / data type:</div>
-        {inputValArr.map((input, i) => <span key={`${input}`}> {input} / {selectedDataTypeLabels[i]} </span>)}
+        {// eslint-disable-next-line react/no-array-index-key
+        inputValArr.map((input, i) => <span key={`${input}${i}`}> {input} / {selectedDataTypeLabels[i]} </span>)
+        }
       </div>
     );
   } else if (!isTruncated && !hideSourceDropdown) return fieldType;
@@ -226,6 +231,7 @@ export default function Mapper2ExtractsTypeableSelect({
             isDynamicLookup={isDynamicLookup}
             isHardCodedValue={isHardCodedValue}
             isHandlebarExp={isHandlebarExp}
+            isSource
             fieldType="Source field"
             sourceDataTypes={sourceDataType}
         />
