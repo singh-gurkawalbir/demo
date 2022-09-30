@@ -89,7 +89,7 @@ export default function TitleActions({ flowId }) {
           {merged.http?._httpConnectorId
             ? (
               <>
-                Connector guide
+                Connection guide
                 <Divider orientation="vertical" className={classes.divider} />
               </>
               )
