@@ -596,9 +596,10 @@ export const connectorsList = () => {
 
   publishedConnectors?.forEach(pc => {
     connectors.push({
-      value: pc._id,
+      value: pc.name,
       label: pc.name,
       icon: pc.legacyId || pc.name.toLowerCase().replace(/\.|\s/g, ''),
+      _httpConnectorId: pc._id,
       type: 'http',
       published: true,
     });

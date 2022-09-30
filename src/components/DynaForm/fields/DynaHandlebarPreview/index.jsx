@@ -82,9 +82,8 @@ export default function DynaHandlebarPreview({
           <ActionButton
             data-test={dataTest || id}
             tooltip="Open handlebars editor"
+            placement="bottom"
             className={clsx(classes.afeButton, { [classes.errorBtn]: !isValid})}
-            variant="outlined"
-            color="secondary"
             onClick={onEditorClick}>
             <AfeIcon />
           </ActionButton>

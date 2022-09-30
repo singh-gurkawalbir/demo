@@ -113,7 +113,7 @@ import { filterMap } from '../components/GlobalSearch/filterMeta';
 import { getRevisionFilterKey, getFilteredRevisions, getPaginatedRevisions, REVISION_DIFF_ACTIONS } from '../utils/revisions';
 import { buildDrawerUrl, drawerPaths } from '../utils/rightDrawer';
 import { GRAPHQL_HTTP_FIELDS, isGraphqlResource } from '../utils/graphql';
-import { initializeFlowForReactFlow } from '../utils/flows/flowbuilder';
+import { initializeFlowForReactFlow, getFlowAsyncKey } from '../utils/flows/flowbuilder';
 import { HTTP_BASED_ADAPTORS } from '../utils/http';
 
 const emptyArray = [];
@@ -2180,6 +2180,9 @@ selectors.makeFlowDataForFlowBuilder = () => {
     flow => initializeFlowForReactFlow(flow)
   );
 };
+
+selectors.isFlowSaveInProgress = (state, flowId) => selectors.isAsyncTaskLoading(state, getFlowAsyncKey(flowId));
+
 selectors.flowDataForFlowBuilder = selectors.makeFlowDataForFlowBuilder();
 // Please use makeResourceDataSelector in JSX as it is cached selector.
 // For sagas we can use resourceData which points to cached selector.
@@ -7199,7 +7202,7 @@ selectors.allAliases = createSelector(
 
 selectors.retryUsersList = createSelector(
   selectors.userProfile,
-  selectors.usersList,
+  state => selectors.availableUsersList(state),
   (state, flowId, resourceId) => selectors.retryList(state, flowId, resourceId),
   (profile, availableUsersList, retryJobs) => {
     if (!Array.isArray(retryJobs)) {
@@ -7221,7 +7224,7 @@ selectors.retryUsersList = createSelector(
       }];
     }, []);
 
-    return [{ _id: 'all', name: 'Select'}, ...allUsersTriggeredRetry];
+    return [{ _id: 'all', name: 'All users'}, ...allUsersTriggeredRetry];
   }
 );
 

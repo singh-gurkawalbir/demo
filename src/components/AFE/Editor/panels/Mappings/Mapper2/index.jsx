@@ -44,7 +44,10 @@ const useStyles = makeStyles(theme => ({
       position: 'relative',
       border: '1px solid transparent',
       '&.hideRow': {
-        display: 'none',
+        // This css for virtualisation remove space ref: IO-28685
+        visibility: 'hidden',
+        height: 0,
+        marginTop: '-2px',
       },
       '&:hover': {
         '& .rc-tree-draggable-icon': {
@@ -347,7 +350,7 @@ export default function Mapper2({editorId}) {
       <div className={clsx(classes.mappingDrawerContent, {[classes.addSearchBar]: searchKey !== undefined})}>
         <Tree
           className={clsx(classes.treeRoot, {[classes.virtualTree]: allNodes > 50}, {[classes.virtualTreeCompactRow]: allNodes > 50 && editorLayout === 'compactRow'})}
-          height={allNodes > 50 ? 600 : undefined}
+          height={allNodes > 50 ? Math.round(window.innerHeight) - 262 : undefined}
           itemHeight={allNodes > 50 ? 20 : undefined}
           titleRender={Row}
           treeData={treeData}

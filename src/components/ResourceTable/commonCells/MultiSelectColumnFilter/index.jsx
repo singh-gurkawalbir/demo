@@ -11,7 +11,7 @@ import Help from '../../../Help';
 const useStyles = makeStyles({
   wrapperSelectFilter: {
     display: 'flex',
-    alignItems: 'flex-start',
+    alignItems: 'center',
     whiteSpace: 'nowrap',
   },
   helpIcon: {

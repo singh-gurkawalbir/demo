@@ -7,23 +7,19 @@ import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import { useHistory } from 'react-router-dom';
-import { DATA_TYPES_DROPDOWN_OPTIONS, DATA_TYPES_REPRESENTATION_LIST } from '../../../../../../../utils/mapping';
+import { DATA_TYPES_DROPDOWN_OPTIONS, DATA_TYPES_REPRESENTATION_LIST, MAPPING_DATA_TYPES } from '../../../../../../../utils/mapping';
 import actions from '../../../../../../../actions';
 import { TextButton } from '../../../../../../Buttons';
 import ArrowPopper from '../../../../../../ArrowPopper';
 import ArrowDownFilledIcon from '../../../../../../icons/ArrowDownFilledIcon';
 import { buildDrawerUrl, drawerPaths } from '../../../../../../../utils/rightDrawer';
-import CeligoTruncate from '../../../../../../CeligoTruncate';
 import useSyncedRef from '../../../../../../../hooks/useSyncedRef';
 
 const useStyles = makeStyles(theme => ({
   dataType: {
-    border: 'none',
-    fontStyle: 'italic',
     color: theme.palette.primary.main,
     justifyContent: 'end',
     padding: 0,
-    width: theme.spacing(9),
     '& svg': {
       marginLeft: theme.spacing(-1),
     },
@@ -130,6 +126,13 @@ const useStyles = makeStyles(theme => ({
     wordBreak: 'break-word',
     textAlign: 'right',
   },
+  dataTypeSelected: {
+    width: theme.spacing(8),
+    textAlign: 'right',
+    whiteSpace: 'nowrap',
+    textOverflow: 'ellipsis',
+    overflow: 'hidden',
+  },
 }));
 
 const getToolTipTitle = (isHandlebarExp, isHardCodedValue) => {
@@ -153,13 +156,15 @@ export default function SourceDataType({
   sourceDataTypes,
   isHardCodedValue,
   isHandlebarExp,
+  isFocused,
 }) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const history = useHistory();
-  const sourceDataTypeRef = useSyncedRef(sourceDataTypes);
+  const sourceDataTypeRef = useSyncedRef(!sourceDataTypes?.length ? [MAPPING_DATA_TYPES.STRING] : sourceDataTypes);
   const open = !!anchorEl;
   const selectedDataTypeLabels = [];
+
   const handleMenu = useCallback(
     event => {
       if (selectedDataTypeLabels && selectedDataTypeLabels.length > 1) {
@@ -174,7 +179,7 @@ export default function SourceDataType({
         setAnchorEl(anchorEl ? null : event.currentTarget);
       }
     },
-    [anchorEl, setAnchorEl, selectedDataTypeLabels]
+    [anchorEl, dispatch, history, setAnchorEl, nodeKey, selectedDataTypeLabels]
   );
   const handleClose = useCallback(() => {
     setAnchorEl(null);
@@ -188,7 +193,7 @@ export default function SourceDataType({
     handleClose();
     sourceDataTypeRef.current = [newDataType];
     dispatch(actions.mapping.v2.updateDataType(nodeKey, newDataType, true));
-  }, [handleClose, dataType, dispatch, nodeKey]);
+  }, [handleClose, dispatch, nodeKey, sourceDataTypeRef]);
 
   return (
     <div className={clsx(classes.sourceDataTypeDropDown, className)}>
@@ -203,12 +208,13 @@ export default function SourceDataType({
             disabled={disabled}
             endIcon={sourceDataTypes && sourceDataTypes.length > 1 ? '' : <ArrowDownFilledIcon />}
             className={classes.dataType} >
-            { document.getElementById('extractPopper')
-              ? <span className={classes.dataTypeList}>{selectedDataTypeLabels.join()}</span> : (
-                <CeligoTruncate placement="bottom" disableHoverListener>
-                  {selectedDataTypeLabels.join()}
-                </CeligoTruncate>
-              )}
+            {// CeligoTruncate is not used here since it effects the drag and drop functionality
+            isFocused ? <span className={classes.dataTypeList}>{selectedDataTypeLabels.join()}</span> : (
+              <span className={classes.dataTypeSelected}>
+                {selectedDataTypeLabels.join()}
+              </span>
+            )
+            }
           </TextButton>
         </span>
       </Tooltip>

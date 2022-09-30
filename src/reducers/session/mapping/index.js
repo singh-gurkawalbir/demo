@@ -873,7 +873,7 @@ export default (state = {}, action) => {
                 }
               } else if (node.dataType !== MAPPING_DATA_TYPES.OBJECT || node.copySource === 'yes') {
                 node.extract = value;
-                node.sourceDataType = draft.mapping.extractsTree && draft.mapping.extractsTree[0] ? getSelectedExtractDataTypes(draft.mapping.extractsTree[0], value.replace(/(\$\.)|(\$\[\*\]\.)/g, ''))[0] || 'string' : 'string';
+                node.sourceDataType = getSelectedExtractDataTypes(draft.mapping.extractsTree, value)[0] || MAPPING_DATA_TYPES.STRING;
               }
             }
           } else if (node.isRequired) {
@@ -894,7 +894,7 @@ export default (state = {}, action) => {
 
           if (field === 'generate' && value.length) {
             // updates tree data with new nodes added at eligible parent nodes for object array
-            insertSiblingsOnDestinationUpdate(draft.mapping.v2TreeData, node);
+            insertSiblingsOnDestinationUpdate(draft.mapping.v2TreeData, node, draft.mapping.lookups);
           }
         }
 
@@ -934,6 +934,10 @@ export default (state = {}, action) => {
           // handle if data type changed
           if (oldDataType !== newDataType) {
             nodeSubArray[nodeIndexInSubArray] = updateDataType(draft, node, oldDataType, newDataType);
+            if (newDataType === MAPPING_DATA_TYPES.OBJECTARRAY) {
+              // Handles updates of mapper node incase the  data type is changed to Object array with source field settings
+              nodeSubArray[nodeIndexInSubArray] = rebuildObjectArrayNode(nodeSubArray[nodeIndexInSubArray], node.extract);
+            }
           } else if (newDataType === MAPPING_DATA_TYPES.OBJECT) {
             delete node.extractsArrayHelper;
 

@@ -8,6 +8,7 @@ import actions from '../../../actions';
 import { selectors } from '../../../reducers';
 import InvitationItem from './InvitationItem';
 import LoadResources from '../../../components/LoadResources';
+import IconButtonWithTooltip from '../../../components/IconButtonWithTooltip';
 
 const useStyles = makeStyles(theme => ({
   notificationContainer: {
@@ -23,6 +24,9 @@ const useStyles = makeStyles(theme => ({
   },
   divider: {
     margin: theme.spacing(2, 0),
+  },
+  btnNotification: {
+    padding: 0,
   },
 }));
 
@@ -84,7 +88,7 @@ function Notifications() {
       <>
         <LoadResources resources={isAccountOwner ? 'transfers' : 'transfers/invited'} />
         <Tooltip title="No notifications" placement="bottom" aria-label="no notifications">
-          <IconButton aria-label="notifications" size="small" color="inherit">
+          <IconButton aria-label="notifications" size="small" color="inherit" className={classes.btnNotification}>
             <NotificationsIcon />
           </IconButton>
         </Tooltip>
@@ -95,14 +99,20 @@ function Notifications() {
   return (
     <>
       <LoadResources resources={isAccountOwner ? 'transfers' : 'transfers/invited'} />
-      <IconButton aria-label="notifications" size="small" color="inherit" onClick={handleClick}>
+      <IconButtonWithTooltip
+        tooltipProps={{title: 'Notifications'}}
+        aria-label="notifications"
+        size="small"
+        color="inherit"
+        noPadding
+        onClick={handleClick}>
         <Badge
           badgeContent={notifications.length}
           color="primary"
           className={classes.badgeText}>
           <NotificationsIcon />
         </Badge>
-      </IconButton>
+      </IconButtonWithTooltip>
 
       <ArrowPopper
         id="notifications"

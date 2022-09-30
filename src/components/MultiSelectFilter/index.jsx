@@ -67,9 +67,6 @@ const useStyles = makeStyles(theme => ({
       borderColor: theme.palette.primary.main,
       color: theme.palette.secondary.dark,
     },
-    '& .MuiButton-label': {
-      width: theme.spacing(19),
-    },
   },
   actions: {
     marginTop: theme.spacing(2),

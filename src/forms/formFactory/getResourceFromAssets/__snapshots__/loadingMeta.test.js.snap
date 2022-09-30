@@ -4778,35 +4778,11 @@ Object {
             "min": 1,
           },
         },
-        "visibleWhenAll": Array [
-          Object {
-            "field": "netsuite.restlet.recordType",
-            "isNot": Array [
-              "",
-            ],
-          },
+        "visibleWhen": Array [
           Object {
             "field": "restlet.type",
             "is": Array [
               "once",
-            ],
-          },
-          Object {
-            "field": "outputMode",
-            "is": Array [
-              "records",
-            ],
-          },
-          Object {
-            "field": "netsuite.api.type",
-            "is": Array [
-              "restlet",
-            ],
-          },
-          Object {
-            "field": "netsuite.execution.type",
-            "is": Array [
-              "scheduled",
             ],
           },
         ],
@@ -13245,7 +13221,7 @@ Object {
   },
   "init": undefined,
   "optionsHandler": [Function],
-  "preSave": undefined,
+  "preSave": [Function],
   "validationHandler": undefined,
 }
 `;
