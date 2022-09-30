@@ -138,7 +138,11 @@ export const TooltipTitle = ({
         }
       </div>
     );
-  } else if (!isTruncated && !hideSourceDropdown) return fieldType;
+  } else if (!isTruncated && !hideSourceDropdown) {
+    return fieldType;
+  } else {
+    title = `${fieldType}: ${inputValue}`;
+  }
 
   if (!hideSourceDropdown) return title;
 
