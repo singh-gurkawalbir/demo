@@ -208,7 +208,7 @@ export default function SourceDataType({
             disabled={disabled}
             endIcon={sourceDataTypes && sourceDataTypes.length > 1 ? '' : <ArrowDownFilledIcon />}
             className={classes.dataType} >
-            {// CeligoTruncate is not used here since it effects the drag and drop finctionality
+            {// CeligoTruncate is not used here since it effects the drag and drop functionality
             isFocused ? <span className={classes.dataTypeList}>{selectedDataTypeLabels.join()}</span> : (
               <span className={classes.dataTypeSelected}>
                 {selectedDataTypeLabels.join()}
