@@ -101,7 +101,7 @@ export default {
     settings.generate = generate;
     settings.description = formVal.description;
     settings.extract = formVal.sourceField;
-    settings.sourceDataType = formVal.sourceDataType;
+    settings.sourceDataType = formVal.dataType === MAPPING_DATA_TYPES.OBJECT ? formVal.objectSourceDataType : formVal.sourceDataType;
 
     if ('dataType' in formVal) {
       // default data type is always string

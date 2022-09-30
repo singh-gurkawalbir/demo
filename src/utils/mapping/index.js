@@ -654,40 +654,53 @@ export const getExtractDataType = helper => {
 };
 
 // util for fetching the the correct datatype value of a selected node
-export const getSelectedExtractDataTypes = (extractsTreeNode, selectedValue, selectedNodes = []) => {
-  if (isEmpty(extractsTreeNode) || !extractsTreeNode.children?.length) return selectedNodes;
+export const getSelectedExtractDataTypes = (extractsTreeNodeArr, selectedValuePath, selectedDataType = []) => {
+  if (!extractsTreeNodeArr || !extractsTreeNodeArr[0]) {
+    return selectedDataType;
+  }
+  const extractsTreeNode = extractsTreeNodeArr[0];
 
-  extractsTreeNode.children.forEach(node => {
-    const {dataType, jsonPath} = node;
+  if (isEmpty(extractsTreeNode) || !extractsTreeNode.children?.length) return selectedDataType;
 
-    if (selectedValue === jsonPath) {
-      let dataTypeValue;
+  if (selectedValuePath === '$') {
+    selectedDataType.push(MAPPING_DATA_TYPES.OBJECT);
+  } else if (selectedValuePath === '$[*]') {
+    selectedDataType.push(MAPPING_DATA_TYPES.OBJECTARRAY);
+  } else {
+    const selectedValue = selectedValuePath.replace(/(\$\.)|(\$\[\*\]\.)/g, '');
 
-      switch (dataType) {
-        case '[object]':
-          dataTypeValue = 'objectarray';
-          break;
-        case '[boolean]':
-          dataTypeValue = 'booleanarray';
-          break;
-        case '[number]':
-          dataTypeValue = 'numberarray';
-          break;
-        case '[string]':
-          dataTypeValue = 'stringarray';
-          break;
-        default:
-          dataTypeValue = dataType;
+    extractsTreeNode.children.forEach(node => {
+      const {dataType, jsonPath} = node;
+
+      if (selectedValue === jsonPath) {
+        let dataTypeValue;
+
+        switch (dataType) {
+          case '[object]':
+            dataTypeValue = MAPPING_DATA_TYPES.OBJECTARRAY;
+            break;
+          case '[boolean]':
+            dataTypeValue = MAPPING_DATA_TYPES.BOOLEANARRAY;
+            break;
+          case '[number]':
+            dataTypeValue = MAPPING_DATA_TYPES.NUMBERARRAY;
+            break;
+          case '[string]':
+            dataTypeValue = MAPPING_DATA_TYPES.STRINGARRAY;
+            break;
+          default:
+            dataTypeValue = dataType;
+        }
+        selectedDataType.push(dataTypeValue);
       }
-      selectedNodes.push(dataTypeValue);
-    }
 
-    if (node.children) {
-      getSelectedExtractDataTypes(node, selectedValue, selectedNodes);
-    }
-  });
+      if (node.children) {
+        getSelectedExtractDataTypes([node], selectedValue, selectedDataType);
+      }
+    });
+  }
 
-  return selectedNodes;
+  return selectedDataType;
 };
 
 export const buildExtractsHelperFromExtract = (existingExtractsArray = [], sourceField, formKey, newExtractObj, extractsTree) => {
@@ -715,11 +728,11 @@ export const buildExtractsHelperFromExtract = (existingExtractsArray = [], sourc
       // add missing extracts in existingExtractsArray which are newly added by the user and copy settings if found at same index
       toReturn.push({...removedSources[existingExtractsArray[i].extract],
         extract: uniqueExtract,
-        sourceDataType: extractsTree && extractsTree[0] ? getSelectedExtractDataTypes(extractsTree[0], e.replace(/(\$\.)|(\$\[\*\]\.)/g, ''))[0] || 'string' : 'string'});
+        sourceDataType: getSelectedExtractDataTypes(extractsTree, e)[0] || MAPPING_DATA_TYPES.STRING});
     } else {
       // add extract
       toReturn.push(formKey ? newExtractObj : {extract: uniqueExtract,
-        sourceDataType: extractsTree && extractsTree[0] ? getSelectedExtractDataTypes(extractsTree[0], e.replace(/(\$\.)|(\$\[\*\]\.)/g, ''))[0] || 'string' : 'string'});
+        sourceDataType: getSelectedExtractDataTypes(extractsTree, e)[0] || MAPPING_DATA_TYPES.STRING});
     }
   });
 
