@@ -1078,7 +1078,7 @@ function recursivelyBuildTreeFromV2Mappings({mappings = [], treeData, parentKey,
             extract: newExtract,
             sourceDataType: obj.sourceDataType || MAPPING_DATA_TYPES.STRING,
             default: obj.default,
-            conditional: obj.conditional || {when: 'extract_not_empty'},
+            conditional: obj.conditional,
             copySource: mappings ? 'no' : 'yes',
           };
 
@@ -1131,7 +1131,7 @@ function recursivelyBuildTreeFromV2Mappings({mappings = [], treeData, parentKey,
           extract: getUniqueExtractId(obj.extract, index),
           sourceDataType: obj.sourceDataType || MAPPING_DATA_TYPES.STRING,
           default: obj.default,
-          conditional: obj.conditional || {when: 'extract_not_empty'},
+          conditional: obj.conditional,
         };
 
         extractsArrayHelper.push(extractObj);
