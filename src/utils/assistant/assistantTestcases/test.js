@@ -2853,7 +2853,7 @@ describe('convertFromExport', () => {
       {
         export: {
           labels: {
-            version: 'API Version',
+            version: 'API version',
             resource: 'Resource',
             endpoint: 'Operation',
           },
