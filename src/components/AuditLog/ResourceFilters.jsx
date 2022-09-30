@@ -87,11 +87,12 @@ export function ResourceTypeFilter(props) {
           'revision',
           'script',
           'agent',
+          'notification',
         ],
   };
 
   resourceTypeFilterOptionsByResourceType.all =
-    [...resourceTypeFilterOptionsByResourceType.integrations, 'accesstoken', 'ssoclient', 'user', 'api', 'notification'];
+    [...resourceTypeFilterOptionsByResourceType.integrations, 'accesstoken', 'ssoclient', 'user', 'api'];
 
   return (
     <FormControl className={classes.formControl}>

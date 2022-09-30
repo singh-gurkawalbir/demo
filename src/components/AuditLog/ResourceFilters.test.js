@@ -100,7 +100,7 @@ describe('UI test cases for resource type filters', () => {
     userEvent.click(resourceType);
     const resourceOptions = screen.getAllByRole('option');
 
-    expect(resourceOptions).toHaveLength(12);
+    expect(resourceOptions).toHaveLength(13);
   });
 });
 
