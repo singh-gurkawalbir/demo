@@ -111,6 +111,7 @@ function ProfileMenuButton() {
         aria-label="avatar"
         aria-owns={open ? 'profileOptions' : null}
         aria-haspopup="true"
+        noPadding
         onClick={handleMenu}>
         <Avatar alt={name} src={avatarUrl} className={classes.avatar} />
       </IconButtonWithTooltip>
