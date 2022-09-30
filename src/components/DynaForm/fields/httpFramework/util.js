@@ -3,23 +3,23 @@ import format from 'xml-formatter';
 import { deepClone } from 'fast-json-patch';
 import { stringCompare } from '../../../../utils/sort';
 
-function resourceOptions({ assistantData }) {
-  return assistantData?.resources?.map(resource => ({
-    label: resource.name,
-    value: resource.id,
+function versionOptions({ assistantData }) {
+  return assistantData?.versions?.map(version => ({
+    label: version.version,
+    value: version._id || version.version,
   }));
 }
 
-function versionOptions({ resourceData = { resources: [] } }) {
-  return resourceData.versions?.map(version => ({
-    label: version.version,
-    value: version._id || version.version,
+function resourceOptions({ versionData = { resources: [] } }) {
+  return versionData.resources?.map(resource => ({
+    label: resource.name,
+    value: resource.id,
   }))
     .sort(stringCompare('label'));
 }
 
-function exportOperationOptions({ versionData = { endpoints: [] } }) {
-  return versionData.endpoints?.map(operation => ({
+function exportOperationOptions({ resourceData = { endpoints: [] } }) {
+  return resourceData.endpoints?.map(operation => ({
     label: operation.name,
     value: operation.id || operation.url,
   }));
@@ -37,8 +37,8 @@ function importOperationKey(operation) {
   return [operation.method, operation.url].join(':');
 }
 
-function importOperationOptions({ versionData = { operations: [] } }) {
-  return versionData.operations.map(operation => ({
+function importOperationOptions({ resourceData = { operations: [] } }) {
+  return resourceData.operations.map(operation => ({
     label: operation.name,
     value: importOperationKey(operation),
   }));
@@ -66,49 +66,40 @@ export function selectOptions({
 }) {
   const resourceTypeSingular = resourceType === 'imports' ? 'import' : 'export';
 
-  if (assistantFieldType === 'version' && assistantData?.[resourceTypeSingular]?.versions?.length === 1) {
-    const versions = assistantData?.[resourceTypeSingular]?.versions;
-
-    return versions?.map(version => ({
-      label: version.version,
-      value: version._id || version.version,
-    }))
-      .sort(stringCompare('label'));
-  }
-  if (assistantFieldType === 'resource') {
-    return resourceOptions({
+  if (assistantFieldType === 'version') {
+    return versionOptions({
       assistantData: assistantData?.[resourceTypeSingular],
     });
   }
 
-  const selectedResource = resourceData({
-    resources: assistantData?.[resourceTypeSingular]?.resources,
-    resourceId: formContext.resource,
+  const selectedVersion = versionData({
+    versions: assistantData?.[resourceTypeSingular]?.versions,
+    versionId: formContext.version,
   });
 
-  if (!selectedResource) {
+  if (!selectedVersion) {
     return [];
   }
 
-  if (assistantFieldType === 'version') {
-    return versionOptions({
-      resourceData: selectedResource,
+  if (assistantFieldType === 'resource') {
+    return resourceOptions({
+      versionData: selectedVersion,
     });
   }
   if (assistantFieldType === 'operation') {
     if (resourceType === 'imports') {
       return importOperationOptions({
-        versionData: versionData({
-          versions: selectedResource.versions,
-          versionId: formContext.version,
+        resourceData: resourceData({
+          resources: selectedVersion.resources,
+          resourceId: formContext.resource,
         }),
       });
     }
 
     return exportOperationOptions({
-      versionData: versionData({
-        versions: selectedResource.versions,
-        versionId: formContext.version,
+      resourceData: resourceData({
+        resources: selectedVersion.resources,
+        resourceId: formContext.resource,
       }),
     });
   }

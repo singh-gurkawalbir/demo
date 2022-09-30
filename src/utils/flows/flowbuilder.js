@@ -1,7 +1,7 @@
 /* eslint-disable no-param-reassign */
 import { cloneDeep, uniq, uniqBy } from 'lodash';
 import jsonPatch from 'fast-json-patch';
-import { BranchPathRegex, GRAPH_ELEMENTS_TYPE, PageProcessorPathRegex } from '../../constants';
+import { BranchPathRegex, GRAPH_ELEMENTS_TYPE, PageProcessorPathRegex, FLOW_SAVE_ASYNC_KEY } from '../../constants';
 import { shortId } from '../string';
 import { setObjectValue } from '../json';
 import messageStore from '../messageStore';
@@ -684,6 +684,8 @@ export const mergeTerminalToAnEdge = ({ flowDoc, elements, patchSet, sourceEleme
     mergeBetweenTwoPPSteps({flowDoc, targetElement, sourceElement, patchSet});
   }
 };
+
+export const getFlowAsyncKey = flowId => `${flowId}-${FLOW_SAVE_ASYNC_KEY}`;
 
 export const mergeDragSourceWithTarget = (flowDoc, elements, dragNodeId, targetId, patchSet) => {
   const sourceElement = elements[dragNodeId];

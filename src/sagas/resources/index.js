@@ -293,7 +293,6 @@ export function* commitStagedChanges({ resourceType, id, scope, options, context
       yield put(actions.flow.isOnOffActionInprogress(false, id));
     }
     if (resourceType === 'flows') {
-      yield put(actions.flow.setSaveStatus(id));
       if (options?.revertChangesOnFailure) {
         yield put(actions.resource.clearStaged(id, scope));
       }
@@ -415,9 +414,6 @@ export function* commitStagedChanges({ resourceType, id, scope, options, context
       { connectionId: merged._id,
         link: merged.netsuite.linkSuiteScriptIntegrator }
     );
-  }
-  if (resourceType === 'flows') {
-    yield put(actions.flow.setSaveStatus(id));
   }
 }
 
