@@ -110,6 +110,9 @@ const ErrorTableWithPanel = ({
   const hasErrors = useSelector(state =>
     selectors.hasResourceErrors(state, { flowId, resourceId, isResolved })
   );
+  const retryStatus = useSelector(
+    state => selectors.retryStatus(state, flowId, resourceId)
+  );
   const filter = useSelector(state => selectors.filter(state, filterKey));
 
   if (
@@ -123,7 +126,7 @@ const ErrorTableWithPanel = ({
   ) {
     hasFilter = true;
   }
-  const emptyErrorMessage = !hasFilter && !isResolved && !hasErrors;
+  const emptyErrorMessage = !hasFilter && !isResolved && !hasErrors && !(retryStatus === 'inProgress');
   const emptyFilterMessage = hasFilter && errorsInCurrPage.length === 0;
 
   useEffect(() => {
