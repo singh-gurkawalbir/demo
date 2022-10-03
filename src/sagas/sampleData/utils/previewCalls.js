@@ -254,6 +254,7 @@ export function* exportPreview({
     path = `/integrations/${flow._integrationId}/exports/preview`;
   } else {
     path = '/exports/preview';
+    body._flowId = flowId;
   }
 
   try {
