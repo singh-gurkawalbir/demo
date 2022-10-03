@@ -22,6 +22,7 @@ import util, {
   // getNewChildrenToAdd,
   hideOtherTabRows,
   isCsvOrXlsxResourceForMapper2,
+  getSelectedExtractDataTypes,
 } from '.';
 import {generateUniqueKey} from '../string';
 
@@ -506,6 +507,52 @@ describe('v2 mapping utils', () => {
       expect(hideOtherTabRows(node, newTabExtract)).toEqual(newNode);
     });
   });
+
+  describe('getSelectedExtractDataTypes util', () => {
+    test('should not throw exception for invalid args', () => {
+      expect(getSelectedExtractDataTypes()).toEqual([]);
+      expect(getSelectedExtractDataTypes([])).toEqual([]);
+    });
+    test('should return correct data type depending on the input provided', () => {
+      const extractsTreeNodeArr = [
+        {
+          key: 'ayQRLXyyH0Z7kh7rhKIUD',
+          title: '',
+          dataType: '[object]',
+          propName: '$',
+          children: [
+            {
+              key: 'Yyh6ZHqzCW7sujMGJ8MqG',
+              parentKey: 'ayQRLXyyH0Z7kh7rhKIUD',
+              title: '',
+              jsonPath: 'isFlagShip',
+              propName: 'isFlagShip',
+              dataType: 'boolean',
+            },
+            {
+              key: 'ilILG9diOQBMRBMaNyPKN',
+              parentKey: 'ayQRLXyyH0Z7kh7rhKIUD',
+              title: '',
+              jsonPath: 'sku',
+              propName: 'sku',
+              dataType: 'string',
+            },
+            {
+              key: '5khsdQYcGjwDHGQNPbOnM',
+              parentKey: 'ayQRLXyyH0Z7kh7rhKIUD',
+              title: '',
+              jsonPath: 'vendor',
+              propName: 'vendor',
+              dataType: 'string',
+            },
+          ],
+        },
+      ];
+
+      expect(getSelectedExtractDataTypes(extractsTreeNodeArr, '$[*].isFlagShip', [])).toEqual(['boolean']);
+    });
+  });
+
   describe('rebuildObjectArrayNode util', () => {
     test('should not throw exception for invalid args', () => {
       expect(rebuildObjectArrayNode()).toBeUndefined();
