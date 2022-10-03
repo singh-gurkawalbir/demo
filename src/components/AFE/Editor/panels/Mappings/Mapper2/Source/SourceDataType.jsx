@@ -198,7 +198,6 @@ export default function SourceDataType({
 
   const onDataTypeChange = useCallback(newDataType => {
     handleClose();
-    // sourceDataTypeRef.current = [newDataType];
     setSourceDataType([newDataType]);
     dispatch(actions.mapping.v2.updateDataType(nodeKey, newDataType, true));
   }, [handleClose, dispatch, nodeKey]);
