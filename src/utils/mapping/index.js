@@ -622,12 +622,15 @@ export const getExtractFromUniqueId = extractId => {
   return extractId;
 };
 
-export const findMatchingExtract = (helper, extract) => {
-  if (!helper || !extract) return {};
+// returns the matching extract config object
+// from passed extracts helper array
+export const findMatchingExtract = (helper, uniqueExtract) => {
+  if (!helper || !uniqueExtract) return {};
 
-  return helper.find(h => h.extract === extract) || {};
+  return helper.find(h => h.extract === uniqueExtract) || {};
 };
 
+// returns the array of all extracts value (non-unique so its readable for user) from helper array
 export const getCombinedExtract = helper => {
   if (!helper || !helper.length) return [];
 
@@ -703,16 +706,19 @@ export const getSelectedExtractDataTypes = (extractsTreeNodeArr, selectedValuePa
   return selectedDataType;
 };
 
+// this util takes in the existing helper array and new source field
+// and adds/updates the helper array accordingly
 export const buildExtractsHelperFromExtract = (existingExtractsArray = [], sourceField, formKey, newExtractObj, extractsTree) => {
   if (!sourceField) return [];
 
   const splitExtracts = sourceField?.split(',') || [];
+  const uniqueSplitExtracts = splitExtracts.map((e, i) => getUniqueExtractId(e, i));
   const toReturn = [];
   const removedSources = {};
 
   // copy the existing settings of removed source so if a new source is added at same index, we copy same settings
   existingExtractsArray.forEach(c => {
-    if (!splitExtracts.includes(getExtractFromUniqueId(c.extract))) {
+    if (!uniqueSplitExtracts.includes(c.extract)) {
       removedSources[c.extract] = c;
     }
   });
@@ -802,6 +808,8 @@ export const hideOtherTabRows = (node, newTabExtract = '', hidden, useOriginalNo
   return clonedNode;
 };
 
+// find the first extract from helper array
+// which does not have copy source as yes
 export const getFirstActiveTab = node => {
   if (!node || !node.extractsArrayHelper) return {};
   let activeTab;
@@ -1203,7 +1211,9 @@ export const buildTreeFromV2Mappings = ({
   return mappingsTreeData;
 };
 
-const isMappingWithoutExtract = (mapping, lookups) => {
+export const isMappingWithoutExtract = (mapping, lookups) => {
+  if (!mapping) return true;
+
   const {dataType, copySource, extract, extractsArrayHelper = []} = mapping;
 
   let missingExtract;
