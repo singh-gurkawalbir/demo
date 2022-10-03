@@ -111,7 +111,7 @@ export const updateDataType = (draft, node, oldDataType, newDataType) => {
   if (newDataType === MAPPING_DATA_TYPES.OBJECT || newDataType === MAPPING_DATA_TYPES.OBJECTARRAY) {
     expandRow(draft, newNode.key);
 
-    newNode.extractsArrayHelper = newNode.extractsArrayHelper || buildExtractsHelperFromExtract([], newNode.extract);
+    newNode.extractsArrayHelper = newNode.extractsArrayHelper || buildExtractsHelperFromExtract([], newNode.extract, undefined, undefined, undefined, newNode.sourceDataType);
 
     delete newNode.hardCodedValue;
     delete newNode.lookupName;
