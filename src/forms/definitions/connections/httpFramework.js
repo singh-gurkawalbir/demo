@@ -430,8 +430,6 @@ export default {
               fields: [
                 'httpBasic',
                 'httpCookie',
-                'http.custom.encrypted',
-                'http.custom.unencrypted',
                 'httpDigest',
                 'httpOAuth',
                 'httpOAuthOverrides',

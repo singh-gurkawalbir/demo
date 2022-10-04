@@ -213,6 +213,7 @@ export default {
 
     newValues['/configureTokenRefresh'] = undefined;
     newValues['/configureCutomAuthTokenRefresh'] = undefined;
+    newValues['/assistant'] = undefined;
 
     return newValues;
   },

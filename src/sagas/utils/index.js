@@ -517,18 +517,15 @@ export const updateFinalMetadataWithHttpFramework = (finalFieldMeta, connector, 
     });
   }
 
-  if (unEncryptedFields) {
+  if (unEncryptedFields && !isGenericHTTP) {
     for (let i = 0; i < unEncryptedFields.length; i += 1) {
       unEncryptedFields[i] = unEncryptedFields[i].field;
       tempFiledMeta.fieldMap[unEncryptedFields[i].id] = unEncryptedFields[i];
-      if (!isGenericHTTP && unEncryptedFields[i].id === 'http.unencrypted.version') {
+      if (unEncryptedFields[i].id === 'http.unencrypted.version') {
         tempFiledMeta?.layout?.containers[0]?.fields.push(unEncryptedFields[i].id);
       } else if (tempFiledMeta?.layout?.containers?.[0]?.containers?.[1]?.fields) {
         tempFiledMeta.layout.containers[0].containers[1]?.fields.push(unEncryptedFields[i].id);
       } else if (tempFiledMeta?.layout?.containers[2]?.fields) { tempFiledMeta.layout.containers[2].fields.push(unEncryptedFields[i].id); }
-      if (isGenericHTTP && unEncryptedFields[i].id.includes('http.encrypted')) {
-        tempFiledMeta?.layout?.containers[1]?.fields.push(unEncryptedFields[i].id);
-      }
     }
   }
 
