@@ -146,7 +146,6 @@ const getToolTipTitle = (isHandlebarExp, isHardCodedValue) => {
 };
 
 export default function SourceDataType({
-  dataType = 'string',
   disabled,
   nodeKey,
   className,
@@ -246,7 +245,7 @@ export default function SourceDataType({
                 onDataTypeChange(opt.id);
               }}
               className={clsx(classes.itemRoot, {
-                [classes.itemSelected]: opt.id === dataType,
+                [classes.itemSelected]: opt.label === sourceDataTypeState[0],
               })}
               classes={{
                 root: classes.itemRoot,
