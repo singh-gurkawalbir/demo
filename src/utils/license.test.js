@@ -315,6 +315,7 @@ describe('platformLicenseActionDetails function test', () => {
       expiresSoon: false,
       label: 'Request upgrade now -',
       daysLeft: '10 days left',
+      id: 'request-upgrade-buttton',
     };
     const license = selectors.platformLicense(state);
 
@@ -351,6 +352,7 @@ describe('platformLicenseActionDetails function test', () => {
     const expected = {
       action: 'upgrade',
       label: 'Request upgrade now',
+      id: 'request-upgrade-buttton',
     };
     const license = selectors.platformLicense(state);
 
@@ -515,6 +517,7 @@ describe('platformLicenseActionDetails function test', () => {
     const expected = {
       action: 'startTrial',
       label: 'Get unlimited flows',
+      id: 'unlimited-flows-button',
     };
     const license = selectors.platformLicense(state);
 
