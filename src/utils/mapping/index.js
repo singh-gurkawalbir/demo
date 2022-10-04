@@ -707,6 +707,9 @@ export const buildExtractsHelperFromExtract = (existingExtractsArray = [], sourc
   if (!sourceField) return [];
 
   const splitExtracts = sourceField?.split(',') || [];
+
+  // TODO: check if we will be having a scenario
+  // multiple datatypes will be coming in
   const splitDataTypes = sourceDataTypes?.split(',') || [];
   const toReturn = [];
   const removedSources = {};
@@ -733,7 +736,7 @@ export const buildExtractsHelperFromExtract = (existingExtractsArray = [], sourc
     } else {
       // add extract
       toReturn.push(formKey ? newExtractObj : {extract: uniqueExtract,
-        sourceDataType: (splitDataTypes.length && splitDataTypes[i]) ? splitDataTypes[i] : getSelectedExtractDataTypes(extractsTree, e)[0] || MAPPING_DATA_TYPES.STRING});
+        sourceDataType: (splitDataTypes[i]) ? splitDataTypes[i] : getSelectedExtractDataTypes(extractsTree, e)[0] || MAPPING_DATA_TYPES.STRING});
     }
   });
 
