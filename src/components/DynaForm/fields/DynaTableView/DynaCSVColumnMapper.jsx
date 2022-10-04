@@ -10,16 +10,17 @@ export default function DynaCSVColumnMapper(props) {
     value,
   } = props;
 
+  const newValue = value.map(val => {
+    const v = cloneDeep(val);
+
+    // We support both string/number type numbers in Ampersand so adding this translation for backward compatibility.
+    v.column = v.column && !Number.isNaN(v.column) ? parseInt(v.column, 10) : v.column;
+
+    return v;
+  });
+
   const optionsMap = useMemo(() => {
     let columnOptions = [];
-    const newValue = value.map(val => {
-      const v = cloneDeep(val);
-
-      // We support both string/number type numbers in Ampersand so adding this translation for backward compatibility.
-      v.column = v.column && !Number.isNaN(v.column) ? parseInt(v.column, 10) : v.column;
-
-      return v;
-    });
 
     if (newValue && !maxNumberOfColumns) {
       columnOptions = newValue
@@ -65,10 +66,14 @@ export default function DynaCSVColumnMapper(props) {
         supportsRefresh: false,
       },
     ];
-  }, [extractFieldHeader, generateFieldHeader, maxNumberOfColumns, value]);
-  // console.log('render: <DynaCSVColumnMapper>');
+  }, [extractFieldHeader, generateFieldHeader, maxNumberOfColumns, newValue]);
 
   return (
-    <DynaTableView {...props} collapsable hideLabel optionsMap={optionsMap} />
+    <DynaTableView
+      {...props}
+      value={newValue}
+      collapsable
+      hideLabel
+      optionsMap={optionsMap} />
   );
 }
