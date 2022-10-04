@@ -90,21 +90,6 @@ export default {
         return 'paapi';
       },
     },
-    // to make it generic OAuth, added below 2 fields.
-    'http._iClientId': {
-      fieldId: 'http._iClientId',
-      required: true,
-      filter: { provider: 'custom_oauth2' },
-      type: 'dynaiclient',
-      connectionId: r => r && r._id,
-      connectorId: r => r && r._connectorId,
-      ignoreEnvironmentFilter: true,
-      helpKey: 'quickbooks.connection.http._iClientId',
-    },
-    'http.auth.oauth.callbackURL': {
-      fieldId: 'http.auth.oauth.callbackURL',
-      copyToClipboard: true,
-    },
     application: {
       fieldId: 'application',
     },
@@ -116,7 +101,7 @@ export default {
       { collapsed: true, label: 'General', fields: ['name', 'application'] },
       { collapsed: true,
         label: 'Application details',
-        fields: ['http.quickbooksEnvironment', 'http._iClientId', 'http.auth.oauth.callbackURL'] },
+        fields: ['http.quickbooksEnvironment'] },
       { collapsed: true, label: 'Advanced', fields: ['httpAdvanced'] },
     ],
   },

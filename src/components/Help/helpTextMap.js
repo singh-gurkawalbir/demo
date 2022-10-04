@@ -79,8 +79,6 @@ export default {
 'Please enter your private key here. The private key is secret and is similar to a password. Only you and Paycor should have your private key. The shared secret allows access to your sensitive data.<br> Multiple layers of protection, including AES 256 encryption, are in place to keep your Private key safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'connection.http.quickbooksEnvironment':
 'Please select your environment here. Select Sandbox Accounting if the account is created on https://sandbox-quickbooks.api.intuit.com. Select Sandbox Payment if the account is created on https://sandbox.api.intuit.com. Select Production Accounting if the account is created on https://quickbooks.api.intuit.com. Select Production Payment if the account is created on https://api.intuit.com.',
-  'quickbooks.connection.http._iClientId':
-'Save your client ID and client secret for an extra layer of security.<br><br><b>Steps to get the client ID and client secret:<br></b>1. Sign in to your QuickBooks developer account.<br>2. From the toolbar, select the <b>Dashboard </b>link.<br>3. Select and open the required app.<br>4. If you are connecting a sandbox company account, navigate to the <b>Development</b> section and select <b>Keys & OAuth</b> (or) if you are connecting a production app, navigate to the <b>Production</b> section and select <b>Keys & OAuth</b>.<br>5. Copy the <b>Client ID</b> and <b>Client secret</b>.',
   'trinet.connection.http.unencrypted.companyId':
 'Please reach out to TriNet support team for company Id.',
   'trinet.connection.http.auth.token.token':
