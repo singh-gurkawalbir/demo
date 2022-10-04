@@ -706,6 +706,7 @@ describe('resourceFormSampleData sagas', () => {
 
       const body = {
         ...resourceObj,
+        _flowId: flowId,
         test: {
           limit: sampleDataRecordSize,
         },
