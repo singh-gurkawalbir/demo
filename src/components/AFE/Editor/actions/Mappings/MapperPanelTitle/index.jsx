@@ -149,7 +149,7 @@ export default function MapperPanelTitle({editorId, title, helpKey}) {
 
         {(searchKey === undefined) && (
           <Tooltip title={isFilterApplied ? "You can't search while a filter is applied. Clear your filter to allow searching." : ''} placement="bottom">
-            {/* This span needs is required to render the tooltip correctly */}
+            {/* This span is needed to render the tooltip correctly */}
             <span>
               <IconButton
                 disabled={isFilterApplied}
