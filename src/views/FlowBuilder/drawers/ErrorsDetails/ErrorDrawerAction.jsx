@@ -30,9 +30,6 @@ const useStyles = makeStyles(theme => ({
     height: theme.spacing(3),
     marginRight: theme.spacing(2),
   },
-  viewResults: {
-    paddingLeft: theme.spacing(0.5),
-  },
 }));
 
 export default function ErrorDrawerAction({ flowId, onChange, errorType }) {
@@ -62,9 +59,7 @@ export default function ErrorDrawerAction({ flowId, onChange, errorType }) {
           Retry completed.
         </Typography>
         {errorType !== FILTER_KEYS.RETRIES ? (
-          <TextButton
-            size="large" bold="true" color="primary" className={classes.viewResults}
-            onClick={handleClick}>
+          <TextButton size="large" color="primary" onClick={handleClick}>
             View results
           </TextButton>
         ) : ''}
