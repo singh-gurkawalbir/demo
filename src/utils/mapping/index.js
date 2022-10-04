@@ -1646,7 +1646,7 @@ export const getNewChildrenToAdd = (parentNode, destinationNode) => {
 
     parentNode.extractsArrayHelper.forEach(extractConfig => {
       const currentExtract = extractConfig.extract;
-      const hasDestNode = parentNode.children.some(childNode => {
+      const hasDestNode = parentNode.children?.some(childNode => {
         const { dataType, generate, parentExtract } = childNode;
 
         // checks for datatype, generate to check if the node exist for this extract
@@ -1668,13 +1668,13 @@ export const getNewChildrenToAdd = (parentNode, destinationNode) => {
     return newChildren;
   }
 
-  const hasDestNode = parentNode.children.some(childNode => {
+  const hasDestNode = parentNode.children?.some(childNode => {
     const { dataType, generate } = childNode;
 
     return dataType === destinationNode.dataType && generate === destinationNode.generate;
   });
 
-  if (!hasDestNode) {
+  if (!hasDestNode && parentNode.copySource !== 'yes') {
     // Incase the parent has no extracts and does not contain this node, add the new node directly as a child
     return [constructNodeWithEmptySource({...destinationNode, parentKey: parentNode.key, parentExtract: ''})];
   }
@@ -1750,8 +1750,8 @@ export const insertSiblingsOnDestinationUpdate = (treeData, newNode, lookups) =>
   const matchingLeafNodes = findAllPossibleDestinationMatchingParentNodes(restOfParentNodes, [topNode]);
 
   matchingLeafNodes.forEach(parentNode => {
-    const newChildren = getNewChildrenToAdd(parentNode, newNode);
-    let updatedChildren = [...parentNode.children, ...newChildren];
+    const newChildren = getNewChildrenToAdd(parentNode, newNode) || [];
+    let updatedChildren = [...parentNode.children || [], ...newChildren];
 
     if (parentNode.key === newNode.parentKey) {
       updatedChildren = updatedChildren.filter(childNode => {
