@@ -403,7 +403,7 @@ export const updateFinalMetadataWithHttpFramework = (finalFieldMeta, connector, 
           ];
 
           tempFiledMeta.fieldMap[key] = {...tempFiledMeta.fieldMap[key], options};
-        } else {
+        } else if (key !== 'http.baseURI' || !tempFiledMeta.fieldMap[key]?._conditionIdValuesMap?.length) {
           tempFiledMeta.fieldMap[key] = {...tempFiledMeta.fieldMap[key], visible: false};
         }
         if (!tempFiledMeta.fieldMap[key].defaultValue) { tempFiledMeta.fieldMap[key] = {...tempFiledMeta.fieldMap[key], defaultValue: preConfiguredField.values?.[0]}; }
@@ -526,9 +526,6 @@ export const updateFinalMetadataWithHttpFramework = (finalFieldMeta, connector, 
       } else if (tempFiledMeta?.layout?.containers?.[0]?.containers?.[1]?.fields) {
         tempFiledMeta.layout.containers[0].containers[1]?.fields.push(unEncryptedFields[i].id);
       } else if (tempFiledMeta?.layout?.containers[2]?.fields) { tempFiledMeta.layout.containers[2].fields.push(unEncryptedFields[i].id); }
-      if (isGenericHTTP && unEncryptedFields[i].id.includes('http.encrypted')) {
-        tempFiledMeta?.layout?.containers[1]?.fields.push(unEncryptedFields[i].id);
-      }
     }
   }
 

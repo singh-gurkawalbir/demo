@@ -385,6 +385,7 @@ export default {
     },
   },
   layout: {
+    type: 'boxWrapper',
     containers: [
       {
         fields: [
