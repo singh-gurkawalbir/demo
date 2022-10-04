@@ -2,6 +2,7 @@ import React, { useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import { makeStyles, Divider } from '@material-ui/core';
 import { useRouteMatch, useHistory } from 'react-router-dom';
+import clsx from 'clsx';
 import InstallationGuideIcon from '../../../../icons/InstallationGuideIcon';
 import { KBDocumentation } from '../../../../../utils/connections';
 import DebugIcon from '../../../../icons/DebugIcon';
@@ -44,6 +45,12 @@ const useStyles = makeStyles(theme => ({
     height: 24,
     width: 1,
   },
+  httpConnectorGuide: {
+    marginRight: 0,
+    '& $divider': {
+      marginLeft: theme.spacing(1),
+    },
+  },
 }));
 
 export default function TitleActions({ flowId }) {
@@ -77,9 +84,16 @@ export default function TitleActions({ flowId }) {
       {showApplicationLogo && (
       <div className={classes.guideWrapper}>
         {resourceType === 'connections' && (app.helpURL || KBDocumentation[applicationType]) && (
-        <a className={classes.guideLink} href={app.helpURL || KBDocumentation[applicationType]} rel="noreferrer" target="_blank">
+        <a className={clsx(classes.guideLink, {[classes.httpConnectorGuide]: merged.http?._httpConnectorId})} href={app.helpURL || KBDocumentation[applicationType]} rel="noreferrer" target="_blank">
           <InstallationGuideIcon className={classes.guideLinkIcon} />
-          {app.name || applicationType} connection guide
+          {merged.http?._httpConnectorId
+            ? (
+              <>
+                Connection guide
+                <Divider orientation="vertical" className={classes.divider} />
+              </>
+              )
+            : `${app.name || applicationType} connection guide`}
         </a>
         )}
         {hasFlowStepLogsAccess && (

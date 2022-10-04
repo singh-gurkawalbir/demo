@@ -12,6 +12,7 @@ import {
 } from './TabComponent';
 import IndentedComponents from './IndentedComponents';
 import BoxComponents from './BoxComponents';
+import BoxWrapperComponents from './BoxWrapperComponents';
 
 // TODO: Checked with little change
 const useStyles = makeStyles({
@@ -84,6 +85,8 @@ export default function FormGenerator(props) {
     ConvertedContainer = CollapsedComponents;
   } else if (type === 'box') {
     ConvertedContainer = BoxComponents;
+  } else if (type === 'boxWrapper') {
+    ConvertedContainer = BoxWrapperComponents;
   } else if (type === 'indent') {
     ConvertedContainer = IndentedComponents;
   } else if (type === 'column') {
