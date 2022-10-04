@@ -14,14 +14,15 @@ import { defaultPatchSetConverter, sanitizePatchSet } from '../../../forms/formF
 import TextToggle from '../../TextToggle';
 import Help from '../../Help';
 
-const useStyles = makeStyles({
+const useStyles = makeStyles(theme => ({
   helpTextButton: {
     padding: 0,
   },
   connectorTextToggle: {
-    marginRight: '0px !important',
+    flexGrow: 100,
+    marginLeft: theme.spacing(-1),
   },
-});
+}));
 const emptyObj = {};
 export default function FormView(props) {
   const classes = useStyles();
@@ -134,19 +135,18 @@ export default function FormView(props) {
   }
 
   return (
-    <>
+    <div className={classes.connectorTextToggle}>
       <TextToggle
         value={value}
         onChange={onFieldChangeFn}
         exclusive
         options={options}
-        className={classes.connectorTextToggle}
       />
       <Help
         title="Formview"
         className={classes.helpTextButton}
         helpKey="connectionFormView"
       />
-    </>
+    </div>
   );
 }
