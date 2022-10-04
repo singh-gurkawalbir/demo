@@ -703,10 +703,14 @@ export const getSelectedExtractDataTypes = (extractsTreeNodeArr, selectedValuePa
   return selectedDataType;
 };
 
-export const buildExtractsHelperFromExtract = (existingExtractsArray = [], sourceField, formKey, newExtractObj, extractsTree) => {
+export const buildExtractsHelperFromExtract = (existingExtractsArray = [], sourceField, formKey, newExtractObj, extractsTree, sourceDataTypes) => {
   if (!sourceField) return [];
 
   const splitExtracts = sourceField?.split(',') || [];
+
+  // TODO: check if we will be having a scenario
+  // multiple datatypes will be coming in
+  const splitDataTypes = sourceDataTypes?.split(',') || [];
   const toReturn = [];
   const removedSources = {};
 
@@ -732,7 +736,7 @@ export const buildExtractsHelperFromExtract = (existingExtractsArray = [], sourc
     } else {
       // add extract
       toReturn.push(formKey ? newExtractObj : {extract: uniqueExtract,
-        sourceDataType: getSelectedExtractDataTypes(extractsTree, e)[0] || MAPPING_DATA_TYPES.STRING});
+        sourceDataType: (splitDataTypes[i]) ? splitDataTypes[i] : getSelectedExtractDataTypes(extractsTree, e)[0] || MAPPING_DATA_TYPES.STRING});
     }
   });
 
