@@ -1750,7 +1750,7 @@ export const insertSiblingsOnDestinationUpdate = (treeData, newNode, lookups) =>
   const matchingLeafNodes = findAllPossibleDestinationMatchingParentNodes(restOfParentNodes, [topNode]);
 
   matchingLeafNodes.forEach(parentNode => {
-    const newChildren = getNewChildrenToAdd(parentNode, newNode) || [];
+    const newChildren = getNewChildrenToAdd(parentNode, newNode);
     let updatedChildren = [...parentNode.children || [], ...newChildren];
 
     if (parentNode.key === newNode.parentKey) {
