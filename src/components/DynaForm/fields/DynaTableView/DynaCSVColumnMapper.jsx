@@ -25,7 +25,7 @@ export default function DynaCSVColumnMapper(props) {
     if (newValue && !maxNumberOfColumns) {
       columnOptions = newValue
         .filter(el => el.column)
-        .map(el => ({ id: el.column.toString(), text: el.column.toString() }));
+        .map(el => ({ id: el.column, text: el.column.toString() }));
     }
 
     if (maxNumberOfColumns) {
