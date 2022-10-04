@@ -828,6 +828,10 @@ export default (state = {}, action) => {
           dragSubArr.push(newChild);
         }
 
+        // when the node is dropped into tabbed object array, copy the fields to other tabs as well
+        if (dragObj.generate?.length > 0) {
+          insertSiblingsOnDestinationUpdate(draft.mapping.v2TreeData, dragObj);
+        }
         break;
       }
 
