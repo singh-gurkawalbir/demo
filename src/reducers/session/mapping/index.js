@@ -154,7 +154,7 @@ export const updateDataType = (draft, node, oldDataType, newDataType) => {
   // now handle other primitive arrays which can not have children
   if (ARRAY_DATA_TYPES.includes(newDataType)) {
     delete newNode.children;
-    newNode.extractsArrayHelper = newNode.extractsArrayHelper || buildExtractsHelperFromExtract([], newNode.extract);
+    newNode.extractsArrayHelper = newNode.extractsArrayHelper || buildExtractsHelperFromExtract([], newNode.extract, undefined, undefined, undefined, newNode.sourceDataType);
     delete newNode.extract;
 
     return newNode;
