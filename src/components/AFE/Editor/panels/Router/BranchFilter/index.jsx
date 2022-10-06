@@ -6,7 +6,7 @@ import React, {
   useCallback,
   useMemo,
 } from 'react';
-import { isEmpty } from 'lodash';
+import { isEmpty, cloneDeep } from 'lodash';
 import 'jQuery-QueryBuilder';
 import 'jQuery-QueryBuilder/dist/css/query-builder.default.css';
 // eslint-disable-next-line import/no-extraneous-dependencies
@@ -577,7 +577,7 @@ export default function BranchFilter({ editorId, position }) {
         },
         valueGetter(rule, isTouched) {
           const ruleId = getFilterRuleId(rule);
-          const r = rulesState[ruleId].data;
+          const r = cloneDeep(rulesState[ruleId].data);
           let lhsValue = rule.$el
             .find(`.rule-filter-container [name=${rule.id}_filter]`)
             .val();
@@ -601,8 +601,6 @@ export default function BranchFilter({ editorId, position }) {
           }
 
           if (r.lhs.type === 'field') {
-            const fieldType = filtersMetadata.find(metadata => metadata.id === lhsValue).type;
-
             if (
               lhsValue &&
               (lhsValue === 'lastExportDateTime' ||
@@ -618,9 +616,6 @@ export default function BranchFilter({ editorId, position }) {
                 r.lhs.dataType = 'number';
                 r.rhs.dataType = 'number';
               }
-            } else if (fieldType === 'string' || !fieldType) {
-              r.lhs.dataType = 'string';
-              r.rhs.dataType = 'string';
             }
           }
 
@@ -694,8 +689,6 @@ export default function BranchFilter({ editorId, position }) {
             }
 
             if (r.lhs.type === 'field') {
-              const fieldType = filtersMetadata.find(metadata => metadata.id === lhsValue).type;
-
               if (
                 lhsValue &&
                 (lhsValue === 'lastExportDateTime' ||
@@ -711,9 +704,6 @@ export default function BranchFilter({ editorId, position }) {
                   r.lhs.dataType = 'number';
                   r.rhs.dataType = 'number';
                 }
-              } else if (fieldType === 'string' || !fieldType) {
-                r.lhs.dataType = 'string';
-                r.rhs.dataType = 'string';
               }
             }
 

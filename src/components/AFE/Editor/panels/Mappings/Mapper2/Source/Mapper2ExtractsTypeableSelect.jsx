@@ -52,8 +52,7 @@ const useStyles = makeStyles(theme => ({
     },
   },
   divider: {
-    marginTop: theme.spacing(1),
-    marginBottom: theme.spacing(1),
+    margin: theme.spacing(1, 0),
   },
   extractListPopper: {
     width: theme.spacing(50),
