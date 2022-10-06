@@ -14,12 +14,17 @@ import util, {
   allowDrop,
   buildV2MappingsFromTree,
   buildTreeFromV2Mappings,
+  isMappingWithoutExtract,
   hasV2MappingsInTreeData,
   rebuildObjectArrayNode,
   // insertSiblingsOnDestinationUpdate,
   findAllParentNodesForNode,
   findAllPossibleDestinationMatchingParentNodes,
   // getNewChildrenToAdd,
+  findMatchingExtract,
+  getCombinedExtract,
+  buildExtractsHelperFromExtract,
+  getFirstActiveTab,
   hideOtherTabRows,
   isCsvOrXlsxResourceForMapper2,
   getSelectedExtractDataTypes,
@@ -76,6 +81,101 @@ describe('v2 mapping utils', () => {
       expect(isCsvOrXlsxResourceForMapper2({_id: 'id1', adaptorType: 'AS2Import', file: {type: 'csv'}})).toEqual(true);
     });
   });
+
+  describe('findMatchingExtract util', () => {
+    test('should not throw exception for invalid args', () => {
+      expect(findMatchingExtract()).toEqual({});
+      expect(findMatchingExtract([])).toEqual({});
+      expect(findMatchingExtract(null)).toEqual({});
+    });
+    test('should return empty object if no matching extract is found', () => {
+      const helper = [{extract: '$|0', sourceDataType: 'object'}];
+
+      expect(findMatchingExtract(helper, '$')).toEqual({});
+    });
+    test('should correctly return the matching object', () => {
+      const helper = [{extract: '$|0', sourceDataType: 'object'}, {extract: '$|1', sourceDataType: 'string'}];
+
+      expect(findMatchingExtract(helper, '$|1')).toEqual({extract: '$|1', sourceDataType: 'string'});
+    });
+  });
+
+  describe('getCombinedExtract util', () => {
+    test('should not throw exception for invalid args', () => {
+      expect(getCombinedExtract()).toEqual([]);
+      expect(getCombinedExtract([])).toEqual([]);
+      expect(getCombinedExtract(null)).toEqual([]);
+    });
+    test('should correctly return combined extracts from passed helper', () => {
+      const helper = [{extract: '$|0', sourceDataType: 'object'}, {extract: '$|1', sourceDataType: 'string'}, {extract: '$.items[*]', sourceDataType: 'string'}];
+
+      expect(getCombinedExtract(helper)).toEqual(['$', '$', '$.items[*]']);
+    });
+  });
+
+  describe('buildExtractsHelperFromExtract util', () => {
+    test('should not throw exception for invalid args', () => {
+      expect(buildExtractsHelperFromExtract()).toEqual([]);
+      expect(buildExtractsHelperFromExtract([])).toEqual([]);
+      expect(buildExtractsHelperFromExtract(null)).toEqual([]);
+    });
+    test('should not modify the helper array if no new source is added and formKey is not passed', () => {
+      const existingExtractsArray = [{extract: '$|0', sourceDataType: 'object'}, {extract: '$|1', sourceDataType: 'string', copySource: 'yes'}, {extract: '$.items[*]', sourceDataType: 'string'}];
+      const sourceField = '$,$,$.items[*]';
+
+      expect(buildExtractsHelperFromExtract(existingExtractsArray, sourceField)).toEqual(existingExtractsArray);
+    });
+    test('should modify the helper array and use new extract config if source is already present and formKey is passed', () => {
+      const existingExtractsArray = [{extract: '$|0', sourceDataType: 'object'}, {extract: '$|1', sourceDataType: 'string'}, {extract: '$.items[*]', sourceDataType: 'string'}];
+      const sourceField = '$,$,$.items[*]';
+      const formKey = '$|1';
+      const newExtractObj = {extract: '$|1', sourceDataType: 'object', copySource: 'yes'};
+
+      expect(buildExtractsHelperFromExtract(existingExtractsArray, sourceField, formKey, newExtractObj)).toEqual([{extract: '$|0', sourceDataType: 'object'}, {extract: '$|1', sourceDataType: 'object', copySource: 'yes'}, {extract: '$.items[*]', sourceDataType: 'string'}]);
+    });
+    test('should modify the helper array and remove the sources not passed', () => {
+      const existingExtractsArray = [{extract: '$|0', sourceDataType: 'object'}, {extract: '$|1', sourceDataType: 'string'}, {extract: '$.items[*]', sourceDataType: 'string'}];
+      const sourceField = '$,$.items[*]';
+
+      expect(buildExtractsHelperFromExtract(existingExtractsArray, sourceField)).toEqual([{extract: '$|0', sourceDataType: 'object'}, {extract: '$.items[*]', sourceDataType: 'string'}]);
+    });
+    test('should copy the existing settings if a new source is added at same index', () => {
+      const existingExtractsArray = [{extract: '$|0', sourceDataType: 'object', copySource: 'yes'}, {extract: '$|1', sourceDataType: 'string'}, {extract: '$.items[*]', sourceDataType: 'string'}];
+      const sourceField = '$.new,$,$.items[*]';
+
+      expect(buildExtractsHelperFromExtract(existingExtractsArray, sourceField)).toEqual([{extract: '$.new', sourceDataType: 'string', copySource: 'yes'}, {extract: '$|1', sourceDataType: 'string'}, {extract: '$.items[*]', sourceDataType: 'string'}]);
+    });
+    test('should add the new source in the helper array at a new index', () => {
+      const existingExtractsArray = [{extract: '$.abc', sourceDataType: 'object', copySource: 'yes'}, {extract: '$.items[*]', sourceDataType: 'string'}];
+      const sourceField = '$.new,$.abc,$.items[*]';
+
+      expect(buildExtractsHelperFromExtract(existingExtractsArray, sourceField)).toEqual([{extract: '$.new', sourceDataType: 'string'}, {extract: '$.abc', sourceDataType: 'object', copySource: 'yes'}, {extract: '$.items[*]', sourceDataType: 'string'}]);
+    });
+  });
+
+  describe('getFirstActiveTab util', () => {
+    test('should not throw exception for invalid args', () => {
+      expect(getFirstActiveTab()).toEqual({});
+      expect(getFirstActiveTab({})).toEqual({});
+      expect(getFirstActiveTab(null)).toEqual({});
+    });
+    test('should return empty object if all extracts have copy source as yes', () => {
+      const node = { extractsArrayHelper: [{extract: '$.a', copySource: 'yes'}, {extract: '$.b', copySource: 'yes'}]};
+
+      expect(getFirstActiveTab(node)).toEqual({});
+    });
+    test('should return 0th index if first copy source is no at 0th index', () => {
+      const node = { extractsArrayHelper: [{extract: '$.a', copySource: 'no'}, {extract: '$.b', copySource: 'yes'}]};
+
+      expect(getFirstActiveTab(node)).toEqual({activeTab: 0, activeExtract: '$.a'});
+    });
+    test('should return 2nd index if first copy source is no at 2nd index', () => {
+      const node = { extractsArrayHelper: [{extract: '$.a', copySource: 'yes'}, {extract: '$.b', copySource: 'yes'}, {extract: '$.c'}]};
+
+      expect(getFirstActiveTab(node)).toEqual({activeTab: 2, activeExtract: '$.c'});
+    });
+  });
+
   describe('hideOtherTabRows util', () => {
     test('should not throw exception for invalid args', () => {
       expect(hideOtherTabRows()).toBeUndefined();
@@ -969,7 +1069,6 @@ describe('v2 mapping utils', () => {
 
       expect(rebuildObjectArrayNode(node, extract)).toEqual(newNode);
     });
-
     test('should correctly update the node with empty generates with child nodes for the new source incase the first source has an object mapping', () => {
       generateUniqueKey.mockReturnValue('new_key');
 
@@ -1329,9 +1428,9 @@ describe('v2 mapping utils', () => {
     });
   });
 
-  describe('insertSiblingsOnDestinationUpdate util', () => {
+  // describe('insertSiblingsOnDestinationUpdate util', () => {
+  // });
 
-  });
   describe('findAllParentNodesForNode util', () => {
     test('should return empty array incase of invalid node', () => {
       expect(findAllParentNodesForNode()).toEqual([]);
@@ -1440,6 +1539,7 @@ describe('v2 mapping utils', () => {
       expect(findAllParentNodesForNode(v2TreeData, 'c3')).toEqual(expected);
     });
   });
+
   describe('findAllPossibleDestinationMatchingParentNodes util', () => {
     test('should return empty array incase of invalid params', () => {
       expect(findAllPossibleDestinationMatchingParentNodes()).toEqual([]);
@@ -1578,8 +1678,8 @@ describe('v2 mapping utils', () => {
       expect(findAllPossibleDestinationMatchingParentNodes(matchingNodes, parentNodes)).toEqual([v2TreeData[0].children[0].children[0]]);
     });
   });
-  // describe('getNewChildrenToAdd util', () => {
 
+  // describe('getNewChildrenToAdd util', () => {
   // });
 
   describe('buildTreeFromV2Mappings util', () => {
@@ -2827,6 +2927,70 @@ describe('v2 mapping utils', () => {
       expect(buildTreeFromV2Mappings({importResource, isGroupedSampleData: false, disabled: false})).toEqual(v2TreeData);
     });
   });
+
+  describe('isMappingWithoutExtract util', () => {
+    test('should not throw exception for invalid args', () => {
+      expect(isMappingWithoutExtract()).toEqual(true);
+      expect(isMappingWithoutExtract({})).toEqual(true);
+      expect(isMappingWithoutExtract(null)).toEqual(true);
+    });
+    test('should return true if primitive data type has no extract', () => {
+      const mapping = {
+        dataType: 'number',
+        generate: 'test',
+      };
+
+      expect(isMappingWithoutExtract(mapping)).toEqual(true);
+    });
+    test('should return false if primitive data type has no extract but has hard coded value', () => {
+      const mapping = {
+        dataType: 'number',
+        generate: 'test',
+        hardCodedValue: 'abc',
+      };
+
+      expect(isMappingWithoutExtract(mapping)).toEqual(false);
+    });
+    test('should return false if primitive data type has no extract but has dynamic lookup', () => {
+      const mapping = {
+        dataType: 'number',
+        generate: 'test',
+        lookupName: 'new-lookup',
+      };
+      const lookups = [{name: 'new-lookup'}];
+
+      expect(isMappingWithoutExtract(mapping, lookups)).toEqual(false);
+    });
+    test('should return true if array data type has no extract', () => {
+      const mapping = {
+        dataType: 'stringarray',
+        generate: 'test',
+        extractsArrayHelper: [],
+      };
+
+      expect(isMappingWithoutExtract(mapping)).toEqual(true);
+    });
+    test('should return true if object data type has no extract with copy source as yes', () => {
+      const mapping = {
+        dataType: 'object',
+        generate: 'test',
+        copySource: 'yes',
+        children: [],
+      };
+
+      expect(isMappingWithoutExtract(mapping)).toEqual(true);
+    });
+    test('should return false if object data type has no extract with copy source as no', () => {
+      const mapping = {
+        dataType: 'object',
+        generate: 'test',
+        children: [],
+      };
+
+      expect(isMappingWithoutExtract(mapping)).toEqual(false);
+    });
+  });
+
   describe('hasV2MappingsInTreeData util', () => {
     test('should not throw exception for invalid args', () => {
       expect(hasV2MappingsInTreeData()).toEqual(false);
