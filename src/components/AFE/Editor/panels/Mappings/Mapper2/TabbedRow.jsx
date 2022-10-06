@@ -18,7 +18,6 @@ const useStyles = makeStyles(theme => ({
   tab: {
     color: theme.palette.secondary.main,
     fontSize: 14,
-    maxWidth: 'none',
   },
 }));
 
