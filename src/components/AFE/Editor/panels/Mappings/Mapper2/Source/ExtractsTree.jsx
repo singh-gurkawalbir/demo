@@ -120,7 +120,7 @@ const ExtractsTree = React.memo((
     inputValue = '',
     setInputValue,
     setIsFocused,
-    onBlur,
+    patchField,
   }) => {
   const classes = useStyles();
   const isArrayType = destDataType.includes('array');
@@ -143,8 +143,8 @@ const ExtractsTree = React.memo((
 
     setInputValue(newValue);
     setIsFocused(false);
-    if (propValue !== newValue) { onBlur(newValue); }
-  }, [inputValue, isArrayType, isGroupedSampleData, onBlur, propValue, setInputValue, setIsFocused, nodeKey, mappingsTreeData]);
+    patchField(propValue, newValue);
+  }, [inputValue, isArrayType, isGroupedSampleData, patchField, propValue, setInputValue, setIsFocused, nodeKey, mappingsTreeData]);
 
   if (isEmpty(extractsTreeData)) return null;
 
@@ -155,7 +155,7 @@ const ExtractsTree = React.memo((
         {isArrayType &&
         (
         <><li> Separate fields with a comma (,)</li>
-        <li>For sources that are not listed below, enter data types in Settings</li>
+          <li>For sources that are not listed below, enter data types in Settings</li>
         </>
         )}
       </ul>

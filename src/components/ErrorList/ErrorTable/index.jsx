@@ -14,6 +14,7 @@ import ErrorDetailsPanel from './ErrorDetailsPanel';
 import ErrorTableFilters from './ErrorTableFilters';
 import FetchErrorsHook from './hooks/useFetchErrors';
 import { useEditRetryConfirmDialog } from './hooks/useEditRetryConfirmDialog';
+import { NO_RESULT_SEARCH_MESSAGE } from '../../../constants';
 
 const useStyles = makeStyles(theme => ({
   hide: {
@@ -109,6 +110,9 @@ const ErrorTableWithPanel = ({
   const hasErrors = useSelector(state =>
     selectors.hasResourceErrors(state, { flowId, resourceId, isResolved })
   );
+  const retryStatus = useSelector(
+    state => selectors.retryStatus(state, flowId, resourceId)
+  );
   const filter = useSelector(state => selectors.filter(state, filterKey));
 
   if (
@@ -122,7 +126,7 @@ const ErrorTableWithPanel = ({
   ) {
     hasFilter = true;
   }
-  const emptyErrorMessage = !hasFilter && !isResolved && !hasErrors;
+  const emptyErrorMessage = !hasFilter && !isResolved && !hasErrors && !(retryStatus === 'inProgress');
   const emptyFilterMessage = hasFilter && errorsInCurrPage.length === 0;
 
   useEffect(() => {
@@ -226,9 +230,7 @@ const EmptyErrorMessage = () => (
 const NoFiltersMessage = () => (
   <NoResultTypography>
     <br />
-    You don’t have any errors that match the filters you applied.
-    <br />
-    Clear all filters to see any errors for this step.
+    {NO_RESULT_SEARCH_MESSAGE}
   </NoResultTypography>
 );
 
