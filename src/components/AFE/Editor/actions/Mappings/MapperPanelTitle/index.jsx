@@ -145,7 +145,7 @@ export default function MapperPanelTitle({editorId, title, helpKey}) {
         </Tooltip>
 
         <CeligoDivider position="right" />
-        {searchKey === undefined && <Mapper2Filter />}
+        <Mapper2Filter />
 
         {(searchKey === undefined) && (
           <Tooltip title={isFilterApplied ? "You can't search while a filter is applied. Clear your filter to allow searching." : ''} placement="bottom">
