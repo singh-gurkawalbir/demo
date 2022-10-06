@@ -22,6 +22,8 @@ export default function MultiSelectUsersFilter({flowId, resourceId, filterKey}) 
   const users = useSelector(
     state => selectors.retryUsersList(state, flowId, resourceId)
   );
+
+  const retries = useSelector(state => selectors.retryList(state, flowId, resourceId, {}));
   const filterOptions = useSelector(state => selectors.filter(state, filterKey));
   const selected = filterOptions[filterBy]?.length ? filterOptions[filterBy] : ['all'];
 
@@ -40,6 +42,10 @@ export default function MultiSelectUsersFilter({flowId, resourceId, filterKey}) 
       Retry started by:
     </Typography>
   ), [classes.customUserLabel]);
+
+  if (!retries.length) {
+    return null;
+  }
 
   return (
     <MultiSelectColumnFilter
