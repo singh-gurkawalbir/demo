@@ -708,15 +708,12 @@ export const getSelectedExtractDataTypes = (extractsTreeNodeArr, selectedValuePa
 
 // this util takes in the existing helper array and new source field
 // and adds/updates the helper array accordingly
-export const buildExtractsHelperFromExtract = (existingExtractsArray = [], sourceField, formKey, newExtractObj, extractsTree, sourceDataTypes) => {
+export const buildExtractsHelperFromExtract = (existingExtractsArray = [], sourceField, formKey, newExtractObj, extractsTree) => {
   if (!sourceField) return [];
 
   const splitExtracts = sourceField?.split(',') || [];
   const uniqueSplitExtracts = splitExtracts.map((e, i) => getUniqueExtractId(e, i));
 
-  // TODO: check if we will be having a scenario
-  // multiple datatypes will be coming in
-  const splitDataTypes = sourceDataTypes?.split(',') || [];
   const toReturn = [];
   const removedSources = {};
 
@@ -742,7 +739,7 @@ export const buildExtractsHelperFromExtract = (existingExtractsArray = [], sourc
     } else {
       // add extract
       toReturn.push(formKey ? newExtractObj : {extract: uniqueExtract,
-        sourceDataType: (splitDataTypes[i]) ? splitDataTypes[i] : getSelectedExtractDataTypes(extractsTree, e)[0] || MAPPING_DATA_TYPES.STRING});
+        sourceDataType: getSelectedExtractDataTypes(extractsTree, e)[0] || MAPPING_DATA_TYPES.STRING});
     }
   });
 

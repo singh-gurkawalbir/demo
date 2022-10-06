@@ -111,7 +111,7 @@ export const updateDataType = (draft, node, oldDataType, newDataType) => {
   if (newDataType === MAPPING_DATA_TYPES.OBJECT || newDataType === MAPPING_DATA_TYPES.OBJECTARRAY) {
     expandRow(draft, newNode.key);
 
-    newNode.extractsArrayHelper = newNode.extractsArrayHelper || buildExtractsHelperFromExtract([], newNode.extract, undefined, undefined, undefined, newNode.sourceDataType);
+    newNode.extractsArrayHelper = newNode.extractsArrayHelper || buildExtractsHelperFromExtract([], newNode.extract, undefined, undefined, draft.mapping.extractsTree);
 
     delete newNode.hardCodedValue;
     delete newNode.lookupName;
@@ -154,7 +154,7 @@ export const updateDataType = (draft, node, oldDataType, newDataType) => {
   // now handle other primitive arrays which can not have children
   if (ARRAY_DATA_TYPES.includes(newDataType)) {
     delete newNode.children;
-    newNode.extractsArrayHelper = newNode.extractsArrayHelper || buildExtractsHelperFromExtract([], newNode.extract, undefined, undefined, undefined, newNode.sourceDataType);
+    newNode.extractsArrayHelper = newNode.extractsArrayHelper || buildExtractsHelperFromExtract([], newNode.extract, undefined, undefined, draft.mapping.extractsTree);
     delete newNode.extract;
 
     return newNode;
@@ -163,6 +163,9 @@ export const updateDataType = (draft, node, oldDataType, newDataType) => {
   if (PRIMITIVE_DATA_TYPES.includes(newDataType)) {
     delete newNode.children;
     newNode.extract = newNode.extract || getCombinedExtract(newNode.extractsArrayHelper).join(',');
+    if (ARRAY_DATA_TYPES.includes(oldDataType)) {
+      newNode.sourceDataType = newNode.extractsArrayHelper?.length ? newNode.extractsArrayHelper[0].sourceDataType : MAPPING_DATA_TYPES.STRING;
+    }
     delete newNode.extractsArrayHelper;
   }
 
@@ -1117,11 +1120,11 @@ export default (state = {}, action) => {
         // all tab changes if required in objectarray
         items.tabChange.forEach(item => {
           const {key, tabValue, parentExtract} = item;
-          const {node, nodeIndexInSubArray, nodeSubArray} = findNodeInTree(draft.mapping.v2TreeData, 'key', key);
+          const { node } = findNodeInTree(draft.mapping.v2TreeData, 'key', key);
 
           if (isEmpty(node)) return;
-          nodeSubArray[nodeIndexInSubArray] = hideOtherTabRows(original(node), parentExtract);
-          nodeSubArray[nodeIndexInSubArray].activeTab = tabValue;
+          hideOtherTabRows(node, parentExtract, undefined, true);
+          node.activeTab = tabValue;
         });
         break;
       }
@@ -1142,6 +1145,7 @@ export default (state = {}, action) => {
         if (!draft.mapping) break;
         if (filter?.length) {
           draft.mapping.filter = filter;
+          delete draft.mapping.searchKey;
         } else {
           draft.mapping.filter = [];
         }
