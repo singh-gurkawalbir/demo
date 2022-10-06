@@ -1117,11 +1117,11 @@ export default (state = {}, action) => {
         // all tab changes if required in objectarray
         items.tabChange.forEach(item => {
           const {key, tabValue, parentExtract} = item;
-          const {node, nodeIndexInSubArray, nodeSubArray} = findNodeInTree(draft.mapping.v2TreeData, 'key', key);
+          const { node } = findNodeInTree(draft.mapping.v2TreeData, 'key', key);
 
           if (isEmpty(node)) return;
-          nodeSubArray[nodeIndexInSubArray] = hideOtherTabRows(original(node), parentExtract);
-          nodeSubArray[nodeIndexInSubArray].activeTab = tabValue;
+          hideOtherTabRows(node, parentExtract, undefined, true);
+          node.activeTab = tabValue;
         });
         break;
       }
