@@ -710,7 +710,7 @@ export const buildExtractsHelperFromExtract = (existingExtractsArray = [], sourc
 
   // TODO: check if we will be having a scenario
   // multiple datatypes will be coming in
-  const splitDataTypes = sourceDataTypes?.split(',') || [];
+  let splitDataTypes = sourceDataTypes?.split(',') || [];
   const toReturn = [];
   const removedSources = {};
 
@@ -720,6 +720,12 @@ export const buildExtractsHelperFromExtract = (existingExtractsArray = [], sourc
       removedSources[c.extract] = c;
     }
   });
+
+  // if the datatype and extract does not match
+  // then recalculate all datatypes
+  if (splitDataTypes.length !== splitExtracts.length) {
+    splitDataTypes = [];
+  }
 
   splitExtracts.forEach((e, i) => {
     const uniqueExtract = getUniqueExtractId(e, i);

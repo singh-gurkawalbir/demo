@@ -551,6 +551,72 @@ describe('v2 mapping utils', () => {
 
       expect(getSelectedExtractDataTypes(extractsTreeNodeArr, '$[*].isFlagShip', [])).toEqual(['boolean']);
     });
+    test('should return empty array if the json path is not available', () => {
+      const extractsTreeNodeArr = [
+        {
+          key: 'ayQRLXyyH0Z7kh7rhKIUD',
+          title: '',
+          dataType: '[object]',
+          propName: '$',
+          children: [
+            {
+              key: 'Yyh6ZHqzCW7sujMGJ8MqG',
+              parentKey: 'ayQRLXyyH0Z7kh7rhKIUD',
+              title: '',
+              jsonPath: 'isFlagShip',
+              propName: 'isFlagShip',
+              dataType: 'boolean',
+            },
+          ],
+        },
+      ];
+
+      expect(getSelectedExtractDataTypes(extractsTreeNodeArr, '$[*].isflagShip', [])).toEqual([]);
+    });
+    test('should return object if the json path is $', () => {
+      const extractsTreeNodeArr = [
+        {
+          key: 'ayQRLXyyH0Z7kh7rhKIUD',
+          title: '',
+          dataType: '[object]',
+          propName: '$',
+          children: [
+            {
+              key: 'Yyh6ZHqzCW7sujMGJ8MqG',
+              parentKey: 'ayQRLXyyH0Z7kh7rhKIUD',
+              title: '',
+              jsonPath: 'isFlagShip',
+              propName: 'isFlagShip',
+              dataType: 'boolean',
+            },
+          ],
+        },
+      ];
+
+      expect(getSelectedExtractDataTypes(extractsTreeNodeArr, '$', [])).toEqual(['object']);
+    });
+    test('should return objectArray if the json path is $[*]', () => {
+      const extractsTreeNodeArr = [
+        {
+          key: 'ayQRLXyyH0Z7kh7rhKIUD',
+          title: '',
+          dataType: '[object]',
+          propName: '$',
+          children: [
+            {
+              key: 'Yyh6ZHqzCW7sujMGJ8MqG',
+              parentKey: 'ayQRLXyyH0Z7kh7rhKIUD',
+              title: '',
+              jsonPath: 'isFlagShip',
+              propName: 'isFlagShip',
+              dataType: 'boolean',
+            },
+          ],
+        },
+      ];
+
+      expect(getSelectedExtractDataTypes(extractsTreeNodeArr, '$[*]', [])).toEqual(['objectarray']);
+    });
   });
 
   describe('rebuildObjectArrayNode util', () => {
