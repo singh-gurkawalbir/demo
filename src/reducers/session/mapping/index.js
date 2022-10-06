@@ -1145,6 +1145,7 @@ export default (state = {}, action) => {
         if (!draft.mapping) break;
         if (filter?.length) {
           draft.mapping.filter = filter;
+          delete draft.mapping.searchKey;
         } else {
           draft.mapping.filter = [];
         }
