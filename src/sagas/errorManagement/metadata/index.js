@@ -1,5 +1,5 @@
 import { deepClone } from 'fast-json-patch';
-import { put, takeLatest, take, call, fork, cancel, select } from 'redux-saga/effects';
+import { put, takeLatest, take, call, fork, cancel, select, takeEvery } from 'redux-saga/effects';
 import actions from '../../../actions';
 import actionTypes from '../../../actions/types';
 import { apiCallWithRetry } from '../../index';
@@ -8,6 +8,7 @@ import openExternalUrl from '../../../utils/window';
 import { safeParse } from '../../../utils/string';
 import { pollApiRequests } from '../../app';
 import { emptyObject } from '../../../constants';
+import { getRetryJobCollection } from '../retries';
 
 export function* downloadRetryData({flowId, resourceId, retryDataKey}) {
   let response;
@@ -128,7 +129,11 @@ export function* _requestRetryStatus({ flowId, resourceId }) {
 
     yield put(actions.errorManager.retryStatus.received({ flowId, resourceId, status}));
     // stop polling if there are no retry jobs in progress
+    // and refresh retries collection if retries are previously inProgress
     if (!pendingRetryList || !pendingRetryList.length) {
+      if (prevStatus) {
+        yield call(getRetryJobCollection, {flowId, resourceId});
+      }
       yield put(actions.errorManager.retryStatus.stopPoll());
     }
   } catch (e) {
@@ -202,7 +207,7 @@ export function* downloadBlobDocument({ flowId, resourceId, reqAndResKey }) {
 }
 
 export default [
-  takeLatest(actionTypes.ERROR_MANAGER.RETRY_DATA.REQUEST, requestRetryData),
+  takeEvery(actionTypes.ERROR_MANAGER.RETRY_DATA.REQUEST, requestRetryData),
   takeLatest(actionTypes.ERROR_MANAGER.RETRY_DATA.DOWNLOAD, downloadRetryData),
   takeLatest(
     actionTypes.ERROR_MANAGER.RETRY_STATUS.REQUEST_FOR_POLL,

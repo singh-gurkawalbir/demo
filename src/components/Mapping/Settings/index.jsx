@@ -193,11 +193,13 @@ function MappingSettings({
       handleLookupUpdate(oldLookupValue, updatedLookup);
       patchSettings(settings);
       if (closeAfterSave) {
+        handleClose();
+
         return;
       }
       setCount(count => count + 1);
     },
-    [enquesnackbar, extract, formVal, generate, handleLookupUpdate, lookupName, lookups, patchSettings]
+    [enquesnackbar, extract, formVal, generate, handleLookupUpdate, lookupName, lookups, patchSettings, handleClose]
   );
 
   useFormInitWithPermissions({
@@ -219,6 +221,7 @@ function MappingSettings({
           formKey={formKey}
           onClose={handleClose}
           onSave={handleSubmit}
+          disableOnCloseAfterSave
           status={FORM_SAVE_STATUS.COMPLETE}
           disabled={disableSave}
         />

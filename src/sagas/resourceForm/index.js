@@ -9,7 +9,7 @@ import {
   sanitizePatchSet,
   defaultPatchSetConverter,
 } from '../../forms/formFactory/utils';
-import { commitStagedChanges, commitStagedChangesWrapper } from '../resources';
+import { commitStagedChangesWrapper } from '../resources';
 import connectionSagas, { createPayload, pingConnectionWithId } from './connections';
 import { requestAssistantMetadata } from '../resources/meta';
 import {
@@ -21,7 +21,7 @@ import {
 import { _fetchRawDataForFileAdaptors } from '../sampleData/rawDataUpdates/fileAdaptorUpdates';
 import { fileTypeToApplicationTypeMap } from '../../utils/file';
 import { uploadRawData } from '../uploadFile';
-import { UI_FIELD_VALUES, FORM_SAVE_STATUS, emptyObject, EMPTY_RAW_DATA, FLOW_SAVING_STATUS, PageProcessorRegex } from '../../constants';
+import { UI_FIELD_VALUES, FORM_SAVE_STATUS, emptyObject, EMPTY_RAW_DATA, PageProcessorRegex } from '../../constants';
 import { isIntegrationApp, isFlowUpdatedWithPgOrPP, shouldUpdateLastModified, flowLastModifiedPatch } from '../../utils/flows';
 import getResourceFormAssets from '../../forms/formFactory/getResourceFromAssets';
 import getFieldsWithDefaults from '../../forms/formFactory/getFieldsWithDefaults';
@@ -31,7 +31,7 @@ import { getAssistantConnectorType, getHttpConnector } from '../../constants/app
 import { constructResourceFromFormValues } from '../utils';
 import {getConnector, getConnectorMetadata} from '../resources/httpConnectors';
 import { setObjectValue } from '../../utils/json';
-import { addPageProcessor } from '../../utils/flows/flowbuilder';
+import { addPageProcessor, getFlowAsyncKey } from '../../utils/flows/flowbuilder';
 
 export const SCOPES = {
   META: 'meta',
@@ -622,7 +622,8 @@ function* updateIAFlowDoc({flow, resource }) {
 
   yield put(actions.resource.patchStaged(flow._id, patch, SCOPES.VALUE));
 
-  yield call(commitStagedChanges, {
+  yield call(commitStagedChangesWrapper, {
+    asyncKey: getFlowAsyncKey(flow._id),
     resourceType: 'flows',
     id: flow._id,
     scope: SCOPES.VALUE,
@@ -635,8 +636,6 @@ export function* updateFlowDoc({ flowId, resourceType, resourceId, resourceValue
     'flows',
     flowId
   ))?.merged || emptyObject;
-
-  yield put(actions.flow.setSaveStatus(flowId, FLOW_SAVING_STATUS));
 
   if (isIntegrationApp(flow)) {
     // update the last modified time
@@ -678,7 +677,8 @@ export function* updateFlowDoc({ flowId, resourceType, resourceId, resourceValue
     yield put(actions.resource.patchStaged(flowId, skipRetryPatches, SCOPES.VALUE));
   }
 
-  yield call(commitStagedChanges, {
+  yield call(commitStagedChangesWrapper, {
+    asyncKey: getFlowAsyncKey(flowId),
     resourceType: 'flows',
     id: flowId,
     scope: SCOPES.VALUE,

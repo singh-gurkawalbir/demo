@@ -39,11 +39,11 @@ export const operators = [
   { label: 'within', value: 'within' },
 ];
 export const operatorsByFieldType = {
-  checkbox: ['is'],
-  text: ['contains', 'doesnotcontain', 'doesnotstartwith', 'equalto', 'haskeywords', 'is', 'isempty', 'isnot', 'isnotempty', 'startswith'],
+  checkbox: ['is', 'equalto'],
+  text: ['any', 'contains', 'doesnotcontain', 'doesnotstartwith', 'equalto', 'haskeywords', 'is', 'isempty', 'isnot', 'isnotempty', 'startswith'],
   date: ['after', 'before', 'isempty', 'isnotempty', 'notafter', 'notbefore', 'noton', 'notonorafter', 'notonorbefore', 'notwithin', 'on', 'onorafter', 'onorbefore', 'within'],
   select: ['anyof', 'noneof'],
-  currency: ['between', 'equalto', 'greaterthan', 'greaterthanorequalto', 'isempty', 'isnotempty', 'lessthan', 'lessthanorequalto', 'notbetween', 'notequalto', 'notgreaterthan', 'notgreaterthanorequalto', 'notlessthan', 'notlessthanorequalto'],
+  currency: ['any', 'between', 'equalto', 'greaterthan', 'greaterthanorequalto', 'isempty', 'isnotempty', 'lessthan', 'lessthanorequalto', 'notbetween', 'notequalto', 'notgreaterthan', 'notgreaterthanorequalto', 'notlessthan', 'notlessthanorequalto'],
   multiselect: ['allof', 'anyof', 'noneof', 'notallof'],
 };
 
@@ -52,7 +52,7 @@ operatorsByFieldType.textarea = operatorsByFieldType.text;
 operatorsByFieldType.phone = operatorsByFieldType.text;
 operatorsByFieldType.email = operatorsByFieldType.text;
 operatorsByFieldType.inlinehtml = operatorsByFieldType.text;
-operatorsByFieldType.image = operatorsByFieldType.text;
+operatorsByFieldType.image = operatorsByFieldType.select;
 operatorsByFieldType.url = operatorsByFieldType.text;
 operatorsByFieldType.datetime = operatorsByFieldType.date;
 operatorsByFieldType.datetimetz = operatorsByFieldType.date;

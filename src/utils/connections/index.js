@@ -1,6 +1,6 @@
 import { matchPath } from 'react-router-dom';
 import { PING_STATES } from '../../reducers/comms/ping';
-import { CONSTANT_CONTACT_VERSIONS, EBAY_TYPES, GOOGLE_CONTACTS_API, emptyObject, MULTIPLE_AUTH_TYPE_ASSISTANTS, RDBMS_TYPES } from '../../constants';
+import { CONSTANT_CONTACT_VERSIONS, EBAY_TYPES, emptyObject, MULTIPLE_AUTH_TYPE_ASSISTANTS, RDBMS_TYPES } from '../../constants';
 import { rdbmsSubTypeToAppType } from '../resource';
 import {getHttpConnector} from '../../constants/applications';
 
@@ -57,17 +57,6 @@ export const getFilterExpressionForAssistant = (assistant, expression) => {
     const resultExpression = { $or: [] };
 
     EBAY_TYPES.forEach(type => {
-      const finalExpression = [...expression, {assistant: type}];
-
-      resultExpression.$or.push({$and: finalExpression});
-    });
-
-    return resultExpression;
-  }
-  if (assistant === 'googlecontacts' || assistant === 'googlecontactspeople') {
-    const resultExpression = { $or: [] };
-
-    GOOGLE_CONTACTS_API.forEach(type => {
       const finalExpression = [...expression, {assistant: type}];
 
       resultExpression.$or.push({$and: finalExpression});
@@ -148,8 +137,6 @@ export const getConstantContactVersion = connection =>
   connection?.http?.baseURI?.includes('api.cc.email') ? 'constantcontactv3' : 'constantcontactv2';
 export const getEbayType = connection =>
   connection?.http?.baseURI?.includes('apiz') ? 'ebayfinance' : 'ebay';
-export const getGoogleContactsAPI = connection =>
-  connection?.http?.baseURI?.includes('people.googleapis') ? 'googlecontactspeople' : 'googlecontacts';
 const getRecurlyType = connection => {
   const addversion = connection?.http?.unencrypted?.version;
 
@@ -202,9 +189,6 @@ export const getAssistantFromConnection = (assistant, connection) => {
   }
   if (assistant === ('ebay' || 'ebayfinance')) {
     return getEbayType(connection);
-  }
-  if (assistant === ('googlecontacts' || 'googlecontactspeople')) {
-    return getGoogleContactsAPI(connection);
   }
   if (assistant === 'amazonmws') {
     return getAmazonMWSType(connection);

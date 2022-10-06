@@ -17,8 +17,7 @@ export default function getFormFieldMetadata(
       fieldId: {
         id: 'fieldId',
         name: 'fieldId',
-        // TODO: helpText is needed
-        helpText: 'Sample helptext for the subrecord set',
+        helpKey: 'dynaFormField.subrecord',
         type: 'select',
         label: `Which ${recordLabel} field should this subrecord set?`,
         options: [
@@ -48,6 +47,7 @@ export default function getFormFieldMetadata(
     fieldMeta.fieldMap[jsonPathFieldId] = {
       id: jsonPathFieldId,
       name: jsonPathFieldId,
+      helpKey: 'dynaFormField.pathToNode',
       isLoggable: true,
       type: 'netsuitesubrecordjsonpath',
       label: fld.subRecordJsonPathLabel,

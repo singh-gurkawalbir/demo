@@ -8,7 +8,7 @@ export default {
     '/http/baseURI': `https://www.${
       formValues['/http/accountType'] === 'staging' ? 'faire-stage' : 'faire'
     }.com`,
-    '/http/ping/relativeURI': '/api/v1/orders',
+    '/http/ping/relativeURI': '/external-api/v2/orders',
     '/http/ping/method': 'GET',
     '/http/headers': [
       {

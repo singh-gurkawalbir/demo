@@ -8,6 +8,7 @@ import FieldHelp from '../FieldHelp';
 import { FilledButton, OutlinedButton} from '../../Buttons';
 import { useIsLoggable } from '../../IsLoggableContextProvider';
 import isLoggableAttr from '../../../utils/isLoggableAttr';
+import HelpLink from '../../HelpLink';
 
 const useStyles = makeStyles({
   dynaSelectScopesContainer: {
@@ -23,6 +24,10 @@ const useStyles = makeStyles({
   scopesBtn: {
     maxWidth: 160,
   },
+  helpLinkScope: {
+    float: 'right',
+    fontSize: '0.875rem',
+  },
 });
 const excludeSelectedScopes = (defaultScopes, selectedScopes = []) =>
   defaultScopes.filter(scope => !selectedScopes.includes(scope));
@@ -35,11 +40,13 @@ const TransferListModal = props => {
     scopesOrig,
     subHeaderMap,
     onFieldChange,
+    helpLink,
   } = props;
   const [availableScopes, setAvailableScopes] = useState(
     defaultAvailableScopes
   );
   const [selectedScopes, setSelectedScopes] = useState(defaultSelectedScopes);
+  const classes = useStyles();
   const transferListProps = {
     scopesOrig,
     subHeaderMap,
@@ -52,7 +59,7 @@ const TransferListModal = props => {
 
   return (
     <ModalDialog show onClose={handleClose} maxWidth="lg">
-      <div>Scopes Editor</div>
+      <div>Scopes Editor <HelpLink helpLink={helpLink} className={classes.helpLinkScope} /></div>
       <span {...isLoggableAttr(isLoggable)}>
         <TransferList {...transferListProps} />
       </span>
@@ -72,7 +79,7 @@ const TransferListModal = props => {
 
 export default function DynaSelectScopesDialog(props) {
   const classes = useStyles();
-  const { label, scopes: scopesOrig, value: selectedScopes = [], onFieldChange, id } = props;
+  const { label, scopes: scopesOrig, value: selectedScopes = [], onFieldChange, id, helpLink } = props;
   const [showScopesModal, setShowScopesModal] = useState(false);
 
   const {flattenedScopes, subHeaderMap} = useMemo(() => {
@@ -110,6 +117,7 @@ export default function DynaSelectScopesDialog(props) {
           handleClose={() => {
             setShowScopesModal(false);
           }}
+          helpLink={helpLink}
         />
       )}
       <FormControl className={classes.dynaSelectScopesContainer}>

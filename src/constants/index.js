@@ -30,6 +30,7 @@ export const ALLOWED_HTML_TAGS =
   ['p', 'pre', 's', 'b', 'a', 'small', 'i', 'font', 'ul', 'ol', 'li', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'hr', 'br', 'big', 'center', 'del', 'em', 'strong', 'sub', 'sup', 'table', 'td', 'tr', 'th', 'tt', 'title'];
 export const LICENSE_TRIAL_ISSUED_MESSAGE = 'Congratulations! Your trial of unlimited flows starts now - what will you integrate next?';
 export const LICENSE_UPGRADE_REQUEST_SUBMITTED_MESSAGE = 'Your request has been received. We will contact you soon.';
+export const LICENSE_REACTIVATED_MESSAGE = 'Reactivation successful.';
 export const AUTH_FAILURE_MESSAGE = 'Authentication Failure';
 export const NO_RESULT_SEARCH_MESSAGE = 'Your search didn’t return any matching results. Try expanding your search criteria.';
 
@@ -40,5 +41,6 @@ export const POLLING_STATUS = Object.freeze({
 });
 export const MFA_RESET_ASYNC_KEY = 'MFA_RESET_ASYNC_KEY';
 export const MFA_SETUP_ASYNC_KEY = 'MFA_SETUP_ASYNC_KEY';
+export const MFA_ACCOUNT_SETTINGS_ASYNC_KEY = 'MFA_ACCOUNT_SETTINGS_ASYNC_KEY';
 export const MFA_DELETE_DEVICE_ASYNC_KEY = 'MFA_DELETE_DEVICE_ASYNC_KEY';
 

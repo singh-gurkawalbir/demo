@@ -1,22 +1,17 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import { useRouteMatch } from 'react-router-dom';
 import { makeStyles, Divider, Typography } from '@material-ui/core';
 import { selectors } from '../../../../reducers';
 import Spinner from '../../../../components/Spinner';
 import ErrorActionStatus from './ErrorActionStatus';
+import TextButton from '../../../../components/Buttons/TextButton';
+import { FILTER_KEYS } from '../../../../utils/errorManagement';
 
 const useStyles = makeStyles(theme => ({
-  divider: {
-    width: 1,
-    height: 24,
-    margin: theme.spacing(0.5, 1, 0.5, 0),
-    spinnerWrapper: {
-      margin: theme.spacing(0, 1),
-    },
-  },
   spinner: {
-    marginRight: theme.spacing(1),
+    marginRight: theme.spacing(0.5),
+    display: 'flex',
   },
   status: {
     color: theme.palette.secondary.main,
@@ -31,21 +26,29 @@ const useStyles = makeStyles(theme => ({
       whiteSpace: 'nowrap',
     },
   },
+  divider: {
+    height: theme.spacing(3),
+    marginRight: theme.spacing(2),
+  },
+  viewResults: {
+    paddingLeft: theme.spacing(0.5),
+  },
 }));
 
-export default function ErrorDrawerAction({ flowId }) {
+export default function ErrorDrawerAction({ flowId, onChange, errorType }) {
   const classes = useStyles();
   const match = useRouteMatch();
   const { resourceId } = match?.params || {};
   const retryStatus = useSelector(
     state => selectors.retryStatus(state, flowId, resourceId)
   );
+  const handleClick = useCallback(() => onChange(FILTER_KEYS.RETRIES), [onChange]);
 
   return (
     <>
       { retryStatus === 'inProgress' && (
       <div className={classes.retryContainer}>
-        <Divider orientation className={classes.divider} />
+        <Divider orientation="vertical" className={classes.divider} />
         <Spinner size={16} className={classes.spinner} />
         <Typography variant="body2" component="div" className={classes.status}>
           Retrying errors...
@@ -54,10 +57,17 @@ export default function ErrorDrawerAction({ flowId }) {
       )}
       { retryStatus === 'completed' && (
       <div className={classes.retryContainer}>
-        <Divider orientation className={classes.divider} />
+        <Divider orientation="vertical" className={classes.divider} />
         <Typography variant="body2" component="div" className={classes.status}>
-          Retrying complete
+          Retry completed.
         </Typography>
+        {errorType !== FILTER_KEYS.RETRIES ? (
+          <TextButton
+            size="large" bold="true" color="primary" className={classes.viewResults}
+            onClick={handleClick}>
+            View results
+          </TextButton>
+        ) : ''}
       </div>
       )}
       {

@@ -1,7 +1,7 @@
 import { call, takeEvery, put, select, takeLatest, all, take, race } from 'redux-saga/effects';
 import { deepClone } from 'fast-json-patch';
 import shortid from 'shortid';
-import { uniqBy } from 'lodash';
+import { uniqBy, isEmpty } from 'lodash';
 import actionTypes from '../../actions/types';
 import actions from '../../actions';
 import { SCOPES } from '../resourceForm';
@@ -278,6 +278,7 @@ export function* mappingInit({
       isGroupedSampleData,
       options,
       disabled: isMonitorLevelAccess,
+      requiredMappings: options.assistant?.requiredMappings || [],
     });
 
     // generate tree structure based on input sample data
@@ -287,7 +288,8 @@ export function* mappingInit({
     // save import sample data in state for auto creation of mappings
     importSampleData = yield call(getImportSampleData, {importId});
 
-    if (importResource.mappings?.length || !formattedMappings?.length) {
+    // this needs to be updated when v2 mappings are supported for other adaptors like NS
+    if (importResource.mappings?.length || isEmpty(importResource.mapping)) {
       version = 2;
     }
   }
@@ -569,11 +571,12 @@ export function* validateMappings() {
     v2TreeData,
     lookups,
     validationErrMsg,
+    isGroupedSampleData,
   } = yield select(selectors.mapping);
   const {
     isSuccess,
     errMessage,
-  } = mappingUtil.validateMappings(mappings, lookups, v2TreeData);
+  } = mappingUtil.validateMappings(mappings, lookups, v2TreeData, isGroupedSampleData);
   const newValidationErrMsg = isSuccess ? undefined : errMessage;
 
   if (newValidationErrMsg !== validationErrMsg) {

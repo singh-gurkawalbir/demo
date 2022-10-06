@@ -8,6 +8,7 @@ import { apiCallWithRetry } from '..';
 import actions from '../../actions';
 import { authParams, getCSRFParams, logoutParams } from '../api/apiPaths';
 import { getResource, getResourceCollection } from '../resources';
+import { requestMFASessionInfo } from '../mfa';
 import { selectors } from '../../reducers';
 import {
   auth,
@@ -293,11 +294,19 @@ describe('initialize all app relevant resources sagas', () => {
   });
   test('should intialize the app retrieving first the org details and then subsequently user details, when user is an org owner', () => {
     const saga = retrieveAppInitializationResources();
+    const requestMFASessionInfoEffect = call(requestMFASessionInfo);
+    const isMFASetupIncompleteEffect = select(selectors.isMFASetupIncomplete);
     const retrievingOrgDetailsEffect = call(retrievingOrgDetails);
     const retrievingUserDetailsEffect = call(retrievingUserDetails);
     const retrievingAssistantDetailsEffect = call(retrievingAssistantDetails);
     const retrievingHttpConnectorDetailsEffect = call(retrievingHttpConnectorDetails);
 
+    expect(saga.next().value).toEqual(
+      requestMFASessionInfoEffect,
+    );
+    expect(saga.next().value).toEqual(
+      isMFASetupIncompleteEffect,
+    );
     expect(saga.next().value).toEqual(
       retrievingUserDetailsEffect,
     );
@@ -328,11 +337,19 @@ describe('initialize all app relevant resources sagas', () => {
   });
   test('should intialize the app retrieving first the org details and then subsequently user details, when user is org user with a valid defaultAshareId', () => {
     const saga = retrieveAppInitializationResources();
+    const requestMFASessionInfoEffect = call(requestMFASessionInfo);
+    const isMFASetupIncompleteEffect = select(selectors.isMFASetupIncomplete);
     const retrievingOrgDetailsEffect = call(retrievingOrgDetails);
     const retrievingUserDetailsEffect = call(retrievingUserDetails);
     const retrievingAssistantDetailsEffect = call(retrievingAssistantDetails);
     const retrievingHttpConnectorDetailsEffect = call(retrievingHttpConnectorDetails);
 
+    expect(saga.next().value).toEqual(
+      requestMFASessionInfoEffect,
+    );
+    expect(saga.next().value).toEqual(
+      isMFASetupIncompleteEffect,
+    );
     expect(saga.next().value).toEqual(
       retrievingUserDetailsEffect,
     );
@@ -372,11 +389,19 @@ describe('initialize all app relevant resources sagas', () => {
   });
   test('should intialize the app retrieving first the org details and then subsequently user details, when user is org user with an invalid defaultAshareId', () => {
     const saga = retrieveAppInitializationResources();
+    const requestMFASessionInfoEffect = call(requestMFASessionInfo);
+    const isMFASetupIncompleteEffect = select(selectors.isMFASetupIncomplete);
     const retrievingOrgDetailsEffect = call(retrievingOrgDetails);
     const retrievingUserDetailsEffect = call(retrievingUserDetails);
     const retrievingAssistantDetailsEffect = call(retrievingAssistantDetails);
     const retrievingHttpConnectorDetailsEffect = call(retrievingHttpConnectorDetails);
 
+    expect(saga.next().value).toEqual(
+      requestMFASessionInfoEffect,
+    );
+    expect(saga.next().value).toEqual(
+      isMFASetupIncompleteEffect,
+    );
     expect(saga.next().value).toEqual(
       retrievingUserDetailsEffect,
     );

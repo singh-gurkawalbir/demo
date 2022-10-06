@@ -1,4 +1,4 @@
-import React, { useRef, useCallback, useReducer} from 'react';
+import React, { useRef, useCallback, useReducer, useEffect} from 'react';
 import clsx from 'clsx';
 import {InputBase, IconButton} from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
@@ -85,7 +85,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const PLACEHOLDER = 'Search integrations & flows';
-export default function HomeSearchInput({value, onChange}) {
+export default function HomeSearchInput({value, onChange, placeHolder, openWithFocus, className}) {
   const inputRef = useRef();
   const classes = useStyles();
   const [searchBoxState, dispatchLocalAction] = useReducer(reducer, {
@@ -98,11 +98,11 @@ export default function HomeSearchInput({value, onChange}) {
   const onChangeHandler = useCallback(e => {
     if (e.target.value === '') {
       inputRef.current.firstChild.focus();
-      inputRef.current.firstChild.placeholder = PLACEHOLDER;
+      inputRef.current.firstChild.placeholder = placeHolder || PLACEHOLDER;
     }
     dispatchLocalAction({type: 'onInputChange', value: e.target.value});
     onChange(e);
-  }, [onChange]);
+  }, [onChange, placeHolder]);
 
   const blurHandler = useCallback(e => {
     dispatchLocalAction({type: 'onBlur', value: e.target.value});
@@ -118,8 +118,17 @@ export default function HomeSearchInput({value, onChange}) {
     dispatchLocalAction({type: 'onFocus'});
   }, []);
 
+  // to bring cursor and focus in search field when it is opened for first time
+  useEffect(() => {
+    if (openWithFocus) {
+      inputRef.current.firstChild.focus();
+      inputRef.current.firstChild.placeholder = placeHolder || PLACEHOLDER;
+      dispatchLocalAction({type: 'onInputChange', value: ''});
+    }
+  }, [openWithFocus, placeHolder]);
+
   return (
-    <div className={clsx(classes.search, {[classes.searchActive]: isSearchFocused})}>
+    <div className={clsx(classes.search, {[classes.searchActive]: isSearchFocused}, className)}>
       {!isSearchIconHidden && (
         <div className={clsx(classes.searchIcon, {[classes.hideSearchIcon]: isSearchIconHidden})}>
           <SearchIcon />
@@ -131,7 +140,7 @@ export default function HomeSearchInput({value, onChange}) {
         onBlur={blurHandler}
         onFocus={focusHandler}
         onChange={onChangeHandler}
-        placeholder={PLACEHOLDER}
+        placeholder={placeHolder || PLACEHOLDER}
         data-test="homeSearchInput"
         classes={{
           root: classes.inputRoot,

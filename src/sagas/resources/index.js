@@ -293,7 +293,6 @@ export function* commitStagedChanges({ resourceType, id, scope, options, context
       yield put(actions.flow.isOnOffActionInprogress(false, id));
     }
     if (resourceType === 'flows') {
-      yield put(actions.flow.setSaveStatus(id));
       if (options?.revertChangesOnFailure) {
         yield put(actions.resource.clearStaged(id, scope));
       }
@@ -415,9 +414,6 @@ export function* commitStagedChanges({ resourceType, id, scope, options, context
       { connectionId: merged._id,
         link: merged.netsuite.linkSuiteScriptIntegrator }
     );
-  }
-  if (resourceType === 'flows') {
-    yield put(actions.flow.setSaveStatus(id));
   }
 }
 
@@ -647,7 +643,7 @@ export function* patchResource({ resourceType, id, patchSet, options = {}, async
 
       yield put(actions.resource.received(resourceType, resourceUpdated));
     } else {
-      yield put(actions.resource.request('integrations', id));
+      yield put(actions.resource.request(resourceType, id));
     }
   } catch (error) {
     // TODO: What should we do for 4xx errors? where the resource to put/post

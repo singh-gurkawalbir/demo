@@ -2,7 +2,7 @@
 import { adaptorTypeMap, isFileAdaptor, isAS2Resource } from '../../../../../../../../utils/resource';
 import httpMappingSettings from './http';
 import ftpMappingSettings from './ftp';
-import { MAPPING_DATA_TYPES } from '../../../../../../../../utils/mapping';
+import { MAPPING_DATA_TYPES, ARRAY_DATA_TYPES, buildExtractsHelperFromExtract } from '../../../../../../../../utils/mapping';
 import { generateUniqueKey } from '../../../../../../../../utils/string';
 
 const getFormattedLookup = (lookup, formVal, settings) => {
@@ -24,7 +24,13 @@ const getFormattedLookup = (lookup, formVal, settings) => {
   } else {
     lookupTmp.map = {};
     (formVal._mapList || []).forEach(obj => {
-      if (obj.import && obj.export) lookupTmp.map[obj.export] = obj.import;
+      if (obj.import && obj.export) {
+        const splitSourceValues = obj.export.split(',');
+
+        splitSourceValues.forEach(src => {
+          lookupTmp.map[src] = obj.import;
+        });
+      }
     });
   }
 
@@ -88,38 +94,24 @@ export default {
     return fieldMeta;
   },
   getFormattedValue: (node, formVal, importResource) => {
-    const { generate, extract, lookup } = node;
+    const { generate, lookup } = node;
     const settings = {};
     let updatedLookup;
 
     settings.generate = generate;
     settings.description = formVal.description;
+    settings.extract = formVal.sourceField;
+    settings.sourceDataType = formVal.dataType === MAPPING_DATA_TYPES.OBJECT ? formVal.objectSourceDataType : formVal.sourceDataType;
 
     if ('dataType' in formVal) {
       // default data type is always string
       settings.dataType = formVal.dataType || MAPPING_DATA_TYPES.STRING;
     }
+    if (ARRAY_DATA_TYPES.includes(settings.dataType)) {
+      settings.extractsArrayHelper = buildExtractsHelperFromExtract(formVal.extractsArrayHelper, formVal.sourceField);
+    }
 
     settings.copySource = formVal.copySource;
-
-    // setting extract value
-    if (formVal.copySource !== 'yes') {
-      if (
-        formVal.fieldMappingType === 'standard' &&
-        extract &&
-        extract.indexOf('{{') !== -1
-      ) {
-        settings.extract = '';
-      } else if (formVal.fieldMappingType === 'multifield') {
-        settings.extract = formVal.expression;
-      } else if (formVal.fieldMappingType !== 'hardCoded') {
-        settings.extract = extract;
-      }
-    }
-
-    if ((settings.dataType === MAPPING_DATA_TYPES.OBJECT || settings.dataType === MAPPING_DATA_TYPES.OBJECTARRAY) && formVal.copySource === 'no') {
-      settings.extract = '';
-    }
 
     if (formVal.copySource === 'yes') {
       switch (formVal.objectAction) {
@@ -146,7 +138,7 @@ export default {
           settings.default = null;
           break;
         case 'default':
-          settings.default = formVal.default;
+          settings.default = settings.dataType === MAPPING_DATA_TYPES.BOOLEAN ? formVal.boolDefault : formVal.default;
           break;
         case 'discardIfEmpty':
           settings.conditional = {};
@@ -163,9 +155,14 @@ export default {
           settings.hardCodedValue = null;
           break;
         case 'default':
-          settings.hardCodedValue = Array.isArray(formVal.hardcodedDefault)
-            ? formVal.hardcodedDefault.join(',')
-            : formVal.hardcodedDefault;
+          if (settings.dataType === MAPPING_DATA_TYPES.BOOLEAN) {
+            settings.hardCodedValue = formVal.boolHardcodedDefault;
+          } else {
+            settings.hardCodedValue = Array.isArray(formVal.hardcodedDefault)
+              ? formVal.hardcodedDefault.join(',')
+              : formVal.hardcodedDefault;
+          }
+
           break;
         case 'discardIfEmpty':
           settings.conditional = {};
@@ -173,6 +170,7 @@ export default {
           break;
         default:
       }
+      settings.extract = '';
     } else if (formVal.fieldMappingType === 'multifield') {
       switch (formVal.multifieldAction) {
         case 'useEmptyString':
@@ -182,7 +180,7 @@ export default {
           settings.default = null;
           break;
         case 'default':
-          settings.default = formVal.multifieldDefault;
+          settings.default = settings.dataType === MAPPING_DATA_TYPES.BOOLEAN ? formVal.boolMultifieldDefault : formVal.multifieldDefault;
           break;
         case 'discardIfEmpty':
           settings.conditional = {};
@@ -190,6 +188,7 @@ export default {
           break;
         default:
       }
+      settings.extract = formVal.expression;
     } else if (formVal.fieldMappingType === 'lookup') {
       if (formVal._mode === 'static' || isFileAdaptor(importResource) || isAS2Resource(importResource)) {
         const {_mapList = []} = formVal;
@@ -206,12 +205,14 @@ export default {
           errorMessage = 'You need to map at least one value.';
         }
 
-        const duplicateKeys = _mapList
+        const formattedSourceValues = _mapList
           .filter(e => !!e.export)
           .map(e => e.export)
+          .reduce((values, src) => [...values, ...src.split(',')], []);
+        const duplicateKeys = formattedSourceValues
           .map((e, i, final) => final.indexOf(e) !== i && i)
-          .filter(obj => _mapList[obj])
-          .map(e => _mapList[e].export);
+          .filter(obj => formattedSourceValues[obj])
+          .map(e => formattedSourceValues[e]);
 
         if (duplicateKeys.length) {
           errorMessage = `You cannot have duplicate source field values: ${duplicateKeys.join(
@@ -241,6 +242,16 @@ export default {
     if (settings.dataType === MAPPING_DATA_TYPES.OBJECT || settings.dataType === MAPPING_DATA_TYPES.OBJECTARRAY) {
       delete settings.hardCodedValue;
       delete settings.lookupName;
+    }
+
+    // array data types don't have these properties at parent level
+    if (ARRAY_DATA_TYPES.includes(settings.dataType)) {
+      delete settings.default;
+      delete settings.sourceDataType;
+      delete settings.copySource;
+      if (settings?.conditional?.when === 'extract_not_empty') {
+        delete settings.conditional;
+      }
     }
 
     return {

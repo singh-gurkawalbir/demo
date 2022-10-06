@@ -1,7 +1,7 @@
 import React, {useMemo, useCallback} from 'react';
-import { makeStyles, Tabs, Tab } from '@material-ui/core';
+import { makeStyles, Tabs, Tab, Tooltip } from '@material-ui/core';
 import { useSelector, useDispatch } from 'react-redux';
-import {findNodeInTree, getUniqueExtractId} from '../../../../../../utils/mapping';
+import {findNodeInTree, getExtractFromUniqueId} from '../../../../../../utils/mapping';
 import {selectors} from '../../../../../../reducers';
 import actions from '../../../../../../actions';
 
@@ -23,19 +23,28 @@ const useStyles = makeStyles(theme => ({
 
 function generateTabs(parentNode) {
   const tabs = [];
+  let anyExtractHasMappings = false;
 
-  if (parentNode?.combinedExtract) {
-    const splitExtracts = parentNode.combinedExtract.split(',');
+  if (parentNode?.extractsArrayHelper) {
+    parentNode.extractsArrayHelper.forEach(extractConfig => {
+      if (!extractConfig.extract) return;
+      if (extractConfig.copySource !== 'yes') {
+        anyExtractHasMappings = true;
+      }
 
-    splitExtracts.forEach((extract, index) => {
-      if (!extract) return;
+      const shouldDisableTab = parentNode.extractsWithoutMappings?.includes(extractConfig.extract);
 
       tabs.push({
-        id: getUniqueExtractId(extract, index),
-        label: extract,
+        id: extractConfig.extract,
+        label: getExtractFromUniqueId(extractConfig.extract),
+        disabled: (extractConfig.copySource === 'yes') || shouldDisableTab,
+        disabledInfo: shouldDisableTab ? 'No matching fields in this tab' : 'No fields need to be configured because this source has the setting "Copy an object array from the source as-is" set to "Yes".',
       });
     });
   }
+
+  // if all sources have copy source setting as yes, then no tab is shown
+  if (!anyExtractHasMappings) return [];
 
   return tabs;
 }
@@ -43,7 +52,7 @@ function generateTabs(parentNode) {
 function TabbedRow({parentKey}) {
   const classes = useStyles();
   const dispatch = useDispatch();
-  const treeData = useSelector(state => selectors.v2MappingsTreeData(state));
+  const treeData = useSelector(state => selectors.filteredV2TreeData(state));
   const parentNode = useMemo(() => (findNodeInTree(treeData, 'key', parentKey)?.node), [parentKey, treeData]);
 
   const tabs = useMemo(() => generateTabs(parentNode), [parentNode]);
@@ -62,13 +71,29 @@ function TabbedRow({parentKey}) {
         textColor="primary"
         variant="scrollable"
         scrollButtons="auto" >
-        {tabs.map(({ id, label }) => (
-          <Tab
-            className={classes.tab}
-            key={id}
-            label={label}
-          />
-        ))}
+        {tabs.map(({ id, label, disabled, disabledInfo }) =>
+          disabled ? (
+            <Tooltip
+              key={id}
+              title={disabled ? disabledInfo : ''}
+              placement="bottom">
+              {/* this div needs to be added to render the tooltip correctly */}
+              <div>
+                <Tab
+                  className={classes.tab}
+                  key={id}
+                  label={label}
+                  disabled={disabled} />
+              </div>
+            </Tooltip>
+          )
+            : (
+              <Tab
+                className={classes.tab}
+                key={id}
+                label={label} />
+            )
+        )}
       </Tabs>
     </div>
   );

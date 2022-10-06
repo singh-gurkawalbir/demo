@@ -261,7 +261,8 @@ export default function DefaultEdge({
           onMouseOver={handleMouseOver}
           onMouseOut={handleMouseOut}
           edgePath={edgePath}
-          position="center"
+          position={position}
+          offset={offset}
           size={34}
         >
           <DiamondMergeIcon isDroppable />

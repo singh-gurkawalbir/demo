@@ -1,65 +1,118 @@
-// import React, { useMemo, useCallback } from 'react';
-// import { makeStyles } from '@material-ui/core/styles';
-// import CollapsableContainer from '../../../../../components/CollapsableContainer';
-// import useFormInitWithPermissions from '../../../../../hooks/useFormInitWithPermissions';
-// import DynaForm from '../../../../../components/DynaForm';
-// import DynaSubmit from '../../../../../components/DynaForm/DynaSubmit';
+import React, { useMemo, useCallback, useEffect, useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { makeStyles } from '@material-ui/core/styles';
+import CollapsableContainer from '../../../../../components/CollapsableContainer';
+import useForm from '../../../../../components/Form';
+import DynaForm from '../../../../../components/DynaForm';
+import Spinner from '../../../../../components/Spinner';
+import DynaSubmit from '../../../../../components/DynaForm/DynaSubmit';
+import { selectors } from '../../../../../reducers';
+import actions from '../../../../../actions';
+import useEnqueueSnackbar from '../../../../../hooks/enqueueSnackbar';
+import messageStore from '../../../../../utils/messageStore';
+import { MFA_ACCOUNT_SETTINGS_ASYNC_KEY, FORM_SAVE_STATUS } from '../../../../../constants';
 
-// const useStyles = makeStyles(theme => ({
-//   footer: {
-//     margin: theme.spacing(2, 2, 0, 0),
-//   },
-//   container: {
-//     margin: theme.spacing(2),
-//   },
-// }));
+const useStyles = makeStyles(theme => ({
+  footer: {
+    margin: theme.spacing(2, 2, 0, 0),
+  },
+  container: {
+    margin: theme.spacing(2),
+  },
+}));
 
-// export default function AccountSettings() {
-//   const classes = useStyles();
-//   const fieldMeta = useMemo(
-//     () => ({
-//       fieldMap: {
-//         allowTrust: {
-//           id: 'allowTrust',
-//           name: 'allowTrust',
-//           label: 'Do not allow trusted devices',
-//           type: 'checkbox',
-//           noApi: true,
-//           isLoggable: false,
-//         },
-//         days: {
-//           id: 'days',
-//           name: 'days',
-//           type: 'text',
-//           label: 'Number of days until MFA is required again for trusted devices',
-//           noApi: true,
-//           isLoggable: false,
-//         },
-//       },
-//     }),
-//     []
-//   );
+export default function AccountSettings() {
+  const classes = useStyles();
+  const dispatch = useDispatch();
+  const [enquesnackbar] = useEnqueueSnackbar();
+  const [remountKey, setRemountKey] = useState(1);
 
-//   const formKey = useFormInitWithPermissions({ fieldMeta });
+  const areAccountSettingsLoaded = useSelector(selectors.areAccountSettingsLoaded);
+  const mfaAccountSettings = useSelector(selectors.mfaAccountSettings);
+  const areAccountSettingsUpdated = useSelector(state => selectors.asyncTaskStatus(state, MFA_ACCOUNT_SETTINGS_ASYNC_KEY) === FORM_SAVE_STATUS.COMPLETE);
+  const fieldMeta = useMemo(
+    () => ({
+      fieldMap: {
+        dontAllowTrustedDevices: {
+          id: 'dontAllowTrustedDevices',
+          name: 'dontAllowTrustedDevices',
+          label: 'Do not allow trusted devices',
+          defaultValue: mfaAccountSettings?.dontAllowTrustedDevices,
+          type: 'checkbox',
+          noApi: true,
+          isLoggable: false,
+          helpKey: 'mfa.dontAllowTrustedDevices',
+        },
+        trustDeviceForPeriod: {
+          id: 'trustDeviceForPeriod',
+          name: 'trustDeviceForPeriod',
+          type: 'text',
+          label: 'Number of days until MFA is required again for trusted devices',
+          defaultValue: mfaAccountSettings?.trustDeviceForPeriod,
+          disabledWhen: [{ field: 'dontAllowTrustedDevices', is: [true] }],
+          noApi: true,
+          isLoggable: false,
+          helpKey: 'mfa.trustDeviceForPeriod',
+          validWhen: {
+            matchesRegEx: {
+              pattern: '^[1-9]\\d*$',
+              message: 'Value must be numbers only',
+            },
+          },
+        },
+      },
+    }),
+    [mfaAccountSettings]
+  );
 
-//   const updateAccountSettings = useCallback(() => {
-//     // console.log(values);
-//   }, []);
+  useEffect(() => {
+    setRemountKey(key => key + 1);
+  }, [mfaAccountSettings]);
 
-//   return (
-//     <CollapsableContainer title="Account settings" forceExpand>
-//       <div className={classes.container}>
-//         <DynaForm formKey={formKey} className={classes.ssoFormContainer} />
-//         <div className={classes.footer}>
-//           <DynaSubmit
-//             formKey={formKey}
-//             className={classes.saveConfig}
-//             onClick={updateAccountSettings}>
-//             Save
-//           </DynaSubmit>
-//         </div>
-//       </div>
-//     </CollapsableContainer>
-//   );
-// }
+  const formKey = useForm({ fieldMeta, remount: remountKey });
+
+  const updateAccountSettings = useCallback(values => {
+    dispatch(actions.mfa.updateAccountSettings(values));
+  }, [dispatch]);
+
+  useEffect(() => {
+    if (!areAccountSettingsLoaded) {
+      dispatch(actions.mfa.requestAccountSettings());
+    }
+  }, [areAccountSettingsLoaded, dispatch]);
+
+  useEffect(() => {
+    if (areAccountSettingsUpdated) {
+      enquesnackbar({
+        message: messageStore('MFA_ACCOUNT_SETTINGS_UPDATED'),
+        variant: 'success',
+      });
+      dispatch(actions.asyncTask.clear(MFA_ACCOUNT_SETTINGS_ASYNC_KEY));
+    }
+  }, [areAccountSettingsUpdated, enquesnackbar, dispatch]);
+
+  if (!areAccountSettingsLoaded) {
+    return (
+      <CollapsableContainer title="Account settings" forceExpand>
+        <Spinner loading size="large" />
+      </CollapsableContainer>
+    );
+  }
+
+  return (
+    <CollapsableContainer title="Account settings" forceExpand>
+      <div className={classes.container}>
+        <DynaForm formKey={formKey} className={classes.ssoFormContainer} />
+        <div className={classes.footer}>
+          <DynaSubmit
+            formKey={formKey}
+            className={classes.saveConfig}
+            onClick={updateAccountSettings}>
+            Save
+          </DynaSubmit>
+        </div>
+      </div>
+    </CollapsableContainer>
+  );
+}
 

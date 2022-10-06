@@ -10,6 +10,7 @@ import ActionButton from '../../../ActionButton';
 import ExitIcon from '../../../icons/ExitIcon';
 import openExternalUrl from '../../../../utils/window';
 import FieldMessage from '../FieldMessage';
+import IconButtonWithTooltip from '../../../IconButtonWithTooltip';
 
 const useStyles = makeStyles(theme => ({
   refreshGenericResourceWrapper: {
@@ -18,10 +19,12 @@ const useStyles = makeStyles(theme => ({
   },
   refreshGenericResourceActionBtn: {
     alignSelf: 'flex-start',
-    marginTop: theme.spacing(4),
+    marginTop: theme.spacing(3),
+    padding: theme.spacing(1),
   },
   refreshLoader: {
     marginLeft: theme.spacing(1),
+    padding: theme.spacing(0.5),
   },
   refreshRoot: {
     width: '100%',
@@ -139,12 +142,14 @@ export default function RefreshGenericResource(props) {
           })}
         </div>
         {!isLoading && !removeRefresh && (
-          <ActionButton
+          <IconButtonWithTooltip
             onClick={onRefresh}
+            buttonSize="small"
+            tooltipProps={{title: 'Refresh'}}
             className={classes.refreshGenericResourceActionBtn}
             data-test="refreshResource">
             <RefreshIcon />
-          </ActionButton>
+          </IconButtonWithTooltip>
         )}
         {fieldData && isLoading && (
           <span
