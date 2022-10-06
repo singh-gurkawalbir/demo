@@ -2,7 +2,6 @@ import { makeStyles, Typography } from '@material-ui/core';
 import React, { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { selectors } from '../../../../../reducers';
-import { FILTER_KEYS } from '../../../../../utils/errorManagement';
 import MultiSelectColumnFilter from '../../../../ResourceTable/commonCells/MultiSelectColumnFilter';
 
 const useStyles = makeStyles(theme => ({
@@ -24,8 +23,7 @@ export default function MultiSelectUsersFilter({flowId, resourceId, filterKey}) 
     state => selectors.retryUsersList(state, flowId, resourceId)
   );
 
-  const filters = useSelector(state => selectors.filter(state, FILTER_KEYS.RETRIES));
-  const retries = useSelector(state => selectors.retryList(state, flowId, resourceId, filters));
+  const retries = useSelector(state => selectors.retryList(state, flowId, resourceId, {}));
   const filterOptions = useSelector(state => selectors.filter(state, filterKey));
   const selected = filterOptions[filterBy]?.length ? filterOptions[filterBy] : ['all'];
 
