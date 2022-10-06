@@ -2868,7 +2868,7 @@ describe('v2 mapping utils', () => {
       expect(isMappingWithoutExtract({})).toEqual(true);
       expect(isMappingWithoutExtract(null)).toEqual(true);
     });
-    // add more
+    // add more here
   });
 
   describe('hasV2MappingsInTreeData util', () => {
