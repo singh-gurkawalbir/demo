@@ -2934,7 +2934,61 @@ describe('v2 mapping utils', () => {
       expect(isMappingWithoutExtract({})).toEqual(true);
       expect(isMappingWithoutExtract(null)).toEqual(true);
     });
-    // add more here
+    test('should return true if primitive data type has no extract', () => {
+      const mapping = {
+        dataType: 'number',
+        generate: 'test',
+      };
+
+      expect(isMappingWithoutExtract(mapping)).toEqual(true);
+    });
+    test('should return false if primitive data type has no extract but has hard coded value', () => {
+      const mapping = {
+        dataType: 'number',
+        generate: 'test',
+        hardCodedValue: 'abc',
+      };
+
+      expect(isMappingWithoutExtract(mapping)).toEqual(false);
+    });
+    test('should return false if primitive data type has no extract but has dynamic lookup', () => {
+      const mapping = {
+        dataType: 'number',
+        generate: 'test',
+        lookupName: 'new-lookup',
+      };
+      const lookups = [{name: 'new-lookup'}];
+
+      expect(isMappingWithoutExtract(mapping, lookups)).toEqual(false);
+    });
+    test('should return true if array data type has no extract', () => {
+      const mapping = {
+        dataType: 'stringarray',
+        generate: 'test',
+        extractsArrayHelper: [],
+      };
+
+      expect(isMappingWithoutExtract(mapping)).toEqual(true);
+    });
+    test('should return true if object data type has no extract with copy source as yes', () => {
+      const mapping = {
+        dataType: 'object',
+        generate: 'test',
+        copySource: 'yes',
+        children: [],
+      };
+
+      expect(isMappingWithoutExtract(mapping)).toEqual(true);
+    });
+    test('should return false if object data type has no extract with copy source as no', () => {
+      const mapping = {
+        dataType: 'object',
+        generate: 'test',
+        children: [],
+      };
+
+      expect(isMappingWithoutExtract(mapping)).toEqual(false);
+    });
   });
 
   describe('hasV2MappingsInTreeData util', () => {
