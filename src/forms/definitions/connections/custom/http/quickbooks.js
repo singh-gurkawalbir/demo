@@ -89,7 +89,6 @@ export default {
         return 'paapi';
       },
     },
-    // to make it generic OAuth, added below 2 fields.
     'http._iClientId': {
       fieldId: 'http._iClientId',
       required: true,
