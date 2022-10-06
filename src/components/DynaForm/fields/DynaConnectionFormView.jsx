@@ -93,10 +93,20 @@ export default function FormView(props) {
     if (selectedApplication !== 'true') {
       stagedRes['/http/formType'] = 'assistant';
       newFinalValues['/http/formType'] = 'assistant';
+      dispatch(
+        actions.analytics.gainsight.trackEvent('CONNECTION_FORM_VIEW', {
+          formView: 'Simple',
+        })
+      );
     } else {
       // set http.formType prop to http to use http form from the export/import as it is now using parent form');
       stagedRes['/http/formType'] = 'http';
       newFinalValues['/http/formType'] = 'http';
+      dispatch(
+        actions.analytics.gainsight.trackEvent('CONNECTION_FORM_VIEW', {
+          formView: 'HTTP',
+        })
+      );
     }
     const allPatches = sanitizePatchSet({
       patchSet: defaultPatchSetConverter({ ...stagedRes, ...newFinalValues }),
