@@ -190,6 +190,7 @@ export default {
     'http.type': {
       fieldId: 'http.type',
       visible: false,
+      omitWhenHidden: true,
     },
     connectionFormView: {
       fieldId: 'connectionFormView',

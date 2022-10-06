@@ -1370,6 +1370,8 @@ describe('updateFinalMetadataWithHttpFramework saga', () => {
         name: '/settings/storeName',
         options: undefined,
         required: true,
+        _conditionIdValuesMap: [],
+        _conditionIds: [],
         type: 'text',
         validWhen: {
           matchesRegEx: {

@@ -256,6 +256,11 @@ export default {
     'http.mediaType': {
       fieldId: 'http.mediaType',
     },
+    'http.type': {
+      fieldId: 'http.type',
+      visible: false,
+      omitWhenHidden: true,
+    },
     'http.successMediaType': {
       fieldId: 'http.successMediaType',
     },
@@ -461,6 +466,7 @@ export default {
           'http.baseURI',
           'http.headers',
           'http.mediaType',
+          'http.type',
           'http.successMediaType',
           'http.errorMediaType',
         ],

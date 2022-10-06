@@ -674,9 +674,9 @@ export const updateHTTPFrameworkFormValues = (formValues, resource, httpConnecto
     if (httpHeaders?.find(header => header.name === headerName)) {
       const index = httpHeaders?.findIndex(header => header.name === headerName);
 
-      httpHeaders[index].value = retValues['/http/unencrypted/version'];
+      httpHeaders[index].value = retValues['/http/unencrypted/version'] || retValues['/http/unencrypted']?.version;
     } else {
-      httpHeaders.push({name: headerName, value: retValues['/http/unencrypted/version']});
+      httpHeaders.push({name: headerName, value: retValues['/http/unencrypted/version'] || retValues['/http/unencrypted']?.version});
     }
     retValues['/http/headers'] = httpHeaders;
   }
