@@ -325,7 +325,7 @@ export default {
     'http.rateLimit.failPath': { fieldId: 'http.rateLimit.failPath' },
     'http.rateLimit.failValues': { fieldId: 'http.rateLimit.failValues' },
     'http.retryHeader': { fieldId: 'http.retryHeader' },
-    'http.ping.relativeURI': { fieldId: 'http.ping.relativeURI', visible: false },
+    'http.ping.relativeURI': { fieldId: 'http.ping.relativeURI' },
     'http.ping.method': { fieldId: 'http.ping.method' },
     'http.ping.body': {
       fieldId: 'http.ping.body',
@@ -385,6 +385,7 @@ export default {
     },
   },
   layout: {
+    type: 'boxWrapper',
     containers: [
       {
         fields: [
@@ -430,8 +431,6 @@ export default {
               fields: [
                 'httpBasic',
                 'httpCookie',
-                'http.custom.encrypted',
-                'http.custom.unencrypted',
                 'httpDigest',
                 'httpOAuth',
                 'httpOAuthOverrides',

@@ -70,7 +70,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function ErrorTableFilters({ flowId, resourceId, isResolved, filterKey }) {
+export default function ErrorTableFilters({ flowId, resourceId, isResolved, filterKey, flowJobId }) {
   const classes = useStyles();
   const [selectedComponent, setSelectedComponent] = useState(null);
   const dispatch = useDispatch();
@@ -91,7 +91,7 @@ export default function ErrorTableFilters({ flowId, resourceId, isResolved, filt
     rowsPerPage,
     handleChangePage,
     handleChangeRowsPerPage,
-  } = useHandleNextAndPreviousErrorPage({flowId, resourceId, isResolved, filterKey, showRetryDataChangedConfirmDialog});
+  } = useHandleNextAndPreviousErrorPage({flowId, resourceId, isResolved, filterKey, showRetryDataChangedConfirmDialog, flowJobId});
 
   const useRowActions = () => [DownloadAction];
 
