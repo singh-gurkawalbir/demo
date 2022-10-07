@@ -322,7 +322,7 @@ export const updateFinalMetadataWithHttpFramework = (finalFieldMeta, connector, 
       const _conditionIdValuesMap = [];
 
       preConfiguredFieldLists.forEach(field => {
-        if (field._conditionIds?.length) { _conditionIdValuesMap.push({_conditionIds: field._conditionIds, values: field.values}); }
+        if (field._conditionIds?.length && field.values) { _conditionIdValuesMap.push({_conditionIds: field._conditionIds, values: field.values}); }
       });
       if (preConfiguredField && _conditionIdValuesMap.length) {
         tempFiledMeta.fieldMap[key]._conditionIdValuesMap = _conditionIdValuesMap;
@@ -403,10 +403,12 @@ export const updateFinalMetadataWithHttpFramework = (finalFieldMeta, connector, 
           ];
 
           tempFiledMeta.fieldMap[key] = {...tempFiledMeta.fieldMap[key], options};
-        } else if (key !== 'http.baseURI' || !tempFiledMeta.fieldMap[key]?._conditionIdValuesMap?.length) {
+        } else {
           tempFiledMeta.fieldMap[key] = {...tempFiledMeta.fieldMap[key], visible: false};
         }
-        if (!tempFiledMeta.fieldMap[key].defaultValue) { tempFiledMeta.fieldMap[key] = {...tempFiledMeta.fieldMap[key], defaultValue: preConfiguredField.values?.[0]}; }
+        if (!tempFiledMeta.fieldMap[key].defaultValue) {
+          tempFiledMeta.fieldMap[key] = {...tempFiledMeta.fieldMap[key], defaultValue: preConfiguredField.values?.[0]};
+        }
       } else if (!tempFiledMeta.fieldMap[key].required && key !== 'settings') {
         tempFiledMeta.fieldMap[key] = {...tempFiledMeta.fieldMap[key], visible: isGenericHTTP || false};
       } else if (key === 'http._iClientId') {
@@ -468,38 +470,62 @@ export const updateFinalMetadataWithHttpFramework = (finalFieldMeta, connector, 
       },
     });
   }
-  const preConfiguredUnencryptedFields = connectionTemplate.preConfiguredFields.find(field => field.path === 'http.unencryptedFields');
+  const preConfiguredUnEncryptedFields = connectionTemplate.preConfiguredFields.find(field => field.path === 'http.unencryptedFields');
 
-  if (preConfiguredUnencryptedFields?.values?.length > 0) {
-    preConfiguredUnencryptedFields.values.forEach(fld => {
-      if (!unEncryptedFields.find(unEncryptedField => unEncryptedField.id === `http.unencrypted.${fld.id}`)) {
-        const preConfiguredFieldLists = preConfiguredUnencryptedFields?.values?.filter(field => field.id === fld.id);
-        const _conditionIdValuesMap = [];
+  if (preConfiguredUnEncryptedFields?.values?.length > 0) {
+    preConfiguredUnEncryptedFields.values.forEach(fld => {
+      const _conditionIdValuesMap = [];
+      let _conditionIds = [];
 
-        preConfiguredFieldLists.forEach(field => {
-          if (field._conditionIds?.length && field.values?.length) { _conditionIdValuesMap.push({_conditionIds: field._conditionIds, values: field.values}); }
+      const preConfiguredField = connectionTemplate.preConfiguredFields?.find(field => `http.unencrypted.${fld.id}` === field.path);
+      const fieldUserMustSet = connectionTemplate.fieldsUserMustSet?.find(field => `http.unencrypted.${fld.id}` === field.path);
+
+      if (preConfiguredField) {
+        const fieldLists = connectionTemplate.preConfiguredFields?.filter(field => `http.unencrypted.${fld.id}` === field.path);
+
+        fieldLists.forEach(field => {
+          if (field._conditionIds?.length) { _conditionIdValuesMap.push({_conditionIds: field._conditionIds, values: field.values}); }
         });
-        unEncryptedFields.push({
-          position: 1,
-          field: {
-            ...fld,
-            name: `/http/unencrypted/${fld.id}`,
-            id: `http.unencrypted.${fld.id}`,
-            fieldId: `http.unencrypted.${fld.id}`,
-            type: fld.type || 'text',
-            defaultValue: resource?.http?.unencrypted?.[fld.id] || fld.defaultValue,
-            conditions: connectionTemplate?.conditions,
-            _conditionIdValuesMap,
-            helpLink: fld.helpURL,
-          },
-        });
+      } else if (fieldUserMustSet && fieldUserMustSet?._conditionIds && fieldUserMustSet?._conditionIds.length > 0) {
+        _conditionIds = fieldUserMustSet?._conditionIds;
       }
+      unEncryptedFields.push({
+        position: 1,
+        field: {
+          ...fld,
+          name: `/http/unencrypted/${fld.id}`,
+          id: `http.unencrypted.${fld.id}`,
+          fieldId: `http.unencrypted.${fld.id}`,
+          type: fld.type || 'text',
+          defaultValue: resource?.http?.unencrypted?.[fld.id] || fld.defaultValue,
+          conditions: connectionTemplate?.conditions,
+          _conditionIdValuesMap,
+          helpLink: fld.helpURL,
+          _conditionIds,
+        },
+      });
     });
   }
-  const preConfiguredencryptedFields = connectionTemplate.preConfiguredFields.find(field => field.path === 'http.encryptedFields');
+  const preConfiguredEncryptedFields = connectionTemplate.preConfiguredFields.find(field => field.path === 'http.encryptedFields');
 
-  if (preConfiguredencryptedFields?.values?.length > 0) {
-    preConfiguredencryptedFields.values.forEach(fld => {
+  if (preConfiguredEncryptedFields?.values?.length > 0) {
+    preConfiguredEncryptedFields.values.forEach(fld => {
+      const _conditionIdValuesMap = [];
+      let _conditionIds = [];
+
+      const preConfiguredField = connectionTemplate.preConfiguredFields?.find(field => `http.encrypted.${fld.id}` === field.path);
+      const fieldUserMustSet = connectionTemplate.fieldsUserMustSet?.find(field => `http.encrypted.${fld.id}` === field.path);
+
+      if (preConfiguredField) {
+        const fieldLists = connectionTemplate.preConfiguredFields?.filter(field => `http.encrypted.${fld.id}` === field.path);
+
+        fieldLists.forEach(field => {
+          if (field._conditionIds?.length) { _conditionIdValuesMap.push({_conditionIds: field._conditionIds, values: field.values}); }
+        });
+      } else if (fieldUserMustSet && fieldUserMustSet?._conditionIds && fieldUserMustSet?._conditionIds.length > 0) {
+        _conditionIds = fieldUserMustSet?._conditionIds;
+      }
+
       unEncryptedFields.push({
         position: 2,
         field: {
@@ -512,6 +538,8 @@ export const updateFinalMetadataWithHttpFramework = (finalFieldMeta, connector, 
           defaultValue: resource?.http?.encrypted?.[fld.id],
           conditions: connectionTemplate?.conditions,
           helpLink: fld.helpURL,
+          _conditionIdValuesMap,
+          _conditionIds,
         },
       });
     });
@@ -529,27 +557,44 @@ export const updateFinalMetadataWithHttpFramework = (finalFieldMeta, connector, 
     }
   }
 
-  const settingFields = connectionTemplate.preConfiguredFields?.filter(field => field.path === 'settingsForm');
-  const fields = [];
+  const settingFields = connectionTemplate.preConfiguredFields?.find(field => field.path === 'settingsForm');
 
-  if (settingFields && settingFields.length) {
-    settingFields.forEach(settingField => {
-      const fieldMap = settingField.values?.[0].fieldMap;
+  if (settingFields) {
+    const fieldMap = settingFields.values?.[0].fieldMap;
+    const fields = [];
 
-      Object.entries(fieldMap).forEach(([, value]) => {
-        fields.push({
-          field: {
-            ...value,
-            name: `/settings/${value.id}`,
-            id: `settings.${value.id}`,
-            fieldId: `settings.${value.id}`,
-            type: value.type || 'text',
-            defaultValue: resource?.settings?.[value.id] || value.defaultValue,
-            _conditionIds: settingField._conditionIds,
-            conditions: connectionTemplate?.conditions,
-            helpLink: value.helpURL,
-          },
-        });
+    Object.entries(fieldMap).forEach(([, value]) => {
+      const _conditionIdValuesMap = [];
+      let _conditionIds = [];
+
+      if (!isGenericHTTP) {
+        const preConfiguredField = connectionTemplate.preConfiguredFields?.find(field => `settings.${value.id}` === field.path);
+        const fieldUserMustSet = connectionTemplate.fieldsUserMustSet?.find(field => `settings.${value.id}` === field.path);
+
+        if (preConfiguredField) {
+          const fieldLists = preConfiguredField ? connectionTemplate.preConfiguredFields?.filter(field => `settings.${value.id}` === field.path) : connectionTemplate.fieldsUserMustSet?.filter(field => `settings.${value.id}` === field.path);
+
+          fieldLists.forEach(field => {
+            if (field._conditionIds?.length) { _conditionIdValuesMap.push({_conditionIds: field._conditionIds, values: field.values}); }
+          });
+        } else if (fieldUserMustSet && fieldUserMustSet?._conditionIds && fieldUserMustSet?._conditionIds.length > 0) {
+          _conditionIds = fieldUserMustSet?._conditionIds;
+        }
+      }
+
+      fields.push({
+        field: {
+          ...value,
+          name: `/settings/${value.id}`,
+          id: `settings.${value.id}`,
+          fieldId: `settings.${value.id}`,
+          type: value.type || 'text',
+          defaultValue: resource?.settings?.[value.id] || value.defaultValue,
+          conditions: connectionTemplate?.conditions,
+          helpLink: value.helpURL,
+          _conditionIdValuesMap,
+          _conditionIds,
+        },
       });
     });
 
