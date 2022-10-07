@@ -1,0 +1,66 @@
+/* global describe, test, expect */
+import React from 'react';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import {screen, render} from '@testing-library/react';
+import { MemoryRouter } from 'react-router-dom';
+import FilledButton from './index';
+import {renderWithProviders} from '../../../test/test-utils';
+
+describe('Filled Button component test', () => {
+  function handleClose() {
+  }
+
+  test('should render the component with content onto the screen', () => {
+    renderWithProviders(<FilledButton />);
+  });
+
+  test('test passing string', () => {
+    renderWithProviders(
+      <MemoryRouter>
+        <FilledButton
+          data-test="closeLogs"
+          onClick={handleClose}
+          disabled={false}
+          size="medium"
+          color="primary">
+          Close
+        </FilledButton>
+      </MemoryRouter>);
+    const test1 = screen.getByText('Close');
+
+    expect(test1).toBeInTheDocument();
+  });
+
+  test('test passing number', () => {
+    renderWithProviders(
+      <MemoryRouter>
+        <FilledButton
+          data-test="closeLogs"
+          onClick={handleClose}
+          disabled={false}
+          size="medium"
+          color="primary">
+          {123}
+        </FilledButton>
+      </MemoryRouter>);
+    const test1 = screen.getByText('123');
+
+    expect(test1).toBeInTheDocument();
+  });
+
+  test('testing by className', () => {
+    const {container} = render(
+      <MemoryRouter>
+        <FilledButton
+          error
+          data-test="cancel"
+          disabled={false}
+          color="primary"
+       > Close
+        </FilledButton>
+      </MemoryRouter>);
+    const m = container.querySelector("[data-test='cancel']");
+
+    expect(m).toBeInTheDocument();
+  });
+});

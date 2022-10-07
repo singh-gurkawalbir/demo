@@ -8,6 +8,7 @@ import actions from '../../../actions';
 import { selectors } from '../../../reducers';
 import InvitationItem from './InvitationItem';
 import LoadResources from '../../../components/LoadResources';
+import IconButtonWithTooltip from '../../../components/IconButtonWithTooltip';
 
 const useStyles = makeStyles(theme => ({
   notificationContainer: {
@@ -23,6 +24,9 @@ const useStyles = makeStyles(theme => ({
   },
   divider: {
     margin: theme.spacing(2, 0),
+  },
+  btnNotification: {
+    padding: 0,
   },
 }));
 
@@ -41,6 +45,9 @@ function Notifications() {
   const isAccountOwner = useSelector(state =>
     selectors.isAccountOwner(state)
   );
+  const mfaSessionInfoStatus = useSelector(selectors.mfaSessionInfoStatus);
+  const isMFASetupIncomplete = useSelector(selectors.isMFASetupIncomplete);
+
   const handleClick = useCallback(
     event => {
       setAnchorEl(!anchorEl ? event.currentTarget : null);
@@ -70,12 +77,18 @@ function Notifications() {
   );
   const open = !!anchorEl;
 
+  // we proceed further only when mfa sessionInfo is received
+  if (!mfaSessionInfoStatus || mfaSessionInfoStatus === 'requested') return null;
+
+  if (isMFASetupIncomplete) {
+    return null;
+  }
   if (!notifications || notifications.length === 0) {
     return (
       <>
         <LoadResources resources={isAccountOwner ? 'transfers' : 'transfers/invited'} />
         <Tooltip title="No notifications" placement="bottom" aria-label="no notifications">
-          <IconButton aria-label="notifications" size="small" color="inherit">
+          <IconButton aria-label="notifications" size="small" color="inherit" className={classes.btnNotification}>
             <NotificationsIcon />
           </IconButton>
         </Tooltip>
@@ -86,14 +99,20 @@ function Notifications() {
   return (
     <>
       <LoadResources resources={isAccountOwner ? 'transfers' : 'transfers/invited'} />
-      <IconButton aria-label="notifications" size="small" color="inherit" onClick={handleClick}>
+      <IconButtonWithTooltip
+        tooltipProps={{title: 'Notifications'}}
+        aria-label="notifications"
+        size="small"
+        color="inherit"
+        noPadding
+        onClick={handleClick}>
         <Badge
           badgeContent={notifications.length}
           color="primary"
           className={classes.badgeText}>
           <NotificationsIcon />
         </Badge>
-      </IconButton>
+      </IconButtonWithTooltip>
 
       <ArrowPopper
         id="notifications"

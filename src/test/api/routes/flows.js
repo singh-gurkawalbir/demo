@@ -131,4 +131,29 @@ export default API.get('/api/flows', [
     wizardState: 'done',
     lastExecutedAt: '2020-05-21T11:05:38.927Z',
     autoResolveMatchingTraceKeys: true,
+  },
+  {
+    _id: '629db47eccb94d35de6f1889',
+    lastModified: '2022-06-07T14:22:28.096Z',
+    name: 'test',
+    disabled: true,
+    _integrationId: '',
+    skipRetries: false,
+    pageProcessors: [
+      {
+        responseMapping: {
+          fields: [],
+          lists: [],
+        },
+        type: 'import',
+        _importId: '62190c3b78f2387da20ff6b6',
+      },
+    ],
+    pageGenerators: [
+      {
+        _exportId: '6217d3c80f36bf7cbd9daa34',
+      },
+    ],
+    createdAt: '2022-06-06T08:02:06.552Z',
+    autoResolveMatchingTraceKeys: true,
   }]);

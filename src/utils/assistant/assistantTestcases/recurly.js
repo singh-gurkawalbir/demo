@@ -1,7 +1,7 @@
 export default {
   export: {
     labels: {
-      version: 'API Version',
+      version: 'API version',
       resource: 'Resource',
       endpoint: 'Operation',
     },
@@ -1862,7 +1862,7 @@ export default {
   },
   import: {
     labels: {
-      version: 'API Version',
+      version: 'API version',
       resource: 'API Name',
       operation: 'Operation',
     },

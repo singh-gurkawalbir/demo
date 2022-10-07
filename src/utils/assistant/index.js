@@ -15,6 +15,7 @@ import {
   get,
 } from 'lodash';
 import { getPathParams } from './pathParamUtils';
+import { getPublishedHttpConnectors } from '../../constants/applications';
 
 const OVERWRITABLE_PROPERTIES = Object.freeze([
   'allowUndefinedResource',
@@ -486,7 +487,6 @@ export function getExportOperationDetails({
     headersMetadata,
   });
 }
-
 export function getImportOperationDetails({
   version,
   resource,
@@ -607,9 +607,9 @@ export function convertFromExport({ exportDoc: exportDocOrig, assistantData: ass
   let { version, resource, operation } = exportDoc.assistantMetadata || {};
 
   if (exportDoc?.http) {
-    operation = exportDoc.http._httpConnectorEndpointId || operation;
-    resource = exportDoc.http._httpConnectorResourceId || resource;
-    version = exportDoc.http._httpConnectorVersionId || version;
+    operation = operation || exportDoc.http._httpConnectorEndpointId;
+    resource = resource || exportDoc.http._httpConnectorResourceId;
+    version = version || exportDoc.http._httpConnectorVersionId;
   }
   const { exportType, dontConvert } = exportDoc.assistantMetadata || {};
   const assistantMetadata = {
@@ -1500,6 +1500,12 @@ export function convertFromImport({ importDoc: importDocOrig, assistantData: ass
   const assistantData = cloneDeep(assistantDataOrig);
   let { version, resource, operation, lookupType } =
     importDoc.assistantMetadata || {};
+
+  if (importDoc?.http) {
+    operation = operation || importDoc.http._httpConnectorEndpointId;
+    resource = resource || importDoc.http._httpConnectorResourceId;
+    version = version || importDoc.http._httpConnectorVersionId;
+  }
   const { dontConvert, lookups } = importDoc.assistantMetadata || {};
   let sampleData;
   let { ignoreExisting, ignoreMissing } = importDoc;
@@ -2267,4 +2273,16 @@ export function shouldLoadAssistantFormForExports(resource, connection) {
 
 export function isEbayFinanceConnection(connection) {
   return connection?.assistant === 'ebayfinance';
+}
+
+export function getPublishedConnectorName(httpConnectorId) {
+  const publishedConnectors = getPublishedHttpConnectors();
+
+  return publishedConnectors?.find(pc => pc._id === httpConnectorId)?.name;
+}
+
+export function getPublishedConnectorId(httpConnectorName) {
+  const publishedConnectors = getPublishedHttpConnectors();
+
+  return publishedConnectors?.find(pc => pc.name === httpConnectorName)?._id;
 }

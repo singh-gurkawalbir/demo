@@ -12,7 +12,7 @@ import DrawerFooter from '../../../../../../drawer/Right/DrawerFooter';
 import SaveAndCloseResourceForm from '../../../../../../SaveAndCloseButtonGroup/SaveAndCloseResourceForm';
 import { FORM_SAVE_STATUS } from '../../../../../../../constants';
 import actions from '../../../../../../../actions';
-import { findNodeInTree } from '../../../../../../../utils/mapping';
+import { findNodeInTree, MAPPING_DATA_TYPES } from '../../../../../../../utils/mapping';
 import ApplicationMappingSettings from './application';
 
 const emptyObject = {};
@@ -62,7 +62,18 @@ function MappingSettingsV2({
   [dispatch, history]);
 
   const patchSettings = useCallback(settings => {
-    dispatch(actions.mapping.v2.patchSettings(nodeKey, settings));
+    const {extract, ...rest} = settings || {};
+
+    if (rest.dataType === MAPPING_DATA_TYPES.OBJECTARRAY) {
+      // all use cases of object array are handled in a single util 'rebuildObjectArrayNode'
+      // which gets called from patch settings action
+      dispatch(actions.mapping.v2.patchSettings(nodeKey, settings));
+    } else {
+      dispatch(actions.mapping.v2.patchSettings(nodeKey, rest));
+      if (!('hardCodedValue' in rest)) {
+        dispatch(actions.mapping.v2.patchField('extract', nodeKey, extract || ''));
+      }
+    }
   }, [dispatch, nodeKey]);
 
   const handleLookupUpdate = useCallback((oldLookup, newLookup) => {
@@ -103,11 +114,13 @@ function MappingSettingsV2({
       handleLookupUpdate(oldLookupValue, updatedLookup);
       patchSettings(settings);
       if (closeAfterSave) {
+        handleClose();
+
         return;
       }
       setCount(count => count + 1);
     },
-    [enqueueSnackbar, extract, formVal, handleLookupUpdate, generate, lookupName, lookups, patchSettings, importResource]
+    [enqueueSnackbar, extract, formVal, handleLookupUpdate, generate, lookupName, lookups, patchSettings, importResource, handleClose]
   );
 
   useFormInitWithPermissions({
@@ -129,6 +142,7 @@ function MappingSettingsV2({
           formKey={formKey}
           onClose={handleClose}
           onSave={handleSubmit}
+          disableOnCloseAfterSave
           status={FORM_SAVE_STATUS.COMPLETE}
           disabled={disabled}
           />

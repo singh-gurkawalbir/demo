@@ -102,10 +102,14 @@ export function* invokeProcessor({ editorId, processor, body }) {
       // give preference to v2 mappings always
       if (hasV2MappingsInTreeData(v2TreeData, lookups)) {
         const connection = yield select(selectors.resource, 'connections', importResource?._connectionId);
+        const flow = yield select(selectors.resource, 'flows', flowId);
         const _mappingsV2 = buildV2MappingsFromTree({v2TreeData, lookups});
 
         _mappings = {mappings: _mappingsV2, lookups};
         options.connection = connection;
+        options._flowId = flowId;
+        options._integrationId = flow?._integrationId;
+        options.import = importResource;
       } else {
         const mappings = (yield select(selectors.mapping))?.mappings;
         const exportResource = yield select(selectors.firstFlowPageGenerator, flowId);
@@ -161,8 +165,8 @@ export function* requestPreview({ id }) {
   // since mappings are stored in separate state
   // we validate the same here
   if (editor.editorType === 'mappings') {
-    const {mappings, lookups, v2TreeData} = yield select(selectors.mapping);
-    const {errMessage} = mappingUtil.validateMappings(mappings, lookups, v2TreeData);
+    const {mappings, lookups, v2TreeData, isGroupedSampleData} = yield select(selectors.mapping);
+    const {errMessage} = mappingUtil.validateMappings(mappings, lookups, v2TreeData, isGroupedSampleData);
 
     if (errMessage) {
       const violations = {
@@ -654,7 +658,7 @@ export function* requestEditorSampleData({
 
       delete body.sampleData;
       delete body.templateVersion;
-    } else {
+    } else if (resourceType !== 'flows') {
       // As UI does oneToMany processing and we do not need BE changes w.r.to oneToMany, we make oneToMany prop as false  for getContext API
       resource = { ...resource, oneToMany: false };
       if (isOldRestResource && resource?.rest?.pagingMethod && !resource?.http?.paging?.method) {

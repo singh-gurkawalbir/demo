@@ -110,6 +110,7 @@ export default {
         },
       ],
     },
+    rdbmsGrouping: {formId: 'rdbmsGrouping' },
     advancedSettings: { formId: 'advancedSettings' },
   },
   layout: {
@@ -144,6 +145,11 @@ export default {
           'dynamodb.onceExportPartitionKey',
           'dynamodb.onceExportSortKey',
         ],
+      },
+      {
+        collapsed: true,
+        label: 'Would you like to group records?',
+        fields: ['rdbmsGrouping'],
       },
       { collapsed: true, label: 'Advanced', fields: ['advancedSettings'] },
     ],

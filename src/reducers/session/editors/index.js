@@ -162,7 +162,7 @@ export default function reducer(state = {}, action) {
       case actionTypes.EDITOR.PATCH.DATA: {
         if (!draft[id]) break;
         // Object.assign(draft[id].data, deepClone(dataPatch));
-        const mode = draft[id].activeProcessor;
+        const mode = draft[id].activeProcessor || draft[id]?.rule?.activeProcessor;
 
         if (mode) {
           if (!draft[id].data) {
@@ -332,7 +332,7 @@ selectors.editorData = (state, id) => {
   const editor = state[id];
 
   if (!editor) return;
-  const mode = editor.activeProcessor;
+  const mode = editor.activeProcessor || editor.rule?.activeProcessor;
 
   if (mode) {
     return editor.data?.[mode];

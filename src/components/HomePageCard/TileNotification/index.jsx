@@ -114,22 +114,7 @@ export default function TileNotification({
       if (![INTEGRATION_ACCESS_LEVELS.OWNER, USER_ACCESS_LEVELS.ACCOUNT_ADMIN].includes(accessLevel)) {
         enquesnackbar({ message: 'Contact your account owner to reactivate this integration app.', variant: 'error' });
       } else {
-        confirmDialog({
-          title: 'Request to reactivate subscription',
-          message: 'We will contact you to reactivate your subscription.',
-          buttons: [
-            {
-              label: 'Submit request',
-              onClick: () => {
-                dispatch(actions.integrationApp.license.resume(integrationId));
-              },
-            },
-            {
-              label: 'Cancel',
-              variant: 'text',
-            },
-          ],
-        });
+        return dispatch(actions.integrationApp.license.resume(integrationId));
       }
     } else if (showTrialLicenseMessage) {
       onClickBuyButton();
@@ -173,7 +158,7 @@ export default function TileNotification({
             onClick={onClickRenewOrReactivateButton}
             data-test="RenewOrReactivate"
            >
-            {resumable ? 'Request to reactivate' : 'Request to renew'}
+            {resumable ? 'Reactivate' : 'Request to renew'}
           </FilledButton>
         )}
         {single && showTrialLicenseMessage && (

@@ -1,4 +1,5 @@
 import React from 'react';
+import { useSelector } from 'react-redux';
 import { Switch, Route } from 'react-router-dom';
 import loadable from '../../utils/loadable';
 import ClonePreview from '../../views/Clone/Preview';
@@ -6,6 +7,7 @@ import CloneSetup from '../../views/Clone/Setup';
 import getRoutePath from '../../utils/routePaths';
 import AmpersandRoutesHandler from './AmpersandRoutesHandler';
 import { AMPERSAND_ROUTES, HOME_PAGE_PATH } from '../../constants';
+import { selectors } from '../../reducers';
 import retry from '../../utils/retry';
 import ResourceListInfo from '../../views/ResourceList/infoText';
 
@@ -113,6 +115,20 @@ function ResourceListRouteCatcher(props) {
 
 export default function AppRouting() {
   // console.log('render: <AppRouting>');
+  const isMFASetupIncomplete = useSelector(selectors.isMFASetupIncomplete);
+
+  if (isMFASetupIncomplete) {
+    return (
+      <Switch>
+        <Route path={getRoutePath('myAccount/security')} component={MyAccount} />
+        <Route
+          path="*"
+          render={({ history }) => history.replace(getRoutePath('myAccount/security/mfa'))}
+        />
+      </Switch>
+    );
+  }
+
   return (
     <Switch>
       <Route
@@ -178,7 +194,7 @@ export default function AppRouting() {
         exact
         render={({ history, match }) =>
           history.replace(
-            getRoutePath(`/integrations/${match.params.integrationId}/flows`)
+            getRoutePath(`/integrationapps/${match.params.integrationAppName}/${match.params.integrationId}/flows`)
           )}
         />
 

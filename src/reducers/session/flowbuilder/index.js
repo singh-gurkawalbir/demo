@@ -5,7 +5,7 @@ import actionTypes from '../../../actions/types';
 import { generateReactFlowGraph } from '../../../utils/flows/flowbuilder';
 
 export default function reducer(state = {}, action) {
-  const { type, flow, flowId, stepId, targetId, targetType, status, isViewMode, info } = action;
+  const { type, flow, flowId, stepId, targetId, targetType, status, isViewMode, info, isDataLoader } = action;
 
   return produce(state, draft => {
     switch (type) {
@@ -13,7 +13,7 @@ export default function reducer(state = {}, action) {
         if (!draft[flowId]) {
           draft[flowId] = {};
         }
-        draft[flowId].elements = generateReactFlowGraph(flow, isViewMode);
+        draft[flowId].elements = generateReactFlowGraph(flow, isViewMode, isDataLoader);
         draft[flowId].elementsMap = keyBy(draft[flowId].elements || [], 'id');
         draft[flowId].flow = flow;
         draft[flowId].isViewMode = isViewMode;
@@ -85,7 +85,6 @@ selectors.fbInfo = (state, flowId) => state?.[flowId]?.info || emptyObject;
 selectors.fbMergeTargetType = (state, flowId) => state?.[flowId]?.mergeTargetType;
 selectors.fbMergeTargetId = (state, flowId) => state?.[flowId]?.mergeTargetId;
 selectors.fbDragStepIdInProgress = (state, flowId) => state?.[flowId]?.dragStepIdInProgress;
-selectors.isFlowSaveInProgress = (state, flowId) => state?.[flowId]?.status === 'saving';
 
 selectors.fbRouterStepsInfo = (state, flowId, routerId) => {
   let configuredCount = 0;

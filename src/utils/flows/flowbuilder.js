@@ -1,10 +1,10 @@
 /* eslint-disable no-param-reassign */
-
 import { cloneDeep, uniq, uniqBy } from 'lodash';
 import jsonPatch from 'fast-json-patch';
-import { BranchPathRegex, GRAPH_ELEMENTS_TYPE, PageProcessorPathRegex } from '../../constants';
+import { BranchPathRegex, GRAPH_ELEMENTS_TYPE, PageProcessorPathRegex, FLOW_SAVE_ASYNC_KEY } from '../../constants';
 import { shortId } from '../string';
 import { setObjectValue } from '../json';
+import messageStore from '../messageStore';
 
 export const isVirtualRouter = (router = {}) => !router.routeRecordsTo && !router.routeRecordsUsing && (!router.branches || router.branches.length <= 1);
 
@@ -86,13 +86,18 @@ export const addPageProcessor = (flow, insertAtIndex, branchPath, ppData) => {
         flow.routers = [newRouter, ...flow.routers];
       }
     } else {
-      const pageProcessors = jsonPatch.getValueByPointer(flow, `${branchPath}/pageProcessors`);
+      try {
+        const pageProcessors = jsonPatch.getValueByPointer(flow, `${branchPath}/pageProcessors`);
 
-      if (insertAtIndex === -1) {
-        setObjectValue(flow, `${branchPath}/pageProcessors`, [...pageProcessors, pageProcessor]);
-      } else {
-        pageProcessors.splice(insertAtIndex, 0, pageProcessor);
-        setObjectValue(flow, `${branchPath}/pageProcessors`, pageProcessors);
+        if (insertAtIndex === -1) {
+          setObjectValue(flow, `${branchPath}/pageProcessors`, [...pageProcessors, pageProcessor]);
+        } else {
+          pageProcessors.splice(insertAtIndex, 0, pageProcessor);
+          setObjectValue(flow, `${branchPath}/pageProcessors`, pageProcessors);
+        }
+      } catch (e) {
+        // eslint-disable-next-line no-console
+        console.warn('Getting unexpected error for branchPath: ', branchPath);
       }
     }
   } else {
@@ -191,7 +196,7 @@ export const generateRouterNode = (router, routerIndex) => ({
   type: isVirtualRouter(router) ? GRAPH_ELEMENTS_TYPE.MERGE : GRAPH_ELEMENTS_TYPE.ROUTER,
   data: {
     path: `/routers/${routerIndex}`,
-    router,
+    routeRecordsTo: router.routeRecordsTo,
   },
 });
 
@@ -200,7 +205,7 @@ export const generateNewTerminal = ({branch = {}, branchIndex, routerIndex} = {}
   type: GRAPH_ELEMENTS_TYPE.TERMINAL,
   draggable: false,
   data: {
-    ...branch,
+    name: branch.name,
     path: `/routers/${routerIndex}/branches/${branchIndex}/pageProcessors/${branch.pageProcessors?.length || '-'}`,
   },
 });
@@ -209,7 +214,8 @@ export const generateNewEmptyNode = ({branch = {}, branchIndex, routerIndex} = {
   id: shortId(),
   type: GRAPH_ELEMENTS_TYPE.EMPTY,
   data: {
-    ...branch,
+    name: branch.name,
+    infoText: branch.infoText,
     path: `/routers/${routerIndex}/branches/${branchIndex}/pageProcessors/${branch.pageProcessors?.length || '-'}`,
   },
 });
@@ -415,11 +421,13 @@ export const populateMergeData = (flow, elements) => {
   });
 };
 
-export const generateNodesAndEdgesFromBranchedFlow = (flow, isViewMode) => {
+export const generateNodesAndEdgesFromBranchedFlow = (flow, isViewMode, isDataLoader) => {
   const {pageGenerators = [], routers = [], _connectorId} = flow;
-  const isReadOnlyMode = !!_connectorId || isViewMode;
+  const isReadOnlyMode = !!_connectorId || isViewMode || isDataLoader;
   let firstPPId = routers[0].id;
   let isFirstRouterVirtual = false;
+
+  const isNewDataLoaderFlow = pageGenerators[0].application === 'dataLoader' && !pageGenerators[0]._exportId;
 
   if (isVirtualRouter(routers[0])) {
     isFirstRouterVirtual = true;
@@ -428,6 +436,19 @@ export const generateNodesAndEdgesFromBranchedFlow = (flow, isViewMode) => {
     } else if (routers[0].branches[0].nextRouterId) {
       firstPPId = routers[0].branches[0].nextRouterId;
     }
+  }
+  if (isNewDataLoaderFlow) {
+    const emptyNode = generateNewEmptyNode({branch: {infoText: messageStore('DATALOADER_PP_MESSAGE')}});
+
+    return [
+      {
+        id: pageGenerators[0].id,
+        type: GRAPH_ELEMENTS_TYPE.PG_STEP,
+        data: {...pageGenerators[0], path: '/pageGenerators/0', hideDelete: true },
+      },
+      generateDefaultEdge(pageGenerators[0].id, emptyNode.id),
+      emptyNode,
+    ];
   }
   const elements = [...generatePageGeneratorNodesAndEdges(pageGenerators, firstPPId, isReadOnlyMode, isFirstRouterVirtual)];
   const routerVisited = {};
@@ -445,7 +466,7 @@ export const generateNodesAndEdgesFromBranchedFlow = (flow, isViewMode) => {
           const pageProcessorNodes = generatePageProcessorNodesAndEdges(
             branch.pageProcessors,
             { branch, branchIndex, routerIndex, isVirtual: isVirtualRouter(router), branchCount: branches.length},
-            isReadOnlyMode
+            !!_connectorId || isViewMode
           );
 
           if (routerIndex !== 0 || !isVirtualRouter(router)) {
@@ -506,7 +527,7 @@ export const generateNodesAndEdgesFromBranchedFlow = (flow, isViewMode) => {
   return elements;
 };
 
-export const generateReactFlowGraph = (flow, isViewMode) => {
+export const generateReactFlowGraph = (flow, isViewMode, isDataLoader) => {
   if (!flow) {
     return;
   }
@@ -514,10 +535,10 @@ export const generateReactFlowGraph = (flow, isViewMode) => {
   const {routers} = flow;
 
   if (!routers || routers.length === 0) {
-    return generateNodesAndEdgesFromNonBranchedFlow(flow, isViewMode);
+    return generateNodesAndEdgesFromNonBranchedFlow(flow, isViewMode, isDataLoader);
   }
 
-  return generateNodesAndEdgesFromBranchedFlow(flow, isViewMode);
+  return generateNodesAndEdgesFromBranchedFlow(flow, isViewMode, isDataLoader);
 };
 
 export const mergeBetweenPPAndRouter = ({edgeSource, patchSet, sourceElement, edgeTarget}) => {
@@ -664,6 +685,8 @@ export const mergeTerminalToAnEdge = ({ flowDoc, elements, patchSet, sourceEleme
   }
 };
 
+export const getFlowAsyncKey = flowId => `${flowId}-${FLOW_SAVE_ASYNC_KEY}`;
+
 export const mergeDragSourceWithTarget = (flowDoc, elements, dragNodeId, targetId, patchSet) => {
   const sourceElement = elements[dragNodeId];
   const targetElement = elements[targetId];
@@ -681,7 +704,7 @@ export const mergeDragSourceWithTarget = (flowDoc, elements, dragNodeId, targetI
     patchSet.push({
       op: 'add',
       path: `/routers/${sourceRouterIndex}/branches/${sourceBranchIndex}/nextRouterId`,
-      value: targetElement.data.router.id,
+      value: targetElement.id,
     });
   } else if (targetElement.type === GRAPH_ELEMENTS_TYPE.EDGE) {
     mergeTerminalToAnEdge({flowDoc, elements, sourceElement, targetElement, patchSet});

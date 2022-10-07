@@ -7,6 +7,7 @@ import { useFlowContext } from '../Context';
 import actions from '../../../../actions';
 import { selectors } from '../../../../reducers';
 import PageGenerator from '../../PageGenerator';
+import { PageGeneratorRegex } from '../../../../constants';
 
 const useStyles = makeStyles(theme => ({
   pgContainer: {
@@ -29,6 +30,7 @@ export default function PageGeneratorNode(props) {
   const isViewMode = useSelector(state => selectors.isFlowViewMode(state, flow?._integrationId, flowId));
   const isFlowSaveInProgress = useSelector(state => selectors.isFlowSaveInProgress(state, flowId));
   const showDelete = !data.hideDelete && !isFlowSaveInProgress;
+  const [, pgIndex = ''] = PageGeneratorRegex.exec(data.path) || [];
 
   const handleDelete = useCallback(id => {
     dispatch(actions.flow.deleteStep(flowId, id));
@@ -40,6 +42,7 @@ export default function PageGeneratorNode(props) {
         <PageGenerator
           className={classes.pageGenerator}
           {...data}
+          index={+pgIndex}
           onDelete={showDelete && handleDelete}
           flowId={flowId}
           integrationId={flow?._integrationId}

@@ -1,5 +1,6 @@
-import { cloneDeep, pick } from 'lodash';
+import { cloneDeep, isEqual, pick } from 'lodash';
 import { hooksToFunctionNamesMap } from '../../../../../utils/hooks';
+import { safeParse } from '../../../../../utils/string';
 import filter from '../filter';
 import javascript from '../javascript';
 
@@ -76,11 +77,13 @@ export default {
   processor: 'branchFilter',
 
   requestBody: editor => {
-    const {rules, data, options} = filter.requestBody({
-      data: editor.data,
+    const { activeProcessor } = editor.rule;
+    const editorData = editor.data[activeProcessor];
+    const { rules, data, options } = filter.requestBody({
+      data: editorData,
       rule: editor.rule,
     });
-
+    const javascriptData = safeParse(editorData) || {};
     const router = { ...rules.rules };
 
     router.routeRecordsUsing = router.activeProcessor === 'javascript' ? 'script' : 'input_filters';
@@ -91,7 +94,7 @@ export default {
     return {
       data: [{
         router: pick(router, ['id', 'branches', 'routeRecordsTo', 'routeRecordsUsing', 'script']),
-        record: data[0],
+        record: router.activeProcessor === 'javascript' ? javascriptData.record : data[0],
         options,
       }],
     };
@@ -100,31 +103,44 @@ export default {
   validate: editor => {
     if (editor.rule.activeProcessor === 'filter') {
       return filter.validate({
-        data: editor.data,
+        data: editor.data?.filter,
         rule: editor.rule,
       });
     }
 
     return javascript.validate({
-      data: editor.data,
+      data: editor.data?.javascript,
     });
+  },
+  dirty: editor => {
+    const { activeProcessor } = editor.rule;
+
+    if (activeProcessor === 'javascript') {
+      return javascript.dirty(editor);
+    }
+
+    return !isEqual(editor.originalRule, editor.rule);
   },
   processResult: (editor, result) => {
     let outputMessage = '';
+    let logs;
 
-    if (result?.data) {
-      if (result.data[0].length === 1) {
-        const branch = editor.rule.branches[result.data[0][0]]?.name;
+    if (Array.isArray(result?.data)) {
+      const { data = [] } = result.data[0] || {};
 
-        outputMessage = `The record will pass through branch ${result.data[0][0]}: ${branch} `;
-      } else if (!result.data[0].length) {
+      logs = result.data[0].logs;
+      if (data.length === 1) {
+        const branch = editor.rule.branches[data[0]]?.name;
+
+        outputMessage = `The record will pass through branch ${data[0]}: ${branch} `;
+      } else if (!data.length) {
         outputMessage = 'The record will not pass through any of the branches.';
       } else {
-        outputMessage = `The record will pass through branches:\n${result.data[0].map(branchIndex => `branch ${branchIndex}: ${editor.rule.branches[branchIndex]?.name}`).join('\n')}`;
+        outputMessage = `The record will pass through branches:\n${data.map(branchIndex => `branch ${branchIndex}: ${editor.rule.branches[branchIndex]?.name}`).join('\n')}`;
       }
     }
 
-    return {data: outputMessage};
+    return { data: outputMessage, logs };
   },
   patchSet: editor => {
     const patches = {
@@ -150,7 +166,7 @@ export default {
       routeRecordsTo: rule.routeRecordsTo,
       branches: rule.branches,
       script: {
-        _scriptId: scriptId,
+        _scriptId: scriptId || undefined,
         function: entryFunction,
       },
     };
@@ -197,4 +213,29 @@ export default {
       draft.rule = rulePatch;
     }
   },
+  buildData: (_, sampleData) => {
+    const data = {};
+    let parsedData = safeParse(sampleData);
+
+    data.filter = JSON.stringify(parsedData, null, 2) || '';
+    // for JS panel, 'rows' is also represented as 'record'
+    if (parsedData?.rows) {
+      /*
+       While stringifying the json in below line after the block,
+       the iteration order is a combination of the insertion order for strings keys, and ascending order for number-like keys.
+       Hence if commented out code is used record is inserted last, hence shows up as last property in the editor.(IO-28963)
+
+       parsedData.record = parsedData.rows;
+       delete parsedData.rows;
+      */
+      const {rows, ...otherProps} = parsedData;
+
+      parsedData = {record: rows, ...otherProps};
+    }
+
+    data.javascript = JSON.stringify(parsedData, null, 2) || '';
+
+    return data;
+  },
+
 };

@@ -8,7 +8,7 @@ import AddIcon from '../icons/AddIcon';
 import PanelHeader from '../PanelHeader';
 import UsersList from './UsersList';
 import { TextButton } from '../Buttons';
-import infoText from '../../views/MyAccount/infoText';
+import infoText from '../Help/infoText';
 
 const useStyles = makeStyles(theme => ({
   userListWrapper: {
