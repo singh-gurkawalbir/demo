@@ -103,12 +103,14 @@ export function* updateRetryData({ flowId, resourceId, retryId, retryData }) {
 export function* _requestRetryStatus({ flowId, resourceId }) {
   let resourceType = 'exports';
   const importResource = yield select(selectors.resource, 'imports', resourceId);
+  const flow = yield select(selectors.resource, 'flows', flowId);
+  const integrationId = flow?._integrationId || 'none';
 
   if (importResource) {
     resourceType = 'imports';
   }
 
-  const path = `/jobs?_flowId=${flowId}&type=retry&status=queued&status=running&${resourceType === 'exports' ? '_exportId' : '_importId'}=${resourceId}`;
+  const path = `/jobs?_integrationId=${integrationId}&_flowId=${flowId}&type=retry&status=queued&status=running&${resourceType === 'exports' ? '_exportId' : '_importId'}=${resourceId}`;
 
   try {
     const pendingRetryList = yield call(apiCallWithRetry, {
