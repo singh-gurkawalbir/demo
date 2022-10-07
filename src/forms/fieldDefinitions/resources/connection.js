@@ -343,6 +343,7 @@ export default {
   'rest.scope': {
     type: 'selectscopes',
     label: 'Configure scopes',
+    required: true,
     helpKey: 'connection.http.auth.oauth.scope',
   },
 
@@ -706,6 +707,7 @@ export default {
   'http.auth.oauth.scope': {
     type: 'selectscopes',
     label: 'Configure scopes',
+    required: true,
   },
   'http.auth.oauth.scopeDelimiter': {
     isLoggable: true,
