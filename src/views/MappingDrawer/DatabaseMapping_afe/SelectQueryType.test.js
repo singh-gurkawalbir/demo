@@ -106,7 +106,7 @@ describe('SelectQueryType_afe test cases', () => {
     expect(screen.queryByText(/UPDATE/i)).toBeInTheDocument();
   });
 
-  test('should pass the initial render with RDBMS adaptorType with out queryType', async () => {
+  test('should pass the initial render with RDBMS adaptorType without queryType', async () => {
     const { utils } = await initSelectQueryType({
       importId: 'import_id_2',
     });

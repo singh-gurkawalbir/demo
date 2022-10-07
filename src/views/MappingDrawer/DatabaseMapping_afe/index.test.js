@@ -111,14 +111,14 @@ describe('DatabaseMapping_afe test cases', () => {
     expect(utils.container).toBeEmptyDOMElement();
   });
 
-  //   test('should pass the initial render with DynamodbImport adaptorType & postItem method', async () => {
-  //     const { utils } = await initDatabaseMapping({
-  //       importId: 'import_id_2',
-  //     });
+  test('should pass the initial render with DynamodbImport adaptorType & postItem method', async () => {
+    const { utils } = await initDatabaseMapping({
+      importId: 'import_id_2',
+    });
 
-  //     expect(mockRedirect).toBeCalledWith('/flows/queryBuilder/flow_id/import_id_2/0/editor/false');
-  //     expect(utils.container).toBeEmptyDOMElement();
-  //   });
+    expect(mockRedirect).toBeCalledWith('/flows/queryBuilder/flow_id/import_id_2/0/editor/false');
+    expect(utils.container).toBeEmptyDOMElement();
+  });
 
   test('should pass the initial render with DynamodbImport adaptorType & insertMany method', async () => {
     const { utils } = await initDatabaseMapping({
