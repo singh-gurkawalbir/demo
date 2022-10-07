@@ -17,6 +17,7 @@ export default {
     }/oauth2/v0/token`,
     '/http/auth/token/refreshMethod': 'POST',
     '/http/auth/token/refreshMediaType': 'urlencoded',
+    '/http/auth/failStatusCode': ['us2', 'eu2'].some(d => formValues['/http/baseURI'].includes(d)) ? 403 : 401,
   }),
   fieldMap: {
     name: { fieldId: 'name' },

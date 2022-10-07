@@ -77,6 +77,7 @@ export function KeyValueComponent(props) {
     keyLabel,
     valueLabel,
     isLoggable,
+    // handleEditorClick,
   } = props;
 
   const preUpdate = useCallback(val => val.filter(
@@ -241,6 +242,7 @@ export function KeyValueComponent(props) {
                   r={r}
                   enableSorting={enableSorting}
                   showSortOrder={showSortOrder}
+                  // handleEditorClick={handleEditorClick}
               />
               )}
               />

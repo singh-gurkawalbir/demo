@@ -6,6 +6,7 @@ import actions from '../../../../actions';
 import RefreshIcon from '../../../icons/RefreshIcon';
 import Spinner from '../../../Spinner';
 import { selectors } from '../../../../reducers';
+import ActionGroup from '../../../ActionGroup';
 
 const useStyles = makeStyles(theme => ({
   status: {
@@ -33,10 +34,10 @@ export default function RefreshableHeading({label, resourceType}) {
   }, [dispatch, setRefreshRequested, resourceType]);
 
   return (
-    <span className={classes.status}>
+    <ActionGroup>
       {label}
       {(refreshRequested && isResourceCollectionLoading)
-        ? <Spinner className={classes.statusSpinner} />
+        ? <Spinner className={classes.statusSpinner} size="small" />
         : (
           <IconButton
             data-test="refreshStatus"
@@ -45,7 +46,7 @@ export default function RefreshableHeading({label, resourceType}) {
             onClick={handleRefresh}>
             <RefreshIcon />
           </IconButton>
-        )}
-    </span>
+        ) }
+    </ActionGroup>
   );
 }

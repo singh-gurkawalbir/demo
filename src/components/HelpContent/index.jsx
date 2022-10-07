@@ -14,6 +14,8 @@ const useStyles = makeStyles(theme => ({
     maxWidth: '319px',
     borderRadius: theme.spacing(0.5),
     textAlign: 'left',
+    display: 'flex',
+    flexDirection: 'column',
   },
   title: {
     wordBreak: 'break-word',
@@ -24,6 +26,9 @@ const useStyles = makeStyles(theme => ({
     lineHeight: '22px',
     whiteSpace: 'normal',
     wordBreak: 'break-word',
+    '&>div': {
+      maxHeight: 300,
+    },
     '& > div > pre': {
       background: theme.palette.background.paper2,
       border: '1px solid',
@@ -53,6 +58,10 @@ const useStyles = makeStyles(theme => ({
     borderTop: '1px solid',
     borderColor: theme.palette.secondary.lightest,
   },
+  feedbackActionButton: {
+    display: 'flex',
+    alignSelf: 'flex-start',
+  },
 }));
 
 export default function HelpContent({ children, title, caption, fieldId, resourceType, updatePosition }) {
@@ -66,7 +75,7 @@ export default function HelpContent({ children, title, caption, fieldId, resourc
         dispatch(actions.app.postFeedback(resourceType, fieldId, helpful));
       } else {
         setFeedbackText(true);
-        updatePosition();
+        updatePosition && updatePosition();
       }
     },
 
@@ -103,6 +112,7 @@ export default function HelpContent({ children, title, caption, fieldId, resourc
             className={classes.feedbackTextField}
           />
           <OutlinedButton
+            className={classes.feedbackActionButton}
             onClick={handleSendFeedbackText}>
             Submit
           </OutlinedButton>

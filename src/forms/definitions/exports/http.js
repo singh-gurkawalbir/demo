@@ -315,6 +315,17 @@ export default {
         return 'records';
       },
     },
+    groupByFields: {
+      fieldId: 'groupByFields',
+      defaultValue: r => r.groupByFields,
+      resourceSubType: 'http',
+      visibleWhenAll: [
+        {
+          field: 'outputMode',
+          is: ['records'],
+        },
+      ],
+    },
     'http.method': { fieldId: 'http.method' },
     'http.blobMethod': { fieldId: 'http.blobMethod' },
     'http.headers': { fieldId: 'http.headers' },
@@ -578,6 +589,11 @@ export default {
             ],
           },
         ],
+      },
+      {
+        collapsed: true,
+        label: 'Would you like to group records?',
+        fields: ['groupByFields'],
       },
       {
         collapsed: true,

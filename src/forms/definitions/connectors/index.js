@@ -1,8 +1,14 @@
+import { getPublishedConnectorId } from '../../../utils/assistant';
+
 export default {
   preSave: formValues => {
     const newValues = {
       ...formValues,
     };
+
+    const applications = formValues['/applications'];
+
+    newValues['/applications'] = applications.map(app => getPublishedConnectorId(app) || app);
 
     if (!newValues['/trialEnabled']) {
       newValues['/trialPeriod'] = undefined;

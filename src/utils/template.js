@@ -29,7 +29,10 @@ export const getApplication = conn => {
   const applications = applicationsList();
   const app = applications.find(a => {
     if (conn.assistant) {
-      return a.id === conn.assistant;
+      return (a?.id?.toLowerCase()?.replace(/\.|\s/g, '')) === conn.assistant;
+    }
+    if (conn.http?._httpConnectorId && conn.http?.formType !== 'graph_ql') {
+      return a._httpConnectorId === conn.http._httpConnectorId;
     }
 
     if (conn.type === 'rdbms' && conn.rdbms) {
@@ -43,7 +46,7 @@ export const getApplication = conn => {
     return a.id === conn.type;
   }) || {};
 
-  return { name: app.name, id: app.id };
+  return { name: app.name, id: app?.id?.toLowerCase()?.replace(/\.|\s/g, '') };
 };
 
 export default {

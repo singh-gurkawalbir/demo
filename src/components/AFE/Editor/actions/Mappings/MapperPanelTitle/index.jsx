@@ -2,6 +2,7 @@ import React, { useCallback } from 'react';
 import { IconButton, Tooltip } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
+import isEmpty from 'lodash/isEmpty';
 import Help from '../../../../../Help';
 import actions from '../../../../../../actions';
 import { selectors } from '../../../../../../reducers';
@@ -14,6 +15,8 @@ import ActionGroup from '../../../../../ActionGroup';
 import Spinner from '../../../../../Spinner';
 import OutputFormatsList from './OutputFormatsList';
 import MoreActions from './MoreActions';
+import SearchIcon from '../../../../../icons/SearchIcon';
+import Mapper2Filter from '../../../panels/Mappings/Mapper2/Mapper2Filter';
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
@@ -42,6 +45,7 @@ export default function MapperPanelTitle({editorId, title, helpKey}) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const disabled = useSelector(state => selectors.isEditorDisabled(state, editorId));
+  const searchKey = useSelector(state => selectors.searchKey(state));
   const {mappingVersion, flowId, importId} = useSelector(state => {
     const mapping = selectors.mapping(state);
 
@@ -63,6 +67,12 @@ export default function MapperPanelTitle({editorId, title, helpKey}) {
     return extractStatus === 'requested';
   });
 
+  const isFilterApplied = useSelector(state => {
+    const mapper2Filter = selectors.mapper2Filter(state);
+
+    return !isEmpty(mapper2Filter) && !mapper2Filter.includes('all');
+  });
+
   const handleRefreshFlowDataClick = useCallback(() => {
     const refreshCache = true;
 
@@ -79,6 +89,11 @@ export default function MapperPanelTitle({editorId, title, helpKey}) {
 
   const handleToggleRows = useCallback(shouldExpand => {
     dispatch(actions.mapping.v2.toggleRows(shouldExpand));
+  }, [dispatch]);
+
+  // to toggle if SearchBar to be shown
+  const handleToggleSearch = useCallback(() => {
+    dispatch(actions.mapping.v2.searchTree({ searchKey: '', showKey: false }));
   }, [dispatch]);
 
   // return the old title if its not mapper2 view
@@ -128,6 +143,24 @@ export default function MapperPanelTitle({editorId, title, helpKey}) {
             <CollapseRowsIcon />
           </IconButton>
         </Tooltip>
+
+        <CeligoDivider position="right" />
+        <Mapper2Filter />
+
+        {(searchKey === undefined) && (
+          <Tooltip title={isFilterApplied ? "You can't search while a filter is applied. Clear your filter to allow searching." : ''} placement="bottom">
+            {/* This span is needed to render the tooltip correctly */}
+            <span>
+              <IconButton
+                disabled={isFilterApplied}
+                size="small"
+                date-test="showSearch"
+                onClick={handleToggleSearch} >
+                <SearchIcon />
+              </IconButton>
+            </span>
+          </Tooltip>
+        )}
 
         <MoreActions importId={importId} disabled={disabled} />
 

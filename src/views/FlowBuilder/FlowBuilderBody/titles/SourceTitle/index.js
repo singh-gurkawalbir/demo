@@ -12,6 +12,7 @@ const minTitleWidth = 140;
 
 const useStyles = makeStyles(theme => ({
   sourceTitle: {
+    cursor: 'default',
     width: ({ titleWidth }) => titleWidth,
     left: ({ xOffset }) => xOffset,
     background: `linear-gradient(${theme.palette.background.default}, 95%, #FFF0)`,

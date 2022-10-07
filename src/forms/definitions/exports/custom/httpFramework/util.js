@@ -27,14 +27,14 @@ function basicFieldsMeta({ assistant, assistantConfig, assistantData }) {
       value: assistantConfig.resource,
       required: true,
       type: 'hfoptions',
-      label: 'Resources',
+      label: 'Resource',
     },
     operation: {
       fieldId: 'assistantMetadata.operation',
       value: assistantConfig.operation || assistantConfig.operationUrl,
       required: true,
       type: 'hfoptions',
-      label: 'API Endpoints',
+      label: 'API endpoint',
     },
   };
   const { labels = {}, versions = [], helpTexts = {} } = assistantData;
@@ -200,6 +200,8 @@ function searchParameterFieldsMeta({
           : 'assistantMetadata.bodyParams',
       label,
       value: !isEmpty(value) ? value : defaultValue,
+      keyName: 'name',
+      valueName: 'value',
       paramMeta: {
         paramLocation,
         fields: parameters,

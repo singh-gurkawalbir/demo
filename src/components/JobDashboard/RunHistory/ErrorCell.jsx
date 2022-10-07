@@ -10,7 +10,7 @@ import { getTextAfterCount } from '../../../utils/string';
 import { buildDrawerUrl, drawerPaths } from '../../../utils/rightDrawer';
 import Status from '../../Buttons/Status';
 
-export default function ErrorCell({ job }) {
+export default function ErrorCell({ job, disabled }) {
   const { _integrationId, _flowId, _childId, _flowJobId, _parentJobId, _exportId, numOpenError, _importId, _expOrImpId } = job;
   const flowJobId = _flowJobId || _parentJobId;
   const dispatch = useDispatch();
@@ -39,16 +39,16 @@ export default function ErrorCell({ job }) {
       baseUrl: flowBuilderTo,
       params: { resourceId: id, flowJobId, errorType: 'open'},
     }));
-  }, [_flowId, flowJobId, dispatch, flowBuilderTo, history, id, job]);
+  }, [dispatch, _flowId, flowJobId, id, job, history, flowBuilderTo]);
 
   if (!numOpenError) {
     return (
-      <Status variant="success" size="mini" onClick={handleErrorClick}>Success</Status>
+      <Status variant="success" size="mini" onClick={disabled ? null : handleErrorClick}>Success</Status>
     );
   }
 
   return (
-    <Status variant="error" size="mini" onClick={handleErrorClick}>
+    <Status variant="error" size="mini" onClick={disabled ? null : handleErrorClick}>
       {numOpenError > 9999 ? '9999+ errors' : getTextAfterCount('error', numOpenError)}
     </Status>
   );

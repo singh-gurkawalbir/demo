@@ -27,14 +27,14 @@ function basicFieldsMeta({ assistant, assistantConfig, assistantData }) {
       value: assistantConfig.resource,
       required: true,
       type: 'hfoptions',
-      label: 'Resources',
+      label: 'Resource',
     },
     operation: {
       fieldId: 'assistantMetadata.operation',
       type: 'hfoptions',
       value: assistantConfig.operation || assistantConfig.operationUrl,
       required: true,
-      label: 'API Endpoints',
+      label: 'API endpoint',
     },
   };
   const { labels = {}, versions = [], helpTexts = {} } = assistantData;
@@ -44,7 +44,7 @@ function basicFieldsMeta({ assistant, assistantConfig, assistantData }) {
       fieldDefinitions[fieldId].visible = versions.length > 1;
 
       if (!fieldDefinitions[fieldId].value && versions.length === 1) {
-        fieldDefinitions[fieldId].value = versions[0].version;
+        fieldDefinitions[fieldId].value = versions[0]._id;
       }
     }
 

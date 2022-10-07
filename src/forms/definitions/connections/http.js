@@ -1,6 +1,8 @@
+import { PASSWORD_MASK } from '../../../constants';
 import {
   updateFinalMetadataWithHttpFramework,
 } from '../../../sagas/utils';
+import { safeParse } from '../../../utils/string';
 import { updateHTTPFrameworkFormValues } from '../../metaDataUtils/fileUtil';
 
 export default {
@@ -47,16 +49,6 @@ export default {
       }
     }
 
-    if (newValues['/http/custom/encrypted']) {
-      try {
-        newValues['/http/custom/encrypted'] = JSON.parse(
-          newValues['/http/custom/encrypted']
-        );
-      } catch (ex) {
-        newValues['/http/custom/encrypted'] = undefined;
-      }
-    }
-
     if (newValues['/http/unencrypted']) {
       try {
         newValues['/http/unencrypted'] = JSON.parse(
@@ -91,10 +83,10 @@ export default {
       newValues['/http/auth/basic/username'] = newValues['/http/auth/digest/username'];
       newValues['/http/auth/basic/password'] = newValues['/http/auth/digest/password'];
     }
-
     if (
-      newValues['/http/auth/type'] !== 'token' ||
-      !formValues['/configureTokenRefresh']
+      !['custom', 'token'].includes(newValues['/http/auth/type']) ||
+      (newValues['/http/auth/type'] === 'custom' && !newValues['/configureCutomAuthTokenRefresh']) ||
+      (newValues['/http/auth/type'] === 'token' && !newValues['/configureTokenRefresh'])
     ) {
       newValues['/http/auth/token/refreshMethod'] = undefined;
       newValues['/http/auth/token/refreshTokenPath'] = undefined;
@@ -103,14 +95,37 @@ export default {
       newValues['/http/auth/token/refreshBody'] = undefined;
       newValues['/http/auth/token/refreshRelativeURI'] = undefined;
       newValues['/http/auth/token/refreshMediaType'] = undefined;
+      newValues['/http/auth/token/tokenPaths'] = undefined;
     }
-
+    if (newValues['/http/auth/type'] !== 'custom' || !newValues['/http/auth/token/tokenPaths']) {
+      // tokenPaths are only supported for custom auth type refresh token
+      newValues['/http/auth/token/tokenPaths'] = undefined;
+    }
     if (newValues['/http/auth/type'] === 'token' || newValues['/http/auth/type'] === 'oauth') {
       if (newValues['/http/auth/token/scheme'] === 'Custom') {
         newValues['/http/auth/token/scheme'] = newValues['/http/customAuthScheme'];
       }
     }
 
+    if (newValues['/http/custom/encrypted']) {
+      const tokenPathsDefaultObject = newValues['/http/auth/token/tokenPaths']?.reduce?.((a, v) => ({ ...a, [v]: PASSWORD_MASK}), {});
+
+      const encryptedFieldValue = safeParse(newValues['/http/custom/encrypted']);
+
+      newValues['/http/custom/encrypted'] = encryptedFieldValue;
+
+      if (typeof tokenPathsDefaultObject === 'object') {
+        newValues['/http/custom/encrypted'] = tokenPathsDefaultObject;
+      }
+
+      if (typeof encryptedFieldValue === 'object') {
+        // override the default token paths with user provided values
+        newValues['/http/custom/encrypted'] = {
+          ...(newValues['/http/custom/encrypted'] || {}),
+          ...encryptedFieldValue,
+        };
+      }
+    }
     if (newValues['/http/auth/type'] !== 'token' && newValues['/http/auth/type'] !== 'oauth') {
       newValues['/http/auth/oauth'] = undefined;
       delete newValues['/http/auth/oauth/callbackURL'];
@@ -196,13 +211,14 @@ export default {
 
     delete newValues['/http/clientCertificates/type'];
 
+    newValues['/configureTokenRefresh'] = undefined;
+    newValues['/configureCutomAuthTokenRefresh'] = undefined;
+    newValues['/assistant'] = undefined;
+
     return newValues;
   },
   fieldMap: {
     name: { fieldId: 'name' },
-    connectionFormView: {
-      fieldId: 'connectionFormView',
-    },
     mode: {
       id: 'mode',
       type: 'radiogroup',
@@ -300,11 +316,23 @@ export default {
     },
     httpRefreshToken: {
       formId: 'httpRefreshToken',
-      visibleWhenAll: [
-        { field: 'http.auth.type', is: ['token'] },
-        { field: 'http.auth.token.location', isNot: [''] },
-        { field: 'configureTokenRefresh', is: [true] },
-      ],
+      visibleWhenAll: [{
+        OR: [
+          {
+            AND: [
+              { field: 'http.auth.type', is: ['token'] },
+              { field: 'http.auth.token.location', isNot: [''] },
+              { field: 'configureTokenRefresh', is: [true] },
+            ],
+          },
+          {
+            AND: [
+              { field: 'http.auth.type', is: ['custom'] },
+              { field: 'configureCutomAuthTokenRefresh', is: [true] },
+            ],
+          },
+        ],
+      }],
     },
     httpCookie: {
       formId: 'httpCookie',
@@ -409,6 +437,9 @@ export default {
     application: {
       fieldId: 'application',
     },
+    configureCutomAuthTokenRefresh: {
+      fieldId: 'configureCutomAuthTokenRefresh',
+    },
   },
   layout: {
     type: 'collapse',
@@ -418,7 +449,6 @@ export default {
         label: 'General',
         fields: [
           'name',
-          'connectionFormView',
           'application',
           'mode',
           '_agentId',
@@ -465,6 +495,7 @@ export default {
                 fields: [
                   'http.custom.encrypted',
                   'http.custom.unencrypted',
+                  'configureCutomAuthTokenRefresh',
                 ],
               },
               {

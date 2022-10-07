@@ -11,6 +11,7 @@ import actions from '../../actions';
 import actionTypes from '../../actions/types';
 import { authParams, logoutParams, getCSRFParams } from '../api/apiPaths';
 import { apiCallWithRetry } from '../index';
+import { requestMFASessionInfo } from '../mfa';
 import { getResource, getResourceCollection } from '../resources';
 import {
   setCSRFToken,
@@ -172,12 +173,25 @@ export function* fetchUIVersion() {
 }
 
 export function* retrieveAppInitializationResources() {
+  yield call(requestMFASessionInfo);
+  const isMFASetupIncomplete = yield select(selectors.isMFASetupIncomplete);
+
   yield call(retrievingUserDetails);
-  yield all([
-    call(retrievingOrgDetails),
-    call(retrievingAssistantDetails),
-    call(retrievingHttpConnectorDetails),
-  ]);
+
+  if (isMFASetupIncomplete) {
+    // Incase the account user has not yet setup mfa and owner has enforced require mfa, then we only fetch ashare accounts
+    // all other APIs are evaded
+    yield call(
+      getResourceCollection,
+      actions.user.org.accounts.requestCollection('Retrieving user\'s accounts')
+    );
+  } else {
+    yield all([
+      call(retrievingOrgDetails),
+      call(retrievingAssistantDetails),
+      call(retrievingHttpConnectorDetails),
+    ]);
+  }
 
   yield put(actions.app.fetchUiVersion());
   const { defaultAShareId } = yield select(selectors.userPreferences);
@@ -327,7 +341,7 @@ export function* auth({ email, password }) {
       // Once login is success, incase of mfaRequired, user has to enter OTP to successfully authenticate
       // So , we redirect him to OTP (/mfa/verify) page
 
-      return yield put(actions.auth.mfaRequired());
+      return yield put(actions.auth.mfaRequired(apiAuthentications));
     }
     const isExpired = yield select(selectors.isSessionExpired);
 

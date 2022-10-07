@@ -92,13 +92,13 @@ export default function MoreActionsButton({editorId, position, pageProcessors = 
         onClose={handleCloseMenu}
         onClick={handleArrowPopperClick}
       >
-        <MenuItem onClick={handleEdit}>
+        <MenuItem data-test={`edit-branch-${position}`} onClick={handleEdit}>
           <EditIcon /> Edit branch name/description
         </MenuItem>
 
         <Tooltip title={allowDeleting ? '' : messageStore('DELETE_LAST_BRANCH_MESSAGE')} placement="bottom" aria-label="no notifications">
           <span>
-            <MenuItem disabled={!allowDeleting} onClick={handleDeleteBranch}>
+            <MenuItem disabled={!allowDeleting} data-test={`deleteBranch-${position}`} onClick={handleDeleteBranch}>
               <TrashIcon /> Delete branch
             </MenuItem>
           </span>

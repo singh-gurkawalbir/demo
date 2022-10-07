@@ -24,9 +24,6 @@ const useStyles = makeStyles(theme => ({
     border: '1px solid',
     borderColor: theme.palette.secondary.lightest,
     borderRadius: theme.spacing(0.5),
-    '&:last-child': {
-      marginBottom: 0,
-    },
   },
 }));
 

@@ -1,12 +1,27 @@
 import clsx from 'clsx';
 import React from 'react';
 import { makeStyles, Divider } from '@material-ui/core';
+import PropTypes from 'prop-types';
 
 const useStyles = makeStyles(theme => ({
   divider: {
     margin: theme.spacing(0.5, 1, 0),
-    height: 24,
     width: 1,
+  },
+  small: {
+    height: theme.spacing(1),
+  },
+  medium: {
+    height: theme.spacing(2),
+    margin: theme.spacing(0, 0.5),
+  },
+  large: {
+    height: theme.spacing(3),
+    margin: theme.spacing(0, 1),
+  },
+  xlarge: {
+    height: theme.spacing(4),
+    margin: theme.spacing(0, 2),
   },
   right: {
     marginLeft: theme.spacing(0),
@@ -16,13 +31,24 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function CeligoDivider({ orientation = 'vertical', position }) {
+export default function CeligoDivider({ orientation = 'vertical', height, position, className }) {
   const classes = useStyles();
 
   return (
     <Divider
       orientation={orientation}
-      className={clsx(classes.divider, classes[position])}
+      className={clsx(classes.divider, classes[position], classes[height], className)}
+      height={height}
   />
   );
 }
+
+CeligoDivider.defaultProps = {
+  orientation: 'horizontal,',
+};
+
+CeligoDivider.propTypes = {
+  height: PropTypes.oneOf(['small', 'medium', 'large', 'xLarge']),
+  orientation: PropTypes.oneOf(['vertical', 'horizontal']),
+  position: PropTypes.oneOf(['left', 'right']),
+};

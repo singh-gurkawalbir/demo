@@ -19,7 +19,7 @@ import PanelHeader from '../../../components/PanelHeader';
 import UpgradeDrawer from './drawers/Upgrade';
 import { TextButton, FilledButton } from '../../../components/Buttons';
 import { drawerPaths, buildDrawerUrl } from '../../../utils/rightDrawer';
-import infoText from '../infoText';
+import infoText from '../../../components/Help/infoText';
 
 const useStyles = makeStyles(theme => ({
   itemsList: {
@@ -344,7 +344,8 @@ export default function Endpoint() {
               ) > -1 && (
               <FilledButton
                 onClick={onStartFreeTrialClick}
-                className={classes.subscriptionUpgradeBtn}>
+                className={classes.subscriptionUpgradeBtn}
+                id="myaccout-unlimited-flows-button">
                 Get unlimited flows
               </FilledButton>
               )}
@@ -357,6 +358,7 @@ export default function Endpoint() {
                 onClick={onRequestUpgradeClick}
                 disabled={upgradeRequested}
                 className={classes.subscriptionUpgradeBtn}
+                id="myaccout-request-upgrade-buttton"
              >
                 {upgradeRequested ? 'Upgrade requested' : 'Request upgrade'}
               </FilledButton>
