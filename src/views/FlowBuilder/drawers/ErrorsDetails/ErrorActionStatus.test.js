@@ -1,6 +1,5 @@
-/* global describe, test, expect, beforeEach, afterEach, jest */
+/* global describe, test, expect */
 import React from 'react';
-import * as reactRedux from 'react-redux';
 import { MemoryRouter, Route } from 'react-router-dom';
 import { screen } from '@testing-library/react';
 import ErrorActionStatus from './ErrorActionStatus';
@@ -51,23 +50,6 @@ async function initErrorActionStatus({
 
 describe('ErrorActionStatus test cases', () => {
   runServer();
-  let mockDispatchFn;
-  let useDispatchSpy;
-
-  beforeEach(() => {
-    useDispatchSpy = jest.spyOn(reactRedux, 'useDispatch');
-    mockDispatchFn = jest.fn(action => {
-      switch (action.type) {
-        default:
-      }
-    });
-    useDispatchSpy.mockReturnValue(mockDispatchFn);
-  });
-
-  afterEach(() => {
-    useDispatchSpy.mockClear();
-    mockDispatchFn.mockClear();
-  });
 
   test('should pass the initial render with default value', async () => {
     await initErrorActionStatus();

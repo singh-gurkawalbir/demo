@@ -34,7 +34,6 @@ describe('Admin Panel UI tests', () => {
     expect(screen.getByText('API tokens')).toBeInTheDocument();
     expect(screen.getByText('Subscription')).toBeInTheDocument();
     expect(screen.getByText('Uninstall')).toBeInTheDocument();
-    screen.debug();
   });
   test('should not display the API tokens panel when childId is present', () => {
     initAdminPanel({integrationId: '60e6f83f3499084a689178cc', access: 'owner', childId: '60e6f83f3499084a689189bb'});

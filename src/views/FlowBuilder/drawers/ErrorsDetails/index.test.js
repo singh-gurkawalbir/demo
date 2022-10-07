@@ -1,6 +1,5 @@
-/* global describe, test, expect, beforeEach, afterEach, jest */
+/* global describe, test, expect, afterEach, jest */
 import React from 'react';
-import * as reactRedux from 'react-redux';
 import { MemoryRouter, Route } from 'react-router-dom';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -96,23 +95,11 @@ jest.mock('react-router-dom', () => ({
 }));
 
 describe('ErrorDetailsDrawer test cases', () => {
+  window.HTMLElement.prototype.scrollTo = jest.fn();
+  window.HTMLElement.prototype.scrollIntoView = jest.fn();
   runServer();
-  let mockDispatchFn;
-  let useDispatchSpy;
-
-  beforeEach(() => {
-    useDispatchSpy = jest.spyOn(reactRedux, 'useDispatch');
-    mockDispatchFn = jest.fn(action => {
-      switch (action.type) {
-        default:
-      }
-    });
-    useDispatchSpy.mockReturnValue(mockDispatchFn);
-  });
 
   afterEach(() => {
-    useDispatchSpy.mockClear();
-    mockDispatchFn.mockClear();
     mockReplaceFn.mockClear();
     mockGoBackFn.mockClear();
   });

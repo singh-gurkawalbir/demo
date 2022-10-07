@@ -41,8 +41,6 @@ describe('StackSystemToken test cases', () => {
   });
   test('should pass the initial render with default values', async () => {
     await initStackSystemToken({});
-
-    screen.debug();
     expect(screen.queryByText(/Show token/i)).toBeInTheDocument();
 
     const buttonRef = screen.getByRole('button');

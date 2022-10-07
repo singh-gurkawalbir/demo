@@ -56,7 +56,6 @@ describe('UninstallSection UI tests', () => {
     const buttons = screen.getAllByText('Uninstall');
 
     expect(buttons).toHaveLength(2);
-    screen.debug();
   });
   test('should display the confirm dialogue when clicked on uninstall button', async () => {
     await initUninstallSection({integrationId: '5ff579d745ceef7dcd797c15', steps: demoSteps});

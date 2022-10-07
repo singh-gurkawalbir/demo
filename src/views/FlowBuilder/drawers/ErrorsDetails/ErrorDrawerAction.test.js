@@ -1,6 +1,5 @@
-/* global describe, test, expect, beforeEach, afterEach, jest */
+/* global describe, test, expect */
 import React from 'react';
-import * as reactRedux from 'react-redux';
 import { MemoryRouter, Route } from 'react-router-dom';
 import { screen } from '@testing-library/react';
 import ErrorDrawerAction from './ErrorDrawerAction';
@@ -40,23 +39,6 @@ async function initErrorDrawerAction({
 
 describe('ErrorDrawerAction test cases', () => {
   runServer();
-  let mockDispatchFn;
-  let useDispatchSpy;
-
-  beforeEach(() => {
-    useDispatchSpy = jest.spyOn(reactRedux, 'useDispatch');
-    mockDispatchFn = jest.fn(action => {
-      switch (action.type) {
-        default:
-      }
-    });
-    useDispatchSpy.mockReturnValue(mockDispatchFn);
-  });
-
-  afterEach(() => {
-    useDispatchSpy.mockClear();
-    mockDispatchFn.mockClear();
-  });
 
   test('should pass the initial render with default value', async () => {
     await initErrorDrawerAction();
@@ -67,6 +49,7 @@ describe('ErrorDrawerAction test cases', () => {
     await initErrorDrawerAction({
       retryStatus: 'completed',
     });
-    expect(screen.queryByText(/Retrying complete/i)).toBeInTheDocument();
+    expect(screen.queryByText(/Retry completed./i)).toBeInTheDocument();
+    expect(screen.queryByText(/View results/i)).toBeInTheDocument();
   });
 });
