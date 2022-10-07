@@ -56,7 +56,7 @@ describe('ErrorActionStatus test cases', () => {
     expect(screen.queryByText('Retries: 1 | Resolves: 1')).toBeInTheDocument();
   });
 
-  test('should pass the initial render with default value', async () => {
+  test('should pass the initial render without wrong export id', async () => {
     await initErrorActionStatus({
       props: {
         flowId: 'flow_id',
