@@ -6,7 +6,7 @@ import { HTTP_STAGES } from '../../../utils/exportPanel';
 import PreviewBody from './PreviewBody';
 
 describe('Testsuite for PreviewBody', () => {
-  test('Shpuld test the Preview Body with no data', () => {
+  test('Should test the Preview Body with no data', () => {
     const {utils} = renderWithProviders(<PreviewBody
       resourceSampleData={{}}
       handlePanelViewChange={jest.fn()}
@@ -49,7 +49,7 @@ describe('Testsuite for PreviewBody', () => {
     expect(screen.getByText('someLabel')).toBeInTheDocument();
     expect(screen.getByText('Other')).toBeInTheDocument();
   });
-  test('ewfqwedefer', () => { // not able to understand what value to give in previewStageDataList
+  test('Should test the Preview Body with response data', () => {
     renderWithProviders(<PreviewBody
       resourceSampleData={{ status: 'received' }}
       resourceType="imports"
@@ -72,3 +72,4 @@ describe('Testsuite for PreviewBody', () => {
     expect(pressed).toHaveTextContent('HTTP response');
   });
 });
+

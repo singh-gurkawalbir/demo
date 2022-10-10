@@ -107,7 +107,7 @@ describe('Testsuite for Request Url Panel', () => {
     expect(screen.getByText(/Request URL/i)).toBeInTheDocument();
     expect(screen.getByText('https://test.com/testing')).toBeInTheDocument();
   });
-  test('second', async () => {
+  test('should test the empty request url panel', async () => {
     const props = {
       previewStageDataList: {
       },

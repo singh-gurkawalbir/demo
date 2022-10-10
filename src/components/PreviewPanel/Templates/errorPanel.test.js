@@ -9,7 +9,7 @@ import { getCreatedStore } from '../../../store';
 
 let initialStore;
 
-async function initErrorPanel({resourceId = '', data} = {}) {
+async function initErrorPanel({resourceId, data} = {}) {
   initialStore.getState().session.resourceFormSampleData[resourceId] = data;
   const ui = (
     <MemoryRouter>

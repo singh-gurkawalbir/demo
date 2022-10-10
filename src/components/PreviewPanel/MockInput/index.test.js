@@ -66,15 +66,20 @@ jest.mock('../../AFE/Editor/panels/Code', () => ({
   __esModule: true,
   ...jest.requireActual('../../AFE/Editor/panels/Code'),
   default: props => {
-    if (!props.value.page_of_records) {
-      return <div>Value not provided</div>;
+    let value;
+
+    if (typeof props.value === 'string') {
+      value = props.value;
+    } else {
+      value = JSON.stringify(props.value);
     }
+    const handleChange = event => {
+      props.onChange(event?.currentTarget?.value);
+    };
 
     return (
       <>
-        <div>
-          <textarea value={JSON.stringify(props.value)} onChange={props.onChange} />
-        </div>
+        <textarea name="codeEditor" value={value} onChange={handleChange} />
       </>
     );
   },
@@ -99,7 +104,7 @@ describe('Testsuite for MockInput', () => {
     useDispatchSpy.mockClear();
     mockDispatchFn.mockClear();
   });
-  test.skip('should edit the JSON code with an valid JSON click on done message', async () => {
+  test('should edit the JSON code with an valid JSON click on done message', async () => {
     await initMockInput({data: {
       preview: {
         status: 'received',
@@ -145,13 +150,16 @@ describe('Testsuite for MockInput', () => {
     });
     expect(screen.getByText(/Header/i)).toBeInTheDocument();
     expect(screen.getByText(/input/i)).toBeInTheDocument();
-    // userEvent.type(screen.getByText(/123/i), 'test');
-    // expect(screen.getByText(/Mock input must contain page_of_records/i)).toBeInTheDocument();
-    // const doneButtonNode = screen.getByRole('button', {name: 'Done'});
+    expect(screen.getByText('{"page_of_records":[{"record":{"id":"123"}}]}')).toBeInTheDocument();
+    const doneButtonNode = screen.getByText(/Done/i);
 
-    // expect(doneButtonNode).toBeInTheDocument();
-    // expect(doneButtonNode).toBeDisabled();
-    screen.debug(null, Infinity);
+    expect(doneButtonNode).toBeInTheDocument();
+    userEvent.click(doneButtonNode);
+    expect(mockDispatchFn).toHaveBeenCalledWith({
+      type: 'RESOURCE_FORM_SAMPLE_DATA_SET_MOCK_DATA',
+      resourceId: '98765',
+      mockData: { id: '123' },
+    });
   });
   test('should edit the JSON code with an empty JSON and verify the error message', async () => {
     await initMockInput({data: {
@@ -197,12 +205,155 @@ describe('Testsuite for MockInput', () => {
       },
     },
     });
-    const jsonNode = screen.getByText('{"page_of_records":[{"record":{"id":"123"}}]}');
+    const inputNode = screen.getByRole('textbox');
 
-    expect(jsonNode).toBeInTheDocument();
-    userEvent.clear(jsonNode);
-    expect(screen.getByText(/Value not provided/i)).toBeInTheDocument();
+    userEvent.clear(inputNode);
+    userEvent.type(inputNode, '{}'.replace(/[{[]/g, '$&$&'));
     expect(screen.getByText(/Mock input must contain page_of_records/)).toBeInTheDocument();
+  });
+  test('should edit the JSON code with an invalid JSON', async () => {
+    await initMockInput({data: {
+      preview: {
+        status: 'received',
+        recordSize: 10,
+        data: {
+          request: [
+            {
+              headers: {
+                accept: 'application/json',
+              },
+              url: 'https://testapi.com',
+              method: 'POST',
+              body: {
+                id: '123',
+              },
+            },
+          ],
+          mockData: true,
+        },
+      },
+      typeOfSampleData: 'preview',
+    },
+    flowData: {
+      preMap: {
+        status: 'received',
+        data: {
+          id: '123',
+        },
+      },
+      processedFlowInput: {
+        status: 'received',
+        data: {
+          id: '123',
+        },
+      },
+      flowInput: {
+        status: 'received',
+        data: {
+          id: '123',
+        },
+      },
+    },
+    });
+    const inputNode = document.querySelector('textarea[name="codeEditor"]');
+
+    userEvent.clear(inputNode);
+    userEvent.type(inputNode, 'test');
+    expect(screen.getByText(/test/i)).toBeInTheDocument();
+    expect(screen.getByText(/Mock input must be valid JSON/i)).toBeInTheDocument();
+  });
+  test('should test the JSON data of type array', async () => {
+    await initMockInput({data: {
+      preview: {
+        status: 'received',
+        recordSize: 10,
+        data: {
+          request: [
+            {
+              headers: {
+                accept: 'application/json',
+              },
+              url: 'https://testapi.com',
+              method: 'POST',
+              body: [{
+                id: '123',
+              }],
+            },
+          ],
+          mockData: false,
+        },
+      },
+      typeOfSampleData: 'preview',
+    },
+    flowData: {
+      preMap: {
+        status: 'received',
+        data: [{
+          id: '123',
+        }],
+      },
+      processedFlowInput: {
+        status: 'received',
+        data: [{
+          id: '123',
+        }],
+      },
+      flowInput: {
+        status: 'received',
+        data: [{
+          id: '123',
+        }],
+      },
+    },
+    });
+    expect(screen.getByText('{"page_of_records":[{"rows":[{"id":"123"}]}]}')).toBeInTheDocument();
+  });
+  test('should test the JSON data when requested', async () => {
+    await initMockInput(
+      {data: {
+        preview: {
+          status: 'requested',
+          recordSize: 10,
+          data: {
+            request: [
+              {
+                headers: {
+                  accept: 'application/json',
+                },
+                url: 'https://testapi.com',
+                method: 'POST',
+                body: [{
+                  id: '123',
+                }],
+              },
+            ],
+            mockData: false,
+          },
+        },
+        typeOfSampleData: 'preview',
+      },
+      flowData: {
+        preMap: {
+          status: 'requested',
+          data: [{
+            id: '123',
+          }],
+        },
+        processedFlowInput: {
+          status: 'requested',
+          data: [{
+            id: '123',
+          }],
+        },
+        flowInput: {
+          status: 'requested',
+          data: [{
+            id: '123',
+          }],
+        },
+      },
+      });
+    expect(document.querySelector(['svg[class="MuiCircularProgress-svg"]'])).toBeInTheDocument();
   });
 });
 
