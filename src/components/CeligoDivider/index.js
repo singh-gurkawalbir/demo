@@ -31,7 +31,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function CeligoDivider({ orientation = 'vertical', height, position, className }) {
+export default function CeligoDivider({ orientation = 'vertical', height = 'large', position, className }) {
   const classes = useStyles();
 
   return (
