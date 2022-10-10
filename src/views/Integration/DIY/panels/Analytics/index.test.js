@@ -26,13 +26,11 @@ describe('AnalyticsPanel UI tests', () => {
     renderWithProviders(<MemoryRouter><AnalyticsPanel integrationId="IntegrationID" /></MemoryRouter>);
     expect(screen.getByText('Analytics')).toBeInTheDocument();
     expect(screen.getByText('Chart Drawer , intgerationId = IntegrationID')).toBeInTheDocument();
-    screen.debug();
   });
 
   test('should test the case when childId is also passed', () => {
     renderWithProviders(<MemoryRouter><AnalyticsPanel integrationId="IntegrationID" childId="childId" /></MemoryRouter>);
     expect(screen.getByText('Analytics')).toBeInTheDocument();
     expect(screen.getByText('Chart Drawer , intgerationId = childId')).toBeInTheDocument();
-    screen.debug();
   });
 });

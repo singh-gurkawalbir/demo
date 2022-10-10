@@ -33,12 +33,10 @@ describe('FlowSectionTile UI tests', () => {
     initialStoreAndRender(true, false, 20);
     expect(screen.getByText('someTitle')).toBeInTheDocument();
     expect(screen.getByText('20')).toBeInTheDocument();
-    screen.debug();
   });
   test('should test the case when error is greater than 9999', () => {
     initialStoreAndRender(true, false, 10000);
     expect(screen.getByText('someTitle')).toBeInTheDocument();
     expect(screen.getByText('9999+')).toBeInTheDocument();
-    screen.debug();
   });
 });

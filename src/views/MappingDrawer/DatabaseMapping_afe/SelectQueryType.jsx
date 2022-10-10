@@ -27,7 +27,7 @@ export default function SelectQueryType() {
 
   const queryTypes = useSelector(
     state => {
-      const importResource = selectors.resource(state, 'imports', importId);
+      const importResource = selectors.resource(state, 'imports', importId) || {};
 
       if (importResource.adaptorType === 'RDBMSImport') {
         return importResource.rdbms?.queryType || emptySet;

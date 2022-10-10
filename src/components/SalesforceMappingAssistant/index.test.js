@@ -327,7 +327,6 @@ describe('test suite for SalesforceMappingAssistant', () => {
     };
 
     await initSalesforceMappingAssistant({connectionId, sObjectType, layoutId}, initialStore);
-    screen.debug();
     expect(screen.getByText('Spinner')).toBeInTheDocument();
     expect(mockDispatchFn).toBeCalledWith(actions.metadata.request(
       connectionId, commMetaPath

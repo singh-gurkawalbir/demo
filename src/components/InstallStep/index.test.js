@@ -160,7 +160,7 @@ describe('InstallationStep UI tests', () => {
 
     initInstallation(props);
     userEvent.click(screen.getByText(/configure/i));
-    screen.debug();
+
     expect(mockClick).toBeCalled();
   });
   test('should make the respective dispatch calls when step.type equals "install package"', () => {

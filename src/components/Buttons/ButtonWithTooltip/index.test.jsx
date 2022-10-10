@@ -22,7 +22,6 @@ describe('Buttontooltip component test', () => {
           <TextButton />
         </ButtonWithTooltip>
       </MemoryRouter>);
-    screen.debug();
   });
   test('Before hovering over the button the title is displayed', () => {
     renderWithProviders(
@@ -37,7 +36,6 @@ describe('Buttontooltip component test', () => {
 
     expect(TitleDisplay).toBeInTheDocument();
     fireEvent.click(ButtonName1);
-    screen.debug();
   });
 
   test('Whenever hovering over the button then title is disappeared', () => {
@@ -56,7 +54,6 @@ describe('Buttontooltip component test', () => {
     const Title3 = screen.queryByText('Only the flow group will be deleted. Its flows will be moved into “Unassigned”.');
 
     expect(Title3).not.toBeInTheDocument();
-    screen.debug();
   });
 
   test('Whenever hovering over the button then title is disappeared', () => {

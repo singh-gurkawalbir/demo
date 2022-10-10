@@ -22,7 +22,6 @@ describe('GenericAdaptorNotification ui tests', () => {
 
     expect(message).toBeInTheDocument();
     expect(secondMessage).toBeInTheDocument();
-    screen.debug();
   });
 
   test('should invoke the onClose function on closing the notification', () => {
