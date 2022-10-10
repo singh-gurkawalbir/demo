@@ -2545,6 +2545,754 @@ describe('mapping reducer', () => {
 
       expect(state).toEqual(expectedState);
     });
+    test('should correctly insert when dragged from parent level and dropped at a child level[1]', () => {
+      const initialState = {
+        mapping: {
+          importId: 'imp-123',
+          flowId: 'flow-123',
+          version: 2,
+          v2TreeData: [{
+            key: 'key1',
+            dataType: MAPPING_DATA_TYPES.STRING,
+            generate: 'fname',
+            extract: '$.fname',
+          },
+          {
+            key: 'key2',
+            dataType: MAPPING_DATA_TYPES.OBJECT,
+            generate: 'lname',
+            jsonPath: 'lname',
+            children: [
+              {
+                key: 'c1',
+                dataType: MAPPING_DATA_TYPES.STRING,
+                generate: 'child1',
+                extract: '$.child1',
+                parentExtract: '',
+                parentKey: 'key2',
+              },
+              {
+                key: 'c2',
+                dataType: MAPPING_DATA_TYPES.STRING,
+                generate: 'child2',
+                extract: '$.child2',
+                parentExtract: '',
+                parentKey: 'key2',
+              },
+            ],
+          },
+          {
+            key: 'key3',
+            dataType: MAPPING_DATA_TYPES.STRING,
+            generate: 'nickname',
+            extract: '$.nickname',
+          }],
+        },
+      };
+      const state = reducer(initialState, actions.mapping.v2.dropRow({
+        dropPosition: 1,
+        dragNode: {
+          dataType: MAPPING_DATA_TYPES.STRING,
+          generate: 'nickname',
+          extract: '$.nickname',
+          key: 'key3',
+          pos: '0-2',
+        },
+        node: {
+          key: 'key2',
+          dataType: MAPPING_DATA_TYPES.OBJECT,
+          generate: 'lname',
+          children: [
+            {
+              key: 'c1',
+              dataType: MAPPING_DATA_TYPES.STRING,
+              generate: 'child1',
+              extract: '$.child1',
+              parentExtract: '',
+              parentKey: 'key2',
+            },
+            {
+              key: 'c2',
+              dataType: MAPPING_DATA_TYPES.STRING,
+              generate: 'child2',
+              extract: '$.child2',
+              parentExtract: '',
+              parentKey: 'key2',
+            },
+          ],
+          pos: '0-1',
+        },
+
+      }));
+      const expectedState = {
+        mapping: {
+          importId: 'imp-123',
+          flowId: 'flow-123',
+          version: 2,
+          v2TreeData: [{
+            key: 'key1',
+            dataType: MAPPING_DATA_TYPES.STRING,
+            generate: 'fname',
+            extract: '$.fname',
+          },
+          {
+            key: 'key2',
+            dataType: MAPPING_DATA_TYPES.OBJECT,
+            generate: 'lname',
+            jsonPath: 'lname',
+            children: [
+              {
+                key: 'key3',
+                dataType: MAPPING_DATA_TYPES.STRING,
+                generate: 'nickname',
+                extract: '$.nickname',
+                parentKey: 'key2',
+                jsonPath: 'lname.nickname',
+              },
+              {
+                key: 'c1',
+                dataType: MAPPING_DATA_TYPES.STRING,
+                generate: 'child1',
+                extract: '$.child1',
+                parentExtract: '',
+                parentKey: 'key2',
+              },
+              {
+                key: 'c2',
+                dataType: MAPPING_DATA_TYPES.STRING,
+                generate: 'child2',
+                extract: '$.child2',
+                parentExtract: '',
+                parentKey: 'key2',
+              },
+            ],
+          }],
+        },
+      };
+
+      expect(state).toEqual(expectedState);
+    });
+    test('should correctly insert when dragged from parent level and dropped at a child level[2]', () => {
+      const initialState = {
+        mapping: {
+          importId: 'imp-123',
+          flowId: 'flow-123',
+          version: 2,
+          v2TreeData: [{
+            key: 'key1',
+            dataType: MAPPING_DATA_TYPES.STRING,
+            generate: 'fname',
+            extract: '$.fname',
+          },
+          {
+            key: 'key2',
+            dataType: MAPPING_DATA_TYPES.OBJECT,
+            generate: 'lname',
+            jsonPath: 'lname',
+            children: [
+              {
+                key: 'c1',
+                dataType: MAPPING_DATA_TYPES.STRING,
+                generate: 'child1',
+                extract: '$.child1',
+                parentExtract: '',
+                parentKey: 'key2',
+              },
+              {
+                key: 'c2',
+                dataType: MAPPING_DATA_TYPES.STRING,
+                generate: 'child2',
+                extract: '$.child2',
+                parentExtract: '',
+                parentKey: 'key2',
+              },
+            ],
+          },
+          {
+            key: 'key3',
+            dataType: MAPPING_DATA_TYPES.STRING,
+            generate: 'nickname',
+            extract: '$.nickname',
+          }],
+        },
+      };
+      const state = reducer(initialState, actions.mapping.v2.dropRow({
+        dropPosition: 2,
+        dragNode: {
+          dataType: MAPPING_DATA_TYPES.STRING,
+          generate: 'nickname',
+          extract: '$.nickname',
+          key: 'key3',
+          pos: '0-2',
+        },
+        node: {
+          key: 'c2',
+          dataType: MAPPING_DATA_TYPES.STRING,
+          generate: 'child2',
+          extract: '$.child2',
+          parentExtract: '',
+          parentKey: 'key2',
+          pos: '0-1-1',
+        },
+
+      }));
+      const expectedState = {
+        mapping: {
+          importId: 'imp-123',
+          flowId: 'flow-123',
+          version: 2,
+          v2TreeData: [{
+            key: 'key1',
+            dataType: MAPPING_DATA_TYPES.STRING,
+            generate: 'fname',
+            extract: '$.fname',
+          },
+          {
+            key: 'key2',
+            dataType: MAPPING_DATA_TYPES.OBJECT,
+            generate: 'lname',
+            jsonPath: 'lname',
+            children: [
+              {
+                key: 'c1',
+                dataType: MAPPING_DATA_TYPES.STRING,
+                generate: 'child1',
+                extract: '$.child1',
+                parentExtract: '',
+                parentKey: 'key2',
+              },
+              {
+                key: 'c2',
+                dataType: MAPPING_DATA_TYPES.STRING,
+                generate: 'child2',
+                extract: '$.child2',
+                parentExtract: '',
+                parentKey: 'key2',
+              },
+              {
+                key: 'key3',
+                dataType: MAPPING_DATA_TYPES.STRING,
+                generate: 'nickname',
+                extract: '$.nickname',
+                parentExtract: '',
+                parentKey: 'key2',
+                jsonPath: 'lname.nickname',
+              },
+            ],
+          }],
+        },
+      };
+
+      expect(state).toEqual(expectedState);
+    });
+    test('should correctly insert when dragged from parent level and dropped at a child level[3]', () => {
+      const initialState = {
+        mapping: {
+          importId: 'imp-123',
+          flowId: 'flow-123',
+          version: 2,
+          v2TreeData: [{
+            key: 'key1',
+            dataType: MAPPING_DATA_TYPES.STRING,
+            generate: 'fname',
+            extract: '$.fname',
+          },
+          {
+            key: 'key2',
+            dataType: MAPPING_DATA_TYPES.OBJECTARRAY,
+            generate: 'mothers_side',
+            extractsArrayHelper: [{extract: '$.siblings[*]'}, {extract: '$.children[*]'}],
+            activeTab: 0,
+            jsonPath: 'mothers_side',
+            children: [
+              {
+                key: 'c0',
+                isTabNode: true,
+                parentKey: 'key2',
+              },
+              {
+                key: 'c1',
+                dataType: MAPPING_DATA_TYPES.STRING,
+                generate: 'child1',
+                extract: '$.child1',
+                parentExtract: '$.siblings[*]',
+                parentKey: 'key2',
+              },
+              {
+                key: 'c2',
+                dataType: MAPPING_DATA_TYPES.STRING,
+                generate: 'child2',
+                extract: '$.child2',
+                parentExtract: '$.children[*]',
+                parentKey: 'key2',
+              },
+            ],
+          },
+          {
+            key: 'key3',
+            dataType: MAPPING_DATA_TYPES.STRING,
+            generate: 'nickname',
+            extract: '$.nickname',
+          }],
+        },
+      };
+      const state = reducer(initialState, actions.mapping.v2.dropRow({
+        dropPosition: 1,
+        dragNode: {
+          dataType: MAPPING_DATA_TYPES.STRING,
+          generate: 'nickname',
+          extract: '$.nickname',
+          key: 'key3',
+          pos: '0-2',
+        },
+        node: {
+          key: 'c0',
+          isTabNode: true,
+          parentKey: 'key2',
+          pos: '0-1-0',
+        },
+
+      }));
+      const expectedState = {
+        mapping: {
+          importId: 'imp-123',
+          flowId: 'flow-123',
+          version: 2,
+          v2TreeData: [{
+            key: 'key1',
+            dataType: MAPPING_DATA_TYPES.STRING,
+            generate: 'fname',
+            extract: '$.fname',
+          },
+          {
+            key: 'key2',
+            dataType: MAPPING_DATA_TYPES.OBJECTARRAY,
+            generate: 'mothers_side',
+            extractsArrayHelper: [{extract: '$.siblings[*]'}, {extract: '$.children[*]'}],
+            activeTab: 0,
+            jsonPath: 'mothers_side',
+            children: [
+              {
+                key: 'c0',
+                isTabNode: true,
+                parentKey: 'key2',
+              },
+              {
+                key: 'key3',
+                dataType: MAPPING_DATA_TYPES.STRING,
+                generate: 'nickname',
+                extract: '$.nickname',
+                parentExtract: '$.siblings[*]',
+                parentKey: 'key2',
+                jsonPath: 'mothers_side[*].nickname',
+              },
+              {
+                key: 'c1',
+                dataType: MAPPING_DATA_TYPES.STRING,
+                generate: 'child1',
+                extract: '$.child1',
+                parentExtract: '$.siblings[*]',
+                parentKey: 'key2',
+              },
+              {
+                key: 'c2',
+                dataType: MAPPING_DATA_TYPES.STRING,
+                generate: 'child2',
+                extract: '$.child2',
+                parentExtract: '$.children[*]',
+                parentKey: 'key2',
+              },
+              {
+                key: 'new_key',
+                className: 'hideRow',
+                hidden: true,
+                dataType: MAPPING_DATA_TYPES.STRING,
+                generate: 'nickname',
+                parentExtract: '$.children[*]',
+                parentKey: 'key2',
+                jsonPath: 'mothers_side[*].nickname',
+                title: '',
+              },
+            ],
+          }],
+        },
+      };
+
+      expect(state).toEqual(expectedState);
+    });
+    test('should correctly insert when dragged from parent level and dropped at a child level[4]', () => {
+      const initialState = {
+        mapping: {
+          importId: 'imp-123',
+          flowId: 'flow-123',
+          version: 2,
+          v2TreeData: [{
+            key: 'key1',
+            dataType: MAPPING_DATA_TYPES.STRING,
+            generate: 'fname',
+            extract: '$.fname',
+          },
+          {
+            key: 'key2',
+            dataType: MAPPING_DATA_TYPES.OBJECTARRAY,
+            generate: 'mothers_side',
+            extractsArrayHelper: [{extract: '$.siblings[*]'}, {extract: '$.children[*]'}],
+            activeTab: 0,
+            jsonPath: 'mothers_side',
+            children: [
+              {
+                key: 'c0',
+                isTabNode: true,
+                parentKey: 'key2',
+              },
+              {
+                key: 'c1',
+                dataType: MAPPING_DATA_TYPES.STRING,
+                generate: 'child1',
+                extract: '$.child1',
+                parentExtract: '$.siblings[*]',
+                parentKey: 'key2',
+              },
+              {
+                key: 'c2',
+                dataType: MAPPING_DATA_TYPES.STRING,
+                generate: 'child2',
+                extract: '$.child2',
+                parentExtract: '$.children[*]',
+                parentKey: 'key2',
+              },
+            ],
+          },
+          {
+            key: 'key3',
+            dataType: MAPPING_DATA_TYPES.STRING,
+            generate: 'nickname',
+            extract: '$.nickname',
+          }],
+        },
+      };
+      const state = reducer(initialState, actions.mapping.v2.dropRow({
+        dropPosition: 2,
+        dragNode: {
+          dataType: MAPPING_DATA_TYPES.STRING,
+          generate: 'nickname',
+          extract: '$.nickname',
+          key: 'key3',
+          pos: '0-2',
+        },
+        node: {
+          key: 'c1',
+          dataType: MAPPING_DATA_TYPES.STRING,
+          parentKey: 'key2',
+          pos: '0-1-1',
+          generate: 'child1',
+          extract: '$.child1',
+        },
+
+      }));
+      const expectedState = {
+        mapping: {
+          importId: 'imp-123',
+          flowId: 'flow-123',
+          version: 2,
+          v2TreeData: [{
+            key: 'key1',
+            dataType: MAPPING_DATA_TYPES.STRING,
+            generate: 'fname',
+            extract: '$.fname',
+          },
+          {
+            key: 'key2',
+            dataType: MAPPING_DATA_TYPES.OBJECTARRAY,
+            generate: 'mothers_side',
+            extractsArrayHelper: [{extract: '$.siblings[*]'}, {extract: '$.children[*]'}],
+            activeTab: 0,
+            jsonPath: 'mothers_side',
+            children: [
+              {
+                key: 'c0',
+                isTabNode: true,
+                parentKey: 'key2',
+              },
+              {
+                key: 'c1',
+                dataType: MAPPING_DATA_TYPES.STRING,
+                generate: 'child1',
+                extract: '$.child1',
+                parentExtract: '$.siblings[*]',
+                parentKey: 'key2',
+              },
+              {
+                key: 'key3',
+                dataType: MAPPING_DATA_TYPES.STRING,
+                generate: 'nickname',
+                extract: '$.nickname',
+                parentExtract: '$.siblings[*]',
+                parentKey: 'key2',
+                jsonPath: 'mothers_side[*].nickname',
+              },
+              {
+                key: 'c2',
+                dataType: MAPPING_DATA_TYPES.STRING,
+                generate: 'child2',
+                extract: '$.child2',
+                parentExtract: '$.children[*]',
+                parentKey: 'key2',
+              },
+              {
+                key: 'new_key',
+                className: 'hideRow',
+                hidden: true,
+                dataType: MAPPING_DATA_TYPES.STRING,
+                generate: 'nickname',
+                parentExtract: '$.children[*]',
+                parentKey: 'key2',
+                jsonPath: 'mothers_side[*].nickname',
+                title: '',
+              },
+            ],
+          }],
+        },
+      };
+
+      expect(state).toEqual(expectedState);
+    });
+    test('should correctly insert when dragged from child level and dropped at a parent level', () => {
+      const initialState = {
+        mapping: {
+          importId: 'imp-123',
+          flowId: 'flow-123',
+          version: 2,
+          v2TreeData: [{
+            key: 'key1',
+            dataType: MAPPING_DATA_TYPES.STRING,
+            generate: 'fname',
+            extract: '$.fname',
+            jsonPath: 'fname',
+          },
+          {
+            key: 'key2',
+            dataType: MAPPING_DATA_TYPES.OBJECT,
+            generate: 'lname',
+            jsonPath: 'lname',
+            children: [
+              {
+                key: 'c1',
+                dataType: MAPPING_DATA_TYPES.STRING,
+                generate: 'child1',
+                extract: '$.child1',
+                parentExtract: '',
+                parentKey: 'key2',
+              },
+              {
+                key: 'c2',
+                dataType: MAPPING_DATA_TYPES.STRING,
+                generate: 'child2',
+                extract: '$.child2',
+                parentExtract: '',
+                parentKey: 'key2',
+              },
+            ],
+          }],
+        },
+      };
+      const state = reducer(initialState, actions.mapping.v2.dropRow({
+        dropPosition: -1,
+        dragNode: {
+          key: 'c2',
+          dataType: MAPPING_DATA_TYPES.STRING,
+          generate: 'child2',
+          extract: '$.child2',
+          pos: '0-1-1',
+        },
+        node: {
+          key: 'key1',
+          dataType: MAPPING_DATA_TYPES.STRING,
+          generate: 'fname',
+          extract: '$.fname',
+          pos: '0-0',
+        },
+
+      }));
+      const expectedState = {
+        mapping: {
+          importId: 'imp-123',
+          flowId: 'flow-123',
+          version: 2,
+          v2TreeData: [{
+            key: 'c2',
+            dataType: MAPPING_DATA_TYPES.STRING,
+            generate: 'child2',
+            extract: '$.child2',
+            jsonPath: 'child2',
+          },
+          {
+            key: 'key1',
+            dataType: MAPPING_DATA_TYPES.STRING,
+            generate: 'fname',
+            extract: '$.fname',
+            jsonPath: 'fname',
+          },
+          {
+            key: 'key2',
+            dataType: MAPPING_DATA_TYPES.OBJECT,
+            generate: 'lname',
+            jsonPath: 'lname',
+            children: [
+              {
+                key: 'c1',
+                dataType: MAPPING_DATA_TYPES.STRING,
+                generate: 'child1',
+                extract: '$.child1',
+                parentExtract: '',
+                parentKey: 'key2',
+              },
+            ],
+          }],
+        },
+      };
+
+      expect(state).toEqual(expectedState);
+    });
+    test('should correctly insert when dragged a child node and dropped as a child of different parent', () => {
+      const initialState = {
+        mapping: {
+          importId: 'imp-123',
+          flowId: 'flow-123',
+          version: 2,
+          v2TreeData: [{
+            key: 'key1',
+            dataType: MAPPING_DATA_TYPES.STRING,
+            generate: 'fname',
+            extract: '$.fname',
+            jsonPath: 'fname',
+          },
+          {
+            key: 'key2',
+            dataType: MAPPING_DATA_TYPES.OBJECT,
+            generate: 'parent1',
+            jsonPath: 'parent1',
+            children: [
+              {
+                key: 'c1',
+                dataType: MAPPING_DATA_TYPES.STRING,
+                generate: 'child1',
+                extract: '$.child1',
+                parentExtract: '',
+                parentKey: 'key2',
+              },
+              {
+                key: 'c2',
+                dataType: MAPPING_DATA_TYPES.STRING,
+                generate: 'child2',
+                extract: '$.child2',
+                parentExtract: '',
+                parentKey: 'key2',
+              },
+            ],
+          },
+          {
+            key: 'key3',
+            dataType: MAPPING_DATA_TYPES.OBJECT,
+            generate: 'parent2',
+            jsonPath: 'parent2',
+            children: [
+              {
+                key: 'c3',
+                dataType: MAPPING_DATA_TYPES.STRING,
+                generate: 'child3',
+                extract: '$.child3',
+                parentExtract: '',
+                parentKey: 'key3',
+              },
+            ],
+          }],
+        },
+      };
+      const state = reducer(initialState, actions.mapping.v2.dropRow({
+        dropPosition: 2,
+        dragNode: {
+          key: 'c1',
+          dataType: MAPPING_DATA_TYPES.STRING,
+          generate: 'child1',
+          extract: '$.child1',
+          pos: '0-1-0',
+        },
+        node: {
+          key: 'key3',
+          dataType: MAPPING_DATA_TYPES.OBJECT,
+          generate: 'parent2',
+          jsonPath: 'parent2',
+          pos: '0-2',
+          children: [
+            {
+              key: 'c3',
+              dataType: MAPPING_DATA_TYPES.STRING,
+              generate: 'child3',
+              extract: '$.child3',
+              parentKey: 'key3',
+            },
+          ],
+        },
+      }));
+      const expectedState = {
+        mapping: {
+          importId: 'imp-123',
+          flowId: 'flow-123',
+          version: 2,
+          v2TreeData: [{
+            key: 'key1',
+            dataType: MAPPING_DATA_TYPES.STRING,
+            generate: 'fname',
+            extract: '$.fname',
+            jsonPath: 'fname',
+          },
+          {
+            key: 'key2',
+            dataType: MAPPING_DATA_TYPES.OBJECT,
+            generate: 'parent1',
+            jsonPath: 'parent1',
+            children: [
+              {
+                key: 'c2',
+                dataType: MAPPING_DATA_TYPES.STRING,
+                generate: 'child2',
+                extract: '$.child2',
+                parentExtract: '',
+                parentKey: 'key2',
+              },
+            ],
+          },
+          {
+            key: 'key3',
+            dataType: MAPPING_DATA_TYPES.OBJECT,
+            generate: 'parent2',
+            jsonPath: 'parent2',
+            children: [
+              {
+                key: 'c1',
+                dataType: MAPPING_DATA_TYPES.STRING,
+                generate: 'child1',
+                extract: '$.child1',
+                parentExtract: '',
+                parentKey: 'key3',
+                jsonPath: 'parent2.child1',
+              },
+              {
+                key: 'c3',
+                dataType: MAPPING_DATA_TYPES.STRING,
+                generate: 'child3',
+                extract: '$.child3',
+                parentExtract: '',
+                parentKey: 'key3',
+              },
+            ],
+          }],
+        },
+      };
+
+      expect(state).toEqual(expectedState);
+    });
     test('should correctly insert dragged node when the drop position is 0th in children array for object array parent', () => {
       const initialState = {
         mapping: {
