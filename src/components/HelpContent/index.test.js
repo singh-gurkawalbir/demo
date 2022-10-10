@@ -28,7 +28,6 @@ describe('HelpContent UI tests', () => {
     const props = { children: 'This is the sample text', title: 'Sample title', caption: 'Sample caption' };
 
     renderWithProviders(<HelpContent {...props} />);
-    screen.debug();
     expect(screen.getByText('This is the sample text')).toBeInTheDocument();
     expect(screen.getByText('Sample title')).toBeInTheDocument();
     expect(screen.getByText('Sample caption')).toBeInTheDocument();

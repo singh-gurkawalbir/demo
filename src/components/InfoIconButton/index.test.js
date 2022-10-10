@@ -10,7 +10,6 @@ describe('InfoIconButton UI tests', () => {
     const props = {info: 'sample info icon content'};
 
     renderWithProviders(<InfoIconButton {...props} />);
-    screen.debug();
     expect(screen.getByRole('button')).toBeInTheDocument();
   });
   test('should display the ArrowPopper on clicking the infoIconButton', () => {

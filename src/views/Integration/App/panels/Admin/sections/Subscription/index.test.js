@@ -127,7 +127,6 @@ describe('Subscription Section UI tests', () => {
   });
   test('should make the respective dispatch call when clicked on "Submit request" in the dialog box', async () => {
     await initSubscriptionSection({integrationId: '61604a5a8364267b8a378084', edition: false});
-    screen.debug();
     userEvent.click(screen.getByText('Request upgrade'));
     userEvent.click(screen.getByText('Submit request'));
     expect(mockDispatchFn).toBeCalledWith(actions.integrationApp.settings.requestUpgrade('61604a5a8364267b8a378084', {
