@@ -75,7 +75,7 @@ export default function NotificationsSection({ integrationId, childId }) {
   const isUserInErrMgtTwoDotZero = useSelector(state =>
     selectors.isOwnerUserInErrMgtTwoDotZero(state)
   );
-  const { flowOps, connectionOps } = useGetNotificationOptions({ integrationId, flows, connections });
+  const { flowOps, connectionOps } = useGetNotificationOptions({ integrationId: _integrationId, flows, connections });
 
   // TODO: Remove below hashing logic once mkIntegrationNotificationResources is optimised.
   const flowHash = flowValues.sort().join('');
@@ -136,7 +136,7 @@ export default function NotificationsSection({ integrationId, childId }) {
     <div className={classes.root}>
       <PanelHeader title="Notifications" infoText={infoText.Notifications} />
 
-      <LoadResources required integrationId={integrationId} resources="notifications,flows,connections">
+      <LoadResources required integrationId={_integrationId} resources="notifications,flows,connections">
         <div className={classes.form}>
           <DynaForm formKey={formKey} />
 
