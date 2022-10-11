@@ -343,6 +343,7 @@ export default {
   'rest.scope': {
     type: 'selectscopes',
     label: 'Configure scopes',
+    required: true,
     helpKey: 'connection.http.auth.oauth.scope',
   },
 
@@ -706,6 +707,7 @@ export default {
   'http.auth.oauth.scope': {
     type: 'selectscopes',
     label: 'Configure scopes',
+    required: true,
   },
   'http.auth.oauth.scopeDelimiter': {
     isLoggable: true,
@@ -2541,6 +2543,23 @@ export default {
         ],
       },
     ],
+  },
+  connectionFormView: {
+    isLoggable: true,
+    id: 'connectionFormView',
+    type: 'connectionFormView',
+    label: 'Form view',
+    required: true,
+    resourceType: 'connections',
+    visible: true,
+    defaultValue: r => {
+      if (!r) return 'false';
+      if (!r.http) return 'false';
+      if (!r.http.formType) return 'false';
+
+      return r.http?.formType === 'assistant' ? 'false' : 'true';
+    },
+    helpKey: 'formView',
   },
   configureCutomAuthTokenRefresh: {
     id: 'configureCutomAuthTokenRefresh',

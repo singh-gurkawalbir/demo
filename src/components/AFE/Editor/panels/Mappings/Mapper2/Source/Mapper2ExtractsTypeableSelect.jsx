@@ -139,7 +139,7 @@ export const TooltipTitle = ({
     );
   } else if (!isTruncated && !hideSourceDropdown) {
     return fieldType;
-  } else {
+  } else if (!isDynamicLookup) {
     title = `${fieldType}: ${inputValue}`;
   }
 
@@ -279,6 +279,7 @@ export default function Mapper2ExtractsTypeableSelect({
         disabled={disabled || isHardCodedValue || isHandlebarExp}
         isHardCodedValue={isHardCodedValue}
         isHandlebarExp={isHandlebarExp}
+        isDynamicLookup={isDynamicLookup}
         nodeKey={nodeKey}
         sourceDataTypes={sourceDataType}
         className={clsx({[classes.sourceDataTypeButton]: hideSourceDropdown})}

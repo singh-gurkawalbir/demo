@@ -281,6 +281,7 @@ export default (state = {}, action) => {
     isCSVOrXLSX,
     inputValue,
     propValue,
+    isSettingsPatch,
   } = action;
 
   return produce(state, draft => {
@@ -880,7 +881,7 @@ export default (state = {}, action) => {
                 }
               } else if (node.dataType !== MAPPING_DATA_TYPES.OBJECT || node.copySource === 'yes') {
                 node.extract = value;
-                node.sourceDataType = getSelectedExtractDataTypes(draft.mapping.extractsTree, value)[0] || MAPPING_DATA_TYPES.STRING;
+                node.sourceDataType = isSettingsPatch ? node.sourceDataType : getSelectedExtractDataTypes(draft.mapping.extractsTree, value)[0] || MAPPING_DATA_TYPES.STRING;
               }
             }
           } else if (node.isRequired) {
