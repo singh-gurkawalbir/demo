@@ -25,7 +25,7 @@ const useStyles = makeStyles({
 const emptyObj = {};
 export default function FormView(props) {
   const classes = useStyles();
-  const { resourceType, resourceId, defaultValue, formKey } = props;
+  const { resourceType, resourceId, defaultValue, formKey, sourceForm} = props;
 
   const formContext = useFormContext(formKey);
   const dispatch = useDispatch();
@@ -137,9 +137,9 @@ export default function FormView(props) {
         allTouchedFields
       )
     );
-  }, [dispatch, formContext?.fields, formContext?.value, resourceFormState?.fieldMeta, resourceId, resourceType, stagedResource]);
+  }, [dispatch, formContext?.fields, formContext?.value, props, resourceFormState.fieldMeta, resourceId, resourceType, stagedResource]);
 
-  if (!_httpConnectorId) {
+  if (!_httpConnectorId || !sourceForm) {
     return null;
   }
 
