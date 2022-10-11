@@ -3929,6 +3929,20 @@ describe('v2 mapping utils', () => {
 
       expect(allowDrop({dragNode, dropNode, dropPosition: 2})).toEqual(false);
     });
+    test('should return false if drop node does not have a child and drop position is 0', () => {
+      const dragNode = {
+        key: 'c1',
+        extract: '$.fname',
+        generate: 'fname',
+      };
+      const dropNode = {
+        key: 'c2',
+        extract: '$.lname',
+        generate: 'lname',
+      };
+
+      expect(allowDrop({dragNode, dropNode, dropPosition: 0})).toEqual(false);
+    });
     test('should return true for other cases', () => {
       const dragNode = {
         key: 'c1',
