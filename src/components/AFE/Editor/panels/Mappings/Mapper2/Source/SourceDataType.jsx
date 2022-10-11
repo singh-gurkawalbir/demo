@@ -13,7 +13,6 @@ import { TextButton } from '../../../../../../Buttons';
 import ArrowPopper from '../../../../../../ArrowPopper';
 import ArrowDownFilledIcon from '../../../../../../icons/ArrowDownFilledIcon';
 import { buildDrawerUrl, drawerPaths } from '../../../../../../../utils/rightDrawer';
-import CeligoTruncate from '../../../../../../CeligoTruncate';
 import useSyncedRef from '../../../../../../../hooks/useSyncedRef';
 
 const useStyles = makeStyles(theme => ({
@@ -130,9 +129,9 @@ const useStyles = makeStyles(theme => ({
   dataTypeSelected: {
     width: theme.spacing(8),
     textAlign: 'right',
-    '& span': {
-      whiteSpace: 'nowrap',
-    },
+    whiteSpace: 'nowrap',
+    textOverflow: 'ellipsis',
+    overflow: 'hidden',
   },
 }));
 
@@ -209,11 +208,13 @@ export default function SourceDataType({
             disabled={disabled}
             endIcon={sourceDataTypes && sourceDataTypes.length > 1 ? '' : <ArrowDownFilledIcon />}
             className={classes.dataType} >
-            { isFocused ? <span className={classes.dataTypeList}>{selectedDataTypeLabels.join()}</span> : (
-              <CeligoTruncate placement="bottom" className={classes.dataTypeSelected} disableHoverListener>
+            {// CeligoTruncate is not used here since it effects the drag and drop functionality
+            isFocused ? <span className={classes.dataTypeList}>{selectedDataTypeLabels.join()}</span> : (
+              <span className={classes.dataTypeSelected}>
                 {selectedDataTypeLabels.join()}
-              </CeligoTruncate>
-            )}
+              </span>
+            )
+            }
           </TextButton>
         </span>
       </Tooltip>

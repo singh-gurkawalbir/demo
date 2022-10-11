@@ -216,7 +216,6 @@ describe('FormStepDrawer UI tests', () => {
     };
 
     initFormDrawer(props);
-    screen.debug();
 
     waitFor(() => expect(screen.getByText(/Submit/i)).toBeInTheDocument());
     userEvent.click(screen.getByText(/Submit/i));

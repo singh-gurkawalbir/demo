@@ -3130,18 +3130,19 @@ describe('Flow sample data utility sagas', () => {
           .run();
       });
       test('should format the resourceObject, put hidden true and include runOfflineOptions if runOffline is true and resource has valid rawData and it is a standalone resource', () => {
+        const hidden = false;
+
+        const flowId = 'f1';
+        const path = '/exports/preview';
         const body = {
           ...formattedResourceWithoutOnceDoc,
+          _flowId: flowId,
           verbose: true,
           runOfflineOptions: {
             runOffline: true,
             runOfflineSource: 'db',
           },
         };
-        const hidden = false;
-
-        const flowId = 'f1';
-        const path = '/exports/preview';
 
         return expectSaga(exportPreview, { resourceId, runOffline: true, hidden, flowId })
           .provide([

@@ -16,25 +16,25 @@ function hiddenFieldsMeta({ values }) {
 
 function basicFieldsMeta({ assistant, assistantConfig, assistantData }) {
   const fieldDefinitions = {
-    resource: {
-      fieldId: 'assistantMetadata.resource',
-      value: assistantConfig.resource,
-      required: true,
-      type: 'hfoptions',
-      label: 'Resources',
-    },
     version: {
       fieldId: 'assistantMetadata.version',
       value: assistantConfig.version,
       type: 'hfoptions',
       required: true,
     },
+    resource: {
+      fieldId: 'assistantMetadata.resource',
+      value: assistantConfig.resource,
+      required: true,
+      type: 'hfoptions',
+      label: 'Resource',
+    },
     operation: {
       fieldId: 'assistantMetadata.operation',
       type: 'hfoptions',
       value: assistantConfig.operation || assistantConfig.operationUrl,
       required: true,
-      label: 'API Endpoints',
+      label: 'API endpoint',
     },
   };
   const { labels = {}, versions = [], helpTexts = {} } = assistantData;

@@ -17,14 +17,15 @@ import { isAmazonHybridConnection, isLoopReturnsv2Connection, isAcumaticaEcommer
 import TextToggle from '../../TextToggle';
 import Help from '../../Help';
 
-const useStyles = makeStyles({
+const useStyles = makeStyles(theme => ({
   helpTextButton: {
     padding: 0,
   },
   connectorTextToggle: {
     flexGrow: 100,
+    marginLeft: theme.spacing(-2),
   },
-});
+}));
 const emptyObj = {};
 const isParent = true;
 
@@ -69,8 +70,8 @@ export default function FormView(props) {
 
   const isGraphql = http?.formType === 'graph_ql';
   const _httpConnectorId = getHttpConnector(connection?.http?._httpConnectorId)?._id;
-  const showHTTPFrameworkImport = resourceType === 'imports' && connectorMetaData?.import?.resources?.[0]?.versions?.length;
-  const showHTTPFrameworkExport = resourceType === 'exports' && connectorMetaData?.export?.resources?.[0]?.versions?.length;
+  const showHTTPFrameworkImport = resourceType === 'imports' && connectorMetaData?.import?.versions?.[0]?.resources?.length;
+  const showHTTPFrameworkExport = resourceType === 'exports' && connectorMetaData?.export?.versions?.[0]?.resources?.length;
   const isHttpFramework = showHTTPFrameworkImport || showHTTPFrameworkExport;
 
   const options = useMemo(() => {

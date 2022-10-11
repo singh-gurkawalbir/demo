@@ -25,6 +25,9 @@ const useStyles = makeStyles(theme => ({
   divider: {
     margin: theme.spacing(2, 0),
   },
+  btnNotification: {
+    padding: 0,
+  },
 }));
 
 function Notifications() {
@@ -85,7 +88,7 @@ function Notifications() {
       <>
         <LoadResources resources={isAccountOwner ? 'transfers' : 'transfers/invited'} />
         <Tooltip title="No notifications" placement="bottom" aria-label="no notifications">
-          <IconButton aria-label="notifications" size="small" color="inherit">
+          <IconButton aria-label="notifications" size="small" color="inherit" className={classes.btnNotification}>
             <NotificationsIcon />
           </IconButton>
         </Tooltip>
