@@ -10,11 +10,9 @@ jest.mock('../../../../../components/Help', () => ({
 }));
 describe('Test suite for HeaderWithHelpText', () => {
   test('should render the title and help text', () => {
-    const children = 'test children';
-
     render(
       <HeaderWithHelpText title="Test Title" helpKey="test" >
-        {children}
+        test children
       </HeaderWithHelpText>
     );
     expect(screen.getByText(/test children/i)).toBeInTheDocument();

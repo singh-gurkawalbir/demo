@@ -72,9 +72,7 @@ describe('Testsuite for MFA Reset Authorization', () => {
     await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith({ type: 'MFA_RESET', aShareId: undefined, password: 'testpassword' }));
   });
   test('should test the MFA Reset authorization by entering password and by clicking on Reset MFA button', async () => {
-    const mockCloseButtonFunction = jest.fn();
-
-    await initMFAResetAuthorization({asyncStatus: 'complete', onClose: mockCloseButtonFunction});
+    await initMFAResetAuthorization({asyncStatus: 'complete', onClose: jest.fn()});
     expect(screen.getByText(/your mfa has been reset successfully and a new key has been regenerated\. to use the new key with your account\./i)).toBeInTheDocument();
   });
 });

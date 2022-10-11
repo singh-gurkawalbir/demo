@@ -1,4 +1,4 @@
-/* global describe, test, expect, jest */
+/* global describe, test, expect, jest, beforeEach, afterEach */
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { getCreatedStore } from '../../../../store';
@@ -8,12 +8,11 @@ import useNotifySetupSuccess from './useNotifySetupSuccess';
 import * as mockEnqueSnackbar from '../../../../hooks/enqueueSnackbar';
 
 const initialStore = getCreatedStore();
-const mockDispatch = jest.fn();
 
 jest.mock('react-redux', () => ({
   __esModule: true,
   ...jest.requireActual('react-redux'),
-  useDispatch: () => mockDispatch,
+  useDispatch: () => jest.fn(),
 }));
 const asyncTaskKey = 'MFA_SETUP_ASYNC_KEY';
 const enqueueSnackbar = jest.fn();
@@ -41,18 +40,21 @@ async function initUseNotifySetupSuccess(context) {
 
 describe('Testsuite for useNotificationSetupSuccess', () => {
   runServer();
-  test('should test the snackbar for context setup', async () => {
+  beforeEach(() => {
     jest.spyOn(mockEnqueSnackbar, 'default').mockReturnValue([enqueueSnackbar]);
+  });
+  afterEach(() => {
+    enqueueSnackbar.mockClear();
+  });
+  test('should test the snackbar for context setup', async () => {
     initUseNotifySetupSuccess({context: 'setup'});
     expect(enqueueSnackbar).toHaveBeenCalledWith({message: 'MFA enabled and device connected successfully.', variant: 'success'});
   });
   test('should test the snackbar for context update', async () => {
-    jest.spyOn(mockEnqueSnackbar, 'default').mockReturnValue([enqueueSnackbar]);
     initUseNotifySetupSuccess({context: 'update'});
     expect(enqueueSnackbar).toHaveBeenCalledWith({message: 'Primary account to reset updated successfully', variant: 'success'});
   });
   test('should test the snackbar for context switch', async () => {
-    jest.spyOn(mockEnqueSnackbar, 'default').mockReturnValue([enqueueSnackbar]);
     initUseNotifySetupSuccess({context: 'switch'});
     expect(enqueueSnackbar).toHaveBeenCalledWith({message: 'MFA disabled successfully.', variant: 'success'});
   });

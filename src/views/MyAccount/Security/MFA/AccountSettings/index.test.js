@@ -1,5 +1,5 @@
 /* global describe, test, expect, beforeEach, afterEach, jest */
-import { screen, waitFor, within } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import * as reactRedux from 'react-redux';
@@ -51,13 +51,9 @@ describe('Testsuite for AccountSettings', () => {
   });
   test('should able to update account settings on clicking save button by checking Do not allow trusted devices', async () => {
     await initAccountSettings({asyncStatus: 'complete'});
-    const accountSettingButtonNode = screen.getByRole('button', {
-      name: /account settings/i,
-    });
+    expect(screen.getByRole('button', {name: /account settings/i})).toBeInTheDocument();
 
-    within(accountSettingButtonNode).getByText(/account settings/i);
     await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith({ type: 'ASYNC_TASK_CLEAR', key: 'MFA_ACCOUNT_SETTINGS_ASYNC_KEY' }));
-    expect(screen.getByText(/Do not allow trusted devices/i)).toBeInTheDocument();
     expect(screen.getByText(/Number of days until MFA is required again for trusted devices/i)).toBeInTheDocument();
     const trustedDeviceNode = screen.getByRole('checkbox', {name: /do not allow trusted devices/i});
 

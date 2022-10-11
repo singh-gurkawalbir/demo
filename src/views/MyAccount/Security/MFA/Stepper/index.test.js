@@ -5,11 +5,9 @@ import Stepper from '.';
 
 describe('Testsuite for stepper', () => {
   test('should verify the index count for stepper', () => {
-    const children = 'test';
-
     render(
       <Stepper index="5" isLast="true" >
-        {children}
+        test
       </Stepper>
     );
     expect(screen.getByText(/5/i)).toBeInTheDocument();

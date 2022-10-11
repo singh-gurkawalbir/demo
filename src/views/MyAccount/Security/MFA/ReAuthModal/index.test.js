@@ -24,7 +24,6 @@ async function initReAuthModal({mfaValues, onClose, isQRCode} = {}) {
 
   return renderWithProviders(ui, {initialStore});
 }
-const onCloseButton = jest.fn();
 
 describe('Testsuite for ReAuthModal', () => {
   runServer();
@@ -53,7 +52,7 @@ describe('Testsuite for ReAuthModal', () => {
           showQrCode: true,
         },
       },
-      onClose: onCloseButton,
+      onClose: jest.fn(),
       isQRCode: true,
     });
     expect(screen.getByText(/view qr code/i)).toBeInTheDocument();
@@ -74,6 +73,8 @@ describe('Testsuite for ReAuthModal', () => {
     });
   });
   test('should test ReAuthModal dialogbox and view the secret key', async () => {
+    const onCloseButton = jest.fn();
+
     await initReAuthModal({
       mfaValues: {
         codes: {
