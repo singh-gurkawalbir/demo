@@ -219,6 +219,9 @@ export default {
   },
   fieldMap: {
     name: { fieldId: 'name' },
+    connectionFormView: {
+      fieldId: 'connectionFormView',
+    },
     mode: {
       id: 'mode',
       type: 'radiogroup',
@@ -455,6 +458,7 @@ export default {
         fields: [
           'name',
           'application',
+          'connectionFormView',
           'mode',
           '_agentId',
         ],
