@@ -121,13 +121,12 @@ const ErrorTableWithPanel = ({
       filter.classifications.indexOf('all') === -1) ||
     (filter.sources &&
       filter.sources.length > 0 &&
-      filter.sources.indexOf('all') === -1) ||
-    filter.keyword
-  ) {
+      filter.sources.indexOf('all') === -1)) {
     hasFilter = true;
   }
   const emptyErrorMessage = !hasFilter && !isResolved && !hasErrors && !(retryStatus === 'inProgress');
   const emptyFilterMessage = hasFilter && errorsInCurrPage.length === 0;
+  const noSearchResult = hasErrors && filter.keyword && errorsInCurrPage.length === 0;
 
   useEffect(() => {
     const refEle = tableRef?.current;
@@ -178,6 +177,7 @@ const ErrorTableWithPanel = ({
             />
             {emptyErrorMessage && <EmptyErrorMessage />}
             {emptyFilterMessage && <NoFiltersMessage />}
+            {noSearchResult && <NoSearchResultMessage />}
           </div>
           <div className={classes.partition}>
             <Divider
@@ -213,6 +213,7 @@ const ErrorTableWithPanel = ({
             tableRef={tableRef} />
           {emptyErrorMessage && <EmptyErrorMessage />}
           {emptyFilterMessage && <NoFiltersMessage />}
+          {noSearchResult && <NoSearchResultMessage />}
         </div>
       </>
     );
@@ -224,12 +225,21 @@ const EmptyErrorMessage = () => (
     resolved them.
     <br />
     <br />
-    If “Refresh errors” is enabled, you can click it to retrieve additional
+    If <b>Refresh errors</b> is enabled, you can click it to retrieve additional
     errors.
   </NoResultTypography>
 );
 
 const NoFiltersMessage = () => (
+  <NoResultTypography>
+    <br />
+    You don’t have any errors that match the filters you applied.
+    <br />
+    Clear all filters to see any errors for this step.
+  </NoResultTypography>
+);
+
+const NoSearchResultMessage = () => (
   <NoResultTypography>
     <br />
     {NO_RESULT_SEARCH_MESSAGE}

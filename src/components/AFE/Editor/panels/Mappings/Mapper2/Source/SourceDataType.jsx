@@ -154,6 +154,7 @@ export default function SourceDataType({
   sourceDataTypes,
   isHardCodedValue,
   isHandlebarExp,
+  isDynamicLookup,
   isFocused,
 }) {
   const classes = useStyles();
@@ -200,6 +201,11 @@ export default function SourceDataType({
     setSourceDataType([newDataType]);
     dispatch(actions.mapping.v2.updateDataType(nodeKey, newDataType, true));
   }, [handleClose, dispatch, nodeKey]);
+
+  // dynamic lookup does not support source field and source data type
+  if (isDynamicLookup) {
+    return null;
+  }
 
   return (
     <div className={clsx(classes.sourceDataTypeDropDown, className)}>

@@ -7202,8 +7202,8 @@ selectors.allAliases = createSelector(
 
 selectors.retryUsersList = createSelector(
   selectors.userProfile,
-  state => selectors.availableUsersList(state),
-  (state, flowId, resourceId) => selectors.retryList(state, flowId, resourceId),
+  (state, integrationId) => selectors.availableUsersList(state, integrationId),
+  (state, _1, flowId, resourceId) => selectors.retryList(state, flowId, resourceId),
   (profile, availableUsersList, retryJobs) => {
     if (!Array.isArray(retryJobs)) {
       // When all users are selected we show the 'Select' as the placeholder text in the filter

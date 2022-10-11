@@ -71,7 +71,7 @@ function MappingSettingsV2({
     } else {
       dispatch(actions.mapping.v2.patchSettings(nodeKey, rest));
       if (!('hardCodedValue' in rest)) {
-        dispatch(actions.mapping.v2.patchField('extract', nodeKey, extract || ''));
+        dispatch(actions.mapping.v2.patchField('extract', nodeKey, extract || '', true));
       }
     }
   }, [dispatch, nodeKey]);
