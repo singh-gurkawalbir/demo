@@ -20,6 +20,8 @@ const useStyles = makeStyles(theme => ({
     flexGrow: 100,
     alignItems: 'center',
     display: 'flex',
+    minWidth: 230,
+    alignSelf: 'flex-start',
   },
   errorDrawerActionToggle: {
     '& > button': {
@@ -31,7 +33,7 @@ const useStyles = makeStyles(theme => ({
     marginRight: theme.spacing(2),
   },
   viewResults: {
-    paddingLeft: theme.spacing(0.5),
+    padding: theme.spacing(0, 0.5),
   },
 }));
 
