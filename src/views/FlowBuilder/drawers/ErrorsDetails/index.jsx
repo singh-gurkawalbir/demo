@@ -110,6 +110,7 @@ export default function ErrorDetailsDrawer({ flowId }) {
     } else {
       history.replace(match.url);
     }
+    setChangeTab(true);
   }, [history, match.url]);
 
   const showRetryDataChangedConfirmDialog = useEditRetryConfirmDialog({flowId, resourceId, isResolved: errorType !== 'open'});

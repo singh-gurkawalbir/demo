@@ -1046,7 +1046,7 @@ export default {
     required: true,
     helpKey: 'amazonmws.connection.http.type',
     defaultDisabled: r => !isNewId(r?._id),
-    defaultValue: r => isNewId(r?._id) ? r?.http?.type : (r?.http?.type || 'Amazon-MWS'),
+    defaultValue: r => isNewId(r?._id) ? (r?.http?.type || '') : (r?.http?.type || 'Amazon-MWS'),
     skipSort: true,
     resourceId: r => r?._id,
   },
