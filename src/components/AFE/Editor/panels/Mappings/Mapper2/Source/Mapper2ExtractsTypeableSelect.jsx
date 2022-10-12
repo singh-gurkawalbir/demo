@@ -223,10 +223,6 @@ export default function Mapper2ExtractsTypeableSelect({
     setIsTruncated(inputFieldRef.current.offsetWidth < inputFieldRef.current.scrollWidth);
   }, []);
 
-  const handleClick = useCallback(() => {
-    setIsFocused(true);
-  }, []);
-
   const hideSourceDropdown = isDynamicLookup || isHardCodedValue || isHandlebarExp;
 
   return (
@@ -266,7 +262,7 @@ export default function Mapper2ExtractsTypeableSelect({
           InputProps={{
             endAdornment: !hideSourceDropdown &&
               (
-                <InputAdornment className={classes.autoSuggestDropdown} position="start" onClick={handleClick}>
+                <InputAdornment className={classes.autoSuggestDropdown} position="start" onClick={() => { setIsFocused(true); }}>
                   <ArrowDownIcon />
                 </InputAdornment>
               ),
