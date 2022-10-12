@@ -44,7 +44,7 @@ const useStyles = makeStyles(theme => ({
     right: 0,
     marginTop: '0px !important',
     color: theme.palette.secondary.light,
-    pointerEvents: 'none',
+    cursor: 'pointer',
   },
   textFieldWithDataType: {
     '&> * .MuiFilledInput-input': {
@@ -262,7 +262,7 @@ export default function Mapper2ExtractsTypeableSelect({
           InputProps={{
             endAdornment: !hideSourceDropdown &&
               (
-                <InputAdornment className={classes.autoSuggestDropdown} position="start">
+                <InputAdornment className={classes.autoSuggestDropdown} position="start" onClick={() => { setIsFocused(true); }}>
                   <ArrowDownIcon />
                 </InputAdornment>
               ),
