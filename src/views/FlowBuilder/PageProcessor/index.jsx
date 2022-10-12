@@ -5,7 +5,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import AppBlock from '../AppBlock';
 import { selectors } from '../../../reducers';
 import actions from '../../../actions';
-import { getResourceSubType, generateNewId, resourceCategory} from '../../../utils/resource';
+import { getResourceSubType, resourceCategory} from '../../../utils/resource';
 import importMappingAction from './actions/importMapping';
 import inputFilterAction from './actions/inputFilter_afe';
 import pageProcessorHooksAction from './actions/pageProcessorHooks';
@@ -59,8 +59,9 @@ const PageProcessor = ({
   const rdbmsAppType = useSelector(
     state => pending && selectors.rdbmsConnectionType(state, pp._connectionId)
   );
-
-  const blockType = pending ? 'newPP' : resourceCategory(resource, !!pp._exportId, !!pp._importId);
+  const isDataLoaderFlow = useSelector(state => selectors.isDataLoaderFlow(state, flowId));
+  const pendingBlockType = isDataLoaderFlow ? 'newImport' : 'newPP';
+  const blockType = pending ? pendingBlockType : resourceCategory(resource, !!pp._exportId, !!pp._importId);
 
   const showMapping = flowDetails._connectorId ? flowDetails.showMapping : true;
 
@@ -78,8 +79,6 @@ const PageProcessor = ({
     ) || {};
 
   const handleBlockClick = useCallback(() => {
-    let newId = generateNewId();
-
     if (pending) {
       // generate newId
 
@@ -110,17 +109,15 @@ const PageProcessor = ({
         },
       ];
 
-      // for pending resource, passing the PP index in newId
-      // which will be used in saga to add or replace the pending resource
-      newId = `${newId}.${pp.id}`;
-      dispatch(actions.resource.patchStaged(newId, patchSet, 'value'));
+      dispatch(actions.flow.addNewPPStepInfo(flowId, {branchPath: `/routers/${pp.routerIndex}/branches/${pp.branchIndex}`, processorIndex: index}));
+      dispatch(actions.resource.patchStaged(pp.id, patchSet, 'value'));
     }
 
     const to = pending
       ? buildDrawerUrl({
         path: drawerPaths.RESOURCE.ADD,
         baseUrl: match.url,
-        params: { resourceType: 'pageProcessor', id: newId },
+        params: { resourceType: 'pageProcessor', id: pp.id },
       })
       : buildDrawerUrl({
         path: drawerPaths.RESOURCE.EDIT,

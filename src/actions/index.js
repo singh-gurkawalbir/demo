@@ -98,6 +98,12 @@ const auth = {
   linkWithGoogle: returnTo =>
     action(actionTypes.AUTH.LINK_WITH_GOOGLE, { returnTo }),
   complete: () => action(actionTypes.AUTH.SUCCESSFUL),
+  mfaRequired: mfaAuthInfo => action(actionTypes.AUTH.MFA_REQUIRED, { mfaAuthInfo }),
+  mfaVerify: {
+    request: payload => action(actionTypes.AUTH.MFA_VERIFY.REQUEST, { payload }),
+    failed: mfaError => action(actionTypes.AUTH.MFA_VERIFY.FAILED, { mfaError }),
+    success: () => action(actionTypes.AUTH.MFA_VERIFY.SUCCESS),
+  },
   failure: message => action(actionTypes.AUTH.FAILURE, { message }),
   warning: () => action(actionTypes.AUTH.WARNING),
   logout: isExistingSessionInvalid =>
@@ -382,6 +388,15 @@ const resource = {
       }),
     clearRedirect: integrationId =>
       action(actionTypes.INTEGRATION.CLEAR_REDIRECT, {
+        integrationId,
+      }),
+    isTileClick: (integrationId, isTileClick) =>
+      action(actionTypes.INTEGRATION.TILE_CLICK, {
+        integrationId,
+        isTileClick,
+      }),
+    clearIsTileClick: integrationId =>
+      action(actionTypes.INTEGRATION.CLEAR_TILE_CLICK, {
         integrationId,
       }),
     flowGroups: {
@@ -1319,6 +1334,8 @@ const license = {
     action(actionTypes.LICENSE.UPDATE_REQUEST, { actionType, connectorId, licenseId, feature }),
   licenseUpgradeRequestSubmitted: (message, feature) =>
     action(actionTypes.LICENSE.UPGRADE_REQUEST_SUBMITTED, { message, feature }),
+  licenseReactivated: () =>
+    action(actionTypes.LICENSE.REACTIVATED),
   ssoLicenseUpgradeRequested: () =>
     action(actionTypes.LICENSE.SSO.UPGRADE_REQUESTED),
   requestLicenseEntitlementUsage: () =>
@@ -1540,7 +1557,7 @@ const mapping = {
     updateActiveKey: v2Key => action(actionTypes.MAPPING.V2.ACTIVE_KEY, { v2Key }),
     deleteRow: v2Key => action(actionTypes.MAPPING.V2.DELETE_ROW, { v2Key }),
     addRow: v2Key => action(actionTypes.MAPPING.V2.ADD_ROW, { v2Key }),
-    updateDataType: (v2Key, newDataType) => action(actionTypes.MAPPING.V2.UPDATE_DATA_TYPE, { v2Key, newDataType }),
+    updateDataType: (v2Key, newDataType, isSource) => action(actionTypes.MAPPING.V2.UPDATE_DATA_TYPE, { v2Key, newDataType, isSource }),
     changeArrayTab: (v2Key, newTabValue, newTabExtractId) => action(actionTypes.MAPPING.V2.CHANGE_ARRAY_TAB, { v2Key, newTabValue, newTabExtractId }),
     patchField: (field, v2Key, value) => action(actionTypes.MAPPING.V2.PATCH_FIELD, { field, v2Key, value }),
     patchSettings: (v2Key, value) => action(actionTypes.MAPPING.V2.PATCH_SETTINGS, { v2Key, value }),
@@ -1548,6 +1565,10 @@ const mapping = {
     deleteAll: isCSVOrXLSX => action(actionTypes.MAPPING.V2.DELETE_ALL, { isCSVOrXLSX }),
     autoCreateStructure: (uploadedData, isCSVOrXLSX) => action(actionTypes.MAPPING.V2.AUTO_CREATE_STRUCTURE, { uploadedData, isCSVOrXLSX }),
     toggleAutoCreateFlag: () => action(actionTypes.MAPPING.V2.TOGGLE_AUTO_CREATE_FLAG, {}),
+    updateHighlightedIndex: index => action(actionTypes.MAPPING.V2.UPDATE_HIGHLIGHTED_INDEX, {index}),
+    searchTree: ({ searchKey, showKey }) => action(actionTypes.MAPPING.V2.SEARCH_TREE, { searchKey, showKey }),
+    updateFilter: filter => action(actionTypes.MAPPING.V2.UPDATE_FILTER, { filter }),
+    deleteNewRowKey: () => action(actionTypes.MAPPING.V2.DELETE_NEW_ROW_KEY, {}),
   },
 };
 
@@ -2028,6 +2049,20 @@ const errorManager = {
       filters,
     }),
   },
+  retries: {
+    request: ({ flowId, resourceId }) =>
+      action(actionTypes.ERROR_MANAGER.RETRIES.REQUEST, { flowId, resourceId }),
+    received: ({ flowId, resourceId, retries }) =>
+      action(actionTypes.ERROR_MANAGER.RETRIES.RECEIVED, {
+        flowId,
+        resourceId,
+        retries,
+      }),
+    clear: ({ flowId, resourceId }) =>
+      action(actionTypes.ERROR_MANAGER.RETRIES.CLEAR, { flowId, resourceId }),
+    cancelRequest: ({ flowId, resourceId, jobId}) =>
+      action(actionTypes.ERROR_MANAGER.RETRIES.CANCEL.REQUEST, {flowId, resourceId, jobId}),
+  },
   retryData: {
     request: ({ flowId, resourceId, retryId }) =>
       action(actionTypes.ERROR_MANAGER.RETRY_DATA.REQUEST, {
@@ -2039,6 +2074,11 @@ const errorManager = {
       action(actionTypes.ERROR_MANAGER.RETRY_DATA.RECEIVED, {
         flowId,
         resourceId,
+        retryId,
+        retryData,
+      }),
+    updateUserRetryData: ({retryId, retryData}) =>
+      action(actionTypes.ERROR_MANAGER.RETRY_DATA.UPDATE_USER_RETRY_DATA, {
         retryId,
         retryData,
       }),
@@ -2089,6 +2129,8 @@ const errorManager = {
 const flow = {
   addNewPGStep: flowId => action(actionTypes.FLOW.ADD_NEW_PG_STEP, { flowId }),
   addNewPPStep: (flowId, path, processorIndex) => action(actionTypes.FLOW.ADD_NEW_PP_STEP, { flowId, path, processorIndex }),
+  addNewPPStepInfo: (flowId, info) => action(actionTypes.FLOW.ADD_NEW_PP_STEP_INFO, { flowId, info }),
+  clearPPStepInfo: flowId => action(actionTypes.FLOW.CLEAR_PP_STEP_INFO, { flowId }),
   addNewRouter: (flowId, router) => action(actionTypes.FLOW.ADD_NEW_ROUTER, { flowId, router }),
   dragStart: (flowId, stepId) => action(actionTypes.FLOW.DRAG_START, { flowId, stepId }),
   setDragInProgress: flowId => action(actionTypes.FLOW.SET_DRAG_IN_PROGRESS, { flowId }),
@@ -2099,7 +2141,7 @@ const flow = {
   deleteStep: (flowId, stepId) => action(actionTypes.FLOW.DELETE_STEP, { flowId, stepId }),
   deleteEdge: (flowId, edgeId) => action(actionTypes.FLOW.DELETE_EDGE, { flowId, edgeId }),
   deleteRouter: (flowId, routerId) => action(actionTypes.FLOW.DELETE_ROUTER, { flowId, routerId }),
-  initializeFlowGraph: (flowId, flow, isViewMode) => action(actionTypes.FLOW.INIT_FLOW_GRAPH, { flowId, flow, isViewMode }),
+  initializeFlowGraph: (flowId, flow, isViewMode, isDataLoader) => action(actionTypes.FLOW.INIT_FLOW_GRAPH, { flowId, flow, isViewMode, isDataLoader }),
   setSaveStatus: (flowId, status) => action(actionTypes.FLOW.SET_SAVE_STATUS, { flowId, status }),
   run: ({ flowId, customStartDate, options }) =>
     action(actionTypes.FLOW.RUN, { flowId, customStartDate, options }),
@@ -2387,13 +2429,13 @@ const mfa = {
   showQrCode: () => action(actionTypes.MFA.QR_CODE.SHOW),
   secretCodeError: secretCodeError => action(actionTypes.MFA.SECRET_CODE.ERROR, { secretCodeError }),
   resetMFA: ({ password, aShareId }) => action(actionTypes.MFA.RESET, { aShareId, password }),
-  updateDevice: deviceInfo => action(actionTypes.MFA.UPDATE_DEVICE, { deviceInfo }),
   deleteDevice: deviceId => action(actionTypes.MFA.DELETE_DEVICE, { deviceId }),
   verifyMobileCode: code => action(actionTypes.MFA.MOBILE_CODE.VERIFY, { code }),
   mobileCodeVerified: (status, error) => action(actionTypes.MFA.MOBILE_CODE.STATUS, { status, error }),
   resetMobileCodeStatus: () => action(actionTypes.MFA.MOBILE_CODE.RESET),
   requestSessionInfo: () => action(actionTypes.MFA.SESSION_INFO.REQUEST),
   receivedSessionInfo: sessionInfo => action(actionTypes.MFA.SESSION_INFO.RECEIVED, { sessionInfo }),
+  clearSessionInfo: () => action(actionTypes.MFA.SESSION_INFO.CLEAR),
   addSetupContext: context => action(actionTypes.MFA.ADD_SETUP_CONTEXT, { context }),
   clearSetupContext: () => action(actionTypes.MFA.CLEAR_SETUP_CONTEXT),
   clear: () => action(actionTypes.MFA.CLEAR),

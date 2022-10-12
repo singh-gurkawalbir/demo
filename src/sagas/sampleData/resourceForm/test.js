@@ -706,6 +706,7 @@ describe('resourceFormSampleData sagas', () => {
 
       const body = {
         ...resourceObj,
+        _flowId: flowId,
         test: {
           limit: sampleDataRecordSize,
         },
@@ -865,7 +866,7 @@ describe('resourceFormSampleData sagas', () => {
 
       return expectSaga(_requestFileSampleData, { formKey })
         .provide([
-          [call(_fetchResourceInfoFromFormKey, { formKey }), { resourceId, resourceObj: ftpResource}],
+          [call(_fetchResourceInfoFromFormKey, { formKey }), { resourceId, resourceObj: ftpResource, resourceType: 'exports'}],
           [call(extractFileSampleDataProps, { formKey }), response],
           [matchers.call.fn(_parseFileData)],
         ])
@@ -876,6 +877,7 @@ describe('resourceFormSampleData sagas', () => {
           fileProps: response.fileProps,
           parserOptions: response.parserOptions,
           isNewSampleData: undefined,
+          resourceType: 'exports',
         })
         .not.put(actions.resourceFormSampleData.clearStages(resourceId))
         .run();
@@ -910,7 +912,7 @@ describe('resourceFormSampleData sagas', () => {
 
       return expectSaga(_requestFileSampleData, { formKey })
         .provide([
-          [call(_fetchResourceInfoFromFormKey, { formKey }), { resourceId, resourceObj: ftpResource}],
+          [call(_fetchResourceInfoFromFormKey, { formKey }), { resourceId, resourceObj: ftpResource, resourceType: 'exports'}],
           [call(extractFileSampleDataProps, { formKey }), {
             resourceId,
             sampleData: uploadedFile.file,
@@ -926,6 +928,7 @@ describe('resourceFormSampleData sagas', () => {
           fileType: 'csv',
           parserOptions,
           fileProps,
+          resourceType: 'exports',
           isNewSampleData: true})
         .not.put(actions.resourceFormSampleData.clearStages(resourceId))
         .run();
@@ -1183,6 +1186,7 @@ describe('resourceFormSampleData sagas', () => {
         rule: parserOptions,
         data: fileContent,
         editorType: 'jsonParser',
+        resourceType: 'exports',
       };
       const processorResponse = {
         data: {
@@ -1193,7 +1197,7 @@ describe('resourceFormSampleData sagas', () => {
         users: { test: 5 },
       };
 
-      return expectSaga(_parseFileData, { resourceId, fileContent, fileProps: ftpResource.file.json, parserOptions, isNewSampleData: true, fileType: 'json' })
+      return expectSaga(_parseFileData, { resourceType: 'exports', resourceId, fileContent, fileProps: ftpResource.file.json, parserOptions, isNewSampleData: true, fileType: 'json' })
         .provide([
           [call(_getProcessorOutput, { processorData }), processorResponse],
         ])
@@ -1225,6 +1229,7 @@ describe('resourceFormSampleData sagas', () => {
         rule: parserOptions,
         data: fileContent,
         editorType: 'jsonParser',
+        resourceType: 'exports',
       };
       const processorResponse = {
         error: {
@@ -1236,7 +1241,7 @@ describe('resourceFormSampleData sagas', () => {
         users: { test: 5 },
       };
 
-      return expectSaga(_parseFileData, { resourceId, fileContent, fileProps: ftpResource.file.json, parserOptions, isNewSampleData: true, fileType: 'json' })
+      return expectSaga(_parseFileData, { resourceType: 'exports', resourceId, fileContent, fileProps: ftpResource.file.json, parserOptions, isNewSampleData: true, fileType: 'json' })
         .provide([
           [call(_getProcessorOutput, { processorData }), processorResponse],
         ])
@@ -1278,6 +1283,7 @@ describe('resourceFormSampleData sagas', () => {
         rule: parserOptions,
         data: fileContent,
         editorType: 'csvParser',
+        resourceType: 'exports',
       };
       const processorResponse = {
         data: {
@@ -1289,7 +1295,7 @@ describe('resourceFormSampleData sagas', () => {
         users: { test: 5 },
       };
 
-      return expectSaga(_parseFileData, { resourceId, fileContent, fileProps: ftpResource.file.csv, parserOptions, isNewSampleData: true, fileType: 'csv' })
+      return expectSaga(_parseFileData, { resourceType: 'exports', resourceId, fileContent, fileProps: ftpResource.file.csv, parserOptions, isNewSampleData: true, fileType: 'csv' })
         .provide([
           [call(_getProcessorOutput, { processorData }), processorResponse],
         ])

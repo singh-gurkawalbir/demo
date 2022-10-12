@@ -164,6 +164,7 @@ export function* requestLicenseUpdate({ actionType, connectorId, licenseId, feat
     yield put(actions.resource.requestCollection('exports'));
     yield put(actions.resource.requestCollection('imports'));
     yield put(actions.license.refreshCollection());
+    yield put(actions.license.licenseReactivated());
   } else {
     yield put(actions.license.licenseUpgradeRequestSubmitted(response, feature));
   }

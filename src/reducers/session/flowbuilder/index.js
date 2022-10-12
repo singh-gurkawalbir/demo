@@ -5,7 +5,7 @@ import actionTypes from '../../../actions/types';
 import { generateReactFlowGraph } from '../../../utils/flows/flowbuilder';
 
 export default function reducer(state = {}, action) {
-  const { type, flow, flowId, stepId, targetId, targetType, status, isViewMode } = action;
+  const { type, flow, flowId, stepId, targetId, targetType, status, isViewMode, info, isDataLoader } = action;
 
   return produce(state, draft => {
     switch (type) {
@@ -13,7 +13,7 @@ export default function reducer(state = {}, action) {
         if (!draft[flowId]) {
           draft[flowId] = {};
         }
-        draft[flowId].elements = generateReactFlowGraph(flow, isViewMode);
+        draft[flowId].elements = generateReactFlowGraph(flow, isViewMode, isDataLoader);
         draft[flowId].elementsMap = keyBy(draft[flowId].elements || [], 'id');
         draft[flowId].flow = flow;
         draft[flowId].isViewMode = isViewMode;
@@ -53,6 +53,16 @@ export default function reducer(state = {}, action) {
         break;
       }
 
+      case actionTypes.FLOW.ADD_NEW_PP_STEP_INFO: {
+        draft[flowId].info = info;
+        break;
+      }
+
+      case actionTypes.FLOW.CLEAR_PP_STEP_INFO: {
+        delete draft[flowId].info;
+        break;
+      }
+
       case actionTypes.FLOW.MERGE_TARGET_CLEAR: {
         delete draft[flowId].mergeTargetId;
         delete draft[flowId].mergeTargetType;
@@ -71,10 +81,10 @@ selectors.fbGraphElements = (state, flowId) => (state && state[flowId] && state[
 selectors.fbGraphElementsMap = (state, flowId) => (state && state[flowId]?.elementsMap) || emptyObject;
 selectors.fbFlow = (state, flowId) => state && state[flowId]?.flow;
 selectors.fbDragStepId = (state, flowId) => state?.[flowId]?.dragStepId;
+selectors.fbInfo = (state, flowId) => state?.[flowId]?.info || emptyObject;
 selectors.fbMergeTargetType = (state, flowId) => state?.[flowId]?.mergeTargetType;
 selectors.fbMergeTargetId = (state, flowId) => state?.[flowId]?.mergeTargetId;
 selectors.fbDragStepIdInProgress = (state, flowId) => state?.[flowId]?.dragStepIdInProgress;
-selectors.isFlowSaveInProgress = (state, flowId) => state?.[flowId]?.status === 'saving';
 
 selectors.fbRouterStepsInfo = (state, flowId, routerId) => {
   let configuredCount = 0;

@@ -108,6 +108,9 @@ export function* _fetchAssistantSampleData({ resource }) {
       httpVersionId: connection?.http?._httpConnectorVersionId,
       _httpConnectorApiId: connection?.http?._httpConnectorApiId,
     });
+    if (!connectorMetaData) {
+      return false;
+    }
   }
   if (!getHttpConnector(connection?.http?._httpConnectorId)) {
     if (!assistantMetadata) {
@@ -308,10 +311,11 @@ export function* getImportSampleData({ importId }) {
 
   if (!resource) return;
 
+  const connection = yield select(selectors.resource, 'connections', resource._connectionId);
   const { assistant, file, sampleData, _connectorId } = resource;
   const { type } = file || {};
 
-  if (assistant && assistant !== 'financialforce' && !(FILE_PROVIDER_ASSISTANTS.includes(assistant))) {
+  if (getHttpConnector(connection?.http?._httpConnectorId) || (assistant && assistant !== 'financialforce' && !(FILE_PROVIDER_ASSISTANTS.includes(assistant)))) {
     // get assistants sample data
     const assistantSampleData = yield select(selectors.assistantPreviewData, importId);
 
@@ -333,6 +337,7 @@ export function* getImportSampleData({ importId }) {
     const parsedData = yield call(parseFileData, {
       sampleData,
       resource,
+      resourceType: 'imports',
     });
     const fileSampleData = parsedData?.data;
 

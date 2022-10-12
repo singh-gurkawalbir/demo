@@ -25,7 +25,7 @@ export default function DynaManageAliases({ id, label, resourceContext, ...props
           <FormLabel>
             {label}
           </FormLabel>
-          <FieldHelp {...props} />
+          <FieldHelp label={label} {...props} />
         </div>
         <OutlinedButton
           data-test={id}

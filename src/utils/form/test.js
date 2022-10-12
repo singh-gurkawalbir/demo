@@ -276,10 +276,21 @@ describe('rule evaluation', () => {
   const aIs1 = { field: 'a', is: ['1'] };
   const bIs2 = { field: 'b', is: ['2'] };
   const cIs3 = { field: 'c', is: ['3'] };
+  const dIs4 = { field: 'd', is: ['4'] };
+  const eIs5 = { field: 'e', is: ['5'] };
+
+  const aIs1_or_bIs2_AND_cIs3_or_dIs4 = {
+    AND: [
+      {OR: [aIs1, bIs2]},
+      {OR: [cIs3, dIs4]},
+    ],
+  };
   // Create some fields to be tested (fieldC is expected to fail)...
   const fieldA = createField({ id: 'A', name: 'a', value: '1' });
   const fieldB = createField({ id: 'B', name: 'b', value: '2' });
   const fieldC = createField({ id: 'C', name: 'c', value: 'fail' });
+  const fieldD = createField({ id: 'D', name: 'd', value: '4'});
+  const fieldE = createField({ id: 'E', name: 'e', value: 'fail' });
 
   describe('evaluateAllRules', () => {
     test('should default result(true) when there are rules of invalid signature', () => {
@@ -331,6 +342,114 @@ describe('rule evaluation', () => {
       expect(
         evaluateAllRules({ rules, fieldsById, defaultResult: true })
       ).toEqual(true);
+    });
+
+    test('passes when all rules pass of combinations1', () => {
+      const rules = [{
+        AND: [
+          {OR: [aIs1, bIs2]},
+          {OR: [cIs3, dIs4]},
+        ],
+      }];
+      const fieldsById = {
+        a: fieldA,
+        b: fieldB,
+        c: fieldC,
+        d: fieldD,
+        e: fieldE,
+      };
+
+      expect(
+        evaluateAllRules({ rules, fieldsById, defaultResult: false })
+      ).toEqual(true);
+    });
+
+    test('passes when all rules pass of combinations2', () => {
+      const rules = [{
+        OR: [
+          {OR: [aIs1, bIs2]},
+          {AND: [cIs3, dIs4]},
+        ],
+      }];
+      const fieldsById = {
+        a: fieldA,
+        b: fieldB,
+        c: fieldC,
+        d: fieldD,
+        e: fieldE,
+      };
+
+      expect(
+        evaluateAllRules({ rules, fieldsById, defaultResult: false })
+      ).toEqual(true);
+    });
+
+    test('passes when all rules pass of combinations4', () => {
+      const rules = [{
+        OR: [
+          {AND: [aIs1, bIs2]},
+          {AND: [cIs3, dIs4]},
+        ],
+      }];
+      const fieldsById = {
+        a: fieldA,
+        b: fieldB,
+        c: fieldC,
+        d: fieldD,
+        e: fieldE,
+      };
+
+      expect(
+        evaluateAllRules({ rules, fieldsById, defaultResult: false })
+      ).toEqual(true);
+    });
+
+    test('passes when all rules pass of combinations4', () => {
+      const rules = [{
+        AND: [
+          {AND: [aIs1, bIs2]},
+          {OR: [cIs3, dIs4]},
+        ],
+      }];
+      const fieldsById = {
+        a: fieldA,
+        b: fieldB,
+        c: fieldC,
+        d: fieldD,
+        e: fieldE,
+      };
+
+      expect(
+        evaluateAllRules({ rules, fieldsById, defaultResult: false })
+      ).toEqual(true);
+    });
+
+    test('passes when all rules pass of combinations3', () => {
+      const rules = [aIs1_or_bIs2_AND_cIs3_or_dIs4];
+      const fieldsById = {
+        a: fieldA,
+        b: fieldB,
+        c: fieldC,
+        d: fieldD,
+        e: fieldE,
+      };
+
+      expect(
+        evaluateAllRules({ rules, fieldsById, defaultResult: true })
+      ).toEqual(true);
+      expect(
+        evaluateAllRules({ rules, fieldsById, defaultResult: false })
+      ).toEqual(true);
+      expect(
+        evaluateAllRules({ rules: [{
+          AND: [
+            {OR: [aIs1, bIs2]},
+            {OR: [cIs3, eIs5]},
+          ],
+        }],
+        fieldsById,
+        defaultResult: true})
+      ).toEqual(false);
     });
   });
 

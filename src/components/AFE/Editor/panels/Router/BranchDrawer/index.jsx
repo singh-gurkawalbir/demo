@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useSelector, shallowEqual, useDispatch } from 'react-redux';
 import { useHistory, useParams } from 'react-router-dom';
 import { selectors } from '../../../../../../reducers';
@@ -18,6 +18,7 @@ const getFieldMeta = branch => ({
       name: 'name',
       id: 'name',
       type: 'text',
+      autoFocus: true,
       label: 'Name',
       required: true,
       defaultValue: branch.name,
@@ -35,9 +36,10 @@ const getFieldMeta = branch => ({
 function RouterWrappedContent({editorId}) {
   const { position } = useParams();
   const history = useHistory();
+  const [remountKey, setRemountkey] = useState(0);
   const branch = useSelector(state => selectors.editorRule(state, editorId)?.branches?.[position]);
   const fieldMeta = getFieldMeta(branch);
-  const formKey = useFormInitWithPermissions({ fieldMeta });
+  const formKey = useFormInitWithPermissions({ fieldMeta, remount: remountKey });
   const dispatch = useDispatch();
   // This is strange to query the form values like this.
   // Why doesn't the <SaveAndCloseButtonGroupForm> onSave event pass the form values?
@@ -47,6 +49,8 @@ function RouterWrappedContent({editorId}) {
 
   const handleSave = closeAfterSave => {
     dispatch(actions.editor.patchRule(editorId, {...branch, ...values}, {rulePath: `branches[${position}]`}));
+    dispatch(actions.asyncTask.success(formKey));
+    setRemountkey(key => key + 1);
 
     if (closeAfterSave) handleClose();
   };

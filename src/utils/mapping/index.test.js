@@ -3298,6 +3298,7 @@ describe('mapping utils', () => {
       {resource: {adaptorType: 'RDBMSImport'}, connection: {rdbms: {type: 'oracle'}}, appName: 'Oracle DB (SQL)'},
       {resource: {adaptorType: 'RDBMSImport'}, connection: {rdbms: {type: 'postgresql'}}, appName: 'PostgreSQL'},
       {resource: {adaptorType: 'RDBMSImport'}, connection: {}, appName: 'Snowflake'},
+      {resource: {adaptorType: 'HTTPImport'}, connection: {http: {_httpConnecorId: '123'}}, appName: 'HTTP'},
 
     ];
 
@@ -3468,6 +3469,44 @@ describe('mapping utils', () => {
           {
             key: 'key2',
             generate: 'lname',
+            jsonPath: 'lname',
+            dataType: MAPPING_DATA_TYPES.OBJECT,
+            children: [{
+              key: 'c1',
+              extract: 'child1',
+              generate: 'fname',
+              jsonPath: 'lname.fname',
+              parentKey: 'key2',
+              dataType: MAPPING_DATA_TYPES.STRING,
+            },
+            {
+              key: 'c2',
+              extract: 'child2',
+              generate: 'fname',
+              jsonPath: 'lname.fname',
+              parentKey: 'key2',
+              dataType: MAPPING_DATA_TYPES.STRING,
+            }],
+          },
+        ],
+        result: {
+          isSuccess: false,
+          errMessage: errorMessageStore('MAPPER2_DUP_GENERATE', {fields: 'lname.fname'}),
+        },
+      },
+      {
+        mappings: [],
+        lookups: [],
+        v2TreeData: [
+          {
+            key: 'key1',
+            extract: '$.fname',
+            generate: 'fname',
+            dataType: MAPPING_DATA_TYPES.STRING,
+          },
+          {
+            key: 'key2',
+            generate: 'lname',
             dataType: MAPPING_DATA_TYPES.OBJECT,
             children: [{
               key: 'c1',
@@ -3548,13 +3587,54 @@ describe('mapping utils', () => {
             key: 'key2',
             generate: 'lname',
             dataType: MAPPING_DATA_TYPES.OBJECTARRAY,
-            copySource: 'yes',
             isRequired: true,
+            children: [
+              {
+                key: 'c1',
+                generate: 'fname',
+                dataType: MAPPING_DATA_TYPES.STRING,
+                parentKey: 'key2',
+                isRequired: true,
+                jsonPath: 'lname[*].fname',
+              },
+            ],
           },
         ],
         result: {
           isSuccess: false,
-          errMessage: errorMessageStore('MAPPER2_MISSING_EXTRACT', {fields: 'lname'}),
+          errMessage: errorMessageStore('MAPPER2_MISSING_EXTRACT', {fields: 'lname,lname[*].fname'}),
+        },
+      },
+      {
+        mappings: [],
+        lookups: [],
+        v2TreeData: [
+          {
+            key: 'key1',
+            hardCodedValue: 'test',
+            generate: 'fname',
+            dataType: MAPPING_DATA_TYPES.OBJECT,
+          },
+        ],
+        result: {
+          isSuccess: false,
+          errMessage: errorMessageStore('MAPPER2_ONLY_JSON_PATH_SUPPORT', {fields: 'fname'}),
+        },
+      },
+      {
+        mappings: [],
+        lookups: [],
+        v2TreeData: [
+          {
+            key: 'key1',
+            extract: '{{record.test}}',
+            generate: 'fname',
+            dataType: MAPPING_DATA_TYPES.STRINGARRAY,
+          },
+        ],
+        result: {
+          isSuccess: false,
+          errMessage: errorMessageStore('MAPPER2_EXPRESSION_NOT_SUPPORTED', {fields: 'fname'}),
         },
       },
       {
@@ -3572,7 +3652,10 @@ describe('mapping utils', () => {
             generate: 'lname',
             dataType: MAPPING_DATA_TYPES.OBJECTARRAY,
             copySource: 'yes',
-            combinedExtract: '$.siblings[*]',
+            extractsArrayHelper: [{
+              extract: '$.siblings[*]',
+              sourceDataType: MAPPING_DATA_TYPES.OBJECT,
+            }],
           },
         ],
         result: {isSuccess: true},
@@ -3623,6 +3706,8 @@ describe('mapping utils', () => {
             generate: 'lname',
             dataType: MAPPING_DATA_TYPES.OBJECT,
             copySource: 'yes',
+            extract: '$.siblings[*]',
+            sourceDataType: MAPPING_DATA_TYPES.OBJECT,
           },
         ],
         result: {isSuccess: true},
@@ -3676,10 +3761,218 @@ describe('mapping utils', () => {
         ],
         result: {isSuccess: true},
       },
+      {
+        mappings: [],
+        lookups: [],
+        isGroupedSampleData: true,
+        v2TreeData: [
+          {
+            key: 'key1',
+            extract: '{{rows.[0].id}}',
+            generate: 'fname',
+            dataType: MAPPING_DATA_TYPES.STRING,
+          },
+        ],
+        result: {isSuccess: true},
+      },
+      {
+        mappings: [],
+        lookups: [],
+        isGroupedSampleData: false,
+        v2TreeData: [
+          {
+            key: 'key1',
+            extract: '{{record.id}}',
+            generate: 'fname',
+            dataType: MAPPING_DATA_TYPES.NUMBER,
+          },
+        ],
+        result: {isSuccess: true},
+      },
+      {
+        mappings: [],
+        lookups: [],
+        isGroupedSampleData: true,
+        v2TreeData: [
+          {
+            key: 'key1',
+            extract: '{{record.isValid}}',
+            generate: 'fname',
+            dataType: MAPPING_DATA_TYPES.BOOLEAN,
+          },
+        ],
+        result: {
+          isSuccess: false,
+          errMessage: errorMessageStore('MAPPER2_WRONG_HANDLEBAR_FOR_ROWS'),
+        },
+      },
+      {
+        mappings: [],
+        lookups: [],
+        isGroupedSampleData: false,
+        v2TreeData: [
+          {
+            key: 'key1',
+            extract: '{{rows.[0].id}}',
+            generate: 'fname',
+            dataType: MAPPING_DATA_TYPES.STRING,
+          },
+        ],
+        result: {
+          isSuccess: false,
+          errMessage: errorMessageStore('MAPPER2_WRONG_HANDLEBAR_FOR_RECORD'),
+        },
+      },
+      {
+        mappings: [],
+        lookups: [],
+        isGroupedSampleData: true,
+        v2TreeData: [
+          {
+            key: 'key1',
+            extract: '{{rows.[1].record.id}}',
+            generate: 'fname',
+            dataType: MAPPING_DATA_TYPES.STRING,
+          },
+        ],
+        result: {isSuccess: true},
+      },
+      {
+        mappings: [],
+        lookups: [],
+        isGroupedSampleData: false,
+        v2TreeData: [
+          {
+            key: 'key1',
+            extract: '{{record.rows.id}}',
+            generate: 'fname',
+            dataType: MAPPING_DATA_TYPES.NUMBER,
+          },
+        ],
+        result: {isSuccess: true},
+      },
+      {
+        mappings: [],
+        lookups: [],
+        isGroupedSampleData: true,
+        v2TreeData: [
+          {
+            key: 'key1',
+            extract: '{{add rows.[0].value1 rows.[1].value2}}',
+            generate: 'fname',
+            dataType: MAPPING_DATA_TYPES.NUMBER,
+          },
+        ],
+        result: {isSuccess: true},
+      },
+      {
+        mappings: [],
+        lookups: [],
+        isGroupedSampleData: false,
+        v2TreeData: [
+          {
+            key: 'key1',
+            extract: '{{add record.value1 rows.value2}}',
+            generate: 'fname',
+            dataType: MAPPING_DATA_TYPES.NUMBER,
+          },
+        ],
+        result: {
+          isSuccess: false,
+          errMessage: errorMessageStore('MAPPER2_WRONG_HANDLEBAR_FOR_RECORD'),
+        },
+      },
+      {
+        mappings: [],
+        lookups: [],
+        isGroupedSampleData: false,
+        v2TreeData: [
+          {
+            key: 'key1',
+            extract: 'isName',
+            generate: 'fname',
+            jsonPath: 'fname',
+            dataType: MAPPING_DATA_TYPES.STRING,
+            sourceDataType: MAPPING_DATA_TYPES.BOOLEAN,
+          },
+        ],
+        result: {
+          isSuccess: true,
+        },
+      },
+      {
+        mappings: [],
+        lookups: [],
+        isGroupedSampleData: false,
+        v2TreeData: [
+          {
+            key: 'key1',
+            extract: 'isName',
+            generate: 'fname',
+            jsonPath: 'fname',
+            dataType: MAPPING_DATA_TYPES.NUMBER,
+            sourceDataType: MAPPING_DATA_TYPES.BOOLEAN,
+          },
+        ],
+        result: {
+          isSuccess: false,
+          errMessage: "Mapper 2.0: fname: You can't map boolean (source) to number (destination)",
+        },
+      },
+      {
+        mappings: [],
+        lookups: [],
+        v2TreeData: [
+          {
+            key: 'key1',
+            generate: 'sibling',
+            jsonPath: 'sibling',
+            dataType: MAPPING_DATA_TYPES.OBJECT,
+            copySource: 'yes',
+            extract: '$.siblings[*]',
+            sourceDataType: MAPPING_DATA_TYPES.NUMBERARRAY,
+          },
+        ],
+        result: {
+          isSuccess: false,
+          errMessage: "Mapper 2.0: sibling: You can't map [number] (source) to object (destination)",
+        },
+      },
+      {
+        mappings: [],
+        lookups: [],
+        v2TreeData: [
+          {
+            jsonPath: 'quantity',
+            generate: 'quantity',
+            dataType: MAPPING_DATA_TYPES.NUMBERARRAY,
+            extractsArrayHelper: [
+              {
+                extract: '$[*].cartonQuantity',
+                conditional: {
+                  when: 'extract_not_empty',
+                },
+                sourceDataType: MAPPING_DATA_TYPES.NUMBER,
+              },
+              {
+                extract: '$[*].configuration',
+                conditional: {
+                  when: 'extract_not_empty',
+                },
+                sourceDataType: MAPPING_DATA_TYPES.BOOLEAN,
+              },
+            ],
+          },
+        ],
+        result: {
+          isSuccess: false,
+          errMessage: "Mapper 2.0: quantity: You can't map boolean (source) to [number] (destination)",
+        },
+      },
     ];
 
-    testCases.forEach(({mappings, lookups, v2TreeData, result}) => {
-      expect(util.validateMappings(mappings, lookups, v2TreeData)).toEqual(result);
+    testCases.forEach(({mappings, lookups, v2TreeData, isGroupedSampleData, result}) => {
+      expect(util.validateMappings(mappings, lookups, v2TreeData, isGroupedSampleData)).toEqual(result);
     });
   });
   test('getExtractPaths util', () => {
@@ -3852,7 +4145,7 @@ describe('mapping utils', () => {
         },
       },
       {
-        data: `a  ,b  ,c  
+        data: `a  ,b  ,c
         d,e,f`,
         output: {
           a: 'a',

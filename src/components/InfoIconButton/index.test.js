@@ -1,0 +1,36 @@
+/* global describe, test, expect, */
+import React from 'react';
+import {screen} from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import {renderWithProviders} from '../../test/test-utils';
+import InfoIconButton from '.';
+
+describe('InfoIconButton UI tests', () => {
+  test('should render the infoIcon Button', () => {
+    const props = {info: 'sample info icon content'};
+
+    renderWithProviders(<InfoIconButton {...props} />);
+    expect(screen.getByRole('button')).toBeInTheDocument();
+  });
+  test('should display the ArrowPopper on clicking the infoIconButton', () => {
+    const props = {info: 'sample info icon content'};
+
+    renderWithProviders(<InfoIconButton {...props} />);
+    userEvent.click(screen.getByRole('button'));
+    expect(screen.getByText(/sample info icon content/i)).toBeInTheDocument();
+  });
+  test('should render empty DOM when no info is passed', () => {
+    const {utils} = renderWithProviders(<InfoIconButton />);
+
+    expect(utils.container).toBeEmptyDOMElement();
+  });
+  test('should close the arrowpopper when clicked outside the arrowpopper', () => {
+    const props = {info: 'sample info icon content'};
+
+    renderWithProviders(<div>exterior<InfoIconButton {...props} /></div>);
+    userEvent.click(screen.getByRole('button'));
+    expect(screen.getByText(/sample info icon content/i)).toBeInTheDocument();
+    userEvent.click(screen.getByText('exterior'));
+    expect(screen.queryByText(/sample info icon content/i)).toBeNull();
+  });
+});

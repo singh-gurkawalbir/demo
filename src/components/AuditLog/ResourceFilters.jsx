@@ -86,17 +86,13 @@ export function ResourceTypeFilter(props) {
           'filedefinition',
           'revision',
           'script',
-          'api',
-          'accesstoken',
-          'ssoclient',
           'agent',
-          'user',
           'notification',
         ],
   };
 
   resourceTypeFilterOptionsByResourceType.all =
-    resourceTypeFilterOptionsByResourceType.integrations;
+    [...resourceTypeFilterOptionsByResourceType.integrations, 'accesstoken', 'ssoclient', 'user', 'api'];
 
   return (
     <FormControl className={classes.formControl}>
@@ -194,6 +190,7 @@ export function AuditLogActionFilter({
   classes,
   filters,
   onChange,
+  resource,
 }) {
   return (
     <FormControl className={classes.formControl}>
@@ -207,6 +204,13 @@ export function AuditLogActionFilter({
         </MenuItem>
         {[
           ...Object.keys(AUDIT_LOG_EVENT_LABELS)
+            .filter(k => {
+              if (!resource) {
+                return true;
+              }
+
+              return !['signin', 'signout'].includes(k);
+            })
             .map(k => [k, AUDIT_LOG_EVENT_LABELS[k]]),
         ].map(opt => (
           <MenuItem key={opt[0]} value={opt[0]}>

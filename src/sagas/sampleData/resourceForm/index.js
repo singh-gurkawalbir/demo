@@ -101,6 +101,7 @@ export function* _requestExportPreviewData({ formKey, executeProcessors = false 
     path = `/integrations/${integrationId}/exports/preview`;
   } else {
     path = '/exports/preview';
+    body._flowId = flowId;
   }
 
   const recordSize = yield select(selectors.sampleDataRecordSize, resourceId);
@@ -123,7 +124,7 @@ export function* _requestExportPreviewData({ formKey, executeProcessors = false 
   }
 }
 
-export function* _parseFileData({ resourceId, fileContent, fileProps = {}, fileType, parserOptions, isNewSampleData = false }) {
+export function* _parseFileData({ resourceType, resourceId, fileContent, fileProps = {}, fileType, parserOptions, isNewSampleData = false }) {
   const recordSize = yield select(selectors.sampleDataRecordSize, resourceId);
 
   if (isNewSampleData) {
@@ -137,6 +138,7 @@ export function* _parseFileData({ resourceId, fileContent, fileProps = {}, fileT
         rule: parserOptions,
         data: fileContent,
         editorType: PARSERS[fileType],
+        resourceType,
       };
       const processorOutput = yield call(_getProcessorOutput, { processorData });
 
@@ -211,7 +213,7 @@ export function* _parseFileData({ resourceId, fileContent, fileProps = {}, fileT
 }
 
 export function* _requestFileSampleData({ formKey }) {
-  const { resourceObj: resourceInfo, resourceId, ssLinkedConnectionId } = yield call(_fetchResourceInfoFromFormKey, { formKey });
+  const { resourceObj: resourceInfo, resourceId, ssLinkedConnectionId, resourceType } = yield call(_fetchResourceInfoFromFormKey, { formKey });
 
   const resourceObj = { ...resourceInfo };
 
@@ -233,6 +235,7 @@ export function* _requestFileSampleData({ formKey }) {
       fileProps,
       parserOptions,
       isNewSampleData,
+      resourceType,
     });
   }
   // no sample data - so clear sample data from state

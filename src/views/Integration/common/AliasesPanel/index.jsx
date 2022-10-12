@@ -89,7 +89,7 @@ export default function Aliases({ integrationId, childId }) {
 
   return (
     <div className={classes.root}>
-      <PanelHeader title="Aliases" infoText={messageStore('ALIAS_PANEL_HELPINFO')} className={classes.aliasesHeader} >
+      <PanelHeader title="Aliases" infoText={messageStore('ALIAS_PANEL_HELPINFO')} placement="right-end" className={classes.aliasesHeader} >
         <ActionGroup>
           {hasManageAccess && (
           <TextButton

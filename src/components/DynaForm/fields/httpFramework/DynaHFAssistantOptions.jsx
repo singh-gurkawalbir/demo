@@ -162,7 +162,6 @@ function DynaAssistantOptions(props) {
   }, [id, value]);
   function onFieldChange(id, value) {
     onFieldChangeFn(id, value);
-
     if (
       ['version', 'resource', 'operation', 'exportType'].includes(
         assistantFieldType
@@ -179,6 +178,7 @@ function DynaAssistantOptions(props) {
           resource: ['operation'],
         },
       };
+
       const patch = [];
 
       patch.push({

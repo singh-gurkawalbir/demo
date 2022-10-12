@@ -1,5 +1,6 @@
 import React, { useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { makeStyles } from '@material-ui/core';
 import actions from '../../../actions';
 import { getAssistantConnectorType, getApp, getHttpConnector} from '../../../constants/applications';
 import { selectors } from '../../../reducers';
@@ -13,12 +14,24 @@ import { emptyObject } from '../../../constants';
 import getResourceFormAssets from '../../../forms/formFactory/getResourceFromAssets';
 import { defaultPatchSetConverter, sanitizePatchSet } from '../../../forms/formFactory/utils';
 import { isAmazonHybridConnection, isLoopReturnsv2Connection, isAcumaticaEcommerceConnection, isMicrosoftBusinessCentralOdataConnection, isEbayFinanceConnection } from '../../../utils/assistant';
+import TextToggle from '../../TextToggle';
+import Help from '../../Help';
 
+const useStyles = makeStyles(theme => ({
+  helpTextButton: {
+    padding: 0,
+  },
+  connectorTextToggle: {
+    flexGrow: 100,
+    marginLeft: theme.spacing(-2),
+  },
+}));
 const emptyObj = {};
 const isParent = true;
 
 export default function FormView(props) {
-  const { resourceType, flowId, resourceId, value, formKey } = props;
+  const classes = useStyles();
+  const { resourceType, flowId, resourceId, value: containerValue, formKey, defaultValue, isTitleBar } = props;
   const formContext = useFormContext(formKey);
   const dispatch = useDispatch();
   const { merged } =
@@ -28,6 +41,12 @@ export default function FormView(props) {
       resourceId
     ) || {};
   const staggedResource = merged || emptyObject;
+  const value = useMemo(() => {
+    if (!isTitleBar) return containerValue;
+    if (!staggedResource || !staggedResource.http || !staggedResource.http.formType) return defaultValue;
+
+    return staggedResource.http?.formType === 'assistant' ? 'false' : 'true';
+  }, [staggedResource, containerValue, isTitleBar, defaultValue]);
   const resourceFormState = useSelector(
     state =>
       selectors.resourceFormState(state, resourceType, resourceId) || emptyObj
@@ -37,7 +56,6 @@ export default function FormView(props) {
       selectors.resource(state, 'connections', staggedResource._connectionId) ||
       emptyObj
   );
-
   const connectorMetaData = useSelector(state =>
     selectors.httpConnectorMetaData(state, connection?.http?._httpConnectorId, connection?.http?._httpConnectorVersionId, connection?.http?._httpConnectorApiId)
   );
@@ -50,12 +68,11 @@ export default function FormView(props) {
 
   const { assistant: assistantName, http } = connection;
 
+  const isGraphql = http?.formType === 'graph_ql';
   const _httpConnectorId = getHttpConnector(connection?.http?._httpConnectorId)?._id;
   const showHTTPFrameworkImport = resourceType === 'imports' && connectorMetaData?.import?.versions?.[0]?.resources?.length;
   const showHTTPFrameworkExport = resourceType === 'exports' && connectorMetaData?.export?.versions?.[0]?.resources?.length;
-  const isHttpFramework = _httpConnectorId && (showHTTPFrameworkImport || showHTTPFrameworkExport);
-
-  const isGraphql = http?.formType === 'graph_ql';
+  const isHttpFramework = showHTTPFrameworkImport || showHTTPFrameworkExport;
 
   const options = useMemo(() => {
     const matchingApplication = getApp(null, isGraphql ? 'graph_ql' : assistantName, _httpConnectorId);
@@ -63,7 +80,15 @@ export default function FormView(props) {
     if (matchingApplication) {
       const { name, type } = matchingApplication;
 
-      // all types are lower case...lets upper case them
+      if (_httpConnectorId) {
+        // all types are lower case...lets upper case them
+        return [
+          { label: 'Simple', value: `${!isParent}` },
+          // if type is REST then we should show REST API
+          { label: (isGraphql || _httpConnectorId) ? 'HTTP' : type && (type.toUpperCase() === 'REST' ? 'REST API' : type.toUpperCase()), value: `${isParent}` },
+        ];
+      }
+
       return [
         {
           items: [
@@ -83,12 +108,12 @@ export default function FormView(props) {
   useHFSetInitializeFormData({...props, isHTTPFramework: _httpConnectorId});
   useSetInitializeFormData({...props, isHTTPFramework: _httpConnectorId});
 
-  const onFieldChangeFn = (id, selectedApplication) => {
+  const onFieldChangeFn = selectedApplication => {
     // first get the previously selected application values
     // stagged state we will break up the scope to selected application and actual value
 
     // selecting the other option
-
+    const {id} = props;
     const staggedRes = Object.keys(staggedResource).reduce((acc, curr) => {
       acc[`/${curr}`] = staggedResource[curr];
 
@@ -109,7 +134,7 @@ export default function FormView(props) {
     staggedRes['/useParentForm'] = selectedApplication === `${isParent}`;
 
     // if assistant is selected back again assign it to the export to the export obj as well
-    if (_httpConnectorId) {
+    if (_httpConnectorId && !isGraphql) {
       staggedRes['/isHttpConnector'] = true;
       newFinalValues['/isHttpConnector'] = true;
       if (selectedApplication !== `${isParent}`) {
@@ -169,15 +194,39 @@ export default function FormView(props) {
   const isAcumaticaEcommerceImport = (resourceType === 'imports') && isAcumaticaEcommerceConnection(connection);
   const isLoopReturnsv2import = (resourceType === 'imports') && isLoopReturnsv2Connection(connection);
   const isEbayFinanceImport = (resourceType === 'imports') && isEbayFinanceConnection(connection);
-  const isFlowBuilderAssistant = flowId && (isGraphql || isHttpFramework ||
+  const isFlowBuilderAssistant = flowId && (isGraphql ||
     (assistantName && assistantName !== 'financialforce' && !isAmazonHybridConnection(connection) && !isMicrosoftBusinessCentralOdataConnection(connection) && !isAcumaticaEcommerceImport && !isLoopReturnsv2import && !isEbayFinanceImport));
 
-  return isFlowBuilderAssistant ? (
+  if (_httpConnectorId && !isHttpFramework && !isGraphql) {
+    return null;
+  }
+  const titleBarFormView = isTitleBar ? (
+    <div className={classes.connectorTextToggle}>
+      <TextToggle
+        value={value}
+        onChange={onFieldChangeFn}
+        exclusive
+        options={options}
+      />
+      <Help
+        title="Formview"
+        className={classes.helpTextButton}
+        helpKey="connectionFormView"
+      />
+    </div>
+  ) : null;
+  const containerFormView = !isTitleBar ? (
     <DynaSelect
       {...props}
-      onFieldChange={onFieldChangeFn}
+      onFieldChange={(id, selectedApplication) => onFieldChangeFn(selectedApplication)}
       value={value}
       options={options}
-    />
+/>
   ) : null;
+  const insideFormView = isFlowBuilderAssistant
+    ? containerFormView : null;
+
+  // Show form view for both flow builder and standalone export/import when _httpConnectorId is present.
+  return _httpConnectorId
+    ? titleBarFormView : insideFormView;
 }

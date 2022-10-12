@@ -317,6 +317,7 @@ describe('flow sample data sagas', () => {
           rules: [mappings],
         },
         data: [preProcessedData],
+        options: undefined,
       };
       const processedData = {
         mediaType: 'json',
@@ -371,6 +372,7 @@ describe('flow sample data sagas', () => {
           rules: [mappings],
         },
         data: [preProcessedData],
+        options: undefined,
       };
       const processedMappingData = {
         mediaType: 'json',
@@ -428,6 +430,7 @@ describe('flow sample data sagas', () => {
           rules: [mappings],
         },
         data: [preProcessedData],
+        options: undefined,
       };
 
       return expectSaga(_processMappingData, {
@@ -475,6 +478,7 @@ describe('flow sample data sagas', () => {
         .call(pageProcessorPreview, {
           flowId,
           _pageProcessorId,
+          routerId: undefined,
           _pageProcessorDoc: undefined,
           previewType: 'raw',
           resourceType: 'exports',
@@ -511,6 +515,7 @@ describe('flow sample data sagas', () => {
         .call(pageProcessorPreview, {
           flowId,
           _pageProcessorId,
+          routerId: undefined,
           _pageProcessorDoc: resourceObj,
           previewType: 'raw',
           resourceType: 'exports',
@@ -533,6 +538,7 @@ describe('flow sample data sagas', () => {
       return expectSaga(fetchPageProcessorPreview, {
         flowId,
         _pageProcessorId,
+        routerId: undefined,
         previewType: 'raw',
         resourceType,
         hidden: true,
@@ -548,6 +554,7 @@ describe('flow sample data sagas', () => {
         .call(pageProcessorPreview, {
           flowId,
           _pageProcessorId,
+          routerId: undefined,
           _pageProcessorDoc: undefined,
           previewType: 'raw',
           resourceType,
@@ -1088,6 +1095,8 @@ describe('flow sample data sagas', () => {
         _id: 'import-123',
         name: 'rest import',
         adaptorType: 'RESTImport',
+        _connectionId: 'conn-123',
+        lookups: [{name: 'some-lookup'}],
         mappings,
       };
       const preProcessedSampleData = { count: 5 };
@@ -1122,6 +1131,7 @@ describe('flow sample data sagas', () => {
             stage,
           }), {data: preProcessedSampleData}],
           [matchers.call.fn(apiCallWithRetry), undefined],
+          [select(selectors.resource, 'connections', 'conn-123'), {_id: 'conn-123'}],
         ])
         .call(getFlowStageData, {
           flowId,
@@ -1134,9 +1144,10 @@ describe('flow sample data sagas', () => {
         .call(_processMappingData, {
           flowId,
           resourceId,
-          mappings,
+          mappings: {mappings, lookups: [{name: 'some-lookup'}]},
           stage,
           preProcessedData,
+          options: {connection: {_id: 'conn-123'}, _flowId: flowId, import: restImport, _integrationId: undefined},
         })
         .run();
     });

@@ -191,13 +191,14 @@ export function* requestSampleData({
 export function* fetchPageProcessorPreview({
   flowId,
   _pageProcessorId,
+  routerId,
   previewType,
   editorId,
   hidden,
   refresh,
   resourceType = 'exports',
 }) {
-  if (!flowId || !_pageProcessorId) return;
+  if (!flowId || (!_pageProcessorId && !routerId)) return;
   const { formKey, refresh: flowDataRefresh } = (yield select(selectors.getFlowDataState, flowId)) || {};
   let resource = yield call(getConstructedResourceObj, {
     resourceId: _pageProcessorId,
@@ -209,6 +210,7 @@ export function* fetchPageProcessorPreview({
   const previewData = yield call(pageProcessorPreview, {
     flowId,
     _pageProcessorId,
+    routerId,
     _pageProcessorDoc: formKey ? resource : undefined,
     previewType,
     resourceType,
@@ -236,7 +238,7 @@ export function* fetchPageProcessorPreview({
   yield put(
     actions.flowData.receivedPreviewData(
       flowId,
-      _pageProcessorId,
+      _pageProcessorId || routerId,
       previewData,
       previewType
     )
@@ -325,12 +327,14 @@ export function* _processMappingData({
   mappings,
   stage,
   preProcessedData,
+  options,
 }) {
   const body = {
     rules: {
       rules: [mappings],
     },
     data: preProcessedData ? [preProcessedData] : [],
+    options,
   };
   // call processor data specific to mapper as it is not part of editors saga
   const path = '/processors/mapperProcessor';
@@ -484,14 +488,25 @@ export function* requestProcessorData({
   } else if (stage === 'importMapping') {
     // mapping fields are processed here against raw data
     let resourceMappings;
+    const lookups = resource?.lookups || [];
+    const options = {};
 
     if (resource?.mappings?.length) { // v2 mappings, if present, are applied during import
-      resourceMappings = cloneDeep(resource.mappings);
+      resourceMappings = {mappings: cloneDeep(resource.mappings), lookups};
+
+      const connection = yield select(selectors.resource, 'connections', resource?._connectionId);
+      const flow = yield select(selectors.resource, 'flows', flowId);
+
+      options.connection = connection;
+      options._flowId = flowId;
+      options._integrationId = flow?._integrationId;
+      options.import = resource;
     } else {
       resourceMappings = mappingUtil.getMappingFromResource({
         importResource: resource,
         isFieldMapping: true,
       });
+      resourceMappings = {...resourceMappings, lookups};
       // Incase of no fields/lists inside mappings , no need to make a processor call
       if (!resourceMappings.fields.length && !resourceMappings.lists.length) {
         hasNoRulesToProcess = true;
@@ -505,6 +520,7 @@ export function* requestProcessorData({
         mappings: resourceMappings,
         stage,
         preProcessedData,
+        options,
       });
     }
     hasNoRulesToProcess = true;

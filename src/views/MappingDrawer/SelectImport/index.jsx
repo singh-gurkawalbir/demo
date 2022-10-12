@@ -2,6 +2,7 @@ import React, { useState, useEffect, Fragment, useMemo } from 'react';
 import { Link, Redirect, useRouteMatch } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography, Button, Divider } from '@material-ui/core';
+import { isEmpty } from 'lodash';
 import { selectors } from '../../../reducers';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 import { getNetSuiteSubrecordImports, isQueryBuilderSupported } from '../../../utils/resource';
@@ -86,7 +87,7 @@ export default function SelectImport() {
     return i1index - i2index;
   }), [flow.pageProcessors, imports]);
 
-  if (!flow) {
+  if (!flow || isEmpty(flow)) {
     return <Typography className={classes.root}>No flow exists with id: {flowId}</Typography>;
   }
 

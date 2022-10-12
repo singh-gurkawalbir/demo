@@ -84,7 +84,7 @@ import {
 } from '../utils/exportPanel';
 import getRoutePath from '../utils/routePaths';
 import { getIntegrationAppUrlName, getTitleFromEdition, getTitleIdFromSection, isIntegrationAppVersion2 } from '../utils/integrationApps';
-import mappingUtil from '../utils/mapping';
+import mappingUtil, { applyRequiredFilter, applyMappedFilter } from '../utils/mapping';
 import responseMappingUtil from '../utils/responseMapping';
 import { suiteScriptResourceKey, isJavaFlow } from '../utils/suiteScript';
 import { stringCompare, comparer } from '../utils/sort';
@@ -99,7 +99,7 @@ import {
   getParentJobSteps,
 } from '../utils/latestJobs';
 import getJSONPaths from '../utils/jsonPaths';
-import { getApp, getHttpConnector } from '../constants/applications';
+import { getApp, getHttpConnector, applicationsList} from '../constants/applications';
 import { HOOK_STAGES } from '../utils/editor';
 import { getTextAfterCount } from '../utils/string';
 import { remainingDays } from './user/org/accounts';
@@ -113,7 +113,7 @@ import { filterMap } from '../components/GlobalSearch/filterMeta';
 import { getRevisionFilterKey, getFilteredRevisions, getPaginatedRevisions, REVISION_DIFF_ACTIONS } from '../utils/revisions';
 import { buildDrawerUrl, drawerPaths } from '../utils/rightDrawer';
 import { GRAPHQL_HTTP_FIELDS, isGraphqlResource } from '../utils/graphql';
-import { initializeFlowForReactFlow } from '../utils/flows/flowbuilder';
+import { initializeFlowForReactFlow, getFlowAsyncKey } from '../utils/flows/flowbuilder';
 import { HTTP_BASED_ADAPTORS } from '../utils/http';
 
 const emptyArray = [];
@@ -2180,6 +2180,9 @@ selectors.makeFlowDataForFlowBuilder = () => {
     flow => initializeFlowForReactFlow(flow)
   );
 };
+
+selectors.isFlowSaveInProgress = (state, flowId) => selectors.isAsyncTaskLoading(state, getFlowAsyncKey(flowId));
+
 selectors.flowDataForFlowBuilder = selectors.makeFlowDataForFlowBuilder();
 // Please use makeResourceDataSelector in JSX as it is cached selector.
 // For sagas we can use resourceData which points to cached selector.
@@ -5385,6 +5388,20 @@ selectors.applicationType = (state, resourceType, id) => {
 
     return connection && connection.rdbms && rdbmsSubTypeToAppType(connection.rdbms.type);
   }
+  if ((adaptorType?.toUpperCase().startsWith('HTTP') || adaptorType?.toUpperCase().startsWith('REST')) && !assistant) {
+    const connection = resourceType === 'connections' ? resourceObj : selectors.resource(
+      state,
+      'connections',
+      getStagedValue('/_connectionId') || (resourceObj?._connectionId)
+    );
+    const httpConnectorId = getStagedValue('/_httpConnectorId') || connection?._httpConnectorId || connection?.http?._httpConnectorId;
+    const applications = applicationsList();
+    const httpApp = applications.find(a => a._httpConnectorId === httpConnectorId);
+
+    if (httpConnectorId && httpApp) {
+      return httpApp._legacyId || httpApp.name;
+    }
+  }
 
   if (adaptorType?.toUpperCase().startsWith('HTTP') && resourceObj?.http?.formType === 'rest' && !assistant) {
     adaptorType = adaptorType.replace(/HTTP/, 'REST');
@@ -5534,6 +5551,26 @@ selectors.isMapper2Supported = state => {
     resource.adaptorType === 'HTTPImport' ||
     resource.adaptorType === 'RESTImport'
   );
+};
+
+selectors.resourceHasMappings = (state, importId) => {
+  const resource = selectors.resource(state, 'imports', importId);
+
+  if (!resource) return false;
+
+  // v2 mappings
+  if (resource.mappings?.length) {
+    return true;
+  }
+
+  // v1 mappings
+  const mappings = mappingUtil.getMappingFromResource({
+    importResource: resource,
+    isFieldMapping: true,
+  });
+  const { fields = [], lists = [] } = mappings || {};
+
+  return !!(fields.length || lists.length);
 };
 
 selectors.mappingEditorNotification = (state, editorId) => {
@@ -6616,7 +6653,7 @@ selectors.shouldGetContextFromBE = (state, editorId, sampleData) => {
   }
 
   if (
-    ['flowTransform', 'responseTransform', 'netsuiteLookupFilter', 'salesforceLookupFilter'].includes(editorType) ||
+    ['structuredFileGenerator', 'flowTransform', 'responseTransform', 'netsuiteLookupFilter', 'salesforceLookupFilter'].includes(editorType) ||
   HOOK_STAGES.includes(stage)
   ) {
     return {shouldGetContextFromBE: false, sampleData};
@@ -7162,3 +7199,76 @@ selectors.allAliases = createSelector(
 
     return aliasesFilter?.sort ? allAliases.sort(comparer(aliasesFilter.sort)) : allAliases;
   });
+
+selectors.retryUsersList = createSelector(
+  selectors.userProfile,
+  state => selectors.availableUsersList(state),
+  (state, flowId, resourceId) => selectors.retryList(state, flowId, resourceId),
+  (profile, availableUsersList, retryJobs) => {
+    if (!Array.isArray(retryJobs)) {
+      // When all users are selected we show the 'Select' as the placeholder text in the filter
+      return [{ _id: 'all', name: 'Select'}];
+    }
+
+    const allUsersTriggeredRetry = retryJobs.reduce((users, job) => {
+      if (!job.triggeredBy) {
+        return users;
+      }
+
+      const userObject = availableUsersList.find(userOb => userOb.sharedWithUser?._id === job.triggeredBy);
+      const name = profile._id === job.triggeredBy ? (profile.name || profile.email) : userObject?.sharedWithUser?.name;
+
+      return users.find(user => user._id === job.triggeredBy) ? users : [...users, {
+        _id: job.triggeredBy,
+        name,
+      }];
+    }, []);
+
+    return [{ _id: 'all', name: 'All users'}, ...allUsersTriggeredRetry];
+  }
+);
+
+selectors.mkFlowResourcesRetryStatus = () => {
+  const flowResources = selectors.mkFlowResources();
+
+  return createSelector(
+    state => state?.session?.errorManagement?.retryData?.retryStatus,
+    (_1, flowId) => flowId,
+    (state, flowId) => flowResources(state, flowId)?.filter(res => res.type === 'exports' || res.type === 'imports'),
+    (resourcesRetryStatus, flowId, flowResources) => {
+      const finalResourcesRetryStatus = {
+        isAnyRetryInProgress: false,
+        resourcesWithRetryCompleted: [],
+      };
+
+      if (!resourcesRetryStatus || !resourcesRetryStatus[flowId]) {
+        return finalResourcesRetryStatus;
+      }
+
+      finalResourcesRetryStatus.isAnyRetryInProgress = flowResources.find(res => resourcesRetryStatus?.[flowId]?.[res._id] === 'inProgress');
+      finalResourcesRetryStatus.resourcesWithRetryCompleted = flowResources.filter(res => resourcesRetryStatus?.[flowId]?.[res._id] === 'completed');
+
+      return finalResourcesRetryStatus;
+    }
+  );
+};
+
+selectors.filteredV2TreeData = state => {
+  const v2TreeData = selectors.v2MappingsTreeData(state);
+  const { filter = [], lookups = [] } = selectors.mapping(state);
+
+  if (isEmpty(v2TreeData) || isEmpty(filter) || filter.includes('all')) return v2TreeData;
+
+  // ToDo: try replacing cloneDeep with something else
+  let filteredTreeData = cloneDeep(v2TreeData);
+
+  if (filter.includes('required') && filter.includes('mapped')) {
+    filteredTreeData = applyMappedFilter(filteredTreeData, lookups, true);
+  } else if (filter.includes('required')) {
+    filteredTreeData = applyRequiredFilter(filteredTreeData);
+  } else {
+    filteredTreeData = applyMappedFilter(filteredTreeData, lookups);
+  }
+
+  return filteredTreeData;
+};

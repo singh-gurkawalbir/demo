@@ -4,6 +4,7 @@ import errorDetails, { selectors as fromErrorDetails } from './errorDetails';
 import latestIntegrationJobDetails, { selectors as fromLatestIntegrationJobs } from './latestJobs/integrations';
 import latestFlowJobs, { selectors as fromLatestFlowJobs } from './latestJobs/flows';
 import runHistory, { selectors as fromRunHistory } from './runHistory';
+import retries, { selectors as fromRetries } from './retries';
 import retryData, { selectors as fromRetryData } from './retryData';
 import metadata, { selectors as fromMetadata } from './metadata';
 import errorHttpDoc, { selectors as fromErrorHttpDoc } from './errorHttpDoc';
@@ -18,6 +19,7 @@ export default combineReducers({
   retryData,
   metadata,
   errorHttpDoc,
+  retries,
 });
 
 export const selectors = {};
@@ -30,6 +32,7 @@ const subSelectors = {
   latestFlowJobs: fromLatestFlowJobs,
   runHistory: fromRunHistory,
   errorHttpDoc: fromErrorHttpDoc,
+  retries: fromRetries,
 };
 
 genSelectors(selectors, subSelectors);

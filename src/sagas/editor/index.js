@@ -102,10 +102,14 @@ export function* invokeProcessor({ editorId, processor, body }) {
       // give preference to v2 mappings always
       if (hasV2MappingsInTreeData(v2TreeData, lookups)) {
         const connection = yield select(selectors.resource, 'connections', importResource?._connectionId);
+        const flow = yield select(selectors.resource, 'flows', flowId);
         const _mappingsV2 = buildV2MappingsFromTree({v2TreeData, lookups});
 
         _mappings = {mappings: _mappingsV2, lookups};
         options.connection = connection;
+        options._flowId = flowId;
+        options._integrationId = flow?._integrationId;
+        options.import = importResource;
       } else {
         const mappings = (yield select(selectors.mapping))?.mappings;
         const exportResource = yield select(selectors.firstFlowPageGenerator, flowId);
@@ -161,8 +165,8 @@ export function* requestPreview({ id }) {
   // since mappings are stored in separate state
   // we validate the same here
   if (editor.editorType === 'mappings') {
-    const {mappings, lookups, v2TreeData} = yield select(selectors.mapping);
-    const {errMessage} = mappingUtil.validateMappings(mappings, lookups, v2TreeData);
+    const {mappings, lookups, v2TreeData, isGroupedSampleData} = yield select(selectors.mapping);
+    const {errMessage} = mappingUtil.validateMappings(mappings, lookups, v2TreeData, isGroupedSampleData);
 
     if (errMessage) {
       const violations = {
@@ -547,9 +551,9 @@ export function* requestEditorSampleData({
     return { data: fileData};
   }
 
-  // for file definition editors, sample data is read from network call
+  // for file definition editors, sample data is read from network call if stage (postMapOutput) is not defined
   // adding this check here, in case network call is delayed
-  if (editorType === 'structuredFileGenerator' || editorType === 'structuredFileParser') { return {}; }
+  if ((editorType === 'structuredFileGenerator' || editorType === 'structuredFileParser') && !stage) { return {}; }
 
   // for exports resource with 'once' type fields, exported preview data is shown and not the flow input data
   const showPreviewStageData = resourceType === 'exports' && fieldId?.includes('once');
@@ -654,7 +658,7 @@ export function* requestEditorSampleData({
 
       delete body.sampleData;
       delete body.templateVersion;
-    } else {
+    } else if (resourceType !== 'flows') {
       // As UI does oneToMany processing and we do not need BE changes w.r.to oneToMany, we make oneToMany prop as false  for getContext API
       resource = { ...resource, oneToMany: false };
       if (isOldRestResource && resource?.rest?.pagingMethod && !resource?.http?.paging?.method) {
@@ -707,7 +711,7 @@ export function* requestEditorSampleData({
   }
 
   // don't wrap with context for below editors
-  const EDITORS_WITHOUT_CONTEXT_WRAP = ['csvGenerator', 'outputFilter', 'exportFilter', 'inputFilter', 'netsuiteLookupFilter', 'salesforceLookupFilter'];
+  const EDITORS_WITHOUT_CONTEXT_WRAP = ['structuredFileGenerator', 'csvGenerator', 'outputFilter', 'exportFilter', 'inputFilter', 'netsuiteLookupFilter', 'salesforceLookupFilter'];
 
   if (!EDITORS_WITHOUT_CONTEXT_WRAP.includes(editorType)) {
     const { data } = yield select(selectors.sampleDataWrapper, {
@@ -901,7 +905,8 @@ export default [
   takeLatest(
     [actionTypes.EDITOR.PATCH.DATA,
       actionTypes.EDITOR.PATCH.RULE,
-      actionTypes.EDITOR.TOGGLE_AUTO_PREVIEW],
+      actionTypes.EDITOR.TOGGLE_AUTO_PREVIEW,
+      actionTypes.EDITOR.PATCH.FEATURES],
     autoEvaluateProcessorWithCancel
   ),
   // added a separate effect for DynaFileKeyColumn as

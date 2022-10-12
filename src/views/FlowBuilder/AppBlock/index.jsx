@@ -36,7 +36,6 @@ const useStyles = makeStyles(theme => ({
     position: 'relative',
     zIndex: theme.zIndex.bubble,
   },
-  // draggable: { cursor: 'move' },
   name: {
     height: 150,
     overflow: 'hidden',
@@ -84,7 +83,6 @@ const useStyles = makeStyles(theme => ({
     top: 68,
   },
   isNotOverActions: {
-    // display: 'none',
     width: 0,
     height: 0,
     margin: 0,
@@ -96,7 +94,6 @@ const useStyles = makeStyles(theme => ({
     },
   },
   actionIsNew: {
-    // border: 'solid 1px',
     color: theme.palette.primary.main,
   },
   bubbleContainer: {
@@ -121,7 +118,6 @@ const useStyles = makeStyles(theme => ({
   appLogoContainer: {
     marginTop: theme.spacing(2),
     textAlign: 'center',
-    // width: 101,
     height: 41,
   },
   appLogo: {
@@ -129,11 +125,7 @@ const useStyles = makeStyles(theme => ({
     alignSelf: 'center',
     maxWidth: 101,
     maxHeight: theme.spacing(4),
-  },
-  addButton: {
-    // padding: theme.spacing(2),
-    // marginTop: -theme.spacing(1),
-    // marginLeft: -theme.spacing(1),
+    pointerEvents: 'none',
   },
   deleteButton: {
     position: 'absolute',
@@ -187,7 +179,7 @@ export default function AppBlock({
 
     return activeConn === resource?._id || activeConn === resource?._connectionId;
   });
-
+  const isFlowSaveInProgress = useSelector(state => selectors.isFlowSaveInProgress(state, flowId));
   const iconType = useSelector(state => {
     if (blockType === 'dataLoader') return;
 
@@ -364,12 +356,11 @@ export default function AppBlock({
           )}
         </div>
         <div className={classes.buttonContainer}>
-          <ResourceButton onClick={onBlockClick} variant={blockType} />
+          <ResourceButton onClick={onBlockClick} variant={blockType} disabled={isFlowSaveInProgress} />
           <div className={classes.middleActionContainer}>
             {renderActions(middleActions)}
             {!expanded && hasActions ? (
               <ActionIconButton
-                className={classes.addButton}
                 onClick={handleExpandClick}
                 data-test="addDataProcessor"
                 helpText="Define options">

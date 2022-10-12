@@ -14,11 +14,14 @@ import getRoutePath from '../../../utils/routePaths';
 async function initGlobalSearch(ui = (<MemoryRouter><GlobalSearch /></MemoryRouter>)) {
   const { store, utils } = renderWithProviders(ui);
 
+  mockGetRequestOnce('/api/mfa/sessionInfo', {});
   store.dispatch(actions.user.preferences.request());
   store.dispatch(actions.user.profile.request());
+  store.dispatch(actions.mfa.receivedSessionInfo());
 
   await waitFor(() => expect(isEmpty(store?.getState()?.user?.profile)).not.toBe(true));
   await waitFor(() => expect(isEmpty(store?.getState()?.user?.preferences)).not.toBe(true));
+  await waitFor(() => expect(isEmpty(store?.getState()?.session?.mfa?.sessionInfo)).not.toBe(true));
   await waitFor(() => expect(screen.queryByLabelText(/Global search/i)).toBeInTheDocument());
 
   return {store, utils};

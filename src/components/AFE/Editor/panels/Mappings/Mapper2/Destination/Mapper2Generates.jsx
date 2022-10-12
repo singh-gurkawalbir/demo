@@ -1,4 +1,5 @@
-import React, { useState, useRef, useCallback } from 'react';
+import React, { useState, useRef, useCallback, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import { FormControl, TextField, Tooltip } from '@material-ui/core';
 import clsx from 'clsx';
@@ -8,6 +9,9 @@ import { MAPPING_DATA_TYPES } from '../../../../../../../utils/mapping';
 import { TooltipTitle } from '../Source/Mapper2ExtractsTypeableSelect';
 import DestinationDataType from './DestinationDataType';
 import LockIcon from '../../../../../../icons/LockIcon';
+import { selectors } from '../../../../../../../reducers';
+import useScrollIntoView from '../../../../../../../hooks/useScrollIntoView';
+import actions from '../../../../../../../actions';
 
 const useStyles = makeStyles(theme => ({
   customTextField: {
@@ -21,6 +25,9 @@ const useStyles = makeStyles(theme => ({
     '& .MuiFilledInput-multiline': {
       border: 'none',
     },
+  },
+  highlightedField: {
+    borderColor: `${theme.palette.primary.main} !important`,
   },
   mapField: {
     display: 'flex',
@@ -65,12 +72,28 @@ export default function Mapper2Generates(props) {
     nodeKey,
     isRequired,
   } = props;
+  const dispatch = useDispatch();
+  const highlightedKey = useSelector(state => selectors.highlightedKey(state));
+  const newRowKey = useSelector(state => selectors.newRowKey(state));
   const classes = useStyles();
   const [isFocused, setIsFocused] = useState(false);
   const [inputValue, setInputValue] = useState(propValue);
   const [isTruncated, setIsTruncated] = useState(false);
+  const [anchorEl, setAnchorEl] = useState(null);
   const containerRef = useRef();
   const inputFieldRef = useRef();
+
+  // run only at mount to bring focus in the new row
+  useEffect(() => {
+    if (newRowKey && id.includes(newRowKey)) {
+      setIsFocused(true);
+      dispatch(actions.mapping.v2.deleteNewRowKey());
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // bring the highlighted key into focus
+  useScrollIntoView(containerRef, nodeKey === highlightedKey);
 
   const handleChange = useCallback(event => {
     setInputValue(event.target.value);
@@ -95,11 +118,15 @@ export default function Mapper2Generates(props) {
     setIsTruncated(inputFieldRef.current.offsetWidth < inputFieldRef.current.scrollWidth);
   }, []);
 
-  useOnClickOutside(containerRef, isFocused && handleBlur);
+  // adding the anchorEl dependency becuase if data type is clicked,
+  // we want to handle the blur function after the data type has been updated
+  // Ref: IO-26909
+  useOnClickOutside(containerRef, !anchorEl && isFocused && handleBlur);
   useKeyboardShortcut(['Escape'], handleBlur, {ignoreBlacklist: true});
 
   return (
     <FormControl
+      className={{[classes.highlightedField]: nodeKey === highlightedKey}}
       data-test={id}
       key={id}
       ref={containerRef} >
@@ -133,6 +160,9 @@ export default function Mapper2Generates(props) {
         </Tooltip >
 
         <DestinationDataType
+          anchorEl={anchorEl}
+          setAnchorEl={setAnchorEl}
+          handleBlur={handleBlur}
           dataType={dataType}
           disabled={disabled}
           nodeKey={nodeKey}

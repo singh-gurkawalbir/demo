@@ -9,11 +9,11 @@ export default {
     pageGenerators: [
       {
         setupInProgress: true,
-        id: 'none-f-VmSW',
+        id: 'new-f-VmSW',
       },
       {
         setupInProgress: true,
-        id: 'none--n6eZl',
+        id: 'new--n6eZl',
       },
     ],
     createdAt: '2022-06-23T10:57:42.116Z',
@@ -34,7 +34,7 @@ export default {
                   lists: [],
                 },
                 setupInProgress: true,
-                id: 'none-z5-QwC',
+                id: 'new-z5-QwC',
               },
             ],
           },
@@ -70,7 +70,7 @@ export default {
                   lists: [],
                 },
                 setupInProgress: true,
-                id: 'none-WWcOB3',
+                id: 'new-WWcOB3',
               },
             ],
           },

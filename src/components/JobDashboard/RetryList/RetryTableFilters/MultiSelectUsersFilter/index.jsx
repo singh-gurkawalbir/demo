@@ -1,0 +1,53 @@
+import { makeStyles, Typography } from '@material-ui/core';
+import React, { useMemo } from 'react';
+import { useSelector } from 'react-redux';
+import { selectors } from '../../../../../reducers';
+import MultiSelectColumnFilter from '../../../../ResourceTable/commonCells/MultiSelectColumnFilter';
+
+const useStyles = makeStyles(theme => ({
+  multiSelectUserWrapper: {
+    alignItems: 'center',
+  },
+  customUserLabel: {
+    marginRight: theme.spacing(1),
+  },
+}));
+
+const filterBy = 'selectedUsers';
+const resourceType = 'users';
+const defaultUserId = 'all';
+
+export default function MultiSelectUsersFilter({flowId, resourceId, filterKey}) {
+  const classes = useStyles();
+  const users = useSelector(
+    state => selectors.retryUsersList(state, flowId, resourceId)
+  );
+  const filterOptions = useSelector(state => selectors.filter(state, filterKey));
+  const selected = filterOptions[filterBy]?.length ? filterOptions[filterBy] : ['all'];
+
+  const ButtonLabel = useMemo(() => {
+    if (selected.length === 1) {
+      const selectedUser = users.find(r => r._id === selected[0]);
+
+      return selectedUser?._id === defaultUserId ? 'Select' : selectedUser?.name;
+    }
+
+    return `${selected.length} ${resourceType} selected`;
+  }, [selected, users]);
+
+  const CustomLabel = useMemo(() => (
+    <Typography className={classes.customUserLabel}>
+      Retry started by:
+    </Typography>
+  ), [classes.customUserLabel]);
+
+  return (
+    <MultiSelectColumnFilter
+      className={classes.multiSelectUserWrapper}
+      title={CustomLabel}
+      filterBy="selectedUsers"
+      filterKey={filterKey}
+      options={users}
+      ButtonLabel={ButtonLabel} />
+  );
+}

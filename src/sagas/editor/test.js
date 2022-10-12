@@ -465,6 +465,8 @@ describe('editor sagas', () => {
               generate: 'new-obj',
               dataType: 'object',
               extract: 'parents',
+              status: 'Active',
+              sourceDataType: 'string',
               description: undefined,
               extractDateFormat: undefined,
               extractDateTimezone: undefined,
@@ -481,6 +483,9 @@ describe('editor sagas', () => {
         data: [[{id: '123'}]],
         options: {
           connection: connRes,
+          _flowId: 'flow-123',
+          import: importRes,
+          _integrationId: 'in-123',
         },
       };
 
@@ -490,6 +495,7 @@ describe('editor sagas', () => {
           [select(selectors.mapping), {v2TreeData, mappings, lookups: []}],
           [select(selectors.editor, editorId), editorState],
           [select(selectors.resource, 'imports', 'res-123'), importRes],
+          [select(selectors.resource, 'flows', 'flow-123'), {_id: 'flow-123', _integrationId: 'in-123'}],
           [select(selectors.resource, 'connections', 'conn-123'), connRes],
         ])
         .call(apiCallWithRetry, {
@@ -1732,11 +1738,11 @@ describe('editor sagas', () => {
             v2TreeData: [
               {
                 key: 'k1',
-                combinedExtract: '$.siblings[*]',
+                extractsArrayHelper: [{extract: '$.siblings[*]'}],
                 dataType: 'objectarray',
                 children: [{
                   key: 'c1',
-                  combinedExtract: '$.siblings.children[*]',
+                  extractsArrayHelper: [{extract: '$.siblings.children[*]'}],
                   parentKey: 'k1',
                   parentExtract: '$.siblings[*]',
                   dataType: 'objectarray',
@@ -2054,7 +2060,6 @@ describe('editor sagas', () => {
         formKey: 'new-123',
         layout: 'jsonFormBuilder',
         autoEvaluate: true,
-        previewOnSave: true,
         sampleDataStatus: 'requested',
         insertStubKey: 'formInit',
         activeProcessor: 'json',
@@ -2136,7 +2141,6 @@ describe('editor sagas', () => {
         integrationId: 'intId',
         sectionId: 'Cus-1234567',
         autoEvaluate: true,
-        previewOnSave: true,
         sampleDataStatus: 'requested',
         insertStubKey: 'formInit',
         activeProcessor: 'json',
@@ -2248,7 +2252,6 @@ describe('editor sagas', () => {
         integrationId: 'intId',
         sectionId: 'Cus-1234567',
         autoEvaluate: true,
-        previewOnSave: true,
         sampleDataStatus: 'requested',
         insertStubKey: 'formInit',
         activeProcessor: 'script',

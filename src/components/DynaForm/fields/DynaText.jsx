@@ -1,10 +1,8 @@
 import React, { useEffect, useState, useMemo, useCallback } from 'react';
-import { FormControl, InputAdornment, FormLabel } from '@material-ui/core';
+import { FormControl, InputAdornment, FormLabel, makeStyles } from '@material-ui/core';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import TextField from '@material-ui/core/TextField';
 import clsx from 'clsx';
-// eslint-disable-next-line import/no-extraneous-dependencies
-import { makeStyles } from '@material-ui/styles';
 import { isNaN } from 'lodash';
 import CopyIcon from '../../icons/CopyIcon';
 import FieldHelp from '../FieldHelp';
@@ -12,6 +10,7 @@ import FieldMessage from './FieldMessage';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import isLoggableAttr from '../../../utils/isLoggableAttr';
 import IconButtonWithTooltip from '../../IconButtonWithTooltip';
+import HelpLink from '../../HelpLink';
 
 const useStyles = makeStyles(theme => ({
   dynaFieldWrapper: {
@@ -30,11 +29,11 @@ const useStyles = makeStyles(theme => ({
   },
   dynaFieldCopyClipboard: {
     display: 'flex',
-    alignItems: 'flex-end',
+    alignItems: 'flex-start',
   },
   copyButton: {
-    marginLeft: theme.spacing(1),
-    marginBottom: theme.spacing(0.5),
+    marginTop: theme.spacing(2),
+    padding: theme.spacing(1),
   },
   textFieldWithClipBoard: {
     width: '100%',
@@ -62,6 +61,7 @@ function DynaText(props) {
     disabled,
     errorMessages,
     id,
+    autoFocus = false,
     isValid = true,
     name,
     onFieldChange,
@@ -72,6 +72,7 @@ function DynaText(props) {
     multiline,
     delimiter,
     rowsMax,
+    maxLength,
     startAdornment,
     endAdornment,
     readOnly,
@@ -142,6 +143,9 @@ function DynaText(props) {
         step: '1',
       };
     }
+    if (maxLength) {
+      props.inputProps = { maxLength };
+    }
 
     return props;
   }, [
@@ -150,6 +154,7 @@ function DynaText(props) {
     inputType,
     readOnly,
     startAdornment,
+    maxLength,
   ]);
 
   return (
@@ -159,12 +164,14 @@ function DynaText(props) {
           {label}
         </FormLabel>
         <FieldHelp {...props} />
+        <HelpLink helpLink={props.helpLink} />
       </div>
       <TextField
         {...isLoggableAttr(isLoggable)}
         autoComplete="off"
         key={id}
         data-test={id}
+        autoFocus={autoFocus}
         name={name}
         InputProps={InputProps}
         type={inputType}

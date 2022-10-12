@@ -115,7 +115,7 @@ function ResourceSetupDrawerContent({
       ? (resourceObj.http?.formType === 'rest' ? 'rest' : 'http')
       : resourceObj.type;
 
-    if (!isResourceStaged) {
+    if (!isResourceStaged && setIsResourceStaged) {
       dispatch(
         actions.resource.patchStaged(
           resourceId,

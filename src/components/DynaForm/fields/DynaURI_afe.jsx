@@ -85,6 +85,7 @@ export default function DynaURI_afe(props) {
         <ActionButton
           data-test={id}
           tooltip="Open handlebars editor"
+          placement="bottom"
           onClick={handleEditorClick}
           className={classes.dynaURIActionButton}>
           <AfeIcon />
