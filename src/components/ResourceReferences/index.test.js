@@ -71,7 +71,6 @@ describe('ResourceReferences test cases', () => {
     });
 
     expect(screen.queryByText(/Used by/i)).toBeInTheDocument();
-    expect(screen.queryByText(/Used by/i)).toBeInTheDocument();
   });
 
   test('should pass the initial render with with dependencies & title', async () => {
