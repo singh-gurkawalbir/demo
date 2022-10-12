@@ -148,7 +148,7 @@ export default function AddOns({integrationId, childId}) {
             Add-ons
           </Typography>
           <Typography className={classes.message}>
-            You don`t have any add-ons yet. Add-ons let you customize
+            You don’t have any add-ons yetw. Add-ons let you customize
             subscription to meet your specific business requirements.
           </Typography>
         </div>
