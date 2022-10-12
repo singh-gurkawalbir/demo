@@ -1,3 +1,5 @@
+/* eslint-disable react/button-has-type */
+/* eslint-disable react/jsx-handler-names */
 /* global describe, test, jest, beforeEach, afterEach, expect */
 import { screen } from '@testing-library/react';
 import React from 'react';
@@ -11,13 +13,47 @@ import { renderWithProviders } from '../../../test/test-utils';
 
 let initialStore;
 
-async function initMockInput({flowId = '12345', formKey = 'imports-98765', resourceType = 'imports', resourceId = '98765', data, flowData} = {}) {
-  initialStore.getState().session.resourceFormSampleData[resourceId] = data;
+async function initMockInput({flowId = '12345', formKey = 'imports-98765', resourceType = 'imports', resourceId = '98765', data} = {}) {
+  initialStore.getState().session.resourceFormSampleData[resourceId] = {
+    preview: {
+      status: data.status,
+      recordSize: 10,
+      data: {
+        request: [
+          {
+            headers: {
+              accept: 'application/json',
+            },
+            url: 'https://testapi.com',
+            method: 'POST',
+            body: {
+              id: '123',
+            },
+          },
+        ],
+        mockData: data.mockData,
+      },
+    },
+    typeOfSampleData: 'preview',
+  };
   initialStore.getState().session.flowData[flowId] = {
     pageProcessorsMap: {
     },
   };
-  initialStore.getState().session.flowData[flowId].pageProcessorsMap[resourceId] = flowData;
+  initialStore.getState().session.flowData[flowId].pageProcessorsMap[resourceId] = {
+    preMap: {
+      status: data.status,
+      data: data.data,
+    },
+    processedFlowInput: {
+      status: data.status,
+      data: data.data,
+    },
+    flowInput: {
+      status: data.status,
+      data: data.data,
+    },
+  };
   const ui = (
     <MemoryRouter
       initialEntries={[{pathname: '/integrations/654321/flowBuilder/12345/edit/imports/98765/inputData'}]}
@@ -35,22 +71,23 @@ async function initMockInput({flowId = '12345', formKey = 'imports-98765', resou
 }
 
 const mockHistoryReplace = jest.fn();
-const mockHistorygoBack = jest.fn();
 
 jest.mock('react-router-dom', () => ({
   __esModule: true,
   ...jest.requireActual('react-router-dom'),
   useHistory: () => ({
     replace: mockHistoryReplace,
-    goBack: mockHistorygoBack,
   }),
 }));
 
 jest.mock('../../drawer/Right', () => ({
   __esModule: true,
   ...jest.requireActual('../../drawer/Right'),
-  default: newprops => (
-    <div>{newprops.children}</div>
+  default: newProps => (
+    <>
+      <div>{newProps.children}</div>
+      <div><button onClick={newProps.onClose}>On Close</button></div>
+    </>
   ),
 }
 ));
@@ -58,7 +95,9 @@ jest.mock('../../drawer/Right/DrawerHeader', () => ({
   __esModule: true,
   ...jest.requireActual('../../drawer/Right/DrawerHeader'),
   default: () => (
-    <div>Header</div>
+    <>
+      <div>Header</div>
+    </>
   ),
 }
 ));
@@ -105,49 +144,16 @@ describe('Testsuite for MockInput', () => {
     mockDispatchFn.mockClear();
   });
   test('should edit the JSON code with an valid JSON click on done message', async () => {
-    await initMockInput({data: {
-      preview: {
-        status: 'received',
-        recordSize: 10,
+    await initMockInput(
+      {
         data: {
-          request: [
-            {
-              headers: {
-                accept: 'application/json',
-              },
-              url: 'https://testapi.com',
-              method: 'POST',
-              body: {
-                id: '123',
-              },
-            },
-          ],
+          status: 'received',
           mockData: true,
+          data: {
+            id: '123',
+          },
         },
-      },
-      typeOfSampleData: 'preview',
-    },
-    flowData: {
-      preMap: {
-        status: 'received',
-        data: {
-          id: '123',
-        },
-      },
-      processedFlowInput: {
-        status: 'received',
-        data: {
-          id: '123',
-        },
-      },
-      flowInput: {
-        status: 'received',
-        data: {
-          id: '123',
-        },
-      },
-    },
-    });
+      });
     expect(screen.getByText(/Header/i)).toBeInTheDocument();
     expect(screen.getByText(/input/i)).toBeInTheDocument();
     expect(screen.getByText('{"page_of_records":[{"record":{"id":"123"}}]}')).toBeInTheDocument();
@@ -162,99 +168,33 @@ describe('Testsuite for MockInput', () => {
     });
   });
   test('should edit the JSON code with an empty JSON and verify the error message', async () => {
-    await initMockInput({data: {
-      preview: {
+    await initMockInput({
+      data: {
         status: 'received',
-        recordSize: 10,
-        data: {
-          request: [
-            {
-              headers: {
-                accept: 'application/json',
-              },
-              url: 'https://testapi.com',
-              method: 'POST',
-              body: {
-                id: '123',
-              },
-            },
-          ],
-          mockData: true,
-        },
-      },
-      typeOfSampleData: 'preview',
-    },
-    flowData: {
-      preMap: {
-        status: 'received',
+        mockData: true,
         data: {
           id: '123',
         },
-      },
-      processedFlowInput: {
-        status: 'received',
-        data: {
-          id: '123',
-        },
-      },
-      flowInput: {
-        status: 'received',
-        data: {
-          id: '123',
-        },
-      },
-    },
-    });
+      }});
     const inputNode = screen.getByRole('textbox');
 
     userEvent.clear(inputNode);
     userEvent.type(inputNode, '{}'.replace(/[{[]/g, '$&$&'));
     expect(screen.getByText(/Mock input must contain page_of_records/)).toBeInTheDocument();
+    const onCloseButtonNode = screen.getByRole('button', {name: 'On Close'});
+
+    expect(onCloseButtonNode).toBeInTheDocument();
+    userEvent.click(onCloseButtonNode);
+    expect(mockHistoryReplace).toHaveBeenCalledWith('/integrations/654321/flowBuilder/12345/edit/imports/98765');
   });
   test('should edit the JSON code with an invalid JSON', async () => {
     await initMockInput({data: {
-      preview: {
-        status: 'received',
-        recordSize: 10,
-        data: {
-          request: [
-            {
-              headers: {
-                accept: 'application/json',
-              },
-              url: 'https://testapi.com',
-              method: 'POST',
-              body: {
-                id: '123',
-              },
-            },
-          ],
-          mockData: true,
-        },
+      status: 'received',
+      mockData: true,
+      data: {
+        id: '123',
       },
-      typeOfSampleData: 'preview',
-    },
-    flowData: {
-      preMap: {
-        status: 'received',
-        data: {
-          id: '123',
-        },
-      },
-      processedFlowInput: {
-        status: 'received',
-        data: {
-          id: '123',
-        },
-      },
-      flowInput: {
-        status: 'received',
-        data: {
-          id: '123',
-        },
-      },
-    },
-    });
+    }});
     const inputNode = document.querySelector('textarea[name="codeEditor"]');
 
     userEvent.clear(inputNode);
@@ -264,95 +204,23 @@ describe('Testsuite for MockInput', () => {
   });
   test('should test the JSON data of type array', async () => {
     await initMockInput({data: {
-      preview: {
-        status: 'received',
-        recordSize: 10,
-        data: {
-          request: [
-            {
-              headers: {
-                accept: 'application/json',
-              },
-              url: 'https://testapi.com',
-              method: 'POST',
-              body: [{
-                id: '123',
-              }],
-            },
-          ],
-          mockData: false,
-        },
-      },
-      typeOfSampleData: 'preview',
-    },
-    flowData: {
-      preMap: {
-        status: 'received',
-        data: [{
-          id: '123',
-        }],
-      },
-      processedFlowInput: {
-        status: 'received',
-        data: [{
-          id: '123',
-        }],
-      },
-      flowInput: {
-        status: 'received',
-        data: [{
-          id: '123',
-        }],
-      },
-    },
-    });
+      status: 'received',
+      mockData: false,
+      data: [{
+        id: '123',
+      }],
+    }});
     expect(screen.getByText('{"page_of_records":[{"rows":[{"id":"123"}]}]}')).toBeInTheDocument();
   });
   test('should test the JSON data when requested', async () => {
     await initMockInput(
       {data: {
-        preview: {
-          status: 'requested',
-          recordSize: 10,
-          data: {
-            request: [
-              {
-                headers: {
-                  accept: 'application/json',
-                },
-                url: 'https://testapi.com',
-                method: 'POST',
-                body: [{
-                  id: '123',
-                }],
-              },
-            ],
-            mockData: false,
-          },
-        },
-        typeOfSampleData: 'preview',
-      },
-      flowData: {
-        preMap: {
-          status: 'requested',
-          data: [{
-            id: '123',
-          }],
-        },
-        processedFlowInput: {
-          status: 'requested',
-          data: [{
-            id: '123',
-          }],
-        },
-        flowInput: {
-          status: 'requested',
-          data: [{
-            id: '123',
-          }],
-        },
-      },
-      });
+        status: 'requested',
+        mockData: false,
+        data: [{
+          id: '123',
+        }],
+      }});
     expect(document.querySelector(['svg[class="MuiCircularProgress-svg"]'])).toBeInTheDocument();
   });
 });
