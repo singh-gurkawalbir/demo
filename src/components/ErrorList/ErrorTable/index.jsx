@@ -221,8 +221,7 @@ const ErrorTableWithPanel = ({
 const EmptyErrorMessage = () => (
   <NoResultTypography>
     <br />
-    There don’t seem to be any more errors. You may have already retried or
-    resolved them.
+    You don’t have any open errors.
     <br />
     <br />
     If <b>Refresh errors</b> is enabled, you can click it to retrieve additional

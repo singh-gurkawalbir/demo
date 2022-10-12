@@ -1046,7 +1046,7 @@ export default {
     required: true,
     helpKey: 'amazonmws.connection.http.type',
     defaultDisabled: r => !isNewId(r?._id),
-    defaultValue: r => isNewId(r?._id) ? r?.http?.type : (r?.http?.type || 'Amazon-MWS'),
+    defaultValue: r => isNewId(r?._id) ? (r?.http?.type || '') : (r?.http?.type || 'Amazon-MWS'),
     skipSort: true,
     resourceId: r => r?._id,
   },
@@ -2543,6 +2543,23 @@ export default {
         ],
       },
     ],
+  },
+  connectionFormView: {
+    isLoggable: true,
+    id: 'connectionFormView',
+    type: 'connectionFormView',
+    label: 'Form view',
+    required: true,
+    resourceType: 'connections',
+    visible: true,
+    defaultValue: r => {
+      if (!r) return 'false';
+      if (!r.http) return 'false';
+      if (!r.http.formType) return 'false';
+
+      return r.http?.formType === 'assistant' ? 'false' : 'true';
+    },
+    helpKey: 'formView',
   },
   configureCutomAuthTokenRefresh: {
     id: 'configureCutomAuthTokenRefresh',

@@ -610,11 +610,10 @@ describe('v2 mapping utils', () => {
 
   describe('getSelectedExtractDataTypes util', () => {
     test('should not throw exception for invalid args', () => {
-      expect(getSelectedExtractDataTypes()).toEqual([]);
-      expect(getSelectedExtractDataTypes([])).toEqual([]);
+      expect(getSelectedExtractDataTypes({})).toEqual([]);
     });
     test('should return correct data type depending on the input provided', () => {
-      const extractsTreeNodeArr = [
+      const extractsTree = [
         {
           key: 'ayQRLXyyH0Z7kh7rhKIUD',
           title: '',
@@ -649,10 +648,10 @@ describe('v2 mapping utils', () => {
         },
       ];
 
-      expect(getSelectedExtractDataTypes(extractsTreeNodeArr, '$[*].isFlagShip', [])).toEqual(['boolean']);
+      expect(getSelectedExtractDataTypes({extractsTree, selectedValue: '$[*].isFlagShip'})).toEqual(['boolean']);
     });
     test('should return empty array if the json path is not available', () => {
-      const extractsTreeNodeArr = [
+      const extractsTree = [
         {
           key: 'ayQRLXyyH0Z7kh7rhKIUD',
           title: '',
@@ -671,10 +670,10 @@ describe('v2 mapping utils', () => {
         },
       ];
 
-      expect(getSelectedExtractDataTypes(extractsTreeNodeArr, '$[*].isflagShip', [])).toEqual([]);
+      expect(getSelectedExtractDataTypes({extractsTree, selectedValue: '$[*].isflagShip'})).toEqual([]);
     });
     test('should return object if the json path is $', () => {
-      const extractsTreeNodeArr = [
+      const extractsTree = [
         {
           key: 'ayQRLXyyH0Z7kh7rhKIUD',
           title: '',
@@ -693,10 +692,10 @@ describe('v2 mapping utils', () => {
         },
       ];
 
-      expect(getSelectedExtractDataTypes(extractsTreeNodeArr, '$', [])).toEqual(['object']);
+      expect(getSelectedExtractDataTypes({extractsTree, selectedValue: '$'})).toEqual(['object']);
     });
     test('should return objectArray if the json path is $[*]', () => {
-      const extractsTreeNodeArr = [
+      const extractsTree = [
         {
           key: 'ayQRLXyyH0Z7kh7rhKIUD',
           title: '',
@@ -715,7 +714,7 @@ describe('v2 mapping utils', () => {
         },
       ];
 
-      expect(getSelectedExtractDataTypes(extractsTreeNodeArr, '$[*]', [])).toEqual(['objectarray']);
+      expect(getSelectedExtractDataTypes({extractsTree, selectedValue: '$[*]'})).toEqual(['objectarray']);
     });
   });
 
@@ -3928,6 +3927,20 @@ describe('v2 mapping utils', () => {
       };
 
       expect(allowDrop({dragNode, dropNode, dropPosition: 2})).toEqual(false);
+    });
+    test('should return false if drop node does not have a child and drop position is 0', () => {
+      const dragNode = {
+        key: 'c1',
+        extract: '$.fname',
+        generate: 'fname',
+      };
+      const dropNode = {
+        key: 'c2',
+        extract: '$.lname',
+        generate: 'lname',
+      };
+
+      expect(allowDrop({dragNode, dropNode, dropPosition: 0})).toEqual(false);
     });
     test('should return true for other cases', () => {
       const dragNode = {

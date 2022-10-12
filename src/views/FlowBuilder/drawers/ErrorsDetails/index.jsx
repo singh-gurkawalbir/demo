@@ -26,13 +26,11 @@ const useStyles = makeStyles(theme => ({
   boldErrorsCount: {
     fontWeight: 'bold',
   },
-  removeBottomLine: {
-    borderBottom: 0,
-  },
-  title: {
-    flexGrow: 1,
-    color: theme.palette.secondary.main,
-    wordBreak: 'break-word',
+  drawerErrorTitle: {
+    borderBottom: 'none',
+    '&>.MuiTypography-root': {
+      alignSelf: 'flex-start',
+    },
   },
   errorDetailsDrawerContent: {
     overflowY: 'hidden',
@@ -112,6 +110,7 @@ export default function ErrorDetailsDrawer({ flowId }) {
     } else {
       history.replace(match.url);
     }
+    setChangeTab(true);
   }, [history, match.url]);
 
   const showRetryDataChangedConfirmDialog = useEditRetryConfirmDialog({flowId, resourceId, isResolved: errorType !== 'open'});
@@ -159,7 +158,7 @@ export default function ErrorDetailsDrawer({ flowId }) {
   const endedAt = childJob?.endedAt;
   const Title = () => (
     <>
-      <Typography variant="h4" className={classes.title} >{`Errors: ${resourceName}`}</Typography>
+      {`Errors: ${resourceName}`}
       {endedAt && <DrawerHeaderSubTitle>Run completed: <CeligoTimeAgo date={endedAt} /></DrawerHeaderSubTitle>}
     </>
   );
@@ -172,16 +171,16 @@ export default function ErrorDetailsDrawer({ flowId }) {
       ]}
       width="full"
       onClose={handleClose}>
-      <DrawerHeader className={classes.removeBottomLine} title={<Title />} handleClose={handleDrawerClose} hideBackButton>
+      <DrawerHeader className={classes.drawerErrorTitle} title={<Title />} handleClose={handleDrawerClose} hideBackButton>
         <ErrorDrawerAction flowId={flowId} onChange={handleErrorTypeChange} errorType={errorType} />
       </DrawerHeader>
       <Tabs flowId={flowId} onChange={handleErrorTypeChange} />
 
       <DrawerContent className={classes.errorDetailsDrawerContent}>
-        {flowJobId && allErrors.length < 1000 ? (
+        {flowJobId ? (
           <Typography variant="body2" className={classes.errorsInRun}>
             <span className={classes.boldErrorsCount}>{childJob?.numOpenError} error{childJob?.numOpenError !== 1 ? 's' : ''} in this run </span>
-            <span><span>: {allErrors.length} open  |  </span><span>{childJob?.numOpenError - allErrors.length} resolved</span></span>
+            {childJob?.numOpenError <= 1000 ? (<span><span>: {allErrors.length} open  |  </span><span>{childJob?.numOpenError - allErrors.length} resolved</span></span>) : ''}
           </Typography>
         ) : ''}
         {errorType === FILTER_KEYS.RETRIES ? <RetryList flowId={flowId} /> : <ErrorList flowId={flowId} errorsInRun={flowJobId} />}

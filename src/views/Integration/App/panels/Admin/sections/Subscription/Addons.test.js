@@ -91,7 +91,7 @@ describe('Addons UI tests', () => {
   test('should pass the initial render when no Addons are present', async () => {
     await initAddons({integrationId: '61604a5a8364267b8a378084'});
     expect(screen.getByText('Add-ons')).toBeInTheDocument();
-    expect(screen.getByText('You don`t have any add-ons yet. Add-ons let you customize subscription to meet your specific business requirements.')).toBeInTheDocument();
+    expect(screen.getByText('You don’t have any add-ons yet. Add-ons let you customize subscription to meet your specific business requirements.')).toBeInTheDocument();
     expect(screen.getByText('Get add-ons')).toBeInTheDocument();
   });
   test('should pass the initial render when Addons are present', async () => {

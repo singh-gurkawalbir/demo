@@ -59,7 +59,7 @@ export const getExportMetadata = (connectorMetadata, connectionVersion) => {
   }
   const exportPreConfiguredFields = connectorMetadata.supportedBy?.export?.preConfiguredFields;
 
-  exportPreConfiguredFields.forEach(field => {
+  exportPreConfiguredFields?.forEach(field => {
     exportData[field.path] = field.values?.[0];
   });
 
@@ -155,9 +155,13 @@ export const getImportMetadata = (connectorMetadata, connectionVersion) => {
     },
 
   };
+
+  if (!httpResources || !httpEndpoints) {
+    return importData;
+  }
   const importPreConfiguredFields = connectorMetadata.supportedBy?.import?.preConfiguredFields;
 
-  importPreConfiguredFields.forEach(field => {
+  importPreConfiguredFields?.forEach(field => {
     importData[field.path] = field.values?.[0];
   });
   let versions = connectorMetadata.versions?.map(v => ({version: v.name, _id: v._id}));
