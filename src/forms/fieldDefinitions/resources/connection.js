@@ -108,16 +108,12 @@ export default {
     isLoggable: true,
     type: 'text',
     label: 'Port',
-    validWhen: [
-      {
-        fallsWithinNumericalRange: {
-          min: 0,
-          max: 65535,
-          message: 'The value must be more than 0 and less than 65535',
-        },
-        matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
+    validWhen: {
+      fallsWithinNumericalRange: {
+        min: 0,
+        max: 65535,
       },
-    ],
+    },
   },
   'rdbms.database': {
     isLoggable: true,
@@ -347,6 +343,7 @@ export default {
   'rest.scope': {
     type: 'selectscopes',
     label: 'Configure scopes',
+    required: true,
     helpKey: 'connection.http.auth.oauth.scope',
   },
 
@@ -710,6 +707,7 @@ export default {
   'http.auth.oauth.scope': {
     type: 'selectscopes',
     label: 'Configure scopes',
+    required: true,
   },
   'http.auth.oauth.scopeDelimiter': {
     isLoggable: true,
@@ -1042,6 +1040,16 @@ export default {
     defaultValue: r => (r && r.http && r.http.headers) || '',
     label: 'Configure HTTP headers',
   },
+  'http.type': {
+    label: 'API type',
+    type: 'amazonmwstype',
+    required: true,
+    helpKey: 'amazonmws.connection.http.type',
+    defaultDisabled: r => !isNewId(r?._id),
+    defaultValue: r => isNewId(r?._id) ? (r?.http?.type || '') : (r?.http?.type || 'Amazon-MWS'),
+    skipSort: true,
+    resourceId: r => r?._id,
+  },
   'http.unencrypted': {
     isLoggable: true,
     type: 'editor',
@@ -1165,9 +1173,7 @@ export default {
       fallsWithinNumericalRange: {
         min: 0,
         max: 65535,
-        message: 'The value must be more than 0 and less than 65535',
       },
-      matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
     },
   },
   'ftp.usePassiveMode': {
@@ -1768,17 +1774,9 @@ export default {
         is: [true],
       },
     ],
-    validWhen: [
-      {
-        matchesRegEx: { pattern: '^[\\d]$', message: 'Only numbers allowed' },
-      },
-      {
-        fallsWithinNumericalRange: {
-          message:
-            'The value must be greater than undefined and  lesser than undefined',
-        },
-      },
-    ],
+    validWhen: {
+      matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
+    },
   },
   'as2.partnerStationInfo.encryptionType': {
     isLoggable: true,
@@ -2553,7 +2551,7 @@ export default {
     label: 'Form view',
     required: true,
     resourceType: 'connections',
-    visible: r => r?._httpConnectorId || r?.http?._httpConnectorId,
+    visible: true,
     defaultValue: r => {
       if (!r) return 'false';
       if (!r.http) return 'false';
@@ -2562,5 +2560,22 @@ export default {
       return r.http?.formType === 'assistant' ? 'false' : 'true';
     },
     helpKey: 'formView',
+  },
+  configureCutomAuthTokenRefresh: {
+    id: 'configureCutomAuthTokenRefresh',
+    type: 'checkbox',
+    label: 'Configure refresh token',
+    helpKey: 'connection.configureTokenRefresh',
+    // Refresh token is mandatory when Configure refresh token is enabled, hence we check if this value is provided or not
+    defaultValue: r => !!(r?.http?.auth?.token?.refreshToken),
+    visibleWhenAll: [
+      { field: 'http.auth.type', is: ['custom'] },
+    ],
+  },
+  'http.auth.token.tokenPaths': {
+    id: 'http.auth.token.tokenPaths',
+    type: 'text',
+    label: 'Paths to encrypted field in the HTTP response body',
+    delimiter: ',',
   },
 };

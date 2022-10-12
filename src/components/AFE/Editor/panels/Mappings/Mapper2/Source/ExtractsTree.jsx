@@ -120,7 +120,7 @@ const ExtractsTree = React.memo((
     inputValue = '',
     setInputValue,
     setIsFocused,
-    onBlur,
+    patchField,
   }) => {
   const classes = useStyles();
   const isArrayType = destDataType.includes('array');
@@ -143,8 +143,8 @@ const ExtractsTree = React.memo((
 
     setInputValue(newValue);
     setIsFocused(false);
-    if (propValue !== newValue) { onBlur(newValue); }
-  }, [inputValue, isArrayType, isGroupedSampleData, onBlur, propValue, setInputValue, setIsFocused, nodeKey, mappingsTreeData]);
+    patchField(propValue, newValue, e.node?.jsonPath);
+  }, [inputValue, isArrayType, isGroupedSampleData, patchField, propValue, setInputValue, setIsFocused, nodeKey, mappingsTreeData]);
 
   if (isEmpty(extractsTreeData)) return null;
 
@@ -152,7 +152,12 @@ const ExtractsTree = React.memo((
     <div className={classes.dropdown}>
       <ul className={classes.message}>
         <li>Type or select source field</li>
-        {isArrayType && <li>Separate additional fields with a comma (,)</li>}
+        {isArrayType &&
+        (
+        <><li> Separate fields with a comma (,)</li>
+          <li>For sources that are not listed below, enter data types in Settings</li>
+        </>
+        )}
       </ul>
       <Divider className={classes.messageDivider} />
 

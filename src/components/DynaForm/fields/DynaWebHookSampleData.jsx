@@ -8,6 +8,7 @@ import { selectors } from '../../../reducers';
 import { isJsonString } from '../../../utils/string';
 import FieldMessage from './FieldMessage';
 import { OutlinedButton } from '../../Buttons';
+import FieldHelp from '../FieldHelp';
 
 const useStyles = makeStyles(theme => ({
   sampleDataContent: {
@@ -27,6 +28,10 @@ const useStyles = makeStyles(theme => ({
   },
   dynaWebhookWrapper: {
     display: 'flex',
+  },
+  fieldWrapper: {
+    display: 'flex',
+    alignItems: 'flex-start',
   },
 }));
 
@@ -80,7 +85,12 @@ export default function DynaWebHookSampleData(props) {
   return (
     <div className={classes.dynaWebhookWrapper}>
       <div className={classes.sampleDataContent}>
-        <FormLabel error={!isValid} >{label}</FormLabel>
+        <div className={classes.fieldWrapper}>
+          <FormLabel error={!isValid}>{label}</FormLabel>
+          <FieldHelp
+            helpKey="webhook.sampleData"
+            label={label} />
+        </div>
         {/* sample data can contain sensitive information */}
         <div className={classes.container} data-private>
           <CodeEditor

@@ -6,17 +6,19 @@ import clsx from 'clsx';
 import ArrowDownIcon from '../../../../../../icons/ArrowDownIcon';
 import useKeyboardShortcut from '../../../../../../../hooks/useKeyboardShortcut';
 import ExtractsTree from './ExtractsTree';
-import { MAPPING_DATA_TYPES } from '../../../../../../../utils/mapping';
+import { DATA_TYPES_REPRESENTATION_LIST, MAPPING_DATA_TYPES } from '../../../../../../../utils/mapping';
 import messageStore from '../../../../../../../utils/messageStore';
 import ArrowPopper from '../../../../../../ArrowPopper';
 import useDebouncedValue from '../../../../../../../hooks/useDebouncedInput';
 import actions from '../../../../../../../actions';
+import SourceDataType from './SourceDataType';
 
 const useStyles = makeStyles(theme => ({
   customTextField: {
     padding: 0,
     display: 'flex',
     marginBottom: 0,
+    width: '100%',
     '& > .MuiFilledInput-multiline': {
       border: `1px solid ${theme.palette.secondary.lightest}`,
       paddingRight: 0,
@@ -28,6 +30,12 @@ const useStyles = makeStyles(theme => ({
       overflow: 'hidden',
       textOverflow: 'ellipsis',
       height: theme.spacing(5),
+      paddingRight: theme.spacing(14),
+    },
+  },
+  sourceCustomTextField: {
+    '& > * .MuiFilledInput-input': {
+      paddingRight: theme.spacing(10),
     },
   },
   autoSuggestDropdown: {
@@ -44,8 +52,7 @@ const useStyles = makeStyles(theme => ({
     },
   },
   divider: {
-    marginTop: theme.spacing(1),
-    marginBottom: theme.spacing(1),
+    margin: theme.spacing(1, 0),
   },
   extractListPopper: {
     width: theme.spacing(50),
@@ -55,6 +62,7 @@ const useStyles = makeStyles(theme => ({
   },
   extractListPopperCompact: {
     width: theme.spacing(38),
+    marginLeft: 0,
   },
   extractPopperArrow: {
     display: 'none',
@@ -65,6 +73,20 @@ const useStyles = makeStyles(theme => ({
     border: `1px solid ${theme.palette.secondary.lightest}`,
     '&:empty': {
       display: 'none',
+    },
+  },
+  sourceDataTypeButton: {
+    marginLeft: -theme.spacing(10),
+    '&>.MuiDivider-root': {
+      display: 'none',
+    },
+  },
+  sourceDataToolTip: {
+    display: 'flex',
+    flexDirection: 'column',
+    padding: theme.spacing(1),
+    '&>div': {
+      marginBottom: theme.spacing(1),
     },
   },
 })
@@ -78,12 +100,12 @@ export const TooltipTitle = ({
   isHardCodedValue,
   isHandlebarExp,
   fieldType,
+  sourceDataTypes,
+  isSource,
 }) => {
   const classes = useStyles();
   let title = '';
   let hideDropdownMsgKey = '';
-
-  if (!isTruncated && !hideSourceDropdown) return fieldType;
 
   if (hideSourceDropdown) {
     if (isDynamicLookup) {
@@ -95,12 +117,30 @@ export const TooltipTitle = ({
     }
   }
 
-  if (isTruncated) {
-    if (hideSourceDropdown) {
-      title = inputValue;
-    } else {
-      title = `${fieldType}: ${inputValue}`;
-    }
+  // Adding condition for length since we need to show the tooltip
+  // if their are two source field since dataType is truncated
+  const sourceInputs = inputValue?.split(',');
+
+  if ((isTruncated || (sourceInputs.length > 1)) && isSource) {
+    const selectedDataTypeLabels = [];
+
+    sourceDataTypes?.forEach(datatype => {
+      selectedDataTypeLabels.push(DATA_TYPES_REPRESENTATION_LIST[[datatype]]);
+    });
+    const inputValArr = sourceInputs;
+
+    title = (
+      <div className={classes.sourceDataToolTip}>
+        <div>Source field / data type:</div>
+        {// eslint-disable-next-line react/no-array-index-key
+        inputValArr.map((input, i) => <span key={`${input}${i}`}> {input} / {selectedDataTypeLabels[i]} </span>)
+        }
+      </div>
+    );
+  } else if (!isTruncated && !hideSourceDropdown) {
+    return fieldType;
+  } else if (!isDynamicLookup) {
+    title = `${fieldType}: ${inputValue}`;
   }
 
   if (!hideSourceDropdown) return title;
@@ -125,19 +165,23 @@ export default function Mapper2ExtractsTypeableSelect({
   isHardCodedValue,
   isHandlebarExp,
   editorLayout,
+  className,
+  popperClassName,
+  sourceDataType,
 }) {
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = useState(null);
   const dispatch = useDispatch();
   const [isFocused, setIsFocused] = useState(false);
   const [inputValue, setInputValue] = useDebouncedValue(propValue, value => {
-    // do not dispatch action if the field is empty as there can be
+    // do not dispatch action if the field is not clicked yet as there can be
     // multiple rows and it will unnecessarily dispatch actions slowing down the UI
-    if (value === '' && value === propValue) return;
+    if (!isFocused) return;
     dispatch(actions.mapping.v2.patchExtractsFilter(value, propValue));
   });
   const [isTruncated, setIsTruncated] = useState(false);
   const inputFieldRef = useRef();
+  const [dataTypeSelector, selectDataType] = useState(false);
 
   const handleChange = useCallback(event => {
     setInputValue(event.target.value);
@@ -154,6 +198,13 @@ export default function Mapper2ExtractsTypeableSelect({
     setIsFocused(true);
   }, []);
 
+  const patchField = useCallback((propValue, newValue, jsonPath) => {
+    // on blur, patch the extracts tree with empty input so all values in the
+    // dropdown will be visible
+    dispatch(actions.mapping.v2.patchExtractsFilter('', ''));
+    if (propValue !== newValue) { onBlur(newValue, jsonPath); }
+  }, [dispatch, onBlur]);
+
   const handleBlur = useCallback(event => {
     // handleBlur gets called by ClickAwayListener inside ArrowPopper to close the dropdown
     // if a click was made outside the dropdown.
@@ -163,8 +214,8 @@ export default function Mapper2ExtractsTypeableSelect({
 
     setIsFocused(false);
     setAnchorEl(null);
-    if (propValue !== inputValue) { onBlur(inputValue); }
-  }, [nodeKey, propValue, inputValue, onBlur]);
+    patchField(propValue, inputValue);
+  }, [nodeKey, propValue, inputValue, patchField]);
 
   useKeyboardShortcut(['Escape'], handleBlur, {ignoreBlacklist: true});
 
@@ -190,14 +241,16 @@ export default function Mapper2ExtractsTypeableSelect({
             isDynamicLookup={isDynamicLookup}
             isHardCodedValue={isHardCodedValue}
             isHandlebarExp={isHandlebarExp}
+            isSource
             fieldType="Source field"
+            sourceDataTypes={sourceDataType}
         />
         )} >
         <TextField
           id={`${nodeKey}-mapper2SourceTextField`}
           isLoggable
           onMouseMove={handleMouseOver}
-          className={classes.customTextField}
+          className={clsx(classes.customTextField, {[classes.sourceCustomTextField]: hideSourceDropdown}, className)}
           variant="filled"
           autoFocus={isFocused}
           value={inputValue}
@@ -220,6 +273,18 @@ export default function Mapper2ExtractsTypeableSelect({
            />
       </Tooltip >
 
+      <SourceDataType
+        anchorEl={dataTypeSelector}
+        setAnchorEl={selectDataType}
+        disabled={disabled || isHardCodedValue || isHandlebarExp}
+        isHardCodedValue={isHardCodedValue}
+        isHandlebarExp={isHandlebarExp}
+        isDynamicLookup={isDynamicLookup}
+        nodeKey={nodeKey}
+        sourceDataTypes={sourceDataType}
+        className={clsx({[classes.sourceDataTypeButton]: hideSourceDropdown})}
+        isFocused={isFocused} />
+
       {/* only render tree component if field is focussed and not disabled.
       Here we are wrapping tree component with ArrowPopper to correctly handle the
       dropdown placement logic
@@ -236,7 +301,7 @@ export default function Mapper2ExtractsTypeableSelect({
         classes={{
           popper: clsx(classes.extractListPopper, {
             [classes.extractListPopperCompact]: editorLayout === 'compact2',
-          }),
+          }, popperClassName),
           arrow: classes.extractPopperArrow,
           paper: classes.extractPopperPaper,
         }}
@@ -248,7 +313,7 @@ export default function Mapper2ExtractsTypeableSelect({
             destDataType={destDataType}
             propValue={propValue}
             inputValue={inputValue}
-            onBlur={onBlur}
+            patchField={patchField}
             setInputValue={setInputValue}
             setIsFocused={setIsFocused}
           />

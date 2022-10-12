@@ -327,6 +327,7 @@ function LicenseAction() {
           disableElevation
           className={clsx(classes.inTrial, {[classes.hideElement]: upgradeButton === false})}
           data-test={licenseActionDetails.label}
+          id={licenseActionDetails.id}
           onClick={handleClick}>
           {licenseActionDetails.label}
           <span className={classes.inTrialDaysLeft}>{licenseActionDetails.daysLeft}</span>

@@ -309,7 +309,12 @@ const connectors = [
 ];
 // These can be removed once metadata gets updated.
 const newConnections = [
-  {id: 'googledrive', name: 'Google Drive', type: 'http', assistant: 'googledrive'},
+  {id: 'googledrive',
+    name: 'Google Drive',
+    type: 'http',
+    assistant: 'googledrive',
+    helpURL: 'https://docs.celigo.com/hc/en-us/articles/360056026892-Set-up-a-connection-to-Google-Drive',
+  },
   {id: 'azurestorageaccount', name: 'Azure Blob Storage', type: 'http', assistant: 'azurestorageaccount'},
   {
     id: 'constantcontact',
@@ -406,8 +411,9 @@ export const groupApplications = (
         type: 'http',
         export: true,
         import: true,
-        icon: pc.legacyId || pc.name,
+        icon: pc.legacyId || pc.name.toLowerCase().replace(/\.|\s/g, ''),
         assistant: pc.legacyId,
+        application: pc.name.toLowerCase().replace(/\.|\s/g, ''),
         _httpConnectorId: pc._id,
         helpURL: pc.helpURL,
       });
@@ -505,6 +511,7 @@ export const applicationsList = () => {
       export: true,
       import: true,
       assistant: pc.legacyId,
+      application: pc.name.toLowerCase().replace(/\.|\s/g, ''),
       _httpConnectorId: pc._id,
       helpURL: pc.helpURL,
     });
@@ -589,10 +596,12 @@ export const connectorsList = () => {
 
   publishedConnectors?.forEach(pc => {
     connectors.push({
-      value: pc.legacyId || pc.name,
+      value: pc.name,
       label: pc.name,
-      icon: pc.legacyId || pc.name,
+      icon: pc.legacyId || pc.name.toLowerCase().replace(/\.|\s/g, ''),
+      _httpConnectorId: pc._id,
       type: 'http',
+      published: true,
     });
   });
 

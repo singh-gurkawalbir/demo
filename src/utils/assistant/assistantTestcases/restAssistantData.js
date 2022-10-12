@@ -1,7 +1,7 @@
 export default {
   export: {
     labels: {
-      version: 'API Version',
+      version: 'API version',
       resource: 'API Name',
       endpoint: 'Operation',
     },
@@ -90,7 +90,7 @@ export default {
   },
   import: {
     labels: {
-      version: 'API Version',
+      version: 'API version',
     },
     urlResolution: [
       '/v3/contacts',

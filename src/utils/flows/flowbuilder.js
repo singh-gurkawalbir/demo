@@ -1,8 +1,7 @@
 /* eslint-disable no-param-reassign */
-
 import { cloneDeep, uniq, uniqBy } from 'lodash';
 import jsonPatch from 'fast-json-patch';
-import { BranchPathRegex, GRAPH_ELEMENTS_TYPE, PageProcessorPathRegex } from '../../constants';
+import { BranchPathRegex, GRAPH_ELEMENTS_TYPE, PageProcessorPathRegex, FLOW_SAVE_ASYNC_KEY } from '../../constants';
 import { shortId } from '../string';
 import { setObjectValue } from '../json';
 import messageStore from '../messageStore';
@@ -87,13 +86,18 @@ export const addPageProcessor = (flow, insertAtIndex, branchPath, ppData) => {
         flow.routers = [newRouter, ...flow.routers];
       }
     } else {
-      const pageProcessors = jsonPatch.getValueByPointer(flow, `${branchPath}/pageProcessors`);
+      try {
+        const pageProcessors = jsonPatch.getValueByPointer(flow, `${branchPath}/pageProcessors`);
 
-      if (insertAtIndex === -1) {
-        setObjectValue(flow, `${branchPath}/pageProcessors`, [...pageProcessors, pageProcessor]);
-      } else {
-        pageProcessors.splice(insertAtIndex, 0, pageProcessor);
-        setObjectValue(flow, `${branchPath}/pageProcessors`, pageProcessors);
+        if (insertAtIndex === -1) {
+          setObjectValue(flow, `${branchPath}/pageProcessors`, [...pageProcessors, pageProcessor]);
+        } else {
+          pageProcessors.splice(insertAtIndex, 0, pageProcessor);
+          setObjectValue(flow, `${branchPath}/pageProcessors`, pageProcessors);
+        }
+      } catch (e) {
+        // eslint-disable-next-line no-console
+        console.warn('Getting unexpected error for branchPath: ', branchPath);
       }
     }
   } else {
@@ -537,7 +541,7 @@ export const generateReactFlowGraph = (flow, isViewMode, isDataLoader) => {
   return generateNodesAndEdgesFromBranchedFlow(flow, isViewMode, isDataLoader);
 };
 
-const mergeBetweenPPAndRouter = ({edgeSource, patchSet, sourceElement, edgeTarget}) => {
+export const mergeBetweenPPAndRouter = ({edgeSource, patchSet, sourceElement, edgeTarget}) => {
   const [, sourceRouterIndex, sourceBranchIndex] = BranchPathRegex.exec(sourceElement.data.path);
   const [, edgeSourceRouterIndex, edgeSourceBranchIndex] = BranchPathRegex.exec(edgeSource.data.path);
 
@@ -564,7 +568,7 @@ const mergeBetweenPPAndRouter = ({edgeSource, patchSet, sourceElement, edgeTarge
   ]);
 };
 
-const mergeTerminalNodes = ({ patchSet, sourceElement, targetElement }) => {
+export const mergeTerminalNodes = ({ patchSet, sourceElement, targetElement }) => {
   const [, sourceRouterIndex, sourceBranchIndex] = BranchPathRegex.exec(sourceElement.data.path);
   // merging two terminal nodes
   const [, targetRouterIndex, targetBranchIndex] = BranchPathRegex.exec(targetElement.data.path);
@@ -588,7 +592,7 @@ const mergeTerminalNodes = ({ patchSet, sourceElement, targetElement }) => {
     }]);
 };
 
-const mergeBetweenRouterAndPP = ({flowDoc, edgeTarget, patchSet, sourceElement}) => {
+export const mergeBetweenRouterAndPP = ({flowDoc, edgeTarget, patchSet, sourceElement}) => {
   const [, sourceRouterIndex, sourceBranchIndex] = BranchPathRegex.exec(sourceElement.data.path);
 
   const [, targetRouterIndex, targetBranchIndex] = BranchPathRegex.exec(edgeTarget.data.path);
@@ -623,7 +627,7 @@ const mergeBetweenRouterAndPP = ({flowDoc, edgeTarget, patchSet, sourceElement})
     },
   ]);
 };
-const splitPPArray = (ar, index) => {
+export const splitPPArray = (ar, index) => {
   const firstHalf = ar.slice(0, index);
   const secondHalf = ar.slice(index, ar.length);
 
@@ -662,7 +666,7 @@ const mergeBetweenTwoPPSteps = ({flowDoc, targetElement, sourceElement, patchSet
   ]);
 };
 
-const mergeTerminalToAnEdge = ({ flowDoc, elements, patchSet, sourceElement, targetElement }) => {
+export const mergeTerminalToAnEdge = ({ flowDoc, elements, patchSet, sourceElement, targetElement }) => {
   // Merging terminal node to an edge
 
   const edgeSource = elements[targetElement.source];
@@ -680,6 +684,8 @@ const mergeTerminalToAnEdge = ({ flowDoc, elements, patchSet, sourceElement, tar
     mergeBetweenTwoPPSteps({flowDoc, targetElement, sourceElement, patchSet});
   }
 };
+
+export const getFlowAsyncKey = flowId => `${flowId}-${FLOW_SAVE_ASYNC_KEY}`;
 
 export const mergeDragSourceWithTarget = (flowDoc, elements, dragNodeId, targetId, patchSet) => {
   const sourceElement = elements[dragNodeId];

@@ -16,6 +16,7 @@ import actions from '../../../../../actions';
 
 const useStyles = makeStyles(theme => ({
   title: {
+    cursor: 'default',
     left: ({ xOffset }) => xOffset,
     width: ({ columnWidth }) => `calc(100% - ${columnWidth}px)`,
     background: `linear-gradient(${theme.palette.background.paper}, 95%, #FFF0)`,
@@ -48,7 +49,11 @@ const DestinationTitle = () => {
   const handleOpenMenu = event => {
     if (isLinearFlow || branches.length === 1) {
       if (!isLinearFlow) {
-        dispatch(actions.flow.addNewPPStepInfo(flowId, {branchPath: branches[0].path}));
+        dispatch(
+          actions.flow.addNewPPStepInfo(flowId, {
+            branchPath: branches[0].path,
+          })
+        );
       }
       const newTempProcessorId = generateNewId();
       const addPPUrl = buildDrawerUrl({

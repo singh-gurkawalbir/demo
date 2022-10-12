@@ -3,7 +3,7 @@ import actionTypes from '../../../actions/types';
 import { stringCompare } from '../../../utils/sort';
 import { SUITESCRIPT_CONNECTORS, SUITESCRIPT_CONNECTOR_IDS } from '../../../constants';
 import { isEuRegion } from '../../../forms/formFactory/utils';
-import { isAppConstantContact } from '../../../utils/assistant';
+import { getPublishedConnectorId, isAppConstantContact } from '../../../utils/assistant';
 
 const emptySet = [];
 const sfConnector = SUITESCRIPT_CONNECTORS.find(s => s._id === SUITESCRIPT_CONNECTOR_IDS.salesforce);
@@ -107,7 +107,7 @@ selectors.connectors = (state, application, sandbox, licenses, isAccountOwnerOrA
   if (application) {
     connectors = connectors.filter(
       c => c.applications?.some(app =>
-        isAppConstantContact(application) ? app.includes(application) : app === application)
+        isAppConstantContact(application) ? app.includes(application) : (app === application || app === getPublishedConnectorId(application)))
     );
   }
 
@@ -130,7 +130,7 @@ selectors.marketplaceTemplatesByApp = (state, application) => {
   if (application) {
     templates = templates
       .filter(t => t.applications?.some(app =>
-        isAppConstantContact(application) ? app.includes(application) : app === application))
+        isAppConstantContact(application) ? app.includes(application) : (app === application || app === getPublishedConnectorId(application))))
       .sort(stringCompare('name'));
   }
 

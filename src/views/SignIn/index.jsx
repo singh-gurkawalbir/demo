@@ -4,6 +4,7 @@ import { makeStyles, Typography, Link } from '@material-ui/core';
 import SigninForm from './SigninForm';
 import CeligoLogo from '../../components/CeligoLogo';
 import { getDomain } from '../../utils/resource';
+import messageStore from '../../utils/messageStore';
 import { selectors } from '../../reducers';
 import MarketingContentWithIframe from '../../components/LoginScreen/MarketingContentWithIframe';
 import InfoIcon from '../../components/icons/InfoIcon';
@@ -84,6 +85,7 @@ const useStyles = makeStyles(theme => ({
 
 const Title = ({ isMFAAuthRequired }) => {
   const classes = useStyles();
+  const { isAccountUser, noOfDays } = useSelector(selectors.mfaAuthInfo);
 
   if (!isMFAAuthRequired) {
     return (
@@ -93,6 +95,14 @@ const Title = ({ isMFAAuthRequired }) => {
     );
   }
 
+  let infoMessage;
+
+  if (isAccountUser) {
+    infoMessage = messageStore(noOfDays ? 'MFA_USER_OTP_INFO_FOR_TRUSTED_NUMBER_OF_DAYS' : 'MFA_USER_OTP_INFO', { noOfDays });
+  } else {
+    infoMessage = messageStore('MFA_OWNER_OTP_INFO');
+  }
+
   return (
     <>
       <Typography variant="h3" className={classes.mfaTitle}>
@@ -100,7 +110,7 @@ const Title = ({ isMFAAuthRequired }) => {
       </Typography>
       <div className={classes.mfaInfo}>
         <InfoIcon color="primary" width="16.5" height="16.5" />
-        <span className={classes.infoText}>You are signing in from a new device. Enter your passcode to verify your account.</span>
+        <span className={classes.infoText}>{infoMessage}</span>
       </div>
     </>
 

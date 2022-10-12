@@ -168,11 +168,11 @@ export const getResourceSampleData = (resourceIdSampleData, stage) => {
 
   switch (stage) {
     case 'parse':
-      return resourceData.parse?.[0] || DEFAULT_VALUE;
+      return resourceData.group?.[0] || resourceData.parse?.[0] || DEFAULT_VALUE;
     case 'preview':
-      return resourceData.preview || resourceData.parse || DEFAULT_VALUE;
+      return resourceData.preview || resourceData.group || resourceData.parse || DEFAULT_VALUE;
     case 'preSavePageHook':
-      return resourceData.preSavePageHook || resourceData.transform || resourceData.parse?.[0] || DEFAULT_VALUE;
+      return resourceData.preSavePageHook || resourceData.transform || resourceData.group?.[0] || resourceData.parse?.[0] || DEFAULT_VALUE;
     default:
       return resourceData[stage] || DEFAULT_VALUE;
   }

@@ -1,5 +1,5 @@
 import { deepClone } from 'fast-json-patch';
-import { put, takeLatest, take, call, fork, cancel, select } from 'redux-saga/effects';
+import { put, takeLatest, take, call, fork, cancel, select, takeEvery } from 'redux-saga/effects';
 import actions from '../../../actions';
 import actionTypes from '../../../actions/types';
 import { apiCallWithRetry } from '../../index';
@@ -8,6 +8,7 @@ import openExternalUrl from '../../../utils/window';
 import { safeParse } from '../../../utils/string';
 import { pollApiRequests } from '../../app';
 import { emptyObject } from '../../../constants';
+import { getRetryJobCollection } from '../retries';
 
 export function* downloadRetryData({flowId, resourceId, retryDataKey}) {
   let response;
@@ -102,12 +103,14 @@ export function* updateRetryData({ flowId, resourceId, retryId, retryData }) {
 export function* _requestRetryStatus({ flowId, resourceId }) {
   let resourceType = 'exports';
   const importResource = yield select(selectors.resource, 'imports', resourceId);
+  const flow = yield select(selectors.resource, 'flows', flowId);
+  const integrationId = flow?._integrationId || 'none';
 
   if (importResource) {
     resourceType = 'imports';
   }
 
-  const path = `/jobs?_flowId=${flowId}&type=retry&status=queued&status=running&${resourceType === 'exports' ? '_exportId' : '_importId'}=${resourceId}`;
+  const path = `/jobs?_integrationId=${integrationId}&_flowId=${flowId}&type=retry&status=queued&status=running&${resourceType === 'exports' ? '_exportId' : '_importId'}=${resourceId}`;
 
   try {
     const pendingRetryList = yield call(apiCallWithRetry, {
@@ -128,7 +131,11 @@ export function* _requestRetryStatus({ flowId, resourceId }) {
 
     yield put(actions.errorManager.retryStatus.received({ flowId, resourceId, status}));
     // stop polling if there are no retry jobs in progress
+    // and refresh retries collection if retries are previously inProgress
     if (!pendingRetryList || !pendingRetryList.length) {
+      if (prevStatus) {
+        yield call(getRetryJobCollection, {flowId, resourceId});
+      }
       yield put(actions.errorManager.retryStatus.stopPoll());
     }
   } catch (e) {
@@ -202,7 +209,7 @@ export function* downloadBlobDocument({ flowId, resourceId, reqAndResKey }) {
 }
 
 export default [
-  takeLatest(actionTypes.ERROR_MANAGER.RETRY_DATA.REQUEST, requestRetryData),
+  takeEvery(actionTypes.ERROR_MANAGER.RETRY_DATA.REQUEST, requestRetryData),
   takeLatest(actionTypes.ERROR_MANAGER.RETRY_DATA.DOWNLOAD, downloadRetryData),
   takeLatest(
     actionTypes.ERROR_MANAGER.RETRY_STATUS.REQUEST_FOR_POLL,

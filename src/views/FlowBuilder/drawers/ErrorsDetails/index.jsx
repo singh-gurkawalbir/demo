@@ -13,6 +13,9 @@ import CeligoTimeAgo from '../../../../components/CeligoTimeAgo';
 import DrawerHeaderSubTitle from '../../../../components/DrawerHeaderSubTitle';
 import Tabs from './Tabs';
 import { buildDrawerUrl, drawerPaths } from '../../../../utils/rightDrawer';
+import { useEditRetryConfirmDialog } from '../../../../components/ErrorList/ErrorTable/hooks/useEditRetryConfirmDialog';
+import RetryList from '../../../../components/JobDashboard/RetryList';
+import { FILTER_KEYS } from '../../../../utils/errorManagement';
 
 const emptySet = [];
 
@@ -23,13 +26,14 @@ const useStyles = makeStyles(theme => ({
   boldErrorsCount: {
     fontWeight: 'bold',
   },
-  removeBottomLine: {
-    borderBottom: 0,
+  drawerErrorTitle: {
+    borderBottom: 'none',
+    '&>.MuiTypography-root': {
+      alignSelf: 'flex-start',
+    },
   },
-  title: {
-    flexGrow: 1,
-    color: theme.palette.secondary.main,
-    wordBreak: 'break-word',
+  errorDetailsDrawerContent: {
+    overflowY: 'hidden',
   },
 }));
 export default function ErrorDetailsDrawer({ flowId }) {
@@ -106,7 +110,13 @@ export default function ErrorDetailsDrawer({ flowId }) {
     } else {
       history.replace(match.url);
     }
+    setChangeTab(true);
   }, [history, match.url]);
+
+  const showRetryDataChangedConfirmDialog = useEditRetryConfirmDialog({flowId, resourceId, isResolved: errorType !== 'open'});
+  const handleDrawerClose = useCallback(() => {
+    showRetryDataChangedConfirmDialog(handleClose);
+  }, [handleClose, showRetryDataChangedConfirmDialog]);
 
   const handleErrorTypeChange = useCallback(errorType => {
     if (matchErrorDrawerPathWithFilter) {
@@ -148,7 +158,7 @@ export default function ErrorDetailsDrawer({ flowId }) {
   const endedAt = childJob?.endedAt;
   const Title = () => (
     <>
-      <Typography variant="h4" className={classes.title} >{`Errors: ${resourceName}`}</Typography>
+      {`Errors: ${resourceName}`}
       {endedAt && <DrawerHeaderSubTitle>Run completed: <CeligoTimeAgo date={endedAt} /></DrawerHeaderSubTitle>}
     </>
   );
@@ -161,19 +171,19 @@ export default function ErrorDetailsDrawer({ flowId }) {
       ]}
       width="full"
       onClose={handleClose}>
-      <DrawerHeader className={classes.removeBottomLine} title={<Title />} hideBackButton>
-        <ErrorDrawerAction flowId={flowId} onChange={handleErrorTypeChange} />
+      <DrawerHeader className={classes.drawerErrorTitle} title={<Title />} handleClose={handleDrawerClose} hideBackButton>
+        <ErrorDrawerAction flowId={flowId} onChange={handleErrorTypeChange} errorType={errorType} />
       </DrawerHeader>
-      <Tabs onChange={handleErrorTypeChange} />
+      <Tabs flowId={flowId} onChange={handleErrorTypeChange} />
 
-      <DrawerContent>
+      <DrawerContent className={classes.errorDetailsDrawerContent}>
         {flowJobId ? (
           <Typography variant="body2" className={classes.errorsInRun}>
             <span className={classes.boldErrorsCount}>{childJob?.numOpenError} error{childJob?.numOpenError !== 1 ? 's' : ''} in this run </span>
             {childJob?.numOpenError <= 1000 ? (<span><span>: {allErrors.length} open  |  </span><span>{childJob?.numOpenError - allErrors.length} resolved</span></span>) : ''}
           </Typography>
         ) : ''}
-        <ErrorList flowId={flowId} />
+        {errorType === FILTER_KEYS.RETRIES ? <RetryList flowId={flowId} /> : <ErrorList flowId={flowId} errorsInRun={flowJobId} />}
       </DrawerContent>
     </RightDrawer>
   );

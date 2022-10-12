@@ -311,10 +311,11 @@ export function* getImportSampleData({ importId }) {
 
   if (!resource) return;
 
+  const connection = yield select(selectors.resource, 'connections', resource._connectionId);
   const { assistant, file, sampleData, _connectorId } = resource;
   const { type } = file || {};
 
-  if (assistant && assistant !== 'financialforce' && !(FILE_PROVIDER_ASSISTANTS.includes(assistant))) {
+  if (getHttpConnector(connection?.http?._httpConnectorId) || (assistant && assistant !== 'financialforce' && !(FILE_PROVIDER_ASSISTANTS.includes(assistant)))) {
     // get assistants sample data
     const assistantSampleData = yield select(selectors.assistantPreviewData, importId);
 

@@ -104,13 +104,13 @@ export default function SelectDependentResource({resources = emptySet, selectedR
   }, [initalValue]);
 
   const buttonName = useMemo(() => {
-    const filterChecked = Array.isArray(checked) ? checked.filter(item => resources.find(r => r._id === item)) : [];
+    const filterChecked = Array.isArray(checked) ? checked.filter(item => resources.find(r => r.id === item.id)) : [];
 
     if (!checked || !filterChecked.length) {
       return 'Step';
     }
     if (filterChecked.length === 1) {
-      return resources.find(r => r._id === filterChecked[0])?.name;
+      return resources.find(r => r.id === filterChecked[0].id)?.name;
     }
 
     return `${filterChecked.length} resources selected`;
@@ -131,7 +131,7 @@ export default function SelectDependentResource({resources = emptySet, selectedR
   }, [checked, resources]);
   const toggleAllSelection = useCallback(event => {
     event.stopPropagation();
-    if (checked.length === 0) {
+    if (checked.length !== resources.length) {
       setChecked(resources);
     } else setChecked([]);
   }, [checked.length, resources]);

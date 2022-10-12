@@ -195,12 +195,12 @@ describe('getPreviewStageData util', () => {
     },
     {
       name: 'parse',
-      data: {
+      data: [{
         users: [{
           id: '123',
           name: 'user1',
         }],
-      },
+      }],
     }],
   };
 
@@ -256,6 +256,33 @@ describe('getPreviewStageData util', () => {
       url: 'https://celigohelp.zendesk.com/api/v2/users.json',
       body: '{"users": [{id: "123", name: "user1"}]}',
     });
+  });
+  test('should return parse stage data from previewData when stage is parse stage and group stage is not available', () => {
+    expect(getPreviewStageData(previewData, 'parse')).toEqual({
+      users: [{
+        id: '123',
+        name: 'user1',
+      }],
+    });
+  });
+  test('should return group stage data from previewData when stage is parse stage and group stage is available', () => {
+    previewData.stages.push({
+      name: 'group',
+      data: [
+        [{
+          users: [{
+            id: '123',
+            name: 'user1',
+          }],
+        }],
+      ],
+    });
+    expect(getPreviewStageData(previewData, 'parse')).toEqual([{
+      users: [{
+        id: '123',
+        name: 'user1',
+      }],
+    }]);
   });
 });
 

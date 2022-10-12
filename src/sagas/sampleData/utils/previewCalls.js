@@ -20,6 +20,7 @@ export function* pageProcessorPreview({
   flowId,
   _pageProcessorId,
   _pageProcessorDoc,
+  routerId,
   previewType,
   editorId,
   resourceType = 'exports',
@@ -30,7 +31,7 @@ export function* pageProcessorPreview({
   runOffline = false,
   addMockData,
 }) {
-  if (!flowId || !_pageProcessorId) return;
+  if (!flowId || (!_pageProcessorId && !routerId)) return;
 
   const { merged } = yield select(selectors.resourceData, 'flows', flowId, SCOPES.VALUE);
   const { prePatches } = yield select(selectors.editor, editorId);
@@ -110,37 +111,6 @@ export function* pageProcessorPreview({
     delete pageProcessorMap[_pageProcessorId];
   }
 
-  if (flow.routers && flow.routers.some(r => r.id === _pageProcessorId)) {
-    delete flow.pageProcessors;
-    const router = flow.routers.find(r => r.id === _pageProcessorId);
-
-    if (router?.branches?.length) {
-      // make record pass through the router's first branch by removing all filters
-      router.routeRecordsTo = 'all_matching_branches';
-      router.routeRecordsUsing = 'input_filters';
-      if (router.branches[0].pageProcessors?.length) {
-        updatedPageProcessorId = uniqId;
-        router.branches[0].pageProcessors[0].type = 'import';
-        router.branches[0].pageProcessors[0]._importId = uniqId;
-        // Delete existing _exportId which gets added when the PP is a lookup and we mock it as import to get flowInputData
-        // Ref bug : IO-27378
-        delete router.branches[0].pageProcessors[0]._exportId;
-        delete router.branches[0].pageProcessors[0].setupInProgress;
-        delete router.branches[0].inputFilter;
-      } else {
-        router.branches[0].pageProcessors = [{type: 'import', _importId: uniqId }];
-        delete router.branches[0].inputFilter;
-        updatedPageProcessorId = uniqId;
-      }
-    } else if (!router.branches) {
-      router.branches = [{pageProcessors: [{type: 'import', _importId: uniqId }]}];
-      updatedPageProcessorId = uniqId;
-    }
-    pageProcessorMap[updatedPageProcessorId] = {
-      doc: {_id: updatedPageProcessorId},
-    };
-  }
-
   if (previewType === 'flowInput') {
     // make the _pageProcessor as import so that BE calculates flow data till that processor
     const updatePageProcessorToImport = pageProcessor => {
@@ -183,7 +153,14 @@ export function* pageProcessorPreview({
     }
   }
 
-  const body = { flow, _pageProcessorId: updatedPageProcessorId, pageGeneratorMap, pageProcessorMap, includeStages };
+  const body = {
+    flow,
+    _pageProcessorId: updatedPageProcessorId,
+    ...(routerId && {_routerId: routerId}),
+    pageGeneratorMap,
+    pageProcessorMap,
+    includeStages,
+  };
 
   const isRunOfflineConfigured = runOffline && Object.values(pageGeneratorMap)
     .some(
@@ -209,6 +186,7 @@ export function* pageProcessorPreview({
       return yield call(pageProcessorPreview, {
         flowId,
         _pageProcessorId,
+        routerId,
         _pageProcessorDoc,
         previewType,
         editorId,
@@ -276,6 +254,7 @@ export function* exportPreview({
     path = `/integrations/${flow._integrationId}/exports/preview`;
   } else {
     path = '/exports/preview';
+    body._flowId = flowId;
   }
 
   try {

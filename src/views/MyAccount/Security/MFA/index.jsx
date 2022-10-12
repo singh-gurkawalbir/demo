@@ -12,8 +12,10 @@ import actions from '../../../../actions';
 import MFASetup from './Setup';
 import useNotifySetupSuccess from './useNotifySetupSuccess';
 import EditMFAConfiguration from './EditConfiguration';
-import infoText from '../../infoText';
-// import AccountSettings from './AccountSettings';
+import NotificationToaster from '../../../../components/NotificationToaster';
+import { MFA_URL } from '../../../../constants';
+import infoText from '../../../../components/Help/infoText';
+import AccountSettings from './AccountSettings';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -58,6 +60,9 @@ const useStyles = makeStyles(theme => ({
       minHeight: '100px !important',
     },
   },
+  mfaIncompleteWarning: {
+    margin: theme.spacing(2),
+  },
 }));
 
 function MFAConfiguration() {
@@ -76,7 +81,7 @@ function MyUserSettings() {
   const mfaEnabled = useSelector(state => selectors.isMFAEnabled(state));
   const mfaUserSettings = useSelector(state => selectors.mfaUserSettings(state));
   const isMFASetupComplete = useSelector(state => selectors.isMFASetupComplete(state));
-
+  const isMFASetupIncomplete = useSelector(selectors.isMFASetupIncomplete);
   const [isMFAEnabled, setIsMFAEnabled] = useState(false);
 
   const handleEnableMFA = useCallback(() => {
@@ -97,9 +102,13 @@ function MyUserSettings() {
       <div className={classes.mfaSwitch}>
         <Typography variant="body2" className={classes.content}> Enable MFA </Typography>
         <Help title="Enable MFA" helpKey="mfa.enable" className={classes.helpTextButton} />
-        <CeligoSwitch onChange={handleEnableMFA} checked={isMFAEnabled} />
+        <CeligoSwitch
+          onChange={handleEnableMFA}
+          checked={isMFASetupIncomplete || isMFAEnabled}
+          disabled={isMFASetupIncomplete}
+          tooltip="Off/On" />
       </div>
-      { isMFAEnabled ? (
+      { isMFAEnabled || isMFASetupIncomplete ? (
         <div className={classes.mfaConfig}>
           <MFAConfiguration />
         </div>
@@ -113,6 +122,7 @@ function MFADetails() {
   const dispatch = useDispatch();
   const areUserSettingsLoaded = useSelector(selectors.areUserSettingsLoaded);
   const isAccountOwnerOrAdmin = useSelector(state => selectors.isAccountOwnerOrAdmin(state));
+  const isMFASetupIncomplete = useSelector(selectors.isMFASetupIncomplete);
 
   useEffect(() => {
     if (!areUserSettingsLoaded) {
@@ -120,15 +130,18 @@ function MFADetails() {
     }
   }, [areUserSettingsLoaded, dispatch]);
 
-  // TODO: Account settings will be added in Phase 2
-
-  if (isAccountOwnerOrAdmin) {
+  if (isAccountOwnerOrAdmin && !isMFASetupIncomplete) {
     return (
-      <div className={classes.collapseContainer}>
-        <CollapsableContainer title="My user" forceExpand className={classes.userSettingsContainer}>
-          { areUserSettingsLoaded ? <MyUserSettings /> : <Spinner centerAll /> }
-        </CollapsableContainer>
-      </div>
+      <>
+        <div className={classes.collapseContainer}>
+          <CollapsableContainer title="My user" forceExpand className={classes.userSettingsContainer}>
+            { areUserSettingsLoaded ? <MyUserSettings /> : <Spinner centerAll /> }
+          </CollapsableContainer>
+        </div>
+        <div className={classes.collapseContainer}>
+          <AccountSettings />
+        </div>
+      </>
     );
   }
 
@@ -139,6 +152,22 @@ function MFADetails() {
   );
 }
 
+const EnableMFANotification = () => {
+  const classes = useStyles();
+  const isMFASetupIncomplete = useSelector(selectors.isMFASetupIncomplete);
+
+  if (!isMFASetupIncomplete) return null;
+
+  return (
+    <NotificationToaster variant="warning" size="large" className={classes.mfaIncompleteWarning}>
+      <span className={classes.content}>
+        You are required to enable MFA before you can continue in this account.
+        <b><a target="_blank" rel="noreferrer" href={MFA_URL}> Learn more</a>.</b>
+      </span>
+    </NotificationToaster>
+  );
+};
+
 export default function MFA() {
   const classes = useStyles();
 
@@ -148,6 +177,7 @@ export default function MFA() {
   return (
     <div className={classes.root}>
       <PanelHeader title="Multifactor authentication (MFA)" infoText={infoText.MFA} />
+      <EnableMFANotification />
       <MFADetails />
     </div>
   );
