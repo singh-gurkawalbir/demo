@@ -244,6 +244,37 @@ describe('Flow sample data utility sagas', () => {
 
         expect(generateFileParserOptionsFromResource(httpCsvResource)).toEqual(expectedOptions);
       });
+      test('should return csv parse rules object incase of csv http file adaptor resource', () => {
+        const httpFileAdaptorCsvResource = {
+          _id: 'export-123',
+          name: 'Gdrive export',
+          adaptorType: 'HTTPExport',
+          assistant: 'googledrive',
+          file: {
+            type: 'csv',
+            csv: {
+              columnDelimiter: ',',
+              rowDelimiter: ' ',
+              hasHeaderRow: false,
+              trimSpaces: true,
+              rowsToSkip: 0,
+            },
+            groupByFields: ['column0'],
+          },
+        };
+        const expectedOptions = {
+          columnDelimiter: ',',
+          hasHeaderRow: false,
+          rowDelimiter: ' ',
+          rowsToSkip: 0,
+          trimSpaces: true,
+          groupByFields: ['column0'],
+          groupEmptyValues: true,
+          sortByFields: [],
+        };
+
+        expect(generateFileParserOptionsFromResource(httpFileAdaptorCsvResource)).toEqual(expectedOptions);
+      });
       test('should return xml parse rules object incase of xml file resource', () => {
         const ftpXmlResource = {
           _id: 'export-123',
@@ -291,6 +322,55 @@ describe('Flow sample data utility sagas', () => {
         };
 
         expect(generateFileParserOptionsFromResource(ftpXmlResource)).toEqual(expectedOptions);
+      });
+      test('should return xml parse rules object incase of xml http file adaptor resource', () => {
+        const httpFileAdaptorCsvResource = {
+          _id: 'export-123',
+          name: 'Gdrive export',
+          adaptorType: 'HTTPExport',
+          assistant: 'googledrive',
+          file: {
+            type: 'xml',
+            resourcePath: '/',
+          },
+          parsers: [
+            {
+              type: 'xml',
+              version: '1',
+              rules: {
+                V0_json: false,
+                trimSpaces: true,
+                stripNewLineChars: true,
+                attributePrefix: 'name',
+                textNodeName: 'locations',
+                listNodes: [
+                  '/addresses', '/names',
+                ],
+                includeNodes: [
+                  '/city/pin', '/branch',
+                ],
+                excludeNodes: [
+                  '/desc', '/others',
+                ],
+              },
+            },
+          ],
+        };
+        const expectedOptions = {
+          V0_json: false,
+          attributePrefix: 'name',
+          excludeNodes: ['/desc', '/others'],
+          includeNodes: ['/city/pin', '/branch'],
+          listNodes: ['/addresses', '/names'],
+          resourcePath: undefined,
+          stripNewLineChars: true,
+          textNodeName: 'locations',
+          trimSpaces: true,
+          sortByFields: [],
+          groupByFields: [],
+        };
+
+        expect(generateFileParserOptionsFromResource(httpFileAdaptorCsvResource)).toEqual(expectedOptions);
       });
       test('should return options incase of json with expected json related parse options', () => {
         const ftpJsonResource = {
