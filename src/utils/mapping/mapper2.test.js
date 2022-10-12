@@ -832,12 +832,12 @@ describe('v2 mapping utils', () => {
         },
         {
           key: 'key3',
-          dataType: 'object',
+          dataType: MAPPING_DATA_TYPES.OBJECT,
           generate: 'parent1',
           children: [
             {
               key: 'c1',
-              dataType: 'string',
+              dataType: MAPPING_DATA_TYPES.STRING,
               generate: 'child1',
               extract: 'child1',
             },
