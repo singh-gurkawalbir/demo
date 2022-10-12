@@ -282,6 +282,7 @@ export default (state = {}, action) => {
     inputValue,
     propValue,
     isSettingsPatch,
+    selectedExtractJsonPath,
   } = action;
 
   return produce(state, draft => {
@@ -867,7 +868,7 @@ export default (state = {}, action) => {
                   }];
                 } else if (node.dataType === MAPPING_DATA_TYPES.OBJECTARRAY) {
                   // handle tab view
-                  nodeSubArray[nodeIndexInSubArray] = rebuildObjectArrayNode(node, value, undefined, draft.mapping.extractsTree);
+                  nodeSubArray[nodeIndexInSubArray] = rebuildObjectArrayNode(node, value, undefined, draft.mapping.extractsTree, selectedExtractJsonPath);
                 }
 
                 // array data types do not have direct 'extract' prop
@@ -876,12 +877,12 @@ export default (state = {}, action) => {
                   delete nodeSubArray[nodeIndexInSubArray].hardCodedValue;
                   // object array is already handled in rebuildObjectArrayNode
                   if (node.dataType !== MAPPING_DATA_TYPES.OBJECTARRAY) {
-                    nodeSubArray[nodeIndexInSubArray].extractsArrayHelper = buildExtractsHelperFromExtract(nodeSubArray[nodeIndexInSubArray].extractsArrayHelper, value, undefined, undefined, draft.mapping.extractsTree);
+                    nodeSubArray[nodeIndexInSubArray].extractsArrayHelper = buildExtractsHelperFromExtract(nodeSubArray[nodeIndexInSubArray].extractsArrayHelper, value, undefined, undefined, draft.mapping.extractsTree, selectedExtractJsonPath);
                   }
                 }
               } else if (node.dataType !== MAPPING_DATA_TYPES.OBJECT || node.copySource === 'yes') {
                 node.extract = value;
-                node.sourceDataType = isSettingsPatch ? node.sourceDataType : getSelectedExtractDataTypes(draft.mapping.extractsTree, value)[0] || MAPPING_DATA_TYPES.STRING;
+                node.sourceDataType = isSettingsPatch ? node.sourceDataType : getSelectedExtractDataTypes({extractsTree: draft.mapping.extractsTree, selectedValue: value, selectedExtractJsonPath})[0] || MAPPING_DATA_TYPES.STRING;
               }
             }
           } else if (node.isRequired) {

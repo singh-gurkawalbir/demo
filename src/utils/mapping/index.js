@@ -643,7 +643,7 @@ export const getCombinedExtract = helper => {
   }, []);
 };
 
-// fetch source datatype from the extracthelper Array
+// fetch source datatype from the extract helper array
 export const getExtractDataType = helper => {
   if (!helper || !helper.length) return [];
 
@@ -657,25 +657,29 @@ export const getExtractDataType = helper => {
 };
 
 // util for fetching the the correct datatype value of a selected node
-export const getSelectedExtractDataTypes = (extractsTreeNodeArr, selectedValuePath, selectedDataType = []) => {
-  if (!extractsTreeNodeArr || !extractsTreeNodeArr[0]) {
+export const getSelectedExtractDataTypes = ({
+  extractsTree,
+  selectedValue,
+  selectedDataType = [],
+  selectedExtractJsonPath}) => {
+  if (!extractsTree || !extractsTree[0]) {
     return selectedDataType;
   }
-  const extractsTreeNode = extractsTreeNodeArr[0];
+  const extractsTreeNode = extractsTree[0];
 
   if (isEmpty(extractsTreeNode) || !extractsTreeNode.children?.length) return selectedDataType;
 
-  if (selectedValuePath === '$') {
+  if (selectedValue === '$') {
     selectedDataType.push(MAPPING_DATA_TYPES.OBJECT);
-  } else if (selectedValuePath === '$[*]') {
+  } else if (selectedValue === '$[*]') {
     selectedDataType.push(MAPPING_DATA_TYPES.OBJECTARRAY);
   } else {
-    const selectedValue = selectedValuePath.replace(/(\$\.)|(\$\[\*\]\.)/g, '');
+    const selectedValuePath = selectedExtractJsonPath || (selectedValue.replace(/(\$\.)|(\$\[\*\]\.)/g, ''));
 
     extractsTreeNode.children.forEach(node => {
       const {dataType, jsonPath} = node;
 
-      if (selectedValue === jsonPath) {
+      if (selectedValuePath === jsonPath) {
         let dataTypeValue;
 
         switch (dataType) {
@@ -698,7 +702,7 @@ export const getSelectedExtractDataTypes = (extractsTreeNodeArr, selectedValuePa
       }
 
       if (node.children) {
-        getSelectedExtractDataTypes([node], selectedValue, selectedDataType);
+        getSelectedExtractDataTypes({extractsTree: [node], selectedValue, selectedDataType, selectedExtractJsonPath});
       }
     });
   }
@@ -708,7 +712,7 @@ export const getSelectedExtractDataTypes = (extractsTreeNodeArr, selectedValuePa
 
 // this util takes in the existing helper array and new source field
 // and adds/updates the helper array accordingly
-export const buildExtractsHelperFromExtract = (existingExtractsArray = [], sourceField, formKey, newExtractObj, extractsTree) => {
+export const buildExtractsHelperFromExtract = (existingExtractsArray = [], sourceField, formKey, newExtractObj, extractsTree, selectedExtractJsonPath) => {
   if (!sourceField) return [];
 
   const splitExtracts = sourceField?.split(',') || [];
@@ -735,11 +739,11 @@ export const buildExtractsHelperFromExtract = (existingExtractsArray = [], sourc
       // add missing extracts in existingExtractsArray which are newly added by the user and copy settings if found at same index
       toReturn.push({...removedSources[existingExtractsArray[i].extract],
         extract: uniqueExtract,
-        sourceDataType: getSelectedExtractDataTypes(extractsTree, e)[0] || MAPPING_DATA_TYPES.STRING});
+        sourceDataType: getSelectedExtractDataTypes({extractsTree, selectedValue: e, selectedExtractJsonPath})[0] || MAPPING_DATA_TYPES.STRING});
     } else {
       // add extract
       toReturn.push(formKey ? newExtractObj : {extract: uniqueExtract,
-        sourceDataType: getSelectedExtractDataTypes(extractsTree, e)[0] || MAPPING_DATA_TYPES.STRING});
+        sourceDataType: getSelectedExtractDataTypes({extractsTree, selectedValue: e, selectedExtractJsonPath})[0] || MAPPING_DATA_TYPES.STRING});
     }
   });
 
@@ -886,7 +890,7 @@ export const constructNodeWithEmptySource = node => {
 
 // this util is for object array data type nodes when multiple extracts are given,
 // to reconstruct the whole children array
-export const rebuildObjectArrayNode = (node, extract = '', prevActiveExtract, extractsTree) => {
+export const rebuildObjectArrayNode = (node, extract = '', prevActiveExtract, extractsTree, selectedExtractJsonPath) => {
   if (isEmpty(node) || node.dataType !== MAPPING_DATA_TYPES.OBJECTARRAY) return node;
 
   let clonedNode = {...node};
@@ -901,7 +905,7 @@ export const rebuildObjectArrayNode = (node, extract = '', prevActiveExtract, ex
     return (childNode.parentExtract || '') === previousFirstExtract;
   }) || [];
 
-  clonedNode.extractsArrayHelper = buildExtractsHelperFromExtract(clonedNode.extractsArrayHelper, extract, undefined, undefined, extractsTree);
+  clonedNode.extractsArrayHelper = buildExtractsHelperFromExtract(clonedNode.extractsArrayHelper, extract, undefined, undefined, extractsTree, selectedExtractJsonPath);
   const hasNoExtract = isEmpty(clonedNode.extractsArrayHelper);
 
   const {activeTab, activeExtract} = getFirstActiveTab(clonedNode);

@@ -198,11 +198,11 @@ export default function Mapper2ExtractsTypeableSelect({
     setIsFocused(true);
   }, []);
 
-  const patchField = useCallback((propValue, newValue) => {
+  const patchField = useCallback((propValue, newValue, jsonPath) => {
     // on blur, patch the extracts tree with empty input so all values in the
     // dropdown will be visible
     dispatch(actions.mapping.v2.patchExtractsFilter('', ''));
-    if (propValue !== newValue) { onBlur(newValue); }
+    if (propValue !== newValue) { onBlur(newValue, jsonPath); }
   }, [dispatch, onBlur]);
 
   const handleBlur = useCallback(event => {
