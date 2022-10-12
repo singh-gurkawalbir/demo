@@ -26,13 +26,11 @@ const useStyles = makeStyles(theme => ({
   boldErrorsCount: {
     fontWeight: 'bold',
   },
-  removeBottomLine: {
-    borderBottom: 0,
-  },
-  title: {
-    flexGrow: 1,
-    color: theme.palette.secondary.main,
-    wordBreak: 'break-word',
+  drawerErrorTitle: {
+    borderBottom: 'none',
+    '&>.MuiTypography-root': {
+      alignSelf: 'flex-start',
+    },
   },
   errorDetailsDrawerContent: {
     overflowY: 'hidden',
@@ -159,7 +157,7 @@ export default function ErrorDetailsDrawer({ flowId }) {
   const endedAt = childJob?.endedAt;
   const Title = () => (
     <>
-      <Typography variant="h4" className={classes.title} >{`Errors: ${resourceName}`}</Typography>
+      {`Errors: ${resourceName}`}
       {endedAt && <DrawerHeaderSubTitle>Run completed: <CeligoTimeAgo date={endedAt} /></DrawerHeaderSubTitle>}
     </>
   );
@@ -172,7 +170,7 @@ export default function ErrorDetailsDrawer({ flowId }) {
       ]}
       width="full"
       onClose={handleClose}>
-      <DrawerHeader className={classes.removeBottomLine} title={<Title />} handleClose={handleDrawerClose} hideBackButton>
+      <DrawerHeader className={classes.drawerErrorTitle} title={<Title />} handleClose={handleDrawerClose} hideBackButton>
         <ErrorDrawerAction flowId={flowId} onChange={handleErrorTypeChange} errorType={errorType} />
       </DrawerHeader>
       <Tabs flowId={flowId} onChange={handleErrorTypeChange} />
