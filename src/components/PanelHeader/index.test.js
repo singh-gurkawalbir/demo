@@ -48,4 +48,9 @@ describe('Testsuite for Panel Header', () => {
     expect(screen.getByText(/Testing InfoText/i)).toBeInTheDocument();
     expect(screen.getByText(/Testing Children/i)).toBeInTheDocument();
   });
+  test('should test the panel header when children has a value of type string, title and placement but no info text', async () => {
+    await initPanelheader({children: 'Testing Children', title: 'Testing Title', infoText: '', placement: 'right'});
+    expect(screen.getByRole('heading', {name: /Testing Title/i})).toBeInTheDocument();
+    expect(screen.getByText(/Testing Children/i)).toBeInTheDocument();
+  });
 });
