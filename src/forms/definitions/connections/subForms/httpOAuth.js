@@ -2,6 +2,9 @@ export default {
   fieldMap: {
     'http._iClientId': {
       fieldId: 'http._iClientId',
+      addTitle: 'Create iClient',
+      editTitle: 'Edit iClient',
+      disabledTitle: 'Select an iClient to allow editing.',
       label: 'OAuth 2.0 client',
       required: true,
       filter: { provider: 'custom_oauth2' },
