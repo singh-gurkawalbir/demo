@@ -85,6 +85,9 @@ export default {
       type: 'selectresource',
       resourceType: 'connections',
       label: 'Connection',
+      addTitle: 'Add Connection',
+      editTitle: 'Edit connection',
+      disabledTitle: 'Select a connection to allow editing',
       defaultValue: r => (r && r._connectionId) || '',
       required: true,
       validWhen: {
