@@ -61,7 +61,7 @@ export default function DynaNSSavedSearch(props) {
   const [searchType, setSearchType] = useState('public');
   // Use this state to set Search type for the first time
   const [isSearchTypeSet, setIsSearchTypeSet] = useState(false);
-
+  const [resetSearchIdValue, setResetSearchIdValue] = useState(false);
   const {
     value,
     connectionId,
@@ -85,7 +85,12 @@ export default function DynaNSSavedSearch(props) {
   const handleChange = evt => {
     // Resets value on change of search type
     onFieldChange(id, '');
-    setSearchType(evt.target.value);
+    const newValue = evt.target.value;
+
+    if (newValue === 'public') setResetSearchIdValue(true);
+    else setResetSearchIdValue(false);
+
+    setSearchType(newValue);
   };
 
   const { data } = useSelectorMemo(selectors.makeOptionsFromMetadata, connectionId, commMetaPath);
@@ -159,6 +164,7 @@ export default function DynaNSSavedSearch(props) {
               {...searchIdOptions}
               {...props}
               ignoreValueUnset
+              resetValue={resetSearchIdValue}
               urlToOpen={savedSearchUrl}
               className={classes.dynaNsInternalID}
               helpKey="export.netsuite.restlet.searchId"
