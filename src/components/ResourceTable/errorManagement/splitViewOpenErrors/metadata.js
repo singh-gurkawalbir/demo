@@ -7,6 +7,7 @@ import SelectClassification from '../cells/SelectClassification';
 import SelectDate from '../cells/SelectDate';
 import Classification from '../cells/Classification';
 import SelectAllErrors from '../cells/SelectAllErrors';
+import CodeCell from '../cells/CodeCell';
 import CeligoTimeAgo from '../../../CeligoTimeAgo';
 import TextOverflowCell from '../../../TextOverflowCell';
 import ErrorMessage from '../cells/ErrorMessage';
@@ -22,13 +23,6 @@ export default {
       );
 
       return errorFilter?.activeErrorId === rowData.errorId;
-    },
-    IsThisCurrentNavItem: ({ rowData }) => {
-      const errorFilter = useSelector(
-        state => selectors.filter(state, FILTER_KEYS.OPEN), shallowEqual
-      );
-
-      return errorFilter?.currentNavItem === rowData.errorId;
     },
   },
   useColumns: () => [
@@ -69,7 +63,7 @@ export default {
     {
       key: 'code',
       heading: 'Code',
-      Value: ({rowData: r}) => <TextOverflowCell message={r.code} />,
+      Value: ({rowData: r}) => <CodeCell message={r.code} />,
       width: '15%',
     },
     {

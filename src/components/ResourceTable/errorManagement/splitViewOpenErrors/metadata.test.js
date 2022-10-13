@@ -45,7 +45,6 @@ async function initDownloadErrors() {
       },
     });
     const isActive = actions.additionalConfigs.IsActiveRow({ rowData: {}});
-    const isNavItem = actions.additionalConfigs.IsThisCurrentNavItem({ rowData: {}});
 
     return (
       <>
@@ -80,7 +79,6 @@ async function initDownloadErrors() {
           {selectDateValue}
         </div>
         <span>isActive: {isActive}</span>
-        <span>isNavItem: {isNavItem}</span>
       </>
     );
   };

@@ -11,7 +11,7 @@ import Help from '../../../Help';
 const useStyles = makeStyles({
   wrapperSelectFilter: {
     display: 'flex',
-    alignItems: 'flex-start',
+    alignItems: 'center',
     whiteSpace: 'nowrap',
   },
   helpIcon: {
@@ -109,7 +109,8 @@ export default function MultiSelectColumnFilter({
           helpKey={helpKey}
           caption={helpKey}
           className={classes.helpIcon}
-        />
+          disablePortal={false}
+          placement="left-end" />
       )}
     </div>
   );

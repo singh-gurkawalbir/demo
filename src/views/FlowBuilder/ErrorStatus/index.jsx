@@ -10,6 +10,7 @@ import Spinner from '../../../components/Spinner';
 import actions from '../../../actions';
 import { FILTER_KEYS } from '../../../utils/errorManagement';
 import TextButton from '../../../components/Buttons/TextButton';
+import { isNewId } from '../../../utils/resource';
 
 const useStyles = makeStyles(theme => ({
   statusAppBlock: {
@@ -71,7 +72,9 @@ export default function ErrorStatus({ count, isNew, flowId, resourceId }) {
    * clears the errorDetails, retryStatus and respective tab filters on unmount
   */
   useEffect(() => {
-    dispatch(actions.errorManager.retryStatus.requestPoll({ flowId, resourceId}));
+    if (flowId && resourceId && !isNewId(flowId)) {
+      dispatch(actions.errorManager.retryStatus.requestPoll({ flowId, resourceId}));
+    }
 
     return () => {
       dispatch(actions.errorManager.retryStatus.stopPoll());

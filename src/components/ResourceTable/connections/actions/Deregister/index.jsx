@@ -43,6 +43,7 @@ export default {
           {
             label: 'Deregister',
             onClick: deregisterConnection,
+            error: true,
           },
           {
             label: 'Cancel',

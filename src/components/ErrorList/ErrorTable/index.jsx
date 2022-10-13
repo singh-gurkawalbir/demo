@@ -1,7 +1,7 @@
 import { makeStyles } from '@material-ui/core/styles';
 import { Divider } from '@material-ui/core';
 import clsx from 'clsx';
-import React, { useMemo, useCallback, useEffect, useRef } from 'react';
+import React, { useMemo, useCallback, useEffect, useRef, useState } from 'react';
 import { useSelector, shallowEqual, useDispatch } from 'react-redux';
 import actions from '../../../actions';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
@@ -14,6 +14,7 @@ import ErrorDetailsPanel from './ErrorDetailsPanel';
 import ErrorTableFilters from './ErrorTableFilters';
 import FetchErrorsHook from './hooks/useFetchErrors';
 import { useEditRetryConfirmDialog } from './hooks/useEditRetryConfirmDialog';
+import { NO_RESULT_SEARCH_MESSAGE } from '../../../constants';
 
 const useStyles = makeStyles(theme => ({
   hide: {
@@ -21,6 +22,8 @@ const useStyles = makeStyles(theme => ({
   },
   errorDetailsTable: {
     wordBreak: 'break-word',
+    overflow: 'auto',
+    height: 'calc(100vh - 320px)',
     '& th': {
       wordBreak: 'normal',
     },
@@ -34,22 +37,18 @@ const useStyles = makeStyles(theme => ({
     flexBasis: '40%',
   },
   errorTable: {
-    height: 'calc(100vh - 320px)',
     wordBreak: 'break-word',
+    overflow: 'auto',
+    height: 'calc(100vh - 320px)',
     '& th': {
       wordBreak: 'normal',
     },
-    flexGrow: 1,
-    display: 'flex',
-    flexDirection: 'column',
-    flexBasis: '60%',
-    overflow: 'auto',
     '&:focus': {
       outline: 'inherit',
     },
   },
   errorTableWithErrorsInRun: {
-    height: 'calc(100vh - 351px)',
+    height: 'calc(100vh - 361px)',
   },
   errorDetailsPanel: {
     flexGrow: 1,
@@ -105,9 +104,14 @@ const ErrorTableWithPanel = ({
 }) => {
   const classes = useStyles();
   const tableRef = useRef();
+  const drawerRef = useRef();
+  const [scrollPosition, setScrollPosition] = useState(0);
   let hasFilter;
   const hasErrors = useSelector(state =>
     selectors.hasResourceErrors(state, { flowId, resourceId, isResolved })
+  );
+  const retryStatus = useSelector(
+    state => selectors.retryStatus(state, flowId, resourceId)
   );
   const filter = useSelector(state => selectors.filter(state, filterKey));
 
@@ -122,8 +126,8 @@ const ErrorTableWithPanel = ({
   ) {
     hasFilter = true;
   }
-  const emptyErrorMessage = !hasFilter && !isResolved && !hasErrors;
-  const emptyFilterMessage = hasFilter && !isResolved && (!hasErrors || errorsInCurrPage.length === 0);
+  const emptyErrorMessage = !hasFilter && !isResolved && !hasErrors && !(retryStatus === 'inProgress');
+  const emptyFilterMessage = hasFilter && errorsInCurrPage.length === 0;
 
   useEffect(() => {
     const refEle = tableRef?.current;
@@ -137,49 +141,77 @@ const ErrorTableWithPanel = ({
     };
   }, [isSplitView, keydownListener, tableRef]);
 
+  const handleScrollPosition = event => {
+    if (!isResolved) {
+      setScrollPosition((event.target.scrollTop / (event.target.scrollHeight - event.target.offsetHeight)) * 100);
+    }
+  };
+
+  useEffect(() => {
+    if (isSplitView && !isResolved) {
+      tableRef?.current?.scrollTo(0, (scrollPosition / 100) * (tableRef?.current?.scrollHeight - tableRef?.current?.offsetHeight));
+    } else if (!isResolved) {
+      drawerRef?.current?.scrollTo(0, (scrollPosition / 100) * (drawerRef?.current?.scrollHeight - drawerRef?.current?.offsetHeight));
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isSplitView]);
+
   return isSplitView && !isResolved
     ? (
-      <div className={classes.baseFormWithPreview}>
-        {/* eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex */}
-        <div className={clsx(classes.errorTable, {[classes.errorTableWithErrorsInRun]: errorsInRun})} ref={tableRef} tabIndex={0}>
-          <ResourceTable
-            resources={errorsInCurrPage}
-            className={classes.resourceFormWrapper}
-            resourceType="splitViewOpenErrors"
-            actionProps={actionProps}
-            onRowClick={onRowClick}
+      <>
+        <ErrorTableFilters
+          flowId={flowId}
+          resourceId={resourceId}
+          isResolved={isResolved}
+          filterKey={filterKey}
+        />
+        <div className={classes.baseFormWithPreview}>
+          {/* eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex */}
+          <div className={clsx(classes.errorTable, {[classes.errorTableWithErrorsInRun]: errorsInRun})} ref={tableRef} tabIndex={0} onScroll={handleScrollPosition}>
+            <ResourceTable
+              resources={errorsInCurrPage}
+              className={classes.resourceFormWrapper}
+              resourceType="splitViewOpenErrors"
+              actionProps={actionProps}
+              onRowClick={onRowClick}
+            />
+            {emptyErrorMessage && <EmptyErrorMessage />}
+            {emptyFilterMessage && <NoFiltersMessage />}
+          </div>
+          <div className={classes.partition}>
+            <Divider
+              orientation="vertical"
+              className={clsx(classes.divider)}
           />
-          {emptyErrorMessage && <EmptyErrorMessage />}
-          {emptyFilterMessage && <NoFiltersMessage />}
-        </div>
-        <div className={classes.partition}>
-          <Divider
-            orientation="vertical"
-            className={clsx(classes.divider)}
+          </div>
+          <div className={classes.errorDetailsPanel}>
+            <ErrorDetailsPanel
+              errorsInCurrPage={errorsInCurrPage}
+              flowId={flowId}
+              resourceId={resourceId}
+              isResolved={isResolved}
+              errorsInRun={errorsInRun}
           />
+          </div>
         </div>
-        <div className={classes.errorDetailsPanel}>
-          <ErrorDetailsPanel
-            errorsInCurrPage={errorsInCurrPage}
-            flowId={flowId}
-            resourceId={resourceId}
-            isResolved={isResolved}
-            errorsInRun={errorsInRun}
-          />
-        </div>
-      </div>
+      </>
     )
     : (
       <>
-        <ResourceTable
-          resources={errorsInCurrPage}
-          resourceType={filterKey}
-          actionProps={actionProps}
-          className={classes.errorDetailsTable}
-          tableRef={tableRef}
-      />
-        {emptyErrorMessage && <EmptyErrorMessage />}
-        {emptyFilterMessage && <NoFiltersMessage />}
+        <ErrorTableFilters
+          flowId={flowId}
+          resourceId={resourceId}
+          isResolved={isResolved}
+          filterKey={filterKey} />
+        <div className={clsx(classes.errorDetailsTable, {[classes.errorTableWithErrorsInRun]: errorsInRun})} ref={drawerRef} onScroll={handleScrollPosition}>
+          <ResourceTable
+            resources={errorsInCurrPage}
+            resourceType={filterKey}
+            actionProps={actionProps}
+            tableRef={tableRef} />
+          {emptyErrorMessage && <EmptyErrorMessage />}
+          {emptyFilterMessage && <NoFiltersMessage />}
+        </div>
       </>
     );
 };
@@ -198,9 +230,7 @@ const EmptyErrorMessage = () => (
 const NoFiltersMessage = () => (
   <NoResultTypography>
     <br />
-    You don’t have any errors that match the filters you applied.
-    <br />
-    Clear all filters to see any errors for this step.
+    {NO_RESULT_SEARCH_MESSAGE}
   </NoResultTypography>
 );
 
@@ -254,119 +284,73 @@ export default function ErrorTable({
   );
   const isSplitView =
     filterKey === FILTER_KEYS.OPEN && errorFilter.view !== 'drawer';
+  const showRetryDataChangedConfirmDialog = useEditRetryConfirmDialog({flowId, resourceId, isResolved});
+  const keydownListener = useCallback(event => {
+    if (!isSplitView) {
+      return;
+    }
+    const currIndex = errorsInCurrPage.findIndex(eachError => eachError.errorId === errorFilter.activeErrorId);
 
-  const showRetryDataChangedConfirmDialog = useEditRetryConfirmDialog({
-    flowId,
-    resourceId,
-    isResolved,
-  });
-
-  const keydownListener = useCallback(
-    event => {
-      if (!isSplitView) {
+    // up arrow key
+    if (event.keyCode === 38) {
+      event.preventDefault();
+      if (currIndex === 0) {
         return;
       }
-      const currIndex = errorsInCurrPage.findIndex(
-        eachError => eachError.errorId === errorFilter.currentNavItem
-      );
+      showRetryDataChangedConfirmDialog(() => {
+        dispatch(actions.patchFilter(FILTER_KEYS.OPEN, {
+          activeErrorId: errorsInCurrPage[currIndex - 1]?.errorId,
+        }));
+      });
 
-      if (!errorFilter.currentNavItem && currIndex < 0) {
-        dispatch(
-          actions.patchFilter(FILTER_KEYS.OPEN, {
-            currentNavItem: errorsInCurrPage[0].errorId,
-          })
-        );
+      return;
+    }
 
+    // down arrow key
+    if (event.keyCode === 40) {
+      event.preventDefault();
+      if (currIndex === errorsInCurrPage.length - 1) {
         return;
       }
-      // enter key
-      if (event.keyCode === 13) {
-        event.preventDefault();
-        showRetryDataChangedConfirmDialog(() => {
-          dispatch(
-            actions.patchFilter(FILTER_KEYS.OPEN, {
-              activeErrorId: errorFilter.currentNavItem,
-            })
-          );
-        });
+      showRetryDataChangedConfirmDialog(() => {
+        dispatch(actions.patchFilter(FILTER_KEYS.OPEN, {
+          activeErrorId: errorsInCurrPage[currIndex + 1]?.errorId,
+        }));
+      });
+    }
+  }, [errorFilter.activeErrorId, dispatch, errorsInCurrPage, isSplitView, showRetryDataChangedConfirmDialog]);
 
-        return;
-      }
-      // up arrow key
-      if (event.keyCode === 38) {
-        const currIndex = errorsInCurrPage.findIndex(
-          eachError => eachError.errorId === errorFilter.currentNavItem
-        );
-
-        if (currIndex === 0) {
-          return;
-        }
-        dispatch(
-          actions.patchFilter(FILTER_KEYS.OPEN, {
-            currentNavItem: errorsInCurrPage[currIndex - 1]?.errorId,
-          })
-        );
-
-        return;
-      }
-      // down arrow key
-      if (event.keyCode === 40) {
-        const currIndex = errorsInCurrPage.findIndex(
-          eachError => eachError.errorId === errorFilter.currentNavItem
-        );
-
-        if (currIndex === errorsInCurrPage.length - 1) {
-          return;
-        }
-        dispatch(
-          actions.patchFilter(FILTER_KEYS.OPEN, {
-            currentNavItem: errorsInCurrPage[currIndex + 1]?.errorId,
-          })
-        );
-      }
-    },
-    [
-      errorFilter.currentNavItem,
-      dispatch,
-      errorsInCurrPage,
-      isSplitView,
-      showRetryDataChangedConfirmDialog,
-    ]
-  );
-
-  const onRowClick = useCallback(
-    ({ rowData, dispatch, event }) => {
-      if (
-        event?.target?.type !== 'checkbox' &&
-        errorFilter?.activeErrorId !== rowData.errorId
-      ) {
-        showRetryDataChangedConfirmDialog(() => {
-          dispatch(
-            actions.patchFilter(FILTER_KEYS.OPEN, {
-              activeErrorId: rowData.errorId,
-              currentNavItem: rowData.errorId,
-            })
-          );
-        });
-      }
-    },
-    [errorFilter?.activeErrorId, showRetryDataChangedConfirmDialog]
-  );
+  const onRowClick = useCallback(({ rowData, dispatch, event }) => {
+    if (event?.target?.type !== 'checkbox' && errorFilter.activeErrorId !== rowData.errorId) {
+      showRetryDataChangedConfirmDialog(() => {
+        dispatch(actions.patchFilter(FILTER_KEYS.OPEN, {
+          activeErrorId: rowData.errorId,
+        }));
+      });
+    }
+  }, [errorFilter.activeErrorId, showRetryDataChangedConfirmDialog]);
 
   useEffect(() => {
     const currIndex = errorsInCurrPage.findIndex(
       eachError => eachError.errorId === errorFilter.activeErrorId
     );
 
-    if (errorFilter?.activeErrorId !== '' && currIndex < 0 && isSplitView) {
-      dispatch(
-        actions.patchFilter(FILTER_KEYS.OPEN, {
-          activeErrorId: errorsInCurrPage[0]?.errorId,
-          currentNavItem: errorsInCurrPage[0]?.errorId,
-        })
-      );
+    if (errorFilter.activeErrorId !== '' && currIndex < 0 && isSplitView) {
+      dispatch(actions.patchFilter(FILTER_KEYS.OPEN, {
+        activeErrorId: errorsInCurrPage[0]?.errorId,
+      }));
     }
   }, [errorsInCurrPage, errorFilter.activeErrorId, dispatch, isSplitView]);
+
+  useEffect(() => {
+    // when search keyword changes, first error in the page should be selected
+    if (isSplitView) {
+      dispatch(actions.patchFilter(FILTER_KEYS.OPEN, {
+        activeErrorId: errorsInCurrPage[0]?.errorId,
+      }));
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dispatch, errorFilter.keyword]);
 
   return (
     <div className={clsx(classes.errorTableWrapper)}>
@@ -381,13 +365,6 @@ export default function ErrorTable({
         <Spinner centerAll />
       ) : (
         <>
-          <ErrorTableFilters
-            flowId={flowId}
-            resourceId={resourceId}
-            isResolved={isResolved}
-            filterKey={filterKey}
-          />
-
           <ErrorTableWithPanel
             errorsInCurrPage={errorsInCurrPage}
             filterKey={filterKey}

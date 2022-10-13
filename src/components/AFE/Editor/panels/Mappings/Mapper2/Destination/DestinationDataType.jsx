@@ -20,7 +20,6 @@ const useStyles = makeStyles(theme => ({
     border: 'none',
     fontStyle: 'italic',
     color: theme.palette.primary.main,
-    width: theme.spacing(9),
     justifyContent: 'flex-end',
     padding: theme.spacing(0, 0.5),
     '& svg': {
@@ -98,7 +97,7 @@ const useStyles = makeStyles(theme => ({
   },
   listWrapper: {
     minWidth: theme.spacing(20),
-    maxHeight: theme.spacing(32),
+    maxHeight: theme.spacing(37),
     overflowY: 'auto',
   },
   itemRootName: {

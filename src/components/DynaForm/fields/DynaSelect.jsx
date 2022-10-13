@@ -9,6 +9,7 @@ import isLoggableAttr from '../../../utils/isLoggableAttr';
 import { stringCompare } from '../../../utils/sort';
 import CeligoSelect from '../../CeligoSelect';
 import CeligoTruncate from '../../CeligoTruncate';
+import HelpLink from '../../HelpLink';
 import FieldHelp from '../FieldHelp';
 import FieldMessage from './FieldMessage';
 
@@ -284,6 +285,7 @@ export default function DynaSelect(props) {
           {label}
         </FormLabel>
         <FieldHelp {...props} />
+        <HelpLink {...props} />
       </div>
       <FormControl
         key={id}

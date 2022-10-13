@@ -1,8 +1,7 @@
 /* eslint-disable no-param-reassign */
-
 import { cloneDeep, uniq, uniqBy } from 'lodash';
 import jsonPatch from 'fast-json-patch';
-import { BranchPathRegex, GRAPH_ELEMENTS_TYPE, PageProcessorPathRegex } from '../../constants';
+import { BranchPathRegex, GRAPH_ELEMENTS_TYPE, PageProcessorPathRegex, FLOW_SAVE_ASYNC_KEY } from '../../constants';
 import { shortId } from '../string';
 import { setObjectValue } from '../json';
 import messageStore from '../messageStore';
@@ -87,13 +86,18 @@ export const addPageProcessor = (flow, insertAtIndex, branchPath, ppData) => {
         flow.routers = [newRouter, ...flow.routers];
       }
     } else {
-      const pageProcessors = jsonPatch.getValueByPointer(flow, `${branchPath}/pageProcessors`);
+      try {
+        const pageProcessors = jsonPatch.getValueByPointer(flow, `${branchPath}/pageProcessors`);
 
-      if (insertAtIndex === -1) {
-        setObjectValue(flow, `${branchPath}/pageProcessors`, [...pageProcessors, pageProcessor]);
-      } else {
-        pageProcessors.splice(insertAtIndex, 0, pageProcessor);
-        setObjectValue(flow, `${branchPath}/pageProcessors`, pageProcessors);
+        if (insertAtIndex === -1) {
+          setObjectValue(flow, `${branchPath}/pageProcessors`, [...pageProcessors, pageProcessor]);
+        } else {
+          pageProcessors.splice(insertAtIndex, 0, pageProcessor);
+          setObjectValue(flow, `${branchPath}/pageProcessors`, pageProcessors);
+        }
+      } catch (e) {
+        // eslint-disable-next-line no-console
+        console.warn('Getting unexpected error for branchPath: ', branchPath);
       }
     }
   } else {
@@ -680,6 +684,8 @@ export const mergeTerminalToAnEdge = ({ flowDoc, elements, patchSet, sourceEleme
     mergeBetweenTwoPPSteps({flowDoc, targetElement, sourceElement, patchSet});
   }
 };
+
+export const getFlowAsyncKey = flowId => `${flowId}-${FLOW_SAVE_ASYNC_KEY}`;
 
 export const mergeDragSourceWithTarget = (flowDoc, elements, dragNodeId, targetId, patchSet) => {
   const sourceElement = elements[dragNodeId];

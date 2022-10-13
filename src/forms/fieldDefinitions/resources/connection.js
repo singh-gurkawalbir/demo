@@ -1038,6 +1038,18 @@ export default {
     defaultValue: r => (r && r.http && r.http.headers) || '',
     label: 'Configure HTTP headers',
   },
+  'http.type': {
+    label: 'API type',
+    type: 'amazonmwstype',
+    required: true,
+    helpKey: 'amazonmws.connection.http.type',
+    defaultDisabled: r => !isNewId(r?._id),
+    defaultValue: r => isNewId(r?._id) ? '' : (r?.http?.type || 'Amazon-MWS'),
+    skipSort: true,
+    resourceId: r => r?._id,
+    omitWhenHidden: true,
+
+  },
   'http.unencrypted': {
     isLoggable: true,
     type: 'editor',
@@ -2547,14 +2559,6 @@ export default {
     id: 'http.auth.token.tokenPaths',
     type: 'text',
     label: 'Paths to encrypted field in the HTTP response body',
-    defaultValue: r => {
-      const values = r?.http?.auth?.token?.tokenPaths;
-
-      if (Array.isArray(values)) {
-        return values.join(',');
-      }
-
-      return values;
-    },
+    delimiter: ',',
   },
 };

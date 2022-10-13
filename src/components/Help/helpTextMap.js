@@ -125,6 +125,7 @@ export default {
 'Click the <b>Generate token</b> button to have integrator.io fill in an encrypted access token or enter the token generated for you by Paypal. <br>Multiple layers of protection are in place, including AES 256 encryption, to keep your connection\'s token safe. When editing this form later, you must generate this value again; it is stored only when the connection is saved and never displayed as text.',
   'returnly.connection.http.encrypted.apiKey':
 'Please enter your API key here. This can be obtained from the Summary tab in Your Account section.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your API key safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
+  'returnly.connection.http.unencrypted.version': 'Enter the API version. For example 2020-08.',
   '4castplus.connection.http.subdomain':
 'The subdomain is the unique portion of the 4castplus.com address that you visit to log in to your portal.',
   '4castplus.connection.http.unencrypted.username':
@@ -307,6 +308,7 @@ export default {
 'Select your Shopify account version, such as 2020-10. For more information, see <a href="https://shopify.dev/concepts/about-apis/versioning">Shopify API Versioning</a>.',
   'shopify.connection.http.auth.basic.username': 'Login to your Shopify store and navigate to "Apps" section. Click on the respective private app and the API key can be found next to the "Authentication" section.',
   'shopify.connection.http.auth.basic.password': 'Login to your Shopify store and navigate to "Apps" section. Click on the respective private app and the password can be found next to the "Authentication" section.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your password safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
+  'shopify.connection.http.auth.token.token': 'Enter the access token created in the Shopify custom app. For more information, see <a href="https://help.shopify.com/en/manual/apps/custom-apps?shpxid=5ef7b108-7D90-4BAE-ABAB-3CA2FF5EC05E">Shopify Custom app</a>.',
   'concurinvoice.connection.http.unencrypted.username': 'Please enter the value of <b>id</b> which appears in the redirected popup page URL after signin to integrator.io.',
   'concurinvoice.connection.http.encrypted.password': 'Please enter the value of <b>requestToken</b> which appears in the redirected popup page URL after signin to integrator.io.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your password safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'concurinvoice.connection.http.auth.token.token': 'Click the <b>Generate token</b> button to have integrator.io fill in an encrypted access token or enter the token generated for you by Concur Invoice. <br>Multiple layers of protection are in place, including AES 256 encryption, to keep your connection\'s token safe. When editing this form later, you must generate this value again; it is stored only when the connection is saved and never displayed as text.',
@@ -2233,6 +2235,7 @@ if you're using a production account, you'll find your API keys under the 'API M
   'fb.pp.imports.inputFilter':
 'Define an ‘input filter’ here to specify which source records should get processed by the import. i.e. Records that evaluate to true are processed. Records that evaluate to false are ignored (but still passed along to downstream applications in the flow).',
   'mapping.v2.dataType': 'Select the data type of the destination field.',
+  'mapping.v2.sourceDataType': 'The source field data type is automatically assigned when the source field is chosen from the drop-down list or the field mapping type is hardcoded or expression. If you are entering a new field into the source record, use this to assign its data type.',
   'mapping.v2.fieldMappingType': 'Select the type of mapping you want to apply to the destination field:<br><b>• Standard</b>: Send the value of the source field as the value in the destination field.<br><b>• Hard-coded</b>: Set the source field to a defined value for the destination field.<br><b>• Handlebars expression</b>: Build a handlebars expression for the value in the source field to send to the destination field.<br><b>• Lookup</b>: Define a static value-to-value mapping or use the results of a dynamic search to populate the destination field value.<br>See <a href="https://docs.celigo.com/hc/en-us/articles/360019506771-Map-source-record-fields-to-destination">Map source fields to destination</a>.',
   'mapping.v2.useDate': 'Check this box if the destination field is a date type field. Additional options display if this box is checked.',
   'mapping.v2.extractDateFormat': 'Select the date format for the source field',
@@ -2499,9 +2502,15 @@ use the custom option.`,
   'flowGroup.name': 'Provide a logical name for the new flow group and select the flows to include in this group. Keep in mind that flow groups are simply a tool to categorize flows within an integration.',
   'flowGroup.flows': 'Assigning a flow to a group does not impact scheduling or other flow configuration settings that determine when a flow runs. <a href="https://docs.celigo.com/hc/en-us/articles/4416660353819-Organize-flows-into-groups" target="_blank">Learn more</a>.',
   'dynaFormField.subrecord': 'Within the parent record shown, select a subrecord to map the source field to in the import. (Subrecords hold information about a parent record and are meaningful only within that context.) <a href="https://docs.celigo.com/hc/en-us/articles/360016510891-Configure-and-map-NetSuite-subrecords" target="_blank">Learn more</a>.',
+  'dynaFormField.pathToNode': 'Select the JSON path to the line item fields. <a href="https://docs.celigo.com/hc/en-us/articles/360016510891-Configure-and-map-NetSuite-subrecords" target="_blank">Learn more</a>.',
   'userForm.email': 'Enter the email of the user you would like to invite to manage and/or monitor selected integrations.',
   'userForm.integrationsToManage': 'The invited user will have permissions to manage the integrations selected here.',
   'userForm.integrationsToMonitor': 'The invited user will have permissions to monitor the integrations selected here.',
   'userForm.accountSSORequired': 'Switch <b>Require SSO</b> on to require single sign-on (SSO) authentication for this user.',
   'userForm.accountMFARequired': 'Switch <b>Require MFA</b> on to require the user to authenticate with MFA when accessing your account.',
+  'connectorLicense.email': 'This field is read-only. It displays the user’s email.',
+  'connectorLicense.trialEndDate': 'Select the date when the trial subscription expires. The Integration App (IA) owner can edit the field based on changes in the trial subscription.',
+  'connectorLicense.expires': 'Select the date when the subscription license expires. The Integration App (IA) owner can edit the field based on any changes in the subscription license.',
+  'connectorLicense.sandbox': 'This field is read-only. It displays the user environment as production or sandbox based on the subscription license.',
+  'connectorLicense.opts': 'You can add license details in the JSON format. For example, <br /> { <br /> "company" : "xxx" <br /> }',
 };

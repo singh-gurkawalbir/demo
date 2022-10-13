@@ -15,6 +15,7 @@ import {
   get,
 } from 'lodash';
 import { getPathParams } from './pathParamUtils';
+import { getPublishedHttpConnectors } from '../../constants/applications';
 
 const OVERWRITABLE_PROPERTIES = Object.freeze([
   'allowUndefinedResource',
@@ -413,32 +414,6 @@ export function getVersionDetails({ version, assistantData }) {
 
   return { ...versionDetails };
 }
-export function getHFResourceDetails({ resource, assistantData }) {
-  let resourceDetails = {};
-
-  if (
-    !assistantData ||
-    !assistantData.resources ||
-    assistantData.resources.length === 0
-  ) {
-    return resourceDetails;
-  }
-
-  if (resource) {
-    resourceDetails = assistantData.resources.find(r => (r.id === resource || r._id === resource));
-  } else if (assistantData.resources.length === 1) {
-    [resourceDetails] = assistantData.resources;
-  }
-
-  if (resourceDetails && (resourceDetails.resource || resourceDetails.versions)) {
-    resourceDetails = populateDefaults({
-      child: resourceDetails,
-      parent: assistantData,
-    });
-  }
-
-  return { ...resourceDetails };
-}
 
 export function getResourceDetails({ version, resource, assistantData }) {
   let resourceDetails = {};
@@ -461,103 +436,47 @@ export function getResourceDetails({ version, resource, assistantData }) {
   return { ...resourceDetails, headersMetadata: versionDetails.headersMetadata };
 }
 
-export function getHFVersionDetails({ version, resource, assistantData }) {
-  let versionDetails = {};
-  const resourceDetails = getHFResourceDetails({
-    resource,
-    assistantData,
-  });
-
-  if (resourceDetails && resourceDetails.versions) {
-    versionDetails = resourceDetails.versions.find(v => v.version === version || v._id === version);
-
-    if (versionDetails) {
-      versionDetails = populateDefaults({
-        child: versionDetails,
-        parent: resourceDetails,
-      });
-    }
-  }
-
-  return { ...versionDetails, headersMetadata: resourceDetails.headersMetadata };
-}
 export function getExportOperationDetails({
   version,
   resource,
   operation,
   assistantData = {},
 }) {
+  const resourceDetails = getResourceDetails({
+    version,
+    resource,
+    assistantData: assistantData.export,
+  });
   let operationDetails = {};
+
+  if (resourceDetails && resourceDetails.endpoints) {
+    operationDetails = resourceDetails.endpoints.find(
+      op => op.id === operation || op.url === operation
+    );
+
+    if (operationDetails) {
+      if (
+        !operationDetails.supportedExportTypes ||
+        !operationDetails.supportedExportTypes.includes('delta')
+      ) {
+        delete operationDetails.delta;
+      }
+
+      operationDetails = populateDefaults({
+        child: operationDetails,
+        parent: resourceDetails,
+        isChildAnOperation: true,
+      });
+    }
+  }
+
   const headersMetadata = [];
 
-  if (assistantData?.export?.resources?.length) {
-    const versionDetails = getHFVersionDetails({
-      version,
-      resource,
-      assistantData: assistantData.export,
-    });
-
-    if (versionDetails && versionDetails.endpoints) {
-      operationDetails = versionDetails.endpoints.find(
-        op => op.id === operation || op.url === operation
-      );
-
-      if (operationDetails) {
-        if (
-          !operationDetails.supportedExportTypes ||
-          !operationDetails.supportedExportTypes.includes('delta')
-        ) {
-          delete operationDetails.delta;
-        }
-
-        operationDetails = populateDefaults({
-          child: operationDetails,
-          parent: versionDetails,
-          isChildAnOperation: true,
-        });
-      }
-    }
-
-    if (versionDetails?.headersMetadata) {
-      headersMetadata.push(...versionDetails.headersMetadata);
-    }
-    if (operationDetails?.headersMetadata) {
-      headersMetadata.push(...operationDetails.headersMetadata);
-    }
-  } else {
-    const resourceDetails = getResourceDetails({
-      version,
-      resource,
-      assistantData: assistantData.export,
-    });
-
-    if (resourceDetails && resourceDetails.endpoints) {
-      operationDetails = resourceDetails.endpoints.find(
-        op => op.id === operation || op.url === operation
-      );
-
-      if (operationDetails) {
-        if (
-          !operationDetails.supportedExportTypes ||
-          !operationDetails.supportedExportTypes.includes('delta')
-        ) {
-          delete operationDetails.delta;
-        }
-
-        operationDetails = populateDefaults({
-          child: operationDetails,
-          parent: resourceDetails,
-          isChildAnOperation: true,
-        });
-      }
-    }
-
-    if (resourceDetails?.headersMetadata) {
-      headersMetadata.push(...resourceDetails.headersMetadata);
-    }
-    if (operationDetails?.headersMetadata) {
-      headersMetadata.push(...operationDetails.headersMetadata);
-    }
+  if (resourceDetails?.headersMetadata) {
+    headersMetadata.push(...resourceDetails.headersMetadata);
+  }
+  if (operationDetails?.headersMetadata) {
+    headersMetadata.push(...operationDetails.headersMetadata);
   }
 
   return cloneDeep({
@@ -568,217 +487,109 @@ export function getExportOperationDetails({
     headersMetadata,
   });
 }
-
 export function getImportOperationDetails({
   version,
   resource,
   operation,
   assistantData = {},
 }) {
+  const resourceDetails = getResourceDetails({
+    version,
+    resource,
+    assistantData: assistantData.import,
+  });
+  let operationDetails = { sampleData: resourceDetails.sampleData };
+
+  if (resourceDetails && resourceDetails.operations) {
+    operationDetails = resourceDetails.operations.find(op => {
+      if (op.id === operation) {
+        return true;
+      }
+
+      if (isArray(op.url)) {
+        if ([op.method.join(':'), op.url.join(':')].join(':') === operation) {
+          return true;
+        }
+      } else if ([op.method, op.url].join(':') === operation) {
+        return true;
+      }
+
+      return false;
+    });
+
+    if (operationDetails) {
+      operationDetails = populateDefaults({
+        child: operationDetails,
+        parent: resourceDetails,
+        isChildAnOperation: true,
+      });
+
+      if (!operationDetails.howToFindIdentifier) {
+        operationDetails.howToFindIdentifier = {};
+      }
+
+      if (operationDetails.howToFindIdentifier.lookup) {
+        const lookupOperationDetails = getExportOperationDetails({
+          version,
+          resource: operationDetails.howToFindIdentifier.lookup.resource || resource,
+          operation:
+            operationDetails.howToFindIdentifier.lookup.id ||
+            operationDetails.howToFindIdentifier.lookup.url,
+          assistantData,
+        });
+
+        if (lookupOperationDetails.queryParameters) {
+          lookupOperationDetails.queryParameters = lookupOperationDetails.queryParameters.filter(
+            qp =>
+              !(
+                qp.readOnly &&
+                qp.defaultValue &&
+                qp.defaultValue.includes &&
+                qp.defaultValue.includes('{{export.')
+              )
+          );
+        }
+        if (operationDetails.howToFindIdentifier.lookup.resource) {
+          lookupOperationDetails.resource = operationDetails.howToFindIdentifier.lookup.resource;
+        }
+
+        if (operationDetails.howToFindIdentifier.lookup.parameterValues) {
+          Object.keys(
+            operationDetails.howToFindIdentifier.lookup.parameterValues
+          ).forEach(p => {
+            if (lookupOperationDetails.queryParameters) {
+              lookupOperationDetails.queryParameters = lookupOperationDetails.queryParameters.map(
+                qp => {
+                  if (qp.id === p) {
+                    // eslint-disable-next-line no-param-reassign
+                    qp = {
+                      ...qp,
+                      readOnly: true,
+                      defaultValue:
+                        operationDetails.howToFindIdentifier.lookup
+                          .parameterValues[p],
+                    };
+                  }
+
+                  return qp;
+                }
+              );
+            }
+          });
+        }
+
+        operationDetails.lookupOperationDetails = lookupOperationDetails;
+      }
+    }
+  }
+
   const headersMetadata = [];
-  let operationDetails;
 
-  if (assistantData?.import?.resources?.length) {
-    const resourceDetails = getHFResourceDetails({
-      version,
-      resource,
-      assistantData: assistantData.import,
-    });
-    const versionDetails = getHFVersionDetails({
-      version,
-      resource,
-      assistantData: assistantData.import,
-    });
-
-    operationDetails = { sampleData: resourceDetails.sampleData };
-
-    if (versionDetails && versionDetails.operations) {
-      operationDetails = versionDetails.operations.find(op => {
-        if (op.id === operation) {
-          return true;
-        }
-
-        if (isArray(op.url)) {
-          if ([op.method.join(':'), op.url.join(':')].join(':') === operation) {
-            return true;
-          }
-        } else if ([op.method, op.url].join(':') === operation) {
-          return true;
-        }
-
-        return false;
-      });
-
-      if (operationDetails) {
-        operationDetails = populateDefaults({
-          child: operationDetails,
-          parent: versionDetails,
-          isChildAnOperation: true,
-        });
-
-        if (!operationDetails.howToFindIdentifier) {
-          operationDetails.howToFindIdentifier = {};
-        }
-
-        if (operationDetails.howToFindIdentifier.lookup) {
-          const lookupOperationDetails = getExportOperationDetails({
-            version,
-            resource: operationDetails.howToFindIdentifier.lookup.resource || resource,
-            operation:
-              operationDetails.howToFindIdentifier.lookup.id ||
-              operationDetails.howToFindIdentifier.lookup.url,
-            assistantData,
-          });
-
-          if (lookupOperationDetails.queryParameters) {
-            lookupOperationDetails.queryParameters = lookupOperationDetails.queryParameters.filter(
-              qp =>
-                !(
-                  qp.readOnly &&
-                  qp.defaultValue &&
-                  qp.defaultValue.includes &&
-                  qp.defaultValue.includes('{{export.')
-                )
-            );
-          }
-          if (operationDetails.howToFindIdentifier.lookup.resource) {
-            lookupOperationDetails.resource = operationDetails.howToFindIdentifier.lookup.resource;
-          }
-
-          if (operationDetails.howToFindIdentifier.lookup.parameterValues) {
-            Object.keys(
-              operationDetails.howToFindIdentifier.lookup.parameterValues
-            ).forEach(p => {
-              if (lookupOperationDetails.queryParameters) {
-                lookupOperationDetails.queryParameters = lookupOperationDetails.queryParameters.map(
-                  qp => {
-                    if (qp.id === p) {
-                      // eslint-disable-next-line no-param-reassign
-                      qp = {
-                        ...qp,
-                        readOnly: true,
-                        defaultValue:
-                          operationDetails.howToFindIdentifier.lookup
-                            .parameterValues[p],
-                      };
-                    }
-
-                    return qp;
-                  }
-                );
-              }
-            });
-          }
-
-          operationDetails.lookupOperationDetails = lookupOperationDetails;
-        }
-      }
-    }
-
-    if (versionDetails?.headersMetadata) {
-      headersMetadata.push(...versionDetails.headersMetadata);
-    }
-    if (operationDetails?.headersMetadata) {
-      headersMetadata.push(...operationDetails.headersMetadata);
-    }
-  } else {
-    const resourceDetails = getResourceDetails({
-      version,
-      resource,
-      assistantData: assistantData.import,
-    });
-
-    operationDetails = { sampleData: resourceDetails.sampleData };
-
-    if (resourceDetails && resourceDetails.operations) {
-      operationDetails = resourceDetails.operations.find(op => {
-        if (op.id === operation) {
-          return true;
-        }
-
-        if (isArray(op.url)) {
-          if ([op.method.join(':'), op.url.join(':')].join(':') === operation) {
-            return true;
-          }
-        } else if ([op.method, op.url].join(':') === operation) {
-          return true;
-        }
-
-        return false;
-      });
-
-      if (operationDetails) {
-        operationDetails = populateDefaults({
-          child: operationDetails,
-          parent: resourceDetails,
-          isChildAnOperation: true,
-        });
-
-        if (!operationDetails.howToFindIdentifier) {
-          operationDetails.howToFindIdentifier = {};
-        }
-
-        if (operationDetails.howToFindIdentifier.lookup) {
-          const lookupOperationDetails = getExportOperationDetails({
-            version,
-            resource: operationDetails.howToFindIdentifier.lookup.resource || resource,
-            operation:
-              operationDetails.howToFindIdentifier.lookup.id ||
-              operationDetails.howToFindIdentifier.lookup.url,
-            assistantData,
-          });
-
-          if (lookupOperationDetails.queryParameters) {
-            lookupOperationDetails.queryParameters = lookupOperationDetails.queryParameters.filter(
-              qp =>
-                !(
-                  qp.readOnly &&
-                  qp.defaultValue &&
-                  qp.defaultValue.includes &&
-                  qp.defaultValue.includes('{{export.')
-                )
-            );
-          }
-          if (operationDetails.howToFindIdentifier.lookup.resource) {
-            lookupOperationDetails.resource = operationDetails.howToFindIdentifier.lookup.resource;
-          }
-
-          if (operationDetails.howToFindIdentifier.lookup.parameterValues) {
-            Object.keys(
-              operationDetails.howToFindIdentifier.lookup.parameterValues
-            ).forEach(p => {
-              if (lookupOperationDetails.queryParameters) {
-                lookupOperationDetails.queryParameters = lookupOperationDetails.queryParameters.map(
-                  qp => {
-                    if (qp.id === p) {
-                      // eslint-disable-next-line no-param-reassign
-                      qp = {
-                        ...qp,
-                        readOnly: true,
-                        defaultValue:
-                          operationDetails.howToFindIdentifier.lookup
-                            .parameterValues[p],
-                      };
-                    }
-
-                    return qp;
-                  }
-                );
-              }
-            });
-          }
-
-          operationDetails.lookupOperationDetails = lookupOperationDetails;
-        }
-      }
-    }
-
-    if (resourceDetails?.headersMetadata) {
-      headersMetadata.push(...resourceDetails.headersMetadata);
-    }
-    if (operationDetails?.headersMetadata) {
-      headersMetadata.push(...operationDetails.headersMetadata);
-    }
+  if (resourceDetails?.headersMetadata) {
+    headersMetadata.push(...resourceDetails.headersMetadata);
+  }
+  if (operationDetails?.headersMetadata) {
+    headersMetadata.push(...operationDetails.headersMetadata);
   }
 
   return cloneDeep({
@@ -796,9 +607,9 @@ export function convertFromExport({ exportDoc: exportDocOrig, assistantData: ass
   let { version, resource, operation } = exportDoc.assistantMetadata || {};
 
   if (exportDoc?.http) {
-    operation = exportDoc.http._httpConnectorEndpointId || operation;
-    resource = exportDoc.http._httpConnectorResourceId || resource;
-    version = exportDoc.http._httpConnectorVersionId || version;
+    operation = operation || exportDoc.http._httpConnectorEndpointId;
+    resource = resource || exportDoc.http._httpConnectorResourceId;
+    version = version || exportDoc.http._httpConnectorVersionId;
   }
   const { exportType, dontConvert } = exportDoc.assistantMetadata || {};
   const assistantMetadata = {
@@ -1691,9 +1502,9 @@ export function convertFromImport({ importDoc: importDocOrig, assistantData: ass
     importDoc.assistantMetadata || {};
 
   if (importDoc?.http) {
-    operation = importDoc.http._httpConnectorEndpointId || operation;
-    resource = importDoc.http._httpConnectorResourceId || resource;
-    version = importDoc.http._httpConnectorVersionId || version;
+    operation = operation || importDoc.http._httpConnectorEndpointId;
+    resource = resource || importDoc.http._httpConnectorResourceId;
+    version = version || importDoc.http._httpConnectorVersionId;
   }
   const { dontConvert, lookups } = importDoc.assistantMetadata || {};
   let sampleData;
@@ -2462,4 +2273,16 @@ export function shouldLoadAssistantFormForExports(resource, connection) {
 
 export function isEbayFinanceConnection(connection) {
   return connection?.assistant === 'ebayfinance';
+}
+
+export function getPublishedConnectorName(httpConnectorId) {
+  const publishedConnectors = getPublishedHttpConnectors();
+
+  return publishedConnectors?.find(pc => pc._id === httpConnectorId)?.name;
+}
+
+export function getPublishedConnectorId(httpConnectorName) {
+  const publishedConnectors = getPublishedHttpConnectors();
+
+  return publishedConnectors?.find(pc => pc.name === httpConnectorName)?._id;
 }

@@ -1,5 +1,5 @@
 import { deepClone } from 'fast-json-patch';
-import { put, takeLatest, take, call, fork, cancel, select } from 'redux-saga/effects';
+import { put, takeLatest, take, call, fork, cancel, select, takeEvery } from 'redux-saga/effects';
 import actions from '../../../actions';
 import actionTypes from '../../../actions/types';
 import { apiCallWithRetry } from '../../index';
@@ -207,7 +207,7 @@ export function* downloadBlobDocument({ flowId, resourceId, reqAndResKey }) {
 }
 
 export default [
-  takeLatest(actionTypes.ERROR_MANAGER.RETRY_DATA.REQUEST, requestRetryData),
+  takeEvery(actionTypes.ERROR_MANAGER.RETRY_DATA.REQUEST, requestRetryData),
   takeLatest(actionTypes.ERROR_MANAGER.RETRY_DATA.DOWNLOAD, downloadRetryData),
   takeLatest(
     actionTypes.ERROR_MANAGER.RETRY_STATUS.REQUEST_FOR_POLL,

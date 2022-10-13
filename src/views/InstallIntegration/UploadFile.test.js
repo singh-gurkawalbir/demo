@@ -44,7 +44,6 @@ describe('UploadFile UI tests', () => {
     initUploadFile(props);
     expect(screen.getByText('Select template zip file')).toBeInTheDocument();
     expect(screen.getByText(/Upload Integration zip file/i)).toBeInTheDocument();
-    screen.debug();
   });
   test('should make the respective dispatch call and display the uploading message when a file is uploaded', async () => {
     const props = {history, obj: {installIntegration: false}};
