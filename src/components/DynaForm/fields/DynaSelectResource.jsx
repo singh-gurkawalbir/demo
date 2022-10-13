@@ -198,9 +198,9 @@ export default function DynaSelectResource(props) {
     integrationId,
     connectorId,
     flowId,
-    addTitle = '',
-    editTitle = '',
-    disabledTitle = '',
+    addTitle = 'Add connection',
+    editTitle = 'Edit connection ',
+    disabledTitle = 'Select a connection to allow editing',
   } = props;
   const {options} = props;
   const classes = useStyles();
