@@ -1079,6 +1079,7 @@ export default (state = {}, action) => {
       case actionTypes.MAPPING.V2.SEARCH_TREE: {
         if (!draft.mapping) break;
         draft.mapping.searchKey = searchKey;
+        delete draft.mapping.filter;
         break;
       }
 

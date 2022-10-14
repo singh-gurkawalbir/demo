@@ -84,7 +84,7 @@ import {
 } from '../utils/exportPanel';
 import getRoutePath from '../utils/routePaths';
 import { getIntegrationAppUrlName, getTitleFromEdition, getTitleIdFromSection, isIntegrationAppVersion2 } from '../utils/integrationApps';
-import mappingUtil, { applyRequiredFilter, applyMappedFilter, applySearchFilter } from '../utils/mapping';
+import mappingUtil, { applyRequiredFilter, applyMappedFilter, applySearchFilter, countMatches } from '../utils/mapping';
 import responseMappingUtil from '../utils/responseMapping';
 import { suiteScriptResourceKey, isJavaFlow } from '../utils/suiteScript';
 import { stringCompare, comparer } from '../utils/sort';
@@ -5621,13 +5621,13 @@ selectors.filteredV2TreeData = createSelector(
 
     // ToDo: try replacing cloneDeep with something else
     let filteredTreeData = cloneDeep(v2TreeData);
-    const options = {
-      searchCount: 0,
-      expandedKeys: [],
-    };
+    let expandedKeys;
+    let searchCount;
 
     if (searchKey) {
-      filteredTreeData = applySearchFilter(filteredTreeData, lookups, searchKey, options);
+      expandedKeys = [];
+      filteredTreeData = applySearchFilter(filteredTreeData, lookups, searchKey, expandedKeys);
+      searchCount = countMatches(filteredTreeData, searchKey);
     } else if (filter.includes('required') && filter.includes('mapped')) {
       filteredTreeData = applyMappedFilter(filteredTreeData, lookups, true);
     } else if (filter.includes('required')) {
@@ -5636,7 +5636,7 @@ selectors.filteredV2TreeData = createSelector(
       filteredTreeData = applyMappedFilter(filteredTreeData, lookups);
     }
 
-    return {filteredTreeData, searchCount: options.searchCount, expandedKeys: options.expandedKeys};
+    return {filteredTreeData, searchCount, expandedKeys};
   }
 );
 

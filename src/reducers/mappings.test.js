@@ -1235,9 +1235,9 @@ describe('Mappings region selector testcases', () => {
 
   describe('selectors.filteredV2TreeData', () => {
     test('should return empty array if state does not exist', () => {
-      expect(selectors.filteredV2TreeData()).toEqual([]);
-      expect(selectors.filteredV2TreeData(null)).toEqual([]);
-      expect(selectors.filteredV2TreeData({})).toEqual([]);
+      expect(selectors.filteredV2TreeData()).toEqual({filteredTreeData: []});
+      expect(selectors.filteredV2TreeData(null)).toEqual({filteredTreeData: []});
+      expect(selectors.filteredV2TreeData({})).toEqual({filteredTreeData: []});
     });
     test('should return actual v2TreeData if no filter or All Fields filter is applied', () => {
       const state = {
@@ -1257,7 +1257,7 @@ describe('Mappings region selector testcases', () => {
           },
         },
       };
-      const expectedState = [
+      const expectedData = [
         {
           key: 'key1',
           dataType: MAPPING_DATA_TYPES.STRING,
@@ -1266,7 +1266,7 @@ describe('Mappings region selector testcases', () => {
         },
       ];
 
-      expect(selectors.filteredV2TreeData(state)).toEqual(expectedState);
+      expect(selectors.filteredV2TreeData(state)).toEqual({filteredTreeData: expectedData});
     });
     test('should return filtered v2TreeData if Required Fields filter is applied', () => {
       const state = {
@@ -1383,7 +1383,7 @@ describe('Mappings region selector testcases', () => {
         },
       ];
 
-      expect(selectors.filteredV2TreeData(state)).toEqual(expectedData);
+      expect(selectors.filteredV2TreeData(state)).toEqual({filteredTreeData: expectedData});
     });
     test('should return filtered v2TreeData if Mapped Fields filter is applied', () => {
       const state = {
@@ -1552,7 +1552,7 @@ describe('Mappings region selector testcases', () => {
         },
       ];
 
-      expect(selectors.filteredV2TreeData(state)).toEqual(expectedData);
+      expect(selectors.filteredV2TreeData(state)).toEqual({filteredTreeData: expectedData});
     });
     test('should return filtered v2TreeData if both filters are applied', () => {
       const state = {
@@ -1746,7 +1746,137 @@ describe('Mappings region selector testcases', () => {
         },
       ];
 
-      expect(selectors.filteredV2TreeData(state)).toEqual(expectedData);
+      expect(selectors.filteredV2TreeData(state)).toEqual({filteredTreeData: expectedData});
+    });
+    test('should correctly return the search count and expanded keys if search key is present', () => {
+      const state = {
+        session: {
+          mapping: {
+            mapping: {
+              importId: 'imp-123',
+              searchKey: 'parent1',
+              v2TreeData: [
+                {
+                  key: 'key1',
+                  dataType: MAPPING_DATA_TYPES.STRING,
+                  generate: 'id',
+                  isRequired: true,
+                },
+                {
+                  key: 'key2',
+                  dataType: MAPPING_DATA_TYPES.STRING,
+                  generate: 'fname',
+                  extract: 'fname',
+                },
+                {
+                  key: 'key3',
+                  dataType: MAPPING_DATA_TYPES.OBJECT,
+                  generate: 'parent1',
+                  isRequired: true,
+                  children: [
+                    {
+                      key: 'c1',
+                      dataType: MAPPING_DATA_TYPES.STRING,
+                      generate: 'child1',
+                      isRequired: true,
+                    },
+                    {
+                      key: 'c2',
+                      dataType: MAPPING_DATA_TYPES.STRING,
+                      generate: 'child2',
+                      extract: 'child2',
+                    },
+                    {
+                      key: 'c3',
+                      dataType: MAPPING_DATA_TYPES.STRING,
+                      generate: 'child3',
+                    },
+                  ],
+                },
+                {
+                  key: 'key4',
+                  dataType: MAPPING_DATA_TYPES.OBJECT,
+                  generate: 'parent2',
+                  isRequired: true,
+                  children: [
+                    {
+                      key: 'c4',
+                      dataType: MAPPING_DATA_TYPES.STRING,
+                      generate: 'child4',
+                      extract: 'child4',
+                      parentKey: 'key4',
+                      isRequired: true,
+                    },
+                    {
+                      key: 'c5',
+                      dataType: MAPPING_DATA_TYPES.OBJECT,
+                      generate: 'child5',
+                      parentKey: 'key4',
+                      children: [{
+                        key: 'c6',
+                        dataType: MAPPING_DATA_TYPES.STRING,
+                        generate: 'parent1',
+                        extract: 'child6',
+                        parentKey: 'c5',
+                      }],
+                    },
+                  ],
+                },
+              ],
+            },
+          },
+        },
+      };
+      const expectedData = [
+        {
+          key: 'key3',
+          dataType: MAPPING_DATA_TYPES.OBJECT,
+          generate: 'parent1',
+          isRequired: true,
+          children: [
+            {
+              key: 'c1',
+              dataType: MAPPING_DATA_TYPES.STRING,
+              generate: 'child1',
+              isRequired: true,
+            },
+            {
+              key: 'c2',
+              dataType: MAPPING_DATA_TYPES.STRING,
+              generate: 'child2',
+              extract: 'child2',
+            },
+            {
+              key: 'c3',
+              dataType: MAPPING_DATA_TYPES.STRING,
+              generate: 'child3',
+            },
+          ],
+        },
+        {
+          key: 'key4',
+          dataType: MAPPING_DATA_TYPES.OBJECT,
+          generate: 'parent2',
+          isRequired: true,
+          children: [
+            {
+              key: 'c5',
+              dataType: MAPPING_DATA_TYPES.OBJECT,
+              generate: 'child5',
+              parentKey: 'key4',
+              children: [{
+                key: 'c6',
+                dataType: MAPPING_DATA_TYPES.STRING,
+                generate: 'parent1',
+                extract: 'child6',
+                parentKey: 'c5',
+              }],
+            },
+          ],
+        },
+      ];
+
+      expect(selectors.filteredV2TreeData(state)).toEqual({filteredTreeData: expectedData, searchCount: 2, expandedKeys: ['c5', 'key4']});
     });
   });
 });

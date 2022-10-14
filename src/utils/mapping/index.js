@@ -2516,7 +2516,8 @@ export const filterNode = (node, searchKey) => {
   return false;
 };
 
-const parentHasAnyChildMatch = (v2TreeData = [], searchKey, lookups) => {
+// check if any children is matching the searchKey
+export const parentHasAnyChildMatch = (v2TreeData = [], searchKey, lookups) => {
   let matched = false;
 
   forEach(v2TreeData, mapping => {
@@ -2539,7 +2540,7 @@ const parentHasAnyChildMatch = (v2TreeData = [], searchKey, lookups) => {
 };
 
 /* eslint-disable no-param-reassign */
-export const applySearchFilter = (v2TreeData = [], lookups, searchKey, options) => {
+export const applySearchFilter = (v2TreeData = [], lookups, searchKey, expandedKeys = []) => {
   if (isEmpty(v2TreeData) || !searchKey) return v2TreeData;
 
   return v2TreeData.filter(mapping => {
@@ -2554,12 +2555,11 @@ export const applySearchFilter = (v2TreeData = [], lookups, searchKey, options) 
     const parentMatched = filterNode(mapping, searchKey) || !isMappingRowTouched(mapping, lookups);
 
     if (parentMatched) {
-      options.searchCount += 1;
       if (mapping.children?.length) {
         // if parentMatched, then all children should be shown but parent
         // only needs to be expanded if any child is a match
         if (parentHasAnyChildMatch(mapping.children, searchKey, lookups)) {
-          options.expandedKeys.push(mapping.key);
+          expandedKeys.push(mapping.key);
         }
       }
 
@@ -2568,12 +2568,12 @@ export const applySearchFilter = (v2TreeData = [], lookups, searchKey, options) 
 
     if (dataType === MAPPING_DATA_TYPES.OBJECT) {
       // make a recursive call to check the children
-      mapping.children = applySearchFilter(mapping.children, lookups, searchKey, options);
+      mapping.children = applySearchFilter(mapping.children, lookups, searchKey, expandedKeys);
       const someChildrenMatch = !!mapping.children?.length;
 
       // if any child matched, then only parent should be expanded
       if (someChildrenMatch) {
-        options.expandedKeys.push(mapping.key);
+        expandedKeys.push(mapping.key);
       }
 
       // if all children are filtered out, then remove the parent as well
@@ -2582,12 +2582,12 @@ export const applySearchFilter = (v2TreeData = [], lookups, searchKey, options) 
 
     if (dataType === MAPPING_DATA_TYPES.OBJECTARRAY) {
       // make a recursive call to check the children
-      mapping.children = applySearchFilter(mapping.children, lookups, searchKey, options);
+      mapping.children = applySearchFilter(mapping.children, lookups, searchKey, expandedKeys);
       const someChildrenMatch = mapping.children?.some(child => !child.isTabNode);
 
       // if any child matched, then only parent should be expanded
       if (someChildrenMatch) {
-        options.expandedKeys.push(mapping.key);
+        expandedKeys.push(mapping.key);
       }
 
       mapping.extractsWithoutMappings = [];
@@ -2623,6 +2623,22 @@ export const applySearchFilter = (v2TreeData = [], lookups, searchKey, options) 
   });
 };
 /* eslint-enable */
+
+// find the total match count based on filterNode func
+export const countMatches = (v2TreeData = [], searchKey) => {
+  let count = 0;
+
+  v2TreeData.forEach(mapping => {
+    if (filterNode(mapping, searchKey)) {
+      count += 1;
+    }
+    if (mapping.children?.length) {
+      count += countMatches(mapping.children, searchKey);
+    }
+  });
+
+  return count;
+};
 
 // #endregion
 
