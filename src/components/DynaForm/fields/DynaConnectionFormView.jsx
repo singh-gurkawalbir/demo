@@ -94,7 +94,9 @@ export default function FormView(props) {
       newFinalValues['/http/formType'] = 'assistant';
       dispatch(
         actions.analytics.gainsight.trackEvent('CONNECTION_FORM_VIEW', {
-          formView: 'Simple',
+          'Toggle Mode': 'Simple',
+          UserID: getHttpConnector(_httpConnectorId)._userId,
+          Connector: getHttpConnector(_httpConnectorId).name,
         })
       );
     } else {
@@ -103,7 +105,9 @@ export default function FormView(props) {
       newFinalValues['/http/formType'] = 'http';
       dispatch(
         actions.analytics.gainsight.trackEvent('CONNECTION_FORM_VIEW', {
-          formView: 'HTTP',
+          'Toggle Mode': 'HTTP',
+          UserID: getHttpConnector(_httpConnectorId)._userId,
+          Connector: getHttpConnector(_httpConnectorId).name,
         })
       );
     }
