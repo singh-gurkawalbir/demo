@@ -100,7 +100,6 @@ const ErrorTableWithPanel = ({
   keydownListener,
   onRowClick,
   errorsInRun,
-  flowJobId,
 }) => {
   const classes = useStyles();
   const tableRef = useRef();
@@ -163,7 +162,6 @@ const ErrorTableWithPanel = ({
           resourceId={resourceId}
           isResolved={isResolved}
           filterKey={filterKey}
-          flowJobId={flowJobId}
         />
         <div className={classes.baseFormWithPreview}>
           {/* eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex */}
@@ -203,8 +201,7 @@ const ErrorTableWithPanel = ({
           flowId={flowId}
           resourceId={resourceId}
           isResolved={isResolved}
-          filterKey={filterKey}
-          flowJobId={flowJobId} />
+          filterKey={filterKey} />
         <div className={clsx(classes.errorDetailsTable, {[classes.errorTableWithErrorsInRun]: errorsInRun})} ref={drawerRef} onScroll={handleScrollPosition}>
           <ResourceTable
             resources={errorsInCurrPage}
@@ -387,7 +384,6 @@ export default function ErrorTable({
             keydownListener={keydownListener}
             onRowClick={onRowClick}
             errorsInRun={errorsInRun}
-            flowJobId={flowJobId}
           />
         </>
       )}

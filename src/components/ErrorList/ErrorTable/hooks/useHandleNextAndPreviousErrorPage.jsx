@@ -12,20 +12,15 @@ const emptySet = [];
 const emptyObj = {};
 
 export const useHandleNextAndPreviousErrorPage = ({
-  flowId, resourceId, isResolved, filterKey, flowJobId,
+  flowId, resourceId, isResolved, filterKey,
 }) => {
   const dispatch = useDispatch();
 
-  const childJob = useSelector(
-    state => selectors.filter(state, `${flowId}-${flowJobId}-${resourceId}`), shallowEqual
-  );
   const fetchErrors = useFetchErrors({
     filterKey,
     flowId,
     resourceId,
     isResolved,
-    flowJobId,
-    childJob,
   });
   const errorConfig = useMemo(() => ({
     flowId,

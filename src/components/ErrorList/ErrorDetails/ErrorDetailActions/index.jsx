@@ -59,6 +59,19 @@ export default function Actions({
 
   const retryData = useSelector(state => selectors.retryData(state, retryId));
 
+  const handleRetry = useCallback(() => {
+    dispatch(
+      actions.errorManager.flowErrorDetails.retry({
+        flowId,
+        resourceId,
+        retryIds: [retryId],
+        isResolved,
+      })
+    );
+
+    handleNextError(true);
+  }, [dispatch, flowId, handleNextError, isResolved, resourceId, retryId]);
+
   const updateRetry = useCallback(closeAfterSave => {
     dispatch(
       actions.errorManager.retryData.updateRequest({
@@ -136,7 +149,9 @@ export default function Actions({
   if (mode === 'editRetry' && !isFlowDisabled) {
     return (
       <ActionGroup>
-        <FilledButton disabled={isResolved && !isRetryDataChanged} onClick={handleSaveAndRetry}>
+        <FilledButton
+          disabled={isResolved && !isRetryDataChanged}
+          onClick={isRetryDataChanged ? handleSaveAndRetry : handleRetry}>
           {retryButtonLabel}
         </FilledButton>
         <FilledButton disabled={!isRetryDataChanged} onClick={updateRetry}>
