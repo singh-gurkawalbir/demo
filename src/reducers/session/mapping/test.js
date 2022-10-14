@@ -3532,6 +3532,34 @@ describe('mapping reducer', () => {
       expect(state).toEqual(expectedState);
     });
   });
+  describe('MAPPING.V2.UPDATE_FILTER action', () => {
+    test('should be an empty array if no-value/empty-array is passed', () => {
+      const initialState = {
+        mapping: {},
+      };
+      const state1 = reducer(initialState, actions.mapping.v2.updateFilter([]));
+      const state2 = reducer(initialState, actions.mapping.v2.updateFilter());
+
+      expect(state1.mapping.filter).toEqual([]);
+      expect(state2.mapping.filter).toEqual([]);
+    });
+    test('should contain the filter value', () => {
+      const initialState = {
+        mapping: {},
+      };
+      const state = reducer(initialState, actions.mapping.v2.updateFilter(['required']));
+
+      expect(state.mapping.filter).toEqual(['required']);
+    });
+    test('should contain two filter values if two filters are applied', () => {
+      const initialState = {
+        mapping: {},
+      };
+      const state = reducer(initialState, actions.mapping.v2.updateFilter(['required', 'mapped']));
+
+      expect(state.mapping.filter).toEqual(['required', 'mapped']);
+    });
+  });
   describe('MAPPING.V2.PATCH_FIELD action', () => {
     test('should do nothing if row is not found', () => {
       const initialState = {

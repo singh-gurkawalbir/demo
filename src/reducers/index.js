@@ -5611,6 +5611,26 @@ selectors.mappingEditorNotification = (state, editorId) => {
   };
 };
 
+selectors.filteredV2TreeData = state => {
+  const v2TreeData = selectors.v2MappingsTreeData(state);
+  const { filter = [], lookups = [] } = selectors.mapping(state);
+
+  if (isEmpty(v2TreeData) || isEmpty(filter) || filter.includes('all')) return v2TreeData;
+
+  // ToDo: try replacing cloneDeep with something else
+  let filteredTreeData = cloneDeep(v2TreeData);
+
+  if (filter.includes('required') && filter.includes('mapped')) {
+    filteredTreeData = applyMappedFilter(filteredTreeData, lookups, true);
+  } else if (filter.includes('required')) {
+    filteredTreeData = applyRequiredFilter(filteredTreeData);
+  } else {
+    filteredTreeData = applyMappedFilter(filteredTreeData, lookups);
+  }
+
+  return filteredTreeData;
+};
+
 // #endregion MAPPING END
 
 // DO NOT DELETE, might be needed later
@@ -7251,24 +7271,4 @@ selectors.mkFlowResourcesRetryStatus = () => {
       return finalResourcesRetryStatus;
     }
   );
-};
-
-selectors.filteredV2TreeData = state => {
-  const v2TreeData = selectors.v2MappingsTreeData(state);
-  const { filter = [], lookups = [] } = selectors.mapping(state);
-
-  if (isEmpty(v2TreeData) || isEmpty(filter) || filter.includes('all')) return v2TreeData;
-
-  // ToDo: try replacing cloneDeep with something else
-  let filteredTreeData = cloneDeep(v2TreeData);
-
-  if (filter.includes('required') && filter.includes('mapped')) {
-    filteredTreeData = applyMappedFilter(filteredTreeData, lookups, true);
-  } else if (filter.includes('required')) {
-    filteredTreeData = applyRequiredFilter(filteredTreeData);
-  } else {
-    filteredTreeData = applyMappedFilter(filteredTreeData, lookups);
-  }
-
-  return filteredTreeData;
 };
