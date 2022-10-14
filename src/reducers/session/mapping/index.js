@@ -18,9 +18,6 @@ import {
   autoCreateDestinationStructure,
   isDropDragPositionSame,
   deleteNonRequiredMappings,
-  searchTree,
-  filterKey,
-  filterNode,
   updateChildrenJSONPath,
   getCombinedExtract,
   buildExtractsHelperFromExtract,
@@ -243,9 +240,7 @@ export default (state = {}, action) => {
     type,
     key,
     field,
-    index,
     searchKey,
-    showKey,
     shiftIndex,
     value,
     mappings,
@@ -1082,64 +1077,8 @@ export default (state = {}, action) => {
         break;
 
       case actionTypes.MAPPING.V2.SEARCH_TREE: {
-        if (!draft.mapping || !draft.mapping.v2TreeData) break;
-
-        // set the searchKey when showKey is false
-        if (!showKey) draft.mapping.searchKey = searchKey;
-        if (searchKey === undefined && !showKey) break;
-
-        // clear the state if searchKey is empty
-        if (searchKey === '') {
-          delete draft.mapping.filteredKeys;
-          delete draft.mapping.highlightedIndex;
-          break;
-        }
-        const items = {
-          firstIndex: -1,   // stores the first index where match was found
-          expandedKeys: [],   // stores which fields need to be expanded
-          filteredKeys: [],   // stores the list of key of all the matched fields
-          tabChange: [],    // stores the all tab changes required in case of objectArray field
-        };
-
-        // search for the matching values in the generate of the mapping fields
-        if (!showKey && searchKey) {
-          searchTree(draft.mapping.v2TreeData, searchKey, filterNode, items);
-          draft.mapping.expandedKeys = items.expandedKeys;
-          // list of all the field key that matched
-          draft.mapping.filteredKeys = items.filteredKeys;
-          // index for the field to be highlightied
-          draft.mapping.highlightedIndex = items.filteredKeys ? 0 : -1;
-        // if showKey is true then search for the highlighted key to be shown
-        } else if (showKey) {
-          // current highlighted key
-          const key = draft.mapping.filteredKeys[draft.mapping.highlightedIndex];
-
-          searchTree(draft.mapping.v2TreeData, key, filterKey, items);
-          // merging two lists then
-          // removing duplicates by converting to set and then to list
-          draft.mapping.expandedKeys = [...new Set([...draft.mapping.expandedKeys, ...items.expandedKeys])];
-        }
-        // all tab changes if required in objectarray
-        items.tabChange.forEach(item => {
-          const {key, tabValue, parentExtract} = item;
-          const { node } = findNodeInTree(draft.mapping.v2TreeData, 'key', key);
-
-          if (isEmpty(node)) return;
-          hideOtherTabRows(node, parentExtract, undefined, true);
-          node.activeTab = tabValue;
-        });
-        break;
-      }
-
-      case actionTypes.MAPPING.V2.UPDATE_HIGHLIGHTED_INDEX: {
         if (!draft.mapping) break;
-
-        draft.mapping.highlightedIndex = index;
-        // clearing the seleteFields list if index is -1
-        if (index === -1) {
-          draft.mapping.filteredKeys = [];
-          delete draft.mapping.searchKey;
-        }
+        draft.mapping.searchKey = searchKey;
         break;
       }
 
@@ -1190,31 +1129,6 @@ selectors.v2MappingsExtractsTree = state => {
   }
 
   return state.mapping.extractsTree || emptyArr;
-};
-
-selectors.highlightedKey = state => {
-  if (!state || !state.mapping) {
-    return '';
-  }
-  const {highlightedIndex, filteredKeys} = state.mapping;
-
-  return filteredKeys?.[highlightedIndex] || '';
-};
-
-selectors.highlightedIndex = state => {
-  if (!state || !state.mapping) {
-    return -1;
-  }
-
-  return state.mapping.highlightedIndex;
-};
-
-selectors.filteredKeys = state => {
-  if (!state || !state.mapping) {
-    return emptyArr;
-  }
-
-  return state.mapping.filteredKeys || emptyArr;
 };
 
 selectors.searchKey = state => {
