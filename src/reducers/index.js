@@ -84,7 +84,7 @@ import {
 } from '../utils/exportPanel';
 import getRoutePath from '../utils/routePaths';
 import { getIntegrationAppUrlName, getTitleFromEdition, getTitleIdFromSection, isIntegrationAppVersion2 } from '../utils/integrationApps';
-import mappingUtil, { applyRequiredFilter, applyMappedFilter } from '../utils/mapping';
+import mappingUtil, { applyRequiredFilter, applyMappedFilter, applySearchFilter, countMatches } from '../utils/mapping';
 import responseMappingUtil from '../utils/responseMapping';
 import { suiteScriptResourceKey, isJavaFlow } from '../utils/suiteScript';
 import { stringCompare, comparer } from '../utils/sort';
@@ -5611,25 +5611,34 @@ selectors.mappingEditorNotification = (state, editorId) => {
   };
 };
 
-selectors.filteredV2TreeData = state => {
-  const v2TreeData = selectors.v2MappingsTreeData(state);
-  const { filter = [], lookups = [] } = selectors.mapping(state);
+selectors.filteredV2TreeData = createSelector(
+  state => selectors.v2MappingsTreeData(state),
+  state => selectors.mapping(state).filter,
+  state => selectors.mapping(state).lookups,
+  state => selectors.mapping(state).searchKey,
+  (v2TreeData, filter = [], lookups = [], searchKey) => {
+    if (isEmpty(v2TreeData) || (!searchKey && (isEmpty(filter) || filter.includes('all')))) return {filteredTreeData: v2TreeData};
 
-  if (isEmpty(v2TreeData) || isEmpty(filter) || filter.includes('all')) return v2TreeData;
+    // ToDo: try replacing cloneDeep with something else
+    let filteredTreeData = cloneDeep(v2TreeData);
+    let expandedKeys;
+    let searchCount;
 
-  // ToDo: try replacing cloneDeep with something else
-  let filteredTreeData = cloneDeep(v2TreeData);
+    if (searchKey) {
+      expandedKeys = [];
+      filteredTreeData = applySearchFilter(filteredTreeData, lookups, searchKey, expandedKeys);
+      searchCount = countMatches(filteredTreeData, searchKey);
+    } else if (filter.includes('required') && filter.includes('mapped')) {
+      filteredTreeData = applyMappedFilter(filteredTreeData, lookups, true);
+    } else if (filter.includes('required')) {
+      filteredTreeData = applyRequiredFilter(filteredTreeData);
+    } else {
+      filteredTreeData = applyMappedFilter(filteredTreeData, lookups);
+    }
 
-  if (filter.includes('required') && filter.includes('mapped')) {
-    filteredTreeData = applyMappedFilter(filteredTreeData, lookups, true);
-  } else if (filter.includes('required')) {
-    filteredTreeData = applyRequiredFilter(filteredTreeData);
-  } else {
-    filteredTreeData = applyMappedFilter(filteredTreeData, lookups);
+    return {filteredTreeData, searchCount, expandedKeys};
   }
-
-  return filteredTreeData;
-};
+);
 
 // #endregion MAPPING END
 

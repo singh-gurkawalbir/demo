@@ -93,7 +93,7 @@ export default function MapperPanelTitle({editorId, title, helpKey}) {
 
   // to toggle if SearchBar to be shown
   const handleToggleSearch = useCallback(() => {
-    dispatch(actions.mapping.v2.searchTree({ searchKey: '', showKey: false }));
+    dispatch(actions.mapping.v2.searchTree(''));
   }, [dispatch]);
 
   // return the old title if its not mapper2 view
