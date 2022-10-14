@@ -89,8 +89,7 @@ export default function FetchErrorsHook({
   });
 
   useEffect(() => {
-    if (!errorObj.status ||
-      (flowJobId && errorFilter.flowJobId !== flowJobId)) {
+    if (!errorObj.status) {
       fetchErrors();
     }
 
@@ -109,8 +108,7 @@ export default function FetchErrorsHook({
     errorObj.outdated,
     fetchErrors,
     errorObj.status,
-    flowJobId,
-    errorFilter.flowJobId]);
+  ]);
 
   useEffect(() => {
     dispatch(

@@ -78,11 +78,7 @@ export default function ErrorStatus({ count, isNew, flowId, resourceId }) {
 
     return () => {
       dispatch(actions.errorManager.retryStatus.stopPoll());
-      dispatch(actions.errorManager.flowErrorDetails.clear({ flowId, resourceId }));
       dispatch(actions.errorManager.retries.clear({flowId, resourceId}));
-      dispatch(actions.clearFilter(FILTER_KEYS.OPEN));
-      dispatch(actions.clearFilter(FILTER_KEYS.RESOLVED));
-      dispatch(actions.clearFilter(FILTER_KEYS.RETRIES));
     };
   }, [dispatch, flowId, resourceId]);
 

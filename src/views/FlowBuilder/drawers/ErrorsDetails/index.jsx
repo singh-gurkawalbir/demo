@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { isEmpty } from 'lodash';
-import { useSelector, shallowEqual } from 'react-redux';
+import { useSelector, shallowEqual, useDispatch } from 'react-redux';
 import { makeStyles, Typography } from '@material-ui/core';
 import { useHistory, useRouteMatch, useLocation, matchPath } from 'react-router-dom';
 import { selectors } from '../../../../reducers';
@@ -16,6 +16,7 @@ import { buildDrawerUrl, drawerPaths } from '../../../../utils/rightDrawer';
 import { useEditRetryConfirmDialog } from '../../../../components/ErrorList/ErrorTable/hooks/useEditRetryConfirmDialog';
 import RetryList from '../../../../components/JobDashboard/RetryList';
 import { FILTER_KEYS } from '../../../../utils/errorManagement';
+import actions from '../../../../actions';
 
 const emptySet = [];
 
@@ -40,6 +41,7 @@ export default function ErrorDetailsDrawer({ flowId }) {
   const history = useHistory();
   const classes = useStyles();
   const match = useRouteMatch();
+  const dispatch = useDispatch();
   const { pathname } = useLocation();
   const [changeTab, setChangeTab] = useState(true);
 
@@ -137,6 +139,13 @@ export default function ErrorDetailsDrawer({ flowId }) {
       history.replace(changedErrorUrl);
     }
   }, [matchErrorDrawerPathWithFilter, history, match.url, matchErrorDrawerPath]);
+
+  useEffect(() => () => {
+    dispatch(actions.errorManager.flowErrorDetails.clear({ flowId, resourceId }));
+    dispatch(actions.clearFilter(FILTER_KEYS.OPEN));
+    dispatch(actions.clearFilter(FILTER_KEYS.RESOLVED));
+    dispatch(actions.clearFilter(FILTER_KEYS.RETRIES));
+  }, [dispatch, flowId, resourceId]);
 
   useEffect(() => {
     if (isOpenErrorsLoaded && !allErrors.length && errorType === 'open' && changeTab) {
