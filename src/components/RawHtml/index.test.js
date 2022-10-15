@@ -14,7 +14,7 @@ describe('RawHtml UI tests', () => {
     };
 
     renderWithProviders(<RawHtml {...props} />);
-    expect(screen.getByText(/This is not working/i)).toBeInTheDocument(); // '[object Object]' is the text displayed when the html passed as props is displayed on browser//
+    expect(screen.getByText(/This is not working/i)).toBeInTheDocument();
   });
   test('should pass the render when allowedTags prop is null', () => {
     const props = {
