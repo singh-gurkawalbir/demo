@@ -1,8 +1,9 @@
-import React, { useCallback, useRef, useEffect } from 'react';
+import React, { useCallback, useRef } from 'react';
 import { useDispatch } from 'react-redux';
 import clsx from 'clsx';
 import {makeStyles } from '@material-ui/core/styles';
 import { TableRow } from '@material-ui/core';
+import useScrollIntoView from '../../../hooks/useScrollIntoView';
 
 const useStyles = makeStyles(theme => ({
   tableRow: {
@@ -15,9 +16,9 @@ const useStyles = makeStyles(theme => ({
   rowSelected: {
     '&$selected': {
       borderLeft: `6px solid ${theme.palette.primary.main}`,
-      backgroundColor: theme.palette.primary.lightest,
+      backgroundColor: theme.palette.primary.lightest2,
       '&:hover': {
-        backgroundColor: theme.palette.primary.lightest,
+        backgroundColor: theme.palette.primary.lightest2,
       },
     },
   },
@@ -34,15 +35,10 @@ const useStyles = makeStyles(theme => ({
 export default function DataRow({ children, rowData, onRowOver, onRowOut, className, additionalConfigs, onRowClick }) {
   const classes = useStyles();
   const dispatch = useDispatch();
-  const isActiveRow = additionalConfigs?.IsActiveRow && additionalConfigs.IsActiveRow({ rowData });
-  const isCurrentNavItem = additionalConfigs?.IsThisCurrentNavItem && additionalConfigs?.IsThisCurrentNavItem({ rowData });
+  const {IsActiveRow, IsCurrentNavItem} = additionalConfigs || {};
   const rowRef = useRef();
 
-  useEffect(() => {
-    if (rowRef?.current && isActiveRow) {
-      rowRef?.current?.scrollIntoView({behavior: 'smooth', block: 'nearest'});
-    }
-  }, [rowRef, isActiveRow]);
+  useScrollIntoView(rowRef, IsActiveRow?.({ rowData }), 'nearest');
 
   const handleMouseOver = useCallback(() => {
     onRowOver(rowData, dispatch);
@@ -60,7 +56,7 @@ export default function DataRow({ children, rowData, onRowOver, onRowOut, classN
     <TableRow
       hover
       className={clsx(classes.tableRow, className, {
-        [classes.currentNavItem]: isCurrentNavItem,
+        [classes.currentNavItem]: IsCurrentNavItem?.({ rowData }),
         [classes.pointer]: !!onRowClick,
       })}
       classes={{
@@ -72,7 +68,7 @@ export default function DataRow({ children, rowData, onRowOver, onRowOut, classN
       onMouseOut={onRowOut && handleMouseOut}
       onBlur={onRowOut && handleMouseOut}
       onClick={onRowClick && handleClick}
-      selected={isActiveRow}
+      selected={IsActiveRow?.({ rowData })}
       ref={rowRef}
     >
       {children}

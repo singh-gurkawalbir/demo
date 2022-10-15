@@ -101,6 +101,7 @@ export function* _requestExportPreviewData({ formKey, executeProcessors = false 
     path = `/integrations/${integrationId}/exports/preview`;
   } else {
     path = '/exports/preview';
+    body._flowId = flowId;
   }
 
   const recordSize = yield select(selectors.sampleDataRecordSize, resourceId);

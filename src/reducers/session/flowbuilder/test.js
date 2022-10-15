@@ -334,33 +334,6 @@ describe('Selectors test cases', () => {
       expect(selectors.fbDragStepIdInProgress(state, '123')).toEqual(dragStepIdInProgress);
     });
   });
-  describe('isFlowSaveInProgress test cases', () => {
-    test('should not throw exception for invalid arguments', () => {
-      expect(selectors.isFlowSaveInProgress()).toBeFalsy();
-      expect(selectors.isFlowSaveInProgress({})).toBeFalsy();
-      expect(selectors.isFlowSaveInProgress({}, '123')).toBeFalsy();
-      expect(selectors.isFlowSaveInProgress('123')).toBeFalsy();
-      expect(selectors.isFlowSaveInProgress({}, '')).toBeFalsy();
-    });
-    test('should return false if status is not "saving"', () => {
-      const state = {
-        123: {status: 'failed'},
-        124: {status: 'error'},
-        125: {status: 'received'},
-      };
-
-      expect(selectors.isFlowSaveInProgress(state, '123')).toBeFalsy();
-      expect(selectors.isFlowSaveInProgress(state, '123')).toBeFalsy();
-      expect(selectors.isFlowSaveInProgress(state, '123')).toBeFalsy();
-    });
-    test('should return true if status is "saving"', () => {
-      const state = {
-        123: {status: 'saving'},
-      };
-
-      expect(selectors.isFlowSaveInProgress(state, '123')).toBeTruthy();
-    });
-  });
   describe('fbRouterStepsInfo test cases', () => {
     test('should not throw exception for invalid arguments', () => {
       expect(selectors.fbRouterStepsInfo()).toEqual({configuredCount: 0, unconfiguredCount: 0});

@@ -13,6 +13,7 @@ import {applicationsList} from '../../constants/applications';
 import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
 import NoResultTypography from '../../components/NoResultTypography';
 import PageContent from '../../components/PageContent';
+import { getPublishedConnectorName } from '../../utils/assistant';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -72,6 +73,7 @@ export default function ApplicationsList({ filter }) {
     connectors.forEach(c => { applications = applications.concat(c.applications); });
     templates.forEach(t => { applications = applications.concat(t.applications); });
     connectorsMetadata.forEach(c => { applications = applications.concat(c.id); });
+    applications = applications.map(app => getPublishedConnectorName(app) || app);
     applications = applications.filter(a => !CONNECTORS_TO_IGNORE.includes(a) && !WEBHOOK_ONLY_APPLICATIONS.includes(a));
     applications = uniq(applications.filter(Boolean));
 

@@ -65,18 +65,24 @@ describe('UI test cases for DynaSortAndGroup', () => {
     await waitFor(() => expect(screen.queryByText(/randomString/i)).toBeInTheDocument());
     await waitFor(() => expect(screen.queryByText(/randomObject/i)).toBeInTheDocument());
   });
-  test('should display the options in the select component for a http or file type export', async () => {
+  test('should display the options in the select component for a http, rdbms and file type export', async () => {
     renderWithProviders(<DynaSortAndGroup resourceId={resourceId} formKey={formKey} resourceSubType="http" />, {initialStore});
     userEvent.click(screen.queryByText(/Select.../i));
     await waitFor(() => expect(screen.queryByText(/randomString/i)).toBeInTheDocument());
-    await waitFor(() => expect(screen.queryByText(/randomObject/i)).not.toBeInTheDocument());
   });
-  test('should display the options as columns in the select component for a rdbms type export', async () => {
+  test('should not display the object in the select component as options for a http or rdbms type export', async () => {
     renderWithProviders(<DynaSortAndGroup resourceId={resourceId} formKey={formKey} value={value} resourceSubType="rdbms" />, {initialStore});
     expect(screen.queryByText(/selectedValue/i)).toBeInTheDocument();
     userEvent.click(screen.queryByText(/selectedValue/i));
-    await waitFor(() => expect(screen.queryByText(/Column2/i)).toBeInTheDocument());
-    await waitFor(() => expect(screen.queryByText(/randomString/i)).not.toBeInTheDocument());
+    await waitFor(() => expect(screen.queryByText(/randomString/i)).toBeInTheDocument());
+    await waitFor(() => expect(screen.queryByText(/randomObject/i)).not.toBeInTheDocument());
+  });
+  test('should display the object in the select component as options for a file type export', async () => {
+    renderWithProviders(<DynaSortAndGroup resourceId={resourceId} formKey={formKey} value={value} />, {initialStore});
+    expect(screen.queryByText(/selectedValue/i)).toBeInTheDocument();
+    userEvent.click(screen.queryByText(/selectedValue/i));
+    await waitFor(() => expect(screen.queryByText(/randomString/i)).toBeInTheDocument());
+    await waitFor(() => expect(screen.queryByText(/randomObject/i)).toBeInTheDocument());
   });
   test('should dispatch resourceFormSampleData request if the export has no sampleData', () => {
     renderWithProviders(<DynaSortAndGroup resourceId="export-id-2" formKey={formKey} />, {initialStore});

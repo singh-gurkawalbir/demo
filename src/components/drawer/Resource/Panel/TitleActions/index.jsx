@@ -2,6 +2,7 @@ import React, { useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import { makeStyles, Divider } from '@material-ui/core';
 import { useRouteMatch, useHistory } from 'react-router-dom';
+import clsx from 'clsx';
 import InstallationGuideIcon from '../../../../icons/InstallationGuideIcon';
 import { KBDocumentation } from '../../../../../utils/connections';
 import DebugIcon from '../../../../icons/DebugIcon';
@@ -10,6 +11,7 @@ import { drawerPaths, buildDrawerUrl } from '../../../../../utils/rightDrawer';
 import {applicationsList} from '../../../../../constants/applications';
 import ApplicationImg from '../../../../icons/ApplicationImg';
 import { TextButton } from '../../../../Buttons';
+import { useSelectorMemo } from '../../../../../hooks';
 
 const useStyles = makeStyles(theme => ({
   appLogo: {
@@ -43,6 +45,12 @@ const useStyles = makeStyles(theme => ({
     height: 24,
     width: 1,
   },
+  httpConnectorGuide: {
+    marginRight: 0,
+    '& $divider': {
+      marginLeft: theme.spacing(1),
+    },
+  },
 }));
 
 export default function TitleActions({ flowId }) {
@@ -53,10 +61,18 @@ export default function TitleActions({ flowId }) {
   const applications = applicationsList();
   const isNew = operation === 'add';
   const hasFlowStepLogsAccess = useSelector(state => selectors.hasLogsAccess(state, id, resourceType, isNew, flowId));
-  const applicationType = useSelector(state => selectors.applicationType(state, resourceType, id));
+  let applicationType = useSelector(state => selectors.applicationType(state, resourceType, id));
   const showApplicationLogo =
     ['exports', 'imports', 'connections'].includes(resourceType) &&
     !!applicationType;
+  const { merged } =
+    useSelectorMemo(
+      selectors.makeResourceDataSelector,
+      resourceType,
+      id
+    ) || {};
+
+  applicationType = merged.http?.formType === 'http' ? 'http' : applicationType;
   const app = applications.find(a => [a.id, a.assistant].includes(applicationType)) || {};
 
   const flowStepDrawerHandler = useCallback(() => {
@@ -68,9 +84,16 @@ export default function TitleActions({ flowId }) {
       {showApplicationLogo && (
       <div className={classes.guideWrapper}>
         {resourceType === 'connections' && (app.helpURL || KBDocumentation[applicationType]) && (
-        <a className={classes.guideLink} href={app.helpURL || KBDocumentation[applicationType]} rel="noreferrer" target="_blank">
+        <a className={clsx(classes.guideLink, {[classes.httpConnectorGuide]: merged.http?._httpConnectorId})} href={app.helpURL || KBDocumentation[applicationType]} rel="noreferrer" target="_blank">
           <InstallationGuideIcon className={classes.guideLinkIcon} />
-          {app.name || applicationType} connection guide
+          {merged.http?._httpConnectorId
+            ? (
+              <>
+                Connection guide
+                <Divider orientation="vertical" className={classes.divider} />
+              </>
+              )
+            : `${app.name || applicationType} connection guide`}
         </a>
         )}
         {hasFlowStepLogsAccess && (

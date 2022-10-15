@@ -8,7 +8,6 @@ import { renderWithProviders } from '../../../test/test-utils';
 describe('text button component test', () => {
   test('text test', () => {
     renderWithProviders(<TextButton />);
-    screen.debug();
   });
   function onClose() {
   }
@@ -20,7 +19,6 @@ describe('text button component test', () => {
         onClick={onClose}>
         Cancel
       </TextButton>);
-    screen.debug();
   });
 
   test('textbutton click working', () => {
@@ -32,7 +30,6 @@ describe('text button component test', () => {
     const Message = screen.getByText('Cancel');
 
     userEvent.click(Message);
-    screen.debug();
   });
 
   test('test passing number', () => {
@@ -44,7 +41,6 @@ describe('text button component test', () => {
     const Message = screen.getByText('123');
 
     userEvent.click(Message);
-    screen.debug();
   });
 
   test('testing by className', () => {

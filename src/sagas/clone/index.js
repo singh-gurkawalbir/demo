@@ -31,7 +31,7 @@ export function* requestPreview({ resourceType, resourceId }) {
 }
 
 export function* createComponents({ resourceType, resourceId }) {
-  const { cMap: connectionMap, stackId: _stackId, data = {} } = yield select(
+  const { cMap: connectionMap = {}, stackId: _stackId, data = {} } = yield select(
     selectors.template,
     `${resourceType}-${resourceId}`
   );

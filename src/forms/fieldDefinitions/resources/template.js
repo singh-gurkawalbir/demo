@@ -1,5 +1,6 @@
 import { templatesList } from '../../../constants/applications';
 import { ABS_URL_VALIDATION_PATTERN } from '../../../constants';
+import { getPublishedConnectorName } from '../../../utils/assistant';
 
 export default {
   name: {
@@ -41,7 +42,7 @@ export default {
     placeholder: 'Choose applications',
     label: 'Applications',
     valueDelimiter: ',',
-    defaultValue: r => (r?.applications) || [],
+    defaultValue: r => (r?.applications || []).map(app => getPublishedConnectorName(app) || app),
     options: [
       {
         items: templatesList(),

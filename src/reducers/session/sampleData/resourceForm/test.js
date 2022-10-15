@@ -1591,4 +1591,46 @@ describe('sampleData getResourceSampleData util function', () => {
     expect(getResourceSampleData(resourceIdSampleData, 'preview')).toEqual(expectedOutput);
     expect(getResourceSampleData(resourceIdSampleData, 'request')).toEqual(expectedOutputForRequest);
   });
+
+  test('should return the group stage data from the resource state when requested for parse stage and group stage is available', () => {
+    const resourceIdSampleData = {
+      status: 'received',
+      data: {
+        parse: [{
+          name: 'Bob',
+          age: 23,
+        }],
+        preview: {
+          name: 'Bob',
+          age: 23,
+        },
+        group: [
+          [{
+            name: 'Bob',
+            age: 23,
+          }],
+        ],
+        request: [{
+          url: 'https://api.mocki.io/v1/awe',
+          method: 'GET',
+        }],
+      },
+    };
+    const expectedOutput = [{
+      name: 'Bob',
+      age: 23,
+    }];
+    const expectedOutputForpreview = {
+      name: 'Bob',
+      age: 23,
+    };
+    const expectedOutputForRequest = [{
+      url: 'https://api.mocki.io/v1/awe',
+      method: 'GET',
+    }];
+
+    expect(getResourceSampleData(resourceIdSampleData, 'parse')).toEqual(expectedOutput);
+    expect(getResourceSampleData(resourceIdSampleData, 'preview')).toEqual(expectedOutputForpreview);
+    expect(getResourceSampleData(resourceIdSampleData, 'request')).toEqual(expectedOutputForRequest);
+  });
 });

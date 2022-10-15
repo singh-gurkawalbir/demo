@@ -53,9 +53,9 @@ export default function CategoryList({ integrationId, flowId }) {
               {name}
             </NavLink>
             {listCollapseState[id] ? (
-              <ArrowUpIcon onClick={handleListClick(id)} />
+              <ArrowUpIcon data-testid="arrow-up-icon" onClick={handleListClick(id)} />
             ) : (
-              <ArrowDownIcon onClick={handleListClick(id)} />
+              <ArrowDownIcon data-testid="arrow-down-icon" onClick={handleListClick(id)} />
             )}
           </ListItem>
           {!!children && !!children.length && (

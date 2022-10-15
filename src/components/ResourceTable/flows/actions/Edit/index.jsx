@@ -5,6 +5,7 @@ import EditIcon from '../../../../icons/EditIcon';
 import { selectors } from '../../../../../reducers';
 import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
 import { flowbuilderUrl } from '../../../../../utils/flows';
+import { useGetTableContext } from '../../../../CeligoTable/TableContext';
 
 export default {
   key: 'editFlow',
@@ -19,7 +20,10 @@ export default {
       selectors.isDataLoader(state, flowId)
     );
     const appName = useSelectorMemo(selectors.integrationAppName, integrationId);
-    const flowBuilderTo = flowbuilderUrl(flowId, integrationId, {isIntegrationApp, appName, isDataLoader});
+    const { childId, sectionId } = useGetTableContext();
+    const flowBuilderTo = flowbuilderUrl(flowId, integrationId, {
+      childId, isIntegrationApp, appName, isDataLoader, sectionId,
+    });
 
     return useCallback(() => {
       history.push(flowBuilderTo);

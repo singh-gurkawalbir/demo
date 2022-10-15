@@ -145,6 +145,17 @@ const useStyles = makeStyles(theme => ({
       width: '100%',
     },
   },
+  italic: {
+    fontStyle: 'italic',
+  },
+  noBorder: {
+    border: 'none',
+    '& svg': {
+      color: theme.palette.text.hint,
+      marginTop: 2,
+      alignSelf: 'flex-start',
+    },
+  },
 }));
 const variantIcon = {
   success: SuccessIcon,
@@ -164,6 +175,8 @@ export default function NotificationToaster(props) {
     onClose,
     variant,
     transparent = false,
+    italic = false,
+    noBorder = false,
     size = 'small',
     ...other
   } = props;
@@ -186,6 +199,8 @@ export default function NotificationToaster(props) {
         classes[size],
         classes.root,
         {[classes.transparent]: transparent},
+        {[classes.italic]: italic},
+        {[classes.noBorder]: noBorder},
         className
       )}
       aria-describedby="client-snackbar"
