@@ -85,6 +85,41 @@ function initTile(props = {}) {
   return renderWithProviders(<Router history={history}><Tile {...props} /></Router>, {initialStore});
 }
 
+const demoTile = {
+  _integrationId: '62bedcdca0f5f21448171ea2',
+  numError: 0,
+  offlineConnections: [],
+  name: 'Clone - demoint',
+  description: 'demo integration',
+  lastModified: '2022-07-05T06:02:56.701Z',
+  sandbox: false,
+  numFlows: 0,
+  _parentId: null,
+  mode: 'install',
+  supportsChild: false,
+  iaV2: false,
+  trialEndDate: '2018-07-25T11:15:51.209Z',
+  _registeredConnectionIds: [
+    '62bd43c87b94d20de64e9ab3',
+    '5e3152806287420d5ce56573',
+  ],
+  key: '62bedcdca0f5f21448171ea2',
+  status: 'is_pending_setup',
+  tag: 'sample tag',
+  flowsNameAndDescription: '',
+  sortablePropType: 0,
+  integration: {
+    permissions: {
+      accessLevel: 'owner',
+      connections: {
+        edit: true,
+      },
+    },
+  },
+  applications: [],
+  pinned: false,
+};
+
 describe('Tile UI tests', () => {
   let mockDispatchFn;
   let useDispatchSpy;
@@ -104,43 +139,10 @@ describe('Tile UI tests', () => {
     useDispatchSpy.mockClear();
   });
   test('should display the contents of the integration tile as passed in the props', () => {
-    const props = {tile: {
-      _integrationId: '62bedcdca0f5f21448171ea2',
-      numError: 0,
-      offlineConnections: [],
-      name: 'Clone - demoint',
-      description: 'demo integration',
-      lastModified: '2022-07-05T06:02:56.701Z',
-      sandbox: false,
-      numFlows: 0,
-      _parentId: null,
-      mode: 'install',
-      supportsChild: false,
-      iaV2: false,
-      trialEndDate: '2018-07-25T11:15:51.209Z',
-      _registeredConnectionIds: [
-        '62bd43c87b94d20de64e9ab3',
-        '5e3152806287420d5ce56573',
-      ],
-      key: '62bedcdca0f5f21448171ea2',
-      status: 'is_pending_setup',
-      tag: 'sample tag',
-      flowsNameAndDescription: '',
-      sortablePropType: 0,
-      integration: {
-        permissions: {
-          accessLevel: 'owner',
-          connections: {
-            edit: true,
-          },
-        },
-      },
-      applications: [],
-      pinned: false,
-    },
-    isDragInProgress: false,
-    isTileDragged: false,
-    errmgt: true,
+    const props = {tile: demoTile,
+      isDragInProgress: false,
+      isTileDragged: false,
+      errmgt: true,
     };
 
     initTile(props);
@@ -149,43 +151,10 @@ describe('Tile UI tests', () => {
     expect(screen.getAllByRole('button')).toHaveLength(3);
   });
   test('should make the respective redirection when clicked on setup status on the tile', async () => {
-    const props = {tile: {
-      _integrationId: '62bedcdca0f5f21448171ea2',
-      numError: 0,
-      offlineConnections: [],
-      name: 'Clone - demoint',
-      description: 'demo integration',
-      lastModified: '2022-07-05T06:02:56.701Z',
-      sandbox: false,
-      numFlows: 0,
-      _parentId: null,
-      mode: 'install',
-      supportsChild: false,
-      iaV2: false,
-      trialEndDate: '2018-07-25T11:15:51.209Z',
-      _registeredConnectionIds: [
-        '62bd43c87b94d20de64e9ab3',
-        '5e3152806287420d5ce56573',
-      ],
-      key: '62bedcdca0f5f21448171ea2',
-      status: 'is_pending_setup',
-      tag: 'sample tag',
-      flowsNameAndDescription: '',
-      sortablePropType: 0,
-      integration: {
-        permissions: {
-          accessLevel: 'owner',
-          connections: {
-            edit: true,
-          },
-        },
-      },
-      applications: [],
-      pinned: false,
-    },
-    isDragInProgress: false,
-    isTileDragged: false,
-    errmgt: true,
+    const props = {tile: demoTile,
+      isDragInProgress: false,
+      isTileDragged: false,
+      errmgt: true,
     };
 
     initTile(props);
@@ -193,43 +162,10 @@ describe('Tile UI tests', () => {
     await waitFor(() => expect(history.push).toBeCalledWith('/integrations/62bedcdca0f5f21448171ea2/setup'));
   });
   test('should make the respective dispatch call and redirection when setup status is other than pending', async () => {
-    const props = {tile: {
-      _integrationId: '62bedcdca0f5f21448171ea2',
-      numError: 0,
-      offlineConnections: [],
-      name: 'Clone - demoint',
-      description: 'demo integration',
-      status: 'success',
-      lastModified: '2022-07-05T06:02:56.701Z',
-      sandbox: false,
-      numFlows: 0,
-      _parentId: null,
-      mode: 'install',
-      supportsChild: false,
-      iaV2: false,
-      trialEndDate: '2018-07-25T11:15:51.209Z',
-      _registeredConnectionIds: [
-        '62bd43c87b94d20de64e9ab3',
-        '5e3152806287420d5ce56573',
-      ],
-      key: '62bedcdca0f5f21448171ea2',
-      tag: 'sample tag',
-      flowsNameAndDescription: '',
-      sortablePropType: 0,
-      integration: {
-        permissions: {
-          accessLevel: 'owner',
-          connections: {
-            edit: true,
-          },
-        },
-      },
-      applications: [],
-      pinned: false,
-    },
-    isDragInProgress: false,
-    isTileDragged: false,
-    errmgt: false,
+    const props = {tile: {...demoTile, status: 'success'},
+      isDragInProgress: false,
+      isTileDragged: false,
+      errmgt: false,
     };
 
     initTile(props);
@@ -237,44 +173,12 @@ describe('Tile UI tests', () => {
     await waitFor(() => expect(mockDispatchFn).toBeCalledWith(actions.patchFilter('jobs', { status: 'all'})));
     await waitFor(() => expect(history.push).toBeCalledWith('/integrations/62bedcdca0f5f21448171ea2/dashboard'));
   });
+
   test('should redirect to the correct url when clicked on permissions icon on the tile', () => {
-    const props = {tile: {
-      _integrationId: '62bedcdca0f5f21448171ea2',
-      numError: 0,
-      offlineConnections: [],
-      name: 'Clone - demoint',
-      description: 'demo integration',
-      lastModified: '2022-07-05T06:02:56.701Z',
-      sandbox: false,
-      numFlows: 0,
-      _parentId: null,
-      mode: 'install',
-      supportsChild: false,
-      iaV2: false,
-      trialEndDate: '2018-07-25T11:15:51.209Z',
-      _registeredConnectionIds: [
-        '62bd43c87b94d20de64e9ab3',
-        '5e3152806287420d5ce56573',
-      ],
-      key: '62bedcdca0f5f21448171ea2',
-      status: 'is_pending_setup',
-      tag: 'sample tag',
-      flowsNameAndDescription: '',
-      sortablePropType: 0,
-      integration: {
-        permissions: {
-          accessLevel: 'owner',
-          connections: {
-            edit: true,
-          },
-        },
-      },
-      applications: [],
-      pinned: false,
-    },
-    isDragInProgress: false,
-    isTileDragged: false,
-    errmgt: false,
+    const props = {tile: demoTile,
+      isDragInProgress: false,
+      isTileDragged: false,
+      errmgt: false,
     };
 
     initTile(props);
@@ -284,42 +188,10 @@ describe('Tile UI tests', () => {
     waitFor(() => expect(history.push).toBeCalledWith('/integrations/62bedcdca0f5f21448171ea2/users'));
   });
   test('should redirect to the integration connections when connection icon is clicked on the tile', () => {
-    const props = {tile: {
-      _integrationId: '62bedcdca0f5f21448171ea2',
-      numError: 0,
-      name: 'Clone - demoint',
-      description: 'demo integration',
-      lastModified: '2022-07-05T06:02:56.701Z',
-      sandbox: false,
-      numFlows: 0,
-      _parentId: null,
-      mode: 'install',
-      supportsChild: false,
-      iaV2: false,
-      trialEndDate: '2018-07-25T11:15:51.209Z',
-      _registeredConnectionIds: [
-        '62bd43c87b94d20de64e9ab3',
-        '5e3152806287420d5ce56573',
-      ],
+    const props = {tile: {...demoTile,
       offlineConnections: [
         '5e3152806287420d5ce56573',
-      ],
-      key: '62bedcdca0f5f21448171ea2',
-      status: 'is_pending_setup',
-      tag: 'sample tag',
-      flowsNameAndDescription: '',
-      sortablePropType: 0,
-      integration: {
-        permissions: {
-          accessLevel: 'owner',
-          connections: {
-            edit: true,
-          },
-        },
-      },
-      applications: [],
-      pinned: false,
-    },
+      ]},
     isDragInProgress: false,
     isTileDragged: false,
     errmgt: true,
@@ -335,44 +207,10 @@ describe('Tile UI tests', () => {
     expect(history.push).toBeCalledWith('/integrations/62bedcdca0f5f21448171ea2/connections');
   });
   test('should display the license expiry message on the tile', () => {
-    const props = {tile: {
-      _integrationId: '62bedcdca0f5f21448171ea2',
-      numError: 0,
-      offlineConnections: [],
-      name: 'Clone - demoint',
-      description: 'demo integration',
-      lastModified: '2022-07-05T06:02:56.701Z',
-      sandbox: false,
-      numFlows: 0,
-      _parentId: null,
-      mode: 'install',
-      supportsChild: false,
-      iaV2: false,
-      trialEndDate: '2018-07-25T11:15:51.209Z',
-      _connectorId: '5829bce6069ccb4460cdb34e',
-      _registeredConnectionIds: [
-        '62bd43c87b94d20de64e9ab3',
-        '5e3152806287420d5ce56573',
-      ],
-      key: '62bedcdca0f5f21448171ea2',
-      status: 'is_pending_setup',
-      tag: 'sample tag',
-      flowsNameAndDescription: '',
-      sortablePropType: 0,
-      integration: {
-        permissions: {
-          accessLevel: 'owner',
-          connections: {
-            edit: true,
-          },
-        },
-      },
-      applications: [],
-      pinned: false,
-    },
-    isDragInProgress: false,
-    isTileDragged: false,
-    errmgt: true,
+    const props = {tile: {...demoTile, _connectorId: '5829bce6069ccb4460cdb34e'},
+      isDragInProgress: false,
+      isTileDragged: false,
+      errmgt: true,
     };
 
     initTile(props);
@@ -380,43 +218,10 @@ describe('Tile UI tests', () => {
     expect(screen.getByText('Request to renew')).toBeInTheDocument();
   });
   test('should redirect to the integration contents when clikced on the tile title', () => {
-    const props = {tile: {
-      _integrationId: '62bedcdca0f5f21448171ea2',
-      numError: 0,
-      offlineConnections: [],
-      name: 'Clone - demoint',
-      description: 'demo integration',
-      lastModified: '2022-07-05T06:02:56.701Z',
-      sandbox: false,
-      numFlows: 0,
-      _parentId: null,
-      mode: 'install',
-      supportsChild: false,
-      iaV2: false,
-      trialEndDate: '2018-07-25T11:15:51.209Z',
-      _registeredConnectionIds: [
-        '62bd43c87b94d20de64e9ab3',
-        '5e3152806287420d5ce56573',
-      ],
-      key: '62bedcdca0f5f21448171ea2',
-      status: 'is_pending_setup',
-      tag: 'sample tag',
-      flowsNameAndDescription: '',
-      sortablePropType: 0,
-      integration: {
-        permissions: {
-          accessLevel: 'owner',
-          connections: {
-            edit: true,
-          },
-        },
-      },
-      applications: [],
-      pinned: false,
-    },
-    isDragInProgress: false,
-    isTileDragged: false,
-    errmgt: true,
+    const props = {tile: demoTile,
+      isDragInProgress: false,
+      isTileDragged: false,
+      errmgt: true,
     };
 
     initTile(props);

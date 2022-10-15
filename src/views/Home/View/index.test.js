@@ -115,13 +115,11 @@ describe('HomeView UI tests', () => {
   test('should render the ListView when format is passed as list', () => {
     initHomeView('list');
     expect(mockDispatchFn).toBeCalled();
-    screen.debug();
     expect(screen.getByText(/ListView/i)).toBeInTheDocument();             // ListView and LoadResources components have been mocked//
   });
   test('should render the TileView when format is not passed as list', () => {
     initHomeView();
     expect(mockDispatchFn).toBeCalled();
-    screen.debug();
     expect(screen.getByText(/TileView/i)).toBeInTheDocument();
   });
 });

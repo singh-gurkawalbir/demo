@@ -26,6 +26,5 @@ describe('InstallZip UI tests', () => {
 
     renderWithProviders(ui);
     expect(screen.getByText(/SearchBar/i)).toBeInTheDocument();     // Searchbar text is rendered by the mocked component//
-    screen.debug();
   });
 });
