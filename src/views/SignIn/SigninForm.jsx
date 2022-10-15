@@ -166,15 +166,15 @@ export default function SignIn({dialogOpen}) {
 
   const handleOnSubmit = useCallback(e => {
     e.preventDefault();
-    const email = e.target.email.value;
-    const password = e.target.password.value;
+    const email = e?.target?.email?.value || e?.target?.elements?.email?.value;
+    const password = e?.target?.password?.value || e?.target?.elements?.password?.value;
 
     handleAuthentication(email, password);
   }, [handleAuthentication]);
 
   const handleSignInWithGoogle = useCallback(e => {
     e.preventDefault();
-    dispatch(actions.auth.signInWithGoogle(e.target.attemptedRoute.value));
+    dispatch(actions.auth.signInWithGoogle(e?.target?.attemptedRoute?.value || e?.target?.elements?.attemptedRoute?.value));
   }, [dispatch]);
 
   const handleReSignInWithGoogle = useCallback(e => {

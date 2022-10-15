@@ -176,7 +176,7 @@ describe('UI test cases for Audit Log Filter ', () => {
 
     const resourceOptions = screen.getAllByRole('option');
 
-    expect(resourceOptions).toHaveLength(12);
+    expect(resourceOptions).toHaveLength(13);
     const defaultType = screen.getByRole('option', {name: /Select resource type/i});
 
     expect(defaultType).toBeInTheDocument();

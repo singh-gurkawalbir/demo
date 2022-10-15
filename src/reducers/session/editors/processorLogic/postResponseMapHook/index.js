@@ -9,7 +9,7 @@ export default {
 
     if (flow?.pageProcessors?.length) {
       pageProcessorsObject = flow.pageProcessors[pageProcessorIndex] || {};
-    } else if (flow?.routers?.lenth) {
+    } else if (flow?.routers?.length) {
       pageProcessorsObject = flow.routers[routerIndex].branches[branchIndex].pageProcessors?.[pageProcessorIndex] || {};
     }
     const postResponseMapHook = pageProcessorsObject?.hooks?.postResponseMap || {};

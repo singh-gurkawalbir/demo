@@ -6,12 +6,12 @@ import {useEffect} from 'react';
  * @param {*} scrollIntoView boolean that indicates if element is not already in view
  * @returns null
  */
-export default function useScrollIntoView(ref, scrollIntoView = false) {
+export default function useScrollIntoView(ref, scrollIntoView = false, block = 'end') {
   useEffect(() => {
     if (ref?.current && scrollIntoView) {
-        ref?.current?.scrollIntoView({behavior: 'smooth', block: 'end', inline: 'nearest'});
+      ref?.current?.scrollIntoView({behavior: 'smooth', block, inline: 'nearest'});
     }
-  }, [ref, scrollIntoView]);
+  }, [block, ref, scrollIntoView]);
 
   return null;
 }

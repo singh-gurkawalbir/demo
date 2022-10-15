@@ -6,7 +6,7 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import { Typography } from '@material-ui/core';
 import Stepper from '../Stepper';
 import HeaderWithHelpText from '../HeaderWithHelpText';
-import useFormInitWithPermissions from '../../../../../hooks/useFormInitWithPermissions';
+import useForm from '../../../../../components/Form';
 import { selectors } from '../../../../../reducers';
 import actions from '../../../../../actions';
 import DynaForm from '../../../../../components/DynaForm';
@@ -67,7 +67,7 @@ function PrimaryAccountSelect({className}) {
   const primaryAccountOptions = useMemo(() => (
     [{
       items: primaryAccounts.map(
-        acc => ({label: acc.ownerUser?.name, value: acc.ownerUser?._id})
+        acc => ({label: acc.ownerUser?.company, value: acc.ownerUser?._id})
       ),
     }]
   ), [primaryAccounts]);
@@ -92,7 +92,7 @@ function PrimaryAccountSelect({className}) {
     [primaryAccountOptions, selectedPrimaryAccount]
   );
 
-  useFormInitWithPermissions({ fieldMeta, formKey: PRIMARY_ACCOUNT_FORM_KEY, remountKey, disabled: !isMobileCodeVerified });
+  useForm({ fieldMeta, formKey: PRIMARY_ACCOUNT_FORM_KEY, remountKey, disabled: !isMobileCodeVerified });
 
   return <DynaForm formKey={PRIMARY_ACCOUNT_FORM_KEY} className={className} />;
 }

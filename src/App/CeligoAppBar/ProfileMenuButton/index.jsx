@@ -2,7 +2,6 @@ import React, { useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
-import IconButton from '@material-ui/core/IconButton';
 import Avatar from '@material-ui/core/Avatar';
 import { Link } from 'react-router-dom';
 import ArrowPopper from '../../../components/ArrowPopper';
@@ -11,6 +10,8 @@ import { selectors } from '../../../reducers';
 import { USER_ACCESS_LEVELS } from '../../../constants';
 import getRoutePath from '../../../utils/routePaths';
 import {OutlinedButton, TextButton } from '../../../components/Buttons/index';
+import IconButtonWithTooltip from '../../../components/IconButtonWithTooltip';
+import ActionGroup from '../../../components/ActionGroup';
 
 const useStyles = makeStyles(theme => ({
   profilePopper: {
@@ -41,7 +42,6 @@ const useStyles = makeStyles(theme => ({
     marginLeft: 6,
   },
   actions: {
-    display: 'flex',
     paddingTop: 12,
     marginBottom: 14,
   },
@@ -75,6 +75,7 @@ function ProfileMenuButton() {
   const dispatch = useDispatch();
   const [anchorEl, setAnchorEl] = useState(null);
   const hasProfile = useSelector(state => selectors.hasProfile(state));
+  const isMFASetupIncomplete = useSelector(selectors.isMFASetupIncomplete);
   const hasPreferences = useSelector(state => selectors.hasPreferences(state));
   const profile = useSelector(state => selectors.userProfile(state)) || {};
   const avatarUrl = useSelector(state => selectors.avatarUrl(state));
@@ -103,17 +104,17 @@ function ProfileMenuButton() {
 
   return (
     <>
-      <IconButton
+      <IconButtonWithTooltip
+        tooltipProps={{title: 'Account'}}
         data-test="profileMenu"
         size="small"
-        className={classes.avatarButton}
         aria-label="avatar"
         aria-owns={open ? 'profileOptions' : null}
         aria-haspopup="true"
-        onClick={handleMenu}
-        color="inherit">
+        noPadding
+        onClick={handleMenu}>
         <Avatar alt={name} src={avatarUrl} className={classes.avatar} />
-      </IconButton>
+      </IconButtonWithTooltip>
       <ArrowPopper
         id="profileOptions"
         classes={{
@@ -146,24 +147,23 @@ function ProfileMenuButton() {
               </Typography>
             </span>
 
-            <div>
-              <div className={classes.actions}>
-                <OutlinedButton
-                  data-test="myAccountOrMyProfile"
-                  onClick={handleClose}
-                  color="secondary"
-                  component={Link}
-                  to={getRoutePath('/myAccount/profile')}>
-                  {isAccountOwner ? 'My account' : 'My profile'}
-                </OutlinedButton>
-                <TextButton
-                  data-test="signOut"
-                  className={classes.actionsBtn}
-                  onClick={handleUserLogout}>
-                  Sign out
-                </TextButton>
-              </div>
-            </div>
+            <ActionGroup className={classes.actions}>
+              <OutlinedButton
+                data-test="myAccountOrMyProfile"
+                onClick={handleClose}
+                color="secondary"
+                component={Link}
+                disabled={isMFASetupIncomplete}
+                to={getRoutePath('/myAccount/profile')}>
+                {isAccountOwner ? 'My account' : 'My profile'}
+              </OutlinedButton>
+              <TextButton
+                data-test="signOut"
+                className={classes.actionsBtn}
+                onClick={handleUserLogout}>
+                Sign out
+              </TextButton>
+            </ActionGroup>
           </div>
 
         </div>

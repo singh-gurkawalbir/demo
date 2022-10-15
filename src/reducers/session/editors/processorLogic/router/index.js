@@ -126,7 +126,7 @@ export default {
     let logs;
 
     if (Array.isArray(result?.data)) {
-      const { data } = result.data[0];
+      const { data = [] } = result.data[0] || {};
 
       logs = result.data[0].logs;
       if (data.length === 1) {
@@ -215,16 +215,25 @@ export default {
   },
   buildData: (_, sampleData) => {
     const data = {};
-    const parsedData = safeParse(sampleData);
+    let parsedData = safeParse(sampleData);
 
-    delete parsedData.settings;
-    data.filter = JSON.stringify(parsedData, null, 2);
+    data.filter = JSON.stringify(parsedData, null, 2) || '';
     // for JS panel, 'rows' is also represented as 'record'
     if (parsedData?.rows) {
-      parsedData.record = parsedData.rows;
-      delete parsedData.rows;
+      /*
+       While stringifying the json in below line after the block,
+       the iteration order is a combination of the insertion order for strings keys, and ascending order for number-like keys.
+       Hence if commented out code is used record is inserted last, hence shows up as last property in the editor.(IO-28963)
+
+       parsedData.record = parsedData.rows;
+       delete parsedData.rows;
+      */
+      const {rows, ...otherProps} = parsedData;
+
+      parsedData = {record: rows, ...otherProps};
     }
-    data.javascript = JSON.stringify(parsedData, null, 2);
+
+    data.javascript = JSON.stringify(parsedData, null, 2) || '';
 
     return data;
   },

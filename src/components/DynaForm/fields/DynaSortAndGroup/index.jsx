@@ -28,9 +28,7 @@ export default function DynaSortAndGroup(props) {
       return options;
     }
 
-    return options.map((name, index) =>
-      resourceSubType === 'rdbms' ? `Column${index}` : name
-    ).filter(opt =>
+    return options.filter(opt =>
       !sampleData[opt] || (
         typeof sampleData[opt] === 'string' ||
         typeof sampleData[opt] === 'number' ||

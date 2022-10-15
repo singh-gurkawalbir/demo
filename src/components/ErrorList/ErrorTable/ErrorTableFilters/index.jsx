@@ -83,6 +83,7 @@ export default function ErrorTableFilters({ flowId, resourceId, isResolved, filt
   const {
     hasErrors,
     errorObj,
+    retryStatus,
     fetchErrors,
     isFreshDataLoad,
     paginationOptions,
@@ -99,7 +100,6 @@ export default function ErrorTableFilters({ flowId, resourceId, isResolved, filt
       dispatch(actions.patchFilter(filterKey, {
         view: event.target.value,
         activeErrorId: '',
-        currentNavItem: '',
       }));
       dispatch(
         actions.analytics.gainsight.trackEvent('OPEN_ERRORS_VIEW_CHANGED')
@@ -124,7 +124,7 @@ export default function ErrorTableFilters({ flowId, resourceId, isResolved, filt
           <ErrorActions flowId={flowId} resourceId={resourceId} isResolved={isResolved} className={classes.errorActions} />
         }
         <div className={classes.refreshBtn}>
-          <RefreshCard onRefresh={fetchErrors} disabled={!errorObj.updated || isFreshDataLoad} />
+          <RefreshCard onRefresh={fetchErrors} retryStatus={retryStatus} disabled={!errorObj.updated || isFreshDataLoad} />
         </div>
       </div>
       <div className={classes.paginationWrapper}>

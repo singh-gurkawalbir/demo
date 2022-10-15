@@ -1038,6 +1038,18 @@ export default {
     defaultValue: r => (r && r.http && r.http.headers) || '',
     label: 'Configure HTTP headers',
   },
+  'http.type': {
+    label: 'API type',
+    type: 'amazonmwstype',
+    required: true,
+    helpKey: 'amazonmws.connection.http.type',
+    defaultDisabled: r => !isNewId(r?._id),
+    defaultValue: r => isNewId(r?._id) ? '' : (r?.http?.type || 'Amazon-MWS'),
+    skipSort: true,
+    resourceId: r => r?._id,
+    omitWhenHidden: true,
+
+  },
   'http.unencrypted': {
     isLoggable: true,
     type: 'editor',
@@ -2532,23 +2544,6 @@ export default {
       },
     ],
   },
-  connectionFormView: {
-    isLoggable: true,
-    id: 'connectionFormView',
-    type: 'connectionFormView',
-    label: 'Form view',
-    required: true,
-    resourceType: 'connections',
-    visible: r => r?._httpConnectorId || r?.http?._httpConnectorId,
-    defaultValue: r => {
-      if (!r) return 'false';
-      if (!r.http) return 'false';
-      if (!r.http.formType) return 'false';
-
-      return r.http?.formType === 'assistant' ? 'false' : 'true';
-    },
-    helpKey: 'formView',
-  },
   configureCutomAuthTokenRefresh: {
     id: 'configureCutomAuthTokenRefresh',
     type: 'checkbox',
@@ -2563,15 +2558,7 @@ export default {
   'http.auth.token.tokenPaths': {
     id: 'http.auth.token.tokenPaths',
     type: 'text',
-    label: 'Paths to encrypted field in the response body',
-    defaultValue: r => {
-      const values = r?.http?.auth?.token?.tokenPaths;
-
-      if (Array.isArray(values)) {
-        return values.join(',');
-      }
-
-      return values;
-    },
+    label: 'Paths to encrypted field in the HTTP response body',
+    delimiter: ',',
   },
 };

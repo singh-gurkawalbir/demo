@@ -84,7 +84,9 @@ const DropdownIndicator = props => (
 
 const MultiValueLabel = props => {
   const classes = useStyles();
-  const value = typeof props.data === 'object' ? props.data.value : props.data;
+  const value = typeof props.data === 'object'
+    ? (props.data.published && props.data.label) || props.data.value
+    : props.data;
 
   return (
     <div data-test={value} className={classes.chips}>

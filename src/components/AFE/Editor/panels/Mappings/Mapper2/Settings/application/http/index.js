@@ -1,5 +1,5 @@
 import dateTimezones from '../../../../../../../../../utils/dateTimezones';
-import mappingUtil, {ARRAY_DATA_TYPES, MAPPING_DATA_TYPES} from '../../../../../../../../../utils/mapping';
+import mappingUtil, {ARRAY_DATA_TYPES, MAPPING_DATA_TYPES, getCombinedExtract} from '../../../../../../../../../utils/mapping';
 import dateFormats from '../../../../../../../../../utils/dateFormats';
 import { emptyObject } from '../../../../../../../../../constants';
 
@@ -73,13 +73,14 @@ export default {
     lookups,
     importResource = {},
   }) => {
-    const {key, lookupName, dataType: propDataType, copySource, isRequired, combinedExtract, extract, hardCodedValue, disabled} = node;
+    const {key, lookupName, dataType: propDataType, copySource, isRequired, extractsArrayHelper, extract, hardCodedValue, disabled} = node;
 
     const {_connectionId: connectionId, adaptorType, _id: resourceId } = importResource;
 
     const isComposite = !!((adaptorType === 'HTTPImport' && importResource?.http?.method && importResource.http.method.length > 1) || (adaptorType === 'RESTImport' && importResource?.rest?.method && importResource.rest.method.length > 1));
     const lookup = (lookupName && lookups.find(lookup => lookup.name === lookupName)) || emptyObject;
 
+    const formattedLookup = mappingUtil.getV2DefaultStaticMapValue(lookup.map);
     const conditionalWhenOptions = (isComposite && conditionalOptions) || [];
 
     const fieldMeta = {
@@ -116,15 +117,11 @@ export default {
           name: 'copySource',
           type: 'radiogroup',
           refreshOptionsOnChangesTo: ['dataType'],
-          label: propDataType === MAPPING_DATA_TYPES.OBJECT
-            ? 'Copy an object from the source as-is?'
-            : 'Copy an object array from the source as-is?',
-          helpKey: propDataType === MAPPING_DATA_TYPES.OBJECT
-            ? 'mapping.v2.copyObject'
-            : 'mapping.v2.copyObjectArray',
+          label: 'Copy an object from the source as-is?',
+          helpKey: 'mapping.v2.copyObject',
           fullWidth: true,
           defaultValue: copySource || 'no',
-          visibleWhenAll: [{ field: 'dataType', is: ['object', 'objectarray'] }],
+          visibleWhen: [{ field: 'dataType', is: ['object'] }],
           noApi: true,
           options: [
             {
@@ -140,12 +137,12 @@ export default {
           name: 'fieldMappingType',
           type: 'select',
           label: 'Field mapping type',
-          defaultValue: mappingUtil.getFieldMappingType(node),
+          defaultValue: mappingUtil.getV2FieldMappingType(node),
           helpKey: 'mapping.v2.fieldMappingType',
           noApi: true,
           skipSort: true,
           refreshOptionsOnChangesTo: ['dataType'],
-          visibleWhenAll: [
+          visibleWhen: [
             { field: 'dataType', isNot: ['object', 'objectarray'] },
           ],
         },
@@ -252,12 +249,80 @@ export default {
           id: 'sourceField',
           name: 'sourceField',
           type: 'mapper2sourcefield',
-          defaultValue: combinedExtract || extract || (hardCodedValue ? `"${hardCodedValue}"` : undefined),
+          defaultValue: getCombinedExtract(extractsArrayHelper).join(',') || extract || (hardCodedValue ? `"${hardCodedValue}"` : undefined),
           label: 'Source field',
           noApi: true,
           nodeKey: key,
           disabled,
           resourceId,
+        },
+        sourceDataType: {
+          id: 'sourceDataType',
+          name: 'sourceDataType',
+          type: 'select',
+          skipSort: true,
+          skipDefault: true,
+          label: 'Source data type',
+          defaultValue: node.sourceDataType || 'string',
+          helpKey: 'mapping.v2.sourceDataType',
+          noApi: true,
+          visibleWhenAll: [
+            { field: 'dataType', isNot: ['object', 'objectarray', 'stringarray', 'numberarray', 'booleanarray'] },
+            { field: 'fieldMappingType', isNot: ['hardCoded', 'multifield'] },
+          ],
+          options: [
+            {
+              items: [
+                { label: 'string', value: 'string' },
+                { label: 'number', value: 'number' },
+                { label: 'boolean', value: 'boolean' },
+                { label: 'object', value: 'object' },
+                { label: '[string]', value: 'stringarray' },
+                { label: '[number]', value: 'numberarray' },
+                { label: '[boolean]', value: 'booleanarray' },
+                { label: '[object]', value: 'objectarray' },
+              ],
+            },
+          ],
+        },
+        objectSourceDataType: {
+          id: 'objectSourceDataType',
+          name: 'objectSourceDataType',
+          type: 'select',
+          skipSort: true,
+          skipDefault: true,
+          label: 'Source data type',
+          defaultValue: node.sourceDataType || 'string',
+          helpKey: 'mapping.v2.sourceDataType',
+          noApi: true,
+          visibleWhenAll: [
+            { field: 'dataType', is: ['object'] },
+            { field: 'copySource', is: ['yes'] },
+          ],
+          options: [
+            {
+              items: [
+                { label: 'string', value: 'string' },
+                { label: 'number', value: 'number' },
+                { label: 'boolean', value: 'boolean' },
+                { label: 'object', value: 'object' },
+                { label: '[string]', value: 'stringarray' },
+                { label: '[number]', value: 'numberarray' },
+                { label: '[boolean]', value: 'booleanarray' },
+                { label: '[object]', value: 'objectarray' },
+              ],
+            },
+          ],
+        },
+        extractsArrayHelper: {
+          id: 'extractsArrayHelper',
+          name: 'extractsArrayHelper',
+          type: 'mapper2tabbedextracts',
+          defaultValue: node.extractsArrayHelper || [],
+          nodeKey: key,
+          visibleWhen: [
+            { field: 'dataType', is: ['stringarray', 'numberarray', 'booleanarray', 'objectarray'] },
+          ],
         },
         standardAction: {
           id: 'standardAction',
@@ -270,7 +335,7 @@ export default {
           noApi: true,
           visibleWhenAll: [
             { field: 'fieldMappingType', is: ['standard'] },
-            { field: 'dataType', isNot: ['object', 'objectarray'] },
+            { field: 'dataType', isNot: ['object', 'objectarray', 'stringarray', 'numberarray', 'booleanarray'] },
           ],
         },
         default: {
@@ -283,7 +348,7 @@ export default {
           visibleWhenAll: [
             { field: 'standardAction', is: ['default'] },
             { field: 'fieldMappingType', is: ['standard'] },
-            { field: 'dataType', isNot: ['boolean', 'object', 'objectarray'] },
+            { field: 'dataType', isNot: ['boolean', 'object', 'objectarray', 'stringarray', 'numberarray', 'booleanarray'] },
           ],
           helpKey: 'mapping.v2.default',
           noApi: true,
@@ -325,7 +390,7 @@ export default {
           helpKey: 'mapping.v2.objectAction',
           noApi: true,
           visibleWhenAll: [
-            { field: 'dataType', is: ['object', 'objectarray'] },
+            { field: 'dataType', is: ['object'] },
             { field: 'copySource', is: ['yes'] },
           ],
         },
@@ -494,13 +559,27 @@ export default {
           keyLabel: 'Source field value',
           valueName: 'import',
           valueLabel: 'Destination field value',
-          defaultValue:
-              lookup.map &&
-              Object.keys(lookup.map).map(key => ({
-                export: key,
-                import: lookup.map[key],
-              })),
-          map: lookup.map,
+          columns: [
+            {
+              id: 'import',
+              label: 'Destination field value',
+              required: false,
+              type: 'input',
+              supportsRefresh: false,
+            },
+            {
+              id: 'export',
+              label: 'Source field value',
+              required: false,
+              type: 'input',
+              supportsRefresh: false,
+            },
+          ],
+          defaultValue: Object.keys(formattedLookup).map(key => ({
+            export: key,
+            import: formattedLookup[key],
+          })),
+          map: formattedLookup,
           visibleWhenAll: [
             { field: 'fieldMappingType', is: ['lookup'] },
             { field: 'lookup.mode', is: ['static'] },
@@ -656,7 +735,7 @@ export default {
           id: 'description',
           name: 'description',
           type: 'text',
-          label: 'Description',
+          label: 'Settings description',
           defaultValue: node.description,
           noApi: true,
           helpKey: 'mapping.v2.description',
@@ -704,6 +783,9 @@ export default {
           {
             fields: [
               'sourceField',
+              'sourceDataType',
+              'objectSourceDataType',
+              'extractsArrayHelper',
             ],
           },
           {
@@ -790,19 +872,6 @@ export default {
               ],
             },
           ];
-        }
-
-        if (fieldId === 'copySource') {
-          const copySourceField = fields.find(
-            field => field.id === 'copySource'
-          );
-
-          copySourceField.label = dataTypeField?.value === MAPPING_DATA_TYPES.OBJECT
-            ? 'Copy an object from the source as-is?'
-            : 'Copy an object array from the source as-is?';
-          copySourceField.helpKey = dataTypeField?.value === MAPPING_DATA_TYPES.OBJECT
-            ? 'mapping.v2.copyObject'
-            : 'mapping.v2.copyObjectArray';
         }
 
         return null;

@@ -13,14 +13,18 @@ import useConfirmDialog from '../../../../../../ConfirmDialog';
 import actions from '../../../../../../../actions';
 import { TextButton } from '../../../../../../Buttons';
 import ArrowPopper from '../../../../../../ArrowPopper';
+import ArrowDownFilledIcon from '../../../../../../icons/ArrowDownFilledIcon';
 
 const useStyles = makeStyles(theme => ({
   dataType: {
     border: 'none',
     fontStyle: 'italic',
     color: theme.palette.primary.main,
-    width: theme.spacing(9),
-    padding: 0,
+    justifyContent: 'flex-end',
+    padding: theme.spacing(0, 0.5),
+    '& svg': {
+      marginLeft: theme.spacing(-1),
+    },
     '&:focus': {
       color: theme.palette.primary.main,
     },
@@ -93,7 +97,7 @@ const useStyles = makeStyles(theme => ({
   },
   listWrapper: {
     minWidth: theme.spacing(20),
-    maxHeight: theme.spacing(32),
+    maxHeight: theme.spacing(37),
     overflowY: 'auto',
   },
   itemRootName: {
@@ -169,6 +173,7 @@ export default function DestinationDataType({
           <TextButton
             onClick={handleMenu}
             disabled={disabled}
+            endIcon={<ArrowDownFilledIcon />}
             className={classes.dataType} >
             {selectedDataTypeLabel}
           </TextButton>

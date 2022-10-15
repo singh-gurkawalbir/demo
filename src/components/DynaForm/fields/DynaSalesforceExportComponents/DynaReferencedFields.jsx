@@ -133,6 +133,8 @@ export default function DynaReferencedFields(props) {
           data-test="editReferencedFields"
           onClick={toggle}
           disabled={disabled}
+          placement="bottom"
+          tooltip="Edit"
           className={classes.editIconRefrencedField}>
           <EditIcon />
         </ActionButton>

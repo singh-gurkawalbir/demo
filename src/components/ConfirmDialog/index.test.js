@@ -152,7 +152,6 @@ describe('Confirm Dialogue Component Testing', async () => {
 
     expect(value1).toBeInTheDocument();
     userEvent.click(value1);
-    screen.debug();
   });
 
   test('testing dialogue box without userevents', async () => {
@@ -171,7 +170,6 @@ describe('Confirm Dialogue Component Testing', async () => {
 
     expect(value1).toBeInTheDocument();
     userEvent.type(value1, 'Hello, World!');
-    screen.debug();
   });
 
   test('testing saveDiscardDialogue', async () => {
@@ -232,7 +230,6 @@ describe('Confirm Dialogue Component Testing', async () => {
     expect(value4).toBeInTheDocument();
     fireEvent.click(value3);
     expect(value3).not.toBeInTheDocument();
-    screen.debug();
   });
 
   test('testing onClose', async () => {
@@ -247,7 +244,6 @@ describe('Confirm Dialogue Component Testing', async () => {
 
     expect(value1).toBeInTheDocument();
     fireEvent.click(value1);
-    screen.debug();
   });
 
   test('testing Confirm Dialogue with isHtml true', async () => {
@@ -270,7 +266,6 @@ describe('Confirm Dialogue Component Testing', async () => {
 
     expect(value2[0]).toBeInTheDocument();
     userEvent.click(value2[0]);
-    screen.debug();
   });
 });
 

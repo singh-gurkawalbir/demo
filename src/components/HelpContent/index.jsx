@@ -14,6 +14,8 @@ const useStyles = makeStyles(theme => ({
     maxWidth: '319px',
     borderRadius: theme.spacing(0.5),
     textAlign: 'left',
+    display: 'flex',
+    flexDirection: 'column',
   },
   title: {
     wordBreak: 'break-word',
@@ -55,6 +57,10 @@ const useStyles = makeStyles(theme => ({
     paddingTop: theme.spacing(1),
     borderTop: '1px solid',
     borderColor: theme.palette.secondary.lightest,
+  },
+  feedbackActionButton: {
+    display: 'flex',
+    alignSelf: 'flex-start',
   },
 }));
 
@@ -106,6 +112,7 @@ export default function HelpContent({ children, title, caption, fieldId, resourc
             className={classes.feedbackTextField}
           />
           <OutlinedButton
+            className={classes.feedbackActionButton}
             onClick={handleSendFeedbackText}>
             Submit
           </OutlinedButton>

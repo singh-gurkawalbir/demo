@@ -696,7 +696,7 @@ describe('getHTTPConnectorMetadata saga', () => {
   const output1 = {
     export: {
       labels: {
-        version: 'API Version',
+        version: 'API version',
       },
       paging: {
         lastPageStatusCode: 404,
@@ -802,7 +802,7 @@ describe('getHTTPConnectorMetadata saga', () => {
     import: {
       errorMediaType: 'json',
       labels: {
-        version: 'API Version',
+        version: 'API version',
       },
       requestMediaType: 'json',
       successMediaType: 'json',
@@ -860,7 +860,7 @@ describe('getHTTPConnectorMetadata saga', () => {
   const output2 = {
     export: {
       labels: {
-        version: 'API Version',
+        version: 'API version',
       },
       paging: {
         lastPageStatusCode: 404,
@@ -966,7 +966,7 @@ describe('getHTTPConnectorMetadata saga', () => {
     import: {
       errorMediaType: 'json',
       labels: {
-        version: 'API Version',
+        version: 'API version',
       },
       requestMediaType: 'json',
       successMediaType: 'json',
@@ -1153,6 +1153,14 @@ describe('updateFinalMetadataWithHttpFramework saga', () => {
       defaultValue: 'https://{{{connection.settings.environmenttype}}}.com',
       helpKey: 'connection.http.baseURI',
     },
+    'http.updateBaseURI': {
+      type: 'text',
+      visible: false,
+      fieldId: 'http.updateBaseURI',
+      id: 'http.updateBaseURI',
+      name: '/http/updateBaseURI',
+      defaultValue: 'https://{{{connection.settings.environmenttype}}}.com',
+    },
     'http.ping.method': {
       type: 'select',
       label: 'HTTP method',
@@ -1236,7 +1244,14 @@ describe('updateFinalMetadataWithHttpFramework saga', () => {
         name: '/http/baseURI',
         required: true,
         type: 'text',
-
+      },
+      'http.updateBaseURI': {
+        type: 'text',
+        visible: false,
+        fieldId: 'http.updateBaseURI',
+        id: 'http.updateBaseURI',
+        name: '/http/updateBaseURI',
+        defaultValue: 'https://{{{connection.settings.environmenttype}}}.com',
       },
       'http.ping.body': {
         defaultValue: '',
@@ -1311,7 +1326,7 @@ describe('updateFinalMetadataWithHttpFramework saga', () => {
       'http.unencrypted.version': {
         fieldId: 'http.unencrypted.version',
         id: 'http.unencrypted.version',
-        label: 'API Version',
+        label: 'API version',
         name: '/http/unencrypted/version',
         options: [
           {
@@ -1346,7 +1361,23 @@ describe('updateFinalMetadataWithHttpFramework saga', () => {
         type: 'settings',
 
       },
-
+      'settings.storeName': {
+        defaultValue: undefined,
+        fieldId: 'settings.storeName',
+        helpText: 'Enter the unique portion of your Shopify store’s URL. For example, if your Shopify store URL is https://demo-store.myshopify.com, then provide <i>demo-store</i> for the store URL.',
+        id: 'settings.storeName',
+        label: 'Store Name',
+        name: '/settings/storeName',
+        options: undefined,
+        required: true,
+        type: 'text',
+        validWhen: {
+          matchesRegEx: {
+            message: 'Subdomain should not contain spaces.',
+            pattern: '^[\\S]+$',
+          },
+        },
+      },
     },
 
   };
