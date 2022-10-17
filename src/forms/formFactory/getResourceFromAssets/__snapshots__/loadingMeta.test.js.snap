@@ -7442,10 +7442,10 @@ Object {
             "connection",
             "name",
             "description",
-            "settings",
           ],
-        }
-      ]
+        },
+      ],
+      "type": "box",
     },
   },
   "init": undefined,
@@ -10876,13 +10876,17 @@ Object {
       },
     },
     "layout": Object {
-      "fields": Array [
-        "application",
-        "connection",
-        "name",
-        "description",
-        "settings",
+      "containers": Array [
+        Object {
+          "fields": Array [
+            "application",
+            "connection",
+            "name",
+            "description",
+          ],
+        },
       ],
+      "type": "box",
     },
   },
   "init": undefined,
