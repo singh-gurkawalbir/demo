@@ -112,7 +112,7 @@ export const getExportMetadata = (connectorMetadata, connectionVersion) => {
                 }
 
                 const ep = {
-                  id: httpEndpoint._id, name: httpEndpoint.name, url: httpEndpoint.relativeURI, supportedExportTypes, queryParameters, pathParameters, doesNotSupportPaging,
+                  id: httpEndpoint._id, name: httpEndpoint.name, url: httpEndpoint.relativeURI, supportedExportTypes, queryParameters, pathParameters, doesNotSupportPaging, method: httpEndpoint.method,
                 };
 
                   r.exportPreConfiguredFields?.forEach(field => {
