@@ -7206,8 +7206,7 @@ selectors.retryUsersList = createSelector(
   (state, _1, flowId, resourceId) => selectors.retryList(state, flowId, resourceId),
   (profile, availableUsersList, retryJobs) => {
     if (!Array.isArray(retryJobs)) {
-      // When all users are selected we show the 'Select' as the placeholder text in the filter
-      return [{ _id: 'all', name: 'Select'}];
+      return [{ _id: 'all', name: 'All users'}];
     }
 
     const allUsersTriggeredRetry = retryJobs.reduce((users, job) => {
@@ -7245,7 +7244,7 @@ selectors.mkFlowResourcesRetryStatus = () => {
         return finalResourcesRetryStatus;
       }
 
-      finalResourcesRetryStatus.isAnyRetryInProgress = flowResources.find(res => resourcesRetryStatus?.[flowId]?.[res._id] === 'inProgress');
+      finalResourcesRetryStatus.isAnyRetryInProgress = !!flowResources.find(res => resourcesRetryStatus?.[flowId]?.[res._id] === 'inProgress');
       finalResourcesRetryStatus.resourcesWithRetryCompleted = flowResources.filter(res => resourcesRetryStatus?.[flowId]?.[res._id] === 'completed');
 
       return finalResourcesRetryStatus;

@@ -40,7 +40,8 @@ export default function RetryList({ flowId }) {
   }), [flowId, resourceId]);
 
   useEffect(() => {
-    dispatch(actions.patchFilter(FILTER_KEYS.RETRIES, DEFAULT_FILTERS.RETRIES));
+    dispatch(actions.patchFilter(FILTER_KEYS.RETRIES, filters || DEFAULT_FILTERS.RETRIES));
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch]);
 
   useEffect(() => {
