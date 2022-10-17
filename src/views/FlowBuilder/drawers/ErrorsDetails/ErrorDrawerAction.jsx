@@ -15,6 +15,7 @@ const useStyles = makeStyles(theme => ({
   },
   status: {
     color: theme.palette.secondary.main,
+    fontSize: 15,
   },
   retryContainer: {
     flexGrow: 100,
