@@ -442,6 +442,9 @@ describe('initialize all app relevant resources sagas', () => {
         })
       )
     );
+    expect(saga.next().value).toEqual(
+      call(retrievingHttpConnectorDetails)
+    );
     expect(saga.next().value).toEqual(put(actions.auth.defaultAccountSet()));
 
     expect(saga.next().done).toEqual(true);
