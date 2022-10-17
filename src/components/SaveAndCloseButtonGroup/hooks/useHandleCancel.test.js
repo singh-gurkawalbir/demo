@@ -28,10 +28,6 @@ async function inituseHandleCancel(props = {}, initialStore) {
 }
 
 describe('test suite for useHandleCancelBasic hook', () => {
-  test('should pass initial rendering', async () => {
-    await inituseHandleCancel();
-  });
-
   test('should fetch and return from the selector properly', async () => {
     const formKey = 'connections-123';
     const onClose = jest.fn(() => 'onClose Called');

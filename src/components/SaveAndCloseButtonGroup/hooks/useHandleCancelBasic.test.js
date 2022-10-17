@@ -41,10 +41,6 @@ describe('test suite for useHandleCancelBasic hook', () => {
     mockDiscard = undefined;
   });
 
-  test('should pass initial rendering', async () => {
-    await inituseHandleCancelBasic();
-  });
-
   test('should execute onClose when not dirty', async () => {
     const onClose = jest.fn(() => 'onClose Called');
     const handleCancelClick = await inituseHandleCancelBasic({ isDirty: false, onClose });
