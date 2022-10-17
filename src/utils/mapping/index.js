@@ -1924,6 +1924,8 @@ export const buildExtractsTree = sampleData => {
 
   const dataObj = pickFirstObject(sampleData);
 
+  if (!dataObj) return treeData;
+
   const key = generateUniqueKey();
 
   // add first default $ path
