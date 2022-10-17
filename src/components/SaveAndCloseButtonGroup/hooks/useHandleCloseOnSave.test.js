@@ -50,8 +50,9 @@ describe('test cases for useHandleCloseOnSave', () => {
   test('should execute onClose whenever setCloseTriggered is called and status is complete', async () => {
     const onSave = jest.fn();
     const onClose = jest.fn();
-    const status = FORM_SAVE_STATUS.COMPLETE;
-    const cb = await inituseHandleCloseOnSave({ onSave, onClose, status });
+    const cb = await inituseHandleCloseOnSave({ onSave,
+      onClose,
+      status: FORM_SAVE_STATUS.COMPLETE });
 
     act(() => {
       cb();
@@ -63,8 +64,9 @@ describe('test cases for useHandleCloseOnSave', () => {
   test('onClose should be called as many number of times as setCloseTriggered is called', async () => {
     const onSave = jest.fn();
     const onClose = jest.fn();
-    const status = FORM_SAVE_STATUS.COMPLETE;
-    const cb = await inituseHandleCloseOnSave({ onSave, onClose, status });
+    const cb = await inituseHandleCloseOnSave({ onSave,
+      onClose,
+      status: FORM_SAVE_STATUS.COMPLETE });
 
     act(() => {
       cb();

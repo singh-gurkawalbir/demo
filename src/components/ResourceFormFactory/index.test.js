@@ -90,6 +90,9 @@ describe('test suite for ResourceFormFactory', () => {
   afterEach(() => {
     useDispatchSpy.mockClear();
     mockDispatchFn.mockClear();
+    mockInitPermitFn.mockClear();
+    mockOptionsHandler.mockClear();
+    mockValidationHandler.mockClear();
   });
 
   test('should pass initial rendering', async () => {
@@ -128,7 +131,7 @@ describe('test suite for ResourceFormFactory', () => {
     };
 
     await initResourceFormFactory({resourceType, resourceId, onSubmitComplete, isNew}, initialStore);
-    expect(mockInitPermitFn).toHaveBeenCalledTimes(4);  //  prev 2 for the previous test-case
+    expect(mockInitPermitFn).toHaveBeenCalledTimes(2);
     expect(onSubmitComplete).toHaveBeenCalledTimes(1);
 
     const initButton = screen.getByRole('button', {name: 'Initialize Form'});

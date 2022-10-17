@@ -48,10 +48,6 @@ describe('test suite for NextAndCancel', () => {
 
     useDispatchSpy.mockReturnValue(mockDispatchFn);
     const submitButtonLabel = 'SAVE BUTTON';
-    const closeAfterSave = true;
-    const resourceType = 'exports';
-    const resourceId = '123abcd';
-    const flowId = '9678flws';
     const formKey = 'form-123';
 
     const initialStore = getCreatedStore();
@@ -63,14 +59,17 @@ describe('test suite for NextAndCancel', () => {
       },
     };
 
-    await initNextAndCancel({submitButtonLabel, closeAfterSave, resourceType, resourceId, flowId, formKey}, initialStore);
+    await initNextAndCancel({submitButtonLabel,
+      closeAfterSave: true,
+      resourceType: 'exports',
+      resourceId: '123abcd',
+      flowId: '9678flws',
+      formKey}, initialStore);
     const saveButton = screen.getByRole('button', {name: submitButtonLabel});
 
     expect(saveButton).toBeEnabled();
     userEvent.click(saveButton);
     expect(mockDispatchFn).toBeCalled();
-    useDispatchSpy.mockClear();
-    mockDispatchFn.mockClear();
   });
 
   test('should be able to provide the correct formSaveStatus', async () => {

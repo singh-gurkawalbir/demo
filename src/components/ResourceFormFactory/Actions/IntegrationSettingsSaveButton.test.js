@@ -7,11 +7,6 @@ import { renderWithProviders, reduxStore } from '../../../test/test-utils';
 import { getCreatedStore } from '../../../store';
 import IntegrationSettingsSaveButton from './IntegrationSettingsSaveButton';
 
-const getStateKey = (integrationId, flowId, sectionId) =>
-  `${integrationId}${flowId ? `-${flowId}` : ''}${
-    sectionId ? `-${sectionId}` : ''
-  }`;
-
 async function initIntegrationSettingsSaveButton(props = {}, initialStore = reduxStore) {
   const ui = (
     <MemoryRouter>
@@ -33,7 +28,7 @@ describe('test suite for IntegrationSettingsSaveButton', () => {
     const integrationId = 'integration-123';
     const flowId = 'flow-456';
     const sectionId = 'section-789';
-    const KEY = getStateKey(integrationId, flowId, sectionId);
+    const KEY = `${integrationId}-${flowId}-${sectionId}`;
     const initialStore = getCreatedStore();
 
     initialStore.getState().session.integrationApps.settings[KEY] = {

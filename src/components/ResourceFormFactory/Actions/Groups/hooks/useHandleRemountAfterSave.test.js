@@ -7,11 +7,10 @@ import useHandleRemountAfterSave from './useHandleRemountAfterSave';
 import { getCreatedStore } from '../../../../../store';
 
 async function initUseHandleRemountAfterSave(props = {}, initialStore) {
-  let cb;
   const DummyComponent = () => {
     const { formKey, onSave, remountAfterSaveFn } = props;
 
-    cb = useHandleRemountAfterSave(formKey, onSave, remountAfterSaveFn);
+    const cb = useHandleRemountAfterSave(formKey, onSave, remountAfterSaveFn);
 
     const onClick = () => {
       if (initialStore && initialStore.getState().session.asyncTask[formKey]?.status) {

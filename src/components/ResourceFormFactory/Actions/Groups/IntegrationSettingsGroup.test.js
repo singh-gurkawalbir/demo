@@ -33,7 +33,6 @@ const getStateKey = (integrationId, flowId, sectionId) =>
 describe('test suite for IntegrationSettings', () => {
   test('should pass initial rendering', async () => {
     await initIntegrationSettings();
-    screen.debug();
     expect(screen.getByRole('button', {name: 'Save'})).toBeDisabled();
     expect(screen.getByRole('button', {name: 'Close'})).toBeEnabled();
   });
@@ -43,7 +42,6 @@ describe('test suite for IntegrationSettings', () => {
     const integrationId = 'asdfgh';
     const flowId = 'qwerty';
     const sectionId = 'zxcvb';
-    const disabled = true;
     const KEY = getStateKey(integrationId, flowId, sectionId);
     const initialStore = getCreatedStore();
 
@@ -55,7 +53,7 @@ describe('test suite for IntegrationSettings', () => {
     initialStore.getState().session.integrationApps.settings[KEY] = {
       formSaveStatus: 'loading',
     };
-    await initIntegrationSettings({integrationId, flowId, sectionId, formKey, disabled}, initialStore);
+    await initIntegrationSettings({integrationId, flowId, sectionId, formKey, disabled: true}, initialStore);
     expect(screen.getByRole('button', {name: 'Saving...'})).toBeDisabled();
     expect(screen.getByRole('button', {name: 'Close'})).toBeDisabled();
   });
@@ -88,7 +86,6 @@ describe('test suite for IntegrationSettings', () => {
       },
     };
     await initIntegrationSettings({formKey}, initialStore);
-    screen.debug();
     const saveButton = screen.getByRole('button', {name: 'Save'});
     const closeButton = screen.getByRole('button', {name: 'Close'});
     const saveAndCloseButton = screen.getByRole('button', {name: 'Save & close'});

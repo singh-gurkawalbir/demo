@@ -18,11 +18,9 @@ async function inituseClearAsyncStateOnUnmount() {
     useClearAsyncStateOnUnmount(key);
 
     return (
-      <>
-        <div>
-          Hello
-        </div>
-      </>
+      <div>
+        Hello
+      </div>
     );
   };
 

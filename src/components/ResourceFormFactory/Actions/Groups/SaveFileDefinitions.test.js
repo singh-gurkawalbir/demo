@@ -42,7 +42,6 @@ describe('test suite for SaveFileDefinitions', () => {
   });
   test('should pass initial rendering', async () => {
     await initSaveFileDefinitions();
-    screen.debug();
     expect(screen.getByRole('button', {name: 'Save'})).toBeDisabled();
     expect(screen.getByRole('button', {name: 'Close'})).toBeEnabled();
   });

@@ -16,11 +16,9 @@ async function inituseHandleCancel(props = {}, initialStore) {
     returnData = useHandleCancel(props);
 
     return (
-      <>
-        <div>
-          Hello
-        </div>
-      </>
+      <div>
+        Hello
+      </div>
     );
   };
 

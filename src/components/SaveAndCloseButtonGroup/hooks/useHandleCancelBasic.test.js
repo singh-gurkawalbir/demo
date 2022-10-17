@@ -1,4 +1,4 @@
-/* global describe, jest, expect, test */
+/* global describe, jest, expect, test, beforeEach */
 import React from 'react';
 import { renderWithProviders } from '../../../test/test-utils';
 import { CLOSE_AFTER_SAVE } from '..';
@@ -24,11 +24,9 @@ async function inituseHandleCancelBasic(props = {}) {
     returnData = useHandleCancelBasic(props);
 
     return (
-      <>
-        <div>
-          Hello
-        </div>
-      </>
+      <div>
+        Hello
+      </div>
     );
   };
 
@@ -38,7 +36,6 @@ async function inituseHandleCancelBasic(props = {}) {
 }
 
 describe('test suite for useHandleCancelBasic hook', () => {
-  // eslint-disable-next-line no-undef
   beforeEach(() => {
     mockSave = undefined;
     mockDiscard = undefined;

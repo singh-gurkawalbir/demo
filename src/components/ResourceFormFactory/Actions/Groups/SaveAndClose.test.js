@@ -18,8 +18,6 @@ jest.mock('./hooks/useHandleSubmit', () => ({
   default: () => mockHandleSubmit,
 }));
 
-jest.mock();
-
 async function initSaveAndClose(props = {}, initialStore) {
   const ui = (
     <ConfirmDialogProvider>
@@ -93,8 +91,6 @@ describe('test suite for SaveAndClose', () => {
   test('should display a dialog box on replacing connection for existing imports / exports', async () => {
     const onCancel = jest.fn();
     const formKey = 'form-123';
-    const resourceType = 'imports';
-    const resourceId = '287dgf';
     const flowId = '345dns';
     const integrationId = '872vss';
     const connectionId = 'zkdzj33';
@@ -121,7 +117,7 @@ describe('test suite for SaveAndClose', () => {
       }],
     };
 
-    await initSaveAndClose({formKey, resourceType, resourceId, onCancel, flowId}, initialStore);
+    await initSaveAndClose({formKey, resourceType: 'imports', resourceId: '287dgf', onCancel, flowId}, initialStore);
     const saveButton = screen.getByRole('button', {name: 'Save'});
 
     userEvent.click(saveButton);
