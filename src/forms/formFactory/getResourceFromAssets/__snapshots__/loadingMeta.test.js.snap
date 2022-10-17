@@ -7434,14 +7434,18 @@ Object {
       },
     },
     "layout": Object {
-      "fields": Array [
-        "application",
-        "type",
-        "connection",
-        "name",
-        "description",
-        "settings",
-      ],
+      "containers": Array [
+        Object {
+          "fields": Array [
+            "application",
+            "type",
+            "connection",
+            "name",
+            "description",
+            "settings",
+          ],
+        }
+      ]
     },
   },
   "init": undefined,
