@@ -739,6 +739,7 @@ export function* getResourceCollection({ resourceType, refresh, integrationId })
     resourceType &&
     ((resourceType.includes('suitescript/connections/') && resourceType.includes('/tiles')) ||
     resourceType.includes('ashares') ||
+    resourceType.includes('httpconnectors') ||
     resourceType.includes('transfers'))
   ) {
     hideNetWorkSnackbar = true;

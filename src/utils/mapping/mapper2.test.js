@@ -4438,6 +4438,7 @@ describe('v2 mapping utils', () => {
     test('should not throw exception for invalid args', () => {
       expect(buildExtractsTree()).toEqual([]);
       expect(buildExtractsTree(null, null)).toEqual([]);
+      expect(buildExtractsTree('invalid string data')).toEqual([]);
     });
     test('should correctly return the tree structure based on passed non-array sample data', () => {
       generateUniqueKey.mockReturnValue('new_key');
