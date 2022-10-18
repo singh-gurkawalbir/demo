@@ -127,8 +127,7 @@ function DownloadErrors({ flowId, resourceId, onClose }) {
 }
 export default function DownloadErrorsDrawer({ flowId, resourceId }) {
   const history = useHistory();
-  const match = useRouteMatch();
-  const handleClose = useCallback(() => history.replace(`${match.url}`), [history, match]);
+  const handleClose = useCallback(() => history.goBack(), [history]);
 
   return (
     <RightDrawer
