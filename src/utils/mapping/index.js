@@ -712,7 +712,14 @@ export const getSelectedExtractDataTypes = ({
 
 // this util takes in the existing helper array and new source field
 // and adds/updates the helper array accordingly
-export const buildExtractsHelperFromExtract = (existingExtractsArray = [], sourceField, formKey, newExtractObj, extractsTree, selectedExtractJsonPath) => {
+export const buildExtractsHelperFromExtract = ({
+  existingExtractsArray = [],
+  sourceField,
+  formKey,
+  newExtractObj,
+  extractsTree,
+  selectedExtractJsonPath,
+  oldSourceDataType}) => {
   if (!sourceField) return [];
 
   const splitExtracts = sourceField?.split(',') || [];
@@ -743,7 +750,7 @@ export const buildExtractsHelperFromExtract = (existingExtractsArray = [], sourc
     } else {
       // add extract
       toReturn.push(formKey ? newExtractObj : {extract: uniqueExtract,
-        sourceDataType: getSelectedExtractDataTypes({extractsTree, selectedValue: e, selectedExtractJsonPath})[0] || MAPPING_DATA_TYPES.STRING});
+        sourceDataType: oldSourceDataType || getSelectedExtractDataTypes({extractsTree, selectedValue: e, selectedExtractJsonPath})[0] || MAPPING_DATA_TYPES.STRING});
     }
   });
 
@@ -905,7 +912,7 @@ export const rebuildObjectArrayNode = (node, extract = '', prevActiveExtract, ex
     return (childNode.parentExtract || '') === previousFirstExtract;
   }) || [];
 
-  clonedNode.extractsArrayHelper = buildExtractsHelperFromExtract(clonedNode.extractsArrayHelper, extract, undefined, undefined, extractsTree, selectedExtractJsonPath);
+  clonedNode.extractsArrayHelper = buildExtractsHelperFromExtract({existingExtractsArray: clonedNode.extractsArrayHelper, sourceField: extract, extractsTree, selectedExtractJsonPath});
   const hasNoExtract = isEmpty(clonedNode.extractsArrayHelper);
 
   const {activeTab, activeExtract} = getFirstActiveTab(clonedNode);

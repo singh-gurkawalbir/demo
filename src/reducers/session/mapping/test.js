@@ -1,5 +1,5 @@
 /* global describe, test, expect, jest */
-import reducer, { selectors, expandRow, updateChildrenProps, updateDataType } from '.';
+import reducer, { selectors, expandRow, updateChildrenProps, updateDestinationDataType } from '.';
 import actions from '../../../actions';
 import {MAPPING_DATA_TYPES} from '../../../utils/mapping';
 import {generateUniqueKey} from '../../../utils/string';
@@ -6197,7 +6197,7 @@ describe('mapping utils', () => {
       expect(updateChildrenProps(children, parentNode, MAPPING_DATA_TYPES.OBJECT)).toEqual(newChildren);
     });
   });
-  describe('updateDataType util', () => {
+  describe('updateDestinationDataType util', () => {
     const state = {
       mapping: {
         importId: 'imp-123',
@@ -6207,8 +6207,8 @@ describe('mapping utils', () => {
     };
 
     test('should return original node if its falsy', () => {
-      expect(updateDataType()).toBeUndefined();
-      expect(updateDataType({}, null)).toBeNull();
+      expect(updateDestinationDataType()).toBeUndefined();
+      expect(updateDestinationDataType({}, null)).toBeNull();
     });
     test('should return original node if old and new data types are same', () => {
       const node = {
@@ -6218,7 +6218,7 @@ describe('mapping utils', () => {
         dataType: MAPPING_DATA_TYPES.STRING,
       };
 
-      expect(updateDataType(state, node, MAPPING_DATA_TYPES.STRING, MAPPING_DATA_TYPES.STRING)).toBe(node);
+      expect(updateDestinationDataType(state, node, MAPPING_DATA_TYPES.STRING, MAPPING_DATA_TYPES.STRING)).toBe(node);
     });
     test('should add empty row child if new data type is object array with copy source as yes', () => {
       generateUniqueKey.mockReturnValue('new_key');
@@ -6246,7 +6246,7 @@ describe('mapping utils', () => {
         }],
       };
 
-      expect(updateDataType(state, node, MAPPING_DATA_TYPES.OBJECT, MAPPING_DATA_TYPES.OBJECTARRAY)).toEqual(newNode);
+      expect(updateDestinationDataType(state, node, MAPPING_DATA_TYPES.OBJECT, MAPPING_DATA_TYPES.OBJECTARRAY)).toEqual(newNode);
     });
     test('should add empty row to children if new data type is object array with copy source as no and no existing children', () => {
       generateUniqueKey.mockReturnValue('new_key');
@@ -6272,7 +6272,7 @@ describe('mapping utils', () => {
         }],
       };
 
-      expect(updateDataType(state, node, MAPPING_DATA_TYPES.STRING, MAPPING_DATA_TYPES.OBJECTARRAY)).toEqual(newNode);
+      expect(updateDestinationDataType(state, node, MAPPING_DATA_TYPES.STRING, MAPPING_DATA_TYPES.OBJECTARRAY)).toEqual(newNode);
     });
     test('should delete existing children if new data type is object with copy source as yes', () => {
       const node = {
@@ -6296,7 +6296,7 @@ describe('mapping utils', () => {
         extract: '$.fname[*]',
       };
 
-      expect(updateDataType(state, node, MAPPING_DATA_TYPES.OBJECTARRAY, MAPPING_DATA_TYPES.OBJECT)).toEqual(newNode);
+      expect(updateDestinationDataType(state, node, MAPPING_DATA_TYPES.OBJECTARRAY, MAPPING_DATA_TYPES.OBJECT)).toEqual(newNode);
     });
     test('should delete existing children and add empty row to children if new data type is object with copy source as no', () => {
       generateUniqueKey.mockReturnValue('new_key');
@@ -6326,7 +6326,7 @@ describe('mapping utils', () => {
         }],
       };
 
-      expect(updateDataType(state, node, MAPPING_DATA_TYPES.OBJECTARRAY, MAPPING_DATA_TYPES.OBJECT)).toEqual(newNode);
+      expect(updateDestinationDataType(state, node, MAPPING_DATA_TYPES.OBJECTARRAY, MAPPING_DATA_TYPES.OBJECT)).toEqual(newNode);
     });
     test('should delete existing children if new data type is primitive array', () => {
       const node = {
@@ -6349,7 +6349,7 @@ describe('mapping utils', () => {
         extractsArrayHelper: [{extract: '$.fname[*]'}],
       };
 
-      expect(updateDataType(state, node, MAPPING_DATA_TYPES.OBJECTARRAY, MAPPING_DATA_TYPES.STRINGARRAY)).toEqual(newNode);
+      expect(updateDestinationDataType(state, node, MAPPING_DATA_TYPES.OBJECTARRAY, MAPPING_DATA_TYPES.STRINGARRAY)).toEqual(newNode);
     });
     test('should delete existing children if new data type is primitive type', () => {
       const node = {
@@ -6372,7 +6372,7 @@ describe('mapping utils', () => {
         dataType: MAPPING_DATA_TYPES.NUMBER,
       };
 
-      expect(updateDataType(state, node, MAPPING_DATA_TYPES.OBJECTARRAY, MAPPING_DATA_TYPES.NUMBER)).toEqual(newNode);
+      expect(updateDestinationDataType(state, node, MAPPING_DATA_TYPES.OBJECTARRAY, MAPPING_DATA_TYPES.NUMBER)).toEqual(newNode);
     });
   });
 });

@@ -121,15 +121,14 @@ describe('v2 mapping utils', () => {
 
   describe('buildExtractsHelperFromExtract util', () => {
     test('should not throw exception for invalid args', () => {
-      expect(buildExtractsHelperFromExtract()).toEqual([]);
-      expect(buildExtractsHelperFromExtract([])).toEqual([]);
-      expect(buildExtractsHelperFromExtract(null)).toEqual([]);
+      expect(buildExtractsHelperFromExtract({})).toEqual([]);
+      expect(buildExtractsHelperFromExtract({existingExtractsArray: []})).toEqual([]);
     });
     test('should not modify the helper array if no new source is added and formKey is not passed', () => {
       const existingExtractsArray = [{extract: '$|0', sourceDataType: 'object'}, {extract: '$|1', sourceDataType: 'string', copySource: 'yes'}, {extract: '$.items[*]', sourceDataType: 'string'}];
       const sourceField = '$,$,$.items[*]';
 
-      expect(buildExtractsHelperFromExtract(existingExtractsArray, sourceField)).toEqual(existingExtractsArray);
+      expect(buildExtractsHelperFromExtract({existingExtractsArray, sourceField})).toEqual(existingExtractsArray);
     });
     test('should modify the helper array and use new extract config if source is already present and formKey is passed', () => {
       const existingExtractsArray = [{extract: '$|0', sourceDataType: 'object'}, {extract: '$|1', sourceDataType: 'string'}, {extract: '$.items[*]', sourceDataType: 'string'}];
@@ -137,25 +136,25 @@ describe('v2 mapping utils', () => {
       const formKey = '$|1';
       const newExtractObj = {extract: '$|1', sourceDataType: 'object', copySource: 'yes'};
 
-      expect(buildExtractsHelperFromExtract(existingExtractsArray, sourceField, formKey, newExtractObj)).toEqual([{extract: '$|0', sourceDataType: 'object'}, {extract: '$|1', sourceDataType: 'object', copySource: 'yes'}, {extract: '$.items[*]', sourceDataType: 'string'}]);
+      expect(buildExtractsHelperFromExtract({existingExtractsArray, sourceField, formKey, newExtractObj})).toEqual([{extract: '$|0', sourceDataType: 'object'}, {extract: '$|1', sourceDataType: 'object', copySource: 'yes'}, {extract: '$.items[*]', sourceDataType: 'string'}]);
     });
     test('should modify the helper array and remove the sources not passed', () => {
       const existingExtractsArray = [{extract: '$|0', sourceDataType: 'object'}, {extract: '$|1', sourceDataType: 'string'}, {extract: '$.items[*]', sourceDataType: 'string'}];
       const sourceField = '$,$.items[*]';
 
-      expect(buildExtractsHelperFromExtract(existingExtractsArray, sourceField)).toEqual([{extract: '$|0', sourceDataType: 'object'}, {extract: '$.items[*]', sourceDataType: 'string'}]);
+      expect(buildExtractsHelperFromExtract({existingExtractsArray, sourceField})).toEqual([{extract: '$|0', sourceDataType: 'object'}, {extract: '$.items[*]', sourceDataType: 'string'}]);
     });
     test('should copy the existing settings if a new source is added at same index', () => {
       const existingExtractsArray = [{extract: '$|0', sourceDataType: 'object', copySource: 'yes'}, {extract: '$|1', sourceDataType: 'string'}, {extract: '$.items[*]', sourceDataType: 'string'}];
       const sourceField = '$.new,$,$.items[*]';
 
-      expect(buildExtractsHelperFromExtract(existingExtractsArray, sourceField)).toEqual([{extract: '$.new', sourceDataType: 'string', copySource: 'yes'}, {extract: '$|1', sourceDataType: 'string'}, {extract: '$.items[*]', sourceDataType: 'string'}]);
+      expect(buildExtractsHelperFromExtract({existingExtractsArray, sourceField})).toEqual([{extract: '$.new', sourceDataType: 'string', copySource: 'yes'}, {extract: '$|1', sourceDataType: 'string'}, {extract: '$.items[*]', sourceDataType: 'string'}]);
     });
     test('should add the new source in the helper array at a new index', () => {
       const existingExtractsArray = [{extract: '$.abc', sourceDataType: 'object', copySource: 'yes'}, {extract: '$.items[*]', sourceDataType: 'string'}];
       const sourceField = '$.new,$.abc,$.items[*]';
 
-      expect(buildExtractsHelperFromExtract(existingExtractsArray, sourceField)).toEqual([{extract: '$.new', sourceDataType: 'string'}, {extract: '$.abc', sourceDataType: 'object', copySource: 'yes'}, {extract: '$.items[*]', sourceDataType: 'string'}]);
+      expect(buildExtractsHelperFromExtract({existingExtractsArray, sourceField})).toEqual([{extract: '$.new', sourceDataType: 'string'}, {extract: '$.abc', sourceDataType: 'object', copySource: 'yes'}, {extract: '$.items[*]', sourceDataType: 'string'}]);
     });
   });
 
