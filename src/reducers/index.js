@@ -6031,8 +6031,9 @@ selectors.getIntegrationUserNameById = (state, userId, flowId) => {
   // else get user name from integration users list
   const integrationId = selectors.resource(state, 'flows', flowId)?._integrationId || 'none';
   const usersList = selectors.availableUsersList(state, integrationId);
+  const userObject = usersList.find(user => user?.sharedWithUser?._id === userId);
 
-  return usersList.find(user => user?.sharedWithUser?._id === userId)?.sharedWithUser?.name;
+  return userObject?.sharedWithUser?.name || userObject?.sharedWithUser?.email;
 };
 
 // #endregion errorManagement selectors
@@ -7245,7 +7246,13 @@ selectors.retryUsersList = createSelector(
       }
 
       const userObject = availableUsersList.find(userOb => userOb.sharedWithUser?._id === job.triggeredBy);
-      const name = profile._id === job.triggeredBy ? (profile.name || profile.email) : userObject?.sharedWithUser?.name;
+      const name = profile._id === job.triggeredBy
+        ? (profile.name || profile.email)
+        : (userObject?.sharedWithUser?.name || userObject?.sharedWithUser?.email);
+
+      if (!name) {
+        return users;
+      }
 
       return users.find(user => user._id === job.triggeredBy) ? users : [...users, {
         _id: job.triggeredBy,
