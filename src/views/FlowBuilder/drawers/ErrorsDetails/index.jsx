@@ -140,7 +140,7 @@ export default function ErrorDetailsDrawer({ flowId }) {
   }, [matchErrorDrawerPathWithFilter, history, match.url, matchErrorDrawerPath]);
 
   useEffect(() => {
-    if (isOpenErrorsLoaded && !allErrors.length && errorType === 'open' && changeTab) {
+    if (isOpenErrorsLoaded && !allErrors.length && errorType && errorType.includes('open') && changeTab) {
       handleErrorTypeChange('resolved');
       setChangeTab(false);
     }
