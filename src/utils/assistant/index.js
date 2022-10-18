@@ -746,8 +746,11 @@ export function convertFromExport({ exportDoc: exportDocOrig, assistantData: ass
     } else {
       bodyParams = exportAdaptorSubSchema.body;
     }
-
-    bodyParams = JSON.parse(bodyParams);
+    try {
+      bodyParams = JSON.parse(bodyParams);
+    // eslint-disable-next-line no-empty
+    } catch (e) {
+    }
   }
 
   if (!operation) {

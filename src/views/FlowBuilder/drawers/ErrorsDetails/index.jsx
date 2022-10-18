@@ -17,6 +17,7 @@ import { useEditRetryConfirmDialog } from '../../../../components/ErrorList/Erro
 import RetryList from '../../../../components/JobDashboard/RetryList';
 import { FILTER_KEYS } from '../../../../utils/errorManagement';
 import actions from '../../../../actions';
+import { getTextAfterCount } from '../../../../utils/string';
 
 const emptySet = [];
 
@@ -92,8 +93,8 @@ export default function ErrorDetailsDrawer({ flowId }) {
 
   const childJob = useSelector(
     state => selectors.filter(state, `${flowId}-${flowJobId}-${matchErrorDrawerPathWithFilter?.params?.resourceId}`), shallowEqual
-  );
-
+  ) || {};
+  const {endedAt, isLatestJob, numOpenError} = childJob;
   const resourceName = useSelector(state => {
     const { resourceId } = matchErrorDrawerPath?.params || {};
 
@@ -140,6 +141,19 @@ export default function ErrorDetailsDrawer({ flowId }) {
     }
   }, [matchErrorDrawerPathWithFilter, history, match.url, matchErrorDrawerPath]);
 
+  const {data: latestFlowJobs = emptySet} = useSelector(
+    state => selectors.flowDashboardJobs(state, flowId),
+    shallowEqual
+  ) || {};
+
+  const totalErrorsCount = (isLatestJob && latestFlowJobs.find(job => {
+    const { _flowJobId, _parentJobId, _exportId, _importId, _expOrImpId } = job;
+    const id = _expOrImpId || _exportId || _importId;
+    const jobFlowJobId = _flowJobId || _parentJobId;
+
+    return resourceId === id && flowJobId === jobFlowJobId;
+  })?.numError) || numOpenError;
+
   useEffect(() => () => {
     dispatch(actions.errorManager.flowErrorDetails.clear({ flowId, resourceId }));
     dispatch(actions.clearFilter(FILTER_KEYS.OPEN));
@@ -164,7 +178,7 @@ export default function ErrorDetailsDrawer({ flowId }) {
       handleClose();
     }
   }, [childJob, flowJobId, handleClose]);
-  const endedAt = childJob?.endedAt;
+
   const Title = () => (
     <>
       {`Errors: ${resourceName}`}
@@ -191,10 +205,10 @@ export default function ErrorDetailsDrawer({ flowId }) {
       <Tabs flowId={flowId} onChange={handleErrorTypeChange} />
 
       <DrawerContent className={classes.errorDetailsDrawerContent}>
-        {flowJobId ? (
+        {flowJobId && isOpenErrorsLoaded ? (
           <Typography variant="body2" className={classes.errorsInRun}>
-            <span className={classes.boldErrorsCount}>{childJob?.numOpenError} error{childJob?.numOpenError !== 1 ? 's' : ''} in this run </span>
-            {childJob?.numOpenError <= 1000 ? (<span><span>: {allErrors.length} open  |  </span><span>{childJob?.numOpenError - allErrors.length} resolved</span></span>) : ''}
+            <span className={classes.boldErrorsCount}>{getTextAfterCount('error', totalErrorsCount)} in this run </span>
+            {totalErrorsCount < 1000 ? (<span><span>: {allErrors.length} open  |  </span><span>{totalErrorsCount - allErrors.length} resolved</span></span>) : ''}
           </Typography>
         ) : ''}
         {errorType === FILTER_KEYS.RETRIES ? <RetryList flowId={flowId} /> : <ErrorList flowId={flowId} errorsInRun={flowJobId} />}

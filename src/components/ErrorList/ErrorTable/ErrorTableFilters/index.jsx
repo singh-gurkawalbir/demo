@@ -102,7 +102,7 @@ export default function ErrorTableFilters({ flowId, resourceId, isResolved, filt
         activeErrorId: '',
       }));
       dispatch(
-        actions.analytics.gainsight.trackEvent('OPEN_ERRORS_VIEW_CHANGED')
+        actions.analytics.gainsight.trackEvent('OPEN_ERRORS_VIEW_CHANGED', {view: event.target.value})
       );
     });
   }, [dispatch, filterKey, showRetryDataChangedConfirmDialog]);

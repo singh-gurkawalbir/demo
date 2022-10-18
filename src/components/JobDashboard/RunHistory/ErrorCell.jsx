@@ -10,7 +10,7 @@ import { getTextAfterCount } from '../../../utils/string';
 import { buildDrawerUrl, drawerPaths } from '../../../utils/rightDrawer';
 import Status from '../../Buttons/Status';
 
-export default function ErrorCell({ job, disabled }) {
+export default function ErrorCell({ job, disabled, isLatestJob}) {
   const { _integrationId, _flowId, _childId, _flowJobId, _parentJobId, _exportId, numOpenError, _importId, _expOrImpId } = job;
   const flowJobId = _flowJobId || _parentJobId;
   const dispatch = useDispatch();
@@ -33,13 +33,13 @@ export default function ErrorCell({ job, disabled }) {
   });
 
   const handleErrorClick = useCallback(() => {
-    dispatch(actions.patchFilter(`${_flowId}-${flowJobId}-${id}`, {...job}));
+    dispatch(actions.patchFilter(`${_flowId}-${flowJobId}-${id}`, {...job, isLatestJob}));
     history.push(buildDrawerUrl({
       path: drawerPaths.ERROR_MANAGEMENT.V2.JOB_ERROR_DETAILS,
       baseUrl: flowBuilderTo,
       params: { resourceId: id, flowJobId, errorType: 'open'},
     }));
-  }, [dispatch, _flowId, flowJobId, id, job, history, flowBuilderTo]);
+  }, [dispatch, _flowId, flowJobId, id, job, isLatestJob, history, flowBuilderTo]);
 
   if (!numOpenError) {
     return (
