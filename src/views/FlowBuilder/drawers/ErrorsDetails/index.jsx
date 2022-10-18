@@ -172,18 +172,24 @@ export default function ErrorDetailsDrawer({ flowId }) {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpenErrorsLoaded]);
 
-  // Child job information will not be available if we reload the page. Page should be redirected to old url for this case.
-  if (flowJobId && (!childJob || isEmpty(childJob))) {
-    handleClose();
+  useEffect(() => {
+    // Child job information will not be available if we reload the page. Page should be redirected to parent url for this case.
+    if (flowJobId && (!childJob || isEmpty(childJob))) {
+      handleClose();
+    }
+  }, [childJob, flowJobId, handleClose]);
 
-    return null;
-  }
   const Title = () => (
     <>
       {`Errors: ${resourceName}`}
       {endedAt && <DrawerHeaderSubTitle>Run completed: <CeligoTimeAgo date={endedAt} /></DrawerHeaderSubTitle>}
     </>
   );
+
+  if (flowJobId && (!childJob || isEmpty(childJob))) {
+    // we redirect in case of no flow job id
+    return null;
+  }
 
   return (
     <RightDrawer
