@@ -146,6 +146,19 @@ export default function ErrorDetailsDrawer({ flowId }) {
     shallowEqual
   ) || {};
 
+  const integrationId = useSelector(state =>
+    selectors.resource(state, 'flows', flowId)?._integrationId || 'none'
+  );
+  const isIntegrationUsersRequested = useSelector(state =>
+    !!selectors.integrationUsers(state, integrationId)
+  );
+  const users = useSelector(state =>
+    selectors.availableUsersList(state, integrationId)
+  );
+  const isOwnerOrAdmin = useSelector(state =>
+    selectors.isAccountOwnerOrAdmin(state)
+  );
+
   const totalErrorsCount = (isLatestJob && latestFlowJobs.find(job => {
     const { _flowJobId, _parentJobId, _exportId, _importId, _expOrImpId } = job;
     const id = _expOrImpId || _exportId || _importId;
@@ -178,6 +191,18 @@ export default function ErrorDetailsDrawer({ flowId }) {
       handleClose();
     }
   }, [childJob, flowJobId, handleClose]);
+
+  const requestIntegrationUsers = useCallback(() => {
+    if (!users?.length && isOwnerOrAdmin) {
+      dispatch(actions.user.org.users.requestCollection('Retrieving org users'));
+    } else if (!isOwnerOrAdmin && !isIntegrationUsersRequested) {
+      dispatch(actions.resource.requestCollection(`integrations/${integrationId}/ashares`));
+    }
+  }, [dispatch, integrationId, isIntegrationUsersRequested, isOwnerOrAdmin, users?.length]);
+
+  useEffect(() => {
+    requestIntegrationUsers();
+  }, [requestIntegrationUsers]);
 
   const Title = () => (
     <>

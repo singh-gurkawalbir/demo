@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useRouteMatch } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core';
@@ -27,12 +27,6 @@ export default function RetryList({ flowId }) {
   const filters = useSelector(state => selectors.filter(state, FILTER_KEYS.RETRIES));
   const retries = useSelector(state => selectors.retryList(state, flowId, resourceId, filters));
   const retryListStatus = useSelector(state => selectors.retryListStatus(state, flowId, resourceId));
-  const integrationId = useSelector(state =>
-    selectors.resource(state, 'flows', flowId)?._integrationId || 'none'
-  );
-  const isIntegrationUsersRequested = useSelector(state =>
-    !!selectors.integrationUsers(state, integrationId)
-  );
 
   const actionProps = useMemo(() => ({
     resourceId,
@@ -54,16 +48,6 @@ export default function RetryList({ flowId }) {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch, flowId]);
-
-  const requestIntegrationUsers = useCallback(() => {
-    if (!isIntegrationUsersRequested) {
-      dispatch(actions.resource.requestCollection(`integrations/${integrationId}/ashares`));
-    }
-  }, [dispatch, integrationId, isIntegrationUsersRequested]);
-
-  useEffect(() => {
-    requestIntegrationUsers();
-  }, [requestIntegrationUsers]);
 
   return (
     <>
