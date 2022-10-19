@@ -41,8 +41,9 @@ const fieldMeta = {
 const INVALID_DATE = 'Invalid date';
 const VALID_ERROR_TYPES = ['open', 'resolved'];
 
-function DownloadErrors({ flowId, resourceId, onClose }) {
+function DownloadErrors({ flowId, resourceId }) {
   const match = useRouteMatch();
+  const history = useHistory();
   const {type: errorType} = match.params || {};
   const dispatch = useDispatch();
   const [enqueueSnackbar] = useEnqueueSnackbar();
@@ -61,6 +62,8 @@ function DownloadErrors({ flowId, resourceId, onClose }) {
       setIsValidForm(true);
     }
   }, [formContext.value]);
+
+  const onClose = useCallback(() => history.goBack(), [history]);
 
   const handleDownload = useCallback(
     () => {
@@ -126,9 +129,6 @@ function DownloadErrors({ flowId, resourceId, onClose }) {
   );
 }
 export default function DownloadErrorsDrawer({ flowId, resourceId }) {
-  const history = useHistory();
-  const handleClose = useCallback(() => history.goBack(), [history]);
-
   return (
     <RightDrawer
       path={drawerPaths.ERROR_MANAGEMENT.V2.DOWNLOAD_ERRORS}
@@ -140,8 +140,7 @@ export default function DownloadErrorsDrawer({ flowId, resourceId }) {
        // two separate components so that the DrawerContent and DrawerFooter components could
        // be user here directly instead of being children of the DownloadErrors component.
         flowId={flowId}
-        resourceId={resourceId}
-        onClose={handleClose} />
+        resourceId={resourceId} />
     </RightDrawer>
   );
 }
