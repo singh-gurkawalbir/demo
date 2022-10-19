@@ -3751,6 +3751,7 @@ describe('mapping reducer', () => {
             dataType: MAPPING_DATA_TYPES.STRING,
             generate: 'fname',
             hardCodedValue: 'custom value',
+            sourceDataType: MAPPING_DATA_TYPES.STRING,
           }],
         },
       };
@@ -4027,6 +4028,7 @@ describe('mapping reducer', () => {
               dataType: MAPPING_DATA_TYPES.STRING,
               generate: 'fname',
               extract: '{{Base Price}}',
+              sourceDataType: MAPPING_DATA_TYPES.STRING,
             },
           ],
         },
@@ -4101,6 +4103,7 @@ describe('mapping reducer', () => {
               dataType: MAPPING_DATA_TYPES.STRING,
               generate: 'fname',
               hardCodedValue: null,
+              sourceDataType: MAPPING_DATA_TYPES.STRING,
             },
           ],
         },

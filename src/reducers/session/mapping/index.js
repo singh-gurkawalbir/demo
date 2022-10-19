@@ -21,7 +21,8 @@ import {
   updateChildrenJSONPath,
   getCombinedExtract,
   buildExtractsHelperFromExtract,
-  getSelectedExtractDataTypes} from '../../../utils/mapping';
+  getSelectedExtractDataTypes,
+  isMapper2HandlebarExpression} from '../../../utils/mapping';
 import { generateUniqueKey } from '../../../utils/string';
 
 export const expandRow = (draft, key) => {
@@ -841,11 +842,14 @@ export default (state = {}, action) => {
 
         if (node) {
           if (field === 'extract') {
+            let isHardCoded = false;
+
             if (value.indexOf('"') === 0) {
               delete node.extract;
               delete node.extractsArrayHelper;
               delete node.default;
               node.hardCodedValue = value.replace(/(^")|("$)/g, '');
+              isHardCoded = true;
             } else {
               delete node.hardCodedValue;
               if (ARRAY_DATA_TYPES.includes(node.dataType)) {
@@ -879,6 +883,10 @@ export default (state = {}, action) => {
                 node.extract = value;
                 node.sourceDataType = isSettingsPatch ? node.sourceDataType : getSelectedExtractDataTypes({extractsTree: draft.mapping.extractsTree, selectedValue: value, selectedExtractJsonPath})[0] || MAPPING_DATA_TYPES.STRING;
               }
+            }
+
+            if (isHardCoded || isMapper2HandlebarExpression(value, isHardCoded)) {
+              node.sourceDataType = MAPPING_DATA_TYPES.STRING;
             }
           } else if (node.isRequired) {
             // do nothing as no changes can be made to 'generate' of a required mapping
@@ -926,11 +934,13 @@ export default (state = {}, action) => {
           if (value?.conditional?.when === 'extract_not_empty') {
             delete node.default;
           }
+          let isHardCoded = false;
 
           if ('hardCodedValue' in value) {
             delete node.extract;
             delete node.extractsArrayHelper;
             delete node.default;
+            isHardCoded = true;
           } else {
             delete node.hardCodedValue;
           }
@@ -972,6 +982,10 @@ export default (state = {}, action) => {
             if (!value.conditional?.when && nodeSubArray[nodeIndexInSubArray]?.conditional?.when) {
               delete nodeSubArray[nodeIndexInSubArray].conditional.when;
             }
+          }
+
+          if (isHardCoded || isMapper2HandlebarExpression(node.extract, isHardCoded)) {
+            node.sourceDataType = MAPPING_DATA_TYPES.STRING;
           }
         }
 
