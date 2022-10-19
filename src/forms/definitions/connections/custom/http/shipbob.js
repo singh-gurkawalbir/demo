@@ -1,3 +1,5 @@
+import uniq from 'lodash/uniq';
+
 export default {
   preSave: formValues => ({
     ...formValues,
@@ -11,10 +13,10 @@ export default {
     '/http/auth/oauth/authURI': 'https://auth.shipbob.com/connect/integrate',
     '/http/auth/oauth/tokenURI': 'https://auth.shipbob.com/connect/token',
     '/http/auth/oauth/scopeDelimiter': ' ',
-    '/http/auth/oauth/scope': [
+    '/http/auth/oauth/scope': uniq([
       ...['inventory_read'],
       ...formValues['/http/auth/oauth/scope'],
-    ],
+    ]),
     '/http/auth/token/refreshMethod': 'POST',
     '/http/auth/token/refreshMediaType': 'urlencoded',
     '/http/concurrencyLevel': `${formValues['/http/concurrencyLevel']}` || 2,
