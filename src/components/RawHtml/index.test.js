@@ -46,4 +46,10 @@ describe('Test suite for RawHtml component', () => {
     userEvent.click(button);
     expect(onClick).toHaveBeenCalledTimes(1);
   });
+  test('should pass the render when options is an empty object', async () => {
+    const html = '<>This is <strong>not</strong> working.</>';
+
+    await initRawHtml({html});
+    expect(screen.getByText(/working/i)).toBeInTheDocument();
+  });
 });
