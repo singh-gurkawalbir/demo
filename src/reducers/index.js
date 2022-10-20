@@ -1568,8 +1568,6 @@ selectors.matchingConnectionList = (state, connection = {}, environment, manageO
         if (getHttpConnector(connection.http?._httpConnectorId)) {
           return (
             this.http?._httpConnectorId === connection.http?._httpConnectorId &&
-            this.http?._httpConnectorVersionId === connection.http?._httpConnectorVersionId &&
-            this.http?._httpConnectorApiId === connection.http?._httpConnectorApiId &&
             !this._connectorId &&
             (!environment || !!this.sandbox === (environment === 'sandbox'))
           );

@@ -90,9 +90,6 @@ export const getReplaceConnectionExpression = (connection, isFrameWork2, childId
       if (connection.http?._httpConnectorId) {
         expression.push({ 'http._httpConnectorId': connection.http._httpConnectorId });
       }
-      if (connection.http?._httpConnectorVersionId) {
-        expression.push({ 'http._httpConnectorVersionId': connection.http._httpConnectorVersionId });
-      }
     }
     expression.push({ 'http.formType': { $ne: 'rest' } });
     expression.push({ type });
