@@ -7245,25 +7245,25 @@ selectors.retryUsersList = createSelector(
       }
 
       if (job.triggeredBy === 'auto') {
-        return [...users, {
+        users.push({
           _id: job.triggeredBy,
           name: 'Auto-retried',
-        }];
+        });
+      } else {
+        const userObject = availableUsersList.find(userOb => userOb.sharedWithUser?._id === job.triggeredBy);
+        const name = profile._id === job.triggeredBy
+          ? (profile.name || profile.email)
+          : (userObject?.sharedWithUser?.name || userObject?.sharedWithUser?.email);
+
+        if (name) {
+          users.push({
+            _id: job.triggeredBy,
+            name,
+          });
+        }
       }
 
-      const userObject = availableUsersList.find(userOb => userOb.sharedWithUser?._id === job.triggeredBy);
-      const name = profile._id === job.triggeredBy
-        ? (profile.name || profile.email)
-        : (userObject?.sharedWithUser?.name || userObject?.sharedWithUser?.email);
-
-      if (!name) {
-        return users;
-      }
-
-      return [...users, {
-        _id: job.triggeredBy,
-        name,
-      }];
+      return users;
     }, []);
 
     return [{ _id: 'all', name: 'All users'}, ...(uniqBy(allUsersTriggeredRetry, '_id'))];
