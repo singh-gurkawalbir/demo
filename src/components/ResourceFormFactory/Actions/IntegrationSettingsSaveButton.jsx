@@ -41,6 +41,7 @@ export default function IntegrationSettingsSaveButton(props) {
   return (
     <FilledButton
       disabled={disabled || !isDirty || isSaving}
+      data-test="Save"
       onClick={onSave}>
       {isSaving ? 'Saving...' : 'Save'}
     </FilledButton>
