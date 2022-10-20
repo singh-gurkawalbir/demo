@@ -172,6 +172,9 @@ const useStyles = makeStyles(theme => ({
     margin: theme.spacing(2, 2, -2),
     alignItems: 'center',
     color: theme.palette.secondary.main,
+    '&+$mappingDrawerContent': {
+      marginTop: theme.spacing(2),
+    },
     '& > svg': {
       marginRight: theme.spacing(0.5),
       fontSize: theme.spacing(2),
