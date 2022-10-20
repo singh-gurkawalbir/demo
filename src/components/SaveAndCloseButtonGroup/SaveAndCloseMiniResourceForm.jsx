@@ -9,32 +9,6 @@ import useHandleCancel from './hooks/useHandleCancel';
 import useTriggerCancelFromContext from './hooks/useTriggerCancelFromContext';
 import SaveAndCloseMiniButtons from './SaveAndCloseMiniButtons';
 
-const MiniResourceForm = ({
-  isDirty,
-  inProgress,
-  handleSave,
-  handleCancel,
-  submitTransientLabel,
-  submitButtonLabel,
-  shouldNotShowCancelButton,
-  className,
-  disabled,
-}) => (
-  <ActionGroup>
-    <SaveAndCloseMiniButtons
-      isDirty={isDirty}
-      inProgress={inProgress}
-      handleSave={handleSave}
-      handleCancel={handleCancel}
-      submitTransientLabel={submitTransientLabel}
-      submitButtonLabel={submitButtonLabel}
-      shouldNotShowCancelButton={shouldNotShowCancelButton}
-      className={className}
-      disabled={disabled}
-    />
-  </ActionGroup>
-);
-
 export default function SaveAndCloseMiniResourceForm({
   formKey,
   submitButtonLabel = 'Save & close',
@@ -62,16 +36,18 @@ export default function SaveAndCloseMiniResourceForm({
   useTriggerCancelFromContext(formKey, handleCancelClick);
 
   return (
-    <MiniResourceForm
-      isDirty={forceIsDirty || isDirty}
-      inProgress={inProgress}
-      submitButtonLabel={submitButtonLabel}
-      submitTransientLabel={submitTransientLabel}
-      handleSave={handleSaveWhenValid}
-      handleCancel={handleCancelClick}
-      shouldNotShowCancelButton={shouldNotShowCancelButton}
-      className={className}
-      disabled={disabled}
-    />
+    <ActionGroup>
+      <SaveAndCloseMiniButtons
+        isDirty={forceIsDirty || isDirty}
+        inProgress={inProgress}
+        submitButtonLabel={submitButtonLabel}
+        submitTransientLabel={submitTransientLabel}
+        handleSave={handleSaveWhenValid}
+        handleCancel={handleCancelClick}
+        shouldNotShowCancelButton={shouldNotShowCancelButton}
+        className={className}
+        disabled={disabled}
+        />
+    </ActionGroup>
   );
 }
