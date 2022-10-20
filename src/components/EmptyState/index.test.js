@@ -33,7 +33,6 @@ describe('EmptyState component Test cases', () => {
   test('should pass the intial render', async () => {
     await initEmptyState();
     expect(screen.getByRole('img')).toBeInTheDocument();
-    screen.debug(null, Infinity);
   });
 
   test('should pass the intial render by setting title, subTitle, type and children', async () => {
@@ -44,7 +43,6 @@ describe('EmptyState component Test cases', () => {
       children: <div>test children</div>,
     });
     expect(screen.getByText(/Test Title/i)).toBeInTheDocument();
-    screen.debug(null, Infinity);
   });
 
   test('should have the image source as somethingURL', async () => {
@@ -52,6 +50,5 @@ describe('EmptyState component Test cases', () => {
       type: 'recyclebin',
     });
     expect(screen.getByRole('img')).toHaveAttribute('src', 'somethingURL');
-    screen.debug(null, Infinity);
   });
 });
