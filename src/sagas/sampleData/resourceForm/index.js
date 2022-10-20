@@ -9,7 +9,7 @@ import {
   isRealTimeOrDistributedResource,
   isFileAdaptor,
   isAS2Resource,
-} from '../../../utils/resource';
+  isNewId } from '../../../utils/resource';
 import { getFormattedResourceForPreview } from '../../../utils/flowData';
 import {
   _fetchResourceInfoFromFormKey,
@@ -101,7 +101,7 @@ export function* _requestExportPreviewData({ formKey, executeProcessors = false 
     path = `/integrations/${integrationId}/exports/preview`;
   } else {
     path = '/exports/preview';
-    body._flowId = flowId;
+    if (!isNewId(flowId)) { body._flowId = flowId; }
   }
 
   const recordSize = yield select(selectors.sampleDataRecordSize, resourceId);
