@@ -7245,7 +7245,7 @@ selectors.retryUsersList = createSelector(
       }
 
       if (job.triggeredBy === 'auto') {
-        return users.find(user => user._id === job.triggeredBy) ? users : [...users, {
+        return [...users, {
           _id: job.triggeredBy,
           name: 'Auto-retried',
         }];
@@ -7260,13 +7260,13 @@ selectors.retryUsersList = createSelector(
         return users;
       }
 
-      return users.find(user => user._id === job.triggeredBy) ? users : [...users, {
+      return [...users, {
         _id: job.triggeredBy,
         name,
       }];
     }, []);
 
-    return [{ _id: 'all', name: 'All users'}, ...allUsersTriggeredRetry];
+    return [{ _id: 'all', name: 'All users'}, ...(uniqBy(allUsersTriggeredRetry, '_id'))];
   }
 );
 
