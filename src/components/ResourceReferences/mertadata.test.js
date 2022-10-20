@@ -4,9 +4,7 @@ import * as tableContext from '../CeligoTable/TableContext';
 import ResourceLink from '../ResourceLink';
 import metadata from './metadata';
 
-describe('ResourceDrawer UI test', () => {
-  test('resource type wrong', () => {
-  });
+describe('Resourcereference metadata UI test', () => {
   test('should verify the various keys in the usecolumns array', () => {
     const [first, second] = metadata.useColumns();
 

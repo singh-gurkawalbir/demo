@@ -22,7 +22,7 @@ initialStore.getState().data.resources.flows = [
     name: 'FlowName',
   }];
 
-describe('ResourceDrawer UI test', () => {
+describe('ResourceName UI test', () => {
   test('should show Export Name of provided Id', () => {
     renderWithProviders(<ResourceName resourceId="2" />, {initialStore});
     expect(screen.getByText('ExportName')).toBeInTheDocument();

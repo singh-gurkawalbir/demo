@@ -24,7 +24,7 @@ jest.mock('../LoadResources', () => ({
   ),
 }));
 
-describe('ResourceDrawer UI test', () => {
+describe('ResourceLink UI test', () => {
   test('should ssc', () => {
     const mockFn = jest.fn();
 
@@ -66,7 +66,7 @@ describe('ResourceDrawer UI test', () => {
     userEvent.click(linkButton);
     expect(mockFn).not.toHaveBeenCalled();
   });
-  test('should show as name when name is not provided', () => {
+  test('should show Id as name when name is not provided', () => {
     jest.spyOn(reactRedux, 'useSelector').mockReturnValue('/someLink');
     const mockFn = jest.fn();
 

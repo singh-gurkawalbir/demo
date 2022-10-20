@@ -122,7 +122,7 @@ function renderFunction() {
     </MemoryRouter>, {initialStore});
 }
 
-describe('ResourceDrawer UI test', () => {
+describe('AddOrSelect UI test', () => {
   test('should call the submitfunction on clicking Done after selecting the required connection', () => {
     renderFunction();
     userEvent.click(screen.getByText('Use existing connection'));

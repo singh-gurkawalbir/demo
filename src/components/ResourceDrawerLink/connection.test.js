@@ -28,7 +28,7 @@ jest.mock('../ResourceDrawerLink', () => ({
   },
 }));
 
-describe('ResourceDrawer UI test', () => {
+describe('ResourceDrawer connections UI test', () => {
   test('should show the resource content ans tupe when and disabled text ', () => {
     renderWithProviders(<MemoryRouter><ConnectionResourceDrawerLink integrationId="integrationId" resource="resourceContent" /> </MemoryRouter>);
 

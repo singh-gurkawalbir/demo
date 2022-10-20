@@ -41,8 +41,8 @@ jest.mock('../CeligoTable', () => ({
   ),
 }));
 
-describe('ResourceDrawer UI test', () => {
-  test('resource type wrong', () => {
+describe('ResourceReferences UI test', () => {
+  test('should show Retrieving references when resource type is wrong', () => {
     renderWithProviders(<MemoryRouter><ResourceReferences resourceType="connfvections" title="someTitle" resourceId="someId" /> </MemoryRouter>);
 
     expect(screen.getByText('Retrieving references')).toBeInTheDocument();

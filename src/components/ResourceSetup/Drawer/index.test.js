@@ -161,7 +161,7 @@ function renderFunction(initialStore, props, initialEntries) {
     </MemoryRouter>, {initialStore});
 }
 
-describe('ResourceDrawer UI test', () => {
+describe('ResourceSetupDrawer UI test', () => {
   afterEach(() => {
     jest.clearAllMocks();
   });
