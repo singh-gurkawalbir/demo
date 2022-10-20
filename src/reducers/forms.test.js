@@ -104,6 +104,10 @@ describe('Form fields state validation test cases', () => {
                     _id: 'jobId3',
                     triggeredBy: '5f686ef49daecd32740e2710',
                   },
+                  {
+                    _id: 'jobId3',
+                    triggeredBy: 'auto',
+                  },
                 ],
               },
             },
@@ -241,6 +245,7 @@ describe('Form fields state validation test cases', () => {
         { _id: 'all', name: 'All users'},
         { _id: '5f6882679daecd32740e2c38', name: 'Shared user 1' },
         { _id: '5f686ef49daecd32740e2710', name: 'Shared user 2' },
+        { _id: 'auto', name: 'Auto-retried' },
       ]);
     });
   });

@@ -7244,6 +7244,13 @@ selectors.retryUsersList = createSelector(
         return users;
       }
 
+      if (job.triggeredBy === 'auto') {
+        return users.find(user => user._id === job.triggeredBy) ? users : [...users, {
+          _id: job.triggeredBy,
+          name: 'Auto-retried',
+        }];
+      }
+
       const userObject = availableUsersList.find(userOb => userOb.sharedWithUser?._id === job.triggeredBy);
       const name = profile._id === job.triggeredBy
         ? (profile.name || profile.email)
