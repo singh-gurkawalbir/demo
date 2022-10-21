@@ -1,13 +1,12 @@
-/* global describe, test, expect,afterEach,beforeEach, jest */
+/* global describe, test, expect,afterEach, jest */
 import React from 'react';
 import { MemoryRouter, Route } from 'react-router-dom';
-import { screen } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import * as reactRedux from 'react-redux';
-import { renderWithProviders, reduxStore } from '../../../test/test-utils';
+import { renderWithProviders, reduxStore, mockPatchRequestOnce } from '../../../test/test-utils';
 import ConfigConnectionDebugger from '.';
 import { DrawerProvider } from '../Right/DrawerContext/index';
-import actionTypes from '../../../actions/types';
+import { runServer } from '../../../test/api/server';
 
 const mockHistoryGoBack = jest.fn();
 let initialStore;
@@ -84,26 +83,8 @@ jest.mock('react-router-dom', () => ({
 }));
 
 describe('ConfigConnectionDebugger tests', () => {
-  let mockDispatch;
-  let useDispatchSpy;
-
-  beforeEach(() => {
-    useDispatchSpy = jest.spyOn(reactRedux, 'useDispatch');
-    mockDispatch = jest.fn(actions => {
-      switch (actions.type) {
-        case actionTypes.RESOURCE.PATCH:
-          initialStore.getState().data.resources.connections[0].debugDate = actions.patchSet[0].value;
-          break;
-        default: initialStore.dispatch(actions);
-      }
-    });
-
-    useDispatchSpy.mockReturnValue(mockDispatch);
-  });
-
+  runServer();
   afterEach(() => {
-    useDispatchSpy.mockClear();
-    mockDispatch.mockClear();
     mockHistoryGoBack.mockClear();
   });
 
@@ -137,26 +118,25 @@ describe('ConfigConnectionDebugger tests', () => {
   });
 
   test('Should able to test the ConfigConnectionDebugger drawer When debugger is Turned On', async () => {
-    const {store} = await initConfigConnectionDebugger({});
+    await initConfigConnectionDebugger({});
     const save = screen.getByRole('button', {name: 'Save'});
 
     expect(save).not.toBeEnabled();
     userEvent.click(screen.getByRole('radio', {name: 'Next 15 mins'}));
-    expect(mockDispatch).toHaveBeenCalledTimes(2);
     userEvent.click(save);
-    expect(mockDispatch).toHaveBeenCalledTimes(4);
-    userEvent.click(screen.getByRole('radio', {name: 'Next 30 mins'}));
-    expect(screen.queryByText(/Debug mode is enabled for the next 14 minutes./i)).toBeInTheDocument();
-    store.getState().session.asyncTask['config-conn-debug'].status = 'complete';
+    mockPatchRequestOnce('api/connections/_connectionId', []);
+    await waitFor(() => expect(screen.queryByText(/Debug mode is enabled for the next 14 minutes./i)).toBeInTheDocument());
   });
 
   test('Should able to test the ConfigConnectionDebugger drawer When debugger is Turned Off', async () => {
     await initConfigConnectionDebugger({debugTime: 45});
     expect(screen.queryByText(/Debug mode is enabled for the next 44 minutes./i)).toBeInTheDocument();
     userEvent.click(screen.getByRole('radio', {name: /Off/i}));
-    userEvent.click(screen.getByRole('button', {name: 'Save'}));
-    expect(mockDispatch).toHaveBeenCalled();
-    userEvent.click(screen.getByRole('radio', {name: 'Next 30 mins'}));
-    expect(screen.queryByText(/Debug mode is enabled for the next 44 minutes./i)).not.toBeInTheDocument();
+    const saveAndClose = screen.getByRole('button', {name: 'Save & close'});
+
+    expect(saveAndClose).toBeEnabled();
+    userEvent.click(saveAndClose);
+    mockPatchRequestOnce('api/connections/_connectionId', []);
+    await waitFor(() => expect(screen.queryByText(/Debug mode is enabled for the next 44 minutes./i)).not.toBeInTheDocument());
   });
 });
