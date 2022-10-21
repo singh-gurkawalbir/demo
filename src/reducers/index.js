@@ -5400,7 +5400,7 @@ selectors.applicationType = (state, resourceType, id) => {
     const httpApp = applications.find(a => a._httpConnectorId === httpConnectorId);
 
     if (httpConnectorId && httpApp) {
-      return httpApp._legacyId || httpApp.name;
+      return httpApp._legacyId || httpApp.id;
     }
   }
 
