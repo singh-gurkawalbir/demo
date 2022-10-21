@@ -42,6 +42,7 @@ const connectors = [
     type: 'wrapper',
     keywords: 'technology',
     group: 'tech',
+    helpURL: 'https://docs.celigo.com/hc/en-us/articles/360050836031-Set-up-a-wrapper-connection',
   },
   {
     id: 'webhook',
@@ -315,7 +316,7 @@ const newConnections = [
     assistant: 'googledrive',
     helpURL: 'https://docs.celigo.com/hc/en-us/articles/360056026892-Set-up-a-connection-to-Google-Drive',
   },
-  {id: 'azurestorageaccount', name: 'Azure Blob Storage', type: 'http', assistant: 'azurestorageaccount'},
+  {id: 'azurestorageaccount', name: 'Azure Blob Storage', type: 'http', assistant: 'azurestorageaccount', helpURL: 'https://docs.celigo.com/hc/en-us/articles/4405704367771-Set-up-a-connection-to-Azure-Blob-Storage'},
   {
     id: 'constantcontact',
     name: 'Constant Contact',
