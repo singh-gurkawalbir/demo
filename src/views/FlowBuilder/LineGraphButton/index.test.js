@@ -1,6 +1,5 @@
 /* global describe, test, expect, jest */
 import React from 'react';
-import {screen} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import {reduxStore, renderWithProviders} from '../../../test/test-utils';
 import LineGraphButton from '.';
@@ -67,7 +66,6 @@ describe('LineGraphButton UI tests', () => {
     const LineGraphButon = document.querySelector('[ data-test="charts"]');
 
     expect(LineGraphButon).toBeDisabled();
-    screen.debug();
   });
   test('should run the onClickHandler function passed in props', () => {
     const mockOnClickHandler = jest.fn();

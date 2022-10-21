@@ -124,7 +124,6 @@ describe('formbuilder button UI tests', () => {
     userEvent.click(button);
     expect(mockDispatchFn).toHaveBeenCalledTimes(1);
     expect(history.push).toHaveBeenCalledTimes(1);
-    screen.debug();
   });
   test('should render empty DOM when no props are passed', () => {
     const {utils} = renderWithProviders(<MemoryRouter><FormBuilderButton /></MemoryRouter>);

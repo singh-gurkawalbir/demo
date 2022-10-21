@@ -23,6 +23,7 @@ const useStyles = makeStyles(theme => ({
   },
   viewResultButton: {
     padding: theme.spacing(0, 0.5),
+    fontSize: '0.75rem',
   },
   divider: {
     height: theme.spacing(3),
@@ -66,7 +67,9 @@ export default function RetryStatus({ flowId }) {
         {resourcesWithRetryCompleted.length > 1 ? (
           <RetryListPopper resources={resourcesWithRetryCompleted} />
         ) : (
-          <TextButton size="small" color="primary" className={classes.viewResultButton} onClick={handleClick}>
+          <TextButton
+            size="small" bold="true" color="primary" className={classes.viewResultButton}
+            onClick={handleClick}>
             View results
           </TextButton>
         )}
