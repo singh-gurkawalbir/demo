@@ -97,7 +97,7 @@ export default function DynaReplaceConnection(props) {
       .filter(field => {
         if (field.touched) {
           if (metaDataExists) {
-            if (!(field.id.includes('assistantMetadata'))) { return true; }
+            if (!(field?.id?.includes('assistantMetadata'))) { return true; }
           } else { return true; }
         }
 
