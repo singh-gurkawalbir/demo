@@ -291,7 +291,7 @@ describe('Testsuite for Job Dashboard Filters', () => {
       name: 'jobs',
       filter: { status: 'error', currentPage: 0 },
     });
-  });
+  }, 10000);
   test('should test the filter button when it has no flow id and select a flow', async () => {
     await initFilters({
       integrationId: '1234',
@@ -323,7 +323,7 @@ describe('Testsuite for Job Dashboard Filters', () => {
       name: 'jobs',
       filter: { flowId: '', currentPage: 0 },
     });
-  });
+  }, 10000);
   test('should test the refresh button and test the run now text', async () => {
     await initFilters({
       integrationId: '1234',
