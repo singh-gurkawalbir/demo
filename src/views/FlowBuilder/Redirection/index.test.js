@@ -157,7 +157,6 @@ describe('Redirection UI tests', () => {
 
     initRedirection(ui, props);
     await waitFor(() => expect(mockHistoryReplace).toBeCalled());
-    screen.debug();
   });
   test('should make the respective dispatch calls when flowId is not "new"', async () => {
     const props = {children: <ResourceButton variant="import" />};
@@ -173,7 +172,6 @@ describe('Redirection UI tests', () => {
 
     initRedirection(ui, props);
     await waitFor(() => expect(mockDispatchFn).toBeCalledWith(actions.errorManager.openFlowErrors.requestPoll({ flowId: '62c6f122a2f4a703c3dee3d0' })));
-    screen.debug();
   });
   test('should make the respective dispatch call when the flowId starts with "new"', async () => {
     const props = {children: <ResourceButton variant="import" />};

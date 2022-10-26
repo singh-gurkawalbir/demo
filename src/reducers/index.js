@@ -1494,8 +1494,9 @@ selectors.flowListWithMetadata = (state, options) => {
  */
 selectors.mkNextDataFlowsForFlow = () => createSelector(
   state => state?.data?.resources?.flows,
+  state => state?.data?.resources?.exports,
   (_, flow) => flow,
-  (flows, flow) => getNextDataFlows(flows, flow)
+  (flows, exports, flow) => getNextDataFlows(flows, exports, flow)
 );
 
 selectors.isConnectionOffline = (state, id) => {

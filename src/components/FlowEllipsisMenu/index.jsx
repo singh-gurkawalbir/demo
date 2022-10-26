@@ -21,6 +21,7 @@ import { getIntegrationAppUrlName } from '../../utils/integrationApps';
 import { getTemplateUrlName } from '../../utils/template';
 import getRoutePath from '../../utils/routePaths';
 import { buildDrawerUrl, drawerPaths } from '../../utils/rightDrawer';
+import { isNewId } from '../../utils/resource';
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
@@ -266,6 +267,7 @@ export default function FlowEllipsisMenu({ flowId, exclude }) {
         aria-label="more"
         aria-controls={actionsPopoverId}
         aria-haspopup="true"
+        disabled={isNewId(flowId)}
         size="small"
         onClick={handleMenuClick}>
         <EllipsisIcon />

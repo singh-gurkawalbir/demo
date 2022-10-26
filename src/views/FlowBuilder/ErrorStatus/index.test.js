@@ -38,7 +38,6 @@ describe('ErrorStatus UI tests', () => {
 
     initErrorStatus(props);
     expect(screen.getByText('Success')).toBeInTheDocument();
-    screen.debug();
   });
   test('should pass the initial render for given number of errors', () => {
     const props = {isNew: false, flowId: '6253af74cddb8a1ba550a010', count: 2};
