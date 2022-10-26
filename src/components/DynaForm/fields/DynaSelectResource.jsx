@@ -198,9 +198,10 @@ export default function DynaSelectResource(props) {
     integrationId,
     connectorId,
     flowId,
-    addTitle = 'Add connection',
-    editTitle = 'Edit connection ',
-    disabledTitle = 'Select a connection to allow editing',
+    type,
+    addTitle = type === 'dynaiclient' ? 'Create iClient' : 'Add connection',
+    editTitle = type === 'dynaiclient' ? 'Edit iClient' : 'Edit connection',
+    disabledTitle = type === 'dynaiclient' ? 'Select an iClient to allow editing' : 'Select a connection to allow editing',
   } = props;
   const {options} = props;
   const classes = useStyles();
