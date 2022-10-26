@@ -212,6 +212,12 @@ export function SalesforceLookupFilterPanelData({
     }
   };
 
+  const hasWhiteSpace = s => {
+    const whitespaceChars = [' ', '\t', '\n'];
+
+    return whitespaceChars.some(char => s.includes(char));
+  };
+
   const validateRule = rule => {
     const r = rule.data;
 
@@ -221,6 +227,10 @@ export function SalesforceLookupFilterPanelData({
 
     if (r.rhs.type && !r.rhs[r.rhs.type]) {
       return { isValid: false, error: 'Please select right operand.' };
+    }
+
+    if (r.rhs.type && r.rhs.type === 'value' && hasWhiteSpace(r.rhs[r.rhs.type])) {
+      return { isValid: false, error: 'Value should not contain spaces.' };
     }
 
     return {
