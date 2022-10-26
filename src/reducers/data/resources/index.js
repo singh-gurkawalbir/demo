@@ -534,7 +534,7 @@ selectors.resourceDetailsMap = createSelector(
   }
 );
 
-const hasFormData = settingsForm => !!(settingsForm && (settingsForm.form || settingsForm.init));
+const hasFormData = settingsForm => !!(settingsForm && (settingsForm.form?.layout?.fields?.length || settingsForm.form?.layout?.containers?.length || settingsForm.init));
 
 const getSectionMetadata = selectors.mkGetCustomFormPerSectionId();
 
