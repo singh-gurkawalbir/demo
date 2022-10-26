@@ -2471,48 +2471,103 @@ describe('isImportMappingAvailable', () => {
 });
 
 describe('getNextDataFlows', () => {
-  const flow = {
+  const flow1 = {
     _id: 'f1',
     _integrationId: 'i1',
+    pageGenerators: [{ type: 'export', _exportId: 'e3' }],
+  };
+  const flow4 = {
+    _id: 'f4',
+    _integrationId: 'i1',
+    pageGenerators: [{ type: 'export', _exportId: 'e2' }],
   };
   const flows = [
     {
       _id: 'f1',
       _integrationId: 'i1',
+      pageGenerators: [{ type: 'export', _exportId: 'e3' }],
     },
     {
       _id: 'f2',
       _integrationId: 'i1',
+      pageGenerators: [{ type: 'export', _exportId: 'e3' }],
     },
     {
       _id: 'f3',
       _integrationId: 'i2',
+      pageGenerators: [{ type: 'export', _exportId: 'e1' }],
     },
     {
       _id: 'f4',
       _integrationId: 'i1',
-      isRealtime: true,
+      pageGenerators: [{ type: 'export', _exportId: 'e2' }],
     },
     {
       _id: 'f5',
       _integrationId: 'i1',
-      isSimpleImport: true,
+      pageGenerators: [{ type: 'export', _exportId: 'e1' }],
     },
     {
       _id: 'f6',
       _integrationId: 'i1',
+      pageGenerators: [{ type: 'export', _exportId: 'e2' }],
       disabled: true,
+    },
+  ];
+  const exports = [
+    {
+      _id: 'e1',
+      adaptorType: 'SimpleExport',
+      type: 'simple',
+    },
+    {
+      _id: 'e2',
+      adaptorType: 'NetSuiteExport',
+      type: 'distributed',
+    },
+    {
+      _id: 'e3',
+      adaptorType: 'NetSuiteExport',
+      type: 'delta',
+    },
+  ];
+  const expectedData1 = [
+    {
+      _id: 'f2',
+      _integrationId: 'i1',
+      pageGenerators: [{ type: 'export', _exportId: 'e3' }],
+      isRealtime: false,
+      isSimpleImport: false,
+    },
+  ];
+  const expectedData2 = [
+    {
+      _id: 'f1',
+      _integrationId: 'i1',
+      pageGenerators: [{ type: 'export', _exportId: 'e3' }],
+      isRealtime: false,
+      isSimpleImport: false,
+    },
+    {
+      _id: 'f2',
+      _integrationId: 'i1',
+      pageGenerators: [{ type: 'export', _exportId: 'e3' }],
+      isRealtime: false,
+      isSimpleImport: false,
     },
   ];
 
   test('should return empty array if flows is empty', () => {
-    expect(getNextDataFlows(undefined, flow)).toEqual([]);
+    expect(getNextDataFlows(undefined, exports, flow1)).toEqual([]);
   });
   test('should return empty array if flow is empty', () => {
-    expect(getNextDataFlows(flows, undefined)).toEqual([]);
+    expect(getNextDataFlows(flows, exports, undefined)).toEqual([]);
   });
-  test('should return correct flows', () => {
-    expect(getNextDataFlows(flows, flow)).toEqual([{_id: 'f2', _integrationId: 'i1'}]);
+  test('should return correct flows [1]', () => {
+    expect(getNextDataFlows(flows, exports, flow1)).toEqual(expectedData1);
+  });
+  test('should return correct flows [2]', () => {
+    expect(getNextDataFlows(flows, exports, flow4)).toEqual(expectedData2);
   });
 });
 

@@ -67,6 +67,7 @@ export default function DynaReplaceConnection(props) {
 
   const onFieldChangeHandler = useCallback((id, newConnectionId) => {
     const patch = [];
+    let metaDataExists = false;
 
     patch.push({
       op: 'replace',
@@ -77,6 +78,7 @@ export default function DynaReplaceConnection(props) {
     // assistantMetadata is removed on connection replace because the metadata changes on
     // switching between different versions of constant contact i.e. v2 & v3
     if (MULTIPLE_AUTH_TYPE_ASSISTANTS.includes(connection?.assistant)) {
+      metaDataExists = true;
       patch.push({
         op: 'remove',
         path: '/assistantMetadata',
@@ -92,7 +94,15 @@ export default function DynaReplaceConnection(props) {
     );
 
     let allTouchedFields = Object.values(formContext.fields)
-      .filter(field => !!field.touched)
+      .filter(field => {
+        if (field.touched) {
+          if (metaDataExists) {
+            if (!(field?.id?.includes('assistantMetadata'))) { return true; }
+          } else { return true; }
+        }
+
+        return false;
+      })
       .map(field => ({ id: field.id, value: field.value }));
 
     allTouchedFields = [
