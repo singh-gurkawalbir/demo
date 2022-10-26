@@ -1,11 +1,9 @@
-import React from 'react';
 import RouterPanel from '../Editor/panels/Router';
 import JavaScriptPanel from '../Editor/panels/JavaScript';
 import DataPanel from '../Editor/panels/Data';
 import ToggleMode from '../Drawer/actions/ToggleMode';
 import RouterMenu from '../Drawer/actions/RouterMenu';
 import ResultPanel from '../Editor/panels/Result';
-import InputOutputTitle from '../Editor/panels/Router/InputOutputTitle';
 
 export default {
   type: 'router',
@@ -22,15 +20,17 @@ export default {
         props: { mode: 'json' },
       },
       {
-        title: () => <InputOutputTitle activeProcessor={activeProcessor} type="input" />,
+        title: activeProcessor === 'javascript' ? 'Function input' : 'Input',
         area: 'form',
         Panel: DataPanel,
+        helpKey: 'afe.router.input',
         props: {mode: 'json'},
       },
       {
-        title: () => <InputOutputTitle activeProcessor={activeProcessor} type="output" />,
+        title: activeProcessor === 'javascript' ? 'Function output' : 'Output',
         area: 'values',
         Panel: ResultPanel,
+        helpKey: 'afe.router.output',
       },
     ];
 
