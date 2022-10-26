@@ -87,7 +87,6 @@ export const getJSONContentFromString = data => {
 export async function getCsvFromXlsx(data) {
   const { read, utils } = await retry(() => import(/* webpackChunkName: "XLSX" */'xlsx'));
   let workBook;
-  let result;
 
   try {
     const typedArray = String.fromCharCode.apply(null, new Uint8Array(data));
@@ -111,21 +110,22 @@ export async function getCsvFromXlsx(data) {
     }
   }
 
-  workBook.SheetNames.forEach(sheetName => {
-    try {
-      result = utils.sheet_to_csv(workBook.Sheets[sheetName]);
-    } catch (e) {
-      return {
-        success: false,
-        error: 'Upload Error',
-      };
-    }
-  });
+  // we fetch first sheet in case of multiple xlsx sheets to get the sample data out of xlsx file
+  const firstSheet = workBook.SheetNames[0];
 
-  return {
-    success: true,
-    result,
-  };
+  try {
+    const result = utils.sheet_to_csv(workBook.Sheets[firstSheet]);
+
+    return {
+      success: true,
+      result,
+    };
+  } catch (e) {
+    return {
+      success: false,
+      error: 'Upload Error',
+    };
+  }
 }
 
 /*
