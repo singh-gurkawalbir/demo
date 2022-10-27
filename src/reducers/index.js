@@ -1494,8 +1494,9 @@ selectors.flowListWithMetadata = (state, options) => {
  */
 selectors.mkNextDataFlowsForFlow = () => createSelector(
   state => state?.data?.resources?.flows,
+  state => state?.data?.resources?.exports,
   (_, flow) => flow,
-  (flows, flow) => getNextDataFlows(flows, flow)
+  (flows, exports, flow) => getNextDataFlows(flows, exports, flow)
 );
 
 selectors.isConnectionOffline = (state, id) => {
@@ -1568,8 +1569,6 @@ selectors.matchingConnectionList = (state, connection = {}, environment, manageO
         if (getHttpConnector(connection.http?._httpConnectorId)) {
           return (
             this.http?._httpConnectorId === connection.http?._httpConnectorId &&
-            this.http?._httpConnectorVersionId === connection.http?._httpConnectorVersionId &&
-            this.http?._httpConnectorApiId === connection.http?._httpConnectorApiId &&
             !this._connectorId &&
             (!environment || !!this.sandbox === (environment === 'sandbox'))
           );

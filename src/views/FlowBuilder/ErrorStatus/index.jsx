@@ -97,7 +97,7 @@ export default function ErrorStatus({ count, isNew, flowId, resourceId }) {
   return (
     <div className={classes.statusAppBlock}>
       <Status
-        onClick={() => handleStatus(FILTER_KEYS.OPEN)}
+        onClick={() => handleStatus('open')}
         variant={count ? 'error' : 'success'}> { count ? `${count} errors` : 'Success'}
       </Status>
       { retryStatus === 'inProgress' && (
