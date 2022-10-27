@@ -12,6 +12,8 @@ export default function DynaSalesforceSObject(props) {
 
     return !!(resource?._connectorId);
   });
+  // For sObject field, the value is not shown if the sObject is not triggerable
+  // For IA's, as the sObject field is configured and cLocked, to show the sObject we are not filtering them based on triggerable value
   const filterKey = isIAResource ? 'salesforce-sObjects' : 'salesforce-sObjects-triggerable';
 
   return (
