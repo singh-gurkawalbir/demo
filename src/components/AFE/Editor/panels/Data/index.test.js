@@ -22,7 +22,7 @@ jest.mock('../Code', () => ({
 let initialStore = getCreatedStore();
 
 function initDataPanel(props = {}) {
-  initialStore.getState().session.editors = {'5b3c75dd5d3c125c88b5dd02': {
+  initialStore.getState().session.editors = {filecsv: {
     fieldId: 'file.csv',
     formKey: 'imports-5b3c75dd5d3c125c88b5dd20',
     resourceId: '5b3c75dd5d3c125c88b5dd20',
@@ -83,7 +83,7 @@ describe('AFE DataPanel UI tests', () => {
   test('should pass the initial render', async () => {
     const props = {
       mode: 'json',
-      editorId: '5b3c75dd5d3c125c88b5dd02',
+      editorId: 'filecsv',
       disabled: false,
     };
 
@@ -94,7 +94,7 @@ describe('AFE DataPanel UI tests', () => {
   test('should make the respective dispatch call when data is changed in the panel', async () => {
     const props = {
       mode: 'json',
-      editorId: '5b3c75dd5d3c125c88b5dd02',
+      editorId: 'filecsv',
       disabled: false,
     };
 
@@ -104,6 +104,6 @@ describe('AFE DataPanel UI tests', () => {
     expect(DataPanel).toBeInTheDocument();
 
     userEvent.click(DataPanel);
-    await waitFor(() => expect(mockDispatchFn).toBeCalledWith(actions.editor.patchData('5b3c75dd5d3c125c88b5dd02', 'new value')));
+    await waitFor(() => expect(mockDispatchFn).toBeCalledWith(actions.editor.patchData('filecsv', 'new value')));
   });
 });

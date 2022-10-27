@@ -27,7 +27,7 @@ jest.mock('../../../../../DynaForm/DynaSubmit', () => ({
 const initialStore = getCreatedStore();
 
 function initFormPreview(props = {}) {
-  initialStore.getState().session.editors = {'5b3c75dd5d3c125c88b5dd02': {
+  initialStore.getState().session.editors = {filecsv: {
     fieldId: 'file.csv',
     formKey: 'imports-5b3c75dd5d3c125c88b5dd20',
     resourceId: '5b3c75dd5d3c125c88b5dd20',
@@ -59,16 +59,16 @@ describe('CsvGeneratePanel UI tests', () => {
     mockDispatchFn.mockClear();
   });
   test('should pass the initial render', async () => {
-    initFormPreview({editorId: '5b3c75dd5d3c125c88b5dd02', status: 'success'});
+    initFormPreview({editorId: 'filecsv', status: 'success'});
     expect(screen.getByText(/Test Form/i)).toBeInTheDocument();
   });
   test('should make the respective dispatch call when Test Form button is clicked', async () => {
-    initFormPreview({editorId: '5b3c75dd5d3c125c88b5dd02', status: 'success'});
+    initFormPreview({editorId: 'filecsv', status: 'success'});
     userEvent.click(screen.getByText(/Test Form/i));
-    await waitFor(() => expect(mockDispatchFn).toBeCalledWith(actions.editor.patchFeatures('5b3c75dd5d3c125c88b5dd02', {formOutput: 'data'})));
+    await waitFor(() => expect(mockDispatchFn).toBeCalledWith(actions.editor.patchFeatures('filecsv', {formOutput: 'data'})));
   });
   test('should display the error message when there is an error', () => {
-    initFormPreview({editorId: '5b3c75dd5d3c125c88b5dd02', status: 'error'});
+    initFormPreview({editorId: 'filecsv', status: 'error'});
     expect(screen.getByText('A preview of your settings form will appear once you add some valid form metadata or add an init hook.')).toBeInTheDocument();
   });
 });

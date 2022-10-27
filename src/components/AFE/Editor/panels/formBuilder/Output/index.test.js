@@ -16,7 +16,7 @@ jest.mock('../../Code', () => ({
 const initialStore = getCreatedStore();
 
 function initOutputPanel(props = {}) {
-  initialStore.getState().session.editors = {'5b3c75dd5d3c125c88b5dd02': {
+  initialStore.getState().session.editors = {filecsv: {
     fieldId: 'file.csv',
     formKey: 'imports-5b3c75dd5d3c125c88b5dd20',
     resourceId: '5b3c75dd5d3c125c88b5dd20',
@@ -29,15 +29,15 @@ function initOutputPanel(props = {}) {
 }
 describe('Output Panel UI tests', () => {
   test('should pass the initial render', () => {
-    initOutputPanel({editorId: '5b3c75dd5d3c125c88b5dd02', status: 'success', data: 'custom value'});
+    initOutputPanel({editorId: 'filecsv', status: 'success', data: 'custom value'});
     expect(screen.getByText('custom value')).toBeInTheDocument();
   });
   test('should display a prompt to click the preview when no data is present in the output', () => {
-    initOutputPanel({editorId: '5b3c75dd5d3c125c88b5dd02', status: 'success'});
+    initOutputPanel({editorId: 'filecsv', status: 'success'});
     expect(screen.getByText('Click the ‘test form’ button above to preview form output.')).toBeInTheDocument();
   });
   test('should display the loading message on screen when previewStatus is requested', () => {
-    initOutputPanel({editorId: '5b3c75dd5d3c125c88b5dd02', status: 'requested'});
+    initOutputPanel({editorId: 'filecsv', status: 'requested'});
     expect(screen.getByText('Loading...')).toBeInTheDocument();
   });
 });

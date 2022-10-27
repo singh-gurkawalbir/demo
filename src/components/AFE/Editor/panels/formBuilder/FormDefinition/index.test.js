@@ -22,7 +22,7 @@ jest.mock('../../Code', () => ({
 let initialStore = getCreatedStore();
 
 function initFormDefinitonPanel(props = {}) {
-  initialStore.getState().session.editors = {'5b3c75dd5d3c125c88b5dd02': {
+  initialStore.getState().session.editors = {filecsv: {
     fieldId: 'file.csv',
     formKey: 'imports-5b3c75dd5d3c125c88b5dd20',
     resourceId: '5b3c75dd5d3c125c88b5dd20',
@@ -56,7 +56,7 @@ describe('AFE DataPanel UI tests', () => {
   test('should pass the initial render', () => {
     const props = {
       mode: 'json',
-      editorId: '5b3c75dd5d3c125c88b5dd02',
+      editorId: 'filecsv',
     };
 
     initFormDefinitonPanel(props);
@@ -66,7 +66,7 @@ describe('AFE DataPanel UI tests', () => {
   test('should make the respective dispatch call when data is changed in the panel', async () => {
     const props = {
       mode: 'json',
-      editorId: '5b3c75dd5d3c125c88b5dd02',
+      editorId: 'filecsv',
     };
 
     initFormDefinitonPanel(props);
@@ -75,7 +75,7 @@ describe('AFE DataPanel UI tests', () => {
     expect(CodePanel).toBeInTheDocument();
 
     userEvent.click(CodePanel);
-    await waitFor(() => expect(mockDispatchFn).toBeCalledWith(actions.editor.patchFeatures('5b3c75dd5d3c125c88b5dd02', {data: 'new feature value'})));
-    await waitFor(() => expect(mockDispatchFn).toBeCalledWith(actions.editor.toggleAutoPreview('5b3c75dd5d3c125c88b5dd02', true)));
+    await waitFor(() => expect(mockDispatchFn).toBeCalledWith(actions.editor.patchFeatures('filecsv', {data: 'new feature value'})));
+    await waitFor(() => expect(mockDispatchFn).toBeCalledWith(actions.editor.toggleAutoPreview('filecsv', true)));
   });
 });

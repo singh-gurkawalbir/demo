@@ -29,7 +29,7 @@ jest.mock('../Code', () => ({
 const initialStore = getCreatedStore();
 
 function initJavaScriptPanel(props = {}) {
-  initialStore.getState().session.editors = {'5b3c75dd5d3c125c88b5dd02': {
+  initialStore.getState().session.editors = {filecsv: {
     fieldId: 'file.csv',
     formKey: 'imports-5b3c75dd5d3c125c88b5dd20',
     resourceId: '5b3c75dd5d3c125c88b5dd20',
@@ -96,7 +96,7 @@ describe('CsvGeneratePanel UI tests', () => {
     mockDispatchFn.mockClear();
   });
   test('should pass the initial render', async () => {
-    initJavaScriptPanel({editorId: '5b3c75dd5d3c125c88b5dd02', status: 'success'});
+    initJavaScriptPanel({editorId: 'filecsv', status: 'success'});
     expect(screen.getByText('Script')).toBeInTheDocument();
     expect(screen.getByText('Function')).toBeInTheDocument();
     const functionField = document.querySelector('[id="entryFunction"]');
@@ -108,7 +108,7 @@ describe('CsvGeneratePanel UI tests', () => {
     expect(screen.getByText('Insert pre save page stub')).toBeInTheDocument();
   });
   test('should have the respective default values selected for both script and function dropdowns', async () => {
-    initJavaScriptPanel({editorId: '5b3c75dd5d3c125c88b5dd02', status: 'success'});
+    initJavaScriptPanel({editorId: 'filecsv', status: 'success'});
 
     const defaultScript = document.querySelector('[value="5b3c75dd5d3c125c88b5cc00"]');  // value for script1 //
 
@@ -119,42 +119,42 @@ describe('CsvGeneratePanel UI tests', () => {
     expect(screen.getByText('Insert pre save page stub')).toBeInTheDocument();
   });
   test('should display the scripts dropdown when clicked on selected script', () => {
-    initJavaScriptPanel({editorId: '5b3c75dd5d3c125c88b5dd02', status: 'success'});
+    initJavaScriptPanel({editorId: 'filecsv', status: 'success'});
     userEvent.click(screen.getByText('script 1'));
     expect(screen.getByText('None')).toBeInTheDocument();
     expect(screen.getByText('script 2')).toBeInTheDocument();
     expect(screen.getByText('script 3')).toBeInTheDocument();
   });
   test('should make the respective dispatch call and change the selected script when clicked on a menu item', async () => {
-    initJavaScriptPanel({editorId: '5b3c75dd5d3c125c88b5dd02', status: 'success'});
+    initJavaScriptPanel({editorId: 'filecsv', status: 'success'});
     userEvent.click(screen.getByText('script 1'));
     expect(screen.getByText('script 2')).toBeInTheDocument();
     userEvent.click(screen.getByText('script 2'));
-    expect(mockDispatchFn).toBeCalledWith(actions.editor.patchRule('5b3c75dd5d3c125c88b5dd02', { scriptId: '5b3c75dd5d3c125c88b5cc01', fetchScriptContent: true }));
+    expect(mockDispatchFn).toBeCalledWith(actions.editor.patchRule('filecsv', { scriptId: '5b3c75dd5d3c125c88b5cc01', fetchScriptContent: true }));
   });
   test('should make the respective dispatch call when function is changed', async () => {
-    initJavaScriptPanel({editorId: '5b3c75dd5d3c125c88b5dd02', status: 'success'});
+    initJavaScriptPanel({editorId: 'filecsv', status: 'success'});
     const defaultFunction = document.querySelector('[value="preSavePage"]');
 
     expect(defaultFunction).toBeInTheDocument();
     userEvent.type(defaultFunction, 'a');
 
-    await waitFor(() => expect(mockDispatchFn).toBeCalledWith(actions.editor.patchRule('5b3c75dd5d3c125c88b5dd02', { entryFunction: 'preSavePagea' })));
+    await waitFor(() => expect(mockDispatchFn).toBeCalledWith(actions.editor.patchRule('filecsv', { entryFunction: 'preSavePagea' })));
   });
-  test('should close the script dropdpwn when and change the selected script when it is changed to a new script from the dropdown', async () => {
-    initJavaScriptPanel({editorId: '5b3c75dd5d3c125c88b5dd02', status: 'success'});
+  test('should close the script dropdpwn when the selected script is changed to a new script from the dropdown', async () => {
+    initJavaScriptPanel({editorId: 'filecsv', status: 'success'});
     userEvent.click(screen.getByText('script 1'));
     expect(screen.getByText('script 2')).toBeInTheDocument();
     userEvent.click(screen.getByText('script 2'));
     await waitFor(() => expect(screen.queryByText('script 1')).toBeNull());
     await waitFor(() => expect(screen.queryByText('script 3')).toBeNull());
-    userEvent.click(screen.getByText('Insert pre save page stub'));
+    // userEvent.click(screen.getByText('Insert pre save page stub'));
   });
   test('should make the repective dispatch call when changes are made in code panel', async () => {
-    initJavaScriptPanel({editorId: '5b3c75dd5d3c125c88b5dd02', status: 'success'});
+    initJavaScriptPanel({editorId: 'filecsv', status: 'success'});
     expect(screen.getByText('custom code')).toBeInTheDocument();
     userEvent.click(screen.getByText('Code Panel'));
-    await waitFor(() => expect(mockDispatchFn).toBeCalledWith(actions.editor.patchRule('5b3c75dd5d3c125c88b5dd02', {code: 'new code value'})));
+    await waitFor(() => expect(mockDispatchFn).toBeCalledWith(actions.editor.patchRule('filecsv', {code: 'new code value'})));
   });
   test('should make the repective dispatch call when script does not have content', async () => {
     initJavaScriptPanel({editorId: '6b3c75dd5d3c125c88b5dd02', status: 'success'});
