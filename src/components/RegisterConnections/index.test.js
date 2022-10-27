@@ -14,14 +14,14 @@ jest.mock('../LoadResources', () => ({
   default: ({children}) => children,
 }));
 
-async function initRegisterConnections(props = {}, initialStore) {
+function initRegisterConnections(props = {}, initialStore) {
   const ui = (
     <MemoryRouter>
       <RegisterConnections {...props} />
     </MemoryRouter>
   );
 
-  return renderWithProviders(ui, {initialStore});
+  renderWithProviders(ui, {initialStore});
 }
 
 describe('Test suite for RegisterConnections component', () => {
@@ -43,10 +43,10 @@ describe('Test suite for RegisterConnections component', () => {
     mockDispatchFn.mockClear();
   });
 
-  test('should pass initial rendering', async () => {
+  test('should pass initial rendering', () => {
     const onClose = jest.fn();
 
-    await initRegisterConnections({onClose});
+    initRegisterConnections({onClose});
     const columnHeaders = screen.getAllByRole('columnheader').map(ele => ele.textContent);
 
     expect(screen.getByText('Register connections')).toBeInTheDocument();
@@ -73,7 +73,7 @@ describe('Test suite for RegisterConnections component', () => {
     expect(onClose).toHaveBeenCalledTimes(2);
   });
 
-  test('should be able to register multiple connections', async () => {
+  test('should be able to register multiple connections', () => {
     const integrationId = '626int';
     const onClose = jest.fn();
     const state = reduxStore.getState();
@@ -120,7 +120,7 @@ describe('Test suite for RegisterConnections component', () => {
         lastModified: '2022-08-25T08:14:18.288Z',
       }];
 
-    await initRegisterConnections({integrationId, onClose}, reduxStore);
+    initRegisterConnections({integrationId, onClose}, reduxStore);
 
     const connectionLinks = screen.getAllByRole('link').map(ele => ele.textContent);
 

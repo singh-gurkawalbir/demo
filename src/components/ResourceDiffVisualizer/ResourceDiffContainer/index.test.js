@@ -13,7 +13,7 @@ jest.mock('../../Spinner', () => ({
   default: () => (<div data-testid="spinner" />),
 }));
 
-async function initResourceDiffContainer(props = {}, initialStore) {
+function initResourceDiffContainer(props = {}, initialStore) {
   const ui = (
     <MemoryRouter>
       <ResourceDiffContainer {...props} />
@@ -24,7 +24,7 @@ async function initResourceDiffContainer(props = {}, initialStore) {
 }
 
 describe('Test suite for ResourceDiffContainer component', () => {
-  test('should render the resource name and titles in proper casing', async () => {
+  test('should render the resource name and titles in proper casing', () => {
     const props = {
       titles: { before: 'Before Merging', after: 'After Merging' },
       diff: [
@@ -41,7 +41,7 @@ describe('Test suite for ResourceDiffContainer component', () => {
       integrationId: 'int123',
     };
 
-    await initResourceDiffContainer(props);
+    initResourceDiffContainer(props);
     expect(screen.queryByText('References')).not.toBeInTheDocument();
     expect(screen.getByRole('button', {name: 'Imports'})).toBeInTheDocument();
 
@@ -58,7 +58,7 @@ describe('Test suite for ResourceDiffContainer component', () => {
     ]));
   });
 
-  test('should provide a default title (if not passed manually); and should be able to expand and close fullScreen View', async () => {
+  test('should provide a default title (if not passed manually); and should be able to expand and close fullScreen View', () => {
     const props = {
       diff: [
         {
@@ -74,7 +74,7 @@ describe('Test suite for ResourceDiffContainer component', () => {
       integrationId: 'int123',
     };
 
-    await initResourceDiffContainer(props);
+    initResourceDiffContainer(props);
     expect(screen.queryByText('References')).not.toBeInTheDocument();
     const fullScreen = document.querySelector('[data-test="expandAll"]');
 
@@ -100,7 +100,7 @@ describe('Test suite for ResourceDiffContainer component', () => {
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
   });
 
-  test('should show conflicts and conflict status in title bar', async () => {
+  test('should show conflicts and conflict status in title bar', () => {
     const props = {
       diff: [
         {
@@ -157,7 +157,7 @@ describe('Test suite for ResourceDiffContainer component', () => {
       integrationId: 'int123',
     };
 
-    await initResourceDiffContainer(props);
+    initResourceDiffContainer(props);
     expect(screen.getByRole('button', {name: 'Integrations'})).toBeInTheDocument();
     expect(screen.getByText('Conflicts')).toBeInTheDocument();
     expect(screen.getByText('1 conflict')).toBeInTheDocument();
@@ -166,7 +166,7 @@ describe('Test suite for ResourceDiffContainer component', () => {
     expect(screen.getByText('Remote')).toBeInTheDocument();
   });
 
-  test('should show References; and resourceId if name not set', async () => {
+  test('should show References; and resourceId if name not set', () => {
     const props = {
       titles: {
         before: 'Before pull',
@@ -219,7 +219,7 @@ describe('Test suite for ResourceDiffContainer component', () => {
       },
     ];
 
-    await initResourceDiffContainer(props, initialStore);
+    initResourceDiffContainer(props, initialStore);
 
     expect(screen.getByRole('button', {name: 'Exports'})).toBeInTheDocument();
 
@@ -267,7 +267,7 @@ describe('Test suite for ResourceDiffContainer component', () => {
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
   });
 
-  test('should only show a spinner if resourceReferences not present', async () => {
+  test('should only show a spinner if resourceReferences not present', () => {
     const props = {
       titles: {
         before: 'Before pull',
@@ -287,7 +287,7 @@ describe('Test suite for ResourceDiffContainer component', () => {
       integrationId: 'int123',
     };
 
-    await initResourceDiffContainer(props);
+    initResourceDiffContainer(props);
     const openReferences = screen.getByText('References');
 
     expect(openReferences).toBeInTheDocument();
@@ -296,7 +296,7 @@ describe('Test suite for ResourceDiffContainer component', () => {
     expect(screen.queryByRole('tab')).not.toBeInTheDocument();
   });
 
-  test('should not render table if resourceReferences is an empty Array', async () => {
+  test('should not render table if resourceReferences is an empty Array', () => {
     const props = {
       titles: {
         before: 'Before pull',
@@ -322,7 +322,7 @@ describe('Test suite for ResourceDiffContainer component', () => {
       integrations: [],
     };
 
-    await initResourceDiffContainer(props, initialStore);
+    initResourceDiffContainer(props, initialStore);
     const openReferences = screen.getByText('References');
 
     expect(openReferences).toBeInTheDocument();
