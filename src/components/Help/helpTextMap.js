@@ -2393,11 +2393,10 @@ When you select <b>Apply only the first row’s value and map the Visits</b>, th
   'stack.sharing':
 'Invite users from any integrator.io account to share your stack, which will allow them to invoke the functions in your stack from their integration flows. You may revoke their access from this screen at any time.',
   parentSObjectType: 'Use this field to specify the additional referencelist (child sObjects of parent sObject) that you would like to add to the export data. Ex: Contact is a childSObjectType for the parentSObject type Account.',
-  'pageGenerator.application': 'Choose an application, database, or universal connector.',
   'pageGenerator.type': 'The source options presented – or automatically selected for you – depend on the features available in the application that you chose.',
   'pageGenerator.connection': 'Choose an existing connection to this application, or click the <b>+</b> icon to create a new connection. You can always change your connection later.',
   'pageGenerator.exportId': 'Select an existing export, listener, or transfer that you have already created in your account for this application, in order to add that same resource to the current flow. To set up a new resource, leave this field blank and click <b>Next</b>.',
-  'pageProcessor.application': 'Choose an application, database, or universal connector.',
+  application: 'Choose an application, database, or universal connector.',
   'pageProcessor.connection': 'Choose an existing connection to this application, or click the <b>+</b> icon to create a new connection. You can always change your connection later.',
   'pageProcessor.resourceType': 'The destination options presented – or automatically selected for you – depend on the features available in the application that you chose.',
   'pageProcessor.importId': 'Select an existing import, lookup, or transfer that you have already created in your account for this application, in order to add that same resource to the current flow. To set up a new resource, leave this field blank and click <b>Next</b>.',

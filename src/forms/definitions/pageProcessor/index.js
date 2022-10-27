@@ -80,6 +80,7 @@ export default {
       type: 'selectapplication',
       isLoggable: true,
       label: 'Application',
+      helpKey: 'application',
       refreshOptionsOnChangesTo: ['resourceType'],
       placeholder: applicationsPlaceHolderText(),
       defaultValue: r => {
