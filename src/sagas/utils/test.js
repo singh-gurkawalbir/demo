@@ -1235,7 +1235,6 @@ describe('updateFinalMetadataWithHttpFramework saga', () => {
         label: 'Base URI',
         name: '/http/baseURI',
         required: true,
-        visible: false,
         type: 'text',
       },
       'http.ping.body': {
@@ -1353,7 +1352,6 @@ describe('updateFinalMetadataWithHttpFramework saga', () => {
         id: 'settings.storeName',
         label: 'Store Name',
         name: '/settings/storeName',
-        options: undefined,
         required: true,
         type: 'text',
         validWhen: {
