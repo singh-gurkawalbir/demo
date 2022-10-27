@@ -89,6 +89,15 @@
   background-color: #fff;
   background-image: none;
   border: 1px solid #ddd;
+  border-radius: 0;
+}
+.query-builder select.form-control{
+  background: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4KPCEtLSBDaGV2cm9uIERvd24gaWNvbiBieSBBcnRodXIgU2hsYWluIGZyb20gVXNlZnVsaWNvbnMuY29tIC0tPgo8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHhtbDpzcGFjZT0icHJlc2VydmUiIHZlcnNpb249IjEuMSIgeD0iMHB4IiB5PSIwcHgiIHZpZXdCb3g9IjAgMCAxMDAgMTAwIiB3aWR0aD0iMjBweCIgaGVpZ2h0PSIyMHB4IiBmaWxsPSIjOTk5OTk5Ij48cGF0aCBkPSJNMTUsNDBMNTAsNzVMODUsNDBMODAsMzVMNTAsNjVMMjAsMzVaIiBzdHJva2U9Im5vbmUiPjwvcGF0aD48L3N2Zz4=) no-repeat;
+	-moz-appearance: none; 
+	-webkit-appearance: none;
+	appearance: none;
+	background-position: center right;
+  padding-right: 20px;
 }
 
 .pull-right {
