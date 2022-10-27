@@ -198,7 +198,6 @@ export default function DynaSelectResource(props) {
     integrationId,
     connectorId,
     flowId,
-    type,
     addTitle = 'Add connection',
     editTitle = 'Edit connection',
     disabledTitle = 'Select a connection to allow editing',
@@ -376,10 +375,6 @@ export default function DynaSelectResource(props) {
     return null;
   }
 
-  const addTooltipTitle = type === 'dynaiclient' ? 'Create iClient' : `${addTitle}`;
-  const editTooltipTitle = type === 'dynaiclient' ? 'Edit iClient' : `${editTitle}`;
-  const disabledTooltipTitle = type === 'dynaiclient' ? 'Select an iClient to allow editing' : `${disabledTitle}`;
-
   return (
     <div className={classes.root}>
       <LoadResources
@@ -416,8 +411,7 @@ export default function DynaSelectResource(props) {
           <div className={classes.dynaSelectMultiSelectActions}>
             {allowNew && (
             <IconButtonWithTooltip
-              // tooltipProps={{title: `${addTooltipTitle}` || `${addTitle}`}}
-              tooltipProps={{title: `${addTooltipTitle}`}}
+              tooltipProps={{title: `${addTitle}`}}
               data-test="addNewResource"
               onClick={handleAddNewResourceMemo}
               buttonSize="small">
@@ -428,8 +422,7 @@ export default function DynaSelectResource(props) {
             {allowEdit && (
             // Disable adding a new resource when the user has selected an existing resource
             <IconButtonWithTooltip
-              tooltipProps={{title: value ? `${editTooltipTitle}` : `${disabledTooltipTitle}`}}
-              disabled={!value}
+              tooltipProps={{title: value ? `${editTitle}` : `${disabledTitle}`}} disabled={!value}
               data-test="editNewResource"
               onClick={handleEditResource}
               buttonSize="small">
