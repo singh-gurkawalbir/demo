@@ -240,7 +240,7 @@ export default {
     if (data) {
       const form = extractForm(data, activeProcessor);
 
-      if (form && form.layout && (form.layout.fields?.length || form.layout.containers?.length)) {
+      if (form && (!form.layout || (form.layout.fields?.length || form.layout.containers?.length))) {
         value.form = form;
       }
 
