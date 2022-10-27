@@ -1,12 +1,11 @@
 /* global describe, jest, test, expect, beforeEach, afterEach */
 import React from 'react';
-import { MemoryRouter } from 'react-router-dom';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { renderWithProviders } from '../../../test/test-utils';
+import { buildDrawerUrl, drawerPaths } from '../../../utils/rightDrawer';
 import CeligoTable from '../../CeligoTable';
 import metadata from './metadata';
-import { buildDrawerUrl, drawerPaths } from '../../../utils/rightDrawer';
 
 const mockHistoryPush = jest.fn();
 let mockIds;
@@ -46,16 +45,6 @@ jest.mock('../../CeligoTimeAgo', () => ({
   default: ({date}) => (<span>{date}</span>),
 }));
 
-async function initScriptLogs(data = {}) {
-  const ui = (
-    <MemoryRouter>
-      <CeligoTable {...metadata} data={data} />
-    </MemoryRouter>
-  );
-
-  renderWithProviders(ui);
-}
-
 describe('Script Logs test suite', () => {
   beforeEach(() => {
     mockIds = {};
@@ -65,7 +54,7 @@ describe('Script Logs test suite', () => {
     mockHistoryPush.mockClear();
   });
 
-  test('should render the table accordingly', async () => {
+  test('should render the table accordingly', () => {
     const data = [{
       time: 'TIME',
       _resourceId: 'RESOURCE_ID',
@@ -74,7 +63,7 @@ describe('Script Logs test suite', () => {
       message: 'MESSAGE',
     }];
 
-    await initScriptLogs(data);
+    renderWithProviders(<CeligoTable {...metadata} data={data} />);
     const columnNames = screen.getAllByRole('columnheader').map(ele => ele.textContent);
 
     expect(columnNames).toEqual([
@@ -108,7 +97,7 @@ describe('Script Logs test suite', () => {
     expect(actionItems).toEqual(['View']);
   });
 
-  test('should be able to view log details for a script', async () => {
+  test('should be able to view log details for a script', () => {
     mockIds = {
       flowId: 'FLOW_ID',
       scriptId: 'SCRIPT_ID',
@@ -122,7 +111,7 @@ describe('Script Logs test suite', () => {
       message: 'MESSAGE',
     }];
 
-    await initScriptLogs(data);
+    renderWithProviders(<CeligoTable {...metadata} data={data} />);
     userEvent.click(screen.getByRole('button', {name: /more/i}));
     const viewButton = screen.getByRole('menuitem', {name: 'View'});
 
@@ -137,7 +126,7 @@ describe('Script Logs test suite', () => {
     }));
   });
 
-  test('should route to a different path if flowId not present', async () => {
+  test('should route to a different path if flowId not present', () => {
     mockIds = {
       scriptId: 'SCRIPT_ID',
     };
@@ -150,7 +139,7 @@ describe('Script Logs test suite', () => {
       message: 'MESSAGE',
     }];
 
-    await initScriptLogs(data);
+    renderWithProviders(<CeligoTable {...metadata} data={data} />);
     userEvent.click(screen.getByRole('button', {name: /more/i}));
     const viewButton = screen.getByRole('menuitem', {name: 'View'});
 

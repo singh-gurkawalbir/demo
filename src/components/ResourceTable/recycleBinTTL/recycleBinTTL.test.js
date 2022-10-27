@@ -1,12 +1,11 @@
 /* global describe, jest, test, expect, beforeEach, afterEach */
 import React from 'react';
-import { MemoryRouter } from 'react-router-dom';
 import * as reactRedux from 'react-redux';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { renderWithProviders } from '../../../test/test-utils';
-import CeligoTable from '../../CeligoTable';
 import { ConfirmDialogProvider } from '../../ConfirmDialog';
+import CeligoTable from '../../CeligoTable';
 import actions from '../../../actions';
 import metadata from './metadata';
 
@@ -16,13 +15,11 @@ jest.mock('../../DateTimeDisplay', () => ({
   default: ({dateTime}) => (<span>{dateTime}</span>),
 }));
 
-async function initRecycleBin(data = {}) {
+function initRecycleBin(data = {}) {
   const ui = (
-    <MemoryRouter>
-      <ConfirmDialogProvider>
-        <CeligoTable {...metadata} data={data} />
-      </ConfirmDialogProvider>
-    </MemoryRouter>
+    <ConfirmDialogProvider>
+      <CeligoTable {...metadata} data={data} />
+    </ConfirmDialogProvider>
   );
 
   renderWithProviders(ui);
@@ -47,7 +44,7 @@ describe('Recycle Bin TTL test suite', () => {
     mockDispatchFn.mockClear();
   });
 
-  test('should render the table accordingly', async () => {
+  test('should render the table accordingly', () => {
     const lastModified = new Date().toUTCString();
     const data = [{
       doc: {
@@ -57,7 +54,7 @@ describe('Recycle Bin TTL test suite', () => {
       model: 'Flow',
     }];
 
-    await initRecycleBin(data);
+    initRecycleBin(data);
     const columnNames = screen.getAllByRole('columnheader').map(ele => ele.textContent);
 
     expect(columnNames).toEqual([
@@ -152,7 +149,7 @@ describe('Recycle Bin TTL test suite', () => {
     expect(timeLeft6).toEqual('0 seconds');
   });
 
-  test('should be able to restore the deleted item', async () => {
+  test('should be able to restore the deleted item', () => {
     const data = [{
       doc: {
         _id: 'flow123',
@@ -162,7 +159,7 @@ describe('Recycle Bin TTL test suite', () => {
       model: 'Flow',
     }];
 
-    await initRecycleBin(data);
+    initRecycleBin(data);
     userEvent.click(screen.getByRole('button', {name: /more/i}));
     const restoreButton = screen.getByRole('menuitem', {name: 'Restore'});
 
@@ -170,7 +167,7 @@ describe('Recycle Bin TTL test suite', () => {
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.recycleBin.restore('flows', 'flow123'));
   });
 
-  test('should be able to purge the deleted item', async () => {
+  test('should be able to purge the deleted item', () => {
     const data = [{
       doc: {
         _id: 'flow123',
@@ -180,7 +177,7 @@ describe('Recycle Bin TTL test suite', () => {
       model: 'Flow',
     }];
 
-    await initRecycleBin(data);
+    initRecycleBin(data);
     userEvent.click(screen.getByRole('button', {name: /more/i}));
     let purgeButton = screen.getByRole('menuitem', {name: 'Purge'});
 

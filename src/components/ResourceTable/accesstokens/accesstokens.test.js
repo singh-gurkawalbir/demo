@@ -8,9 +8,9 @@ import moment from 'moment';
 import { renderWithProviders } from '../../../test/test-utils';
 import CeligoTable from '../../CeligoTable';
 import { ConfirmDialogProvider } from '../../ConfirmDialog';
+import { getCreatedStore } from '../../../store';
 import actions from '../../../actions';
 import metadata from './metadata';
-import { getCreatedStore } from '../../../store';
 
 jest.mock('../../CeligoTimeAgo', () => ({
   __esModule: true,
@@ -26,7 +26,7 @@ jest.mock('../../CeligoTable/TableContext', () => ({
   }),
 }));
 
-async function initAccessTokens(data = {}, initialStore, renderFun) {
+function initAccessTokens(data = {}, initialStore, renderFun) {
   const ui = (
     <MemoryRouter>
       <ConfirmDialogProvider>
@@ -86,7 +86,7 @@ describe('Access Tokens test suite', () => {
       },
     }];
 
-    await initAccessTokens(data);
+    initAccessTokens(data);
     const columnNames = screen.getAllByRole('columnheader').map(ele => ele.textContent);
 
     expect(columnNames).toEqual([
@@ -138,7 +138,7 @@ describe('Access Tokens test suite', () => {
     await waitFor(() => expect(screen.getByRole('tooltip', { name: 'To delete this API token you need to revoke it first.'})).toBeInTheDocument());
   });
 
-  test('should show the reason if not able to show API token', async () => {
+  test('should show the reason if not able to show API token', () => {
     const data = [{
       _id: 'token123',
       name: 'The API token',
@@ -159,13 +159,13 @@ describe('Access Tokens test suite', () => {
       },
     }];
 
-    await initAccessTokens(data);
+    initAccessTokens(data);
     const apiToken = screen.getAllByRole('cell').filter(ele => ele.getAttribute('data-private'))[0];
 
     expect(apiToken).toHaveTextContent('You are not authorized to view this token.');
   });
 
-  test('should show Purged instead of the API token if purged', async () => {
+  test('should show Purged instead of the API token if purged', () => {
     const data = [{
       _id: 'token123',
       name: 'The API token',
@@ -186,13 +186,13 @@ describe('Access Tokens test suite', () => {
       },
     }];
 
-    await initAccessTokens(data);
+    initAccessTokens(data);
     const apiToken = screen.getAllByRole('cell').filter(ele => ele.getAttribute('data-private'))[0];
 
     expect(apiToken).toHaveTextContent('Purged');
   });
 
-  test('should be able to show the API token', async () => {
+  test('should be able to show the API token', () => {
     const data = [{
       _id: 'token123',
       name: 'The API token',
@@ -212,18 +212,18 @@ describe('Access Tokens test suite', () => {
       },
     }];
 
-    const {utils, store} = await initAccessTokens(data, globalStore);
+    const {utils, store} = initAccessTokens(data, globalStore);
     const showToken = screen.getByRole('button', {name: 'Show token'});
 
     userEvent.click(showToken);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.accessToken.displayToken('token123'));
-    await initAccessTokens(data, store, utils.rerender);
+    initAccessTokens(data, store, utils.rerender);
     const apiToken = screen.getAllByRole('cell').filter(ele => ele.getAttribute('data-private'))[0];
 
     expect(apiToken).toHaveTextContent('TOKEN_VALUE');
   });
 
-  test('should be able to reactivate a revoked token', async () => {
+  test('should be able to reactivate a revoked token', () => {
     const lastModified = moment().format('DD/MM/YYYY');
     const data = [{
       _id: 'token123',
@@ -242,7 +242,7 @@ describe('Access Tokens test suite', () => {
       },
     }];
 
-    await initAccessTokens(data);
+    initAccessTokens(data);
     const cells = screen.getAllByRole('cell').map(ele => ele.textContent);
 
     expect(cells).toEqual([
@@ -281,7 +281,7 @@ describe('Access Tokens test suite', () => {
     ));
   });
 
-  test('should be able to regenerate a token', async () => {
+  test('should be able to regenerate a token', () => {
     const data = [{
       _id: 'token123',
       name: 'The API token',
@@ -301,7 +301,7 @@ describe('Access Tokens test suite', () => {
       },
     }];
 
-    await initAccessTokens(data);
+    initAccessTokens(data);
     const actionButton = screen.getByRole('button', {name: /more/i});
 
     userEvent.click(actionButton);
@@ -313,7 +313,7 @@ describe('Access Tokens test suite', () => {
     ));
   });
 
-  test('should be able to revoke an active token', async () => {
+  test('should be able to revoke an active token', () => {
     const data = [{
       _id: 'token123',
       name: 'The API token',
@@ -333,7 +333,7 @@ describe('Access Tokens test suite', () => {
       },
     }];
 
-    await initAccessTokens(data);
+    initAccessTokens(data);
     const actionButton = screen.getByRole('button', {name: /more/i});
 
     userEvent.click(actionButton);
@@ -351,7 +351,7 @@ describe('Access Tokens test suite', () => {
     ));
   });
 
-  test('should show the time left to automatically purge', async () => {
+  test('should show the time left to automatically purge', () => {
     const data = [{
       _id: 'token123',
       name: 'The API token',
@@ -372,7 +372,7 @@ describe('Access Tokens test suite', () => {
       },
     }];
 
-    await initAccessTokens(data);
+    initAccessTokens(data);
     expect(screen.getAllByRole('cell')[3]).toHaveTextContent('5 hours');
   });
 
