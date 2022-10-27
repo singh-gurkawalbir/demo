@@ -7,16 +7,14 @@ import PreviewTable from './PreviewTable';
 
 async function initPreviewTable(props = {}, data = {}, status = 'success') {
   const initialStore = reduxStore;
+  const components = data.model ? { objects: [data]} : undefined;
 
   initialStore.getState().session.templates = {
     _templateId:
       {
         preview: {
           status,
-          components: {
-            objects: data.model ? [data] : [],
-            stackRequired: false,
-          },
+          components,
         },
       },
   };
