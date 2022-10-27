@@ -199,7 +199,7 @@ export default function DynaSelectResource(props) {
     connectorId,
     flowId,
     addTitle = 'Add connection',
-    editTitle = 'Edit connection ',
+    editTitle = 'Edit connection',
     disabledTitle = 'Select a connection to allow editing',
   } = props;
   const {options} = props;
@@ -422,8 +422,7 @@ export default function DynaSelectResource(props) {
             {allowEdit && (
             // Disable adding a new resource when the user has selected an existing resource
             <IconButtonWithTooltip
-              tooltipProps={{title: value ? `${editTitle}` : `${disabledTitle}`}}
-              disabled={!value}
+              tooltipProps={{title: value ? `${editTitle}` : `${disabledTitle}`}} disabled={!value}
               data-test="editNewResource"
               onClick={handleEditResource}
               buttonSize="small">
