@@ -28,6 +28,7 @@ import OperandSettingsDialog from './OperandSettingsDialog';
 import actions from '../../../../../actions';
 import { stringCompare } from '../../../../../utils/sort';
 import Spinner from '../../../../Spinner';
+import { hasWhiteSpace } from '../../../../../utils/string';
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -210,12 +211,6 @@ export function SalesforceLookupFilterPanelData({
         updateUIForField(rule);
       }
     }
-  };
-
-  const hasWhiteSpace = s => {
-    const whitespaceChars = [' ', '\t', '\n'];
-
-    return whitespaceChars.some(char => s.includes(char));
   };
 
   const validateRule = rule => {
