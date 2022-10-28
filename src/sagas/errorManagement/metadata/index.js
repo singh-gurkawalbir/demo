@@ -104,6 +104,7 @@ export function* _requestRetryStatus({ flowId, resourceId }) {
   let resourceType = 'exports';
   const importResource = yield select(selectors.resource, 'imports', resourceId);
   const flow = yield select(selectors.resource, 'flows', flowId);
+  const {isAnyRetryInProgress} = yield select(selectors.flowResourcesRetryStatus, flowId);
   const integrationId = flow?._integrationId || 'none';
 
   if (importResource) {
@@ -136,7 +137,9 @@ export function* _requestRetryStatus({ flowId, resourceId }) {
       if (prevStatus) {
         yield call(getRetryJobCollection, {flowId, resourceId});
       }
-      yield put(actions.errorManager.retryStatus.stopPoll());
+      if (!isAnyRetryInProgress) {
+        yield put(actions.errorManager.retryStatus.stopPoll(flowId, resourceId));
+      }
     }
   } catch (e) {
     // errors
@@ -211,7 +214,7 @@ export function* downloadBlobDocument({ flowId, resourceId, reqAndResKey }) {
 export default [
   takeEvery(actionTypes.ERROR_MANAGER.RETRY_DATA.REQUEST, requestRetryData),
   takeLatest(actionTypes.ERROR_MANAGER.RETRY_DATA.DOWNLOAD, downloadRetryData),
-  takeLatest(
+  takeEvery(
     actionTypes.ERROR_MANAGER.RETRY_STATUS.REQUEST_FOR_POLL,
     startPollingForRetryStatus
   ),

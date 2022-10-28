@@ -169,9 +169,15 @@ const useStyles = makeStyles(theme => ({
   infoFilter: {
     fontStyle: 'italic',
     display: 'flex',
-    margin: theme.spacing(2, 2, -2),
+    margin: theme.spacing(2, 2, 1),
     alignItems: 'center',
     color: theme.palette.secondary.main,
+    '&+$mappingDrawerContent': {
+      paddingTop: 0,
+      '& .rc-tree-list': {
+        paddingBottom: theme.spacing(6),
+      },
+    },
     '& > svg': {
       marginRight: theme.spacing(0.5),
       fontSize: theme.spacing(2),

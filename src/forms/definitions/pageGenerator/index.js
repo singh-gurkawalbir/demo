@@ -69,6 +69,7 @@ export default {
     application: {
       id: 'application',
       label: 'Application',
+      helpKey: 'application',
       name: 'application',
       type: 'selectapplication',
       isLoggable: true,

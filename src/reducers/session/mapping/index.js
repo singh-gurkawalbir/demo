@@ -21,7 +21,8 @@ import {
   updateChildrenJSONPath,
   getCombinedExtract,
   buildExtractsHelperFromExtract,
-  getSelectedExtractDataTypes} from '../../../utils/mapping';
+  getSelectedExtractDataTypes,
+  isMapper2HandlebarExpression} from '../../../utils/mapping';
 import { generateUniqueKey } from '../../../utils/string';
 
 export const expandRow = (draft, key) => {
@@ -94,7 +95,7 @@ export const updateSourceDataType = (node, oldSourceDataType, newDataType) => {
 /* eslint-enable no-param-reassign */
 
 // updates specific to data type change
-export const updateDataType = (draft, node, oldDataType, newDataType) => {
+export const updateDestinationDataType = (draft, node, oldDataType, newDataType) => {
   if (!node) return node;
 
   const newNode = deepClone(node);
@@ -108,7 +109,9 @@ export const updateDataType = (draft, node, oldDataType, newDataType) => {
   if (newDataType === MAPPING_DATA_TYPES.OBJECT || newDataType === MAPPING_DATA_TYPES.OBJECTARRAY) {
     expandRow(draft, newNode.key);
 
-    newNode.extractsArrayHelper = newNode.extractsArrayHelper || buildExtractsHelperFromExtract([], newNode.extract, undefined, undefined, draft.mapping.extractsTree);
+    const oldSourceDataType = PRIMITIVE_DATA_TYPES.includes(oldDataType) ? newNode.sourceDataType : undefined;
+
+    newNode.extractsArrayHelper = newNode.extractsArrayHelper || buildExtractsHelperFromExtract({sourceField: newNode.extract, extractsTree: draft.mapping.extractsTree, oldSourceDataType});
 
     delete newNode.hardCodedValue;
     delete newNode.lookupName;
@@ -151,8 +154,13 @@ export const updateDataType = (draft, node, oldDataType, newDataType) => {
   // now handle other primitive arrays which can not have children
   if (ARRAY_DATA_TYPES.includes(newDataType)) {
     delete newNode.children;
-    newNode.extractsArrayHelper = newNode.extractsArrayHelper || buildExtractsHelperFromExtract([], newNode.extract, undefined, undefined, draft.mapping.extractsTree);
+
+    const oldSourceDataType = PRIMITIVE_DATA_TYPES.includes(oldDataType) ? newNode.sourceDataType : undefined;
+
+    newNode.extractsArrayHelper = newNode.extractsArrayHelper || buildExtractsHelperFromExtract({sourceField: newNode.extract, extractsTree: draft.mapping.extractsTree, oldSourceDataType});
+
     delete newNode.extract;
+    delete newNode.sourceDataType;
 
     return newNode;
   }
@@ -708,7 +716,7 @@ export default (state = {}, action) => {
         if (isSource) {
           nodeSubArray[nodeIndexInSubArray] = updateSourceDataType(node, node.sourceDataType, newDataType);
         } else {
-          nodeSubArray[nodeIndexInSubArray] = updateDataType(draft, node, node.dataType, newDataType);
+          nodeSubArray[nodeIndexInSubArray] = updateDestinationDataType(draft, node, node.dataType, newDataType);
         }
         delete nodeSubArray[nodeIndexInSubArray].isEmptyRow;
         break;
@@ -841,11 +849,14 @@ export default (state = {}, action) => {
 
         if (node) {
           if (field === 'extract') {
+            let isHardCoded = false;
+
             if (value.indexOf('"') === 0) {
               delete node.extract;
               delete node.extractsArrayHelper;
               delete node.default;
               node.hardCodedValue = value.replace(/(^")|("$)/g, '');
+              isHardCoded = true;
             } else {
               delete node.hardCodedValue;
               if (ARRAY_DATA_TYPES.includes(node.dataType)) {
@@ -872,13 +883,17 @@ export default (state = {}, action) => {
                   delete nodeSubArray[nodeIndexInSubArray].hardCodedValue;
                   // object array is already handled in rebuildObjectArrayNode
                   if (node.dataType !== MAPPING_DATA_TYPES.OBJECTARRAY) {
-                    nodeSubArray[nodeIndexInSubArray].extractsArrayHelper = buildExtractsHelperFromExtract(nodeSubArray[nodeIndexInSubArray].extractsArrayHelper, value, undefined, undefined, draft.mapping.extractsTree, selectedExtractJsonPath);
+                    nodeSubArray[nodeIndexInSubArray].extractsArrayHelper = buildExtractsHelperFromExtract({existingExtractsArray: nodeSubArray[nodeIndexInSubArray].extractsArrayHelper, sourceField: value, extractsTree: draft.mapping.extractsTree, selectedExtractJsonPath});
                   }
                 }
               } else if (node.dataType !== MAPPING_DATA_TYPES.OBJECT || node.copySource === 'yes') {
                 node.extract = value;
                 node.sourceDataType = isSettingsPatch ? node.sourceDataType : getSelectedExtractDataTypes({extractsTree: draft.mapping.extractsTree, selectedValue: value, selectedExtractJsonPath})[0] || MAPPING_DATA_TYPES.STRING;
               }
+            }
+
+            if (isHardCoded || isMapper2HandlebarExpression(value, isHardCoded)) {
+              node.sourceDataType = MAPPING_DATA_TYPES.STRING;
             }
           } else if (node.isRequired) {
             // do nothing as no changes can be made to 'generate' of a required mapping
@@ -926,18 +941,20 @@ export default (state = {}, action) => {
           if (value?.conditional?.when === 'extract_not_empty') {
             delete node.default;
           }
+          let isHardCoded = false;
 
           if ('hardCodedValue' in value) {
             delete node.extract;
             delete node.extractsArrayHelper;
             delete node.default;
+            isHardCoded = true;
           } else {
             delete node.hardCodedValue;
           }
 
           // handle if data type changed
           if (oldDataType !== newDataType) {
-            nodeSubArray[nodeIndexInSubArray] = updateDataType(draft, node, oldDataType, newDataType);
+            nodeSubArray[nodeIndexInSubArray] = updateDestinationDataType(draft, node, oldDataType, newDataType);
             if (newDataType === MAPPING_DATA_TYPES.OBJECTARRAY) {
               // Handles updates of mapper node incase the  data type is changed to Object array with source field settings
               nodeSubArray[nodeIndexInSubArray] = rebuildObjectArrayNode(nodeSubArray[nodeIndexInSubArray], node.extract);
@@ -972,6 +989,10 @@ export default (state = {}, action) => {
             if (!value.conditional?.when && nodeSubArray[nodeIndexInSubArray]?.conditional?.when) {
               delete nodeSubArray[nodeIndexInSubArray].conditional.when;
             }
+          }
+
+          if (isHardCoded || isMapper2HandlebarExpression(node.extract, isHardCoded)) {
+            node.sourceDataType = MAPPING_DATA_TYPES.STRING;
           }
         }
 

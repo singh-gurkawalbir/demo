@@ -1180,7 +1180,7 @@ export default {
     isLoggable: true,
     type: 'checkbox',
     label: 'Use passive mode',
-    defaultValue: r => (r && r.ftp && r.ftp.usePassiveMode) || 'true',
+    defaultValue: r => r?.ftp?.usePassiveMode !== false,
   },
   'ftp.entryParser': {
     isLoggable: true,
