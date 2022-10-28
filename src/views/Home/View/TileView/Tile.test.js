@@ -4,7 +4,7 @@ import {screen, waitFor} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Router } from 'react-router-dom';
 import * as reactRedux from 'react-redux';
-// eslint-disable-next-line import/no-extraneous-dependencies
+// eslint-disable-next-line import/no-extraneous-dependencies, import/no-unresolved
 import {createMemoryHistory} from 'history';
 import Tile from './Tile';
 import {renderWithProviders} from '../../../../test/test-utils';
@@ -185,13 +185,14 @@ describe('Tile UI tests', () => {
     const userButton = document.querySelector('[aria-label="tooltip"]');
 
     userEvent.click(userButton);
-    await waitFor(() => expect(history.push).toBeCalledWith('/integrations/62bedcdca0f5f21448171ea2/users'));
+    await waitFor(() => expect(history.push).toBeCalledWith('/integrations/62bedcdca0f5f21448171ea2/setup'));
   });
   test('should redirect to the integration connections when connection icon is clicked on the tile', async () => {
     const props = {tile: {...demoTile,
       offlineConnections: [
         '5e3152806287420d5ce56573',
-      ]},
+      ],
+      status: 'success'},
     isDragInProgress: false,
     isTileDragged: false,
     errmgt: true,
@@ -226,6 +227,6 @@ describe('Tile UI tests', () => {
 
     initTile(props);
     userEvent.click(screen.getByText('Clone - demoint'));
-    await waitFor(() => expect(history.push).toBeCalledWith('/integrationapps/Clonedemoint/62bedcdca0f5f21448171ea2/setup'));
+    await waitFor(() => expect(history.push).toBeCalledWith('/integrations/62bedcdca0f5f21448171ea2/setup'));
   });
 });
