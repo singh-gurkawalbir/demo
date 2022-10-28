@@ -798,7 +798,6 @@ describe('settingsForm processor logic', () => {
               op: 'replace',
               path: '/settingsForm',
               value: {
-                form: { fieldMap: {}, layout: { fields: [] } },
                 init: {
                   function: 'newFunc',
                   _scriptId: '123456',
