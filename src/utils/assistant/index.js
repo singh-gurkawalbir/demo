@@ -2262,7 +2262,7 @@ export function shouldLoadAssistantFormForImports(resource, connection) {
           !isAmazonHybridConnection(connection) &&
           (resource.useParentForm !== undefined
             ? !resource.useParentForm && resource.assistant
-            : resource.assistant) && (!resource.useTechAdaptorForm || isAmazonSellingPartnerConnection(connection));
+            : resource.assistant) && (!resource.useTechAdaptorForm);
 }
 
 export function shouldLoadAssistantFormForExports(resource, connection) {

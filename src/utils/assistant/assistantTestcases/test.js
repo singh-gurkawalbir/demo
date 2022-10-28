@@ -4389,7 +4389,10 @@ describe('shouldLoadAssistantFormForImports util', () => {
   });
 
   test('should return true if resource is an assistant and connection is of Amazon selling partner', () => {
-    expect(shouldLoadAssistantFormForImports({assistant: 'amazonmws', useTechAdaptorForm: true}, {assistant: 'amazonmws', http: {type: 'Amazon-SP-API'}})).toBeTruthy();
+    expect(shouldLoadAssistantFormForImports({assistant: 'amazonmws'}, {assistant: 'amazonmws', http: {type: 'Amazon-SP-API'}})).toBeTruthy();
+  });
+  test('should return false if resource is an assistant and connection is of Amazon selling partner and useTechAdaptorForm is set to true', () => {
+    expect(shouldLoadAssistantFormForImports({assistant: 'amazonmws', useTechAdaptorForm: true}, {assistant: 'amazonmws', http: {type: 'Amazon-SP-API'}})).toBeFalsy();
   });
 });
 
