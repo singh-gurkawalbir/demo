@@ -4,7 +4,7 @@ import {screen, waitFor} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Router } from 'react-router-dom';
 import * as reactRedux from 'react-redux';
-// eslint-disable-next-line import/no-extraneous-dependencies, import/no-unresolved
+// eslint-disable-next-line import/no-extraneous-dependencies
 import {createMemoryHistory} from 'history';
 import Tile from './Tile';
 import {renderWithProviders} from '../../../../test/test-utils';

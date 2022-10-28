@@ -1,8 +1,8 @@
 /* global describe, test, expect, */
 import getForm from './formMeta';
 
-describe('CsvParse Rules UI tests', () => {
-  test('should return an object with the required propperties when fieldId is passed as "keyColumns" to the optionsHandler fumction', () => {
+describe('CsvParseRules UI tests', () => {
+  test('should return an object with the required properties when fieldId is passed as "keyColumns" to the optionsHandler function', () => {
     const options = {
       code: 'custom code',
       entryFunction: 'preSavePage',

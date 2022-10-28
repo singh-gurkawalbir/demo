@@ -10,7 +10,7 @@ import { getCreatedStore } from '../../../../../store';
 const initialStore = getCreatedStore();
 
 function initCsvParseRules(props = {}) {
-  initialStore.getState().session.editors = {'5b3c75dd5d3c125c88b5dd02': {
+  initialStore.getState().session.editors = {filecsv: {
     fieldId: 'file.csv',
     formKey: 'imports-5b3c75dd5d3c125c88b5dd20',
     resourceId: '5b3c75dd5d3c125c88b5dd20',
@@ -72,7 +72,7 @@ describe('CsvParse Rules UI tests', () => {
     mockDispatchFn.mockClear();
   });
   test('should pass the initial render', () => {
-    initCsvParseRules({editorId: '5b3c75dd5d3c125c88b5dd02', keyColumns: ['demo']});
+    initCsvParseRules({editorId: 'filecsv', keyColumns: ['demo']});
     expect(screen.getByText('Column delimiter')).toBeInTheDocument();
     expect(screen.getByText('Row delimiter')).toBeInTheDocument();
     expect(screen.getByText('Trim spaces')).toBeInTheDocument();
@@ -82,7 +82,7 @@ describe('CsvParse Rules UI tests', () => {
     expect(screen.getByText('Key columns')).toBeInTheDocument();
   });
   test('should not display the key columns field when editor rule does not contain keyColumns propperty in state', () => {
-    initCsvParseRules({editorId: '5b3c75dd5d3c125c88b5dd02'});
+    initCsvParseRules({editorId: 'filecsv'});
     expect(screen.queryByText('Key columns')).toBeNull();
   });
   test('should make a dispatch call on initial render', async () => {
@@ -96,7 +96,7 @@ describe('CsvParse Rules UI tests', () => {
       keyColumns: ['demo'],
     };
 
-    initCsvParseRules({editorId: '5b3c75dd5d3c125c88b5dd02', keyColumns: ['demo']});
-    await waitFor(() => expect(mockDispatchFn).toBeCalledWith(actions.editor.patchRule('5b3c75dd5d3c125c88b5dd02', formValue)));
+    initCsvParseRules({editorId: 'filecsv', keyColumns: ['demo']});
+    await waitFor(() => expect(mockDispatchFn).toBeCalledWith(actions.editor.patchRule('filecsv', formValue)));
   });
 });
