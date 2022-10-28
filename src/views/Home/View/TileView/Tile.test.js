@@ -174,7 +174,7 @@ describe('Tile UI tests', () => {
     await waitFor(() => expect(history.push).toBeCalledWith('/integrations/62bedcdca0f5f21448171ea2/dashboard'));
   });
 
-  test('should redirect to the correct url when clicked on permissions icon on the tile', () => {
+  test('should redirect to the correct url when clicked on permissions icon on the tile', async () => {
     const props = {tile: demoTile,
       isDragInProgress: false,
       isTileDragged: false,
@@ -185,9 +185,9 @@ describe('Tile UI tests', () => {
     const userButton = document.querySelector('[aria-label="tooltip"]');
 
     userEvent.click(userButton);
-    waitFor(() => expect(history.push).toBeCalledWith('/integrations/62bedcdca0f5f21448171ea2/users'));
+    await waitFor(() => expect(history.push).toBeCalledWith('/integrations/62bedcdca0f5f21448171ea2/users'));
   });
-  test('should redirect to the integration connections when connection icon is clicked on the tile', () => {
+  test('should redirect to the integration connections when connection icon is clicked on the tile', async () => {
     const props = {tile: {...demoTile,
       offlineConnections: [
         '5e3152806287420d5ce56573',
@@ -201,8 +201,8 @@ describe('Tile UI tests', () => {
     const buttonList = screen.getAllByRole('button');
 
     userEvent.hover(buttonList[1]);
-    waitFor(() => expect(screen.getByText(/Connection down/i)).toBeInTheDocument());
-    waitFor(() => expect(screen.getByText(/Success/i)).toBeInTheDocument());
+    await waitFor(() => expect(screen.getByText(/Connection down/i)).toBeInTheDocument());
+    await waitFor(() => expect(screen.getByText(/Success/i)).toBeInTheDocument());
     userEvent.click(buttonList[1]);
     expect(history.push).toBeCalledWith('/integrations/62bedcdca0f5f21448171ea2/connections');
   });
@@ -217,7 +217,7 @@ describe('Tile UI tests', () => {
     expect(screen.getByText('Your subscription expired on 05/05/2022. Contact sales to renew your subscription.')).toBeInTheDocument();
     expect(screen.getByText('Request to renew')).toBeInTheDocument();
   });
-  test('should redirect to the integration contents when clikced on the tile title', () => {
+  test('should redirect to the integration contents when clikced on the tile title', async () => {
     const props = {tile: demoTile,
       isDragInProgress: false,
       isTileDragged: false,
@@ -226,6 +226,6 @@ describe('Tile UI tests', () => {
 
     initTile(props);
     userEvent.click(screen.getByText('Clone - demoint'));
-    waitFor(() => expect(history.push).toBeCalledWith('/integrationapps/Clonedemoint/62bedcdca0f5f21448171ea2/setup'));
+    await waitFor(() => expect(history.push).toBeCalledWith('/integrationapps/Clonedemoint/62bedcdca0f5f21448171ea2/setup'));
   });
 });
