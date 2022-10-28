@@ -38,10 +38,6 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function CsvGeneratePanel({ editorId }) {
-  console.log(editorId);
-  console.log(editorId);
-  console.log(editorId);
-  console.log(editorId);
   const classes = useStyles();
   const dispatch = useDispatch();
   const disabled = useSelector(state => selectors.isEditorDisabled(state, editorId));
