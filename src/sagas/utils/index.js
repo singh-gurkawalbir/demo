@@ -427,10 +427,6 @@ export const updateFinalMetadataWithHttpFramework = (finalFieldMeta, connector, 
 
           tempFiledMeta.fieldMap[key] = {...tempFiledMeta.fieldMap[key], options, type: 'select'};
         }
-        if (!tempFiledMeta.fieldMap[key].defaultValue.includes('{{')) {
-          tempFiledMeta.fieldMap[key].visible = false;
-        }
-        tempFiledMeta.fieldMap['http.updateBaseURI'].defaultValue = tempFiledMeta.fieldMap[key].defaultValue;
       }
       if (tempFiledMeta?.fieldMap['name']) {
         const application = resource?.application;
@@ -567,37 +563,22 @@ export const updateFinalMetadataWithHttpFramework = (finalFieldMeta, connector, 
       if (isGenericHTTP && isNewId(resource._id)) {
           tempFiledMeta.layout?.containers?.push({fields: fieldIds, label: 'Custom settings'});
       } else if (!isGenericHTTP) {
-        const baseURIFields = []; const authFields = [];
-        const baseURIValue = tempFiledMeta?.fieldMap['http.baseURI']?.defaultValue;
-
-        fieldIds.forEach(field => {
-          (new RegExp(`{{{(.)*(${field})(.)*}}}`)).test(baseURIValue) ? baseURIFields.push(field) : authFields.push(field);
-        });
-        if (baseURIFields.length > 0) {
-              tempFiledMeta?.fieldMap['http.baseURI']?.refreshOptionsOnChangesTo.push(...baseURIFields);
-              tempFiledMeta?.layout?.containers[1]?.containers[1].containers.splice(0, 1, {fields: baseURIFields});
-        } else {
-              tempFiledMeta?.layout?.containers[1]?.containers?.splice(1, 1);
+        if (tempFiledMeta?.fieldMap['http.auth.type']?.visible === false) {
+          delete tempFiledMeta?.layout?.containers[3]?.containers[1]?.type;
         }
-        if (authFields.length > 0) {
-          // when there is only one authentication type then side bar is not required for authentication related fields which are coming from custom setting
-          if (tempFiledMeta?.fieldMap['http.auth.type']?.visible === false) {
-            delete tempFiledMeta?.layout?.containers[3]?.containers[1]?.type;
+          tempFiledMeta?.layout?.containers?.push({fields: fieldIds});
+
+          Object.keys(tempFiledMeta.fieldMap).map(key => {
+            const fieldUserMustSet = connectionTemplate.fieldsUserMustSet?.find(field => key === field.path);
+
+            if (fieldUserMustSet && fieldUserMustSet.helpURL) {
+              tempFiledMeta.fieldMap[key].helpLink = `${fieldUserMustSet.helpURL}`;
+            }
+
+            return tempFiledMeta.fieldMap[key];
           }
 
-          tempFiledMeta?.layout?.containers[3]?.containers[1]?.containers[0]?.fields.push(...authFields);
-        }
-        Object.keys(tempFiledMeta.fieldMap).map(key => {
-          const fieldUserMustSet = connectionTemplate.fieldsUserMustSet?.find(field => key === field.path);
-
-          if (fieldUserMustSet && fieldUserMustSet.helpURL) {
-            tempFiledMeta.fieldMap[key].helpLink = `${fieldUserMustSet.helpURL}`;
-          }
-
-          return tempFiledMeta.fieldMap[key];
-        }
-
-        );
+          );
       }
     }
   } else if (!isGenericHTTP) {

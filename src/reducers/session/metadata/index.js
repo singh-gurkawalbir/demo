@@ -151,6 +151,10 @@ export default (
       case actionTypes.METADATA.ASSISTANT_RECEIVED: {
         const { adaptorType, assistant, metadata } = action;
 
+        if (!draft.assistants[adaptorType]) {
+          draft.assistants[adaptorType] = {};
+        }
+
         if (draft.assistants[adaptorType]) {
           draft.assistants[adaptorType][assistant] = metadata;
         }
