@@ -25,7 +25,7 @@ jest.mock('../LoadResources', () => ({
 }));
 
 describe('ResourceLink UI test', () => {
-  test('should ssc', () => {
+  test('should show the link button', () => {
     const mockFn = jest.fn();
 
     renderWithProviders(
@@ -70,10 +70,12 @@ describe('ResourceLink UI test', () => {
     jest.spyOn(reactRedux, 'useSelector').mockReturnValue('/someLink');
     const mockFn = jest.fn();
 
-    renderWithProviders(<MemoryRouter><ResourceLink
-      integrationId="integrationId" resource="resourceContent" resourceType="asynchelpers" id="someID"
-      onClick={mockFn} />
-                        </MemoryRouter>);
+    renderWithProviders(
+      <MemoryRouter>
+        <ResourceLink
+          integrationId="integrationId" resource="resourceContent" resourceType="asynchelpers" id="someID"
+          onClick={mockFn} />
+      </MemoryRouter>);
     const linkButton = screen.getByText('someID');
 
     expect(linkButton).toBeInTheDocument();
