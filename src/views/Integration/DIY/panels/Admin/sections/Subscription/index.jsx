@@ -85,9 +85,6 @@ const useStyles = makeStyles(theme => ({
   button: {
     margin: theme.spacing(1),
   },
-  item: {
-    float: 'left',
-  },
   planContent: {
     margin: 0,
     lineHeight: '16px',
@@ -218,22 +215,22 @@ export default function SubscriptionSection({ childId, integrationId }) {
           <div className={classes.planContent}>
             <Grid container className={classes.container}>
               <Grid item xs={2}>
-                <Typography data-test="iaPlan" className={classes.item}>
+                <Typography data-test="iaPlan">
                   {' '}
                   {plan}{' '}
                 </Typography>
               </Grid>
               <Grid item xs={4}>
-                <Typography data-test="iaVersion" className={classes.item}>
+                <Typography data-test="iaVersion">
                   {`Version ${version}`}
                 </Typography>
-                <Typography data-test="integrationId" className={classes.item}>
+                <Typography data-test="integrationId">
                   {`Integration ID ${integrationId}`}
                 </Typography>
               </Grid>
               <Grid item xs={3}>
-                <Typography className={classes.item}>{createdText}</Typography>
-                <Typography className={classes.item}>{expiresText}</Typography>
+                <Typography>{createdText}</Typography>
+                <Typography>{expiresText}</Typography>
               </Grid>
               <Grid item xs={3}>
                 {upgradeText && (

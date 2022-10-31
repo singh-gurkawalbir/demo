@@ -240,7 +240,9 @@ export default {
     if (data) {
       const form = extractForm(data, activeProcessor);
 
-      value.form = form;
+      if (form && (!form.layout || (form.layout.fields?.length || form.layout.containers?.length))) {
+        value.form = form;
+      }
 
       // {
       //   fieldMap: {
@@ -267,7 +269,6 @@ export default {
       //   layout: {
       //     fields: ['A', 'mode'],
       //   },
-      // };
     }
 
     if (scriptId && activeProcessor === 'script') {

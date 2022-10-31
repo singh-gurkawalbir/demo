@@ -114,3 +114,9 @@ export const escapeSpecialChars = message => {
 };
 
 export const generateUniqueKey = () => nanoid();
+
+export const hasWhiteSpace = s => {
+  const whitespaceChars = [' ', '\t', '\n'];
+
+  return whitespaceChars.some(char => s?.includes(char));
+};

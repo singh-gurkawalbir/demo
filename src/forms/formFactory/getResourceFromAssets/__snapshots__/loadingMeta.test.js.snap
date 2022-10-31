@@ -5871,8 +5871,7 @@ Object {
         "commMetaPath": [Function],
         "connectionId": [Function],
         "fieldId": "salesforce.sObjectType",
-        "filterKey": "salesforce-sObjects-triggerable",
-        "type": "refreshableselect",
+        "type": "salesforcesobject",
       },
       "salesforce.soql": Object {
         "connectionId": [Function],
@@ -6815,8 +6814,7 @@ Object {
         "commMetaPath": [Function],
         "connectionId": [Function],
         "fieldId": "salesforce.sObjectType",
-        "filterKey": "salesforce-sObjects-triggerable",
-        "type": "refreshableselect",
+        "type": "salesforcesobject",
       },
       "salesforce.soql": Object {
         "connectionId": [Function],
@@ -7620,8 +7618,7 @@ Object {
         "commMetaPath": [Function],
         "connectionId": [Function],
         "fieldId": "salesforce.sObjectType",
-        "filterKey": "salesforce-sObjects-triggerable",
-        "type": "refreshableselect",
+        "type": "salesforcesobject",
       },
       "salesforce.soql": Object {
         "connectionId": [Function],

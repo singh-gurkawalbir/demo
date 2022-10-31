@@ -870,8 +870,6 @@ export function* initFormValues({
         )
       );
     }
-    // Needs to get connection list
-
     assistantData = yield select(selectors.assistantData, {
       adaptorType,
       assistant: connectionAssistant,
