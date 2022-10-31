@@ -19,7 +19,7 @@ jest.mock('../Code', () => ({
 const initialStore = getCreatedStore();
 
 function initHandlebarsPanel(props = {}) {
-  initialStore.getState().session.editors = {'5b3c75dd5d3c125c88b5dd02': {
+  initialStore.getState().session.editors = {filecsv: {
     fieldId: 'file.csv',
     formKey: 'imports-5b3c75dd5d3c125c88b5dd20',
     resourceId: '5b3c75dd5d3c125c88b5dd20',
@@ -50,17 +50,17 @@ describe('Handelbars UI tests', () => {
     mockDispatchFn.mockClear();
   });
   test('should pass the initial render', () => {
-    initHandlebarsPanel({editorId: '5b3c75dd5d3c125c88b5dd02'});
+    initHandlebarsPanel({editorId: 'filecsv'});
     const codePanel = screen.getByTestId('codepanel');
 
     expect(codePanel).toBeInTheDocument();
   });
   test('should make the respective dispatch call when content of the code panel is edited', async () => {
-    initHandlebarsPanel({editorId: '5b3c75dd5d3c125c88b5dd02'});
+    initHandlebarsPanel({editorId: 'filecsv'});
     const codePanel = screen.getByTestId('codepanel');
 
     userEvent.type(codePanel, 'a');
-    await waitFor(() => expect(mockDispatchFn).toBeCalledWith(actions.editor.patchRule('5b3c75dd5d3c125c88b5dd02', 'a')));
+    await waitFor(() => expect(mockDispatchFn).toBeCalledWith(actions.editor.patchRule('filecsv', 'a')));
     screen.debug();
   });
 });
