@@ -38,7 +38,7 @@ function renderFuntion(actionProps, data, errorType) {
           actionProps={actionProps}
           {...metadata}
           data={[data]}
-/>
+        />
       </Route>
     </MemoryRouter>,
     {initialStore}

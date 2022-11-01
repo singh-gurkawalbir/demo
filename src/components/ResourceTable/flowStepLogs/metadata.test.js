@@ -31,7 +31,7 @@ function renderFuntion(data, actionProps) {
           actionProps={actionProps}
           {...metadata}
           data={[data]}
-/>
+        />
       </MemoryRouter>
     </ConfirmDialogProvider>, {initialStore}
   );

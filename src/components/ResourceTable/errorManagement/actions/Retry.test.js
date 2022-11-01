@@ -26,7 +26,7 @@ function renderFuntion(actionProps, data) {
           actionProps={actionProps}
           {...metadata}
           data={[data]}
-/>
+        />
       </MemoryRouter>
     </ConfirmDialogProvider>
   );

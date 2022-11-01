@@ -37,7 +37,7 @@ function renderFuntion(actionProps, data, errorType) {
           actionProps={actionProps}
           {...metadata}
           data={[data]}
-/>
+        />
       </Route>
     </MemoryRouter>,
     {initialStore}
@@ -47,12 +47,12 @@ function renderFuntion(actionProps, data, errorType) {
 
 describe('Error Management Retry UI tests ', () => {
   test('should redirect to edit Retry page when errot type is close', () => {
-    renderFuntion({resourceId: 'resourceId'}, {retryDataKey: 'somereqAndResKey', errorId: 'someerrorId'}, 'close');
+    renderFuntion({resourceId: 'resourceId'}, {retryDataKey: 'somereqAndResKey', errorId: 'someerrorId'}, 'resolved');
     const editRetry = screen.getByText('Edit retry data');
 
     expect(editRetry).toBeInTheDocument();
     userEvent.click(editRetry);
-    expect(mockHistoryPush).toHaveBeenCalledWith('/close/details/someerrorId/editRetry');
+    expect(mockHistoryPush).toHaveBeenCalledWith('/resolved/details/someerrorId/editRetry');
   });
   test('should redirect to edit Retry page and make dispatch call when error type is open', () => {
     renderFuntion({resourceId: 'resourceId'}, {retryDataKey: 'somereqAndResKey', errorId: 'someerrorId'}, 'open');
