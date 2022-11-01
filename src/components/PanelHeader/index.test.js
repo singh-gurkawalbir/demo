@@ -1,28 +1,56 @@
-/* global describe, test, expect, */
-import React from 'react';
+/* global describe, test, expect */
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { renderWithProviders } from '../../test/test-utils';
+import React from 'react';
+import { MemoryRouter } from 'react-router-dom';
 import PanelHeader from '.';
+import { renderWithProviders } from '../../test/test-utils';
 
-describe('Panel header UI tests', () => {
-  test('should pass the initial render', async () => {
-    const props = {
-      title: 'Panel Header',
-      infoText: 'Information about the header',
-    };
+async function initPanelheader({children = '', title = '', infoText = '', placement = ''} = {}) {
+  const ui = (
+    <MemoryRouter>
+      <PanelHeader
+        title={title}
+        infoText={infoText}
+        placement={placement}
+      >
+        {children}
+      </PanelHeader>
+    </MemoryRouter>
+  );
 
-    renderWithProviders(<PanelHeader {...props} />);
-    expect(screen.queryByText(/Panel Header/i)).not.toBeNull();
-    const button = screen.getByRole('button');
+  return renderWithProviders(ui);
+}
 
-    expect(button).toBeInTheDocument();
-    userEvent.click(button);
-    await (() => expect(screen.queryByText(/Information about the header/i, {exact: false})).not.toBeNull());
+describe('Testsuite for Panel Header', () => {
+  test('should test the panel header with empty children, title, infoText and placement', async () => {
+    const { utils } = await initPanelheader();
+
+    expect(utils.container.firstChild.lastChild).toBeEmptyDOMElement();
   });
-  test('should render empty DOM for null props', () => {
-    const {utils} = renderWithProviders(<PanelHeader />);
+  test('should test the panel header when children has a value of type number, title, infoText and placement', async () => {
+    await initPanelheader({children: 123, title: 'Testing Title', infoText: 'Testing InfoText', placement: 'right'});
+    expect(screen.getByRole('heading', {name: /Testing Title/i})).toBeInTheDocument();
+    const buttonNode = screen.getAllByRole('button').find(eachOption => eachOption.getAttribute('data-test') === 'openPageInfo');
 
-    expect(utils.container).toContainHTML('');
+    expect(buttonNode).toBeInTheDocument();
+    userEvent.click(buttonNode);
+    expect(screen.getByText(/Testing InfoText/i)).toBeInTheDocument();
+    expect(screen.getByText(/123/i)).toBeInTheDocument();
+  });
+  test('should test the panel header when children has a value of type string, title, infoText and placement', async () => {
+    await initPanelheader({children: 'Testing Children', title: 'Testing Title', infoText: 'Testing InfoText', placement: 'right'});
+    expect(screen.getByRole('heading', {name: /Testing Title/i})).toBeInTheDocument();
+    const buttonNode = screen.getAllByRole('button').find(eachOption => eachOption.getAttribute('data-test') === 'openPageInfo');
+
+    expect(buttonNode).toBeInTheDocument();
+    userEvent.click(buttonNode);
+    expect(screen.getByText(/Testing InfoText/i)).toBeInTheDocument();
+    expect(screen.getByText(/Testing Children/i)).toBeInTheDocument();
+  });
+  test('should test the panel header when children has a value of type string, title and placement but no info text', async () => {
+    await initPanelheader({children: 'Testing Children', title: 'Testing Title', infoText: '', placement: 'right'});
+    expect(screen.getByRole('heading', {name: /Testing Title/i})).toBeInTheDocument();
+    expect(screen.getByText(/Testing Children/i)).toBeInTheDocument();
   });
 });

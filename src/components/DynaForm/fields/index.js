@@ -158,6 +158,7 @@ import DynaConnectionFormView from './DynaConnectionFormView';
 import DynaSwitch from './DynaSwitch';
 import DynaMapper2SourceField from './mapper2/DynaMapper2SourceField';
 import DynaMapper2TabbedExtracts from './mapper2/DynaMapper2TabbedExtracts';
+import DynaSalesforceSObject from './DynaSalesforceSObject';
 
 export default {
   updateoptions: DynaUpdateOptions,
@@ -205,6 +206,7 @@ export default {
   csvgenerate: DynaCsvGenerate_afe,
   xmlparse: DynaXmlParse_afe,
   refreshableselect: DynaRefreshableSelect,
+  salesforcesobject: DynaSalesforceSObject,
   netsuiterecordtype: DynaNetSuiteRecordType,
   netsuiteapiversion: DynaNetSuiteAPIVersion,
   ftpport: DynaTextFtpPort,
