@@ -36,12 +36,8 @@ function renderFuntion(actionProps, data, errorType) {
         <CeligoTable
           actionProps={actionProps}
           {...metadata}
-          data={
-                       [
-                         data,
-                       ]
-                      }
-              />
+          data={[data]}
+/>
       </Route>
     </MemoryRouter>,
     {initialStore}

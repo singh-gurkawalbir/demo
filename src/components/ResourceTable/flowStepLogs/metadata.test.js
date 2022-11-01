@@ -3,7 +3,7 @@ import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
-import { renderWithProviders } from '../../../test/test-utils';
+import { renderWithProviders, reduxStore } from '../../../test/test-utils';
 import metadata from './metadata';
 import CeligoTable from '../../CeligoTable';
 import actions from '../../../actions';
@@ -17,25 +17,24 @@ jest.mock('react-redux', () => ({
   useDispatch: () => mockDispatch,
 }));
 
+const initialStore = reduxStore;
+
+initialStore.getState().user.profile = {
+  timezone: 'Asia/Calcutta',
+};
+
 function renderFuntion(data, actionProps) {
-  const {store} = renderWithProviders(
+  renderWithProviders(
     <ConfirmDialogProvider>
       <MemoryRouter initialEntries={['/']}>
         <CeligoTable
           actionProps={actionProps}
           {...metadata}
-          data={
-                   [
-                     data,
-                   ]
-                  }
-          />
+          data={[data]}
+/>
       </MemoryRouter>
-    </ConfirmDialogProvider>
+    </ConfirmDialogProvider>, {initialStore}
   );
-  const profile = {timezone: 'Asia/Kolkata'};
-
-  store.dispatch(actions.user.profile.update(profile));
 }
 
 describe('FlowStepLogs meta data UI tests', () => {

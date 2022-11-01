@@ -25,21 +25,17 @@ function renderFuntion(actionProps, data) {
         <CeligoTable
           actionProps={actionProps}
           {...metadata}
-          data={
-                       [
-                         data,
-                       ]
-                      }
-              />
+          data={[data]}
+/>
       </MemoryRouter>
     </ConfirmDialogProvider>
   );
   userEvent.click(screen.getByRole('button', {name: /more/i}));
 }
 
-describe('Error Management Retry UI tests ', () => {
+describe('Retry actions UI tests ', () => {
   test('should show "Enable the flow to retry" message when flow is disabled', () => {
-    renderFuntion({isFlowDisabled: true}, {retryDataKey: 'someKey'});
+    renderFuntion({isFlowDisabled: true}, {retryDataKey: 'someKey', errorId: 'errorId'});
     userEvent.click(screen.getByRole('button', {name: /more/i}));
     const retry = screen.getByTitle('Enable the flow to retry');
 
@@ -52,7 +48,7 @@ describe('Error Management Retry UI tests ', () => {
       isResolved: false,
       flowId: 'someflowId',
       resourceId: 'someresourceId',
-    }, {retryDataKey: 'someKey'});
+    }, {retryDataKey: 'someKey', errorId: 'errorId'});
     userEvent.click(screen.getByRole('button', {name: /more/i}));
     const retry = screen.getByText('Retry');
 
@@ -75,7 +71,7 @@ describe('Error Management Retry UI tests ', () => {
       isResolved: true,
       flowId: 'someflowId',
       resourceId: 'someresourceId',
-    }, {retryDataKey: 'someKey'});
+    }, {retryDataKey: 'someKey', errorId: 'errorId'});
     userEvent.click(screen.getByRole('button', {name: /more/i}));
     const retry = screen.getByText('Retry');
 

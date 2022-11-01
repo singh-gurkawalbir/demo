@@ -37,12 +37,8 @@ function renderFuntion(actionProps, data, errorType) {
         <CeligoTable
           actionProps={actionProps}
           {...metadata}
-          data={
-                       [
-                         data,
-                       ]
-                      }
-              />
+          data={[data]}
+/>
       </Route>
     </MemoryRouter>,
     {initialStore}
@@ -50,7 +46,7 @@ function renderFuntion(actionProps, data, errorType) {
   userEvent.click(screen.getByRole('button', {name: /more/i}));
 }
 
-describe('Error Management Retry UI tests ', () => {
+describe('Retry actions UI tests ', () => {
   test('should redirect to request page', () => {
     renderFuntion({resourceId: 'resourceId'}, {reqAndResKey: 'somereqAndResKey', errorId: 'someerrorId'}, 'close');
     const request = screen.getByText('View request');
