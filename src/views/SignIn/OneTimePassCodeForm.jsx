@@ -67,10 +67,14 @@ export default function OneTimePassCodeForm({ dialogOpen }) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const isMFAAuthRequestInProgress = useSelector(selectors.isMFAAuthRequested);
-  const { dontAllowTrustedDevices } = useSelector(selectors.mfaAuthInfo);
+  const { dontAllowTrustedDevices, isAccountUser } = useSelector(selectors.mfaAuthInfo);
   const mfaError = useSelector(selectors.mfaError);
   const [error, setError] = useState();
   const [trustDevice, setTrustDevice] = useState(false);
+  // Trust device option is always available to account owner
+  // For account user, depends on 'dontAllowTrustedDevices' configuration in the account settings of the owner
+  const showTrustDevice = !isAccountUser || (isAccountUser && !dontAllowTrustedDevices);
+
   const handleOnSubmit = useCallback(e => {
     e.preventDefault();
     const code = e?.target?.code?.value?.trim() || e?.target?.elements?.code?.value?.trim();
@@ -88,11 +92,11 @@ export default function OneTimePassCodeForm({ dialogOpen }) {
 
     const payload = { code };
 
-    if (!dontAllowTrustedDevices) {
+    if (showTrustDevice) {
       payload.trustDevice = e?.target?.trustDevice?.checked || e?.target?.elements?.trustDevice?.checked;
     }
     dispatch(actions.auth.mfaVerify.request(payload));
-  }, [dispatch, dontAllowTrustedDevices]);
+  }, [dispatch, showTrustDevice]);
 
   useEffect(() => {
     setError(mfaError);
@@ -118,7 +122,7 @@ export default function OneTimePassCodeForm({ dialogOpen }) {
             )
           }
         <div className={clsx(classes.flexWrapper, { [classes.flexRight]: dontAllowTrustedDevices })}>
-          {!dontAllowTrustedDevices && (
+          {showTrustDevice && (
           <FormControlLabel
             control={(
               <Checkbox
