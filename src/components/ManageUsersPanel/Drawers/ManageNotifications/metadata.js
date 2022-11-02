@@ -27,7 +27,7 @@ export default function notificationsMetadata(props) {
           name: 'connections',
           type: 'multiselect',
           valueDelimiter: ',',
-          label: 'Notify user when connection goes offline',
+          label: 'Notify me on connection issues',
           defaultValue: connectionValues,
           options: [{ items: connectionOps }],
         },
