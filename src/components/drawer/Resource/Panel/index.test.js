@@ -80,6 +80,7 @@ jest.mock('../../../ResourceFormWithStatusPanel', () => ({
   default: props => (
     <>
       <button onClick={props.onSubmitComplete} type="button">Submit</button>
+      {props.showNotificationToaster && (<p>Snackbar</p>)}
       <button onClick={props.onCloseNotificationToaster} type="button">Close notification</button>
     </>
   ),
@@ -154,5 +155,6 @@ describe('Panel tests', () => {
     expect(mockHistoryReplace).toHaveBeenCalledWith('/parentURL/edit/exports/_resourceId');
     expect(isNestedDrawer('/add/pageGenerator/_id')).toEqual(false);
     userEvent.click(screen.getByRole('button', {name: 'Close notification'}));
+    expect(screen.queryByText('Snackbar')).not.toBeInTheDocument();
   });
 });
