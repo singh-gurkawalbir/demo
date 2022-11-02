@@ -121,7 +121,7 @@ export default function OneTimePassCodeForm({ dialogOpen }) {
               </FormHelperText>
             )
           }
-        <div className={clsx(classes.flexWrapper, { [classes.flexRight]: dontAllowTrustedDevices })}>
+        <div className={clsx(classes.flexWrapper, { [classes.flexRight]: !showTrustDevice })}>
           {showTrustDevice && (
           <FormControlLabel
             control={(
