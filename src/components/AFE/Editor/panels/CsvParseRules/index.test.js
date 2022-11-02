@@ -29,19 +29,7 @@ function initCsvParseRules(props = {}) {
       columnDelimiter: '*',
     },
   },
-  '6b3c75dd5d3c125c88b5dd02': {
-    fieldId: 'file.csv',
-    formKey: 'imports-5b3c75dd5d3c125c88b5dd20',
-    resourceId: '5b3c75dd5d3c125c88b5dd20',
-    resourceType: 'imports',
-    previewStatus: props.status,
-    insertStubKey: 'preSavePage',
-    rule: {
-      code: 'custom code',
-      entryFunction: 'preSavePage',
-      scriptId: '7b3c75dd5d3c125c88b5cc01',
-    },
-  }};
+  };
   initialStore.getState().session.form = {'imports-5b3c75dd5d3c125c88b5dd20': { value: 'demoValue',
     fields: {
       'file.csv': {
