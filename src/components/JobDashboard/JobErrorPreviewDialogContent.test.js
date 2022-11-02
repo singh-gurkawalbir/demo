@@ -87,6 +87,5 @@ describe('Testsuite for Job Error Preview Dialog Content', () => {
     expect(screen.getByText(
       /please note that we highly recommend you keep a copy of all error files downloaded\. whenever a new error file is uploaded, the job stats and error data will be regenerated based on the new file\./i
     )).toBeInTheDocument();
-    screen.debug(null, Infinity);
   });
 });
