@@ -218,6 +218,5 @@ describe('DynaFormGenerator UI tests', () => {
 
     expect(functonFields).toHaveLength(2);
     expect(contentFields).toHaveLength(2);
-    expect(screen.getByText('default name')).toBeInTheDocument();
   });
 });
