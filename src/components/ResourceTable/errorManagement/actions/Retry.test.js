@@ -33,7 +33,7 @@ function renderFuntion(actionProps, data) {
   userEvent.click(screen.getByRole('button', {name: /more/i}));
 }
 
-describe('Retry actions UI tests ', () => {
+describe('Error management retry action tests', () => {
   test('should show "Enable the flow to retry" message when flow is disabled', () => {
     renderFuntion({isFlowDisabled: true}, {retryDataKey: 'someKey', errorId: 'errorId'});
     userEvent.click(screen.getByRole('button', {name: /more/i}));
@@ -42,7 +42,7 @@ describe('Retry actions UI tests ', () => {
     expect(retry).toBeInTheDocument();
     expect(retry.textContent).toBe('Retry');
   });
-  test('should show make dispatch call for retry', () => {
+  test('should make dispatch call for retry on clicking retry button', () => {
     renderFuntion({
       isFlowDisabled: false,
       isResolved: false,
@@ -65,7 +65,7 @@ describe('Retry actions UI tests ', () => {
       )
     );
   });
-  test('should show "Enable the flow to retry" mergessage when flow is disabled', () => {
+  test('should show "Enable the flow to retry" message when flow is disabled', () => {
     renderFuntion({
       isFlowDisabled: false,
       isResolved: true,

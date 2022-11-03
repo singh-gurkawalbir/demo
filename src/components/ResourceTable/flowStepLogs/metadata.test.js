@@ -79,7 +79,7 @@ describe('FlowStepLogs meta data UI tests', () => {
       )
     );
   });
-  test('should verify the Response code cloumn', () => {
+  test('should verify the Response code column', () => {
     renderFuntion({key: 'someKey', statusCode: 'somestatusCode'}, {resourceId: 'someresourceId', flowId: 'someflowId'});
     expect(screen.getByText('Response code')).toBeInTheDocument();
     expect(screen.getByText('somestatusCode')).toBeInTheDocument();
@@ -92,7 +92,7 @@ describe('FlowStepLogs meta data UI tests', () => {
       )
     );
   });
-  test('should verify the actions button', () => {
+  test('should click the actions button', () => {
     renderFuntion({key: 'someKey'}, {resourceId: 'someresourceId', flowId: 'someflowId'});
     userEvent.click(screen.getByRole('button', {name: /more/i}));
     userEvent.click(screen.getByText('Delete log'));

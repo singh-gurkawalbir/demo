@@ -46,15 +46,15 @@ function renderFuntion(actionProps, data, errorType) {
   userEvent.click(screen.getByRole('button', {name: /more/i}));
 }
 
-describe('Retry actions UI tests ', () => {
-  test('should redirect to request page', () => {
-    renderFuntion({resourceId: 'resourceId'}, {reqAndResKey: 'somereqAndResKey', errorId: 'someerrorId'}, 'close');
+describe('Error management View netsuite request action tests', () => {
+  test('should click on View Request when error type is resolved', () => {
+    renderFuntion({resourceId: 'resourceId'}, {reqAndResKey: 'somereqAndResKey', errorId: 'someerrorId'}, 'resolved');
     const request = screen.getByText('View request');
 
     userEvent.click(request);
-    expect(mockHistoryPush).toHaveBeenCalledWith('/close/details/someerrorId/request');
+    expect(mockHistoryPush).toHaveBeenCalledWith('/resolved/details/someerrorId/request');
   });
-  test('should make dispatch call and redirect to request page', () => {
+  test('should click on View Request when error type is open', () => {
     renderFuntion({resourceId: 'resourceId'}, {reqAndResKey: 'somereqAndResKey', errorId: 'someerrorId'}, 'open');
     const request = screen.getByText('View request');
 

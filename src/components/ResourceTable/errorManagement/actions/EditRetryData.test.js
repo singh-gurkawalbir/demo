@@ -45,7 +45,7 @@ function renderFuntion(actionProps, data, errorType) {
   userEvent.click(screen.getByRole('button', {name: /more/i}));
 }
 
-describe('Error Management Retry UI tests ', () => {
+describe('Error management edit retry data action tests ', () => {
   test('should redirect to edit Retry page when errot type is close', () => {
     renderFuntion({resourceId: 'resourceId'}, {retryDataKey: 'somereqAndResKey', errorId: 'someerrorId'}, 'resolved');
     const editRetry = screen.getByText('Edit retry data');
