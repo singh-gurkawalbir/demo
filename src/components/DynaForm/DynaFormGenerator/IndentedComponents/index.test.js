@@ -152,8 +152,6 @@ describe('Collapsed Components UI tests', () => {
     props.containers = [];
     const {utils} = initIndentedComponent(props);
 
-    screen.debug();
-
     expect(utils.container).toContainHTML('<div></div>');
   });
 });

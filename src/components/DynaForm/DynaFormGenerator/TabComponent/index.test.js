@@ -129,7 +129,6 @@ describe('BoxComponents UI tests', () => {
 
     expect(screen.getByText('General')).toBeInTheDocument();
     expect(screen.getByText('Script content')).toBeInTheDocument();
-    screen.debug(null, Infinity);
   });
   test('should pass the initial render for  TabIAComponent', () => {
     const Component = Components.TabIAComponent;
@@ -139,7 +138,6 @@ describe('BoxComponents UI tests', () => {
     expect(screen.getByText('General')).toBeInTheDocument();
     expect(screen.getByText('Script content')).toBeInTheDocument();
     expect(screen.getByText('Save')).toBeInTheDocument();
-    screen.debug(null, Infinity);
   });
   test('should pass the initial render for  TabIAComponent', () => {
     const Component = Components.TabIAComponent;
@@ -149,7 +147,6 @@ describe('BoxComponents UI tests', () => {
     expect(screen.getByText('General')).toBeInTheDocument();
     expect(screen.getByText('Script content')).toBeInTheDocument();
     expect(screen.getByText('Save')).toBeInTheDocument();
-    screen.debug(null, Infinity);
   });
   test('should pass the initial render for  SuiteScriptTabIACompleteSave Component', () => {
     const Component = Components.SuiteScriptTabIACompleteSave;
@@ -160,7 +157,6 @@ describe('BoxComponents UI tests', () => {
     expect(screen.getByText('Script content')).toBeInTheDocument();
     expect(screen.getByText('Save')).toBeInTheDocument();
     userEvent.click(screen.getByText('General'));
-    screen.debug(null, Infinity);
   });
   test('should pass the initial render for  TabComponentWithoutSave Component', () => {
     const Component = Components.TabComponentWithoutSave;
@@ -169,7 +165,6 @@ describe('BoxComponents UI tests', () => {
 
     expect(screen.getByText('General')).toBeInTheDocument();
     expect(screen.getByText('Script content')).toBeInTheDocument();
-    screen.debug(null, Infinity);
   });
   test('should pass the initial render for  TabComponentWithoutSave Component', () => {
     const Component = Components.TabComponentWithoutSave;
@@ -178,7 +173,6 @@ describe('BoxComponents UI tests', () => {
 
     expect(screen.getByText('General')).toBeInTheDocument();
     expect(screen.getByText('Script content')).toBeInTheDocument();
-    screen.debug(null, Infinity);
   });
   test('should pass the initial render for  TabComponentWithoutSaveVertical Component', () => {
     const Component = Components.TabComponentWithoutSaveVertical;
@@ -187,6 +181,5 @@ describe('BoxComponents UI tests', () => {
 
     expect(screen.getByText('General')).toBeInTheDocument();
     expect(screen.getByText('Script content')).toBeInTheDocument();
-    screen.debug(null, Infinity);
   });
 });
