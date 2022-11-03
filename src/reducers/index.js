@@ -5542,8 +5542,12 @@ selectors.isMapper2Supported = state => {
 
   const resource = selectors.resource(state, 'imports', importId);
 
-  // IAs don't support mapper2
-  if (!resource || resource._connectorId) return false;
+  if (!resource) return false;
+
+  // IAs will only support mapper2 if its present in the doc
+  if (resource._connectorId && isEmpty(resource.mappings)) {
+    return false;
+  }
 
   return !!(
     isFileAdaptor(resource) ||
@@ -5579,7 +5583,10 @@ selectors.mappingEditorNotification = (state, editorId) => {
 
   if (editorType !== 'mappings' || !isMapper2Supported) return emptyObject;
 
-  const {mapping, mappings} = selectors.resource(state, 'imports', resourceId) || {};
+  const {mapping, mappings, _connectorId} = selectors.resource(state, 'imports', resourceId) || {};
+
+  // IAs don't support the notification
+  if (_connectorId) return emptyObject;
 
   const resourceHasV2Mappings = !!mappings?.length;
 
