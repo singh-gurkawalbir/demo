@@ -461,6 +461,12 @@ export default {
           'http.unencrypted',
         ],
       },
+      {
+        containers: [{
+          fields: [],
+        },
+        ],
+      },
     ],
   },
   actions: [
