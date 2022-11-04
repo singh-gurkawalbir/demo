@@ -52,7 +52,7 @@ export default function NetSuiteQualificationCriteriaPanel({ editorId }) {
     };
   });
 
-  const useSS2Framework = useSelector(state => selectors.fieldState(state, formKey, 'netsuite.distributed.useSS2Framework'))?.value;
+  const useSS2Framework = useSelector(state => selectors.fieldState(state, formKey, 'netsuite.distributed.useSS2Framework'))?.value === 'true';
 
   const patchEditor = useCallback(
     value => {
@@ -84,8 +84,8 @@ export default function NetSuiteQualificationCriteriaPanel({ editorId }) {
             }
           } else if (filter.type === 'checkbox') {
             filterData.options = [
-              { id: useSS2Framework === 'true' ? true : 'T', text: 'Yes' },
-              { id: useSS2Framework === 'true' ? false : 'F', text: 'No' },
+              { id: useSS2Framework ? true : 'T', text: 'Yes' },
+              { id: useSS2Framework ? false : 'F', text: 'No' },
             ];
           }
 
