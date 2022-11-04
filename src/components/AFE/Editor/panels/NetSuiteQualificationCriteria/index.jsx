@@ -43,7 +43,16 @@ export default function NetSuiteQualificationCriteriaPanel({ editorId }) {
   const [rulesState, setRulesState] = useState({});
   const dispatch = useDispatch();
   const rule = useSelector(state => selectors.editorRule(state, editorId));
-  const filters = useSelector(state => selectors.editor(state, editorId).filters || defaultFilters);
+  const { filters, formKey } = useSelector(state => {
+    const editorData = selectors.editor(state, editorId);
+
+    return {
+      filters: editorData.filters || defaultFilters,
+      formKey: editorData.formKey,
+    };
+  });
+
+  const useSS2Framework = useSelector(state => selectors.fieldState(state, formKey, 'netsuite.distributed.useSS2Framework'))?.value;
 
   const patchEditor = useCallback(
     value => {
@@ -75,8 +84,8 @@ export default function NetSuiteQualificationCriteriaPanel({ editorId }) {
             }
           } else if (filter.type === 'checkbox') {
             filterData.options = [
-              { id: 'T', text: 'Yes' },
-              { id: 'F', text: 'No' },
+              { id: useSS2Framework === 'true' ? true : 'T', text: 'Yes' },
+              { id: useSS2Framework === 'true' ? false : 'F', text: 'No' },
             ];
           }
 
