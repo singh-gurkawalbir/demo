@@ -93,7 +93,7 @@ export default function NetSuiteQualificationCriteriaPanel({ editorId }) {
         }),
         'id'
       ),
-    [filters]
+    [filters, useSS2Framework]
   );
 
   useEffect(() => {
