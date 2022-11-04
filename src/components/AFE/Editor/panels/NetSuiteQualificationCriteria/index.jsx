@@ -84,8 +84,8 @@ export default function NetSuiteQualificationCriteriaPanel({ editorId }) {
             }
           } else if (filter.type === 'checkbox') {
             filterData.options = [
-              { id: useSS2Framework ? true : 'T', text: 'Yes' },
-              { id: useSS2Framework ? false : 'F', text: 'No' },
+              { id: useSS2Framework ? true : 'T', text: 'Yes', type: useSS2Framework ? 'boolean' : 'string' },
+              { id: useSS2Framework ? false : 'F', text: 'No', type: useSS2Framework ? 'boolean' : 'string' },
             ];
           }
 
@@ -187,6 +187,10 @@ export default function NetSuiteQualificationCriteriaPanel({ editorId }) {
             filter.values[opt.text] = opt.text;
           } else {
             filter.values[opt.id] = opt.text;
+          }
+          if (opt.type === 'boolean') {
+            filter.type = 'boolean';
+            filter.input = 'radio';
           }
         });
       } else {
