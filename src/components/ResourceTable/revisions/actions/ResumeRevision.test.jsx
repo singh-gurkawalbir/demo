@@ -72,7 +72,7 @@ function renderFuntion(data) {
   userEvent.click(screen.getByRole('button', {name: /more/i}));
 }
 
-describe('Test suite for resume revision ', () => {
+describe('UI tests for resume revision ', () => {
   beforeEach(() => {
     jest.resetAllMocks();
   });
