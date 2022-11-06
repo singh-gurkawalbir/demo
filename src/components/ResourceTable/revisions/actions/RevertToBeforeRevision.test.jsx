@@ -84,7 +84,6 @@ describe('UI tests for revert to before revision', () => {
   });
   test('should call onclick', () => {
     renderFuntion({_id: 'somereqAndResKey', _createdByUserId: '5f7011605b2e3244837309f9', status: 'completed', integrationId: '5e44ee816fb284424f693b43', type: 'pull'});
-    screen.debug(null, Infinity);
     const request = screen.getByText('Revert to before this revision');
 
     userEvent.click(request);
