@@ -59,7 +59,7 @@ const SearchCount = () => {
           italic
           noBorder
           className={classes.infoFilter}>
-          Rows without matches are hidden (except for children of parents that have matches)
+          Adding a row closes search mode
         </NotificationToaster>
       ) : null}
 
