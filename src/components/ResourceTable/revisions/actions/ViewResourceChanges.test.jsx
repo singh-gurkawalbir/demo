@@ -76,7 +76,7 @@ describe('UI test cases for view resource changes ', () => {
   beforeEach(() => {
     jest.resetAllMocks();
   });
-  test('should call onclick', () => {
+  test('Should redirect to correct URL when clicked on view resource changed', () => {
     renderFuntion({_id: 'somereqAndResKey', _createdByUserId: '5f7011605b2e3244837309f9', status: 'completed', integrationId: '5e44ee816fb284424f693b43'});
     const viewresourcechanged = screen.getByText('View resources changed');
 

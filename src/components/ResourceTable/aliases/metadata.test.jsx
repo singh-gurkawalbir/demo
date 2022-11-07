@@ -1,4 +1,4 @@
-/* global describe, expect, jest, test */
+/* global describe, expect, test */
 import React from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { screen } from '@testing-library/react';

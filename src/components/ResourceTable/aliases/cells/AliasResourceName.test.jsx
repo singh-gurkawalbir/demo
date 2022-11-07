@@ -25,7 +25,7 @@ initialStore.getState().data.resources.imports = [{
 }];
 
 describe('UI test cases for aliasresourcename', () => {
-  test('should render the table accordingly', () => {
+  test('should display import name when the component is rendered', () => {
     const alias = {
       _importId: '5ffad3d1f08d35214ed200g7',
     };

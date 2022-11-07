@@ -83,7 +83,7 @@ describe('UI test cases for revert to after revision ', () => {
   beforeEach(() => {
     jest.resetAllMocks();
   });
-  test('should call onclick', () => {
+  test('Redirect to correct URL when clicked on revert to after revision', () => {
     renderFuntion({_id: 'somereqAndResKey', _createdByUserId: '5f7011605b2e3244837309f9', status: 'completed', integrationId: '5e44ee816fb284424f693b43', type: 'pull'});
     const revertafterbutton = screen.getByText('Revert to after this revision');
 

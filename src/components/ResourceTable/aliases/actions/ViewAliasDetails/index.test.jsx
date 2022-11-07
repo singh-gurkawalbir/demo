@@ -33,8 +33,13 @@ describe('UI test cases for view alias details', () => {
   beforeEach(() => {
     jest.resetAllMocks();
   });
+  const _id = 'someid';
+  const alias = 'somereqAndResKey';
+  const status = 'canceled';
+  const _parentId = 'someparentId';
+
   test('should call onclick when parentId is not provided', () => {
-    renderFuntion({ _id: 'someid', alias: 'somereqAndResKey', status: 'canceled' });
+    renderFuntion({ _id, alias, status });
     const request = screen.getByText('View details');
 
     userEvent.click(request);
@@ -43,7 +48,7 @@ describe('UI test cases for view alias details', () => {
     );
   });
   test('should call onclick when parentId is provided', () => {
-    renderFuntion({ _id: 'someid', alias: 'somereqAndResKey', _parentId: 'someparentId', status: 'canceled' });
+    renderFuntion({ _id, alias, _parentId, status });
     const request = screen.getByText('View details');
 
     userEvent.click(request);

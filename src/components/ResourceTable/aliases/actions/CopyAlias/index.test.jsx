@@ -1,25 +1,18 @@
 /* global test, expect, describe, beforeEach, afterEach, jest */
 import React from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
-import { screen } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter, Route } from 'react-router-dom';
 import { renderWithProviders } from '../../../../../test/test-utils';
-import { runServer } from '../../../../../test/api/server';
 import metadata from '../../metadata';
 import * as mockEnqueSnackbar from '../../../../../hooks/enqueueSnackbar';
 import CeligoTable from '../../../../CeligoTable';
 
-const mockHistoryPush = jest.fn();
 const enqueueSnackbar = jest.fn();
 
-jest.mock('react-router-dom', () => ({
-  ...jest.requireActual('react-router-dom'),
-  useHistory: () => ({
-    push: mockHistoryPush,
-  }),
-}));
+window.prompt = jest.fn();
 
 function renderFuntion(data) {
   renderWithProviders(
@@ -33,18 +26,23 @@ function renderFuntion(data) {
 }
 
 describe('UI test cases for copy alias ', () => {
-  runServer();
   beforeEach(() => {
     jest.spyOn(mockEnqueSnackbar, 'default').mockReturnValue([enqueueSnackbar]);
   });
   afterEach(() => {
     enqueueSnackbar.mockClear();
   });
-  test('should call onclick', () => {
-    renderFuntion({_id: '74839jf930928379302', alias: 'somereqAndResKey'});
+  test('should display a prompt after clicking on copy alias', async () => {
+    renderFuntion({_connectionId: '62f0d335e77a2e04750c3951',
+      _id: '12',
+      alias: '12',
+      type: 'connections'});
     const request = screen.getByText('Copy alias');
 
     userEvent.click(request);
+    await waitFor(() => {
+      expect(window.prompt).toHaveBeenCalled();
+    });
     expect(enqueueSnackbar).toHaveBeenCalledWith({message: 'Alias copied to clipboard.'});
   });
 });

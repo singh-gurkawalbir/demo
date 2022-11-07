@@ -82,11 +82,11 @@ describe('UI test cases for revert to revision ', () => {
   beforeEach(() => {
     jest.resetAllMocks();
   });
-  test('should call onclick', () => {
+  test('Redirect to correct URL when clicked on revert to this revision', () => {
     renderFuntion({_id: 'somereqAndResKey', _createdByUserId: '5f7011605b2e3244837309f9', status: 'completed', integrationId: '5e44efa28015c9464272256f', type: 'snapshot'});
-    const revisiontorevisions = screen.getByText('Revert to this revision');
+    const revisionrevisionButton = screen.getByText('Revert to this revision');
 
-    userEvent.click(revisiontorevisions);
+    userEvent.click(revisionrevisionButton);
     expect(mockHistoryPush).toHaveBeenCalledWith('/parent/revert/randomvalue/open/toBefore/revision/somereqAndResKey');
   });
 });

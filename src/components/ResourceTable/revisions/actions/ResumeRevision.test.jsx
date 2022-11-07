@@ -76,14 +76,14 @@ describe('UI tests for resume revision ', () => {
   beforeEach(() => {
     jest.resetAllMocks();
   });
-  test('should call onclick and type is set to pull', () => {
+  test('Redirects to correct URL on click when type is set to pull', () => {
     renderFuntion({_id: 'somereqAndResKey', _createdByUserId: '5f7011605b2e3244837309f9', status: 'inprogress', integrationId: '5e44ee816fb284424f693b43', type: 'pull'});
     const request = screen.getByText('Resume operation');
 
     userEvent.click(request);
     expect(mockHistoryPush).toHaveBeenCalledWith('/parent/pull/somereqAndResKey/merge');
   });
-  test('should call onclick and type is set to revert', () => {
+  test('Redirects to correct URL on click when type is set to revert', () => {
     renderFuntion({_id: 'somereqAndResKey', _createdByUserId: '5f7011605b2e3244837309f9', status: 'inprogress', integrationId: '5e44ee816fb284424f693b43', type: 'revert'});
     const request = screen.getByText('Resume operation');
 

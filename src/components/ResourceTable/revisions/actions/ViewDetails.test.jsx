@@ -76,11 +76,11 @@ describe('UI test cases for view details ', () => {
   beforeEach(() => {
     jest.resetAllMocks();
   });
-  test('should call onclick', () => {
+  test('Should open a view details drawer when clicked on view details', () => {
     renderFuntion({_id: 'somereqAndResKey', _createdByUserId: '5f7011605b2e3244837309f9', status: 'canceled'});
-    const viewdetails = screen.getByText('View details');
+    const viewdetailsButton = screen.getByText('View details');
 
-    userEvent.click(viewdetails);
+    userEvent.click(viewdetailsButton);
     expect(mockHistoryPush).toHaveBeenCalledWith('/parent/view/somereqAndResKey/mode/details');
   });
 });

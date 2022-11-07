@@ -69,9 +69,9 @@ function initImports(data) {
   renderWithProviders(ui, { initialStore });
 }
 describe('Test suite for revisions metadata', () => {
-  test('should render the table accordingly for rowactions when status is inprogress and type is revert', () => {
-    const date = new Date().toUTCString();
+  const date = new Date().toUTCString();
 
+  test('should render the table accordingly for rowactions when status is inprogress and type is revert', () => {
     initImports({
       _id: 'someid',
       _createdByUserId: '5f7011605b2e3244837309f9',
@@ -122,8 +122,6 @@ describe('Test suite for revisions metadata', () => {
     ]);
   });
   test('should render the table accordingly for rowactions when status is failed and type is revert', () => {
-    const date = new Date().toUTCString();
-
     initImports({
       _id: 'someid',
       _createdByUserId: '5f7011605b2e3244837309f9',
@@ -148,8 +146,6 @@ describe('Test suite for revisions metadata', () => {
   });
 
   test('should render the table accordingly for rowactions when status is cancelled', () => {
-    const date = new Date().toUTCString();
-
     initImports({
       _id: 'someid',
       _createdByUserId: '5f7011605b2e3244837309f9',
@@ -172,8 +168,6 @@ describe('Test suite for revisions metadata', () => {
   });
 
   test('should render the table accordingly for rowactions when status is completed and type is snapshot', () => {
-    const date = new Date().toUTCString();
-
     initImports({
       _id: 'someid',
       _createdByUserId: '5f7011605b2e3244837309f9',
@@ -197,8 +191,6 @@ describe('Test suite for revisions metadata', () => {
     ]);
   });
   test('should render the table accordingly for rowactions when status is completed', () => {
-    const date = new Date().toUTCString();
-
     initImports({
       _id: 'someid',
       _createdByUserId: '5f7011605b2e3244837309f9',
@@ -224,8 +216,6 @@ describe('Test suite for revisions metadata', () => {
   });
 
   test('should render the table accordingly for rowactions when status is completed and type is not snapshot', () => {
-    const date = new Date().toUTCString();
-
     initialStore.getState().user = {
       preferences: {
         defaultAShareId: '5f7011605b2e3244837309f9',
@@ -286,8 +276,6 @@ describe('Test suite for revisions metadata', () => {
     ]);
   });
   test('should render the table accordingly for rowactions when status is completed and type is snapshot', () => {
-    const date = new Date().toUTCString();
-
     initialStore.getState().user = {
       preferences: {
         defaultAShareId: '5f7011605b2e3244837309f9',

@@ -82,7 +82,7 @@ describe('UI test cases for create pull ', () => {
   beforeEach(() => {
     jest.resetAllMocks();
   });
-  test('should call onclick', () => {
+  test('redirect to correct URL after clicking on create pull', async () => {
     renderFuntion({_id: 'somereqAndResKey', _createdByUserId: '5f7011605b2e3244837309f9', status: 'failed'});
     const createpull = screen.getByText('Create pull');
 

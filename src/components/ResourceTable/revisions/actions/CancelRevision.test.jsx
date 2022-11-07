@@ -83,7 +83,7 @@ describe('UI tests for cancel revision ', () => {
   beforeEach(() => {
     jest.resetAllMocks();
   });
-  test('should call onclick', () => {
+  test('should make a dispatch call when cancel revision is clicked', () => {
     renderFuntion({_id: '5cadc8b42b1034709483790',
       _createdByUserId: '5f7011605b2e3244837309f9',
       status: 'inprogress',
