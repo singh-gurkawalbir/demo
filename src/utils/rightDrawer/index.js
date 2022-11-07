@@ -73,6 +73,7 @@ export const drawerPaths = {
     V2: {
       ERROR_DETAILS: 'errors/:resourceId/:errorType',
       JOB_ERROR_DETAILS: 'errors/:resourceId/filter/:flowJobId/:errorType',
+      OPEN_ERROR_DETAILS: ':viewType',
       DOWNLOAD_ERRORS: 'download/:type',
       VIEW_ERROR_DETAILS: 'details/:errorId/:mode',
       FLOW_ERROR_LIST: ':flowId/errorsList',
