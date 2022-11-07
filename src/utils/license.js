@@ -57,12 +57,21 @@ export function upgradeStatus(license, integration = {}) {
   return '';
 }
 
-export function upgradeButtonText(license, integration = {}, upgradeRequested) {
+export function upgradeButtonText(license, integration = {}, upgradeRequested, editions) {
   if (upgradeRequested) {
     return 'Upgrade requested';
   }
+  let value;
 
-  const value = upgradeStatus(license, integration);
+  if (editions?.length) {
+    editions.forEach(edition => {
+      if (edition._id === license._editionId) {
+        value = edition.order < (editions.length - 1) ? 'requestUpgrade' : '';
+      }
+    });
+  } else {
+    value = upgradeStatus(license, integration);
+  }
 
   if (value === 'upgrade') {
     return 'Upgrade';
