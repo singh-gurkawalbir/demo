@@ -6,6 +6,10 @@ import { useDispatch } from 'react-redux';
 import actions from '../../actions';
 import ActionGroup from '../ActionGroup';
 import OutlinedButton from '../Buttons/OutlinedButton';
+import ThumbsUpIcon from '../icons/ThumbsUpIcon';
+import IconButtonWithTooltip from '../IconButtonWithTooltip';
+import ThumbsDownIcon from '../icons/ThumbsDownIcon';
+import CloseIcon from '../icons/CloseIcon';
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
@@ -26,6 +30,9 @@ const useStyles = makeStyles(theme => ({
     lineHeight: '22px',
     whiteSpace: 'normal',
     wordBreak: 'break-word',
+    borderWidth: '1px 0',
+    borderStyle: 'solid',
+    borderColor: theme.palette.secondary.lightest,
     '&>div': {
       maxHeight: 300,
     },
@@ -38,11 +45,15 @@ const useStyles = makeStyles(theme => ({
   },
   caption: {
     wordBreak: 'break-word',
+    borderTop: `1px solid ${theme.palette.secondary.lightest}`,
+    paddingTop: theme.spacing(1),
   },
   actionButton: {
-    minWidth: 'auto',
-    '&:not(:last-child)': {
-      marginRight: theme.spacing(1),
+    color: theme.palette.secondary.main,
+    marginLeft: theme.spacing(1),
+    '& .MuiIconButton-label, .MuiSvgIcon-root': {
+      height: theme.spacing(2.5),
+      width: theme.spacing(2.5),
     },
   },
   feedbackTextField: {
@@ -54,13 +65,20 @@ const useStyles = makeStyles(theme => ({
   },
   actionWrapper: {
     display: 'flex',
-    paddingTop: theme.spacing(1),
-    borderTop: '1px solid',
-    borderColor: theme.palette.secondary.lightest,
+    padding: theme.spacing(1, 0),
+    margin: theme.spacing(1, 0),
+    backgroundColor: theme.palette.background.paper2,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   feedbackActionButton: {
     display: 'flex',
     alignSelf: 'flex-start',
+  },
+  titleWrapper: {
+    display: 'flex',
+    alignItems: 'center',
+    marginBottom: theme.spacing(1),
   },
 }));
 
@@ -92,14 +110,19 @@ export default function HelpContent({ children, title, caption, fieldId, resourc
 
   return (
     <div className={classes.wrapper}>
-      <Typography className={classes.title} variant="h6">
-        {title}
-      </Typography>
-      {caption && (
-        <Typography variant="caption" className={classes.caption}>
-          {caption}
+      <div className={classes.titleWrapper}>
+        <Typography className={classes.title} variant="h6">
+          {title}
         </Typography>
-      )}
+        <ActionGroup position="right">
+          <IconButtonWithTooltip
+            tooltipProps={{title: 'Close'}}
+            buttonSize={{size: 'small'}}
+            noPadding>
+            <CloseIcon />
+          </IconButtonWithTooltip>
+        </ActionGroup>
+      </div>
       {feedbackText ? (
         <>
           <TextField
@@ -121,27 +144,32 @@ export default function HelpContent({ children, title, caption, fieldId, resourc
         <>
           <Typography variant="subtitle2" component="div" className={classes.content}>{children}</Typography>
           <div className={classes.actionWrapper}>
-            <Typography>Was this helpful?</Typography>
-            <ActionGroup position="right">
-              <OutlinedButton
-                data-test="yesContentHelpful"
-                color="secondary"
-                size="small"
-                onClick={handleUpdateFeedBack(true)}
-                className={classes.actionButton}>
-                Yes
-              </OutlinedButton>
-              <OutlinedButton
-                data-test="noContentHelpful"
-                color="secondary"
-                size="small"
-                onClick={handleUpdateFeedBack(false)}
-                className={classes.actionButton}>
-                No
-              </OutlinedButton>
-            </ActionGroup>
+            <Typography variant="subtitle2">Was this helpful?</Typography>
+            <IconButtonWithTooltip
+              data-test="yesContentHelpful"
+              tooltipProps={{title: 'Yes'}}
+              buttonSize={{size: 'small'}}
+              className={classes.actionButton}
+              onClick={handleUpdateFeedBack(true)}
+              noPadding>
+              <ThumbsUpIcon />
+            </IconButtonWithTooltip>
+            <IconButtonWithTooltip
+              data-test="noContentHelpful"
+              tooltipProps={{title: 'No'}}
+              buttonSize={{size: 'small'}}
+              className={classes.actionButton}
+              onClick={handleUpdateFeedBack(false)}
+              noPadding>
+              <ThumbsDownIcon />
+            </IconButtonWithTooltip>
           </div>
         </>
+      )}
+      {caption && (
+      <Typography variant="subtitle2" className={classes.caption}>
+        {caption}
+      </Typography>
       )}
     </div>
   );
