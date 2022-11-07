@@ -1,7 +1,6 @@
 /* global describe, test, expect, jest, beforeEach, afterEach  */
 import { screen } from '@testing-library/react';
 import React from 'react';
-import { MemoryRouter } from 'react-router-dom';
 import CompletedFlows from '.';
 import { getCreatedStore } from '../../../../store';
 import {renderWithProviders} from '../../../../test/test-utils';
@@ -11,9 +10,7 @@ let initialStore;
 async function initCompletedFlows(data) {
   initialStore.getState().data.completedJobs = data;
   const ui = (
-    <MemoryRouter>
-      <CompletedFlows />
-    </MemoryRouter>
+    <CompletedFlows />
   );
 
   return renderWithProviders(ui, {initialStore});
@@ -82,6 +79,7 @@ describe('Testsuite for Completed Flows', () => {
     };
 
     await initCompletedFlows(data);
+    expect(screen.getByText(/filterkey = completedflows/i)).toBeInTheDocument();
     expect(screen.getByText(/resource table resources = testing completed jobs/i)).toBeInTheDocument();
     expect(screen.getByText(/Testing RunHistoryDrawer/i)).toBeInTheDocument();
     expect(screen.getByText(/Testing ErrorsList/i)).toBeInTheDocument();

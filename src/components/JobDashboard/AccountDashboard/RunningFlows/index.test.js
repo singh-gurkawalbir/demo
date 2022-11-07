@@ -95,7 +95,7 @@ jest.mock('../../../ResourceTable', () => ({
   __esModule: true,
   ...jest.requireActual('../../../ResourceTable'),
   default: props => (
-    <div>Resource Table Resources = {props.resources}</div>
+    <div>Resource Table Resources = {JSON.stringify(props.resources)}</div>
   ),
 }));
 
@@ -137,36 +137,18 @@ describe('Testsuite for Running flows', () => {
     await initRunningFlows('runningFlows', 'loading', []);
     expect(screen.getByRole('progressbar').className).toEqual(expect.stringContaining('MuiCircularProgress-'));
   });
-  test.skip('should render the data when there are jobs', async () => {
+  test('should render the data when there are jobs', async () => {
     const runningJobsData =
       [{
         _id: 123,
-        _integrationId: 12345,
-        _flowId: 67890,
-        _exportId: 'xsjxks',
-        _importId: 'nxksnn',
-        children: undefined,
-        createdAt: '2022-10-20T14:18:12.264Z',
-        doneExporting: false,
-        duration: undefined,
-        flowDisabled: false,
-        lastModified: '2022-10-20T14:18:13.651Z',
-        name: 'Test flow name 1',
-        numError: 0,
-        numExport: 0,
-        numIgnore: 0,
-        numOpenError: 0,
-        numPagesGenerated: 0,
-        numPagesProcessed: 0,
-        numResolved: 0,
-        numSuccess: 0,
-        percentComplete: 0,
-        startedAt: '2022-10-20T14:18:13.650Z',
-        status: 'running',
-        type: 'flow',
       }];
 
     await initRunningFlows('runningFlows', 'success', runningJobsData);
+    expect(screen.getByText(/filterkey = runningflows/i)).toBeInTheDocument();
+    expect(screen.getByText(
+      /resource table resources = \[\{"_id":123,"doneexporting":false,"numpagesprocessed":0,"percentcomplete":0\}\]/i
+    )).toBeInTheDocument();
+    expect(mockDispatchFn).toHaveBeenCalledWith({ type: 'JOB_DASHBOARD_RUNNING_CLEAR' });
   });
 });
 
