@@ -41,7 +41,7 @@ describe('UI test cases for copy alias ', () => {
     enqueueSnackbar.mockClear();
   });
   test('should call onclick', () => {
-    renderFuntion({_id: 1, alias: 'somereqAndResKey'});
+    renderFuntion({_id: '74839jf930928379302', alias: 'somereqAndResKey'});
     const request = screen.getByText('Copy alias');
 
     userEvent.click(request);
