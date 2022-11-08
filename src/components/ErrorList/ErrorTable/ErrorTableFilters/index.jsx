@@ -114,7 +114,7 @@ export default function ErrorTableFilters({
         activeErrorId: '',
       }));
       history.replace(buildDrawerUrl({
-        path: drawerPaths.ERROR_MANAGEMENT.V2.OPEN_ERROR_DETAILS,
+        path: drawerPaths.ERROR_MANAGEMENT.V2.OPEN_ERROR_VIEW,
         baseUrl: match.url,
         params: { viewType: event.target.value },
       }));

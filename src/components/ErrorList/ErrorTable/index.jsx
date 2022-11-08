@@ -255,7 +255,7 @@ export default function ErrorTable({
   const filterKey = isResolved ? FILTER_KEYS.RESOLVED : FILTER_KEYS.OPEN;
   const matchOpenErrorDrawerPath = matchPath(pathname, {
     path: buildDrawerUrl({
-      path: drawerPaths.ERROR_MANAGEMENT.V2.OPEN_ERROR_DETAILS,
+      path: drawerPaths.ERROR_MANAGEMENT.V2.OPEN_ERROR_VIEW,
       baseUrl: match.url,
     }),
   });
@@ -379,7 +379,7 @@ export default function ErrorTable({
     if (!isResolved && !viewType) {
       // on initial load of the component, set viewType to 'split' by default
       history.replace(buildDrawerUrl({
-        path: drawerPaths.ERROR_MANAGEMENT.V2.OPEN_ERROR_DETAILS,
+        path: drawerPaths.ERROR_MANAGEMENT.V2.OPEN_ERROR_VIEW,
         baseUrl: match.url,
         params: { viewType: errorFilter.view || OPEN_ERRORS_VIEW_TYPES.SPLIT },
       }));
