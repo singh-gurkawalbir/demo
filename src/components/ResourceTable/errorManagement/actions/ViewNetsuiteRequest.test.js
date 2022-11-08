@@ -1,4 +1,4 @@
-/* global test, expect, describe, jest */
+/* global test, expect, describe, jest, afterEach */
 import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -47,6 +47,9 @@ function renderFuntion(actionProps, data, errorType) {
 }
 
 describe('Error management View netsuite request action tests', () => {
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
   test('should click on View Request when error type is resolved', () => {
     renderFuntion({resourceId: 'resourceId'}, {reqAndResKey: 'somereqAndResKey', errorId: 'someerrorId'}, 'resolved');
     const request = screen.getByText('View request');

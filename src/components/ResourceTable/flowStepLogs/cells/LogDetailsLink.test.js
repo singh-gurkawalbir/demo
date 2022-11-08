@@ -45,8 +45,8 @@ describe('LogDetailsLink UI tests', () => {
 
     const button = screen.getByRole('button');
 
-    const classofbutton = button.getAttribute('class');
+    const classOfButton = button.getAttribute('class');
 
-    expect(classofbutton.indexOf('rowClicked')).toBeGreaterThan(-1);
+    expect(classOfButton.indexOf('rowClicked')).toBeGreaterThan(-1);
   });
 });

@@ -1,10 +1,9 @@
-/* global test, expect, describe, jest */
+/* global test, expect, describe, jest, afterEach */
 import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import { renderWithProviders } from '../../../../test/test-utils';
-// import obj from './metadata';
 import metadata from '../resolvedErrors/metadata';
 import CeligoTable from '../../../CeligoTable';
 import actions from '../../../../actions';
@@ -34,6 +33,9 @@ function renderFuntion(actionProps, data) {
 }
 
 describe('Error management retry action tests', () => {
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
   test('should show "Enable the flow to retry" message when flow is disabled', () => {
     renderFuntion({isFlowDisabled: true}, {retryDataKey: 'someKey', errorId: 'errorId'});
     userEvent.click(screen.getByRole('button', {name: /more/i}));
