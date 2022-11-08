@@ -31,6 +31,9 @@ const Transfers = loadable(() =>
 const Security = loadable(() =>
   retry(() => import(/* webpackChunkName: 'MyAccount.Security' */ './Security/index'))
 );
+const DataRetention = loadable(() =>
+  retry(() => import(/* webpackChunkName: 'MyAccount.DataRetention' */ './DataRetention/index'))
+);
 
 const SECURITY_TAB = {
   path: 'security',
@@ -66,6 +69,12 @@ const tabs = [
     Panel: Transfers,
   },
   SECURITY_TAB,
+  {
+    path: 'dataretention',
+    label: 'Data retention',
+    Icon: TransfersIcon,
+    Panel: DataRetention,
+  },
 ];
 
 const useStyles = makeStyles(theme => ({

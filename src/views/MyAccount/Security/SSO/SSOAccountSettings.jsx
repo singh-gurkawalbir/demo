@@ -109,8 +109,8 @@ const SSOLicenseUpgradeContainer = () => {
   );
 
   useEffect(() => {
-    if (platformLicenseActionMessage === messageStore('SSO_LICENSE_UPGRADE_REQUEST_SUBMITTED_MESSAGE')) {
-      enquesnackbar({message: <RawHtml html={messageStore('SSO_LICENSE_UPGRADE_REQUESTED_MESSAGE')} />, variant: 'success'});
+    if (platformLicenseActionMessage === messageStore('FEATURE_LICENSE_UPGRADE_REQUEST_SUBMITTED_MESSAGE')) {
+      enquesnackbar({message: <RawHtml html={platformLicenseActionMessage} />, variant: 'success'});
       dispatch(actions.license.clearActionMessage());
     }
   }, [dispatch, enquesnackbar, platformLicenseActionMessage]);
@@ -141,7 +141,7 @@ const SSOLicenseUpgradeContainer = () => {
       <RawHtml html={messageStore('SSO_LICENSE_UPGRADE_INFO')} />
       <ButtonWithTooltip
         tooltipProps={{
-          title: ssoLicenseUpgradeRequested ? messageStore('SSO_LICENSE_UPGRADE_REQUESTED_TOOLTIP_MESSAGE') : '',
+          title: ssoLicenseUpgradeRequested ? messageStore('FEATURE_LICENSE_UPGRADE_REQUESTED_TOOLTIP_MESSAGE') : '',
           placement: 'bottom-start'}}>
         <FilledButton
           onClick={onRequestUpgradeClick}

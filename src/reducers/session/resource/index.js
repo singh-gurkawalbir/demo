@@ -36,8 +36,11 @@ export default function reducer(state = {}, action) {
       case actionTypes.LICENSE.SSO.UPGRADE_REQUESTED:
         draft.ssoLicenseUpgradeRequested = true;
         break;
+      case actionTypes.LICENSE.DATA_RETENTION.UPGRADE_REQUESTED:
+        draft.dataRetentionLicenseUpgradeRequested = true;
+        break;
       case actionTypes.LICENSE.UPGRADE_REQUEST_SUBMITTED:
-        draft.platformLicenseActionMessage = feature === 'SSO' ? messageStore('SSO_LICENSE_UPGRADE_REQUEST_SUBMITTED_MESSAGE') : LICENSE_UPGRADE_REQUEST_SUBMITTED_MESSAGE;
+        draft.platformLicenseActionMessage = (feature === 'SSO' || feature === 'dataRetention') ? messageStore('FEATURE_LICENSE_UPGRADE_REQUEST_SUBMITTED_MESSAGE') : LICENSE_UPGRADE_REQUEST_SUBMITTED_MESSAGE;
         break;
       case actionTypes.LICENSE.REACTIVATED:
         draft.platformLicenseActionMessage = LICENSE_REACTIVATED_MESSAGE;
@@ -123,6 +126,13 @@ selectors.ssoLicenseUpgradeRequested = state => {
   }
 
   return state.ssoLicenseUpgradeRequested;
+};
+selectors.dataRetentionLicenseUpgradeRequested = state => {
+  if (!state) {
+    return;
+  }
+
+  return state.dataRetentionLicenseUpgradeRequested;
 };
 selectors.licenseErrorCode = state => {
   if (!state) {

@@ -1338,6 +1338,8 @@ const license = {
     action(actionTypes.LICENSE.REACTIVATED),
   ssoLicenseUpgradeRequested: () =>
     action(actionTypes.LICENSE.SSO.UPGRADE_REQUESTED),
+  dataRetentionLicenseUpgradeRequested: () =>
+    action(actionTypes.LICENSE.DATA_RETENTION.UPGRADE_REQUESTED),
   requestLicenseEntitlementUsage: () =>
     action(actionTypes.LICENSE.ENTITLEMENT_USAGE_REQUEST),
   requestNumEnabledFlows: () =>
@@ -2441,6 +2443,12 @@ const mfa = {
   clear: () => action(actionTypes.MFA.CLEAR),
 };
 
+const accountSettings = {
+  request: () => action(actionTypes.ACCOUNT_SETTINGS.REQUEST),
+  update: accountSettings => action(actionTypes.ACCOUNT_SETTINGS.UPDATE, {accountSettings}),
+  received: accountSettings => action(actionTypes.ACCOUNT_SETTINGS.RECEIVED, {accountSettings}),
+};
+
 export default {
   asyncTask,
   form,
@@ -2488,6 +2496,7 @@ export default {
   logs,
   sso,
   mfa,
+  accountSettings,
   bottomDrawer,
   integrationLCM,
   httpConnectors,

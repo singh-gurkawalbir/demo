@@ -46,8 +46,13 @@ href="/marketplace"><u>Check out our Marketplace</u></a> to jumpstart your  inte
   <ul><li>Improved security</li>
   <li>Reduced password fatigue</li>
   <li>Streamlined user experience</li></ul>`,
-  SSO_LICENSE_UPGRADE_REQUESTED_MESSAGE: 'Thanks for your request! We will be in touch soon.',
-  SSO_LICENSE_UPGRADE_REQUESTED_TOOLTIP_MESSAGE: 'We have received your request and will be in touch soon.',
+  FEATURE_LICENSE_UPGRADE_REQUESTED_TOOLTIP_MESSAGE: 'We have received your request and will be in touch soon.',
+  // #Data retention messsages
+  DATA_RETENTION_LICENSE_UPGRADE: '<b>More options available</b> - Upgrade your account to enable selecting a longer data retention period.',
+  DATA_RETENTION_PERIOD_CHANGE_INFO: '<a target="_blank" rel="noreferrer" href="https://docs.celigo.com/hc/en-us/articles" >Learn more about data retention</a> and consult with your security/privacy team before saving a new retention period.',
+  DATA_RETENTION_PERIOD_UPDATE_CONFIRM: 'The new retention period of 60 days will apply only to new flow runs. All other data in your account will persist up until its current retention period of 30 days. <br> Learn more about data retention and consult with your security/privacy team before saving.',
+  DATA_RETENTION_PERIOD_UPDATED: 'New data retention period saved.',
+  // #endregion
   // #region mapper2 messages
   MAPPER2_DELETE_ROW_WARNING: 'Are you sure you want to delete this parent record row? All its child rows will be deleted as well.',
   MAPPER2_DATA_TYPE_WARNING: `Since only an "object" or "[object]" data type can have child rows, 
@@ -82,7 +87,7 @@ href="/marketplace"><u>Check out our Marketplace</u></a> to jumpstart your  inte
   DELETE_TRUSTED_DEVICE: "Are you sure you want to delete your trusted MFA device? You'll need to re-authenticate your account the next time you sign into integrator.io with the device.",
   RESET_MFA: "Are you sure you want to reset MFA? You'll need to re-associate your authenticator app and configure your device in integrator.io.",
   DELETE_DEVICE_SUCCESS: 'Device deleted successfully.',
-  SSO_LICENSE_UPGRADE_REQUEST_SUBMITTED_MESSAGE: 'Thanks for your request! We will be in touch soon.',
+  FEATURE_LICENSE_UPGRADE_REQUEST_SUBMITTED_MESSAGE: 'Thanks for your request! We will be in touch soon.',
   CONFIRM_LEAVE_MFA: 'Are you sure you want to leave? Your MFA settings will be disabled unless you connect your device successfully.',
   MFA_AUTH_FAILED: 'Verification failed. Please try again',
   SSO_LINKED_TO_ANOTHER_ACCOUNT_TOOLTIP: 'This user is already linked to another account’s SSO',
