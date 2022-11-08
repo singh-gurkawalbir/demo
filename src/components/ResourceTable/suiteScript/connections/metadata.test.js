@@ -10,8 +10,6 @@ const resource = {
   _id: '5e7068331c056a75e6df19b2',
 
   hostURI: 'somehostURI',
-  createdAt: '2020-03-17T06:03:31.798Z',
-  lastModified: '2020-03-19T23:47:55.181Z',
   type: 'rest',
   name: '3D Cart Staging delete',
   assistant: '3dcart',
@@ -23,43 +21,35 @@ const resource = {
     formType: 'assistant',
     mediaType: 'json',
     hostURI: 'https://apirest.3dcart.com',
-    concurrencyLevel: 11,
-    ping: {
-      relativeURI: '/3dCartWebAPI/v1/Customers',
-      method: 'GET',
-    },
-    headers: [
-      {
-        name: 'SecureUrl',
-        value: 'https://celigoc1.com',
-      },
-      {
-        name: 'PrivateKey',
-        value: '{{{connection.http.encrypted.PrivateKey}}}',
-      },
-      {
-        name: 'content-type',
-        value: 'application/json',
-      },
-    ],
-    encrypted: '******',
-    encryptedFields: [],
-    auth: {
-      type: 'token',
-      oauth: {
-        scope: [],
-      },
-      token: {
-        token: '******',
-        location: 'header',
-        headerName: 'Token',
-        scheme: ' ',
-        refreshMethod: 'POST',
-        refreshMediaType: 'urlencoded',
-      },
-    },
   },
 };
+
+function existanceOfCellInDom(text, role) {
+  const cells = screen.getAllByRole(role);
+  let indeX = -1;
+
+  cells.find((each, index) => {
+    if (each.textContent === text) {
+      indeX = index;
+
+      return true;
+    }
+
+    return false;
+  });
+
+  return indeX;
+}
+let headerI;
+let cellI;
+
+function expectFunction(header, cell) {
+  expect(header).toBeGreaterThan(-1);
+  expect(cell).toBeGreaterThan(-1);
+  expect(cell).toEqual(header);
+  headerI = -1;
+  cellI = -1;
+}
 
 function renderFunction(resource) {
   renderWithProviders(
@@ -67,40 +57,49 @@ function renderFunction(resource) {
       <CeligoTable
         actionProps={{}}
         {...metadata}
-        data={
-             [
-               resource,
-             ]
-            }
-            />
+        data={[resource]}
+        />
     </MemoryRouter>
   );
 }
 
 describe('Suite script connection metadata UI test', () => {
-  test('should verify the name field', () => {
+  test('should verify the coulmns for unknown resource type', () => {
     renderFunction(resource);
-    expect(screen.getByText('Name')).toBeInTheDocument();
-    expect(screen.getByText('3D Cart Staging delete')).toBeInTheDocument();
+    headerI = existanceOfCellInDom('Name', 'columnheader');
+    cellI = existanceOfCellInDom('3D Cart Staging delete', 'cell');
+    expectFunction(headerI, cellI);
+
+    headerI = existanceOfCellInDom('Type', 'columnheader');
+    cellI = existanceOfCellInDom('rest', 'cell');
+    expectFunction(headerI, cellI);
+
+    headerI = existanceOfCellInDom('API', 'columnheader');
+    cellI = existanceOfCellInDom('https://apirest.3dcart.com', 'cell');
+
+    expectFunction(headerI, cellI);
+
+    headerI = existanceOfCellInDom('Username', 'columnheader');
+    cellI = existanceOfCellInDom('SomeUserName', 'cell');
+    expectFunction(headerI, cellI);
   });
-  test('should verify the Type field', () => {
-    renderFunction(resource);
-    expect(screen.getByText('Type')).toBeInTheDocument();
-    expect(screen.getByText('rest')).toBeInTheDocument();
-  });
-  test('should verify the Type field', () => {
-    renderFunction(resource);
-    expect(screen.getByText('API')).toBeInTheDocument();
-    expect(screen.getByText('https://apirest.3dcart.com')).toBeInTheDocument();
-  });
-  test('should verify the userName and hosturi for ftp Type field ', () => {
+  test('should verify the coulmns for ftp Type field ', () => {
     renderFunction({...resource, type: 'sftp', ftp: {hostURI: 'FTPhostURI', username: 'FTP userName'}});
-    expect(screen.getByText('FTP userName')).toBeInTheDocument();
-    expect(screen.getByText('FTPhostURI')).toBeInTheDocument();
-  });
-  test('should verify the Username field', () => {
-    renderFunction(resource);
-    expect(screen.getByText('Username')).toBeInTheDocument();
-    expect(screen.getByText('SomeUserName')).toBeInTheDocument();
+    headerI = existanceOfCellInDom('Name', 'columnheader');
+    cellI = existanceOfCellInDom('3D Cart Staging delete', 'cell');
+    expectFunction(headerI, cellI);
+
+    headerI = existanceOfCellInDom('Type', 'columnheader');
+    cellI = existanceOfCellInDom('SFTP', 'cell');
+    expectFunction(headerI, cellI);
+
+    headerI = existanceOfCellInDom('API', 'columnheader');
+    cellI = existanceOfCellInDom('FTPhostURI', 'cell');
+
+    expectFunction(headerI, cellI);
+
+    headerI = existanceOfCellInDom('Username', 'columnheader');
+    cellI = existanceOfCellInDom('FTP userName', 'cell');
+    expectFunction(headerI, cellI);
   });
 });

@@ -1,8 +1,7 @@
 /* global test, expect, jest,describe */
 import React from 'react';
-import { screen } from '@testing-library/react';
+import { screen, render} from '@testing-library/react';
 import { MemoryRouter, Route } from 'react-router-dom';
-import { renderWithProviders } from '../../../../../test/test-utils';
 import ScheduleCell from './index';
 
 jest.mock('../../../../icons/CalendarIcon', () => ({
@@ -15,20 +14,20 @@ jest.mock('../../../../icons/CalendarIcon', () => ({
 
 describe('Suite script ScheduleCell ui test', () => {
   test('should show empty dom when no props are provided', () => {
-    const {utils} = renderWithProviders(<MemoryRouter><ScheduleCell /></MemoryRouter>);
+    const utils = render(<MemoryRouter><ScheduleCell /></MemoryRouter>);
 
     expect(utils.container.textContent).toBe('');
   });
 
   test('should show no option for schedule when flow type is not of schedule', () => {
-    renderWithProviders(<MemoryRouter><ScheduleCell flow={{type: 'REALTIME_EXPORT', hasConfiguration: true}} /></MemoryRouter>);
+    render(<MemoryRouter><ScheduleCell flow={{type: 'REALTIME_EXPORT', hasConfiguration: true}} /></MemoryRouter>);
     expect(screen.getByText('Realtime')).toBeInTheDocument();
     const link = screen.queryByRole('link');
 
     expect(link).not.toBeInTheDocument();
   });
   test('should disable the button when props for ecit is not sent', () => {
-    renderWithProviders(
+    render(
       <MemoryRouter initialEntries={[{pathname: '/initialURL'}]}>
         <Route
           path="/initialURL"
@@ -47,7 +46,7 @@ describe('Suite script ScheduleCell ui test', () => {
     expect(disable).toBe('true');
   });
   test('should show the link button as enabled', () => {
-    renderWithProviders(
+    render(
       <MemoryRouter initialEntries={[{pathname: '/initialURL'}]}>
         <Route
           path="/initialURL"

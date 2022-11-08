@@ -1,4 +1,4 @@
-/* global test, expect, jest,describe */
+/* global test, expect, jest, describe, afterEach */
 import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -40,6 +40,9 @@ function renderFunction(isFlowBuilderView = false, initialStore = null) {
 }
 
 describe('Suite script DeleteCell ui test', () => {
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
   test('should check that the button is disabled when ManageLevelUser', () => {
     renderFunction();
     const deleteButton = screen.getByRole('button');

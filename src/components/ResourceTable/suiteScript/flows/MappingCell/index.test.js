@@ -1,9 +1,8 @@
-/* global test, expect, jest,describe */
+/* global test, expect, jest, describe, afterEach */
 import React from 'react';
-import { screen } from '@testing-library/react';
+import { screen, render} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter, Route } from 'react-router-dom';
-import { renderWithProviders } from '../../../../../test/test-utils';
 import MappingCell from './index';
 
 const mockHistoryPush = jest.fn();
@@ -17,13 +16,16 @@ jest.mock('react-router-dom', () => ({
 }));
 
 describe('Suite script MappingCell ui test', () => {
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
   test('should show empty dom when no flow is provided', () => {
-    const {utils} = renderWithProviders(<MemoryRouter><MappingCell flow={{}} /></MemoryRouter>);
+    const utils = render(<MemoryRouter><MappingCell flow={{}} /></MemoryRouter>);
 
     expect(utils.container).toBeEmptyDOMElement();
   });
   test('should call history push after clikcing the mapping button', () => {
-    renderWithProviders(
+    render(
       <MemoryRouter initialEntries={[{pathname: '/initialURL'}]}>
         <Route
           path="/initialURL"

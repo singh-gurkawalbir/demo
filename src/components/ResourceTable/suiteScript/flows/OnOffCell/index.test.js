@@ -1,4 +1,4 @@
-/* global test, expect, jest,describe */
+/* global test, expect, jest, describe, afterEach */
 import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -22,7 +22,10 @@ initialStore.getState().user.preferences = {
 };
 
 describe('On/Off cell UI tests', () => {
-  test('should disble the flow via click', () => {
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+  test('should disable the flow via click', () => {
     renderWithProviders(
       <ConfirmDialogProvider>
         <OnOffCell ssLinkedConnectionId="ssLinkedConnectionId" flow={{_id: 'FlowId', _integrationId: 'integrationId'}} />

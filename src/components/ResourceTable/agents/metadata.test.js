@@ -3,11 +3,14 @@ import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
-import { renderWithProviders } from '../../../test/test-utils';
+import { renderWithProviders, reduxStore } from '../../../test/test-utils';
 // import obj from './metadata';
 import metadata from './metadata';
 import CeligoTable from '../../CeligoTable';
-import actions from '../../../actions';
+
+const initialStore = reduxStore;
+
+initialStore.getState().user.profile = { timezone: 'Asia/Calcutta' };
 
 const resource = {
   _id: '5e7068331c056a75e6df19b2',
@@ -21,48 +24,71 @@ const resource = {
   shared: true,
 };
 
+function existanceOfCellInDom(text, role) {
+  const cells = screen.getAllByRole(role);
+  let indeX = -1;
+
+  cells.find((each, index) => {
+    if (each.textContent === text) {
+      indeX = index;
+
+      return true;
+    }
+
+    return false;
+  });
+
+  return indeX;
+}
+let headerI;
+let cellI;
+
+function expectFunction(header, cell) {
+  expect(header).toBeGreaterThan(-1);
+  expect(cell).toBeGreaterThan(-1);
+  expect(cell).toEqual(header);
+  headerI = -1;
+  cellI = -1;
+}
+
 describe('Agents metadata UI tests', () => {
   beforeEach(() => {
-    const {store} = renderWithProviders(
+    renderWithProviders(
       <MemoryRouter>
         <CeligoTable
           actionProps={{resourceType: 'agents'}}
           {...metadata}
           data={
-               [
-                 resource,
-               ]
-              }
-      />
-      </MemoryRouter>
+               [resource]
+          } />
+      </MemoryRouter>, {initialStore}
     );
-    const profile = {timezone: 'Asia/Kolkata'};
-
-    store.dispatch(actions.user.profile.update(profile));
   });
-  test('should test Name fields', () => {
+
+  test('should verify all the coulmns', () => {
     expect(screen.getByText('Name')).toBeInTheDocument();
     expect(screen.getByText('AgentName')).toBeInTheDocument();
-  });
-  test('should test Status fields', () => {
-    expect(screen.getByText('Status')).toBeInTheDocument();
-    expect(screen.getByText('Offline')).toBeInTheDocument();
-  });
-  test('should test Last heartbeat fields', () => {
-    expect(screen.getByText('Last heartbeat')).toBeInTheDocument();
-    expect(screen.getByText('03/20/2021 5:17:55 am')).toBeInTheDocument();
-  });
-  test('should test Last updated fields', () => {
-    expect(screen.getByText('Last updated')).toBeInTheDocument();
-    expect(screen.getByText('03/20/2020 5:17:55 am')).toBeInTheDocument();
-  });
-  test('should test Install fields', () => {
-    expect(screen.getByText('Install')).toBeInTheDocument();
-    expect(screen.getByText('Download')).toBeInTheDocument();
-  });
-  test('should test Access token fields', () => {
-    expect(screen.getByText('Access token')).toBeInTheDocument();
-    expect(screen.getByText('Show token')).toBeInTheDocument();
+    headerI = existanceOfCellInDom('Name', 'columnheader');
+    cellI = existanceOfCellInDom('AgentNameShared', 'cell');
+    expectFunction(headerI, cellI);
+
+    headerI = existanceOfCellInDom('Status', 'columnheader');
+    cellI = existanceOfCellInDom('Offline', 'cell');
+    expectFunction(headerI, cellI);
+
+    headerI = existanceOfCellInDom('Last heartbeat', 'columnheader');
+    cellI = existanceOfCellInDom('03/20/2021 5:17:55 am', 'cell');
+
+    expectFunction(headerI, cellI);
+
+    headerI = existanceOfCellInDom('Last updated', 'columnheader');
+    cellI = existanceOfCellInDom('03/20/2020 5:17:55 am', 'cell');
+    expectFunction(headerI, cellI);
+
+    headerI = existanceOfCellInDom('Access token', 'columnheader');
+    cellI = existanceOfCellInDom('Show token', 'cell');
+
+    expectFunction(headerI, cellI);
   });
   test('should test Actions fields', () => {
     expect(screen.getByText('Actions')).toBeInTheDocument();

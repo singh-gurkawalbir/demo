@@ -16,9 +16,7 @@ initialStore.getState().data.suiteScript = {ssLinkedConnectionId: {integrations:
   {
     _id: '2inetgrationId',
   },
-],
-},
-};
+]}};
 
 describe('Suite script Name Cell ui test', () => {
   test('should show unamed as name when no name is provided', () => {
@@ -29,7 +27,7 @@ describe('Suite script Name Cell ui test', () => {
     expect(link.textContent).toBe('Unnamed (id: flowId)');
     expect(link).toHaveAttribute('href', '/suitescript/ssLinkedConnectionId/integrationapps/someurlName/inetgrationId/flowBuilder/flowId');
   });
-  test('should show the floe name with link button', () => {
+  test('should show the flow name with link button', () => {
     renderWithProviders(<MemoryRouter><NameCell ssLinkedConnectionId="ssLinkedConnectionId" flow={{name: 'Flow1', _id: 'flowId', _integrationId: 'inetgrationId'}} /></MemoryRouter>, {initialStore});
     const link = screen.getByRole('link');
 
@@ -37,7 +35,7 @@ describe('Suite script Name Cell ui test', () => {
     expect(link.textContent).toBe('Flow1');
     expect(link).toHaveAttribute('href', '/suitescript/ssLinkedConnectionId/integrationapps/someurlName/inetgrationId/flowBuilder/flowId');
   });
-  test('should show the ioFlowName wiht link button', () => {
+  test('should show the ioFlowName with link button', () => {
     renderWithProviders(<MemoryRouter><NameCell ssLinkedConnectionId="ssLinkedConnectionId" flow={{ioFlowName: 'ioFlowName', _id: 'flowId', _integrationId: 'inetgrationId'}} /></MemoryRouter>, {initialStore});
     const link = screen.getByRole('link');
 
