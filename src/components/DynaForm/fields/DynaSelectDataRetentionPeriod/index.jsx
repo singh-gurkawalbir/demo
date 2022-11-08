@@ -1,9 +1,10 @@
-import { MenuItem } from '@material-ui/core';
+import { FormLabel, MenuItem } from '@material-ui/core';
 import React, { useCallback, useMemo } from 'react';
 import CeligoSelect from '../../../CeligoSelect';
+import FieldHelp from '../../FieldHelp';
 
 export default function DynaSelectDataRetentionPeriod(props) {
-  const {id, value, onFieldChange, maxAllowedDataRetention} = props;
+  const {id, label, value, onFieldChange, maxAllowedDataRetention} = props;
   const options = useMemo(() => ([
     {
       label: '30 days',
@@ -34,6 +35,12 @@ export default function DynaSelectDataRetentionPeriod(props) {
 
   return (
     <>
+      <div>
+        <FormLabel htmlFor={id}>
+          {label}
+        </FormLabel>
+        <FieldHelp {...props} />
+      </div>
       <CeligoSelect
         data-test={id}
         value={value}
