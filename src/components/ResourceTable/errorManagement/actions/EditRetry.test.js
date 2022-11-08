@@ -30,7 +30,7 @@ initialStore.getState().data.resources.exports = [{
 }];
 
 async function renderFuntion(actionProps, data, errorType) {
-  renderWithProviders(
+  await renderWithProviders(
     <MemoryRouter initialEntries={[`/${errorType}`]}>
       <Route path="/:errorType">
         <CeligoTable
