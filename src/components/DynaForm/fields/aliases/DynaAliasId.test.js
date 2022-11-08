@@ -64,10 +64,9 @@ describe('DynaAliasId UI tests', () => {
 
     expect(aliasIdField).toBeInTheDocument();
   });
-  test('should make the respective dispatch calls based on the props passed on initial render', async () => {
+  test('should make the respective dispatch call based on the props passed on initial render', async () => {
     initDynaAliasId(props);
     await waitFor(() => expect(mockDispatchFn).toBeCalledWith(actions.form.forceFieldState('integration-alias')('aliasId', {isValid: true})));
-    // await waitFor(() => expect(mockDispatchFn).toBeCalledWith(actions.form.clearForceFieldState('integration-alias')('aliasId')));
   });
   test('should make a different dispatch call when aliasData is empty', async () => {
     initDynaAliasId({...props, aliasData: {}});
@@ -75,8 +74,5 @@ describe('DynaAliasId UI tests', () => {
       isValid: false,
       errorMessages: 'An alias with the same ID already exists. Provide a different ID.',
     })));
-  });
-  test('should cleanup', () => {
-
   });
 });

@@ -22,7 +22,7 @@ describe('DynaCheckbox UI tests', () => {
     };
 
     renderWithProviders(<DynaCheckboxForResetFields {...props} />);
-    expect(screen.getByText('Deprecated option.')).toBeInTheDocument();
+    expect(screen.getByText('Deprecated option.', {exact: false})).toBeInTheDocument();
   });
   test('should execute the "onFieldChange" function passed in props when checkbox is checked', () => {
     const mockOnFieldChange = jest.fn();
@@ -37,6 +37,6 @@ describe('DynaCheckbox UI tests', () => {
 
     expect(checkBox).toBeInTheDocument();
     userEvent.click(checkBox);
-    expect(mockOnFieldChange).tpBeCalled();
+    expect(mockOnFieldChange).toBeCalled();
   });
 });

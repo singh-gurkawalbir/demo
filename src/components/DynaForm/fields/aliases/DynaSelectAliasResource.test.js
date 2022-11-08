@@ -7,6 +7,9 @@ import actions from '../../../../actions';
 import DynaSelectAliasResource from './DynaSelectAliasResource';
 import {renderWithProviders} from '../../../../test/test-utils';
 import { getCreatedStore } from '../../../../store';
+import errorMessageStore from '../../../../utils/errorStore';
+import messageStore from '../../../../utils/messageStore';
+import { MODEL_PLURAL_TO_LABEL } from '../../../../utils/resource';
 
 const initialStore = getCreatedStore();
 
@@ -82,7 +85,7 @@ function initDynaSelect(props = {}) {
       },
       {
         _id: '75368c92bb74b66e32ab05ee',
-        _conenctionId: '63368c92bb74b66e32ab05cc',
+        _connectionId: '63368c92bb74b66e32ab05cc',
         name: 'export3',
       },
       {
@@ -198,5 +201,22 @@ describe('DynaAliasId UI tests', () => {
     expect(screen.getByText('export3')).toBeInTheDocument();
 
     expect(screen.queryByText('export4')).toBeNull();     // export4 is not registered with the passed integration hence should not be shown //
+  });
+  test('should make a dispatch call with an error message when no resource is available for the selected resourceType', async () => {
+    initDynaSelect({...props, value: undefined, options: {aliasResourceType: 'scripts'}});
+    await waitFor(() => expect(mockDispatchFn).toBeCalledWith(actions.form.forceFieldState('integration-alias')('aliasId', {
+      isValid: false,
+      errorMessages: errorMessageStore('NO_ALIAS_RESOURCE_MESSAGE', {
+        label: MODEL_PLURAL_TO_LABEL.scripts.toLowerCase(),
+        resourceType: 'scripts',
+      }),
+    })));
+  });
+  test('should make a dispatch call with an error message when no resource is selected for the passed resourceType', async () => {
+    initDynaSelect({...props, value: undefined, options: {aliasResourceType: 'flows'}});
+    await waitFor(() => expect(mockDispatchFn).toBeCalledWith(actions.form.forceFieldState('integration-alias')('aliasId', {
+      isValid: false,
+      errorMessages: messageStore('REQUIRED_MESSAGE'),
+    })));
   });
 });
