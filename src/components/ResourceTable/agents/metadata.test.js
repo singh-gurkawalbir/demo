@@ -4,7 +4,6 @@ import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import { renderWithProviders, reduxStore } from '../../../test/test-utils';
-// import obj from './metadata';
 import metadata from './metadata';
 import CeligoTable from '../../CeligoTable';
 
@@ -26,19 +25,8 @@ const resource = {
 
 function existanceOfCellInDom(text, role) {
   const cells = screen.getAllByRole(role);
-  let indeX = -1;
 
-  cells.find((each, index) => {
-    if (each.textContent === text) {
-      indeX = index;
-
-      return true;
-    }
-
-    return false;
-  });
-
-  return indeX;
+  return cells.findIndex(each => each.textContent === text);
 }
 let headerI;
 let cellI;
@@ -47,8 +35,6 @@ function expectFunction(header, cell) {
   expect(header).toBeGreaterThan(-1);
   expect(cell).toBeGreaterThan(-1);
   expect(cell).toEqual(header);
-  headerI = -1;
-  cellI = -1;
 }
 
 describe('Agents metadata UI tests', () => {

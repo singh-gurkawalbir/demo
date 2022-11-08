@@ -8,7 +8,6 @@ import CeligoTable from '../../../CeligoTable';
 
 const resource = {
   _id: '5e7068331c056a75e6df19b2',
-
   hostURI: 'somehostURI',
   type: 'rest',
   name: '3D Cart Staging delete',
@@ -26,29 +25,14 @@ const resource = {
 
 function existanceOfCellInDom(text, role) {
   const cells = screen.getAllByRole(role);
-  let indeX = -1;
 
-  cells.find((each, index) => {
-    if (each.textContent === text) {
-      indeX = index;
-
-      return true;
-    }
-
-    return false;
-  });
-
-  return indeX;
+  return cells.findIndex(each => each.textContent === text);
 }
-let headerI;
-let cellI;
 
 function expectFunction(header, cell) {
   expect(header).toBeGreaterThan(-1);
   expect(cell).toBeGreaterThan(-1);
   expect(cell).toEqual(header);
-  headerI = -1;
-  cellI = -1;
 }
 
 function renderFunction(resource) {
@@ -64,6 +48,9 @@ function renderFunction(resource) {
 }
 
 describe('Suite script connection metadata UI test', () => {
+  let headerI;
+  let cellI;
+
   test('should verify the coulmns for unknown resource type', () => {
     renderFunction(resource);
     headerI = existanceOfCellInDom('Name', 'columnheader');
