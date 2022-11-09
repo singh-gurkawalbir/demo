@@ -14,8 +14,11 @@ import RawHtml from '../../../../components/RawHtml';
 import useFormContext from '../../../../components/Form/FormContext';
 import NotificationToaster from '../../../../components/NotificationToaster';
 
-const useStyles = makeStyles(() => ({
-  root: {
+const useStyles = makeStyles(theme => ({
+  periodChangedNotification: {
+    padding: 0,
+    marginTop: theme.spacing(-1),
+    marginBottom: theme.spacing(1),
   },
 }));
 
@@ -93,7 +96,7 @@ export default function DataRetentionPeriod() {
     <div>
       <DynaForm formKey={formKey} />
       {isPeriodChanged ? (
-        <NotificationToaster variant="warning" transparent >
+        <NotificationToaster variant="warning" className={classes.periodChangedNotification} transparent noBorder>
           <RawHtml html={messageStore('DATA_RETENTION_PERIOD_CHANGE_INFO')} />
         </NotificationToaster>
       ) : ''}

@@ -6,6 +6,7 @@ import { selectors } from '../../reducers';
 import { USER_ACCESS_LEVELS } from '../../constants';
 import CeligoPageBar from '../../components/CeligoPageBar';
 import TransfersIcon from '../../components/icons/TransfersIcon';
+import DataRetentionIcon from '../../components/icons/DataRetentionIcon';
 import SecurityIcon from '../../components/icons/SecurityIcon';
 import SingleUserIcon from '../../components/icons/SingleUserIcon';
 import UsersIcon from '../../components/icons/GroupOfUsersIcon';
@@ -72,7 +73,7 @@ const tabs = [
   {
     path: 'dataretention',
     label: 'Data retention',
-    Icon: TransfersIcon,
+    Icon: DataRetentionIcon,
     Panel: DataRetention,
   },
 ];

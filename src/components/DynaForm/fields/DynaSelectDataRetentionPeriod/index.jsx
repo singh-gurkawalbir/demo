@@ -1,9 +1,23 @@
 import { FormLabel, MenuItem } from '@material-ui/core';
 import React, { useCallback, useMemo } from 'react';
+import { makeStyles } from '@material-ui/core/styles';
 import CeligoSelect from '../../../CeligoSelect';
 import FieldHelp from '../../FieldHelp';
 
+const useStyles = makeStyles(theme => ({
+  dataListItem: {
+    borderRadius: 0,
+    backgroundColor: theme.palette.background.paper,
+    '& .MuiMenuItem-root': {
+      '&:hover:before': {
+        backgroundColor: theme.palette.primary.main,
+      },
+      padding: theme.spacing(1.5, 2),
+    },
+  },
+}));
 export default function DynaSelectDataRetentionPeriod(props) {
+  const classes = useStyles();
   const {id, label, value, onFieldChange, maxAllowedDataRetention} = props;
   const options = useMemo(() => ([
     {
@@ -45,7 +59,10 @@ export default function DynaSelectDataRetentionPeriod(props) {
         data-test={id}
         value={value}
         onChange={handlePeriodChange}
-        inputProps={{ id: 'dataRetentionPeriod' }}>
+        inputProps={{ id: 'dataRetentionPeriod' }}
+        MenuProps={{
+          classes: { paper: classes.dataListItem },
+        }}>
         {options.map(opt => (
           <MenuItem key={opt.value} value={opt.value} data-test={opt.dataTest} disabled={isPeriodInValid(opt.value)}>
             {isPeriodInValid(opt.value) ? `${opt.label} - upgrade required` : opt.label}

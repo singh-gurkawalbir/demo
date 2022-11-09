@@ -20,8 +20,10 @@ const useStyles = makeStyles(theme => ({
     border: '1px solid',
     borderColor: theme.palette.secondary.lightest,
   },
+  contentWrapper: {
+    padding: theme.spacing(0, 2, 2),
+  },
   upgradeLicenseNotification: {
-    marginTop: theme.spacing(2),
     marginBottom: theme.spacing(2),
   },
 }));
@@ -84,22 +86,24 @@ export default function DataRetention() {
   return (
     <div className={classes.root}>
       <PanelHeader title="Data retention" />
-      <NotificationToaster variant="info" size="large" className={classes.upgradeLicenseNotification} >
-        <RawHtml html={messageStore('DATA_RETENTION_LICENSE_UPGRADE')} />
-        <ButtonWithTooltip
-          tooltipProps={{
-            title: dataRetentionLicenseUpgradeRequested ? messageStore('FEATURE_LICENSE_UPGRADE_REQUESTED_TOOLTIP_MESSAGE') : '',
-            placement: 'bottom-start'}}>
-          <TextButton
-            size="large" bold="true" color="primary"
-            data-test="dataRetentionRequestUpgrade"
-            onClick={onRequestUpgradeClick}
-            disabled={dataRetentionLicenseUpgradeRequested}>
-            {dataRetentionLicenseUpgradeRequested ? 'Upgrade requested' : 'Request upgrade'}
-          </TextButton>
-        </ButtonWithTooltip>
-      </NotificationToaster>
-      <DataRetentionPeriod />
+      <div className={classes.contentWrapper}>
+        <NotificationToaster variant="info" size="large" className={classes.upgradeLicenseNotification} >
+          <RawHtml html={messageStore('DATA_RETENTION_LICENSE_UPGRADE')} />
+          <ButtonWithTooltip
+            tooltipProps={{
+              title: dataRetentionLicenseUpgradeRequested ? messageStore('FEATURE_LICENSE_UPGRADE_REQUESTED_TOOLTIP_MESSAGE') : '',
+              placement: 'bottom-start'}}>
+            <TextButton
+              size="large" bold="true" color="primary"
+              data-test="dataRetentionRequestUpgrade"
+              onClick={onRequestUpgradeClick}
+              disabled={dataRetentionLicenseUpgradeRequested}>
+              {dataRetentionLicenseUpgradeRequested ? 'Upgrade requested' : 'Request upgrade'}
+            </TextButton>
+          </ButtonWithTooltip>
+        </NotificationToaster>
+        <DataRetentionPeriod />
+      </div>
     </div>
   );
 }
