@@ -43,7 +43,7 @@ export default function DataRetentionPeriod() {
           noApi: true,
           isLoggable: false,
           helpKey: 'accountSettings.dataRetentionPeriod',
-          maxAllowedDataRetention: (platformLicense.maxAllowedDataRetention || 60),
+          maxAllowedDataRetention: platformLicense.maxAllowedDataRetention,
         },
       },
     }),

@@ -49,8 +49,8 @@ href="/marketplace"><u>Check out our Marketplace</u></a> to jumpstart your  inte
   FEATURE_LICENSE_UPGRADE_REQUESTED_TOOLTIP_MESSAGE: 'We have received your request and will be in touch soon.',
   // #Data retention messsages
   DATA_RETENTION_LICENSE_UPGRADE: '<b>More options available</b> - Upgrade your account to enable selecting a longer data retention period.',
-  DATA_RETENTION_PERIOD_CHANGE_INFO: '<b><a target="_blank" rel="noreferrer" href="https://docs.celigo.com/hc/en-us/articles" >Learn more about data retention</a></b> and consult with your security/privacy team before saving a new retention period.',
-  DATA_RETENTION_PERIOD_UPDATE_CONFIRM: 'The new retention period of 60 days will apply only to new flow runs. All other data in your account will persist up until its current retention period of 30 days. <br> Learn more about data retention and consult with your security/privacy team before saving.',
+  DATA_RETENTION_PERIOD_CHANGE_INFO: '<b><a href="https://docs.celigo.com/hc/en-us/articles/6359380074779-Access-data-for-more-than-30-days" target="_blank">Learn more about data retention</a></b> and consult with your security/privacy team before saving a new retention period.',
+  DATA_RETENTION_PERIOD_UPDATE_CONFIRM: 'The new retention period of 60 days will apply only to new flow runs. All other data in your account will persist up until its current retention period of 30 days. <br> <a href="https://docs.celigo.com/hc/en-us/articles/6359380074779-Access-data-for-more-than-30-days" target="_blank">Learn more about data retention</a> and consult with your security/privacy team before saving.',
   DATA_RETENTION_PERIOD_UPDATED: 'New data retention period saved.',
   // #endregion
   // #region mapper2 messages
