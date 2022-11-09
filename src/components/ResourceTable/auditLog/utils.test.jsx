@@ -2,32 +2,25 @@
 import {hasLongLength} from './utils';
 
 describe('UI test cases for utils', () => {
+  const dataobj = {
+    responseMapping: {
+      fields: [],
+      lists: [],
+    },
+    type: 'import',
+    _importId: '634592daced7de038e18b6aa',
+  };
+
   test('should return false when oldValue and newValue are not provided', () => {
     expect(hasLongLength()).toBe(false);
   });
   test('should return true when oldValue is of type string, newValue is of type object', () => {
-    const result = hasLongLength('true',
-      {
-        responseMapping: {
-          fields: [],
-          lists: [],
-        },
-        type: 'import',
-        _importId: '634592daced7de038e18b6aa',
-      },
-    );
+    const result = hasLongLength('true', dataobj);
 
     expect(result).toBe(true);
   });
   test('should return false when oldValue is of type object, newValue is of type empty string ', () => {
-    const result = hasLongLength({
-      responseMapping: {
-        fields: [],
-        lists: [],
-      },
-      type: 'import',
-      _importId: '634592daced7de038e18b6aa',
-    }, '');
+    const result = hasLongLength(dataobj, '');
 
     expect(result).toBe(true);
   });
@@ -42,33 +35,12 @@ describe('UI test cases for utils', () => {
     expect(result).toBe(false);
   });
   test('should return false when oldValue is of type object, provided no newValue', () => {
-    const result = hasLongLength({
-      responseMapping: {
-        fields: [],
-        lists: [],
-      },
-      type: 'import',
-      _importId: '634592daced7de038e18b6aa',
-    });
+    const result = hasLongLength(dataobj);
 
     expect(result).toBe(true);
   });
   test('should return true when oldValue, newValue is of type object', () => {
-    const result = hasLongLength({
-      responseMapping: {
-        fields: [],
-        lists: [],
-      },
-      type: 'import',
-      _importId: '634592daced7de038e18b6aa',
-    }, {
-      responseMapping: {
-        fields: [],
-        lists: [],
-      },
-      type: 'export',
-      _exportId: '634592dace645324568e18b6aa',
-    });
+    const result = hasLongLength(dataobj, dataobj);
 
     expect(result).toBe(true);
   });
