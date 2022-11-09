@@ -95,7 +95,7 @@ describe('Mappings UI tests', () => {
           integrationId="5ff579d745ceef7dcd797c15" flowId="5ea16c600e2fab71928a6152" editorId="editorId"
           generateFields={[{name: 'sometext2', id: 'sometext2', filterType: 'field'}, '']}
         />
-      </MemoryRouter>, {initialStore}); screen.debug(null, Infinity);
+      </MemoryRouter>, {initialStore});
     const allInput = screen.getAllByRole('textbox');
     const input = allInput.find(each => each.getAttribute('id') === 'fieldMappingGenerate-someGeneratedId');
 
@@ -123,7 +123,7 @@ describe('Mappings UI tests', () => {
           integrationId="5ff579d745ceef7dcd797c15" flowId="5ea16c600e2fab71928a6152" editorId="editorId"
           generateFields={[{name: 'sometext2', id: 'sometext2', filterType: 'optional'}, '']}
         />
-      </MemoryRouter>, {initialStore}); screen.debug(null, Infinity);
+      </MemoryRouter>, {initialStore});
     const allInput = screen.getAllByRole('textbox');
     const input = allInput.find(each => each.getAttribute('id') === 'fieldMappingExtract-someGeneratedId');
 

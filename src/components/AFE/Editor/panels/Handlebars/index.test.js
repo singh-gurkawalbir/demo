@@ -61,6 +61,5 @@ describe('Handelbars UI tests', () => {
 
     userEvent.type(codePanel, 'a');
     await waitFor(() => expect(mockDispatchFn).toBeCalledWith(actions.editor.patchRule('filecsv', 'a')));
-    screen.debug();
   });
 });

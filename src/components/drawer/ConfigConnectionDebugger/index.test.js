@@ -124,7 +124,7 @@ describe('ConfigConnectionDebugger tests', () => {
     expect(save).not.toBeEnabled();
     userEvent.click(screen.getByRole('radio', {name: 'Next 15 mins'}));
     userEvent.click(save);
-    mockPatchRequestOnce('api/connections/_connectionId', []);
+    await mockPatchRequestOnce('api/connections/_connectionId', []);
     await waitFor(() => expect(screen.queryByText(/Debug mode is enabled for the next 14 minutes./i)).toBeInTheDocument());
   });
 
@@ -136,7 +136,7 @@ describe('ConfigConnectionDebugger tests', () => {
 
     expect(saveAndClose).toBeEnabled();
     userEvent.click(saveAndClose);
-    mockPatchRequestOnce('api/connections/_connectionId', []);
+    await mockPatchRequestOnce('api/connections/_connectionId', []);
     await waitFor(() => expect(screen.queryByText(/Debug mode is enabled for the next 44 minutes./i)).not.toBeInTheDocument());
   });
 });
