@@ -9,7 +9,7 @@ jobs:
   fast_finish: true
   include:
     - stage: ui/ux test cases
-      script: yarn test --runInBand
+      script: yarn test
     - # stage name not required, will continue to use `ui/ux test cases`
       script: yarn run lint
     - stage: build storybook
