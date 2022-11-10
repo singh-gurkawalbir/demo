@@ -11,7 +11,7 @@ jobs:
     - stage: ui/ux test cases
       name: 'Data layer test cases'
       script: yarn test ".*\/(utils|reducers|sagas)\/.*.test.js"
-    - script: yarn test --runInBand --testPathIgnorePatterns=".*\/(utils|reducers|sagas)\/.*.test.js"
+    - script: yarn test --maxWorkers=1 --testPathIgnorePatterns=".*\/(utils|reducers|sagas)\/.*.test.js"
       name: 'UX test cases'
     - script: yarn run lint
       name: 'Linting errors'
