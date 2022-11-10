@@ -65,7 +65,7 @@ export function upgradeButtonText(license, integration = {}, upgradeRequested, e
 
   if (editions?.length) {
     editions.forEach(edition => {
-      if (edition._id === license._editionId) {
+      if (edition._id === license?._editionId) {
         value = edition.order < (editions.length - 1) ? 'requestUpgrade' : '';
       }
     });
