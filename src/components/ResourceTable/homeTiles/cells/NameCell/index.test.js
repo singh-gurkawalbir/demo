@@ -1,4 +1,4 @@
-/* global test, expect, describe, jest */
+/* global test, expect, describe, jest, afterEach */
 import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -45,6 +45,9 @@ function initNameCell(tileData = null, initialStore = null) {
 }
 
 describe("HomeTile's NameCell UI tests", () => {
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
   test('should show Success when no props are provided', () => {
     initNameCell({name: 'tileName', _connectorId: 'some_connectorId', _integrationId: '2_integrationId'});
     const name = screen.getByText('tileName');

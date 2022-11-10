@@ -1,4 +1,4 @@
-/* global test, expect, describe, jest */
+/* global test, expect, describe, jest, afterEach */
 import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -27,6 +27,9 @@ function initHomeTiles(data = {}, initialStore = null) {
 }
 
 describe('Pin actions of homeTile UI tests', () => {
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
   test('should make dispatch call when when clicked on Pin Integration', () => {
     initHomeTiles({key: 'somekey', name: 'tileName', pinned: false, status: 'is_pending_setup', _integrationId: '2_integrationId', supportsMultiStore: true});
     userEvent.click(screen.queryByRole('button', {name: /more/i}));

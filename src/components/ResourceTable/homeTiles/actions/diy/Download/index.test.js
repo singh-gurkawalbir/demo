@@ -1,4 +1,4 @@
-/* global test, expect, describe, jest */
+/* global test, expect, describe, jest, afterEach */
 import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -31,6 +31,9 @@ function initHomeTiles(data = {}, initialStore = null) {
 }
 
 describe("HomeTile's Download Action UI tests", () => {
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
   test('should make dispatch call wgen download button is clicked', () => {
     initHomeTiles({key: 'somekey', name: 'tileName', pinned: false, _integrationId: '2_integrationId', supportsMultiStore: true}, initialStore);
     userEvent.click(screen.queryByRole('button', {name: /more/i}));

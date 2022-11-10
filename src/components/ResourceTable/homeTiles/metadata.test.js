@@ -1,4 +1,4 @@
-/* global test, expect, describe, jest */
+/* global test, expect, describe, jest, afterEach */
 import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -53,6 +53,9 @@ function initHomeTiles(data = {}, initialStore = null) {
 }
 
 describe('HomeTiles metadata UI tests', () => {
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
   test('should verify the Name coulmn', () => {
     initHomeTiles({name: 'tileName', _id: 'someId'});
     const row = screen.getAllByRole('row');

@@ -1,4 +1,4 @@
-/* global test, expect, describe, jest */
+/* global test, expect, describe, jest, beforeEach, afterEach */
 import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -23,12 +23,18 @@ function initHomeTiles(data = {}, initialStore = null) {
 }
 
 describe("HomeTile's Uninstall action UI tests", () => {
-  test('should verify the uninstall button is visible and handle delete function is called in clicking it', () => {
-    const mockDelete = jest.fn();
-    const mockuseHandleDelete = jest.spyOn(useHandleDelete, 'default');
+  const mockDelete = jest.fn();
+  let mockuseHandleDelete;
 
+  beforeEach(() => {
+    mockuseHandleDelete = jest.spyOn(useHandleDelete, 'default');
     mockuseHandleDelete.mockReturnValue(mockDelete);
+  });
 
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+  test('should verify the uninstall button is visible and handle delete function is called in clicking it', () => {
     const data = {_id: 'someId', name: 'tileName', _connectorId: 'some_connectorId', pinned: true, status: 'is_pending_setup', _integrationId: '2_integrationId', supportsMultiStore: true, mode: 'modeText'};
 
     initHomeTiles(data, initialStore);

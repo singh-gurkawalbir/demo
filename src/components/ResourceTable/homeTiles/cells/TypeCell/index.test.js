@@ -37,16 +37,10 @@ describe('TypeCell UI tests', () => {
     renderWithProviders(<TypeCell tile={{_connectorId: 'some_connectorId'}} />);
     expect(screen.getByText('Integration app')).toBeInTheDocument();
   });
-  test('should show custom message when no flow error is provided', () => {
-    renderWithProviders(<TypeCell tile={{}} />);
-    expect(screen.getByText('Custom')).toBeInTheDocument();
-    expect(screen.getByText('0 Flows')).toBeInTheDocument();
-  });
   test('should show the expiring message when integration expires', () => {
     renderWithProviders(<TypeCell tile={{_connectorId: 'some_connectorId', _integrationId: '1_integrationId'}} />, {initialStore});
     expect(screen.getByText('Integration app')).toBeInTheDocument();
     expect(screen.getByText('Expired 61 days ago')).toBeInTheDocument();
-    screen.debug();
   });
   test('should show the expiring message when integration trieal ends', () => {
     renderWithProviders(<TypeCell tile={{_connectorId: 'some_connectorId', _integrationId: '2_integrationId'}} />, {initialStore});

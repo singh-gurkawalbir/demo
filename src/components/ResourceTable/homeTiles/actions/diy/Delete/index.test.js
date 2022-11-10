@@ -1,4 +1,4 @@
-/* global test, expect, describe, jest */
+/* global test, expect, describe, jest, beforeEach, afterEach */
 import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -23,12 +23,18 @@ function initHomeTiles(data = {}, initialStore = null) {
 }
 
 describe('HomeTile delete action UI tests', () => {
-  test('should call mock handdelete function', () => {
-    const mockDelete = jest.fn();
-    const mockuseHandleDelete = jest.spyOn(useHandleDelete, 'default');
+  const mockDelete = jest.fn();
+  let mockuseHandleDelete;
 
+  beforeEach(() => {
+    mockuseHandleDelete = jest.spyOn(useHandleDelete, 'default');
     mockuseHandleDelete.mockReturnValue(mockDelete);
+  });
 
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+  test('should call mock handdelete function', () => {
     const data = {key: 'keyText', name: 'tileName', pinned: true, status: 'is_pending_setup', _integrationId: '2_integrationId', supportsMultiStore: true, mode: 'modeText'};
 
     initHomeTiles(data, initialStore);

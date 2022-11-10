@@ -1,4 +1,4 @@
-/* global test, expect, describe, jest */
+/* global test, expect, describe, jest, afterEach */
 import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -37,6 +37,9 @@ function initHomeTiles(data = {}, initialStore = null) {
 }
 
 describe("HomeTile's Clone integration Action UI tests", () => {
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
   test('should verify theds Row actionads setup is pending no connector Id', () => {
     const data = {_id: 'someID', name: 'Salesforce - NetSuite', pinned: true, _connectorId: '5b61ae4aeb538642c26bdbe6', _integrationId: '2_integrationId', supportsMultiStore: true, mode: 'sfnsio'};
 

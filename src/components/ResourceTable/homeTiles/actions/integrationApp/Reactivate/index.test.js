@@ -1,4 +1,4 @@
-/* global test, expect, describe, jest */
+/* global test, expect, describe, jest, afterEach */
 import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -44,6 +44,9 @@ function initHomeTiles(data = {}, initialStore = null) {
 }
 
 describe("HomeTiles's Reactivate Action UI tests", () => {
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
   test('should show the reactivate button with pending status', () => {
     const data = {name: 'tileName', _connectorId: 'some_connectorId', pinned: true, status: 'is_pending_setup', _integrationId: '2_integrationId', supportsMultiStore: true, _id: 'someID'};
 
