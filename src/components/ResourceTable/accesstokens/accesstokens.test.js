@@ -153,9 +153,11 @@ describe('Access Tokens test suite', () => {
         edit: true,
         delete: false,
         permissionReasons: {
-          displayToken: 'You are not authorized to view this token.',
           delete: 'To delete this api token you need to revoke it first.',
         },
+      },
+      permissionReasons: {
+        displayToken: 'You are not authorized to view this token.',
       },
     }];
 
