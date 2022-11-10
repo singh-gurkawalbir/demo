@@ -2882,7 +2882,8 @@ selectors.integrationAppLicense = (state, id) => {
     license,
     integrationResource,
     upgradeRequested,
-    editions
+    editions,
+    connector?.twoDotZero
   );
 
   return {

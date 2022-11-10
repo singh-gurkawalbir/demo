@@ -57,14 +57,14 @@ export function upgradeStatus(license, integration = {}) {
   return '';
 }
 
-export function upgradeButtonText(license, integration = {}, upgradeRequested, editions) {
+export function upgradeButtonText(license, integration = {}, upgradeRequested, editions, isTwoDotZero) {
   if (upgradeRequested) {
     return 'Upgrade requested';
   }
   let value;
 
-  if (editions?.length) {
-    editions.forEach(edition => {
+  if (isTwoDotZero) {
+    editions?.length && editions.forEach(edition => {
       if (edition._id === license?._editionId) {
         value = edition.order < (editions.length - 1) ? 'requestUpgrade' : '';
       }
