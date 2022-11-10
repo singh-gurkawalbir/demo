@@ -52,14 +52,16 @@ describe('DynaDateSelector UI tests', () => {
     useDispatchSpy.mockClear();
     mockDispatchFn.mockClear();
   });
-  test('should pass the initial render', () => {
-    const mockOnFieldChange = jest.fn();
-    const props = {
-      required: true,
-      value: '2018-06-06T00:00:00.000Z',
-      onFieldChange: mockOnFieldChange,
-    };
+  const mockOnFieldChange = jest.fn();
+  const props = {
+    id: 'formId',
+    required: true,
+    formKey: 'demo-formkey',
+    value: '2018-06-06T00:00:00.000Z',
+    onFieldChange: mockOnFieldChange,
+  };
 
+  test('should pass the initial render', () => {
     initDynaDateSelector(props);
     const dateField = screen.getByPlaceholderText('MM/DD/YYYY');
 
@@ -67,42 +69,15 @@ describe('DynaDateSelector UI tests', () => {
     expect(dateField).toHaveValue('06/06/2018');
   });
   test('should make a dispatch call when valid date is passed on initial render', async () => {
-    const mockOnFieldChange = jest.fn();
-    const props = {
-      id: 'formId',
-      required: true,
-      formKey: 'demo-formkey',
-      value: '2018-06-06T00:00:00.000Z',
-      onFieldChange: mockOnFieldChange,
-    };
-
-    initDynaDateSelector(props);
+    initDynaDateSelector({...props, formKey: 'demo-formkey'});
     await waitFor(() => expect(mockDispatchFn).toBeCalledWith(actions.form.forceFieldState('demo-formkey')('formId', {isValid: true})));
   });
   test('should make a dispatch call with error message when invalid date is passed on initial render', async () => {
-    const mockOnFieldChange = jest.fn();
-    const props = {
-      id: 'formId',
-      required: true,
-      formKey: 'demo-formkey',
-      value: '2018-06T00:00:00.000Z',
-      onFieldChange: mockOnFieldChange,
-    };
-
-    initDynaDateSelector(props);
+    initDynaDateSelector({...props, value: '2018-06T0000.000Z'});
     await waitFor(() => expect(mockDispatchFn).toBeCalledWith(actions.form.forceFieldState('demo-formkey')('formId', {isValid: false, errorMessages: 'Invalid date format'})));
   });
   test('should call the onChange function passed in props when field value is altered', () => {
-    const mockOnFieldChange = jest.fn();
-    const props = {
-      id: 'formId',
-      required: true,
-      formKey: 'demo-formkey',
-      value: '2018-06-06T00:00:00.000Z',
-      onFieldChange: mockOnFieldChange,
-    };
-
-    initDynaDateSelector(props);
+    initDynaDateSelector({...props, formKey: 'demo-formkey'});
     const field = screen.getByRole('textbox');
 
     expect(field).toBeInTheDocument();
@@ -110,13 +85,6 @@ describe('DynaDateSelector UI tests', () => {
     expect(mockOnFieldChange).toBeCalled();
   });
   test('should call the "handleDateRangeChange" function when date is changed', () => {
-    const mockOnFieldChange = jest.fn();
-    const props = {
-      required: true,
-      value: '2018-06-06T00:00:00.000Z',
-      onFieldChange: mockOnFieldChange,
-    };
-
     initDynaDateSelector(props);
     const dateField = screen.getByPlaceholderText('MM/DD/YYYY');
 
