@@ -62,7 +62,10 @@ export default function DataRetentionPeriod() {
   const updateDataRetentionPeriod = useCallback(values => {
     confirmDialog({
       title: 'Confirm save',
-      message: <RawHtml html={messageStore('DATA_RETENTION_PERIOD_UPDATE_CONFIRM')} />,
+      message: <RawHtml
+        html={messageStore('DATA_RETENTION_PERIOD_UPDATE_CONFIRM', {
+          newDataRetentionPeriod: values.dataRetentionPeriod,
+          currentDataRetentionPeriod: dataRetentionPeriod})} />,
       buttons: [
         { label: 'Save',
           dataTest: 'confirmDataRetentionSave',
@@ -76,7 +79,7 @@ export default function DataRetentionPeriod() {
         },
       ],
     });
-  }, [confirmDialog, dispatch]);
+  }, [confirmDialog, dispatch, dataRetentionPeriod]);
 
   useEffect(() => {
     setRemountKey(key => key + 1);
