@@ -2,6 +2,7 @@ import produce from 'immer';
 import { isEqual, uniqBy } from 'lodash';
 import actionTypes from '../../../../actions/types';
 import { convertOldFlowSchemaToNewOne, populateRestSchema } from '../../../../utils/flows';
+import { getHttpConnector } from '../../../../constants/applications';
 
 export const initializationResources = ['profile', 'preferences'];
 const accountResources = ['ashares', 'shared/ashares', 'licenses'];
@@ -38,12 +39,21 @@ function replaceOrInsertResource(draft, resourceType, resourceValue) {
 
   if (type === 'flows') resource = convertOldFlowSchemaToNewOne(resource);
   if (type === 'exports') resource = populateRestSchema(resource);
+
+  if (type === 'imports' || type === 'exports') {
+    const connection = draft.connections?.find(conn => conn._id === resource._connectionId);
+
+    if (getHttpConnector(connection?.http?._httpConnectorId)?._id) {
+      resource = {...resource, adaptorType: 'http'};
+
+      delete resource.rest;
+    }
+  }
   if (!draft[type]) {
     draft[type] = [resource];
 
     return;
   }
-
   // if we have a collection, look for a match
   const collection = draft[type];
   const index = collection.findIndex(r => r._id === resource._id);
@@ -115,16 +125,31 @@ const addResourceCollection = (draft, resourceType, collection) => {
 
   // we need to convert http subdoc to rest subdoc for REST exports.
   // Once rest is deprecated in backend, UI still needs to support REST forms and REST export form needs rest subdoc
-  if (resourceType === 'exports') {
-    let newCollection;
+  if (resourceType === 'exports' || resourceType === 'imports') {
+    let newCollection = collection;
 
     try {
-      newCollection = collection?.map?.(populateRestSchema);
+      if (resourceType === 'exports') {
+        newCollection = collection?.map?.(populateRestSchema);
+      }
+    // eslint-disable-next-line no-empty
     } catch (e) {
-      newCollection = collection;
     }
+    newCollection = (collection || [])?.map(coll => {
+      const connection = draft.connections?.find(conn => conn._id === coll._connectionId);
 
-    updateStateWhenValueDiff(draft, 'exports', newCollection || []);
+      if (getHttpConnector(connection?.http?._httpConnectorId)?._id) {
+        const newColl = {...coll, adaptorType: 'http'};
+
+        delete newColl.rest;
+
+        return newColl;
+      }
+
+      return coll;
+    });
+
+    updateStateWhenValueDiff(draft, resourceType, newCollection || []);
 
     return;
   }

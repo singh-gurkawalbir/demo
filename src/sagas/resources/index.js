@@ -219,6 +219,12 @@ export function* commitStagedChanges({ resourceType, id, scope, options, context
   if (!merged.assistant && merged?.http?.formType === 'rest' && merged.adaptorType === 'HTTPImport') {
     merged = importConversionUtil.convertImportJSONObjRESTtoHTTP(merged);
   }
+
+  if (resourceType === 'connections' && master && getHttpConnector(merged?.http?._httpConnectorId) && master.type === 'rest') {
+    merged.type = 'rest';
+    delete merged.rest;
+  }
+
   if (['exports', 'imports'].includes(resourceType)) {
     delete merged.adaptorType;
   }
