@@ -9,8 +9,8 @@ jobs:
   fast_finish: true
   include:
     - stage: ui/ux test cases
-      script: yarn test
-    - # stage name not required, will continue to use `ui/ux test cases`
+      script: yarn test utils
+    - stage: lint errors
       script: yarn run lint
     - stage: build storybook
       if: branch = storybook
