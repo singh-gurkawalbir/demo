@@ -379,15 +379,6 @@ export default function ClonePreview(props) {
     );
   }
 
-  if (!components || isEmpty(components)) {
-    return (
-      <Loader open>
-        <Typography variant="h4">Loading Clone Preview</Typography>
-        <Spinner />
-      </Loader>
-    );
-  }
-
   const clone = ({ name, environment, integration, flowGroup, tag }) => {
     const { installSteps, connectionMap } =
       templateUtil.getInstallSteps(components) || {};
