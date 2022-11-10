@@ -48,10 +48,11 @@ href="/marketplace"><u>Check out our Marketplace</u></a> to jumpstart your  inte
   <li>Streamlined user experience</li></ul>`,
   FEATURE_LICENSE_UPGRADE_REQUESTED_TOOLTIP_MESSAGE: 'We have received your request and will be in touch soon.',
   // #Data retention messsages
-  DATA_RETENTION_LICENSE_UPGRADE: '<b>More options available</b> - Upgrade your account to enable selecting a longer data retention period.',
+  DATA_RETENTION_TAB_INFO: 'If you’re an <a href="https://docs.celigo.com/hc/en-us/articles/115003929872" target="_blank">account owner or administrator</a>, you can <a href="https://docs.celigo.com/hc/en-us/articles/6359380074779" target="_blank">access your integrator.io data for 30 or more days</a>. The data retention period varies based on your Celigo license, which you can upgrade anytime. You can also delete records these records. This functionality is compliant with <a href="https://www.celigo.com/security-privacy-compliance/" target="_blank">GDPR and CCPA rules.</a>',
+  DATA_RETENTION_LICENSE_UPGRADE: '<b>More options available</b> - Upgrade your account for longer data retention periods. ',
   DATA_RETENTION_PERIOD_CHANGE_INFO: '<b><a href="https://docs.celigo.com/hc/en-us/articles/6359380074779-Access-data-for-more-than-30-days" target="_blank">Learn more about data retention</a></b> and consult with your security/privacy team before saving a new retention period.',
   DATA_RETENTION_PERIOD_UPDATE_CONFIRM: 'The new retention period of 60 days will apply only to new flow runs. All other data in your account will persist up until its current retention period of 30 days. <br> <a href="https://docs.celigo.com/hc/en-us/articles/6359380074779-Access-data-for-more-than-30-days" target="_blank">Learn more about data retention</a> and consult with your security/privacy team before saving.',
-  DATA_RETENTION_PERIOD_UPDATED: 'New data retention period saved.',
+  DATA_RETENTION_PERIOD_UPDATED: 'New data retention period successfully saved.',
   // #endregion
   // #region mapper2 messages
   MAPPER2_DELETE_ROW_WARNING: 'Are you sure you want to delete this parent record row? All its child rows will be deleted as well.',

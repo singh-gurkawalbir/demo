@@ -85,7 +85,7 @@ export default function DataRetention() {
 
   return (
     <div className={classes.root}>
-      <PanelHeader title="Data retention" />
+      <PanelHeader title="Data retention" infoText={messageStore('DATA_RETENTION_TAB_INFO')} />
       <div className={classes.contentWrapper}>
         <NotificationToaster variant="info" size="large" className={classes.upgradeLicenseNotification} >
           <RawHtml html={messageStore('DATA_RETENTION_LICENSE_UPGRADE')} />
