@@ -26,7 +26,7 @@ export default function Display({ accessToken }) {
   return (
     <>
       {!accessToken.permissions.displayToken && (
-        <Typography>{accessToken.permissions.permissionReasons.displayToken}</Typography>
+        <Typography>{accessToken.permissionReasons.displayToken}</Typography>
       )}
       {isPurged(accessToken.autoPurgeAt) ? (
         <Typography>Purged</Typography>
