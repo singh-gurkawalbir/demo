@@ -9,7 +9,7 @@ const props = { integrationId: '_integrationId', revisionId: '_revId', parentUrl
 const MockComponent = props => {
   useHandleInvalidRevision(props);
 
-  return <></>;
+  return null;
 };
 
 async function inituseHandleInvalidRevision(props = {}) {

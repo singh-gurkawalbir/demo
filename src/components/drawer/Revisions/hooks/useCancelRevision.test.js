@@ -14,13 +14,7 @@ const props = { integrationId: '_integrationId', revisionId: '_revId', onClose: 
 const MockComponent = props => {
   const handleCancel = useCancelRevision(props);
 
-  return (
-    <>
-      <button type="button" onClick={handleCancel}>
-        Cancel
-      </button>
-    </>
-  );
+  return <button type="button" onClick={handleCancel}>Cancel</button>;
 };
 
 async function inituseCancelRevision(props = {}, type = 'pull') {

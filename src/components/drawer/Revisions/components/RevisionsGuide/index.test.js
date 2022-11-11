@@ -16,7 +16,7 @@ function SetWidth({width}) {
     })
   );
 
-  return <></>;
+  return null;
 }
 describe('RevisionsGuide tests', () => {
   test('Should able to test the Revisions Guide Link is there when screen sizes are different', async () => {

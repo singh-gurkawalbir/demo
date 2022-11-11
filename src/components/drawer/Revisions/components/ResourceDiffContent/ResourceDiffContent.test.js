@@ -34,7 +34,7 @@ async function initResourceDiffContent(props = {}, pushError = false, status = '
     },
   };
 
-  return renderWithProviders(<MemoryRouter><ResourceDiffContent {...props} /> </MemoryRouter>, {initialStore});
+  return renderWithProviders(<ResourceDiffContent {...props} />, {initialStore});
 }
 describe('ResourceDiffContent tests', () => {
   test('Should able to test the initial render with ResourceDiffContent having DiffError', async () => {
