@@ -7,6 +7,7 @@ import actions from '../../../../actions';
 import { selectors } from '../../../../reducers';
 import Spinner from '../../../Spinner';
 import { buildDrawerUrl, drawerPaths } from '../../../../utils/rightDrawer';
+import FieldMessage from '../../../DynaForm/fields/FieldMessage';
 
 const useStyles = makeStyles(theme => ({
   uploadButton: {
@@ -58,12 +59,19 @@ export default function UploadFile() {
   const { isFileUploaded, templateId } = useSelector(state =>
     selectors.isFileUploaded(state)
   );
-  const {previewFailedStatus, id} = useSelector(state =>
+  const { previewFailedStatus, id, error } = useSelector(state =>
     selectors.isPreviewStatusFailed(state)
   );
 
   const classes = useStyles();
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (id) { // clearing the data when component is re-opened
+      dispatch(actions.template.clearTemplate(id));
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     if (isFileUploaded) {
@@ -85,6 +93,9 @@ export default function UploadFile() {
   }, [dispatch, previewFailedStatus, id]);
 
   const handleUploadFileChange = e => {
+    if (id) { // clearing the old file data when re-uploading
+      dispatch(actions.template.clearTemplate(id));
+    }
     const file = e.target.files[0];
 
     dispatch(actions.file.previewZip(file));
@@ -127,6 +138,7 @@ export default function UploadFile() {
           </label>
           <p className={classes.defaultText}>No file chosen</p>
         </div>
+        {error && <FieldMessage errorMessages={error} />}
       </FormControl>
     </div>
   );

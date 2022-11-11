@@ -1164,8 +1164,8 @@ const template = {
       templateId,
       data,
     }),
-  failedPreview: templateId =>
-    action(actionTypes.TEMPLATE.FAILURE, { templateId }),
+  failedPreview: (templateId, error) =>
+    action(actionTypes.TEMPLATE.FAILURE, { templateId, error }),
   failedInstall: templateId =>
     action(actionTypes.TEMPLATE.INSTALL_FAILURE, { templateId }),
   createdComponents: (components, templateId) =>
