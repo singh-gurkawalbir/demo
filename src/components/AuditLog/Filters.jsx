@@ -1,20 +1,22 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
 import moment from 'moment';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import FormControl from '@material-ui/core/FormControl';
 import MenuItem from '@material-ui/core/MenuItem';
 import { makeStyles } from '@material-ui/core';
 import { endOfDay } from 'date-fns';
-import { AUDIT_LOG_SOURCE_LABELS } from '../../constants/auditLog';
+import { AUDIT_LOG_SOURCE_LABELS, AUDIT_LOG_FILTER_KEY, ROWS_PER_PAGE_OPTIONS, DEFAULT_ROWS_PER_PAGE } from '../../constants/auditLog';
 import { selectors } from '../../reducers';
 import { ResourceTypeFilter, ResourceIdFilter, AuditLogActionFilter } from './ResourceFilters';
 import CeligoSelect from '../CeligoSelect';
 import ActionGroup from '../ActionGroup';
 import DateRangeSelector from '../DateRangeSelector';
+import CeligoPagination from '../CeligoPagination';
 import { AUDIT_LOGS_RANGE_FILTERS } from '../../utils/resource';
 import actions from '../../actions';
 import Help from '../Help';
 import { getSelectedRange } from '../../utils/flowMetrics';
+import { emptyObject } from '../../constants';
 
 const OPTION_ALL = { id: 'all', label: 'All' };
 
@@ -64,12 +66,70 @@ const useStyles = makeStyles(theme => ({
   helpTextButton: {
     padding: 0,
   },
+  tablePaginationRoot: {
+    display: 'flex',
+  },
 }));
 const defaultRange = {
   startDate: new Date(),
   endDate: endOfDay(new Date()),
   preset: null,
 };
+
+function AuditPagination({ resourceType, resourceId, totalCount }) {
+  const classes = useStyles();
+  const dispatch = useDispatch();
+
+  const auditPagingFilter = useSelector(state => selectors.filter(state, AUDIT_LOG_FILTER_KEY)?.paging || emptyObject, shallowEqual);
+  const auditNextPagePath = useSelector(state => selectors.auditLogsNextPagePath(state));
+  const auditLoadMoreStatus = useSelector(state => selectors.auditLoadMoreStatus(state));
+
+  const handlePageChange = useCallback((e, newPage) => {
+    dispatch(
+      actions.patchFilter(AUDIT_LOG_FILTER_KEY, {
+        paging: {
+          ...auditPagingFilter,
+          currPage: newPage,
+        },
+      })
+    );
+  }, [dispatch, auditPagingFilter]);
+  const handleRowsPerPageChange = useCallback(e => {
+    dispatch(
+      actions.patchFilter(AUDIT_LOG_FILTER_KEY, {
+        paging: {
+          ...auditPagingFilter,
+          rowsPerPage: parseInt(e.target.value, 10),
+          currPage: 0,
+        },
+      })
+    );
+  }, [dispatch, auditPagingFilter]);
+
+  const fetchMoreLogs = useCallback(() => dispatch(actions.auditLogs.request(resourceType, resourceId, auditNextPagePath)), [auditNextPagePath, dispatch, resourceId, resourceType]);
+
+  const paginationOptions = useMemo(
+    () => ({
+      loadMoreHandler: fetchMoreLogs,
+      hasMore: !!auditNextPagePath,
+      loading: auditLoadMoreStatus === 'requested',
+    }),
+    [fetchMoreLogs, auditNextPagePath, auditLoadMoreStatus]
+  );
+
+  return (
+    <CeligoPagination
+      {...paginationOptions}
+      rowsPerPageOptions={ROWS_PER_PAGE_OPTIONS}
+      className={classes.tablePaginationRoot}
+      count={totalCount}
+      page={auditPagingFilter?.currPage || 0}
+      rowsPerPage={auditPagingFilter?.rowsPerPage || DEFAULT_ROWS_PER_PAGE}
+      onChangePage={handlePageChange}
+      onChangeRowsPerPage={handleRowsPerPageChange}
+    />
+  );
+}
 
 export default function Filters(props) {
   const [date, setDate] = useState(defaultRange);
@@ -227,6 +287,8 @@ export default function Filters(props) {
           />
         </ActionGroup>
         <ActionGroup position="right" className={classes.downloadButton}>
+          <AuditPagination {...props} />
+
           <DateRangeSelector
             disabled={!canDownloadLogs}
             primaryButtonLabel="Download"

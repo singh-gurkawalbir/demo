@@ -23,7 +23,7 @@ export default function AuditPanel({ flowId, integrationId }) {
       integrationId={integrationId}
       resourceId={flowId}
       className={classes.auditLog}
-      isFixed={false}
+      isFixed={false} // todo ashu remove this after testing
       />
   );
 }

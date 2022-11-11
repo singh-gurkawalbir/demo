@@ -24,7 +24,7 @@ describe('audit reducer', () => {
     test('should update the state properly when the current state is undefined', () => {
       const newState = reducer(undefined, auditLogsReceivedAction);
 
-      expect(newState).toEqual({ all: auditLogs });
+      expect(newState).toEqual({ all: auditLogs, loadMoreStatus: 'received' });
     });
     test('should update the state properly when the current state is not empty', () => {
       const newState = reducer(
@@ -32,7 +32,7 @@ describe('audit reducer', () => {
         auditLogsReceivedAction
       );
 
-      expect(newState).toEqual({ all: auditLogs });
+      expect(newState).toEqual({ all: auditLogs, integrations: { int1: [{ _id: 'int_id1' }, { _id: 'int_id2' }] }, loadMoreStatus: 'received' });
     });
   });
   describe('should update the state properly when an integration audit collection received', () => {
@@ -45,7 +45,7 @@ describe('audit reducer', () => {
     test('should update the state properly when the current state is undefined', () => {
       const newState = reducer(undefined, auditLogsReceivedAction);
 
-      expect(newState).toEqual({ integrations: { int1: auditLogs } });
+      expect(newState).toEqual({ integrations: { int1: auditLogs }, loadMoreStatus: 'received' });
     });
     test('should update the state properly when the current state is not empty', () => {
       const newState = reducer(
@@ -53,7 +53,7 @@ describe('audit reducer', () => {
         auditLogsReceivedAction
       );
 
-      expect(newState).toEqual({ integrations: { int1: auditLogs } });
+      expect(newState).toEqual({ integrations: { int1: auditLogs }, loadMoreStatus: 'received' });
     });
   });
   describe('clear audit logs', () => {

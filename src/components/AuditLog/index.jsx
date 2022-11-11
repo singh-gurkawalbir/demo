@@ -10,6 +10,7 @@ import Spinner from '../Spinner';
 import AuditLogTable from './AuditLogTable';
 import Filters from './Filters';
 import { isNewId } from '../../utils/resource';
+import { AUDIT_LOG_FILTER_KEY } from '../../constants/auditLog';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -30,7 +31,6 @@ export default function AuditLog({
   resourceType,
   resourceId,
   onClick,
-  isFixed,
   integrationId,
   childId,
 }) {
@@ -38,8 +38,16 @@ export default function AuditLog({
   const dispatch = useDispatch();
   const clearAuditLogs = () => {
     dispatch(actions.auditLogs.clear());
+    dispatch(actions.clearFilter(AUDIT_LOG_FILTER_KEY));
   };
   const [filters, handleFiltersChange] = useState({});
+  const totalCount = useSelector(state => selectors.paginatedAuditLogs(
+    state,
+    resourceType,
+    resourceId,
+    filters,
+    {childId}
+  ).totalCount);
 
   const requestAuditLogs = (resourceType, resourceId) => {
     dispatch(actions.auditLogs.request(resourceType, resourceId));
@@ -76,6 +84,7 @@ export default function AuditLog({
                 onFiltersChange={handleFiltersChange}
                 resourceType={resourceType}
                 resourceId={resourceId}
+                totalCount={totalCount}
             />
               <AuditLogTable
                 resourceType={resourceType}
@@ -83,7 +92,6 @@ export default function AuditLog({
                 filters={filters}
                 childId={childId}
                 onClick={onClick}
-                isFixed={isFixed}
                 className={classes.tableContainer}
             />
             </div>

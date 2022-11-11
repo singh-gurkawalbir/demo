@@ -115,6 +115,7 @@ import { buildDrawerUrl, drawerPaths } from '../utils/rightDrawer';
 import { GRAPHQL_HTTP_FIELDS, isGraphqlResource } from '../utils/graphql';
 import { initializeFlowForReactFlow, getFlowAsyncKey } from '../utils/flows/flowbuilder';
 import { HTTP_BASED_ADAPTORS } from '../utils/http';
+import { AUDIT_LOG_FILTER_KEY } from '../constants/auditLog';
 
 const emptyArray = [];
 const emptyObject = {};
@@ -2203,7 +2204,6 @@ selectors.auditLogs = (
 
   const result = {
     logs: [],
-    count: 0,
     totalCount: 0,
   };
 
@@ -2232,12 +2232,22 @@ selectors.auditLogs = (
     });
   }
 
-  result.logs = options.take ? auditLogs.slice(0, options.take) : auditLogs;
-  result.count = result.logs.length;
+  result.logs = auditLogs;
   result.totalCount = auditLogs.length;
 
   return result;
 };
+
+selectors.paginatedAuditLogs = createSelector(
+  selectors.auditLogs,
+  state => selectors.filter(state, AUDIT_LOG_FILTER_KEY),
+  (auditLogs, pagingFilters) => {
+    const { currPage = 0, rowsPerPage = DEFAULT_ROWS_PER_PAGE } = pagingFilters?.paging || {};
+
+    auditLogs.logs = auditLogs.logs.slice(currPage * rowsPerPage, (currPage + 1) * rowsPerPage);
+
+    return auditLogs;
+  });
 
 selectors.mkFlowResources = () => createSelector(
   state => state?.data?.resources?.flows,
