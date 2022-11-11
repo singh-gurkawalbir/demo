@@ -9,12 +9,11 @@ jobs:
   fast_finish: true
   include:
     - stage: ui/ux test cases
-      name: 'Data layer test cases'
+      name: 'Data layer test cases and lint errors'
       script: yarn test ".*\/(utils|reducers|sagas)\/.*.test.js"
+              yarn run lint
     - script: yarn test --testPathIgnorePatterns=".*\/(utils|reducers|sagas)\/.*.test.js"
       name: 'UX test cases'
-    - script: yarn run lint
-      name: 'Linting errors'
     - stage: build storybook
       if: branch = storybook
       script:
