@@ -20,6 +20,7 @@ const useStyles = makeStyles(theme => ({
     color: theme.palette.primary.main,
     justifyContent: 'end',
     padding: 0,
+    fontStyle: 'italic',
     '& svg': {
       marginLeft: theme.spacing(-1),
     },
