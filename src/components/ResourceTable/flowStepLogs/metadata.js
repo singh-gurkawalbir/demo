@@ -110,6 +110,7 @@ export default {
   },
   useRowActions: log => [
     {
+      key: 'deleteLog',
       icon: TrashIcon,
       useLabel: () => 'Delete log',
       useOnClick: () => {

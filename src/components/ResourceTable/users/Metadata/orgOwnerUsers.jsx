@@ -7,7 +7,6 @@ import ReinviteUser from '../cells/ReinviteUser';
 import UserStatus from '../cells/UserStatus';
 import Notifications from '../cells/Notifications';
 import AccessLevelHeader from '../cells/AccessLevelHeader';
-import EnableUserHeader from '../cells/EnableUserHeader';
 import StatusHeader from '../cells/StatusHeader';
 import HeaderWithHelpText from '../../commonCells/HeaderWithHelpText';
 import { ACCOUNT_IDS, USER_ACCESS_LEVELS, ACCOUNT_SSO_STATUS } from '../../../../constants';
@@ -45,7 +44,7 @@ export default {
       },
       {
         key: 'enableUserHeader',
-        HeaderValue: EnableUserHeader,
+        HeaderValue: () => <HeaderWithHelpText title="Enable user" helpKey="users.enable" />,
         align: 'center',
         Value: ({rowData: r}) => {
           const {integrationId, accessLevel} = useGetTableContext();
