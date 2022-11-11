@@ -1,7 +1,6 @@
 /* global describe, test, expect, jest */
 import React from 'react';
 import { screen } from '@testing-library/react';
-import { MemoryRouter } from 'react-router-dom';
 import { renderWithProviders, reduxStore } from '../../../../../test/test-utils';
 import { REVISION_TYPES } from '../../../../../constants';
 import ResourceDiffContent from '.';
