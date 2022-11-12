@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core';
 import actions from '../../../actions';
@@ -20,14 +20,15 @@ const useStyles = makeStyles(theme => ({
   },
   connectorTextToggle: {
     flexGrow: 100,
-    marginLeft: theme.spacing(-1),
+    marginLeft: theme.spacing(-2),
   },
 }));
 const emptyObj = {};
-export default function FormView(props) {
-  const classes = useStyles();
-  const { resourceType, resourceId, defaultValue, formKey } = props;
+const isParent = true;
 
+export default function DynaHTTPFrameworkBubbleFormView(props) {
+  const classes = useStyles();
+  const { resourceType, flowId, resourceId, formKey } = props;
   const formContext = useFormContext(formKey);
   const dispatch = useDispatch();
   const { merged } =
@@ -38,42 +39,60 @@ export default function FormView(props) {
     ) || {};
   const stagedResource = merged || emptyObject;
   const value = useMemo(() => {
-    if (!stagedResource || !stagedResource.http || !stagedResource.http.sessionFormType) return defaultValue;
+    if (!stagedResource || !stagedResource.http || !stagedResource.http.sessionFormType) return 'false';
 
     return stagedResource.http?.sessionFormType === 'assistant' ? 'false' : 'true';
-  }, [stagedResource, defaultValue]);
-
+  }, [stagedResource]);
   const resourceFormState = useSelector(
     state =>
       selectors.resourceFormState(state, resourceType, resourceId) || emptyObj
   );
+  const connection = useSelector(
+    state =>
+      selectors.resource(state, 'connections', stagedResource._connectionId) ||
+      emptyObj
+  );
+  const connectorMetaData = useSelector(state =>
+    selectors.httpConnectorMetaData(state, connection?.http?._httpConnectorId, connection?.http?._httpConnectorVersionId, connection?.http?._httpConnectorApiId)
+  );
 
-  let _httpConnectorId = stagedResource?.http?._httpConnectorId || stagedResource?._httpConnectorId;
+  const { assistant: assistantName } = connection;
 
-  _httpConnectorId = getHttpConnector(_httpConnectorId)?._id;
+  const _httpConnectorId = getHttpConnector(connection?.http?._httpConnectorId)?._id;
+  const showHTTPFrameworkImport = resourceType === 'imports' && connectorMetaData?.import?.versions?.[0]?.resources?.length;
+  const showHTTPFrameworkExport = resourceType === 'exports' && connectorMetaData?.export?.versions?.[0]?.resources?.length;
+  const isHttpFramework = showHTTPFrameworkImport || showHTTPFrameworkExport;
 
   const options = useMemo(() => {
-    const matchingApplication = getApp(null, null, _httpConnectorId);
+    const matchingApplication = getApp(null, assistantName, _httpConnectorId);
 
     if (matchingApplication) {
+      const { type } = matchingApplication;
+
+      // all types are lower case...lets upper case them
       return [
-        { label: 'Simple', value: 'false' },
-        { label: 'HTTP', value: 'true' },
+        { label: 'Simple', value: `${!isParent}` },
+        // if type is REST then we should show REST API
+        { label: (_httpConnectorId) ? 'HTTP' : type && (type.toUpperCase() === 'REST' ? 'REST API' : type.toUpperCase()), value: `${isParent}` },
       ];
     }
 
+    // if i cant find a matching application this is not an assistant
+
     return null;
-  }, [_httpConnectorId]);
+  }, [_httpConnectorId, assistantName]);
 
   useHFSetInitializeFormData({...props, isHTTPFramework: _httpConnectorId});
-
-  const onFieldChangeFn = useCallback(selectedApplication => {
+  if (!_httpConnectorId || !isHttpFramework) {
+    return null;
+  }
+  const onFieldChangeFn = selectedApplication => {
     // first get the previously selected application values
     // stagged state we will break up the scope to selected application and actual value
 
     // selecting the other option
     const {id} = props;
-    const stagedRes = Object.keys(stagedResource).reduce((acc, curr) => {
+    const staggedRes = Object.keys(stagedResource).reduce((acc, curr) => {
       acc[`/${curr}`] = stagedResource[curr];
 
       return acc;
@@ -84,22 +103,29 @@ export default function FormView(props) {
       resourceType,
       resource: stagedResource,
       isNew: false,
+      connection,
+      assistantData: connectorMetaData,
     });
-    const finalValues = preSave(formContext.value, stagedRes);
+    const finalValues = preSave(formContext.value, staggedRes, { connection });
     const newFinalValues = {...finalValues};
 
-    // if assistant is selected back again assign it to the export to the export obj as well
+    staggedRes['/useParentForm'] = selectedApplication === `${isParent}`;
 
-    if (selectedApplication !== 'true') {
-      stagedRes['/http/sessionFormType'] = 'assistant';
-      newFinalValues['/http/sessionFormType'] = 'assistant';
-    } else {
-      // set http.sessionFormType prop to http to use http form from the export/import as it is now using parent form');
-      stagedRes['/http/sessionFormType'] = 'http';
-      newFinalValues['/http/sessionFormType'] = 'http';
+    // if assistant is selected back again assign it to the export to the export obj as well
+    if (_httpConnectorId) {
+      staggedRes['/isHttpConnector'] = true;
+      newFinalValues['/isHttpConnector'] = true;
+      if (selectedApplication !== `${isParent}`) {
+        staggedRes['/http/sessionFormType'] = 'assistant';
+        newFinalValues['/http/sessionFormType'] = 'assistant';
+      } else {
+        // set http.sessionFormType prop to http to use http form from the export/import as it is now using parent form');
+        staggedRes['/http/sessionFormType'] = 'http';
+        newFinalValues['/http/sessionFormType'] = 'http';
+      }
     }
     const allPatches = sanitizePatchSet({
-      patchSet: defaultPatchSetConverter({ ...stagedRes, ...newFinalValues }),
+      patchSet: defaultPatchSetConverter({ ...staggedRes, ...newFinalValues }),
       fieldMeta: resourceFormState.fieldMeta,
       resource: {},
     });
@@ -124,15 +150,11 @@ export default function FormView(props) {
         resourceId,
         false,
         false,
-        '',
+        flowId,
         allTouchedFields
       )
     );
-  }, [dispatch, formContext.fields, formContext.value, props, resourceFormState.fieldMeta, resourceId, resourceType, stagedResource]);
-
-  if (!_httpConnectorId) {
-    return null;
-  }
+  };
 
   return (
     <div className={classes.connectorTextToggle}>
