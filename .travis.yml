@@ -13,9 +13,9 @@ jobs:
       script: yarn test ".*\/(utils|reducers|sagas)\/(.*.)?test.js" # run data layer test cases.
               yarn run lint # run link check
     - script: yarn test "src/views\/(.*.)?test.js" # run tests of views folder
-      name: 'UX test cases - 1'
+      name: 'UX test cases - part 1'
     - script: yarn test --testPathIgnorePatterns=".*\/(utils|reducers|sagas)\/(.*.)?test.js" --testPathIgnorePatterns="src/views\/(.*.)?test.js" # run remaining all test cases
-      name: 'UX test cases - 2'
+      name: 'UX test cases - part 2'
     - stage: build storybook
       if: branch = storybook
       script:
