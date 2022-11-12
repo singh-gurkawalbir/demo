@@ -10,7 +10,7 @@ jobs:
   include:
     - stage: ui/ux test cases
       name: 'Data layer test cases and lint errors'
-      script: yarn test ".*\/(utils|reducers|sagas)\/(.*.)?test.js" #run data layer test cases.
+      script: yarn test ".*\/(utils|reducers|sagas)\/(.*.)?test.js" # run data layer test cases.
               yarn run lint # run link check
     - script: yarn test "src/views\/(.*.)?test.js" # run tests of views folder
       name: 'UX test cases - 1'
