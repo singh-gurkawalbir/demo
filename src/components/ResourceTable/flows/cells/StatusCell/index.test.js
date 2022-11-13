@@ -1,26 +1,9 @@
-/* global describe, test,expect, jest */
+/* global describe, test,expect */
 import React from 'react';
 import { screen, render } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { reduxStore, renderWithProviders} from '../../../../../test/test-utils';
 import StatusCell from '.';
-
-const mockDispatch = jest.fn();
-const mockHistoryPush = jest.fn();
-
-jest.mock('react-router-dom', () => ({
-  __esModule: true,
-  ...jest.requireActual('react-router-dom'),
-  useHistory: () => ({
-    push: mockHistoryPush,
-  }),
-}));
-
-jest.mock('react-redux', () => ({
-  __esModule: true,
-  ...jest.requireActual('react-redux'),
-  useDispatch: () => mockDispatch,
-}));
 
 const initialStore = reduxStore;
 
@@ -35,7 +18,7 @@ describe('Status Cell of Flow Table UI test cases', () => {
     expect(utils.container.textContent).toBe('');
   });
   test('should show status provided', () => {
-    render(<StatusCell lastExecutedAtSortJobStatus="someStatus" />);
+    render(<MemoryRouter><StatusCell lastExecutedAtSortJobStatus="someStatus" /></MemoryRouter>);
     expect(screen.getByText('someStatus')).toBeInTheDocument();
   });
   test('should show status when job in queue satus', () => {
@@ -49,10 +32,13 @@ describe('Status Cell of Flow Table UI test cases', () => {
   });
   test('should show name and link to flowBuilder when no connection is offline', () => {
     renderWithProviders(
-      <StatusCell
-        lastExecutedAtSortType="date"
-        lastExecutedAtSort="2022-05-18T18:16:31.989Z"
-        />, {initialStore});
+      <MemoryRouter>
+        <StatusCell
+          lastExecutedAtSortType="date"
+          lastExecutedAtSort="2022-05-18T18:16:31.989Z"
+        />
+      </MemoryRouter>, {initialStore}
+    );
     expect(screen.getByText('05/18/2022 11:46:31 pm')).toBeInTheDocument();
   });
 });

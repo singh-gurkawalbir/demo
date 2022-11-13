@@ -63,6 +63,10 @@ function expectFunction(header, cell) {
 
 const initialStore = reduxStore;
 
+initialStore.getState().user.profile = {
+  timezone: 'Asia/Calcutta',
+};
+
 initialStore.getState().user.preferences = {
   defaultAShareId: 'own',
 };
@@ -78,9 +82,6 @@ const resourcE = {
   lastExecutedAt: '2022-03-03T15:36:36.851Z',
   autoResolveMatchingTraceKeys: true,
   errors: 1,
-  id: '5d95f7d1795b356dfcb5d6c4',
-  childId: '14663',
-  childName: 'AMZ-US-1',
   lastExecutedAtSort: '2022-03-03T15:36:36.851Z',
   lastExecutedAtSortType: 'date',
 };
@@ -96,7 +97,7 @@ const actionProps = {
   }},
 };
 
-async function initflowTable(actionProps = {}, resource = resourcE) {
+function initflowTable(actionProps = {}, resource = resourcE) {
   const ui = (
     <MemoryRouter>
       <CeligoTable
@@ -106,10 +107,10 @@ async function initflowTable(actionProps = {}, resource = resourcE) {
     </MemoryRouter>
   );
 
-  return renderWithProviders(ui);
+  return renderWithProviders(ui, {initialStore});
 }
 
-describe('flows matadata UI test case', () => {
+describe('flows metadata UI test case', () => {
   test('should verify the coulmns when resource is not integration app', () => {
     initflowTable(actionProps);
     headerI = existanceOfCellInDom('Name', 'columnheader');
@@ -176,13 +177,13 @@ describe('flows matadata UI test case', () => {
     expect(screen.getByText('Edit flow')).toBeInTheDocument();
     expect(screen.getByText('View audit log')).toBeInTheDocument();
     expect(screen.getByText('Used by')).toBeInTheDocument();
-    expect(screen.getByText('Download flow')).toBeInTheDocument();//
+    expect(screen.getByText('Download flow')).toBeInTheDocument();
     expect(screen.getByText('Clone flow')).toBeInTheDocument();
     expect(screen.getByText('Detach flow')).toBeInTheDocument();
     expect(screen.getByText('Delete flow')).toBeInTheDocument();
   });
   test('should show detach option when flow belongs to standalone', () => {
-    initflowTable({resourceType: 'flows'}, {...resourcE, _connectorId: null, _integrationId: null});
+    initflowTable({...actionProps, resourceType: 'flows'}, {...resourcE, _connectorId: null, _integrationId: null});
     userEvent.click(screen.getByRole('button', {name: /more/i}));
     expect(screen.getByText('Edit flow')).toBeInTheDocument();
     expect(screen.getByText('View audit log')).toBeInTheDocument();
