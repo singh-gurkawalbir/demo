@@ -1,0 +1,44 @@
+/* global describe, test,expect, jest */
+import React from 'react';
+import { screen } from '@testing-library/react';
+import { MemoryRouter, Route } from 'react-router-dom';
+import userEvent from '@testing-library/user-event';
+import {renderWithProviders} from '../../../../../test/test-utils';
+import CeligoTable from '../../../../CeligoTable';
+import { ConfirmDialogProvider } from '../../../../ConfirmDialog';
+import CreateFlowGroup from '.';
+
+const mockHistoryPush = jest.fn();
+
+jest.mock('react-router-dom', () => ({
+  __esModule: true,
+  ...jest.requireActual('react-router-dom'),
+  useHistory: () => ({
+    push: mockHistoryPush,
+    location: {pathname: '/parentUrl'},
+  }),
+}));
+
+const metadata = {
+  useColumns: () => [],
+  useRowActions: () => [CreateFlowGroup],
+};
+
+describe('Create flow group UI test cases', () => {
+  test('should redirect to flow page for adding new group', () => {
+    renderWithProviders(
+      <MemoryRouter initialEntries={['/parentUrl']}>
+        <Route path="/parentUrl">
+          <ConfirmDialogProvider>
+            <CeligoTable
+              {...metadata}
+              data={[{}]} />
+          </ConfirmDialogProvider>
+        </Route>
+      </MemoryRouter>,
+    );
+    userEvent.click(screen.getByRole('button', {name: /more/i}));
+    userEvent.click(screen.queryByText('Create flow group'));
+    expect(mockHistoryPush).toHaveBeenCalledWith('/parentUrl/flowgroups/add');
+  });
+});
