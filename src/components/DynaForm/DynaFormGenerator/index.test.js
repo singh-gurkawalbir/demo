@@ -152,7 +152,6 @@ describe('DynaFormGenerator UI tests', () => {
     expect(screen.getByText('Box Component')).toBeInTheDocument();
     expect(screen.getByText('default name')).toBeInTheDocument();
     expect(screen.getByText('default description')).toBeInTheDocument();
-    screen.debug();
   });
   test('should render the BoxWrapperComponent when layout type is "boxWrapper"', () => {
     props.layout.type = 'boxWrapper';
