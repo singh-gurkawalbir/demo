@@ -17,9 +17,9 @@ import useSyncedRef from '../../../../../../../hooks/useSyncedRef';
 
 const useStyles = makeStyles(theme => ({
   dataType: {
-    color: theme.palette.primary.main,
-    justifyContent: 'end',
+    justifyContent: 'flex-end',
     padding: 0,
+    fontStyle: 'italic',
     '& svg': {
       marginLeft: theme.spacing(-1),
     },
@@ -207,7 +207,8 @@ export default function SourceDataType({
             onClick={handleMenu}
             disabled={disabled}
             endIcon={sourceDataTypes && sourceDataTypes.length > 1 ? '' : <ArrowDownFilledIcon />}
-            className={classes.dataType} >
+            className={classes.dataType}
+            color="primary">
             {// CeligoTruncate is not used here since it effects the drag and drop functionality
             isFocused ? <span className={classes.dataTypeList}>{selectedDataTypeLabels.join()}</span> : (
               <span className={classes.dataTypeSelected}>
