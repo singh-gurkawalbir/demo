@@ -73,12 +73,9 @@ const ChatbotWidget = () => {
       <IconButton className={classes.chatbotIcon} onClick={handleWidget}>
         {
           isOpen ? (
-            <CloseIcon />
+            <CloseIcon data-test="close-zd-chatbot" />
           ) : (
-            <TriangleIcon
-              data-test="open"
-              // width="57" height="58" viewBox="0 0 57 58" fill="none"
-            />
+            <TriangleIcon data-test="open-zd-chatbot" />
           )
         }
       </IconButton>
