@@ -371,7 +371,7 @@ const FlowsTable = ({integrationId, childId}) => {
   }), [childId, isUserInErrMgtTwoDotZero, appName, flowAttributes, integration, sectionId]);
 
   return (
-    <LoadResources required integrationId={integrationId} resources="flows,connections,exports">
+    <LoadResources required integrationId={integrationId} resources="flows,exports">
       <CeligoTable
         data={flows}
         filterKey={filterKey}
