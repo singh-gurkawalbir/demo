@@ -1,4 +1,4 @@
-/* global test, expect, describe, beforeEach, jest */
+/* global test, expect, describe, beforeEach, afterEach, jest */
 import React from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { screen } from '@testing-library/react';
@@ -7,7 +7,11 @@ import userEvent from '@testing-library/user-event';
 import { MemoryRouter, Route } from 'react-router-dom';
 import { renderWithProviders, reduxStore } from '../../../../test/test-utils';
 import metadata from '../metadata';
+import ErrorContent from '../../../ErrorContent';
+import * as mockEnqueSnackbar from '../../../../hooks/enqueueSnackbar';
 import CeligoTable from '../../../CeligoTable';
+
+const enqueueSnackbar = jest.fn();
 
 const initialStore = reduxStore;
 
@@ -66,12 +70,12 @@ jest.mock('nanoid', () => ({
 }));
 function renderFuntion(data) {
   renderWithProviders(
-    <MemoryRouter initialEntries={['/parent']}>
-      <Route path="/parent">
+    <MemoryRouter initialEntries={[{pathname: `/integrations/${data.integrationId}`}]}>
+      <Route path="/integrations/:integrationId">
         <CeligoTable
           {...metadata}
           data={[data]}
-        />
+          />
       </Route>
     </MemoryRouter>, {initialStore}
   );
@@ -81,12 +85,32 @@ function renderFuntion(data) {
 describe('UI tests for revert to before revision', () => {
   beforeEach(() => {
     jest.resetAllMocks();
+    jest.spyOn(mockEnqueSnackbar, 'default').mockReturnValue([enqueueSnackbar]);
   });
-  test('Redirect to correct URL when clicked on revert to before revision', () => {
+  afterEach(() => {
+    enqueueSnackbar.mockClear();
+  });
+  test('should push revertbefore URL when status is set to completed', () => {
     renderFuntion({_id: 'somereqAndResKey', _createdByUserId: '5f7011605b2e3244837309f9', status: 'completed', integrationId: '5e44ee816fb284424f693b43', type: 'pull'});
     const revertBeforeButton = screen.getByText('Revert to before this revision');
 
     userEvent.click(revertBeforeButton);
-    expect(mockHistoryPush).toHaveBeenCalledWith('/parent/revert/randomvalue/open/toBefore/revision/somereqAndResKey');
+    expect(mockHistoryPush).toHaveBeenCalledWith('/integrations/5e44ee816fb284424f693b43/revert/randomvalue/open/toBefore/revision/somereqAndResKey');
+  });
+
+  test('should display a prompt when the status is in progress', () => {
+    initialStore.getState().data.revisions = {
+      '5e44ee816fb284424f693b43': {
+        data: [{
+          _id: '5cadc8b42b1034709483790',
+          type: 'pull',
+          status: 'inprogress',
+        }],
+      }};
+    renderFuntion({_id: '5cadc8b42b1034709483790', _createdByUserId: '5f7011605b2e3244837309f9', status: 'completed', integrationId: '5e44ee816fb284424f693b43', type: 'pull'});
+    const revertBeforeButton = screen.getByText('Revert to before this revision');
+
+    userEvent.click(revertBeforeButton);
+    expect(enqueueSnackbar).toHaveBeenCalledWith({message: <ErrorContent error="You have a pull, snapshot, or revert in progress." />, variant: 'error'});
   });
 });
