@@ -8,7 +8,9 @@ export default {
     if (newValues['/expires']) {
       delete newValues['/trialEndDate'];
     }
-
+    if (!newValues['/_changeEditionId']) {
+      newValues['/_changeEditionId'] = undefined;
+    }
     try {
       newValues['/opts'] = JSON.parse(newValues['/opts']);
     } catch (e) {
@@ -25,6 +27,7 @@ export default {
     sandbox: { fieldId: 'sandbox' },
     opts: { fieldId: 'opts' },
     childLicenses: { fieldId: 'childLicenses' },
+    _changeEditionId: { fieldId: '_changeEditionId' },
   },
   layout: {
     type: 'collapse',
@@ -32,7 +35,7 @@ export default {
       {
         collapsed: true,
         label: 'General',
-        fields: ['email', '_editionId', 'expires', 'trialEndDate', 'sandbox', 'opts'],
+        fields: ['email', '_editionId', '_changeEditionId', 'expires', 'trialEndDate', 'sandbox', 'opts'],
       },
       {
         collapsed: true,

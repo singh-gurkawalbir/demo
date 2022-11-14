@@ -10,7 +10,7 @@ const emptyArray = [];
 
 export default {
   key: 'tradingPartner',
-  useLabel: rowData => `Mark as ${rowData?.ftp?.tradingPartner ? 'not' : ''} trading partner`,
+  useLabel: rowData => `Mark as ${rowData?.ftp?.tradingPartner ? 'not ' : ''}trading partner`,
   icon: TradingPartnerIcon,
   Component: ({ rowData = {}}) => {
     const { _id: connectionId } = rowData;
@@ -35,7 +35,7 @@ export default {
       confirmDialog({
         title: 'Confirm connection changes',
         isHtml: true,
-        message: `Are you sure you want to mark the following connections as ${rowData?.ftp?.tradingPartner ? 'not' : ''} being trading partners? ${connectionsList}`,
+        message: `Are you sure you want to mark the following connections as ${rowData?.ftp?.tradingPartner ? 'not ' : ''}being trading partners? ${connectionsList}`,
         buttons: [
           {
             label: 'Confirm',
