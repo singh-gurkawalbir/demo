@@ -68,7 +68,7 @@ export default function RetryStatus({ flowId }) {
           <RetryListPopper resources={resourcesWithRetryCompleted} />
         ) : (
           <TextButton
-            size="small" bold="true" color="primary" className={classes.viewResultButton}
+            size="small" bold color="primary" className={classes.viewResultButton}
             onClick={handleClick}>
             View results
           </TextButton>
