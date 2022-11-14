@@ -5,18 +5,20 @@ import { ACCOUNT_SETTINGS_DATA_RETENTION_ASYNC_KEY } from '../../constants';
 import { apiCallWithRetry } from '../index';
 
 export function* requestAccountSettings() {
+  let response;
+
   try {
-    const response = yield call(apiCallWithRetry, {
+    response = yield call(apiCallWithRetry, {
       path: '/accountSettings',
       opts: {
         method: 'GET',
       },
     });
-
-    yield put(actions.accountSettings.received(response));
-  } catch (error) {
-    return undefined;
+  } catch (e) {
+    return;
   }
+
+  yield put(actions.accountSettings.received(response));
 }
 
 export function* updateAccountSettings({accountSettings}) {
@@ -34,8 +36,6 @@ export function* updateAccountSettings({accountSettings}) {
     yield put(actions.asyncTask.success(ACCOUNT_SETTINGS_DATA_RETENTION_ASYNC_KEY));
   } catch (error) {
     yield put(actions.asyncTask.failed(ACCOUNT_SETTINGS_DATA_RETENTION_ASYNC_KEY));
-
-    return undefined;
   }
 }
 

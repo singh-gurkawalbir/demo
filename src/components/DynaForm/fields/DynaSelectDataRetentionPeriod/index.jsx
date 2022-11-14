@@ -1,5 +1,5 @@
 import { FormLabel, MenuItem } from '@material-ui/core';
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import CeligoSelect from '../../../CeligoSelect';
 import FieldHelp from '../../FieldHelp';
@@ -16,32 +16,34 @@ const useStyles = makeStyles(theme => ({
     },
   },
 }));
+
+const options = [
+  {
+    label: '30 days',
+    value: 30,
+    dataTest: 'thirtyDays',
+  },
+  {
+    label: '60 days',
+    value: 60,
+    dataTest: 'sixtyDays',
+  },
+  {
+    label: '90 days',
+    value: 90,
+    dataTest: 'nintyDays',
+  },
+  {
+    label: '180 days',
+    value: 180,
+    dataTest: 'oneEightyDays',
+  },
+];
+
 export default function DynaSelectDataRetentionPeriod(props) {
   const classes = useStyles();
   const {id, label, value, onFieldChange, maxAllowedDataRetention} = props;
-  const options = useMemo(() => ([
-    {
-      label: '30 days',
-      value: 30,
-      dataTest: 'thirtyDays',
-    },
-    {
-      label: '60 days',
-      value: 60,
-      dataTest: 'sixtyDays',
-    },
-    {
-      label: '90 days',
-      value: 90,
-      dataTest: 'nintyDays',
-    },
-    {
-      label: '180 days',
-      value: 180,
-      dataTest: 'oneEightyDays',
-    },
-  ]), []);
-  const isPeriodInValid = period => !(period <= maxAllowedDataRetention);
+  const isPeriodInValid = useCallback(period => !(period <= maxAllowedDataRetention), [maxAllowedDataRetention]);
 
   const handlePeriodChange = useCallback(e => {
     onFieldChange(id, e.target.value);
