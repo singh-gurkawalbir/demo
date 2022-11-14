@@ -43,8 +43,8 @@ function replaceOrInsertResource(draft, resourceType, resourceValue) {
   if (type === 'imports' || type === 'exports') {
     const connection = draft.connections?.find(conn => conn._id === resource._connectionId);
 
-    if (getHttpConnector(connection?.http?._httpConnectorId)?._id) {
-      resource = {...resource, adaptorType: 'http'};
+    if (getHttpConnector(connection?.http?._httpConnectorId)?._id && resource.adaptorType?.includes('REST')) {
+      resource = {...resource, adaptorType: 'HTTPExport', restToHTTPConverted: true};
 
       delete resource.rest;
     }
@@ -138,8 +138,8 @@ const addResourceCollection = (draft, resourceType, collection) => {
     newCollection = (collection || [])?.map(coll => {
       const connection = draft.connections?.find(conn => conn._id === coll._connectionId);
 
-      if (getHttpConnector(connection?.http?._httpConnectorId)?._id) {
-        const newColl = {...coll, adaptorType: 'http'};
+      if (getHttpConnector(connection?.http?._httpConnectorId)?._id && coll.adaptorType?.includes('REST')) {
+        const newColl = {...coll, adaptorType: resourceType === 'exports' ? 'HTTPExport' : 'HTTPImport', restToHTTPConverted: true};
 
         delete newColl.rest;
 
