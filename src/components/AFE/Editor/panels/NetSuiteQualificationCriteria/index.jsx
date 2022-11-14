@@ -6,7 +6,7 @@ import React, {
   useMemo,
   useCallback,
 } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import 'jQuery-QueryBuilder';
 import 'jQuery-QueryBuilder/dist/css/query-builder.default.css';
@@ -50,7 +50,7 @@ export default function NetSuiteQualificationCriteriaPanel({ editorId }) {
       filters: editorData.filters || defaultFilters,
       formKey: editorData.formKey,
     };
-  });
+  }, shallowEqual);
 
   const useSS2Framework = useSelector(state => selectors.fieldState(state, formKey, 'netsuite.distributed.useSS2Framework'))?.value === 'true';
 
