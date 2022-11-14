@@ -2952,11 +2952,10 @@ Object {
         Object {
           "fields": Array [
             "application",
-            "settings",
           ],
         },
       ]
-      type: 'box',
+      "type": "box",
     },
   },
   "init": undefined,
