@@ -17,7 +17,7 @@ jest.mock('../../panels/Code', () => ({
 
 function initConsoleGridItem(props = {}) {
   initialStore.getState().session.editors = {'file.csv': {
-    result: { logs: ['result1', 'result2', 'result3']},
+    result: { logs: ['result1']},
   }};
 
   return renderWithProviders(<ConsoleGridItem {...props} />, {initialStore});
@@ -27,8 +27,6 @@ describe('ConsoleGridItem UI tests', () => {
   test('should pass the initial render', () => {
     initConsoleGridItem({editorId: 'file.csv'});
     expect(screen.getByText('result1')).toBeInTheDocument();
-    expect(screen.getByText('result2')).toBeInTheDocument();
-    expect(screen.getByText('result3')).toBeInTheDocument();
   });
   test('should render empty DOM when result propperty is not present for a particular editorId state', () => {
     const {utils} = initConsoleGridItem({editorId: 'files.csv'});
