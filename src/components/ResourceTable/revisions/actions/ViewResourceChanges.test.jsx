@@ -60,8 +60,8 @@ jest.mock('react-router-dom', () => ({
 
 function renderFuntion(data) {
   renderWithProviders(
-    <MemoryRouter initialEntries={['/parent']}>
-      <Route path="/parent">
+    <MemoryRouter initialEntries={[{pathname: `/integrations/${data.integrationId}`}]}>
+      <Route path="/integrations/:integrationId">
         <CeligoTable
           {...metadata}
           data={[data]}
@@ -76,11 +76,11 @@ describe('UI test cases for view resource changes ', () => {
   beforeEach(() => {
     jest.resetAllMocks();
   });
-  test('Should redirect to correct URL when clicked on view resource changed', () => {
-    renderFuntion({_id: 'somereqAndResKey', _createdByUserId: '5f7011605b2e3244837309f9', status: 'completed', integrationId: '5e44ee816fb284424f693b43'});
+  test('should push viewresourcechanges URL when status is set to completed', () => {
+    renderFuntion({_id: '6368de0bec4c35664453023b', _createdByUserId: '5f7011605b2e3244837309f9', status: 'completed', integrationId: '5e44efa28015c9464272256f'});
     const viewresourcechanged = screen.getByText('View resources changed');
 
     userEvent.click(viewresourcechanged);
-    expect(mockHistoryPush).toHaveBeenCalledWith('/parent/view/somereqAndResKey/mode/changes');
+    expect(mockHistoryPush).toHaveBeenCalledWith('/integrations/5e44efa28015c9464272256f/view/6368de0bec4c35664453023b/mode/changes');
   });
 });

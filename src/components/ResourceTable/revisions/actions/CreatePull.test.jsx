@@ -66,8 +66,8 @@ jest.mock('nanoid', () => ({
 }));
 function renderFuntion(data) {
   renderWithProviders(
-    <MemoryRouter initialEntries={['/parent']}>
-      <Route path="/parent">
+    <MemoryRouter initialEntries={[{pathname: `/integrations/${data.integrationId}`}]}>
+      <Route path="/integrations/:integrationId">
         <CeligoTable
           {...metadata}
           data={[data]}
@@ -82,11 +82,11 @@ describe('UI test cases for create pull ', () => {
   beforeEach(() => {
     jest.resetAllMocks();
   });
-  test('redirect to correct URL after clicking on create pull', async () => {
-    renderFuntion({_id: 'somereqAndResKey', _createdByUserId: '5f7011605b2e3244837309f9', status: 'failed'});
-    const createpull = screen.getByText('Create pull');
+  test('should push createpull URL when status is set to failed', () => {
+    renderFuntion({_id: '6368de0bec4c35664453023b', _createdByUserId: '5f7011605b2e3244837309f9', status: 'failed', integrationId: '5e44efa28015c9464272256f'});
+    const createpullButton = screen.getByText('Create pull');
 
-    userEvent.click(createpull);
-    expect(mockHistoryPush).toHaveBeenCalledWith('/parent/pull/randomvalue/open');
+    userEvent.click(createpullButton);
+    expect(mockHistoryPush).toHaveBeenCalledWith('/integrations/5e44efa28015c9464272256f/pull/randomvalue/open');
   });
 });

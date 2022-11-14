@@ -58,8 +58,8 @@ jest.mock('../../CeligoTimeAgo', () => ({
 
 function initImports(data) {
   const ui = (
-    <MemoryRouter initialEntries={['/5e44ee816fb284424f693b43']}>
-      <Route path="/:integrationId">
+    <MemoryRouter initialEntries={[{pathname: `/integrations/${data._integrationId}`}]}>
+      <Route path="/integrations/:integrationId">
         <CeligoTable
           {...metadata} data={[data]} />
       </Route>

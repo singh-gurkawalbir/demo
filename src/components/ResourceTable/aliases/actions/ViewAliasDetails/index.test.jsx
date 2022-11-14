@@ -20,8 +20,8 @@ jest.mock('react-router-dom', () => ({
 
 function renderFuntion(data) {
   renderWithProviders(
-    <MemoryRouter initialEntries={['/parent']}>
-      <Route path="/parent">
+    <MemoryRouter initialEntries={[{pathname: `/integrations/${data._integrationId}/aliases`}]}>
+      <Route path="/integrations/:integrationId/aliases">
         <CeligoTable {...metadata} data={[data]} />
       </Route>
     </MemoryRouter>
@@ -34,26 +34,27 @@ describe('UI test cases for view alias details', () => {
     jest.resetAllMocks();
   });
   const _id = 'someid';
-  const alias = 'somereqAndResKey';
+  const alias = '6368de0bec4c35664453023b';
   const status = 'canceled';
   const _parentId = 'someparentId';
+  const _integrationId = '5e44efa28015c9464272256f';
 
-  test('should call onclick when parentId is not provided', () => {
-    renderFuntion({ _id, alias, status });
+  test('Should push viewdetails URL onClick without parentId when it is not provided', () => {
+    renderFuntion({ _id, alias, status, _integrationId });
     const request = screen.getByText('View details');
 
     userEvent.click(request);
     expect(mockHistoryPush).toHaveBeenCalledWith(
-      '/parent/viewdetails/somereqAndResKey'
+      '/integrations/5e44efa28015c9464272256f/aliases/viewdetails/6368de0bec4c35664453023b'
     );
   });
-  test('should call onclick when parentId is provided', () => {
-    renderFuntion({ _id, alias, _parentId, status });
+  test('Should push viewdetails URL onClick with parentId when it is provided', () => {
+    renderFuntion({ _id, alias, _parentId, status, _integrationId });
     const request = screen.getByText('View details');
 
     userEvent.click(request);
     expect(mockHistoryPush).toHaveBeenCalledWith(
-      '/parent/viewdetails/somereqAndResKey/inherited/someparentId'
+      '/integrations/5e44efa28015c9464272256f/aliases/viewdetails/6368de0bec4c35664453023b/inherited/someparentId'
     );
   });
 });

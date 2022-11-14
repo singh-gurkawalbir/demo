@@ -60,8 +60,8 @@ jest.mock('react-router-dom', () => ({
 
 function renderFuntion(data) {
   renderWithProviders(
-    <MemoryRouter initialEntries={['/parent']}>
-      <Route path="/parent">
+    <MemoryRouter initialEntries={[{pathname: `/integrations/${data.integrationId}`}]}>
+      <Route path="/integrations/:integrationId">
         <CeligoTable
           {...metadata}
           data={[data]}
@@ -76,11 +76,11 @@ describe('UI test cases for view details ', () => {
   beforeEach(() => {
     jest.resetAllMocks();
   });
-  test('Should open a view details drawer when clicked on view details', () => {
-    renderFuntion({_id: 'somereqAndResKey', _createdByUserId: '5f7011605b2e3244837309f9', status: 'canceled'});
+  test('should push viewDetails URL when status is set to canceled', () => {
+    renderFuntion({_id: '6368de0bec4c35664453023b', _createdByUserId: '5f7011605b2e3244837309f9', status: 'canceled', integrationId: '5e44efa28015c9464272256f'});
     const viewdetailsButton = screen.getByText('View details');
 
     userEvent.click(viewdetailsButton);
-    expect(mockHistoryPush).toHaveBeenCalledWith('/parent/view/somereqAndResKey/mode/details');
+    expect(mockHistoryPush).toHaveBeenCalledWith('/integrations/5e44efa28015c9464272256f/view/6368de0bec4c35664453023b/mode/details');
   });
 });

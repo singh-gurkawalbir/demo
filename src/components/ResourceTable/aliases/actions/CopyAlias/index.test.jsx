@@ -4,7 +4,7 @@ import React from 'react';
 import { screen, waitFor } from '@testing-library/react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import userEvent from '@testing-library/user-event';
-import { MemoryRouter, Route } from 'react-router-dom';
+import { MemoryRouter } from 'react-router-dom';
 import { renderWithProviders } from '../../../../../test/test-utils';
 import metadata from '../../metadata';
 import * as mockEnqueSnackbar from '../../../../../hooks/enqueueSnackbar';
@@ -16,10 +16,8 @@ window.prompt = jest.fn();
 
 function renderFuntion(data) {
   renderWithProviders(
-    <MemoryRouter initialEntries={['/parent']}>
-      <Route path="/parent">
-        <CeligoTable {...metadata} data={[data]} />
-      </Route>
+    <MemoryRouter>
+      <CeligoTable {...metadata} data={[data]} />
     </MemoryRouter>
   );
   userEvent.click(screen.getByRole('button', { name: /more/i }));

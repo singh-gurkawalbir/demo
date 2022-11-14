@@ -20,8 +20,8 @@ jest.mock('react-router-dom', () => ({
 
 function renderFuntion(actionProps, data) {
   renderWithProviders(
-    <MemoryRouter initialEntries={['/parent']}>
-      <Route path="/parent">
+    <MemoryRouter initialEntries={[{pathname: `/integrations/${data.integrationId}/edit`}]}>
+      <Route path="/integrations/:integrationId">
         <CeligoTable
           actionProps={actionProps}
           {...metadata}
@@ -38,10 +38,12 @@ describe('UI test cases for edit alias', () => {
     jest.resetAllMocks();
   });
   test('should call onclick', () => {
-    renderFuntion({hasManageAccess: true}, {_id: 'someid', alias: 'somereqAndResKey'});
+    renderFuntion({hasManageAccess: true}, {_id: 'someid',
+      alias: 'editalias',
+      integrationId: '6366bee72c1bd1023108c05b'});
     const editAliasButton = screen.getByText('Edit alias');
 
     userEvent.click(editAliasButton);
-    expect(mockHistoryPush).toHaveBeenCalledWith('/parent/edit/somereqAndResKey');
+    expect(mockHistoryPush).toHaveBeenCalledWith('/integrations/6366bee72c1bd1023108c05b/edit/editalias');
   });
 });

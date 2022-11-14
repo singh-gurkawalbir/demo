@@ -12,14 +12,6 @@ import CeligoTable from '../../../CeligoTable';
 
 const initialStore = reduxStore;
 
-initialStore.getState().data.revisions = {
-  '5e44ee816fb284424f693b43': {
-    data: [{
-      _id: '5cadc8b42b1034709483790',
-      type: 'pull',
-    }],
-  }};
-
 initialStore.getState().user = {
   preferences: {
     defaultAShareId: 'own',
@@ -57,6 +49,15 @@ initialStore.getState().user = {
     ],
   },
 };
+
+initialStore.getState().data.revisions = {
+  '5e44ee816fb284424f693b43': {
+    data: [{
+      _id: '5cadc8b42b1034709483790',
+      type: 'pull',
+    }],
+  }};
+
 const mockDispatchFn = jest.fn();
 
 jest.mock('react-redux', () => ({

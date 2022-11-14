@@ -60,8 +60,8 @@ jest.mock('react-router-dom', () => ({
 
 function renderFuntion(data) {
   renderWithProviders(
-    <MemoryRouter initialEntries={['/parent']}>
-      <Route path="/parent">
+    <MemoryRouter initialEntries={[{pathname: `/integrations/${data.integrationId}`}]}>
+      <Route path="/integrations/:integrationId">
         <CeligoTable
           {...metadata}
           data={[data]}
@@ -76,18 +76,18 @@ describe('UI tests for resume revision ', () => {
   beforeEach(() => {
     jest.resetAllMocks();
   });
-  test('Redirects to correct URL on click when type is set to pull', () => {
-    renderFuntion({_id: 'somereqAndResKey', _createdByUserId: '5f7011605b2e3244837309f9', status: 'inprogress', integrationId: '5e44ee816fb284424f693b43', type: 'pull'});
-    const request = screen.getByText('Resume operation');
+  test('should push resumerevision URL when type is set to pull', () => {
+    renderFuntion({_id: '6368de0bec4c35664453023b', _createdByUserId: '5f7011605b2e3244837309f9', status: 'inprogress', integrationId: '5e44ee816fb284424f693b43', type: 'pull'});
+    const resumeOperationButton = screen.getByText('Resume operation');
 
-    userEvent.click(request);
-    expect(mockHistoryPush).toHaveBeenCalledWith('/parent/pull/somereqAndResKey/merge');
+    userEvent.click(resumeOperationButton);
+    expect(mockHistoryPush).toHaveBeenCalledWith('/integrations/5e44ee816fb284424f693b43/pull/6368de0bec4c35664453023b/merge');
   });
-  test('Redirects to correct URL on click when type is set to revert', () => {
-    renderFuntion({_id: 'somereqAndResKey', _createdByUserId: '5f7011605b2e3244837309f9', status: 'inprogress', integrationId: '5e44ee816fb284424f693b43', type: 'revert'});
-    const request = screen.getByText('Resume operation');
+  test('should push resumerevision URL when status is set to completed', () => {
+    renderFuntion({_id: '6368de0bec4c35664453023b', _createdByUserId: '5f7011605b2e3244837309f9', status: 'inprogress', integrationId: '5e44ee816fb284424f693b43', type: 'revert'});
+    const resumeOperationButton = screen.getByText('Resume operation');
 
-    userEvent.click(request);
-    expect(mockHistoryPush).toHaveBeenCalledWith('/parent/revert/somereqAndResKey/final');
+    userEvent.click(resumeOperationButton);
+    expect(mockHistoryPush).toHaveBeenCalledWith('/integrations/5e44ee816fb284424f693b43/revert/6368de0bec4c35664453023b/final');
   });
 });
