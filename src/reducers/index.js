@@ -59,6 +59,7 @@ import {
   AFE_SAVE_STATUS,
   UNASSIGNED_SECTION_NAME,
   emptyList,
+  MAX_DATA_RETENTION_PERIOD,
 } from '../constants';
 import messageStore from '../utils/messageStore';
 import { upgradeButtonText, expiresInfo } from '../utils/license';
@@ -3604,6 +3605,7 @@ selectors.platformLicenseWithMetadata = createSelector(
     }
 
     licenseActionDetails.totalSandboxFlowsAvailable = 0;
+    licenseActionDetails.isMaxDataRetentionPeriodAvailable = !!(licenseActionDetails.maxAllowedDataRetention === MAX_DATA_RETENTION_PERIOD);
 
     if (licenseActionDetails.sandbox) {
       licenseActionDetails.totalSandboxFlowsAvailable = getTierToFlowsMap(

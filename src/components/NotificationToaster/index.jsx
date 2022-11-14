@@ -150,6 +150,11 @@ const useStyles = makeStyles(theme => ({
   },
   noBorder: {
     border: 'none',
+    '&$warning': {
+      '& svg': {
+        color: theme.palette.warning.main,
+      },
+    },
     '& svg': {
       color: theme.palette.text.hint,
       marginTop: 2,
