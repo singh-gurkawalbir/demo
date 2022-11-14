@@ -14,6 +14,11 @@ export function* requestUpgrade({ integrationId, options }) {
     'integrations',
     integrationId
   );
+  const istwoDotZeroFrameWork = yield select(
+    selectors.isIntegrationAppVersion2,
+    integrationId,
+    true
+  );
   const { _connectorId, name, _id } = integration;
   const path = `/connectors/${_connectorId}/licenses/${licenseId}/upgradeRequest`;
   let response;
@@ -36,7 +41,7 @@ export function* requestUpgrade({ integrationId, options }) {
   } catch (error) {
     return undefined;
   }
-  yield put(actions.license.licenseUpgradeRequestSubmitted(response));
+  yield put(actions.license.licenseUpgradeRequestSubmitted(response, undefined, istwoDotZeroFrameWork));
   yield put(actions.integrationApp.settings.requestedUpgrade(licenseId));
 }
 
