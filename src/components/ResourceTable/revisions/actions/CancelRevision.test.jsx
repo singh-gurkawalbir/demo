@@ -99,4 +99,30 @@ describe('UI tests for cancel revision ', () => {
     userEvent.click(cancelmerge);
     expect(mockDispatchFn).toBeCalledTimes(1);
   });
+
+  test('should test continue merge button', () => {
+    renderFuntion({_id: '5cadc8b42b1034709483790',
+      _createdByUserId: '5f7011605b2e3244837309f9',
+      status: 'inprogress',
+      _integrationId: '5e44ee816fb284424f693b43',
+      onClose: () => {},
+      type: 'pull'});
+    const cancelrevision = screen.getByText('Cancel revision');
+
+    userEvent.click(cancelrevision);
+    const continueMerge = screen.getByText('Continue merge');
+
+    userEvent.click(continueMerge);
+    expect(continueMerge).not.toBeInTheDocument();
+  });
+
+  test('should not display cancel revision button when type is set to snapshot and status is set to completed', () => {
+    renderFuntion({_id: '5cadc8b42b1034709483790',
+      _createdByUserId: '5f7011605b2e3244837309f9',
+      status: 'completed',
+      _integrationId: '5e44ee816fb284424f693b43',
+      onClose: () => {},
+      type: 'snapshot'});
+    expect(screen.queryByText('Cancel revision')).not.toBeInTheDocument();
+  });
 });
