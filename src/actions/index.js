@@ -1332,8 +1332,8 @@ const license = {
     action(actionTypes.LICENSE.UPGRADE_REQUEST, {}),
   requestUpdate: (actionType, {connectorId, licenseId, feature}) =>
     action(actionTypes.LICENSE.UPDATE_REQUEST, { actionType, connectorId, licenseId, feature }),
-  licenseUpgradeRequestSubmitted: (message, feature) =>
-    action(actionTypes.LICENSE.UPGRADE_REQUEST_SUBMITTED, { message, feature }),
+  licenseUpgradeRequestSubmitted: (message, feature, isTwoDotZero) =>
+    action(actionTypes.LICENSE.UPGRADE_REQUEST_SUBMITTED, { message, feature, isTwoDotZero }),
   licenseReactivated: () =>
     action(actionTypes.LICENSE.REACTIVATED),
   ssoLicenseUpgradeRequested: () =>

@@ -63,7 +63,7 @@ export default function ErrorDrawerAction({ flowId, onChange, errorType }) {
         </Typography>
         {errorType !== FILTER_KEYS.RETRIES ? (
           <TextButton
-            size="large" bold="true" color="primary" className={classes.viewResults}
+            size="large" bold color="primary" className={classes.viewResults}
             onClick={handleClick}>
             View results
           </TextButton>
