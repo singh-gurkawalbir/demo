@@ -132,22 +132,22 @@ const addResourceCollection = (draft, resourceType, collection) => {
       if (resourceType === 'exports') {
         newCollection = collection?.map?.(populateRestSchema);
       }
+      newCollection = (newCollection || [])?.map(coll => {
+        const connection = draft.connections?.find(conn => conn._id === coll._connectionId);
+
+        if (getHttpConnector(connection?.http?._httpConnectorId)?._id && coll.adaptorType?.includes('REST')) {
+          const newColl = {...coll, adaptorType: resourceType === 'exports' ? 'HTTPExport' : 'HTTPImport', restToHTTPConverted: true};
+
+          delete newColl.rest;
+
+          return newColl;
+        }
+
+        return coll;
+      });
     // eslint-disable-next-line no-empty
     } catch (e) {
     }
-    newCollection = (collection || [])?.map(coll => {
-      const connection = draft.connections?.find(conn => conn._id === coll._connectionId);
-
-      if (getHttpConnector(connection?.http?._httpConnectorId)?._id && coll.adaptorType?.includes('REST')) {
-        const newColl = {...coll, adaptorType: resourceType === 'exports' ? 'HTTPExport' : 'HTTPImport', restToHTTPConverted: true};
-
-        delete newColl.rest;
-
-        return newColl;
-      }
-
-      return coll;
-    });
 
     updateStateWhenValueDiff(draft, resourceType, newCollection || []);
 
