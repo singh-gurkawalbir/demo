@@ -943,6 +943,7 @@ describe('Accounts region selector testcases', () => {
         totalSandboxFlowsAvailable: 0,
         usageTierHours: 1,
         usageTierName: 'Free',
+        isMaxDataRetentionPeriodAvailable: false,
       });
     });
   });
