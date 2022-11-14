@@ -47,13 +47,13 @@ jest.mock('../../icons/SettingsIcon', () => ({
   ),
 }));
 
-function existanceOfCellInDom(text, role) {
+function indexOfCell(text, role) {
   const cells = screen.getAllByRole(role);
 
   return cells.findIndex(each => each.textContent === text);
 }
-let headerI;
-let cellI;
+let headerIndex;
+let cellIndex;
 
 function expectFunction(header, cell) {
   expect(header).toBeGreaterThan(-1);
@@ -113,57 +113,71 @@ function initflowTable(actionProps = {}, resource = resourcE) {
 describe('flows metadata UI test case', () => {
   test('should verify the coulmns when resource is not integration app', () => {
     initflowTable(actionProps);
-    headerI = existanceOfCellInDom('Name', 'columnheader');
-    cellI = existanceOfCellInDom('Name of the flow', 'cell');
-    expectFunction(headerI, cellI);
-    headerI = existanceOfCellInDom('Last updated', 'columnheader');
-    cellI = existanceOfCellInDom('05/03/2022 6:24:08 am', 'cell');
-    expectFunction(headerI, cellI);
-    headerI = existanceOfCellInDom('Last run', 'columnheader');
-    cellI = existanceOfCellInDom('03/03/2022 9:06:36 pm', 'cell');
-    expectFunction(headerI, cellI);
-    headerI = existanceOfCellInDom('Mapping', 'columnheader');
-    cellI = existanceOfCellInDom('Mocked Mappping cell flowId: 5d95f7d1795b356dfcb5d6c4 childId: someChildID', 'cell');
-    expectFunction(headerI, cellI);
-    headerI = existanceOfCellInDom('Schedule', 'columnheader');
-    cellI = existanceOfCellInDom('Mocked CalendarIcon', 'cell');
-    expectFunction(headerI, cellI);
-    headerI = existanceOfCellInDom('Run', 'columnheader');
-    cellI = existanceOfCellInDom('Mocked RunFlowButton', 'cell');
-    expectFunction(headerI, cellI);
-    headerI = existanceOfCellInDom('Off/On', 'columnheader');
-    cellI = existanceOfCellInDom('Mocked CeligoSwitch', 'cell');
-    expectFunction(headerI, cellI);
+    headerIndex = indexOfCell('Name', 'columnheader');
+    cellIndex = indexOfCell('Name of the flow', 'cell');
+    expectFunction(headerIndex, cellIndex);
+    headerIndex = indexOfCell('Last updated', 'columnheader');
+    cellIndex = indexOfCell('05/03/2022 6:24:08 am', 'cell');
+    expectFunction(headerIndex, cellIndex);
+    headerIndex = indexOfCell('Last run', 'columnheader');
+    cellIndex = indexOfCell('03/03/2022 9:06:36 pm', 'cell');
+    expectFunction(headerIndex, cellIndex);
+    headerIndex = indexOfCell('Mapping', 'columnheader');
+    cellIndex = indexOfCell('Mocked Mappping cell flowId: 5d95f7d1795b356dfcb5d6c4 childId: someChildID', 'cell');
+    expectFunction(headerIndex, cellIndex);
+    headerIndex = indexOfCell('Schedule', 'columnheader');
+    cellIndex = indexOfCell('Mocked CalendarIcon', 'cell');
+    expectFunction(headerIndex, cellIndex);
+    headerIndex = indexOfCell('Run', 'columnheader');
+    cellIndex = indexOfCell('Mocked RunFlowButton', 'cell');
+    expectFunction(headerIndex, cellIndex);
+    headerIndex = indexOfCell('Off/On', 'columnheader');
+    cellIndex = indexOfCell('Mocked CeligoSwitch', 'cell');
+    expectFunction(headerIndex, cellIndex);
+  });
+  test('should show child when header as App', () => {
+    initflowTable({...actionProps, showChild: true}, {...resourcE, childName: 'ChildName'});
+    screen.debug(null, Infinity);
+    headerIndex = indexOfCell('App', 'columnheader');
+    cellIndex = indexOfCell('ChildName', 'cell');
+    expectFunction(headerIndex, cellIndex);
+  });
+  test('should show child when header is provided', () => {
+    initflowTable({...actionProps, showChild: true, childHeader: 'someChildHeader', integrationChildren: [{value: '5d95f77174836b1acdcd2788', label: 'someLabel'}]});
+    screen.debug(null, Infinity);
+    headerIndex = indexOfCell('someChildHeader', 'columnheader');
+    cellIndex = indexOfCell('someLabel', 'cell');
+    expectFunction(headerIndex, cellIndex);
   });
   test('should verify the coulmns when resource is integration app', () => {
     initflowTable({...actionProps, isIntegrationApp: true, isUserInErrMgtTwoDotZero: true});
-    headerI = existanceOfCellInDom('Name', 'columnheader');
-    cellI = existanceOfCellInDom('Name of the flow', 'cell');
-    expectFunction(headerI, cellI);
-    headerI = existanceOfCellInDom('Last updated', 'columnheader');
-    cellI = existanceOfCellInDom('05/03/2022 6:24:08 am', 'cell');
-    expectFunction(headerI, cellI);
-    headerI = existanceOfCellInDom('Last run', 'columnheader');
-    cellI = existanceOfCellInDom('03/03/2022 9:06:36 pm', 'cell');
-    expectFunction(headerI, cellI);
-    headerI = existanceOfCellInDom('Mapping', 'columnheader');
-    cellI = existanceOfCellInDom('Mocked Mappping cell flowId: 5d95f7d1795b356dfcb5d6c4 childId: someChildID', 'cell');
-    expectFunction(headerI, cellI);
-    headerI = existanceOfCellInDom('Schedule', 'columnheader');
-    cellI = existanceOfCellInDom('Mocked CalendarIcon', 'cell');
-    expectFunction(headerI, cellI);
-    headerI = existanceOfCellInDom('Run', 'columnheader');
-    cellI = existanceOfCellInDom('Mocked RunFlowButton', 'cell');
-    expectFunction(headerI, cellI);
-    headerI = existanceOfCellInDom('Off/On', 'columnheader');
-    cellI = existanceOfCellInDom('Mocked CeligoSwitch', 'cell');
-    expectFunction(headerI, cellI);
-    headerI = existanceOfCellInDom('Settings', 'columnheader');
-    cellI = existanceOfCellInDom('Mocked SettingsIcon', 'cell');
-    expectFunction(headerI, cellI);
-    headerI = existanceOfCellInDom('Errors', 'columnheader');
-    cellI = existanceOfCellInDom('Success', 'cell');
-    expectFunction(headerI, cellI);
+    headerIndex = indexOfCell('Name', 'columnheader');
+    cellIndex = indexOfCell('Name of the flow', 'cell');
+    expectFunction(headerIndex, cellIndex);
+    headerIndex = indexOfCell('Last updated', 'columnheader');
+    cellIndex = indexOfCell('05/03/2022 6:24:08 am', 'cell');
+    expectFunction(headerIndex, cellIndex);
+    headerIndex = indexOfCell('Last run', 'columnheader');
+    cellIndex = indexOfCell('03/03/2022 9:06:36 pm', 'cell');
+    expectFunction(headerIndex, cellIndex);
+    headerIndex = indexOfCell('Mapping', 'columnheader');
+    cellIndex = indexOfCell('Mocked Mappping cell flowId: 5d95f7d1795b356dfcb5d6c4 childId: someChildID', 'cell');
+    expectFunction(headerIndex, cellIndex);
+    headerIndex = indexOfCell('Schedule', 'columnheader');
+    cellIndex = indexOfCell('Mocked CalendarIcon', 'cell');
+    expectFunction(headerIndex, cellIndex);
+    headerIndex = indexOfCell('Run', 'columnheader');
+    cellIndex = indexOfCell('Mocked RunFlowButton', 'cell');
+    expectFunction(headerIndex, cellIndex);
+    headerIndex = indexOfCell('Off/On', 'columnheader');
+    cellIndex = indexOfCell('Mocked CeligoSwitch', 'cell');
+    expectFunction(headerIndex, cellIndex);
+    headerIndex = indexOfCell('Settings', 'columnheader');
+    cellIndex = indexOfCell('Mocked SettingsIcon', 'cell');
+    expectFunction(headerIndex, cellIndex);
+    headerIndex = indexOfCell('Errors', 'columnheader');
+    cellIndex = indexOfCell('Success', 'cell');
+    expectFunction(headerIndex, cellIndex);
   });
   test('should verify action for inetgartion app', () => {
     initflowTable({...actionProps, isIntegrationApp: true});
