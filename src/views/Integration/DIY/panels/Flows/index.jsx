@@ -472,7 +472,7 @@ export default function FlowsPanel({ integrationId, childId }) {
           </Typography>
         ) : ''}
 
-        <LoadResources required integrationId={integrationId} resources="flows,exports">
+        <LoadResources required integrationId={integrationId} resources="flows,connections,exports">
           <FlowListing
             integrationId={currentIntegrationId}
             filterKey={filterKey}

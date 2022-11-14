@@ -61,8 +61,8 @@ export default function AuditLog({
     <LoadResources
       required
       integrationId={integrationId}
-      resources={[
-        'integrations', 'flows', 'exports', 'imports', 'connections', 'scripts', 'agents', 'stacks', ...(
+      resources={['connections',
+        'integrations', 'flows', 'exports', 'imports', 'scripts', 'agents', 'stacks', ...(
           !resourceId ? ['apis', 'accesstokens'] : []
         )].join(',')}>
       <>
