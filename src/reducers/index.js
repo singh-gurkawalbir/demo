@@ -2876,6 +2876,10 @@ selectors.integrationAppLicense = (state, id) => {
   const integrationResource = selectors.integrationAppSettings(state, id);
   const userLicenses = fromUser.licenses(state && state.user) || [];
   const license = userLicenses.find(l => l._integrationId === id) || {};
+  const integrationAppList = selectors.publishedConnectors(state);
+  const connector =
+     integrationAppList?.find(ia => ia._id === license?._connectorId);
+  const editions = connector?.twoDotZero?.editions || emptyArray;
   const upgradeRequested = selectors.checkUpgradeRequested(state, license._id);
   const dateFormat = selectors.userProfilePreferencesProps(state)?.dateFormat;
   const { expires, created } = license;
@@ -2887,7 +2891,9 @@ selectors.integrationAppLicense = (state, id) => {
   const upgradeText = upgradeButtonText(
     license,
     integrationResource,
-    upgradeRequested
+    upgradeRequested,
+    editions,
+    connector?.twoDotZero
   );
 
   return {

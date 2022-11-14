@@ -60,4 +60,12 @@ export default {
     connectorId: r => r._connectorId,
     visible: r => !isNewId(r._id),
   },
+  _changeEditionId: {
+    isLoggable: true,
+    type: 'changelicenseedition',
+    label: 'Change edition',
+    editionId: r => r?._editionId,
+    connectorId: r => r._connectorId,
+    visible: r => !isNewId(r._id) && !!r._integrationId,
+  },
 };

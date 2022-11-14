@@ -11,6 +11,7 @@ import { FILTER_KEYS } from '../../../../utils/errorManagement';
 const useStyles = makeStyles(theme => ({
   currentContainer: {
     padding: theme.spacing(0, 0.5),
+    fontSize: '0.75rem',
     '& .MuiButton-endIcon': {
       color: theme.palette.secondary.main,
     },
@@ -28,9 +29,6 @@ const useStyles = makeStyles(theme => ({
     '& .MuiMenuItem-root+.MuiMenuItem-root': {
       borderTop: `1px solid ${theme.palette.secondary.lightest}`,
     },
-  },
-  viewResultsPopperArrow: {
-    left: '183px !important',
   },
 }));
 
@@ -70,7 +68,8 @@ export default function RetryListPopper({resources}) {
         className={classes.currentContainer}
         aria-owns={open ? 'accountList' : null}
         aria-haspopup="true"
-        color="primary">
+        color="primary"
+        bold>
         View results
       </TextButton>
 
@@ -82,7 +81,6 @@ export default function RetryListPopper({resources}) {
         onClose={handleClose}
         classes={{
           popper: classes.viewResultsPopper,
-          arrow: classes.viewResultsPopperArrow,
         }}>
 
         <ClickAwayListener onClickAway={handleClose}>
