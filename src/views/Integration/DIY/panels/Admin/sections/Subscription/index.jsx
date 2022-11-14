@@ -129,6 +129,7 @@ export default function SubscriptionSection({ childId, integrationId }) {
   const plan = useSelector(state =>
     selectors.integrationAppEdition(state, integrationId)
   );
+  const istwoDotZeroFrameWork = useSelector(state => selectors.isIntegrationAppVersion2(state, integrationId, true));
   const addOnState = useSelector(state =>
     selectors.integrationAppAddOnState(state, integrationId)
   );
@@ -184,7 +185,7 @@ export default function SubscriptionSection({ childId, integrationId }) {
     if (upgradeText === 'Request upgrade') {
       confirmDialog({
         title: 'Request upgrade',
-        message: 'We will contact you to discuss your business needs and recommend an ideal subscription plan.',
+        message: istwoDotZeroFrameWork ? 'You’ll receive a follow-up email from an associate shortly to discuss different plan options, resources & features available in each plan, and pricing.' : 'We will contact you to discuss your business needs and recommend an ideal subscription plan.',
         buttons: [
           {
             label: 'Submit request',
