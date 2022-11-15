@@ -63,8 +63,6 @@ export default function DynaHFAssistantSearchParams(props) {
     resourceId,
     flowId,
     value,
-    keyName,
-    valueName,
     required,
   } = props;
   let { label } = props;
@@ -109,11 +107,14 @@ export default function DynaHFAssistantSearchParams(props) {
     dispatch(actions.form.clearForceFieldState(formKey)(id));
   }, [dispatch, formKey, id]);
 
-  const handleSave = useCallback(editorValues => {
-    onFieldChange(id, editorValues.rule);
-  }, [id, onFieldChange]);
+  const handleSave = useCallback((selectKey, values) => editorValues => {
+    const newValue = {...values, [Object.keys(values)[selectKey]]: editorValues.rule};
 
-  const handleEditorClick = useCallback(() => {
+    onFieldChange(id, newValue);
+  }, [id, onFieldChange]);
+  const handleEditorClick = useCallback(event => {
+    const selectedKey = +event.currentTarget.id.match(/\d+/g);
+
     dispatch(actions.editor.init(editorId, 'handlebars', {
       formKey,
       flowId,
@@ -121,7 +122,8 @@ export default function DynaHFAssistantSearchParams(props) {
       resourceType,
       fieldId: id,
       stage: flowDataStage,
-      onSave: handleSave,
+      onSave: handleSave(selectedKey, value),
+      fieldKey: selectedKey,
     }));
 
     history.push(buildDrawerUrl({
@@ -129,19 +131,11 @@ export default function DynaHFAssistantSearchParams(props) {
       baseUrl: match.url,
       params: { editorId },
     }));
-  }, [dispatch, flowDataStage, editorId, formKey, flowId, resourceId, resourceType, id, handleSave, history, match.url]);
+  }, [dispatch, editorId, formKey, flowId, resourceId, resourceType, id, flowDataStage, handleSave, value, history, match.url]);
 
   const handleUpdate = useCallback(values => {
-    const finalValue = values.reduce((fv, val) => {
-      if (!val[keyName]) {
-        return fv;
-      }
-
-      return { ...fv, [val[keyName]]: val[valueName]};
-    }, {});
-
-    onFieldChange(id, finalValue);
-  }, [id, keyName, onFieldChange, valueName]);
+    onFieldChange(id, values);
+  }, [id, onFieldChange]);
 
   if (!label) {
     label =

@@ -768,7 +768,7 @@ export function* initSampleData({ id }) {
 }
 
 export function* initEditor({ id, editorType, options }) {
-  const { formKey, integrationId, resourceId, resourceType, flowId, sectionId, fieldId, ssLinkedConnectionId} = options || {};
+  const { formKey, integrationId, resourceId, resourceType, flowId, sectionId, fieldId, ssLinkedConnectionId, fieldKey} = options || {};
 
   let fieldState = {};
   let formState = {};
@@ -812,6 +812,9 @@ export function* initEditor({ id, editorType, options }) {
         isPageGenerator,
         isStandaloneResource: !flowId,
       });
+      if (fieldId === 'assistantMetadata.queryParams') {
+        formattedOptions = {...formattedOptions, rule: fieldState.value[Object.keys(fieldState.value)[fieldKey]]};
+      }
     } else if (editorType === 'settingsForm') {
       let parentResource = {};
       const sectionMeta = yield select(selectors.getSectionMetadata, resourceType, resourceId, sectionId || 'general');
