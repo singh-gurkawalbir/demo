@@ -36,6 +36,11 @@ export default {
     },
   },
   layout: {
-    fields: ['application'],
+    type: 'box',
+    containers: [
+      {
+        fields: ['application'],
+      },
+    ],
   },
 };
