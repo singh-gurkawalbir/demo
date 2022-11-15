@@ -2,7 +2,6 @@
 import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { MemoryRouter } from 'react-router-dom';
 import { renderWithProviders } from '../../../test/test-utils';
 import CeligoTable from '../../CeligoTable';
 import { getCreatedStore } from '../../../store';
@@ -21,7 +20,7 @@ let initialStore;
 let mockTableContext;
 let mockLocation;
 let mockRouteMatch;
-const mockDispatchFn = jest.fn(action => initialStore.dispatch(action));
+const mockDispatchFn = jest.fn();
 const mockHistoryPush = jest.fn();
 
 jest.mock('react-redux', () => ({
@@ -38,6 +37,7 @@ jest.mock('react-router-dom', () => ({
   }),
   useLocation: () => mockLocation,
   useRouteMatch: () => mockRouteMatch,
+  Link: ({children}) => (<div>{children}</div>),
 }));
 
 jest.mock('../../CeligoTable/TableContext', () => ({
@@ -61,14 +61,13 @@ function initCommonActions(data = [{}]) {
     ],
   };
   const ui = (
-    <MemoryRouter>
-      <ConfirmDialogProvider>
-        <CeligoTable {...metadata} data={data} />
-      </ConfirmDialogProvider>
-    </MemoryRouter>
+    <ConfirmDialogProvider>
+      <CeligoTable {...metadata} data={data} />
+    </ConfirmDialogProvider>
   );
 
-  return renderWithProviders(ui, {initialStore});
+  renderWithProviders(ui, {initialStore});
+  userEvent.click(screen.getByRole('button'));
 }
 
 describe('test suite for common actions', () => {
@@ -93,7 +92,6 @@ describe('test suite for common actions', () => {
 
     initialStore.getState().data.resources.connections = [connection];
     initCommonActions([{_id: connection._id}]);
-    userEvent.click(screen.getByRole('button'));
     const viewAuditLogsButton = screen.getByRole('menuitem', {name: 'View audit log'});
 
     userEvent.click(viewAuditLogsButton);
@@ -112,7 +110,6 @@ describe('test suite for common actions', () => {
     const scriptId = 'script123';
 
     initCommonActions([{_id: scriptId}]);
-    userEvent.click(screen.getByRole('button'));
     const viewExecutionLogsButton = screen.getByRole('menuitem', {name: 'View execution log'});
 
     userEvent.click(viewExecutionLogsButton);
@@ -132,7 +129,6 @@ describe('test suite for common actions', () => {
     const scriptId = 'script123';
 
     initCommonActions([{_id: scriptId}]);
-    userEvent.click(screen.getByRole('button'));
     const viewExecutionLogsButton = screen.getByRole('menuitem', {name: 'View execution log'});
 
     userEvent.click(viewExecutionLogsButton);
@@ -147,7 +143,7 @@ describe('test suite for common actions', () => {
     test('should be able to clone resources (other than integration flows)', () => {
       mockTableContext.resourceType = 'exports';
       initCommonActions([{ _id: 'export123' }]);
-      userEvent.click(screen.getByRole('button'));
+
       const cloneButton = screen.getByRole('menuitem', {name: 'Clone export'});
 
       userEvent.click(cloneButton);
@@ -163,7 +159,7 @@ describe('test suite for common actions', () => {
 
       initialStore.getState().user.preferences.defaultAShareId = 'own';
       initCommonActions(data);
-      userEvent.click(screen.getByRole('button'));
+
       expect(screen.getByRole('menuitem', {name: 'Clone flow'})).toBeInTheDocument();
     });
 
@@ -175,7 +171,7 @@ describe('test suite for common actions', () => {
       }];
 
       initCommonActions(data);
-      userEvent.click(screen.getByRole('button'));
+
       expect(screen.queryByRole('menuitem', {name: 'Clone flow'})).not.toBeInTheDocument();
     });
   });
@@ -194,7 +190,6 @@ describe('test suite for common actions', () => {
       _id: 'ia123',
       type: 'integrationApp',
     }]);
-    userEvent.click(screen.getByRole('button'));
 
     const editButton = screen.getByRole('menuitem', {name: 'Edit license'});
 
@@ -208,7 +203,6 @@ describe('test suite for common actions', () => {
       _id: 'ia123',
       type: 'integrationApp',
     }]);
-    userEvent.click(screen.getByRole('button'));
 
     const deleteButton = screen.getByRole('menuitem', {name: 'Delete license'});
 
@@ -247,7 +241,6 @@ describe('test suite for common actions', () => {
       },
     };
     initCommonActions(data);
-    userEvent.click(screen.getByRole('button'));
     const deleteButton = screen.getByRole('menuitem', {name: 'Delete export'});
 
     userEvent.click(deleteButton);
@@ -267,7 +260,6 @@ describe('test suite for common actions', () => {
       _id: 'template123',
       name: 'Shopify template',
     }]);
-    userEvent.click(screen.getByRole('button'));
     const downloadButton = screen.getByRole('menuitem', {name: 'Download template zip'});
 
     userEvent.click(downloadButton);
@@ -290,7 +282,6 @@ describe('test suite for common actions', () => {
     }];
 
     initCommonActions(data);
-    userEvent.click(screen.getByRole('button'));
     const generateTokenButton = screen.queryByRole('menuitem', {name: 'Generate new token'});
 
     userEvent.click(generateTokenButton);
@@ -318,7 +309,6 @@ describe('test suite for common actions', () => {
     }];
 
     initCommonActions(data);
-    userEvent.click(screen.getByRole('button'));
     const generateTokenButton = screen.queryByRole('menuitem', {name: 'Generate new token'});
 
     userEvent.click(generateTokenButton);
@@ -346,7 +336,6 @@ describe('test suite for common actions', () => {
     }];
 
     initCommonActions(data);
-    userEvent.click(screen.getByRole('button'));
     expect(screen.queryByRole('menuitem', {name: 'Generate new token'})).not.toBeInTheDocument();
   });
 
@@ -371,7 +360,6 @@ describe('test suite for common actions', () => {
       _id: 'export123',
       name: 'Netsuite Export',
     }]);
-    userEvent.click(screen.getByRole('button'));
     const viewReferenceButton = screen.getByRole('menuitem', {name: 'Used by'});
 
     userEvent.click(viewReferenceButton);
