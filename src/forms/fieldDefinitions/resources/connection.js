@@ -50,7 +50,7 @@ export default {
     id: 'autoRecoverGovernanceErrors',
     label: 'Auto-recover governance errors',
     type: 'checkbox',
-    defaultValue: r => r?.autoRecoverGovernanceErrors || true,
+    defaultValue: r => typeof r?.autoRecoverGovernanceErrors === 'boolean' ? r?.autoRecoverGovernanceErrors : true,
     visibleWhen: [
       {
         field: '_borrowConcurrencyFromConnectionId',
