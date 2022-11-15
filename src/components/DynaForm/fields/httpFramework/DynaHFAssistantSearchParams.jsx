@@ -64,6 +64,8 @@ export default function DynaHFAssistantSearchParams(props) {
     flowId,
     value,
     required,
+    keyName,
+    valueName,
   } = props;
   let { label } = props;
   const classes = useStyles();
@@ -134,8 +136,16 @@ export default function DynaHFAssistantSearchParams(props) {
   }, [dispatch, editorId, formKey, flowId, resourceId, resourceType, id, flowDataStage, handleSave, value, history, match.url]);
 
   const handleUpdate = useCallback(values => {
-    onFieldChange(id, values);
-  }, [id, onFieldChange]);
+    const finalValue = values.reduce((fv, val) => {
+      if (!val[keyName]) {
+        return fv;
+      }
+
+      return { ...fv, [val[keyName]]: val[valueName]};
+    }, {});
+
+    onFieldChange(id, finalValue);
+  }, [id, keyName, onFieldChange, valueName]);
 
   if (!label) {
     label =
