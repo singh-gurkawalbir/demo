@@ -1,7 +1,7 @@
 import React from 'react';
 import SvgIcon from '@material-ui/core/SvgIcon';
 
-export default function ZendeskIcon(props) {
+export default function ZendeskChatIcon(props) {
   return (
     <SvgIcon {...props} viewBox="0 0 64 64">
       <circle fill="#3776C1" cx="28.445" cy="29.07" r="28.364" />
