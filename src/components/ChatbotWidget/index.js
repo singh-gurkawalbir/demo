@@ -3,7 +3,7 @@ import Draggable from 'react-draggable';
 import {makeStyles} from '@material-ui/core/styles';
 import { IconButton } from '@material-ui/core';
 import { useSelector } from 'react-redux';
-import TriangleIcon from '../icons/TriangleIcon';
+import ZendeskChatIcon from '../icons/ZendeskChatIcon';
 import CloseIcon from '../icons/CloseIcon';
 import useScript from '../../hooks/useScript';
 import { selectors } from '../../reducers';
@@ -11,12 +11,15 @@ import { selectors } from '../../reducers';
 const scriptUrl = process.env.ZD_CHATBOT_URL + process.env.ZD_CHATBOT_KEY;
 const scriptId = 'ze-snippet';
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles(theme => ({
   chatbotIcon: {
     position: 'absolute',
     zIndex: 99999999,
-    bottom: 20,
-    right: 20,
+    bottom: theme.spacing(2),
+    right: theme.spacing(2),
+  },
+  chatIcon: {
+    fontSize: theme.spacing(6),
   },
 }));
 
@@ -75,7 +78,7 @@ const ChatbotWidget = () => {
           isOpen ? (
             <CloseIcon data-test="close-zd-chatbot" />
           ) : (
-            <TriangleIcon data-test="open-zd-chatbot" />
+            <ZendeskChatIcon className={classes.chatIcon} data-test="open-zd-chatbot" />
           )
         }
       </IconButton>
