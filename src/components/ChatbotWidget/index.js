@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Draggable from 'react-draggable';
 import {makeStyles} from '@material-ui/core/styles';
 import { IconButton } from '@material-ui/core';
-import { useSelector } from 'react-redux';
+import { useSelector, shallowEqual } from 'react-redux';
 import ZendeskChatIcon from '../icons/ZendeskChatIcon';
 import CloseIcon from '../icons/CloseIcon';
 import useScript from '../../hooks/useScript';
@@ -26,7 +26,7 @@ const useStyles = makeStyles(theme => ({
 const ChatbotWidget = () => {
   const classes = useStyles();
   const [isOpen, open] = useState(false);
-  const { email, name } = useSelector(state => selectors.userProfile(state)) || {};
+  const { email, name } = useSelector(state => selectors.userProfile(state), shallowEqual) || {};
 
   useScript(scriptUrl, scriptId, () => {
     // Hiding the default launcher
