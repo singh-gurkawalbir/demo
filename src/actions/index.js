@@ -1332,12 +1332,14 @@ const license = {
     action(actionTypes.LICENSE.UPGRADE_REQUEST, {}),
   requestUpdate: (actionType, {connectorId, licenseId, feature}) =>
     action(actionTypes.LICENSE.UPDATE_REQUEST, { actionType, connectorId, licenseId, feature }),
-  licenseUpgradeRequestSubmitted: (message, feature) =>
-    action(actionTypes.LICENSE.UPGRADE_REQUEST_SUBMITTED, { message, feature }),
+  licenseUpgradeRequestSubmitted: (message, feature, isTwoDotZero) =>
+    action(actionTypes.LICENSE.UPGRADE_REQUEST_SUBMITTED, { message, feature, isTwoDotZero }),
   licenseReactivated: () =>
     action(actionTypes.LICENSE.REACTIVATED),
   ssoLicenseUpgradeRequested: () =>
     action(actionTypes.LICENSE.SSO.UPGRADE_REQUESTED),
+  dataRetentionLicenseUpgradeRequested: () =>
+    action(actionTypes.LICENSE.DATA_RETENTION.UPGRADE_REQUESTED),
   requestLicenseEntitlementUsage: () =>
     action(actionTypes.LICENSE.ENTITLEMENT_USAGE_REQUEST),
   requestNumEnabledFlows: () =>
@@ -2441,6 +2443,12 @@ const mfa = {
   clear: () => action(actionTypes.MFA.CLEAR),
 };
 
+const accountSettings = {
+  request: () => action(actionTypes.ACCOUNT_SETTINGS.REQUEST),
+  update: accountSettings => action(actionTypes.ACCOUNT_SETTINGS.UPDATE, {accountSettings}),
+  received: accountSettings => action(actionTypes.ACCOUNT_SETTINGS.RECEIVED, {accountSettings}),
+};
+
 export default {
   asyncTask,
   form,
@@ -2488,6 +2496,7 @@ export default {
   logs,
   sso,
   mfa,
+  accountSettings,
   bottomDrawer,
   integrationLCM,
   httpConnectors,
