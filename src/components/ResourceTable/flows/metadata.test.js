@@ -71,7 +71,7 @@ initialStore.getState().user.preferences = {
   defaultAShareId: 'own',
 };
 
-const resourcE = {
+const resource = {
   _id: '5d95f7d1795b356dfcb5d6c4',
   lastModified: '2022-05-03T00:54:08.540Z',
   name: 'Name of the flow',
@@ -97,13 +97,13 @@ const actionProps = {
   }},
 };
 
-function initflowTable(actionProps = {}, resource = resourcE) {
+function initflowTable(actionProps = {}, res = resource) {
   const ui = (
     <MemoryRouter>
       <CeligoTable
         actionProps={actionProps}
         {...metadata}
-        data={[resource]} />
+        data={[res]} />
     </MemoryRouter>
   );
 
@@ -135,16 +135,14 @@ describe('flows metadata UI test case', () => {
     cellIndex = indexOfCell('Mocked CeligoSwitch', 'cell');
     expectFunction(headerIndex, cellIndex);
   });
-  test('should show child when header as App', () => {
-    initflowTable({...actionProps, showChild: true}, {...resourcE, childName: 'ChildName'});
-    screen.debug(null, Infinity);
+  test('should show child with header as App', () => {
+    initflowTable({...actionProps, showChild: true}, {...resource, childName: 'ChildName'});
     headerIndex = indexOfCell('App', 'columnheader');
     cellIndex = indexOfCell('ChildName', 'cell');
     expectFunction(headerIndex, cellIndex);
   });
   test('should show child when header is provided', () => {
     initflowTable({...actionProps, showChild: true, childHeader: 'someChildHeader', integrationChildren: [{value: '5d95f77174836b1acdcd2788', label: 'someLabel'}]});
-    screen.debug(null, Infinity);
     headerIndex = indexOfCell('someChildHeader', 'columnheader');
     cellIndex = indexOfCell('someLabel', 'cell');
     expectFunction(headerIndex, cellIndex);
@@ -179,14 +177,14 @@ describe('flows metadata UI test case', () => {
     cellIndex = indexOfCell('Success', 'cell');
     expectFunction(headerIndex, cellIndex);
   });
-  test('should verify action for inetgartion app', () => {
+  test('should verify action for integration app', () => {
     initflowTable({...actionProps, isIntegrationApp: true});
     userEvent.click(screen.getByRole('button', {name: /more/i}));
     expect(screen.getByText('Edit flow')).toBeInTheDocument();
     expect(screen.getByText('View audit log')).toBeInTheDocument();
   });
   test('should show detach option when flow does not belongs to standalone', () => {
-    initflowTable({...actionProps, resourceType: 'flows'}, {...resourcE, _connectorId: null});
+    initflowTable({...actionProps, resourceType: 'flows'}, {...resource, _connectorId: null});
     userEvent.click(screen.getByRole('button', {name: /more/i}));
     expect(screen.getByText('Edit flow')).toBeInTheDocument();
     expect(screen.getByText('View audit log')).toBeInTheDocument();
@@ -197,7 +195,7 @@ describe('flows metadata UI test case', () => {
     expect(screen.getByText('Delete flow')).toBeInTheDocument();
   });
   test('should show detach option when flow belongs to standalone', () => {
-    initflowTable({...actionProps, resourceType: 'flows'}, {...resourcE, _connectorId: null, _integrationId: null});
+    initflowTable({...actionProps, resourceType: 'flows'}, {...resource, _connectorId: null, _integrationId: null});
     userEvent.click(screen.getByRole('button', {name: /more/i}));
     expect(screen.getByText('Edit flow')).toBeInTheDocument();
     expect(screen.getByText('View audit log')).toBeInTheDocument();

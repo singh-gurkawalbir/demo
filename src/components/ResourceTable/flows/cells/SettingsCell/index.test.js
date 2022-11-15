@@ -13,16 +13,16 @@ jest.mock('../../../../icons/SettingsIcon', () => ({
   ),
 }));
 
-describe('Settign cell test cases', () => {
-  test('should show empty dom when flow doesnot supoorts settings', () => {
+describe('Setting cell test cases', () => {
+  test('should show empty dom when flow doesnot supports settings', () => {
     const {container} = render(<MemoryRouter><RemoveMargin actionProps={{flowAttributes: {}}} /></MemoryRouter>);
 
     expect(container).toBeEmptyDOMElement();
   });
-  test('should show empty dom when flow doesnot supoorts seteqrtings', async () => {
+  test('should show empty dom when flow supports settings', async () => {
     render(
-      <MemoryRouter initialEntries={['/parentUrl']}>
-        <Route path="/parentUrl">
+      <MemoryRouter initialEntries={['/integrations/integration_id/flows']}>
+        <Route path="/integrations/integration_id/flows">
           <RemoveMargin
             flowId="someFlowId"
             name="someName"
@@ -33,7 +33,7 @@ describe('Settign cell test cases', () => {
     const link = screen.getByRole('button');
 
     expect(link).toBeInTheDocument();
-    expect(link).toHaveAttribute('href', '/parentUrl/someFlowId/settings');
+    expect(link).toHaveAttribute('href', '/integrations/integration_id/flows/someFlowId/settings');
 
     expect(screen.getByText('SettingsIcon')).toBeInTheDocument();
     userEvent.hover(link);

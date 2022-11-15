@@ -1,7 +1,7 @@
 /* global describe, test,expect */
 import React from 'react';
 import { screen } from '@testing-library/react';
-import { MemoryRouter, Route} from 'react-router-dom';
+import { MemoryRouter } from 'react-router-dom';
 import userEvent from '@testing-library/user-event';
 import {renderWithProviders} from '../../../../../test/test-utils';
 import CeligoTable from '../../../../CeligoTable';
@@ -15,12 +15,10 @@ const metadata = {
 describe('Attach flow action test case', () => {
   test('should show modal dialog for attach flow', () => {
     renderWithProviders(
-      <MemoryRouter initialEntries={['/parentUrl']}>
-        <Route path="/parentUrl">
-          <CeligoTable
-            {...metadata}
-            data={[{_id: 'someId'}]} />
-        </Route>
+      <MemoryRouter>
+        <CeligoTable
+          {...metadata}
+          data={[{_id: 'someId'}]} />
       </MemoryRouter>
     );
     userEvent.click(screen.getByRole('button', {name: /more/i}));

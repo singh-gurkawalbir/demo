@@ -21,7 +21,7 @@ describe('Status Cell of Flow Table UI test cases', () => {
     render(<MemoryRouter><StatusCell lastExecutedAtSortJobStatus="someStatus" /></MemoryRouter>);
     expect(screen.getByText('someStatus')).toBeInTheDocument();
   });
-  test('should show status when job in queue satus', () => {
+  test('should show status when job in queue status', () => {
     render(
       <MemoryRouter>
         <StatusCell

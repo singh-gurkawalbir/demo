@@ -1,4 +1,4 @@
-/* global describe, test,expect, jest */
+/* global describe, test,expect, jest, afterEach */
 import React from 'react';
 import { screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
@@ -28,28 +28,16 @@ const initialStore = reduxStore;
 
 initialStore.getState().data.resources.connections = [{
   _id: '62bd43c87b94d20de64e9ab3',
-  createdAt: '2022-06-30T06:33:44.780Z',
-  lastModified: '2022-06-30T06:33:44.870Z',
   offline: true,
   type: 'http',
   name: 'demo',
-  sandbox: false,
 }];
 initialStore.getState().data.resources.flows = [
   {
     _id: '5ea16c600e2fab71928a6152',
-    lastModified: '2021-08-13T08:02:49.712Z',
-    name: ' Bulk insert with harcode and mulfield mapping settings',
-    disabled: true,
     _integrationId: '5e9bf6c9edd8fa3230149fbd',
-    skipRetries: false,
     pageProcessors: [
       {
-        responseMapping: {
-          fields: [],
-          lists: [],
-        },
-        type: 'import',
         _importId: '5ea16cd30e2fab71928a6166',
       },
     ],
@@ -58,29 +46,20 @@ initialStore.getState().data.resources.flows = [
         _exportId: '5d00b9f0bcd64414811b2396',
       },
     ],
-    createdAt: '2020-04-23T10:22:24.290Z',
-    lastExecutedAt: '2020-04-23T11:08:41.093Z',
-    autoResolveMatchingTraceKeys: true,
   },
 ];
 
 initialStore.getState().data.resources.imports = [
   {
     _id: '5ea16cd30e2fab71928a6166',
-    createdAt: '2022-02-25T17:04:59.480Z',
     lastModified: '2022-06-12T06:54:25.628Z',
     name: 'Rest import',
     _connectionId: '62bd43c87b94d20de64e9ab3',
-    apiIdentifier: 'ica1cc6072',
-    ignoreExisting: false,
-    ignoreMissing: false,
-    oneToMany: false,
-    sandbox: false,
     adaptorType: 'HTTPImport',
   },
 ];
 
-async function initNameCell(props = {}, initialStore = null) {
+function initNameCell(props = {}, initialStore = null) {
   const ui = (
     <MemoryRouter>
       <NameCell
@@ -89,10 +68,16 @@ async function initNameCell(props = {}, initialStore = null) {
     </MemoryRouter>
   );
 
-  return renderWithProviders(ui, {initialStore});
+  renderWithProviders(ui, {initialStore});
+  const link = screen.getByRole('link');
+
+  return link;
 }
 
 describe('Name Cell of Flow Table UI test cases', () => {
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
   test('should show undefined as name when no props are provided', () => {
     renderWithProviders(<MemoryRouter><NameCell /></MemoryRouter>);
     const link = screen.getByRole('link');
@@ -140,8 +125,7 @@ describe('Name Cell of Flow Table UI test cases', () => {
       isIntegrationApp: true,
       actionProps: {appName: 'someappName', sectionId: 'somesectionId', flowAttributes: []}};
 
-    initNameCell(props);
-    const link = screen.getByRole('link');
+    const link = initNameCell(props);
 
     expect(link.textContent).toBe('SomeName');
     expect(link).toHaveAttribute('href', '/integrationapps/someappName/someintegrationId/child/someChildId/flows/sections/somesectionId/flowBuilder/SomeflowId');
@@ -160,8 +144,7 @@ describe('Name Cell of Flow Table UI test cases', () => {
         flowAttributes: {SomeflowId: {isDataLoader: true}}},
     };
 
-    initNameCell(props);
-    const link = screen.getByRole('link');
+    const link = initNameCell(props);
 
     expect(link.textContent).toBe('SomeName');
     expect(link).toHaveAttribute(
@@ -178,8 +161,7 @@ describe('Name Cell of Flow Table UI test cases', () => {
       actionProps: {appName: 'someappName', sectionId: 'somesectionId', flowAttributes: []},
     };
 
-    initNameCell(props, initialStore);
-    const link = screen.getByRole('link');
+    const link = initNameCell(props, initialStore);
 
     expect(link.textContent).toBe('SomeName');
     userEvent.click(screen.getAllByRole('button')[0]);

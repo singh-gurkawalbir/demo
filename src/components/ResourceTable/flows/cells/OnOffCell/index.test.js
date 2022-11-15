@@ -35,16 +35,12 @@ initialStore.getState().user.org.accounts = [
         accessLevel: 'manage',
       },
     ],
-    lastModified: '2020-01-30T09:37:56.801Z',
-    createdAt: '2020-01-30T09:35:26.336Z',
     ownerUser: {
       _id: '57ba9c1dc3432f661abf4e67',
       timezone: 'Asia/Calcutta',
       licenses: [
         {
           _id: '57ba9c1ec3432f661abf4e68',
-          created: '2016-08-22T06:30:54.524Z',
-          lastModified: '2022-11-10T08:01:32.820Z',
           type: 'diy',
           hasSubscription: true,
           expires: '2016-08-22T06:30:54.524Z',
@@ -56,7 +52,7 @@ initialStore.getState().user.org.accounts = [
   },
 ];
 
-async function initonoffCell(props = {}, initialStore = null) {
+function initonoffCell(props = {}, initialStore = null) {
   const ui = (
     <ConfirmDialogProvider>
       <OnOffCell
@@ -77,7 +73,7 @@ describe('On/Off cell UI test case', () => {
   afterEach(() => {
     jest.clearAllMocks();
   });
-  test('should show empty dom when flow us enable locked', () => {
+  test('should show empty dom when flow is enable locked', () => {
     const {utils} = renderWithProviders(
       <ConfirmDialogProvider>
         <OnOffCell
@@ -139,7 +135,7 @@ describe('On/Off cell UI test case', () => {
 
     expect(screen.getByRole('progressbar')).toBeInTheDocument();
   });
-  test('should show snackbar message when licnese not valid to enable', () => {
+  test('should show snackbar message when license not valid to enable', () => {
     const props = {
       actionProps: {flowAttributes: {}},
       flowId: 'someflowId',
@@ -158,7 +154,7 @@ describe('On/Off cell UI test case', () => {
       }
     );
   });
-  test('should not call en que snack bar when licnese is free', () => {
+  test('should not call enqueue snack bar when licnese is free', () => {
     const props = {
       actionProps: {flowAttributes: {}},
       flowId: 'someflowId',
@@ -172,7 +168,7 @@ describe('On/Off cell UI test case', () => {
     userEvent.click(screen.getByText('Enable'));
     expect(enqueueSnackbar).not.toHaveBeenCalled();
   });
-  test('should not call enqueue snakck bar when flow is DataLoader', () => {
+  test('should not call enqueue snack bar when flow is DataLoader', () => {
     const props = {
       actionProps: {flowAttributes: {someflowId: {isDataLoader: true}}},
       flowId: 'someflowId',
@@ -186,7 +182,7 @@ describe('On/Off cell UI test case', () => {
     userEvent.click(screen.getByText('Enable'));
     expect(enqueueSnackbar).not.toHaveBeenCalled();
   });
-  test('should not call enqueue snakck bar when flow belaonge to 2.0 framework', () => {
+  test('should not call enqueue snack bar when flow belong to 2.0 framework', () => {
     const props = {
       actionProps: {integration: {installSteps: [1]}, flowAttributes: {}},
       flowId: 'someflowId',
@@ -200,7 +196,7 @@ describe('On/Off cell UI test case', () => {
     userEvent.click(screen.getByText('Enable'));
     expect(enqueueSnackbar).not.toHaveBeenCalled();
   });
-  test('should click on the diable for integrator app', () => {
+  test('should click on the disable for integrator app', () => {
     const props = {
       actionProps: {flowAttributes: {}},
       isIntegrationApp: true,

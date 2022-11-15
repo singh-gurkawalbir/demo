@@ -45,13 +45,13 @@ describe('Run cell UI test cases', () => {
   afterEach(() => {
     jest.clearAllMocks();
   });
-  test('should redirect to dashborad of standalone flow when flow starts', () => {
+  test('should redirect to dashboard of standalone flow when flow starts', () => {
     initRunCell();
     expect(screen.getByText('Mocked RunFlowButton someflowId'));
     userEvent.click(screen.getByText('onRunStartButton'));
     expect(mockHistoryPush).toHaveBeenCalledWith('/templates/templateName/none/dashboard');
   });
-  test('should redirect to dashborad of provided integration when flow starts', () => {
+  test('should redirect to dashboard of provided integration when flow starts', () => {
     initRunCell({flowId: 'someflowId', integrationId: 'someintegrationId' });
     expect(screen.getByText('Mocked RunFlowButton someflowId'));
     userEvent.click(screen.getByText('onRunStartButton'));
@@ -70,7 +70,7 @@ describe('Run cell UI test cases', () => {
     userEvent.click(screen.getByText('onRunStartButton'));
     expect(mockHistoryPush).toHaveBeenCalledWith('/integrations/someintegrationId/dashboard');
   });
-  test('should redirect to no template standalone', () => {
+  test('should redirect to inetgration dashboard', () => {
     render(
       <MemoryRouter>
         <RunCell
@@ -83,7 +83,7 @@ describe('Run cell UI test cases', () => {
     userEvent.click(screen.getByText('onRunStartButton'));
     expect(mockHistoryPush).toHaveBeenCalledWith('/integrations/someintegrationId/dashboard');
   });
-  test('should redirect isIntegrationApp childId', () => {
+  test('should redirect to integration app with childId', () => {
     render(
       <MemoryRouter>
         <RunCell
@@ -98,7 +98,7 @@ describe('Run cell UI test cases', () => {
     userEvent.click(screen.getByText('onRunStartButton'));
     expect(mockHistoryPush).toHaveBeenCalledWith('/integrationapps/appName/someintegrationId/child/somechildId/dashboard');
   });
-  test('should redirect isIntegrationApp no childId', () => {
+  test('should redirect to integration app with no childId', () => {
     render(
       <MemoryRouter>
         <RunCell
@@ -112,7 +112,7 @@ describe('Run cell UI test cases', () => {
     userEvent.click(screen.getByText('onRunStartButton'));
     expect(mockHistoryPush).toHaveBeenCalledWith('/integrationapps/appName/someintegrationId/dashboard');
   });
-  test('should risUserInErrMgtTwoDotZero', () => {
+  test('should not redirect to any other url on run start when user is in ErrMgtTwoDotZero', () => {
     render(
       <MemoryRouter>
         <RunCell

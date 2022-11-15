@@ -1,4 +1,4 @@
-/* global describe, test,expect, jest */
+/* global describe, test,expect, jest, afterEach */
 import React from 'react';
 import { screen } from '@testing-library/react';
 import { MemoryRouter} from 'react-router-dom';
@@ -17,7 +17,7 @@ jest.mock('react-redux', () => ({
   useDispatch: () => mockDispatch,
 }));
 
-const resourcE = {
+const resource = {
   _id: '5d95f7d1795b356dfcb5d6c4',
   lastModified: '2022-05-03T00:54:08.540Z',
   name: 'Name of the flow',
@@ -42,14 +42,14 @@ initialStore.getState().user.preferences = {
   defaultAShareId: 'own',
 };
 
-async function initflowTable(actionProps = {}, resource = resourcE, initialStore = null) {
+async function initflowTable(actionProps = {}, res = resource, initialStore = null) {
   const ui = (
     <ConfirmDialogProvider>
       <MemoryRouter>
         <CeligoTable
           actionProps={actionProps}
           {...metadata}
-          data={[resource]} />
+          data={[res]} />
       </MemoryRouter>
     </ConfirmDialogProvider>
   );
@@ -58,13 +58,16 @@ async function initflowTable(actionProps = {}, resource = resourcE, initialStore
 }
 
 describe('Detach flow action UI test cases', () => {
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
   test('should not show detach flow option because of permissions', () => {
-    initflowTable({...actionProps, resourceType: 'flows'}, {...resourcE, _connectorId: null});
+    initflowTable({...actionProps, resourceType: 'flows'}, {...resource, _connectorId: null});
     userEvent.click(screen.getByRole('button', {name: /more/i}));
     expect(screen.queryByText('Detach flow')).not.toBeInTheDocument();
   });
   test('should click on detach button and dispatch call should be made for detaching', () => {
-    initflowTable({...actionProps, resourceType: 'flows'}, {...resourcE, _connectorId: null}, initialStore);
+    initflowTable({...actionProps, resourceType: 'flows'}, {...resource, _connectorId: null}, initialStore);
     userEvent.click(screen.getByRole('button', {name: /more/i}));
     userEvent.click(screen.getByText('Detach flow'));
     userEvent.click(screen.getByText('Detach'));
@@ -77,7 +80,7 @@ describe('Detach flow action UI test cases', () => {
     );
   });
   test('should click on detach button when flow was part of a flow group', () => {
-    initflowTable({...actionProps, resourceType: 'flows'}, {...resourcE, _connectorId: null, _flowGroupingId: 'someflowGroupId'}, initialStore);
+    initflowTable({...actionProps, resourceType: 'flows'}, {...resource, _connectorId: null, _flowGroupingId: 'someflowGroupId'}, initialStore);
     userEvent.click(screen.getByRole('button', {name: /more/i}));
     userEvent.click(screen.getByText('Detach flow'));
     userEvent.click(screen.getByText('Detach'));

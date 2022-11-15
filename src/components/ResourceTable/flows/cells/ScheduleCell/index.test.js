@@ -23,8 +23,8 @@ initialStore.getState().data.resources.flows = [
 
 function initScheduleCell(actionProps = {}, initialStore = null) {
   const ui = (
-    <MemoryRouter initialEntries={['/parentUrl']}>
-      <Route path="/parentUrl">
+    <MemoryRouter initialEntries={['/integrations/integration_id/flows']}>
+      <Route path="/integrations/integration_id">
         <ScheduleCell
           flowId="someflowId"
           name="someName"
@@ -55,7 +55,7 @@ describe('Shecdule cell UI test cases', () => {
 
     expect(button).toHaveAttribute('aria-disabled', 'true');
 
-    expect(button).toHaveAttribute('href', '/parentUrl/someflowId/schedule');
+    expect(button).toHaveAttribute('href', '/integrations/integration_id/flows/someflowId/schedule');
   });
   test('should show tooltip for configure schedule', () => {
     initScheduleCell({flowAttributes: {someflowId: {allowSchedule: true, type: 'Scheduled'}}});
@@ -63,6 +63,6 @@ describe('Shecdule cell UI test cases', () => {
     expect(screen.getByTitle('Change schedule')).toBeInTheDocument();
     const button = screen.getByRole('button');
 
-    expect(button).toHaveAttribute('href', '/parentUrl/someflowId/schedule');
+    expect(button).toHaveAttribute('href', '/integrations/integration_id/flows/someflowId/schedule');
   });
 });

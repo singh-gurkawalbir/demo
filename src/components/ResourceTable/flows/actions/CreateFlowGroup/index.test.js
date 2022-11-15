@@ -1,4 +1,4 @@
-/* global describe, test,expect, jest */
+/* global describe, test,expect, jest,  afterEach */
 import React from 'react';
 import { screen } from '@testing-library/react';
 import { MemoryRouter, Route } from 'react-router-dom';
@@ -25,20 +25,23 @@ const metadata = {
 };
 
 describe('Create flow group UI test cases', () => {
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
   test('should redirect to flow page for adding new group', () => {
     renderWithProviders(
-      <MemoryRouter initialEntries={['/parentUrl']}>
-        <Route path="/parentUrl">
+      <MemoryRouter initialEntries={['/integrations/603ce75ac4fec33283691f43/flows']}>
+        <Route path="/integrations/603ce75ac4fec33283691f43/flows">
           <ConfirmDialogProvider>
             <CeligoTable
               {...metadata}
-              data={[{}]} />
+              data={[{key: 'someKey'}]} />
           </ConfirmDialogProvider>
         </Route>
       </MemoryRouter>,
     );
     userEvent.click(screen.getByRole('button', {name: /more/i}));
     userEvent.click(screen.queryByText('Create flow group'));
-    expect(mockHistoryPush).toHaveBeenCalledWith('/parentUrl/flowgroups/add');
+    expect(mockHistoryPush).toHaveBeenCalledWith('/integrations/603ce75ac4fec33283691f43/flows/flowgroups/add');
   });
 });

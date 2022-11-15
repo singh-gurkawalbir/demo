@@ -1,4 +1,4 @@
-/* global describe, test,expect, jest */
+/* global describe, test,expect, jest, afterEach */
 import React from 'react';
 import { screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
@@ -13,7 +13,7 @@ jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
   useHistory: () => ({
     push: mockHistoryPush,
-    location: { pathname: '/parentURL'},
+    location: { pathname: '/integrations/62662cc4e06ff462c3db470e/flows'},
   }),
 }));
 
@@ -51,6 +51,9 @@ async function initMappingPage(props) {
 }
 
 describe('Mapping cell  ui test cases', () => {
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
   test('should show empty dom when no props provided', () => {
     const {utils} = renderWithProviders(<MemoryRouter><MappingCell /></MemoryRouter>);
 
@@ -59,12 +62,12 @@ describe('Mapping cell  ui test cases', () => {
   test('should redirect to mapping page', () => {
     initMappingPage({flowId: '5ea16c600e2fab71928a6152'});
     userEvent.click(screen.getByRole('button'));
-    expect(mockHistoryPush).toHaveBeenCalledWith('/parentURL/mapping/5ea16c600e2fab71928a6152');
+    expect(mockHistoryPush).toHaveBeenCalledWith('/integrations/62662cc4e06ff462c3db470e/flows/mapping/5ea16c600e2fab71928a6152');
   });
   test('should redirect to Utility Mapping page', () => {
     initMappingPage({flowId: '5ea16c600e2fab71928a6153', childId: 'someChildId'});
 
     userEvent.click(screen.getByRole('button'));
-    expect(mockHistoryPush).toHaveBeenCalledWith('/parentURL/5ea16c600e2fab71928a6153/utilitymapping/commonAttributes');
+    expect(mockHistoryPush).toHaveBeenCalledWith('/integrations/62662cc4e06ff462c3db470e/flows/5ea16c600e2fab71928a6153/utilitymapping/commonAttributes');
   });
 });
