@@ -2948,10 +2948,14 @@ Object {
       },
     },
     "layout": Object {
-      "fields": Array [
-        "application",
-        "settings",
+      "containers": Array [
+        Object {
+          "fields": Array [
+            "application",
+          ],
+        },
       ],
+      "type": "box",
     },
   },
   "init": undefined,
