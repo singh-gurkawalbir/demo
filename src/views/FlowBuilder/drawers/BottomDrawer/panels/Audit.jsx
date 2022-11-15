@@ -1,6 +1,5 @@
 import React from 'react';
-// eslint-disable-next-line import/no-extraneous-dependencies
-import { makeStyles } from '@material-ui/styles';
+import { makeStyles } from '@material-ui/core/styles';
 import AuditLog from '../../../../../components/AuditLog';
 
 const useStyles = makeStyles(theme => ({
@@ -23,7 +22,6 @@ export default function AuditPanel({ flowId, integrationId }) {
       integrationId={integrationId}
       resourceId={flowId}
       className={classes.auditLog}
-      isFixed={false} // todo ashu remove this after testing
       />
   );
 }
