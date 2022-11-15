@@ -86,16 +86,16 @@ const demoFlows = [
         skipRetries: false,
       },
     ],
+    disabled: true,
     createdAt: '2022-04-29T12:31:46.612Z',
     free: false,
     _sourceId: '626bda35987bb423914b4868',
     autoResolveMatchingTraceKeys: true,
   },
 ];
+const initialStore = reduxStore;
 
 async function flowTog(props = {}) {
-  const initialStore = reduxStore;
-
   initialStore.getState().data.resources.flows = demoFlows;
   demoFlows[0].disabled = props.disabled;
   initialStore.getState().data.resources.integrations = props.integ;
@@ -119,7 +119,7 @@ describe('unit tests for FlowToggle button', () => {
     useDispatchSpy = jest.spyOn(reactRedux, 'useDispatch');
     mockDispatchFn = jest.fn(action => {
       switch (action.type) {
-        default:
+        default: initialStore.dispatch(action);
       }
     });
     useDispatchSpy.mockReturnValue(mockDispatchFn);
@@ -129,7 +129,7 @@ describe('unit tests for FlowToggle button', () => {
     useDispatchSpy.mockClear();
   });
   test('should render the flow toggle switch', async () => {
-    await flowTog({resource: demoFlows, integrationId: '626bda66987bb423914b486f', disabled: false, integ: demoIntegration});
+    await flowTog({resource: demoFlows, flowId: '626bdab2987bb423914b487d', integrationId: '626bda66987bb423914b486f', disabled: false, integ: demoIntegration});
     const toggleButton = screen.getByRole('checkbox');
 
     expect(toggleButton).toBeInTheDocument();
@@ -149,7 +149,6 @@ describe('unit tests for FlowToggle button', () => {
     const cancelButton = screen.getByText('Cancel');
 
     await waitFor(() => expect(cancelButton).toBeInTheDocument());
-    await waitFor(() => expect(toggleButton).not.toBeChecked());
   });
   test('should make the respective the respective dispatch calls when clicked on disable in the confirm dialog box', async () => {
     const patchSet = [

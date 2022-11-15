@@ -1,7 +1,7 @@
 import produce from 'immer';
 import { createSelector } from 'reselect';
 import actionTypes from '../../../actions/types';
-import { LICENSE_REACTIVATED_MESSAGE, LICENSE_UPGRADE_REQUEST_SUBMITTED_MESSAGE } from '../../../constants';
+import { LICENSE_REACTIVATED_MESSAGE, LICENSE_UPGRADE_REQUEST_SUBMITTED_MESSAGE, REQUEST_UPGRADE_SUCCESS_MESSAGE } from '../../../constants';
 import messageStore from '../../../utils/messageStore';
 
 const defaultObject = { numEnabledPaidFlows: 0, numEnabledSandboxFlows: 0 };
@@ -17,6 +17,7 @@ export default function reducer(state = {}, action) {
     childId,
     code,
     feature,
+    isTwoDotZero,
   } = action;
 
   return produce(state, draft => {
@@ -36,8 +37,14 @@ export default function reducer(state = {}, action) {
       case actionTypes.LICENSE.SSO.UPGRADE_REQUESTED:
         draft.ssoLicenseUpgradeRequested = true;
         break;
+      case actionTypes.LICENSE.DATA_RETENTION.UPGRADE_REQUESTED:
+        draft.dataRetentionLicenseUpgradeRequested = true;
+        break;
       case actionTypes.LICENSE.UPGRADE_REQUEST_SUBMITTED:
-        draft.platformLicenseActionMessage = feature === 'SSO' ? messageStore('SSO_LICENSE_UPGRADE_REQUEST_SUBMITTED_MESSAGE') : LICENSE_UPGRADE_REQUEST_SUBMITTED_MESSAGE;
+        // eslint-disable-next-line no-case-declarations
+        const message = isTwoDotZero ? REQUEST_UPGRADE_SUCCESS_MESSAGE : LICENSE_UPGRADE_REQUEST_SUBMITTED_MESSAGE;
+
+        draft.platformLicenseActionMessage = (feature === 'SSO' || feature === 'dataRetention') ? messageStore('FEATURE_LICENSE_UPGRADE_REQUEST_SUBMITTED_MESSAGE') : message;
         break;
       case actionTypes.LICENSE.REACTIVATED:
         draft.platformLicenseActionMessage = LICENSE_REACTIVATED_MESSAGE;
@@ -123,6 +130,13 @@ selectors.ssoLicenseUpgradeRequested = state => {
   }
 
   return state.ssoLicenseUpgradeRequested;
+};
+selectors.dataRetentionLicenseUpgradeRequested = state => {
+  if (!state) {
+    return;
+  }
+
+  return state.dataRetentionLicenseUpgradeRequested;
 };
 selectors.licenseErrorCode = state => {
   if (!state) {

@@ -28,6 +28,7 @@ const useStyles = makeStyles(theme => ({
   },
   searchCount: {
     marginRight: theme.spacing(1),
+    whiteSpace: 'nowrap',
   },
   showSearchCount: {
     display: 'flex',
