@@ -58,7 +58,7 @@ export default function UploadFile() {
   const history = useHistory();
   const location = useLocation();
   const [uploadInProgress, setUploadInProgress] = useState(false);
-  const [error, setError] = useState(false);
+  const [error, setError] = useState();
   const { isFileUploaded, templateId } = useSelector(state =>
     selectors.isFileUploaded(state)
   );
