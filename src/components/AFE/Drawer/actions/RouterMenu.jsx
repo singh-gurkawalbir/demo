@@ -25,8 +25,6 @@ export default function RouterMenu({ editorId }) {
   const flow = useSelector(state => selectors.fbFlow(state, flowId));
   const isViewMode = useSelector(state => selectors.isFlowViewMode(state, flow?._integrationId, flowId));
   const routerId = useSelector(state => selectors.editorRule(state, editorId)?.id);
-  const isEdit = useSelector(state => selectors.editor(state, editorId).isEdit);
-
   const {
     configuredCount,
     unconfiguredCount,
@@ -69,7 +67,7 @@ export default function RouterMenu({ editorId }) {
   return (
     <>
       <ClickAwayListener onClickAway={handleCloseMenu}>
-        <IconButton data-test="routerMenu" size="small" disabled={!isEdit} onClick={handleOpenMenu}>
+        <IconButton data-test="routerMenu" size="small" onClick={handleOpenMenu}>
           <EllipsisHorizontalIcon />
         </IconButton>
       </ClickAwayListener>

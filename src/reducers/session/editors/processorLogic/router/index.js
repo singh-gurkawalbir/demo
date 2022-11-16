@@ -75,7 +75,6 @@ export default {
       ...(!isEdit ? {originalRule} : {}),
       rule,
       editorTitle,
-      isEdit,
     };
   },
 
