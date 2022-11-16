@@ -2,14 +2,13 @@
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import * as reactRedux from 'react-redux';
-import { screen, waitFor } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import cloneDeep from 'lodash/cloneDeep';
 import userEvent from '@testing-library/user-event';
 import { renderWithProviders, reduxStore } from '../../../test/test-utils';
 import CreateAliasDrawer from './CreateAliases';
 import actions from '../../../actions';
 import actionTypes from '../../../actions/types';
-import { runServer } from '../../../test/api/server';
 
 const props = {
   resourceId: '_integrationId',
@@ -54,7 +53,6 @@ jest.mock('react-router-dom', () => ({
 }));
 
 describe('CreateAliasDrawer tests', () => {
-  runServer();
   let mockDispatchFn;
   let useDispatchSpy;
   let initialStore;
@@ -109,7 +107,7 @@ describe('CreateAliasDrawer tests', () => {
     userEvent.keyboard('new-alias-id');
     userEvent.click(screen.getByRole('button', {name: 'Please select'}));
     userEvent.click(screen.getByRole('menuitem', {name: 'Connection'}));
-    await waitFor(() => expect(screen.queryByText('Resource name')).toBeInTheDocument());
+    expect(screen.queryByText('Resource name')).toBeInTheDocument();
     userEvent.click(screen.getByRole('button', {name: 'Please select'}));
     userEvent.click(screen.getByRole('menuitem', {name: 'RegisteredConnection'}));
     mockDispatchFn.mockClear();
