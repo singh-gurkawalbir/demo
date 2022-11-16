@@ -16,7 +16,6 @@ export default function reducer(state = {}, action) {
     installSteps,
     connectionMap,
     data,
-    error,
     step = {},
   } = action;
   const {
@@ -70,7 +69,6 @@ export default function reducer(state = {}, action) {
           draft[templateId].preview = {};
         }
         draft[templateId].preview.status = 'failure';
-        draft[templateId].preview.error = error;
         break;
 
       case actionTypes.TEMPLATE.CLEAR_TEMPLATE:
@@ -229,7 +227,6 @@ selectors.connectionMap = (state, templateId) => {
 };
 selectors.isPreviewStatusFailed = state => {
   let id;
-  let error;
   let previewFailedStatus = false;
 
   if (!state) {
@@ -240,11 +237,10 @@ selectors.isPreviewStatusFailed = state => {
     if (state[key].preview?.status === 'failure') {
       previewFailedStatus = true;
       id = key;
-      error = state[key].preview?.error;
     }
   });
 
-  return {previewFailedStatus, id, error };
+  return {previewFailedStatus, id };
 };
 
 selectors.templatePublishStatus = (state, templateId) => state?.[templateId]?.publishStatus || 'failed';

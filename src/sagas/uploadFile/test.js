@@ -78,7 +78,7 @@ describe('uploadRawData saga', () => {
 
 describe('previewZip saga', () => {
   const fileType = 'application/zip';
-  const file = { _id: '456', name: 'someFile', size: 500 };
+  const file = { _id: '456', name: 'someFile' };
   const runKey = '1234';
   const components = [
     {
@@ -119,14 +119,6 @@ describe('previewZip saga', () => {
         [matchers.call.fn(uploadFile), throwError(error)],
       ])
       .call.fn(uploadFile)
-      .run();
-  });
-
-  test('should throw error when the file size is more than 1 MB', () => {
-    const error = 'File exceeds max file size';
-
-    return expectSaga(previewZip, { file: {...file, size: 1024 * 1025 }, fileType})
-      .put(actions.template.failedPreview(`someFile_${Date.now()}`, error))
       .run();
   });
 });

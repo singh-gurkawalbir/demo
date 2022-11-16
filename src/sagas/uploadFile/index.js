@@ -8,7 +8,6 @@ import {
   getJSONContentFromString,
   getUploadedFileStatus,
 } from '../../utils/file';
-import { MAX_TEMPLATE_ZIP_SIZE } from '../../constants';
 
 export function* uploadFile({
   resourceType,
@@ -68,12 +67,7 @@ export function* uploadRawData({
 
 export function* previewZip({ file, fileType = 'application/zip' }) {
   const uploadPath = `/s3SignedURL?file_name=${encodeURIComponent(file.name)}&file_type=${fileType}`;
-  let runKey = `${file.name}_${Date.now()}`; // temparary name incase of errors
-  const { error } = getUploadedFileStatus(file, fileType, { maxSize: MAX_TEMPLATE_ZIP_SIZE });
-
-  if (error) {
-    return yield put(actions.template.failedPreview(runKey, error));
-  }
+  let runKey;
 
   try {
     runKey = yield call(uploadFile, { file, fileType, uploadPath });
