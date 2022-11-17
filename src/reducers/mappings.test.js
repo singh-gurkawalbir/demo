@@ -2,6 +2,7 @@
 import reducer, { selectors } from '.';
 import actions from '../actions';
 import messageStore from '../utils/messageStore';
+import { MAPPING_DATA_TYPES } from '../utils/mapping';
 
 describe('Mappings region selector testcases', () => {
   const flows = [
@@ -1229,6 +1230,653 @@ describe('Mappings region selector testcases', () => {
         message: messageStore('MAPPER2_BANNER_WARNING'),
         variant: 'warning',
       });
+    });
+  });
+
+  describe('selectors.filteredV2TreeData', () => {
+    test('should return empty array if state does not exist', () => {
+      expect(selectors.filteredV2TreeData()).toEqual({filteredTreeData: []});
+      expect(selectors.filteredV2TreeData(null)).toEqual({filteredTreeData: []});
+      expect(selectors.filteredV2TreeData({})).toEqual({filteredTreeData: []});
+    });
+    test('should return actual v2TreeData if no filter or All Fields filter is applied', () => {
+      const state = {
+        session: {
+          mapping: {
+            mapping: {
+              importId: 'imp-123',
+              v2TreeData: [
+                {
+                  key: 'key1',
+                  dataType: MAPPING_DATA_TYPES.STRING,
+                  generate: 'fname',
+                  extract: '$.fname',
+                },
+              ],
+            },
+          },
+        },
+      };
+      const expectedData = [
+        {
+          key: 'key1',
+          dataType: MAPPING_DATA_TYPES.STRING,
+          generate: 'fname',
+          extract: '$.fname',
+        },
+      ];
+
+      expect(selectors.filteredV2TreeData(state)).toEqual({filteredTreeData: expectedData});
+    });
+    test('should return filtered v2TreeData if Required Fields filter is applied', () => {
+      const state = {
+        session: {
+          mapping: {
+            mapping: {
+              importId: 'imp-123',
+              filter: ['required'],
+              v2TreeData: [
+                {
+                  key: 'key1',
+                  dataType: MAPPING_DATA_TYPES.STRING,
+                  generate: 'id',
+                  extract: 'id',
+                  isRequired: true,
+                },
+                {
+                  key: 'key2',
+                  dataType: MAPPING_DATA_TYPES.NUMBER,
+                  generate: 'age',
+                  extract: 'age',
+                },
+                {
+                  key: 'key3',
+                  dataType: MAPPING_DATA_TYPES.OBJECT,
+                  generate: 'parent1',
+                  isRequired: true,
+                  children: [
+                    {
+                      key: 'c1',
+                      dataType: MAPPING_DATA_TYPES.STRING,
+                      generate: 'child1',
+                      extract: 'child1',
+                      isRequired: true,
+                    },
+                    {
+                      key: 'c2',
+                      dataType: MAPPING_DATA_TYPES.STRING,
+                      generate: 'child2',
+                      extract: 'child2',
+                      isRequired: false,
+                    },
+                  ],
+                },
+                {
+                  key: 'key4',
+                  dataType: MAPPING_DATA_TYPES.OBJECTARRAY,
+                  generate: 'parent2',
+                  extract: 'parent2',
+                  isRequired: true,
+                  children: [
+                    {
+                      key: 'c3',
+                      dataType: MAPPING_DATA_TYPES.STRING,
+                      generate: 'child3',
+                      extract: 'child3',
+                      isRequired: true,
+                      parentKey: 'key4',
+                    },
+                    {
+                      key: 'c4',
+                      dataType: MAPPING_DATA_TYPES.STRING,
+                      generate: 'child4',
+                      extract: 'child4',
+                      isRequired: false,
+                      parentKey: 'key4',
+                    },
+                  ],
+                },
+              ],
+            },
+          },
+        },
+      };
+      const expectedData = [
+        {
+          key: 'key1',
+          dataType: MAPPING_DATA_TYPES.STRING,
+          generate: 'id',
+          extract: 'id',
+          isRequired: true,
+        },
+        {
+          key: 'key3',
+          dataType: MAPPING_DATA_TYPES.OBJECT,
+          generate: 'parent1',
+          isRequired: true,
+          children: [
+            {
+              key: 'c1',
+              dataType: MAPPING_DATA_TYPES.STRING,
+              generate: 'child1',
+              extract: 'child1',
+              isRequired: true,
+            },
+          ],
+        },
+        {
+          key: 'key4',
+          dataType: MAPPING_DATA_TYPES.OBJECTARRAY,
+          generate: 'parent2',
+          extract: 'parent2',
+          isRequired: true,
+          children: [
+            {
+              key: 'c3',
+              dataType: MAPPING_DATA_TYPES.STRING,
+              generate: 'child3',
+              extract: 'child3',
+              isRequired: true,
+              parentKey: 'key4',
+            },
+          ],
+        },
+      ];
+
+      expect(selectors.filteredV2TreeData(state)).toEqual({filteredTreeData: expectedData});
+    });
+    test('should return filtered v2TreeData if Mapped Fields filter is applied', () => {
+      const state = {
+        session: {
+          mapping: {
+            mapping: {
+              importId: 'imp-123',
+              filter: ['mapped'],
+              v2TreeData: [
+                {
+                  key: 'key1',
+                  dataType: MAPPING_DATA_TYPES.STRING,
+                  generate: 'id',
+                  extract: 'id',
+                },
+                {
+                  key: 'key2',
+                  dataType: MAPPING_DATA_TYPES.STRING,
+                  generate: 'fname',
+                },
+                {
+                  key: 'key3',
+                  dataType: MAPPING_DATA_TYPES.OBJECT,
+                  generate: 'parent1',
+                  children: [
+                    {
+                      key: 'c1',
+                      dataType: MAPPING_DATA_TYPES.STRING,
+                      generate: 'child1',
+                      extract: 'child1',
+                    },
+                    {
+                      key: 'c2',
+                      dataType: MAPPING_DATA_TYPES.STRING,
+                      generate: 'child2',
+                    },
+                  ],
+                },
+                {
+                  key: 'key4',
+                  dataType: MAPPING_DATA_TYPES.OBJECTARRAY,
+                  generate: 'parent2',
+                  children: [
+                    {
+                      key: 'c3',
+                      dataType: MAPPING_DATA_TYPES.STRING,
+                      generate: 'child3',
+                      extract: 'child3',
+                      parentKey: 'key4',
+                    },
+                    {
+                      key: 'c4',
+                      dataType: MAPPING_DATA_TYPES.STRING,
+                      generate: 'child4',
+                      parentKey: 'key4',
+                    },
+                  ],
+                },
+                {
+                  key: 'key5',
+                  dataType: MAPPING_DATA_TYPES.OBJECTARRAY,
+                  generate: 'parent3',
+                  activeTab: 1,
+                  extractsArrayHelper: [
+                    {
+                      extract: 'tab1',
+                    },
+                    {
+                      extract: 'tab2',
+                    },
+                  ],
+                  children: [
+                    {
+                      key: 'c0',
+                      isTabNode: true,
+                      parentKey: 'key5',
+                    },
+                    {
+                      key: 'c5',
+                      dataType: MAPPING_DATA_TYPES.STRING,
+                      generate: 'child5',
+                      extract: 'tab1.child5',
+                      parentKey: 'key5',
+                      parentExtract: 'tab1',
+                    },
+                    {
+                      key: 'c6',
+                      dataType: MAPPING_DATA_TYPES.STRING,
+                      generate: 'child6',
+                      parentKey: 'key5',
+                      parentExtract: 'tab2',
+                      className: 'hideRow',
+                      hidden: true,
+                    },
+                  ],
+                },
+              ],
+            },
+          },
+        },
+      };
+      const expectedData = [
+        {
+          key: 'key1',
+          dataType: MAPPING_DATA_TYPES.STRING,
+          generate: 'id',
+          extract: 'id',
+        },
+        {
+          key: 'key3',
+          dataType: MAPPING_DATA_TYPES.OBJECT,
+          generate: 'parent1',
+          children: [
+            {
+              key: 'c1',
+              dataType: MAPPING_DATA_TYPES.STRING,
+              generate: 'child1',
+              extract: 'child1',
+            },
+          ],
+        },
+        {
+          key: 'key4',
+          dataType: MAPPING_DATA_TYPES.OBJECTARRAY,
+          generate: 'parent2',
+          extractsWithoutMappings: [],
+          children: [
+            {
+              key: 'c3',
+              dataType: MAPPING_DATA_TYPES.STRING,
+              generate: 'child3',
+              extract: 'child3',
+              parentKey: 'key4',
+            },
+          ],
+        },
+        {
+          key: 'key5',
+          dataType: MAPPING_DATA_TYPES.OBJECTARRAY,
+          generate: 'parent3',
+          activeTab: 0,
+          extractsWithoutMappings: ['tab2'],
+          extractsArrayHelper: [
+            {
+              extract: 'tab1',
+            },
+            {
+              extract: 'tab2',
+            },
+          ],
+          children: [
+            {
+              key: 'c0',
+              isTabNode: true,
+              parentKey: 'key5',
+            },
+            {
+              key: 'c5',
+              dataType: MAPPING_DATA_TYPES.STRING,
+              generate: 'child5',
+              extract: 'tab1.child5',
+              parentKey: 'key5',
+              parentExtract: 'tab1',
+            },
+          ],
+        },
+      ];
+
+      expect(selectors.filteredV2TreeData(state)).toEqual({filteredTreeData: expectedData});
+    });
+    test('should return filtered v2TreeData if both filters are applied', () => {
+      const state = {
+        session: {
+          mapping: {
+            mapping: {
+              importId: 'imp-123',
+              filter: ['required', 'mapped'],
+              v2TreeData: [
+                {
+                  key: 'key1',
+                  dataType: MAPPING_DATA_TYPES.STRING,
+                  generate: 'id',
+                  isRequired: true,
+                },
+                {
+                  key: 'key2',
+                  dataType: MAPPING_DATA_TYPES.STRING,
+                  generate: 'fname',
+                  extract: 'fname',
+                },
+                {
+                  key: 'key3',
+                  dataType: MAPPING_DATA_TYPES.OBJECT,
+                  generate: 'parent1',
+                  isRequired: true,
+                  children: [
+                    {
+                      key: 'c1',
+                      dataType: MAPPING_DATA_TYPES.STRING,
+                      generate: 'child1',
+                      isRequired: true,
+                    },
+                    {
+                      key: 'c2',
+                      dataType: MAPPING_DATA_TYPES.STRING,
+                      generate: 'child2',
+                      extract: 'child2',
+                    },
+                    {
+                      key: 'c3',
+                      dataType: MAPPING_DATA_TYPES.STRING,
+                      generate: 'child3',
+                    },
+                  ],
+                },
+                {
+                  key: 'key4',
+                  dataType: MAPPING_DATA_TYPES.OBJECTARRAY,
+                  generate: 'parent2',
+                  isRequired: true,
+                  children: [
+                    {
+                      key: 'c4',
+                      dataType: MAPPING_DATA_TYPES.STRING,
+                      generate: 'child4',
+                      extract: 'child4',
+                      parentKey: 'key4',
+                      isRequired: true,
+                    },
+                    {
+                      key: 'c5',
+                      dataType: MAPPING_DATA_TYPES.STRING,
+                      generate: 'child5',
+                      parentKey: 'key4',
+                    },
+                  ],
+                },
+                {
+                  key: 'key5',
+                  dataType: MAPPING_DATA_TYPES.OBJECTARRAY,
+                  generate: 'parent3',
+                  activeTab: 1,
+                  extractsArrayHelper: [
+                    {
+                      extract: 'tab1',
+                    },
+                    {
+                      extract: 'tab2',
+                    },
+                  ],
+                  children: [
+                    {
+                      key: 'c0',
+                      isTabNode: true,
+                      parentKey: 'key5',
+                    },
+                    {
+                      key: 'c6',
+                      dataType: MAPPING_DATA_TYPES.STRING,
+                      generate: 'child6',
+                      extract: 'tab1.child6',
+                      parentKey: 'key5',
+                      parentExtract: 'tab1',
+                    },
+                    {
+                      key: 'c7',
+                      dataType: MAPPING_DATA_TYPES.STRING,
+                      generate: 'child7',
+                      parentKey: 'key5',
+                      parentExtract: 'tab2',
+                      className: 'hideRow',
+                      hidden: true,
+                    },
+                  ],
+                },
+              ],
+            },
+          },
+        },
+      };
+      const expectedData = [
+        {
+          key: 'key1',
+          dataType: MAPPING_DATA_TYPES.STRING,
+          generate: 'id',
+          isRequired: true,
+        },
+        {
+          key: 'key2',
+          dataType: MAPPING_DATA_TYPES.STRING,
+          generate: 'fname',
+          extract: 'fname',
+        },
+        {
+          key: 'key3',
+          dataType: MAPPING_DATA_TYPES.OBJECT,
+          generate: 'parent1',
+          isRequired: true,
+          children: [
+            {
+              key: 'c1',
+              dataType: MAPPING_DATA_TYPES.STRING,
+              generate: 'child1',
+              isRequired: true,
+            },
+            {
+              key: 'c2',
+              dataType: MAPPING_DATA_TYPES.STRING,
+              generate: 'child2',
+              extract: 'child2',
+            },
+          ],
+        },
+        {
+          key: 'key4',
+          dataType: MAPPING_DATA_TYPES.OBJECTARRAY,
+          generate: 'parent2',
+          isRequired: true,
+          extractsWithoutMappings: [],
+          children: [
+            {
+              key: 'c4',
+              dataType: MAPPING_DATA_TYPES.STRING,
+              generate: 'child4',
+              extract: 'child4',
+              parentKey: 'key4',
+              isRequired: true,
+            },
+          ],
+        },
+        {
+          key: 'key5',
+          dataType: MAPPING_DATA_TYPES.OBJECTARRAY,
+          generate: 'parent3',
+          activeTab: 0,
+          extractsWithoutMappings: ['tab2'],
+          extractsArrayHelper: [
+            {
+              extract: 'tab1',
+            },
+            {
+              extract: 'tab2',
+            },
+          ],
+          children: [
+            {
+              key: 'c0',
+              isTabNode: true,
+              parentKey: 'key5',
+            },
+            {
+              key: 'c6',
+              dataType: MAPPING_DATA_TYPES.STRING,
+              generate: 'child6',
+              extract: 'tab1.child6',
+              parentKey: 'key5',
+              parentExtract: 'tab1',
+            },
+          ],
+        },
+      ];
+
+      expect(selectors.filteredV2TreeData(state)).toEqual({filteredTreeData: expectedData});
+    });
+    test('should correctly return the search count and expanded keys if search key is present', () => {
+      const state = {
+        session: {
+          mapping: {
+            mapping: {
+              importId: 'imp-123',
+              searchKey: 'parent1',
+              v2TreeData: [
+                {
+                  key: 'key1',
+                  dataType: MAPPING_DATA_TYPES.STRING,
+                  generate: 'id',
+                  isRequired: true,
+                },
+                {
+                  key: 'key2',
+                  dataType: MAPPING_DATA_TYPES.STRING,
+                  generate: 'fname',
+                  extract: 'fname',
+                },
+                {
+                  key: 'key3',
+                  dataType: MAPPING_DATA_TYPES.OBJECT,
+                  generate: 'parent1',
+                  isRequired: true,
+                  children: [
+                    {
+                      key: 'c1',
+                      dataType: MAPPING_DATA_TYPES.STRING,
+                      generate: 'child1',
+                      isRequired: true,
+                    },
+                    {
+                      key: 'c2',
+                      dataType: MAPPING_DATA_TYPES.STRING,
+                      generate: 'child2',
+                      extract: 'child2',
+                    },
+                    {
+                      key: 'c3',
+                      dataType: MAPPING_DATA_TYPES.STRING,
+                      generate: 'child3',
+                    },
+                  ],
+                },
+                {
+                  key: 'key4',
+                  dataType: MAPPING_DATA_TYPES.OBJECT,
+                  generate: 'parent2',
+                  isRequired: true,
+                  children: [
+                    {
+                      key: 'c4',
+                      dataType: MAPPING_DATA_TYPES.STRING,
+                      generate: 'child4',
+                      extract: 'child4',
+                      parentKey: 'key4',
+                      isRequired: true,
+                    },
+                    {
+                      key: 'c5',
+                      dataType: MAPPING_DATA_TYPES.OBJECT,
+                      generate: 'child5',
+                      parentKey: 'key4',
+                      children: [{
+                        key: 'c6',
+                        dataType: MAPPING_DATA_TYPES.STRING,
+                        generate: 'parent1',
+                        extract: 'child6',
+                        parentKey: 'c5',
+                      }],
+                    },
+                  ],
+                },
+              ],
+            },
+          },
+        },
+      };
+      const expectedData = [
+        {
+          key: 'key3',
+          dataType: MAPPING_DATA_TYPES.OBJECT,
+          generate: 'parent1',
+          isRequired: true,
+          children: [
+            {
+              key: 'c1',
+              dataType: MAPPING_DATA_TYPES.STRING,
+              generate: 'child1',
+              isRequired: true,
+            },
+            {
+              key: 'c2',
+              dataType: MAPPING_DATA_TYPES.STRING,
+              generate: 'child2',
+              extract: 'child2',
+            },
+            {
+              key: 'c3',
+              dataType: MAPPING_DATA_TYPES.STRING,
+              generate: 'child3',
+            },
+          ],
+        },
+        {
+          key: 'key4',
+          dataType: MAPPING_DATA_TYPES.OBJECT,
+          generate: 'parent2',
+          isRequired: true,
+          children: [
+            {
+              key: 'c5',
+              dataType: MAPPING_DATA_TYPES.OBJECT,
+              generate: 'child5',
+              parentKey: 'key4',
+              children: [{
+                key: 'c6',
+                dataType: MAPPING_DATA_TYPES.STRING,
+                generate: 'parent1',
+                extract: 'child6',
+                parentKey: 'c5',
+              }],
+            },
+          ],
+        },
+      ];
+
+      expect(selectors.filteredV2TreeData(state)).toEqual({filteredTreeData: expectedData, searchCount: 2, expandedKeys: ['c5', 'key4']});
     });
   });
 });

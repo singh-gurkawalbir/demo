@@ -84,9 +84,9 @@ export default function TitleActions({ flowId }) {
       {showApplicationLogo && (
       <div className={classes.guideWrapper}>
         {resourceType === 'connections' && (app.helpURL || KBDocumentation[applicationType]) && (
-        <a className={clsx(classes.guideLink, {[classes.httpConnectorGuide]: merged.http?._httpConnectorId})} href={app.helpURL || KBDocumentation[applicationType]} rel="noreferrer" target="_blank">
+        <a className={clsx(classes.guideLink, {[classes.httpConnectorGuide]: merged?._httpConnectorId || merged.http?._httpConnectorId})} href={app.helpURL || KBDocumentation[applicationType]} rel="noreferrer" target="_blank">
           <InstallationGuideIcon className={classes.guideLinkIcon} />
-          {merged.http?._httpConnectorId
+          {merged?._httpConnectorId || merged.http?._httpConnectorId
             ? (
               <>
                 Connection guide

@@ -143,7 +143,7 @@ const ExtractsTree = React.memo((
 
     setInputValue(newValue);
     setIsFocused(false);
-    patchField(propValue, newValue);
+    patchField(propValue, newValue, e.node?.jsonPath);
   }, [inputValue, isArrayType, isGroupedSampleData, patchField, propValue, setInputValue, setIsFocused, nodeKey, mappingsTreeData]);
 
   if (isEmpty(extractsTreeData)) return null;

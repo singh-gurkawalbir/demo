@@ -45,14 +45,16 @@ export default function ErrorControls({
         onClick={handlePreviousError}
         className={classes.arrowBtn}
         disabled={disabledPrevious}
-        startIcon={<ArrowLeftIcon />} >
+        startIcon={<ArrowLeftIcon />}
+        data-test="previousError">
         <span className={classes.label}>Previous</span>
       </TextButton>
       <TextButton
         onClick={handleNextError}
         className={clsx(classes.arrowBtn, classes.arrowBtnRight)}
         disabled={disableNext || loading}
-        endIcon={loading ? (<Spinner size="small" />) : <ArrowRightIcon />} >
+        endIcon={loading ? (<Spinner size="small" />) : <ArrowRightIcon />}
+        data-test="nextError">
         <span className={classes.label}>Next</span>
       </TextButton>
     </Typography>
