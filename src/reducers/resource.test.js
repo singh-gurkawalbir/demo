@@ -5679,7 +5679,7 @@ describe('resource region selector testcases', () => {
 
   describe('selectors.auditLogs test cases', () => {
     test('should not throw any exception for invalid arguments', () => {
-      expect(selectors.auditLogs({}, 'flows', 'id')).toEqual({count: 0, logs: [], totalCount: 0});
+      expect(selectors.auditLogs({}, 'flows', 'id')).toEqual({logs: [], totalCount: 0});
     });
     const logs = [
       {
@@ -5748,35 +5748,6 @@ describe('resource region selector testcases', () => {
       expect(selectors.auditLogs(state, 'flows', 'f1')).toEqual(
         {
           logs: expectedResult,
-          count: 4,
-          totalCount: 4,
-        }
-      );
-    });
-
-    test('should return logs for provided resourceId and with filtering', () => {
-      let state = reducer(
-        undefined,
-        actions.resource.receivedCollection('flows/f1/audit',
-          logs)
-      );
-
-      state = reducer(
-        state,
-        actions.resource.receivedCollection('flows', [{
-          _id: 'f1',
-        }])
-      );
-
-      expect(selectors.auditLogs(state, 'flows', 'f1', undefined, {
-        take: 2,
-      })).toEqual(
-        {
-          logs: [
-            expectedResult[0],
-            expectedResult[1],
-          ],
-          count: 2,
           totalCount: 4,
         }
       );
@@ -5915,7 +5886,6 @@ describe('resource region selector testcases', () => {
       expect(selectors.auditLogs(state, undefined, 'i1', undefined, {
         childId: 's1',
       })).toEqual({
-        count: 4,
         logs: [
           {
             _id: 'l1',

@@ -281,11 +281,12 @@ const resource = {
       patch,
       context,
     }),
-  receivedCollection: (resourceType, collection, integrationId) =>
+  receivedCollection: (resourceType, collection, integrationId, isNextPageCollection) =>
     action(actionTypes.RESOURCE.RECEIVED_COLLECTION, {
       resourceType,
       collection,
       integrationId,
+      isNextPageCollection,
     }),
   clearCollection: resourceType =>
     action(actionTypes.RESOURCE.CLEAR_COLLECTION, { resourceType }),
@@ -528,9 +529,12 @@ const resource = {
 // #endregion
 
 const auditLogs = {
-  request: (resourceType, resourceId, message) => action(actionTypes.RESOURCE.REQUEST_COLLECTION, {
+  request: (resourceType, resourceId, nextPagePath) => action(actionTypes.RESOURCE.REQUEST_COLLECTION, {
     resourceType: auditResourceTypePath(resourceType, resourceId),
-    message,
+    nextPagePath,
+  }),
+  receivedNextPagePath: nextPagePath => action(actionTypes.RESOURCE.AUDIT_LOGS_NEXT_PATH, {
+    nextPagePath,
   }),
   download: ({resourceType, resourceId, childId, filters}) => action(actionTypes.RESOURCE.DOWNLOAD_AUDIT_LOGS, {
     resourceType,
