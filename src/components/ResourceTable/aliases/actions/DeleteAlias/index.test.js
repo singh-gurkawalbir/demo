@@ -48,6 +48,7 @@ describe('DeleteAlias test cases', () => {
   test('should show modal dialog for delete Alias on clicking Delete alias', () => {
     initHomeTiles(...props);
     userEvent.click(screen.getByText('Delete alias'));
+    expect(screen.getByRole('dialog')).toBeInTheDocument();
     expect(screen.getByText('Delete alias?')).toBeInTheDocument();
     const deleteButton = screen.getByText('Delete alias');
 
@@ -56,6 +57,7 @@ describe('DeleteAlias test cases', () => {
     expect(mockDispatch).toHaveBeenCalledWith(
       actions.resource.aliases.delete('someResourceId', 'integrations', 'aliasId', ALIAS_FORM_KEY.integrations)
     );
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
   });
   test('should click on cancel button of Delete Alias modal', () => {
     initHomeTiles(...props);
