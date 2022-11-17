@@ -538,6 +538,8 @@ export const getApp = (type, assistant, _httpConnectorId) => {
     return applications.find(c => c._httpConnectorId === _httpConnectorId) || {};
   }
 
+  if (!id) return {};
+
   return applications.find(c => [c.id, c.assistant].includes(id)) || {};
 };
 

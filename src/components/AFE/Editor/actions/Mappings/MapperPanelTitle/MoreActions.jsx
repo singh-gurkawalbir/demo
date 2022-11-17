@@ -26,8 +26,8 @@ const getActions = importHasSampleData => [
     label: 'Auto-populate destination fields',
     optionDisabled: !importHasSampleData,
     Icon: <AddIcon />,
-    toolTip: importHasSampleData ? 'Click the help icon in this panel\'s header for more info on auto-population.'
-      : 'Auto-populate is not available for this connector.<br><br>Click the help icon in this panel\'s header for more info on auto-population.',
+    toolTip: importHasSampleData ? 'Click <b>Learn about Mapper 2.0</b> above for more info on auto-population.'
+      : 'Auto-populate is not available for this connector.<br><br>Click <b>Learn about Mapper 2.0</b> above for more info on auto-population.',
   },
   {
     action: 'deleteall',

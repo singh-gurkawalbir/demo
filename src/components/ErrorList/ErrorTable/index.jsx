@@ -100,7 +100,7 @@ const ErrorTableWithPanel = ({
   keydownListener,
   onRowClick,
   errorsInRun,
-
+  flowJobId,
 }) => {
   const classes = useStyles();
   const tableRef = useRef();
@@ -121,13 +121,12 @@ const ErrorTableWithPanel = ({
       filter.classifications.indexOf('all') === -1) ||
     (filter.sources &&
       filter.sources.length > 0 &&
-      filter.sources.indexOf('all') === -1) ||
-    filter.keyword
-  ) {
+      filter.sources.indexOf('all') === -1)) {
     hasFilter = true;
   }
   const emptyErrorMessage = !hasFilter && !isResolved && !hasErrors && !(retryStatus === 'inProgress');
   const emptyFilterMessage = hasFilter && errorsInCurrPage.length === 0;
+  const noSearchResult = hasErrors && filter.keyword && errorsInCurrPage.length === 0;
 
   useEffect(() => {
     const refEle = tableRef?.current;
@@ -164,6 +163,7 @@ const ErrorTableWithPanel = ({
           resourceId={resourceId}
           isResolved={isResolved}
           filterKey={filterKey}
+          flowJobId={flowJobId}
         />
         <div className={classes.baseFormWithPreview}>
           {/* eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex */}
@@ -177,6 +177,7 @@ const ErrorTableWithPanel = ({
             />
             {emptyErrorMessage && <EmptyErrorMessage />}
             {emptyFilterMessage && <NoFiltersMessage />}
+            {noSearchResult && <NoSearchResultMessage />}
           </div>
           <div className={classes.partition}>
             <Divider
@@ -202,7 +203,8 @@ const ErrorTableWithPanel = ({
           flowId={flowId}
           resourceId={resourceId}
           isResolved={isResolved}
-          filterKey={filterKey} />
+          filterKey={filterKey}
+          flowJobId={flowJobId} />
         <div className={clsx(classes.errorDetailsTable, {[classes.errorTableWithErrorsInRun]: errorsInRun})} ref={drawerRef} onScroll={handleScrollPosition}>
           <ResourceTable
             resources={errorsInCurrPage}
@@ -211,6 +213,7 @@ const ErrorTableWithPanel = ({
             tableRef={tableRef} />
           {emptyErrorMessage && <EmptyErrorMessage />}
           {emptyFilterMessage && <NoFiltersMessage />}
+          {noSearchResult && <NoSearchResultMessage />}
         </div>
       </>
     );
@@ -218,16 +221,24 @@ const ErrorTableWithPanel = ({
 const EmptyErrorMessage = () => (
   <NoResultTypography>
     <br />
-    There don’t seem to be any more errors. You may have already retried or
-    resolved them.
+    You don’t have any open errors.
     <br />
     <br />
-    If “Refresh errors” is enabled, you can click it to retrieve additional
+    If <b>Refresh errors</b> is enabled, you can click it to retrieve additional
     errors.
   </NoResultTypography>
 );
 
 const NoFiltersMessage = () => (
+  <NoResultTypography>
+    <br />
+    You don’t have any errors that match the filters you applied.
+    <br />
+    Clear all filters to see any errors for this step.
+  </NoResultTypography>
+);
+
+const NoSearchResultMessage = () => (
   <NoResultTypography>
     <br />
     {NO_RESULT_SEARCH_MESSAGE}
@@ -376,6 +387,7 @@ export default function ErrorTable({
             keydownListener={keydownListener}
             onRowClick={onRowClick}
             errorsInRun={errorsInRun}
+            flowJobId={flowJobId}
           />
         </>
       )}

@@ -26,7 +26,7 @@ const useStyles = makeStyles(theme => ({
 const emptyObj = {};
 export default function FormView(props) {
   const classes = useStyles();
-  const { resourceType, resourceId, defaultValue, formKey } = props;
+  const { resourceType, resourceId, defaultValue, formKey, sourceForm} = props;
 
   const formContext = useFormContext(formKey);
   const dispatch = useDispatch();
@@ -93,10 +93,24 @@ export default function FormView(props) {
     if (selectedApplication !== 'true') {
       stagedRes['/http/formType'] = 'assistant';
       newFinalValues['/http/formType'] = 'assistant';
+      dispatch(
+        actions.analytics.gainsight.trackEvent('CONNECTION_FORM_VIEW', {
+          'Toggle Mode': 'Simple',
+          UserID: getHttpConnector(_httpConnectorId)._userId,
+          Connector: getHttpConnector(_httpConnectorId).name,
+        })
+      );
     } else {
       // set http.formType prop to http to use http form from the export/import as it is now using parent form');
       stagedRes['/http/formType'] = 'http';
       newFinalValues['/http/formType'] = 'http';
+      dispatch(
+        actions.analytics.gainsight.trackEvent('CONNECTION_FORM_VIEW', {
+          'Toggle Mode': 'HTTP',
+          UserID: getHttpConnector(_httpConnectorId)._userId,
+          Connector: getHttpConnector(_httpConnectorId).name,
+        })
+      );
     }
     const allPatches = sanitizePatchSet({
       patchSet: defaultPatchSetConverter({ ...stagedRes, ...newFinalValues }),
@@ -128,9 +142,9 @@ export default function FormView(props) {
         allTouchedFields
       )
     );
-  }, [dispatch, formContext?.fields, formContext?.value, resourceFormState?.fieldMeta, resourceId, resourceType, stagedResource]);
+  }, [dispatch, formContext?.fields, formContext?.value, props, resourceFormState.fieldMeta, resourceId, resourceType, stagedResource]);
 
-  if (!_httpConnectorId) {
+  if (!_httpConnectorId || !sourceForm) {
     return null;
   }
 
