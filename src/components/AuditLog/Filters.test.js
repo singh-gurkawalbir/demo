@@ -193,7 +193,7 @@ describe('UI test cases for Audit Log Filter ', () => {
     userEvent.click(screen.getByText('Download'));
     expect(mockDispatchFn).toBeCalled();
   });
-  test('Should able to pass initial render with default values having logs > 0 and navigate to next and previous Page', async () => {
+  test('Should able to pass initial render with default values having logs > 0 and navigate to next and previous Page', () => {
     expect(screen.getByText(/1 - 1 of 1+/i)).toBeInTheDocument();
     const rowsTextNode = screen.getByText(/Results per page:/i);
 

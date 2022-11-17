@@ -127,7 +127,7 @@ selectors.auditLoadMoreStatus = state => {
 };
 
 selectors.auditHasMoreDownloads = state => {
-  if (!state) return;
+  if (!state) return false;
 
   return state.hasMoreDownloads;
 };
