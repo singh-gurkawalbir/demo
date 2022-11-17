@@ -68,6 +68,9 @@ export function upgradeButtonText(license, integration = {}, upgradeRequested, e
       if (edition._id === license?._editionId) {
         value = edition.order < (editions.length - 1) ? 'requestUpgrade' : '';
       }
+      if (license?._changeEditionId) {
+        value = 'upgradeEdition';
+      }
     });
   } else {
     value = upgradeStatus(license, integration);
@@ -78,6 +81,9 @@ export function upgradeButtonText(license, integration = {}, upgradeRequested, e
   }
   if (value === 'requestUpgrade') {
     return 'Request upgrade';
+  }
+  if (value === 'upgradeEdition') {
+    return 'upgradeEdition';
   }
 
   return '';

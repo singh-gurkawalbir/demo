@@ -2881,6 +2881,8 @@ selectors.integrationAppLicense = (state, id) => {
   const connector =
      integrationAppList?.find(ia => ia._id === license?._connectorId);
   const editions = connector?.twoDotZero?.editions || emptyArray;
+  const changeEdition = (editions.find(ed => ed._id === license?._changeEditionId) || {})?.displayName;
+  const nextPlan = changeEdition ? getTitleFromEdition(changeEdition) : '';
   const upgradeRequested = selectors.checkUpgradeRequested(state, license._id);
   const dateFormat = selectors.userProfilePreferencesProps(state)?.dateFormat;
   const { expires, created } = license;
@@ -2904,6 +2906,7 @@ selectors.integrationAppLicense = (state, id) => {
     upgradeRequested: !!upgradeRequested,
     createdText: createdFormatted,
     showLicenseExpiringWarning: hasExpired || isExpiringSoon,
+    nextPlan,
   };
 };
 
