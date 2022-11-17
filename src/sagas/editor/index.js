@@ -811,10 +811,8 @@ export function* initEditor({ id, editorType, options }) {
         connection: resourceType === 'connections' ? resource : connection,
         isPageGenerator,
         isStandaloneResource: !flowId,
+        fieldKey,
       });
-      if (fieldId === 'assistantMetadata.queryParams') {
-        formattedOptions = {...formattedOptions, rule: fieldState.value[Object.keys(fieldState.value)[fieldKey]]};
-      }
     } else if (editorType === 'settingsForm') {
       let parentResource = {};
       const sectionMeta = yield select(selectors.getSectionMetadata, resourceType, resourceId, sectionId || 'general');

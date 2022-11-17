@@ -113,7 +113,8 @@ export function _editorSupportsV1V2data({resource, fieldId, connection, isPageGe
 
 export default {
   init: props => {
-    const {options, resource, fieldState, connection, isPageGenerator, isStandaloneResource, formValues, ...rest} = props;
+    const {resource, fieldState, connection, isPageGenerator, isStandaloneResource, formValues, fieldKey, ...rest} = props;
+    let {options} = props;
     const {fieldId} = options;
     const {type, value, arrayIndex} = fieldState || {};
     let rule = value;
@@ -150,6 +151,10 @@ export default {
       resultMode = contentType;
     }
     if (GRAPHQL_JSON_FIELDS.includes(fieldId)) resultMode = 'json';
+
+    if (fieldId === 'assistantMetadata.queryParams') {
+      options = {...options, rule: fieldState.value[Object.keys(fieldState.value)[fieldKey]]};
+    }
 
     return {
       ...options,
