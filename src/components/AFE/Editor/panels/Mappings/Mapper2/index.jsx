@@ -162,12 +162,22 @@ const useStyles = makeStyles(theme => ({
   emptyMessage: {
     padding: theme.spacing(3),
   },
+  emptySearchMessage: {
+    padding: theme.spacing(4),
+    paddingTop: theme.spacing(8),
+  },
   infoFilter: {
     fontStyle: 'italic',
     display: 'flex',
-    margin: theme.spacing(2, 2, -2),
+    margin: theme.spacing(2, 2, 1),
     alignItems: 'center',
     color: theme.palette.secondary.main,
+    '&+$mappingDrawerContent': {
+      paddingTop: 0,
+      '& .rc-tree-list': {
+        paddingBottom: theme.spacing(6),
+      },
+    },
     '& > svg': {
       marginRight: theme.spacing(0.5),
       fontSize: theme.spacing(2),
@@ -207,14 +217,14 @@ export default function Mapper2({editorId}) {
   const [enqueueSnackbar] = useEnqueueSnackbar();
   const dispatch = useDispatch();
   const disabled = useSelector(state => selectors.isEditorDisabled(state, editorId));
-  const treeData = useSelector(state => selectors.filteredV2TreeData(state));
+  const treeData = useSelector(state => selectors.filteredV2TreeData(state).filteredTreeData);
   const mapper2Filter = useSelector(selectors.mapper2Filter);
   const isAutoCreateSuccess = useSelector(state => selectors.mapping(state).autoCreated);
   const expandedKeys = useSelector(state => selectors.v2MappingExpandedKeys(state));
   const activeKey = useSelector(state => selectors.v2ActiveKey(state));
   const searchKey = useSelector(state => selectors.searchKey(state));
   const importId = useSelector(state => selectors.mapping(state).importId);
-  const editorLayout = useSelector(state => selectors.editorLayout(state, getMappingsEditorId(importId)));// editorlayout is required for adjusting horizontal scroll in both layouts
+  const editorLayout = useSelector(state => selectors.editorLayout(state, getMappingsEditorId(importId)));// editor layout is required for adjusting horizontal scroll in both layouts
   const settingDrawerActive = useRef();
   const currentScrollPosition = useRef();
 
@@ -293,19 +303,19 @@ export default function Mapper2({editorId}) {
   }, [dispatch]);
 
   // Add scroll handling for navigating back to the user scroll previous scroll position
-  // when virtaulization is enabled for rc-tree
+  // when virtualization is enabled for rc-tree
   const onScrollHandler = useCallback(e => {
-    // Add mouse move event listner to stop the default behaviour
+    // Add mouse move event listener to stop the default behavior
     // of mouse move by rc-tree library
     window.addEventListener('mousemove', handleMouseMove, true);
 
-    // Add wheel event listner to handle horizontal scroll
+    // Add wheel event listener to handle horizontal scroll
     document.addEventListener('wheel', handleWheelEvent, {passive: false});
 
     if (settingDrawerActive.current && settingDrawerActive.current.wasActive) {
       const currentEle = e.currentTarget;
-      // NOTE: rc-tree by default is reseting the scroll to top postion when virtualization is enabled
-      // inorder to set the user position back on close of drawer we are adding this time out for now
+      // NOTE: rc-tree by default is resetting the scroll to top position when virtualization is enabled
+      // in order to set the user position back on close of drawer we are adding this time out for now
       // to handle this scenario.
       // TODO: There is be a slight delay in scroll animation when the scroll
       // is returning back to current position.this needs to be fixed
@@ -333,10 +343,15 @@ export default function Mapper2({editorId}) {
   return (
     <>
       {searchKey !== undefined && <SearchBar />}
+      {searchKey && isEmpty(treeData) && (
+      <Typography variant="body2" className={classes.emptySearchMessage}>
+        Your search term doesn&apos;t match any destination fields.
+      </Typography>
+      )}
 
       {isFilterApplied && isEmpty(treeData) && (
         <Typography variant="body2" className={classes.emptyMessage}>
-          You don&lsquo;t have any fields that match the filter you applied. <br /> Clear the filter by setting it to &quot;All fields&quot;.
+          You don&apos;t have any fields that match the filter you applied. <br /> Clear the filter by setting it to &quot;All fields&quot;.
         </Typography>
       )}
 

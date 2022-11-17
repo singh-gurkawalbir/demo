@@ -348,7 +348,8 @@ export default function Endpoint() {
               ) > -1 && (
               <FilledButton
                 onClick={onStartFreeTrialClick}
-                className={classes.subscriptionUpgradeBtn}>
+                className={classes.subscriptionUpgradeBtn}
+                id="myaccout-unlimited-flows-button">
                 Get unlimited flows
               </FilledButton>
               )}
@@ -361,6 +362,7 @@ export default function Endpoint() {
                 onClick={onRequestUpgradeClick}
                 disabled={upgradeRequested}
                 className={classes.subscriptionUpgradeBtn}
+                id="myaccout-request-upgrade-buttton"
              >
                 {upgradeRequested ? 'Upgrade requested' : 'Request upgrade'}
               </FilledButton>

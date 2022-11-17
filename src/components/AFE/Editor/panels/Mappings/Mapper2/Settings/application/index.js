@@ -108,7 +108,7 @@ export default {
       settings.dataType = formVal.dataType || MAPPING_DATA_TYPES.STRING;
     }
     if (ARRAY_DATA_TYPES.includes(settings.dataType)) {
-      settings.extractsArrayHelper = buildExtractsHelperFromExtract(formVal.extractsArrayHelper, formVal.sourceField);
+      settings.extractsArrayHelper = buildExtractsHelperFromExtract({existingExtractsArray: formVal.extractsArrayHelper, sourceField: formVal.sourceField});
     }
 
     settings.copySource = formVal.copySource;

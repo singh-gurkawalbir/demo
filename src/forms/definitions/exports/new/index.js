@@ -49,6 +49,7 @@ export default {
       name: 'application',
       type: 'selectapplication',
       label: 'Application',
+      helpKey: 'application',
       isLoggable: true,
       appType: 'export',
       placeholder: applicationsPlaceHolderText(),
@@ -126,7 +127,12 @@ export default {
     },
   },
   layout: {
-    fields: ['application', 'type', 'connection', 'name', 'description'],
+    type: 'box',
+    containers: [
+      {
+        fields: ['application', 'type', 'connection', 'name', 'description'],
+      },
+    ],
   },
   optionsHandler: (fieldId, fields) => {
     const appField = fields.find(field => field.id === 'application');

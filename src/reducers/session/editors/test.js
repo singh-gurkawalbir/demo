@@ -1261,6 +1261,53 @@ describe('editors reducers', () => {
 
       expect(newState).toHaveProperty('query', {id: 'query'});
     });
+    test('should clear result from editor state', () => {
+      const options = {
+        id: 'httpbody',
+        editorType: 'handlebars',
+        stage: 'flowInput',
+        rule: '{{data.id}}',
+      };
+      const initialState = reducer(
+        undefined,
+        actions.editor.initComplete('httpbody', options)
+      );
+      const resultState = reducer(
+        initialState,
+        actions.editor.previewResponse('httpbody', {data: 'data', logs: 'logs'})
+      );
+
+      const expectedResultState = {
+        httpbody: {
+          id: 'httpbody',
+          editorType: 'handlebars',
+          stage: 'flowInput',
+          rule: '{{data.id}}',
+          previewStatus: 'received',
+          result: {data: 'data', logs: 'logs'},
+        },
+      };
+
+      expect(resultState).toEqual(expectedResultState);
+
+      const errorState = reducer(
+        resultState,
+        actions.editor.previewFailed('httpbody', {errorMessage: 'some error', errorLine: 12})
+      );
+      const expectedState = {
+        httpbody: {
+          id: 'httpbody',
+          editorType: 'handlebars',
+          stage: 'flowInput',
+          rule: '{{data.id}}',
+          previewStatus: 'error',
+          error: 'some error',
+          errorLine: 12,
+        },
+      };
+
+      expect(errorState).toEqual(expectedState);
+    });
   });
   describe('SAVE.REQUEST action', () => {
     test('should not throw error if state does not exist', () => {

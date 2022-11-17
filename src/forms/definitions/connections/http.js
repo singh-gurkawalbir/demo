@@ -213,11 +213,15 @@ export default {
 
     newValues['/configureTokenRefresh'] = undefined;
     newValues['/configureCutomAuthTokenRefresh'] = undefined;
+    newValues['/assistant'] = undefined;
 
     return newValues;
   },
   fieldMap: {
     name: { fieldId: 'name' },
+    connectionFormView: {
+      fieldId: 'connectionFormView',
+    },
     mode: {
       id: 'mode',
       type: 'radiogroup',
@@ -254,6 +258,11 @@ export default {
     },
     'http.mediaType': {
       fieldId: 'http.mediaType',
+    },
+    'http.type': {
+      fieldId: 'http.type',
+      visible: false,
+      omitWhenHidden: true,
     },
     'http.successMediaType': {
       fieldId: 'http.successMediaType',
@@ -449,6 +458,7 @@ export default {
         fields: [
           'name',
           'application',
+          'connectionFormView',
           'mode',
           '_agentId',
         ],
@@ -460,6 +470,7 @@ export default {
           'http.baseURI',
           'http.headers',
           'http.mediaType',
+          'http.type',
           'http.successMediaType',
           'http.errorMediaType',
         ],
