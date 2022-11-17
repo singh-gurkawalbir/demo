@@ -9,7 +9,7 @@ import actions from '../../../../actions';
 import { runServer } from '../../../../test/api/server';
 import { renderWithProviders, reduxStore } from '../../../../test/test-utils';
 
-async function initSettingsDrawer({
+function initSettingsDrawer({
   props = {
     flowId: 'flow_id',
     integrationId: 'integration_id',
@@ -108,7 +108,7 @@ async function initSettingsDrawer({
     </MemoryRouter>
   );
 
-  const { store, utils } = await renderWithProviders(ui, { initialStore });
+  const { store, utils } = renderWithProviders(ui, { initialStore });
 
   return {
     store,
@@ -162,8 +162,8 @@ describe('SettingsDrawer test cases', () => {
     mockHistoryGoBack.mockClear();
   });
 
-  test('should pass the initial render with default value', async () => {
-    await initSettingsDrawer();
+  test('should pass the initial render with default value', () => {
+    initSettingsDrawer();
     const saveButton = screen.getByRole('button', { name: 'mock Save'});
     const closeButton = screen.getByRole('button', { name: 'mock Close'});
     const remountAfterSaveFnButton = screen.getByRole('button', { name: 'remountAfterSaveFn'});
@@ -222,8 +222,8 @@ describe('SettingsDrawer test cases', () => {
     ], { asyncKey: 'flowbuildersettings' }));
   });
 
-  test('should pass the initial render with invliad setting value', async () => {
-    await initSettingsDrawer({
+  test('should pass the initial render with invliad setting value', () => {
+    initSettingsDrawer({
       props: {
         flowId: 'flow_id_2',
         resourceType: 'flows',
@@ -267,8 +267,8 @@ describe('SettingsDrawer test cases', () => {
     ], { asyncKey: 'flowbuildersettings' }));
   });
 
-  test('should pass the initial render with monitor level access', async () => {
-    await initSettingsDrawer({
+  test('should pass the initial render with monitor level access', () => {
+    initSettingsDrawer({
       accessLevel: 'monitor',
       accountId: 'account_id_1',
     });
@@ -284,8 +284,8 @@ describe('SettingsDrawer test cases', () => {
     userEvent.click(saveButton);
   });
 
-  test('should pass the initial render with integration app flow', async () => {
-    await initSettingsDrawer({
+  test('should pass the initial render with integration app flow', () => {
+    initSettingsDrawer({
       props: {
         flowId: 'flow_id_1',
         integrationId: 'integration_id_1',
@@ -337,8 +337,8 @@ describe('SettingsDrawer test cases', () => {
     ], { asyncKey: 'flowbuildersettings' }));
   });
 
-  test('should pass the initial render with integration app flow with monitor access', async () => {
-    await initSettingsDrawer({
+  test('should pass the initial render with integration app flow with monitor access', () => {
+    initSettingsDrawer({
       props: {
         flowId: 'flow_id_1',
         integrationId: 'integration_id_1',
@@ -360,8 +360,8 @@ describe('SettingsDrawer test cases', () => {
     userEvent.click(saveButton);
   });
 
-  test('should pass the initial render with integration app flow', async () => {
-    await initSettingsDrawer({
+  test('should pass the initial render with integration app flow', () => {
+    initSettingsDrawer({
       props: {
         flowId: 'flow_id_0',
         resourceType: 'flows',
