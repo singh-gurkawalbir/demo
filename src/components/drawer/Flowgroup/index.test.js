@@ -145,7 +145,7 @@ describe('FlowgroupDrawer tests', () => {
     expect(mockHistoryGoBack).toHaveBeenCalled();
   });
 
-  test('Should able to test the FlowGroup drawer with create flowgroup having flows', async () => {
+  test('Should able to test the FlowGroup drawer with create flowgroup having flows with close after save', async () => {
     await initFlowgroupDrawer({props, isEdit: false, addFlow: true});
     expect(screen.getByText(/Create flow group/i)).toBeInTheDocument();
     await waitFor(() => userEvent.click(screen.getAllByRole('checkbox')[0]));
@@ -155,9 +155,18 @@ describe('FlowgroupDrawer tests', () => {
     userEvent.keyboard('Mock flowgroup');
     userEvent.click(screen.getByRole('button', {name: 'Save & close'}));
     expect(mockHistoryGoBack).toHaveBeenCalled();
+  });
+  test('Should able to test the FlowGroup drawer with create flowgroup having flows and move to edit drawer', async () => {
+    await initFlowgroupDrawer({props, isEdit: false, addFlow: true});
+    expect(screen.getByText(/Create flow group/i)).toBeInTheDocument();
+    await waitFor(() => userEvent.click(screen.getAllByRole('checkbox')[0]));
+    const nameInput = document.querySelector('input');
 
-    // TODO: needs to check handleClose callback in handleSave
-    // expect(mockHistoryReplace).toHaveBeenCalledWith('/integrations/_integrationId/flows/sections/undefined/flowgroups/edit');
+    userEvent.click(nameInput);
+    userEvent.keyboard('Mock flowgroup');
+    userEvent.click(screen.getByRole('button', {name: 'Save'}));
+    expect(mockHistoryGoBack).not.toHaveBeenCalled();
+    expect(mockHistoryReplace).toHaveBeenCalledWith('/integrations/_integrationId/flows/sections/undefined/flowgroups/edit');
   });
   test('Should able to test the FlowGroup drawer is there when Create flowgroup failed', async () => {
     await initFlowgroupDrawer({props}, 'Failed');
