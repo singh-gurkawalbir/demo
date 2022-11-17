@@ -59,6 +59,7 @@ import {
   AFE_SAVE_STATUS,
   UNASSIGNED_SECTION_NAME,
   emptyList,
+  MAX_DATA_RETENTION_PERIOD,
 } from '../constants';
 import messageStore from '../utils/messageStore';
 import { upgradeButtonText, expiresInfo } from '../utils/license';
@@ -115,6 +116,7 @@ import { buildDrawerUrl, drawerPaths } from '../utils/rightDrawer';
 import { GRAPHQL_HTTP_FIELDS, isGraphqlResource } from '../utils/graphql';
 import { initializeFlowForReactFlow, getFlowAsyncKey } from '../utils/flows/flowbuilder';
 import { HTTP_BASED_ADAPTORS } from '../utils/http';
+import { AUDIT_LOG_PAGING_FILTER_KEY } from '../constants/auditLog';
 
 const emptyArray = [];
 const emptyObject = {};
@@ -1569,8 +1571,6 @@ selectors.matchingConnectionList = (state, connection = {}, environment, manageO
         if (getHttpConnector(connection.http?._httpConnectorId)) {
           return (
             this.http?._httpConnectorId === connection.http?._httpConnectorId &&
-            this.http?._httpConnectorVersionId === connection.http?._httpConnectorVersionId &&
-            this.http?._httpConnectorApiId === connection.http?._httpConnectorApiId &&
             !this._connectorId &&
             (!environment || !!this.sandbox === (environment === 'sandbox'))
           );
@@ -2205,7 +2205,6 @@ selectors.auditLogs = (
 
   const result = {
     logs: [],
-    count: 0,
     totalCount: 0,
   };
 
@@ -2234,12 +2233,22 @@ selectors.auditLogs = (
     });
   }
 
-  result.logs = options.take ? auditLogs.slice(0, options.take) : auditLogs;
-  result.count = result.logs.length;
+  result.logs = auditLogs;
   result.totalCount = auditLogs.length;
 
   return result;
 };
+
+selectors.paginatedAuditLogs = createSelector(
+  selectors.auditLogs,
+  state => selectors.filter(state, AUDIT_LOG_PAGING_FILTER_KEY),
+  (auditLogs, pagingFilters) => {
+    const { currPage = 0, rowsPerPage = DEFAULT_ROWS_PER_PAGE } = pagingFilters?.paging || {};
+
+    auditLogs.logs = auditLogs.logs.slice(currPage * rowsPerPage, (currPage + 1) * rowsPerPage);
+
+    return auditLogs;
+  });
 
 selectors.mkFlowResources = () => createSelector(
   state => state?.data?.resources?.flows,
@@ -2868,6 +2877,10 @@ selectors.integrationAppLicense = (state, id) => {
   const integrationResource = selectors.integrationAppSettings(state, id);
   const userLicenses = fromUser.licenses(state && state.user) || [];
   const license = userLicenses.find(l => l._integrationId === id) || {};
+  const integrationAppList = selectors.publishedConnectors(state);
+  const connector =
+     integrationAppList?.find(ia => ia._id === license?._connectorId);
+  const editions = connector?.twoDotZero?.editions || emptyArray;
   const upgradeRequested = selectors.checkUpgradeRequested(state, license._id);
   const dateFormat = selectors.userProfilePreferencesProps(state)?.dateFormat;
   const { expires, created } = license;
@@ -2879,7 +2892,9 @@ selectors.integrationAppLicense = (state, id) => {
   const upgradeText = upgradeButtonText(
     license,
     integrationResource,
-    upgradeRequested
+    upgradeRequested,
+    editions,
+    connector?.twoDotZero
   );
 
   return {
@@ -3600,6 +3615,7 @@ selectors.platformLicenseWithMetadata = createSelector(
     }
 
     licenseActionDetails.totalSandboxFlowsAvailable = 0;
+    licenseActionDetails.isMaxDataRetentionPeriodAvailable = !!(licenseActionDetails.maxAllowedDataRetention === MAX_DATA_RETENTION_PERIOD);
 
     if (licenseActionDetails.sandbox) {
       licenseActionDetails.totalSandboxFlowsAvailable = getTierToFlowsMap(

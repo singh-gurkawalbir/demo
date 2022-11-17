@@ -172,10 +172,6 @@ export default {
     delete newValues['/http/auth/wsse/password'];
     delete newValues['/http/auth/wsse/headerName'];
     newValues['/http/formType'] = 'assistant';
-    if (newValues['/http/updateBaseURI']) {
-      newValues['/http/baseURI'] = newValues['/http/updateBaseURI'];
-      delete newValues['/http/updateBaseURI'];
-    }
     if (resource?._httpConnectorId || resource?.http?._httpConnectorId) {
       newValues = updateHTTPFrameworkFormValues(newValues, resource, options?.httpConnector);
     }
@@ -227,23 +223,7 @@ export default {
     },
     'http.baseURI': {
       fieldId: 'http.baseURI',
-      readOnly: true,
-      refreshOptionsOnChangesTo: [],
-      defaultDisabled: true,
-      defaultValue: r => {
-        if (!r?.http?.baseURI) { return null; }
-
-        return r?.http?.baseURI;
-      },
-    },
-    'http.updateBaseURI': {
-      fieldId: 'http.updateBaseURI',
       visible: false,
-      defaultValue: r => {
-        if (!r?.http?.baseURI) { return null; }
-
-        return r?.http?.baseURI;
-      },
     },
     'http.mediaType': {
       fieldId: 'http.mediaType',
@@ -401,11 +381,9 @@ export default {
           {
             fields: [
               'http.baseURI',
-              'http.updateBaseURI',
             ],
           },
           {
-            type: 'indent',
             containers: [{
               fields: [],
             }],
@@ -529,22 +507,5 @@ export default {
       ],
     },
   ],
-  // refresh the baseURI as per the user input
-  optionsHandler(fieldId, fields) {
-    if (fieldId === 'http.baseURI') {
-      const baseURIField = fields.find(field => field.id === 'http.baseURI');
-      let baseURIValue = baseURIField.defaultValue;
-
-      baseURIField.refreshOptionsOnChangesTo.forEach(fieldId => {
-        const fieldValue = fields.find(field => field.id === fieldId)?.value;
-
-        if (fieldValue) {
-          baseURIValue = baseURIValue.replace(new RegExp(`{{{(.)*${fieldId}}}}`), fieldValue);
-        }
-      });
-
-      return baseURIValue;
-    }
-  },
 };
 

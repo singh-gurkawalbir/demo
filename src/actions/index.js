@@ -281,11 +281,12 @@ const resource = {
       patch,
       context,
     }),
-  receivedCollection: (resourceType, collection, integrationId) =>
+  receivedCollection: (resourceType, collection, integrationId, isNextPageCollection) =>
     action(actionTypes.RESOURCE.RECEIVED_COLLECTION, {
       resourceType,
       collection,
       integrationId,
+      isNextPageCollection,
     }),
   clearCollection: resourceType =>
     action(actionTypes.RESOURCE.CLEAR_COLLECTION, { resourceType }),
@@ -528,9 +529,12 @@ const resource = {
 // #endregion
 
 const auditLogs = {
-  request: (resourceType, resourceId, message) => action(actionTypes.RESOURCE.REQUEST_COLLECTION, {
+  request: (resourceType, resourceId, nextPagePath) => action(actionTypes.RESOURCE.REQUEST_COLLECTION, {
     resourceType: auditResourceTypePath(resourceType, resourceId),
-    message,
+    nextPagePath,
+  }),
+  receivedNextPagePath: nextPagePath => action(actionTypes.RESOURCE.AUDIT_LOGS_NEXT_PATH, {
+    nextPagePath,
   }),
   download: ({resourceType, resourceId, childId, filters}) => action(actionTypes.RESOURCE.DOWNLOAD_AUDIT_LOGS, {
     resourceType,
@@ -1332,12 +1336,14 @@ const license = {
     action(actionTypes.LICENSE.UPGRADE_REQUEST, {}),
   requestUpdate: (actionType, {connectorId, licenseId, feature}) =>
     action(actionTypes.LICENSE.UPDATE_REQUEST, { actionType, connectorId, licenseId, feature }),
-  licenseUpgradeRequestSubmitted: (message, feature) =>
-    action(actionTypes.LICENSE.UPGRADE_REQUEST_SUBMITTED, { message, feature }),
+  licenseUpgradeRequestSubmitted: (message, feature, isTwoDotZero) =>
+    action(actionTypes.LICENSE.UPGRADE_REQUEST_SUBMITTED, { message, feature, isTwoDotZero }),
   licenseReactivated: () =>
     action(actionTypes.LICENSE.REACTIVATED),
   ssoLicenseUpgradeRequested: () =>
     action(actionTypes.LICENSE.SSO.UPGRADE_REQUESTED),
+  dataRetentionLicenseUpgradeRequested: () =>
+    action(actionTypes.LICENSE.DATA_RETENTION.UPGRADE_REQUESTED),
   requestLicenseEntitlementUsage: () =>
     action(actionTypes.LICENSE.ENTITLEMENT_USAGE_REQUEST),
   requestNumEnabledFlows: () =>
@@ -2441,6 +2447,12 @@ const mfa = {
   clear: () => action(actionTypes.MFA.CLEAR),
 };
 
+const accountSettings = {
+  request: () => action(actionTypes.ACCOUNT_SETTINGS.REQUEST),
+  update: accountSettings => action(actionTypes.ACCOUNT_SETTINGS.UPDATE, {accountSettings}),
+  received: accountSettings => action(actionTypes.ACCOUNT_SETTINGS.RECEIVED, {accountSettings}),
+};
+
 export default {
   asyncTask,
   form,
@@ -2488,6 +2500,7 @@ export default {
   logs,
   sso,
   mfa,
+  accountSettings,
   bottomDrawer,
   integrationLCM,
   httpConnectors,

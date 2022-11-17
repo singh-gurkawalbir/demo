@@ -5,6 +5,7 @@ import { selectors } from '../../reducers';
 import AppRouting from '../AppRouting';
 import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
 import { NONE_TIER_USER_ERROR } from '../../utils/messageStore';
+import ChatbotWidget from '../../components/ChatbotWidget';
 
 const useStyles = makeStyles(theme => ({
   content: {
@@ -44,6 +45,7 @@ export default function PageContent() {
           classes.toolbar
         }
       />
+      <ChatbotWidget />
       <AppRouting />
     </main>
   );

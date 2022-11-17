@@ -1,134 +1,32 @@
-/* global describe, test, expect, jest, beforeEach, afterEach */
+/* global describe, jest, test, expect, beforeEach, afterEach */
 import React from 'react';
-import { screen, waitFor } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
-import userEvent from '@testing-library/user-event';
 import * as reactRedux from 'react-redux';
-import { renderWithProviders} from '../../test/test-utils';
-import RegisterConnections from './index';
-import { getCreatedStore } from '../../store';
+import { screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import actions from '../../actions';
+import { renderWithProviders, reduxStore } from '../../test/test-utils';
+import RegisterConnections from '.';
 
-async function customFunc(props = {}) {
-  const initialStore = getCreatedStore();
+jest.mock('../LoadResources', () => ({
+  __esModule: true,
+  ...jest.requireActual('../LoadResources'),
+  default: ({children}) => children,
+}));
 
-  initialStore.getState().data.resources.connections = [{
-    _id: '5f084bff6da99c0abdacb731',
-    createdAt: '2020-07-10T11:07:43.161Z',
-    lastModified: '2020-12-14T05:24:10.236Z',
-    type: 'ftp',
-    name: 'FTP-Test',
-    offline: true,
-    debugDate: '2020-09-18T12:04:31.079Z',
-    sandbox: false,
-    ftp: {
-      type: 'sftp',
-      hostURI: 'celigo.brickftp.com',
-      username: 'kalyan.chakravarthi@celigo.com',
-      password: '******',
-      port: 22,
-      usePassiveMode: true,
-      userDirectoryIsRoot: false,
-      useImplicitFtps: false,
-      requireSocketReUse: false,
-    },
-    queueSize: 0,
-  }];
-  initialStore.getState().data.resources.integrations = [{
-    _id: '5f5f09aded5b6f5f6c851f23',
-    lastModified: '2020-09-18T10:41:09.051Z',
-    name: 'Marketo Flows',
-    install: [],
-    sandbox: false,
-    _registeredConnectionIds: [
-      '5f5f08e6ed5b6f5f6c851ef8',
-      '5f084bff6da99c0abdacb731',
-    ],
-    installSteps: [],
-    uninstallSteps: [],
-    flowGroupings: [],
-    createdAt: '2020-09-14T06:11:57.537Z',
-  }];
-
+function initRegisterConnections(props = {}, initialStore) {
   const ui = (
     <MemoryRouter>
       <RegisterConnections {...props} />
     </MemoryRouter>
   );
 
-  return renderWithProviders(ui, {initialStore});
+  renderWithProviders(ui, {initialStore});
 }
 
-const mockHandleChange = jest.fn().mockReturnValue({
-  connections: {
-    '62543ffed68e2457e3b35315': true,
-    '5dcd2e3d3791751318970ef9': true,
-  },
-});
-
-jest.mock('../LoadResources', () => ({              // LoadResources Mock//
-  __esModule: true,
-  ...jest.requireActual('../LoadResources'),
-  default: props =>
-    (
-      <>
-        <div>
-          {props.children}
-        </div>
-      </>
-    )
-  ,
-}));
-jest.mock('../CeligoTable', () => ({      // CeligoTable Mock//
-  __esModule: true,
-  ...jest.requireActual('../CeligoTable'),
-  default: props => {
-    const handleSelectChange = () => {
-      const { connections } = mockHandleChange();
-
-      props.onSelectChange(connections);
-    };
-
-    return (
-      <>
-        <button type="button" onClick={handleSelectChange} data-testid="text_button_1">
-          mockedRegister
-        </button>
-      </>
-    );
-  },
-}));
-
-const mockHandleSubmit = jest.fn().mockReturnValue({
-  selected: {
-    '62543ffed68e2457e3b35315': true,
-    '5dcd2e3d3791751318970ef9': true,
-  },
-});
-
-jest.mock('../Buttons/FilledButton', () => ({         // OutlinedButton Mock//
-  __esModule: true,
-  ...jest.requireActual('../Buttons/FilledButton'),
-  default: props => {
-    const handleRegisterClick = () => {
-      const { selected } = mockHandleSubmit();
-
-      props.onClick(selected);
-    };
-
-    return (
-      <>
-        <button type="button" onClick={handleRegisterClick} data-testid="text_button_1">
-          RegisterButton
-        </button>
-      </>
-    );
-  },
-}));
-
-describe('Register Connections UI tests', () => {
-  let mockDispatchFn;
+describe('Test suite for RegisterConnections component', () => {
   let useDispatchSpy;
+  let mockDispatchFn;
 
   beforeEach(() => {
     useDispatchSpy = jest.spyOn(reactRedux, 'useDispatch');
@@ -142,36 +40,104 @@ describe('Register Connections UI tests', () => {
 
   afterEach(() => {
     useDispatchSpy.mockClear();
+    mockDispatchFn.mockClear();
   });
-  test('should pass the initial render', async () => {
-    const mockOnClose = jest.fn();
 
-    await customFunc({onClose: mockOnClose, integrationId: '5f5f09aded5b6f5f6c851f23'});
-    expect(screen.getByText(/Register Connections/i)).toBeInTheDocument();
-    expect(screen.getByText(/RegisterButton/i)).toBeInTheDocument();
+  test('should pass initial rendering', () => {
+    const onClose = jest.fn();
+
+    initRegisterConnections({onClose});
+    const columnHeaders = screen.getAllByRole('columnheader').map(ele => ele.textContent);
+
+    expect(screen.getByText('Register connections')).toBeInTheDocument();
+    expect(columnHeaders).toEqual([
+      '  ',
+      'Name',
+      'Status',
+      'Connector',
+      'API',
+      'Last updated',
+      'Queue size']);
+
+    const registerButton = screen.getByRole('button', {name: 'Register'});
+
+    expect(registerButton).toBeInTheDocument();
+    userEvent.click(registerButton);
+    expect(onClose).toHaveBeenCalledTimes(1);
+    expect(mockDispatchFn).toHaveBeenCalledWith(actions.connection.requestRegister([], undefined));
+
+    const closeDialogButton = screen.getByTestId('closeModalDialog');
+
+    expect(closeDialogButton).toBeInTheDocument();
+    userEvent.click(closeDialogButton);
+    expect(onClose).toHaveBeenCalledTimes(2);
   });
-  test('should make the respective dispatch calls when clicked on Register Button', async () => {
-    const mockOnClose = jest.fn();
 
-    await customFunc({onClose: mockOnClose, integrationId: '5f5f09aded5b6f5f6c851f23'});
-    const buton = screen.getByText(/RegisterButton/i);
+  test('should be able to register multiple connections', () => {
+    const integrationId = '626int';
+    const onClose = jest.fn();
+    const state = reduxStore.getState();
 
-    userEvent.click(buton);
-    await waitFor(() => expect(mockDispatchFn).toBeCalledWith(actions.connection.requestRegister([], '5f5f09aded5b6f5f6c851f23')));
-    expect(mockOnClose).toBeCalledTimes(1);
-  });
-  test('should make the dispatch call with selected connections when some are selected', async () => {
-    const mockOnClose = jest.fn();
+    state.session.filters.registerConnections = {
+      isAllSelected: false,
+      sort: {
+        order: 'asc',
+        orderBy: 'name',
+      },
+    };
+    state.user.preferences.environment = 'production';
+    state.user.preferences.defaultAShareId = 'id123';
+    state.user.org.accounts = [
+      {
+        _id: 'id123',
+        accessLevel: 'manage',
+      },
+    ];
+    state.data.resources.connections = [
+      {
+        _id: '627conn1',
+        name: 'Connection 1',
+        type: 'netsuite',
+        lastModified: '2022-08-24T10:24:52.046Z',
+      },
+      {
+        _id: '627conn2',
+        name: 'Connection 2',
+        type: 'http',
+        http: {
+          baseURI: 'https://http.com',
+        },
+        lastModified: '2022-08-25T08:14:18.288Z',
+      },
+      {
+        _id: '627conn3',
+        name: 'Connection 3',
+        offline: true,
+        type: 'rest',
+        rest: {
+          baseURI: 'https://rest.com',
+        },
+        lastModified: '2022-08-25T08:14:18.288Z',
+      }];
 
-    await customFunc({onClose: mockOnClose, integrationId: '5f5f09aded5b6f5f6c851f23'});
-    const buton = screen.getByText(/Register Connections/i);
+    initRegisterConnections({integrationId, onClose}, reduxStore);
 
-    userEvent.click(buton);
-    const button = screen.getByText(/mockedRegister/i); // Register button is rendered by mocked component//
+    const connectionLinks = screen.getAllByRole('link').map(ele => ele.textContent);
 
-    userEvent.click(button);
-    userEvent.click(screen.getByText(/RegisterButton/i));
-    await waitFor(() => expect(mockDispatchFn).toBeCalledWith(actions.connection.requestRegister(['62543ffed68e2457e3b35315', '5dcd2e3d3791751318970ef9'], '5f5f09aded5b6f5f6c851f23')));
+    expect(connectionLinks).toEqual(['Connection 1', 'Connection 2', 'Connection 3']);
+
+    [
+      'Connection 1 online NetSuite relative date time 0',
+      'Connection 2 online HTTP https://http.com relative date time 0',
+      'Connection 3 Offline REST API (HTTP) https://rest.com relative date time 0',
+    ].forEach(rowText => expect(screen.getByRole('row', {name: rowText})).toBeInTheDocument());
+
+    const registerButton = screen.getByRole('button', {name: 'Register'});
+    const selectAllConnections = screen.getAllByRole('checkbox')[0];
+
+    userEvent.click(selectAllConnections);
+    userEvent.click(registerButton);
+
+    expect(mockDispatchFn).toHaveBeenLastCalledWith(actions.connection.requestRegister(['627conn1', '627conn2', '627conn3'], integrationId));
   });
 });
-

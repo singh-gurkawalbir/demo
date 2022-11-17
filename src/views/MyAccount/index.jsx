@@ -6,6 +6,7 @@ import { selectors } from '../../reducers';
 import { USER_ACCESS_LEVELS } from '../../constants';
 import CeligoPageBar from '../../components/CeligoPageBar';
 import TransfersIcon from '../../components/icons/TransfersIcon';
+import DataRetentionIcon from '../../components/icons/DataRetentionIcon';
 import SecurityIcon from '../../components/icons/SecurityIcon';
 import SingleUserIcon from '../../components/icons/SingleUserIcon';
 import UsersIcon from '../../components/icons/GroupOfUsersIcon';
@@ -30,6 +31,9 @@ const Transfers = loadable(() =>
 );
 const Security = loadable(() =>
   retry(() => import(/* webpackChunkName: 'MyAccount.Security' */ './Security/index'))
+);
+const DataRetention = loadable(() =>
+  retry(() => import(/* webpackChunkName: 'MyAccount.DataRetention' */ './DataRetention/index'))
 );
 
 const SECURITY_TAB = {
@@ -66,6 +70,12 @@ const tabs = [
     Panel: Transfers,
   },
   SECURITY_TAB,
+  {
+    path: 'dataretention',
+    label: 'Data retention',
+    Icon: DataRetentionIcon,
+    Panel: DataRetention,
+  },
 ];
 
 const useStyles = makeStyles(theme => ({

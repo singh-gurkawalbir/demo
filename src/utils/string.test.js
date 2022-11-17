@@ -1,5 +1,5 @@
 /* global describe, test, expect */
-import { getTextAfterCount, camelCase, isHTML, getTrimmedTitle, getParsedMessage, escapeSpecialChars } from './string';
+import { getTextAfterCount, camelCase, isHTML, getTrimmedTitle, getParsedMessage, escapeSpecialChars, hasWhiteSpace } from './string';
 
 describe('getTextAfterCount util test cases', () => {
   test('should return correct string when count is zero', () => {
@@ -112,5 +112,19 @@ describe('escapeSpecialChars util test cases', () => {
     expect(escapeSpecialChars('\r\n')).toEqual('\\r\\n');
     expect(escapeSpecialChars('*')).toEqual('*');
     expect(escapeSpecialChars({id: '[]'})).toEqual(JSON.stringify({id: '[]'}));
+  });
+});
+
+describe('hasWhiteSpace util test cases', () => {
+  test('should not throw exception for invalid arguments', () => {
+    expect(hasWhiteSpace()).toEqual(false);
+    expect(hasWhiteSpace(null)).toEqual(false);
+  });
+  test('should return correct boolean value for given string', () => {
+    expect(hasWhiteSpace('valid')).toEqual(false);
+    expect(hasWhiteSpace('valid string')).toEqual(true);
+    expect(hasWhiteSpace('valid  string')).toEqual(true);
+    expect(hasWhiteSpace(`valid
+    string`)).toEqual(true);
   });
 });

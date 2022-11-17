@@ -28,6 +28,7 @@ import OperandSettingsDialog from './OperandSettingsDialog';
 import actions from '../../../../../actions';
 import { stringCompare } from '../../../../../utils/sort';
 import Spinner from '../../../../Spinner';
+import { hasWhiteSpace } from '../../../../../utils/string';
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -221,6 +222,10 @@ export function SalesforceLookupFilterPanelData({
 
     if (r.rhs.type && !r.rhs[r.rhs.type]) {
       return { isValid: false, error: 'Please select right operand.' };
+    }
+
+    if (r.rhs.type && r.rhs.type === 'value' && hasWhiteSpace(r.rhs[r.rhs.type])) {
+      return { isValid: false, error: 'Value should not contain spaces.' };
     }
 
     return {

@@ -57,7 +57,8 @@ export default function getSettingsMetadata(props) {
             ],
           },
         ],
-        label: 'Notify me on flow errors',
+        helpKey: 'flow.notifyOnFlowError',
+        label: 'Notify me of flow errors',
       },
       autoResolveMatchingTraceKeys: {
         id: 'autoResolveMatchingTraceKeys',

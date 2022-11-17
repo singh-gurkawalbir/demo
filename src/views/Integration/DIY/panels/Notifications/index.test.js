@@ -267,7 +267,6 @@ describe('NotificationsSection UI tests', () => {
         integrationId: '5ff579d745ceef7dcd797c15',
       }
     );
-    screen.debug(null, Infinity);
   });
   test('should test for collections notification options', () => {
     const mockDispatch = initStoreAndRender(true);

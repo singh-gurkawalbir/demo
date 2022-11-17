@@ -90,6 +90,5 @@ describe('FlowGroupRow UI tests', () => {
     expect(screen.getByText('SortableHandle')).toBeInTheDocument();
     userEvent.unhover(screen.getByText('demo section'));
     waitFor(() => expect(screen.queryByText('SortableHandle')).toBeNull());
-    screen.debug(undefined, Infinity);
   });
 });

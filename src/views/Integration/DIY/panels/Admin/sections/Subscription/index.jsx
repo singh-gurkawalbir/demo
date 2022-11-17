@@ -85,9 +85,6 @@ const useStyles = makeStyles(theme => ({
   button: {
     margin: theme.spacing(1),
   },
-  item: {
-    float: 'left',
-  },
   planContent: {
     margin: 0,
     lineHeight: '16px',
@@ -132,6 +129,7 @@ export default function SubscriptionSection({ childId, integrationId }) {
   const plan = useSelector(state =>
     selectors.integrationAppEdition(state, integrationId)
   );
+  const istwoDotZeroFrameWork = useSelector(state => selectors.isIntegrationAppVersion2(state, integrationId, true));
   const addOnState = useSelector(state =>
     selectors.integrationAppAddOnState(state, integrationId)
   );
@@ -187,7 +185,7 @@ export default function SubscriptionSection({ childId, integrationId }) {
     if (upgradeText === 'Request upgrade') {
       confirmDialog({
         title: 'Request upgrade',
-        message: 'We will contact you to discuss your business needs and recommend an ideal subscription plan.',
+        message: istwoDotZeroFrameWork ? 'You’ll receive a follow-up email from an associate shortly to discuss different plan options, resources & features available in each plan, and pricing.' : 'We will contact you to discuss your business needs and recommend an ideal subscription plan.',
         buttons: [
           {
             label: 'Submit request',
@@ -218,22 +216,22 @@ export default function SubscriptionSection({ childId, integrationId }) {
           <div className={classes.planContent}>
             <Grid container className={classes.container}>
               <Grid item xs={2}>
-                <Typography data-test="iaPlan" className={classes.item}>
+                <Typography data-test="iaPlan">
                   {' '}
                   {plan}{' '}
                 </Typography>
               </Grid>
               <Grid item xs={4}>
-                <Typography data-test="iaVersion" className={classes.item}>
+                <Typography data-test="iaVersion">
                   {`Version ${version}`}
                 </Typography>
-                <Typography data-test="integrationId" className={classes.item}>
+                <Typography data-test="integrationId">
                   {`Integration ID ${integrationId}`}
                 </Typography>
               </Grid>
               <Grid item xs={3}>
-                <Typography className={classes.item}>{createdText}</Typography>
-                <Typography className={classes.item}>{expiresText}</Typography>
+                <Typography>{createdText}</Typography>
+                <Typography>{expiresText}</Typography>
               </Grid>
               <Grid item xs={3}>
                 {upgradeText && (
