@@ -18,17 +18,19 @@ function initRunHistoryTable(data = {}) {
   renderWithProviders(ui, {initialStore});
 }
 
-function existanceOfCellInDom(text, role) {
+function indexOfCell(text, role) {
   const cells = screen.getAllByRole(role);
-  let indeX = -1;
 
-  cells.find((each, index) => {
-    each.textContent === text ? indeX = index : null;
+  return cells.findIndex(each => each.textContent === text);
+}
 
-    return each.textContent === text;
-  });
+let headerIndex;
+let cellIndex;
 
-  return indeX;
+function expectFunction(header, cell) {
+  expect(header).toBeGreaterThan(-1);
+  expect(cell).toBeGreaterThan(-1);
+  expect(cell).toEqual(header);
 }
 
 const key = 'someKey';
@@ -36,80 +38,60 @@ const key = 'someKey';
 describe('JobStatusWithTag test cases', () => {
   test('should show completed message with errors', () => {
     initRunHistoryTable({ key, status: 'completedWithErrors'});
-    expect(existanceOfCellInDom('Status', 'columnheader')).toBeDefined();
-    expect(existanceOfCellInDom('Completed', 'cell')).toBeDefined();
+    expect(indexOfCell('Status', 'columnheader')).toBeDefined();
+    expect(indexOfCell('Completed', 'cell')).toBeDefined();
   });
   test('should show duration', () => {
     initRunHistoryTable({ key, startedAt: '2022-05-18T18:16:31.989Z', endedAt: '2022-05-18T18:16:35.989Z'});
-    const headerI = existanceOfCellInDom('Duration', 'columnheader');
-    const cellI = existanceOfCellInDom('00:00:04', 'cell');
+    headerIndex = indexOfCell('Duration', 'columnheader');
+    cellIndex = indexOfCell('00:00:04', 'cell');
 
-    expect(headerI).toBeGreaterThan(-1);
-    expect(cellI).toBeGreaterThan(-1);
-    expect(cellI).toEqual(headerI);
+    expectFunction(headerIndex, cellIndex);
   });
   test('should show Started cloumn', () => {
     initRunHistoryTable({ key, startedAt: '2022-05-18T18:16:31.989Z', endedAt: '2022-05-18T18:16:35.989Z'});
-    const headerI = existanceOfCellInDom('Started', 'columnheader');
-    const cellI = existanceOfCellInDom('05/18/2022 11:46:31 pm', 'cell');
-
-    expect(headerI).toBeGreaterThan(-1);
-    expect(cellI).toBeGreaterThan(-1);
-    expect(cellI).toEqual(headerI);
+    headerIndex = indexOfCell('Started', 'columnheader');
+    cellIndex = indexOfCell('05/18/2022 11:46:31 pm', 'cell');
+    expectFunction(headerIndex, cellIndex);
   });
   test('should show Completed(time) cloumn', () => {
     initRunHistoryTable({ key, startedAt: '2022-05-18T18:16:31.989Z', endedAt: '2022-05-18T18:16:35.989Z'});
-    const headerI = existanceOfCellInDom('Completed', 'columnheader');
-    const cellI = existanceOfCellInDom('05/18/2022 11:46:35 pm', 'cell');
-
-    expect(headerI).toBeGreaterThan(-1);
-    expect(cellI).toBeGreaterThan(-1);
-    expect(cellI).toEqual(headerI);
+    headerIndex = indexOfCell('Completed', 'columnheader');
+    cellIndex = indexOfCell('05/18/2022 11:46:35 pm', 'cell');
+    expectFunction(headerIndex, cellIndex);
   });
   test('should show Success cloumn', () => {
     const numSuccess = '1';
 
     initRunHistoryTable({ key, numSuccess});
 
-    const headerI = existanceOfCellInDom('Success', 'columnheader');
-    const cellI = existanceOfCellInDom(numSuccess, 'cell');
-
-    expect(headerI).toBeGreaterThan(-1);
-    expect(cellI).toBeGreaterThan(-1);
-    expect(cellI).toEqual(headerI);
+    headerIndex = indexOfCell('Success', 'columnheader');
+    cellIndex = indexOfCell(numSuccess, 'cell');
+    expectFunction(headerIndex, cellIndex);
   });
   test('should show Ignored cloumn', () => {
     const numIgnore = '2';
 
     initRunHistoryTable({ key, numIgnore});
-    const headerI = existanceOfCellInDom('Ignored', 'columnheader');
-    const cellI = existanceOfCellInDom(numIgnore, 'cell');
-
-    expect(headerI).toBeGreaterThan(-1);
-    expect(cellI).toBeGreaterThan(-1);
-    expect(cellI).toEqual(headerI);
+    headerIndex = indexOfCell('Ignored', 'columnheader');
+    cellIndex = indexOfCell(numIgnore, 'cell');
+    expectFunction(headerIndex, cellIndex);
   });
   test('should show Errors cloumn', () => {
     const numError = '3';
 
     initRunHistoryTable({ key, numError});
-    const headerI = existanceOfCellInDom('Errors', 'columnheader');
-    const cellI = existanceOfCellInDom(numError, 'cell');
-
-    expect(headerI).toBeGreaterThan(-1);
-    expect(cellI).toBeGreaterThan(-1);
-    expect(cellI).toEqual(headerI);
+    headerIndex = indexOfCell('Errors', 'columnheader');
+    cellIndex = indexOfCell(numError, 'cell');
+    expectFunction(headerIndex, cellIndex);
   });
   test('should show Pages cloumn', () => {
     const numPagesGenerated = '4';
 
     initRunHistoryTable({ key, numPagesGenerated: 4});
-    const headerI = existanceOfCellInDom('Pages', 'columnheader');
-    const cellI = existanceOfCellInDom(numPagesGenerated, 'cell');
-
-    expect(headerI).toBeGreaterThan(-1);
-    expect(cellI).toBeGreaterThan(-1);
-    expect(cellI).toEqual(headerI);
+    headerIndex = indexOfCell('Pages', 'columnheader');
+    cellIndex = indexOfCell(numPagesGenerated, 'cell');
+    expectFunction(headerIndex, cellIndex);
   });
   test('should click on action button and show only download disgnostics', () => {
     initRunHistoryTable({ key});

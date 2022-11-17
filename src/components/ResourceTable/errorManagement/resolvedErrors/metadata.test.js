@@ -47,17 +47,19 @@ initialStore.getState().data.resources.exports = [{
   adaptorType: 'NetSuiteExport',
 }];
 
-function existanceOfCellInDom(text, role) {
+function indexOfCell(text, role) {
   const cells = screen.getAllByRole(role);
-  let indeX = -1;
 
-  cells.find((each, index) => {
-    indeX = index;
+  return cells.findIndex(each => each.textContent === text);
+}
 
-    return each.textContent === text;
-  });
+let headerIndex;
+let cellIndex;
 
-  return indeX;
+function expectFunction(header, cell) {
+  expect(header).toBeGreaterThan(-1);
+  expect(cell).toBeGreaterThan(-1);
+  expect(cell).toEqual(header);
 }
 
 const props = {
@@ -72,61 +74,39 @@ const props = {
 describe("ResolvedErros table's metadata UI tests", () => {
   test('should verify the Select All column', () => {
     initFunction(props);
-
-    const headerI = existanceOfCellInDom('MockedSelectAll', 'columnheader');
-
-    expect(headerI).toBeGreaterThan(-1);
+    headerIndex = indexOfCell('MockedSelectAll', 'columnheader');
+    expect(headerIndex).toBeGreaterThan(-1);
     expect(screen.getByTitle(messageStore('SELECT_ERROR_HOVER_MESSAGE'))).toBeInTheDocument();
   });
   test('should verify Message cloumn', () => {
     initFunction(props);
-
-    const headerI = existanceOfCellInDom('Message', 'columnheader');
-    const cellI = existanceOfCellInDom('someMessage', 'cell');
-
-    expect(headerI).toBeGreaterThan(-1);
-    expect(cellI).toBeGreaterThan(-1);
-    expect(cellI).toEqual(headerI);
+    headerIndex = indexOfCell('Message', 'columnheader');
+    cellIndex = indexOfCell('someMessage', 'cell');
+    expectFunction(headerIndex, cellIndex);
   });
   test('should verify the code coulmn', () => {
     initFunction(props);
-
-    const headerI = existanceOfCellInDom('Code', 'columnheader');
-    const cellI = existanceOfCellInDom('someCode', 'cell');
-
-    expect(headerI).toBeGreaterThan(-1);
-    expect(cellI).toBeGreaterThan(-1);
-    expect(cellI).toEqual(headerI);
+    headerIndex = indexOfCell('Code', 'columnheader');
+    cellIndex = indexOfCell('someCode', 'cell');
+    expect(cellIndex).toEqual(headerIndex);
   });
   test('should verify the Select Source coulmn', () => {
     initFunction(props);
-
-    const headerI = existanceOfCellInDom('MockedSelectSource', 'columnheader');
-    const cellI = existanceOfCellInDom('somesource', 'cell');
-
-    expect(headerI).toBeGreaterThan(-1);
-    expect(cellI).toBeGreaterThan(-1);
-    expect(cellI).toEqual(headerI);
+    headerIndex = indexOfCell('MockedSelectSource', 'columnheader');
+    cellIndex = indexOfCell('somesource', 'cell');
+    expect(cellIndex).toEqual(headerIndex);
   });
   test('should verify the Classification coulmn', () => {
     initFunction(props);
-
-    const headerI = existanceOfCellInDom(' Classification', 'columnheader');
-    const cellI = existanceOfCellInDom('someclassification', 'cell');
-
-    expect(headerI).toBeGreaterThan(-1);
-    expect(cellI).toBeGreaterThan(-1);
-    expect(cellI).toEqual(headerI);
+    headerIndex = indexOfCell(' Classification', 'columnheader');
+    cellIndex = indexOfCell('someclassification', 'cell');
+    expect(cellIndex).toEqual(headerIndex);
   });
   test('should verify SelectDate coulmn', () => {
     initFunction(props, {}, initialStore);
-
-    const headerI = existanceOfCellInDom(' Timestamp', 'columnheader');
-    const cellI = existanceOfCellInDom('05/18/2022 11:46:31 pm', 'cell');
-
-    expect(headerI).toBeGreaterThan(-1);
-    expect(cellI).toBeGreaterThan(-1);
-    expect(cellI).toEqual(headerI);
+    headerIndex = indexOfCell(' Timestamp', 'columnheader');
+    cellIndex = indexOfCell('05/18/2022 11:46:31 pm', 'cell');
+    expect(cellIndex).toEqual(headerIndex);
   });
   test('should not show action button when action is in progress', () => {
     initFunction(props, {actionInProgress: true});
