@@ -2,7 +2,7 @@
 import { select } from 'redux-saga/effects';
 import { expectSaga } from 'redux-saga-test-plan';
 import * as matchers from 'redux-saga-test-plan/matchers';
-import { resourceConflictResolution, constructResourceFromFormValues, convertResourceFieldstoSampleData, getHTTPConnectorMetadata, updateFinalMetadataWithHttpFramework } from './index';
+import { resourceConflictResolution, constructResourceFromFormValues, convertResourceFieldstoSampleData, getHTTPConnectorMetadata, updateFinalMetadataWithHttpFramework, getEndpointResourceFields } from './index';
 import { createFormValuesPatchSet } from '../resourceForm';
 import { selectors } from '../../reducers';
 import getResourceFormAssets from '../../forms/formFactory/getResourceFromAssets';
@@ -254,7 +254,7 @@ describe('constructResourceFromFormValues saga', () => {
       .run();
   });
 });
-describe('convertResourceFieldstoSampleData saga', () => {
+describe('convertResourceFieldstoSampleData', () => {
   const input1 = [
     {
       id: 'address',
@@ -372,7 +372,7 @@ describe('convertResourceFieldstoSampleData saga', () => {
     expect(sampleData).toEqual('');
   });
 });
-describe('getHTTPConnectorMetadata saga', () => {
+describe('getHTTPConnectorMetadata', () => {
   const input1 = {
     baseURIs: [
       'https://{{{connection.settings.storeName}}}.myshopify.com/admin/api/:_version',
@@ -1034,7 +1034,7 @@ describe('getHTTPConnectorMetadata saga', () => {
   });
 });
 
-describe('updateFinalMetadataWithHttpFramework saga', () => {
+describe('updateFinalMetadataWithHttpFramework', () => {
   const connector = {
     baseURIs: [
       'https://{{{connection.settings.storeName}}}.myshopify.com/admin/api/:_version',
@@ -1370,10 +1370,63 @@ describe('updateFinalMetadataWithHttpFramework saga', () => {
 
     expect(metaData).toEqual(expctedOutput);
   });
-  test('should return undefined if none of the argument is passes', () => {
+  test('should not throw any exception for invalid arguments', () => {
     const metaData = updateFinalMetadataWithHttpFramework();
 
     expect(metaData).toEqual(undefined);
+  });
+});
+
+describe('getEndpointResourceFields', () => {
+  const resourceFields = {
+    address: {
+      address1: 'address1',
+      address2: 'address2',
+      original_shipping_lines: [
+        {
+          code: 'code',
+        },
+      ],
+      shipping_lines_override: 'shipping_lines_override',
+    },
+  };
+
+  test('should return correct endpoint sample data for resource fields when type is inclusion', () => {
+    const endpointResourceFields = [{type: 'inclusion', fields: ['address.shipping_lines_override']}];
+
+    const sampleData = getEndpointResourceFields(endpointResourceFields, resourceFields);
+    const expected = {address: {
+      shipping_lines_override: 'default',
+    }};
+
+    expect(sampleData).toEqual(expected);
+  });
+  test('should return correct endpoint sample data for resource fields when type is exclusion', () => {
+    const endpointResourceFields = [{type: 'exclusion', fields: ['address.shipping_lines_override']}];
+
+    const sampleData = getEndpointResourceFields(endpointResourceFields, resourceFields);
+    const expected = {
+      address: {
+        address1: 'address1',
+        address2: 'address2',
+        original_shipping_lines: [
+          {
+            code: 'code',
+          },
+        ] },
+    };
+
+    expect(sampleData).toEqual(expected);
+  });
+  test('should not throw any exception for invalid arguments', () => {
+    const sampleData = getEndpointResourceFields();
+
+    expect(sampleData).toEqual(undefined);
+  });
+  test('should return resourceFields directly if endpoint resource fields are empty', () => {
+    const sampleData = getEndpointResourceFields('', resourceFields);
+
+    expect(sampleData).toEqual(resourceFields);
   });
 });
 
