@@ -14,6 +14,9 @@ const useStyles = makeStyles(theme => ({
     maxWidth: 250,
     top: `${theme.spacing(1)}px !important`,
   },
+  purgeErrorEllipsis: {
+    marginLeft: theme.spacing(1),
+  },
 }));
 
 export default function PurgeErrorAction({ flowId, resourceId }) {
@@ -63,7 +66,8 @@ export default function PurgeErrorAction({ flowId, resourceId }) {
         aria-controls="purgeError"
         aria-haspopup="true"
         size="small"
-        onClick={handleMenuClick}>
+        onClick={handleMenuClick}
+        className={classes.purgeErrorEllipsis}>
         <EllipsisIcon />
       </IconButton>
       <ArrowPopper
@@ -74,7 +78,7 @@ export default function PurgeErrorAction({ flowId, resourceId }) {
         open={open}
         anchorEl={anchorEl}
         onClose={handleMenuClose}>
-        <MenuItem value="" disabled >
+        <MenuItem selected disabled className={classes.purgeMenuItem} >
           Purge
         </MenuItem>
         <MenuItem value="selected" onClick={handlePurge}>
