@@ -44,7 +44,7 @@ export default function ResourceEmptyState({resourceType}) {
 
         </EmptyState>
       ) : (
-        <NoResultTypography>You don&apos;t have any {resourceType}.</NoResultTypography>
+        <NoResultTypography>You don&apos;t have any {resourceType === 'apis' ? 'APIs' : resourceType} .</NoResultTypography>
       )}
     </LoadResources>
 

@@ -16,6 +16,7 @@ import { useGetTableContext } from '../../../../../../../components/CeligoTable/
 import FilledButton from '../../../../../../../components/Buttons/FilledButton';
 import useConfirmDialog from '../../../../../../../components/ConfirmDialog';
 import ButtonWithTooltip from '../../../../../../../components/Buttons/ButtonWithTooltip';
+import ChildIntegrationsTable from './ChildIntegrationsTable';
 
 const emptyObject = {};
 const metadata = {
@@ -124,6 +125,7 @@ export default function SubscriptionSection({ childId, integrationId }) {
     return emptyObject;
   }, shallowEqual);
   const children = useSelectorMemo(selectors.mkIntegrationChildren, integrationId);
+  const allChildIntegrations = useSelectorMemo(selectors.mkGetChildIntegrations, integrationId);
   const license = useSelector(state =>
     selectors.integrationAppLicense(state, integrationId)
   );
@@ -282,6 +284,12 @@ export default function SubscriptionSection({ childId, integrationId }) {
           (tile) of this Integration App. Contact your Account Manager for more
           info.
         </Typography>
+        {allChildIntegrations.length && (
+          <ChildIntegrationsTable
+            integrationId={integrationId}
+            allChildIntegrations={allChildIntegrations}
+          />
+        )}
         {hasAddOns && !hasSubscribedAddOns && (
           <div className={classes.customisedBlock}>
             <div className={classes.leftBlock}>
@@ -289,7 +297,7 @@ export default function SubscriptionSection({ childId, integrationId }) {
                 Add-ons
               </Typography>
               <Typography className={classes.message}>
-                You don`t have any add-ons yet. Add-ons let you customize
+                You don’t have any add-ons yet. Add-ons let you customize
                 subscription to meet your specific business requirements.
               </Typography>
             </div>

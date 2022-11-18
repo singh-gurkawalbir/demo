@@ -548,7 +548,13 @@ export default function FilterPanel({editorId}) {
               updateUIForRHSRule({ rule, name });
             });
           }
-          const rhsValue = rulesState[ruleId].data.rhs.value === undefined ? '' : rulesState[ruleId].data.rhs.value;
+          let rhsValue = rulesState[ruleId].data.rhs.value === undefined ? '' : rulesState[ruleId].data.rhs.value;
+
+          // https://celigo.atlassian.net/browse/IO-28905
+          // we can remove the qoutes for value(value=${rhsValue}) or convert all the qoutes when type is string
+          if (rulesState[ruleId].data.rhs.dataType === 'string') {
+            rhsValue = rhsValue?.replaceAll('"', '&quot;');
+          }
 
           return `<input class="form-control" name="${name}" value="${rhsValue}"><img style="display:none;" class="settings-icon" src="https://d142hkd03ds8ug.cloudfront.net/images/icons/icon/gear.png">`;
         },

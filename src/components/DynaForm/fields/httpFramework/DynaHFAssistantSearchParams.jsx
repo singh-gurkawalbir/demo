@@ -87,14 +87,19 @@ export default function DynaHFAssistantSearchParams(props) {
       name: <KeyLabel id={id} description={description} />,
       value: id,
     })), [paramMeta.fields]);
-  const suggestionConfig = useMemo(() => ({
-    keyConfig: {
-      suggestions: dataFields,
-      labelName: 'name',
-      valueName: 'value',
-      showAllSuggestions: true,
-    },
-  }), [dataFields]);
+
+  const suggestionConfig = useMemo(() => {
+    const updatedDataFields = dataFields.filter(field => !Object.keys(value).includes(field.value));
+
+    return ({
+      keyConfig: {
+        suggestions: updatedDataFields,
+        labelName: 'name',
+        valueName: 'value',
+        showAllSuggestions: true,
+      },
+    });
+  }, [dataFields, value]);
 
   useEffect(() => {
     if (!required) {
