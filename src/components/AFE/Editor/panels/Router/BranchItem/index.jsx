@@ -124,6 +124,7 @@ export default function BranchItem({
 
     return editorRule?.branches?.[position]?.inputFilter?.rules;
   });
+
   const hasRules = !!rules?.length;
   const branchType = useSelector(state => {
     const editorRule = selectors.editorRule(state, editorId);
