@@ -19,6 +19,7 @@ import { selectors } from '../../../../reducers';
 import ViewNetsuiteRequest from '../actions/ViewNetsuiteRequest';
 import ViewNetsuiteResponse from '../actions/ViewNetsuiteResponse';
 import messageStore from '../../../../utils/messageStore';
+import PurgeError from '../actions/PurgeError';
 
 const options = {allowedTags: ['a']};
 export default {
@@ -130,6 +131,7 @@ export default {
         ? actions.push(ViewNetsuiteRequest, ViewNetsuiteResponse)
         : actions.push(ViewHttpRequest, ViewHttpResponse);
     }
+    actions.push(PurgeError);
 
     return actions;
   },

@@ -607,6 +607,13 @@ export default (state = DEFAULT_STATE, action) => {
         break;
       }
 
+      case actionTypes.JOB.PURGE.SUCCESS:
+        draft.purgeFilesSuccess = true;
+        break;
+      case actionTypes.JOB.PURGE.CLEAR:
+        delete draft.purgeFilesSuccess;
+        break;
+
       default:
     }
   });
@@ -935,5 +942,7 @@ selectors.jobErrorRetryObject = (state, retryId) => {
 };
 
 selectors.isFlowJobsCollectionLoading = state => state?.status === 'loading';
+
+selectors.purgeFilesSuccess = state => !!state?.purgeFilesSuccess;
 
 // #endregion

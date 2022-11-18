@@ -116,6 +116,12 @@ href="/marketplace"><u>Check out our Marketplace</u></a> to jumpstart your  inte
   RETRIES_TAB_INFO: 'When you retry errors in a flow step, a new row in the <b>Retries</b> tab under that step will display its progress. When a retry results in errors in later flow steps, you can locate the new errors in their <b>Open errors tab</b>. <br>Here you will also find auto-retry runs. When retries were triggered by auto-retry, a single row will appear for each retry job in the <b>Retries</b> tab and the column <b>Retry started by</b> will contain <b>Auto-retried</b>.',
   CANCEL_RETRY_CONFIRM: 'Cancelling will abort the retrying of any errors not yet processed in this operation; those errors already processed will not be reverted, maintaining their current state (failed or resolved).',
   RETRIES_TAB_ERRORS_UPDATED_INFO: 'Retries that were initated from previous steps in your flow cannot be shown on any subsequent steps whose errors/success were changed by the retries in a previous step.',
+  ERROR_PURGE_CONFIRM_MESSAGE: 'Are you sure you want to purge the selected resolved error? This cannot be undone.',
+  MULTIPLE_ERROR_PURGE_CONFIRM_MESSAGE: 'Are you sure you want to purge the selected resolved error(s)? This cannot be undone.',
+  ERROR_PURGE_SUCCESS_MESSAGE: 'Error purged',
+  MULTIPLE_ERROR_PURGE_SUCCESS_MESSAGE: 'Error(s) purged',
+  FILE_PURGE_CONFIRM_MESSAGE: 'Are you sure you want to purge all files related to this run? This cannot be undone.',
+  FILE_PURGE_SUCCESS_MESSAGE: 'All run files purged.',
 };
 
 export default function messageStore(key, argsObj) {

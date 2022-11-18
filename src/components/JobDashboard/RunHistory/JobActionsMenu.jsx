@@ -1,5 +1,5 @@
-import React, { useState, useCallback } from 'react';
-import { useDispatch } from 'react-redux';
+import React, { useState, useCallback, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import Menu from '@material-ui/core/Menu';
 import { makeStyles } from '@material-ui/core';
 import MenuItem from '@material-ui/core/MenuItem';
@@ -9,6 +9,11 @@ import JobFilesDownloadDialog from '../JobFilesDownloadDialog';
 import EllipsisHorizontallIcon from '../../icons/EllipsisHorizontalIcon';
 import DownloadIntegrationIcon from '../../icons/DownloadIntegrationIcon';
 import DownloadIcon from '../../icons/DownloadIcon';
+import PurgeIcon from '../../icons/PurgeIcon';
+import { selectors } from '../../../reducers';
+
+import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
+import messageStore from '../../../utils/messageStore';
 
 const useStyle = makeStyles({
   iconBtn: {
@@ -23,6 +28,8 @@ export default function JobActionsMenu({
   const dispatch = useDispatch();
   const [anchorEl, setAnchorEl] = useState(null);
   const [showFilesDownloadDialog, setShowFilesDownloadDialog] = useState(false);
+  const [enqueueSnackbar] = useEnqueueSnackbar();
+  const purgeFilesSuccess = useSelector(state => selectors.purgeFilesSuccess(state));
 
   const menuOptions = [];
 
@@ -36,6 +43,11 @@ export default function JobActionsMenu({
       label: `${job.files.length > 1 ? 'Download files' : 'Download file'}`,
       action: 'downloadFiles',
       icon: <DownloadIcon />,
+    });
+    menuOptions.push({
+      label: `${job.files.length > 1 ? 'Purge files' : 'Purge file'}`,
+      action: 'purgeFiles',
+      icon: <PurgeIcon />,
     });
   }
 
@@ -60,12 +72,24 @@ export default function JobActionsMenu({
       } else if (job.files.length > 1) {
         setShowFilesDownloadDialog(true);
       }
+    } else if (action === 'purgeFiles') {
+      dispatch(actions.job.purge.request({ jobId: job._id }));
     }
   }
 
   function handleJobFilesDownloadDialogCloseClick() {
     setShowFilesDownloadDialog(false);
   }
+
+  useEffect(() => {
+    if (purgeFilesSuccess) {
+      enqueueSnackbar({
+        message: messageStore('FILE_PURGE_SUCCESS_MESSAGE'),
+        variant: 'success',
+      });
+      dispatch(actions.job.purge.clar());
+    }
+  }, [dispatch, enqueueSnackbar, purgeFilesSuccess]);
 
   return (
     <>

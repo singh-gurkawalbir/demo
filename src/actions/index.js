@@ -1748,7 +1748,14 @@ const job = {
   downloadFiles: ({ jobId, fileType, fileIds }) =>
     action(actionTypes.JOB.DOWNLOAD_FILES, { jobId, fileType, fileIds }),
   clear: () => action(actionTypes.JOB.CLEAR),
-
+  purge: {
+    request: ({ jobId }) =>
+      action(actionTypes.JOB.PURGE.REQUEST, {jobId}),
+    success: () =>
+      action(actionTypes.JOB.PURGE.SUCCESS),
+    clear: () =>
+      action(actionTypes.JOB.PURGE.CLEAR),
+  },
   cancel: ({ jobId, flowJobId }) =>
     action(actionTypes.JOB.CANCEL, { jobId, flowJobId }),
   resolveAllPending: () => action(actionTypes.JOB.RESOLVE_ALL_PENDING),
@@ -2053,6 +2060,13 @@ const errorManager = {
       isResolved,
       filters,
     }),
+    purge: {
+      request: ({ flowId, resourceId, errors }) =>
+        action(actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.PURGE.REQUEST, {flowId, resourceId, errors}),
+      success: ({ flowId, resourceId, message}) =>
+        action(actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.PURGE.SUCCESS, { flowId, resourceId, message}),
+      clear: ({ flowId, resourceId}) => action(actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.PURGE.CLEAR, { flowId, resourceId}),
+    },
   },
   retries: {
     request: ({ flowId, resourceId }) =>

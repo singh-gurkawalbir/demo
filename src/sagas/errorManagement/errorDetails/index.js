@@ -7,6 +7,7 @@ import { updateRetryData } from '../metadata';
 import getRequestOptions from '../../../utils/requestOptions';
 import openExternalUrl from '../../../utils/window';
 import { MAX_ERRORS_TO_RETRY_OR_RESOLVE, CLASSIFICATION_LABELS_MAP, sourceLabelsMap } from '../../../utils/errorManagement';
+import messageStore from '../../../utils/messageStore';
 
 export function* _formatErrors({ errors = [], resourceId }) {
   const application = yield select(selectors.applicationName, resourceId);
@@ -268,6 +269,33 @@ export function* downloadErrors({ flowId, resourceId, isResolved, filters }) {
   }
 }
 
+export function* purgeError({ flowId, resourceId, errors }) {
+  const errorIdList = yield select(selectors.selectedErrorIds, { flowId, resourceId, isResolved: true });
+
+  try {
+    yield call(apiCallWithRetry, {
+      path: `/flows/${flowId}/${resourceId}/resolved `,
+      opts: {
+        method: 'DELETE',
+        body: {
+          errors: errorIdList?.length ? errorIdList : errors,
+        },
+      },
+      hidden: true,
+    });
+
+    yield put(
+      actions.errorManager.flowErrorDetails.purge.success({
+        flowId,
+        resourceId,
+        message: messageStore(errorIdList?.length ? 'MULTIPLE_ERROR_PURGE_SUCCESS_MESSAGE' : 'ERROR_PURGE_SUCCESS_MESSAGE'),
+      })
+    );
+  } catch (error) {
+    // Handle errors
+  }
+}
+
 export default [
   takeEvery(actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.ACTIONS.SAVE_AND_RETRY,
     saveAndRetryError),
@@ -294,5 +322,9 @@ export default [
   takeLatest(
     actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.DOWNLOAD.REQUEST,
     downloadErrors
+  ),
+  takeLatest(
+    actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.PURGE.REQUEST,
+    purgeError
   ),
 ];
