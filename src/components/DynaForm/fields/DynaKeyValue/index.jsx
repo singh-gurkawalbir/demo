@@ -171,7 +171,9 @@ export function KeyValueComponent(props) {
 
     handleUpdate(key, value, valueName);
   };
-
+  const handleEditorClickWithIndex = index => event => {
+    handleEditorClick(index, event);
+  };
   const onSortEnd = useCallback(({oldIndex, newIndex}) => {
     const valuesCopy = [...values];
     const [removed] = valuesCopy.splice(oldIndex, 1);
@@ -242,7 +244,7 @@ export function KeyValueComponent(props) {
                   r={r}
                   enableSorting={enableSorting}
                   showSortOrder={showSortOrder}
-                  handleEditorClick={handleEditorClick}
+                  handleEditorClick={handleEditorClickWithIndex}
               />
               )}
               />

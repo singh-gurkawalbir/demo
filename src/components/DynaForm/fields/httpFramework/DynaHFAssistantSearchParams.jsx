@@ -109,14 +109,12 @@ export default function DynaHFAssistantSearchParams(props) {
     dispatch(actions.form.clearForceFieldState(formKey)(id));
   }, [dispatch, formKey, id]);
 
-  const handleSave = useCallback((selectKey, values) => editorValues => {
-    const newValue = {...values, [Object.keys(values)[selectKey]]: editorValues.rule};
+  const handleSave = useCallback(editorValues => {
+    const newValue = {...value, [Object.keys(value)[editorValues.fieldKey]]: editorValues.rule};
 
     onFieldChange(id, newValue);
-  }, [id, onFieldChange]);
-  const handleEditorClick = useCallback(event => {
-    const selectedKey = +event.currentTarget.id.match(/\d+/g);
-
+  }, [id, onFieldChange, value]);
+  const handleEditorClick = useCallback(index => {
     dispatch(actions.editor.init(editorId, 'handlebars', {
       formKey,
       flowId,
@@ -124,8 +122,8 @@ export default function DynaHFAssistantSearchParams(props) {
       resourceType,
       fieldId: id,
       stage: flowDataStage,
-      onSave: handleSave(selectedKey, value),
-      fieldKey: selectedKey,
+      onSave: handleSave,
+      fieldKey: index,
     }));
 
     history.push(buildDrawerUrl({
@@ -133,7 +131,7 @@ export default function DynaHFAssistantSearchParams(props) {
       baseUrl: match.url,
       params: { editorId },
     }));
-  }, [dispatch, editorId, formKey, flowId, resourceId, resourceType, id, flowDataStage, handleSave, value, history, match.url]);
+  }, [dispatch, editorId, formKey, flowId, resourceId, resourceType, id, flowDataStage, handleSave, history, match.url]);
 
   const handleUpdate = useCallback(values => {
     const finalValue = values.reduce((fv, val) => {

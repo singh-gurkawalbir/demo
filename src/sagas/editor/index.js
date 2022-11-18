@@ -768,7 +768,7 @@ export function* initSampleData({ id }) {
 }
 
 export function* initEditor({ id, editorType, options }) {
-  const { formKey, integrationId, resourceId, resourceType, flowId, sectionId, fieldId, ssLinkedConnectionId, fieldKey} = options || {};
+  const { formKey, integrationId, resourceId, resourceType, flowId, sectionId, fieldId, ssLinkedConnectionId} = options || {};
 
   let fieldState = {};
   let formState = {};
@@ -811,7 +811,6 @@ export function* initEditor({ id, editorType, options }) {
         connection: resourceType === 'connections' ? resource : connection,
         isPageGenerator,
         isStandaloneResource: !flowId,
-        fieldKey,
       });
     } else if (editorType === 'settingsForm') {
       let parentResource = {};
