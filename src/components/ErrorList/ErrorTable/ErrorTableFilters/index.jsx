@@ -5,6 +5,8 @@ import { useHistory, useRouteMatch } from 'react-router-dom';
 import CeligPagination from '../../../CeligoPagination';
 import KeywordSearch from '../../../KeywordSearch';
 import RefreshCard from '../RefreshCard';
+import ActionMenu from '../../../CeligoTable/ActionMenu';
+import DownloadAction from '../../../ResourceTable/errorManagement/actions/DownloadErrors';
 import ErrorActions from '../ErrorActions';
 import CeligoDivider from '../../../CeligoDivider';
 import ToggleViewSelect from '../../../AFE/Drawer/actions/ToggleView';
@@ -101,6 +103,8 @@ export default function ErrorTableFilters({ flowId, resourceId, isResolved, filt
     handleChangeRowsPerPage,
   } = useHandleNextAndPreviousErrorPage({flowId, resourceId, isResolved, filterKey, showRetryDataChangedConfirmDialog, flowJobId});
 
+  const useRowActions = () => [DownloadAction];
+
   const handleDownload = useCallback(() => {
     history.push(buildDrawerUrl({
       path: drawerPaths.ERROR_MANAGEMENT.V2.DOWNLOAD_ERRORS,
@@ -179,21 +183,34 @@ export default function ErrorTableFilters({ flowId, resourceId, isResolved, filt
           </>
         )}
         {selectedComponent}
-        {
+        { !isResolved ? (
           hasErrors && (
-            <OutlinedButton
-              data-test="downloadErrorButton"
-              onClick={handleDownload}
-              color="secondary">
-              Download
-            </OutlinedButton>
-          )
-        }
-        {
-          hasErrors && isResolved && (
-            <PurgeErrorAction flowId={flowId} resourceId={resourceId} setSelectedComponent={setSelectedComponent} />
-          )
-        }
+            <ActionMenu
+              setSelectedComponent={setSelectedComponent}
+              useRowActions={useRowActions}
+              rowData={{
+                isResolved,
+              }}
+            />
+          )) : (
+            <>
+              {
+                hasErrors && (
+                  <OutlinedButton
+                    data-test="downloadErrorButton"
+                    onClick={handleDownload}
+                    color="secondary">
+                    Download
+                  </OutlinedButton>
+                )
+              }
+              {
+                hasErrors && isResolved && (
+                <PurgeErrorAction flowId={flowId} resourceId={resourceId} setSelectedComponent={setSelectedComponent} />
+                )
+              }
+            </>
+        )}
       </div>
     </div>
   );

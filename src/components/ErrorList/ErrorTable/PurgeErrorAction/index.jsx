@@ -41,6 +41,7 @@ export default function PurgeErrorAction({ flowId, resourceId }) {
       buttons: [
         {
           label: 'Purge error(s)',
+          error: true,
           onClick: () => {
             dispatch(actions.errorManager.flowErrorDetails.purge.request({flowId, resourceId}));
           },
