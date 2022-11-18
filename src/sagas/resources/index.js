@@ -20,6 +20,7 @@ import openExternalUrl from '../../utils/window';
 import { pingConnectionWithId } from '../resourceForm/connections';
 import httpConnectorSagas from './httpConnectors';
 import { getHttpConnector} from '../../constants/applications';
+import { NO_ENVIRONMENT_RESOURCE_TYPES } from '../../constants/resource';
 
 export function* isDataLoaderFlow(flow) {
   if (!flow) return false;
@@ -174,9 +175,7 @@ export function* commitStagedChanges({ resourceType, id, scope, options, context
     // eslint-disable-next-line prefer-destructuring
     merged = resp.merged;
   } else if (
-    ['exports', 'imports', 'connections', 'flows', 'integrations', 'apis', 'eventreports', 'asyncHelpers'].includes(
-      resourceType
-    ) || (resourceType.startsWith('integrations/') && resourceType.endsWith('connections'))
+    !NO_ENVIRONMENT_RESOURCE_TYPES.includes(resourceType) || (resourceType.startsWith('integrations/') && resourceType.endsWith('connections'))
   ) {
     // For Cloning, the preference of environment is set by user during clone setup. Do not override that preference
     // For all other cases, set the sandbox property to current environment
