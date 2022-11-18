@@ -164,7 +164,6 @@ export const NO_ENVIRONMENT_RESOURCE_TYPES = Object.freeze([
   'accesstokens',
   'agents',
   'iClients',
-  'scripts',
   'stacks',
   'templates',
   'published',
