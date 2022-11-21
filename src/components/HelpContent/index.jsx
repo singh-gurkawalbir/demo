@@ -3,8 +3,8 @@ import { makeStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
 import { useDispatch } from 'react-redux';
+import { IconButton } from '@material-ui/core';
 import actions from '../../actions';
-import ActionGroup from '../ActionGroup';
 import OutlinedButton from '../Buttons/OutlinedButton';
 import ThumbsUpIcon from '../icons/ThumbsUpIcon';
 import IconButtonWithTooltip from '../IconButtonWithTooltip';
@@ -80,6 +80,10 @@ const useStyles = makeStyles(theme => ({
     marginBottom: theme.spacing(1),
     paddingBottom: theme.spacing(1),
     borderBottom: `1px solid ${theme.palette.secondary.lightest}`,
+    justifyContent: 'space-between',
+  },
+  closeButton: {
+    padding: 0,
   },
 }));
 
@@ -115,14 +119,13 @@ export default function HelpContent({ children, title, caption, fieldId, resourc
         <Typography className={classes.title} variant="h6">
           {title}
         </Typography>
-        <ActionGroup position="right">
-          <IconButtonWithTooltip
-            tooltipProps={{title: 'Close'}}
-            buttonSize={{size: 'small'}}
-            noPadding>
-            <CloseIcon />
-          </IconButtonWithTooltip>
-        </ActionGroup>
+        <IconButton
+          size="small"
+          data-test="close"
+          aria-label="Close"
+          className={classes.closeButton}>
+          <CloseIcon />
+        </IconButton>
       </div>
       {feedbackText ? (
         <>
