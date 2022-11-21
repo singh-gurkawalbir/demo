@@ -52,7 +52,7 @@ const NO_OF_OPTIONS = 6;
 const ITEM_SIZE = 40;
 const OPTIONS_VIEW_PORT_HEIGHT = 250;
 
-const ListboxComponent = React.forwardRef(props => {
+const ListboxComponent = props => {
   const {children, ...rest} = props;
   const listRef = React.useRef();
 
@@ -88,7 +88,7 @@ const ListboxComponent = React.forwardRef(props => {
     </OuterElementContext.Provider>
 
   );
-});
+};
 
 export default function DynaAutocomplete(props) {
   const {
