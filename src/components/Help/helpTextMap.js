@@ -2135,7 +2135,7 @@ if you're using a production account, you'll find your API keys under the 'API M
   'notifications.jobErrors':
 "Please choose 'All flows' to receive an email notification whenever any flow in this integration has a job error, or select individual flows to focus your email traffic to just higher priority data flows.",
   'notifications.connections':
-'Please select which connections you would like to be notified about when they go offline (and subsequently back online).  Please note that connections can be shared across integrations, and if you choose to be notified here, this notification setting will be reflected everywhere else this connection is being used.',
+`Select a connection if you want the user to be notified whenever it goes offline, comes back online, or is in the process of <a href="${HELP_CENTER_BASE_URL}/hc/en-us/articles/360043926372" target="_blank">auto-recovering governance errors</a>.<br><br> Since a connection can be shared by multiple integrations, these notifications also apply to any connection issues account-wide.`,
   'me.dateFormat':
 'Use this field to configure how you want dates to be formatted in your integrator.io account. For example, there is a dashboard in your integrator.io account to view integration activity, and this field controls how the dates on that page appear.',
   'me.timeFormat':
