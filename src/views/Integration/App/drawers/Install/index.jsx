@@ -561,7 +561,6 @@ export default function ConnectorInstallation() {
               data-test="uninstall"
               component={Link}
               onClick={handleUninstall}
-              error
               startIcon={<CloseIcon />}
              >
               Uninstall
