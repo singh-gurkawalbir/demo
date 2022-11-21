@@ -18,13 +18,11 @@ import {
   autoCreateDestinationStructure,
   isDropDragPositionSame,
   deleteNonRequiredMappings,
-  searchTree,
-  filterKey,
-  filterNode,
   updateChildrenJSONPath,
   getCombinedExtract,
   buildExtractsHelperFromExtract,
-  getSelectedExtractDataTypes} from '../../../utils/mapping';
+  getSelectedExtractDataTypes,
+  isMapper2HandlebarExpression} from '../../../utils/mapping';
 import { generateUniqueKey } from '../../../utils/string';
 
 export const expandRow = (draft, key) => {
@@ -97,7 +95,7 @@ export const updateSourceDataType = (node, oldSourceDataType, newDataType) => {
 /* eslint-enable no-param-reassign */
 
 // updates specific to data type change
-export const updateDataType = (draft, node, oldDataType, newDataType) => {
+export const updateDestinationDataType = (draft, node, oldDataType, newDataType) => {
   if (!node) return node;
 
   const newNode = deepClone(node);
@@ -111,7 +109,9 @@ export const updateDataType = (draft, node, oldDataType, newDataType) => {
   if (newDataType === MAPPING_DATA_TYPES.OBJECT || newDataType === MAPPING_DATA_TYPES.OBJECTARRAY) {
     expandRow(draft, newNode.key);
 
-    newNode.extractsArrayHelper = newNode.extractsArrayHelper || buildExtractsHelperFromExtract([], newNode.extract);
+    const oldSourceDataType = PRIMITIVE_DATA_TYPES.includes(oldDataType) ? newNode.sourceDataType : undefined;
+
+    newNode.extractsArrayHelper = newNode.extractsArrayHelper || buildExtractsHelperFromExtract({sourceField: newNode.extract, extractsTree: draft.mapping.extractsTree, oldSourceDataType});
 
     delete newNode.hardCodedValue;
     delete newNode.lookupName;
@@ -154,8 +154,13 @@ export const updateDataType = (draft, node, oldDataType, newDataType) => {
   // now handle other primitive arrays which can not have children
   if (ARRAY_DATA_TYPES.includes(newDataType)) {
     delete newNode.children;
-    newNode.extractsArrayHelper = newNode.extractsArrayHelper || buildExtractsHelperFromExtract([], newNode.extract);
+
+    const oldSourceDataType = PRIMITIVE_DATA_TYPES.includes(oldDataType) ? newNode.sourceDataType : undefined;
+
+    newNode.extractsArrayHelper = newNode.extractsArrayHelper || buildExtractsHelperFromExtract({sourceField: newNode.extract, extractsTree: draft.mapping.extractsTree, oldSourceDataType});
+
     delete newNode.extract;
+    delete newNode.sourceDataType;
 
     return newNode;
   }
@@ -163,6 +168,9 @@ export const updateDataType = (draft, node, oldDataType, newDataType) => {
   if (PRIMITIVE_DATA_TYPES.includes(newDataType)) {
     delete newNode.children;
     newNode.extract = newNode.extract || getCombinedExtract(newNode.extractsArrayHelper).join(',');
+    if (ARRAY_DATA_TYPES.includes(oldDataType)) {
+      newNode.sourceDataType = newNode.extractsArrayHelper?.length ? newNode.extractsArrayHelper[0].sourceDataType : MAPPING_DATA_TYPES.STRING;
+    }
     delete newNode.extractsArrayHelper;
   }
 
@@ -240,9 +248,7 @@ export default (state = {}, action) => {
     type,
     key,
     field,
-    index,
     searchKey,
-    showKey,
     shiftIndex,
     value,
     mappings,
@@ -278,6 +284,8 @@ export default (state = {}, action) => {
     isCSVOrXLSX,
     inputValue,
     propValue,
+    isSettingsPatch,
+    selectedExtractJsonPath,
   } = action;
 
   return produce(state, draft => {
@@ -708,7 +716,7 @@ export default (state = {}, action) => {
         if (isSource) {
           nodeSubArray[nodeIndexInSubArray] = updateSourceDataType(node, node.sourceDataType, newDataType);
         } else {
-          nodeSubArray[nodeIndexInSubArray] = updateDataType(draft, node, node.dataType, newDataType);
+          nodeSubArray[nodeIndexInSubArray] = updateDestinationDataType(draft, node, node.dataType, newDataType);
         }
         delete nodeSubArray[nodeIndexInSubArray].isEmptyRow;
         break;
@@ -828,6 +836,10 @@ export default (state = {}, action) => {
           dragSubArr.push(newChild);
         }
 
+        // when the node is dropped into tabbed object array, copy the fields to other tabs as well
+        if (dragObj.generate?.length > 0) {
+          insertSiblingsOnDestinationUpdate(draft.mapping.v2TreeData, dragObj);
+        }
         break;
       }
 
@@ -837,11 +849,14 @@ export default (state = {}, action) => {
 
         if (node) {
           if (field === 'extract') {
+            let isHardCoded = false;
+
             if (value.indexOf('"') === 0) {
               delete node.extract;
               delete node.extractsArrayHelper;
               delete node.default;
               node.hardCodedValue = value.replace(/(^")|("$)/g, '');
+              isHardCoded = true;
             } else {
               delete node.hardCodedValue;
               if (ARRAY_DATA_TYPES.includes(node.dataType)) {
@@ -859,7 +874,7 @@ export default (state = {}, action) => {
                   }];
                 } else if (node.dataType === MAPPING_DATA_TYPES.OBJECTARRAY) {
                   // handle tab view
-                  nodeSubArray[nodeIndexInSubArray] = rebuildObjectArrayNode(node, value, undefined, draft.mapping.extractsTree);
+                  nodeSubArray[nodeIndexInSubArray] = rebuildObjectArrayNode(node, value, undefined, draft.mapping.extractsTree, selectedExtractJsonPath);
                 }
 
                 // array data types do not have direct 'extract' prop
@@ -868,13 +883,17 @@ export default (state = {}, action) => {
                   delete nodeSubArray[nodeIndexInSubArray].hardCodedValue;
                   // object array is already handled in rebuildObjectArrayNode
                   if (node.dataType !== MAPPING_DATA_TYPES.OBJECTARRAY) {
-                    nodeSubArray[nodeIndexInSubArray].extractsArrayHelper = buildExtractsHelperFromExtract(nodeSubArray[nodeIndexInSubArray].extractsArrayHelper, value, undefined, undefined, draft.mapping.extractsTree);
+                    nodeSubArray[nodeIndexInSubArray].extractsArrayHelper = buildExtractsHelperFromExtract({existingExtractsArray: nodeSubArray[nodeIndexInSubArray].extractsArrayHelper, sourceField: value, extractsTree: draft.mapping.extractsTree, selectedExtractJsonPath});
                   }
                 }
               } else if (node.dataType !== MAPPING_DATA_TYPES.OBJECT || node.copySource === 'yes') {
                 node.extract = value;
-                node.sourceDataType = getSelectedExtractDataTypes(draft.mapping.extractsTree, value)[0] || MAPPING_DATA_TYPES.STRING;
+                node.sourceDataType = isSettingsPatch ? node.sourceDataType : getSelectedExtractDataTypes({extractsTree: draft.mapping.extractsTree, selectedValue: value, selectedExtractJsonPath})[0] || MAPPING_DATA_TYPES.STRING;
               }
+            }
+
+            if (isHardCoded || isMapper2HandlebarExpression(value, isHardCoded)) {
+              node.sourceDataType = MAPPING_DATA_TYPES.STRING;
             }
           } else if (node.isRequired) {
             // do nothing as no changes can be made to 'generate' of a required mapping
@@ -922,18 +941,20 @@ export default (state = {}, action) => {
           if (value?.conditional?.when === 'extract_not_empty') {
             delete node.default;
           }
+          let isHardCoded = false;
 
           if ('hardCodedValue' in value) {
             delete node.extract;
             delete node.extractsArrayHelper;
             delete node.default;
+            isHardCoded = true;
           } else {
             delete node.hardCodedValue;
           }
 
           // handle if data type changed
           if (oldDataType !== newDataType) {
-            nodeSubArray[nodeIndexInSubArray] = updateDataType(draft, node, oldDataType, newDataType);
+            nodeSubArray[nodeIndexInSubArray] = updateDestinationDataType(draft, node, oldDataType, newDataType);
             if (newDataType === MAPPING_DATA_TYPES.OBJECTARRAY) {
               // Handles updates of mapper node incase the  data type is changed to Object array with source field settings
               nodeSubArray[nodeIndexInSubArray] = rebuildObjectArrayNode(nodeSubArray[nodeIndexInSubArray], node.extract);
@@ -968,6 +989,10 @@ export default (state = {}, action) => {
             if (!value.conditional?.when && nodeSubArray[nodeIndexInSubArray]?.conditional?.when) {
               delete nodeSubArray[nodeIndexInSubArray].conditional.when;
             }
+          }
+
+          if (isHardCoded || isMapper2HandlebarExpression(node.extract, isHardCoded)) {
+            node.sourceDataType = MAPPING_DATA_TYPES.STRING;
           }
         }
 
@@ -1073,64 +1098,9 @@ export default (state = {}, action) => {
         break;
 
       case actionTypes.MAPPING.V2.SEARCH_TREE: {
-        if (!draft.mapping || !draft.mapping.v2TreeData) break;
-
-        // set the searchKey when showKey is false
-        if (!showKey) draft.mapping.searchKey = searchKey;
-        if (searchKey === undefined && !showKey) break;
-
-        // clear the state if searchKey is empty
-        if (searchKey === '') {
-          delete draft.mapping.filteredKeys;
-          delete draft.mapping.highlightedIndex;
-          break;
-        }
-        const items = {
-          firstIndex: -1,   // stores the first index where match was found
-          expandedKeys: [],   // stores which fields need to be expanded
-          filteredKeys: [],   // stores the list of key of all the matched fields
-          tabChange: [],    // stores the all tab changes required in case of objectArray field
-        };
-
-        // search for the matching values in the generate of the mapping fields
-        if (!showKey && searchKey) {
-          searchTree(draft.mapping.v2TreeData, searchKey, filterNode, items);
-          draft.mapping.expandedKeys = items.expandedKeys;
-          // list of all the field key that matched
-          draft.mapping.filteredKeys = items.filteredKeys;
-          // index for the field to be highlightied
-          draft.mapping.highlightedIndex = items.filteredKeys ? 0 : -1;
-        // if showKey is true then search for the highlighted key to be shown
-        } else if (showKey) {
-          // current highlighted key
-          const key = draft.mapping.filteredKeys[draft.mapping.highlightedIndex];
-
-          searchTree(draft.mapping.v2TreeData, key, filterKey, items);
-          // merging two lists then
-          // removing duplicates by converting to set and then to list
-          draft.mapping.expandedKeys = [...new Set([...draft.mapping.expandedKeys, ...items.expandedKeys])];
-        }
-        // all tab changes if required in objectarray
-        items.tabChange.forEach(item => {
-          const {key, tabValue, parentExtract} = item;
-          const {node, nodeIndexInSubArray, nodeSubArray} = findNodeInTree(draft.mapping.v2TreeData, 'key', key);
-
-          if (isEmpty(node)) return;
-          nodeSubArray[nodeIndexInSubArray] = hideOtherTabRows(original(node), parentExtract);
-          nodeSubArray[nodeIndexInSubArray].activeTab = tabValue;
-        });
-        break;
-      }
-
-      case actionTypes.MAPPING.V2.UPDATE_HIGHLIGHTED_INDEX: {
         if (!draft.mapping) break;
-
-        draft.mapping.highlightedIndex = index;
-        // clearing the seleteFields list if index is -1
-        if (index === -1) {
-          draft.mapping.filteredKeys = [];
-          delete draft.mapping.searchKey;
-        }
+        draft.mapping.searchKey = searchKey;
+        delete draft.mapping.filter;
         break;
       }
 
@@ -1138,6 +1108,7 @@ export default (state = {}, action) => {
         if (!draft.mapping) break;
         if (filter?.length) {
           draft.mapping.filter = filter;
+          delete draft.mapping.searchKey;
         } else {
           draft.mapping.filter = [];
         }
@@ -1180,31 +1151,6 @@ selectors.v2MappingsExtractsTree = state => {
   }
 
   return state.mapping.extractsTree || emptyArr;
-};
-
-selectors.highlightedKey = state => {
-  if (!state || !state.mapping) {
-    return '';
-  }
-  const {highlightedIndex, filteredKeys} = state.mapping;
-
-  return filteredKeys?.[highlightedIndex] || '';
-};
-
-selectors.highlightedIndex = state => {
-  if (!state || !state.mapping) {
-    return -1;
-  }
-
-  return state.mapping.highlightedIndex;
-};
-
-selectors.filteredKeys = state => {
-  if (!state || !state.mapping) {
-    return emptyArr;
-  }
-
-  return state.mapping.filteredKeys || emptyArr;
 };
 
 selectors.searchKey = state => {

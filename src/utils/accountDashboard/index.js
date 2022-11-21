@@ -31,16 +31,6 @@ export const DEFAULTS_COMPLETED_JOBS_FILTER = {
   },
 };
 
-export const ACCOUNT_DASHBOARD_COMPLETED_JOBS_RANGE_FILTERS = [
-  {id: 'today', label: 'Today'},
-  {id: 'last24hours', label: 'Last 24 hours'},
-  {id: 'last36hours', label: 'Last 36 hours'},
-  {id: 'last7days', label: 'Last 7 days'},
-  {id: 'last15days', label: 'Last 15 days'},
-  {id: 'last30days', label: 'Last 30 days'},
-  {id: 'custom', label: 'Custom'},
-];
-
 export const RUNNNING_STATUS_OPTIONS = [{_id: 'all', name: 'All statuses'},
   {_id: JOB_STATUS.RUNNING, name: 'In progress'},
   {_id: JOB_STATUS.CANCELING, name: 'Canceling'},

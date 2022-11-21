@@ -15,11 +15,14 @@ const useStyles = makeStyles(theme => ({
   },
   status: {
     color: theme.palette.secondary.main,
+    fontSize: 15,
   },
   retryContainer: {
     flexGrow: 100,
     alignItems: 'center',
     display: 'flex',
+    minWidth: 230,
+    alignSelf: 'flex-start',
   },
   errorDrawerActionToggle: {
     '& > button': {
@@ -31,7 +34,7 @@ const useStyles = makeStyles(theme => ({
     marginRight: theme.spacing(2),
   },
   viewResults: {
-    paddingLeft: theme.spacing(0.5),
+    padding: theme.spacing(0, 0.5),
   },
 }));
 
@@ -63,7 +66,7 @@ export default function ErrorDrawerAction({ flowId, onChange, errorType }) {
         </Typography>
         {errorType !== FILTER_KEYS.RETRIES ? (
           <TextButton
-            size="large" bold="true" color="primary" className={classes.viewResults}
+            size="large" bold color="primary" className={classes.viewResults}
             onClick={handleClick}>
             View results
           </TextButton>

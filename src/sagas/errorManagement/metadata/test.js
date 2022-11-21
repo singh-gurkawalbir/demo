@@ -24,6 +24,8 @@ import openExternalUrl from '../../../utils/window';
 import { pollApiRequests } from '../../app';
 import { getRetryJobCollection } from '../retries';
 
+const integrationId = 'integration-123';
+const standaloneIntegrationId = 'none';
 const flowId = 'flow-123';
 const resourceId = 'id-123';
 const retryId = 'retry-123';
@@ -184,13 +186,18 @@ describe('EM2.0 metadata sagas', () => {
     });
   });
   describe('_requestRetryStatus saga', () => {
+    const flow = {
+      _integrationId: integrationId,
+    };
+
     test('should invoke api call with exports/imports resourceType based on the passed resourceId ', () => {
-      const exportPath = `/jobs?_flowId=${flowId}&type=retry&status=queued&status=running&_exportId=${resourceId}`;
-      const importPath = `/jobs?_flowId=${flowId}&type=retry&status=queued&status=running&_importId=${resourceId}`;
+      const exportPath = `/jobs?_integrationId=${integrationId}&_flowId=${flowId}&type=retry&status=queued&status=running&_exportId=${resourceId}`;
+      const importPath = `/jobs?_integrationId=${standaloneIntegrationId}&_flowId=${flowId}&type=retry&status=queued&status=running&_importId=${resourceId}`;
       const pendingJobs = [];
 
       const test1 = expectSaga(_requestRetryStatus, { flowId, resourceId })
         .provide([
+          [select(selectors.resource, 'flows', flowId), flow],
           [call(apiCallWithRetry, {
             path: exportPath,
             opts: {
@@ -206,6 +213,7 @@ describe('EM2.0 metadata sagas', () => {
 
       const test2 = expectSaga(_requestRetryStatus, { flowId, resourceId })
         .provide([
+          [select(selectors.resource, 'flows', flowId), {}],
           [select(selectors.resource, 'imports', resourceId), { _id: 'id1', name: 'test import' }],
           [call(apiCallWithRetry, {
             path: importPath,
@@ -236,7 +244,7 @@ describe('EM2.0 metadata sagas', () => {
         .run();
     });
     test('should dispatch status as in progress if the api returns list of in progress retry jobs running', () => {
-      const exportPath = `/jobs?_flowId=${flowId}&type=retry&status=queued&status=running&_exportId=${resourceId}`;
+      const exportPath = `/jobs?_integrationId=${integrationId}&_flowId=${flowId}&type=retry&status=queued&status=running&_exportId=${resourceId}`;
       const pendingJobs = [
         { _jobId: '1234' },
         { _jobId: '5678' },
@@ -245,6 +253,7 @@ describe('EM2.0 metadata sagas', () => {
 
       return expectSaga(_requestRetryStatus, { flowId, resourceId })
         .provide([
+          [select(selectors.resource, 'flows', flowId), flow],
           [call(apiCallWithRetry, {
             path: exportPath,
             opts: {
@@ -258,7 +267,7 @@ describe('EM2.0 metadata sagas', () => {
         .run();
     });
     test('should not dispatch stop polling retry status action and should not call getRetryJobCollection if there are in progress retry jobs', () => {
-      const exportPath = `/jobs?_flowId=${flowId}&type=retry&status=queued&status=running&_exportId=${resourceId}`;
+      const exportPath = `/jobs?_integrationId=${integrationId}&_flowId=${flowId}&type=retry&status=queued&status=running&_exportId=${resourceId}`;
       const pendingJobs = [
         { _jobId: '1234' },
         { _jobId: '5678' },
@@ -266,6 +275,7 @@ describe('EM2.0 metadata sagas', () => {
 
       return expectSaga(_requestRetryStatus, { flowId, resourceId })
         .provide([
+          [select(selectors.resource, 'flows', flowId), flow],
           [call(apiCallWithRetry, {
             path: exportPath,
             opts: {
@@ -279,12 +289,13 @@ describe('EM2.0 metadata sagas', () => {
         .run();
     });
     test('should dispatch status as completed and call getRetryJobCollection if the previous status is in progress and there are no retry jobs running any more', () => {
-      const exportPath = `/jobs?_flowId=${flowId}&type=retry&status=queued&status=running&_exportId=${resourceId}`;
+      const exportPath = `/jobs?_integrationId=${integrationId}&_flowId=${flowId}&type=retry&status=queued&status=running&_exportId=${resourceId}`;
       const pendingJobs = [];
       const updatedStatus = 'completed';
 
       return expectSaga(_requestRetryStatus, { flowId, resourceId })
         .provide([
+          [select(selectors.resource, 'flows', flowId), flow],
           [select(selectors.retryStatus, flowId, resourceId), 'inProgress'],
           [call(apiCallWithRetry, {
             path: exportPath,
@@ -299,12 +310,35 @@ describe('EM2.0 metadata sagas', () => {
         .call(getRetryJobCollection, {flowId, resourceId})
         .run();
     });
-    test('should not call getRetryJobCollection and should dispatch stop polling retry status action if there are no previous status and no retry jobs running', () => {
-      const exportPath = `/jobs?_flowId=${flowId}&type=retry&status=queued&status=running&_exportId=${resourceId}`;
+    test('should not call getRetryJobCollection and should not dispatch stop polling retry status action if there are no previous status and no retry jobs running but retries are in progress for other resources', () => {
+      const exportPath = `/jobs?_integrationId=${integrationId}&_flowId=${flowId}&type=retry&status=queued&status=running&_exportId=${resourceId}`;
       const pendingJobs = [];
 
       return expectSaga(_requestRetryStatus, { flowId, resourceId })
         .provide([
+          [select(selectors.resource, 'flows', flowId), flow],
+          [select(selectors.retryStatus, flowId, resourceId), undefined],
+          [select(selectors.flowResourcesRetryStatus, flowId), {isAnyRetryInProgress: true}],
+          [call(apiCallWithRetry, {
+            path: exportPath,
+            opts: {
+              method: 'GET',
+            },
+            hidden: true,
+          }), pendingJobs],
+        ])
+        .put(actions.errorManager.retryStatus.received({ flowId, resourceId, status: undefined }))
+        .not.put(actions.errorManager.retryStatus.stopPoll())
+        .not.call.fn(getRetryJobCollection)
+        .run();
+    });
+    test('should not call getRetryJobCollection and should dispatch stop polling retry status action if there are no previous status and no retry jobs running', () => {
+      const exportPath = `/jobs?_integrationId=${integrationId}&_flowId=${flowId}&type=retry&status=queued&status=running&_exportId=${resourceId}`;
+      const pendingJobs = [];
+
+      return expectSaga(_requestRetryStatus, { flowId, resourceId })
+        .provide([
+          [select(selectors.resource, 'flows', flowId), flow],
           [select(selectors.retryStatus, flowId, resourceId), undefined],
           [call(apiCallWithRetry, {
             path: exportPath,
@@ -319,13 +353,38 @@ describe('EM2.0 metadata sagas', () => {
         .not.call.fn(getRetryJobCollection)
         .run();
     });
-    test('should dispatch stop polling retry status action if there are no retry jobs running', () => {
-      const exportPath = `/jobs?_flowId=${flowId}&type=retry&status=queued&status=running&_exportId=${resourceId}`;
+    test('should not dispatch stop polling retry status action if there are retry jobs running for other resources in the flow', () => {
+      const exportPath = `/jobs?_integrationId=${integrationId}&_flowId=${flowId}&type=retry&status=queued&status=running&_exportId=${resourceId}`;
       const pendingJobs = [];
       const updatedStatus = 'completed';
 
       return expectSaga(_requestRetryStatus, { flowId, resourceId })
         .provide([
+          [select(selectors.resource, 'flows', flowId), flow],
+          [select(selectors.retryStatus, flowId, resourceId), 'inProgress'],
+          [select(selectors.flowResourcesRetryStatus, flowId), {isAnyRetryInProgress: true}],
+          [call(apiCallWithRetry, {
+            path: exportPath,
+            opts: {
+              method: 'GET',
+            },
+            hidden: true,
+          }), pendingJobs],
+          [call(getRetryJobCollection, {flowId, resourceId})],
+        ])
+        .put(actions.errorManager.retryStatus.received({ flowId, resourceId, status: updatedStatus }))
+        .call(getRetryJobCollection, {flowId, resourceId})
+        .not.put(actions.errorManager.retryStatus.stopPoll())
+        .run();
+    });
+    test('should dispatch stop polling retry status action if there are no retry jobs running', () => {
+      const exportPath = `/jobs?_integrationId=${integrationId}&_flowId=${flowId}&type=retry&status=queued&status=running&_exportId=${resourceId}`;
+      const pendingJobs = [];
+      const updatedStatus = 'completed';
+
+      return expectSaga(_requestRetryStatus, { flowId, resourceId })
+        .provide([
+          [select(selectors.resource, 'flows', flowId), flow],
           [select(selectors.retryStatus, flowId, resourceId), 'inProgress'],
           [call(apiCallWithRetry, {
             path: exportPath,
@@ -342,11 +401,12 @@ describe('EM2.0 metadata sagas', () => {
         .run();
     });
     test('should dispatch status undefined if there is no previous status and no in progress retry jobs ', () => {
-      const exportPath = `/jobs?_flowId=${flowId}&type=retry&status=queued&status=running&_exportId=${resourceId}`;
+      const exportPath = `/jobs?_integrationId=${integrationId}&_flowId=${flowId}&type=retry&status=queued&status=running&_exportId=${resourceId}`;
       const pendingJobs = [];
 
       return expectSaga(_requestRetryStatus, { flowId, resourceId })
         .provide([
+          [select(selectors.resource, 'flows', flowId), flow],
           [call(apiCallWithRetry, {
             path: exportPath,
             opts: {

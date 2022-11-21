@@ -119,7 +119,7 @@ export default function ErrorTableFilters({
         params: { viewType: event.target.value },
       }));
       dispatch(
-        actions.analytics.gainsight.trackEvent('OPEN_ERRORS_VIEW_CHANGED')
+        actions.analytics.gainsight.trackEvent('OPEN_ERRORS_VIEW_CHANGED', {view: event.target.value})
       );
     });
   }, [dispatch, filterKey, history, match.url, showRetryDataChangedConfirmDialog]);
