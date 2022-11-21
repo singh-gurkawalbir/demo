@@ -62,7 +62,6 @@ const useStyles = makeStyles(theme => ({
       border: 'none  !important',
     },
   },
-
 }));
 
 export default function CeligoSwitch({
@@ -71,13 +70,14 @@ export default function CeligoSwitch({
   onChange,
   className,
   tooltip,
+  placement = 'bottom',
   ...props
 }) {
   const classes = useStyles();
 
   if (tooltip) {
     return (
-      <IconButtonWithTooltip tooltipProps={{title: tooltip, placement: 'bottom'}}>
+      <IconButtonWithTooltip tooltipProps={{title: tooltip, placement}} className={clsx(className)}>
         <Toggle
           {...props}
           className={clsx(classes.customSwitch, {[classes.customSwitchChecked]: checked}, className)}

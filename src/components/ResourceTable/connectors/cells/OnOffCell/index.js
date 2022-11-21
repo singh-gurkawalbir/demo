@@ -1,18 +1,28 @@
 
 import React, { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import { makeStyles } from '@material-ui/core';
 import actions from '../../../../../actions';
 import { selectors } from '../../../../../reducers';
 import useConfirmDialog from '../../../../ConfirmDialog';
 import CeligoSwitch from '../../../../CeligoSwitch';
 import Spinner from '../../../../Spinner';
 
+const useStyles = makeStyles(theme => ({
+  integrationAppsSwitchOnOff: {
+    marginRight: theme.spacing(2),
+  },
+}));
+
 export default function OnOffCell({
   connectorId: resourceId,
   published: isPublished,
   applications,
   resourceType,
+  tooltip,
 }) {
+  const classes = useStyles();
+
   const { confirmDialog } = useConfirmDialog();
   const dispatch = useDispatch();
   const toggleStatus = useSelector(state => selectors.connectorPublishStatus(state, resourceId));
@@ -46,7 +56,9 @@ export default function OnOffCell({
   return (
     <CeligoSwitch
       checked={isPublished}
+      tooltip={tooltip}
       onChange={handleTogglePublishConfirm}
+      className={classes.integrationAppsSwitchOnOff}
     />
   );
 }

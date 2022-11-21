@@ -149,6 +149,7 @@ export default {
             disabled={r.disabled}
             childId={actionProps.childId}
             actionProps={actionProps}
+            tooltip="Off / On"
             />
         ),
       },

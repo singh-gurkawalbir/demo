@@ -65,12 +65,14 @@ export default {
       key: 'published',
       heading: 'Published',
       isLoggable: true,
+      align: 'center',
       Value: ({rowData: r}) => (
         <OnOffCell
           connectorId={r._id}
           published={r.published}
           applications={r.applications}
           resourceType="connectors"
+          tooltip="Unpublished / Published"
           />
       ),
       orderBy: 'published',
