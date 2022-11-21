@@ -77,7 +77,7 @@ export default function CeligoSwitch({
 
   if (tooltip) {
     return (
-      <IconButtonWithTooltip tooltipProps={{title: tooltip, placement}} className={clsx(className)}>
+      <IconButtonWithTooltip tooltipProps={{title: tooltip, placement}} className={className}>
         <Toggle
           {...props}
           className={clsx(classes.customSwitch, {[classes.customSwitchChecked]: checked}, className)}
