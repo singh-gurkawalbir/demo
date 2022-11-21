@@ -25,14 +25,12 @@ const useStyles = makeStyles(theme => ({
     wordBreak: 'break-word',
   },
   content: {
-    padding: theme.spacing(1, 0),
+    paddingBottom: theme.spacing(1),
     overflowY: 'auto',
     lineHeight: '22px',
     whiteSpace: 'normal',
     wordBreak: 'break-word',
-    borderWidth: '1px 0',
-    borderStyle: 'solid',
-    borderColor: theme.palette.secondary.lightest,
+    borderBottom: `1px solid ${theme.palette.secondary.lightest}`,
     '&>div': {
       maxHeight: 300,
     },
@@ -47,6 +45,7 @@ const useStyles = makeStyles(theme => ({
     wordBreak: 'break-word',
     borderTop: `1px solid ${theme.palette.secondary.lightest}`,
     paddingTop: theme.spacing(1),
+    marginTop: theme.spacing(1),
   },
   actionButton: {
     color: theme.palette.secondary.main,
@@ -57,7 +56,7 @@ const useStyles = makeStyles(theme => ({
     },
   },
   feedbackTextField: {
-    margin: theme.spacing(1, 0),
+    marginBottom: theme.spacing(1),
     width: '100%',
     '& > div': {
       padding: theme.spacing(1.5),
@@ -66,7 +65,7 @@ const useStyles = makeStyles(theme => ({
   actionWrapper: {
     display: 'flex',
     padding: theme.spacing(1, 0),
-    margin: theme.spacing(1, 0),
+    marginTop: theme.spacing(1),
     backgroundColor: theme.palette.background.paper2,
     alignItems: 'center',
     justifyContent: 'center',
@@ -79,6 +78,8 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     alignItems: 'center',
     marginBottom: theme.spacing(1),
+    paddingBottom: theme.spacing(1),
+    borderBottom: `1px solid ${theme.palette.secondary.lightest}`,
   },
 }));
 
@@ -161,7 +162,7 @@ export default function HelpContent({ children, title, caption, fieldId, resourc
               className={classes.actionButton}
               onClick={handleUpdateFeedBack(false)}
               noPadding>
-              <ThumbsDownIcon />
+              <ThumbsDownIcon data-test="thumbsdownicon" />
             </IconButtonWithTooltip>
           </div>
         </>
