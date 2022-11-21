@@ -657,6 +657,42 @@ describe('flowMetrics util function test', () => {
         expect(startDate.toISOString()).toEqual('2020-05-07T00:00:00.000Z');
         expect(endDate.toISOString()).toEqual('2020-06-05T00:00:00.000Z');
       });
+      test('getSelectedRange last60days test', () => {
+        const testRange = {
+          startDate: new Date(),
+          endDate: new Date(),
+          preset: 'last60days',
+        };
+
+        const {startDate, endDate} = getSelectedRange(testRange);
+
+        expect(startDate.toISOString()).toEqual('2020-04-07T00:00:00.000Z');
+        expect(endDate.toISOString()).toEqual('2020-06-05T00:00:00.000Z');
+      });
+      test('getSelectedRange last90days test', () => {
+        const testRange = {
+          startDate: new Date(),
+          endDate: new Date(),
+          preset: 'last90days',
+        };
+
+        const {startDate, endDate} = getSelectedRange(testRange);
+
+        expect(startDate.toISOString()).toEqual('2020-03-08T00:00:00.000Z');
+        expect(endDate.toISOString()).toEqual('2020-06-05T00:00:00.000Z');
+      });
+      test('getSelectedRange last180days test', () => {
+        const testRange = {
+          startDate: new Date(),
+          endDate: new Date(),
+          preset: 'last180days',
+        };
+
+        const {startDate, endDate} = getSelectedRange(testRange);
+
+        expect(startDate.toISOString()).toEqual('2019-12-09T00:00:00.000Z');
+        expect(endDate.toISOString()).toEqual('2020-06-05T00:00:00.000Z');
+      });
 
       test('getSelectedRange last3months test', () => {
         const testRange = {

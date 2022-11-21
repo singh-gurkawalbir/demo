@@ -3,6 +3,7 @@ import { PING_STATES } from '../../reducers/comms/ping';
 import { CONSTANT_CONTACT_VERSIONS, EBAY_TYPES, emptyObject, MULTIPLE_AUTH_TYPE_ASSISTANTS, RDBMS_TYPES } from '../../constants';
 import { rdbmsSubTypeToAppType } from '../resource';
 import {getHttpConnector} from '../../constants/applications';
+import { getConnectorId } from '../assistant';
 
 export const getStatusVariantAndMessage = ({
   resourceType,
@@ -113,7 +114,7 @@ export const getReplaceConnectionExpression = (connection, isFrameWork2, childId
   if (connector) {
     return {
       filter: andingExpressions,
-      appType: connector.name,
+      appType: getConnectorId(connector.legacyId, connector.name),
     };
   }
 

@@ -46,6 +46,18 @@ export default {
     type: 'selectresource',
     label: 'Borrow concurrency from',
   },
+  autoRecoverGovernanceErrors: {
+    id: 'autoRecoverGovernanceErrors',
+    label: 'Auto-recover governance errors',
+    type: 'checkbox',
+    defaultValue: r => typeof r?.autoRecoverGovernanceErrors === 'boolean' ? r?.autoRecoverGovernanceErrors : true,
+    visibleWhen: [
+      {
+        field: '_borrowConcurrencyFromConnectionId',
+        is: [''],
+      },
+    ],
+  },
   _agentId: {
     isLoggable: true,
     type: 'selectresource',
