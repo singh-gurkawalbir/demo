@@ -135,9 +135,9 @@ export default {
   '4castplus.connection.http.encrypted.password':
 'Password is your 4castplus account password.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your password safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'expensify.connection.http.unencrypted.partnerUserId':
-'Enter your partner user ID provided by Expensify.<br>To retrieve the partner user ID:<br>1. Sign in to your <a href="https://www.expensify.com/">Expensify</a> account.<br>2. Navigate to <a href="https://www.expensify.com/tools/integrations/">Integration server access</a>.<br>3. Copy the <b>partner user ID</b>.',
+'Enter your partner user ID provided by Expensify.<br>To retrieve the partner user ID:<br>1. Sign in to your <a href="https://www.expensify.com/">Expensify</a> account.<br>2. Navigate to <a href="https://www.expensify.com/tools/integrations/">Integration server access</a>.<br>3. Copy the <b>Partner user ID</b>.',
   'expensify.connection.http.encrypted.partnerUserSecret':
-'Enter your partner user secret provided by Expensify.<br>To retrieve the partner user secret:<br>1. Sign in to your <a href="https://www.expensify.com/">Expensify</a> account.<br>2. Navigate to <a href="https://www.expensify.com/tools/integrations/">Integration server access</a>.<br>3. Copy the <b>partner user secret</b>.',
+'Enter your partner user secret provided by Expensify.<br>To retrieve the partner user secret:<br>1. Sign in to your <a href="https://www.expensify.com/">Expensify</a> account.<br>2. Navigate to <a href="https://www.expensify.com/tools/integrations/">Integration server access</a>.<br>3. Copy the <b>Partner user secret</b>.',
   'klaviyo.connection.http.encrypted.apiKey':
 'Please enter your API key here. This can be obtained from the Settings section and API Keys subsection.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your API key safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'zohodesk.connection.http.unencrypted.organizationId':
