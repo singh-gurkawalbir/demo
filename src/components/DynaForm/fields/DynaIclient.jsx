@@ -47,7 +47,13 @@ export default function DynaIclient(props) {
       )}
       {connType !== 'ebay' &&
         (connType !== 'netsuite' || !isProduction()) &&
-        !connectorId && <DynaSelectResource {...props} />}
+        !connectorId && (
+        <DynaSelectResource
+          addTitle="Create iClient"
+          editTitle="Edit iClient"
+          disabledTitle="Select an iClient to allow editing"
+          {...props} />
+      )}
     </>
   );
 }

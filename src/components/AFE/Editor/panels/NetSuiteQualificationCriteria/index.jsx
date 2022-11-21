@@ -6,7 +6,7 @@ import React, {
   useMemo,
   useCallback,
 } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import 'jQuery-QueryBuilder';
 import 'jQuery-QueryBuilder/dist/css/query-builder.default.css';
@@ -43,7 +43,16 @@ export default function NetSuiteQualificationCriteriaPanel({ editorId }) {
   const [rulesState, setRulesState] = useState({});
   const dispatch = useDispatch();
   const rule = useSelector(state => selectors.editorRule(state, editorId));
-  const filters = useSelector(state => selectors.editor(state, editorId).filters || defaultFilters);
+  const { filters, formKey } = useSelector(state => {
+    const editorData = selectors.editor(state, editorId);
+
+    return {
+      filters: editorData.filters || defaultFilters,
+      formKey: editorData.formKey,
+    };
+  }, shallowEqual);
+
+  const useSS2Framework = useSelector(state => selectors.fieldState(state, formKey, 'netsuite.distributed.useSS2Framework'))?.value === 'true';
 
   const patchEditor = useCallback(
     value => {
@@ -75,8 +84,8 @@ export default function NetSuiteQualificationCriteriaPanel({ editorId }) {
             }
           } else if (filter.type === 'checkbox') {
             filterData.options = [
-              { id: 'T', text: 'Yes' },
-              { id: 'F', text: 'No' },
+              { id: useSS2Framework ? true : 'T', text: 'Yes', type: useSS2Framework ? 'boolean' : 'string' },
+              { id: useSS2Framework ? false : 'F', text: 'No', type: useSS2Framework ? 'boolean' : 'string' },
             ];
           }
 
@@ -84,7 +93,7 @@ export default function NetSuiteQualificationCriteriaPanel({ editorId }) {
         }),
         'id'
       ),
-    [filters]
+    [filters, useSS2Framework]
   );
 
   useEffect(() => {
@@ -178,6 +187,10 @@ export default function NetSuiteQualificationCriteriaPanel({ editorId }) {
             filter.values[opt.text] = opt.text;
           } else {
             filter.values[opt.id] = opt.text;
+          }
+          if (opt.type === 'boolean') {
+            filter.type = 'boolean';
+            filter.input = 'radio';
           }
         });
       } else {

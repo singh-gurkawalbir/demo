@@ -254,6 +254,7 @@ export default function reducer(state = {}, action) {
         draft[id].error = error?.errorMessage;
         draft[id].errorLine = error?.errorLine;
         draft[id].previewStatus = 'error';
+        delete draft[id].result;
         break;
       }
 

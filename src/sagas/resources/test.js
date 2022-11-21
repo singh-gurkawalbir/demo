@@ -1720,6 +1720,26 @@ describe('getResourceCollection saga', () => {
       .returns(undefined)
       .run();
   });
+  test('should dispatch receivedNextPagePath for audit logs resource type if nextLinkPath is present', () => {
+    const resourceType = 'audit';
+    const path = '/audit';
+    const collection = [{ id: 1 }, { id: 2 }];
+    const nextLinkPath = '/audit?123';
+
+    return expectSaga(getResourceCollection, {resourceType})
+      .provide([
+        [call(apiCallWithPaging, {
+          path,
+          hidden: undefined,
+          refresh: undefined,
+        }), {data: collection, nextLinkPath}],
+      ])
+      .call(apiCallWithPaging, {path, hidden: undefined, refresh: undefined})
+      .put(actions.auditLogs.receivedNextPagePath(nextLinkPath))
+      .put(actions.resource.receivedCollection(resourceType, collection))
+      .returns(collection)
+      .run();
+  });
 });
 
 describe('updateIntegrationSettings saga', () => {

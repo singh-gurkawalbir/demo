@@ -1090,6 +1090,9 @@ Object {
       "application": Object {
         "fieldId": "application",
       },
+      "autoRecoverGovernanceErrors": Object {
+        "fieldId": "autoRecoverGovernanceErrors",
+      },
       "name": Object {
         "fieldId": "name",
       },
@@ -1343,6 +1346,7 @@ Object {
                 "netsuite.linkSuiteScriptIntegrator",
                 "_borrowConcurrencyFromConnectionId",
                 "netsuite.concurrencyLevel",
+                "autoRecoverGovernanceErrors",
                 "netsuite.wsdlVersion",
               ],
               "label": "Advanced",
@@ -1451,6 +1455,9 @@ Object {
       "application": Object {
         "fieldId": "application",
       },
+      "autoRecoverGovernanceErrors": Object {
+        "fieldId": "autoRecoverGovernanceErrors",
+      },
       "name": Object {
         "fieldId": "name",
       },
@@ -1516,6 +1523,7 @@ Object {
               "fields": Array [
                 "_borrowConcurrencyFromConnectionId",
                 "salesforce.concurrencyLevel",
+                "autoRecoverGovernanceErrors",
               ],
               "label": "Advanced",
             },
@@ -1865,6 +1873,9 @@ Object {
       "application": Object {
         "fieldId": "application",
       },
+      "autoRecoverGovernanceErrors": Object {
+        "fieldId": "autoRecoverGovernanceErrors",
+      },
       "mode": Object {
         "defaultDisabled": true,
         "defaultValue": "onpremise",
@@ -1971,6 +1982,7 @@ Object {
                 "rdbms.serverType",
                 "_borrowConcurrencyFromConnectionId",
                 "rdbms.concurrencyLevel",
+                "autoRecoverGovernanceErrors",
               ],
               "label": "Advanced",
             },
@@ -2160,6 +2172,9 @@ Object {
       "application": Object {
         "fieldId": "application",
       },
+      "autoRecoverGovernanceErrors": Object {
+        "fieldId": "autoRecoverGovernanceErrors",
+      },
       "name": Object {
         "fieldId": "name",
       },
@@ -2242,6 +2257,7 @@ Object {
               "fields": Array [
                 "_borrowConcurrencyFromConnectionId",
                 "rdbms.concurrencyLevel",
+                "autoRecoverGovernanceErrors",
               ],
               "label": "Advanced",
             },
@@ -2522,6 +2538,9 @@ Object {
       "application": Object {
         "fieldId": "application",
       },
+      "autoRecoverGovernanceErrors": Object {
+        "fieldId": "autoRecoverGovernanceErrors",
+      },
       "mode": Object {
         "defaultDisabled": true,
         "defaultValue": "onpremise",
@@ -2628,6 +2647,7 @@ Object {
                 "rdbms.serverType",
                 "_borrowConcurrencyFromConnectionId",
                 "rdbms.concurrencyLevel",
+                "autoRecoverGovernanceErrors",
               ],
               "label": "Advanced",
             },
@@ -2817,6 +2837,9 @@ Object {
       "application": Object {
         "fieldId": "application",
       },
+      "autoRecoverGovernanceErrors": Object {
+        "fieldId": "autoRecoverGovernanceErrors",
+      },
       "name": Object {
         "fieldId": "name",
       },
@@ -2899,6 +2922,7 @@ Object {
               "fields": Array [
                 "_borrowConcurrencyFromConnectionId",
                 "rdbms.concurrencyLevel",
+                "autoRecoverGovernanceErrors",
               ],
               "label": "Advanced",
             },
@@ -2927,6 +2951,7 @@ Object {
     "fieldMap": Object {
       "application": Object {
         "defaultValue": "",
+        "helpKey": "application",
         "id": "application",
         "isLoggable": true,
         "label": "Application",
@@ -7289,6 +7314,7 @@ Object {
       "application": Object {
         "appType": "export",
         "defaultValue": [Function],
+        "helpKey": "application",
         "id": "application",
         "isLoggable": true,
         "label": "Application",
@@ -7436,14 +7462,18 @@ Object {
       },
     },
     "layout": Object {
-      "fields": Array [
-        "application",
-        "type",
-        "connection",
-        "name",
-        "description",
-        "settings",
+      "containers": Array [
+        Object {
+          "fields": Array [
+            "application",
+            "type",
+            "connection",
+            "name",
+            "description",
+          ],
+        },
       ],
+      "type": "box",
     },
   },
   "init": undefined,
@@ -10783,6 +10813,7 @@ Object {
       "application": Object {
         "appType": "import",
         "defaultValue": "",
+        "helpKey": "application",
         "id": "application",
         "isLoggable": true,
         "label": "Application",
@@ -10873,13 +10904,17 @@ Object {
       },
     },
     "layout": Object {
-      "fields": Array [
-        "application",
-        "connection",
-        "name",
-        "description",
-        "settings",
+      "containers": Array [
+        Object {
+          "fields": Array [
+            "application",
+            "connection",
+            "name",
+            "description",
+          ],
+        },
       ],
+      "type": "box",
     },
   },
   "init": undefined,
@@ -12795,6 +12830,7 @@ Object {
       "application": Object {
         "appType": "export",
         "defaultValue": [Function],
+        "helpKey": "application",
         "id": "application",
         "isLoggable": true,
         "label": "Application",
@@ -12919,6 +12955,7 @@ Object {
     "fieldMap": Object {
       "application": Object {
         "defaultValue": [Function],
+        "helpKey": "application",
         "id": "application",
         "isLoggable": true,
         "label": "Application",

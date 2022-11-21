@@ -42,6 +42,42 @@ export const getLineColor = index => {
   return colorSpectrum[index % 8];
 };
 
+export const CUSTOM_DATE_RANGE_FILTERS = [
+  {id: 'today', label: 'Today'},
+  {id: 'last24hours', label: 'Last 24 hours'},
+  {id: 'last36hours', label: 'Last 36 hours'},
+  {id: 'last7days', label: 'Last 7 days'},
+  {id: 'last15days', label: 'Last 15 days'},
+  {id: 'last30days', label: 'Last 30 days'},
+];
+
+export const CUSTOM_PRESET = {id: 'custom', label: 'Custom'};
+
+export const addDataRetentionPeriods = (maxAllowedDataRetention, dataRetentionPeriod) => {
+  const maxPeriodAllowed = dataRetentionPeriod || maxAllowedDataRetention;
+  const allowedDateRanges = [...CUSTOM_DATE_RANGE_FILTERS];
+
+  if (!maxPeriodAllowed || maxPeriodAllowed === 30) return [...CUSTOM_DATE_RANGE_FILTERS, CUSTOM_PRESET];
+
+  if (maxPeriodAllowed >= 60) {
+    allowedDateRanges.push(
+      {id: 'last60days', label: 'Last 60 days'}
+    );
+  }
+  if (maxPeriodAllowed >= 90) {
+    allowedDateRanges.push(
+      {id: 'last90days', label: 'Last 90 days'}
+    );
+  }
+  if (maxPeriodAllowed === 180) {
+    allowedDateRanges.push(
+      {id: 'last180days', label: 'Last 180 days'}
+    );
+  }
+
+  return [...allowedDateRanges, CUSTOM_PRESET];
+};
+
 export const getSelectedRange = (range, skipLastEndDate) => {
   if (!range || typeof range !== 'object') {
     return {};
@@ -112,6 +148,18 @@ export const getSelectedRange = (range, skipLastEndDate) => {
       break;
     case 'last30days':
       start = moment().subtract(29, 'days').startOf('day').toDate();
+      end = currentDate;
+      break;
+    case 'last60days':
+      start = moment().subtract(59, 'days').startOf('day').toDate();
+      end = currentDate;
+      break;
+    case 'last90days':
+      start = moment().subtract(89, 'days').startOf('day').toDate();
+      end = currentDate;
+      break;
+    case 'last180days':
+      start = moment().subtract(179, 'days').startOf('day').toDate();
       end = currentDate;
       break;
     case 'last3months':

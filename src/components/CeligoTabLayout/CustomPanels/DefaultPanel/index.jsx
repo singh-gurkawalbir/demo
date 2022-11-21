@@ -16,6 +16,9 @@ const useStyles = makeStyles(theme => ({
     '& > div': {
       wordBreak: 'break-word',
     },
+    '& > div[id="ace-editor"]': {
+      minHeight: theme.spacing(26),
+    },
   },
 }));
 
