@@ -20,6 +20,7 @@ import ErrorStatus from '../ErrorStatus';
 import CeligoTruncate from '../../../components/CeligoTruncate';
 import actions from '../../../actions';
 import {getHttpConnector} from '../../../constants/applications';
+import { getConnectorId } from '../../../utils/assistant';
 
 const blockHeight = 170;
 const blockWidth = 275;
@@ -224,7 +225,7 @@ export default function AppBlock({
     if (getHttpConnector(http?._httpConnectorId)) {
       const publishedConnector = getHttpConnector(http._httpConnectorId);
 
-      return publishedConnector?.name;
+      return getConnectorId(publishedConnector?.legacyId, publishedConnector?.name);
     }
   });
 

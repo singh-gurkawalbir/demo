@@ -11,6 +11,7 @@ import {
   getFormattedNetsuiteMetadataData,
 } from '../metadata';
 import { getUnionObject, getTransformPaths } from '../jsonPaths';
+import { isFileMetaExpectedForResource } from '../flowData';
 
 // wrap the function inside useMemo since result may contain property 'lastExportDateTime' which refers to new Date()
 export default function getFormattedSampleData({
@@ -641,7 +642,7 @@ export const wrapSampleDataWithContext = ({
         status,
         data: {
           data: data ? [data] : [],
-          files: [
+          files: isFileMetaExpectedForResource(resource) ? [
             {
               fileMeta:
                 {
@@ -649,7 +650,7 @@ export const wrapSampleDataWithContext = ({
                   fileSize: resource.adaptorType === 'FTPExport' ? 1234 : undefined,
                 },
             },
-          ],
+          ] : undefined,
           errors: [],
           ...resourceIds,
           ...contextFields,
