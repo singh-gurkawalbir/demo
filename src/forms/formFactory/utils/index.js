@@ -308,7 +308,7 @@ export const sanitizePatchSet = ({
     // different object which is why its not failing when applying patches.
 
     // eslint-disable-next-line
-    console.log(error, newSet, resource);
+    // console.log(error, newSet, resource);
     // throw new Error('Something wrong with the patchSet operations ', error);
   }
 

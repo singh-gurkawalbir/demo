@@ -49,6 +49,9 @@ export default {
       ],
     },
   },
+  autoRecoverGovernanceErrors: {
+    fieldId: 'autoRecoverGovernanceErrors',
+  },
   layout: {
     type: 'collapse',
     containers: [
@@ -56,7 +59,7 @@ export default {
       { collapsed: true,
         label: 'Application details',
         fields: ['http.auth.token.token'] },
-      { collapsed: true, label: 'Advanced', fields: ['_borrowConcurrencyFromConnectionId', 'http.concurrencyLevel'] },
+      { collapsed: true, label: 'Advanced', fields: ['_borrowConcurrencyFromConnectionId', 'http.concurrencyLevel', 'autoRecoverGovernanceErrors'] },
     ],
   },
 };

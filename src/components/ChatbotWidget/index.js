@@ -61,6 +61,8 @@ const ChatbotWidget = () => {
     };
   }, []);
 
+  if (!scriptUrl) return null;
+
   const handleWidget = () => {
     if (!isOpen) {
       window.zE('webWidget', 'show');

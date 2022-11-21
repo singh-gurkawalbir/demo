@@ -4,6 +4,7 @@ const useScript = (url = '', id = '', callBack) => {
   useEffect(() => {
     const script = document.createElement('script');
 
+    if (!url || !id) return;
     script.id = id;
     script.src = url;
     script.async = true;
