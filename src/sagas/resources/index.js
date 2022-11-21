@@ -174,11 +174,10 @@ export function* commitStagedChanges({ resourceType, id, scope, options, context
     if (resp && (resp.error || resp.conflict)) return resp;
     // eslint-disable-next-line prefer-destructuring
     merged = resp.merged;
-  } else if (
-    !NO_ENVIRONMENT_RESOURCE_TYPES.includes(resourceType) || (resourceType.startsWith('integrations/') && resourceType.endsWith('connections'))
-  ) {
+  } else if (!NO_ENVIRONMENT_RESOURCE_TYPES.includes(resourceType)) {
     // For Cloning, the preference of environment is set by user during clone setup. Do not override that preference
     // For all other cases, set the sandbox property to current environment
+    // for IAs the resource type will be /integrations/_id/connections
     if (merged && !Object.prototype.hasOwnProperty.call(merged, 'sandbox')) merged.sandbox = isSandbox;
   }
 
