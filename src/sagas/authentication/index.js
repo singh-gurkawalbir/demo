@@ -214,6 +214,8 @@ export function* retrieveAppInitializationResources() {
         environment: 'production',
       })
     );
+    // we need to get httpConnectors details once the defaultAShareId has been updated
+    yield call(retrievingHttpConnectorDetails);
   }
 
   yield put(actions.auth.defaultAccountSet());

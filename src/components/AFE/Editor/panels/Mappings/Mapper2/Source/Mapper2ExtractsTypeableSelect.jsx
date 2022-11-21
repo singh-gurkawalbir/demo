@@ -44,7 +44,7 @@ const useStyles = makeStyles(theme => ({
     right: 0,
     marginTop: '0px !important',
     color: theme.palette.secondary.light,
-    pointerEvents: 'none',
+    cursor: 'pointer',
   },
   textFieldWithDataType: {
     '&> * .MuiFilledInput-input': {
@@ -139,7 +139,7 @@ export const TooltipTitle = ({
     );
   } else if (!isTruncated && !hideSourceDropdown) {
     return fieldType;
-  } else {
+  } else if (!isDynamicLookup) {
     title = `${fieldType}: ${inputValue}`;
   }
 
@@ -198,11 +198,11 @@ export default function Mapper2ExtractsTypeableSelect({
     setIsFocused(true);
   }, []);
 
-  const patchField = useCallback((propValue, newValue) => {
+  const patchField = useCallback((propValue, newValue, jsonPath) => {
     // on blur, patch the extracts tree with empty input so all values in the
     // dropdown will be visible
     dispatch(actions.mapping.v2.patchExtractsFilter('', ''));
-    if (propValue !== newValue) { onBlur(newValue); }
+    if (propValue !== newValue) { onBlur(newValue, jsonPath); }
   }, [dispatch, onBlur]);
 
   const handleBlur = useCallback(event => {
@@ -262,7 +262,7 @@ export default function Mapper2ExtractsTypeableSelect({
           InputProps={{
             endAdornment: !hideSourceDropdown &&
               (
-                <InputAdornment className={classes.autoSuggestDropdown} position="start">
+                <InputAdornment className={classes.autoSuggestDropdown} position="start" onClick={() => { setIsFocused(true); }}>
                   <ArrowDownIcon />
                 </InputAdornment>
               ),
@@ -279,6 +279,7 @@ export default function Mapper2ExtractsTypeableSelect({
         disabled={disabled || isHardCodedValue || isHandlebarExp}
         isHardCodedValue={isHardCodedValue}
         isHandlebarExp={isHandlebarExp}
+        isDynamicLookup={isDynamicLookup}
         nodeKey={nodeKey}
         sourceDataTypes={sourceDataType}
         className={clsx({[classes.sourceDataTypeButton]: hideSourceDropdown})}

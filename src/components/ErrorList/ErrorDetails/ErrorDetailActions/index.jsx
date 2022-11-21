@@ -59,6 +59,19 @@ export default function Actions({
 
   const retryData = useSelector(state => selectors.retryData(state, retryId));
 
+  const handleRetry = useCallback(() => {
+    dispatch(
+      actions.errorManager.flowErrorDetails.retry({
+        flowId,
+        resourceId,
+        retryIds: [retryId],
+        isResolved,
+      })
+    );
+
+    handleNextError(true);
+  }, [dispatch, flowId, handleNextError, isResolved, resourceId, retryId]);
+
   const updateRetry = useCallback(closeAfterSave => {
     dispatch(
       actions.errorManager.retryData.updateRequest({
@@ -129,21 +142,33 @@ export default function Actions({
   useTriggerCancelFromContext(ERROR_DETAIL_ACTIONS_ASYNC_KEY, handleCancel);
 
   let retryButtonLabel = 'Retry & next';
+  let dataTestForRetryButton = 'retryAndNext';
 
-  if (isResolved) retryButtonLabel = 'Save & retry';
-  else if (isRetryDataChanged) retryButtonLabel = 'Save, retry & next';
+  if (isResolved) {
+    retryButtonLabel = 'Save & retry';
+    dataTestForRetryButton = undefined;
+  } else if (isRetryDataChanged) {
+    retryButtonLabel = 'Save, retry & next';
+    dataTestForRetryButton = 'saveRetryAndNext';
+  }
 
   if (mode === 'editRetry' && !isFlowDisabled) {
     return (
       <ActionGroup>
-        <FilledButton disabled={isResolved && !isRetryDataChanged} onClick={handleSaveAndRetry}>
+        <FilledButton
+          disabled={isResolved && !isRetryDataChanged}
+          onClick={isRetryDataChanged ? handleSaveAndRetry : handleRetry}
+          data-test={dataTestForRetryButton}>
           {retryButtonLabel}
         </FilledButton>
-        <FilledButton disabled={!isRetryDataChanged} onClick={updateRetry}>
+        <FilledButton
+          disabled={!isRetryDataChanged}
+          onClick={updateRetry}
+          data-test={!isResolved ? 'saveAndNext' : undefined}>
           {isResolved ? 'Save & close' : 'Save & next'}
         </FilledButton>
         {!isResolved && (
-          <OutlinedButton onClick={resolve}>
+          <OutlinedButton onClick={resolve} data-test="resolveAndNext">
             Resolve &amp; next
           </OutlinedButton>
         )}

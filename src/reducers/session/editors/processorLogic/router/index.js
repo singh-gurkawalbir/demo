@@ -51,6 +51,10 @@ export default {
         // eslint-disable-next-line no-param-reassign
         branch.name = `Branch ${branchNamingIndex}.${index}`;
       }
+      if (!branch.inputFilter) {
+        // eslint-disable-next-line no-param-reassign
+        branch.inputFilter = {rules: undefined};
+      }
     });
     const rule = {
       ...routerObj,

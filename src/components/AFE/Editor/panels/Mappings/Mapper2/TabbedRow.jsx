@@ -18,6 +18,7 @@ const useStyles = makeStyles(theme => ({
   tab: {
     color: theme.palette.secondary.main,
     fontSize: 14,
+    maxWidth: 'none',
   },
 }));
 
@@ -52,7 +53,7 @@ function generateTabs(parentNode) {
 function TabbedRow({parentKey}) {
   const classes = useStyles();
   const dispatch = useDispatch();
-  const treeData = useSelector(state => selectors.filteredV2TreeData(state));
+  const treeData = useSelector(state => selectors.filteredV2TreeData(state).filteredTreeData);
   const parentNode = useMemo(() => (findNodeInTree(treeData, 'key', parentKey)?.node), [parentKey, treeData]);
 
   const tabs = useMemo(() => generateTabs(parentNode), [parentNode]);

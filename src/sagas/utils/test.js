@@ -718,6 +718,7 @@ describe('getHTTPConnectorMetadata saga', () => {
                     },
                   },
                   doesNotSupportPaging: false,
+                  method: 'GET',
                   id: '62cffbff0c804009663faa5c',
                   name: 'Retrieves a list of customers',
                   queryParameters: [
@@ -740,6 +741,7 @@ describe('getHTTPConnectorMetadata saga', () => {
                 },
                 {
                   doesNotSupportPaging: false,
+                  method: 'GET',
                   id: '62cffbff0c804009663faa60',
                   name: 'Searches for customers that match a supplied query',
                   queryParameters: [
@@ -758,6 +760,7 @@ describe('getHTTPConnectorMetadata saga', () => {
                 },
                 {
                   doesNotSupportPaging: true,
+                  method: 'GET',
                   id: '62cffbff9b51830e4d641daf',
                   name: 'Retrieves a single customer',
                   pathParameters: [
@@ -775,6 +778,7 @@ describe('getHTTPConnectorMetadata saga', () => {
                 },
                 {
                   doesNotSupportPaging: true,
+                  method: 'GET',
                   id: '62cffbff0c804009663faa62',
                   name: 'Retrieves a list of metafields that belong to a customer',
                   pathParameters: [
@@ -882,6 +886,7 @@ describe('getHTTPConnectorMetadata saga', () => {
                     },
                   },
                   doesNotSupportPaging: false,
+                  method: 'GET',
                   id: '62cffbff0c804009663faa5c',
                   name: 'Retrieves a list of customers',
                   queryParameters: [
@@ -904,6 +909,7 @@ describe('getHTTPConnectorMetadata saga', () => {
                 },
                 {
                   doesNotSupportPaging: false,
+                  method: 'GET',
                   id: '62cffbff0c804009663faa60',
                   name: 'Searches for customers that match a supplied query',
                   queryParameters: [
@@ -922,6 +928,7 @@ describe('getHTTPConnectorMetadata saga', () => {
                 },
                 {
                   doesNotSupportPaging: true,
+                  method: 'GET',
                   id: '62cffbff9b51830e4d641daf',
                   name: 'Retrieves a single customer',
                   pathParameters: [
@@ -939,6 +946,7 @@ describe('getHTTPConnectorMetadata saga', () => {
                 },
                 {
                   doesNotSupportPaging: true,
+                  method: 'GET',
                   id: '62cffbff0c804009663faa62',
                   name: 'Retrieves a list of metafields that belong to a customer',
                   pathParameters: [
@@ -1353,6 +1361,8 @@ describe('updateFinalMetadataWithHttpFramework saga', () => {
         label: 'Store Name',
         name: '/settings/storeName',
         required: true,
+        _conditionIdValuesMap: [],
+        _conditionIds: [],
         type: 'text',
         validWhen: {
           matchesRegEx: {

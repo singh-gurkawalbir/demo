@@ -9,6 +9,7 @@ import useFormContext from '../../Form/FormContext';
 import { useSetInitializeFormData } from './assistant/DynaAssistantOptions';
 import {useHFSetInitializeFormData} from './httpFramework/DynaHFAssistantOptions';
 import { MULTIPLE_AUTH_TYPE_ASSISTANTS } from '../../../constants';
+import useUpdateGroupingVisibility from './DynaSortAndGroup/useUpdateGroupingVisibility';
 
 const emptyObj = {};
 export default function DynaReplaceConnection(props) {
@@ -64,6 +65,10 @@ export default function DynaReplaceConnection(props) {
     onFieldChange,
     isHTTPFramework: connection?.http?._httpConnectorId,
   });
+
+  // this hook needs to be added in some component
+  // which would always be visible on export form
+  useUpdateGroupingVisibility({formKey, resourceId, resourceType: parentResourceType});
 
   const onFieldChangeHandler = useCallback((id, newConnectionId) => {
     const patch = [];
