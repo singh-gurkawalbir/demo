@@ -423,7 +423,7 @@ export function* submitFormValues({
 
   if (
     integrationIdPatch &&
-    integrationIdPatch.value &&
+    !isEmpty(integrationIdPatch.value) &&
     (resourceType === 'accesstokens' || resourceType === 'connections')
   ) {
     type = `integrations/${integrationIdPatch.value}/${resourceType}`;

@@ -23,12 +23,14 @@ export default {
         title: activeProcessor === 'javascript' ? 'Function input' : 'Input',
         area: 'form',
         Panel: DataPanel,
+        helpKey: 'afe.router.input',
         props: {mode: 'json'},
       },
       {
         title: activeProcessor === 'javascript' ? 'Function output' : 'Output',
         area: 'values',
         Panel: ResultPanel,
+        helpKey: 'afe.router.output',
       },
     ];
 

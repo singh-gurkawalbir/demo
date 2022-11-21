@@ -11,7 +11,7 @@ import {PillButton, TextButton} from '../../../components/Buttons';
 import useConfirmDialog from '../../../components/ConfirmDialog';
 import RawHtml from '../../../components/RawHtml';
 import messageStore from '../../../utils/messageStore';
-import { LICENSE_REACTIVATED_MESSAGE, LICENSE_UPGRADE_REQUEST_SUBMITTED_MESSAGE } from '../../../constants';
+import { LICENSE_REACTIVATED_MESSAGE, LICENSE_UPGRADE_REQUEST_SUBMITTED_MESSAGE, REQUEST_UPGRADE_SUCCESS_MESSAGE } from '../../../constants';
 
 const useStyles = makeStyles(theme => ({
   inTrial: {
@@ -291,6 +291,9 @@ function LicenseAction() {
     } else if (platformLicenseActionMessage === LICENSE_REACTIVATED_MESSAGE) {
       enquesnackbar({message: LICENSE_REACTIVATED_MESSAGE});
       dispatch(actions.license.clearActionMessage());
+    } else if (platformLicenseActionMessage === REQUEST_UPGRADE_SUCCESS_MESSAGE) {
+      enquesnackbar({message: <RawHtml html={messageStore('REQUEST_UPGRADE_SUCCESS_MESSAGE')} />, variant: 'success'});
+      dispatch(actions.license.clearActionMessage());
     }
   }, [dispatch, enquesnackbar, platformLicenseActionMessage]);
 
@@ -327,6 +330,7 @@ function LicenseAction() {
           disableElevation
           className={clsx(classes.inTrial, {[classes.hideElement]: upgradeButton === false})}
           data-test={licenseActionDetails.label}
+          id={licenseActionDetails.id}
           onClick={handleClick}>
           {licenseActionDetails.label}
           <span className={classes.inTrialDaysLeft}>{licenseActionDetails.daysLeft}</span>

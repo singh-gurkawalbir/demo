@@ -2927,6 +2927,7 @@ Object {
     "fieldMap": Object {
       "application": Object {
         "defaultValue": "",
+        "helpKey": "application",
         "id": "application",
         "isLoggable": true,
         "label": "Application",
@@ -2948,10 +2949,14 @@ Object {
       },
     },
     "layout": Object {
-      "fields": Array [
-        "application",
-        "settings",
+      "containers": Array [
+        Object {
+          "fields": Array [
+            "application",
+          ],
+        },
       ],
+      "type": "box",
     },
   },
   "init": undefined,
@@ -7285,6 +7290,7 @@ Object {
       "application": Object {
         "appType": "export",
         "defaultValue": [Function],
+        "helpKey": "application",
         "id": "application",
         "isLoggable": true,
         "label": "Application",
@@ -7432,14 +7438,18 @@ Object {
       },
     },
     "layout": Object {
-      "fields": Array [
-        "application",
-        "type",
-        "connection",
-        "name",
-        "description",
-        "settings",
+      "containers": Array [
+        Object {
+          "fields": Array [
+            "application",
+            "type",
+            "connection",
+            "name",
+            "description",
+          ],
+        },
       ],
+      "type": "box",
     },
   },
   "init": undefined,
@@ -10779,6 +10789,7 @@ Object {
       "application": Object {
         "appType": "import",
         "defaultValue": "",
+        "helpKey": "application",
         "id": "application",
         "isLoggable": true,
         "label": "Application",
@@ -10869,13 +10880,17 @@ Object {
       },
     },
     "layout": Object {
-      "fields": Array [
-        "application",
-        "connection",
-        "name",
-        "description",
-        "settings",
+      "containers": Array [
+        Object {
+          "fields": Array [
+            "application",
+            "connection",
+            "name",
+            "description",
+          ],
+        },
       ],
+      "type": "box",
     },
   },
   "init": undefined,
@@ -12791,6 +12806,7 @@ Object {
       "application": Object {
         "appType": "export",
         "defaultValue": [Function],
+        "helpKey": "application",
         "id": "application",
         "isLoggable": true,
         "label": "Application",
@@ -12915,6 +12931,7 @@ Object {
     "fieldMap": Object {
       "application": Object {
         "defaultValue": [Function],
+        "helpKey": "application",
         "id": "application",
         "isLoggable": true,
         "label": "Application",

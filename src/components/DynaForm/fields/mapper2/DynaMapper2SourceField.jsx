@@ -44,7 +44,7 @@ export default function DynaMapper2SourceField(props) {
   const classes = useStyles();
   const {fields} = useFormContext(formKey);
   const importResource = useSelectorMemo(selectors.makeResourceSelector, 'imports', resourceId);
-  const extractsTreeData = useSelector(state => selectors.v2MappingsExtractsTree(state));
+  const extractsTree = useSelector(state => selectors.v2MappingsExtractsTree(state));
   const dataType = fields.dataType?.value;
   const copySource = fields.copySource?.value || 'no';
   const noSourceField = fields.fieldMappingType?.value === 'hardCoded' || fields.fieldMappingType?.value === 'multifield';
@@ -52,19 +52,18 @@ export default function DynaMapper2SourceField(props) {
   const isFileAdaptorLookup = fields.fieldMappingType?.value === 'lookup' && (isFileAdaptor(importResource) || isAS2Resource(importResource));
 
   const editorLayout = useSelector(state => selectors.editorLayout(state, getMappingsEditorId(resourceId)));
-  const handleExtractBlur = useCallback(value => {
+  const handleExtractBlur = useCallback((value, selectedExtractJsonPath) => {
     onFieldChange(id, value);
 
     // in case of source field change update the source datatype also
-
-    const sourceDataTypesList = getSelectedExtractDataTypes(extractsTreeData, value);
+    const sourceDataTypesList = getSelectedExtractDataTypes({extractsTree, selectedValue: value, selectedExtractJsonPath});
 
     if (dataType === MAPPING_DATA_TYPES.OBJECT) {
       onFieldChange('objectSourceDataType', sourceDataTypesList[0]);
     } else {
       onFieldChange('sourceDataType', sourceDataTypesList[0]);
     }
-  }, [id, onFieldChange, dataType, extractsTreeData]);
+  }, [id, onFieldChange, dataType, extractsTree]);
 
   const hideSourceField = (dataType === MAPPING_DATA_TYPES.OBJECT && copySource === 'no') ||
   (isDynamicLookup && !isFileAdaptorLookup) || noSourceField;

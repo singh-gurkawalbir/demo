@@ -159,6 +159,8 @@ import DynaSwitch from './DynaSwitch';
 import DynaMapper2SourceField from './mapper2/DynaMapper2SourceField';
 import DynaMapper2TabbedExtracts from './mapper2/DynaMapper2TabbedExtracts';
 import DynaSalesforceSObject from './DynaSalesforceSObject';
+import DynaSelectDataRetentionPeriod from './DynaSelectDataRetentionPeriod';
+import DynaChangeLicenseEdition from './DynaChangeLicenseEdition';
 
 export default {
   updateoptions: DynaUpdateOptions,
@@ -329,4 +331,6 @@ export default {
   switch: DynaSwitch,
   mapper2sourcefield: DynaMapper2SourceField,
   mapper2tabbedextracts: DynaMapper2TabbedExtracts,
+  selectdataretentionperiod: DynaSelectDataRetentionPeriod,
+  changelicenseedition: DynaChangeLicenseEdition,
 };

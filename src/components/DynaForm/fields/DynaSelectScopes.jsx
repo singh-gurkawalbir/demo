@@ -77,9 +77,17 @@ const TransferListModal = props => {
   );
 };
 
-export default function DynaSelectScopesDialog(props) {
+export default function (props) {
   const classes = useStyles();
-  const { label, scopes: scopesOrig, value: selectedScopes = [], onFieldChange, id, helpLink } = props;
+  const {
+    label,
+    scopes: scopesOrig,
+    value: selectedScopes = [],
+    onFieldChange,
+    id,
+    helpLink,
+    required,
+  } = props;
   const [showScopesModal, setShowScopesModal] = useState(false);
 
   const {flattenedScopes, subHeaderMap} = useMemo(() => {
@@ -122,7 +130,7 @@ export default function DynaSelectScopesDialog(props) {
       )}
       <FormControl className={classes.dynaSelectScopesContainer}>
         <div className={classes.dynaTextLabelWrapper}>
-          <FormLabel htmlFor={id} className={classes.scopesLabel}>
+          <FormLabel htmlFor={id} className={classes.scopesLabel} required={required}>
             {label}
           </FormLabel>
           <FieldHelp {...props} />

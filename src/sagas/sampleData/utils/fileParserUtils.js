@@ -3,6 +3,7 @@ import { evaluateExternalProcessor } from '../../editor';
 import { apiCallWithRetry } from '../../index';
 import { processJsonSampleData, processJsonPreviewData } from '../../../utils/sampleData';
 import { selectors } from '../../../reducers';
+import { FILE_PROVIDER_ASSISTANTS } from '../../../constants';
 
 /*
  * Below sagas are Parser sagas for resource sample data
@@ -54,7 +55,7 @@ export const generateFileParserOptionsFromResource = (resource = {}, oldResource
   // For csv, xlsx - similar kind of props are supplies
   // Some of them are not supported for xlsx yet
   if (['csv', 'xlsx'].includes(fileType)) {
-    if (['HTTPExport', 'RESTExport'].includes(resource?.adaptorType)) {
+    if (['HTTPExport', 'RESTExport'].includes(resource?.adaptorType) && !FILE_PROVIDER_ASSISTANTS.includes(resource.assistant)) {
       return {
         rowsToSkip: fields.rowsToSkip,
         trimSpaces: fields.trimSpaces,
