@@ -11,6 +11,7 @@ import actions from '../../../actions';
 import { FILTER_KEYS } from '../../../utils/errorManagement';
 import TextButton from '../../../components/Buttons/TextButton';
 import { isNewId } from '../../../utils/resource';
+import { getTextAfterCount } from '../../../utils/string';
 
 const useStyles = makeStyles(theme => ({
   statusAppBlock: {
@@ -78,11 +79,7 @@ export default function ErrorStatus({ count, isNew, flowId, resourceId }) {
 
     return () => {
       dispatch(actions.errorManager.retryStatus.stopPoll());
-      dispatch(actions.errorManager.flowErrorDetails.clear({ flowId, resourceId }));
       dispatch(actions.errorManager.retries.clear({flowId, resourceId}));
-      dispatch(actions.clearFilter(FILTER_KEYS.OPEN));
-      dispatch(actions.clearFilter(FILTER_KEYS.RESOLVED));
-      dispatch(actions.clearFilter(FILTER_KEYS.RETRIES));
     };
   }, [dispatch, flowId, resourceId]);
 
@@ -98,7 +95,7 @@ export default function ErrorStatus({ count, isNew, flowId, resourceId }) {
     <div className={classes.statusAppBlock}>
       <Status
         onClick={() => handleStatus('open')}
-        variant={count ? 'error' : 'success'}> { count ? `${count} errors` : 'Success'}
+        variant={count ? 'error' : 'success'}> { count ? `${getTextAfterCount('error', count)}` : 'Success'}
       </Status>
       { retryStatus === 'inProgress' && (
       <div className={classes.retryContainer}>

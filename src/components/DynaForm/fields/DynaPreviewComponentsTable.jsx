@@ -59,7 +59,7 @@ export default function DynaPreviewComponentsTable({ data: objects, useColumns, 
         defaultExpand />
       )}
       {Object.keys(componentsMap).map(resourceType => (
-        <>
+        <div key={resourceType}>
           {resourceType !== 'Flow' && (
           <DynaCeligoTable
             className={classes.previewTableWrapper}
@@ -70,7 +70,7 @@ export default function DynaPreviewComponentsTable({ data: objects, useColumns, 
             defaultExpand={cloneResourceType !== 'integrations' && cloneResourceType === RESOURCE_TYPE_SINGULAR_TO_PLURAL[RESOURCE_TYPE_LABEL_TO_SINGULAR[resourceType]]}
             />
           )}
-        </>
+        </div>
       ))}
     </>
   );
