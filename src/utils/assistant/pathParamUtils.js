@@ -59,7 +59,9 @@ function mapParamsToValues(relativeTokens, actualTokens, pathParametersInfo) {
         const pathParamRegex = new RegExp(`(.*)${suffix}`);
         const valueTokens = pathParamRegex.exec(actualToken);
 
-        actualValue = valueTokens && valueTokens[valueTokens?.length - 1];
+        if (valueTokens?.length) {
+          actualValue = valueTokens[valueTokens?.length - 1];
+        }
       }
 
       const id = relToken
@@ -117,9 +119,13 @@ export function getPathParams({
   // ex: relativePathTokens = ['applicants', 'name', ':_name','from_apply_date'.....]
   // ex:   actualPathTokens = ['applicants', 'name', 'John', 'from_apply_date'.....]
   // return object to be {name: 'John', fromapplydate: 'today', bar: 'buu'...}
-  return mapParamsToValues(
+  const bb = mapParamsToValues(
     relativePathTokens,
     actualPathTokens,
     pathParametersInfo
   );
+
+  console.log('bb', bb);
+
+  return bb;
 }
