@@ -15,6 +15,7 @@ import useSelectorMemo from '../../../../../../../hooks/selectors/useSelectorMem
 import { useGetTableContext } from '../../../../../../../components/CeligoTable/TableContext';
 import FilledButton from '../../../../../../../components/Buttons/FilledButton';
 import useConfirmDialog from '../../../../../../../components/ConfirmDialog';
+import ChildIntegrationsTable from './ChildIntegrationsTable';
 
 const emptyObject = {};
 const metadata = {
@@ -123,12 +124,14 @@ export default function SubscriptionSection({ childId, integrationId }) {
     return emptyObject;
   }, shallowEqual);
   const children = useSelectorMemo(selectors.mkIntegrationChildren, integrationId);
+  const allChildIntegrations = useSelectorMemo(selectors.mkGetChildIntegrations, integrationId);
   const license = useSelector(state =>
     selectors.integrationAppLicense(state, integrationId)
   );
   const plan = useSelector(state =>
     selectors.integrationAppEdition(state, integrationId)
   );
+  const istwoDotZeroFrameWork = useSelector(state => selectors.isIntegrationAppVersion2(state, integrationId, true));
   const addOnState = useSelector(state =>
     selectors.integrationAppAddOnState(state, integrationId)
   );
@@ -184,7 +187,7 @@ export default function SubscriptionSection({ childId, integrationId }) {
     if (upgradeText === 'Request upgrade') {
       confirmDialog({
         title: 'Request upgrade',
-        message: 'We will contact you to discuss your business needs and recommend an ideal subscription plan.',
+        message: istwoDotZeroFrameWork ? 'You’ll receive a follow-up email from an associate shortly to discuss different plan options, resources & features available in each plan, and pricing.' : 'We will contact you to discuss your business needs and recommend an ideal subscription plan.',
         buttons: [
           {
             label: 'Submit request',
@@ -251,6 +254,12 @@ export default function SubscriptionSection({ childId, integrationId }) {
           (tile) of this Integration App. Contact your Account Manager for more
           info.
         </Typography>
+        {allChildIntegrations.length && (
+          <ChildIntegrationsTable
+            integrationId={integrationId}
+            allChildIntegrations={allChildIntegrations}
+          />
+        )}
         {hasAddOns && !hasSubscribedAddOns && (
           <div className={classes.customisedBlock}>
             <div className={classes.leftBlock}>
@@ -258,7 +267,7 @@ export default function SubscriptionSection({ childId, integrationId }) {
                 Add-ons
               </Typography>
               <Typography className={classes.message}>
-                You don`t have any add-ons yet. Add-ons let you customize
+                You don’t have any add-ons yet. Add-ons let you customize
                 subscription to meet your specific business requirements.
               </Typography>
             </div>

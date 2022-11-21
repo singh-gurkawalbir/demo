@@ -263,7 +263,7 @@ export function generateIOFilterExpression(rules, context) {
 
           switch (rr.data.lhs.dataType) {
             case 'number':
-              lhs = parseFloat(rr.data.lhs.value);
+              lhs = Number.isNaN(parseFloat(rr.data.lhs.value)) ? rr.data.lhs.value : parseFloat(rr.data.lhs.value);
               break;
             case 'boolean':
               lhs =
@@ -311,7 +311,7 @@ export function generateIOFilterExpression(rules, context) {
 
             switch (rr.data.rhs.dataType) {
               case 'number':
-                rhs = parseFloat(rr.data.rhs.value);
+                rhs = Number.isNaN(parseFloat(rr.data.rhs.value)) ? rr.data.rhs.value : parseFloat(rr.data.rhs.value);
                 break;
               case 'boolean':
                 rhs =

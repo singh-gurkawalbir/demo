@@ -57,7 +57,7 @@ function iconMap(type = '') {
   const publishedConnector = getHttpConnector(type);
 
   if (publishedConnector) {
-    return publishedConnector.legacyId || publishedConnector.name;
+    return (publishedConnector.legacyId || publishedConnector.name).toLowerCase().replace(/\.|\s/g, '');
   }
 
   // remove all whitespaces and dots
@@ -83,10 +83,10 @@ function imageName(assistant) {
   const publishedConnector = getHttpConnector(assistant);
 
   if (publishedConnector) {
-    return publishedConnector.legacyId || publishedConnector.name;
+    return (publishedConnector.legacyId || publishedConnector.name).toLowerCase().replace(/\.|\s/g, '');
   }
 
-  return assistant.toLowerCase();
+  return assistant.toLowerCase().replace(/\.|\s/g, '');
 }
 
 export default function ApplicationImg({

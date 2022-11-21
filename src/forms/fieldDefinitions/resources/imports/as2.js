@@ -25,7 +25,8 @@ export default {
     keyName: 'name',
     valueName: 'value',
     valueType: 'keyvalue',
-    label: 'Configure HTTP Headers',
+    label: 'Configure HTTP headers',
+    helpKey: 'import.http.headers',
   },
   'as2.maxRetries': {
     isLoggable: true,

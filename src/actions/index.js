@@ -281,11 +281,12 @@ const resource = {
       patch,
       context,
     }),
-  receivedCollection: (resourceType, collection, integrationId) =>
+  receivedCollection: (resourceType, collection, integrationId, isNextPageCollection) =>
     action(actionTypes.RESOURCE.RECEIVED_COLLECTION, {
       resourceType,
       collection,
       integrationId,
+      isNextPageCollection,
     }),
   clearCollection: resourceType =>
     action(actionTypes.RESOURCE.CLEAR_COLLECTION, { resourceType }),
@@ -528,9 +529,12 @@ const resource = {
 // #endregion
 
 const auditLogs = {
-  request: (resourceType, resourceId, message) => action(actionTypes.RESOURCE.REQUEST_COLLECTION, {
+  request: (resourceType, resourceId, nextPagePath) => action(actionTypes.RESOURCE.REQUEST_COLLECTION, {
     resourceType: auditResourceTypePath(resourceType, resourceId),
-    message,
+    nextPagePath,
+  }),
+  receivedNextPagePath: nextPagePath => action(actionTypes.RESOURCE.AUDIT_LOGS_NEXT_PATH, {
+    nextPagePath,
   }),
   download: ({resourceType, resourceId, childId, filters}) => action(actionTypes.RESOURCE.DOWNLOAD_AUDIT_LOGS, {
     resourceType,
@@ -538,6 +542,7 @@ const auditLogs = {
     childId,
     filters,
   }),
+  toggleHasMoreDownloads: hasMoreDownloads => action(actionTypes.RESOURCE.AUDIT_LOGS_HAS_MORE_DOWNLOADS, {hasMoreDownloads}),
   clear: () => action(actionTypes.RESOURCE.AUDIT_LOGS_CLEAR),
 };
 const connectors = {
@@ -1332,12 +1337,14 @@ const license = {
     action(actionTypes.LICENSE.UPGRADE_REQUEST, {}),
   requestUpdate: (actionType, {connectorId, licenseId, feature}) =>
     action(actionTypes.LICENSE.UPDATE_REQUEST, { actionType, connectorId, licenseId, feature }),
-  licenseUpgradeRequestSubmitted: (message, feature) =>
-    action(actionTypes.LICENSE.UPGRADE_REQUEST_SUBMITTED, { message, feature }),
+  licenseUpgradeRequestSubmitted: (message, feature, isTwoDotZero) =>
+    action(actionTypes.LICENSE.UPGRADE_REQUEST_SUBMITTED, { message, feature, isTwoDotZero }),
   licenseReactivated: () =>
     action(actionTypes.LICENSE.REACTIVATED),
   ssoLicenseUpgradeRequested: () =>
     action(actionTypes.LICENSE.SSO.UPGRADE_REQUESTED),
+  dataRetentionLicenseUpgradeRequested: () =>
+    action(actionTypes.LICENSE.DATA_RETENTION.UPGRADE_REQUESTED),
   requestLicenseEntitlementUsage: () =>
     action(actionTypes.LICENSE.ENTITLEMENT_USAGE_REQUEST),
   requestNumEnabledFlows: () =>
@@ -1559,14 +1566,13 @@ const mapping = {
     addRow: v2Key => action(actionTypes.MAPPING.V2.ADD_ROW, { v2Key }),
     updateDataType: (v2Key, newDataType, isSource) => action(actionTypes.MAPPING.V2.UPDATE_DATA_TYPE, { v2Key, newDataType, isSource }),
     changeArrayTab: (v2Key, newTabValue, newTabExtractId) => action(actionTypes.MAPPING.V2.CHANGE_ARRAY_TAB, { v2Key, newTabValue, newTabExtractId }),
-    patchField: (field, v2Key, value) => action(actionTypes.MAPPING.V2.PATCH_FIELD, { field, v2Key, value }),
+    patchField: (field, v2Key, value, isSettingsPatch, selectedExtractJsonPath) => action(actionTypes.MAPPING.V2.PATCH_FIELD, { field, v2Key, value, isSettingsPatch, selectedExtractJsonPath }),
     patchSettings: (v2Key, value) => action(actionTypes.MAPPING.V2.PATCH_SETTINGS, { v2Key, value }),
     patchExtractsFilter: (inputValue, propValue) => action(actionTypes.MAPPING.V2.PATCH_EXTRACTS_FILTER, { inputValue, propValue }),
     deleteAll: isCSVOrXLSX => action(actionTypes.MAPPING.V2.DELETE_ALL, { isCSVOrXLSX }),
     autoCreateStructure: (uploadedData, isCSVOrXLSX) => action(actionTypes.MAPPING.V2.AUTO_CREATE_STRUCTURE, { uploadedData, isCSVOrXLSX }),
     toggleAutoCreateFlag: () => action(actionTypes.MAPPING.V2.TOGGLE_AUTO_CREATE_FLAG, {}),
-    updateHighlightedIndex: index => action(actionTypes.MAPPING.V2.UPDATE_HIGHLIGHTED_INDEX, {index}),
-    searchTree: ({ searchKey, showKey }) => action(actionTypes.MAPPING.V2.SEARCH_TREE, { searchKey, showKey }),
+    searchTree: searchKey => action(actionTypes.MAPPING.V2.SEARCH_TREE, { searchKey }),
     updateFilter: filter => action(actionTypes.MAPPING.V2.UPDATE_FILTER, { filter }),
     deleteNewRowKey: () => action(actionTypes.MAPPING.V2.DELETE_NEW_ROW_KEY, {}),
   },
@@ -2441,6 +2447,12 @@ const mfa = {
   clear: () => action(actionTypes.MFA.CLEAR),
 };
 
+const accountSettings = {
+  request: () => action(actionTypes.ACCOUNT_SETTINGS.REQUEST),
+  update: accountSettings => action(actionTypes.ACCOUNT_SETTINGS.UPDATE, {accountSettings}),
+  received: accountSettings => action(actionTypes.ACCOUNT_SETTINGS.RECEIVED, {accountSettings}),
+};
+
 export default {
   asyncTask,
   form,
@@ -2488,6 +2500,7 @@ export default {
   logs,
   sso,
   mfa,
+  accountSettings,
   bottomDrawer,
   integrationLCM,
   httpConnectors,

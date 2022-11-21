@@ -88,14 +88,19 @@ export default function DynaHFAssistantSearchParams(props) {
       name: <KeyLabel id={id} description={description} />,
       value: id,
     })), [paramMeta.fields]);
-  const suggestionConfig = useMemo(() => ({
-    keyConfig: {
-      suggestions: dataFields,
-      labelName: 'name',
-      valueName: 'value',
-      showAllSuggestions: true,
-    },
-  }), [dataFields]);
+
+  const suggestionConfig = useMemo(() => {
+    const updatedDataFields = dataFields.filter(field => !Object.keys(value).includes(field.value));
+
+    return ({
+      keyConfig: {
+        suggestions: updatedDataFields,
+        labelName: 'name',
+        valueName: 'value',
+        showAllSuggestions: true,
+      },
+    });
+  }, [dataFields, value]);
 
   useEffect(() => {
     if (!required) {
@@ -111,7 +116,7 @@ export default function DynaHFAssistantSearchParams(props) {
   }, [dispatch, formKey, id]);
 
   const handleSave = useCallback(editorValues => {
-    const newValue = {...value, [Object.keys(value)[editorValues.fieldKey]]: editorValues.rule};
+    const newValue = {...value, [Object.keys(value)[editorValues.paramIndex]]: editorValues.rule};
 
     onFieldChange(id, newValue);
   }, [id, onFieldChange, value]);
@@ -124,7 +129,7 @@ export default function DynaHFAssistantSearchParams(props) {
       fieldId: id,
       stage: flowDataStage,
       onSave: handleSave,
-      fieldKey: index,
+      paramIndex: index,
     }));
 
     history.push(buildDrawerUrl({
