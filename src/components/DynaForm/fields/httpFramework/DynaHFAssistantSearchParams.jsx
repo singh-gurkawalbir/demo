@@ -110,7 +110,7 @@ export default function DynaHFAssistantSearchParams(props) {
   }, [dispatch, formKey, id]);
 
   const handleSave = useCallback(editorValues => {
-    const newValue = {...value, [Object.keys(value)[editorValues.fieldKey]]: editorValues.rule};
+    const newValue = {...value, [Object.keys(value)[editorValues.paramIndex]]: editorValues.rule};
 
     onFieldChange(id, newValue);
   }, [id, onFieldChange, value]);
@@ -123,7 +123,7 @@ export default function DynaHFAssistantSearchParams(props) {
       fieldId: id,
       stage: flowDataStage,
       onSave: handleSave,
-      fieldKey: index,
+      paramIndex: index,
     }));
 
     history.push(buildDrawerUrl({

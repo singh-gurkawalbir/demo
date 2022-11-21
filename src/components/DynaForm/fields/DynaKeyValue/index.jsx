@@ -171,8 +171,8 @@ export function KeyValueComponent(props) {
 
     handleUpdate(key, value, valueName);
   };
-  const handleEditorClickWithIndex = index => event => {
-    handleEditorClick(index, event);
+  const handleEditorClickWithIndex = index => () => {
+    handleEditorClick(index);
   };
   const onSortEnd = useCallback(({oldIndex, newIndex}) => {
     const valuesCopy = [...values];

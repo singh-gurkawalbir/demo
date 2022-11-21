@@ -114,7 +114,7 @@ export function _editorSupportsV1V2data({resource, fieldId, connection, isPageGe
 export default {
   init: props => {
     const {options, resource, fieldState, connection, isPageGenerator, isStandaloneResource, formValues, ...rest} = props;
-    const {fieldId, fieldKey} = options;
+    const {fieldId, paramIndex} = options;
     const {type, value, arrayIndex} = fieldState || {};
     let rule = value;
 
@@ -150,15 +150,14 @@ export default {
       resultMode = contentType;
     }
     if (GRAPHQL_JSON_FIELDS.includes(fieldId)) resultMode = 'json';
-    let queryRule;
 
     if (fieldId === 'assistantMetadata.queryParams') {
-      queryRule = fieldState.value[Object.keys(fieldState.value)[fieldKey]];
+      rule = fieldState.value[Object.keys(fieldState.value)[paramIndex]];
     }
 
     return {
       ...options,
-      rule: queryRule || options.rule || rule, // if rule was already passed in options, use that first
+      rule: options.rule || rule, // if rule was already passed in options, use that first
       editorSupportsV1V2data,
       resultMode,
       editorTitle: _constructEditorTitle(fieldState?.label),
