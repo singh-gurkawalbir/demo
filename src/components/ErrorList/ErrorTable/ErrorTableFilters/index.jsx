@@ -1,7 +1,6 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
-import { useHistory, useRouteMatch } from 'react-router-dom';
 import CeligPagination from '../../../CeligoPagination';
 import KeywordSearch from '../../../KeywordSearch';
 import RefreshCard from '../RefreshCard';
@@ -13,11 +12,9 @@ import ToggleViewSelect from '../../../AFE/Drawer/actions/ToggleView';
 import { useHandleNextAndPreviousErrorPage } from '../hooks/useHandleNextAndPreviousErrorPage';
 import actions from '../../../../actions';
 import { useEditRetryConfirmDialog } from '../hooks/useEditRetryConfirmDialog';
-import OutlinedButton from '../../../Buttons/OutlinedButton';
-import { buildDrawerUrl, drawerPaths } from '../../../../utils/rightDrawer';
-import PurgeErrorAction from '../PurgeErrorAction';
 import { selectors } from '../../../../reducers';
 import useEnqueueSnackbar from '../../../../hooks/enqueueSnackbar';
+import PurgeMultipleErrors from '../../../ResourceTable/errorManagement/actions/PurgeMultipleErrors';
 
 const rowsPerPageOptions = [10, 25, 50];
 
@@ -80,10 +77,11 @@ export default function ErrorTableFilters({ flowId, resourceId, isResolved, filt
   const classes = useStyles();
   const [selectedComponent, setSelectedComponent] = useState(null);
   const dispatch = useDispatch();
-  const history = useHistory();
-  const match = useRouteMatch();
   const [enqueueSnackbar] = useEnqueueSnackbar();
 
+  const selectedErrorCount = useSelector(state =>
+    selectors.selectedErrorIds(state, { flowId, resourceId, isResolved }).length
+  );
   const purgeSuccessMessage = useSelector(state => selectors.purgeSuccessMessage(state));
   const showRetryDataChangedConfirmDialog = useEditRetryConfirmDialog({flowId, resourceId, isResolved});
   const onSearchFocus = useCallback(() => {
@@ -103,15 +101,7 @@ export default function ErrorTableFilters({ flowId, resourceId, isResolved, filt
     handleChangeRowsPerPage,
   } = useHandleNextAndPreviousErrorPage({flowId, resourceId, isResolved, filterKey, showRetryDataChangedConfirmDialog, flowJobId});
 
-  const useRowActions = () => [DownloadAction];
-
-  const handleDownload = useCallback(() => {
-    history.push(buildDrawerUrl({
-      path: drawerPaths.ERROR_MANAGEMENT.V2.DOWNLOAD_ERRORS,
-      baseUrl: match.url,
-      params: { type: isResolved ? 'resolved' : 'open' },
-    }));
-  }, [match.url, history, isResolved]);
+  const useRowActions = () => [DownloadAction, ...(isResolved ? [PurgeMultipleErrors] : [])];
 
   const handleToggleChange = useCallback(event => {
     showRetryDataChangedConfirmDialog(() => {
@@ -183,34 +173,20 @@ export default function ErrorTableFilters({ flowId, resourceId, isResolved, filt
           </>
         )}
         {selectedComponent}
-        { !isResolved ? (
+        {
           hasErrors && (
             <ActionMenu
               setSelectedComponent={setSelectedComponent}
               useRowActions={useRowActions}
               rowData={{
                 isResolved,
+                flowId,
+                resourceId,
+                selectedErrorCount,
               }}
             />
-          )) : (
-            <>
-              {
-                hasErrors && (
-                  <OutlinedButton
-                    data-test="downloadErrorButton"
-                    onClick={handleDownload}
-                    color="secondary">
-                    Download
-                  </OutlinedButton>
-                )
-              }
-              {
-                hasErrors && isResolved && (
-                <PurgeErrorAction flowId={flowId} resourceId={resourceId} setSelectedComponent={setSelectedComponent} />
-                )
-              }
-            </>
-        )}
+          )
+        }
       </div>
     </div>
   );
