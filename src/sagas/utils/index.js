@@ -1,6 +1,6 @@
 import jsonPatch, { deepClone, applyPatch } from 'fast-json-patch';
 import { select, call } from 'redux-saga/effects';
-import { isEmpty, cloneDeep } from 'lodash';
+import { isEmpty, cloneDeep, set, unset } from 'lodash';
 import util from '../../utils/array';
 import { isNewId } from '../../utils/resource';
 import { selectors } from '../../reducers';
@@ -34,6 +34,26 @@ export const convertResourceFieldstoSampleData = (resourceFields, dataType = 'ob
 
     return [tempOutput];
   }
+};
+export const getEndpointResourceFields = (endpointFields, resourceFields) => {
+  if (!endpointFields || !endpointFields.length || !endpointFields[0].type) {
+    return resourceFields;
+  }
+  let returnData = {};
+  const {fields, type} = endpointFields[0];
+
+  if (type === 'inclusion') {
+    fields.forEach(field => {
+      returnData = set(returnData, field, 'default');
+    });
+  } if (type === 'exclusion') {
+    returnData = resourceFields;
+    fields.forEach(field => {
+      unset(returnData, field);
+    });
+  }
+
+  return returnData;
 };
 export const generateReplaceAndRemoveLastModified = patches =>
   (patches &&
@@ -246,7 +266,7 @@ export const getImportMetadata = (connectorMetadata, connectionVersion) => {
                 };
 
                 if (httpEndpoint.resourceFields) {
-                  ep.sampleData = convertResourceFieldstoSampleData(httpEndpoint.resourceFields);
+                  ep.sampleData = getEndpointResourceFields(httpEndpoint.resourceFields, r.sampleData);
                 }
 
                 r?.resourceFieldsUserMustSet?.forEach(f => {

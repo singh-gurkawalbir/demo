@@ -19,6 +19,7 @@ import InfoIconButton from '../../../../../InfoIconButton';
 import InfoIcon from '../../../../../icons/InfoIcon';
 import messageStore from '../../../../../../utils/messageStore';
 import actions from '../../../../../../actions';
+import useEnqueueSnackbar from '../../../../../../hooks/enqueueSnackbar';
 
 const useStyles = makeStyles(theme => ({
   summaryContainer: {
@@ -109,6 +110,22 @@ const DragHandle = sortableHandle(() => (
   <GripperIcon style={{ cursor: 'grab' }} />
 ));
 
+function getBranchName(position, branches, routerNameIndex) {
+  let index = 0;
+  const branchNames = branches.map(branch => branch.name);
+
+  for (let i = position; i < position + branches.length + 1; i += 1) {
+    const tempName = `Branch ${routerNameIndex}.${i}`;
+
+    if (!branchNames.includes(tempName) || branches[position].name === tempName) {
+      index = i;
+      break;
+    }
+  }
+
+  return `Branch ${routerNameIndex}.${index}`;
+}
+
 export default function BranchItem({
   expandable,
   position,
@@ -117,13 +134,19 @@ export default function BranchItem({
   allowDeleting,
   allowSorting,
 }) {
+  const [enquesnackbar] = useEnqueueSnackbar();
   const classes = useStyles(allowSorting);
   const dispatch = useDispatch();
-  const rules = useSelector(state => {
+  const { rules, branches = [] } = useSelector(state => {
     const editorRule = selectors.editorRule(state, editorId);
 
-    return editorRule?.branches?.[position]?.inputFilter?.rules;
-  });
+    return {
+      rules: editorRule?.branches?.[position]?.inputFilter?.rules,
+      branches: editorRule?.branches,
+    };
+  }, shallowEqual);
+
+  const branchNamingIndex = useSelector(state => selectors.editor(state, editorId)?.branchNamingIndex);
   const hasRules = !!rules?.length;
   const branchType = useSelector(state => {
     const editorRule = selectors.editorRule(state, editorId);
@@ -149,7 +172,13 @@ export default function BranchItem({
   }
 
   const handleNameChange = (title, position) => {
-    dispatch(actions.editor.patchRule(editorId, title, {rulePath: `branches[${position}].name`}));
+    let newTitle = title;
+
+    if (!title) {
+      enquesnackbar({message: 'A branch name is required.', variant: 'error'});
+      newTitle = getBranchName(position, branches, branchNamingIndex);
+    }
+    dispatch(actions.editor.patchRule(editorId, newTitle, {rulePath: `branches[${position}].name`}));
   };
 
   const handleToggleExpand = (collapsed, position) => {
