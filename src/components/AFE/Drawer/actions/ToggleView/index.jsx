@@ -23,8 +23,8 @@ const useStyles = makeStyles(theme => ({
 
 const toggleOptions = {
   openErrorViews: [
-    { value: 'split', Icon: <ViewWithRowsPanelIcon /> },
-    { value: 'drawer', Icon: <ViewWithRowsIcon /> },
+    { value: 'split', Icon: <ViewWithRowsPanelIcon data-test="viewWithRowsPanelIcon" /> },
+    { value: 'drawer', Icon: <ViewWithRowsIcon data-test="viewWithRowsIcon" /> },
   ]};
 
 export default function ToggleViewSelect({ variant, filterKey, defaultView = '', handleToggleChange }) {

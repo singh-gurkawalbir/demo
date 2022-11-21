@@ -37,8 +37,8 @@ function generateTabsForSettings(sourceField) {
   return tabs;
 }
 
-function getSubFormMetadata(value, formKey, dataType, sourceField, sourceDataTypeVal, extractsTreeData) {
-  const newValue = buildExtractsHelperFromExtract(value, sourceField, undefined, undefined, extractsTreeData);
+function getSubFormMetadata(value, formKey, dataType, sourceField, sourceDataTypeVal, extractsTree) {
+  const newValue = buildExtractsHelperFromExtract({existingExtractsArray: value, sourceField, extractsTree});
 
   return {
     fieldMap: {
@@ -210,11 +210,11 @@ function constructExtractsArray(formKey, newOptions, existingExtractsArray, data
     }
   }
 
-  return buildExtractsHelperFromExtract(existingExtractsArray, sourceField, formKey, newExtractObj);
+  return buildExtractsHelperFromExtract({existingExtractsArray, sourceField, formKey, newExtractObj});
 }
 
 function EachTabContainer({id, value, formKey, dataType, isCurrentTab, onFieldChange, sourceField}) {
-  const extractsTreeData = useSelector(state => selectors.v2MappingsExtractsTree(state));
+  const extractsTree = useSelector(state => selectors.v2MappingsExtractsTree(state));
 
   const handleFormChange = useCallback(
     (newOptions, isValid, touched) => {
@@ -226,14 +226,13 @@ function EachTabContainer({id, value, formKey, dataType, isCurrentTab, onFieldCh
   useUpdateParentForm(formKey, handleFormChange);
 
   // During initializing the tabs set the source datatype
-  // depening on the source field selected
-
-  const sourceDataTypeVal = getSelectedExtractDataTypes(extractsTreeData, formKey);
+  // depending on the source field selected
+  const sourceDataTypeVal = getSelectedExtractDataTypes({extractsTree, selectedValue: formKey});
 
   // useSetSubFormShowValidations(parentFormKey, formKey);
   const formKeyComponent = useFormInitWithPermissions({
     formKey,
-    fieldMeta: getSubFormMetadata(value, formKey, dataType, sourceField, sourceDataTypeVal[0], extractsTreeData),
+    fieldMeta: getSubFormMetadata(value, formKey, dataType, sourceField, sourceDataTypeVal[0], extractsTree),
   });
 
   if (!isCurrentTab) return null;

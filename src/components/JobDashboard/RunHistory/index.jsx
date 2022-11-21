@@ -9,9 +9,9 @@ import { selectors } from '../../../reducers';
 import actions from '../../../actions';
 import { isNewId } from '../../../utils/resource';
 import RefreshIcon from '../../icons/RefreshIcon';
-import { getSelectedRange } from '../../../utils/flowMetrics';
+import { addDataRetentionPeriods, getSelectedRange } from '../../../utils/flowMetrics';
 import DateRangeSelector from '../../DateRangeSelector';
-import { FILTER_KEYS, ERROR_MANAGEMENT_RANGE_FILTERS } from '../../../utils/errorManagement';
+import { FILTER_KEYS } from '../../../utils/errorManagement';
 import Spinner from '../../Spinner';
 import NoResultTypography from '../../NoResultTypography';
 import { hashCode } from '../../../utils/string';
@@ -102,6 +102,13 @@ export default function RunHistory({ flowId, className }) {
     endDate: new Date(filter.range.endDate),
     preset: filter.range.preset,
   } : defaultRange, [isDateFilterSelected, filter]);
+  const areUserAccountSettingsLoaded = useSelector(selectors.areUserAccountSettingsLoaded);
+  const maxAllowedDataRetention = useSelector(state => selectors.platformLicense(state)?.maxAllowedDataRetention);
+  const dataRetentionPeriod = useSelector(selectors.dataRetentionPeriod);
+  const maxAllowedDate = (dataRetentionPeriod || maxAllowedDataRetention) || 30;
+  const addCustomPeriods = useMemo(() =>
+    addDataRetentionPeriods(maxAllowedDataRetention, dataRetentionPeriod),
+  [dataRetentionPeriod, maxAllowedDataRetention]);
 
   const fetchFlowRunHistory = useCallback(
     () => {
@@ -162,6 +169,12 @@ export default function RunHistory({ flowId, className }) {
     [runHistory, currentPage]
   );
 
+  useEffect(() => {
+    if (!areUserAccountSettingsLoaded) {
+      dispatch(actions.accountSettings.request());
+    }
+  }, [areUserAccountSettingsLoaded, dispatch]);
+
   return (
     <div className={clsx(classes.wrapper, className)}>
       <div className={classes.filterContainerRunHistory}>
@@ -174,8 +187,8 @@ export default function RunHistory({ flowId, className }) {
               onSave={handleDateFilter}
               showCustomRangeValue
               value={selectedDate}
-              customPresets={ERROR_MANAGEMENT_RANGE_FILTERS}
-              fromDate={startOfDay(addDays(new Date(), -29))}
+              customPresets={addCustomPeriods}
+              fromDate={startOfDay(addDays(new Date(), -(maxAllowedDate - 1)))}
          />
             <CeligoSelect
               data-test="flowStatusFilter"

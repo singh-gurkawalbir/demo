@@ -85,7 +85,7 @@ import {
 } from '../utils/exportPanel';
 import getRoutePath from '../utils/routePaths';
 import { getIntegrationAppUrlName, getTitleFromEdition, getTitleIdFromSection, isIntegrationAppVersion2 } from '../utils/integrationApps';
-import mappingUtil, { applyRequiredFilter, applyMappedFilter } from '../utils/mapping';
+import mappingUtil, { applyRequiredFilter, applyMappedFilter, applySearchFilter, countMatches } from '../utils/mapping';
 import responseMappingUtil from '../utils/responseMapping';
 import { suiteScriptResourceKey, isJavaFlow } from '../utils/suiteScript';
 import { stringCompare, comparer } from '../utils/sort';
@@ -116,6 +116,7 @@ import { buildDrawerUrl, drawerPaths } from '../utils/rightDrawer';
 import { GRAPHQL_HTTP_FIELDS, isGraphqlResource } from '../utils/graphql';
 import { initializeFlowForReactFlow, getFlowAsyncKey } from '../utils/flows/flowbuilder';
 import { HTTP_BASED_ADAPTORS } from '../utils/http';
+import { AUDIT_LOG_PAGING_FILTER_KEY } from '../constants/auditLog';
 
 const emptyArray = [];
 const emptyObject = {};
@@ -2204,7 +2205,6 @@ selectors.auditLogs = (
 
   const result = {
     logs: [],
-    count: 0,
     totalCount: 0,
   };
 
@@ -2233,12 +2233,22 @@ selectors.auditLogs = (
     });
   }
 
-  result.logs = options.take ? auditLogs.slice(0, options.take) : auditLogs;
-  result.count = result.logs.length;
+  result.logs = auditLogs;
   result.totalCount = auditLogs.length;
 
   return result;
 };
+
+selectors.paginatedAuditLogs = createSelector(
+  selectors.auditLogs,
+  state => selectors.filter(state, AUDIT_LOG_PAGING_FILTER_KEY),
+  (auditLogs, pagingFilters) => {
+    const { currPage = 0, rowsPerPage = DEFAULT_ROWS_PER_PAGE } = pagingFilters?.paging || {};
+
+    auditLogs.logs = auditLogs.logs.slice(currPage * rowsPerPage, (currPage + 1) * rowsPerPage);
+
+    return auditLogs;
+  });
 
 selectors.mkFlowResources = () => createSelector(
   state => state?.data?.resources?.flows,
@@ -3006,7 +3016,7 @@ selectors.hasGeneralSettings = (state, integrationId, childId) => {
   const { supportsMultiStore, general } = integrationResource.settings || {};
 
   if (supportsMultiStore) {
-    return !!(general || []).find(s => s.id === childId);
+    return Array.isArray(general) && !!general.find(s => s.id === childId);
   }
   if (Array.isArray(general)) {
     return !!general.find(s => s.title === 'General');
@@ -5406,7 +5416,7 @@ selectors.applicationType = (state, resourceType, id) => {
     const httpApp = applications.find(a => a._httpConnectorId === httpConnectorId);
 
     if (httpConnectorId && httpApp) {
-      return httpApp._legacyId || httpApp.name;
+      return httpApp._legacyId || httpApp.id;
     }
   }
 
@@ -5617,6 +5627,35 @@ selectors.mappingEditorNotification = (state, editorId) => {
     variant: 'warning',
   };
 };
+
+selectors.filteredV2TreeData = createSelector(
+  state => selectors.v2MappingsTreeData(state),
+  state => selectors.mapping(state).filter,
+  state => selectors.mapping(state).lookups,
+  state => selectors.mapping(state).searchKey,
+  (v2TreeData, filter = [], lookups = [], searchKey) => {
+    if (isEmpty(v2TreeData) || (!searchKey && (isEmpty(filter) || filter.includes('all')))) return {filteredTreeData: v2TreeData};
+
+    // ToDo: try replacing cloneDeep with something else
+    let filteredTreeData = cloneDeep(v2TreeData);
+    let expandedKeys;
+    let searchCount;
+
+    if (searchKey) {
+      expandedKeys = [];
+      filteredTreeData = applySearchFilter(filteredTreeData, lookups, searchKey, expandedKeys);
+      searchCount = countMatches(filteredTreeData, searchKey);
+    } else if (filter.includes('required') && filter.includes('mapped')) {
+      filteredTreeData = applyMappedFilter(filteredTreeData, lookups, true);
+    } else if (filter.includes('required')) {
+      filteredTreeData = applyRequiredFilter(filteredTreeData);
+    } else {
+      filteredTreeData = applyMappedFilter(filteredTreeData, lookups);
+    }
+
+    return {filteredTreeData, searchCount, expandedKeys};
+  }
+);
 
 // #endregion MAPPING END
 
@@ -6009,8 +6048,9 @@ selectors.getIntegrationUserNameById = (state, userId, flowId) => {
   // else get user name from integration users list
   const integrationId = selectors.resource(state, 'flows', flowId)?._integrationId || 'none';
   const usersList = selectors.availableUsersList(state, integrationId);
+  const userObject = usersList.find(user => user?.sharedWithUser?._id === userId);
 
-  return usersList.find(user => user?.sharedWithUser?._id === userId)?.sharedWithUser?.name;
+  return userObject?.sharedWithUser?.name || userObject?.sharedWithUser?.email;
 };
 
 // #endregion errorManagement selectors
@@ -7209,12 +7249,11 @@ selectors.allAliases = createSelector(
 
 selectors.retryUsersList = createSelector(
   selectors.userProfile,
-  state => selectors.availableUsersList(state),
-  (state, flowId, resourceId) => selectors.retryList(state, flowId, resourceId),
+  (state, integrationId) => selectors.availableUsersList(state, integrationId),
+  (state, _1, flowId, resourceId) => selectors.retryList(state, flowId, resourceId),
   (profile, availableUsersList, retryJobs) => {
     if (!Array.isArray(retryJobs)) {
-      // When all users are selected we show the 'Select' as the placeholder text in the filter
-      return [{ _id: 'all', name: 'Select'}];
+      return [{ _id: 'all', name: 'All users'}];
     }
 
     const allUsersTriggeredRetry = retryJobs.reduce((users, job) => {
@@ -7222,16 +7261,29 @@ selectors.retryUsersList = createSelector(
         return users;
       }
 
-      const userObject = availableUsersList.find(userOb => userOb.sharedWithUser?._id === job.triggeredBy);
-      const name = profile._id === job.triggeredBy ? (profile.name || profile.email) : userObject?.sharedWithUser?.name;
+      if (job.triggeredBy === 'auto') {
+        users.push({
+          _id: job.triggeredBy,
+          name: 'Auto-retried',
+        });
+      } else {
+        const userObject = availableUsersList.find(userOb => userOb.sharedWithUser?._id === job.triggeredBy);
+        const name = profile._id === job.triggeredBy
+          ? (profile.name || profile.email)
+          : (userObject?.sharedWithUser?.name || userObject?.sharedWithUser?.email);
 
-      return users.find(user => user._id === job.triggeredBy) ? users : [...users, {
-        _id: job.triggeredBy,
-        name,
-      }];
+        if (name) {
+          users.push({
+            _id: job.triggeredBy,
+            name,
+          });
+        }
+      }
+
+      return users;
     }, []);
 
-    return [{ _id: 'all', name: 'All users'}, ...allUsersTriggeredRetry];
+    return [{ _id: 'all', name: 'All users'}, ...(uniqBy(allUsersTriggeredRetry, '_id'))];
   }
 );
 
@@ -7252,7 +7304,7 @@ selectors.mkFlowResourcesRetryStatus = () => {
         return finalResourcesRetryStatus;
       }
 
-      finalResourcesRetryStatus.isAnyRetryInProgress = flowResources.find(res => resourcesRetryStatus?.[flowId]?.[res._id] === 'inProgress');
+      finalResourcesRetryStatus.isAnyRetryInProgress = !!flowResources.find(res => resourcesRetryStatus?.[flowId]?.[res._id] === 'inProgress');
       finalResourcesRetryStatus.resourcesWithRetryCompleted = flowResources.filter(res => resourcesRetryStatus?.[flowId]?.[res._id] === 'completed');
 
       return finalResourcesRetryStatus;
@@ -7260,22 +7312,4 @@ selectors.mkFlowResourcesRetryStatus = () => {
   );
 };
 
-selectors.filteredV2TreeData = state => {
-  const v2TreeData = selectors.v2MappingsTreeData(state);
-  const { filter = [], lookups = [] } = selectors.mapping(state);
-
-  if (isEmpty(v2TreeData) || isEmpty(filter) || filter.includes('all')) return v2TreeData;
-
-  // ToDo: try replacing cloneDeep with something else
-  let filteredTreeData = cloneDeep(v2TreeData);
-
-  if (filter.includes('required') && filter.includes('mapped')) {
-    filteredTreeData = applyMappedFilter(filteredTreeData, lookups, true);
-  } else if (filter.includes('required')) {
-    filteredTreeData = applyRequiredFilter(filteredTreeData);
-  } else {
-    filteredTreeData = applyMappedFilter(filteredTreeData, lookups);
-  }
-
-  return filteredTreeData;
-};
+selectors.flowResourcesRetryStatus = selectors.mkFlowResourcesRetryStatus();

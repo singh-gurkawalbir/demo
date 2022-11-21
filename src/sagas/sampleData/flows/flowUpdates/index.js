@@ -22,8 +22,9 @@ export function* _updateResponseMapping({ flowId, resourceIndex, routerIndex, br
 
   if (routers.length) {
     updatedResource = routers[routerIndex]?.branches?.[branchIndex]?.pageProcessors?.[resourceIndex];
+  } else {
+    updatedResource = pageProcessors[resourceIndex];
   }
-  updatedResource = pageProcessors[resourceIndex];
 
   if (resourceIndex < 0 || !updatedResource) {
     return;
