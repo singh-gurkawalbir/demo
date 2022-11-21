@@ -11,6 +11,7 @@ import Spinner from '../../../../Spinner';
 const useStyles = makeStyles(theme => ({
   integrationAppsSwitchOnOff: {
     marginRight: theme.spacing(2),
+    padding: 0,
   },
 }));
 

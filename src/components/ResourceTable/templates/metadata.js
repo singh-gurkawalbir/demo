@@ -66,7 +66,7 @@ export default {
           published={r.published}
           applications={r.applications}
           resourceType="templates"
-          tooltip="Unpublished / Published"
+          tooltip="Unpublish / Publish"
           />
 
       ),

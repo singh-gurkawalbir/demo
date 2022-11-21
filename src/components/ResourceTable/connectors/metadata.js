@@ -72,7 +72,7 @@ export default {
           published={r.published}
           applications={r.applications}
           resourceType="connectors"
-          tooltip="Unpublished / Published"
+          tooltip="Unpublish / Publish"
           />
       ),
       orderBy: 'published',
