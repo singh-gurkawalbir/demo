@@ -103,7 +103,8 @@ href="/marketplace"><u>Check out our Marketplace</u></a> to jumpstart your  inte
   VIEW_ACTIONS_HOVER_MESSAGE: 'View actions for this error',
   RETRY_ACTION_HOVER_MESSAGE: 'Before retrying, you must save your edits for each error in the batch. Click “Save & next” on this error to continue.',
   // #endregion
-
+  // #region Edit mock input
+  MOCK_INPUT_REFRESH_SUCCESS: 'Successfully fetched latest input data.',
   DATALOADER_PP_MESSAGE: 'You can add a destination application once you complete the configuration of your data loader.',
   MAX_ROUTERS_LIMIT_REACHED: 'You have reached the maximum of 25 branchings in a flow',
   MAX_BRANCHES_LIMIT_REACHED: 'You have reached the maximum of 25 branches in a branching',

@@ -5,6 +5,7 @@ import { screen, waitFor, cleanup } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import AccessTokenList from '.';
 import { runServer } from '../../test/api/server';
+import { NO_RESULT_SEARCH_MESSAGE } from '../../constants';
 import { renderWithProviders, reduxStore, mockGetRequestOnce } from '../../test/test-utils';
 
 async function initAccessTokenList({
@@ -81,9 +82,7 @@ describe('AccessTokenList test cases', () => {
 
     expect(searchInput).toBeInTheDocument();
     userEvent.type(searchInput, 'typ');
-    await waitFor(() => expect(screen.queryByText(/Name/i)).toBeInTheDocument());
-    expect(screen.queryByText(/Action/i)).toBeInTheDocument();
-    expect(screen.queryByText(/Status/i)).toBeInTheDocument();
+    await waitFor(() => expect(screen.queryByText(NO_RESULT_SEARCH_MESSAGE)).toBeInTheDocument());
   });
 
   test('should pass the initial render with different user', async () => {

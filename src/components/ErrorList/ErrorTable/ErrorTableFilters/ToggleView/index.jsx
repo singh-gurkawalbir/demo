@@ -1,9 +1,8 @@
 import React from 'react';
-import { useSelector, shallowEqual } from 'react-redux';
 import { makeStyles, MenuItem, Select } from '@material-ui/core';
-import { selectors } from '../../../../../reducers';
 import ViewWithRowsIcon from '../../../../icons/ViewWithRows';
 import ViewWithRowsPanelIcon from '../../../../icons/ViewWithRowsPanel';
+import { OPEN_ERRORS_VIEW_TYPES } from '../../../../../constants';
 
 const useStyles = makeStyles(theme => ({
   toggleViewSelect: {
@@ -23,31 +22,25 @@ const useStyles = makeStyles(theme => ({
 
 const toggleOptions = {
   openErrorViews: [
-    { value: 'split', Icon: <ViewWithRowsPanelIcon data-test="viewWithRowsPanelIcon" /> },
-    { value: 'drawer', Icon: <ViewWithRowsIcon data-test="viewWithRowsIcon" /> },
+    { value: OPEN_ERRORS_VIEW_TYPES.SPLIT, Icon: <ViewWithRowsPanelIcon data-test="viewWithRowsPanelIcon" /> },
+    { value: OPEN_ERRORS_VIEW_TYPES.LIST, Icon: <ViewWithRowsIcon data-test="viewWithRowsIcon" /> },
   ]};
 
-export default function ToggleViewSelect({ variant, filterKey, defaultView = '', handleToggleChange }) {
+export default function ToggleViewSelect({
+  variant,
+  defaultView = OPEN_ERRORS_VIEW_TYPES.SPLIT,
+  handleToggleChange,
+  viewType,
+}) {
   const classes = useStyles();
-  const view = useSelector(state => {
-    const e = selectors.filter(state, filterKey);
-
-    return e.view || defaultView;
-  }, shallowEqual);
-
-  const handleToggle = event => {
-    if (handleToggleChange) {
-      handleToggleChange(event);
-    }
-  };
 
   return (
     <Select
       labelId="toggle-view-label"
       id="toggle-view"
-      value={view}
+      value={viewType || defaultView}
       className={classes.toggleViewSelect}
-      onChange={handleToggle} >
+      onChange={handleToggleChange} >
       {toggleOptions[variant]?.map(item => (
         <MenuItem key={item.value} className={classes.item} value={item.value}>{item.Icon}</MenuItem>
       ))}

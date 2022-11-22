@@ -219,15 +219,20 @@ export function* commitStagedChanges({ resourceType, id, scope, options, context
   if (!merged.assistant && merged?.http?.formType === 'rest' && merged.adaptorType === 'HTTPImport') {
     merged = importConversionUtil.convertImportJSONObjRESTtoHTTP(merged);
   }
-  if (['exports', 'imports'].includes(resourceType)) {
-    delete merged.adaptorType;
+
+  if (resourceType === 'connections' && master && getHttpConnector(merged?.http?._httpConnectorId) && master.type === 'rest') {
+    merged.type = 'rest';
+    delete merged.rest;
   }
+
   if (resourceType === 'exports' && merged._rest) {
     delete merged._rest;
   }
   if (['exports', 'imports'].includes(resourceType) && merged.adaptorType && !merged.adaptorType.includes('AS2')) {
     // AS2 is special case where backend cannot identify adaptorType on its own
-    delete merged.adaptorType;
+    if (merged.restToHTTPConverted) {
+      merged.adaptorType = resourceType === 'exports' ? 'RESTExport' : 'RESTImport';
+    } else { delete merged.adaptorType; }
   }
 
   // When integrationId is set on connection model, integrations/:_integrationId/connections route will be used

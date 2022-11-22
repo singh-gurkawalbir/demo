@@ -1451,11 +1451,17 @@ const resourceFormSampleData = {
   setPreviewData: (resourceId, previewData) => action(actionTypes.RESOURCE_FORM_SAMPLE_DATA.SET_PREVIEW_DATA, { resourceId, previewData }),
   setCsvFileData: (resourceId, csvData) => action(actionTypes.RESOURCE_FORM_SAMPLE_DATA.SET_CSV_FILE_DATA, { resourceId, csvData }),
   setProcessorData: ({resourceId, processor, processorData}) => action(actionTypes.RESOURCE_FORM_SAMPLE_DATA.SET_PROCESSOR_DATA, { resourceId, processor, processorData }),
-  setMockData: (resourceId, mockData) => action(actionTypes.RESOURCE_FORM_SAMPLE_DATA.SET_MOCK_DATA, { resourceId, mockData }),
   updateRecordSize: (resourceId, recordSize) => action(actionTypes.RESOURCE_FORM_SAMPLE_DATA.UPDATE_RECORD_SIZE, { resourceId, recordSize }),
   clear: resourceId => action(actionTypes.RESOURCE_FORM_SAMPLE_DATA.CLEAR, { resourceId }),
   clearStages: resourceId => action(actionTypes.RESOURCE_FORM_SAMPLE_DATA.CLEAR_STAGES, { resourceId }),
   updateType: (resourceId, sampleDataType) => action(actionTypes.RESOURCE_FORM_SAMPLE_DATA.UPDATE_DATA_TYPE, { resourceId, sampleDataType }),
+};
+const mockInput = {
+  request: (resourceId, resourceType, flowId, options) => action(actionTypes.MOCK_INPUT.REQUEST, {resourceId, resourceType, flowId, options}),
+  received: (resourceId, data) => action(actionTypes.MOCK_INPUT.RECEIVED, {resourceId, data}),
+  receivedError: (resourceId, error) => action(actionTypes.MOCK_INPUT.RECEIVED_ERROR, {resourceId, error}),
+  updateUserMockInput: (resourceId, data) => action(actionTypes.MOCK_INPUT.UPDATE_USER_MOCK_INPUT, {resourceId, data}),
+  clear: resourceId => action(actionTypes.MOCK_INPUT.CLEAR, {resourceId}),
 };
 const app = {
   polling: {
@@ -2483,6 +2489,7 @@ export default {
   assistantMetadata,
   stack,
   resourceFormSampleData,
+  mockInput,
   importSampleData,
   flowData,
   connection,
