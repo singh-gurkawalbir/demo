@@ -195,7 +195,7 @@ export default function ErrorsListDrawer({ integrationId, childId }) {
   }, [match.url, history]);
 
   return (
-    <LoadResources required="true" integrationId={integrationId} resources="imports,exports,connections">
+    <LoadResources required="true" integrationId={integrationId} resources="connections,imports,exports">
       <RightDrawer
         path={drawerPaths.ERROR_MANAGEMENT.V2.FLOW_ERROR_LIST}
         height="tall"
