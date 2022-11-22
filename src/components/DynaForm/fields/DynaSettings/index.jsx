@@ -36,6 +36,7 @@ const useStyles = makeStyles(theme => ({
   },
   renderErrorSettings: {
     marginBottom: theme.spacing(2),
+    wordBreak: 'break-all',
   },
 }));
 
