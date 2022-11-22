@@ -15,7 +15,7 @@ import ResourceDrawer from '../../components/drawer/Resource';
 import ShowMoreDrawer from '../../components/drawer/ShowMore';
 import KeywordSearch from '../../components/KeywordSearch';
 import CheckPermissions from '../../components/CheckPermissions';
-import { NO_RESULT_SEARCH_MESSAGE, PERMISSIONS } from '../../constants';
+import { PERMISSIONS } from '../../constants';
 import { additionalFilter } from './util';
 import actions from '../../actions';
 import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
@@ -23,8 +23,7 @@ import StackShareDrawer from '../../components/StackShare/Drawer';
 import ConfigConnectionDebugger from '../../components/drawer/ConfigConnectionDebugger';
 import ScriptLogsDrawerRoute from '../ScriptLogs/Drawer';
 import { TextButton } from '../../components/Buttons';
-import NoResultTypography from '../../components/NoResultTypography';
-import ResourceEmptyState from './ResourceEmptyState';
+import ResourceTableWrapper from '../../components/ResourceTableWrapper';
 import ActionGroup from '../../components/ActionGroup';
 import PageContent from '../../components/PageContent';
 import { buildDrawerUrl, drawerPaths } from '../../utils/rightDrawer';
@@ -164,21 +163,16 @@ export default function ResourceList(props) {
       </CeligoPageBar>
       <PageContent showPagingBar={showPagingBar} hidePagingBar={hidePagingBar}>
         <LoadResources required integrationId="none" resources={resourcesToLoad(resourceType)}>
-          {list.count === 0 ? (
-            <>
-              {list.total === 0
-                ? (
-                  <ResourceEmptyState resourceType={resourceType} />
-                )
-                : <NoResultTypography>{NO_RESULT_SEARCH_MESSAGE}</NoResultTypography>}
-            </>
-          ) : (
+          <ResourceTableWrapper
+            resourceType={resourceType}
+            hasNoData={!list.count && !list.total}
+            hasEmptySearchResults={!list.count && list.total}>
             <ResourceTable
               resourceType={resourceType}
               resources={list.resources}
               actionProps={actionProps}
             />
-          )}
+          </ResourceTableWrapper>
         </LoadResources>
       </PageContent>
       <ShowMoreDrawer

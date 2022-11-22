@@ -8,8 +8,8 @@ import { selectors } from '../../../../../reducers';
 import Spinner from '../../../../Spinner';
 
 const useStyles = makeStyles(theme => ({
-  celigoSwitchOnOff: {
-    marginTop: theme.spacing(1),
+  templatesSwitchOnOff: {
+    marginRight: theme.spacing(2),
   },
 }));
 
@@ -18,6 +18,7 @@ export default function OnOffCell({
   published: isPublished,
   applications,
   resourceType,
+  tooltip,
 }) {
   const classes = useStyles();
 
@@ -54,9 +55,10 @@ export default function OnOffCell({
 
   return (
     <CeligoSwitch
-      className={classes.celigoSwitchOnOff}
+      className={classes.templatesSwitchOnOff}
       checked={isPublished}
       onChange={handleTogglePublishConfirm}
+      tooltip={tooltip}
     />
   );
 }

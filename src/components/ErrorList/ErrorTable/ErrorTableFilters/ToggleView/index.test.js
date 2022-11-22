@@ -10,6 +10,7 @@ import ToggleViewSelect from '.';
 import { runServer } from '../../../../../test/api/server';
 import { renderWithProviders} from '../../../../../test/test-utils';
 import { FILTER_KEYS } from '../../../../../utils/errorManagement';
+import { OPEN_ERRORS_VIEW_TYPES } from '../../../../../constants';
 
 async function initToggleViewSelect({ props = {}} = {}) {
   const ui = (
@@ -55,7 +56,7 @@ describe('ToggleViewSelect component Test cases', () => {
       props: {
         variant: 'openErrorViews',
         filterKey: FILTER_KEYS.OPEN,
-        defaultView: 'split',
+        defaultView: OPEN_ERRORS_VIEW_TYPES.SPLIT,
         handleToggleChange,
       },
     });
@@ -63,7 +64,7 @@ describe('ToggleViewSelect component Test cases', () => {
 
     userEvent.click(buttonRef);
 
-    const drawerOption = screen.getAllByRole('option').find(eachOption => eachOption.getAttribute('data-value') === 'drawer');
+    const drawerOption = screen.getAllByRole('option').find(eachOption => eachOption.getAttribute('data-value') === OPEN_ERRORS_VIEW_TYPES.LIST);
 
     expect(drawerOption).toBeInTheDocument();
     userEvent.click(drawerOption);

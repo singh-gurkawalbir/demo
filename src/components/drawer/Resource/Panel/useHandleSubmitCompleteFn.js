@@ -8,7 +8,6 @@ import {
 import actions from '../../../../actions';
 import { selectors } from '../../../../reducers';
 import { multiStepSaveResourceTypes } from '../../../../utils/resource';
-import getRoutePath from '../../../../utils/routePaths';
 import useDrawerEditUrl from './useDrawerEditUrl';
 
 export default function useHandleSubmitCompleteFn(resourceType, id, onClose) {
@@ -48,9 +47,8 @@ export default function useHandleSubmitCompleteFn(resourceType, id, onClose) {
       // selected.
 
       if (resourceType === 'integrations') {
-        return history.replace(
-          getRoutePath(`/${resourceType}/${newResourceId}/flows`)
-        );
+        // redirection on creation of a new integration is handled at Save Button component level
+        return;
       }
 
       if (isMultiStepSaveResource) {

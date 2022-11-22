@@ -1817,12 +1817,15 @@ selectors.mkFilteredHomeTiles = () => {
     state => {
       const tiles = tilesSelector(state);
 
-      return tiles.map(t => {
+      tiles.forEach(t => {
         const applications = appSel(state, t);
         const pinnedIntegrations = selectors.userPreferences(state).dashboard?.pinnedIntegrations || emptyArray;
 
-        return {...t, applications, pinned: pinnedIntegrations.includes(t._integrationId)};
+        t.applications = applications;
+        t.pinned = pinnedIntegrations.includes(t._integrationId);
       });
+
+      return tiles;
     },
     state => selectors.suiteScriptLinkedTiles(state),
     state => selectors.userPreferences(state).dashboard,

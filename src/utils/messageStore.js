@@ -103,7 +103,8 @@ href="/marketplace"><u>Check out our Marketplace</u></a> to jumpstart your  inte
   VIEW_ACTIONS_HOVER_MESSAGE: 'View actions for this error',
   RETRY_ACTION_HOVER_MESSAGE: 'Before retrying, you must save your edits for each error in the batch. Click “Save & next” on this error to continue.',
   // #endregion
-
+  // #region Edit mock input
+  MOCK_INPUT_REFRESH_SUCCESS: 'Successfully fetched latest input data.',
   DATALOADER_PP_MESSAGE: 'You can add a destination application once you complete the configuration of your data loader.',
   MAX_ROUTERS_LIMIT_REACHED: 'You have reached the maximum of 25 branchings in a flow',
   MAX_BRANCHES_LIMIT_REACHED: 'You have reached the maximum of 25 branches in a branching',
@@ -115,7 +116,8 @@ href="/marketplace"><u>Check out our Marketplace</u></a> to jumpstart your  inte
   CREATE_PULL_FORM_HELPINFO: 'Pulling changes from one linked integration to another lets you see conflicts, review changes, and merge them from one integration to another. You can only pull data from a direct clone or source integration.. For example, clone Integration A as Integration B, then B to C, and B to D. You can create a pull between integrations A and B, B and C, B and D; but not between A and C, or C and D',
   RETRIES_TAB_INFO: 'When you retry errors in a flow step, a new row in the <b>Retries</b> tab under that step will display its progress. When a retry results in errors in later flow steps, you can locate the new errors in their <b>Open errors tab</b>. <br>Here you will also find auto-retry runs. When retries were triggered by auto-retry, a single row will appear for each retry job in the <b>Retries</b> tab and the column <b>Retry started by</b> will contain <b>Auto-retried</b>.',
   CANCEL_RETRY_CONFIRM: 'Cancelling will abort the retrying of any errors not yet processed in this operation; those errors already processed will not be reverted, maintaining their current state (failed or resolved).',
-  RETRIES_TAB_ERRORS_UPDATED_INFO: 'Retries that were initated from previous steps in your flow cannot be shown on any subsequent steps whose errors/success were changed by the retries in a previous step.',
+  RETRIES_TAB_ERRORS_UPDATED_INFO: 'Retries that were initiated from previous steps in your flow cannot be shown on any subsequent steps whose errors/success were changed by the retries in a previous step.',
+  AUDIT_LOGS_HAS_MORE_DOWNLOADS: 'Your downloaded file has exceeded the limit of 20,000 records. To narrow the results, try again after limiting the events\' dates, resource type, source, and so on.',
 };
 
 export default function messageStore(key, argsObj) {

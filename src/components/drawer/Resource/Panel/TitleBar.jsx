@@ -6,7 +6,7 @@ import CloseButton from './CloseButton';
 import { isNewId, convertResourceLabelToLowercase } from '../../../../utils/resource';
 import { selectors } from '../../../../reducers';
 import TitleActions from './TitleActions';
-import DynaFormView from '../../../DynaForm/fields/DynaFormView';
+import DynaHTTPFrameworkBubbleFormView from '../../../DynaForm/fields/DynaHTTPFrameworkBubbleFormView';
 import DynaConnectionFormView from '../../../DynaForm/fields/DynaConnectionFormView';
 
 const getTitle = ({ resourceType, resourceLabel, opTitle }) => {
@@ -62,7 +62,7 @@ export default function TitleBar({ flowId, formKey, onClose }) {
       CloseButton={ResourceCloseButton}
       handleBack={onClose} >
       {['imports', 'exports'].includes(resourceType) && (
-      <DynaFormView
+      <DynaHTTPFrameworkBubbleFormView
         formKey={formKey} resourceType={resourceType} resourceId={id} flowId={flowId}
         defaultValue="false"
         isTitleBar />

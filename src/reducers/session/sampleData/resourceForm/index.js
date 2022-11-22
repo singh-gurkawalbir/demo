@@ -45,7 +45,6 @@ export default function (state = {}, action) {
     processor,
     processorData,
     processorError,
-    mockData,
   } = action;
 
   return produce(state, draft => {
@@ -68,10 +67,6 @@ export default function (state = {}, action) {
         break;
       case actionTypes.RESOURCE_FORM_SAMPLE_DATA.SET_STATUS:
         draft[resourceId][activeSendOrPreviewTab].status = status;
-        // when new sample data is requested, clear the defaultMockData if it exists
-        if (status === 'requested' && draft[resourceId].data && draft[resourceId].data.defaultMockData) {
-          draft[resourceId].data.defaultMockData = undefined;
-        }
         break;
       case actionTypes.RESOURCE_FORM_SAMPLE_DATA.RECEIVED_PREVIEW_STAGES:
         draft[resourceId][activeSendOrPreviewTab].status = 'received';
@@ -127,12 +122,6 @@ export default function (state = {}, action) {
           draft[resourceId][activeSendOrPreviewTab].data = {};
         }
         draft[resourceId][activeSendOrPreviewTab].data[processor] = processorData;
-        break;
-      case actionTypes.RESOURCE_FORM_SAMPLE_DATA.SET_MOCK_DATA:
-        if (!draft[resourceId].data) {
-          draft[resourceId].data = {};
-        }
-        draft[resourceId].data.mockData = mockData || DEFAULT_VALUE;
         break;
       case actionTypes.RESOURCE_FORM_SAMPLE_DATA.UPDATE_RECORD_SIZE:
         draft[resourceId][activeSendOrPreviewTab].recordSize = recordSize;
@@ -225,5 +214,3 @@ selectors.getAllParsableErrors = (state, resourceId) => {
   // if there are no stages return all errors and the complete error list would be visible in the preview editor
   return errors;
 };
-
-selectors.getResourceMockData = (state, resourceId) => state?.[resourceId]?.data?.mockData;

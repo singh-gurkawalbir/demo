@@ -229,7 +229,7 @@ export default function TabRedirection({children: componentChildren}) {
   // of the 'useRouteMatch' hook now available in react-router-dom to break
   // the need for parent components passing any props at all.
   return supportsChild ? (
-    <LoadResources required resources="flows,exports,imports">
+    <LoadResources required resources="flows,connections,exports,imports">
       {componentChildren}
     </LoadResources>
   ) : componentChildren;

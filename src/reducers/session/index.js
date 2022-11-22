@@ -13,6 +13,7 @@ import apiAccessTokens, { selectors as fromApiAccessTokens } from './apiAccessTo
 import connectionToken, { selectors as fromConnectionToken } from './connectionToken';
 import netsuiteUserRole, { selectors as fromNetsuiteUserRoles } from './netsuiteUserRoles';
 import resourceFormSampleData, { selectors as fromResourceFormSampleData } from './sampleData/resourceForm';
+import mockInput, { selectors as fromMockInput } from './sampleData/mockInput';
 import importSampleData, { selectors as fromImportSampleData } from './sampleData/imports';
 import flowData, { selectors as fromFlowData } from './sampleData/flows';
 import integrationApps, { selectors as fromIntegrationApps } from './integrationApps';
@@ -84,6 +85,7 @@ export default combineReducers({
   mfa,
   bottomDrawer,
   resourceFormSampleData,
+  mockInput,
   lifeCycleManagement,
   loadResources,
   aliases,
@@ -132,6 +134,7 @@ const subSelectors = {
   mfa: fromMFA,
   bottomDrawer: fromBottomDrawer,
   resourceFormSampleData: fromResourceFormSampleData,
+  mockInput: fromMockInput,
   lifeCycleManagement: fromLifeCycleManagement,
   loadResources: fromLoadResources,
   aliases: fromAliases,
