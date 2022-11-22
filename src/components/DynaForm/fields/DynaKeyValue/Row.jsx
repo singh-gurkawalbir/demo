@@ -8,6 +8,7 @@ import SortableHandle from '../../../Sortable/SortableHandle';
 import isLoggableAttr from '../../../../utils/isLoggableAttr';
 import CeligoSelect from '../../../CeligoSelect';
 import AfeIcon from '../../../icons/AfeIcon';
+import CloseIcon from '../../../icons/CloseIcon';
 
 const emptySet = {};
 
@@ -44,6 +45,7 @@ export default function KeyValueRow(props) {
     handleKeyUpdate,
     handleValueUpdate,
     showDelete,
+    isInlineClose,
     handleDelete,
     isKey,
     r,
@@ -52,6 +54,7 @@ export default function KeyValueRow(props) {
     showSortOrder,
     isLoggable,
     handleEditorClick,
+    isEndSearchIcon,
   } = props;
 
   const {
@@ -77,6 +80,16 @@ export default function KeyValueRow(props) {
       setShowGripper(true);
     }
   }, [enableSorting, isRowDragged]);
+  const closeComponent = isInlineClose ? (
+    <ActionButton
+      disabled={disabled || (!(r[keyName] || r[valueName]))}
+      id={`delete-${index}`}
+      data-test={`delete-${index}`}
+      tooltip="Delete"
+      onClick={handleDelete(r.key)}>
+      <CloseIcon />
+    </ActionButton>
+  ) : undefined;
 
   return (
     <div
@@ -105,7 +118,10 @@ export default function KeyValueRow(props) {
           options={{ suggestions: suggestKeyConfig.suggestions }}
           showAllSuggestions={suggestKeyConfig.showAllSuggestions}
           fullWidth
-              />
+          isEndSearchIcon={isEndSearchIcon}
+          showInlineClose={closeComponent}
+          />
+
         )}
         {!suggestKeyConfig && (
         <TextField
