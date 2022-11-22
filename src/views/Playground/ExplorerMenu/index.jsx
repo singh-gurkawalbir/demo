@@ -114,7 +114,7 @@ export default function ExplorerMenu({ onEditorChange }) {
   if (resourceId) expanded.push(resourceId);
 
   return (
-    <LoadResources required resources="integrations,flows,imports,exports">
+    <LoadResources required resources="integrations,connections,flows,imports,exports">
       <TreeView
         defaultCollapseIcon={<ArrowUpIcon />}
         defaultExpandIcon={<ArrowDownIcon />}

@@ -13,6 +13,9 @@ export default {
   useLabel: rowData => {
     const tableContext = useGetTableContext();
 
+    if (tableContext.resourceType === 'iClients') {
+      return 'Delete iClient';
+    }
     if (['accesstokens', 'apis', 'connectors'].includes(tableContext.resourceType)) {
       return `Delete ${MODEL_PLURAL_TO_LABEL[tableContext?.resourceType]}`;
     }

@@ -5,6 +5,7 @@ import AddIcon from '../../components/icons/AddIcon';
 import CeligoPageBar from '../../components/CeligoPageBar';
 import { MODEL_PLURAL_TO_LABEL, generateNewId,
   isTradingPartnerSupported,
+  convertResourceLabelToLowercase,
 } from '../../utils/resource';
 import infoText from './infoText';
 import { selectors } from '../../reducers';
@@ -14,16 +15,15 @@ import ResourceDrawer from '../../components/drawer/Resource';
 import ShowMoreDrawer from '../../components/drawer/ShowMore';
 import KeywordSearch from '../../components/KeywordSearch';
 import CheckPermissions from '../../components/CheckPermissions';
-import { NO_RESULT_SEARCH_MESSAGE, PERMISSIONS } from '../../constants';
-import { connectorFilter } from './util';
+import { PERMISSIONS } from '../../constants';
+import { additionalFilter } from './util';
 import actions from '../../actions';
 import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
 import StackShareDrawer from '../../components/StackShare/Drawer';
 import ConfigConnectionDebugger from '../../components/drawer/ConfigConnectionDebugger';
 import ScriptLogsDrawerRoute from '../ScriptLogs/Drawer';
 import { TextButton } from '../../components/Buttons';
-import NoResultTypography from '../../components/NoResultTypography';
-import ResourceEmptyState from './ResourceEmptyState';
+import ResourceTableWrapper from '../../components/ResourceTableWrapper';
 import ActionGroup from '../../components/ActionGroup';
 import PageContent from '../../components/PageContent';
 import { buildDrawerUrl, drawerPaths } from '../../utils/rightDrawer';
@@ -48,7 +48,7 @@ const createdResouceLabelFn = (resourceType, resourceName) => {
     if (['accesstokens', 'apis', 'connectors'].includes(resourceType)) {
       createResourceLabel = resourceName;
     } else {
-      createResourceLabel = resourceName.toLowerCase();
+      createResourceLabel = convertResourceLabelToLowercase(resourceName);
     }
   }
 
@@ -64,7 +64,7 @@ export default function ResourceList(props) {
   const filterConfig = useMemo(
     () => ({
       type: resourceType,
-      filter: connectorFilter(resourceType),
+      filter: additionalFilter(resourceType),
       ...(filter || {}),
     }),
     [filter, resourceType]
@@ -142,7 +142,7 @@ export default function ResourceList(props) {
       <ScriptLogsDrawerRoute />
 
       <CeligoPageBar
-        title={`${resourceName}s`}
+        title={resourceType === 'iClients' ? resourceType : `${resourceName}s`}
         infoText={infoText[resourceType]}>
         <ActionGroup>
           <KeywordSearch
@@ -163,21 +163,16 @@ export default function ResourceList(props) {
       </CeligoPageBar>
       <PageContent showPagingBar={showPagingBar} hidePagingBar={hidePagingBar}>
         <LoadResources required integrationId="none" resources={resourcesToLoad(resourceType)}>
-          {list.count === 0 ? (
-            <>
-              {list.total === 0
-                ? (
-                  <ResourceEmptyState resourceType={resourceType} />
-                )
-                : <NoResultTypography>{NO_RESULT_SEARCH_MESSAGE}</NoResultTypography>}
-            </>
-          ) : (
+          <ResourceTableWrapper
+            resourceType={resourceType}
+            hasNoData={!list.count && !list.total}
+            hasEmptySearchResults={!list.count && list.total}>
             <ResourceTable
               resourceType={resourceType}
               resources={list.resources}
               actionProps={actionProps}
             />
-          )}
+          </ResourceTableWrapper>
         </LoadResources>
       </PageContent>
       <ShowMoreDrawer

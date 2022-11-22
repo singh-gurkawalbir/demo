@@ -66,7 +66,7 @@ export default function ScriptLogsDrawerRoute() {
     <RightDrawer path={drawerPaths.LOGS.SCRIPT} width="full" >
       <LoadResources
         required="true"
-        resources="imports,exports,scripts">
+        resources="connections,imports,exports,scripts">
         <>
           <ScriptLogsDrawerHeader />
           <ScriptLogsWrapper />

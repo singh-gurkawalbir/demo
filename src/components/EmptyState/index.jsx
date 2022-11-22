@@ -1,5 +1,6 @@
 import { makeStyles, Typography } from '@material-ui/core';
 import React from 'react';
+import clsx from 'clsx';
 import PropTypes from 'prop-types';
 import getImageUrl from '../../utils/image';
 
@@ -30,13 +31,13 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function EmptyState({type, title, subTitle, children}) {
+export default function EmptyState({type, title, subTitle, children, className}) {
   const classes = useStyles();
 
   const path = getImageUrl(`images/react/empty-states/${type}.png`);
 
   return (
-    <div className={classes.emptyStateContainer}>
+    <div className={clsx(className, classes.emptyStateContainer)}>
       <img
         className={classes.appLogo}
         src={path}

@@ -16,6 +16,8 @@ export default {
      agents connect to integrator.io and establish a reverse SSH tunnel allowing 
      secure communication through your firewall without any need of whitelisting 
      IPs in your firewall settings.`,
+  iClients: `An iClient is a securely stored client ID and client secret pair, provided to you by a third-party application for OAuth 2.0 requests.
+     When you save an iClient – at this page or when configuring a connection – it is added to the list of resources below, and you can select the iClient for use in other connections.`,
   connections: `Connections store credentials and other information needed to 
     access an application via its API. When you share an integration with other 
     integrator.io users, they are able to create, edit, or run a flow using the 
