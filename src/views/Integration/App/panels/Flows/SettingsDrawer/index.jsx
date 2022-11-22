@@ -79,7 +79,7 @@ function IASettings({ integrationId, childId, parentUrl }) {
   );
 
   return (
-    <LoadResources required integrationId={integrationId} resources="exports,imports,flows,connections">
+    <LoadResources required integrationId={integrationId} resources="connections,exports,imports,flows">
       <IAFormStateManager
         className={clsx(classes.settingsDrawerForm, {
           [classes.settingsDrawerCamForm]: sections,

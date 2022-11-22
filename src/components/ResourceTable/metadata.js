@@ -27,6 +27,7 @@ import completedFlows from './accountDashboard/completedFlows/metadata';
 import homeTiles from './homeTiles/metadata';
 import revisions from './revisions/metadata';
 import revisionErrors from './revisionErrors/metadata';
+import iClients from './iClients/metadata';
 
 const metadata = {
   agents,
@@ -57,6 +58,7 @@ const metadata = {
   homeTiles,
   revisions,
   revisionErrors,
+  iClients,
 };
 
 export default function (resourceType) {

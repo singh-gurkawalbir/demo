@@ -63,6 +63,12 @@ export function* createPayload({ values, resourceId }) {
   ) {
     returnData = conversionUtil.convertConnJSONObjHTTPtoREST(returnData);
   }
+  if (getHttpConnector(returnData?._httpConnectorId || returnData?.http?._httpConnectorId)) {
+    if (connectionResource?.master?.type === 'rest') {
+      returnData.type = 'rest';
+      delete returnData.rest;
+    }
+  }
 
   return returnData;
 }
