@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useMemo } from 'react';
+import React, { useState, useCallback, useMemo, useEffect } from 'react';
 import moment from 'moment';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import FormControl from '@material-ui/core/FormControl';
@@ -17,6 +17,8 @@ import actions from '../../actions';
 import Help from '../Help';
 import { getSelectedRange } from '../../utils/flowMetrics';
 import { emptyObject } from '../../constants';
+import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
+import messageStore from '../../utils/messageStore';
 
 const OPTION_ALL = { id: 'all', label: 'All' };
 
@@ -137,6 +139,7 @@ export default function Filters(props) {
   const {resourceType, resourceId, resourceDetails, onFiltersChange, childId} = props;
   const dispatch = useDispatch();
   const classes = useStyles();
+  const [enqueueSnackbar] = useEnqueueSnackbar();
   const {
     users,
     affectedResources,
@@ -145,6 +148,8 @@ export default function Filters(props) {
     resourceType,
     resourceId
   ));
+  const hasMoreDownloads = useSelector(state => selectors.auditHasMoreDownloads(state));
+
   const [filters, setFilters] = useState(
     {
 
@@ -210,6 +215,17 @@ export default function Filters(props) {
 
     onFiltersChange(updatedFilters);
   };
+
+  useEffect(() => {
+    if (hasMoreDownloads) {
+      enqueueSnackbar({
+        message: messageStore('AUDIT_LOGS_HAS_MORE_DOWNLOADS'),
+        variant: 'info',
+        persist: true,
+      });
+      dispatch(actions.auditLogs.toggleHasMoreDownloads(false));
+    }
+  }, [dispatch, enqueueSnackbar, hasMoreDownloads]);
 
   const { byUser, source } = filters;
   const resource = getResource();

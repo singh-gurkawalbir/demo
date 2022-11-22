@@ -542,6 +542,7 @@ const auditLogs = {
     childId,
     filters,
   }),
+  toggleHasMoreDownloads: hasMoreDownloads => action(actionTypes.RESOURCE.AUDIT_LOGS_HAS_MORE_DOWNLOADS, {hasMoreDownloads}),
   clear: () => action(actionTypes.RESOURCE.AUDIT_LOGS_CLEAR),
 };
 const connectors = {

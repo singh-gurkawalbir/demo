@@ -122,6 +122,7 @@ href="/marketplace"><u>Check out our Marketplace</u></a> to jumpstart your  inte
   MULTIPLE_ERROR_PURGE_SUCCESS_MESSAGE: 'Error(s) purged',
   FILE_PURGE_CONFIRM_MESSAGE: 'Are you sure you want to purge all files related to this run? This cannot be undone.',
   FILE_PURGE_SUCCESS_MESSAGE: 'All run files purged.',
+  AUDIT_LOGS_HAS_MORE_DOWNLOADS: 'Your downloaded file has exceeded the limit of 20,000 records. To narrow the results, try again after limiting the events\' dates, resource type, source, and so on.',
 };
 
 export default function messageStore(key, argsObj) {
