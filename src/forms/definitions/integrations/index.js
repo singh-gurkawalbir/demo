@@ -11,19 +11,9 @@ export default {
       },
     ],
   },
-  // preSave: formValues => {
-  //   const newValues = formValues;
-
-  //   if (newValues['/settings']) {
-  //     if (!isObject(newValues['/settings'])) {
-  //       try {
-  //         newValues['/settings'] = JSON.parse(newValues['/settings']);
-  //       } catch (ex) {
-  //         newValues['/settings'] = {};
-  //       }
-  //     }
-  //   }
-
-  //   return newValues;
-  // },
+  actions: [
+    {
+      id: 'saveandcreateflow',
+    },
+  ],
 };

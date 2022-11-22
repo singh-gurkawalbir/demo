@@ -127,9 +127,9 @@ jest.mock('./HomeCard', () => ({
   ,
 }));
 
-jest.mock('../../../ResourceList/ResourceEmptyState', () => ({
+jest.mock('../../../../components/ResourceTableWrapper/ResourceEmptyState', () => ({
   __esModule: true,
-  ...jest.requireActual('../../../ResourceList/ResourceEmptyState'),
+  ...jest.requireActual('../../../../components/ResourceTableWrapper/ResourceEmptyState'),
   default: () =>
     (
       <>

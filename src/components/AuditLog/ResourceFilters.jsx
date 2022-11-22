@@ -51,6 +51,7 @@ export function ResourceTypeFilter(props) {
     'scripts',
     'apis',
     'agents',
+    'iClients',
   ];
   const resource =
     resourceType &&

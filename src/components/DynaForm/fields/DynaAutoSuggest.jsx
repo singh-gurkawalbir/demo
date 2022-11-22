@@ -15,6 +15,7 @@ import FieldHelp from '../FieldHelp';
 import FieldMessage from './FieldMessage';
 import ArrowDownIcon from '../../icons/ArrowDownIcon';
 import isLoggableAttr from '../../../utils/isLoggableAttr';
+import SearchIcon from '../../icons/SearchIcon';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -71,10 +72,20 @@ const useStyles = makeStyles(theme => ({
     color: theme.palette.secondary.light,
     pointerEvents: 'none',
   },
+  inlineDelete: {
+    position: 'absolute',
+    top: 4,
+    right: 0,
+    marginTop: '0px !important',
+    color: theme.palette.secondary.light,
+  },
 }));
 
 function renderInputComponent(inputProps) {
-  const { classes, inputRef = () => {}, ref, ...other } = inputProps;
+  const { classes, inputRef = () => {}, ref, isEndSearchIcon, showInlineClose, ...other } = inputProps;
+  const searchIcon = isEndSearchIcon ? <SearchIcon /> : <ArrowDownIcon />;
+  const isValuePresent = showInlineClose && (inputProps.value.length > 0);
+  const classNames = isValuePresent ? classes.inlineDelete : classes.autoSuggestDropdown;
 
   return (
     <TextField
@@ -86,7 +97,7 @@ function renderInputComponent(inputProps) {
           ref(node);
           inputRef(node);
         },
-        endAdornment: (<InputAdornment className={classes.autoSuggestDropdown} position="start"><ArrowDownIcon /></InputAdornment>),
+        endAdornment: (<InputAdornment className={classNames} position="start">{ isValuePresent ? showInlineClose : searchIcon }</InputAdornment>),
       }}
       {...other}
     />
@@ -151,6 +162,8 @@ export default function DynaAutoSuggest(props) {
     required,
     options = {},
     isLoggable,
+    isEndSearchIcon = false,
+    showInlineClose,
   } = props;
   const classes = useStyles();
   const suggestions = (options.suggestions || []).map(option => ({
@@ -204,6 +217,8 @@ export default function DynaAutoSuggest(props) {
             value,
             disabled,
             onChange: handleChange,
+            isEndSearchIcon,
+            showInlineClose,
           }}
           theme={{
             container: classes.container,
