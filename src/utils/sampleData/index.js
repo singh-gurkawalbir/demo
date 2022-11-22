@@ -723,3 +723,6 @@ export const wrapSampleDataWithContext = ({
       return { status, data, templateVersion };
   }
 };
+
+export const wrapMockInputData = sampleData =>
+  wrapExportFileSampleData(Array.isArray(sampleData) ? [sampleData] : sampleData);

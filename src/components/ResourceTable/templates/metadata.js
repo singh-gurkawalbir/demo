@@ -59,12 +59,14 @@ export default {
       key: 'published',
       heading: 'Published',
       isLoggable: true,
+      align: 'center',
       Value: ({rowData: r}) => (
         <OnOffCell
           templateId={r._id}
           published={r.published}
           applications={r.applications}
           resourceType="templates"
+          tooltip="Unpublish / Publish"
           />
 
       ),

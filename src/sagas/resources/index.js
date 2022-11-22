@@ -1164,6 +1164,10 @@ export function* downloadAuditlogs({resourceType, resourceId, childId, filters})
     if (response.signedURL) {
       yield call(openExternalUrl, { url: response.signedURL });
     }
+
+    if (response.hasMore) {
+      yield put(actions.auditLogs.toggleHasMoreDownloads(true));
+    }
   } catch (e) {
     //  Handle errors
   }

@@ -185,7 +185,7 @@ export default function KeyValueRow(props) {
             id={`handleBar-${index}`}
             data-test={`handleBar-${index}`}
             tooltip="Open handlebars editor"
-            onClick={handleEditorClick}
+            onClick={handleEditorClick(index)}
             className={classes.dynaURIActionButton}>
             <AfeIcon />
           </ActionButton>

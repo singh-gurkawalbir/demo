@@ -2,6 +2,7 @@ import { Grid, makeStyles, Typography } from '@material-ui/core';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 import { Link, useHistory, useRouteMatch } from 'react-router-dom';
+import ResourceEmptyState from '../../../../../components/ResourceTableWrapper/ResourceEmptyState';
 import actions from '../../../../../actions';
 import ActionGroup from '../../../../../components/ActionGroup';
 import { TextButton } from '../../../../../components/Buttons';
@@ -121,6 +122,10 @@ const useStyles = makeStyles(theme => ({
       fontSize: theme.spacing(2),
       color: theme.palette.text.hint,
     },
+  },
+  emptyFlowsInfo: {
+    top: theme.spacing(20),
+    maxWidth: 600,
   },
 }));
 
@@ -318,6 +323,7 @@ const useRowActions = resource => {
 
   return actions;
 };
+
 export default function FlowsPanel({ integrationId, childId }) {
   const isStandalone = integrationId === 'none';
   const classes = useStyles();
@@ -420,6 +426,8 @@ export default function FlowsPanel({ integrationId, childId }) {
     'Showing all flow groups that contain search matches.';
 
   const basePath = getBasePath(match);
+  const hasNoData = !finalFilter.keyword && !flows.length;
+  const hasEmptySearchResults = finalFilter.keyword && !flows.length && !flowGroupingsSections?.some(({title}) => title.toUpperCase().includes(finalFilter.keyword.toUpperCase()));
 
   return (
     <>
@@ -481,9 +489,17 @@ export default function FlowsPanel({ integrationId, childId }) {
             flows={flows}
         />
         </LoadResources>
+        {
+          hasNoData && (
+          <ResourceEmptyState
+            resourceType="flows"
+            className={classes.emptyFlowsInfo}
+            integrationId={integrationId} />
+          )
+        }
       </div>
       <div className={classes.noSearchResults}>
-        {(finalFilter.keyword && !flows.length && !flowGroupingsSections?.some(({title}) => title.toUpperCase().includes(finalFilter.keyword.toUpperCase()))) ? (
+        { hasEmptySearchResults ? (
           <NoResultTypography>{NO_RESULT_SEARCH_MESSAGE}</NoResultTypography>
         ) : ''}
       </div>

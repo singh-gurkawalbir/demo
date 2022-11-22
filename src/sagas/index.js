@@ -30,6 +30,7 @@ import { cloneSagas } from './clone';
 import { uploadFileSagas } from './uploadFile';
 import { stackSagas } from './stack';
 import resourceFormSampleDataSagas from './sampleData/resourceForm';
+import mockInput from './sampleData/mockInput';
 import flowDataSagas from './sampleData/flows';
 import rawDataUpdateSagas from './sampleData/rawDataUpdates';
 import importsSampleDataSagas from './sampleData/imports';
@@ -201,6 +202,7 @@ export function* allSagas() {
     ...uploadFileSagas,
     ...stackSagas,
     ...resourceFormSampleDataSagas,
+    ...mockInput,
     ...flowDataSagas,
     ...rawDataUpdateSagas,
     ...importsSampleDataSagas,
