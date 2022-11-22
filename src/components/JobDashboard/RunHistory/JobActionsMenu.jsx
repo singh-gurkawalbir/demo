@@ -14,6 +14,7 @@ import { selectors } from '../../../reducers';
 
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import messageStore from '../../../utils/messageStore';
+import useConfirmDialog from '../../ConfirmDialog';
 
 const useStyle = makeStyles({
   iconBtn: {
@@ -28,8 +29,9 @@ export default function JobActionsMenu({
   const dispatch = useDispatch();
   const [anchorEl, setAnchorEl] = useState(null);
   const [showFilesDownloadDialog, setShowFilesDownloadDialog] = useState(false);
+  const { confirmDialog } = useConfirmDialog();
   const [enqueueSnackbar] = useEnqueueSnackbar();
-  const isPurgeFilesSuccess = useSelector(state => selectors.purgeFilesStatus(state) === 'success');
+  const isPurgeFilesSuccess = useSelector(state => selectors.isPurgeFilesSuccess(state));
 
   const menuOptions = [];
 
@@ -55,6 +57,28 @@ export default function JobActionsMenu({
     setAnchorEl(null);
   }, []);
 
+  const handlePurge = useCallback(() => {
+    dispatch(actions.job.purge.request({ jobId: job._id }));
+  }, [dispatch, job._id]);
+
+  const handleClick = useCallback(() => {
+    confirmDialog({
+      title: 'Confirm purge files',
+      message: messageStore('FILE_PURGE_CONFIRM_MESSAGE'),
+      buttons: [
+        {
+          label: 'Purge files',
+          error: true,
+          onClick: handlePurge,
+        },
+        {
+          label: 'Cancel',
+          variant: 'text',
+        },
+      ],
+    });
+  }, [confirmDialog, handlePurge]);
+
   function handleMenuClick(event) {
     setAnchorEl(event.currentTarget);
   }
@@ -73,7 +97,7 @@ export default function JobActionsMenu({
         setShowFilesDownloadDialog(true);
       }
     } else if (action === 'purgeFiles') {
-      dispatch(actions.job.purge.request({ jobId: job._id }));
+      handleClick();
     }
   }
 

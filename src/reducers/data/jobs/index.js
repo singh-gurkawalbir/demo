@@ -943,6 +943,6 @@ selectors.jobErrorRetryObject = (state, retryId) => {
 
 selectors.isFlowJobsCollectionLoading = state => state?.status === 'loading';
 
-selectors.purgeFilesStatus = state => state?.purgeFilesStatus;
+selectors.isPurgeFilesSuccess = state => state?.purgeFilesStatus === 'success';
 
 // #endregion

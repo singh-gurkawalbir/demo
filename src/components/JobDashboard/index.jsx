@@ -70,7 +70,7 @@ export default function JobDashboard({
   const isBulkRetryInProgress = useSelector(state =>
     selectors.isBulkRetryInProgress(state)
   );
-  const isPurgeFilesSuccess = useSelector(state => selectors.purgeFilesStatus(state) === 'success');
+  const isPurgeFilesSuccess = useSelector(state => selectors.isPurgeFilesSuccess(state));
   const queryParams = new URLSearchParams(location.search);
   const flowJobId = queryParams.get('_flowJobId');
   const filters = useSelector(state => selectors.filter(state, filterKey));
