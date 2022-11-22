@@ -91,7 +91,7 @@ export default function KeyValueRow(props) {
       <div className={clsx(classes.rowContainer, rowComponentClasses.textFieldRowContainer, {[rowComponentClasses.rowContainerWrapper]: !suggestKeyConfig && !suggestValueConfig})}>
         {suggestKeyConfig && (
         <AutoSuggest
-          disabled={disabled}
+          disabled={r.disableRowKey || disabled}
           value={r[keyName]}
           id={`${keyName}-${index}`}
           data-test={`${keyName}-${index}`}
@@ -109,7 +109,7 @@ export default function KeyValueRow(props) {
         )}
         {!suggestKeyConfig && (
         <TextField
-          disabled={disabled}
+          disabled={r.disableRowKey || disabled}
           autoFocus={index === rowInd && isKey}
           defaultValue={r[keyName]}
           id={`${keyName}-${index}`}
