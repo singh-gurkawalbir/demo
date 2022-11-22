@@ -111,7 +111,7 @@ export default function JobActionsMenu({
         message: messageStore('FILE_PURGE_SUCCESS_MESSAGE'),
         variant: 'success',
       });
-      dispatch(actions.job.purge.clar());
+      dispatch(actions.job.purge.clear());
     }
   }, [dispatch, enqueueSnackbar, isPurgeFilesSuccess]);
 
