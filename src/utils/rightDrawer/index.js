@@ -73,6 +73,7 @@ export const drawerPaths = {
     V2: {
       ERROR_DETAILS: 'errors/:resourceId/:errorType',
       JOB_ERROR_DETAILS: 'errors/:resourceId/filter/:flowJobId/:errorType',
+      // TODO: Siddharth, once all error drawer tabs have uniform urls, viewType can be moved to parent level
       OPEN_ERROR_VIEW: ':viewType',
       DOWNLOAD_ERRORS: 'download/:type',
       VIEW_ERROR_DETAILS: 'details/:errorId/:mode',
