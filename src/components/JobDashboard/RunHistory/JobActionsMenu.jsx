@@ -29,7 +29,7 @@ export default function JobActionsMenu({
   const [anchorEl, setAnchorEl] = useState(null);
   const [showFilesDownloadDialog, setShowFilesDownloadDialog] = useState(false);
   const [enqueueSnackbar] = useEnqueueSnackbar();
-  const purgeFilesSuccess = useSelector(state => selectors.purgeFilesSuccess(state));
+  const isPurgeFilesSuccess = useSelector(state => selectors.purgeFilesStatus(state) === 'success');
 
   const menuOptions = [];
 
@@ -82,14 +82,14 @@ export default function JobActionsMenu({
   }
 
   useEffect(() => {
-    if (purgeFilesSuccess) {
+    if (isPurgeFilesSuccess) {
       enqueueSnackbar({
         message: messageStore('FILE_PURGE_SUCCESS_MESSAGE'),
         variant: 'success',
       });
       dispatch(actions.job.purge.clar());
     }
-  }, [dispatch, enqueueSnackbar, purgeFilesSuccess]);
+  }, [dispatch, enqueueSnackbar, isPurgeFilesSuccess]);
 
   return (
     <>

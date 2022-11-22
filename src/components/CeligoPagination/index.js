@@ -38,6 +38,7 @@ const useStyles = makeStyles(theme => ({
   pagesCountWrapper: {
     display: 'flex',
     alignItems: 'center',
+    marginRight: theme.spacing(3),
   },
   arrowBtnRight: {
     '& > svg': {

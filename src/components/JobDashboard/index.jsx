@@ -70,7 +70,7 @@ export default function JobDashboard({
   const isBulkRetryInProgress = useSelector(state =>
     selectors.isBulkRetryInProgress(state)
   );
-  const purgeFilesSuccess = useSelector(state => selectors.purgeFilesSuccess(state));
+  const isPurgeFilesSuccess = useSelector(state => selectors.purgeFilesStatus(state) === 'success');
   const queryParams = new URLSearchParams(location.search);
   const flowJobId = queryParams.get('_flowJobId');
   const filters = useSelector(state => selectors.filter(state, filterKey));
@@ -112,7 +112,7 @@ export default function JobDashboard({
   }, [dispatch, rowsPerPage]);
 
   useEffect(() => {
-    if (!isNewId(flowId) || purgeFilesSuccess) {
+    if (!isNewId(flowId) || isPurgeFilesSuccess) {
       dispatch(
         actions.job.requestCollection({
           integrationId,

@@ -82,7 +82,7 @@ export default function ErrorTableFilters({ flowId, resourceId, isResolved, filt
   const selectedErrorCount = useSelector(state =>
     selectors.selectedErrorIds(state, { flowId, resourceId, isResolved }).length
   );
-  const purgeSuccessMessage = useSelector(state => selectors.purgeSuccessMessage(state));
+  const purgeErrorStatus = useSelector(state => selectors.purgeErrorStatus(state));
   const showRetryDataChangedConfirmDialog = useEditRetryConfirmDialog({flowId, resourceId, isResolved});
   const onSearchFocus = useCallback(() => {
     showRetryDataChangedConfirmDialog();
@@ -116,14 +116,14 @@ export default function ErrorTableFilters({ flowId, resourceId, isResolved, filt
   }, [dispatch, filterKey, showRetryDataChangedConfirmDialog]);
 
   useEffect(() => {
-    if (purgeSuccessMessage) {
+    if (purgeErrorStatus.status === 'success') {
       enqueueSnackbar({
-        message: purgeSuccessMessage,
+        message: purgeErrorStatus.message,
         variant: 'success',
       });
       dispatch(actions.errorManager.flowErrorDetails.purge.clear({flowId, resourceId}));
     }
-  }, [enqueueSnackbar, dispatch, purgeSuccessMessage, flowId, resourceId]);
+  }, [enqueueSnackbar, dispatch, flowId, resourceId, purgeErrorStatus.status, purgeErrorStatus.message]);
 
   return (
 
@@ -170,6 +170,7 @@ export default function ErrorTableFilters({ flowId, resourceId, isResolved, filt
               onChangeRowsPerPage={handleChangeRowsPerPage}
               resultPerPageLabel="Per page:"
             />
+            <CeligoDivider position="right" />
           </>
         )}
         {selectedComponent}

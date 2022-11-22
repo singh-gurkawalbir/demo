@@ -1,5 +1,6 @@
 import produce from 'immer';
 import actionTypes from '../../../../actions/types';
+import { emptyObject } from '../../../../constants';
 
 const defaultObject = {};
 
@@ -175,11 +176,14 @@ export default (state = {}, action) => {
         break;
 
       case actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.PURGE.SUCCESS:
-        draft.purgeSuccessMessage = message;
+        draft.purgeErrorStatus = {
+          status: 'success',
+          message,
+        };
         break;
 
       case actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.PURGE.CLEAR:
-        delete draft.purgeSuccessMessage;
+        delete draft.purgeErrorStatus;
         break;
 
       default:
@@ -232,4 +236,4 @@ selectors.isAllErrorsSelected = (state, { flowId, resourceId, isResolved, errorI
   );
 };
 
-selectors.purgeSuccessMessage = state => state?.purgeSuccessMessage;
+selectors.purgeErrorStatus = state => state?.purgeErrorStatus || emptyObject;

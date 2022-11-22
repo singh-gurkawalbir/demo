@@ -608,10 +608,10 @@ export default (state = DEFAULT_STATE, action) => {
       }
 
       case actionTypes.JOB.PURGE.SUCCESS:
-        draft.purgeFilesSuccess = true;
+        draft.purgeFilesStatus = 'success';
         break;
       case actionTypes.JOB.PURGE.CLEAR:
-        delete draft.purgeFilesSuccess;
+        delete draft.purgeFilesStatus;
         break;
 
       default:
@@ -943,6 +943,6 @@ selectors.jobErrorRetryObject = (state, retryId) => {
 
 selectors.isFlowJobsCollectionLoading = state => state?.status === 'loading';
 
-selectors.purgeFilesSuccess = state => !!state?.purgeFilesSuccess;
+selectors.purgeFilesStatus = state => state?.purgeFilesStatus;
 
 // #endregion
