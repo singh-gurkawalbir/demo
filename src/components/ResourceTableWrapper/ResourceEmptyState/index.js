@@ -1,22 +1,29 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { FilledButton, TextButton } from '../../../components/Buttons';
-import EmptyState from '../../../components/EmptyState';
-import resourceTypeMetaData from '../../../components/EmptyState/metadata';
-import NoResultTypography from '../../../components/NoResultTypography';
+import { FilledButton, TextButton } from '../../Buttons';
+import EmptyState from '../../EmptyState';
+import resourceTypeMetaData from '../../EmptyState/metadata';
+import NoResultTypography from '../../NoResultTypography';
 import { generateNewId } from '../../../utils/resource';
 import { buildDrawerUrl, drawerPaths } from '../../../utils/rightDrawer';
-import LoadResources from '../../../components/LoadResources';
+import LoadResources from '../../LoadResources';
 
-export default function ResourceEmptyState({resourceType}) {
+export default function ResourceEmptyState({resourceType, integrationId = 'none', className}) {
   const resource = resourceTypeMetaData[resourceType];
   const location = useLocation();
+  let createResourceUrl;
 
-  const createResourceUrl = buildDrawerUrl({
-    path: drawerPaths.RESOURCE.ADD,
-    baseUrl: location.pathname,
-    params: { resourceType, id: generateNewId() },
-  });
+  if (resource?.type === 'integrations') {
+    createResourceUrl = '/integrations/none/flowBuilder/new';
+  } else if (resource?.type === 'flows') {
+    createResourceUrl = `/integrations/${integrationId}/flowBuilder/new`;
+  } else {
+    createResourceUrl = buildDrawerUrl({
+      path: drawerPaths.RESOURCE.ADD,
+      baseUrl: location.pathname,
+      params: { resourceType, id: generateNewId() },
+    });
+  }
 
   return (
     <LoadResources required resources={resourceType}>
@@ -25,13 +32,12 @@ export default function ResourceEmptyState({resourceType}) {
           title={resource.title}
           subTitle={resource.subTitle}
           type={resource.type}
+          className={className}
         >
           <FilledButton
             component={Link}
             data-test={resource.type === 'integrations' ? 'create flow' : 'addNewResource'}
-            to={resource.type === 'integrations'
-              ? '/integrations/none/flowBuilder/new'
-              : createResourceUrl} >
+            to={createResourceUrl} >
             {resource.buttonLabel}
           </FilledButton>
           <TextButton
