@@ -72,7 +72,7 @@ export function* _getMockDataOptionsForResource({
 
   if (!addMockData) return options;
 
-  const mockInput = yield select(selectors.getResourceMockData, resourceId);
+  const mockInput = yield select(selectors.userMockInput, resourceId);
   const typeOfPreview = yield select(selectors.typeOfSampleData, resourceId);
 
   if (addMockData) {

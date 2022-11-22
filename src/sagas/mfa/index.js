@@ -22,13 +22,13 @@ export function* requestUserSettings() {
 export function* requestAccountSettings() {
   try {
     const response = yield call(apiCallWithRetry, {
-      path: '/trustedDevices/settings',
+      path: '/accountSettings',
       opts: {
         method: 'GET',
       },
     });
 
-    yield put(actions.mfa.receivedAccountSettings(response));
+    yield put(actions.mfa.receivedAccountSettings(response?.mfa));
   } catch (error) {
     return undefined;
   }
@@ -70,15 +70,15 @@ export function* updateAccountSettings({ accountSettings }) {
   }
   yield put(actions.asyncTask.start(MFA_ACCOUNT_SETTINGS_ASYNC_KEY));
   try {
-    const response = yield call(apiCallWithRetry, {
-      path: '/trustedDevices/settings',
+    yield call(apiCallWithRetry, {
+      path: '/accountSettings',
       opts: {
         body: payload,
-        method: 'PUT',
+        method: 'PATCH',
       },
     });
+    yield call(requestAccountSettings);
 
-    yield put(actions.mfa.receivedAccountSettings(response));
     yield put(actions.asyncTask.success(MFA_ACCOUNT_SETTINGS_ASYNC_KEY));
   } catch (error) {
     yield put(actions.asyncTask.failed(MFA_ACCOUNT_SETTINGS_ASYNC_KEY));

@@ -67,7 +67,11 @@ export default function TitleBar({ flowId, formKey, onClose }) {
         defaultValue="false"
         isTitleBar />
       )}
-      {resourceType === 'connections' && <DynaConnectionFormView formKey={formKey} resourceType={resourceType} resourceId={id} defaultValue="false" /> }
+      {resourceType === 'connections' && (
+      <DynaConnectionFormView
+        formKey={formKey} resourceType={resourceType} resourceId={id} defaultValue="false"
+        sourceForm="title" />
+      ) }
       <TitleActions flowId={flowId} />
     </DrawerHeader>
   );

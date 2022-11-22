@@ -29,6 +29,7 @@ import {
   isAmazonSellingPartnerConnection,
   shouldLoadAssistantFormForImports,
   shouldLoadAssistantFormForExports,
+  getConnectorId,
 } from '..';
 import { getPathParams } from '../pathParamUtils';
 
@@ -4429,4 +4430,47 @@ describe('shouldLoadAssistantFormForExports util', () => {
   test('should return false if resource is openair assistant', () => {
     expect(shouldLoadAssistantFormForExports({assistant: 'openair', useTechAdaptorForm: true}, {assistant: 'amazonmws', http: {type: 'Amazon-SP-API'}})).toBeFalsy();
   });
+});
+
+describe('getConnectorId util', () => {
+  const testCases = [
+    [
+      '3plcentral',
+      {
+        name: '3PL Central',
+        legacyId: '3plcentral',
+      },
+    ],
+    [
+      'braintree',
+      {
+        name: 'Braintree',
+        legacyId: 'braintree',
+      },
+    ],
+    ['etsy', {name: 'Etsy'}],
+    [
+      'loopreturns',
+      {
+        name: 'Loop Returns',
+        legacyId: 'loopreturns',
+      },
+    ],
+    ['narvar', {name: 'Narvar'}],
+    [
+      'orderful',
+      {
+        name: 'Orderful',
+        legacyId: 'orderful',
+      },
+    ],
+    ['orderful-local', {name: 'orderful-local'}],
+  ];
+
+  each(testCases).test(
+    'should return %s when integrationAppName = %s',
+    (expected, connector) => {
+      expect(getConnectorId(connector.legacyId, connector.name)).toEqual(expected);
+    }
+  );
 });

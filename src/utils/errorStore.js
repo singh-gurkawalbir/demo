@@ -16,12 +16,16 @@ const messages = {
   MAPPER2_DUP_GENERATE: 'Mapper 2.0: Duplicate destination field(s): {{{fields}}}',
   MAPPER2_MISSING_GENERATE: 'Mapper 2.0: One or more destination field values not entered.',
   MAPPER2_MISSING_EXTRACT: 'Mapper 2.0: Source field value not entered for destination field(s): {{{fields}}}',
-  MAPPER2_EXPRESSION_NOT_SUPPORTED: 'Mapper 2.0: You could only use valid JSONPath expression or hard-coded value for destination field(s): {{{fields}}}',
-  MAPPER2_ONLY_JSON_PATH_SUPPORT: 'Mapper 2.0: You could only use valid JSONPath expression for destination field(s): {{{fields}}}',
+  MAPPER2_EXPRESSION_NOT_SUPPORTED: 'Mapper 2.0: You can only use a valid JSONPath expression or hard-coded value for destination field(s): {{{fields}}}',
+  MAPPER2_ONLY_JSON_PATH_SUPPORT: 'Mapper 2.0: You can only use a valid JSONPath expression for destination field(s): {{{fields}}}',
   MAPPER2_WRONG_HANDLEBAR_FOR_ROWS: "Mapper 2.0: The source field values should start with 'rows' since input data is of the type rows. For instance rows.field1, rows.field2, etc.",
   MAPPER2_WRONG_HANDLEBAR_FOR_RECORD: "Mapper 2.0: The source field values should start with 'record' since input data is of the type record. For instance record.field1, record.field2, etc.",
   MAPPER2_WRONG_SOURCE_DATA_TYPE: "Mapper 2.0: {{{jsonPath}}}: You can't map {{{sourceDataType}}} (source) to {{{dataType}}} (destination)",
   // #endregion
+  // #region Edit mock input error messages
+  MOCK_INPUT_REFRESH_FAILED: 'Failed to fetch latest input data.',
+  MOCK_INPUT_INVALID_JSON: 'Mock input must be valid JSON',
+  MOCK_INPUT_INVALID_FORMAT: 'Mock input must contain page_of_records',
 };
 
 export default function errorMessageStore(key, argsObj) {

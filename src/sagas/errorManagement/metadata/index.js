@@ -103,12 +103,15 @@ export function* updateRetryData({ flowId, resourceId, retryId, retryData }) {
 export function* _requestRetryStatus({ flowId, resourceId }) {
   let resourceType = 'exports';
   const importResource = yield select(selectors.resource, 'imports', resourceId);
+  const flow = yield select(selectors.resource, 'flows', flowId);
+  const {isAnyRetryInProgress} = yield select(selectors.flowResourcesRetryStatus, flowId);
+  const integrationId = flow?._integrationId || 'none';
 
   if (importResource) {
     resourceType = 'imports';
   }
 
-  const path = `/jobs?_flowId=${flowId}&type=retry&status=queued&status=running&${resourceType === 'exports' ? '_exportId' : '_importId'}=${resourceId}`;
+  const path = `/jobs?_integrationId=${integrationId}&_flowId=${flowId}&type=retry&status=queued&status=running&${resourceType === 'exports' ? '_exportId' : '_importId'}=${resourceId}`;
 
   try {
     const pendingRetryList = yield call(apiCallWithRetry, {
@@ -134,7 +137,9 @@ export function* _requestRetryStatus({ flowId, resourceId }) {
       if (prevStatus) {
         yield call(getRetryJobCollection, {flowId, resourceId});
       }
-      yield put(actions.errorManager.retryStatus.stopPoll());
+      if (!isAnyRetryInProgress) {
+        yield put(actions.errorManager.retryStatus.stopPoll(flowId, resourceId));
+      }
     }
   } catch (e) {
     // errors
@@ -209,7 +214,7 @@ export function* downloadBlobDocument({ flowId, resourceId, reqAndResKey }) {
 export default [
   takeEvery(actionTypes.ERROR_MANAGER.RETRY_DATA.REQUEST, requestRetryData),
   takeLatest(actionTypes.ERROR_MANAGER.RETRY_DATA.DOWNLOAD, downloadRetryData),
-  takeLatest(
+  takeEvery(
     actionTypes.ERROR_MANAGER.RETRY_STATUS.REQUEST_FOR_POLL,
     startPollingForRetryStatus
   ),

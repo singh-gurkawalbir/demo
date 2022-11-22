@@ -1,0 +1,110 @@
+/* global describe, expect, jest, test, beforeEach, afterEach */
+import React from 'react';
+import * as reactRedux from 'react-redux';
+import { MemoryRouter } from 'react-router-dom';
+import { screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import actions from '../../../../actions';
+import { renderWithProviders } from '../../../../test/test-utils';
+import SaveAndContinueGroup from './SaveAndContinueGroup';
+import { getCreatedStore } from '../../../../store';
+
+const mockUseRouteMatch = jest.fn(() => 'MATCH');
+
+jest.mock('react-router-dom', () => ({
+  __esModule: true,
+  ...jest.requireActual('react-router-dom'),
+  useRouteMatch: jest.fn(() => mockUseRouteMatch()),
+}));
+
+async function initSaveAndContinueGroup(props = {}, initialStore) {
+  const ui = (
+    <MemoryRouter>
+      <SaveAndContinueGroup {...props} />
+    </MemoryRouter>
+  );
+
+  return renderWithProviders(ui, {initialStore});
+}
+
+describe('test suite for SaveAndContinueGroup', () => {
+  let useDispatchSpy;
+  let mockDispatchFn;
+
+  beforeEach(() => {
+    useDispatchSpy = jest.spyOn(reactRedux, 'useDispatch');
+    mockDispatchFn = jest.fn(action => {
+      switch (action.type) {
+        default:
+      }
+    });
+    useDispatchSpy.mockReturnValue(mockDispatchFn);
+  });
+
+  afterEach(() => {
+    useDispatchSpy.mockClear();
+    mockDispatchFn.mockClear();
+  });
+
+  test('should pass initial rendering', async () => {
+    await initSaveAndContinueGroup();
+    const saveButton = screen.getByRole('button', {name: 'Save & continue'});
+    const closeButton = screen.getByRole('button', {name: 'Close'});
+
+    expect(saveButton).toBeDisabled();
+    expect(closeButton).toBeEnabled();
+    expect(mockUseRouteMatch).toBeCalled();
+  });
+
+  test('should pass the correct formSaveStatus', async () => {
+    const resourceType = 'exports';
+    const resourceId = '123asd';
+    const KEY = `${resourceType}-${resourceId}`;
+    const initialStore = getCreatedStore();
+
+    initialStore.getState().session.asyncTask[KEY] = {
+      status: 'loading',
+    };
+    await initSaveAndContinueGroup({resourceType, resourceId}, initialStore);
+    const saveButton = screen.getByRole('button', {name: 'Saving...'});
+    const closeButton = screen.getByRole('button', {name: 'Close'});
+
+    expect(saveButton).toBeDisabled();
+    expect(closeButton).toBeDisabled();
+  });
+
+  test('should be able to close successfully', async () => {
+    const onCancel = jest.fn();
+
+    await initSaveAndContinueGroup({onCancel});
+    const closeButton = screen.getByRole('button', {name: 'Close'});
+
+    userEvent.click(closeButton);
+    expect(onCancel).toHaveBeenCalledTimes(1);
+  });
+
+  test('should be able to save successfully', async () => {
+    const formKey = 'form-123';
+    const resourceType = 'exports';
+    const resourceId = '123asd';
+    const initialStore = getCreatedStore();
+
+    initialStore.getState().session.form[formKey] = {
+      isValid: true,
+      value: {
+        '/_borrowConcurrencyFromConnectionId': false,
+      },
+      fields: {
+        tempField: { touched: true },
+      },
+    };
+    await initSaveAndContinueGroup({formKey, resourceType, resourceId}, initialStore);
+    const saveButton = screen.getByRole('button', {name: 'Save & continue'});
+
+    expect(saveButton).toBeEnabled();
+    userEvent.click(saveButton);
+    expect(mockDispatchFn).toBeCalledWith(actions.resourceForm.saveAndContinue(
+      resourceType, resourceId, {}, 'MATCH', false, {}
+    ));
+  });
+});

@@ -63,9 +63,9 @@ export default function DynaHFAssistantSearchParams(props) {
     resourceId,
     flowId,
     value,
+    required,
     keyName,
     valueName,
-    required,
   } = props;
   let { label } = props;
   const classes = useStyles();
@@ -87,14 +87,19 @@ export default function DynaHFAssistantSearchParams(props) {
       name: <KeyLabel id={id} description={description} />,
       value: id,
     })), [paramMeta.fields]);
-  const suggestionConfig = useMemo(() => ({
-    keyConfig: {
-      suggestions: dataFields,
-      labelName: 'name',
-      valueName: 'value',
-      showAllSuggestions: true,
-    },
-  }), [dataFields]);
+
+  const suggestionConfig = useMemo(() => {
+    const updatedDataFields = dataFields.filter(field => !Object.keys(value).includes(field.value));
+
+    return ({
+      keyConfig: {
+        suggestions: updatedDataFields,
+        labelName: 'name',
+        valueName: 'value',
+        showAllSuggestions: true,
+      },
+    });
+  }, [dataFields, value]);
 
   useEffect(() => {
     if (!required) {
@@ -110,10 +115,11 @@ export default function DynaHFAssistantSearchParams(props) {
   }, [dispatch, formKey, id]);
 
   const handleSave = useCallback(editorValues => {
-    onFieldChange(id, editorValues.rule);
-  }, [id, onFieldChange]);
+    const newValue = {...value, [Object.keys(value)[editorValues.paramIndex]]: editorValues.rule};
 
-  const handleEditorClick = useCallback(() => {
+    onFieldChange(id, newValue);
+  }, [id, onFieldChange, value]);
+  const handleEditorClick = useCallback(index => {
     dispatch(actions.editor.init(editorId, 'handlebars', {
       formKey,
       flowId,
@@ -122,6 +128,7 @@ export default function DynaHFAssistantSearchParams(props) {
       fieldId: id,
       stage: flowDataStage,
       onSave: handleSave,
+      paramIndex: index,
     }));
 
     history.push(buildDrawerUrl({
@@ -129,7 +136,7 @@ export default function DynaHFAssistantSearchParams(props) {
       baseUrl: match.url,
       params: { editorId },
     }));
-  }, [dispatch, flowDataStage, editorId, formKey, flowId, resourceId, resourceType, id, handleSave, history, match.url]);
+  }, [dispatch, editorId, formKey, flowId, resourceId, resourceType, id, flowDataStage, handleSave, history, match.url]);
 
   const handleUpdate = useCallback(values => {
     const finalValue = values.reduce((fv, val) => {

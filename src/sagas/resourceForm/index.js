@@ -423,7 +423,7 @@ export function* submitFormValues({
 
   if (
     integrationIdPatch &&
-    integrationIdPatch.value &&
+    !isEmpty(integrationIdPatch.value) &&
     (resourceType === 'accesstokens' || resourceType === 'connections')
   ) {
     type = `integrations/${integrationIdPatch.value}/${resourceType}`;
@@ -870,8 +870,6 @@ export function* initFormValues({
         )
       );
     }
-    // Needs to get connection list
-
     assistantData = yield select(selectors.assistantData, {
       adaptorType,
       assistant: connectionAssistant,

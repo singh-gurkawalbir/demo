@@ -28,6 +28,7 @@ We are currently working with NetSuite to resolve these problems.`,
 
 <a target="_blank" rel="noopener noreferrer"
 href="/marketplace"><u>Check out our Marketplace</u></a> to jumpstart your integrations with integration apps & templates.`,
+  REQUEST_UPGRADE_SUCCESS_MESSAGE: 'Your request to upgrade has been sent. Keep an eye out for an email from one of our associates soon.',
   LICENSE_TRIAL_ISSUED: `What will you integrate next?
   <br/><br/><a target="_blank" rel="noopener noreferrer"
 href="/marketplace"><u>Check out our Marketplace</u></a> to jumpstart your  integrations with integration apps & templates.`,
@@ -46,8 +47,14 @@ href="/marketplace"><u>Check out our Marketplace</u></a> to jumpstart your  inte
   <ul><li>Improved security</li>
   <li>Reduced password fatigue</li>
   <li>Streamlined user experience</li></ul>`,
-  SSO_LICENSE_UPGRADE_REQUESTED_MESSAGE: 'Thanks for your request! We will be in touch soon.',
-  SSO_LICENSE_UPGRADE_REQUESTED_TOOLTIP_MESSAGE: 'We have received your request and will be in touch soon.',
+  FEATURE_LICENSE_UPGRADE_REQUESTED_TOOLTIP_MESSAGE: 'We have received your request and will be in touch soon.',
+  // #Data retention messsages
+  DATA_RETENTION_TAB_INFO: 'If you’re an <a href="https://docs.celigo.com/hc/en-us/articles/115003929872" target="_blank">account owner or administrator</a>, you can <a href="https://docs.celigo.com/hc/en-us/articles/6359380074779" target="_blank">access your integrator.io data for 30 or more days</a>. The data retention period varies based on your Celigo license, which you can upgrade anytime. You can also delete records these records. This functionality is compliant with <a href="https://www.celigo.com/security-privacy-compliance/" target="_blank">GDPR and CCPA rules.</a>',
+  DATA_RETENTION_LICENSE_UPGRADE: '<b>More options available</b> - Upgrade your account for longer data retention periods. ',
+  DATA_RETENTION_PERIOD_CHANGE_INFO: '<b><a href="https://docs.celigo.com/hc/en-us/articles/6359380074779-Access-data-for-more-than-30-days" target="_blank">Learn more about data retention</a></b> and consult with your security/privacy team before saving a new retention period.',
+  DATA_RETENTION_PERIOD_UPDATE_CONFIRM: 'The new retention period of {{newDataRetentionPeriod}} days will apply only to new flow runs. All other data in your account will persist up until its current retention period of {{currentDataRetentionPeriod}} days. <br> <a href="https://docs.celigo.com/hc/en-us/articles/6359380074779-Access-data-for-more-than-30-days" target="_blank">Learn more about data retention</a> and consult with your security/privacy team before saving.',
+  DATA_RETENTION_PERIOD_UPDATED: 'New data retention period successfully saved.',
+  // #endregion
   // #region mapper2 messages
   MAPPER2_DELETE_ROW_WARNING: 'Are you sure you want to delete this parent record row? All its child rows will be deleted as well.',
   MAPPER2_DATA_TYPE_WARNING: `Since only an "object" or "[object]" data type can have child rows, 
@@ -82,7 +89,7 @@ href="/marketplace"><u>Check out our Marketplace</u></a> to jumpstart your  inte
   DELETE_TRUSTED_DEVICE: "Are you sure you want to delete your trusted MFA device? You'll need to re-authenticate your account the next time you sign into integrator.io with the device.",
   RESET_MFA: "Are you sure you want to reset MFA? You'll need to re-associate your authenticator app and configure your device in integrator.io.",
   DELETE_DEVICE_SUCCESS: 'Device deleted successfully.',
-  SSO_LICENSE_UPGRADE_REQUEST_SUBMITTED_MESSAGE: 'Thanks for your request! We will be in touch soon.',
+  FEATURE_LICENSE_UPGRADE_REQUEST_SUBMITTED_MESSAGE: 'Thanks for your request! We will be in touch soon.',
   CONFIRM_LEAVE_MFA: 'Are you sure you want to leave? Your MFA settings will be disabled unless you connect your device successfully.',
   MFA_AUTH_FAILED: 'Verification failed. Please try again',
   SSO_LINKED_TO_ANOTHER_ACCOUNT_TOOLTIP: 'This user is already linked to another account’s SSO',
@@ -96,7 +103,8 @@ href="/marketplace"><u>Check out our Marketplace</u></a> to jumpstart your  inte
   VIEW_ACTIONS_HOVER_MESSAGE: 'View actions for this error',
   RETRY_ACTION_HOVER_MESSAGE: 'Before retrying, you must save your edits for each error in the batch. Click “Save & next” on this error to continue.',
   // #endregion
-
+  // #region Edit mock input
+  MOCK_INPUT_REFRESH_SUCCESS: 'Successfully fetched latest input data.',
   DATALOADER_PP_MESSAGE: 'You can add a destination application once you complete the configuration of your data loader.',
   MAX_ROUTERS_LIMIT_REACHED: 'You have reached the maximum of 25 branchings in a flow',
   MAX_BRANCHES_LIMIT_REACHED: 'You have reached the maximum of 25 branches in a branching',
@@ -108,7 +116,8 @@ href="/marketplace"><u>Check out our Marketplace</u></a> to jumpstart your  inte
   CREATE_PULL_FORM_HELPINFO: 'Pulling changes from one linked integration to another lets you see conflicts, review changes, and merge them from one integration to another. You can only pull data from a direct clone or source integration.. For example, clone Integration A as Integration B, then B to C, and B to D. You can create a pull between integrations A and B, B and C, B and D; but not between A and C, or C and D',
   RETRIES_TAB_INFO: 'When you retry errors in a flow step, a new row in the <b>Retries</b> tab under that step will display its progress. When a retry results in errors in later flow steps, you can locate the new errors in their <b>Open errors tab</b>. <br>Here you will also find auto-retry runs. When retries were triggered by auto-retry, a single row will appear for each retry job in the <b>Retries</b> tab and the column <b>Retry started by</b> will contain <b>Auto-retried</b>.',
   CANCEL_RETRY_CONFIRM: 'Cancelling will abort the retrying of any errors not yet processed in this operation; those errors already processed will not be reverted, maintaining their current state (failed or resolved).',
-  RETRIES_TAB_ERRORS_UPDATED_INFO: 'Retries that were initated from previous steps in your flow cannot be shown on any subsequent steps whose errors/success were changed by the retries in a previous step.',
+  RETRIES_TAB_ERRORS_UPDATED_INFO: 'Retries that were initiated from previous steps in your flow cannot be shown on any subsequent steps whose errors/success were changed by the retries in a previous step.',
+  AUDIT_LOGS_HAS_MORE_DOWNLOADS: 'Your downloaded file has exceeded the limit of 20,000 records. To narrow the results, try again after limiting the events\' dates, resource type, source, and so on.',
 };
 
 export default function messageStore(key, argsObj) {

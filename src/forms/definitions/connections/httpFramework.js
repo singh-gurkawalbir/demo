@@ -172,10 +172,6 @@ export default {
     delete newValues['/http/auth/wsse/password'];
     delete newValues['/http/auth/wsse/headerName'];
     newValues['/http/formType'] = 'assistant';
-    if (newValues['/http/updateBaseURI']) {
-      newValues['/http/baseURI'] = newValues['/http/updateBaseURI'];
-      delete newValues['/http/updateBaseURI'];
-    }
     if (resource?._httpConnectorId || resource?.http?._httpConnectorId) {
       newValues = updateHTTPFrameworkFormValues(newValues, resource, options?.httpConnector);
     }
@@ -190,6 +186,7 @@ export default {
     'http.type': {
       fieldId: 'http.type',
       visible: false,
+      omitWhenHidden: true,
     },
     connectionFormView: {
       fieldId: 'connectionFormView',
@@ -227,23 +224,7 @@ export default {
     },
     'http.baseURI': {
       fieldId: 'http.baseURI',
-      readOnly: true,
-      refreshOptionsOnChangesTo: [],
-      defaultDisabled: true,
-      defaultValue: r => {
-        if (!r?.http?.baseURI) { return null; }
-
-        return r?.http?.baseURI;
-      },
-    },
-    'http.updateBaseURI': {
-      fieldId: 'http.updateBaseURI',
       visible: false,
-      defaultValue: r => {
-        if (!r?.http?.baseURI) { return null; }
-
-        return r?.http?.baseURI;
-      },
     },
     'http.mediaType': {
       fieldId: 'http.mediaType',
@@ -325,7 +306,7 @@ export default {
     'http.rateLimit.failPath': { fieldId: 'http.rateLimit.failPath' },
     'http.rateLimit.failValues': { fieldId: 'http.rateLimit.failValues' },
     'http.retryHeader': { fieldId: 'http.retryHeader' },
-    'http.ping.relativeURI': { fieldId: 'http.ping.relativeURI', visible: false },
+    'http.ping.relativeURI': { fieldId: 'http.ping.relativeURI' },
     'http.ping.method': { fieldId: 'http.ping.method' },
     'http.ping.body': {
       fieldId: 'http.ping.body',
@@ -401,11 +382,9 @@ export default {
           {
             fields: [
               'http.baseURI',
-              'http.updateBaseURI',
             ],
           },
           {
-            type: 'indent',
             containers: [{
               fields: [],
             }],
@@ -431,8 +410,6 @@ export default {
               fields: [
                 'httpBasic',
                 'httpCookie',
-                'http.custom.encrypted',
-                'http.custom.unencrypted',
                 'httpDigest',
                 'httpOAuth',
                 'httpOAuthOverrides',
@@ -483,6 +460,12 @@ export default {
           'http.unencrypted',
         ],
       },
+      {
+        containers: [{
+          fields: [],
+        },
+        ],
+      },
     ],
   },
   actions: [
@@ -529,22 +512,5 @@ export default {
       ],
     },
   ],
-  // refresh the baseURI as per the user input
-  optionsHandler(fieldId, fields) {
-    if (fieldId === 'http.baseURI') {
-      const baseURIField = fields.find(field => field.id === 'http.baseURI');
-      let baseURIValue = baseURIField.defaultValue;
-
-      baseURIField.refreshOptionsOnChangesTo.forEach(fieldId => {
-        const fieldValue = fields.find(field => field.id === fieldId)?.value;
-
-        if (fieldValue) {
-          baseURIValue = baseURIValue.replace(new RegExp(`{{{(.)*${fieldId}}}}`), fieldValue);
-        }
-      });
-
-      return baseURIValue;
-    }
-  },
 };
 

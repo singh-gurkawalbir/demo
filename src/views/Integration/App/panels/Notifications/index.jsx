@@ -100,7 +100,7 @@ export default function NotificationsSection({ integrationId, childId }) {
         name: 'connections',
         type: 'multiselect',
         valueDelimiter: ',',
-        label: 'Notify me when connection goes offline',
+        label: 'Notify me on connection issues',
         defaultValue: connectionValues,
         options: [{ items: connectionOps }],
       },

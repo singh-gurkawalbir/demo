@@ -333,6 +333,10 @@ export default function Endpoint() {
                       {licenseActionDetails?.sso && (<CheckMarkIcon className={classes.enableIcon} />)}
                       <Typography variant="body2" component="span" className={clsx(classes.featureText, {[classes.featureTextDisabled]: !(licenseActionDetails?.sso)})}>Single sign-on (SSO)</Typography>
                     </li>
+                    <li>
+                      {licenseActionDetails?.isMaxDataRetentionPeriodAvailable && (<CheckMarkIcon className={classes.enableIcon} />)}
+                      <Typography variant="body2" component="span" className={clsx(classes.featureText, {[classes.featureTextDisabled]: !(licenseActionDetails?.isMaxDataRetentionPeriodAvailable)})}>Data retention up to 180 days</Typography>
+                    </li>
                   </ul>
                 </div>
               </div>
@@ -344,7 +348,8 @@ export default function Endpoint() {
               ) > -1 && (
               <FilledButton
                 onClick={onStartFreeTrialClick}
-                className={classes.subscriptionUpgradeBtn}>
+                className={classes.subscriptionUpgradeBtn}
+                id="myaccout-unlimited-flows-button">
                 Get unlimited flows
               </FilledButton>
               )}
@@ -357,6 +362,7 @@ export default function Endpoint() {
                 onClick={onRequestUpgradeClick}
                 disabled={upgradeRequested}
                 className={classes.subscriptionUpgradeBtn}
+                id="myaccout-request-upgrade-buttton"
              >
                 {upgradeRequested ? 'Upgrade requested' : 'Request upgrade'}
               </FilledButton>

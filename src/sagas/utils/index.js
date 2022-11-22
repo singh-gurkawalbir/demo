@@ -1,6 +1,6 @@
 import jsonPatch, { deepClone, applyPatch } from 'fast-json-patch';
 import { select, call } from 'redux-saga/effects';
-import { isEmpty, cloneDeep } from 'lodash';
+import { isEmpty, cloneDeep, set, unset } from 'lodash';
 import util from '../../utils/array';
 import { isNewId } from '../../utils/resource';
 import { selectors } from '../../reducers';
@@ -35,6 +35,26 @@ export const convertResourceFieldstoSampleData = (resourceFields, dataType = 'ob
     return [tempOutput];
   }
 };
+export const getEndpointResourceFields = (endpointFields, resourceFields) => {
+  if (!endpointFields || !endpointFields.length || !endpointFields[0].type) {
+    return resourceFields;
+  }
+  let returnData = {};
+  const {fields, type} = endpointFields[0];
+
+  if (type === 'inclusion') {
+    fields.forEach(field => {
+      returnData = set(returnData, field, 'default');
+    });
+  } if (type === 'exclusion') {
+    returnData = resourceFields;
+    fields.forEach(field => {
+      unset(returnData, field);
+    });
+  }
+
+  return returnData;
+};
 export const generateReplaceAndRemoveLastModified = patches =>
   (patches &&
     patches.length &&
@@ -59,7 +79,7 @@ export const getExportMetadata = (connectorMetadata, connectionVersion) => {
   }
   const exportPreConfiguredFields = connectorMetadata.supportedBy?.export?.preConfiguredFields;
 
-  exportPreConfiguredFields.forEach(field => {
+  exportPreConfiguredFields?.forEach(field => {
     exportData[field.path] = field.values?.[0];
   });
 
@@ -112,7 +132,7 @@ export const getExportMetadata = (connectorMetadata, connectionVersion) => {
                 }
 
                 const ep = {
-                  id: httpEndpoint._id, name: httpEndpoint.name, url: httpEndpoint.relativeURI, supportedExportTypes, queryParameters, pathParameters, doesNotSupportPaging,
+                  id: httpEndpoint._id, name: httpEndpoint.name, url: httpEndpoint.relativeURI, supportedExportTypes, queryParameters, pathParameters, doesNotSupportPaging, method: httpEndpoint.method,
                 };
 
                   r.exportPreConfiguredFields?.forEach(field => {
@@ -155,9 +175,13 @@ export const getImportMetadata = (connectorMetadata, connectionVersion) => {
     },
 
   };
+
+  if (!httpResources || !httpEndpoints) {
+    return importData;
+  }
   const importPreConfiguredFields = connectorMetadata.supportedBy?.import?.preConfiguredFields;
 
-  importPreConfiguredFields.forEach(field => {
+  importPreConfiguredFields?.forEach(field => {
     importData[field.path] = field.values?.[0];
   });
   let versions = connectorMetadata.versions?.map(v => ({version: v.name, _id: v._id}));
@@ -242,7 +266,7 @@ export const getImportMetadata = (connectorMetadata, connectionVersion) => {
                 };
 
                 if (httpEndpoint.resourceFields) {
-                  ep.sampleData = convertResourceFieldstoSampleData(httpEndpoint.resourceFields);
+                  ep.sampleData = getEndpointResourceFields(httpEndpoint.resourceFields, r.sampleData);
                 }
 
                 r?.resourceFieldsUserMustSet?.forEach(f => {
@@ -322,7 +346,7 @@ export const updateFinalMetadataWithHttpFramework = (finalFieldMeta, connector, 
       const _conditionIdValuesMap = [];
 
       preConfiguredFieldLists.forEach(field => {
-        if (field._conditionIds?.length) { _conditionIdValuesMap.push({_conditionIds: field._conditionIds, values: field.values}); }
+        if (field._conditionIds?.length && field.values) { _conditionIdValuesMap.push({_conditionIds: field._conditionIds, values: field.values}); }
       });
       if (preConfiguredField && _conditionIdValuesMap.length) {
         tempFiledMeta.fieldMap[key]._conditionIdValuesMap = _conditionIdValuesMap;
@@ -406,7 +430,9 @@ export const updateFinalMetadataWithHttpFramework = (finalFieldMeta, connector, 
         } else {
           tempFiledMeta.fieldMap[key] = {...tempFiledMeta.fieldMap[key], visible: false};
         }
-        if (!tempFiledMeta.fieldMap[key].defaultValue) { tempFiledMeta.fieldMap[key] = {...tempFiledMeta.fieldMap[key], defaultValue: preConfiguredField.values?.[0]}; }
+        if (!tempFiledMeta.fieldMap[key].defaultValue) {
+          tempFiledMeta.fieldMap[key] = {...tempFiledMeta.fieldMap[key], defaultValue: preConfiguredField.values?.[0]};
+        }
       } else if (!tempFiledMeta.fieldMap[key].required && key !== 'settings') {
         tempFiledMeta.fieldMap[key] = {...tempFiledMeta.fieldMap[key], visible: isGenericHTTP || false};
       } else if (key === 'http._iClientId') {
@@ -427,10 +453,6 @@ export const updateFinalMetadataWithHttpFramework = (finalFieldMeta, connector, 
 
           tempFiledMeta.fieldMap[key] = {...tempFiledMeta.fieldMap[key], options, type: 'select'};
         }
-        if (!tempFiledMeta.fieldMap[key].defaultValue.includes('{{')) {
-          tempFiledMeta.fieldMap[key].visible = false;
-        }
-        tempFiledMeta.fieldMap['http.updateBaseURI'].defaultValue = tempFiledMeta.fieldMap[key].defaultValue;
       }
       if (tempFiledMeta?.fieldMap['name']) {
         const application = resource?.application;
@@ -468,38 +490,62 @@ export const updateFinalMetadataWithHttpFramework = (finalFieldMeta, connector, 
       },
     });
   }
-  const preConfiguredUnencryptedFields = connectionTemplate.preConfiguredFields.find(field => field.path === 'http.unencryptedFields');
+  const preConfiguredUnEncryptedFields = connectionTemplate.preConfiguredFields.find(field => field.path === 'http.unencryptedFields');
 
-  if (preConfiguredUnencryptedFields?.values?.length > 0) {
-    preConfiguredUnencryptedFields.values.forEach(fld => {
-      if (!unEncryptedFields.find(unEncryptedField => unEncryptedField.id === `http.unencrypted.${fld.id}`)) {
-        const preConfiguredFieldLists = preConfiguredUnencryptedFields?.values?.filter(field => field.id === fld.id);
-        const _conditionIdValuesMap = [];
+  if (preConfiguredUnEncryptedFields?.values?.length > 0) {
+    preConfiguredUnEncryptedFields.values.forEach(fld => {
+      const _conditionIdValuesMap = [];
+      let _conditionIds = [];
 
-        preConfiguredFieldLists.forEach(field => {
-          if (field._conditionIds?.length && field.values?.length) { _conditionIdValuesMap.push({_conditionIds: field._conditionIds, values: field.values}); }
+      const preConfiguredField = connectionTemplate.preConfiguredFields?.find(field => `http.unencrypted.${fld.id}` === field.path);
+      const fieldUserMustSet = connectionTemplate.fieldsUserMustSet?.find(field => `http.unencrypted.${fld.id}` === field.path);
+
+      if (preConfiguredField) {
+        const fieldLists = connectionTemplate.preConfiguredFields?.filter(field => `http.unencrypted.${fld.id}` === field.path);
+
+        fieldLists.forEach(field => {
+          if (field._conditionIds?.length) { _conditionIdValuesMap.push({_conditionIds: field._conditionIds, values: field.values}); }
         });
-        unEncryptedFields.push({
-          position: 1,
-          field: {
-            ...fld,
-            name: `/http/unencrypted/${fld.id}`,
-            id: `http.unencrypted.${fld.id}`,
-            fieldId: `http.unencrypted.${fld.id}`,
-            type: fld.type || 'text',
-            defaultValue: resource?.http?.unencrypted?.[fld.id] || fld.defaultValue,
-            conditions: connectionTemplate?.conditions,
-            _conditionIdValuesMap,
-            helpLink: fld.helpURL,
-          },
-        });
+      } else if (fieldUserMustSet && fieldUserMustSet?._conditionIds && fieldUserMustSet?._conditionIds.length > 0) {
+        _conditionIds = fieldUserMustSet?._conditionIds;
       }
+      unEncryptedFields.push({
+        position: 1,
+        field: {
+          ...fld,
+          name: `/http/unencrypted/${fld.id}`,
+          id: `http.unencrypted.${fld.id}`,
+          fieldId: `http.unencrypted.${fld.id}`,
+          type: fld.type || 'text',
+          defaultValue: resource?.http?.unencrypted?.[fld.id] || fld.defaultValue,
+          conditions: connectionTemplate?.conditions,
+          _conditionIdValuesMap,
+          helpLink: fld.helpURL,
+          _conditionIds,
+        },
+      });
     });
   }
-  const preConfiguredencryptedFields = connectionTemplate.preConfiguredFields.find(field => field.path === 'http.encryptedFields');
+  const preConfiguredEncryptedFields = connectionTemplate.preConfiguredFields.find(field => field.path === 'http.encryptedFields');
 
-  if (preConfiguredencryptedFields?.values?.length > 0) {
-    preConfiguredencryptedFields.values.forEach(fld => {
+  if (preConfiguredEncryptedFields?.values?.length > 0) {
+    preConfiguredEncryptedFields.values.forEach(fld => {
+      const _conditionIdValuesMap = [];
+      let _conditionIds = [];
+
+      const preConfiguredField = connectionTemplate.preConfiguredFields?.find(field => `http.encrypted.${fld.id}` === field.path);
+      const fieldUserMustSet = connectionTemplate.fieldsUserMustSet?.find(field => `http.encrypted.${fld.id}` === field.path);
+
+      if (preConfiguredField) {
+        const fieldLists = connectionTemplate.preConfiguredFields?.filter(field => `http.encrypted.${fld.id}` === field.path);
+
+        fieldLists.forEach(field => {
+          if (field._conditionIds?.length) { _conditionIdValuesMap.push({_conditionIds: field._conditionIds, values: field.values}); }
+        });
+      } else if (fieldUserMustSet && fieldUserMustSet?._conditionIds && fieldUserMustSet?._conditionIds.length > 0) {
+        _conditionIds = fieldUserMustSet?._conditionIds;
+      }
+
       unEncryptedFields.push({
         position: 2,
         field: {
@@ -512,47 +558,67 @@ export const updateFinalMetadataWithHttpFramework = (finalFieldMeta, connector, 
           defaultValue: resource?.http?.encrypted?.[fld.id],
           conditions: connectionTemplate?.conditions,
           helpLink: fld.helpURL,
+          _conditionIdValuesMap,
+          _conditionIds,
         },
       });
     });
   }
 
-  if (unEncryptedFields) {
+  if (unEncryptedFields && !isGenericHTTP) {
     for (let i = 0; i < unEncryptedFields.length; i += 1) {
       unEncryptedFields[i] = unEncryptedFields[i].field;
       tempFiledMeta.fieldMap[unEncryptedFields[i].id] = unEncryptedFields[i];
-      if (!isGenericHTTP && unEncryptedFields[i].id === 'http.unencrypted.version') {
+      if (unEncryptedFields[i].id === 'http.unencrypted.version') {
         tempFiledMeta?.layout?.containers[0]?.fields.push(unEncryptedFields[i].id);
+      } else if (unEncryptedFields[i].id.includes('http.unencrypted')) {
+        tempFiledMeta?.layout?.containers?.push({fields: [unEncryptedFields[i].id]});
+      } else if (unEncryptedFields[i].id.includes('http.encrypted')) {
+        tempFiledMeta?.layout?.containers?.push({fields: [unEncryptedFields[i].id]});
       } else if (tempFiledMeta?.layout?.containers?.[0]?.containers?.[1]?.fields) {
         tempFiledMeta.layout.containers[0].containers[1]?.fields.push(unEncryptedFields[i].id);
       } else if (tempFiledMeta?.layout?.containers[2]?.fields) { tempFiledMeta.layout.containers[2].fields.push(unEncryptedFields[i].id); }
-      if (isGenericHTTP && unEncryptedFields[i].id.includes('http.encrypted')) {
-        tempFiledMeta?.layout?.containers[1]?.fields.push(unEncryptedFields[i].id);
-      }
     }
   }
 
-  const settingFields = connectionTemplate.preConfiguredFields?.filter(field => field.path === 'settingsForm');
-  const fields = [];
+  const settingFields = connectionTemplate.preConfiguredFields?.find(field => field.path === 'settingsForm');
 
-  if (settingFields && settingFields.length) {
-    settingFields.forEach(settingField => {
-      const fieldMap = settingField.values?.[0].fieldMap;
+  if (settingFields) {
+    const fieldMap = settingFields.values?.[0].fieldMap;
+    const fields = [];
 
-      Object.entries(fieldMap).forEach(([, value]) => {
-        fields.push({
-          field: {
-            ...value,
-            name: `/settings/${value.id}`,
-            id: `settings.${value.id}`,
-            fieldId: `settings.${value.id}`,
-            type: value.type || 'text',
-            defaultValue: resource?.settings?.[value.id] || value.defaultValue,
-            _conditionIds: settingField._conditionIds,
-            conditions: connectionTemplate?.conditions,
-            helpLink: value.helpURL,
-          },
-        });
+    Object.entries(fieldMap).forEach(([, value]) => {
+      const _conditionIdValuesMap = [];
+      let _conditionIds = [];
+
+      if (!isGenericHTTP) {
+        const preConfiguredField = connectionTemplate.preConfiguredFields?.find(field => `settings.${value.id}` === field.path);
+        const fieldUserMustSet = connectionTemplate.fieldsUserMustSet?.find(field => `settings.${value.id}` === field.path);
+
+        if (preConfiguredField) {
+          const fieldLists = preConfiguredField ? connectionTemplate.preConfiguredFields?.filter(field => `settings.${value.id}` === field.path) : connectionTemplate.fieldsUserMustSet?.filter(field => `settings.${value.id}` === field.path);
+
+          fieldLists.forEach(field => {
+            if (field._conditionIds?.length) { _conditionIdValuesMap.push({_conditionIds: field._conditionIds, values: field.values}); }
+          });
+        } else if (fieldUserMustSet && fieldUserMustSet?._conditionIds && fieldUserMustSet?._conditionIds.length > 0) {
+          _conditionIds = fieldUserMustSet?._conditionIds;
+        }
+      }
+
+      fields.push({
+        field: {
+          ...value,
+          name: `/settings/${value.id}`,
+          id: `settings.${value.id}`,
+          fieldId: `settings.${value.id}`,
+          type: value.type || 'text',
+          defaultValue: resource?.settings?.[value.id] || value.defaultValue,
+          conditions: connectionTemplate?.conditions,
+          helpLink: value.helpURL,
+          _conditionIdValuesMap,
+          _conditionIds,
+        },
       });
     });
 
@@ -567,26 +633,11 @@ export const updateFinalMetadataWithHttpFramework = (finalFieldMeta, connector, 
       if (isGenericHTTP && isNewId(resource._id)) {
           tempFiledMeta.layout?.containers?.push({fields: fieldIds, label: 'Custom settings'});
       } else if (!isGenericHTTP) {
-        const baseURIFields = []; const authFields = [];
-        const baseURIValue = tempFiledMeta?.fieldMap['http.baseURI']?.defaultValue;
-
-        fieldIds.forEach(field => {
-          (new RegExp(`{{{(.)*(${field})(.)*}}}`)).test(baseURIValue) ? baseURIFields.push(field) : authFields.push(field);
-        });
-        if (baseURIFields.length > 0) {
-              tempFiledMeta?.fieldMap['http.baseURI']?.refreshOptionsOnChangesTo.push(...baseURIFields);
-              tempFiledMeta?.layout?.containers[1]?.containers[1].containers.splice(0, 1, {fields: baseURIFields});
-        } else {
-              tempFiledMeta?.layout?.containers[1]?.containers?.splice(1, 1);
+        if (tempFiledMeta?.fieldMap['http.auth.type']?.visible === false) {
+          delete tempFiledMeta?.layout?.containers[3]?.containers[1]?.type;
         }
-        if (authFields.length > 0) {
-          // when there is only one authentication type then side bar is not required for authentication related fields which are coming from custom setting
-          if (tempFiledMeta?.fieldMap['http.auth.type']?.visible === false) {
-            delete tempFiledMeta?.layout?.containers[3]?.containers[1]?.type;
-          }
-
-          tempFiledMeta?.layout?.containers[3]?.containers[1]?.containers[0]?.fields.push(...authFields);
-        }
+        tempFiledMeta?.layout?.containers[7].containers?.push({fields: fieldIds});
+        tempFiledMeta?.layout?.containers[7]?.containers?.splice(0, 1);
         Object.keys(tempFiledMeta.fieldMap).map(key => {
           const fieldUserMustSet = connectionTemplate.fieldsUserMustSet?.find(field => key === field.path);
 

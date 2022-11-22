@@ -591,14 +591,18 @@ export function getFlowListWithMetadata(flows = [], exports = []) {
   return { resources: flows };
 }
 
-export function getNextDataFlows(flows = emptyList, flow = emptyObject) {
+export function getNextDataFlows(flows = emptyList, exports = emptyList, flow = emptyObject) {
   const { _integrationId } = flow;
   // Incase of standalone Integrations, _integrationId is undefined for flow resources
   const flowIntegrationId =
     _integrationId === STANDALONE_INTEGRATION ? undefined : _integrationId;
 
   // Returns all valid flows under this integration
-  return flows.filter(
+  return flows.map(item => ({
+    isRealtime: isRealtimeFlow(item, exports),
+    isSimpleImport: isSimpleImportFlow(item, exports),
+    ...item,
+  })).filter(
     f =>
       f._integrationId === flowIntegrationId &&
       f._id !== flow._id &&

@@ -1,9 +1,7 @@
 import React, {useEffect, useCallback} from 'react';
-import { IconButton, Typography } from '@material-ui/core';
+import { Typography } from '@material-ui/core';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
-import ArrowDownIcon from '../../../../../icons/ArrowDownIcon';
-import ArrowUpIcon from '../../../../../icons/ArrowUpIcon';
 import { selectors } from '../../../../../../reducers';
 import actions from '../../../../../../actions';
 import ActionGroup from '../../../../../ActionGroup';
@@ -11,6 +9,8 @@ import CloseIcon from '../../../../../icons/CloseIcon';
 import IconButtonWithTooltip from '../../../../../IconButtonWithTooltip';
 import HomeSearchInput from '../../../../../SearchInput/HomeSearchInput';
 import useDebouncedValue from '../../../../../../hooks/useDebouncedInput';
+import { emptyList } from '../../../../../../constants';
+import NotificationToaster from '../../../../../NotificationToaster';
 
 const useStyles = makeStyles(theme => ({
   searchWrapper: {
@@ -27,90 +27,70 @@ const useStyles = makeStyles(theme => ({
     height: 29,
   },
   searchCount: {
-    marginRight: theme.spacing(1),
+    marginRight: theme.spacing(2),
   },
   showSearchCount: {
     display: 'flex',
     alignItems: 'center',
   },
+  infoFilter: {
+    paddingLeft: 0,
+    '& svg': {
+      color: theme.palette.text.secondary,
+    },
+  },
 }));
 
 // display when search has been done
-const ShowAfterSearch = ({
-  className,
-  matches,
-  downClickHandler,
-  upClickHandler,
-  fieldsLen,
-  highlightedIndex,
-}) => (
-  <div className={className}>
-    { fieldsLen ? (<Typography variant="body2">{highlightedIndex + 1} of {fieldsLen} matches</Typography>)
-      : (<Typography variant="body2" className={className.searchCount}>0 of 0 matches</Typography>)}
-    {matches}
-    <IconButton size="small" onClick={downClickHandler}>
-      <ArrowDownIcon />
-    </IconButton>
-    <IconButton size="small" onClick={upClickHandler}>
-      <ArrowUpIcon />
-    </IconButton>
-  </div>
-);
+const SearchCount = () => {
+  const classes = useStyles();
+  const totalMatches = useSelector(state => selectors.filteredV2TreeData(state).searchCount);
+
+  return (
+    <div className={classes.showSearchCount}>
+      <Typography variant="body2" className={classes.searchCount}>
+        {totalMatches ? `${totalMatches} ${totalMatches === 1 ? 'match' : 'matches'}` : '0 matches'}
+      </Typography>
+
+      {totalMatches ? (
+        <NotificationToaster
+          variant="info"
+          transparent
+          italic
+          noBorder
+          className={classes.infoFilter}>
+          Rows without matches are hidden (except for children of parents that have matches)
+        </NotificationToaster>
+      ) : null}
+
+    </div>
+  );
+};
 
 export default function SearchBar() {
   const classes = useStyles();
   const dispatch = useDispatch();
-  const highlightedIndex = useSelector(state => selectors.highlightedIndex(state));
-  const fieldsLen = useSelector(state => selectors.filteredKeys(state).length);
+  const expandedKeys = useSelector(state => selectors.filteredV2TreeData(state).expandedKeys || emptyList);
+  const searchKey = useSelector(state => selectors.searchKey(state));
   const [text, setText] = useDebouncedValue('', value => {
-    dispatch(actions.mapping.v2.searchTree({ searchKey: value, showKey: false }));
+    dispatch(actions.mapping.v2.searchTree(value));
   });
 
-  // clear the filter and filteredKeys and index
-  useEffect(() => () => {
-    dispatch(actions.mapping.v2.updateHighlightedIndex(-1));
-  }, [dispatch]);
+  useEffect(() => {
+    // update the expanded keys based on the search
+    if (searchKey) {
+      dispatch(actions.mapping.v2.updateExpandedKeys(expandedKeys));
+    }
+  // we don't need expandedKeys as the dependency here as this action should be dispatched only when search is changed
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dispatch, searchKey]);
 
   const handleKeywordChange = useCallback(e => {
     setText(e.target.value);
   }, [setText]);
 
-  const downClickHandler = useCallback(() => {
-    if (highlightedIndex < 0 || !fieldsLen) return;
-
-    if (fieldsLen !== 1) {
-      // increase highlighIndex if in range 0 to fieldsLen - 2
-      if (highlightedIndex >= 0 && highlightedIndex < fieldsLen - 1) {
-        dispatch(actions.mapping.v2.updateHighlightedIndex(highlightedIndex + 1));
-      }
-      // set to 0 if highlightIndex is fieldslen - 1
-      if (highlightedIndex === fieldsLen - 1) {
-        dispatch(actions.mapping.v2.updateHighlightedIndex(0));
-      }
-    }
-    // finding the specific highlighted key
-    dispatch(actions.mapping.v2.searchTree({ showKey: true }));
-  }, [dispatch, fieldsLen, highlightedIndex]);
-
-  const upClickHandler = useCallback(() => {
-    if (highlightedIndex < 0 || !fieldsLen) return;
-
-    if (fieldsLen !== 1) {
-      // decrease highlighIndex if in range 1 to fieldsLen - 1
-      if (highlightedIndex > 0 && highlightedIndex < fieldsLen) {
-        dispatch(actions.mapping.v2.updateHighlightedIndex(highlightedIndex - 1));
-      }
-      // set to fieldsLen - 1 if highlightIndex is 0
-      if (highlightedIndex === 0) {
-        dispatch(actions.mapping.v2.updateHighlightedIndex(fieldsLen - 1));
-      }
-    }
-    // finding the specific highlighted key
-    dispatch(actions.mapping.v2.searchTree({ showKey: true }));
-  }, [dispatch, fieldsLen, highlightedIndex]);
-
   const onCloseHandler = useCallback(() => {
-    dispatch(actions.mapping.v2.searchTree({ searchKey: undefined, showKey: false }));
+    dispatch(actions.mapping.v2.searchTree(undefined));
   }, [dispatch]);
 
   return (
@@ -123,16 +103,11 @@ export default function SearchBar() {
           placeHolder="Search destination fields"
           openWithFocus
         />
-        {text && (
-        <ShowAfterSearch
-          className={classes.showSearchCount}
-          fieldsLen={fieldsLen}
-          highlightedIndex={highlightedIndex}
-          upClickHandler={upClickHandler}
-          downClickHandler={downClickHandler}
-        />
-        )}
+
+        {searchKey && <SearchCount />}
+
       </ActionGroup>
+
       <ActionGroup position="right">
         <IconButtonWithTooltip
           tooltipProps={{title: 'Close search'}}

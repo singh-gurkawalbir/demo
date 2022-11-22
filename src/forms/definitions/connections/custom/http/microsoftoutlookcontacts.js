@@ -1,3 +1,5 @@
+import uniq from 'lodash/uniq';
+
 export default {
   preSave: formValues => ({
     ...formValues,
@@ -12,10 +14,10 @@ export default {
       'https://login.microsoftonline.com/common/oauth2/v2.0/authorize',
     '/http/auth/oauth/tokenURI':
       'https://login.microsoftonline.com/common/oauth2/v2.0/token',
-    '/http/auth/oauth/scope': [
+    '/http/auth/oauth/scope': uniq([
       ...['openid', 'offline_access', 'Contacts.Read'],
       ...formValues['/http/auth/oauth/scope'],
-    ],
+    ]),
     '/http/auth/oauth/scopeDelimiter': ' ',
     '/http/auth/token/refreshMethod': 'POST',
     '/http/auth/token/refreshMediaType': 'urlencoded',
