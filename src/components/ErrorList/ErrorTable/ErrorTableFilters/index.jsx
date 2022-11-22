@@ -1,6 +1,7 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
+import { useHistory, useRouteMatch } from 'react-router-dom';
 import CeligPagination from '../../../CeligoPagination';
 import KeywordSearch from '../../../KeywordSearch';
 import RefreshCard from '../RefreshCard';
@@ -8,13 +9,15 @@ import ActionMenu from '../../../CeligoTable/ActionMenu';
 import DownloadAction from '../../../ResourceTable/errorManagement/actions/DownloadErrors';
 import ErrorActions from '../ErrorActions';
 import CeligoDivider from '../../../CeligoDivider';
-import ToggleViewSelect from '../../../AFE/Drawer/actions/ToggleView';
+import ToggleViewSelect from './ToggleView';
 import { useHandleNextAndPreviousErrorPage } from '../hooks/useHandleNextAndPreviousErrorPage';
 import actions from '../../../../actions';
 import { useEditRetryConfirmDialog } from '../hooks/useEditRetryConfirmDialog';
 import { selectors } from '../../../../reducers';
 import useEnqueueSnackbar from '../../../../hooks/enqueueSnackbar';
 import PurgeMultipleErrors from '../../../ResourceTable/errorManagement/actions/PurgeMultipleErrors';
+import { buildDrawerUrl, drawerPaths } from '../../../../utils/rightDrawer';
+import { OPEN_ERRORS_VIEW_TYPES } from '../../../../constants';
 
 const rowsPerPageOptions = [10, 25, 50];
 
@@ -73,7 +76,14 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function ErrorTableFilters({ flowId, resourceId, isResolved, filterKey, flowJobId }) {
+export default function ErrorTableFilters({
+  flowId,
+  resourceId,
+  isResolved,
+  filterKey,
+  flowJobId,
+  viewType,
+}) {
   const classes = useStyles();
   const [selectedComponent, setSelectedComponent] = useState(null);
   const dispatch = useDispatch();
@@ -102,6 +112,8 @@ export default function ErrorTableFilters({ flowId, resourceId, isResolved, filt
   } = useHandleNextAndPreviousErrorPage({flowId, resourceId, isResolved, filterKey, showRetryDataChangedConfirmDialog, flowJobId});
 
   const useRowActions = () => [DownloadAction, ...(isResolved ? [PurgeMultipleErrors] : [])];
+  const history = useHistory();
+  const match = useRouteMatch();
 
   const handleToggleChange = useCallback(event => {
     showRetryDataChangedConfirmDialog(() => {
@@ -109,11 +121,16 @@ export default function ErrorTableFilters({ flowId, resourceId, isResolved, filt
         view: event.target.value,
         activeErrorId: '',
       }));
+      history.replace(buildDrawerUrl({
+        path: drawerPaths.ERROR_MANAGEMENT.V2.OPEN_ERROR_VIEW,
+        baseUrl: match.url,
+        params: { viewType: event.target.value },
+      }));
       dispatch(
         actions.analytics.gainsight.trackEvent('OPEN_ERRORS_VIEW_CHANGED', {view: event.target.value})
       );
     });
-  }, [dispatch, filterKey, showRetryDataChangedConfirmDialog]);
+  }, [dispatch, filterKey, history, match.url, showRetryDataChangedConfirmDialog]);
 
   useEffect(() => {
     if (purgeErrorStatus.status === 'success') {
@@ -151,8 +168,9 @@ export default function ErrorTableFilters({ flowId, resourceId, isResolved, filt
           <ToggleViewSelect
             variant="openErrorViews"
             filterKey={filterKey}
-            defaultView="split"
+            defaultView={OPEN_ERRORS_VIEW_TYPES.SPLIT}
             handleToggleChange={handleToggleChange}
+            viewType={viewType}
           />
           <CeligoDivider position="left" />
         </>

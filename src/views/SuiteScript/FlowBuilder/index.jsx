@@ -255,7 +255,9 @@ function FlowBuilder() {
           )}
       >
           <div className={classes.actions}>
-            <OnOffCell ssLinkedConnectionId={ssLinkedConnectionId} flow={flow} />
+            <OnOffCell
+              tooltip="Off / On"
+              ssLinkedConnectionId={ssLinkedConnectionId} flow={flow} />
             <RunCell
               ssLinkedConnectionId={ssLinkedConnectionId}
               flow={flow}

@@ -12,12 +12,11 @@ import SearchInput from '../../components/SearchInput';
 import LoadResources from '../../components/LoadResources';
 import infoText from '../ResourceList/infoText';
 import CheckPermissions from '../../components/CheckPermissions';
-import { NO_RESULT_SEARCH_MESSAGE, PERMISSIONS } from '../../constants';
+import { PERMISSIONS } from '../../constants';
 import { generateNewId } from '../../utils/resource';
 import { buildDrawerUrl, drawerPaths } from '../../utils/rightDrawer';
 import { TextButton } from '../../components/Buttons';
-import NoResultTypography from '../../components/NoResultTypography';
-import ResourceEmptyState from '../ResourceList/ResourceEmptyState';
+import ResourceTableWrapper from '../../components/ResourceTableWrapper';
 import ActionGroup from '../../components/ActionGroup';
 import PageContent from '../../components/PageContent';
 
@@ -73,20 +72,12 @@ export default function AccessTokenList(props) {
 
         <PageContent showPagingBar={showPagingBar} hidePagingBar={hidePagingBar}>
           <LoadResources required resources="accesstokens">
-            {list.count > 0 ? (
+            <ResourceTableWrapper resourceType="accesstokens" hasNoData={!list.total} hasEmptySearchResults={list.total && !list.filtered}>
               <ResourceTable
                 resourceType="accesstokens"
                 resources={list.resources}
               />
-
-            ) : (
-              <div>
-                {list.total === 0
-                  ? (
-                    <ResourceEmptyState resourceType="accesstokens" />
-                  ) : <NoResultTypography>{NO_RESULT_SEARCH_MESSAGE}</NoResultTypography>}
-              </div>
-            )}
+            </ResourceTableWrapper>
           </LoadResources>
         </PageContent>
         <ShowMoreDrawer
