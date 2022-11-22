@@ -255,6 +255,11 @@ export const CATEGORY_MAPPING_SAVE_STATUS = {
   FAILED: 'failed',
 };
 
+export const MOCK_INPUT_STATUS = {
+  REQUESTED: 'requested',
+  RECEIVED: 'received',
+  ERROR: 'error',
+};
 export const OPEN_ERRORS_VIEW_TYPES = {
   SPLIT: 'split', // new view
   LIST: 'list', // old view
