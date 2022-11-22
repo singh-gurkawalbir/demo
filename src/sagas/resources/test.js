@@ -3210,4 +3210,23 @@ describe('downloadAuditlogs saga', () => {
       .not.call(openExternalUrl, { url: '' })
       .run();
   });
+  test('should dispatch toggleHasMoreDownloads if response contains hasMore', () => {
+    const requestOptions = getRequestOptions(
+      actionTypes.RESOURCE.DOWNLOAD_AUDIT_LOGS,
+      { resourceType, resourceId, filters }
+    );
+    const response = { signedURL: 'http://mockUrl.com/SHA256/2345sdcv', hasMore: true };
+
+    return expectSaga(downloadAuditlogs, { resourceType, resourceId, filters })
+      .provide([
+        [matchers.call.fn(apiCallWithRetry), response],
+      ])
+      .call(apiCallWithRetry, {
+        path: requestOptions.path,
+        opts: requestOptions.opts,
+      })
+      .call(openExternalUrl, { url: response.signedURL })
+      .put(actions.auditLogs.toggleHasMoreDownloads(true))
+      .run();
+  });
 });

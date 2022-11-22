@@ -1,6 +1,6 @@
 import jsonPatch, { deepClone, applyPatch } from 'fast-json-patch';
 import { select, call } from 'redux-saga/effects';
-import { isEmpty, cloneDeep } from 'lodash';
+import { isEmpty, cloneDeep, set, unset } from 'lodash';
 import util from '../../utils/array';
 import { isNewId } from '../../utils/resource';
 import { selectors } from '../../reducers';
@@ -34,6 +34,26 @@ export const convertResourceFieldstoSampleData = (resourceFields, dataType = 'ob
 
     return [tempOutput];
   }
+};
+export const getEndpointResourceFields = (endpointFields, resourceFields) => {
+  if (!endpointFields || !endpointFields.length || !endpointFields[0].type) {
+    return resourceFields;
+  }
+  let returnData = {};
+  const {fields, type} = endpointFields[0];
+
+  if (type === 'inclusion') {
+    fields.forEach(field => {
+      returnData = set(returnData, field, 'default');
+    });
+  } if (type === 'exclusion') {
+    returnData = resourceFields;
+    fields.forEach(field => {
+      unset(returnData, field);
+    });
+  }
+
+  return returnData;
 };
 export const generateReplaceAndRemoveLastModified = patches =>
   (patches &&
@@ -246,7 +266,7 @@ export const getImportMetadata = (connectorMetadata, connectionVersion) => {
                 };
 
                 if (httpEndpoint.resourceFields) {
-                  ep.sampleData = convertResourceFieldstoSampleData(httpEndpoint.resourceFields);
+                  ep.sampleData = getEndpointResourceFields(httpEndpoint.resourceFields, r.sampleData);
                 }
 
                 r?.resourceFieldsUserMustSet?.forEach(f => {
@@ -551,6 +571,10 @@ export const updateFinalMetadataWithHttpFramework = (finalFieldMeta, connector, 
       tempFiledMeta.fieldMap[unEncryptedFields[i].id] = unEncryptedFields[i];
       if (unEncryptedFields[i].id === 'http.unencrypted.version') {
         tempFiledMeta?.layout?.containers[0]?.fields.push(unEncryptedFields[i].id);
+      } else if (unEncryptedFields[i].id.includes('http.unencrypted')) {
+        tempFiledMeta?.layout?.containers?.push({fields: [unEncryptedFields[i].id]});
+      } else if (unEncryptedFields[i].id.includes('http.encrypted')) {
+        tempFiledMeta?.layout?.containers?.push({fields: [unEncryptedFields[i].id]});
       } else if (tempFiledMeta?.layout?.containers?.[0]?.containers?.[1]?.fields) {
         tempFiledMeta.layout.containers[0].containers[1]?.fields.push(unEncryptedFields[i].id);
       } else if (tempFiledMeta?.layout?.containers[2]?.fields) { tempFiledMeta.layout.containers[2].fields.push(unEncryptedFields[i].id); }
@@ -612,19 +636,19 @@ export const updateFinalMetadataWithHttpFramework = (finalFieldMeta, connector, 
         if (tempFiledMeta?.fieldMap['http.auth.type']?.visible === false) {
           delete tempFiledMeta?.layout?.containers[3]?.containers[1]?.type;
         }
-          tempFiledMeta?.layout?.containers?.push({fields: fieldIds});
+        tempFiledMeta?.layout?.containers[7].containers?.push({fields: fieldIds});
+        tempFiledMeta?.layout?.containers[7]?.containers?.splice(0, 1);
+        Object.keys(tempFiledMeta.fieldMap).map(key => {
+          const fieldUserMustSet = connectionTemplate.fieldsUserMustSet?.find(field => key === field.path);
 
-          Object.keys(tempFiledMeta.fieldMap).map(key => {
-            const fieldUserMustSet = connectionTemplate.fieldsUserMustSet?.find(field => key === field.path);
-
-            if (fieldUserMustSet && fieldUserMustSet.helpURL) {
-              tempFiledMeta.fieldMap[key].helpLink = `${fieldUserMustSet.helpURL}`;
-            }
-
-            return tempFiledMeta.fieldMap[key];
+          if (fieldUserMustSet && fieldUserMustSet.helpURL) {
+            tempFiledMeta.fieldMap[key].helpLink = `${fieldUserMustSet.helpURL}`;
           }
 
-          );
+          return tempFiledMeta.fieldMap[key];
+        }
+
+        );
       }
     }
   } else if (!isGenericHTTP) {
