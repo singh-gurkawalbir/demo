@@ -3,7 +3,7 @@ import { useSelector } from 'react-redux';
 import { useLocation, useRouteMatch } from 'react-router-dom';
 import DrawerHeader from '../../Right/DrawerHeader';
 import CloseButton from './CloseButton';
-import { isNewId } from '../../../../utils/resource';
+import { isNewId, convertResourceLabelToLowercase } from '../../../../utils/resource';
 import { selectors } from '../../../../reducers';
 import TitleActions from './TitleActions';
 import DynaHTTPFrameworkBubbleFormView from '../../../DynaForm/fields/DynaHTTPFrameworkBubbleFormView';
@@ -23,7 +23,7 @@ const getTitle = ({ resourceType, resourceLabel, opTitle }) => {
 
   if (!resourceLabel) { return ''; }
 
-  return `${opTitle} ${resourceLabel.toLowerCase()}`;
+  return `${opTitle} ${convertResourceLabelToLowercase(resourceLabel)}`;
 };
 
 const ResourceTitle = ({ flowId }) => {

@@ -109,6 +109,7 @@ describe('metdata flows test cases', () => {
 
     expect(value5Ref).toEqual(
       <ErrorCell
+        isLatestJob
         job={{
           _flowId: '634d67d93b8a451127bb6c0d',
           createdAt: '2022-10-18T06:47:55.741Z',
