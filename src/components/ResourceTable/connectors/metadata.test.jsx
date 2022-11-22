@@ -117,6 +117,7 @@ describe('UI test cases for ResourceTable connectors', () => {
         published
         applications={['netsuite', 'mysql']}
         resourceType="connectors"
+        tooltip="Unpublish / Publish"
       />
     );
     const useRowActions = defaultRef.useRowActions();

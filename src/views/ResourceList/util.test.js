@@ -1,26 +1,32 @@
 /* global describe, test, expect */
-import { connectorFilter } from './util';
+import { additionalFilter } from './util';
 
-describe('connectorFilter test cases', () => {
-  test('Should pass the connectorFilter with exports resource type', () => {
-    const response = connectorFilter('exports');
-
-    expect(response).toEqual({
-      _connectorId: { $exists: false },
-    });
-  });
-
-  test('Should pass the connectorFilter with imports resource type', () => {
-    const response = connectorFilter('imports');
+describe('additionalFilter test cases', () => {
+  test('Should pass the additionalFilter with exports resource type', () => {
+    const response = additionalFilter('exports');
 
     expect(response).toEqual({
       _connectorId: { $exists: false },
     });
   });
 
-  test('Should pass the connectorFilter with connections resource type', () => {
-    const response = connectorFilter('connections');
+  test('Should pass the additionalFilter with imports resource type', () => {
+    const response = additionalFilter('imports');
+
+    expect(response).toEqual({
+      _connectorId: { $exists: false },
+    });
+  });
+
+  test('Should pass the additionalFilter with connections resource type', () => {
+    const response = additionalFilter('connections');
 
     expect(response).toBeNull();
+  });
+
+  test('Should pass the additionalFilter with iClients resource type', () => {
+    const response = additionalFilter('iClients');
+
+    expect(response).toEqual({ provider: 'custom_oauth2' });
   });
 });
