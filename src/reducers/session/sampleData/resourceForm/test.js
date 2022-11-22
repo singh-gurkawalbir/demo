@@ -1007,67 +1007,6 @@ describe('resourceFormSampleData reducer', () => {
       expect(newState).toEqual(expectedState);
     });
   });
-  describe('SET_MOCK_DATA action', () => {
-    const initialState = {
-      456: { preview: {status: 'received', data: {}} },
-      789: { send: {status: 'received', data: {}}, typeOfSampleData: 'send' },
-    };
-    const mockData = {
-      name: 'user1',
-      id: '1',
-    };
-
-    test('should set the mock input data on the resource', () => {
-      const expectedState = {
-        456: { preview: {status: 'received', data: {}}, data: {mockData}},
-        789: { send: {status: 'received', data: {}}, typeOfSampleData: 'send' },
-      };
-      const newState = reducer(
-        initialState,
-        actions.resourceFormSampleData.setMockData('456', mockData)
-      );
-
-      expect(newState).toEqual(expectedState);
-
-      const expectedState1 = {
-        456: { preview: {status: 'received', data: {}} },
-        789: { send: {status: 'received', data: {}}, typeOfSampleData: 'send', data: {mockData}},
-      };
-      const newState1 = reducer(
-        initialState,
-        actions.resourceFormSampleData.setMockData('789', mockData)
-      );
-
-      expect(newState1).toEqual(expectedState1);
-    });
-    test('should add new resource state with parse stage filled with parse data passed for send and preview sample data types', () => {
-      const expectedState = {
-        [resourceId]: { preview: {}, data: {mockData}},
-        ...initialState,
-      };
-      const newState = reducer(
-        initialState,
-        actions.resourceFormSampleData.setMockData(resourceId, mockData)
-      );
-
-      expect(newState).toEqual(expectedState);
-
-      const expectedStateSend = {
-        [resourceId]: { preview: {}, send: {}, typeOfSampleData: 'send', data: {mockData}},
-        ...initialState,
-      };
-      const sendState = reducer(
-        initialState,
-        actions.resourceFormSampleData.updateType(resourceId, 'send')
-      );
-      const newStateSend = reducer(
-        sendState,
-        actions.resourceFormSampleData.setMockData(resourceId, mockData)
-      );
-
-      expect(newStateSend).toEqual(expectedStateSend);
-    });
-  });
 });
 
 describe('sampleData selectors', () => {
@@ -1466,20 +1405,6 @@ describe('sampleData selectors', () => {
       ];
 
       expect(selectors.getResourceSampleDataStages(initialSendState, '123')).toEqual(expectedOutput);
-    });
-  });
-  describe('getResourceMockData', () => {
-    test('should not throw exception for invalid arguments', () => {
-      expect(selectors.getResourceMockData({}, resourceId)).toBeUndefined();
-      expect(selectors.getResourceMockData({})).toBeUndefined();
-      expect(selectors.getResourceMockData({123: {}}, resourceId)).toBeUndefined();
-    });
-    test('should return correct mock data for a resourceid', () => {
-      const state = reducer(
-        {}, actions.resourceFormSampleData.setMockData(resourceId, {data: '123'})
-      );
-
-      expect(selectors.getResourceMockData(state, resourceId)).toEqual({data: '123'});
     });
   });
 });

@@ -178,7 +178,7 @@ describe('SettingsDrawer test cases', () => {
     userEvent.click(closeButton);
     expect(mockHistoryGoBack).toBeCalled();
 
-    const notifyOnFlowError = screen.getByRole('radiogroup', { name: 'Notify me on flow errors'});
+    const notifyOnFlowError = screen.getByRole('radiogroup', { name: 'Notify me of flow errors'});
 
     expect(notifyOnFlowError).toBeInTheDocument();
 

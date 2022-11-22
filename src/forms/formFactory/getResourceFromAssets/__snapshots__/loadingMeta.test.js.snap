@@ -12794,7 +12794,11 @@ Object {
 exports[`getResourceFromAssets load correct form other resource types resouceType integrations 1`] = `
 Object {
   "fieldMeta": Object {
-    "actions": undefined,
+    "actions": Array [
+      Object {
+        "id": "saveandcreateflow",
+      },
+    ],
     "fieldMap": Object {
       "description": Object {
         "fieldId": "description",

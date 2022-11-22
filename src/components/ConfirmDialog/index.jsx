@@ -5,6 +5,7 @@ import ModalDialog from '../ModalDialog';
 import RawHtml from '../RawHtml';
 import ActionGroup from '../ActionGroup';
 import { TextButton, FilledButton, OutlinedButton } from '../Buttons';
+import { DISCARD_DIALOG_TITLE, DISCARD_DIALOG_MESSAGE } from '../../constants';
 
 const useStyles = makeStyles(theme => ({
   message: {
@@ -166,8 +167,8 @@ export default function useConfirmDialog() {
   const saveDiscardDialog = useCallback(
     ({onSave, onDiscard}) => {
       setConfirmDialogProps({
-        title: 'You’ve got unsaved changes',
-        message: 'Are you sure you want to leave this page and lose your unsaved changes?',
+        title: DISCARD_DIALOG_TITLE,
+        message: DISCARD_DIALOG_MESSAGE,
         buttons: [
           { label: 'Save changes', onClick: onSave },
           { label: 'Discard changes', variant: 'outlined', onClick: onDiscard },
