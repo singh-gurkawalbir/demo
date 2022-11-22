@@ -22,6 +22,10 @@ const messages = {
   MAPPER2_WRONG_HANDLEBAR_FOR_RECORD: "Mapper 2.0: The source field values should start with 'record' since input data is of the type record. For instance record.field1, record.field2, etc.",
   MAPPER2_WRONG_SOURCE_DATA_TYPE: "Mapper 2.0: {{{jsonPath}}}: You can't map {{{sourceDataType}}} (source) to {{{dataType}}} (destination)",
   // #endregion
+  // #region Edit mock input error messages
+  MOCK_INPUT_REFRESH_FAILED: 'Failed to fetch latest input data.',
+  MOCK_INPUT_INVALID_JSON: 'Mock input must be valid JSON',
+  MOCK_INPUT_INVALID_FORMAT: 'Mock input must contain page_of_records',
 };
 
 export default function errorMessageStore(key, argsObj) {
