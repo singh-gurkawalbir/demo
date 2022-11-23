@@ -28,6 +28,10 @@ const useStyles = makeStyles(theme => ({
     wordBreak: 'break-word',
     '&>div': {
       maxHeight: 300,
+      '&>ul': {
+        paddingLeft: theme.spacing(2),
+        margin: 0,
+      },
     },
     '& > div > pre': {
       background: theme.palette.background.paper2,
