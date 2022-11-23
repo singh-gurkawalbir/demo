@@ -7,6 +7,7 @@ import {
   INTEGRATION_ACCESS_LEVELS,
   EMAIL_REGEX,
 } from '../../../../constants';
+import messageStore from '../../../../utils/messageStore';
 import useFormInitWithPermissions from '../../../../hooks/useFormInitWithPermissions';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import LoadResources from '../../../LoadResources';
@@ -16,7 +17,6 @@ import DynaSubmit from '../../../DynaForm/DynaSubmit';
 import DrawerContent from '../../../drawer/Right/DrawerContent';
 import DrawerFooter from '../../../drawer/Right/DrawerFooter';
 import { TextButton } from '../../../Buttons';
-import messageStore from '../../../../utils/messageStore';
 
 const integrationsFilterConfig = {
   type: 'integrations',
