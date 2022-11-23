@@ -69,7 +69,7 @@ const useDetermineRequiredResources = type => useMemo(() => {
   }
 
   // if its exports or imports then we need associated connections to be loaded
-  if (resourceType.includes('exports') || resourceType.includes('imports')) return [...resourceType, 'connections'];
+  if (resourceType.includes('exports') || resourceType.includes('imports')) return ['connections', ...resourceType];
 
   return resourceType;
 }, [type]);

@@ -63,4 +63,8 @@ describe('TitleBar tests', () => {
     await initTitleBar(props, 'wrongResourceType');
     expect(screen.getByRole('heading', {name: ''})).toBeInTheDocument();
   });
+  test('Should able to test the TitleBar is there with iClients', async () => {
+    await initTitleBar(props, 'iClients');
+    expect(screen.getByRole('heading', {name: 'Edit iClient'})).toBeInTheDocument();
+  });
 });
