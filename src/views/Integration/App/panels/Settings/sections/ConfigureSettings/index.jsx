@@ -64,7 +64,7 @@ export default function ConfigureSettings({ integrationId, childId, sectionId })
     <LoadResources
       required
       integrationId={integrationId}
-      resources={['flows', 'exports', 'imports', 'connections']}>
+      resources={['connections', 'flows', 'exports', 'imports']}>
       {formState?.formSaveStatus === FORM_SAVE_STATUS.LOADING && <SavingMask />}
       <IsLoggableContextProvider isLoggable>
         <IAFormStateManager

@@ -10,6 +10,7 @@ import FileIcon from '../../components/icons/FileIcon';
 import EditorsPlaygroundIcon from '../../components/icons/EditorsPlaygroundIcon';
 import ConnectionsIcon from '../../components/icons/ConnectionsIcon';
 import AgentsIcon from '../../components/icons/AgentsIcon';
+import IClientsIcon from '../../components/icons/IClientsIcon';
 import ScriptsIcon from '../../components/icons/ScriptsIcon';
 import ImportsIcon from '../../components/icons/ImportsIcon';
 import StacksIcon from '../../components/icons/StacksIcon';
@@ -108,6 +109,7 @@ export default function menuItems({
         getRoutePath('/connections'),
         getRoutePath('/scripts'),
         getRoutePath('/agents'),
+        getRoutePath('/iClients'),
         getRoutePath('/stacks'),
         getRoutePath('/templates'),
         getRoutePath('/connectors'),
@@ -121,6 +123,7 @@ export default function menuItems({
         { label: 'Exports', path: '/exports', Icon: ExportsIcon },
         { label: 'Scripts', path: '/scripts', Icon: ScriptsIcon },
         { label: 'Agents', path: '/agents', Icon: AgentsIcon },
+        { label: 'iClients', path: '/iClients', Icon: IClientsIcon },
         { label: 'Stacks', path: '/stacks', Icon: StacksIcon },
         { label: 'My APIs', path: '/apis', Icon: MyApiIcon },
         { label: 'API tokens', path: '/accesstokens', Icon: TokensApiIcon },

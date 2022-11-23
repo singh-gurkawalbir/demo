@@ -5,6 +5,7 @@ import AddIcon from '../../components/icons/AddIcon';
 import CeligoPageBar from '../../components/CeligoPageBar';
 import { MODEL_PLURAL_TO_LABEL, generateNewId,
   isTradingPartnerSupported,
+  convertResourceLabelToLowercase,
 } from '../../utils/resource';
 import infoText from './infoText';
 import { selectors } from '../../reducers';
@@ -15,7 +16,7 @@ import ShowMoreDrawer from '../../components/drawer/ShowMore';
 import KeywordSearch from '../../components/KeywordSearch';
 import CheckPermissions from '../../components/CheckPermissions';
 import { PERMISSIONS } from '../../constants';
-import { connectorFilter } from './util';
+import { additionalFilter } from './util';
 import actions from '../../actions';
 import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
 import StackShareDrawer from '../../components/StackShare/Drawer';
@@ -47,7 +48,7 @@ const createdResouceLabelFn = (resourceType, resourceName) => {
     if (['accesstokens', 'apis', 'connectors'].includes(resourceType)) {
       createResourceLabel = resourceName;
     } else {
-      createResourceLabel = resourceName.toLowerCase();
+      createResourceLabel = convertResourceLabelToLowercase(resourceName);
     }
   }
 
@@ -63,7 +64,7 @@ export default function ResourceList(props) {
   const filterConfig = useMemo(
     () => ({
       type: resourceType,
-      filter: connectorFilter(resourceType),
+      filter: additionalFilter(resourceType),
       ...(filter || {}),
     }),
     [filter, resourceType]
@@ -141,7 +142,7 @@ export default function ResourceList(props) {
       <ScriptLogsDrawerRoute />
 
       <CeligoPageBar
-        title={`${resourceName}s`}
+        title={resourceType === 'iClients' ? resourceType : `${resourceName}s`}
         infoText={infoText[resourceType]}>
         <ActionGroup>
           <KeywordSearch

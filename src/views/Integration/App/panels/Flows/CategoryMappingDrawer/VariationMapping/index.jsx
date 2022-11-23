@@ -245,7 +245,7 @@ export default function VariationMappingDrawerRoute({ integrationId, flowId, cat
   const match = useRouteMatch();
 
   return (
-    <LoadResources required integrationId={integrationId} resources="flows,exports,imports,connections">
+    <LoadResources required integrationId={integrationId} resources="flows,connections,exports,imports">
       <RightDrawer
         path={[
           drawerPaths.MAPPINGS.CATEGORY_MAPPING.VARIATION_MAPPING.VARIATION,
