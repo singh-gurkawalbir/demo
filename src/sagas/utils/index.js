@@ -283,10 +283,6 @@ export const getImportMetadata = (connectorMetadata, connectionVersion) => {
                 if (requiredMappings) {
                   ep.requiredMappings = requiredMappings;
                 }
-                // isIdentifier should be always set on last path parameters
-                if (parameters.length && (ep.ignoreExisting || ep.ignoreMissing || ep.askForHowToGetIdentifier)) {
-                  parameters[parameters.length - 1].isIdentifier = true;
-                }
                 if (parameters.length) {
                   ep.parameters = parameters;
                 }
