@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, shallowEqual } from 'react-redux';
 import { selectors } from '../../../../reducers';
 import { getAsyncKey } from '../../../../utils/saveAndCloseButtons';
 import SaveAndCloseMiniResourceForm from '../../../SaveAndCloseButtonGroup/SaveAndCloseMiniResourceForm';
@@ -17,6 +17,7 @@ export default function OAuthAndTest({
   integrationId,
   parentType,
   parentId,
+  isHTTPForm,
 }) {
   const formSaveStatus = useSelector(state =>
     selectors.asyncTaskStatus(state, getAsyncKey(resourceType, resourceId))
@@ -25,6 +26,10 @@ export default function OAuthAndTest({
     selectors.testConnectionCommState(state, resourceId)
   );
   const pingLoading = testConnectionCommState.commState === PING_STATES.LOADING;
+
+  const values = useSelector(state => selectors.formValueTrimmed(state, formKey), shallowEqual);
+  const iClientGrantType = useSelector(state => selectors.resource(state, 'iClients', values?.['/http/_iClientId'])?.oauth2?.grantType);
+  const oauthType = values?.['/http/auth/type'];
 
   const parentContext = useMemo(() => ({
     flowId,
@@ -35,6 +40,10 @@ export default function OAuthAndTest({
 
   const handleSave = useHandleSaveAndAuth({formKey, resourceType, resourceId, parentContext});
   const disabled = formSaveStatus === FORM_SAVE_STATUS.LOADING;
+
+  if (isHTTPForm && (oauthType !== 'oauth' || iClientGrantType === 'clientcredentials')) {
+    return null;
+  }
 
   return (
     <>
