@@ -106,7 +106,7 @@ function MyUserSettings() {
           onChange={handleEnableMFA}
           checked={isMFASetupIncomplete || isMFAEnabled}
           disabled={isMFASetupIncomplete}
-          tooltip="Off/On"
+          tooltip="Off / On"
           data-test="mfa-switch-button" />
       </div>
       { isMFAEnabled || isMFASetupIncomplete ? (
