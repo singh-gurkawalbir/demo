@@ -148,6 +148,13 @@ describe('ResourceList test cases', () => {
     expect(screen.queryByText(/Stacks/i)).toBeInTheDocument();
   });
 
+  test('should pass the initial render with iClients resource type', async () => {
+    await initResourceList({
+      resourceType: 'iClients',
+    });
+    expect(screen.queryByText(/iClients/i)).toBeInTheDocument();
+  });
+
   test('should pass the initial render with empty resource type', async () => {
     await initResourceList({
       resourceType: null,
