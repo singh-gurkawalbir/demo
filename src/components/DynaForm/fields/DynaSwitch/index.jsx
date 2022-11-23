@@ -8,7 +8,10 @@ import ActionGroup from '../../../ActionGroup';
 
 const useStyles = makeStyles(theme => ({
   dynaSwitchLabel: {
-    marginRight: theme.spacing(3),
+    marginRight: theme.spacing(1),
+  },
+  dynaSwitch: {
+    marginRight: theme.spacing(0),
   },
 }));
 
@@ -29,7 +32,12 @@ export default function DynaSwitch(props) {
       <FormLabel htmlFor={id} className={classes.dynaSwitchLabel}>
         {label}
       </FormLabel>
-      <CeligoSwitch {...rest} onChange={onChange} checked={value} tooltip={tooltip} />
+      <CeligoSwitch
+        {...rest}
+        onChange={onChange}
+        checked={value}
+        tooltip={rest.disabled ? tooltip : ''}
+        className={classes.dynaSwitch} />
       <FieldHelp {...props} />
     </ActionGroup>
   );

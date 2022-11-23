@@ -16,6 +16,7 @@ import DynaSubmit from '../../../DynaForm/DynaSubmit';
 import DrawerContent from '../../../drawer/Right/DrawerContent';
 import DrawerFooter from '../../../drawer/Right/DrawerFooter';
 import { TextButton } from '../../../Buttons';
+import messageStore from '../../../../utils/messageStore';
 
 const integrationsFilterConfig = {
   type: 'integrations',
@@ -192,7 +193,7 @@ export default function UserForm({
         id: 'accountSSORequired',
         name: 'accountSSORequired',
         label: 'Require SSO?',
-        tooltip: 'No / Yes',
+        tooltip: messageStore('ACCOUNT_SSO_OR_MFA_REQUIRED_TOOLTIP'),
         defaultValue: isEditMode && isValidUser ? !!data.accountSSORequired : false,
         visible: !isEditMode && isAccountOwnerOrAdmin && isSSOEnabled,
         // Incase of invite, this field should not be passed if the owner has not enabled SSO
@@ -210,7 +211,7 @@ export default function UserForm({
         defaultValue: isEditMode && isValidUser ? !!data.accountMFARequired : false,
         visible: !isEditMode && isAccountOwnerOrAdmin,
         disabledWhen: [{ field: 'accountSSORequired', is: [true] }],
-        tooltip: 'No / Yes',
+        tooltip: messageStore('ACCOUNT_SSO_OR_MFA_REQUIRED_TOOLTIP'),
         helpKey: 'userForm.accountMFARequired',
         noApi: true,
       },
