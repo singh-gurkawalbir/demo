@@ -274,7 +274,7 @@ export function* purgeError({ flowId, resourceId, errors }) {
 
   try {
     yield call(apiCallWithRetry, {
-      path: `/flows/${flowId}/${resourceId}/resolved `,
+      path: `/flows/${flowId}/${resourceId}/resolved`,
       opts: {
         method: 'DELETE',
         body: {

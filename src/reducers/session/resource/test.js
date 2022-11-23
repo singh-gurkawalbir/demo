@@ -1,7 +1,8 @@
 /* global describe, test, expect */
 import reducer, { selectors } from '.';
 import actions from '../../../actions';
-import { LICENSE_REACTIVATED_MESSAGE, LICENSE_UPGRADE_REQUEST_SUBMITTED_MESSAGE} from '../../../constants';
+import { LICENSE_REACTIVATED_MESSAGE, LICENSE_UPGRADE_REQUEST_SUBMITTED_MESSAGE, REQUEST_UPGRADE_SUCCESS_MESSAGE} from '../../../constants';
+import messageStore from '../../../utils/messageStore';
 
 describe('session.resource reducers', () => {
   test('reducer should return previous state if action is not handled.', () => {
@@ -87,6 +88,26 @@ describe('session.resource reducers', () => {
         actions.license.licenseUpgradeRequestSubmitted()
       );
       const expected = {platformLicenseActionMessage: LICENSE_UPGRADE_REQUEST_SUBMITTED_MESSAGE};
+
+      expect(state).toEqual(expected);
+    });
+    test('should store the license upgrade request submitted message for twoDotZero resource', () => {
+      const isTwoDotZero = true;
+      const state = reducer(
+        undefined,
+        actions.license.licenseUpgradeRequestSubmitted(undefined, undefined, isTwoDotZero)
+      );
+      const expected = {platformLicenseActionMessage: REQUEST_UPGRADE_SUCCESS_MESSAGE};
+
+      expect(state).toEqual(expected);
+    });
+    test('should store the license upgrade request submitted message for feature SSO and dataRetention', () => {
+      const feature = 'SSO';
+      const state = reducer(
+        undefined,
+        actions.license.licenseUpgradeRequestSubmitted(undefined, feature)
+      );
+      const expected = {platformLicenseActionMessage: messageStore('FEATURE_LICENSE_UPGRADE_REQUEST_SUBMITTED_MESSAGE')};
 
       expect(state).toEqual(expected);
     });
