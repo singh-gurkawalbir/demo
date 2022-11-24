@@ -114,7 +114,7 @@ describe('FlowChart UI Tests', () => {
     const store = await renderWithProps(props);
 
     store.dispatch(actions.flowMetrics.received('629f0dcfccb94d35de6f436b', []));
-    const value = screen.getAllByText('123');
+    const value = await waitFor(() => screen.getAllByText('123'));
     const lastindex = value.length - 1;
 
     fireEvent.mouseEnter(value[lastindex]);
@@ -128,9 +128,9 @@ describe('FlowChart UI Tests', () => {
     const store = await renderWithProps(props);
 
     store.dispatch(actions.flowMetrics.received('629f0dcfccb94d35de6f436b', []));
-    expect(screen.getAllByText('Tooltip')[0]).toBeInTheDocument();
-    expect(screen.getAllByText('06/05/2022')[0]).toBeInTheDocument();
-    expect(screen.getAllByText('name: nametext')[0]).toBeInTheDocument();
+    await waitFor(() => expect(screen.getAllByText('Tooltip')[0]).toBeInTheDocument());
+    await waitFor(() => expect(screen.getAllByText('06/05/2022')[0]).toBeInTheDocument());
+    await waitFor(() => expect(screen.getAllByText('name: nametext')[0]).toBeInTheDocument());
   });
   test('should run with an error', async () => {
     const store = await renderWithProps(props);
@@ -167,6 +167,6 @@ describe('FlowChart UI Tests', () => {
       type: 'sei',
       value: 0,
     }));
-    expect(screen.getAllByText('1656936991435 , 1656936991435')[0]).toBeInTheDocument();
+    await waitFor(() => expect(screen.getAllByText('1656936991435 , 1656936991435')[0]).toBeInTheDocument());
   });
 });
