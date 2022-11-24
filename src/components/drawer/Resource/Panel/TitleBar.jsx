@@ -3,10 +3,10 @@ import { useSelector } from 'react-redux';
 import { useLocation, useRouteMatch } from 'react-router-dom';
 import DrawerHeader from '../../Right/DrawerHeader';
 import CloseButton from './CloseButton';
-import { isNewId } from '../../../../utils/resource';
+import { isNewId, convertResourceLabelToLowercase } from '../../../../utils/resource';
 import { selectors } from '../../../../reducers';
 import TitleActions from './TitleActions';
-import DynaFormView from '../../../DynaForm/fields/DynaFormView';
+import DynaHTTPFrameworkBubbleFormView from '../../../DynaForm/fields/DynaHTTPFrameworkBubbleFormView';
 import DynaConnectionFormView from '../../../DynaForm/fields/DynaConnectionFormView';
 
 const getTitle = ({ resourceType, resourceLabel, opTitle }) => {
@@ -23,7 +23,7 @@ const getTitle = ({ resourceType, resourceLabel, opTitle }) => {
 
   if (!resourceLabel) { return ''; }
 
-  return `${opTitle} ${resourceLabel.toLowerCase()}`;
+  return `${opTitle} ${convertResourceLabelToLowercase(resourceLabel)}`;
 };
 
 const ResourceTitle = ({ flowId }) => {
@@ -62,12 +62,16 @@ export default function TitleBar({ flowId, formKey, onClose }) {
       CloseButton={ResourceCloseButton}
       handleBack={onClose} >
       {['imports', 'exports'].includes(resourceType) && (
-      <DynaFormView
+      <DynaHTTPFrameworkBubbleFormView
         formKey={formKey} resourceType={resourceType} resourceId={id} flowId={flowId}
         defaultValue="false"
         isTitleBar />
       )}
-      {resourceType === 'connections' && <DynaConnectionFormView formKey={formKey} resourceType={resourceType} resourceId={id} defaultValue="false" /> }
+      {resourceType === 'connections' && (
+      <DynaConnectionFormView
+        formKey={formKey} resourceType={resourceType} resourceId={id} defaultValue="false"
+        sourceForm="title" />
+      ) }
       <TitleActions flowId={flowId} />
     </DrawerHeader>
   );

@@ -8,6 +8,7 @@ import actions from '../../../../actions';
 import { getValidRelativePath } from '../../../../utils/routePaths';
 import { buildDrawerUrl, drawerPaths } from '../../../../utils/rightDrawer';
 import { isMetaRequiredValuesMet, PARAMETER_LOCATION } from '../../../../utils/assistant';
+import messageStore from '../../../../utils/messageStore';
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -96,14 +97,19 @@ export default function DynaHFAssistantSearchParams(props) {
       name: <KeyLabel id={id} description={description} />,
       value: id,
     })), [paramMeta.fields]);
-  const suggestionConfig = useMemo(() => ({
-    keyConfig: {
-      suggestions: dataFields,
-      labelName: 'name',
-      valueName: 'value',
-      showAllSuggestions: true,
-    },
-  }), [dataFields]);
+
+  const suggestionConfig = useMemo(() => {
+    const updatedDataFields = dataFields.filter(field => !Object.keys(value).includes(field.value));
+
+    return ({
+      keyConfig: {
+        suggestions: updatedDataFields,
+        labelName: 'name',
+        valueName: 'value',
+        showAllSuggestions: true,
+      },
+    });
+  }, [dataFields, value]);
 
   useEffect(() => {
     if (!required) {
@@ -111,7 +117,7 @@ export default function DynaHFAssistantSearchParams(props) {
 
       return;
     }
-    dispatch(actions.form.forceFieldState(formKey)(id, {isValid: isMetaValid}));
+    dispatch(actions.form.forceFieldState(formKey)(id, {isValid: isMetaValid, errorMessages: messageStore('REQUIRED_MESSAGE')}));
   }, [dispatch, formKey, id, isMetaValid, required]);
 
   useEffect(() => () => {
@@ -172,6 +178,8 @@ export default function DynaHFAssistantSearchParams(props) {
       value={updatedValue}
       onUpdate={handleUpdate}
       handleEditorClick={handleEditorClick}
+      isEndSearchIcon
+      isInlineClose
     />
   );
 }

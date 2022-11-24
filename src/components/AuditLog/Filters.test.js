@@ -35,6 +35,13 @@ initialStore.getState().data.audit = {
     ],
   },
 };
+initialStore.getState().session.filters = {
+  auditLogs: { paging: {
+    rowsPerPage: 50,
+    currPage: 0,
+  },
+  },
+};
 const propsObj = {
   resourceDetails: {
     ssoclients: {},
@@ -99,6 +106,7 @@ const propsObj = {
   },
   resourceType: 'integrations',
   resourceId: '6253af74cddb8a1ba550a010',
+  totalCount: 1,
 };
 
 jest.mock('../DateRangeSelector', () => ({
@@ -184,6 +192,18 @@ describe('UI test cases for Audit Log Filter ', () => {
   test('should run the onSave function on clicking the mocked download button', () => {
     userEvent.click(screen.getByText('Download'));
     expect(mockDispatchFn).toBeCalled();
+  });
+  test('Should able to pass initial render with default values having logs > 0 and navigate to next and previous Page', () => {
+    expect(screen.getByText(/1 - 1 of 1+/i)).toBeInTheDocument();
+    const rowsTextNode = screen.getByText(/Results per page:/i);
+
+    expect(rowsTextNode).toBeInTheDocument();
+    const prevPageButtonNode = screen.getByTestId(/prevPage/i);
+
+    expect(prevPageButtonNode).toBeInTheDocument();
+    const nextPageButtonNode = screen.getByTestId(/nextPage/i);
+
+    expect(nextPageButtonNode).toBeInTheDocument();
   });
 });
 test('should display the user emailId under select users tab when name is not present', () => {

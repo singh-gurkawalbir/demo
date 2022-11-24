@@ -25,7 +25,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function Help({ className, helpKey, helpText, escapeUnsecuredDomains, disablePortal = 'true', placement = 'right', ...rest }) {
+export default function Help({ className, helpKey, helpText, escapeUnsecuredDomains, disablePortal = true, placement = 'right', ...rest }) {
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = useState(null);
   const popperRef = React.useRef(null);

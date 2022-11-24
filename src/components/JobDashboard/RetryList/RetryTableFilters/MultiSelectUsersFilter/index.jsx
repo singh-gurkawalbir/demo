@@ -19,9 +19,14 @@ const defaultUserId = 'all';
 
 export default function MultiSelectUsersFilter({flowId, resourceId, filterKey}) {
   const classes = useStyles();
-  const users = useSelector(
-    state => selectors.retryUsersList(state, flowId, resourceId)
+  const integrationId = useSelector(state =>
+    selectors.resource(state, 'flows', flowId)?._integrationId || 'none'
   );
+  const users = useSelector(
+    state => selectors.retryUsersList(state, integrationId, flowId, resourceId)
+  );
+
+  const retries = useSelector(state => selectors.retryList(state, flowId, resourceId, {}));
   const filterOptions = useSelector(state => selectors.filter(state, filterKey));
   const selected = filterOptions[filterBy]?.length ? filterOptions[filterBy] : ['all'];
 
@@ -40,6 +45,10 @@ export default function MultiSelectUsersFilter({flowId, resourceId, filterKey}) 
       Retry started by:
     </Typography>
   ), [classes.customUserLabel]);
+
+  if (!retries.length) {
+    return null;
+  }
 
   return (
     <MultiSelectColumnFilter

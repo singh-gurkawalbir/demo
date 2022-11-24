@@ -42,6 +42,12 @@ export const PERMISSIONS = Object.freeze({
     edit: 'connections.edit',
     delete: 'connections.delete',
   },
+  iClients: {
+    view: 'connections.view',
+    create: 'connections.create',
+    edit: 'connections.edit',
+    delete: 'connections.delete',
+  },
   connectors: {
     publish: 'connectors.publish',
     view: 'connectors.view',

@@ -7,6 +7,9 @@ import actions from '../../../../actions';
 import { selectors } from '../../../../reducers';
 import Spinner from '../../../Spinner';
 import { buildDrawerUrl, drawerPaths } from '../../../../utils/rightDrawer';
+import FieldMessage from '../../../DynaForm/fields/FieldMessage';
+import errorMessageStore from '../../../../utils/errorStore';
+import { MAX_TEMPLATE_ZIP_SIZE } from '../../../../constants';
 
 const useStyles = makeStyles(theme => ({
   uploadButton: {
@@ -55,6 +58,7 @@ export default function UploadFile() {
   const history = useHistory();
   const location = useLocation();
   const [uploadInProgress, setUploadInProgress] = useState(false);
+  const [error, setError] = useState();
   const { isFileUploaded, templateId } = useSelector(state =>
     selectors.isFileUploaded(state)
   );
@@ -85,10 +89,15 @@ export default function UploadFile() {
   }, [dispatch, previewFailedStatus, id]);
 
   const handleUploadFileChange = e => {
+    setError();
     const file = e.target.files[0];
 
-    dispatch(actions.file.previewZip(file));
-    setUploadInProgress(true);
+    if (file?.size > MAX_TEMPLATE_ZIP_SIZE) {
+      setError(errorMessageStore('FILE_SIZE_EXCEEDED'));
+    } else {
+      dispatch(actions.file.previewZip(file));
+      setUploadInProgress(true);
+    }
   };
 
   if (uploadInProgress) {
@@ -127,6 +136,7 @@ export default function UploadFile() {
           </label>
           <p className={classes.defaultText}>No file chosen</p>
         </div>
+        {error && <FieldMessage errorMessages={error} />}
       </FormControl>
     </div>
   );

@@ -219,15 +219,20 @@ export function* commitStagedChanges({ resourceType, id, scope, options, context
   if (!merged.assistant && merged?.http?.formType === 'rest' && merged.adaptorType === 'HTTPImport') {
     merged = importConversionUtil.convertImportJSONObjRESTtoHTTP(merged);
   }
-  if (['exports', 'imports'].includes(resourceType)) {
-    delete merged.adaptorType;
+
+  if (resourceType === 'connections' && master && getHttpConnector(merged?.http?._httpConnectorId) && master.type === 'rest') {
+    merged.type = 'rest';
+    delete merged.rest;
   }
+
   if (resourceType === 'exports' && merged._rest) {
     delete merged._rest;
   }
   if (['exports', 'imports'].includes(resourceType) && merged.adaptorType && !merged.adaptorType.includes('AS2')) {
     // AS2 is special case where backend cannot identify adaptorType on its own
-    delete merged.adaptorType;
+    if (merged.restToHTTPConverted) {
+      merged.adaptorType = resourceType === 'exports' ? 'RESTExport' : 'RESTImport';
+    } else { delete merged.adaptorType; }
   }
 
   // When integrationId is set on connection model, integrations/:_integrationId/connections route will be used
@@ -727,8 +732,8 @@ export function* deleteIntegration({ integrationId }) {
   yield put(actions.resource.integrations.redirectTo(integrationId, HOME_PAGE_PATH));
 }
 
-export function* getResourceCollection({ resourceType, refresh, integrationId }) {
-  let path = `/${resourceType}`;
+export function* getResourceCollection({ resourceType, refresh, integrationId, nextPagePath }) {
+  let path = nextPagePath || `/${resourceType}`;
   let hideNetWorkSnackbar;
 
   /** hide the error that GET SuiteScript tiles throws when connection is offline */
@@ -739,6 +744,7 @@ export function* getResourceCollection({ resourceType, refresh, integrationId })
     resourceType &&
     ((resourceType.includes('suitescript/connections/') && resourceType.includes('/tiles')) ||
     resourceType.includes('ashares') ||
+    resourceType.includes('httpconnectors') ||
     resourceType.includes('transfers'))
   ) {
     hideNetWorkSnackbar = true;
@@ -775,6 +781,15 @@ export function* getResourceCollection({ resourceType, refresh, integrationId })
       refresh,
     });
 
+    if (path.includes('/audit')) {
+      const {data, nextLinkPath} = collection || {};
+
+      collection = data;
+      if (nextLinkPath) {
+        yield put(actions.auditLogs.receivedNextPagePath(nextLinkPath));
+      }
+    }
+
     if (resourceType === 'stacks') {
       let sharedStacks = yield call(apiCallWithPaging, {
         path: '/shared/stacks',
@@ -803,7 +818,7 @@ export function* getResourceCollection({ resourceType, refresh, integrationId })
       collection = undefined;
     }
 
-    yield put(actions.resource.receivedCollection(resourceType, collection, integrationId));
+    yield put(actions.resource.receivedCollection(resourceType, collection, integrationId, nextPagePath ? true : undefined));
     yield put(actions.resource.collectionRequestSucceeded({resourceType: updatedResourceType, integrationId}));
 
     return collection;
@@ -1153,6 +1168,10 @@ export function* downloadAuditlogs({resourceType, resourceId, childId, filters})
 
     if (response.signedURL) {
       yield call(openExternalUrl, { url: response.signedURL });
+    }
+
+    if (response.hasMore) {
+      yield put(actions.auditLogs.toggleHasMoreDownloads(true));
     }
   } catch (e) {
     //  Handle errors

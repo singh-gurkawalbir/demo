@@ -44,6 +44,9 @@ export default {
       fieldId: '_borrowConcurrencyFromConnectionId',
     },
     'salesforce.concurrencyLevel': { fieldId: 'salesforce.concurrencyLevel' },
+    autoRecoverGovernanceErrors: {
+      fieldId: 'autoRecoverGovernanceErrors',
+    },
     application: {
       fieldId: 'application',
     },
@@ -76,6 +79,7 @@ export default {
         fields: [
           '_borrowConcurrencyFromConnectionId',
           'salesforce.concurrencyLevel',
+          'autoRecoverGovernanceErrors',
         ],
       },
     ],
