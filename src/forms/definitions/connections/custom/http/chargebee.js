@@ -21,6 +21,7 @@ export default {
       endAdornment: '.chargebee.com/api',
       label: 'Subdomain',
       required: true,
+      helpKey: 'chargebee.connection.http.subdomain',
       validWhen: {
         matchesRegEx: {
           pattern: '^[\\S]+$',
