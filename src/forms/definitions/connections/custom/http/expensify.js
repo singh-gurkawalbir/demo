@@ -32,8 +32,7 @@ export default {
       id: 'http.unencrypted.partnerUserId',
       type: 'text',
       label: 'Partner user id',
-      helpKey:
-        'Please enter your partner user id of expenisfy account which can be obtained from  https://www.expensify.com/tools/integrations/ after creating Expensify account at https://www.expensify.com/.',
+      helpKey: 'expensify.connection.http.unencrypted.partnerUserId',
       required: true,
     },
     'http.encrypted.partnerUserSecret': {
@@ -42,6 +41,7 @@ export default {
       inputType: 'password',
       label: 'Partner user secret',
       required: true,
+      helpKey: 'expensify.connection.http.encrypted.partnerUserSecret',
       description:
         'Note: for security reasons this field must always be re-entered.',
     },
