@@ -8,7 +8,7 @@ import { renderWithProviders } from '../../../../test/test-utils';
 
 const props = { value: {test: 'value1', test1: 'value2'}, isLoggable: true };
 
-describe('Testing Default panel Component', async () => {
+describe('Testing Default panel Component', () => {
   test('Testing Default panel by passing a value to the value key', async () => {
     renderWithProviders(
       <DefaultPanel {...props} />

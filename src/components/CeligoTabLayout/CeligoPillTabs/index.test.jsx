@@ -11,7 +11,7 @@ const props = {
   tabs: [],
 };
 
-describe('Testing Celigo Pills Tab', async () => {
+describe('Testing Celigo Pills Tab', () => {
   test('Testing Celigo Pills Tab with defaultTab and empty tabs Props', () => {
     render(
       <MemoryRouter>
