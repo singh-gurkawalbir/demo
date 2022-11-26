@@ -5,7 +5,7 @@ import { MemoryRouter } from 'react-router-dom';
 import userEvent from '@testing-library/user-event';
 import ConnectionStatusPanel from '.';
 import actions from '../../actions';
-import { mockPostRequest, mockPostRequestOnce, renderWithProviders } from '../../test/test-utils';
+import { mockPostRequest, renderWithProviders } from '../../test/test-utils';
 
 const mockHistoryPush = jest.fn();
 
