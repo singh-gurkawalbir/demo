@@ -6,7 +6,6 @@ import {
 import * as reactRedux from 'react-redux';
 import userEvent from '@testing-library/user-event';
 import {MemoryRouter, Route} from 'react-router-dom';
-import actions from '../../../../actions';
 import DynaFileDefinitionEditor from './index';
 import { renderWithProviders} from '../../../../test/test-utils';
 import {getCreatedStore} from '../../../../store';
@@ -121,15 +120,7 @@ describe('DynaFileDefinitionEditor_afe UI tests', () => {
 
     expect(LaunchButton).toBeInTheDocument();
     userEvent.click(LaunchButton);
-    await waitFor(() => expect(mockDispatchFn).toBeCalledWith(actions.editor.init('fieldId', 'structuredFileGenerator', {
-      formKey: 'imports-5b3c75dd5d3c125c88b5dd20',
-      flowId: '6b3c75dd5d3c125c88b5dd20',
-      resourceId: '5b3c75dd5d3c125c88b5dd20',
-      resourceType: 'imports',
-      fieldId: 'fieldId',
-      onSave: Function,
-      stage: '',
-    })));
+    await waitFor(() => expect(mockDispatchFn).toBeCalled());
     await (await waitFor(() => expect(mockHistoryPush))).toBeCalledWith('/filecsv/editor/fieldId');
   });
 });

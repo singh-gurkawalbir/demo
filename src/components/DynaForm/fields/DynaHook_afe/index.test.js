@@ -123,8 +123,9 @@ describe('DynaHook_afe UI tests', () => {
     screen.debug();
   });
   test('should render the ScriptView component by default when no hookType is passed in props', () => {
-    props.hookType = null;
-    renderWithProviders(<MemoryRouter><DynaHookAFE {...props} /></MemoryRouter>);
+    const newprops = {};
+
+    renderWithProviders(<MemoryRouter><DynaHookAFE {...newprops} /></MemoryRouter>);
     expect(screen.getByText('Script')).toBeInTheDocument();
     expect(document.querySelector('[id="scriptId"]')).toBeInTheDocument();
     expect(document.querySelector('[title="Create script"]')).toBeInTheDocument();
