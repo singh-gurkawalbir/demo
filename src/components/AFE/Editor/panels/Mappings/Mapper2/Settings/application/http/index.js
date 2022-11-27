@@ -269,6 +269,7 @@ export default {
           visibleWhenAll: [
             { field: 'dataType', isNot: ['object', 'objectarray', 'stringarray', 'numberarray', 'booleanarray'] },
             { field: 'fieldMappingType', isNot: ['hardCoded', 'multifield'] },
+            { field: 'lookup.mode', isNot: ['dynamic'] },
           ],
           options: [
             {

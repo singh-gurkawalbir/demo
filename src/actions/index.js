@@ -542,6 +542,7 @@ const auditLogs = {
     childId,
     filters,
   }),
+  toggleHasMoreDownloads: hasMoreDownloads => action(actionTypes.RESOURCE.AUDIT_LOGS_HAS_MORE_DOWNLOADS, {hasMoreDownloads}),
   clear: () => action(actionTypes.RESOURCE.AUDIT_LOGS_CLEAR),
 };
 const connectors = {
@@ -1450,11 +1451,17 @@ const resourceFormSampleData = {
   setPreviewData: (resourceId, previewData) => action(actionTypes.RESOURCE_FORM_SAMPLE_DATA.SET_PREVIEW_DATA, { resourceId, previewData }),
   setCsvFileData: (resourceId, csvData) => action(actionTypes.RESOURCE_FORM_SAMPLE_DATA.SET_CSV_FILE_DATA, { resourceId, csvData }),
   setProcessorData: ({resourceId, processor, processorData}) => action(actionTypes.RESOURCE_FORM_SAMPLE_DATA.SET_PROCESSOR_DATA, { resourceId, processor, processorData }),
-  setMockData: (resourceId, mockData) => action(actionTypes.RESOURCE_FORM_SAMPLE_DATA.SET_MOCK_DATA, { resourceId, mockData }),
   updateRecordSize: (resourceId, recordSize) => action(actionTypes.RESOURCE_FORM_SAMPLE_DATA.UPDATE_RECORD_SIZE, { resourceId, recordSize }),
   clear: resourceId => action(actionTypes.RESOURCE_FORM_SAMPLE_DATA.CLEAR, { resourceId }),
   clearStages: resourceId => action(actionTypes.RESOURCE_FORM_SAMPLE_DATA.CLEAR_STAGES, { resourceId }),
   updateType: (resourceId, sampleDataType) => action(actionTypes.RESOURCE_FORM_SAMPLE_DATA.UPDATE_DATA_TYPE, { resourceId, sampleDataType }),
+};
+const mockInput = {
+  request: (resourceId, resourceType, flowId, options) => action(actionTypes.MOCK_INPUT.REQUEST, {resourceId, resourceType, flowId, options}),
+  received: (resourceId, data) => action(actionTypes.MOCK_INPUT.RECEIVED, {resourceId, data}),
+  receivedError: (resourceId, error) => action(actionTypes.MOCK_INPUT.RECEIVED_ERROR, {resourceId, error}),
+  updateUserMockInput: (resourceId, data) => action(actionTypes.MOCK_INPUT.UPDATE_USER_MOCK_INPUT, {resourceId, data}),
+  clear: resourceId => action(actionTypes.MOCK_INPUT.CLEAR, {resourceId}),
 };
 const app = {
   polling: {
@@ -1565,14 +1572,13 @@ const mapping = {
     addRow: v2Key => action(actionTypes.MAPPING.V2.ADD_ROW, { v2Key }),
     updateDataType: (v2Key, newDataType, isSource) => action(actionTypes.MAPPING.V2.UPDATE_DATA_TYPE, { v2Key, newDataType, isSource }),
     changeArrayTab: (v2Key, newTabValue, newTabExtractId) => action(actionTypes.MAPPING.V2.CHANGE_ARRAY_TAB, { v2Key, newTabValue, newTabExtractId }),
-    patchField: (field, v2Key, value) => action(actionTypes.MAPPING.V2.PATCH_FIELD, { field, v2Key, value }),
+    patchField: (field, v2Key, value, isSettingsPatch, selectedExtractJsonPath) => action(actionTypes.MAPPING.V2.PATCH_FIELD, { field, v2Key, value, isSettingsPatch, selectedExtractJsonPath }),
     patchSettings: (v2Key, value) => action(actionTypes.MAPPING.V2.PATCH_SETTINGS, { v2Key, value }),
     patchExtractsFilter: (inputValue, propValue) => action(actionTypes.MAPPING.V2.PATCH_EXTRACTS_FILTER, { inputValue, propValue }),
     deleteAll: isCSVOrXLSX => action(actionTypes.MAPPING.V2.DELETE_ALL, { isCSVOrXLSX }),
     autoCreateStructure: (uploadedData, isCSVOrXLSX) => action(actionTypes.MAPPING.V2.AUTO_CREATE_STRUCTURE, { uploadedData, isCSVOrXLSX }),
     toggleAutoCreateFlag: () => action(actionTypes.MAPPING.V2.TOGGLE_AUTO_CREATE_FLAG, {}),
-    updateHighlightedIndex: index => action(actionTypes.MAPPING.V2.UPDATE_HIGHLIGHTED_INDEX, {index}),
-    searchTree: ({ searchKey, showKey }) => action(actionTypes.MAPPING.V2.SEARCH_TREE, { searchKey, showKey }),
+    searchTree: searchKey => action(actionTypes.MAPPING.V2.SEARCH_TREE, { searchKey }),
     updateFilter: filter => action(actionTypes.MAPPING.V2.UPDATE_FILTER, { filter }),
     deleteNewRowKey: () => action(actionTypes.MAPPING.V2.DELETE_NEW_ROW_KEY, {}),
   },
@@ -2483,6 +2489,7 @@ export default {
   assistantMetadata,
   stack,
   resourceFormSampleData,
+  mockInput,
   importSampleData,
   flowData,
   connection,

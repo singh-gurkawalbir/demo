@@ -5,7 +5,7 @@ const defaultState = {};
 const emptySet = [];
 
 export default (state = defaultState, action) => {
-  const { type, resourceType, collection, nextPagePath, isNextPageCollection } = action;
+  const { type, resourceType, collection, nextPagePath, isNextPageCollection, hasMoreDownloads } = action;
 
   if (type === actionTypes.RESOURCE.AUDIT_LOGS_CLEAR) {
     return defaultState;
@@ -48,6 +48,12 @@ export default (state = defaultState, action) => {
       case actionTypes.RESOURCE.AUDIT_LOGS_NEXT_PATH: {
         draft.loadMoreStatus = 'received';
         draft.nextPagePath = nextPagePath;
+
+        break;
+      }
+
+      case actionTypes.RESOURCE.AUDIT_LOGS_HAS_MORE_DOWNLOADS: {
+        draft.hasMoreDownloads = hasMoreDownloads;
 
         break;
       }
@@ -118,6 +124,12 @@ selectors.auditLoadMoreStatus = state => {
   if (!state) return;
 
   return state.loadMoreStatus;
+};
+
+selectors.auditHasMoreDownloads = state => {
+  if (!state) return false;
+
+  return state.hasMoreDownloads;
 };
 
 // #endregion

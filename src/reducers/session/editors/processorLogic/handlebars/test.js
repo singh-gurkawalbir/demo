@@ -239,6 +239,27 @@ describe('handlebars processor logic', () => {
 
       expect(init({options, resource, fieldState})).toEqual(expectedOptions);
     });
+    test('should correctly read and return rule if field is assistantMetadata.queryParams', () => {
+      const options = {
+        fieldId: 'assistantMetadata.queryParams',
+        resourceId: 'res-123',
+        resourceType: 'exports',
+        paramIndex: '1',
+      };
+      const resource = {
+        _id: 'res-123',
+        adaptorType: 'HTTPExport',
+      };
+      const fieldState = {
+        type: 'hfsearchparams',
+        id: 'assistantMetadata.queryParams',
+        value: {field1: 'value1',
+          field2: 'value2',
+        },
+      };
+
+      expect(init({options, resource, fieldState}).rule).toEqual('value2');
+    });
   });
   describe('requestBody util', () => {
     test('should return correct request body', () => {

@@ -139,6 +139,7 @@ export function platformLicenseActionDetails(license) {
       licenseActionDetails = {
         action: 'startTrial',
         label: 'Get unlimited flows',
+        id: 'unlimited-flows-button',
       };
     }
   } else if (license.tier === 'free') {
@@ -146,18 +147,21 @@ export function platformLicenseActionDetails(license) {
       licenseActionDetails = {
         action: 'upgrade',
         label: 'Request upgrade now',
+        id: 'request-upgrade-buttton',
       };
     } else if (license.status === 'IN_TRIAL') {
       if (license.expiresInDays < 1) {
         licenseActionDetails = {
           action: 'upgrade',
           label: 'Request upgrade now',
+          id: 'request-upgrade-buttton',
         };
       } else {
         licenseActionDetails = {
           action: 'upgrade',
           label: 'Request upgrade now -',
           daysLeft: `${license.expiresInDays} days left`,
+          id: 'request-upgrade-buttton',
         };
         licenseActionDetails.expiresSoon = license.expiresInDays < 10;
       }
@@ -165,11 +169,13 @@ export function platformLicenseActionDetails(license) {
       licenseActionDetails = {
         action: 'startTrial',
         label: 'Get unlimited flows',
+        id: 'unlimited-flows-button',
       };
     } else if (!license.trialEndDate && !license.expires) {
       licenseActionDetails = {
         action: 'startTrial',
         label: 'Get unlimited flows',
+        id: 'unlimited-flows-button',
       };
     }
   }

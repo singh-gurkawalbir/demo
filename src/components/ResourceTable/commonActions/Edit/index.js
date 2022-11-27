@@ -10,6 +10,9 @@ export default {
   useLabel: rowData => {
     const tableContext = useGetTableContext();
 
+    if (tableContext.resourceType === 'iClients') {
+      return 'Edit iClient';
+    }
     if (['accesstokens', 'apis', 'connectors'].includes(tableContext.resourceType)) {
       return `Edit ${MODEL_PLURAL_TO_LABEL[tableContext?.resourceType]}`;
     }

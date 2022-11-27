@@ -309,6 +309,7 @@ export default function ConnectorInstallation() {
       buttons: [
         {
           label: 'Uninstall',
+          error: true,
           onClick: () => {
             if (!_connectorId) {
               dispatch(actions.resource.integrations.delete(integrationId));

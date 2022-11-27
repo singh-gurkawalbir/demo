@@ -24,6 +24,7 @@ import { isNewFlowFn, useHandleExitClick, usePatchFlow, usePushOrReplaceHistory 
 import LastRun from '../../LastRun';
 import LineGraphButton from '../../LineGraphButton';
 import messageStore from '../../../../utils/messageStore';
+import { getTextAfterCount } from '../../../../utils/string';
 import RetryStatus from '../../RetryStatus';
 
 const calcPageBarTitleStyles = makeStyles(theme => ({
@@ -264,7 +265,7 @@ const TotalErrors = ({flowId}) => {
 
   return (
     <Status variant="error" size="small" className={classes.errorStatus}>
-      <span>{totalErrors} errors</span>
+      <span>{getTextAfterCount('error', totalErrors)}</span>
     </Status>
   );
 };
