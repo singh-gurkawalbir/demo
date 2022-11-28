@@ -35,10 +35,13 @@ const PageProcessor = ({
   flowId,
   index,
   isLast,
+  showLeft,
+  showRight,
   integrationId,
   isViewMode,
   isMonitorLevelAccess,
   onDelete,
+  onMove,
   openErrorCount,
   ...pp
 }) => {
@@ -214,8 +217,9 @@ const PageProcessor = ({
 
   return (
     <>
-      <div className={classes.ppContainer}>
+      <div className={classes.ppContainer} >
         <AppBlock
+          {...pp}
           integrationId={integrationId}
           name={name}
           onDelete={onDelete}
@@ -229,6 +233,8 @@ const PageProcessor = ({
           flowId={flowId}
           index={index}
           id={pp.id}
+          showLeft={showLeft}
+          showRight={showRight}
           resource={resource}
           resourceId={resourceId}
           resourceIndex={index}

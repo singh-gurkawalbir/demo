@@ -4,7 +4,7 @@ import React from 'react';
 import {screen} from '@testing-library/react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import userEvent from '@testing-library/user-event';
-import DynaSalesforceLookupFilters_afe from './DynaSalesforceLookupFilters_afe';
+import DynaSalesforceLookupFiltersAfe from './DynaSalesforceLookupFilters_afe';
 import { renderWithProviders, reduxStore} from '../../../test/test-utils';
 import actions from '../../../actions';
 
@@ -43,7 +43,7 @@ const mockOnFieldChange = jest.fn();
 
 function initDynaNetSuiteLookupFiltersafe(disableFetch = false) {
   const ui = (
-    <DynaSalesforceLookupFilters_afe
+    <DynaSalesforceLookupFiltersAfe
       id="salesforce.operation"
       value="(CreatedById = 5)"
       connectionId="someconnectionId"
@@ -66,7 +66,7 @@ describe('DynaNetSuiteLookupFiltersafe UI test cases', () => {
     jest.clearAllMocks();
   });
   test('should show spinner when data not loaded', () => {
-    renderWithProviders(<DynaSalesforceLookupFilters_afe />);
+    renderWithProviders(<DynaSalesforceLookupFiltersAfe />);
     expect(screen.getByRole('progressbar')).toBeInTheDocument();
   });
   test('should verify useEffect dispatch call', () => {
