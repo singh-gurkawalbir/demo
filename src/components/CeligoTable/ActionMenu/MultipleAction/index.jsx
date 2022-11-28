@@ -10,6 +10,7 @@ const MultipleAction = ({rowData, handleMenuClose, setSelectedComponent, meta}) 
     hasAccess,
     label,
     disabledActionTitle,
+    disabled,
   } = useGetAllActionProps({meta, rowData, setSelectedComponent, handleMenuClose});
 
   if (!hasAccess) {
@@ -30,7 +31,7 @@ const MultipleAction = ({rowData, handleMenuClose, setSelectedComponent, meta}) 
   }
 
   return (
-    <MenuItem data-test={key} onClick={handleActionClick}>
+    <MenuItem data-test={key} onClick={handleActionClick} disabled={disabled}>
       {actionIcon}
       {label}
     </MenuItem>
