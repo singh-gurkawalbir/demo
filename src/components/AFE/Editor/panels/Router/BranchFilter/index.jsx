@@ -860,7 +860,7 @@ export default function BranchFilter({ editorId, position }) {
         // eslint-disable-next-line camelcase
         const isSingleInputOperator = !state.rule?.operator?.nb_inputs;
 
-        if (state.data.rhs.value || isSingleInputOperator) return;
+        if (state.data.rhs.type !== 'value' || state.data.rhs.value || isSingleInputOperator) return;
 
         const $emptyRule = state.rule;
 
