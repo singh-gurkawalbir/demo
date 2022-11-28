@@ -3115,6 +3115,7 @@ describe('integrationApps selector testcases', () => {
         showLicenseExpiringWarning: true,
         upgradeRequested: true,
         upgradeText: 'Upgrade requested',
+        nextPlan: '',
       });
     });
 
@@ -3161,6 +3162,7 @@ describe('integrationApps selector testcases', () => {
         showLicenseExpiringWarning: false,
         upgradeRequested: false,
         upgradeText: '',
+        nextPlan: '',
       });
     });
 
@@ -3204,6 +3206,7 @@ describe('integrationApps selector testcases', () => {
         showLicenseExpiringWarning: true,
         upgradeRequested: false,
         upgradeText: '',
+        nextPlan: '',
       });
     });
 
@@ -3248,6 +3251,7 @@ describe('integrationApps selector testcases', () => {
         showLicenseExpiringWarning: true,
         upgradeRequested: false,
         upgradeText: '',
+        nextPlan: '',
       });
     });
 
@@ -3294,6 +3298,7 @@ describe('integrationApps selector testcases', () => {
         showLicenseExpiringWarning: false,
         upgradeRequested: false,
         upgradeText: '',
+        nextPlan: '',
       });
     });
   });
