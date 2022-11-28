@@ -74,7 +74,7 @@ describe('useHandleSubmitCompleteFn tests', () => {
   test('Should able to test the custom hook with new integration ', async () => {
     await inituseHandleSubmitCompleteFn('integrations', 'add', 'new-integration');
     userEvent.click(screen.getByRole('button', {name: 'Submit'}));
-    expect(mockHistoryReplace).toHaveBeenCalledWith('/integrations/new-integration/flows');
+    expect(mockHistoryReplace).toHaveBeenCalledWith('/edit/exports/_resourceId');
   });
   test('Should able to test the custom hook with new script with skipClose ', async () => {
     await inituseHandleSubmitCompleteFn('scripts', 'add', 'new-script');

@@ -1,6 +1,6 @@
 /* eslint-disable camelcase */
 import React, { useCallback, useEffect, useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import { Paper } from '@material-ui/core';
@@ -12,13 +12,17 @@ import actions from '../../../actions';
 import { selectors } from '../../../reducers';
 import { FilledButton } from '../../Buttons';
 import CodePanel from '../../AFE/Editor/panels/Code';
-import { unwrapExportFileSampleData, wrapExportFileSampleData } from '../../../utils/sampleData';
+import { unwrapExportFileSampleData, wrapExportFileSampleData, wrapMockInputData } from '../../../utils/sampleData';
 import Spinner from '../../Spinner';
 import { safeParse } from '../../../utils/string';
 import FieldMessage from '../../DynaForm/fields/FieldMessage';
 import PanelTitle from '../../AFE/Editor/gridItems/PanelTitle';
 import { drawerPaths } from '../../../utils/rightDrawer';
-import { sampleDataStage } from '../../../utils/flowData';
+import FetchLatestMockInputDataButton from './FetchLatestMockInputDataButton';
+import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
+import { MOCK_INPUT_STATUS } from '../../../constants';
+import messageStore from '../../../utils/messageStore';
+import errorMessageStore from '../../../utils/errorStore';
 
 const useStyles = makeStyles(theme => ({
   editMockContentWrapper: {
@@ -34,29 +38,30 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
+function DrawerSpinner({visible}) {
+  if (!visible) return null;
+
+  return (<Spinner centerAll />);
+}
+
 function RouterWrappedContent(props) {
-  const { handleClose, resourceId, flowId, resourceType} = props;
+  const { handleClose, resourceId, resourceType, flowId } = props;
+
   const classes = useStyles();
   const dispatch = useDispatch();
+  const [enquesnackbar] = useEnqueueSnackbar();
   const [error, setError] = useState();
-  const resourceSampleDataStatus = useSelector(state =>
-    selectors.getResourceSampleDataWithStatus(state, resourceId, 'preview').status,
-  );
-  const resourceMockData = useSelector(state => selectors.getResourceMockData(state, resourceId));
-  const {status: sampleDataStatus, data: sampleData} = useSelector(state => selectors.getSampleDataContext(state, {
-    flowId,
-    resourceId,
-    resourceType,
-    stage: sampleDataStage.imports.processedFlowInput,
-  }));
+  const [refreshMockInputData, setRefreshMockInputData] = useState(false);
+  const userMockData = useSelector(state => selectors.userMockInput(state, resourceId));
+  const {data: mockInput, status} = useSelector(state => selectors.mockInput(state, resourceId), shallowEqual);
 
-  const [value, setValue] = useState(resourceMockData ? wrapExportFileSampleData(resourceMockData) : '');
+  const [value, setValue] = useState(userMockData ? wrapExportFileSampleData(userMockData) : '');
 
   useEffect(() => {
-    if (sampleDataStatus === 'received' && !resourceMockData) {
-      setValue(wrapExportFileSampleData(Array.isArray(sampleData) ? [sampleData] : sampleData));
+    if (status === MOCK_INPUT_STATUS.RECEIVED && !userMockData) {
+      setValue(wrapMockInputData(mockInput));
     }
-  }, [resourceMockData, resourceSampleDataStatus, sampleData, sampleDataStatus]);
+  }, [userMockData, status, mockInput]);
 
   const handleChange = newValue => {
     setValue(newValue);
@@ -66,9 +71,9 @@ function RouterWrappedContent(props) {
     if (!parsedMockData || !unwrappedMockData) {
       // throw error for invalid json and data not being in the connonical format
       if (!parsedMockData) {
-        setError('Mock input must be valid JSON');
+        setError(errorMessageStore('MOCK_INPUT_INVALID_JSON'));
       } else {
-        setError('Mock input must contain page_of_records');
+        setError(errorMessageStore('MOCK_INPUT_INVALID_FORMAT'));
       }
 
       return;
@@ -80,29 +85,61 @@ function RouterWrappedContent(props) {
     const parsedMockData = safeParse(value);
     const unwrappedMockData = unwrapExportFileSampleData(parsedMockData);
 
-    dispatch(actions.resourceFormSampleData.setMockData(resourceId, unwrappedMockData));
+    dispatch(actions.mockInput.updateUserMockInput(resourceId, unwrappedMockData));
     handleClose();
   }, [dispatch, handleClose, resourceId, value]);
 
+  const fetchMockInputData = useCallback(refreshCache => {
+    dispatch(actions.mockInput.request(resourceId, resourceType, flowId, { refreshCache }));
+  }, [dispatch, flowId, resourceId, resourceType]);
+
+  useEffect(() => {
+    if (!status) {
+      fetchMockInputData();
+    }
+  }, [fetchMockInputData, dispatch, resourceId, status]);
+
+  useEffect(() => () => {
+    dispatch(actions.mockInput.clear(resourceId));
+  }, [dispatch, resourceId]);
+
+  useEffect(() => {
+    if (!refreshMockInputData) return;
+    if (status === MOCK_INPUT_STATUS.RECEIVED) {
+      dispatch(actions.mockInput.updateUserMockInput(resourceId));
+      setValue(wrapMockInputData(mockInput));
+      enquesnackbar({ message: messageStore('MOCK_INPUT_REFRESH_SUCCESS')});
+      setRefreshMockInputData(false);
+    } else if (status === MOCK_INPUT_STATUS.ERROR) {
+      enquesnackbar({ message: errorMessageStore('MOCK_INPUT_REFRESH_FAILED'), variant: 'error' });
+      setRefreshMockInputData(false);
+    }
+  }, [dispatch, enquesnackbar, mockInput, refreshMockInputData, resourceId, status]);
+
+  const handleMockDataRefresh = useCallback(() => {
+    fetchMockInputData(true);
+    setRefreshMockInputData(true);
+  }, [fetchMockInputData]);
+
   return (
     <>
-      <DrawerHeader title="Edit mock input" helpKey="import.editMockInput" hideBackButton />
+      <DrawerHeader title="Edit mock input" helpTitle="Edit mock input" helpKey="import.editMockInput" hideBackButton>
+        <FetchLatestMockInputDataButton
+          disabled={status === MOCK_INPUT_STATUS.REQUESTED}
+          onClick={handleMockDataRefresh} />
+      </DrawerHeader>
       <DrawerContent className={classes.editMockContentWrapper} >
-        {sampleDataStatus === 'requested' && (
-        <Spinner centerAll />
-        )}
-        { resourceSampleDataStatus !== 'requested' && (
-          <div className={classes.editMockPanelWrapper}>
-            <PanelTitle title="Input" />
-            <Paper elevation={0} className={classes.editMockCodeWrapper}>
-              <CodePanel
-                name="data"
-                mode="json"
-                value={value}
-                onChange={handleChange} />
-            </Paper>
-          </div>
-        )}
+        <DrawerSpinner visible={status === MOCK_INPUT_STATUS.REQUESTED} />
+        <div className={classes.editMockPanelWrapper}>
+          <PanelTitle title="Input" />
+          <Paper elevation={0} className={classes.editMockCodeWrapper}>
+            <CodePanel
+              name="data"
+              mode="json"
+              value={value}
+              onChange={handleChange} />
+          </Paper>
+        </div>
         <FieldMessage errorMessages={error} />
       </DrawerContent>
       <DrawerFooter>

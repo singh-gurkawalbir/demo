@@ -1,0 +1,275 @@
+/* global describe, expect, jest, test, afterEach */
+import React from 'react';
+import { screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { renderWithProviders } from '../../../test/test-utils';
+import DynaNetsuiteUserRoles from './DynaNetsuiteUserRoles';
+import { getCreatedStore } from '../../../store';
+
+const onFieldChange = jest.fn();
+
+describe('tests for netsuiteUserRoles in netsuite connection', () => {
+  afterEach(() => {
+    onFieldChange.mockClear();
+  });
+
+  test('should show the fields only once connection is validated', () => {
+    renderWithProviders(<DynaNetsuiteUserRoles />);
+    expect(document.querySelector('body > div')).toBeEmptyDOMElement();
+  });
+
+  test('should auto-set itself to environment if value already exists', () => {
+    const props = {
+      resourceId: 'connection123',
+      resourceType: 'connections',
+      type: 'netsuiteuserroles',
+      label: 'Environment',
+      fieldId: 'netsuite.environment',
+      netsuiteResourceType: 'environment',
+      id: 'netsuite.environment',
+      name: '/netsuite/environment',
+      formKey: 'connections-frm123',
+      value: 'production',
+      onFieldChange,
+    };
+    const initialStore = getCreatedStore();
+
+    initialStore.getState().session.netsuiteUserRole = {
+      connection123: {
+        hideNotificationMessage: true,
+        userRoles: {
+          production: {
+            success: true,
+            accounts: [],
+          },
+          beta: {
+            success: true,
+            accounts: [],
+          },
+          sandbox: {
+            success: true,
+            accounts: [],
+          },
+        },
+        status: 'success',
+      },
+    };
+
+    renderWithProviders(<DynaNetsuiteUserRoles {...props} />, {initialStore});
+    const label = document.querySelector('label');
+    const selectedEnvironment = document.querySelector('[id="netsuite.environment"]');
+
+    expect(label).toHaveTextContent(props.label);
+    expect(selectedEnvironment).toHaveValue('production');
+
+    userEvent.click(screen.getByRole('button', {name: 'production'}));
+    const availableEnvironments = screen.getAllByRole('menuitem').map(ele => ele.textContent);
+
+    expect(availableEnvironments).toEqual([
+      'Please select...',
+      'beta...',
+      'production...',
+      'sandbox...',
+    ]);
+
+    userEvent.click(screen.getByRole('menuitem', {name: 'beta'}));
+    expect(onFieldChange).toBeCalledWith(props.id, 'beta');
+
+    //  should reset account and role fields if environment is changed
+    expect(onFieldChange).toBeCalledWith('netsuite.account', '', true);
+    expect(onFieldChange).toBeCalledWith('netsuite.roleId', '', true);
+  });
+
+  test('should set itself to other environment if the only other one is beta', () => {
+    const props = {
+      resourceId: 'connection123',
+      resourceType: 'connections',
+      type: 'netsuiteuserroles',
+      label: 'Environment',
+      fieldId: 'netsuite.environment',
+      netsuiteResourceType: 'environment',
+      id: 'netsuite.environment',
+      name: '/netsuite/environment',
+      formKey: 'connections-frm123',
+      onFieldChange,
+    };
+    const initialStore = getCreatedStore();
+
+    initialStore.getState().session.netsuiteUserRole = {
+      connection123: {
+        hideNotificationMessage: true,
+        userRoles: {
+          beta: {
+            success: true,
+            accounts: [],
+          },
+          sandbox: {
+            success: true,
+            accounts: [],
+          },
+        },
+        status: 'success',
+      },
+    };
+
+    renderWithProviders(<DynaNetsuiteUserRoles {...props} />, {initialStore});
+
+    userEvent.click(screen.getByRole('button', {name: 'Please select'}));
+    const availableEnvironments = screen.getAllByRole('menuitem').map(ele => ele.textContent);
+
+    expect(availableEnvironments).toEqual([
+      'Please select...',
+      'beta...',
+      'sandbox...',
+    ]);
+    expect(onFieldChange).toBeCalledWith(props.id, 'sandbox', true);
+  });
+
+  test('should default to the only option when selecting environment', () => {
+    const props = {
+      resourceId: 'connection123',
+      resourceType: 'connections',
+      type: 'netsuiteuserroles',
+      label: 'Environment',
+      fieldId: 'netsuite.environment',
+      netsuiteResourceType: 'environment',
+      id: 'netsuite.environment',
+      name: '/netsuite/environment',
+      formKey: 'connections-frm123',
+      onFieldChange,
+    };
+    const initialStore = getCreatedStore();
+
+    initialStore.getState().session.netsuiteUserRole = {
+      connection123: {
+        hideNotificationMessage: true,
+        userRoles: {
+          production: {
+            success: true,
+            accounts: [],
+          },
+        },
+        status: 'success',
+      },
+    };
+
+    renderWithProviders(<DynaNetsuiteUserRoles {...props} />, {initialStore});
+
+    userEvent.click(screen.getByRole('button', {name: 'Please select'}));
+    const availableEnvironments = screen.getAllByRole('menuitem').map(ele => ele.textContent);
+
+    expect(availableEnvironments).toEqual([
+      'Please select...',
+      'production...',
+    ]);
+    expect(onFieldChange).toBeCalledWith(props.id, 'production', true);
+  });
+
+  test('should default to the only option when selecting account', () => {
+    const props = {
+      resourceId: 'connection123',
+      resourceType: 'connections',
+      type: 'netsuiteuserroles',
+      label: 'Account ID',
+      fieldId: 'netsuite.account',
+      netsuiteResourceType: 'account',
+      id: 'netsuite.account',
+      name: '/netsuite/account',
+      helpKey: 'connection.netsuite.account',
+      formKey: 'connections-frm123',
+      options: {
+        env: 'production',
+      },
+      onFieldChange,
+    };
+    const initialStore = getCreatedStore();
+
+    initialStore.getState().session.netsuiteUserRole = {
+      connection123: {
+        hideNotificationMessage: true,
+        userRoles: {
+          production: {
+            success: true,
+            accounts: [
+              {
+                account: {
+                  internalId: 'TSTDRV12345',
+                  name: 'Celigo Epicenter',
+                  type: 'PRODUCTION',
+                },
+              },
+            ],
+          },
+        },
+        status: 'success',
+      },
+    };
+
+    renderWithProviders(<DynaNetsuiteUserRoles {...props} />, {initialStore});
+
+    userEvent.click(screen.getByRole('button', {name: 'Please select'}));
+    const availableAccounts = screen.getAllByRole('menuitem').map(ele => ele.textContent);
+
+    expect(availableAccounts).toEqual([
+      'Please select...',
+      'Celigo Epicenter...',
+    ]);
+    expect(onFieldChange).toBeCalledWith(props.id, 'TSTDRV12345', true);
+  });
+
+  test('should default to the only option when selecting role', () => {
+    const props = {
+      resourceId: 'connection123',
+      resourceType: 'connections',
+      type: 'netsuiteuserroles',
+      label: 'Role',
+      fieldId: 'netsuite.roleId',
+      netsuiteResourceType: 'role',
+      onFieldChange,
+      id: 'netsuite.roleId',
+      name: '/netsuite/roleId',
+      formKey: 'connections-frm123',
+      options: {
+        env: 'production',
+        acc: 'TSTDRV12345',
+      },
+    };
+    const initialStore = getCreatedStore();
+
+    initialStore.getState().session.netsuiteUserRole = {
+      connection123: {
+        hideNotificationMessage: true,
+        userRoles: {
+          production: {
+            success: true,
+            accounts: [
+              {
+                account: {
+                  internalId: 'TSTDRV12345',
+                  name: 'Celigo Epicenter',
+                  type: 'PRODUCTION',
+                },
+                role: {
+                  internalId: 1074,
+                  name: 'Administrator',
+                },
+              },
+            ],
+          },
+        },
+        status: 'success',
+      },
+    };
+
+    renderWithProviders(<DynaNetsuiteUserRoles {...props} />, {initialStore});
+
+    userEvent.click(screen.getByRole('button', {name: 'Please select'}));
+    const availableAccounts = screen.getAllByRole('menuitem').map(ele => ele.textContent);
+
+    expect(availableAccounts).toEqual([
+      'Please select...',
+      'Administrator...',
+    ]);
+    expect(onFieldChange).toBeCalledWith(props.id, '1074', true);
+  });
+});

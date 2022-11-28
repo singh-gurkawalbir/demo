@@ -61,7 +61,7 @@ export default function MappingDrawerRoute(props) {
     <LoadResources
       required="true"
       integrationId={integrationId}
-      resources="imports,exports,connections">
+      resources="connections,imports,exports">
       <RightDrawer
         path={[
           drawerPaths.MAPPINGS.SUB_RECORD,

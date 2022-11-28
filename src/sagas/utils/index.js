@@ -571,6 +571,10 @@ export const updateFinalMetadataWithHttpFramework = (finalFieldMeta, connector, 
       tempFiledMeta.fieldMap[unEncryptedFields[i].id] = unEncryptedFields[i];
       if (unEncryptedFields[i].id === 'http.unencrypted.version') {
         tempFiledMeta?.layout?.containers[0]?.fields.push(unEncryptedFields[i].id);
+      } else if (unEncryptedFields[i].id.includes('http.unencrypted')) {
+        tempFiledMeta?.layout?.containers?.push({fields: [unEncryptedFields[i].id]});
+      } else if (unEncryptedFields[i].id.includes('http.encrypted')) {
+        tempFiledMeta?.layout?.containers?.push({fields: [unEncryptedFields[i].id]});
       } else if (tempFiledMeta?.layout?.containers?.[0]?.containers?.[1]?.fields) {
         tempFiledMeta.layout.containers[0].containers[1]?.fields.push(unEncryptedFields[i].id);
       } else if (tempFiledMeta?.layout?.containers[2]?.fields) { tempFiledMeta.layout.containers[2].fields.push(unEncryptedFields[i].id); }
@@ -632,19 +636,19 @@ export const updateFinalMetadataWithHttpFramework = (finalFieldMeta, connector, 
         if (tempFiledMeta?.fieldMap['http.auth.type']?.visible === false) {
           delete tempFiledMeta?.layout?.containers[3]?.containers[1]?.type;
         }
-          tempFiledMeta?.layout?.containers?.push({fields: fieldIds});
+        tempFiledMeta?.layout?.containers[7].containers?.push({fields: fieldIds});
+        tempFiledMeta?.layout?.containers[7]?.containers?.splice(0, 1);
+        Object.keys(tempFiledMeta.fieldMap).map(key => {
+          const fieldUserMustSet = connectionTemplate.fieldsUserMustSet?.find(field => key === field.path);
 
-          Object.keys(tempFiledMeta.fieldMap).map(key => {
-            const fieldUserMustSet = connectionTemplate.fieldsUserMustSet?.find(field => key === field.path);
-
-            if (fieldUserMustSet && fieldUserMustSet.helpURL) {
-              tempFiledMeta.fieldMap[key].helpLink = `${fieldUserMustSet.helpURL}`;
-            }
-
-            return tempFiledMeta.fieldMap[key];
+          if (fieldUserMustSet && fieldUserMustSet.helpURL) {
+            tempFiledMeta.fieldMap[key].helpLink = `${fieldUserMustSet.helpURL}`;
           }
 
-          );
+          return tempFiledMeta.fieldMap[key];
+        }
+
+        );
       }
     }
   } else if (!isGenericHTTP) {
