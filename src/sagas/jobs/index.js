@@ -366,6 +366,21 @@ export function* downloadFiles({ jobId, fileType, fileIds = [] }) {
   }
 }
 
+export function* purgeFiles({jobId}) {
+  const requestOptions = getRequestOptions(actionTypes.JOB.PURGE.REQUEST, {
+    resourceId: jobId,
+  });
+  const { path, opts } = requestOptions;
+
+  try {
+    yield call(apiCallWithRetry, { path, opts });
+
+    yield put(actions.job.purge.success());
+  } catch (error) {
+    // Handle errors
+  }
+}
+
 export function* cancelJob({ jobId }) {
   const requestOptions = getRequestOptions(actionTypes.JOB.CANCEL, {
     resourceId: jobId,
@@ -897,4 +912,5 @@ export const jobSagas = [
   takeEvery(actionTypes.JOB.ERROR.UPDATE_RETRY_DATA, updateRetryData),
   takeLatest(actionTypes.JOB.ERROR.DOWNLOAD_RETRY_DATA, downloadRetryData),
   takeEvery(actionTypes.JOB.ERROR.RETRY_PROCESSED_ERRORS, retryProcessedErrors),
+  takeEvery(actionTypes.JOB.PURGE.REQUEST, purgeFiles),
 ];

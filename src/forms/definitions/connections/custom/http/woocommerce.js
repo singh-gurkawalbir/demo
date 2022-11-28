@@ -7,6 +7,7 @@ export default {
     '/http/mediaType': 'json',
     '/http/ping/relativeURI': '/wp-json/wc/v1/orders',
     '/http/ping/method': 'GET',
+    '/http/headers': [{ name: 'User-Agent', value: 'PostmanRuntime/7.29.2' }],
   }),
   fieldMap: {
     name: { fieldId: 'name' },
