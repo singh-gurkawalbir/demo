@@ -250,7 +250,7 @@ export function KeyValueComponent(props) {
                     r={r}
                     enableSorting={enableSorting}
                     showSortOrder={showSortOrder}
-                    handleEditorClick={handleEditorClickWithIndex}
+                    handleEditorClick={handleEditorClick && handleEditorClickWithIndex}
                     isEndSearchIcon={isEndSearchIcon}
                     isInlineClose={isInlineClose}
                />

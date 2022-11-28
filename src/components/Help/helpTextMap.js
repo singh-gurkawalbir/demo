@@ -134,10 +134,10 @@ export default {
 'Username is your 4castplus account email.',
   '4castplus.connection.http.encrypted.password':
 'Password is your 4castplus account password.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your password safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
-  'connection.http.unencrypted.partnerUserId':
-'Please enter your partner user id of expenisfy account which can be obtained from  https://www.expensify.com/tools/integrations/ after creating Expensify account at https://www.expensify.com/.',
+  'expensify.connection.http.unencrypted.partnerUserId':
+'Enter your partner user ID provided by Expensify.<br>To retrieve the partner user ID:<br>1. Sign in to your <a href="https://www.expensify.com/">Expensify</a> account.<br>2. Navigate to <a href="https://www.expensify.com/tools/integrations/">Integration server access</a>.<br>3. Copy the <b>Partner user ID</b>.',
   'expensify.connection.http.encrypted.partnerUserSecret':
-'Please enter your partner user secret of expenisfy account which can be obtained from  https://www.expensify.com/tools/integrations/ after creating Expensify account at https://www.expensify.com/.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your user secret safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
+'Enter your partner user secret provided by Expensify.<br>To retrieve the partner user secret:<br>1. Sign in to your <a href="https://www.expensify.com/">Expensify</a> account.<br>2. Navigate to <a href="https://www.expensify.com/tools/integrations/">Integration server access</a>.<br>3. Copy the <b>Partner user secret</b>.',
   'klaviyo.connection.http.encrypted.apiKey':
 'Please enter your API key here. This can be obtained from the Settings section and API Keys subsection.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your API key safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'zohodesk.connection.http.unencrypted.organizationId':
@@ -361,6 +361,8 @@ export default {
 'Please enter the Harvest account ID. This can be obtained from the Settings section and Account ID subsection.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your Account ID safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'pulseway.connection.http.baseURI':
 'Enter the base URI of your Pulseway account. If you host your own Pulseway Enterprise Server, enter https://your-server-name/api as the base URI.',
+  'pulseway.connection.http.auth.basic.username': 'Enter your Pulseway account username.',
+  'pulseway.connection.http.auth.basic.password': 'Enter your Pulseway account password.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your Password safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'shiphawk.connection.http.encrypted.apiKey':
 'The API Key of your ShipHawk account. This can be obtained from the Settings section and API Key subsection.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your API key safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'newrelic.connection.http.encrypted.apiKey':
@@ -384,6 +386,8 @@ export default {
 'Please enter your API key here. This can be obtained by reaching out to FieldAware support team.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your API key safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'chargebee.connection.http.auth.basic.username':
 'The API Key of your Chargebee account.',
+  'chargebee.connection.http.subdomain':
+'Enter your Chargebee subdomain. For example, if you sign into your Chargebee account at https://celigo-xyz-test.chargebee.com, then <b>celigo-xyz-test</b> is your subdomain.',
   'taxjar.connection.http.auth.token.token':
 'Please enter your token here. This can be obtained by navigating to Tokens page from the options menu on the top right corner in the application.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your token safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'pitneybowes.connection.http.sandbox':
@@ -434,7 +438,7 @@ export default {
 'Please enter company name of your lexbizz account.',
   'lexbizz.connection.http.unencrypted.locale':
 'Please enter locale of your lexbizz account.',
-  'braintree.connection.http.unencrypted.environment': 'Select the environment of your Braintree account.',
+  'braintree.connection.http.unencrypted.environment': 'Select the Braintree account environment type you are connecting to, either <b>Production</b> or <b>Sandbox</b>.',
   'braintree.connection.http.auth.basic.username': 'Enter the Public key of your Braintree account.<br> <b>Steps to get the Public Key:</b> <br>1. Sign in to your Braintree account.<br>2. Navigate to <b>My User</b> at the top right.<br>2. Click on <b>View Authorizations</b>.Copy the Public Key shown on the dashboard. (If none exists yet or you want to change the API credentials, click on <b>Generate New API Key</b> to generate a new pair.)',
   'braintree.connection.http.auth.basic.password': 'Enter the Private key of your Braintree account.<br> <b>Steps to get the Private Key:</b> <br>1. Sign in to your Braintree account.<br>2. Navigate to <b>My User</b> at the top right.<br>2. Click on <b>View Authorizations</b>.Copy the Private Key shown on the dashboard. (If none exists yet or you want to change the API credentials, click on <b>Generate New API Key</b> to generate a new pair.)<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your key safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'myobadvanced.connection.http.auth.type': 'Please select Authentication Type.',
@@ -455,6 +459,8 @@ export default {
   'g2.connection.http.auth.token.token': 'Please enter your API Token here.<br><b>Steps to get API Token:</b> <br>Login to your G2 account, under Integrations > API Tokens, you can create and manage your Tokens.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your token safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'shippo.connection.http.encrypted.token':
 'Please enter your API key here. You can find your token on the Shippo API settings page.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your password safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
+  'acumatica.connection.http.auth.type':
+'Select the authentication method, either <b>Cookie</b> or <b>OAuth 2.0</b>.<br><b>Cookie</b>: If your service relies on session-based authentication. This method includes a unique cookie in the HTTP request header. When you select this option, the platform automatically creates and inserts this cookie into every HTTP request it sends to your application.<br><b>OAuth 2.0</b>: If your application supports the OAuth2.0 authentication.',
   'acumatica.connection.instanceURI':
 'Please enter URL of your instance with Acumatica. For example, http://try.acumatica.com/isv/entity/Default/6.00.001, then the Instance URI would be http://try.acumatica.com/isv.',
   'acumatica.connection.http.unencrypted.endpointName':
@@ -519,6 +525,8 @@ export default {
   'sugarcrm.connection.http.unencrypted.version':
 'Please enter endpoint version of your SugarCRM account.',
   'sugarcrm.connection.http.unencrypted.clientID': 'The client_id of "sugar" will automatically create an OAuth Key in the system and can be used for "password" authentication. The client_id of "support_portal" will create an OAuth Key if the portal system is enabled and will allow for portal authentication. Other client_id \'s can be created by the administrator in the OAuthKeys section in the Administration section and can be used in the future for additional grant types,if the client secret is filled in, it will be checked to validate the use of the client id.',
+  'sugarcrm.connection.http.unencrypted.username': 'Enter your SugarCRM account username.',
+  'sugarcrm.connection.http.encrypted.password': 'Enter your SugarCRM account password.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your Password safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'sugarcrm.connection.http.unencrypted.platform': 'Defaults to "base" allows you to have custom meta-data per platform. If using a value other than "base", you should make sure it is registered using the Platform extension or configure an API platform in Administration panel.',
   'sugarcrm.connection.http.encrypted.clientSecret': 'Defaults to "base" allows you to have custom meta-data per platform. If using a value other than "base", you should make sure it is registered using the Platform extension or configure an API platform in Administration panel.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your secret safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'sugarcrm.connection.http.auth.token.token':
@@ -2533,4 +2541,6 @@ use the custom option.`,
   'connectorLicense.expires': 'Select the date when the subscription license expires. The Integration App (IA) owner can edit the field based on any changes in the subscription license.',
   'connectorLicense.sandbox': 'This field is read-only. It displays the user environment as production or sandbox based on the subscription license.',
   'connectorLicense.opts': 'You can add license details in the JSON format. For example, <br /> { <br /> "company" : "xxx" <br /> }',
+  'spreecommerce.connection.http.baseURI': 'Enter the local host URL. For more information on how to retrieve the Base URI, see <a href="https://dev-docs.spreecommerce.org/getting-started/installation">Installation</a>.',
+  'spreecommerce.connection.http.auth.token.token': 'Enter the API token provided by Spree Commerce. For more information on how to retrieve the API token, see <a href="https://dev-docs.spreecommerce.org/getting-started/installation">Installation</a>.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your Token safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
 };
