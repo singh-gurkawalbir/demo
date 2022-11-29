@@ -2,7 +2,7 @@
 
 import { select } from 'redux-saga/effects';
 import { expectSaga } from 'redux-saga-test-plan';
-import { createNewPGStep, createNewPPStep, deleteEdge, deleteRouter, deleteStep, mergeBranch } from '.';
+import { createNewPGStep, createNewPPStep, deleteEdge, deleteRouter, deleteStep, mergeBranch, moveStep } from '.';
 import actions from '../../actions';
 import { GRAPH_ELEMENTS_TYPE } from '../../constants';
 import { selectors } from '../../reducers';
@@ -18,6 +18,52 @@ describe('flowbuilder sagas', () => {
   beforeEach(() => {
     getFlowAsyncKey.mockReturnValue(MOCK_FLOW_ASYNC_KEY);
     getChangesPatchSet.mockReturnValue([]);
+  });
+  describe('moveStep saga', () => {
+    const flowId = '62d561f648a4303c75f7dca2';
+
+    test('should call deletePGOrPPStepForRouters function if step is PG and dispatch setSaveStatus and patchAndCommitStaged actions', () => {
+      const stepInfo = {};
+      const originalFlow = {
+        _id: '62d561f648a4303c75f7dca2',
+        lastModified: '2022-07-18T13:37:08.833Z',
+        name: 'Test cases',
+        disabled: true,
+        _integrationId: '62d535b83efe3d37ca446f52',
+        skipRetries: false,
+        pageGenerators: [
+          {
+            _exportId: '61ee3cca2959b91c0ab9ce02',
+          },
+        ],
+        createdAt: '2022-07-18T13:36:54.709Z',
+        autoResolveMatchingTraceKeys: true,
+      };
+      const patchSet = [
+        {
+          op: 'remove',
+          path: '/pageGenerators/0/id',
+        },
+        {
+          op: 'remove',
+          path: '/pageGenerators/0/_exportId',
+        },
+        {
+          op: 'add',
+          path: '/pageGenerators/0/setupInProgress',
+          value: true,
+        },
+      ];
+
+      getChangesPatchSet.mockReturnValue(patchSet);
+
+      return expectSaga(moveStep, {flowId, stepInfo})
+        .provide([
+          [select(selectors.resourceData, 'flows', flowId), {merged: originalFlow}],
+        ])
+        .put(actions.resource.patchAndCommitStaged('flows', flowId, patchSet, { asyncKey: MOCK_FLOW_ASYNC_KEY, options: {revertChangesOnFailure: true} }))
+        .run();
+    });
   });
   describe('createNewPGStep saga', () => {
     const flowId = '123';

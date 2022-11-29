@@ -56,6 +56,7 @@ import {
   startPollingForDashboardInProgressJobs,
   getDashboardJobFamily,
   downloadRetryData,
+  purgeFiles,
 } from '.';
 import { selectors } from '../../reducers';
 import { JOB_TYPES, JOB_STATUS, STANDALONE_INTEGRATION } from '../../constants';
@@ -2598,4 +2599,36 @@ describe('downloadRetryData saga', () => {
     ])
     .call(apiCallWithRetry, { path: '/retries/1/signedURL', opts: { method: 'GET' } })
     .run());
+});
+
+describe('purgeFiles saga', () => {
+  test('should dispatch purge success action if api call is successful', () => {
+    const jobId = 'j1';
+    const path = `/jobs/${jobId}/files`;
+    const opts = { method: 'DELETE' };
+
+    return expectSaga(purgeFiles, {jobId})
+      .provide([
+        [matchers.call.fn(getRequestOptions), { path, opts }],
+        [matchers.call.fn(apiCallWithRetry)],
+      ])
+      .call(apiCallWithRetry, { path, opts })
+      .put(actions.job.purge.success())
+      .run();
+  });
+  test('should do nothing if api call fails', () => {
+    const jobId = 'j1';
+    const path = `/jobs/${jobId}/files`;
+    const opts = { method: 'DELETE' };
+    const error = new Error();
+
+    return expectSaga(purgeFiles, {jobId})
+      .provide([
+        [matchers.call.fn(getRequestOptions), { path, opts }],
+        [matchers.call.fn(apiCallWithRetry), throwError(error)],
+      ])
+      .call(apiCallWithRetry, { path, opts })
+      .not.put(actions.job.purge.success())
+      .run();
+  });
 });

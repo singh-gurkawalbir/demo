@@ -1,6 +1,6 @@
 import { makeStyles, useTheme } from '@material-ui/core';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import ReactFlow, { MiniMap, ReactFlowProvider } from 'react-flow-renderer';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import ReactFlow, { MiniMap } from 'react-flow-renderer';
 import { useDispatch, useSelector } from 'react-redux';
 import actions from '../../../actions';
 import { selectors } from '../../../reducers';
@@ -24,6 +24,8 @@ import EmptyNode from './CustomNodes/EmptyNode';
 import LoadingNotification from '../../../App/LoadingNotification';
 import { GRAPH_ELEMENTS_TYPE } from '../../../constants';
 import { CanvasControls } from './CanvasControls';
+import AutoScroll from './AutoScroll';
+import CustomDragLayer from './DragPreview';
 
 const useCalcCanvasStyle = fullscreen => {
   const theme = useTheme();
@@ -117,12 +119,14 @@ const nodeTypes = {
 const edgeTypes = {
   default: DefaultEdge,
 };
+const BUFFER_SIZE = 100;
 
 export function Canvas({ flowId, fullscreen }) {
   const dispatch = useDispatch();
   const menuDrawerWidth = useMenuDrawerWidth();
   const drawerWidth = fullscreen ? 0 : menuDrawerWidth;
   const classes = useStyles(drawerWidth);
+  const [rfInstance, setRFInstance] = useState(null);
   const [showMiniMap, setShowMiniMap] = useState(true);
   const [isPanning, setIsPanning] = useState(false);
   const calcCanvasStyle = useCalcCanvasStyle(fullscreen);
@@ -130,7 +134,7 @@ export function Canvas({ flowId, fullscreen }) {
     selectors.makeFlowDataForFlowBuilder,
     flowId
   );
-
+  const parentDiv = useRef(null);
   const elements = useSelector(state =>
     selectors.fbGraphElements(state, flowId)
   );
@@ -153,100 +157,112 @@ export function Canvas({ flowId, fullscreen }) {
     selectors.isFlowSaveInProgress(state, flowId)
   );
 
-  const updatedLayout = useMemo(() => layoutElements(elements, 'LR'), [
-    elements,
+  const {elements: updatedLayout, x, y } = useMemo(() => layoutElements(elements, mergedFlow), [
+    elements, mergedFlow,
   ]);
+  const translateExtent = [[-BUFFER_SIZE, -BUFFER_SIZE], [Math.max(x + BUFFER_SIZE, 1500), Math.max(y + 2 * BUFFER_SIZE, 700)]];
 
   useEffect(() => {
     dispatch(actions.flow.initializeFlowGraph(flowId, mergedFlow, isViewMode, isDataLoaderFlow));
   }, [mergedFlow, dispatch, flowId, isViewMode, isDataLoaderFlow]);
 
-  const handleNodeDragStart = (evt, source) => {
+  const handleNodeDragStart = useCallback((evt, source) => {
     dispatch(actions.flow.dragStart(flowId, source.id));
-  };
+  }, [dispatch, flowId]);
 
-  const handleNodeDragStop = () => {
+  const handleNodeDragStop = useCallback(() => {
     dispatch(actions.flow.mergeBranch(flowId));
-  };
+  }, [dispatch, flowId]);
 
-  const handleNodeDrag = () => {
+  const handleNodeDrag = useCallback(() => {
     if (dragStepIdInProgress) {
       dispatch(actions.flow.setDragInProgress(flowId));
     }
-  };
+  }, [dispatch, dragStepIdInProgress, flowId]);
 
   const handleAddNewSource = useCallback(() => {
     dispatch(actions.flow.addNewPGStep(flowId));
   }, [dispatch, flowId]);
 
-  const handleMoveEnd = () => setIsPanning(false);
-  const handleMove = () => {
+  const onLoad = useCallback(reactFlowInstance => {
+    setRFInstance(reactFlowInstance);
+    setTimeout(() => {
+      reactFlowInstance.setTransform({x: 0, y: 0, zoom: 1});
+    }, 10);
+  }, []);
+
+  const handleMoveEnd = useCallback(() => setIsPanning(false), []);
+  const handleMove = useCallback(() => {
     if (!isPanning) {
       setIsPanning(true);
     }
-  };
+  }, [isPanning]);
 
   return (
     <div className={classes.canvasContainer} style={calcCanvasStyle}>
       <LoadingNotification
         message={isFlowSaveInProgress ? 'Saving flow' : ''}
       />
-      <div className={classes.canvas}>
+      <div ref={parentDiv} className={classes.canvas}>
         {/* CANVAS START */}
-        <ReactFlowProvider>
-          {/* add flow to the context so it is accessible to flowGraph beneath
-          //...this will be replaced by the resourceDataSelector */}
-          <FlowProvider
-            elements={elements}
-            elementsMap={elementsMap}
-            flow={mergedFlow}
-            flowId={flowId}
-            dragNodeId={dragStepId}
-          >
-            <ReactFlow
-              className={isPanning ? classes.isPanning : classes.canPan}
-              onNodeDragStart={handleNodeDragStart}
-              onNodeDragStop={handleNodeDragStop}
-              onNodeDrag={handleNodeDrag}
-              onMoveEnd={handleMoveEnd}
-              onMove={handleMove}
-              nodesDraggable={false}
-              minZoom={0.4}
-              panOnScroll
-              elements={updatedLayout}
-              nodeTypes={nodeTypes}
-              edgeTypes={edgeTypes}
-              preventScrolling={false}
-              onlyRenderVisibleElements
-            >
-              <SourceTitle onClick={handleAddNewSource} />
-              <DestinationTitle />
-              <BackgroundPanel />
-              {showMiniMap && (
-                <MiniMap
-                  nodeClassName={node => {
-                    switch (node.type) {
-                      case GRAPH_ELEMENTS_TYPE.TERMINAL:
-                      case GRAPH_ELEMENTS_TYPE.ROUTER:
-                      case GRAPH_ELEMENTS_TYPE.MERGE:
-                      case GRAPH_ELEMENTS_TYPE.EMPTY:
-                        return classes.minimap;
 
-                      default:
-                        return classes.terminal;
-                    }
-                  }}
-                  nodeBorderRadius={75}
-                />
-              )}
-              {/* <ExportFlowStateButton flowId={flowId} /> */}
-              <CanvasControls
-                showMiniMap={showMiniMap}
-                toggleMiniMap={() => setShowMiniMap(oldState => !oldState)}
+        <FlowProvider
+          elements={elements}
+          elementsMap={elementsMap}
+          flow={mergedFlow}
+          flowId={flowId}
+          dragNodeId={dragStepId}
+            >
+          <CustomDragLayer />
+          <ReactFlow
+            className={isPanning ? classes.isPanning : classes.canPan}
+            onNodeDragStart={handleNodeDragStart}
+            onNodeDragStop={handleNodeDragStop}
+            onNodeDrag={handleNodeDrag}
+            onMoveEnd={handleMoveEnd}
+            onMove={handleMove}
+            nodesDraggable={false}
+            minZoom={0.4}
+            maxZoom={1.25}
+            panOnScroll
+            translateExtent={translateExtent}
+                // nodeExtent={translateExtent}
+            onLoad={onLoad}
+            elements={updatedLayout}
+            nodeTypes={nodeTypes}
+            edgeTypes={edgeTypes}
+            preventScrolling={false}
+            onlyRenderVisibleElements
+            >
+            <SourceTitle onClick={handleAddNewSource} />
+            <DestinationTitle />
+            <BackgroundPanel />
+            <AutoScroll ref={parentDiv} rfInstance={rfInstance} />
+            {showMiniMap && (
+            <MiniMap
+              nodeClassName={node => {
+                switch (node.type) {
+                  // Hide these elements in mini map
+                  case GRAPH_ELEMENTS_TYPE.TERMINAL:
+                  case GRAPH_ELEMENTS_TYPE.ROUTER:
+                  case GRAPH_ELEMENTS_TYPE.MERGE:
+                  case GRAPH_ELEMENTS_TYPE.EMPTY:
+                    return classes.minimap;
+
+                  default:
+                    return classes.terminal;
+                }
+              }}
+              nodeBorderRadius={75}
+            />
+            )}
+            {/* <ExportFlowStateButton flowId={flowId} /> */}
+            <CanvasControls
+              showMiniMap={showMiniMap}
+              toggleMiniMap={() => setShowMiniMap(oldState => !oldState)}
               />
-            </ReactFlow>
-          </FlowProvider>
-        </ReactFlowProvider>
+          </ReactFlow>
+        </FlowProvider>
         {/* CANVAS END */}
       </div>
     </div>

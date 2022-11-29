@@ -8,6 +8,7 @@ import actions from '../../../../actions';
 import { selectors } from '../../../../reducers';
 import PageGenerator from '../../PageGenerator';
 import { PageGeneratorRegex } from '../../../../constants';
+import { useHandleMovePG } from '../../hooks';
 
 const useStyles = makeStyles(theme => ({
   pgContainer: {
@@ -35,6 +36,7 @@ export default function PageGeneratorNode(props) {
   const handleDelete = useCallback(id => {
     dispatch(actions.flow.deleteStep(flowId, id));
   }, [dispatch, flowId]);
+  const handleMove = useHandleMovePG(flowId);
 
   return (
     <div className={classes.root}>
@@ -45,6 +47,7 @@ export default function PageGeneratorNode(props) {
           index={+pgIndex}
           onDelete={showDelete && handleDelete}
           flowId={flowId}
+          onMove={handleMove}
           integrationId={flow?._integrationId}
           openErrorCount={(flowErrorsMap && flowErrorsMap[data._exportId]) || 0}
           isViewMode={isViewMode || isFreeFlow}

@@ -1,6 +1,5 @@
 import React, { useCallback, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
-import { makeStyles } from '@material-ui/core';
 import CeligoSwitch from '../../../../CeligoSwitch';
 import { ACCOUNT_IDS } from '../../../../../constants';
 import useConfirmDialog from '../../../../ConfirmDialog';
@@ -10,14 +9,7 @@ import { COMM_STATES } from '../../../../../reducers/comms/networkComms';
 import useEnqueueSnackbar from '../../../../../hooks/enqueueSnackbar';
 import useCommStatus from '../../../../../hooks/useCommStatus';
 
-const useStyles = makeStyles(theme => ({
-  userToggle: {
-    padding: 0,
-    marginRight: theme.spacing(2),
-  },
-}));
 export default function EnableUser({ user }) {
-  const classes = useStyles();
   const { confirmDialog } = useConfirmDialog();
   const { sharedWithUser, disabled, _id: userId, accepted } = user;
   const dispatch = useDispatch();
@@ -83,8 +75,8 @@ export default function EnableUser({ user }) {
       disabled={!accepted || userId === ACCOUNT_IDS.OWN}
       checked={!disabled}
       onChange={handleSwitch}
-      tooltip="Disable user / Enable user"
-      className={classes.userToggle}
+      tooltip="Disable / Enable"
+      noPadding
       />
   );
 }
