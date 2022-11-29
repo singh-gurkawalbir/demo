@@ -1,5 +1,5 @@
-import React, { useState, useCallback } from 'react';
-import { useDispatch } from 'react-redux';
+import React, { useState, useCallback, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import Menu from '@material-ui/core/Menu';
 import { makeStyles } from '@material-ui/core';
 import MenuItem from '@material-ui/core/MenuItem';
@@ -9,6 +9,12 @@ import JobFilesDownloadDialog from '../JobFilesDownloadDialog';
 import EllipsisHorizontallIcon from '../../icons/EllipsisHorizontalIcon';
 import DownloadIntegrationIcon from '../../icons/DownloadIntegrationIcon';
 import DownloadIcon from '../../icons/DownloadIcon';
+import PurgeIcon from '../../icons/PurgeIcon';
+import { selectors } from '../../../reducers';
+
+import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
+import messageStore from '../../../utils/messageStore';
+import useConfirmDialog from '../../ConfirmDialog';
 
 const useStyle = makeStyles({
   iconBtn: {
@@ -23,6 +29,9 @@ export default function JobActionsMenu({
   const dispatch = useDispatch();
   const [anchorEl, setAnchorEl] = useState(null);
   const [showFilesDownloadDialog, setShowFilesDownloadDialog] = useState(false);
+  const { confirmDialog } = useConfirmDialog();
+  const [enqueueSnackbar] = useEnqueueSnackbar();
+  const isPurgeFilesSuccess = useSelector(state => selectors.isPurgeFilesSuccess(state));
 
   const menuOptions = [];
 
@@ -37,11 +46,38 @@ export default function JobActionsMenu({
       action: 'downloadFiles',
       icon: <DownloadIcon />,
     });
+    menuOptions.push({
+      label: `${job.files.length > 1 ? 'Purge files' : 'Purge file'}`,
+      action: 'purgeFiles',
+      icon: <PurgeIcon />,
+    });
   }
 
   const handleMenuClose = useCallback(() => {
     setAnchorEl(null);
   }, []);
+
+  const handlePurge = useCallback(() => {
+    dispatch(actions.job.purge.request({ jobId: job._id }));
+  }, [dispatch, job._id]);
+
+  const handleClick = useCallback(() => {
+    confirmDialog({
+      title: 'Confirm purge files',
+      message: messageStore('FILE_PURGE_CONFIRM_MESSAGE'),
+      buttons: [
+        {
+          label: 'Purge files',
+          error: true,
+          onClick: handlePurge,
+        },
+        {
+          label: 'Cancel',
+          variant: 'text',
+        },
+      ],
+    });
+  }, [confirmDialog, handlePurge]);
 
   function handleMenuClick(event) {
     setAnchorEl(event.currentTarget);
@@ -60,12 +96,24 @@ export default function JobActionsMenu({
       } else if (job.files.length > 1) {
         setShowFilesDownloadDialog(true);
       }
+    } else if (action === 'purgeFiles') {
+      handleClick();
     }
   }
 
   function handleJobFilesDownloadDialogCloseClick() {
     setShowFilesDownloadDialog(false);
   }
+
+  useEffect(() => {
+    if (isPurgeFilesSuccess) {
+      enqueueSnackbar({
+        message: messageStore('FILE_PURGE_SUCCESS_MESSAGE'),
+        variant: 'success',
+      });
+      dispatch(actions.job.purge.clear());
+    }
+  }, [dispatch, enqueueSnackbar, isPurgeFilesSuccess]);
 
   return (
     <>

@@ -732,7 +732,7 @@ export function getIAFlowSettings(integration, flowId, childId) {
       const section = integration.settings.sections.find(sec => sec.id === childId);
 
       if (!section || !section.sections) {
-        return;
+        return emptyObject;
       }
 
       const { flows } = section.sections.reduce((a, b) => ({
@@ -743,7 +743,7 @@ export function getIAFlowSettings(integration, flowId, childId) {
     } else {
       integration.settings.sections.forEach(section => {
         if (!section.sections) {
-          return;
+          return emptyObject;
         }
 
         const { flows } = section.sections.reduce((a, b) => ({

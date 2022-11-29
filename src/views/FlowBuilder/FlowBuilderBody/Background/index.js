@@ -20,7 +20,6 @@ export function Background() {
   // regardless of pan or zoom settings.
   const [x, , scale] = useStoreState(s => s.transform);
   const width = Math.max(0, FB_SOURCE_COLUMN_WIDTH * scale + x);
-  // console.log({x, scale});
 
   return (
     <svg className={classes.svgBg}>
