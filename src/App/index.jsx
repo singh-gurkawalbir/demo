@@ -14,7 +14,7 @@ import { selectors } from '../reducers';
 import actions from '../actions';
 import MfaVerify from '../views/MFA';
 import Signin from '../views/SignIn';
-import Signup from '../views/Signup';
+import Signup from '../views/SignUp';
 import ResetPassword from '../views/ResetRequest';
 import ChangeEmail from '../views/ChangeEmail';
 import SetPassword from '../views/SetPassword';
@@ -34,6 +34,7 @@ import PageContent from './PageContent';
 import { FormOnCancelProvider } from '../components/FormOnCancelContext';
 import UserActivityMonitor from './UserActivityMonitor';
 import * as pendo from '../utils/analytics/pendo';
+import MfaHelp from '../views/MFAHelp';
 
 // The makeStyles function below does not have access to the theme.
 // We can only use the theme in components that are children of
@@ -115,6 +116,7 @@ export const PageContentComponents = () => (
     <Route exact path={getRoutePath('/reset-password/:token')} component={ResetPassword} />
     <Route exact path={getRoutePath('/change-email/:token')} component={ChangeEmail} />
     <Route exact path={getRoutePath('/set-initial-password/:token')} component={SetPassword} />
+    <Route path={getRoutePath('/mfa-help')} component={MfaHelp} />
     <Route path={getRoutePath('/mfa/verify')} component={MfaVerify} />
     <Route path={getRoutePath('/signin')} component={Signin} />
     <Route path={getRoutePath('/signup')} component={Signup} />
@@ -184,6 +186,7 @@ export default function App() {
                     <ErrorNotifications />
                     {/* Headers */}
                     <Switch>
+                      <Route path={getRoutePath('/mfa-help')} component={null} />
                       <Route path={getRoutePath('/mfa/verify')} component={null} />
                       <Route path={getRoutePath('/reset-password')} component={null} />
                       <Route path={getRoutePath('/set-initial-password')} component={null} />

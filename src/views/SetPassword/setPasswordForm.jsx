@@ -3,14 +3,12 @@ import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import React, { useState, useCallback, useRef} from 'react';
 import { Typography, InputAdornment} from '@material-ui/core';
-import { useLocation, Link, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import actions from '../../actions';
 import { selectors } from '../../reducers';
 import { AUTH_FAILURE_MESSAGE, PASSWORD_STRENGTH_ERROR } from '../../constants';
 import Spinner from '../../components/Spinner';
 import { FilledButton, TextButton } from '../../components/Buttons';
-import getImageUrl from '../../utils/image';
-
 import ShowContentIcon from '../../components/icons/ShowContentIcon';
 import HideContentIcon from '../../components/icons/HideContentIcon';
 
@@ -63,10 +61,8 @@ export default function SetPassword() {
   const {token} = useParams();
   const inputFieldRef = useRef();
   const dispatch = useDispatch();
-  const location = useLocation();
-  const showError = false;
+  //  const showError = false;
   const classes = useStyles();
-  const [password, setPassword] = useState('');
   const [showErr, setShowErr] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const handleClickShowPassword = () => setShowPassword(!showPassword);
@@ -88,7 +84,7 @@ export default function SetPassword() {
     return errorMessage;
   });
   const handleOnChangePassword = useCallback(e => {
-    setPassword(e.target.value);
+    // setPassword(e.target.value);
     const regex = /^(?=.*\d)(?=.*[!@#$%^&*])(?=.*[a-z])(?=.*[A-Z]).{8,}$/;
     const regexTest = regex.test(e.target.value);
 
@@ -97,7 +93,7 @@ export default function SetPassword() {
     } else {
       setShowErr(false);
     }
-  }, [password]);
+  }, []);
 
   const handleOnSubmit = useCallback(e => {
     e.preventDefault();

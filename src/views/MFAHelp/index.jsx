@@ -1,17 +1,10 @@
 import React from 'react';
-import { useSelector } from 'react-redux';
 import { makeStyles, Typography } from '@material-ui/core';
-import { Link, useHistory } from 'react-router-dom';
+import { Link} from 'react-router-dom';
 import CeligoLogo from '../../components/CeligoLogo';
 import { getDomain } from '../../utils/resource';
-import messageStore from '../../utils/messageStore';
-import { selectors } from '../../reducers';
 import MarketingContentWithIframe from '../../components/LoginScreen/MarketingContentWithIframe';
-import InfoIcon from '../../components/icons/InfoIcon';
 import { TextButton } from '../../components/Buttons';
-import getRoutePath from '../../utils/routePaths';
-
-import OneTimePassCodeForm from './OneTimePassCodeForm';
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
@@ -65,9 +58,18 @@ const useStyles = makeStyles(theme => ({
   mfaTitle: {
     marginBottom: theme.spacing(3),
     fontSize: 30,
+    fontWeight: 300,
     lineHeight: '28px',
     width: 290,
     textAlign: 'center',
+  },
+  mfaLabel: {
+    marginBottom: '16px',
+    fontSize: '15px',
+    color: '#6a7b89',
+    maxWidth: '300px',
+    alignItems: 'center',
+    lineHeight: '20px',
   },
   signupLink: {
     position: 'absolute',
@@ -93,40 +95,46 @@ const useStyles = makeStyles(theme => ({
 
 const Title = () => {
   const classes = useStyles();
-  const { isAccountUser, noOfDays } = useSelector(selectors.mfaAuthInfo);
-  let infoMessage;
-
-  if (isAccountUser) {
-    infoMessage = messageStore(noOfDays ? 'MFA_USER_OTP_INFO_FOR_TRUSTED_NUMBER_OF_DAYS' : 'MFA_USER_OTP_INFO', { noOfDays });
-  } else {
-    infoMessage = messageStore('MFA_OWNER_OTP_INFO');
-  }
 
   return (
     <>
       <Typography variant="h3" className={classes.mfaTitle}>
-        Authenticate with one-time passcode
+        Need help authenticating?
       </Typography>
-      <div className={classes.mfaInfo}>
-        <InfoIcon color="primary" width="16.5" height="16.5" />
-        <span className={classes.infoText}>{infoMessage}</span>
-      </div>
     </>
 
   );
 };
-
-export default function MfaVerify() {
+const Label = () => {
   const classes = useStyles();
-  const history = useHistory();
+
+  return (
+    <div className={classes.mfaLabel}>
+      Contact an admin or owner of the primary account to reset MFA. Otherwise ,
+      <a
+        href="https://www.celigo.com/company/contact-us/"
+        target="_blank"
+        rel="noreferrer"
+    >
+        contact Celigo support via call.
+      </a>
+      <br />
+      <br />
+      Need more help? &nbsp;
+      <a
+        href="https://docs.celigo.com/hc/en-us/articles/7127009384987-Set-up-multifactor-authentication-MFA-for-an-account"
+        target="_blank"
+        rel="noreferrer"
+    >
+        Check out our help documentation.
+      </a>
+    </div>
+  );
+};
+export default function MfaHelp() {
+  const classes = useStyles();
   // eslint-disable-next-line no-undef
   const contentUrl = (getDomain() === 'eu.integrator.io' ? IO_LOGIN_PROMOTION_URL_EU : IO_LOGIN_PROMOTION_URL);
-
-  const isMFAAuthRequired = useSelector(state => selectors.isMFAAuthRequired(state));
-
-  if (!isMFAAuthRequired) {
-    history.push(getRoutePath('/signin'));
-  }
 
   return (
     <div className={classes.wrapper}>
@@ -136,7 +144,7 @@ export default function MfaVerify() {
             <CeligoLogo />
           </div>
           <Title />
-          <OneTimePassCodeForm dialogOpen />
+          <Label />
           {getDomain() !== 'eu.integrator.io' && (
           <Typography variant="body2" className={classes.signupLink}>
             Don&apos;t have an account?

@@ -100,7 +100,6 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const formKey = 'forgotPassword';
 export default function ForgotPassword({setShowError, email}) {
   const dispatch = useDispatch();
   const classes = useStyles();

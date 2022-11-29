@@ -9,7 +9,7 @@ import { selectors } from '../../reducers';
 import MarketingContentWithIframe from '../../components/LoginScreen/MarketingContentWithIframe';
 import { TextButton } from '../../components/Buttons';
 import actions from '../../actions';
-import ErrorIcon from '../../components/icons/ErrorIcon';
+import messageStore from '../../utils/messageStore';
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
@@ -117,10 +117,10 @@ export default function ForgotPassword(props) {
   }
   // eslint-disable-next-line no-undef
   const contentUrl = (getDomain() === 'eu.integrator.io' ? IO_LOGIN_PROMOTION_URL_EU : IO_LOGIN_PROMOTION_URL);
-  let msg = "Enter your email address and we'll send you a link to reset your password.";
+  let message = messageStore('FORGOT_PASSWORD_DEFAULT');
 
   if (successView) {
-    msg = `If ${email}  exists in our system, you will receive a password recovery email soon.`;
+    message = `If ${email} ${messageStore('FORGOT_PASSWORD_USER_EXIST')}`;
   }
 
   return (
@@ -149,7 +149,7 @@ export default function ForgotPassword(props) {
           </Typography>
           )}
           <div className={classes.mfaInfo}>
-            <span className={classes.infoText}>{msg}</span>
+            <span className={classes.infoText}>{message}</span>
           </div>
           {!successView
             ? (
