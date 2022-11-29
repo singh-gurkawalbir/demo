@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { useRouteMatch, Link } from 'react-router-dom';
 import moment from 'moment';
@@ -15,6 +15,7 @@ import useSelectorMemo from '../../../../../../../hooks/selectors/useSelectorMem
 import { useGetTableContext } from '../../../../../../../components/CeligoTable/TableContext';
 import FilledButton from '../../../../../../../components/Buttons/FilledButton';
 import useConfirmDialog from '../../../../../../../components/ConfirmDialog';
+import ButtonWithTooltip from '../../../../../../../components/Buttons/ButtonWithTooltip';
 import ChildIntegrationsTable from './ChildIntegrationsTable';
 
 const emptyObject = {};
@@ -182,6 +183,7 @@ export default function SubscriptionSection({ childId, integrationId }) {
     expiresText,
     upgradeText,
     upgradeRequested,
+    nextPlan,
   } = license;
   const handleUpgrade = () => {
     if (upgradeText === 'Request upgrade') {
@@ -210,6 +212,24 @@ export default function SubscriptionSection({ childId, integrationId }) {
     }
   };
 
+  const handleUpgradeEdition = useCallback(() => {
+    confirmDialog({
+      title: 'Upgrade plan',
+      message: `Upgrade to a ${nextPlan} plan. Upgrades might require additional install steps to complete. If there are multiple accounts tied to this integration app, those accounts will begin installing once the subscription upgrade is complete.`,
+      buttons: [
+        {
+          label: 'Submit request',
+          // onClick logic will be added with next trackers
+          onClick: () => {},
+        },
+        {
+          label: 'Cancel',
+          variant: 'text',
+        },
+      ],
+    });
+  }, [confirmDialog, nextPlan]);
+
   return (
     <>
       <PanelHeader title="Subscription details" />
@@ -236,13 +256,23 @@ export default function SubscriptionSection({ childId, integrationId }) {
                 <Typography>{expiresText}</Typography>
               </Grid>
               <Grid item xs={3}>
-                {upgradeText && (
+                {upgradeText && upgradeText === 'upgradeEdition' && (
+                <ButtonWithTooltip>
+                  tooltipProps={{title: `Upgrade to a ${nextPlan} plan`}}
                   <FilledButton
                     className={classes.button}
-                    disabled={upgradeRequested || isLicenseExpired}
-                    onClick={handleUpgrade}>
-                    {upgradeText}
+                    onClick={handleUpgradeEdition}>
+                    Upgrade
                   </FilledButton>
+                </ButtonWithTooltip>
+                )}
+                {upgradeText && upgradeText !== 'upgradeEdition' && (
+                <FilledButton
+                  className={classes.button}
+                  disabled={upgradeRequested || isLicenseExpired}
+                  onClick={handleUpgrade}>
+                  {upgradeText}
+                </FilledButton>
                 )}
               </Grid>
             </Grid>

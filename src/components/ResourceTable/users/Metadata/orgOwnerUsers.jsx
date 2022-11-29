@@ -96,6 +96,7 @@ export default {
           // will this redact enqueue snackbar notification
           Value: ({rowData: r}) => <RequireAccountSSO user={r} />,
           align: 'center',
+          tooltip: 'No / Yes',
         });
       }
       columns.push({
@@ -103,6 +104,7 @@ export default {
         HeaderValue: () => <HeaderWithHelpText title="Require MFA?" helpKey="users.requireAccountMFA" />,
         Value: ({rowData: r}) => <RequireMFA user={r} />,
         align: 'center',
+        tooltip: 'No / Yes',
       });
     }
 
