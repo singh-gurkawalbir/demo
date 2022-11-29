@@ -84,11 +84,13 @@ export default function DynaHFAssistantSearchParams(props) {
     requiredFields.forEach(field => {
       !Object.keys(value).includes(field) && keyValues.push({name: field, disableRowKey: true});
     });
-    Object.keys(value).forEach(key => keyValues.push({
-      name: key,
-      value: value[key],
-      disableRowKey: requiredFields.includes(key),
-    }));
+    if (value) {
+      Object.keys(value).forEach(key => keyValues.push({
+        name: key,
+        value: value[key],
+        disableRowKey: requiredFields.includes(key),
+      }));
+    }
 
     return keyValues;
   }, [requiredFields, value]);

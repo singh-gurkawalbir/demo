@@ -38,6 +38,7 @@ export default function KeyValueRow(props) {
     isRowDragged,
     disabled,
     keyName,
+    keyPlaceholder,
     valueName,
     index,
     handleUpdate,
@@ -109,7 +110,7 @@ export default function KeyValueRow(props) {
           id={`${keyName}-${index}`}
           data-test={`${keyName}-${index}`}
                     // autoFocus={r.row === rowInd && isKey}
-          placeholder={keyName}
+          placeholder={keyPlaceholder || keyName}
           variant="filled"
           onFieldChange={(_, _value) =>
             handleUpdate(r.key, _value, keyName)}
@@ -119,7 +120,7 @@ export default function KeyValueRow(props) {
           showAllSuggestions={suggestKeyConfig.showAllSuggestions}
           fullWidth
           isEndSearchIcon={isEndSearchIcon}
-          showInlineClose={closeComponent}
+          showInlineClose={!r.disableRowKey ? closeComponent : <></>}
           />
 
         )}
@@ -130,7 +131,7 @@ export default function KeyValueRow(props) {
           defaultValue={r[keyName]}
           id={`${keyName}-${index}`}
           data-test={`${keyName}-${index}`}
-          placeholder={keyName}
+          placeholder={keyPlaceholder || keyName}
           variant="filled"
           fullWidth
           onChange={handleKeyUpdate(r.key)}
