@@ -169,7 +169,7 @@ module.exports = (env, argv) => {
     config.devtool = 'eval-cheap-module-source-map';
     config.optimization.minimize = false;
   }
-  const getProxyOpts = () => {
+  const getProxyOpts = shouldBypass => {
     // eslint-disable-next-line no-console
     console.log(`API endpoint: [${dotenv.API_ENDPOINT}]`);
 
@@ -182,12 +182,20 @@ module.exports = (env, argv) => {
       // eslint-disable-next-line no-console
       console.log('Cookie rewrite needed for secure API host.');
     }
+    let bypass = function (req, res, proxyOptions) {
+      if (req.method !== 'POST') return '/';
+    };
+
+    if (!shouldBypass) {
+      bypass = '';
+    }
 
     const opts = {
       target,
       secure,
       changeOrigin: true,
       timeout: 10 * 60 * 1000,
+      bypass,
       // pathRewrite: {
       //  '^/api': '',
       // },
@@ -218,12 +226,11 @@ module.exports = (env, argv) => {
 
     return opts;
   };
-
   const isDevServer = argv && argv.$0.endsWith('webpack-dev-server');
 
   if (isDevServer) {
     config.output.filename = '[name].js';
-    const proxyOpts = getProxyOpts();
+    const proxyOpts = getProxyOpts(false);
 
     config.devServer = {
       hot: true,
@@ -236,11 +243,17 @@ module.exports = (env, argv) => {
         index: '/index.html',
       },
       proxy: {
-        '/signin': proxyOpts,
+        '/signin': getProxyOpts(true),
+        '/signup': getProxyOpts(true),
+        '/request-reset': getProxyOpts(true),
+        '/change-email/*': getProxyOpts(true),
+        '/reset-password/*': getProxyOpts(true),
+        '/set-initial-password/*': getProxyOpts(true),
+        '/request-reset-sent': getProxyOpts(true),
+        '/mfa/verify': getProxyOpts(true),
         '/litmos/sso': proxyOpts,
         '/auth/google': proxyOpts,
         '/reSigninWithGoogle': proxyOpts,
-        '/mfa/verify': proxyOpts,
         '/reSigninWithSSO/*': proxyOpts,
         '/sso/*': proxyOpts,
         '/link/google': proxyOpts,

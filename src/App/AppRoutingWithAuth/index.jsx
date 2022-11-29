@@ -57,11 +57,15 @@ export function AppRoutingWithAuth(props) {
 
   const { shouldShowAppRouting, isAuthenticated, isSessionExpired } = props;
   const isSignInRoute = location.pathname === getRoutePath('signin');
+  const isSignUpRoute = location.pathname === getRoutePath('signup');
+  const isForgotPasswordRoute = location.pathname === getRoutePath('request-reset');
+  const isMfaVerifyRoute = location.pathname === getRoutePath('mfa/verify');
+  const isResetPasswordRoute = location.pathname.split('/')[1] === 'reset-password';
+  const isSetPasswordRoute = location.pathname.split('/')[1] === 'set-initial-password';
+  const isChangeEmailRoute = location.pathname.split('/')[1] === 'change-email';
 
   // this selector is used by the UI to hold off rendering any routes
   // till it determines the auth state
-  if (!shouldShowAppRouting) return null;
-
   if (isAuthenticated) {
     if (isSignInRoute) {
       const { state: routeState } = location;
@@ -72,8 +76,7 @@ export function AppRoutingWithAuth(props) {
 
     return children;
   }
-
-  if (!isSessionExpired && !isSignInRoute) {
+  if (!isSessionExpired && !isSignInRoute && !isSignUpRoute && !isForgotPasswordRoute && !isResetPasswordRoute && !isSetPasswordRoute && !isChangeEmailRoute && !isMfaVerifyRoute) {
     return (
       <Redirect
         push={false}
@@ -86,6 +89,7 @@ export function AppRoutingWithAuth(props) {
   }
 
   return children;
+  if (!shouldShowAppRouting) return null;
 }
 
 // we need to create a HOC with withRouter otherwise the router context will

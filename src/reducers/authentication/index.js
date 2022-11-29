@@ -17,11 +17,39 @@ export default function (state = defaultState, action) {
       loggedOut: true, // why is this not in the defaultState?
     };
   }
-
   const {type, showAuthError, mfaError, mfaAuthInfo} = action;
 
   return produce(state, draft => {
     switch (type) {
+      case actionTypes.AUTH.CHANGE_EMAIL_SUCCESSFUL:
+        draft.changeEmailStatus = 'success';
+        break;
+      case actionTypes.AUTH.CHANGE_EMAIL_FAILED:
+        draft.changeEmailStatus = 'failure';
+        break;
+      case actionTypes.AUTH.RESET_REQUEST_SENT:
+        draft.requestResetStatus = '';
+        draft.resetRequestLoader = false;
+        draft.requestResetEmail = '';
+        draft.requestResetError = '';
+        break;
+      case actionTypes.AUTH.RESET_REQUEST:
+        draft.resetRequestLoader = true;
+        draft.requestResetStatus = 'requesting';
+        draft.requestResetError = '';
+        break;
+      case actionTypes.AUTH.RESET_REQUEST_FAILED:
+        draft.resetRequestLoader = false;
+        draft.requestResetStatus = 'failed';
+        draft.requestResetError = action.error;
+        break;
+
+      case actionTypes.AUTH.RESET_REQUEST_SUCCESSFUL:
+        draft.resetRequestLoader = false;
+        draft.requestResetStatus = 'success';
+        draft.requestResetError = '';
+        draft.requestResetEmail = action.restRequestInfo.email;
+        break;
       case actionTypes.AUTH.INIT_SESSION:
         delete draft.showAuthError;
         draft.authenticated = false;
@@ -90,6 +118,12 @@ export default function (state = defaultState, action) {
 
         break;
 
+      case actionTypes.AUTH.SIGNUP_STATUS:
+        if (!draft.signup) draft.signup = {};
+        draft.signup.status = action.status;
+        draft.signup.message = action.message;
+        break;
+
       case actionTypes.AUTH.MFA_VERIFY.REQUEST:
         draft.mfaAuth = {};
         draft.mfaAuth.status = 'requested';
@@ -147,6 +181,13 @@ selectors.isMFAAuthFailed = state => {
   return state.mfaAuth.status === 'failed';
 };
 selectors.mfaError = state => state?.mfaAuth?.error;
+selectors.requestResetEmail = state => state?.requestResetEmail;
+selectors.signupStatus = state => state?.signup?.status;
+selectors.signupMessage = state => state?.signup?.message;
+selectors.requestResetError = state => state?.requestResetError;
+selectors.resetRequestLoader = state => state?.resetRequestLoader || false;
+selectors.requestResetStatus = state => state?.requestResetStatus || '';
+selectors.changeEmailStatus = state => state?.changeEmailStatus || '';
 selectors.isMFAAuthVerified = state => {
   if (!state?.mfaAuth) return false;
 

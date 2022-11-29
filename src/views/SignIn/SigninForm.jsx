@@ -2,8 +2,8 @@ import TextField from '@material-ui/core/TextField';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import React, { useState, useCallback} from 'react';
-import { Typography, Link} from '@material-ui/core';
-import { useLocation } from 'react-router-dom';
+import { Typography} from '@material-ui/core';
+import { useLocation, Link , useHistory} from 'react-router-dom';
 import actions from '../../actions';
 import { selectors } from '../../reducers';
 import ErrorIcon from '../../components/icons/ErrorIcon';
@@ -12,9 +12,8 @@ import { getDomain } from '../../utils/resource';
 import { AUTH_FAILURE_MESSAGE } from '../../constants';
 import getRoutePath from '../../utils/routePaths';
 import Spinner from '../../components/Spinner';
-import { FilledButton, OutlinedButton } from '../../components/Buttons';
+import { FilledButton, OutlinedButton, TextButton } from '../../components/Buttons';
 import getImageUrl from '../../utils/image';
-import OneTimePassCodeForm from './OneTimePassCodeForm';
 
 const path = getImageUrl('images/googlelogo.png');
 
@@ -28,6 +27,7 @@ const useStyles = makeStyles(theme => ({
     height: 38,
     fontSize: theme.spacing(2),
     marginTop: theme.spacing(1),
+    color: theme.palette.warning.main,
   },
   editableFields: {
     textAlign: 'center',
@@ -67,7 +67,7 @@ const useStyles = makeStyles(theme => ({
     color: theme.palette.primary.dark,
   },
   forgotPass: {
-    color: theme.palette.primary.dark,
+    color: theme.palette.warning.main,
     textAlign: 'right',
     marginBottom: theme.spacing(3),
   },
@@ -129,7 +129,7 @@ export default function SignIn({dialogOpen}) {
   const location = useLocation();
   const classes = useStyles();
   const [email, setEmail] = useState('');
-
+  const history = useHistory();
   const handleAuthentication = useCallback((email, password) => {
     dispatch(actions.auth.request(email, password, true));
   }, [dispatch]);
@@ -195,7 +195,7 @@ export default function SignIn({dialogOpen}) {
   };
 
   if (isMFAAuthRequired) {
-    return <OneTimePassCodeForm dialogOpen={dialogOpen} />;
+    history.push(getRoutePath('/mfa/verify'));
   }
   const attemptedRoute =
       location && location.state && location.state.attemptedRoute;
@@ -227,9 +227,14 @@ export default function SignIn({dialogOpen}) {
             />
 
         <div className={classes.forgotPass}>
-          <Link href="/request-reset" className={classes.forgotPass} variant="body2">
-            Forgot password?
-          </Link>
+          <TextButton
+            data-test="forgotPassword"
+            color="primary"
+            className={classes.forgotPass}
+            component={Link}
+            to={email ? getRoutePath(`/request-reset?email=${email}`) : getRoutePath('/request-reset')}>
+            Forgot password-UI?
+          </TextButton>
         </div>
         { showError && error && (
           <Typography
@@ -248,7 +253,7 @@ export default function SignIn({dialogOpen}) {
               type="submit"
               className={classes.submit}
               value="Submit">
-              Sign in
+              Sign in (UI)
             </FilledButton>
           )}
       </form>

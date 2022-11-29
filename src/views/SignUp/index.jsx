@@ -1,17 +1,13 @@
-import React, {useState} from 'react';
+import React from 'react';
 import { useSelector } from 'react-redux';
-import { makeStyles, Typography } from '@material-ui/core';
-import { Link } from 'react-router-dom';
-import SigninForm from './SigninForm';
+import { makeStyles, Typography, Link } from '@material-ui/core';
+import SignUp from './SignupForm';
 import CeligoLogo from '../../components/CeligoLogo';
 import { getDomain } from '../../utils/resource';
 import messageStore from '../../utils/messageStore';
 import { selectors } from '../../reducers';
 import MarketingContentWithIframe from '../../components/LoginScreen/MarketingContentWithIframe';
 import InfoIcon from '../../components/icons/InfoIcon';
-import { TextButton } from '../../components/Buttons';
-import getRoutePath from '../../utils/routePaths';
-import { SIGN_UP_SUCCESS } from '../../constants';
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
@@ -73,10 +69,6 @@ const useStyles = makeStyles(theme => ({
     position: 'absolute',
     bottom: theme.spacing(8),
   },
-  signupSuccess: {
-    color: theme.palette.success.main,
-    marginBottom: theme.spacing(2),
-  },
   signInForm: {
     [theme.breakpoints.down('xs')]: {
       maxWidth: '100%',
@@ -98,7 +90,7 @@ const Title = ({ isMFAAuthRequired }) => {
   if (!isMFAAuthRequired) {
     return (
       <Typography variant="h3" className={classes.title}>
-        Sign in
+        Sign up
       </Typography>
     );
   }
@@ -125,17 +117,12 @@ const Title = ({ isMFAAuthRequired }) => {
   );
 };
 
-export default function Signin(props) {
+export default function Signup(props) {
   const classes = useStyles();
-  const [setAnchorEl] = useState(null);
   // eslint-disable-next-line no-undef
   const contentUrl = (getDomain() === 'eu.integrator.io' ? IO_LOGIN_PROMOTION_URL_EU : IO_LOGIN_PROMOTION_URL);
 
-  const isSignupCompleted = useSelector(state => selectors.signupStatus(state) === 'done');
   const isMFAAuthRequired = useSelector(state => selectors.isMFAAuthRequired(state));
-  const handleClick = () => {
-    setAnchorEl(null);
-  };
 
   return (
     <div className={classes.wrapper}>
@@ -145,29 +132,18 @@ export default function Signin(props) {
             <CeligoLogo />
           </div>
           <Title isMFAAuthRequired={isMFAAuthRequired} />
-          {
-            isSignupCompleted && (
-            <Typography variant="body2" className={classes.signupSuccess} >
-              {SIGN_UP_SUCCESS}
-            </Typography>
-            )
-          }
-          <SigninForm
+
+          <SignUp
             {...props}
             dialogOpen={false}
             className={classes.signInForm}
           />
           {getDomain() !== 'eu.integrator.io' && (
           <Typography variant="body2" className={classes.signupLink}>
-            Don&apos;t have an account?
-            <TextButton
-              data-test="signup"
-              color="primary"
-              className={classes.link}
-              component={Link}
-              to="/signup">
-              Sign up "From UI"
-            </TextButton>
+            Already have an account?
+            <Link href="/signin" className={classes.link}>
+              Sign in "From UI"
+            </Link>
           </Typography>
           )}
         </div>

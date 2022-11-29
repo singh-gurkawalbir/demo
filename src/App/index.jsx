@@ -12,7 +12,13 @@ import { ConfirmDialogProvider } from '../components/ConfirmDialog';
 import ConflictAlertDialog from '../components/ConflictAlertDialog';
 import { selectors } from '../reducers';
 import actions from '../actions';
+import MfaVerify from '../views/MFA';
 import Signin from '../views/SignIn';
+import Signup from '../views/Signup';
+import ResetPassword from '../views/ResetRequest';
+import ChangeEmail from '../views/ChangeEmail';
+import SetPassword from '../views/SetPassword';
+import ForgotPassword from '../views/ForgotPassword';
 import * as gainsight from '../utils/analytics/gainsight';
 import { getDomain } from '../utils/resource';
 import getRoutePath from '../utils/routePaths';
@@ -106,7 +112,18 @@ function NonSigninHeaderComponents() {
 const pageContentPaths = [getRoutePath('/*'), getRoutePath('/')];
 export const PageContentComponents = () => (
   <Switch>
+    <Route exact path={getRoutePath('/reset-password/:token')} component={ResetPassword} />
+    <Route exact path={getRoutePath('/change-email/:token')} component={ChangeEmail} />
+    <Route exact path={getRoutePath('/set-initial-password/:token')} component={SetPassword} />
+    <Route path={getRoutePath('/mfa/verify')} component={MfaVerify} />
     <Route path={getRoutePath('/signin')} component={Signin} />
+    <Route path={getRoutePath('/signup')} component={Signup} />
+    <Route
+      path={[
+        getRoutePath('/request-reset?email'),
+        getRoutePath('/request-reset'),
+      ]} component={ForgotPassword} />
+    <Route path={getRoutePath('/request-reset-sent')} component={ForgotPassword} />
     <Route path={pageContentPaths} component={PageContent} />
   </Switch>
 );
@@ -167,7 +184,14 @@ export default function App() {
                     <ErrorNotifications />
                     {/* Headers */}
                     <Switch>
+                      <Route path={getRoutePath('/mfa/verify')} component={null} />
+                      <Route path={getRoutePath('/reset-password')} component={null} />
+                      <Route path={getRoutePath('/set-initial-password')} component={null} />
                       <Route path={getRoutePath('/signin')} component={null} />
+                      <Route path={getRoutePath('/signup')} component={null} />
+                      <Route path={getRoutePath('/request-reset')} component={null} />
+                      <Route path={getRoutePath('/request-reset-sent')} component={null} />
+                      <Route path={getRoutePath('/change-email')} component={null} />
                       <Route path={getRoutePath('/*')} component={NonSigninHeaderComponents} />
                     </Switch>
                     {/* page content */}
