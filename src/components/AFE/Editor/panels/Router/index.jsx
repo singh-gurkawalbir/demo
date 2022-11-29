@@ -13,6 +13,7 @@ import BranchItem from './BranchItem';
 import messageStore from '../../../../../utils/messageStore';
 import Spinner from '../../../../Spinner';
 import { shortId } from '../../../../../utils/string';
+import DynaText from '../../../../DynaForm/fields/DynaText';
 
 const useStyles = makeStyles(theme => ({
   panelContent: {
@@ -67,7 +68,10 @@ export default function RouterPanel({ editorId }) {
   const branches = useMemo(() => Array(branchesLength).fill().map(() => ({id: shortId()})), [branchesLength]);
   const isLoading = useSelector(state => selectors.editor(state, editorId).sampleDataStatus === 'requested');
   const maxBranchesLimitReached = branches.length >= 25;
-  const routeRecordsTo = useSelector(state => selectors.editorRule(state, editorId)?.routeRecordsTo || 'first_matching_branch');
+  const {
+    routeRecordsTo = 'first_matching_branch',
+    name = '',
+  } = useSelector(state => selectors.editorRule(state, editorId), shallowEqual);
   const { flowId } = useSelector(state => selectors.editor(state, editorId), shallowEqual);
   const flow = useSelector(state => selectors.fbFlow(state, flowId));
   const isViewMode = useSelector(state => selectors.isFlowViewMode(state, flow?._integrationId, flowId));
@@ -95,6 +99,10 @@ export default function RouterPanel({ editorId }) {
     dispatch(actions.editor.patchRule(editorId, val, {rulePath: 'routeRecordsTo'}));
   };
 
+  const updatedOnNameChange = (id, val) => {
+    dispatch(actions.editor.patchRule(editorId, val, {rulePath: 'name'}));
+  };
+
   return (
     <div className={classes.panelContent}>
       <BranchDrawer editorId={editorId} />
@@ -102,6 +110,17 @@ export default function RouterPanel({ editorId }) {
       <BranchHeading helpKey="flow.router.branchType" classes={classes}>Branching type</BranchHeading>
 
       <div className={classes.branchingType}>
+        <DynaText
+          id="name"
+          name="name"
+          disabled={isViewMode}
+          multiline
+          rowsMax={4}
+          label="Branching name"
+          value={name}
+          onFieldChange={updatedOnNameChange}
+        />
+
         <DynaRadioGroup
           id="branchType"
           name="branchType"

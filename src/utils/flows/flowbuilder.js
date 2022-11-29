@@ -64,6 +64,29 @@ export const addPageGenerators = flow => {
   flow.pageGenerators.push({setupInProgress: true});
 };
 
+export const moveStepFunction = (flow, stepInfo) => {
+  if (!flow || !stepInfo) return;
+  if (stepInfo.itemType === 'pg') {
+    flow.pageGenerators.splice(stepInfo.targetIndex, 0, flow.pageGenerators.splice(stepInfo.sourceIndex, 1)[0]);
+  } else if (flow.routers?.length) {
+    if (!stepInfo.sourcePath || !stepInfo.targetPath) return;
+    const {sourcePath, targetPath, position} = stepInfo;
+    const [, srcRouterIndex, srcBranchIndex, srcPageProcessorIndex] = PageProcessorPathRegex.exec(sourcePath);
+    const [, targetRouterIndex, targetBranchIndex, targetPageProcessorIndex] = PageProcessorPathRegex.exec(targetPath);
+    const index = position === 'right' ? +targetPageProcessorIndex + 1 : targetPageProcessorIndex;
+    // Remove pp from its current location
+    const [pp] = flow.routers[srcRouterIndex].branches[srcBranchIndex].pageProcessors.splice(srcPageProcessorIndex, 1);
+
+    // Insert it in to its new dropped location.
+    flow.routers[targetRouterIndex].branches[targetBranchIndex].pageProcessors.splice(index, 0, pp);
+  } else if (flow.pageProcessors?.length) {
+    const {sourceIndex, targetIndex, position} = stepInfo;
+    const index = position === 'right' && sourceIndex > targetIndex ? targetIndex + 1 : targetIndex;
+
+    flow.pageProcessors.splice(index, 0, flow.pageProcessors.splice(stepInfo.sourceIndex, 1)[0]);
+  }
+};
+
 export const addPageProcessor = (flow, insertAtIndex, branchPath, ppData) => {
   if (!flow) return;
   const pageProcessor = ppData || {setupInProgress: true};
@@ -195,6 +218,7 @@ export const generateRouterNode = (router, routerIndex) => ({
   id: router?.id || shortId(),
   type: isVirtualRouter(router) ? GRAPH_ELEMENTS_TYPE.MERGE : GRAPH_ELEMENTS_TYPE.ROUTER,
   data: {
+    name: router.name,
     path: `/routers/${routerIndex}`,
     routeRecordsTo: router.routeRecordsTo,
   },
@@ -330,6 +354,20 @@ export const generateNodesAndEdgesFromNonBranchedFlow = (flow, isViewMode) => {
   ];
 };
 
+export const populateDragDropData = (source, target) => {
+  if (target.type === GRAPH_ELEMENTS_TYPE.PP_STEP || source.type === GRAPH_ELEMENTS_TYPE.PP_STEP) {
+    if (target.type === GRAPH_ELEMENTS_TYPE.PP_STEP && source.type === GRAPH_ELEMENTS_TYPE.PP_STEP) {
+      source.data.showRight = true;
+    }
+    if (target.type === GRAPH_ELEMENTS_TYPE.PP_STEP && [GRAPH_ELEMENTS_TYPE.ROUTER, GRAPH_ELEMENTS_TYPE.MERGE, GRAPH_ELEMENTS_TYPE.PG_STEP].includes(source.type)) {
+      target.data.showLeft = true;
+    }
+    if (source.type === GRAPH_ELEMENTS_TYPE.PP_STEP && [GRAPH_ELEMENTS_TYPE.ROUTER, GRAPH_ELEMENTS_TYPE.MERGE, GRAPH_ELEMENTS_TYPE.PG_STEP, GRAPH_ELEMENTS_TYPE.TERMINAL].includes(target.type)) {
+      source.data.showRight = true;
+    }
+  }
+};
+
 export const populateMergeData = (flow, elements) => {
   const terminalNodes = elements.filter(el => el.type === GRAPH_ELEMENTS_TYPE.TERMINAL);
   const { routers = [] } = flow;
@@ -348,6 +386,8 @@ export const populateMergeData = (flow, elements) => {
     if (element.type === GRAPH_ELEMENTS_TYPE.EDGE) {
       const targetElement = elements.find(el => el.id === element.target);
       const sourceElement = elements.find(el => el.id === element.source);
+
+      populateDragDropData(sourceElement, targetElement);
 
       if (sourceElement && targetElement && (
         sourceElement.type === GRAPH_ELEMENTS_TYPE.PG_STEP || // is connected to Page generator => cant merge to page generators
