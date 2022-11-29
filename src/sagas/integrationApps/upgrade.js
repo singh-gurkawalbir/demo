@@ -52,7 +52,6 @@ export function* getSteps({ integrationId }) {
   yield put(actions.integrationApp.upgrade.setStatus(integrationId, obj));
 }
 export function* postChangeEditionSteps({ integrationId }) {
-  yield put(actions.integrationApp.upgrade.setStatus(integrationId, { status: 'inProgress' }));
   const path = `/integrations/${integrationId}/changeEditionSteps`;
   let response;
 
