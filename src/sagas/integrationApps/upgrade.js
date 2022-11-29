@@ -6,13 +6,11 @@ import { apiCallWithRetry } from '../index';
 export function* changeEdition({ integrationId }) {
   yield put(actions.integrationApp.upgrade.setStatus(integrationId, { status: 'inProgress' }));
   const path = `/integrations/${integrationId}/changeEdition`;
-  const body = {};
 
   try {
     yield call(apiCallWithRetry, {
       path,
-      opts: { body, method: 'POST' },
-      // hidden: true,
+      opts: { body: {}, method: 'POST' },
       message: 'Requesting change edition',
     }) || {};
   } catch (error) {
@@ -33,7 +31,6 @@ export function* getSteps({ integrationId }) {
     response = yield call(apiCallWithRetry, {
       path,
       opts: { method: 'GET' },
-      // hidden: true,
       message: 'Requesting edition steps',
     }) || {};
   } catch (error) {
@@ -43,7 +40,7 @@ export function* getSteps({ integrationId }) {
     return;
   }
 
-  if (response.showWizard === false) {
+  if (!response.showWizard) {
     yield put(actions.integrationApp.upgrade.postChangeEditonSteps(integrationId));
   }
 
@@ -57,19 +54,19 @@ export function* getSteps({ integrationId }) {
 export function* postChangeEditionSteps({ integrationId }) {
   yield put(actions.integrationApp.upgrade.setStatus(integrationId, { status: 'inProgress' }));
   const path = `/integrations/${integrationId}/changeEditionSteps`;
-  const body = {};
   let response;
 
   try {
     response = yield call(apiCallWithRetry, {
       path,
-      opts: { body, method: 'POST' },
-      // hidden: true,
+      opts: { body: {}, method: 'POST' },
       message: 'Posting edition steps',
     }) || {};
   } catch (error) {
     yield put(actions.integrationApp.upgrade.setStatus(integrationId, { status: 'error' }));
     // error handling;
+
+    return;
   }
   if (response?.done === true) {
     yield put(actions.integrationApp.upgrade.setStatus(integrationId, { status: 'done' }));

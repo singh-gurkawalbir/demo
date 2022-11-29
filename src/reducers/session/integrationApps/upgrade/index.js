@@ -52,7 +52,7 @@ selectors.currentChildUpgrade = state => {
   let currentChild = '';
 
   forEach(state?.childList, id => {
-    if (state[id].inQueue === true) {
+    if (state[id].inQueue) {
       currentChild = id;
 
       return false;

@@ -34,7 +34,7 @@ export default function ParentUpgradeButton(props) {
       tooltipProps={{title: `Upgrade to a ${nextPlan} plan`}}
       <FilledButton
         className={className}
-        onClick={() => onClick()}>
+        onClick={onClick}>
         Upgrade
       </FilledButton>
     </ButtonWithTooltip>

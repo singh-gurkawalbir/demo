@@ -860,7 +860,7 @@ const integrationApp = {
           { integrationId, flowId, mappingData }
         ),
     },
-    v2: {
+    integrationAppV2: {
       upgrade: integrationId =>
         action(actionTypes.INTEGRATION_APPS.SETTINGS.V2.UPGRADE, {
           integrationId,

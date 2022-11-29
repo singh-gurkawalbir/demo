@@ -220,7 +220,7 @@ export default function SubscriptionSection({ childId, integrationId }) {
         {
           label: 'Submit request',
           onClick: () => {
-            dispatch(actions.integrationApp.settings.v2.upgrade(integrationId));
+            dispatch(actions.integrationApp.settings.integrationAppV2.upgrade(integrationId));
           },
         },
         {

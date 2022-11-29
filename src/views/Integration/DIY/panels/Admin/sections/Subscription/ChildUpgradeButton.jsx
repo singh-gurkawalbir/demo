@@ -34,7 +34,7 @@ export default function ChildUpgradeButton({ resource }) {
 
   useEffect(() => {
     if (currentChild === id) {
-      dispatch(actions.integrationApp.settings.v2.upgrade(id));
+      dispatch(actions.integrationApp.settings.integrationAppV2.upgrade(id));
     }
   }, [dispatch, currentChild, id]);
 
