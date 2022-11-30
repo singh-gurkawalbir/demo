@@ -15,8 +15,8 @@ import useSelectorMemo from '../../../../../../../hooks/selectors/useSelectorMem
 import { useGetTableContext } from '../../../../../../../components/CeligoTable/TableContext';
 import FilledButton from '../../../../../../../components/Buttons/FilledButton';
 import useConfirmDialog from '../../../../../../../components/ConfirmDialog';
-import ButtonWithTooltip from '../../../../../../../components/Buttons/ButtonWithTooltip';
 import ChildIntegrationsTable from './ChildIntegrationsTable';
+import ParentUpgradeButton from './ParentUpgradeButton';
 
 const emptyObject = {};
 const metadata = {
@@ -219,8 +219,9 @@ export default function SubscriptionSection({ childId, integrationId }) {
       buttons: [
         {
           label: 'Submit request',
-          // onClick logic will be added with next trackers
-          onClick: () => {},
+          onClick: () => {
+            dispatch(actions.integrationApp.settings.integrationAppV2.upgrade(integrationId));
+          },
         },
         {
           label: 'Cancel',
@@ -228,7 +229,7 @@ export default function SubscriptionSection({ childId, integrationId }) {
         },
       ],
     });
-  }, [confirmDialog, nextPlan]);
+  }, [confirmDialog, dispatch, integrationId, nextPlan]);
 
   return (
     <>
@@ -257,14 +258,12 @@ export default function SubscriptionSection({ childId, integrationId }) {
               </Grid>
               <Grid item xs={3}>
                 {upgradeText && upgradeText === 'upgradeEdition' && (
-                <ButtonWithTooltip>
-                  tooltipProps={{title: `Upgrade to a ${nextPlan} plan`}}
-                  <FilledButton
-                    className={classes.button}
-                    onClick={handleUpgradeEdition}>
-                    Upgrade
-                  </FilledButton>
-                </ButtonWithTooltip>
+                <ParentUpgradeButton
+                  id={integrationId}
+                  className={classes.button}
+                  onClick={handleUpgradeEdition}
+                  nextPlan={nextPlan}
+                />
                 )}
                 {upgradeText && upgradeText !== 'upgradeEdition' && (
                 <FilledButton
