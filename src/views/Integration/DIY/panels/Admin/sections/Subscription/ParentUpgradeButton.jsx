@@ -1,4 +1,5 @@
-import React, { useState, useSelector, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useSelector } from 'react-redux';
 import Spinner from '../../../../../../../components/Spinner';
 import FilledButton from '../../../../../../../components/Buttons/FilledButton';
 import ButtonWithTooltip from '../../../../../../../components/Buttons/ButtonWithTooltip';
@@ -30,8 +31,9 @@ export default function ParentUpgradeButton(props) {
   }
 
   return (
-    <ButtonWithTooltip>
+    <ButtonWithTooltip
       tooltipProps={{title: `Upgrade to a ${nextPlan} plan`}}
+    >
       <FilledButton
         className={className}
         onClick={onClick}>
