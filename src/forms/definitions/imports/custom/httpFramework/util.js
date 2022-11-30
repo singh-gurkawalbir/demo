@@ -254,6 +254,9 @@ function howToFindIdentifierFieldsMeta({
         fieldId: 'assistantMetadata.lookupQueryParams',
         label: 'Query parameters',
         type: 'hfsearchparams',
+        keyName: 'name',
+        valueName: 'value',
+        keyPlaceholder: 'Search, select or add a name',
         value: !isEmpty(lookupQueryParameterValues)
           ? lookupQueryParameterValues
           : undefined,

@@ -202,6 +202,7 @@ function searchParameterFieldsMeta({
       value: !isEmpty(value) ? value : defaultValue,
       keyName: 'name',
       valueName: 'value',
+      keyPlaceholder: 'Search, select or add a name',
       paramMeta: {
         paramLocation,
         fields: parameters,

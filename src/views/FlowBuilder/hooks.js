@@ -1,5 +1,6 @@
-import { useCallback } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
+import { useDragDropManager } from 'react-dnd';
 import { useHistory, useLocation, useRouteMatch } from 'react-router-dom';
 import actions from '../../actions';
 import useConfirmDialog from '../../components/ConfirmDialog';
@@ -349,5 +350,25 @@ export const useHandleAddNewRouter = edgeId => {
       params: { editorId },
     }));
   };
+};
+
+export const useIsDragInProgress = () => {
+  const [dragInProgress, setDragInProgress] = useState(false);
+  const clearMonitorSubscription = useRef(null);
+  const dragDropManager = useDragDropManager();
+  const handleMonitorChange = useCallback(() => {
+    setDragInProgress(dragDropManager.getMonitor().isDragging());
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dragDropManager]);
+
+  useEffect(() => {
+    clearMonitorSubscription.current = dragDropManager.getMonitor().subscribeToStateChange(handleMonitorChange);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  useEffect(() => () => {
+    clearMonitorSubscription.current();
+  }, []);
+
+  return dragInProgress;
 };
 

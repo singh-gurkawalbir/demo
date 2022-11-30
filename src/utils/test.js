@@ -190,6 +190,14 @@ describe('getRequestOptions util method', () => {
         },
       },
     ],
+    [
+      {
+        path: '/jobs/j1/files',
+        opts: { method: 'DELETE' },
+      },
+      actionTypes.JOB.PURGE.REQUEST,
+      { resourceId: 'j1' },
+    ],
   ];
 
   each(testCases).test(

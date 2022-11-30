@@ -2801,10 +2801,10 @@ describe('getIAFlowSettings', () => {
     expect(getIAFlowSettings(multiStoreApp, flowIDMultiStore, 'c2')).toEqual({});
   });
   test('should return undefined if the IA supports multistore but it does not have the required child', () => {
-    expect(getIAFlowSettings(multiStoreApp, flowIDMultiStore, 'c3')).toEqual(undefined);
+    expect(getIAFlowSettings(multiStoreApp, flowIDMultiStore, 'c3')).toEqual({});
   });
   test('should return undefined if the IA supports multistore but the required child does not have sections defined', () => {
-    expect(getIAFlowSettings(multiStoreAppWithChildNotHavingSections, flowIDMultiStore, 'c1')).toEqual(undefined);
+    expect(getIAFlowSettings(multiStoreAppWithChildNotHavingSections, flowIDMultiStore, 'c1')).toEqual({});
   });
   test('should return undefined if the IA supports multistore and sections is not defined for any of the child', () => {
     expect(getIAFlowSettings(multiStoreAppWithChildNotHavingSections, flowIDMultiStore, undefined)).toEqual({});

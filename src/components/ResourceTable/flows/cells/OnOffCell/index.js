@@ -140,7 +140,7 @@ export default function OnOffCell({
     return (
       <RemoveMargin>
         <CeligoSwitch
-          tooltip="Off/On"
+          tooltip="Off / On"
           data-test={`toggleOnAndOffFlow${flowName}`}
           disabled={accessLevel === 'monitor'}
           checked={!disabled}
