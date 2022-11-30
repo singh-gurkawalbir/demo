@@ -68,11 +68,13 @@ export default function ChangeEmail(props) {
   const changeEmailStatus = useSelector(state => selectors.changeEmailStatus(state));
   const [token, setToken] = React.useState(props.match.params.token ? props.match.params.token : '');
 
+ 
   useEffect(() => {
     if (token == null || token === '') {
       return;
     }
-    dispatch(actions.auth.changeEmailRequest(token));
+    dispatch(actions.auth.changeEmailRequest(token))
+    
   }, []);
   useEffect(() => {
     if (changeEmailStatus === 'success') {
@@ -84,9 +86,9 @@ export default function ChangeEmail(props) {
   const contentUrl = (getDomain() === 'eu.integrator.io' ? IO_LOGIN_PROMOTION_URL_EU : IO_LOGIN_PROMOTION_URL);
 
   if (changeEmailStatus === '') {
-    return (
-      <Spinner centerAll />
-    );
+    // return (
+    //   <Spinner centerAll />
+    // );
   }
 
   return (

@@ -43,8 +43,9 @@ export function normalizeUrlAndOptions(path, opts) {
       path.includes('/reSigninWithSSO') ||
       path.includes('/mfa/verify') ||
       path.includes('/request-reset') ||
-      path.includes('/reset-password/*') ||
-      path.includes('/set-initial-password/*')
+      path.includes('/reset-password') ||
+      path.includes('/set-initial-password') ||
+      path.includes('/change-email')
     ) {
       url = path;
     } else {

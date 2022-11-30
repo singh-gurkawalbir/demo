@@ -19,7 +19,6 @@ const useStyles = makeStyles(theme => ({
     height: 38,
     fontSize: theme.spacing(2),
     marginTop: theme.spacing(1),
-    color: theme.palette.warning.main,
   },
   editableFields: {
     textAlign: 'center',

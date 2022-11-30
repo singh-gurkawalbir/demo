@@ -38,17 +38,32 @@ export default function (state = defaultState, action) {
         draft.requestResetStatus = 'requesting';
         draft.requestResetError = '';
         break;
+      case actionTypes.AUTH.SET_PASSWORD_REQUEST_FAILED:
+        draft.requestSetPasswordStatus = 'failed';
+        draft.requestSetPasswordError = action.error;
+        break;
+      case actionTypes.AUTH.RESET_PASSWORD_REQUEST_FAILED:
+        draft.requestResetPasswordStatus = 'failed';
+        draft.requestResetPasswordError = action.error;
+        break;
+      case actionTypes.AUTH.RESET_PASSWORD_REQUEST_SUCCESSFUL:
+        draft.requestResetPasswordStatus = 'success';
+        delete draft.requestResetPasswordError;
+        break;
       case actionTypes.AUTH.RESET_REQUEST_FAILED:
         draft.resetRequestLoader = false;
         draft.requestResetStatus = 'failed';
         draft.requestResetError = action.error;
         break;
-
       case actionTypes.AUTH.RESET_REQUEST_SUCCESSFUL:
         draft.resetRequestLoader = false;
         draft.requestResetStatus = 'success';
         draft.requestResetError = '';
         draft.requestResetEmail = action.restRequestInfo.email;
+        break;
+      case actionTypes.AUTH.SET_PASSWORD_REQUEST_SUCCESSFUL:
+        draft.requestSetPasswordStatus = 'success';
+        delete draft.requestSetPasswordError;
         break;
       case actionTypes.AUTH.INIT_SESSION:
         delete draft.showAuthError;
@@ -184,10 +199,15 @@ selectors.mfaError = state => state?.mfaAuth?.error;
 selectors.requestResetEmail = state => state?.requestResetEmail;
 selectors.signupStatus = state => state?.signup?.status;
 selectors.signupMessage = state => state?.signup?.message;
+selectors.setPasswordError = state => state?.setPasswordError;
 selectors.requestResetError = state => state?.requestResetError;
 selectors.resetRequestLoader = state => state?.resetRequestLoader || false;
 selectors.requestResetStatus = state => state?.requestResetStatus || '';
 selectors.changeEmailStatus = state => state?.changeEmailStatus || '';
+selectors.requestResetPasswordError = state => state?.requestResetPasswordError;
+selectors.requestResetPasswordStatus = state => state?.requestResetPasswordStatus || '';
+selectors.requestSetPasswordError = state => state?.requestSetPasswordError;
+selectors.requestSetPasswordStatus = state => state?.requestSetPasswordStatus || '';
 selectors.isMFAAuthVerified = state => {
   if (!state?.mfaAuth) return false;
 

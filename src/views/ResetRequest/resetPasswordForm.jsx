@@ -1,9 +1,9 @@
 import TextField from '@material-ui/core/TextField';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
-import React, { useState, useCallback, useRef} from 'react';
+import React, { useState, useCallback, useRef, useEffect} from 'react';
 import { Typography, InputAdornment} from '@material-ui/core';
-import { useParams } from 'react-router-dom';
+import { useParams, useHistory} from 'react-router-dom';
 import actions from '../../actions';
 import { selectors } from '../../reducers';
 import { AUTH_FAILURE_MESSAGE, PASSWORD_STRENGTH_ERROR } from '../../constants';
@@ -12,6 +12,7 @@ import { FilledButton, TextButton } from '../../components/Buttons';
 
 import ShowContentIcon from '../../components/icons/ShowContentIcon';
 import HideContentIcon from '../../components/icons/HideContentIcon';
+import getRoutePath from '../../utils/routePaths';
 
 const useStyles = makeStyles(theme => ({
   submit: {
@@ -62,20 +63,26 @@ export default function ResetPassword() {
   const inputFieldRef = useRef();
   const dispatch = useDispatch();
   // const showError = false;
+  const history = useHistory();
   const classes = useStyles();
   const [showErr, setShowErr] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const handleClickShowPassword = () => setShowPassword(!showPassword);
   const handleMouseDownPassword = () => setShowPassword(!showPassword);
-
   const handleResetPassword = useCallback(password => {
     dispatch(actions.auth.resetPasswordRequest(password, token));
   }, [dispatch, token]);
+  const isSetPasswordCompleted = useSelector(state => selectors.requestResetPasswordStatus(state) === 'success');
 
+  useEffect(() => {
+    if (isSetPasswordCompleted) {
+      history.replace(getRoutePath('/signin'));
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isSetPasswordCompleted]);
   const isAuthenticating = useSelector(state => selectors.isAuthenticating(state));
-
   const error = useSelector(state => {
-    const errorMessage = selectors.authenticationErrored(state);
+    const errorMessage = selectors.requestResetPasswordError(state);
 
     if (errorMessage === AUTH_FAILURE_MESSAGE) {
       return 'Sign in failed. Please try again.';
@@ -107,12 +114,22 @@ export default function ResetPassword() {
 
   return (
     <div className={classes.editableFields}>
+      { error && (
+      <Typography
+        data-private
+        color="error"
+        component="div"
+        variant="h5"
+        className={classes.alertMsg}>
+        {error}
+      </Typography>
+      )}
       <form onSubmit={handleOnSubmit}>
         <TextField
           data-private
           data-test="password"
           id="password"
-          variant="filled"
+          variant="outlined"
           type={showPassword ? 'text' : 'password'}
           placeholder="Password"
           onChange={handleOnChangePassword}
@@ -120,7 +137,7 @@ export default function ResetPassword() {
           InputProps={{
             endAdornment: (true) &&
               (
-                <InputAdornment className={classes.autoSuggestDropdown} position="end">
+                <InputAdornment  position="end">
                     {showPassword ? (
                       <ShowContentIcon
                         onClick={handleClickShowPassword}
