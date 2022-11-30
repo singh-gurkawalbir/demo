@@ -57,6 +57,7 @@ export default function DynaRefreshCollection(props) {
       ) : (
         <ActionButton
           onClick={onRefresh}
+          tooltip="Refresh"
           className={classes.refreshResourceActionBtn}
           data-test="refreshResource">
           <RefreshIcon />
