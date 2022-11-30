@@ -211,6 +211,7 @@ export function Canvas({ flowId, fullscreen }) {
           elementsMap={elementsMap}
           flow={mergedFlow}
           flowId={flowId}
+          translateExtent={translateExtent}
           dragNodeId={dragStepId}
             >
           <CustomDragLayer />
