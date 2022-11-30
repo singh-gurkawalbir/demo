@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React from 'react';
 import { makeStyles, Typography } from '@material-ui/core';
 import SetPasswordForm from './setPasswordForm';
 import CeligoLogo from '../../components/CeligoLogo';
