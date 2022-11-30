@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import actions from '../../../actions';
-import { getAssistantConnectorType, getApp} from '../../../constants/applications';
+import { getAssistantConnectorType, getApp, getHttpConnector} from '../../../constants/applications';
 import { selectors } from '../../../reducers';
 import { SCOPES } from '../../../sagas/resourceForm';
 import useFormContext from '../../Form/FormContext';
@@ -36,6 +36,7 @@ export default function FormView(props) {
       selectors.resource(state, 'connections', staggedResource._connectionId) ||
       emptyObj
   );
+  const _httpConnectorId = getHttpConnector(connection?.http?._httpConnectorId)?._id;
 
   const assistantData = useSelector(state =>
     selectors.assistantData(state, {
@@ -150,7 +151,7 @@ export default function FormView(props) {
   const isFlowBuilderAssistant = flowId && (isGraphql ||
     (assistantName && assistantName !== 'financialforce' && !isAmazonHybridConnection(connection) && !isMicrosoftBusinessCentralOdataConnection(connection) && !isAcumaticaEcommerceImport && !isLoopReturnsv2import && !isEbayFinanceImport));
 
-  if (!isFlowBuilderAssistant) {
+  if (!isFlowBuilderAssistant || _httpConnectorId) {
     return null;
   }
 
