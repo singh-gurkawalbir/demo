@@ -1,7 +1,7 @@
 import TextField from '@material-ui/core/TextField';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
-import React, { useState, useCallback} from 'react';
+import React, { useState, useCallback, useEffect} from 'react';
 import { Typography} from '@material-ui/core';
 import { useLocation, Link, useHistory} from 'react-router-dom';
 import clsx from 'clsx';
@@ -28,7 +28,6 @@ const useStyles = makeStyles(theme => ({
     height: 38,
     fontSize: theme.spacing(2),
     marginTop: theme.spacing(1),
-    color: theme.palette.warning.main,
   },
   editableFields: {
     textAlign: 'center',
@@ -68,7 +67,7 @@ const useStyles = makeStyles(theme => ({
     color: theme.palette.primary.dark,
   },
   forgotPass: {
-    color: theme.palette.warning.main,
+    color: theme.palette.primary.dark,
     textAlign: 'right',
     marginBottom: theme.spacing(3),
   },
@@ -194,10 +193,11 @@ export default function SignIn({dialogOpen, className}) {
   window.signedInWithSSO = () => {
     reInitializeSession();
   };
-
-  if (isMFAAuthRequired) {
-    history.push(getRoutePath('/mfa/verify'));
-  }
+  useEffect(() => {
+    if (isMFAAuthRequired) {
+      history.push(getRoutePath('/mfa/verify'));
+    }
+  }, [history, isMFAAuthRequired]);
   const attemptedRoute =
       location && location.state && location.state.attemptedRoute;
 
@@ -233,8 +233,9 @@ export default function SignIn({dialogOpen, className}) {
             color="primary"
             className={classes.forgotPass}
             component={Link}
+            role="link"
             to={email ? getRoutePath(`/request-reset?email=${email}`) : getRoutePath('/request-reset')}>
-            Forgot password-UI?
+            Forgot password?
           </TextButton>
         </div>
         { showError && error && (
@@ -252,9 +253,10 @@ export default function SignIn({dialogOpen, className}) {
             <FilledButton
               data-test="submit"
               type="submit"
+              role="button"
               className={classes.submit}
               value="Submit">
-              Sign in (UI)
+              Sign in
             </FilledButton>
           )}
       </form>

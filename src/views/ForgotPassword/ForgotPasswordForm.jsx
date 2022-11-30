@@ -19,7 +19,6 @@ const useStyles = makeStyles(theme => ({
     height: 38,
     fontSize: theme.spacing(2),
     marginTop: theme.spacing(1),
-    color: theme.palette.warning.main,
   },
   editableFields: {
     textAlign: 'center',
@@ -100,7 +99,6 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const formKey = 'forgotPassword';
 export default function ForgotPassword({setShowError, email}) {
   const dispatch = useDispatch();
   const classes = useStyles();

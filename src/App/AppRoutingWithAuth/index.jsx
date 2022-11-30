@@ -60,6 +60,7 @@ export function AppRoutingWithAuth(props) {
   const isSignUpRoute = location.pathname === getRoutePath('signup');
   const isForgotPasswordRoute = location.pathname === getRoutePath('request-reset');
   const isMfaVerifyRoute = location.pathname === getRoutePath('mfa/verify');
+  const isMfaHelpRoute = location.pathname === getRoutePath('mfa-help');
   const isResetPasswordRoute = location.pathname.split('/')[1] === 'reset-password';
   const isSetPasswordRoute = location.pathname.split('/')[1] === 'set-initial-password';
   const isChangeEmailRoute = location.pathname.split('/')[1] === 'change-email';
@@ -76,7 +77,7 @@ export function AppRoutingWithAuth(props) {
 
     return children;
   }
-  if (!isSessionExpired && !isSignInRoute && !isSignUpRoute && !isForgotPasswordRoute && !isResetPasswordRoute && !isSetPasswordRoute && !isChangeEmailRoute && !isMfaVerifyRoute) {
+  if (!isSessionExpired && !isSignInRoute && !isSignUpRoute && !isForgotPasswordRoute && !isResetPasswordRoute && !isSetPasswordRoute && !isChangeEmailRoute && !isMfaVerifyRoute && !isMfaHelpRoute) {
     return (
       <Redirect
         push={false}
@@ -87,9 +88,9 @@ export function AppRoutingWithAuth(props) {
       />
     );
   }
+  if (!shouldShowAppRouting) return null;
 
   return children;
-  if (!shouldShowAppRouting) return null;
 }
 
 // we need to create a HOC with withRouter otherwise the router context will

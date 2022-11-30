@@ -182,6 +182,7 @@ module.exports = (env, argv) => {
       // eslint-disable-next-line no-console
       console.log('Cookie rewrite needed for secure API host.');
     }
+    // eslint-disable-next-line func-names
     let bypass = function (req, res, proxyOptions) {
       if (req.method !== 'POST') return '/';
     };

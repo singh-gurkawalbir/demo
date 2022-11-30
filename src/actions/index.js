@@ -93,6 +93,8 @@ const auth = {
   changeEmailFailed: error => action(actionTypes.AUTH.CHANGE_EMAIL_FAILED, {error}),
   setPasswordRequest: (password, token) =>
     action(actionTypes.AUTH.SET_PASSWORD_REQUEST, { password, token }),
+  setPasswordRequestFailed: error => action(actionTypes.AUTH.SET_PASSWORD_REQUEST_FAILED, {error}),
+  setPasswordRequestSuccess: setPasswordRequestInfo => action(actionTypes.AUTH.SET_PASSWORD_REQUEST_SUCCESSFUL, {setPasswordRequestInfo}),
   resetRequestSent: () => action(actionTypes.AUTH.RESET_REQUEST_SENT),
   resetRequestSuccess: restRequestInfo => action(actionTypes.AUTH.RESET_REQUEST_SUCCESSFUL, {restRequestInfo}),
   resetRequestFailed: error => action(actionTypes.AUTH.RESET_REQUEST_FAILED, {error}),
@@ -102,6 +104,8 @@ const auth = {
     action(actionTypes.AUTH.REQUEST, { email, password, showAuthError }),
   resetPasswordRequest: (password, token) =>
     action(actionTypes.AUTH.RESET_PASSWORD_REQUEST, { password, token }),
+  resetPasswordSuccess: resetPasswordRequestInfo => action(actionTypes.AUTH.RESET_PASSWORD_REQUEST_SUCCESSFUL, {resetPasswordRequestInfo}),
+  resetPasswordFailed: error => action(actionTypes.AUTH.RESET_PASSWORD_REQUEST_FAILED, {error}),
   signup: payloadBody =>
     action(actionTypes.AUTH.SIGNUP, { payloadBody }),
   signupStatus: (status, message) =>

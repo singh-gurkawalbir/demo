@@ -5,13 +5,11 @@ import { Link, useLocation } from 'react-router-dom';
 import SigninForm from './SigninForm';
 import CeligoLogo from '../../components/CeligoLogo';
 import { getDomain } from '../../utils/resource';
-import messageStore from '../../utils/messageStore';
 import { selectors } from '../../reducers';
 import MarketingContentWithIframe from '../../components/LoginScreen/MarketingContentWithIframe';
-import InfoIcon from '../../components/icons/InfoIcon';
 import { TextButton } from '../../components/Buttons';
-import { SIGN_UP_SUCCESS } from '../../constants';
 import ConcurSignInPage from './Concur';
+import { SIGN_UP_SUCCESS, RESET_PASSWORD_SUCCESS } from '../../constants';
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
@@ -37,7 +35,7 @@ const useStyles = makeStyles(theme => ({
   },
   link: {
     paddingLeft: 4,
-    color: theme.palette.warning.main,
+    color: theme.palette.primary.dark,
   },
   signinWrapper: {
     background: theme.palette.background.paper,
@@ -91,37 +89,13 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const Title = ({ isMFAAuthRequired }) => {
+const Title = () => {
   const classes = useStyles();
-  const { isAccountUser, noOfDays } = useSelector(selectors.mfaAuthInfo);
-
-  if (!isMFAAuthRequired) {
-    return (
-      <Typography variant="h3" className={classes.title}>
-        Sign in
-      </Typography>
-    );
-  }
-
-  let infoMessage;
-
-  if (isAccountUser) {
-    infoMessage = messageStore(noOfDays ? 'MFA_USER_OTP_INFO_FOR_TRUSTED_NUMBER_OF_DAYS' : 'MFA_USER_OTP_INFO', { noOfDays });
-  } else {
-    infoMessage = messageStore('MFA_OWNER_OTP_INFO');
-  }
 
   return (
-    <>
-      <Typography variant="h3" className={classes.mfaTitle}>
-        Authenticate with one-time passcode
-      </Typography>
-      <div className={classes.mfaInfo}>
-        <InfoIcon color="primary" width="16.5" height="16.5" />
-        <span className={classes.infoText}>{infoMessage}</span>
-      </div>
-    </>
-
+    <Typography variant="h3" className={classes.title}>
+      Sign in
+    </Typography>
   );
 };
 
@@ -131,7 +105,7 @@ function Signin(props) {
   const contentUrl = (getDomain() === 'eu.integrator.io' ? IO_LOGIN_PROMOTION_URL_EU : IO_LOGIN_PROMOTION_URL);
 
   const isSignupCompleted = useSelector(state => selectors.signupStatus(state) === 'done');
-  const isMFAAuthRequired = useSelector(state => selectors.isMFAAuthRequired(state));
+  const isSetPasswordCompleted = useSelector(state => selectors.requestResetPasswordStatus(state) === 'success');
 
   return (
     <div className={classes.wrapper}>
@@ -140,11 +114,18 @@ function Signin(props) {
           <div className={classes.logo}>
             <CeligoLogo />
           </div>
-          <Title isMFAAuthRequired={isMFAAuthRequired} />
+          <Title />
           {
             isSignupCompleted && (
             <Typography variant="body2" className={classes.signupSuccess} >
               {SIGN_UP_SUCCESS}
+            </Typography>
+            )
+          }
+          {
+            isSetPasswordCompleted && (
+            <Typography variant="body2" className={classes.signupSuccess} >
+              {RESET_PASSWORD_SUCCESS}
             </Typography>
             )
           }
@@ -162,8 +143,7 @@ function Signin(props) {
               className={classes.link}
               component={Link}
               to="/signup">
-              {/* eslint-disable-next-line react/no-unescaped-entities */}
-              Sign up "From UI"
+              Sign up
             </TextButton>
           </Typography>
           )}

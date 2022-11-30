@@ -47,7 +47,7 @@ export const resetPasswordRequestParams = {
     },
     method: 'POST',
   },
-  path: '/request-password?no_redirect=true',
+  path: '/reset-password?no_redirect=true',
 };
 export const setPasswordRequestParams = {
   opts: {
@@ -70,12 +70,11 @@ export const setChangeEmailParams = {
       'Content-Type': 'application/json',
     },
     body: {
-      password: process.env.API_PASSWORD,
       token: process.env.API_TOKEN,
     },
     method: 'POST',
   },
-  path: '/change-email',
+  path: '/change-email?no_redirect=true',
 };
 export const logoutParams = {
   opts: {

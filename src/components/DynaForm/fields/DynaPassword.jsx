@@ -1,14 +1,10 @@
-import React, { useState, useRef,useCallback } from 'react';
+import React, { useRef } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { useDispatch } from 'react-redux';
-import { FormControl, FormLabel, TextField,InputAdornment } from '@material-ui/core';
-import actions from '../../../actions';
-import FieldHelp from '../FieldHelp';
-import ActionButton from '../../ActionButton';
+import { FormControl, FormLabel, TextField, InputAdornment } from '@material-ui/core';
 import ShowContentIcon from '../../icons/ShowContentIcon';
 import isLoggableAttr from '../../../utils/isLoggableAttr';
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(theme => ({
   formWrapper: {
     alignItems: 'flex-start',
     display: 'flex',
@@ -29,26 +25,14 @@ const useStyles = makeStyles((theme) => ({
     marginTop: '0px !important',
     color: theme.palette.secondary.light,
     pointerEvents: 'none',
-  }
-  
+  },
+
 }));
 
 export default function DynaPassword(props) {
   const { id, label, isLoggable} = props;
   const classes = useStyles();
   const inputFieldRef = useRef();
-  const [showPasswordModal, setShowPasswordModal] = useState(false);
-  const dispatch = useDispatch();
-  const clearComms = useCallback(() => dispatch(actions.api.clearComms()), [
-    dispatch,
-  ]);
-  const handleModalOpen = useCallback(() => {
-    clearComms();
-    setShowPasswordModal(true);
-  }, [clearComms]);
-  const handleModalClose = useCallback(() => {
-    setShowPasswordModal(false);
-  }, []);
 
   return (
     <FormControl className={classes.field}>
@@ -74,7 +58,7 @@ export default function DynaPassword(props) {
             ref: inputFieldRef,
           }}
         />
-       
+
       </div>
     </FormControl>
   );

@@ -142,7 +142,7 @@ export default function Signup(props) {
           <Typography variant="body2" className={classes.signupLink}>
             Already have an account?
             <Link href="/signin" className={classes.link}>
-              Sign in "From UI"
+              Sign in
             </Link>
           </Typography>
           )}

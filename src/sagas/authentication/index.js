@@ -58,106 +58,6 @@ export function* retrievingUserDetails() {
     )
   );
 }
-export function* resetRequest({ email }) {
-  try {
-    const _csrf = yield call(getCSRFTokenBackend);
-    const credentialsBody = { email, _csrf};
-    const payload = { ...resetRequestParams.opts, body: credentialsBody };
-    const apiResponse = yield call(apiCallWithRetry, {
-      path: resetRequestParams.path,
-      opts: payload,
-      message: 'User Password Reset Request',
-      hidden: true,
-    });
-
-    if (apiResponse?.success) {
-      yield put(actions.auth.resetRequestSuccess({...apiResponse}));
-    } else if (apiResponse?.errors) {
-      const authError = inferErrorMessages(errors?.message)?.[0];
-
-      yield put(actions.auth.resetRequestFailed(authError));
-    }
-  } catch (error) {
-    const authError = inferErrorMessages(error?.message)?.[0];
-
-    yield put(actions.auth.resetRequestFailed(authError));
-  }
-}
-export function* setPasswordRequest({ password, token }) {
-  try {
-    const _csrf = yield call(getCSRFTokenBackend);
-    const credentialsBody = { password, token, _csrf};
-    const payload = { ...setPasswordRequestParams.opts, body: credentialsBody };
-    const apiResponse = yield call(apiCallWithRetry, {
-      path: setPasswordRequestParams.path,
-      opts: payload,
-      message: 'User Set Password Reset Request',
-      hidden: true,
-    });
-
-    if (apiResponse?.success) {
-      yield put(actions.auth.resetRequestSuccess({...apiResponse}));
-    } else if (apiResponse?.errors) {
-      const authError = inferErrorMessages(errors?.message)?.[0];
-
-      yield put(actions.auth.resetRequestFailed(authError));
-    }
-  } catch (error) {
-    const authError = inferErrorMessages(error?.message)?.[0];
-
-    yield put(actions.auth.resetRequestFailed(authError));
-  }
-}
-export function* changeEmailRequest({ token }) {
-  try {
-    const _csrf = yield call(getCSRFTokenBackend);
-    const credentialsBody = { token, _csrf};
-    const payload = { ...resetRequestParams.opts, body: credentialsBody };
-    const apiResponse = yield call(apiCallWithRetry, {
-      path: resetRequestParams.path,
-      opts: payload,
-      message: 'User change email Request',
-      hidden: true,
-    });
-
-    if (apiResponse?.success) {
-      yield put(actions.auth.changeEmailSuccess({...apiResponse}));
-    } else if (apiResponse?.errors) {
-      const authError = inferErrorMessages(errors?.message)?.[0];
-
-      yield put(actions.auth.changeEmailFailed(authError));
-    }
-  } catch (error) {
-    const authError = inferErrorMessages(error?.message)?.[0];
-
-    yield put(actions.auth.changeEmailFailed(authError));
-  }
-}
-export function* resetPasswordRequest({ password, token }) {
-  try {
-    const _csrf = yield call(getCSRFTokenBackend);
-    const credentialsBody = { password, token, _csrf};
-    const payload = { ...resetPasswordRequestParams.opts, body: credentialsBody };
-    const apiResponse = yield call(apiCallWithRetry, {
-      path: resetPasswordRequestParams.path,
-      opts: payload,
-      message: 'User Password Reset Request',
-      hidden: true,
-    });
-
-    if (apiResponse?.success) {
-      yield put(actions.auth.resetRequestSuccess({...apiResponse}));
-    } else if (apiResponse?.errors) {
-      const authError = inferErrorMessages(errors?.message)?.[0];
-
-      yield put(actions.auth.resetRequestFailed(authError));
-    }
-  } catch (error) {
-    const authError = inferErrorMessages(error?.message)?.[0];
-
-    yield put(actions.auth.resetRequestFailed(authError));
-  }
-}
 export function* retrievingHttpConnectorDetails() {
   const collection = yield call(
     getResourceCollection,
@@ -415,7 +315,106 @@ export function* getCSRFTokenBackend() {
 
   return _csrf;
 }
+export function* resetRequest({ email }) {
+  try {
+    const _csrf = yield call(getCSRFTokenBackend);
+    const credentialsBody = { email, _csrf};
+    const payload = { ...resetRequestParams.opts, body: credentialsBody };
+    const apiResponse = yield call(apiCallWithRetry, {
+      path: resetRequestParams.path,
+      opts: payload,
+      message: 'User Password Reset Request',
+      hidden: true,
+    });
 
+    if (apiResponse?.success) {
+      yield put(actions.auth.resetRequestSuccess({...apiResponse}));
+    } else if (apiResponse?.errors) {
+      const authError = inferErrorMessages(errors?.message)?.[0];
+
+      yield put(actions.auth.resetRequestFailed(authError));
+    }
+  } catch (error) {
+    const authError = inferErrorMessages(error?.message)?.[0];
+
+    yield put(actions.auth.resetRequestFailed(authError));
+  }
+}
+export function* setPasswordRequest({ password, token }) {
+  try {
+    const _csrf = yield call(getCSRFTokenBackend);
+    const credentialsBody = { password, token, _csrf};
+    const payload = { ...setPasswordRequestParams.opts, body: credentialsBody };
+    const apiResponse = yield call(apiCallWithRetry, {
+      path: setPasswordRequestParams.path,
+      opts: payload,
+      message: 'User Set Password Reset Request',
+      hidden: true,
+    });
+
+    if (apiResponse?.success) {
+      yield put(actions.auth.setPasswordRequestSuccess({...apiResponse}));
+    } else if (apiResponse?.errors) {
+      const authError = inferErrorMessages(errors?.message)?.[0];
+
+      yield put(actions.auth.setPasswordRequestFailed(authError));
+    }
+  } catch (error) {
+    const authError = inferErrorMessages(error?.message)?.[0];
+
+    yield put(actions.auth.setPasswordRequestFailed(authError));
+  }
+}
+export function* changeEmailRequest({ token }) {
+  try {
+    const _csrf = yield call(getCSRFTokenBackend);
+    const credentialsBody = { token, _csrf};
+    const payload = { ...resetRequestParams.opts, body: credentialsBody };
+    const apiResponse = yield call(apiCallWithRetry, {
+      path: setChangeEmailParams.path,
+      opts: payload,
+      message: 'User change email Request',
+      hidden: true,
+    });
+
+    if (apiResponse?.success) {
+      yield put(actions.auth.changeEmailSuccess({...apiResponse}));
+    } else if (apiResponse?.errors) {
+      const authError = inferErrorMessages(errors?.message)?.[0];
+
+      yield put(actions.auth.changeEmailFailed(authError));
+    }
+  } catch (error) {
+    const authError = inferErrorMessages(error?.message)?.[0];
+
+    yield put(actions.auth.changeEmailFailed(authError));
+  }
+}
+export function* resetPasswordRequest({ password, token }) {
+  try {
+    const _csrf = yield call(getCSRFTokenBackend);
+    const credentialsBody = { password, token, _csrf};
+    const payload = { ...resetPasswordRequestParams.opts, body: credentialsBody };
+    const apiResponse = yield call(apiCallWithRetry, {
+      path: resetPasswordRequestParams.path,
+      opts: payload,
+      message: 'User Password Reset Request',
+      hidden: true,
+    });
+
+    if (apiResponse?.success) {
+      yield put(actions.auth.resetPasswordSuccess({...apiResponse}));
+    } else if (apiResponse?.errors) {
+      const authError = inferErrorMessages(errors?.message)?.[0];
+
+      yield put(actions.auth.resetPasswordFailed(authError));
+    }
+  } catch (error) {
+    const authError = inferErrorMessages(error?.message)?.[0];
+
+    yield put(actions.auth.resetPasswordFailed(authError));
+  }
+}
 export function* setLastLoggedInLocalStorage() {
   const profile = yield call(
     getResource,
