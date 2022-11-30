@@ -15,11 +15,14 @@ const useStyles = makeStyles(theme => ({
   chatbotIcon: {
     position: 'absolute',
     zIndex: 99999999,
-    bottom: theme.spacing(2),
-    right: theme.spacing(2),
+    bottom: theme.spacing(3),
+    right: theme.spacing(3),
+    '&:hover': {
+      backgroundColor: 'transparent',
+    },
   },
   chatIcon: {
-    fontSize: theme.spacing(6),
+    fontSize: theme.spacing(7),
   },
 }));
 
