@@ -860,6 +860,12 @@ const integrationApp = {
           { integrationId, flowId, mappingData }
         ),
     },
+    integrationAppV2: {
+      upgrade: integrationId =>
+        action(actionTypes.INTEGRATION_APPS.SETTINGS.V2.UPGRADE, {
+          integrationId,
+        }),
+    },
     initComplete: (integrationId, flowId, sectionId) =>
       action(actionTypes.INTEGRATION_APPS.SETTINGS.FORM.INIT_COMPLETE, {
         integrationId,
@@ -1149,7 +1155,25 @@ const integrationApp = {
       integrationId,
     }),
   },
-
+  upgrade: {
+    setStatus: (integrationId, statusObj) =>
+      action(actionTypes.INTEGRATION_APPS.SETTINGS.V2.SET_STATUS, {
+        id: integrationId,
+        statusObj,
+      }),
+    getSteps: integrationId =>
+      action(actionTypes.INTEGRATION_APPS.SETTINGS.V2.GET_STEPS, {
+        integrationId,
+      }),
+    postChangeEditonSteps: integrationId =>
+      action(actionTypes.INTEGRATION_APPS.SETTINGS.V2.POST_CHANGE_EDITION_STEPS, {
+        integrationId,
+      }),
+    addChildForUpgrade: childList =>
+      action(actionTypes.INTEGRATION_APPS.SETTINGS.V2.ADD_CHILD_UPGRADE_LIST, {
+        childList,
+      }),
+  },
 };
 const clone = {
   requestPreview: (resourceType, resourceId) =>
@@ -2155,6 +2179,7 @@ const errorManager = {
 const flow = {
   addNewPGStep: flowId => action(actionTypes.FLOW.ADD_NEW_PG_STEP, { flowId }),
   addNewPPStep: (flowId, path, processorIndex) => action(actionTypes.FLOW.ADD_NEW_PP_STEP, { flowId, path, processorIndex }),
+  moveStep: (flowId, stepInfo) => action(actionTypes.FLOW.MOVE_STEP, {flowId, stepInfo}),
   addNewPPStepInfo: (flowId, info) => action(actionTypes.FLOW.ADD_NEW_PP_STEP_INFO, { flowId, info }),
   clearPPStepInfo: flowId => action(actionTypes.FLOW.CLEAR_PP_STEP_INFO, { flowId }),
   addNewRouter: (flowId, router) => action(actionTypes.FLOW.ADD_NEW_ROUTER, { flowId, router }),

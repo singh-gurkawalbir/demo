@@ -11,9 +11,22 @@ import {
   deleteUnUsedRouters,
   mergeDragSourceWithTarget,
   getFlowAsyncKey,
+  moveStepFunction,
 } from '../../utils/flows/flowbuilder';
 import { getChangesPatchSet } from '../../utils/json';
 import { GRAPH_ELEMENTS_TYPE } from '../../constants';
+
+export function* moveStep({flowId, stepInfo}) {
+  const flow = (yield select(selectors.resourceData, 'flows', flowId))?.merged;
+  const patchSet = getChangesPatchSet(moveStepFunction, flow, stepInfo);
+
+  yield put(actions.resource.patchAndCommitStaged('flows', flowId, patchSet, {
+    asyncKey: getFlowAsyncKey(flowId),
+    options: {
+      revertChangesOnFailure: true,
+    },
+  }));
+}
 
 export function* createNewPGStep({ flowId }) {
   const flow = (yield select(selectors.resourceData, 'flows', flowId))?.merged;
@@ -168,6 +181,7 @@ export function* deleteRouter({flowId, routerId, prePatches}) {
 export default [
   takeEvery(actionTypes.FLOW.ADD_NEW_PG_STEP, createNewPGStep),
   takeEvery(actionTypes.FLOW.ADD_NEW_PP_STEP, createNewPPStep),
+  takeEvery(actionTypes.FLOW.MOVE_STEP, moveStep),
   takeEvery(actionTypes.FLOW.DELETE_STEP, deleteStep),
   takeEvery(actionTypes.FLOW.MERGE_BRANCH, mergeBranch),
   takeEvery(actionTypes.FLOW.DELETE_EDGE, deleteEdge),

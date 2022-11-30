@@ -27,7 +27,8 @@ const useStyles = makeStyles(theme => ({
     height: 29,
   },
   searchCount: {
-    marginRight: theme.spacing(2),
+    marginRight: theme.spacing(1),
+    whiteSpace: 'nowrap',
   },
   showSearchCount: {
     display: 'flex',

@@ -83,6 +83,7 @@ export function KeyValueComponent(props) {
     isValid,
     removeHelperText,
     isEndSearchIcon,
+    keyPlaceholder,
   } = props;
 
   const preUpdate = useCallback(val => val.filter(
@@ -238,6 +239,7 @@ export function KeyValueComponent(props) {
                     disabled={disabled}
                     keyName={keyName}
                     valueName={valueName}
+                    keyPlaceholder={keyPlaceholder}
                     index={index}
                     handleUpdate={handleUpdate}
                     rowInd={rowInd}

@@ -1,17 +1,17 @@
+/* eslint-disable no-console */
 import React, { useCallback } from 'react';
 import { FormLabel } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import CeligoSwitch from '../../../CeligoSwitch';
 import FieldHelp from '../../FieldHelp';
+import ActionGroup from '../../../ActionGroup';
 
 const useStyles = makeStyles(theme => ({
-  container: {
-    display: 'flex',
-    alignItems: 'center',
-    height: theme.spacing(3),
+  dynaSwitchLabel: {
+    marginRight: theme.spacing(1),
   },
-  margin: {
-    marginRight: theme.spacing(0.5),
+  dynaSwitch: {
+    marginRight: theme.spacing(0),
   },
 }));
 
@@ -28,12 +28,17 @@ export default function DynaSwitch(props) {
   );
 
   return (
-    <div className={classes.container}>
-      <FormLabel htmlFor={id} className={classes.margin}>
+    <ActionGroup className={classes.container}>
+      <FormLabel htmlFor={id} className={classes.dynaSwitchLabel}>
         {label}
       </FormLabel>
-      <CeligoSwitch {...rest} onChange={onChange} checked={value} tooltip={rest.disabled ? tooltip : ''} />
+      <CeligoSwitch
+        {...rest}
+        onChange={onChange}
+        checked={value}
+        tooltip={rest.disabled ? tooltip : ''}
+        className={classes.dynaSwitch} />
       <FieldHelp {...props} />
-    </div>
+    </ActionGroup>
   );
 }
