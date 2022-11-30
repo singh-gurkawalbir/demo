@@ -1,14 +1,14 @@
-import React, {useState, useEffect} from 'react';
+import React, { useEffect} from 'react';
+import { useHistory } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles, Typography } from '@material-ui/core';
 import CeligoLogo from '../../components/CeligoLogo';
 import { getDomain } from '../../utils/resource';
-import messageStore from '../../utils/messageStore';
 import { selectors } from '../../reducers';
 import actions from '../../actions';
 import MarketingContentWithIframe from '../../components/LoginScreen/MarketingContentWithIframe';
 import { CHANGE_EMAIL_SUCCESS } from '../../constants';
-import Spinner from '../../components/Spinner';
+import getRoutePath from '../../utils/routePaths';
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
@@ -64,18 +64,16 @@ const useStyles = makeStyles(theme => ({
 export default function ChangeEmail(props) {
   const classes = useStyles();
   const dispatch = useDispatch();
-  const [setAnchorEl] = useState(null);
+  const history = useHistory();
   const changeEmailStatus = useSelector(state => selectors.changeEmailStatus(state));
-  const [token, setToken] = React.useState(props.match.params.token ? props.match.params.token : '');
+  const token = React.useState(props.match.params.token ? props.match.params.token : '');
 
- 
   useEffect(() => {
     if (token == null || token === '') {
       return;
     }
-    dispatch(actions.auth.changeEmailRequest(token))
-    
-  }, []);
+    dispatch(actions.auth.changeEmailRequest(token));
+  }, [dispatch, token]);
   useEffect(() => {
     if (changeEmailStatus === 'success') {
       dispatch(actions.auth.signupStatus('done', CHANGE_EMAIL_SUCCESS));
@@ -83,6 +81,7 @@ export default function ChangeEmail(props) {
     }
   }, [dispatch, history, changeEmailStatus]);
 
+  // eslint-disable-next-line no-undef
   const contentUrl = (getDomain() === 'eu.integrator.io' ? IO_LOGIN_PROMOTION_URL_EU : IO_LOGIN_PROMOTION_URL);
 
   if (changeEmailStatus === '') {

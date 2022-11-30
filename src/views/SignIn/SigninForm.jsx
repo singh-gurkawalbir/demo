@@ -1,7 +1,7 @@
 import TextField from '@material-ui/core/TextField';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
-import React, { useState, useCallback,useEffect} from 'react';
+import React, { useState, useCallback, useEffect} from 'react';
 import { Typography} from '@material-ui/core';
 import { useLocation, Link, useHistory} from 'react-router-dom';
 import actions from '../../actions';

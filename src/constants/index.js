@@ -36,8 +36,8 @@ export const LICENSE_REACTIVATED_MESSAGE = 'Reactivation successful.';
 export const AUTH_FAILURE_MESSAGE = 'Authentication Failure';
 export const SIGN_UP_SUCCESS = 'Please check your email!';
 export const RESET_PASSWORD_SUCCESS = 'Reset successful! Please sign in.';
-export const CHANGE_EMAIL_SUCCESS = 'invited successfully'
-export const PASSWORD_STRENGTH_ERROR='Password should be minimum 8 letter , with at least a symbol, upper and lower case letters and a number'
+export const CHANGE_EMAIL_SUCCESS = 'invited successfully';
+export const PASSWORD_STRENGTH_ERROR = 'Password should be minimum 8 letter , with at least a symbol, upper and lower case letters and a number';
 export const NO_RESULT_SEARCH_MESSAGE = 'Your search didn’t return any matching results. Try expanding your search criteria.';
 
 export const POLLING_STATUS = Object.freeze({

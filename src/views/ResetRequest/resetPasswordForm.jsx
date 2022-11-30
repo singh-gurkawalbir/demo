@@ -137,7 +137,7 @@ export default function ResetPassword() {
           InputProps={{
             endAdornment: (true) &&
               (
-                <InputAdornment  position="end">
+                <InputAdornment position="end">
                     {showPassword ? (
                       <ShowContentIcon
                         onClick={handleClickShowPassword}

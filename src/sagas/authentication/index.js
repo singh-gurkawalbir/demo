@@ -330,7 +330,8 @@ export function* resetRequest({ email }) {
     if (apiResponse?.success) {
       yield put(actions.auth.resetRequestSuccess({...apiResponse}));
     } else if (apiResponse?.errors) {
-      const authError = inferErrorMessages(errors?.message)?.[0];
+      const errObj = apiResponse?.errors;
+      const authError = inferErrorMessages(errObj?.message)?.[0];
 
       yield put(actions.auth.resetRequestFailed(authError));
     }
@@ -355,7 +356,8 @@ export function* setPasswordRequest({ password, token }) {
     if (apiResponse?.success) {
       yield put(actions.auth.setPasswordRequestSuccess({...apiResponse}));
     } else if (apiResponse?.errors) {
-      const authError = inferErrorMessages(errors?.message)?.[0];
+      const errObj = apiResponse?.errors;
+      const authError = inferErrorMessages(errObj?.message)?.[0];
 
       yield put(actions.auth.setPasswordRequestFailed(authError));
     }
@@ -380,7 +382,8 @@ export function* changeEmailRequest({ token }) {
     if (apiResponse?.success) {
       yield put(actions.auth.changeEmailSuccess({...apiResponse}));
     } else if (apiResponse?.errors) {
-      const authError = inferErrorMessages(errors?.message)?.[0];
+      const errObj = apiResponse?.errors;
+      const authError = inferErrorMessages(errObj?.message)?.[0];
 
       yield put(actions.auth.changeEmailFailed(authError));
     }
@@ -405,7 +408,8 @@ export function* resetPasswordRequest({ password, token }) {
     if (apiResponse?.success) {
       yield put(actions.auth.resetPasswordSuccess({...apiResponse}));
     } else if (apiResponse?.errors) {
-      const authError = inferErrorMessages(errors?.message)?.[0];
+      const errObj = apiResponse?.errors;
+      const authError = inferErrorMessages(errObj?.message)?.[0];
 
       yield put(actions.auth.resetPasswordFailed(authError));
     }
