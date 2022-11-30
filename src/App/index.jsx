@@ -14,7 +14,7 @@ import { selectors } from '../reducers';
 import actions from '../actions';
 import MfaVerify from '../views/MFA';
 import Signin from '../views/SignIn';
-import Signup from '../views/Signup';
+import Signup from '../views/SignUp';
 import ResetPassword from '../views/ResetRequest';
 import ChangeEmail from '../views/ChangeEmail';
 import SetPassword from '../views/SetPassword';

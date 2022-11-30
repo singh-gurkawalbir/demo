@@ -1,13 +1,9 @@
-import React, {useState} from 'react';
-import { useSelector } from 'react-redux';
+import React from 'react';
 import { makeStyles, Typography } from '@material-ui/core';
 import ResetPasswordForm from './resetPasswordForm';
 import CeligoLogo from '../../components/CeligoLogo';
 import { getDomain } from '../../utils/resource';
-import messageStore from '../../utils/messageStore';
-import { selectors } from '../../reducers';
 import MarketingContentWithIframe from '../../components/LoginScreen/MarketingContentWithIframe';
-
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
@@ -61,15 +57,10 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-
 export default function ResetPassword(props) {
   const classes = useStyles();
-  const [setAnchorEl] = useState(null);
   // eslint-disable-next-line no-undef
   const contentUrl = (getDomain() === 'eu.integrator.io' ? IO_LOGIN_PROMOTION_URL_EU : IO_LOGIN_PROMOTION_URL);
-  const handleClick = () => {
-    setAnchorEl(null);
-  };
 
   return (
     <div className={classes.wrapper}>

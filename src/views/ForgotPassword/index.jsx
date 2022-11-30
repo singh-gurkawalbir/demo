@@ -9,7 +9,7 @@ import { selectors } from '../../reducers';
 import MarketingContentWithIframe from '../../components/LoginScreen/MarketingContentWithIframe';
 import { TextButton } from '../../components/Buttons';
 import actions from '../../actions';
-import ErrorIcon from '../../components/icons/ErrorIcon';
+import ConcurForgotPassword from './Concur';
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
@@ -101,7 +101,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function ForgotPassword(props) {
+function ForgotPassword(props) {
   const [showError, setShowError] = useState(false);
   const resetRequestStatus = useSelector(state => selectors.requestResetStatus(state));
   const successView = (resetRequestStatus === 'success');
@@ -182,4 +182,28 @@ export default function ForgotPassword(props) {
       </div>
     </div>
   );
+}
+
+function useQuery() {
+  const { search } = useLocation();
+
+  return React.useMemo(() => new URLSearchParams(search), [search]);
+}
+
+export default function SignInWrapper(props) {
+  const query = useQuery();
+  const application = query.get('application');
+  let ForgotPasswordPage = ForgotPassword;
+
+  if (application) {
+    switch (application) {
+      case 'concur':
+        ForgotPasswordPage = ConcurForgotPassword;
+        break;
+      default:
+        break;
+    }
+  }
+
+  return <ForgotPasswordPage {...props} />;
 }

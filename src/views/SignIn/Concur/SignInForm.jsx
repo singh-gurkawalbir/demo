@@ -3,18 +3,18 @@ import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import React, { useState, useCallback} from 'react';
 import { Typography} from '@material-ui/core';
-import { useLocation, Link, useHistory} from 'react-router-dom';
+import { useLocation, useHistory} from 'react-router-dom';
 import clsx from 'clsx';
-import actions from '../../actions';
-import { selectors } from '../../reducers';
-import ErrorIcon from '../../components/icons/ErrorIcon';
-import SecurityIcon from '../../components/icons/SecurityIcon';
-import { getDomain } from '../../utils/resource';
-import { AUTH_FAILURE_MESSAGE } from '../../constants';
-import getRoutePath from '../../utils/routePaths';
-import Spinner from '../../components/Spinner';
-import { FilledButton, OutlinedButton, TextButton } from '../../components/Buttons';
-import getImageUrl from '../../utils/image';
+import actions from '../../../actions';
+import { selectors } from '../../../reducers';
+import ErrorIcon from '../../../components/icons/ErrorIcon';
+import SecurityIcon from '../../../components/icons/SecurityIcon';
+import { getDomain } from '../../../utils/resource';
+import { AUTH_FAILURE_MESSAGE } from '../../../constants';
+import getRoutePath from '../../../utils/routePaths';
+import Spinner from '../../../components/Spinner';
+import { FilledButton, OutlinedButton } from '../../../components/Buttons';
+import getImageUrl from '../../../utils/image';
 
 const path = getImageUrl('images/googlelogo.png');
 
@@ -27,7 +27,7 @@ const useStyles = makeStyles(theme => ({
     borderRadius: 4,
     height: 38,
     fontSize: theme.spacing(2),
-    marginTop: theme.spacing(1),
+    margin: theme.spacing(1, 0, 2, 0),
     color: theme.palette.warning.main,
   },
   editableFields: {
@@ -80,6 +80,8 @@ const useStyles = makeStyles(theme => ({
     height: 38,
     fontSize: 16,
     backgroundColor: theme.palette.background.paper,
+    minWidth: '240px',
+    margin: theme.spacing(0, 0, 2, 0),
   },
   ssoBtn: {
     borderRadius: 4,
@@ -159,8 +161,6 @@ export default function SignIn({dialogOpen, className}) {
   const canUserLoginViaSSO = useSelector(state => selectors.isUserAllowedOptionalSSOSignIn(state));
   const showError = useSelector(state => selectors.showAuthError(state));
 
-  const userHasOtherLoginOptions = (userEmail && userProfileLinkedWithGoogle) || canUserLoginViaSSO;
-
   const handleOnChangeEmail = useCallback(e => {
     setEmail(e.target.value);
   }, []);
@@ -216,7 +216,7 @@ export default function SignIn({dialogOpen, className}) {
           onChange={handleOnChangeEmail}
           className={classes.textField}
           disabled={dialogOpen}
-            />
+        />
         <TextField
           data-private
           data-test="password"
@@ -225,18 +225,11 @@ export default function SignIn({dialogOpen, className}) {
           type="password"
           placeholder="Password"
           className={classes.textField}
-            />
+        />
 
-        <div className={classes.forgotPass}>
-          <TextButton
-            data-test="forgotPassword"
-            color="primary"
-            className={classes.forgotPass}
-            component={Link}
-            to={email ? getRoutePath(`/request-reset?email=${email}`) : getRoutePath('/request-reset')}>
-            Forgot password-UI?
-          </TextButton>
-        </div>
+        <p align="center">
+          <a className={classes.forgotPass} data-hook="forgot-password-link" href="/request-reset?application=concur">Forgot Password?</a>
+        </p>
         { showError && error && (
           <Typography
             data-private
@@ -254,7 +247,7 @@ export default function SignIn({dialogOpen, className}) {
               type="submit"
               className={classes.submit}
               value="Submit">
-              Sign in (UI)
+              Sign in and connect
             </FilledButton>
           )}
       </form>
@@ -268,10 +261,8 @@ export default function SignIn({dialogOpen, className}) {
             id="attemptedRoute"
             name="attemptedRoute"
             value={attemptedRoute || getRoutePath('/')}
-                />
-          <div className={classes.or}>
-            <Typography variant="body1">or</Typography>
-          </div>
+          />
+
           <OutlinedButton
             type="submit"
             color="secondary"
@@ -279,11 +270,6 @@ export default function SignIn({dialogOpen, className}) {
             Sign in with Google
           </OutlinedButton>
         </form>
-        )}
-        {dialogOpen && userHasOtherLoginOptions && (
-          <div className={classes.or}>
-            <Typography variant="body1">or</Typography>
-          </div>
         )}
         {dialogOpen && canUserLoginViaSSO && (
           <form onSubmit={handleReSignInWithSSO}>

@@ -1,7 +1,7 @@
-import React, {useState} from 'react';
+import React from 'react';
 import { useSelector } from 'react-redux';
 import { makeStyles, Typography } from '@material-ui/core';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import SigninForm from './SigninForm';
 import CeligoLogo from '../../components/CeligoLogo';
 import { getDomain } from '../../utils/resource';
@@ -10,8 +10,8 @@ import { selectors } from '../../reducers';
 import MarketingContentWithIframe from '../../components/LoginScreen/MarketingContentWithIframe';
 import InfoIcon from '../../components/icons/InfoIcon';
 import { TextButton } from '../../components/Buttons';
-import getRoutePath from '../../utils/routePaths';
 import { SIGN_UP_SUCCESS } from '../../constants';
+import ConcurSignInPage from './Concur';
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
@@ -125,17 +125,13 @@ const Title = ({ isMFAAuthRequired }) => {
   );
 };
 
-export default function Signin(props) {
+function Signin(props) {
   const classes = useStyles();
-  const [setAnchorEl] = useState(null);
   // eslint-disable-next-line no-undef
   const contentUrl = (getDomain() === 'eu.integrator.io' ? IO_LOGIN_PROMOTION_URL_EU : IO_LOGIN_PROMOTION_URL);
 
   const isSignupCompleted = useSelector(state => selectors.signupStatus(state) === 'done');
   const isMFAAuthRequired = useSelector(state => selectors.isMFAAuthRequired(state));
-  const handleClick = () => {
-    setAnchorEl(null);
-  };
 
   return (
     <div className={classes.wrapper}>
@@ -166,6 +162,7 @@ export default function Signin(props) {
               className={classes.link}
               component={Link}
               to="/signup">
+              {/* eslint-disable-next-line react/no-unescaped-entities */}
               Sign up "From UI"
             </TextButton>
           </Typography>
@@ -177,4 +174,27 @@ export default function Signin(props) {
       </div>
     </div>
   );
+}
+function useQuery() {
+  const { search } = useLocation();
+
+  return React.useMemo(() => new URLSearchParams(search), [search]);
+}
+
+export default function SignInWrapper(props) {
+  const query = useQuery();
+  const application = query.get('application');
+  let SignInPage = Signin;
+
+  if (application) {
+    switch (application) {
+      case 'concur':
+        SignInPage = ConcurSignInPage;
+        break;
+      default:
+        break;
+    }
+  }
+
+  return <SignInPage {...props} />;
 }
