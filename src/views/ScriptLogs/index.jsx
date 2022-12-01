@@ -20,6 +20,10 @@ import FetchProgressIndicator from '../../components/FetchProgressIndicator';
 import ViewLogDetailDrawer from './DetailDrawer';
 import NoResultTypography from '../../components/NoResultTypography';
 import { TextButton } from '../../components/Buttons';
+import messageStore from '../../utils/messageStore';
+import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
+import ActionMenu from '../../components/CeligoTable/ActionMenu';
+import PurgeLog from '../../components/ResourceTable/scriptLogs/actions/PurgeLog';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -109,6 +113,8 @@ export default function ScriptLogs({ flowId, scriptId }) {
   const dispatch = useDispatch();
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(DEFAULT_ROWS_PER_PAGE);
+  const [selectedComponent, setSelectedComponent] = useState(null);
+  const [enqueueSnackbar] = useEnqueueSnackbar();
 
   const {
     logs = emptySet,
@@ -121,6 +127,10 @@ export default function ScriptLogs({ flowId, scriptId }) {
     fetchStatus,
     currQueryTime,
   } = useSelector(state => selectors.scriptLog(state, {scriptId, flowId}), shallowEqual);
+  const isAllLogsReceived = useSelector(state => selectors.isAllLogsReceived(state, {scriptId, flowId}));
+  const isPurgeAvailable = useSelector(state => selectors.isPurgeAvailable(state, {scriptId, flowId}));
+  const isPurgeLogSuccess = useSelector(state => selectors.isPurgeLogSuccess(state));
+  const useRowActions = () => [PurgeLog];
 
   const patchFilter = useCallback((field, value) => {
     dispatch(actions.logs.scripts.patchFilter({scriptId, flowId, field, value}));
@@ -188,6 +198,22 @@ export default function ScriptLogs({ flowId, scriptId }) {
     }
   }, [dispatch, flowId, scriptId, status]);
 
+  useEffect(() => {
+    if (!isAllLogsReceived) {
+      dispatch(actions.logs.scripts.requestAllLogs({scriptId, flowId}));
+    }
+  }, [dispatch, flowId, isAllLogsReceived, scriptId]);
+  useEffect(() => {
+    if (isPurgeLogSuccess) {
+      dispatch(actions.logs.scripts.refresh({scriptId, flowId}));
+      enqueueSnackbar({
+        message: messageStore('PURGE_SCRIPT_LOG_SUCCESS_MESSAGE'),
+        variant: 'success',
+      });
+      dispatch(actions.logs.scripts.purge.clear());
+    }
+  }, [dispatch, enqueueSnackbar, flowId, isPurgeLogSuccess, scriptId]);
+
   // used to determine fetch progress percentage
   const {startTime, endTime} = useMemo(() => {
     const {startDate, endDate} = dateRange || {};
@@ -252,6 +278,7 @@ export default function ScriptLogs({ flowId, scriptId }) {
             ))}
           </CeligoSelect>
         </div>
+        {selectedComponent}
         <div className={classes.rightActionContainer}>
           <div className={classes.leftActionItems}>
             {flowId && (
@@ -271,6 +298,16 @@ export default function ScriptLogs({ flowId, scriptId }) {
               startIcon={<RefreshIcon />}>
               Refresh
             </TextButton>
+            <ActionMenu
+              iconLabel="More"
+              setSelectedComponent={setSelectedComponent}
+              useRowActions={useRowActions}
+              rowData={{
+                scriptId,
+                flowId,
+                isPurgeAvailable,
+              }}
+            />
           </div>
           <CeligoPagination
             {...paginationOptions}

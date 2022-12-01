@@ -124,6 +124,8 @@ href="/marketplace"><u>Check out our Marketplace</u></a> to jumpstart your  inte
   FILE_PURGE_CONFIRM_MESSAGE: 'Are you sure you want to purge all files related to this run? This cannot be undone.',
   FILE_PURGE_SUCCESS_MESSAGE: 'All run files purged.',
   AUDIT_LOGS_HAS_MORE_DOWNLOADS: 'Your downloaded file has exceeded the limit of 20,000 records. To narrow the results, try again after limiting the events\' dates, resource type, source, and so on.',
+  PURGE_SCRIPT_LOG_CONFIRM_MESSAGE: 'Are you sure you want to purge all logs of this script? This cannot be undone.',
+  PURGE_SCRIPT_LOG_SUCCESS_MESSAGE: 'All logs of this script successfully purged.',
 };
 
 export default function messageStore(key, argsObj) {
