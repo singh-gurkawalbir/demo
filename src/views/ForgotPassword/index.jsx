@@ -10,6 +10,7 @@ import MarketingContentWithIframe from '../../components/LoginScreen/MarketingCo
 import { TextButton } from '../../components/Buttons';
 import actions from '../../actions';
 import ConcurForgotPassword from './Concur';
+import useQuery from '../../hooks/useQuery';
 import messageStore from '../../utils/messageStore';
 
 const useStyles = makeStyles(theme => ({
@@ -185,13 +186,7 @@ function ForgotPassword(props) {
   );
 }
 
-function useQuery() {
-  const { search } = useLocation();
-
-  return React.useMemo(() => new URLSearchParams(search), [search]);
-}
-
-export default function SignInWrapper(props) {
+export default function ForgotPasswordWrapper(props) {
   const query = useQuery();
   const application = query.get('application');
   let ForgotPasswordPage = ForgotPassword;

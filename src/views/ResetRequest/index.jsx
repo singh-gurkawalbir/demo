@@ -3,6 +3,7 @@ import { makeStyles, Typography } from '@material-ui/core';
 import ResetPasswordForm from './resetPasswordForm';
 import CeligoLogo from '../../components/CeligoLogo';
 import { getDomain } from '../../utils/resource';
+import useQuery from '../../hooks/useQuery';
 import MarketingContentWithIframe from '../../components/LoginScreen/MarketingContentWithIframe';
 
 const useStyles = makeStyles(theme => ({
@@ -57,7 +58,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function ResetPassword(props) {
+function ResetPassword(props) {
   const classes = useStyles();
   // eslint-disable-next-line no-undef
   const contentUrl = (getDomain() === 'eu.integrator.io' ? IO_LOGIN_PROMOTION_URL_EU : IO_LOGIN_PROMOTION_URL);
@@ -84,4 +85,22 @@ export default function ResetPassword(props) {
       </div>
     </div>
   );
+}
+
+export default function RequestResetWrapper(props) {
+  const query = useQuery();
+  const application = query.get('application');
+  let ResetPasswordPage = ResetPassword;
+
+  if (application) {
+    switch (application) {
+      case 'concur':
+        ResetPasswordPage = ConcurResetPasswordPage;
+        break;
+      default:
+        break;
+    }
+  }
+
+  return <ResetPasswordPage {...props} />;
 }

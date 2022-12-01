@@ -1,7 +1,7 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { makeStyles, Typography } from '@material-ui/core';
-import { Link, useLocation } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import SigninForm from './SigninForm';
 import CeligoLogo from '../../components/CeligoLogo';
 import { getDomain } from '../../utils/resource';
@@ -9,6 +9,7 @@ import { selectors } from '../../reducers';
 import MarketingContentWithIframe from '../../components/LoginScreen/MarketingContentWithIframe';
 import { TextButton } from '../../components/Buttons';
 import ConcurSignInPage from './Concur';
+import useQuery from '../../hooks/useQuery';
 import { SIGN_UP_SUCCESS, RESET_PASSWORD_SUCCESS } from '../../constants';
 
 const useStyles = makeStyles(theme => ({
@@ -154,11 +155,6 @@ function Signin(props) {
       </div>
     </div>
   );
-}
-function useQuery() {
-  const { search } = useLocation();
-
-  return React.useMemo(() => new URLSearchParams(search), [search]);
 }
 
 export default function SignInWrapper(props) {
