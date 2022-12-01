@@ -130,7 +130,7 @@ export default function ClonePreview(props) {
         if (!sandbox === (preferences.environment === 'sandbox')) {
           confirmDialog({
             title: 'Confirm switch',
-            message: `Your ${isIAIntegration ? 'integration app' : 'integration'} has been successfully cloned to your ${sandbox ? 'sandbox' : 'production'}. Congratulations! Switch back to your ${!sandbox ? 'sandbox' : 'production'} account?.`,
+            message: `Your ${isIAIntegration ? 'integration app' : 'integration'} has been successfully cloned to your ${sandbox ? 'sandbox' : 'production'} environment. Switch back to your ${!sandbox ? 'sandbox' : 'production'} account.`,
             buttons: [
               {
                 label: 'Yes, switch',
@@ -139,7 +139,7 @@ export default function ClonePreview(props) {
                 },
               },
               {
-                label: 'No, go back',
+                label: 'No, stay here',
                 variant: 'text',
                 onClick: () => {
                   dispatch(actions.user.preferences.update({ environment: sandbox ? 'sandbox' : 'production' }));
