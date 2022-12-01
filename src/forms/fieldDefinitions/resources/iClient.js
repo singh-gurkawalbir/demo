@@ -155,7 +155,7 @@ export default {
     contentType: 'json',
     label: 'Override revoke token HTTP request body',
   },
-  'oauth2.location': {
+  'oauth2.accessTokenLocation': {
     isLoggable: true,
     type: 'select',
     label: 'Send token via',
@@ -170,7 +170,7 @@ export default {
       },
     ],
   },
-  'oauth2.headerName': {
+  'oauth2.accessTokenheaderName': {
     isLoggable: true,
     type: 'text',
     label: 'Header name',
@@ -200,12 +200,12 @@ export default {
       },
     ],
   },
-  'oauth2.paramName': {
+  'oauth2.accessTokenParamName': {
     isLoggable: true,
     type: 'text',
     label: 'Parameter name',
     required: true,
-    defaultValue: r => r?.oauth2?.paramName || 'access_token',
+    defaultValue: r => r?.oauth2?.accessTokenParamName || 'access_token',
   },
   'oauth2.failStatusCode': {
     isLoggable: true,
