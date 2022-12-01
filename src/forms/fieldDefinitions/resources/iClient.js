@@ -79,7 +79,7 @@ export default {
     ],
   },
   'oauth2.token.uri': {
-    type: 'text',
+    type: 'uri',
     label: 'Access token URL',
     required: true,
   },
@@ -102,7 +102,7 @@ export default {
     required: true,
   },
   'oauth2.revoke.uri': {
-    type: 'text',
+    type: 'uri',
     label: 'Revoke token URL',
   },
   'oauth2.scopeDelimiter': {
@@ -114,7 +114,7 @@ export default {
     ],
   },
   'oauth2.token.headers': {
-    type: 'keyvalue',
+    type: 'iclientHeaders',
     keyName: 'name',
     valueName: 'value',
     valueType: 'keyvalue',
@@ -126,7 +126,7 @@ export default {
     label: 'Override access token HTTP request body',
   },
   'oauth2.refresh.headers': {
-    type: 'keyvalue',
+    type: 'iclientHeaders',
     keyName: 'name',
     valueName: 'value',
     valueType: 'keyvalue',
@@ -144,7 +144,7 @@ export default {
     ],
   },
   'oauth2.revoke.headers': {
-    type: 'keyvalue',
+    type: 'iclientHeaders',
     keyName: 'name',
     valueName: 'value',
     valueType: 'keyvalue',
