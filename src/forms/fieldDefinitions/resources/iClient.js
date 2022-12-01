@@ -170,7 +170,7 @@ export default {
       },
     ],
   },
-  'oauth2.accessTokenheaderName': {
+  'oauth2.accessTokenHeaderName': {
     isLoggable: true,
     type: 'text',
     label: 'Header name',

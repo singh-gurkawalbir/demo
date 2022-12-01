@@ -3,8 +3,8 @@ export default {
     'oauth2.accessTokenLocation': {
       fieldId: 'oauth2.accessTokenLocation',
     },
-    'oauth2.accessTokenheaderName': {
-      fieldId: 'oauth2.accessTokenheaderName',
+    'oauth2.accessTokenHeaderName': {
+      fieldId: 'oauth2.accessTokenHeaderName',
       visibleWhenAll: [{ field: 'oauth2.accessTokenLocation', is: ['header'] }],
     },
     'oauth2.scheme': {
@@ -36,7 +36,7 @@ export default {
   layout: {
     fields: [
       'oauth2.accessTokenLocation',
-      'oauth2.accessTokenheaderName',
+      'oauth2.accessTokenHeaderName',
       'oauth2.scheme',
       'oauth2.customAuthScheme',
       'oauth2.accessTokenParamName',

@@ -2068,7 +2068,7 @@ if you're using a production account, you'll find your API keys under the 'API M
   'iClient.oauth2.revoke.uri':
 'integrator.io makes an HTTP post request to the token revocation endpoint URL to revoke a particular token.',
   'iClient.oauth2.accessTokenLocation': 'This determines where your application’s API expects to find the authentication token.</br>Choose URL if the authentication token is located in the URL. You can then specify the query string parameter name that holds the token value.</br> Choose Header and specify the header name and authentication scheme to use when constructing the HTTP request. </br>Choose Body if your API requires the token to be embedded in the body structure of your HTTP request. In such cases, place the token in your body template using the placeholder: {connection.http.token.token}.',
-  'iClient.oauth2.accessTokenheaderName':
+  'iClient.oauth2.accessTokenHeaderName':
 "By default, integrator.io will send all authentication type info in the 'Authorization: ' HTTP header field.  If the REST API you are connecting to requires a different HTTP header, use this field to provide an override.",
   'iClient.oauth2.scheme':
 "Use this field to set the HTTP authorization header scheme value. For example, 'Bearer' would be the scheme value for 'Authorization: Bearer my_secret_api_token'",
