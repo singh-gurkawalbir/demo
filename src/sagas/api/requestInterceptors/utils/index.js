@@ -34,13 +34,18 @@ export function normalizeUrlAndOptions(path, opts) {
     options = opts;
   } else {
     if (
+      path.includes('/signup') ||
       path.includes('/netSuiteWS') ||
       path.includes('/netsuiteDA') ||
       /^\/connections.*distributed$/.test(path) ||
       path.includes('/mappingPreview') ||
       path.includes('/unlink/google') ||
       path.includes('/reSigninWithSSO') ||
-      path.includes('/mfa/verify')
+      path.includes('/mfa/verify') ||
+      path.includes('/request-reset') ||
+      path.includes('/reset-password') ||
+      path.includes('/set-initial-password') ||
+      path.includes('/change-email?no_redirect=true')
     ) {
       url = path;
     } else {

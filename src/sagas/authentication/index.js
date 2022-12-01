@@ -9,7 +9,7 @@ import LogRocket from 'logrocket';
 import setupLogRocketReact from 'logrocket-react';
 import actions from '../../actions';
 import actionTypes from '../../actions/types';
-import { authParams, logoutParams, getCSRFParams } from '../api/apiPaths';
+import { authParams, logoutParams, getCSRFParams, resetRequestParams, resetPasswordRequestParams, setPasswordRequestParams, setChangeEmailParams} from '../api/apiPaths';
 import { apiCallWithRetry } from '../index';
 import { requestMFASessionInfo } from '../mfa';
 import { getResource, getResourceCollection } from '../resources';
@@ -20,7 +20,7 @@ import {
 } from '../../utils/session';
 import { selectors } from '../../reducers';
 import { initializationResources } from '../../reducers/data/resources/resourceUpdate';
-import { ACCOUNT_IDS, AUTH_FAILURE_MESSAGE } from '../../constants';
+import { ACCOUNT_IDS, AUTH_FAILURE_MESSAGE, SIGN_UP_SUCCESS } from '../../constants';
 import messageStore from '../../utils/messageStore';
 import getRoutePath from '../../utils/routePaths';
 import { getDomain } from '../../utils/resource';
@@ -58,7 +58,6 @@ export function* retrievingUserDetails() {
     )
   );
 }
-
 export function* retrievingHttpConnectorDetails() {
   const collection = yield call(
     getResourceCollection,
@@ -316,7 +315,110 @@ export function* getCSRFTokenBackend() {
 
   return _csrf;
 }
+export function* resetRequest({ email }) {
+  try {
+    const _csrf = yield call(getCSRFTokenBackend);
+    const credentialsBody = { email, _csrf};
+    const payload = { ...resetRequestParams.opts, body: credentialsBody };
+    const apiResponse = yield call(apiCallWithRetry, {
+      path: resetRequestParams.path,
+      opts: payload,
+      message: 'User Password Reset Request',
+      hidden: true,
+    });
 
+    if (apiResponse?.success) {
+      yield put(actions.auth.resetRequestSuccess({...apiResponse}));
+    } else if (apiResponse?.errors) {
+      const errObj = apiResponse?.errors;
+      const authError = inferErrorMessages(errObj?.message)?.[0];
+
+      yield put(actions.auth.resetRequestFailed(authError));
+    }
+  } catch (error) {
+    const authError = inferErrorMessages(error?.message)?.[0];
+
+    yield put(actions.auth.resetRequestFailed(authError));
+  }
+}
+export function* setPasswordRequest({ password, token }) {
+  try {
+    const _csrf = yield call(getCSRFTokenBackend);
+    const credentialsBody = { password, token, _csrf};
+    const payload = { ...setPasswordRequestParams.opts, body: credentialsBody };
+    const apiResponse = yield call(apiCallWithRetry, {
+      path: setPasswordRequestParams.path,
+      opts: payload,
+      message: 'User Set Password Reset Request',
+      hidden: true,
+    });
+
+    if (apiResponse?.success) {
+      yield put(actions.auth.setPasswordRequestSuccess({...apiResponse}));
+    } else if (apiResponse?.errors) {
+      const errObj = apiResponse?.errors;
+      const authError = inferErrorMessages(errObj?.message)?.[0];
+
+      yield put(actions.auth.setPasswordRequestFailed(authError));
+    }
+  } catch (error) {
+    const authError = inferErrorMessages(error?.message)?.[0];
+
+    yield put(actions.auth.setPasswordRequestFailed(authError));
+  }
+}
+export function* changeEmailRequest({ token }) {
+  try {
+    const _csrf = yield call(getCSRFTokenBackend);
+    const credentialsBody = { token, _csrf};
+    const payload = { ...resetRequestParams.opts, body: credentialsBody };
+    const apiResponse = yield call(apiCallWithRetry, {
+      path: setChangeEmailParams.path,
+      opts: payload,
+      message: 'User change email Request',
+      hidden: true,
+    });
+
+    if (apiResponse?.success) {
+      yield put(actions.auth.changeEmailSuccess({...apiResponse}));
+    } else if (apiResponse?.errors) {
+      const errObj = apiResponse?.errors;
+      const authError = inferErrorMessages(errObj?.message)?.[0];
+
+      yield put(actions.auth.changeEmailFailed(authError));
+    }
+  } catch (error) {
+    const authError = inferErrorMessages(error?.message)?.[0];
+
+    yield put(actions.auth.changeEmailFailed(authError));
+  }
+}
+export function* resetPasswordRequest({ password, token }) {
+  try {
+    const _csrf = yield call(getCSRFTokenBackend);
+    const credentialsBody = { password, token, _csrf};
+    const payload = { ...resetPasswordRequestParams.opts, body: credentialsBody };
+    const apiResponse = yield call(apiCallWithRetry, {
+      path: resetPasswordRequestParams.path,
+      opts: payload,
+      message: 'User Password Reset Request',
+      hidden: true,
+    });
+
+    if (apiResponse?.success) {
+      yield put(actions.auth.resetPasswordSuccess({...apiResponse}));
+    } else if (apiResponse?.errors) {
+      const errObj = apiResponse?.errors;
+      const authError = inferErrorMessages(errObj?.message)?.[0];
+
+      yield put(actions.auth.resetPasswordFailed(authError));
+    }
+  } catch (error) {
+    const authError = inferErrorMessages(error?.message)?.[0];
+
+    yield put(actions.auth.resetPasswordFailed(authError));
+  }
+}
 export function* setLastLoggedInLocalStorage() {
   const profile = yield call(
     getResource,
@@ -363,6 +465,32 @@ export function* auth({ email, password }) {
       authError = AUTH_FAILURE_MESSAGE;
     }
     yield put(actions.auth.failure(authError));
+    yield put(actions.user.profile.delete());
+  }
+}
+
+export function* signup({payloadBody}) {
+  try {
+    const _csrf = yield call(getCSRFTokenBackend);
+    const credentialsBody = { ...payloadBody, _csrf };
+    const payload = { ...authParams.opts, body: credentialsBody };
+    const apiAuthentications = yield call(apiCallWithRetry, {
+      path: '/signup?no_redirect=true',
+      opts: payload,
+      message: 'Authenticating User',
+      hidden: true,
+    });
+
+    if (apiAuthentications.success) {
+      yield put(actions.auth.signupStatus('success', SIGN_UP_SUCCESS));
+    }
+  } catch (error) {
+    let authError = inferErrorMessages(error?.message)?.[0];
+
+    if (typeof authError !== 'string') {
+      authError = AUTH_FAILURE_MESSAGE;
+    }
+    yield put(actions.auth.signupStatus('failed', authError));
     yield put(actions.user.profile.delete());
   }
 }
@@ -510,10 +638,15 @@ function* mfaVerify({ payload }) {
 export const authenticationSagas = [
   takeEvery(actionTypes.AUTH.INIT_SESSION, initializeSession),
   takeEvery(actionTypes.AUTH.REQUEST, auth),
+  takeEvery(actionTypes.AUTH.SIGNUP, signup),
   takeEvery(actionTypes.APP.UI_VERSION_FETCH, fetchUIVersion),
   takeEvery(actionTypes.AUTH.SIGNIN_WITH_GOOGLE, signInWithGoogle),
   takeEvery(actionTypes.AUTH.RE_SIGNIN_WITH_GOOGLE, reSignInWithGoogle),
   takeEvery(actionTypes.AUTH.RE_SIGNIN_WITH_SSO, reSignInWithSSO),
   takeEvery(actionTypes.AUTH.LINK_WITH_GOOGLE, linkWithGoogle),
   takeEvery(actionTypes.AUTH.MFA_VERIFY.REQUEST, mfaVerify),
+  takeEvery(actionTypes.AUTH.RESET_REQUEST, resetRequest),
+  takeEvery(actionTypes.AUTH.RESET_PASSWORD_REQUEST, resetPasswordRequest),
+  takeEvery(actionTypes.AUTH.SET_PASSWORD_REQUEST, setPasswordRequest),
+  takeEvery(actionTypes.AUTH.CHANGE_EMAIL_REQUEST, changeEmailRequest),
 ];

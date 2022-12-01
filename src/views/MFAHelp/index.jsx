@@ -1,14 +1,10 @@
 import React from 'react';
-import { useSelector } from 'react-redux';
 import { makeStyles, Typography } from '@material-ui/core';
-import { Link } from 'react-router-dom';
-import SigninForm from './SigninForm';
+import { Link} from 'react-router-dom';
 import CeligoLogo from '../../components/CeligoLogo';
 import { getDomain } from '../../utils/resource';
-import { selectors } from '../../reducers';
 import MarketingContentWithIframe from '../../components/LoginScreen/MarketingContentWithIframe';
 import { TextButton } from '../../components/Buttons';
-import { SIGN_UP_SUCCESS, RESET_PASSWORD_SUCCESS } from '../../constants';
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
@@ -34,7 +30,7 @@ const useStyles = makeStyles(theme => ({
   },
   link: {
     paddingLeft: 4,
-    color: theme.palette.primary.dark,
+    color: theme.palette.warning.main,
   },
   signinWrapper: {
     background: theme.palette.background.paper,
@@ -62,9 +58,18 @@ const useStyles = makeStyles(theme => ({
   mfaTitle: {
     marginBottom: theme.spacing(3),
     fontSize: 30,
+    fontWeight: 300,
     lineHeight: '28px',
     width: 290,
     textAlign: 'center',
+  },
+  mfaLabel: {
+    marginBottom: '16px',
+    fontSize: '15px',
+    color: '#6a7b89',
+    maxWidth: '300px',
+    alignItems: 'center',
+    lineHeight: '20px',
   },
   signupLink: {
     position: 'absolute',
@@ -92,19 +97,44 @@ const Title = () => {
   const classes = useStyles();
 
   return (
-    <Typography variant="h3" className={classes.title}>
-      Sign in
-    </Typography>
+    <>
+      <Typography variant="h3" className={classes.mfaTitle}>
+        Need help authenticating?
+      </Typography>
+    </>
+
   );
 };
+const Label = () => {
+  const classes = useStyles();
 
-export default function Signin(props) {
+  return (
+    <div className={classes.mfaLabel}>
+      Contact an admin or owner of the primary account to reset MFA. Otherwise ,
+      <a
+        href="https://www.celigo.com/company/contact-us/"
+        target="_blank"
+        rel="noreferrer"
+    >
+        contact Celigo support via call.
+      </a>
+      <br />
+      <br />
+      Need more help? &nbsp;
+      <a
+        href="https://docs.celigo.com/hc/en-us/articles/7127009384987-Set-up-multifactor-authentication-MFA-for-an-account"
+        target="_blank"
+        rel="noreferrer"
+    >
+        Check out our help documentation.
+      </a>
+    </div>
+  );
+};
+export default function MfaHelp() {
   const classes = useStyles();
   // eslint-disable-next-line no-undef
   const contentUrl = (getDomain() === 'eu.integrator.io' ? IO_LOGIN_PROMOTION_URL_EU : IO_LOGIN_PROMOTION_URL);
-
-  const isSignupCompleted = useSelector(state => selectors.signupStatus(state) === 'done');
-  const isSetPasswordCompleted = useSelector(state => selectors.requestResetPasswordStatus(state) === 'success');
 
   return (
     <div className={classes.wrapper}>
@@ -114,25 +144,7 @@ export default function Signin(props) {
             <CeligoLogo />
           </div>
           <Title />
-          {
-            isSignupCompleted && (
-            <Typography variant="body2" className={classes.signupSuccess} >
-              {SIGN_UP_SUCCESS}
-            </Typography>
-            )
-          }
-          {
-            isSetPasswordCompleted && (
-            <Typography variant="body2" className={classes.signupSuccess} >
-              {RESET_PASSWORD_SUCCESS}
-            </Typography>
-            )
-          }
-          <SigninForm
-            {...props}
-            dialogOpen={false}
-            className={classes.signInForm}
-          />
+          <Label />
           {getDomain() !== 'eu.integrator.io' && (
           <Typography variant="body2" className={classes.signupLink}>
             Don&apos;t have an account?

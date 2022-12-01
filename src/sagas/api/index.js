@@ -26,7 +26,6 @@ export function* sendRequest(request) {
 
   try {
     const {url, ...options} = requestPayload;
-
     const actualResponse = yield call(fetch, url, {...options, signal});
 
     // extract just what is important from the fetch api response like url, headers, status and actual data

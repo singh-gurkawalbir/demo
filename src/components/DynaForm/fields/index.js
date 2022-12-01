@@ -69,6 +69,7 @@ import DynaIAExpression from './DynaIAExpression';
 import DynaIASelect from './DynaIASelect';
 import DynaUserEmail from './DynaUserEmail';
 import DynaUserPassword from './DynaUserPassword';
+import DynaPassword from './DynaPassword';
 import DynaIclient from './DynaIclient';
 import DynaNetSuiteQualifier_afe from './DynaNetSuiteQualifier_afe';
 import DynaSalesforceQualifier_afe from './DynaSalesforceQualifier_afe';
@@ -158,6 +159,9 @@ import DynaConnectionFormView from './DynaConnectionFormView';
 import DynaSwitch from './DynaSwitch';
 import DynaMapper2SourceField from './mapper2/DynaMapper2SourceField';
 import DynaMapper2TabbedExtracts from './mapper2/DynaMapper2TabbedExtracts';
+import DynaSignupConsent from './DynaSignupConsent';
+import DynaSignupName from './DynaSignupName';
+import DynaSignupEmail from './DynaSignupEmail';
 import DynaSalesforceSObject from './DynaSalesforceSObject';
 import DynaSelectDataRetentionPeriod from './DynaSelectDataRetentionPeriod';
 import DynaChangeLicenseEdition from './DynaChangeLicenseEdition';
@@ -287,6 +291,7 @@ export default {
   netsuitedefaultvalue: DynaNetSuiteDefaultValue,
   ...SuiteScript,
   exportSelect: DynaExportSelect,
+  password: DynaPassword,
   textwithflowsuggestion: DynaTextWithFlowSuggestion,
   selectconditionallookup: DynaSelectConditionalLookup,
   csvhasheaderrow: DynaCsvHasHeaderRow,
@@ -331,6 +336,9 @@ export default {
   switch: DynaSwitch,
   mapper2sourcefield: DynaMapper2SourceField,
   mapper2tabbedextracts: DynaMapper2TabbedExtracts,
+  signupconsent: DynaSignupConsent,
+  signupname: DynaSignupName,
+  signupemail: DynaSignupEmail,
   selectdataretentionperiod: DynaSelectDataRetentionPeriod,
   changelicenseedition: DynaChangeLicenseEdition,
 };

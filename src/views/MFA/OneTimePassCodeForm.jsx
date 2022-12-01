@@ -1,5 +1,6 @@
 import React, { useCallback, useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useHistory } from 'react-router-dom';
 import clsx from 'clsx';
 import TextField from '@material-ui/core/TextField';
 import FormHelperText from '@material-ui/core/FormHelperText';
@@ -13,6 +14,7 @@ import actions from '../../actions';
 import { selectors } from '../../reducers';
 import ErrorIcon from '../../components/icons/ErrorIcon';
 import { NUMBER_REGEX } from '../../constants';
+import getRoutePath from '../../utils/routePaths';
 
 const useStyles = makeStyles(theme => ({
   submit: {
@@ -63,10 +65,12 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function OneTimePassCodeForm({ dialogOpen }) {
+export default function OneTimePassCodeForm() {
   const classes = useStyles();
   const dispatch = useDispatch();
+  const history = useHistory();
   const isMFAAuthRequestInProgress = useSelector(selectors.isMFAAuthRequested);
+  const isMFAVerified = useSelector(selectors.isMFAAuthVerified);
   const { dontAllowTrustedDevices, isAccountUser } = useSelector(selectors.mfaAuthInfo);
   const mfaError = useSelector(selectors.mfaError);
   const [error, setError] = useState();
@@ -101,6 +105,11 @@ export default function OneTimePassCodeForm({ dialogOpen }) {
   useEffect(() => {
     setError(mfaError);
   }, [mfaError]);
+  useEffect(() => {
+    if (isMFAVerified) {
+      history.push(getRoutePath('/'));
+    }
+  }, [isMFAVerified]);
 
   return (
     <div className={classes.editableFields}>
@@ -135,11 +144,9 @@ export default function OneTimePassCodeForm({ dialogOpen }) {
           )}
             label="Trust this device" />
           )}
-          {!dialogOpen && (
           <Link href="/mfa/help" className={classes.forgotPass} variant="body2">
             Need help?
           </Link>
-          )}
         </div>
 
         { isMFAAuthRequestInProgress ? <Spinner />
