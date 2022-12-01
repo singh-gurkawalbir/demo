@@ -142,12 +142,7 @@ export default (state = {}, action) => {
         }
         break;
       case actionTypes.LOGS.SCRIPTS.RECEIVED_ALL_LOGS:
-        if (!draft.scripts) {
-          draft.scripts = {};
-        }
-        if (!draft.scripts[key]) {
-          draft.scripts[key] = {};
-        }
+        if (!draft?.scripts?.[key]) break;
         draft.scripts[key].allLogsStatus = 'success';
         draft.scripts[key].isPurgeAvailable = isPurgeAvailable;
         break;
