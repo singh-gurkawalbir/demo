@@ -3,7 +3,7 @@
 import React from 'react';
 import { MemoryRouter, Route} from 'react-router-dom';
 // eslint-disable-next-line import/no-extraneous-dependencies
-import { screen, cleanup, waitFor } from '@testing-library/react';
+import { screen, cleanup } from '@testing-library/react';
 import * as reactRedux from 'react-redux';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import userEvent from '@testing-library/user-event';

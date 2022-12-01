@@ -139,7 +139,7 @@ const rootReducer = (state, action) => {
       case actionTypes.AUTH.CLEAR_STORE:
         Object.keys(draft).forEach(key => {
           // delete everything except for app and auth
-          if (key !== 'app' && key !== 'auth'  ) {
+          if (key !== 'app' && key !== 'auth') {
             delete draft[key];
           }
         });

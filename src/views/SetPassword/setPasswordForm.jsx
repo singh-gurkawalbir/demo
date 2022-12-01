@@ -33,9 +33,9 @@ const useStyles = makeStyles(theme => ({
   textField: {
     width: '100%',
   },
-  passwordIcon:{
+  passwordIcon: {
     position: 'absolute',
-    paddingLeft: '88%', 
+    paddingLeft: '88%',
   },
   alertMsg: {
     paddingTop: 20,

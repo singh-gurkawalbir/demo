@@ -136,7 +136,7 @@ export default function MfaVerify() {
             <CeligoLogo />
           </div>
           <Title />
-          <OneTimePassCodeForm dialogOpen />
+          <OneTimePassCodeForm />
           {getDomain() !== 'eu.integrator.io' && (
           <Typography variant="body2" className={classes.signupLink}>
             Don&apos;t have an account?

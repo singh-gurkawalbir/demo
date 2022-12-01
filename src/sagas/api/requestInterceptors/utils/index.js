@@ -45,7 +45,7 @@ export function normalizeUrlAndOptions(path, opts) {
       path.includes('/request-reset') ||
       path.includes('/reset-password') ||
       path.includes('/set-initial-password') ||
-      path.includes('/change-email')
+      path.includes('/change-email?no_redirect=true')
     ) {
       url = path;
     } else {
