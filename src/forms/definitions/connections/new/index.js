@@ -25,6 +25,7 @@ export default {
       id: 'application',
       name: 'application',
       type: 'selectapplication',
+      helpKey: 'application',
       label: 'Application',
       isLoggable: true,
       placeholder: applicationsPlaceHolderText(),
@@ -36,6 +37,11 @@ export default {
     },
   },
   layout: {
-    fields: ['application'],
+    type: 'box',
+    containers: [
+      {
+        fields: ['application'],
+      },
+    ],
   },
 };

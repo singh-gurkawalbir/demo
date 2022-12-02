@@ -6,6 +6,7 @@ import { selectors } from '../../reducers';
 import { USER_ACCESS_LEVELS } from '../../constants';
 import CeligoPageBar from '../../components/CeligoPageBar';
 import TransfersIcon from '../../components/icons/TransfersIcon';
+import DataRetentionIcon from '../../components/icons/DataRetentionIcon';
 import SecurityIcon from '../../components/icons/SecurityIcon';
 import SingleUserIcon from '../../components/icons/SingleUserIcon';
 import UsersIcon from '../../components/icons/GroupOfUsersIcon';
@@ -15,6 +16,7 @@ import AuditLogIcon from '../../components/icons/AuditLogIcon';
 import ResourceDrawer from '../../components/drawer/Resource';
 import Tabs from '../Integration/common/Tabs';
 import retry from '../../utils/retry';
+import PageContent from '../../components/PageContent';
 
 const Profile = loadable(() =>
   retry(() => import(/* webpackChunkName: 'MyAccount.Profile' */ './Profile'))
@@ -30,6 +32,9 @@ const Transfers = loadable(() =>
 );
 const Security = loadable(() =>
   retry(() => import(/* webpackChunkName: 'MyAccount.Security' */ './Security/index'))
+);
+const DataRetention = loadable(() =>
+  retry(() => import(/* webpackChunkName: 'MyAccount.DataRetention' */ './DataRetention/index'))
 );
 
 const SECURITY_TAB = {
@@ -66,6 +71,12 @@ const tabs = [
     Panel: Transfers,
   },
   SECURITY_TAB,
+  {
+    path: 'dataretention',
+    label: 'Data retention',
+    Icon: DataRetentionIcon,
+    Panel: DataRetention,
+  },
 ];
 
 const useStyles = makeStyles(theme => ({
@@ -73,7 +84,6 @@ const useStyles = makeStyles(theme => ({
     margin: theme.spacing(3),
   },
   tabsAccount: {
-    padding: theme.spacing(3),
     '& > [role = tabpanel]': {
       background: 'none',
       padding: 0,
@@ -101,7 +111,9 @@ export default function MyAccount({ match }) {
           }
         />
       <ResourceDrawer match={match} />
-      <Tabs tabs={myAccountTabs} match={match} className={classes.tabsAccount} />
+      <PageContent>
+        <Tabs tabs={myAccountTabs} match={match} className={classes.tabsAccount} />
+      </PageContent>
     </>
   );
 }

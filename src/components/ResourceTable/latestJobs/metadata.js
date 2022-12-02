@@ -35,7 +35,7 @@ export default {
       heading: 'Errors',
       // these fields are numbers so it should be okay if they are loggable
       isLoggable: true,
-      Value: ({rowData: r}) => <ErrorCell job={r} /> },
+      Value: ({rowData: r}) => <ErrorCell job={r} isLatestJob /> },
     {
       key: 'resolved',
       heading: 'Resolved',

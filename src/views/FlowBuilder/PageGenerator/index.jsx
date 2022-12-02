@@ -38,6 +38,7 @@ const PageGenerator = ({
   integrationId,
   isViewMode,
   onDelete,
+  onMove,
   openErrorCount,
   className,
   ...pg
@@ -232,6 +233,7 @@ const PageGenerator = ({
   const blockName = pending
     ? ''
     : resource.name || resource.id;
+
   const { connectorType, assistant, blockType } = getApplication();
 
   // #region Configure available generator actions
@@ -285,7 +287,7 @@ const PageGenerator = ({
   // console.log('render: <PageGenerator>');
 
   return (
-    <div className={clsx(classes.pgContainer, className)}>
+    <div className={clsx(classes.pgContainer, className)} >
       <AppBlock
         integrationId={integrationId}
         name={blockName}
@@ -307,6 +309,7 @@ const PageGenerator = ({
         isPageGenerator
       />
     </div>
+
   );
 };
 

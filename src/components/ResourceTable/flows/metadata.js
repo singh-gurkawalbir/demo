@@ -96,7 +96,7 @@ export default {
         heading: 'Schedule',
         align: 'center',
         isLoggable: true,
-        Value: ({rowData: r}) => <ScheduleCell flowId={r._id} name={r.name} actionProps={actionProps} />,
+        Value: ({rowData: r}) => <ScheduleCell flowId={r._id} name={r.name} schedule={r.schedule} actionProps={actionProps} />,
       },
     ];
 
@@ -149,6 +149,7 @@ export default {
             disabled={r.disabled}
             childId={actionProps.childId}
             actionProps={actionProps}
+            tooltip="Off / On"
             />
         ),
       },

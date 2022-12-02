@@ -69,6 +69,7 @@ export default {
     application: {
       id: 'application',
       label: 'Application',
+      helpKey: 'application',
       name: 'application',
       type: 'selectapplication',
       isLoggable: true,
@@ -188,7 +189,7 @@ export default {
       const andingExpressions = { $and: expression };
 
       if (app._httpConnectorId) {
-        return { filter: andingExpressions, appType: app.name };
+        return { filter: andingExpressions, appType: app.id };
       }
 
       if (app.assistant) {

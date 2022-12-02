@@ -21,6 +21,7 @@ import FlowSelector from '../FlowSelector';
 import DateRangeSelector from '../../DateRangeSelector';
 import { getSelectedRange } from '../../../utils/flowMetrics';
 import { TextButton } from '../../Buttons';
+import CeligoDivider from '../../CeligoDivider';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -71,12 +72,6 @@ const useStyles = makeStyles(theme => ({
   },
   hideLabel: {
     marginLeft: '10px',
-  },
-  divider: {
-    width: 1,
-    height: 20,
-    borderLeft: `1px solid ${theme.palette.secondary.lightest}`,
-    margin: theme.spacing(0, 1.5, 0, 0.25),
   },
 }));
 const rangeFilters = [
@@ -199,7 +194,7 @@ export default function Filters({
           </MenuItem>
         </CeligoSelect>
 
-        <div className={classes.divider} />
+        <CeligoDivider height="large" />
         <Typography>Filter by: </Typography>
 
         {!flowId && (

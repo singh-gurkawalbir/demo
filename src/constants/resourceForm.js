@@ -10,6 +10,8 @@ export const FORM_SAVE_STATUS = Object.freeze({
 });
 export const UI_FIELD_VALUES = Object.freeze(['/formView', '/uploadFile']);
 
+export const DISCARD_DIALOG_TITLE = 'You’ve got unsaved changes';
+export const DISCARD_DIALOG_MESSAGE = 'Are you sure you want to leave this page and lose your unsaved changes?';
 export const INVITE_USER_DRAWER_FORM_KEY = 'inviteUserDrawerFormKey';
 export const LOOKUP_DRAWER_FORM_KEY = 'LOOKUP_DRAWER_FORM_KEY';
 export const LOOKUP_FORM_KEY = 'LOOKUP_FORM_KEY';

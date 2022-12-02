@@ -23,10 +23,6 @@ const useStyles = makeStyles(theme => ({
     },
   },
   selected: {},
-  currentNavItem: {
-    borderLeft: `6px solid ${theme.palette.primary.main}`,
-    backgroundColor: theme.palette.background.paper2,
-  },
   pointer: {
     cursor: 'pointer',
   },
@@ -35,7 +31,7 @@ const useStyles = makeStyles(theme => ({
 export default function DataRow({ children, rowData, onRowOver, onRowOut, className, additionalConfigs, onRowClick }) {
   const classes = useStyles();
   const dispatch = useDispatch();
-  const {IsActiveRow, IsCurrentNavItem} = additionalConfigs || {};
+  const { IsActiveRow } = additionalConfigs || {};
   const rowRef = useRef();
 
   useScrollIntoView(rowRef, IsActiveRow?.({ rowData }), 'nearest');
@@ -56,8 +52,7 @@ export default function DataRow({ children, rowData, onRowOver, onRowOut, classN
     <TableRow
       hover
       className={clsx(classes.tableRow, className, {
-        [classes.currentNavItem]: IsCurrentNavItem?.({ rowData }),
-        [classes.pointer]: !!onRowClick,
+        [classes.pointer]: !!onRowClick && !IsActiveRow?.({ rowData }),
       })}
       classes={{
         root: classes.rowSelected,

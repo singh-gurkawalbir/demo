@@ -30,6 +30,7 @@ export default {
   contactEmail: {
     type: 'text',
     label: 'Contact emails',
+    placeholder: 'Comma separated list of emails',
   },
   installerFunction: {
     isLoggable: true,

@@ -15,6 +15,7 @@ describe('Handlebars autocomplete', () => {
     add: '{{add}}',
     substract: '{{substract}}',
   };
+  const lookupHints = [{name: 'propperty_1'}, {name: 'propperty_2'}];
   const jsonData = JSON.stringify({
     a: {
       d: 1,
@@ -64,6 +65,15 @@ describe('Handlebars autocomplete', () => {
         matchingResult
       );
       expect(editor.getValue()).toEqual(matchingResult);
+    });
+    test('should remove all the text preceeding the opening braces', () => {
+      editor.execCommand('insertstring', 'unwantedtext{{a');
+
+      const matchingGroup = utils.textAfterBracesMatchers(
+        editor
+      );
+
+      expect(matchingGroup[1]).toEqual('a');
     });
   });
 
@@ -126,6 +136,37 @@ describe('Handlebars autocomplete', () => {
     prevOp = editor.prevOp.command;
 
     expect(prevOp.name).not.toEqual('startAutocomplete');
+  });
+
+  test('should attempt to autocomplete when user types a valid brace expression with matching lookups', () => {
+    handleBarsCompleters.setLookupCompleter(lookupHints, false);
+    editor.execCommand('insertstring', '{{p');
+    const prevOp = editor.prevOp.command;
+
+    expect(editor.completer.completions.all.length).toEqual(2);
+    const matchingResults = editor.completer.completions.all.map(
+      result => result.matchingResult
+    );
+
+    expect(matchingResults).toEqual(
+      ['lookup "propperty_1" this', 'lookup "propperty_2" this']
+    );
+    expect(prevOp.name).toEqual('startAutocomplete');
+  });
+  test('should attempt to autocomplete when user types a valid brace expression with matching lookups when dotNotation is used', () => {
+    handleBarsCompleters.setLookupCompleter(lookupHints, true);
+    editor.execCommand('insertstring', '{{p');
+    const prevOp = editor.prevOp.command;
+
+    expect(editor.completer.completions.all.length).toEqual(2);
+    const matchingResults = editor.completer.completions.all.map(
+      result => result.matchingResult
+    );
+
+    expect(matchingResults).toEqual(
+      ['lookup.propperty_1', 'lookup.propperty_2']
+    );
+    expect(prevOp.name).toEqual('startAutocomplete');
   });
 
   /*

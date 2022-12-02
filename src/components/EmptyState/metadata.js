@@ -52,6 +52,12 @@ export default {
     subTitle: 'You can view all deleted items from your account on this page.',
     type: 'recyclebin',
   },
+  flows: {
+    title: 'You don’t have any flows in this integration yet.',
+    subTitle: 'Select Attach Flows from the More menu (to choose from among your Standalone flows)',
+    type: 'flows',
+    buttonLabel: 'Create flow now',
+  },
 
 };
 

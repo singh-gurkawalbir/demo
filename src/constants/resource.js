@@ -120,6 +120,7 @@ export const C_LOCKED_FIELDS = Object.freeze({
     '_connectionId',
     'lookups',
     'batchSize',
+    'netsuite.file.folder',
     'netsuite_da.batchSize',
     'netsuite_da.internalIdLookup.extract',
     'netsuite_da.internalIdLookup.searchField',
@@ -253,4 +254,14 @@ export const CATEGORY_MAPPING_SAVE_STATUS = {
   SAVED: 'saved',
   CLOSE: 'close',
   FAILED: 'failed',
+};
+
+export const MOCK_INPUT_STATUS = {
+  REQUESTED: 'requested',
+  RECEIVED: 'received',
+  ERROR: 'error',
+};
+export const OPEN_ERRORS_VIEW_TYPES = {
+  SPLIT: 'split', // new view
+  LIST: 'list', // old view
 };
