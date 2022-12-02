@@ -198,21 +198,31 @@ export default function ScriptLogs({ flowId, scriptId }) {
     }
   }, [dispatch, flowId, scriptId, status]);
 
+  /*
+  To disable/enable the purge action, UI needs information if the respective script has any logs present
+  If there are no logs present for the default selected time period, we make a call to get all the logs for a given script
+  */
   useEffect(() => {
-    if (!isAllLogsReceived) {
+    if (!logs.length && !isAllLogsReceived) {
       dispatch(actions.logs.scripts.requestAllLogs({scriptId, flowId}));
     }
-  }, [dispatch, flowId, isAllLogsReceived, scriptId]);
+  }, [dispatch, flowId, isAllLogsReceived, logs?.length, scriptId]);
+
+  /*
+  If the purge is a success, we need to refresh the list if there are any logs present in the selected time frame.
+  */
   useEffect(() => {
     if (isPurgeLogSuccess) {
-      dispatch(actions.logs.scripts.refresh({scriptId, flowId}));
+      if (logs.length) {
+        dispatch(actions.logs.scripts.refresh({scriptId, flowId}));
+      }
       enqueueSnackbar({
         message: messageStore('PURGE_SCRIPT_LOG_SUCCESS_MESSAGE'),
         variant: 'success',
       });
       dispatch(actions.logs.scripts.purge.clear());
     }
-  }, [dispatch, enqueueSnackbar, flowId, isPurgeLogSuccess, scriptId]);
+  }, [dispatch, enqueueSnackbar, flowId, isPurgeLogSuccess, logs.length, scriptId]);
 
   // used to determine fetch progress percentage
   const {startTime, endTime} = useMemo(() => {

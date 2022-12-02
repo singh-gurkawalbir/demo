@@ -176,6 +176,10 @@ export function* startDebug({scriptId, value}) {
   yield put(actions.resource.patch('scripts', scriptId, patchSet));
 }
 
+/*
+requestAllLogs saga gets all the logs present for a given scriptId without depending on dateRange.
+If there are any logs present in the response, we make Purge action available to the user and vice versa.
+*/
 export function* requestAllLogs({scriptId, flowId}) {
   const path = `/scripts/${scriptId}/logs`;
 
