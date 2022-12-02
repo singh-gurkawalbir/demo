@@ -16,7 +16,7 @@ const useStyles = makeStyles({
   },
 });
 
-export default function AuditLogTable({ resourceType, resourceId, filters, childId, className }) {
+export default function AuditLogTable({ resourceType, resourceId, childId, className }) {
   const classes = useStyles();
   const filterKey = `${resourceType}-${resourceId}-auditLogs`;
   const {logs: auditLogs, totalCount} = useSelector(state =>
@@ -24,7 +24,6 @@ export default function AuditLogTable({ resourceType, resourceId, filters, child
       state,
       resourceType,
       resourceId,
-      filters,
       {childId}
     ));
 

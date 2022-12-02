@@ -20,6 +20,7 @@ import openExternalUrl from '../../utils/window';
 import { pingConnectionWithId } from '../resourceForm/connections';
 import httpConnectorSagas from './httpConnectors';
 import { getHttpConnector} from '../../constants/applications';
+import { AUDIT_LOG_FILTER_KEY } from '../../constants/auditLog';
 
 export function* isDataLoaderFlow(flow) {
   if (!flow) return false;
@@ -732,8 +733,8 @@ export function* deleteIntegration({ integrationId }) {
   yield put(actions.resource.integrations.redirectTo(integrationId, HOME_PAGE_PATH));
 }
 
-export function* getResourceCollection({ resourceType, refresh, integrationId, nextPagePath }) {
-  let path = nextPagePath || `/${resourceType}`;
+export function* getResourceCollection({ resourceType, refresh, integrationId }) {
+  let path = `/${resourceType}`;
   let hideNetWorkSnackbar;
 
   /** hide the error that GET SuiteScript tiles throws when connection is offline */
@@ -781,15 +782,6 @@ export function* getResourceCollection({ resourceType, refresh, integrationId, n
       refresh,
     });
 
-    if (path.includes('/audit')) {
-      const {data, nextLinkPath} = collection || {};
-
-      collection = data;
-      if (nextLinkPath) {
-        yield put(actions.auditLogs.receivedNextPagePath(nextLinkPath));
-      }
-    }
-
     if (resourceType === 'stacks') {
       let sharedStacks = yield call(apiCallWithPaging, {
         path: '/shared/stacks',
@@ -818,7 +810,7 @@ export function* getResourceCollection({ resourceType, refresh, integrationId, n
       collection = undefined;
     }
 
-    yield put(actions.resource.receivedCollection(resourceType, collection, integrationId, nextPagePath ? true : undefined));
+    yield put(actions.resource.receivedCollection(resourceType, collection, integrationId));
     yield put(actions.resource.collectionRequestSucceeded({resourceType: updatedResourceType, integrationId}));
 
     return collection;
@@ -1177,6 +1169,48 @@ export function* downloadAuditlogs({resourceType, resourceId, childId, filters})
     //  Handle errors
   }
 }
+
+export function* requestAuditLogs({ resourceType, nextPagePath }) {
+  const filters = yield select(selectors.filter, AUDIT_LOG_FILTER_KEY);
+
+  const requestOptions = getRequestOptions(
+    actionTypes.RESOURCE.REQUEST_AUDIT_LOGS,
+    { nextPagePath, resourceType, filters }
+  );
+  const { path } = requestOptions;
+
+  let hideNetWorkSnackbar;
+
+  try {
+    yield put(actions.resource.collectionRequestSent(resourceType));
+
+    // eslint-disable-next-line prefer-const
+    let {data, nextLinkPath} = (yield call(apiCallWithPaging, {
+      path,
+      hidden: hideNetWorkSnackbar,
+    })) || {};
+
+    if (nextLinkPath) {
+      yield put(actions.auditLogs.receivedNextPagePath(nextLinkPath));
+    }
+
+    if (data !== undefined && !Array.isArray(data) && !NON_ARRAY_RESOURCE_TYPES.includes(resourceType)) {
+      // eslint-disable-next-line no-console
+      console.warn('Getting unexpected collection values: ', data);
+      data = undefined;
+    }
+
+    yield put(actions.resource.receivedCollection(resourceType, data, undefined, nextPagePath ? true : undefined));
+    yield put(actions.resource.collectionRequestSucceeded({resourceType}));
+
+    return data;
+  } catch (error) {
+    // generic message to the user that the
+    // saga failed and services team working on it
+    yield put(actions.resource.collectionRequestFailed({resourceType}));
+  }
+}
+
 export const resourceSagas = [
   takeEvery(actionTypes.EVENT_REPORT.CANCEL, eventReportCancel),
   takeEvery(actionTypes.EVENT_REPORT.DOWNLOAD, downloadReport),
@@ -1214,6 +1248,7 @@ export const resourceSagas = [
   takeEvery(actionTypes.RESOURCE.REPLACE_CONNECTION, replaceConnection),
   takeLatest(actionTypes.INTEGRATION.DELETE, deleteIntegration),
   takeLatest(actionTypes.RESOURCE.DOWNLOAD_AUDIT_LOGS, downloadAuditlogs),
+  takeLatest(actionTypes.RESOURCE.REQUEST_AUDIT_LOGS, requestAuditLogs),
 
   ...metadataSagas,
   ...httpConnectorSagas,
