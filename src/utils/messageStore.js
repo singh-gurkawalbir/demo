@@ -108,6 +108,13 @@ href="/marketplace"><u>Check out our Marketplace</u></a> to jumpstart your  inte
   // #endregion
   // #region Edit mock input
   MOCK_INPUT_REFRESH_SUCCESS: 'Successfully fetched latest input data.',
+
+  // #region shopify landing page
+  OFFLINE_CONNECTION_MESSAGE: 'Save & authorize offline connections to bring them back online.',
+  CONNECTION_TYPE_CHANGE_INFO: 'Saving this connection will change its current "{{type}}" auth type to "OAuth 2.0".',
+  IA_NAME_MESSAGE: 'You don’t have a {{appLabel}} integration app installed in integrator.io. Install a {{appLabel}} integration app and then refresh this page to select it.',
+  // #endregion
+
   DATALOADER_PP_MESSAGE: 'You can add a destination application once you complete the configuration of your data loader.',
   MAX_ROUTERS_LIMIT_REACHED: 'You have reached the maximum of 25 branchings in a flow',
   MAX_BRANCHES_LIMIT_REACHED: 'You have reached the maximum of 25 branches in a branching',
@@ -136,7 +143,7 @@ export default function messageStore(key, argsObj) {
   if (!argsObj || typeof argsObj !== 'object') return str;
 
   Object.keys(argsObj).forEach(arg => {
-    str = str.replace(`{{${arg}}}`, argsObj[arg]);
+    str = str.replaceAll(`{{${arg}}}`, argsObj[arg]);
   });
 
   return str;

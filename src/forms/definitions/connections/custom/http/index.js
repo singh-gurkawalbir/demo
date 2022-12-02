@@ -43,6 +43,8 @@ import pulseway from './pulseway';
 import servicenow from './servicenow';
 import shipstation from './shipstation';
 import shopify from './shopify';
+// should be removed
+import shopifyOld from './shopifyOld';
 import shipwire from './shipwire';
 import snapfulfil from './snapfulfil';
 import splunk from './splunk';
@@ -321,6 +323,7 @@ export default {
   servicenow,
   shipstation,
   shopify,
+  shopifyOld,
   // surveymonkey,
   stripe,
   twilio,

@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import actions from '../../../actions';
 import { getAssistantConnectorType, getApp} from '../../../constants/applications';
 import { selectors } from '../../../reducers';
@@ -43,6 +43,7 @@ export default function FormView(props) {
       assistant: staggedResource.assistant,
     })
   );
+  const accountOwner = useSelector(() => selectors.accountOwner(), shallowEqual);
 
   const { assistant: assistantName, http } = connection;
 
@@ -91,6 +92,7 @@ export default function FormView(props) {
       isNew: false,
       connection,
       assistantData,
+      accountOwner,
     });
     const finalValues = preSave(formContext.value, staggedRes, { connection });
     const newFinalValues = {...finalValues};

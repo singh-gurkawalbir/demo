@@ -1,6 +1,3 @@
-import { SHOPIFY_BASIC_AUTH_PASSWORD_HELP_LINK, SHOPIFY_BASIC_AUTH_USERNAME_HELP_LINK } from '../../../../../constants';
-import { isNewId } from '../../../../../utils/resource';
-
 export default {
   preSave: (formValues, resource) => {
     const retValues = { ...formValues };
@@ -8,10 +5,10 @@ export default {
     if (retValues['/http/auth/type'] === 'oauth') {
       retValues['/http/auth/token/location'] = 'header';
       retValues['/http/auth/oauth/authURI'] = `https://${
-        formValues['/http/storeName']
+        formValues['/http/storeURL'] || formValues['/http/storeName']
       }.myshopify.com/admin/oauth/authorize`;
       retValues['/http/auth/oauth/tokenURI'] = `https://${
-        formValues['/http/storeName']
+        formValues['/http/storeURL'] || formValues['/http/storeName']
       }.myshopify.com/admin/oauth/access_token`;
       retValues['/http/auth/token/headerName'] = 'X-Shopify-Access-Token';
       retValues['/http/auth/token/scheme'] = ' ';
@@ -24,9 +21,9 @@ export default {
 
       if (
         resource &&
-        !resource._connectorId &&
-        resource.http &&
-        resource.http._iClientId
+          !resource._connectorId &&
+          resource.http &&
+          resource.http._iClientId
       ) {
         retValues['/http/_iClientId'] = undefined;
       }
@@ -57,15 +54,15 @@ export default {
     }
     if (
       resource &&
-      resource._connectorId) {
+        resource._connectorId) {
       retValues['/http/baseURI'] = `https://${
-        formValues['/http/storeName']
+        formValues['/http/storeURL'] || formValues['/http/storeName']
       }.myshopify.com`;
       retValues['/http/ping/relativeURI'] = '/admin/orders.json';
 
       if (
         retValues['/http/auth/oauth/scope'] &&
-        !!retValues['/http/auth/oauth/scope'].length
+          !!retValues['/http/auth/oauth/scope'].length
       ) {
         const scope = retValues['/http/auth/oauth/scope'].find(
           str => str !== 'read_analytics'
@@ -93,11 +90,11 @@ export default {
     } else {
       retValues['/http/ping/relativeURI'] = '/orders.json';
       retValues['/http/baseURI'] = `https://${
-        formValues['/http/storeName']
+        formValues['/http/storeURL'] || formValues['/http/storeName']
       }.myshopify.com/admin/api/${formValues['/http/unencrypted/version']}`;
       if (
         retValues['/http/auth/oauth/scope'] &&
-        !!retValues['/http/auth/oauth/scope'].length
+          !!retValues['/http/auth/oauth/scope'].length
       ) {
         const scope = retValues['/http/auth/oauth/scope'].find(
           str => str !== 'read_analytics'
@@ -133,16 +130,11 @@ export default {
     };
   },
   fieldMap: {
-    name: {
-      fieldId: 'name',
-      label: 'Name your connection',
-      placeholder: 'e.g., Shopify connection',
-    },
+    name: { fieldId: 'name' },
     'http.auth.type': {
       id: 'http.auth.type',
       type: 'select',
-      label: 'Auth type',
-      required: true,
+      label: 'Authentication type',
       helpKey: 'shopify.connection.http.auth.type',
       options: [
         {
@@ -156,65 +148,48 @@ export default {
       defaultValue: r => {
         const authType = r && r.http && r.http.auth && r.http.auth.type;
 
-        return authType || 'basic';
+        if (authType === 'oauth') {
+          return 'oauth';
+        }
+
+        return 'basic';
       },
     },
-    'shopify.form.header.link': {
-      fieldId: 'shopify.form.header',
-      id: 'shopify.form.header.link',
-      messageText: 'Shopify recommends creating connections directly from the Shopify App Store',
-      isHeader: true,
-      visible: r => isNewId(r._id),
-    },
-    'shopify.form.link': {
-      fieldId: 'shopify.form.header',
-      id: 'shopify.form.link',
-      messageText: 'Shopify requires creating OAuth 2.0 connections directly from the Shopify App Store',
-      visibleWhenAll: [
-        {field: 'http.auth.type', is: ['oauth']},
-      ],
-    },
-    'http.storeName': {
-      id: 'http.storeName',
-      type: 'shopifystorename',
-      label: 'Store name',
+    'http.storeURL': {
+      id: 'http.storeURL',
+      startAdornment: 'https://',
+      endAdornment: '.myshopify.com',
+      type: 'text',
+      label: 'Store URL',
       helpKey: 'shopify.connection.http.storeURL',
-      showHelpLink: true,
       required: true,
       validWhen: {
         matchesRegEx: {
           pattern: '^[\\S]+$',
-          message: 'Store name should not contain spaces.',
+          message: 'Subdomain should not contain spaces.',
         },
       },
       defaultValue: r => {
         const baseUri = r && r.http && r.http.baseURI;
         const subdomain =
-          baseUri &&
-          baseUri.substring(
-            baseUri.indexOf('https://') + 8,
-            baseUri.indexOf('.myshopify.com')
-          );
+            baseUri &&
+            baseUri.substring(
+              baseUri.indexOf('https://') + 8,
+              baseUri.indexOf('.myshopify.com')
+            );
 
         return subdomain;
-      },
-      disabledWhenAll: r => {
-        if (isNewId(r?._id)) {
-          return [];
-        }
-
-        return [{ field: 'http.auth.type', is: ['oauth'] }];
       },
     },
     'http.unencrypted.version': {
       fieldId: 'http.unencrypted.version',
       type: 'select',
-      label: 'API version',
+      label: 'Version',
       helpKey: 'shopify.connection.http.unencrypted.version',
       required: true,
       defaultValue: r =>
         (r && r.http && r.http.unencrypted && r.http.unencrypted.version) ||
-        '2022-10',
+          '2022-10',
       visible: r => !(r?._connectorId),
       options: [
         {
@@ -228,15 +203,14 @@ export default {
     },
     'http.auth.basic.username': {
       fieldId: 'http.auth.basic.username',
+      label: 'API key',
       helpKey: 'shopify.connection.http.auth.basic.username',
       visibleWhen: [{ field: 'http.auth.type', is: ['basic'] }],
-      helpLink: SHOPIFY_BASIC_AUTH_USERNAME_HELP_LINK,
     },
     'http.auth.basic.password': {
       fieldId: 'http.auth.basic.password',
       helpKey: 'shopify.connection.http.auth.basic.password',
       visibleWhen: [{ field: 'http.auth.type', is: ['basic'] }],
-      helpLink: SHOPIFY_BASIC_AUTH_PASSWORD_HELP_LINK,
     },
     'http.auth.token.token': {
       fieldId: 'http.auth.token.token',
@@ -310,14 +284,11 @@ export default {
       visibleWhenAll: r => {
         if (r?.http?._iClientId) {
           return [{ field: 'http.auth.type', isNot: ['oauth'] },
-            { field: 'http.auth.type', isNot: ['basic'] },
-            { field: 'http.auth.type', isNot: ['token'] }];
+            { field: 'http.auth.type', isNot: ['basic'] }];
         }
 
         return [{ field: 'http.auth.type', is: ['oauth'] }];
       },
-      required: true,
-      visible: r => r?.http?.auth?.type === 'oauth',
     },
     application: {
       fieldId: 'application',
@@ -325,49 +296,24 @@ export default {
     httpAdvanced: { formId: 'httpAdvanced' },
   },
   layout: {
-    fields: ['shopify.form.header.link'],
+    type: 'collapse',
     containers: [
-      {
-        type: 'box',
-        containers: [
-          {
-            type: 'indent',
-            fields: [
-              'name',
-              'http.unencrypted.version',
-              'http.storeName',
-              'http.auth.type',
-              'shopify.form.link',
-              'http.auth.token.token',
-              'http.auth.oauth.scope',
-            ],
-            containers: [
-              {
-                type: 'indent',
-                fields: [
-                  'http.auth.basic.username',
-                  'http.auth.basic.password',
-                ],
-              },
-            ],
-          },
-        ],
-      },
-      {
-        type: 'collapse',
-        containers: [
-          {
-            collapsed: true,
-            label: 'Advanced',
-            fields: ['httpAdvanced'],
-          },
-        ],
-      },
+      { collapsed: true, label: 'General', fields: ['name', 'application'] },
+      { collapsed: true,
+        label: 'Application details',
+        fields: ['http.auth.type',
+          'http.storeURL',
+          'http.unencrypted.version',
+          'http.auth.basic.username',
+          'http.auth.basic.password',
+          'http.auth.token.token',
+          'http.auth.oauth.scope'] },
+      { collapsed: true, label: 'Advanced', fields: ['httpAdvanced'] },
     ],
   },
   actions: [
     {
-      id: 'shopifyoauthbuttongroup',
+      id: 'oauthandcancel',
       visibleWhen: [
         {
           field: 'http.auth.type',
@@ -396,3 +342,4 @@ export default {
     },
   ],
 };
+

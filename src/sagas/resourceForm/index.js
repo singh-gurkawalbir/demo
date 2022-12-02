@@ -52,6 +52,7 @@ export function* createFormValuesPatchSet({
     resourceId,
     scope
   );
+  const accountOwner = yield select(selectors.accountOwner);
 
   if (!resource) return { patchSet: [], finalValues: null }; // nothing to do.
 
@@ -88,6 +89,7 @@ export function* createFormValuesPatchSet({
     connection,
     isNew: formState.isNew,
     assistantData,
+    accountOwner,
   });
 
   if (typeof preSave === 'function') {
@@ -822,8 +824,10 @@ export function* initFormValues({
   skipCommit,
   flowId,
   integrationId,
+  fieldMeta: customFieldMeta,
 }) {
   const developerMode = yield select(selectors.developerMode);
+  const accountOwner = yield select(selectors.accountOwner);
   const resource = (yield select(
     selectors.resourceData,
     resourceType,
@@ -903,6 +907,8 @@ export function* initFormValues({
       isNew,
       assistantData: getHttpConnector(connection?.http?._httpConnectorId) ? connectorMetaData : assistantData,
       connection,
+      customFieldMeta,
+      accountOwner,
     });
 
     const form = defaultFormAssets.fieldMeta;
