@@ -1503,6 +1503,7 @@ if you're using a production account, you'll find your API keys under the 'API M
   'flow.router.branchType': `Select the <a href="https://docs.celigo.com/hc/en-us/articles/7287177264795-Branch-flows-Add-flow-branching-" target="_blank">type of branching</a> based on how you want records to flow through the branches:
   <ul><li>If you select <b>First matching branch</b>, the branching conditions will be applied to a record sequentially based on the order of the branches. The record will only go through the first branch where the conditions are met.</li>
   <li>If you select <b>All matching branches</b>, the branching conditions will be applied to a record for all branches. The record will go through all the branches where the conditions are met.</li></ul>`,
+  'flow.router.name': 'Name your branching router (optional) to make your flow more readable on the flow builder canvas.',
   'flow.routers.branches': 'Add branches and define branching conditions. You can change the order of a branch by dragging it up or down, except when <b>All matching branches</b> is selected.',
   'alias.aliasId': 'Enter a descriptive, unique name to use as the Alias ID. This is what you will use in scripts to refer to the resource. Use only letters, numbers, hyphens(-) and/or underscores(_). For example, shopify_flow_neworders or netsuite-connection2_prod',
   'alias.description': 'Enter a description that provides more context on how the resource is used in your integration.',
