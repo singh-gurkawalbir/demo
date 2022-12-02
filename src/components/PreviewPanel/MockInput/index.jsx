@@ -58,7 +58,7 @@ function RouterWrappedContent(props) {
   const [value, setValue] = useState(userMockData ? wrapExportFileSampleData(userMockData) : '');
 
   useEffect(() => {
-    if (status === MOCK_INPUT_STATUS.RECEIVED && !userMockData) {
+    if ([MOCK_INPUT_STATUS.RECEIVED, MOCK_INPUT_STATUS.ERROR].includes(status) && !userMockData) {
       setValue(wrapMockInputData(mockInput));
     }
   }, [userMockData, status, mockInput]);
