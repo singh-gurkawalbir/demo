@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import { makeStyles } from '@material-ui/core';
 import actions from '../../../actions';
 import { getApp, getHttpConnector} from '../../../constants/applications';
@@ -47,6 +47,7 @@ export default function FormView(props) {
     state =>
       selectors.resourceFormState(state, resourceType, resourceId) || emptyObj
   );
+  const accountOwner = useSelector(() => selectors.accountOwner(), shallowEqual);
 
   let _httpConnectorId = stagedResource?.http?._httpConnectorId || stagedResource?._httpConnectorId;
 
@@ -84,6 +85,7 @@ export default function FormView(props) {
       resourceType,
       resource: stagedResource,
       isNew: false,
+      accountOwner,
     });
     const finalValues = preSave(formContext.value, stagedRes);
     const newFinalValues = {...finalValues};
@@ -142,7 +144,7 @@ export default function FormView(props) {
         allTouchedFields
       )
     );
-  }, [dispatch, formContext?.fields, formContext?.value, props, resourceFormState.fieldMeta, resourceId, resourceType, stagedResource, _httpConnectorId]);
+  }, [_httpConnectorId, accountOwner, dispatch, formContext?.fields, formContext?.value, props, resourceFormState.fieldMeta, resourceId, resourceType, stagedResource]);
 
   if (!_httpConnectorId || !sourceForm) {
     return null;

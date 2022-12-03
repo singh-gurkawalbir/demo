@@ -5,6 +5,7 @@ import uninstaller2Sagas from './uninstaller2.0';
 import resumeSagas from './resume';
 import utilitySagas from './utility';
 import upgradeSagas from './upgrade';
+import landingPage from './landingPage';
 
 export default [
   ...installerSagas,
@@ -14,4 +15,5 @@ export default [
   ...resumeSagas,
   ...utilitySagas,
   ...upgradeSagas,
+  ...landingPage,
 ];

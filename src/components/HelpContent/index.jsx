@@ -21,11 +21,13 @@ const useStyles = makeStyles(theme => ({
     wordBreak: 'break-word',
   },
   content: {
-    padding: theme.spacing(1, 0),
     overflowY: 'auto',
     lineHeight: '22px',
     whiteSpace: 'normal',
     wordBreak: 'break-word',
+    maxHeight: 638,
+    marginRight: -theme.spacing(1.5),
+    padding: theme.spacing(1, 1.5, 0, 0),
     '&>div': {
       maxHeight: 300,
     },

@@ -65,6 +65,8 @@ describe('useHandleSubmitCompleteFn tests', () => {
   afterEach(() => {
     useDispatchSpy.mockClear();
     mockDispatchFn.mockClear();
+    mockHistoryReplace.mockClear();
+    mockOnClose.mockClear();
   });
   test('Should able to test the custom hook with new pageGenerator ', async () => {
     await inituseHandleSubmitCompleteFn('pageGenerator');
@@ -74,7 +76,7 @@ describe('useHandleSubmitCompleteFn tests', () => {
   test('Should able to test the custom hook with new integration ', async () => {
     await inituseHandleSubmitCompleteFn('integrations', 'add', 'new-integration');
     userEvent.click(screen.getByRole('button', {name: 'Submit'}));
-    expect(mockHistoryReplace).toHaveBeenCalledWith('/edit/exports/_resourceId');
+    expect(mockHistoryReplace).not.toHaveBeenCalledWith('/add/integrations/new-integration');
   });
   test('Should able to test the custom hook with new script with skipClose ', async () => {
     await inituseHandleSubmitCompleteFn('scripts', 'add', 'new-script');
