@@ -371,6 +371,27 @@ selectors.integrationInstallSteps = (state, id) => {
   });
 };
 
+selectors.integrationChangeEditionSteps = (state, id) => {
+  const integration = selectors.resource(state, 'integrations', id);
+
+  if (
+    !integration ||
+    !(
+      (integration._changeEditionSteps && integration._changeEditionSteps.length)
+    )
+  ) {
+    return emptyList;
+  }
+
+  if (integration._changeEditionSteps && integration._changeEditionSteps.length) {
+    return produce(integration._changeEditionSteps, draft => {
+      if (draft.find(step => !step.completed)) {
+        draft.find(step => !step.completed).isCurrentStep = true;
+      }
+    });
+  }
+};
+
 selectors.mkFlowGroupingsSections = () => {
   const resourceSelector = selectors.makeResourceSelector();
 

@@ -4,10 +4,11 @@ import Spinner from '../../../../../../../components/Spinner';
 import FilledButton from '../../../../../../../components/Buttons/FilledButton';
 import { selectors } from '../../../../../../../reducers';
 import actions from '../../../../../../../actions';
+import TextButton from '../../../../../../../components/Buttons/TextButton';
 
 export default function ChildUpgradeButton({ resource }) {
   const dispatch = useDispatch();
-  const { id } = resource;
+  const { id, changeEditionId } = resource;
   const [isInProgress, setIsInProgress] = useState(false);
   const [isInQueue, setIsInQueue] = useState(false);
   const status = useSelector(state => selectors.getStatus(state, id)?.status);
@@ -42,9 +43,19 @@ export default function ChildUpgradeButton({ resource }) {
     return (
       <>
         {isInProgress ? (
-          <Spinner centerAll size="small">Upgrading...</Spinner>
+          // <Spinner centerAll size="small">Upgrading...</Spinner>
+          <TextButton
+            startIcon={<Spinner size="small" />}
+          >
+            Upgrading...
+          </TextButton>
         ) : (
-          <Spinner centerAll size="small">Waiting in Queue...</Spinner>
+          // <Spinner centerAll size="small">Waiting in Queue...</Spinner>
+          <TextButton
+            startIcon={<Spinner size="small" />}
+          >
+            Waiting in Queue...
+          </TextButton>
         )}
       </>
     );
@@ -52,7 +63,7 @@ export default function ChildUpgradeButton({ resource }) {
 
   return (
     <FilledButton
-      disabled
+      disabled={!changeEditionId}
     >
       Upgrade
     </FilledButton>

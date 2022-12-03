@@ -129,6 +129,7 @@ export default function SubscriptionSection({ childId, integrationId }) {
   const license = useSelector(state =>
     selectors.integrationAppLicense(state, integrationId)
   );
+  // console.log("license", license);
   const plan = useSelector(state =>
     selectors.integrationAppEdition(state, integrationId)
   );
@@ -184,6 +185,7 @@ export default function SubscriptionSection({ childId, integrationId }) {
     upgradeText,
     upgradeRequested,
     nextPlan,
+    _changeEditionId: changeEditionId,
   } = license;
   const handleUpgrade = () => {
     if (upgradeText === 'Request upgrade') {
@@ -218,7 +220,7 @@ export default function SubscriptionSection({ childId, integrationId }) {
       message: `Upgrade to a ${nextPlan} plan. Upgrades might require additional install steps to complete. If there are multiple accounts tied to this integration app, those accounts will begin installing once the subscription upgrade is complete.`,
       buttons: [
         {
-          label: 'Submit request',
+          label: 'Continue',
           onClick: () => {
             dispatch(actions.integrationApp.settings.integrationAppV2.upgrade(integrationId));
           },
@@ -263,6 +265,7 @@ export default function SubscriptionSection({ childId, integrationId }) {
                   className={classes.button}
                   onClick={handleUpgradeEdition}
                   nextPlan={nextPlan}
+                  changeEditionId={changeEditionId}
                 />
                 )}
                 {upgradeText && upgradeText !== 'upgradeEdition' && (

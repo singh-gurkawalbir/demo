@@ -8,6 +8,7 @@ import utility, { selectors as fromUtilities } from './utility';
 import addon, { selectors as fromAddon } from './addon';
 import clone, { selectors as fromClone } from './clone';
 import upgrade, { selectors as fromUpgrade } from './upgrade';
+import editionSteps, { selectors as fromEditionSteps } from './editionSteps';
 import { genSelectors } from '../../util';
 
 export default combineReducers({
@@ -20,6 +21,7 @@ export default combineReducers({
   clone,
   utility,
   upgrade,
+  editionSteps,
 });
 
 export const selectors = {};
@@ -33,6 +35,7 @@ const subSelectors = {
   clone: fromClone,
   utility: fromUtilities,
   upgrade: fromUpgrade,
+  editionSteps: fromEditionSteps,
 };
 
 genSelectors(selectors, subSelectors);

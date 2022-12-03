@@ -5,6 +5,7 @@ import QueuedJobsDrawer from '../../../components/JobDashboard/QueuedJobs/Queued
 import LoadResources from '../../../components/LoadResources';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 import { selectors } from '../../../reducers';
+import UpgradeDrawer from './drawers/Upgrade';
 import IntegrationTabs from './IntegrationTabs';
 import PageBar from './PageBar';
 import TabRedirection from './TabRedirection';
@@ -28,6 +29,7 @@ export default function IntegrationApp() {
         <IntegrationTabs />
         <ResourceDrawer />
         <QueuedJobsDrawer integrationId={integrationId} />
+        <UpgradeDrawer />
       </TabRedirection>
     </>
   );
