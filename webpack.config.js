@@ -80,9 +80,6 @@ const config = {
     new webpack.ProvidePlugin({
       React: 'react',
     }),
-    new webpack.DefinePlugin({
-      'process.env': JSON.stringify(process.env),
-    }),
     new CleanWebpackPlugin(),
     new HtmlWebpackPlugin({
       template: path.resolve(__dirname, 'src/index.html'),
@@ -92,6 +89,7 @@ const config = {
     }),
     // define LOGROCKET_IDENTIFIER for logrocket
     new webpack.DefinePlugin({
+      'process.env': JSON.stringify(process.env),
       RELEASE_VERSION: JSON.stringify(process.env.RELEASE_VERSION),
       LOGROCKET_IDENTIFIER: JSON.stringify(process.env.LOGROCKET_IDENTIFIER),
       LOGROCKET_IDENTIFIER_EU: JSON.stringify(process.env.LOGROCKET_IDENTIFIER_EU),
