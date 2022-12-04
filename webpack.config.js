@@ -247,6 +247,7 @@ module.exports = (env, argv) => {
         '/signin': getProxyOpts(true),
         '/signup': getProxyOpts(true),
         '/request-reset': getProxyOpts(true),
+        '/accept-invite': getProxyOpts(true),
         '/change-email/*': getProxyOpts(true),
         '/reset-password/*': getProxyOpts(true),
         '/set-initial-password/*': getProxyOpts(true),

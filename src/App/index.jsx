@@ -100,6 +100,8 @@ export const useSnackbarStyles = makeStyles({
 });
 
 function NonSigninHeaderComponents() {
+  console.log('non signin header componetn');
+
   return (
     <>
       <CeligoAppBar />
@@ -120,7 +122,6 @@ const PUBLIC_ROUTES = [
   'signin',
   'signup',
   'mfa-help',
-  'mfa/verify',
 ];
 
 const pageContentPaths = [getRoutePath('/*'), getRoutePath('/')];
@@ -147,9 +148,10 @@ export const PageContentComponents = () => (
 const Headers = () => {
   const location = useLocation();
 
+  const isMFAVerifyPage = location.pathname === '/mfa/verify';
   const isPublicPage = PUBLIC_ROUTES.includes(location.pathname?.split('/')?.[1]);
 
-  if (isPublicPage) return null;
+  if (isPublicPage || isMFAVerifyPage) return null;
 
   return <NonSigninHeaderComponents />;
 };

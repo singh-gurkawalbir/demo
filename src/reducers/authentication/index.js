@@ -17,7 +17,7 @@ export default function (state = defaultState, action) {
       loggedOut: true, // why is this not in the defaultState?
     };
   }
-  const { type, showAuthError, mfaError, mfaAuthInfo, payload } = action;
+  const { type, showAuthError, mfaError, mfaAuthInfo, payload, response } = action;
 
   return produce(state, draft => {
     switch (type) {
@@ -160,6 +160,13 @@ export default function (state = defaultState, action) {
         if (!draft.acceptInvite) draft.acceptInvite = {};
         draft.acceptInvite = {...payload};
         break;
+      case actionTypes.AUTH.ACCEPT_INVITE.SUCCESS:
+        if (!draft.acceptInvite) draft.acceptInvite = {};
+        draft.acceptInvite.redirectUrl = response.ssoRedirectURL || '/signin';
+        break;
+      case actionTypes.AUTH.ACCEPT_INVITE.CLEAR:
+        delete draft.acceptInvite;
+        break;
       default:
     }
   });
@@ -175,6 +182,7 @@ selectors.isAuthLoading = state => state?.commStatus === COMM_STATES.LOADING;
 selectors.isAuthenticating = state => selectors.isAuthLoading(state) && state?.authenticated === false;
 // show auth error when user is logged in
 selectors.showAuthError = state => state?.showAuthError;
+selectors.shouldRedirectToSignIn = state => state?.acceptInvite?.redirectUrl;
 selectors.acceptInviteData = state => state?.acceptInvite;
 selectors.showSessionStatus = state => {
   const { sessionExpired, warning } = state;

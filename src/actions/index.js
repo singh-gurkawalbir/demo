@@ -91,6 +91,10 @@ const auth = {
     validate: token => action(actionTypes.AUTH.ACCEPT_INVITE.VALIDATE, { token }),
     validateError: error => action(actionTypes.AUTH.ACCEPT_INVITE.VALIDATE_ERROR, {error}),
     validateSuccess: payload => action(actionTypes.AUTH.ACCEPT_INVITE.VALIDATE_SUCCESS, {payload}),
+    submit: payload => action(actionTypes.AUTH.ACCEPT_INVITE.SUBMIT, { payload }),
+    success: response => action(actionTypes.AUTH.ACCEPT_INVITE.SUCCESS, { response }),
+    failure: error => action(actionTypes.AUTH.ACCEPT_INVITE.FAILED, { error }),
+    clear: () => action(actionTypes.AUTH.ACCEPT_INVITE.CLEAR),
   },
   changeEmailRequest: token =>
     action(actionTypes.AUTH.CHANGE_EMAIL_REQUEST, { token }),
