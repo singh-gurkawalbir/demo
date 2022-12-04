@@ -89,7 +89,6 @@ const config = {
     }),
     // define LOGROCKET_IDENTIFIER for logrocket
     new webpack.DefinePlugin({
-      'process.env': JSON.stringify(process.env),
       RELEASE_VERSION: JSON.stringify(process.env.RELEASE_VERSION),
       LOGROCKET_IDENTIFIER: JSON.stringify(process.env.LOGROCKET_IDENTIFIER),
       LOGROCKET_IDENTIFIER_EU: JSON.stringify(process.env.LOGROCKET_IDENTIFIER_EU),
