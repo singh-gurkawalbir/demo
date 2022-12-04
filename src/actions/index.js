@@ -87,6 +87,11 @@ const form = {
 };
 // #endregion
 const auth = {
+  acceptInvite: {
+    validate: token => action(actionTypes.AUTH.ACCEPT_INVITE.VALIDATE, { token }),
+    validateError: error => action(actionTypes.AUTH.ACCEPT_INVITE.VALIDATE_ERROR, {error}),
+    validateSuccess: payload => action(actionTypes.AUTH.ACCEPT_INVITE.VALIDATE_SUCCESS, {payload}),
+  },
   changeEmailRequest: token =>
     action(actionTypes.AUTH.CHANGE_EMAIL_REQUEST, { token }),
   changeEmailSuccess: () => action(actionTypes.AUTH.CHANGE_EMAIL_SUCCESSFUL),

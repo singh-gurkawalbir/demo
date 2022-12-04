@@ -77,8 +77,8 @@ const useStyles = makeStyles(theme => ({
     textAlign: 'center',
   },
   signupLink: {
-    position: 'absolute',
-    bottom: theme.spacing(8),
+    position: 'relative',
+    // bottom: theme.spacing(8),
   },
   ForgotPasswordForm: {
     [theme.breakpoints.down('xs')]: {
@@ -173,7 +173,7 @@ export default function ConcurForgotPassword(props) {
           />
             ) : ''}
           {successView ? (
-            <Typography variant="body2" className={classes.signupLink}>
+            <Typography variant="body2">
               Back to
               <TextButton
                 data-test="signin"
@@ -181,7 +181,7 @@ export default function ConcurForgotPassword(props) {
                 className={classes.link}
                 onClick={handleClick}
                 component={Link}
-                to="/signin">
+                to="/signin?application=concur">
                 Sign in
               </TextButton>
             </Typography>

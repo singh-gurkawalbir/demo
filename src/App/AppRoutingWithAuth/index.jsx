@@ -57,13 +57,14 @@ export function AppRoutingWithAuth(props) {
 
   const { shouldShowAppRouting, isAuthenticated, isSessionExpired } = props;
   const isSignInRoute = location.pathname === getRoutePath('signin');
-  const isSignUpRoute = location.pathname === getRoutePath('signup');
-  const isForgotPasswordRoute = location.pathname === getRoutePath('request-reset');
-  const isMfaVerifyRoute = location.pathname === getRoutePath('mfa/verify');
-  const isMfaHelpRoute = location.pathname === getRoutePath('mfa-help');
-  const isResetPasswordRoute = location.pathname.split('/')[1] === 'reset-password';
-  const isSetPasswordRoute = location.pathname.split('/')[1] === 'set-initial-password';
-  const isChangeEmailRoute = location.pathname.split('/')[1] === 'change-email';
+  // const isSignUpRoute = location.pathname === getRoutePath('signup');
+  // const isForgotPasswordRoute = location.pathname === getRoutePath('request-reset');
+  // const isMfaVerifyRoute = location.pathname === getRoutePath('mfa/verify');
+  // const isMfaHelpRoute = location.pathname === getRoutePath('mfa-help');
+  // const isResetPasswordRoute = location.pathname.split('/')[1] === 'reset-password';
+  // const isSetPasswordRoute = location.pathname.split('/')[1] === 'set-initial-password';
+  // const isChangeEmailRoute = location.pathname.split('/')[1] === 'change-email';
+  // const isAcceptInviteRoute = location.pathname.split('/')[1] === 'accept-invite';
 
   // this selector is used by the UI to hold off rendering any routes
   // till it determines the auth state
@@ -77,7 +78,7 @@ export function AppRoutingWithAuth(props) {
 
     return children;
   }
-  if (!isSessionExpired && !isSignInRoute && !isSignUpRoute && !isForgotPasswordRoute && !isResetPasswordRoute && !isSetPasswordRoute && !isChangeEmailRoute && !isMfaVerifyRoute && !isMfaHelpRoute) {
+  if (!isSessionExpired && !isSignInRoute) {
     return (
       <Redirect
         push={false}

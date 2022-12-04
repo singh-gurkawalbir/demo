@@ -22,7 +22,7 @@ import { flowMetricSagas } from './flowMetrics';
 import integrationAppsSagas from './integrationApps';
 import { flowSagas } from './flows';
 import editor from './editor';
-import { authenticationSagas, initializeApp, initializeLogrocket, invalidateSession } from './authentication';
+import { authenticationSagas, initializeLogrocket, invalidateSession } from './authentication';
 import { logoutParams } from './api/apiPaths';
 import { agentSagas } from './agent';
 import { templateSagas } from './template';
@@ -236,6 +236,11 @@ export function* allSagas() {
     ...flowbuildersagas,
   ]);
 }
+let LOGROCKET_INITIALIZED = false;
+const getLogrocketId = () =>
+// LOGROCKET_IDENTIFIER and LOGROCKET_IDENTIFIER_EU are defined by webpack
+// eslint-disable-next-line no-undef
+  (getDomain() === 'eu.integrator.io' ? LOGROCKET_IDENTIFIER_EU : LOGROCKET_IDENTIFIER);
 
 export default function* rootSaga() {
   const t = yield fork(allSagas);
@@ -254,7 +259,16 @@ export default function* rootSaga() {
     // initializeApp must be called(again) after initilizeLogrocket and saga restart
     // the only code path that leads here is by calling initializeApp after successful `auth` or `initializeSession`
     // from within sagas/authentication/index.js
-    yield call(initializeApp, logrocket.opts);
+    // yield call(initializeApp, logrocket.opts);
+    if (!LOGROCKET_INITIALIZED && getLogrocketId()) {
+      LOGROCKET_INITIALIZED = true;
+
+      // stop sagas, init logrocket, and restart sagas
+      // note the current saga `initializeApp` is killed as well
+      // so that it needs to be called again after logrocket is initialized and sagas restarted
+      // that happens in sagas/index.js
+      return yield put(actions.auth.abortAllSagasAndInitLR());
+    }
   }
   if (logout) {
     // invalidate the session and clear the store

@@ -315,6 +315,19 @@ export function* getCSRFTokenBackend() {
 
   return _csrf;
 }
+export function* validateAcceptInviteToken({ token }) {
+  try {
+    const apiResponse = yield call(apiCallWithRetry, {
+      path: `/accept-invite/${token}`,
+      message: 'User Password Reset Request',
+      hidden: true,
+    });
+
+    yield put(actions.auth.acceptInvite.validateSuccess(apiResponse));
+  } catch (e) {
+    yield put(actions.auth.acceptInvite.validateError(e));
+  }
+}
 export function* resetRequest({ email }) {
   try {
     const _csrf = yield call(getCSRFTokenBackend);
@@ -636,6 +649,7 @@ function* mfaVerify({ payload }) {
   }
 }
 export const authenticationSagas = [
+  takeEvery(actionTypes.AUTH.ACCEPT_INVITE.VALIDATE, validateAcceptInviteToken),
   takeEvery(actionTypes.AUTH.INIT_SESSION, initializeSession),
   takeEvery(actionTypes.AUTH.REQUEST, auth),
   takeEvery(actionTypes.AUTH.SIGNUP, signup),

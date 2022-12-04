@@ -8,7 +8,6 @@ import clsx from 'clsx';
 import actions from '../../../actions';
 import { selectors } from '../../../reducers';
 import ErrorIcon from '../../../components/icons/ErrorIcon';
-import SecurityIcon from '../../../components/icons/SecurityIcon';
 import { getDomain } from '../../../utils/resource';
 import { AUTH_FAILURE_MESSAGE } from '../../../constants';
 import getRoutePath from '../../../utils/routePaths';
@@ -19,16 +18,12 @@ import getImageUrl from '../../../utils/image';
 const path = getImageUrl('images/googlelogo.png');
 
 const useStyles = makeStyles(theme => ({
-  snackbar: {
-    margin: theme.spacing(1),
-  },
   submit: {
     width: '100%',
     borderRadius: 4,
     height: 38,
     fontSize: theme.spacing(2),
     margin: theme.spacing(1, 0, 2, 0),
-    color: theme.palette.warning.main,
   },
   editableFields: {
     textAlign: 'center',
@@ -38,9 +33,6 @@ const useStyles = makeStyles(theme => ({
     [theme.breakpoints.down('sm')]: {
       maxWidth: '100%',
     },
-  },
-  relatedContent: {
-    textDecoration: 'none',
   },
   textField: {
     width: '100%',
@@ -63,12 +55,7 @@ const useStyles = makeStyles(theme => ({
       marginRight: 5,
     },
   },
-  link: {
-    paddingLeft: 4,
-    color: theme.palette.primary.dark,
-  },
   forgotPass: {
-    color: theme.palette.warning.main,
     textAlign: 'right',
     marginBottom: theme.spacing(3),
   },
@@ -83,49 +70,18 @@ const useStyles = makeStyles(theme => ({
     minWidth: '240px',
     margin: theme.spacing(0, 0, 2, 0),
   },
-  ssoBtn: {
-    borderRadius: 4,
-    width: '100%',
-    backgroundSize: theme.spacing(2),
-    height: 38,
-    fontSize: 16,
-    margin: theme.spacing(0, 0, 2, 0),
-    backgroundColor: theme.palette.background.paper,
-    display: 'flex',
-    justifyContent: 'space-around',
-    paddingLeft: theme.spacing(5),
-    paddingRight: theme.spacing(16),
-  },
-  or: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    width: '100%',
-    margin: theme.spacing(2, 0),
-    '&:before': {
-      content: '""',
-      width: '40%',
-      borderTop: '1px solid',
-      borderColor: theme.palette.secondary.lightest,
-    },
-    '&:after': {
-      content: '""',
-      width: '40%',
-      borderTop: '1px solid',
-      borderColor: theme.palette.secondary.lightest,
-    },
-  },
-  hidden: {
-    display: 'none',
-  },
-  wrapper: {
-    textAlign: 'left',
-    marginBottom: theme.spacing(2),
-  },
-  label: {
-    display: 'flex',
-  },
 }));
+
+function ForgotPassworLink({email = ''}) {
+  const classes = useStyles();
+  const fpLink = email ? `/request-reset?application=concur&email=${email}` : '/request-reset?application=concur';
+
+  return (
+    <p align="center">
+      <a className={classes.forgotPass} data-hook="forgot-password-link" href={fpLink}>Forgot Password?</a>
+    </p>
+  );
+}
 
 export default function SignIn({dialogOpen, className}) {
   const dispatch = useDispatch();
@@ -158,7 +114,6 @@ export default function SignIn({dialogOpen, className}) {
   });
   const userEmail = useSelector(state => selectors.userProfileEmail(state));
   const userProfileLinkedWithGoogle = useSelector(state => selectors.userProfileLinkedWithGoogle(state));
-  const canUserLoginViaSSO = useSelector(state => selectors.isUserAllowedOptionalSSOSignIn(state));
   const showError = useSelector(state => selectors.showAuthError(state));
 
   const handleOnChangeEmail = useCallback(e => {
@@ -183,11 +138,6 @@ export default function SignIn({dialogOpen, className}) {
     dispatch(actions.auth.reSignInWithGoogle(userEmail));
   }, [dispatch, userEmail]);
 
-  const handleReSignInWithSSO = e => {
-    e.preventDefault();
-    dispatch(actions.auth.reSignInWithSSO());
-  };
-
   window.signedInWithGoogle = () => {
     reInitializeSession();
   };
@@ -198,8 +148,7 @@ export default function SignIn({dialogOpen, className}) {
   if (isMFAAuthRequired) {
     history.push(getRoutePath('/mfa/verify'));
   }
-  const attemptedRoute =
-      location && location.state && location.state.attemptedRoute;
+  const attemptedRoute = location && location.state && location.state.attemptedRoute;
 
   return (
   // user's email can be listed here ...type passwords is anyways redacted by logrocket
@@ -208,10 +157,11 @@ export default function SignIn({dialogOpen, className}) {
         <TextField
           data-private
           data-test="email"
+          required
           id="email"
           type="email"
           variant="filled"
-          placeholder="Email"
+          placeholder="Email *"
           value={dialogOpen ? userEmail : email}
           onChange={handleOnChangeEmail}
           className={classes.textField}
@@ -222,14 +172,13 @@ export default function SignIn({dialogOpen, className}) {
           data-test="password"
           id="password"
           variant="filled"
+          required
           type="password"
-          placeholder="Password"
+          placeholder="Password *"
           className={classes.textField}
         />
 
-        <p align="center">
-          <a className={classes.forgotPass} data-hook="forgot-password-link" href="/request-reset?application=concur">Forgot Password?</a>
-        </p>
+        <ForgotPassworLink email={email} />
         { showError && error && (
           <Typography
             data-private
@@ -270,17 +219,6 @@ export default function SignIn({dialogOpen, className}) {
             Sign in with Google
           </OutlinedButton>
         </form>
-        )}
-        {dialogOpen && canUserLoginViaSSO && (
-          <form onSubmit={handleReSignInWithSSO}>
-            <OutlinedButton
-              type="submit"
-              className={classes.ssoBtn}
-              startIcon={<SecurityIcon />}
-              color="secondary">
-              Sign in with SSO
-            </OutlinedButton>
-          </form>
         )}
         {dialogOpen && userEmail && userProfileLinkedWithGoogle && (
         <form onSubmit={handleReSignInWithGoogle}>
