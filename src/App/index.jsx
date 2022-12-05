@@ -195,6 +195,7 @@ export default function App() {
                       <Route path={getRoutePath('/request-reset')} component={null} />
                       <Route path={getRoutePath('/request-reset-sent')} component={null} />
                       <Route path={getRoutePath('/change-email')} component={null} />
+                      <Route path={getRoutePath('/landing')} component={null} />
                       <Route path={getRoutePath('/*')} component={NonSigninHeaderComponents} />
                     </Switch>
                     {/* page content */}
