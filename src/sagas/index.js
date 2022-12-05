@@ -64,7 +64,7 @@ import mfaSagas from './mfa';
 import { APIException } from './api/requestInterceptors/utils';
 import { bottomDrawerSagas } from './bottomDrawer';
 import { AUTH_FAILURE_MESSAGE } from '../constants';
-import { getNextLinkRelativeUrl } from '../utils/resource';
+import { getDomain, getNextLinkRelativeUrl } from '../utils/resource';
 import flowGroupSagas from './flowGroups';
 import aliasSagas from './aliases';
 import { appSagas } from './app';
