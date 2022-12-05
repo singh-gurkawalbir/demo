@@ -139,7 +139,7 @@ export default function KeyValueRow(props) {
               />
         )}
 
-        {suggestValueConfig && !showSortOrder && (
+        { (r.isSelect || suggestValueConfig) && !showSortOrder && (
         <AutoSuggest
           disabled={disabled}
           value={r[valueName]}
@@ -148,15 +148,15 @@ export default function KeyValueRow(props) {
                 // autoFocus={r.row === rowInd && isKey}
           placeholder={valueName}
           variant="filled"
-          labelName={suggestValueConfig.labelName}
-          valueName={suggestValueConfig.valueName}
+          labelName={r.isSelect ? 'name' : suggestValueConfig.labelName}
+          valueName={r.isSelect ? 'value' : suggestValueConfig.valueName}
           onFieldChange={(_, _value) =>
             handleUpdate(r.key, _value, valueName)}
-          options={{ suggestions: suggestValueConfig.suggestions }}
+          options={r.isSelect ? {suggestions: r.options} : { suggestions: suggestValueConfig.suggestions }}
           fullWidth
               />
         )}
-        {!suggestValueConfig && !showSortOrder && (
+        {!r.isSelect && !suggestValueConfig && !showSortOrder && (
         <TextField
           disabled={disabled}
           autoFocus={index === rowInd && !isKey}

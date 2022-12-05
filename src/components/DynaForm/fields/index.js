@@ -165,6 +165,10 @@ import DynaSignupEmail from './DynaSignupEmail';
 import DynaSalesforceSObject from './DynaSalesforceSObject';
 import DynaSelectDataRetentionPeriod from './DynaSelectDataRetentionPeriod';
 import DynaChangeLicenseEdition from './DynaChangeLicenseEdition';
+import DynaShopifyHeaderLink from './Shopify/DynaShopifyHeaderLink';
+import DynaShopifyStoreName from './Shopify/DynaShopifyStoreName';
+import DynaIANameSelect from './Shopify/DynaIANameSelect';
+import DynaShopifyConnectionSelect from './Shopify/SelectConnection';
 
 export default {
   updateoptions: DynaUpdateOptions,
@@ -341,4 +345,8 @@ export default {
   signupemail: DynaSignupEmail,
   selectdataretentionperiod: DynaSelectDataRetentionPeriod,
   changelicenseedition: DynaChangeLicenseEdition,
+  shopifystorename: DynaShopifyStoreName,
+  shopifyheaderlink: DynaShopifyHeaderLink,
+  ianameselect: DynaIANameSelect,
+  shopifyconnectionselect: DynaShopifyConnectionSelect,
 };

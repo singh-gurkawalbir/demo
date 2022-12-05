@@ -19,14 +19,24 @@ const NO_OF_OPTIONS = 6;
 const ITEM_SIZE = 48;
 const OPTIONS_VIEW_PORT_HEIGHT = 300;
 
-const getLabel = (items, value) => {
+const getLabel = (items, value, classes) => {
   const item = items.find(item => item?.value === value);
+  let label;
 
   if (typeof item?.label === 'string') {
-    return item.label;
+    label = item.label;
   }
   if (item?.optionSearch) {
-    return item.optionSearch;
+    label = item.optionSearch;
+  }
+
+  if (label) {
+    return classes && item.itemInfo ? (
+      <div title={item.value} className={classes.menuItem}>
+        {label}
+        <div className={classes.textInfo}>| {item.itemInfo}</div>
+      </div>
+    ) : label;
   }
 
   return '';
@@ -132,11 +142,21 @@ const useStyles = makeStyles(theme => ({
   dynaSelectMenuItem: {
     wordBreak: 'break-word',
   },
+  textInfo: {
+    color: theme.palette.secondary.light,
+    marginLeft: 5,
+  },
+  menuItem: {
+    maxWidth: '95%',
+    textOverflow: 'ellipsis',
+    overflow: 'hidden',
+    display: 'flex',
+  },
 }));
 
 const Row = ({ index, style, data }) => {
   const {classes, items, matchMenuIndex, finalTextValue, onFieldChange, setOpen, isLoggable, id} = data;
-  const { label, value, subHeader, disabled = false } = items[index];
+  const { label, value, subHeader, disabled = false, itemInfo } = items[index];
 
   if (subHeader) {
     return (
@@ -168,6 +188,7 @@ const Row = ({ index, style, data }) => {
       <CeligoTruncate isLoggable={isLoggable} placement="left" lines={2}>
         {label}
       </CeligoTruncate>
+      {value && itemInfo ? <div className={classes.textInfo}>| {itemInfo}</div> : null}
     </MenuItem>
   );
 };
@@ -258,7 +279,8 @@ export default function DynaSelect(props) {
     finalTextValue = value;
   }
 
-  const renderValue = useCallback(selected => getLabel(items, selected), [items]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const renderValue = useCallback(selected => getLabel(items, selected, classes), [items]);
 
   const openSelect = useCallback(() => {
     setOpen(true);

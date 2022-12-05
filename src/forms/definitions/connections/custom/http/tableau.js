@@ -105,6 +105,7 @@ export default {
       id: 'http.unencrypted.siteId',
       type: 'text',
       label: 'Site ID',
+      helpKey: 'tableau.connection.http.unencrypted.siteId',
       defaultValue: '',
       description:
       'Note: for security reasons this field must always be re-entered.',

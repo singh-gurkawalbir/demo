@@ -13,6 +13,7 @@ import { selectors } from '../../../reducers';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import DataRetentionPeriod from './DataRetentionPeriod';
 import Spinner from '../../../components/Spinner';
+import { MAX_DATA_RETENTION_PERIOD } from '../../../constants';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -39,6 +40,7 @@ export default function DataRetention() {
   const platformLicenseActionMessage = useSelector(state =>
     selectors.platformLicenseActionMessage(state)
   );
+  const maxAllowedDataRetention = useSelector(state => selectors.platformLicense(state)?.maxAllowedDataRetention);
   const areUserAccountSettingsLoaded = useSelector(selectors.areUserAccountSettingsLoaded);
 
   const onRequestUpgradeClick = useCallback(() => {
@@ -87,21 +89,23 @@ export default function DataRetention() {
     <div className={classes.root}>
       <PanelHeader title="Data retention" infoText={messageStore('DATA_RETENTION_TAB_INFO')} />
       <div className={classes.contentWrapper}>
-        <NotificationToaster variant="info" size="large" className={classes.upgradeLicenseNotification} >
-          <RawHtml html={messageStore('DATA_RETENTION_LICENSE_UPGRADE')} />
-          <ButtonWithTooltip
-            tooltipProps={{
-              title: dataRetentionLicenseUpgradeRequested ? messageStore('FEATURE_LICENSE_UPGRADE_REQUESTED_TOOLTIP_MESSAGE') : '',
-              placement: 'bottom-start'}}>
-            <TextButton
-              size="large" bold="true" color="primary"
-              data-test="dataRetentionRequestUpgrade"
-              onClick={onRequestUpgradeClick}
-              disabled={dataRetentionLicenseUpgradeRequested}>
-              {dataRetentionLicenseUpgradeRequested ? 'Upgrade requested' : 'Request upgrade'}
-            </TextButton>
-          </ButtonWithTooltip>
-        </NotificationToaster>
+        {(maxAllowedDataRetention !== MAX_DATA_RETENTION_PERIOD) && (
+          <NotificationToaster variant="info" size="large" className={classes.upgradeLicenseNotification} >
+            <RawHtml html={messageStore('DATA_RETENTION_LICENSE_UPGRADE')} />
+            <ButtonWithTooltip
+              tooltipProps={{
+                title: dataRetentionLicenseUpgradeRequested ? messageStore('FEATURE_LICENSE_UPGRADE_REQUESTED_TOOLTIP_MESSAGE') : '',
+                placement: 'bottom-start'}}>
+              <TextButton
+                size="large" bold="true" color="primary"
+                data-test="dataRetentionRequestUpgrade"
+                onClick={onRequestUpgradeClick}
+                disabled={dataRetentionLicenseUpgradeRequested}>
+                {dataRetentionLicenseUpgradeRequested ? 'Upgrade requested' : 'Request upgrade'}
+              </TextButton>
+            </ButtonWithTooltip>
+          </NotificationToaster>
+        )}
         <DataRetentionPeriod />
       </div>
     </div>
