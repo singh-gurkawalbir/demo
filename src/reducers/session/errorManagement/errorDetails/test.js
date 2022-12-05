@@ -1188,6 +1188,41 @@ describe(' Error details in EM 2.0 reducer ', () => {
       expect(currState).toEqual(errorStateWithActions);
     });
   });
+  describe('ERROR_MANAGER.FLOW_ERROR_DETAILS.PURGE.SUCCESS action', () => {
+    test('should save the message and status of the purge', () => {
+      const message = 'Purge success message';
+      const currState = reducer(undefined, actions.errorManager.flowErrorDetails.purge.success({
+        flowId,
+        resourceId,
+        message,
+      }));
+      const expectedState = {
+        purgeErrorStatus: {
+          status: 'success',
+          message,
+        },
+      };
+
+      expect(currState).toEqual(expectedState);
+    });
+  });
+  describe('ERROR_MANAGER.FLOW_ERROR_DETAILS.PURGE.CLEAR action', () => {
+    test('should clear the purge status details', () => {
+      const message = 'Purge success message';
+      const state = reducer(undefined, actions.errorManager.flowErrorDetails.purge.success({
+        flowId,
+        resourceId,
+        message,
+      }));
+      const currState = reducer(state, actions.errorManager.flowErrorDetails.purge.clear({
+        flowId,
+        resourceId,
+      }));
+      const expectedState = {};
+
+      expect(currState).toEqual(expectedState);
+    });
+  });
 });
 
 describe('allResourceErrorDetails selector ', () => {
@@ -1549,3 +1584,33 @@ describe('hasResourceErrors selector', () => {
   });
 });
 
+describe('purgeErrorStatus selector', () => {
+  test('should return empty object if no error is purged', () => {
+    const sampleState = {
+      [flowId]: {
+        [resourceId]: {},
+      },
+    };
+
+    expect(selectors.purgeErrorStatus(sampleState)).toEqual({});
+  });
+  test('should return correct object if a error is purged', () => {
+    const sampleState = {
+      [flowId]: {
+        [resourceId]: {},
+      },
+    };
+    const message = 'Purge success message';
+    const currState = reducer(sampleState, actions.errorManager.flowErrorDetails.purge.success({
+      flowId,
+      resourceId,
+      message,
+    }));
+    const expected = {
+      status: 'success',
+      message,
+    };
+
+    expect(selectors.purgeErrorStatus(currState)).toEqual(expected);
+  });
+});

@@ -6,7 +6,7 @@ import actions from '../../../actions';
 import TextToggle from '../../../components/TextToggle';
 import getRoutePath from '../../../utils/routePaths';
 
-function EnvironmentToggle() {
+function EnvironmentToggle({ handleToggle }) {
   const dispatch = useDispatch();
   const history = useHistory();
   const isMFASetupIncomplete = useSelector(selectors.isMFASetupIncomplete);
@@ -19,9 +19,13 @@ function EnvironmentToggle() {
   const handleChange = useCallback(
     environment => {
       dispatch(actions.user.preferences.update({ environment }));
-      history.push(getRoutePath('/'));
+      if (handleToggle && typeof handleToggle === 'function') {
+        handleToggle();
+      } else {
+        history.push(getRoutePath('/'));
+      }
     },
-    [dispatch, history]
+    [dispatch, handleToggle, history]
   );
 
   if (isMFASetupIncomplete || !selectedAccountHasSandbox) return null;
@@ -38,6 +42,7 @@ function EnvironmentToggle() {
     />
   );
 }
-export default function EnvironmentToggleMemo() {
-  return useMemo(() => <EnvironmentToggle />, []);
+
+export default function EnvironmentToggleMemo({ handleToggle }) {
+  return useMemo(() => <EnvironmentToggle handleToggle={handleToggle} />, [handleToggle]);
 }

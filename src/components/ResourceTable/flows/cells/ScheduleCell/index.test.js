@@ -21,7 +21,7 @@ initialStore.getState().data.resources.flows = [
   },
 ];
 
-function initScheduleCell(actionProps = {}, initialStore = null) {
+function initScheduleCell(actionProps = {}, initialStore = null, schedule = '') {
   const ui = (
     <MemoryRouter initialEntries={['/integrations/integration_id/flows']}>
       <Route path="/integrations/integration_id">
@@ -29,6 +29,7 @@ function initScheduleCell(actionProps = {}, initialStore = null) {
           flowId="someflowId"
           name="someName"
           actionProps={actionProps}
+          schedule={schedule}
         />
       </Route>
     </MemoryRouter>
@@ -64,5 +65,15 @@ describe('Shecdule cell UI test cases', () => {
     const button = screen.getByRole('button');
 
     expect(button).toHaveAttribute('href', '/integrations/integration_id/flows/someflowId/schedule');
+  });
+  test('should show icon indicator for scheduled flows', () => {
+    initScheduleCell({flowAttributes: {someflowId: {allowSchedule: true}}}, null, 'some schedule');
+
+    expect(document.querySelector('div div div').className).toContain('circle');
+  });
+  test('should not show icon indicator for unscheduled flows', () => {
+    initScheduleCell({flowAttributes: {someflowId: {allowSchedule: true}}}, null);
+
+    expect(document.querySelector('div div div').className).not.toContain('circle');
   });
 });

@@ -31,7 +31,7 @@ const defaultData = {
   },
 };
 
-async function initMockInput({ resourceType = 'imports', status, data, userData } = {}) {
+function initMockInput({ resourceType = 'imports', status, data, userData } = {}) {
   initialStore.getState().session.mockInput[resourceId] = {
     status,
     data,
@@ -131,7 +131,7 @@ describe('Mock input drawer test cases', () => {
     mockDispatchFn.mockClear();
   });
   test('should dispatch and update the state with correct user input on click of done button', async () => {
-    await initMockInput({ status: 'received', data: defaultData });
+    initMockInput({ status: 'received', data: defaultData });
     expect(screen.getByText(/Edit mock input/i)).toBeInTheDocument();
     const fetchLatestInputButton = document.querySelector("[data-test='fetchLatestInputData']");
 
@@ -150,7 +150,7 @@ describe('Mock input drawer test cases', () => {
     });
   });
   test('should navigate the history correctly on click of close button', async () => {
-    await initMockInput({ status: 'received', data: defaultData });
+    initMockInput({ status: 'received', data: defaultData });
     const inputNode = screen.getByRole('textbox');
     const fetchLatestInputButton = document.querySelector("[data-test='fetchLatestInputData']");
 
@@ -165,7 +165,7 @@ describe('Mock input drawer test cases', () => {
     expect(mockHistoryReplace).toHaveBeenCalledWith('/integrations/654321/flowBuilder/12345/edit/imports/98765');
   });
   test('should show error for invalid JSON input', async () => {
-    await initMockInput({ status: 'received', data: defaultData });
+    initMockInput({ status: 'received', data: defaultData });
     const inputNode = document.querySelector('textarea[name="codeEditor"]');
 
     userEvent.clear(inputNode);
@@ -174,11 +174,47 @@ describe('Mock input drawer test cases', () => {
     expect(screen.getByText(/Mock input must be valid JSON/i)).toBeInTheDocument();
   });
   test('should wrap array data type correctly', async () => {
-    await initMockInput({ status: 'received', data: [{id: '123'}] });
+    initMockInput({ status: 'received', data: [{id: '123'}] });
     expect(screen.getByText('{"page_of_records":[{"rows":[{"id":"123"}]}]}')).toBeInTheDocument();
   });
+  test('should fetch mock input data and update editor with mock input on initial load of the component', async () => {
+    initMockInput();
+    expect(screen.getByText(/Edit mock input/i)).toBeInTheDocument();
+
+    expect(mockDispatchFn).toHaveBeenCalledWith({
+      type: actionTypes.MOCK_INPUT.REQUEST,
+      resourceId,
+      resourceType: 'imports',
+      flowId,
+      options: {refreshCache: undefined},
+    });
+
+    await initialStore.dispatch(actions.mockInput.received(resourceId, defaultData));
+
+    await waitFor(() => {
+      expect(screen.getByText('{"page_of_records":[{"record":{"Budget":1,"Director":"director","ID":"1","Name":"name","Producer":"producer","NewObj":{"ID":"name"}}}]}')).toBeInTheDocument();
+    });
+  });
+  test('should update editor with mock input stub if fetchMockInput fails on initial load of the component', async () => {
+    initMockInput();
+    expect(screen.getByText(/Edit mock input/i)).toBeInTheDocument();
+
+    expect(mockDispatchFn).toHaveBeenCalledWith({
+      type: actionTypes.MOCK_INPUT.REQUEST,
+      resourceId,
+      resourceType: 'imports',
+      flowId,
+      options: {refreshCache: undefined},
+    });
+
+    await initialStore.dispatch(actions.mockInput.receivedError(resourceId, 'Not found'));
+
+    await waitFor(() => {
+      expect(screen.getByText('{"page_of_records":[{"record":{}}]}')).toBeInTheDocument();
+    });
+  });
   test('should show a spinner and "Fetch latest input data" button should be disabled when mock input is requested', async () => {
-    await initMockInput({ status: MOCK_INPUT_STATUS.REQUESTED });
+    initMockInput({ status: MOCK_INPUT_STATUS.REQUESTED });
     expect(document.querySelector(['svg[class="MuiCircularProgress-svg"]'])).toBeInTheDocument();
 
     const fetchLatestInputButton = document.querySelector("[data-test='fetchLatestInputData']");
@@ -186,7 +222,7 @@ describe('Mock input drawer test cases', () => {
     expect(fetchLatestInputButton).toBeDisabled();
   });
   test('should dispatch correct action on click of "Fetch latest input data" button and show success snackbar', async () => {
-    await initMockInput({ status: 'status' });
+    initMockInput({ status: 'status' });
     expect(screen.getByText(/Edit mock input/i)).toBeInTheDocument();
     const fetchLatestInputButton = document.querySelector("[data-test='fetchLatestInputData']");
 
@@ -213,7 +249,7 @@ describe('Mock input drawer test cases', () => {
     });
   });
   test('should dispatch correct action on click of "Fetch latest input data" button and show error snackbar', async () => {
-    await initMockInput({ status: 'status' });
+    initMockInput({ status: 'status' });
     expect(screen.getByText(/Edit mock input/i)).toBeInTheDocument();
     const fetchLatestInputButton = document.querySelector("[data-test='fetchLatestInputData']");
 

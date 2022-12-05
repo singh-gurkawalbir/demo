@@ -88,7 +88,7 @@ export default function NotificationsSection({ integrationId, childId }) {
         name: 'flows',
         type: 'multiselect',
         valueDelimiter: ',',
-        label: `Notify me on ${isUserInErrMgtTwoDotZero ? 'flow' : 'job'} error`,
+        label: `Notify me of ${isUserInErrMgtTwoDotZero ? 'flow' : 'job'} error`,
         defaultValue: flowValues,
         options: [{ items: flowOps }],
         SelectedOptionIml,

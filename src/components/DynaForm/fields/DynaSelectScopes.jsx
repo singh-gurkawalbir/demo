@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { FormControl, FormLabel } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
+import { get } from 'lodash';
 import ModalDialog from '../../ModalDialog';
 import TransferList from '../../TransferList';
 import FieldMessage from './FieldMessage';
@@ -9,6 +10,8 @@ import { FilledButton, OutlinedButton} from '../../Buttons';
 import { useIsLoggable } from '../../IsLoggableContextProvider';
 import isLoggableAttr from '../../../utils/isLoggableAttr';
 import HelpLink from '../../HelpLink';
+import { selectors } from '../../../reducers';
+import { useSelectorMemo } from '../../../hooks';
 
 const useStyles = makeStyles({
   dynaSelectScopesContainer: {
@@ -59,7 +62,7 @@ const TransferListModal = props => {
 
   return (
     <ModalDialog show onClose={handleClose} maxWidth="lg">
-      <div>Scopes Editor <HelpLink helpLink={helpLink} className={classes.helpLinkScope} /></div>
+      <div>Scopes editor <HelpLink helpLink={helpLink} className={classes.helpLinkScope} /></div>
       <span {...isLoggableAttr(isLoggable)}>
         <TransferList {...transferListProps} />
       </span>
@@ -87,7 +90,25 @@ export default function (props) {
     id,
     helpLink,
     required,
+    pathToScopeField,
+    options = {},
+    defaultValue = [],
   } = props;
+
+  const {resourceType, resourceId} = options;
+
+  const resource = useSelectorMemo(selectors.makeResourceSelector, resourceType, resourceId);
+
+  const updatedScopes = useMemo(() => {
+    if (resource && pathToScopeField) {
+      const resourceScope = get(resource, pathToScopeField);
+
+      return resourceScope?.length ? resourceScope : defaultValue;
+    }
+
+    return selectedScopes.length ? selectedScopes : defaultValue;
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [resourceId]);
   const [showScopesModal, setShowScopesModal] = useState(false);
 
   const {flattenedScopes, subHeaderMap} = useMemo(() => {
@@ -110,7 +131,7 @@ export default function (props) {
     return { subHeaderMap, flattenedScopes};
   }, [scopesOrig]);
 
-  const defaultAvailableScopes = excludeSelectedScopes(flattenedScopes, selectedScopes);
+  const defaultAvailableScopes = excludeSelectedScopes(flattenedScopes, updatedScopes);
 
   return (
     <>
@@ -120,7 +141,7 @@ export default function (props) {
           scopesOrig={flattenedScopes}
           subHeaderMap={subHeaderMap}
           availableScopes={defaultAvailableScopes}
-          selectedScopes={selectedScopes}
+          selectedScopes={updatedScopes}
           onFieldChange={onFieldChange}
           handleClose={() => {
             setShowScopesModal(false);

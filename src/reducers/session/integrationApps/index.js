@@ -7,6 +7,8 @@ import settings, { selectors as fromSettings } from './settings';
 import utility, { selectors as fromUtilities } from './utility';
 import addon, { selectors as fromAddon } from './addon';
 import clone, { selectors as fromClone } from './clone';
+import upgrade, { selectors as fromUpgrade } from './upgrade';
+import landingPage, { selectors as fromLandingPage } from './landingPage';
 import { genSelectors } from '../../util';
 
 export default combineReducers({
@@ -18,6 +20,8 @@ export default combineReducers({
   addon,
   clone,
   utility,
+  upgrade,
+  landingPage,
 });
 
 export const selectors = {};
@@ -30,6 +34,8 @@ const subSelectors = {
   addon: fromAddon,
   clone: fromClone,
   utility: fromUtilities,
+  upgrade: fromUpgrade,
+  landingPage: fromLandingPage,
 };
 
 genSelectors(selectors, subSelectors);

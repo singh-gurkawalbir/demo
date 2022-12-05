@@ -5,6 +5,7 @@ import {
   useHistory,
   matchPath,
   useLocation,
+  shallowEqual,
 } from 'react-router-dom';
 import actions from '../../../../actions';
 import RightDrawer from '../../../drawer/Right';
@@ -12,7 +13,7 @@ import DrawerHeader from '../../../drawer/Right/DrawerHeader';
 import ErrorDetails from '../../ErrorDetails';
 import { selectors } from '../../../../reducers';
 import useFormOnCancelContext from '../../../FormOnCancelContext';
-import { ERROR_DETAIL_ACTIONS_ASYNC_KEY } from '../../../../constants';
+import { ERROR_DETAIL_ACTIONS_ASYNC_KEY, OPEN_ERRORS_VIEW_TYPES } from '../../../../constants';
 import { drawerPaths, buildDrawerUrl } from '../../../../utils/rightDrawer';
 import { FILTER_KEYS } from '../../../../utils/errorManagement';
 import ErrorControls from '../ErrorDetailsPanel/ErrorControls';
@@ -91,11 +92,12 @@ export default function ErrorDetailsDrawer({ flowId, resourceId, isResolved }) {
 
   const errorsInPage = useSelectorMemo(selectors.mkResourceFilteredErrorsInCurrPageSelector, errorConfig);
 
-  const activeErrorId = useSelector(state => {
+  const { activeErrorId, view } = useSelector(state => {
     const e = selectors.filter(state, FILTER_KEYS.OPEN);
 
-    return e.activeErrorId;
-  });
+    return e;
+  }, shallowEqual);
+  const isSplitView = filterKey === FILTER_KEYS.OPEN && view !== OPEN_ERRORS_VIEW_TYPES.LIST;
 
   const handleNextOrPrev = useCallback(newErrorId => {
     if (!newErrorId) return;
@@ -119,14 +121,14 @@ export default function ErrorDetailsDrawer({ flowId, resourceId, isResolved }) {
     <RightDrawer path={drawerPaths.ERROR_MANAGEMENT.V2.VIEW_ERROR_DETAILS} width="large" >
       <DrawerHeader title="Error details" handleClose={onClose}>
         {!isResolved && (
-        <ErrorControls
-          retryId={retryId}
-          flowId={flowId}
-          resourceId={resourceId}
-          errorsInPage={errorsInPage}
-          activeErrorId={activeErrorId}
-          handlePrev={handleNextOrPrev}
-          handleNext={handleNextOrPrev} />
+          <ErrorControls
+            retryId={retryId}
+            flowId={flowId}
+            resourceId={resourceId}
+            errorsInPage={errorsInPage}
+            activeErrorId={activeErrorId}
+            handlePrev={handleNextOrPrev}
+            handleNext={handleNextOrPrev} />
         )}
       </DrawerHeader>
       <ErrorDetails
@@ -135,6 +137,9 @@ export default function ErrorDetailsDrawer({ flowId, resourceId, isResolved }) {
         isResolved={isResolved}
         onClose={handleClose}
         onTabChange={handleTabChange}
+        errorsInPage={errorsInPage}
+        activeErrorId={activeErrorId}
+        isSplitView={isSplitView}
         handleNext={handleNextOrPrev} />
     </RightDrawer>
   );
