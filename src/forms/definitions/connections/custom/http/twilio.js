@@ -13,13 +13,13 @@ export default {
     name: { fieldId: 'name' },
     'http.auth.basic.username': {
       fieldId: 'http.auth.basic.username',
-      helpKey: 'tsheets.connection.http.auth.basic.username',
-      label: 'Account sid',
+      helpKey: 'twilio.connection.http.auth.basic.username',
+      label: 'Account SID',
     },
     'http.auth.basic.password': {
       fieldId: 'http.auth.basic.password',
       label: 'Auth token',
-      helpKey: 'tsheets.connection.http.auth.basic.password',
+      helpKey: 'twilio.connection.http.auth.basic.password',
       defaultValue: '',
     },
     application: {
