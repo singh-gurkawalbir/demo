@@ -100,8 +100,6 @@ export const useSnackbarStyles = makeStyles({
 });
 
 function NonSigninHeaderComponents() {
-  console.log('non signin header componetn');
-
   return (
     <>
       <CeligoAppBar />

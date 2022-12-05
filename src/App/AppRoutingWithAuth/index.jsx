@@ -43,7 +43,6 @@ export function AppRoutingWithAuth(props) {
         initSession();
       }
       if (!hasPageReloaded) clearAppError();
-      console.log('setting state again and again');
       setHasPageReloaded(true);
     }
   }, [
