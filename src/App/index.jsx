@@ -168,6 +168,7 @@ export default function App() {
                     {/* Headers */}
                     <Switch>
                       <Route path={getRoutePath('/signin')} component={null} />
+                      <Route path={getRoutePath('/landing')} component={null} />
                       <Route path={getRoutePath('/*')} component={NonSigninHeaderComponents} />
                     </Switch>
                     {/* page content */}

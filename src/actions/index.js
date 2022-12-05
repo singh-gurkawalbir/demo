@@ -860,6 +860,12 @@ const integrationApp = {
           { integrationId, flowId, mappingData }
         ),
     },
+    integrationAppV2: {
+      upgrade: integrationId =>
+        action(actionTypes.INTEGRATION_APPS.SETTINGS.V2.UPGRADE, {
+          integrationId,
+        }),
+    },
     initComplete: (integrationId, flowId, sectionId) =>
       action(actionTypes.INTEGRATION_APPS.SETTINGS.FORM.INIT_COMPLETE, {
         integrationId,
@@ -1149,7 +1155,33 @@ const integrationApp = {
       integrationId,
     }),
   },
-
+  upgrade: {
+    setStatus: (integrationId, statusObj) =>
+      action(actionTypes.INTEGRATION_APPS.SETTINGS.V2.SET_STATUS, {
+        id: integrationId,
+        statusObj,
+      }),
+    getSteps: integrationId =>
+      action(actionTypes.INTEGRATION_APPS.SETTINGS.V2.GET_STEPS, {
+        integrationId,
+      }),
+    postChangeEditonSteps: integrationId =>
+      action(actionTypes.INTEGRATION_APPS.SETTINGS.V2.POST_CHANGE_EDITION_STEPS, {
+        integrationId,
+      }),
+    addChildForUpgrade: childList =>
+      action(actionTypes.INTEGRATION_APPS.SETTINGS.V2.ADD_CHILD_UPGRADE_LIST, {
+        childList,
+      }),
+  },
+  landingPage: {
+    requestIntegrations: ({ clientId }) => action(actionTypes.INTEGRATION_APPS.LANDING_PAGE.REQUEST_INTEGRATIONS, {
+      clientId,
+    }),
+    receivedIntegrations: ({ integrations }) => action(actionTypes.INTEGRATION_APPS.LANDING_PAGE.RECEIVED_INTEGRATIONS, {
+      integrations,
+    }),
+  },
 };
 const clone = {
   requestPreview: (resourceType, resourceId) =>
@@ -1602,7 +1634,7 @@ const searchCriteria = {
 };
 // #region DynaForm Actions
 const resourceForm = {
-  init: (resourceType, resourceId, isNew, skipCommit, flowId, initData, integrationId) =>
+  init: (resourceType, resourceId, isNew, skipCommit, flowId, initData, integrationId, fieldMeta) =>
     action(actionTypes.RESOURCE_FORM.INIT, {
       resourceType,
       resourceId,
@@ -1611,6 +1643,7 @@ const resourceForm = {
       flowId,
       initData,
       integrationId,
+      fieldMeta,
     }),
   initComplete: (
     resourceType,
@@ -1755,7 +1788,14 @@ const job = {
   downloadFiles: ({ jobId, fileType, fileIds }) =>
     action(actionTypes.JOB.DOWNLOAD_FILES, { jobId, fileType, fileIds }),
   clear: () => action(actionTypes.JOB.CLEAR),
-
+  purge: {
+    request: ({ jobId }) =>
+      action(actionTypes.JOB.PURGE.REQUEST, {jobId}),
+    success: () =>
+      action(actionTypes.JOB.PURGE.SUCCESS),
+    clear: () =>
+      action(actionTypes.JOB.PURGE.CLEAR),
+  },
   cancel: ({ jobId, flowJobId }) =>
     action(actionTypes.JOB.CANCEL, { jobId, flowJobId }),
   resolveAllPending: () => action(actionTypes.JOB.RESOLVE_ALL_PENDING),
@@ -2060,6 +2100,13 @@ const errorManager = {
       isResolved,
       filters,
     }),
+    purge: {
+      request: ({ flowId, resourceId, errors }) =>
+        action(actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.PURGE.REQUEST, {flowId, resourceId, errors}),
+      success: ({ flowId, resourceId, message}) =>
+        action(actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.PURGE.SUCCESS, { flowId, resourceId, message}),
+      clear: ({ flowId, resourceId}) => action(actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.PURGE.CLEAR, { flowId, resourceId}),
+    },
   },
   retries: {
     request: ({ flowId, resourceId }) =>
@@ -2141,6 +2188,7 @@ const errorManager = {
 const flow = {
   addNewPGStep: flowId => action(actionTypes.FLOW.ADD_NEW_PG_STEP, { flowId }),
   addNewPPStep: (flowId, path, processorIndex) => action(actionTypes.FLOW.ADD_NEW_PP_STEP, { flowId, path, processorIndex }),
+  moveStep: (flowId, stepInfo) => action(actionTypes.FLOW.MOVE_STEP, {flowId, stepInfo}),
   addNewPPStepInfo: (flowId, info) => action(actionTypes.FLOW.ADD_NEW_PP_STEP_INFO, { flowId, info }),
   clearPPStepInfo: flowId => action(actionTypes.FLOW.CLEAR_PP_STEP_INFO, { flowId }),
   addNewRouter: (flowId, router) => action(actionTypes.FLOW.ADD_NEW_ROUTER, { flowId, router }),
@@ -2331,6 +2379,16 @@ const logs = {
       action(actionTypes.LOGS.SCRIPTS.START_DEBUG, { scriptId, value }),
     setFetchStatus: ({ scriptId, flowId, fetchStatus }) => action(actionTypes.LOGS.SCRIPTS.FETCH_STATUS, { scriptId, flowId, fetchStatus }),
     pauseFetch: ({ scriptId, flowId }) => action(actionTypes.LOGS.SCRIPTS.PAUSE_FETCH, { scriptId, flowId }),
+    requestAllLogs: ({scriptId, flowId}) => action(actionTypes.LOGS.SCRIPTS.REQUEST_ALL_LOGS, {scriptId, flowId}),
+    receivedAllLogs: ({scriptId, flowId, isPurgeAvailable}) => action(actionTypes.LOGS.SCRIPTS.RECEIVED_ALL_LOGS, {scriptId, flowId, isPurgeAvailable}),
+    purge: {
+      request: ({ scriptId, flowId }) =>
+        action(actionTypes.LOGS.SCRIPTS.PURGE.REQUEST, {scriptId, flowId}),
+      success: ({scriptId, flowId}) =>
+        action(actionTypes.LOGS.SCRIPTS.PURGE.SUCCESS, {scriptId, flowId}),
+      clear: () =>
+        action(actionTypes.LOGS.SCRIPTS.PURGE.CLEAR),
+    },
   },
   connections: {
     request: connectionId =>

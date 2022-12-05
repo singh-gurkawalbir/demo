@@ -240,6 +240,11 @@ export default function getRequestOptions(
         path: `/retries/${resourceId}/signedURL`,
         opts: { method: 'GET' },
       };
+    case actionTypes.JOB.PURGE.REQUEST:
+      return {
+        path: `/jobs/${resourceId}/files`,
+        opts: { method: 'DELETE' },
+      };
     case actionTypes.FLOW.RUN:
       return {
         path: `/flows/${resourceId}/run`,
