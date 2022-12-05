@@ -77,7 +77,7 @@ function initJavaScriptPanel(props = {}) {
 
   return renderWithProviders(<JavaScriptPanel {...props} />, {initialStore});
 }
-describe('CsvGeneratePanel UI tests', () => {
+describe('JavaScriptPanel UI tests', () => {
   let mockDispatchFn;
   let useDispatchSpy;
 

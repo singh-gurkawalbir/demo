@@ -9,6 +9,7 @@ import ValidateAndSave from './Groups/ValidateAndSave';
 import SaveAndContinueGroup from './Groups/SaveAndContinueGroup';
 import SaveIntegrationAndCreateFlow from './Groups/SaveIntegrationAndCreateFlow';
 import IntegrationSettings from './Groups/IntegrationSettingsGroup';
+import ShopifyOauthButtonGroup from './Groups/ShopifyOauthButtonGroup';
 
 export default {
   // action groups
@@ -25,4 +26,5 @@ export default {
 
   // Single action
   saveintegrationsettings: IntegrationSettingsSaveButton,
+  shopifyoauthbuttongroup: ShopifyOauthButtonGroup,
 };

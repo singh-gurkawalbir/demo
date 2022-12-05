@@ -148,8 +148,9 @@ const Headers = () => {
 
   const isMFAVerifyPage = location.pathname === '/mfa/verify';
   const isPublicPage = PUBLIC_ROUTES.includes(location.pathname?.split('/')?.[1]);
+  const isLandingPage = location.pathname.startsWith('/landing');
 
-  if (isPublicPage || isMFAVerifyPage) return null;
+  if (isPublicPage || isMFAVerifyPage || isLandingPage) return null;
 
   return <NonSigninHeaderComponents />;
 };
