@@ -1,6 +1,11 @@
 import { isJsonString } from '../../../utils/string';
+import {
+  updateWebhookFinalMetadataWithHttpFramework,
+} from '../../../sagas/utils';
 
 export default {
+  init: (fieldMeta, resource, flow, httpConnector) => updateWebhookFinalMetadataWithHttpFramework(fieldMeta, httpConnector, resource),
+
   validationHandler: field => {
     // Used to validate sampleData field
     // Incase of invalid json throws error to be shown on the field

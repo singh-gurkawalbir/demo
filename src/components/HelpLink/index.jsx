@@ -11,12 +11,11 @@ const useStyles = makeStyles({
 export default function HelpLink({helpLink, className}) {
   const classes = useStyles();
 
-  const isHelpLink = helpLink ? (
+  if (!helpLink) return null;
+
+  return (
     <a className={clsx(classes.helpLink, className)} href={helpLink} rel="noreferrer" target="_blank">
       Can&apos;t find?
     </a>
-
-  ) : null;
-
-  return isHelpLink;
+  );
 }

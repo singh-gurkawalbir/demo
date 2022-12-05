@@ -12,6 +12,8 @@ import DrawerContent from '../Right/DrawerContent';
 import DrawerFooter from '../Right/DrawerFooter';
 import DrawerHeader from '../Right/DrawerHeader';
 import { emptyObject } from '../../../constants';
+import { drawerPaths } from '../../../utils/rightDrawer';
+import messageStore from '../../../utils/messageStore';
 
 const useStyles = makeStyles(theme => ({
   aliasDetailContent: {
@@ -66,17 +68,15 @@ export default function ViewAliasDetailsDrawer({ resourceId, resourceType, heigh
     history.goBack();
   }, [history]);
 
-  const infoTextViewAliasDetails = 'View information about the alias and the resource it references';
-
   return (
     <RightDrawer
       height={height}
       width="default"
-      path={['viewdetails/:aliasId/inherited/:parentResourceId', 'viewdetails/:aliasId']}
+      path={[drawerPaths.ALIASES.VIEW_INHERITED_DETAILS, drawerPaths.ALIASES.VIEW_DETAILS]}
     >
       <DrawerHeader
         title="View details"
-        infoText={infoTextViewAliasDetails}
+        infoText={messageStore('VIEW_ALIAS_DETAILS_HELPINFO')}
       />
       <DrawerContent>
         <ViewAliasDetails resourceId={resourceId} resourceType={resourceType} />

@@ -635,6 +635,48 @@ describe('jobs reducer', () => {
     });
   });
 
+  test('should update state properly when a error is purged successfully', () => {
+    const state = reducer(
+      undefined,
+      actions.job.purge.success()
+    );
+    const expected = {
+      purgeFilesStatus: 'success',
+      bulkRetryJobs: [],
+      errors: [],
+      flowJobs: [],
+      paging: {
+        currentPage: 0,
+        rowsPerPage: 10,
+      },
+      retryObjects: {},
+    };
+
+    expect(state).toEqual(expected);
+  });
+  test('should update state properly when purge status is cleared', () => {
+    const state = reducer(
+      undefined,
+      actions.job.purge.success()
+    );
+    const state2 = reducer(
+      state,
+      actions.job.purge.clear()
+    );
+    const expected = {
+      bulkRetryJobs: [],
+      errors: [],
+      flowJobs: [],
+      paging: {
+        currentPage: 0,
+        rowsPerPage: 10,
+      },
+      retryObjects: {},
+    };
+
+    expect(state2).toEqual(expected);
+  });
+
   test('should update state properly when a job error collection received', () => {
     const state = reducer(
       undefined,

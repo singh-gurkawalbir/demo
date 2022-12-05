@@ -11,6 +11,7 @@ import actions from '../../../../actions';
 import PageProcessor from '../../PageProcessor';
 import { PageProcessorPathRegex } from '../../../../constants';
 import useConfirmDialog from '../../../../components/ConfirmDialog';
+import { useHandleMovePP } from '../../hooks';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -48,7 +49,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function PageProcessorNode({ data = {} }) {
-  const { branch = {}, isFirst, isLast, hideDelete, isVirtual, path, resource = {} } = data;
+  const { branch = {}, isFirst, isLast, hideDelete, isVirtual, path, resource = {}, showLeft = false, showRight = false } = data;
   const dispatch = useDispatch();
   const classes = useStyles();
   const [, routerIndex, branchIndex, pageProcessorIndex] = PageProcessorPathRegex.exec(path);
@@ -60,6 +61,7 @@ export default function PageProcessorNode({ data = {} }) {
     selectors.isFormAMonitorLevelAccess(state, integrationId)
   );
   const {confirmDialog} = useConfirmDialog();
+  const handlePPMove = useHandleMovePP();
   const isFreeFlow = useSelector(state => selectors.isFreeFlowResource(state, flowId));
   const isViewMode = useSelector(state => selectors.isFlowViewMode(state, integrationId, flowId));
   const isFlowSaveInProgress = useSelector(state => selectors.isFlowSaveInProgress(state, flowId));
@@ -112,6 +114,10 @@ export default function PageProcessorNode({ data = {} }) {
             isViewMode={isViewMode || isFreeFlow}
             isMonitorLevelAccess={isMonitorLevelAccess}
             isLast={isLast}
+            showLeft={!!showLeft}
+            showRight={!!showRight}
+            path={path}
+            onMove={handlePPMove}
             routerIndex={routerIndex}
             branchIndex={branchIndex}
             pageProcessorIndex={pageProcessorIndex}

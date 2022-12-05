@@ -57,7 +57,7 @@ describe('metdata flows test cases', () => {
             name: 'flows',
             type: 'multiselect',
             valueDelimiter: ',',
-            label: 'Notify user on flow error',
+            label: 'Notify user of flow error',
             defaultValue: ['i1', {
               _id: 'f1',
               _integrationId: 'i1',

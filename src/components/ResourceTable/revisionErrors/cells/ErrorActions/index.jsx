@@ -15,5 +15,5 @@ export default function ErrorActions({ errorId }) {
     }));
   };
 
-  return <IconButton onClick={handleErrorAction}><ActionsIcon /></IconButton>;
+  return <IconButton data-test="error-actions" onClick={handleErrorAction}><ActionsIcon /></IconButton>;
 }

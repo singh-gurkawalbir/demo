@@ -25,14 +25,19 @@ const useStyles = makeStyles(theme => ({
     wordBreak: 'break-word',
   },
   content: {
-    paddingBottom: theme.spacing(1),
     overflowY: 'auto',
     lineHeight: '22px',
     whiteSpace: 'normal',
     wordBreak: 'break-word',
-    borderBottom: `1px solid ${theme.palette.secondary.lightest}`,
+    maxHeight: 638,
+    marginRight: -theme.spacing(1.5),
+    padding: theme.spacing(1, 1.5, 0, 0),
     '&>div': {
       maxHeight: 300,
+      '&>ul': {
+        paddingLeft: theme.spacing(2),
+        margin: 0,
+      },
     },
     '& > div > pre': {
       background: theme.palette.background.paper2,
