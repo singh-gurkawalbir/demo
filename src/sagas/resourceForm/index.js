@@ -898,8 +898,13 @@ export function* initFormValues({
   //   type: 'httpconnectors',
   // });
   // const httpConnector = httpConnectors?.find(conn => (conn.name === resource.assistant) && conn.published);
-  const httpPublishedConnector = resourceType === 'connections' && getHttpConnector(resource?._httpConnectorId || resource?.http?._httpConnectorId);
+  let httpPublishedConnector = resourceType === 'connections';
 
+  if (resourceType === 'connections') {
+    httpPublishedConnector = getHttpConnector(resource?._httpConnectorId || resource?.http?._httpConnectorId);
+  } else if (resourceType === 'exports') {
+    httpPublishedConnector = getHttpConnector(resource?._httpConnectorId);
+  }
   try {
     const defaultFormAssets = getResourceFormAssets({
       resourceType,
