@@ -1,6 +1,6 @@
 import React, { useMemo, Fragment, useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { BrowserRouter, Switch, Route, useLocation, useRouteMatch } from 'react-router-dom';
+import { BrowserRouter, Switch, Route, useLocation } from 'react-router-dom';
 import { MuiThemeProvider, makeStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import { SnackbarProvider } from 'notistack';
