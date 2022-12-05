@@ -22,7 +22,7 @@ import * as apiConsts from './api/apiPaths';
 import { netsuiteUserRoles } from './resourceForm/connections';
 import { selectors } from '../reducers';
 import { COMM_STATES } from '../reducers/comms/networkComms';
-import { initializeApp, initializeLogrocket, invalidateSession } from './authentication';
+import { initializeLogrocket, invalidateSession } from './authentication';
 import { sendRequest } from './api';
 import { getAsyncKey } from '../utils/saveAndCloseButtons';
 

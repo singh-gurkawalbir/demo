@@ -1,0 +1,39 @@
+/* global describe, test, expect */
+import React from 'react';
+import { screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { renderWithProviders, reduxStore } from '../../../../test/test-utils';
+import DynaSelectWithValidations from './DynaSelectWithValidations';
+
+const props = {formKey: '_formKey', value: '/file/name', options: [{items: [{value: '/file/name', fieldsToValidate: ['_field1'], description: '_description', regex: {test: k => !!k}}]}]};
+
+async function initDynaSelectWithValidations(props = {}) {
+  const initialStore = reduxStore;
+
+  initialStore.getState().session.form = {
+    _formKey: {
+      fields: {
+        _field1: {value: 'something'},
+      },
+    },
+  };
+
+  return renderWithProviders(<DynaSelectWithValidations {...props} />, { initialStore });
+}
+describe('DynaSelectWithValidations tests', () => {
+  test('Should test dynaSelect field validation without proper formFields', async () => {
+    await initDynaSelectWithValidations({...props, formKey: 'random'});
+    userEvent.click(screen.getByRole('button'));
+    expect(screen.getByText('Please select')).toBeInTheDocument();
+    expect(screen.queryByText('_description')).toBeInTheDocument();
+  });
+  test('Should test dynaSelect field validation with proper formField', async () => {
+    await initDynaSelectWithValidations(props);
+    expect(screen.queryByText('_description')).not.toBeInTheDocument();
+  });
+  test('Should test dynaSelect field validation without proper options', async () => {
+    await initDynaSelectWithValidations({...props, options: undefined});
+    expect(screen.queryByText('_description')).not.toBeInTheDocument();
+  });
+});
+

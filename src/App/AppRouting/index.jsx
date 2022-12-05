@@ -105,6 +105,12 @@ const SuiteScriptIntegrationAppInstallation = loadable(() =>
   ))
 );
 
+const ShopifyLandingPage = loadable(() =>
+  retry(() => import(
+    /* webpackChunkName: 'ShopifyLandingPage' */ '../../views/LandingPages/Shopify'
+  ))
+);
+
 function ResourceListRouteCatcher(props) {
   const { match } = props;
 
@@ -361,6 +367,7 @@ export default function AppRouting() {
         path={[...AMPERSAND_ROUTES]}
         component={AmpersandRoutesHandler}
       />
+      <Route path={getRoutePath('/landing/shopify')} component={ShopifyLandingPage} />
       {/* we need this to differentiate between a valid resource path and a 404.
           so resourceList and notfound are moved inside the catcher */}
       <Route path={getRoutePath('/:resourceType')} component={ResourceListRouteCatcher} />

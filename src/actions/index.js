@@ -1204,6 +1204,14 @@ const integrationApp = {
         childList,
       }),
   },
+  landingPage: {
+    requestIntegrations: ({ clientId }) => action(actionTypes.INTEGRATION_APPS.LANDING_PAGE.REQUEST_INTEGRATIONS, {
+      clientId,
+    }),
+    receivedIntegrations: ({ integrations }) => action(actionTypes.INTEGRATION_APPS.LANDING_PAGE.RECEIVED_INTEGRATIONS, {
+      integrations,
+    }),
+  },
 };
 const clone = {
   requestPreview: (resourceType, resourceId) =>
@@ -1662,7 +1670,7 @@ const searchCriteria = {
 };
 // #region DynaForm Actions
 const resourceForm = {
-  init: (resourceType, resourceId, isNew, skipCommit, flowId, initData, integrationId) =>
+  init: (resourceType, resourceId, isNew, skipCommit, flowId, initData, integrationId, fieldMeta) =>
     action(actionTypes.RESOURCE_FORM.INIT, {
       resourceType,
       resourceId,
@@ -1671,6 +1679,7 @@ const resourceForm = {
       flowId,
       initData,
       integrationId,
+      fieldMeta,
     }),
   initComplete: (
     resourceType,
@@ -2406,6 +2415,16 @@ const logs = {
       action(actionTypes.LOGS.SCRIPTS.START_DEBUG, { scriptId, value }),
     setFetchStatus: ({ scriptId, flowId, fetchStatus }) => action(actionTypes.LOGS.SCRIPTS.FETCH_STATUS, { scriptId, flowId, fetchStatus }),
     pauseFetch: ({ scriptId, flowId }) => action(actionTypes.LOGS.SCRIPTS.PAUSE_FETCH, { scriptId, flowId }),
+    requestAllLogs: ({scriptId, flowId}) => action(actionTypes.LOGS.SCRIPTS.REQUEST_ALL_LOGS, {scriptId, flowId}),
+    receivedAllLogs: ({scriptId, flowId, isPurgeAvailable}) => action(actionTypes.LOGS.SCRIPTS.RECEIVED_ALL_LOGS, {scriptId, flowId, isPurgeAvailable}),
+    purge: {
+      request: ({ scriptId, flowId }) =>
+        action(actionTypes.LOGS.SCRIPTS.PURGE.REQUEST, {scriptId, flowId}),
+      success: ({scriptId, flowId}) =>
+        action(actionTypes.LOGS.SCRIPTS.PURGE.SUCCESS, {scriptId, flowId}),
+      clear: () =>
+        action(actionTypes.LOGS.SCRIPTS.PURGE.CLEAR),
+    },
   },
   connections: {
     request: connectionId =>

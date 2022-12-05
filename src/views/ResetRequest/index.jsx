@@ -4,6 +4,7 @@ import ResetPasswordForm from './resetPasswordForm';
 import CeligoLogo from '../../components/CeligoLogo';
 import { getDomain } from '../../utils/resource';
 import useQuery from '../../hooks/useQuery';
+import ConcurResetPasswordPage from './Concur';
 import MarketingContentWithIframe from '../../components/LoginScreen/MarketingContentWithIframe';
 
 const useStyles = makeStyles(theme => ({

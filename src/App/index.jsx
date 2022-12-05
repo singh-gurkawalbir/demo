@@ -151,8 +151,9 @@ const Headers = () => {
   const isConcurLandingPage = location.pathname.startsWith('/concurconnect');
   const isMFAVerifyPage = location.pathname === '/mfa/verify';
   const isPublicPage = PUBLIC_ROUTES.includes(location.pathname?.split('/')?.[1]);
+  const isLandingPage = location.pathname.startsWith('/landing');
 
-  if (isConcurLandingPage || isPublicPage || isMFAVerifyPage) return null;
+  if (isConcurLandingPage || isPublicPage || isMFAVerifyPage || isLandingPage) return null;
 
   return <NonSigninHeaderComponents />;
 };

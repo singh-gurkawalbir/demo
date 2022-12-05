@@ -123,7 +123,7 @@ export const getExportMetadata = (connectorMetadata, connectionVersion) => {
                 const {fieldsUserMustSet} = httpEndpoint.supportedBy;
                 const supportedExportTypes = fieldsUserMustSet?.find(f => f.path === 'type')?.values;
 
-                const queryParameters = httpEndpoint.queryParameters?.map(qp => ({name: qp.name, id: qp.name, description: qp.description, required: qp.required, fieldType: qp.fieldType || 'textarea', defaultValue: qp.defaultValue, readOnly: qp.readOnly }));
+                const queryParameters = httpEndpoint.queryParameters?.map(qp => ({name: qp.name, id: qp.name, description: qp.description, required: qp.required, fieldType: qp.dataType || qp.fieldType || 'textarea', defaultValue: qp.defaultValue, readOnly: qp.readOnly, options: qp.values }));
                 const pathParameters = httpEndpoint.pathParameters?.map(pp => ({name: pp.name, id: pp.name, description: pp.description, required: pp.required !== false, fieldType: pp.fieldType || 'input' }));
                 let doesNotSupportPaging = false;
 
@@ -669,6 +669,64 @@ export const updateFinalMetadataWithHttpFramework = (finalFieldMeta, connector, 
 
     );
   }
+
+  return tempFiledMeta;
+};
+
+export const updateWebhookFinalMetadataWithHttpFramework = (finalFieldMeta, connector, resource) => {
+  if (!connector || !connector.supportedBy) {
+    return finalFieldMeta;
+  }
+  const exportTemplate = connector.supportedBy.export;
+  const tempFiledMeta = cloneDeep(finalFieldMeta);
+
+  Object.keys(tempFiledMeta.fieldMap).map(key => {
+    const preConfiguredField = exportTemplate.preConfiguredFields?.find(field => key === field.path);
+    const fieldUserMustSet = exportTemplate.fieldsUserMustSet?.find(field => key === field.path);
+
+    if (isNewId(resource?._id) && preConfiguredField) {
+      tempFiledMeta.fieldMap[key].defaultValue = preConfiguredField?.values?.[0];
+    }
+
+    if (fieldUserMustSet) {
+      tempFiledMeta.fieldMap[key] = {...tempFiledMeta.fieldMap[key], required: true, visible: true};
+      if (fieldUserMustSet.values?.length > 1) {
+        const options = [
+          {
+            items: fieldUserMustSet.values.map(opt => ({
+              label: AUTHENTICATION_LABELS[opt] || opt,
+              value: opt,
+            })),
+          },
+        ];
+
+        if (!tempFiledMeta.fieldMap[key].defaultValue) { tempFiledMeta.fieldMap[key] = {...tempFiledMeta.fieldMap[key], defaultValue: fieldUserMustSet.values?.[0]}; }
+
+        tempFiledMeta.fieldMap[key] = {...tempFiledMeta.fieldMap[key], options};
+      }
+    } else if (preConfiguredField) {
+      if (preConfiguredField.values?.length > 1) {
+        const options = [
+          {
+            items: preConfiguredField.values.map(opt => ({
+              label: AUTHENTICATION_LABELS[opt] || opt,
+              value: opt,
+            })),
+          },
+        ];
+
+        tempFiledMeta.fieldMap[key] = {...tempFiledMeta.fieldMap[key], options};
+      } else {
+        tempFiledMeta.fieldMap[key] = {...tempFiledMeta.fieldMap[key], visible: false};
+      }
+      if (!tempFiledMeta.fieldMap[key].defaultValue) {
+        tempFiledMeta.fieldMap[key] = {...tempFiledMeta.fieldMap[key], defaultValue: preConfiguredField.values?.[0]};
+      }
+    }
+
+    return tempFiledMeta.fieldMap[key];
+  }
+  );
 
   return tempFiledMeta;
 };

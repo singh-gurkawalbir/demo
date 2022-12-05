@@ -123,7 +123,7 @@ const fieldMeta = {
           ],
         },
       ],
-      label: 'Notify me on flow errors',
+      label: 'Notify me of flow errors',
     },
     autoResolveMatchingTraceKeys: {
       id: 'autoResolveMatchingTraceKeys',
