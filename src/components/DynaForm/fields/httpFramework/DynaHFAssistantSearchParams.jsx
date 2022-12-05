@@ -95,7 +95,7 @@ export default function DynaHFAssistantSearchParams(props) {
       !Object.keys(value).includes(field) && keyValues.push({
         name: field,
         disableRowKey: true,
-        isSelect: selectTypeList[field] && true,
+        isSelect: !!selectTypeList[field],
         options: selectTypeList[field] && selectTypeList[field].map(value => ({ name: value, value}))});
     });
     if (value) {
@@ -103,7 +103,7 @@ export default function DynaHFAssistantSearchParams(props) {
         name: key,
         value: value[key],
         disableRowKey: requiredFields.includes(key),
-        isSelect: selectTypeList[key] && true,
+        isSelect: !!selectTypeList[key],
         options: selectTypeList[key] && selectTypeList[key].map(value => ({ name: value, value})),
       }));
     }
