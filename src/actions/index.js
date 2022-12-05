@@ -1541,6 +1541,12 @@ const app = {
     }),
 };
 
+const concur = {
+  connect: data => action(actionTypes.CONCUR.CONNECT, data),
+  connectError: error => action(actionTypes.CONCUR.CONNECT_ERROR, {error}),
+  connectSuccess: payload => action(actionTypes.CONCUR.CONNECT_SUCCESS, {payload}),
+};
+
 const patchFilter = (name, filter) =>
   action(actionTypes.PATCH_FILTER, { name, filter });
 const clearFilter = name => action(actionTypes.CLEAR_FILTER, { name });
@@ -2532,6 +2538,7 @@ export default {
   asyncTask,
   form,
   app,
+  concur,
   metadata,
   fileDefinitions,
   connectors,

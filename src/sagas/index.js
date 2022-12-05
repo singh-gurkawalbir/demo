@@ -27,6 +27,7 @@ import { logoutParams } from './api/apiPaths';
 import { agentSagas } from './agent';
 import { templateSagas } from './template';
 import { cloneSagas } from './clone';
+import { concurSagas } from './concur';
 import { uploadFileSagas } from './uploadFile';
 import { stackSagas } from './stack';
 import resourceFormSampleDataSagas from './sampleData/resourceForm';
@@ -190,6 +191,7 @@ export function* allSagas() {
     ...connectorSagas,
     ...templateSagas,
     ...cloneSagas,
+    ...concurSagas,
     ...editor,
     ...userSagas,
     ...authenticationSagas,

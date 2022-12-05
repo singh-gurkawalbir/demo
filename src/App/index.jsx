@@ -1,6 +1,6 @@
 import React, { useMemo, Fragment, useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { BrowserRouter, Switch, Route, useLocation, useRouteMatch } from 'react-router-dom';
+import { BrowserRouter, Switch, Route, useLocation } from 'react-router-dom';
 import { MuiThemeProvider, makeStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import { SnackbarProvider } from 'notistack';
@@ -36,6 +36,7 @@ import { FormOnCancelProvider } from '../components/FormOnCancelContext';
 import UserActivityMonitor from './UserActivityMonitor';
 import * as pendo from '../utils/analytics/pendo';
 import MfaHelp from '../views/MFAHelp';
+import ConcurConnect from '../views/ConcurConnect';
 
 // The makeStyles function below does not have access to the theme.
 // We can only use the theme in components that are children of
@@ -139,6 +140,7 @@ export const PageContentComponents = () => (
       ]} component={ForgotPassword} />
     <Route path={getRoutePath('/request-reset-sent')} component={ForgotPassword} />
     <Route path={getRoutePath('/accept-invite/:token')} component={AcceptInvite} />
+    <Route path={getRoutePath('/concurconnect/:module')} component={ConcurConnect} />
     <Route path={pageContentPaths} component={PageContent} />
   </Switch>
 );
@@ -146,10 +148,11 @@ export const PageContentComponents = () => (
 const Headers = () => {
   const location = useLocation();
 
+  const isConcurLandingPage = location.pathname.startsWith('/concurconnect');
   const isMFAVerifyPage = location.pathname === '/mfa/verify';
   const isPublicPage = PUBLIC_ROUTES.includes(location.pathname?.split('/')?.[1]);
 
-  if (isPublicPage || isMFAVerifyPage) return null;
+  if (isConcurLandingPage || isPublicPage || isMFAVerifyPage) return null;
 
   return <NonSigninHeaderComponents />;
 };

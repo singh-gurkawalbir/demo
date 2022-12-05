@@ -32,12 +32,14 @@ export function AppRoutingWithAuth(props) {
   const { pathname: currentRoute, search } = location;
   const [hasPageReloaded, setHasPageReloaded] = useState(false);
   const isMFAAuthRequired = useSelector(selectors.isMFAAuthRequired);
+  const isSignInRoute = location.pathname.split('?')[0] === getRoutePath('signin');
+  const isConcurPage = location.pathname.startsWith('/concurconnect');
 
   useEffect(() => {
     if (!isAuthInitialized && !hasPageReloaded) {
-      if (currentRoute !== getRoutePath('signin')) {
+      if (!isSignInRoute) {
         history.replace({
-          search,
+          search: isConcurPage ? '?application=concur' : search,
           state: { attemptedRoute: currentRoute, search },
         });
         initSession();
@@ -48,6 +50,8 @@ export function AppRoutingWithAuth(props) {
   }, [
     hasPageReloaded,
     currentRoute,
+    isConcurPage,
+    isSignInRoute,
     history,
     search,
     initSession,
@@ -56,7 +60,6 @@ export function AppRoutingWithAuth(props) {
   ]);
 
   const { shouldShowAppRouting, isAuthenticated, isSessionExpired } = props;
-  const isSignInRoute = location.pathname === getRoutePath('signin');
 
   // this selector is used by the UI to hold off rendering any routes
   // till it determines the auth state

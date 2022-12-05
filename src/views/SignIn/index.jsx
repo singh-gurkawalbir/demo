@@ -159,6 +159,7 @@ function Signin(props) {
 }
 
 export default function SignInWrapper(props) {
+  console.log('I should be here');
   const query = useQuery();
   const application = query.get('application');
   let SignInPage = Signin;
