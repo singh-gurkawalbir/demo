@@ -40,6 +40,7 @@ export function normalizeUrlAndOptions(path, opts) {
       /^\/connections.*distributed$/.test(path) ||
       path.includes('/mappingPreview') ||
       path.includes('/unlink/google') ||
+      path.includes('/accept-invite-metadata') ||
       path.includes('/accept-invite?no_redirect=true') ||
       path.includes('/reSigninWithSSO') ||
       path.includes('/mfa/verify') ||
