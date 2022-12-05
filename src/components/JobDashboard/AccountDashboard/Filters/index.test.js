@@ -5,10 +5,11 @@ import * as reactRedux from 'react-redux';
 import { MemoryRouter, Route } from 'react-router-dom';
 import userEvent from '@testing-library/user-event';
 import moment from 'moment';
+import { isEmpty } from 'lodash';
 import { runServer } from '../../../../test/api/server';
 import Filters from '.';
 import { getCreatedStore } from '../../../../store';
-import {renderWithProviders} from '../../../../test/test-utils';
+import {mockGetRequestOnce, renderWithProviders} from '../../../../test/test-utils';
 
 let initialStore;
 
@@ -137,5 +138,35 @@ describe('Testsuite for Job Dashboard Filters', () => {
       name: 'completedFlows',
       filter: { paging: { rowsPerPage: 10, currPage: 1 } },
     });
+  });
+  test('should show corresponding options in the dateRange component based on the dataRetentionPeriod', async () => {
+    mockGetRequestOnce('/api/accountSettings', {
+      dataRetentionPeriod: 60,
+    });
+    const {store} = await initFilters({filterKey: 'completedFlows'});
+
+    await waitFor(() => expect(isEmpty(store?.getState()?.data?.accountSettings)).not.toBe(true));
+    await waitFor(() => {
+      const last24ButtonNode = screen.getAllByRole('button', {name: 'Last 24 hours'});
+
+      userEvent.click(last24ButtonNode[0]);
+    });
+    await waitFor(() => expect(screen.getByRole('button', {name: 'Last 60 days'})).toBeInTheDocument());
+  });
+  test('should show corresponding options in the dateRange component based on the max dataRetentionPeriod selected', async () => {
+    mockGetRequestOnce('/api/accountSettings', {
+      dataRetentionPeriod: 180,
+    });
+    const {store} = await initFilters({filterKey: 'completedFlows'});
+
+    await waitFor(() => expect(isEmpty(store?.getState()?.data?.accountSettings)).not.toBe(true));
+    await waitFor(() => {
+      const last24ButtonNode = screen.getAllByRole('button', {name: 'Last 24 hours'});
+
+      userEvent.click(last24ButtonNode[0]);
+    });
+    await waitFor(() => expect(screen.getByRole('button', {name: 'Last 60 days'})).toBeInTheDocument());
+    await waitFor(() => expect(screen.getByRole('button', {name: 'Last 90 days'})).toBeInTheDocument());
+    await waitFor(() => expect(screen.getByRole('button', {name: 'Last 180 days'})).toBeInTheDocument());
   });
 });
