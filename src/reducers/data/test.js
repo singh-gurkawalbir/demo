@@ -107,27 +107,8 @@ function getAuditLogDetails(resourceType, _resourceId) {
   };
 }
 
-function getExpectedLogs(allLogs, filters = {}) {
-  const filteredLogs = allLogs.filter(l => {
-    if (filters.resourceType && filters.resourceType !== l.resourceType) {
-      return false;
-    }
-
-    if (filters._resourceId && filters._resourceId !== l._resourceId) {
-      return false;
-    }
-
-    if (filters.byUser && filters.byUser !== l.byUser._id) {
-      return false;
-    }
-
-    if (filters.source && filters.source !== l.source) {
-      return false;
-    }
-
-    return true;
-  });
-  const expectedLogs = filteredLogs.filter(l => {
+function getExpectedLogs(allLogs) {
+  const expectedLogs = allLogs.filter(l => {
     if (!l._resourceId.includes('connector')) {
       return true;
     }
@@ -175,75 +156,8 @@ function getExpectedLogs(allLogs, filters = {}) {
 
 function getTestCases(resourceType = undefined, resourceId = undefined) {
   let testCases = [
-    [resourceType, resourceId, undefined, true],
-    [resourceType, resourceId, { resourceType: 'integration' }, true],
-    [resourceType, resourceId, { source: 'source1' }, true],
-    [resourceType, resourceId, { byUser: 'user2' }, true],
-    [resourceType, resourceId, { source: 'source3', byUser: 'user3' }, true],
-    [
-      resourceType,
-      resourceId,
-      {
-        resourceType: 'integration',
-        _resourceId: resourceId,
-        source: 'source1',
-        byUser: 'user1',
-      },
-      true,
-    ],
-    [
-      resourceType,
-      resourceId,
-      {
-        resourceType: 'flow',
-        _resourceId: 'flows3',
-        source: 'source3',
-        byUser: 'user3',
-      },
-      true,
-    ],
-    [
-      resourceType,
-      resourceId,
-      {
-        resourceType: 'connection',
-        _resourceId: 'connections5',
-        source: 'source1',
-        byUser: 'user2',
-      },
-      true,
-    ],
-    [
-      resourceType,
-      resourceId,
-      {
-        resourceType: 'export',
-        _resourceId: 'exports1',
-        source: 'source1',
-        byUser: 'user1',
-      },
-      true,
-    ],
-    [
-      resourceType,
-      resourceId,
-      {
-        resourceType: 'import',
-        _resourceId: 'imports3',
-        source: 'source3',
-        byUser: 'user3',
-      },
-      true,
-    ],
-    ['something', 'somethingelse', undefined, false],
-    [
-      'something',
-      'somethingelse',
-      {
-        resourceType: 'integration',
-      },
-      false,
-    ],
+    [resourceType, resourceId, true],
+    ['something', 'somethingelse', false],
   ];
 
   if (!resourceType && !resourceId) {
@@ -252,12 +166,6 @@ function getTestCases(resourceType = undefined, resourceId = undefined) {
       [
         undefined,
         undefined,
-        {
-          resourceType: 'integration',
-          _resourceId: 'integrations2connector',
-          source: 'source2',
-          byUser: 'user2',
-        },
         true,
       ],
     ]);
@@ -274,45 +182,6 @@ function getTestCases(resourceType = undefined, resourceId = undefined) {
       [
         resourceType,
         resourceId,
-        {
-          resourceType: 'flow',
-          _resourceId: 'flows4connector',
-          source: 'source4',
-          byUser: 'user1',
-        },
-        true,
-      ],
-      [
-        resourceType,
-        resourceId,
-        {
-          resourceType: 'connection',
-          _resourceId: 'connections2connector',
-          source: 'source2',
-          byUser: 'user2',
-        },
-        true,
-      ],
-      [
-        resourceType,
-        resourceId,
-        {
-          resourceType: 'export',
-          _resourceId: 'exports2connector',
-          source: 'source2',
-          byUser: 'user2',
-        },
-        true,
-      ],
-      [
-        resourceType,
-        resourceId,
-        {
-          resourceType: 'import',
-          _resourceId: 'imports4connector',
-          source: 'source4',
-          byUser: 'user1',
-        },
         true,
       ],
     ]);
@@ -326,13 +195,10 @@ describe('auditLogs selector', () => {
     const state = reducer(undefined, 'some action');
 
     expect(selectors.auditLogs(state)).toEqual([]);
-    expect(selectors.auditLogs(state, undefined, undefined, {})).toEqual([]);
+    expect(selectors.auditLogs(state, undefined, undefined)).toEqual([]);
     expect(selectors.auditLogs(state, 'something', 'somethingelse')).toEqual(
       []
     );
-    expect(
-      selectors.auditLogs(state, 'something', 'somethingelse', {})
-    ).toEqual([]);
   });
 
   describe('account audit logs selector ', () => {
@@ -352,23 +218,21 @@ describe('auditLogs selector', () => {
     );
 
     each(getTestCases(undefined, undefined)).test(
-      'should return correct details when resourceType is %s, resourceId is %s and filters are %j',
+      'should return correct details when resourceType is %s, resourceId is %s',
       (
         resourceType,
         resourceId,
-        filters,
         resultsLengthShouldBeGreaterThanZero
       ) => {
         const resultLogs = selectors.auditLogs(
           state,
           resourceType,
           resourceId,
-          filters
         );
 
         if (resultsLengthShouldBeGreaterThanZero) {
           expect(resultLogs.length).toBeGreaterThan(0);
-          expect(resultLogs).toEqual(getExpectedLogs(logs, filters));
+          expect(resultLogs).toEqual(getExpectedLogs(logs));
         } else {
           expect(resultLogs.length).toEqual(0);
         }
@@ -406,23 +270,21 @@ describe('auditLogs selector', () => {
     );
 
     each(getTestCases(resourceType, resourceId)).test(
-      'should return correct details when resourceType is %s, resourceId is %s and filters are %j',
+      'should return correct details when resourceType is %s, resourceId is %s',
       (
         resourceType,
         resourceId,
-        filters,
         resultsLengthShouldBeGreaterThanZero
       ) => {
         const resultLogs = selectors.auditLogs(
           state,
           resourceType,
           resourceId,
-          filters
         );
 
         if (resultsLengthShouldBeGreaterThanZero) {
           expect(resultLogs.length).toBeGreaterThan(0);
-          expect(resultLogs).toEqual(getExpectedLogs(logs, filters));
+          expect(resultLogs).toEqual(getExpectedLogs(logs));
         } else {
           expect(resultLogs.length).toEqual(0);
         }
@@ -460,23 +322,21 @@ describe('auditLogs selector', () => {
     );
 
     each(getTestCases(resourceType, resourceId)).test(
-      'should return correct details when resourceType is %s, resourceId is %s and filters are %j',
+      'should return correct details when resourceType is %s, resourceId is %s',
       (
         resourceType,
         resourceId,
-        filters,
         resultsLengthShouldBeGreaterThanZero
       ) => {
         const resultLogs = selectors.auditLogs(
           state,
           resourceType,
           resourceId,
-          filters
         );
 
         if (resultsLengthShouldBeGreaterThanZero) {
           expect(resultLogs.length).toBeGreaterThan(0);
-          expect(resultLogs).toEqual(getExpectedLogs(logs, filters));
+          expect(resultLogs).toEqual(getExpectedLogs(logs));
         } else {
           expect(resultLogs.length).toEqual(0);
         }
