@@ -97,4 +97,6 @@ selectors.addNewChildSteps = createSelector(
       }
     })};
   });
+
+selectors.getChildInstallSteps = (state, integrationId) => state?.[integrationId]?.steps || [];
 // #endregion

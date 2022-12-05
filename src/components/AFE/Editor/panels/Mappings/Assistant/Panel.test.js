@@ -158,7 +158,6 @@ describe('PreviewPanelWrapper UI tests', () => {
   test('should render the netsuite assistant when import is of adaptorType Salesforce', () => {
     initPanelWrapper({editorId: 'filescsv', disabled: false, status: 'received'});
     expect(screen.getByText('Netsuite Assistant')).toBeInTheDocument();    // Mocked Component is rendered
-    screen.debug();
   });
   test('should render an empty DOM when mappingPreviewType is not defined', () => {
     const {utils} = initPanelWrapper({editorId: 'file1csv', disabled: false, status: 'received'});

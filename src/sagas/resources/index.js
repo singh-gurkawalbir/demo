@@ -279,6 +279,9 @@ export function* commitStagedChanges({ resourceType, id, scope, options, context
     delete merged.flowConvertedToNewSchema;
   }
   // #endregion
+  if (parentContext?.queryParams) {
+    path += `?${parentContext.queryParams.join('&')}`;
+  }
 
   try {
     updated = yield call(apiCallWithRetry, {

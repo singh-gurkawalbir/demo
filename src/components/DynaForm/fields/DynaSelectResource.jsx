@@ -1,9 +1,10 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import sift from 'sift';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 import { useSelector, useDispatch } from 'react-redux';
 import { useHistory, useLocation } from 'react-router-dom';
+import { isEqual } from 'lodash';
 import { selectors } from '../../../reducers';
 import AddIcon from '../../icons/AddIcon';
 import EditIcon from '../../icons/EditIcon';
@@ -56,7 +57,7 @@ const handleAddNewResource = args => {
 
     if (['pageProcessor', 'pageGenerator'].includes(resourceType)) {
       values = resourceMeta[resourceType].preSave({
-        application: options.appType,
+        application: options?.appType,
       });
     } else if (['iClients'].includes(resourceType)) {
       values = {
@@ -78,7 +79,7 @@ const handleAddNewResource = args => {
       }
     } else {
       values = resourceMeta[resourceType].new.preSave({
-        application: options.appType,
+        application: options?.appType,
       });
 
       if (resourceType === 'asyncHelpers' || statusExport) {
@@ -202,13 +203,20 @@ export default function DynaSelectResource(props) {
     editTitle = 'Edit connection',
     disabledTitle = 'Select a connection to allow editing',
   } = props;
-  const {options} = props;
+  const { options = {}, getItemInfo } = props;
   const classes = useStyles();
   const location = useLocation();
   const integrationIdFromUrl = useIntegration(resourceType, id);
   const dispatch = useDispatch();
   const history = useHistory();
   const [newResourceId, setNewResourceId] = useState(generateNewId());
+  const optionRef = useRef(options);
+
+  useEffect(() => {
+    if (!isEqual(optionRef.current, options)) {
+      optionRef.current = options;
+    }
+  }, [options]);
   const filterConfig = useMemo(
     () => ({
       type: resourceType,
@@ -234,11 +242,11 @@ export default function DynaSelectResource(props) {
   const allRegisteredConnectionIdsFromManagedIntegrations = useSelector(state => selectors.allRegisteredConnectionIdsFromManagedIntegrations(state));
 
   useEffect(() => {
-    if (!appTypeIsStatic && options.appType && !!value) {
+    if (!appTypeIsStatic && options?.appType && !!value) {
       onFieldChange(id, '', true);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [id, options.appType]);
+  }, [id, options?.appType]);
 
   useEffect(() => {
     if (createdId) {
@@ -271,8 +279,10 @@ export default function DynaSelectResource(props) {
     return filteredResources.map(conn => ({
       label: conn.offline ? `${conn.name || conn._id} - Offline` : conn.name || conn._id,
       value: conn._id,
+      itemInfo: getItemInfo?.(conn),
     }));
-  }, [resources, options, filter, resourceType, checkPermissions, allRegisteredConnectionIdsFromManagedIntegrations]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [resources, optionRef.current, filter, resourceType, checkPermissions, allRegisteredConnectionIdsFromManagedIntegrations]);
   const { merged } =
     useSelectorMemo(
       selectors.makeResourceDataSelector,
@@ -369,7 +379,22 @@ export default function DynaSelectResource(props) {
       ),
       optionSearch: i.label,
       value: i.value,
+      itemInfo: i.itemInfo,
     }));
+
+  useEffect(() => {
+    if (value && !Array.isArray(value)) {
+      const isValuePresentInOption = resourceItems.find(eachItem => eachItem.value === value);
+
+      if (!isValuePresentInOption) {
+        onFieldChange(id, '', true);
+      }
+    }
+
+  // resourceItems are filtered by options,
+  // if options change then resourceItems also change, hence adding options as a dependency here
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [optionRef.current]);
 
   if (!resourceItems.length && hideOnEmptyList && hasResourceTypeLoaded) {
     return null;

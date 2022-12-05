@@ -17,10 +17,19 @@ export default {
       ...rest,
     };
 
+    if (app._httpConnectorId || application === 'webhook') {
+      newValues['/webhook/provider'] = 'custom';
+      newValues['/_httpConnectorId'] = app._httpConnectorId;
+    }
     if (type === 'webhook' || (application !== 'webhook' && app.webhookOnly)) {
       newValues['/type'] = 'webhook';
       newValues['/adaptorType'] = 'WebhookExport';
-      newValues['/webhook/provider'] = application;
+      if (app._httpConnectorId || application === 'webhook') {
+        newValues['/webhook/provider'] = 'custom';
+        newValues['/_httpConnectorId'] = app._httpConnectorId;
+      } else {
+        newValues['/webhook/provider'] = (application === 'integratorio' ? 'integrator-extension' : application);
+      }
       delete newValues['/_connectionId'];
     } else {
       newValues['/adaptorType'] = `${appTypeToAdaptorType[appType]}Export`;
