@@ -58,6 +58,9 @@ export default {
         },
       ],
       defaultValue: r => {
+        if (r?.http?.unencrypted?.apiType) {
+          return r.http.unencrypted.apiType;
+        }
         const baseUri = r?.http?.baseURI;
 
         if (baseUri && !baseUri.endsWith('/api')) {

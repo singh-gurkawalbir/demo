@@ -161,6 +161,10 @@ import DynaMapper2TabbedExtracts from './mapper2/DynaMapper2TabbedExtracts';
 import DynaSalesforceSObject from './DynaSalesforceSObject';
 import DynaSelectDataRetentionPeriod from './DynaSelectDataRetentionPeriod';
 import DynaChangeLicenseEdition from './DynaChangeLicenseEdition';
+import DynaShopifyHeaderLink from './Shopify/DynaShopifyHeaderLink';
+import DynaShopifyStoreName from './Shopify/DynaShopifyStoreName';
+import DynaIANameSelect from './Shopify/DynaIANameSelect';
+import DynaShopifyConnectionSelect from './Shopify/SelectConnection';
 
 export default {
   updateoptions: DynaUpdateOptions,
@@ -333,4 +337,8 @@ export default {
   mapper2tabbedextracts: DynaMapper2TabbedExtracts,
   selectdataretentionperiod: DynaSelectDataRetentionPeriod,
   changelicenseedition: DynaChangeLicenseEdition,
+  shopifystorename: DynaShopifyStoreName,
+  shopifyheaderlink: DynaShopifyHeaderLink,
+  ianameselect: DynaIANameSelect,
+  shopifyconnectionselect: DynaShopifyConnectionSelect,
 };

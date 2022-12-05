@@ -2,9 +2,88 @@ const webpack = require('webpack');
 
 module.exports = async ({ config }) => {
   config.node = {
-    ...config.node, 
-    fs: 'empty'
+    ...config.node,
   };
+  config.resolve = {
+    extensions: ['*', '.js', '.jsx', '.ts', '.tsx'],
+    fallback: {
+      fs: false,
+      path: require.resolve('path-browserify'),
+    }
+  };
+
+  config.module = {
+    rules: [
+      {
+        test: /\.mdx?$/,
+        use: [
+          {
+            loader: '@mdx-js/loader',
+            options: {}
+          }
+        ]
+      },
+      {
+        test: /\.(js|jsx)$/,
+        exclude: /node_modules/,
+        use: [{
+          loader: 'babel-loader',
+          options: {
+            cacheDirectory: true,
+            cacheCompression: false,
+          },
+        }],
+      },
+      {
+        test: /\.css$/i,
+        use: ['style-loader', 'css-loader'],
+      },
+      {
+        test: /\.scss$/,
+        use: [
+            "style-loader",
+            "css-loader",
+            "sass-loader",
+        ],
+      },
+      {
+        test: /\.(png|svg|jpg|gif)$/,
+        use: [{
+          loader: 'file-loader',
+          options: {
+            name: '[name].[ext]',
+            outputPath: 'static/images/',
+          },
+        },
+        ],
+      },
+      {
+        test: /\.(woff(2)?|ttf|eot|svg)(\?v=\d+\.\d+\.\d+)?$/,
+        use: [
+          {
+            loader: 'file-loader',
+            options: {
+              name: '[name].[ext]',
+              outputPath: 'static/fonts/',
+            },
+          },
+        ],
+      },
+      {
+        test: /ace-builds.*\/worker-.*$/,
+        use: [
+          {
+            loader: 'file-loader',
+            options: {
+              esModule: false,
+              name: '[name].[hash:8].[ext]',
+              outputPath: 'static/ace/',
+            },
+          },
+        ],
+      },
+    ],
+  }
 
   // This plugin config tells webpack (that is responsible for building the static 
   // storybook UI), to "search/replace" the constant/value pairs below since storybook 

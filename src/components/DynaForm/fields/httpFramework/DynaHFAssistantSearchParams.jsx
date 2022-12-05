@@ -73,16 +73,27 @@ export default function DynaHFAssistantSearchParams(props) {
   const dispatch = useDispatch();
   const history = useHistory();
   const match = useRouteMatch();
-  const updatedValue = [];
 
   const editorId = getValidRelativePath(id);
   const flowDataStage = resourceType === 'exports' ? 'inputFilter' : 'importMappingExtract';
   const isMetaValid = isMetaRequiredValuesMet(paramMeta, value);
+  const requiredFields = useMemo(() => paramMeta?.fields.filter(field => field.required).map(field => field.id), [paramMeta]);
+  const updatedValue = useMemo(() => {
+    const keyValues = [];
 
-  Object.keys(value).forEach(key => updatedValue.push({
-    name: key,
-    value: value[key],
-  }));
+    requiredFields.forEach(field => {
+      !Object.keys(value).includes(field) && keyValues.push({name: field, disableRowKey: true});
+    });
+    if (value) {
+      Object.keys(value).forEach(key => keyValues.push({
+        name: key,
+        value: value[key],
+        disableRowKey: requiredFields.includes(key),
+      }));
+    }
+
+    return keyValues;
+  }, [requiredFields, value]);
   const dataFields = useMemo(() =>
     paramMeta.fields.map(({id, description}) => ({
       name: <KeyLabel id={id} description={description} />,

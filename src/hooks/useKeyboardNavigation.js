@@ -5,9 +5,8 @@ const KEYCODE = {
   UP: 38,
   DOWN: 40,
 };
-const initialFocusIndex = -1;
 
-function useKeyboardNavigation({listLength = 0, containerRef = null, listItemRef = null}) {
+function useKeyboardNavigation({listLength = 0, containerRef = null, listItemRef = null, initialFocusIndex = -1}) {
   const [currentFocussed, setCurrentFocussed] = useState(initialFocusIndex);
 
   useEffect(() => {
@@ -32,7 +31,7 @@ function useKeyboardNavigation({listLength = 0, containerRef = null, listItemRef
   const keyDownHandler = useCallback(onKeyDown, [listLength]);
   const resetKeyboardFocus = useCallback(() => {
     setCurrentFocussed(initialFocusIndex);
-  }, []);
+  }, [initialFocusIndex]);
 
   // Adding listener to parent for key down events
   useEffect(() => {

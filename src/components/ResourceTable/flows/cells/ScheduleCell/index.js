@@ -49,7 +49,7 @@ export default function ScheduleCell({flowId, name, actionProps, schedule}) {
 
   return (
     <RemoveMargin>
-      <span className={clsx(!!schedule && classes.circle)}>
+      <div className={clsx(!!schedule && classes.circle)}>
         <IconButtonWithTooltip
           tooltipProps={{
             title: isSetupInProgress ? messageStore('INCOMPLETE_FLOW_SCHEDULE_TOOLTIP') : 'Change schedule',
@@ -67,7 +67,7 @@ export default function ScheduleCell({flowId, name, actionProps, schedule}) {
           })}>
           <CalendarIcon color="secondary" />
         </IconButtonWithTooltip>
-      </span>
+      </div>
     </RemoveMargin>
   );
 }

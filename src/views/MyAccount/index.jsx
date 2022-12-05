@@ -16,6 +16,7 @@ import AuditLogIcon from '../../components/icons/AuditLogIcon';
 import ResourceDrawer from '../../components/drawer/Resource';
 import Tabs from '../Integration/common/Tabs';
 import retry from '../../utils/retry';
+import PageContent from '../../components/PageContent';
 
 const Profile = loadable(() =>
   retry(() => import(/* webpackChunkName: 'MyAccount.Profile' */ './Profile'))
@@ -83,7 +84,6 @@ const useStyles = makeStyles(theme => ({
     margin: theme.spacing(3),
   },
   tabsAccount: {
-    padding: theme.spacing(3),
     '& > [role = tabpanel]': {
       background: 'none',
       padding: 0,
@@ -111,7 +111,9 @@ export default function MyAccount({ match }) {
           }
         />
       <ResourceDrawer match={match} />
-      <Tabs tabs={myAccountTabs} match={match} className={classes.tabsAccount} />
+      <PageContent>
+        <Tabs tabs={myAccountTabs} match={match} className={classes.tabsAccount} />
+      </PageContent>
     </>
   );
 }
