@@ -317,9 +317,17 @@ export function* getCSRFTokenBackend() {
 }
 export function* validateAcceptInviteToken({ token }) {
   try {
+    const _csrf = yield call(getCSRFTokenBackend);
     const apiResponse = yield call(apiCallWithRetry, {
-      path: `/accept-invite/${token}`,
+      path: '/accept-invite-metadata',
       message: 'Validate accept invite token',
+      opts: {
+        method: 'POST',
+        body: {
+          token,
+          _csrf,
+        },
+      },
       hidden: true,
     });
 

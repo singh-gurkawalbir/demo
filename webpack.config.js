@@ -255,6 +255,7 @@ module.exports = (env, argv) => {
         '/mfa/verify': getProxyOpts(true),
         '/litmos/sso': proxyOpts,
         '/auth/google': proxyOpts,
+        '/accept-invite-metadata': proxyOpts,
         '/reSigninWithGoogle': proxyOpts,
         '/reSigninWithSSO/*': proxyOpts,
         '/sso/*': proxyOpts,
