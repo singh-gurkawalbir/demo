@@ -2578,4 +2578,9 @@ export default {
     label: 'Paths to encrypted field in the HTTP response body',
     delimiter: ',',
   },
+  'shopify.form.header': {
+    id: 'shopify.form.header',
+    label: 'Header',
+    type: 'shopifyheaderlink',
+  },
 };

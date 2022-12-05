@@ -1144,7 +1144,14 @@ const integrationApp = {
       integrationId,
     }),
   },
-
+  landingPage: {
+    requestIntegrations: ({ clientId }) => action(actionTypes.INTEGRATION_APPS.LANDING_PAGE.REQUEST_INTEGRATIONS, {
+      clientId,
+    }),
+    receivedIntegrations: ({ integrations }) => action(actionTypes.INTEGRATION_APPS.LANDING_PAGE.RECEIVED_INTEGRATIONS, {
+      integrations,
+    }),
+  },
 };
 const clone = {
   requestPreview: (resourceType, resourceId) =>
@@ -1589,7 +1596,7 @@ const searchCriteria = {
 };
 // #region DynaForm Actions
 const resourceForm = {
-  init: (resourceType, resourceId, isNew, skipCommit, flowId, initData, integrationId) =>
+  init: (resourceType, resourceId, isNew, skipCommit, flowId, initData, integrationId, fieldMeta) =>
     action(actionTypes.RESOURCE_FORM.INIT, {
       resourceType,
       resourceId,
@@ -1598,6 +1605,7 @@ const resourceForm = {
       flowId,
       initData,
       integrationId,
+      fieldMeta,
     }),
   initComplete: (
     resourceType,

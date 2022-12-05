@@ -158,6 +158,10 @@ import DynaConnectionFormView from './DynaConnectionFormView';
 import DynaSwitch from './DynaSwitch';
 import DynaMapper2SourceField from './mapper2/DynaMapper2SourceField';
 import DynaMapper2TabbedExtracts from './mapper2/DynaMapper2TabbedExtracts';
+import DynaShopifyHeaderLink from './Shopify/DynaShopifyHeaderLink';
+import DynaShopifyStoreName from './Shopify/DynaShopifyStoreName';
+import DynaIANameSelect from './Shopify/DynaIANameSelect';
+import DynaShopifyConnectionSelect from './Shopify/SelectConnection';
 
 export default {
   updateoptions: DynaUpdateOptions,
@@ -327,4 +331,8 @@ export default {
   switch: DynaSwitch,
   mapper2sourcefield: DynaMapper2SourceField,
   mapper2tabbedextracts: DynaMapper2TabbedExtracts,
+  shopifystorename: DynaShopifyStoreName,
+  shopifyheaderlink: DynaShopifyHeaderLink,
+  ianameselect: DynaIANameSelect,
+  shopifyconnectionselect: DynaShopifyConnectionSelect,
 };
