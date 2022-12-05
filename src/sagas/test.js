@@ -774,14 +774,10 @@ describe('rootSaga', () => {
           switchAcc: take(actionsTypes.AUTH.ABORT_ALL_SAGAS_AND_SWITCH_ACC
           )})
       );
-      expect(saga.next({logrocket: {opts: {prop1: 'someOptsz'}}}).value)
-        .toEqual(call(initializeLogrocket));
+      expect(saga.next({logrocket: {opts: {prop1: 'someOptsz'}}}).value).toEqual(call(initializeLogrocket));
       expect(forkEffectRes.cancel).toHaveBeenCalled();
-
-      expect(saga.next().value)
-        .toEqual(spawn(rootSaga));
-      expect(saga.next().value)
-        .toEqual(call(initializeApp, {prop1: 'someOptsz'}));
+      expect(saga.next().value).toEqual(spawn(rootSaga));
+      expect(saga.next().value).toEqual(put(actions.auth.abortAllSagasAndInitLR()));
       expect(saga.next().done).toBe(true);
     });
 
