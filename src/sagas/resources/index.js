@@ -249,6 +249,7 @@ export function* commitStagedChanges({ resourceType, id, scope, options, context
   // only support the older interface, so we need to convert back before we make the PUT/POST API call.
   // this complete code block can be removed once the BE DL code uses the new flow interface fields.
   let resourceIsDataLoaderFlow = false;
+  let isNewDataLoaderFlow = false;
 
   if (resourceType === 'flows') {
     deleteUnUsedRouters(merged);
@@ -256,8 +257,10 @@ export function* commitStagedChanges({ resourceType, id, scope, options, context
     // this value 'flowConvertedToNewSchema' has been set at the time of caching a flow collection.... we convert it to the new schema
     // and set this flag 'flowConvertedToNewSchema' to true if we find it to be in the old schema...now when we are actually commiting the resource
     // we reverse this process and convert it back to the old schema ...also we delete this flag
+    isNewDataLoaderFlow = !merged._id && merged.pageGenerators?.[0]?.application === 'dataLoader' && !merged.pageGenerators?.[0]?._exportId;
 
     if (
+      isNewDataLoaderFlow ||
       resourceIsDataLoaderFlow ||
       (merged.flowConvertedToNewSchema && isIntegrationApp(merged))
     ) {
@@ -350,9 +353,13 @@ export function* commitStagedChanges({ resourceType, id, scope, options, context
   // #region Data loader transform
   // This code can be removed (with above DL code) once the BE DL code supports
   // the new flow interface. For now we "fake" compatibility and convert on load/save
-  if (resourceIsDataLoaderFlow) {
-    // console.log('commit DL convert to old interface on api');
-    updated.pageGenerators = [{ _exportId: updated._exportId }];
+  if (resourceIsDataLoaderFlow || isNewDataLoaderFlow) {
+    if (updated._exportId) {
+      updated.pageGenerators = [{ _exportId: updated._exportId }];
+    } else {
+      // add dummy application when PG is not yet created for DL
+      updated.pageGenerators = [{ application: 'dataLoader' }];
+    }
     delete updated._exportId;
 
     if (updated._importId) {
