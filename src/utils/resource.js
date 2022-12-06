@@ -995,10 +995,6 @@ export const getAssistantFromResource = resource => {
     return 'ebay';
   }
 
-  if (assistant === 'googlecontacts' || assistant === 'googlecontactspeople') {
-    return 'googlecontacts';
-  }
-
   return assistant;
 };
 

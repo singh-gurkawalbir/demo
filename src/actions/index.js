@@ -1254,12 +1254,13 @@ const agent = {
 };
 const file = {
   previewZip: file => action(actionTypes.FILE.PREVIEW_ZIP, { file }),
-  upload: (resourceType, resourceId, fileType, file) =>
+  upload: ({resourceType, resourceId, fileType, file, asyncKey}) =>
     action(actionTypes.FILE.UPLOAD, {
       resourceType,
       resourceId,
       fileType,
       file,
+      asyncKey,
     }),
   processFile: ({ fileId, file, fileType, fileProps }) =>
     action(actionTypes.FILE.PROCESS, {
