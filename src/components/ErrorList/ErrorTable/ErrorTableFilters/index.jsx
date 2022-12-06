@@ -134,13 +134,14 @@ export default function ErrorTableFilters({
 
   useEffect(() => {
     if (purgeErrorStatus.status === 'success') {
+      if (fetchErrors) fetchErrors();
       enqueueSnackbar({
         message: purgeErrorStatus.message,
         variant: 'success',
       });
       dispatch(actions.errorManager.flowErrorDetails.purge.clear({flowId, resourceId}));
     }
-  }, [enqueueSnackbar, dispatch, flowId, resourceId, purgeErrorStatus.status, purgeErrorStatus.message]);
+  }, [enqueueSnackbar, dispatch, flowId, resourceId, purgeErrorStatus.status, purgeErrorStatus.message, fetchErrors]);
 
   return (
 
