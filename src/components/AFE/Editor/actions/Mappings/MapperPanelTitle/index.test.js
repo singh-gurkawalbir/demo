@@ -102,6 +102,6 @@ describe('MapperPanelTitle UI tests', () => {
 
     expect(searchIconButton).toBeInTheDocument();
     userEvent.click(searchIconButton);
-    await waitFor(() => expect(mockDispatchFn).toBeCalledWith(actions.mapping.v2.searchTree({ searchKey: '', showKey: false })));
+    await waitFor(() => expect(mockDispatchFn).toBeCalledWith(actions.mapping.v2.searchTree('')));
   });
 });

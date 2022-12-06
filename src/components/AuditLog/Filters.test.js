@@ -1,7 +1,6 @@
 /* global describe, test, expect, beforeEach, jest, afterEach */
 import React from 'react';
 import {screen, waitFor} from '@testing-library/react';
-import { MemoryRouter } from 'react-router-dom';
 import userEvent from '@testing-library/user-event';
 import * as reactRedux from 'react-redux';
 import Filters from './Filters';
@@ -36,10 +35,16 @@ initialStore.getState().data.audit = {
   },
 };
 initialStore.getState().session.filters = {
-  auditLogs: { paging: {
-    rowsPerPage: 50,
-    currPage: 0,
-  },
+  auditLogs: {
+    paging: {
+      rowsPerPage: 50,
+      currPage: 0,
+    },
+    byUser: 'all',
+    event: 'all',
+    resourceType: 'all',
+    source: 'all',
+    _resourceId: 'all',
   },
 };
 const propsObj = {
@@ -131,7 +136,7 @@ describe('UI test cases for Audit Log Filter ', () => {
     });
     useDispatchSpy.mockReturnValue(mockDispatchFn);
 
-    renderWithProviders(<MemoryRouter><Filters {... propsObj} /></MemoryRouter>, {initialStore});
+    renderWithProviders(<Filters {... propsObj} />, {initialStore});
   });
   afterEach(() => {
     useDispatchSpy.mockClear();
@@ -234,7 +239,20 @@ test('should display the user emailId under select users tab when name is not pr
       ],
     },
   };
-  renderWithProviders(<MemoryRouter><Filters {...propsObj} /></MemoryRouter>, {tempStore});
+  tempStore.getState().session.filters = {
+    auditLogs: {
+      paging: {
+        rowsPerPage: 50,
+        currPage: 0,
+      },
+      byUser: 'all',
+      event: 'all',
+      resourceType: 'all',
+      source: 'all',
+      _resourceId: 'all',
+    },
+  };
+  renderWithProviders(<Filters {...propsObj} />, {initialStore: tempStore});
   userEvent.click(screen.getByText(/Select user/i));
   waitFor(() => expect(screen.getByText(/testUser@celigo.com/i)).toBeInTheDocument());
 });
