@@ -20,6 +20,7 @@ import openExternalUrl from '../../utils/window';
 import { pingConnectionWithId } from '../resourceForm/connections';
 import httpConnectorSagas from './httpConnectors';
 import { getHttpConnector} from '../../constants/applications';
+import { AUDIT_LOG_FILTER_KEY } from '../../constants/auditLog';
 
 export function* isDataLoaderFlow(flow) {
   if (!flow) return false;
@@ -248,6 +249,7 @@ export function* commitStagedChanges({ resourceType, id, scope, options, context
   // only support the older interface, so we need to convert back before we make the PUT/POST API call.
   // this complete code block can be removed once the BE DL code uses the new flow interface fields.
   let resourceIsDataLoaderFlow = false;
+  let isNewDataLoaderFlow = false;
 
   if (resourceType === 'flows') {
     deleteUnUsedRouters(merged);
@@ -255,8 +257,10 @@ export function* commitStagedChanges({ resourceType, id, scope, options, context
     // this value 'flowConvertedToNewSchema' has been set at the time of caching a flow collection.... we convert it to the new schema
     // and set this flag 'flowConvertedToNewSchema' to true if we find it to be in the old schema...now when we are actually commiting the resource
     // we reverse this process and convert it back to the old schema ...also we delete this flag
+    isNewDataLoaderFlow = !merged._id && merged.pageGenerators?.[0]?.application === 'dataLoader' && !merged.pageGenerators?.[0]?._exportId;
 
     if (
+      isNewDataLoaderFlow ||
       resourceIsDataLoaderFlow ||
       (merged.flowConvertedToNewSchema && isIntegrationApp(merged))
     ) {
@@ -278,6 +282,9 @@ export function* commitStagedChanges({ resourceType, id, scope, options, context
     delete merged.flowConvertedToNewSchema;
   }
   // #endregion
+  if (parentContext?.queryParams) {
+    path += `?${parentContext.queryParams.join('&')}`;
+  }
 
   try {
     updated = yield call(apiCallWithRetry, {
@@ -346,9 +353,13 @@ export function* commitStagedChanges({ resourceType, id, scope, options, context
   // #region Data loader transform
   // This code can be removed (with above DL code) once the BE DL code supports
   // the new flow interface. For now we "fake" compatibility and convert on load/save
-  if (resourceIsDataLoaderFlow) {
-    // console.log('commit DL convert to old interface on api');
-    updated.pageGenerators = [{ _exportId: updated._exportId }];
+  if (resourceIsDataLoaderFlow || isNewDataLoaderFlow) {
+    if (updated._exportId) {
+      updated.pageGenerators = [{ _exportId: updated._exportId }];
+    } else {
+      // add dummy application when PG is not yet created for DL
+      updated.pageGenerators = [{ application: 'dataLoader' }];
+    }
     delete updated._exportId;
 
     if (updated._importId) {
@@ -732,20 +743,22 @@ export function* deleteIntegration({ integrationId }) {
   yield put(actions.resource.integrations.redirectTo(integrationId, HOME_PAGE_PATH));
 }
 
-export function* getResourceCollection({ resourceType, refresh, integrationId, nextPagePath }) {
-  let path = nextPagePath || `/${resourceType}`;
+export function* getResourceCollection({ resourceType, refresh, integrationId }) {
+  let path = `/${resourceType}`;
   let hideNetWorkSnackbar;
 
   /** hide the error that GET SuiteScript tiles throws when connection is offline */
   /** hide transfers API call as it throws error when account user accepts first account and
    *  logs in with SSO for the very first time when his preferences still hold defaultAshareId as 'own'
+   *  hide ssoclients - throws error when shared user enabled post disabling in the same session @IO-29588
    */
   if (
     resourceType &&
     ((resourceType.includes('suitescript/connections/') && resourceType.includes('/tiles')) ||
     resourceType.includes('ashares') ||
     resourceType.includes('httpconnectors') ||
-    resourceType.includes('transfers'))
+    resourceType.includes('transfers') ||
+    resourceType.includes('ssoclients'))
   ) {
     hideNetWorkSnackbar = true;
   }
@@ -781,15 +794,6 @@ export function* getResourceCollection({ resourceType, refresh, integrationId, n
       refresh,
     });
 
-    if (path.includes('/audit')) {
-      const {data, nextLinkPath} = collection || {};
-
-      collection = data;
-      if (nextLinkPath) {
-        yield put(actions.auditLogs.receivedNextPagePath(nextLinkPath));
-      }
-    }
-
     if (resourceType === 'stacks') {
       let sharedStacks = yield call(apiCallWithPaging, {
         path: '/shared/stacks',
@@ -818,7 +822,7 @@ export function* getResourceCollection({ resourceType, refresh, integrationId, n
       collection = undefined;
     }
 
-    yield put(actions.resource.receivedCollection(resourceType, collection, integrationId, nextPagePath ? true : undefined));
+    yield put(actions.resource.receivedCollection(resourceType, collection, integrationId));
     yield put(actions.resource.collectionRequestSucceeded({resourceType: updatedResourceType, integrationId}));
 
     return collection;
@@ -887,10 +891,10 @@ export function* updateTileNotifications({ resourcesToUpdate, integrationId, chi
     return;
   }
 
+  yield put(actions.asyncTask.success(asyncKey));
   if (response) {
     yield put(actions.resource.requestCollection('notifications'));
   }
-  yield put(actions.asyncTask.success(asyncKey));
 }
 
 export function* updateFlowNotification({ flowId, isSubscribed }) {
@@ -1177,6 +1181,48 @@ export function* downloadAuditlogs({resourceType, resourceId, childId, filters})
     //  Handle errors
   }
 }
+
+export function* requestAuditLogs({ resourceType, nextPagePath }) {
+  const filters = yield select(selectors.filter, AUDIT_LOG_FILTER_KEY);
+
+  const requestOptions = getRequestOptions(
+    actionTypes.RESOURCE.REQUEST_AUDIT_LOGS,
+    { nextPagePath, resourceType, filters }
+  );
+  const { path } = requestOptions;
+
+  let hideNetWorkSnackbar;
+
+  try {
+    yield put(actions.resource.collectionRequestSent(resourceType));
+
+    // eslint-disable-next-line prefer-const
+    let {data, nextLinkPath} = (yield call(apiCallWithPaging, {
+      path,
+      hidden: hideNetWorkSnackbar,
+    })) || {};
+
+    if (nextLinkPath) {
+      yield put(actions.auditLogs.receivedNextPagePath(nextLinkPath));
+    }
+
+    if (data !== undefined && !Array.isArray(data) && !NON_ARRAY_RESOURCE_TYPES.includes(resourceType)) {
+      // eslint-disable-next-line no-console
+      console.warn('Getting unexpected collection values: ', data);
+      data = undefined;
+    }
+
+    yield put(actions.resource.receivedCollection(resourceType, data, undefined, nextPagePath ? true : undefined));
+    yield put(actions.resource.collectionRequestSucceeded({resourceType}));
+
+    return data;
+  } catch (error) {
+    // generic message to the user that the
+    // saga failed and services team working on it
+    yield put(actions.resource.collectionRequestFailed({resourceType}));
+  }
+}
+
 export const resourceSagas = [
   takeEvery(actionTypes.EVENT_REPORT.CANCEL, eventReportCancel),
   takeEvery(actionTypes.EVENT_REPORT.DOWNLOAD, downloadReport),
@@ -1214,6 +1260,7 @@ export const resourceSagas = [
   takeEvery(actionTypes.RESOURCE.REPLACE_CONNECTION, replaceConnection),
   takeLatest(actionTypes.INTEGRATION.DELETE, deleteIntegration),
   takeLatest(actionTypes.RESOURCE.DOWNLOAD_AUDIT_LOGS, downloadAuditlogs),
+  takeLatest(actionTypes.RESOURCE.REQUEST_AUDIT_LOGS, requestAuditLogs),
 
   ...metadataSagas,
   ...httpConnectorSagas,

@@ -116,7 +116,8 @@ import { buildDrawerUrl, drawerPaths } from '../utils/rightDrawer';
 import { GRAPHQL_HTTP_FIELDS, isGraphqlResource } from '../utils/graphql';
 import { initializeFlowForReactFlow, getFlowAsyncKey } from '../utils/flows/flowbuilder';
 import { HTTP_BASED_ADAPTORS } from '../utils/http';
-import { AUDIT_LOG_PAGING_FILTER_KEY } from '../constants/auditLog';
+import { AUDIT_LOG_FILTER_KEY } from '../constants/auditLog';
+import { SHOPIFY_APP_STORE_LINKS } from '../constants/urls';
 
 const emptyArray = [];
 const emptyObject = {};
@@ -2196,14 +2197,12 @@ selectors.auditLogs = (
   state,
   resourceType,
   resourceId,
-  filters,
   options = {}
 ) => {
   let auditLogs = fromData.auditLogs(
     state?.data,
     resourceType,
     resourceId,
-    filters
   );
 
   const result = {
@@ -2244,9 +2243,9 @@ selectors.auditLogs = (
 
 selectors.paginatedAuditLogs = createSelector(
   selectors.auditLogs,
-  state => selectors.filter(state, AUDIT_LOG_PAGING_FILTER_KEY),
-  (auditLogs, pagingFilters) => {
-    const { currPage = 0, rowsPerPage = DEFAULT_ROWS_PER_PAGE } = pagingFilters?.paging || {};
+  state => selectors.filter(state, AUDIT_LOG_FILTER_KEY),
+  (auditLogs, filters) => {
+    const { currPage = 0, rowsPerPage = DEFAULT_ROWS_PER_PAGE } = filters?.paging || {};
 
     auditLogs.logs = auditLogs.logs.slice(currPage * rowsPerPage, (currPage + 1) * rowsPerPage);
 
@@ -2659,6 +2658,35 @@ selectors.mkGetMediaTypeOptions = () => {
 
       return {modifiedOptions: [{ items: modifiedOptions}], parentFieldMediaType};
     }
+  );
+};
+
+// for IA 1.0 install mode dummy connection are created. since we don't know it's new connection or existing connection we will verify
+// if connection is online or not.
+selectors.isNewConnectionId = () => {
+  const makeResourceSelector = selectors.makeResourceSelector();
+
+  return createSelector(
+    (state, resourceType, resourceId) => {
+      const resource = makeResourceSelector(state, resourceType, resourceId);
+
+      if (!resource?._connectorId) {
+        return [];
+      }
+      let steps = selectors.getChildInstallSteps(state, resource?._integrationId) || [];
+
+      if (!steps.length) {
+        const integrationResource = makeResourceSelector(state, 'integrations', resource?._integrationId);
+
+        if (integrationResource?.mode === 'install') {
+          steps = selectors.integrationInstallSteps(state, resource?._integrationId) || [];
+        }
+      }
+
+      return steps;
+    },
+    (_1, _2, resourceId) => resourceId,
+    (installSteps, resourceId) => !!installSteps?.find(s => s?._connectionId === resourceId)
   );
 };
 
@@ -3428,7 +3456,10 @@ selectors.availableUsersList = createSelector(
       ];
     }
 
-    return _users ? _users.sort(stringCompare('sharedWithUser.name')) : emptyArray;
+    return _users
+      ? _users.sort(stringCompare('sharedWithUser.name'))
+        .map(userVal => !userVal.sharedWithUser ? ({ ...userVal, sharedWithUser: emptyObject }) : userVal)
+      : emptyArray;
   }
 
 );
@@ -7319,3 +7350,21 @@ selectors.mkFlowResourcesRetryStatus = () => {
 };
 
 selectors.flowResourcesRetryStatus = selectors.mkFlowResourcesRetryStatus();
+selectors.getShopifyStoreLink = (state, resourceId) => {
+  const {_connectorId} = selectors.resourceData(
+    state,
+    'connections',
+    resourceId,
+    'value'
+  )?.merged || emptyObject;
+
+  if (!_connectorId) return SHOPIFY_APP_STORE_LINKS.DIY_APP;
+
+  /* uncomment the below code when
+    'SAP Business ByDesign Integration App' or 'Microsoft Business Central Integration App' are published
+    const integration = selectors.resource(state, 'integrations', _integrationId);
+    if (integration.name.toLowerCase().includes('microsoft')) return SHOPIFY_APP_STORE_LINKS.MICROSOFT_BUSINESS_IA_APP;
+    if (integration.name.toLowerCase().includes('sap')) return SHOPIFY_APP_STORE_LINKS.SAP_BUSINESS_IA_APP; */
+
+  return SHOPIFY_APP_STORE_LINKS.NETSUITE_IA_APP;
+};

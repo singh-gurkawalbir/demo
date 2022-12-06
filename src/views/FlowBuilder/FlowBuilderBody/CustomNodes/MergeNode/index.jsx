@@ -39,6 +39,7 @@ export default function MergeNode({id, data}) {
       className={classes.container}
       onMouseOver={handleMouseOver}
       onMouseOut={handleMouseOut}
+      data-test="mergenode"
       >
       <DefaultHandle type="target" position={Position.Left} />
 

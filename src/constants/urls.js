@@ -57,3 +57,21 @@ export const AMPERSAND_ROUTES = [
   '/releasenotes/list',
   '/retry/edit',
 ];
+
+export const SHOPIFY_STORE_NAME_FOR_BASIC_AUTH_HELP_LINK = 'https://docs.celigo.com/hc/en-us/articles/360038373892-Set-up-a-basic-auth-connection-to-Shopify#storename';
+export const SHOPIFY_STORE_NAME_FOR_OAUTH_HELP_LINK = 'https://docs.celigo.com/hc/en-us/articles/360038755451-Set-up-an-OAuth-2-0-connection-to-Shopify#storename';
+
+export const SHOPIFY_BASIC_AUTH_USERNAME_HELP_LINK = 'https://docs.celigo.com/hc/en-us/articles/360038373892-Set-up-a-basic-auth-connection-to-Shopify#username';
+export const SHOPIFY_BASIC_AUTH_PASSWORD_HELP_LINK = 'https://docs.celigo.com/hc/en-us/articles/360038373892-Set-up-a-basic-auth-connection-to-Shopify#password';
+
+export const SHOPIFY_OAUTH_CONNECTION_VIEW_INSTRUCTIONS_LINK = 'https://docs.celigo.com/hc/en-us/articles/360038755451';
+
+// Shopify store listing urls
+export const SHOPIFY_APP_STORE_LINKS = {
+  NETSUITE_IA_APP: 'https://apps.shopify.com',
+  DIY_APP: 'https://apps.shopify.com',
+
+  // in future when these apps are published, change the URLs
+  // MICROSOFT_BUSINESS_IA_APP: 'https://apps.shopify.com/IA/Microsoft',
+  // SAP_BUSINESS_IA_APP: 'https://apps.shopify.com/IA/SAP',
+};

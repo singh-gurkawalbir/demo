@@ -2,10 +2,12 @@ import { useCallback } from 'react';
 import { useHistory, useLocation } from 'react-router-dom';
 import { useGetTableContext } from '../../../CeligoTable/TableContext';
 import { buildDrawerUrl, drawerPaths } from '../../../../utils/rightDrawer';
+import AuditLogIcon from '../../../icons/AuditLogIcon';
 
 export default {
   key: 'viewLogDetail',
-  useLabel: () => 'View',
+  useLabel: () => 'View log',
+  icon: AuditLogIcon,
   useOnClick: rowData => {
     const {index} = rowData;
     const {flowId, scriptId } = useGetTableContext();

@@ -117,6 +117,7 @@ export default function RouterPanel({ editorId }) {
           multiline
           rowsMax={4}
           label="Branching name"
+          helpKey="flow.router.name"
           value={name}
           onFieldChange={updatedOnNameChange}
         />

@@ -27,6 +27,7 @@ export default function getRequestOptions(
     childId,
     flowIds,
     feature,
+    nextPagePath,
   } = {}
 ) {
   switch (action) {
@@ -371,6 +372,36 @@ export default function getRequestOptions(
       return {
         path,
         opts,
+      };
+    }
+    case actionTypes.RESOURCE.REQUEST_AUDIT_LOGS: {
+      if (nextPagePath) {
+        return {
+          path: nextPagePath,
+        };
+      }
+      let path = `/${resourceType}`;
+
+      const { resourceType: filterResourceType, source, event, byUser, _resourceId } = filters || {};
+
+      if (byUser && byUser !== 'all') {
+        path += `&_byUserId=${byUser}`;
+      }
+      if (filterResourceType && filterResourceType !== 'all') {
+        path += `&resourceType=${filterResourceType}`;
+      }
+      if (_resourceId && _resourceId !== 'all') {
+        path += `&_resourceId=${_resourceId}`;
+      }
+      if (source && source !== 'all') {
+        path += `&source=${source}`;
+      }
+      if (event && event !== 'all') {
+        path += `&action=${event}`;
+      }
+
+      return {
+        path,
       };
     }
 

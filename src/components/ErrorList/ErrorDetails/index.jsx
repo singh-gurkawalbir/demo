@@ -14,6 +14,9 @@ import DrawerFooter from '../../drawer/Right/DrawerFooter';
 import ErrorDetailActions from './ErrorDetailActions';
 import actions from '../../../actions';
 import AddToBatch from './ErrorDetailActions/AddToBatch';
+import { FILTER_KEYS } from '../../../utils/errorManagement';
+import useKeydownListener from '../ErrorTable/hooks/useKeyboardNavigation';
+import { useEditRetryConfirmDialog } from '../ErrorTable/hooks/useEditRetryConfirmDialog';
 
 const useStyles = makeStyles(theme => ({
   detailsContainer: {
@@ -65,10 +68,11 @@ function TabPanel({ children, value, type }) {
   );
 }
 
-export default function ErrorDetails({ flowId, resourceId, isResolved, onClose, onTabChange, handleNext}) {
+export default function ErrorDetails({ flowId, resourceId, isResolved, onClose, onTabChange, handleNext, errorsInPage, activeErrorId, isSplitView }) {
   const match = useRouteMatch();
   const classes = useStyles();
   const dispatch = useDispatch();
+  const filterKey = isResolved ? FILTER_KEYS.RESOLVED : FILTER_KEYS.OPEN;
 
   const { mode, errorId } = match.params;
 
@@ -117,6 +121,9 @@ export default function ErrorDetails({ flowId, resourceId, isResolved, onClose, 
     // Incase of invalid url , redirects user to first available tab
     onTabChange(errorId, availableTabs[0].type);
   }
+  const showRetryDataChangedConfirmDialog = useEditRetryConfirmDialog({flowId, resourceId, isResolved});
+
+  useKeydownListener({showRetryDataChangedConfirmDialog, errorsInPage, filterKey, dispatch, activeErrorId, isSplitView, handleNext});
 
   const handleModeChange = (evt, newValue) => onTabChange(errorId, newValue);
 

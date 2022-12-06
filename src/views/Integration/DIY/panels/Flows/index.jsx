@@ -426,7 +426,9 @@ export default function FlowsPanel({ integrationId, childId }) {
     'Showing all flow groups that contain search matches.';
 
   const basePath = getBasePath(match);
-  const hasNoData = !finalFilter.keyword && !flows.length;
+  const hasEditAccess = !isStandalone && !isMonitorLevelUser && !isIntegrationApp;
+  // empty state is not shown for IA 2.0 only for DIY flows
+  const showEmptyState = !finalFilter.keyword && !flows.length && hasEditAccess;
   const hasEmptySearchResults = finalFilter.keyword && !flows.length && !flowGroupingsSections?.some(({title}) => title.toUpperCase().includes(finalFilter.keyword.toUpperCase()));
 
   return (
@@ -463,7 +465,7 @@ export default function FlowsPanel({ integrationId, childId }) {
               Load data
             </TextButton>
             )}
-            {!isStandalone && !isMonitorLevelUser && !isIntegrationApp && (
+            {hasEditAccess && (
             <ActionMenu
               setSelectedComponent={setSelectedComponent}
               useRowActions={useRowActions}
@@ -490,7 +492,7 @@ export default function FlowsPanel({ integrationId, childId }) {
         />
         </LoadResources>
         {
-          hasNoData && (
+          showEmptyState && (
           <ResourceEmptyState
             resourceType="flows"
             className={classes.emptyFlowsInfo}
