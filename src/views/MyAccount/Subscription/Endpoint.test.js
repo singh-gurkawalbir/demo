@@ -118,6 +118,7 @@ describe('Subscription test cases', () => {
       expires: expires.toISOString(),
     });
     expect(screen.queryByText(/Subscription/i)).toBeInTheDocument();
+    expect(screen.queryByText(/Data retention up to 180 days/i)).toBeInTheDocument();
     expect(screen.queryByText(/Expired/i)).toBeInTheDocument();
     expect(screen.queryByText(/Production entitlements/i)).toBeInTheDocument();
   });
