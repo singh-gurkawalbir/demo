@@ -3456,7 +3456,10 @@ selectors.availableUsersList = createSelector(
       ];
     }
 
-    return _users ? _users.sort(stringCompare('sharedWithUser.name')) : emptyArray;
+    return _users
+      ? _users.sort(stringCompare('sharedWithUser.name'))
+        .map(userVal => !userVal.sharedWithUser ? ({ ...userVal, sharedWithUser: emptyObject }) : userVal)
+      : emptyArray;
   }
 
 );
