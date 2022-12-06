@@ -99,7 +99,6 @@ describe('ScriptView UI tests', () => {
     expect(document.querySelector('[id="scriptId"]')).toBeInTheDocument();
     expect(document.querySelector('[title="Create script"]')).toBeInTheDocument();
     expect(document.querySelector('[title="Edit script"]')).toBeInTheDocument();
-    screen.debug();
   });
   test('should call the "handleCreateScriptClick" function passed in props when clicked on create script button', () => {
     initScriptView(props);
@@ -132,6 +131,5 @@ describe('ScriptView UI tests', () => {
     expect(screen.getByText('AmazonS3PreSavePageDND')).toBeInTheDocument();
     expect(screen.getByText('Branching Script')).toBeInTheDocument();
     expect(screen.getByText('DND_47506')).toBeInTheDocument();
-    screen.debug(null, Infinity);
   });
 });
