@@ -5,15 +5,14 @@ import * as reactRedux from 'react-redux';
 import { MemoryRouter, Route } from 'react-router-dom';
 import userEvent from '@testing-library/user-event';
 import moment from 'moment';
-import { isEmpty } from 'lodash';
 import { runServer } from '../../../../test/api/server';
 import Filters from '.';
 import { getCreatedStore } from '../../../../store';
-import {mockGetRequestOnce, renderWithProviders} from '../../../../test/test-utils';
+import { renderWithProviders } from '../../../../test/test-utils';
 
 let initialStore;
 
-async function initFilters({filterKey = 'completedFlows', completedJobs}) {
+async function initFilters({filterKey = 'completedFlows', completedJobs, dataRetentionPeriod}) {
   initialStore.getState().data.resources.integrations = [
     {
       _id: 'integration1',
@@ -24,6 +23,7 @@ async function initFilters({filterKey = 'completedFlows', completedJobs}) {
     },
   ];
   initialStore.getState().data.completedJobs = completedJobs;
+  initialStore.getState().data.accountSettings.dataRetentionPeriod = dataRetentionPeriod;
   const ui = (
     <MemoryRouter
       initialEntries={[{pathname: `/dashboard/${filterKey}`}]}
@@ -139,34 +139,53 @@ describe('Testsuite for Job Dashboard Filters', () => {
       filter: { paging: { rowsPerPage: 10, currPage: 1 } },
     });
   });
-  test('should show corresponding options in the dateRange component based on the dataRetentionPeriod', async () => {
-    mockGetRequestOnce('/api/accountSettings', {
-      dataRetentionPeriod: 60,
-    });
-    const {store} = await initFilters({filterKey: 'completedFlows'});
+  test('should show corresponding options in the dateRange component based on the dataRetentionPeriod', () => {
+    initFilters({filterKey: 'completedFlows', dataRetentionPeriod: 60});
 
-    await waitFor(() => expect(isEmpty(store?.getState()?.data?.accountSettings)).not.toBe(true));
-    await waitFor(() => {
-      const last24ButtonNode = screen.getAllByRole('button', {name: 'Last 24 hours'});
+    const last24ButtonNode = screen.getAllByRole('button', {name: 'Last 24 hours'});
 
-      userEvent.click(last24ButtonNode[0]);
-    });
-    await waitFor(() => expect(screen.getByRole('button', {name: 'Last 60 days'})).toBeInTheDocument());
+    userEvent.click(last24ButtonNode[0]);
+    expect(screen.getByRole('button', {name: 'Last 60 days'})).toBeInTheDocument();
   });
-  test('should show corresponding options in the dateRange component based on the max dataRetentionPeriod selected', async () => {
-    mockGetRequestOnce('/api/accountSettings', {
-      dataRetentionPeriod: 180,
-    });
-    const {store} = await initFilters({filterKey: 'completedFlows'});
+  test('should show corresponding options in the dateRange component based on the max dataRetentionPeriod selected', () => {
+    initFilters({filterKey: 'completedFlows', dataRetentionPeriod: 180});
 
-    await waitFor(() => expect(isEmpty(store?.getState()?.data?.accountSettings)).not.toBe(true));
-    await waitFor(() => {
-      const last24ButtonNode = screen.getAllByRole('button', {name: 'Last 24 hours'});
+    const last24ButtonNode = screen.getAllByRole('button', {name: 'Last 24 hours'});
 
-      userEvent.click(last24ButtonNode[0]);
+    userEvent.click(last24ButtonNode[0]);
+
+    expect(screen.getByRole('button', {name: 'Last 60 days'})).toBeInTheDocument();
+    expect(screen.getByRole('button', {name: 'Last 90 days'})).toBeInTheDocument();
+    expect(screen.getByRole('button', {name: 'Last 180 days'})).toBeInTheDocument();
+  });
+  test('should be able to select new corresponding options in the dateRange component based on the max dataRetentionPeriod selected', () => {
+    initFilters({filterKey: 'completedFlows', dataRetentionPeriod: 180});
+
+    const last24ButtonNode = screen.getAllByRole('button', {name: 'Last 24 hours'});
+
+    userEvent.click(last24ButtonNode[0]);
+
+    expect(screen.getByRole('button', {name: 'Last 60 days'})).toBeInTheDocument();
+    expect(screen.getByRole('button', {name: 'Last 90 days'})).toBeInTheDocument();
+    const last180daysMenuItemButtonNode = screen.getByRole('button', {name: 'Last 180 days'});
+
+    expect(last180daysMenuItemButtonNode).toBeInTheDocument();
+    userEvent.click(last180daysMenuItemButtonNode);
+    const applyButtonNode = screen.getByRole('button', {name: /apply/i});
+
+    expect(applyButtonNode).toBeInTheDocument();
+    userEvent.click(applyButtonNode);
+
+    expect(mockDispatchFn).toHaveBeenCalledWith({
+      type: 'PATCH_FILTER',
+      name: 'completedFlows',
+      filter: {
+        range: {
+          startDate: moment().subtract(179, 'days').startOf('day').toDate(),
+          endDate: moment().toDate(),
+          preset: 'last180days',
+        },
+      },
     });
-    await waitFor(() => expect(screen.getByRole('button', {name: 'Last 60 days'})).toBeInTheDocument());
-    await waitFor(() => expect(screen.getByRole('button', {name: 'Last 90 days'})).toBeInTheDocument());
-    await waitFor(() => expect(screen.getByRole('button', {name: 'Last 180 days'})).toBeInTheDocument());
   });
 });
