@@ -25,7 +25,7 @@ export default function (state = defaultState, action) {
         draft.changeEmailStatus = 'success';
         break;
       case actionTypes.AUTH.CHANGE_EMAIL_FAILED:
-        draft.changeEmailStatus = 'failure';
+        draft.changeEmailStatus = 'failed';
         break;
       case actionTypes.AUTH.RESET_REQUEST_SENT:
         draft.requestResetStatus = '';

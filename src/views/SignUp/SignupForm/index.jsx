@@ -6,20 +6,13 @@ import { useHistory } from 'react-router-dom';
 import actions from '../../../actions';
 import { selectors } from '../../../reducers';
 import { SIGN_UP_SUCCESS } from '../../../constants';
-import getImageUrl from '../../../utils/image';
 import getFieldMeta from './metadata';
 import useFormInitWithPermissions from '../../../hooks/useFormInitWithPermissions';
-import DrawerContent from '../../../components/drawer/Right/DrawerContent';
 import DynaForm from '../../../components/DynaForm';
 import DynaSubmit from '../../../components/DynaForm/DynaSubmit';
 import getRoutePath from '../../../utils/routePaths';
 
-const path = getImageUrl('images/googlelogo.png');
-
 const useStyles = makeStyles(theme => ({
-  snackbar: {
-    margin: theme.spacing(1),
-  },
   submit: {
     width: '100%',
     borderRadius: 4,
@@ -36,14 +29,6 @@ const useStyles = makeStyles(theme => ({
       maxWidth: '100%',
     },
   },
-  relatedContent: {
-    textDecoration: 'none',
-  },
-  textField: {
-    width: '100%',
-    background: theme.palette.background.paper,
-    marginBottom: 10,
-  },
   alertMsg: {
     fontSize: 12,
     textAlign: 'left',
@@ -59,66 +44,6 @@ const useStyles = makeStyles(theme => ({
       fontSize: theme.spacing(2),
       marginRight: 5,
     },
-  },
-  link: {
-    paddingLeft: 4,
-    color: theme.palette.primary.dark,
-  },
-  forgotPass: {
-    color: theme.palette.primary.dark,
-    textAlign: 'right',
-    marginBottom: theme.spacing(3),
-  },
-  googleBtn: {
-    borderRadius: 4,
-    width: '100%',
-    background: `url(${path}) 15% center no-repeat`,
-    backgroundSize: theme.spacing(2),
-    height: 38,
-    fontSize: 16,
-    backgroundColor: theme.palette.background.paper,
-  },
-  ssoBtn: {
-    borderRadius: 4,
-    width: '100%',
-    backgroundSize: theme.spacing(2),
-    height: 38,
-    fontSize: 16,
-    margin: theme.spacing(0, 0, 2, 0),
-    backgroundColor: theme.palette.background.paper,
-    display: 'flex',
-    justifyContent: 'space-around',
-    paddingLeft: theme.spacing(5),
-    paddingRight: theme.spacing(16),
-  },
-  or: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    width: '100%',
-    margin: theme.spacing(2, 0),
-    '&:before': {
-      content: '""',
-      width: '40%',
-      borderTop: '1px solid',
-      borderColor: theme.palette.secondary.lightest,
-    },
-    '&:after': {
-      content: '""',
-      width: '40%',
-      borderTop: '1px solid',
-      borderColor: theme.palette.secondary.lightest,
-    },
-  },
-  hidden: {
-    display: 'none',
-  },
-  wrapper: {
-    textAlign: 'left',
-    marginBottom: theme.spacing(2),
-  },
-  label: {
-    display: 'flex',
   },
 }));
 
@@ -162,11 +87,7 @@ export default function SignUp() {
           {error}
         </Typography>
       )}
-
-      <DrawerContent>
-        <DynaForm formKey={formKey} />
-      </DrawerContent>
-
+      <DynaForm formKey={formKey} />
       <DynaSubmit
         className={classes.submit}
         formKey={formKey}
@@ -177,4 +98,3 @@ export default function SignUp() {
     </div>
   );
 }
-
