@@ -15,13 +15,18 @@ function hiddenFieldsMeta({ values }) {
 }
 
 function basicFieldsMeta({ assistant, assistantConfig, assistantData }) {
+  let resourceDefaultValue = assistantConfig.resource;
+  let operationDefaultValue = assistantConfig.operation || assistantConfig.operationUrl;
+
+  if (assistantData?.resources?.find(res => res.id === resourceDefaultValue)?.hidden) {
+    resourceDefaultValue = assistantData?.resources?.find(res => res.id !== resourceDefaultValue && res.id.includes(resourceDefaultValue))?.id;
+  }
+  const resourceObj = assistantData?.resources?.find(res => res.id === resourceDefaultValue);
+
+  if (resourceObj?.operations?.find(ep => ep.id === operationDefaultValue)?.hidden) {
+    operationDefaultValue = resourceObj?.operations?.find(ep => ep.id !== operationDefaultValue && ep.id.includes(operationDefaultValue))?.id;
+  }
   const fieldDefinitions = {
-    version: {
-      fieldId: 'assistantMetadata.version',
-      value: assistantConfig.version,
-      type: 'hfoptions',
-      required: true,
-    },
     resource: {
       fieldId: 'assistantMetadata.resource',
       value: assistantConfig.resource,
@@ -35,6 +40,12 @@ function basicFieldsMeta({ assistant, assistantConfig, assistantData }) {
       value: assistantConfig.operation || assistantConfig.operationUrl,
       required: true,
       label: 'API endpoint',
+    },
+    version: {
+      fieldId: 'assistantMetadata.version',
+      value: assistantConfig.version,
+      type: 'hfoptions',
+      required: true,
     },
   };
   const { labels = {}, versions = [], helpTexts = {} } = assistantData;
