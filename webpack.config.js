@@ -175,7 +175,7 @@ module.exports = (env, argv) => {
       console.log('Cookie rewrite needed for secure API host.');
     }
     // eslint-disable-next-line func-names
-    let bypass = function (req, res, proxyOptions) {
+    let bypass = function (req) {
       if (req.method !== 'POST') return '/';
     };
 
@@ -239,6 +239,7 @@ module.exports = (env, argv) => {
         '/signin': getProxyOpts(true),
         '/signup': getProxyOpts(true),
         '/request-reset': getProxyOpts(true),
+        '/accept-invite': getProxyOpts(true),
         '/change-email/*': getProxyOpts(true),
         '/reset-password/*': getProxyOpts(true),
         '/set-initial-password/*': getProxyOpts(true),
@@ -246,6 +247,7 @@ module.exports = (env, argv) => {
         '/mfa/verify': getProxyOpts(true),
         '/litmos/sso': proxyOpts,
         '/auth/google': proxyOpts,
+        '/accept-invite-metadata': proxyOpts,
         '/reSigninWithGoogle': proxyOpts,
         '/reSigninWithSSO/*': proxyOpts,
         '/sso/*': proxyOpts,

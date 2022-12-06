@@ -1,33 +1,29 @@
 import TextField from '@material-ui/core/TextField';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
-import React, { useState, useCallback, useEffect} from 'react';
+import React, { useState, useCallback} from 'react';
 import { Typography} from '@material-ui/core';
-import { useLocation, Link, useHistory} from 'react-router-dom';
+import { useLocation, useHistory} from 'react-router-dom';
 import clsx from 'clsx';
-import actions from '../../actions';
-import { selectors } from '../../reducers';
-import ErrorIcon from '../../components/icons/ErrorIcon';
-import SecurityIcon from '../../components/icons/SecurityIcon';
-import { getDomain } from '../../utils/resource';
-import { AUTH_FAILURE_MESSAGE } from '../../constants';
-import getRoutePath from '../../utils/routePaths';
-import Spinner from '../../components/Spinner';
-import { FilledButton, OutlinedButton, TextButton } from '../../components/Buttons';
-import getImageUrl from '../../utils/image';
+import actions from '../../../actions';
+import { selectors } from '../../../reducers';
+import ErrorIcon from '../../../components/icons/ErrorIcon';
+import { getDomain } from '../../../utils/resource';
+import { AUTH_FAILURE_MESSAGE } from '../../../constants';
+import getRoutePath from '../../../utils/routePaths';
+import Spinner from '../../../components/Spinner';
+import { FilledButton, OutlinedButton } from '../../../components/Buttons';
+import getImageUrl from '../../../utils/image';
 
 const path = getImageUrl('images/googlelogo.png');
 
 const useStyles = makeStyles(theme => ({
-  snackbar: {
-    margin: theme.spacing(1),
-  },
   submit: {
     width: '100%',
     borderRadius: 4,
     height: 38,
     fontSize: theme.spacing(2),
-    marginTop: theme.spacing(1),
+    margin: theme.spacing(1, 0, 2, 0),
   },
   editableFields: {
     textAlign: 'center',
@@ -37,9 +33,6 @@ const useStyles = makeStyles(theme => ({
     [theme.breakpoints.down('sm')]: {
       maxWidth: '100%',
     },
-  },
-  relatedContent: {
-    textDecoration: 'none',
   },
   textField: {
     width: '100%',
@@ -62,12 +55,7 @@ const useStyles = makeStyles(theme => ({
       marginRight: 5,
     },
   },
-  link: {
-    paddingLeft: 4,
-    color: theme.palette.primary.dark,
-  },
   forgotPass: {
-    color: theme.palette.primary.dark,
     textAlign: 'right',
     marginBottom: theme.spacing(3),
   },
@@ -79,50 +67,21 @@ const useStyles = makeStyles(theme => ({
     height: 38,
     fontSize: 16,
     backgroundColor: theme.palette.background.paper,
-  },
-  ssoBtn: {
-    borderRadius: 4,
-    width: '100%',
-    backgroundSize: theme.spacing(2),
-    height: 38,
-    fontSize: 16,
+    minWidth: '240px',
     margin: theme.spacing(0, 0, 2, 0),
-    backgroundColor: theme.palette.background.paper,
-    display: 'flex',
-    justifyContent: 'space-around',
-    paddingLeft: theme.spacing(5),
-    paddingRight: theme.spacing(16),
-  },
-  or: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    width: '100%',
-    margin: theme.spacing(2, 0),
-    '&:before': {
-      content: '""',
-      width: '40%',
-      borderTop: '1px solid',
-      borderColor: theme.palette.secondary.lightest,
-    },
-    '&:after': {
-      content: '""',
-      width: '40%',
-      borderTop: '1px solid',
-      borderColor: theme.palette.secondary.lightest,
-    },
-  },
-  hidden: {
-    display: 'none',
-  },
-  wrapper: {
-    textAlign: 'left',
-    marginBottom: theme.spacing(2),
-  },
-  label: {
-    display: 'flex',
   },
 }));
+
+function ForgotPassworLink({email = ''}) {
+  const classes = useStyles();
+  const fpLink = email ? `/request-reset?application=concur&email=${email}` : '/request-reset?application=concur';
+
+  return (
+    <p align="center">
+      <a className={classes.forgotPass} data-hook="forgot-password-link" href={fpLink}>Forgot Password?</a>
+    </p>
+  );
+}
 
 export default function SignIn({dialogOpen, className}) {
   const dispatch = useDispatch();
@@ -155,10 +114,7 @@ export default function SignIn({dialogOpen, className}) {
   });
   const userEmail = useSelector(state => selectors.userProfileEmail(state));
   const userProfileLinkedWithGoogle = useSelector(state => selectors.userProfileLinkedWithGoogle(state));
-  const canUserLoginViaSSO = useSelector(state => selectors.isUserAllowedOptionalSSOSignIn(state));
   const showError = useSelector(state => selectors.showAuthError(state));
-
-  const userHasOtherLoginOptions = (userEmail && userProfileLinkedWithGoogle) || canUserLoginViaSSO;
 
   const handleOnChangeEmail = useCallback(e => {
     setEmail(e.target.value);
@@ -182,24 +138,17 @@ export default function SignIn({dialogOpen, className}) {
     dispatch(actions.auth.reSignInWithGoogle(userEmail));
   }, [dispatch, userEmail]);
 
-  const handleReSignInWithSSO = e => {
-    e.preventDefault();
-    dispatch(actions.auth.reSignInWithSSO());
-  };
-
   window.signedInWithGoogle = () => {
     reInitializeSession();
   };
   window.signedInWithSSO = () => {
     reInitializeSession();
   };
-  useEffect(() => {
-    if (isMFAAuthRequired) {
-      history.push(getRoutePath('/mfa/verify'));
-    }
-  }, [history, isMFAAuthRequired]);
-  const attemptedRoute =
-      location && location.state && location.state.attemptedRoute;
+
+  if (isMFAAuthRequired) {
+    history.push(getRoutePath('/mfa/verify'));
+  }
+  const attemptedRoute = location && location.state && location.state.attemptedRoute;
 
   return (
   // user's email can be listed here ...type passwords is anyways redacted by logrocket
@@ -208,36 +157,28 @@ export default function SignIn({dialogOpen, className}) {
         <TextField
           data-private
           data-test="email"
+          required
           id="email"
           type="email"
           variant="filled"
-          placeholder="Email"
+          placeholder="Email *"
           value={dialogOpen ? userEmail : email}
           onChange={handleOnChangeEmail}
           className={classes.textField}
           disabled={dialogOpen}
-            />
+        />
         <TextField
           data-private
           data-test="password"
           id="password"
           variant="filled"
+          required
           type="password"
-          placeholder="Password"
+          placeholder="Password *"
           className={classes.textField}
-            />
+        />
 
-        <div className={classes.forgotPass}>
-          <TextButton
-            data-test="forgotPassword"
-            color="primary"
-            className={classes.forgotPass}
-            component={Link}
-            role="link"
-            to={email ? getRoutePath(`/request-reset?email=${email}`) : getRoutePath('/request-reset')}>
-            Forgot password?
-          </TextButton>
-        </div>
+        <ForgotPassworLink email={email} />
         { showError && error && (
           <Typography
             data-private
@@ -253,10 +194,9 @@ export default function SignIn({dialogOpen, className}) {
             <FilledButton
               data-test="submit"
               type="submit"
-              role="button"
               className={classes.submit}
               value="Submit">
-              Sign in
+              Sign in and connect
             </FilledButton>
           )}
       </form>
@@ -270,10 +210,8 @@ export default function SignIn({dialogOpen, className}) {
             id="attemptedRoute"
             name="attemptedRoute"
             value={attemptedRoute || getRoutePath('/')}
-                />
-          <div className={classes.or}>
-            <Typography variant="body1">or</Typography>
-          </div>
+          />
+
           <OutlinedButton
             type="submit"
             color="secondary"
@@ -281,22 +219,6 @@ export default function SignIn({dialogOpen, className}) {
             Sign in with Google
           </OutlinedButton>
         </form>
-        )}
-        {dialogOpen && userHasOtherLoginOptions && (
-          <div className={classes.or}>
-            <Typography variant="body1">or</Typography>
-          </div>
-        )}
-        {dialogOpen && canUserLoginViaSSO && (
-          <form onSubmit={handleReSignInWithSSO}>
-            <OutlinedButton
-              type="submit"
-              className={classes.ssoBtn}
-              startIcon={<SecurityIcon />}
-              color="secondary">
-              Sign in with SSO
-            </OutlinedButton>
-          </form>
         )}
         {dialogOpen && userEmail && userProfileLinkedWithGoogle && (
         <form onSubmit={handleReSignInWithGoogle}>

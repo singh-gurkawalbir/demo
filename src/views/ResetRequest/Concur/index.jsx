@@ -1,11 +1,6 @@
 import React from 'react';
 import { makeStyles, Typography } from '@material-ui/core';
-import ResetPasswordForm from './resetPasswordForm';
-import CeligoLogo from '../../components/CeligoLogo';
-import { getDomain } from '../../utils/resource';
-import useQuery from '../../hooks/useQuery';
-import ConcurResetPasswordPage from './Concur';
-import MarketingContentWithIframe from '../../components/LoginScreen/MarketingContentWithIframe';
+import ResetPasswordForm from './ResetPasswordForm';
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
@@ -59,18 +54,14 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function ResetPassword(props) {
+export default function ResetPassword(props) {
   const classes = useStyles();
-  // eslint-disable-next-line no-undef
-  const contentUrl = (getDomain() === 'eu.integrator.io' ? IO_LOGIN_PROMOTION_URL_EU : IO_LOGIN_PROMOTION_URL);
 
   return (
     <div className={classes.wrapper}>
       <div className={classes.resetPasswordWrapper}>
         <div className={classes.resetPasswordContent}>
-          <div className={classes.logo}>
-            <CeligoLogo />
-          </div>
+          <div className={classes.logo} />
           <Typography variant="h3" className={classes.title}>
             Reset Password
           </Typography>
@@ -81,27 +72,6 @@ function ResetPassword(props) {
           />
         </div>
       </div>
-      <div className={classes.marketingContentWrapper}>
-        <MarketingContentWithIframe contentUrl={contentUrl} />
-      </div>
     </div>
   );
-}
-
-export default function RequestResetWrapper(props) {
-  const query = useQuery();
-  const application = query.get('application');
-  let ResetPasswordPage = ResetPassword;
-
-  if (application) {
-    switch (application) {
-      case 'concur':
-        ResetPasswordPage = ConcurResetPasswordPage;
-        break;
-      default:
-        break;
-    }
-  }
-
-  return <ResetPasswordPage {...props} />;
 }

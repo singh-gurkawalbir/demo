@@ -8,7 +8,9 @@ import { getDomain } from '../../utils/resource';
 import { selectors } from '../../reducers';
 import MarketingContentWithIframe from '../../components/LoginScreen/MarketingContentWithIframe';
 import { TextButton } from '../../components/Buttons';
-import { SIGN_UP_SUCCESS, RESET_PASSWORD_SUCCESS } from '../../constants';
+import ConcurSignInPage from './Concur';
+import useQuery from '../../hooks/useQuery';
+import { RESET_PASSWORD_SUCCESS } from '../../constants';
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
@@ -98,12 +100,13 @@ const Title = () => {
   );
 };
 
-export default function Signin(props) {
+function Signin(props) {
   const classes = useStyles();
   // eslint-disable-next-line no-undef
   const contentUrl = (getDomain() === 'eu.integrator.io' ? IO_LOGIN_PROMOTION_URL_EU : IO_LOGIN_PROMOTION_URL);
 
   const isSignupCompleted = useSelector(state => selectors.signupStatus(state) === 'done');
+  const signupMessage = useSelector(state => selectors.signupMessage(state));
   const isSetPasswordCompleted = useSelector(state => selectors.requestResetPasswordStatus(state) === 'success');
 
   return (
@@ -117,7 +120,7 @@ export default function Signin(props) {
           {
             isSignupCompleted && (
             <Typography variant="body2" className={classes.signupSuccess} >
-              {SIGN_UP_SUCCESS}
+              {signupMessage}
             </Typography>
             )
           }
@@ -153,4 +156,23 @@ export default function Signin(props) {
       </div>
     </div>
   );
+}
+
+export default function SignInWrapper(props) {
+  console.log('I should be here');
+  const query = useQuery();
+  const application = query.get('application');
+  let SignInPage = Signin;
+
+  if (application) {
+    switch (application) {
+      case 'concur':
+        SignInPage = ConcurSignInPage;
+        break;
+      default:
+        break;
+    }
+  }
+
+  return <SignInPage {...props} />;
 }

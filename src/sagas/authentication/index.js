@@ -315,6 +315,47 @@ export function* getCSRFTokenBackend() {
 
   return _csrf;
 }
+export function* validateAcceptInviteToken({ token }) {
+  try {
+    const _csrf = yield call(getCSRFTokenBackend);
+    const apiResponse = yield call(apiCallWithRetry, {
+      path: '/accept-invite-metadata',
+      message: 'Validate accept invite token',
+      opts: {
+        method: 'POST',
+        body: {
+          token,
+          _csrf,
+        },
+      },
+      hidden: true,
+    });
+
+    yield put(actions.auth.acceptInvite.validateSuccess(apiResponse));
+  } catch (e) {
+    yield put(actions.auth.acceptInvite.validateError(e));
+  }
+}
+export function* submitAcceptInvite({payload}) {
+  try {
+    const response = yield call(apiCallWithRetry, {
+      path: '/accept-invite?no_redirect=true',
+      opts: {
+        body: payload,
+        method: 'POST',
+      },
+      message: 'Accept invite',
+      hidden: true,
+    });
+
+    if (response.success) {
+      yield put(actions.auth.acceptInvite.success(response));
+      yield put(actions.auth.signupStatus('done', response.message));
+    }
+  } catch (e) {
+    yield put(actions.auth.acceptInvite.failure(e));
+  }
+}
 export function* resetRequest({ email }) {
   try {
     const _csrf = yield call(getCSRFTokenBackend);
@@ -636,6 +677,8 @@ function* mfaVerify({ payload }) {
   }
 }
 export const authenticationSagas = [
+  takeEvery(actionTypes.AUTH.ACCEPT_INVITE.VALIDATE, validateAcceptInviteToken),
+  takeEvery(actionTypes.AUTH.ACCEPT_INVITE.SUBMIT, submitAcceptInvite),
   takeEvery(actionTypes.AUTH.INIT_SESSION, initializeSession),
   takeEvery(actionTypes.AUTH.REQUEST, auth),
   takeEvery(actionTypes.AUTH.SIGNUP, signup),

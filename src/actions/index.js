@@ -87,6 +87,15 @@ const form = {
 };
 // #endregion
 const auth = {
+  acceptInvite: {
+    validate: token => action(actionTypes.AUTH.ACCEPT_INVITE.VALIDATE, { token }),
+    validateError: error => action(actionTypes.AUTH.ACCEPT_INVITE.VALIDATE_ERROR, {error}),
+    validateSuccess: payload => action(actionTypes.AUTH.ACCEPT_INVITE.VALIDATE_SUCCESS, {payload}),
+    submit: payload => action(actionTypes.AUTH.ACCEPT_INVITE.SUBMIT, { payload }),
+    success: response => action(actionTypes.AUTH.ACCEPT_INVITE.SUCCESS, { response }),
+    failure: error => action(actionTypes.AUTH.ACCEPT_INVITE.FAILED, { error }),
+    clear: () => action(actionTypes.AUTH.ACCEPT_INVITE.CLEAR),
+  },
   changeEmailRequest: token =>
     action(actionTypes.AUTH.CHANGE_EMAIL_REQUEST, { token }),
   changeEmailSuccess: () => action(actionTypes.AUTH.CHANGE_EMAIL_SUCCESSFUL),
@@ -1540,6 +1549,12 @@ const app = {
     }),
 };
 
+const concur = {
+  connect: data => action(actionTypes.CONCUR.CONNECT, data),
+  connectError: error => action(actionTypes.CONCUR.CONNECT_ERROR, {error}),
+  connectSuccess: payload => action(actionTypes.CONCUR.CONNECT_SUCCESS, {payload}),
+};
+
 const patchFilter = (name, filter) =>
   action(actionTypes.PATCH_FILTER, { name, filter });
 const clearFilter = name => action(actionTypes.CLEAR_FILTER, { name });
@@ -2542,6 +2557,7 @@ export default {
   asyncTask,
   form,
   app,
+  concur,
   metadata,
   fileDefinitions,
   connectors,

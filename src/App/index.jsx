@@ -1,6 +1,6 @@
 import React, { useMemo, Fragment, useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { BrowserRouter, Switch, Route } from 'react-router-dom';
+import { BrowserRouter, Switch, Route, useLocation } from 'react-router-dom';
 import { MuiThemeProvider, makeStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import { SnackbarProvider } from 'notistack';
@@ -19,6 +19,7 @@ import ResetPassword from '../views/ResetRequest';
 import ChangeEmail from '../views/ChangeEmail';
 import SetPassword from '../views/SetPassword';
 import ForgotPassword from '../views/ForgotPassword';
+import AcceptInvite from '../views/AcceptInvite';
 import * as gainsight from '../utils/analytics/gainsight';
 import { getDomain } from '../utils/resource';
 import getRoutePath from '../utils/routePaths';
@@ -35,6 +36,7 @@ import { FormOnCancelProvider } from '../components/FormOnCancelContext';
 import UserActivityMonitor from './UserActivityMonitor';
 import * as pendo from '../utils/analytics/pendo';
 import MfaHelp from '../views/MFAHelp';
+import ConcurConnect from '../views/ConcurConnect';
 
 // The makeStyles function below does not have access to the theme.
 // We can only use the theme in components that are children of
@@ -109,6 +111,17 @@ function NonSigninHeaderComponents() {
     </>
   );
 }
+const PUBLIC_ROUTES = [
+  'reset-password',
+  'change-email',
+  'set-initial-password',
+  'accept-invite',
+  'request-reset-sent',
+  'request-reset',
+  'signin',
+  'signup',
+  'mfa-help',
+];
 
 const pageContentPaths = [getRoutePath('/*'), getRoutePath('/')];
 export const PageContentComponents = () => (
@@ -126,9 +139,36 @@ export const PageContentComponents = () => (
         getRoutePath('/request-reset'),
       ]} component={ForgotPassword} />
     <Route path={getRoutePath('/request-reset-sent')} component={ForgotPassword} />
+    <Route path={getRoutePath('/accept-invite/:token')} component={AcceptInvite} />
+    <Route path={getRoutePath('/concurconnect/:module')} component={ConcurConnect} />
     <Route path={pageContentPaths} component={PageContent} />
   </Switch>
 );
+
+const Headers = () => {
+  const location = useLocation();
+
+  const isConcurLandingPage = location.pathname.startsWith('/concurconnect');
+  const isMFAVerifyPage = location.pathname === '/mfa/verify';
+  const isPublicPage = PUBLIC_ROUTES.includes(location.pathname?.split('/')?.[1]);
+  const isLandingPage = location.pathname.startsWith('/landing');
+
+  if (isConcurLandingPage || isPublicPage || isMFAVerifyPage || isLandingPage) return null;
+
+  return <NonSigninHeaderComponents />;
+};
+
+const PageContentWrapper = () => {
+  const location = useLocation();
+  const isPublicPage = PUBLIC_ROUTES.includes(location.pathname?.split('/')?.[1]);
+  const isSignInPage = location.pathname.startsWith('/signin');
+
+  return isPublicPage && !isSignInPage ? <PageContentComponents /> : (
+    <WithAuth>
+      <PageContentComponents />
+    </WithAuth>
+  );
+};
 
 export default function App() {
   const classes = useStyles();
@@ -185,23 +225,9 @@ export default function App() {
                     <LoadingNotification />
                     <ErrorNotifications />
                     {/* Headers */}
-                    <Switch>
-                      <Route path={getRoutePath('/mfa-help')} component={null} />
-                      <Route path={getRoutePath('/mfa/verify')} component={null} />
-                      <Route path={getRoutePath('/reset-password')} component={null} />
-                      <Route path={getRoutePath('/set-initial-password')} component={null} />
-                      <Route path={getRoutePath('/signin')} component={null} />
-                      <Route path={getRoutePath('/signup')} component={null} />
-                      <Route path={getRoutePath('/request-reset')} component={null} />
-                      <Route path={getRoutePath('/request-reset-sent')} component={null} />
-                      <Route path={getRoutePath('/change-email')} component={null} />
-                      <Route path={getRoutePath('/landing')} component={null} />
-                      <Route path={getRoutePath('/*')} component={NonSigninHeaderComponents} />
-                    </Switch>
+                    <Headers />
                     {/* page content */}
-                    <WithAuth>
-                      <PageContentComponents />
-                    </WithAuth>
+                    <PageContentWrapper />
                   </div>
                 </BrowserRouter>
                 <ConflictAlertDialog />

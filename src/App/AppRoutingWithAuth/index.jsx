@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { connect } from 'react-redux';
+import { connect, useSelector } from 'react-redux';
 import { withRouter, Redirect } from 'react-router-dom';
 import { selectors } from '../../reducers';
 import actions from '../../actions';
@@ -31,23 +31,27 @@ export function AppRoutingWithAuth(props) {
   } = props;
   const { pathname: currentRoute, search } = location;
   const [hasPageReloaded, setHasPageReloaded] = useState(false);
+  const isMFAAuthRequired = useSelector(selectors.isMFAAuthRequired);
+  const isSignInRoute = location.pathname.split('?')[0] === getRoutePath('signin');
+  const isConcurPage = location.pathname.startsWith('/concurconnect');
 
   useEffect(() => {
     if (!isAuthInitialized && !hasPageReloaded) {
-      if (currentRoute !== getRoutePath('signin')) {
+      if (!isSignInRoute) {
         history.replace({
-          search,
+          search: isConcurPage ? '?application=concur' : search,
           state: { attemptedRoute: currentRoute, search },
         });
+        initSession();
       }
-      initSession();
+      if (!hasPageReloaded) clearAppError();
+      setHasPageReloaded(true);
     }
-
-    if (!hasPageReloaded) clearAppError();
-    setHasPageReloaded(true);
   }, [
     hasPageReloaded,
     currentRoute,
+    isConcurPage,
+    isSignInRoute,
     history,
     search,
     initSession,
@@ -56,14 +60,6 @@ export function AppRoutingWithAuth(props) {
   ]);
 
   const { shouldShowAppRouting, isAuthenticated, isSessionExpired } = props;
-  const isSignInRoute = location.pathname === getRoutePath('signin');
-  const isSignUpRoute = location.pathname === getRoutePath('signup');
-  const isForgotPasswordRoute = location.pathname === getRoutePath('request-reset');
-  const isMfaVerifyRoute = location.pathname === getRoutePath('mfa/verify');
-  const isMfaHelpRoute = location.pathname === getRoutePath('mfa-help');
-  const isResetPasswordRoute = location.pathname.split('/')[1] === 'reset-password';
-  const isSetPasswordRoute = location.pathname.split('/')[1] === 'set-initial-password';
-  const isChangeEmailRoute = location.pathname.split('/')[1] === 'change-email';
 
   // this selector is used by the UI to hold off rendering any routes
   // till it determines the auth state
@@ -77,7 +73,7 @@ export function AppRoutingWithAuth(props) {
 
     return children;
   }
-  if (!isSessionExpired && !isSignInRoute && !isSignUpRoute && !isForgotPasswordRoute && !isResetPasswordRoute && !isSetPasswordRoute && !isChangeEmailRoute && !isMfaVerifyRoute && !isMfaHelpRoute) {
+  if (!isSessionExpired && !isSignInRoute && !isMFAAuthRequired) {
     return (
       <Redirect
         push={false}
@@ -88,7 +84,7 @@ export function AppRoutingWithAuth(props) {
       />
     );
   }
-  if (!shouldShowAppRouting) return null;
+  if (!shouldShowAppRouting && !isSignInRoute) return null;
 
   return children;
 }

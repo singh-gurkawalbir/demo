@@ -3,35 +3,57 @@ import { useSelector, useDispatch} from 'react-redux';
 import { makeStyles, Typography } from '@material-ui/core';
 import { Link, useLocation } from 'react-router-dom';
 import ForgotPasswordForm from './ForgotPasswordForm';
-import CeligoLogo from '../../components/CeligoLogo';
-import { getDomain } from '../../utils/resource';
-import { selectors } from '../../reducers';
-import MarketingContentWithIframe from '../../components/LoginScreen/MarketingContentWithIframe';
-import { TextButton } from '../../components/Buttons';
-import actions from '../../actions';
-import ConcurForgotPassword from './Concur';
-import useQuery from '../../hooks/useQuery';
-import messageStore from '../../utils/messageStore';
+import { selectors } from '../../../reducers';
+import { TextButton } from '../../../components/Buttons';
+import actions from '../../../actions';
+import messageStore from '../../../utils/messageStore';
+import getImageUrl from '../../../utils/image';
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
-    flexGrow: 1,
-    display: 'grid',
-    gridTemplateColumns: '30% 70%',
-    height: '100vh',
-    [theme.breakpoints.down('sm')]: {
-      gridTemplateColumns: '100%',
+    maxWidth: '770px',
+    margin: '0 auto',
+    position: 'relative',
+  },
+  logo: {
+    margin: '0 0 40px 0',
+    '& > img': {
+      height: '50px',
+      width: 'auto',
+    },
+  },
+  link: {
+    paddingLeft: 4,
+    color: theme.palette.warning.main,
+  },
+  signinWrapper: {
+    background: theme.palette.background.paper,
+    width: '100%',
+    border: '0px none',
+    height: '679px',
+    textAlign: 'center',
+    position: 'relative',
+    zIndex: 1,
+    overflow: 'inherit !important',
+  },
+  signinWrapperContent: {
+    width: '2500px',
+    height: '679px',
+    display: 'table-cell',
+    verticalAlign: 'middle',
+    padding: '10px 0',
+    '& > p': {
+      margin: '0 auto 15px auto',
+      width: '327px',
     },
   },
   alertMsg: {
-    fontSize: 10,
+    width: '300px',
+    margin: '0 auto 15px auto',
+    fontSize: 14,
     textAlign: 'left',
-    marginLeft: 0,
-    width: '100%',
     display: 'flex',
     alignItems: 'flex-start',
-    marginTop: theme.spacing(-2),
-    marginBottom: 10,
     lineHeight: `${theme.spacing(2)}px`,
     '& > svg': {
       fill: theme.palette.error.main,
@@ -39,44 +61,13 @@ const useStyles = makeStyles(theme => ({
       marginRight: 5,
     },
   },
-  marketingContentWrapper: {
-    [theme.breakpoints.down('sm')]: {
-      display: 'none',
-    },
-  },
-  logo: {
-    width: 150,
-    marginBottom: theme.spacing(5),
-    '& > svg': {
-      fill: theme.palette.primary.dark,
-    },
-  },
-  link: {
-    paddingLeft: 4,
-    color: theme.palette.primary.dark,
-  },
-  signinWrapper: {
-    background: theme.palette.background.paper,
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    position: 'relative',
-  },
-  signinWrapperContent: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    width: 300,
-    marginTop: '50%',
-    height: '100%',
-    [theme.breakpoints.down('sm')]: {
-      marginTop: 0,
-    },
-  },
   title: {
-    marginBottom: theme.spacing(2),
-    fontSize: 30,
-    lineHeight: '40px',
+    margin: theme.spacing(0, 0, 4, 0),
+    lineHeight: '38px',
+    color: '#677A89',
+    fontFamily: '"Roboto", Helvetica, sans-serif',
+    fontSize: '32px',
+    fontWeight: 'normal',
   },
   mfaTitle: {
     marginBottom: theme.spacing(3),
@@ -86,8 +77,8 @@ const useStyles = makeStyles(theme => ({
     textAlign: 'center',
   },
   signupLink: {
-    position: 'absolute',
-    bottom: theme.spacing(8),
+    position: 'relative',
+    // bottom: theme.spacing(8),
   },
   ForgotPasswordForm: {
     [theme.breakpoints.down('xs')]: {
@@ -95,15 +86,35 @@ const useStyles = makeStyles(theme => ({
     },
   },
   mfaInfo: {
-    display: 'flex',
-    marginBottom: theme.spacing(1.5),
+    margin: '0 auto 15px auto',
+    width: '327px',
   },
   infoText: {
     marginLeft: theme.spacing(1),
   },
+  signInForm: {
+    width: '327px',
+    margin: '0 auto',
+    '& > div': {
+      marginBottom: '5px',
+      maxWidth: '390px',
+      marginLeft: 'auto',
+      marginRight: 'auto',
+      position: 'relative',
+    },
+  },
+  bottom: {
+    padding: '20px 0',
+    margin: '20px 0 0',
+    borderTop: '1px solid #D8E5EF',
+    '& > a': {
+      color: '#6A7B89',
+      padding: '0 15px',
+    },
+  },
 }));
 
-function ForgotPassword(props) {
+export default function ConcurForgotPassword(props) {
   const [showError, setShowError] = useState(false);
   const resetRequestStatus = useSelector(state => selectors.requestResetStatus(state));
   const successView = (resetRequestStatus === 'success');
@@ -117,9 +128,7 @@ function ForgotPassword(props) {
   function handleClick() {
     dispatch(actions.auth.resetRequestSent());
   }
-  // eslint-disable-next-line no-undef
-  const contentUrl = (getDomain() === 'eu.integrator.io' ? IO_LOGIN_PROMOTION_URL_EU : IO_LOGIN_PROMOTION_URL);
-  let message = messageStore('FORGOT_PASSWORD_DEFAULT');
+  let message = 'Please note that after you reset your password, you have to go back to the Concur App Center and connect again to the Celigo app.';
 
   if (successView) {
     message = `If ${email} ${messageStore('FORGOT_PASSWORD_USER_EXIST')}`;
@@ -130,9 +139,9 @@ function ForgotPassword(props) {
       <div className={classes.signinWrapper}>
         <div className={classes.signinWrapperContent}>
           <div className={classes.logo}>
-            <CeligoLogo />
+            <img alt="SapConcur" src={getImageUrl('/images/celigo-sapconcur.png')} />
           </div>
-          <Typography variant="h4" className={classes.title}>
+          <Typography variant="h1" className={classes.title}>
             Forgot your password?
           </Typography>
           {email && (
@@ -164,7 +173,7 @@ function ForgotPassword(props) {
           />
             ) : ''}
           {successView ? (
-            <Typography variant="body2" className={classes.signupLink}>
+            <Typography variant="body2">
               Back to
               <TextButton
                 data-test="signin"
@@ -172,34 +181,18 @@ function ForgotPassword(props) {
                 className={classes.link}
                 onClick={handleClick}
                 component={Link}
-                to="/signin">
+                to="/signin?application=concur">
                 Sign in
               </TextButton>
             </Typography>
           ) : ''}
+          <div className={classes.bottom}>
+            <a href="https://www.celigo.com/privacy/" target="_blank" rel="noreferrer" >Privacy</a>
+            <a href="https://www.celigo.com/terms-of-service/" target="_blank" rel="noreferrer" >Terms of Service</a>
+            <a href="https://www.celigo.com/support/" target="_blank" rel="noreferrer" >Support</a>
+          </div>
         </div>
-      </div>
-      <div className={classes.marketingContentWrapper}>
-        <MarketingContentWithIframe contentUrl={contentUrl} />
       </div>
     </div>
   );
-}
-
-export default function ForgotPasswordWrapper(props) {
-  const query = useQuery();
-  const application = query.get('application');
-  let ForgotPasswordPage = ForgotPassword;
-
-  if (application) {
-    switch (application) {
-      case 'concur':
-        ForgotPasswordPage = ConcurForgotPassword;
-        break;
-      default:
-        break;
-    }
-  }
-
-  return <ForgotPasswordPage {...props} />;
 }
