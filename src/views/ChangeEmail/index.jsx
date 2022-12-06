@@ -9,6 +9,7 @@ import actions from '../../actions';
 import MarketingContentWithIframe from '../../components/LoginScreen/MarketingContentWithIframe';
 import { CHANGE_EMAIL_SUCCESS } from '../../constants';
 import getRoutePath from '../../utils/routePaths';
+import Spinner from '../../components/Spinner';
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
@@ -65,6 +66,7 @@ export default function ChangeEmail(props) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const history = useHistory();
+  const isUserLoggedOut = useSelector(state => selectors.isUserLoggedOut(state));
   const changeEmailStatus = useSelector(state => selectors.changeEmailStatus(state));
   const token = React.useState(props.match.params.token ? props.match.params.token : '');
 
@@ -72,8 +74,10 @@ export default function ChangeEmail(props) {
     if (token == null || token === '') {
       return;
     }
-    dispatch(actions.auth.changeEmailRequest(token));
-  }, [dispatch, token]);
+    if (isUserLoggedOut && changeEmailStatus === '') {
+      dispatch(actions.auth.changeEmailRequest(token));
+    }
+  }, [dispatch, isUserLoggedOut, token, changeEmailStatus]);
   useEffect(() => {
     if (changeEmailStatus === 'success') {
       dispatch(actions.auth.signupStatus('done', CHANGE_EMAIL_SUCCESS));
@@ -84,30 +88,28 @@ export default function ChangeEmail(props) {
   // eslint-disable-next-line no-undef
   const contentUrl = (getDomain() === 'eu.integrator.io' ? IO_LOGIN_PROMOTION_URL_EU : IO_LOGIN_PROMOTION_URL);
 
-  if (changeEmailStatus === '') {
-    // return (
-    //   <Spinner centerAll />
-    // );
-  }
-
-  return (
-    <div className={classes.wrapper}>
-      <div className={classes.changeEmailWrapper}>
-        <div className={classes.changeEmailContent}>
-          <div className={classes.logo}>
-            <CeligoLogo />
+  if (changeEmailStatus === 'failed') {
+    return (
+      <div className={classes.wrapper}>
+        <div className={classes.changeEmailWrapper}>
+          <div className={classes.changeEmailContent}>
+            <div className={classes.logo}>
+              <CeligoLogo />
+            </div>
+            <Typography variant="h1" className={classes.title}>
+              Failed to change email address.
+            </Typography>
+            <Typography variant="body1">
+              invalid token
+            </Typography>
           </div>
-          <Typography variant="h1" className={classes.title}>
-            Failed to change email address.
-          </Typography>
-          <Typography variant="body1">
-            invalid token
-          </Typography>
+        </div>
+        <div className={classes.marketingContentWrapper}>
+          <MarketingContentWithIframe contentUrl={contentUrl} />
         </div>
       </div>
-      <div className={classes.marketingContentWrapper}>
-        <MarketingContentWithIframe contentUrl={contentUrl} />
-      </div>
-    </div>
-  );
+    );
+  }
+
+  return <Spinner centerAll />;
 }

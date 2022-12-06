@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import { useSelector } from 'react-redux';
 import { makeStyles, Typography } from '@material-ui/core';
 import { Link, useHistory } from 'react-router-dom';
@@ -124,9 +124,11 @@ export default function MfaVerify() {
 
   const isMFAAuthRequired = useSelector(state => selectors.isMFAAuthRequired(state));
 
-  if (!isMFAAuthRequired) {
-    history.push(getRoutePath('/signin'));
-  }
+  useEffect(() => {
+    if (!isMFAAuthRequired) {
+      history.push(getRoutePath('/signin'));
+    }
+  }, [history, isMFAAuthRequired]);
 
   return (
     <div className={classes.wrapper}>
