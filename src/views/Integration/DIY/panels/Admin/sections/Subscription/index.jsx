@@ -239,7 +239,7 @@ export default function SubscriptionSection({ childId, integrationId }) {
         },
       ],
     });
-  }, [confirmDialog, dispatch, integrationId, nextPlan]);
+  }, [confirmDialog, dispatch, integrationId, nextPlan, changeEditionSteps?.length]);
 
   return (
     <>

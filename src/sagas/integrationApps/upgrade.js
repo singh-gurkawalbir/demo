@@ -7,7 +7,6 @@ import { apiCallWithRetry } from '../index';
 import { openOAuthWindowForConnection } from '../resourceForm/connections/index';
 import { isOauth } from '../../utils/resource';
 import { isJsonString } from '../../utils/string';
-// import { getResource } from '../resources';
 import { refreshConnectionMetadata } from '../resources/meta';
 import { INSTALL_STEP_TYPES } from '../../constants';
 import openExternalUrl from '../../utils/window';
@@ -48,7 +47,6 @@ export function* getSteps({ integrationId }) {
     // error handling;
     return;
   }
-  console.log('getSteps response', response);
 
   if (!response.showWizard) {
     yield put(actions.integrationApp.upgrade.postChangeEditonSteps(integrationId));
@@ -77,7 +75,6 @@ export function* postChangeEditionSteps({ integrationId }) {
 
     return;
   }
-  console.log('post response', response);
   if (response?.done === true) {
     yield put(actions.integrationApp.upgrade.setStatus(integrationId, { status: 'done' }));
     yield put(actions.resource.request('integrations', integrationId));
@@ -280,19 +277,8 @@ export function* installScriptStep({
     return undefined;
   }
 
-  console.log('response', stepCompleteResponse);
-
   if (!stepCompleteResponse || stepCompleteResponse.warnings) {
-    // const integration = yield select(selectors.resource, 'integrations', id);
-
-    // if (
-    //   integration &&
-    //   integration.initChild &&
-    //   integration.initChild.function
-    // ) {
-    //   yield call(installInitChild, { id });
-    // }
-    // refresh NS/SF connection's metadata once the integration install steps are completed
+    // refresh NS/SF connection's metadata once the integration changeEdition steps are completed
     yield call(refreshIntegrationConnectionsMetadata, { integrationId: id });
     // to clear session state
     yield put(
@@ -307,16 +293,13 @@ export function* installScriptStep({
 
   if (stepCompleteResponse?.done) {
     const status = yield select(selectors.getStatus, id);
-    let steps = status?.steps;
-
-    console.log("before steps", steps);
+    const steps = status?.steps;
 
     if (steps.length) {
       let lastStep = steps.length ? steps[steps.length - 1] : {};
 
       lastStep = {...lastStep, completed: true};
       steps[steps.length - 1] = lastStep;
-      console.log("last steps", steps);
     }
     yield put(actions.integrationApp.upgrade.setStatus(id, { status: 'done', steps }));
     yield put(actions.resource.request('integrations', id));
@@ -398,14 +381,6 @@ export function* verifyBundleOrPackageInstall({
         actions.integrationApp.upgrade.installer.scriptInstallStep(id)
       );
     }
-    // else {
-    //   yield put(
-    //     actions.integrationApp.upgrade.installer.installStep(
-    //       id,
-    //       installerFunction,
-    //     )
-    //   );
-    // }
   } else if (
     response &&
       !response.success &&
@@ -428,82 +403,6 @@ export function* verifyBundleOrPackageInstall({
     );
   }
 }
-// export function* installChildStep({ id, installerFunction, formVal }) {
-//   const path = `/integrations/${id}/installer/${installerFunction}`;
-//   let stepCompleteResponse;
-//   const body = formVal ? { formVal } : {};
-
-//   try {
-//     stepCompleteResponse = yield call(apiCallWithRetry, {
-//       path,
-//       timeout: 5 * 60 * 1000,
-//       opts: { body, method: 'PUT' },
-//       hidden: true,
-//       message: 'Installing',
-//     }) || {};
-//   } catch (error) {
-//     yield put(
-//       actions.integrationApp.child.updateStep(id, installerFunction, 'failed')
-//     );
-//     yield put(actions.api.failure(path, 'PUT', error, false));
-
-//     return undefined;
-//   }
-
-//   if (stepCompleteResponse && stepCompleteResponse.success) {
-//     yield call(getResource, { resourceType: 'integrations', id });
-
-//     yield put(
-//       actions.integrationApp.settings.requestAddOnLicenseMetadata(id)
-//     );
-//     yield put(
-//       actions.integrationApp.child.completedStepInstall(
-//         id,
-//         installerFunction,
-//         stepCompleteResponse.stepsToUpdate
-//       )
-//     );
-//   } else if (
-//     stepCompleteResponse &&
-//     !stepCompleteResponse.success &&
-//     (stepCompleteResponse.resBody || stepCompleteResponse.message)
-//   ) {
-//     yield put(
-//       actions.api.failure(
-//         path,
-//         'PUT',
-//         stepCompleteResponse.resBody || stepCompleteResponse.message,
-//         false
-//       )
-//     );
-//   }
-// }
-
-// export function* addNewChild({ id }) {
-//   const path = `/integrations/${id}/installer/addNewStore`;
-//   let steps;
-
-//   try {
-//     steps = yield call(apiCallWithRetry, {
-//       path,
-//       opts: { body: {}, method: 'PUT' },
-//       hidden: true,
-//       message: 'Installing',
-//     });
-//   } catch (error) {
-//     yield put(actions.api.failure(path, 'PUT', error && error.message, false));
-//     yield put(
-//       actions.integrationApp.child.failedNewChildSteps(id, error.message)
-//     );
-
-//     return undefined;
-//   }
-
-//   if (steps) {
-//     yield put(actions.resource.requestCollection('connections'));
-//     yield put(actions.integrationApp.child.receivedNewChildSteps(id, steps));
-//   }
-// }
 
 // for certain type of steps ('form'/'url' for now), in order to display the step for the user,
 // we need to invoke get /currentStep route to get the form metadata or url
@@ -583,8 +482,6 @@ export default [
   takeLatest(actionTypes.INTEGRATION_APPS.SETTINGS.V2.UPGRADE, changeEdition),
   takeLatest(actionTypes.INTEGRATION_APPS.SETTINGS.V2.GET_STEPS, getSteps),
   takeLatest(actionTypes.INTEGRATION_APPS.SETTINGS.V2.POST_CHANGE_EDITION_STEPS, postChangeEditionSteps),
-  // to be edited
-  // takeEvery(actionTypes.INTEGRATION_APPS.INSTALLER.V2.STEP.REQUEST, installStep),
   takeEvery(actionTypes.INTEGRATION_APPS.TEMPLATES.V2.INSTALLER.VERIFY_BUNDLE_INSTALL, verifyBundleOrPackageInstall),
   takeEvery(
     actionTypes.INTEGRATION_APPS.INSTALLER.V2.STEP.SCRIPT_REQUEST,
@@ -594,8 +491,4 @@ export default [
     actionTypes.INTEGRATION_APPS.INSTALLER.V2.STEP.CURRENT_STEP,
     getCurrentStep
   ),
-  // takeLatest(actionTypes.INTEGRATION_APPS.CHILD.ADD, addNewChild),
-  // takeLatest(actionTypes.INTEGRATION_APPS.CHILD.INSTALL, installChildStep),
-  // takeLatest(actionTypes.INTEGRATION_APPS.INSTALLER.V2.INIT_CHILD, installInitChild),
-  // takeLatest(actionTypes.INTEGRATION_APPS.INSTALLER.V2.INIT, initInstall),
 ];
