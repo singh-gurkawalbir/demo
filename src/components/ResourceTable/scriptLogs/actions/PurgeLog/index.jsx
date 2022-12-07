@@ -20,7 +20,7 @@ export default {
 
     const handleClick = useCallback(() => {
       confirmDialog({
-        title: 'Confirm purge log',
+        title: 'Confirm purge all logs of the script',
         message: messageStore('PURGE_SCRIPT_LOG_CONFIRM_MESSAGE'),
         buttons: [
           {
