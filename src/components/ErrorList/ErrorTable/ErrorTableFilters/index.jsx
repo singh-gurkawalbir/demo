@@ -134,7 +134,6 @@ export default function ErrorTableFilters({
 
   useEffect(() => {
     if (purgeErrorStatus.status === 'success') {
-      if (fetchErrors) fetchErrors();
       enqueueSnackbar({
         message: purgeErrorStatus.message,
         variant: 'success',
