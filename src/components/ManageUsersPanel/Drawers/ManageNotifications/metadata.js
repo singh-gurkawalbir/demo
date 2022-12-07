@@ -16,7 +16,7 @@ export default function notificationsMetadata(props) {
           name: 'flows',
           type: 'multiselect',
           valueDelimiter: ',',
-          label: 'Notify user on flow error',
+          label: 'Notify user of flow error',
           defaultValue: flowValues,
           options: [{ items: flowOps }],
           selectAllIdentifier: integrationId,

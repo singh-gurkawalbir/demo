@@ -5883,7 +5883,7 @@ describe('resource region selector testcases', () => {
         actions.resource.receivedCollection('audit', logs)
       );
 
-      expect(selectors.auditLogs(state, undefined, 'i1', undefined, {
+      expect(selectors.auditLogs(state, undefined, 'i1', {
         childId: 's1',
       })).toEqual({
         logs: [

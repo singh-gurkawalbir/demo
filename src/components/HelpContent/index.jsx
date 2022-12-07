@@ -30,6 +30,10 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing(1, 1.5, 0, 0),
     '&>div': {
       maxHeight: 300,
+      '&>ul': {
+        paddingLeft: theme.spacing(2),
+        margin: 0,
+      },
     },
     '& > div > pre': {
       background: theme.palette.background.paper2,

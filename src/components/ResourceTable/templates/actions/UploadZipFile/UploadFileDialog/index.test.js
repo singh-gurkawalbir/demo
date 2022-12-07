@@ -8,6 +8,7 @@ import { ConfirmDialogProvider } from '../../../../../ConfirmDialog';
 import { renderWithProviders} from '../../../../../../test/test-utils';
 import { getCreatedStore } from '../../../../../../store';
 import actions from '../../../../../../actions';
+import { TEMPLATE_ZIP_UPLOAD_ASYNC_KEY } from '../../../../../../constants';
 
 let initialStore;
 const mockOnClose = jest.fn();
@@ -89,8 +90,7 @@ describe('Testsuite for Upload File Dialog', () => {
     const input = document.querySelector('input[data-test="uploadFile"]');
 
     userEvent.upload(input, file);
-    await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith(actions.file.upload('exports', '1234', 'application/JSON', file)));
-    expect(mockOnClose).toHaveBeenCalledTimes(1);
+    await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith(actions.file.upload({resourceType: 'exports', resourceId: '1234', fileType: 'application/JSON', file, asyncKey: TEMPLATE_ZIP_UPLOAD_ASYNC_KEY})));
   });
   test('should test the upload file dialog box by uploading a wrong format file which is not equal to the file type that sent in prop', async () => {
     const props = {
@@ -121,8 +121,7 @@ describe('Testsuite for Upload File Dialog', () => {
     const input = document.querySelector('input[data-test="uploadFile"]');
 
     await userEvent.upload(input, file);
-    await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith(actions.file.upload(props.resourceType, props.resourceId, props.fileType, file)));
-    expect(mockOnClose).toHaveBeenCalledTimes(1);
+    await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith(actions.file.upload({resourceType: props.resourceType, resourceId: props.resourceId, fileType: props.fileType, file, asyncKey: TEMPLATE_ZIP_UPLOAD_ASYNC_KEY})));
   });
 });
 
