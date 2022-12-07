@@ -140,7 +140,7 @@ export default function ErrorTableFilters({
       });
       dispatch(actions.errorManager.flowErrorDetails.purge.clear({flowId, resourceId}));
     }
-  }, [enqueueSnackbar, dispatch, flowId, resourceId, purgeErrorStatus.status, purgeErrorStatus.message, fetchErrors]);
+  }, [enqueueSnackbar, dispatch, flowId, resourceId, purgeErrorStatus.status, purgeErrorStatus.message]);
 
   return (
 
