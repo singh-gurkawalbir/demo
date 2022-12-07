@@ -66,7 +66,6 @@ describe('StackView UI tests', () => {
     initStackView(props);
     expect(screen.getByText('Stacks')).toBeInTheDocument();
     expect(screen.getByText('None')).toBeInTheDocument();
-    screen.debug();
   });
   test('should render the corresponding stack as selected when stackId is passed in props', () => {
     initStackView({...props, stackId: '634664b80eeae84271ab534e'});

@@ -1,5 +1,5 @@
-import React, { useState, useCallback, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import React, { useState, useCallback } from 'react';
+import { useDispatch } from 'react-redux';
 import Menu from '@material-ui/core/Menu';
 import { makeStyles } from '@material-ui/core';
 import MenuItem from '@material-ui/core/MenuItem';
@@ -10,9 +10,6 @@ import EllipsisHorizontallIcon from '../../icons/EllipsisHorizontalIcon';
 import DownloadIntegrationIcon from '../../icons/DownloadIntegrationIcon';
 import DownloadIcon from '../../icons/DownloadIcon';
 import PurgeIcon from '../../icons/PurgeIcon';
-import { selectors } from '../../../reducers';
-
-import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import messageStore from '../../../utils/messageStore';
 import useConfirmDialog from '../../ConfirmDialog';
 
@@ -30,8 +27,6 @@ export default function JobActionsMenu({
   const [anchorEl, setAnchorEl] = useState(null);
   const [showFilesDownloadDialog, setShowFilesDownloadDialog] = useState(false);
   const { confirmDialog } = useConfirmDialog();
-  const [enqueueSnackbar] = useEnqueueSnackbar();
-  const isPurgeFilesSuccess = useSelector(state => selectors.isPurgeFilesSuccess(state));
 
   const menuOptions = [];
 
@@ -104,16 +99,6 @@ export default function JobActionsMenu({
   function handleJobFilesDownloadDialogCloseClick() {
     setShowFilesDownloadDialog(false);
   }
-
-  useEffect(() => {
-    if (isPurgeFilesSuccess) {
-      enqueueSnackbar({
-        message: messageStore('FILE_PURGE_SUCCESS_MESSAGE'),
-        variant: 'success',
-      });
-      dispatch(actions.job.purge.clear());
-    }
-  }, [dispatch, enqueueSnackbar, isPurgeFilesSuccess]);
 
   return (
     <>

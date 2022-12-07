@@ -19,6 +19,8 @@ import { TextButton } from '../../Buttons';
 import ActionGroup from '../../ActionGroup';
 import {RUN_HISTORY_STATUS_OPTIONS} from '../../../utils/accountDashboard';
 import JobTable from './JobTable';
+import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
+import messageStore from '../../../utils/messageStore';
 
 const useStyles = makeStyles(theme => ({
   actions: {
@@ -103,6 +105,8 @@ export default function RunHistory({ flowId, className }) {
     endDate: new Date(filter.range.endDate),
     preset: filter.range.preset,
   } : defaultRange, [defaultRange, isDateFilterSelected, filter]);
+  const [enqueueSnackbar] = useEnqueueSnackbar();
+  const isPurgeFilesSuccess = useSelector(state => selectors.isPurgeFilesSuccess(state));
   const areUserAccountSettingsLoaded = useSelector(selectors.areUserAccountSettingsLoaded);
   const maxAllowedDataRetention = useSelector(state => selectors.platformLicense(state)?.maxAllowedDataRetention);
   const dataRetentionPeriod = useSelector(selectors.dataRetentionPeriod);
@@ -175,6 +179,17 @@ export default function RunHistory({ flowId, className }) {
       dispatch(actions.accountSettings.request());
     }
   }, [areUserAccountSettingsLoaded, dispatch]);
+
+  useEffect(() => {
+    if (isPurgeFilesSuccess) {
+      dispatch(actions.job.purge.clear());
+      dispatch(actions.errorManager.runHistory.request({ flowId }));
+      enqueueSnackbar({
+        message: messageStore('FILE_PURGE_SUCCESS_MESSAGE'),
+        variant: 'success',
+      });
+    }
+  }, [dispatch, enqueueSnackbar, flowId, isPurgeFilesSuccess]);
 
   return (
     <div className={clsx(classes.wrapper, className)}>

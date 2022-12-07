@@ -6,7 +6,7 @@ import { MemoryRouter, Route} from 'react-router-dom';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import userEvent from '@testing-library/user-event';
 import SharedUserList from '.';
-import { renderWithProviders } from '../../../test/test-utils';
+import { mockGetRequestOnce, mockPutRequestOnce, renderWithProviders } from '../../../test/test-utils';
 import reduxStore from '../../../store';
 import { ConfirmDialogProvider } from '../../ConfirmDialog';
 import { runServer } from '../../../test/api/server';
@@ -64,6 +64,8 @@ describe('Shared User List', () => {
   runServer();
   afterEach(cleanup);
   test('Should able to list the Shared User List and enable the user and then delete the user', async () => {
+    mockPutRequestOnce('/api/sshares/62d4100770b1915aa17b6614/disable', (req, res, ctx) => res(ctx.json([])));
+    mockGetRequestOnce('/api/sshares/62d4100770b1915aa17b6614/dependencies', {});
     await initSharedUserList();
 
     const emailText = screen.getByText('Email');

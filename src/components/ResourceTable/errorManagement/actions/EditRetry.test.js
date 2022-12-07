@@ -45,7 +45,7 @@ async function renderFuntion(actionProps, data, errorType) {
   userEvent.click(screen.getByRole('button', {name: /more/i}));
 }
 
-describe('Error management edit retry data action tests ', async () => {
+describe('Error management edit retry data action tests ', () => {
   afterEach(() => {
     jest.clearAllMocks();
   });

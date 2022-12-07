@@ -38,6 +38,9 @@ export const mockPutRequestOnce = (url, resolver) => {
 export const mockPostRequestOnce = (url, resolver) => {
   server.use(API.postOnce(url, resolver));
 };
+export const mockPostRequest = (url, resolver) => {
+  server.use(API.post(url, resolver));
+};
 export const mockDeleteRequestOnce = (url, resolver) => {
   server.use(API.deleteOnce(url, resolver));
 };
