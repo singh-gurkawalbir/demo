@@ -535,15 +535,19 @@ export function* signup({payloadBody}) {
     yield put(actions.user.profile.delete());
   }
 }
+export function* validateSession() {
+  return yield call(apiCallWithRetry, {
+    path: '/validate-session',
+    message: 'Authenticating User',
+    hidden: true,
+  });
+}
 
 export function* initializeSession({opts} = {}) {
   try {
-    const resp = yield call(
-      getResource,
-      actions.user.profile.request('Initializing application')
-    );
+    const resp = yield call(validateSession);
 
-    if (resp) {
+    if (resp.authenticated) {
       const _csrf = yield call(getCSRFTokenBackend);
 
       yield call(setCSRFToken, _csrf);
