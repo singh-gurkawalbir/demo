@@ -5416,6 +5416,14 @@ selectors.applicationType = (state, resourceType, id) => {
   const assistant = getStagedValue('/assistant') || resourceObj?.assistant;
 
   if (adaptorType === 'WebhookExport') {
+    const httpConnectorId = getStagedValue('/_httpConnectorId') || getStagedValue('/webhook/_httpConnectorId') || resourceObj?._httpConnectorId || resourceObj?.webhook?._httpConnectorId;
+    const applications = applicationsList();
+    const httpApp = applications.find(a => a._httpConnectorId === httpConnectorId);
+
+    if (httpConnectorId && httpApp) {
+      return httpApp._legacyId || httpApp.id;
+    }
+
     return (
       getStagedValue('/webhook/provider') ||
       (resourceObj && resourceObj.webhook && resourceObj.webhook.provider)
