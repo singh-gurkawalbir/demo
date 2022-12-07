@@ -60,13 +60,6 @@ const useStyles = makeStyles(theme => ({
     fontSize: 30,
     lineHeight: '40px',
   },
-  mfaTitle: {
-    marginBottom: theme.spacing(3),
-    fontSize: 30,
-    lineHeight: '28px',
-    width: 290,
-    textAlign: 'center',
-  },
   signupLink: {
     position: 'absolute',
     bottom: theme.spacing(8),
@@ -75,13 +68,6 @@ const useStyles = makeStyles(theme => ({
     [theme.breakpoints.down('xs')]: {
       maxWidth: '100%',
     },
-  },
-  mfaInfo: {
-    display: 'flex',
-    marginBottom: theme.spacing(1.5),
-  },
-  infoText: {
-    marginLeft: theme.spacing(1),
   },
   disclaimer: {
     display: 'flex',
@@ -93,7 +79,6 @@ const useStyles = makeStyles(theme => ({
     background: '#FFFFFF',
     boxShadow: '0px 1px 4px rgb(106 123 137 / 45%)',
     borderRadius: '6px',
-    // fontFamily: 'Sourcesanspro',
     fontWeight: '400',
     maxHeight: '63px',
     color: '#333d47',
