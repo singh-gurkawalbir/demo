@@ -404,11 +404,6 @@ selectors.integrationChangeEditionSteps = createSelector(
   (state, integrationId) => fromSession.v2integrationAppsInstaller(state?.session, integrationId),
   (state, integrationId) => selectors.integrationAppSettings(state, integrationId)?._connectorId,
   (integrationChangeEditionSteps, changeEditionStepsStatus, _connectorId) => {
-    // console.log({
-    //   integrationChangeEditionSteps,
-    //   changeEditionStepsStatus,
-    //   _connectorId,
-    // });
     const visibleSteps = integrationChangeEditionSteps.filter(s => s.type !== 'hidden');
 
     const changeEditionSteps = visibleSteps.map(step => {
@@ -419,10 +414,7 @@ selectors.integrationChangeEditionSteps = createSelector(
       return step;
     });
 
-    // Incase of IAs, return the install steps
     if (_connectorId) return changeEditionSteps;
-    // Else do below changes to the install steps incase of a template
-    // @Sravan review the logic below - moved from the component
     const bundleInstallationForNetsuiteConnections = changeEditionSteps.filter(step => step.sourceConnection?.type === 'netsuite');
     const bundleInstallationForSalesforceConnections = changeEditionSteps.filter(step => step.sourceConnection?.type === 'salesforce');
 

@@ -371,38 +371,6 @@ selectors.integrationInstallSteps = (state, id) => {
   });
 };
 
-selectors.integrationChangeEditionSteps = (state, id) => {
-  // const integration = selectors.resource(state, 'integrations', id);
-  const steps = selectors.getStatus(state, id)?.steps;
-
-  if (!steps.length) {
-    return emptyList;
-  }
-  // if (
-  //   !integration ||
-  //   !(
-  //     (integration.changeEditionSteps && integration.changeEditionSteps.length)
-  //   )
-  // ) {
-  //   return emptyList;
-  // }
-
-  if (steps && steps.length) {
-    return produce(steps, draft => {
-      if (draft.find(step => !step.completed)) {
-        draft.find(step => !step.completed).isCurrentStep = true;
-      }
-    });
-  }
-  // if (integration.changeEditionSteps && integration.changeEditionSteps.length) {
-  //   return produce(integration.changeEditionSteps, draft => {
-  //     if (draft.find(step => !step.completed)) {
-  //       draft.find(step => !step.completed).isCurrentStep = true;
-  //     }
-  //   });
-  // }
-};
-
 selectors.mkFlowGroupingsSections = () => {
   const resourceSelector = selectors.makeResourceSelector();
 

@@ -133,7 +133,6 @@ export default function SubscriptionSection({ childId, integrationId }) {
   const license = useSelector(state =>
     selectors.integrationAppLicense(state, integrationId)
   );
-  // console.log("license", license);
   const plan = useSelector(state =>
     selectors.integrationAppEdition(state, integrationId)
   );

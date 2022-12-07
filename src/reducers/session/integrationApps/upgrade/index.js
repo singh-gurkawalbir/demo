@@ -63,7 +63,6 @@ selectors.currentChildUpgrade = state => {
 };
 
 selectors.changeEditionSteps = (state, id) => {
-  // const integration = selectors.resource(state, 'integrations', id);
   if (!state || !state[id]) {
     return [];
   }
@@ -73,14 +72,6 @@ selectors.changeEditionSteps = (state, id) => {
   if (!steps.length) {
     return [];
   }
-  // if (
-  //   !integration ||
-  //   !(
-  //     (integration.changeEditionSteps && integration.changeEditionSteps.length)
-  //   )
-  // ) {
-  //   return emptyList;
-  // }
 
   if (steps && steps.length) {
     return produce(steps, draft => {
@@ -89,13 +80,6 @@ selectors.changeEditionSteps = (state, id) => {
       }
     });
   }
-  // if (integration.changeEditionSteps && integration.changeEditionSteps.length) {
-  //   return produce(integration.changeEditionSteps, draft => {
-  //     if (draft.find(step => !step.completed)) {
-  //       draft.find(step => !step.completed).isCurrentStep = true;
-  //     }
-  //   });
-  // }
 };
 
 // #endregion
