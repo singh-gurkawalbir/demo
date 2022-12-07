@@ -124,6 +124,7 @@ const useStyles = makeStyles(theme => ({
     width: theme.spacing(8),
     wordBreak: 'break-word',
     textAlign: 'right',
+    whiteSpace: 'normal',
   },
   dataTypeSelected: {
     width: theme.spacing(8),

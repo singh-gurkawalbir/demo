@@ -78,22 +78,38 @@ export default function DynaHFAssistantSearchParams(props) {
   const flowDataStage = resourceType === 'exports' ? 'inputFilter' : 'importMappingExtract';
   const isMetaValid = isMetaRequiredValuesMet(paramMeta, value);
   const requiredFields = useMemo(() => paramMeta?.fields.filter(field => field.required).map(field => field.id), [paramMeta]);
+  const selectTypeList = useMemo(() => {
+    const selectFields = {};
+
+    paramMeta?.fields.filter(field => field.fieldType === 'select').forEach(field => {
+      selectFields[field.id] = field.options;
+    });
+
+    return selectFields;
+  }, [paramMeta]);
+
   const updatedValue = useMemo(() => {
     const keyValues = [];
 
     requiredFields.forEach(field => {
-      !Object.keys(value).includes(field) && keyValues.push({name: field, disableRowKey: true});
+      !Object.keys(value).includes(field) && keyValues.push({
+        name: field,
+        disableRowKey: true,
+        isSelect: !!selectTypeList[field],
+        options: selectTypeList[field] && selectTypeList[field].map(value => ({ name: value, value}))});
     });
     if (value) {
       Object.keys(value).forEach(key => keyValues.push({
         name: key,
         value: value[key],
         disableRowKey: requiredFields.includes(key),
+        isSelect: !!selectTypeList[key],
+        options: selectTypeList[key] && selectTypeList[key].map(value => ({ name: value, value})),
       }));
     }
 
     return keyValues;
-  }, [requiredFields, value]);
+  }, [requiredFields, selectTypeList, value]);
   const dataFields = useMemo(() =>
     paramMeta.fields.map(({id, description}) => ({
       name: <KeyLabel id={id} description={description} />,

@@ -10,7 +10,7 @@ import { getCreatedStore } from '../../../store';
 
 let initialStore;
 
-function initRunHistory({flowId, runHistoryData, filterData}) {
+function initRunHistory({flowId, runHistoryData, filterData, dataRetentionPeriod}) {
   initialStore.getState().session.errorManagement = {
     runHistory: {
       [flowId]: runHistoryData,
@@ -19,6 +19,7 @@ function initRunHistory({flowId, runHistoryData, filterData}) {
   initialStore.getState().session.filters = {
     runHistory: filterData,
   };
+  initialStore.getState().data.accountSettings.dataRetentionPeriod = dataRetentionPeriod;
   const ui = (
     <RunHistory flowId={flowId} />
   );
@@ -107,6 +108,54 @@ describe('Testsuite for RunHistory', () => {
           startDate: moment().startOf('day').toDate(),
           endDate: moment().toDate(),
           preset: 'today',
+        },
+      },
+    });
+  });
+  test('should test the date range selector by checking presets available for a given dataRetentionPeriod', async () => {
+    await initRunHistory({
+      flowId: '12345',
+      runHistoryData: {
+        status: 'completed',
+        data: [
+          {
+            _id: 'ud8d9',
+          },
+        ],
+      },
+      filterData: {
+        range: {
+          preset: null,
+          startDate: '2022-10-29T00:00:00.000Z',
+          endDate: '2022-10-28T23:59:99.999Z',
+        },
+      },
+      dataRetentionPeriod: 180,
+    });
+
+    const selectRangeButtonNode = screen.getByRole('button', {name: /select range/i});
+
+    expect(selectRangeButtonNode).toBeInTheDocument();
+    userEvent.click(selectRangeButtonNode);
+    expect(screen.getByRole('button', {name: 'Last 60 days'})).toBeInTheDocument();
+    expect(screen.getByRole('button', {name: 'Last 90 days'})).toBeInTheDocument();
+    const last180daysMenuItemButtonNode = screen.getByRole('button', {name: 'Last 180 days'});
+
+    expect(last180daysMenuItemButtonNode).toBeInTheDocument();
+    userEvent.click(last180daysMenuItemButtonNode);
+    const applyButtonNode = screen.getByRole('button', {name: /apply/i});
+
+    expect(applyButtonNode).toBeInTheDocument();
+    userEvent.click(applyButtonNode);
+
+    expect(mockDispatchFn).toHaveBeenCalledWith({
+      type: 'PATCH_FILTER',
+      name: 'runHistory',
+      filter: {
+        range: {
+          startDate: moment().subtract(179, 'days').startOf('day').toDate(),
+          endDate: moment().toDate(),
+          preset: 'last180days',
         },
       },
     });

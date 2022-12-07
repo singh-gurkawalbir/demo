@@ -94,7 +94,7 @@ describe('Script Logs test suite', () => {
     userEvent.click(actionButton);
     const actionItems = screen.getAllByRole('menuitem').map(ele => ele.textContent);
 
-    expect(actionItems).toEqual(['View']);
+    expect(actionItems).toEqual(['View log']);
   });
 
   test('should be able to view log details for a script', () => {
@@ -113,7 +113,7 @@ describe('Script Logs test suite', () => {
 
     renderWithProviders(<CeligoTable {...metadata} data={data} />);
     userEvent.click(screen.getByRole('button', {name: /more/i}));
-    const viewButton = screen.getByRole('menuitem', {name: 'View'});
+    const viewButton = screen.getByRole('menuitem', {name: 'View log'});
 
     userEvent.click(viewButton);
     expect(mockHistoryPush).toHaveBeenCalledWith(buildDrawerUrl({
@@ -141,7 +141,7 @@ describe('Script Logs test suite', () => {
 
     renderWithProviders(<CeligoTable {...metadata} data={data} />);
     userEvent.click(screen.getByRole('button', {name: /more/i}));
-    const viewButton = screen.getByRole('menuitem', {name: 'View'});
+    const viewButton = screen.getByRole('menuitem', {name: 'View log'});
 
     userEvent.click(viewButton);
     expect(mockHistoryPush).toHaveBeenCalledWith(buildDrawerUrl({

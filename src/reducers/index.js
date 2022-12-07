@@ -116,7 +116,7 @@ import { buildDrawerUrl, drawerPaths } from '../utils/rightDrawer';
 import { GRAPHQL_HTTP_FIELDS, isGraphqlResource } from '../utils/graphql';
 import { initializeFlowForReactFlow, getFlowAsyncKey } from '../utils/flows/flowbuilder';
 import { HTTP_BASED_ADAPTORS } from '../utils/http';
-import { AUDIT_LOG_PAGING_FILTER_KEY } from '../constants/auditLog';
+import { AUDIT_LOG_FILTER_KEY } from '../constants/auditLog';
 import { SHOPIFY_APP_STORE_LINKS } from '../constants/urls';
 
 const emptyArray = [];
@@ -2252,14 +2252,12 @@ selectors.auditLogs = (
   state,
   resourceType,
   resourceId,
-  filters,
   options = {}
 ) => {
   let auditLogs = fromData.auditLogs(
     state?.data,
     resourceType,
     resourceId,
-    filters
   );
 
   const result = {
@@ -2300,9 +2298,9 @@ selectors.auditLogs = (
 
 selectors.paginatedAuditLogs = createSelector(
   selectors.auditLogs,
-  state => selectors.filter(state, AUDIT_LOG_PAGING_FILTER_KEY),
-  (auditLogs, pagingFilters) => {
-    const { currPage = 0, rowsPerPage = DEFAULT_ROWS_PER_PAGE } = pagingFilters?.paging || {};
+  state => selectors.filter(state, AUDIT_LOG_FILTER_KEY),
+  (auditLogs, filters) => {
+    const { currPage = 0, rowsPerPage = DEFAULT_ROWS_PER_PAGE } = filters?.paging || {};
 
     auditLogs.logs = auditLogs.logs.slice(currPage * rowsPerPage, (currPage + 1) * rowsPerPage);
 
@@ -3513,7 +3511,10 @@ selectors.availableUsersList = createSelector(
       ];
     }
 
-    return _users ? _users.sort(stringCompare('sharedWithUser.name')) : emptyArray;
+    return _users
+      ? _users.sort(stringCompare('sharedWithUser.name'))
+        .map(userVal => !userVal.sharedWithUser ? ({ ...userVal, sharedWithUser: emptyObject }) : userVal)
+      : emptyArray;
   }
 
 );

@@ -529,7 +529,7 @@ const resource = {
 // #endregion
 
 const auditLogs = {
-  request: (resourceType, resourceId, nextPagePath) => action(actionTypes.RESOURCE.REQUEST_COLLECTION, {
+  request: (resourceType, resourceId, nextPagePath) => action(actionTypes.RESOURCE.REQUEST_AUDIT_LOGS, {
     resourceType: auditResourceTypePath(resourceType, resourceId),
     nextPagePath,
   }),
@@ -1318,12 +1318,13 @@ const agent = {
 };
 const file = {
   previewZip: file => action(actionTypes.FILE.PREVIEW_ZIP, { file }),
-  upload: (resourceType, resourceId, fileType, file) =>
+  upload: ({resourceType, resourceId, fileType, file, asyncKey}) =>
     action(actionTypes.FILE.UPLOAD, {
       resourceType,
       resourceId,
       fileType,
       file,
+      asyncKey,
     }),
   processFile: ({ fileId, file, fileType, fileProps }) =>
     action(actionTypes.FILE.PROCESS, {
@@ -2443,6 +2444,16 @@ const logs = {
       action(actionTypes.LOGS.SCRIPTS.START_DEBUG, { scriptId, value }),
     setFetchStatus: ({ scriptId, flowId, fetchStatus }) => action(actionTypes.LOGS.SCRIPTS.FETCH_STATUS, { scriptId, flowId, fetchStatus }),
     pauseFetch: ({ scriptId, flowId }) => action(actionTypes.LOGS.SCRIPTS.PAUSE_FETCH, { scriptId, flowId }),
+    requestAllLogs: ({scriptId, flowId}) => action(actionTypes.LOGS.SCRIPTS.REQUEST_ALL_LOGS, {scriptId, flowId}),
+    receivedAllLogs: ({scriptId, flowId, isPurgeAvailable}) => action(actionTypes.LOGS.SCRIPTS.RECEIVED_ALL_LOGS, {scriptId, flowId, isPurgeAvailable}),
+    purge: {
+      request: ({ scriptId, flowId }) =>
+        action(actionTypes.LOGS.SCRIPTS.PURGE.REQUEST, {scriptId, flowId}),
+      success: ({scriptId, flowId}) =>
+        action(actionTypes.LOGS.SCRIPTS.PURGE.SUCCESS, {scriptId, flowId}),
+      clear: () =>
+        action(actionTypes.LOGS.SCRIPTS.PURGE.CLEAR),
+    },
   },
   connections: {
     request: connectionId =>

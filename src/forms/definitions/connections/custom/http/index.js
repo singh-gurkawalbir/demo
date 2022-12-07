@@ -101,7 +101,7 @@ import tesco from './tesco';
 import fieldaware from './fieldaware';
 import googlesheets from './googlesheets';
 // import googlemail from './googlemail';
-import googlecontacts from './googlecontacts';
+import googlecontactspeople from './googlecontacts';
 import googleshopping from './googleshopping';
 import googleanalytics from './googleanalytics';
 import taxjar from './taxjar';
@@ -355,7 +355,7 @@ export default {
   fieldaware,
   googlesheets,
   // googlemail,
-  googlecontacts,
+  googlecontactspeople,
   googleshopping,
   googleanalytics,
   chargebee,

@@ -1,5 +1,5 @@
 import { makeStyles } from '@material-ui/core/styles';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import clsx from 'clsx';
 import actions, { auditResourceTypePath } from '../../actions';
@@ -10,7 +10,7 @@ import Spinner from '../Spinner';
 import AuditLogTable from './AuditLogTable';
 import Filters from './Filters';
 import { isNewId } from '../../utils/resource';
-import { AUDIT_LOG_PAGING_FILTER_KEY } from '../../constants/auditLog';
+import { AUDIT_LOG_FILTER_KEY } from '../../constants/auditLog';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -25,6 +25,8 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
+const OPTION_ALL = { id: 'all', label: 'All' };
+
 export default function AuditLog({
   className,
   users,
@@ -38,14 +40,13 @@ export default function AuditLog({
   const dispatch = useDispatch();
   const clearAuditLogs = () => {
     dispatch(actions.auditLogs.clear());
-    dispatch(actions.clearFilter(AUDIT_LOG_PAGING_FILTER_KEY));
+    dispatch(actions.clearFilter(AUDIT_LOG_FILTER_KEY));
   };
-  const [filters, handleFiltersChange] = useState({});
+
   const totalCount = useSelector(state => selectors.paginatedAuditLogs(
     state,
     resourceType,
     resourceId,
-    filters,
     {childId}
   ).totalCount);
 
@@ -54,7 +55,17 @@ export default function AuditLog({
   };
 
   useEffect(() => {
-    if (!isNewId(resourceId)) { requestAuditLogs(resourceType, resourceId); }
+    if (!isNewId(resourceId)) {
+      dispatch(actions.patchFilter(AUDIT_LOG_FILTER_KEY, {
+        resourceType: OPTION_ALL.id,
+        _resourceId: OPTION_ALL.id,
+        byUser: OPTION_ALL.id,
+        source: OPTION_ALL.id,
+        event: OPTION_ALL.id,
+      }));
+
+      requestAuditLogs(resourceType, resourceId);
+    }
 
     return clearAuditLogs;
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -81,7 +92,6 @@ export default function AuditLog({
                 resourceDetails={resourceDetails}
                 users={users}
                 childId={childId}
-                onFiltersChange={handleFiltersChange}
                 resourceType={resourceType}
                 resourceId={resourceId}
                 totalCount={totalCount}
@@ -89,7 +99,6 @@ export default function AuditLog({
               <AuditLogTable
                 resourceType={resourceType}
                 resourceId={resourceId}
-                filters={filters}
                 childId={childId}
                 onClick={onClick}
                 className={classes.tableContainer}
