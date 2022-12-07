@@ -6958,8 +6958,10 @@ selectors.isUserAllowedOnlySSOSignIn = state => {
 
 selectors.primaryAccounts = createSelector(
   state => selectors.isAccountOwner(state),
-  state => state?.user?.org?.accounts?.filter(acc => acc._id !== ACCOUNT_IDS.OWN),
-  (isAccountOwner, orgAccounts) => {
+  state => state?.user?.org?.accounts,
+  (isAccountOwner, allAccounts) => {
+    const orgAccounts = allAccounts?.filter(acc => acc._id !== ACCOUNT_IDS.OWN);
+
     if (isAccountOwner) {
       return emptyList;
     }

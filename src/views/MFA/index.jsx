@@ -1,5 +1,5 @@
-import React from 'react';
-import { useSelector } from 'react-redux';
+import React, { useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles, Typography } from '@material-ui/core';
 import { Link, useHistory } from 'react-router-dom';
 import CeligoLogo from '../../components/CeligoLogo';
@@ -12,6 +12,9 @@ import { TextButton } from '../../components/Buttons';
 import getRoutePath from '../../utils/routePaths';
 
 import OneTimePassCodeForm from './OneTimePassCodeForm';
+import actions from '../../actions';
+import Loader from '../../components/Loader';
+import Spinner from '../../components/Spinner';
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
@@ -121,12 +124,26 @@ export default function MfaVerify() {
   const history = useHistory();
   // eslint-disable-next-line no-undef
   const contentUrl = (getDomain() === 'eu.integrator.io' ? IO_LOGIN_PROMOTION_URL_EU : IO_LOGIN_PROMOTION_URL);
-
+  const dispatch = useDispatch();
   const isMFAAuthRequired = useSelector(state => selectors.isMFAAuthRequired(state));
+  const isMFASetupIncomplete = useSelector(selectors.isMFASetupIncomplete);
+  const sessionInfoResolved = useSelector(selectors.mfaSessionInfoStatus) === 'received';
 
-  if (!isMFAAuthRequired) {
-    history.push(getRoutePath('/signin'));
-  }
+  useEffect(() => {
+    dispatch(actions.auth.validateSession());
+  }, []);
+
+  useEffect(() => {
+    if (sessionInfoResolved) {
+      if (isMFASetupIncomplete) {
+        history.push(getRoutePath('/myAccount/security'));
+      } else if (!isMFAAuthRequired) {
+        history.push(getRoutePath('/signin'));
+      }
+    }
+  }, [history, isMFAAuthRequired, isMFASetupIncomplete, sessionInfoResolved]);
+
+  if (!sessionInfoResolved) return <Loader open><Spinner /></Loader>;
 
   return (
     <div className={classes.wrapper}>

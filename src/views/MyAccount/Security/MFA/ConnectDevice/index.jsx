@@ -55,15 +55,10 @@ function TrustDeviceStep({ trustDevice, setTrustDevice }) {
 
 function PrimaryAccountSelect({className}) {
   const primaryAccounts = useSelector(selectors.primaryAccounts);
+
   const selectedPrimaryAccount = useSelector(selectors.selectedPrimaryAccount);
   const isMobileCodeVerified = useSelector(selectors.isMobileCodeVerified);
   const [remountKey, setRemountKey] = useState(1);
-
-  useEffect(() => {
-    setRemountKey(remountKey + 1);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isMobileCodeVerified]);
-
   const primaryAccountOptions = useMemo(() => (
     [{
       items: primaryAccounts.map(
@@ -71,6 +66,11 @@ function PrimaryAccountSelect({className}) {
       ),
     }]
   ), [primaryAccounts]);
+
+  useEffect(() => {
+    setRemountKey(remountKey + 1);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isMobileCodeVerified, primaryAccountOptions]);
 
   const fieldMeta = useMemo(
     () => ({
@@ -92,7 +92,7 @@ function PrimaryAccountSelect({className}) {
     [primaryAccountOptions, selectedPrimaryAccount]
   );
 
-  useForm({ fieldMeta, formKey: PRIMARY_ACCOUNT_FORM_KEY, remountKey, disabled: !isMobileCodeVerified });
+  useForm({ fieldMeta, formKey: PRIMARY_ACCOUNT_FORM_KEY, remount: remountKey, disabled: !isMobileCodeVerified });
 
   return <DynaForm formKey={PRIMARY_ACCOUNT_FORM_KEY} className={className} />;
 }

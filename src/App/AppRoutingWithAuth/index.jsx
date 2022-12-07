@@ -5,7 +5,7 @@ import { selectors } from '../../reducers';
 import actions from '../../actions';
 import getRoutePath from '../../utils/routePaths';
 
-export function AppRoutingWithAuth({children}) {
+export function AppRoutingWithAuth({ children }) {
   const location = useLocation();
   const history = useHistory();
   const { pathname: currentRoute, search } = location;
@@ -18,6 +18,9 @@ export function AppRoutingWithAuth({children}) {
   const isSessionExpired = useSelector(selectors.isSessionExpired);
   const isAuthenticated = useSelector(selectors.isAuthenticated);
   const isUserLoggedOut = useSelector(selectors.isUserLoggedOut);
+  const isMFASetupIncomplete = useSelector(selectors.isMFASetupIncomplete);
+  const isUserAuthenticated = useSelector(state => selectors.sessionInfo(state)?.authenticated);
+
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -49,6 +52,20 @@ export function AppRoutingWithAuth({children}) {
 
     return children;
   }
+
+  const isMFASetupPage = getRoutePath('/myAccount/security/mfa') === location.pathname;
+
+  if (isMFASetupIncomplete && isUserAuthenticated && !isMFASetupPage && !isSignInRoute) {
+    return (
+      <Redirect
+        push={false}
+        to={{
+          pathname: getRoutePath('/myAccount/security/mfa'),
+          state: location.state,
+        }}
+      />
+    );
+  }
   if (!isSessionExpired && !isSignInRoute && !isMFAAuthRequired && (isAuthInitialized || isUserLoggedOut)) {
     return (
       <Redirect
@@ -60,7 +77,7 @@ export function AppRoutingWithAuth({children}) {
       />
     );
   }
-  if (!shouldShowAppRouting && !isSignInRoute) return null;
+  if (!shouldShowAppRouting && !isSignInRoute && !isMFASetupPage) return null;
 
   return children;
 }
