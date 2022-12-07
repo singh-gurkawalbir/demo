@@ -173,7 +173,7 @@ export const getExportMetadata = (connectorMetadata, connectionVersion) => {
     // }
     // exportData.resources[i].versions = deepClone(exportData.resources[i].versions.filter(r => r.endpoints?.length));
   });
-  // exportData.resources = deepClone(exportData.resources.filter(r => r.versions?.length));
+  exportData.resources = deepClone(exportData.resources.filter(r => r.endpoints?.length));
 
   return exportData;
 };
@@ -219,7 +219,7 @@ export const getImportMetadata = (connectorMetadata, connectionVersion) => {
     const sampleData = httpResource.resourceFields && convertResourceFieldstoSampleData(httpResource.resourceFields);
 
     return {
-      ...httpResource, id: httpResource._id, name: httpResource.name, resourcePreConfiguredFields, sampleData, resourceFieldsUserMustSet,
+      ...httpResource, id: httpResource._id, name: httpResource.name, resourcePreConfiguredFields, sampleData, resourceFieldsUserMustSet, hidden: !!httpResource.hidden,
     };
   });
 
@@ -228,7 +228,22 @@ export const getImportMetadata = (connectorMetadata, connectionVersion) => {
 
     // if (importData.resources[i].versions.length) {
     //   importData.resources[i].versions.forEach(v => {
-    const filteredHttpEndpoints = httpEndpoints.filter(e => e._httpConnectorResourceIds?.includes(r.id));
+    // const filteredHttpEndpoints = httpEndpoints.filter(e => e._httpConnectorResourceIds?.includes(r.id));
+
+    // if (exportData.resources[i].versions.length) {
+    // exportData.resources[i].versions.forEach(v => {
+    const filteredHttpEndpoints = httpEndpoints.filter(e => {
+      // Needs to optimise this logic
+      let htpEndpointExists = false;
+
+            e._httpConnectorResourceIds?.forEach(eResId => {
+              if (r.id.includes(eResId)) {
+                htpEndpointExists = true;
+              }
+            });
+
+            return htpEndpointExists;
+    });
 
     if (filteredHttpEndpoints.length) {
       importData.resources[i].operations = [];
@@ -331,7 +346,7 @@ export const getImportMetadata = (connectorMetadata, connectionVersion) => {
     // }
     // importData.resources[i].versions = deepClone(importData.resources[i].versions.filter(r => r.operations?.length));
   });
-  // importData.resources = deepClone(importData.resources.filter(r => r.versions?.length));
+  importData.resources = deepClone(importData.resources.filter(r => r.operations?.length));
 
   return importData;
 };

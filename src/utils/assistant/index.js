@@ -607,224 +607,226 @@ export function getImportOperationDetails({
   const headersMetadata = [];
   let operationDetails;
 
-  if (assistantData?.import?.resources?.length) {
-    let modifiedResource = resource;
-    let modifiedOperation = operation;
+  if (version) {
+    if (assistantData?.import?.resources?.length) {
+      let modifiedResource = resource;
+      let modifiedOperation = operation;
 
-    if (resource.includes('+') && version) {
-      let resources = resource.split('+');
+      if (resource.includes('+') && version) {
+        let resources = resource.split('+');
 
-      resources = assistantData?.export?.resources.filter(res => resources.includes(res._id));
+        resources = assistantData?.export?.resources.filter(res => resources.includes(res._id));
 
-      modifiedResource = resources.find(r => r._versionIds.includes(version))?._id;
-    }
-    const resourceDetails = getHFResourceDetails({
-      version,
-      resource,
-      assistantData: assistantData.import,
-    });
-
-    if (operation.includes('+') && version) {
-      let operations = operation.split('+');
-
-      operations = resourceDetails.operations.filter(ep => operations.includes(ep.id));
-
-      modifiedOperation = operations.find(op => op?._httpConnectorResourceIds?.includes(modifiedResource))?.id;
-    }
-    const versionDetails = getHFVersionDetails({
-      version,
-      resource,
-      assistantData: assistantData.import,
-    });
-
-    operationDetails = { sampleData: resourceDetails.sampleData };
-
-    if (resourceDetails && resourceDetails.operations) {
-      operationDetails = resourceDetails.operations.find(op => {
-        if (op.id === modifiedOperation) {
-          return true;
-        }
-
-        if (isArray(op.url)) {
-          if ([op.method.join(':'), op.url.join(':')].join(':') === modifiedOperation) {
-            return true;
-          }
-        } else if ([op.method, op.url].join(':') === modifiedOperation) {
-          return true;
-        }
-
-        return false;
+        modifiedResource = resources.find(r => r._versionIds.includes(version))?._id;
+      }
+      const resourceDetails = getHFResourceDetails({
+        version,
+        resource,
+        assistantData: assistantData.import,
       });
 
-      if (operationDetails) {
-        operationDetails = populateDefaults({
-          child: operationDetails,
-          parent: versionDetails,
-          isChildAnOperation: true,
+      if (operation.includes('+') && version) {
+        let operations = operation.split('+');
+
+        operations = resourceDetails.operations.filter(ep => operations.includes(ep.id));
+
+        modifiedOperation = operations.find(op => op?._httpConnectorResourceIds?.includes(modifiedResource))?.id;
+      }
+      // const versionDetails = getHFVersionDetails({
+      //   version,
+      //   resource,
+      //   assistantData: assistantData.import,
+      // });
+
+      operationDetails = { sampleData: resourceDetails.sampleData };
+
+      if (resourceDetails && resourceDetails.operations) {
+        operationDetails = resourceDetails.operations.find(op => {
+          if (op.id === modifiedOperation) {
+            return true;
+          }
+
+          if (isArray(op.url)) {
+            if ([op.method.join(':'), op.url.join(':')].join(':') === modifiedOperation) {
+              return true;
+            }
+          } else if ([op.method, op.url].join(':') === modifiedOperation) {
+            return true;
+          }
+
+          return false;
         });
 
-        if (!operationDetails.howToFindIdentifier) {
-          operationDetails.howToFindIdentifier = {};
-        }
-
-        if (operationDetails.howToFindIdentifier.lookup) {
-          const lookupOperationDetails = getExportOperationDetails({
-            version,
-            resource: operationDetails.howToFindIdentifier.lookup.resource || resource,
-            operation:
-              operationDetails.howToFindIdentifier.lookup.id ||
-              operationDetails.howToFindIdentifier.lookup.url,
-            assistantData,
+        if (operationDetails) {
+          operationDetails = populateDefaults({
+            child: operationDetails,
+            parent: resourceDetails,
+            isChildAnOperation: true,
           });
 
-          if (lookupOperationDetails.queryParameters) {
-            lookupOperationDetails.queryParameters = lookupOperationDetails.queryParameters.filter(
-              qp =>
-                !(
-                  qp.readOnly &&
+          if (!operationDetails.howToFindIdentifier) {
+            operationDetails.howToFindIdentifier = {};
+          }
+
+          if (operationDetails.howToFindIdentifier.lookup) {
+            const lookupOperationDetails = getExportOperationDetails({
+              version,
+              resource: operationDetails.howToFindIdentifier.lookup.resource || resource,
+              operation:
+              operationDetails.howToFindIdentifier.lookup.id ||
+              operationDetails.howToFindIdentifier.lookup.url,
+              assistantData,
+            });
+
+            if (lookupOperationDetails.queryParameters) {
+              lookupOperationDetails.queryParameters = lookupOperationDetails.queryParameters.filter(
+                qp =>
+                  !(
+                    qp.readOnly &&
                   qp.defaultValue &&
                   qp.defaultValue.includes &&
                   qp.defaultValue.includes('{{export.')
-                )
-            );
-          }
-          if (operationDetails.howToFindIdentifier.lookup.resource) {
-            lookupOperationDetails.resource = operationDetails.howToFindIdentifier.lookup.resource;
-          }
+                  )
+              );
+            }
+            if (operationDetails.howToFindIdentifier.lookup.resource) {
+              lookupOperationDetails.resource = operationDetails.howToFindIdentifier.lookup.resource;
+            }
 
-          if (operationDetails.howToFindIdentifier.lookup.parameterValues) {
-            Object.keys(
-              operationDetails.howToFindIdentifier.lookup.parameterValues
-            ).forEach(p => {
-              if (lookupOperationDetails.queryParameters) {
-                lookupOperationDetails.queryParameters = lookupOperationDetails.queryParameters.map(
-                  qp => {
-                    if (qp.id === p) {
+            if (operationDetails.howToFindIdentifier.lookup.parameterValues) {
+              Object.keys(
+                operationDetails.howToFindIdentifier.lookup.parameterValues
+              ).forEach(p => {
+                if (lookupOperationDetails.queryParameters) {
+                  lookupOperationDetails.queryParameters = lookupOperationDetails.queryParameters.map(
+                    qp => {
+                      if (qp.id === p) {
                       // eslint-disable-next-line no-param-reassign
-                      qp = {
-                        ...qp,
-                        readOnly: true,
-                        defaultValue:
+                        qp = {
+                          ...qp,
+                          readOnly: true,
+                          defaultValue:
                           operationDetails.howToFindIdentifier.lookup
                             .parameterValues[p],
-                      };
+                        };
+                      }
+
+                      return qp;
                     }
+                  );
+                }
+              });
+            }
 
-                    return qp;
-                  }
-                );
-              }
-            });
+            operationDetails.lookupOperationDetails = lookupOperationDetails;
           }
-
-          operationDetails.lookupOperationDetails = lookupOperationDetails;
         }
       }
-    }
 
-    if (versionDetails?.headersMetadata) {
-      headersMetadata.push(...versionDetails.headersMetadata);
-    }
-    if (operationDetails?.headersMetadata) {
-      headersMetadata.push(...operationDetails.headersMetadata);
-    }
-  } else {
-    const resourceDetails = getResourceDetails({
-      version,
-      resource,
-      assistantData: assistantData.import,
-    });
-
-    operationDetails = { sampleData: resourceDetails.sampleData };
-
-    if (resourceDetails && resourceDetails.operations) {
-      operationDetails = resourceDetails.operations.find(op => {
-        if (op.id === operation) {
-          return true;
-        }
-
-        if (isArray(op.url)) {
-          if ([op.method.join(':'), op.url.join(':')].join(':') === operation) {
-            return true;
-          }
-        } else if ([op.method, op.url].join(':') === operation) {
-          return true;
-        }
-
-        return false;
+      if (resourceDetails?.headersMetadata) {
+        headersMetadata.push(...resourceDetails.headersMetadata);
+      }
+      if (operationDetails?.headersMetadata) {
+        headersMetadata.push(...operationDetails.headersMetadata);
+      }
+    } else {
+      const resourceDetails = getResourceDetails({
+        version,
+        resource,
+        assistantData: assistantData.import,
       });
 
-      if (operationDetails) {
-        operationDetails = populateDefaults({
-          child: operationDetails,
-          parent: resourceDetails,
-          isChildAnOperation: true,
+      operationDetails = { sampleData: resourceDetails.sampleData };
+
+      if (resourceDetails && resourceDetails.operations) {
+        operationDetails = resourceDetails.operations.find(op => {
+          if (op.id === operation) {
+            return true;
+          }
+
+          if (isArray(op.url)) {
+            if ([op.method.join(':'), op.url.join(':')].join(':') === operation) {
+              return true;
+            }
+          } else if ([op.method, op.url].join(':') === operation) {
+            return true;
+          }
+
+          return false;
         });
 
-        if (!operationDetails.howToFindIdentifier) {
-          operationDetails.howToFindIdentifier = {};
-        }
-
-        if (operationDetails.howToFindIdentifier.lookup) {
-          const lookupOperationDetails = getExportOperationDetails({
-            version,
-            resource: operationDetails.howToFindIdentifier.lookup.resource || resource,
-            operation:
-              operationDetails.howToFindIdentifier.lookup.id ||
-              operationDetails.howToFindIdentifier.lookup.url,
-            assistantData,
+        if (operationDetails) {
+          operationDetails = populateDefaults({
+            child: operationDetails,
+            parent: resourceDetails,
+            isChildAnOperation: true,
           });
 
-          if (lookupOperationDetails.queryParameters) {
-            lookupOperationDetails.queryParameters = lookupOperationDetails.queryParameters.filter(
-              qp =>
-                !(
-                  qp.readOnly &&
+          if (!operationDetails.howToFindIdentifier) {
+            operationDetails.howToFindIdentifier = {};
+          }
+
+          if (operationDetails.howToFindIdentifier.lookup) {
+            const lookupOperationDetails = getExportOperationDetails({
+              version,
+              resource: operationDetails.howToFindIdentifier.lookup.resource || resource,
+              operation:
+              operationDetails.howToFindIdentifier.lookup.id ||
+              operationDetails.howToFindIdentifier.lookup.url,
+              assistantData,
+            });
+
+            if (lookupOperationDetails.queryParameters) {
+              lookupOperationDetails.queryParameters = lookupOperationDetails.queryParameters.filter(
+                qp =>
+                  !(
+                    qp.readOnly &&
                   qp.defaultValue &&
                   qp.defaultValue.includes &&
                   qp.defaultValue.includes('{{export.')
-                )
-            );
-          }
-          if (operationDetails.howToFindIdentifier.lookup.resource) {
-            lookupOperationDetails.resource = operationDetails.howToFindIdentifier.lookup.resource;
-          }
+                  )
+              );
+            }
+            if (operationDetails.howToFindIdentifier.lookup.resource) {
+              lookupOperationDetails.resource = operationDetails.howToFindIdentifier.lookup.resource;
+            }
 
-          if (operationDetails.howToFindIdentifier.lookup.parameterValues) {
-            Object.keys(
-              operationDetails.howToFindIdentifier.lookup.parameterValues
-            ).forEach(p => {
-              if (lookupOperationDetails.queryParameters) {
-                lookupOperationDetails.queryParameters = lookupOperationDetails.queryParameters.map(
-                  qp => {
-                    if (qp.id === p) {
+            if (operationDetails.howToFindIdentifier.lookup.parameterValues) {
+              Object.keys(
+                operationDetails.howToFindIdentifier.lookup.parameterValues
+              ).forEach(p => {
+                if (lookupOperationDetails.queryParameters) {
+                  lookupOperationDetails.queryParameters = lookupOperationDetails.queryParameters.map(
+                    qp => {
+                      if (qp.id === p) {
                       // eslint-disable-next-line no-param-reassign
-                      qp = {
-                        ...qp,
-                        readOnly: true,
-                        defaultValue:
+                        qp = {
+                          ...qp,
+                          readOnly: true,
+                          defaultValue:
                           operationDetails.howToFindIdentifier.lookup
                             .parameterValues[p],
-                      };
+                        };
+                      }
+
+                      return qp;
                     }
+                  );
+                }
+              });
+            }
 
-                    return qp;
-                  }
-                );
-              }
-            });
+            operationDetails.lookupOperationDetails = lookupOperationDetails;
           }
-
-          operationDetails.lookupOperationDetails = lookupOperationDetails;
         }
       }
-    }
 
-    if (resourceDetails?.headersMetadata) {
-      headersMetadata.push(...resourceDetails.headersMetadata);
-    }
-    if (operationDetails?.headersMetadata) {
-      headersMetadata.push(...operationDetails.headersMetadata);
+      if (resourceDetails?.headersMetadata) {
+        headersMetadata.push(...resourceDetails.headersMetadata);
+      }
+      if (operationDetails?.headersMetadata) {
+        headersMetadata.push(...operationDetails.headersMetadata);
+      }
     }
   }
 
