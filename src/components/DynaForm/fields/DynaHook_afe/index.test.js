@@ -96,8 +96,6 @@ describe('DynaHook_afe UI tests', () => {
     const buttons = screen.getAllByRole('button');
     const n = buttons.length;
 
-    screen.debug(null, Infinity);
-
     userEvent.click(buttons[n - 2]);
     await waitFor(() => expect(mockHistoryPush).toBeCalledWith('//add/scripts/new-scriptId'));
   });
@@ -120,7 +118,6 @@ describe('DynaHook_afe UI tests', () => {
     expect(screen.getByText('None')).toBeInTheDocument();   // function dropdown initial value  //
     expect(screen.getByPlaceholderText('function field')).toBeInTheDocument();
     expect(document.querySelector('[id="stackId"]')).toBeInTheDocument();
-    screen.debug();
   });
   test('should render the ScriptView component by default when no hookType is passed in props', () => {
     const newprops = {};
