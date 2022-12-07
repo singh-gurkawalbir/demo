@@ -1,15 +1,9 @@
-/*
- TODO:
- This file needs to be re-implemented as a stepper functionality drawer as per new mocks.
- As of now this is not a drawer, but a standalone page.
-*/
 import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import {
   Typography,
-  Link,
 } from '@material-ui/core';
 import isEmpty from 'lodash/isEmpty';
 import { selectors } from '../../../../../reducers';
@@ -18,29 +12,23 @@ import {
   generateNewId,
   isOauth,
 } from '../../../../../utils/resource';
-import CeligoPageBar from '../../../../../components/CeligoPageBar';
 import LoadResources from '../../../../../components/LoadResources';
 import openExternalUrl from '../../../../../utils/window';
 import ResourceSetupDrawer from '../../../../../components/ResourceSetup/Drawer';
 import InstallationStep from '../../../../../components/InstallStep';
-// import useConfirmDialog from '../../../../../components/ConfirmDialog';
-import { getIntegrationAppUrlName } from '../../../../../utils/integrationApps';
 import { SCOPES } from '../../../../../sagas/resourceForm';
 import jsonUtil from '../../../../../utils/json';
 import { INSTALL_STEP_TYPES, emptyObject,
 } from '../../../../../constants';
 import FormStepDrawer from '../../../../../components/InstallStep/FormStep';
-// import CloseIcon from '../../../../../components/icons/CloseIcon';
 import RawHtml from '../../../../../components/RawHtml';
-// import getRoutePath from '../../../../../utils/routePaths';
-import HelpIcon from '../../../../../components/icons/HelpIcon';
 import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
-// import TrashIcon from '../../../../../components/icons/TrashIcon';
-import { TextButton } from '../../../../../components/Buttons';
 import { buildDrawerUrl, drawerPaths } from '../../../../../utils/rightDrawer';
 import RightDrawer from '../../../../../components/drawer/Right';
 import DrawerHeader from '../../../../../components/drawer/Right/DrawerHeader';
 import DrawerContent from '../../../../../components/drawer/Right/DrawerContent';
+import DrawerFooter from '../../../../../components/drawer/Right/DrawerFooter';
+import FilledButton from '../../../../../components/Buttons/FilledButton';
 
 const useStyles = makeStyles(theme => ({
   installIntegrationWrapper: {
@@ -80,7 +68,6 @@ function UpgradeInstallation() {
   const match = useRouteMatch();
   const { currentIntegrationId: integrationId } = match.params;
   const [connection, setConnection] = useState(null);
-  // const { confirmDialog } = useConfirmDialog();
   const [isSetupComplete, setIsSetupComplete] = useState(false);
   const [isResourceStaged, setIsResourceStaged] = useState(false);
   const dispatch = useDispatch();
@@ -88,48 +75,11 @@ function UpgradeInstallation() {
   const integration = useSelectorMemo(selectors.mkIntegrationAppSettings, integrationId);
 
   const {
-    name: integrationName,
-    // install = [],
-    // integrationInstallSteps = [],
-    mode,
-    // children,
-    // supportsMultiStore,
     _connectorId,
-    initChild,
-    parentId,
   } = useMemo(() => integration ? {
-    name: integration.name,
-    initChild: integration.initChild,
-    // install: integration.install,
-    mode: integration.mode,
-    // children: integration.children,
-    // supportsMultiStore: !!(integration.settings && integration.settings.supportsMultiStore),
     _connectorId: integration._connectorId,
-    // integrationInstallSteps: integration.installSteps,
-    parentId: integration._parentId,
   } : emptyObject, [integration]);
 
-  // const {
-  //   name: childIntegrationName,
-  //   id: childIntegrationId,
-  //   mode: childIntegrationMode,
-  // } = useSelector(state => {
-  //   const id = selectors.getChildIntegrationId(state, integrationId);
-
-  //   if (id) {
-  //     const integration = selectors.resource(state, 'integrations', id);
-
-  //     if (integration) {
-  //       return {
-  //         name: integration.name,
-  //         id: integration._id,
-  //         mode: integration.mode,
-  //       };
-  //     }
-  //   }
-
-  //   return emptyObject;
-  // }, shallowEqual);
   const helpUrl = useSelector(state => {
     const integrationApp = selectors.resource(state, 'published', _connectorId);
 
@@ -139,15 +89,8 @@ function UpgradeInstallation() {
     selectors.integrationChangeEditionSteps(state, integrationId),
   shallowEqual
   );
-  // console.log("ChangeEdition steps", changeEditionSteps);
 
   const status = useSelector(state => selectors.getStatus(state, integrationId)?.status);
-
-  // useEffect(() => {
-  //   if (!changeEditionSteps.length) {
-  //     dispatch(actions.resource.request('integrations', integrationId));
-  //   }
-  // }, [dispatch, integrationId]);
 
   const { openOauthConnection, connectionId } = useSelector(
     state => selectors.v2canOpenOauthConnection(state, integrationId),
@@ -171,110 +114,27 @@ function UpgradeInstallation() {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [connectionId, dispatch, integrationId, openOauthConnection, oauthConnection]);
 
-  const integrationAppName = getIntegrationAppUrlName(integrationName);
   const handleClose = useCallback(() => {
     setConnection(false);
   }, []);
-  // const isCloned = install.find(step => step.isClone);
-  // const isFrameWork2 = integrationInstallSteps.length || isCloned;
   const isFrameWork2 = changeEditionSteps.length;
 
-  // const redirectTo = useSelector(state => selectors.shouldRedirect(state, integrationId));
-
-  // init the install for IA2.0 to get updated installSteps
-  // useEffect(() => {
-  //   if (isFrameWork2) {
-  //     //  Adarsh this need to be changed accordingly
-  //     dispatch(actions.integrationApp.upgrade.installer.init(integrationId));
-  //   }
-  // // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, []);
-
-  // Adarsh we need to use this for closing the drawer
-  // useEffect(() => {
-  //   if (redirectTo) {
-  //     history.push(getRoutePath(redirectTo));
-  //     dispatch(actions.resource.integrations.clearRedirect(integrationId));
-  //   }
-  // }, [dispatch, history, integrationId, redirectTo]);
-
-  // useEffect(() => {
-  //   const allStepsCompleted = !installSteps.reduce((result, step) => result || !step.completed, false);
-
-  //   if (installSteps.length) {
-  //     if (allStepsCompleted && !isSetupComplete) {
-  //       dispatch(actions.resource.request('integrations', integrationId));
-  //       setIsSetupComplete(true);
-  //     } else if (!allStepsCompleted && isSetupComplete) {
-  //       // reset local state if some new steps were added
-  //       setIsSetupComplete(false);
-  //     }
-  //   }
-  // }, [dispatch, installSteps, integrationId, isSetupComplete]);
-
-  // written by Adarsh
   useEffect(() => {
-    // const allStepsCompleted = !changeEditionSteps.reduce((result, step) => result || !step.completed, false);
     const allStepsCompleted = status === 'done';
 
     if (changeEditionSteps.length) {
       if (allStepsCompleted && !isSetupComplete) {
         dispatch(actions.resource.request('integrations', integrationId));
+        dispatch(actions.integrationApp.upgrade.setStatus(integrationId, { showWizard: false }));
         setIsSetupComplete(true);
       } else if (!allStepsCompleted && isSetupComplete) {
-        // reset local state if some new steps were added
         setIsSetupComplete(false);
       }
     }
   }, [changeEditionSteps, dispatch, integrationId, isSetupComplete, status]);
 
-  // const handleSubmitComplete = useCallback(
-  //   (connId, isAuthorized, connectionDoc = {}) => {
-  //     // Here connection Doc will come into picture for only for IA2.0 and if connection step doesn't contain connection Id.
-  //     const step = installSteps.find(s => s.isCurrentStep);
-
-  //     dispatch(
-  //       actions.integrationApp.installer.updateStep(
-  //         integrationId,
-  //         (step || {}).installerFunction,
-  //         'inProgress'
-  //       )
-  //     );
-
-  //     if (isFrameWork2) {
-  //       dispatch(
-  //         actions.integrationApp.installer.scriptInstallStep(
-  //           integrationId,
-  //            connection?._connectionId || connId,
-  //            connectionDoc
-  //         )
-  //       );
-  //     } else {
-  //       dispatch(
-  //         actions.integrationApp.installer.installStep(
-  //           integrationId,
-  //           (step || {}).installerFunction,
-  //           connection && connection._connectionId
-  //         )
-  //       );
-  //     }
-  //     if (connectionDoc && !isOauth(connectionDoc)) {
-  //       setConnection(false);
-  //     }
-  //   },
-  //   [
-  //     connection,
-  //     dispatch,
-  //     installSteps,
-  //     integrationId,
-  //     isFrameWork2,
-  //   ]
-  // );
-
-  // written by Adarsh
   const handleSubmitComplete = useCallback(
     (connId, isAuthorized, connectionDoc = {}) => {
-      // Here connection Doc will come into picture for only for IA2.0 and if connection step doesn't contain connection Id.
       const step = changeEditionSteps.find(s => s.isCurrentStep);
 
       dispatch(
@@ -301,126 +161,9 @@ function UpgradeInstallation() {
     [changeEditionSteps, connection?._connectionId, dispatch, integrationId, isFrameWork2]
   );
 
-  // this useEffect to clear up after all the steps are done
-  useEffect(() => {
-    if (isSetupComplete) {
-      // redirect to integration Settings
-      console.log('inside component');
-      dispatch(actions.resource.request('integrations', integrationId));
-      dispatch(actions.resource.requestCollection('flows', undefined, undefined, integrationId));
-      dispatch(actions.resource.requestCollection('exports', undefined, undefined, integrationId));
-      dispatch(actions.license.refreshCollection());
-      dispatch(actions.resource.requestCollection('imports', undefined, undefined, integrationId));
-      dispatch(actions.resource.requestCollection('connections', undefined, undefined, integrationId));
-      dispatch(actions.resource.requestCollection('asynchelpers', undefined, undefined, integrationId));
-
-      // if (mode === 'settings') {
-      //   if (
-      //     initChild &&
-      //     initChild.function &&
-      //     childIntegrationMode === 'install'
-      //   ) {
-      //     setIsSetupComplete(false);
-      //     history.push(
-      //       getRoutePath(`/integrationapps/${integrationChildAppName}/${childIntegrationId}/setup`)
-      //     );
-      //   } else if (parentId) {
-      //     history.push(
-      //       getRoutePath(`/integrationapps/${integrationAppName}/${parentId}/child/${integrationId}/flows`)
-      //     );
-      //   } else if (changeEditionSteps && changeEditionSteps.length > 0) {
-      //     if (_connectorId) {
-      //       history.push(
-      //         getRoutePath(`/integrationapps/${integrationAppName}/${integrationId}`)
-      //       );
-      //     } else {
-      //       history.push(
-      //         getRoutePath(`/integrations/${integrationId}/flows`)
-      //       );
-      //     }
-      //   } else {
-      //     history.push(
-      //       getRoutePath(`/integrationapps/${integrationAppName}/${integrationId}/flows`)
-      //     );
-      //   }
-      // }
-      // adarsh write closing the drawer code here
-      dispatch(actions.integrationApp.upgrade.setStatus(integrationId, { showWizard: false }));
-      history.goBack();
-    }
-  },
-  [dispatch,
-    mode,
-    _connectorId,
-    integrationAppName,
-    integrationId,
-    isSetupComplete,
-    history,
-    initChild,
-    parentId,
-    changeEditionSteps,
-  ]);
-
   if (!changeEditionSteps) {
     return <Typography className={classes.noIntegrationMsg}>No integration found</Typography>;
   }
-
-  // const handleUninstall = e => {
-  //   e.preventDefault();
-  //   confirmDialog({
-  //     title: 'Confirm uninstall',
-  //     message: 'Are you sure you want to uninstall?',
-  //     buttons: [
-  //       {
-  //         label: 'Uninstall',
-  //         error: true,
-  //         onClick: () => {
-  //           if (!_connectorId) {
-  //             dispatch(actions.resource.integrations.delete(integrationId));
-
-  //             return;
-  //           }
-  //           const childId = children?.length
-  //             ? children[0].value
-  //             : undefined;
-
-  //           // for old cloned IAs, uninstall should happen the old way
-  //           if (isFrameWork2 && !isCloned) {
-  //             const { url } = match;
-  //             const urlExtractFields = url.split('/');
-  //             const index = urlExtractFields.findIndex(
-  //               element => element === 'child'
-  //             );
-
-  //             // REVIEW: @ashu, review with Dave once
-  //             // if url contains '/child/xxx' use that id as child id
-  //             if (index === -1) {
-  //               history.push(
-  //                 getRoutePath(`/integrationapps/${integrationAppName}/${integrationId}/uninstall`)
-  //               );
-  //             } else {
-  //               history.push(
-  //                 getRoutePath(`/integrationapps/${integrationAppName}/${integrationId}/uninstall/child/${urlExtractFields[index + 1]}`)
-  //               );
-  //             }
-  //           } else if (supportsMultiStore) {
-  //             history.push(
-  //               getRoutePath(`/integrationapps/${integrationAppName}/${integrationId}/uninstall/child/${childId}`)
-  //             );
-  //           } else {
-  //             history.push(
-  //               getRoutePath(`/integrationapps/${integrationAppName}/${integrationId}/uninstall`)
-  //             );
-  //           }
-  //         },
-  //       },
-  //       {
-  //         label: 'Cancel',
-  //         variant: 'text',
-  //       },
-  //     ],
-  //   });
-  // };
 
   const handleStepClick = step => {
     const {
@@ -535,16 +278,7 @@ function UpgradeInstallation() {
             actions.integrationApp.upgrade.installer.scriptInstallStep(integrationId)
           );
         }
-        // else {
-        //   dispatch(
-        //     actions.integrationApp.upgrade.installer.installStep(
-        //       integrationId,
-        //       installerFunction
-        //     )
-        //   );
-        // }
       }
-      // handle Action step click
     } else if (type === 'stack') {
       if (!stackId) {
         const newStackId = generateNewId();
@@ -576,12 +310,6 @@ function UpgradeInstallation() {
           'inProgress'
         )
       );
-      // dispatch(
-      //   actions.integrationApp.upgrade.installer.installStep(
-      //     integrationId,
-      //     installerFunction
-      //   )
-      // );
     }
   };
   const handleStackSetupDone = stackId => {
@@ -598,50 +326,8 @@ function UpgradeInstallation() {
     setShowStackDialog(false);
   };
 
-  const handleHelpUrlClick = e => {
-    e.preventDefault();
-    openExternalUrl({ url: helpUrl });
-  };
-
   return (
     <LoadResources required resources="connections,integrations,published">
-      <CeligoPageBar
-        title="Upgrade plan"
-        // Todo: (Mounika) please add the helpText
-        // adarsh to show the help icon we need infotext using messageStore
-        // infoText="we need to have the help text for the following."
-        >
-        <div className={classes.actions}>
-          {helpUrl && (
-            <TextButton
-              data-test="viewHelpGuide"
-              component={Link}
-              onClick={handleHelpUrlClick}
-              startIcon={<HelpIcon />}
-              >
-              View help guide
-            </TextButton>
-          )}
-          {/* {_connectorId ? (
-            <TextButton
-              data-test="uninstall"
-              component={Link}
-              onClick={handleUninstall}
-              startIcon={<CloseIcon />}
-             >
-              Uninstall
-            </TextButton>
-          )
-            : (
-              <TextButton
-                data-test="deleteIntegration"
-                onClick={handleUninstall}
-                startIcon={<TrashIcon />}>
-                Delete integration
-              </TextButton>
-            )} */}
-        </div>
-      </CeligoPageBar>
       <div className={classes.installIntegrationWrapper}>
         <div className={classes.installIntegrationWrapperContent}>
           {helpUrl ? (
@@ -683,20 +369,28 @@ function UpgradeInstallation() {
 }
 
 export default function UpgradeDrawer() {
+  const history = useHistory();
+
   return (
-    // <RightDrawer
-    //   path={drawerPaths.UPGRADE.INSTALL}
-    //   height="tall">
-    //   <UpgradeInstallation />
-    // </RightDrawer>
     <RightDrawer
-      onClose={() => {}}
+      onClose={() => {
+        history.goBack();
+      }}
       path={drawerPaths.UPGRADE.INSTALL}
       height="tall">
       <DrawerHeader title="Upgrade plan" />
       <DrawerContent>
         <UpgradeInstallation />
       </DrawerContent>
+      <DrawerFooter>
+        <FilledButton
+          onClick={() => {
+            history.goBack();
+          }}
+        >
+          Close
+        </FilledButton>
+      </DrawerFooter>
     </RightDrawer>
   );
 }

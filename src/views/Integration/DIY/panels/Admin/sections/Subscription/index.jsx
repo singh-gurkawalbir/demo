@@ -113,6 +113,7 @@ export default function SubscriptionSection({ childId, integrationId }) {
   const {
     supportsChild,
     version,
+    changeEditionSteps = [],
   } = useSelector(state => {
     const integration = selectors.integrationAppSettings(state, integrationId);
 
@@ -120,11 +121,13 @@ export default function SubscriptionSection({ childId, integrationId }) {
       return {
         supportsChild: !!(integration.initChild && integration.initChild.function),
         version: integration.version,
+        changeEditionSteps: integration?.changeEditionSteps,
       };
     }
 
     return emptyObject;
   }, shallowEqual);
+
   const children = useSelectorMemo(selectors.mkIntegrationChildren, integrationId);
   const allChildIntegrations = useSelectorMemo(selectors.mkGetChildIntegrations, integrationId);
   const license = useSelector(state =>
@@ -223,7 +226,11 @@ export default function SubscriptionSection({ childId, integrationId }) {
         {
           label: 'Continue',
           onClick: () => {
-            dispatch(actions.integrationApp.settings.integrationAppV2.upgrade(integrationId));
+            if (changeEditionSteps?.length) {
+              dispatch(actions.integrationApp.upgrade.getSteps(integrationId));
+            } else {
+              dispatch(actions.integrationApp.settings.integrationAppV2.upgrade(integrationId));
+            }
           },
         },
         {

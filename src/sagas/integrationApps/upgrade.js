@@ -306,7 +306,19 @@ export function* installScriptStep({
   }
 
   if (stepCompleteResponse?.done) {
-    yield put(actions.integrationApp.upgrade.setStatus(id, { status: 'done' }));
+    const status = yield select(selectors.getStatus, id);
+    let steps = status?.steps;
+
+    console.log("before steps", steps);
+
+    if (steps.length) {
+      let lastStep = steps.length ? steps[steps.length - 1] : {};
+
+      lastStep = {...lastStep, completed: true};
+      steps[steps.length - 1] = lastStep;
+      console.log("last steps", steps);
+    }
+    yield put(actions.integrationApp.upgrade.setStatus(id, { status: 'done', steps }));
     yield put(actions.resource.request('integrations', id));
     yield put(actions.resource.requestCollection('flows', null, true, id));
     yield put(actions.resource.requestCollection('exports', null, true, id));
