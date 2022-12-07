@@ -372,24 +372,35 @@ selectors.integrationInstallSteps = (state, id) => {
 };
 
 selectors.integrationChangeEditionSteps = (state, id) => {
-  const integration = selectors.resource(state, 'integrations', id);
+  // const integration = selectors.resource(state, 'integrations', id);
+  const steps = selectors.getStatus(state, id)?.steps;
 
-  if (
-    !integration ||
-    !(
-      (integration._changeEditionSteps && integration._changeEditionSteps.length)
-    )
-  ) {
+  if (!steps.length) {
     return emptyList;
   }
+  // if (
+  //   !integration ||
+  //   !(
+  //     (integration.changeEditionSteps && integration.changeEditionSteps.length)
+  //   )
+  // ) {
+  //   return emptyList;
+  // }
 
-  if (integration._changeEditionSteps && integration._changeEditionSteps.length) {
-    return produce(integration._changeEditionSteps, draft => {
+  if (steps && steps.length) {
+    return produce(steps, draft => {
       if (draft.find(step => !step.completed)) {
         draft.find(step => !step.completed).isCurrentStep = true;
       }
     });
   }
+  // if (integration.changeEditionSteps && integration.changeEditionSteps.length) {
+  //   return produce(integration.changeEditionSteps, draft => {
+  //     if (draft.find(step => !step.completed)) {
+  //       draft.find(step => !step.completed).isCurrentStep = true;
+  //     }
+  //   });
+  // }
 };
 
 selectors.mkFlowGroupingsSections = () => {

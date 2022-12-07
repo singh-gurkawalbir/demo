@@ -39,6 +39,8 @@ import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
 import { TextButton } from '../../../../../components/Buttons';
 import { buildDrawerUrl, drawerPaths } from '../../../../../utils/rightDrawer';
 import RightDrawer from '../../../../../components/drawer/Right';
+import DrawerHeader from '../../../../../components/drawer/Right/DrawerHeader';
+import DrawerContent from '../../../../../components/drawer/Right/DrawerContent';
 
 const useStyles = makeStyles(theme => ({
   installIntegrationWrapper: {
@@ -95,7 +97,6 @@ function UpgradeInstallation() {
     _connectorId,
     initChild,
     parentId,
-    integrationChangeEditionSteps = [],
   } = useMemo(() => integration ? {
     name: integration.name,
     initChild: integration.initChild,
@@ -106,7 +107,6 @@ function UpgradeInstallation() {
     _connectorId: integration._connectorId,
     // integrationInstallSteps: integration.installSteps,
     parentId: integration._parentId,
-    integrationChangeEditionSteps: integration._changeEditionSteps,
   } : emptyObject, [integration]);
 
   // const {
@@ -139,6 +139,15 @@ function UpgradeInstallation() {
     selectors.integrationChangeEditionSteps(state, integrationId),
   shallowEqual
   );
+  // console.log("ChangeEdition steps", changeEditionSteps);
+
+  const status = useSelector(state => selectors.getStatus(state, integrationId)?.status);
+
+  // useEffect(() => {
+  //   if (!changeEditionSteps.length) {
+  //     dispatch(actions.resource.request('integrations', integrationId));
+  //   }
+  // }, [dispatch, integrationId]);
 
   const { openOauthConnection, connectionId } = useSelector(
     state => selectors.v2canOpenOauthConnection(state, integrationId),
@@ -168,7 +177,7 @@ function UpgradeInstallation() {
   }, []);
   // const isCloned = install.find(step => step.isClone);
   // const isFrameWork2 = integrationInstallSteps.length || isCloned;
-  const isFrameWork2 = integrationChangeEditionSteps.length;
+  const isFrameWork2 = changeEditionSteps.length;
 
   // const redirectTo = useSelector(state => selectors.shouldRedirect(state, integrationId));
 
@@ -205,7 +214,8 @@ function UpgradeInstallation() {
 
   // written by Adarsh
   useEffect(() => {
-    const allStepsCompleted = !changeEditionSteps.reduce((result, step) => result || !step.completed, false);
+    // const allStepsCompleted = !changeEditionSteps.reduce((result, step) => result || !step.completed, false);
+    const allStepsCompleted = status === 'done';
 
     if (changeEditionSteps.length) {
       if (allStepsCompleted && !isSetupComplete) {
@@ -216,7 +226,7 @@ function UpgradeInstallation() {
         setIsSetupComplete(false);
       }
     }
-  }, [changeEditionSteps, dispatch, integrationId, isSetupComplete]);
+  }, [changeEditionSteps, dispatch, integrationId, isSetupComplete, status]);
 
   // const handleSubmitComplete = useCallback(
   //   (connId, isAuthorized, connectionDoc = {}) => {
@@ -295,6 +305,7 @@ function UpgradeInstallation() {
   useEffect(() => {
     if (isSetupComplete) {
       // redirect to integration Settings
+      console.log('inside component');
       dispatch(actions.resource.request('integrations', integrationId));
       dispatch(actions.resource.requestCollection('flows', undefined, undefined, integrationId));
       dispatch(actions.resource.requestCollection('exports', undefined, undefined, integrationId));
@@ -334,8 +345,8 @@ function UpgradeInstallation() {
       //   }
       // }
       // adarsh write closing the drawer code here
-      history.goBack();
       dispatch(actions.integrationApp.upgrade.setStatus(integrationId, { showWizard: false }));
+      history.goBack();
     }
   },
   [dispatch,
@@ -673,10 +684,19 @@ function UpgradeInstallation() {
 
 export default function UpgradeDrawer() {
   return (
+    // <RightDrawer
+    //   path={drawerPaths.UPGRADE.INSTALL}
+    //   height="tall">
+    //   <UpgradeInstallation />
+    // </RightDrawer>
     <RightDrawer
+      onClose={() => {}}
       path={drawerPaths.UPGRADE.INSTALL}
       height="tall">
-      <UpgradeInstallation />
+      <DrawerHeader title="Upgrade plan" />
+      <DrawerContent>
+        <UpgradeInstallation />
+      </DrawerContent>
     </RightDrawer>
   );
 }

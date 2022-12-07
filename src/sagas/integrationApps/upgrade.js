@@ -20,7 +20,7 @@ export function* changeEdition({ integrationId }) {
     yield call(apiCallWithRetry, {
       path,
       opts: { body: {}, method: 'POST' },
-      message: 'Requesting change edition',
+      message: 'Requesting for change edition',
     }) || {};
   } catch (error) {
     yield put(actions.integrationApp.upgrade.setStatus(integrationId, { status: 'error' }));
@@ -48,7 +48,7 @@ export function* getSteps({ integrationId }) {
     // error handling;
     return;
   }
-  console.log('response', response);
+  console.log('getSteps response', response);
 
   if (!response.showWizard) {
     yield put(actions.integrationApp.upgrade.postChangeEditonSteps(integrationId));
@@ -86,12 +86,18 @@ export function* postChangeEditionSteps({ integrationId }) {
     yield put(actions.resource.requestCollection('imports', null, true, integrationId));
     yield put(actions.resource.requestCollection('connections', null, true, integrationId));
     yield put(actions.resource.requestCollection('asynchelpers', null, true, integrationId));
-  }
-  const obj = {
-    steps: response?.steps,
-  };
+  } else {
+    const obj = {
+      steps: response,
+    };
 
-  yield put(actions.integrationApp.upgrade.setStatus(integrationId, obj));
+    yield put(actions.integrationApp.upgrade.setStatus(integrationId, obj));
+  }
+  // const obj = {
+  //   steps: response?.steps,
+  // };
+
+  // yield put(actions.integrationApp.upgrade.setStatus(integrationId, obj));
 }
 
 // To be edited accordingly
@@ -210,8 +216,8 @@ export function* postChangeEditionSteps({ integrationId }) {
 // }
 
 function* refreshIntegrationConnectionsMetadata({ integrationId }) {
-  const installSteps = yield select(selectors.integrationInstallSteps, integrationId);
-  const connections = installSteps
+  const changeEditionSteps = yield select(selectors.integrationChangeEditionSteps, integrationId);
+  const connections = changeEditionSteps
     .filter(step => step.type === 'connection' && ['netsuite', 'salesforce'].includes(step.sourceConnection?.type) && step._connectionId)
     .map(step => ({ type: step.sourceConnection?.type, _id: step._connectionId }));
 
@@ -274,6 +280,8 @@ export function* installScriptStep({
     return undefined;
   }
 
+  console.log('response', stepCompleteResponse);
+
   if (!stepCompleteResponse || stepCompleteResponse.warnings) {
     // const integration = yield select(selectors.resource, 'integrations', id);
 
@@ -295,6 +303,21 @@ export function* installScriptStep({
     );
 
     return yield put(actions.resource.request('integrations', id));
+  }
+
+  if (stepCompleteResponse?.done) {
+    yield put(actions.integrationApp.upgrade.setStatus(id, { status: 'done' }));
+    yield put(actions.resource.request('integrations', id));
+    yield put(actions.resource.requestCollection('flows', null, true, id));
+    yield put(actions.resource.requestCollection('exports', null, true, id));
+    yield put(actions.resource.requestCollection('imports', null, true, id));
+    yield put(actions.resource.requestCollection('connections', null, true, id));
+    yield put(actions.resource.requestCollection('asynchelpers', null, true, id));
+
+    return;
+  // eslint-disable-next-line no-else-return
+  } else {
+    yield put(actions.integrationApp.upgrade.setStatus(id, {steps: stepCompleteResponse}));
   }
 
   const filteredConnectionSteps =

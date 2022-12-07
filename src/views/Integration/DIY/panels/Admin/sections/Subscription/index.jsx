@@ -17,6 +17,7 @@ import FilledButton from '../../../../../../../components/Buttons/FilledButton';
 import useConfirmDialog from '../../../../../../../components/ConfirmDialog';
 import ChildIntegrationsTable from './ChildIntegrationsTable';
 import ParentUpgradeButton from './ParentUpgradeButton';
+import UpgradeDrawer from '../../../../../App/drawers/Upgrade';
 
 const emptyObject = {};
 const metadata = {
@@ -286,12 +287,12 @@ export default function SubscriptionSection({ childId, integrationId }) {
           (tile) of this Integration App. Contact your Account Manager for more
           info.
         </Typography>
-        {allChildIntegrations.length && (
+        {allChildIntegrations.length ? (
           <ChildIntegrationsTable
             integrationId={integrationId}
             allChildIntegrations={allChildIntegrations}
           />
-        )}
+        ) : null}
         {hasAddOns && !hasSubscribedAddOns && (
           <div className={classes.customisedBlock}>
             <div className={classes.leftBlock}>
@@ -331,6 +332,7 @@ export default function SubscriptionSection({ childId, integrationId }) {
           </>
         )}
       </div>
+      <UpgradeDrawer />
     </>
   );
 }

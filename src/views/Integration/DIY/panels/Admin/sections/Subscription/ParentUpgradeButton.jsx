@@ -38,7 +38,7 @@ export default function ParentUpgradeButton(props) {
         params: { currentIntegrationId: id},
       }));
     }
-  });
+  }, [history, id, match.url, showWizard]);
 
   // Next all the logic for upgrade button will be written
   if (isInProgress) {
@@ -54,12 +54,12 @@ export default function ParentUpgradeButton(props) {
   return (
     <ButtonWithTooltip
       tooltipProps={{title: `Upgrade to a ${nextPlan} plan`}}
-    >
+      >
       <FilledButton
         className={className}
         onClick={onClick}
         disabled={!changeEditionId}
-      >
+        >
         Upgrade
       </FilledButton>
     </ButtonWithTooltip>

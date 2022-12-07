@@ -400,10 +400,15 @@ selectors.integrationInstallSteps = createSelector(
   }
 );
 selectors.integrationChangeEditionSteps = createSelector(
-  (state, integrationId) => fromData.integrationChangeEditionSteps(state?.data, integrationId),
+  (state, integrationId) => fromSession.changeEditionSteps(state?.session, integrationId),
   (state, integrationId) => fromSession.v2integrationAppsInstaller(state?.session, integrationId),
   (state, integrationId) => selectors.integrationAppSettings(state, integrationId)?._connectorId,
   (integrationChangeEditionSteps, changeEditionStepsStatus, _connectorId) => {
+    // console.log({
+    //   integrationChangeEditionSteps,
+    //   changeEditionStepsStatus,
+    //   _connectorId,
+    // });
     const visibleSteps = integrationChangeEditionSteps.filter(s => s.type !== 'hidden');
 
     const changeEditionSteps = visibleSteps.map(step => {
