@@ -66,8 +66,6 @@ describe('MapperPanelTitle UI tests', () => {
     const SearchIconButton = document.querySelector('[date-test="showSearch"]');
 
     expect(SearchIconButton).toBeInTheDocument();
-
-    screen.debug(null, Infinity);
   });
   test('should make a dispatch call when clicked on the collapseRow icon', async () => {
     initMapperPanelTitle({editorId: 'filecsv', helpKey: 'test-key'});
@@ -76,7 +74,6 @@ describe('MapperPanelTitle UI tests', () => {
     expect(collapseRowsButton).toBeInTheDocument();
     userEvent.click(collapseRowsButton);
     await waitFor(() => expect(mockDispatchFn).toBeCalledWith(actions.mapping.v2.toggleRows(false)));
-    screen.debug(null, Infinity);
   });
   test('should make a dispatch call when clicked on the expandRows icon', async () => {
     initMapperPanelTitle({editorId: 'filecsv', helpKey: 'test-key'});
@@ -85,7 +82,6 @@ describe('MapperPanelTitle UI tests', () => {
     expect(expandRowsButton).toBeInTheDocument();
     userEvent.click(expandRowsButton);
     await waitFor(() => expect(mockDispatchFn).toBeCalledWith(actions.mapping.v2.toggleRows(true)));
-    screen.debug(null, Infinity);
   });
   test('should make a dispatch call when clicked on the refresf filters icon', async () => {
     initMapperPanelTitle({editorId: 'filecsv', helpKey: 'test-key'});
@@ -94,7 +90,6 @@ describe('MapperPanelTitle UI tests', () => {
     expect(RefreshFiltersButton).toBeInTheDocument();
     userEvent.click(RefreshFiltersButton);
     await waitFor(() => expect(mockDispatchFn).toBeCalledWith(actions.flowData.requestSampleData('5ea16c600e2fab71928a6152', '5ea16cd30e2fab71928a6166', 'imports', 'importMappingExtract', true)));
-    screen.debug(null, Infinity);
   });
   test('should make a dispatch call when clicked on the search icon', async () => {
     initMapperPanelTitle({editorId: 'filecsv', helpKey: 'test-key'});

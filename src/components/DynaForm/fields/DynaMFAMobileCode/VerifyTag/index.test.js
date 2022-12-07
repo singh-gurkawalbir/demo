@@ -41,12 +41,10 @@ describe('VerifyTag UI tests', () => {
   test('should pass the initial render for successful verification', () => {
     initVerifyTag({status: 'success', isValid: true});
     expect(screen.getByText('Verification successful')).toBeInTheDocument();
-    screen.debug();
   });
   test('should pass the initial render for unsuccessful verification', () => {
     initVerifyTag({status: 'error', isValid: true});
     expect(screen.getByText('Verification failed. Try entering the 6-digit code again.')).toBeInTheDocument();
-    screen.debug();
   });
   test('should make a dispatch call when isValid is false for the field', async () => {
     initVerifyTag({status: 'error', isValid: false});

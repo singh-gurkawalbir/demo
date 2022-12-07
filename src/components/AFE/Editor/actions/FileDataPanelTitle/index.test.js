@@ -74,7 +74,6 @@ describe('FileDataPanelTitle UI tests', () => {
     expect(uploadButton).toBeInTheDocument();
     userEvent.upload(uploadButton, file);
     await waitFor(() => expect(mockDispatchFn).toBeCalledWith({file, fileId: '5b3c75dd5d3c125c88b5dd20-uploadFile', fileProps: {maxSize: undefined}, fileType: 'csv', type: 'FILE_PROCESS'}));
-    screen.debug();
   });
   test('should not render the uploadFile option for adaptorTypes other than ftp,s3 and simple', () => {
     initFileDataPanelTitle({editorId: 'filescsv', fileType: 'csv'});
