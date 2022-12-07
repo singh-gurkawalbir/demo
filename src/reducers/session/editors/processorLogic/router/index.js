@@ -1,5 +1,6 @@
 import { cloneDeep, isEqual, pick } from 'lodash';
 import { hooksToFunctionNamesMap } from '../../../../../utils/hooks';
+import messageStore from '../../../../../utils/messageStore';
 import { safeParse } from '../../../../../utils/string';
 import filter from '../filter';
 import javascript from '../javascript';
@@ -109,6 +110,11 @@ export default {
   },
   // No point performing parsing or validation when it is an object
   validate: editor => {
+    if (editor.rule?.name?.length > 256) {
+      return {
+        ruleError: messageStore('BRANCH_NAME_LENGTH_ERROR'),
+      };
+    }
     if (editor.rule.activeProcessor === 'filter') {
       return filter.validate({
         data: editor.data?.filter,
