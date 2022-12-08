@@ -6261,6 +6261,11 @@ Object {
       "traceKeyTemplate": Object {
         "fieldId": "traceKeyTemplate",
       },
+      "webhook._httpConnectorId": Object {
+        "id": "webhook._httpConnectorId",
+        "type": "text",
+        "visible": false,
+      },
       "webhook.algorithm": Object {
         "fieldId": "webhook.algorithm",
       },
@@ -6347,6 +6352,7 @@ Object {
                 "webhook.path",
                 "webhook.username",
                 "webhook.password",
+                "webhook._httpConnectorId",
               ],
               "label": "Secure the listener",
             },
