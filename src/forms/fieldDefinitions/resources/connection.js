@@ -703,6 +703,7 @@ export default {
     type: 'text',
     helpKey: 'connection.http.auth.failPath',
     label: 'Override path to auth error field in HTTP response body',
+    defaultValue: r => r?.http?.auth?.failPath,
     visibleWhen: [
       {
         field: 'http.auth.type',
@@ -728,6 +729,7 @@ export default {
     helpKey: 'connection.http.auth.failPath',
     delimiter: ',',
     label: 'Override auth error values',
+    defaultValue: r => r?.http?.auth?.failValues,
     visibleWhen: [
       {
         field: 'http.auth.type',
