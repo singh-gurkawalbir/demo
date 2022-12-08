@@ -505,7 +505,7 @@ export function getExportOperationDetails({
       }
       const resourceDetails = getHFResourceDetails({
         version,
-        resource: modifiedResource,
+        resource,
         assistantData: assistantData.export,
       });
 
@@ -519,11 +519,11 @@ export function getExportOperationDetails({
 
       if (resourceDetails && resourceDetails.endpoints) {
         operationDetails = resourceDetails.endpoints.find(
-          op => op.id === modifiedOperation || op.url === operation
+          op => op.id === modifiedOperation || op.url === modifiedOperation
         );
         const versionLabel = assistantData?.export?.versions?.find(ver => ver._id === version)?.version;
 
-        if (version && !operationDetails?.url?.includes(`/${versionLabel}`) && assistantData?.export?.addVersionToUrl) {
+        if (operationDetails && version && !operationDetails?.url?.includes(`/${versionLabel}`) && assistantData?.export?.addVersionToUrl) {
           operationDetails.url = `/${versionLabel}/${operationDetails.url}`.replace(/([^:]\/)\/+/g, '$1');
         }
 
@@ -612,7 +612,7 @@ export function getImportOperationDetails({
       let modifiedResource = resource;
       let modifiedOperation = operation;
 
-      if (resource.includes('+') && version) {
+      if (resource.includes('+')) {
         let resources = resource.split('+');
 
         resources = assistantData?.export?.resources.filter(res => resources.includes(res._id));

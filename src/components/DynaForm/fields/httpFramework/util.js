@@ -10,12 +10,27 @@ function resourceOptions({ assistantData }) {
   }));
 }
 
-function versionOptions({ resourceData = { resources: [] } }) {
-  return resourceData.versions?.map(version => ({
+function versionOptions({ resourceData = { versions: [] }, operation, resources, resourceType }) {
+  if (!resourceData.id.includes('+')) {
+    return resourceData.versions?.map(version => ({
+      label: version.version,
+      value: version._id || version.version,
+    }))
+    .sort(stringCompare('label'));
+  }
+
+  const operations = operation.split('+');
+  const endpoints = resourceType === 'imports' ? resourceData.operations : resourceData.endpoints;
+  const resourceIds = endpoints.filter(e => operations.includes(e.id))?.map(ep => ep._httpConnectorResourceIds)?.flat(1);
+
+  const filteredResources = resources.filter(res => resourceIds.includes(res.id));
+  const versionIds = filteredResources.map(fRes => fRes._versionIds)?.flat(1);
+
+  return resourceData.versions?.filter(v => versionIds.includes(v._id))?.map(version => ({
     label: version.version,
     value: version._id || version.version,
   }))
-    .sort(stringCompare('label'));
+  .sort(stringCompare('label'));
 }
 
 function exportOperationOptions({ resourceData = { endpoints: [] } }) {
@@ -90,11 +105,6 @@ export function selectOptions({
     return [];
   }
 
-  if (assistantFieldType === 'version') {
-    return versionOptions({
-      resourceData: selectedResource,
-    });
-  }
   if (assistantFieldType === 'operation') {
     if (resourceType === 'imports') {
       return importOperationOptions({
@@ -104,6 +114,19 @@ export function selectOptions({
 
     return exportOperationOptions({
       resourceData: selectedResource,
+    });
+  }
+
+  if (!formContext.operation) {
+    return [];
+  }
+
+  if (assistantFieldType === 'version') {
+    return versionOptions({
+      resourceData: selectedResource,
+      operation: formContext.operation,
+      resources: assistantData?.[resourceTypeSingular]?.resources,
+      resourceType,
     });
   }
 
