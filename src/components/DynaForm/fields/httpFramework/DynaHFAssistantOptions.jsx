@@ -170,30 +170,30 @@ function DynaAssistantOptions(props) {
         assistantFieldType
       )
     ) {
-      const fieldDependencyMap = {
+      let fieldDependencyMap = {
         exports: {
           resource: ['operation', 'version', 'exportType'],
-          version: ['exportType'],
           operation: ['exportType'],
+          version: ['exportType'],
         },
         imports: {
           resource: ['operation', 'version'],
         },
       };
 
-      // if (versions?.length > 1) {
-      //   fieldDependencyMap = {
-      //     exports: {
-      //       resource: ['version', 'operation', 'exportType'],
-      //       version: ['operation', 'exportType'],
-      //       operation: ['exportType'],
-      //     },
-      //     imports: {
-      //       resource: ['version', 'operation'],
-      //       version: ['operation'],
-      //     },
-      //   };
-      // }
+      if (versions?.length > 1) {
+        fieldDependencyMap = {
+          exports: {
+            resource: ['operation', 'version', 'exportType'],
+            operation: ['exportType', 'version'],
+            version: ['exportType'],
+          },
+          imports: {
+            resource: ['version', 'operation'],
+            operation: ['version'],
+          },
+        };
+      }
       const patch = [];
 
       patch.push({
