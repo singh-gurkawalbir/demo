@@ -1,5 +1,5 @@
 /* eslint-disable camelcase */
-import { call, put, select, takeLatest, race, take } from 'redux-saga/effects';
+import { call, put, select, takeLatest, takeEvery, race, take } from 'redux-saga/effects';
 import moment from 'moment';
 import actionTypes from '../../../actions/types';
 import actions from '../../../actions';
@@ -176,6 +176,41 @@ export function* startDebug({scriptId, value}) {
   yield put(actions.resource.patch('scripts', scriptId, patchSet));
 }
 
+/*
+requestAllLogs saga gets all the logs present for a given scriptId without depending on dateRange.
+If there are any logs present in the response, we make Purge action available to the user and vice versa.
+*/
+export function* requestAllLogs({scriptId, flowId}) {
+  const path = `/scripts/${scriptId}/logs`;
+
+  try {
+    const response = yield call(apiCallWithRetry, {
+      path,
+      opts: { method: 'GET' },
+    });
+
+    const isPurgeAvailable = !!response?.logs?.length;
+
+    yield put(actions.logs.scripts.receivedAllLogs({scriptId, flowId, isPurgeAvailable}));
+  } catch (error) {
+    // Handle errors
+  }
+}
+export function* purgeLogs({scriptId, flowId}) {
+  const path = `/scripts/${scriptId}/logs`;
+
+  try {
+    yield call(apiCallWithRetry, {
+      path,
+      opts: { method: 'DELETE' },
+    });
+
+    yield put(actions.logs.scripts.purge.success({scriptId, flowId}));
+  } catch (error) {
+    // Handle errors
+  }
+}
+
 export const scriptsLogSagas = [
   takeLatest([
     actionTypes.LOGS.SCRIPTS.REQUEST,
@@ -185,5 +220,7 @@ export const scriptsLogSagas = [
   ], requestLogsWithCancel),
   takeLatest(actionTypes.LOGS.SCRIPTS.START_DEBUG, startDebug),
   takeLatest(actionTypes.LOGS.SCRIPTS.GET_DEPENDENCY, getScriptDependencies),
+  takeEvery(actionTypes.LOGS.SCRIPTS.PURGE.REQUEST, purgeLogs),
+  takeEvery(actionTypes.LOGS.SCRIPTS.REQUEST_ALL_LOGS, requestAllLogs),
 ];
 

@@ -237,7 +237,7 @@ export const getDomainUrl = () => {
 };
 
 export const getApiUrl = () => {
-  if (getDomain() === 'localhost.io' && process?.env?.API_ENDPOINT) {
+  if (getDomain() === 'localhost.io' && process.env?.API_ENDPOINT) {
     return process.env.API_ENDPOINT.replace('://', '://api.');
   }
 
@@ -993,10 +993,6 @@ export const getAssistantFromResource = resource => {
 
   if (assistant === 'ebay' || assistant === 'ebayfinance') {
     return 'ebay';
-  }
-
-  if (assistant === 'googlecontacts' || assistant === 'googlecontactspeople') {
-    return 'googlecontacts';
   }
 
   return assistant;

@@ -184,7 +184,7 @@ const getSuiteScriptFormMeta = ({resourceType, resource}) => {
 
   return meta;
 };
-const getFormMeta = ({resourceType, isNew, resource, connection, assistantData}) => {
+const getFormMeta = ({resourceType, isNew, resource, connection, assistantData, accountOwner}) => {
   let meta;
 
   const { type } = getResourceSubType(resource);
@@ -215,6 +215,8 @@ const getFormMeta = ({resourceType, isNew, resource, connection, assistantData})
       } else if (resource && resource.assistant) {
         meta = formMeta.connections.custom[type];
         const assistant = getAssistantFromResource(resource);
+        // eslint-disable-next-line no-undef
+        const shopifyUserIds = SHOPIFY_USER_IDS?.split(',') || [];
 
         /* TODO This is a temp fix until React becomes the only app and when REST deprecation is done from backend
         perspective and when all assistant metadata files are moved over to HTTP adaptor */
@@ -226,7 +228,12 @@ const getFormMeta = ({resourceType, isNew, resource, connection, assistantData})
         }
 
         if (meta) {
-          meta = meta[assistant];
+          // @TODO to remove this changes after shopify approves the production app
+          if (assistant === 'shopify' && !shopifyUserIds.includes(accountOwner?._id)) {
+            meta = meta.shopifyOld;
+          } else {
+            meta = meta[assistant];
+          }
         }
       } else if (resource && resource.type === 'rdbms') {
         const rdbmsSubType = resource.rdbms.type;
@@ -429,6 +436,8 @@ const getResourceFormAssets = ({
   assistantData,
   connection,
   ssLinkedConnectionId,
+  customFieldMeta,
+  accountOwner,
 }) => {
   let meta;
 
@@ -439,7 +448,8 @@ const getResourceFormAssets = ({
     if (ssLinkedConnectionId) {
       meta = getSuiteScriptFormMeta({resourceType, resource});
     } else {
-      meta = getFormMeta({resourceType, isNew, resource, connection, assistantData});
+      // TODO: @Siddharth, find better way to inject custom form field meta instead of directly applied from resourceFormInit
+      meta = customFieldMeta || getFormMeta({resourceType, isNew, resource, connection, assistantData, accountOwner});
     }
   } catch (e) {
     throw new Error(`cannot load metadata assets ${resourceType} ${resource?._id}`);

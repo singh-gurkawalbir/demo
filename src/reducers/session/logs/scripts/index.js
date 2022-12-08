@@ -8,7 +8,7 @@ const emptySet = [];
 const emptyObj = {};
 
 export default (state = {}, action) => {
-  const { type, scriptId = '', resourceReferences, logs = emptySet, nextPageURL, field, value, flowId = '', errorMsg, fetchStatus } = action;
+  const { type, scriptId = '', resourceReferences, logs = emptySet, nextPageURL, field, value, flowId = '', errorMsg, fetchStatus, isPurgeAvailable } = action;
   const key = `${scriptId}-${flowId}`;
 
   return produce(state, draft => {
@@ -56,6 +56,9 @@ export default (state = {}, action) => {
           });
           draft.scripts[key].status = 'success';
           draft.scripts[key].nextPageURL = nextPageURL;
+          if (oldLogCount || logs.length) {
+            draft.scripts[key].isPurgeAvailable = true;
+          }
         }
 
         break;
@@ -138,6 +141,19 @@ export default (state = {}, action) => {
           draft.scripts[key].status = 'requested';
         }
         break;
+      case actionTypes.LOGS.SCRIPTS.RECEIVED_ALL_LOGS:
+        if (!draft?.scripts?.[key]) break;
+        draft.scripts[key].allLogsStatus = 'success';
+        draft.scripts[key].isPurgeAvailable = isPurgeAvailable;
+        break;
+      case actionTypes.LOGS.SCRIPTS.PURGE.SUCCESS:
+        draft.purgeLogStatus = 'success';
+        draft.scripts[key].isPurgeAvailable = false;
+        break;
+      case actionTypes.LOGS.SCRIPTS.PURGE.CLEAR:
+        delete draft.purgeLogStatus;
+        break;
+
       default:
     }
   });
@@ -182,4 +198,28 @@ selectors.flowExecutionLogScripts = createSelector(
     return filteredScript;
   }
 );
+
+selectors.isPurgeAvailable = createSelector(
+  (state, {scriptId = '', flowId = ''}) => {
+    if (!state || !state.scripts) {
+      return emptyObj;
+    }
+    const key = `${scriptId}-${flowId}`;
+
+    return state.scripts[key] || emptyObj;
+  },
+  script => script.isPurgeAvailable,
+);
+selectors.isAllLogsReceived = createSelector(
+  (state, {scriptId = '', flowId = ''}) => {
+    if (!state || !state.scripts) {
+      return emptyObj;
+    }
+    const key = `${scriptId}-${flowId}`;
+
+    return state.scripts[key] || emptyObj;
+  },
+  script => script.allLogsStatus === 'success',
+);
+selectors.isPurgeLogSuccess = state => state?.purgeLogStatus === 'success';
 

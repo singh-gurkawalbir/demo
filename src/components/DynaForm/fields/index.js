@@ -162,6 +162,10 @@ import DynaSalesforceSObject from './DynaSalesforceSObject';
 import DynaSelectDataRetentionPeriod from './DynaSelectDataRetentionPeriod';
 import DynaChangeLicenseEdition from './DynaChangeLicenseEdition';
 import DynaIClientHeaders from './DynaIClientHeaders';
+import DynaShopifyHeaderLink from './Shopify/DynaShopifyHeaderLink';
+import DynaShopifyStoreName from './Shopify/DynaShopifyStoreName';
+import DynaIANameSelect from './Shopify/DynaIANameSelect';
+import DynaShopifyConnectionSelect from './Shopify/SelectConnection';
 
 export default {
   updateoptions: DynaUpdateOptions,
@@ -335,4 +339,8 @@ export default {
   selectdataretentionperiod: DynaSelectDataRetentionPeriod,
   changelicenseedition: DynaChangeLicenseEdition,
   iclientHeaders: DynaIClientHeaders,
+  shopifystorename: DynaShopifyStoreName,
+  shopifyheaderlink: DynaShopifyHeaderLink,
+  ianameselect: DynaIANameSelect,
+  shopifyconnectionselect: DynaShopifyConnectionSelect,
 };

@@ -1,6 +1,11 @@
 import { isJsonString } from '../../../utils/string';
+import {
+  updateWebhookFinalMetadataWithHttpFramework,
+} from '../../../sagas/utils';
 
 export default {
+  init: (fieldMeta, resource, flow, httpConnector) => updateWebhookFinalMetadataWithHttpFramework(fieldMeta, httpConnector, resource),
+
   validationHandler: field => {
     // Used to validate sampleData field
     // Incase of invalid json throws error to be shown on the field
@@ -107,6 +112,11 @@ export default {
     'webhook.successBody': {
       fieldId: 'webhook.successBody',
     },
+    'webhook._httpConnectorId': {
+      id: 'webhook._httpConnectorId',
+      type: 'text',
+      visible: false,
+    },
   },
   layout: {
     type: 'collapse',
@@ -131,6 +141,7 @@ export default {
           'webhook.path',
           'webhook.username',
           'webhook.password',
+          'webhook._httpConnectorId',
         ],
       },
       {
