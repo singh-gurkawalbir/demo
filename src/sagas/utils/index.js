@@ -70,7 +70,7 @@ export const getExportMetadata = (connectorMetadata, connectionVersion) => {
 
   const exportData = {
     labels: {
-      version: 'API Version',
+      version: 'API version',
     },
   };
 
@@ -182,7 +182,7 @@ export const getImportMetadata = (connectorMetadata, connectionVersion) => {
   const { httpConnectorResources: httpResources, httpConnectorEndpoints: httpEndpoints} = connectorMetadata;
   const importData = {
     labels: {
-      version: 'API Version',
+      version: 'API version',
     },
   };
 
