@@ -371,6 +371,24 @@ selectors.integrationInstallSteps = (state, id) => {
   });
 };
 
+selectors.integrationChangeEditionSteps = (state, id) => {
+  const integration = selectors.resource(state, 'integrations', id);
+
+  if (
+    (!integration ||
+      (!integration?.changeEditionSteps?.length)
+    )
+  ) {
+    return emptyList;
+  }
+
+  return produce(integration.changeEditionSteps, draft => {
+    if (draft.find(step => !step.completed)) {
+      draft.find(step => !step.completed).isCurrentStep = true;
+    }
+  });
+};
+
 selectors.mkFlowGroupingsSections = () => {
   const resourceSelector = selectors.makeResourceSelector();
 

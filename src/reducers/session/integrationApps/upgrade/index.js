@@ -17,9 +17,9 @@ export default (state = {}, action) => {
       case actionTypes.INTEGRATION_APPS.SETTINGS.V2.SET_STATUS:
         if (!draft[id]) draft[id] = {};
         if (statusObj?.steps) draft[id].steps = statusObj.steps;
-        if (statusObj?.showWizard) draft[id].showWizard = statusObj.showWizard;
+        if (statusObj?.showWizard !== undefined) draft[id].showWizard = statusObj.showWizard;
         if (statusObj?.status) draft[id].status = statusObj.status;
-        if (statusObj?.inQueue) draft[id].inQueue = statusObj.inQueue;
+        if (statusObj?.inQueue !== undefined) draft[id].inQueue = statusObj.inQueue;
         break;
 
       case actionTypes.INTEGRATION_APPS.SETTINGS.V2.ADD_CHILD_UPGRADE_LIST:
@@ -60,6 +60,24 @@ selectors.currentChildUpgrade = state => {
   });
 
   return currentChild;
+};
+
+selectors.changeEditionSteps = (state, id) => {
+  if (!state || !state[id]) {
+    return [];
+  }
+
+  const steps = state[id]?.steps || [];
+
+  if (!steps.length) {
+    return [];
+  }
+
+  return produce(steps, draft => {
+    if (draft.find(step => !step.completed)) {
+      draft.find(step => !step.completed).isCurrentStep = true;
+    }
+  });
 };
 
 // #endregion
