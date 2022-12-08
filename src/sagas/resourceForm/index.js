@@ -903,7 +903,7 @@ export function* initFormValues({
   if (resourceType === 'connections') {
     httpPublishedConnector = getHttpConnector(resource?._httpConnectorId || resource?.http?._httpConnectorId);
   } else if (resourceType === 'exports') {
-    httpPublishedConnector = getHttpConnector(resource?._httpConnectorId);
+    httpPublishedConnector = getHttpConnector(resource?._httpConnectorId || resource?.webhook?._httpConnectorId);
   }
   try {
     const defaultFormAssets = getResourceFormAssets({

@@ -44,10 +44,6 @@ export default {
       ],
       defaultValue: r => r?.http?.auth?.oauth?.scope || ['https://www.googleapis.com/auth/contacts'],
     },
-    'http.auth.oauth.callbackURL': {
-      fieldId: 'http.auth.oauth.callbackURL',
-      copyToClipboard: true,
-    },
     httpAdvanced: { formId: 'httpAdvanced' },
   },
   layout: {
@@ -56,7 +52,7 @@ export default {
       { collapsed: true, label: 'General', fields: ['name', 'application'] },
       { collapsed: true,
         label: 'Application details',
-        fields: ['http._iClientId', 'http.auth.oauth.callbackURL', 'http.scopePeople'] },
+        fields: ['http._iClientId', 'http.scopePeople'] },
       { collapsed: true, label: 'Advanced', fields: ['httpAdvanced'] },
     ],
   },

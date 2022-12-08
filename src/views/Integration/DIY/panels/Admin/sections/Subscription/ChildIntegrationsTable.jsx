@@ -46,7 +46,7 @@ export default function ChildIntegrationsTable({ integrationId, allChildIntegrat
   const dispatch = useDispatch();
   const licenses = useSelector(state => selectors.licenses(state));
   const parentLicenseId = licenses.find(license => license._integrationId === integrationId)?._id;
-  const childLicenses = licenses.filter(license => license?._parentId === parentLicenseId);
+  const childLicenses = licenses.filter(license => (!!license?._integrationId) && (license?._parentId === parentLicenseId));
   const integrationAppList = useSelector(state => selectors.publishedConnectors(state));
   const parentStatus = useSelector(state => selectors.getStatus(state, integrationId)?.status);
 
@@ -65,6 +65,7 @@ export default function ChildIntegrationsTable({ integrationId, allChildIntegrat
         name,
         installedOn,
         plan,
+        changeEditionId: license?._changeEditionId,
       };
     });
 

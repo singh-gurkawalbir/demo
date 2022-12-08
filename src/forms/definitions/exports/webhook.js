@@ -112,6 +112,11 @@ export default {
     'webhook.successBody': {
       fieldId: 'webhook.successBody',
     },
+    'webhook._httpConnectorId': {
+      id: 'webhook._httpConnectorId',
+      type: 'text',
+      visible: false,
+    },
   },
   layout: {
     type: 'collapse',
@@ -136,6 +141,7 @@ export default {
           'webhook.path',
           'webhook.username',
           'webhook.password',
+          'webhook._httpConnectorId',
         ],
       },
       {
