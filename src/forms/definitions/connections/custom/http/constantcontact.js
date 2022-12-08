@@ -60,11 +60,6 @@ export default {
       ],
       helpKey: 'constantcontact.connection.http._iClientId',
     },
-    'http.auth.oauth.callbackURL': {
-      fieldId: 'http.auth.oauth.callbackURL',
-      copyToClipboard: true,
-      visibleWhen: [{ field: 'versionType', is: ['constantcontactv3'] }],
-    },
   },
   layout: {
     type: 'collapse',
@@ -72,7 +67,7 @@ export default {
       { collapsed: true, label: 'General', fields: ['name', 'application', 'versionType'] },
       { collapsed: true,
         label: 'Application details',
-        fields: ['http._iClientId', 'http.auth.oauth.callbackURL'] },
+        fields: ['http._iClientId'] },
       { collapsed: true, label: 'Advanced', fields: ['httpAdvanced'] },
     ],
   },

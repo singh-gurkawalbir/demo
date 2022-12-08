@@ -2044,30 +2044,43 @@ if you're using a production account, you'll find your API keys under the 'API M
   // 'connection.rest.bearerToken': "The 3dcart merchant's token.",
   'connection.http.auth.revoke.uri':
 'This is the URL that we will use to revoke this token’s access to this endpoint.',
-  'connection.http.auth.oauth.grantType': 'OAuth 2.0 authentication currently supports two grant types: authorization code and client credentials. Choose Authorization code to use an authorization server to obtain an authorization code as an intermediary between the client and resource owner. Choose Client credentials if authorization scopes are limited to protected resources under the control of the client or previously configured on the authorization server.',
-  'connection.http.auth.oauth.callbackURL': 'Use the callback URL to exchange secure messages with the authorization server after authentication. You must whitelist this URL with your authorization server.',
-  'connection.http.auth.oauth.clientCredentialsLocation': 'Sends a basic auth request in the header or client credentials in the request body.',
-  'connection.http.auth.oauth.tokenURI':
+  'iClient.oauth2.grantType': 'OAuth 2.0 authentication currently supports two grant types: authorization code and client credentials. Choose Authorization code to use an authorization server to obtain an authorization code as an intermediary between the client and resource owner. Choose Client credentials if authorization scopes are limited to protected resources under the control of the client or previously configured on the authorization server.',
+  'iClient.oauth2.callbackURL': 'Use the callback URL to exchange secure messages with the authorization server after authentication. You must whitelist this URL with your authorization server.',
+  'iClient.oauth2.clientCredentialsLocation': 'Sends a basic auth request in the header or client credentials in the request body.',
+  'iClient.oauth2.token.uri':
 'integrator.io retrieves the access token from this URL.',
-  'connection.http.auth.oauth.scopeDelimiter':
+  'iClient.oauth2.scopeDelimiter':
 'Enter the non-space scope delimiter used by your API provider.',
-  'connection.http.auth.oauth.authURI':
+  'iClient.oauth2.auth.uri':
 'This is the authorization code retrieval endpoint on the API provider’s authorization server.',
   'connection.generic.http.auth.oauth.scope':
 'List the scopes to grant access to authorization server requests. Separate multiple scopes with a space character, unless you are providing an alternative delimiter, below.',
   'connection.http.auth.oauth.scope':
 'Scopes are named permissions that are provided when the connection is authorized. The list of supported scopes should be clearly documented in the API user guide. Connecting with a given scope allows your integration, for example, to export data or perform admin functions.',
-  'connection.http.auth.oauth.accessTokenHeaders': 'In some rare cases, it may be necessary to include custom HTTP headers with your API requests. The default content-type header value is application/x-www-form-urlencoded. Enter a name and a value to replace default header values with custom values.',
-  'connection.http.auth.oauth.accessTokenBody':
+  'iClient.oauth2.token.headers': 'In some rare cases, it may be necessary to include custom HTTP headers with your API requests. The default content-type header value is application/x-www-form-urlencoded. Enter a name and a value to replace default header values with custom values.',
+  'iClient.oauth2.token.body':
 "Configure your own access token body in JSON format if it is different from the default access token body. This JSON format is finally converted to the form-urlencoded format on the wire. <br> Default access token body format if 'Client Authentication' set as 'body':</br>{ code: {{{query.code}}}, redirect_uri: {{{redirectUri}}}, client_id: {{{clientId}}}, client_secret: {{{clientSecret}}}, grant_type: “authorization_code”}. <br> Default access token body format if 'Client Authentication' set as 'header': { client_id: {{{clientId}}}, client_secret: {{{clientSecret}}} grant_type: “client_credentials” }.",
-  'connection.http.auth.oauth.refreshHeaders': 'In some cases, it may be necessary to include custom HTTP headers with your token refresh requests. As with the body field, you can reference any value from the connection using {placeholders with a complete path matching the connection field.',
-  'connection.http.auth.oauth.refreshBody':
+  'iClient.oauth2.refresh.headers':
+  "In some cases, it may be necessary to include custom HTTP headers with your token refresh requests. As with the 'body' field, any value from the connection can be referenced using {{{placeholders}}} with a complete path matching the connection field.",
+  'iClient.oauth2.refresh.body':
 'Configure your own refresh token body in JSON format if it is different from the default refresh token body. This JSON format is finally converted to the form-urlencoded format on the wire.<br>Default refresh token body format:</br>{ client_id: {{{clientId}}}, client_secret: {{{clientSecret}}}, grant_type: “refresh_token” }',
-  'connection.http.auth.token.revoke.body':
+  'iClient.oauth2.revoke.body':
 'Configure your own revoke body in JSON format if it is different from the default revoke token body. This JSON format is finally converted to the form-urlencoded format on the wire.<br>Default revoke body format:</br>{ token: {{{connection.http.auth.token.token}}} }.',
-  'connection.http.auth.token.revoke.headers': 'In some rare cases, you may need to include custom HTTP headers with your API requests. The default content-type header value is application/x-www-form-urlencoded, and the authorization header value is basic.',
-  'connection.http.auth.token.revoke.uri':
+  'iClient.oauth2.revoke.headers': 'In some rare cases, you may need to include custom HTTP headers with your API requests. The default content-type header value is application/x-www-form-urlencoded, and the authorization header value is basic.',
+  'iClient.oauth2.revoke.uri':
 'integrator.io makes an HTTP post request to the token revocation endpoint URL to revoke a particular token.',
+  'iClient.oauth2.accessTokenLocation': 'This determines where your application’s API expects to find the authentication token.</br>Choose URL if the authentication token is located in the URL. You can then specify the query string parameter name that holds the token value.</br> Choose Header and specify the header name and authentication scheme to use when constructing the HTTP request. </br>Choose Body if your API requires the token to be embedded in the body structure of your HTTP request. In such cases, place the token in your body template using the placeholder: {connection.http.token.token}.',
+  'iClient.oauth2.accessTokenHeaderName':
+"By default, integrator.io will send all authentication type info in the 'Authorization: ' HTTP header field.  If the REST API you are connecting to requires a different HTTP header, use this field to provide an override.",
+  'iClient.oauth2.scheme':
+"Use this field to set the HTTP authorization header scheme value. For example, 'Bearer' would be the scheme value for 'Authorization: Bearer my_secret_api_token'",
+  'iClient.oauth2.accessTokenParamName': 'Use this field to specify the name of the URL parameter that holds the API token value. For example, if you specify myAPITokenURLParam, then all HTTP requests will include ?myAPITokenURLParam=[token]',
+  'iClient.oauth2.failStatusCode':
+'This field only needs to be set if the HTTP status code for auth errors is not 401. For example, an API could return a generic 400 status code instead, and then use a field in the HTTP response body to indicate auth errors.',
+  'iClient.oauth2.failPath':
+"This field only needs to be set if the API returns a field in the HTTP response body to indicate auth errors. For example, if an API returns the field 'errorMessage' with the value 'Auth failed', then you would set this field to 'errorMessage'.",
+  'iClient.oauth2.failValues':
+'Use this field to limit the exact values in the HTTP response body field that should be used to determine auth errors. To provide multiple values, use a comma-separated list.',
   'connection.rest.threedcartSecureUrl': "3dcart merchant's Secure URL.",
   'connection.salesforce.sandbox':
 'Select Production or Sandbox from this field. You can then click on Save & Authorize that opens a Salesforce window where you can enter your Salesforce account credentials to connect to Salesforce.',
@@ -2116,7 +2129,7 @@ if you're using a production account, you'll find your API keys under the 'API M
   'connection.http.auth.oauth.applicationType':
 'For some providers, OAuth 2.0 is built into the app’s endpoint. You will need to use Custom for any apps that do not have OAuth 2.0 built in.',
   'connection.http._iClientId':
-'Save your client ID and client secret in iClient for an added layer of security.',
+'OAuth 2.0 clients are used to securely link your integrator.io account to an external OAuth 2.0 provider for the purpose of acquiring API access tokens. OAuth 2.0 clients can be reused by any number of connections.',
   'connection.http.clientCertificates.key': 'Select a .KEY private key file.',
   'connection.http.clientCertificates.type':
 'Select the certificate type.',

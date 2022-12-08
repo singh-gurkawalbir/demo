@@ -70,10 +70,6 @@ export default {
       required: true,
       helpKey: 'googleads.connection.http.unencrypted.loginCustomerId',
     },
-    'http.auth.oauth.callbackURL': {
-      fieldId: 'http.auth.oauth.callbackURL',
-      copyToClipboard: true,
-    },
     application: {
       fieldId: 'application',
     },
@@ -91,7 +87,6 @@ export default {
           'http.unencrypted.customerId',
           'http.unencrypted.loginCustomerId',
           'http._iClientId',
-          'http.auth.oauth.callbackURL',
         ],
       },
       { collapsed: true, label: 'Advanced', fields: ['httpAdvanced'] },

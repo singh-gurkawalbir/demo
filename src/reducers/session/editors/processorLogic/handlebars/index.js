@@ -153,6 +153,10 @@ export default {
 
     if (fieldId === 'assistantMetadata.queryParams') {
       rule = fieldState.value[Object.keys(fieldState.value)[paramIndex]];
+    } else if (fieldId === 'oauth2.token.headers' ||
+    fieldId === 'oauth2.revoke.headers' ||
+    fieldId === 'oauth2.refresh.headers') {
+      rule = fieldState.value[paramIndex]?.value;
     }
 
     return {
