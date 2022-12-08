@@ -402,6 +402,10 @@ const getFormMeta = ({resourceType, isNew, resource, connection, assistantData, 
       }
 
       break;
+    case 'iClients':
+      meta = formMeta[resourceType].iClient;
+      break;
+
     case 'agents':
     case 'apis':
     case 'scripts':
@@ -410,7 +414,6 @@ const getFormMeta = ({resourceType, isNew, resource, connection, assistantData, 
     case 'stacks':
     case 'templates':
     case 'connectors':
-    case 'iClients':
     case 'asyncHelpers':
     case 'pageProcessor':
     case 'pageGenerator':

@@ -797,6 +797,8 @@ export const updateWebhookFinalMetadataWithHttpFramework = (finalFieldMeta, conn
       if (!tempFiledMeta.fieldMap[key].defaultValue) {
         tempFiledMeta.fieldMap[key] = {...tempFiledMeta.fieldMap[key], defaultValue: preConfiguredField.values?.[0]};
       }
+    } else if (key === 'webhook._httpConnectorId') {
+      tempFiledMeta.fieldMap[key] = {...tempFiledMeta.fieldMap[key], defaultValue: connector._id};
     }
 
     return tempFiledMeta.fieldMap[key];

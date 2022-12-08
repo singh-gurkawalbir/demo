@@ -16,7 +16,6 @@ import httpWsse from './httpWsse';
 import httpRefreshToken from './httpRefreshToken';
 import restRefreshToken from './restRefreshToken';
 import httpOAuth from './httpOAuth';
-import httpOAuthOverrides from './httpOAuthOverrides';
 import graphql from './graphql';
 
 export default {
@@ -31,7 +30,6 @@ export default {
   restToken,
   restRefreshToken,
   httpOAuth,
-  httpOAuthOverrides,
   restAdvanced,
   httpAdvanced,
   restCookie,

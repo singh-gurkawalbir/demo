@@ -108,7 +108,6 @@ describe('editor utils test cases', () => {
       expect(getUniqueFieldId('http.relativeURICreate')).toEqual('http.relativeURI.1');
       expect(getUniqueFieldId('rdbms.query1')).toEqual('rdbms.query');
       expect(getUniqueFieldId('rdbms.query2')).toEqual('rdbms.query');
-      expect(getUniqueFieldId('http.auth.oauth.refreshBody')).toEqual('http.auth.token.refreshBody');
     });
     test('should correctly return field id in case of graphql field', () => {
       expect(getUniqueFieldId('graphql.query')).toEqual('http.body');
