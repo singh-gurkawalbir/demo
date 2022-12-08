@@ -112,10 +112,8 @@ export const getExportMetadata = (connectorMetadata, connectionVersion) => {
   exportData.resources.forEach((r, i) => {
     exportData.resources[i].versions = versions.filter(v => r._versionIds?.includes(v._id));
 
-    // if (exportData.resources[i].versions.length) {
-    // exportData.resources[i].versions.forEach(v => {
     const filteredHttpEndpoints = httpEndpoints.filter(e => {
-      // Needs to optimise this logic
+      // TODO: Ashok: Needs to optimise this logic
       let htpEndpointExists = false;
 
           e._httpConnectorResourceIds?.forEach(eResId => {
@@ -159,19 +157,11 @@ export const getExportMetadata = (connectorMetadata, connectionVersion) => {
                     delete ep[field.path];
                   }
                 });
-                // This logic should be added in calculating reverse logic
-                // if (versionLocation === 'uri' && !connectionVersion) {
-                //   ep.url = `/${v.version}${httpEndpoint.relativeURI}`;
-                // }
-
                 exportData.resources[i].endpoints.push(deepClone(ep));
         }
       });
     }
     delete exportData.resources[i].exportPreConfiguredFields;
-    // });
-    // }
-    // exportData.resources[i].versions = deepClone(exportData.resources[i].versions.filter(r => r.endpoints?.length));
   });
   exportData.resources = deepClone(exportData.resources.filter(r => r.endpoints?.length));
 
@@ -225,15 +215,7 @@ export const getImportMetadata = (connectorMetadata, connectionVersion) => {
 
   importData.resources.forEach((r, i) => {
     importData.resources[i].versions = versions.filter(v => r._versionIds?.includes(v._id));
-
-    // if (importData.resources[i].versions.length) {
-    //   importData.resources[i].versions.forEach(v => {
-    // const filteredHttpEndpoints = httpEndpoints.filter(e => e._httpConnectorResourceIds?.includes(r.id));
-
-    // if (exportData.resources[i].versions.length) {
-    // exportData.resources[i].versions.forEach(v => {
     const filteredHttpEndpoints = httpEndpoints.filter(e => {
-      // Needs to optimise this logic
       let htpEndpointExists = false;
 
             e._httpConnectorResourceIds?.forEach(eResId => {
@@ -315,10 +297,6 @@ export const getImportMetadata = (connectorMetadata, connectionVersion) => {
                   ep[f.path] = undefined;
                   delete ep[f.path];
                 });
-
-                // if (versionLocation === 'uri' && !connectionVersion) {
-                //   ep.url = `/${v.version}${httpEndpoint.relativeURI}`;
-                // }
                 if (ep.ignoreExisting) {
                   ep.supportIgnoreExisting = true;
                 }
@@ -342,9 +320,6 @@ export const getImportMetadata = (connectorMetadata, connectionVersion) => {
     }
     delete importData.resources[i].resourcePreConfiguredFields;
     delete importData.resources[i].resourceFieldsUserMustSet;
-    //   });
-    // }
-    // importData.resources[i].versions = deepClone(importData.resources[i].versions.filter(r => r.operations?.length));
   });
   importData.resources = deepClone(importData.resources.filter(r => r.operations?.length));
 
