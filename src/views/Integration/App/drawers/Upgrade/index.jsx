@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback, useMemo } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
@@ -74,11 +74,7 @@ function UpgradeInstallation() {
 
   const integration = useSelectorMemo(selectors.mkIntegrationAppSettings, integrationId);
 
-  const {
-    _connectorId,
-  } = useMemo(() => integration ? {
-    _connectorId: integration._connectorId,
-  } : emptyObject, [integration]);
+  const { _connectorId } = integration?._connectorId || emptyObject;
 
   const helpUrl = useSelector(state => {
     const integrationApp = selectors.resource(state, 'published', _connectorId);
@@ -370,12 +366,13 @@ function UpgradeInstallation() {
 
 export default function UpgradeDrawer() {
   const history = useHistory();
+  const onClose = useCallback(() => {
+    history.goBack();
+  }, [history]);
 
   return (
     <RightDrawer
-      onClose={() => {
-        history.goBack();
-      }}
+      onClose={onClose}
       path={drawerPaths.UPGRADE.INSTALL}
       height="tall">
       <DrawerHeader title="Upgrade plan" />
@@ -384,9 +381,7 @@ export default function UpgradeDrawer() {
       </DrawerContent>
       <DrawerFooter>
         <FilledButton
-          onClick={() => {
-            history.goBack();
-          }}
+          onClick={onClose}
         >
           Close
         </FilledButton>

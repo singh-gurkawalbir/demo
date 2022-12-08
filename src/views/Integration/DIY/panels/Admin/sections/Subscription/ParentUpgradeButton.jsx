@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import Spinner from '../../../../../../../components/Spinner';
 import FilledButton from '../../../../../../../components/Buttons/FilledButton';
@@ -7,6 +7,7 @@ import ButtonWithTooltip from '../../../../../../../components/Buttons/ButtonWit
 import { selectors } from '../../../../../../../reducers';
 import { buildDrawerUrl, drawerPaths } from '../../../../../../../utils/rightDrawer';
 import TextButton from '../../../../../../../components/Buttons/TextButton';
+import actions from '../../../../../../../actions';
 
 export default function ParentUpgradeButton(props) {
   const {
@@ -18,6 +19,7 @@ export default function ParentUpgradeButton(props) {
   } = props;
   const history = useHistory();
   const match = useRouteMatch();
+  const dispatch = useDispatch();
   const [isInProgress, setIsInProgress] = useState(false);
   const status = useSelector(state => selectors.getStatus(state, id)?.status);
   const showWizard = useSelector(state => selectors.getStatus(state, id)?.showWizard);
@@ -31,14 +33,15 @@ export default function ParentUpgradeButton(props) {
   }, [status]);
 
   useEffect(() => {
-    if (showWizard === true) {
+    if (showWizard) {
+      dispatch(actions.integrationApp.upgrade.setStatus(id, { showWizard: false }));
       history.push(buildDrawerUrl({
         path: drawerPaths.UPGRADE.INSTALL,
         baseUrl: match.url,
         params: { currentIntegrationId: id},
       }));
     }
-  }, [history, id, match.url, showWizard]);
+  }, [dispatch, history, id, match.url, showWizard]);
 
   // Next all the logic for upgrade button will be written
   if (isInProgress) {

@@ -55,6 +55,7 @@ export function* getSteps({ integrationId }) {
   const obj = {
     steps: response.steps,
     showWizard: response.showWizard,
+    status: 'inComplete',
   };
 
   yield put(actions.integrationApp.upgrade.setStatus(integrationId, obj));
@@ -152,9 +153,8 @@ export function* installScriptStep({
       }
     }
     yield put(actions.integrationApp.installer.updateStep(id, '', 'failed'));
-    yield put(actions.api.failure(path, 'PUT', error.message, false));
 
-    return undefined;
+    return yield put(actions.api.failure(path, 'PUT', error.message, false));
   }
 
   if (!stepCompleteResponse || stepCompleteResponse.warnings) {
@@ -244,15 +244,13 @@ export function* verifyBundleOrPackageInstall({
       message: 'Verifying Bundle/Package Installation...',
     });
   } catch (error) {
-    yield put(
+    return yield put(
       actions.integrationApp.upgrade.installer.updateStep(
         id,
         '',
         'failed'
       )
     );
-
-    return undefined;
   }
 
   if (response?.success) {
