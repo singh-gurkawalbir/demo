@@ -116,10 +116,13 @@ export default function App() {
   const snackbarClasses = useSnackbarStyles();
   const dispatch = useDispatch();
   const reloadCount = useSelector(state => selectors.reloadCount(state));
+  const profile = useSelector(state => selectors.userProfile(state)) || {};
+  const { darkModeTheme } = profile;
+  const theme1 = darkModeTheme ? 'dark' : 'light';
   const themeName = useSelector(state =>
     selectors.userPreferences(state).environment === 'sandbox'
       ? 'sandbox'
-      : 'light'
+      : theme1
   );
   const theme = useMemo(() => themeProvider(themeName), [themeName]);
   const toggleDebugMode = useCallback(() => {
