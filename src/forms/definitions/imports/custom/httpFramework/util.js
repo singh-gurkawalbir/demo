@@ -29,7 +29,7 @@ function basicFieldsMeta({ assistant, assistantConfig, assistantData }) {
   const fieldDefinitions = {
     resource: {
       fieldId: 'assistantMetadata.resource',
-      value: assistantConfig.resource,
+      value: resourceDefaultValue,
       required: true,
       type: 'hfoptions',
       label: 'Resource',
@@ -37,7 +37,7 @@ function basicFieldsMeta({ assistant, assistantConfig, assistantData }) {
     operation: {
       fieldId: 'assistantMetadata.operation',
       type: 'hfoptions',
-      value: assistantConfig.operation || assistantConfig.operationUrl,
+      value: operationDefaultValue,
       required: true,
       label: 'API endpoint',
     },
