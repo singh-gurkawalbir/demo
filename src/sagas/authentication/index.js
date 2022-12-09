@@ -467,6 +467,17 @@ export function* setLastLoggedInLocalStorage() {
 
   localStorage.setItem('latestUser', profile?._id);
 }
+export function* validateSession() {
+  const response = yield call(apiCallWithRetry, {
+    path: '/validate-session',
+    message: 'Authenticating User',
+    hidden: true,
+  });
+
+  yield put(actions.mfa.receivedSessionInfo(response));
+
+  return response;
+}
 
 export function* auth({ email, password }) {
   try {
@@ -489,6 +500,7 @@ export function* auth({ email, password }) {
     }
     const isExpired = yield select(selectors.isSessionExpired);
 
+    yield call(validateSession);
     yield call(setCSRFToken, apiAuthentications._csrf);
 
     yield call(setLastLoggedInLocalStorage);
@@ -533,17 +545,6 @@ export function* signup({payloadBody}) {
     yield put(actions.auth.signupStatus('failed', authError));
     yield put(actions.user.profile.delete());
   }
-}
-export function* validateSession() {
-  const response = yield call(apiCallWithRetry, {
-    path: '/validate-session',
-    message: 'Authenticating User',
-    hidden: true,
-  });
-
-  yield put(actions.mfa.receivedSessionInfo(response));
-
-  return response;
 }
 
 export function* initializeSession({opts} = {}) {
