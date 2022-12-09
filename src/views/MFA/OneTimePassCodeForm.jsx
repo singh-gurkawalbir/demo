@@ -109,7 +109,7 @@ export default function OneTimePassCodeForm() {
     if (isMFAVerified) {
       history.push(getRoutePath('/'));
     }
-  }, [isMFAVerified]);
+  }, [history, isMFAVerified]);
 
   return (
     <div className={classes.editableFields}>

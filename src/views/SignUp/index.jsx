@@ -33,7 +33,6 @@ const useStyles = makeStyles(theme => ({
   },
   link: {
     paddingLeft: 4,
-    color: theme.palette.warning.main,
   },
   signinWrapper: {
     background: theme.palette.background.paper,
@@ -46,8 +45,9 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
+    position: 'relative',
+    justifyContent: 'center',
     width: 300,
-    marginTop: '50%',
     height: '100%',
     [theme.breakpoints.down('sm')]: {
       marginTop: 0,
