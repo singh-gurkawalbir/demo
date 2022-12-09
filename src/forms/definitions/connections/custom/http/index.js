@@ -43,6 +43,8 @@ import pulseway from './pulseway';
 import servicenow from './servicenow';
 import shipstation from './shipstation';
 import shopify from './shopify';
+// should be removed
+import shopifyOld from './shopifyOld';
 import shipwire from './shipwire';
 import snapfulfil from './snapfulfil';
 import splunk from './splunk';
@@ -99,7 +101,7 @@ import tesco from './tesco';
 import fieldaware from './fieldaware';
 import googlesheets from './googlesheets';
 // import googlemail from './googlemail';
-import googlecontacts from './googlecontacts';
+import googlecontactspeople from './googlecontacts';
 import googleshopping from './googleshopping';
 import googleanalytics from './googleanalytics';
 import taxjar from './taxjar';
@@ -321,6 +323,7 @@ export default {
   servicenow,
   shipstation,
   shopify,
+  shopifyOld,
   // surveymonkey,
   stripe,
   twilio,
@@ -352,7 +355,7 @@ export default {
   fieldaware,
   googlesheets,
   // googlemail,
-  googlecontacts,
+  googlecontactspeople,
   googleshopping,
   googleanalytics,
   chargebee,

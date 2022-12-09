@@ -2047,11 +2047,9 @@ export function convertToImport({ assistantConfig, assistantData, headers }) {
       }
     }
   }
-  if (operationDetails.howToIdentifyExistingRecords) {
-    if (existingExtract) {
-      importDoc.existingExtract = existingExtract;
-      importDoc.existingLookupName = undefined;
-    }
+  if (operationDetails.howToIdentifyExistingRecords && existingExtract) {
+    importDoc.existingExtract = existingExtract;
+    importDoc.existingLookupName = undefined;
   }
   if (ignoreExisting) {
     if (identifiers && identifiers.length > 0) {
@@ -2065,7 +2063,7 @@ export function convertToImport({ assistantConfig, assistantData, headers }) {
     ignoreMissing
   ) {
     if (identifiers && identifiers.length > 0) {
-      if (lookupType === 'source') {
+      if (lookupType === 'source' && pathParams[identifiers[0].id]) {
         if (ignoreMissing) {
           importDoc.ignoreExtract = pathParams[identifiers[0].id];
           importDoc.existingExtract = undefined;
@@ -2278,14 +2276,19 @@ export function isEbayFinanceConnection(connection) {
   return connection?.assistant === 'ebayfinance';
 }
 
-export function getPublishedConnectorName(httpConnectorId) {
-  const publishedConnectors = getPublishedHttpConnectors();
-
-  return publishedConnectors?.find(pc => pc._id === httpConnectorId)?.name;
+export function getConnectorId(legacyId, name) {
+  return legacyId || name?.toLowerCase().replace(/\.|\s/g, '');
 }
 
-export function getPublishedConnectorId(httpConnectorName) {
+export function getPublishedConnectorName(httpConnectorId) {
+  const publishedConnectors = getPublishedHttpConnectors();
+  const publishedConnector = publishedConnectors?.find(pc => pc._id === httpConnectorId);
+
+  return getConnectorId(publishedConnector?.legacyId, publishedConnector?.name);
+}
+
+export function getPublishedConnectorId(application) {
   const publishedConnectors = getPublishedHttpConnectors();
 
-  return publishedConnectors?.find(pc => pc.name === httpConnectorName)?._id;
+  return publishedConnectors?.find(pc => getConnectorId(pc.legacyId, pc.name) === application)?._id;
 }

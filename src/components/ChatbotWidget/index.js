@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Draggable from 'react-draggable';
 import {makeStyles} from '@material-ui/core/styles';
 import { IconButton } from '@material-ui/core';
@@ -15,17 +15,21 @@ const useStyles = makeStyles(theme => ({
   chatbotIcon: {
     position: 'absolute',
     zIndex: 99999999,
-    bottom: theme.spacing(2),
-    right: theme.spacing(2),
+    bottom: theme.spacing(3),
+    right: theme.spacing(3),
+    '&:hover': {
+      backgroundColor: 'transparent',
+    },
   },
   chatIcon: {
-    fontSize: theme.spacing(6),
+    fontSize: theme.spacing(7),
   },
 }));
 
 const ChatbotWidget = () => {
   const classes = useStyles();
   const [isOpen, open] = useState(false);
+  const dragCount = useRef(0);
   const { email, name } = useSelector(state => selectors.userProfile(state), shallowEqual) || {};
 
   useScript(scriptUrl, scriptId, () => {
@@ -64,6 +68,14 @@ const ChatbotWidget = () => {
   if (!scriptUrl) return null;
 
   const handleWidget = () => {
+    // The dragCount ref is used to differentiate the drag from click
+    // because the click handle is getting called after every drag
+    if (dragCount.current > 1) {
+      dragCount.current = 0;
+
+      return;
+    }
+
     if (!isOpen) {
       window.zE('webWidget', 'show');
       window.zE('webWidget', 'open');
@@ -73,8 +85,12 @@ const ChatbotWidget = () => {
     }
   };
 
+  const onDrag = () => {
+    dragCount.current += 1;
+  };
+
   return (
-    <Draggable>
+    <Draggable onDrag={onDrag}>
       <IconButton className={classes.chatbotIcon} onClick={handleWidget}>
         {
           isOpen ? (

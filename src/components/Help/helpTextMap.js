@@ -134,10 +134,10 @@ export default {
 'Username is your 4castplus account email.',
   '4castplus.connection.http.encrypted.password':
 'Password is your 4castplus account password.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your password safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
-  'connection.http.unencrypted.partnerUserId':
-'Please enter your partner user id of expenisfy account which can be obtained from  https://www.expensify.com/tools/integrations/ after creating Expensify account at https://www.expensify.com/.',
+  'expensify.connection.http.unencrypted.partnerUserId':
+'Enter your partner user ID provided by Expensify.<br>To retrieve the partner user ID:<br>1. Sign in to your <a href="https://www.expensify.com/">Expensify</a> account.<br>2. Navigate to <a href="https://www.expensify.com/tools/integrations/">Integration server access</a>.<br>3. Copy the <b>Partner user ID</b>.',
   'expensify.connection.http.encrypted.partnerUserSecret':
-'Please enter your partner user secret of expenisfy account which can be obtained from  https://www.expensify.com/tools/integrations/ after creating Expensify account at https://www.expensify.com/.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your user secret safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
+'Enter your partner user secret provided by Expensify.<br>To retrieve the partner user secret:<br>1. Sign in to your <a href="https://www.expensify.com/">Expensify</a> account.<br>2. Navigate to <a href="https://www.expensify.com/tools/integrations/">Integration server access</a>.<br>3. Copy the <b>Partner user secret</b>.',
   'klaviyo.connection.http.encrypted.apiKey':
 'Please enter your API key here. This can be obtained from the Settings section and API Keys subsection.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your API key safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'zohodesk.connection.http.unencrypted.organizationId':
@@ -322,10 +322,8 @@ export default {
   'fulfilment.connection.http.auth.token.token': 'Click the <b>Generate token</b> button to have integrator.io fill in an encrypted access token or enter the token generated for you by Fulfillment.com. <br>Multiple layers of protection are in place, including AES 256 encryption, to keep your connection\'s token safe. When editing this form later, you must generate this value again; it is stored only when the connection is saved and never displayed as text.',
   'stripe.connection.http.auth.token.token':
 'The secret key of your Stripe account.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your secret key safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
-  'twilio.connection.http.auth.basic.username':
-'The Account Sid of your Twilio account.',
-  'twilio.connection.http.auth.basic.password':
-'The token of your Twilio account.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your token safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
+  'twilio.connection.http.auth.basic.username': 'Enter your account SID provided by Twilio. <br />To retrieve the account SID:<ul><li>Sign into your <a href="https://www.twilio.com/" target="_blank">Twilio</a> account.</li><li>Navigate to <b>Console Dashboard</b>.</li><li>From <b>Project info</b>, copy the <b>Account SID</b>.</li></ul>',
+  'twilio.connection.http.auth.basic.password': 'Enter your auth token provided by Twilio. <br />To retrieve the auth token:<ul><li>Sign into your <a href="https://www.twilio.com/" target="_blank">Twilio</a> account.</li><li>Navigate to <b>Console Dashboard</b>.</li><li>From <b>Project info</b>, click <b>Show</b>, and copy the <b>Auth token</b>.</li></ul>Multiple layers of protection, including AES 256 encryption, are in place to keep your auth token safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'woocommerce.connection.http.baseURI': 'Enter the base URI of your WooCommerce account. For example, if your endpoint is at https://shopName.com/wp-json/wc/v1/orders, then enter https://shopName.com.',
   'woocommerce.connection.http.auth.basic.username':
 'The consumer key of your WooCommerce account.',
@@ -361,6 +359,8 @@ export default {
 'Please enter the Harvest account ID. This can be obtained from the Settings section and Account ID subsection.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your Account ID safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'pulseway.connection.http.baseURI':
 'Enter the base URI of your Pulseway account. If you host your own Pulseway Enterprise Server, enter https://your-server-name/api as the base URI.',
+  'pulseway.connection.http.auth.basic.username': 'Enter your Pulseway account username.',
+  'pulseway.connection.http.auth.basic.password': 'Enter your Pulseway account password.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your Password safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'shiphawk.connection.http.encrypted.apiKey':
 'The API Key of your ShipHawk account. This can be obtained from the Settings section and API Key subsection.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your API key safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'newrelic.connection.http.encrypted.apiKey':
@@ -375,8 +375,7 @@ export default {
 'The content URL is the value that in the server environment is referred to as the Site ID.',
   'tableau.connection.http.auth.token.token':
 'Click the <b>Generate token</b> button to have integrator.io fill in an encrypted access token or enter the token generated for you by Tableau. <br>Multiple layers of protection are in place, including AES 256 encryption, to keep your connection\'s token safe. When editing this form later, you must generate this value again; it is stored only when the connection is saved and never displayed as text.',
-  'tableau.connection.http.unencrypted.siteId':
-'The Site ID of your Tableau account.',
+  'tableau.connection.http.unencrypted.siteId': 'Enter your Tableau site ID. You can find the site ID in the site URL followed by <i>#/site</i>. For example, if <i>https://xyz/#/site/misc/projects</i> is your site URL, then misc is your site ID.',
   'tableau.connection.http.unencrypted.version': 'Please enter the version of the API to use, such as 3.10. For more information, see <a href="https://help.tableau.com/current/api/rest_api/en-us/REST/rest_api_concepts_versions.htm">REST API and Resource Versions</a>.',
   'tesco.connection.http.encrypted.apiKey':
 'The subscription key of your Tesco account. This can be obtained from the Settings section and API Keys subsection.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your subscription key safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
@@ -384,6 +383,8 @@ export default {
 'Please enter your API key here. This can be obtained by reaching out to FieldAware support team.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your API key safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'chargebee.connection.http.auth.basic.username':
 'The API Key of your Chargebee account.',
+  'chargebee.connection.http.subdomain':
+'Enter your Chargebee subdomain. For example, if you sign into your Chargebee account at https://celigo-xyz-test.chargebee.com, then <b>celigo-xyz-test</b> is your subdomain.',
   'taxjar.connection.http.auth.token.token':
 'Please enter your token here. This can be obtained by navigating to Tokens page from the options menu on the top right corner in the application.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your token safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'pitneybowes.connection.http.sandbox':
@@ -434,7 +435,7 @@ export default {
 'Please enter company name of your lexbizz account.',
   'lexbizz.connection.http.unencrypted.locale':
 'Please enter locale of your lexbizz account.',
-  'braintree.connection.http.unencrypted.environment': 'Select the environment of your Braintree account.',
+  'braintree.connection.http.unencrypted.environment': 'Select the Braintree account environment type you are connecting to, either <b>Production</b> or <b>Sandbox</b>.',
   'braintree.connection.http.auth.basic.username': 'Enter the Public key of your Braintree account.<br> <b>Steps to get the Public Key:</b> <br>1. Sign in to your Braintree account.<br>2. Navigate to <b>My User</b> at the top right.<br>2. Click on <b>View Authorizations</b>.Copy the Public Key shown on the dashboard. (If none exists yet or you want to change the API credentials, click on <b>Generate New API Key</b> to generate a new pair.)',
   'braintree.connection.http.auth.basic.password': 'Enter the Private key of your Braintree account.<br> <b>Steps to get the Private Key:</b> <br>1. Sign in to your Braintree account.<br>2. Navigate to <b>My User</b> at the top right.<br>2. Click on <b>View Authorizations</b>.Copy the Private Key shown on the dashboard. (If none exists yet or you want to change the API credentials, click on <b>Generate New API Key</b> to generate a new pair.)<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your key safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'myobadvanced.connection.http.auth.type': 'Please select Authentication Type.',
@@ -455,6 +456,8 @@ export default {
   'g2.connection.http.auth.token.token': 'Please enter your API Token here.<br><b>Steps to get API Token:</b> <br>Login to your G2 account, under Integrations > API Tokens, you can create and manage your Tokens.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your token safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'shippo.connection.http.encrypted.token':
 'Please enter your API key here. You can find your token on the Shippo API settings page.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your password safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
+  'acumatica.connection.http.auth.type':
+'Select the authentication method, either <b>Cookie</b> or <b>OAuth 2.0</b>.<br><b>Cookie</b>: If your service relies on session-based authentication. This method includes a unique cookie in the HTTP request header. When you select this option, the platform automatically creates and inserts this cookie into every HTTP request it sends to your application.<br><b>OAuth 2.0</b>: If your application supports the OAuth2.0 authentication.',
   'acumatica.connection.instanceURI':
 'Please enter URL of your instance with Acumatica. For example, http://try.acumatica.com/isv/entity/Default/6.00.001, then the Instance URI would be http://try.acumatica.com/isv.',
   'acumatica.connection.http.unencrypted.endpointName':
@@ -519,6 +522,8 @@ export default {
   'sugarcrm.connection.http.unencrypted.version':
 'Please enter endpoint version of your SugarCRM account.',
   'sugarcrm.connection.http.unencrypted.clientID': 'The client_id of "sugar" will automatically create an OAuth Key in the system and can be used for "password" authentication. The client_id of "support_portal" will create an OAuth Key if the portal system is enabled and will allow for portal authentication. Other client_id \'s can be created by the administrator in the OAuthKeys section in the Administration section and can be used in the future for additional grant types,if the client secret is filled in, it will be checked to validate the use of the client id.',
+  'sugarcrm.connection.http.unencrypted.username': 'Enter your SugarCRM account username.',
+  'sugarcrm.connection.http.encrypted.password': 'Enter your SugarCRM account password.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your Password safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'sugarcrm.connection.http.unencrypted.platform': 'Defaults to "base" allows you to have custom meta-data per platform. If using a value other than "base", you should make sure it is registered using the Platform extension or configure an API platform in Administration panel.',
   'sugarcrm.connection.http.encrypted.clientSecret': 'Defaults to "base" allows you to have custom meta-data per platform. If using a value other than "base", you should make sure it is registered using the Platform extension or configure an API platform in Administration panel.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your secret safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'sugarcrm.connection.http.auth.token.token':
@@ -549,8 +554,8 @@ export default {
 'The Client ID will be found in the Admin > LaunchPoint menu by selecting the custom service, and clicking View Details.',
   'marketo.connection.http.encrypted.clientSecret':
 'The Client Secret will be found in the Admin > LaunchPoint menu by selecting the custom service, and clicking View Details.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your secret safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
-  'zimbra.connection.http.unencrypted.userAccount':
-'The user. To load an explicit user account, specify the user in one of the following formats:<ul> <li>john.doe <pre>http://localhost:7070/home/john.doe/inbox.rss </pre> </li> <li>john.doe@mydomain.com</li> <pre>http://localhost:7070/home/john.doe@mydomain.com/inbox.rss </pre> </ul>.',
+  'zimbra.connection.http.baseURI': 'Enter the base URI of your Zimbra account. For example, if the URL is <i>http://localhost:7070/home/john.doe/inbox.rss</i>, then enter <i>http://localhost:7070</i>.',
+  'zimbra.connection.http.unencrypted.userAccount': 'The user. To load an explicit user account, specify the user in one of the following formats:<ul> <li>john.doe <pre>http://localhost:7070/home/john.doe/inbox.rss </pre> </li> <li>john.doe@mydomain.com</li> <pre>http://localhost:7070/home/john.doe@mydomain.com/inbox.rss </pre> </ul>',
   'grms.connection.http.unencrypted.apiKey':
 'GRMS assigned API key to a partner account. API key is given out by GRMS customer support team.',
   'grms.connection.http.encrypted.apiSecret':
@@ -777,6 +782,7 @@ if you're using a production account, you'll find your API keys under the 'API M
 "To connect to an on-premise application integrator.io requires that an 'Agent' be installed on a computer that has network access to the on-premise application. Once the agent has been installed you can simply reference the agent here, and then integrating your on-premise applications is no different than integrating any other applications using integrator.io. Please note also that a single 'Agent' can be used by multiple different connections.",
   'connection.name':
 'Enter a unique name for your connection so that you can easily reference it from other parts of the application.',
+  'connection.application': 'The application to which you are connecting. This setting is read-only; you cannot change the application. To select a different application, you must create another connection.',
   'connection.type':
 "This field lists all applications and technology adaptors that integrator.io supports for exporting or importing the data. For less technical users, application adaptors, such as NetSuite or Salesforce are the easiest to use, whereas technology adaptors, such as the REST API adaptor requires a more technical understanding of the applications being integrated. However, once you learn how to use a specific technology adaptor, you will be able to integrate a multitude of different applications without having to wait for integrator.io to expose specific application adaptors. If you are unable to find a matching application or a technology adaptor, the only other connectivity option is to use the integrator.io extension framework to develop a custom Wrapper. For more information on Wrappers and to learn more about integrator.io's developer extension framework, contact Celigo Support.",
   'connection.lastModified':
@@ -791,8 +797,12 @@ if you're using a production account, you'll find your API keys under the 'API M
 'Indicates for how long integrator.io should be recording both request and response traffic from this connection. You can later review this raw debug information directly from the download icon on the /connections page.',
   'connection._borrowConcurrencyFromConnectionId':
 'By default, all data flowing through a connection record will get submitted to the respective endpoint application at the concurrency level configured for that connection record. There are use cases however where you need multiple connections to share the same concurrency level, and this field allows you to specify that a connection should borrow concurrency from another connection such that the data flowing through both connections will get submitted to the endpoint application together via a shared concurrency model. For example, you might have three separate NetSuite connection records in your integrator.io account (for the purpose of isolating different permissions for different integrations), but you only want to provision one concurrent request for all three NetSuite connection records to share. To implement this use case you would setup one of the three connections with a concurrency level 1, and then you would setup the other two NetSuite connections to borrow concurrency from the other.',
+  'connection.autoRecoverGovernanceErrors':
+'Check to enable auto recovery for governance errors. When a connection receives rate-limiting errors from your applications,  <a href="https://www.celigo.com/ipaas-integration-platform/">integrator.io</a> platform classifies these errors as "Governance". During the auto recovery attempts, the record is submitted again, but individually at a slower rate.',
   'connection.netsuite.account':
 'Your NetSuite Account Id.  One way to obtain this value within NetSuite is via Setup -> Integration -> Web Services Preferences.  If this does not work then please contact NetSuite support.',
+  'connection.netsuite.tokenAccount': 'Enter your NetSuite account ID. <br /> To retrieve the account ID: <ul><li>Sign into your <a href="https://www.netsuite.com/portal/in/home.shtml" target="_blank"></a>NetSuite account.</li><li>Navigate to <b>Setup > Integration > SOAP Web services preferences</b>.</li><li>From <b>Primary information</b>, copy the <b>Account ID</b>.</li></ul>',
+  'connection.netsuite.token.auto.account': 'Enter your NetSuite account ID. <br /> To retrieve the account ID: <ul><li>Sign into your <a href="https://www.netsuite.com/portal/in/home.shtml" target="_blank"></a>NetSuite account.</li><li>Navigate to <b>Setup > Integration > SOAP Web services preferences</b>.</li><li>From <b>Primary information</b>, copy the <b>Account ID</b>.</li></ul>',
   'connection.netsuite.roleId':
 "The NetSuite Internal Id of the Role associated with the User.  To obtain this value you must first know which NetSuite Role record is associated with the User you are using for this connection.  Once you know the Role then you can navigate to Setup -> Users/Roles -> Manage Roles and if you have NetSuite Internal Ids displayed automatically it will just show in the list view, or you can open the Role in view mode and look at the URL in the browser and the id will be listed there too.  If these steps didn't work for your particular NetSuite instance then please contact NetSuite support.",
   'connection.netsuite.email':
@@ -805,6 +815,7 @@ if you're using a production account, you'll find your API keys under the 'API M
 "Important: before creating an Access Token in NetSuite for integrator.io, please make sure you have installed the 'Celigo integrator.io' SuiteApp (i.e. the Bundle with id 20038) in your NetSuite account. You must reference 'integrator.io' in the 'Application' field for all Access Tokens used by integrator.io. After you create an Access Token in NetSuite, 'Token Id' and 'Token Secret' will be displayed only once (on the token confirmation page inside NetSuite). Please copy and paste 'Token Secret' here before you leave the confirmation page.",
   'connection.netsuite.environment':
 'The NetSuite environment that you want to connect with.  NetSuite supports Production, Sandbox and Beta environments.  Sandbox NetSuite accounts must be provisioned by NetSuite, and Beta environments are typically only available in the weeks prior to a large NetSuite upgrade.',
+  'connection.netsuite.tokenEnvironment': 'Select the required environment, depending on the NetSuite account instance you\'re connecting to: <br /><b>Beta</b> – if your account is created at http://rp.app.netsuite.com/ <br /><b>Production</b> – if your account is created at http://app.netsuite.com/ <br /><b>Sandbox 2.0</b> – if your account is created at http://sb.app.netsuite.com/',
   'connection.netsuite.concurrencyLevelRESTlet':
 'Set this field to limit (or increase) the number of concurrent requests allowed by this connection.  Please contact NetSuite if you are unsure how many concurrent requests are allowed in your NetSuite account.  You can also contact NetSuite to purchase additional concurrent requests if you need more throughput.  If you need more throughput than 25 concurrent requests for a single connection resource then please consider creating a second connection resource and partitioning your flows across different connections.',
   'connection.netsuite.concurrencyLevelWebServices':
@@ -1487,12 +1498,13 @@ if you're using a production account, you'll find your API keys under the 'API M
 'Use this field to configure the time zone that the integrator.io scheduler should use to run your integration flow.',
   'flow._runNextFlowIds':
 'Select one or more flows that you would like to run automatically whenever this flow completes. The next flow must be enabled, and it cannot be a realtime flow. (Note that the current flow may run again even though the next flow is in progress.) ',
-  'flow.notifyOnFlowError': '<a href="https://docs.celigo.com/hc/en-us/articles/8961419557019" target="_blank">Get notified by email</a> whenever a flow encounters an error or if the connection used by a flow goes offline so that you can quickly fix the problem.  <a href="https://docs.celigo.com/hc/en-us/articles/8864920211355-How-integrator-io-determines-when-to-email-an-error-notification" target="_blank">integrator.io checks for errors</a> every 15 minutes.Learn more about aliases.',
+  'flow.notifyOfFlowError': 'Enable Notify me of flow errors to <a href="https://docs.celigo.com/hc/en-us/articles/8961419557019" target="_blank">receive an email notification</a>whenever the flow encounters an error so that you can try and quickly fix the error. <a href="https://docs.celigo.com/hc/en-us/articles/8864920211355-How-integrator-io-determines-when-to-email-an-error-notification" target="_blank">integrator.io checks for errors</a> every 15 minutes.',
   'flow.autoResolveMatchingTraceKeys': 'Enable <b>Auto-resolve errors with matching trace key</b> to resolve other open errors with the same <a href="https://docs.celigo.com/hc/en-us/articles/360060740672" target="_blank">trace key</a> (unique field identifier).',
   'flow.manageAliases': 'Use this page to see all of your aliases for this flow, as well as any integration-level aliases (inherited aliases). You can create a new alias for this flow (top right), or use the Actions menu to edit, copy, delete, or view details for a flow-level alias.  Inherited aliases are passed down to the flow from the integration. However, keep in mind that if you reference both a flow-level alias and an integration-level alias for a resource in a script, the flow-level alias will take precedence. Use the Actions menu for Inherited aliases to copy an alias or view its details. To create, edit, or delete one of these aliases, navigate to the integration instead and use the Alias tab. <a href="https://docs.celigo.com/hc/en-us/articles/4454740861979" target="_blank">Learn more about aliases</a>.',
   'flow.router.branchType': `Select the <a href="https://docs.celigo.com/hc/en-us/articles/7287177264795-Branch-flows-Add-flow-branching-" target="_blank">type of branching</a> based on how you want records to flow through the branches:
   <ul><li>If you select <b>First matching branch</b>, the branching conditions will be applied to a record sequentially based on the order of the branches. The record will only go through the first branch where the conditions are met.</li>
   <li>If you select <b>All matching branches</b>, the branching conditions will be applied to a record for all branches. The record will go through all the branches where the conditions are met.</li></ul>`,
+  'flow.router.name': 'Name your branching router (optional) to make your flow more readable on the flow builder canvas.',
   'flow.routers.branches': 'Add branches and define branching conditions. You can change the order of a branch by dragging it up or down, except when <b>All matching branches</b> is selected.',
   'alias.aliasId': 'Enter a descriptive, unique name to use as the Alias ID. This is what you will use in scripts to refer to the resource. Use only letters, numbers, hyphens(-) and/or underscores(_). For example, shopify_flow_neworders or netsuite-connection2_prod',
   'alias.description': 'Enter a description that provides more context on how the resource is used in your integration.',
@@ -2013,7 +2025,7 @@ if you're using a production account, you'll find your API keys under the 'API M
 'This dropdown lists all the available fields from your export record that can be used in your expression. Either by themselves, or as argument value for any selected helper methods.',
   'import.expression':
 'This field represents your complete handlebars expression. You have the freedom to manually enter an expression, or use the function and field drop-downs above to help construct it.',
-  'import.editMockInput': 'Use this mock data to preview and send import requests. The data can be modified to test different import scenarios, or to help with import configurations. The mock input is stored temporarily for the duration of the session, and is used for testing purposes only.',
+  'import.editMockInput': 'Use this <a href="https://docs.celigo.com/hc/en-us/articles/4473437451163" target="_blank">mock data</a> to preview and send import requests. The data can be modified to test different import scenarios, or to help with import configurations. Mock input is stored only during the current session for the current user account (it is discarded when you sign out or the session expires after an hour of inactivity), and is used for import testing (preview/send) purposes only.',
   'jobErrors.helpSummary':
 'You can view the error source, code and message, as well as when the error occurred. Hover over each error to click the … Actions to access the record where the error occurred and make any necessary changes. Once you’ve tracked down and resolved your error, resolve it from the Actions or button toolbar. You can also retry errors, such as something due to an intermittent connection failure. If you have a lot of errors, you’ll want to download them into a csv, then mark them resolved or retried, and upload your processed errors.',
   'connection.useSFTP': '',
@@ -2032,30 +2044,43 @@ if you're using a production account, you'll find your API keys under the 'API M
   // 'connection.rest.bearerToken': "The 3dcart merchant's token.",
   'connection.http.auth.revoke.uri':
 'This is the URL that we will use to revoke this token’s access to this endpoint.',
-  'connection.http.auth.oauth.grantType': 'OAuth 2.0 authentication currently supports two grant types: authorization code and client credentials. Choose Authorization code to use an authorization server to obtain an authorization code as an intermediary between the client and resource owner. Choose Client credentials if authorization scopes are limited to protected resources under the control of the client or previously configured on the authorization server.',
-  'connection.http.auth.oauth.callbackURL': 'Use the callback URL to exchange secure messages with the authorization server after authentication. You must whitelist this URL with your authorization server.',
-  'connection.http.auth.oauth.clientCredentialsLocation': 'Sends a basic auth request in the header or client credentials in the request body.',
-  'connection.http.auth.oauth.tokenURI':
+  'iClient.oauth2.grantType': 'OAuth 2.0 authentication currently supports two grant types: authorization code and client credentials. Choose Authorization code to use an authorization server to obtain an authorization code as an intermediary between the client and resource owner. Choose Client credentials if authorization scopes are limited to protected resources under the control of the client or previously configured on the authorization server.',
+  'iClient.oauth2.callbackURL': 'Use the callback URL to exchange secure messages with the authorization server after authentication. You must whitelist this URL with your authorization server.',
+  'iClient.oauth2.clientCredentialsLocation': 'Sends a basic auth request in the header or client credentials in the request body.',
+  'iClient.oauth2.token.uri':
 'integrator.io retrieves the access token from this URL.',
-  'connection.http.auth.oauth.scopeDelimiter':
+  'iClient.oauth2.scopeDelimiter':
 'Enter the non-space scope delimiter used by your API provider.',
-  'connection.http.auth.oauth.authURI':
+  'iClient.oauth2.auth.uri':
 'This is the authorization code retrieval endpoint on the API provider’s authorization server.',
   'connection.generic.http.auth.oauth.scope':
 'List the scopes to grant access to authorization server requests. Separate multiple scopes with a space character, unless you are providing an alternative delimiter, below.',
   'connection.http.auth.oauth.scope':
 'Scopes are named permissions that are provided when the connection is authorized. The list of supported scopes should be clearly documented in the API user guide. Connecting with a given scope allows your integration, for example, to export data or perform admin functions.',
-  'connection.http.auth.oauth.accessTokenHeaders': 'In some rare cases, it may be necessary to include custom HTTP headers with your API requests. The default content-type header value is application/x-www-form-urlencoded. Enter a name and a value to replace default header values with custom values.',
-  'connection.http.auth.oauth.accessTokenBody':
+  'iClient.oauth2.token.headers': 'In some rare cases, it may be necessary to include custom HTTP headers with your API requests. The default content-type header value is application/x-www-form-urlencoded. Enter a name and a value to replace default header values with custom values.',
+  'iClient.oauth2.token.body':
 "Configure your own access token body in JSON format if it is different from the default access token body. This JSON format is finally converted to the form-urlencoded format on the wire. <br> Default access token body format if 'Client Authentication' set as 'body':</br>{ code: {{{query.code}}}, redirect_uri: {{{redirectUri}}}, client_id: {{{clientId}}}, client_secret: {{{clientSecret}}}, grant_type: “authorization_code”}. <br> Default access token body format if 'Client Authentication' set as 'header': { client_id: {{{clientId}}}, client_secret: {{{clientSecret}}} grant_type: “client_credentials” }.",
-  'connection.http.auth.oauth.refreshHeaders': 'In some cases, it may be necessary to include custom HTTP headers with your token refresh requests. As with the body field, you can reference any value from the connection using {placeholders with a complete path matching the connection field.',
-  'connection.http.auth.oauth.refreshBody':
+  'iClient.oauth2.refresh.headers':
+  "In some cases, it may be necessary to include custom HTTP headers with your token refresh requests. As with the 'body' field, any value from the connection can be referenced using {{{placeholders}}} with a complete path matching the connection field.",
+  'iClient.oauth2.refresh.body':
 'Configure your own refresh token body in JSON format if it is different from the default refresh token body. This JSON format is finally converted to the form-urlencoded format on the wire.<br>Default refresh token body format:</br>{ client_id: {{{clientId}}}, client_secret: {{{clientSecret}}}, grant_type: “refresh_token” }',
-  'connection.http.auth.token.revoke.body':
+  'iClient.oauth2.revoke.body':
 'Configure your own revoke body in JSON format if it is different from the default revoke token body. This JSON format is finally converted to the form-urlencoded format on the wire.<br>Default revoke body format:</br>{ token: {{{connection.http.auth.token.token}}} }.',
-  'connection.http.auth.token.revoke.headers': 'In some rare cases, you may need to include custom HTTP headers with your API requests. The default content-type header value is application/x-www-form-urlencoded, and the authorization header value is basic.',
-  'connection.http.auth.token.revoke.uri':
+  'iClient.oauth2.revoke.headers': 'In some rare cases, you may need to include custom HTTP headers with your API requests. The default content-type header value is application/x-www-form-urlencoded, and the authorization header value is basic.',
+  'iClient.oauth2.revoke.uri':
 'integrator.io makes an HTTP post request to the token revocation endpoint URL to revoke a particular token.',
+  'iClient.oauth2.accessTokenLocation': 'This determines where your application’s API expects to find the authentication token.</br>Choose URL if the authentication token is located in the URL. You can then specify the query string parameter name that holds the token value.</br> Choose Header and specify the header name and authentication scheme to use when constructing the HTTP request. </br>Choose Body if your API requires the token to be embedded in the body structure of your HTTP request. In such cases, place the token in your body template using the placeholder: {connection.http.token.token}.',
+  'iClient.oauth2.accessTokenHeaderName':
+"By default, integrator.io will send all authentication type info in the 'Authorization: ' HTTP header field.  If the REST API you are connecting to requires a different HTTP header, use this field to provide an override.",
+  'iClient.oauth2.scheme':
+"Use this field to set the HTTP authorization header scheme value. For example, 'Bearer' would be the scheme value for 'Authorization: Bearer my_secret_api_token'",
+  'iClient.oauth2.accessTokenParamName': 'Use this field to specify the name of the URL parameter that holds the API token value. For example, if you specify myAPITokenURLParam, then all HTTP requests will include ?myAPITokenURLParam=[token]',
+  'iClient.oauth2.failStatusCode':
+'This field only needs to be set if the HTTP status code for auth errors is not 401. For example, an API could return a generic 400 status code instead, and then use a field in the HTTP response body to indicate auth errors.',
+  'iClient.oauth2.failPath':
+"This field only needs to be set if the API returns a field in the HTTP response body to indicate auth errors. For example, if an API returns the field 'errorMessage' with the value 'Auth failed', then you would set this field to 'errorMessage'.",
+  'iClient.oauth2.failValues':
+'Use this field to limit the exact values in the HTTP response body field that should be used to determine auth errors. To provide multiple values, use a comma-separated list.',
   'connection.rest.threedcartSecureUrl': "3dcart merchant's Secure URL.",
   'connection.salesforce.sandbox':
 'Select Production or Sandbox from this field. You can then click on Save & Authorize that opens a Salesforce window where you can enter your Salesforce account credentials to connect to Salesforce.',
@@ -2104,7 +2129,7 @@ if you're using a production account, you'll find your API keys under the 'API M
   'connection.http.auth.oauth.applicationType':
 'For some providers, OAuth 2.0 is built into the app’s endpoint. You will need to use Custom for any apps that do not have OAuth 2.0 built in.',
   'connection.http._iClientId':
-'Save your client ID and client secret in iClient for an added layer of security.',
+'OAuth 2.0 clients are used to securely link your integrator.io account to an external OAuth 2.0 provider for the purpose of acquiring API access tokens. OAuth 2.0 clients can be reused by any number of connections.',
   'connection.http.clientCertificates.key': 'Select a .KEY private key file.',
   'connection.http.clientCertificates.type':
 'Select the certificate type.',
@@ -2135,7 +2160,7 @@ if you're using a production account, you'll find your API keys under the 'API M
   'notifications.jobErrors':
 "Please choose 'All flows' to receive an email notification whenever any flow in this integration has a job error, or select individual flows to focus your email traffic to just higher priority data flows.",
   'notifications.connections':
-'Please select which connections you would like to be notified about when they go offline (and subsequently back online).  Please note that connections can be shared across integrations, and if you choose to be notified here, this notification setting will be reflected everywhere else this connection is being used.',
+`Select a connection if you want the user to be notified whenever it goes offline, comes back online, or is in the process of <a href="${HELP_CENTER_BASE_URL}/hc/en-us/articles/360043926372" target="_blank">auto-recovering governance errors</a>.<br><br> Since a connection can be shared by multiple integrations, these notifications also apply to any connection issues account-wide.`,
   'me.dateFormat':
 'Use this field to configure how you want dates to be formatted in your integrator.io account. For example, there is a dashboard in your integrator.io account to view integration activity, and this field controls how the dates on that page appear.',
   'me.timeFormat':
@@ -2462,7 +2487,7 @@ use the custom option.`,
   'import.netsuite.file.fileType': 'Each file in NetSuite has a fileType. This is an optional field that defines the file format (e.g. _PDF, _PLAINTEXT, etc.). If you have already provided file names with file extensions (e.g. temp.txt), then there’s no need to explicitly define the file type. If you haven’t, specify the file type (e.g. _PDF) for the files that you want to import. If the file type should be dynamic based on the data you are integrating, you can specify the JSON path to the field in your data containing the file type values instead. For example, <code>{{{myFileField.fileName}}}</code>. See all supported file types.',
   'import.netsuite.file.folder': 'Specify the internal ID for the Netsuite File Cabinet folder where you want to import  your files. If the folder internal ID should be dynamic based on the data you are integrating, you can specify the JSON path to the field in your data containing the folder internal id values instead. For example, {{{myFileField.fileName}}}.',
   'import.netsuite.file.internalId': 'Enter a reference ID or expression to identify reference IDs of files to replace in the NetSuite File Cabinet.',
-  'auditlogs.download': 'Download up to 1000 records from the last year.',
+  'auditlogs.download': 'Download up to 20000 records from the last year.',
   'pull.integration': 'Select the remote production or sandbox integration from which you pull changes. All linked integrations are displayed, which includes clones of this integration and the integration from which it was cloned.',
   'pull.description': 'Enter text describing the changes you are pulling into your integration.',
   'pull.reviewChanges': 'Review the changes between the current and remote integration. You can see all your integration resource changes, except for sensitive resources like API tokens and connections. You must resolve conflicts before you can continue to merge your changes. You’ll configure any new connections in the Merge changes step.',
@@ -2518,4 +2543,6 @@ use the custom option.`,
   'connectorLicense.expires': 'Select the date when the subscription license expires. The Integration App (IA) owner can edit the field based on any changes in the subscription license.',
   'connectorLicense.sandbox': 'This field is read-only. It displays the user environment as production or sandbox based on the subscription license.',
   'connectorLicense.opts': 'You can add license details in the JSON format. For example, <br /> { <br /> "company" : "xxx" <br /> }',
+  'spreecommerce.connection.http.baseURI': 'Enter the local host URL. For more information on how to retrieve the Base URI, see <a href="https://dev-docs.spreecommerce.org/getting-started/installation">Installation</a>.',
+  'spreecommerce.connection.http.auth.token.token': 'Enter the API token provided by Spree Commerce. For more information on how to retrieve the API token, see <a href="https://dev-docs.spreecommerce.org/getting-started/installation">Installation</a>.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your Token safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
 };

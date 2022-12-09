@@ -16,6 +16,7 @@ import NotificationToaster from '../../../../components/NotificationToaster';
 import { MFA_URL } from '../../../../constants';
 import infoText from '../../../../components/Help/infoText';
 import AccountSettings from './AccountSettings';
+import ActionGroup from '../../../../components/ActionGroup';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -29,9 +30,7 @@ const useStyles = makeStyles(theme => ({
     margin: theme.spacing(2),
   },
   mfaSwitch: {
-    display: 'flex',
-    alignItems: 'center',
-    marginBottom: theme.spacing(0.5),
+    marginLeft: theme.spacing(0.5),
   },
   content: {
     fontSize: '14px',
@@ -56,7 +55,7 @@ const useStyles = makeStyles(theme => ({
     },
   },
   userSettingsContainer: {
-    '& .MuiCollapse-container': {
+    '& .MuiCollapse-entered': {
       minHeight: '100px !important',
     },
   },
@@ -99,16 +98,17 @@ function MyUserSettings() {
 
   return (
     <div className={classes.userSettings}>
-      <div className={classes.mfaSwitch}>
+      <ActionGroup>
         <Typography variant="body2" className={classes.content}> Enable MFA </Typography>
-        <Help title="Enable MFA" helpKey="mfa.enable" className={classes.helpTextButton} />
         <CeligoSwitch
           onChange={handleEnableMFA}
           checked={isMFASetupIncomplete || isMFAEnabled}
           disabled={isMFASetupIncomplete}
-          tooltip="Off/On"
+          className={classes.mfaSwitch}
+          tooltip="Off / On"
           data-test="mfa-switch-button" />
-      </div>
+        <Help title="Enable MFA" helpKey="mfa.enable" className={classes.helpTextButton} />
+      </ActionGroup>
       { isMFAEnabled || isMFASetupIncomplete ? (
         <div className={classes.mfaConfig}>
           <MFAConfiguration />

@@ -1,7 +1,9 @@
 import { Grid, makeStyles, Typography } from '@material-ui/core';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
-import { Link, useHistory, useRouteMatch } from 'react-router-dom';
+import { Link, useHistory, useRouteMatch, useParams } from 'react-router-dom';
+import clsx from 'clsx';
+import ResourceEmptyState from '../../../../../components/ResourceTableWrapper/ResourceEmptyState';
 import actions from '../../../../../actions';
 import ActionGroup from '../../../../../components/ActionGroup';
 import { TextButton } from '../../../../../components/Buttons';
@@ -122,6 +124,19 @@ const useStyles = makeStyles(theme => ({
       color: theme.palette.text.hint,
     },
   },
+  emptyFlowsInfo: {
+    top: 0,
+    position: 'relative',
+    maxWidth: 600,
+    marginTop: theme.spacing(3),
+  },
+  emptyFlowGroupInfo: {
+    top: '50%',
+    transform: 'translateY(-50%)',
+    position: 'relative',
+    maxWidth: 600,
+    marginTop: 0,
+  },
 }));
 
 const getBasePath = match => {
@@ -151,9 +166,35 @@ const LastRowSortableItemComponent = props => {
     <FlowGroupRow rowData={lastRow} {...props} className={classes.flowGroupRowUnassigned} />
   );
 };
+
+const EmptyFlowsState = ({ isEmptyList, integrationId, searchFilterKey }) => {
+  const classes = useStyles();
+  const { sectionId } = useParams();
+  const searchFilterKeyWord = useSelector(state => selectors.filter(state, searchFilterKey)?.keyword);
+  const hasCreateFlowAccess = useSelector(state => {
+    const isStandalone = integrationId === 'none';
+    const isMonitorLevelUser = selectors.isFormAMonitorLevelAccess(state, integrationId);
+    const isIntegrationApp = selectors.isIntegrationApp(state, integrationId);
+
+    return !isStandalone && !isMonitorLevelUser && !isIntegrationApp;
+  });
+
+  const showEmptyState = hasCreateFlowAccess && !searchFilterKeyWord && isEmptyList;
+
+  if (!showEmptyState) return null;
+
+  return (
+    <ResourceEmptyState
+      resourceType="flows"
+      className={clsx(classes.emptyFlowsInfo, { [classes.emptyFlowGroupInfo]: sectionId })}
+      integrationId={integrationId}
+      sectionId={sectionId} />
+  );
+};
 const FlowListingTable = ({
   flows,
   filterKey,
+  searchFilterKey,
   flowTableMeta,
   actionProps,
   integrationId,
@@ -194,6 +235,11 @@ const FlowListingTable = ({
             {...flowTableMeta}
             actionProps={actionProps}
           />
+          <EmptyFlowsState
+            isEmptyList={!groupedFlows.length}
+            integrationId={integrationId}
+            searchFilterKey={searchFilterKey}
+          />
         </LoadResources>
       </Grid>
     </Grid>
@@ -232,12 +278,19 @@ const FlowListing = ({integrationId, filterKey, searchFilterKey, actionProps, fl
 
   if (!flowGroupingsSections) {
     return (
-      <CeligoTable
-        data={flows}
-        filterKey={filterKey}
-        {...flowTableMeta}
-        actionProps={actionProps}
+      <>
+        <CeligoTable
+          data={flows}
+          filterKey={filterKey}
+          {...flowTableMeta}
+          actionProps={actionProps}
       />
+        <EmptyFlowsState
+          integrationId={integrationId}
+          searchFilterKey={searchFilterKey}
+          isEmptyList={!flows.length}
+         />
+      </>
     );
   }
 
@@ -245,6 +298,7 @@ const FlowListing = ({integrationId, filterKey, searchFilterKey, actionProps, fl
     <FlowListingTable
       flows={flows}
       filterKey={filterKey}
+      searchFilterKey={searchFilterKey}
       flowTableMeta={flowTableMeta}
       actionProps={actionProps}
       integrationId={integrationId}
@@ -318,6 +372,7 @@ const useRowActions = resource => {
 
   return actions;
 };
+
 export default function FlowsPanel({ integrationId, childId }) {
   const isStandalone = integrationId === 'none';
   const classes = useStyles();
@@ -420,6 +475,8 @@ export default function FlowsPanel({ integrationId, childId }) {
     'Showing all flow groups that contain search matches.';
 
   const basePath = getBasePath(match);
+  const hasEditAccess = !isStandalone && !isMonitorLevelUser && !isIntegrationApp;
+  const hasEmptySearchResults = finalFilter.keyword && !flows.length && !flowGroupingsSections?.some(({title}) => title.toUpperCase().includes(finalFilter.keyword.toUpperCase()));
 
   return (
     <>
@@ -455,7 +512,7 @@ export default function FlowsPanel({ integrationId, childId }) {
               Load data
             </TextButton>
             )}
-            {!isStandalone && !isMonitorLevelUser && !isIntegrationApp && (
+            {hasEditAccess && (
             <ActionMenu
               setSelectedComponent={setSelectedComponent}
               useRowActions={useRowActions}
@@ -472,7 +529,7 @@ export default function FlowsPanel({ integrationId, childId }) {
           </Typography>
         ) : ''}
 
-        <LoadResources required integrationId={integrationId} resources="flows,exports">
+        <LoadResources required integrationId={integrationId} resources="flows,connections,exports">
           <FlowListing
             integrationId={currentIntegrationId}
             filterKey={filterKey}
@@ -483,7 +540,7 @@ export default function FlowsPanel({ integrationId, childId }) {
         </LoadResources>
       </div>
       <div className={classes.noSearchResults}>
-        {(finalFilter.keyword && !flows.length && !flowGroupingsSections?.some(({title}) => title.toUpperCase().includes(finalFilter.keyword.toUpperCase()))) ? (
+        { hasEmptySearchResults ? (
           <NoResultTypography>{NO_RESULT_SEARCH_MESSAGE}</NoResultTypography>
         ) : ''}
       </div>

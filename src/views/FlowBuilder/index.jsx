@@ -75,7 +75,7 @@ export default function FlowBuilder() {
   if (!integrationLoaded) return null;
 
   return (
-    <LoadResources integrationId={__integrationId} required resources="imports,exports,flows,scripts">
+    <LoadResources integrationId={__integrationId} required resources="connections,imports,exports,flows,scripts">
       <Redirection>
         <ResourceDrawer flowId={flowId} integrationId={integrationId} />
         <ConfigConnectionDebugger />

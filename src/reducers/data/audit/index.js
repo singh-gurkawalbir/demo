@@ -5,7 +5,7 @@ const defaultState = {};
 const emptySet = [];
 
 export default (state = defaultState, action) => {
-  const { type, resourceType, collection, nextPagePath, isNextPageCollection } = action;
+  const { type, resourceType, collection, nextPagePath, isNextPageCollection, hasMoreDownloads } = action;
 
   if (type === actionTypes.RESOURCE.AUDIT_LOGS_CLEAR) {
     return defaultState;
@@ -13,7 +13,7 @@ export default (state = defaultState, action) => {
 
   return produce(state, draft => {
     switch (type) {
-      case actionTypes.RESOURCE.REQUEST_COLLECTION: {
+      case actionTypes.RESOURCE.REQUEST_AUDIT_LOGS: {
         if (resourceType === 'audit' || resourceType.endsWith('/audit')) {
           if (nextPagePath) {
             draft.loadMoreStatus = 'requested';
@@ -52,6 +52,12 @@ export default (state = defaultState, action) => {
         break;
       }
 
+      case actionTypes.RESOURCE.AUDIT_LOGS_HAS_MORE_DOWNLOADS: {
+        draft.hasMoreDownloads = hasMoreDownloads;
+
+        break;
+      }
+
       default:
     }
   });
@@ -60,7 +66,7 @@ export default (state = defaultState, action) => {
 // #region PUBLIC SELECTORS
 export const selectors = {};
 
-selectors.auditLogs = (state, resourceType, resourceId, filters) => {
+selectors.auditLogs = (state, resourceType, resourceId) => {
   let logs = emptySet;
 
   if (!state) {
@@ -77,35 +83,7 @@ selectors.auditLogs = (state, resourceType, resourceId, filters) => {
     logs = emptySet;
   }
 
-  if (!filters) {
-    return logs;
-  }
-
-  const filteredLogs = logs.filter(al => {
-    if (filters.resourceType && filters.resourceType !== al.resourceType) {
-      return false;
-    }
-
-    if (filters._resourceId && filters._resourceId !== al._resourceId) {
-      return false;
-    }
-
-    if (filters.byUser && filters.byUser !== al.byUser._id) {
-      return false;
-    }
-
-    if (filters.source && filters.source !== al.source) {
-      return false;
-    }
-
-    if (filters.event && filters.event !== al.event) {
-      return false;
-    }
-
-    return true;
-  });
-
-  return filteredLogs;
+  return logs;
 };
 
 selectors.auditLogsNextPagePath = state => {
@@ -118,6 +96,12 @@ selectors.auditLoadMoreStatus = state => {
   if (!state) return;
 
   return state.loadMoreStatus;
+};
+
+selectors.auditHasMoreDownloads = state => {
+  if (!state) return false;
+
+  return state.hasMoreDownloads;
 };
 
 // #endregion

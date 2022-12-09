@@ -1,0 +1,74 @@
+/* global describe, test, expect, jest, afterEach */
+import * as React from 'react';
+import {screen, fireEvent} from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import Mapper2Generates from './Mapper2Generates';
+import { renderWithProviders} from '../../../../../../../test/test-utils';
+
+const mockDispatch = jest.fn();
+
+jest.mock('react-redux', () => ({
+  __esModule: true,
+  ...jest.requireActual('react-redux'),
+  useDispatch: () => mockDispatch,
+}));
+
+jest.mock('../../../../../../icons/LockIcon', () => ({
+  __esModule: true,
+  ...jest.requireActual('../../../../../../icons/LockIcon'),
+  default: () => (
+    <div>LockIcon</div>
+  ),
+}));
+const mockOnBlur = jest.fn();
+
+function initFunction(disabled = false, isRequired = false) {
+  const ui = (
+    <Mapper2Generates
+      id="someId"
+      disabled={disabled}
+      onBlur={mockOnBlur}
+      nodeKey="somenodeKey"
+      isRequired={isRequired}
+        />
+  );
+
+  renderWithProviders(ui);
+}
+
+describe('Mapper2Generates test cases', () => {
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+  test('should change the data type Generates field', () => {
+    initFunction();
+
+    userEvent.type(screen.getByRole('textbox'), 'number');
+    userEvent.click(screen.getByText('string'));
+    userEvent.click(screen.getByRole('button', {name: 'number'}));
+    expect(mockOnBlur).toHaveBeenCalledWith('number');
+  });
+  test('should show the textbox as disabled', () => {
+    initFunction(true);
+    expect(screen.getByRole('textbox')).toBeDisabled();
+  });
+  test('should press the escape button and textbox should be blurred', () => {
+    initFunction();
+
+    userEvent.type(screen.getByRole('textbox'), 'number');
+    userEvent.keyboard('{Escape}');
+    expect(mockOnBlur).toHaveBeenCalled();
+  });
+  test('should click outside the textbox and the textbox should be blurred', () => {
+    initFunction();
+
+    userEvent.type(screen.getByRole('textbox'), 'number');
+    fireEvent.click(document);
+    expect(mockOnBlur).toHaveBeenCalled();
+  });
+  test('should should the Lock Icon when the field is mandatory', () => {
+    initFunction(false, true);
+    expect(screen.getByText('LockIcon')).toBeInTheDocument();
+    expect(screen.getByTitle('This field is required by the application you are importing into')).toBeInTheDocument();
+  });
+});

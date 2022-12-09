@@ -9,6 +9,7 @@ import {
 } from '../../constants/resource';
 import CeligoSelect from '../CeligoSelect';
 import { AUDIT_LOG_EVENT_LABELS } from '../../constants/auditLog';
+import { STANDALONE_INTEGRATION } from '../../constants';
 
 const OPTION_ALL = { id: 'all', label: 'All' };
 
@@ -50,6 +51,7 @@ export function ResourceTypeFilter(props) {
     'scripts',
     'apis',
     'agents',
+    'iClients',
   ];
   const resource =
     resourceType &&
@@ -191,6 +193,8 @@ export function AuditLogActionFilter({
   filters,
   onChange,
   resource,
+  resourceType,
+  resourceId,
 }) {
   return (
     <FormControl className={classes.formControl}>
@@ -205,6 +209,11 @@ export function AuditLogActionFilter({
         {[
           ...Object.keys(AUDIT_LOG_EVENT_LABELS)
             .filter(k => {
+              // For integration and resource type audit logs, signin and signout actions should not be shown
+              if (resourceType === 'integrations' && resourceId === STANDALONE_INTEGRATION.id) {
+                return !['signin', 'signout'].includes(k);
+              }
+
               if (!resource) {
                 return true;
               }

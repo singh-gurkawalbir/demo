@@ -1,7 +1,6 @@
 /* global describe, test, expect, beforeEach, jest, afterEach */
 import React from 'react';
 import {screen, waitFor} from '@testing-library/react';
-import { MemoryRouter } from 'react-router-dom';
 import userEvent from '@testing-library/user-event';
 import * as reactRedux from 'react-redux';
 import Filters from './Filters';
@@ -33,6 +32,19 @@ initialStore.getState().data.audit = {
         },
       },
     ],
+  },
+};
+initialStore.getState().session.filters = {
+  auditLogs: {
+    paging: {
+      rowsPerPage: 50,
+      currPage: 0,
+    },
+    byUser: 'all',
+    event: 'all',
+    resourceType: 'all',
+    source: 'all',
+    _resourceId: 'all',
   },
 };
 const propsObj = {
@@ -99,6 +111,7 @@ const propsObj = {
   },
   resourceType: 'integrations',
   resourceId: '6253af74cddb8a1ba550a010',
+  totalCount: 1,
 };
 
 jest.mock('../DateRangeSelector', () => ({
@@ -123,7 +136,7 @@ describe('UI test cases for Audit Log Filter ', () => {
     });
     useDispatchSpy.mockReturnValue(mockDispatchFn);
 
-    renderWithProviders(<MemoryRouter><Filters {... propsObj} /></MemoryRouter>, {initialStore});
+    renderWithProviders(<Filters {... propsObj} />, {initialStore});
   });
   afterEach(() => {
     useDispatchSpy.mockClear();
@@ -185,6 +198,18 @@ describe('UI test cases for Audit Log Filter ', () => {
     userEvent.click(screen.getByText('Download'));
     expect(mockDispatchFn).toBeCalled();
   });
+  test('Should able to pass initial render with default values having logs > 0 and navigate to next and previous Page', () => {
+    expect(screen.getByText(/1 - 1 of 1+/i)).toBeInTheDocument();
+    const rowsTextNode = screen.getByText(/Results per page:/i);
+
+    expect(rowsTextNode).toBeInTheDocument();
+    const prevPageButtonNode = screen.getByTestId(/prevPage/i);
+
+    expect(prevPageButtonNode).toBeInTheDocument();
+    const nextPageButtonNode = screen.getByTestId(/nextPage/i);
+
+    expect(nextPageButtonNode).toBeInTheDocument();
+  });
 });
 test('should display the user emailId under select users tab when name is not present', () => {
   const tempStore = reduxStore;
@@ -214,7 +239,20 @@ test('should display the user emailId under select users tab when name is not pr
       ],
     },
   };
-  renderWithProviders(<MemoryRouter><Filters {...propsObj} /></MemoryRouter>, {tempStore});
+  tempStore.getState().session.filters = {
+    auditLogs: {
+      paging: {
+        rowsPerPage: 50,
+        currPage: 0,
+      },
+      byUser: 'all',
+      event: 'all',
+      resourceType: 'all',
+      source: 'all',
+      _resourceId: 'all',
+    },
+  };
+  renderWithProviders(<Filters {...propsObj} />, {initialStore: tempStore});
   userEvent.click(screen.getByText(/Select user/i));
   waitFor(() => expect(screen.getByText(/testUser@celigo.com/i)).toBeInTheDocument());
 });

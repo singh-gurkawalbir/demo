@@ -5,7 +5,7 @@ import { MemoryRouter } from 'react-router-dom';
 import userEvent from '@testing-library/user-event';
 import ConnectionStatusPanel from '.';
 import actions from '../../actions';
-import { renderWithProviders } from '../../test/test-utils';
+import { mockPostRequest, renderWithProviders } from '../../test/test-utils';
 
 const mockHistoryPush = jest.fn();
 
@@ -26,7 +26,10 @@ const collection = [
 
 describe('ConnectionStatusPanel UI tests', () => {
   beforeEach(() => {
-    jest.resetAllMocks();
+    // jest.resetAllMocks();
+    mockPostRequest('/api/connections/connection1/ping', {status: 200});
+    mockPostRequest('/api/connections/connection2/ping', {status: 200});
+    mockPostRequest('/api/connections/connection3/ping', {status: 200});
   });
   function renderWithStore(resourcetype, resourceId) {
     const {store} = renderWithProviders(<MemoryRouter ><ConnectionStatusPanel resourceId={resourceId} resourceType={resourcetype} /></MemoryRouter>);

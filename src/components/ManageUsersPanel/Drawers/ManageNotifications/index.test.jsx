@@ -252,7 +252,7 @@ describe('Manage Notifications', () => {
       integrationId: '602aac4c53b612272ca1f54b',
     });
 
-    expect(screen.getByText('Notify user on flow error')).toBeInTheDocument();
+    expect(screen.getByText('Notify user of flow error')).toBeInTheDocument();
     const svg = document.querySelector("[viewBox='0 0 24 24']");
 
     expect(svg).toBeInTheDocument();
@@ -292,7 +292,7 @@ describe('Manage Notifications', () => {
 
     expect(doneMessage).toBeInTheDocument();
     userEvent.click(doneMessage);
-    const notifyUserWhenConnectionGoesOfflineText = screen.getByText('Notify user when connection goes offline');
+    const notifyUserWhenConnectionGoesOfflineText = screen.getByText('Notify me on connection issues');
 
     expect(notifyUserWhenConnectionGoesOfflineText).toBeInTheDocument();
     const pleaseSelectText1 = await screen.queryAllByRole('button', { name: 'Please select'}).find(eachOption => eachOption.getAttribute('id') === 'mui-component-select-connections');
@@ -317,7 +317,7 @@ describe('Manage Notifications', () => {
       integrationId: '602aac4c53b612272ca1f54b',
     });
 
-    expect(screen.getByText('Notify user on flow error')).toBeInTheDocument();
+    expect(screen.getByText('Notify user of flow error')).toBeInTheDocument();
     const svg = document.querySelector("[viewBox='0 0 24 24']");
 
     expect(svg).toBeInTheDocument();
@@ -343,7 +343,7 @@ describe('Manage Notifications', () => {
     expect(submitText).toBeInTheDocument();
     userEvent.click(submitText);
 
-    expect(screen.getByText('Notify user when connection goes offline')).toBeInTheDocument();
+    expect(screen.getByText('Notify me on connection issues')).toBeInTheDocument();
     const pleaseSelectText = await screen.queryAllByRole('button', { name: 'Please select'}).find(eachOption => eachOption.getAttribute('id') === 'mui-component-select-connections');
 
     expect(pleaseSelectText).toBeInTheDocument();
@@ -397,7 +397,7 @@ describe('Manage Notifications', () => {
       integrationId: '602aac4c53b612272ca1f54b',
     });
 
-    expect(screen.getByText('Notify user on flow error')).toBeInTheDocument();
+    expect(screen.getByText('Notify user of flow error')).toBeInTheDocument();
     const svg = document.querySelector("[viewBox='0 0 24 24']");
 
     expect(svg).toBeInTheDocument();
@@ -423,11 +423,11 @@ describe('Manage Notifications', () => {
     expect(submitText).toBeInTheDocument();
     userEvent.click(submitText);
 
-    expect(screen.getByText('Notify user on flow error')).toBeInTheDocument();
+    expect(screen.getByText('Notify user of flow error')).toBeInTheDocument();
 
     expect(screen.getByText('Sample1')).toBeInTheDocument();
 
-    expect(screen.getByText('Notify user when connection goes offline')).toBeInTheDocument();
+    expect(screen.getByText('Notify me on connection issues')).toBeInTheDocument();
 
     expect(screen.getByText('Test Connection')).toBeInTheDocument();
     const cancelText = screen.getByRole('button', {name: 'Close'});
@@ -466,7 +466,7 @@ describe('Manage Notifications', () => {
       integrationId: '602aac4c53b612272ca1f54b',
     });
 
-    expect(screen.getByText('Notify user on flow error')).toBeInTheDocument();
+    expect(screen.getByText('Notify user of flow error')).toBeInTheDocument();
     const svg = document.querySelector("[viewBox='0 0 24 24']");
 
     expect(svg).toBeInTheDocument();
@@ -492,7 +492,7 @@ describe('Manage Notifications', () => {
     expect(submitText).toBeInTheDocument();
     userEvent.click(submitText);
 
-    expect(screen.getByText('Notify user on flow error')).toBeInTheDocument();
+    expect(screen.getByText('Notify user of flow error')).toBeInTheDocument();
     const flowSelected = screen.getByText('Sample1');
 
     expect(flowSelected).toBeInTheDocument();
@@ -506,7 +506,7 @@ describe('Manage Notifications', () => {
     expect(doneMessage).toBeInTheDocument();
     userEvent.click(doneMessage);
 
-    expect(screen.getByText('Notify user when connection goes offline')).toBeInTheDocument();
+    expect(screen.getByText('Notify me on connection issues')).toBeInTheDocument();
     const connectionSelected = screen.getByText('Test Connection');
 
     expect(connectionSelected).toBeInTheDocument();
@@ -538,7 +538,7 @@ describe('Manage Notifications', () => {
       integrationId: '602aac4c53b612272ca1f54b',
     });
 
-    expect(screen.getByText('Notify user on flow error')).toBeInTheDocument();
+    expect(screen.getByText('Notify user of flow error')).toBeInTheDocument();
     const svg = document.querySelector("[viewBox='0 0 24 24']");
 
     expect(svg).toBeInTheDocument();
@@ -564,7 +564,7 @@ describe('Manage Notifications', () => {
     expect(submitText).toBeInTheDocument();
     userEvent.click(submitText);
 
-    expect(screen.getByText('Notify user on flow error')).toBeInTheDocument();
+    expect(screen.getByText('Notify user of flow error')).toBeInTheDocument();
     const flowSelected = await screen.queryAllByRole('button', { name: 'Please select'}).find(eachOption => eachOption.getAttribute('id') === 'mui-component-select-flows');
 
     expect(flowSelected).toBeInTheDocument();

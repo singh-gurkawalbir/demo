@@ -9,7 +9,7 @@ import { renderWithProviders } from '../../../../test/test-utils';
 
 const props = {variant: ''};
 
-describe('Testing Request Response panel', async () => {
+describe('Testing Request Response panel', () => {
   test('Testing the Request Response Panel', async () => {
     renderWithProviders(
       <RequestResponsePanel {...props} />

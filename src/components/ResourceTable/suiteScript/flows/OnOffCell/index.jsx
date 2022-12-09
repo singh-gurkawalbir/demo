@@ -6,7 +6,6 @@ import Spinner from '../../../../Spinner';
 import { selectors } from '../../../../../reducers';
 import actions from '../../../../../actions';
 import useConfirmDialog from '../../../../ConfirmDialog';
-import RemoveMargin from '../RemoveMargin';
 
 const useStyles = makeStyles(theme => ({
   celigoSwitchOnOff: {
@@ -17,7 +16,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function OnOffCell({ ssLinkedConnectionId, flow }) {
+export default function OnOffCell({ ssLinkedConnectionId, flow, tooltip }) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const { defaultConfirmDialog } = useConfirmDialog();
@@ -57,14 +56,14 @@ export default function OnOffCell({ ssLinkedConnectionId, flow }) {
   }
 
   return (
-    <RemoveMargin>
-      <CeligoSwitch
-        className={classes.celigoSwitchOnOff}
-        data-test={`toggleOnAndOffFlow${flowName}`}
-        disabled={!isManageLevelUser}
-        checked={!flow.disabled}
-        onChange={handleDisableClick}
+
+    <CeligoSwitch
+      className={classes.celigoSwitchOnOff}
+      data-test={`toggleOnAndOffFlow${flowName}`}
+      disabled={!isManageLevelUser}
+      checked={!flow.disabled}
+      onChange={handleDisableClick}
+      tooltip={tooltip}
     />
-    </RemoveMargin>
   );
 }

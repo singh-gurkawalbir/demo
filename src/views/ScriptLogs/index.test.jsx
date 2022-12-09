@@ -800,6 +800,46 @@ describe('Script logs', () => {
 
     expect(debugButtonNode).toBeInTheDocument();
   });
+  test('Should able to test the purge logs action', async () => {
+    store({
+      connections: {},
+      scripts: {
+        scripts: {
+          '62e59df376ce554057c07abc-62e59e1176ce554057c07abc': {
+            scriptId: '62e59df376ce554057c07abc',
+            flowId: '62e59e1176ce554057c07abc',
+            dateRange: {
+              startDate: new Date('2022-08-13'),
+              preset: 'last15minutes',
+            },
+            status: 'received',
+            logs: [
+              {
+                time: new Date('2022-08-13'),
+                _resourceId: '62e59e0c76ce554057c07abc',
+                functionType: 'Function type',
+                logLevel: 'debug',
+                message: 'test message',
+              },
+            ],
+            isPurgeAvailable: true,
+          },
+        },
+      },
+      flowStep: {},
+    });
+    await initScriptLogs({
+      flowId: '62e59e1176ce554057c07abc',
+      scriptId: '62e59df376ce554057c07abc',
+    });
+    const moreActions = screen.getAllByRole('button', {name: /more/i});
+
+    userEvent.click(moreActions[0]);
+    const purgeLogs = screen.getByText(/Purge all logs of this script/i);
+
+    expect(purgeLogs).toBeInTheDocument();
+    expect(purgeLogs.getAttribute('aria-disabled')).toBeFalsy;
+  });
   test('Should able to test the refresh button', async () => {
     store({
       connections: {},

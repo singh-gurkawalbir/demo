@@ -8,6 +8,7 @@ import SortableHandle from '../../../Sortable/SortableHandle';
 import isLoggableAttr from '../../../../utils/isLoggableAttr';
 import CeligoSelect from '../../../CeligoSelect';
 import AfeIcon from '../../../icons/AfeIcon';
+import CloseIcon from '../../../icons/CloseIcon';
 
 const emptySet = {};
 
@@ -44,6 +45,7 @@ export default function KeyValueRow(props) {
     handleKeyUpdate,
     handleValueUpdate,
     showDelete,
+    isInlineClose,
     handleDelete,
     isKey,
     r,
@@ -52,6 +54,8 @@ export default function KeyValueRow(props) {
     showSortOrder,
     isLoggable,
     handleEditorClick,
+    isEndSearchIcon,
+    keyPlaceholder,
   } = props;
 
   const {
@@ -77,6 +81,16 @@ export default function KeyValueRow(props) {
       setShowGripper(true);
     }
   }, [enableSorting, isRowDragged]);
+  const closeComponent = isInlineClose ? (
+    <ActionButton
+      disabled={disabled || (!(r[keyName] || r[valueName]))}
+      id={`delete-${index}`}
+      data-test={`delete-${index}`}
+      tooltip="Delete"
+      onClick={handleDelete(r.key)}>
+      <CloseIcon />
+    </ActionButton>
+  ) : undefined;
 
   return (
     <div
@@ -91,12 +105,12 @@ export default function KeyValueRow(props) {
       <div className={clsx(classes.rowContainer, rowComponentClasses.textFieldRowContainer, {[rowComponentClasses.rowContainerWrapper]: !suggestKeyConfig && !suggestValueConfig})}>
         {suggestKeyConfig && (
         <AutoSuggest
-          disabled={disabled}
+          disabled={r.disableRowKey || disabled}
           value={r[keyName]}
           id={`${keyName}-${index}`}
           data-test={`${keyName}-${index}`}
                     // autoFocus={r.row === rowInd && isKey}
-          placeholder={keyName}
+          placeholder={keyPlaceholder || keyName}
           variant="filled"
           onFieldChange={(_, _value) =>
             handleUpdate(r.key, _value, keyName)}
@@ -105,16 +119,19 @@ export default function KeyValueRow(props) {
           options={{ suggestions: suggestKeyConfig.suggestions }}
           showAllSuggestions={suggestKeyConfig.showAllSuggestions}
           fullWidth
-              />
+          isEndSearchIcon={isEndSearchIcon}
+          showInlineClose={!r.disableRowKey ? closeComponent : <></>}
+          />
+
         )}
         {!suggestKeyConfig && (
         <TextField
-          disabled={disabled}
+          disabled={r.disableRowKey || disabled}
           autoFocus={index === rowInd && isKey}
           defaultValue={r[keyName]}
           id={`${keyName}-${index}`}
           data-test={`${keyName}-${index}`}
-          placeholder={keyName}
+          placeholder={keyPlaceholder || keyName}
           variant="filled"
           fullWidth
           onChange={handleKeyUpdate(r.key)}
@@ -122,7 +139,7 @@ export default function KeyValueRow(props) {
               />
         )}
 
-        {suggestValueConfig && !showSortOrder && (
+        { (r.isSelect || suggestValueConfig) && !showSortOrder && (
         <AutoSuggest
           disabled={disabled}
           value={r[valueName]}
@@ -131,15 +148,15 @@ export default function KeyValueRow(props) {
                 // autoFocus={r.row === rowInd && isKey}
           placeholder={valueName}
           variant="filled"
-          labelName={suggestValueConfig.labelName}
-          valueName={suggestValueConfig.valueName}
+          labelName={r.isSelect ? 'name' : suggestValueConfig.labelName}
+          valueName={r.isSelect ? 'value' : suggestValueConfig.valueName}
           onFieldChange={(_, _value) =>
             handleUpdate(r.key, _value, valueName)}
-          options={{ suggestions: suggestValueConfig.suggestions }}
+          options={r.isSelect ? {suggestions: r.options} : { suggestions: suggestValueConfig.suggestions }}
           fullWidth
               />
         )}
-        {!suggestValueConfig && !showSortOrder && (
+        {!r.isSelect && !suggestValueConfig && !showSortOrder && (
         <TextField
           disabled={disabled}
           autoFocus={index === rowInd && !isKey}
@@ -185,7 +202,7 @@ export default function KeyValueRow(props) {
             id={`handleBar-${index}`}
             data-test={`handleBar-${index}`}
             tooltip="Open handlebars editor"
-            onClick={handleEditorClick}
+            onClick={handleEditorClick(index)}
             className={classes.dynaURIActionButton}>
             <AfeIcon />
           </ActionButton>

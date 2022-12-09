@@ -75,6 +75,8 @@ export default function EnableUser({ user }) {
       disabled={!accepted || userId === ACCOUNT_IDS.OWN}
       checked={!disabled}
       onChange={handleSwitch}
+      tooltip="Disable / Enable"
+      noPadding
       />
   );
 }

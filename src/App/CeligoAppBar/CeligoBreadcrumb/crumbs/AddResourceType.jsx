@@ -1,5 +1,6 @@
 import { useSelector } from 'react-redux';
 import { selectors } from '../../../../reducers';
+import { convertResourceLabelToLowercase } from '../../../../utils/resource';
 
 /*
  * Deals with labelling different resource types
@@ -22,5 +23,5 @@ export default function AddResourceTypeCrumb({
     return `Create ${resourceLabel}`;
   }
 
-  return `Create ${resourceLabel.toLowerCase()}`;
+  return `Create ${convertResourceLabelToLowercase(resourceLabel)}`;
 }

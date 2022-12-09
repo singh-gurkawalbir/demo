@@ -148,10 +148,6 @@ Object {
         "required": true,
         "type": "dynaiclient",
       },
-      "http.auth.oauth.callbackURL": Object {
-        "copyToClipboard": true,
-        "fieldId": "http.auth.oauth.callbackURL",
-      },
       "http.auth.oauth.scope": Object {
         "fieldId": "http.auth.oauth.scope",
         "scopes": Array [
@@ -195,7 +191,6 @@ Object {
             Object {
               "collapsed": true,
               "fields": Array [
-                "http.auth.oauth.callbackURL",
                 "http._iClientId",
                 "http.auth.oauth.scope",
               ],
@@ -1090,6 +1085,9 @@ Object {
       "application": Object {
         "fieldId": "application",
       },
+      "autoRecoverGovernanceErrors": Object {
+        "fieldId": "autoRecoverGovernanceErrors",
+      },
       "name": Object {
         "fieldId": "name",
       },
@@ -1343,6 +1341,7 @@ Object {
                 "netsuite.linkSuiteScriptIntegrator",
                 "_borrowConcurrencyFromConnectionId",
                 "netsuite.concurrencyLevel",
+                "autoRecoverGovernanceErrors",
                 "netsuite.wsdlVersion",
               ],
               "label": "Advanced",
@@ -1451,6 +1450,9 @@ Object {
       "application": Object {
         "fieldId": "application",
       },
+      "autoRecoverGovernanceErrors": Object {
+        "fieldId": "autoRecoverGovernanceErrors",
+      },
       "name": Object {
         "fieldId": "name",
       },
@@ -1516,6 +1518,7 @@ Object {
               "fields": Array [
                 "_borrowConcurrencyFromConnectionId",
                 "salesforce.concurrencyLevel",
+                "autoRecoverGovernanceErrors",
               ],
               "label": "Advanced",
             },
@@ -1865,6 +1868,9 @@ Object {
       "application": Object {
         "fieldId": "application",
       },
+      "autoRecoverGovernanceErrors": Object {
+        "fieldId": "autoRecoverGovernanceErrors",
+      },
       "mode": Object {
         "defaultDisabled": true,
         "defaultValue": "onpremise",
@@ -1971,6 +1977,7 @@ Object {
                 "rdbms.serverType",
                 "_borrowConcurrencyFromConnectionId",
                 "rdbms.concurrencyLevel",
+                "autoRecoverGovernanceErrors",
               ],
               "label": "Advanced",
             },
@@ -2160,6 +2167,9 @@ Object {
       "application": Object {
         "fieldId": "application",
       },
+      "autoRecoverGovernanceErrors": Object {
+        "fieldId": "autoRecoverGovernanceErrors",
+      },
       "name": Object {
         "fieldId": "name",
       },
@@ -2242,6 +2252,7 @@ Object {
               "fields": Array [
                 "_borrowConcurrencyFromConnectionId",
                 "rdbms.concurrencyLevel",
+                "autoRecoverGovernanceErrors",
               ],
               "label": "Advanced",
             },
@@ -2522,6 +2533,9 @@ Object {
       "application": Object {
         "fieldId": "application",
       },
+      "autoRecoverGovernanceErrors": Object {
+        "fieldId": "autoRecoverGovernanceErrors",
+      },
       "mode": Object {
         "defaultDisabled": true,
         "defaultValue": "onpremise",
@@ -2628,6 +2642,7 @@ Object {
                 "rdbms.serverType",
                 "_borrowConcurrencyFromConnectionId",
                 "rdbms.concurrencyLevel",
+                "autoRecoverGovernanceErrors",
               ],
               "label": "Advanced",
             },
@@ -2817,6 +2832,9 @@ Object {
       "application": Object {
         "fieldId": "application",
       },
+      "autoRecoverGovernanceErrors": Object {
+        "fieldId": "autoRecoverGovernanceErrors",
+      },
       "name": Object {
         "fieldId": "name",
       },
@@ -2899,6 +2917,7 @@ Object {
               "fields": Array [
                 "_borrowConcurrencyFromConnectionId",
                 "rdbms.concurrencyLevel",
+                "autoRecoverGovernanceErrors",
               ],
               "label": "Advanced",
             },
@@ -6237,6 +6256,11 @@ Object {
       "traceKeyTemplate": Object {
         "fieldId": "traceKeyTemplate",
       },
+      "webhook._httpConnectorId": Object {
+        "id": "webhook._httpConnectorId",
+        "type": "text",
+        "visible": false,
+      },
       "webhook.algorithm": Object {
         "fieldId": "webhook.algorithm",
       },
@@ -6323,6 +6347,7 @@ Object {
                 "webhook.path",
                 "webhook.username",
                 "webhook.password",
+                "webhook._httpConnectorId",
               ],
               "label": "Secure the listener",
             },
@@ -6358,7 +6383,7 @@ Object {
       ],
     },
   },
-  "init": undefined,
+  "init": [Function],
   "optionsHandler": [Function],
   "preSave": [Function],
   "validationHandler": [Function],
@@ -12738,26 +12763,100 @@ Object {
       "name": Object {
         "fieldId": "name",
       },
+      "oauth2.auth.uri": Object {
+        "fieldId": "oauth2.auth.uri",
+      },
+      "oauth2.callbackURL": Object {
+        "fieldId": "oauth2.callbackURL",
+      },
+      "oauth2.clientCredentialsLocation": Object {
+        "fieldId": "oauth2.clientCredentialsLocation",
+      },
       "oauth2.clientId": Object {
         "fieldId": "oauth2.clientId",
       },
       "oauth2.clientSecret": Object {
         "fieldId": "oauth2.clientSecret",
       },
+      "oauth2.failPath": Object {
+        "fieldId": "oauth2.failPath",
+      },
+      "oauth2.failStatusCode": Object {
+        "fieldId": "oauth2.failStatusCode",
+      },
+      "oauth2.failValues": Object {
+        "fieldId": "oauth2.failValues",
+      },
+      "oauth2.grantType": Object {
+        "fieldId": "oauth2.grantType",
+      },
+      "oauth2.revoke.uri": Object {
+        "fieldId": "oauth2.revoke.uri",
+      },
+      "oauth2.token.uri": Object {
+        "fieldId": "oauth2.token.uri",
+      },
+      "oauthOverrides": Object {
+        "formId": "oauthOverrides",
+      },
+      "oauthToken": Object {
+        "formId": "oauthToken",
+      },
+      "provider": Object {
+        "fieldId": "provider",
+      },
     },
     "layout": Object {
       "containers": Array [
         Object {
+          "collapsed": true,
           "fields": Array [
             "name",
+            "provider",
+          ],
+          "label": "General",
+        },
+        Object {
+          "collapsed": true,
+          "fields": Array [
             "oauth2.clientId",
             "oauth2.clientSecret",
             "amazonmws.accessKeyId",
             "amazonmws.secretKey",
+            "oauth2.grantType",
+            "oauth2.clientCredentialsLocation",
+            "oauth2.auth.uri",
+            "oauth2.callbackURL",
+            "oauth2.token.uri",
+            "oauth2.revoke.uri",
           ],
+          "label": "Configure OAuth 2.0",
+        },
+        Object {
+          "collapsed": true,
+          "fields": Array [
+            "oauthOverrides",
+          ],
+          "label": "OAuth 2.0 overrides",
+        },
+        Object {
+          "collapsed": true,
+          "fields": Array [
+            "oauthToken",
+          ],
+          "label": "Configure token auth",
+        },
+        Object {
+          "collapsed": true,
+          "fields": Array [
+            "oauth2.failStatusCode",
+            "oauth2.failPath",
+            "oauth2.failValues",
+          ],
+          "label": "Non-standard API response patterns",
         },
       ],
-      "type": "box",
+      "type": "collapse",
     },
   },
   "init": undefined,
@@ -12770,7 +12869,11 @@ Object {
 exports[`getResourceFromAssets load correct form other resource types resouceType integrations 1`] = `
 Object {
   "fieldMeta": Object {
-    "actions": undefined,
+    "actions": Array [
+      Object {
+        "id": "saveandcreateflow",
+      },
+    ],
     "fieldMap": Object {
       "description": Object {
         "fieldId": "description",

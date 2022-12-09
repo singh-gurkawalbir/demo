@@ -38,6 +38,7 @@ import {
   commitStagedChangesWrapper,
   startPollingForQueuedJobs,
   startPollingForConnectionStatus,
+  requestAuditLogs,
 } from '.';
 import { apiCallWithRetry, apiCallWithPaging } from '..';
 import { selectors } from '../../reducers';
@@ -57,6 +58,7 @@ import { APIException } from '../api/requestInterceptors/utils';
 import getRequestOptions from '../../utils/requestOptions';
 import openExternalUrl from '../../utils/window';
 import { pingConnectionWithId } from '../resourceForm/connections';
+import { AUDIT_LOG_FILTER_KEY } from '../../constants/auditLog';
 
 const apiError = throwError(new APIException({
   status: 401,
@@ -1720,26 +1722,6 @@ describe('getResourceCollection saga', () => {
       .returns(undefined)
       .run();
   });
-  test('should dispatch receivedNextPagePath for audit logs resource type if nextLinkPath is present', () => {
-    const resourceType = 'audit';
-    const path = '/audit';
-    const collection = [{ id: 1 }, { id: 2 }];
-    const nextLinkPath = '/audit?123';
-
-    return expectSaga(getResourceCollection, {resourceType})
-      .provide([
-        [call(apiCallWithPaging, {
-          path,
-          hidden: undefined,
-          refresh: undefined,
-        }), {data: collection, nextLinkPath}],
-      ])
-      .call(apiCallWithPaging, {path, hidden: undefined, refresh: undefined})
-      .put(actions.auditLogs.receivedNextPagePath(nextLinkPath))
-      .put(actions.resource.receivedCollection(resourceType, collection))
-      .returns(collection)
-      .run();
-  });
 });
 
 describe('updateIntegrationSettings saga', () => {
@@ -3208,6 +3190,47 @@ describe('downloadAuditlogs saga', () => {
         opts: requestOptions.opts,
       })
       .not.call(openExternalUrl, { url: '' })
+      .run();
+  });
+  test('should dispatch toggleHasMoreDownloads if response contains hasMore', () => {
+    const requestOptions = getRequestOptions(
+      actionTypes.RESOURCE.DOWNLOAD_AUDIT_LOGS,
+      { resourceType, resourceId, filters }
+    );
+    const response = { signedURL: 'http://mockUrl.com/SHA256/2345sdcv', hasMore: true };
+
+    return expectSaga(downloadAuditlogs, { resourceType, resourceId, filters })
+      .provide([
+        [matchers.call.fn(apiCallWithRetry), response],
+      ])
+      .call(apiCallWithRetry, {
+        path: requestOptions.path,
+        opts: requestOptions.opts,
+      })
+      .call(openExternalUrl, { url: response.signedURL })
+      .put(actions.auditLogs.toggleHasMoreDownloads(true))
+      .run();
+  });
+});
+describe('requestAuditLogs saga', () => {
+  test('should dispatch receivedNextPagePath for audit logs resource type if nextLinkPath is present', () => {
+    const resourceType = 'audit';
+    const path = '/audit&resourceType=connection';
+    const collection = [{ id: 1 }, { id: 2 }];
+    const nextLinkPath = '/audit?123';
+
+    return expectSaga(requestAuditLogs, {resourceType})
+      .provide([
+        [select(selectors.filter, AUDIT_LOG_FILTER_KEY), {resourceType: 'connection'}],
+        [call(apiCallWithPaging, {
+          path,
+          hidden: undefined,
+        }), {data: collection, nextLinkPath}],
+      ])
+      .call(apiCallWithPaging, {path, hidden: undefined})
+      .put(actions.auditLogs.receivedNextPagePath(nextLinkPath))
+      .put(actions.resource.receivedCollection(resourceType, collection))
+      .returns(collection)
       .run();
   });
 });

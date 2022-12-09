@@ -43,10 +43,6 @@ export default {
       ignoreEnvironmentFilter: true,
       helpKey: 'zohoexpense.connection.http._iClientId',
     },
-    'http.auth.oauth.callbackURL': {
-      fieldId: 'http.auth.oauth.callbackURL',
-      copyToClipboard: true,
-    },
     'http.auth.oauth.scope': {
       fieldId: 'http.auth.oauth.scope',
       scopes: [
@@ -83,7 +79,6 @@ export default {
         label: 'Application details',
         fields: ['http.unencrypted.organizationID',
           'http._iClientId',
-          'http.auth.oauth.callbackURL',
           'http.auth.oauth.scope'] },
       { collapsed: true, label: 'Advanced', fields: ['httpAdvanced'] },
     ],

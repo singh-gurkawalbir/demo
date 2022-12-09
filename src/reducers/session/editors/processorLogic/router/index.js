@@ -1,5 +1,6 @@
 import { cloneDeep, isEqual, pick } from 'lodash';
 import { hooksToFunctionNamesMap } from '../../../../../utils/hooks';
+import messageStore from '../../../../../utils/messageStore';
 import { safeParse } from '../../../../../utils/string';
 import filter from '../filter';
 import javascript from '../javascript';
@@ -75,6 +76,7 @@ export default {
       ...(!isEdit ? {originalRule} : {}),
       rule,
       editorTitle,
+      isEdit,
     };
   },
 
@@ -91,13 +93,16 @@ export default {
     const router = { ...rules.rules };
 
     router.routeRecordsUsing = router.activeProcessor === 'javascript' ? 'script' : 'input_filters';
+    if (!router.script) {
+      router.script = {};
+    }
     router.script._scriptId = router.scriptId;
     router.script.function = router.entryFunction;
     router.script.code = router.code;
 
     return {
       data: [{
-        router: pick(router, ['id', 'branches', 'routeRecordsTo', 'routeRecordsUsing', 'script']),
+        router: pick(router, ['id', 'branches', 'routeRecordsTo', 'routeRecordsUsing', 'script', 'name']),
         record: router.activeProcessor === 'javascript' ? javascriptData.record : data[0],
         options,
       }],
@@ -105,6 +110,11 @@ export default {
   },
   // No point performing parsing or validation when it is an object
   validate: editor => {
+    if (editor.rule?.name?.length > 256) {
+      return {
+        ruleError: messageStore('BRANCH_NAME_LENGTH_ERROR'),
+      };
+    }
     if (editor.rule.activeProcessor === 'filter') {
       return filter.validate({
         data: editor.data?.filter,
@@ -160,12 +170,13 @@ export default {
       prePatches,
       isInsertingBeforeFirstRouter,
     } = editor;
-    const {scriptId, code, entryFunction, activeProcessor } = rule || {};
+    const {scriptId, code, entryFunction, activeProcessor, name } = rule || {};
 
     const type = activeProcessor === 'filter' ? 'input_filters' : 'script';
     const path = `/routers/${isInsertingBeforeFirstRouter ? 0 : routerIndex}`;
     const value = {
       routeRecordsUsing: type,
+      name,
       id: router.id,
       routeRecordsTo: rule.routeRecordsTo,
       branches: rule.branches,

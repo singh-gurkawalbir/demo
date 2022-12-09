@@ -2,7 +2,7 @@
 import { select } from 'redux-saga/effects';
 import { expectSaga } from 'redux-saga-test-plan';
 import * as matchers from 'redux-saga-test-plan/matchers';
-import { resourceConflictResolution, constructResourceFromFormValues, convertResourceFieldstoSampleData, getHTTPConnectorMetadata, updateFinalMetadataWithHttpFramework } from './index';
+import { resourceConflictResolution, constructResourceFromFormValues, convertResourceFieldstoSampleData, getHTTPConnectorMetadata, updateFinalMetadataWithHttpFramework, getEndpointResourceFields, updateWebhookFinalMetadataWithHttpFramework } from './index';
 import { createFormValuesPatchSet } from '../resourceForm';
 import { selectors } from '../../reducers';
 import getResourceFormAssets from '../../forms/formFactory/getResourceFromAssets';
@@ -254,7 +254,7 @@ describe('constructResourceFromFormValues saga', () => {
       .run();
   });
 });
-describe('convertResourceFieldstoSampleData saga', () => {
+describe('convertResourceFieldstoSampleData', () => {
   const input1 = [
     {
       id: 'address',
@@ -372,7 +372,7 @@ describe('convertResourceFieldstoSampleData saga', () => {
     expect(sampleData).toEqual('');
   });
 });
-describe('getHTTPConnectorMetadata saga', () => {
+describe('getHTTPConnectorMetadata', () => {
   const input1 = {
     baseURIs: [
       'https://{{{connection.settings.storeName}}}.myshopify.com/admin/api/:_version',
@@ -1042,7 +1042,7 @@ describe('getHTTPConnectorMetadata saga', () => {
   });
 });
 
-describe('updateFinalMetadataWithHttpFramework saga', () => {
+describe('updateFinalMetadataWithHttpFramework', () => {
   const connector = {
     baseURIs: [
       'https://{{{connection.settings.storeName}}}.myshopify.com/admin/api/:_version',
@@ -1380,8 +1380,629 @@ describe('updateFinalMetadataWithHttpFramework saga', () => {
 
     expect(metaData).toEqual(expctedOutput);
   });
-  test('should return undefined if none of the argument is passes', () => {
+  test('should not throw any exception for invalid arguments', () => {
     const metaData = updateFinalMetadataWithHttpFramework();
+
+    expect(metaData).toEqual(undefined);
+  });
+});
+
+describe('getEndpointResourceFields', () => {
+  const resourceFields = {
+    address: {
+      address1: 'address1',
+      address2: 'address2',
+      original_shipping_lines: [
+        {
+          code: 'code',
+        },
+      ],
+      shipping_lines_override: 'shipping_lines_override',
+    },
+  };
+
+  test('should return correct endpoint sample data for resource fields when type is inclusion', () => {
+    const endpointResourceFields = [{type: 'inclusion', fields: ['address.shipping_lines_override']}];
+
+    const sampleData = getEndpointResourceFields(endpointResourceFields, resourceFields);
+    const expected = {address: {
+      shipping_lines_override: 'default',
+    }};
+
+    expect(sampleData).toEqual(expected);
+  });
+  test('should return correct endpoint sample data for resource fields when type is exclusion', () => {
+    const endpointResourceFields = [{type: 'exclusion', fields: ['address.shipping_lines_override']}];
+
+    const sampleData = getEndpointResourceFields(endpointResourceFields, resourceFields);
+    const expected = {
+      address: {
+        address1: 'address1',
+        address2: 'address2',
+        original_shipping_lines: [
+          {
+            code: 'code',
+          },
+        ] },
+    };
+
+    expect(sampleData).toEqual(expected);
+  });
+  test('should not throw any exception for invalid arguments', () => {
+    const sampleData = getEndpointResourceFields();
+
+    expect(sampleData).toEqual(undefined);
+  });
+  test('should return resourceFields directly if endpoint resource fields are empty', () => {
+    const sampleData = getEndpointResourceFields('', resourceFields);
+
+    expect(sampleData).toEqual(resourceFields);
+  });
+});
+
+describe('updateWebhookFinalMetadataWithHttpFramework', () => {
+  const connector = {
+    baseURIs: [
+      'https://{{{connection.settings.storeName}}}.myshopify.com/admin/api/:_version',
+    ],
+    versioning: {
+      location: 'uri',
+    },
+    versions: [
+      {
+        _id: '62cffbf79b51830e4d641d6d',
+        name: '2022-01',
+      },
+    ],
+    apis: [],
+    supportedBy: {
+      export: {
+        preConfiguredFields: [
+          {
+            path: 'paging',
+            values: [
+              {
+                method: 'linkheader',
+                lastPageStatusCode: 404,
+                linkHeaderRelation: 'next',
+              },
+            ],
+          },
+          {
+            path: 'requestMediaType',
+            values: [
+              'json',
+            ],
+          },
+        ],
+      },
+      import: {
+        preConfiguredFields: [
+          {
+            path: 'successMediaType',
+            values: [
+              'json',
+            ],
+          },
+          {
+            path: 'errorMediaType',
+            values: [
+              'json',
+            ],
+          },
+          {
+            path: 'requestMediaType',
+            values: [
+              'json',
+            ],
+          },
+        ],
+      },
+      connection: {
+        preConfiguredFields: [
+          {
+            path: 'webhook.verify',
+            values: [
+              'hmac',
+            ],
+          },
+          {
+            path: 'webhook.algorithm',
+            values: [
+              'sha256',
+            ],
+          },
+          {
+            path: 'webhook.encoding',
+            values: [
+              'base64',
+            ],
+          },
+          {
+            path: 'webhook.header',
+            values: [
+              'X-Shopify-Hmac-SHA256',
+            ],
+          },
+        ],
+        fieldsUserMustSet: [
+          {
+            path: 'webhooks.key',
+          },
+        ],
+      },
+    },
+  };
+  const inputFieldMetaData = {fieldMap: {
+    'webhook.verify': {
+      resourceType: 'exports',
+      isLoggable: true,
+      type: 'selectforsetfields',
+      label: 'Verification type',
+      required: true,
+      setFieldIds: [
+        'webhook.url',
+      ],
+      options: [
+        {
+          items: [
+            {
+              label: 'Basic',
+              value: 'basic',
+            },
+            {
+              label: 'HMAC',
+              value: 'hmac',
+            },
+            {
+              label: 'Secret URL',
+              value: 'secret_url',
+            },
+            {
+              label: 'Token',
+              value: 'token',
+            },
+          ],
+        },
+      ],
+      visible: true,
+      fieldId: 'webhook.verify',
+      id: 'webhook.verify',
+      name: '/webhook/verify',
+      defaultValue: '',
+      helpKey: 'export.webhook.verify',
+    },
+    'webhook.algorithm': {
+      resourceType: 'exports',
+      isLoggable: true,
+      type: 'selectforsetfields',
+      label: 'Algorithm',
+      setFieldIds: [
+        'webhook.url',
+      ],
+      options: [
+        {
+          items: [
+            {
+              label: 'SHA-1',
+              value: 'sha1',
+            },
+            {
+              label: 'SHA-256',
+              value: 'sha256',
+            },
+            {
+              label: 'SHA-384',
+              value: 'sha384',
+            },
+            {
+              label: 'SHA-512',
+              value: 'sha512',
+            },
+          ],
+        },
+      ],
+      visibleWhen: [
+        {
+          field: 'webhook.verify',
+          is: [
+            'hmac',
+          ],
+        },
+      ],
+      required: true,
+      fieldId: 'webhook.algorithm',
+      id: 'webhook.algorithm',
+      name: '/webhook/algorithm',
+      defaultValue: '',
+      helpKey: 'export.webhook.algorithm',
+    },
+    'webhook.encoding': {
+      resourceType: 'exports',
+      isLoggable: true,
+      type: 'selectforsetfields',
+      label: 'Encoding',
+      required: true,
+      setFieldIds: [
+        'webhook.url',
+      ],
+      options: [
+        {
+          items: [
+            {
+              label: 'Base64',
+              value: 'base64',
+            },
+            {
+              label: 'Hexadecimal',
+              value: 'hex',
+            },
+          ],
+        },
+      ],
+      visibleWhen: [
+        {
+          field: 'webhook.verify',
+          is: [
+            'hmac',
+          ],
+        },
+      ],
+      fieldId: 'webhook.encoding',
+      id: 'webhook.encoding',
+      name: '/webhook/encoding',
+      defaultValue: '',
+      helpKey: 'export.webhook.encoding',
+    },
+    'webhook.key': {
+      resourceType: 'exports',
+      type: 'textforsetfields',
+      label: 'Key (secret)',
+      inputType: 'password',
+      setFieldIds: [
+        'webhook.url',
+      ],
+      visible: true,
+      visibleWhen: [
+        {
+          field: 'webhook.verify',
+          is: [
+            'hmac',
+          ],
+        },
+      ],
+      required: true,
+      fieldId: 'webhook.key',
+      id: 'webhook.key',
+      name: '/webhook/key',
+      defaultValue: '',
+      helpKey: 'export.webhook.key',
+    },
+    'webhook.token': {
+      type: 'webhooktokengenerator',
+      label: 'Custom URL token',
+      buttonLabel: 'Generate new token',
+      required: true,
+      provider: 'custom',
+      setFieldIds: [
+        'webhook.url',
+      ],
+      visible: true,
+      visibleWhen: [
+        {
+          field: 'webhook.verify',
+          is: [
+            'secret_url',
+          ],
+        },
+      ],
+      fieldId: 'webhook.token',
+      refreshOptionsOnChangesTo: [
+        'webhook.provider',
+      ],
+      id: 'webhook.token',
+      name: '/webhook/token',
+      defaultValue: '',
+      helpKey: 'export.webhook.token',
+    },
+    'webhook.generateToken': {
+      type: 'webhooktokengenerator',
+      label: 'Token',
+      provider: 'custom',
+      buttonLabel: 'Generate new token',
+      setFieldIds: [
+        'webhook.url',
+      ],
+      helpKey: 'export.webhook.token',
+      visibleWhen: [
+        {
+          field: 'webhook.verify',
+          is: [
+            'token',
+          ],
+        },
+      ],
+      fieldId: 'webhook.generateToken',
+      id: 'webhook.generateToken',
+      name: '/webhook/generateToken',
+    },
+    'webhook.successBody': {
+      label: 'Override HTTP response body for success responses',
+      type: 'uri',
+      stage: 'responseMappingExtract',
+      showLookup: false,
+      refreshOptionsOnChangesTo: [
+        'webhook.successMediaType',
+      ],
+    },
+
+  }};
+  const resource = {};
+  const expctedOutput = {
+    fieldMap: {
+
+      'webhook.algorithm': {
+        defaultValue: '',
+        fieldId: 'webhook.algorithm',
+        helpKey: 'export.webhook.algorithm',
+        id: 'webhook.algorithm',
+        isLoggable: true,
+        label: 'Algorithm',
+        name: '/webhook/algorithm',
+        options: [
+          {
+            items: [
+              {
+                label: 'SHA-1',
+                value: 'sha1',
+
+              },
+              {
+                label: 'SHA-256',
+                value: 'sha256',
+
+              },
+              {
+                label: 'SHA-384',
+                value: 'sha384',
+
+              },
+              {
+                label: 'SHA-512',
+                value: 'sha512',
+
+              },
+
+            ],
+
+          },
+
+        ],
+        required: true,
+        resourceType: 'exports',
+        setFieldIds: [
+          'webhook.url',
+
+        ],
+        type: 'selectforsetfields',
+        visibleWhen: [
+          {
+            field: 'webhook.verify',
+            is: [
+              'hmac',
+
+            ],
+
+          },
+
+        ],
+
+      },
+      'webhook.encoding': {
+        defaultValue: '',
+        fieldId: 'webhook.encoding',
+        helpKey: 'export.webhook.encoding',
+        id: 'webhook.encoding',
+        isLoggable: true,
+        label: 'Encoding',
+        name: '/webhook/encoding',
+        options: [
+          {
+            items: [
+              {
+                label: 'Base64',
+                value: 'base64',
+
+              },
+              {
+                label: 'Hexadecimal',
+                value: 'hex',
+
+              },
+
+            ],
+
+          },
+
+        ],
+        required: true,
+        resourceType: 'exports',
+        setFieldIds: [
+          'webhook.url',
+
+        ],
+        type: 'selectforsetfields',
+        visibleWhen: [
+          {
+            field: 'webhook.verify',
+            is: [
+              'hmac',
+
+            ],
+
+          },
+
+        ],
+
+      },
+      'webhook.generateToken': {
+        buttonLabel: 'Generate new token',
+        fieldId: 'webhook.generateToken',
+        helpKey: 'export.webhook.token',
+        id: 'webhook.generateToken',
+        label: 'Token',
+        name: '/webhook/generateToken',
+        provider: 'custom',
+        setFieldIds: [
+          'webhook.url',
+
+        ],
+        type: 'webhooktokengenerator',
+        visibleWhen: [
+          {
+            field: 'webhook.verify',
+            is: [
+              'token',
+
+            ],
+
+          },
+
+        ],
+
+      },
+      'webhook.key': {
+        defaultValue: '',
+        fieldId: 'webhook.key',
+        helpKey: 'export.webhook.key',
+        id: 'webhook.key',
+        inputType: 'password',
+        label: 'Key (secret)',
+        name: '/webhook/key',
+        required: true,
+        resourceType: 'exports',
+        setFieldIds: [
+          'webhook.url',
+
+        ],
+        type: 'textforsetfields',
+        visible: true,
+        visibleWhen: [
+          {
+            field: 'webhook.verify',
+            is: [
+              'hmac',
+
+            ],
+
+          },
+
+        ],
+
+      },
+      'webhook.successBody': {
+        label: 'Override HTTP response body for success responses',
+        refreshOptionsOnChangesTo: [
+          'webhook.successMediaType',
+
+        ],
+        showLookup: false,
+        stage: 'responseMappingExtract',
+        type: 'uri',
+
+      },
+      'webhook.token': {
+        buttonLabel: 'Generate new token',
+        defaultValue: '',
+        fieldId: 'webhook.token',
+        helpKey: 'export.webhook.token',
+        id: 'webhook.token',
+        label: 'Custom URL token',
+        name: '/webhook/token',
+        provider: 'custom',
+        refreshOptionsOnChangesTo: [
+          'webhook.provider',
+
+        ],
+        required: true,
+        setFieldIds: [
+          'webhook.url',
+
+        ],
+        type: 'webhooktokengenerator',
+        visible: true,
+        visibleWhen: [
+          {
+            field: 'webhook.verify',
+            is: [
+              'secret_url',
+
+            ],
+
+          },
+
+        ],
+
+      },
+      'webhook.verify': {
+        defaultValue: '',
+        fieldId: 'webhook.verify',
+        helpKey: 'export.webhook.verify',
+        id: 'webhook.verify',
+        isLoggable: true,
+        label: 'Verification type',
+        name: '/webhook/verify',
+        options: [
+          {
+            items: [
+              {
+                label: 'Basic',
+                value: 'basic',
+
+              },
+              {
+                label: 'HMAC',
+                value: 'hmac',
+
+              },
+              {
+                label: 'Secret URL',
+                value: 'secret_url',
+
+              },
+              {
+                label: 'Token',
+                value: 'token',
+
+              },
+
+            ],
+
+          },
+
+        ],
+        required: true,
+        resourceType: 'exports',
+        setFieldIds: [
+          'webhook.url',
+
+        ],
+        type: 'selectforsetfields',
+        visible: true,
+
+      },
+
+    },
+
+  };
+
+  test('should return modified webhook field metadata to support new http framework', () => {
+    const metaData = updateWebhookFinalMetadataWithHttpFramework(inputFieldMetaData, connector, resource);
+
+    expect(metaData).toEqual(expctedOutput);
+  });
+  test('should not throw any exception for invalid arguments', () => {
+    const metaData = updateWebhookFinalMetadataWithHttpFramework();
 
     expect(metaData).toEqual(undefined);
   });

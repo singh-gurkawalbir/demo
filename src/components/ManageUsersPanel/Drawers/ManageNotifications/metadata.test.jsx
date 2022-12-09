@@ -57,7 +57,7 @@ describe('metdata flows test cases', () => {
             name: 'flows',
             type: 'multiselect',
             valueDelimiter: ',',
-            label: 'Notify user on flow error',
+            label: 'Notify user of flow error',
             defaultValue: ['i1', {
               _id: 'f1',
               _integrationId: 'i1',
@@ -82,7 +82,7 @@ describe('metdata flows test cases', () => {
             type: 'multiselect',
             helpKey: 'notifications.connections',
             valueDelimiter: ',',
-            label: 'Notify user when connection goes offline',
+            label: 'Notify me on connection issues',
             defaultValue: ['c1'],
             options: [{ items:
               [{

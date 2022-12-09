@@ -1,3 +1,5 @@
+import React from 'react';
+
 export default {
   tiles: {
     title: 'Jumpstart your data integrations',
@@ -51,6 +53,12 @@ export default {
     title: 'Your recycle bin is empty',
     subTitle: 'You can view all deleted items from your account on this page.',
     type: 'recyclebin',
+  },
+  flows: {
+    title: 'You don’t have any flows yet',
+    subTitle: <span>Select <b> + Create flow </b> to create a new flow or <b>Attach flows</b> from the <b>...</b> More menu to add them from the <b> Standalone flows </b>tile. </span>,
+    type: 'flows',
+    buttonLabel: 'Create flow now',
   },
 
 };
