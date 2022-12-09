@@ -1,3 +1,5 @@
+import React from 'react';
+
 export default {
   tiles: {
     title: 'Jumpstart your data integrations',
@@ -53,8 +55,8 @@ export default {
     type: 'recyclebin',
   },
   flows: {
-    title: 'You don’t have any flows in this integration yet.',
-    subTitle: 'Select Attach Flows from the More menu (to choose from among your Standalone flows)',
+    title: 'You don’t have any flows yet',
+    subTitle: <span>Select <b> + Create flow </b> to create a new flow or <b>Attach flows</b> from the <b>...</b> More menu to add them from the <b> Standalone flows </b>tile. </span>,
     type: 'flows',
     buttonLabel: 'Create flow now',
   },
