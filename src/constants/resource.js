@@ -165,7 +165,6 @@ export const NO_ENVIRONMENT_RESOURCE_TYPES = Object.freeze([
   'accesstokens',
   'agents',
   'iClients',
-  'scripts',
   'stacks',
   'templates',
   'published',
@@ -174,7 +173,7 @@ export const NO_ENVIRONMENT_RESOURCE_TYPES = Object.freeze([
   'connectors',
 ]);
 
-export const NO_ENVIRONMENT_MODELS_FOR_BIN = Object.freeze(['Agent', 'Script', 'Stack']);
+export const NO_ENVIRONMENT_MODELS_FOR_BIN = Object.freeze(['Agent', 'Stack']);
 
 export const AWS_REGIONS_LIST = [
   {
