@@ -7,12 +7,16 @@ import * as reactRedux from 'react-redux';
 import JobActionsMenu from './JobActionsMenu';
 import {renderWithProviders} from '../../../test/test-utils';
 import { getCreatedStore } from '../../../store';
+import { ConfirmDialogProvider } from '../../ConfirmDialog';
+import actions from '../../../actions';
 
 let initialStore;
 
 function initJobActionMenu({job}) {
   const ui = (
-    <JobActionsMenu job={job} />
+    <ConfirmDialogProvider>
+      <JobActionsMenu job={job} />
+    </ConfirmDialogProvider>
   );
 
   return renderWithProviders(ui, {initialStore});
@@ -141,5 +145,48 @@ describe('Testsuite for JobActionMenu', () => {
     expect(modalCloseButtonNode).toBeInTheDocument();
     await userEvent.click(modalCloseButtonNode);
     await waitFor(() => expect(modalCloseButtonNode).not.toBeInTheDocument());
+  });
+  test('should test the purge file button when the files are present', async () => {
+    const job = {
+      _id: '12345',
+      files: [{
+        host: 's3',
+        id: '67890',
+      }],
+    };
+
+    initJobActionMenu({job});
+    const moreJobActionMenuButtonNode = document.querySelector('button[data-test="moreJobActionsMenu"]');
+
+    expect(moreJobActionMenuButtonNode).toBeInTheDocument();
+    userEvent.click(moreJobActionMenuButtonNode);
+    const downloadDiagnosticsButtonNode = screen.getByRole('menuitem', {
+      name: /download diagnostics/i,
+    });
+
+    expect(downloadDiagnosticsButtonNode).toBeInTheDocument();
+    const downloadFileButtonNode = screen.getByRole('menuitem', {
+      name: /download file/i,
+    });
+
+    expect(downloadFileButtonNode).toBeInTheDocument();
+    const purgeFileButtonNode = screen.getByRole('menuitem', {
+      name: /purge file/i,
+    });
+
+    expect(purgeFileButtonNode).toBeInTheDocument();
+    await userEvent.click(purgeFileButtonNode);
+    const purgeFileConfirmButtonNode = screen.getByRole('button', {
+      name: /purge files/i,
+    });
+
+    expect(purgeFileConfirmButtonNode).toBeInTheDocument();
+    const cancelButtonNode = screen.getByRole('button', {
+      name: /Cancel/i,
+    });
+
+    expect(cancelButtonNode).toBeInTheDocument();
+    await userEvent.click(purgeFileConfirmButtonNode);
+    expect(mockDispatchFn).toBeCalledWith(actions.job.purge.request({ jobId: job._id }));
   });
 });

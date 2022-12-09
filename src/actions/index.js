@@ -559,7 +559,7 @@ const resource = {
 // #endregion
 
 const auditLogs = {
-  request: (resourceType, resourceId, nextPagePath) => action(actionTypes.RESOURCE.REQUEST_COLLECTION, {
+  request: (resourceType, resourceId, nextPagePath) => action(actionTypes.RESOURCE.REQUEST_AUDIT_LOGS, {
     resourceType: auditResourceTypePath(resourceType, resourceId),
     nextPagePath,
   }),
@@ -1086,6 +1086,17 @@ const integrationApp = {
           isFrameWork2,
         }),
     },
+    upgrade: {
+      installer: {
+        verifyBundleOrPackageInstall: (id, connectionId, installerFunction, isFrameWork2) =>
+          action(actionTypes.INTEGRATION_APPS.TEMPLATES.INSTALLER.VERIFY_BUNDLE_INSTALL, {
+            id,
+            connectionId,
+            installerFunction,
+            isFrameWork2,
+          }),
+      },
+    },
   },
   uninstaller2: {
     init: integrationId =>
@@ -1203,6 +1214,59 @@ const integrationApp = {
       action(actionTypes.INTEGRATION_APPS.SETTINGS.V2.ADD_CHILD_UPGRADE_LIST, {
         childList,
       }),
+    installer: {
+      init: integrationId => action(actionTypes.INTEGRATION_APPS.INSTALLER.V2.INIT, {
+        id: integrationId,
+      }),
+      setOauthConnectionMode: (connectionId, openOauthConnection, id) =>
+        action(actionTypes.INTEGRATION_APPS.INSTALLER.V2.RECEIVED_OAUTH_CONNECTION_STATUS, {
+          connectionId, openOauthConnection, id,
+        }),
+      initChild: integrationId => action(actionTypes.INTEGRATION_APPS.INSTALLER.V2.INIT_CHILD, {
+        id: integrationId,
+      }),
+      installStep: (integrationId, installerFunction, childId, addOnId, formVal) =>
+        action(actionTypes.INTEGRATION_APPS.INSTALLER.V2.STEP.REQUEST, {
+          id: integrationId,
+          installerFunction,
+          childId,
+          addOnId,
+          formVal,
+        }),
+      scriptInstallStep: (
+        integrationId,
+        connectionId,
+        connectionDoc,
+        formSubmission,
+        stackId
+      ) =>
+        action(actionTypes.INTEGRATION_APPS.INSTALLER.V2.STEP.SCRIPT_REQUEST, {
+          id: integrationId,
+          connectionId,
+          connectionDoc,
+          formSubmission,
+          stackId,
+        }),
+      updateStep: (integrationId, installerFunction, update, formMeta, url) =>
+        action(actionTypes.INTEGRATION_APPS.INSTALLER.V2.STEP.UPDATE, {
+          id: integrationId,
+          installerFunction,
+          update,
+          formMeta,
+          url,
+        }),
+      completedStepInstall: (stepCompleteResponse, id, installerFunction) =>
+        action(actionTypes.INTEGRATION_APPS.INSTALLER.V2.STEP.DONE, {
+          stepsToUpdate: stepCompleteResponse.stepsToUpdate,
+          id,
+          installerFunction,
+        }),
+      getCurrentStep: (integrationId, step) =>
+        action(actionTypes.INTEGRATION_APPS.INSTALLER.V2.STEP.CURRENT_STEP, {
+          id: integrationId,
+          step,
+        }),
+    },
   },
   landingPage: {
     requestIntegrations: ({ clientId }) => action(actionTypes.INTEGRATION_APPS.LANDING_PAGE.REQUEST_INTEGRATIONS, {
@@ -1284,12 +1348,13 @@ const agent = {
 };
 const file = {
   previewZip: file => action(actionTypes.FILE.PREVIEW_ZIP, { file }),
-  upload: (resourceType, resourceId, fileType, file) =>
+  upload: ({resourceType, resourceId, fileType, file, asyncKey}) =>
     action(actionTypes.FILE.UPLOAD, {
       resourceType,
       resourceId,
       fileType,
       file,
+      asyncKey,
     }),
   processFile: ({ fileId, file, fileType, fileProps }) =>
     action(actionTypes.FILE.PROCESS, {

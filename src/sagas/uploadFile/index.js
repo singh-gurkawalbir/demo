@@ -17,12 +17,14 @@ export function* uploadFile({
   fileName,
   uploadPath,
   opts,
+  asyncKey,
 }) {
   const path =
     uploadPath ||
     `/${resourceType}/${resourceId}/upload/signedURL?file_type=${fileType}`;
 
   try {
+    yield put(actions.asyncTask.start(asyncKey));
     const response = yield call(apiCallWithRetry, {
       path,
       ...(opts && {opts}),
@@ -42,9 +44,12 @@ export function* uploadFile({
       headers,
       body: file,
     });
+    yield put(actions.asyncTask.success(asyncKey));
 
     return response.runKey;
   } catch (e) {
+    yield put(actions.asyncTask.failed(asyncKey));
+
     return undefined;
   }
 }

@@ -12,6 +12,5 @@ describe('DynaMFAMobileCode UI tests', () => {
     expect(screen.getByText('demo label')).toBeInTheDocument();
     expect(screen.getByText('Enter the 6-digit code from your app and click the', {exact: false})).toBeInTheDocument();
     expect(screen.getByText('Verify')).toBeInTheDocument();
-    screen.debug();
   });
 });

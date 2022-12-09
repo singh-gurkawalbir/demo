@@ -13,7 +13,7 @@ import DynaSelect from './DynaSelect';
 import DynaMultiSelect from './DynaMultiSelect';
 import actions from '../../../actions';
 import resourceMeta from '../../../forms/definitions';
-import { generateNewId } from '../../../utils/resource';
+import { generateNewId, MODEL_PLURAL_TO_LABEL } from '../../../utils/resource';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 import useIntegration from '../../../hooks/useIntegration';
 import { stringCompare } from '../../../utils/sort';
@@ -22,6 +22,7 @@ import OnlineStatus from '../../OnlineStatus';
 import { drawerPaths, buildDrawerUrl } from '../../../utils/rightDrawer';
 import Spinner from '../../Spinner';
 import IconButtonWithTooltip from '../../IconButtonWithTooltip';
+import { RESOURCE_TYPE_PLURAL_TO_SINGULAR } from '../../../constants';
 
 const emptyArray = [];
 const handleAddNewResource = args => {
@@ -120,6 +121,42 @@ const handleAddNewResource = args => {
   }));
 };
 
+const getType = resourceType => {
+  let type = 'connection';
+
+  if (['connectorLicenses'].includes(resourceType)) {
+    type = MODEL_PLURAL_TO_LABEL[resourceType]?.toLowerCase();
+  } else if (RESOURCE_TYPE_PLURAL_TO_SINGULAR[resourceType]) {
+    type = RESOURCE_TYPE_PLURAL_TO_SINGULAR[resourceType];
+  }
+
+  return type;
+};
+
+const addIconTitle = (resourceType, title) => {
+  if (title) {
+    return title;
+  }
+
+  return `Add ${getType(resourceType)}`;
+};
+
+const ediIconTitle = (resourceType, title) => {
+  if (title) {
+    return title;
+  }
+
+  return `Edit ${getType(resourceType)}`;
+};
+
+const disabledIconTitle = (resourceType, title) => {
+  if (title) {
+    return title;
+  }
+
+  return `Select a ${getType(resourceType)} to allow editing`;
+};
+
 const useStyles = makeStyles(theme => ({
   root: {
     flexDirection: 'row !important',
@@ -199,9 +236,9 @@ export default function DynaSelectResource(props) {
     integrationId,
     connectorId,
     flowId,
-    addTitle = 'Add connection',
-    editTitle = 'Edit connection',
-    disabledTitle = 'Select a connection to allow editing',
+    addTitle,
+    editTitle,
+    disabledTitle,
   } = props;
   const { options = {}, getItemInfo } = props;
   const classes = useStyles();
@@ -436,7 +473,7 @@ export default function DynaSelectResource(props) {
           <div className={classes.dynaSelectMultiSelectActions}>
             {allowNew && (
             <IconButtonWithTooltip
-              tooltipProps={{title: `${addTitle}`}}
+              tooltipProps={{title: `${addIconTitle(resourceType, addTitle)}`}}
               data-test="addNewResource"
               onClick={handleAddNewResourceMemo}
               buttonSize="small">
@@ -447,7 +484,7 @@ export default function DynaSelectResource(props) {
             {allowEdit && (
             // Disable adding a new resource when the user has selected an existing resource
             <IconButtonWithTooltip
-              tooltipProps={{title: value ? `${editTitle}` : `${disabledTitle}`}} disabled={!value}
+              tooltipProps={{title: value ? `${ediIconTitle(resourceType, editTitle)}` : `${disabledIconTitle(resourceType, disabledTitle)}`}} disabled={!value}
               data-test="editNewResource"
               onClick={handleEditResource}
               buttonSize="small">

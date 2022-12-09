@@ -119,10 +119,6 @@ export default {
         },
       ],
     },
-    'http.auth.oauth.callbackURL': {
-      fieldId: 'http.auth.oauth.callbackURL',
-      copyToClipboard: true,
-    },
     httpAdvanced: { formId: 'httpAdvanced' },
     application: {
       fieldId: 'application',
@@ -138,7 +134,6 @@ export default {
           'http.unencrypted.subdomain',
           'http.unencrypted.email',
           'http._iClientId',
-          'http.auth.oauth.callbackURL',
           'http.auth.oauth.scope'],
       },
       {

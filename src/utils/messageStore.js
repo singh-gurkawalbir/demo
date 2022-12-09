@@ -138,6 +138,7 @@ href="/marketplace"><u>Check out our Marketplace</u></a> to jumpstart your  inte
   FORGOT_PASSWORD_USER_EXIST: 'exists in our system, you will receive a password recovery email soon.',
   PURGE_SCRIPT_LOG_CONFIRM_MESSAGE: 'Are you sure you want to purge all logs of this script? This cannot be undone.',
   PURGE_SCRIPT_LOG_SUCCESS_MESSAGE: 'All logs of this script successfully purged.',
+  BRANCH_NAME_LENGTH_ERROR: 'Branching name should not be more than 256 characters.',
 };
 
 export default function messageStore(key, argsObj) {
