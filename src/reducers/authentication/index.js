@@ -17,11 +17,54 @@ export default function (state = defaultState, action) {
       loggedOut: true, // why is this not in the defaultState?
     };
   }
-
-  const {type, showAuthError, mfaError, mfaAuthInfo} = action;
+  const { type, showAuthError, mfaError, mfaAuthInfo, payload, response } = action;
 
   return produce(state, draft => {
     switch (type) {
+      case actionTypes.AUTH.CHANGE_EMAIL_SUCCESSFUL:
+        draft.changeEmailStatus = 'success';
+        break;
+      case actionTypes.AUTH.CHANGE_EMAIL_FAILED:
+        draft.changeEmailStatus = 'failed';
+        break;
+      case actionTypes.AUTH.RESET_REQUEST_SENT:
+        draft.requestResetStatus = '';
+        draft.resetRequestLoader = false;
+        draft.requestResetEmail = '';
+        draft.requestResetError = '';
+        break;
+      case actionTypes.AUTH.RESET_REQUEST:
+        draft.resetRequestLoader = true;
+        draft.requestResetStatus = 'requesting';
+        draft.requestResetError = '';
+        break;
+      case actionTypes.AUTH.SET_PASSWORD_REQUEST_FAILED:
+        draft.requestSetPasswordStatus = 'failed';
+        draft.requestSetPasswordError = action.error;
+        break;
+      case actionTypes.AUTH.RESET_PASSWORD_REQUEST_FAILED:
+        draft.requestResetPasswordStatus = 'failed';
+        draft.requestResetPasswordError = action.error;
+        break;
+      case actionTypes.AUTH.RESET_PASSWORD_REQUEST_SUCCESSFUL:
+        draft.requestResetPasswordStatus = 'success';
+        delete draft.requestResetPasswordError;
+        break;
+      case actionTypes.AUTH.RESET_REQUEST_FAILED:
+        draft.resetRequestLoader = false;
+        draft.requestResetStatus = 'failed';
+        draft.requestResetError = action.error;
+        break;
+      case actionTypes.AUTH.RESET_REQUEST_SUCCESSFUL:
+        draft.resetRequestLoader = false;
+        draft.requestResetStatus = 'success';
+        draft.requestResetError = '';
+        draft.requestResetEmail = action.restRequestInfo.email;
+        break;
+      case actionTypes.AUTH.SET_PASSWORD_REQUEST_SUCCESSFUL:
+        draft.requestSetPasswordStatus = 'success';
+        delete draft.requestSetPasswordError;
+        break;
       case actionTypes.AUTH.INIT_SESSION:
         delete draft.showAuthError;
         draft.authenticated = false;
@@ -90,6 +133,12 @@ export default function (state = defaultState, action) {
 
         break;
 
+      case actionTypes.AUTH.SIGNUP_STATUS:
+        if (!draft.signup) draft.signup = {};
+        draft.signup.status = action.status;
+        draft.signup.message = action.message;
+        break;
+
       case actionTypes.AUTH.MFA_VERIFY.REQUEST:
         draft.mfaAuth = {};
         draft.mfaAuth.status = 'requested';
@@ -107,6 +156,17 @@ export default function (state = defaultState, action) {
         delete draft.mfaAuthInfo;
         draft.mfaAuth = { status: 'success' };
         break;
+      case actionTypes.AUTH.ACCEPT_INVITE.VALIDATE_SUCCESS:
+        if (!draft.acceptInvite) draft.acceptInvite = {};
+        draft.acceptInvite = {...payload};
+        break;
+      case actionTypes.AUTH.ACCEPT_INVITE.SUCCESS:
+        if (!draft.acceptInvite) draft.acceptInvite = {};
+        draft.acceptInvite.redirectUrl = response.ssoRedirectURL || '/signin';
+        break;
+      case actionTypes.AUTH.ACCEPT_INVITE.CLEAR:
+        delete draft.acceptInvite;
+        break;
       default:
     }
   });
@@ -122,6 +182,8 @@ selectors.isAuthLoading = state => state?.commStatus === COMM_STATES.LOADING;
 selectors.isAuthenticating = state => selectors.isAuthLoading(state) && state?.authenticated === false;
 // show auth error when user is logged in
 selectors.showAuthError = state => state?.showAuthError;
+selectors.shouldRedirectToSignIn = state => state?.acceptInvite?.redirectUrl;
+selectors.acceptInviteData = state => state?.acceptInvite;
 selectors.showSessionStatus = state => {
   const { sessionExpired, warning } = state;
 
@@ -147,6 +209,18 @@ selectors.isMFAAuthFailed = state => {
   return state.mfaAuth.status === 'failed';
 };
 selectors.mfaError = state => state?.mfaAuth?.error;
+selectors.requestResetEmail = state => state?.requestResetEmail;
+selectors.signupStatus = state => state?.signup?.status;
+selectors.signupMessage = state => state?.signup?.message;
+selectors.setPasswordError = state => state?.setPasswordError;
+selectors.requestResetError = state => state?.requestResetError;
+selectors.resetRequestLoader = state => state?.resetRequestLoader || false;
+selectors.requestResetStatus = state => state?.requestResetStatus || '';
+selectors.changeEmailStatus = state => state?.changeEmailStatus || '';
+selectors.requestResetPasswordError = state => state?.requestResetPasswordError;
+selectors.requestResetPasswordStatus = state => state?.requestResetPasswordStatus || '';
+selectors.requestSetPasswordError = state => state?.requestSetPasswordError;
+selectors.requestSetPasswordStatus = state => state?.requestSetPasswordStatus || '';
 selectors.isMFAAuthVerified = state => {
   if (!state?.mfaAuth) return false;
 

@@ -2,6 +2,8 @@
 // referenced from this repo https://github.com/celigo/integrator-adaptor/blob/master/util/validator.js
 export const EMAIL_REGEX = /^[\w\-.+]+@[a-zA-Z0-9.-]+\.[a-zA-z0-9]{2,10}$/;
 
+export const FULL_NAME_WITH_TWO_WORDS = /\w+ \w+/;
+
 // Regular Expression to Simple multiple email addresses separated by commas from regextester.com
 export const MULTIPLE_EMAILS = /^(\s?[^\s,]+@[^\s,]+\.[^\s,]+\s?,)*(\s?[^\s,]+@[^\s,]+\.[^\s,]+)$/;
 // Regular Expression to absolute url, e.g: (https|http)://abc.com but not relative urls such as www.abc.com or abc.com
