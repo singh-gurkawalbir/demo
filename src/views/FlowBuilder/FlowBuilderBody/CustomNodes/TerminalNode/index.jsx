@@ -18,7 +18,7 @@ const useStyles = makeStyles(theme => ({
     height: 20,
   },
   terminal: {
-    backgroundColor: theme.palette.common.white,
+    backgroundColor: theme.palette.background.paper,
     border: `solid 1px ${theme.palette.secondary.lightest}`,
     color: theme.palette.secondary.light,
     borderRadius: '50%',

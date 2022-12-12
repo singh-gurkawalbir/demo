@@ -24,7 +24,7 @@ const useStyles = makeStyles(theme => ({
   root: {
     marginTop: -1,
     paddingBottom: theme.spacing(1.5),
-    backgroundColor: theme.palette.common.white,
+    backgroundColor: theme.palette.background.paper,
     overflowX: 'auto',
   },
   tablePaginationRoot: {

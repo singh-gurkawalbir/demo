@@ -77,7 +77,7 @@ const useStyles = makeStyles(theme => ({
     height: 22,
     borderRadius: 16,
     backgroundColor: theme.palette.text.hint,
-    color: theme.palette.common.white,
+    color: theme.palette.background.paper,
   },
   accordionContainer: {
     flexGrow: 1,
@@ -86,7 +86,7 @@ const useStyles = makeStyles(theme => ({
     marginBottom: '16px !important',
   },
   focused: {
-    backgroundColor: `${theme.palette.common.white} !important`,
+    backgroundColor: `${theme.palette.background.paper} !important`,
   },
   headerContainer: {
     display: 'flex',

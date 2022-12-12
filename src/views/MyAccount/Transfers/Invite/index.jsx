@@ -18,7 +18,7 @@ const useStyles = makeStyles(theme => ({
     margin: theme.spacing(1, 0),
   },
   createTransferContainer: {
-    background: theme.palette.common.white,
+    background: theme.palette.background.paper,
     border: '1px solid',
     borderColor: theme.palette.divider,
     padding: theme.spacing(2),
@@ -28,7 +28,7 @@ const useStyles = makeStyles(theme => ({
   },
   initiateTransferWrapper: {
     marginTop: theme.spacing(2),
-    background: theme.palette.common.white,
+    background: theme.palette.background.paper,
     border: '1px solid',
     borderColor: theme.palette.divider,
   },

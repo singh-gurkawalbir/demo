@@ -47,7 +47,7 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing(0, 2),
   },
   root: {
-    backgroundColor: theme.palette.common.white,
+    backgroundColor: theme.palette.background.paper,
     border: '1px solid',
     borderColor: theme.palette.secondary.lightest,
     overflowX: 'auto',
@@ -128,8 +128,8 @@ export default function ProfilePanel() {
   const dispatch = useDispatch();
   const handleSubmit = useCallback(formVal => {
     const completePayloadCopy = { ...formVal };
-    const { timeFormat, dateFormat, showRelativeDateTime } = completePayloadCopy;
-    const preferencesPayload = { timeFormat, dateFormat, showRelativeDateTime };
+    const { timeFormat, dateFormat, showRelativeDateTime, darkMode } = completePayloadCopy;
+    const preferencesPayload = { timeFormat, dateFormat, showRelativeDateTime, darkMode };
 
     // track event if there is any action for Developer mode
     if (preferences.developer !== completePayloadCopy.developer) {
@@ -147,6 +147,7 @@ export default function ProfilePanel() {
     delete completePayloadCopy.timeFormat;
     delete completePayloadCopy.dateFormat;
     delete completePayloadCopy.showRelativeDateTime;
+    delete completePayloadCopy.darkMode;
 
     dispatch(actions.user.profile.update(completePayloadCopy));
   }, [dispatch, preferences.developer]);
@@ -288,6 +289,14 @@ export default function ProfilePanel() {
         // is this loggable
         isLoggable: true,
       },
+      darkMode: {
+        id: 'darkModeTheme',
+        name: 'darkModeTheme',
+        type: 'checkbox',
+        helpKey: 'myaccount.darkMode',
+        label: 'Dark mode',
+        defaultValue: preferences && preferences.darkModeTheme,
+      },
     },
     layout: {
       fields: [
@@ -302,6 +311,7 @@ export default function ProfilePanel() {
         'timeFormat',
         'showRelativeDateTime',
         'developer',
+        'darkMode',
       ],
     },
   }), [dateFormatList, dateTimeZonesList, preferences, timeFormatList, isUserAllowedOnlySSOSignIn]);
