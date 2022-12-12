@@ -22,6 +22,60 @@ export const authParams = {
   },
   path: '/signin?no_redirect=true',
 };
+export const resetRequestParams = {
+  opts: {
+    credentials: 'same-origin', // this is needed to instruct fetch to send cookies
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: {
+      email: process.env.API_EMAIL,
+    },
+    method: 'POST',
+  },
+  path: '/request-reset?no_redirect=true',
+};
+export const resetPasswordRequestParams = {
+  opts: {
+    credentials: 'same-origin',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: {
+      password: process.env.API_PASSWORD,
+      token: process.env.API_TOKEN,
+    },
+    method: 'POST',
+  },
+  path: '/reset-password?no_redirect=true',
+};
+export const setPasswordRequestParams = {
+  opts: {
+    credentials: 'same-origin',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: {
+      password: process.env.API_PASSWORD,
+      token: process.env.API_TOKEN,
+    },
+    method: 'POST',
+  },
+  path: '/set-initial-password?no_redirect=true',
+};
+export const setChangeEmailParams = {
+  opts: {
+    credentials: 'same-origin',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: {
+      token: process.env.API_TOKEN,
+    },
+    method: 'POST',
+  },
+  path: '/change-email?no_redirect=true',
+};
 export const logoutParams = {
   opts: {
     credentials: 'same-origin',

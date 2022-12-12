@@ -87,8 +87,38 @@ const form = {
 };
 // #endregion
 const auth = {
+  acceptInvite: {
+    validate: token => action(actionTypes.AUTH.ACCEPT_INVITE.VALIDATE, { token }),
+    validateError: error => action(actionTypes.AUTH.ACCEPT_INVITE.VALIDATE_ERROR, {error}),
+    validateSuccess: payload => action(actionTypes.AUTH.ACCEPT_INVITE.VALIDATE_SUCCESS, {payload}),
+    submit: payload => action(actionTypes.AUTH.ACCEPT_INVITE.SUBMIT, { payload }),
+    success: response => action(actionTypes.AUTH.ACCEPT_INVITE.SUCCESS, { response }),
+    failure: error => action(actionTypes.AUTH.ACCEPT_INVITE.FAILED, { error }),
+    clear: () => action(actionTypes.AUTH.ACCEPT_INVITE.CLEAR),
+  },
+  changeEmailRequest: token =>
+    action(actionTypes.AUTH.CHANGE_EMAIL_REQUEST, { token }),
+  changeEmailSuccess: () => action(actionTypes.AUTH.CHANGE_EMAIL_SUCCESSFUL),
+  changeEmailFailed: error => action(actionTypes.AUTH.CHANGE_EMAIL_FAILED, {error}),
+  setPasswordRequest: (password, token) =>
+    action(actionTypes.AUTH.SET_PASSWORD_REQUEST, { password, token }),
+  setPasswordRequestFailed: error => action(actionTypes.AUTH.SET_PASSWORD_REQUEST_FAILED, {error}),
+  setPasswordRequestSuccess: setPasswordRequestInfo => action(actionTypes.AUTH.SET_PASSWORD_REQUEST_SUCCESSFUL, {setPasswordRequestInfo}),
+  resetRequestSent: () => action(actionTypes.AUTH.RESET_REQUEST_SENT),
+  resetRequestSuccess: restRequestInfo => action(actionTypes.AUTH.RESET_REQUEST_SUCCESSFUL, {restRequestInfo}),
+  resetRequestFailed: error => action(actionTypes.AUTH.RESET_REQUEST_FAILED, {error}),
+  resetRequest: email =>
+    action(actionTypes.AUTH.RESET_REQUEST, { email }),
   request: (email, password, showAuthError) =>
     action(actionTypes.AUTH.REQUEST, { email, password, showAuthError }),
+  resetPasswordRequest: (password, token) =>
+    action(actionTypes.AUTH.RESET_PASSWORD_REQUEST, { password, token }),
+  resetPasswordSuccess: resetPasswordRequestInfo => action(actionTypes.AUTH.RESET_PASSWORD_REQUEST_SUCCESSFUL, {resetPasswordRequestInfo}),
+  resetPasswordFailed: error => action(actionTypes.AUTH.RESET_PASSWORD_REQUEST_FAILED, {error}),
+  signup: payloadBody =>
+    action(actionTypes.AUTH.SIGNUP, { payloadBody }),
+  signupStatus: (status, message) =>
+    action(actionTypes.AUTH.SIGNUP_STATUS, {status, message}),
   signInWithGoogle: returnTo =>
     action(actionTypes.AUTH.SIGNIN_WITH_GOOGLE, { returnTo }),
   reSignInWithGoogle: email =>
@@ -115,6 +145,7 @@ const auth = {
   abortAllSagasAndInitLR: opts => action(actionTypes.AUTH.ABORT_ALL_SAGAS_AND_INIT_LR, { opts }),
   abortAllSagasAndSwitchAcc: accountToSwitchTo => action(actionTypes.AUTH.ABORT_ALL_SAGAS_AND_SWITCH_ACC, { accountToSwitchTo }),
   initSession: opts => action(actionTypes.AUTH.INIT_SESSION, { opts }),
+  validateSession: () => action(actionTypes.AUTH.VALIDATE_SESSION),
   changePassword: updatedPassword =>
     action(actionTypes.AUTH.USER.CHANGE_PASSWORD, { updatedPassword }),
   changeEmail: updatedEmail =>
@@ -1584,6 +1615,12 @@ const app = {
     }),
 };
 
+const concur = {
+  connect: data => action(actionTypes.CONCUR.CONNECT, data),
+  connectError: error => action(actionTypes.CONCUR.CONNECT_ERROR, {error}),
+  connectSuccess: payload => action(actionTypes.CONCUR.CONNECT_SUCCESS, {payload}),
+};
+
 const patchFilter = (name, filter) =>
   action(actionTypes.PATCH_FILTER, { name, filter });
 const clearFilter = name => action(actionTypes.CLEAR_FILTER, { name });
@@ -2586,6 +2623,7 @@ export default {
   asyncTask,
   form,
   app,
+  concur,
   metadata,
   fileDefinitions,
   connectors,
