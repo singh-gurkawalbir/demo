@@ -71,10 +71,6 @@ export default {
       connectorId: r => r && r._connectorId,
       ignoreEnvironmentFilter: true,
     },
-    'http.auth.oauth.callbackURL': {
-      fieldId: 'http.auth.oauth.callbackURL',
-      copyToClipboard: true,
-    },
     'http.auth.oauth.scope': {
       fieldId: 'http.auth.oauth.scope',
       required: true,
@@ -215,7 +211,7 @@ export default {
       { collapsed: true, label: 'General', fields: ['name', 'application'] },
       { collapsed: true,
         label: 'Application details',
-        fields: ['http.coupaSubdomain', 'http._iClientId', 'http.auth.oauth.callbackURL', 'http.auth.oauth.scope'] },
+        fields: ['http.coupaSubdomain', 'http._iClientId', 'http.auth.oauth.scope'] },
       { collapsed: true, label: 'Advanced', fields: ['httpAdvanced'] },
     ],
   },

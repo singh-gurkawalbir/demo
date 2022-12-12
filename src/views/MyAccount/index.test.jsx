@@ -751,6 +751,8 @@ describe('MyAccount', () => {
     expect(screen.getByText('Transfers')).toBeInTheDocument();
 
     expect(screen.getByText('Security')).toBeInTheDocument();
+
+    expect(screen.getByText('Data retention')).toBeInTheDocument();
   });
   test('Should able to acess the subscription tab', async () => {
     const match = {
@@ -881,5 +883,30 @@ describe('MyAccount', () => {
     const securityText = screen.getByRole('tab', {name: 'Security'});
 
     expect(securityText).toBeInTheDocument();
+  });
+  test('Should able to acess the data retention tab', async () => {
+    const match = {
+      path: '/myAccount/:tab',
+      url: '/myAccount/dataretention',
+      isExact: true,
+      params: {
+        tab: 'dataretention',
+      },
+    };
+
+    const accounts = [
+      {
+        _id: 'own',
+        accessLevel: 'owner',
+        defaultAShareId: 'own',
+      },
+    ];
+
+    store(accounts);
+    await initMyAccount(match, match.params.tab);
+
+    const dataretentionText = screen.getByRole('tab', {name: 'Data retention'});
+
+    expect(dataretentionText).toBeInTheDocument();
   });
 });

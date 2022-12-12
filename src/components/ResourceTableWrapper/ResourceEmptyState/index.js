@@ -8,7 +8,7 @@ import { generateNewId } from '../../../utils/resource';
 import { buildDrawerUrl, drawerPaths } from '../../../utils/rightDrawer';
 import LoadResources from '../../LoadResources';
 
-export default function ResourceEmptyState({resourceType, integrationId = 'none', className}) {
+export default function ResourceEmptyState({resourceType, className, integrationId = 'none', sectionId}) {
   const resource = resourceTypeMetaData[resourceType];
   const location = useLocation();
   let createResourceUrl;
@@ -16,7 +16,11 @@ export default function ResourceEmptyState({resourceType, integrationId = 'none'
   if (resource?.type === 'integrations') {
     createResourceUrl = '/integrations/none/flowBuilder/new';
   } else if (resource?.type === 'flows') {
-    createResourceUrl = `/integrations/${integrationId}/flowBuilder/new`;
+    if (sectionId) {
+      createResourceUrl = `/integrations/${integrationId}/flows/sections/${sectionId}/flowBuilder/new`;
+    } else {
+      createResourceUrl = `/integrations/${integrationId}/flowBuilder/new`;
+    }
   } else {
     createResourceUrl = buildDrawerUrl({
       path: drawerPaths.RESOURCE.ADD,

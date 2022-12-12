@@ -65,7 +65,7 @@ export function* invokeProcessor({ editorId, processor, body }) {
       ...body,
       options: {
         connection,
-        [resourceType === 'imports' ? 'import' : 'export']: resource,
+        [RESOURCE_TYPE_PLURAL_TO_SINGULAR[resourceType]]: resource,
         // TODO: Siddharth, revert this change after completion of https://celigo.atlassian.net/browse/IO-25372
         fieldPath: fieldId === 'webhook.successBody' ? 'dataURITemplate' : fieldId,
         timezone,
@@ -651,6 +651,17 @@ export function* requestEditorSampleData({
         _userId,
         ...(resource || {}),
       };
+
+      if (parentType) {
+        body[parentType === 'exports' ? 'exportId' : 'importId'] = parentId;
+      }
+
+      delete body.sampleData;
+      delete body.templateVersion;
+    } else if (resourceType === 'iClients') {
+      body.type = 'iclient';
+      body.connectionId = editor.connectionId;
+      body.iClient = resource || {};
 
       if (parentType) {
         body[parentType === 'exports' ? 'exportId' : 'importId'] = parentId;

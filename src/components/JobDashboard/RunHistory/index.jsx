@@ -19,6 +19,8 @@ import { TextButton } from '../../Buttons';
 import ActionGroup from '../../ActionGroup';
 import {RUN_HISTORY_STATUS_OPTIONS} from '../../../utils/accountDashboard';
 import JobTable from './JobTable';
+import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
+import messageStore from '../../../utils/messageStore';
 
 const useStyles = makeStyles(theme => ({
   actions: {
@@ -69,12 +71,6 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const defaultRange = {
-  startDate: startOfDay(addDays(new Date(), -29)),
-  endDate: endOfDay(new Date()),
-  preset: null,
-};
-
 const ROWS_PER_PAGE = 50;
 
 export default function RunHistory({ flowId, className }) {
@@ -87,7 +83,14 @@ export default function RunHistory({ flowId, className }) {
 
     return !status || status === 'requested';
   });
-
+  const defaultRange = useMemo(
+    () => ({
+      startDate: startOfDay(addDays(new Date(), -29)),
+      endDate: endOfDay(new Date()),
+      preset: null,
+    }),
+    []
+  );
   const runHistory = useSelector(state => selectors.runHistoryContext(state, flowId).data);
 
   const filter = useSelector(state =>
@@ -101,7 +104,9 @@ export default function RunHistory({ flowId, className }) {
     startDate: new Date(filter.range.startDate),
     endDate: new Date(filter.range.endDate),
     preset: filter.range.preset,
-  } : defaultRange, [isDateFilterSelected, filter]);
+  } : defaultRange, [defaultRange, isDateFilterSelected, filter]);
+  const [enqueueSnackbar] = useEnqueueSnackbar();
+  const isPurgeFilesSuccess = useSelector(state => selectors.isPurgeFilesSuccess(state));
   const areUserAccountSettingsLoaded = useSelector(selectors.areUserAccountSettingsLoaded);
   const maxAllowedDataRetention = useSelector(state => selectors.platformLicense(state)?.maxAllowedDataRetention);
   const dataRetentionPeriod = useSelector(selectors.dataRetentionPeriod);
@@ -175,6 +180,17 @@ export default function RunHistory({ flowId, className }) {
     }
   }, [areUserAccountSettingsLoaded, dispatch]);
 
+  useEffect(() => {
+    if (isPurgeFilesSuccess) {
+      dispatch(actions.job.purge.clear());
+      dispatch(actions.errorManager.runHistory.request({ flowId }));
+      enqueueSnackbar({
+        message: messageStore('FILE_PURGE_SUCCESS_MESSAGE'),
+        variant: 'success',
+      });
+    }
+  }, [dispatch, enqueueSnackbar, flowId, isPurgeFilesSuccess]);
+
   return (
     <div className={clsx(classes.wrapper, className)}>
       <div className={classes.filterContainerRunHistory}>
@@ -240,7 +256,7 @@ export default function RunHistory({ flowId, className }) {
             jobsInCurrentPage={jobsInCurrentPage || []} />
         )}
 
-      {!hasFlowRunHistory &&
+      {(!hasFlowRunHistory && !isLoadingHistory) &&
         (
         <NoResultTypography isBackground className={clsx({[classes.hideWrapper]: isLoadingHistory})}>
           You don&apos;t have any run history.

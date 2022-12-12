@@ -1,5 +1,5 @@
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { makeStyles, Divider, Typography, Tooltip } from '@material-ui/core';
 import { sortableContainer, sortableElement } from 'react-sortable-hoc';
 import Help from '../../../../Help';
@@ -60,6 +60,34 @@ const BranchHeading = ({ helpKey, children, classes }) => (
     />
   </div>
 );
+const BranchName = ({ editorId, isViewMode, name }) => {
+  const dispatch = useDispatch();
+  const [errorMessage, setErrorMessage] = useState(null);
+  const updatedOnNameChange = (id, val) => {
+    if (val?.length > 256) {
+      setErrorMessage([messageStore('BRANCH_NAME_LENGTH_ERROR')]);
+    } else {
+      setErrorMessage(null);
+    }
+    dispatch(actions.editor.patchRule(editorId, val, {rulePath: 'name'}));
+  };
+
+  return (
+    <DynaText
+      id="name"
+      name="name"
+      disabled={isViewMode}
+      isValid={!errorMessage}
+      errorMessages={errorMessage ? [errorMessage] : undefined}
+      multiline
+      rowsMax={4}
+      label="Branching name"
+      helpKey="flow.router.name"
+      value={name}
+      onFieldChange={updatedOnNameChange}
+  />
+  );
+};
 
 export default function RouterPanel({ editorId }) {
   const classes = useStyles();
@@ -99,10 +127,6 @@ export default function RouterPanel({ editorId }) {
     dispatch(actions.editor.patchRule(editorId, val, {rulePath: 'routeRecordsTo'}));
   };
 
-  const updatedOnNameChange = (id, val) => {
-    dispatch(actions.editor.patchRule(editorId, val, {rulePath: 'name'}));
-  };
-
   return (
     <div className={classes.panelContent}>
       <BranchDrawer editorId={editorId} />
@@ -110,17 +134,7 @@ export default function RouterPanel({ editorId }) {
       <BranchHeading helpKey="flow.router.branchType" classes={classes}>Branching type</BranchHeading>
 
       <div className={classes.branchingType}>
-        <DynaText
-          id="name"
-          name="name"
-          disabled={isViewMode}
-          multiline
-          rowsMax={4}
-          label="Branching name"
-          value={name}
-          onFieldChange={updatedOnNameChange}
-        />
-
+        <BranchName editorId={editorId} name={name} isViewMode={isViewMode} />
         <DynaRadioGroup
           id="branchType"
           name="branchType"
