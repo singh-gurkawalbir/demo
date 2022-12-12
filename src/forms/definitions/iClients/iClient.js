@@ -26,6 +26,7 @@ export default {
     'oauth2.callbackURL': { fieldId: 'oauth2.callbackURL' },
     'oauth2.token.uri': { fieldId: 'oauth2.token.uri' },
     'oauth2.revoke.uri': { fieldId: 'oauth2.revoke.uri' },
+    'oauth2.validDomainNames': { fieldId: 'oauth2.validDomainNames' },
     'oauth2.clientId': { fieldId: 'oauth2.clientId' },
     'oauth2.clientSecret': { fieldId: 'oauth2.clientSecret' },
     'amazonmws.accessKeyId': { fieldId: 'amazonmws.accessKeyId' },
@@ -65,6 +66,7 @@ export default {
           'oauth2.callbackURL',
           'oauth2.token.uri',
           'oauth2.revoke.uri',
+          'oauth2.validDomainNames',
         ],
       },
       {

@@ -105,6 +105,13 @@ export default {
     type: 'uri',
     label: 'Revoke token URL',
   },
+  'oauth2.validDomainNames': {
+    isLoggable: true,
+    required: true,
+    type: 'text',
+    delimiter: ',',
+    label: 'Valid domain names',
+  },
   'oauth2.scopeDelimiter': {
     isLoggable: true,
     type: 'text',
