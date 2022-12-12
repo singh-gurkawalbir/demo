@@ -21,18 +21,20 @@ jest.mock('../HelpContent', () => ({
 }));
 describe('IconButtonWithTooltip UI tests', () => {
   test('should render the button', () => {
-    renderWithProviders(<IconButtonWithTooltip />);
+    const props = { tooltipProps: {title: 'title'} };
+
+    renderWithProviders(<IconButtonWithTooltip {...props} />);
     expect(screen.getByRole('button')).toBeInTheDocument();
   });
   test('should render the component on clicking the button', () => {
-    const props = {children: <HelpContent /> };
+    const props = {children: <HelpContent />, tooltipProps: {title: 'title'} };
 
     renderWithProviders(<IconButtonWithTooltip {...props} />);
     userEvent.click(screen.getByRole('button'));
     expect(screen.getByText('Help')).toBeInTheDocument();
   });
   test('should display any string passed as children on clicking the button', () => {
-    const props = {children: 'Hello there'};
+    const props = {children: 'Hello there', tooltipProps: {title: 'title'}};
 
     renderWithProviders(<IconButtonWithTooltip {...props} />);
 

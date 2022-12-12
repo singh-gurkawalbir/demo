@@ -44,7 +44,7 @@ export default function CeligoDivider({ orientation = 'vertical', height = 'larg
 }
 
 CeligoDivider.defaultProps = {
-  orientation: 'horizontal,',
+  orientation: 'horizontal',
 };
 
 CeligoDivider.propTypes = {

@@ -58,6 +58,10 @@ function getPositionAndOffset(
   ) {
     position = 'right';
     offset = 50;
+  } else if (targetType === GRAPH_ELEMENTS_TYPE.TERMINAL &&
+    sourceType === GRAPH_ELEMENTS_TYPE.PP_STEP
+  ) {
+    offset = 40;
   } else if (
     targetType !== GRAPH_ELEMENTS_TYPE.PP_STEP &&
     sourceType === GRAPH_ELEMENTS_TYPE.PP_STEP

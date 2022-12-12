@@ -86,7 +86,7 @@ describe('PurgeMultipleErrors action Test cases', () => {
     expect(purgeLogs.getAttribute('aria-disabled')).toBeFalsy;
 
     userEvent.click(purgeLogs);
-    expect(screen.getByText('Confirm purge log')).toBeInTheDocument();
+    expect(screen.getByText('Are you sure you want to purge all logs of this script? This cannot be undone.')).toBeInTheDocument();
     const confirmPurgeButton = screen.getByRole('button', {name: 'Purge all logs of this script'});
     const cancelButton = screen.getByRole('button', {name: 'Cancel'});
 

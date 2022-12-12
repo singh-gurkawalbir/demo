@@ -164,12 +164,12 @@ const useStyles = makeStyles(theme => ({
     },
   },
   dropbox: {
-    top: '75px',
+    top: '77px',
     display: 'flex',
     position: 'absolute',
   },
   left: {
-    left: '-40px',
+    left: '-80px',
   },
   right: {
     right: '-82px',

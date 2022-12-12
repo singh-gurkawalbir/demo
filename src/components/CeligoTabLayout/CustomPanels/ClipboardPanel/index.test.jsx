@@ -14,7 +14,7 @@ const props = {
   },
 };
 
-describe('Testing Clipboard Panel', async () => {
+describe('Testing Clipboard Panel', () => {
   test('testing the Clipboard Panel by giving content as Object', async () => {
     renderWithProviders(
       <MemoryRouter>
