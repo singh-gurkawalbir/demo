@@ -1,8 +1,14 @@
-/* global describe, test, expect */
+/* global describe, test, expect, jest */
 import React from 'react';
 import { screen } from '@testing-library/react';
 import { renderWithProviders, reduxStore } from '../../test/test-utils';
 import DynaForm from '.';
+
+jest.mock('./fields/DynaMode', () => ({
+  __esModule: true,
+  ...jest.requireActual('../DynaForm/fields/DynaMode'),
+  default: () => { throw new Error('Error prone field'); },
+}));
 
 const fields = {
   a: {
@@ -54,14 +60,10 @@ describe('DynaForm UI test cases', () => {
   });
   test('Should validate DynaForm error boundary with FieldDefinitionException error', () => {
     try {
-      initDynaSubmit({ formKey: '_formKey' }, ['a'], { ...fields, a: { visible: true, id: 'a' } }, {});
+      initDynaSubmit({ formKey: '_formKey' }, ['a'], fields);
     } catch (err) {
-      expect(screen.getByText('Some unknown error')).toBeInTheDocument();
+      expect(screen.getByText('Invalid field definition for field: a')).toBeInTheDocument();
     }
-  });
-  test('Should validate DynaForm non empty fieldMap', () => {
-    initDynaSubmit({ formKey: '_formKey' }, ['a', 'b'], fields);
-    expect(screen.getAllByRole('textbox')).toHaveLength(2);
   });
   test('Should validate DynaForm invalid fieldMap', () => {
     initDynaSubmit({ formKey: '_formKey' }, [], undefined);

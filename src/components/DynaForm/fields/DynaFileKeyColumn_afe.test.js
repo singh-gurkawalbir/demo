@@ -44,13 +44,11 @@ async function initDynaFileDefinitionSelect(props, status) {
         },
       },
     },
-    sampleData: {
-      resourceForm: {
-        expId: {
-          preview: {
-            data: { preview: '[{a: 90}]' },
-            status: 'received',
-          },
+    resourceFormSampleData: {
+      expId: {
+        preview: {
+          data: { preview: '[{a: 90}]' },
+          status: 'received',
         },
       },
     },
@@ -90,6 +88,12 @@ describe('DynaFileKeyColumn_afe tests', () => {
   });
   test('Should able to test DynaFileKeyColumn_afe with HTTPExport', async () => {
     const props = { resourceId: 'expId', resourceType: 'exports', onFieldChange };
+
+    await initDynaFileDefinitionSelect(props);
+    expect(mockDispatchFn).not.toHaveBeenCalled();
+  });
+  test('Should able to test DynaFileKeyColumn_afe with invalid values', async () => {
+    const props = { resourceId: 'expId', resourceType: 'exports', onFieldChange, value: {} };
 
     await initDynaFileDefinitionSelect(props);
     expect(mockDispatchFn).not.toHaveBeenCalled();
