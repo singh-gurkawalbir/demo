@@ -5,7 +5,7 @@ import FormControl from '@material-ui/core/FormControl';
 import MenuItem from '@material-ui/core/MenuItem';
 import { makeStyles } from '@material-ui/core';
 import { endOfDay } from 'date-fns';
-import { AUDIT_LOG_SOURCE_LABELS, AUDIT_LOG_PAGING_FILTER_KEY, ROWS_PER_PAGE_OPTIONS, DEFAULT_ROWS_PER_PAGE } from '../../constants/auditLog';
+import { AUDIT_LOG_SOURCE_LABELS, AUDIT_LOG_FILTER_KEY, ROWS_PER_PAGE_OPTIONS, DEFAULT_ROWS_PER_PAGE } from '../../constants/auditLog';
 import { selectors } from '../../reducers';
 import { ResourceTypeFilter, ResourceIdFilter, AuditLogActionFilter } from './ResourceFilters';
 import CeligoSelect from '../CeligoSelect';
@@ -82,13 +82,13 @@ function AuditPagination({ resourceType, resourceId, totalCount }) {
   const classes = useStyles();
   const dispatch = useDispatch();
 
-  const auditPagingFilter = useSelector(state => selectors.filter(state, AUDIT_LOG_PAGING_FILTER_KEY)?.paging || emptyObject, shallowEqual);
+  const auditPagingFilter = useSelector(state => selectors.filter(state, AUDIT_LOG_FILTER_KEY)?.paging || emptyObject, shallowEqual);
   const auditNextPagePath = useSelector(state => selectors.auditLogsNextPagePath(state));
   const auditLoadMoreStatus = useSelector(state => selectors.auditLoadMoreStatus(state));
 
   const handlePageChange = useCallback((e, newPage) => {
     dispatch(
-      actions.patchFilter(AUDIT_LOG_PAGING_FILTER_KEY, {
+      actions.patchFilter(AUDIT_LOG_FILTER_KEY, {
         paging: {
           ...auditPagingFilter,
           currPage: newPage,
@@ -98,7 +98,7 @@ function AuditPagination({ resourceType, resourceId, totalCount }) {
   }, [dispatch, auditPagingFilter]);
   const handleRowsPerPageChange = useCallback(e => {
     dispatch(
-      actions.patchFilter(AUDIT_LOG_PAGING_FILTER_KEY, {
+      actions.patchFilter(AUDIT_LOG_FILTER_KEY, {
         paging: {
           ...auditPagingFilter,
           rowsPerPage: parseInt(e.target.value, 10),
@@ -136,7 +136,7 @@ function AuditPagination({ resourceType, resourceId, totalCount }) {
 export default function Filters(props) {
   const [date, setDate] = useState(defaultRange);
 
-  const {resourceType, resourceId, resourceDetails, onFiltersChange, childId} = props;
+  const {resourceType, resourceId, resourceDetails, childId} = props;
   const dispatch = useDispatch();
   const classes = useStyles();
   const [enqueueSnackbar] = useEnqueueSnackbar();
@@ -148,18 +148,9 @@ export default function Filters(props) {
     resourceType,
     resourceId
   ));
+  const auditNextPagePath = useSelector(state => selectors.auditLogsNextPagePath(state));
   const hasMoreDownloads = useSelector(state => selectors.auditHasMoreDownloads(state));
-
-  const [filters, setFilters] = useState(
-    {
-
-      resourceType: OPTION_ALL.id,
-      _resourceId: OPTION_ALL.id,
-      byUser: OPTION_ALL.id,
-      source: OPTION_ALL.id,
-      event: OPTION_ALL.id,
-    }
-  );
+  const filters = useSelector(state => selectors.filter(state, AUDIT_LOG_FILTER_KEY) || emptyObject, shallowEqual);
 
   const handleDateFilter = useCallback(
     dateFilter => {
@@ -184,7 +175,6 @@ export default function Filters(props) {
       state,
       resourceType,
       resourceId,
-      undefined,
       {childId}
     ).totalCount);
 
@@ -197,24 +187,16 @@ export default function Filters(props) {
     return resource;
   };
 
-  const handleChange = event => {
-    const toUpdate = { ...filters, [event.target.name]: event.target.value };
+  const handleChange = useCallback(event => {
+    const updatedFilters = { ...filters, [event.target.name]: event.target.value };
 
     if (event.target.name === 'resourceType') {
-      toUpdate._resourceId = OPTION_ALL.id;
+      updatedFilters._resourceId = OPTION_ALL.id;
     }
-    setFilters(toUpdate);
 
-    const updatedFilters = { ...toUpdate };
-
-    Object.keys(updatedFilters).forEach(key => {
-      if (updatedFilters[key] === OPTION_ALL.id) {
-        updatedFilters[key] = undefined;
-      }
-    });
-
-    onFiltersChange(updatedFilters);
-  };
+    dispatch(actions.patchFilter(AUDIT_LOG_FILTER_KEY, updatedFilters));
+    dispatch(actions.auditLogs.request(resourceType, resourceId, auditNextPagePath));
+  }, [auditNextPagePath, dispatch, filters, resourceId, resourceType]);
 
   useEffect(() => {
     if (hasMoreDownloads) {

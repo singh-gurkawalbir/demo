@@ -85,7 +85,7 @@ const FieldComponent = props => {
   );
 };
 
-export default function FormFragment({ defaultFields, formKey}) {
+export default function FormFragment({ defaultFields = [], formKey}) {
   const dispatch = useDispatch();
 
   const onFieldChange = useCallback(

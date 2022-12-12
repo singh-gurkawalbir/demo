@@ -55,7 +55,7 @@ const useStyles = makeStyles(theme => ({
     },
   },
   userSettingsContainer: {
-    '& .MuiCollapse-container': {
+    '& .MuiCollapse-entered': {
       minHeight: '100px !important',
     },
   },

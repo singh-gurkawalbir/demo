@@ -529,7 +529,7 @@ const resource = {
 // #endregion
 
 const auditLogs = {
-  request: (resourceType, resourceId, nextPagePath) => action(actionTypes.RESOURCE.REQUEST_COLLECTION, {
+  request: (resourceType, resourceId, nextPagePath) => action(actionTypes.RESOURCE.REQUEST_AUDIT_LOGS, {
     resourceType: auditResourceTypePath(resourceType, resourceId),
     nextPagePath,
   }),
@@ -860,6 +860,12 @@ const integrationApp = {
           { integrationId, flowId, mappingData }
         ),
     },
+    integrationAppV2: {
+      upgrade: integrationId =>
+        action(actionTypes.INTEGRATION_APPS.SETTINGS.V2.UPGRADE, {
+          integrationId,
+        }),
+    },
     initComplete: (integrationId, flowId, sectionId) =>
       action(actionTypes.INTEGRATION_APPS.SETTINGS.FORM.INIT_COMPLETE, {
         integrationId,
@@ -1050,6 +1056,17 @@ const integrationApp = {
           isFrameWork2,
         }),
     },
+    upgrade: {
+      installer: {
+        verifyBundleOrPackageInstall: (id, connectionId, installerFunction, isFrameWork2) =>
+          action(actionTypes.INTEGRATION_APPS.TEMPLATES.INSTALLER.VERIFY_BUNDLE_INSTALL, {
+            id,
+            connectionId,
+            installerFunction,
+            isFrameWork2,
+          }),
+      },
+    },
   },
   uninstaller2: {
     init: integrationId =>
@@ -1149,7 +1166,86 @@ const integrationApp = {
       integrationId,
     }),
   },
-
+  upgrade: {
+    setStatus: (integrationId, statusObj) =>
+      action(actionTypes.INTEGRATION_APPS.SETTINGS.V2.SET_STATUS, {
+        id: integrationId,
+        statusObj,
+      }),
+    getSteps: integrationId =>
+      action(actionTypes.INTEGRATION_APPS.SETTINGS.V2.GET_STEPS, {
+        integrationId,
+      }),
+    postChangeEditonSteps: integrationId =>
+      action(actionTypes.INTEGRATION_APPS.SETTINGS.V2.POST_CHANGE_EDITION_STEPS, {
+        integrationId,
+      }),
+    addChildForUpgrade: childList =>
+      action(actionTypes.INTEGRATION_APPS.SETTINGS.V2.ADD_CHILD_UPGRADE_LIST, {
+        childList,
+      }),
+    installer: {
+      init: integrationId => action(actionTypes.INTEGRATION_APPS.INSTALLER.V2.INIT, {
+        id: integrationId,
+      }),
+      setOauthConnectionMode: (connectionId, openOauthConnection, id) =>
+        action(actionTypes.INTEGRATION_APPS.INSTALLER.V2.RECEIVED_OAUTH_CONNECTION_STATUS, {
+          connectionId, openOauthConnection, id,
+        }),
+      initChild: integrationId => action(actionTypes.INTEGRATION_APPS.INSTALLER.V2.INIT_CHILD, {
+        id: integrationId,
+      }),
+      installStep: (integrationId, installerFunction, childId, addOnId, formVal) =>
+        action(actionTypes.INTEGRATION_APPS.INSTALLER.V2.STEP.REQUEST, {
+          id: integrationId,
+          installerFunction,
+          childId,
+          addOnId,
+          formVal,
+        }),
+      scriptInstallStep: (
+        integrationId,
+        connectionId,
+        connectionDoc,
+        formSubmission,
+        stackId
+      ) =>
+        action(actionTypes.INTEGRATION_APPS.INSTALLER.V2.STEP.SCRIPT_REQUEST, {
+          id: integrationId,
+          connectionId,
+          connectionDoc,
+          formSubmission,
+          stackId,
+        }),
+      updateStep: (integrationId, installerFunction, update, formMeta, url) =>
+        action(actionTypes.INTEGRATION_APPS.INSTALLER.V2.STEP.UPDATE, {
+          id: integrationId,
+          installerFunction,
+          update,
+          formMeta,
+          url,
+        }),
+      completedStepInstall: (stepCompleteResponse, id, installerFunction) =>
+        action(actionTypes.INTEGRATION_APPS.INSTALLER.V2.STEP.DONE, {
+          stepsToUpdate: stepCompleteResponse.stepsToUpdate,
+          id,
+          installerFunction,
+        }),
+      getCurrentStep: (integrationId, step) =>
+        action(actionTypes.INTEGRATION_APPS.INSTALLER.V2.STEP.CURRENT_STEP, {
+          id: integrationId,
+          step,
+        }),
+    },
+  },
+  landingPage: {
+    requestIntegrations: ({ clientId }) => action(actionTypes.INTEGRATION_APPS.LANDING_PAGE.REQUEST_INTEGRATIONS, {
+      clientId,
+    }),
+    receivedIntegrations: ({ integrations }) => action(actionTypes.INTEGRATION_APPS.LANDING_PAGE.RECEIVED_INTEGRATIONS, {
+      integrations,
+    }),
+  },
 };
 const clone = {
   requestPreview: (resourceType, resourceId) =>
@@ -1222,12 +1318,13 @@ const agent = {
 };
 const file = {
   previewZip: file => action(actionTypes.FILE.PREVIEW_ZIP, { file }),
-  upload: (resourceType, resourceId, fileType, file) =>
+  upload: ({resourceType, resourceId, fileType, file, asyncKey}) =>
     action(actionTypes.FILE.UPLOAD, {
       resourceType,
       resourceId,
       fileType,
       file,
+      asyncKey,
     }),
   processFile: ({ fileId, file, fileType, fileProps }) =>
     action(actionTypes.FILE.PROCESS, {
@@ -1602,7 +1699,7 @@ const searchCriteria = {
 };
 // #region DynaForm Actions
 const resourceForm = {
-  init: (resourceType, resourceId, isNew, skipCommit, flowId, initData, integrationId) =>
+  init: (resourceType, resourceId, isNew, skipCommit, flowId, initData, integrationId, fieldMeta) =>
     action(actionTypes.RESOURCE_FORM.INIT, {
       resourceType,
       resourceId,
@@ -1611,6 +1708,7 @@ const resourceForm = {
       flowId,
       initData,
       integrationId,
+      fieldMeta,
     }),
   initComplete: (
     resourceType,
@@ -2346,6 +2444,16 @@ const logs = {
       action(actionTypes.LOGS.SCRIPTS.START_DEBUG, { scriptId, value }),
     setFetchStatus: ({ scriptId, flowId, fetchStatus }) => action(actionTypes.LOGS.SCRIPTS.FETCH_STATUS, { scriptId, flowId, fetchStatus }),
     pauseFetch: ({ scriptId, flowId }) => action(actionTypes.LOGS.SCRIPTS.PAUSE_FETCH, { scriptId, flowId }),
+    requestAllLogs: ({scriptId, flowId}) => action(actionTypes.LOGS.SCRIPTS.REQUEST_ALL_LOGS, {scriptId, flowId}),
+    receivedAllLogs: ({scriptId, flowId, isPurgeAvailable}) => action(actionTypes.LOGS.SCRIPTS.RECEIVED_ALL_LOGS, {scriptId, flowId, isPurgeAvailable}),
+    purge: {
+      request: ({ scriptId, flowId }) =>
+        action(actionTypes.LOGS.SCRIPTS.PURGE.REQUEST, {scriptId, flowId}),
+      success: ({scriptId, flowId}) =>
+        action(actionTypes.LOGS.SCRIPTS.PURGE.SUCCESS, {scriptId, flowId}),
+      clear: () =>
+        action(actionTypes.LOGS.SCRIPTS.PURGE.CLEAR),
+    },
   },
   connections: {
     request: connectionId =>

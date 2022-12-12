@@ -15,8 +15,9 @@ import useSelectorMemo from '../../../../../../../hooks/selectors/useSelectorMem
 import { useGetTableContext } from '../../../../../../../components/CeligoTable/TableContext';
 import FilledButton from '../../../../../../../components/Buttons/FilledButton';
 import useConfirmDialog from '../../../../../../../components/ConfirmDialog';
-import ButtonWithTooltip from '../../../../../../../components/Buttons/ButtonWithTooltip';
 import ChildIntegrationsTable from './ChildIntegrationsTable';
+import ParentUpgradeButton from './ParentUpgradeButton';
+import UpgradeDrawer from '../../../../../App/drawers/Upgrade';
 
 const emptyObject = {};
 const metadata = {
@@ -112,6 +113,7 @@ export default function SubscriptionSection({ childId, integrationId }) {
   const {
     supportsChild,
     version,
+    changeEditionSteps = [],
   } = useSelector(state => {
     const integration = selectors.integrationAppSettings(state, integrationId);
 
@@ -119,11 +121,13 @@ export default function SubscriptionSection({ childId, integrationId }) {
       return {
         supportsChild: !!(integration.initChild && integration.initChild.function),
         version: integration.version,
+        changeEditionSteps: integration?.changeEditionSteps,
       };
     }
 
     return emptyObject;
   }, shallowEqual);
+
   const children = useSelectorMemo(selectors.mkIntegrationChildren, integrationId);
   const allChildIntegrations = useSelectorMemo(selectors.mkGetChildIntegrations, integrationId);
   const license = useSelector(state =>
@@ -184,6 +188,7 @@ export default function SubscriptionSection({ childId, integrationId }) {
     upgradeText,
     upgradeRequested,
     nextPlan,
+    _changeEditionId: changeEditionId,
   } = license;
   const handleUpgrade = () => {
     if (upgradeText === 'Request upgrade') {
@@ -218,9 +223,14 @@ export default function SubscriptionSection({ childId, integrationId }) {
       message: `Upgrade to a ${nextPlan} plan. Upgrades might require additional install steps to complete. If there are multiple accounts tied to this integration app, those accounts will begin installing once the subscription upgrade is complete.`,
       buttons: [
         {
-          label: 'Submit request',
-          // onClick logic will be added with next trackers
-          onClick: () => {},
+          label: 'Continue',
+          onClick: () => {
+            if (changeEditionSteps?.length) {
+              dispatch(actions.integrationApp.upgrade.getSteps(integrationId));
+            } else {
+              dispatch(actions.integrationApp.settings.integrationAppV2.upgrade(integrationId));
+            }
+          },
         },
         {
           label: 'Cancel',
@@ -228,7 +238,7 @@ export default function SubscriptionSection({ childId, integrationId }) {
         },
       ],
     });
-  }, [confirmDialog, nextPlan]);
+  }, [confirmDialog, dispatch, integrationId, nextPlan, changeEditionSteps?.length]);
 
   return (
     <>
@@ -257,14 +267,13 @@ export default function SubscriptionSection({ childId, integrationId }) {
               </Grid>
               <Grid item xs={3}>
                 {upgradeText && upgradeText === 'upgradeEdition' && (
-                <ButtonWithTooltip>
-                  tooltipProps={{title: `Upgrade to a ${nextPlan} plan`}}
-                  <FilledButton
-                    className={classes.button}
-                    onClick={handleUpgradeEdition}>
-                    Upgrade
-                  </FilledButton>
-                </ButtonWithTooltip>
+                <ParentUpgradeButton
+                  id={integrationId}
+                  className={classes.button}
+                  onClick={handleUpgradeEdition}
+                  nextPlan={nextPlan}
+                  changeEditionId={changeEditionId}
+                />
                 )}
                 {upgradeText && upgradeText !== 'upgradeEdition' && (
                 <FilledButton
@@ -284,12 +293,12 @@ export default function SubscriptionSection({ childId, integrationId }) {
           (tile) of this Integration App. Contact your Account Manager for more
           info.
         </Typography>
-        {allChildIntegrations.length && (
+        {allChildIntegrations.length ? (
           <ChildIntegrationsTable
             integrationId={integrationId}
             allChildIntegrations={allChildIntegrations}
           />
-        )}
+        ) : null}
         {hasAddOns && !hasSubscribedAddOns && (
           <div className={classes.customisedBlock}>
             <div className={classes.leftBlock}>
@@ -329,6 +338,7 @@ export default function SubscriptionSection({ childId, integrationId }) {
           </>
         )}
       </div>
+      <UpgradeDrawer />
     </>
   );
 }

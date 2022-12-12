@@ -29,7 +29,6 @@ describe('WarningGridItem UI tests', () => {
     initWarningGridItem({editorId: 'file.csv', status: 'recieved', warning: 'Invalid data format'});
     expect(screen.getByText('Warning')).toBeInTheDocument();
     expect(screen.getByText('Invalid data format')).toBeInTheDocument();
-    screen.debug();
   });
   test('should render empty DOM when editor result status is "requested"', () => {
     const {utils} = initWarningGridItem({editorId: 'files.csv', status: 'requested'});

@@ -109,7 +109,7 @@ function RightDrawer(props) {
 }
 
 export default function RightDrawerRoute(props) {
-  const { path } = props;
+  const { path, disableEnforceFocus = true } = props;
   let fullPath;
   const match = useRouteMatch();
 
@@ -127,7 +127,7 @@ export default function RightDrawerRoute(props) {
   return (
     <Switch>
       <Route path={fullPath}>
-        <RightDrawer {...props} fullPath={fullPath} />
+        <RightDrawer {...props} fullPath={fullPath} disableEnforceFocus={disableEnforceFocus} />
       </Route>
       <Route>
         <Drawer />

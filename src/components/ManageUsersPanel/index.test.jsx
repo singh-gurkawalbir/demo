@@ -7,7 +7,7 @@ import { Router } from 'react-router-dom';
 import {createMemoryHistory} from 'history';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import userEvent from '@testing-library/user-event';
-import { renderWithProviders } from '../../test/test-utils';
+import { mockGetRequestOnce, renderWithProviders } from '../../test/test-utils';
 import { runServer } from '../../test/api/server';
 import actions from '../../actions';
 import ManageUsersPanel from '.';
@@ -30,6 +30,9 @@ describe('Test cases for Manage User Panel', () => {
   }));
 
   test('Test case for the Invite user button for a account owner', async () => {
+    mockGetRequestOnce('/api/integrations/5rdqtswdywgd8wu8', {_id: '5rdqtswdywgd8wu8' });
+    mockGetRequestOnce('/api/integrations/5rdqtswdywgd8wu8/connections', {_id: '5rdqtswdywgd8wu8' });
+
     const { store } = renderWithProviders(
       <Router history={history}>
         <ManageUsersPanel {...props} />
@@ -46,6 +49,9 @@ describe('Test cases for Manage User Panel', () => {
     expect(history.push).toHaveBeenCalledTimes(1);
   });
   test('Test case for the Invite user button who is not a account owner', () => {
+    mockGetRequestOnce('/api/integrations/5rdqtswdywgd8wu8', {_id: '5rdqtswdywgd8wu8' });
+    mockGetRequestOnce('/api/integrations/5rdqtswdywgd8wu8/connections', {_id: '5rdqtswdywgd8wu8' });
+
     renderWithProviders(
       <Router history={history}>
         <ManageUsersPanel {...props} />
@@ -58,6 +64,9 @@ describe('Test cases for Manage User Panel', () => {
     expect(history.push).not.toBeCalled();
   });
   test('Test case for the Invite user button when there is no integration ID', () => {
+    mockGetRequestOnce('/api/integrations/5rdqtswdywgd8wu8', {_id: '5rdqtswdywgd8wu8' });
+    mockGetRequestOnce('/api/integrations/5rdqtswdywgd8wu8/connections', {_id: '5rdqtswdywgd8wu8' });
+
     renderWithProviders(
       <Router history={history}>
         <ManageUsersPanel {...props} integrationId="" />

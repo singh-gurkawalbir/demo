@@ -2047,11 +2047,9 @@ export function convertToImport({ assistantConfig, assistantData, headers }) {
       }
     }
   }
-  if (operationDetails.howToIdentifyExistingRecords) {
-    if (existingExtract) {
-      importDoc.existingExtract = existingExtract;
-      importDoc.existingLookupName = undefined;
-    }
+  if (operationDetails.howToIdentifyExistingRecords && existingExtract) {
+    importDoc.existingExtract = existingExtract;
+    importDoc.existingLookupName = undefined;
   }
   if (ignoreExisting) {
     if (identifiers && identifiers.length > 0) {
@@ -2065,7 +2063,7 @@ export function convertToImport({ assistantConfig, assistantData, headers }) {
     ignoreMissing
   ) {
     if (identifiers && identifiers.length > 0) {
-      if (lookupType === 'source') {
+      if (lookupType === 'source' && pathParams[identifiers[0].id]) {
         if (ignoreMissing) {
           importDoc.ignoreExtract = pathParams[identifiers[0].id];
           importDoc.existingExtract = undefined;

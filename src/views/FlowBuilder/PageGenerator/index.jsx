@@ -189,6 +189,16 @@ const PageGenerator = ({
         ) {
           connectorType = resource.webhook.provider;
         }
+        const httpConnectorId = resource._httpConnectorId || resource.webhook?._httpConnectorId;
+
+        if (httpConnectorId) {
+          const applications = applicationsList();
+          const httpApp = applications.find(a => a._httpConnectorId === httpConnectorId);
+
+          if (httpConnectorId && httpApp) {
+            connectorType = httpApp._legacyId || httpApp.id;
+          }
+        }
       }
 
       blockType = isRealTimeOrDistributedResource(resource)

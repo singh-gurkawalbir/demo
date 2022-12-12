@@ -19,6 +19,7 @@ export default function SaveAndContinueGroup(props) {
     integrationId,
     parentType,
     parentId,
+    isHTTPForm,
   } = props;
 
   const match = useRouteMatch();
@@ -27,6 +28,8 @@ export default function SaveAndContinueGroup(props) {
     selectors.asyncTaskStatus(state, getAsyncKey(resourceType, resourceId))
   );
   const values = useSelector(state => selectors.formValueTrimmed(state, formKey), shallowEqual);
+  const iClientGrantType = useSelector(state => selectors.resource(state, 'iClients', values?.['/http/_iClientId'])?.oauth2?.grantType);
+  const oauthType = values?.['/http/auth/type'];
 
   const parentContext = useMemo(() => ({
     flowId,
@@ -56,6 +59,10 @@ export default function SaveAndContinueGroup(props) {
     },
     [dispatch, match, resourceId, resourceType, values, parentContext]
   );
+
+  if (isHTTPForm && (oauthType !== 'oauth' || iClientGrantType !== 'clientcredentials')) {
+    return null;
+  }
 
   return (
     <>

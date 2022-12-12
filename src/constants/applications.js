@@ -418,6 +418,7 @@ export const groupApplications = (
         application: pc.name.toLowerCase().replace(/\.|\s/g, ''),
         _httpConnectorId: pc._id,
         helpURL: pc.helpURL,
+        webhook: pc.supportsWebhook,
       });
     });
 
@@ -516,6 +517,7 @@ export const applicationsList = () => {
       application: pc.name.toLowerCase().replace(/\.|\s/g, ''),
       _httpConnectorId: pc._id,
       helpURL: pc.helpURL,
+      webhook: pc.supportsWebhook,
     });
   });
 
