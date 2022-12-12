@@ -11,7 +11,6 @@ import actions from '../../actions';
 import actionTypes from '../../actions/types';
 import { authParams, logoutParams, getCSRFParams, resetRequestParams, resetPasswordRequestParams, setPasswordRequestParams, setChangeEmailParams} from '../api/apiPaths';
 import { apiCallWithRetry } from '../index';
-import { requestMFASessionInfo } from '../mfa';
 import { getResource, getResourceCollection } from '../resources';
 import {
   setCSRFToken,
@@ -172,7 +171,7 @@ export function* fetchUIVersion() {
 }
 
 export function* retrieveAppInitializationResources() {
-  yield call(requestMFASessionInfo);
+  // yield call(requestMFASessionInfo);
   const isMFASetupIncomplete = yield select(selectors.isMFASetupIncomplete);
 
   yield call(retrievingUserDetails);
@@ -468,6 +467,17 @@ export function* setLastLoggedInLocalStorage() {
 
   localStorage.setItem('latestUser', profile?._id);
 }
+export function* validateSession() {
+  const response = yield call(apiCallWithRetry, {
+    path: '/validate-session',
+    message: 'Authenticating User',
+    hidden: true,
+  });
+
+  yield put(actions.mfa.receivedSessionInfo(response));
+
+  return response;
+}
 
 export function* auth({ email, password }) {
   try {
@@ -490,6 +500,7 @@ export function* auth({ email, password }) {
     }
     const isExpired = yield select(selectors.isSessionExpired);
 
+    yield call(validateSession);
     yield call(setCSRFToken, apiAuthentications._csrf);
 
     yield call(setLastLoggedInLocalStorage);
@@ -538,15 +549,18 @@ export function* signup({payloadBody}) {
 
 export function* initializeSession({opts} = {}) {
   try {
-    const resp = yield call(
-      getResource,
-      actions.user.profile.request('Initializing application')
-    );
+    const resp = yield call(validateSession);
+    let isUserAuthenticated = resp.authenticated;
 
-    if (resp) {
+    if (resp.mfaRequired) {
+      isUserAuthenticated = resp.mfaVerified;
+    }
+    if (resp.authenticated) {
       const _csrf = yield call(getCSRFTokenBackend);
 
       yield call(setCSRFToken, _csrf);
+    }
+    if (isUserAuthenticated) {
       yield call(setLastLoggedInLocalStorage);
 
       yield put(actions.auth.complete());
@@ -557,7 +571,13 @@ export function* initializeSession({opts} = {}) {
     // Important: intializeApp should be the last thing to happen in this function
     } else {
       // existing session is invalid
-      yield put(actions.auth.logout(true));
+      const isMFASetupIncomplete = yield select(selectors.isMFASetupIncomplete);
+
+      if (!isMFASetupIncomplete) {
+        yield put(actions.auth.logout(true));
+      } else {
+        yield call(retrieveAppInitializationResources);
+      }
     }
   } catch (e) {
     yield put(actions.auth.logout());
@@ -568,9 +588,12 @@ export function* invalidateSession({ isExistingSessionInvalid = false } = {}) {
   // if existing session is valid lets
   // go ahead and make an api call to invalidate the session
   // otherwise skip it
-
   if (!isExistingSessionInvalid) {
-    const _csrf = yield call(getCSRFToken);
+    let _csrf = yield call(getCSRFToken);
+
+    if (!_csrf) {
+      _csrf = yield call(getCSRFTokenBackend);
+    }
     const logoutOpts = { ...logoutParams.opts, body: { _csrf } };
 
     try {
@@ -692,4 +715,5 @@ export const authenticationSagas = [
   takeEvery(actionTypes.AUTH.RESET_PASSWORD_REQUEST, resetPasswordRequest),
   takeEvery(actionTypes.AUTH.SET_PASSWORD_REQUEST, setPasswordRequest),
   takeEvery(actionTypes.AUTH.CHANGE_EMAIL_REQUEST, changeEmailRequest),
+  takeEvery(actionTypes.AUTH.VALIDATE_SESSION, validateSession),
 ];

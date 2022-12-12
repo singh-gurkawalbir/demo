@@ -145,6 +145,7 @@ const auth = {
   abortAllSagasAndInitLR: opts => action(actionTypes.AUTH.ABORT_ALL_SAGAS_AND_INIT_LR, { opts }),
   abortAllSagasAndSwitchAcc: accountToSwitchTo => action(actionTypes.AUTH.ABORT_ALL_SAGAS_AND_SWITCH_ACC, { accountToSwitchTo }),
   initSession: opts => action(actionTypes.AUTH.INIT_SESSION, { opts }),
+  validateSession: () => action(actionTypes.AUTH.VALIDATE_SESSION),
   changePassword: updatedPassword =>
     action(actionTypes.AUTH.USER.CHANGE_PASSWORD, { updatedPassword }),
   changeEmail: updatedEmail =>

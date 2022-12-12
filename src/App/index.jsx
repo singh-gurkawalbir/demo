@@ -120,7 +120,7 @@ const PUBLIC_ROUTES = [
   'request-reset',
   'signin',
   'signup',
-  'mfa-help',
+  'mfa',
 ];
 
 const pageContentPaths = [getRoutePath('/*'), getRoutePath('/')];
@@ -129,7 +129,7 @@ export const PageContentComponents = () => (
     <Route exact path={getRoutePath('/reset-password/:token')} component={ResetPassword} />
     <Route exact path={getRoutePath('/change-email/:token')} component={ChangeEmail} />
     <Route exact path={getRoutePath('/set-initial-password/:token')} component={SetPassword} />
-    <Route path={getRoutePath('/mfa-help')} component={MfaHelp} />
+    <Route path={getRoutePath('/mfa/help')} component={MfaHelp} />
     <Route path={getRoutePath('/mfa/verify')} component={MfaVerify} />
     <Route path={getRoutePath('/signin')} component={Signin} />
     <Route path={getRoutePath('/signup')} component={Signup} />

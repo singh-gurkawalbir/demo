@@ -1,39 +1,27 @@
 import React, { useEffect, useState } from 'react';
-import { connect, useSelector } from 'react-redux';
-import { withRouter, Redirect } from 'react-router-dom';
+import { withRouter, Redirect, useLocation, useHistory } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
 import { selectors } from '../../reducers';
 import actions from '../../actions';
 import getRoutePath from '../../utils/routePaths';
 
-const mapStateToProps = state => ({
-  shouldShowAppRouting: selectors.shouldShowAppRouting(state),
-  isAuthInitialized: selectors.isAuthInitialized(state),
-  isSessionExpired: selectors.isSessionExpired(state),
-  isAuthenticated: selectors.isAuthenticated(state),
-});
-const mapDispatchToProps = dispatch => ({
-  initSession: () => {
-    dispatch(actions.auth.initSession());
-  },
-  clearAppError: () => {
-    dispatch(actions.app.clearError());
-  },
-});
-
-export function AppRoutingWithAuth(props) {
-  const {
-    initSession,
-    isAuthInitialized,
-    location,
-    history,
-    children,
-    clearAppError,
-  } = props;
+export function AppRoutingWithAuth({ children }) {
+  const location = useLocation();
+  const history = useHistory();
   const { pathname: currentRoute, search } = location;
   const [hasPageReloaded, setHasPageReloaded] = useState(false);
   const isMFAAuthRequired = useSelector(selectors.isMFAAuthRequired);
   const isSignInRoute = location.pathname.split('?')[0] === getRoutePath('signin');
   const isConcurPage = location.pathname.startsWith('/concurconnect');
+  const shouldShowAppRouting = useSelector(selectors.shouldShowAppRouting);
+  const isAuthInitialized = useSelector(selectors.isAuthInitialized);
+  const isSessionExpired = useSelector(selectors.isSessionExpired);
+  const isAuthenticated = useSelector(selectors.isAuthenticated);
+  const isUserLoggedOut = useSelector(selectors.isUserLoggedOut);
+  const isMFASetupIncomplete = useSelector(selectors.isMFASetupIncomplete);
+  const isUserAuthenticated = useSelector(state => selectors.sessionInfo(state)?.authenticated);
+
+  const dispatch = useDispatch();
 
   useEffect(() => {
     if (!isAuthInitialized && !hasPageReloaded) {
@@ -42,24 +30,15 @@ export function AppRoutingWithAuth(props) {
           search: isConcurPage ? '?application=concur' : search,
           state: { attemptedRoute: currentRoute, search },
         });
-        initSession();
+        dispatch(actions.auth.initSession());
       }
-      if (!hasPageReloaded) clearAppError();
-      setHasPageReloaded(true);
     }
-  }, [
-    hasPageReloaded,
-    currentRoute,
-    isConcurPage,
-    isSignInRoute,
-    history,
-    search,
-    initSession,
-    isAuthInitialized,
-    clearAppError,
-  ]);
 
-  const { shouldShowAppRouting, isAuthenticated, isSessionExpired } = props;
+    if (!hasPageReloaded) {
+      dispatch(actions.app.clearError());
+    }
+    setHasPageReloaded(true);
+  }, [hasPageReloaded, currentRoute, history, search, isAuthInitialized, dispatch, isSignInRoute, isConcurPage]);
 
   // this selector is used by the UI to hold off rendering any routes
   // till it determines the auth state
@@ -73,7 +52,21 @@ export function AppRoutingWithAuth(props) {
 
     return children;
   }
-  if (!isSessionExpired && !isSignInRoute && !isMFAAuthRequired) {
+
+  const isMFASetupPage = getRoutePath('/myAccount/security/mfa') === location.pathname;
+
+  if (isMFASetupIncomplete && isUserAuthenticated && !isMFASetupPage && !isSignInRoute) {
+    return (
+      <Redirect
+        push={false}
+        to={{
+          pathname: getRoutePath('/myAccount/security/mfa'),
+          state: location.state,
+        }}
+      />
+    );
+  }
+  if (!isSessionExpired && !isSignInRoute && !isMFAAuthRequired && (isAuthInitialized || isUserLoggedOut)) {
     return (
       <Redirect
         push={false}
@@ -84,7 +77,7 @@ export function AppRoutingWithAuth(props) {
       />
     );
   }
-  if (!shouldShowAppRouting && !isSignInRoute) return null;
+  if (!shouldShowAppRouting && !isSignInRoute && !isMFASetupPage) return null;
 
   return children;
 }
@@ -92,9 +85,5 @@ export function AppRoutingWithAuth(props) {
 // we need to create a HOC with withRouter otherwise the router context will
 // go missing when using connect and this can result in the Path component not
 // being able to make matches to the url provided
-export default withRouter(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps
-  )(AppRoutingWithAuth)
-);
+export default withRouter(AppRoutingWithAuth);
+
