@@ -266,6 +266,14 @@ export default function SubscriptionSection({ childId, integrationId }) {
                 <Typography>{expiresText}</Typography>
               </Grid>
               <Grid item xs={3}>
+                {upgradeText === '' && istwoDotZeroFrameWork && (
+                  <FilledButton
+                    className={classes.button}
+                    disabled
+                  >
+                    Request upgrade
+                  </FilledButton>
+                )}
                 {upgradeText && upgradeText === 'upgradeEdition' && (
                 <ParentUpgradeButton
                   id={integrationId}

@@ -122,12 +122,13 @@ function UpgradeInstallation() {
       if (allStepsCompleted && !isSetupComplete) {
         dispatch(actions.resource.request('integrations', integrationId));
         dispatch(actions.integrationApp.upgrade.setStatus(integrationId, { showWizard: false }));
+        history.goBack();
         setIsSetupComplete(true);
       } else if (!allStepsCompleted && isSetupComplete) {
         setIsSetupComplete(false);
       }
     }
-  }, [changeEditionSteps, dispatch, integrationId, isSetupComplete, status]);
+  }, [changeEditionSteps, dispatch, history, integrationId, isSetupComplete, status]);
 
   const handleSubmitComplete = useCallback(
     (connId, isAuthorized, connectionDoc = {}) => {

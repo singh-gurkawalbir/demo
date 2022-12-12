@@ -31,7 +31,7 @@ We are currently working with NetSuite to resolve these problems.`,
 
 <a target="_blank" rel="noopener noreferrer"
 href="/marketplace"><u>Check out our Marketplace</u></a> to jumpstart your integrations with integration apps & templates.`,
-  REQUEST_UPGRADE_SUCCESS_MESSAGE: 'Your request to upgrade has been sent. Keep an eye out for an email from one of our associates soon.',
+  REQUEST_UPGRADE_SUCCESS_MESSAGE: 'Your request to upgrade has been sent. Keep an eye out<br>for an email from one of our associates soon.',
   LICENSE_TRIAL_ISSUED: `What will you integrate next?
   <br/><br/><a target="_blank" rel="noopener noreferrer"
 href="/marketplace"><u>Check out our Marketplace</u></a> to jumpstart your  integrations with integration apps & templates.`,
