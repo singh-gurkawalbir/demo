@@ -12796,6 +12796,9 @@ Object {
       "oauth2.token.uri": Object {
         "fieldId": "oauth2.token.uri",
       },
+      "oauth2.validDomainNames": Object {
+        "fieldId": "oauth2.validDomainNames",
+      },
       "oauthOverrides": Object {
         "formId": "oauthOverrides",
       },
@@ -12829,6 +12832,7 @@ Object {
             "oauth2.callbackURL",
             "oauth2.token.uri",
             "oauth2.revoke.uri",
+            "oauth2.validDomainNames",
           ],
           "label": "Configure OAuth 2.0",
         },
