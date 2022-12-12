@@ -84,6 +84,7 @@ export default function ChildUpgradeButton({ resource }) {
     <FilledButton
       disabled={!changeEditionId}
       onClick={onClickHandler}
+      data-test="childUpgrade"
     >
       Upgrade
     </FilledButton>

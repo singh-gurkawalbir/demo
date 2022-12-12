@@ -383,6 +383,7 @@ export default function UpgradeDrawer() {
       <DrawerFooter>
         <FilledButton
           onClick={onClose}
+          data-test="close"
         >
           Close
         </FilledButton>

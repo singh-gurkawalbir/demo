@@ -52,6 +52,7 @@ export default function ParentUpgradeButton(props) {
         className={className}
         onClick={onClick}
         disabled={!changeEditionId}
+        data-test="upgrade"
         >
         Upgrade
       </FilledButton>
