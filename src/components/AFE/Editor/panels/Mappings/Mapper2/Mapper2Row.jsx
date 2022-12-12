@@ -250,6 +250,7 @@ const Mapper2Row = React.memo(props => {
             isHardCodedValue={isHardCodedValue}
             isHandlebarExp={isHandlebarExp}
             editorLayout={editorLayout}
+            displaySourceDataType
             />
         </div>
       )}
