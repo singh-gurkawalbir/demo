@@ -137,10 +137,10 @@ export default function DynaFlowsTiedToIntegration(props) {
         }
       });
 
-      return flowOptions;
+      return flowOptions.map(item => ({ ...item, label: item.label || `Unnamed (id: ${item.value})` }));
     }
 
-    return flowsTiedToIntegrations?.map(({_id, name}) => ({ label: name, value: _id}));
+    return flowsTiedToIntegrations?.map(({_id, name}) => ({ label: name || `Unnamed (id: ${_id})`, value: _id}));
   }, [flowGroupings, flowsTiedToIntegrations, isFlowGroupForm]);
 
   return (
