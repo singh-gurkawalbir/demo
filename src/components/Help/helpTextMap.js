@@ -470,7 +470,7 @@ export default {
 'Please enter password of your Acumatica account.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your password safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'acumatica.connection.http.unencrypted.company':
 'Please enter company name of your Acumatica account.',
-  'zoom.connection.http.auth.type': 'Select the Authentication Type',
+  'zoom.connection.http.auth.type': 'Select the required authentication type, either OAuth 2.0 or JWT.',
   'zoom.connection.http.encrypted.apiKey':
 'The API Key of your zoom account.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your API key safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'zoom.connection.http.encrypted.apiSecret':

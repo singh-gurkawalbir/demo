@@ -42,7 +42,7 @@ export default {
       options: [
         {
           items: [
-            { label: 'Jwt', value: 'jwt' },
+            { label: 'JWT', value: 'jwt' },
             { label: 'OAuth 2.0', value: 'oauth' },
           ],
         },
