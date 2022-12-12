@@ -399,6 +399,62 @@ selectors.integrationInstallSteps = createSelector(
     });
   }
 );
+selectors.integrationChangeEditionSteps = createSelector(
+  (state, integrationId) => fromSession.changeEditionSteps(state?.session, integrationId),
+  (state, integrationId) => fromData.integrationChangeEditionSteps(state?.data, integrationId),
+  (state, integrationId) => fromSession.v2integrationAppsInstaller(state?.session, integrationId),
+  (state, integrationId) => selectors.integrationAppSettings(state, integrationId)?._connectorId,
+  (steps, integrationChangeEditionSteps, changeEditionStepsStatus, _connectorId) => {
+    const visibleSteps = (steps.length
+      ? steps
+      : integrationChangeEditionSteps)
+      .filter(s => s.type !== 'hidden');
+
+    const changeEditionSteps = visibleSteps.map(step => {
+      if (step.isCurrentStep) {
+        return { ...step, ...changeEditionStepsStatus };
+      }
+
+      return step;
+    });
+
+    if (_connectorId) return changeEditionSteps;
+    const bundleInstallationForNetsuiteConnections = changeEditionSteps.filter(step => step.sourceConnection?.type === 'netsuite');
+    const bundleInstallationForSalesforceConnections = changeEditionSteps.filter(step => step.sourceConnection?.type === 'salesforce');
+
+    let netsuiteConnIndex = 0;
+    let salesforceConnIndex = 0;
+    // passing connectionId as _connId in case of 'Integrator Bundle' and 'Integrator Adaptor Package'
+
+    return changeEditionSteps.map(step => {
+      if (step.installURL || step.url) {
+        if (
+          step.name.includes('Integrator Bundle')
+        ) {
+          const connectionId = bundleInstallationForNetsuiteConnections[netsuiteConnIndex]?._connectionId;
+
+          netsuiteConnIndex += 1;
+
+          return {
+            ...step,
+            _connId: connectionId,
+          };
+        } if (step.name.includes('Integrator Adaptor Package')) {
+          const connectionId = bundleInstallationForSalesforceConnections[salesforceConnIndex]?._connectionId;
+
+          salesforceConnIndex += 1;
+
+          return {
+            ...step,
+            _connId: connectionId,
+          };
+        }
+      }
+
+      return step;
+    });
+  }
+);
 
 const emptyStepsArr = [];
 
@@ -5416,6 +5472,14 @@ selectors.applicationType = (state, resourceType, id) => {
   const assistant = getStagedValue('/assistant') || resourceObj?.assistant;
 
   if (adaptorType === 'WebhookExport') {
+    const httpConnectorId = getStagedValue('/_httpConnectorId') || getStagedValue('/webhook/_httpConnectorId') || resourceObj?._httpConnectorId || resourceObj?.webhook?._httpConnectorId;
+    const applications = applicationsList();
+    const httpApp = applications.find(a => a._httpConnectorId === httpConnectorId);
+
+    if (httpConnectorId && httpApp) {
+      return httpApp._legacyId || httpApp.id;
+    }
+
     return (
       getStagedValue('/webhook/provider') ||
       (resourceObj && resourceObj.webhook && resourceObj.webhook.provider)
@@ -6959,8 +7023,10 @@ selectors.isUserAllowedOnlySSOSignIn = state => {
 
 selectors.primaryAccounts = createSelector(
   state => selectors.isAccountOwner(state),
-  state => state?.user?.org?.accounts?.filter(acc => acc._id !== ACCOUNT_IDS.OWN),
-  (isAccountOwner, orgAccounts) => {
+  state => state?.user?.org?.accounts,
+  (isAccountOwner, allAccounts) => {
+    const orgAccounts = allAccounts?.filter(acc => acc._id !== ACCOUNT_IDS.OWN);
+
     if (isAccountOwner) {
       return emptyList;
     }

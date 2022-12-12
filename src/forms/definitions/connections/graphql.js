@@ -24,6 +24,12 @@ export default {
     if (newValues['/http/ping/method'] === 'POST') {
       newValues['/http/ping/relativeURI'] = undefined;
     }
+
+    newValues['/http/auth/failPath'] = newValues['/http/auth/type'] === 'oauth' ? newValues['/http/auth/failPathForOauth'] : newValues['/http/auth/failPath'];
+    newValues['/http/auth/failValues'] = newValues['/http/auth/type'] === 'oauth' ? newValues['/http/auth/failValuesForOauth'] : newValues['/http/auth/failValues'];
+
+    delete newValues['/http/auth/failPathForOauth'];
+    delete newValues['/http/auth/failValuesForOauth'];
     delete newValues['/graphql/query'];
     delete newValues['/graphql/operationName'];
     delete newValues['/graphql/variables'];
@@ -60,8 +66,14 @@ export default {
     'http.auth.failPath': {
       fieldId: 'http.auth.failPath',
     },
+    'http.auth.failPathForOauth': {
+      fieldId: 'http.auth.failPathForOauth',
+    },
     'http.auth.failValues': {
       fieldId: 'http.auth.failValues',
+    },
+    'http.auth.failValuesForOauth': {
+      fieldId: 'http.auth.failValuesForOauth',
     },
     'http.baseURI': {
       fieldId: 'http.baseURI',
@@ -103,12 +115,6 @@ export default {
         { field: 'http.auth.type', is: ['oauth'] },
       ],
     },
-    httpOAuthOverrides: {
-      formId: 'httpOAuthOverrides',
-      visibleWhenAll: [
-        { field: 'http.auth.type', is: ['oauth'] },
-      ],
-    },
     httpWsse: {
       formId: 'httpWsse',
       visibleWhenAll: [
@@ -117,7 +123,7 @@ export default {
     },
     httpToken: {
       formId: 'httpToken',
-      visibleWhenAll: [{ field: 'http.auth.type', is: ['token', 'oauth'] }],
+      visibleWhenAll: [{ field: 'http.auth.type', is: ['token'] }],
     },
     httpRefreshToken: {
       formId: 'httpRefreshToken',
@@ -274,13 +280,6 @@ export default {
               },
               {
                 collapsed: true,
-                label: 'OAuth 2.0 overrides',
-                fields: [
-                  'httpOAuthOverrides',
-                ],
-              },
-              {
-                collapsed: true,
                 label: 'Configure token auth',
                 fields: [
                   'httpToken',
@@ -298,13 +297,17 @@ export default {
                   'httpWsse',
                 ],
               },
-            ],
-          },
-          {
-            fields: [
-              'http.auth.failStatusCode',
-              'http.auth.failPath',
-              'http.auth.failValues',
+              {
+                collapsed: true,
+                label: 'Non-standard API response patterns',
+                fields: [
+                  'http.auth.failStatusCode',
+                  'http.auth.failPath',
+                  'http.auth.failPathForOauth',
+                  'http.auth.failValues',
+                  'http.auth.failValuesForOauth',
+                ],
+              },
             ],
           },
         ],
@@ -343,23 +346,11 @@ export default {
   actions: [
     {
       id: 'saveandcontinuegroup',
-      visibleWhenAll: [
-        {
-          field: 'http.auth.type',
-          is: ['oauth'],
-        },
-        { field: 'http.auth.oauth.grantType', is: ['clientcredentials'] },
-      ],
+      isHTTPForm: true,
     },
     {
       id: 'oauthandtest',
-      visibleWhenAll: [
-        {
-          field: 'http.auth.type',
-          is: ['oauth'],
-        },
-        { field: 'http.auth.oauth.grantType', isNot: ['clientcredentials'] },
-      ],
+      isHTTPForm: true,
     },
     {
       id: 'saveandclosegroup',

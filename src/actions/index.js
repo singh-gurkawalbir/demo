@@ -87,8 +87,38 @@ const form = {
 };
 // #endregion
 const auth = {
+  acceptInvite: {
+    validate: token => action(actionTypes.AUTH.ACCEPT_INVITE.VALIDATE, { token }),
+    validateError: error => action(actionTypes.AUTH.ACCEPT_INVITE.VALIDATE_ERROR, {error}),
+    validateSuccess: payload => action(actionTypes.AUTH.ACCEPT_INVITE.VALIDATE_SUCCESS, {payload}),
+    submit: payload => action(actionTypes.AUTH.ACCEPT_INVITE.SUBMIT, { payload }),
+    success: response => action(actionTypes.AUTH.ACCEPT_INVITE.SUCCESS, { response }),
+    failure: error => action(actionTypes.AUTH.ACCEPT_INVITE.FAILED, { error }),
+    clear: () => action(actionTypes.AUTH.ACCEPT_INVITE.CLEAR),
+  },
+  changeEmailRequest: token =>
+    action(actionTypes.AUTH.CHANGE_EMAIL_REQUEST, { token }),
+  changeEmailSuccess: () => action(actionTypes.AUTH.CHANGE_EMAIL_SUCCESSFUL),
+  changeEmailFailed: error => action(actionTypes.AUTH.CHANGE_EMAIL_FAILED, {error}),
+  setPasswordRequest: (password, token) =>
+    action(actionTypes.AUTH.SET_PASSWORD_REQUEST, { password, token }),
+  setPasswordRequestFailed: error => action(actionTypes.AUTH.SET_PASSWORD_REQUEST_FAILED, {error}),
+  setPasswordRequestSuccess: setPasswordRequestInfo => action(actionTypes.AUTH.SET_PASSWORD_REQUEST_SUCCESSFUL, {setPasswordRequestInfo}),
+  resetRequestSent: () => action(actionTypes.AUTH.RESET_REQUEST_SENT),
+  resetRequestSuccess: restRequestInfo => action(actionTypes.AUTH.RESET_REQUEST_SUCCESSFUL, {restRequestInfo}),
+  resetRequestFailed: error => action(actionTypes.AUTH.RESET_REQUEST_FAILED, {error}),
+  resetRequest: email =>
+    action(actionTypes.AUTH.RESET_REQUEST, { email }),
   request: (email, password, showAuthError) =>
     action(actionTypes.AUTH.REQUEST, { email, password, showAuthError }),
+  resetPasswordRequest: (password, token) =>
+    action(actionTypes.AUTH.RESET_PASSWORD_REQUEST, { password, token }),
+  resetPasswordSuccess: resetPasswordRequestInfo => action(actionTypes.AUTH.RESET_PASSWORD_REQUEST_SUCCESSFUL, {resetPasswordRequestInfo}),
+  resetPasswordFailed: error => action(actionTypes.AUTH.RESET_PASSWORD_REQUEST_FAILED, {error}),
+  signup: payloadBody =>
+    action(actionTypes.AUTH.SIGNUP, { payloadBody }),
+  signupStatus: (status, message) =>
+    action(actionTypes.AUTH.SIGNUP_STATUS, {status, message}),
   signInWithGoogle: returnTo =>
     action(actionTypes.AUTH.SIGNIN_WITH_GOOGLE, { returnTo }),
   reSignInWithGoogle: email =>
@@ -115,6 +145,7 @@ const auth = {
   abortAllSagasAndInitLR: opts => action(actionTypes.AUTH.ABORT_ALL_SAGAS_AND_INIT_LR, { opts }),
   abortAllSagasAndSwitchAcc: accountToSwitchTo => action(actionTypes.AUTH.ABORT_ALL_SAGAS_AND_SWITCH_ACC, { accountToSwitchTo }),
   initSession: opts => action(actionTypes.AUTH.INIT_SESSION, { opts }),
+  validateSession: () => action(actionTypes.AUTH.VALIDATE_SESSION),
   changePassword: updatedPassword =>
     action(actionTypes.AUTH.USER.CHANGE_PASSWORD, { updatedPassword }),
   changeEmail: updatedEmail =>
@@ -1056,6 +1087,17 @@ const integrationApp = {
           isFrameWork2,
         }),
     },
+    upgrade: {
+      installer: {
+        verifyBundleOrPackageInstall: (id, connectionId, installerFunction, isFrameWork2) =>
+          action(actionTypes.INTEGRATION_APPS.TEMPLATES.INSTALLER.VERIFY_BUNDLE_INSTALL, {
+            id,
+            connectionId,
+            installerFunction,
+            isFrameWork2,
+          }),
+      },
+    },
   },
   uninstaller2: {
     init: integrationId =>
@@ -1173,6 +1215,59 @@ const integrationApp = {
       action(actionTypes.INTEGRATION_APPS.SETTINGS.V2.ADD_CHILD_UPGRADE_LIST, {
         childList,
       }),
+    installer: {
+      init: integrationId => action(actionTypes.INTEGRATION_APPS.INSTALLER.V2.INIT, {
+        id: integrationId,
+      }),
+      setOauthConnectionMode: (connectionId, openOauthConnection, id) =>
+        action(actionTypes.INTEGRATION_APPS.INSTALLER.V2.RECEIVED_OAUTH_CONNECTION_STATUS, {
+          connectionId, openOauthConnection, id,
+        }),
+      initChild: integrationId => action(actionTypes.INTEGRATION_APPS.INSTALLER.V2.INIT_CHILD, {
+        id: integrationId,
+      }),
+      installStep: (integrationId, installerFunction, childId, addOnId, formVal) =>
+        action(actionTypes.INTEGRATION_APPS.INSTALLER.V2.STEP.REQUEST, {
+          id: integrationId,
+          installerFunction,
+          childId,
+          addOnId,
+          formVal,
+        }),
+      scriptInstallStep: (
+        integrationId,
+        connectionId,
+        connectionDoc,
+        formSubmission,
+        stackId
+      ) =>
+        action(actionTypes.INTEGRATION_APPS.INSTALLER.V2.STEP.SCRIPT_REQUEST, {
+          id: integrationId,
+          connectionId,
+          connectionDoc,
+          formSubmission,
+          stackId,
+        }),
+      updateStep: (integrationId, installerFunction, update, formMeta, url) =>
+        action(actionTypes.INTEGRATION_APPS.INSTALLER.V2.STEP.UPDATE, {
+          id: integrationId,
+          installerFunction,
+          update,
+          formMeta,
+          url,
+        }),
+      completedStepInstall: (stepCompleteResponse, id, installerFunction) =>
+        action(actionTypes.INTEGRATION_APPS.INSTALLER.V2.STEP.DONE, {
+          stepsToUpdate: stepCompleteResponse.stepsToUpdate,
+          id,
+          installerFunction,
+        }),
+      getCurrentStep: (integrationId, step) =>
+        action(actionTypes.INTEGRATION_APPS.INSTALLER.V2.STEP.CURRENT_STEP, {
+          id: integrationId,
+          step,
+        }),
+    },
   },
   landingPage: {
     requestIntegrations: ({ clientId }) => action(actionTypes.INTEGRATION_APPS.LANDING_PAGE.REQUEST_INTEGRATIONS, {
@@ -1518,6 +1613,12 @@ const app = {
       helpful,
       feedback,
     }),
+};
+
+const concur = {
+  connect: data => action(actionTypes.CONCUR.CONNECT, data),
+  connectError: error => action(actionTypes.CONCUR.CONNECT_ERROR, {error}),
+  connectSuccess: payload => action(actionTypes.CONCUR.CONNECT_SUCCESS, {payload}),
 };
 
 const patchFilter = (name, filter) =>
@@ -2522,6 +2623,7 @@ export default {
   asyncTask,
   form,
   app,
+  concur,
   metadata,
   fileDefinitions,
   connectors,

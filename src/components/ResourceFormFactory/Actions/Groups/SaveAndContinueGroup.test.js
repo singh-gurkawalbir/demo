@@ -107,4 +107,31 @@ describe('test suite for SaveAndContinueGroup', () => {
       resourceType, resourceId, {}, 'MATCH', false, {}
     ));
   });
+
+  test('should not render buttons if oauth values are not correct for http form', async () => {
+    const formKey = 'form-123';
+    const initialStore = getCreatedStore();
+
+    initialStore.getState().session.form[formKey] = {
+      isValid: true,
+      value: {
+        '/http/_iClientId': 'ic-123',
+        '/http/auth/type': 'oauth',
+      },
+      fields: {
+        tempField: { touched: true },
+      },
+    };
+    initialStore.getState().data.resources.iClients = [{
+      _id: 'ic-123',
+      oauth2: {
+        grantType: '',
+      },
+    }];
+    await initSaveAndContinueGroup({isHTTPForm: true, formKey}, initialStore);
+
+    expect(screen.queryByText('Save & continue')).not.toBeInTheDocument();
+    expect(screen.queryByText('Close')).not.toBeInTheDocument();
+    expect(screen.queryByText('Test connection')).not.toBeInTheDocument();
+  });
 });

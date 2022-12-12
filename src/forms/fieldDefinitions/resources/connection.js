@@ -1,5 +1,5 @@
 import { URI_VALIDATION_PATTERN, RDBMS_TYPES, AWS_REGIONS_LIST} from '../../../constants';
-import { isNewId, getDomainUrl, getAssistantFromResource, rdbmsSubTypeToAppType, rdbmsAppTypeToSubType } from '../../../utils/resource';
+import { isNewId, getAssistantFromResource, rdbmsSubTypeToAppType, rdbmsAppTypeToSubType } from '../../../utils/resource';
 import { applicationsList} from '../../../constants/applications';
 import { getConstantContactVersion } from '../../../utils/connections';
 
@@ -691,12 +691,51 @@ export default {
     isLoggable: true,
     type: 'text',
     label: 'Path to auth error field in HTTP response body',
+    visibleWhen: [
+      {
+        field: 'http.auth.type',
+        isNot: ['oauth'],
+      },
+    ],
+  },
+  'http.auth.failPathForOauth': {
+    isLoggable: true,
+    type: 'text',
+    helpKey: 'connection.http.auth.failPath',
+    label: 'Override path to auth error field in HTTP response body',
+    defaultValue: r => r?.http?.auth?.failPath,
+    visibleWhen: [
+      {
+        field: 'http.auth.type',
+        is: ['oauth'],
+      },
+    ],
   },
   'http.auth.failValues': {
     isLoggable: true,
     type: 'text',
     delimiter: ',',
     label: 'Auth error values',
+    visibleWhen: [
+      {
+        field: 'http.auth.type',
+        isNot: ['oauth'],
+      },
+    ],
+  },
+  'http.auth.failValuesForOauth': {
+    isLoggable: true,
+    type: 'text',
+    helpKey: 'connection.http.auth.failPath',
+    delimiter: ',',
+    label: 'Override auth error values',
+    defaultValue: r => r?.http?.auth?.failValues,
+    visibleWhen: [
+      {
+        field: 'http.auth.type',
+        is: ['oauth'],
+      },
+    ],
   },
   'http.auth.basic.username': {
     type: 'text',
@@ -712,60 +751,15 @@ export default {
       'Note: for security reasons this field must always be re-entered.',
     required: true,
   },
-  'http.auth.oauth.tokenURI': {
-    type: 'text',
-    label: 'Access token URL',
-  },
   'http.auth.oauth.scope': {
     type: 'selectscopes',
     label: 'Configure scopes',
     required: true,
   },
-  'http.auth.oauth.scopeDelimiter': {
-    isLoggable: true,
-    type: 'text',
-    label: 'Override default scope delimiter',
-  },
   'http.auth.oauth.accessTokenPath': {
     isLoggable: true,
     type: 'text',
     label: 'Http auth oauth access token path',
-  },
-  'http.auth.oauth.authURI': {
-    type: 'text',
-    label: 'Authorization URL',
-  },
-  'http.auth.oauth.clientCredentialsLocation': {
-    isLoggable: true,
-    type: 'select',
-    label: 'Send client credentials via',
-    defaultValue: r =>
-      (r &&
-        r.http &&
-        r.http.auth &&
-        r.http.auth.oauth &&
-        r.http.auth.oauth.clientCredentialsLocation) ||
-      'body',
-    options: [
-      {
-        items: [
-          { label: 'Basic auth header', value: 'basicauthheader' },
-          { label: 'HTTP body', value: 'body' },
-        ],
-      },
-    ],
-  },
-  'http.auth.oauth.accessTokenHeaders': {
-    type: 'keyvalue',
-    keyName: 'name',
-    valueName: 'value',
-    valueType: 'keyvalue',
-    label: 'Override access token HTTP headers',
-  },
-  'http.auth.oauth.accessTokenBody': {
-    type: 'httprequestbody',
-    contentType: 'json',
-    label: 'Override access token HTTP request body',
   },
   'http._iClientId': {
     isLoggable: true,
@@ -775,72 +769,13 @@ export default {
     allowNew: true,
     allowEdit: true,
   },
-  'http.auth.oauth.grantType': {
-    isLoggable: true,
-    type: 'select',
-    label: 'Grant type',
-    options: [
-      {
-        items: [
-          { label: 'Authorization code', value: 'authorizecode' },
-          // { label: 'Password', value: 'password' },
-          { label: 'Client credentials', value: 'clientcredentials' },
-        ],
-      },
-    ],
-  },
   'http.auth.oauth.username': {
     type: 'text',
     label: 'Http auth oauth username',
   },
-  'http.auth.oauth.applicationType': {
-    isLoggable: true,
-    type: 'select',
-    label: 'Provider',
-    defaultValue: r =>
-      r &&
-      r.http &&
-      r.http.auth &&
-      r.http.auth.oauth &&
-      r.http.auth.oauth.grantType
-        ? 'custom'
-        : r &&
-          r.http &&
-          r.http.auth &&
-          r.http.auth.oauth &&
-          r.http.auth.oauth.applicationType,
-    options: [
-      {
-        items: [{ label: 'Custom', value: 'custom' }],
-      },
-    ],
-  },
-  'http.auth.oauth.callbackURL': {
-    isLoggable: true,
-    type: 'text',
-    label: 'Redirect URL',
-    defaultDisabled: true,
-    defaultValue: () => `${getDomainUrl()}/connection/oauth2callback`,
-  },
   'http.auth.oauth.type': {
     isLoggable: true,
     defaultValue: 'custom',
-  },
-  'http.auth.token.revoke.uri': {
-    type: 'text',
-    label: 'Revoke token URL',
-  },
-  'http.auth.token.revoke.body': {
-    type: 'httprequestbody',
-    contentType: 'json',
-    label: 'Override revoke token HTTP request body',
-  },
-  'http.auth.token.revoke.headers': {
-    type: 'keyvalue',
-    keyName: 'name',
-    valueName: 'value',
-    valueType: 'keyvalue',
-    label: 'Override revoke token HTTP headers',
   },
   'http.auth.oauth.password': {
     type: 'text',

@@ -165,7 +165,6 @@ describe('Testsuite for Queued Jobs Drawer', () => {
 
     expect(cellNode).toHaveLength(8);
     expect(mockDispatchFn).toHaveBeenCalledWith({ type: 'QUEUED_JOBS_REQUEST_POLL', connectionId: 'abcde' });
-    screen.debug(null, Infinity);
   });
   test('should test the queued jobs drawer by clicking on action button and canceling the queued job', async () => {
     const connectionId = 'abcde';

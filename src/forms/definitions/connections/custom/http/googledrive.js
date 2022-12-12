@@ -49,10 +49,6 @@ export default {
       connectorId: r => r && r._connectorId,
       ignoreEnvironmentFilter: true,
     },
-    'http.auth.oauth.callbackURL': {
-      fieldId: 'http.auth.oauth.callbackURL',
-      copyToClipboard: true,
-    },
     application: {
       fieldId: 'application',
     },
@@ -66,7 +62,7 @@ export default {
       {
         collapsed: true,
         label: 'Configure your client id and secret',
-        fields: ['http.auth.oauth.callbackURL', 'http._iClientId', 'http.auth.oauth.scope'],
+        fields: ['http._iClientId', 'http.auth.oauth.scope'],
       },
       { collapsed: true, label: 'Advanced', fields: ['fileAdvanced', 'httpAdvanced'] },
     ],
