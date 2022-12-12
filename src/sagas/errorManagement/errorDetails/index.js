@@ -284,6 +284,7 @@ export function* purgeError({ flowId, resourceId, errors }) {
       hidden: true,
     });
 
+    yield call(requestErrorDetails, {flowId, resourceId, isResolved: true});
     yield put(
       actions.errorManager.flowErrorDetails.purge.success({
         flowId,

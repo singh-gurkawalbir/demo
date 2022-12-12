@@ -17,7 +17,7 @@ jest.mock('../../../../DynaForm/fields/DynaSelectWithInput', () => ({
   default: props => (
     <div>
       Column Delimiter
-      <input onChange={e => props.onFieldChange(props.id, e.target.value)} data-testId={props.label} type="text" value={props.value} />
+      <input onChange={e => props.onFieldChange(props.id, e.target.value)} data-testid={props.label} type="text" value={props.value} />
       {/* <span>{props.errorMessages}</span> */}
     </div>
 

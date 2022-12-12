@@ -819,12 +819,14 @@ describe('errorDetails sagas', () => {
       return expectSaga(purgeError, { flowId, resourceId, errors })
         .provide([
           [matchers.call.fn(apiCallWithRetry)],
+          [matchers.call.fn(requestErrorDetails)],
         ])
         .call(apiCallWithRetry, {
           path,
           opts,
           hidden: true,
         })
+        .call(requestErrorDetails, {flowId, resourceId, isResolved: true})
         .put(
           actions.errorManager.flowErrorDetails.purge.success({
             flowId,
@@ -848,12 +850,14 @@ describe('errorDetails sagas', () => {
         .provide([
           [select(selectors.selectedErrorIds, { flowId, resourceId, isResolved: true }), errorIdList],
           [matchers.call.fn(apiCallWithRetry)],
+          [matchers.call.fn(requestErrorDetails)],
         ])
         .call(apiCallWithRetry, {
           path,
           opts,
           hidden: true,
         })
+        .call(requestErrorDetails, {flowId, resourceId, isResolved: true})
         .put(
           actions.errorManager.flowErrorDetails.purge.success({
             flowId,
@@ -884,6 +888,7 @@ describe('errorDetails sagas', () => {
           opts,
           hidden: true,
         })
+        .not.call(requestErrorDetails, {flowId, resourceId, isResolved: true})
         .not.put(
           actions.errorManager.flowErrorDetails.purge.success({
             flowId,

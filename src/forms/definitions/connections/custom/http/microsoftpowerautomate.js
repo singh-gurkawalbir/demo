@@ -51,10 +51,6 @@ export default {
       ignoreEnvironmentFilter: true,
       helpKey: 'microsoftpowerautomate.connection.http._iClientId',
     },
-    'http.auth.oauth.callbackURL': {
-      fieldId: 'http.auth.oauth.callbackURL',
-      copyToClipboard: true,
-    },
     application: {
       fieldId: 'application',
     },
@@ -69,8 +65,7 @@ export default {
         fields: [
           'http.unencrypted.subdomain',
           'http.unencrypted.tenantId',
-          'http._iClientId',
-          'http.auth.oauth.callbackURL'] },
+          'http._iClientId'] },
       { collapsed: true, label: 'Advanced', fields: ['httpAdvanced'] },
     ],
   },

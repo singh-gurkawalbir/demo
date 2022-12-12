@@ -68,7 +68,7 @@ export function rectifyPageGeneratorOrder(nodes = [], flow) {
   flow.pageGenerators?.forEach((pg, index) => {
     const pgNode = pgs.find(node => node.id === pg.id);
 
-    if (pgNode) {
+    if (pgNode && !!positions[index]) {
       pgNode.position = positions[index].position;
     }
   });
