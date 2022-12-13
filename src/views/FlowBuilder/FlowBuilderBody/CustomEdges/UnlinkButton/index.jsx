@@ -7,7 +7,7 @@ import actions from '../../../../../actions';
 
 const useStyles = makeStyles(theme => ({
   unlinkButton: {
-    backgroundColor: theme.palette.common.white,
+    backgroundColor: theme.palette.background.paper,
     border: `solid 1px ${theme.palette.secondary.lightest}`,
     padding: 0,
     '& > span': {

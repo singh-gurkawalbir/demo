@@ -14,7 +14,6 @@ const useStyles = makeStyles(theme => ({
   },
   tab: {
     minWidth: 'auto',
-    color: theme.palette.secondary.main,
     fontSize: 14,
   },
 }));

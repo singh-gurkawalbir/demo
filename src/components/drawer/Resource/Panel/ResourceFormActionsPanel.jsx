@@ -23,7 +23,7 @@ const useStyles = makeStyles(theme => ({
     borderTop: `1px solid ${theme.palette.secondary.lightest}`,
     display: 'flex',
     justifyContent: 'space-between',
-    background: theme.palette.common.white,
+    background: theme.palette.background.paper,
   },
 }));
 /**

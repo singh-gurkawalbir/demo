@@ -83,7 +83,7 @@ const useStyles = makeStyles(theme => ({
     marginTop: theme.spacing(1),
   },
   scriptsFetchLog: {
-    backgroundColor: theme.palette.common.white,
+    backgroundColor: theme.palette.background.paper,
     borderBottom: `1px solid ${theme.palette.secondary.lightest}`,
     padding: '5px 12px',
   },
