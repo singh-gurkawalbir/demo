@@ -8,6 +8,7 @@ export default {
     '/http/baseURI': 'https://api.mercadolibre.com/',
     '/http/ping/relativeURI': '/users/me',
     '/http/ping/method': 'GET',
+    '/http/auth/oauth/useIClientFields': false,
     '/http/auth/oauth/authURI': `https://auth.${
       formValues['/http/unencrypted/region'] === 'br' ? 'mercadolivre' : 'mercadolibre'}${
       formValues['/http/unencrypted/region'] === 'cr' ? '.co' : `${formValues['/http/unencrypted/region'] === 'cl' ? '' : '.com'}`}.${formValues['/http/unencrypted/region']}/authorization`,
@@ -63,6 +64,10 @@ export default {
       ignoreEnvironmentFilter: true,
       helpKey: 'mercadolibre.connection.http._iClientId',
     },
+    'http.auth.oauth.callbackURL': {
+      fieldId: 'http.auth.oauth.callbackURL',
+      copyToClipboard: true,
+    },
     application: {
       fieldId: 'application',
     },
@@ -75,7 +80,8 @@ export default {
       { collapsed: true,
         label: 'Application details',
         fields: ['http.unencrypted.region',
-          'http._iClientId'] },
+          'http._iClientId',
+          'http.auth.oauth.callbackURL'] },
       { collapsed: true, label: 'Advanced', fields: ['httpAdvanced'] },
     ],
   },

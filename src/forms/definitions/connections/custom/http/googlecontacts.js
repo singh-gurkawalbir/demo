@@ -11,6 +11,7 @@ export default {
       '/http/baseURI': 'https://people.googleapis.com/v1',
       '/http/ping/relativeURI': '/contactGroups',
       '/http/ping/method': 'GET',
+      '/http/auth/oauth/useIClientFields': false,
       '/http/auth/oauth/authURI': 'https://accounts.google.com/o/oauth2/auth',
       '/http/auth/oauth/tokenURI': 'https://accounts.google.com/o/oauth2/token',
       '/http/auth/oauth/scopeDelimiter': ' ',
@@ -44,6 +45,10 @@ export default {
       ],
       defaultValue: r => r?.http?.auth?.oauth?.scope || ['https://www.googleapis.com/auth/contacts'],
     },
+    'http.auth.oauth.callbackURL': {
+      fieldId: 'http.auth.oauth.callbackURL',
+      copyToClipboard: true,
+    },
     httpAdvanced: { formId: 'httpAdvanced' },
   },
   layout: {
@@ -52,7 +57,7 @@ export default {
       { collapsed: true, label: 'General', fields: ['name', 'application'] },
       { collapsed: true,
         label: 'Application details',
-        fields: ['http._iClientId', 'http.scopePeople'] },
+        fields: ['http._iClientId', 'http.auth.oauth.callbackURL', 'http.scopePeople'] },
       { collapsed: true, label: 'Advanced', fields: ['httpAdvanced'] },
     ],
   },

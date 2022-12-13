@@ -18,8 +18,12 @@ export default {
       ignoreEnvironmentFilter: true,
       visibleWhenAll: [{ field: 'genericOauth', is: ['true'] }],
     },
+    'http.auth.oauth.callbackURL': {
+      fieldId: 'http.auth.oauth.callbackURL',
+      copyToClipboard: true,
+    },
   },
   layout: {
-    fields: ['genericOauth', 'http._iClientId'],
+    fields: ['genericOauth', 'http._iClientId', 'http.auth.oauth.callbackURL'],
   },
 };
