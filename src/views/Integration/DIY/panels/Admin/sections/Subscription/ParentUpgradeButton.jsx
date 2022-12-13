@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import Spinner from '../../../../../../../components/Spinner';
@@ -20,17 +20,8 @@ export default function ParentUpgradeButton(props) {
   const history = useHistory();
   const match = useRouteMatch();
   const dispatch = useDispatch();
-  const [isInProgress, setIsInProgress] = useState(false);
   const status = useSelector(state => selectors.getStatus(state, id)?.status);
   const showWizard = useSelector(state => selectors.getStatus(state, id)?.showWizard);
-
-  useEffect(() => {
-    if (status === 'inProgress') {
-      setIsInProgress(status);
-    } else {
-      setIsInProgress(false);
-    }
-  }, [status]);
 
   useEffect(() => {
     if (showWizard) {
@@ -43,8 +34,7 @@ export default function ParentUpgradeButton(props) {
     }
   }, [dispatch, history, id, match.url, showWizard]);
 
-  // Next all the logic for upgrade button will be written
-  if (isInProgress) {
+  if (status === 'inProgress') {
     return (
       <TextButton
         startIcon={<Spinner size="small" />}
@@ -62,6 +52,7 @@ export default function ParentUpgradeButton(props) {
         className={className}
         onClick={onClick}
         disabled={!changeEditionId}
+        data-test="upgrade"
         >
         Upgrade
       </FilledButton>
