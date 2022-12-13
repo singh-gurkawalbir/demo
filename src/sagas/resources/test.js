@@ -3215,7 +3215,7 @@ describe('downloadAuditlogs saga', () => {
 describe('requestAuditLogs saga', () => {
   test('should dispatch receivedNextPagePath for audit logs resource type if nextLinkPath is present', () => {
     const resourceType = 'audit';
-    const path = '/audit&resourceType=connection';
+    const path = '/audit?&resourceType=connection';
     const collection = [{ id: 1 }, { id: 2 }];
     const nextLinkPath = '/audit?123';
 
