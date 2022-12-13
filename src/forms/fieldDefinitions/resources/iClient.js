@@ -111,6 +111,12 @@ export default {
     type: 'text',
     delimiter: ',',
     label: 'Valid domain names',
+    validWhen: {
+      matchesRegEx: {
+        pattern: '^([^,]*,){0,2}[^,]*$',
+        message: 'Only 3 domain names are allowed',
+      },
+    },
   },
   'oauth2.scopeDelimiter': {
     isLoggable: true,

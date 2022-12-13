@@ -87,9 +87,9 @@ function DynaAssistantOptions(props) {
     () =>
       [
         'adaptorType',
-        'version',
         'resource',
         'operation',
+        'version',
         'exportType',
       ].reduce(
         (values, fId) => ({
@@ -162,23 +162,38 @@ function DynaAssistantOptions(props) {
   }, [id, value]);
   function onFieldChange(id, value) {
     onFieldChangeFn(id, value);
+    const resourceTypeSingular = resourceType === 'imports' ? 'import' : 'export';
+    const versions = assistantData?.[resourceTypeSingular]?.versions;
+
     if (
       ['version', 'resource', 'operation', 'exportType'].includes(
         assistantFieldType
       )
     ) {
-      const fieldDependencyMap = {
+      let fieldDependencyMap = {
         exports: {
-          version: ['resource', 'operation', 'exportType'],
-          resource: ['operation', 'exportType'],
+          resource: ['operation', 'version', 'exportType'],
           operation: ['exportType'],
+          version: ['exportType'],
         },
         imports: {
-          version: ['resource', 'operation'],
-          resource: ['operation'],
+          resource: ['operation', 'version'],
         },
       };
 
+      if (versions?.length > 1) {
+        fieldDependencyMap = {
+          exports: {
+            resource: ['operation', 'version', 'exportType'],
+            operation: ['exportType', 'version'],
+            version: ['exportType'],
+          },
+          imports: {
+            resource: ['version', 'operation'],
+            operation: ['version'],
+          },
+        };
+      }
       const patch = [];
 
       patch.push({
@@ -211,6 +226,14 @@ function DynaAssistantOptions(props) {
           op: 'replace',
           path: '/assistantMetadata/operationChanged',
           value: true,
+        });
+      }
+
+      if (assistantFieldType === 'resource' && versions.length === 1) {
+        patch.push({
+          op: 'replace',
+          path: '/assistantMetadata/version',
+          value: versions[0]._id,
         });
       }
 

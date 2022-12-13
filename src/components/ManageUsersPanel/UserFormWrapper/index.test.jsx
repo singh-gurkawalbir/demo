@@ -158,25 +158,7 @@ describe('User Form Wrapper', () => {
     });
 
     expect(screen.queryByText(/Email/i)).toBeInTheDocument();
-    const svgEl = document.querySelector("[viewBox='0 0 24 24']");
 
-    expect(svgEl).toBeInTheDocument();
-    userEvent.click(svgEl);
-    expect(screen.getByText('Enter the email of the user you would like to invite to manage and/or monitor selected integrations.')).toBeInTheDocument();
-    expect(screen.getByText('Was this helpful?')).toBeInTheDocument();
-    expect(screen.getByText('Yes')).toBeInTheDocument();
-    expect(screen.getByText('No')).toBeInTheDocument();
-    userEvent.click(screen.getByText('Yes'));
-    userEvent.click(svgEl);
-    userEvent.click(screen.getByText('No'));
-    fireEvent.change(screen.queryByPlaceholderText(/How can we make this information more helpful?/i), {
-      target: {value: 'Hey! cool'},
-    });
-    const submitText = screen.getByText('Submit');
-
-    expect(submitText).toBeInTheDocument();
-    userEvent.click(submitText);
-    expect(submitText).not.toBeInTheDocument();
     const input = screen.queryByRole('textbox');
 
     fireEvent.change(input, { target: { value: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.' }});
@@ -204,25 +186,6 @@ describe('User Form Wrapper', () => {
     initUserFormWrapper(props.userId);
 
     expect(screen.queryByText(/Email/i)).toBeInTheDocument();
-    const svgEl = document.querySelector("[viewBox='0 0 24 24']");
-
-    expect(svgEl).toBeInTheDocument();
-    userEvent.click(svgEl);
-    expect(screen.getByText('Enter the email of the user you would like to invite to manage and/or monitor selected integrations.')).toBeInTheDocument();
-    expect(screen.getByText('Was this helpful?')).toBeInTheDocument();
-    expect(screen.getByText('Yes')).toBeInTheDocument();
-    expect(screen.getByText('No')).toBeInTheDocument();
-    userEvent.click(screen.getByText('Yes'));
-    userEvent.click(svgEl);
-    userEvent.click(screen.getByText('No'));
-    fireEvent.change(screen.queryByPlaceholderText(/How can we make this information more helpful?/i), {
-      target: {value: 'Hey! cool'},
-    });
-    const submitText = screen.getByText('Submit');
-
-    expect(submitText).toBeInTheDocument();
-    userEvent.click(submitText);
-    expect(submitText).not.toBeInTheDocument();
     const input = screen.queryByRole('textbox');
 
     fireEvent.change(input, { target: { value: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.' }});
@@ -259,25 +222,7 @@ describe('User Form Wrapper', () => {
       },
     ]);
     expect(screen.queryByText(/Email/i)).toBeInTheDocument();
-    const svgEl = document.querySelector("[viewBox='0 0 24 24']");
 
-    expect(svgEl).toBeInTheDocument();
-    userEvent.click(svgEl);
-    expect(screen.getByText('Enter the email of the user you would like to invite to manage and/or monitor selected integrations.')).toBeInTheDocument();
-    expect(screen.getByText('Was this helpful?')).toBeInTheDocument();
-    expect(screen.getByText('Yes')).toBeInTheDocument();
-    expect(screen.getByText('No')).toBeInTheDocument();
-    userEvent.click(screen.getByText('Yes'));
-    userEvent.click(svgEl);
-    userEvent.click(screen.getByText('No'));
-    fireEvent.change(screen.queryByPlaceholderText(/How can we make this information more helpful?/i), {
-      target: {value: 'Hey! cool'},
-    });
-    const submitText = screen.getByText('Submit');
-
-    expect(submitText).toBeInTheDocument();
-    userEvent.click(submitText);
-    expect(submitText).not.toBeInTheDocument();
     const input = screen.queryByRole('textbox');
 
     fireEvent.change(input, { target: { value: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.' }});
@@ -322,25 +267,7 @@ describe('User Form Wrapper', () => {
       },
     ]);
     expect(screen.queryByText(/Email/i)).toBeInTheDocument();
-    const svgEl = document.querySelector("[viewBox='0 0 24 24']");
 
-    expect(svgEl).toBeInTheDocument();
-    userEvent.click(svgEl);
-    expect(screen.getByText('Enter the email of the user you would like to invite to manage and/or monitor selected integrations.')).toBeInTheDocument();
-    expect(screen.getByText('Was this helpful?')).toBeInTheDocument();
-    expect(screen.getByText('Yes')).toBeInTheDocument();
-    expect(screen.getByText('No')).toBeInTheDocument();
-    userEvent.click(screen.getByText('Yes'));
-    userEvent.click(svgEl);
-    userEvent.click(screen.getByText('No'));
-    fireEvent.change(screen.queryByPlaceholderText(/How can we make this information more helpful?/i), {
-      target: {value: 'Hey! cool'},
-    });
-    const submitText = screen.getByText('Submit');
-
-    expect(submitText).toBeInTheDocument();
-    userEvent.click(submitText);
-    expect(submitText).not.toBeInTheDocument();
     const input = screen.queryByRole('textbox');
 
     fireEvent.change(input, { target: { value: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.' }});
@@ -382,25 +309,6 @@ describe('User Form Wrapper', () => {
       },
     ]);
     expect(screen.queryByText(/Email/i)).toBeInTheDocument();
-    const svgEl = document.querySelector("[viewBox='0 0 24 24']");
-
-    expect(svgEl).toBeInTheDocument();
-    userEvent.click(svgEl);
-    expect(screen.getByText('Enter the email of the user you would like to invite to manage and/or monitor selected integrations.')).toBeInTheDocument();
-    expect(screen.getByText('Was this helpful?')).toBeInTheDocument();
-    expect(screen.getByText('Yes')).toBeInTheDocument();
-    expect(screen.getByText('No')).toBeInTheDocument();
-    userEvent.click(screen.getByText('Yes'));
-    userEvent.click(svgEl);
-    userEvent.click(screen.getByText('No'));
-    fireEvent.change(screen.queryByPlaceholderText(/How can we make this information more helpful?/i), {
-      target: {value: 'Hey! cool'},
-    });
-    const submitText = screen.getByText('Submit');
-
-    expect(submitText).toBeInTheDocument();
-    userEvent.click(submitText);
-    expect(submitText).not.toBeInTheDocument();
     const input = screen.queryByRole('textbox');
 
     fireEvent.change(input, { target: { value: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.' }});
@@ -463,25 +371,6 @@ describe('User Form Wrapper', () => {
       },
     ]);
     expect(await screen.findByText(/Email/i)).toBeInTheDocument();
-    const svgEl = document.querySelector("[viewBox='0 0 24 24']");
-
-    expect(svgEl).toBeInTheDocument();
-    userEvent.click(svgEl);
-    expect(screen.getByText('Enter the email of the user you would like to invite to manage and/or monitor selected integrations.')).toBeInTheDocument();
-    expect(screen.getByText('Was this helpful?')).toBeInTheDocument();
-    expect(screen.getByText('Yes')).toBeInTheDocument();
-    expect(screen.getByText('No')).toBeInTheDocument();
-    userEvent.click(screen.getByText('Yes'));
-    userEvent.click(svgEl);
-    userEvent.click(screen.getByText('No'));
-    fireEvent.change(screen.queryByPlaceholderText(/How can we make this information more helpful?/i), {
-      target: {value: 'Hey! cool'},
-    });
-    const submitText = screen.getByText('Submit');
-
-    expect(submitText).toBeInTheDocument();
-    userEvent.click(submitText);
-    expect(submitText).not.toBeInTheDocument();
     const input = screen.queryByRole('textbox');
 
     fireEvent.change(input, { target: { value: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.' }});
@@ -548,25 +437,6 @@ describe('User Form Wrapper', () => {
       },
     ]);
     expect(await screen.findByText(/Email/i)).toBeInTheDocument();
-    const svgEl = document.querySelector("[viewBox='0 0 24 24']");
-
-    expect(svgEl).toBeInTheDocument();
-    userEvent.click(svgEl);
-    expect(screen.getByText('Enter the email of the user you would like to invite to manage and/or monitor selected integrations.')).toBeInTheDocument();
-    expect(screen.getByText('Was this helpful?')).toBeInTheDocument();
-    expect(screen.getByText('Yes')).toBeInTheDocument();
-    expect(screen.getByText('No')).toBeInTheDocument();
-    userEvent.click(screen.getByText('Yes'));
-    userEvent.click(svgEl);
-    userEvent.click(screen.getByText('No'));
-    fireEvent.change(screen.queryByPlaceholderText(/How can we make this information more helpful?/i), {
-      target: {value: 'Hey! cool'},
-    });
-    const submitText = screen.getByText('Submit');
-
-    expect(submitText).toBeInTheDocument();
-    userEvent.click(submitText);
-    expect(submitText).not.toBeInTheDocument();
     const input = screen.queryByRole('textbox');
 
     fireEvent.change(input, { target: { value: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.' }});
@@ -626,25 +496,6 @@ describe('User Form Wrapper', () => {
   test('Should be able to verify the monitor integration access to a tile', async () => {
     await initUserFormWrapper('60fea86dbac8e87b7660f985');
     expect(await screen.findByText(/Email/i)).toBeInTheDocument();
-    const svgEl = document.querySelector("[viewBox='0 0 24 24']");
-
-    expect(svgEl).toBeInTheDocument();
-    userEvent.click(svgEl);
-    expect(screen.getByText('Enter the email of the user you would like to invite to manage and/or monitor selected integrations.')).toBeInTheDocument();
-    expect(screen.getByText('Was this helpful?')).toBeInTheDocument();
-    expect(screen.getByText('Yes')).toBeInTheDocument();
-    expect(screen.getByText('No')).toBeInTheDocument();
-    userEvent.click(screen.getByText('Yes'));
-    userEvent.click(svgEl);
-    userEvent.click(screen.getByText('No'));
-    fireEvent.change(screen.queryByPlaceholderText(/How can we make this information more helpful?/i), {
-      target: {value: 'Hey! cool'},
-    });
-    const submitText = screen.getByText('Submit');
-
-    expect(submitText).toBeInTheDocument();
-    userEvent.click(submitText);
-    expect(submitText).not.toBeInTheDocument();
     const input = screen.queryByRole('textbox');
 
     fireEvent.change(input, { target: { value: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.' }});
@@ -678,25 +529,6 @@ describe('User Form Wrapper', () => {
   test('Should be able to verify the manage integration access to a tile', async () => {
     await initUserFormWrapper('60fea86dbac8e87b7660f986');
     expect(await screen.findByText(/Email/i)).toBeInTheDocument();
-    const svgEl = document.querySelector("[viewBox='0 0 24 24']");
-
-    expect(svgEl).toBeInTheDocument();
-    userEvent.click(svgEl);
-    expect(screen.getByText('Enter the email of the user you would like to invite to manage and/or monitor selected integrations.')).toBeInTheDocument();
-    expect(screen.getByText('Was this helpful?')).toBeInTheDocument();
-    expect(screen.getByText('Yes')).toBeInTheDocument();
-    expect(screen.getByText('No')).toBeInTheDocument();
-    userEvent.click(screen.getByText('Yes'));
-    userEvent.click(svgEl);
-    userEvent.click(screen.getByText('No'));
-    fireEvent.change(screen.queryByPlaceholderText(/How can we make this information more helpful?/i), {
-      target: {value: 'Hey! cool'},
-    });
-    const submitText = screen.getByText('Submit');
-
-    expect(submitText).toBeInTheDocument();
-    userEvent.click(submitText);
-    expect(submitText).not.toBeInTheDocument();
     const input = screen.queryByRole('textbox');
 
     fireEvent.change(input, { target: { value: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.' }});
