@@ -74,6 +74,10 @@ export const getExportMetadata = (connectorMetadata, connectionVersion) => {
     },
   };
 
+  if (versionLocation === 'uri' && !connectionVersion) {
+    exportData.addVersionToUrl = true;
+  }
+
   if (!httpResources || !httpEndpoints) {
     return exportData;
   }
@@ -88,6 +92,8 @@ export const getExportMetadata = (connectorMetadata, connectionVersion) => {
   if (connectionVersion) {
     versions = versions.filter(v => v.version === connectionVersion);
   }
+  exportData.versions = cloneDeep(versions);
+
   if (!versions || !versions.length) {
     versions = [
       {
@@ -95,74 +101,69 @@ export const getExportMetadata = (connectorMetadata, connectionVersion) => {
         _id: '_v2id',
       }];
   }
-  exportData.versions = versions;
-  exportData.versions.forEach((v, i) => {
-    const filteredHttpResources = httpResources.filter(r => r._versionIds?.includes(v._id));
 
-    if (filteredHttpResources.length) {
-      if (!exportData.versions[i].resources) {
-        exportData.versions[i].resources = [];
-      }
-      exportData.versions[i].resources = filteredHttpResources.map(httpResource => {
-        const exportPreConfiguredFields = cloneDeep(httpResource.supportedBy?.export?.preConfiguredFields);
+  exportData.resources = httpResources.map(httpResource => {
+    const exportPreConfiguredFields = cloneDeep(httpResource.supportedBy?.export?.preConfiguredFields);
 
-        return {
-          id: httpResource._id, name: httpResource.name, exportPreConfiguredFields,
-        };
-      });
-      if (exportData.versions[i].resources.length) {
-        exportData.versions[i].resources.forEach((r, j) => {
-          const filteredHttpEndpoints = httpEndpoints.filter(e => e._httpConnectorResourceIds?.includes(r.id));
-
-          if (filteredHttpEndpoints.length) {
-            if (!exportData.versions[i].resources[j].endpoints) {
-              exportData.versions[i].resources[j].endpoints = [];
-            }
-            filteredHttpEndpoints.forEach(httpEndpoint => {
-              if (httpEndpoint.supportedBy?.type === 'export') {
-                const {fieldsUserMustSet} = httpEndpoint.supportedBy;
-                const supportedExportTypes = fieldsUserMustSet?.find(f => f.path === 'type')?.values;
-
-                const queryParameters = httpEndpoint.queryParameters?.map(qp => ({name: qp.name, id: qp.name, description: qp.description, required: qp.required, fieldType: qp.dataType || qp.fieldType || 'textarea', defaultValue: qp.defaultValue, readOnly: qp.readOnly, options: qp.values }));
-                const pathParameters = httpEndpoint.pathParameters?.map(pp => ({name: pp.name, id: pp.name, description: pp.description, required: pp.required !== false, fieldType: pp.fieldType || 'input' }));
-                let doesNotSupportPaging = false;
-
-                if (httpEndpoint.supportedBy.fieldsToUnset?.includes('paging')) {
-                  doesNotSupportPaging = true;
-                }
-
-                const ep = {
-                  id: httpEndpoint._id, name: httpEndpoint.name, url: httpEndpoint.relativeURI, supportedExportTypes, queryParameters, pathParameters, doesNotSupportPaging, method: httpEndpoint.method,
-                };
-
-                  r.exportPreConfiguredFields?.forEach(field => {
-                    ep[field.path] = field.values?.[0];
-                  });
-
-                  httpEndpoint.supportedBy.preConfiguredFields?.forEach(field => {
-                    ep[field.path] = field.values?.[0];
-                  });
-                  httpEndpoint.supportedBy.fieldsToUnset?.forEach(field => {
-                    if (ep[field.path]) {
-                      ep[field.path] = undefined;
-                      delete ep[field.path];
-                    }
-                  });
-
-                  if (versionLocation === 'uri' && !connectionVersion) {
-                    ep.url = `/${v.version}${httpEndpoint.relativeURI}`;
-                  }
-
-                  exportData.versions[i].resources[j].endpoints.push(ep);
-              }
-            });
-          }
-          delete exportData.versions[i].resources[j].exportPreConfiguredFields;
-        });
-      }
-      exportData.versions[i].resources = deepClone(exportData.versions[i].resources.filter(r => r.endpoints?.length));
-    }
+    return {
+      ...httpResource, id: httpResource._id, exportPreConfiguredFields, hidden: !!httpResource.hidden,
+    };
   });
+  exportData.resources.forEach((r, i) => {
+    exportData.resources[i].versions = versions.filter(v => r._versionIds?.includes(v._id));
+
+    const filteredHttpEndpoints = httpEndpoints.filter(e => {
+      // TODO: Ashok: Needs to optimise this logic
+      let htpEndpointExists = false;
+
+          e._httpConnectorResourceIds?.forEach(eResId => {
+            if (r.id.includes(eResId)) {
+              htpEndpointExists = true;
+            }
+          });
+
+          return htpEndpointExists;
+    });
+
+    if (filteredHttpEndpoints.length) {
+      exportData.resources[i].endpoints = [];
+      filteredHttpEndpoints.forEach(httpEndpoint => {
+        if (httpEndpoint.supportedBy?.type === 'export') {
+          const {fieldsUserMustSet} = httpEndpoint.supportedBy;
+          const supportedExportTypes = fieldsUserMustSet?.find(f => f.path === 'type')?.values;
+
+          const queryParameters = httpEndpoint.queryParameters?.map(qp => ({name: qp.name, id: qp.name, description: qp.description, required: qp.required, fieldType: qp.dataType || qp.fieldType || 'textarea', defaultValue: qp.defaultValue, readOnly: qp.readOnly, options: qp.values }));
+          const pathParameters = httpEndpoint.pathParameters?.map(pp => ({name: pp.name, id: pp.name, description: pp.description, required: pp.required !== false, fieldType: pp.fieldType || 'input' }));
+          let doesNotSupportPaging = false;
+
+          if (httpEndpoint.supportedBy.fieldsToUnset?.includes('paging')) {
+            doesNotSupportPaging = true;
+          }
+
+          const ep = {
+            id: httpEndpoint._id, name: httpEndpoint.name, url: httpEndpoint.relativeURI, supportedExportTypes, queryParameters, pathParameters, doesNotSupportPaging, method: httpEndpoint.method, hidden: !!httpEndpoint.hidden, _httpConnectorResourceIds: httpEndpoint._httpConnectorResourceIds,
+          };
+
+                r.exportPreConfiguredFields?.forEach(field => {
+                  ep[field.path] = field.values?.[0];
+                });
+
+                httpEndpoint.supportedBy.preConfiguredFields?.forEach(field => {
+                  ep[field.path] = field.values?.[0];
+                });
+                httpEndpoint.supportedBy.fieldsToUnset?.forEach(field => {
+                  if (ep[field.path]) {
+                    ep[field.path] = undefined;
+                    delete ep[field.path];
+                  }
+                });
+                exportData.resources[i].endpoints.push(deepClone(ep));
+        }
+      });
+    }
+    delete exportData.resources[i].exportPreConfiguredFields;
+  });
+  exportData.resources = deepClone(exportData.resources.filter(r => r.endpoints?.length));
 
   return exportData;
 };
@@ -173,8 +174,11 @@ export const getImportMetadata = (connectorMetadata, connectionVersion) => {
     labels: {
       version: 'API version',
     },
-
   };
+
+  if (versionLocation === 'uri' && !connectionVersion) {
+    importData.addVersionToUrl = true;
+  }
 
   if (!httpResources || !httpEndpoints) {
     return importData;
@@ -197,39 +201,42 @@ export const getImportMetadata = (connectorMetadata, connectionVersion) => {
       }];
   }
 
-  importData.versions = versions;
-  importData.versions.forEach((v, i) => {
-    const filteredHttpResources = httpResources.filter(r => r._versionIds?.includes(v._id));
+  importData.versions = cloneDeep(versions);
+  importData.resources = httpResources.map(httpResource => {
+    const resourcePreConfiguredFields = cloneDeep(httpResource.supportedBy?.import?.preConfiguredFields);
+    const resourceFieldsUserMustSet = cloneDeep(httpResource.supportedBy?.import?.fieldsUserMustSet);
 
-    if (filteredHttpResources.length) {
-      if (!importData.versions[i].resources) {
-        importData.versions[i].resources = [];
-      }
-      importData.versions[i].resources = filteredHttpResources.map(httpResource => {
-        const resourcePreConfiguredFields = cloneDeep(httpResource.supportedBy?.import?.preConfiguredFields);
-        const resourceFieldsUserMustSet = cloneDeep(httpResource.supportedBy?.import?.fieldsUserMustSet);
+    const sampleData = httpResource.resourceFields && convertResourceFieldstoSampleData(httpResource.resourceFields);
 
-        const sampleData = httpResource.resourceFields && convertResourceFieldstoSampleData(httpResource.resourceFields);
+    return {
+      ...httpResource, id: httpResource._id, name: httpResource.name, resourcePreConfiguredFields, sampleData, resourceFieldsUserMustSet, hidden: !!httpResource.hidden,
+    };
+  });
 
-        return {
-          id: httpResource._id, name: httpResource.name, resourcePreConfiguredFields, sampleData, resourceFieldsUserMustSet,
-        };
-      });
-      if (importData.versions[i].resources.length) {
-        importData.versions[i].resources.forEach((r, j) => {
-          const filteredHttpEndpoints = httpEndpoints.filter(e => e._httpConnectorResourceIds?.includes(r.id));
+  importData.resources.forEach((r, i) => {
+    importData.resources[i].versions = versions.filter(v => r._versionIds?.includes(v._id));
+    const filteredHttpEndpoints = httpEndpoints.filter(e => {
+      let htpEndpointExists = false;
 
-          if (filteredHttpEndpoints.length) {
-            if (!importData.versions[i].resources[j].operations) {
-              importData.versions[i].resources[j].operations = [];
-            }
-            filteredHttpEndpoints.forEach(httpEndpoint => {
-              if (httpEndpoint?.supportedBy?.type === 'import') {
-                const requiredMappings = [];
-                const parameters = [];
-                let howToFindIdentifier;
+            e._httpConnectorResourceIds?.forEach(eResId => {
+              if (r.id.includes(eResId)) {
+                htpEndpointExists = true;
+              }
+            });
 
-                if (httpEndpoint.pathParameters) {
+            return htpEndpointExists;
+    });
+
+    if (filteredHttpEndpoints.length) {
+      importData.resources[i].operations = [];
+
+      filteredHttpEndpoints.forEach(httpEndpoint => {
+        if (httpEndpoint?.supportedBy?.type === 'import') {
+          const requiredMappings = [];
+          const parameters = [];
+          let howToFindIdentifier;
+
+          if (httpEndpoint.pathParameters) {
                   httpEndpoint.pathParameters?.forEach(pp => {
                     parameters.push({
                       id: pp.name,
@@ -238,36 +245,36 @@ export const getImportMetadata = (connectorMetadata, connectionVersion) => {
                       required: true,
                     });
                   });
-                }
-                if (httpEndpoint.supportedBy.pathParameterToIdentifyExisting) {
-                  parameters.push({
-                    id: httpEndpoint.supportedBy.pathParameterToIdentifyExisting,
-                    in: 'path',
-                    required: true,
-                    isIdentifier: true,
-                  });
-                }
+          }
+          if (httpEndpoint.supportedBy.pathParameterToIdentifyExisting) {
+            parameters.push({
+              id: httpEndpoint.supportedBy.pathParameterToIdentifyExisting,
+              in: 'path',
+              required: true,
+              isIdentifier: true,
+            });
+          }
 
-                if (httpEndpoint.supportedBy?.lookupToIdentifyExisting) {
-                  const lookup = httpEndpoint.supportedBy.lookupToIdentifyExisting;
-                  const endpoint = lookup?._httpConnectorEndpointId;
-                  const lookupEndpoint = httpEndpoints.find(ep => ep._id === endpoint);
+          if (httpEndpoint.supportedBy?.lookupToIdentifyExisting) {
+            const lookup = httpEndpoint.supportedBy.lookupToIdentifyExisting;
+            const endpoint = lookup?._httpConnectorEndpointId;
+            const lookupEndpoint = httpEndpoints.find(ep => ep._id === endpoint);
 
-                  if (!howToFindIdentifier) {
-                    howToFindIdentifier = {};
-                  }
-                  if (lookupEndpoint) {
-                    howToFindIdentifier.lookup = {url: lookupEndpoint.relativeURI, id: lookupEndpoint._id, extract: lookup?.extract};
-                  }
-                }
+            if (!howToFindIdentifier) {
+              howToFindIdentifier = {};
+            }
+            if (lookupEndpoint) {
+              howToFindIdentifier.lookup = {url: lookupEndpoint.relativeURI, id: lookupEndpoint._id, extract: lookup?.extract};
+            }
+          }
 
-                const ep = {
-                  id: httpEndpoint._id, name: httpEndpoint.name, url: httpEndpoint.relativeURI, method: httpEndpoint.method, howToFindIdentifier,
-                };
+          const ep = {
+            id: httpEndpoint._id, name: httpEndpoint.name, url: httpEndpoint.relativeURI, method: httpEndpoint.method, howToFindIdentifier, hidden: !!httpEndpoint.hidden, _httpConnectorResourceIds: httpEndpoint._httpConnectorResourceIds,
+          };
 
-                if (httpEndpoint.resourceFields) {
-                  ep.sampleData = getEndpointResourceFields(httpEndpoint.resourceFields, r.sampleData);
-                }
+          if (httpEndpoint.resourceFields) {
+            ep.sampleData = getEndpointResourceFields(httpEndpoint.resourceFields, r.sampleData);
+          }
 
                 r?.resourceFieldsUserMustSet?.forEach(f => {
                   ep[f.path] = f.values?.[0] || true;
@@ -290,10 +297,6 @@ export const getImportMetadata = (connectorMetadata, connectionVersion) => {
                   ep[f.path] = undefined;
                   delete ep[f.path];
                 });
-
-                if (versionLocation === 'uri' && !connectionVersion) {
-                  ep.url = `/${v.version}${httpEndpoint.relativeURI}`;
-                }
                 if (ep.ignoreExisting) {
                   ep.supportIgnoreExisting = true;
                 }
@@ -311,23 +314,70 @@ export const getImportMetadata = (connectorMetadata, connectionVersion) => {
                   ep.parameters = parameters;
                 }
 
-                importData.versions[i].resources[j].operations.push(ep);
-              }
-            });
-          }
-          delete importData.versions[i].resources[j].resourcePreConfiguredFields;
-          delete importData.versions[i].resources[j].resourceFieldsUserMustSet;
-        });
-      }
-      importData.versions[i].resources = deepClone(importData.versions[i].resources.filter(r => r.operations?.length));
+                importData.resources[i].operations.push(deepClone(ep));
+        }
+      });
     }
+    delete importData.resources[i].resourcePreConfiguredFields;
+    delete importData.resources[i].resourceFieldsUserMustSet;
   });
+  importData.resources = deepClone(importData.resources.filter(r => r.operations?.length));
 
   return importData;
 };
 export const getHTTPConnectorMetadata = (connectorMetadata, connectionVersion) => {
-  const exportData = getExportMetadata(connectorMetadata, connectionVersion);
-  const importData = getImportMetadata(connectorMetadata, connectionVersion);
+  const { httpConnectorResources, httpConnectorEndpoints} = connectorMetadata;
+
+  const resourceNames = {};
+  const newResources = [];
+  let modifiedHttpConnectorResources = httpConnectorResources.map(res => {
+    const filteredHttpResources = httpConnectorResources.filter(hRes => res.name === hRes.name);
+
+    if (filteredHttpResources.length > 1) {
+      if (!resourceNames[res.name]) {
+        resourceNames[res.name] = true;
+        const ids = filteredHttpResources.map(fRes => fRes._id);
+        let versionIds = filteredHttpResources.map(fRes => fRes._versionIds)?.flat(1);
+
+        versionIds = [...new Set(versionIds)];
+        const newId = ids.join('+');
+
+        newResources.push({...filteredHttpResources[0], _id: newId, _versionIds: versionIds});
+      }
+
+      return {...res, hidden: true};
+    }
+
+    return {...res};
+  });
+
+  modifiedHttpConnectorResources = [...modifiedHttpConnectorResources, ...newResources];
+
+  const endpointNames = {};
+  const newEndpoints = [];
+
+  let modifiedHttpConnectorEndpoints = httpConnectorEndpoints.map(res => {
+    const filteredHttpEndpoints = httpConnectorEndpoints.filter(hRes => res.name === hRes.name);
+
+    if (filteredHttpEndpoints.length > 1) {
+      if (!endpointNames[res.name]) {
+        endpointNames[res.name] = true;
+        const ids = filteredHttpEndpoints.map(fRes => fRes._id);
+        const newId = ids.join('+');
+
+        newEndpoints.push({...filteredHttpEndpoints[0], _id: newId});
+      }
+
+      return {...res, hidden: true};
+    }
+
+    return {...res};
+  });
+
+  modifiedHttpConnectorEndpoints = [...modifiedHttpConnectorEndpoints, ...newEndpoints];
+
+  const exportData = getExportMetadata({...connectorMetadata, httpConnectorResources: modifiedHttpConnectorResources, httpConnectorEndpoints: modifiedHttpConnectorEndpoints }, connectionVersion);
+  const importData = getImportMetadata({...connectorMetadata, httpConnectorResources: modifiedHttpConnectorResources, httpConnectorEndpoints: modifiedHttpConnectorEndpoints }, connectionVersion);
 
   return {export: exportData, import: importData};
 };

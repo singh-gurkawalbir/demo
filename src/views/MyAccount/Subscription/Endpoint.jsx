@@ -126,7 +126,7 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing(0, 2),
     border: '1px solid',
     borderColor: theme.palette.secondary.lightest,
-    backgroundColor: theme.palette.common.white,
+    backgroundColor: theme.palette.background.paper,
   },
 }));
 

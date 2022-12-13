@@ -18,7 +18,7 @@ const useStyles = makeStyles(theme => ({
     height: '100%',
   },
   tabs: {
-    backgroundColor: theme.palette.common.white,
+    backgroundColor: theme.palette.background.paper,
   },
 }));
 

@@ -695,6 +695,7 @@ describe('getHTTPConnectorMetadata', () => {
   };
   const output1 = {
     export: {
+      addVersionToUrl: true,
       labels: {
         version: 'API version',
       },
@@ -704,158 +705,259 @@ describe('getHTTPConnectorMetadata', () => {
         method: 'linkheader',
       },
       requestMediaType: 'json',
+      resources: [
+        {
+          _httpConnectorId: '62cffbf79b51830e4d641d6c',
+          _id: '62cffbf70c804009663faa2b',
+          _versionIds: [
+            '62cffbf79b51830e4d641d6d',
+            '62cffbf79b51830e4d641d6e',
+            '62cffbf79b51830e4d641d6f',
+          ],
+          createdAt: '2022-07-14T11:20:24.000Z',
+          endpoints: [
+            {
+              _httpConnectorResourceIds: [
+                '62cffbf70c804009663faa2b',
+              ],
+              delta: {
+                dateFormat: 'YYYY-MM-DDTHH:mm:ss[Z]',
+                defaults: {
+                  updated_at_min: '{{{lastExportDateTime}}}',
+                },
+              },
+              doesNotSupportPaging: false,
+              hidden: false,
+              id: '62cffbff0c804009663faa5c',
+              method: 'GET',
+              name: 'Retrieves a list of customers',
+              queryParameters: [
+                {
+                  description: 'A comma-separated list of customer ids',
+                  fieldType: 'textarea',
+                  id: 'ids',
+                  name: 'ids',
+                  required: false,
+                },
+              ],
+              response: {
+                resourcePath: 'customers',
+              },
+              supportedExportTypes: [
+                'delta',
+                'test',
+              ],
+              url: '/customers.json',
+            },
+            {
+              _httpConnectorResourceIds: [
+                '62cffbf70c804009663faa2b',
+              ],
+              doesNotSupportPaging: false,
+              hidden: false,
+              id: '62cffbff0c804009663faa60',
+              method: 'GET',
+              name: 'Searches for customers that match a supplied query',
+              queryParameters: [
+                {
+                  description: 'Field and direction to order results by(default: last_order_date DESC)',
+                  fieldType: 'textarea',
+                  id: 'order',
+                  name: 'order',
+                  required: false,
+                },
+              ],
+              response: {
+                resourcePath: 'customers',
+              },
+              url: '/customers/search.json',
+            },
+            {
+              _httpConnectorResourceIds: [
+                '62cffbf70c804009663faa2b',
+              ],
+              doesNotSupportPaging: true,
+              hidden: false,
+              id: '62cffbff9b51830e4d641daf',
+              method: 'GET',
+              name: 'Retrieves a single customer',
+              pathParameters: [
+                {
+                  fieldType: 'input',
+                  id: 'customerId',
+                  name: 'customerId',
+                  required: true,
+                },
+              ],
+              response: {
+                resourcePath: 'customer',
+              },
+              url: '/customers/:_customerId.json',
+            },
+            {
+              _httpConnectorResourceIds: [
+                '62cffbf70c804009663faa2b',
+              ],
+              doesNotSupportPaging: true,
+              hidden: false,
+              id: '62cffbff0c804009663faa62',
+              method: 'GET',
+              name: 'Retrieves a list of metafields that belong to a customer',
+              pathParameters: [
+                {
+                  fieldType: 'input',
+                  id: 'customerId',
+                  name: 'customerId',
+                  required: true,
+                },
+              ],
+              response: {
+                resourcePath: 'metafields',
+              },
+              url: '/customers/:_customerId/metafields.json',
+            },
+          ],
+          hidden: false,
+          id: '62cffbf70c804009663faa2b',
+          lastModified: '2022-07-14T11:20:24.003Z',
+          name: 'Customers : Customer',
+          published: true,
+          resourceFields: [
+            {
+              dataType: 'objectarray',
+              id: 'customer',
+              resourceFields: [
+                {
+                  dataType: 'object',
+                  id: 'default_address',
+                  resourceFields: [
+                    {
+                      dataType: 'string',
+                      id: 'province_code',
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+          supportedBy: {
+            import: {
+              preConfiguredFields: [],
+            },
+          },
+          versions: [
+            {
+              _id: '62cffbf79b51830e4d641d6d',
+              version: '2022-01',
+            },
+          ],
+        },
+      ],
       versions: [
         {
           _id: '62cffbf79b51830e4d641d6d',
-          resources: [
-            {
-              endpoints: [
-                {
-                  delta: {
-                    dateFormat: 'YYYY-MM-DDTHH:mm:ss[Z]',
-                    defaults: {
-                      updated_at_min: '{{{lastExportDateTime}}}',
-                    },
-                  },
-                  doesNotSupportPaging: false,
-                  method: 'GET',
-                  id: '62cffbff0c804009663faa5c',
-                  name: 'Retrieves a list of customers',
-                  queryParameters: [
-                    {
-                      description: 'A comma-separated list of customer ids',
-                      fieldType: 'textarea',
-                      id: 'ids',
-                      name: 'ids',
-                      required: false,
-                    },
-                  ],
-                  response: {
-                    resourcePath: 'customers',
-                  },
-                  supportedExportTypes: [
-                    'delta',
-                    'test',
-                  ],
-                  url: '/2022-01/customers.json',
-                },
-                {
-                  doesNotSupportPaging: false,
-                  method: 'GET',
-                  id: '62cffbff0c804009663faa60',
-                  name: 'Searches for customers that match a supplied query',
-                  queryParameters: [
-                    {
-                      description: 'Field and direction to order results by(default: last_order_date DESC)',
-                      fieldType: 'textarea',
-                      id: 'order',
-                      name: 'order',
-                      required: false,
-                    },
-                  ],
-                  response: {
-                    resourcePath: 'customers',
-                  },
-                  url: '/2022-01/customers/search.json',
-                },
-                {
-                  doesNotSupportPaging: true,
-                  method: 'GET',
-                  id: '62cffbff9b51830e4d641daf',
-                  name: 'Retrieves a single customer',
-                  pathParameters: [
-                    {
-                      fieldType: 'input',
-                      id: 'customerId',
-                      name: 'customerId',
-                      required: true,
-                    },
-                  ],
-                  response: {
-                    resourcePath: 'customer',
-                  },
-                  url: '/2022-01/customers/:_customerId.json',
-                },
-                {
-                  doesNotSupportPaging: true,
-                  method: 'GET',
-                  id: '62cffbff0c804009663faa62',
-                  name: 'Retrieves a list of metafields that belong to a customer',
-                  pathParameters: [
-                    {
-                      fieldType: 'input',
-                      id: 'customerId',
-                      name: 'customerId',
-                      required: true,
-                    },
-                  ],
-                  response: {
-                    resourcePath: 'metafields',
-                  },
-                  url: '/2022-01/customers/:_customerId/metafields.json',
-                },
-              ],
-              id: '62cffbf70c804009663faa2b',
-              name: 'Customers : Customer',
-            },
-          ],
           version: '2022-01',
         },
       ],
     },
     import: {
+      addVersionToUrl: true,
       errorMediaType: 'json',
       labels: {
         version: 'API version',
       },
       requestMediaType: 'json',
+      resources: [
+        {
+          _httpConnectorId: '62cffbf79b51830e4d641d6c',
+          _id: '62cffbf70c804009663faa2b',
+          _versionIds: [
+            '62cffbf79b51830e4d641d6d',
+            '62cffbf79b51830e4d641d6e',
+            '62cffbf79b51830e4d641d6f',
+          ],
+          createdAt: '2022-07-14T11:20:24.000Z',
+          hidden: false,
+          id: '62cffbf70c804009663faa2b',
+          lastModified: '2022-07-14T11:20:24.003Z',
+          name: 'Customers : Customer',
+          operations: [
+            {
+              _httpConnectorResourceIds: [
+                '62cffbf70c804009663faa2b',
+              ],
+              hidden: false,
+              howToFindIdentifier: {
+                lookup: {
+                  extract: 'customers[0].id',
+                  id: '62cffbff0c804009663faa60',
+                  url: '/customers/search.json',
+                },
+              },
+              id: '62cffc149b51830e4d641e51',
+              ignoreExisting: true,
+              method: 'POST',
+              name: 'Creates a customer',
+              parameters: [
+                {
+                  id: 'customerId',
+                  in: 'path',
+                  isIdentifier: true,
+                  required: true,
+                },
+              ],
+              requiredMappings: [
+                'customer.email',
+              ],
+              supportIgnoreExisting: true,
+              url: '/customers.json',
+            },
+          ],
+          published: true,
+          resourceFields: [
+            {
+              dataType: 'objectarray',
+              id: 'customer',
+              resourceFields: [
+                {
+                  dataType: 'object',
+                  id: 'default_address',
+                  resourceFields: [
+                    {
+                      dataType: 'string',
+                      id: 'province_code',
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+          sampleData: {
+            customer: [
+              {
+                default_address: {
+                  province_code: 'province_code',
+                },
+              },
+            ],
+          },
+          supportedBy: {
+            import: {
+              preConfiguredFields: [],
+            },
+          },
+          versions: [
+            {
+              _id: '62cffbf79b51830e4d641d6d',
+              version: '2022-01',
+            },
+          ],
+        },
+      ],
       successMediaType: 'json',
       versions: [
         {
           _id: '62cffbf79b51830e4d641d6d',
-          resources: [
-            {
-              id: '62cffbf70c804009663faa2b',
-              name: 'Customers : Customer',
-              operations: [
-                {
-                  howToFindIdentifier: {
-                    lookup: {
-                      extract: 'customers[0].id',
-                      id: '62cffbff0c804009663faa60',
-                      url: '/customers/search.json',
-                    },
-                  },
-                  id: '62cffc149b51830e4d641e51',
-                  ignoreExisting: true,
-                  method: 'POST',
-                  name: 'Creates a customer',
-                  parameters: [
-                    {
-                      id: 'customerId',
-                      in: 'path',
-                      isIdentifier: true,
-                      required: true,
-                    },
-                  ],
-                  requiredMappings: [
-                    'customer.email',
-                  ],
-                  supportIgnoreExisting: true,
-                  url: '/2022-01/customers.json',
-                },
-              ],
-              sampleData: {
-                customer: [
-                  {
-                    default_address: {
-                      province_code: 'province_code',
-                    },
-                  },
-                ],
-              },
-            },
-          ],
           version: '2022-01',
         },
       ],
@@ -872,101 +974,157 @@ describe('getHTTPConnectorMetadata', () => {
         method: 'linkheader',
       },
       requestMediaType: 'json',
+      resources: [
+        {
+          _httpConnectorId: '62cffbf79b51830e4d641d6c',
+          _id: '62cffbf70c804009663faa2b',
+          _versionIds: [
+            '62cffbf79b51830e4d641d6d',
+            '62cffbf79b51830e4d641d6e',
+            '62cffbf79b51830e4d641d6f',
+          ],
+          createdAt: '2022-07-14T11:20:24.000Z',
+          endpoints: [
+            {
+              _httpConnectorResourceIds: [
+                '62cffbf70c804009663faa2b',
+              ],
+              delta: {
+                dateFormat: 'YYYY-MM-DDTHH:mm:ss[Z]',
+                defaults: {
+                  updated_at_min: '{{{lastExportDateTime}}}',
+                },
+              },
+              doesNotSupportPaging: false,
+              hidden: false,
+              id: '62cffbff0c804009663faa5c',
+              method: 'GET',
+              name: 'Retrieves a list of customers',
+              queryParameters: [
+                {
+                  description: 'A comma-separated list of customer ids',
+                  fieldType: 'textarea',
+                  id: 'ids',
+                  name: 'ids',
+                  required: false,
+                },
+              ],
+              response: {
+                resourcePath: 'customers',
+              },
+              supportedExportTypes: [
+                'delta',
+                'test',
+              ],
+              url: '/customers.json',
+            },
+            {
+              _httpConnectorResourceIds: [
+                '62cffbf70c804009663faa2b',
+              ],
+              doesNotSupportPaging: false,
+              hidden: false,
+              id: '62cffbff0c804009663faa60',
+              method: 'GET',
+              name: 'Searches for customers that match a supplied query',
+              queryParameters: [
+                {
+                  description: 'Field and direction to order results by(default: last_order_date DESC)',
+                  fieldType: 'textarea',
+                  id: 'order',
+                  name: 'order',
+                  required: false,
+                },
+              ],
+              response: {
+                resourcePath: 'customers',
+              },
+              url: '/customers/search.json',
+            },
+            {
+              _httpConnectorResourceIds: [
+                '62cffbf70c804009663faa2b',
+              ],
+              doesNotSupportPaging: true,
+              hidden: false,
+              id: '62cffbff9b51830e4d641daf',
+              method: 'GET',
+              name: 'Retrieves a single customer',
+              pathParameters: [
+                {
+                  fieldType: 'input',
+                  id: 'customerId',
+                  name: 'customerId',
+                  required: true,
+                },
+              ],
+              response: {
+                resourcePath: 'customer',
+              },
+              url: '/customers/:_customerId.json',
+            },
+            {
+              _httpConnectorResourceIds: [
+                '62cffbf70c804009663faa2b',
+              ],
+              doesNotSupportPaging: true,
+              hidden: false,
+              id: '62cffbff0c804009663faa62',
+              method: 'GET',
+              name: 'Retrieves a list of metafields that belong to a customer',
+              pathParameters: [
+                {
+                  fieldType: 'input',
+                  id: 'customerId',
+                  name: 'customerId',
+                  required: true,
+                },
+              ],
+              response: {
+                resourcePath: 'metafields',
+              },
+              url: '/customers/:_customerId/metafields.json',
+            },
+          ],
+          hidden: false,
+          id: '62cffbf70c804009663faa2b',
+          lastModified: '2022-07-14T11:20:24.003Z',
+          name: 'Customers : Customer',
+          published: true,
+          resourceFields: [
+            {
+              dataType: 'objectarray',
+              id: 'customer',
+              resourceFields: [
+                {
+                  dataType: 'object',
+                  id: 'default_address',
+                  resourceFields: [
+                    {
+                      dataType: 'string',
+                      id: 'province_code',
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+          supportedBy: {
+            import: {
+              preConfiguredFields: [],
+            },
+          },
+          versions: [
+            {
+              _id: '62cffbf79b51830e4d641d6d',
+              version: '2022-01',
+            },
+          ],
+        },
+      ],
       versions: [
         {
           _id: '62cffbf79b51830e4d641d6d',
-          resources: [
-            {
-              endpoints: [
-                {
-                  delta: {
-                    dateFormat: 'YYYY-MM-DDTHH:mm:ss[Z]',
-                    defaults: {
-                      updated_at_min: '{{{lastExportDateTime}}}',
-                    },
-                  },
-                  doesNotSupportPaging: false,
-                  method: 'GET',
-                  id: '62cffbff0c804009663faa5c',
-                  name: 'Retrieves a list of customers',
-                  queryParameters: [
-                    {
-                      description: 'A comma-separated list of customer ids',
-                      fieldType: 'textarea',
-                      id: 'ids',
-                      name: 'ids',
-                      required: false,
-                    },
-                  ],
-                  response: {
-                    resourcePath: 'customers',
-                  },
-                  supportedExportTypes: [
-                    'delta',
-                    'test',
-                  ],
-                  url: '/customers.json',
-                },
-                {
-                  doesNotSupportPaging: false,
-                  method: 'GET',
-                  id: '62cffbff0c804009663faa60',
-                  name: 'Searches for customers that match a supplied query',
-                  queryParameters: [
-                    {
-                      description: 'Field and direction to order results by(default: last_order_date DESC)',
-                      fieldType: 'textarea',
-                      id: 'order',
-                      name: 'order',
-                      required: false,
-                    },
-                  ],
-                  response: {
-                    resourcePath: 'customers',
-                  },
-                  url: '/customers/search.json',
-                },
-                {
-                  doesNotSupportPaging: true,
-                  method: 'GET',
-                  id: '62cffbff9b51830e4d641daf',
-                  name: 'Retrieves a single customer',
-                  pathParameters: [
-                    {
-                      fieldType: 'input',
-                      id: 'customerId',
-                      name: 'customerId',
-                      required: true,
-                    },
-                  ],
-                  response: {
-                    resourcePath: 'customer',
-                  },
-                  url: '/customers/:_customerId.json',
-                },
-                {
-                  doesNotSupportPaging: true,
-                  method: 'GET',
-                  id: '62cffbff0c804009663faa62',
-                  name: 'Retrieves a list of metafields that belong to a customer',
-                  pathParameters: [
-                    {
-                      fieldType: 'input',
-                      id: 'customerId',
-                      name: 'customerId',
-                      required: true,
-                    },
-                  ],
-                  response: {
-                    resourcePath: 'metafields',
-                  },
-                  url: '/customers/:_customerId/metafields.json',
-                },
-              ],
-              id: '62cffbf70c804009663faa2b',
-              name: 'Customers : Customer',
-            },
-          ],
           version: '2022-01',
         },
       ],
@@ -977,53 +1135,97 @@ describe('getHTTPConnectorMetadata', () => {
         version: 'API version',
       },
       requestMediaType: 'json',
+      resources: [
+        {
+          _httpConnectorId: '62cffbf79b51830e4d641d6c',
+          _id: '62cffbf70c804009663faa2b',
+          _versionIds: [
+            '62cffbf79b51830e4d641d6d',
+            '62cffbf79b51830e4d641d6e',
+            '62cffbf79b51830e4d641d6f',
+          ],
+          createdAt: '2022-07-14T11:20:24.000Z',
+          hidden: false,
+          id: '62cffbf70c804009663faa2b',
+          lastModified: '2022-07-14T11:20:24.003Z',
+          name: 'Customers : Customer',
+          operations: [
+            {
+              _httpConnectorResourceIds: [
+                '62cffbf70c804009663faa2b',
+              ],
+              hidden: false,
+              howToFindIdentifier: {
+                lookup: {
+                  extract: 'customers[0].id',
+                  id: '62cffbff0c804009663faa60',
+                  url: '/customers/search.json',
+                },
+              },
+              id: '62cffc149b51830e4d641e51',
+              ignoreExisting: true,
+              method: 'POST',
+              name: 'Creates a customer',
+              parameters: [
+                {
+                  id: 'customerId',
+                  in: 'path',
+                  isIdentifier: true,
+                  required: true,
+                },
+              ],
+              requiredMappings: [
+                'customer.email',
+              ],
+              supportIgnoreExisting: true,
+              url: '/customers.json',
+            },
+          ],
+          published: true,
+          resourceFields: [
+            {
+              dataType: 'objectarray',
+              id: 'customer',
+              resourceFields: [
+                {
+                  dataType: 'object',
+                  id: 'default_address',
+                  resourceFields: [
+                    {
+                      dataType: 'string',
+                      id: 'province_code',
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+          sampleData: {
+            customer: [
+              {
+                default_address: {
+                  province_code: 'province_code',
+                },
+              },
+            ],
+          },
+          supportedBy: {
+            import: {
+              preConfiguredFields: [],
+            },
+          },
+          versions: [
+            {
+              _id: '62cffbf79b51830e4d641d6d',
+              version: '2022-01',
+            },
+          ],
+        },
+      ],
       successMediaType: 'json',
       versions: [
         {
           _id: '62cffbf79b51830e4d641d6d',
-          resources: [
-            {
-              id: '62cffbf70c804009663faa2b',
-              name: 'Customers : Customer',
-              operations: [
-                {
-                  howToFindIdentifier: {
-                    lookup: {
-                      extract: 'customers[0].id',
-                      id: '62cffbff0c804009663faa60',
-                      url: '/customers/search.json',
-                    },
-                  },
-                  id: '62cffc149b51830e4d641e51',
-                  ignoreExisting: true,
-                  method: 'POST',
-                  name: 'Creates a customer',
-                  parameters: [
-                    {
-                      id: 'customerId',
-                      in: 'path',
-                      isIdentifier: true,
-                      required: true,
-                    },
-                  ],
-                  requiredMappings: [
-                    'customer.email',
-                  ],
-                  supportIgnoreExisting: true,
-                  url: '/customers.json',
-                },
-              ],
-              sampleData: {
-                customer: [
-                  {
-                    default_address: {
-                      province_code: 'province_code',
-                    },
-                  },
-                ],
-              },
-            },
-          ],
           version: '2022-01',
         },
       ],
