@@ -24,15 +24,15 @@ const useStyles = makeStyles(theme => ({
   stepNumber: step => ({
     // eslint-disable-next-line no-nested-ternary
     background: step.completed
-      ? theme.palette.common.white
+      ? theme.palette.background.paper
       : step.isCurrentStep
         ? theme.palette.primary.main
-        : theme.palette.common.white,
+        : theme.palette.background.paper,
     // eslint-disable-next-line no-nested-ternary
     color: step.completed
       ? theme.palette.secondary.contrastText
       : step.isCurrentStep
-        ? theme.palette.common.white
+        ? theme.palette.background.paper
         : theme.palette.secondary.contrastText,
     border: '1px solid',
     // eslint-disable-next-line no-nested-ternary

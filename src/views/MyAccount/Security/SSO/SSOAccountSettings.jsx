@@ -59,7 +59,7 @@ const useStyles = makeStyles(theme => ({
     lineHeight: '20px',
   },
   root: {
-    backgroundColor: theme.palette.common.white,
+    backgroundColor: theme.palette.background.paper,
     border: '1px solid',
     borderColor: theme.palette.secondary.lightest,
     overflowX: 'auto',

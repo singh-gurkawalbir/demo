@@ -7,7 +7,7 @@ const useStyles = makeStyles(theme => ({
     marginTop: -1,
     '& > div': {
       '&:first-child': {
-        backgroundColor: theme.palette.common.white,
+        backgroundColor: theme.palette.background.paper,
       },
     },
   },

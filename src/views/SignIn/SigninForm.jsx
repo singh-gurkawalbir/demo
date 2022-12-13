@@ -1,9 +1,10 @@
 import TextField from '@material-ui/core/TextField';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
-import React, { useState, useCallback} from 'react';
-import { Typography, Link} from '@material-ui/core';
-import { useLocation } from 'react-router-dom';
+import React, { useState, useCallback, useEffect} from 'react';
+import { Typography} from '@material-ui/core';
+import { useLocation, Link, useHistory} from 'react-router-dom';
+import clsx from 'clsx';
 import actions from '../../actions';
 import { selectors } from '../../reducers';
 import ErrorIcon from '../../components/icons/ErrorIcon';
@@ -12,9 +13,8 @@ import { getDomain } from '../../utils/resource';
 import { AUTH_FAILURE_MESSAGE } from '../../constants';
 import getRoutePath from '../../utils/routePaths';
 import Spinner from '../../components/Spinner';
-import { FilledButton, OutlinedButton } from '../../components/Buttons';
+import { FilledButton, OutlinedButton, TextButton } from '../../components/Buttons';
 import getImageUrl from '../../utils/image';
-import OneTimePassCodeForm from './OneTimePassCodeForm';
 
 const path = getImageUrl('images/googlelogo.png');
 
@@ -124,12 +124,12 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function SignIn({dialogOpen}) {
+export default function SignIn({dialogOpen, className}) {
   const dispatch = useDispatch();
   const location = useLocation();
   const classes = useStyles();
   const [email, setEmail] = useState('');
-
+  const history = useHistory();
   const handleAuthentication = useCallback((email, password) => {
     dispatch(actions.auth.request(email, password, true));
   }, [dispatch]);
@@ -193,16 +193,17 @@ export default function SignIn({dialogOpen}) {
   window.signedInWithSSO = () => {
     reInitializeSession();
   };
-
-  if (isMFAAuthRequired) {
-    return <OneTimePassCodeForm dialogOpen={dialogOpen} />;
-  }
+  useEffect(() => {
+    if (isMFAAuthRequired) {
+      history.push(getRoutePath('/mfa/verify'));
+    }
+  }, [history, isMFAAuthRequired]);
   const attemptedRoute =
       location && location.state && location.state.attemptedRoute;
 
   return (
   // user's email can be listed here ...type passwords is anyways redacted by logrocket
-    <div className={classes.editableFields}>
+    <div className={clsx(classes.editableFields, className)}>
       <form onSubmit={handleOnSubmit}>
         <TextField
           data-private
@@ -227,9 +228,15 @@ export default function SignIn({dialogOpen}) {
             />
 
         <div className={classes.forgotPass}>
-          <Link href="/request-reset" className={classes.forgotPass} variant="body2">
+          <TextButton
+            data-test="forgotPassword"
+            color="primary"
+            className={classes.forgotPass}
+            component={Link}
+            role="link"
+            to={email ? getRoutePath(`/request-reset?email=${email}`) : getRoutePath('/request-reset')}>
             Forgot password?
-          </Link>
+          </TextButton>
         </div>
         { showError && error && (
           <Typography
@@ -246,6 +253,7 @@ export default function SignIn({dialogOpen}) {
             <FilledButton
               data-test="submit"
               type="submit"
+              role="button"
               className={classes.submit}
               value="Submit">
               Sign in
