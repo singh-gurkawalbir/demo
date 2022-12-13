@@ -35,7 +35,7 @@ initialStore.getState().data.audit = {
   },
 };
 initialStore.getState().session.filters = {
-  auditLogs: {
+  'integrations-6253af74cddb8a1ba550a010-auditLogs': {
     paging: {
       rowsPerPage: 50,
       currPage: 0,
@@ -240,7 +240,7 @@ test('should display the user emailId under select users tab when name is not pr
     },
   };
   tempStore.getState().session.filters = {
-    auditLogs: {
+    'integrations-6253af74cddb8a1ba550a010-auditLogs': {
       paging: {
         rowsPerPage: 50,
         currPage: 0,
