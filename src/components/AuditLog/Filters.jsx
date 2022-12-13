@@ -149,7 +149,6 @@ export default function Filters(props) {
     resourceType,
     resourceId
   ));
-  const auditNextPagePath = useSelector(state => selectors.auditLogsNextPagePath(state));
   const hasMoreDownloads = useSelector(state => selectors.auditHasMoreDownloads(state));
   const filterKey = getAuditLogFilterKey(resourceType, resourceId);
   const filters = useSelector(state => selectors.filter(state, filterKey) || emptyObject, shallowEqual);
@@ -197,8 +196,8 @@ export default function Filters(props) {
     }
 
     dispatch(actions.patchFilter(filterKey, updatedFilters));
-    dispatch(actions.auditLogs.request(resourceType, resourceId, auditNextPagePath));
-  }, [auditNextPagePath, dispatch, filterKey, filters, resourceId, resourceType]);
+    dispatch(actions.auditLogs.request(resourceType, resourceId));
+  }, [dispatch, filterKey, filters, resourceId, resourceType]);
 
   useEffect(() => {
     if (hasMoreDownloads) {
