@@ -106,12 +106,12 @@ describe('MappingsSettingsV2Wrapper test cases', () => {
     expect(mockDispatch).toHaveBeenCalledWith(actions.mapping.v2.updateActiveKey(''));
     expect(mockGoback).toHaveBeenCalledWith();
   });
-  test('should male dispatch call of patch setting when save button is clicked after changing data type', () => {
+  test('should make dispatch call of patch setting when save button is clicked after changing data type', () => {
     initFunction();
 
     const stringType = screen.getAllByText('string');
 
-    userEvent.click(stringType[1]);
+    userEvent.click(stringType[0]);
     userEvent.click(screen.getByText('[number]'));
     userEvent.click(screen.getByText('Save'));
     expect(mockDispatch).toHaveBeenCalledWith(
@@ -134,14 +134,14 @@ describe('MappingsSettingsV2Wrapper test cases', () => {
       actions.mapping.v2.patchField('extract', 'someNodeKey', '', true)
     );
   });
-  test('should male dispatch call of patch setting and call goback function when save and close button is clicked', () => {
+  test('should make dispatch call of patch setting and call goback function when save and close button is clicked', () => {
     initFunction();
     const stringType = screen.getAllByText('string');
 
     userEvent.click(stringType[0]);
     userEvent.click(screen.getByText('number'));
     fireEvent.click(document);
-    userEvent.click(stringType[1]);
+    userEvent.click(stringType[0]);
     userEvent.click(screen.getAllByText('number')[1]);
     userEvent.click(screen.getByText('Save & close'));
     expect(mockDispatch).toHaveBeenCalledWith(

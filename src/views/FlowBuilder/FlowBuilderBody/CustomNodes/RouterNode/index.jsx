@@ -13,12 +13,12 @@ const useStyles = makeStyles(theme => ({
     height: 34,
   },
   button: {
-    backgroundColor: theme.palette.common.white,
+    backgroundColor: theme.palette.background.paper,
     border: `solid 1px ${theme.palette.secondary.lightest}`,
   },
   badgeColor: {
     backgroundColor: theme.palette.secondary.light,
-    color: theme.palette.common.white,
+    color: theme.palette.background.paper,
   },
   icon: {
     width: 20,

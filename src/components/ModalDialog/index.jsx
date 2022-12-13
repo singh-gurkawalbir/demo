@@ -51,7 +51,7 @@ const useStyles = makeStyles(theme => ({
     minWidth: theme.breakpoints.values.md,
   },
   dialogContent: {
-    background: theme.palette.common.white,
+    background: theme.palette.background.paper,
     padding: theme.spacing(2),
     wordBreak: 'break-word',
   },

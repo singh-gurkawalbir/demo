@@ -21,7 +21,7 @@ import { selectors } from '../../../../../reducers';
 const useStyles = makeStyles(theme => ({
   addButton: {
     position: 'static',
-    backgroundColor: theme.palette.common.white,
+    backgroundColor: theme.palette.background.paper,
     border: `solid 1px ${theme.palette.secondary.lightest}`,
     padding: 0,
     '& > span': {

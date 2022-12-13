@@ -168,6 +168,7 @@ export default function Mapper2ExtractsTypeableSelect({
   className,
   popperClassName,
   sourceDataType,
+  displaySourceDataType,
 }) {
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = useState(null);
@@ -273,6 +274,7 @@ export default function Mapper2ExtractsTypeableSelect({
            />
       </Tooltip >
 
+      {displaySourceDataType && (
       <SourceDataType
         anchorEl={dataTypeSelector}
         setAnchorEl={selectDataType}
@@ -284,6 +286,7 @@ export default function Mapper2ExtractsTypeableSelect({
         sourceDataTypes={sourceDataType}
         className={clsx({[classes.sourceDataTypeButton]: hideSourceDropdown})}
         isFocused={isFocused} />
+      )}
 
       {/* only render tree component if field is focussed and not disabled.
       Here we are wrapping tree component with ArrowPopper to correctly handle the

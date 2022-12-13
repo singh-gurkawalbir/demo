@@ -5,7 +5,7 @@ import { makeStyles } from '@material-ui/core';
 const useStyles = makeStyles(theme => ({
   drawerFooter: {
     borderTop: `1px solid ${theme.palette.secondary.lightest}`,
-    background: theme.palette.common.white,
+    background: theme.palette.background.paper,
     padding: theme.spacing(2, 3),
     display: 'flex',
   },

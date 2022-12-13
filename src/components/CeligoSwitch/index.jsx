@@ -74,7 +74,7 @@ export default function CeligoSwitch({
   className,
   tooltip,
   placement = 'bottom',
-  noPadding = 'false',
+  noPadding = false,
   ...props
 }) {
   const classes = useStyles();

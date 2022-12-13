@@ -55,7 +55,7 @@ const useStyles = makeStyles(theme => ({
     },
   },
   overlayPanel: {
-    background: fade(theme.palette.common.white, 0.7),
+    background: fade(theme.palette.background.paper, 0.7),
     height: '100%',
     position: 'absolute',
     top: 0,

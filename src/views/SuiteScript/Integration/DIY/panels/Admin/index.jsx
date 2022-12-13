@@ -17,7 +17,7 @@ import LegacySection from './sections/Legacy';
 const useStyles = makeStyles(theme => ({
   root: {
     padding: theme.spacing(0),
-    backgroundColor: theme.palette.common.white,
+    backgroundColor: theme.palette.background.paper,
     border: '1px solid',
     borderColor: theme.palette.secondary.lightest,
   },

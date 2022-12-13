@@ -25,7 +25,7 @@ const useStyles = makeStyles(theme => ({
       borderRadius: 24,
       backgroundColor: theme.palette.background.toggle,
       '& span': {
-        color: theme.palette.common.white,
+        color: theme.palette.background.paper,
       },
     },
     '& button:hover': {

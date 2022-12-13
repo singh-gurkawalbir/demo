@@ -21,7 +21,6 @@ const useStyles = makeStyles(theme => ({
   select: {
     display: 'flex !important',
     flexWrap: 'nowrap',
-    background: theme.palette.background.paper,
     border: '1px solid',
     borderColor: theme.palette.secondary.lightest,
     transitionProperty: 'border',
