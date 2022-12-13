@@ -58,7 +58,7 @@ import { APIException } from '../api/requestInterceptors/utils';
 import getRequestOptions from '../../utils/requestOptions';
 import openExternalUrl from '../../utils/window';
 import { pingConnectionWithId } from '../resourceForm/connections';
-import { AUDIT_LOG_FILTER_KEY } from '../../constants/auditLog';
+import { AUDIT_LOG_FILTER_KEY, getAuditLogFilterKey } from '../../constants/auditLog';
 
 const apiError = throwError(new APIException({
   status: 401,
@@ -3222,6 +3222,28 @@ describe('requestAuditLogs saga', () => {
     return expectSaga(requestAuditLogs, {resourceType})
       .provide([
         [select(selectors.filter, AUDIT_LOG_FILTER_KEY), {resourceType: 'connection'}],
+        [call(apiCallWithPaging, {
+          path,
+          hidden: undefined,
+        }), {data: collection, nextLinkPath}],
+      ])
+      .call(apiCallWithPaging, {path, hidden: undefined})
+      .put(actions.auditLogs.receivedNextPagePath(nextLinkPath))
+      .put(actions.resource.receivedCollection(resourceType, collection))
+      .returns(collection)
+      .run();
+  });
+  test('should dispatch receivedNextPagePath for integration audit logs resource type if nextLinkPath is present', () => {
+    const resourceType = 'integrations/i1/audit';
+    const auditResource = 'integrations';
+    const resourceId = 'i1';
+    const path = '/integrations/i1/audit?&resourceType=connection';
+    const collection = [{ id: 1 }, { id: 2 }];
+    const nextLinkPath = '/audit?123';
+
+    return expectSaga(requestAuditLogs, {resourceType, auditResource, resourceId})
+      .provide([
+        [select(selectors.filter, getAuditLogFilterKey(auditResource, resourceId)), {resourceType: 'connection'}],
         [call(apiCallWithPaging, {
           path,
           hidden: undefined,

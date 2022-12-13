@@ -10,7 +10,7 @@ import Spinner from '../Spinner';
 import AuditLogTable from './AuditLogTable';
 import Filters from './Filters';
 import { isNewId } from '../../utils/resource';
-import { AUDIT_LOG_FILTER_KEY } from '../../constants/auditLog';
+import { getAuditLogFilterKey } from '../../constants/auditLog';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -38,9 +38,10 @@ export default function AuditLog({
 }) {
   const classes = useStyles();
   const dispatch = useDispatch();
+  const filterKey = getAuditLogFilterKey(resourceType, resourceId);
   const clearAuditLogs = () => {
     dispatch(actions.auditLogs.clear());
-    dispatch(actions.clearFilter(AUDIT_LOG_FILTER_KEY));
+    dispatch(actions.clearFilter(filterKey));
   };
 
   const totalCount = useSelector(state => selectors.paginatedAuditLogs(
@@ -56,7 +57,7 @@ export default function AuditLog({
 
   useEffect(() => {
     if (!isNewId(resourceId)) {
-      dispatch(actions.patchFilter(AUDIT_LOG_FILTER_KEY, {
+      dispatch(actions.patchFilter(filterKey, {
         resourceType: OPTION_ALL.id,
         _resourceId: OPTION_ALL.id,
         byUser: OPTION_ALL.id,

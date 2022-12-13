@@ -5,6 +5,7 @@ import clsx from 'clsx';
 import { selectors } from '../../reducers';
 import ResourceTable from '../ResourceTable';
 import NoResultTypography from '../NoResultTypography';
+import { getAuditLogFilterKey } from '../../constants/auditLog';
 
 const useStyles = makeStyles({
   root: {
@@ -18,7 +19,7 @@ const useStyles = makeStyles({
 
 export default function AuditLogTable({ resourceType, resourceId, childId, className }) {
   const classes = useStyles();
-  const filterKey = `${resourceType}-${resourceId}-auditLogs`;
+  const filterKey = getAuditLogFilterKey(resourceType, resourceId);
   const {logs: auditLogs, totalCount} = useSelector(state =>
     selectors.paginatedAuditLogs(
       state,

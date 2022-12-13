@@ -18,3 +18,5 @@ export const AUDIT_LOG_EVENT_LABELS = {
 export const DEFAULT_ROWS_PER_PAGE = 50;
 export const ROWS_PER_PAGE_OPTIONS = [50, 100, 500, 1000];
 export const AUDIT_LOG_FILTER_KEY = 'auditLogs';
+
+export const getAuditLogFilterKey = (resourceType, resourceId) => resourceType ? `${resourceType}-${resourceId}-auditLogs` : AUDIT_LOG_FILTER_KEY;
