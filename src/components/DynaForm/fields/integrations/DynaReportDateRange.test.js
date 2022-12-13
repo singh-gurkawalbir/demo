@@ -1,0 +1,118 @@
+/* global describe, test, expect, jest */
+import React from 'react';
+import {
+  screen, waitFor,
+} from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import DynaReportDateRange from './DynaReportDateRange';
+import { getCreatedStore } from '../../../../store';
+import { renderWithProviders } from '../../../../test/test-utils';
+
+const initialStore = getCreatedStore();
+
+const mockonFieldChange = jest.fn();
+
+function initDynaReportDateRange(props = {}) {
+  initialStore.getState().session.form = {
+    formKey: {
+      fields: {
+        integration: {
+          value: '5b3c75dd5d3c125c88b5dd20',
+        },
+      },
+    },
+  };
+
+  return renderWithProviders(<DynaReportDateRange {...props} />, {initialStore});
+}
+
+jest.mock('../../../icons/ArrowDownIcon', () => ({
+  __esModule: true,
+  ...jest.requireActual('../../../icons/ArrowDownIcon'),
+  default: () => (
+    <div>Icon button</div>
+
+  ),
+}));
+
+describe('DynaReportDateRange UI tests', () => {
+  const props = {
+    formKey: 'formKey',
+    id: 'testId',
+    onFieldChange: mockonFieldChange,
+    value: {},
+    label: 'Resource',
+    child: {
+      function: jest.fn(),
+    },
+    defaultPreset: {
+      startDate: '1',
+      endDate: '2',
+      preset: 'custom',
+    },
+    disabled: false,
+    isLoggable: true,
+  };
+
+  test('should pass the initial render', () => {
+    initDynaReportDateRange(props);
+    expect(screen.getByText('Resource')).toBeInTheDocument();
+    expect(screen.getByText('Select range')).toBeInTheDocument();
+    screen.debug(undefined, Infinity);
+  });
+  test('should display the date ranges when clicked on Select range option', () => {
+    initDynaReportDateRange(props);
+    expect(screen.getByText('Select range')).toBeInTheDocument();
+    userEvent.click(screen.getByText('Select range'));
+    expect(screen.getByText(/last minute/i)).toBeInTheDocument();
+    expect(screen.getByText(/last 5 minutes/i)).toBeInTheDocument();
+    expect(screen.getByText(/last 15 minutes/i)).toBeInTheDocument();
+    expect(screen.getByText(/last 30 minutes/i)).toBeInTheDocument();
+    expect(screen.getByText(/last hour/i)).toBeInTheDocument();
+    expect(screen.getByText(/last 6 hours/i)).toBeInTheDocument();
+    expect(screen.getByText(/last 12 hours/i)).toBeInTheDocument();
+    expect(screen.getByText(/last 24 hours/i)).toBeInTheDocument();
+    expect(screen.getByText(/custom/i)).toBeInTheDocument();
+  });
+  test('should open the calendar view to select start and end date when clicked on Custom preset', () => {
+    initDynaReportDateRange(props);
+    userEvent.click(screen.getByText('Select range'));
+    userEvent.click(screen.getByText('Custom'));
+    expect(screen.getByText(/Dec 2022/i)).toBeInTheDocument();
+    expect(screen.getByText(/Jan 2023/i)).toBeInTheDocument();
+    expect(screen.getByText(/Start date/i)).toBeInTheDocument();
+    expect(screen.getByText(/Start time/i)).toBeInTheDocument();
+    expect(screen.getByText(/End date/i)).toBeInTheDocument();
+    expect(screen.getByText(/End time/i)).toBeInTheDocument();
+    expect(screen.getByText('You can generate a report for up to 3 days of data.')).toBeInTheDocument();
+    screen.debug(undefined, Infinity);
+  });
+  test('should display the range in the field when range is already passed', () => {
+    initDynaReportDateRange({...props,
+      value: {
+        startDate: '2022-12-09T18:30:00.000Z',
+        endDate: '2022-12-10T18:55:13.184Z',
+        preset: 'custom',
+      },
+    });
+    expect(screen.getByText('09/12/22-10/12/22')).toBeInTheDocument();
+    screen.debug(undefined, Infinity);
+  });
+  test('should call the onFieldChange function passed in props when clicked on apply button', async () => {
+    initDynaReportDateRange(props);
+    userEvent.click(screen.getByText('Select range'));
+    userEvent.click(screen.getByText(/last minute/i));
+    const applyButton = screen.getByText(/Apply/i);
+
+    expect(applyButton).toBeInTheDocument();
+    userEvent.click(applyButton);
+    await waitFor(() => expect(mockonFieldChange).toBeCalled());
+  });
+  test('should not render the calendar views when preset is other than custom', () => {
+    initDynaReportDateRange(props);
+    userEvent.click(screen.getByText('Select range'));
+    userEvent.click(screen.getByText(/last minute/i));
+    expect(screen.queryByText(/Dec 2022/i)).toBeNull();
+    expect(screen.queryByText(/Jan 2023/i)).toBeNull();
+  });
+});
