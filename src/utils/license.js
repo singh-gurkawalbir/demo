@@ -64,14 +64,20 @@ export function upgradeButtonText(license, integration = {}, upgradeRequested, e
   let value;
 
   if (isTwoDotZero) {
+    let highestOrder = 0;
+
+    editions?.length && editions.forEach(edition => {
+      highestOrder = highestOrder < edition?.order ? edition.order : highestOrder;
+    });
     editions?.length && editions.forEach(edition => {
       if (edition._id === license?._editionId) {
-        value = edition.order < (editions.length - 1) ? 'requestUpgrade' : '';
-      }
-      if (license?._changeEditionId) {
-        value = 'upgradeEdition';
+        // value = edition.order < (editions.length - 1) ? 'requestUpgrade' : '';
+        value = edition.order === highestOrder ? '' : 'requestUpgrade';
       }
     });
+    if (license?._changeEditionId) {
+      value = 'upgradeEdition';
+    }
   } else {
     value = upgradeStatus(license, integration);
   }

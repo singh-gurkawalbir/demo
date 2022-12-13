@@ -1215,6 +1215,10 @@ const integrationApp = {
       action(actionTypes.INTEGRATION_APPS.SETTINGS.V2.ADD_CHILD_UPGRADE_LIST, {
         childList,
       }),
+    deleteStatus: integrationId =>
+      action(actionTypes.INTEGRATION_APPS.SETTINGS.V2.DELETE_STATUS, {
+        id: integrationId,
+      }),
     installer: {
       init: integrationId => action(actionTypes.INTEGRATION_APPS.INSTALLER.V2.INIT, {
         id: integrationId,
