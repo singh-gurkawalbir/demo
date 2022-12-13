@@ -55,7 +55,7 @@ export function* getSteps({ integrationId }) {
   const obj = {
     steps: response.steps,
     showWizard: response.showWizard,
-    status: 'inComplete',
+    status: 'hold',
   };
 
   yield put(actions.integrationApp.upgrade.setStatus(integrationId, obj));
@@ -84,6 +84,7 @@ export function* postChangeEditionSteps({ integrationId }) {
     yield put(actions.resource.requestCollection('imports', null, true, integrationId));
     yield put(actions.resource.requestCollection('connections', null, true, integrationId));
     yield put(actions.resource.requestCollection('asynchelpers', null, true, integrationId));
+    yield put(actions.resource.requestCollection('licenses'));
   } else {
     const obj = {
       steps: response,
@@ -102,7 +103,7 @@ function* refreshIntegrationConnectionsMetadata({ integrationId }) {
   yield call(refreshConnectionMetadata, { connections });
 }
 
-export function* installScriptStep({
+export function* upgradeInstallScriptStep({
   id,
   connectionId,
   connectionDoc,
@@ -152,7 +153,7 @@ export function* installScriptStep({
         yield put(actions.resource.requestCollection('connections'));
       }
     }
-    yield put(actions.integrationApp.installer.updateStep(id, '', 'failed'));
+    yield put(actions.integrationApp.upgrade.installer.updateStep(id, '', 'failed'));
 
     return yield put(actions.api.failure(path, 'PUT', error.message, false));
   }
@@ -188,6 +189,7 @@ export function* installScriptStep({
     yield put(actions.resource.requestCollection('imports', null, true, id));
     yield put(actions.resource.requestCollection('connections', null, true, id));
     yield put(actions.resource.requestCollection('asynchelpers', null, true, id));
+    yield put(actions.resource.requestCollection('licenses'));
 
     return;
   // eslint-disable-next-line no-else-return
@@ -210,7 +212,7 @@ export function* installScriptStep({
   }
 
   if (currentConnectionStep && isOauth(connectionDoc)) {
-    yield put(actions.integrationApp.installer.setOauthConnectionMode(currentConnectionStep._connectionId, true, id));
+    yield put(actions.integrationApp.upgrade.installer.setOauthConnectionMode(currentConnectionStep._connectionId, true, id));
     try {
       yield call(
         openOAuthWindowForConnection,
@@ -229,7 +231,7 @@ export function* installScriptStep({
   );
 }
 
-export function* verifyBundleOrPackageInstall({
+export function* upgradeVerifyBundleOrPackageInstall({
   id,
   connectionId,
   installerFunction,
@@ -284,7 +286,7 @@ export function* verifyBundleOrPackageInstall({
 
 // for certain type of steps ('form'/'url' for now), in order to display the step for the user,
 // we need to invoke get /currentStep route to get the form metadata or url
-export function* getCurrentStep({ id, step }) {
+export function* upgradeGetCurrentStep({ id, step }) {
   const { type, form, initFormFunction, getUrlFunction } = step;
 
   //  currently only handling 'form' and 'url' type step
@@ -360,13 +362,13 @@ export default [
   takeLatest(actionTypes.INTEGRATION_APPS.SETTINGS.V2.UPGRADE, changeEdition),
   takeLatest(actionTypes.INTEGRATION_APPS.SETTINGS.V2.GET_STEPS, getSteps),
   takeLatest(actionTypes.INTEGRATION_APPS.SETTINGS.V2.POST_CHANGE_EDITION_STEPS, postChangeEditionSteps),
-  takeEvery(actionTypes.INTEGRATION_APPS.TEMPLATES.V2.INSTALLER.VERIFY_BUNDLE_INSTALL, verifyBundleOrPackageInstall),
+  takeEvery(actionTypes.INTEGRATION_APPS.TEMPLATES.V2.INSTALLER.VERIFY_BUNDLE_INSTALL, upgradeVerifyBundleOrPackageInstall),
   takeEvery(
     actionTypes.INTEGRATION_APPS.INSTALLER.V2.STEP.SCRIPT_REQUEST,
-    installScriptStep
+    upgradeInstallScriptStep
   ),
   takeEvery(
     actionTypes.INTEGRATION_APPS.INSTALLER.V2.STEP.CURRENT_STEP,
-    getCurrentStep
+    upgradeGetCurrentStep
   ),
 ];

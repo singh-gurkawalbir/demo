@@ -235,7 +235,10 @@ export default function AppRouting() {
       </Route>
 
       <Route
-        path={getRoutePath('/integrationapps/:integrationAppName/:integrationId([a-f\\d]{24})/setup')}
+        path={[
+          getRoutePath('/integrationapps/:integrationAppName/:integrationId([a-f\\d]{24})/setup'),
+          getRoutePath('/integrationapps/:integrationAppName/:integrationId([a-f\\d]{24})/child/:childId/setup'),
+        ]}
         component={IntegrationInstallation}
         />
       <Route

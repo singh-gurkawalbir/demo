@@ -8,7 +8,7 @@ export default (state = {}, action) => {
   const { id, type, statusObj, childList } = action;
 
   return produce(state, draft => {
-    if (!id) {
+    if (!id && !childList) {
       return;
     }
 
@@ -28,6 +28,10 @@ export default (state = {}, action) => {
           if (!draft[id]) draft[id] = {};
           draft[id].inQueue = true;
         });
+        break;
+
+      case actionTypes.INTEGRATION_APPS.SETTINGS.V2.DELETE_STATUS:
+        delete draft[id];
         break;
     }
   });
@@ -52,7 +56,7 @@ selectors.currentChildUpgrade = state => {
   let currentChild = '';
 
   forEach(state?.childList, id => {
-    if (state[id].inQueue) {
+    if (state[id]?.inQueue) {
       currentChild = id;
 
       return false;
