@@ -77,7 +77,5 @@ describe('MFAHelp', () => {
     await userEvent.click(signUpLinkNode);
     expect(signUpLinkNode.closest('a')).toHaveAttribute('href', '/signup');
     expect(screen.getByText('contact Celigo support via call.')).toBeInTheDocument();
-
   });
-
 });
