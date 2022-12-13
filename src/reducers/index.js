@@ -116,7 +116,7 @@ import { buildDrawerUrl, drawerPaths } from '../utils/rightDrawer';
 import { GRAPHQL_HTTP_FIELDS, isGraphqlResource } from '../utils/graphql';
 import { initializeFlowForReactFlow, getFlowAsyncKey } from '../utils/flows/flowbuilder';
 import { HTTP_BASED_ADAPTORS } from '../utils/http';
-import { AUDIT_LOG_FILTER_KEY } from '../constants/auditLog';
+import { getAuditLogFilterKey } from '../constants/auditLog';
 import { SHOPIFY_APP_STORE_LINKS } from '../constants/urls';
 
 const emptyArray = [];
@@ -2299,7 +2299,11 @@ selectors.auditLogs = (
 
 selectors.paginatedAuditLogs = createSelector(
   selectors.auditLogs,
-  state => selectors.filter(state, AUDIT_LOG_FILTER_KEY),
+  (state, resourceType, resourceId) => {
+    const filterKey = getAuditLogFilterKey(resourceType, resourceId);
+
+    return selectors.filter(state, filterKey);
+  },
   (auditLogs, filters) => {
     const { currPage = 0, rowsPerPage = DEFAULT_ROWS_PER_PAGE } = filters?.paging || {};
 

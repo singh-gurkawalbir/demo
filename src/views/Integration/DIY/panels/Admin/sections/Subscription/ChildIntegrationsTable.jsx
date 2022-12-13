@@ -2,11 +2,28 @@ import React, { useMemo, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { sortBy } from 'lodash';
 import moment from 'moment';
+import { Typography, makeStyles } from '@material-ui/core';
 import { selectors } from '../../../../../../../reducers';
 import actions from '../../../../../../../actions';
 import CeligoTable from '../../../../../../../components/CeligoTable';
 import ChildUpgradeButton from './ChildUpgradeButton';
 import { getTitleFromEdition } from '../../../../../../../utils/integrationApps';
+
+const useStyles = makeStyles(theme => ({
+  sectionTitle: {
+    padding: theme.spacing(0, 2, 2),
+  },
+  childIntegrationList: {
+    margin: theme.spacing(0, 2),
+    border: `1px solid ${theme.palette.secondary.lightest}`,
+    borderRadius: theme.spacing(0.5),
+    '& .MuiTableBody-root': {
+      '& .MuiTableRow-root': {
+        background: theme.palette.background.paper2,
+      },
+    },
+  },
+}));
 
 const metadata = {
   useColumns: () => {
@@ -43,6 +60,7 @@ const metadata = {
 };
 
 export default function ChildIntegrationsTable({ integrationId, allChildIntegrations }) {
+  const classes = useStyles();
   const dispatch = useDispatch();
   const licenses = useSelector(state => selectors.licenses(state));
   const parentLicenseId = licenses.find(license => license._integrationId === integrationId)?._id;
@@ -82,9 +100,13 @@ export default function ChildIntegrationsTable({ integrationId, allChildIntegrat
   }, [data, dispatch, integrationId, parentStatus]);
 
   return (
-    <CeligoTable
-      data={data}
-      {...metadata}
+    <>
+      <Typography variant="h4" className={classes.sectionTitle}>Accounts</Typography>
+      <CeligoTable
+        data={data}
+        {...metadata}
+        className={classes.childIntegrationList}
     />
+    </>
   );
 }
