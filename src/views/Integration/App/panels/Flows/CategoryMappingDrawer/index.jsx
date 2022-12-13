@@ -92,7 +92,7 @@ const useStyles = makeStyles(theme => ({
   },
   // toolbar: theme.mixins.toolbar,
   root: {
-    backgroundColor: theme.palette.common.white,
+    backgroundColor: theme.palette.background.paper,
     border: '1px solid',
     borderColor: theme.palette.secondary.lightest,
     height: '100%',

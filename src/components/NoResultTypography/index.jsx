@@ -5,7 +5,7 @@ import { makeStyles, Typography } from '@material-ui/core';
 
 const useStyles = makeStyles(theme => ({
   root: {
-    backgroundColor: theme.palette.common.white,
+    backgroundColor: theme.palette.background.paper,
     borderBottom: `1px solid ${theme.palette.secondary.lightest}`,
   },
   small: {

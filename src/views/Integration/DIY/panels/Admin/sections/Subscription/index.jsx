@@ -198,6 +198,7 @@ export default function SubscriptionSection({ childId, integrationId }) {
         buttons: [
           {
             label: 'Submit request',
+            dataTest: 'submitRequest',
             onClick: () => {
               dispatch(
                 actions.integrationApp.settings.requestUpgrade(integrationId, {
@@ -224,6 +225,7 @@ export default function SubscriptionSection({ childId, integrationId }) {
       buttons: [
         {
           label: 'Continue',
+          dataTest: 'continueUpgrade',
           onClick: () => {
             if (changeEditionSteps?.length) {
               dispatch(actions.integrationApp.upgrade.getSteps(integrationId));
@@ -266,6 +268,15 @@ export default function SubscriptionSection({ childId, integrationId }) {
                 <Typography>{expiresText}</Typography>
               </Grid>
               <Grid item xs={3}>
+                {upgradeText === '' && istwoDotZeroFrameWork && (
+                  <FilledButton
+                    className={classes.button}
+                    disabled
+                    data-test="requestUpgrade"
+                  >
+                    Request upgrade
+                  </FilledButton>
+                )}
                 {upgradeText && upgradeText === 'upgradeEdition' && (
                 <ParentUpgradeButton
                   id={integrationId}
@@ -279,7 +290,9 @@ export default function SubscriptionSection({ childId, integrationId }) {
                 <FilledButton
                   className={classes.button}
                   disabled={upgradeRequested || isLicenseExpired}
-                  onClick={handleUpgrade}>
+                  onClick={handleUpgrade}
+                  data-test="requestUpgrade"
+                >
                   {upgradeText}
                 </FilledButton>
                 )}

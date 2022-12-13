@@ -15,9 +15,9 @@ const useStyles = makeStyles(theme => ({
   iconButtonRoot: {
     padding: theme.spacing(0.5),
     marginRight: theme.spacing(1),
-    backgroundColor: theme.palette.common.white,
+    backgroundColor: theme.palette.background.paper,
     '&:hover': {
-      backgroundColor: theme.palette.common.white,
+      backgroundColor: theme.palette.background.paper,
       '& svg': {
         color: theme.palette.primary.main,
       },

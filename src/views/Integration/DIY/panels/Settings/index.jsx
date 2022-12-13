@@ -21,7 +21,7 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing(0, 2, 2, 2),
   },
   root: {
-    backgroundColor: theme.palette.common.white,
+    backgroundColor: theme.palette.background.paper,
     border: '1px solid',
     borderColor: theme.palette.secondary.lightest,
   },

@@ -175,7 +175,7 @@ const useStyles = makeStyles(theme => ({
     right: '-82px',
   },
   pgContainerName: {
-    background: theme.palette.common.white,
+    background: theme.palette.background.paper,
   },
 }));
 

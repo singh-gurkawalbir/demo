@@ -12,7 +12,7 @@ import { drawerPaths } from '../../utils/rightDrawer';
 
 const useStyles = makeStyles(theme => ({
   scriptLogsDrawerHeader: {
-    background: theme.palette.common.white,
+    background: theme.palette.background.paper,
   },
 }));
 const ScriptLogsWrapper = () => {

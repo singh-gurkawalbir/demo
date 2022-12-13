@@ -37,12 +37,12 @@ const useStyles = makeStyles(theme => ({
     },
     '&:hover': {
       backgroundColor: theme.palette.background.drawer2,
-      color: theme.palette.background.paper,
+      color: theme.palette.common.white,
       '&:before': {
         background: theme.palette.background.drawerActive,
       },
       '& svg > *': {
-        color: theme.palette.background.paper,
+        color: theme.palette.common.white,
       },
     },
     '&:not(:last-child)': {
@@ -61,13 +61,13 @@ const useStyles = makeStyles(theme => ({
     backgroundColor: `${theme.palette.background.drawerActive} !important`,
     color: theme.palette.common.white,
     '& svg > *': {
-      color: theme.palette.background.paper,
+      color: theme.palette.common.white,
     },
   },
   itemIconRoot: {
     minWidth: 'unset',
     marginRight: theme.spacing(1),
-    color: theme.palette.background.paper,
+    color: theme.palette.common.white,
   },
   itemIconRootCollapsed: {
     minWidth: 45,
