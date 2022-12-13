@@ -129,10 +129,10 @@ export default function UserForm({
             field: 'accessLevel',
             is: [USER_ACCESS_LEVELS.TILE],
           },
-          {
-            field: 'accessLevel',
-            is: [USER_ACCESS_LEVELS.ACCOUNT_MONITOR],
-          },
+          // {
+          //   field: 'accessLevel',
+          //   is: [USER_ACCESS_LEVELS.ACCOUNT_MANAGE],
+          // },
         ],
         requiredWhenAll: [
           {
