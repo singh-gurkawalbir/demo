@@ -35,6 +35,10 @@ export default {
   },
   fieldMap: {
     name: { fieldId: 'name' },
+    'http.auth.oauth.callbackURL': {
+      fieldId: 'http.auth.oauth.callbackURL',
+      copyToClipboard: true,
+    },
     'http.auth.oauth.scope': {
       fieldId: 'http.auth.oauth.scope',
       scopes: [
@@ -71,7 +75,7 @@ export default {
       {
         collapsed: true,
         label: 'Configure your client id and secret',
-        fields: ['http._iClientId', 'http.auth.oauth.scope'],
+        fields: ['http.auth.oauth.callbackURL', 'http._iClientId', 'http.auth.oauth.scope'],
       },
       { collapsed: true, label: 'Advanced', fields: ['fileAdvanced', 'httpAdvanced'] },
     ],
