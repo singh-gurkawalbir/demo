@@ -562,6 +562,8 @@ const resource = {
 const auditLogs = {
   request: (resourceType, resourceId, nextPagePath) => action(actionTypes.RESOURCE.REQUEST_AUDIT_LOGS, {
     resourceType: auditResourceTypePath(resourceType, resourceId),
+    auditResource: resourceType,
+    resourceId,
     nextPagePath,
   }),
   receivedNextPagePath: nextPagePath => action(actionTypes.RESOURCE.AUDIT_LOGS_NEXT_PATH, {
