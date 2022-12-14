@@ -98,7 +98,7 @@ const auth = {
   },
   changeEmailRequest: token =>
     action(actionTypes.AUTH.CHANGE_EMAIL_REQUEST, { token }),
-  changeEmailSuccess: RequestInfo => action(actionTypes.AUTH.CHANGE_EMAIL_SUCCESSFUL, {RequestInfo}),
+  changeEmailSuccess: requestInfo => action(actionTypes.AUTH.CHANGE_EMAIL_SUCCESSFUL, {requestInfo}),
   changeEmailFailed: error => action(actionTypes.AUTH.CHANGE_EMAIL_FAILED, {error}),
   setPasswordRequest: (password, token) =>
     action(actionTypes.AUTH.SET_PASSWORD_REQUEST, { password, token }),

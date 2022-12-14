@@ -23,7 +23,7 @@ export default function (state = defaultState, action) {
     switch (type) {
       case actionTypes.AUTH.CHANGE_EMAIL_SUCCESSFUL:
         draft.changeEmailStatus = 'success';
-        draft.changeEmailMessage = action.RequestInfo.message;
+        draft.changeEmailMessage = action.requestInfo.message;
         break;
       case actionTypes.AUTH.CHANGE_EMAIL_FAILED:
         draft.changeEmailStatus = 'failed';
