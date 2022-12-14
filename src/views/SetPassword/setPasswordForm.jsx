@@ -12,6 +12,7 @@ import { FilledButton, TextButton } from '../../components/Buttons';
 import ShowContentIcon from '../../components/icons/ShowContentIcon';
 import HideContentIcon from '../../components/icons/HideContentIcon';
 import getRoutePath from '../../utils/routePaths';
+import RawHtml from '../../components/RawHtml';
 
 const useStyles = makeStyles(theme => ({
   submit: {
@@ -84,7 +85,7 @@ export default function SetPassword() {
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isSetPasswordStatus]);
-  const isAuthenticating = useSelector(state => selectors.isAuthenticating(state));
+  const isAuthenticating = isSetPasswordStatus === 'loading';
   const error = useSelector(state => {
     const errorMessage = selectors.requestSetPasswordError(state);
 
@@ -125,7 +126,7 @@ export default function SetPassword() {
         component="div"
         variant="h5"
         className={classes.alertMsg}>
-        {error}
+        <RawHtml html={error} />
       </Typography>
       )}
       <form onSubmit={handleOnSubmit}>
