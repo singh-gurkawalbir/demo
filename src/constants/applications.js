@@ -177,15 +177,6 @@ const connectors = [
   // { id: 'amazonaws', name: 'Amazon AWS', type: 'http', assistant: 'amazonaws' },
 
   { id: 'sapariba', name: 'SAP Ariba', type: 'webhook', webhookOnly: true },
-
-  { id: 'box', name: 'Box', type: 'http', webhookOnly: true, icon: 'box' },
-  {
-    id: 'dropbox',
-    name: 'Dropbox',
-    type: 'rest',
-    webhookOnly: true,
-    icon: 'dropbox',
-  },
   {
     id: 'github',
     name: 'GitHub',
@@ -316,6 +307,18 @@ const newConnections = [
     type: 'http',
     assistant: 'googledrive',
     helpURL: 'https://docs.celigo.com/hc/en-us/articles/360056026892-Set-up-a-connection-to-Google-Drive',
+  },
+  {id: 'box',
+    name: 'Box',
+    type: 'http',
+    assistant: 'box',
+    webhook: true,
+  },
+  {id: 'dropbox',
+    name: 'Dropbox',
+    webhook: true,
+    type: 'http',
+    assistant: 'dropbox',
   },
   {id: 'azurestorageaccount', name: 'Azure Blob Storage', type: 'http', assistant: 'azurestorageaccount', helpURL: 'https://docs.celigo.com/hc/en-us/articles/4405704367771-Set-up-a-connection-to-Azure-Blob-Storage'},
   {

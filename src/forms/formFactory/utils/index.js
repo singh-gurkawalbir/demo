@@ -801,6 +801,26 @@ export const sourceOptions = {
       value: 'transferFiles',
     },
   ],
+  box: [
+    {
+      label: 'Transfer files out of source application',
+      value: 'transferFiles',
+    },
+    {
+      label: 'Listen for real-time data from source application',
+      value: 'webhook',
+    },
+  ],
+  dropbox: [
+    {
+      label: 'Transfer files out of source application',
+      value: 'transferFiles',
+    },
+    {
+      label: 'Listen for real-time data from source application',
+      value: 'webhook',
+    },
+  ],
   azurestorageaccount: [
     {
       label: 'Transfer files out of source application',
@@ -864,6 +884,26 @@ export const destinationOptions = {
     },
   ],
   googledrive: [
+    {
+      label: 'Transfer files into destination application',
+      value: 'transferFiles',
+    },
+    {
+      label: 'Look up additional files (per record)',
+      value: 'lookupFiles',
+    },
+  ],
+  box: [
+    {
+      label: 'Transfer files into destination application',
+      value: 'transferFiles',
+    },
+    {
+      label: 'Look up additional files (per record)',
+      value: 'lookupFiles',
+    },
+  ],
+  dropbox: [
     {
       label: 'Transfer files into destination application',
       value: 'transferFiles',
