@@ -1201,9 +1201,7 @@ export function* requestAuditLogs({ resourceType, auditResource, resourceId, nex
       hidden: hideNetWorkSnackbar,
     })) || {};
 
-    if (nextLinkPath) {
-      yield put(actions.auditLogs.receivedNextPagePath(nextLinkPath));
-    }
+    yield put(actions.auditLogs.receivedNextPagePath(nextLinkPath));
 
     if (data !== undefined && !Array.isArray(data) && !NON_ARRAY_RESOURCE_TYPES.includes(resourceType)) {
       // eslint-disable-next-line no-console
