@@ -99,7 +99,7 @@ export function ResourceTypeFilter(props) {
   return (
     <FormControl className={classes.formControl}>
       <CeligoSelect
-        value={filters.resourceType}
+        value={filters.resourceType || ''}
         onChange={onChange}
         // all options are harmless ...mostly resourceTypes
         isLoggable
@@ -174,7 +174,7 @@ export function ResourceIdFilter(props) {
         isLoggable
         inputProps={resourceIdInput}
         className={classes.select}
-        value={filters._resourceId}
+        value={filters._resourceId || ''}
         onChange={onChange}>
         <MenuItem value="" disabled>
           Select {RESOURCE_TYPE_SINGULAR_TO_LABEL[filters.resourceType]}
@@ -202,7 +202,7 @@ export function AuditLogActionFilter({
         isLoggable
         inputProps={eventInput}
         onChange={onChange}
-        value={filters.event}>
+        value={filters.event || ''}>
         <MenuItem key={OPTION_ALL.id} value={OPTION_ALL.id}>
           Select action
         </MenuItem>

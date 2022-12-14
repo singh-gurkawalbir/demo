@@ -7358,8 +7358,6 @@ Object {
             "isNot": Array [
               "",
               "aha",
-              "box",
-              "dropbox",
               "errorception",
               "helpscout",
               "mailparser-io",
@@ -7457,6 +7455,8 @@ Object {
               "shopify",
               "slack",
               "stripe",
+              "box",
+              "dropbox",
             ],
           },
         ],
@@ -12942,8 +12942,6 @@ Object {
             "isNot": Array [
               "",
               "aha",
-              "box",
-              "dropbox",
               "errorception",
               "helpscout",
               "mailparser-io",

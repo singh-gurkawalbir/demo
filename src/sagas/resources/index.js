@@ -21,7 +21,7 @@ import { pingConnectionWithId } from '../resourceForm/connections';
 import httpConnectorSagas from './httpConnectors';
 import { getHttpConnector} from '../../constants/applications';
 import { NO_ENVIRONMENT_RESOURCE_TYPES } from '../../constants/resource';
-import { AUDIT_LOG_FILTER_KEY } from '../../constants/auditLog';
+import { AUDIT_LOG_FILTER_KEY, getAuditLogFilterKey } from '../../constants/auditLog';
 
 export function* isDataLoaderFlow(flow) {
   if (!flow) return false;
@@ -1180,8 +1180,9 @@ export function* downloadAuditlogs({resourceType, resourceId, childId, filters})
   }
 }
 
-export function* requestAuditLogs({ resourceType, nextPagePath }) {
-  const filters = yield select(selectors.filter, AUDIT_LOG_FILTER_KEY);
+export function* requestAuditLogs({ resourceType, auditResource, resourceId, nextPagePath }) {
+  const filterKey = auditResource ? getAuditLogFilterKey(auditResource, resourceId) : AUDIT_LOG_FILTER_KEY;
+  const filters = yield select(selectors.filter, filterKey);
 
   const requestOptions = getRequestOptions(
     actionTypes.RESOURCE.REQUEST_AUDIT_LOGS,

@@ -154,4 +154,10 @@ describe('Collapsed Components UI tests', () => {
 
     expect(utils.container).toContainHTML('<div></div>');
   });
+  test('should render empty DOM when all the fields have visible set to false', () => {
+    props.formfields = [{isValid: false, id: 'name'}, {isValid: false, id: 'description'}];
+    const {utils} = initIndentedComponent(props);
+
+    expect(utils.container).toBeEmptyDOMElement();
+  });
 });

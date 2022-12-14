@@ -6,6 +6,9 @@ import {makeStyles} from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
 
 const useStyles = makeStyles(theme => ({
+  root: {
+    fontFamily: props => props.bold ? 'Roboto500' : 'Roboto400',
+  },
   error: {
     background: theme.palette.error.main,
     borderColor: theme.palette.error.main,
@@ -21,13 +24,14 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function FilledButton({error, className, ...rest}) {
-  const classes = useStyles();
+export default function FilledButton(props) {
+  const classes = useStyles(props);
+  const { error, bold, className, ...rest} = props;
 
   return (
     <Button
       variant="contained"
-      className={clsx({[classes.error]: error}, className)}
+      className={clsx(classes.root, {[classes.error]: error}, className)}
       {...rest} />
   );
 }
@@ -38,6 +42,7 @@ FilledButton.propTypes = {
   size: PropTypes.oneOf(['small', 'medium', 'large']),
   error: PropTypes.bool,
   color: PropTypes.oneOf(['primary', 'secondary']),
+  bold: PropTypes.bool,
 };
 
 FilledButton.defaultProps = {

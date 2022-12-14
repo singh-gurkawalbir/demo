@@ -80,10 +80,11 @@ const useStyles = makeStyles(theme => ({
     paddingBottom: theme.spacing(1),
   },
   content: {
-    padding: '30px 30px 30px 0',
+    padding: theme.spacing(2, 0),
   },
   container: {
-    padding: '0 0 30px 30px',
+    paddingLeft: theme.spacing(2),
+    paddingBottom: theme.spacing(2),
   },
   button: {
     margin: theme.spacing(1),
@@ -272,6 +273,7 @@ export default function SubscriptionSection({ childId, integrationId }) {
                   <FilledButton
                     className={classes.button}
                     disabled
+                    bold
                     data-test="requestUpgrade"
                   >
                     Request upgrade

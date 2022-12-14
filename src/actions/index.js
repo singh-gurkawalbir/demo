@@ -98,7 +98,7 @@ const auth = {
   },
   changeEmailRequest: token =>
     action(actionTypes.AUTH.CHANGE_EMAIL_REQUEST, { token }),
-  changeEmailSuccess: () => action(actionTypes.AUTH.CHANGE_EMAIL_SUCCESSFUL),
+  changeEmailSuccess: requestInfo => action(actionTypes.AUTH.CHANGE_EMAIL_SUCCESSFUL, {requestInfo}),
   changeEmailFailed: error => action(actionTypes.AUTH.CHANGE_EMAIL_FAILED, {error}),
   setPasswordRequest: (password, token) =>
     action(actionTypes.AUTH.SET_PASSWORD_REQUEST, { password, token }),
@@ -562,6 +562,8 @@ const resource = {
 const auditLogs = {
   request: (resourceType, resourceId, nextPagePath) => action(actionTypes.RESOURCE.REQUEST_AUDIT_LOGS, {
     resourceType: auditResourceTypePath(resourceType, resourceId),
+    auditResource: resourceType,
+    resourceId,
     nextPagePath,
   }),
   receivedNextPagePath: nextPagePath => action(actionTypes.RESOURCE.AUDIT_LOGS_NEXT_PATH, {

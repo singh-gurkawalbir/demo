@@ -46,7 +46,8 @@ export default function Help({ className, helpKey, helpText, escapeUnsecuredDoma
     // if clicking interacting with feedback text field  or if clicking on No button
     // do not close popper
     if (event.target.name === 'feedbackText' ||
-    event.target.textContent === 'No'
+    event.target.textContent === 'No' ||
+    event.target.dataset?.test === 'noContentHelpful'
     ) return;
     setAnchorEl(null);
   }, []);
