@@ -78,7 +78,7 @@ export default function TitleActions({ flowId }) {
       id
     ) || {};
 
-  if (merged?.http?._httpConnectorId || merged?.isHttpConnector) {
+  if (merged?.http?._httpConnectorId || merged?.isHttpConnector || merged?._httpConnectorId) {
     applicationType = merged.http?.sessionFormType === 'http' ? 'http' : applicationType;
   } else {
     applicationType = merged.http?.formType === 'http' ? 'http' : applicationType;

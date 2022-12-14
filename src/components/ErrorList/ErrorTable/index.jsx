@@ -63,8 +63,14 @@ const useStyles = makeStyles(theme => ({
     gridColumnGap: theme.spacing(0.5),
   },
   resourceFormWrapper: {
-    width: '100%',
+    width: '135%',
     overflow: 'auto',
+    '& .MuiTableCell-root': {
+      padding: theme.spacing(1),
+    },
+    '& .MuiFormControlLabel-root': {
+      marginRight: 0,
+    },
   },
   panelWrapper: {
     width: '100%',
@@ -178,6 +184,7 @@ const ErrorTableWithPanel = ({
               resourceType="splitViewOpenErrors"
               actionProps={actionProps}
               onRowClick={onRowClick}
+              size="small"
             />
             {emptyErrorMessage && <EmptyErrorMessage />}
             {emptyFilterMessage && <NoFiltersMessage />}

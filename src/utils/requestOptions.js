@@ -380,7 +380,7 @@ export default function getRequestOptions(
           path: nextPagePath,
         };
       }
-      let path = `/${resourceType}`;
+      let path = `/${resourceType}?`;
 
       const { resourceType: filterResourceType, source, event, byUser, _resourceId } = filters || {};
 
