@@ -73,6 +73,7 @@ export default function RequireAccountSSO({ user }) {
             data-test="ssoRequired"
             disabled
             checked={accountSSORequired}
+            noPadding
             onChange={handleSwitch} />
         </div>
       </Tooltip>
@@ -85,6 +86,7 @@ export default function RequireAccountSSO({ user }) {
       checked={accountSSORequired}
       onChange={handleSwitch}
       disabled={switchInProgress}
+      noPadding
       />
   );
 }

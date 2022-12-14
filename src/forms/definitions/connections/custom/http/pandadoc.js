@@ -42,6 +42,7 @@ export default {
       '/http/ping/method': 'GET',
       '/http/auth/token/location': 'header',
       '/http/auth/token/headerName': 'Authorization',
+      '/http/auth/oauth/useIClientFields': false,
     };
   },
   fieldMap: {
@@ -71,6 +72,11 @@ export default {
       ignoreEnvironmentFilter: true,
       visibleWhen: [{ field: 'http.auth.type', is: ['oauth'] }],
     },
+    'http.auth.oauth.callbackURL': {
+      fieldId: 'http.auth.oauth.callbackURL',
+      copyToClipboard: true,
+      visibleWhen: [{ field: 'http.auth.type', is: ['oauth'] }],
+    },
     'http.auth.token.token': {
       fieldId: 'http.auth.token.token',
       id: 'http.auth.token.token',
@@ -93,6 +99,7 @@ export default {
         fields: [
           'http.auth.type',
           'http._iClientId',
+          'http.auth.oauth.callbackURL',
           'http.auth.token.token',
         ],
       },

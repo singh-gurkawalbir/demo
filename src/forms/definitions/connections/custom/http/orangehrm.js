@@ -11,6 +11,7 @@ export default {
     '/http/auth/token/location': 'header',
     '/http/auth/token/headerName': 'Authorization',
     '/http/auth/token/scheme': 'Bearer',
+    '/http/auth/oauth/useIClientFields': false,
     '/http/auth/oauth/tokenURI': `https://${formValues['/http/unencrypted/subdomain']}.orangehrm.com/oauth/issueToken`,
     '/http/auth/oauth/clientCredentialsLocation': 'body',
     '/http/auth/oauth/grantType': 'clientcredentials',
@@ -68,6 +69,10 @@ export default {
       connectorId: r => r && r._connectorId,
       ignoreEnvironmentFilter: true,
     },
+    'http.auth.oauth.callbackURL': {
+      fieldId: 'http.auth.oauth.callbackURL',
+      copyToClipboard: true,
+    },
     application: {
       fieldId: 'application',
     },
@@ -84,6 +89,7 @@ export default {
           'http.unencrypted.username',
           'http.encrypted.password',
           'http._iClientId',
+          'http.auth.oauth.callbackURL',
         ],
       },
       { collapsed: true, label: 'Advanced', fields: ['httpAdvanced'] },

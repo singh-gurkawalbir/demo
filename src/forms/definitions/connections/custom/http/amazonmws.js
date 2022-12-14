@@ -29,6 +29,7 @@ export default {
       newValues['/http/auth/token/refreshMediaType'] = 'urlencoded';
       newValues['/http/auth/token/location'] = 'body';
       newValues['/http/auth/failStatusCode'] = 403;
+      newValues['/http/auth/oauth/useIClientFields'] = false;
       newValues['/http/auth/oauth/authURI'] = amazonSellerCentralAuthURI[newValues['/http/unencrypted/marketplace']];
       newValues['/http/auth/oauth/tokenURI'] = 'https://api.amazon.com/auth/o2/token';
       newValues['/http/auth/oauth/accessTokenPath'] = 'access_token';

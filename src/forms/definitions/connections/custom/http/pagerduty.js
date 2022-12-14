@@ -4,6 +4,7 @@ export default {
 
     if (retValues['/http/auth/type'] === 'oauth') {
       retValues['/http/auth/token/location'] = 'header';
+      retValues['/http/auth/oauth/useIClientFields'] = false;
       retValues['/http/auth/oauth/authURI'] = 'https://app.pagerduty.com/oauth/authorize';
       retValues['/http/auth/oauth/tokenURI'] = 'https://app.pagerduty.com/oauth/token';
       retValues['/http/auth/token/headerName'] = 'Authorization';
@@ -86,6 +87,11 @@ export default {
       helpKey: 'pagerduty.connection.http._iClientId',
       visibleWhen: [{ field: 'http.auth.type', is: ['oauth'] }],
     },
+    'http.auth.oauth.callbackURL': {
+      fieldId: 'http.auth.oauth.callbackURL',
+      copyToClipboard: true,
+      visibleWhen: [{ field: 'http.auth.type', is: ['oauth'] }],
+    },
     application: {
       fieldId: 'application',
     },
@@ -100,6 +106,7 @@ export default {
         fields: ['http.auth.type',
           'http.auth.token.token',
           'http._iClientId',
+          'http.auth.oauth.callbackURL',
         ] },
       { collapsed: true, label: 'Advanced', fields: ['httpAdvanced'] },
     ],
