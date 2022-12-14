@@ -8,6 +8,7 @@ export default {
     '/http/auth/type': 'oauth',
     '/http/mediaType': 'json',
     '/http/baseURI': 'https://graph.microsoft.com/v1.0',
+    '/http/auth/oauth/useIClientFields': false,
     '/http/auth/oauth/authURI':
         `https://login.microsoftonline.com/${
           formValues['/http/unencrypted/tenantId']}/oauth2/v2.0/authorize?prompt=consent`,
@@ -130,6 +131,10 @@ export default {
     application: {
       fieldId: 'application',
     },
+    'http.auth.oauth.callbackURL': {
+      fieldId: 'http.auth.oauth.callbackURL',
+      copyToClipboard: true,
+    },
     httpAdvanced: { formId: 'httpAdvanced' },
   },
   layout: {
@@ -141,6 +146,7 @@ export default {
         fields: [
           'http.unencrypted.tenantId',
           'http._iClientId',
+          'http.auth.oauth.callbackURL',
           'http.auth.oauth.scope'] },
       { collapsed: true, label: 'Advanced', fields: ['httpAdvanced'] },
     ],

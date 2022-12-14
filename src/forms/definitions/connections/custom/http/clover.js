@@ -12,6 +12,7 @@ export default {
     '/http/ping/relativeURI': `/v3/merchants/${
       formValues['/http/unencrypted/merchantId']}`,
     '/http/ping/method': 'GET',
+    '/http/auth/oauth/useIClientFields': false,
     '/http/auth/oauth/authURI': `https://${
       formValues['/http/unencrypted/environment'] === 'sandbox' ? 'sandbox.dev.clover.com' : `${
         formValues['/http/unencrypted/region'] === 'usandcanada' ? 'www.clover.com' : 'eu.clover.com'}`
@@ -82,6 +83,10 @@ export default {
       connectorId: r => r && r._connectorId,
       ignoreEnvironmentFilter: true,
     },
+    'http.auth.oauth.callbackURL': {
+      fieldId: 'http.auth.oauth.callbackURL',
+      copyToClipboard: true,
+    },
     httpAdvanced: { formId: 'httpAdvanced' },
     application: {
       fieldId: 'application',
@@ -93,7 +98,7 @@ export default {
       { collapsed: true, label: 'General', fields: ['name', 'application'] },
       { collapsed: true,
         label: 'Application details',
-        fields: ['http.unencrypted.environment', 'http.unencrypted.region', 'http.unencrypted.merchantId', 'http._iClientId'] },
+        fields: ['http.auth.oauth.callbackURL', 'http.unencrypted.environment', 'http.unencrypted.region', 'http.unencrypted.merchantId', 'http._iClientId'] },
       { collapsed: true, label: 'Advanced', fields: ['httpAdvanced'] },
     ],
   },

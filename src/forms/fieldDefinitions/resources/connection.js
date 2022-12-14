@@ -1,5 +1,5 @@
 import { URI_VALIDATION_PATTERN, RDBMS_TYPES, AWS_REGIONS_LIST} from '../../../constants';
-import { isNewId, getAssistantFromResource, rdbmsSubTypeToAppType, rdbmsAppTypeToSubType } from '../../../utils/resource';
+import { isNewId, getDomainUrl, getAssistantFromResource, rdbmsSubTypeToAppType, rdbmsAppTypeToSubType } from '../../../utils/resource';
 import { applicationsList} from '../../../constants/applications';
 import { getConstantContactVersion } from '../../../utils/connections';
 
@@ -772,6 +772,13 @@ export default {
   'http.auth.oauth.username': {
     type: 'text',
     label: 'Http auth oauth username',
+  },
+  'http.auth.oauth.callbackURL': {
+    isLoggable: true,
+    type: 'text',
+    label: 'Redirect URL',
+    defaultDisabled: true,
+    defaultValue: () => `${getDomainUrl()}/connection/oauth2callback`,
   },
   'http.auth.oauth.type': {
     isLoggable: true,
