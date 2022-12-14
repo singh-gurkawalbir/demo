@@ -3,7 +3,6 @@ export const REST_ASSISTANTS = [
   'certify',
   'chargify',
   'docusign',
-  'dropbox',
   'jet',
   'jira',
   'jobvite',
@@ -121,9 +120,8 @@ export const CONNECTORS_TO_IGNORE = [
   'acumaticaecommerce',
 ];
 
-export const WEBHOOK_ONLY_APPLICATIONS = ['travis-org', 'helpscout', 'errorception', 'aha', 'mailparser-io', 'dropbox', 'travis', 'sapariba',
-  'box'];
-export const FILE_PROVIDER_ASSISTANTS = ['googledrive', 'azurestorageaccount'];
+export const WEBHOOK_ONLY_APPLICATIONS = ['travis-org', 'helpscout', 'errorception', 'aha', 'mailparser-io', 'travis', 'sapariba'];
+export const FILE_PROVIDER_ASSISTANTS = ['googledrive', 'azurestorageaccount', 'box', 'dropbox'];
 export const RDBMS_TYPES = ['mysql', 'postgresql', 'mssql', 'snowflake', 'oracle', 'bigquerydatawarehouse', 'redshiftdatawarehouse'];
 
 export const MULTIPLE_AUTH_TYPE_ASSISTANTS = [
