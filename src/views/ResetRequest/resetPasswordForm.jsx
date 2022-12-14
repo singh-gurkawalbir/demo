@@ -13,6 +13,7 @@ import { FilledButton, TextButton } from '../../components/Buttons';
 import ShowContentIcon from '../../components/icons/ShowContentIcon';
 import HideContentIcon from '../../components/icons/HideContentIcon';
 import getRoutePath from '../../utils/routePaths';
+import RawHtml from '../../components/RawHtml';
 
 const useStyles = makeStyles(theme => ({
   submit: {
@@ -21,7 +22,6 @@ const useStyles = makeStyles(theme => ({
     height: 38,
     fontSize: theme.spacing(2),
     marginTop: theme.spacing(1),
-    color: theme.palette.warning.main,
   },
   editableFields: {
     textAlign: 'center',
@@ -72,14 +72,16 @@ export default function ResetPassword() {
   const handleResetPassword = useCallback(password => {
     dispatch(actions.auth.resetPasswordRequest(password, token));
   }, [dispatch, token]);
-  const isSetPasswordCompleted = useSelector(state => selectors.requestResetPasswordStatus(state) === 'success');
+  const isResetPasswordCompleted = useSelector(state => selectors.requestResetPasswordStatus(state) === 'success');
+  const resetPasswordMsg = useSelector(state => selectors.requestResetPasswordMsg(state));
 
   useEffect(() => {
-    if (isSetPasswordCompleted) {
+    if (isResetPasswordCompleted) {
+      dispatch(actions.auth.signupStatus('done', resetPasswordMsg));
       history.replace(getRoutePath('/signin'));
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isSetPasswordCompleted]);
+  }, [isResetPasswordCompleted]);
   const isAuthenticating = useSelector(state => selectors.isAuthenticating(state));
   const error = useSelector(state => {
     const errorMessage = selectors.requestResetPasswordError(state);
@@ -121,7 +123,7 @@ export default function ResetPassword() {
         component="div"
         variant="h5"
         className={classes.alertMsg}>
-        {error}
+        <RawHtml html={error} />
       </Typography>
       )}
       <form onSubmit={handleOnSubmit}>
