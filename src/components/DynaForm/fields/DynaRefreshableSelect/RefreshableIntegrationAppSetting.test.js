@@ -111,6 +111,14 @@ describe('RefreshableIntegrationAppSetting UI tests', () => {
     userEvent.click(option);
     expect(mockonFieldChange).toBeCalled();
   });
+  test('should make a dispatch call when clicked on refresh button in the select', async () => {
+    initRefreshableIntegrationAppSetting(props);
+    const refreshButton = document.querySelector('[data-test="refreshResource"]');
+
+    expect(refreshButton).toBeInTheDocument();
+    userEvent.click(refreshButton);
+    await waitFor(() => expect(mockDispatchFn).toBeCalledWith(actions.connectors.refreshMetadata(null, 'demo fieldname', '6ced8663a56953365bd28541')));
+  });
   test('should make a dispatch call when autoPostBack prop is true', async () => {
     initRefreshableIntegrationAppSetting({...props, autoPostBack: true});
     const dropDownValue = screen.getByText('Please select');
