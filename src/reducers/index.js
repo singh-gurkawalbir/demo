@@ -85,7 +85,7 @@ import {
 } from '../utils/exportPanel';
 import getRoutePath from '../utils/routePaths';
 import { getIntegrationAppUrlName, getTitleFromEdition, getTitleIdFromSection, isIntegrationAppVersion2 } from '../utils/integrationApps';
-import mappingUtil, { applyRequiredFilter, applyMappedFilter } from '../utils/mapping';
+import mappingUtil, { applyRequiredFilter, applyMappedFilter, applySearchFilter, countMatches } from '../utils/mapping';
 import responseMappingUtil from '../utils/responseMapping';
 import { suiteScriptResourceKey, isJavaFlow } from '../utils/suiteScript';
 import { stringCompare, comparer } from '../utils/sort';
@@ -116,6 +116,8 @@ import { buildDrawerUrl, drawerPaths } from '../utils/rightDrawer';
 import { GRAPHQL_HTTP_FIELDS, isGraphqlResource } from '../utils/graphql';
 import { initializeFlowForReactFlow, getFlowAsyncKey } from '../utils/flows/flowbuilder';
 import { HTTP_BASED_ADAPTORS } from '../utils/http';
+import { getAuditLogFilterKey } from '../constants/auditLog';
+import { SHOPIFY_APP_STORE_LINKS } from '../constants/urls';
 
 const emptyArray = [];
 const emptyObject = {};
@@ -369,6 +371,62 @@ selectors.integrationInstallSteps = createSelector(
     // passing connectionId as _connId in case of 'Integrator Bundle' and 'Integrator Adaptor Package'
 
     return installSteps.map(step => {
+      if (step.installURL || step.url) {
+        if (
+          step.name.includes('Integrator Bundle')
+        ) {
+          const connectionId = bundleInstallationForNetsuiteConnections[netsuiteConnIndex]?._connectionId;
+
+          netsuiteConnIndex += 1;
+
+          return {
+            ...step,
+            _connId: connectionId,
+          };
+        } if (step.name.includes('Integrator Adaptor Package')) {
+          const connectionId = bundleInstallationForSalesforceConnections[salesforceConnIndex]?._connectionId;
+
+          salesforceConnIndex += 1;
+
+          return {
+            ...step,
+            _connId: connectionId,
+          };
+        }
+      }
+
+      return step;
+    });
+  }
+);
+selectors.integrationChangeEditionSteps = createSelector(
+  (state, integrationId) => fromSession.changeEditionSteps(state?.session, integrationId),
+  (state, integrationId) => fromData.integrationChangeEditionSteps(state?.data, integrationId),
+  (state, integrationId) => fromSession.v2integrationAppsInstaller(state?.session, integrationId),
+  (state, integrationId) => selectors.integrationAppSettings(state, integrationId)?._connectorId,
+  (steps, integrationChangeEditionSteps, changeEditionStepsStatus, _connectorId) => {
+    const visibleSteps = (steps.length
+      ? steps
+      : integrationChangeEditionSteps)
+      .filter(s => s.type !== 'hidden');
+
+    const changeEditionSteps = visibleSteps.map(step => {
+      if (step.isCurrentStep) {
+        return { ...step, ...changeEditionStepsStatus };
+      }
+
+      return step;
+    });
+
+    if (_connectorId) return changeEditionSteps;
+    const bundleInstallationForNetsuiteConnections = changeEditionSteps.filter(step => step.sourceConnection?.type === 'netsuite');
+    const bundleInstallationForSalesforceConnections = changeEditionSteps.filter(step => step.sourceConnection?.type === 'salesforce');
+
+    let netsuiteConnIndex = 0;
+    let salesforceConnIndex = 0;
+    // passing connectionId as _connId in case of 'Integrator Bundle' and 'Integrator Adaptor Package'
+
+    return changeEditionSteps.map(step => {
       if (step.installURL || step.url) {
         if (
           step.name.includes('Integrator Bundle')
@@ -1816,12 +1874,15 @@ selectors.mkFilteredHomeTiles = () => {
     state => {
       const tiles = tilesSelector(state);
 
-      return tiles.map(t => {
+      tiles.forEach(t => {
         const applications = appSel(state, t);
         const pinnedIntegrations = selectors.userPreferences(state).dashboard?.pinnedIntegrations || emptyArray;
 
-        return {...t, applications, pinned: pinnedIntegrations.includes(t._integrationId)};
+        t.applications = applications;
+        t.pinned = pinnedIntegrations.includes(t._integrationId);
       });
+
+      return tiles;
     },
     state => selectors.suiteScriptLinkedTiles(state),
     state => selectors.userPreferences(state).dashboard,
@@ -2192,19 +2253,16 @@ selectors.auditLogs = (
   state,
   resourceType,
   resourceId,
-  filters,
   options = {}
 ) => {
   let auditLogs = fromData.auditLogs(
     state?.data,
     resourceType,
     resourceId,
-    filters
   );
 
   const result = {
     logs: [],
-    count: 0,
     totalCount: 0,
   };
 
@@ -2233,12 +2291,26 @@ selectors.auditLogs = (
     });
   }
 
-  result.logs = options.take ? auditLogs.slice(0, options.take) : auditLogs;
-  result.count = result.logs.length;
+  result.logs = auditLogs;
   result.totalCount = auditLogs.length;
 
   return result;
 };
+
+selectors.paginatedAuditLogs = createSelector(
+  selectors.auditLogs,
+  (state, resourceType, resourceId) => {
+    const filterKey = getAuditLogFilterKey(resourceType, resourceId);
+
+    return selectors.filter(state, filterKey);
+  },
+  (auditLogs, filters) => {
+    const { currPage = 0, rowsPerPage = DEFAULT_ROWS_PER_PAGE } = filters?.paging || {};
+
+    auditLogs.logs = auditLogs.logs.slice(currPage * rowsPerPage, (currPage + 1) * rowsPerPage);
+
+    return auditLogs;
+  });
 
 selectors.mkFlowResources = () => createSelector(
   state => state?.data?.resources?.flows,
@@ -2649,6 +2721,35 @@ selectors.mkGetMediaTypeOptions = () => {
   );
 };
 
+// for IA 1.0 install mode dummy connection are created. since we don't know it's new connection or existing connection we will verify
+// if connection is online or not.
+selectors.isNewConnectionId = () => {
+  const makeResourceSelector = selectors.makeResourceSelector();
+
+  return createSelector(
+    (state, resourceType, resourceId) => {
+      const resource = makeResourceSelector(state, resourceType, resourceId);
+
+      if (!resource?._connectorId) {
+        return [];
+      }
+      let steps = selectors.getChildInstallSteps(state, resource?._integrationId) || [];
+
+      if (!steps.length) {
+        const integrationResource = makeResourceSelector(state, 'integrations', resource?._integrationId);
+
+        if (integrationResource?.mode === 'install') {
+          steps = selectors.integrationInstallSteps(state, resource?._integrationId) || [];
+        }
+      }
+
+      return steps;
+    },
+    (_1, _2, resourceId) => resourceId,
+    (installSteps, resourceId) => !!installSteps?.find(s => s?._connectionId === resourceId)
+  );
+};
+
 // #endregion resource selectors
 
 // #region integrationApps selectors
@@ -2871,6 +2972,8 @@ selectors.integrationAppLicense = (state, id) => {
   const connector =
      integrationAppList?.find(ia => ia._id === license?._connectorId);
   const editions = connector?.twoDotZero?.editions || emptyArray;
+  const changeEdition = (editions.find(ed => ed._id === license?._changeEditionId) || {})?.displayName;
+  const nextPlan = changeEdition ? getTitleFromEdition(changeEdition) : '';
   const upgradeRequested = selectors.checkUpgradeRequested(state, license._id);
   const dateFormat = selectors.userProfilePreferencesProps(state)?.dateFormat;
   const { expires, created } = license;
@@ -2894,6 +2997,7 @@ selectors.integrationAppLicense = (state, id) => {
     upgradeRequested: !!upgradeRequested,
     createdText: createdFormatted,
     showLicenseExpiringWarning: hasExpired || isExpiringSoon,
+    nextPlan,
   };
 };
 
@@ -3006,7 +3110,7 @@ selectors.hasGeneralSettings = (state, integrationId, childId) => {
   const { supportsMultiStore, general } = integrationResource.settings || {};
 
   if (supportsMultiStore) {
-    return !!(general || []).find(s => s.id === childId);
+    return Array.isArray(general) && !!general.find(s => s.id === childId);
   }
   if (Array.isArray(general)) {
     return !!general.find(s => s.title === 'General');
@@ -3412,7 +3516,10 @@ selectors.availableUsersList = createSelector(
       ];
     }
 
-    return _users ? _users.sort(stringCompare('sharedWithUser.name')) : emptyArray;
+    return _users
+      ? _users.sort(stringCompare('sharedWithUser.name'))
+        .map(userVal => !userVal.sharedWithUser ? ({ ...userVal, sharedWithUser: emptyObject }) : userVal)
+      : emptyArray;
   }
 
 );
@@ -5369,6 +5476,14 @@ selectors.applicationType = (state, resourceType, id) => {
   const assistant = getStagedValue('/assistant') || resourceObj?.assistant;
 
   if (adaptorType === 'WebhookExport') {
+    const httpConnectorId = getStagedValue('/_httpConnectorId') || getStagedValue('/webhook/_httpConnectorId') || resourceObj?._httpConnectorId || resourceObj?.webhook?._httpConnectorId;
+    const applications = applicationsList();
+    const httpApp = applications.find(a => a._httpConnectorId === httpConnectorId);
+
+    if (httpConnectorId && httpApp) {
+      return httpApp._legacyId || httpApp.id;
+    }
+
     return (
       getStagedValue('/webhook/provider') ||
       (resourceObj && resourceObj.webhook && resourceObj.webhook.provider)
@@ -5406,7 +5521,7 @@ selectors.applicationType = (state, resourceType, id) => {
     const httpApp = applications.find(a => a._httpConnectorId === httpConnectorId);
 
     if (httpConnectorId && httpApp) {
-      return httpApp._legacyId || httpApp.name;
+      return httpApp._legacyId || httpApp.id;
     }
   }
 
@@ -5617,6 +5732,35 @@ selectors.mappingEditorNotification = (state, editorId) => {
     variant: 'warning',
   };
 };
+
+selectors.filteredV2TreeData = createSelector(
+  state => selectors.v2MappingsTreeData(state),
+  state => selectors.mapping(state).filter,
+  state => selectors.mapping(state).lookups,
+  state => selectors.mapping(state).searchKey,
+  (v2TreeData, filter = [], lookups = [], searchKey) => {
+    if (isEmpty(v2TreeData) || (!searchKey && (isEmpty(filter) || filter.includes('all')))) return {filteredTreeData: v2TreeData};
+
+    // ToDo: try replacing cloneDeep with something else
+    let filteredTreeData = cloneDeep(v2TreeData);
+    let expandedKeys;
+    let searchCount;
+
+    if (searchKey) {
+      expandedKeys = [];
+      filteredTreeData = applySearchFilter(filteredTreeData, lookups, searchKey, expandedKeys);
+      searchCount = countMatches(filteredTreeData, searchKey);
+    } else if (filter.includes('required') && filter.includes('mapped')) {
+      filteredTreeData = applyMappedFilter(filteredTreeData, lookups, true);
+    } else if (filter.includes('required')) {
+      filteredTreeData = applyRequiredFilter(filteredTreeData);
+    } else {
+      filteredTreeData = applyMappedFilter(filteredTreeData, lookups);
+    }
+
+    return {filteredTreeData, searchCount, expandedKeys};
+  }
+);
 
 // #endregion MAPPING END
 
@@ -6009,8 +6153,9 @@ selectors.getIntegrationUserNameById = (state, userId, flowId) => {
   // else get user name from integration users list
   const integrationId = selectors.resource(state, 'flows', flowId)?._integrationId || 'none';
   const usersList = selectors.availableUsersList(state, integrationId);
+  const userObject = usersList.find(user => user?.sharedWithUser?._id === userId);
 
-  return usersList.find(user => user?.sharedWithUser?._id === userId)?.sharedWithUser?.name;
+  return userObject?.sharedWithUser?.name || userObject?.sharedWithUser?.email;
 };
 
 // #endregion errorManagement selectors
@@ -6882,8 +7027,10 @@ selectors.isUserAllowedOnlySSOSignIn = state => {
 
 selectors.primaryAccounts = createSelector(
   state => selectors.isAccountOwner(state),
-  state => state?.user?.org?.accounts?.filter(acc => acc._id !== ACCOUNT_IDS.OWN),
-  (isAccountOwner, orgAccounts) => {
+  state => state?.user?.org?.accounts,
+  (isAccountOwner, allAccounts) => {
+    const orgAccounts = allAccounts?.filter(acc => acc._id !== ACCOUNT_IDS.OWN);
+
     if (isAccountOwner) {
       return emptyList;
     }
@@ -7209,12 +7356,11 @@ selectors.allAliases = createSelector(
 
 selectors.retryUsersList = createSelector(
   selectors.userProfile,
-  state => selectors.availableUsersList(state),
-  (state, flowId, resourceId) => selectors.retryList(state, flowId, resourceId),
+  (state, integrationId) => selectors.availableUsersList(state, integrationId),
+  (state, _1, flowId, resourceId) => selectors.retryList(state, flowId, resourceId),
   (profile, availableUsersList, retryJobs) => {
     if (!Array.isArray(retryJobs)) {
-      // When all users are selected we show the 'Select' as the placeholder text in the filter
-      return [{ _id: 'all', name: 'Select'}];
+      return [{ _id: 'all', name: 'All users'}];
     }
 
     const allUsersTriggeredRetry = retryJobs.reduce((users, job) => {
@@ -7222,16 +7368,29 @@ selectors.retryUsersList = createSelector(
         return users;
       }
 
-      const userObject = availableUsersList.find(userOb => userOb.sharedWithUser?._id === job.triggeredBy);
-      const name = profile._id === job.triggeredBy ? (profile.name || profile.email) : userObject?.sharedWithUser?.name;
+      if (job.triggeredBy === 'auto') {
+        users.push({
+          _id: job.triggeredBy,
+          name: 'Auto-retried',
+        });
+      } else {
+        const userObject = availableUsersList.find(userOb => userOb.sharedWithUser?._id === job.triggeredBy);
+        const name = profile._id === job.triggeredBy
+          ? (profile.name || profile.email)
+          : (userObject?.sharedWithUser?.name || userObject?.sharedWithUser?.email);
 
-      return users.find(user => user._id === job.triggeredBy) ? users : [...users, {
-        _id: job.triggeredBy,
-        name,
-      }];
+        if (name) {
+          users.push({
+            _id: job.triggeredBy,
+            name,
+          });
+        }
+      }
+
+      return users;
     }, []);
 
-    return [{ _id: 'all', name: 'All users'}, ...allUsersTriggeredRetry];
+    return [{ _id: 'all', name: 'All users'}, ...(uniqBy(allUsersTriggeredRetry, '_id'))];
   }
 );
 
@@ -7252,7 +7411,7 @@ selectors.mkFlowResourcesRetryStatus = () => {
         return finalResourcesRetryStatus;
       }
 
-      finalResourcesRetryStatus.isAnyRetryInProgress = flowResources.find(res => resourcesRetryStatus?.[flowId]?.[res._id] === 'inProgress');
+      finalResourcesRetryStatus.isAnyRetryInProgress = !!flowResources.find(res => resourcesRetryStatus?.[flowId]?.[res._id] === 'inProgress');
       finalResourcesRetryStatus.resourcesWithRetryCompleted = flowResources.filter(res => resourcesRetryStatus?.[flowId]?.[res._id] === 'completed');
 
       return finalResourcesRetryStatus;
@@ -7260,22 +7419,22 @@ selectors.mkFlowResourcesRetryStatus = () => {
   );
 };
 
-selectors.filteredV2TreeData = state => {
-  const v2TreeData = selectors.v2MappingsTreeData(state);
-  const { filter = [], lookups = [] } = selectors.mapping(state);
+selectors.flowResourcesRetryStatus = selectors.mkFlowResourcesRetryStatus();
+selectors.getShopifyStoreLink = (state, resourceId) => {
+  const {_connectorId} = selectors.resourceData(
+    state,
+    'connections',
+    resourceId,
+    'value'
+  )?.merged || emptyObject;
 
-  if (isEmpty(v2TreeData) || isEmpty(filter) || filter.includes('all')) return v2TreeData;
+  if (!_connectorId) return SHOPIFY_APP_STORE_LINKS.DIY_APP;
 
-  // ToDo: try replacing cloneDeep with something else
-  let filteredTreeData = cloneDeep(v2TreeData);
+  /* uncomment the below code when
+    'SAP Business ByDesign Integration App' or 'Microsoft Business Central Integration App' are published
+    const integration = selectors.resource(state, 'integrations', _integrationId);
+    if (integration.name.toLowerCase().includes('microsoft')) return SHOPIFY_APP_STORE_LINKS.MICROSOFT_BUSINESS_IA_APP;
+    if (integration.name.toLowerCase().includes('sap')) return SHOPIFY_APP_STORE_LINKS.SAP_BUSINESS_IA_APP; */
 
-  if (filter.includes('required') && filter.includes('mapped')) {
-    filteredTreeData = applyMappedFilter(filteredTreeData, lookups, true);
-  } else if (filter.includes('required')) {
-    filteredTreeData = applyRequiredFilter(filteredTreeData);
-  } else {
-    filteredTreeData = applyMappedFilter(filteredTreeData, lookups);
-  }
-
-  return filteredTreeData;
+  return SHOPIFY_APP_STORE_LINKS.NETSUITE_IA_APP;
 };

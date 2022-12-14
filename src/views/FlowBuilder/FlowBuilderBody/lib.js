@@ -3,6 +3,7 @@ import dagre from 'dagre';
 import { isVirtualRouter } from '../../../utils/flows/flowbuilder';
 import { GRAPH_ELEMENTS_TYPE } from '../../../constants';
 import { shortId } from '../../../utils/string';
+import { stringCompare } from '../../../utils/sort';
 
 // react-flow handles by default sit just outside of the node boundary.
 // this offset is the number of pixels the left or right handle is offset from
@@ -58,7 +59,22 @@ export function generateNewNode() {
   };
 }
 
-export function layoutElements(elements = []) {
+export function rectifyPageGeneratorOrder(nodes = [], flow) {
+  const pgs = nodes.filter(node => node.type === GRAPH_ELEMENTS_TYPE.PG_STEP);
+  const positions = pgs.map(node => ({id: node.id, position: node.position}));
+
+  positions.sort(stringCompare('position.y'));
+
+  flow.pageGenerators?.forEach((pg, index) => {
+    const pgNode = pgs.find(node => node.id === pg.id);
+
+    if (pgNode && !!positions[index]) {
+      pgNode.position = positions[index].position;
+    }
+  });
+}
+
+export function layoutElements(elements = [], flow) {
   const graph = new dagre.graphlib.Graph();
 
   graph.setDefaultEdgeLabel(() => ({}));
@@ -76,6 +92,8 @@ export function layoutElements(elements = []) {
 
   const nodes = [];
   const edges = [];
+  let highestX = -Infinity;
+  let highestY = -Infinity;
 
   elements.forEach(el => {
     if (isNode(el)) {
@@ -83,13 +101,19 @@ export function layoutElements(elements = []) {
       const size = nodeSize[el.type];
       const offsetY = 0;
 
+      if (node.x > highestX) {
+        highestX = node.x + size.width / 2;
+      }
+      if (node.y > highestY) {
+        highestY = node.y + size.height / 2;
+      }
       // We override the x position of terminal nodes so that they render a shorter edge path.
       // most times a terminal node will only require a short horizontal edge and it looks better
       // if this edge is shorted, which is accomplished by shifting th terminal node left by 1/2 the
       // size of a step. This way, nodes visually line-up when branching.
       const offsetX =
         el.type === GRAPH_ELEMENTS_TYPE.TERMINAL
-          ? nodeSize.pp.width / 2 - nodeSize[el.type].width / 2
+          ? Math.min(nodeSize.pp.width / 2 - nodeSize[el.type].width / 2, 50)
           : 0;
 
       // We are shifting the dagre node position that returns centerpoint (x,y)
@@ -122,8 +146,9 @@ export function layoutElements(elements = []) {
       });
     }
   });
+  rectifyPageGeneratorOrder(nodes, flow);
 
-  return [...nodes, ...edges];
+  return { elements: [...nodes, ...edges], x: highestX, y: highestY };
 }
 
 export function getAllFlowBranches(flow) {

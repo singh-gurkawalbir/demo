@@ -9,6 +9,9 @@ import JobFilesDownloadDialog from '../JobFilesDownloadDialog';
 import EllipsisHorizontallIcon from '../../icons/EllipsisHorizontalIcon';
 import DownloadIntegrationIcon from '../../icons/DownloadIntegrationIcon';
 import DownloadIcon from '../../icons/DownloadIcon';
+import PurgeIcon from '../../icons/PurgeIcon';
+import messageStore from '../../../utils/messageStore';
+import useConfirmDialog from '../../ConfirmDialog';
 
 const useStyle = makeStyles({
   iconBtn: {
@@ -23,6 +26,7 @@ export default function JobActionsMenu({
   const dispatch = useDispatch();
   const [anchorEl, setAnchorEl] = useState(null);
   const [showFilesDownloadDialog, setShowFilesDownloadDialog] = useState(false);
+  const { confirmDialog } = useConfirmDialog();
 
   const menuOptions = [];
 
@@ -37,11 +41,38 @@ export default function JobActionsMenu({
       action: 'downloadFiles',
       icon: <DownloadIcon />,
     });
+    menuOptions.push({
+      label: `${job.files.length > 1 ? 'Purge files' : 'Purge file'}`,
+      action: 'purgeFiles',
+      icon: <PurgeIcon />,
+    });
   }
 
   const handleMenuClose = useCallback(() => {
     setAnchorEl(null);
   }, []);
+
+  const handlePurge = useCallback(() => {
+    dispatch(actions.job.purge.request({ jobId: job._id }));
+  }, [dispatch, job._id]);
+
+  const handleClick = useCallback(() => {
+    confirmDialog({
+      title: 'Confirm purge files',
+      message: messageStore('FILE_PURGE_CONFIRM_MESSAGE'),
+      buttons: [
+        {
+          label: 'Purge files',
+          error: true,
+          onClick: handlePurge,
+        },
+        {
+          label: 'Cancel',
+          variant: 'text',
+        },
+      ],
+    });
+  }, [confirmDialog, handlePurge]);
 
   function handleMenuClick(event) {
     setAnchorEl(event.currentTarget);
@@ -60,6 +91,8 @@ export default function JobActionsMenu({
       } else if (job.files.length > 1) {
         setShowFilesDownloadDialog(true);
       }
+    } else if (action === 'purgeFiles') {
+      handleClick();
     }
   }
 

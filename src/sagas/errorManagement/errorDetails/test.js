@@ -14,12 +14,14 @@ import {
   downloadErrors,
   selectAllErrorDetailsInCurrPage,
   deselectAllErrors,
+  purgeError,
 } from './index';
 import { updateRetryData } from '../metadata';
 import { selectors } from '../../../reducers';
 import getRequestOptions from '../../../utils/requestOptions';
 import actionTypes from '../../../actions/types';
 import openExternalUrl from '../../../utils/window';
+import messageStore from '../../../utils/messageStore';
 
 const flowId = 'flow-123';
 const resourceId = 'id-123';
@@ -801,6 +803,100 @@ describe('errorDetails sagas', () => {
         .run();
 
       return openErrorsTest && resolvedErrorsTest;
+    });
+  });
+  describe('purgeErrors saga test cases', () => {
+    test('should dispatch purge success action on successfull api call when user purges a resolved error', () => {
+      const errors = [{errorId: 'e1'}];
+      const path = `/flows/${flowId}/${resourceId}/resolved`;
+      const opts = {
+        method: 'DELETE',
+        body: {
+          errors,
+        },
+      };
+
+      return expectSaga(purgeError, { flowId, resourceId, errors })
+        .provide([
+          [matchers.call.fn(apiCallWithRetry)],
+          [matchers.call.fn(requestErrorDetails)],
+        ])
+        .call(apiCallWithRetry, {
+          path,
+          opts,
+          hidden: true,
+        })
+        .call(requestErrorDetails, {flowId, resourceId, isResolved: true})
+        .put(
+          actions.errorManager.flowErrorDetails.purge.success({
+            flowId,
+            resourceId,
+            message: messageStore('ERROR_PURGE_SUCCESS_MESSAGE'),
+          })
+        )
+        .run();
+    });
+    test('should dispatch purge success action on successfull api call when user purges filter selected resolved error', () => {
+      const errorIdList = [{errorId: 'e1'}];
+      const path = `/flows/${flowId}/${resourceId}/resolved`;
+      const opts = {
+        method: 'DELETE',
+        body: {
+          errors: errorIdList,
+        },
+      };
+
+      return expectSaga(purgeError, { flowId, resourceId })
+        .provide([
+          [select(selectors.selectedErrorIds, { flowId, resourceId, isResolved: true }), errorIdList],
+          [matchers.call.fn(apiCallWithRetry)],
+          [matchers.call.fn(requestErrorDetails)],
+        ])
+        .call(apiCallWithRetry, {
+          path,
+          opts,
+          hidden: true,
+        })
+        .call(requestErrorDetails, {flowId, resourceId, isResolved: true})
+        .put(
+          actions.errorManager.flowErrorDetails.purge.success({
+            flowId,
+            resourceId,
+            message: messageStore('MULTIPLE_ERROR_PURGE_SUCCESS_MESSAGE'),
+          })
+        )
+        .run();
+    });
+    test('should do nothing if api call fails', () => {
+      const errorIdList = [{errorId: 'e1'}];
+      const path = `/flows/${flowId}/${resourceId}/resolved`;
+      const opts = {
+        method: 'DELETE',
+        body: {
+          errors: errorIdList,
+        },
+      };
+      const error = new Error();
+
+      return expectSaga(purgeError, { flowId, resourceId })
+        .provide([
+          [select(selectors.selectedErrorIds, { flowId, resourceId, isResolved: true }), errorIdList],
+          [matchers.call.fn(apiCallWithRetry), throwError(error)],
+        ])
+        .call(apiCallWithRetry, {
+          path,
+          opts,
+          hidden: true,
+        })
+        .not.call(requestErrorDetails, {flowId, resourceId, isResolved: true})
+        .not.put(
+          actions.errorManager.flowErrorDetails.purge.success({
+            flowId,
+            resourceId,
+            message: messageStore('MULTIPLE_ERROR_PURGE_SUCCESS_MESSAGE'),
+          })
+        )
+        .run();
     });
   });
 });

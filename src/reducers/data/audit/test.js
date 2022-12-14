@@ -14,6 +14,26 @@ describe('audit reducer', () => {
 
     expect(newState).toEqual(someState);
   });
+  describe('RESOURCE.REQUEST_COLLECTION action', () => {
+    test('should do nothing if resourceType is not of type audit', () => {
+      const prevState = {};
+      const newState = reducer(prevState, actions.auditLogs.request('exports'));
+
+      expect(newState).toEqual(prevState);
+    });
+    test('should do nothing if resourceType is audit but no next page path is present', () => {
+      const prevState = {all: []};
+      const newState = reducer(prevState, actions.auditLogs.request('audit'));
+
+      expect(newState).toEqual(prevState);
+    });
+    test('should correctly update the status if next page path is present for audit', () => {
+      const prevState = {all: []};
+      const newState = reducer(prevState, actions.auditLogs.request('audit', '123', '/audit?123'));
+
+      expect(newState).toEqual({all: [], loadMoreStatus: 'requested'});
+    });
+  });
   describe('should update the state properly when account level audit collection received', () => {
     const auditLogs = [{ _id: 'id1' }, { _id: 'id2' }];
     const auditLogsReceivedAction = actions.resource.receivedCollection(
@@ -24,7 +44,7 @@ describe('audit reducer', () => {
     test('should update the state properly when the current state is undefined', () => {
       const newState = reducer(undefined, auditLogsReceivedAction);
 
-      expect(newState).toEqual({ all: auditLogs });
+      expect(newState).toEqual({ all: auditLogs, loadMoreStatus: 'received' });
     });
     test('should update the state properly when the current state is not empty', () => {
       const newState = reducer(
@@ -32,7 +52,7 @@ describe('audit reducer', () => {
         auditLogsReceivedAction
       );
 
-      expect(newState).toEqual({ all: auditLogs });
+      expect(newState).toEqual({ all: auditLogs, integrations: { int1: [{ _id: 'int_id1' }, { _id: 'int_id2' }] }, loadMoreStatus: 'received' });
     });
   });
   describe('should update the state properly when an integration audit collection received', () => {
@@ -45,7 +65,7 @@ describe('audit reducer', () => {
     test('should update the state properly when the current state is undefined', () => {
       const newState = reducer(undefined, auditLogsReceivedAction);
 
-      expect(newState).toEqual({ integrations: { int1: auditLogs } });
+      expect(newState).toEqual({ integrations: { int1: auditLogs }, loadMoreStatus: 'received' });
     });
     test('should update the state properly when the current state is not empty', () => {
       const newState = reducer(
@@ -53,7 +73,28 @@ describe('audit reducer', () => {
         auditLogsReceivedAction
       );
 
-      expect(newState).toEqual({ integrations: { int1: auditLogs } });
+      expect(newState).toEqual({ integrations: { int1: auditLogs }, loadMoreStatus: 'received' });
+    });
+    test('should update the state properly when the current state is not empty and isNextPageCollection is true', () => {
+      const newState = reducer(
+        { integrations: { int1: [{ _id: 'int_id1' }, { _id: 'int_id2' }] } },
+        actions.resource.receivedCollection(
+          'integrations/int1/audit',
+          [{ _id: 'int3_id3' }],
+          undefined,
+          true,
+        )
+      );
+
+      expect(newState).toEqual({integrations: { int1: [{ _id: 'int_id1' }, { _id: 'int_id2' }, { _id: 'int3_id3' }] }, loadMoreStatus: 'received' });
+    });
+  });
+  describe('RESOURCE.AUDIT_LOGS_NEXT_PATH action', () => {
+    test('should correctly update the state with next page path', () => {
+      const prevState = {all: []};
+      const newState = reducer(prevState, actions.auditLogs.receivedNextPagePath('/audit?123'));
+
+      expect(newState).toEqual({all: [], loadMoreStatus: 'received', nextPagePath: '/audit?123'});
     });
   });
   describe('clear audit logs', () => {
@@ -153,117 +194,23 @@ describe('auditLogs selector', () => {
     const state = reducer({ all: logs }, 'some action');
 
     expect(selectors.auditLogs(state)).toEqual(logs);
-    expect(selectors.auditLogs(state, undefined, undefined, {})).toEqual(logs);
-    expect(
-      selectors.auditLogs(state, undefined, undefined, {
-        resourceType: 'type1',
-      })
-    ).toEqual(logs.filter(log => log.resourceType === 'type1'));
-    expect(
-      selectors.auditLogs(state, undefined, undefined, {
-        source: 's1',
-        byUser: 'user1',
-      })
-    ).toEqual(
-      logs.filter(log => log.source === 's1' && log.byUser._id === 'user1')
-    );
-    expect(
-      selectors.auditLogs(state, undefined, undefined, {
-        resourceType: 'type2',
-        source: 's2',
-        byUser: 'user2',
-      })
-    ).toEqual(
-      logs.filter(
-        log =>
-          log.resourceType === 'type2' &&
-          log.source === 's2' &&
-          log.byUser._id === 'user2'
-      )
-    );
-    expect(
-      selectors.auditLogs(state, undefined, undefined, {
-        resourceType: 'type2',
-        _resourceId: 'type2_1',
-        source: 's3',
-        byUser: 'user2',
-      })
-    ).toEqual(
-      logs.filter(
-        log =>
-          log.resourceType === 'type2' &&
-          log._resourceId === 'type2_1' &&
-          log.source === 's3' &&
-          log.byUser._id === 'user2'
-      )
-    );
-    expect(
-      selectors.auditLogs(state, undefined, undefined, {
-        resourceType: 'something',
-        _resourceId: 'something else',
-        source: 'something',
-        byUser: 'something else',
-      })
-    ).toEqual([]);
+    expect(selectors.auditLogs(state, undefined, undefined)).toEqual(logs);
   });
   test('should return correct resource audilt logs', () => {
     const state = reducer({ integrations: { int1: logs } }, 'some action');
 
     expect(selectors.auditLogs(state)).toEqual([]);
     expect(selectors.auditLogs(state, 'integrations', 'int1')).toEqual(logs);
-    expect(selectors.auditLogs(state, 'integrations', 'int1', {})).toEqual(
+    expect(selectors.auditLogs(state, 'integrations', 'int1')).toEqual(
       logs
     );
-    expect(
-      selectors.auditLogs(state, 'integrations', 'int1', {
-        resourceType: 'type1',
-      })
-    ).toEqual(logs.filter(log => log.resourceType === 'type1'));
-    expect(
-      selectors.auditLogs(state, 'integrations', 'int1', {
-        source: 's1',
-        byUser: 'user1',
-      })
-    ).toEqual(
-      logs.filter(log => log.source === 's1' && log.byUser._id === 'user1')
-    );
-    expect(
-      selectors.auditLogs(state, 'integrations', 'int1', {
-        resourceType: 'type2',
-        source: 's2',
-        byUser: 'user2',
-      })
-    ).toEqual(
-      logs.filter(
-        log =>
-          log.resourceType === 'type2' &&
-          log.source === 's2' &&
-          log.byUser._id === 'user2'
-      )
-    );
-    expect(
-      selectors.auditLogs(state, 'integrations', 'int1', {
-        resourceType: 'type2',
-        _resourceId: 'type2_1',
-        source: 's3',
-        byUser: 'user2',
-      })
-    ).toEqual(
-      logs.filter(
-        log =>
-          log.resourceType === 'type2' &&
-          log._resourceId === 'type2_1' &&
-          log.source === 's3' &&
-          log.byUser._id === 'user2'
-      )
-    );
-    expect(
-      selectors.auditLogs(state, 'integrations', 'int1', {
-        resourceType: 'something',
-        _resourceId: 'something else',
-        source: 'something',
-        byUser: 'something else',
-      })
-    ).toEqual([]);
+  });
+  test('should return correct next page path from state', () => {
+    expect(selectors.auditLogsNextPagePath()).toBeUndefined();
+    expect(selectors.auditLogsNextPagePath({nextPagePath: '/audit?123'})).toEqual('/audit?123');
+  });
+  test('should return correct load more status from state', () => {
+    expect(selectors.auditLoadMoreStatus()).toBeUndefined();
+    expect(selectors.auditLoadMoreStatus({loadMoreStatus: 'requested'})).toEqual('requested');
   });
 });

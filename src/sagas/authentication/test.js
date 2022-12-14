@@ -8,7 +8,6 @@ import { apiCallWithRetry } from '..';
 import actions from '../../actions';
 import { authParams, getCSRFParams, logoutParams } from '../api/apiPaths';
 import { getResource, getResourceCollection } from '../resources';
-import { requestMFASessionInfo } from '../mfa';
 import { selectors } from '../../reducers';
 import {
   auth,
@@ -29,6 +28,7 @@ import {
   signInWithGoogle,
   initializeLogrocket,
   fetchUIVersion,
+  validateSession,
 } from '.';
 import { setCSRFToken, removeCSRFToken } from '../../utils/session';
 import { ACCOUNT_IDS, AUTH_FAILURE_MESSAGE, POLLING_STATUS } from '../../constants';
@@ -294,16 +294,16 @@ describe('initialize all app relevant resources sagas', () => {
   });
   test('should intialize the app retrieving first the org details and then subsequently user details, when user is an org owner', () => {
     const saga = retrieveAppInitializationResources();
-    const requestMFASessionInfoEffect = call(requestMFASessionInfo);
+    // const requestMFASessionInfoEffect = call(requestMFASessionInfo);
     const isMFASetupIncompleteEffect = select(selectors.isMFASetupIncomplete);
     const retrievingOrgDetailsEffect = call(retrievingOrgDetails);
     const retrievingUserDetailsEffect = call(retrievingUserDetails);
     const retrievingAssistantDetailsEffect = call(retrievingAssistantDetails);
     const retrievingHttpConnectorDetailsEffect = call(retrievingHttpConnectorDetails);
 
-    expect(saga.next().value).toEqual(
-      requestMFASessionInfoEffect,
-    );
+    // expect(saga.next().value).toEqual(
+    //   requestMFASessionInfoEffect,
+    // );
     expect(saga.next().value).toEqual(
       isMFASetupIncompleteEffect,
     );
@@ -337,16 +337,16 @@ describe('initialize all app relevant resources sagas', () => {
   });
   test('should intialize the app retrieving first the org details and then subsequently user details, when user is org user with a valid defaultAshareId', () => {
     const saga = retrieveAppInitializationResources();
-    const requestMFASessionInfoEffect = call(requestMFASessionInfo);
+    // const requestMFASessionInfoEffect = call(requestMFASessionInfo);
     const isMFASetupIncompleteEffect = select(selectors.isMFASetupIncomplete);
     const retrievingOrgDetailsEffect = call(retrievingOrgDetails);
     const retrievingUserDetailsEffect = call(retrievingUserDetails);
     const retrievingAssistantDetailsEffect = call(retrievingAssistantDetails);
     const retrievingHttpConnectorDetailsEffect = call(retrievingHttpConnectorDetails);
 
-    expect(saga.next().value).toEqual(
-      requestMFASessionInfoEffect,
-    );
+    // expect(saga.next().value).toEqual(
+    //   requestMFASessionInfoEffect,
+    // );
     expect(saga.next().value).toEqual(
       isMFASetupIncompleteEffect,
     );
@@ -389,16 +389,16 @@ describe('initialize all app relevant resources sagas', () => {
   });
   test('should intialize the app retrieving first the org details and then subsequently user details, when user is org user with an invalid defaultAshareId', () => {
     const saga = retrieveAppInitializationResources();
-    const requestMFASessionInfoEffect = call(requestMFASessionInfo);
+    // const requestMFASessionInfoEffect = call(requestMFASessionInfo);
     const isMFASetupIncompleteEffect = select(selectors.isMFASetupIncomplete);
     const retrievingOrgDetailsEffect = call(retrievingOrgDetails);
     const retrievingUserDetailsEffect = call(retrievingUserDetails);
     const retrievingAssistantDetailsEffect = call(retrievingAssistantDetails);
     const retrievingHttpConnectorDetailsEffect = call(retrievingHttpConnectorDetails);
 
-    expect(saga.next().value).toEqual(
-      requestMFASessionInfoEffect,
-    );
+    // expect(saga.next().value).toEqual(
+    //   requestMFASessionInfoEffect,
+    // );
     expect(saga.next().value).toEqual(
       isMFASetupIncompleteEffect,
     );
@@ -442,6 +442,9 @@ describe('initialize all app relevant resources sagas', () => {
         })
       )
     );
+    expect(saga.next().value).toEqual(
+      call(retrievingHttpConnectorDetails)
+    );
     expect(saga.next().value).toEqual(put(actions.auth.defaultAccountSet()));
 
     expect(saga.next().done).toEqual(true);
@@ -480,7 +483,9 @@ describe('auth saga flow', () => {
         _csrf: _csrfAfterSignIn,
       }).value
     ).toEqual(select(selectors.isSessionExpired));
+    const validateSessionEffect = saga.next(false).value;
 
+    expect(validateSessionEffect).toEqual(call(validateSession));
     const setCSRFEffect = saga.next().value;
 
     expect(setCSRFEffect).toEqual(call(setCSRFToken, _csrfAfterSignIn));
@@ -581,6 +586,9 @@ describe('auth saga flow', () => {
         _csrf: _csrfAfterSignIn,
       }).value
     ).toEqual(select(selectors.isSessionExpired));
+    const validateSessionEffect = saga.next(true).value;
+
+    expect(validateSessionEffect).toEqual(call(validateSession));
     // pass in session expired returned value
     const setCSRFEffect = saga.next(true).value;
 
@@ -624,6 +632,9 @@ describe('auth saga flow', () => {
       }).value
     ).toEqual(select(selectors.isSessionExpired));
     // pass in session expired returned value
+    const validateSessionEffect = saga.next(false).value;
+
+    expect(validateSessionEffect).toEqual(call(validateSession));
     const setCSRFEffect = saga.next(false).value;
 
     expect(setCSRFEffect).toEqual(call(setCSRFToken, _csrfAfterSignIn));
@@ -640,28 +651,16 @@ describe('auth saga flow', () => {
 
 describe('initialize app saga', () => {
   test('should set authentication flag true when the user successfuly makes a profile call when there is a valid user session ', () => {
-    const saga = initializeSession();
-    const getProfileResourceEffect = saga.next().value;
-
-    expect(getProfileResourceEffect).toEqual(
-      call(
-        getResource,
-        actions.user.profile.request('Initializing application')
-      )
-    );
-    const mockResp = 'some response';
-    const getCSRFBackend = saga.next(mockResp).value;
-
-    expect(getCSRFBackend).toEqual(call(getCSRFTokenBackend));
-
-    const setCSRFEffect = saga.next('someCSRF').value;
-
-    expect(setCSRFEffect).toEqual(call(setCSRFToken, 'someCSRF'));
-    expect(saga.next().value).toEqual(call(setLastLoggedInLocalStorage));
-
-    const authCompletedEffect = saga.next().value;
-
-    expect(authCompletedEffect).toEqual(put(actions.auth.complete()));
+    expectSaga(initializeSession)
+      .provide([
+        [call(validateSession), {authenticated: true, mfaRequired: false}],
+        [call(getCSRFTokenBackend), '1234'],
+      ])
+      .call(setCSRFToken, '1234')
+      .call(setLastLoggedInLocalStorage)
+      .put(actions.auth.complete())
+      .call(initializeApp)
+      .run();
   });
 
   test('should dispatch a user logout when the user does not get a response from the Profile call', () => {
@@ -670,14 +669,13 @@ describe('initialize app saga', () => {
 
     expect(getProfileResourceEffect).toEqual(
       call(
-        getResource,
-        actions.user.profile.request('Initializing application')
+        validateSession
       )
     );
     const authLogoutEffect = saga.next().value;
 
     expect(authLogoutEffect).toEqual(
-      put(actions.auth.logout(true))
+      put(actions.auth.logout())
     );
   });
 
@@ -687,8 +685,7 @@ describe('initialize app saga', () => {
 
     expect(getProfileResourceEffect).toEqual(
       call(
-        getResource,
-        actions.user.profile.request('Initializing application')
+        validateSession,
       )
     );
     expect(saga.throw(new Error('Some error')).value).toEqual(
@@ -742,6 +739,7 @@ describe('invalidate session app', () => {
     const getCSRFTokenEffect = saga.next().value;
 
     expect(getCSRFTokenEffect).toEqual(expect.anything());
+    expect(saga.next().value).toEqual(expect.anything());
 
     const logOutUserEffect = saga.next().value;
 

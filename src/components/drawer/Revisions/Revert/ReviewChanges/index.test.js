@@ -10,7 +10,6 @@ import ReviewRevertChangesDrawer from '.';
 
 const props = {integrationId: '_integrationId'};
 const mockHistoryReplace = jest.fn();
-const reviewChangesHelpText = 'Review the changes between your current revision and the revision that you are reverting to. This is a list of every change you’ve made to your exports, imports, flows, and scripts.';
 
 async function initReviewRevertChangesDrawer(props = {}, isCreatedRevId = false, creationInProgress = false) {
   const initialStore = reduxStore;
@@ -77,8 +76,6 @@ describe('ReviewRevertChangesDrawer tests', () => {
     await initReviewRevertChangesDrawer(props);
     expect(screen.getByRole('heading', {name: 'Review changes'})).toBeInTheDocument();
     expect(screen.getByRole('button', {name: 'Expand all'})).toBeInTheDocument();
-    userEvent.click(document.querySelector('svg'));
-    expect(screen.getByText(reviewChangesHelpText)).toBeInTheDocument();
     const close = screen.getAllByRole('button', {name: 'Close'})[0];
     const next = screen.getByRole('button', {name: 'Next'});
 

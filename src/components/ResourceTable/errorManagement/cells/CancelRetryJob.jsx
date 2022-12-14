@@ -24,6 +24,9 @@ export default function CancelRetryJob({retryJob}) {
         jobId: retryJob._id,
       })
     );
+    dispatch(
+      actions.analytics.gainsight.trackEvent('RETRIES_TAB_CANCEL_RETRY')
+    );
   }, [dispatch, flowId, resourceId, retryJob._id]);
 
   const handleCallBack = useCallback(

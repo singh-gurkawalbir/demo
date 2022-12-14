@@ -3,6 +3,7 @@ import { Divider } from '@material-ui/core';
 import clsx from 'clsx';
 import React, { useMemo, useCallback, useEffect, useRef, useState } from 'react';
 import { useSelector, shallowEqual, useDispatch } from 'react-redux';
+import { matchPath, useHistory, useLocation, useRouteMatch } from 'react-router-dom';
 import actions from '../../../actions';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 import { selectors } from '../../../reducers';
@@ -14,7 +15,8 @@ import ErrorDetailsPanel from './ErrorDetailsPanel';
 import ErrorTableFilters from './ErrorTableFilters';
 import FetchErrorsHook from './hooks/useFetchErrors';
 import { useEditRetryConfirmDialog } from './hooks/useEditRetryConfirmDialog';
-import { NO_RESULT_SEARCH_MESSAGE } from '../../../constants';
+import { NO_RESULT_SEARCH_MESSAGE, OPEN_ERRORS_VIEW_TYPES } from '../../../constants';
+import { buildDrawerUrl, drawerPaths } from '../../../utils/rightDrawer';
 
 const useStyles = makeStyles(theme => ({
   hide: {
@@ -61,8 +63,14 @@ const useStyles = makeStyles(theme => ({
     gridColumnGap: theme.spacing(0.5),
   },
   resourceFormWrapper: {
-    width: '100%',
+    width: '135%',
     overflow: 'auto',
+    '& .MuiTableCell-root': {
+      padding: theme.spacing(1),
+    },
+    '& .MuiFormControlLabel-root': {
+      marginRight: 0,
+    },
   },
   panelWrapper: {
     width: '100%',
@@ -100,7 +108,8 @@ const ErrorTableWithPanel = ({
   keydownListener,
   onRowClick,
   errorsInRun,
-
+  flowJobId,
+  viewType,
 }) => {
   const classes = useStyles();
   const tableRef = useRef();
@@ -121,13 +130,12 @@ const ErrorTableWithPanel = ({
       filter.classifications.indexOf('all') === -1) ||
     (filter.sources &&
       filter.sources.length > 0 &&
-      filter.sources.indexOf('all') === -1) ||
-    filter.keyword
-  ) {
+      filter.sources.indexOf('all') === -1)) {
     hasFilter = true;
   }
   const emptyErrorMessage = !hasFilter && !isResolved && !hasErrors && !(retryStatus === 'inProgress');
   const emptyFilterMessage = hasFilter && errorsInCurrPage.length === 0;
+  const noSearchResult = hasErrors && filter.keyword && errorsInCurrPage.length === 0;
 
   useEffect(() => {
     const refEle = tableRef?.current;
@@ -164,6 +172,8 @@ const ErrorTableWithPanel = ({
           resourceId={resourceId}
           isResolved={isResolved}
           filterKey={filterKey}
+          flowJobId={flowJobId}
+          viewType={viewType}
         />
         <div className={classes.baseFormWithPreview}>
           {/* eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex */}
@@ -174,9 +184,11 @@ const ErrorTableWithPanel = ({
               resourceType="splitViewOpenErrors"
               actionProps={actionProps}
               onRowClick={onRowClick}
+              size="small"
             />
             {emptyErrorMessage && <EmptyErrorMessage />}
             {emptyFilterMessage && <NoFiltersMessage />}
+            {noSearchResult && <NoSearchResultMessage />}
           </div>
           <div className={classes.partition}>
             <Divider
@@ -202,7 +214,9 @@ const ErrorTableWithPanel = ({
           flowId={flowId}
           resourceId={resourceId}
           isResolved={isResolved}
-          filterKey={filterKey} />
+          filterKey={filterKey}
+          flowJobId={flowJobId}
+          viewType={viewType} />
         <div className={clsx(classes.errorDetailsTable, {[classes.errorTableWithErrorsInRun]: errorsInRun})} ref={drawerRef} onScroll={handleScrollPosition}>
           <ResourceTable
             resources={errorsInCurrPage}
@@ -211,6 +225,7 @@ const ErrorTableWithPanel = ({
             tableRef={tableRef} />
           {emptyErrorMessage && <EmptyErrorMessage />}
           {emptyFilterMessage && <NoFiltersMessage />}
+          {noSearchResult && <NoSearchResultMessage />}
         </div>
       </>
     );
@@ -218,16 +233,24 @@ const ErrorTableWithPanel = ({
 const EmptyErrorMessage = () => (
   <NoResultTypography>
     <br />
-    There don’t seem to be any more errors. You may have already retried or
-    resolved them.
+    You don’t have any open errors.
     <br />
     <br />
-    If “Refresh errors” is enabled, you can click it to retrieve additional
+    If <b>Refresh errors</b> is enabled, you can click it to retrieve additional
     errors.
   </NoResultTypography>
 );
 
 const NoFiltersMessage = () => (
+  <NoResultTypography>
+    <br />
+    You don’t have any errors that match the filters you applied.
+    <br />
+    Clear all filters to see any errors for this step.
+  </NoResultTypography>
+);
+
+const NoSearchResultMessage = () => (
   <NoResultTypography>
     <br />
     {NO_RESULT_SEARCH_MESSAGE}
@@ -242,7 +265,17 @@ export default function ErrorTable({
   errorsInRun,
 }) {
   const classes = useStyles();
+  const history = useHistory();
+  const match = useRouteMatch();
+  const {pathname} = useLocation();
   const filterKey = isResolved ? FILTER_KEYS.RESOLVED : FILTER_KEYS.OPEN;
+  const matchOpenErrorDrawerPath = matchPath(pathname, {
+    path: buildDrawerUrl({
+      path: drawerPaths.ERROR_MANAGEMENT.V2.OPEN_ERROR_VIEW,
+      baseUrl: match.url,
+    }),
+  });
+  const {viewType} = matchOpenErrorDrawerPath?.params || {};
 
   const isAnyActionInProgress = useSelector(state =>
     selectors.isAnyActionInProgress(state, { flowId, resourceId })
@@ -282,8 +315,7 @@ export default function ErrorTable({
     state => selectors.filter(state, FILTER_KEYS.OPEN),
     shallowEqual
   );
-  const isSplitView =
-    filterKey === FILTER_KEYS.OPEN && errorFilter.view !== 'drawer';
+  const isSplitView = filterKey === FILTER_KEYS.OPEN && viewType !== OPEN_ERRORS_VIEW_TYPES.LIST;
   const showRetryDataChangedConfirmDialog = useEditRetryConfirmDialog({flowId, resourceId, isResolved});
   const keydownListener = useCallback(event => {
     if (!isSplitView) {
@@ -352,6 +384,24 @@ export default function ErrorTable({
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch, errorFilter.keyword]);
 
+  useEffect(() => {
+    if (viewType && !errorFilter.view) {
+      dispatch(actions.patchFilter(filterKey, {
+        view: viewType,
+      }));
+    }
+  });
+  useEffect(() => {
+    if (!isResolved && !viewType) {
+      // on initial load of the component, set viewType to 'split' by default
+      history.replace(buildDrawerUrl({
+        path: drawerPaths.ERROR_MANAGEMENT.V2.OPEN_ERROR_VIEW,
+        baseUrl: match.url,
+        params: { viewType: errorFilter.view || OPEN_ERRORS_VIEW_TYPES.SPLIT },
+      }));
+    }
+  }, [errorFilter.view, history, isResolved, match.url, viewType]);
+
   return (
     <div className={clsx(classes.errorTableWrapper)}>
       <FetchErrorsHook
@@ -376,6 +426,8 @@ export default function ErrorTable({
             keydownListener={keydownListener}
             onRowClick={onRowClick}
             errorsInRun={errorsInRun}
+            flowJobId={flowJobId}
+            viewType={viewType}
           />
         </>
       )}

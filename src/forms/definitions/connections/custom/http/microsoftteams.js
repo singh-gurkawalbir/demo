@@ -8,6 +8,7 @@ export default {
     '/http/auth/type': 'oauth',
     '/http/mediaType': 'json',
     '/http/baseURI': 'https://graph.microsoft.com/v1.0',
+    '/http/auth/oauth/useIClientFields': false,
     '/http/auth/oauth/authURI':
         `https://login.microsoftonline.com/${
           formValues['/http/unencrypted/tenantId']}/oauth2/v2.0/authorize?prompt=consent`,

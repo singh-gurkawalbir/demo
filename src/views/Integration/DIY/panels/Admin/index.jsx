@@ -23,7 +23,7 @@ import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
 const useStyles = makeStyles(theme => ({
   root: {
     padding: theme.spacing(0),
-    backgroundColor: theme.palette.common.white,
+    backgroundColor: theme.palette.background.paper,
     border: '1px solid',
     borderColor: theme.palette.secondary.lightest,
   },
@@ -37,7 +37,7 @@ const useStyles = makeStyles(theme => ({
   content: {
     width: '100%',
     height: '100%',
-    padding: theme.spacing(0, 2, 3, 0),
+    paddingBottom: theme.spacing(3),
     overflowX: 'auto',
   },
   listItem: {

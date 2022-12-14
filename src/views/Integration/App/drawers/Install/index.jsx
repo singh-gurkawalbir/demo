@@ -75,12 +75,14 @@ export default function ConnectorInstallation() {
   const [stackId, setShowStackDialog] = useState(null);
   const history = useHistory();
   const match = useRouteMatch();
-  const { integrationId } = match.params;
+  const { integrationId: _integrationId, childId } = match.params;
   const [connection, setConnection] = useState(null);
   const { confirmDialog } = useConfirmDialog();
   const [isSetupComplete, setIsSetupComplete] = useState(false);
   const [isResourceStaged, setIsResourceStaged] = useState(false);
   const dispatch = useDispatch();
+
+  const integrationId = childId || _integrationId;
 
   const integration = useSelectorMemo(selectors.mkIntegrationAppSettings, integrationId);
 
@@ -309,6 +311,7 @@ export default function ConnectorInstallation() {
       buttons: [
         {
           label: 'Uninstall',
+          error: true,
           onClick: () => {
             if (!_connectorId) {
               dispatch(actions.resource.integrations.delete(integrationId));

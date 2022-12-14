@@ -10,17 +10,20 @@ export const useGetAllActionProps = ({meta, rowData, handleMenuClose, setSelecte
     useLabel,
     icon: Icon,
     Component,
+    useDisabled,
   } = meta;
   const {
     onClick,
     hasAccess,
     disabledActionText,
     label,
+    disabled,
   } = useFunctionsFromHookProps({
     useOnClick,
     useHasAccess,
     useDisabledActionText,
     useLabel,
+    useDisabled,
   }, rowData);
 
   const handleActionClick = useCallback(() => {
@@ -42,5 +45,6 @@ export const useGetAllActionProps = ({meta, rowData, handleMenuClose, setSelecte
     hasAccess,
     label,
     disabledActionTitle,
+    disabled,
   };
 };

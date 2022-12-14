@@ -12,6 +12,7 @@ export default {
     '/http/ping/relativeURI': `/v3/merchants/${
       formValues['/http/unencrypted/merchantId']}`,
     '/http/ping/method': 'GET',
+    '/http/auth/oauth/useIClientFields': false,
     '/http/auth/oauth/authURI': `https://${
       formValues['/http/unencrypted/environment'] === 'sandbox' ? 'sandbox.dev.clover.com' : `${
         formValues['/http/unencrypted/region'] === 'usandcanada' ? 'www.clover.com' : 'eu.clover.com'}`

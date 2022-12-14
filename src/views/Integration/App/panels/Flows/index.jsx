@@ -33,7 +33,7 @@ import NoResultTypography from '../../../../../components/NoResultTypography';
 
 const useStyles = makeStyles(theme => ({
   root: {
-    backgroundColor: theme.palette.common.white,
+    backgroundColor: theme.palette.background.paper,
     border: '1px solid',
     borderColor: theme.palette.secondary.lightest,
   },
@@ -371,7 +371,7 @@ const FlowsTable = ({integrationId, childId}) => {
   }), [childId, isUserInErrMgtTwoDotZero, appName, flowAttributes, integration, sectionId]);
 
   return (
-    <LoadResources required integrationId={integrationId} resources="flows,exports">
+    <LoadResources required integrationId={integrationId} resources="flows,connections,exports">
       <CeligoTable
         data={flows}
         filterKey={filterKey}

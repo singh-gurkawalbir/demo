@@ -34,7 +34,7 @@ const useStyles = makeStyles(theme => ({
     alignItems: 'flex-start',
   },
   container: {
-    background: theme.palette.common.white,
+    background: theme.palette.background.paper,
     padding: theme.spacing(2),
     height: `calc((100vh - ${250}px) - ${theme.spacing(2)}px)`,
     overflowY: 'auto',

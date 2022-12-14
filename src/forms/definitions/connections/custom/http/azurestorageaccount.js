@@ -10,6 +10,7 @@ export default {
       '/http/baseURI': `https://${formValues['/http/unencrypted/storageAccount']}.blob.core.windows.net/`,
       '/http/auth/type': 'oauth',
       '/http/auth/failStatusCode': 403,
+      '/http/auth/oauth/useIClientFields': false,
       '/http/auth/oauth/authURI': `https://login.microsoftonline.com/${formValues['/http/unencrypted/tenantId']}/oauth2/v2.0/authorize`,
       '/http/auth/oauth/tokenURI': `https://login.microsoftonline.com/${formValues['/http/unencrypted/tenantId']}/oauth2/v2.0/token`,
       '/http/auth/oauth/scope': [

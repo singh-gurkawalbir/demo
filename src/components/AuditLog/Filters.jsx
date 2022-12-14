@@ -1,20 +1,24 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useMemo, useEffect } from 'react';
 import moment from 'moment';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import FormControl from '@material-ui/core/FormControl';
 import MenuItem from '@material-ui/core/MenuItem';
 import { makeStyles } from '@material-ui/core';
 import { endOfDay } from 'date-fns';
-import { AUDIT_LOG_SOURCE_LABELS } from '../../constants/auditLog';
+import { AUDIT_LOG_SOURCE_LABELS, ROWS_PER_PAGE_OPTIONS, DEFAULT_ROWS_PER_PAGE, getAuditLogFilterKey } from '../../constants/auditLog';
 import { selectors } from '../../reducers';
 import { ResourceTypeFilter, ResourceIdFilter, AuditLogActionFilter } from './ResourceFilters';
 import CeligoSelect from '../CeligoSelect';
 import ActionGroup from '../ActionGroup';
 import DateRangeSelector from '../DateRangeSelector';
+import CeligoPagination from '../CeligoPagination';
 import { AUDIT_LOGS_RANGE_FILTERS } from '../../utils/resource';
 import actions from '../../actions';
 import Help from '../Help';
 import { getSelectedRange } from '../../utils/flowMetrics';
+import { emptyObject } from '../../constants';
+import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
+import messageStore from '../../utils/messageStore';
 
 const OPTION_ALL = { id: 'all', label: 'All' };
 
@@ -64,6 +68,9 @@ const useStyles = makeStyles(theme => ({
   helpTextButton: {
     padding: 0,
   },
+  tablePaginationRoot: {
+    display: 'flex',
+  },
 }));
 const defaultRange = {
   startDate: new Date(),
@@ -71,12 +78,69 @@ const defaultRange = {
   preset: null,
 };
 
+function AuditPagination({ resourceType, resourceId, totalCount }) {
+  const classes = useStyles();
+  const dispatch = useDispatch();
+  const filterKey = getAuditLogFilterKey(resourceType, resourceId);
+
+  const auditPagingFilter = useSelector(state => selectors.filter(state, filterKey)?.paging || emptyObject, shallowEqual);
+  const auditNextPagePath = useSelector(state => selectors.auditLogsNextPagePath(state));
+  const auditLoadMoreStatus = useSelector(state => selectors.auditLoadMoreStatus(state));
+
+  const handlePageChange = useCallback((e, newPage) => {
+    dispatch(
+      actions.patchFilter(filterKey, {
+        paging: {
+          ...auditPagingFilter,
+          currPage: newPage,
+        },
+      })
+    );
+  }, [dispatch, filterKey, auditPagingFilter]);
+  const handleRowsPerPageChange = useCallback(e => {
+    dispatch(
+      actions.patchFilter(filterKey, {
+        paging: {
+          ...auditPagingFilter,
+          rowsPerPage: parseInt(e.target.value, 10),
+          currPage: 0,
+        },
+      })
+    );
+  }, [dispatch, filterKey, auditPagingFilter]);
+
+  const fetchMoreLogs = useCallback(() => dispatch(actions.auditLogs.request(resourceType, resourceId, auditNextPagePath)), [auditNextPagePath, dispatch, resourceId, resourceType]);
+
+  const paginationOptions = useMemo(
+    () => ({
+      loadMoreHandler: fetchMoreLogs,
+      hasMore: !!auditNextPagePath,
+      loading: auditLoadMoreStatus === 'requested',
+    }),
+    [fetchMoreLogs, auditNextPagePath, auditLoadMoreStatus]
+  );
+
+  return (
+    <CeligoPagination
+      {...paginationOptions}
+      rowsPerPageOptions={ROWS_PER_PAGE_OPTIONS}
+      className={classes.tablePaginationRoot}
+      count={totalCount}
+      page={auditPagingFilter?.currPage || 0}
+      rowsPerPage={auditPagingFilter?.rowsPerPage || DEFAULT_ROWS_PER_PAGE}
+      onChangePage={handlePageChange}
+      onChangeRowsPerPage={handleRowsPerPageChange}
+    />
+  );
+}
+
 export default function Filters(props) {
   const [date, setDate] = useState(defaultRange);
 
-  const {resourceType, resourceId, resourceDetails, onFiltersChange, childId} = props;
+  const {resourceType, resourceId, resourceDetails, childId} = props;
   const dispatch = useDispatch();
   const classes = useStyles();
+  const [enqueueSnackbar] = useEnqueueSnackbar();
   const {
     users,
     affectedResources,
@@ -85,16 +149,9 @@ export default function Filters(props) {
     resourceType,
     resourceId
   ));
-  const [filters, setFilters] = useState(
-    {
-
-      resourceType: OPTION_ALL.id,
-      _resourceId: OPTION_ALL.id,
-      byUser: OPTION_ALL.id,
-      source: OPTION_ALL.id,
-      event: OPTION_ALL.id,
-    }
-  );
+  const hasMoreDownloads = useSelector(state => selectors.auditHasMoreDownloads(state));
+  const filterKey = getAuditLogFilterKey(resourceType, resourceId);
+  const filters = useSelector(state => selectors.filter(state, filterKey) || emptyObject, shallowEqual);
 
   const handleDateFilter = useCallback(
     dateFilter => {
@@ -119,7 +176,6 @@ export default function Filters(props) {
       state,
       resourceType,
       resourceId,
-      undefined,
       {childId}
     ).totalCount);
 
@@ -132,24 +188,27 @@ export default function Filters(props) {
     return resource;
   };
 
-  const handleChange = event => {
-    const toUpdate = { ...filters, [event.target.name]: event.target.value };
+  const handleChange = useCallback(event => {
+    const updatedFilters = { ...filters, [event.target.name]: event.target.value };
 
     if (event.target.name === 'resourceType') {
-      toUpdate._resourceId = OPTION_ALL.id;
+      updatedFilters._resourceId = OPTION_ALL.id;
     }
-    setFilters(toUpdate);
 
-    const updatedFilters = { ...toUpdate };
+    dispatch(actions.patchFilter(filterKey, updatedFilters));
+    dispatch(actions.auditLogs.request(resourceType, resourceId));
+  }, [dispatch, filterKey, filters, resourceId, resourceType]);
 
-    Object.keys(updatedFilters).forEach(key => {
-      if (updatedFilters[key] === OPTION_ALL.id) {
-        updatedFilters[key] = undefined;
-      }
-    });
-
-    onFiltersChange(updatedFilters);
-  };
+  useEffect(() => {
+    if (hasMoreDownloads) {
+      enqueueSnackbar({
+        message: messageStore('AUDIT_LOGS_HAS_MORE_DOWNLOADS'),
+        variant: 'info',
+        persist: true,
+      });
+      dispatch(actions.auditLogs.toggleHasMoreDownloads(false));
+    }
+  }, [dispatch, enqueueSnackbar, hasMoreDownloads]);
 
   const { byUser, source } = filters;
   const resource = getResource();
@@ -177,7 +236,7 @@ export default function Filters(props) {
               isLoggable={false}
               inputProps={userInput}
               onChange={handleChange}
-              value={byUser}>
+              value={byUser || ''}>
               <MenuItem key={OPTION_ALL.id} value={OPTION_ALL.id}>
                 Select user
               </MenuItem>
@@ -193,7 +252,7 @@ export default function Filters(props) {
               isLoggable
               inputProps={sourceInput}
               onChange={handleChange}
-              value={source}>
+              value={source || ''}>
               <MenuItem key={OPTION_ALL.id} value={OPTION_ALL.id}>
                 Select source
               </MenuItem>
@@ -227,6 +286,8 @@ export default function Filters(props) {
           />
         </ActionGroup>
         <ActionGroup position="right" className={classes.downloadButton}>
+          <AuditPagination {...props} />
+
           <DateRangeSelector
             disabled={!canDownloadLogs}
             primaryButtonLabel="Download"

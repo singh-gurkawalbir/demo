@@ -33,11 +33,19 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function IndentedComponents(props) {
-  const { containers, fieldMap, formKey, resourceType, resourceId} = props;
+  const { containers, fieldMap, layout, formKey, resourceType, resourceId} = props;
   const classes = useStyles();
   const resource = useSelectorMemo(selectors.makeResourceDataSelector, resourceType, resourceId)?.merged || emptyObj;
   const connection = useSelectorMemo(selectors.makeResourceDataSelector, 'connections', resource._connectionId)?.merged || emptyObj;
   const formValues = useSelector(state => selectors.formValueTrimmed(state, formKey), shallowEqual);
+  const isAnyIndentedComponentsFieldVisible = useSelector(state =>
+    selectors.isAnyFieldVisibleForMetaForm(state, formKey, {
+      layout,
+      fieldMap,
+    })
+  );
+
+  if (!isAnyIndentedComponentsFieldVisible) return null;
 
   const transformedContainers =
     containers?.map((container, index) => {

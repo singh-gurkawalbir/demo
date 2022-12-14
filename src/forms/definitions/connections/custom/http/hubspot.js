@@ -9,6 +9,8 @@ export default {
       retValues['/http/auth/oauth/authURI'] = undefined;
       retValues['/http/auth/oauth/tokenURI'] = undefined;
       retValues['/http/_iClientId'] = undefined;
+      delete retValues['/http/auth/token/paramName'];
+      retValues['/http/auth/token/paramName'] = undefined;
     } else {
       const scopes = retValues['/http/auth/oauth/scope'] ? retValues['/http/auth/oauth/scope'].filter(s => s !== 'oauth') : [];
 
@@ -111,6 +113,9 @@ export default {
             'crm.schemas.contacts.write',
             'crm.schemas.deals.read',
             'crm.schemas.deals.write',
+            'crm.schemas.quotes.read',
+            'crm.objects.quotes.read',
+            'crm.objects.quotes.write',
           ],
         },
       ],

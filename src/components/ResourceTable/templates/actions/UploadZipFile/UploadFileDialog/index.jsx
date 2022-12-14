@@ -1,13 +1,15 @@
-import React from 'react';
-import { useDispatch } from 'react-redux';
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import {
   makeStyles,
 } from '@material-ui/core';
-
 import { MODEL_PLURAL_TO_LABEL } from '../../../../../../utils/resource';
 import actions from '../../../../../../actions';
+import { selectors } from '../../../../../../reducers';
+import { TEMPLATE_ZIP_UPLOAD_ASYNC_KEY, FORM_SAVE_STATUS } from '../../../../../../constants';
 import ModalDialog from '../../../../../ModalDialog';
 import FilledButton from '../../../../../Buttons/FilledButton';
+import Spinner from '../../../../../Spinner';
 
 const useStyles = makeStyles({
   fileInput: {
@@ -19,12 +21,28 @@ export default function UploadFileDialog(props) {
   const { resourceType, fileType, onClose, type, resourceId } = props;
   const classes = useStyles();
   const dispatch = useDispatch();
+  const fileUploadStatus = useSelector(state => selectors.asyncTaskStatus(state, TEMPLATE_ZIP_UPLOAD_ASYNC_KEY));
+  const isFileUploadInProgress = fileUploadStatus === FORM_SAVE_STATUS.LOADING;
+
   const handleUploadFileChange = e => {
     const file = e.target.files[0];
 
-    dispatch(actions.file.upload(resourceType, resourceId, fileType, file));
-    onClose();
+    dispatch(actions.file.upload({
+      resourceType,
+      resourceId,
+      fileType,
+      file,
+      asyncKey: TEMPLATE_ZIP_UPLOAD_ASYNC_KEY,
+    }));
   };
+
+  useEffect(() => {
+    if (fileUploadStatus === FORM_SAVE_STATUS.COMPLETE) {
+      onClose();
+      dispatch(actions.asyncTask.clear(TEMPLATE_ZIP_UPLOAD_ASYNC_KEY));
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [fileUploadStatus]);
 
   return (
     <ModalDialog show onClose={onClose} aria-labelledby="upload-file-dialog">
@@ -34,11 +52,14 @@ export default function UploadFileDialog(props) {
 
       <div>
         <label htmlFor="fileUpload">
-          <FilledButton
-            data-test="selectFile"
-            component="span">
-            Select {MODEL_PLURAL_TO_LABEL[resourceType].toLowerCase()} {type.toLowerCase()} file
-          </FilledButton>
+          {isFileUploadInProgress ? <Spinner />
+            : (
+              <FilledButton
+                data-test="selectFile"
+                component="span">Select {MODEL_PLURAL_TO_LABEL[resourceType].toLowerCase()} {type.toLowerCase()} file
+              </FilledButton>
+            )}
+
           <input
             data-test="uploadFile"
             id="fileUpload"

@@ -12,7 +12,7 @@ import LoadResources from '../../../../../components/LoadResources';
 
 const useStyles = makeStyles(theme => ({
   root: {
-    backgroundColor: theme.palette.common.white,
+    backgroundColor: theme.palette.background.paper,
     overflow: 'auto',
     border: '1px solid',
     borderColor: theme.palette.secondary.lightest,

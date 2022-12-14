@@ -32,6 +32,7 @@ import {
   getNewRouterPatchSet,
   mergeDragSourceWithTarget,
   mergeTerminalToAnEdge,
+  moveStepFunction,
 } from './flowbuilder';
 
 const anyShortId = expect.stringMatching(/^[a-zA-Z0-9-_]{6}$/);
@@ -1045,6 +1046,61 @@ describe('deletePPStepForOldSchema util function test', () => {
   });
 });
 
+describe('moveStepFunction util function test', () => {
+  test('should change nothing or not throw any error when flow or stepInfo is missing', () => {
+    const flow = {id: 'flow1'};
+    const flowInput = {...flow};
+
+    moveStepFunction(flowInput);
+    expect(flow).toEqual(flowInput);
+    expect(() => moveStepFunction(flowInput)).not.toThrow();
+    expect(() => moveStepFunction()).not.toThrow();
+  });
+  test('should move steps as expected for page generators', () => {
+    const flow = {pageGenerators: [{_exportId: 1}, {_exportId: 2}, {_exportId: 3}], pageProcessors: []};
+
+    moveStepFunction(flow, {itemType: 'pg', sourceIndex: 0, targetIndex: 1});
+    expect(flow).toEqual({pageGenerators: [{_exportId: 2}, {_exportId: 1}, {_exportId: 3}], pageProcessors: []});
+    moveStepFunction(flow, {itemType: 'pg', sourceIndex: 0, targetIndex: 1});
+    expect(flow).toEqual({pageGenerators: [{_exportId: 1}, {_exportId: 2}, {_exportId: 3}], pageProcessors: []});
+    moveStepFunction(flow, {itemType: 'pg', sourceIndex: 1, targetIndex: 2});
+    expect(flow).toEqual({pageGenerators: [{_exportId: 1}, {_exportId: 3}, {_exportId: 2}], pageProcessors: []});
+  });
+
+  test('should move steps as expected for pageProcessors in linear flow', () => {
+    const flow = {pageGenerators: [{_exportId: 1}], pageProcessors: [{id: 1}, {id: 2}, {id: 3}, {id: 4}]};
+
+    moveStepFunction(flow, { sourceIndex: 0, targetIndex: 1, position: 'right'});
+    expect(flow).toEqual({pageGenerators: [{_exportId: 1}], pageProcessors: [{id: 2}, {id: 1}, {id: 3}, {id: 4}]});
+    moveStepFunction(flow, { sourceIndex: 2, targetIndex: 3});
+    expect(flow).toEqual({pageGenerators: [{_exportId: 1}], pageProcessors: [{id: 2}, {id: 1}, {id: 4}, {id: 3}]});
+    moveStepFunction(flow, { sourceIndex: 3, targetIndex: 1, position: 'right'});
+    expect(flow).toEqual({pageGenerators: [{_exportId: 1}], pageProcessors: [{id: 2}, {id: 1}, {id: 3}, {id: 4}]});
+    moveStepFunction(flow, { sourceIndex: 3, targetIndex: 1, position: 'left'});
+    expect(flow).toEqual({pageGenerators: [{_exportId: 1}], pageProcessors: [{id: 2}, {id: 4}, {id: 1}, {id: 3}]});
+  });
+  test('should move steps as expected for pageProcessors in branched flow', () => {
+    const flow = {pageGenerators: [{_exportId: 1}],
+      routers: [
+        {id: 1, branches: [{name: 'r1b1', pageProcessors: [{id: 'r1b1p1'}, {id: 'r1b1p2'}]}] },
+        {id: 2, branches: [{name: 'r2b1', pageProcessors: [{id: 'r2b1p1'}, {id: 'r2b1p2'}]}, {name: 'r2b2', pageProcessors: [{id: 'r2b2p1'}, {id: 'r2b2p2'}]}]},
+      ]};
+
+    moveStepFunction(flow, { sourcePath: '/routers/0/branches/0/pageProcessors/0', targetPath: '/routers/1/branches/0/pageProcessors/1', position: 'right'});
+    expect(flow).toEqual({pageGenerators: [{_exportId: 1}],
+      routers: [
+        {id: 1, branches: [{name: 'r1b1', pageProcessors: [{id: 'r1b1p2'}]}] },
+        {id: 2, branches: [{name: 'r2b1', pageProcessors: [{id: 'r2b1p1'}, {id: 'r2b1p2'}, {id: 'r1b1p1'}]}, {name: 'r2b2', pageProcessors: [{id: 'r2b2p1'}, {id: 'r2b2p2'}]}]},
+      ]});
+    moveStepFunction(flow, { sourcePath: '/routers/1/branches/0/pageProcessors/1', targetPath: '/routers/0/branches/0/pageProcessors/0', position: 'left'});
+    expect(flow).toEqual({pageGenerators: [{_exportId: 1}],
+      routers: [
+        {id: 1, branches: [{name: 'r1b1', pageProcessors: [{id: 'r2b1p2'}, {id: 'r1b1p2'}]}] },
+        {id: 2, branches: [{name: 'r2b1', pageProcessors: [{id: 'r2b1p1'}, {id: 'r1b1p1'}]}, {name: 'r2b2', pageProcessors: [{id: 'r2b2p1'}, {id: 'r2b2p2'}]}]},
+      ]});
+  });
+});
+
 describe('deletePGOrPPStepForRouters util function test', () => {
   const flow1 = {
     pageGenerators: [{id: '1234', setupInProgress: true}, {id: '5678', setupInProgress: true}],
@@ -1879,6 +1935,8 @@ describe('generateNodesAndEdgesFromBranchedFlow util function test', () => {
           isVirtual: false,
           isFirst: true,
           isLast: true,
+          showLeft: true,
+          showRight: true,
           path: '/routers/2/branches/0/pageProcessors/0',
         },
       },
@@ -1953,6 +2011,8 @@ describe('generateNodesAndEdgesFromBranchedFlow util function test', () => {
           isVirtual: false,
           isFirst: true,
           isLast: true,
+          showLeft: true,
+          showRight: true,
           path: '/routers/2/branches/1/pageProcessors/0',
         },
       },
@@ -2032,6 +2092,8 @@ describe('generateNodesAndEdgesFromBranchedFlow util function test', () => {
           isVirtual: false,
           isFirst: true,
           isLast: false,
+          showLeft: true,
+          showRight: true,
           path: '/routers/1/branches/0/pageProcessors/0',
         },
       },
@@ -2097,6 +2159,7 @@ describe('generateNodesAndEdgesFromBranchedFlow util function test', () => {
           isVirtual: false,
           isFirst: false,
           isLast: false,
+          showRight: true,
           path: '/routers/1/branches/0/pageProcessors/1',
         },
       },
@@ -2164,6 +2227,8 @@ describe('generateNodesAndEdgesFromBranchedFlow util function test', () => {
           isVirtual: false,
           isFirst: true,
           isLast: false,
+          showLeft: true,
+          showRight: true,
           path: '/routers/1/branches/1/pageProcessors/0',
         },
       },
@@ -2234,6 +2299,8 @@ describe('generateNodesAndEdgesFromBranchedFlow util function test', () => {
           isVirtual: false,
           isFirst: true,
           isLast: true,
+          showLeft: true,
+          showRight: true,
           path: '/routers/1/branches/2/pageProcessors/0',
         },
       },
@@ -2275,6 +2342,8 @@ describe('generateNodesAndEdgesFromBranchedFlow util function test', () => {
           isVirtual: true,
           isFirst: true,
           isLast: false,
+          showLeft: true,
+          showRight: true,
           path: '/routers/0/branches/0/pageProcessors/0',
         },
       },
@@ -2552,6 +2621,8 @@ describe('generateReactFlowGraph util function test', () => {
           isVirtual: false,
           isFirst: true,
           isLast: true,
+          showLeft: true,
+          showRight: true,
           path: '/routers/2/branches/0/pageProcessors/0',
         },
       },
@@ -2626,6 +2697,8 @@ describe('generateReactFlowGraph util function test', () => {
           isVirtual: false,
           isFirst: true,
           isLast: true,
+          showLeft: true,
+          showRight: true,
           path: '/routers/2/branches/1/pageProcessors/0',
         },
       },
@@ -2705,6 +2778,8 @@ describe('generateReactFlowGraph util function test', () => {
           isVirtual: false,
           isFirst: true,
           isLast: false,
+          showLeft: true,
+          showRight: true,
           path: '/routers/1/branches/0/pageProcessors/0',
         },
       },
@@ -2770,6 +2845,7 @@ describe('generateReactFlowGraph util function test', () => {
           isVirtual: false,
           isFirst: false,
           isLast: false,
+          showRight: true,
           path: '/routers/1/branches/0/pageProcessors/1',
         },
       },
@@ -2837,6 +2913,8 @@ describe('generateReactFlowGraph util function test', () => {
           isVirtual: false,
           isFirst: true,
           isLast: false,
+          showLeft: true,
+          showRight: true,
           path: '/routers/1/branches/1/pageProcessors/0',
         },
       },
@@ -2907,6 +2985,8 @@ describe('generateReactFlowGraph util function test', () => {
           isVirtual: false,
           isFirst: true,
           isLast: true,
+          showLeft: true,
+          showRight: true,
           path: '/routers/1/branches/2/pageProcessors/0',
         },
       },
@@ -2948,6 +3028,8 @@ describe('generateReactFlowGraph util function test', () => {
           isVirtual: true,
           isFirst: true,
           isLast: false,
+          showLeft: true,
+          showRight: true,
           path: '/routers/0/branches/0/pageProcessors/0',
         },
       },

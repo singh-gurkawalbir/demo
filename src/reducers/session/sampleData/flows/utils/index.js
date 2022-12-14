@@ -46,6 +46,8 @@ export const getPPsToReset = (flow, {routerIndex, branchIndex, pageProcessorInde
       .map(pp => pp._exportId || pp._importId);
 
     dependentPageProcessors.push(...pps, ...getDependentRoutersAndPPs(flow, branch?.nextRouterId).pps);
+
+    return dependentPageProcessors;
   }
 
   return (flow.pageProcessors || [])

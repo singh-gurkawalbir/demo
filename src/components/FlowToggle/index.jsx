@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {makeStyles} from '@material-ui/core/styles';
-import { Tooltip } from '@material-ui/core';
 import actions from '../../actions';
 import CeligoSwitch from '../CeligoSwitch';
 import useConfirmDialog from '../ConfirmDialog';
@@ -110,16 +109,13 @@ export default function FlowToggle({
   return onOffInProgressStatus ? (
     <Spinner className={classes.spinnerFlowToggle} />
   ) : (
-    <Tooltip title="Off/On" placement="bottom">
-      <div>
-        <CeligoSwitch
-          disabled={disabled}
-          on={flow.disabled === false ? 'true' : 'false'}
-          onChange={enableOrDisableFlow}
-          data-test="switchFlowOnOff"
-          checked={flow.disabled === false}
+    <CeligoSwitch
+      disabled={disabled}
+      on={flow.disabled === false ? 'true' : 'false'}
+      onChange={enableOrDisableFlow}
+      data-test="switchFlowOnOff"
+      checked={flow.disabled === false}
+      tooltip="Off / On"
       />
-      </div>
-    </Tooltip>
   );
 }

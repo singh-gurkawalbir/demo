@@ -7,6 +7,7 @@ export default {
     '/http/mediaType': 'json',
     '/http/ping/relativeURI': '/poweruser/v1/powerusers',
     '/http/ping/method': 'GET',
+    '/http/auth/oauth/useIClientFields': false,
     '/http/auth/oauth/authURI': `${formValues['/http/baseURI']}/oauth2/authorize`,
     '/http/auth/oauth/tokenURI': `${formValues['/http/baseURI']}/oauth2/token`,
     '/http/auth/token/location': 'header',

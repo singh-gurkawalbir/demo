@@ -649,7 +649,7 @@ describe('apiCallWithPaging saga', () => {
       .returns(responseData)
       .run());
 
-    test('should not call apiCallWithPaging with next url if "next" link header exists if path is /audit and return the first page data', () => expectSaga(apiCallWithPaging, {path: '/audit', opts})
+    test('should not call apiCallWithPaging with next url if "next" link header exists if path is /audit and return the data with next link', () => expectSaga(apiCallWithPaging, {path: '/audit', opts})
       .provide([
         [call(apiCallWithRetry, {path: '/audit', opts, requireHeaders: true}),
           {
@@ -658,7 +658,7 @@ describe('apiCallWithPaging saga', () => {
               get: jest.fn(() => nextLink),
             }}],
       ])
-      .returns(responseData)
+      .returns({data: responseData, nextLinkPath: '/connections?after=xxxx'})
       .run());
 
     test('should recursively call apiCallWithPaging with next url if "next" link header exists and return the total data', () => expectSaga(apiCallWithPaging, {path, opts})
@@ -774,10 +774,8 @@ describe('rootSaga', () => {
           switchAcc: take(actionsTypes.AUTH.ABORT_ALL_SAGAS_AND_SWITCH_ACC
           )})
       );
-      expect(saga.next({logrocket: {opts: {prop1: 'someOptsz'}}}).value)
-        .toEqual(call(initializeLogrocket));
+      expect(saga.next({logrocket: {opts: {prop1: 'someOptsz'}}}).value).toEqual(call(initializeLogrocket));
       expect(forkEffectRes.cancel).toHaveBeenCalled();
-
       expect(saga.next().value)
         .toEqual(spawn(rootSaga));
       expect(saga.next().value)

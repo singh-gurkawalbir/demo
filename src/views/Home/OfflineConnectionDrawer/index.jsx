@@ -21,14 +21,14 @@ const useStyles = makeStyles(theme => ({
     border: 'solid 1px',
     boxShadow: '-4px 4px 8px rgba(0,0,0,0.15)',
     zIndex: theme.zIndex.drawer + 1,
-    backgroundColor: theme.palette.common.white,
+    backgroundColor: theme.palette.background.paper,
 
   },
   root: {
     padding: theme.spacing(0),
     border: '1px solid',
     borderColor: theme.palette.secondary.lightest,
-    backgroundColor: theme.palette.common.white,
+    backgroundColor: theme.palette.background.paper,
   },
   container: {
     display: 'flex',

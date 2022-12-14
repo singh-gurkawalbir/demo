@@ -1,5 +1,5 @@
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { makeStyles, Divider, Typography, Tooltip } from '@material-ui/core';
 import { sortableContainer, sortableElement } from 'react-sortable-hoc';
 import Help from '../../../../Help';
@@ -13,6 +13,7 @@ import BranchItem from './BranchItem';
 import messageStore from '../../../../../utils/messageStore';
 import Spinner from '../../../../Spinner';
 import { shortId } from '../../../../../utils/string';
+import DynaText from '../../../../DynaForm/fields/DynaText';
 
 const useStyles = makeStyles(theme => ({
   panelContent: {
@@ -49,6 +50,45 @@ const SortableContainer = sortableContainer(({children, className}) => (
   </ul>
 ));
 
+const BranchHeading = ({ helpKey, children, classes }) => (
+  <div className={classes.heading}>
+    <Typography variant="h5">{children}</Typography>
+    <Help
+      title={children}
+      className={classes.helpButton}
+      helpKey={helpKey}
+    />
+  </div>
+);
+const BranchName = ({ editorId, isViewMode, name }) => {
+  const dispatch = useDispatch();
+  const [errorMessage, setErrorMessage] = useState(null);
+  const updatedOnNameChange = (id, val) => {
+    if (val?.length > 256) {
+      setErrorMessage([messageStore('BRANCH_NAME_LENGTH_ERROR')]);
+    } else {
+      setErrorMessage(null);
+    }
+    dispatch(actions.editor.patchRule(editorId, val, {rulePath: 'name'}));
+  };
+
+  return (
+    <DynaText
+      id="name"
+      name="name"
+      disabled={isViewMode}
+      isValid={!errorMessage}
+      errorMessages={errorMessage ? [errorMessage] : undefined}
+      multiline
+      rowsMax={4}
+      label="Branching name"
+      helpKey="flow.router.name"
+      value={name}
+      onFieldChange={updatedOnNameChange}
+  />
+  );
+};
+
 export default function RouterPanel({ editorId }) {
   const classes = useStyles();
   const dispatch = useDispatch();
@@ -56,23 +96,15 @@ export default function RouterPanel({ editorId }) {
   const branches = useMemo(() => Array(branchesLength).fill().map(() => ({id: shortId()})), [branchesLength]);
   const isLoading = useSelector(state => selectors.editor(state, editorId).sampleDataStatus === 'requested');
   const maxBranchesLimitReached = branches.length >= 25;
-  const routeRecordsTo = useSelector(state => selectors.editorRule(state, editorId)?.routeRecordsTo || 'first_matching_branch');
+  const {
+    routeRecordsTo = 'first_matching_branch',
+    name = '',
+  } = useSelector(state => selectors.editorRule(state, editorId), shallowEqual);
   const { flowId } = useSelector(state => selectors.editor(state, editorId), shallowEqual);
   const flow = useSelector(state => selectors.fbFlow(state, flowId));
   const isViewMode = useSelector(state => selectors.isFlowViewMode(state, flow?._integrationId, flowId));
   const allowSorting = routeRecordsTo === 'first_matching_branch' && !isViewMode;
   const activeProcessor = useSelector(state => selectors.editorActiveProcessor(state, editorId));
-
-  const BranchHeading = ({ helpKey, children }) => (
-    <div className={classes.heading}>
-      <Typography variant="h5">{children}</Typography>
-      <Help
-        title={children}
-        className={classes.helpButton}
-        helpKey={helpKey}
-    />
-    </div>
-  );
 
   const handleSortStart = (_, event) => {
     // we only want mouse events (not keyboard navigation) to trigger
@@ -99,9 +131,10 @@ export default function RouterPanel({ editorId }) {
     <div className={classes.panelContent}>
       <BranchDrawer editorId={editorId} />
 
-      <BranchHeading helpKey="flow.router.branchType">Branching type</BranchHeading>
+      <BranchHeading helpKey="flow.router.branchType" classes={classes}>Branching type</BranchHeading>
 
       <div className={classes.branchingType}>
+        <BranchName editorId={editorId} name={name} isViewMode={isViewMode} />
         <DynaRadioGroup
           id="branchType"
           name="branchType"
@@ -122,7 +155,7 @@ export default function RouterPanel({ editorId }) {
       />
       </div>
 
-      <BranchHeading helpKey="flow.routers.branches">Branches</BranchHeading>
+      <BranchHeading helpKey="flow.routers.branches" classes={classes}>Branches</BranchHeading>
 
       <Divider orientation="horizontal" className={classes.divider} />
 

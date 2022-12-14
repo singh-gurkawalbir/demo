@@ -1,39 +1,72 @@
+import produce from 'immer';
 import actionTypes from '../../../actions/types';
 
 const defaultState = {};
 const emptySet = [];
 
 export default (state = defaultState, action) => {
-  const { type, resourceType, collection } = action;
+  const { type, resourceType, collection, nextPagePath, isNextPageCollection, hasMoreDownloads } = action;
 
   if (type === actionTypes.RESOURCE.AUDIT_LOGS_CLEAR) {
     return defaultState;
   }
 
-  if (!resourceType) {
-    return state;
-  }
+  return produce(state, draft => {
+    switch (type) {
+      case actionTypes.RESOURCE.REQUEST_AUDIT_LOGS: {
+        if (resourceType === 'audit' || resourceType.endsWith('/audit')) {
+          if (nextPagePath) {
+            draft.loadMoreStatus = 'requested';
+          }
+        }
+        break;
+      }
 
-  if (type === actionTypes.RESOURCE.RECEIVED_COLLECTION) {
-    if (resourceType === 'audit') {
-      return { all: collection || emptySet };
+      case actionTypes.RESOURCE.RECEIVED_COLLECTION: {
+        if (resourceType === 'audit') {
+          draft.loadMoreStatus = 'received';
+          draft.all = isNextPageCollection
+            ? [...draft.all || [], ...collection]
+            : collection || emptySet;
+
+          break;
+        }
+        if (resourceType.endsWith('/audit')) {
+          draft.loadMoreStatus = 'received';
+          const resourceTypeParts = resourceType.split('/');
+
+          draft[resourceTypeParts[0]] = {
+            [resourceTypeParts[1]]: isNextPageCollection
+              ? [...draft[resourceTypeParts[0]][resourceTypeParts[1]] || [], ...collection]
+              : collection || emptySet,
+          };
+        }
+
+        break;
+      }
+
+      case actionTypes.RESOURCE.AUDIT_LOGS_NEXT_PATH: {
+        draft.loadMoreStatus = 'received';
+        draft.nextPagePath = nextPagePath;
+
+        break;
+      }
+
+      case actionTypes.RESOURCE.AUDIT_LOGS_HAS_MORE_DOWNLOADS: {
+        draft.hasMoreDownloads = hasMoreDownloads;
+
+        break;
+      }
+
+      default:
     }
-    if (resourceType.endsWith('/audit')) {
-      const resourceTypeParts = resourceType.split('/');
-
-      return {
-        [resourceTypeParts[0]]: { [resourceTypeParts[1]]: collection || [] },
-      };
-    }
-  }
-
-  return state;
+  });
 };
 
 // #region PUBLIC SELECTORS
 export const selectors = {};
 
-selectors.auditLogs = (state, resourceType, resourceId, filters) => {
+selectors.auditLogs = (state, resourceType, resourceId) => {
   let logs = emptySet;
 
   if (!state) {
@@ -50,35 +83,25 @@ selectors.auditLogs = (state, resourceType, resourceId, filters) => {
     logs = emptySet;
   }
 
-  if (!filters) {
-    return logs;
-  }
+  return logs;
+};
 
-  const filteredLogs = logs.filter(al => {
-    if (filters.resourceType && filters.resourceType !== al.resourceType) {
-      return false;
-    }
+selectors.auditLogsNextPagePath = state => {
+  if (!state) return;
 
-    if (filters._resourceId && filters._resourceId !== al._resourceId) {
-      return false;
-    }
+  return state.nextPagePath;
+};
 
-    if (filters.byUser && filters.byUser !== al.byUser._id) {
-      return false;
-    }
+selectors.auditLoadMoreStatus = state => {
+  if (!state) return;
 
-    if (filters.source && filters.source !== al.source) {
-      return false;
-    }
+  return state.loadMoreStatus;
+};
 
-    if (filters.event && filters.event !== al.event) {
-      return false;
-    }
+selectors.auditHasMoreDownloads = state => {
+  if (!state) return false;
 
-    return true;
-  });
-
-  return filteredLogs;
+  return state.hasMoreDownloads;
 };
 
 // #endregion

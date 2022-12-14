@@ -4,7 +4,7 @@ import CeligoLogo from '../../CeligoLogo';
 
 const useStyles = makeStyles(theme => ({
   signUpForm: {
-    background: theme.palette.common.white,
+    background: theme.palette.background.paper,
     display: 'flex',
     alignItems: 'center',
     flexDirection: 'column',
@@ -38,7 +38,7 @@ const useStyles = makeStyles(theme => ({
   },
   formContainer: {
     marginTop: '50%',
-    background: theme.palette.common.white,
+    background: theme.palette.background.paper,
     alignItems: 'center',
     display: 'flex',
     flexDirection: 'column',

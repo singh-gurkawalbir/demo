@@ -171,12 +171,12 @@ const Mapper2Row = React.memo(props => {
     dispatch(actions.mapping.v2.addRow(nodeKey));
   }, [dispatch, nodeKey]);
 
-  const handleBlur = useCallback((field, value) => {
-    dispatch(actions.mapping.v2.patchField(field, nodeKey, value));
+  const handleBlur = useCallback((field, value, selectedExtractJsonPath) => {
+    dispatch(actions.mapping.v2.patchField(field, nodeKey, value, undefined, selectedExtractJsonPath));
   }, [dispatch, nodeKey]);
 
-  const handleExtractBlur = useCallback(value => {
-    handleBlur('extract', value);
+  const handleExtractBlur = useCallback((value, jsonPath) => {
+    handleBlur('extract', value, jsonPath);
   }, [handleBlur]);
 
   const handleGenerateBlur = useCallback(value => {
@@ -250,6 +250,7 @@ const Mapper2Row = React.memo(props => {
             isHardCodedValue={isHardCodedValue}
             isHandlebarExp={isHandlebarExp}
             editorLayout={editorLayout}
+            displaySourceDataType
             />
         </div>
       )}

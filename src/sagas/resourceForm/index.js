@@ -52,6 +52,7 @@ export function* createFormValuesPatchSet({
     resourceId,
     scope
   );
+  const accountOwner = yield select(selectors.accountOwner);
 
   if (!resource) return { patchSet: [], finalValues: null }; // nothing to do.
 
@@ -88,6 +89,7 @@ export function* createFormValuesPatchSet({
     connection,
     isNew: formState.isNew,
     assistantData,
+    accountOwner,
   });
 
   if (typeof preSave === 'function') {
@@ -423,7 +425,7 @@ export function* submitFormValues({
 
   if (
     integrationIdPatch &&
-    integrationIdPatch.value &&
+    !isEmpty(integrationIdPatch.value) &&
     (resourceType === 'accesstokens' || resourceType === 'connections')
   ) {
     type = `integrations/${integrationIdPatch.value}/${resourceType}`;
@@ -822,8 +824,10 @@ export function* initFormValues({
   skipCommit,
   flowId,
   integrationId,
+  fieldMeta: customFieldMeta,
 }) {
   const developerMode = yield select(selectors.developerMode);
+  const accountOwner = yield select(selectors.accountOwner);
   const resource = (yield select(
     selectors.resourceData,
     resourceType,
@@ -894,8 +898,13 @@ export function* initFormValues({
   //   type: 'httpconnectors',
   // });
   // const httpConnector = httpConnectors?.find(conn => (conn.name === resource.assistant) && conn.published);
-  const httpPublishedConnector = resourceType === 'connections' && getHttpConnector(resource?._httpConnectorId || resource?.http?._httpConnectorId);
+  let httpPublishedConnector = resourceType === 'connections';
 
+  if (resourceType === 'connections') {
+    httpPublishedConnector = getHttpConnector(resource?._httpConnectorId || resource?.http?._httpConnectorId);
+  } else if (resourceType === 'exports') {
+    httpPublishedConnector = getHttpConnector(resource?._httpConnectorId || resource?.webhook?._httpConnectorId);
+  }
   try {
     const defaultFormAssets = getResourceFormAssets({
       resourceType,
@@ -903,6 +912,8 @@ export function* initFormValues({
       isNew,
       assistantData: getHttpConnector(connection?.http?._httpConnectorId) ? connectorMetaData : assistantData,
       connection,
+      customFieldMeta,
+      accountOwner,
     });
 
     const form = defaultFormAssets.fieldMeta;

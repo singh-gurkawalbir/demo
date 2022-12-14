@@ -9,6 +9,7 @@ export default {
     '/http/ping/relativeURI': `/customers/${formValues['/http/unencrypted/customerId']}/googleAds:search`,
     '/http/ping/method': 'POST',
     '/http/ping/body': '{"query": "SELECT campaign.name FROM campaign"}',
+    '/http/auth/oauth/useIClientFields': false,
     '/http/auth/oauth/authURI': 'https://accounts.google.com/o/oauth2/auth?prompt=consent&access_type=offline',
     '/http/auth/oauth/tokenURI': 'https://accounts.google.com/o/oauth2/token',
     '/http/auth/token/location': 'header',

@@ -1,4 +1,4 @@
-import React, { useMemo, useCallback } from 'react';
+import React, { useMemo, useCallback, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import {
   makeStyles, Typography,
@@ -11,21 +11,20 @@ import RefreshIcon from '../../../icons/RefreshIcon';
 import CeligoPagination from '../../../CeligoPagination';
 import DateRangeSelector from '../../../DateRangeSelector';
 import { FILTER_KEYS_AD,
-  ACCOUNT_DASHBOARD_COMPLETED_JOBS_RANGE_FILTERS,
   DEFAULTS_COMPLETED_JOBS_FILTER,
   DEFAULTS_RUNNING_JOBS_FILTER,
   DEFAULT_ROWS_PER_PAGE,
   getDashboardIntegrationId,
   DEFAULT_RANGE,
-  ROWS_PER_PAGE_OPTIONS } from '../../../../utils/accountDashboard';
-import { getSelectedRange } from '../../../../utils/flowMetrics';
+  ROWS_PER_PAGE_OPTIONS} from '../../../../utils/accountDashboard';
+import { addDataRetentionPeriods, getSelectedRange } from '../../../../utils/flowMetrics';
 import { TextButton } from '../../../Buttons';
 
 const useStyles = makeStyles(theme => ({
   root: {
     marginTop: -1,
     paddingBottom: theme.spacing(1.5),
-    backgroundColor: theme.palette.common.white,
+    backgroundColor: theme.palette.background.paper,
     overflowX: 'auto',
   },
   tablePaginationRoot: {
@@ -74,6 +73,13 @@ export default function Filters({filterKey}) {
   const {currPage = 0,
     rowsPerPage = DEFAULT_ROWS_PER_PAGE,
   } = jobFilter?.paging || {};
+  const areUserAccountSettingsLoaded = useSelector(selectors.areUserAccountSettingsLoaded);
+  const maxAllowedDataRetention = useSelector(state => selectors.platformLicense(state)?.maxAllowedDataRetention);
+  const dataRetentionPeriod = useSelector(selectors.dataRetentionPeriod);
+  const maxAllowedDate = (dataRetentionPeriod || maxAllowedDataRetention) || 30;
+  const addCustomPeriods = useMemo(() =>
+    addDataRetentionPeriods(maxAllowedDataRetention, dataRetentionPeriod),
+  [dataRetentionPeriod, maxAllowedDataRetention]);
 
   const patchFilter = useCallback(
     (key, value) => {
@@ -156,6 +162,12 @@ export default function Filters({filterKey}) {
     ); /** We are setting the refreshAt (not sending to api) to make sure the filter changes when user clicks refresh.  */
   }, [defaultFilter, dispatch, integrationFilterKey, patchFilter]);
 
+  useEffect(() => {
+    if (!areUserAccountSettingsLoaded) {
+      dispatch(actions.accountSettings.request());
+    }
+  }, [areUserAccountSettingsLoaded, dispatch]);
+
   return (
     <div className={classes.root}>
       <div className={classes.filterContainer}>
@@ -169,8 +181,8 @@ export default function Filters({filterKey}) {
               onSave={handleDateFilter}
               showCustomRangeValue
               value={selectedDate}
-              customPresets={ACCOUNT_DASHBOARD_COMPLETED_JOBS_RANGE_FILTERS}
-              fromDate={startOfDay(addDays(new Date(), -29))}
+              customPresets={addCustomPeriods}
+              fromDate={startOfDay(addDays(new Date(), -(maxAllowedDate - 1)))}
               showTime={false} />
           </div>
 

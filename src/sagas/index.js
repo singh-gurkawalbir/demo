@@ -27,9 +27,11 @@ import { logoutParams } from './api/apiPaths';
 import { agentSagas } from './agent';
 import { templateSagas } from './template';
 import { cloneSagas } from './clone';
+import { concurSagas } from './concur';
 import { uploadFileSagas } from './uploadFile';
 import { stackSagas } from './stack';
 import resourceFormSampleDataSagas from './sampleData/resourceForm';
+import mockInput from './sampleData/mockInput';
 import flowDataSagas from './sampleData/flows';
 import rawDataUpdateSagas from './sampleData/rawDataUpdates';
 import importsSampleDataSagas from './sampleData/imports';
@@ -144,17 +146,16 @@ export function* apiCallWithPaging(args) {
 
   const { data, headers } = response;
 
-  // restricting pagination for account level audit logs
-  // as the records could be huge
-  // this will be supported later when UI pagination is added
-  if (args.path === '/audit') {
-    return data;
-  }
-
   // BE only supports 'link' pagination for now
   const link = headers ? headers.get('link') : undefined;
 
   const nextLinkPath = getNextLinkRelativeUrl(link);
+
+  // for audit logs, pagination is supported at UI level so
+  // we need to store the nextLinkPath in state
+  if (args.path.includes('/audit')) {
+    return {data, nextLinkPath};
+  }
 
   if (nextLinkPath) {
     try {
@@ -190,6 +191,7 @@ export function* allSagas() {
     ...connectorSagas,
     ...templateSagas,
     ...cloneSagas,
+    ...concurSagas,
     ...editor,
     ...userSagas,
     ...authenticationSagas,
@@ -202,6 +204,7 @@ export function* allSagas() {
     ...uploadFileSagas,
     ...stackSagas,
     ...resourceFormSampleDataSagas,
+    ...mockInput,
     ...flowDataSagas,
     ...rawDataUpdateSagas,
     ...importsSampleDataSagas,

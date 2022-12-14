@@ -123,7 +123,7 @@ const fieldMeta = {
           ],
         },
       ],
-      label: 'Notify me on flow errors',
+      label: 'Notify me of flow errors',
     },
     autoResolveMatchingTraceKeys: {
       id: 'autoResolveMatchingTraceKeys',
@@ -301,10 +301,12 @@ describe('Flows index file UI tests', () => {
     async function prepareStore(store) {
       store.dispatch(actions.resource.requestCollection('integrations'));
       store.dispatch(actions.resource.requestCollection('flows'));
+      store.dispatch(actions.resource.requestCollection('connections'));
       store.dispatch(actions.resource.requestCollection('exports'));
       store.dispatch(actions.user.profile.request());
 
       await waitFor(() => expect(store?.getState()?.data?.resources?.integrations).toBeDefined());
+      await waitFor(() => expect(store?.getState()?.data?.resources?.connections).toBeDefined());
       await waitFor(() => expect(store?.getState()?.data?.resources?.exports).toBeDefined());
       await waitFor(() => expect(store?.getState()?.data?.resources?.flows).toBeDefined());
       await waitFor(() => expect(store?.getState()?.user.profile.useErrMgtTwoDotZero).toBeDefined());

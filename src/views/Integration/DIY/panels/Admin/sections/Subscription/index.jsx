@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { useRouteMatch, Link } from 'react-router-dom';
 import moment from 'moment';
@@ -15,6 +15,9 @@ import useSelectorMemo from '../../../../../../../hooks/selectors/useSelectorMem
 import { useGetTableContext } from '../../../../../../../components/CeligoTable/TableContext';
 import FilledButton from '../../../../../../../components/Buttons/FilledButton';
 import useConfirmDialog from '../../../../../../../components/ConfirmDialog';
+import ChildIntegrationsTable from './ChildIntegrationsTable';
+import ParentUpgradeButton from './ParentUpgradeButton';
+import UpgradeDrawer from '../../../../../App/drawers/Upgrade';
 
 const emptyObject = {};
 const metadata = {
@@ -77,10 +80,11 @@ const useStyles = makeStyles(theme => ({
     paddingBottom: theme.spacing(1),
   },
   content: {
-    padding: '30px 30px 30px 0',
+    padding: theme.spacing(2, 0),
   },
   container: {
-    padding: '0 0 30px 30px',
+    paddingLeft: theme.spacing(2),
+    paddingBottom: theme.spacing(2),
   },
   button: {
     margin: theme.spacing(1),
@@ -110,6 +114,7 @@ export default function SubscriptionSection({ childId, integrationId }) {
   const {
     supportsChild,
     version,
+    changeEditionSteps = [],
   } = useSelector(state => {
     const integration = selectors.integrationAppSettings(state, integrationId);
 
@@ -117,12 +122,15 @@ export default function SubscriptionSection({ childId, integrationId }) {
       return {
         supportsChild: !!(integration.initChild && integration.initChild.function),
         version: integration.version,
+        changeEditionSteps: integration?.changeEditionSteps,
       };
     }
 
     return emptyObject;
   }, shallowEqual);
+
   const children = useSelectorMemo(selectors.mkIntegrationChildren, integrationId);
+  const allChildIntegrations = useSelectorMemo(selectors.mkGetChildIntegrations, integrationId);
   const license = useSelector(state =>
     selectors.integrationAppLicense(state, integrationId)
   );
@@ -180,6 +188,8 @@ export default function SubscriptionSection({ childId, integrationId }) {
     expiresText,
     upgradeText,
     upgradeRequested,
+    nextPlan,
+    _changeEditionId: changeEditionId,
   } = license;
   const handleUpgrade = () => {
     if (upgradeText === 'Request upgrade') {
@@ -189,6 +199,7 @@ export default function SubscriptionSection({ childId, integrationId }) {
         buttons: [
           {
             label: 'Submit request',
+            dataTest: 'submitRequest',
             onClick: () => {
               dispatch(
                 actions.integrationApp.settings.requestUpgrade(integrationId, {
@@ -207,6 +218,30 @@ export default function SubscriptionSection({ childId, integrationId }) {
       dispatch(actions.integrationApp.settings.upgrade(integrationId, license));
     }
   };
+
+  const handleUpgradeEdition = useCallback(() => {
+    confirmDialog({
+      title: 'Upgrade plan',
+      message: `Upgrade to a ${nextPlan} plan. Upgrades might require additional install steps to complete. If there are multiple accounts tied to this integration app, those accounts will begin installing once the subscription upgrade is complete.`,
+      buttons: [
+        {
+          label: 'Continue',
+          dataTest: 'continueUpgrade',
+          onClick: () => {
+            if (changeEditionSteps?.length) {
+              dispatch(actions.integrationApp.upgrade.getSteps(integrationId));
+            } else {
+              dispatch(actions.integrationApp.settings.integrationAppV2.upgrade(integrationId));
+            }
+          },
+        },
+        {
+          label: 'Cancel',
+          variant: 'text',
+        },
+      ],
+    });
+  }, [confirmDialog, dispatch, integrationId, nextPlan, changeEditionSteps?.length]);
 
   return (
     <>
@@ -234,13 +269,34 @@ export default function SubscriptionSection({ childId, integrationId }) {
                 <Typography>{expiresText}</Typography>
               </Grid>
               <Grid item xs={3}>
-                {upgradeText && (
+                {upgradeText === '' && istwoDotZeroFrameWork && (
                   <FilledButton
                     className={classes.button}
-                    disabled={upgradeRequested || isLicenseExpired}
-                    onClick={handleUpgrade}>
-                    {upgradeText}
+                    disabled
+                    bold
+                    data-test="requestUpgrade"
+                  >
+                    Request upgrade
                   </FilledButton>
+                )}
+                {upgradeText && upgradeText === 'upgradeEdition' && (
+                <ParentUpgradeButton
+                  id={integrationId}
+                  className={classes.button}
+                  onClick={handleUpgradeEdition}
+                  nextPlan={nextPlan}
+                  changeEditionId={changeEditionId}
+                />
+                )}
+                {upgradeText && upgradeText !== 'upgradeEdition' && (
+                <FilledButton
+                  className={classes.button}
+                  disabled={upgradeRequested || isLicenseExpired}
+                  onClick={handleUpgrade}
+                  data-test="requestUpgrade"
+                >
+                  {upgradeText}
+                </FilledButton>
                 )}
               </Grid>
             </Grid>
@@ -252,6 +308,12 @@ export default function SubscriptionSection({ childId, integrationId }) {
           (tile) of this Integration App. Contact your Account Manager for more
           info.
         </Typography>
+        {allChildIntegrations.length ? (
+          <ChildIntegrationsTable
+            integrationId={integrationId}
+            allChildIntegrations={allChildIntegrations}
+          />
+        ) : null}
         {hasAddOns && !hasSubscribedAddOns && (
           <div className={classes.customisedBlock}>
             <div className={classes.leftBlock}>
@@ -259,7 +321,7 @@ export default function SubscriptionSection({ childId, integrationId }) {
                 Add-ons
               </Typography>
               <Typography className={classes.message}>
-                You don`t have any add-ons yet. Add-ons let you customize
+                You don’t have any add-ons yet. Add-ons let you customize
                 subscription to meet your specific business requirements.
               </Typography>
             </div>
@@ -291,6 +353,7 @@ export default function SubscriptionSection({ childId, integrationId }) {
           </>
         )}
       </div>
+      <UpgradeDrawer />
     </>
   );
 }

@@ -12,6 +12,7 @@ export default {
         '/http/baseURI': 'https://api.constantcontact.com/',
         '/http/ping/relativeURI': 'v2/eventspot/events?api_key={{{connection.http.unencrypted.apiKey}}}',
         '/http/ping/method': 'GET',
+        '/http/auth/oauth/useIClientFields': false,
         '/http/auth/oauth/authURI':
           'https://oauth2.constantcontact.com/oauth2/oauth/siteowner/authorize',
         '/http/auth/oauth/tokenURI':

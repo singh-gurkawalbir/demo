@@ -9,7 +9,7 @@ const useStyles = makeStyles(theme => ({
     borderColor: theme.palette.error.main,
     color: theme.palette.error.main,
     '&:hover': {
-      background: theme.palette.common.white,
+      background: theme.palette.background.paper,
       borderColor: theme.palette.error.main,
       color: theme.palette.error.dark,
     },

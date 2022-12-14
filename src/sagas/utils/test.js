@@ -2,7 +2,7 @@
 import { select } from 'redux-saga/effects';
 import { expectSaga } from 'redux-saga-test-plan';
 import * as matchers from 'redux-saga-test-plan/matchers';
-import { resourceConflictResolution, constructResourceFromFormValues, convertResourceFieldstoSampleData, getHTTPConnectorMetadata, updateFinalMetadataWithHttpFramework } from './index';
+import { resourceConflictResolution, constructResourceFromFormValues, convertResourceFieldstoSampleData, getHTTPConnectorMetadata, updateFinalMetadataWithHttpFramework, getEndpointResourceFields, updateWebhookFinalMetadataWithHttpFramework } from './index';
 import { createFormValuesPatchSet } from '../resourceForm';
 import { selectors } from '../../reducers';
 import getResourceFormAssets from '../../forms/formFactory/getResourceFromAssets';
@@ -254,7 +254,7 @@ describe('constructResourceFromFormValues saga', () => {
       .run();
   });
 });
-describe('convertResourceFieldstoSampleData saga', () => {
+describe('convertResourceFieldstoSampleData', () => {
   const input1 = [
     {
       id: 'address',
@@ -372,7 +372,7 @@ describe('convertResourceFieldstoSampleData saga', () => {
     expect(sampleData).toEqual('');
   });
 });
-describe('getHTTPConnectorMetadata saga', () => {
+describe('getHTTPConnectorMetadata', () => {
   const input1 = {
     baseURIs: [
       'https://{{{connection.settings.storeName}}}.myshopify.com/admin/api/:_version',
@@ -695,6 +695,7 @@ describe('getHTTPConnectorMetadata saga', () => {
   };
   const output1 = {
     export: {
+      addVersionToUrl: true,
       labels: {
         version: 'API version',
       },
@@ -704,154 +705,259 @@ describe('getHTTPConnectorMetadata saga', () => {
         method: 'linkheader',
       },
       requestMediaType: 'json',
+      resources: [
+        {
+          _httpConnectorId: '62cffbf79b51830e4d641d6c',
+          _id: '62cffbf70c804009663faa2b',
+          _versionIds: [
+            '62cffbf79b51830e4d641d6d',
+            '62cffbf79b51830e4d641d6e',
+            '62cffbf79b51830e4d641d6f',
+          ],
+          createdAt: '2022-07-14T11:20:24.000Z',
+          endpoints: [
+            {
+              _httpConnectorResourceIds: [
+                '62cffbf70c804009663faa2b',
+              ],
+              delta: {
+                dateFormat: 'YYYY-MM-DDTHH:mm:ss[Z]',
+                defaults: {
+                  updated_at_min: '{{{lastExportDateTime}}}',
+                },
+              },
+              doesNotSupportPaging: false,
+              hidden: false,
+              id: '62cffbff0c804009663faa5c',
+              method: 'GET',
+              name: 'Retrieves a list of customers',
+              queryParameters: [
+                {
+                  description: 'A comma-separated list of customer ids',
+                  fieldType: 'textarea',
+                  id: 'ids',
+                  name: 'ids',
+                  required: false,
+                },
+              ],
+              response: {
+                resourcePath: 'customers',
+              },
+              supportedExportTypes: [
+                'delta',
+                'test',
+              ],
+              url: '/customers.json',
+            },
+            {
+              _httpConnectorResourceIds: [
+                '62cffbf70c804009663faa2b',
+              ],
+              doesNotSupportPaging: false,
+              hidden: false,
+              id: '62cffbff0c804009663faa60',
+              method: 'GET',
+              name: 'Searches for customers that match a supplied query',
+              queryParameters: [
+                {
+                  description: 'Field and direction to order results by(default: last_order_date DESC)',
+                  fieldType: 'textarea',
+                  id: 'order',
+                  name: 'order',
+                  required: false,
+                },
+              ],
+              response: {
+                resourcePath: 'customers',
+              },
+              url: '/customers/search.json',
+            },
+            {
+              _httpConnectorResourceIds: [
+                '62cffbf70c804009663faa2b',
+              ],
+              doesNotSupportPaging: true,
+              hidden: false,
+              id: '62cffbff9b51830e4d641daf',
+              method: 'GET',
+              name: 'Retrieves a single customer',
+              pathParameters: [
+                {
+                  fieldType: 'input',
+                  id: 'customerId',
+                  name: 'customerId',
+                  required: true,
+                },
+              ],
+              response: {
+                resourcePath: 'customer',
+              },
+              url: '/customers/:_customerId.json',
+            },
+            {
+              _httpConnectorResourceIds: [
+                '62cffbf70c804009663faa2b',
+              ],
+              doesNotSupportPaging: true,
+              hidden: false,
+              id: '62cffbff0c804009663faa62',
+              method: 'GET',
+              name: 'Retrieves a list of metafields that belong to a customer',
+              pathParameters: [
+                {
+                  fieldType: 'input',
+                  id: 'customerId',
+                  name: 'customerId',
+                  required: true,
+                },
+              ],
+              response: {
+                resourcePath: 'metafields',
+              },
+              url: '/customers/:_customerId/metafields.json',
+            },
+          ],
+          hidden: false,
+          id: '62cffbf70c804009663faa2b',
+          lastModified: '2022-07-14T11:20:24.003Z',
+          name: 'Customers : Customer',
+          published: true,
+          resourceFields: [
+            {
+              dataType: 'objectarray',
+              id: 'customer',
+              resourceFields: [
+                {
+                  dataType: 'object',
+                  id: 'default_address',
+                  resourceFields: [
+                    {
+                      dataType: 'string',
+                      id: 'province_code',
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+          supportedBy: {
+            import: {
+              preConfiguredFields: [],
+            },
+          },
+          versions: [
+            {
+              _id: '62cffbf79b51830e4d641d6d',
+              version: '2022-01',
+            },
+          ],
+        },
+      ],
       versions: [
         {
           _id: '62cffbf79b51830e4d641d6d',
-          resources: [
-            {
-              endpoints: [
-                {
-                  delta: {
-                    dateFormat: 'YYYY-MM-DDTHH:mm:ss[Z]',
-                    defaults: {
-                      updated_at_min: '{{{lastExportDateTime}}}',
-                    },
-                  },
-                  doesNotSupportPaging: false,
-                  id: '62cffbff0c804009663faa5c',
-                  name: 'Retrieves a list of customers',
-                  queryParameters: [
-                    {
-                      description: 'A comma-separated list of customer ids',
-                      fieldType: 'textarea',
-                      id: 'ids',
-                      name: 'ids',
-                      required: false,
-                    },
-                  ],
-                  response: {
-                    resourcePath: 'customers',
-                  },
-                  supportedExportTypes: [
-                    'delta',
-                    'test',
-                  ],
-                  url: '/2022-01/customers.json',
-                },
-                {
-                  doesNotSupportPaging: false,
-                  id: '62cffbff0c804009663faa60',
-                  name: 'Searches for customers that match a supplied query',
-                  queryParameters: [
-                    {
-                      description: 'Field and direction to order results by(default: last_order_date DESC)',
-                      fieldType: 'textarea',
-                      id: 'order',
-                      name: 'order',
-                      required: false,
-                    },
-                  ],
-                  response: {
-                    resourcePath: 'customers',
-                  },
-                  url: '/2022-01/customers/search.json',
-                },
-                {
-                  doesNotSupportPaging: true,
-                  id: '62cffbff9b51830e4d641daf',
-                  name: 'Retrieves a single customer',
-                  pathParameters: [
-                    {
-                      fieldType: 'input',
-                      id: 'customerId',
-                      name: 'customerId',
-                      required: true,
-                    },
-                  ],
-                  response: {
-                    resourcePath: 'customer',
-                  },
-                  url: '/2022-01/customers/:_customerId.json',
-                },
-                {
-                  doesNotSupportPaging: true,
-                  id: '62cffbff0c804009663faa62',
-                  name: 'Retrieves a list of metafields that belong to a customer',
-                  pathParameters: [
-                    {
-                      fieldType: 'input',
-                      id: 'customerId',
-                      name: 'customerId',
-                      required: true,
-                    },
-                  ],
-                  response: {
-                    resourcePath: 'metafields',
-                  },
-                  url: '/2022-01/customers/:_customerId/metafields.json',
-                },
-              ],
-              id: '62cffbf70c804009663faa2b',
-              name: 'Customers : Customer',
-            },
-          ],
           version: '2022-01',
         },
       ],
     },
     import: {
+      addVersionToUrl: true,
       errorMediaType: 'json',
       labels: {
         version: 'API version',
       },
       requestMediaType: 'json',
+      resources: [
+        {
+          _httpConnectorId: '62cffbf79b51830e4d641d6c',
+          _id: '62cffbf70c804009663faa2b',
+          _versionIds: [
+            '62cffbf79b51830e4d641d6d',
+            '62cffbf79b51830e4d641d6e',
+            '62cffbf79b51830e4d641d6f',
+          ],
+          createdAt: '2022-07-14T11:20:24.000Z',
+          hidden: false,
+          id: '62cffbf70c804009663faa2b',
+          lastModified: '2022-07-14T11:20:24.003Z',
+          name: 'Customers : Customer',
+          operations: [
+            {
+              _httpConnectorResourceIds: [
+                '62cffbf70c804009663faa2b',
+              ],
+              hidden: false,
+              howToFindIdentifier: {
+                lookup: {
+                  extract: 'customers[0].id',
+                  id: '62cffbff0c804009663faa60',
+                  url: '/customers/search.json',
+                },
+              },
+              id: '62cffc149b51830e4d641e51',
+              ignoreExisting: true,
+              method: 'POST',
+              name: 'Creates a customer',
+              parameters: [
+                {
+                  id: 'customerId',
+                  in: 'path',
+                  isIdentifier: true,
+                  required: true,
+                },
+              ],
+              requiredMappings: [
+                'customer.email',
+              ],
+              supportIgnoreExisting: true,
+              url: '/customers.json',
+            },
+          ],
+          published: true,
+          resourceFields: [
+            {
+              dataType: 'objectarray',
+              id: 'customer',
+              resourceFields: [
+                {
+                  dataType: 'object',
+                  id: 'default_address',
+                  resourceFields: [
+                    {
+                      dataType: 'string',
+                      id: 'province_code',
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+          sampleData: {
+            customer: [
+              {
+                default_address: {
+                  province_code: 'province_code',
+                },
+              },
+            ],
+          },
+          supportedBy: {
+            import: {
+              preConfiguredFields: [],
+            },
+          },
+          versions: [
+            {
+              _id: '62cffbf79b51830e4d641d6d',
+              version: '2022-01',
+            },
+          ],
+        },
+      ],
       successMediaType: 'json',
       versions: [
         {
           _id: '62cffbf79b51830e4d641d6d',
-          resources: [
-            {
-              id: '62cffbf70c804009663faa2b',
-              name: 'Customers : Customer',
-              operations: [
-                {
-                  howToFindIdentifier: {
-                    lookup: {
-                      extract: 'customers[0].id',
-                      id: '62cffbff0c804009663faa60',
-                      url: '/customers/search.json',
-                    },
-                  },
-                  id: '62cffc149b51830e4d641e51',
-                  ignoreExisting: true,
-                  method: 'POST',
-                  name: 'Creates a customer',
-                  parameters: [
-                    {
-                      id: 'customerId',
-                      in: 'path',
-                      isIdentifier: true,
-                      required: true,
-                    },
-                  ],
-                  requiredMappings: [
-                    'customer.email',
-                  ],
-                  supportIgnoreExisting: true,
-                  url: '/2022-01/customers.json',
-                },
-              ],
-              sampleData: {
-                customer: [
-                  {
-                    default_address: {
-                      province_code: 'province_code',
-                    },
-                  },
-                ],
-              },
-            },
-          ],
           version: '2022-01',
         },
       ],
@@ -868,97 +974,157 @@ describe('getHTTPConnectorMetadata saga', () => {
         method: 'linkheader',
       },
       requestMediaType: 'json',
+      resources: [
+        {
+          _httpConnectorId: '62cffbf79b51830e4d641d6c',
+          _id: '62cffbf70c804009663faa2b',
+          _versionIds: [
+            '62cffbf79b51830e4d641d6d',
+            '62cffbf79b51830e4d641d6e',
+            '62cffbf79b51830e4d641d6f',
+          ],
+          createdAt: '2022-07-14T11:20:24.000Z',
+          endpoints: [
+            {
+              _httpConnectorResourceIds: [
+                '62cffbf70c804009663faa2b',
+              ],
+              delta: {
+                dateFormat: 'YYYY-MM-DDTHH:mm:ss[Z]',
+                defaults: {
+                  updated_at_min: '{{{lastExportDateTime}}}',
+                },
+              },
+              doesNotSupportPaging: false,
+              hidden: false,
+              id: '62cffbff0c804009663faa5c',
+              method: 'GET',
+              name: 'Retrieves a list of customers',
+              queryParameters: [
+                {
+                  description: 'A comma-separated list of customer ids',
+                  fieldType: 'textarea',
+                  id: 'ids',
+                  name: 'ids',
+                  required: false,
+                },
+              ],
+              response: {
+                resourcePath: 'customers',
+              },
+              supportedExportTypes: [
+                'delta',
+                'test',
+              ],
+              url: '/customers.json',
+            },
+            {
+              _httpConnectorResourceIds: [
+                '62cffbf70c804009663faa2b',
+              ],
+              doesNotSupportPaging: false,
+              hidden: false,
+              id: '62cffbff0c804009663faa60',
+              method: 'GET',
+              name: 'Searches for customers that match a supplied query',
+              queryParameters: [
+                {
+                  description: 'Field and direction to order results by(default: last_order_date DESC)',
+                  fieldType: 'textarea',
+                  id: 'order',
+                  name: 'order',
+                  required: false,
+                },
+              ],
+              response: {
+                resourcePath: 'customers',
+              },
+              url: '/customers/search.json',
+            },
+            {
+              _httpConnectorResourceIds: [
+                '62cffbf70c804009663faa2b',
+              ],
+              doesNotSupportPaging: true,
+              hidden: false,
+              id: '62cffbff9b51830e4d641daf',
+              method: 'GET',
+              name: 'Retrieves a single customer',
+              pathParameters: [
+                {
+                  fieldType: 'input',
+                  id: 'customerId',
+                  name: 'customerId',
+                  required: true,
+                },
+              ],
+              response: {
+                resourcePath: 'customer',
+              },
+              url: '/customers/:_customerId.json',
+            },
+            {
+              _httpConnectorResourceIds: [
+                '62cffbf70c804009663faa2b',
+              ],
+              doesNotSupportPaging: true,
+              hidden: false,
+              id: '62cffbff0c804009663faa62',
+              method: 'GET',
+              name: 'Retrieves a list of metafields that belong to a customer',
+              pathParameters: [
+                {
+                  fieldType: 'input',
+                  id: 'customerId',
+                  name: 'customerId',
+                  required: true,
+                },
+              ],
+              response: {
+                resourcePath: 'metafields',
+              },
+              url: '/customers/:_customerId/metafields.json',
+            },
+          ],
+          hidden: false,
+          id: '62cffbf70c804009663faa2b',
+          lastModified: '2022-07-14T11:20:24.003Z',
+          name: 'Customers : Customer',
+          published: true,
+          resourceFields: [
+            {
+              dataType: 'objectarray',
+              id: 'customer',
+              resourceFields: [
+                {
+                  dataType: 'object',
+                  id: 'default_address',
+                  resourceFields: [
+                    {
+                      dataType: 'string',
+                      id: 'province_code',
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+          supportedBy: {
+            import: {
+              preConfiguredFields: [],
+            },
+          },
+          versions: [
+            {
+              _id: '62cffbf79b51830e4d641d6d',
+              version: '2022-01',
+            },
+          ],
+        },
+      ],
       versions: [
         {
           _id: '62cffbf79b51830e4d641d6d',
-          resources: [
-            {
-              endpoints: [
-                {
-                  delta: {
-                    dateFormat: 'YYYY-MM-DDTHH:mm:ss[Z]',
-                    defaults: {
-                      updated_at_min: '{{{lastExportDateTime}}}',
-                    },
-                  },
-                  doesNotSupportPaging: false,
-                  id: '62cffbff0c804009663faa5c',
-                  name: 'Retrieves a list of customers',
-                  queryParameters: [
-                    {
-                      description: 'A comma-separated list of customer ids',
-                      fieldType: 'textarea',
-                      id: 'ids',
-                      name: 'ids',
-                      required: false,
-                    },
-                  ],
-                  response: {
-                    resourcePath: 'customers',
-                  },
-                  supportedExportTypes: [
-                    'delta',
-                    'test',
-                  ],
-                  url: '/customers.json',
-                },
-                {
-                  doesNotSupportPaging: false,
-                  id: '62cffbff0c804009663faa60',
-                  name: 'Searches for customers that match a supplied query',
-                  queryParameters: [
-                    {
-                      description: 'Field and direction to order results by(default: last_order_date DESC)',
-                      fieldType: 'textarea',
-                      id: 'order',
-                      name: 'order',
-                      required: false,
-                    },
-                  ],
-                  response: {
-                    resourcePath: 'customers',
-                  },
-                  url: '/customers/search.json',
-                },
-                {
-                  doesNotSupportPaging: true,
-                  id: '62cffbff9b51830e4d641daf',
-                  name: 'Retrieves a single customer',
-                  pathParameters: [
-                    {
-                      fieldType: 'input',
-                      id: 'customerId',
-                      name: 'customerId',
-                      required: true,
-                    },
-                  ],
-                  response: {
-                    resourcePath: 'customer',
-                  },
-                  url: '/customers/:_customerId.json',
-                },
-                {
-                  doesNotSupportPaging: true,
-                  id: '62cffbff0c804009663faa62',
-                  name: 'Retrieves a list of metafields that belong to a customer',
-                  pathParameters: [
-                    {
-                      fieldType: 'input',
-                      id: 'customerId',
-                      name: 'customerId',
-                      required: true,
-                    },
-                  ],
-                  response: {
-                    resourcePath: 'metafields',
-                  },
-                  url: '/customers/:_customerId/metafields.json',
-                },
-              ],
-              id: '62cffbf70c804009663faa2b',
-              name: 'Customers : Customer',
-            },
-          ],
           version: '2022-01',
         },
       ],
@@ -969,53 +1135,97 @@ describe('getHTTPConnectorMetadata saga', () => {
         version: 'API version',
       },
       requestMediaType: 'json',
+      resources: [
+        {
+          _httpConnectorId: '62cffbf79b51830e4d641d6c',
+          _id: '62cffbf70c804009663faa2b',
+          _versionIds: [
+            '62cffbf79b51830e4d641d6d',
+            '62cffbf79b51830e4d641d6e',
+            '62cffbf79b51830e4d641d6f',
+          ],
+          createdAt: '2022-07-14T11:20:24.000Z',
+          hidden: false,
+          id: '62cffbf70c804009663faa2b',
+          lastModified: '2022-07-14T11:20:24.003Z',
+          name: 'Customers : Customer',
+          operations: [
+            {
+              _httpConnectorResourceIds: [
+                '62cffbf70c804009663faa2b',
+              ],
+              hidden: false,
+              howToFindIdentifier: {
+                lookup: {
+                  extract: 'customers[0].id',
+                  id: '62cffbff0c804009663faa60',
+                  url: '/customers/search.json',
+                },
+              },
+              id: '62cffc149b51830e4d641e51',
+              ignoreExisting: true,
+              method: 'POST',
+              name: 'Creates a customer',
+              parameters: [
+                {
+                  id: 'customerId',
+                  in: 'path',
+                  isIdentifier: true,
+                  required: true,
+                },
+              ],
+              requiredMappings: [
+                'customer.email',
+              ],
+              supportIgnoreExisting: true,
+              url: '/customers.json',
+            },
+          ],
+          published: true,
+          resourceFields: [
+            {
+              dataType: 'objectarray',
+              id: 'customer',
+              resourceFields: [
+                {
+                  dataType: 'object',
+                  id: 'default_address',
+                  resourceFields: [
+                    {
+                      dataType: 'string',
+                      id: 'province_code',
+                    },
+                  ],
+                },
+              ],
+            },
+          ],
+          sampleData: {
+            customer: [
+              {
+                default_address: {
+                  province_code: 'province_code',
+                },
+              },
+            ],
+          },
+          supportedBy: {
+            import: {
+              preConfiguredFields: [],
+            },
+          },
+          versions: [
+            {
+              _id: '62cffbf79b51830e4d641d6d',
+              version: '2022-01',
+            },
+          ],
+        },
+      ],
       successMediaType: 'json',
       versions: [
         {
           _id: '62cffbf79b51830e4d641d6d',
-          resources: [
-            {
-              id: '62cffbf70c804009663faa2b',
-              name: 'Customers : Customer',
-              operations: [
-                {
-                  howToFindIdentifier: {
-                    lookup: {
-                      extract: 'customers[0].id',
-                      id: '62cffbff0c804009663faa60',
-                      url: '/customers/search.json',
-                    },
-                  },
-                  id: '62cffc149b51830e4d641e51',
-                  ignoreExisting: true,
-                  method: 'POST',
-                  name: 'Creates a customer',
-                  parameters: [
-                    {
-                      id: 'customerId',
-                      in: 'path',
-                      isIdentifier: true,
-                      required: true,
-                    },
-                  ],
-                  requiredMappings: [
-                    'customer.email',
-                  ],
-                  supportIgnoreExisting: true,
-                  url: '/customers.json',
-                },
-              ],
-              sampleData: {
-                customer: [
-                  {
-                    default_address: {
-                      province_code: 'province_code',
-                    },
-                  },
-                ],
-              },
-            },
-          ],
           version: '2022-01',
         },
       ],
@@ -1034,7 +1244,7 @@ describe('getHTTPConnectorMetadata saga', () => {
   });
 });
 
-describe('updateFinalMetadataWithHttpFramework saga', () => {
+describe('updateFinalMetadataWithHttpFramework', () => {
   const connector = {
     baseURIs: [
       'https://{{{connection.settings.storeName}}}.myshopify.com/admin/api/:_version',
@@ -1353,6 +1563,8 @@ describe('updateFinalMetadataWithHttpFramework saga', () => {
         label: 'Store Name',
         name: '/settings/storeName',
         required: true,
+        _conditionIdValuesMap: [],
+        _conditionIds: [],
         type: 'text',
         validWhen: {
           matchesRegEx: {
@@ -1370,8 +1582,629 @@ describe('updateFinalMetadataWithHttpFramework saga', () => {
 
     expect(metaData).toEqual(expctedOutput);
   });
-  test('should return undefined if none of the argument is passes', () => {
+  test('should not throw any exception for invalid arguments', () => {
     const metaData = updateFinalMetadataWithHttpFramework();
+
+    expect(metaData).toEqual(undefined);
+  });
+});
+
+describe('getEndpointResourceFields', () => {
+  const resourceFields = {
+    address: {
+      address1: 'address1',
+      address2: 'address2',
+      original_shipping_lines: [
+        {
+          code: 'code',
+        },
+      ],
+      shipping_lines_override: 'shipping_lines_override',
+    },
+  };
+
+  test('should return correct endpoint sample data for resource fields when type is inclusion', () => {
+    const endpointResourceFields = [{type: 'inclusion', fields: ['address.shipping_lines_override']}];
+
+    const sampleData = getEndpointResourceFields(endpointResourceFields, resourceFields);
+    const expected = {address: {
+      shipping_lines_override: 'default',
+    }};
+
+    expect(sampleData).toEqual(expected);
+  });
+  test('should return correct endpoint sample data for resource fields when type is exclusion', () => {
+    const endpointResourceFields = [{type: 'exclusion', fields: ['address.shipping_lines_override']}];
+
+    const sampleData = getEndpointResourceFields(endpointResourceFields, resourceFields);
+    const expected = {
+      address: {
+        address1: 'address1',
+        address2: 'address2',
+        original_shipping_lines: [
+          {
+            code: 'code',
+          },
+        ] },
+    };
+
+    expect(sampleData).toEqual(expected);
+  });
+  test('should not throw any exception for invalid arguments', () => {
+    const sampleData = getEndpointResourceFields();
+
+    expect(sampleData).toEqual(undefined);
+  });
+  test('should return resourceFields directly if endpoint resource fields are empty', () => {
+    const sampleData = getEndpointResourceFields('', resourceFields);
+
+    expect(sampleData).toEqual(resourceFields);
+  });
+});
+
+describe('updateWebhookFinalMetadataWithHttpFramework', () => {
+  const connector = {
+    baseURIs: [
+      'https://{{{connection.settings.storeName}}}.myshopify.com/admin/api/:_version',
+    ],
+    versioning: {
+      location: 'uri',
+    },
+    versions: [
+      {
+        _id: '62cffbf79b51830e4d641d6d',
+        name: '2022-01',
+      },
+    ],
+    apis: [],
+    supportedBy: {
+      export: {
+        preConfiguredFields: [
+          {
+            path: 'paging',
+            values: [
+              {
+                method: 'linkheader',
+                lastPageStatusCode: 404,
+                linkHeaderRelation: 'next',
+              },
+            ],
+          },
+          {
+            path: 'requestMediaType',
+            values: [
+              'json',
+            ],
+          },
+        ],
+      },
+      import: {
+        preConfiguredFields: [
+          {
+            path: 'successMediaType',
+            values: [
+              'json',
+            ],
+          },
+          {
+            path: 'errorMediaType',
+            values: [
+              'json',
+            ],
+          },
+          {
+            path: 'requestMediaType',
+            values: [
+              'json',
+            ],
+          },
+        ],
+      },
+      connection: {
+        preConfiguredFields: [
+          {
+            path: 'webhook.verify',
+            values: [
+              'hmac',
+            ],
+          },
+          {
+            path: 'webhook.algorithm',
+            values: [
+              'sha256',
+            ],
+          },
+          {
+            path: 'webhook.encoding',
+            values: [
+              'base64',
+            ],
+          },
+          {
+            path: 'webhook.header',
+            values: [
+              'X-Shopify-Hmac-SHA256',
+            ],
+          },
+        ],
+        fieldsUserMustSet: [
+          {
+            path: 'webhooks.key',
+          },
+        ],
+      },
+    },
+  };
+  const inputFieldMetaData = {fieldMap: {
+    'webhook.verify': {
+      resourceType: 'exports',
+      isLoggable: true,
+      type: 'selectforsetfields',
+      label: 'Verification type',
+      required: true,
+      setFieldIds: [
+        'webhook.url',
+      ],
+      options: [
+        {
+          items: [
+            {
+              label: 'Basic',
+              value: 'basic',
+            },
+            {
+              label: 'HMAC',
+              value: 'hmac',
+            },
+            {
+              label: 'Secret URL',
+              value: 'secret_url',
+            },
+            {
+              label: 'Token',
+              value: 'token',
+            },
+          ],
+        },
+      ],
+      visible: true,
+      fieldId: 'webhook.verify',
+      id: 'webhook.verify',
+      name: '/webhook/verify',
+      defaultValue: '',
+      helpKey: 'export.webhook.verify',
+    },
+    'webhook.algorithm': {
+      resourceType: 'exports',
+      isLoggable: true,
+      type: 'selectforsetfields',
+      label: 'Algorithm',
+      setFieldIds: [
+        'webhook.url',
+      ],
+      options: [
+        {
+          items: [
+            {
+              label: 'SHA-1',
+              value: 'sha1',
+            },
+            {
+              label: 'SHA-256',
+              value: 'sha256',
+            },
+            {
+              label: 'SHA-384',
+              value: 'sha384',
+            },
+            {
+              label: 'SHA-512',
+              value: 'sha512',
+            },
+          ],
+        },
+      ],
+      visibleWhen: [
+        {
+          field: 'webhook.verify',
+          is: [
+            'hmac',
+          ],
+        },
+      ],
+      required: true,
+      fieldId: 'webhook.algorithm',
+      id: 'webhook.algorithm',
+      name: '/webhook/algorithm',
+      defaultValue: '',
+      helpKey: 'export.webhook.algorithm',
+    },
+    'webhook.encoding': {
+      resourceType: 'exports',
+      isLoggable: true,
+      type: 'selectforsetfields',
+      label: 'Encoding',
+      required: true,
+      setFieldIds: [
+        'webhook.url',
+      ],
+      options: [
+        {
+          items: [
+            {
+              label: 'Base64',
+              value: 'base64',
+            },
+            {
+              label: 'Hexadecimal',
+              value: 'hex',
+            },
+          ],
+        },
+      ],
+      visibleWhen: [
+        {
+          field: 'webhook.verify',
+          is: [
+            'hmac',
+          ],
+        },
+      ],
+      fieldId: 'webhook.encoding',
+      id: 'webhook.encoding',
+      name: '/webhook/encoding',
+      defaultValue: '',
+      helpKey: 'export.webhook.encoding',
+    },
+    'webhook.key': {
+      resourceType: 'exports',
+      type: 'textforsetfields',
+      label: 'Key (secret)',
+      inputType: 'password',
+      setFieldIds: [
+        'webhook.url',
+      ],
+      visible: true,
+      visibleWhen: [
+        {
+          field: 'webhook.verify',
+          is: [
+            'hmac',
+          ],
+        },
+      ],
+      required: true,
+      fieldId: 'webhook.key',
+      id: 'webhook.key',
+      name: '/webhook/key',
+      defaultValue: '',
+      helpKey: 'export.webhook.key',
+    },
+    'webhook.token': {
+      type: 'webhooktokengenerator',
+      label: 'Custom URL token',
+      buttonLabel: 'Generate new token',
+      required: true,
+      provider: 'custom',
+      setFieldIds: [
+        'webhook.url',
+      ],
+      visible: true,
+      visibleWhen: [
+        {
+          field: 'webhook.verify',
+          is: [
+            'secret_url',
+          ],
+        },
+      ],
+      fieldId: 'webhook.token',
+      refreshOptionsOnChangesTo: [
+        'webhook.provider',
+      ],
+      id: 'webhook.token',
+      name: '/webhook/token',
+      defaultValue: '',
+      helpKey: 'export.webhook.token',
+    },
+    'webhook.generateToken': {
+      type: 'webhooktokengenerator',
+      label: 'Token',
+      provider: 'custom',
+      buttonLabel: 'Generate new token',
+      setFieldIds: [
+        'webhook.url',
+      ],
+      helpKey: 'export.webhook.token',
+      visibleWhen: [
+        {
+          field: 'webhook.verify',
+          is: [
+            'token',
+          ],
+        },
+      ],
+      fieldId: 'webhook.generateToken',
+      id: 'webhook.generateToken',
+      name: '/webhook/generateToken',
+    },
+    'webhook.successBody': {
+      label: 'Override HTTP response body for success responses',
+      type: 'uri',
+      stage: 'responseMappingExtract',
+      showLookup: false,
+      refreshOptionsOnChangesTo: [
+        'webhook.successMediaType',
+      ],
+    },
+
+  }};
+  const resource = {};
+  const expctedOutput = {
+    fieldMap: {
+
+      'webhook.algorithm': {
+        defaultValue: '',
+        fieldId: 'webhook.algorithm',
+        helpKey: 'export.webhook.algorithm',
+        id: 'webhook.algorithm',
+        isLoggable: true,
+        label: 'Algorithm',
+        name: '/webhook/algorithm',
+        options: [
+          {
+            items: [
+              {
+                label: 'SHA-1',
+                value: 'sha1',
+
+              },
+              {
+                label: 'SHA-256',
+                value: 'sha256',
+
+              },
+              {
+                label: 'SHA-384',
+                value: 'sha384',
+
+              },
+              {
+                label: 'SHA-512',
+                value: 'sha512',
+
+              },
+
+            ],
+
+          },
+
+        ],
+        required: true,
+        resourceType: 'exports',
+        setFieldIds: [
+          'webhook.url',
+
+        ],
+        type: 'selectforsetfields',
+        visibleWhen: [
+          {
+            field: 'webhook.verify',
+            is: [
+              'hmac',
+
+            ],
+
+          },
+
+        ],
+
+      },
+      'webhook.encoding': {
+        defaultValue: '',
+        fieldId: 'webhook.encoding',
+        helpKey: 'export.webhook.encoding',
+        id: 'webhook.encoding',
+        isLoggable: true,
+        label: 'Encoding',
+        name: '/webhook/encoding',
+        options: [
+          {
+            items: [
+              {
+                label: 'Base64',
+                value: 'base64',
+
+              },
+              {
+                label: 'Hexadecimal',
+                value: 'hex',
+
+              },
+
+            ],
+
+          },
+
+        ],
+        required: true,
+        resourceType: 'exports',
+        setFieldIds: [
+          'webhook.url',
+
+        ],
+        type: 'selectforsetfields',
+        visibleWhen: [
+          {
+            field: 'webhook.verify',
+            is: [
+              'hmac',
+
+            ],
+
+          },
+
+        ],
+
+      },
+      'webhook.generateToken': {
+        buttonLabel: 'Generate new token',
+        fieldId: 'webhook.generateToken',
+        helpKey: 'export.webhook.token',
+        id: 'webhook.generateToken',
+        label: 'Token',
+        name: '/webhook/generateToken',
+        provider: 'custom',
+        setFieldIds: [
+          'webhook.url',
+
+        ],
+        type: 'webhooktokengenerator',
+        visibleWhen: [
+          {
+            field: 'webhook.verify',
+            is: [
+              'token',
+
+            ],
+
+          },
+
+        ],
+
+      },
+      'webhook.key': {
+        defaultValue: '',
+        fieldId: 'webhook.key',
+        helpKey: 'export.webhook.key',
+        id: 'webhook.key',
+        inputType: 'password',
+        label: 'Key (secret)',
+        name: '/webhook/key',
+        required: true,
+        resourceType: 'exports',
+        setFieldIds: [
+          'webhook.url',
+
+        ],
+        type: 'textforsetfields',
+        visible: true,
+        visibleWhen: [
+          {
+            field: 'webhook.verify',
+            is: [
+              'hmac',
+
+            ],
+
+          },
+
+        ],
+
+      },
+      'webhook.successBody': {
+        label: 'Override HTTP response body for success responses',
+        refreshOptionsOnChangesTo: [
+          'webhook.successMediaType',
+
+        ],
+        showLookup: false,
+        stage: 'responseMappingExtract',
+        type: 'uri',
+
+      },
+      'webhook.token': {
+        buttonLabel: 'Generate new token',
+        defaultValue: '',
+        fieldId: 'webhook.token',
+        helpKey: 'export.webhook.token',
+        id: 'webhook.token',
+        label: 'Custom URL token',
+        name: '/webhook/token',
+        provider: 'custom',
+        refreshOptionsOnChangesTo: [
+          'webhook.provider',
+
+        ],
+        required: true,
+        setFieldIds: [
+          'webhook.url',
+
+        ],
+        type: 'webhooktokengenerator',
+        visible: true,
+        visibleWhen: [
+          {
+            field: 'webhook.verify',
+            is: [
+              'secret_url',
+
+            ],
+
+          },
+
+        ],
+
+      },
+      'webhook.verify': {
+        defaultValue: '',
+        fieldId: 'webhook.verify',
+        helpKey: 'export.webhook.verify',
+        id: 'webhook.verify',
+        isLoggable: true,
+        label: 'Verification type',
+        name: '/webhook/verify',
+        options: [
+          {
+            items: [
+              {
+                label: 'Basic',
+                value: 'basic',
+
+              },
+              {
+                label: 'HMAC',
+                value: 'hmac',
+
+              },
+              {
+                label: 'Secret URL',
+                value: 'secret_url',
+
+              },
+              {
+                label: 'Token',
+                value: 'token',
+
+              },
+
+            ],
+
+          },
+
+        ],
+        required: true,
+        resourceType: 'exports',
+        setFieldIds: [
+          'webhook.url',
+
+        ],
+        type: 'selectforsetfields',
+        visible: true,
+
+      },
+
+    },
+
+  };
+
+  test('should return modified webhook field metadata to support new http framework', () => {
+    const metaData = updateWebhookFinalMetadataWithHttpFramework(inputFieldMetaData, connector, resource);
+
+    expect(metaData).toEqual(expctedOutput);
+  });
+  test('should not throw any exception for invalid arguments', () => {
+    const metaData = updateWebhookFinalMetadataWithHttpFramework();
 
     expect(metaData).toEqual(undefined);
   });

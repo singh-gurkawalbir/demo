@@ -10,6 +10,7 @@ export default {
     '/http/ping/method': 'GET',
     '/http/auth/token/location': 'header',
     '/http/auth/token/headerName': 'Authorization',
+    '/http/auth/oauth/useIClientFields': false,
     '/http/auth/oauth/grantType': 'authorizecode',
     '/http/auth/token/scheme': 'Zoho-oauthtoken',
     '/http/auth/oauth/authURI': 'https://accounts.zoho.com/oauth/v2/auth?access_type=offline&prompt=consent',

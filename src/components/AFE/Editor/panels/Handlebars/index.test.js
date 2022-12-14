@@ -13,7 +13,7 @@ jest.mock('../Code', () => ({
   ...jest.requireActual('../Code'),
   default: props => (
 
-    <input onChange={() => props.onChange('a')} data-testId="codepanel" />
+    <input onChange={() => props.onChange('a')} data-testid="codepanel" />
   ),
 }));
 const initialStore = getCreatedStore();

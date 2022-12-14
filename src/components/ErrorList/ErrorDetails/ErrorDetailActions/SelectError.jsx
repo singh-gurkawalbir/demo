@@ -37,9 +37,9 @@ export default function SelectError({
 
   return (
     useMemo(() => (
-      <FormControlLabel
-        control={(
-          <Tooltip title={tooltip || messageStore('SELECT_ERROR_HOVER_MESSAGE')}>
+      <Tooltip title={tooltip || messageStore('SELECT_ERROR_HOVER_MESSAGE')}>
+        <FormControlLabel
+          control={(
             <Checkbox
               icon={(
                 <span>
@@ -56,10 +56,10 @@ export default function SelectError({
               disabled={isDisabled}
               color="primary"
             />
-          </Tooltip>
-         )}
-        label={label}
-     />
+          )}
+          label={label}
+        />
+      </Tooltip>
     ), [error.selected, handleChange, isDisabled, label, tooltip])
   );
 }

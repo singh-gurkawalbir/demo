@@ -18,6 +18,7 @@ export default {
       retValues['/http/auth/oauth/tokenURI'] = 'https://oauth.pipedrive.com/oauth/token';
       retValues['/http/auth/oauth/grantType'] = 'authorizecode';
       retValues['/http/auth/oauth/clientCredentialsLocation'] = 'basicauthheader';
+      retValues['/http/auth/oauth/useIClientFields'] = false;
       retValues['/http/auth/token/location'] = 'header';
       retValues['/http/auth/token/scheme'] = 'Bearer';
       retValues['/http/auth/token/headerName'] = 'Authorization';

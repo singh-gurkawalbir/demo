@@ -2,6 +2,7 @@ import React, { useCallback, useMemo } from 'react';
 import { getSmoothStepPath } from 'react-flow-renderer';
 import { makeStyles } from '@material-ui/core';
 import { useDispatch, useSelector } from 'react-redux';
+import { useDragDropManager } from 'react-dnd';
 import {
   handleOffset,
   nodeSize,
@@ -15,8 +16,11 @@ import ForeignObject from '../ForeignObject';
 import { selectors } from '../../../../../reducers';
 import DiamondMergeIcon from '../../DiamondMergeIcon';
 import actions from '../../../../../actions';
-import { GRAPH_ELEMENTS_TYPE } from '../../../../../constants';
+import { emptyObject, GRAPH_ELEMENTS_TYPE } from '../../../../../constants';
 import { isVirtualRouter } from '../../../../../utils/flows/flowbuilder';
+import { useIsDragInProgress } from '../../../hooks';
+import PGDropbox from '../PGDropbox';
+import itemTypes from '../../../itemTypes';
 
 const useStyles = makeStyles(theme => ({
   edgePath: {
@@ -54,6 +58,10 @@ function getPositionAndOffset(
   ) {
     position = 'right';
     offset = 50;
+  } else if (targetType === GRAPH_ELEMENTS_TYPE.TERMINAL &&
+    sourceType === GRAPH_ELEMENTS_TYPE.PP_STEP
+  ) {
+    offset = 40;
   } else if (
     targetType !== GRAPH_ELEMENTS_TYPE.PP_STEP &&
     sourceType === GRAPH_ELEMENTS_TYPE.PP_STEP
@@ -84,7 +92,7 @@ function getPositionAndOffset(
   return { position, offset };
 }
 
-export default function DefaultEdge({
+function DefaultEdge({
   id,
   sourceX,
   sourceY,
@@ -92,7 +100,7 @@ export default function DefaultEdge({
   targetY,
   sourcePosition,
   targetPosition,
-  style = {},
+  style = emptyObject,
   data,
 }) {
   const classes = useStyles();
@@ -102,6 +110,20 @@ export default function DefaultEdge({
     () => areMultipleEdgesConnectedToSameEdgeTarget(id, elements),
     [id, elements]
   );
+
+  const isDraggingInProgress = useIsDragInProgress();
+  const dragDropManager = useDragDropManager();
+  const itemType = dragDropManager?.getMonitor()?.getItemType();
+  const item = dragDropManager?.getMonitor()?.getItem();
+  const hasMultiplePGs = flow.pageGenerators?.length > 1;
+  const showDropBox = hasMultiplePGs && itemType === itemTypes.PAGE_GENERATOR && item?.id !== data.sourceId;
+  const firstPGId = flow.pageGenerators?.[0]?.id;
+  const targetIndex = flow.pageGenerators.findIndex(pg => pg.id === data.sourceId);
+  const lastPGId = flow.pageGenerators[flow.pageGenerators?.length - 1].id;
+  const isFirstPGEdge = data.sourceId === firstPGId;
+  const isLastPGEdge = data.sourceId === lastPGId;
+  const showDropSpot = (isFirstPGEdge && item?.id !== firstPGId) || (isLastPGEdge && item?.id !== lastPGId);
+
   const isViewMode = useSelector(state =>
     selectors.isFlowViewMode(state, flow._integrationId, flowId)
   );
@@ -111,6 +133,7 @@ export default function DefaultEdge({
   const isDataLoaderFlow = useSelector(state =>
     selectors.isDataLoaderFlow(state, flowId)
   );
+
   const {
     sourceType,
     targetType,
@@ -124,6 +147,7 @@ export default function DefaultEdge({
   const isSourceRouter = sourceType === GRAPH_ELEMENTS_TYPE.ROUTER;
   const isTargetRouter = targetType === GRAPH_ELEMENTS_TYPE.MERGE;
   const isSourceGenerator = sourceType === GRAPH_ELEMENTS_TYPE.PG_STEP;
+
   const isSourceEmptyNode = sourceType === GRAPH_ELEMENTS_TYPE.EMPTY;
   const showLinkIcon =
     hasSiblingEdges && !isSourceGenerator && !isFlowSaveInProgress && !isViewMode;
@@ -147,7 +171,6 @@ export default function DefaultEdge({
   Example path with rounded corners.
   M529,306 L982,306 Q987,306 987,301 L987,92 Q987,87 992,87 L1446,87
   */
-
   const edgePath = useMemo(() => {
     if (isTargetTerminal && !isSourceRouter) {
       const sp = getSmoothStepPath({
@@ -193,6 +216,10 @@ export default function DefaultEdge({
     points.forEach((p, i) => {
       if (i === 0) {
         path = `M${points[0].x},${points[0].y} `;
+      } else if (i === 1 && isFirstPGEdge && isDraggingInProgress && showDropBox) {
+        drawLine(p, 'x');
+        drawLine(p, 'y');
+        drawLine({x: current.x, y: current.y - 100}, 'y');
       } else if (i === 1 && isSourceRouter) {
         // first line
         // When the source is a router, we want to draw the lines vertically first to branch off
@@ -200,6 +227,10 @@ export default function DefaultEdge({
         // edges in some use-cases.
         drawLine(p, 'y');
         drawLine(p, 'x');
+      } else if (i === 1 && isLastPGEdge && isDraggingInProgress && showDropBox) {
+        drawLine(p, 'x');
+        drawLine(p, 'y');
+        drawLine({x: current.x, y: current.y + 100}, 'y');
       } else if (i === points.length - 1 && !isTargetMerge) {
         // last point
         // for the last point (that defines an edge), we want to draw the vertical line first so that
@@ -224,18 +255,7 @@ export default function DefaultEdge({
     });
 
     return path;
-  }, [
-    edgePoints,
-    isSourceRouter,
-    isTargetMerge,
-    isTargetTerminal,
-    sourcePosition,
-    sourceX,
-    sourceY,
-    targetPosition,
-    targetX,
-    targetY,
-  ]);
+  }, [isTargetTerminal, isSourceRouter, targetX, targetY, isTargetMerge, sourceX, sourceY, edgePoints, sourcePosition, targetPosition, isFirstPGEdge, isDraggingInProgress, showDropBox, isLastPGEdge]);
 
   const handleMouseOut = useCallback(() => {
     dispatch(actions.flow.mergeTargetClear(flow._id));
@@ -255,7 +275,6 @@ export default function DefaultEdge({
   return (
     <>
       <path id={id} style={style} className={classes.edgePath} d={edgePath} />
-
       {isDragging && isMergableEdge && (
         <ForeignObject
           onMouseOver={handleMouseOver}
@@ -268,6 +287,42 @@ export default function DefaultEdge({
           <DiamondMergeIcon isDroppable />
         </ForeignObject>
       )}
+      {
+        (
+          <foreignObject
+            style={{zIndex: 9999, position: 'absolute'}}
+            width={34}
+            height={35}
+            x={edgePoints[1].x - 17}
+            y={isFirstPGEdge ? (sourceY - 100 - 17) : sourceY + 100 - 17}
+            requiredExtensions="http://www.w3.org/1999/xhtml">
+            <PGDropbox
+              show={showDropSpot}
+              position={isFirstPGEdge ? 'top' : 'bottom'}
+              id={data.sourceId}
+              targetIndex={targetIndex}
+            />
+          </foreignObject>
+        )
+      }
+      {
+        isSourceGenerator && !isFirstPGEdge && (
+          <ForeignObject
+            edgePath={edgePath}
+            position="left"
+            offset={isLastPGEdge ? 400 : 200}
+            size={34}
+          >
+            <PGDropbox
+              position="middle"
+              show
+              targetIndex={targetIndex}
+              id={data.sourceId}
+              path={data.path}
+            />
+          </ForeignObject>
+        )
+      }
 
       {!isDragging && showAddIcon && (
         <ForeignObject edgePath={edgePath} position={position} offset={offset}>
@@ -287,3 +342,4 @@ export default function DefaultEdge({
     </>
   );
 }
+export default React.memo(DefaultEdge);
