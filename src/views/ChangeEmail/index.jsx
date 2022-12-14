@@ -7,7 +7,6 @@ import { getDomain } from '../../utils/resource';
 import { selectors } from '../../reducers';
 import actions from '../../actions';
 import MarketingContentWithIframe from '../../components/LoginScreen/MarketingContentWithIframe';
-import { CHANGE_EMAIL_SUCCESS } from '../../constants';
 import getRoutePath from '../../utils/routePaths';
 import Spinner from '../../components/Spinner';
 
@@ -66,24 +65,20 @@ export default function ChangeEmail(props) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const history = useHistory();
-  const isUserLoggedOut = useSelector(state => selectors.isUserLoggedOut(state));
   const changeEmailStatus = useSelector(state => selectors.changeEmailStatus(state));
+  const changeEmailMessage = useSelector(state => selectors.changeEmailMessage(state));
   const token = React.useState(props.match.params.token ? props.match.params.token : '');
 
   useEffect(() => {
-    if (token == null || token === '') {
-      return;
-    }
-    if (isUserLoggedOut && changeEmailStatus === '') {
-      dispatch(actions.auth.changeEmailRequest(token));
-    }
-  }, [dispatch, isUserLoggedOut, token, changeEmailStatus]);
+    dispatch(actions.auth.changeEmailRequest(token));
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
   useEffect(() => {
     if (changeEmailStatus === 'success') {
-      dispatch(actions.auth.signupStatus('done', CHANGE_EMAIL_SUCCESS));
+      dispatch(actions.auth.signupStatus('done', changeEmailMessage));
       history.replace(getRoutePath('/signin?from=change=email'));
     }
-  }, [dispatch, history, changeEmailStatus]);
+  }, [dispatch, history, changeEmailStatus, changeEmailMessage]);
 
   // eslint-disable-next-line no-undef
   const contentUrl = (getDomain() === 'eu.integrator.io' ? IO_LOGIN_PROMOTION_URL_EU : IO_LOGIN_PROMOTION_URL);

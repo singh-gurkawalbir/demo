@@ -37,7 +37,7 @@ const useStyles = makeStyles(theme => ({
   content: {
     width: '100%',
     height: '100%',
-    padding: theme.spacing(0, 2, 3, 0),
+    paddingBottom: theme.spacing(3),
     overflowX: 'auto',
   },
   listItem: {

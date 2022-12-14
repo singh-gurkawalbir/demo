@@ -15,7 +15,15 @@ const useStyles = makeStyles(theme => ({
   },
   rowSelected: {
     '&$selected': {
-      borderLeft: `6px solid ${theme.palette.primary.main}`,
+      '&>.MuiTableCell-root:first-child:before': {
+        content: '""',
+        width: 6,
+        height: '100%',
+        backgroundColor: theme.palette.primary.main,
+        position: 'absolute',
+        top: 0,
+        left: 0,
+      },
       backgroundColor: theme.palette.primary.lightest2,
       '&:hover': {
         backgroundColor: theme.palette.primary.lightest2,

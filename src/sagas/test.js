@@ -22,7 +22,7 @@ import * as apiConsts from './api/apiPaths';
 import { netsuiteUserRoles } from './resourceForm/connections';
 import { selectors } from '../reducers';
 import { COMM_STATES } from '../reducers/comms/networkComms';
-import { initializeLogrocket, invalidateSession } from './authentication';
+import { initializeApp, initializeLogrocket, invalidateSession } from './authentication';
 import { sendRequest } from './api';
 import { getAsyncKey } from '../utils/saveAndCloseButtons';
 
@@ -776,8 +776,10 @@ describe('rootSaga', () => {
       );
       expect(saga.next({logrocket: {opts: {prop1: 'someOptsz'}}}).value).toEqual(call(initializeLogrocket));
       expect(forkEffectRes.cancel).toHaveBeenCalled();
-      expect(saga.next().value).toEqual(spawn(rootSaga));
-      expect(saga.next().value).toEqual(put(actions.auth.abortAllSagasAndInitLR()));
+      expect(saga.next().value)
+        .toEqual(spawn(rootSaga));
+      expect(saga.next().value)
+        .toEqual(call(initializeApp, {prop1: 'someOptsz'}));
       expect(saga.next().done).toBe(true);
     });
 

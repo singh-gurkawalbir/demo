@@ -10,7 +10,6 @@ import MarketingContentWithIframe from '../../components/LoginScreen/MarketingCo
 import { TextButton } from '../../components/Buttons';
 import ConcurSignInPage from './Concur';
 import useQuery from '../../hooks/useQuery';
-import { RESET_PASSWORD_SUCCESS } from '../../constants';
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
@@ -107,7 +106,6 @@ function Signin(props) {
 
   const isSignupCompleted = useSelector(state => selectors.signupStatus(state) === 'done');
   const signupMessage = useSelector(state => selectors.signupMessage(state));
-  const isSetPasswordCompleted = useSelector(state => selectors.requestResetPasswordStatus(state) === 'success');
 
   return (
     <div className={classes.wrapper}>
@@ -121,13 +119,6 @@ function Signin(props) {
             isSignupCompleted && (
             <Typography variant="body2" className={classes.signupSuccess} >
               {signupMessage}
-            </Typography>
-            )
-          }
-          {
-            isSetPasswordCompleted && (
-            <Typography variant="body2" className={classes.signupSuccess} >
-              {RESET_PASSWORD_SUCCESS}
             </Typography>
             )
           }

@@ -5,7 +5,7 @@ import FormControl from '@material-ui/core/FormControl';
 import MenuItem from '@material-ui/core/MenuItem';
 import { makeStyles } from '@material-ui/core';
 import { endOfDay } from 'date-fns';
-import { AUDIT_LOG_SOURCE_LABELS, AUDIT_LOG_FILTER_KEY, ROWS_PER_PAGE_OPTIONS, DEFAULT_ROWS_PER_PAGE } from '../../constants/auditLog';
+import { AUDIT_LOG_SOURCE_LABELS, ROWS_PER_PAGE_OPTIONS, DEFAULT_ROWS_PER_PAGE, getAuditLogFilterKey } from '../../constants/auditLog';
 import { selectors } from '../../reducers';
 import { ResourceTypeFilter, ResourceIdFilter, AuditLogActionFilter } from './ResourceFilters';
 import CeligoSelect from '../CeligoSelect';
@@ -81,24 +81,25 @@ const defaultRange = {
 function AuditPagination({ resourceType, resourceId, totalCount }) {
   const classes = useStyles();
   const dispatch = useDispatch();
+  const filterKey = getAuditLogFilterKey(resourceType, resourceId);
 
-  const auditPagingFilter = useSelector(state => selectors.filter(state, AUDIT_LOG_FILTER_KEY)?.paging || emptyObject, shallowEqual);
+  const auditPagingFilter = useSelector(state => selectors.filter(state, filterKey)?.paging || emptyObject, shallowEqual);
   const auditNextPagePath = useSelector(state => selectors.auditLogsNextPagePath(state));
   const auditLoadMoreStatus = useSelector(state => selectors.auditLoadMoreStatus(state));
 
   const handlePageChange = useCallback((e, newPage) => {
     dispatch(
-      actions.patchFilter(AUDIT_LOG_FILTER_KEY, {
+      actions.patchFilter(filterKey, {
         paging: {
           ...auditPagingFilter,
           currPage: newPage,
         },
       })
     );
-  }, [dispatch, auditPagingFilter]);
+  }, [dispatch, filterKey, auditPagingFilter]);
   const handleRowsPerPageChange = useCallback(e => {
     dispatch(
-      actions.patchFilter(AUDIT_LOG_FILTER_KEY, {
+      actions.patchFilter(filterKey, {
         paging: {
           ...auditPagingFilter,
           rowsPerPage: parseInt(e.target.value, 10),
@@ -106,7 +107,7 @@ function AuditPagination({ resourceType, resourceId, totalCount }) {
         },
       })
     );
-  }, [dispatch, auditPagingFilter]);
+  }, [dispatch, filterKey, auditPagingFilter]);
 
   const fetchMoreLogs = useCallback(() => dispatch(actions.auditLogs.request(resourceType, resourceId, auditNextPagePath)), [auditNextPagePath, dispatch, resourceId, resourceType]);
 
@@ -148,9 +149,9 @@ export default function Filters(props) {
     resourceType,
     resourceId
   ));
-  const auditNextPagePath = useSelector(state => selectors.auditLogsNextPagePath(state));
   const hasMoreDownloads = useSelector(state => selectors.auditHasMoreDownloads(state));
-  const filters = useSelector(state => selectors.filter(state, AUDIT_LOG_FILTER_KEY) || emptyObject, shallowEqual);
+  const filterKey = getAuditLogFilterKey(resourceType, resourceId);
+  const filters = useSelector(state => selectors.filter(state, filterKey) || emptyObject, shallowEqual);
 
   const handleDateFilter = useCallback(
     dateFilter => {
@@ -194,9 +195,9 @@ export default function Filters(props) {
       updatedFilters._resourceId = OPTION_ALL.id;
     }
 
-    dispatch(actions.patchFilter(AUDIT_LOG_FILTER_KEY, updatedFilters));
-    dispatch(actions.auditLogs.request(resourceType, resourceId, auditNextPagePath));
-  }, [auditNextPagePath, dispatch, filters, resourceId, resourceType]);
+    dispatch(actions.patchFilter(filterKey, updatedFilters));
+    dispatch(actions.auditLogs.request(resourceType, resourceId));
+  }, [dispatch, filterKey, filters, resourceId, resourceType]);
 
   useEffect(() => {
     if (hasMoreDownloads) {
@@ -235,7 +236,7 @@ export default function Filters(props) {
               isLoggable={false}
               inputProps={userInput}
               onChange={handleChange}
-              value={byUser}>
+              value={byUser || ''}>
               <MenuItem key={OPTION_ALL.id} value={OPTION_ALL.id}>
                 Select user
               </MenuItem>
@@ -251,7 +252,7 @@ export default function Filters(props) {
               isLoggable
               inputProps={sourceInput}
               onChange={handleChange}
-              value={source}>
+              value={source || ''}>
               <MenuItem key={OPTION_ALL.id} value={OPTION_ALL.id}>
                 Select source
               </MenuItem>
