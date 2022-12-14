@@ -1,13 +1,13 @@
 import clsx from 'clsx';
 import React from 'react';
-import { FormControl, makeStyles } from '@material-ui/core';
+import { FormControl, makeStyles, Typography } from '@material-ui/core';
 import Checkbox from '@material-ui/core/Checkbox';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FieldMessage from '../FieldMessage';
 import FieldHelp from '../../FieldHelp';
 import isLoggableAttr from '../../../../utils/isLoggableAttr';
 
-const useStyles = makeStyles({
+const useStyles = makeStyles(theme => ({
   dynaLabelWrapper: {
     flexDirection: 'row !important',
     display: 'flex',
@@ -20,7 +20,16 @@ const useStyles = makeStyles({
   dynaCheckbox: props => {
     props.hideLabelSpacing ? 0 : 12;
   },
-});
+  infoText: {
+    color: theme.palette.error.dark,
+    border: `1px solid ${theme.palette.error.main}`,
+    borderRadius: theme.spacing(0.5),
+    display: 'flex',
+    padding: theme.spacing(0, 1),
+    alignItems: 'center',
+    lineHeight: 1,
+  },
+}));
 // can this be loggable in all circumstances? since it is a checkbox
 export default function DynaCheckbox(props) {
   const classes = useStyles(props);
@@ -36,6 +45,7 @@ export default function DynaCheckbox(props) {
     isValid,
     className,
     isLoggable,
+    labelSubText,
   } = props;
 
   return (
@@ -66,6 +76,8 @@ export default function DynaCheckbox(props) {
         label={label}
 
       />
+      {labelSubText && (<Typography variant="caption" className={classes.infoText}>{labelSubText}</Typography>)}
+
       <FieldHelp {...props} />
       <FieldMessage {...props} />
     </FormControl>

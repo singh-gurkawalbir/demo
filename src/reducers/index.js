@@ -215,6 +215,7 @@ selectors.userProfilePreferencesProps = createSelector(
       auth_type_google,
       _ssoAccountId,
       authTypeSSO,
+      darkTheme,
     } = { ...profile, ...preferences };
 
     return {
@@ -233,6 +234,7 @@ selectors.userProfilePreferencesProps = createSelector(
       showRelativeDateTime,
       _ssoAccountId,
       authTypeSSO,
+      darkTheme,
     };
   });
 
