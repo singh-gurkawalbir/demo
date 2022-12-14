@@ -208,7 +208,6 @@ blobKeyPath: {
   label: r => ['googledrive', 'box', 'dropbox'].includes(r?.assistant) ? 'Directory path' : 'Container name',
   required: true,
   type: 'uri',
-  // helpKey: r => ['googledrive', 'box', 'dropbox'].includes(r?.assistant) ? 'import.gdrive.directoryPath' : 'import.azure.containerName',
   helpKey: r => ['googledrive', 'box', 'dropbox'].includes(r?.assistant) ? `export.${r?.assistant}.directoryPath` : 'export.azure.containerName',
 
 },
