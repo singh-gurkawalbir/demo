@@ -3255,4 +3255,23 @@ describe('requestAuditLogs saga', () => {
       .returns(collection)
       .run();
   });
+  test('should dispatch receivedNextPagePath for audit logs resource type even if nextLinkPath is not present', () => {
+    const resourceType = 'audit';
+    const path = '/audit?&resourceType=connection';
+    const collection = [{ id: 1 }, { id: 2 }];
+
+    return expectSaga(requestAuditLogs, {resourceType})
+      .provide([
+        [select(selectors.filter, AUDIT_LOG_FILTER_KEY), {resourceType: 'connection'}],
+        [call(apiCallWithPaging, {
+          path,
+          hidden: undefined,
+        }), {data: collection}],
+      ])
+      .call(apiCallWithPaging, {path, hidden: undefined})
+      .put(actions.auditLogs.receivedNextPagePath(undefined))
+      .put(actions.resource.receivedCollection(resourceType, collection))
+      .returns(collection)
+      .run();
+  });
 });

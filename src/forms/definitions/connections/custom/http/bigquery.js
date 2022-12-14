@@ -6,6 +6,7 @@ export default {
     '/http/auth/type': 'oauth',
     '/http/mediaType': 'json',
     '/http/baseURI': 'https://bigquery.googleapis.com/bigquery',
+    '/http/auth/oauth/useIClientFields': false,
     '/http/auth/oauth/authURI':
       'https://accounts.google.com/o/oauth2/v2/auth?access_type=offline&prompt=consent',
     '/http/auth/oauth/tokenURI': 'https://oauth2.googleapis.com/token',
