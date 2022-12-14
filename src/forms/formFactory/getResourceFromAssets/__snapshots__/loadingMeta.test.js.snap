@@ -148,6 +148,10 @@ Object {
         "required": true,
         "type": "dynaiclient",
       },
+      "http.auth.oauth.callbackURL": Object {
+        "copyToClipboard": true,
+        "fieldId": "http.auth.oauth.callbackURL",
+      },
       "http.auth.oauth.scope": Object {
         "fieldId": "http.auth.oauth.scope",
         "scopes": Array [
@@ -191,6 +195,7 @@ Object {
             Object {
               "collapsed": true,
               "fields": Array [
+                "http.auth.oauth.callbackURL",
                 "http._iClientId",
                 "http.auth.oauth.scope",
               ],
@@ -7358,8 +7363,6 @@ Object {
             "isNot": Array [
               "",
               "aha",
-              "box",
-              "dropbox",
               "errorception",
               "helpscout",
               "mailparser-io",
@@ -7457,6 +7460,8 @@ Object {
               "shopify",
               "slack",
               "stripe",
+              "box",
+              "dropbox",
             ],
           },
         ],
@@ -12863,7 +12868,7 @@ Object {
       "type": "collapse",
     },
   },
-  "init": undefined,
+  "init": [Function],
   "optionsHandler": [Function],
   "preSave": [Function],
   "validationHandler": undefined,
@@ -12942,8 +12947,6 @@ Object {
             "isNot": Array [
               "",
               "aha",
-              "box",
-              "dropbox",
               "errorception",
               "helpscout",
               "mailparser-io",

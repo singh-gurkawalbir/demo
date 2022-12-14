@@ -32,6 +32,7 @@ export default {
       retValues['/http/auth/oauth/tokenURI'] =
         'https://login.bigcommerce.com/oauth2/token';
       retValues['/http/auth/oauth/scopeDelimiter'] = '+';
+      retValues['/http/auth/oauth/useIClientFields'] = false;
       retValues['/http/auth/token/location'] = 'header';
       retValues['/http/auth/token/headerName'] = 'X-Auth-Token';
       retValues['/http/auth/token/scheme'] = ' ';

@@ -238,7 +238,7 @@ export default function SignIn({dialogOpen, className}) {
             Forgot password?
           </TextButton>
         </div>
-        { showError && error && (
+        {!isAuthenticating && showError && error && (
           <Typography
             data-private
             color="error"

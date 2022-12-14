@@ -12,6 +12,7 @@ import { FilledButton, TextButton } from '../../components/Buttons';
 import ShowContentIcon from '../../components/icons/ShowContentIcon';
 import HideContentIcon from '../../components/icons/HideContentIcon';
 import getRoutePath from '../../utils/routePaths';
+import RawHtml from '../../components/RawHtml';
 
 const useStyles = makeStyles(theme => ({
   submit: {
@@ -75,15 +76,16 @@ export default function SetPassword() {
   const handleResetPassword = useCallback(password => {
     dispatch(actions.auth.setPasswordRequest(password, token));
   }, [dispatch]);
-  const isSetPasswordCompleted = useSelector(state => selectors.requestSetPasswordStatus(state) === 'success');
+  const isSetPasswordStatus = useSelector(state => selectors.requestSetPasswordStatus(state));
+  const showErrMsg = isSetPasswordStatus === 'failed';
 
   useEffect(() => {
-    if (isSetPasswordCompleted) {
+    if (isSetPasswordStatus === 'success') {
       history.replace(getRoutePath('/signin'));
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isSetPasswordCompleted]);
-  const isAuthenticating = useSelector(state => selectors.isAuthenticating(state));
+  }, [isSetPasswordStatus]);
+  const isAuthenticating = isSetPasswordStatus === 'loading';
   const error = useSelector(state => {
     const errorMessage = selectors.requestSetPasswordError(state);
 
@@ -117,14 +119,14 @@ export default function SetPassword() {
 
   return (
     <div className={classes.editableFields}>
-      { error && (
+      { showErrMsg && error && (
       <Typography
         data-private
         color="error"
         component="div"
         variant="h5"
         className={classes.alertMsg}>
-        {error}
+        <RawHtml html={error} />
       </Typography>
       )}
       <form onSubmit={handleOnSubmit}>

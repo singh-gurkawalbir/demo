@@ -9,6 +9,7 @@ export default {
     '/http/auth/oauth/authURI': 'https://api.surveymonkey.com/oauth/authorize',
     '/http/auth/oauth/tokenURI': 'https://api.surveymonkey.com/oauth/token',
     '/http/auth/oauth/scopeDelimiter': ' ',
+    '/http/auth/oauth/useIClientFields': false,
   }),
   fieldMap: {
     name: { fieldId: 'name' },

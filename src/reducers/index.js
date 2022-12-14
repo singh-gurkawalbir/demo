@@ -116,7 +116,7 @@ import { buildDrawerUrl, drawerPaths } from '../utils/rightDrawer';
 import { GRAPHQL_HTTP_FIELDS, isGraphqlResource } from '../utils/graphql';
 import { initializeFlowForReactFlow, getFlowAsyncKey } from '../utils/flows/flowbuilder';
 import { HTTP_BASED_ADAPTORS } from '../utils/http';
-import { AUDIT_LOG_FILTER_KEY } from '../constants/auditLog';
+import { getAuditLogFilterKey } from '../constants/auditLog';
 import { SHOPIFY_APP_STORE_LINKS } from '../constants/urls';
 
 const emptyArray = [];
@@ -2299,7 +2299,11 @@ selectors.auditLogs = (
 
 selectors.paginatedAuditLogs = createSelector(
   selectors.auditLogs,
-  state => selectors.filter(state, AUDIT_LOG_FILTER_KEY),
+  (state, resourceType, resourceId) => {
+    const filterKey = getAuditLogFilterKey(resourceType, resourceId);
+
+    return selectors.filter(state, filterKey);
+  },
   (auditLogs, filters) => {
     const { currPage = 0, rowsPerPage = DEFAULT_ROWS_PER_PAGE } = filters?.paging || {};
 
@@ -2958,6 +2962,17 @@ selectors.integrationAppEdition = (state, integrationId) => {
 
   return plan;
 };
+
+selectors.isChildLicenseInUpgrade = createSelector(
+  state => selectors.licenses(state),
+  (state, id) => id,
+  (licenses, id) => {
+    const parentLicenseId = licenses.find(license => license._integrationId === id)?._id;
+    const childLicenses = licenses.filter(license => (!!license?._integrationId) && (license?._parentId === parentLicenseId));
+
+    return childLicenses.some(license => !!license?._changeEditionId);
+  }
+);
 
 selectors.integrationAppLicense = (state, id) => {
   if (!state) return emptyObject;

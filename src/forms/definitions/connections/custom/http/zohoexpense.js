@@ -10,6 +10,7 @@ export default {
     '/http/ping/method': 'GET',
     '/http/auth/token/location': 'header',
     '/http/auth/token/headerName': 'Authorization',
+    '/http/auth/oauth/useIClientFields': false,
     '/http/auth/oauth/grantType': 'authorizecode',
     '/http/auth/token/scheme': 'Zoho-oauthtoken',
     '/http/auth/oauth/authURI': 'https://accounts.zoho.com/oauth/v2/auth?access_type=offline&prompt=consent',
@@ -42,6 +43,10 @@ export default {
       connectorId: r => r && r._connectorId,
       ignoreEnvironmentFilter: true,
       helpKey: 'zohoexpense.connection.http._iClientId',
+    },
+    'http.auth.oauth.callbackURL': {
+      fieldId: 'http.auth.oauth.callbackURL',
+      copyToClipboard: true,
     },
     'http.auth.oauth.scope': {
       fieldId: 'http.auth.oauth.scope',
@@ -79,6 +84,7 @@ export default {
         label: 'Application details',
         fields: ['http.unencrypted.organizationID',
           'http._iClientId',
+          'http.auth.oauth.callbackURL',
           'http.auth.oauth.scope'] },
       { collapsed: true, label: 'Advanced', fields: ['httpAdvanced'] },
     ],

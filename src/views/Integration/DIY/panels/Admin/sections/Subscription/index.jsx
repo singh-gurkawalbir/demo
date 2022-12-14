@@ -16,8 +16,8 @@ import { useGetTableContext } from '../../../../../../../components/CeligoTable/
 import FilledButton from '../../../../../../../components/Buttons/FilledButton';
 import useConfirmDialog from '../../../../../../../components/ConfirmDialog';
 import ChildIntegrationsTable from './ChildIntegrationsTable';
-import ParentUpgradeButton from './ParentUpgradeButton';
 import UpgradeDrawer from '../../../../../App/drawers/Upgrade';
+import RequestUpgradeButton from './RequestUpgradeButton';
 
 const emptyObject = {};
 const metadata = {
@@ -80,10 +80,11 @@ const useStyles = makeStyles(theme => ({
     paddingBottom: theme.spacing(1),
   },
   content: {
-    padding: '30px 30px 30px 0',
+    padding: theme.spacing(2, 0),
   },
   container: {
-    padding: '0 0 30px 30px',
+    paddingLeft: theme.spacing(2),
+    paddingBottom: theme.spacing(2),
   },
   button: {
     margin: theme.spacing(1),
@@ -186,9 +187,9 @@ export default function SubscriptionSection({ childId, integrationId }) {
     createdText,
     expiresText,
     upgradeText,
-    upgradeRequested,
+    // upgradeRequested,
     nextPlan,
-    _changeEditionId: changeEditionId,
+    // _changeEditionId: changeEditionId,
   } = license;
   const handleUpgrade = () => {
     if (upgradeText === 'Request upgrade') {
@@ -268,34 +269,15 @@ export default function SubscriptionSection({ childId, integrationId }) {
                 <Typography>{expiresText}</Typography>
               </Grid>
               <Grid item xs={3}>
-                {upgradeText === '' && istwoDotZeroFrameWork && (
-                  <FilledButton
-                    className={classes.button}
-                    disabled
-                    data-test="requestUpgrade"
-                  >
-                    Request upgrade
-                  </FilledButton>
-                )}
-                {upgradeText && upgradeText === 'upgradeEdition' && (
-                <ParentUpgradeButton
+                <RequestUpgradeButton
                   id={integrationId}
                   className={classes.button}
-                  onClick={handleUpgradeEdition}
-                  nextPlan={nextPlan}
-                  changeEditionId={changeEditionId}
+                  license={license}
+                  isLicenseExpired={isLicenseExpired}
+                  istwoDotZeroFrameWork={istwoDotZeroFrameWork}
+                  handleUpgrade={handleUpgrade}
+                  handleUpgradeEdition={handleUpgradeEdition}
                 />
-                )}
-                {upgradeText && upgradeText !== 'upgradeEdition' && (
-                <FilledButton
-                  className={classes.button}
-                  disabled={upgradeRequested || isLicenseExpired}
-                  onClick={handleUpgrade}
-                  data-test="requestUpgrade"
-                >
-                  {upgradeText}
-                </FilledButton>
-                )}
               </Grid>
             </Grid>
           </div>

@@ -12,6 +12,7 @@ export default {
         '/http/baseURI': 'https://api.constantcontact.com/',
         '/http/ping/relativeURI': 'v2/eventspot/events?api_key={{{connection.http.unencrypted.apiKey}}}',
         '/http/ping/method': 'GET',
+        '/http/auth/oauth/useIClientFields': false,
         '/http/auth/oauth/authURI':
           'https://oauth2.constantcontact.com/oauth2/oauth/siteowner/authorize',
         '/http/auth/oauth/tokenURI':
@@ -60,6 +61,11 @@ export default {
       ],
       helpKey: 'constantcontact.connection.http._iClientId',
     },
+    'http.auth.oauth.callbackURL': {
+      fieldId: 'http.auth.oauth.callbackURL',
+      copyToClipboard: true,
+      visibleWhen: [{ field: 'versionType', is: ['constantcontactv3'] }],
+    },
   },
   layout: {
     type: 'collapse',
@@ -67,7 +73,7 @@ export default {
       { collapsed: true, label: 'General', fields: ['name', 'application', 'versionType'] },
       { collapsed: true,
         label: 'Application details',
-        fields: ['http._iClientId'] },
+        fields: ['http._iClientId', 'http.auth.oauth.callbackURL'] },
       { collapsed: true, label: 'Advanced', fields: ['httpAdvanced'] },
     ],
   },

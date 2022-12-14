@@ -10,6 +10,7 @@ export default {
     '/http/ping/method': 'GET',
     '/http/auth/token/location': 'header',
     '/http/auth/token/headerName': 'Authorization',
+    '/http/auth/oauth/useIClientFields': false,
     '/http/auth/oauth/grantType': 'authorizecode',
     '/http/auth/token/scheme': 'Bearer',
     '/http/auth/oauth/authURI': `https://login.microsoftonline.com/${formValues['/http/unencrypted/tenantId']}/oauth2/authorize?resource=https://${formValues['/http/unencrypted/subdomain']}.dynamics.com`,
@@ -51,6 +52,10 @@ export default {
       ignoreEnvironmentFilter: true,
       helpKey: 'microsoftpowerautomate.connection.http._iClientId',
     },
+    'http.auth.oauth.callbackURL': {
+      fieldId: 'http.auth.oauth.callbackURL',
+      copyToClipboard: true,
+    },
     application: {
       fieldId: 'application',
     },
@@ -65,7 +70,8 @@ export default {
         fields: [
           'http.unencrypted.subdomain',
           'http.unencrypted.tenantId',
-          'http._iClientId'] },
+          'http._iClientId',
+          'http.auth.oauth.callbackURL'] },
       { collapsed: true, label: 'Advanced', fields: ['httpAdvanced'] },
     ],
   },
