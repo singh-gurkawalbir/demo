@@ -2963,6 +2963,17 @@ selectors.integrationAppEdition = (state, integrationId) => {
   return plan;
 };
 
+selectors.isChildLicenseInUpgrade = createSelector(
+  state => selectors.licenses(state),
+  (state, id) => id,
+  (licenses, id) => {
+    const parentLicenseId = licenses.find(license => license._integrationId === id)?._id;
+    const childLicenses = licenses.filter(license => (!!license?._integrationId) && (license?._parentId === parentLicenseId));
+
+    return childLicenses.some(license => !!license?._changeEditionId);
+  }
+);
+
 selectors.integrationAppLicense = (state, id) => {
   if (!state) return emptyObject;
   const integrationResource = selectors.integrationAppSettings(state, id);
