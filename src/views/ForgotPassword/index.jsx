@@ -24,13 +24,13 @@ const useStyles = makeStyles(theme => ({
     },
   },
   alertMsg: {
-    fontSize: 10,
+    fontSize: theme.spacing(1.5),
     textAlign: 'left',
     marginLeft: 0,
     width: '100%',
     display: 'flex',
     alignItems: 'flex-start',
-    marginTop: theme.spacing(-2),
+    marginTop: 0,
     marginBottom: 10,
     lineHeight: `${theme.spacing(2)}px`,
     '& > svg': {
@@ -75,7 +75,7 @@ const useStyles = makeStyles(theme => ({
   },
   title: {
     marginBottom: theme.spacing(2),
-    fontSize: 30,
+    fontSize: 29,
     lineHeight: '40px',
   },
   mfaTitle: {
@@ -95,11 +95,7 @@ const useStyles = makeStyles(theme => ({
     },
   },
   mfaInfo: {
-    display: 'flex',
-    marginBottom: theme.spacing(1.5),
-  },
-  infoText: {
-    marginLeft: theme.spacing(1),
+    marginBottom: theme.spacing(3.5),
   },
 }));
 
@@ -132,7 +128,7 @@ function ForgotPassword(props) {
           <div className={classes.logo}>
             <CeligoLogo />
           </div>
-          <Typography variant="h4" className={classes.title}>
+          <Typography variant="h3" className={classes.title}>
             Forgot your password?
           </Typography>
           {email && (
@@ -151,7 +147,7 @@ function ForgotPassword(props) {
           </Typography>
           )}
           <div className={classes.mfaInfo}>
-            <span className={classes.infoText}>{message}</span>
+            {message}
           </div>
           {!successView
             ? (
