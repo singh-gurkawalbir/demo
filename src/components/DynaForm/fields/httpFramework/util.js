@@ -133,7 +133,8 @@ export function selectOptions({
   return [];
 }
 
-function semiAssistantOperationOptions(endpoints = [], parent = {key: []}) {
+// parent obj will always be there
+function semiAssistantOperationOptions(endpoints = [], /* istanbul ignore next */ parent = {key: []}) {
   let options = [];
   let endpointName;
 
@@ -147,7 +148,7 @@ function semiAssistantOperationOptions(endpoints = [], parent = {key: []}) {
       }
       options.push({
         label: endpointName,
-        value: parent ? [...parent.key, ep.key].join('.') : ep.key,
+        value: parent ? [...parent.key, ep.key].join('.') : /* istanbul ignore next */ep.key,
       });
     }
   });
