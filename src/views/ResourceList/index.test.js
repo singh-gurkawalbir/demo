@@ -149,7 +149,7 @@ describe('ResourceList test cases', () => {
     await initResourceList({
       resourceType: 'connections',
     });
-    expect(screen.queryByText(/Connections/i)).toBeInTheDocument();
+    expect(screen.queryAllByText(/Connections/)).toHaveLength(2);
   });
 
   test('should pass the initial render with stacks resource type', async () => {
