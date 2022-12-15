@@ -2525,7 +2525,6 @@ selectors.mkDIYIntegrationFlowList = () => {
   const flowGroupsMapSelector = selectors.mkFlowGroupMap();
 
   return createSelector(
-    state => state?.data?.resources?.integrations,
     state => state?.data?.resources?.flows,
     (state, integrationId, childId) => selectors.latestJobMap(state, childId || integrationId || 'none')?.data,
     (state, integrationId) => integrationId,
@@ -2535,16 +2534,15 @@ selectors.mkDIYIntegrationFlowList = () => {
     selectors.openErrorsMap,
     selectors.currentEnvironment,
     flowGroupsMapSelector,
-    (integrations = emptyArray, flows = emptyArray, latestFlowJobs,
+    (flows = emptyArray, latestFlowJobs,
       integrationId, childId, isUserInErrMgtTwoDotZero, options, errorMap, currentEnvironment, flowGroupsMap) => {
-      const childIntegrationIds = integrations.filter(i => i._parentId === integrationId || i._id === integrationId).map(i => i._id);
       let integrationFlows = flows.filter(f => {
         if (!integrationId || integrationId === STANDALONE_INTEGRATION.id) {
           return !f._integrationId && !!f.sandbox === (currentEnvironment === 'sandbox');
         }
         if (childId && childId !== integrationId) return f._integrationId === childId;
 
-        return childIntegrationIds.includes(f._integrationId);
+        return f._integrationId === integrationId;
       });
       const customSearchableText = r => {
         if (!options?.keyword) return;
