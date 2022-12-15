@@ -265,7 +265,7 @@ const FlowListing = ({integrationId, filterKey, searchFilterKey, actionProps, fl
       section => flows.some(flow => (flow._flowGroupingId === section.sectionId))
     );
 
-    return newFlowGroups.length ? newFlowGroups : undefined;
+    return newFlowGroups?.length ? newFlowGroups : undefined;
   }, [flowGroupingsSections, flows, isIntegrationApp]);
 
   const searchFilteredFlowGroups = useMemo(() => {
@@ -431,7 +431,7 @@ export default function FlowsPanel({ integrationId, childId }) {
       section => flows.some(flow => (flow._flowGroupingId === section.sectionId))
     );
 
-    return newFlowGroups.length ? newFlowGroups : undefined;
+    return newFlowGroups?.length ? newFlowGroups : undefined;
   }, [flowGroupingsSections, flows, isIntegrationApp]);
 
   const { canCreate, canAttach, canEdit } = useSelector(state => {
