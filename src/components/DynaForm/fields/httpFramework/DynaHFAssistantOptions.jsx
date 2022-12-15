@@ -299,6 +299,7 @@ function DynaAssistantOptions(props) {
 export default function WrappedContextConsumer(props) {
   const form = useFormContext(props.formKey);
 
+  /* istanbul ignore if */
   if (!form) return null;
 
   return <DynaAssistantOptions {...form} {...props} />;
