@@ -395,11 +395,6 @@ export function* setPasswordRequest({ password, token }) {
 
     if (apiResponse?.success) {
       yield put(actions.auth.setPasswordRequestSuccess({...apiResponse}));
-    } else if (apiResponse?.errors) {
-      const errObj = apiResponse?.errors;
-      const authError = inferErrorMessages(errObj?.message)?.[0];
-
-      yield put(actions.auth.setPasswordRequestFailed(authError));
     }
   } catch (error) {
     const authError = inferErrorMessages(error?.message)?.[0];
