@@ -33,6 +33,10 @@ async function initRecycleBin(
     redirectTo,
   };
   initialStore.getState().data.resources = resources;
+  initialStore.getState().auth = {
+    authenticated: true,
+    defaultAccountSet: true,
+  };
   initialStore.getState().session.filters = filters;
   const ui = (
     <MemoryRouter
