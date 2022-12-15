@@ -23,9 +23,11 @@ export default function (state = defaultState, action) {
     switch (type) {
       case actionTypes.AUTH.CHANGE_EMAIL_SUCCESSFUL:
         draft.changeEmailStatus = 'success';
+        draft.changeEmailMessage = action.requestInfo.message;
         break;
       case actionTypes.AUTH.CHANGE_EMAIL_FAILED:
         draft.changeEmailStatus = 'failed';
+        delete draft.changeEmailMessage;
         break;
       case actionTypes.AUTH.RESET_REQUEST_SENT:
         draft.requestResetStatus = '';
@@ -38,6 +40,12 @@ export default function (state = defaultState, action) {
         draft.requestResetStatus = 'requesting';
         draft.requestResetError = '';
         break;
+      case actionTypes.AUTH.SET_PASSWORD_REQUEST:
+        draft.requestSetPasswordStatus = 'loading';
+        break;
+      case actionTypes.AUTH.RESET_PASSWORD_REQUEST:
+        draft.requestResetPasswordStatus = 'loading';
+        break;
       case actionTypes.AUTH.SET_PASSWORD_REQUEST_FAILED:
         draft.requestSetPasswordStatus = 'failed';
         draft.requestSetPasswordError = action.error;
@@ -48,6 +56,7 @@ export default function (state = defaultState, action) {
         break;
       case actionTypes.AUTH.RESET_PASSWORD_REQUEST_SUCCESSFUL:
         draft.requestResetPasswordStatus = 'success';
+        draft.requestResetPasswordMsg = action.resetPasswordRequestInfo.message;
         delete draft.requestResetPasswordError;
         break;
       case actionTypes.AUTH.RESET_REQUEST_FAILED:
@@ -217,8 +226,10 @@ selectors.requestResetError = state => state?.requestResetError;
 selectors.resetRequestLoader = state => state?.resetRequestLoader || false;
 selectors.requestResetStatus = state => state?.requestResetStatus || '';
 selectors.changeEmailStatus = state => state?.changeEmailStatus || '';
+selectors.changeEmailMessage = state => state?.changeEmailMessage || '';
 selectors.requestResetPasswordError = state => state?.requestResetPasswordError;
 selectors.requestResetPasswordStatus = state => state?.requestResetPasswordStatus || '';
+selectors.requestResetPasswordMsg = state => state?.requestResetPasswordMsg || '';
 selectors.requestSetPasswordError = state => state?.requestSetPasswordError;
 selectors.requestSetPasswordStatus = state => state?.requestSetPasswordStatus || '';
 selectors.isMFAAuthVerified = state => {

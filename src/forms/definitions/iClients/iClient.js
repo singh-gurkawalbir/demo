@@ -1,4 +1,42 @@
+import { cloneDeep } from 'lodash';
+
 export default {
+  init: (fieldMeta, resource) => {
+    if (!resource?.assistant) {
+      return fieldMeta;
+    }
+    // for assistants, old iClients form is used
+    const finalFieldMeta = {
+      fieldMap: {},
+    };
+
+    Object.keys(fieldMeta.fieldMap).forEach(key => {
+      if (key === 'name' ||
+          key === 'oauth2.clientId' ||
+          key === 'oauth2.clientSecret' ||
+          key === 'amazonmws.accessKeyId' ||
+          key === 'amazonmws.secretKey') {
+        finalFieldMeta.fieldMap[key] = cloneDeep(fieldMeta.fieldMap[key]);
+      }
+    });
+
+    finalFieldMeta.layout = {
+      type: 'box',
+      containers: [
+        {
+          fields: [
+            'name',
+            'oauth2.clientId',
+            'oauth2.clientSecret',
+            'amazonmws.accessKeyId',
+            'amazonmws.secretKey',
+          ],
+        },
+      ],
+    };
+
+    return finalFieldMeta;
+  },
   preSave: formValues => {
     const newValues = { ...formValues };
 

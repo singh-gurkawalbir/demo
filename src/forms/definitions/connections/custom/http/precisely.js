@@ -11,6 +11,7 @@ export default {
     '/http/auth/token/location': 'header',
     '/http/auth/token/headerName': 'Authorization',
     '/http/auth/token/scheme': 'Bearer',
+    '/http/auth/oauth/useIClientFields': false,
     '/http/auth/oauth/tokenURI': 'https://api.precisely.com/oauth/token',
     '/http/auth/oauth/clientCredentialsLocation': 'basicauthheader',
     '/http/auth/oauth/grantType': 'clientcredentials',

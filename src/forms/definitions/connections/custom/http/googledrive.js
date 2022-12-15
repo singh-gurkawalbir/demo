@@ -14,6 +14,7 @@ export default {
       '/http/auth/token/location': 'header',
       '/http/auth/token/headerName': 'Authorization',
       '/http/auth/token/scheme': 'Bearer',
+      '/http/auth/oauth/useIClientFields': false,
       '/http/auth/oauth/grantType': 'authorizecode',
       '/http/auth/oauth/authURI': 'https://accounts.google.com/o/oauth2/auth',
       '/http/auth/oauth/tokenURI': 'https://accounts.google.com/o/oauth2/token',
@@ -49,6 +50,10 @@ export default {
       connectorId: r => r && r._connectorId,
       ignoreEnvironmentFilter: true,
     },
+    'http.auth.oauth.callbackURL': {
+      fieldId: 'http.auth.oauth.callbackURL',
+      copyToClipboard: true,
+    },
     application: {
       fieldId: 'application',
     },
@@ -62,7 +67,7 @@ export default {
       {
         collapsed: true,
         label: 'Configure your client id and secret',
-        fields: ['http._iClientId', 'http.auth.oauth.scope'],
+        fields: ['http.auth.oauth.callbackURL', 'http._iClientId', 'http.auth.oauth.scope'],
       },
       { collapsed: true, label: 'Advanced', fields: ['fileAdvanced', 'httpAdvanced'] },
     ],

@@ -294,6 +294,10 @@ export default {
         return 'import.ftp.backupDirectoryPath';
       } if (r?.assistant === 'azurestorageaccount') {
         return 'import.azure.backupPath';
+      } if (r?.assistant === 'box') {
+        return 'import.box.backupPath';
+      } if (r?.assistant === 'dropbox') {
+        return 'import.dropbox.backupPath';
       }
 
       return 'import.file.backupPath';
