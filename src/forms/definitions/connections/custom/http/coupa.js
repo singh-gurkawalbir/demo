@@ -14,6 +14,7 @@ export default {
         value: 'application/json',
       },
     ],
+    '/http/auth/oauth/useIClientFields': false,
     '/http/auth/oauth/scopeDelimiter': ' ',
     '/http/auth/oauth/clientCredentialsLocation': 'body',
     '/http/auth/oauth/grantType': 'clientcredentials',
@@ -70,6 +71,10 @@ export default {
       connectionId: r => r && r._id,
       connectorId: r => r && r._connectorId,
       ignoreEnvironmentFilter: true,
+    },
+    'http.auth.oauth.callbackURL': {
+      fieldId: 'http.auth.oauth.callbackURL',
+      copyToClipboard: true,
     },
     'http.auth.oauth.scope': {
       fieldId: 'http.auth.oauth.scope',
@@ -211,7 +216,7 @@ export default {
       { collapsed: true, label: 'General', fields: ['name', 'application'] },
       { collapsed: true,
         label: 'Application details',
-        fields: ['http.coupaSubdomain', 'http._iClientId', 'http.auth.oauth.scope'] },
+        fields: ['http.coupaSubdomain', 'http._iClientId', 'http.auth.oauth.callbackURL', 'http.auth.oauth.scope'] },
       { collapsed: true, label: 'Advanced', fields: ['httpAdvanced'] },
     ],
   },

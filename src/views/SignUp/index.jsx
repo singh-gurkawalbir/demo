@@ -1,13 +1,9 @@
 import React from 'react';
-import { useSelector } from 'react-redux';
 import { makeStyles, Typography, Link } from '@material-ui/core';
 import SignUp from './SignupForm';
 import CeligoLogo from '../../components/CeligoLogo';
 import { getDomain } from '../../utils/resource';
-import messageStore from '../../utils/messageStore';
-import { selectors } from '../../reducers';
 import MarketingContentWithIframe from '../../components/LoginScreen/MarketingContentWithIframe';
-import InfoIcon from '../../components/icons/InfoIcon';
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
@@ -83,37 +79,13 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-const Title = ({ isMFAAuthRequired }) => {
+const Title = () => {
   const classes = useStyles();
-  const { isAccountUser, noOfDays } = useSelector(selectors.mfaAuthInfo);
-
-  if (!isMFAAuthRequired) {
-    return (
-      <Typography variant="h3" className={classes.title}>
-        Sign up
-      </Typography>
-    );
-  }
-
-  let infoMessage;
-
-  if (isAccountUser) {
-    infoMessage = messageStore(noOfDays ? 'MFA_USER_OTP_INFO_FOR_TRUSTED_NUMBER_OF_DAYS' : 'MFA_USER_OTP_INFO', { noOfDays });
-  } else {
-    infoMessage = messageStore('MFA_OWNER_OTP_INFO');
-  }
 
   return (
-    <>
-      <Typography variant="h3" className={classes.mfaTitle}>
-        Authenticate with one-time passcode
-      </Typography>
-      <div className={classes.mfaInfo}>
-        <InfoIcon color="primary" width="16.5" height="16.5" />
-        <span className={classes.infoText}>{infoMessage}</span>
-      </div>
-    </>
-
+    <Typography variant="h3" className={classes.title}>
+      Sign up
+    </Typography>
   );
 };
 
@@ -122,8 +94,6 @@ export default function Signup(props) {
   // eslint-disable-next-line no-undef
   const contentUrl = (getDomain() === 'eu.integrator.io' ? IO_LOGIN_PROMOTION_URL_EU : IO_LOGIN_PROMOTION_URL);
 
-  const isMFAAuthRequired = useSelector(state => selectors.isMFAAuthRequired(state));
-
   return (
     <div className={classes.wrapper}>
       <div className={classes.signinWrapper}>
@@ -131,7 +101,7 @@ export default function Signup(props) {
           <div className={classes.logo}>
             <CeligoLogo />
           </div>
-          <Title isMFAAuthRequired={isMFAAuthRequired} />
+          <Title />
 
           <SignUp
             {...props}

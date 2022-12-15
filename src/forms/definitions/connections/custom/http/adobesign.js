@@ -8,6 +8,7 @@ export default {
     '/http/baseURI': `https://api.${formValues['/http/unencrypted/subdomain']}.echosign.com/api/rest/v6`,
     '/http/ping/relativeURI': '/users',
     '/http/ping/method': 'GET',
+    '/http/auth/oauth/useIClientFields': false,
     '/http/auth/oauth/authURI': `https://secure.${formValues['/http/unencrypted/subdomain']}.echosign.com/public/oauth/v2`,
     '/http/auth/oauth/tokenURI': `https://secure.${formValues['/http/unencrypted/subdomain']}.echosign.com/oauth/v2/token`,
     '/http/auth/oauth/grantType': 'authorizecode',
@@ -119,6 +120,10 @@ export default {
         },
       ],
     },
+    'http.auth.oauth.callbackURL': {
+      fieldId: 'http.auth.oauth.callbackURL',
+      copyToClipboard: true,
+    },
     httpAdvanced: { formId: 'httpAdvanced' },
     application: {
       fieldId: 'application',
@@ -134,6 +139,7 @@ export default {
           'http.unencrypted.subdomain',
           'http.unencrypted.email',
           'http._iClientId',
+          'http.auth.oauth.callbackURL',
           'http.auth.oauth.scope'],
       },
       {

@@ -9,6 +9,8 @@ import DynaForm from '../../components/DynaForm';
 import DynaSubmit from '../../components/DynaForm/DynaSubmit';
 import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
 import useFormInitWithPermissions from '../../hooks/useFormInitWithPermissions';
+import { changeEmailParams } from '../../sagas/api/apiPaths';
+import commKeyGenerator from '../../utils/commKeyGenerator';
 
 const useStyles = makeStyles({
   container: {
@@ -83,14 +85,20 @@ export default function ChangeEmail({ show, onClose }) {
     // Incase email change is successful, we should close Change Email form
     // and Show notification on top with success message
     if (success && message) {
+      const commKey = commKeyGenerator(
+        changeEmailParams.path,
+        changeEmailParams.opts.method
+      );
+
       onClose();
       enqueueSnackbar({
         message,
         variant: 'success',
         persist: true,
       });
+      dispatch(actions.api.clearCommByKey(commKey));
     }
-  }, [success, message, enqueueSnackbar, onClose]);
+  }, [success, message, enqueueSnackbar, onClose, dispatch]);
   const formKey = useFormInitWithPermissions({
     remount: show,
     fieldMeta: changeEmailFieldMeta,

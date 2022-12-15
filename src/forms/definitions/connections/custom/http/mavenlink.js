@@ -11,6 +11,7 @@ export default {
     '/http/auth/token/location': 'header',
     '/http/auth/token/headerName': 'Authorization',
     '/http/auth/token/scheme': 'Bearer',
+    '/http/auth/oauth/useIClientFields': false,
     '/http/auth/oauth/authURI': 'https://app.mavenlink.com/oauth/authorize',
     '/http/auth/oauth/tokenURI': 'https://app.mavenlink.com/oauth/token',
     '/http/auth/oauth/clientCredentialsLocation': 'body',
@@ -27,6 +28,10 @@ export default {
       connectorId: r => r && r._connectorId,
       ignoreEnvironmentFilter: true,
     },
+    'http.auth.oauth.callbackURL': {
+      fieldId: 'http.auth.oauth.callbackURL',
+      copyToClipboard: true,
+    },
     application: {
       fieldId: 'application',
     },
@@ -39,7 +44,7 @@ export default {
       {
         collapsed: true,
         label: 'Application details',
-        fields: ['http._iClientId'],
+        fields: ['http._iClientId', 'http.auth.oauth.callbackURL'],
       },
       { collapsed: true, label: 'Advanced', fields: ['httpAdvanced'] },
     ],
