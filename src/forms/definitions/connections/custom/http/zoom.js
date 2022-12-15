@@ -78,11 +78,7 @@ export default {
       connectionId: r => r && r._id,
       connectorId: r => r && r._connectorId,
       ignoreEnvironmentFilter: true,
-      visibleWhen: [{ field: 'http.auth.type', is: ['oauth'] }],
-    },
-    'http.auth.oauth.callbackURL': {
-      fieldId: 'http.auth.oauth.callbackURL',
-      copyToClipboard: true,
+      helpKey: 'zoom.connection.http._iClientId',
       visibleWhen: [{ field: 'http.auth.type', is: ['oauth'] }],
     },
     application: {
@@ -96,7 +92,7 @@ export default {
       { collapsed: true, label: 'General', fields: ['name', 'application'] },
       { collapsed: true,
         label: 'Application details',
-        fields: ['http.auth.type', 'http.encrypted.apiKey', 'http.encrypted.apiSecret', 'http._iClientId', 'http.auth.oauth.callbackURL'] },
+        fields: ['http.auth.type', 'http.encrypted.apiKey', 'http.encrypted.apiSecret', 'http._iClientId'] },
       { collapsed: true, label: 'Advanced', fields: ['httpAdvanced'] },
     ],
   },
@@ -116,6 +112,15 @@ export default {
         {
           field: 'http.auth.type',
           is: ['oauth'],
+        },
+      ],
+    },
+    {
+      id: 'testandsavegroup',
+      visibleWhen: [
+        {
+          field: 'http.auth.type',
+          is: ['jwt'],
         },
       ],
     },

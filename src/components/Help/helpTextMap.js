@@ -471,6 +471,7 @@ export default {
   'acumatica.connection.http.unencrypted.company':
 'Please enter company name of your Acumatica account.',
   'zoom.connection.http.auth.type': 'Select the required authentication type, either OAuth 2.0 or JWT.',
+  'zoom.connection.http._iClientId': 'Save your client ID and client secret in iClient for an added layer of security. For more information, see <a href=https://marketplace.zoom.us/docs/guides/build/oauth-app/>Authentication document</a>.',
   'zoom.connection.http.encrypted.apiKey':
 'The API Key of your zoom account.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your API key safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'zoom.connection.http.encrypted.apiSecret':
