@@ -12,6 +12,7 @@ export default {
     '/http/ping/method': 'GET',
     '/http/auth/token/refreshMethod': 'POST',
     '/http/auth/token/refreshMediaType': 'urlencoded',
+    '/http/auth/oauth/useIClientFields': false,
     '/http/auth/oauth/grantType': 'clientcredentials',
     '/http/auth/oauth/clientCredentialsLocation': 'basicauthheader',
     '/http/auth/oauth/tokenURI': `https://${
@@ -55,6 +56,10 @@ export default {
       connectorId: r => r && r._connectorId,
       ignoreEnvironmentFilter: true,
     },
+    'http.auth.oauth.callbackURL': {
+      fieldId: 'http.auth.oauth.callbackURL',
+      copyToClipboard: true,
+    },
     application: {
       fieldId: 'application',
     },
@@ -68,7 +73,8 @@ export default {
         label: 'Application details',
         fields: ['http.unencrypted.environment',
           'http.unencrypted.companyId',
-          'http._iClientId'] },
+          'http._iClientId',
+          'http.auth.oauth.callbackURL'] },
       { collapsed: true, label: 'Advanced', fields: ['httpAdvanced'] },
     ],
   },

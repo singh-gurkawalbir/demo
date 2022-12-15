@@ -17,6 +17,7 @@ export default {
           formValues['/accountType'] === 'sandbox' ? '.sandbox' : ''
         }.ebay.com/`,
         '/http/ping/relativeURI': '/sell/finances/v1/transaction',
+        '/http/auth/oauth/useIClientFields': false,
         '/http/auth/oauth/authURI': `https://signin${
           formValues['/accountType'] === 'sandbox' ? '.sandbox' : ''
         }.ebay.com/authorize`,
@@ -44,6 +45,7 @@ export default {
         formValues['/accountType'] === 'sandbox' ? '.sandbox' : ''
       }.ebay.com/`,
       '/http/ping/relativeURI': 'sell/fulfillment/v1/order',
+      '/http/auth/oauth/useIClientFields': false,
       '/http/auth/oauth/authURI': `https://signin${
         formValues['/accountType'] === 'sandbox' ? '.sandbox' : ''
       }.ebay.com/authorize`,

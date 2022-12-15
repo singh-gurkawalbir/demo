@@ -8,6 +8,7 @@ export default {
       retValues['/http/auth/token/headerName'] = 'Authorization';
       retValues['/http/auth/token/scheme'] = 'Bearer';
       retValues['/http/auth/oauth/grantType'] = 'clientcredentials';
+      retValues['/http/auth/oauth/useIClientFields'] = false;
       retValues['/http/auth/oauth/clientCredentialsLocation'] = 'body';
       retValues['/http/auth/oauth/refreshTokenPath'] = 'refresh_token';
       retValues['/http/auth/oauth/accessTokenPath'] = 'access_token';
@@ -153,6 +154,11 @@ export default {
       helpKey: 'servicenow.connection.http._iClientId',
       visibleWhen: [{ field: 'http.auth.type', is: ['oauth'] }],
     },
+    'http.auth.oauth.callbackURL': {
+      fieldId: 'http.auth.oauth.callbackURL',
+      copyToClipboard: true,
+      visibleWhen: [{ field: 'http.auth.type', is: ['oauth'] }],
+    },
     application: {
       fieldId: 'application',
     },
@@ -171,6 +177,7 @@ export default {
           'http.unencrypted.username',
           'http.encrypted.password',
           'http._iClientId',
+          'http.auth.oauth.callbackURL',
         ] },
       { collapsed: true, label: 'Advanced', fields: ['httpAdvanced'] },
     ],

@@ -1,4 +1,5 @@
 import { isNewId } from '../../../../utils/resource';
+import { FILE_PROVIDER_ASSISTANTS } from '../../../../constants';
 
 export default {
   // TODO: why helpKey is it named csv file id like to change it to
@@ -33,7 +34,7 @@ export default {
   'file.fileNameStartsWith': {
     isLoggable: true,
     type: r => {
-      if (r.assistant === 'googledrive' || r.assistant === 'azurestorageaccount') return 'text';
+      if (FILE_PROVIDER_ASSISTANTS.includes(r.assistant)) return 'text';
 
       return 'uri';
     },
@@ -60,7 +61,7 @@ export default {
   'file.fileNameEndsWith': {
     isLoggable: true,
     type: r => {
-      if (r.assistant === 'googledrive' || r.assistant === 'azurestorageaccount') return 'text';
+      if (FILE_PROVIDER_ASSISTANTS.includes(r.assistant)) return 'text';
 
       return 'uri';
     },

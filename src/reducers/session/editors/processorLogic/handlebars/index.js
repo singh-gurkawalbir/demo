@@ -120,7 +120,7 @@ export default {
 
     if (type === 'relativeuri' || type === 'httprequestbody' || type === 'sqlquerybuilder') {
     // below formatting applies for only relative URI, body and sql fields
-      const formattedRule = typeof arrayIndex === 'number' && Array.isArray(value) ? value[arrayIndex] : value;
+      const formattedRule = typeof arrayIndex === 'number' && Array.isArray(value) ? value[arrayIndex] : value || '';
 
       rule = typeof formattedRule === 'string' ? formattedRule : JSON.stringify(formattedRule, null, 2);
     } else if (type === 'soqlquery') {

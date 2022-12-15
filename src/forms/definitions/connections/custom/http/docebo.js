@@ -7,6 +7,7 @@ export default {
     '/http/mediaType': 'json',
     '/http/ping/relativeURI': '/poweruser/v1/powerusers',
     '/http/ping/method': 'GET',
+    '/http/auth/oauth/useIClientFields': false,
     '/http/auth/oauth/authURI': `${formValues['/http/baseURI']}/oauth2/authorize`,
     '/http/auth/oauth/tokenURI': `${formValues['/http/baseURI']}/oauth2/token`,
     '/http/auth/token/location': 'header',
@@ -40,6 +41,10 @@ export default {
       connectorId: r => r && r._connectorId,
       ignoreEnvironmentFilter: true,
     },
+    'http.auth.oauth.callbackURL': {
+      fieldId: 'http.auth.oauth.callbackURL',
+      copyToClipboard: true,
+    },
     application: {
       fieldId: 'application',
     },
@@ -52,7 +57,8 @@ export default {
       { collapsed: true,
         label: 'Application details',
         fields: ['http.baseURI',
-          'http._iClientId'] },
+          'http._iClientId',
+          'http.auth.oauth.callbackURL'] },
       { collapsed: true, label: 'Advanced', fields: ['httpAdvanced'] },
     ],
   },

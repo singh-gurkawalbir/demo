@@ -25,11 +25,6 @@ const applicationsWithPreviewPanel = [
   'as2',
 ];
 
-const noImportPreviewAssistants = [
-  'googledrive',
-  'azurestorageaccount',
-];
-
 const emptyList = [];
 
 export const HTTP_STAGES = [
@@ -83,7 +78,7 @@ export const getAvailablePreviewStages = (resource, { isDataLoader, isRestCsvExp
 export const isPreviewPanelAvailable = (resource, resourceType, connection) => {
   if (!resource) return false;
   if (resourceType === 'imports') {
-    if (noImportPreviewAssistants.includes(resource.assistant)) return false;
+    if (FILE_PROVIDER_ASSISTANTS.includes(resource.assistant)) return false;
 
     return resource.adaptorType === 'HTTPImport' ||
     (connection && HTTP_BASED_ADAPTORS.includes(connection.type || connection.http?.formType));

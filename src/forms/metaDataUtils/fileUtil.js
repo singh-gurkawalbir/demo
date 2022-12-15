@@ -45,10 +45,10 @@ export const EXPORT_FILE_FIELD_MAP = {common: { formId: 'common' },
   'http.fileRelativeURI': {
     fieldId: 'http.fileRelativeURI',
     defaultValue: r => r.http?.relativeURI,
-    label: r => r?.assistant === 'googledrive' ? 'Directory path' : 'Container name',
+    label: r => ['googledrive', 'box', 'dropbox'].includes(r?.assistant) ? 'Directory path' : 'Container name',
     required: true,
     type: 'uri',
-    helpKey: r => r?.assistant === 'googledrive' ? 'export.gdrive.directoryPath' : 'export.azure.containerName',
+    helpKey: r => ['googledrive', 'box', 'dropbox'].includes(r?.assistant) ? `export.${r?.assistant}.directoryPath` : 'export.azure.containerName',
   },
   'file.fileNameStartsWith': { fieldId: 'file.fileNameStartsWith' },
   'file.fileNameEndsWith': { fieldId: 'file.fileNameEndsWith' },
@@ -205,10 +205,11 @@ blobKeyPath: {
 },
 'http.relativeURI': {
   fieldId: 'http.relativeURI',
-  label: r => r?.assistant === 'googledrive' ? 'Directory path' : 'Container name',
+  label: r => ['googledrive', 'box', 'dropbox'].includes(r?.assistant) ? 'Directory path' : 'Container name',
   required: true,
   type: 'uri',
-  helpKey: r => r?.assistant === 'googledrive' ? 'import.gdrive.directoryPath' : 'import.azure.containerName',
+  helpKey: r => ['googledrive', 'box', 'dropbox'].includes(r?.assistant) ? `export.${r?.assistant}.directoryPath` : 'export.azure.containerName',
+
 },
 'file.fileName': {
   fieldId: 'file.fileName', required: true,

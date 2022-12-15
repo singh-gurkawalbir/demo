@@ -465,6 +465,9 @@ export const updateFinalMetadataWithHttpFramework = (finalFieldMeta, connector, 
 
           tempFiledMeta.fieldMap[key] = {...tempFiledMeta.fieldMap[key], options};
         }
+        if (fieldUserMustSet?.labelOverride) {
+          tempFiledMeta.fieldMap[key] = {...tempFiledMeta.fieldMap[key], label: fieldUserMustSet?.labelOverride};
+        }
       } else if (preConfiguredField) {
         if (preConfiguredField.values?.length > 1) {
           const options = [
