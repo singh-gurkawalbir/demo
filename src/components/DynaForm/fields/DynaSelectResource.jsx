@@ -431,7 +431,7 @@ export default function DynaSelectResource(props) {
     }));
 
   useEffect(() => {
-    if (value && !Array.isArray(value)) {
+    if (!appTypeIsStatic && value && !Array.isArray(value)) {
       const isValuePresentInOption = resourceItems.find(eachItem => eachItem.value === value);
 
       if (!isValuePresentInOption) {
