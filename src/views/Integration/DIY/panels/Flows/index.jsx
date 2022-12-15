@@ -261,7 +261,7 @@ const FlowListing = ({integrationId, filterKey, searchFilterKey, actionProps, fl
       return flowGroupingsSections;
     }
 
-    const newFlowGroups = flowGroupingsSections.filter(
+    const newFlowGroups = flowGroupingsSections?.filter(
       section => flows.some(flow => (flow._flowGroupingId === section.sectionId))
     );
 
@@ -427,7 +427,7 @@ export default function FlowsPanel({ integrationId, childId }) {
       return flowGroupingsSections;
     }
 
-    const newFlowGroups = flowGroupingsSections.filter(
+    const newFlowGroups = flowGroupingsSections?.filter(
       section => flows.some(flow => (flow._flowGroupingId === section.sectionId))
     );
 
