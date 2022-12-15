@@ -12,7 +12,7 @@ import { renderWithProviders } from '../../../../test/test-utils';
 
 let initialStore;
 
-async function initFilters({filterKey = 'completedFlows', completedJobs, dataRetentionPeriod}) {
+async function initFilters({filterKey = 'completedFlows', completedJobs, dataRetentionPeriod, defaultAShareId}) {
   initialStore.getState().data.resources.integrations = [
     {
       _id: 'integration1',
@@ -24,6 +24,51 @@ async function initFilters({filterKey = 'completedFlows', completedJobs, dataRet
   ];
   initialStore.getState().data.completedJobs = completedJobs;
   initialStore.getState().data.accountSettings.dataRetentionPeriod = dataRetentionPeriod;
+  initialStore.getState().user.preferences.defaultAShareId = defaultAShareId || 'own';
+  initialStore.getState().user.org.accounts = [
+    {
+      accessLevel: 'owner',
+      _id: 'own',
+      ownerUser: {
+        licenses: [
+          {
+            endpoint: {
+              production: {},
+              sandbox: {},
+              apiManagement: true,
+            },
+            maxAllowedDataRetention: 180,
+            supportTier: 'preferred',
+            tier: 'enterprise',
+            type: 'endpoint',
+            _id: 'license1',
+          },
+        ],
+      },
+    },
+    {
+      accessLevel: 'manage',
+      _id: 'user1',
+      accepted: true,
+      ownerUser: {
+        licenses: [
+          {
+            endpoint: {
+              production: {},
+              sandbox: {},
+              apiManagement: true,
+            },
+            maxAllowedDataRetention: 180,
+            supportTier: 'preferred',
+            tier: 'enterprise',
+            type: 'endpoint',
+            _id: 'license2',
+          },
+        ],
+        dataRetentionPeriod: 60,
+      },
+    },
+  ];
   const ui = (
     <MemoryRouter
       initialEntries={[{pathname: `/dashboard/${filterKey}`}]}
@@ -187,5 +232,16 @@ describe('Testsuite for Job Dashboard Filters', () => {
         },
       },
     });
+  });
+  test('should show corresponding options in the dateRange component based on the dataRetentionPeriod selected for a shared user', () => {
+    initFilters({filterKey: 'completedFlows', defaultAShareId: 'user1'});
+
+    const last24ButtonNode = screen.getAllByRole('button', {name: 'Last 24 hours'});
+
+    userEvent.click(last24ButtonNode[0]);
+
+    expect(screen.queryByRole('button', {name: 'Last 60 days'})).toBeInTheDocument();
+    expect(screen.queryByRole('button', {name: 'Last 90 days'})).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', {name: 'Last 180 days'})).not.toBeInTheDocument();
   });
 });
