@@ -115,7 +115,7 @@ function DynaAssistantOptions(props) {
       selectors.makeResourceDataSelector,
       resourceType,
       resourceId
-    ) || {};
+    ) || /* istanbul ignore next */ {};
   const staggedResource = merged || emptyObject;
 
   const connection = useSelector(
