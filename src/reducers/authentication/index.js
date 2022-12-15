@@ -40,6 +40,12 @@ export default function (state = defaultState, action) {
         draft.requestResetStatus = 'requesting';
         draft.requestResetError = '';
         break;
+      case actionTypes.AUTH.SET_PASSWORD_REQUEST:
+        draft.requestSetPasswordStatus = 'loading';
+        break;
+      case actionTypes.AUTH.RESET_PASSWORD_REQUEST:
+        draft.requestResetPasswordStatus = 'loading';
+        break;
       case actionTypes.AUTH.SET_PASSWORD_REQUEST_FAILED:
         draft.requestSetPasswordStatus = 'failed';
         draft.requestSetPasswordError = action.error;

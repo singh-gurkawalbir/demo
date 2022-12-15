@@ -16,6 +16,7 @@ export default function ParentUpgradeButton(props) {
     onClick,
     nextPlan,
     changeEditionId,
+    accessLevel,
   } = props;
   const history = useHistory();
   const match = useRouteMatch();
@@ -51,7 +52,7 @@ export default function ParentUpgradeButton(props) {
       <FilledButton
         className={className}
         onClick={onClick}
-        disabled={!changeEditionId}
+        disabled={!changeEditionId || accessLevel === 'monitor'}
         data-test="upgrade"
         >
         Upgrade

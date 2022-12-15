@@ -375,7 +375,9 @@ export default function UpgradeDrawer() {
     <RightDrawer
       onClose={onClose}
       path={drawerPaths.UPGRADE.INSTALL}
-      height="tall">
+      height="tall"
+      width="full"
+    >
       <DrawerHeader title="Upgrade plan" />
       <DrawerContent>
         <UpgradeInstallation />

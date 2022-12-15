@@ -72,17 +72,19 @@ export default function ResetPassword() {
   const handleResetPassword = useCallback(password => {
     dispatch(actions.auth.resetPasswordRequest(password, token));
   }, [dispatch, token]);
-  const isResetPasswordCompleted = useSelector(state => selectors.requestResetPasswordStatus(state) === 'success');
+  const isResetPasswordStatus = useSelector(state => selectors.requestResetPasswordStatus(state));
+  const showErrMsg = isResetPasswordStatus === 'failed';
+
   const resetPasswordMsg = useSelector(state => selectors.requestResetPasswordMsg(state));
 
   useEffect(() => {
-    if (isResetPasswordCompleted) {
+    if (isResetPasswordStatus === 'success') {
       dispatch(actions.auth.signupStatus('done', resetPasswordMsg));
       history.replace(getRoutePath('/signin'));
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isResetPasswordCompleted]);
-  const isAuthenticating = useSelector(state => selectors.isAuthenticating(state));
+  }, [isResetPasswordStatus]);
+  const isAuthenticating = isResetPasswordStatus === 'loading';
   const error = useSelector(state => {
     const errorMessage = selectors.requestResetPasswordError(state);
 
@@ -116,7 +118,7 @@ export default function ResetPassword() {
 
   return (
     <div className={classes.editableFields}>
-      { error && (
+      { showErrMsg && error && (
       <Typography
         data-private
         color="error"
