@@ -19,7 +19,7 @@ const useStyles = makeStyles(theme => ({
     borderRadius: theme.spacing(0.5),
     '& .MuiTableBody-root': {
       '& .MuiTableRow-root': {
-        background: theme.palette.background.paper2,
+        background: theme.palette.background.default,
       },
     },
   },

@@ -1,6 +1,8 @@
 import React, { useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useHistory, useRouteMatch } from 'react-router-dom';
+import clsx from 'clsx';
+import { makeStyles } from '@material-ui/core';
 import Spinner from '../../../../../../../components/Spinner';
 import FilledButton from '../../../../../../../components/Buttons/FilledButton';
 import { selectors } from '../../../../../../../reducers';
@@ -9,7 +11,16 @@ import TextButton from '../../../../../../../components/Buttons/TextButton';
 import { useSelectorMemo } from '../../../../../../../hooks';
 import { buildDrawerUrl, drawerPaths } from '../../../../../../../utils/rightDrawer';
 
+const useStyles = makeStyles(theme => ({
+  disabledButton: {
+    '&:disabled': {
+      background: theme.palette.secondary.lightest,
+      color: theme.palette.text.hint,
+    },
+  },
+}));
 export default function ChildUpgradeButton({ resource }) {
+  const classes = useStyles();
   const dispatch = useDispatch();
   const history = useHistory();
   const match = useRouteMatch();
@@ -86,6 +97,7 @@ export default function ChildUpgradeButton({ resource }) {
       onClick={onClickHandler}
       data-test="childUpgrade"
       bold
+      className={clsx({[classes.disabledButton]: !changeEditionId})}
     >
       Upgrade
     </FilledButton>
