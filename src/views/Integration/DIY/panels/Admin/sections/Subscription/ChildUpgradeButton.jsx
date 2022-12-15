@@ -37,7 +37,7 @@ export default function ChildUpgradeButton({ resource }) {
       history.push(buildDrawerUrl({
         path: drawerPaths.UPGRADE.INSTALL,
         baseUrl: match.url,
-        params: { currentIntegrationId: id},
+        params: { currentIntegrationId: id, type: 'child'},
       }));
     }
   }, [dispatch, history, id, inQueue, match.url, showWizard, status]);
@@ -47,10 +47,6 @@ export default function ChildUpgradeButton({ resource }) {
       dispatch(actions.integrationApp.settings.integrationAppV2.upgrade(id));
     }
   }, [dispatch, currentChild, id]);
-
-  useEffect(() => () => {
-    dispatch(actions.integrationApp.upgrade.deleteStatus(id));
-  }, [dispatch, id]);
 
   const onClickHandler = useCallback(() => {
     if (changeEditionSteps?.length) {
