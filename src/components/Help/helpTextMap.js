@@ -913,6 +913,12 @@ if you're using a production account, you'll find your API keys under the 'API M
   'connection.http.rateLimit.limit': 'If your app’s API response does not let us know how long we need to wait before we make another call to it, then you will need to tell us how much time to take between API calls. <b>Important:</b> This value must be entered in milliseconds.',
   'connection.http.encrypted': 'Store all sensitive fields required by your imports and exports to access the app you are connecting to. For example, {\'password\':\'celigorocks\'} or {\'token\':\'x7if4nkovhgr63ghp\'}. These values are stored with AES-256 encryption and other layers of protection to keep your data safe.',
   'connection.http.unencrypted': 'Store all non-sensitive fields required by your imports and exports to access the app you are connecting to. For example, {\'email\':\'my_email@company.com\', \'accountId\': \'8675301\', \'role\':\'admin\'}.',
+  'http.auth.oauth.oauth1.signatureMethod': 'Signature method to sign the request',
+  'http.auth.oauth.oauth1.consumerKey': 'A value used by the Consumer to identify itself to the Service Provider.',
+  'http.auth.oauth.oauth1.consumerSecret': 'A secret used by the Consumer to establish ownership of the Consumer Key.',
+  'http.auth.oauth.oauth1.accessToken': 'A value used by the Consumer to gain access to the Protected Resources on behalf of the User, instead of using the User\'s Service Provider credentials.',
+  'http.auth.oauth.oauth1.tokenSecret': 'A secret used by the Consumer to establish ownership of a given Token.',
+  'http.auth.oauth.oauth1.consumerPrivateKey': 'Consumer’s private RSA key to sign the request.',
   'connection.rdbms.type': 'Select the database type.',
   'connection.rdbms.host':
 'Hostname/IP of the server. OR Hostname/IP of the server to connect to.',

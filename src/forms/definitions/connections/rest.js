@@ -295,6 +295,18 @@ export default {
       formId: 'restBasic',
       visibleWhenAll: [{ field: 'rest.authType', is: ['basic'] }],
     },
+    'rest.oauth.oauth1.signatureMethod': {
+      fieldId: 'rest.oauth.oauth1.signatureMethod',
+      visibleWhenAll: [
+        { field: 'rest.authType', is: ['oauth1'] },
+      ],
+    },
+    restOAuth1: {
+      formId: 'restOAuth1',
+      visibleWhenAll: [
+        { field: 'rest.authType', is: ['oauth1'] },
+      ],
+    },
     'http.disableStrictSSL': { fieldId: 'http.disableStrictSSL' },
     restToken: {
       formId: 'restToken',
@@ -366,6 +378,25 @@ export default {
             label: 'Configure basic auth',
             fields: [
               'restBasic',
+            ],
+          },
+          {
+            collapsed: true,
+            label: 'Configure OAuth 1.0',
+            fields: [
+              'rest.oauth.oauth1.signatureMethod',
+            ],
+            containers: [
+              {
+                type: 'indent',
+                containers: [
+                  {
+                    fields: [
+                      'restOAuth1',
+                    ],
+                  },
+                ],
+              },
             ],
           },
           {
