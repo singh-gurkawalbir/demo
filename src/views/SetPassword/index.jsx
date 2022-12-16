@@ -8,7 +8,6 @@ import CeligoLogo from '../../components/CeligoLogo';
 import { getDomain } from '../../utils/resource';
 import MarketingContentWithIframe from '../../components/LoginScreen/MarketingContentWithIframe';
 import { ACTIVE_SESSION_MESSAGE } from '../../constants';
-import Spinner from '../../components/Spinner';
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
@@ -83,7 +82,6 @@ export default function SetPassword(props) {
   const dispatch = useDispatch();
   // eslint-disable-next-line no-undef
   const contentUrl = (getDomain() === 'eu.integrator.io' ? IO_LOGIN_PROMOTION_URL_EU : IO_LOGIN_PROMOTION_URL);
-  const sessionInfoResolved = useSelector(selectors.mfaSessionInfoStatus) === 'received';
   const isActiveSession = useSelector(state => selectors.sessionInfo(state)?.authenticated);
 
   useEffect(() => {
@@ -100,27 +98,22 @@ export default function SetPassword(props) {
           <Typography variant="h3" className={classes.title}>
             Create your password
           </Typography>
-          { !sessionInfoResolved ? <Spinner />
-            : (
-              <div>
-                {!isActiveSession ? (
-                  <SetPasswordForm
-                    {...props}
-                    dialogOpen={false}
-                    className={classes.setPasswordForm}
+          {!isActiveSession ? (
+            <SetPasswordForm
+              {...props}
+              dialogOpen={false}
+              className={classes.setPasswordForm}
           />
-                ) : (
-                  <Typography
-                    data-private
-                    color="error"
-                    component="div"
-                    variant="h5"
-                    className={classes.alertMsg}>
-                    {ACTIVE_SESSION_MESSAGE}
-                  </Typography>
-                )}
-              </div>
-            )}
+          ) : (
+            <Typography
+              data-private
+              color="error"
+              component="div"
+              variant="h5"
+              className={classes.alertMsg}>
+              {ACTIVE_SESSION_MESSAGE}
+            </Typography>
+          )}
         </div>
       </div>
       <div className={classes.marketingContentWrapper}>
