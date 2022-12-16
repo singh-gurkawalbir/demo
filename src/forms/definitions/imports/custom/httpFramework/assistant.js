@@ -1,5 +1,4 @@
 import { omitBy } from 'lodash';
-import { updateExportAndImportFinalMetadata } from '../../../../../sagas/utils';
 import { convertToImport } from '../../../../../utils/assistant';
 import { fieldMeta } from './util';
 
@@ -9,10 +8,10 @@ export default function assistantDefinition(
   assistantData
 ) {
   return {
-    init: (fieldMeta, resource, flow, httpConnector) => updateExportAndImportFinalMetadata(fieldMeta, httpConnector, resource),
 
     ...fieldMeta({ resource, assistantData }),
     preSave: (formValues = {}) => {
+      console.log('formValues', formValues);
       const assistantMetadata = {
         pathParams: {},
       };
@@ -30,6 +29,8 @@ export default function assistantDefinition(
         'lookupQueryParams',
         'lookups',
         'existingExtract',
+        'createEndpoint',
+        'updateEndpoint',
       ].forEach(prop => {
         assistantMetadata[prop] = formValues[`/assistantMetadata/${prop}`];
       });
@@ -55,6 +56,7 @@ export default function assistantDefinition(
         importDoc['/assistant'] = undefined;
         delete importDoc['/assistant'];
       }
+      console.log('import presava:', { ...otherFormValues, ...importDoc });
 
       return { ...otherFormValues, ...importDoc };
     },

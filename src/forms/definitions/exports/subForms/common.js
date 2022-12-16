@@ -1,7 +1,7 @@
 
 export default {
   fieldMap: {
-    name: { fieldId: 'name' },
+    name: { fieldId: 'name', isApplicationPlaceholder: true, isLabelUpdate: true },
     description: { fieldId: 'description' },
     _connectionId: {
       fieldId: '_connectionId',
