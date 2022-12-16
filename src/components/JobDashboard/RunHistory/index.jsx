@@ -109,7 +109,17 @@ export default function RunHistory({ flowId, className }) {
   const isPurgeFilesSuccess = useSelector(state => selectors.isPurgeFilesSuccess(state));
   const areUserAccountSettingsLoaded = useSelector(selectors.areUserAccountSettingsLoaded);
   const maxAllowedDataRetention = useSelector(state => selectors.platformLicense(state)?.maxAllowedDataRetention);
-  const dataRetentionPeriod = useSelector(selectors.dataRetentionPeriod);
+  const isAccountOwnerOrAdmin = useSelector(state => selectors.isAccountOwnerOrAdmin(state));
+  const dataRetentionPeriod = useSelector(state => {
+    if (isAccountOwnerOrAdmin) {
+      return selectors.dataRetentionPeriod(state);
+    }
+
+    const accounts = selectors.accountSummary(state);
+    const selectedAccount = accounts?.find(a => a.selected);
+
+    return selectedAccount?.dataRetentionPeriod;
+  });
   const maxAllowedDate = (dataRetentionPeriod || maxAllowedDataRetention) || 30;
   const addCustomPeriods = useMemo(() =>
     addDataRetentionPeriods(maxAllowedDataRetention, dataRetentionPeriod),
@@ -175,10 +185,10 @@ export default function RunHistory({ flowId, className }) {
   );
 
   useEffect(() => {
-    if (!areUserAccountSettingsLoaded) {
+    if (!areUserAccountSettingsLoaded && isAccountOwnerOrAdmin) {
       dispatch(actions.accountSettings.request());
     }
-  }, [areUserAccountSettingsLoaded, dispatch]);
+  }, [areUserAccountSettingsLoaded, dispatch, isAccountOwnerOrAdmin]);
 
   useEffect(() => {
     if (isPurgeFilesSuccess) {

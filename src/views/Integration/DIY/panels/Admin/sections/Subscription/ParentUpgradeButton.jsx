@@ -30,7 +30,7 @@ export default function ParentUpgradeButton(props) {
       history.push(buildDrawerUrl({
         path: drawerPaths.UPGRADE.INSTALL,
         baseUrl: match.url,
-        params: { currentIntegrationId: id},
+        params: { currentIntegrationId: id, type: 'parent' },
       }));
     }
   }, [dispatch, history, id, match.url, showWizard]);

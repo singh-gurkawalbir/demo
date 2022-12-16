@@ -77,7 +77,6 @@ describe('SearchCriteriaDialog UI tests', () => {
     const fields = screen.getAllByRole('textbox');
 
     expect(fields).toHaveLength(3);
-    screen.debug(undefined, Infinity);
   });
   test('should display the dropdownwhen clicked on the operator dropdown', () => {
     initSearchCriteriaDialog(props);
@@ -93,7 +92,6 @@ describe('SearchCriteriaDialog UI tests', () => {
     expect(screen.getByText('has key words')).toBeInTheDocument();
     expect(screen.getByText('is')).toBeInTheDocument();
     expect(screen.getByText('is empty')).toBeInTheDocument();
-    screen.debug(undefined, Infinity);
   });
   test('should call the onSave function passed in props when save button is clicked', () => {
     initSearchCriteriaDialog(props);
@@ -118,6 +116,5 @@ describe('SearchCriteriaDialog UI tests', () => {
     expect(screen.queryByText('FullScreenCloseIcon')).toBeNull();
     userEvent.click(toggleScreenButton);
     expect(screen.getByText('FullScreenCloseIcon')).toBeInTheDocument();
-    screen.debug(null, Infinity);
   });
 });
