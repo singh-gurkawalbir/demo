@@ -187,9 +187,7 @@ export default function SubscriptionSection({ childId, integrationId }) {
     createdText,
     expiresText,
     upgradeText,
-    // upgradeRequested,
     nextPlan,
-    // _changeEditionId: changeEditionId,
   } = license;
   const handleUpgrade = () => {
     if (upgradeText === 'Request upgrade') {
@@ -277,6 +275,7 @@ export default function SubscriptionSection({ childId, integrationId }) {
                   istwoDotZeroFrameWork={istwoDotZeroFrameWork}
                   handleUpgrade={handleUpgrade}
                   handleUpgradeEdition={handleUpgradeEdition}
+                  childIntegrationsCount={allChildIntegrations?.length}
                 />
               </Grid>
             </Grid>
@@ -333,7 +332,7 @@ export default function SubscriptionSection({ childId, integrationId }) {
           </>
         )}
       </div>
-      <UpgradeDrawer />
+      <UpgradeDrawer id={integrationId} />
     </>
   );
 }

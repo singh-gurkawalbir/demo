@@ -15,11 +15,15 @@ export default (state = {}, action) => {
     // eslint-disable-next-line default-case
     switch (type) {
       case actionTypes.INTEGRATION_APPS.SETTINGS.V2.SET_STATUS:
+        // following are the possible values:
+        // status: "done", "hold", "inProgress"
+        // inQueue: "true" or "false"
+        // showWizard: "true" or "false"
+        // steps: [Array]
+        // showMessage: 'true' or 'false'
+        // showFinalMessage: 'true' or 'false'
         if (!draft[id]) draft[id] = {};
-        if (statusObj?.steps) draft[id].steps = statusObj.steps;
-        if (statusObj?.showWizard !== undefined) draft[id].showWizard = statusObj.showWizard;
-        if (statusObj?.status) draft[id].status = statusObj.status;
-        if (statusObj?.inQueue !== undefined) draft[id].inQueue = statusObj.inQueue;
+        draft[id] = {...draft[id], ...statusObj};
         break;
 
       case actionTypes.INTEGRATION_APPS.SETTINGS.V2.ADD_CHILD_UPGRADE_LIST:
@@ -53,7 +57,7 @@ selectors.currentChildUpgrade = state => {
     return '';
   }
 
-  let currentChild = '';
+  let currentChild = 'none';
 
   forEach(state?.childList, id => {
     if (state[id]?.inQueue) {

@@ -121,6 +121,15 @@ describe('integrationApps utility selectors', () => {
 
       expect(selectors.currentChildUpgrade(newState)).toEqual('213');
     });
+    test('should return none when no id is inQueue true.', () => {
+      const newState = {
+        childList: ['123', '213'],
+        123: { status: 'done', inQueue: false },
+        213: { status: 'done', inQueue: false },
+      };
+
+      expect(selectors.currentChildUpgrade(newState)).toEqual('none');
+    });
   });
   describe('changeEditionSteps', () => {
     test('should return empty string when no match found.', () => {

@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, useRef, useImperativeHandle, forwardRef } from 'react';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
@@ -29,6 +29,8 @@ import DrawerHeader from '../../../../../components/drawer/Right/DrawerHeader';
 import DrawerContent from '../../../../../components/drawer/Right/DrawerContent';
 import DrawerFooter from '../../../../../components/drawer/Right/DrawerFooter';
 import FilledButton from '../../../../../components/Buttons/FilledButton';
+import useEnqueueSnackbar from '../../../../../hooks/enqueueSnackbar';
+import messageStore from '../../../../../utils/messageStore';
 
 const useStyles = makeStyles(theme => ({
   installIntegrationWrapper: {
@@ -61,21 +63,20 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function UpgradeInstallation() {
+const UpgradeInstallation = forwardRef(({ parentId, parentUrl }, ref) => {
   const classes = useStyles();
   const [stackId, setShowStackDialog] = useState(null);
   const history = useHistory();
   const match = useRouteMatch();
-  const { currentIntegrationId: integrationId } = match.params;
+  const [enquesnackbar] = useEnqueueSnackbar();
+  const { currentIntegrationId: integrationId, type } = match.params;
   const [connection, setConnection] = useState(null);
-  const [isSetupComplete, setIsSetupComplete] = useState(false);
   const [isResourceStaged, setIsResourceStaged] = useState(false);
   const dispatch = useDispatch();
 
   const integration = useSelectorMemo(selectors.mkIntegrationAppSettings, integrationId);
-
-  const { _connectorId } = integration?._connectorId || emptyObject;
-
+  const parentIntegration = useSelectorMemo(selectors.mkIntegrationAppSettings, parentId);
+  const { _connectorId } = integration || emptyObject;
   const helpUrl = useSelector(state => {
     const integrationApp = selectors.resource(state, 'published', _connectorId);
 
@@ -85,13 +86,26 @@ function UpgradeInstallation() {
     selectors.integrationChangeEditionSteps(state, integrationId),
   shallowEqual
   );
-
   const status = useSelector(state => selectors.getStatus(state, integrationId)?.status);
-
   const { openOauthConnection, connectionId } = useSelector(
     state => selectors.v2canOpenOauthConnection(state, integrationId),
     (left, right) => (left.openOauthConnection === right.openOauthConnection && left.connectionId === right.connectionId)
   );
+  const nextPlan = useSelector(state =>
+    selectors.integrationAppLicense(state, integrationId)?.nextPlan || ''
+  );
+
+  useImperativeHandle(ref, () => ({
+    onClose() {
+      if (status !== 'done') {
+        if (type === 'parent') {
+          enquesnackbar({message: <RawHtml html={messageStore('PARENT_DRAWER_SAVE_MESSAGE')} />, variant: 'success'});
+        } else {
+          enquesnackbar({message: <RawHtml html={messageStore('CHILD_DRAWER_SAVE_MESSAGE', { displayName: parentIntegration?.childDisplayName || '' })} />, variant: 'success'});
+        }
+      }
+    },
+  }), [enquesnackbar, parentIntegration?.childDisplayName, status, type]);
 
   const oauthConnection = useSelectorMemo(selectors.makeResourceSelector, 'connections', connectionId);
 
@@ -116,19 +130,16 @@ function UpgradeInstallation() {
   const isFrameWork2 = changeEditionSteps.length;
 
   useEffect(() => {
-    const allStepsCompleted = status === 'done';
-
-    if (changeEditionSteps.length) {
-      if (allStepsCompleted && !isSetupComplete) {
-        dispatch(actions.resource.request('integrations', integrationId));
-        dispatch(actions.integrationApp.upgrade.setStatus(integrationId, { showWizard: false }));
-        history.goBack();
-        setIsSetupComplete(true);
-      } else if (!allStepsCompleted && isSetupComplete) {
-        setIsSetupComplete(false);
+    if (changeEditionSteps.length && status === 'done') {
+      dispatch(actions.resource.request('integrations', integrationId));
+      dispatch(actions.integrationApp.upgrade.setStatus(integrationId, { showWizard: false }));
+      history.replace(parentUrl);
+      if (type === 'child') {
+        enquesnackbar({message: <RawHtml html={messageStore('LEFTOUT_CHILD_UPGRADE_MESSAGE', { childName: integration?.name || '', nextPlan})} />, variant: 'success'});
       }
     }
-  }, [changeEditionSteps, dispatch, history, integrationId, isSetupComplete, status]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [status]);
 
   const handleSubmitComplete = useCallback(
     (connId, isAuthorized, connectionDoc = {}) => {
@@ -363,13 +374,17 @@ function UpgradeInstallation() {
       />
     </LoadResources>
   );
-}
+});
 
-export default function UpgradeDrawer() {
+export default function UpgradeDrawer({ id }) {
   const history = useHistory();
+  const match = useRouteMatch();
+  const ref = useRef(null);
+  const parentUrl = match.url;
   const onClose = useCallback(() => {
-    history.goBack();
-  }, [history]);
+    ref.current.onClose();
+    history.replace(parentUrl);
+  }, [history, parentUrl]);
 
   return (
     <RightDrawer
@@ -380,7 +395,11 @@ export default function UpgradeDrawer() {
     >
       <DrawerHeader title="Upgrade plan" />
       <DrawerContent>
-        <UpgradeInstallation />
+        <UpgradeInstallation
+          ref={ref}
+          parentId={id}
+          parentUrl={parentUrl}
+        />
       </DrawerContent>
       <DrawerFooter>
         <FilledButton
