@@ -27,7 +27,7 @@ export default {
     'http.unencrypted.subdomain': {
       fieldId: 'http.unencrypted.subdomain',
       startAdornment: 'https://api.',
-      endAdornment: '.adobesign.com/api/rest/v6',
+      endAdornment: '.echosign.com/api/rest/v6',
       type: 'text',
       label: 'Subdomain',
       helpKey: 'adobesign.connection.http.unencrypted.subdomain',
