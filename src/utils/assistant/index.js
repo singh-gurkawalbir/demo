@@ -843,15 +843,20 @@ export function getMergedImportOperationDetails({
   resource,
   createEndpoint,
   updateEndpoint,
-  assistantData = {}}) {
-  const createOperation = getImportOperationDetails({version,
+  assistantData = {},
+}) {
+  const createOperation = getImportOperationDetails({
+    version,
     resource,
     operation: createEndpoint,
-    assistantData});
-  const updateOperation = getImportOperationDetails({version,
+    assistantData,
+  });
+  const updateOperation = getImportOperationDetails({
+    version,
     resource,
     operation: updateEndpoint,
-    assistantData});
+    assistantData,
+  });
 
   const lengthisIdentifier = createOperation.parameters.length;
 
@@ -865,7 +870,9 @@ export function getMergedImportOperationDetails({
   createorupdateoperation.id = [updateOperation.id, createOperation.id];
   createorupdateoperation.method = [updateOperation.method, createOperation.method];
   createorupdateoperation.url = [updateOperation.url, createOperation.url];
-  if (createorupdateoperation.body) { createorupdateoperation.body.push(...updateOperation.body); } else if (updateOperation.body) {
+  if (createorupdateoperation.body) {
+    createorupdateoperation.body.push(...updateOperation.body);
+  } else if (updateOperation.body) {
     createorupdateoperation.body = [...updateOperation.body, ...updateOperation.body];
   }
   for (let i = 0; i < lengthisIdentifier; i += 1) {
@@ -877,11 +884,6 @@ export function getMergedImportOperationDetails({
   const createParameters = createOperation.parameters.filter(param => !param.isIdentifier && !updateArray.includes(param.id));
 
   createorupdateoperation.parameters = [...updateOperation.parameters, ...createParameters];
-  // if (createOperation.parameters.length > 0) {
-  //   createorupdateoperation.parameters = [...createOperation.parameters, ...updateOperation.parameters];
-  // } else {
-  //   createorupdateoperation.parameters = [...updateOperation.parameters];
-  // }
 
   return createorupdateoperation;
 }

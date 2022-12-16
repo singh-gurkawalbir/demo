@@ -287,6 +287,12 @@ function DynaAssistantOptions(props) {
       );
     }
   }
+  useEffect(() => {
+    if (['createEndpoint', 'updateEndpoint'].includes(assistantFieldType) && (!value || value === '') && selectOptionsItems.length === 1) {
+      onFieldChange(id, selectOptionsItems[0].value);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id, value, assistantFieldType]);
 
   return (
     <MaterialUiSelect
