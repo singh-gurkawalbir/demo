@@ -76,7 +76,7 @@ const UpgradeInstallation = forwardRef(({ parentId, parentUrl }, ref) => {
 
   const integration = useSelectorMemo(selectors.mkIntegrationAppSettings, integrationId);
   const parentIntegration = useSelectorMemo(selectors.mkIntegrationAppSettings, parentId);
-  const _connectorId = integration?._connectorId || emptyObject;
+  const { _connectorId } = integration || emptyObject;
   const helpUrl = useSelector(state => {
     const integrationApp = selectors.resource(state, 'published', _connectorId);
 
