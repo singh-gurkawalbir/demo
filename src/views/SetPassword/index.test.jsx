@@ -9,7 +9,6 @@ import * as reactRedux from 'react-redux';
 import userEvent from '@testing-library/user-event';
 import { renderWithProviders } from '../../test/test-utils';
 import SetPassword from '.';
-import actions from '../../actions';
 import { runServer } from '../../test/api/server';
 import { getCreatedStore } from '../../store';
 
