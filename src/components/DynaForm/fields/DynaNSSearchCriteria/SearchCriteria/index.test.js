@@ -110,7 +110,6 @@ describe('SearchCriteriaEditor UI tests', () => {
     const fields = screen.getAllByRole('textbox');
 
     expect(fields).toHaveLength(3);
-    screen.debug(undefined, Infinity);
   });
   test('should make a dispatch call on initial render', async () => {
     initSearchCriteriaEditor(props);
@@ -156,6 +155,5 @@ describe('SearchCriteriaEditor UI tests', () => {
     expect(screen.getByText('has key words')).toBeInTheDocument();
     expect(screen.getByText('is')).toBeInTheDocument();
     expect(screen.getByText('is empty')).toBeInTheDocument();
-    screen.debug(undefined, Infinity);
   });
 });
