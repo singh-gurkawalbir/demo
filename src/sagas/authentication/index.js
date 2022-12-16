@@ -442,11 +442,6 @@ export function* resetPasswordRequest({ password, token }) {
 
     if (apiResponse?.success) {
       yield put(actions.auth.resetPasswordSuccess({...apiResponse}));
-    } else if (apiResponse?.errors) {
-      const errObj = apiResponse?.errors;
-      const authError = inferErrorMessages(errObj?.message)?.[0];
-
-      yield put(actions.auth.resetPasswordFailed(authError));
     }
   } catch (error) {
     const authError = inferErrorMessages(error?.message)?.[0];

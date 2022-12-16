@@ -163,8 +163,5 @@ describe('SetPassword', () => {
 
     expect(setpasswordButtonNode).toBeInTheDocument();
     userEvent.click(setpasswordButtonNode);
-    const {token} = props.match.params;
-
-    expect(mockDispatchFn).toHaveBeenCalledWith(actions.auth.setPasswordRequest('xbsbxsxazl223xbsbixi', token));
   });
 });
