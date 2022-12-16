@@ -115,6 +115,12 @@ href="/marketplace"><u>Check out our Marketplace</u></a> to jumpstart your  inte
   IA_NAME_MESSAGE: 'You don’t have a {{appLabel}} integration app installed in integrator.io. Install a {{appLabel}} integration app and then refresh this page to select it.',
   // #endregion
 
+  // #region shopify landing page
+  OFFLINE_CONNECTION_MESSAGE: 'Save & authorize offline connections to bring them back online.',
+  CONNECTION_TYPE_CHANGE_INFO: 'Saving this connection will change its current "{{type}}" auth type to "OAuth 2.0".',
+  IA_NAME_MESSAGE: 'You don’t have a {{appLabel}} integration app installed in integrator.io. Install a {{appLabel}} integration app and then refresh this page to select it.',
+  // #endregion
+
   DATALOADER_PP_MESSAGE: 'You can add a destination application once you complete the configuration of your data loader.',
   MAX_ROUTERS_LIMIT_REACHED: 'You have reached the maximum of 25 branchings in a flow',
   MAX_BRANCHES_LIMIT_REACHED: 'You have reached the maximum of 25 branches in a branching',

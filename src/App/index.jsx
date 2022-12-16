@@ -229,6 +229,11 @@ export default function App() {
                     <ErrorNotifications />
                     {/* Headers */}
                     <Headers />
+                    <Switch>
+                      <Route path={getRoutePath('/signin')} component={null} />
+                      <Route path={getRoutePath('/landing')} component={null} />
+                      <Route path={getRoutePath('/*')} component={NonSigninHeaderComponents} />
+                    </Switch>
                     {/* page content */}
                     <PageContentWrapper />
                   </div>
