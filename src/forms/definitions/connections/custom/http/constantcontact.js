@@ -48,6 +48,7 @@ export default {
     },
     versionType: {
       fieldId: 'versionType',
+      helpKey: 'constantcontact.connection.http.versiontype',
     },
     'http._iClientId': {
       fieldId: 'http._iClientId',

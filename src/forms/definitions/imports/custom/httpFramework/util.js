@@ -47,6 +47,32 @@ function basicFieldsMeta({ assistant, assistantConfig, assistantData }) {
       type: 'hfoptions',
       required: true,
     },
+    createEndpoint: {
+      fieldId: 'assistantMetadata.createEndpoint',
+      type: 'hfoptions',
+      assistantFieldType: 'createEndpoint',
+      value: assistantConfig.createEndpoint,
+      label: 'API endpoint for create new records',
+      helpText: 'API endpoint for create new records - Select the API endpoint that should be used for creating new records. For more information, see <a href="https://docs.celigo.com/hc/en-us/articles/10841316566043#Composite" target="_blank">Composite API endpoints</a>.',
+      visibleWhen: [{
+        field: 'assistantMetadata.operation',
+        is: ['create-update-id'],
+      }],
+      required: true,
+    },
+    updateEndpoint: {
+      fieldId: 'assistantMetadata.updateEndpoint',
+      type: 'hfoptions',
+      assistantFieldType: 'updateEndpoint',
+      value: assistantConfig.updateEndpoint,
+      label: 'API endpoint for update existing records',
+      helpText: 'API endpoint for update existing records - Select the API endpoint that should be used for updating existing records. For more information, see <a href="https://docs.celigo.com/hc/en-us/articles/10841316566043#Composite" target="_blank">Composite API endpoints</a>',
+      visibleWhen: [{
+        field: 'assistantMetadata.operation',
+        is: ['create-update-id'],
+      }],
+      required: true,
+    },
   };
   const { labels = {}, versions = [], helpTexts = {} } = assistantData;
 
@@ -383,6 +409,7 @@ export function fieldMeta({ resource, assistantData }) {
   fieldMap.settings = {
     fieldId: 'settings',
   };
+  const createEndpointIndex = fieldIds.indexOf('assistantMetadata.createEndpoint');
 
   return {
     fieldMap,
@@ -397,7 +424,20 @@ export function fieldMeta({ resource, assistantData }) {
         {
           collapsed: true,
           label: 'How would you like the records imported?',
-          fields: [...fieldIds],
+          containers: [{
+            fields: fieldIds.slice(0, createEndpointIndex),
+          }, {
+            type: 'indent',
+            containers: [{
+              fields: ['assistantMetadata.createEndpoint',
+                'assistantMetadata.updateEndpoint',
+              ],
+            }],
+          },
+          {
+            fields: fieldIds.slice(createEndpointIndex + 2),
+          },
+          ],
         },
         {
           collapsed: true,
