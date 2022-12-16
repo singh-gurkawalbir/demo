@@ -726,6 +726,11 @@ const filterByEnvironmentResources = (resources, sandbox, resourceType) => {
     });
   }
 
+  // https://celigo.atlassian.net/browse/IO-31027 - remove this change in R2-2023
+  if (resourceType === 'scripts') {
+    return resources.filter(r => !r?.hasOwnProperty('sandbox') || !!r.sandbox === sandbox);
+  }
+
   return resources.filter(r => !!r.sandbox === sandbox);
 };
 

@@ -54,7 +54,6 @@ describe('DynaNSSearchCriteria UI tests', () => {
 
     expect(launchButton).toBeInTheDocument();
     userEvent.click(launchButton);
-    screen.debug(undefined, Infinity);
     expect(screen.getByText('Operator')).toBeInTheDocument();
     expect(screen.getByText('Search Value')).toBeInTheDocument();
     expect(screen.getByText('Search Value 2')).toBeInTheDocument();

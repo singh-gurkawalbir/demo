@@ -797,8 +797,6 @@ if you're using a production account, you'll find your API keys under the 'API M
 'Indicates for how long integrator.io should be recording both request and response traffic from this connection. You can later review this raw debug information directly from the download icon on the /connections page.',
   'connection._borrowConcurrencyFromConnectionId':
 'By default, all data flowing through a connection record will get submitted to the respective endpoint application at the concurrency level configured for that connection record. There are use cases however where you need multiple connections to share the same concurrency level, and this field allows you to specify that a connection should borrow concurrency from another connection such that the data flowing through both connections will get submitted to the endpoint application together via a shared concurrency model. For example, you might have three separate NetSuite connection records in your integrator.io account (for the purpose of isolating different permissions for different integrations), but you only want to provision one concurrent request for all three NetSuite connection records to share. To implement this use case you would setup one of the three connections with a concurrency level 1, and then you would setup the other two NetSuite connections to borrow concurrency from the other.',
-  'connection.autoRecoverGovernanceErrors':
-'Check to enable auto recovery for governance errors. When a connection receives rate-limiting errors from your applications,  <a href="https://www.celigo.com/ipaas-integration-platform/">integrator.io</a> platform classifies these errors as "Governance". During the auto recovery attempts, the record is submitted again, but individually at a slower rate.',
   'connection.netsuite.account':
 'Your NetSuite Account Id.  One way to obtain this value within NetSuite is via Setup -> Integration -> Web Services Preferences.  If this does not work then please contact NetSuite support.',
   'connection.netsuite.tokenAccount': 'Enter your NetSuite account ID. <br /> To retrieve the account ID: <ul><li>Sign into your <a href="https://www.netsuite.com/portal/in/home.shtml" target="_blank"></a>NetSuite account.</li><li>Navigate to <b>Setup > Integration > SOAP Web services preferences</b>.</li><li>From <b>Primary information</b>, copy the <b>Account ID</b>.</li></ul>',
@@ -913,6 +911,12 @@ if you're using a production account, you'll find your API keys under the 'API M
   'connection.http.rateLimit.limit': 'If your app’s API response does not let us know how long we need to wait before we make another call to it, then you will need to tell us how much time to take between API calls. <b>Important:</b> This value must be entered in milliseconds.',
   'connection.http.encrypted': 'Store all sensitive fields required by your imports and exports to access the app you are connecting to. For example, {\'password\':\'celigorocks\'} or {\'token\':\'x7if4nkovhgr63ghp\'}. These values are stored with AES-256 encryption and other layers of protection to keep your data safe.',
   'connection.http.unencrypted': 'Store all non-sensitive fields required by your imports and exports to access the app you are connecting to. For example, {\'email\':\'my_email@company.com\', \'accountId\': \'8675301\', \'role\':\'admin\'}.',
+  'http.auth.oauth.oauth1.signatureMethod': 'Signature method to sign the request',
+  'http.auth.oauth.oauth1.consumerKey': 'A value used by the Consumer to identify itself to the Service Provider.',
+  'http.auth.oauth.oauth1.consumerSecret': 'A secret used by the Consumer to establish ownership of the Consumer Key.',
+  'http.auth.oauth.oauth1.accessToken': 'A value used by the Consumer to gain access to the Protected Resources on behalf of the User, instead of using the User\'s Service Provider credentials.',
+  'http.auth.oauth.oauth1.tokenSecret': 'A secret used by the Consumer to establish ownership of a given Token.',
+  'http.auth.oauth.oauth1.consumerPrivateKey': 'Consumer’s private RSA key to sign the request.',
   'connection.rdbms.type': 'Select the database type.',
   'connection.rdbms.host':
 'Hostname/IP of the server. OR Hostname/IP of the server to connect to.',
@@ -2174,7 +2178,7 @@ if you're using a production account, you'll find your API keys under the 'API M
   'notifications.jobErrors':
 "Please choose 'All flows' to receive an email notification whenever any flow in this integration has a job error, or select individual flows to focus your email traffic to just higher priority data flows.",
   'notifications.connections':
-`Select a connection if you want the user to be notified whenever it goes offline, comes back online, or is in the process of <a href="${HELP_CENTER_BASE_URL}/hc/en-us/articles/360043926372" target="_blank">auto-recovering governance errors</a>.<br><br> Since a connection can be shared by multiple integrations, these notifications also apply to any connection issues account-wide.`,
+  'Please select which connections you would like to be notified about when they go offline (and subsequently back online). Please note that connections can be shared across integrations, and if you choose to be notified here, this notification setting will be reflected everywhere else this connection is being used.',
   'me.dateFormat':
 'Use this field to configure how you want dates to be formatted in your integrator.io account. For example, there is a dashboard in your integrator.io account to view integration activity, and this field controls how the dates on that page appear.',
   'me.timeFormat':

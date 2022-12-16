@@ -180,9 +180,6 @@ export default {
     application: {
       fieldId: 'application',
     },
-    autoRecoverGovernanceErrors: {
-      fieldId: 'autoRecoverGovernanceErrors',
-    },
     'netsuite.wsdlVersion': {
       id: 'netsuite.wsdlVersion',
       type: 'select',
@@ -236,7 +233,6 @@ export default {
           'netsuite.linkSuiteScriptIntegrator',
           '_borrowConcurrencyFromConnectionId',
           'netsuite.concurrencyLevel',
-          'autoRecoverGovernanceErrors',
           'netsuite.wsdlVersion',
         ],
       },

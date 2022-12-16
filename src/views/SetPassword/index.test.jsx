@@ -15,9 +15,8 @@ import { getCreatedStore } from '../../store';
 
 let initialStore;
 
-function store(auth, profile) {
-  initialStore.getState().auth = auth;
-  initialStore.getState().user.profile = profile;
+function store(session) {
+  initialStore.getState().session = session;
 }
 
 async function initSetPassword(props) {
@@ -49,9 +48,6 @@ describe('SetPassword', () => {
     useDispatchSpy = jest.spyOn(reactRedux, 'useDispatch');
     mockDispatchFn = jest.fn(action => {
       switch (action.type) {
-        case 'AUTH_REQUEST':
-          initialStore.dispatch(action);
-          break;
         default: initialStore.dispatch(action);
       }
     });
@@ -65,7 +61,17 @@ describe('SetPassword', () => {
   });
 
   test('Should able to test save button', async () => {
-    store({});
+    store({mfa: {
+      sessionInfo: {
+        data: {
+          authenticated: false,
+          mfaRequired: false,
+          mfaSetupRequired: false,
+          mfaVerified: false,
+        },
+        status: 'received',
+      }},
+    });
     const props = {
       match: {
         params: {
@@ -85,7 +91,17 @@ describe('SetPassword', () => {
   });
 
   test('Should able to test the cancel button', async () => {
-    store({});
+    store({mfa: {
+      sessionInfo: {
+        data: {
+          authenticated: false,
+          mfaRequired: false,
+          mfaSetupRequired: false,
+          mfaVerified: false,
+        },
+        status: 'received',
+      }},
+    });
     const props = {
       match: {
         params: {
@@ -106,7 +122,17 @@ describe('SetPassword', () => {
     expect(cancelButton.closest('a')).toHaveAttribute('href', '/signin');
   });
   test('Should able to test the SetPassword form by entering the password', async () => {
-    store({});
+    store({mfa: {
+      sessionInfo: {
+        data: {
+          authenticated: false,
+          mfaRequired: false,
+          mfaSetupRequired: false,
+          mfaVerified: false,
+        },
+        status: 'received',
+      }},
+    });
     const props = {
       match: {
         params: {
