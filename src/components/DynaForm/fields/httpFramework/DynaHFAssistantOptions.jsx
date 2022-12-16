@@ -80,6 +80,7 @@ function DynaAssistantOptions(props) {
     id,
     onFieldChange: onFieldChangeFn,
     flowId,
+    disabled,
   } = props;
 
   const fields = Object.values(fieldsById);
@@ -300,6 +301,7 @@ function DynaAssistantOptions(props) {
       label={label}
       options={[{ items: selectOptionsItems }]}
       onFieldChange={onFieldChange}
+      disabled={disabled || (['createEndpoint', 'updateEndpoint'].includes(assistantFieldType) && selectOptionsItems.length === 1)}
     />
   );
 }
