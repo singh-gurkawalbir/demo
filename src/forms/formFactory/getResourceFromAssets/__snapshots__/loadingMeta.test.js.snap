@@ -7460,8 +7460,6 @@ Object {
               "shopify",
               "slack",
               "stripe",
-              "box",
-              "dropbox",
             ],
           },
         ],
