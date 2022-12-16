@@ -82,7 +82,7 @@ describe('metdata flows test cases', () => {
             type: 'multiselect',
             helpKey: 'notifications.connections',
             valueDelimiter: ',',
-            label: 'Notify me on connection issues',
+            label: 'Notify user when connection goes offline',
             defaultValue: ['c1'],
             options: [{ items:
               [{
