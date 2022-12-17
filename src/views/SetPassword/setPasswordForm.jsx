@@ -33,20 +33,15 @@ const useStyles = makeStyles(theme => ({
   },
   textField: {
     width: '100%',
-  },
-  passwordIcon: {
-    position: 'absolute',
-    paddingLeft: '88%',
+    minWidth: '100%',
   },
   alertMsg: {
-    paddingTop: 20,
     fontSize: 12,
     textAlign: 'left',
     marginLeft: 0,
     width: '100%',
     display: 'flex',
     alignItems: 'flex-start',
-    marginTop: theme.spacing(-2),
     marginBottom: 0,
     lineHeight: `${theme.spacing(2)}px`,
     '& > svg': {
@@ -92,9 +87,6 @@ export default function SetPassword() {
     if (errorMessage === AUTH_FAILURE_MESSAGE) {
       return 'Sign in failed. Please try again.';
     }
-    if (window.signInError) {
-      return window.signInError;
-    }
 
     return errorMessage;
   });
@@ -114,8 +106,10 @@ export default function SetPassword() {
     e.preventDefault();
     const password = e?.target?.password?.value || e?.target?.elements?.password?.value;
 
-    handleResetPassword(password);
-  }, [handleResetPassword]);
+    if (!showErr) {
+      handleResetPassword(password);
+    }
+  }, [handleResetPassword, showErr]);
 
   return (
     <div className={classes.editableFields}>
