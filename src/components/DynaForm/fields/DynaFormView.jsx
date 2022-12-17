@@ -1,6 +1,5 @@
 import React, { useMemo } from 'react';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
-import { makeStyles } from '@material-ui/core';
 import actions from '../../../actions';
 import { getAssistantConnectorType, getApp, getHttpConnector} from '../../../constants/applications';
 import { selectors } from '../../../reducers';
@@ -93,7 +92,7 @@ export default function FormView(props) {
       resource: staggedResource,
       isNew: false,
       connection,
-      assistantData: _httpConnectorId ? connectorMetaData : assistantData,
+      assistantData,
       accountOwner,
     });
     const finalValues = preSave(formContext.value, staggedRes, { connection });
