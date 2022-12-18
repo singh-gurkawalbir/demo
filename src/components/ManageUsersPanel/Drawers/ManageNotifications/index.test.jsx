@@ -259,7 +259,7 @@ describe('Manage Notifications', () => {
 
     expect(doneMessage).toBeInTheDocument();
     userEvent.click(doneMessage);
-    const notifyUserWhenConnectionGoesOfflineText = screen.getByText('Notify me on connection issues');
+    const notifyUserWhenConnectionGoesOfflineText = screen.getByText('Notify user when connection goes offline');
 
     expect(notifyUserWhenConnectionGoesOfflineText).toBeInTheDocument();
     const pleaseSelectText1 = await screen.queryAllByRole('button', { name: 'Please select'}).find(eachOption => eachOption.getAttribute('id') === 'mui-component-select-connections');
@@ -286,7 +286,7 @@ describe('Manage Notifications', () => {
 
     expect(screen.getByText('Notify user of flow error')).toBeInTheDocument();
 
-    expect(screen.getByText('Notify me on connection issues')).toBeInTheDocument();
+    expect(screen.getByText('Notify user when connection goes offline')).toBeInTheDocument();
     const pleaseSelectText = await screen.queryAllByRole('button', { name: 'Please select'}).find(eachOption => eachOption.getAttribute('id') === 'mui-component-select-connections');
 
     expect(pleaseSelectText).toBeInTheDocument();
@@ -346,7 +346,7 @@ describe('Manage Notifications', () => {
 
     expect(screen.getByText('Sample1')).toBeInTheDocument();
 
-    expect(screen.getByText('Notify me on connection issues')).toBeInTheDocument();
+    expect(screen.getByText('Notify user when connection goes offline')).toBeInTheDocument();
 
     expect(screen.getByText('Test Connection')).toBeInTheDocument();
     const cancelText = screen.getByRole('button', {name: 'Close'});
@@ -401,7 +401,7 @@ describe('Manage Notifications', () => {
     expect(doneMessage).toBeInTheDocument();
     userEvent.click(doneMessage);
 
-    expect(screen.getByText('Notify me on connection issues')).toBeInTheDocument();
+    expect(screen.getByText('Notify user when connection goes offline')).toBeInTheDocument();
     const connectionSelected = screen.getByText('Test Connection');
 
     expect(connectionSelected).toBeInTheDocument();

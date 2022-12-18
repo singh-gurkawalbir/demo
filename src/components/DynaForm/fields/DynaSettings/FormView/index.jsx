@@ -82,11 +82,7 @@ export default function FormView({
   }
 
   if (!settingsFormState || settingsFormState.status === 'request') {
-    return (
-
-      <Spinner centerAll />
-
-    );
+    return (<Spinner centerAll />);
   }
 
   return (

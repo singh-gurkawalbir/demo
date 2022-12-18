@@ -91,6 +91,8 @@ function DynaAssistantOptions(props) {
         'operation',
         'version',
         'exportType',
+        'updateEndpoint',
+        'createEndpoint',
       ].reduce(
         (values, fId) => ({
           ...values,
@@ -130,7 +132,7 @@ function DynaAssistantOptions(props) {
 
   const dispatch = useDispatch();
   const selectOptionsItems = useMemo(() => {
-    if (['version', 'resource', 'operation'].includes(assistantFieldType)) {
+    if (['version', 'resource', 'operation', 'createEndpoint', 'updateEndpoint'].includes(assistantFieldType)) {
       return selectOptions({
         assistantFieldType,
         assistantData,
@@ -166,7 +168,7 @@ function DynaAssistantOptions(props) {
     const versions = assistantData?.[resourceTypeSingular]?.versions;
 
     if (
-      ['version', 'resource', 'operation', 'exportType'].includes(
+      ['version', 'resource', 'operation', 'exportType', 'updateEndpoint', 'createEndpoint'].includes(
         assistantFieldType
       )
     ) {
@@ -177,7 +179,7 @@ function DynaAssistantOptions(props) {
           version: ['exportType'],
         },
         imports: {
-          resource: ['operation', 'version'],
+          resource: ['operation', 'version', 'updateEndpoint', 'createEndpoint'],
         },
       };
 
@@ -189,7 +191,7 @@ function DynaAssistantOptions(props) {
             version: ['exportType'],
           },
           imports: {
-            resource: ['version', 'operation'],
+            resource: ['version', 'operation', 'updateEndpoint', 'createEndpoint'],
             operation: ['version'],
           },
         };
@@ -221,7 +223,7 @@ function DynaAssistantOptions(props) {
         });
       }
 
-      if (assistantFieldType === 'operation') {
+      if (['operation', 'updateEndpoint', 'createEndpoint'].includes(assistantFieldType)) {
         patch.push({
           op: 'replace',
           path: '/assistantMetadata/operationChanged',
@@ -285,6 +287,12 @@ function DynaAssistantOptions(props) {
       );
     }
   }
+  useEffect(() => {
+    if (['createEndpoint', 'updateEndpoint'].includes(assistantFieldType) && (!value || value === '') && selectOptionsItems.length === 1) {
+      onFieldChange(id, selectOptionsItems[0].value);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id, value, assistantFieldType]);
 
   return (
     <MaterialUiSelect

@@ -59,8 +59,8 @@ export default function DynaHTTPFrameworkBubbleFormView(props) {
   const { assistant: assistantName } = connection;
 
   const _httpConnectorId = getHttpConnector(connection?.http?._httpConnectorId)?._id;
-  const showHTTPFrameworkImport = resourceType === 'imports' && connectorMetaData?.import?.versions?.[0]?.resources?.length;
-  const showHTTPFrameworkExport = resourceType === 'exports' && connectorMetaData?.export?.versions?.[0]?.resources?.length;
+  const showHTTPFrameworkImport = resourceType === 'imports' && connectorMetaData?.import?.resources?.[0]?.operations?.length;
+  const showHTTPFrameworkExport = resourceType === 'exports' && connectorMetaData?.export?.resources?.[0]?.endpoints?.length;
   const isHttpFramework = showHTTPFrameworkImport || showHTTPFrameworkExport;
 
   const options = useMemo(() => {

@@ -85,8 +85,6 @@ describe('DataRetentionPeriod component tests', () => {
     };
 
     initDataRetentionPeriod({dataRetentionPeriod, rest});
-
-    screen.debug();
     expect(screen.queryByText('Data retention')).toBeInTheDocument();
   });
   test('Should show request upgrade button if maxAllowedDataRetention is less than MAX_DATA_RETENTION_PERIOD', async () => {
@@ -96,8 +94,6 @@ describe('DataRetentionPeriod component tests', () => {
     };
 
     initDataRetentionPeriod({dataRetentionPeriod, rest});
-
-    screen.debug();
     const button = screen.getByRole('button', {name: 'Request upgrade'});
 
     expect(button).toBeInTheDocument();

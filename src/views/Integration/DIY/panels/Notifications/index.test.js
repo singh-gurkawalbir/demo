@@ -218,7 +218,7 @@ describe('NotificationsSection UI tests', () => {
   test('should test when store does not has integration', () => {
     renderWithProviders(<MemoryRouter><NotificationsSection integrationId="5ff579d745ceef7dcd797c15" /> </MemoryRouter>);
     expect(screen.getByText('Notify me of job error')).toBeInTheDocument();
-    expect(screen.getByText('Notify me on connection issues')).toBeInTheDocument();
+    expect(screen.getByText('Notify me when connection goes offline')).toBeInTheDocument();
   });
   test('should test for jobs notification options', () => {
     const mockDispatch = initStoreAndRender(false);

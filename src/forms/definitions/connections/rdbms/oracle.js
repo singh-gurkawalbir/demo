@@ -72,9 +72,6 @@ export default {
       fieldId: 'application',
     },
     'rdbms.concurrencyLevel': { fieldId: 'rdbms.concurrencyLevel' },
-    autoRecoverGovernanceErrors: {
-      fieldId: 'autoRecoverGovernanceErrors',
-    },
   },
   layout: {
     type: 'collapse',
@@ -108,7 +105,6 @@ export default {
           'rdbms.serverType',
           '_borrowConcurrencyFromConnectionId',
           'rdbms.concurrencyLevel',
-          'autoRecoverGovernanceErrors',
         ],
       },
     ],
