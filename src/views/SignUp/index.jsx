@@ -4,6 +4,7 @@ import SignUp from './SignupForm';
 import CeligoLogo from '../../components/CeligoLogo';
 import { getDomain } from '../../utils/resource';
 import MarketingContentWithIframe from '../../components/LoginScreen/MarketingContentWithIframe';
+import UserSignInPage from '../../components/UserSignInPage';
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
@@ -95,32 +96,46 @@ export default function Signup(props) {
   const contentUrl = (getDomain() === 'eu.integrator.io' ? IO_LOGIN_PROMOTION_URL_EU : IO_LOGIN_PROMOTION_URL);
 
   return (
-    <div className={classes.wrapper}>
-      <div className={classes.signinWrapper}>
-        <div className={classes.signinWrapperContent}>
-          <div className={classes.logo}>
-            <CeligoLogo />
-          </div>
-          <Title />
+    <>
+      <div className={classes.wrapper}>
+        <div className={classes.signinWrapper}>
+          <div className={classes.signinWrapperContent}>
+            <div className={classes.logo}>
+              <CeligoLogo />
+            </div>
+            <Title />
 
-          <SignUp
-            {...props}
-            dialogOpen={false}
-            className={classes.signInForm}
+            <SignUp
+              {...props}
+              dialogOpen={false}
+              className={classes.signInForm}
           />
-          {getDomain() !== 'eu.integrator.io' && (
-          <Typography variant="body2" className={classes.signupLink}>
-            Already have an account?
-            <Link href="/signin" className={classes.link}>
-              Sign in
-            </Link>
-          </Typography>
-          )}
+            {getDomain() !== 'eu.integrator.io' && (
+            <Typography variant="body2" className={classes.signupLink}>
+              Already have an account?
+              <Link href="/signin" className={classes.link}>
+                Sign in
+              </Link>
+            </Typography>
+            )}
+          </div>
+        </div>
+        <div className={classes.marketingContentWrapper}>
+          <MarketingContentWithIframe contentUrl={contentUrl} />
         </div>
       </div>
-      <div className={classes.marketingContentWrapper}>
-        <MarketingContentWithIframe contentUrl={contentUrl} />
-      </div>
-    </div>
+      <UserSignInPage
+        pageTitle="Forgot Password"
+        pageSubHeading=" Enter your email address and we will send you a link to reset your password."
+        footerLinkLabel="Already have an account"
+        footerLinkText="Sign in"
+        footerLink="signin">
+        <SignUp
+          {...props}
+          dialogOpen={false}
+          className={classes.signInForm}
+          />
+      </UserSignInPage>
+    </>
   );
 }
