@@ -353,11 +353,7 @@ export const getHTTPConnectorMetadata = (connectorMetadata, connectionVersion) =
   const newEndpoints = [];
 
   let modifiedHttpConnectorEndpoints = httpConnectorEndpoints.map(res => {
-    const filteredHttpEndpoints = httpConnectorEndpoints.filter(hRes => {
-      const contains = hRes?._httpConnectorResourceIds?.some(element => res?._httpConnectorResourceIds?.includes(element));
-
-      return contains && (res.name === hRes.name);
-    });
+    const filteredHttpEndpoints = httpConnectorEndpoints.filter(hRes => res.name === hRes.name);
 
     if (filteredHttpEndpoints.length > 1) {
       if (!endpointNames[res.name]) {
