@@ -31,6 +31,10 @@ async function initAccessTokenList({
   };
   initialStore.getState().data.resources = resources;
   initialStore.getState().session.filters = filters;
+  initialStore.getState().auth = {
+    defaultAccountSet: true,
+    authenticated: true,
+  };
   initialStore.getState().session.loadResources = {}; // have to clone store somehow or else it using the same store
   const ui = (
     <MemoryRouter>
