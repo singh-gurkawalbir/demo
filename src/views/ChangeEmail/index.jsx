@@ -9,6 +9,7 @@ import actions from '../../actions';
 import MarketingContentWithIframe from '../../components/LoginScreen/MarketingContentWithIframe';
 import getRoutePath from '../../utils/routePaths';
 import Spinner from '../../components/Spinner';
+import { ACTIVE_SESSION_MESSAGE } from '../../constants';
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
@@ -18,6 +19,21 @@ const useStyles = makeStyles(theme => ({
     height: '100vh',
     [theme.breakpoints.down('sm')]: {
       gridTemplateColumns: '100%',
+    },
+  },
+  alertMsg: {
+    fontSize: 15,
+    textAlign: 'center',
+    marginLeft: 0,
+    width: '100%',
+    display: 'flex',
+    alignItems: 'flex-start',
+    marginBottom: 0,
+    lineHeight: `${theme.spacing(2)}px`,
+    '& > svg': {
+      fill: theme.palette.error.main,
+      fontSize: theme.spacing(2),
+      marginRight: 5,
     },
   },
   marketingContentWrapper: {
@@ -67,10 +83,13 @@ export default function ChangeEmail(props) {
   const history = useHistory();
   const changeEmailStatus = useSelector(state => selectors.changeEmailStatus(state));
   const changeEmailMessage = useSelector(state => selectors.changeEmailMessage(state));
+  const ChangeEmailErrMessage = useSelector(state => selectors.changeEmailErrorMessage(state));
   const token = React.useState(props.match.params.token ? props.match.params.token : '');
+  const isActiveSession = useSelector(state => selectors.sessionInfo(state)?.authenticated);
 
   useEffect(() => {
     dispatch(actions.auth.changeEmailRequest(token));
+    dispatch(actions.auth.validateSession());
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   useEffect(() => {
@@ -94,9 +113,20 @@ export default function ChangeEmail(props) {
             <Typography variant="h1" className={classes.title}>
               Failed to change email address.
             </Typography>
-            <Typography variant="body1">
-              invalid token
-            </Typography>
+            {!isActiveSession ? (
+              <Typography variant="body1">
+                {ChangeEmailErrMessage}
+              </Typography>
+            ) : (
+              <Typography
+                data-private
+                color="error"
+                component="div"
+                variant="h5"
+                className={classes.alertMsg}>
+                {ACTIVE_SESSION_MESSAGE}
+              </Typography>
+            )}
           </div>
         </div>
         <div className={classes.marketingContentWrapper}>

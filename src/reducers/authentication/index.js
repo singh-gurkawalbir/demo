@@ -27,6 +27,7 @@ export default function (state = defaultState, action) {
         break;
       case actionTypes.AUTH.CHANGE_EMAIL_FAILED:
         draft.changeEmailStatus = 'failed';
+        draft.changeEmailErrorMessage = action.error;
         delete draft.changeEmailMessage;
         break;
       case actionTypes.AUTH.RESET_REQUEST_SENT:
@@ -227,6 +228,7 @@ selectors.resetRequestLoader = state => state?.resetRequestLoader || false;
 selectors.requestResetStatus = state => state?.requestResetStatus || '';
 selectors.changeEmailStatus = state => state?.changeEmailStatus || '';
 selectors.changeEmailMessage = state => state?.changeEmailMessage || '';
+selectors.changeEmailErrorMessage = state => state?.changeEmailErrorMessage || '';
 selectors.requestResetPasswordError = state => state?.requestResetPasswordError;
 selectors.requestResetPasswordStatus = state => state?.requestResetPasswordStatus || '';
 selectors.requestResetPasswordMsg = state => state?.requestResetPasswordMsg || '';
