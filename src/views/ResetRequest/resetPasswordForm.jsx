@@ -56,6 +56,9 @@ const useStyles = makeStyles(theme => ({
     textAlign: 'right',
     marginBottom: theme.spacing(3),
   },
+  icon: {
+    cursor: 'pointer',
+  },
 }));
 
 export default function ResetPassword() {
@@ -144,10 +147,12 @@ export default function ResetPassword() {
                     {showPassword ? (
                       <ShowContentIcon
                         onClick={handleClickShowPassword}
+                        className={classes.icon}
                         onMouseDown={handleMouseDownPassword} />
                     )
                       : (
                         <HideContentIcon
+                          className={classes.icon}
                           onClick={handleClickShowPassword}
                           onMouseDown={handleMouseDownPassword} />
                       )}

@@ -20,6 +20,7 @@ const useStyles = makeStyles(theme => ({
   logo: {
     width: 150,
     marginBottom: theme.spacing(5),
+    paddingTop: theme.spacing(5),
     '& > svg': {
       fill: theme.palette.primary.dark,
     },
@@ -92,9 +93,11 @@ export default function UserSignInPage(props) {
             <div className={classes.logo}>
               <CeligoLogo />
             </div>
+            {pageTitle && (
             <Typography variant="h3" className={classes.title}>
               {pageTitle}
             </Typography>
+            )}
             {(successMessage || alertMessage) && (
             <Typography
               variant="body2" className={clsx(classes.subHeading,

@@ -4,6 +4,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import React, { useState, useCallback, useRef, useEffect} from 'react';
 import { Typography, InputAdornment} from '@material-ui/core';
 import { useParams, useHistory } from 'react-router-dom';
+import clsx from 'clsx';
 import actions from '../../actions';
 import { selectors } from '../../reducers';
 import { AUTH_FAILURE_MESSAGE, PASSWORD_STRENGTH_ERROR } from '../../constants';
@@ -13,6 +14,10 @@ import ShowContentIcon from '../../components/icons/ShowContentIcon';
 import HideContentIcon from '../../components/icons/HideContentIcon';
 import getRoutePath from '../../utils/routePaths';
 import RawHtml from '../../components/RawHtml';
+import ArrowPopper from '../../components/ArrowPopper';
+import TooltipContent from '../../components/TooltipContent';
+import CloseIcon from '../../components/icons/CloseIcon';
+import CheckMarkIcon from '../../components/icons/CheckmarkIcon';
 
 const useStyles = makeStyles(theme => ({
   submit: {
@@ -35,6 +40,7 @@ const useStyles = makeStyles(theme => ({
     width: '100%',
     minWidth: '100%',
     marginBottom: theme.spacing(1),
+    position: 'relative',
   },
   alertMsg: {
     fontSize: 12,
@@ -56,6 +62,40 @@ const useStyles = makeStyles(theme => ({
     textAlign: 'right',
     marginBottom: theme.spacing(3),
   },
+
+  redText: {
+    color: theme.palette.error.dark,
+  },
+  icon: {
+    border: '1px solid',
+    borderRadius: '50%',
+    fontSize: 18,
+    marginRight: theme.spacing(0.5),
+  },
+  successIcon: {
+    color: theme.palette.success.main,
+    borderColor: theme.palette.success.main,
+  },
+  errorIcon: {
+    color: theme.palette.error.dark,
+    borderColor: theme.palette.error.dark,
+  },
+  /* Just to work css */
+  arrowPopperPassword: {
+    position: 'absolute',
+    left: '450px !important',
+    top: '200px !important',
+  },
+  passwordListItem: {
+    display: 'flex',
+    marginBottom: theme.spacing(1),
+  },
+  passwordListItemText: {
+
+  },
+  passwordListItemTextError: {
+    color: theme.palette.error.dark,
+  },
 }));
 
 export default function SetPassword() {
@@ -71,7 +111,7 @@ export default function SetPassword() {
   const handleMouseDownPassword = () => setShowPassword(!showPassword);
   const handleResetPassword = useCallback(password => {
     dispatch(actions.auth.setPasswordRequest(password, token));
-  }, [dispatch]);
+  }, [dispatch, token]);
   const isSetPasswordStatus = useSelector(state => selectors.requestSetPasswordStatus(state));
   const showErrMsg = isSetPasswordStatus === 'failed';
 
@@ -153,6 +193,33 @@ export default function SetPassword() {
             ref: inputFieldRef,
           }}
       />
+
+        {/* Styling is little off will work once developed */}
+        <ArrowPopper
+          id="pageInfo"
+          open
+          anchorEl
+          placement="right"
+          classes={{ popper: classes.arrowPopperPassword }}
+          preventOverflow>
+          <TooltipContent className={classes.infoText}>
+            <Typography className={clsx(classes.passwordListItem, classes.redText)}>To help protect your account, choose a password that you haven’t used before.</Typography>
+            <Typography className={classes.passwordListItem} >Make sure your password:</Typography>
+            <div className={classes.passwordListItem}>
+              <CloseIcon className={clsx(classes.icon, classes.errorIcon)} />
+              <Typography className={clsx(classes.passwordListItemText, {[classes.passwordListItemTextError]: true})}>Contains at least one capital letter</Typography>
+            </div>
+            <div className={classes.passwordListItem}>
+              <CheckMarkIcon className={clsx(classes.icon, classes.successIcon)} />
+              <Typography className={clsx(classes.passwordListItemText, {[classes.passwordListItemTextError]: false})}>Contains at least one number</Typography>
+            </div>
+            <div className={classes.passwordListItem}>
+              <CheckMarkIcon className={clsx(classes.icon, classes.successIcon)} />
+              <Typography className={clsx(classes.passwordListItemText, {[classes.passwordListItemTextError]: false})}>Is at least 10 characters long and not greater than 256 characters.</Typography>
+            </div>
+          </TooltipContent>
+        </ArrowPopper>
+
         { showErr && (
           <Typography
             data-private
@@ -177,6 +244,7 @@ export default function SetPassword() {
           href="/signin"
           data-test="cancel"
           type="cancel"
+          color="primary"
           className={classes.submit}
           value="Cancel">
           Cancel

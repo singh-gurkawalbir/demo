@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useSelector, useDispatch} from 'react-redux';
-import { Typography } from '@material-ui/core';
+import { Typography, makeStyles } from '@material-ui/core';
 import { Link, useLocation } from 'react-router-dom';
 import ForgotPasswordForm from './ForgotPasswordForm';
 import { selectors } from '../../reducers';
@@ -10,8 +10,28 @@ import ConcurForgotPassword from './Concur';
 import useQuery from '../../hooks/useQuery';
 import messageStore from '../../utils/messageStore';
 import UserSignInPage from '../../components/UserSignInPage';
+import RawHtml from '../../components/RawHtml';
+
+const useStyles = makeStyles(theme => ({
+  backToSignIn: {
+    marginTop: 130,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  rawHTML: {
+    '& > p': {
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginTop: theme.spacing(-0.5),
+      marginBottom: theme.spacing(3),
+    },
+  },
+}));
 
 function ForgotPassword(props) {
+  const classes = useStyles();
   const [showError, setShowError] = useState(false);
   const resetRequestStatus = useSelector(state => selectors.requestResetStatus(state));
   const successView = (resetRequestStatus === 'success');
@@ -27,7 +47,10 @@ function ForgotPassword(props) {
   let message = messageStore('FORGOT_PASSWORD_DEFAULT');
 
   if (successView) {
-    message = `If ${email} ${messageStore('FORGOT_PASSWORD_USER_EXIST')}`;
+    message = `
+    <p className={classes.email}> ${email} </p>
+    If <b>${email}</b> ${messageStore('FORGOT_PASSWORD_USER_EXIST')}
+    `;
   }
 
   const alertMessage = (showError && resetRequestErrorMsg) ? resetRequestErrorMsg : '';
@@ -36,7 +59,7 @@ function ForgotPassword(props) {
 
     <UserSignInPage
       pageTitle="Forgot your password?"
-      pageSubHeading={message}
+      pageSubHeading={<RawHtml html={message} className={classes.rawHTML} />}
       alertMessage={alertMessage}>
       {!successView
         ? (
@@ -48,12 +71,13 @@ function ForgotPassword(props) {
           />
         ) : ''}
       {successView ? (
-        <Typography variant="body2">
+        <Typography variant="body2" className={classes.backToSignIn}>
           Back to
           <TextButton
             data-test="signin"
             color="primary"
             onClick={handleClick}
+            bold
             component={Link}
             to="/signin">
             Sign in
