@@ -6,6 +6,7 @@ const useStyles = makeStyles(theme => ({
 
   UserSignInPageFooterLink: {
     paddingLeft: theme.spacing(0.5),
+    textDecoration: 'none',
   },
 
 }));
@@ -18,7 +19,7 @@ export default function UserSignInPageFooter({linkLabel, linkText, link}) {
       {getDomain() !== 'eu.integrator.io' && (
         <Typography variant="body2" >
           {linkLabel}
-          <Link href={`/{${link}}`} className={classes.UserSignInPageFooterLink}>
+          <Link underline="none" href={`/{${link}}`} className={classes.UserSignInPageFooterLink}>
             {linkText}
           </Link>
         </Typography>

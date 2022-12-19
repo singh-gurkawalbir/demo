@@ -125,8 +125,7 @@ export default function Signup(props) {
         </div>
       </div>
       <UserSignInPage
-        pageTitle="Forgot Password"
-        pageSubHeading=" Enter your email address and we will send you a link to reset your password."
+        pageTitle="Sign up"
         footerLinkLabel="Already have an account"
         footerLinkText="Sign in"
         footerLink="signin">

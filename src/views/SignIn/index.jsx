@@ -10,6 +10,7 @@ import MarketingContentWithIframe from '../../components/LoginScreen/MarketingCo
 import { TextButton } from '../../components/Buttons';
 import ConcurSignInPage from './Concur';
 import useQuery from '../../hooks/useQuery';
+import UserSignInPage from '../../components/UserSignInPage';
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
@@ -108,44 +109,58 @@ function Signin(props) {
   const signupMessage = useSelector(state => selectors.signupMessage(state));
 
   return (
-    <div className={classes.wrapper}>
-      <div className={classes.signinWrapper}>
-        <div className={classes.signinWrapperContent}>
-          <div className={classes.logo}>
-            <CeligoLogo />
-          </div>
-          <Title />
-          {
+    <>
+      <div className={classes.wrapper}>
+        <div className={classes.signinWrapper}>
+          <div className={classes.signinWrapperContent}>
+            <div className={classes.logo}>
+              <CeligoLogo />
+            </div>
+            <Title />
+            {
             isSignupCompleted && (
             <Typography variant="body2" className={classes.signupSuccess} >
               {signupMessage}
             </Typography>
             )
           }
-          <SigninForm
-            {...props}
-            dialogOpen={false}
-            className={classes.signInForm}
+            <SigninForm
+              {...props}
+              dialogOpen={false}
+              className={classes.signInForm}
           />
-          {getDomain() !== 'eu.integrator.io' && (
-          <Typography variant="body2" className={classes.signupLink}>
-            Don&apos;t have an account?
-            <TextButton
-              data-test="signup"
-              color="primary"
-              className={classes.link}
-              component={Link}
-              to="/signup">
-              Sign up
-            </TextButton>
-          </Typography>
-          )}
+            {getDomain() !== 'eu.integrator.io' && (
+            <Typography variant="body2" className={classes.signupLink}>
+              Don&apos;t have an account?
+              <TextButton
+                data-test="signup"
+                color="primary"
+                className={classes.link}
+                component={Link}
+                to="/signup">
+                Sign up
+              </TextButton>
+            </Typography>
+            )}
+          </div>
+        </div>
+        <div className={classes.marketingContentWrapper}>
+          <MarketingContentWithIframe contentUrl={contentUrl} />
         </div>
       </div>
-      <div className={classes.marketingContentWrapper}>
-        <MarketingContentWithIframe contentUrl={contentUrl} />
-      </div>
-    </div>
+      <UserSignInPage
+        pageTitle=" Sign in"
+        pageSuccessMessage="Please check your email"
+        footerLinkLabel=" Don't have an account?"
+        footerLinkText=" Sign up"
+        footerLink="signup">
+        <SigninForm
+          {...props}
+          dialogOpen={false}
+          className={classes.signInForm}
+          />
+      </UserSignInPage>
+    </>
   );
 }
 

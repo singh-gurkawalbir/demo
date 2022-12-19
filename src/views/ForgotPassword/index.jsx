@@ -12,6 +12,7 @@ import actions from '../../actions';
 import ConcurForgotPassword from './Concur';
 import useQuery from '../../hooks/useQuery';
 import messageStore from '../../utils/messageStore';
+import UserSignInPage from '../../components/UserSignInPage';
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
@@ -121,64 +122,99 @@ function ForgotPassword(props) {
     message = `If ${email} ${messageStore('FORGOT_PASSWORD_USER_EXIST')}`;
   }
 
+  const alertMessage = (showError && resetRequestErrorMsg) ? resetRequestErrorMsg : '';
+
   return (
-    <div className={classes.wrapper}>
-      <div className={classes.signinWrapper}>
-        <div className={classes.signinWrapperContent}>
-          <div className={classes.logo}>
-            <CeligoLogo />
-          </div>
-          <Typography variant="h3" className={classes.title}>
-            Forgot your password?
-          </Typography>
-          {email && (
-          <Typography variant="h6" className={classes.title}>
-            {email}
-          </Typography>
-          )}
-          { showError && resetRequestErrorMsg && (
-          <Typography
-            data-private
-            color="error"
-            component="div"
-            variant="h5"
-            className={classes.alertMsg}>
-            {resetRequestErrorMsg}
-          </Typography>
-          )}
-          <div className={classes.mfaInfo}>
-            {message}
-          </div>
-          {!successView
-            ? (
-              <ForgotPasswordForm
-                {...props}
-                setShowError={setShowError}
-                dialogOpen={false}
-                email={queryParams.get('email')}
-                className={classes.signInForm}
-          />
-            ) : ''}
-          {successView ? (
-            <Typography variant="body2" className={classes.signupLink}>
-              Back to
-              <TextButton
-                data-test="signin"
-                color="primary"
-                className={classes.link}
-                onClick={handleClick}
-                component={Link}
-                to="/signin">
-                Sign in
-              </TextButton>
+    <>
+      <div className={classes.wrapper}>
+        <div className={classes.signinWrapper}>
+          <div className={classes.signinWrapperContent}>
+            <div className={classes.logo}>
+              <CeligoLogo />
+            </div>
+            <Typography variant="h3" className={classes.title}>
+              Forgot your password?
             </Typography>
-          ) : ''}
+            {email && (
+            <Typography variant="h6" className={classes.title}>
+              {email}
+            </Typography>
+            )}
+            { showError && resetRequestErrorMsg && (
+            <Typography
+              data-private
+              color="error"
+              component="div"
+              variant="h5"
+              className={classes.alertMsg}>
+              {resetRequestErrorMsg}
+            </Typography>
+            )}
+            <div className={classes.mfaInfo}>
+              {message}
+            </div>
+            {!successView
+              ? (
+                <ForgotPasswordForm
+                  {...props}
+                  setShowError={setShowError}
+                  dialogOpen={false}
+                  email={queryParams.get('email')}
+                  className={classes.signInForm}
+          />
+              ) : ''}
+            {successView ? (
+              <Typography variant="body2" className={classes.signupLink}>
+                Back to
+                <TextButton
+                  data-test="signin"
+                  color="primary"
+                  className={classes.link}
+                  onClick={handleClick}
+                  component={Link}
+                  to="/signin">
+                  Sign in
+                </TextButton>
+              </Typography>
+            ) : ''}
+          </div>
+        </div>
+        <div className={classes.marketingContentWrapper}>
+          <MarketingContentWithIframe contentUrl={contentUrl} />
         </div>
       </div>
-      <div className={classes.marketingContentWrapper}>
-        <MarketingContentWithIframe contentUrl={contentUrl} />
-      </div>
-    </div>
+      <UserSignInPage
+        pageTitle="Forgot your password?"
+        pageSubHeading={message}
+        alertMessage={alertMessage}
+      >
+
+        {!successView
+          ? (
+            <ForgotPasswordForm
+              {...props}
+              setShowError={setShowError}
+              dialogOpen={false}
+              email={queryParams.get('email')}
+              className={classes.signInForm}
+          />
+          ) : ''}
+        {successView ? (
+          <Typography variant="body2" className={classes.signupLink}>
+            Back to
+            <TextButton
+              data-test="signin"
+              color="primary"
+              className={classes.link}
+              onClick={handleClick}
+              component={Link}
+              to="/signin">
+              Sign in
+            </TextButton>
+          </Typography>
+        ) : ''}
+      </UserSignInPage>
+    </>
   );
 }
 
