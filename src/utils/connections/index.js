@@ -241,6 +241,7 @@ export const amazonSellerCentralAuthURI = {
   A1VC38T7YXB528: 'https://sellercentral.amazon.co.jp/apps/authorize/consent',
   ARBP9OOSHTCHU: 'https://sellercentral.amazon.eg/apps/authorize/consent',
   A17E79C6D8DWNP: 'https://sellercentral.amazon.sa/apps/authorize/consent',
+  AMEN7PMS3EDWL: 'https://sellercentral.amazon.com.be/apps/authorize/consent',
 };
 
 export const amazonSellerCentralMarketPlaceOptions = {
@@ -264,6 +265,7 @@ export const amazonSellerCentralMarketPlaceOptions = {
     {label: 'Saudi Arabia', value: 'A17E79C6D8DWNP'},
     {label: 'United Arab Emirates', value: 'A2VIGQ35RCS4UG'},
     {label: 'India', value: 'A21TJRUUN4KGV'},
+    {label: 'Belgium', value: 'AMEN7PMS3EDWL'},
   ],
   farEast: [
     {label: 'Singapore', value: 'A19VAU5U5O7RUS'},

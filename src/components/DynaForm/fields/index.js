@@ -122,7 +122,6 @@ import DynaPreviewComponentsTable from './DynaPreviewComponentsTable';
 import DynaChildLicenses from './DynaChildLicenses';
 import DynaDateSelector from './DynaDateSelector';
 import DynaFileEncryptDecrypt from './DynaFileEncryptDecrypt';
-import DynaHashAlogorithm from './DynaHashAlogorithm';
 import DynaQueryRadioGroup from './radiogroup/DynaQueryRadioGroup';
 import DynaLicenseEdition from './DynaLicenseEdition';
 import DynaAllIntegrations from './integrations/DynaAllIntegrations';
@@ -312,7 +311,6 @@ export default {
   flowgroupstiedtointegrations: DynaFlowGroupsTiedToIntegrations,
   dateselector: DynaDateSelector,
   fileencryptdecrypt: DynaFileEncryptDecrypt,
-  hashalgorithm: DynaHashAlogorithm,
   licenseedition: DynaLicenseEdition,
   triallicense: DynaTrialLicense,
   licenseexpires: DynaLicenseExpires,

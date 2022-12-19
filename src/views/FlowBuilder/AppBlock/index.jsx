@@ -115,10 +115,6 @@ const useStyles = makeStyles(theme => ({
   bubbleContainer: {
     position: 'relative',
     display: 'flex',
-    '&:hover > button': {
-      display: 'block',
-      color: 'unset',
-    },
   },
   bubble: {
     position: 'absolute',
@@ -149,7 +145,7 @@ const useStyles = makeStyles(theme => ({
     top: -theme.spacing(0.5),
     zIndex: 1,
     transition: theme.transitions.create('color'),
-    color: 'rgb(0,0,0,0)',
+    color: ({ isHover }) => isHover ? 'unset' : 'rgb(0,0,0,0)',
   },
   grabButton: {
     left: -theme.spacing(0.5),
@@ -157,7 +153,7 @@ const useStyles = makeStyles(theme => ({
     top: -theme.spacing(0.5),
     zIndex: 1,
     transition: theme.transitions.create('color'),
-    color: 'rgb(0,0,0,0)',
+    color: ({ isHover }) => isHover ? 'unset' : 'rgb(0,0,0,0)',
     cursor: 'move',
     '&:hover': {
       background: 'none',
@@ -205,7 +201,8 @@ export default function AppBlock({
   id,
   ...rest
 }) {
-  const classes = useStyles();
+  const [isHover, setIsHover] = useState(false);
+  const classes = useStyles({ isHover });
   const dispatch = useDispatch();
   const [expanded, setExpanded] = useState(false);
   const [isOver, setIsOver] = useState(false);
@@ -301,6 +298,7 @@ export default function AppBlock({
     setActiveAction(null);
     setExpanded();
   }, []);
+  const handleMouseHover = useCallback(val => () => setIsHover(val), []);
 
   const hasActions = resourceId && flowActions && Array.isArray(flowActions) && flowActions.length;
   const { leftActions, middleActions, rightActions } = useMemo(() => {
@@ -392,7 +390,13 @@ export default function AppBlock({
   }
 
   return (
-    <div className={clsx(classes.root, className, { [classes.draggable]: isDraggable })} style={{ opacity, cursor: isDragging ? 'move' : '' }}>
+    <div
+      ref={drag}
+      className={clsx(classes.root, className, { [classes.draggable]: isDraggable })}
+      style={{ opacity, cursor: isDragging ? 'move' : '' }}
+      onMouseEnter={handleMouseHover(true)}
+      onMouseLeave={handleMouseHover(false)}
+      >
       <div
         onMouseEnter={handleMouseOver(true)}
         onFocus={handleMouseOver(true)}
@@ -400,7 +404,6 @@ export default function AppBlock({
         onBlur={handleMouseOver(false)}
         {...rest}
         data-test={`${isPageGenerator ? 'pg' : 'pp'}-${id}`}
-        ref={drag}
         className={classes.box}
       >
         <div className={classes.bubbleContainer}>

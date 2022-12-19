@@ -9,14 +9,13 @@ import * as reactRedux from 'react-redux';
 import userEvent from '@testing-library/user-event';
 import { renderWithProviders } from '../../test/test-utils';
 import RequestResetWrapper from '.';
-import actions from '../../actions';
 import { runServer } from '../../test/api/server';
 import { getCreatedStore } from '../../store';
 
 let initialStore;
 
-function store(auth) {
-  initialStore.getState().auth = auth;
+function store(session) {
+  initialStore.getState().session = session;
 }
 
 async function initResetPassword() {
@@ -61,7 +60,17 @@ describe('ResetPassword', () => {
   });
 
   test('Should able to test save button', async () => {
-    store({});
+    store({mfa: {
+      sessionInfo: {
+        data: {
+          authenticated: false,
+          mfaRequired: false,
+          mfaSetupRequired: false,
+          mfaVerified: false,
+        },
+        status: 'received',
+      }},
+    });
     await initResetPassword();
     const SaveButton = screen.getByRole('button', {name: 'Save'});
 
@@ -69,7 +78,17 @@ describe('ResetPassword', () => {
   });
 
   test('Should able to test the cancel button', async () => {
-    store({});
+    store({mfa: {
+      sessionInfo: {
+        data: {
+          authenticated: false,
+          mfaRequired: false,
+          mfaSetupRequired: false,
+          mfaVerified: false,
+        },
+        status: 'received',
+      }},
+    });
     await initResetPassword();
     const cancelButton = screen.getByRole('link', {name: 'Cancel'});
 
@@ -78,7 +97,17 @@ describe('ResetPassword', () => {
     expect(cancelButton.closest('a')).toHaveAttribute('href', '/signin');
   });
   test('Should able to test the SetPassword form by entering the password', async () => {
-    store({});
+    store({mfa: {
+      sessionInfo: {
+        data: {
+          authenticated: false,
+          mfaRequired: false,
+          mfaSetupRequired: false,
+          mfaVerified: false,
+        },
+        status: 'received',
+      }},
+    });
     await initResetPassword();
     const titleText = screen.getByText('Celigo Inc.');
 
@@ -97,8 +126,5 @@ describe('ResetPassword', () => {
 
     expect(setpasswordButtonNode).toBeInTheDocument();
     userEvent.click(setpasswordButtonNode);
-    const token = '345DeE';
-
-    expect(mockDispatchFn).toHaveBeenCalledWith(actions.auth.resetPasswordRequest('xbsbxsxazl223xbsbixi', token));
   });
 });

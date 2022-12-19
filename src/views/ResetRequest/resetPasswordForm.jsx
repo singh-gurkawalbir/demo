@@ -91,9 +91,6 @@ export default function ResetPassword() {
     if (errorMessage === AUTH_FAILURE_MESSAGE) {
       return 'Sign in failed. Please try again.';
     }
-    if (window.signInError) {
-      return window.signInError;
-    }
 
     return errorMessage;
   });
@@ -113,8 +110,10 @@ export default function ResetPassword() {
     e.preventDefault();
     const password = e?.target?.password?.value || e?.target?.elements?.password?.value;
 
-    handleResetPassword(password);
-  }, [handleResetPassword]);
+    if (!showErr) {
+      handleResetPassword(password);
+    }
+  }, [handleResetPassword, showErr]);
 
   return (
     <div className={classes.editableFields}>
