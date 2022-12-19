@@ -28,7 +28,7 @@ const useStyles = makeStyles(theme => ({
 
 const VALID_FILE_EXTENSIONS = ['csv', 'json', 'xlsx', 'xml', 'edi'];
 export default function DynaFTPFileNameWithEditor_afe(props) {
-  const {id, flowId, value, resourceId, resourceType, onFieldChange, formKey} = props;
+  const {id, flowId, value = '', resourceId, resourceType, onFieldChange, formKey} = props;
   const {fields} = useFormContext(formKey);
   const fileType = fields['file.type']?.value;
   const fileTypeIsTouched = fields['file.type']?.touched;
