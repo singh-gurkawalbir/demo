@@ -1,5 +1,5 @@
 import React, { useMemo, Fragment, useEffect, useCallback } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { BrowserRouter, Switch, Route, useLocation } from 'react-router-dom';
 import { MuiThemeProvider, makeStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -175,14 +175,15 @@ export default function App() {
   const snackbarClasses = useSnackbarStyles();
   const dispatch = useDispatch();
   const reloadCount = useSelector(state => selectors.reloadCount(state));
-  const profile = useSelector(state => selectors.userProfile(state)) || {};
-  const { darkModeTheme } = profile;
-  const theme1 = darkModeTheme ? 'dark' : 'light';
+  const preferences = useSelector(state => selectors.userProfilePreferencesProps(state), shallowEqual);
+  const { darkTheme } = preferences;
+  const currentTheme = darkTheme ? 'dark' : 'light';
   const themeName = useSelector(state =>
     selectors.userPreferences(state).environment === 'sandbox'
       ? 'sandbox'
-      : theme1
+      : currentTheme
   );
+
   const theme = useMemo(() => themeProvider(themeName), [themeName]);
   const toggleDebugMode = useCallback(() => {
     dispatch(actions.user.toggleDebug());

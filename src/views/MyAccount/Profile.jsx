@@ -16,6 +16,7 @@ import useSaveStatusIndicator from '../../hooks/useSaveStatusIndicator';
 import LoadResources from '../../components/LoadResources';
 import { OutlinedButton } from '../../components/Buttons';
 import infoText from '../../components/Help/infoText';
+import { isProduction } from '../../forms/formFactory/utils';
 
 const useStyles = makeStyles(theme => ({
   googleBtn: {
@@ -128,8 +129,8 @@ export default function ProfilePanel() {
   const dispatch = useDispatch();
   const handleSubmit = useCallback(formVal => {
     const completePayloadCopy = { ...formVal };
-    const { timeFormat, dateFormat, showRelativeDateTime, darkMode } = completePayloadCopy;
-    const preferencesPayload = { timeFormat, dateFormat, showRelativeDateTime, darkMode };
+    const { timeFormat, dateFormat, showRelativeDateTime, darkTheme } = completePayloadCopy;
+    const preferencesPayload = { timeFormat, dateFormat, showRelativeDateTime, darkTheme };
 
     // track event if there is any action for Developer mode
     if (preferences.developer !== completePayloadCopy.developer) {
@@ -147,7 +148,7 @@ export default function ProfilePanel() {
     delete completePayloadCopy.timeFormat;
     delete completePayloadCopy.dateFormat;
     delete completePayloadCopy.showRelativeDateTime;
-    delete completePayloadCopy.darkMode;
+    delete completePayloadCopy.darkTheme;
 
     dispatch(actions.user.profile.update(completePayloadCopy));
   }, [dispatch, preferences.developer]);
@@ -289,13 +290,15 @@ export default function ProfilePanel() {
         // is this loggable
         isLoggable: true,
       },
-      darkMode: {
-        id: 'darkModeTheme',
-        name: 'darkModeTheme',
+      darkTheme: {
+        id: 'darkTheme',
+        name: 'darkTheme',
         type: 'checkbox',
-        helpKey: 'myaccount.darkMode',
+        helpKey: 'myaccount.darkTheme',
         label: 'Dark mode',
-        defaultValue: preferences && preferences.darkModeTheme,
+        defaultValue: preferences && preferences.darkTheme,
+        labelSubText: 'For internal testing only',
+        visible: !isProduction(),
       },
     },
     layout: {
@@ -311,7 +314,7 @@ export default function ProfilePanel() {
         'timeFormat',
         'showRelativeDateTime',
         'developer',
-        'darkMode',
+        'darkTheme',
       ],
     },
   }), [dateFormatList, dateTimeZonesList, preferences, timeFormatList, isUserAllowedOnlySSOSignIn]);
