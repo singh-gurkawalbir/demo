@@ -213,7 +213,7 @@ describe('SubRecordDrawer UI tests', () => {
     useDispatchSpy = jest.spyOn(reactRedux, 'useDispatch');
     mockDispatchFn = jest.fn(action => {
       switch (action.type) {
-        default:
+        default: initialStore.dispatch(action);
       }
     });
     useDispatchSpy.mockReturnValue(mockDispatchFn);
