@@ -6762,6 +6762,25 @@ describe('resource region selector testcases', () => {
                 name: 'flow name 5',
                 _id: 'flow5',
                 _integrationId: 'integrationId3',
+              }, {
+                name: 'flow name 8',
+                _id: 'flow8',
+                _integrationId: 'integrationId4',
+                _flowGroupingId: 'flowGroup1',
+              }, {
+                name: 'flow name 9',
+                _id: 'flow9',
+                _integrationId: 'integrationId4',
+              }, {
+                name: 'flow name 10',
+                _id: 'flow10',
+                _integrationId: 'integrationId5',
+                _flowGroupingId: 'flowGroup1',
+              }, {
+                name: 'flow name 11',
+                _id: 'flow11',
+                _integrationId: 'integrationId5',
+                _flowGroupingId: 'flowGroup2',
               }],
               integrations: [{
                 _id: 'integrationId1',
@@ -6773,6 +6792,62 @@ describe('resource region selector testcases', () => {
                 _id: 'integrationId3',
                 _parentId: 'integrationId2',
                 _registeredConnectionIds: ['connection2'],
+              }, {
+                _id: 'integrationId4',
+                _registeredConnectionIds: ['connection3'],
+                _connectorId: 'connector1',
+                flowGroupings: [
+                  {
+                    name: 'flow group 1',
+                    _id: 'flowGroup1',
+                  },
+                  {
+                    name: 'flow group 2',
+                    _id: 'flowGroup2',
+                  },
+                  {
+                    name: 'flow group 3',
+                    _id: 'flowGroup3',
+                  },
+                ],
+              }, {
+                _id: 'integrationId5',
+                _parentId: 'integrationId4',
+                _registeredConnectionIds: ['connection3'],
+                _connectorId: 'connector1',
+                flowGroupings: [
+                  {
+                    name: 'flow group 1',
+                    _id: 'flowGroup1',
+                  },
+                  {
+                    name: 'flow group 2',
+                    _id: 'flowGroup2',
+                  },
+                  {
+                    name: 'flow group 3',
+                    _id: 'flowGroup3',
+                  },
+                ],
+              }, {
+                _id: 'integrationId6',
+                _parentId: 'integrationId4',
+                _registeredConnectionIds: ['connection3'],
+                _connectorId: 'connector1',
+                flowGroupings: [
+                  {
+                    name: 'flow group 1',
+                    _id: 'flowGroup1',
+                  },
+                  {
+                    name: 'flow group 2',
+                    _id: 'flowGroup2',
+                  },
+                  {
+                    name: 'flow group 3',
+                    _id: 'flowGroup3',
+                  },
+                ],
               }],
               connections: [{
                 _id: 'connection1',
@@ -6780,6 +6855,9 @@ describe('resource region selector testcases', () => {
               }, {
                 _id: 'connection2',
                 name: 'connection2',
+              }, {
+                _id: 'connection3',
+                name: 'connection3',
               }],
             },
           },
@@ -6881,6 +6959,45 @@ describe('resource region selector testcases', () => {
             _id: 'flow7',
           },
         ]);
+      });
+
+      test('should return correct flow list for a parent integration with flowGroupings', () => {
+        expect(selector(state, 'integrationId4', 'integrationId4')).toEqual([{
+          ...sortProperties,
+          name: 'flow name 8',
+          _id: 'flow8',
+          _integrationId: 'integrationId4',
+          _flowGroupingId: 'flowGroup1',
+          errors: 0,
+        }, {
+          ...sortProperties,
+          errors: 0,
+          name: 'flow name 9',
+          _id: 'flow9',
+          _integrationId: 'integrationId4',
+        }]);
+      });
+
+      test('should return correct flow list for a child integration with flowGroupings', () => {
+        expect(selector(state, 'integrationId4', 'integrationId5')).toEqual([{
+          ...sortProperties,
+          name: 'flow name 10',
+          _id: 'flow10',
+          _integrationId: 'integrationId5',
+          _flowGroupingId: 'flowGroup1',
+          errors: 0,
+        }, {
+          ...sortProperties,
+          errors: 0,
+          name: 'flow name 11',
+          _id: 'flow11',
+          _integrationId: 'integrationId5',
+          _flowGroupingId: 'flowGroup2',
+        }]);
+      });
+
+      test('should return correct flow list for a child integration with flowGroupings and has no flows', () => {
+        expect(selector(state, 'integrationId4', 'integrationId6')).toEqual([]);
       });
 
       // Skipping all these test cases for noo as ccurrent errorMap doesnt work for IAF2.0

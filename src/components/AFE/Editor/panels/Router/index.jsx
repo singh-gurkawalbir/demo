@@ -2,6 +2,7 @@ import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 import React, { useMemo, useState } from 'react';
 import { makeStyles, Divider, Typography, Tooltip } from '@material-ui/core';
 import { sortableContainer, sortableElement } from 'react-sortable-hoc';
+import clsx from 'clsx';
 import Help from '../../../../Help';
 import { selectors } from '../../../../../reducers';
 import { TextButton } from '../../../../Buttons';
@@ -14,6 +15,7 @@ import messageStore from '../../../../../utils/messageStore';
 import Spinner from '../../../../Spinner';
 import { shortId } from '../../../../../utils/string';
 import DynaText from '../../../../DynaForm/fields/DynaText';
+import NotificationToaster from '../../../../NotificationToaster';
 
 const useStyles = makeStyles(theme => ({
   panelContent: {
@@ -29,6 +31,7 @@ const useStyles = makeStyles(theme => ({
   },
   heading: {
     marginBottom: theme.spacing(1),
+    marginTop: theme.spacing(1.5),
     display: 'flex',
   },
   branchingType: {
@@ -39,6 +42,21 @@ const useStyles = makeStyles(theme => ({
   },
   grabbing: {
     cursor: 'grabbing',
+  },
+  nameContainer: {
+    marginBottom: theme.spacing(1.5),
+  },
+  nameContainerWOInfo: {
+    marginBottom: theme.spacing(2),
+  },
+  name: {
+    marginBottom: theme.spacing(1),
+  },
+  info: {
+    paddingLeft: 0,
+    '& svg': {
+      color: theme.palette.primary.main,
+    },
   },
 }));
 
@@ -60,32 +78,44 @@ const BranchHeading = ({ helpKey, children, classes }) => (
     />
   </div>
 );
-const BranchName = ({ editorId, isViewMode, name }) => {
+const BranchName = ({ editorId, isViewMode, name, classes }) => {
   const dispatch = useDispatch();
-  const [errorMessage, setErrorMessage] = useState(null);
+  const [info, setInfo] = useState(null);
   const updatedOnNameChange = (id, val) => {
-    if (val?.length > 256) {
-      setErrorMessage([messageStore('BRANCH_NAME_LENGTH_ERROR')]);
+    if (val?.length <= 150) {
+      setInfo(null);
+      dispatch(actions.editor.patchRule(editorId, val, {rulePath: 'name'}));
     } else {
-      setErrorMessage(null);
+      setInfo([messageStore('BRANCH_NAME_LENGTH_INFO')]);
     }
-    dispatch(actions.editor.patchRule(editorId, val, {rulePath: 'name'}));
   };
 
   return (
-    <DynaText
-      id="name"
-      name="name"
-      disabled={isViewMode}
-      isValid={!errorMessage}
-      errorMessages={errorMessage ? [errorMessage] : undefined}
-      multiline
-      rowsMax={4}
-      label="Branching name"
-      helpKey="flow.router.name"
-      value={name}
-      onFieldChange={updatedOnNameChange}
-  />
+    <div className={clsx(classes.nameContainer, !info && classes.nameContainerWOInfo)}>
+      <DynaText
+        id="name"
+        name="name"
+        disabled={isViewMode}
+        className={classes.name}
+        multiline
+        rowsMax={4}
+        label="Branching name"
+        helpKey="flow.router.name"
+        value={name}
+        onFieldChange={updatedOnNameChange}
+      />
+      {
+        info && (
+          <NotificationToaster
+            variant="info"
+            transparent
+            noBorder
+            className={classes.info}
+          >{info}
+          </NotificationToaster>
+        )
+      }
+    </div>
   );
 };
 
@@ -131,10 +161,13 @@ export default function RouterPanel({ editorId }) {
     <div className={classes.panelContent}>
       <BranchDrawer editorId={editorId} />
 
+      <BranchName editorId={editorId} name={name} isViewMode={isViewMode} classes={classes} />
+
+      <Divider orientation="horizontal" className={classes.divider} />
+
       <BranchHeading helpKey="flow.router.branchType" classes={classes}>Branching type</BranchHeading>
 
       <div className={classes.branchingType}>
-        <BranchName editorId={editorId} name={name} isViewMode={isViewMode} />
         <DynaRadioGroup
           id="branchType"
           name="branchType"
