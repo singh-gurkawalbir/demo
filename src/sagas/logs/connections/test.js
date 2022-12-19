@@ -172,14 +172,13 @@ describe('Connection debugger log sagas', () => {
       const connectionId = 'c1';
 
       return expectSaga(deleteConnectionDebugLogs, { connectionId })
+        .provide([
+          [call(apiCallWithRetry, { path: `/connections/${connectionId}/debug`, opts: { method: 'DELETE'}}),
+            {},
+          ],
+        ])
         .call(apiCallWithRetry, { path: `/connections/${connectionId}/debug`, opts: { method: 'DELETE'}})
-        .run();
-    });
-    test('should call apiCallWithRetry with delete connection log path', () => {
-      const connectionId = 'c1';
-
-      return expectSaga(deleteConnectionDebugLogs, { connectionId })
-        .call(apiCallWithRetry, { path: `/connections/${connectionId}/debug`, opts: { method: 'DELETE'}})
+        .call(startPollingForConnectionDebugLogs, { connectionId })
         .run();
     });
   });
