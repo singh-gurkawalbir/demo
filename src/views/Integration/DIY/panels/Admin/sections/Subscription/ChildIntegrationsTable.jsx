@@ -96,7 +96,7 @@ export default function ChildIntegrationsTable({ integrationId, allChildIntegrat
       const childList = data.map(child => child.id);
 
       dispatch(actions.integrationApp.upgrade.addChildForUpgrade(childList));
-      dispatch(actions.integrationApp.upgrade.setStatus(integrationId, {
+      dispatch(actions.integrationApp.upgrade.setStatus('successMessageFlags', {
         showMessage: true,
         showFinalMessage: true,
       }));

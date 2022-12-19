@@ -16,10 +16,13 @@ export default (state = {}, action) => {
     switch (type) {
       case actionTypes.INTEGRATION_APPS.SETTINGS.V2.SET_STATUS:
         // following are the possible values:
-        // status: "done", "hold", "inProgress"
+        // status: "done", "hold", "inProgress", "error"
         // inQueue: "true" or "false"
         // showWizard: "true" or "false"
         // steps: [Array]
+        // errMessage: denoting error message
+
+        // following values will always be with "successMessageFlags" id
         // showMessage: 'true' or 'false'
         // showFinalMessage: 'true' or 'false'
         if (!draft[id]) draft[id] = {};
