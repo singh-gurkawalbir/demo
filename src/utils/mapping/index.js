@@ -2561,7 +2561,7 @@ export const applySearchFilter = (v2TreeData = [], lookups, searchKey, expandedK
 
     if (isTabNode) return true;
 
-    const parentMatched = filterNode(mapping, searchKey) || !isMappingRowTouched(mapping, lookups);
+    const parentMatched = filterNode(mapping, searchKey);
 
     if (parentMatched) {
       if (mapping.children?.length) {

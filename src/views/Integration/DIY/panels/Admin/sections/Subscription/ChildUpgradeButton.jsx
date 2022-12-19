@@ -1,6 +1,8 @@
 import React, { useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useHistory, useRouteMatch } from 'react-router-dom';
+import clsx from 'clsx';
+import { makeStyles } from '@material-ui/core';
 import Spinner from '../../../../../../../components/Spinner';
 import FilledButton from '../../../../../../../components/Buttons/FilledButton';
 import { selectors } from '../../../../../../../reducers';
@@ -8,21 +10,54 @@ import actions from '../../../../../../../actions';
 import TextButton from '../../../../../../../components/Buttons/TextButton';
 import { useSelectorMemo } from '../../../../../../../hooks';
 import { buildDrawerUrl, drawerPaths } from '../../../../../../../utils/rightDrawer';
+import messageStore from '../../../../../../../utils/messageStore';
+import useEnqueueSnackbar from '../../../../../../../hooks/enqueueSnackbar';
+import ErrorContent from '../../../../../../../components/ErrorContent';
 
+const useStyles = makeStyles(theme => ({
+  disabledButton: {
+    '&:disabled': {
+      background: theme.palette.secondary.lightest,
+      color: theme.palette.text.hint,
+    },
+  },
+}));
 export default function ChildUpgradeButton({ resource }) {
+  const classes = useStyles();
   const dispatch = useDispatch();
   const history = useHistory();
   const match = useRouteMatch();
-  const { id, changeEditionId } = resource;
+  const [enquesnackbar] = useEnqueueSnackbar();
+  const { id, changeEditionId, name } = resource;
   const status = useSelector(state => selectors.getStatus(state, id)?.status);
   const changeEditionSteps = useSelectorMemo(selectors.mkIntegrationAppSettings, id)?.changeEditionSteps;
   const showWizard = useSelector(state => selectors.getStatus(state, id)?.showWizard);
   const inQueue = useSelector(state => selectors.getStatus(state, id)?.inQueue);
+  const errMessage = useSelector(state => selectors.getStatus(state, id)?.errMessage);
   const currentChild = useSelector(state => selectors.currentChildUpgrade(state));
+  const accessLevel = useSelector(
+    state => selectors.resourcePermissions(state, 'integrations', id).accessLevel
+  );
 
   useEffect(() => {
     if (status === 'done') {
       dispatch(actions.integrationApp.upgrade.deleteStatus(id));
+    }
+
+    if (status === 'error') {
+      dispatch(actions.integrationApp.upgrade.setStatus(id, {
+        status: 'hold',
+      }));
+      enquesnackbar({
+        message: <ErrorContent
+          error={messageStore('CHILD_UPGRADE_ERROR_MESSAGE',
+            {
+              childName: name,
+              errorMessage: errMessage,
+            }
+          )} />,
+        variant: 'error',
+      });
     }
 
     if (showWizard && inQueue) {
@@ -40,7 +75,8 @@ export default function ChildUpgradeButton({ resource }) {
         params: { currentIntegrationId: id, type: 'child'},
       }));
     }
-  }, [dispatch, history, id, inQueue, match.url, showWizard, status]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dispatch, id, inQueue, showWizard, status]);
 
   useEffect(() => {
     if (currentChild === id) {
@@ -78,10 +114,11 @@ export default function ChildUpgradeButton({ resource }) {
 
   return (
     <FilledButton
-      disabled={!changeEditionId}
+      disabled={!changeEditionId || accessLevel === 'monitor'}
       onClick={onClickHandler}
       data-test="childUpgrade"
       bold
+      className={clsx({[classes.disabledButton]: !changeEditionId})}
     >
       Upgrade
     </FilledButton>

@@ -6,6 +6,8 @@ import AppRouting from '../AppRouting';
 import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
 import { NONE_TIER_USER_ERROR } from '../../utils/messageStore';
 import ChatbotWidget from '../../components/ChatbotWidget';
+import Spinner from '../../components/Spinner';
+import Loader from '../../components/Loader';
 
 const useStyles = makeStyles(theme => ({
   content: {
@@ -23,6 +25,7 @@ export default function PageContent() {
   const classes = useStyles();
 
   const isNoneTierLicense = useSelector(state => selectors.platformLicenseWithMetadata(state).isNone);
+  const isDefaultAccountSetAfterAuth = useSelector(selectors.isDefaultAccountSetAfterAuth);
 
   const [enqueueSnackbar] = useEnqueueSnackbar();
 
@@ -35,6 +38,9 @@ export default function PageContent() {
     });
   }, [enqueueSnackbar, isNoneTierLicense]);
   if (isNoneTierLicense) return null;
+  if (!isDefaultAccountSetAfterAuth) {
+    return <Loader open>Loading...<Spinner /></Loader>;
+  }
 
   return (
     <main className={classes.content}>

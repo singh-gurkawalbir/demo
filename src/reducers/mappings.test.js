@@ -827,13 +827,14 @@ describe('Mappings region selector testcases', () => {
 
       expect(selectors.isMapper2Supported(state)).toEqual(false);
     });
-    test('should return false for IAs', () => {
+    test('should return false for IAs if the doc does not have mappings2', () => {
       const state = {
         data: {
           resources: {
             imports: [{
               _id: 'imp-123',
               _connectorId: 'test123',
+              adaptorType: 'HTTPImport',
             }],
           },
         },
@@ -847,6 +848,29 @@ describe('Mappings region selector testcases', () => {
       };
 
       expect(selectors.isMapper2Supported(state)).toEqual(false);
+    });
+    test('should return true for IAs if the doc has mappings2', () => {
+      const state = {
+        data: {
+          resources: {
+            imports: [{
+              _id: 'imp-123',
+              _connectorId: 'test123',
+              adaptorType: 'HTTPImport',
+              mappings: [{generate: 'id', extract: '$.id', dataType: MAPPING_DATA_TYPES.STRING}],
+            }],
+          },
+        },
+        session: {
+          mapping: {
+            mapping: {
+              importId: 'imp-123',
+            },
+          },
+        },
+      };
+
+      expect(selectors.isMapper2Supported(state)).toEqual(true);
     });
     test('should return false for db imports', () => {
       const state = {
