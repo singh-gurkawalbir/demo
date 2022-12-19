@@ -69,7 +69,9 @@ const isPathPresentAndValueDiff = patchArr => patch =>
   patchArr.some(p => p.path === patch.path && p.value !== patch.value);
 
 export const getExportMetadata = (connectorMetadata, connectionVersion) => {
-  const { httpConnectorResources: httpResources, httpConnectorEndpoints: httpEndpoints} = connectorMetadata;
+  const { httpConnectorEndpoints: httpEndpoints} = connectorMetadata;
+  let { httpConnectorResources: httpResources} = connectorMetadata;
+
   const versionLocation = connectorMetadata.versioning?.location;
 
   const exportData = {
@@ -93,9 +95,6 @@ export const getExportMetadata = (connectorMetadata, connectionVersion) => {
 
   let versions = connectorMetadata.versions?.map(v => ({version: v.name, _id: v._id}));
 
-  if (connectionVersion) {
-    versions = versions.filter(v => v.version === connectionVersion);
-  }
   exportData.versions = cloneDeep(versions);
 
   if (!versions || !versions.length) {
@@ -104,6 +103,10 @@ export const getExportMetadata = (connectorMetadata, connectionVersion) => {
         version: 'v2',
         _id: '_v2id',
       }];
+  }
+  if (connectionVersion) {
+    versions = versions.filter(v => v.version === connectionVersion);
+    httpResources = httpResources.filter(r => r._versionIds?.includes(versions[0]._id));
   }
 
   exportData.resources = httpResources.map(httpResource => {
@@ -173,7 +176,8 @@ export const getExportMetadata = (connectorMetadata, connectionVersion) => {
 };
 export const getImportMetadata = (connectorMetadata, connectionVersion) => {
   const versionLocation = connectorMetadata.versioning?.location;
-  const { httpConnectorResources: httpResources, httpConnectorEndpoints: httpEndpoints} = connectorMetadata;
+  const { httpConnectorEndpoints: httpEndpoints} = connectorMetadata;
+  let { httpConnectorResources: httpResources } = connectorMetadata;
   const importData = {
     labels: {
       version: 'API version',
@@ -194,15 +198,17 @@ export const getImportMetadata = (connectorMetadata, connectionVersion) => {
   });
   let versions = connectorMetadata.versions?.map(v => ({version: v.name, _id: v._id}));
 
-  if (connectionVersion) {
-    versions = versions.filter(v => v.version === connectionVersion);
-  }
   if (!versions || !versions.length) {
     versions = [
       {
         version: 'v2',
         _id: '_v2id',
       }];
+  }
+
+  if (connectionVersion) {
+    versions = versions.filter(v => v.version === connectionVersion);
+    httpResources = httpResources.filter(r => r._versionIds?.includes(versions[0]._id));
   }
 
   importData.versions = cloneDeep(versions);
@@ -333,7 +339,7 @@ export const getHTTPConnectorMetadata = (connectorMetadata, connectionVersion) =
   let modifiedHttpConnectorResources = httpConnectorResources.map(res => {
     const filteredHttpResources = httpConnectorResources.filter(hRes => res.name === hRes.name);
 
-    if (filteredHttpResources.length > 1) {
+    if (filteredHttpResources.length > 1 && !connectionVersion) {
       if (!resourceNames[res.name]) {
         resourceNames[res.name] = true;
         const ids = filteredHttpResources.map(fRes => fRes._id);
@@ -359,7 +365,7 @@ export const getHTTPConnectorMetadata = (connectorMetadata, connectionVersion) =
   let modifiedHttpConnectorEndpoints = httpConnectorEndpoints.map(res => {
     const filteredHttpEndpoints = httpConnectorEndpoints.filter(hRes => res.name === hRes.name);
 
-    if (filteredHttpEndpoints.length > 1) {
+    if (filteredHttpEndpoints.length > 1 && !connectionVersion) {
       if (!endpointNames[res.name]) {
         endpointNames[res.name] = true;
         const ids = filteredHttpEndpoints.map(fRes => fRes._id);
