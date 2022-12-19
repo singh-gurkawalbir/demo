@@ -11,7 +11,6 @@ export default function assistantDefinition(
 
     ...fieldMeta({ resource, assistantData }),
     preSave: (formValues = {}) => {
-      console.log('formValues', formValues);
       const assistantMetadata = {
         pathParams: {},
       };
@@ -56,7 +55,6 @@ export default function assistantDefinition(
         importDoc['/assistant'] = undefined;
         delete importDoc['/assistant'];
       }
-      console.log('import presava:', { ...otherFormValues, ...importDoc });
 
       return { ...otherFormValues, ...importDoc };
     },
