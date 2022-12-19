@@ -25,7 +25,16 @@ const toggleMapperOptions = [
 export default function ToggleMapperVersion({ editorId }) {
   const classes = useStyles();
   const dispatch = useDispatch();
-  const showToggle = useSelector(state => selectors.isMapper2Supported(state));
+  const showToggle = useSelector(state => {
+    const isMapper2Supported = selectors.isMapper2Supported(state);
+    const {resourceId} = selectors.editor(state, editorId);
+    const resource = selectors.resource(state, 'imports', resourceId);
+
+    // for IAs we should not show toggle switch
+    if (resource?._connectorId) return false;
+
+    return isMapper2Supported;
+  });
   const mappingVersion = useSelector(state => selectors.mappingVersion(state));
   const saveInProgress = useSelector(state => selectors.isEditorSaveInProgress(state, editorId));
 

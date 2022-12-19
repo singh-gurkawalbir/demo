@@ -11,6 +11,7 @@ import DestinationDataType from './DestinationDataType';
 import LockIcon from '../../../../../../icons/LockIcon';
 import { selectors } from '../../../../../../../reducers';
 import actions from '../../../../../../../actions';
+import useScrollIntoView from '../../../../../../../hooks/useScrollIntoView';
 
 const useStyles = makeStyles(theme => ({
   customTextField: {
@@ -86,6 +87,7 @@ export default function Mapper2Generates(props) {
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+  useScrollIntoView(containerRef, nodeKey === newRowKey);
 
   const handleChange = useCallback(event => {
     setInputValue(event.target.value);

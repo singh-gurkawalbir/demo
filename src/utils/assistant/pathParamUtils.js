@@ -59,7 +59,9 @@ function mapParamsToValues(relativeTokens, actualTokens, pathParametersInfo) {
         const pathParamRegex = new RegExp(`(.*)${suffix}`);
         const valueTokens = pathParamRegex.exec(actualToken);
 
-        actualValue = valueTokens && valueTokens[valueTokens?.length - 1];
+        if (valueTokens?.length) {
+          actualValue = valueTokens[valueTokens?.length - 1];
+        }
       }
 
       const id = relToken

@@ -64,9 +64,15 @@ export default function getFieldMeta({email, token, _csrf, skipPassword} = {}) {
           placeholder: 'Enter new password *',
           noApi: true,
           validWhen: {
-            matchesRegEx: {
-              pattern: '^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)[a-zA-Z\\d\\w\\W]{10,256}$',
-              message: 'Password should contain at least one uppercase, one number, is at least 10 characters long and not greater than 256 characters.',
+            custom: ({value, allFields}) => {
+              const validPassword = /\d/.test(value) && /[a-z]/.test(value) && /[A-Z]/.test(value) && value.length > 10 && value.length < 256;
+
+              if (!validPassword) {
+                return 'Password should contain at least one uppercase, one number, is at least 10 characters long and not greater than 256 characters.';
+              }
+              const confirmPassword = allFields.find(f => f.id === 'confirmPassword');
+
+              if (confirmPassword.value && value !== confirmPassword.value) return 'Passwords should match';
             },
           },
         },
@@ -81,9 +87,15 @@ export default function getFieldMeta({email, token, _csrf, skipPassword} = {}) {
           placeholder: 'Confirm new password *',
           noApi: true,
           validWhen: {
-            matchesRegEx: {
-              pattern: '^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)[a-zA-Z\\d\\w\\W]{10,256}$',
-              message: 'Password should contain at least one uppercase, one number, is at least 10 characters long and not greater than 256 characters.',
+            custom: ({value, allFields}) => {
+              const validPassword = /\d/.test(value) && /[a-z]/.test(value) && /[A-Z]/.test(value) && value.length > 10 && value.length < 256;
+
+              if (!validPassword) {
+                return 'Password should contain at least one uppercase, one number, is at least 10 characters long and not greater than 256 characters.';
+              }
+              const password = allFields.find(f => f.id === 'password');
+
+              if (password.value && value !== password.value) return 'Passwords should match';
             },
           },
         },

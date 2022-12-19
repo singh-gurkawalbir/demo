@@ -5823,6 +5823,10 @@ describe('v2 mapping utils', () => {
             },
           ],
         },
+        {
+          key: 'key6',
+          dataType: MAPPING_DATA_TYPES.STRING,
+        },
       ];
       const expectedData = [
         {
