@@ -4,6 +4,7 @@ export default {
     '/type': 'rest',
     '/assistant': 'linkedin',
     '/rest/authType': 'oauth',
+    '/rest/useIClientFields': false,
     '/rest/mediaType': 'json',
     '/rest/baseURI': 'https://api.linkedin.com',
     '/rest/tokenLocation': 'header',

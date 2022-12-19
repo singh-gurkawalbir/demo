@@ -4,6 +4,7 @@ export default {
     '/type': 'http',
     '/assistant': 'acton',
     '/http/auth/type': 'oauth',
+    '/http/auth/oauth/useIClientFields': false,
     '/http/mediaType': 'urlencoded',
     '/http/baseURI': 'https://restapi.actonsoftware.com',
     '/http/auth/oauth/authURI': 'https://restapi.actonsoftware.com/authorize',

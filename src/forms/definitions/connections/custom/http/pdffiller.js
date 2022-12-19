@@ -2,6 +2,7 @@ export default {
   preSave: formValues => ({
     ...formValues,
     '/http/auth/type': 'oauth',
+    '/http/auth/oauth/useIClientFields': false,
     '/http/mediaType': 'json',
     '/type': 'http',
     '/assistant': 'pdffiller',
