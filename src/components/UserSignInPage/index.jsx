@@ -5,7 +5,6 @@ import CeligoLogo from '../CeligoLogo';
 import MarketingContentWithIframe from '../LoginScreen/MarketingContentWithIframe';
 import UserSignInPageFooter from './UserSignInPageFooter';
 import { getDomain } from '../../utils/resource';
-import trim from '../../utils/trim';
 
 const useStyles = makeStyles(theme => ({
   userSignInPageContainer: {
@@ -28,6 +27,9 @@ const useStyles = makeStyles(theme => ({
   userSignInLeftFooter: {
     position: 'absolute',
     bottom: theme.spacing(8),
+    width: 300,
+    display: 'flex',
+    justifyContent: 'center',
   },
   userSignInLeftContainer: {
     display: 'flex',
@@ -35,8 +37,12 @@ const useStyles = makeStyles(theme => ({
     justifyContent: 'center',
     flexDirection: 'column',
     position: 'relative',
+
     background: theme.palette.background.paper,
 
+  },
+  userSignInLeftContainerForm: {
+    width: '300px',
   },
   userSignInLeftHeader: {
     display: 'flex',
@@ -61,6 +67,7 @@ const useStyles = makeStyles(theme => ({
   alertMsg: {
     color: theme.palette.error.dark,
   },
+
 }));
 export default function UserSignInPage(props) {
   const {
@@ -80,35 +87,37 @@ export default function UserSignInPage(props) {
   return (
     <div className={classes.userSignInPageContainer}>
       <div className={classes.userSignInLeftContainer}>
-        <div className={classes.userSignInLeftHeader}>
-          <div className={classes.logo}>
-            <CeligoLogo />
+        <div className={classes.userSignInLeftContainerForm}>
+          <div className={classes.userSignInLeftHeader}>
+            <div className={classes.logo}>
+              <CeligoLogo />
+            </div>
+            <Typography variant="h3" className={classes.title}>
+              {pageTitle}
+            </Typography>
+            {(successMessage || alertMessage) && (
+            <Typography
+              variant="body2" className={clsx(classes.subHeading,
+                {[classes.successMsg]: successMessage},
+                {[classes.alertMsg]: alertMessage})}>
+              {successMessage || alertMessage}
+            </Typography>
+            )}
+            {pageSubHeading && (
+            <Typography variant="body2" className={classes.subHeading}>
+              {pageSubHeading}
+            </Typography>
+            )}
+
           </div>
-          <Typography variant="h3" className={classes.title}>
-            {pageTitle}
-          </Typography>
-          {(successMessage || alertMessage) && (
-          <Typography
-            variant="body2" className={clsx(classes.subHeading,
-              {[classes.successMsg]: successMessage},
-              {[classes.alertMsg]: alertMessage})}>
-            {successMessage || alertMessage}
-          </Typography>
-          )}
-          {pageSubHeading && (
-          <Typography variant="body2" className={classes.subHeading}>
-            {pageSubHeading}
-          </Typography>
-          )}
 
-        </div>
+          <div className={classes.userSignInLeftBody}>
+            {children}
+          </div>
 
-        <div className={classes.userSignInLeftBody}>
-          {children}
-        </div>
-
-        <div className={classes.userSignInLeftFooter}>
-          <UserSignInPageFooter linkLabel={footerLinkLabel} linkText={footerLinkText} link={trim(footerLink)} />
+          <div className={classes.userSignInLeftFooter}>
+            <UserSignInPageFooter linkLabel={footerLinkLabel} linkText={footerLinkText} link={footerLink} />
+          </div>
         </div>
       </div>
 

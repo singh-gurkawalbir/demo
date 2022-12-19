@@ -43,7 +43,7 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     alignItems: 'flex-start',
     marginTop: theme.spacing(-2),
-    marginBottom: 0,
+    marginBottom: theme.spacing(2),
     lineHeight: `${theme.spacing(2)}px`,
     '& > svg': {
       fill: theme.palette.error.main,

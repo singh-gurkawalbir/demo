@@ -19,7 +19,7 @@ export default function UserSignInPageFooter({linkLabel, linkText, link}) {
       {getDomain() !== 'eu.integrator.io' && (
         <Typography variant="body2" >
           {linkLabel}
-          <Link underline="none" href={`/{${link}}`} className={classes.UserSignInPageFooterLink}>
+          <Link underline="none" href={`/${link}`} className={classes.UserSignInPageFooterLink}>
             {linkText}
           </Link>
         </Typography>

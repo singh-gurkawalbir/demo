@@ -20,7 +20,7 @@ const useStyles = makeStyles(theme => ({
     borderRadius: 4,
     height: 38,
     fontSize: theme.spacing(2),
-    marginTop: theme.spacing(1),
+    marginTop: 30,
   },
   editableFields: {
     textAlign: 'center',
@@ -34,6 +34,7 @@ const useStyles = makeStyles(theme => ({
   textField: {
     width: '100%',
     minWidth: '100%',
+    marginBottom: theme.spacing(1),
   },
   alertMsg: {
     fontSize: 12,
@@ -42,7 +43,7 @@ const useStyles = makeStyles(theme => ({
     width: '100%',
     display: 'flex',
     alignItems: 'flex-start',
-    marginBottom: 0,
+    marginBottom: theme.spacing(2),
     lineHeight: `${theme.spacing(2)}px`,
     '& > svg': {
       fill: theme.palette.error.main,
