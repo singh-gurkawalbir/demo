@@ -25,6 +25,7 @@ export default (state = {}, action) => {
         // following values will always be with "successMessageFlags" id
         // showMessage: 'true' or 'false'
         // showFinalMessage: 'true' or 'false'
+        // showChildLeftMessageFlag: 'true' or 'false'
         if (!draft[id]) draft[id] = {};
         draft[id] = {...draft[id], ...statusObj};
         break;
