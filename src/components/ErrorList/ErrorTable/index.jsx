@@ -63,13 +63,15 @@ const useStyles = makeStyles(theme => ({
     gridColumnGap: theme.spacing(0.5),
   },
   resourceFormWrapper: {
-    width: '135%',
     overflow: 'auto',
     '& .MuiTableCell-root': {
       padding: theme.spacing(1),
     },
     '& .MuiFormControlLabel-root': {
       marginRight: 0,
+    },
+    [theme.breakpoints.down('lg')]: {
+      width: '135%',
     },
   },
   panelWrapper: {
