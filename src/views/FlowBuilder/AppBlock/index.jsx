@@ -28,6 +28,9 @@ import itemTypes from '../itemTypes';
 import { useSelectorMemo } from '../../../hooks';
 import { useIsDragInProgress } from '../hooks';
 import { getConnectorId } from '../../../utils/assistant';
+import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
+import RawHtml from '../../../components/RawHtml';
+import messageStore from '../../../utils/messageStore';
 
 const blockHeight = 170;
 const blockWidth = 275;
@@ -207,6 +210,7 @@ export default function AppBlock({
   const [expanded, setExpanded] = useState(false);
   const [isOver, setIsOver] = useState(false);
   const [activeAction, setActiveAction] = useState(null);
+  const [enqueueSnackbar] = useEnqueueSnackbar();
   const isNew = blockType.startsWith('new');
   const isActive = useSelector(state => {
     const activeConn = selectors.activeConnection(state);
@@ -219,6 +223,17 @@ export default function AppBlock({
   useSelectorMemo(selectors.makeResourceDataSelector, 'flows', flowId)
     ?.merged || {};
   const isLinearFlow = !flowOriginal.routers?.length;
+  let noDragInfo = '';
+
+  if (
+    (!isPageGenerator && flowOriginal.pageProcessors?.length <= 1) ||
+    (isPageGenerator && flowOriginal.pageGenerators?.length <= 1)
+  ) {
+    noDragInfo = 'There are no available locations this step can be moved to.';
+  } else if (!isLinearFlow) {
+    noDragInfo = <RawHtml html={messageStore('NO_DRAG_FLOW_BRANCHING_INFO')} />;
+  }
+
   const isFlowSaveInProgress = useSelector(state => selectors.isFlowSaveInProgress(state, flowId));
   const iconType = useSelector(state => {
     if (blockType === 'dataLoader') return;
@@ -314,22 +329,26 @@ export default function AppBlock({
 
     return { leftActions, middleActions, rightActions };
   }, [flowActions, hasActions]);
-  const isDraggable = !isViewMode &&
-    !isFlowSaveInProgress &&
-    isLinearFlow &&
-  (
-    (isPageGenerator && flowOriginal.pageGenerators?.length > 1) ||
-    (!isPageGenerator && flowOriginal.pageProcessors?.length > 1)
-  );
+  const isDraggable = !isViewMode && !isFlowSaveInProgress;
   const [{ isDragging }, drag, preview] = useDrag(() => ({
     type: isPageGenerator ? itemTypes.PAGE_GENERATOR : itemTypes.PAGE_PROCESSOR,
-    item: {
-      ...rest,
-      index,
-      id,
-      type: iconType,
-      name,
-      assistant: connAssistant || assistant,
+    item: () => {
+      if (noDragInfo) {
+        enqueueSnackbar({
+          message: noDragInfo,
+          variant: 'info',
+        });
+      }
+
+      return ({
+        ...rest,
+        index,
+        id,
+        type: iconType,
+        name,
+        assistant: connAssistant || assistant,
+        noDrag: !!noDragInfo,
+      });
     },
     collect: monitor => ({
       isDragging: monitor.isDragging(),
@@ -343,7 +362,7 @@ export default function AppBlock({
       }
     },
     canDrag: isDraggable,
-  }), [id, iconType, connAssistant, assistant, isFlowSaveInProgress, index, rest.pageProcessorIndex]);
+  }), [id, iconType, connAssistant, assistant, isFlowSaveInProgress, index, rest.pageProcessorIndex, noDragInfo]);
 
   const opacity = isDragging ? 0.7 : 1;
 
