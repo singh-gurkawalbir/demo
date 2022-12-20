@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import actions from '../../../../../../../actions';
 import FilledButton from '../../../../../../../components/Buttons/FilledButton';
+import ErrorContent from '../../../../../../../components/ErrorContent';
 import RawHtml from '../../../../../../../components/RawHtml';
 import useEnqueueSnackbar from '../../../../../../../hooks/enqueueSnackbar';
 import { selectors } from '../../../../../../../reducers';
@@ -23,8 +24,9 @@ export default function RequestUpgradeButton(props) {
   const dispatch = useDispatch();
   const [enquesnackbar] = useEnqueueSnackbar();
   const status = useSelector(state => selectors.getStatus(state, id)?.status);
-  const showMessage = useSelector(state => selectors.getStatus(state, id)?.showMessage);
-  const showFinalMessage = useSelector(state => selectors.getStatus(state, id)?.showFinalMessage);
+  const errMessage = useSelector(state => selectors.getStatus(state, id)?.errMessage);
+  const showMessage = useSelector(state => selectors.getStatus(state, 'successMessageFlags')?.showMessage);
+  const showFinalMessage = useSelector(state => selectors.getStatus(state, 'successMessageFlags')?.showFinalMessage);
   const isChildLicenseInUpgrade = useSelector(state => selectors.isChildLicenseInUpgrade(state, id));
   const accessLevel = useSelector(
     state => selectors.resourcePermissions(state, 'integrations', id).accessLevel
@@ -48,21 +50,38 @@ export default function RequestUpgradeButton(props) {
       childIntegrationsCount
         ? enquesnackbar({message: <RawHtml html={messageStore('PARENT_WITH_CHILD_UPGRADE_MESSAGE', {plan: nextPlan})} />, variant: 'success'})
         : enquesnackbar({message: <RawHtml html={messageStore('PARENT_WITHOUT_CHILD_UPGRADE_MESSAGE', {plan: nextPlan})} />, variant: 'success'});
+      dispatch(actions.integrationApp.upgrade.deleteStatus(id));
+    }
+
+    if (status === 'error') {
+      dispatch(actions.integrationApp.upgrade.setStatus(id, {
+        status: 'hold',
+      }));
+      enquesnackbar({
+        message: <ErrorContent
+            error={messageStore('PARENT_UPGRADE_ERROR_MESSAGE',
+              {
+                plan: nextPlan,
+                errorMessage: errMessage,
+              }
+            )} />,
+        variant: 'error',
+      });
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [enquesnackbar, status]);
+  }, [status]);
 
   useEffect(() => {
     if (showMessage && currentChild === 'none') {
       enquesnackbar({message: <RawHtml html={messageStore('CHILD_UPGRADE_LEFT_MESSAGE')} />, variant: 'success'});
-      dispatch(actions.integrationApp.upgrade.setStatus(id, { showMessage: false }));
+      dispatch(actions.integrationApp.upgrade.setStatus('successMessageFlags', { showMessage: false }));
     }
   }, [currentChild, dispatch, enquesnackbar, id, showMessage]);
 
   useEffect(() => {
     if (showFinalMessage && !isChildLicenseInUpgrade) {
       enquesnackbar({message: <RawHtml html={messageStore('PARENT_AND_CHILD_FINAL_MESSAGE', {plan: nextPlan})} />, variant: 'success'});
-      dispatch(actions.integrationApp.upgrade.setStatus(id, { showFinalMessage: false }));
+      dispatch(actions.integrationApp.upgrade.setStatus('successMessageFlags', { showFinalMessage: false }));
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch, enquesnackbar, isChildLicenseInUpgrade, showFinalMessage]);

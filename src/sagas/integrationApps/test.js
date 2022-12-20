@@ -2020,12 +2020,21 @@ describe('upgrade saga', () => {
         message: 'Requesting for change edition',
       };
 
+      const error = {
+        message: {
+          steps: [{ a: 1, b: 2 }, { a: 2, b: 1 }],
+        },
+      };
+
       return expectSaga(changeEdition, { integrationId })
         .provide([
-          [call(apiCallWithRetry, args), throwError('some error')],
+          [call(apiCallWithRetry, args), throwError(error)],
         ])
         .call(apiCallWithRetry, args)
-        .put(actions.integrationApp.upgrade.setStatus(integrationId, { status: 'error' }))
+        .put(actions.integrationApp.upgrade.setStatus(integrationId, {
+          status: 'error',
+          errMessage: error.message,
+        }))
         .run();
     });
   });
@@ -2074,15 +2083,24 @@ describe('upgrade saga', () => {
         )
         .run();
     });
-    test('if api call fails, should dispatch upgrade.setStatus', () => expectSaga(getSteps, {
-      integrationId,
-    })
-      .provide([[call(apiCallWithRetry, args), throwError('some error')]])
-      .call(apiCallWithRetry, args)
-      .put(
-        actions.integrationApp.upgrade.setStatus(integrationId, { status: 'error' })
-      )
-      .run());
+    test('if api call fails, should dispatch upgrade.setStatus', () => {
+      const error = {
+        message: {
+          steps: [{ a: 1, b: 2 }, { a: 2, b: 1 }],
+        },
+      };
+
+      return expectSaga(getSteps, {
+        integrationId,
+      })
+        .provide([[call(apiCallWithRetry, args), throwError(error)]])
+        .call(apiCallWithRetry, args)
+        .put(actions.integrationApp.upgrade.setStatus(integrationId, {
+          status: 'error',
+          errMessage: error.message,
+        }))
+        .run();
+    });
   });
   describe('postChangeEditionSteps generator', () => {
     const integrationId = 'dummyId';
@@ -2131,15 +2149,24 @@ describe('upgrade saga', () => {
         .put(actions.resource.requestCollection('licenses'))
         .run();
     });
-    test('if api call fails, should dispatch upgrade.setStatus', () => expectSaga(postChangeEditionSteps, {
-      integrationId,
-    })
-      .provide([[call(apiCallWithRetry, args), throwError('some error')]])
-      .call(apiCallWithRetry, args)
-      .put(
-        actions.integrationApp.upgrade.setStatus(integrationId, { status: 'error' })
-      )
-      .run());
+    test('if api call fails, should dispatch upgrade.setStatus', () => {
+      const error = {
+        message: {
+          steps: [{ a: 1, b: 2 }, { a: 2, b: 1 }],
+        },
+      };
+
+      return expectSaga(postChangeEditionSteps, {
+        integrationId,
+      })
+        .provide([[call(apiCallWithRetry, args), throwError(error)]])
+        .call(apiCallWithRetry, args)
+        .put(actions.integrationApp.upgrade.setStatus(integrationId, {
+          status: 'error',
+          errMessage: error.message,
+        }))
+        .run();
+    });
   });
   describe('upgradeInstallScriptStep generator', () => {
     const id = '123';

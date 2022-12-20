@@ -12,22 +12,28 @@ const isAdjacent = (sourceIndex, targetIndex, position) => {
 };
 
 function PGDropbox({ id, show, position, targetIndex }) {
-  let tIndex = targetIndex;
-
-  if (position === 'top') {
-    tIndex = 0;
-  } else if (position === 'middle') {
-    tIndex = targetIndex - 1;
-  }
   const [{ canDrop, isOver, isDragging, itemType, item }, drop] = useDrop(() => ({
     accept: itemTypes.PAGE_GENERATOR,
-    drop: item => ({
-      sourceId: item.id,
-      targetIndex: tIndex,
-      itemType: itemTypes.PAGE_GENERATOR,
-      sourceIndex: item.index,
-      position,
-    }),
+    drop: item => {
+      let tIndex = targetIndex;
+
+      if (position === 'top') {
+        tIndex = 0;
+      } else if (position === 'middle') {
+        tIndex = targetIndex - 1;
+        if (item.index > targetIndex) {
+          tIndex = targetIndex;
+        }
+      }
+
+      return ({
+        sourceId: item.id,
+        targetIndex: tIndex,
+        itemType: itemTypes.PAGE_GENERATOR,
+        sourceIndex: item.index,
+        position,
+      });
+    },
     collect: monitor => ({
       isOver: monitor.isOver(),
       canDrop: monitor.canDrop(),
@@ -36,7 +42,7 @@ function PGDropbox({ id, show, position, targetIndex }) {
       itemType: monitor.getItemType(),
       item: monitor.getItem(),
     }),
-  }), [id, show, position]);
+  }), [id, show, position, targetIndex]);
 
   const isActive = canDrop && isOver;
 

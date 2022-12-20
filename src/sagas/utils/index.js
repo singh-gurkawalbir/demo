@@ -44,12 +44,16 @@ export const getEndpointResourceFields = (endpointFields, resourceFields) => {
 
   if (type === 'inclusion') {
     fields.forEach(field => {
-      returnData = set(returnData, field, 'default');
+      returnData = set(returnData, field?.replaceAll('[*]', '[0]'), 'default');
     });
   } if (type === 'exclusion') {
     returnData = resourceFields;
     fields.forEach(field => {
-      unset(returnData, field);
+      if (field.includes('[*]')) {
+        unset(returnData, field?.replaceAll('[*]', '[0]'));
+      } else {
+        unset(returnData, field);
+      }
     });
   }
 
@@ -305,10 +309,6 @@ export const getImportMetadata = (connectorMetadata, connectionVersion) => {
                 }
                 if (requiredMappings) {
                   ep.requiredMappings = requiredMappings;
-                }
-                // isIdentifier should be always set on last path parameters
-                if (parameters.length && (ep.ignoreExisting || ep.ignoreMissing || ep.askForHowToGetIdentifier)) {
-                  parameters[parameters.length - 1].isIdentifier = true;
                 }
                 if (parameters.length) {
                   ep.parameters = parameters;

@@ -1613,6 +1613,18 @@ describe('getEndpointResourceFields', () => {
 
     expect(sampleData).toEqual(expected);
   });
+  test('should return correct endpoint sample data for array of objects fields when type is inclusion', () => {
+    const endpointResourceFields = [{type: 'inclusion', fields: ['address[*].shipping_lines_override', 'address[*].shipping_lines', 'address[*].shipping_goods']}];
+
+    const sampleData = getEndpointResourceFields(endpointResourceFields, resourceFields);
+    const expected = {address: [{
+      shipping_lines_override: 'default',
+      shipping_lines: 'default',
+      shipping_goods: 'default',
+    }]};
+
+    expect(sampleData).toEqual(expected);
+  });
   test('should return correct endpoint sample data for resource fields when type is exclusion', () => {
     const endpointResourceFields = [{type: 'exclusion', fields: ['address.shipping_lines_override']}];
 
@@ -1624,6 +1636,43 @@ describe('getEndpointResourceFields', () => {
         original_shipping_lines: [
           {
             code: 'code',
+          },
+        ] },
+    };
+
+    expect(sampleData).toEqual(expected);
+  });
+
+  test('should return correct endpoint sample data for array of objects fields when type is exclusion', () => {
+    const endpointResourceFields = [{type: 'exclusion', fields: ['address.shipping_lines_override', 'address.original_shipping_lines[*].code']}];
+    const input = {
+      address: {
+        address1: 'address1',
+        address2: 'address2',
+        original_shipping_lines: [
+          {
+            code: 'code',
+            name: 'name1',
+          },
+          {
+            name: 'Raj3',
+          },
+        ],
+        shipping_lines_override: 'shipping_lines_override',
+      },
+    };
+
+    const sampleData = getEndpointResourceFields(endpointResourceFields, input);
+    const expected = {
+      address: {
+        address1: 'address1',
+        address2: 'address2',
+        original_shipping_lines: [
+          {
+            name: 'name1',
+          },
+          {
+            name: 'Raj3',
           },
         ] },
     };

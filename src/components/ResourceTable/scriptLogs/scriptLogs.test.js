@@ -67,7 +67,7 @@ describe('Script Logs test suite', () => {
     const columnNames = screen.getAllByRole('columnheader').map(ele => ele.textContent);
 
     expect(columnNames).toEqual([
-      'Date',
+      'Time',
       'Step name',
       'Function type',
       'Log level',

@@ -134,8 +134,8 @@ describe('unit tests for FlowToggle button', () => {
 
     expect(toggleButton).toBeInTheDocument();
   });
-  test('should display the confirm dialog box when flow is enabled', async () => {
-    await flowTog({resource: demoFlows, flowId: '626bdab2987bb423914b487d', integrationId: '626bda66987bb423914b486f', disabled: false, integ: demoIntegration});
+  test('should display the confirm dialog box when flow is disabled', async () => {
+    await flowTog({resource: demoFlows, integrationId: '626bda66987bb423914b486f', disabled: false, integ: demoIntegration});
     const toggleButton = screen.getByRole('checkbox');
 
     expect(toggleButton).toBeInTheDocument();
@@ -150,7 +150,7 @@ describe('unit tests for FlowToggle button', () => {
 
     await waitFor(() => expect(cancelButton).toBeInTheDocument());
   });
-  test('should make the respective the respective dispatch calls when clicked on dipatch in the confirm dialog box', async () => {
+  test('should make the respective the respective dispatch calls when clicked on disable in the confirm dialog box', async () => {
     const patchSet = [
       {
         op: 'replace',
@@ -192,7 +192,7 @@ describe('unit tests for FlowToggle button', () => {
     );
   });
   test('should make the respective dipatch calls for flows which are not of twoDotZero framework', async () => {
-    await flowTog({resource: demoFlows, flowId: '626bdab2987bb423914b487d', integrationId: '626bda66987bb423914b486f', disabled: false, integ: []});
+    await flowTog({resource: demoFlows, integrationId: '626bda66987bb423914b486f', flowId: '626bdab2987bb423914b487d', disabled: false, integ: []});
     const toggleButton = screen.getByRole('checkbox');
 
     userEvent.click(toggleButton);

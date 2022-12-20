@@ -40,6 +40,7 @@ function PPDropbox({ id, show, path, position, targetIndex }) {
     itemTypes.PAGE_PROCESSOR === itemType && // should match the drop itemType to drag itemType
     id !== item.id && // should not hotspot of own item
     show && // valid dropspot
+    !item.noDrag && // should not show hotspot when dragging is restricted
     !isAdjacent(item.id, id, elementsMap, position); // should not drop to the left or right of itself
 
   return shouldShowDropBox ? <DropIcon data-test={`drop=${item.id}-${position}`} ref={drop} isActive={isActive} /> : null;

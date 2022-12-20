@@ -58,7 +58,7 @@ export const getAllPageProcessors = flow => {
   if (!flow) return [];
   if (flow.routers?.length) {
     flow.routers.forEach(router => {
-      router.branches.forEach(branch => {
+      router.branches?.forEach(branch => {
         branch.pageProcessors?.forEach(pp => pageProcessors.push(pp));
       });
     });
@@ -1114,55 +1114,72 @@ export function getScriptsReferencedInFlow(
     });
   };
 
-  flow?.pageGenerators?.forEach(({_exportId}) => {
+  if (!flow) return emptyList;
+  flow.routers?.forEach(router => {
+    if (router.routeRecordsUsing === 'script' && router.script?._scriptId) {
+      scriptIdsUsed.push(router.script._scriptId);
+    }
+  });
+  const _exports = flow._exportId ? [flow._exportId] : map(flow.pageGenerators, '_exportId');
+
+  _exports.forEach(_exportId => {
     const _export = exports?.find(({_id}) => _id === _exportId);
 
-    if (_export?.filter?.type === 'script' && _export?.filter?.script?._scriptId) {
-      scriptIdsUsed.push(_export.filter.script._scriptId);
+    if (_export) {
+      if (_export.filter?.type === 'script' && _export?.filter?.script?._scriptId) {
+        scriptIdsUsed.push(_export.filter.script._scriptId);
+      }
+      if (_export.inputFilter?.type === 'script' && _export?.inputFilter?.script?._scriptId) {
+        scriptIdsUsed.push(_export.inputFilter.script._scriptId);
+      }
+      if (_export.responseTransform?.type === 'script' && _export?.responseTransform?.script?._scriptId) {
+        scriptIdsUsed.push(_export.responseTransform.script._scriptId);
+      }
+      if (_export.transform?.type === 'script' && _export?.transform?.script?._scriptId) {
+        scriptIdsUsed.push(_export.transform.script._scriptId);
+      }
+      checkForHookScripts(_export.hooks);
     }
-    if (_export?.inputFilter?.type === 'script' && _export?.inputFilter?.script?._scriptId) {
-      scriptIdsUsed.push(_export.inputFilter.script._scriptId);
-    }
-    if (_export?.responseTransform?.type === 'script' && _export?.responseTransform?.script?._scriptId) {
-      scriptIdsUsed.push(_export.responseTransform.script._scriptId);
-    }
-    if (_export?.transform?.type === 'script' && _export?.transform?.script?._scriptId) {
-      scriptIdsUsed.push(_export.transform.script._scriptId);
-    }
-
-    checkForHookScripts(_export?.hooks);
   });
-  flow?.pageProcessors?.forEach(({hooks, type, _importId, _exportId}) => {
+
+  const pageProcessors = flow._importId ? [{type: 'import', _importId: flow._importId}] : getAllPageProcessors(flow);
+
+  pageProcessors.forEach(({hooks, type, _importId, _exportId}) => {
     if (hooks?.postResponseMap?._scriptId && scriptIdsUsed.indexOf(hooks.postResponseMap._scriptId) === -1) {
       scriptIdsUsed.push(hooks.postResponseMap._scriptId);
     }
+
     if (type === 'import') {
       const _import = imports?.find(({_id}) => _id === _importId);
 
-      // todo: check if we need to check for filter.type ==='script'?
-      if (_import?.filter?.type === 'script' && _import?.filter?.script?._scriptId) {
-        scriptIdsUsed.push(_import.filter.script._scriptId);
+      if (_import) {
+        // todo: check if we need to check for filter.type ==='script'?
+        if (_import.filter?.type === 'script' && _import.filter?.script?._scriptId) {
+          scriptIdsUsed.push(_import.filter.script._scriptId);
+        }
+        if (_import.responseTransform?.type === 'script' && _import.responseTransform?.script?._scriptId) {
+          scriptIdsUsed.push(_import.responseTransform.script._scriptId);
+        }
+        checkForHookScripts(_import.hooks);
       }
-      if (_import?.responseTransform?.type === 'script' && _import?.responseTransform?.script?._scriptId) {
-        scriptIdsUsed.push(_import.responseTransform.script._scriptId);
-      }
-      checkForHookScripts(_import?.hooks);
     } else if (type === 'export') {
       const _export = exports.find(({_id}) => _id === _exportId);
 
-      if (_export?.filter?.type === 'script' && _export?.filter?.script?._scriptId) {
-        scriptIdsUsed.push(_export.filter.script._scriptId);
+      if (_export) {
+        if (_export.filter?.type === 'script' && _export.filter?.script?._scriptId) {
+          scriptIdsUsed.push(_export.filter.script._scriptId);
+        }
+        if (_export.inputFilter?.type === 'script' && _export.inputFilter?.script?._scriptId) {
+          scriptIdsUsed.push(_export.inputFilter.script._scriptId);
+        }
+        if (_export.responseTransform?.type === 'script' && _export.responseTransform?.script?._scriptId) {
+          scriptIdsUsed.push(_export.responseTransform.script._scriptId);
+        }
+        if (_export.transform?.type === 'script' && _export.transform?.script?._scriptId) {
+          scriptIdsUsed.push(_export.transform.script._scriptId);
+        }
+        checkForHookScripts(_export.hooks);
       }
-      if (_export?.inputFilter?.type === 'script' && _export?.inputFilter?.script?._scriptId) {
-        scriptIdsUsed.push(_export.inputFilter.script._scriptId);
-      }
-      if (_export?.responseTransform?.type === 'script' && _export?.responseTransform?.script?._scriptId) {
-        scriptIdsUsed.push(_export.responseTransform.script._scriptId);
-      }
-      if (_export?.transform?.type === 'script' && _export?.transform?.script?._scriptId) {
-        scriptIdsUsed.push(_export.transform.script._scriptId);
-      }
-      checkForHookScripts(_export?.hooks);
     }
   });
 

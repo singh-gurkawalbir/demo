@@ -17,7 +17,6 @@ import DynaRelativeUri_afe from './DynaRelativeUri_afe';
 import DynaKeyValue from './DynaKeyValue';
 import DynaTextList from './DynaTextList';
 import DynaToggleSelectToText from './select/DynaToggleSelectToText';
-import DynaLookupEditor from './DynaLookupEditor';
 import DynaKeyWithAction from './DynaKeyWithAction';
 import DynaHttpRequestBody_afe from './DynaHttpRequestBody_afe';
 import DynaEditor from './DynaEditor';
@@ -122,7 +121,6 @@ import DynaPreviewComponentsTable from './DynaPreviewComponentsTable';
 import DynaChildLicenses from './DynaChildLicenses';
 import DynaDateSelector from './DynaDateSelector';
 import DynaFileEncryptDecrypt from './DynaFileEncryptDecrypt';
-import DynaHashAlogorithm from './DynaHashAlogorithm';
 import DynaQueryRadioGroup from './radiogroup/DynaQueryRadioGroup';
 import DynaLicenseEdition from './DynaLicenseEdition';
 import DynaAllIntegrations from './integrations/DynaAllIntegrations';
@@ -210,7 +208,6 @@ export default {
   relativeuri: DynaRelativeUri_afe,
   uri: DynaURI_afe,
   httprequestbody: DynaHttpRequestBody_afe,
-  importLookup: DynaLookupEditor,
   keyvalue: DynaKeyValue,
   staticMap: DynaStaticMap,
   csvparse: DynaCsvParse_afe,
@@ -312,7 +309,6 @@ export default {
   flowgroupstiedtointegrations: DynaFlowGroupsTiedToIntegrations,
   dateselector: DynaDateSelector,
   fileencryptdecrypt: DynaFileEncryptDecrypt,
-  hashalgorithm: DynaHashAlogorithm,
   licenseedition: DynaLicenseEdition,
   triallicense: DynaTrialLicense,
   licenseexpires: DynaLicenseExpires,
