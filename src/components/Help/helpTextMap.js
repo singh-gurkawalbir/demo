@@ -470,6 +470,8 @@ export default {
 'Please enter password of your Acumatica account.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your password safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'acumatica.connection.http.unencrypted.company':
 'Please enter company name of your Acumatica account.',
+  'zoom.connection.http.auth.type': 'Select the required authentication type, either OAuth 2.0 or JWT.',
+  'zoom.connection.http._iClientId': 'Save your client ID and client secret in iClient for an added layer of security. For more information, see <a href=https://marketplace.zoom.us/docs/guides/build/oauth-app/>Authentication document</a>.',
   'zoom.connection.http.encrypted.apiKey':
 'The API Key of your zoom account.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your API key safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'zoom.connection.http.encrypted.apiSecret':
@@ -2564,5 +2566,5 @@ use the custom option.`,
   'connectorLicense.opts': 'You can add license details in the JSON format. For example, <br /> { <br /> "company" : "xxx" <br /> }',
   'spreecommerce.connection.http.baseURI': 'Enter the local host URL. For more information on how to retrieve the Base URI, see <a href="https://dev-docs.spreecommerce.org/getting-started/installation">Installation</a>.',
   'spreecommerce.connection.http.auth.token.token': 'Enter the API token provided by Spree Commerce. For more information on how to retrieve the API token, see <a href="https://dev-docs.spreecommerce.org/getting-started/installation">Installation</a>.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your Token safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
-  'myaccount.darkMode': 'Turning on this setting will display dark surfaces across the majority of a UI. It\'s designed to be a supplemental mode to a default (or light) theme. Dark themes reduce the luminance emitted by device screens, reduce eye strain, and facilitate screen use in dark environments.',
+  'myaccount.darkTheme': 'Turning on this setting will display dark surfaces across the majority of a UI. It\'s designed to be a supplemental mode to a default (or light) theme. Dark themes reduce the luminance emitted by device screens, reduce eye strain, and facilitate screen use in dark environments.',
 };

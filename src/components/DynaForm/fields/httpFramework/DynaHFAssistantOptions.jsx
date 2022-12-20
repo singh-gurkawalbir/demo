@@ -80,6 +80,7 @@ function DynaAssistantOptions(props) {
     id,
     onFieldChange: onFieldChangeFn,
     flowId,
+    disabled,
   } = props;
 
   const fields = Object.values(fieldsById);
@@ -117,7 +118,7 @@ function DynaAssistantOptions(props) {
       selectors.makeResourceDataSelector,
       resourceType,
       resourceId
-    ) || {};
+    ) || /* istanbul ignore next */ {};
   const staggedResource = merged || emptyObject;
 
   const connection = useSelector(
@@ -300,6 +301,7 @@ function DynaAssistantOptions(props) {
       label={label}
       options={[{ items: selectOptionsItems }]}
       onFieldChange={onFieldChange}
+      disabled={disabled || (['createEndpoint', 'updateEndpoint'].includes(assistantFieldType) && selectOptionsItems.length === 1)}
     />
   );
 }
@@ -307,6 +309,7 @@ function DynaAssistantOptions(props) {
 export default function WrappedContextConsumer(props) {
   const form = useFormContext(props.formKey);
 
+  /* istanbul ignore if */
   if (!form) return null;
 
   return <DynaAssistantOptions {...form} {...props} />;

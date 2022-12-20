@@ -146,6 +146,7 @@ href="/marketplace"><u>Check out our Marketplace</u></a> to jumpstart your  inte
   CHILD_UPGRADE_LEFT_MESSAGE: 'There are accounts tied to this integration app that requires additional information.<br>Go ahead and begin to upgrade the accounts that are still active.',
   PARENT_AND_CHILD_FINAL_MESSAGE: 'You’ve successfuly upgraded the accounts tied to this integration app to a {{plan}} <br>plan. Additional plans are available for request from the admin tab if you need it later on.',
   LEFTOUT_CHILD_UPGRADE_MESSAGE: 'The {{childName}} acount has successfully upgraded to a {{nextPlan}} plan',
+  NO_DRAG_FLOW_BRANCHING_INFO: 'You cannot reorder steps in a branched flow.<br/>Remove all branching to be able to drag and drop flow steps.',
   PARENT_UPGRADE_ERROR_MESSAGE: 'The upgrade to a {{plan}} plan has failed. {{errorMessage}}. Select the active upgrade button when you are ready to continue with your setup.',
   CHILD_UPGRADE_ERROR_MESSAGE: 'The upgrade for {{childName}} has failed. {{errorMessage}}. Select the active upgrade button when you are ready to continue with your setup.',
 };

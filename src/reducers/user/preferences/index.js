@@ -15,6 +15,7 @@ const GLOBAL_PREFERENCES = [
   'timeFormat',
   'scheduleShiftForFlowsCreatedAfter',
   'lastLoginAt',
+  'darkTheme',
 ];
 
 const getAccountPreferences = draft => {

@@ -17,7 +17,6 @@ import DynaRelativeUri_afe from './DynaRelativeUri_afe';
 import DynaKeyValue from './DynaKeyValue';
 import DynaTextList from './DynaTextList';
 import DynaToggleSelectToText from './select/DynaToggleSelectToText';
-import DynaLookupEditor from './DynaLookupEditor';
 import DynaKeyWithAction from './DynaKeyWithAction';
 import DynaHttpRequestBody_afe from './DynaHttpRequestBody_afe';
 import DynaEditor from './DynaEditor';
@@ -209,7 +208,6 @@ export default {
   relativeuri: DynaRelativeUri_afe,
   uri: DynaURI_afe,
   httprequestbody: DynaHttpRequestBody_afe,
-  importLookup: DynaLookupEditor,
   keyvalue: DynaKeyValue,
   staticMap: DynaStaticMap,
   csvparse: DynaCsvParse_afe,

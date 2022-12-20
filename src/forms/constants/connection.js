@@ -227,6 +227,7 @@ export default {
     'zohoexpense',
     'microsoftpowerautomate',
     'microsoftdynamics365finance',
+    'zoom',
   ],
   OAUTH_CONNECTIONS_WITH_EDITABLE_SCOPES: [
     'bigcommerce',

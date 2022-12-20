@@ -73,6 +73,7 @@ const ResourceFormFactory = props => {
     resourceType,
     resourceId
   ).merged;
+
   let assistantData;
   const connection = useSelector(state =>
     selectors.resource(state, 'connections', resource && resource._connectionId)
@@ -154,6 +155,8 @@ const ResourceFormFactory = props => {
   // operations like saveAndClose should also skip initialization...its only when ur performing just save do you perform initialization
   // during that case does skipClose become false
   const skipInitFormOnSubmit = !skipClose;
+  // Incase of shared stack, user has no edit access
+  const isSharedStack = resourceType === 'stacks' && resource.shared;
 
   return (
     <FormStateManager
@@ -164,6 +167,7 @@ const ResourceFormFactory = props => {
       optionsHandler={optionsHandler}
       validationHandler={validationHandler}
       skipInitFormOnSubmit={skipInitFormOnSubmit}
+      disabled={isSharedStack}
     />
   );
 };
