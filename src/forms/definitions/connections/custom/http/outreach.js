@@ -4,6 +4,7 @@ export default {
     '/type': 'http',
     '/assistant': 'outreach',
     '/http/auth/type': 'oauth',
+    '/http/auth/oauth/useIClientFields': false,
     '/http/mediaType': 'json',
     '/http/baseURI': 'https://api.outreach.io',
     '/http/auth/oauth/authURI': 'https://api.outreach.io/oauth/authorize',

@@ -4,6 +4,7 @@ export default {
     '/type': 'http',
     '/assistant': 'microsoftdynamics365',
     '/http/auth/type': 'oauth',
+    '/http/auth/oauth/useIClientFields': false,
     '/http/mediaType': 'json',
     '/http/auth/token/refreshMethod': 'POST',
     '/http/auth/token/refreshMediaType': 'urlencoded',

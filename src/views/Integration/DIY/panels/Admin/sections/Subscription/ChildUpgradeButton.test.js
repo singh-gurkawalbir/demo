@@ -13,6 +13,19 @@ import { getCreatedStore } from '../../../../../../../store';
 
 let initialStore = {};
 
+const mockHistoryPush = jest.fn();
+
+jest.mock('react-router-dom', () => ({
+  __esModule: true,
+  ...jest.requireActual('react-router-dom'),
+  useHistory: () => ({
+    push: mockHistoryPush,
+  }),
+  useRouteMatch: () => ({
+    url: 'baseUrl',
+  }),
+}));
+
 async function initChildUpgradeButton(props) {
   initialStore.getState().session.integrationApps.upgrade = {
     213: {
@@ -62,6 +75,7 @@ describe('ChildUpgradeButton Unit tests', () => {
   afterEach(() => {
     useDispatchSpy.mockClear();
     mockDispatchFn.mockClear();
+    mockHistoryPush.mockClear();
   });
 
   test('Should render TitleHelp button', async () => {
@@ -126,6 +140,7 @@ describe('ChildUpgradeButton Unit tests', () => {
       showWizard: false,
       inQueue: false,
     }));
+    expect(mockDispatchFn).toHaveBeenCalledWith(actions.integrationApp.upgrade.setStatus('successMessageFlags', { showChildLeftMessageFlag: true }));
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.integrationApp.settings.integrationAppV2.upgrade('123'));
     props = {
       resource: {
@@ -138,5 +153,7 @@ describe('ChildUpgradeButton Unit tests', () => {
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.integrationApp.upgrade.setStatus('645', {
       showWizard: false,
     }));
+    expect(mockHistoryPush).toBeCalledWith('baseUrl/changeEditions/child/645');
+    expect(mockDispatchFn).toHaveBeenCalledWith(actions.integrationApp.upgrade.setStatus('successMessageFlags', { showChildLeftMessageFlag: true }));
   });
 });

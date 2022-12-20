@@ -4,6 +4,7 @@ export default {
     '/type': 'http',
     '/assistant': 'harvest',
     '/http/auth/type': 'oauth',
+    '/http/auth/oauth/useIClientFields': false,
     '/http/mediaType': 'json',
     '/http/baseURI': 'https://api.harvestapp.com/v2/',
     '/http/auth/oauth/authURI': 'https://id.getharvest.com/oauth2/authorize',

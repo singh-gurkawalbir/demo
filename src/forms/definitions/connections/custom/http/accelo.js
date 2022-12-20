@@ -4,6 +4,7 @@ export default {
     '/type': 'http',
     '/assistant': 'accelo',
     '/http/auth/type': 'oauth',
+    '/http/auth/oauth/useIClientFields': false,
     '/http/mediaType': 'json',
     '/http/baseURI': `https://${
       formValues['/http/acceloSubdomain']

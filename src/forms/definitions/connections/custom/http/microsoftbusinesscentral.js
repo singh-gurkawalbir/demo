@@ -27,6 +27,7 @@ export default {
       '/type': 'http',
       '/assistant': 'microsoftbusinesscentral',
       '/http/auth/type': 'oauth',
+      '/http/auth/oauth/useIClientFields': false,
       '/http/mediaType': 'json',
       '/http/auth/oauth/authURI':
       'https://login.microsoftonline.com/common/oauth2/authorize',

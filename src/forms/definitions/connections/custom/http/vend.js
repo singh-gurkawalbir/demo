@@ -4,6 +4,7 @@ export default {
     '/type': 'http',
     '/assistant': 'vend',
     '/http/auth/type': 'oauth',
+    '/http/auth/oauth/useIClientFields': false,
     '/http/mediaType': 'json',
     '/http/baseURI': `https://${formValues['/http/subdomain']}.vendhq.com`,
     '/http/auth/oauth/authURI': 'https://secure.vendhq.com/connect',
