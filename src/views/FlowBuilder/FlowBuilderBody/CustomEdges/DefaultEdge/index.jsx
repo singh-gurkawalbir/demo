@@ -74,6 +74,12 @@ function getPositionAndOffset(
   } else if (sourceType === GRAPH_ELEMENTS_TYPE.EMPTY) {
     position = 'left';
     offset = -20;
+  } else if (
+    targetType === GRAPH_ELEMENTS_TYPE.TERMINAL &&
+    sourceType === GRAPH_ELEMENTS_TYPE.ROUTER
+  ) {
+    position = 'right';
+    offset = 105;
   }
 
   if (processorCount > 0) {
