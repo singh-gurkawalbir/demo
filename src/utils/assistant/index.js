@@ -838,6 +838,55 @@ export function getImportOperationDetails({
     headersMetadata,
   });
 }
+export function getMergedImportOperationDetails({
+  version,
+  resource,
+  createEndpoint,
+  updateEndpoint,
+  assistantData = {},
+}) {
+  const createOperation = getImportOperationDetails({
+    version,
+    resource,
+    operation: createEndpoint,
+    assistantData,
+  });
+  const updateOperation = getImportOperationDetails({
+    version,
+    resource,
+    operation: updateEndpoint,
+    assistantData,
+  });
+
+  const lengthisIdentifier = createOperation.parameters.length;
+
+  const createorupdateoperation = cloneDeep(createOperation);
+
+  createorupdateoperation.ignoreExisting = false;
+  createorupdateoperation.ignoreMissing = false;
+  delete createorupdateoperation.supportIgnoreExisting;
+  delete createorupdateoperation.requiredMappings;
+  createorupdateoperation.strictHandlebarEvaluation = true;
+  createorupdateoperation.id = [updateOperation.id, createOperation.id];
+  createorupdateoperation.method = [updateOperation.method, createOperation.method];
+  createorupdateoperation.url = [updateOperation.url, createOperation.url];
+  if (createorupdateoperation.body) {
+    createorupdateoperation.body.push(...updateOperation.body);
+  } else if (updateOperation.body) {
+    createorupdateoperation.body = [...updateOperation.body, ...updateOperation.body];
+  }
+  for (let i = 0; i < lengthisIdentifier; i += 1) {
+    if (createOperation.parameters[i].isIdentifier === true) {
+      createOperation.parameters.splice(i, 1);
+    }
+  }
+  const updateArray = updateOperation.parameters.map(p => p.id);
+  const createParameters = createOperation.parameters.filter(param => !param.isIdentifier && !updateArray.includes(param.id));
+
+  createorupdateoperation.parameters = [...updateOperation.parameters, ...createParameters];
+
+  return createorupdateoperation;
+}
 
 export function convertFromExport({ exportDoc: exportDocOrig, assistantData: assistantDataOrig, adaptorType }) {
   const exportDoc = cloneDeep(exportDocOrig);
@@ -1739,14 +1788,23 @@ export function convertFromImport({ importDoc: importDocOrig, assistantData: ass
   const importDoc = cloneDeep(importDocOrig);
 
   const assistantData = cloneDeep(assistantDataOrig);
-  let { version, resource, operation, lookupType } =
+  let { version, resource, operation, lookupType, createEndpoint, updateEndpoint } =
     importDoc.assistantMetadata || {};
 
   if (importDoc?.http) {
     operation = operation || importDoc.http._httpConnectorEndpointId;
     resource = resource || importDoc.http._httpConnectorResourceId;
     version = version || importDoc.http._httpConnectorVersionId;
+    if ((isArray(operation) && operation.length > 1) || (isArray(importDoc.http._httpConnectorEndpointIds) && importDoc.http._httpConnectorEndpointIds.length > 1)) {
+      [updateEndpoint, createEndpoint] = isArray(operation) ? operation : importDoc.http._httpConnectorEndpointIds;
+    }
+    if ((isArray(operation) && operation.length > 1)) { operation = 'create-update-id'; }
   }
+  // } else if (importDoc?.http) {
+  //   operation = operation || importDoc.http._httpConnectorEndpointId;
+  //   resource = resource || importDoc.http._httpConnectorResourceId;
+  //   version = version || importDoc.http._httpConnectorVersionId;
+  // }
   const { dontConvert, lookups } = importDoc.assistantMetadata || {};
   let sampleData;
   let { ignoreExisting, ignoreMissing } = importDoc;
@@ -1825,18 +1883,33 @@ export function convertFromImport({ importDoc: importDocOrig, assistantData: ass
   assistantMetadata.resource = resource;
   assistantMetadata.sampleData = sampleData;
   assistantMetadata.operation = operation;
+  assistantMetadata.createEndpoint = createEndpoint;
+  assistantMetadata.updateEndpoint = updateEndpoint;
 
   if (!operation) {
     return assistantMetadata;
   }
+  if (operation === 'create-update-id' && (!createEndpoint || !updateEndpoint)) {
+    return assistantMetadata;
+  }
+  let operationDetails;
 
-  const operationDetails = getImportOperationDetails({
-    version,
-    resource,
-    operation,
-    assistantData,
-  });
-
+  if (operation === 'create-update-id') {
+    operationDetails = getMergedImportOperationDetails({
+      version,
+      resource,
+      createEndpoint,
+      updateEndpoint,
+      assistantData,
+    });
+  } else {
+    operationDetails = getImportOperationDetails({
+      version,
+      resource,
+      operation,
+      assistantData,
+    });
+  }
   if (!operationDetails || !operationDetails.url) {
     return assistantMetadata;
   }
@@ -1888,7 +1961,33 @@ export function convertFromImport({ importDoc: importDocOrig, assistantData: ass
         /**
          * IO-16945, check if the urlMatch has path (:_XYZ) parameters
          */
-        if (url1Info?.urlMatch?.indexOf(':_') > 0 && url1Info?.urlParts && url1Info.urlParts[index]) {
+        if (operation === 'create-update-id') {
+          if (url1Info?.urlMatch?.indexOf(`:_${p.id}`) > 0) {
+            const idIndex = url1Info?.urlMatch?.indexOf(`:_${p.id}`);
+            const beforeIndex = [...url1Info?.urlMatch.substring(0, idIndex).matchAll(new RegExp(':_', 'gi'))].length;
+
+            if (p.isIdentifier) {
+              pathParams[p.id] = url1Info.urlParts[beforeIndex]
+                .replace(/{/g, '')
+                .replace(/}/g, '')
+                .replace('data.0.', '');
+            } else {
+              pathParams[p.id] = url1Info.urlParts[beforeIndex];
+            }
+          } else if (url2Info?.urlMatch?.indexOf(`:_${p.id}`) > 0) {
+            const idIndex = url1Info?.urlMatch?.indexOf(`:_${p.id}`);
+            const beforeIndex = [...url1Info?.urlMatch.substring(0, idIndex).matchAll(new RegExp(':_', 'gi'))].length;
+
+            if (p.isIdentifier) {
+              pathParams[p.id] = url2Info.urlParts[beforeIndex]
+                .replace(/{/g, '')
+                .replace(/}/g, '')
+                .replace('data.0.', '');
+            } else {
+              pathParams[p.id] = url2Info.urlParts[beforeIndex];
+            }
+          }
+        } else if (url1Info?.urlMatch?.indexOf(':_') > 0 && url1Info?.urlParts && url1Info.urlParts[index]) {
           if (p.isIdentifier) {
             pathParams[p.id] = url1Info.urlParts[index]
               .replace(/{/g, '')
@@ -2096,19 +2195,32 @@ export function convertToImport({ assistantConfig, assistantData, headers }) {
     ignoreMissing = false,
     lookups = [],
     existingExtract,
+    createEndpoint,
+    updateEndpoint,
   } = assistantConfig;
   let { lookupQueryParams = {} } = assistantConfig;
 
   if (!resource || !operation || !assistantData) {
     return undefined;
   }
+  let operationDetails;
 
-  const operationDetails = getImportOperationDetails({
-    version,
-    resource,
-    operation,
-    assistantData,
-  });
+  if (operation === 'create-update-id') {
+    operationDetails = getMergedImportOperationDetails({
+      version,
+      resource,
+      createEndpoint,
+      updateEndpoint,
+      assistantData,
+    });
+  } else {
+    operationDetails = getImportOperationDetails({
+      version,
+      resource,
+      operation,
+      assistantData,
+    });
+  }
   const importDefaults = {
     rest: {
       ...cloneDeep(DEFAULT_PROPS.IMPORT.REST),

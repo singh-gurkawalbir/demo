@@ -267,30 +267,33 @@ export function* mappingInit({
   let importSampleData;
 
   // only http and file imports are supported
-  if (!importResource._connectorId && (
-    isFileAdaptor(importResource) ||
+  if (isFileAdaptor(importResource) ||
     isAS2Resource(importResource) ||
     importResource.adaptorType === 'HTTPImport' ||
-    importResource.adaptorType === 'RESTImport')
+    importResource.adaptorType === 'RESTImport'
   ) {
-    mappingsTreeData = buildTreeFromV2Mappings({
-      importResource,
-      isGroupedSampleData,
-      options,
-      disabled: isMonitorLevelAccess,
-      requiredMappings: options.assistant?.requiredMappings || [],
-    });
+    if (importResource._connectorId && isEmpty(importResource.mappings)) {
+      // do nothing as for IAs we need to do mapper2 logic only if mappings2 are present
+    } else {
+      mappingsTreeData = buildTreeFromV2Mappings({
+        importResource,
+        isGroupedSampleData,
+        options,
+        disabled: isMonitorLevelAccess,
+        requiredMappings: options.assistant?.requiredMappings || [],
+      });
 
-    // generate tree structure based on input sample data
-    // for source field
-    extractsTree = buildExtractsTree(flowSampleData);
+      // generate tree structure based on input sample data
+      // for source field
+      extractsTree = buildExtractsTree(flowSampleData);
 
-    // save import sample data in state for auto creation of mappings
-    importSampleData = yield call(getImportSampleData, {importId});
+      // save import sample data in state for auto creation of mappings
+      importSampleData = yield call(getImportSampleData, {importId});
 
-    // this needs to be updated when v2 mappings are supported for other adaptors like NS
-    if (importResource.mappings?.length || isEmpty(importResource.mapping)) {
-      version = 2;
+      // this needs to be updated when v2 mappings are supported for other adaptors like NS
+      if (importResource.mappings?.length || isEmpty(importResource.mapping)) {
+        version = 2;
+      }
     }
   }
 

@@ -259,7 +259,7 @@ export default {
 'Select either Production or Demo and then click Save & Authorize that opens up the DocuSign window where you can enter your DocuSign account email ID and password to establish the connection.',
   'ebay.connection.http.unencrypted.apiType': 'Select your API type here. <br>1. Select <b>Finance API</b> if the requirement is for Finance API. <br>2. Select <b>Other API</b> for all other APIs like, Account API, Compliance API, Analytics API, Inventory API, Fulfillment API, Metadata API.',
   'ebay.connection.accountType':
-'Please select your environment here. Select Sandbox Accounting if the account is created on https://sandbox-quickbooks.api.intuit.com. Select Sandbox Payment if the account is created on https://sandbox.api.intuit.com. Select Production Accounting if the account is created on https://quickbooks.api.intuit.com. Select Production Payment if the account is created on https://api.intuit.com.',
+'Select the eBay account environment type you are connecting to, either <b>Production</b> or <b>Sandbox</b>.',
   'jet.connection.http.refreshTokenBody.user':
 'API User Key available from Jet under API Section-> Get API Keys',
   'jet.connection.http.encrypted.password':
@@ -470,6 +470,8 @@ export default {
 'Please enter password of your Acumatica account.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your password safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'acumatica.connection.http.unencrypted.company':
 'Please enter company name of your Acumatica account.',
+  'zoom.connection.http.auth.type': 'Select the required authentication type, either OAuth 2.0 or JWT.',
+  'zoom.connection.http._iClientId': 'Save your client ID and client secret in iClient for an added layer of security. For more information, see <a href=https://marketplace.zoom.us/docs/guides/build/oauth-app/>Authentication document</a>.',
   'zoom.connection.http.encrypted.apiKey':
 'The API Key of your zoom account.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your API key safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'zoom.connection.http.encrypted.apiSecret':
@@ -547,7 +549,8 @@ export default {
   'bundleb2b.connection.http.unencrypted.email': 'Enter the email of your BundleB2B app.',
   'bundleb2b.connection.http.encrypted.password': 'Enter the password of your BundleB2B app. <br> Multiple layers of protection, including AES 256 encryption, are in place to keep your password safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'bundleb2b.connection.http.auth.token.token': 'Click the <b>Generate token</b> button to have integrator.io fill in an encrypted access token or enter the token generated for you by BundleB2B. <br>Multiple layers of protection are in place, including AES 256 encryption, to keep your connection\'s token safe. When editing this form later, you must generate this value again; it is stored only when the connection is saved and never displayed as text.',
-  'constantcontact.connection.http._iClientId': 'Save your client ID and client secret in this field for an extra layer of security.<br><br><b>Steps to get the client ID and secret:<br></b>1. Open the V3 API Developer Portal and click the <b>My Applications</b> tab.<br>2. Enter your <b>username</b> and <b>password</b> and click <b>Login</b>.<br>3. Select the app you’re using to copy the client ID and secret. If none exist, click <b>New Application</b> to create a new client ID and secret.',
+  'constantcontact.connection.http.versiontype': 'Select the Contact Contact API version you are using, either <b>V2</b> or <b>V3</b>.',
+  'constantcontact.connection.http._iClientId': 'Enter your client ID and client secret provided by Constant Contact.<br>To retrieve the client ID and client secret:<br>1. Navigate to the <a href= https://v3.developer.constantcontact.com/>Constant Contact</a> API developer portal.<br>2. Click <b>My applications</b>. The Constant Contact <b>Sign in</b> page appears.<br>3. Enter the username and password of your Constant Contact account.<br>4. Click Log in. The <b>My applications page</b> appears.<br><b>NOTE:</b> If you have already created an application, you can copy the Client secret of the required application. Otherwise, follow the steps below to create a Client secret.<br>5. Click <b>New application</b>.<br>6. Enter the <b>Name</b> and configure the application settings according to your business requirements.<br>7. Click <b>Save</b>. The <b>My applications</b> page appears.<br>8. Click the application, copy the <b>API key</b> (Client ID) and Click <b>Generate secret</b> and copy the Client secret.',
   'connection.http.marketoSubdomain':
 "Please enter your Marketo subdomain. For example, in https://591-vse-736.mktohttp.com/http/v1/activities/types.json '591-vse-736.mktohttp.com' is the subdomain.",
   'marketo.connection.http.unencrypted.clientId':
@@ -797,8 +800,6 @@ if you're using a production account, you'll find your API keys under the 'API M
 'Indicates for how long integrator.io should be recording both request and response traffic from this connection. You can later review this raw debug information directly from the download icon on the /connections page.',
   'connection._borrowConcurrencyFromConnectionId':
 'By default, all data flowing through a connection record will get submitted to the respective endpoint application at the concurrency level configured for that connection record. There are use cases however where you need multiple connections to share the same concurrency level, and this field allows you to specify that a connection should borrow concurrency from another connection such that the data flowing through both connections will get submitted to the endpoint application together via a shared concurrency model. For example, you might have three separate NetSuite connection records in your integrator.io account (for the purpose of isolating different permissions for different integrations), but you only want to provision one concurrent request for all three NetSuite connection records to share. To implement this use case you would setup one of the three connections with a concurrency level 1, and then you would setup the other two NetSuite connections to borrow concurrency from the other.',
-  'connection.autoRecoverGovernanceErrors':
-'Check to enable auto recovery for governance errors. When a connection receives rate-limiting errors from your applications,  <a href="https://www.celigo.com/ipaas-integration-platform/">integrator.io</a> platform classifies these errors as "Governance". During the auto recovery attempts, the record is submitted again, but individually at a slower rate.',
   'connection.netsuite.account':
 'Your NetSuite Account Id.  One way to obtain this value within NetSuite is via Setup -> Integration -> Web Services Preferences.  If this does not work then please contact NetSuite support.',
   'connection.netsuite.tokenAccount': 'Enter your NetSuite account ID. <br /> To retrieve the account ID: <ul><li>Sign into your <a href="https://www.netsuite.com/portal/in/home.shtml" target="_blank"></a>NetSuite account.</li><li>Navigate to <b>Setup > Integration > SOAP Web services preferences</b>.</li><li>From <b>Primary information</b>, copy the <b>Account ID</b>.</li></ul>',
@@ -913,6 +914,12 @@ if you're using a production account, you'll find your API keys under the 'API M
   'connection.http.rateLimit.limit': 'If your app’s API response does not let us know how long we need to wait before we make another call to it, then you will need to tell us how much time to take between API calls. <b>Important:</b> This value must be entered in milliseconds.',
   'connection.http.encrypted': 'Store all sensitive fields required by your imports and exports to access the app you are connecting to. For example, {\'password\':\'celigorocks\'} or {\'token\':\'x7if4nkovhgr63ghp\'}. These values are stored with AES-256 encryption and other layers of protection to keep your data safe.',
   'connection.http.unencrypted': 'Store all non-sensitive fields required by your imports and exports to access the app you are connecting to. For example, {\'email\':\'my_email@company.com\', \'accountId\': \'8675301\', \'role\':\'admin\'}.',
+  'http.auth.oauth.oauth1.signatureMethod': 'Signature method to sign the request',
+  'http.auth.oauth.oauth1.consumerKey': 'A value used by the Consumer to identify itself to the Service Provider.',
+  'http.auth.oauth.oauth1.consumerSecret': 'A secret used by the Consumer to establish ownership of the Consumer Key.',
+  'http.auth.oauth.oauth1.accessToken': 'A value used by the Consumer to gain access to the Protected Resources on behalf of the User, instead of using the User\'s Service Provider credentials.',
+  'http.auth.oauth.oauth1.tokenSecret': 'A secret used by the Consumer to establish ownership of a given Token.',
+  'http.auth.oauth.oauth1.consumerPrivateKey': 'Consumer’s private RSA key to sign the request.',
   'connection.rdbms.type': 'Select the database type.',
   'connection.rdbms.host':
 'Hostname/IP of the server. OR Hostname/IP of the server to connect to.',
@@ -2174,7 +2181,7 @@ if you're using a production account, you'll find your API keys under the 'API M
   'notifications.jobErrors':
 "Please choose 'All flows' to receive an email notification whenever any flow in this integration has a job error, or select individual flows to focus your email traffic to just higher priority data flows.",
   'notifications.connections':
-`Select a connection if you want the user to be notified whenever it goes offline, comes back online, or is in the process of <a href="${HELP_CENTER_BASE_URL}/hc/en-us/articles/360043926372" target="_blank">auto-recovering governance errors</a>.<br><br> Since a connection can be shared by multiple integrations, these notifications also apply to any connection issues account-wide.`,
+  'Please select which connections you would like to be notified about when they go offline (and subsequently back online). Please note that connections can be shared across integrations, and if you choose to be notified here, this notification setting will be reflected everywhere else this connection is being used.',
   'me.dateFormat':
 'Use this field to configure how you want dates to be formatted in your integrator.io account. For example, there is a dashboard in your integrator.io account to view integration activity, and this field controls how the dates on that page appear.',
   'me.timeFormat':
@@ -2559,5 +2566,5 @@ use the custom option.`,
   'connectorLicense.opts': 'You can add license details in the JSON format. For example, <br /> { <br /> "company" : "xxx" <br /> }',
   'spreecommerce.connection.http.baseURI': 'Enter the local host URL. For more information on how to retrieve the Base URI, see <a href="https://dev-docs.spreecommerce.org/getting-started/installation">Installation</a>.',
   'spreecommerce.connection.http.auth.token.token': 'Enter the API token provided by Spree Commerce. For more information on how to retrieve the API token, see <a href="https://dev-docs.spreecommerce.org/getting-started/installation">Installation</a>.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your Token safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
-  'myaccount.darkMode': 'Turning on this setting will display dark surfaces across the majority of a UI. It\'s designed to be a supplemental mode to a default (or light) theme. Dark themes reduce the luminance emitted by device screens, reduce eye strain, and facilitate screen use in dark environments.',
+  'myaccount.darkTheme': 'Turning on this setting will display dark surfaces across the majority of a UI. It\'s designed to be a supplemental mode to a default (or light) theme. Dark themes reduce the luminance emitted by device screens, reduce eye strain, and facilitate screen use in dark environments.',
 };

@@ -702,6 +702,9 @@ export default (state = {}, action) => {
           });
           // adding the newKey to state so that new row can be focused
           draft.mapping.newRowKey = newRowKey;
+
+          // adding new row should remove any search in progress
+          delete draft.mapping.searchKey;
         }
 
         break;

@@ -19,7 +19,7 @@ const useStyles = makeStyles(theme => ({
     borderRadius: theme.spacing(0.5),
     '& .MuiTableBody-root': {
       '& .MuiTableRow-root': {
-        background: theme.palette.background.paper2,
+        background: theme.palette.background.default,
       },
     },
   },
@@ -63,6 +63,7 @@ export default function ChildIntegrationsTable({ integrationId, allChildIntegrat
   const classes = useStyles();
   const dispatch = useDispatch();
   const licenses = useSelector(state => selectors.licenses(state));
+  const integration = useSelector(state => selectors.integrationAppSettings(state, integrationId));
   const parentLicenseId = licenses.find(license => license._integrationId === integrationId)?._id;
   const childLicenses = licenses.filter(license => (!!license?._integrationId) && (license?._parentId === parentLicenseId));
   const integrationAppList = useSelector(state => selectors.publishedConnectors(state));
@@ -95,13 +96,17 @@ export default function ChildIntegrationsTable({ integrationId, allChildIntegrat
       const childList = data.map(child => child.id);
 
       dispatch(actions.integrationApp.upgrade.addChildForUpgrade(childList));
-      dispatch(actions.integrationApp.upgrade.deleteStatus(integrationId));
+      dispatch(actions.integrationApp.upgrade.setStatus('successMessageFlags', {
+        showMessage: true,
+        showFinalMessage: true,
+      }));
     }
-  }, [data, dispatch, integrationId, parentStatus]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [parentStatus]);
 
   return (
     <>
-      <Typography variant="h4" className={classes.sectionTitle}>Accounts</Typography>
+      <Typography variant="h4" className={classes.sectionTitle}>{integration?.childDisplayName || ''}</Typography>
       <CeligoTable
         data={data}
         {...metadata}

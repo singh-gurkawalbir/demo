@@ -370,9 +370,9 @@ export default function BranchFilter({ editorId, position }) {
 
     if (r.lhs.type === 'expression') {
       try {
-        JSON.parse(r.lhs.expression);
+        const parsedExp = JSON.parse(r.lhs.expression);
 
-        if (JSON.parse(r.lhs.expression).length < 2) {
+        if (!parsedExp.length || parsedExp.length < 2) {
           toReturn.isValid = false;
           toReturn.error = 'Please enter a valid expression.';
         }
@@ -414,9 +414,9 @@ export default function BranchFilter({ editorId, position }) {
 
     if (r.rhs.type === 'expression') {
       try {
-        JSON.parse(r.rhs.expression);
+        const parsedExp = JSON.parse(r.rhs.expression);
 
-        if (JSON.parse(r.rhs.expression).length < 2) {
+        if (!parsedExp.length || parsedExp.length < 2) {
           toReturn.isValid = false;
           toReturn.error = 'Please enter a valid expression.';
         }
@@ -857,7 +857,10 @@ export default function BranchFilter({ editorId, position }) {
         typeof state.data.rhs === 'object'
       ) {
         // console.log('both lhs and rhs have data');
-        if (state.data.rhs.value || state.rule?.operator?.type === 'is_not_empty') return;
+        // eslint-disable-next-line camelcase
+        const isSingleInputOperator = !state.rule?.operator?.nb_inputs;
+
+        if (state.data.rhs.type !== 'value' || state.data.rhs.value || isSingleInputOperator) return;
 
         const $emptyRule = state.rule;
 

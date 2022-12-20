@@ -18,6 +18,7 @@ import useConfirmDialog from '../../../../../../../components/ConfirmDialog';
 import ChildIntegrationsTable from './ChildIntegrationsTable';
 import UpgradeDrawer from '../../../../../App/drawers/Upgrade';
 import RequestUpgradeButton from './RequestUpgradeButton';
+import LoadResources from '../../../../../../../components/LoadResources';
 
 const emptyObject = {};
 const metadata = {
@@ -187,9 +188,7 @@ export default function SubscriptionSection({ childId, integrationId }) {
     createdText,
     expiresText,
     upgradeText,
-    // upgradeRequested,
     nextPlan,
-    // _changeEditionId: changeEditionId,
   } = license;
   const handleUpgrade = () => {
     if (upgradeText === 'Request upgrade') {
@@ -277,6 +276,7 @@ export default function SubscriptionSection({ childId, integrationId }) {
                   istwoDotZeroFrameWork={istwoDotZeroFrameWork}
                   handleUpgrade={handleUpgrade}
                   handleUpgradeEdition={handleUpgradeEdition}
+                  childIntegrationsCount={allChildIntegrations?.length}
                 />
               </Grid>
             </Grid>
@@ -288,12 +288,14 @@ export default function SubscriptionSection({ childId, integrationId }) {
           (tile) of this Integration App. Contact your Account Manager for more
           info.
         </Typography>
-        {allChildIntegrations.length ? (
-          <ChildIntegrationsTable
-            integrationId={integrationId}
-            allChildIntegrations={allChildIntegrations}
+        <LoadResources required integrationId={integrationId} resources="integrations">
+          {allChildIntegrations.length ? (
+            <ChildIntegrationsTable
+              integrationId={integrationId}
+              allChildIntegrations={allChildIntegrations}
           />
-        ) : null}
+          ) : null}
+        </LoadResources>
         {hasAddOns && !hasSubscribedAddOns && (
           <div className={classes.customisedBlock}>
             <div className={classes.leftBlock}>
@@ -333,7 +335,7 @@ export default function SubscriptionSection({ childId, integrationId }) {
           </>
         )}
       </div>
-      <UpgradeDrawer />
+      <UpgradeDrawer id={integrationId} />
     </>
   );
 }

@@ -233,7 +233,7 @@ export default function ErrorDetailsDrawer({ flowId }) {
         {flowJobId && isOpenErrorsLoaded ? (
           <Typography variant="body2" className={classes.errorsInRun}>
             <span className={classes.boldErrorsCount}>{getTextAfterCount('error', totalErrorsCount)} in this run </span>
-            {totalErrorsCount < 1000 ? (<span><span>: {allErrors.length} open  |  </span><span>{totalErrorsCount - allErrors.length} resolved</span></span>) : ''}
+            {totalErrorsCount < 1000 && !isEmpty(allErrors) ? (<span><span>: {allErrors.length} open  |  </span><span>{totalErrorsCount - allErrors.length} resolved</span></span>) : ''}
           </Typography>
         ) : ''}
         {errorType === FILTER_KEYS.RETRIES ? <RetryList flowId={flowId} /> : <ErrorList flowId={flowId} errorsInRun={flowJobId} />}

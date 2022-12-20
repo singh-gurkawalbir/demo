@@ -287,6 +287,7 @@ selectors.sharedAccounts = createSelector(
         hasConnectorSandbox:
           a.ownerUser.licenses.filter(l => l.type === 'connector' && l.sandbox)
             .length > 0,
+        dataRetentionPeriod: a.ownerUser.dataRetentionPeriod,
       });
     });
 
@@ -327,6 +328,7 @@ selectors.accountSummary = createSelector(
         hasSandbox: !!a.hasSandbox,
         hasSSO: !!a.hasSSO,
         hasConnectorSandbox: !!a.hasConnectorSandbox,
+        dataRetentionPeriod: a.dataRetentionPeriod,
       });
     });
 

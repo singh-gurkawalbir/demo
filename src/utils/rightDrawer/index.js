@@ -128,7 +128,7 @@ export const drawerPaths = {
   DYNA_EDITOR_EXPAND: 'expand/:formKey/:fieldId',
   PREVIEW_PANEL_MOCK_INPUT: 'inputData',
   UPGRADE: {
-    INSTALL: 'changeEditions/:currentIntegrationId',
+    INSTALL: 'changeEditions/:type/:currentIntegrationId',
   },
 };
 

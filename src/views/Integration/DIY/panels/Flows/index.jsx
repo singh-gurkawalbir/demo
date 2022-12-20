@@ -254,18 +254,31 @@ const FlowListing = ({integrationId, filterKey, searchFilterKey, actionProps, fl
   const flowGroupingsSections = useSelectorMemo(selectors.mkFlowGroupingsSections, integrationId);
   const hasUnassignedSection = shouldHaveUnassignedSection(flowGroupingsSections, flows);
   const flowGroupFormSaveStatus = useSelector(state => selectors.asyncTaskStatus(state, FLOW_GROUP_FORM_KEY));
+  const isIntegrationApp = useSelector(state => selectors.isIntegrationApp(state, integrationId));
   const searchFilter = useSelector(state => selectors.filter(state, searchFilterKey));
-  const filteredFlowGroups = useMemo(() => {
-    if (flowGroupingsSections && searchFilter.keyword) {
-      return flowGroupingsSections.filter(({ title, sectionId }) =>
+  const filteredFlowGroupSections = useMemo(() => {
+    if (!isIntegrationApp) {
+      return flowGroupingsSections;
+    }
+
+    const newFlowGroups = flowGroupingsSections?.filter(
+      section => flows.some(flow => (flow._flowGroupingId === section.sectionId))
+    );
+
+    return newFlowGroups?.length ? newFlowGroups : undefined;
+  }, [flowGroupingsSections, flows, isIntegrationApp]);
+
+  const searchFilteredFlowGroups = useMemo(() => {
+    if (filteredFlowGroupSections && searchFilter.keyword) {
+      return filteredFlowGroupSections.filter(({ title, sectionId }) =>
         title.toUpperCase().includes(searchFilter.keyword.toUpperCase()) || flows.some(flow => (flow._flowGroupingId === sectionId))
       );
     }
 
-    return flowGroupingsSections;
-  }, [searchFilter, flowGroupingsSections, flows]);
+    return filteredFlowGroupSections;
+  }, [filteredFlowGroupSections, searchFilter.keyword, flows]);
 
-  const redirectTo = redirectToFirstFlowGrouping(filteredFlowGroups, match, hasUnassignedSection);
+  const redirectTo = redirectToFirstFlowGrouping(filteredFlowGroupSections, match, hasUnassignedSection);
 
   useEffect(() => {
     // redirect should only happen if integration is still present and not deleted
@@ -276,7 +289,7 @@ const FlowListing = ({integrationId, filterKey, searchFilterKey, actionProps, fl
     }
   }, [history, redirectTo, integrationIsAvailable, flowGroupFormSaveStatus]);
 
-  if (!flowGroupingsSections) {
+  if (!filteredFlowGroupSections) {
     return (
       <>
         <CeligoTable
@@ -302,7 +315,7 @@ const FlowListing = ({integrationId, filterKey, searchFilterKey, actionProps, fl
       flowTableMeta={flowTableMeta}
       actionProps={actionProps}
       integrationId={integrationId}
-      flowGroupingsSections={filteredFlowGroups}
+      flowGroupingsSections={searchFilteredFlowGroups}
     />
   );
 };
@@ -409,6 +422,17 @@ export default function FlowsPanel({ integrationId, childId }) {
   const isMonitorLevelUser = useSelector(state => selectors.isFormAMonitorLevelAccess(state, integrationId));
   const flows = useSelectorMemo(selectors.mkDIYIntegrationFlowList, integrationId, childId, isUserInErrMgtTwoDotZero, finalFilter);
   const flowGroupingsSections = useSelectorMemo(selectors.mkFlowGroupingsSections, integrationId);
+  const filteredFlowGroupSections = useMemo(() => {
+    if (!isIntegrationApp) {
+      return flowGroupingsSections;
+    }
+
+    const newFlowGroups = flowGroupingsSections?.filter(
+      section => flows.some(flow => (flow._flowGroupingId === section.sectionId))
+    );
+
+    return newFlowGroups?.length ? newFlowGroups : undefined;
+  }, [flowGroupingsSections, flows, isIntegrationApp]);
 
   const { canCreate, canAttach, canEdit } = useSelector(state => {
     const permission = selectors.resourcePermissions(state, 'integrations', integrationId, 'flows') || {};
@@ -476,7 +500,7 @@ export default function FlowsPanel({ integrationId, childId }) {
 
   const basePath = getBasePath(match);
   const hasEditAccess = !isStandalone && !isMonitorLevelUser && !isIntegrationApp;
-  const hasEmptySearchResults = finalFilter.keyword && !flows.length && !flowGroupingsSections?.some(({title}) => title.toUpperCase().includes(finalFilter.keyword.toUpperCase()));
+  const hasEmptySearchResults = finalFilter.keyword && !flows.length && !filteredFlowGroupSections?.some(({title}) => title.toUpperCase().includes(finalFilter.keyword.toUpperCase()));
 
   return (
     <>
@@ -522,7 +546,7 @@ export default function FlowsPanel({ integrationId, childId }) {
             )}
           </ActionGroup>
         </PanelHeader>
-        {(finalFilter.keyword && flows.length && flowGroupingsSections) ? (
+        {(finalFilter.keyword && flows.length && filteredFlowGroupSections) ? (
           <Typography component="div" variant="caption" className={classes.infoFilter}>
             <InfoIcon />
             {infoSearchFilter}

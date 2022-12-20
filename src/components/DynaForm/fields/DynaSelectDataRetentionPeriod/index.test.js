@@ -16,7 +16,6 @@ describe('DynaSelectDataRetentionPeriod UI tests', () => {
   test('should pass the initial render', () => {
     renderWithProviders(<DynaSelectDataRetentionPeriod {...props} maxAllowedDataRetention={30} />);
     expect(screen.getByRole('button')).toBeInTheDocument();
-    screen.debug();
   });
   test('should render correct options if maxAllowedDataRetention is not MAX_DATA_RETENTION_PERIOD', () => {
     const maxAllowedDataRetention = 60;

@@ -1794,6 +1794,7 @@ describe('mapping reducer', () => {
           importId: 'imp-123',
           flowId: 'flow-123',
           version: 2,
+          searchKey: 'name',
           v2TreeData: [{
             key: 'key1',
             dataType: MAPPING_DATA_TYPES.STRING,

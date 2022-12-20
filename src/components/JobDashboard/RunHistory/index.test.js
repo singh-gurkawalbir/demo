@@ -10,7 +10,7 @@ import { getCreatedStore } from '../../../store';
 
 let initialStore;
 
-function initRunHistory({flowId, runHistoryData, filterData, dataRetentionPeriod}) {
+function initRunHistory({flowId, runHistoryData, filterData, dataRetentionPeriod, defaultAShareId}) {
   initialStore.getState().session.errorManagement = {
     runHistory: {
       [flowId]: runHistoryData,
@@ -20,6 +20,51 @@ function initRunHistory({flowId, runHistoryData, filterData, dataRetentionPeriod
     runHistory: filterData,
   };
   initialStore.getState().data.accountSettings.dataRetentionPeriod = dataRetentionPeriod;
+  initialStore.getState().user.preferences.defaultAShareId = defaultAShareId || 'own';
+  initialStore.getState().user.org.accounts = [
+    {
+      accessLevel: 'owner',
+      _id: 'own',
+      ownerUser: {
+        licenses: [
+          {
+            endpoint: {
+              production: {},
+              sandbox: {},
+              apiManagement: true,
+            },
+            maxAllowedDataRetention: 180,
+            supportTier: 'preferred',
+            tier: 'enterprise',
+            type: 'endpoint',
+            _id: 'user1',
+          },
+        ],
+      },
+    },
+    {
+      accessLevel: 'manage',
+      _id: 'user1',
+      accepted: true,
+      ownerUser: {
+        licenses: [
+          {
+            endpoint: {
+              production: {},
+              sandbox: {},
+              apiManagement: true,
+            },
+            maxAllowedDataRetention: 180,
+            supportTier: 'preferred',
+            tier: 'enterprise',
+            type: 'endpoint',
+            _id: 'license2',
+          },
+        ],
+        dataRetentionPeriod: 60,
+      },
+    },
+  ];
   const ui = (
     <RunHistory flowId={flowId} />
   );
@@ -159,6 +204,35 @@ describe('Testsuite for RunHistory', () => {
         },
       },
     });
+  });
+  test('should show corresponding options in the dateRange component based on the dataRetentionPeriod selected for a shared user', async () => {
+    await initRunHistory({
+      flowId: '12345',
+      runHistoryData: {
+        status: 'completed',
+        data: [
+          {
+            _id: 'ud8d9',
+          },
+        ],
+      },
+      filterData: {
+        range: {
+          preset: null,
+          startDate: '2022-10-29T00:00:00.000Z',
+          endDate: '2022-10-28T23:59:99.999Z',
+        },
+      },
+      defaultAShareId: 'user1',
+    });
+
+    const selectRangeButtonNode = screen.getByRole('button', {name: /select range/i});
+
+    expect(selectRangeButtonNode).toBeInTheDocument();
+    userEvent.click(selectRangeButtonNode);
+    expect(screen.queryByRole('button', {name: 'Last 60 days'})).toBeInTheDocument();
+    expect(screen.queryByRole('button', {name: 'Last 90 days'})).not.toBeInTheDocument();
+    expect(screen.queryByRole('button', {name: 'Last 180 days'})).not.toBeInTheDocument();
   });
   test('should test the date range selector by clearing the preset and restoring it it to default', async () => {
     initRunHistory({

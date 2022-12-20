@@ -40,8 +40,6 @@ describe('ActionsRibbon UI tests', () => {
     const toggleButton = document.querySelector('[id="toggle-layout"]');
 
     expect(toggleButton).toBeInTheDocument();
-
-    screen.debug();
   });
   test('should not render the preview button group when hidePreview is true in editorData', () => {
     initActionsRibbon({editorId: 'filecsv'});
