@@ -75,6 +75,10 @@ export default function ChildUpgradeButton({ resource }) {
         params: { currentIntegrationId: id, type: 'child'},
       }));
     }
+
+    if (showWizard) {
+      dispatch(actions.integrationApp.upgrade.setStatus('successMessageFlags', { showChildLeftMessageFlag: true }));
+    }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch, id, inQueue, showWizard, status]);
 
