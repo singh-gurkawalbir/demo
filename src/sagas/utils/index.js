@@ -513,11 +513,6 @@ export const updateFinalMetadataWithHttpFramework = (finalFieldMeta, connector, 
           tempFiledMeta.fieldMap[key] = {...tempFiledMeta.fieldMap[key], options, type: 'select'};
         }
       }
-      if (tempFiledMeta?.fieldMap['name']) {
-        const application = resource?.application;
-
-        tempFiledMeta.fieldMap.name.placeholder = `${application} connection`;
-      }
 
       return tempFiledMeta.fieldMap[key];
     }
@@ -788,19 +783,6 @@ export const updateWebhookFinalMetadataWithHttpFramework = (finalFieldMeta, conn
     return tempFiledMeta.fieldMap[key];
   }
   );
-
-  return tempFiledMeta;
-};
-export const updateExportAndImportFinalMetadata = (finalFieldMeta, connector, resource, isGenericHTTP) => {
-  const tempFiledMeta = cloneDeep(finalFieldMeta);
-
-  if (!isGenericHTTP && tempFiledMeta?.fieldMap['name']) {
-    const dataResourceType = (resource?.isLookup === true) ? 'lookup' : tempFiledMeta?.fieldMap['name']?.resourceType.slice(0, 6);
-    const application = resource?.assistant;
-
-    tempFiledMeta.fieldMap.name.label = `Name your ${dataResourceType}`;
-    tempFiledMeta.fieldMap.name.placeholder = `${application} ${dataResourceType}`;
-  }
 
   return tempFiledMeta;
 };
