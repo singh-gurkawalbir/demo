@@ -646,6 +646,89 @@ describe('mappingInit saga', () => {
     expect(saga5).toBeTruthy();
     mock.mockRestore();
   });
+  test('should trigger mapping init correctly for IA which has mappings2', async () => {
+    const mock = jest.spyOn(shortid, 'generate');  // spy on otherFn
+    const flowId = 'flow28';
+    const importId = 'import28';
+    const exportId = 'export28';
+
+    mock.mockReturnValue('mock_key');
+    generateUniqueKey.mockReturnValue('unique-key');
+
+    const saga5 = await expectSaga(mappingInit, {flowId, importId})
+      .provide([
+        [call(fetchRequiredMappingData, {flowId, importId}), {}],
+        [call(apiCallWithRetry, {path: '/integrations/_i1/settings/getMappingMetadata',
+          opts: {
+            method: 'PUT',
+            body: {},
+          },
+          hidden: true}), {}],
+        [select(selectors.resource, 'imports', importId), {
+          _id: importId,
+          _connectorId: '_c1',
+          _integrationId: '_i1',
+          adaptorType: 'RESTImport',
+          externalId: 'e1',
+          lookups: [],
+          mappings: [{extract: 'id', generate: 'id', dataType: MAPPING_DATA_TYPES.STRING}],
+        }],
+        [select(selectors.integrationAppMappingMetadata, '_i1'), {mappingMetadata: {}}],
+        [select(selectors.firstFlowPageGenerator, flowId), {_id: exportId}],
+        [select(selectors.getSampleDataContext, {
+          flowId,
+          resourceId: importId,
+          stage: 'importMappingExtract',
+          resourceType: 'imports',
+        }), {data: [{id: 'a'}]}],
+      ])
+      .put(actions.flowData.init({refresh: false}))
+      .put(actions.flowData.requestStage(flowId, 'import28', 'preMap'))
+      .put(actions.flowData.requestStage(flowId, 'import28', 'processedFlowInput'))
+      .put(actions.flowData.requestStage(flowId, 'import28', 'flowInput'))
+      .put(actions.flowData.receivedPreviewData(flowId, 'import28', undefined, 'flowInput'))
+      .put(actions.flowData.receivedProcessorData(flowId, 'import28', 'processedFlowInput', {data: []}))
+      .put(actions.flowData.receivedProcessorData(flowId, 'import28', 'preMap', {data: []}))
+      .put(actions.mapping.initComplete({
+        mappings: [],
+        lookups: [],
+        flowId,
+        importId,
+        subRecordMappingId: undefined,
+        isGroupedSampleData: true,
+        version: 2,
+        requiredMappings: [],
+        importSampleData: undefined,
+        v2TreeData: [{
+          key: 'unique-key',
+          title: '',
+          parentKey: undefined,
+          parentExtract: undefined,
+          disabled: false,
+          hidden: undefined,
+          className: undefined,
+          isRequired: false,
+          extract: 'id',
+          generate: 'id',
+          jsonPath: 'id',
+          dataType: MAPPING_DATA_TYPES.STRING,
+          sourceDataType: MAPPING_DATA_TYPES.STRING,
+        }],
+        extractsTree: [
+          {key: 'unique-key',
+            title: '',
+            dataType: '[object]',
+            propName: '$',
+            children: [
+              {key: 'unique-key', parentKey: 'unique-key', title: '', jsonPath: 'id', propName: 'id', dataType: MAPPING_DATA_TYPES.STRING},
+            ]}],
+        isMonitorLevelAccess: false,
+      }))
+      .run();
+
+    expect(saga5).toBeTruthy();
+    mock.mockRestore();
+  });
   test('should not save v2 mappings in the state for non file and http/rest import', async () => {
     const flowId = 'flow24';
     const importId = 'import24';

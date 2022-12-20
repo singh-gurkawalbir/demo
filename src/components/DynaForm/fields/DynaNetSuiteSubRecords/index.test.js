@@ -230,7 +230,6 @@ describe('DynaNetSuiteSubRecords UI tests', () => {
     expect(screen.getByText('Subrecord imports')).toBeInTheDocument();
     expect(screen.getByText('Add subrecord')).toBeInTheDocument();
     expect(screen.getByText('Add subrecord import')).toBeInTheDocument();
-    screen.debug(undefined, Infinity);
   });
   test('should make a dipatch call on initial render when subrecords are absent', async () => {
     const patchSet = [];
@@ -272,7 +271,6 @@ describe('DynaNetSuiteSubRecords UI tests', () => {
     expect(screen.getByText('Confirm remove')).toBeInTheDocument();
     expect(screen.getByText('Are you sure you want to remove this subrecord import?')).toBeInTheDocument();
     expect(screen.getByText('Remove')).toBeInTheDocument();
-    screen.debug(undefined, Infinity);
   });
   test('should make a dispatch call with updated subrecord list when a subrecord is deleted', async () => {
     initDynaNetSuiteSubRecords({...props});

@@ -19,7 +19,7 @@ const useStyles = makeStyles(theme => ({
     borderRadius: theme.spacing(0.5),
     '& .MuiTableBody-root': {
       '& .MuiTableRow-root': {
-        background: theme.palette.background.paper2,
+        background: theme.palette.background.default,
       },
     },
   },
@@ -96,7 +96,7 @@ export default function ChildIntegrationsTable({ integrationId, allChildIntegrat
       const childList = data.map(child => child.id);
 
       dispatch(actions.integrationApp.upgrade.addChildForUpgrade(childList));
-      dispatch(actions.integrationApp.upgrade.setStatus(integrationId, {
+      dispatch(actions.integrationApp.upgrade.setStatus('successMessageFlags', {
         showMessage: true,
         showFinalMessage: true,
       }));

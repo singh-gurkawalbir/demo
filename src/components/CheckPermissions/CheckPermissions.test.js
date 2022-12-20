@@ -70,6 +70,7 @@ describe('CheckPermissions UI tests', () => {
     store.dispatch(actions.user.preferences.request());
     store.dispatch(actions.user.org.accounts.requestCollection());
     store.dispatch(actions.user.profile.request());
+    store.getState().auth = {authenticated: true, defaultAccountSet: true};
     await waitFor(() => expect(store?.getState()?.user?.profile?._id).toBeDefined());
     await waitFor(() => expect(store?.getState()?.user?.preferences?.environment).toBeDefined());
     await waitFor(() => expect(store?.getState()?.user?.org?.accounts.length).toBeGreaterThan[1]);

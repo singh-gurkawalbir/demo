@@ -215,6 +215,7 @@ selectors.userProfilePreferencesProps = createSelector(
       auth_type_google,
       _ssoAccountId,
       authTypeSSO,
+      darkTheme,
     } = { ...profile, ...preferences };
 
     return {
@@ -233,6 +234,7 @@ selectors.userProfilePreferencesProps = createSelector(
       showRelativeDateTime,
       _ssoAccountId,
       authTypeSSO,
+      darkTheme,
     };
   });
 
@@ -724,6 +726,11 @@ const filterByEnvironmentResources = (resources, sandbox, resourceType) => {
 
       return !!r.doc?.sandbox === sandbox;
     });
+  }
+
+  // https://celigo.atlassian.net/browse/IO-31027 - remove this change in R2-2023
+  if (resourceType === 'scripts') {
+    return resources.filter(r => !r?.hasOwnProperty('sandbox') || !!r.sandbox === sandbox);
   }
 
   return resources.filter(r => !!r.sandbox === sandbox);
@@ -2525,7 +2532,6 @@ selectors.mkDIYIntegrationFlowList = () => {
   const flowGroupsMapSelector = selectors.mkFlowGroupMap();
 
   return createSelector(
-    state => state?.data?.resources?.integrations,
     state => state?.data?.resources?.flows,
     (state, integrationId, childId) => selectors.latestJobMap(state, childId || integrationId || 'none')?.data,
     (state, integrationId) => integrationId,
@@ -2535,16 +2541,15 @@ selectors.mkDIYIntegrationFlowList = () => {
     selectors.openErrorsMap,
     selectors.currentEnvironment,
     flowGroupsMapSelector,
-    (integrations = emptyArray, flows = emptyArray, latestFlowJobs,
+    (flows = emptyArray, latestFlowJobs,
       integrationId, childId, isUserInErrMgtTwoDotZero, options, errorMap, currentEnvironment, flowGroupsMap) => {
-      const childIntegrationIds = integrations.filter(i => i._parentId === integrationId || i._id === integrationId).map(i => i._id);
       let integrationFlows = flows.filter(f => {
         if (!integrationId || integrationId === STANDALONE_INTEGRATION.id) {
           return !f._integrationId && !!f.sandbox === (currentEnvironment === 'sandbox');
         }
         if (childId && childId !== integrationId) return f._integrationId === childId;
 
-        return childIntegrationIds.includes(f._integrationId);
+        return f._integrationId === integrationId;
       });
       const customSearchableText = r => {
         if (!options?.keyword) return;
@@ -5675,8 +5680,12 @@ selectors.isMapper2Supported = state => {
 
   const resource = selectors.resource(state, 'imports', importId);
 
-  // IAs don't support mapper2
-  if (!resource || resource._connectorId) return false;
+  if (!resource) return false;
+
+  // IAs will only support mapper2 if its present in the doc
+  if (resource._connectorId && isEmpty(resource.mappings)) {
+    return false;
+  }
 
   return !!(
     isFileAdaptor(resource) ||
@@ -5712,7 +5721,10 @@ selectors.mappingEditorNotification = (state, editorId) => {
 
   if (editorType !== 'mappings' || !isMapper2Supported) return emptyObject;
 
-  const {mapping, mappings} = selectors.resource(state, 'imports', resourceId) || {};
+  const {mapping, mappings, _connectorId} = selectors.resource(state, 'imports', resourceId) || {};
+
+  // IAs don't support the notification
+  if (_connectorId) return emptyObject;
 
   const resourceHasV2Mappings = !!mappings?.length;
 

@@ -1,0 +1,119 @@
+/* global describe, test, jest, expect, afterEach */
+import React from 'react';
+import {screen, fireEvent} from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import DynaTable from './index';
+import { renderWithProviders } from '../../../../../test/test-utils';
+import actionTypes from './actionTypes';
+
+const mockOnFieldChange = jest.fn();
+
+function initDynaTable(props = {}) {
+  const ui = (
+    <DynaTable
+      {...props}
+    />
+  );
+
+  return renderWithProviders(ui);
+}
+
+describe('DynaTable UI test cases', () => {
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+  test('Should render the values accordingly in static mappings dynatable', () => {
+    const props = {
+      label: '',
+      value: [{export: 'Id', import: 'id'}, {export: 'Name', import: 'name'}, {export: 'Type', import: 'type'}, {export: 'Invoice', import: 'invoice'}],
+      className: 'someclassName',
+      optionsMap: [{
+        id: 'export',
+        label: 'Export field value',
+        options: undefined,
+        readOnly: false,
+        required: false,
+        supportsRefresh: false,
+        type: 'input',
+      }, {
+        id: 'import',
+        label: 'Import field value',
+        options: undefined,
+        readOnly: false,
+        required: false,
+        supportsRefresh: false,
+        type: 'input',
+      }],
+      id: 'lookup.mapList',
+      ignoreEmptyRow: () => {},
+      onFieldChange: mockOnFieldChange,
+      onRowChange: (rowValue, fieldId, value) => {
+        // eslint-disable-next-line no-param-reassign
+        rowValue[fieldId] = `${value}`;
+
+        return rowValue;
+      },
+      handleCleanupHandler: () => {},
+      disableDeleteRows: false,
+      isVirtualizedTable: true,
+      isLoggable: false,
+    };
+
+    initDynaTable(props);
+    expect(screen.getByDisplayValue('Id')).toBeInTheDocument();
+    expect(screen.getByDisplayValue('id')).toBeInTheDocument();
+    expect(screen.getByDisplayValue('Name')).toBeInTheDocument();
+    expect(screen.getByDisplayValue('name')).toBeInTheDocument();
+    expect(screen.getByDisplayValue('Type')).toBeInTheDocument();
+    expect(screen.getByDisplayValue('type')).toBeInTheDocument();
+  });
+  test('Test for updating the text in a row in static map dynatable', () => {
+    const props = {
+      label: '',
+      rowIndex: 2,
+      field: 'Type',
+      value: [{export: 'Id', import: 'id'}, {export: 'Name', import: 'name'}, {export: 'Type', import: 'type'}, {export: 'Invoice', import: 'invoice'}],
+      className: 'someclassName',
+      type: actionTypes.UPDATE_TABLE_ROW,
+      optionsMap: [{
+        id: 'export',
+        label: 'Export field value',
+        options: undefined,
+        readOnly: false,
+        required: false,
+        supportsRefresh: false,
+        type: 'input',
+      }, {
+        id: 'import',
+        label: 'Import field value',
+        options: undefined,
+        readOnly: false,
+        required: false,
+        supportsRefresh: false,
+        type: 'input',
+      }],
+      id: 'lookup.mapList',
+      ignoreEmptyRow: () => {},
+      onFieldChange: mockOnFieldChange,
+      onRowChange: (rowValue, fieldId, value) => {
+        // eslint-disable-next-line no-param-reassign
+        rowValue[fieldId] = `${value}`;
+
+        return rowValue;
+      },
+      handleCleanupHandler: () => {},
+      disableDeleteRows: false,
+      isVirtualizedTable: false,
+      isLoggable: false,
+    };
+
+    initDynaTable(props);
+    const inputs = screen.getAllByRole('textbox');
+
+    expect(inputs[4]).toHaveValue('Type');
+    fireEvent.change(inputs[4], { target: { value: '' } });
+    userEvent.type(inputs[4], 'TextChanged');
+    expect(inputs[4]).toHaveValue('TextChanged');
+    expect(mockOnFieldChange).toHaveBeenCalledWith('lookup.mapList', [{export: 'Id', import: 'id'}, {export: 'Name', import: 'name'}, {export: 'TextChanged', import: 'type'}, {export: 'Invoice', import: 'invoice'}]);
+  });
+});

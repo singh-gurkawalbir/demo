@@ -806,19 +806,11 @@ export const sourceOptions = {
       label: 'Transfer files out of source application',
       value: 'transferFiles',
     },
-    {
-      label: 'Listen for real-time data from source application',
-      value: 'webhook',
-    },
   ],
   dropbox: [
     {
       label: 'Transfer files out of source application',
       value: 'transferFiles',
-    },
-    {
-      label: 'Listen for real-time data from source application',
-      value: 'webhook',
     },
   ],
   azurestorageaccount: [

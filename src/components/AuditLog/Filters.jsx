@@ -4,7 +4,6 @@ import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import FormControl from '@material-ui/core/FormControl';
 import MenuItem from '@material-ui/core/MenuItem';
 import { makeStyles } from '@material-ui/core';
-import { endOfDay } from 'date-fns';
 import { AUDIT_LOG_SOURCE_LABELS, ROWS_PER_PAGE_OPTIONS, DEFAULT_ROWS_PER_PAGE, getAuditLogFilterKey } from '../../constants/auditLog';
 import { selectors } from '../../reducers';
 import { ResourceTypeFilter, ResourceIdFilter, AuditLogActionFilter } from './ResourceFilters';
@@ -72,11 +71,7 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
   },
 }));
-const defaultRange = {
-  startDate: new Date(),
-  endDate: endOfDay(new Date()),
-  preset: null,
-};
+const defaultRange = {startDate: null, endDate: null, preset: null};
 
 function AuditPagination({ resourceType, resourceId, totalCount }) {
   const classes = useStyles();
@@ -137,7 +132,7 @@ function AuditPagination({ resourceType, resourceId, totalCount }) {
 export default function Filters(props) {
   const [date, setDate] = useState(defaultRange);
 
-  const {resourceType, resourceId, resourceDetails, childId} = props;
+  const {resourceType, resourceId, resourceDetails, childId, totalCount} = props;
   const dispatch = useDispatch();
   const classes = useStyles();
   const [enqueueSnackbar] = useEnqueueSnackbar();
@@ -189,7 +184,13 @@ export default function Filters(props) {
   };
 
   const handleChange = useCallback(event => {
-    const updatedFilters = { ...filters, [event.target.name]: event.target.value };
+    const updatedFilters = {
+      ...filters,
+      paging: {
+        ...filters.paging,
+        currPage: 0, // whenever filters are changed, reset page to 0
+      },
+      [event.target.name]: event.target.value };
 
     if (event.target.name === 'resourceType') {
       updatedFilters._resourceId = OPTION_ALL.id;
@@ -286,7 +287,7 @@ export default function Filters(props) {
           />
         </ActionGroup>
         <ActionGroup position="right" className={classes.downloadButton}>
-          <AuditPagination {...props} />
+          {totalCount > 0 ? <AuditPagination {...props} /> : null}
 
           <DateRangeSelector
             disabled={!canDownloadLogs}

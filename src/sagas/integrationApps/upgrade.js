@@ -22,9 +22,11 @@ export function* changeEdition({ integrationId }) {
       message: 'Requesting for change edition',
     }) || {};
   } catch (error) {
-    yield put(actions.integrationApp.upgrade.setStatus(integrationId, { status: 'error' }));
+    yield put(actions.integrationApp.upgrade.setStatus(integrationId, {
+      status: 'error',
+      errMessage: error.message,
+    }));
 
-    // error handling;
     return;
   }
   yield put(actions.resource.request('integrations', integrationId));
@@ -42,9 +44,11 @@ export function* getSteps({ integrationId }) {
       message: 'Requesting edition steps',
     }) || {};
   } catch (error) {
-    yield put(actions.integrationApp.upgrade.setStatus(integrationId, { status: 'error' }));
+    yield put(actions.integrationApp.upgrade.setStatus(integrationId, {
+      status: 'error',
+      errMessage: error.message,
+    }));
 
-    // error handling;
     return;
   }
 
@@ -71,8 +75,10 @@ export function* postChangeEditionSteps({ integrationId }) {
       message: 'Posting edition steps',
     }) || {};
   } catch (error) {
-    yield put(actions.integrationApp.upgrade.setStatus(integrationId, { status: 'error' }));
-    // error handling;
+    yield put(actions.integrationApp.upgrade.setStatus(integrationId, {
+      status: 'error',
+      errMessage: error.message,
+    }));
 
     return;
   }

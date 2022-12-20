@@ -53,10 +53,37 @@ function importOperationKey(operation) {
 }
 
 function importOperationOptions({ resourceData = { operations: [] } }) {
-  return resourceData.operations.filter(op => !op.hidden).map(operation => ({
+  const returnOptions = resourceData.operations.filter(op => !op.hidden).map(operation => ({
     label: operation.name,
     value: importOperationKey(operation),
   }));
+  const ignoreExisting = resourceData.operations.find(operation => operation.ignoreExisting);
+  const ignoreMissing = resourceData.operations.find(operation => operation.ignoreMissing);
+
+  if (ignoreExisting && ignoreMissing) {
+    returnOptions.push({
+      label: 'Composite: create new records & update existing records',
+      value: 'create-update-id',
+    });
+  }
+
+  return returnOptions;
+}
+function importcreateEndpointOptions({ resourceData = { operations: [] } }) {
+  const returnOptions = resourceData.operations.filter(operation => !operation.hidden && operation.ignoreExisting).map(operation => ({
+    label: operation.name,
+    value: importOperationKey(operation),
+  }));
+
+  return returnOptions;
+}
+function importupdateEndpointOptions({ resourceData = { operations: [] } }) {
+  const returnOptions = resourceData.operations.filter(operation => !operation.hidden && operation.ignoreMissing).map(operation => ({
+    label: operation.name,
+    value: importOperationKey(operation),
+  }));
+
+  return returnOptions;
 }
 
 // function versionData({ versions = [], versionId }) {
@@ -129,11 +156,24 @@ export function selectOptions({
       resourceType,
     });
   }
+  if (formContext.operation === 'create-update-id' && resourceType === 'imports') {
+    if (assistantFieldType === 'createEndpoint') {
+      return importcreateEndpointOptions({
+        resourceData: selectedResource,
+      });
+    }
+    if (assistantFieldType === 'updateEndpoint') {
+      return importupdateEndpointOptions({
+        resourceData: selectedResource,
+      });
+    }
+  }
 
   return [];
 }
 
-function semiAssistantOperationOptions(endpoints = [], parent = {key: []}) {
+// parent obj will always be there
+function semiAssistantOperationOptions(endpoints = [], /* istanbul ignore next */ parent = {key: []}) {
   let options = [];
   let endpointName;
 
@@ -147,7 +187,7 @@ function semiAssistantOperationOptions(endpoints = [], parent = {key: []}) {
       }
       options.push({
         label: endpointName,
-        value: parent ? [...parent.key, ep.key].join('.') : ep.key,
+        value: parent ? [...parent.key, ep.key].join('.') : /* istanbul ignore next */ep.key,
       });
     }
   });

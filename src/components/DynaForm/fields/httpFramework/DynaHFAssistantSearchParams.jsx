@@ -46,6 +46,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
+/* istanbul ignore next: KeyLabel is passed as list in props for children components */
 const KeyLabel = ({id, description}) => (
   <div>
     <Typography>{id}</Typography>
@@ -98,6 +99,7 @@ export default function DynaHFAssistantSearchParams(props) {
         isSelect: !!selectTypeList[field],
         options: selectTypeList[field] && selectTypeList[field].map(value => ({ name: value, value}))});
     });
+    /* istanbul ignore else: value should never be undefined or null Otherwise need the same check above */
     if (value) {
       Object.keys(value).forEach(key => keyValues.push({
         name: key,
@@ -142,6 +144,7 @@ export default function DynaHFAssistantSearchParams(props) {
     dispatch(actions.form.clearForceFieldState(formKey)(id));
   }, [dispatch, formKey, id]);
 
+  /* istanbul ignore next: handleSave not invoked in test script */
   const handleSave = useCallback(editorValues => {
     const newValue = {...value, [Object.keys(value)[editorValues.paramIndex]]: editorValues.rule};
 

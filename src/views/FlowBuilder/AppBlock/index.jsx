@@ -28,6 +28,9 @@ import itemTypes from '../itemTypes';
 import { useSelectorMemo } from '../../../hooks';
 import { useIsDragInProgress } from '../hooks';
 import { getConnectorId } from '../../../utils/assistant';
+import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
+import RawHtml from '../../../components/RawHtml';
+import messageStore from '../../../utils/messageStore';
 
 const blockHeight = 170;
 const blockWidth = 275;
@@ -115,10 +118,6 @@ const useStyles = makeStyles(theme => ({
   bubbleContainer: {
     position: 'relative',
     display: 'flex',
-    '&:hover > button': {
-      display: 'block',
-      color: 'unset',
-    },
   },
   bubble: {
     position: 'absolute',
@@ -149,7 +148,7 @@ const useStyles = makeStyles(theme => ({
     top: -theme.spacing(0.5),
     zIndex: 1,
     transition: theme.transitions.create('color'),
-    color: 'rgb(0,0,0,0)',
+    color: ({ isHover }) => isHover ? 'unset' : 'rgb(0,0,0,0)',
   },
   grabButton: {
     left: -theme.spacing(0.5),
@@ -157,7 +156,7 @@ const useStyles = makeStyles(theme => ({
     top: -theme.spacing(0.5),
     zIndex: 1,
     transition: theme.transitions.create('color'),
-    color: 'rgb(0,0,0,0)',
+    color: ({ isHover }) => isHover ? 'unset' : 'rgb(0,0,0,0)',
     cursor: 'move',
     '&:hover': {
       background: 'none',
@@ -205,11 +204,13 @@ export default function AppBlock({
   id,
   ...rest
 }) {
-  const classes = useStyles();
+  const [isHover, setIsHover] = useState(false);
+  const classes = useStyles({ isHover });
   const dispatch = useDispatch();
   const [expanded, setExpanded] = useState(false);
   const [isOver, setIsOver] = useState(false);
   const [activeAction, setActiveAction] = useState(null);
+  const [enqueueSnackbar] = useEnqueueSnackbar();
   const isNew = blockType.startsWith('new');
   const isActive = useSelector(state => {
     const activeConn = selectors.activeConnection(state);
@@ -222,6 +223,17 @@ export default function AppBlock({
   useSelectorMemo(selectors.makeResourceDataSelector, 'flows', flowId)
     ?.merged || {};
   const isLinearFlow = !flowOriginal.routers?.length;
+  let noDragInfo = '';
+
+  if (
+    (!isPageGenerator && flowOriginal.pageProcessors?.length <= 1) ||
+    (isPageGenerator && flowOriginal.pageGenerators?.length <= 1)
+  ) {
+    noDragInfo = 'There are no available locations this step can be moved to.';
+  } else if (!isLinearFlow) {
+    noDragInfo = <RawHtml html={messageStore('NO_DRAG_FLOW_BRANCHING_INFO')} />;
+  }
+
   const isFlowSaveInProgress = useSelector(state => selectors.isFlowSaveInProgress(state, flowId));
   const iconType = useSelector(state => {
     if (blockType === 'dataLoader') return;
@@ -301,6 +313,7 @@ export default function AppBlock({
     setActiveAction(null);
     setExpanded();
   }, []);
+  const handleMouseHover = useCallback(val => () => setIsHover(val), []);
 
   const hasActions = resourceId && flowActions && Array.isArray(flowActions) && flowActions.length;
   const { leftActions, middleActions, rightActions } = useMemo(() => {
@@ -316,22 +329,26 @@ export default function AppBlock({
 
     return { leftActions, middleActions, rightActions };
   }, [flowActions, hasActions]);
-  const isDraggable = !isViewMode &&
-    !isFlowSaveInProgress &&
-    isLinearFlow &&
-  (
-    (isPageGenerator && flowOriginal.pageGenerators?.length > 1) ||
-    (!isPageGenerator && flowOriginal.pageProcessors?.length > 1)
-  );
+  const isDraggable = !isViewMode && !isFlowSaveInProgress;
   const [{ isDragging }, drag, preview] = useDrag(() => ({
     type: isPageGenerator ? itemTypes.PAGE_GENERATOR : itemTypes.PAGE_PROCESSOR,
-    item: {
-      ...rest,
-      index,
-      id,
-      type: iconType,
-      name,
-      assistant: connAssistant || assistant,
+    item: () => {
+      if (noDragInfo) {
+        enqueueSnackbar({
+          message: noDragInfo,
+          variant: 'info',
+        });
+      }
+
+      return ({
+        ...rest,
+        index,
+        id,
+        type: iconType,
+        name,
+        assistant: connAssistant || assistant,
+        noDrag: !!noDragInfo,
+      });
     },
     collect: monitor => ({
       isDragging: monitor.isDragging(),
@@ -345,7 +362,7 @@ export default function AppBlock({
       }
     },
     canDrag: isDraggable,
-  }), [id, iconType, connAssistant, assistant, isFlowSaveInProgress, index, rest.pageProcessorIndex]);
+  }), [id, iconType, connAssistant, assistant, isFlowSaveInProgress, index, rest.pageProcessorIndex, noDragInfo]);
 
   const opacity = isDragging ? 0.7 : 1;
 
@@ -392,7 +409,13 @@ export default function AppBlock({
   }
 
   return (
-    <div className={clsx(classes.root, className, { [classes.draggable]: isDraggable })} style={{ opacity, cursor: isDragging ? 'move' : '' }}>
+    <div
+      ref={drag}
+      className={clsx(classes.root, className, { [classes.draggable]: isDraggable })}
+      style={{ opacity, cursor: isDragging ? 'move' : '' }}
+      onMouseEnter={handleMouseHover(true)}
+      onMouseLeave={handleMouseHover(false)}
+      >
       <div
         onMouseEnter={handleMouseOver(true)}
         onFocus={handleMouseOver(true)}
@@ -400,7 +423,6 @@ export default function AppBlock({
         onBlur={handleMouseOver(false)}
         {...rest}
         data-test={`${isPageGenerator ? 'pg' : 'pp'}-${id}`}
-        ref={drag}
         className={classes.box}
       >
         <div className={classes.bubbleContainer}>

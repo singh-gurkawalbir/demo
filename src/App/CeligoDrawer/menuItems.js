@@ -28,6 +28,7 @@ import MyApiIcon from '../../components/icons/MyApiIcon';
 import IntegrationAppsIcon from '../../components/icons/IntegrationAppsIcon';
 import getRoutePath from '../../utils/routePaths';
 import PortalIcon from '../../components/icons/PortalIcon';
+import { isProduction } from '../../forms/formFactory/utils';
 
 export default function menuItems({
   userProfile,
@@ -164,13 +165,14 @@ export default function menuItems({
         },
       ],
     },
-    {
+    // Celigo university should only be accessible in production
+    ...(isProduction() ? [{
       label: 'Celigo university',
       Icon: UniversityIcon,
       href: getUniversityUrl,
       component: 'a',
       dataTest: 'celigo_university',
-    },
+    }] : []),
     {
       label: 'Marketplace',
       Icon: MarketplaceIcon,

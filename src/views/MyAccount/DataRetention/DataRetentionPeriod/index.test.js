@@ -82,8 +82,6 @@ describe('DataRetentionPeriod component tests', () => {
     };
 
     initDataRetentionPeriod({dataRetentionPeriod, rest});
-
-    screen.debug();
     expect(screen.queryByText(/Data retention period/i)).toBeInTheDocument();
   });
   test('Should show warning message on changing the dataRetentionPeriod', async () => {

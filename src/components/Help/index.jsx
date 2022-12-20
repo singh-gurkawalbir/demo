@@ -47,7 +47,7 @@ export default function Help({ className, helpKey, helpText, escapeUnsecuredDoma
     // do not close popper
     if (event.target.name === 'feedbackText' ||
     event.target.textContent === 'No' ||
-    event.target.dataset?.test === 'noContentHelpful'
+    ['thumbsdownicon', 'noContentHelpful'].includes(event.target.dataset?.test)
     ) return;
     setAnchorEl(null);
   }, []);

@@ -16,7 +16,6 @@ export default {
       '/http/auth/token/location': 'header',
       '/http/auth/token/headerName': 'Authorization',
       '/http/auth/token/scheme': 'Bearer',
-      '/http/auth/token/revoke/uri': 'https://api.dropboxapi.com/2/auth/token/revoke',
       '/http/auth/token/refreshMethod': 'POST',
       '/http/auth/token/refreshMediaType': 'urlencoded',
       '/http/auth/oauth/grantType': 'authorizecode',
