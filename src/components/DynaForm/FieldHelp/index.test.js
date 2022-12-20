@@ -30,8 +30,11 @@ describe('FieldHelp UI tests', () => {
     expect(screen.getByText('Name')).toBeInTheDocument();
     expect(screen.getByText('Please name your script record so that you can easily reference it from other parts of the application.')).toBeInTheDocument();
     expect(screen.getByText('Was this helpful?')).toBeInTheDocument();
-    expect(screen.getByText('Yes')).toBeInTheDocument();
-    expect(screen.getByText('No')).toBeInTheDocument();
+    const thumbsup = document.querySelector('[data-test="yesContentHelpful"]');
+    const thumbsdown = document.querySelector('[data-test="noContentHelpful"]');
+
+    expect(thumbsup).toBeInTheDocument();
+    expect(thumbsdown).toBeInTheDocument();
   });
 });
 
