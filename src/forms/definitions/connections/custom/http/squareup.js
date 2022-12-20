@@ -16,6 +16,7 @@ export default {
       '/type': 'http',
       '/assistant': 'squareup',
       '/http/auth/type': 'oauth',
+      '/http/auth/oauth/useIClientFields': false,
       '/http/mediaType': 'json',
       '/http/ping/relativeURI': '/v2/locations',
       '/http/baseURI': 'https://connect.squareup.com',

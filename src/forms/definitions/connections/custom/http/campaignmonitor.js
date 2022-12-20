@@ -4,6 +4,7 @@ export default {
     '/type': 'http',
     '/assistant': 'campaignmonitor',
     '/http/auth/type': 'oauth',
+    '/http/auth/oauth/useIClientFields': false,
     '/http/mediaType': 'json',
     '/http/baseURI': 'https://api.createsend.com/api',
     '/http/token/location': 'header',

@@ -4,6 +4,7 @@ export default {
     '/type': 'http',
     '/assistant': 'wrike',
     '/http/auth/type': 'oauth',
+    '/http/auth/oauth/useIClientFields': false,
     '/http/mediaType': 'urlencoded',
     '/http/baseURI': 'https://www.wrike.com/api/v4',
     '/http/auth/token/location': 'header',

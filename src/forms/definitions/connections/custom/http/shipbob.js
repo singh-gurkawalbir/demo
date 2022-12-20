@@ -6,6 +6,7 @@ export default {
     '/type': 'http',
     '/assistant': 'shipbob',
     '/http/auth/type': 'oauth',
+    '/http/auth/oauth/useIClientFields': false,
     '/http/mediaType': 'json',
     '/http/baseURI': 'https://api.shipbob.com',
     '/http/ping/relativeURI': '/1.0/inventory',

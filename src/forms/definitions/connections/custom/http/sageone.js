@@ -4,6 +4,7 @@ export default {
     '/type': 'http',
     '/assistant': 'sageone',
     '/http/auth/type': 'oauth',
+    '/http/auth/oauth/useIClientFields': false,
     '/http/mediaType': 'json',
     '/http/baseURI': 'https://api.accounting.sage.com/v3.1',
     '/http/auth/oauth/authURI':
