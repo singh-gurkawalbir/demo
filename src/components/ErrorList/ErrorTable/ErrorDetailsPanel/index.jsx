@@ -202,6 +202,8 @@ export default function ErrorDetailsPanel({
     setMode(availableTabs[0].type);
   }
 
+  // Todo: @Siddharth Create a common tab component for ErrorDetails and ErrorDetailsPanel
+
   return (
     <div className={classes.wrapper}>
       <DrawerHeader
@@ -245,7 +247,7 @@ export default function ErrorDetailsPanel({
               isResolved={isResolved}
             />
           </TabPanel>
-          <TabPanel value={mode} type="editRetry">
+          <TabPanel value={mode} type={isFlowDisabled ? 'viewRetry' : 'editRetry'}>
             <EditRetryData
               retryId={retryId}
               onChange={onRetryDataChange}
