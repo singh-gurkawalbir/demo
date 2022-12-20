@@ -4,7 +4,7 @@ export default {
     '/type': 'rest',
     '/assistant': 'ebay',
     '/rest/authType': 'oauth',
-    '/rest/useIClientFields': false,
+    '/rest/oauth/useIClientFields': false,
     '/rest/mediaType': 'json',
     '/rest/baseURI': `https://api${
       formValues['/accountType'] === 'sandbox' ? '.sandbox' : ''
