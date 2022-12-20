@@ -28,8 +28,6 @@ export default function assistantDefinition(
         'lookupQueryParams',
         'lookups',
         'existingExtract',
-        'createEndpoint',
-        'updateEndpoint',
       ].forEach(prop => {
         assistantMetadata[prop] = formValues[`/assistantMetadata/${prop}`];
       });
