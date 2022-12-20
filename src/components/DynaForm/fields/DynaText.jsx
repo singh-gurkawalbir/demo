@@ -99,7 +99,8 @@ function DynaText(props) {
       setValueChanged(false);
     }
   }, [id, onFieldChange, options, valueChanged]);
-  const match = useRouteMatch();
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  const match = isApplicationPlaceholder ? useRouteMatch() : {};
   const { id: resourceId, resourceType } = match.params || {};
   const resource = useSelector(state =>
     selectors.resource(state, resourceType, resourceId)
