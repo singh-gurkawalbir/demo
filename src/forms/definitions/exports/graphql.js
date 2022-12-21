@@ -218,6 +218,7 @@ export default {
     semiassistantoperationselect: {fieldId: 'semiassistantoperationselect', visibleWhenAll: [{field: 'formView', isNot: ['true']}]},
     graphql: {formId: 'graphql'},
     pagingGraphql: {formId: 'pagingGraphql' },
+    mockOutput: {fieldId: 'mockOutput'},
   },
 
   layout: {
@@ -273,6 +274,12 @@ export default {
         collapsed: true,
         label: 'Non-standard API response patterns',
         fields: ['http.response.resourcePath'],
+      },
+      {
+        collapsed: true,
+        actionId: 'mockOutput',
+        label: 'Mock output',
+        fields: ['mockOutput'],
       },
       {
         collapsed: true,

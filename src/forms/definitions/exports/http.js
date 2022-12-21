@@ -1,4 +1,5 @@
 import { isNewId, finalSuccessMediaType } from '../../../utils/resource';
+import { safeParse } from '../../../utils/string';
 
 export default {
   preSave: (formValues, _, { connection } = {}) => {
@@ -246,6 +247,8 @@ export default {
     }
     retValues['/adaptorType'] = 'HTTPExport';
 
+    retValues['/mockOutput'] = safeParse(retValues['/mockOutput']);
+
     return {
       ...retValues,
     };
@@ -487,8 +490,10 @@ export default {
     'unencrypted.apiType': {
       fieldId: 'unencrypted.apiType',
     },
+    mockOutput: {
+      fieldId: 'mockOutput',
+    },
   },
-
   layout: {
     type: 'collapse',
     containers: [
@@ -596,6 +601,12 @@ export default {
         collapsed: true,
         label: 'Would you like to group records?',
         fields: ['groupByFields'],
+      },
+      {
+        collapsed: true,
+        actionId: 'mockOutput',
+        label: 'Mock output',
+        fields: ['mockOutput'],
       },
       {
         collapsed: true,

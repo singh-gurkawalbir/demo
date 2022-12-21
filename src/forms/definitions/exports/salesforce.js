@@ -1,4 +1,5 @@
 import { isNewId } from '../../../utils/resource';
+import { safeParse } from '../../../utils/string';
 
 export default {
   optionsHandler: (fieldId, fields) => {
@@ -113,6 +114,7 @@ export default {
     }
 
     delete retValues['/outputMode'];
+    retValues['/mockOutput'] = safeParse(retValues['/mockOutput']);
 
     return {
       ...retValues,
@@ -287,6 +289,7 @@ export default {
     advancedSettings: {
       formId: 'advancedSettings',
     },
+    mockOutput: {fieldId: 'mockOutput'},
   },
   layout: {
     type: 'collapse',
@@ -309,7 +312,7 @@ export default {
           }
           if (
             r.resourceType === 'realtime' ||
-                r.type === 'distributed'
+                    r.type === 'distributed'
           ) {
             return 'Configure real-time export in source application';
           }
@@ -337,6 +340,12 @@ export default {
           'delta.lagOffset',
           'once.booleanField',
         ],
+      },
+      {
+        collapsed: true,
+        actionId: 'mockOutput',
+        label: 'Mock output',
+        fields: ['mockOutput'],
       },
       {
         collapsed: true,

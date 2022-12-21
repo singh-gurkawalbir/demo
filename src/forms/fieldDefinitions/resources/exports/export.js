@@ -472,4 +472,8 @@ export default {
     type: 'settings',
     defaultValue: r => r && r.settings,
   },
+  mockOutput: {
+    label: 'Mock output',
+    type: 'mockoutput',
+  },
 };

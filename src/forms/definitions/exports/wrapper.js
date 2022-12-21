@@ -1,4 +1,5 @@
 import { isNewId } from '../../../utils/resource';
+import { safeParse } from '../../../utils/string';
 
 export default {
   preSave: formValues => {
@@ -32,6 +33,7 @@ export default {
       delete retValues['/test/limit'];
       delete retValues['/delta/dateField'];
     }
+    retValues['/mockOutput'] = safeParse(retValues['/mockOutput']);
 
     return {
       ...retValues,
@@ -76,6 +78,7 @@ export default {
     },
     exportOneToMany: { formId: 'exportOneToMany' },
     advancedSettings: { formId: 'advancedSettings' },
+    mockOutput: {fieldId: 'mockOutput'},
   },
   layout: {
     type: 'collapse',
@@ -94,6 +97,12 @@ export default {
         collapsed: true,
         label: 'Configure export type',
         fields: ['type', 'test.limit', 'delta.dateField', 'once.booleanField'],
+      },
+      {
+        collapsed: true,
+        actionId: 'mockOutput',
+        label: 'Mock output',
+        fields: ['mockOutput'],
       },
       { collapsed: true, label: 'Advanced', fields: ['advancedSettings'] },
     ],

@@ -1,6 +1,7 @@
 import url from 'url';
 import qs from 'query-string';
 import { isNewId } from '../../../../utils/resource';
+import { safeParse } from '../../../../utils/string';
 
 function isValidArray(value) {
   if (Array.isArray(value) && value[0]) {
@@ -156,6 +157,7 @@ const restPreSave = formValues => {
   retValues['/rest/nextPageTokenPath'] = undefined;
 
   retValues['/http'] = undefined;
+  retValues['/mockOutput'] = safeParse(retValues['/mockOutput']);
 
   return {
     ...retValues,
@@ -653,6 +655,7 @@ export default {
       formId: 'advancedSettings',
     },
     formView: { fieldId: 'formView' },
+    mockOutput: {fieldId: 'mockOutput'},
   },
   layout: {
     type: 'collapse',
@@ -716,6 +719,12 @@ export default {
           'http.response.successPath',
           'http.response.successValues',
         ],
+      },
+      {
+        collapsed: true,
+        actionId: 'mockOutput',
+        label: 'Mock output',
+        fields: ['mockOutput'],
       },
       {
         collapsed: 'true',

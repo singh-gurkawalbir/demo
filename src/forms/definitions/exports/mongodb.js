@@ -1,4 +1,5 @@
 import { isNewId } from '../../../utils/resource';
+import { safeParse } from '../../../utils/string';
 
 export default {
   preSave: formValues => {
@@ -28,6 +29,7 @@ export default {
       delete retValues['/test/limit'];
       delete retValues['/delta/dateField'];
     }
+    retValues['/mockOutput'] = safeParse(retValues['/mockOutput']);
 
     return {
       ...retValues,
@@ -75,6 +77,7 @@ export default {
     },
     rdbmsGrouping: { formId: 'rdbmsGrouping' },
     advancedSettings: { formId: 'advancedSettings' },
+    mockOutput: {fieldId: 'mockOutput'},
   },
   layout: {
     type: 'collapse',
@@ -107,6 +110,12 @@ export default {
         collapsed: true,
         label: 'Would you like to group records?',
         fields: ['rdbmsGrouping'],
+      },
+      {
+        collapsed: true,
+        actionId: 'mockOutput',
+        label: 'Mock output',
+        fields: ['mockOutput'],
       },
       { collapsed: true, label: 'Advanced', fields: ['advancedSettings'] },
     ],

@@ -1,4 +1,4 @@
-import { isJsonString } from '../../../utils/string';
+import { isJsonString, safeParse } from '../../../utils/string';
 
 export default {
   preSave: formValues => {
@@ -13,6 +13,7 @@ export default {
         ? JSON.parse(sampleData)
         : undefined;
     }
+    retValues['/mockResponse'] = safeParse(retValues['/mockResponse']);
 
     return retValues;
   },
@@ -24,6 +25,7 @@ export default {
     sampleData: { fieldId: 'sampleData' },
     dataMappings: { formId: 'dataMappings' },
     advancedSettings: { formId: 'advancedSettings' },
+    mockResponseSection: {formId: 'mockResponseSection'},
   },
   layout: {
     type: 'collapse',
@@ -46,6 +48,12 @@ export default {
         collapsed: true,
         label: 'Do you have a sample destination record?',
         fields: ['sampleData'],
+      },
+      {
+        actionId: 'mockResponse',
+        collapsed: true,
+        label: 'Mock response',
+        fields: ['mockResponseSection'],
       },
       { collapsed: true, label: 'Advanced', fields: ['advancedSettings'] },
     ],

@@ -1,4 +1,5 @@
 import { isNewId } from '../../../utils/resource';
+import { safeParse } from '../../../utils/string';
 
 export default {
   preSave: ({ executionType, apiType, ...rest }) => {
@@ -122,6 +123,7 @@ export default {
     } catch (ex) {
       delete newValues['/netsuite/distributed/qualifier'];
     }
+    newValues['/mockOutput'] = safeParse(newValues['/mockOutput']);
 
     return newValues;
   },
@@ -540,6 +542,7 @@ export default {
         },
       },
     },
+    mockOutput: {fieldId: 'mockOutput'},
   },
   layout: {
     type: 'collapse',
@@ -562,7 +565,7 @@ export default {
           }
           if (
             r.resourceType === 'realtime' ||
-                r.type === 'distributed'
+                    r.type === 'distributed'
           ) {
             return 'Configure real-time export in source application';
           }
@@ -593,6 +596,12 @@ export default {
           'restlet.delta.lagOffset',
           'restlet.once.booleanField',
         ],
+      },
+      {
+        collapsed: true,
+        actionId: 'mockOutput',
+        label: 'Mock output',
+        fields: ['mockOutput'],
       },
       {
         collapsed: true,

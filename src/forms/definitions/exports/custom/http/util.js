@@ -365,6 +365,8 @@ export function fieldMeta({ resource, assistantData }) {
     fieldId: 'traceKeyTemplate',
   };
 
+  fieldMap.mockOutput = {fieldId: 'mockOutput'};
+
   return {
     fieldMap,
     layout: {
@@ -384,6 +386,12 @@ export function fieldMeta({ resource, assistantData }) {
           collapsed: true,
           label: 'Configure export type',
           fields: [...exportTypeFieldIds],
+        },
+        {
+          collapsed: true,
+          actionId: 'mockOutput',
+          label: 'Mock output',
+          fields: ['mockOutput'],
         },
         {
           collapsed: true,

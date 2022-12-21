@@ -1,3 +1,4 @@
+import { safeParse } from '../../../utils/string';
 import {
   updateFileProviderFormValues,
   EXPORT_FILE_FIELD_MAP,
@@ -20,6 +21,8 @@ export default {
       delete newValues['/file/json/resourcePath'];
     }
 
+    newValues['/mockOutput'] = safeParse(newValues['/mockOutput']);
+
     return {
       ...newValues,
     };
@@ -28,7 +31,6 @@ export default {
   fieldMap: {
     ...EXPORT_FILE_FIELD_MAP,
     advancedSettings: { formId: 'advancedSettings' },
-
   },
   layout: {
     type: 'collapse',
@@ -62,6 +64,12 @@ export default {
           'file.sortByFields',
           'file.groupByFields',
         ],
+      },
+      {
+        collapsed: true,
+        actionId: 'mockOutput',
+        label: 'Mock output',
+        fields: ['mockOutput'],
       },
       { collapsed: true, label: 'Advanced', fields: ['advancedSettings'] },
     ],

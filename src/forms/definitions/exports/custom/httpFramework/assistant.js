@@ -1,5 +1,6 @@
 import { omitBy } from 'lodash';
 import { convertToExport } from '../../../../../utils/assistant';
+import { safeParse } from '../../../../../utils/string';
 import { fieldMeta } from './util';
 
 export default function assistantDefinition(
@@ -50,6 +51,7 @@ export default function assistantDefinition(
         exportDoc['/assistant'] = undefined;
         delete exportDoc['/assistant'];
       }
+      otherFormValues['/mockOutput'] = safeParse(otherFormValues['/mockOutput']);
 
       if (formValues['/assistantMetadata/exportType'] !== 'test') {
         otherFormValues['/test/limit'] = undefined;

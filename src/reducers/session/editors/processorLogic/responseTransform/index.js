@@ -43,7 +43,6 @@ export default {
     };
     const {
       rule,
-      data,
       resourceId,
       resourceType,
       activeProcessor,
@@ -66,11 +65,6 @@ export default {
 
     patches.foregroundPatches = [{
       patch: [
-        {
-          op: 'replace',
-          path: '/sampleResponseData',
-          value: data?.transform,
-        },
         {
           op: 'replace',
           path: '/responseTransform',
