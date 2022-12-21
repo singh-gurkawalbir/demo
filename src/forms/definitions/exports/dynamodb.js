@@ -13,7 +13,6 @@ export default {
       delete retValues['/delta/dateField'];
       delete retValues['/once/booleanField'];
     } else if (retValues['/type'] === 'test') {
-      retValues['/test/limit'] = 1;
       retValues['/delta'] = undefined;
       retValues['/once'] = undefined;
       delete retValues['/delta/dateField'];
@@ -85,17 +84,19 @@ export default {
         return output || 'all';
       },
       required: true,
+      skipSort: true,
       options: [
         {
           items: [
             { label: 'All – always export all data', value: 'all' },
             { label: 'Delta – export only modified data', value: 'delta' },
             { label: 'Once – export records only once', value: 'once' },
-            { label: 'Test – export only 1 record', value: 'test' },
+            { label: 'Limit – export a set number of records', value: 'test' },
           ],
         },
       ],
     },
+    'test.limit': {fieldId: 'test.limit'},
     'delta.dateField': {
       fieldId: 'delta.dateField',
     },
@@ -140,6 +141,7 @@ export default {
         label: 'Configure export type',
         fields: [
           'type',
+          'test.limit',
           'delta.dateField',
           'once.booleanField',
           'dynamodb.onceExportPartitionKey',

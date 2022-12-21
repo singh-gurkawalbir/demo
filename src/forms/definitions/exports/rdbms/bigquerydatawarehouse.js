@@ -9,7 +9,6 @@ export default {
       retValues['/rdbms/once'] = undefined;
       delete retValues['/rdbms/once/query'];
     } else if (retValues['/type'] === 'test') {
-      retValues['/test/limit'] = 1;
       retValues['/rdbms/once'] = undefined;
       delete retValues['/rdbms/once/query'];
     } else if (retValues['/type'] === 'delta') {
@@ -35,16 +34,18 @@ export default {
         return r?.type || 'all';
       },
       required: true,
+      skipSort: true,
       options: [
         {
           items: [
             { label: 'All – always export all data', value: 'all' },
             { label: 'Delta – export only modified data', value: 'delta' },
-            { label: 'Test – export only 1 record', value: 'test' },
+            { label: 'Limit – export a set number of records', value: 'test' },
           ],
         },
       ],
     },
+    'test.limit': {fieldId: 'test.limit'},
     rdbmsGrouping: {formId: 'rdbmsGrouping'},
     exportOneToMany: { formId: 'exportOneToMany' },
     advancedSettings: { formId: 'advancedSettings' },
@@ -61,7 +62,7 @@ export default {
       {
         collapsed: true,
         label: 'Configure export type',
-        fields: ['type'],
+        fields: ['type', 'test.limit'],
       },
       {
         collapsed: true,

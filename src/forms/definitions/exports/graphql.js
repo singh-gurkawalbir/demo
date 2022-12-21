@@ -7,7 +7,6 @@ export default {
     const retValues = {...formValues};
 
     retValues['/http/formType'] = 'graph_ql';
-    retValues['/adaptorType'] = 'HTTPExport';
     retValues['/http/mediaType'] = 'json';
 
     retValues['/http/body'] = convertGraphQLQueryToHTTPBody({
@@ -104,6 +103,7 @@ export default {
           is: ['records'],
         },
       ],
+      skipSort: true,
       options: [
         {
           items: [
@@ -115,11 +115,12 @@ export default {
               helpKey: 'export.delta',
             },
             { label: 'Once – export records only once', value: 'once' },
-            { label: 'Test – export only 1 record', value: 'test' },
+            { label: 'Limit – export a set number of records', value: 'test' },
           ],
         },
       ],
     },
+    'test.limit': {fieldId: 'test.limit'},
     'delta.dateFormat': {
       fieldId: 'delta.dateFormat',
     },
@@ -237,6 +238,7 @@ export default {
         label: 'Configure export type',
         fields: [
           'type',
+          'test.limit',
           'delta.dateFormat',
           'delta.lagOffset',
           'once.booleanField',

@@ -47,7 +47,6 @@ export default {
         delete newValues['/delta/lagOffset'];
         delete newValues['/once/booleanField'];
       } else if (newValues['/type'] === 'test') {
-        newValues['/test/limit'] = 1;
         newValues['/delta'] = undefined;
         newValues['/once'] = undefined;
         delete newValues['/delta/dateField'];
@@ -92,7 +91,6 @@ export default {
         delete newValues['/delta/lagOffset'];
         delete newValues['/once/booleanField'];
       } else if (newValues['/type'] === 'test') {
-        newValues['/test/limit'] = 1;
         newValues['/delta'] = undefined;
         newValues['/once'] = undefined;
         delete newValues['/delta/dateField'];
@@ -411,13 +409,14 @@ export default {
 
         return output || 'all';
       },
+      skipSort: true,
       options: [
         {
           items: [
             { label: 'All – always export all data', value: 'all' },
             { label: 'Delta – export only modified data', value: 'delta' },
             { label: 'Once – export records only once', value: 'once' },
-            { label: 'Test – export only 1 record', value: 'test' },
+            { label: 'Limit – export a set number of records', value: 'test' },
           ],
         },
       ],
@@ -426,6 +425,10 @@ export default {
         { field: 'netsuite.execution.type', is: ['scheduled'] },
         { field: 'outputMode', is: ['records'] },
       ],
+    },
+    'test.limit': {
+      fieldId: 'test.limit',
+      visibleWhen: [{ field: 'restlet.type', is: ['test'] }],
     },
     'delta.lagOffset': {
       fieldId: 'delta.lagOffset',
@@ -454,11 +457,12 @@ export default {
 
         return output || 'all';
       },
+      skipSort: true,
       selectOptions: [
         { label: 'All – always export all data', value: 'all' },
         { label: 'Delta – export only modified data', value: 'delta' },
         { label: 'Once – export records only once', value: 'once' },
-        { label: 'Test – export only 1 record', value: 'test' },
+        { label: 'Limit – export a set number of records', value: 'test' },
       ],
       visibleWhenAll: [
         { field: 'outputMode', is: ['records'] },
@@ -584,6 +588,7 @@ export default {
           'delta.lagOffset',
           'once.booleanField',
           'restlet.type',
+          'test.limit',
           'restlet.delta.dateField',
           'restlet.delta.lagOffset',
           'restlet.once.booleanField',

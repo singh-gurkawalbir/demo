@@ -51,7 +51,6 @@ const restPreSave = formValues => {
     delete retValues['/rest/once/postBody'];
     delete retValues['/rest/once/method'];
   } else if (retValues['/type'] === 'test') {
-    retValues['/test/limit'] = 1;
     retValues['/delta'] = undefined;
     retValues['/once'] = undefined;
     retValues['/rest/once'] = undefined;
@@ -187,7 +186,6 @@ export default {
       delete retValues['/rest/once/postBody'];
       delete retValues['/rest/once/method'];
     } else if (retValues['/type'] === 'test') {
-      retValues['/test/limit'] = 1;
       retValues['/delta'] = undefined;
       retValues['/once'] = undefined;
       retValues['/http/once'] = undefined;
@@ -555,6 +553,7 @@ export default {
         },
       ],
       required: true,
+      skipSort: true,
       options: [
         {
           items: [
@@ -567,11 +566,12 @@ export default {
               fieldsToValidate: ['rest.relativeURI', 'rest.postBody'] },
 
             { label: 'Once – export records only once', value: 'once' },
-            { label: 'Test – export only 1 record', value: 'test' },
+            { label: 'Limit – export a set number of records', value: 'test' },
           ],
         },
       ],
     },
+    'test.limit': {fieldId: 'test.limit'},
     'delta.dateFormat': {
       fieldId: 'delta.dateFormat',
     },
@@ -679,6 +679,7 @@ export default {
         label: 'Configure export type',
         fields: [
           'type',
+          'test.limit',
           'delta.dateFormat',
           'delta.lagOffset',
           'once.booleanField',

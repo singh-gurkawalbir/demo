@@ -51,6 +51,10 @@ export default function assistantDefinition(
         delete exportDoc['/assistant'];
       }
 
+      if (formValues['/assistantMetadata/exportType'] !== 'test') {
+        otherFormValues['/test/limit'] = undefined;
+      }
+
       return { ...otherFormValues, ...exportDoc };
     },
   };

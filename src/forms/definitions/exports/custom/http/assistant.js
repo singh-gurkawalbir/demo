@@ -60,6 +60,10 @@ export default function assistantDefinition(
         otherFormValues['/unencrypted/apiType'] = 'Amazon-SP-API';
       }
 
+      if (formValues['/assistantMetadata/exportType'] !== 'test') {
+        otherFormValues['/test/limit'] = undefined;
+      }
+
       return { ...otherFormValues, ...exportDoc };
     },
   };

@@ -38,7 +38,6 @@ export default {
       delete retValues['/http/once/body'];
       delete retValues['/http/once/method'];
     } else if (retValues['/type'] === 'test') {
-      retValues['/test/limit'] = 1;
       retValues['/delta'] = undefined;
       retValues['/once'] = undefined;
       retValues['/http/once'] = undefined;
@@ -363,6 +362,7 @@ export default {
           is: ['records'],
         },
       ],
+      skipSort: true,
       options: [
         {
           items: [
@@ -375,11 +375,12 @@ export default {
               fieldsToValidate: ['http.relativeURI', 'http.body'] },
 
             { label: 'Once – export records only once', value: 'once' },
-            { label: 'Test – export only 1 record', value: 'test' },
+            { label: 'Limit – export a set number of records', value: 'test' },
           ],
         },
       ],
     },
+    'test.limit': {fieldId: 'test.limit'},
     'delta.dateFormat': {
       fieldId: 'delta.dateFormat',
     },
@@ -521,6 +522,7 @@ export default {
         label: 'Configure export type',
         fields: [
           'type',
+          'test.limit',
           'delta.dateFormat',
           'delta.lagOffset',
           'once.booleanField',

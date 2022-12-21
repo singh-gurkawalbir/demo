@@ -3454,6 +3454,9 @@ Object {
       "settings": Object {
         "fieldId": "settings",
       },
+      "test.limit": Object {
+        "fieldId": "test.limit",
+      },
       "type": Object {
         "defaultValue": [Function],
         "id": "type",
@@ -3474,13 +3477,14 @@ Object {
                 "value": "once",
               },
               Object {
-                "label": "Test – export only 1 record",
+                "label": "Limit – export a set number of records",
                 "value": "test",
               },
             ],
           },
         ],
         "required": true,
+        "skipSort": true,
         "type": "select",
       },
     },
@@ -3513,6 +3517,7 @@ Object {
               "collapsed": true,
               "fields": Array [
                 "type",
+                "test.limit",
                 "delta.dateField",
                 "once.booleanField",
                 "dynamodb.onceExportPartitionKey",
@@ -4142,6 +4147,9 @@ Object {
       "settings": Object {
         "fieldId": "settings",
       },
+      "test.limit": Object {
+        "fieldId": "test.limit",
+      },
       "type": Object {
         "defaultValue": [Function],
         "id": "type",
@@ -4169,13 +4177,14 @@ Object {
                 "value": "once",
               },
               Object {
-                "label": "Test – export only 1 record",
+                "label": "Limit – export a set number of records",
                 "value": "test",
               },
             ],
           },
         ],
         "required": true,
+        "skipSort": true,
         "type": "selectwithvalidations",
         "visibleWhen": Array [
           Object {
@@ -4227,6 +4236,7 @@ Object {
               "collapsed": true,
               "fields": Array [
                 "type",
+                "test.limit",
                 "delta.dateFormat",
                 "delta.lagOffset",
                 "once.booleanField",
@@ -4362,6 +4372,9 @@ Object {
       "settings": Object {
         "fieldId": "settings",
       },
+      "test.limit": Object {
+        "fieldId": "test.limit",
+      },
       "type": Object {
         "defaultValue": [Function],
         "id": "type",
@@ -4382,13 +4395,14 @@ Object {
                 "value": "once",
               },
               Object {
-                "label": "Test – export only 1 record",
+                "label": "Limit – export a set number of records",
                 "value": "test",
               },
             ],
           },
         ],
         "required": true,
+        "skipSort": true,
         "type": "select",
       },
     },
@@ -4417,6 +4431,7 @@ Object {
               "collapsed": true,
               "fields": Array [
                 "type",
+                "test.limit",
                 "delta.dateField",
                 "once.booleanField",
               ],
@@ -5129,10 +5144,11 @@ Object {
             "value": "once",
           },
           Object {
-            "label": "Test – export only 1 record",
+            "label": "Limit – export a set number of records",
             "value": "test",
           },
         ],
+        "skipSort": true,
         "type": "netsuiteexporttype",
         "visibleWhenAll": Array [
           Object {
@@ -5181,6 +5197,17 @@ Object {
       "settings": Object {
         "fieldId": "settings",
       },
+      "test.limit": Object {
+        "fieldId": "test.limit",
+        "visibleWhen": Array [
+          Object {
+            "field": "restlet.type",
+            "is": Array [
+              "test",
+            ],
+          },
+        ],
+      },
       "type": Object {
         "defaultValue": [Function],
         "id": "type",
@@ -5201,13 +5228,14 @@ Object {
                 "value": "once",
               },
               Object {
-                "label": "Test – export only 1 record",
+                "label": "Limit – export a set number of records",
                 "value": "test",
               },
             ],
           },
         ],
         "required": true,
+        "skipSort": true,
         "type": "select",
         "visibleWhenAll": Array [
           Object {
@@ -5266,6 +5294,7 @@ Object {
                 "delta.lagOffset",
                 "once.booleanField",
                 "restlet.type",
+                "test.limit",
                 "restlet.delta.dateField",
                 "restlet.delta.lagOffset",
                 "restlet.once.booleanField",
@@ -5911,6 +5940,9 @@ Object {
       "settings": Object {
         "fieldId": "settings",
       },
+      "test.limit": Object {
+        "fieldId": "test.limit",
+      },
       "type": Object {
         "defaultValue": [Function],
         "id": "type",
@@ -5931,13 +5963,14 @@ Object {
                 "value": "once",
               },
               Object {
-                "label": "Test – export only 1 record",
+                "label": "Limit – export a set number of records",
                 "value": "test",
               },
             ],
           },
         ],
         "required": true,
+        "skipSort": true,
         "type": "select",
         "visibleWhenAll": Array [
           Object {
@@ -5987,6 +6020,7 @@ Object {
               "collapsed": true,
               "fields": Array [
                 "type",
+                "test.limit",
                 "delta.dateField",
                 "delta.lagOffset",
                 "once.booleanField",
@@ -6394,6 +6428,9 @@ Object {
       "settings": Object {
         "fieldId": "settings",
       },
+      "test.limit": Object {
+        "fieldId": "test.limit",
+      },
       "type": Object {
         "defaultValue": [Function],
         "id": "type",
@@ -6414,13 +6451,14 @@ Object {
                 "value": "once",
               },
               Object {
-                "label": "Test – export only 1 record",
+                "label": "Limit – export a set number of records",
                 "value": "test",
               },
             ],
           },
         ],
         "required": true,
+        "skipSort": true,
         "type": "select",
       },
       "wrapper.configuration": Object {
@@ -6454,6 +6492,7 @@ Object {
               "collapsed": true,
               "fields": Array [
                 "type",
+                "test.limit",
                 "delta.dateField",
                 "once.booleanField",
               ],
@@ -6860,6 +6899,9 @@ Object {
       "settings": Object {
         "fieldId": "settings",
       },
+      "test.limit": Object {
+        "fieldId": "test.limit",
+      },
       "type": Object {
         "defaultValue": [Function],
         "id": "type",
@@ -6880,13 +6922,14 @@ Object {
                 "value": "once",
               },
               Object {
-                "label": "Test – export only 1 record",
+                "label": "Limit – export a set number of records",
                 "value": "test",
               },
             ],
           },
         ],
         "required": true,
+        "skipSort": true,
         "type": "select",
         "visibleWhenAll": Array [
           Object {
@@ -6936,6 +6979,7 @@ Object {
               "collapsed": true,
               "fields": Array [
                 "type",
+                "test.limit",
                 "delta.dateField",
                 "delta.lagOffset",
                 "once.booleanField",
@@ -7150,6 +7194,9 @@ Object {
       "settings": Object {
         "fieldId": "settings",
       },
+      "test.limit": Object {
+        "fieldId": "test.limit",
+      },
       "type": Object {
         "defaultValue": [Function],
         "id": "type",
@@ -7177,13 +7224,14 @@ Object {
                 "value": "once",
               },
               Object {
-                "label": "Test – export only 1 record",
+                "label": "Limit – export a set number of records",
                 "value": "test",
               },
             ],
           },
         ],
         "required": true,
+        "skipSort": true,
         "type": "selectwithvalidations",
         "visibleWhen": Array [
           Object {
@@ -7225,6 +7273,7 @@ Object {
               "collapsed": true,
               "fields": Array [
                 "type",
+                "test.limit",
                 "delta.dateFormat",
                 "delta.lagOffset",
                 "once.booleanField",
@@ -7667,6 +7716,9 @@ Object {
       "settings": Object {
         "fieldId": "settings",
       },
+      "test.limit": Object {
+        "fieldId": "test.limit",
+      },
       "type": Object {
         "defaultValue": [Function],
         "id": "type",
@@ -7687,13 +7739,14 @@ Object {
                 "value": "once",
               },
               Object {
-                "label": "Test – export only 1 record",
+                "label": "Limit – export a set number of records",
                 "value": "test",
               },
             ],
           },
         ],
         "required": true,
+        "skipSort": true,
         "type": "select",
         "visibleWhenAll": Array [
           Object {
@@ -7743,6 +7796,7 @@ Object {
               "collapsed": true,
               "fields": Array [
                 "type",
+                "test.limit",
                 "delta.dateField",
                 "delta.lagOffset",
                 "once.booleanField",
@@ -7810,6 +7864,9 @@ Object {
       "settings": Object {
         "fieldId": "settings",
       },
+      "test.limit": Object {
+        "fieldId": "test.limit",
+      },
       "type": Object {
         "defaultValue": [Function],
         "id": "type",
@@ -7830,13 +7887,14 @@ Object {
                 "value": "once",
               },
               Object {
-                "label": "Test – export only 1 record",
+                "label": "Limit – export a set number of records",
                 "value": "test",
               },
             ],
           },
         ],
         "required": true,
+        "skipSort": true,
         "type": "select",
       },
     },
@@ -7863,6 +7921,7 @@ Object {
               "collapsed": true,
               "fields": Array [
                 "type",
+                "test.limit",
                 "rdbms.once.query",
               ],
               "label": "Configure export type",
@@ -7933,6 +7992,9 @@ Object {
       "settings": Object {
         "fieldId": "settings",
       },
+      "test.limit": Object {
+        "fieldId": "test.limit",
+      },
       "type": Object {
         "defaultValue": [Function],
         "id": "type",
@@ -7953,13 +8015,14 @@ Object {
                 "value": "once",
               },
               Object {
-                "label": "Test – export only 1 record",
+                "label": "Limit – export a set number of records",
                 "value": "test",
               },
             ],
           },
         ],
         "required": true,
+        "skipSort": true,
         "type": "select",
       },
     },
@@ -7986,6 +8049,7 @@ Object {
               "collapsed": true,
               "fields": Array [
                 "type",
+                "test.limit",
                 "rdbms.once.query",
               ],
               "label": "Configure export type",
