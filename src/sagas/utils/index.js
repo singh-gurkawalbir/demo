@@ -95,8 +95,6 @@ export const getExportMetadata = (connectorMetadata, connectionVersion) => {
 
   let versions = connectorMetadata.versions?.map(v => ({version: v.name, _id: v._id}));
 
-  exportData.versions = cloneDeep(versions);
-
   if (!versions || !versions.length) {
     versions = [
       {
@@ -108,6 +106,7 @@ export const getExportMetadata = (connectorMetadata, connectionVersion) => {
     versions = versions.filter(v => v.version === connectionVersion);
     httpResources = httpResources.filter(r => r._versionIds?.includes(versions[0]._id));
   }
+  exportData.versions = cloneDeep(versions);
 
   exportData.resources = httpResources.map(httpResource => {
     const exportPreConfiguredFields = cloneDeep(httpResource.supportedBy?.export?.preConfiguredFields);

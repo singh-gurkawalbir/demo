@@ -34,6 +34,20 @@ export default function assistantDefinition(
       ].forEach(prop => {
         assistantMetadata[prop] = formValues[`/assistantMetadata/${prop}`];
       });
+
+      if (assistantMetadata.assistant === 'amazonsellingpartner') {
+        assistantMetadata.assistant = 'amazonmws';
+      }
+      if (assistantMetadata.assistant === 'recurlyv3') {
+        assistantMetadata.assistant = 'recurly';
+      }
+      if (assistantMetadata.assistant === 'loopreturnsv2') {
+        assistantMetadata.assistant = 'loopreturns';
+      }
+      if (assistantMetadata.assistant === 'acumaticaecommerce') {
+        assistantMetadata.assistant = 'acumatica';
+      }
+
       const otherFormValues = omitBy(formValues, (v, k) =>
         k.includes('/assistantMetadata/')
       );
