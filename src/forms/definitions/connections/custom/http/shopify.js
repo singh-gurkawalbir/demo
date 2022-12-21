@@ -7,7 +7,6 @@ export default {
 
     if (retValues['/http/auth/type'] === 'oauth') {
       retValues['/http/auth/token/location'] = 'header';
-      retValues['/http/auth/oauth/useIClientFields'] = false;
       retValues['/http/auth/oauth/authURI'] = `https://${
         formValues['/http/storeName']
       }.myshopify.com/admin/oauth/authorize`;
@@ -215,14 +214,14 @@ export default {
       required: true,
       defaultValue: r =>
         (r && r.http && r.http.unencrypted && r.http.unencrypted.version) ||
-        '2022-10',
+        '2023-01',
       visible: r => !(r?._connectorId),
       options: [
         {
           items: [
-            { label: '2022-04', value: '2022-04' },
             { label: '2022-07', value: '2022-07' },
             { label: '2022-10', value: '2022-10' },
+            { label: '2023-01', value: '2023-01' },
           ],
         },
       ],
