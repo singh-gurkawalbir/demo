@@ -1,5 +1,5 @@
 export const additionalFilter = resourceType => {
-  if (resourceType === 'exports' || resourceType === 'imports') {
+  if (resourceType === 'exports' || resourceType === 'imports' || resourceType === 'connections') {
     return {
       _connectorId: { $exists: false },
     };
