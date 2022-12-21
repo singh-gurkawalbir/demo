@@ -624,6 +624,7 @@ export const wrapSampleDataWithContext = ({
   switch (stage) {
     case 'transform':
     case 'sampleResponse':
+    case 'responseTransform':
     case 'outputFilter':
       contextFields.pageIndex = 0;
 
@@ -682,14 +683,15 @@ export const wrapSampleDataWithContext = ({
         data: {
           preMapData: preMapSampleData?.data ? [preMapSampleData.data] : [],
           postMapData: postMapSampleData?.data ? [postMapSampleData.data] : [],
-          responseData: [data].map(() => ({
+          // if data is undefined, show a sample responseData
+          responseData: data ? [data] : [{
             statusCode: 200,
             errors: [{ code: '', message: '', source: '' }],
             ignored: false,
             id: '',
-            _json: data || {},
+            _json: {},
             dataURI: '',
-          })),
+          }],
           ...resourceIds,
           settings,
         },

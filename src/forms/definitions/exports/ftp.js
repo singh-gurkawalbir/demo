@@ -1,3 +1,4 @@
+import { safeParse } from '../../../utils/string';
 import { EXPORT_FILE_FIELD_MAP, getFileProviderExportsOptionsHandler, updateFileProviderFormValues } from '../../metaDataUtils/fileUtil';
 
 export default {
@@ -43,6 +44,8 @@ export default {
     if (!newValues['/file/decrypt']) {
       newValues['/file/decrypt'] = undefined;
     }
+
+    newValues['/mockOutput'] = safeParse(newValues['/mockOutput']);
 
     return {
       ...newValues,
@@ -96,6 +99,12 @@ export default {
           'file.sortByFields',
           'file.groupByFields',
         ],
+      },
+      {
+        collapsed: true,
+        actionId: 'mockOutput',
+        label: 'Mock output',
+        fields: ['mockOutput'],
       },
       {
         collapsed: true,

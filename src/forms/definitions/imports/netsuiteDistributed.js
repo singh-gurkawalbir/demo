@@ -1,4 +1,5 @@
 import { updateMappingsBasedOnNetSuiteSubrecords } from '../../../utils/resource';
+import { safeParse } from '../../../utils/string';
 
 export default {
   preSave: formValues => {
@@ -35,6 +36,7 @@ export default {
     if (newValues['/oneToMany'] === 'false') {
       newValues['/pathToMany'] = undefined;
     }
+    newValues['/mockResponse'] = safeParse(newValues['/mockResponse']);
 
     return {
       ...newValues,
@@ -149,6 +151,7 @@ export default {
       fieldId: 'netsuite_da.useSS2Restlets',
     },
     traceKeyTemplate: {fieldId: 'traceKeyTemplate'},
+    mockResponseSection: { formId: 'mockResponseSection' },
   },
   layout: {
     type: 'collapse',
@@ -182,6 +185,12 @@ export default {
           'netsuite.file.fileType',
           'netsuite.file.folder',
         ],
+      },
+      {
+        actionId: 'mockResponse',
+        collapsed: true,
+        label: 'Mock response',
+        fields: ['mockResponseSection'],
       },
       {
         collapsed: true,

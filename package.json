@@ -62,6 +62,7 @@
     "moment-timezone": "^0.5.35",
     "nanoid": "^3.3.1",
     "notistack": "0.9.17",
+    "object-sizeof": "^1.6.3",
     "parse-link-header": "^2.0.0",
     "pixi-viewport": "4.32.0",
     "pixi.js": "6.1.2",

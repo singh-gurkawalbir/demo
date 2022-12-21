@@ -4,6 +4,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
 import ErrorIcon from '../../icons/ErrorIcon';
 import WarningIcon from '../../icons/WarningIcon';
+import RawHtml from '../../RawHtml';
 
 const useStyles = makeStyles(theme => ({
   descriptionWrapper: {
@@ -14,17 +15,24 @@ const useStyles = makeStyles(theme => ({
     },
   },
   error: {
+    display: 'flex',
+    alignItems: 'top',
     color: theme.palette.error.main,
   },
   warning: {
+    display: 'flex',
+    alignItems: 'top',
     color: theme.palette.warning.main,
   },
   icon: {
+    marginTop: 2,
     marginRight: 3,
     fontSize: theme.spacing(2),
     verticalAlign: 'text-bottom',
   },
   description: {
+    display: 'flex',
+    alignItems: 'top',
     color: theme.palette.text.hint,
     '& a': {
       marginLeft: theme.spacing(0.5),
@@ -35,6 +43,7 @@ const useStyles = makeStyles(theme => ({
 
 export default function FieldMessage({ description, errorMessages, warningMessages, isValid, className }) {
   const classes = useStyles();
+  const shownError = isValid ? description : errorMessages;
 
   return description || errorMessages || warningMessages ? (
     <FormHelperText
@@ -43,19 +52,25 @@ export default function FieldMessage({ description, errorMessages, warningMessag
       component="div">
       {description && isValid && (
       <div className={classes.description}>
-        {description}
+        {/<\/?[a-z][\s\S]*>/i.test(description) ? (
+          <RawHtml html={description} options={{allowedTags: ['a'], escapeUnsecuredDomains: true}} />
+        ) : (description)}
       </div>
       )}
       {warningMessages && (
       <div className={classes.warning}>
         {warningMessages && !isValid && <WarningIcon className={classes.icon} />}
-        {warningMessages}
+        {/<\/?[a-z][\s\S]*>/i.test(warningMessages) ? (
+          <RawHtml html={warningMessages} options={{allowedTags: ['a'], escapeUnsecuredDomains: true}} />
+        ) : (warningMessages)}
       </div>
       )}
       {errorMessages && (
       <div className={classes.error}>
         {errorMessages && !isValid && <ErrorIcon className={classes.icon} />}
-        {isValid ? description : errorMessages}
+        {/<\/?[a-z][\s\S]*>/i.test(shownError) ? (
+          <RawHtml html={shownError} options={{allowedTags: ['a'], escapeUnsecuredDomains: true}} />
+        ) : (shownError)}
       </div>
       )}
     </FormHelperText>

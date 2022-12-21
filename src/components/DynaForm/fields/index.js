@@ -161,6 +161,8 @@ import DynaSignupConsent from './DynaSignupConsent';
 import DynaSignupName from './DynaSignupName';
 import DynaSignupEmail from './DynaSignupEmail';
 import DynaSalesforceSObject from './DynaSalesforceSObject';
+import DynaMockOutput from './DynaMockOutput';
+import DynaMockResponse from './DynaMockResponse';
 import DynaSelectDataRetentionPeriod from './DynaSelectDataRetentionPeriod';
 import DynaChangeLicenseEdition from './DynaChangeLicenseEdition';
 import DynaIClientHeaders from './DynaIClientHeaders';
@@ -337,6 +339,8 @@ export default {
   switch: DynaSwitch,
   mapper2sourcefield: DynaMapper2SourceField,
   mapper2tabbedextracts: DynaMapper2TabbedExtracts,
+  mockoutput: DynaMockOutput,
+  mockResponse: DynaMockResponse,
   signupconsent: DynaSignupConsent,
   signupname: DynaSignupName,
   signupemail: DynaSignupEmail,

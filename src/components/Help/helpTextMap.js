@@ -6,6 +6,11 @@ export default {
   'afe.handlebar.data': 'This is sample help for handlebar afe, data panel',
   'afe.handlebar.rule.relaviveUri': 'This is sample help for handlebar afe, rule panel, relativeUri fieldId',
   previewPanelRecords: 'Enter or select the maximum number of records – up to 100 – to preview. Then, click <b>Preview</b> to see the records that match your query in the order that they’re received.',
+  populateMockOutput: 'Replace any mock output values in this editor with the <a href="https://docs.celigo.com/hc/en-us/articles/360039842611-Preview-export-data" target="_blank">preview data</a> from the most recent export. Clicking this overwrites any existing mock data with preview data.',
+  populateMockResponse: 'Replace any mock response in this editor with the preview data from the most recent import. Clicking this button overwrites any existing mock response with preview data.',
+  populateMockResponseWithSampleData: 'Replace any mock response in this editor with the sample response data. Clicking this button overwrites any existing mock response with sample data.',
+  'export.mockOutput': 'Mock output simulates exported data during flow configuration or when you execute a flow test run. Instead of actually executing the export to retrieve sample data (or waiting for webhook listeners to receive data), integrator.io uses the mock output you provide to simulate export data while you are configuring your flow. Mock output is always required when running the flow in test mode. Click Populate with preview data to replace any mock output values in this editor with <a href="https://docs.celigo.com/hc/en-us/articles/360039842611-Preview-export-data" target="_blank">preview data</a>, or enter your own sample data (max 10 records up to 1 MB in size). Mock output must be in <a href="https://docs.celigo.com/hc/en-us/articles/4473437451163-integrator-io-canonical-format-for-mock-data" target="_blank">integrator.io canonical format.</a>',
+  'import.mockResponse': 'Mock response data simulates a response returned by the destination application. You can use mock response data to configure the rest of your flow. You can also use mock data when running the flow in test mode to avoid interactions with the destination application while running end-to-end flow tests. Mock response data must be in <a href="https://docs.celigo.com/hc/en-us/articles/4473437451163" target="_blank">integrator.io canonical JSON format.</a>',
   settingsForm:
 'Open <a href="https://docs.celigo.com/hc/en-us/articles/360058595552-Create-forms" target="_blank">Form builder</a> to create or edit user-friendly fields that prompt for text entry or selections that will be returned as settings applied to this resource. Your forms can include any <a href="https://docs.celigo.com/hc/en-us/articles/360059205112-Common-form-fields" target="_blank">field types</a> that you see elsewhere in integrator.io. Forms fields make it much easier for less technical users to work with your settings.',
   settings:
@@ -1167,9 +1172,16 @@ if you're using a production account, you'll find your API keys under the 'API M
   'export._connectionId':
 'The specific connection you would like to use for your export or import.\nYou can pre-establish and save your connections using Menu > Connections. Each stored connection contains credentials along with other related information needed to access the desired application.\nIn addition, you can click the + icon beside this field to create a new connection.',
   'export.type':
-"There are multiple export types available to help support common integration patterns.  'All' will export all data, always.  'Delta' will only export data that has changed since the last time the data flow was run.  'Once' will only export data that has not been exported already, and will also automatically update records to mark them as exported.  'Test' will only export 1 record by default, and should be used while testing to avoid syncing lots of data.",
+`Choose an export type depending on your integration pattern:<br/>
+  <ul> <li><b>All</b> – Export all data, every time the flow runs.</li>
+  <li><b>Delta</b> – Export data that has changed since the last time the flow ran.</li>
+  <li><b>Once</b> – Export only data that has not been exported already, and then write back to the source app to mark the retrieved records as exported.</li>
+  <li><b>Limit</b> – Export a set number of records (max 100). You can change the maximum number of records to export each time the flow runs, default is set to 1. <b>Limit</b> is useful when developing and testing integrations to avoid syncing lots of data.</ul>`,
   'export.bigquery.type':
-"There are multiple export types available to help support common integration patterns.  'All' will export all data, always.  'Delta' will only export data that has changed since the last time the data flow was run.  'Test' will only export 1 record by default, and should be used while testing to avoid syncing lots of data.",
+`Choose an export type depending on your integration pattern:<br/>
+  <ul> <li><b>All</b> – Export all data, every time the flow runs.</li>
+  <li><b>Delta</b> – Export data that has changed since the last time the flow ran.</li>
+  <li><b>Limit</b> – Export a set number of records (max 100). You can change the maximum number of records to export each time the flow runs, default is set to 1. <b>Limit</b> is useful when developing and testing integrations to avoid syncing lots of data.</ul>`,
   'export.lastModified':
 'System generated date/time to track the last time this resource was modified.',
   'export.apiIdentifier':
@@ -1195,7 +1207,7 @@ if you're using a production account, you'll find your API keys under the 'API M
   'export.transform.rules':
 'Transformations are an optional feature that lets you alter the representation of your record(s).  By providing a set of rules, you can change the structure of your record. Each rule is made up of a pair of extract and generate json paths. These paths let you map where to get (extract) values from and where to place (generate) them. At its most basic form, by providing rules, you can cherry-pick which record properties you want to keep and which to drop. Only properties that are referenced in a rule will be part of the transformed record. Often simply renaming property names is not enough. It is also possible to promote parent properties to child items. For example, consider the following sample record: <pre>{ id: 1,\n items: [\n {name: ‘bob’},\n {name: ‘joe’}\n ] \n}</pre>\nIf you wanted to rename items.name to people.firstName and move an ‘id’ property into each item, you would use the rule-set: <pre>[\n { extract: ‘items[*].name’, generate: ‘people[*].firstName’ },\n { extract: ‘id’, generate: ‘people[*].id’ }\n]</pre> The result of this transform would be: <pre>{ people: [\n { id: 1, firstName: ‘bob },\n { id: 1, firstName: ‘joe’ } \n] }</pre>',
   'export.test.limit':
-'For testing purpose, records exported will be limited to the number specified',
+'Enter the maximum number of records to export each time this flow runs (maximum limit is 100 records). In most cases, you would apply this limit only while developing and testing an integration.',
   'export.delta.dateField':
 'Please select one or more date fields from the export application, and integrator.io will use these date fields to process records that were created and/or modified since the last time the flow was run.  If you are using multiple date fields, please use commas to separate the different values.  For example, \'createdAt,lastModified\' will first export \'createdAt\' records, and then \'lastModified\' records.',
   'export.delta.dateFormat':

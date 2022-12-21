@@ -1,4 +1,5 @@
 import { isNewId, finalSuccessMediaType } from '../../../utils/resource';
+import { safeParse } from '../../../utils/string';
 
 export default {
   preSave: (formValues, _, { connection } = {}) => {
@@ -38,7 +39,6 @@ export default {
       delete retValues['/http/once/body'];
       delete retValues['/http/once/method'];
     } else if (retValues['/type'] === 'test') {
-      retValues['/test/limit'] = 1;
       retValues['/delta'] = undefined;
       retValues['/once'] = undefined;
       retValues['/http/once'] = undefined;
@@ -247,6 +247,8 @@ export default {
     }
     retValues['/adaptorType'] = 'HTTPExport';
 
+    retValues['/mockOutput'] = safeParse(retValues['/mockOutput']);
+
     return {
       ...retValues,
     };
@@ -363,6 +365,7 @@ export default {
           is: ['records'],
         },
       ],
+      skipSort: true,
       options: [
         {
           items: [
@@ -375,11 +378,12 @@ export default {
               fieldsToValidate: ['http.relativeURI', 'http.body'] },
 
             { label: 'Once – export records only once', value: 'once' },
-            { label: 'Test – export only 1 record', value: 'test' },
+            { label: 'Limit – export a set number of records', value: 'test' },
           ],
         },
       ],
     },
+    'test.limit': {fieldId: 'test.limit'},
     'delta.dateFormat': {
       fieldId: 'delta.dateFormat',
     },
@@ -486,8 +490,10 @@ export default {
     'unencrypted.apiType': {
       fieldId: 'unencrypted.apiType',
     },
+    mockOutput: {
+      fieldId: 'mockOutput',
+    },
   },
-
   layout: {
     type: 'collapse',
     containers: [
@@ -521,6 +527,7 @@ export default {
         label: 'Configure export type',
         fields: [
           'type',
+          'test.limit',
           'delta.dateFormat',
           'delta.lagOffset',
           'once.booleanField',
@@ -594,6 +601,12 @@ export default {
         collapsed: true,
         label: 'Would you like to group records?',
         fields: ['groupByFields'],
+      },
+      {
+        collapsed: true,
+        actionId: 'mockOutput',
+        label: 'Mock output',
+        fields: ['mockOutput'],
       },
       {
         collapsed: true,

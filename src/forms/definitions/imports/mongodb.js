@@ -1,3 +1,5 @@
+import { safeParse } from '../../../utils/string';
+
 export default {
   preSave: formValues => {
     const retValues = {
@@ -18,6 +20,7 @@ export default {
     if (retValues['/oneToMany'] === 'false') {
       retValues['/pathToMany'] = undefined;
     }
+    retValues['/mockResponse'] = safeParse(retValues['/mockResponse']);
 
     return {
       ...retValues,
@@ -67,6 +70,7 @@ export default {
     dataMappings: {
       formId: 'dataMappings',
     },
+    mockResponseSection: {formId: 'mockResponseSection'},
   },
   layout: {
     type: 'collapse',
@@ -91,6 +95,12 @@ export default {
           'mongodb.update',
           'mongodb.upsert',
         ],
+      },
+      {
+        actionId: 'mockResponse',
+        collapsed: true,
+        label: 'Mock response',
+        fields: ['mockResponseSection'],
       },
       {
         collapsed: true,

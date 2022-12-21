@@ -1283,7 +1283,7 @@ describe('Flow sample data utility sagas', () => {
         const pp2 = { _id: 'lookup-456', name: 'pp2', adaptorType: 'HTTPExport'};
         const pp3 = { _id: 'import-123', name: 'pp3', adaptorType: 'HTTPImport'};
 
-        const sampleResponseData = {
+        const mockResponse = {
           id: '',
           errors: '',
           ignored: '',
@@ -1301,9 +1301,9 @@ describe('Flow sample data utility sagas', () => {
         };
 
         const flowResourcesMap = {
-          'lookup-123': {doc: {...pp1, sampleResponseData: lookupResponseData}, options: { }},
-          'lookup-456': {doc: {...pp2, sampleResponseData: lookupResponseData}, options: { }},
-          'import-123': {doc: {...pp3, sampleResponseData}, options: { uiData: undefined, files: undefined }},
+          'lookup-123': {doc: {...pp1, mockResponse: lookupResponseData}, options: { }},
+          'lookup-456': {doc: {...pp2, mockResponse: lookupResponseData}, options: { }},
+          'import-123': {doc: {...pp3, mockResponse}, options: { uiData: undefined, files: undefined }},
         };
 
         return expectSaga(fetchFlowResources, { flow, type: 'pageProcessors' })
@@ -1729,38 +1729,6 @@ describe('Flow sample data utility sagas', () => {
           })
           .run();
       });
-      test('should dispatch receivedPreviewData with parsed sampleResponse if the data is in JSON string format on the resource for the stage sampleResponse', () => {
-        const resourceId = 'import-123';
-        const flowId = 'flow-123';
-        const resource = {
-          _id: 'import-123',
-          name: 'test',
-          adaptorType: 'RESTImport',
-          sampleResponseData: '{ "test": 5 }',
-        };
-        const parsedSampleResponse = {
-          test: 5,
-        };
-
-        return expectSaga(requestSampleDataForImports, { resourceId, flowId, sampleDataStage: 'sampleResponse' })
-          .provide([
-            [select(
-              selectors.resourceData,
-              'imports',
-              resourceId,
-              SCOPES.VALUE
-            ), { merged: resource}],
-          ])
-          .put(
-            actions.flowData.receivedPreviewData(
-              flowId,
-              resourceId,
-              parsedSampleResponse,
-              'sampleResponse'
-            )
-          )
-          .run();
-      });
       test('should dispatch receivedPreviewData with sampleResponse if the data is not in JSON string format on the resource for the stage sampleResponse', () => {
         const resourceId = 'import-123';
         const flowId = 'flow-123';
@@ -1768,41 +1736,11 @@ describe('Flow sample data utility sagas', () => {
           _id: 'import-123',
           name: 'test',
           adaptorType: 'RESTImport',
-          sampleResponseData: { test: 5 },
+          mockResponse: [{ _json: {test: 5} }],
         };
         const parsedSampleResponse = {
           test: 5,
         };
-
-        return expectSaga(requestSampleDataForImports, { resourceId, flowId, sampleDataStage: 'sampleResponse' })
-          .provide([
-            [select(
-              selectors.resourceData,
-              'imports',
-              resourceId,
-              SCOPES.VALUE
-            ), { merged: resource}],
-          ])
-          .put(
-            actions.flowData.receivedPreviewData(
-              flowId,
-              resourceId,
-              parsedSampleResponse,
-              'sampleResponse'
-            )
-          )
-          .run();
-      });
-      test('should dispatch receivedPreviewData with sampleResponse if the data is not in JSON string format ( like XML sampleResponse ) on the resource for the stage sampleResponse', () => {
-        const resourceId = 'import-123';
-        const flowId = 'flow-123';
-        const resource = {
-          _id: 'import-123',
-          name: 'test',
-          adaptorType: 'RESTImport',
-          sampleResponseData: '<xml>123</xml>',
-        };
-        const parsedSampleResponse = '<xml>123</xml>';
 
         return expectSaga(requestSampleDataForImports, { resourceId, flowId, sampleDataStage: 'sampleResponse' })
           .provide([

@@ -907,32 +907,7 @@ describe('getFormattedResourceForPreview util', () => {
 
     expect(getFormattedResourceForPreview(deltaResource)).toEqual(deltaResourceWithPostData);
   });
-  test('should update stringified sampleResponse to JSON sampleResponse on Page processor flow type resource for preview', () => {
-    const importResource = {
-      adaptorType: 'FTPImport',
-      ftp: {
-        directoryPath: '/users',
-        fileName: 'UserList.json',
-      },
-      _id: 'asdf2345',
-      name: 'FTP Import',
-      sampleResponseData: '{ "test": 5 }',
-    };
-    const formattedImportResource = {
-      adaptorType: 'FTPImport',
-      ftp: {
-        directoryPath: '/users',
-        fileName: 'UserList.json',
-      },
-      _id: 'asdf2345',
-      name: 'FTP Import',
-      sampleResponseData: {
-        test: 5,
-      },
-    };
 
-    expect(getFormattedResourceForPreview(importResource, 'imports', 'pageProcessors')).toEqual(formattedImportResource);
-  });
   test('should add default extracts object as sampleResponse on PP flow type resource to fetch pageProcessorPreview data', () => {
     const importResource = {
       adaptorType: 'FTPImport',
@@ -951,7 +926,7 @@ describe('getFormattedResourceForPreview util', () => {
       },
       _id: 'asdf2345',
       name: 'FTP Import',
-      sampleResponseData: {
+      mockResponse: {
         name: '',
         _json: '',
         dataURI: '',

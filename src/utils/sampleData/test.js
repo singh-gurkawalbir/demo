@@ -1427,15 +1427,8 @@ describe('wrapSampleDataWithContext util', () => {
           isValid: true,
         }],
         responseData: [{
-          statusCode: 200,
-          errors: [{ code: '', message: '', source: '' }],
-          ignored: false,
-          id: '',
-          _json: {
-            success: true,
-            id: 2001,
-          },
-          dataURI: '',
+          success: true,
+          id: 2001,
         }],
         _exportId: 'some resource id',
         _connectionId: 'some connection id',

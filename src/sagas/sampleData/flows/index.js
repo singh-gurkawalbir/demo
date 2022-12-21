@@ -59,6 +59,7 @@ import {
 import { isIntegrationApp } from '../../../utils/flows';
 import { emptyObject } from '../../../constants';
 import { getConstructedResourceObj } from './utils';
+import { getMockOutputFromResource } from '../../../utils/flowDebugger';
 
 const VALID_RESOURCE_TYPES_FOR_FLOW_DATA = ['flows', 'exports', 'imports', 'connections'];
 
@@ -265,7 +266,11 @@ export function* fetchPageGeneratorPreview({ flowId, _pageGeneratorId }) {
 
   let previewData;
 
-  if (isBlobTypeResource(resource)) {
+  const mockOutput = getMockOutputFromResource(resource);
+
+  if (mockOutput) {
+    previewData = mockOutput;
+  } else if (isBlobTypeResource(resource)) {
     // Incase of Blob resource, sample data ( Blob type ) is uploaded to S3 in real time
     // So, its key (blobKey) is the sample data
     previewData = getBlobResourceSampleData();
@@ -363,6 +368,41 @@ export function* _processMappingData({
       processedData
     )
   );
+}
+
+// response transform only works on _json part of mockResponse
+// after transform is evaluated merge it into _json of mockResponse
+export function* _processResponseTransformData({ flowId, resourceId, resource, processorData, stage, hasNoRulesToProcess }) {
+  const { wrapInArrayProcessedData, removeDataPropFromProcessedData } =
+    processorData || {};
+  const {mockResponse} = resource || {};
+  let processedData;
+
+  if (!hasNoRulesToProcess) {
+    const transformedData = yield call(evaluateExternalProcessor, {
+      processorData,
+    });
+
+    processedData = mockResponse ? {
+      data: [
+        {
+          ...mockResponse[0],
+          _json: transformedData.data[0] || transformedData.data,
+        },
+      ],
+    } : transformedData;
+  } else {
+    processedData = { data: mockResponse };
+  }
+
+  yield call(updateStateForProcessorData, {
+    flowId,
+    resourceId,
+    stage,
+    processedData,
+    wrapInArrayProcessedData,
+    removeDataPropFromProcessedData,
+  });
 }
 
 export function* _getContextSampleData({ data, editorType, resourceType, resourceId, flowId }) {
@@ -477,6 +517,16 @@ export function* requestProcessorData({
       }
     } else {
       hasNoRulesToProcess = true;
+    }
+    if (stage === 'responseTransform') {
+      return yield call(_processResponseTransformData, {
+        flowId,
+        resource,
+        resourceId,
+        processorData,
+        hasNoRulesToProcess,
+        stage,
+      });
     }
   } else if (['outputFilter', 'inputFilter'].includes(stage)) {
     let filterDoc;
