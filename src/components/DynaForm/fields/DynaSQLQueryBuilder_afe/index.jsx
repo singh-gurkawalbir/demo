@@ -6,6 +6,7 @@ import actions from '../../../../actions';
 import { getValidRelativePath } from '../../../../utils/routePaths';
 import DynaHandlebarPreview from '../DynaHandlebarPreview';
 import { buildDrawerUrl, drawerPaths } from '../../../../utils/rightDrawer';
+import { EXPORT_FILTERED_DATA_STAGE, IMPORT_FLOW_DATA_STAGE } from '../../../../utils/flowData';
 
 export default function DynaSQLQueryBuilder_afe(props) {
   const {
@@ -51,7 +52,7 @@ export default function DynaSQLQueryBuilder_afe(props) {
     }
   }, [arrayIndex, id, onFieldChange, value]);
 
-  const flowDataStage = resourceType === 'exports' ? 'inputFilter' : 'importMappingExtract';
+  const flowDataStage = resourceType === 'exports' ? EXPORT_FILTERED_DATA_STAGE : IMPORT_FLOW_DATA_STAGE;
 
   const handleEditorClick = useCallback(() => {
     dispatch(actions.editor.init(editorId, 'sql', {

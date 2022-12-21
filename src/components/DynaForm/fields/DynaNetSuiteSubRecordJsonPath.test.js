@@ -55,6 +55,10 @@ describe('test suite for netsuite sub-record JSON path field', () => {
             status: 'received',
             data,
           },
+          inputFilter: {
+            status: 'received',
+            data,
+          },
           flowInput: {
             status: 'received',
             data,

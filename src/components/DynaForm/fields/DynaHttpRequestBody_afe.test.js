@@ -4,6 +4,7 @@ import { screen, render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import actions from '../../../actions';
 import DynaHttpRequestBody from './DynaHttpRequestBody_afe';
+import { EXPORT_FILTERED_DATA_STAGE } from '../../../utils/flowData';
 
 const resourceId = 'import-123';
 let mockSave = jest.fn();
@@ -151,7 +152,7 @@ describe('test suite for DynaTransformRules_afe', () => {
       resourceId,
       resourceType: props.resourceType,
       fieldId: props.id,
-      stage: 'inputFilter',
+      stage: EXPORT_FILTERED_DATA_STAGE,
       onSave: expect.anything(),
       parentType: undefined,
       parentId: undefined,
