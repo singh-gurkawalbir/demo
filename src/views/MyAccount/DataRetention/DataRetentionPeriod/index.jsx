@@ -28,7 +28,7 @@ export default function DataRetentionPeriod() {
   const { confirmDialog } = useConfirmDialog();
   const [enquesnackbar] = useEnqueueSnackbar();
   const [remountKey, setRemountKey] = useState(1);
-  const platformLicense = useSelector(state => selectors.platformLicense(state));
+  const maxAllowedDataRetention = useSelector(state => selectors.platformLicense(state)?.maxAllowedDataRetention);
   const dataRetentionPeriod = useSelector(selectors.dataRetentionPeriod);
   const areUserAccountSettingsUpdated = useSelector(state => selectors.asyncTaskStatus(state, ACCOUNT_SETTINGS_DATA_RETENTION_ASYNC_KEY) === FORM_SAVE_STATUS.COMPLETE);
   const fieldMeta = useMemo(
@@ -43,11 +43,11 @@ export default function DataRetentionPeriod() {
           noApi: true,
           isLoggable: false,
           helpKey: 'accountSettings.dataRetentionPeriod',
-          maxAllowedDataRetention: (platformLicense.maxAllowedDataRetention || 30),
+          maxAllowedDataRetention: (maxAllowedDataRetention || 30),
         },
       },
     }),
-    [dataRetentionPeriod, platformLicense.maxAllowedDataRetention]
+    [dataRetentionPeriod, maxAllowedDataRetention]
   );
 
   const formKey = useFormInitWithPermissions({
