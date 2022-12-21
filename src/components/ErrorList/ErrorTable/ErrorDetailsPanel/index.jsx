@@ -202,8 +202,6 @@ export default function ErrorDetailsPanel({
     setMode(availableTabs[0].type);
   }
 
-  // Todo: @Siddharth Create a common tab component for ErrorDetails and ErrorDetailsPanel
-
   return (
     <div className={classes.wrapper}>
       <DrawerHeader
