@@ -29,11 +29,10 @@ const useStyles = makeStyles(theme => ({
     lineHeight: '22px',
     whiteSpace: 'normal',
     wordBreak: 'break-word',
-    maxHeight: 638,
     marginRight: -theme.spacing(1.5),
     padding: theme.spacing(1, 1.5, 0, 0),
     '&>div': {
-      maxHeight: 300,
+      maxHeight: 200,
       '&>ul': {
         paddingLeft: theme.spacing(2),
         margin: 0,
@@ -82,7 +81,6 @@ const useStyles = makeStyles(theme => ({
   titleWrapper: {
     display: 'flex',
     alignItems: 'center',
-    marginBottom: theme.spacing(1),
     paddingBottom: theme.spacing(1),
     borderBottom: `1px solid ${theme.palette.secondary.lightest}`,
     justifyContent: 'space-between',
@@ -177,7 +175,7 @@ export default function HelpContent({ children, title, caption, fieldId, resourc
       )}
       {caption && (
       <Typography variant="subtitle2" className={classes.caption}>
-        {caption}
+        Field path: {caption}
       </Typography>
       )}
     </div>
