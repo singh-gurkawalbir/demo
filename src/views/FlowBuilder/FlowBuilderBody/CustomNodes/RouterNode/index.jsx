@@ -32,7 +32,6 @@ const useStyles = makeStyles(theme => ({
     width: '187px',
     height: '38px',
     position: 'absolute',
-    background: 'white',
   },
   nameGap: {
     top: -45,
@@ -43,6 +42,7 @@ const useStyles = makeStyles(theme => ({
     fontWeight: 600,
     color: theme.palette.text.secondary,
     wordBreak: 'break-all',
+    background: theme.palette.background.paper,
   },
 }));
 
