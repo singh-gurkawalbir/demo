@@ -27,6 +27,13 @@ const useStyles = makeStyles(theme => ({
   upgradeLicenseNotification: {
     marginBottom: theme.spacing(2),
   },
+  requestUpgradeButton: {
+    padding: 0,
+    marginLeft: theme.spacing(0.5),
+  },
+  requestUpgradeTooltip: {
+    lineHeight: 1,
+  },
 }));
 
 export default function DataRetention() {
@@ -95,12 +102,16 @@ export default function DataRetention() {
             <ButtonWithTooltip
               tooltipProps={{
                 title: dataRetentionLicenseUpgradeRequested ? messageStore('FEATURE_LICENSE_UPGRADE_REQUESTED_TOOLTIP_MESSAGE') : '',
-                placement: 'bottom-start'}}>
+                placement: 'bottom-start'}}
+              className={classes.requestUpgradeTooltip}>
               <TextButton
-                size="large" bold="true" color="primary"
+                bold
+                size="large"
+                color="primary"
                 data-test="dataRetentionRequestUpgrade"
                 onClick={onRequestUpgradeClick}
-                disabled={dataRetentionLicenseUpgradeRequested}>
+                disabled={dataRetentionLicenseUpgradeRequested}
+                className={classes.requestUpgradeButton}>
                 {dataRetentionLicenseUpgradeRequested ? 'Upgrade requested' : 'Request upgrade'}
               </TextButton>
             </ButtonWithTooltip>
