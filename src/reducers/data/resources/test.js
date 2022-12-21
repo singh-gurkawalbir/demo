@@ -2184,6 +2184,79 @@ describe('mkGetAllCustomFormsForAResource ', () => {
 
       expect(received).toEqual(expected);
     });
+    test('should consolidate all custom form for an integration app 2.0 with flowgroupings as a collection and has no flows in it', () => {
+      const state = {
+        integrations: [
+          {_id: '1',
+            _connectorId: 'c1',
+            settingsForm,
+            settings,
+            flowGroupings: [
+              {
+                name: 'Group1',
+                _id: 'groupId1',
+                settingsForm,
+                settings,
+              },
+              {
+                name: 'Group2',
+                _id: 'groupId2',
+                settingsForm,
+                settings,
+              },
+            ],
+          },
+        ],
+
+      };
+      const received = customFormsSelector(state, 'integrations', '1');
+      const expected = {allSections: [{settingsForm, settings, title: 'General', sectionId: 'general'}], hasFlowGroupings: false };
+
+      expect(received).toEqual(expected);
+    });
+    test('should consolidate all custom form for an integration app 2.0 with flowgroupings as a collection and has flows in it', () => {
+      const state = {
+        flows: [
+          {
+            _id: 'flow1',
+            _flowGroupingId: 'groupId1',
+            _integrationId: '1',
+          },
+        ],
+        integrations: [
+          {_id: '1',
+            _connectorId: 'c1',
+            settingsForm,
+            settings,
+            flowGroupings: [
+              {
+                name: 'Group1',
+                _id: 'groupId1',
+                settingsForm,
+                settings,
+              },
+              {
+                name: 'Group2',
+                _id: 'groupId2',
+                settingsForm,
+                settings,
+              },
+            ],
+          },
+        ],
+
+      };
+      const received = customFormsSelector(state, 'integrations', '1');
+      const expected = {
+        allSections: [
+          {settingsForm, settings, title: 'General', sectionId: 'general'},
+          {settingsForm, settings, title: 'Group1', sectionId: 'groupId1'},
+        ],
+        hasFlowGroupings: true,
+      };
+
+      expect(received).toEqual(expected);
+    });
   });
 });
 

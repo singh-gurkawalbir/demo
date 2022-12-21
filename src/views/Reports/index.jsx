@@ -46,7 +46,7 @@ const useStyles = makeStyles(theme => ({
   },
   resultData: {
     margin: theme.spacing(3),
-    background: theme.palette.common.white,
+    background: theme.palette.background.paper,
     border: '1px solid',
     borderColor: theme.palette.secondary.lightest,
     overflowX: 'auto',

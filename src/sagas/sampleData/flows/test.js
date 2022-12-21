@@ -273,6 +273,8 @@ describe('flow sample data sagas', () => {
           processedData,
           wrapInArrayProcessedData: undefined,
           removeDataPropFromProcessedData: undefined,
+          isFilterScript: undefined,
+          sampleData: undefined,
         })
         .run();
     });
@@ -294,6 +296,8 @@ describe('flow sample data sagas', () => {
           processedData,
           wrapInArrayProcessedData: true,
           removeDataPropFromProcessedData: true,
+          isFilterScript: undefined,
+          sampleData: undefined,
         })
         .run();
     });

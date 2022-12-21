@@ -5,7 +5,9 @@ import React, {
   useCallback,
   useMemo,
 } from 'react';
+import { useDrag } from 'react-dnd';
 import { useDispatch, useSelector } from 'react-redux';
+import { getEmptyImage } from 'react-dnd-html5-backend';
 import { makeStyles } from '@material-ui/core/styles';
 import { Typography, IconButton } from '@material-ui/core';
 import clsx from 'clsx';
@@ -16,11 +18,19 @@ import ApplicationImg from '../../../components/icons/ApplicationImg';
 import ResourceButton from '../ResourceButton';
 import BubbleSvg from '../BubbleSvg';
 import CloseIcon from '../../../components/icons/CloseIcon';
+import GripperIcon from '../../../components/icons/GripperIcon';
 import ErrorStatus from '../ErrorStatus';
 import CeligoTruncate from '../../../components/CeligoTruncate';
 import actions from '../../../actions';
 import {getHttpConnector} from '../../../constants/applications';
+import PPDropbox from '../FlowBuilderBody/CustomEdges/PPDropbox';
+import itemTypes from '../itemTypes';
+import { useSelectorMemo } from '../../../hooks';
+import { useIsDragInProgress } from '../hooks';
 import { getConnectorId } from '../../../utils/assistant';
+import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
+import RawHtml from '../../../components/RawHtml';
+import messageStore from '../../../utils/messageStore';
 
 const blockHeight = 170;
 const blockWidth = 275;
@@ -30,6 +40,14 @@ const useStyles = makeStyles(theme => ({
     flexDirection: 'column',
     alignItems: 'flex-start',
     width: blockWidth,
+  },
+  draggable: {
+    '&:hover': {
+      cursor: 'move',
+      '& > div:last-child': {
+        boxShadow: '0 5px 10px rgba(0,0,0,0.19)',
+      },
+    },
   },
   box: {
     width: blockWidth,
@@ -100,10 +118,6 @@ const useStyles = makeStyles(theme => ({
   bubbleContainer: {
     position: 'relative',
     display: 'flex',
-    '&:hover > button': {
-      display: 'block',
-      color: 'unset',
-    },
   },
   bubble: {
     position: 'absolute',
@@ -134,10 +148,33 @@ const useStyles = makeStyles(theme => ({
     top: -theme.spacing(0.5),
     zIndex: 1,
     transition: theme.transitions.create('color'),
-    color: 'rgb(0,0,0,0)',
+    color: ({ isHover }) => isHover ? 'unset' : 'rgb(0,0,0,0)',
+  },
+  grabButton: {
+    left: -theme.spacing(0.5),
+    position: 'absolute',
+    top: -theme.spacing(0.5),
+    zIndex: 1,
+    transition: theme.transitions.create('color'),
+    color: ({ isHover }) => isHover ? 'unset' : 'rgb(0,0,0,0)',
+    cursor: 'move',
+    '&:hover': {
+      background: 'none',
+    },
+  },
+  dropbox: {
+    top: '77px',
+    display: 'flex',
+    position: 'absolute',
+  },
+  left: {
+    left: '-80px',
+  },
+  right: {
+    right: '-82px',
   },
   pgContainerName: {
-    background: theme.palette.common.white,
+    background: theme.palette.background.paper,
   },
 }));
 
@@ -167,11 +204,13 @@ export default function AppBlock({
   id,
   ...rest
 }) {
-  const classes = useStyles();
+  const [isHover, setIsHover] = useState(false);
+  const classes = useStyles({ isHover });
   const dispatch = useDispatch();
   const [expanded, setExpanded] = useState(false);
   const [isOver, setIsOver] = useState(false);
   const [activeAction, setActiveAction] = useState(null);
+  const [enqueueSnackbar] = useEnqueueSnackbar();
   const isNew = blockType.startsWith('new');
   const isActive = useSelector(state => {
     const activeConn = selectors.activeConnection(state);
@@ -180,6 +219,21 @@ export default function AppBlock({
 
     return activeConn === resource?._id || activeConn === resource?._connectionId;
   });
+  const flowOriginal =
+  useSelectorMemo(selectors.makeResourceDataSelector, 'flows', flowId)
+    ?.merged || {};
+  const isLinearFlow = !flowOriginal.routers?.length;
+  let noDragInfo = '';
+
+  if (
+    (!isPageGenerator && flowOriginal.pageProcessors?.length <= 1) ||
+    (isPageGenerator && flowOriginal.pageGenerators?.length <= 1)
+  ) {
+    noDragInfo = 'There are no available locations this step can be moved to.';
+  } else if (!isLinearFlow) {
+    noDragInfo = <RawHtml html={messageStore('NO_DRAG_FLOW_BRANCHING_INFO')} />;
+  }
+
   const isFlowSaveInProgress = useSelector(state => selectors.isFlowSaveInProgress(state, flowId));
   const iconType = useSelector(state => {
     if (blockType === 'dataLoader') return;
@@ -207,6 +261,9 @@ export default function AppBlock({
       return resource.rdbms.type;
     }
   });
+
+  const isDragInProgress = useIsDragInProgress();
+
   const connAssistant = useSelector(state => {
     if (blockType === 'dataLoader' || !resource || !resource._connectionId) return;
 
@@ -256,6 +313,7 @@ export default function AppBlock({
     setActiveAction(null);
     setExpanded();
   }, []);
+  const handleMouseHover = useCallback(val => () => setIsHover(val), []);
 
   const hasActions = resourceId && flowActions && Array.isArray(flowActions) && flowActions.length;
   const { leftActions, middleActions, rightActions } = useMemo(() => {
@@ -271,9 +329,50 @@ export default function AppBlock({
 
     return { leftActions, middleActions, rightActions };
   }, [flowActions, hasActions]);
+  const isDraggable = !isViewMode && !isFlowSaveInProgress;
+  const [{ isDragging }, drag, preview] = useDrag(() => ({
+    type: isPageGenerator ? itemTypes.PAGE_GENERATOR : itemTypes.PAGE_PROCESSOR,
+    item: () => {
+      if (noDragInfo) {
+        enqueueSnackbar({
+          message: noDragInfo,
+          variant: 'info',
+        });
+      }
 
-  function renderActions(flowActions) {
-    if (!flowActions || !flowActions.length) return null;
+      return ({
+        ...rest,
+        index,
+        id,
+        type: iconType,
+        name,
+        assistant: connAssistant || assistant,
+        noDrag: !!noDragInfo,
+      });
+    },
+    collect: monitor => ({
+      isDragging: monitor.isDragging(),
+    }),
+    end: (item, monitor) => {
+      const dropResult = monitor.getDropResult();
+
+      if (dropResult) {
+        // if it is a valid drop
+        dispatch(actions.flow.moveStep(flowId, dropResult));
+      }
+    },
+    canDrag: isDraggable,
+  }), [id, iconType, connAssistant, assistant, isFlowSaveInProgress, index, rest.pageProcessorIndex, noDragInfo]);
+
+  const opacity = isDragging ? 0.7 : 1;
+
+  useEffect(() => {
+    // This disables the default preview image, so that we can render our own custom drag layer.
+    preview(getEmptyImage(), { captureDraggingState: true });
+  }, [preview]);
+
+  function renderActions(flowActions, hide) {
+    if (!flowActions || !flowActions.length || hide) return null;
 
     return flowActions.map(a => (
       <Fragment key={a.name}>
@@ -310,15 +409,22 @@ export default function AppBlock({
   }
 
   return (
-    <div className={clsx(classes.root, className)}>
+    <div
+      ref={drag}
+      className={clsx(classes.root, className, { [classes.draggable]: isDraggable })}
+      style={{ opacity, cursor: isDragging ? 'move' : '' }}
+      onMouseEnter={handleMouseHover(true)}
+      onMouseLeave={handleMouseHover(false)}
+      >
       <div
         onMouseEnter={handleMouseOver(true)}
         onFocus={handleMouseOver(true)}
         onMouseLeave={handleMouseOver(false)}
         onBlur={handleMouseOver(false)}
         {...rest}
-        className={clsx(classes.box, { [classes.draggable]: !isNew })}
-        >
+        data-test={`${isPageGenerator ? 'pg' : 'pp'}-${id}`}
+        className={classes.box}
+      >
         <div className={classes.bubbleContainer}>
           {onDelete && !isViewMode && !resource._connectorId && (
             <IconButton
@@ -329,6 +435,22 @@ export default function AppBlock({
               <CloseIcon />
             </IconButton>
           )}
+          {isDraggable && (
+            <IconButton
+              size="small"
+              className={clsx(classes.grabButton)}
+              data-test={`move-${isPageGenerator ? 'pg' : 'pp'}`}>
+              <GripperIcon />
+            </IconButton>
+          )}
+          <div className={clsx(classes.dropbox, classes.left)}>
+            <PPDropbox
+              show={rest.showLeft}
+              position="left"
+              targetIndex={rest.pageProcessorIndex}
+              id={id}
+              path={rest.path} />
+          </div>
           <BubbleSvg
             height={blockHeight}
             width={blockWidth}
@@ -336,15 +458,24 @@ export default function AppBlock({
               bubbleBG: classes.bubbleBG,
             }}
           />
+          <div className={clsx(classes.dropbox, classes.right)}>
+            <PPDropbox
+              show={rest.showRight}
+              position="right"
+              targetIndex={rest.pageProcessorIndex}
+              id={id}
+              path={rest.path}
+              />
+          </div>
         </div>
         <div className={classes.sideActionContainer}>
           <div className={classes.leftActions}>
-            {renderActions(leftActions)}
+            {renderActions(leftActions, isDragInProgress)}
           </div>
         </div>
         <div className={classes.sideActionContainer}>
           <div className={classes.rightActions}>
-            {renderActions(rightActions)}
+            {renderActions(rightActions, isDragInProgress)}
           </div>
         </div>
         <div className={classes.appLogoContainer}>
@@ -384,3 +515,4 @@ export default function AppBlock({
     </div>
   );
 }
+

@@ -4,6 +4,7 @@ export default {
     '/type': 'http',
     '/assistant': 'exacterp',
     '/http/auth/type': 'oauth',
+    '/http/auth/oauth/useIClientFields': false,
     '/http/mediaType': 'json',
     '/http/ping/relativeURI': '/api/v1/current/Me',
     '/http/ping/method': 'GET',

@@ -114,13 +114,13 @@ export function _editorSupportsV1V2data({resource, fieldId, connection, isPageGe
 export default {
   init: props => {
     const {options, resource, fieldState, connection, isPageGenerator, isStandaloneResource, formValues, ...rest} = props;
-    const {fieldId} = options;
+    const {fieldId, paramIndex} = options;
     const {type, value, arrayIndex} = fieldState || {};
     let rule = value;
 
     if (type === 'relativeuri' || type === 'httprequestbody' || type === 'sqlquerybuilder') {
     // below formatting applies for only relative URI, body and sql fields
-      const formattedRule = typeof arrayIndex === 'number' && Array.isArray(value) ? value[arrayIndex] : value;
+      const formattedRule = typeof arrayIndex === 'number' && Array.isArray(value) ? value[arrayIndex] : value || '';
 
       rule = typeof formattedRule === 'string' ? formattedRule : JSON.stringify(formattedRule, null, 2);
     } else if (type === 'soqlquery') {
@@ -150,6 +150,14 @@ export default {
       resultMode = contentType;
     }
     if (GRAPHQL_JSON_FIELDS.includes(fieldId)) resultMode = 'json';
+
+    if (fieldId === 'assistantMetadata.queryParams') {
+      rule = fieldState.value[Object.keys(fieldState.value)[paramIndex]];
+    } else if (fieldId === 'oauth2.token.headers' ||
+    fieldId === 'oauth2.revoke.headers' ||
+    fieldId === 'oauth2.refresh.headers') {
+      rule = fieldState.value[paramIndex]?.value;
+    }
 
     return {
       ...options,

@@ -19,7 +19,7 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing(0),
     border: '1px solid',
     borderColor: theme.palette.secondary.lightest,
-    backgroundColor: theme.palette.common.white,
+    backgroundColor: theme.palette.background.paper,
   },
   container: {
     display: 'flex',

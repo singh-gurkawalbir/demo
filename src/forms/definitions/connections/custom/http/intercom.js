@@ -7,6 +7,7 @@ export default {
     '/http/mediaType': 'json',
     '/http/baseURI': 'https://api.intercom.io/',
     '/http/ping/relativeURI': '/contacts',
+    '/http/auth/oauth/useIClientFields': false,
     '/http/auth/oauth/authURI': 'https://app.intercom.io/oauth',
     '/http/auth/oauth/tokenURI': 'https://api.intercom.io/auth/eagle/token',
     '/http/auth/oauth/accessTokenPath': 'access_token',

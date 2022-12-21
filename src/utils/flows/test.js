@@ -1581,182 +1581,210 @@ describe('getFlowResources', () => {
 });
 
 describe('getScriptsReferencedInFlow', () => {
-  test('', () => {
-    const flow = {
-      _id: 'f1',
-      pageProcessors: [
-        {
-          _importId: 'i1',
-          type: 'import',
+  const flow = {
+    _id: 'f1',
+    pageProcessors: [
+      {
+        _importId: 'i1',
+        type: 'import',
+      },
+      {
+        _exportId: 'e1',
+        type: 'export',
+        hooks: {
+          postResponseMap: {
+            _scriptId: 's1',
+            function: 'abc',
+          },
         },
-        {
+      },
+    ],
+    pageGenerators: [{_exportId: 'e2'}],
+  };
+  const flow2 = {
+    _id: 'f1',
+    _importId: 'i1',
+    _exportId: 'e2',
+  };
+  const flow3 = {
+    pageGenerators: [{_exportId: 'e2'}],
+    routers: [{
+      id: 'router1',
+      routeRecordsUsing: 'script',
+      branches: [{
+        name: 'branch1',
+        pageProcessors: [{
           _exportId: 'e1',
-          type: 'export',
-          hooks: {
-            postResponseMap: {
-              _scriptId: 's1',
-              function: 'abc',
-            },
-          },
+        }],
+      }],
+      script: {
+        _scriptId: 's1',
+        function: 'fun1',
+      },
+    }, {
+      id: 'router2',
+      routeRecordsUsing: 'filters',
+      script: {
+        _scriptId: 's2',
+      },
+    }],
+  };
+  const imports = [
+    {
+      _id: 'i1',
+      responseTransform: {
+        type: 'script',
+        script: {
+          _scriptId: 's2',
+          function: 'transform',
         },
-      ],
-      pageGenerators: [{_exportId: 'e2'}],
-    };
-    const imports = [
-      {
-        _id: 'i1',
-        responseTransform: {
-          type: 'script',
-          script: {
-            _scriptId: 's2',
-            function: 'transform',
-          },
+      },
+      hooks: {
+        preMap: {
+          _scriptId: 's3',
+          function: 'preMap',
         },
-        hooks: {
-          preMap: {
-            _scriptId: 's3',
-            function: 'preMap',
-          },
+      },
+      filter: {
+        type: 'script',
+        script: {
+          _scriptId: 's4',
+          function: 'filter',
         },
-        filter: {
-          type: 'script',
-          script: {
-            _scriptId: 's4',
-            function: 'filter',
-          },
-        },
+      },
 
-      },
-    ];
-    const exports = [
-      {
-        _id: 'e2',
-        hooks: {
-          preSavePage: {
-            _scriptId: 's5',
-            function: 'preSavePage',
-          },
-        },
-        transform: {
-          type: 'script',
-          script: {
-            _scriptId: 's6',
-            function: 'transform',
-          },
-        },
-        filter: {
-          type: 'script',
-          script: {
-            _scriptId: 's7',
-            function: 'filter',
-          },
-        },
-        inputFilter: {
-          type: 'script',
-          script: {
-            _scriptId: 's12',
-            function: 'filter',
-          },
-        },
-        responseTransform: {
-          type: 'script',
-          script: {
-            _scriptId: 's13',
-            function: 'transform',
-          },
+    },
+  ];
+  const exports = [
+    {
+      _id: 'e2',
+      hooks: {
+        preSavePage: {
+          _scriptId: 's5',
+          function: 'preSavePage',
         },
       },
-      {
-        _id: 'e1',
-        transform: {
-          type: 'script',
-          script: {
-            _scriptId: 's8',
-            function: 'transform',
-          },
-        },
-        filter: {
-          type: 'script',
-          script: {
-            _scriptId: 's9',
-            function: 'filter',
-          },
-        },
-        inputFilter: {
-          type: 'script',
-          script: {
-            _scriptId: 's10',
-            function: 'filter',
-          },
-        },
-        responseTransform: {
-          type: 'script',
-          script: {
-            _scriptId: 's14',
-            function: 'transform',
-          },
+      transform: {
+        type: 'script',
+        script: {
+          _scriptId: 's6',
+          function: 'transform',
         },
       },
-    ];
-    const scripts = [
-      {
-        _id: 's1',
-        name: 'ns1',
+      filter: {
+        type: 'script',
+        script: {
+          _scriptId: 's7',
+          function: 'filter',
+        },
       },
-      {
-        _id: 's2',
-        name: 'ns2',
+      inputFilter: {
+        type: 'script',
+        script: {
+          _scriptId: 's12',
+          function: 'filter',
+        },
       },
-      {
-        _id: 's3',
-        name: 'ns3',
+      responseTransform: {
+        type: 'script',
+        script: {
+          _scriptId: 's13',
+          function: 'transform',
+        },
       },
-      {
-        _id: 's4',
-        name: 'ns4',
+    },
+    {
+      _id: 'e1',
+      transform: {
+        type: 'script',
+        script: {
+          _scriptId: 's8',
+          function: 'transform',
+        },
       },
-      {
-        _id: 's5',
-        name: 'ns5',
+      filter: {
+        type: 'script',
+        script: {
+          _scriptId: 's9',
+          function: 'filter',
+        },
       },
-      {
-        _id: 's6',
-        name: 'ns6',
+      inputFilter: {
+        type: 'script',
+        script: {
+          _scriptId: 's10',
+          function: 'filter',
+        },
       },
-      {
-        _id: 's7',
-        name: 'ns7',
+      responseTransform: {
+        type: 'script',
+        script: {
+          _scriptId: 's14',
+          function: 'transform',
+        },
       },
-      {
-        _id: 's8',
-        name: 'ns8',
-      },
-      {
-        _id: 's9',
-        name: 'ns9',
-      },
-      {
-        _id: 's10',
-        name: 'ns10',
-      },
-      {
-        _id: 's11',
-        name: 'ns11',
-      },
-      {
-        _id: 's12',
-        name: 'ns12',
-      },
-      {
-        _id: 's13',
-        name: 'ns13',
-      },
-      {
-        _id: 's14',
-        name: 'ns14',
-      },
-    ];
+    },
+  ];
+  const scripts = [
+    {
+      _id: 's1',
+      name: 'ns1',
+    },
+    {
+      _id: 's2',
+      name: 'ns2',
+    },
+    {
+      _id: 's3',
+      name: 'ns3',
+    },
+    {
+      _id: 's4',
+      name: 'ns4',
+    },
+    {
+      _id: 's5',
+      name: 'ns5',
+    },
+    {
+      _id: 's6',
+      name: 'ns6',
+    },
+    {
+      _id: 's7',
+      name: 'ns7',
+    },
+    {
+      _id: 's8',
+      name: 'ns8',
+    },
+    {
+      _id: 's9',
+      name: 'ns9',
+    },
+    {
+      _id: 's10',
+      name: 'ns10',
+    },
+    {
+      _id: 's11',
+      name: 'ns11',
+    },
+    {
+      _id: 's12',
+      name: 'ns12',
+    },
+    {
+      _id: 's13',
+      name: 'ns13',
+    },
+    {
+      _id: 's14',
+      name: 'ns14',
+    },
+  ];
 
+  test('should return correct scripts for a linear flow', () => {
     expect(getScriptsReferencedInFlow({flow, exports, imports, scripts})).toEqual(
       [
         {
@@ -1812,6 +1840,16 @@ describe('getScriptsReferencedInFlow', () => {
           name: 'ns14',
         },
       ]
+    );
+  });
+  test('should return correct scripts for a dataloader flow', () => {
+    expect(getScriptsReferencedInFlow({flow: flow2, exports, imports, scripts})).toEqual(
+      [{_id: 's2', name: 'ns2'}, {_id: 's3', name: 'ns3'}, {_id: 's4', name: 'ns4'}, {_id: 's5', name: 'ns5'}, {_id: 's6', name: 'ns6'}, {_id: 's7', name: 'ns7'}, {_id: 's12', name: 'ns12'}, {_id: 's13', name: 'ns13'}]
+    );
+  });
+  test('should return correct scripts for a branched flow', () => {
+    expect(getScriptsReferencedInFlow({flow: flow3, exports, imports, scripts})).toEqual(
+      [{_id: 's1', name: 'ns1'}, {_id: 's5', name: 'ns5'}, {_id: 's6', name: 'ns6'}, {_id: 's7', name: 'ns7'}, {_id: 's12', name: 'ns12'}, {_id: 's13', name: 'ns13'}]
     );
   });
 });
@@ -2801,10 +2839,10 @@ describe('getIAFlowSettings', () => {
     expect(getIAFlowSettings(multiStoreApp, flowIDMultiStore, 'c2')).toEqual({});
   });
   test('should return undefined if the IA supports multistore but it does not have the required child', () => {
-    expect(getIAFlowSettings(multiStoreApp, flowIDMultiStore, 'c3')).toEqual(undefined);
+    expect(getIAFlowSettings(multiStoreApp, flowIDMultiStore, 'c3')).toEqual({});
   });
   test('should return undefined if the IA supports multistore but the required child does not have sections defined', () => {
-    expect(getIAFlowSettings(multiStoreAppWithChildNotHavingSections, flowIDMultiStore, 'c1')).toEqual(undefined);
+    expect(getIAFlowSettings(multiStoreAppWithChildNotHavingSections, flowIDMultiStore, 'c1')).toEqual({});
   });
   test('should return undefined if the IA supports multistore and sections is not defined for any of the child', () => {
     expect(getIAFlowSettings(multiStoreAppWithChildNotHavingSections, flowIDMultiStore, undefined)).toEqual({});

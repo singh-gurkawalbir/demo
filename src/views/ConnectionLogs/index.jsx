@@ -19,7 +19,7 @@ const useStyles = makeStyles(theme => ({
   root: {
     marginTop: -1,
     padding: theme.spacing(0, 0, 1.5, 2),
-    backgroundColor: theme.palette.common.white,
+    backgroundColor: theme.palette.background.paper,
     height: '100%',
   },
   filterContainer: {

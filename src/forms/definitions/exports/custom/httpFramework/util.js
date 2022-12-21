@@ -15,27 +15,40 @@ function hiddenFieldsMeta({ values }) {
 }
 
 function basicFieldsMeta({ assistant, assistantConfig, assistantData }) {
+  let resourceDefaultValue = assistantConfig.resource;
+  let operationDefaultValue = assistantConfig.operation || assistantConfig.operationUrl;
+
+  if (assistantData?.resources?.find(res => res.id === resourceDefaultValue)?.hidden) {
+    resourceDefaultValue = assistantData?.resources?.find(res => res.id !== resourceDefaultValue && res.id.includes(resourceDefaultValue))?.id;
+  }
+  const resourceObj = assistantData?.resources?.find(res => res.id === resourceDefaultValue);
+
+  if (resourceObj?.endpoints?.find(ep => ep.id === operationDefaultValue)?.hidden) {
+    operationDefaultValue = resourceObj?.endpoints?.find(ep => ep.id !== operationDefaultValue && ep.id.includes(operationDefaultValue))?.id;
+  }
+
   const fieldDefinitions = {
+    resource: {
+      fieldId: 'assistantMetadata.resource',
+      value: resourceDefaultValue,
+      required: true,
+      type: 'hfoptions',
+      label: 'Resources',
+    },
+    operation: {
+      fieldId: 'assistantMetadata.operation',
+      value: operationDefaultValue,
+      required: true,
+      type: 'hfoptions',
+      label: 'API endpoint',
+    },
     version: {
       fieldId: 'assistantMetadata.version',
       value: assistantConfig.version,
       required: true,
       type: 'hfoptions',
     },
-    resource: {
-      fieldId: 'assistantMetadata.resource',
-      value: assistantConfig.resource,
-      required: true,
-      type: 'hfoptions',
-      label: 'Resource',
-    },
-    operation: {
-      fieldId: 'assistantMetadata.operation',
-      value: assistantConfig.operation || assistantConfig.operationUrl,
-      required: true,
-      type: 'hfoptions',
-      label: 'API endpoint',
-    },
+
   };
   const { labels = {}, versions = [], helpTexts = {} } = assistantData;
 
@@ -45,6 +58,7 @@ function basicFieldsMeta({ assistant, assistantConfig, assistantData }) {
 
       if (!fieldDefinitions[fieldId].value && versions.length === 1) {
         fieldDefinitions[fieldId].value = versions[0]._id;
+        fieldDefinitions[fieldId].defaultValue = versions[0]._id;
       }
     }
 
@@ -202,6 +216,7 @@ function searchParameterFieldsMeta({
       value: !isEmpty(value) ? value : defaultValue,
       keyName: 'name',
       valueName: 'value',
+      keyPlaceholder: 'Search, select or add a name',
       paramMeta: {
         paramLocation,
         fields: parameters,

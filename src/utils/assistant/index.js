@@ -414,6 +414,32 @@ export function getVersionDetails({ version, assistantData }) {
 
   return { ...versionDetails };
 }
+export function getHFResourceDetails({ resource, assistantData }) {
+  let resourceDetails = {};
+
+  if (
+    !assistantData ||
+    !assistantData.resources ||
+    assistantData.resources.length === 0
+  ) {
+    return resourceDetails;
+  }
+
+  if (resource) {
+    resourceDetails = assistantData.resources.find(r => (r.id === resource || r._id === resource));
+  } else if (assistantData.resources.length === 1) {
+    [resourceDetails] = assistantData.resources;
+  }
+
+  if (resourceDetails && (resourceDetails.resource || resourceDetails.versions)) {
+    resourceDetails = populateDefaults({
+      child: resourceDetails,
+      parent: assistantData,
+    });
+  }
+
+  return { ...resourceDetails };
+}
 
 export function getResourceDetails({ version, resource, assistantData }) {
   let resourceDetails = {};
@@ -436,47 +462,131 @@ export function getResourceDetails({ version, resource, assistantData }) {
   return { ...resourceDetails, headersMetadata: versionDetails.headersMetadata };
 }
 
+export function getHFVersionDetails({ version, resource, assistantData }) {
+  let versionDetails = {};
+  const resourceDetails = getHFResourceDetails({
+    resource,
+    assistantData,
+  });
+
+  if (resourceDetails && resourceDetails.versions) {
+    versionDetails = resourceDetails.versions.find(v => v.version === version || v._id === version);
+
+    if (versionDetails) {
+      versionDetails = populateDefaults({
+        child: versionDetails,
+        parent: resourceDetails,
+      });
+    }
+  }
+
+  return { ...versionDetails, headersMetadata: resourceDetails.headersMetadata };
+}
 export function getExportOperationDetails({
   version,
   resource,
   operation,
   assistantData = {},
 }) {
-  const resourceDetails = getResourceDetails({
-    version,
-    resource,
-    assistantData: assistantData.export,
-  });
   let operationDetails = {};
-
-  if (resourceDetails && resourceDetails.endpoints) {
-    operationDetails = resourceDetails.endpoints.find(
-      op => op.id === operation || op.url === operation
-    );
-
-    if (operationDetails) {
-      if (
-        !operationDetails.supportedExportTypes ||
-        !operationDetails.supportedExportTypes.includes('delta')
-      ) {
-        delete operationDetails.delta;
-      }
-
-      operationDetails = populateDefaults({
-        child: operationDetails,
-        parent: resourceDetails,
-        isChildAnOperation: true,
-      });
-    }
-  }
-
   const headersMetadata = [];
 
-  if (resourceDetails?.headersMetadata) {
-    headersMetadata.push(...resourceDetails.headersMetadata);
-  }
-  if (operationDetails?.headersMetadata) {
-    headersMetadata.push(...operationDetails.headersMetadata);
+  if (assistantData?.export?.resources?.length) {
+    if (version) {
+      let modifiedResource = resource;
+      let modifiedOperation = operation;
+
+      if (resource.includes('+')) {
+        let resources = resource.split('+');
+
+        resources = assistantData?.export?.resources.filter(res => resources.includes(res._id));
+
+        modifiedResource = resources.find(r => r._versionIds.includes(version))?._id;
+      }
+      const resourceDetails = getHFResourceDetails({
+        version,
+        resource,
+        assistantData: assistantData.export,
+      });
+
+      if (operation.includes('+') && version) {
+        let operations = operation.split('+');
+
+        operations = resourceDetails.endpoints.filter(ep => operations.includes(ep.id));
+
+        modifiedOperation = operations.find(op => op?._httpConnectorResourceIds?.includes(modifiedResource))?.id;
+      }
+
+      if (resourceDetails && resourceDetails.endpoints) {
+        operationDetails = resourceDetails.endpoints.find(
+          op => op.id === modifiedOperation || op.url === modifiedOperation
+        );
+        const versionLabel = assistantData?.export?.versions?.find(ver => ver._id === version)?.version;
+
+        if (operationDetails && version && !operationDetails?.url?.includes(`/${versionLabel}`) && assistantData?.export?.addVersionToUrl) {
+          operationDetails.url = `/${versionLabel}/${operationDetails.url}`.replace(/([^:]\/)\/+/g, '$1');
+        }
+
+        if (operationDetails) {
+          if (
+            !operationDetails.supportedExportTypes ||
+          !operationDetails.supportedExportTypes.includes('delta')
+          ) {
+            delete operationDetails.delta;
+          }
+
+          operationDetails = populateDefaults({
+            child: operationDetails,
+            parent: resourceDetails,
+            isChildAnOperation: true,
+          });
+        }
+      }
+      const headersMetadata = [];
+
+      if (resourceDetails?.headersMetadata) {
+        headersMetadata.push(...resourceDetails.headersMetadata);
+      }
+      if (operationDetails?.headersMetadata) {
+        headersMetadata.push(...operationDetails.headersMetadata);
+      }
+    }
+  } else {
+    const resourceDetails = getResourceDetails({
+      version,
+      resource,
+      assistantData: assistantData.export,
+    });
+
+    if (resourceDetails && resourceDetails.endpoints) {
+      operationDetails = resourceDetails.endpoints.find(
+        op => op.id === operation || op.url === operation
+      );
+
+      if (operationDetails) {
+        if (
+          !operationDetails.supportedExportTypes ||
+          !operationDetails.supportedExportTypes.includes('delta')
+        ) {
+          delete operationDetails.delta;
+        }
+
+        operationDetails = populateDefaults({
+          child: operationDetails,
+          parent: resourceDetails,
+          isChildAnOperation: true,
+        });
+      }
+    }
+
+    const headersMetadata = [];
+
+    if (resourceDetails?.headersMetadata) {
+      headersMetadata.push(...resourceDetails.headersMetadata);
+    }
+    if (operationDetails?.headersMetadata) {
+      headersMetadata.push(...operationDetails.headersMetadata);
+    }
   }
 
   return cloneDeep({
@@ -487,109 +597,237 @@ export function getExportOperationDetails({
     headersMetadata,
   });
 }
+
 export function getImportOperationDetails({
   version,
   resource,
   operation,
   assistantData = {},
 }) {
-  const resourceDetails = getResourceDetails({
-    version,
-    resource,
-    assistantData: assistantData.import,
-  });
-  let operationDetails = { sampleData: resourceDetails.sampleData };
+  const headersMetadata = [];
+  let operationDetails;
 
-  if (resourceDetails && resourceDetails.operations) {
-    operationDetails = resourceDetails.operations.find(op => {
-      if (op.id === operation) {
-        return true;
+  if (assistantData?.import?.resources?.length) {
+    if (version) {
+      let modifiedResource = resource;
+      let modifiedOperation = operation;
+
+      if (resource.includes('+')) {
+        let resources = resource.split('+');
+
+        resources = assistantData?.export?.resources.filter(res => resources.includes(res._id));
+
+        modifiedResource = resources.find(r => r._versionIds.includes(version))?._id;
       }
-
-      if (isArray(op.url)) {
-        if ([op.method.join(':'), op.url.join(':')].join(':') === operation) {
-          return true;
-        }
-      } else if ([op.method, op.url].join(':') === operation) {
-        return true;
-      }
-
-      return false;
-    });
-
-    if (operationDetails) {
-      operationDetails = populateDefaults({
-        child: operationDetails,
-        parent: resourceDetails,
-        isChildAnOperation: true,
+      const resourceDetails = getHFResourceDetails({
+        version,
+        resource,
+        assistantData: assistantData.import,
       });
 
-      if (!operationDetails.howToFindIdentifier) {
-        operationDetails.howToFindIdentifier = {};
-      }
+      if (operation.includes('+') && version) {
+        let operations = operation.split('+');
 
-      if (operationDetails.howToFindIdentifier.lookup) {
-        const lookupOperationDetails = getExportOperationDetails({
-          version,
-          resource: operationDetails.howToFindIdentifier.lookup.resource || resource,
-          operation:
-            operationDetails.howToFindIdentifier.lookup.id ||
-            operationDetails.howToFindIdentifier.lookup.url,
-          assistantData,
+        operations = resourceDetails.operations.filter(ep => operations.includes(ep.id));
+
+        modifiedOperation = operations.find(op => op?._httpConnectorResourceIds?.includes(modifiedResource))?.id;
+      }
+      // const versionDetails = getHFVersionDetails({
+      //   version,
+      //   resource,
+      //   assistantData: assistantData.import,
+      // });
+
+      operationDetails = { sampleData: resourceDetails.sampleData };
+
+      if (resourceDetails && resourceDetails.operations) {
+        operationDetails = resourceDetails.operations.find(op => {
+          if (op.id === modifiedOperation) {
+            return true;
+          }
+
+          if (isArray(op.url)) {
+            if ([op.method.join(':'), op.url.join(':')].join(':') === modifiedOperation) {
+              return true;
+            }
+          } else if ([op.method, op.url].join(':') === modifiedOperation) {
+            return true;
+          }
+
+          return false;
         });
 
-        if (lookupOperationDetails.queryParameters) {
-          lookupOperationDetails.queryParameters = lookupOperationDetails.queryParameters.filter(
-            qp =>
-              !(
-                qp.readOnly &&
-                qp.defaultValue &&
-                qp.defaultValue.includes &&
-                qp.defaultValue.includes('{{export.')
-              )
-          );
-        }
-        if (operationDetails.howToFindIdentifier.lookup.resource) {
-          lookupOperationDetails.resource = operationDetails.howToFindIdentifier.lookup.resource;
-        }
+        if (operationDetails) {
+          operationDetails = populateDefaults({
+            child: operationDetails,
+            parent: resourceDetails,
+            isChildAnOperation: true,
+          });
 
-        if (operationDetails.howToFindIdentifier.lookup.parameterValues) {
-          Object.keys(
-            operationDetails.howToFindIdentifier.lookup.parameterValues
-          ).forEach(p => {
+          if (!operationDetails.howToFindIdentifier) {
+            operationDetails.howToFindIdentifier = {};
+          }
+
+          if (operationDetails.howToFindIdentifier.lookup) {
+            const lookupOperationDetails = getExportOperationDetails({
+              version,
+              resource: operationDetails.howToFindIdentifier.lookup.resource || resource,
+              operation:
+              operationDetails.howToFindIdentifier.lookup.id ||
+              operationDetails.howToFindIdentifier.lookup.url,
+              assistantData,
+            });
+
             if (lookupOperationDetails.queryParameters) {
-              lookupOperationDetails.queryParameters = lookupOperationDetails.queryParameters.map(
-                qp => {
-                  if (qp.id === p) {
-                    // eslint-disable-next-line no-param-reassign
-                    qp = {
-                      ...qp,
-                      readOnly: true,
-                      defaultValue:
-                        operationDetails.howToFindIdentifier.lookup
-                          .parameterValues[p],
-                    };
-                  }
-
-                  return qp;
-                }
+              lookupOperationDetails.queryParameters = lookupOperationDetails.queryParameters.filter(
+                qp =>
+                  !(
+                    qp.readOnly &&
+                  qp.defaultValue &&
+                  qp.defaultValue.includes &&
+                  qp.defaultValue.includes('{{export.')
+                  )
               );
             }
-          });
-        }
+            if (operationDetails.howToFindIdentifier.lookup.resource) {
+              lookupOperationDetails.resource = operationDetails.howToFindIdentifier.lookup.resource;
+            }
 
-        operationDetails.lookupOperationDetails = lookupOperationDetails;
+            if (operationDetails.howToFindIdentifier.lookup.parameterValues) {
+              Object.keys(
+                operationDetails.howToFindIdentifier.lookup.parameterValues
+              ).forEach(p => {
+                if (lookupOperationDetails.queryParameters) {
+                  lookupOperationDetails.queryParameters = lookupOperationDetails.queryParameters.map(
+                    qp => {
+                      if (qp.id === p) {
+                      // eslint-disable-next-line no-param-reassign
+                        qp = {
+                          ...qp,
+                          readOnly: true,
+                          defaultValue:
+                          operationDetails.howToFindIdentifier.lookup
+                            .parameterValues[p],
+                        };
+                      }
+
+                      return qp;
+                    }
+                  );
+                }
+              });
+            }
+
+            operationDetails.lookupOperationDetails = lookupOperationDetails;
+          }
+        }
+      }
+
+      if (resourceDetails?.headersMetadata) {
+        headersMetadata.push(...resourceDetails.headersMetadata);
+      }
+      if (operationDetails?.headersMetadata) {
+        headersMetadata.push(...operationDetails.headersMetadata);
       }
     }
-  }
+  } else {
+    const resourceDetails = getResourceDetails({
+      version,
+      resource,
+      assistantData: assistantData.import,
+    });
 
-  const headersMetadata = [];
+    operationDetails = { sampleData: resourceDetails.sampleData };
 
-  if (resourceDetails?.headersMetadata) {
-    headersMetadata.push(...resourceDetails.headersMetadata);
-  }
-  if (operationDetails?.headersMetadata) {
-    headersMetadata.push(...operationDetails.headersMetadata);
+    if (resourceDetails && resourceDetails.operations) {
+      operationDetails = resourceDetails.operations.find(op => {
+        if (op.id === operation) {
+          return true;
+        }
+
+        if (isArray(op.url)) {
+          if ([op.method.join(':'), op.url.join(':')].join(':') === operation) {
+            return true;
+          }
+        } else if ([op.method, op.url].join(':') === operation) {
+          return true;
+        }
+
+        return false;
+      });
+
+      if (operationDetails) {
+        operationDetails = populateDefaults({
+          child: operationDetails,
+          parent: resourceDetails,
+          isChildAnOperation: true,
+        });
+
+        if (!operationDetails.howToFindIdentifier) {
+          operationDetails.howToFindIdentifier = {};
+        }
+
+        if (operationDetails.howToFindIdentifier.lookup) {
+          const lookupOperationDetails = getExportOperationDetails({
+            version,
+            resource: operationDetails.howToFindIdentifier.lookup.resource || resource,
+            operation:
+              operationDetails.howToFindIdentifier.lookup.id ||
+              operationDetails.howToFindIdentifier.lookup.url,
+            assistantData,
+          });
+
+          if (lookupOperationDetails.queryParameters) {
+            lookupOperationDetails.queryParameters = lookupOperationDetails.queryParameters.filter(
+              qp =>
+                !(
+                  qp.readOnly &&
+                  qp.defaultValue &&
+                  qp.defaultValue.includes &&
+                  qp.defaultValue.includes('{{export.')
+                )
+            );
+          }
+          if (operationDetails.howToFindIdentifier.lookup.resource) {
+            lookupOperationDetails.resource = operationDetails.howToFindIdentifier.lookup.resource;
+          }
+
+          if (operationDetails.howToFindIdentifier.lookup.parameterValues) {
+            Object.keys(
+              operationDetails.howToFindIdentifier.lookup.parameterValues
+            ).forEach(p => {
+              if (lookupOperationDetails.queryParameters) {
+                lookupOperationDetails.queryParameters = lookupOperationDetails.queryParameters.map(
+                  qp => {
+                    if (qp.id === p) {
+                      // eslint-disable-next-line no-param-reassign
+                      qp = {
+                        ...qp,
+                        readOnly: true,
+                        defaultValue:
+                          operationDetails.howToFindIdentifier.lookup
+                            .parameterValues[p],
+                      };
+                    }
+
+                    return qp;
+                  }
+                );
+              }
+            });
+          }
+
+          operationDetails.lookupOperationDetails = lookupOperationDetails;
+        }
+      }
+    }
+
+    if (resourceDetails?.headersMetadata) {
+      headersMetadata.push(...resourceDetails.headersMetadata);
+    }
+    if (operationDetails?.headersMetadata) {
+      headersMetadata.push(...operationDetails.headersMetadata);
+    }
   }
 
   return cloneDeep({
@@ -599,6 +837,55 @@ export function getImportOperationDetails({
     ...operationDetails,
     headersMetadata,
   });
+}
+export function getMergedImportOperationDetails({
+  version,
+  resource,
+  createEndpoint,
+  updateEndpoint,
+  assistantData = {},
+}) {
+  const createOperation = getImportOperationDetails({
+    version,
+    resource,
+    operation: createEndpoint,
+    assistantData,
+  });
+  const updateOperation = getImportOperationDetails({
+    version,
+    resource,
+    operation: updateEndpoint,
+    assistantData,
+  });
+
+  const lengthisIdentifier = createOperation.parameters.length;
+
+  const createorupdateoperation = cloneDeep(createOperation);
+
+  createorupdateoperation.ignoreExisting = false;
+  createorupdateoperation.ignoreMissing = false;
+  delete createorupdateoperation.supportIgnoreExisting;
+  delete createorupdateoperation.requiredMappings;
+  createorupdateoperation.strictHandlebarEvaluation = true;
+  createorupdateoperation.id = [updateOperation.id, createOperation.id];
+  createorupdateoperation.method = [updateOperation.method, createOperation.method];
+  createorupdateoperation.url = [updateOperation.url, createOperation.url];
+  if (createorupdateoperation.body) {
+    createorupdateoperation.body.push(...updateOperation.body);
+  } else if (updateOperation.body) {
+    createorupdateoperation.body = [...updateOperation.body, ...updateOperation.body];
+  }
+  for (let i = 0; i < lengthisIdentifier; i += 1) {
+    if (createOperation.parameters[i].isIdentifier === true) {
+      createOperation.parameters.splice(i, 1);
+    }
+  }
+  const updateArray = updateOperation.parameters.map(p => p.id);
+  const createParameters = createOperation.parameters.filter(param => !param.isIdentifier && !updateArray.includes(param.id));
+
+  createorupdateoperation.parameters = [...updateOperation.parameters, ...createParameters];
+
+  return createorupdateoperation;
 }
 
 export function convertFromExport({ exportDoc: exportDocOrig, assistantData: assistantDataOrig, adaptorType }) {
@@ -1501,14 +1788,23 @@ export function convertFromImport({ importDoc: importDocOrig, assistantData: ass
   const importDoc = cloneDeep(importDocOrig);
 
   const assistantData = cloneDeep(assistantDataOrig);
-  let { version, resource, operation, lookupType } =
+  let { version, resource, operation, lookupType, createEndpoint, updateEndpoint } =
     importDoc.assistantMetadata || {};
 
   if (importDoc?.http) {
     operation = operation || importDoc.http._httpConnectorEndpointId;
     resource = resource || importDoc.http._httpConnectorResourceId;
     version = version || importDoc.http._httpConnectorVersionId;
+    if ((isArray(operation) && operation.length > 1) || (isArray(importDoc.http._httpConnectorEndpointIds) && importDoc.http._httpConnectorEndpointIds.length > 1)) {
+      [updateEndpoint, createEndpoint] = isArray(operation) ? operation : importDoc.http._httpConnectorEndpointIds;
+    }
+    if ((isArray(operation) && operation.length > 1)) { operation = 'create-update-id'; }
   }
+  // } else if (importDoc?.http) {
+  //   operation = operation || importDoc.http._httpConnectorEndpointId;
+  //   resource = resource || importDoc.http._httpConnectorResourceId;
+  //   version = version || importDoc.http._httpConnectorVersionId;
+  // }
   const { dontConvert, lookups } = importDoc.assistantMetadata || {};
   let sampleData;
   let { ignoreExisting, ignoreMissing } = importDoc;
@@ -1587,18 +1883,33 @@ export function convertFromImport({ importDoc: importDocOrig, assistantData: ass
   assistantMetadata.resource = resource;
   assistantMetadata.sampleData = sampleData;
   assistantMetadata.operation = operation;
+  assistantMetadata.createEndpoint = createEndpoint;
+  assistantMetadata.updateEndpoint = updateEndpoint;
 
   if (!operation) {
     return assistantMetadata;
   }
+  if (operation === 'create-update-id' && (!createEndpoint || !updateEndpoint)) {
+    return assistantMetadata;
+  }
+  let operationDetails;
 
-  const operationDetails = getImportOperationDetails({
-    version,
-    resource,
-    operation,
-    assistantData,
-  });
-
+  if (operation === 'create-update-id') {
+    operationDetails = getMergedImportOperationDetails({
+      version,
+      resource,
+      createEndpoint,
+      updateEndpoint,
+      assistantData,
+    });
+  } else {
+    operationDetails = getImportOperationDetails({
+      version,
+      resource,
+      operation,
+      assistantData,
+    });
+  }
   if (!operationDetails || !operationDetails.url) {
     return assistantMetadata;
   }
@@ -1650,7 +1961,33 @@ export function convertFromImport({ importDoc: importDocOrig, assistantData: ass
         /**
          * IO-16945, check if the urlMatch has path (:_XYZ) parameters
          */
-        if (url1Info?.urlMatch?.indexOf(':_') > 0 && url1Info?.urlParts && url1Info.urlParts[index]) {
+        if (operation === 'create-update-id') {
+          if (url1Info?.urlMatch?.indexOf(`:_${p.id}`) > 0) {
+            const idIndex = url1Info?.urlMatch?.indexOf(`:_${p.id}`);
+            const beforeIndex = [...url1Info?.urlMatch.substring(0, idIndex).matchAll(new RegExp(':_', 'gi'))].length;
+
+            if (p.isIdentifier) {
+              pathParams[p.id] = url1Info.urlParts[beforeIndex]
+                .replace(/{/g, '')
+                .replace(/}/g, '')
+                .replace('data.0.', '');
+            } else {
+              pathParams[p.id] = url1Info.urlParts[beforeIndex];
+            }
+          } else if (url2Info?.urlMatch?.indexOf(`:_${p.id}`) > 0) {
+            const idIndex = url1Info?.urlMatch?.indexOf(`:_${p.id}`);
+            const beforeIndex = [...url1Info?.urlMatch.substring(0, idIndex).matchAll(new RegExp(':_', 'gi'))].length;
+
+            if (p.isIdentifier) {
+              pathParams[p.id] = url2Info.urlParts[beforeIndex]
+                .replace(/{/g, '')
+                .replace(/}/g, '')
+                .replace('data.0.', '');
+            } else {
+              pathParams[p.id] = url2Info.urlParts[beforeIndex];
+            }
+          }
+        } else if (url1Info?.urlMatch?.indexOf(':_') > 0 && url1Info?.urlParts && url1Info.urlParts[index]) {
           if (p.isIdentifier) {
             pathParams[p.id] = url1Info.urlParts[index]
               .replace(/{/g, '')
@@ -1858,19 +2195,32 @@ export function convertToImport({ assistantConfig, assistantData, headers }) {
     ignoreMissing = false,
     lookups = [],
     existingExtract,
+    createEndpoint,
+    updateEndpoint,
   } = assistantConfig;
   let { lookupQueryParams = {} } = assistantConfig;
 
   if (!resource || !operation || !assistantData) {
     return undefined;
   }
+  let operationDetails;
 
-  const operationDetails = getImportOperationDetails({
-    version,
-    resource,
-    operation,
-    assistantData,
-  });
+  if (operation === 'create-update-id') {
+    operationDetails = getMergedImportOperationDetails({
+      version,
+      resource,
+      createEndpoint,
+      updateEndpoint,
+      assistantData,
+    });
+  } else {
+    operationDetails = getImportOperationDetails({
+      version,
+      resource,
+      operation,
+      assistantData,
+    });
+  }
   const importDefaults = {
     rest: {
       ...cloneDeep(DEFAULT_PROPS.IMPORT.REST),
@@ -2047,11 +2397,9 @@ export function convertToImport({ assistantConfig, assistantData, headers }) {
       }
     }
   }
-  if (operationDetails.howToIdentifyExistingRecords) {
-    if (existingExtract) {
-      importDoc.existingExtract = existingExtract;
-      importDoc.existingLookupName = undefined;
-    }
+  if (operationDetails.howToIdentifyExistingRecords && existingExtract) {
+    importDoc.existingExtract = existingExtract;
+    importDoc.existingLookupName = undefined;
   }
   if (ignoreExisting) {
     if (identifiers && identifiers.length > 0) {
@@ -2065,7 +2413,7 @@ export function convertToImport({ assistantConfig, assistantData, headers }) {
     ignoreMissing
   ) {
     if (identifiers && identifiers.length > 0) {
-      if (lookupType === 'source') {
+      if (lookupType === 'source' && pathParams[identifiers[0].id]) {
         if (ignoreMissing) {
           importDoc.ignoreExtract = pathParams[identifiers[0].id];
           importDoc.existingExtract = undefined;

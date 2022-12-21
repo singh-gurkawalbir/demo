@@ -14,7 +14,7 @@ import useConfirmDialog from '../../../components/ConfirmDialog';
 
 const useStyles = makeStyles(theme => ({
   root: {
-    backgroundColor: theme.palette.common.white,
+    backgroundColor: theme.palette.background.paper,
     border: '1px solid',
     borderColor: theme.palette.secondary.lightest,
     overflowX: 'auto',

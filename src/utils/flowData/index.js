@@ -19,31 +19,32 @@ import { isIntegrationApp } from '../flows';
 import { isJsonString } from '../string';
 
 export const BASE_FLOW_INPUT_STAGE = 'flowInput';
-export const LOOKUP_FLOW_DATA_STAGE = 'inputFilter';
 export const IMPORT_FLOW_DATA_STAGE = 'importMappingExtract';
+export const IMPORT_FILTERED_DATA_STAGE = 'preMap';
+export const EXPORT_FILTERED_DATA_STAGE = 'postInputFilter';
+export const IMPORT_POST_MAPPED_DATA_STAGE = 'postMapOutput';
 
-// TODO @RAGHU : Add comments on the different stages and their use cases
 export const sampleDataStage = {
   exports: {
     processedFlowInput: 'flowInput',
     inputFilter: 'processedFlowInput',
+    postInputFilter: 'inputFilter',
     transform: 'raw',
-    preSavePage: 'transform', // preSavePage indicates export hooks
     outputFilter: 'transform',
+    preSavePage: 'outputFilter', // preSavePage indicates export hooks
     responseMappingExtract: 'preSavePage',
     responseMapping: 'responseMappingExtract',
     postResponseMap: 'responseMapping',
     postResponseMapHook: 'postResponseMap',
   },
   /**
-   * flowInput, processedFlowInput, inputFilter
-   * raw, processedFlowInput, transform, preSavePage, responseMappingExtract, responseMapping, postResponseMap, postResponseMapHook
-   * raw, transform, outputFilter
+   * flowInput, processedFlowInput, inputFilter, postInputFilter
+   * raw, transform, outputFilter, preSavePage, responseMappingExtract, responseMapping, postResponseMap, postResponseMapHook
    */
   imports: {
     processedFlowInput: 'flowInput',
     inputFilter: 'processedFlowInput',
-    preMap: 'processedFlowInput',
+    preMap: 'inputFilter',
     importMappingExtract: 'preMap',
     importMapping: 'importMappingExtract',
     responseMappingExtract: 'responseTransform',
@@ -59,8 +60,7 @@ export const sampleDataStage = {
     router: 'router',
   },
   /**
-   * flowInput, processedFlowInput, inputFilter
-   * flowInput, preMap, importMappingExtract, importMapping, postMap,
+   * flowInput, processedFlowInput, inputFilter, preMap, importMappingExtract, importMapping, postMap,
    * sampleResponse, responseTransform, postSubmit
    * sampleResponse, responseTransform, responseMappingExtract, responseMapping, postResponseMap, postResponseMapHook
    */

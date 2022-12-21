@@ -29,17 +29,19 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function DiamondMergeIcon({isDroppable, className, tooltip, ...rest}) {
+function DiamondMergeIcon({isDroppable, className, tooltip, ...rest}, ref) {
   const classes = useStyles();
   const diamondIconClassName = clsx(classes.icon, {[classes.droppable]: isDroppable}, className);
 
   return (
     tooltip ? (
       <Tooltip title={tooltip} placement="bottom">
-        <div>
+        <div ref={ref}>
           <DiamondIcon className={diamondIconClassName} {...rest} />
         </div>
       </Tooltip>
-    ) : <DiamondIcon className={diamondIconClassName} {...rest} />
+    ) : <div ref={ref}><DiamondIcon className={diamondIconClassName} {...rest} /></div>
   );
 }
+export default React.forwardRef(DiamondMergeIcon);
+

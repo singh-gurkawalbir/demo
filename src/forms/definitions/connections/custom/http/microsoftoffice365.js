@@ -6,6 +6,7 @@ export default {
     '/type': 'http',
     '/assistant': 'microsoftoffice365',
     '/http/auth/type': 'oauth',
+    '/http/auth/oauth/useIClientFields': false,
     '/http/mediaType': 'json',
     '/http/baseURI': 'https://graph.microsoft.com/v1.0',
     '/http/auth/oauth/authURI':

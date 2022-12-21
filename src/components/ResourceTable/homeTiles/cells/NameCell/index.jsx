@@ -63,7 +63,7 @@ export default function NameCell({ tile }) {
   const accessLevel = ssLinkedConnectionId ? ssAccessLevel
     : tile.integration?.permissions?.accessLevel;
   const handleClick = () => {
-    if (!tile.iaV2 && tile._connectorId && tile.supportsChild) {
+    if (tile._connectorId && tile.supportsChild) {
       dispatch(actions.resource.integrations.isTileClick(tile?._integrationId, true));
     }
   };

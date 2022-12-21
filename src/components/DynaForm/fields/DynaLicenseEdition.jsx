@@ -32,8 +32,7 @@ export default function DynaLicenseEdition(props) {
 
   return (
     <DynaSelect
-      {...props} options={[{ items: options || [] }]}
-
+      {...props} options={[{ items: options }]}
   />
   );
 }

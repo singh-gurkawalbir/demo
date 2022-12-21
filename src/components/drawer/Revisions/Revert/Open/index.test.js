@@ -74,10 +74,7 @@ describe('OpenRevertDrawer tests', () => {
     expect(screen.getByText('Revert to revision created date')).toBeInTheDocument();
     expect(screen.getByText('Revert to revision ID')).toBeInTheDocument();
     expect(screen.getAllByText('*')).toHaveLength(1);
-    const helpKey = screen.getAllByRole('button', {name: ''}).find(b => b.getAttribute('class').includes('helpTextButton'));
 
-    userEvent.click(helpKey);
-    expect(screen.getByText('When creating a revert, you are restoring to a revision of an integration. The revert action will also generate a revision')).toBeInTheDocument();
     const close = screen.getAllByRole('button', {name: 'Close'})[0];
     const next = screen.getByRole('button', {name: 'Next'});
 

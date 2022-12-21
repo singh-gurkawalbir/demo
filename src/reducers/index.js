@@ -116,7 +116,8 @@ import { buildDrawerUrl, drawerPaths } from '../utils/rightDrawer';
 import { GRAPHQL_HTTP_FIELDS, isGraphqlResource } from '../utils/graphql';
 import { initializeFlowForReactFlow, getFlowAsyncKey } from '../utils/flows/flowbuilder';
 import { HTTP_BASED_ADAPTORS } from '../utils/http';
-import { AUDIT_LOG_PAGING_FILTER_KEY } from '../constants/auditLog';
+import { getAuditLogFilterKey } from '../constants/auditLog';
+import { SHOPIFY_APP_STORE_LINKS } from '../constants/urls';
 
 const emptyArray = [];
 const emptyObject = {};
@@ -214,6 +215,7 @@ selectors.userProfilePreferencesProps = createSelector(
       auth_type_google,
       _ssoAccountId,
       authTypeSSO,
+      darkTheme,
     } = { ...profile, ...preferences };
 
     return {
@@ -232,6 +234,7 @@ selectors.userProfilePreferencesProps = createSelector(
       showRelativeDateTime,
       _ssoAccountId,
       authTypeSSO,
+      darkTheme,
     };
   });
 
@@ -370,6 +373,62 @@ selectors.integrationInstallSteps = createSelector(
     // passing connectionId as _connId in case of 'Integrator Bundle' and 'Integrator Adaptor Package'
 
     return installSteps.map(step => {
+      if (step.installURL || step.url) {
+        if (
+          step.name.includes('Integrator Bundle')
+        ) {
+          const connectionId = bundleInstallationForNetsuiteConnections[netsuiteConnIndex]?._connectionId;
+
+          netsuiteConnIndex += 1;
+
+          return {
+            ...step,
+            _connId: connectionId,
+          };
+        } if (step.name.includes('Integrator Adaptor Package')) {
+          const connectionId = bundleInstallationForSalesforceConnections[salesforceConnIndex]?._connectionId;
+
+          salesforceConnIndex += 1;
+
+          return {
+            ...step,
+            _connId: connectionId,
+          };
+        }
+      }
+
+      return step;
+    });
+  }
+);
+selectors.integrationChangeEditionSteps = createSelector(
+  (state, integrationId) => fromSession.changeEditionSteps(state?.session, integrationId),
+  (state, integrationId) => fromData.integrationChangeEditionSteps(state?.data, integrationId),
+  (state, integrationId) => fromSession.v2integrationAppsInstaller(state?.session, integrationId),
+  (state, integrationId) => selectors.integrationAppSettings(state, integrationId)?._connectorId,
+  (steps, integrationChangeEditionSteps, changeEditionStepsStatus, _connectorId) => {
+    const visibleSteps = (steps.length
+      ? steps
+      : integrationChangeEditionSteps)
+      .filter(s => s.type !== 'hidden');
+
+    const changeEditionSteps = visibleSteps.map(step => {
+      if (step.isCurrentStep) {
+        return { ...step, ...changeEditionStepsStatus };
+      }
+
+      return step;
+    });
+
+    if (_connectorId) return changeEditionSteps;
+    const bundleInstallationForNetsuiteConnections = changeEditionSteps.filter(step => step.sourceConnection?.type === 'netsuite');
+    const bundleInstallationForSalesforceConnections = changeEditionSteps.filter(step => step.sourceConnection?.type === 'salesforce');
+
+    let netsuiteConnIndex = 0;
+    let salesforceConnIndex = 0;
+    // passing connectionId as _connId in case of 'Integrator Bundle' and 'Integrator Adaptor Package'
+
+    return changeEditionSteps.map(step => {
       if (step.installURL || step.url) {
         if (
           step.name.includes('Integrator Bundle')
@@ -667,6 +726,11 @@ const filterByEnvironmentResources = (resources, sandbox, resourceType) => {
 
       return !!r.doc?.sandbox === sandbox;
     });
+  }
+
+  // https://celigo.atlassian.net/browse/IO-31027 - remove this change in R2-2023
+  if (resourceType === 'scripts') {
+    return resources.filter(r => !r?.hasOwnProperty('sandbox') || !!r.sandbox === sandbox);
   }
 
   return resources.filter(r => !!r.sandbox === sandbox);
@@ -1817,12 +1881,15 @@ selectors.mkFilteredHomeTiles = () => {
     state => {
       const tiles = tilesSelector(state);
 
-      return tiles.map(t => {
+      tiles.forEach(t => {
         const applications = appSel(state, t);
         const pinnedIntegrations = selectors.userPreferences(state).dashboard?.pinnedIntegrations || emptyArray;
 
-        return {...t, applications, pinned: pinnedIntegrations.includes(t._integrationId)};
+        t.applications = applications;
+        t.pinned = pinnedIntegrations.includes(t._integrationId);
       });
+
+      return tiles;
     },
     state => selectors.suiteScriptLinkedTiles(state),
     state => selectors.userPreferences(state).dashboard,
@@ -2193,14 +2260,12 @@ selectors.auditLogs = (
   state,
   resourceType,
   resourceId,
-  filters,
   options = {}
 ) => {
   let auditLogs = fromData.auditLogs(
     state?.data,
     resourceType,
     resourceId,
-    filters
   );
 
   const result = {
@@ -2241,9 +2306,13 @@ selectors.auditLogs = (
 
 selectors.paginatedAuditLogs = createSelector(
   selectors.auditLogs,
-  state => selectors.filter(state, AUDIT_LOG_PAGING_FILTER_KEY),
-  (auditLogs, pagingFilters) => {
-    const { currPage = 0, rowsPerPage = DEFAULT_ROWS_PER_PAGE } = pagingFilters?.paging || {};
+  (state, resourceType, resourceId) => {
+    const filterKey = getAuditLogFilterKey(resourceType, resourceId);
+
+    return selectors.filter(state, filterKey);
+  },
+  (auditLogs, filters) => {
+    const { currPage = 0, rowsPerPage = DEFAULT_ROWS_PER_PAGE } = filters?.paging || {};
 
     auditLogs.logs = auditLogs.logs.slice(currPage * rowsPerPage, (currPage + 1) * rowsPerPage);
 
@@ -2463,7 +2532,6 @@ selectors.mkDIYIntegrationFlowList = () => {
   const flowGroupsMapSelector = selectors.mkFlowGroupMap();
 
   return createSelector(
-    state => state?.data?.resources?.integrations,
     state => state?.data?.resources?.flows,
     (state, integrationId, childId) => selectors.latestJobMap(state, childId || integrationId || 'none')?.data,
     (state, integrationId) => integrationId,
@@ -2473,16 +2541,15 @@ selectors.mkDIYIntegrationFlowList = () => {
     selectors.openErrorsMap,
     selectors.currentEnvironment,
     flowGroupsMapSelector,
-    (integrations = emptyArray, flows = emptyArray, latestFlowJobs,
+    (flows = emptyArray, latestFlowJobs,
       integrationId, childId, isUserInErrMgtTwoDotZero, options, errorMap, currentEnvironment, flowGroupsMap) => {
-      const childIntegrationIds = integrations.filter(i => i._parentId === integrationId || i._id === integrationId).map(i => i._id);
       let integrationFlows = flows.filter(f => {
         if (!integrationId || integrationId === STANDALONE_INTEGRATION.id) {
           return !f._integrationId && !!f.sandbox === (currentEnvironment === 'sandbox');
         }
         if (childId && childId !== integrationId) return f._integrationId === childId;
 
-        return childIntegrationIds.includes(f._integrationId);
+        return f._integrationId === integrationId;
       });
       const customSearchableText = r => {
         if (!options?.keyword) return;
@@ -2656,6 +2723,35 @@ selectors.mkGetMediaTypeOptions = () => {
 
       return {modifiedOptions: [{ items: modifiedOptions}], parentFieldMediaType};
     }
+  );
+};
+
+// for IA 1.0 install mode dummy connection are created. since we don't know it's new connection or existing connection we will verify
+// if connection is online or not.
+selectors.isNewConnectionId = () => {
+  const makeResourceSelector = selectors.makeResourceSelector();
+
+  return createSelector(
+    (state, resourceType, resourceId) => {
+      const resource = makeResourceSelector(state, resourceType, resourceId);
+
+      if (!resource?._connectorId) {
+        return [];
+      }
+      let steps = selectors.getChildInstallSteps(state, resource?._integrationId) || [];
+
+      if (!steps.length) {
+        const integrationResource = makeResourceSelector(state, 'integrations', resource?._integrationId);
+
+        if (integrationResource?.mode === 'install') {
+          steps = selectors.integrationInstallSteps(state, resource?._integrationId) || [];
+        }
+      }
+
+      return steps;
+    },
+    (_1, _2, resourceId) => resourceId,
+    (installSteps, resourceId) => !!installSteps?.find(s => s?._connectionId === resourceId)
   );
 };
 
@@ -2872,6 +2968,17 @@ selectors.integrationAppEdition = (state, integrationId) => {
   return plan;
 };
 
+selectors.isChildLicenseInUpgrade = createSelector(
+  state => selectors.licenses(state),
+  (state, id) => id,
+  (licenses, id) => {
+    const parentLicenseId = licenses.find(license => license._integrationId === id)?._id;
+    const childLicenses = licenses.filter(license => (!!license?._integrationId) && (license?._parentId === parentLicenseId));
+
+    return childLicenses.some(license => !!license?._changeEditionId);
+  }
+);
+
 selectors.integrationAppLicense = (state, id) => {
   if (!state) return emptyObject;
   const integrationResource = selectors.integrationAppSettings(state, id);
@@ -2881,6 +2988,8 @@ selectors.integrationAppLicense = (state, id) => {
   const connector =
      integrationAppList?.find(ia => ia._id === license?._connectorId);
   const editions = connector?.twoDotZero?.editions || emptyArray;
+  const changeEdition = (editions.find(ed => ed._id === license?._changeEditionId) || {})?.displayName;
+  const nextPlan = changeEdition ? getTitleFromEdition(changeEdition) : '';
   const upgradeRequested = selectors.checkUpgradeRequested(state, license._id);
   const dateFormat = selectors.userProfilePreferencesProps(state)?.dateFormat;
   const { expires, created } = license;
@@ -2904,6 +3013,7 @@ selectors.integrationAppLicense = (state, id) => {
     upgradeRequested: !!upgradeRequested,
     createdText: createdFormatted,
     showLicenseExpiringWarning: hasExpired || isExpiringSoon,
+    nextPlan,
   };
 };
 
@@ -3422,7 +3532,10 @@ selectors.availableUsersList = createSelector(
       ];
     }
 
-    return _users ? _users.sort(stringCompare('sharedWithUser.name')) : emptyArray;
+    return _users
+      ? _users.sort(stringCompare('sharedWithUser.name'))
+        .map(userVal => !userVal.sharedWithUser ? ({ ...userVal, sharedWithUser: emptyObject }) : userVal)
+      : emptyArray;
   }
 
 );
@@ -5379,6 +5492,14 @@ selectors.applicationType = (state, resourceType, id) => {
   const assistant = getStagedValue('/assistant') || resourceObj?.assistant;
 
   if (adaptorType === 'WebhookExport') {
+    const httpConnectorId = getStagedValue('/_httpConnectorId') || getStagedValue('/webhook/_httpConnectorId') || resourceObj?._httpConnectorId || resourceObj?.webhook?._httpConnectorId;
+    const applications = applicationsList();
+    const httpApp = applications.find(a => a._httpConnectorId === httpConnectorId);
+
+    if (httpConnectorId && httpApp) {
+      return httpApp._legacyId || httpApp.id;
+    }
+
     return (
       getStagedValue('/webhook/provider') ||
       (resourceObj && resourceObj.webhook && resourceObj.webhook.provider)
@@ -5559,8 +5680,12 @@ selectors.isMapper2Supported = state => {
 
   const resource = selectors.resource(state, 'imports', importId);
 
-  // IAs don't support mapper2
-  if (!resource || resource._connectorId) return false;
+  if (!resource) return false;
+
+  // IAs will only support mapper2 if its present in the doc
+  if (resource._connectorId && isEmpty(resource.mappings)) {
+    return false;
+  }
 
   return !!(
     isFileAdaptor(resource) ||
@@ -5596,7 +5721,10 @@ selectors.mappingEditorNotification = (state, editorId) => {
 
   if (editorType !== 'mappings' || !isMapper2Supported) return emptyObject;
 
-  const {mapping, mappings} = selectors.resource(state, 'imports', resourceId) || {};
+  const {mapping, mappings, _connectorId} = selectors.resource(state, 'imports', resourceId) || {};
+
+  // IAs don't support the notification
+  if (_connectorId) return emptyObject;
 
   const resourceHasV2Mappings = !!mappings?.length;
 
@@ -6922,8 +7050,10 @@ selectors.isUserAllowedOnlySSOSignIn = state => {
 
 selectors.primaryAccounts = createSelector(
   state => selectors.isAccountOwner(state),
-  state => state?.user?.org?.accounts?.filter(acc => acc._id !== ACCOUNT_IDS.OWN),
-  (isAccountOwner, orgAccounts) => {
+  state => state?.user?.org?.accounts,
+  (isAccountOwner, allAccounts) => {
+    const orgAccounts = allAccounts?.filter(acc => acc._id !== ACCOUNT_IDS.OWN);
+
     if (isAccountOwner) {
       return emptyList;
     }
@@ -7313,3 +7443,21 @@ selectors.mkFlowResourcesRetryStatus = () => {
 };
 
 selectors.flowResourcesRetryStatus = selectors.mkFlowResourcesRetryStatus();
+selectors.getShopifyStoreLink = (state, resourceId) => {
+  const {_connectorId} = selectors.resourceData(
+    state,
+    'connections',
+    resourceId,
+    'value'
+  )?.merged || emptyObject;
+
+  if (!_connectorId) return SHOPIFY_APP_STORE_LINKS.DIY_APP;
+
+  /* uncomment the below code when
+    'SAP Business ByDesign Integration App' or 'Microsoft Business Central Integration App' are published
+    const integration = selectors.resource(state, 'integrations', _integrationId);
+    if (integration.name.toLowerCase().includes('microsoft')) return SHOPIFY_APP_STORE_LINKS.MICROSOFT_BUSINESS_IA_APP;
+    if (integration.name.toLowerCase().includes('sap')) return SHOPIFY_APP_STORE_LINKS.SAP_BUSINESS_IA_APP; */
+
+  return SHOPIFY_APP_STORE_LINKS.NETSUITE_IA_APP;
+};

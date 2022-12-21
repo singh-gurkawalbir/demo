@@ -9,6 +9,7 @@ import {
 } from '../../constants/resource';
 import CeligoSelect from '../CeligoSelect';
 import { AUDIT_LOG_EVENT_LABELS } from '../../constants/auditLog';
+import { STANDALONE_INTEGRATION } from '../../constants';
 
 const OPTION_ALL = { id: 'all', label: 'All' };
 
@@ -50,6 +51,7 @@ export function ResourceTypeFilter(props) {
     'scripts',
     'apis',
     'agents',
+    'iClients',
   ];
   const resource =
     resourceType &&
@@ -97,7 +99,7 @@ export function ResourceTypeFilter(props) {
   return (
     <FormControl className={classes.formControl}>
       <CeligoSelect
-        value={filters.resourceType}
+        value={filters.resourceType || ''}
         onChange={onChange}
         // all options are harmless ...mostly resourceTypes
         isLoggable
@@ -172,7 +174,7 @@ export function ResourceIdFilter(props) {
         isLoggable
         inputProps={resourceIdInput}
         className={classes.select}
-        value={filters._resourceId}
+        value={filters._resourceId || ''}
         onChange={onChange}>
         <MenuItem value="" disabled>
           Select {RESOURCE_TYPE_SINGULAR_TO_LABEL[filters.resourceType]}
@@ -191,6 +193,8 @@ export function AuditLogActionFilter({
   filters,
   onChange,
   resource,
+  resourceType,
+  resourceId,
 }) {
   return (
     <FormControl className={classes.formControl}>
@@ -198,13 +202,18 @@ export function AuditLogActionFilter({
         isLoggable
         inputProps={eventInput}
         onChange={onChange}
-        value={filters.event}>
+        value={filters.event || ''}>
         <MenuItem key={OPTION_ALL.id} value={OPTION_ALL.id}>
           Select action
         </MenuItem>
         {[
           ...Object.keys(AUDIT_LOG_EVENT_LABELS)
             .filter(k => {
+              // For integration and resource type audit logs, signin and signout actions should not be shown
+              if (resourceType === 'integrations' && resourceId === STANDALONE_INTEGRATION.id) {
+                return !['signin', 'signout'].includes(k);
+              }
+
               if (!resource) {
                 return true;
               }

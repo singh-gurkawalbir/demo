@@ -9,7 +9,6 @@ describe('DynaCheckbox UI tests', () => {
   test('should pass the initial render', () => {
     renderWithProviders(<DynaCheckbox />);
     expect(screen.getByRole('checkbox')).toBeInTheDocument();
-    screen.debug();
   });
   test('should render a checked checkbox when value is passed as true in props', () => {
     const props = {value: true};

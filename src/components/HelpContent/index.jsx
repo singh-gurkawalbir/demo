@@ -3,9 +3,13 @@ import { makeStyles } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
 import { useDispatch } from 'react-redux';
+import { IconButton } from '@material-ui/core';
 import actions from '../../actions';
-import ActionGroup from '../ActionGroup';
 import OutlinedButton from '../Buttons/OutlinedButton';
+import ThumbsUpIcon from '../icons/ThumbsUpIcon';
+import IconButtonWithTooltip from '../IconButtonWithTooltip';
+import ThumbsDownIcon from '../icons/ThumbsDownIcon';
+import CloseIcon from '../icons/CloseIcon';
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
@@ -21,13 +25,18 @@ const useStyles = makeStyles(theme => ({
     wordBreak: 'break-word',
   },
   content: {
-    padding: theme.spacing(1, 0),
     overflowY: 'auto',
     lineHeight: '22px',
     whiteSpace: 'normal',
     wordBreak: 'break-word',
+    marginRight: -theme.spacing(1.5),
+    padding: theme.spacing(1, 1.5, 0, 0),
     '&>div': {
-      maxHeight: 300,
+      maxHeight: 200,
+      '&>ul': {
+        paddingLeft: theme.spacing(2),
+        margin: 0,
+      },
     },
     '& > div > pre': {
       background: theme.palette.background.paper2,
@@ -38,15 +47,20 @@ const useStyles = makeStyles(theme => ({
   },
   caption: {
     wordBreak: 'break-word',
+    borderTop: `1px solid ${theme.palette.secondary.lightest}`,
+    paddingTop: theme.spacing(1),
+    marginTop: theme.spacing(1),
   },
   actionButton: {
-    minWidth: 'auto',
-    '&:not(:last-child)': {
-      marginRight: theme.spacing(1),
+    color: theme.palette.secondary.main,
+    marginLeft: theme.spacing(1),
+    '& .MuiIconButton-label, .MuiSvgIcon-root': {
+      height: theme.spacing(2.5),
+      width: theme.spacing(2.5),
     },
   },
   feedbackTextField: {
-    margin: theme.spacing(1, 0),
+    marginBottom: theme.spacing(1),
     width: '100%',
     '& > div': {
       padding: theme.spacing(1.5),
@@ -54,13 +68,25 @@ const useStyles = makeStyles(theme => ({
   },
   actionWrapper: {
     display: 'flex',
-    paddingTop: theme.spacing(1),
-    borderTop: '1px solid',
-    borderColor: theme.palette.secondary.lightest,
+    padding: theme.spacing(1, 0),
+    marginTop: theme.spacing(1),
+    backgroundColor: theme.palette.background.paper2,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   feedbackActionButton: {
     display: 'flex',
     alignSelf: 'flex-start',
+  },
+  titleWrapper: {
+    display: 'flex',
+    alignItems: 'center',
+    paddingBottom: theme.spacing(1),
+    borderBottom: `1px solid ${theme.palette.secondary.lightest}`,
+    justifyContent: 'space-between',
+  },
+  closeButton: {
+    padding: 0,
   },
 }));
 
@@ -92,14 +118,18 @@ export default function HelpContent({ children, title, caption, fieldId, resourc
 
   return (
     <div className={classes.wrapper}>
-      <Typography className={classes.title} variant="h6">
-        {title}
-      </Typography>
-      {caption && (
-        <Typography variant="caption" className={classes.caption}>
-          {caption}
+      <div className={classes.titleWrapper}>
+        <Typography className={classes.title} variant="h6">
+          {title}
         </Typography>
-      )}
+        <IconButton
+          size="small"
+          data-test="close"
+          aria-label="Close"
+          className={classes.closeButton}>
+          <CloseIcon />
+        </IconButton>
+      </div>
       {feedbackText ? (
         <>
           <TextField
@@ -121,27 +151,32 @@ export default function HelpContent({ children, title, caption, fieldId, resourc
         <>
           <Typography variant="subtitle2" component="div" className={classes.content}>{children}</Typography>
           <div className={classes.actionWrapper}>
-            <Typography>Was this helpful?</Typography>
-            <ActionGroup position="right">
-              <OutlinedButton
-                data-test="yesContentHelpful"
-                color="secondary"
-                size="small"
-                onClick={handleUpdateFeedBack(true)}
-                className={classes.actionButton}>
-                Yes
-              </OutlinedButton>
-              <OutlinedButton
-                data-test="noContentHelpful"
-                color="secondary"
-                size="small"
-                onClick={handleUpdateFeedBack(false)}
-                className={classes.actionButton}>
-                No
-              </OutlinedButton>
-            </ActionGroup>
+            <Typography variant="subtitle2">Was this helpful?</Typography>
+            <IconButtonWithTooltip
+              data-test="yesContentHelpful"
+              tooltipProps={{title: 'Yes'}}
+              buttonSize={{size: 'small'}}
+              className={classes.actionButton}
+              onClick={handleUpdateFeedBack(true)}
+              noPadding>
+              <ThumbsUpIcon />
+            </IconButtonWithTooltip>
+            <IconButtonWithTooltip
+              data-test="noContentHelpful"
+              tooltipProps={{title: 'No'}}
+              buttonSize={{size: 'small'}}
+              className={classes.actionButton}
+              onClick={handleUpdateFeedBack(false)}
+              noPadding>
+              <ThumbsDownIcon data-test="thumbsdownicon" />
+            </IconButtonWithTooltip>
           </div>
         </>
+      )}
+      {caption && (
+      <Typography variant="subtitle2" className={classes.caption}>
+        Field path: {caption}
+      </Typography>
       )}
     </div>
   );

@@ -6,7 +6,7 @@ import { renderWithProviders, reduxStore } from '../../../../test/test-utils';
 import useHandleResourceFormFlowSampleData from './useHandleResourceFormFlowSampleData';
 import actions from '../../../../actions';
 import {
-  LOOKUP_FLOW_DATA_STAGE,
+  EXPORT_FILTERED_DATA_STAGE,
   IMPORT_FLOW_DATA_STAGE,
 } from '../../../../utils/flowData';
 
@@ -22,7 +22,7 @@ async function inituseHandleResourceFormFlowSampleData(resourceType = 'imports',
   const DummyComponent = () => {
     useHandleResourceFormFlowSampleData('formKey');
 
-    return <></>;
+    return null;
   };
 
   const initialStore = reduxStore;
@@ -65,10 +65,8 @@ describe('useHandleResourceFormFlowSampleData tests', () => {
   });
   test('Should able to test the custom hook with imports', async () => {
     await inituseHandleResourceFormFlowSampleData();
-    await waitFor(() => expect(mockDispatchFn).toHaveBeenNthCalledWith(1, actions.flowData.requestSampleData(
-      '_flowId', '_id', 'imports', IMPORT_FLOW_DATA_STAGE, undefined, 'formKey')));
-    await waitFor(() => expect(mockDispatchFn).toHaveBeenNthCalledWith(2, actions.flowData.resetStages('_flowId', '_id', [
-      'processedFlowInput', 'inputFilter', 'preMap', 'importMappingExtract', 'importMapping', 'postMap', 'postMapOutput'])));
+    expect(mockDispatchFn).toHaveBeenCalledWith(actions.flowData.requestSampleData(
+      '_flowId', '_id', 'imports', IMPORT_FLOW_DATA_STAGE, undefined, 'formKey'));
   });
   test('Should able to test the custom hook with normal standalone exports', async () => {
     await inituseHandleResourceFormFlowSampleData('exports', '_id2');
@@ -76,9 +74,7 @@ describe('useHandleResourceFormFlowSampleData tests', () => {
   });
   test('Should able to test the custom hook with lookup exports', async () => {
     await inituseHandleResourceFormFlowSampleData('exports');
-    await waitFor(() => expect(mockDispatchFn).toHaveBeenNthCalledWith(1, actions.flowData.requestSampleData(
-      '_flowId', '_id', 'exports', LOOKUP_FLOW_DATA_STAGE, undefined, 'formKey')));
-    await waitFor(() => expect(mockDispatchFn).toHaveBeenNthCalledWith(2, actions.flowData.resetStages('_flowId', '_id', ['processedFlowInput', 'inputFilter'])));
-    await waitFor(() => expect(mockDispatchFn).toHaveBeenNthCalledWith(3, actions.flowData.resetStages('_flowId', '_id', ['responseMapping', 'responseMappingExtract', 'preSavePage', 'transform', 'raw'])));
+    expect(mockDispatchFn).toHaveBeenNthCalledWith(1, actions.flowData.requestSampleData(
+      '_flowId', '_id', 'exports', EXPORT_FILTERED_DATA_STAGE, undefined, 'formKey'));
   });
 });

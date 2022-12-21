@@ -18,13 +18,22 @@ import EditRetryData from '../actions/EditRetry';
 import { selectors } from '../../../../reducers';
 import ViewNetsuiteRequest from '../actions/ViewNetsuiteRequest';
 import ViewNetsuiteResponse from '../actions/ViewNetsuiteResponse';
+import { FILTER_KEYS } from '../../../../utils/errorManagement';
 import messageStore from '../../../../utils/messageStore';
+import PurgeError from '../actions/PurgeError';
 
 const options = {allowedTags: ['a']};
 export default {
   rowKey: 'errorId',
   additionalConfigs: {
     actionMenuTooltip: messageStore('VIEW_ACTIONS_HOVER_MESSAGE'),
+    IsActiveRow: ({ rowData }) => {
+      const activeErrorId = useSelector(
+        state => selectors.filter(state, FILTER_KEYS.RESOLVED)?.activeErrorId
+      );
+
+      return activeErrorId === rowData.errorId;
+    },
   },
   useColumns: () => [
     {
@@ -130,6 +139,7 @@ export default {
         ? actions.push(ViewNetsuiteRequest, ViewNetsuiteResponse)
         : actions.push(ViewHttpRequest, ViewHttpResponse);
     }
+    actions.push(PurgeError);
 
     return actions;
   },

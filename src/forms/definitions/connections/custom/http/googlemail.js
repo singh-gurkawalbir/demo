@@ -6,6 +6,7 @@ export default {
     '/http/auth/type': 'oauth',
     '/http/mediaType': 'json',
     '/http/baseURI': 'https://www.googleapis.com/gmail/',
+    '/http/auth/oauth/useIClientFields': false,
     '/http/auth/oauth/authURI': 'https://accounts.google.com/o/oauth2/auth',
     '/http/auth/oauth/tokenURI': 'https://accounts.google.com/o/oauth2/token',
     '/http/auth/oauth/scopeDelimiter': ' ',

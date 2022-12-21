@@ -9,9 +9,12 @@ export default {
       retValues['/http/auth/oauth/authURI'] = undefined;
       retValues['/http/auth/oauth/tokenURI'] = undefined;
       retValues['/http/_iClientId'] = undefined;
+      delete retValues['/http/auth/token/paramName'];
+      retValues['/http/auth/token/paramName'] = undefined;
     } else {
       const scopes = retValues['/http/auth/oauth/scope'] ? retValues['/http/auth/oauth/scope'].filter(s => s !== 'oauth') : [];
 
+      retValues['/http/auth/oauth/useIClientFields'] = false;
       retValues['/http/auth/oauth/authURI'] =
         `https://app.hubspot.com/oauth/authorize?optional_scope=${encodeURIComponent(scopes.join(' '))}`;
       retValues['/http/auth/token/refreshMethod'] = 'POST';
@@ -111,6 +114,9 @@ export default {
             'crm.schemas.contacts.write',
             'crm.schemas.deals.read',
             'crm.schemas.deals.write',
+            'crm.schemas.quotes.read',
+            'crm.objects.quotes.read',
+            'crm.objects.quotes.write',
           ],
         },
       ],

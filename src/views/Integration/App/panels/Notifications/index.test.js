@@ -217,14 +217,14 @@ describe('NotificationsSection UI tests', () => {
   }
   test('should test when store does not has integration', () => {
     renderWithProviders(<MemoryRouter><NotificationsSection integrationId="5ff579d745ceef7dcd797c15" /> </MemoryRouter>);
-    expect(screen.getByText('Notify me on job error')).toBeInTheDocument();
+    expect(screen.getByText('Notify me of job error')).toBeInTheDocument();
     expect(screen.getByText('Notify me when connection goes offline')).toBeInTheDocument();
   });
   test('should test for jobs notification options', () => {
     const mockDispatch = initStoreAndRender(false);
 
     expect(screen.getByText('Notifications')).toBeInTheDocument();
-    expect(screen.getByText('Notify me on job error')).toBeInTheDocument();
+    expect(screen.getByText('Notify me of job error')).toBeInTheDocument();
 
     userEvent.click(screen.getByText('All flows'));
     userEvent.click(screen.getByText('Second flow'));
@@ -247,7 +247,7 @@ describe('NotificationsSection UI tests', () => {
     const mockDispatch = initStoreAndRender(true);
 
     expect(screen.getByText('Notifications')).toBeInTheDocument();
-    expect(screen.getByText('Notify me on flow error')).toBeInTheDocument();
+    expect(screen.getByText('Notify me of flow error')).toBeInTheDocument();
 
     userEvent.click(screen.getByText('All flows'));
     userEvent.click(screen.getByText('Second flow'));

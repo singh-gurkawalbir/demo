@@ -18,7 +18,7 @@ const useStyles = makeStyles(theme => ({
     margin: theme.spacing(1, 0),
   },
   createTransferContainer: {
-    background: theme.palette.common.white,
+    background: theme.palette.background.paper,
     border: '1px solid',
     borderColor: theme.palette.divider,
     padding: theme.spacing(2),
@@ -28,7 +28,7 @@ const useStyles = makeStyles(theme => ({
   },
   initiateTransferWrapper: {
     marginTop: theme.spacing(2),
-    background: theme.palette.common.white,
+    background: theme.palette.background.paper,
     border: '1px solid',
     borderColor: theme.palette.divider,
   },
@@ -77,8 +77,7 @@ export default function Invite(props) {
         type: 'text',
         label: "New owner's email",
         required: true,
-        helpText:
-          'Email address of the person who the integration is transferred to. The receiver needs to be a user with their own integrator.io account and can’t be part of your organization',
+        helpKey: 'transfer.email',
       },
       _integrationIds: {
         id: '_integrationIds',
@@ -87,6 +86,7 @@ export default function Invite(props) {
         label: 'Integrations to transfer',
         resourceType: 'integrations',
         required: true,
+        helpKey: 'transfer._integrationIds',
         options: [
           {
             items: integrations.map(i => ({ label: i.name, value: i._id, tag: i.tag })),

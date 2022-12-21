@@ -27,7 +27,8 @@ const useStyles = makeStyles(theme => ({
     height: 29,
   },
   searchCount: {
-    marginRight: theme.spacing(2),
+    marginRight: theme.spacing(1),
+    whiteSpace: 'nowrap',
   },
   showSearchCount: {
     display: 'flex',
@@ -59,7 +60,7 @@ const SearchCount = () => {
           italic
           noBorder
           className={classes.infoFilter}>
-          Rows without matches are hidden (except for children of parents that have matches)
+          Adding a row closes search mode
         </NotificationToaster>
       ) : null}
 

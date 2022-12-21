@@ -35,7 +35,7 @@ const useStyles = makeStyles(theme => ({
     marginRight: 45,
   },
   root: {
-    backgroundColor: theme.palette.common.white,
+    backgroundColor: theme.palette.background.paper,
     border: '1px solid',
     borderColor: theme.palette.secondary.lightest,
     minHeight: '100%',
@@ -245,7 +245,7 @@ export default function VariationMappingDrawerRoute({ integrationId, flowId, cat
   const match = useRouteMatch();
 
   return (
-    <LoadResources required integrationId={integrationId} resources="flows,exports,imports,connections">
+    <LoadResources required integrationId={integrationId} resources="flows,connections,exports,imports">
       <RightDrawer
         path={[
           drawerPaths.MAPPINGS.CATEGORY_MAPPING.VARIATION_MAPPING.VARIATION,

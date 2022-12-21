@@ -4,6 +4,7 @@ export default {
 
     if (retValues['/http/auth/type'] === 'oauth') {
       retValues['/http/auth/token/location'] = 'header';
+      retValues['/http/auth/oauth/useIClientFields'] = false;
       retValues['/http/auth/oauth/authURI'] = 'https://app.pagerduty.com/oauth/authorize';
       retValues['/http/auth/oauth/tokenURI'] = 'https://app.pagerduty.com/oauth/token';
       retValues['/http/auth/token/headerName'] = 'Authorization';

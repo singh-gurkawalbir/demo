@@ -8,7 +8,7 @@ import { semiAssistantExportOperationOptions, semiAssistantExportConfig } from '
 import useConfirmDialog from '../../../ConfirmDialog';
 import useFormContext from '../../../Form/FormContext';
 
-export default function DynaSemiAssistantOperationSelect(props) {
+export default function DynaSemiHFAssistantOperationSelect(props) {
   const { label = 'Select an operation', resourceType, flowId, resourceId, formKey, value, onFieldChange } = props;
   const formContext = useFormContext(formKey);
   const { merged } =

@@ -14,6 +14,7 @@ export default {
         value: 'application/json',
       },
     ],
+    '/http/auth/oauth/useIClientFields': false,
     '/http/auth/oauth/scopeDelimiter': ' ',
     '/http/auth/oauth/clientCredentialsLocation': 'body',
     '/http/auth/oauth/grantType': 'clientcredentials',

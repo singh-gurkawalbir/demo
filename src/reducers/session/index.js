@@ -5,6 +5,7 @@ import filters, { selectors as fromFilters } from './filters';
 import editors, { selectors as fromEditors } from './editors';
 import metadata, { selectors as fromMetadata } from './metadata';
 import connectors, { selectors as fromConnectors } from './connectors';
+import concur, { selectors as fromConcur } from './concur';
 import connections, { selectors as fromConnections } from './connections';
 import resourceForm, { selectors as fromResourceForm } from './resourceForm';
 import agentAccessTokens, { selectors as fromAgentAccessTokens } from './agentAccessTokens';
@@ -13,6 +14,7 @@ import apiAccessTokens, { selectors as fromApiAccessTokens } from './apiAccessTo
 import connectionToken, { selectors as fromConnectionToken } from './connectionToken';
 import netsuiteUserRole, { selectors as fromNetsuiteUserRoles } from './netsuiteUserRoles';
 import resourceFormSampleData, { selectors as fromResourceFormSampleData } from './sampleData/resourceForm';
+import mockInput, { selectors as fromMockInput } from './sampleData/mockInput';
 import importSampleData, { selectors as fromImportSampleData } from './sampleData/imports';
 import flowData, { selectors as fromFlowData } from './sampleData/flows';
 import integrationApps, { selectors as fromIntegrationApps } from './integrationApps';
@@ -52,6 +54,7 @@ export default combineReducers({
   filters,
   editors,
   metadata,
+  concur,
   connectors,
   connections,
   connectionToken,
@@ -84,6 +87,7 @@ export default combineReducers({
   mfa,
   bottomDrawer,
   resourceFormSampleData,
+  mockInput,
   lifeCycleManagement,
   loadResources,
   aliases,
@@ -99,6 +103,7 @@ const subSelectors = {
   filters: fromFilters,
   editors: fromEditors,
   metadata: fromMetadata,
+  concur: fromConcur,
   connectors: fromConnectors,
   connections: fromConnections,
   resourceForm: fromResourceForm,
@@ -132,6 +137,7 @@ const subSelectors = {
   mfa: fromMFA,
   bottomDrawer: fromBottomDrawer,
   resourceFormSampleData: fromResourceFormSampleData,
+  mockInput: fromMockInput,
   lifeCycleManagement: fromLifeCycleManagement,
   loadResources: fromLoadResources,
   aliases: fromAliases,

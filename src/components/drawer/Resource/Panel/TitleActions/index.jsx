@@ -11,6 +11,7 @@ import { drawerPaths, buildDrawerUrl } from '../../../../../utils/rightDrawer';
 import {applicationsList} from '../../../../../constants/applications';
 import ApplicationImg from '../../../../icons/ApplicationImg';
 import { TextButton } from '../../../../Buttons';
+import CeligoDivider from '../../../../CeligoDivider';
 import { useSelectorMemo } from '../../../../../hooks';
 
 const useStyles = makeStyles(theme => ({
@@ -21,6 +22,11 @@ const useStyles = makeStyles(theme => ({
   guideWrapper: {
     display: 'flex',
     alignItems: 'center',
+  },
+  integrationGuide: {
+    display: 'flex',
+    alignItems: 'center',
+    marginTop: theme.spacing(-0.5),
   },
   guideLink: {
     marginRight: theme.spacing(2),
@@ -72,12 +78,37 @@ export default function TitleActions({ flowId }) {
       id
     ) || {};
 
-  applicationType = merged.http?.formType === 'http' ? 'http' : applicationType;
+  if (merged?.http?._httpConnectorId || merged?.isHttpConnector || merged?._httpConnectorId) {
+    applicationType = merged.http?.sessionFormType === 'http' ? 'http' : applicationType;
+  } else {
+    applicationType = merged.http?.formType === 'http' ? 'http' : applicationType;
+  }
   const app = applications.find(a => [a.id, a.assistant].includes(applicationType)) || {};
 
   const flowStepDrawerHandler = useCallback(() => {
     history.push(buildDrawerUrl({ path: drawerPaths.LOGS.FLOW_STEP_DEBUG, baseUrl: match.url }));
   }, [match.url, history]);
+
+  if (resourceType === 'integrations') {
+    const anchorProps = {
+      component: 'a',
+      target: '_blank',
+      href: 'https://docs.celigo.com/hc/en-us/articles/360019292691-Understand-basic-concepts ',
+    };
+
+    return (
+      <div className={classes.integrationGuide}>
+        <TextButton
+          {...anchorProps}
+          data-test="integrationGuide"
+          color="primary"
+          startIcon={<InstallationGuideIcon />}>
+          Integration guide
+        </TextButton>
+        <CeligoDivider position="right" />
+      </div>
+    );
+  }
 
   return (
     <>

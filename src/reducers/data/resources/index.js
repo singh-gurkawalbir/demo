@@ -371,6 +371,24 @@ selectors.integrationInstallSteps = (state, id) => {
   });
 };
 
+selectors.integrationChangeEditionSteps = (state, id) => {
+  const integration = selectors.resource(state, 'integrations', id);
+
+  if (
+    (!integration ||
+      (!integration?.changeEditionSteps?.length)
+    )
+  ) {
+    return emptyList;
+  }
+
+  return produce(integration.changeEditionSteps, draft => {
+    if (draft.find(step => !step.completed)) {
+      draft.find(step => !step.completed).isCurrentStep = true;
+    }
+  });
+};
+
 selectors.mkFlowGroupingsSections = () => {
   const resourceSelector = selectors.makeResourceSelector();
 
@@ -389,10 +407,13 @@ selectors.mkGetAllCustomFormsForAResource = () => {
   const resourceSelector = selectors.makeResourceSelector();
 
   return createSelector(
+    state => state?.flows,
     (state, resourceType, resourceId) => resourceSelector(state, resourceType, resourceId),
     (_1, resourceType) => resourceType,
-    (resource, resourceType) => {
+    (_1, _2, resourceId) => resourceId,
+    (flows = emptyList, resource, resourceType, resourceId) => {
       if (!resource) return null;
+      const isIntegrationApp = !!resource._connectorId;
       const {settingsForm, settings, flowGroupings} = resource;
       const settingsMeta = {settingsForm, settings, title: 'General', sectionId: 'general'};
 
@@ -401,12 +422,17 @@ selectors.mkGetAllCustomFormsForAResource = () => {
       // flowGroupings present for only in integrations
       if (resourceType !== 'integrations') { return noFlowGroupings; }
 
+      // For an Integration App 2.0, filter the flowgroups which do not have any flows
+      const filteredFlowGroups = isIntegrationApp ? flowGroupings?.filter(
+        flowGroup => flows.some(flow => (flow._flowGroupingId === flowGroup._id && flow._integrationId === resourceId))
+      ) : flowGroupings;
+
       // if the integration does not have it
-      if (!flowGroupings || !flowGroupings.length) {
+      if (!filteredFlowGroups || !filteredFlowGroups.length) {
         return noFlowGroupings;
       }
 
-      return {allSections: [settingsMeta, ...flowGroupings.map(({name, _id, settingsForm, settings}) =>
+      return {allSections: [settingsMeta, ...filteredFlowGroups.map(({name, _id, settingsForm, settings}) =>
         ({ title: name, sectionId: _id, settingsForm, settings }))],
       hasFlowGroupings: true,
       };

@@ -14,6 +14,7 @@ export default {
       retValues['/http/auth/token/location'] = 'header';
       retValues['/http/auth/token/scheme'] = 'Bearer';
       retValues['/http/auth/token/headerName'] = 'Authorization';
+      retValues['/http/auth/oauth/useIClientFields'] = false;
       retValues['/http/auth/oauth/authURI'] =
         `https://slack.com/oauth/v2/authorize?user_scope=${formValues['/http/unencrypted/userScopes']}`;
       retValues['/http/auth/token/refreshMethod'] = 'POST';
@@ -81,6 +82,7 @@ export default {
     },
     'http.auth.oauth.scope': {
       fieldId: 'http.auth.oauth.scope',
+      required: true,
       scopes: [
         'calls:read',
         'calls:write',
@@ -93,18 +95,18 @@ export default {
         'groups:read',
         'groups:write',
         'im:history',
-        'im:write',
         'im:read',
+        'im:write',
         'incoming-webhook',
         'links:read',
         'links:write',
         'mpim:history',
         'mpim:read',
         'mpim:write',
-        'reactions:read',
-        'reactions:write',
         'pins:read',
         'pins:write',
+        'reactions:read',
+        'reactions:write',
         'remote_files:read',
         'remote_files:share',
         'team.billing:read',
@@ -121,7 +123,7 @@ export default {
     },
     'http.unencrypted.userScopes': {
       fieldId: 'http.unencrypted.userScopes',
-      label: 'user_scope',
+      label: 'User scope',
       type: 'multiselect',
       helpKey: 'slack.connection.http.unencrypted.userScopes',
       visibleWhen: [{ field: 'http.auth.type', is: ['oauth'] }],
@@ -129,18 +131,18 @@ export default {
         {
           items: [
             { label: 'admin', value: 'admin' },
+            { label: 'channels:write', value: 'channels:write' },
+            { label: 'chat:write', value: 'chat:write' },
+            { label: 'dnd:write', value: 'dnd:write' },
             { label: 'files:read', value: 'files:read' },
             { label: 'files:write', value: 'files:write' },
-            { label: 'chat:write', value: 'chat:write' },
+            { label: 'identify', value: 'identify' },
             { label: 'reminders:read', value: 'reminders:read' },
             { label: 'reminders:write', value: 'reminders:write' },
-            { label: 'identify', value: 'identify' },
-            { label: 'dnd:write', value: 'dnd:write' },
             { label: 'search:read', value: 'search:read' },
             { label: 'stars:read', value: 'stars:read' },
             { label: 'stars:write', value: 'stars:write' },
             { label: 'users.profile:write', value: 'users.profile:write' },
-            { label: 'channels:write', value: 'channels:write' },
           ],
         },
       ],

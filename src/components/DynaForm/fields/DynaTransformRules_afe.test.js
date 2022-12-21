@@ -1,0 +1,162 @@
+/* global describe, expect, jest, test, afterEach */
+import React from 'react';
+import { screen, render } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import DynaTransformRules from './DynaTransformRules_afe';
+import actions from '../../../actions';
+import { IMPORT_FILTERED_DATA_STAGE } from '../../../utils/flowData';
+
+const asyncHelperId = 'async-123';
+let mockSave = jest.fn();
+const mockHistoryPush = jest.fn();
+const mockDispatchFn = jest.fn(action => {
+  switch (action.type) {
+    case 'EDITOR_INIT':
+      mockSave = action.options.onSave;
+      break;
+
+    default:
+  }
+});
+const mockRouteMatch = {
+  path: '/imports/edit/imports/import-123/:operation(add|edit)/:resourceType/:id',
+  url: `/imports/edit/imports/import-123/edit/asyncHelpers/${asyncHelperId}`,
+  isExact: true,
+  params: {
+    operation: 'edit',
+    resourceType: 'asyncHelpers',
+    id: asyncHelperId,
+  },
+};
+
+jest.mock('react-router-dom', () => ({
+  __esModule: true,
+  ...jest.requireActual('react-router-dom'),
+  useHistory: () => ({
+    push: mockHistoryPush,
+  }),
+  useRouteMatch: () => mockRouteMatch,
+}));
+
+jest.mock('../../CodeEditor2', () => ({
+  __esModule: true,
+  ...jest.requireActual('../../CodeEditor2'),
+  default: ({value, readOnly}) => (
+    <div data-testid="codeEditor" readOnly={readOnly}>{value}</div>
+  ),
+}));
+
+jest.mock('react-redux', () => ({
+  __esModule: true,
+  ...jest.requireActual('react-redux'),
+  useDispatch: () => mockDispatchFn,
+}));
+
+describe('test suite for DynaTransformRules_afe', () => {
+  afterEach(() => {
+    mockHistoryPush.mockClear();
+    mockDispatchFn.mockClear();
+  });
+
+  test('should populate the saved code in code editor', () => {
+    const sampleCode = {
+      rules: JSON.stringify({
+        record: { sampleRecord: 'Record_123' },
+      }),
+    };
+    const props = {
+      id: 'http.submit.transform',
+      resourceId: asyncHelperId,
+      resourceType: 'asyncHelpers',
+      formKey: `asyncHelpers-${asyncHelperId}`,
+      value: sampleCode,
+      label: 'Transform rules',
+    };
+
+    render(<DynaTransformRules {...props} />);
+    expect(screen.getByText(props.label)).toBeInTheDocument();
+
+    const codeEditor = screen.getByTestId('codeEditor');
+
+    expect(codeEditor).toHaveTextContent(sampleCode.rules);
+
+    //  should not be able to edit in the code editor
+    expect(codeEditor).toHaveAttribute('readOnly', '');
+  });
+
+  test('should not be able to open AFE if disabled', () => {
+    const props = {
+      id: 'http.submit.transform',
+      resourceId: asyncHelperId,
+      resourceType: 'asyncHelpers',
+      formKey: `asyncHelpers-${asyncHelperId}`,
+      label: 'Transform rules',
+      disabled: true,
+    };
+
+    render(<DynaTransformRules {...props} />);
+    const openAfeBtn = document.querySelector('[data-test="editTransformation"]');
+
+    expect(openAfeBtn).toBeDisabled();
+  });
+
+  test('should open the AFE editor on clicking Edit Icon', () => {
+    const props = {
+      id: 'http.submit.transform',
+      resourceId: asyncHelperId,
+      resourceType: 'asyncHelpers',
+      formKey: `asyncHelpers-${asyncHelperId}`,
+      label: 'Transform rules',
+    };
+
+    render(<DynaTransformRules {...props} />);
+    const openAfeBtn = document.querySelector('[data-test="editTransformation"]');
+
+    userEvent.click(openAfeBtn);
+
+    expect(mockDispatchFn).toBeCalledWith(actions.editor.init('httpsubmittransform', 'transform', {
+      data: {},
+      rule: undefined,
+      formKey: props.formKey,
+      flowId: undefined,
+      resourceId: props.resourceId,
+      resourceType: props.resourceType,
+      fieldId: props.id,
+      stage: IMPORT_FILTERED_DATA_STAGE,
+      onSave: expect.anything(),
+    }));
+
+    expect(mockHistoryPush).toBeCalledWith('/imports/edit/imports/import-123/edit/asyncHelpers/async-123/editor/httpsubmittransform');
+  });
+
+  test('should be able to save the modified code in AFE', () => {
+    const onFieldChange = jest.fn();
+    const props = {
+      id: 'http.submit.transform',
+      resourceId: asyncHelperId,
+      resourceType: 'asyncHelpers',
+      formKey: `asyncHelpers-${asyncHelperId}`,
+      label: 'Transform rules',
+      onFieldChange,
+    };
+
+    render(
+      <>
+        <DynaTransformRules {...props} />
+        <button type="button" onClick={() => mockSave({rule: 'sampleNewRule'})}>Save</button>
+      </>
+    );
+    userEvent.click(document.querySelector('[data-test="editTransformation"]'));
+
+    const saveBtn = screen.getByRole('button', {name: /save/i});
+
+    userEvent.click(saveBtn);
+    expect(onFieldChange).toBeCalledWith(props.id, {
+      rules: ['sampleNewRule'],
+      rulesCollection: {
+        mappings: ['sampleNewRule'],
+      },
+      version: 1,
+    });
+  });
+});

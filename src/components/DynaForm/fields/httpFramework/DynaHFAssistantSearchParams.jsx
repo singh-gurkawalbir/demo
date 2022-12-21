@@ -8,6 +8,8 @@ import actions from '../../../../actions';
 import { getValidRelativePath } from '../../../../utils/routePaths';
 import { buildDrawerUrl, drawerPaths } from '../../../../utils/rightDrawer';
 import { isMetaRequiredValuesMet, PARAMETER_LOCATION } from '../../../../utils/assistant';
+import messageStore from '../../../../utils/messageStore';
+import { EXPORT_FILTERED_DATA_STAGE, IMPORT_FLOW_DATA_STAGE } from '../../../../utils/flowData';
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -45,6 +47,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
+/* istanbul ignore next: KeyLabel is passed as list in props for children components */
 const KeyLabel = ({id, description}) => (
   <div>
     <Typography>{id}</Typography>
@@ -63,25 +66,53 @@ export default function DynaHFAssistantSearchParams(props) {
     resourceId,
     flowId,
     value,
+    required,
     keyName,
     valueName,
-    required,
   } = props;
   let { label } = props;
   const classes = useStyles();
   const dispatch = useDispatch();
   const history = useHistory();
   const match = useRouteMatch();
-  const updatedValue = [];
 
   const editorId = getValidRelativePath(id);
-  const flowDataStage = resourceType === 'exports' ? 'inputFilter' : 'importMappingExtract';
+  const flowDataStage = resourceType === 'exports' ? EXPORT_FILTERED_DATA_STAGE : IMPORT_FLOW_DATA_STAGE;
   const isMetaValid = isMetaRequiredValuesMet(paramMeta, value);
+  const requiredFields = useMemo(() => paramMeta?.fields.filter(field => field.required).map(field => field.id), [paramMeta]);
+  const selectTypeList = useMemo(() => {
+    const selectFields = {};
 
-  Object.keys(value).forEach(key => updatedValue.push({
-    name: key,
-    value: value[key],
-  }));
+    paramMeta?.fields.filter(field => field.fieldType === 'select').forEach(field => {
+      selectFields[field.id] = field.options;
+    });
+
+    return selectFields;
+  }, [paramMeta]);
+
+  const updatedValue = useMemo(() => {
+    const keyValues = [];
+
+    requiredFields.forEach(field => {
+      !Object.keys(value).includes(field) && keyValues.push({
+        name: field,
+        disableRowKey: true,
+        isSelect: !!selectTypeList[field],
+        options: selectTypeList[field] && selectTypeList[field].map(value => ({ name: value, value}))});
+    });
+    /* istanbul ignore else: value should never be undefined or null Otherwise need the same check above */
+    if (value) {
+      Object.keys(value).forEach(key => keyValues.push({
+        name: key,
+        value: value[key],
+        disableRowKey: requiredFields.includes(key),
+        isSelect: !!selectTypeList[key],
+        options: selectTypeList[key] && selectTypeList[key].map(value => ({ name: value, value})),
+      }));
+    }
+
+    return keyValues;
+  }, [requiredFields, selectTypeList, value]);
   const dataFields = useMemo(() =>
     paramMeta.fields.map(({id, description}) => ({
       name: <KeyLabel id={id} description={description} />,
@@ -107,18 +138,20 @@ export default function DynaHFAssistantSearchParams(props) {
 
       return;
     }
-    dispatch(actions.form.forceFieldState(formKey)(id, {isValid: isMetaValid}));
+    dispatch(actions.form.forceFieldState(formKey)(id, {isValid: isMetaValid, errorMessages: messageStore('REQUIRED_MESSAGE')}));
   }, [dispatch, formKey, id, isMetaValid, required]);
 
   useEffect(() => () => {
     dispatch(actions.form.clearForceFieldState(formKey)(id));
   }, [dispatch, formKey, id]);
 
+  /* istanbul ignore next: handleSave not invoked in test script */
   const handleSave = useCallback(editorValues => {
-    onFieldChange(id, editorValues.rule);
-  }, [id, onFieldChange]);
+    const newValue = {...value, [Object.keys(value)[editorValues.paramIndex]]: editorValues.rule};
 
-  const handleEditorClick = useCallback(() => {
+    onFieldChange(id, newValue);
+  }, [id, onFieldChange, value]);
+  const handleEditorClick = useCallback(index => {
     dispatch(actions.editor.init(editorId, 'handlebars', {
       formKey,
       flowId,
@@ -127,6 +160,7 @@ export default function DynaHFAssistantSearchParams(props) {
       fieldId: id,
       stage: flowDataStage,
       onSave: handleSave,
+      paramIndex: index,
     }));
 
     history.push(buildDrawerUrl({
@@ -134,7 +168,7 @@ export default function DynaHFAssistantSearchParams(props) {
       baseUrl: match.url,
       params: { editorId },
     }));
-  }, [dispatch, flowDataStage, editorId, formKey, flowId, resourceId, resourceType, id, handleSave, history, match.url]);
+  }, [dispatch, editorId, formKey, flowId, resourceId, resourceType, id, flowDataStage, handleSave, history, match.url]);
 
   const handleUpdate = useCallback(values => {
     const finalValue = values.reduce((fv, val) => {
@@ -166,6 +200,8 @@ export default function DynaHFAssistantSearchParams(props) {
       value={updatedValue}
       onUpdate={handleUpdate}
       handleEditorClick={handleEditorClick}
+      isEndSearchIcon
+      isInlineClose
     />
   );
 }

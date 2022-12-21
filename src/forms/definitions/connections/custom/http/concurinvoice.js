@@ -4,6 +4,7 @@ export default {
     '/type': 'http',
     '/assistant': 'concurinvoice',
     '/http/auth/type': 'oauth',
+    '/http/auth/oauth/useIClientFields': false,
     '/http/mediaType': 'json',
     '/http/auth/token/location': 'header',
     '/http/auth/token/scheme': 'Bearer',

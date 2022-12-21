@@ -17,7 +17,6 @@ import DynaRelativeUri_afe from './DynaRelativeUri_afe';
 import DynaKeyValue from './DynaKeyValue';
 import DynaTextList from './DynaTextList';
 import DynaToggleSelectToText from './select/DynaToggleSelectToText';
-import DynaLookupEditor from './DynaLookupEditor';
 import DynaKeyWithAction from './DynaKeyWithAction';
 import DynaHttpRequestBody_afe from './DynaHttpRequestBody_afe';
 import DynaEditor from './DynaEditor';
@@ -69,6 +68,7 @@ import DynaIAExpression from './DynaIAExpression';
 import DynaIASelect from './DynaIASelect';
 import DynaUserEmail from './DynaUserEmail';
 import DynaUserPassword from './DynaUserPassword';
+import DynaPassword from './DynaPassword';
 import DynaIclient from './DynaIclient';
 import DynaNetSuiteQualifier_afe from './DynaNetSuiteQualifier_afe';
 import DynaSalesforceQualifier_afe from './DynaSalesforceQualifier_afe';
@@ -121,7 +121,6 @@ import DynaPreviewComponentsTable from './DynaPreviewComponentsTable';
 import DynaChildLicenses from './DynaChildLicenses';
 import DynaDateSelector from './DynaDateSelector';
 import DynaFileEncryptDecrypt from './DynaFileEncryptDecrypt';
-import DynaHashAlogorithm from './DynaHashAlogorithm';
 import DynaQueryRadioGroup from './radiogroup/DynaQueryRadioGroup';
 import DynaLicenseEdition from './DynaLicenseEdition';
 import DynaAllIntegrations from './integrations/DynaAllIntegrations';
@@ -158,9 +157,17 @@ import DynaConnectionFormView from './DynaConnectionFormView';
 import DynaSwitch from './DynaSwitch';
 import DynaMapper2SourceField from './mapper2/DynaMapper2SourceField';
 import DynaMapper2TabbedExtracts from './mapper2/DynaMapper2TabbedExtracts';
+import DynaSignupConsent from './DynaSignupConsent';
+import DynaSignupName from './DynaSignupName';
+import DynaSignupEmail from './DynaSignupEmail';
 import DynaSalesforceSObject from './DynaSalesforceSObject';
 import DynaSelectDataRetentionPeriod from './DynaSelectDataRetentionPeriod';
 import DynaChangeLicenseEdition from './DynaChangeLicenseEdition';
+import DynaIClientHeaders from './DynaIClientHeaders';
+import DynaShopifyHeaderLink from './Shopify/DynaShopifyHeaderLink';
+import DynaShopifyStoreName from './Shopify/DynaShopifyStoreName';
+import DynaIANameSelect from './Shopify/DynaIANameSelect';
+import DynaShopifyConnectionSelect from './Shopify/SelectConnection';
 
 export default {
   updateoptions: DynaUpdateOptions,
@@ -201,7 +208,6 @@ export default {
   relativeuri: DynaRelativeUri_afe,
   uri: DynaURI_afe,
   httprequestbody: DynaHttpRequestBody_afe,
-  importLookup: DynaLookupEditor,
   keyvalue: DynaKeyValue,
   staticMap: DynaStaticMap,
   csvparse: DynaCsvParse_afe,
@@ -287,6 +293,7 @@ export default {
   netsuitedefaultvalue: DynaNetSuiteDefaultValue,
   ...SuiteScript,
   exportSelect: DynaExportSelect,
+  password: DynaPassword,
   textwithflowsuggestion: DynaTextWithFlowSuggestion,
   selectconditionallookup: DynaSelectConditionalLookup,
   csvhasheaderrow: DynaCsvHasHeaderRow,
@@ -302,7 +309,6 @@ export default {
   flowgroupstiedtointegrations: DynaFlowGroupsTiedToIntegrations,
   dateselector: DynaDateSelector,
   fileencryptdecrypt: DynaFileEncryptDecrypt,
-  hashalgorithm: DynaHashAlogorithm,
   licenseedition: DynaLicenseEdition,
   triallicense: DynaTrialLicense,
   licenseexpires: DynaLicenseExpires,
@@ -331,6 +337,14 @@ export default {
   switch: DynaSwitch,
   mapper2sourcefield: DynaMapper2SourceField,
   mapper2tabbedextracts: DynaMapper2TabbedExtracts,
+  signupconsent: DynaSignupConsent,
+  signupname: DynaSignupName,
+  signupemail: DynaSignupEmail,
   selectdataretentionperiod: DynaSelectDataRetentionPeriod,
   changelicenseedition: DynaChangeLicenseEdition,
+  iclientHeaders: DynaIClientHeaders,
+  shopifystorename: DynaShopifyStoreName,
+  shopifyheaderlink: DynaShopifyHeaderLink,
+  ianameselect: DynaIANameSelect,
+  shopifyconnectionselect: DynaShopifyConnectionSelect,
 };

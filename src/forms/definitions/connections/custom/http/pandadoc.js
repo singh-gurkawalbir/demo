@@ -42,6 +42,7 @@ export default {
       '/http/ping/method': 'GET',
       '/http/auth/token/location': 'header',
       '/http/auth/token/headerName': 'Authorization',
+      '/http/auth/oauth/useIClientFields': false,
     };
   },
   fieldMap: {

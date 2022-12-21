@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import { makeStyles } from '@material-ui/core';
 import actions from '../../../actions';
 import { getApp, getHttpConnector} from '../../../constants/applications';
@@ -22,6 +22,13 @@ const useStyles = makeStyles(theme => ({
     flexGrow: 100,
     marginLeft: theme.spacing(-1),
   },
+  textToggle: {
+    '&>.MuiButtonBase-root': {
+      minWidth: 'auto',
+      paddingLeft: theme.spacing(2.5),
+      paddingRight: theme.spacing(2.5),
+    },
+  },
 }));
 const emptyObj = {};
 export default function FormView(props) {
@@ -38,15 +45,16 @@ export default function FormView(props) {
     ) || {};
   const stagedResource = merged || emptyObject;
   const value = useMemo(() => {
-    if (!stagedResource || !stagedResource.http || !stagedResource.http.formType) return defaultValue;
+    if (!stagedResource || !stagedResource.http || !stagedResource.http.sessionFormType) return defaultValue;
 
-    return stagedResource.http?.formType === 'assistant' ? 'false' : 'true';
+    return stagedResource.http?.sessionFormType === 'assistant' ? 'false' : 'true';
   }, [stagedResource, defaultValue]);
 
   const resourceFormState = useSelector(
     state =>
       selectors.resourceFormState(state, resourceType, resourceId) || emptyObj
   );
+  const accountOwner = useSelector(() => selectors.accountOwner(), shallowEqual);
 
   let _httpConnectorId = stagedResource?.http?._httpConnectorId || stagedResource?._httpConnectorId;
 
@@ -84,6 +92,7 @@ export default function FormView(props) {
       resourceType,
       resource: stagedResource,
       isNew: false,
+      accountOwner,
     });
     const finalValues = preSave(formContext.value, stagedRes);
     const newFinalValues = {...finalValues};
@@ -91,8 +100,8 @@ export default function FormView(props) {
     // if assistant is selected back again assign it to the export to the export obj as well
 
     if (selectedApplication !== 'true') {
-      stagedRes['/http/formType'] = 'assistant';
-      newFinalValues['/http/formType'] = 'assistant';
+      stagedRes['/http/sessionFormType'] = 'assistant';
+      newFinalValues['/http/sessionFormType'] = 'assistant';
       dispatch(
         actions.analytics.gainsight.trackEvent('CONNECTION_FORM_VIEW', {
           'Toggle Mode': 'Simple',
@@ -102,8 +111,8 @@ export default function FormView(props) {
       );
     } else {
       // set http.formType prop to http to use http form from the export/import as it is now using parent form');
-      stagedRes['/http/formType'] = 'http';
-      newFinalValues['/http/formType'] = 'http';
+      stagedRes['/http/sessionFormType'] = 'http';
+      newFinalValues['/http/sessionFormType'] = 'http';
       dispatch(
         actions.analytics.gainsight.trackEvent('CONNECTION_FORM_VIEW', {
           'Toggle Mode': 'HTTP',
@@ -142,7 +151,7 @@ export default function FormView(props) {
         allTouchedFields
       )
     );
-  }, [dispatch, formContext?.fields, formContext?.value, props, resourceFormState.fieldMeta, resourceId, resourceType, stagedResource]);
+  }, [_httpConnectorId, accountOwner, dispatch, formContext?.fields, formContext?.value, props, resourceFormState.fieldMeta, resourceId, resourceType, stagedResource]);
 
   if (!_httpConnectorId || !sourceForm) {
     return null;
@@ -155,6 +164,7 @@ export default function FormView(props) {
         onChange={onFieldChangeFn}
         exclusive
         options={options}
+        className={classes.textToggle}
       />
       <Help
         title="Formview"

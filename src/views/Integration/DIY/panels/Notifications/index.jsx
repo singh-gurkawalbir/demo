@@ -23,7 +23,7 @@ const useStyles = makeStyles(theme => ({
     },
   },
   root: {
-    backgroundColor: theme.palette.common.white,
+    backgroundColor: theme.palette.background.paper,
     border: '1px solid',
     borderColor: theme.palette.secondary.lightest,
   },
@@ -92,7 +92,7 @@ export default function NotificationsSection({ integrationId, childId }) {
         name: 'flows',
         type: 'multiselect',
         valueDelimiter: ',',
-        label: `Notify me on ${isUserInErrMgtTwoDotZero ? 'flow' : 'job'} error`,
+        label: `Notify me of ${isUserInErrMgtTwoDotZero ? 'flow' : 'job'} error`,
         defaultValue: flowValues,
         options: [{ items: flowOps }],
         SelectedOptionIml,

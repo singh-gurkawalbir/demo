@@ -47,7 +47,7 @@ const useStyles = makeStyles(theme => ({
   },
   errorMarker: {
     background: fade(theme.palette.error.dark, 0.3),
-    color: theme.palette.common.white,
+    color: theme.palette.background.paper,
     position: 'relative',
   },
   editorReadOnlyPanel: {

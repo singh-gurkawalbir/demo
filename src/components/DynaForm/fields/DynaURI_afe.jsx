@@ -1,15 +1,16 @@
 /* eslint-disable camelcase */
 import React, { useCallback } from 'react';
 import { makeStyles } from '@material-ui/core';
-import { useHistory, useRouteMatch } from 'react-router-dom';
+import { useHistory, useRouteMatch, matchPath } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import ActionButton from '../../ActionButton';
 import AfeIcon from '../../icons/AfeIcon';
 import DynaTextWithFlowSuggestion from './DynaTextWithFlowSuggestion';
 import actions from '../../../actions';
 import { getValidRelativePath } from '../../../utils/routePaths';
-import { getParentResourceContext } from '../../../utils/connections';
+import { getParentResourceContext, RESOURCE_DRAWER_PATH, CONN_DRAWER_PATH, ICLIENT_DRAWER_PATH } from '../../../utils/connections';
 import { buildDrawerUrl, drawerPaths } from '../../../utils/rightDrawer';
+import { EXPORT_FILTERED_DATA_STAGE, IMPORT_FLOW_DATA_STAGE } from '../../../utils/flowData';
 
 const useStyles = makeStyles(theme => ({
   dynaURIActionButton: {
@@ -43,9 +44,15 @@ export default function DynaURI_afe(props) {
   const history = useHistory();
   const match = useRouteMatch();
   const editorId = getValidRelativePath(id);
-  const flowDataStage = stage || (resourceType === 'exports' ? 'inputFilter' : 'importMappingExtract');
+  const flowDataStage = stage || (resourceType === 'exports' ? EXPORT_FILTERED_DATA_STAGE : IMPORT_FLOW_DATA_STAGE);
 
-  const {parentType, parentId} = getParentResourceContext(match.url);
+  let parentIds = getParentResourceContext(match.url);
+
+  if (resourceType === 'iClients') {
+    parentIds = matchPath(match.url, {
+      path: `/**${RESOURCE_DRAWER_PATH}${CONN_DRAWER_PATH}${ICLIENT_DRAWER_PATH}`,
+      exact: true})?.params || {};
+  }
 
   const handleSave = useCallback(editorValues => {
     onFieldChange(id, editorValues.rule);
@@ -60,8 +67,9 @@ export default function DynaURI_afe(props) {
       fieldId: id,
       stage: flowDataStage,
       onSave: handleSave,
-      parentType,
-      parentId,
+      parentType: parentIds.parentType,
+      parentId: parentIds.parentId,
+      connectionId: parentIds.connId,
       mapper2RowKey,
     }));
 
@@ -70,7 +78,7 @@ export default function DynaURI_afe(props) {
       baseUrl: match.url,
       params: { editorId },
     }));
-  }, [dispatch, flowDataStage, editorId, formKey, flowId, resourceId, resourceType, id, handleSave, parentType, parentId, history, match.url, mapper2RowKey]);
+  }, [dispatch, editorId, formKey, flowId, resourceId, resourceType, id, flowDataStage, handleSave, parentIds.parentType, parentIds.parentId, parentIds.connId, mapper2RowKey, history, match.url]);
 
   return (
     <>

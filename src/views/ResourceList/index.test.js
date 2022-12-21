@@ -1,4 +1,4 @@
-/* global describe, test, expect, beforeEach */
+/* global describe, test, expect, beforeEach, jest */
 import React from 'react';
 import { MemoryRouter, Route } from 'react-router-dom';
 import { screen } from '@testing-library/react';
@@ -6,6 +6,13 @@ import ResourceList from '.';
 import { runServer } from '../../test/api/server';
 import { renderWithProviders, reduxStore, mockGetRequestOnce } from '../../test/test-utils';
 
+jest.mock('../../components/LoadResources', () => ({
+  __esModule: true,
+  ...jest.requireActual('../../components/LoadResources'),
+  default: props => (
+    <div>{props.children}</div>
+  ),
+}));
 async function initResourceList({
   props = { },
   resourceType = 'exports',
@@ -58,6 +65,10 @@ async function initResourceList({
         name: 'export name 1',
       },
     ],
+  };
+  initialStore.getState().auth = {
+    authenticated: true,
+    defaultAccountSet: true,
   };
   const ui = (
     <MemoryRouter
@@ -138,14 +149,21 @@ describe('ResourceList test cases', () => {
     await initResourceList({
       resourceType: 'connections',
     });
-    expect(screen.queryByText(/Connections/i)).toBeInTheDocument();
+    expect(screen.queryAllByText(/Connections/)).toHaveLength(2);
   });
 
   test('should pass the initial render with stacks resource type', async () => {
     await initResourceList({
       resourceType: 'stacks',
     });
-    expect(screen.queryByText(/Stacks/i)).toBeInTheDocument();
+    expect(screen.queryByText(/Stacks/)).toBeInTheDocument();
+  });
+
+  test('should pass the initial render with iClients resource type', async () => {
+    await initResourceList({
+      resourceType: 'iClients',
+    });
+    expect(screen.queryAllByText(/iClients/)[0]).toBeInTheDocument();
   });
 
   test('should pass the initial render with empty resource type', async () => {

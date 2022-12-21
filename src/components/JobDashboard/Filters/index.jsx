@@ -27,7 +27,7 @@ const useStyles = makeStyles(theme => ({
   root: {
     marginTop: -1,
     paddingBottom: theme.spacing(1.5),
-    backgroundColor: theme.palette.common.white,
+    backgroundColor: theme.palette.background.paper,
     overflowX: 'auto',
   },
   filterContainer: {
@@ -72,12 +72,6 @@ const useStyles = makeStyles(theme => ({
   },
   hideLabel: {
     marginLeft: '10px',
-  },
-  divider: {
-    width: 1,
-    height: 20,
-    borderLeft: `1px solid ${theme.palette.secondary.lightest}`,
-    margin: theme.spacing(0, 1.5, 0, 0.25),
   },
 }));
 const rangeFilters = [

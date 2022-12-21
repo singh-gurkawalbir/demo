@@ -101,7 +101,7 @@ export default {
       // tokenPaths are only supported for custom auth type refresh token
       newValues['/http/auth/token/tokenPaths'] = undefined;
     }
-    if (newValues['/http/auth/type'] === 'token' || newValues['/http/auth/type'] === 'oauth') {
+    if (newValues['/http/auth/type'] === 'token') {
       if (newValues['/http/auth/token/scheme'] === 'Custom') {
         newValues['/http/auth/token/scheme'] = newValues['/http/customAuthScheme'];
       }
@@ -166,20 +166,16 @@ export default {
       newValues['/http/encrypted'] = newValues['/http/custom/encrypted'];
       newValues['/http/unencrypted'] = newValues['/http/custom/unencrypted'];
     }
-    if (newValues['/http/auth/type'] === 'oauth') {
-      newValues['/http/auth/oauth/applicationType'] = 'custom';
-      newValues['/http/auth/token/refreshHeaders'] = newValues['/http/auth/oauth/refreshHeaders'];
-      newValues['/http/auth/token/refreshBody'] = newValues['/http/auth/oauth/refreshBody'];
-    }
 
-    if (!newValues['/http/auth/token/revoke/uri']) delete newValues['/http/auth/token/revoke/uri'];
-
-    if (!newValues['/http/auth/token/revoke/body']) delete newValues['/http/auth/token/revoke/body'];
+    newValues['/http/auth/failPath'] = newValues['/http/auth/type'] === 'oauth' ? newValues['/http/auth/failPathForOauth'] : newValues['/http/auth/failPath'];
+    newValues['/http/auth/failValues'] = newValues['/http/auth/type'] === 'oauth' ? newValues['/http/auth/failValuesForOauth'] : newValues['/http/auth/failValues'];
 
     if (!newValues['/http/auth/failPath']) {
       newValues['/http/auth/failValues'] = undefined;
     }
 
+    delete newValues['/http/auth/failPathForOauth'];
+    delete newValues['/http/auth/failValuesForOauth'];
     delete newValues['/http/auth/oauth/refreshHeaders'];
     delete newValues['/http/auth/oauth/refreshBody'];
     delete newValues['/http/custom/encrypted'];
@@ -250,8 +246,14 @@ export default {
     'http.auth.failPath': {
       fieldId: 'http.auth.failPath',
     },
+    'http.auth.failPathForOauth': {
+      fieldId: 'http.auth.failPathForOauth',
+    },
     'http.auth.failValues': {
       fieldId: 'http.auth.failValues',
+    },
+    'http.auth.failValuesForOauth': {
+      fieldId: 'http.auth.failValuesForOauth',
     },
     'http.baseURI': {
       fieldId: 'http.baseURI',
@@ -306,10 +308,16 @@ export default {
         { field: 'http.auth.type', is: ['oauth'] },
       ],
     },
-    httpOAuthOverrides: {
-      formId: 'httpOAuthOverrides',
+    'http.auth.oauth.oauth1.signatureMethod': {
+      fieldId: 'http.auth.oauth.oauth1.signatureMethod',
       visibleWhenAll: [
-        { field: 'http.auth.type', is: ['oauth'] },
+        { field: 'http.auth.type', is: ['oauth1'] },
+      ],
+    },
+    httpOAuth1: {
+      formId: 'httpOAuth1',
+      visibleWhenAll: [
+        { field: 'http.auth.type', is: ['oauth1'] },
       ],
     },
     httpWsse: {
@@ -320,7 +328,7 @@ export default {
     },
     httpToken: {
       formId: 'httpToken',
-      visibleWhenAll: [{ field: 'http.auth.type', is: ['token', 'oauth'] }],
+      visibleWhenAll: [{ field: 'http.auth.type', is: ['token'] }],
     },
     httpRefreshToken: {
       formId: 'httpRefreshToken',
@@ -524,9 +532,21 @@ export default {
               },
               {
                 collapsed: true,
-                label: 'OAuth 2.0 overrides',
+                label: 'Configure OAuth 1.0',
                 fields: [
-                  'httpOAuthOverrides',
+                  'http.auth.oauth.oauth1.signatureMethod',
+                ],
+                containers: [
+                  {
+                    type: 'indent',
+                    containers: [
+                      {
+                        fields: [
+                          'httpOAuth1',
+                        ],
+                      },
+                    ],
+                  },
                 ],
               },
               {
@@ -548,13 +568,17 @@ export default {
                   'httpWsse',
                 ],
               },
-            ],
-          },
-          {
-            fields: [
-              'http.auth.failStatusCode',
-              'http.auth.failPath',
-              'http.auth.failValues',
+              {
+                collapsed: true,
+                label: 'Non-standard API response patterns',
+                fields: [
+                  'http.auth.failStatusCode',
+                  'http.auth.failPath',
+                  'http.auth.failPathForOauth',
+                  'http.auth.failValues',
+                  'http.auth.failValuesForOauth',
+                ],
+              },
             ],
           },
         ],
@@ -621,23 +645,11 @@ export default {
   actions: [
     {
       id: 'saveandcontinuegroup',
-      visibleWhenAll: [
-        {
-          field: 'http.auth.type',
-          is: ['oauth'],
-        },
-        { field: 'http.auth.oauth.grantType', is: ['clientcredentials'] },
-      ],
+      isHTTPForm: true,
     },
     {
       id: 'oauthandtest',
-      visibleWhenAll: [
-        {
-          field: 'http.auth.type',
-          is: ['oauth'],
-        },
-        { field: 'http.auth.oauth.grantType', isNot: ['clientcredentials'] },
-      ],
+      isHTTPForm: true,
     },
     {
       id: 'saveandclosegroup',

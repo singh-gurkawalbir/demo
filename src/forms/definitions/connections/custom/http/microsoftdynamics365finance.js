@@ -4,6 +4,7 @@ export default {
     '/type': 'http',
     '/assistant': 'microsoftdynamics365finance',
     '/http/auth/type': 'oauth',
+    '/http/auth/oauth/useIClientFields': false,
     '/http/mediaType': 'json',
     '/http/baseURI': `https://${formValues['/http/unencrypted/subdomain']}.dynamics.com`,
     '/http/ping/relativeURI': '/data/CustomerGroups',

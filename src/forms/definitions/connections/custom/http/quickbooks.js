@@ -45,6 +45,7 @@ export default {
       '/http/auth/token/refreshMediaType': 'urlencoded',
       '/http/ping/relativeURI': '/v3/company/{{connection.http.unencrypted.realmID}}/query?query=select * from CompanyInfo',
       '/http/ping/method': 'GET',
+      '/http/auth/oauth/useIClientFields': false,
       '/http/auth/oauth/authURI': 'https://appcenter.intuit.com/connect/oauth2',
       '/http/auth/oauth/tokenURI':
         'https://oauth.platform.intuit.com/oauth2/v1/tokens/bearer',

@@ -2,13 +2,14 @@
 import { expectSaga } from 'redux-saga-test-plan';
 import { call, select } from 'redux-saga/effects';
 import shortid from 'shortid';
+import * as matchers from 'redux-saga-test-plan/matchers';
 import { responseMappingInit, responseMappingSave } from '.';
 import { SCOPES } from '../resourceForm';
 import actions from '../../actions';
 import { selectors } from '../../reducers';
 import responseMappingUtil from '../../utils/responseMapping';
 import { commitStagedChanges } from '../resources';
-import { requestSampleData } from '../sampleData/flows';
+import { requestSampleData, _getContextSampleData } from '../sampleData/flows';
 
 describe('responseMappingInit saga', () => {
   test('should dispatch initFailed in case there is no flow page processor ', () => {
@@ -275,6 +276,7 @@ describe('responseMappingInit saga', () => {
     const expectedSaga = expectSaga(responseMappingInit, { flowId, resourceId, resourceType })
       .provide([
         [select(selectors.resourceData, 'flows', flowId), flowResource],
+        [matchers.call.fn(_getContextSampleData), {}],
       ])
       .put(
         actions.responseMapping.initComplete({
