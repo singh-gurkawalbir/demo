@@ -54,7 +54,7 @@ export default function RouterNode({id: routerId, data = {}}) {
   const nameGap = name?.length > 25 && name.indexOf(' ') > -1;
 
   return (
-    <div className={classes.container} onClick={handleRouterClick}>
+    <div className={classes.container}>
       <div className={clsx(classes.nameContainer, nameGap && classes.nameGap)}>
         <CeligoTruncate isLoggable className={classes.name} lines={2}>{name}</CeligoTruncate>
       </div>
@@ -64,6 +64,7 @@ export default function RouterNode({id: routerId, data = {}}) {
           size="small"
           data-test={`router-${routerId}`}
           className={classes.button}
+          onClick={handleRouterClick}
         >
           <Badge
             badgeContent={badgeContent}
