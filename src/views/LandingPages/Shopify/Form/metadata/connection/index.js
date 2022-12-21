@@ -100,7 +100,7 @@ export default {
           label: 'API version',
           required: true,
           helpKey: 'shopify.connection.http.unencrypted.version',
-          defaultValue: '2022-04',
+          defaultValue: '2022-10',
           options: metadata.fieldMap['http.unencrypted.version'].options,
           visible: useNew && !isIA,
         },
