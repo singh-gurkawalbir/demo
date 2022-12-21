@@ -27,6 +27,7 @@ export default {
       '/type': 'http',
       '/assistant': 'constantcontactv3',
       '/http/auth/type': 'oauth',
+      '/http/auth/oauth/useIClientFields': false,
       '/http/mediaType': 'json',
       '/http/baseURI': 'https://api.cc.email/',
       '/http/ping/relativeURI': 'v3/contacts',

@@ -245,6 +245,7 @@ export function* requestSampleDataForImports({
       break;
     }
 
+    case 'inputFilter':
     case 'processedFlowInput':
     case 'responseTransform':
     case 'importMappingExtract':
@@ -312,8 +313,10 @@ export function* updateStateForProcessorData({
   processedData,
   wrapInArrayProcessedData,
   removeDataPropFromProcessedData,
+  isFilterScript,
+  sampleData,
 }) {
-  const resultantProcessedData = processedData && deepClone(processedData);
+  let resultantProcessedData = processedData && deepClone(processedData);
 
   // wrapInArrayProcessedData: Incase of Transform scripts , data is not inside an array as in other stages
   // So this prop wraps data to extract the same in the reducer
@@ -328,6 +331,16 @@ export function* updateStateForProcessorData({
     resultantProcessedData?.data?.[0]?.data
   ) {
     resultantProcessedData.data[0] = resultantProcessedData.data[0].data;
+  }
+
+  if (isFilterScript) {
+    // Incase of filters, script response is either true/false
+    // Incase of true, pass on the sampleData to the next stage
+    if (processedData.data === true) {
+      resultantProcessedData = { data: [sampleData] };
+    } else {
+      resultantProcessedData = undefined;
+    }
   }
 
   yield put(

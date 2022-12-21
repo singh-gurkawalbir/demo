@@ -6,6 +6,7 @@ import userEvent from '@testing-library/user-event';
 import DynaSQLQueryBuildersafe from './index';
 import { renderWithProviders } from '../../../../test/test-utils';
 import actions from '../../../../actions';
+import { EXPORT_FILTERED_DATA_STAGE } from '../../../../utils/flowData';
 
 const mockonFieldChange = jest.fn();
 let mockSave = jest.fn();
@@ -77,7 +78,7 @@ describe('DynaSQLQueryBuilder_afe UI test cases', () => {
       resourceId: '6340b7b746048c3afbacb178',
       resourceType: 'exports',
       fieldId: props.id,
-      stage: 'inputFilter',
+      stage: EXPORT_FILTERED_DATA_STAGE,
       onSave: expect.anything(),
     }));
     expect(mockHistoryPush).toHaveBeenCalledWith('/integrations/6387a6877045c4017f06f9d3/flowBuilder/63947b4ffc58924d43aec619/edit/imports/6368996d667fdb7984b49949/editor/rdbmsquery');

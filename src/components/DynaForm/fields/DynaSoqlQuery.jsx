@@ -12,6 +12,7 @@ import ScriptsIcon from '../../icons/ScriptsIcon';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 import { getValidRelativePath } from '../../../utils/routePaths';
 import { buildDrawerUrl, drawerPaths } from '../../../utils/rightDrawer';
+import { EXPORT_FILTERED_DATA_STAGE, IMPORT_FILTERED_DATA_STAGE } from '../../../utils/flowData';
 
 const useStyles = makeStyles({
   formField: {
@@ -108,7 +109,7 @@ export default function DynaSoqlQuery(props) {
       resourceId,
       resourceType,
       fieldId: id,
-      stage: 'inputFilter',
+      stage: resourceType === 'exports' ? EXPORT_FILTERED_DATA_STAGE : IMPORT_FILTERED_DATA_STAGE,
       onSave: handleSave,
     }));
 

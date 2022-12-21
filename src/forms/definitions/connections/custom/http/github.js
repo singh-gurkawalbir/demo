@@ -4,6 +4,7 @@ export default {
     '/type': 'http',
     '/assistant': 'github',
     '/http/auth/type': 'oauth',
+    '/http/auth/oauth/useIClientFields': false,
     '/http/mediaType': 'json',
     '/http/baseURI': 'https://api.github.com',
     '/http/auth/oauth/authURI': 'http://github.com/login/oauth/authorize',

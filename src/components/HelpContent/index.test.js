@@ -31,7 +31,6 @@ describe('HelpContent UI tests', () => {
     screen.debug();
     expect(screen.getByText('This is the sample text')).toBeInTheDocument();
     expect(screen.getByText('Sample title')).toBeInTheDocument();
-    expect(screen.getByText('Sample caption')).toBeInTheDocument();
     expect(screen.getByText(/Was this helpful/i)).toBeInTheDocument();
     const thumbsup = document.querySelector('[data-test="yesContentHelpful"]');
     const thumbsdown = document.querySelector('[data-test="noContentHelpful"]');
