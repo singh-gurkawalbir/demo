@@ -103,18 +103,6 @@ describe('Signin', () => {
     userEvent.click(signinButtonNode);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.auth.request('testuser@test.com', 'xbsbxsxazl223xbsbixi', true));
   });
-  test('Should able to test the signup link', async () => {
-    store({});
-    await initSignIn();
-    const dontHaveAnAccountTextNode = screen.getByText("Don't have an account?");
-
-    expect(dontHaveAnAccountTextNode).toBeInTheDocument();
-    const signUpLinkNode = screen.getByRole('button', {name: 'Sign up'});
-
-    expect(signUpLinkNode).toBeInTheDocument();
-    await userEvent.click(signUpLinkNode);
-    expect(signUpLinkNode.closest('a')).toHaveAttribute('href', '/signup');
-  });
 
   //   store({
   //     initialized: true,

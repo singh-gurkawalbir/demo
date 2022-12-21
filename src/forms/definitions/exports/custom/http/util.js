@@ -139,7 +139,7 @@ function exportTypeFieldsMeta({
   }
 
   if (supportedExportTypes.includes('test')) {
-    exportTypeOptions.push({ value: 'test', label: 'Test – export only 1 record' });
+    exportTypeOptions.push({ value: 'test', label: 'Limit – export a set number of records' });
   }
 
   if (exportTypeOptions.length <= 1) {
@@ -156,6 +156,12 @@ function exportTypeFieldsMeta({
         },
       ],
       value: exportType || 'all',
+    },
+    {
+      fieldId: 'test.limit',
+      visibleWhen: [
+        {field: 'assistantMetadata.exportType', is: ['test']},
+      ],
     },
   ];
 }
@@ -338,6 +344,7 @@ export function fieldMeta({ resource, assistantData }) {
     pageSize: { fieldId: 'pageSize' },
     formView: { fieldId: 'formView' },
     skipRetries: { fieldId: 'skipRetries' },
+    'test.limit': {fieldId: 'test.limit'},
   };
   const fieldIds = [];
   const exportTypeFieldIds = [];
@@ -358,6 +365,8 @@ export function fieldMeta({ resource, assistantData }) {
     fieldId: 'traceKeyTemplate',
   };
 
+  fieldMap.mockOutput = {fieldId: 'mockOutput'};
+
   return {
     fieldMap,
     layout: {
@@ -377,6 +386,12 @@ export function fieldMeta({ resource, assistantData }) {
           collapsed: true,
           label: 'Configure export type',
           fields: [...exportTypeFieldIds],
+        },
+        {
+          collapsed: true,
+          actionId: 'mockOutput',
+          label: 'Mock output',
+          fields: ['mockOutput'],
         },
         {
           collapsed: true,

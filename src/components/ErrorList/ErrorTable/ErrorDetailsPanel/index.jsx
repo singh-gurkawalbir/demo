@@ -245,7 +245,7 @@ export default function ErrorDetailsPanel({
               isResolved={isResolved}
             />
           </TabPanel>
-          <TabPanel value={mode} type="editRetry">
+          <TabPanel value={mode} type={isFlowDisabled ? 'viewRetry' : 'editRetry'}>
             <EditRetryData
               retryId={retryId}
               onChange={onRetryDataChange}

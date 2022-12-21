@@ -1105,3 +1105,4 @@ export const finalSuccessMediaType = (formValues, connection) => {
 
   return mediaType;
 };
+

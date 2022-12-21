@@ -1,4 +1,5 @@
 import { isNewId } from '../../../../utils/resource';
+import { safeParse } from '../../../../utils/string';
 
 const restPreSave = formValues => {
   const retValues = { ...formValues };
@@ -68,6 +69,7 @@ export default {
     delete retValues['/outputMode'];
     delete retValues['/uploadFile'];
     delete retValues['/rest'];
+    retValues['/mockOutput'] = safeParse(retValues['/mockOutput']);
 
     return {
       ...retValues,
@@ -160,6 +162,7 @@ export default {
       formId: 'advancedSettings',
     },
     formView: { fieldId: 'formView' },
+    mockOutput: {fieldId: 'mockOutput'},
   },
   layout: {
     type: 'collapse',
@@ -200,6 +203,12 @@ export default {
         collapsed: true,
         label: 'Non-standard API response patterns',
         fields: ['http.response.resourcePath'],
+      },
+      {
+        collapsed: true,
+        actionId: 'mockOutput',
+        label: 'Mock output',
+        fields: ['mockOutput'],
       },
       { collapsed: 'true', label: 'Advanced', fields: ['advancedSettings'] },
     ],

@@ -1,3 +1,4 @@
+import { safeParse } from '../../../utils/string';
 import { alterFileDefinitionRulesVisibility } from '../../formFactory/utils';
 import { updateFileProviderFormValues } from '../../metaDataUtils/fileUtil';
 
@@ -60,6 +61,7 @@ export default {
 
     delete newValues['/file/compressFiles'];
     newValues['/file/skipAggregation'] = true;
+    newValues['/mockResponse'] = safeParse(newValues['/mockResponse']);
 
     return {
       ...newValues,
@@ -123,6 +125,7 @@ export default {
       ],
     },
     traceKeyTemplate: {fieldId: 'traceKeyTemplate'},
+    mockResponseSection: {formId: 'mockResponseSection'},
   },
   layout: {
     type: 'collapse',
@@ -154,6 +157,12 @@ export default {
         containers: [{fields: [
           'file.csv',
         ]}],
+      },
+      {
+        actionId: 'mockResponse',
+        collapsed: true,
+        label: 'Mock response',
+        fields: ['mockResponseSection'],
       },
       {
         collapsed: true,

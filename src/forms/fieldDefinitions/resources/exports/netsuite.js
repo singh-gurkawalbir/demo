@@ -180,13 +180,14 @@ export default {
     isLoggable: true,
     type: 'select',
     label: 'Export type',
+    skipSort: true,
     options: [
       {
         items: [
           { label: 'All – always export all data', value: 'all' },
           { label: 'Delta – export only modified data', value: 'delta' },
           { label: 'Once – export records only once', value: 'once' },
-          { label: 'Test – export only 1 record', value: 'test' },
+          { label: 'Limit – export a set number of records', value: 'test' },
         ],
       },
     ],

@@ -1,3 +1,5 @@
+import { MOCK_OUTPUT_CANONICAL_FORMAT_LINK, MOCK_RESPONSE_CANONICAL_FORMAT_LINK } from '../constants';
+
 export const MOCK_INPUT_RECORD_ABSENT = 'At least 1 mock input record is required. Mock records must pass through the input filter and hooks to qualify.';
 
 const messages = {
@@ -29,6 +31,20 @@ const messages = {
   MOCK_INPUT_REFRESH_FAILED: 'Failed to fetch latest input data.',
   MOCK_INPUT_INVALID_JSON: 'Mock input must be valid JSON',
   MOCK_INPUT_INVALID_FORMAT: 'Mock input must contain page_of_records',
+  // #endregion
+
+  // #region Mock output error messages
+  MOCK_OUTPUT_INVALID_JSON: 'Mock output must be a valid JSON.',
+  MOCK_OUTPUT_INVALID_FORMAT: `Mock output must be in integrator.io canonical format. <a href=${MOCK_OUTPUT_CANONICAL_FORMAT_LINK} target="_blank" rel="noreferrer">Learn more.</a>`,
+  MOCK_OUTPUT_SIZE_EXCEED: 'Mock output cannot be larger than 1 MB. Decrease your data size and try again.',
+  MOCK_OUTPUT_NUM_RECORDS_EXCEED: 'Mock output cannot be more than 10 records. Reduce the records amount and try again.',
+  // #endregion
+
+  // #region Mock output error messages
+  MOCK_RESPONSE_INVALID_JSON: 'Mock response must be a valid JSON.',
+  MOCK_RESPONSE_INVALID_FORMAT: `Mock response must be in integrator.io canonical format. <a href=${MOCK_RESPONSE_CANONICAL_FORMAT_LINK} target="_blank" rel="noreferrer">Learn more.</a>`,
+  MOCK_RESPONSE_SIZE_EXCEED: 'Mock response cannot be larger than 1 MB. Decrease your data size and try again.',
+  // #endregion
 };
 
 export default function errorMessageStore(key, argsObj) {

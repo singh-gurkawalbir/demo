@@ -174,31 +174,31 @@ describe('MFAVerify', () => {
 
     expect(warningMessageNode).toBeInTheDocument();
   });
-  test('Should able to test the signup link', async () => {
-    store({
-      initialized: true,
-      commStatus: 'success',
-      authenticated: true,
-      authTimestamp: 1661250286856,
-      defaultAccountSet: true,
-      mfaRequired: true,
-      isMFASetupIncomplete: true,
-    }, {data: {
-      authenticated: true,
-      mfaRequired: true,
-      mfaSetupRequired: false,
-      mfaVerified: false,
-    },
-    status: 'received'}
-    );
-    await initMFAVerify();
-    const dontHaveAnAccountTextNode = screen.getByText("Don't have an account?");
+  // test('Should able to test the signup link', async () => {
+  //   store({
+  //     initialized: true,
+  //     commStatus: 'success',
+  //     authenticated: true,
+  //     authTimestamp: 1661250286856,
+  //     defaultAccountSet: true,
+  //     mfaRequired: true,
+  //     isMFASetupIncomplete: true,
+  //   }, {data: {
+  //     authenticated: true,
+  //     mfaRequired: true,
+  //     mfaSetupRequired: false,
+  //     mfaVerified: false,
+  //   },
+  //   status: 'received'}
+  //   );
+  //   await initMFAVerify();
+  //   const dontHaveAnAccountTextNode = screen.getByText("Don't have an account?");
 
-    expect(dontHaveAnAccountTextNode).toBeInTheDocument();
-    const signUpLinkNode = screen.getByRole('button', {name: 'Sign up'});
+  //   expect(dontHaveAnAccountTextNode).toBeInTheDocument();
+  //   const signUpLinkNode = screen.getByRole('button', {name: 'Sign up'});
 
-    expect(signUpLinkNode).toBeInTheDocument();
-    await userEvent.click(signUpLinkNode);
-    expect(signUpLinkNode.closest('a')).toHaveAttribute('href', '/signup');
-  });
+  //   expect(signUpLinkNode).toBeInTheDocument();
+  //   await userEvent.click(signUpLinkNode);
+  //   expect(signUpLinkNode.closest('a')).toHaveAttribute('href', '/signup');
+  // });
 });

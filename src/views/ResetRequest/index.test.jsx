@@ -112,7 +112,7 @@ describe('ResetPassword', () => {
     const titleText = screen.getByText('Celigo Inc.');
 
     expect(titleText).toBeInTheDocument();
-    const setpasswordHeadingNode = screen.getByRole('heading', {name: 'Reset Password'});
+    const setpasswordHeadingNode = screen.getByRole('heading', {name: 'Reset password'});
 
     expect(setpasswordHeadingNode).toBeInTheDocument();
     const password = screen.getByPlaceholderText('Password');

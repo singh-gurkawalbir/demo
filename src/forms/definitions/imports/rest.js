@@ -1,5 +1,5 @@
 import { getMediaTypeForImport, isNewId } from '../../../utils/resource';
-import { isJsonString } from '../../../utils/string';
+import { isJsonString, safeParse } from '../../../utils/string';
 
 function isValidArray(value) {
   if (Array.isArray(value) && value[0]) {
@@ -260,6 +260,7 @@ const restPreSave = formValues => {
   delete retValues['/rest/ignoreExistingLookupName'];
   delete retValues['/rest/ignoreNewLookupName'];
   retValues['/http'] = undefined;
+  retValues['/mockResponse'] = safeParse(retValues['/mockResponse']);
 
   return {
     ...retValues,
@@ -1034,6 +1035,7 @@ export default {
       ],
     },
     formView: { fieldId: 'formView' },
+    mockResponseSection: {formId: 'mockResponseSection'},
   },
   layout: {
     type: 'collapse',
@@ -1132,6 +1134,12 @@ export default {
             ],
           },
         ],
+      },
+      {
+        actionId: 'mockResponse',
+        collapsed: true,
+        label: 'Mock response',
+        fields: ['mockResponseSection'],
       },
       {
         collapsed: true,

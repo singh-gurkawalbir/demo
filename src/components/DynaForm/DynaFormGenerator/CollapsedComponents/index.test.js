@@ -41,6 +41,14 @@ const props = {
         'content',
       ],
     },
+    {
+      collapsed: false,
+      actionId: 'mockResponse',
+      label: 'Mock response',
+      fields: [
+        'mockResponse',
+      ],
+    },
   ],
   fieldMap: {
     name: {
@@ -104,6 +112,17 @@ const props = {
       ],
       id: 'content',
     },
+    mockResponse: {
+      resourceId: '5ff687fa4f59bb348d41b332',
+      resourceType: 'imports',
+      isLoggable: true,
+      type: 'text',
+      label: 'Mock response',
+      required: true,
+      fieldId: 'mockResponse',
+      id: 'mockResponse',
+      defaultValue: 'test',
+    },
   },
   layout: {
     type: 'collapse',
@@ -128,6 +147,14 @@ const props = {
           'content',
         ],
       },
+      {
+        collapsed: false,
+        actionId: 'mockResponse',
+        label: 'Mock response',
+        fields: [
+          'mockResponse',
+        ],
+      },
     ],
   },
   formKey: 'scripts-5ff687fa4f59bb348d41b332',
@@ -147,5 +174,12 @@ describe('Collapsed Components UI tests', () => {
     const {utils} = initCollapsedComponent(props);
 
     expect(utils.container).toContainHTML('<div></div>');
+  });
+  test('should render CollapsedComponentActions if layout has actionId', () => {
+    const formfields = [{visible: true, required: true, id: 'mockResponse', isValid: false}];
+    const resourceType = 'imports';
+
+    initCollapsedComponent({...props, formfields, resourceType});
+    expect(screen.getByText(/Populate with sample response data/i)).toBeInTheDocument();
   });
 });

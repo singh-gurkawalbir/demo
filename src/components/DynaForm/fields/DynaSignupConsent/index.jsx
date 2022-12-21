@@ -1,14 +1,32 @@
 import React, { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
+import { makeStyles } from '@material-ui/core';
 import actions from '../../../../actions';
 import errorMessageStore from '../../../../utils/errorStore';
 import DynaCheckbox from '../checkbox/DynaCheckbox';
 
+const useStyles = makeStyles(theme => ({
+  signupCheckBox: {
+    display: 'flex',
+    flexDirection: 'column !important',
+    '& > .MuiFormControlLabel-root': {
+      alignItems: 'flex-start',
+      '& > .MuiButtonBase-root': {
+        marginRight: theme.spacing(1),
+      },
+    },
+  },
+  signupLabel: {
+    fontSize: theme.spacing(2),
+  },
+}));
+
 export default function DynaSignupConsent(props) {
+  const classes = useStyles();
   const dispatch = useDispatch();
   const { id, formKey, value } = props;
   const label = () => (
-    <div>
+    <span className={classes.signupLabel}>
       I agree to the&nbsp;
       <a
         href="https://www.celigo.com/terms-of-service/"
@@ -32,7 +50,7 @@ export default function DynaSignupConsent(props) {
       >
         Service Subscription Agreement.
       </a>
-    </div>
+    </span>
   );
 
   useEffect(() => {
@@ -56,6 +74,7 @@ export default function DynaSignupConsent(props) {
   return (
     <DynaCheckbox
       {...props}
-      label={label()} />
+      label={label()}
+      className={classes.signupCheckBox} />
   );
 }

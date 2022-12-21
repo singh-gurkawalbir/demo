@@ -221,23 +221,20 @@ export function* requestSampleDataForImports({
       break;
     }
 
+    // TODO: Siddharth, once mockResponse is stable, replace sample data stage also to mockResponse
     case 'sampleResponse': {
-      const sampleResponseData = (yield select(
+      const mockResponse = (yield select(
         selectors.resourceData,
         'imports',
         resourceId,
         SCOPES.VALUE
-      ))?.merged?.sampleResponseData || '';
-
-      const sampleResponse = isJsonString(sampleResponseData)
-        ? JSON.parse(sampleResponseData)
-        : sampleResponseData;
+      ))?.merged?.mockResponse || emptyObject;
 
       yield put(
         actions.flowData.receivedPreviewData(
           flowId,
           resourceId,
-          sampleResponse,
+          mockResponse?.[0]?._json,
           'sampleResponse'
         )
       );

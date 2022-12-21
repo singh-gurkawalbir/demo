@@ -187,6 +187,7 @@ export const EXPORT_FILE_FIELD_MAP = {common: { formId: 'common' },
   's3.keyEndsWith': { fieldId: 's3.keyEndsWith' },
   'file.sortByFields': { fieldId: 'file.sortByFields' },
   'file.groupByFields': { fieldId: 'file.groupByFields' },
+  mockOutput: { fieldId: 'mockOutput' },
 };
 export const IMPORT_FILE_FIELD_MAP = {common: {
   formId: 'common',
@@ -349,6 +350,7 @@ fileApiIdentifier: {
   fieldId: 's3.bucket',
 },
 traceKeyTemplate: {fieldId: 'traceKeyTemplate'},
+mockResponseSection: {formId: 'mockResponseSection'},
 };
 export const updatePGPFormValues = formValues => {
   const newValues = { ...formValues };

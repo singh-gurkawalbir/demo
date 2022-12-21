@@ -1,20 +1,17 @@
 import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles, Typography } from '@material-ui/core';
-import { Link, useHistory } from 'react-router-dom';
-import CeligoLogo from '../../components/CeligoLogo';
-import { getDomain } from '../../utils/resource';
+import { useHistory } from 'react-router-dom';
 import messageStore from '../../utils/messageStore';
 import { selectors } from '../../reducers';
-import MarketingContentWithIframe from '../../components/LoginScreen/MarketingContentWithIframe';
 import InfoIcon from '../../components/icons/InfoIcon';
-import { TextButton } from '../../components/Buttons';
 import getRoutePath from '../../utils/routePaths';
 
 import OneTimePassCodeForm from './OneTimePassCodeForm';
 import actions from '../../actions';
 import Loader from '../../components/Loader';
 import Spinner from '../../components/Spinner';
+import UserSignInPage from '../../components/UserSignInPage';
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
@@ -120,10 +117,7 @@ const Title = () => {
 };
 
 export default function MfaVerify() {
-  const classes = useStyles();
   const history = useHistory();
-  // eslint-disable-next-line no-undef
-  const contentUrl = (getDomain() === 'eu.integrator.io' ? IO_LOGIN_PROMOTION_URL_EU : IO_LOGIN_PROMOTION_URL);
   const dispatch = useDispatch();
   const isMFAAuthRequired = useSelector(state => selectors.isMFAAuthRequired(state));
   const isMFASetupIncomplete = useSelector(selectors.isMFASetupIncomplete);
@@ -131,7 +125,7 @@ export default function MfaVerify() {
 
   useEffect(() => {
     dispatch(actions.auth.validateSession());
-  }, []);
+  }, [dispatch]);
 
   useEffect(() => {
     if (sessionInfoResolved) {
@@ -146,32 +140,13 @@ export default function MfaVerify() {
   if (!sessionInfoResolved) return <Loader open><Spinner /></Loader>;
 
   return (
-    <div className={classes.wrapper}>
-      <div className={classes.signinWrapper}>
-        <div className={classes.signinWrapperContent}>
-          <div className={classes.logo}>
-            <CeligoLogo />
-          </div>
-          <Title />
-          <OneTimePassCodeForm />
-          {getDomain() !== 'eu.integrator.io' && (
-          <Typography variant="body2" className={classes.signupLink}>
-            Don&apos;t have an account?
-            <TextButton
-              data-test="signup"
-              color="primary"
-              className={classes.link}
-              component={Link}
-              to="/signup">
-              Sign up
-            </TextButton>
-          </Typography>
-          )}
-        </div>
-      </div>
-      <div className={classes.marketingContentWrapper}>
-        <MarketingContentWithIframe contentUrl={contentUrl} />
-      </div>
-    </div>
+    <UserSignInPage
+      footerLinkText="Sign up"
+      footerLink="signup"
+      footerLinkLabel="Don't have an account?">
+      <Title />
+      <OneTimePassCodeForm />
+    </UserSignInPage>
+
   );
 }
