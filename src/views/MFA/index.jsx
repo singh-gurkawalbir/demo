@@ -143,8 +143,7 @@ export default function MfaVerify() {
     <UserSignInPage
       footerLinkText="Sign up"
       footerLink="signup"
-      footerLinkLabel=" Don't have an account?"
-     >
+      footerLinkLabel="Don't have an account?">
       <Title />
       <OneTimePassCodeForm />
     </UserSignInPage>

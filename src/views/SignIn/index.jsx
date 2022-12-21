@@ -16,7 +16,7 @@ function Signin(props) {
       pageTitle=" Sign in"
       pageSuccessMessage={isSignupCompleted ? signupMessage : ''}
       footerLinkLabel=" Don't have an account?"
-      footerLinkText=" Sign up"
+      footerLinkText="Sign up"
       footerLink="signup">
       <SigninForm
         {...props}
