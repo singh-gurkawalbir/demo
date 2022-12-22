@@ -524,7 +524,7 @@ export function* signup({payloadBody}) {
     });
 
     if (apiAuthentications.success) {
-      yield put(actions.auth.signupStatus('success', SIGN_UP_SUCCESS));
+      yield put(actions.auth.signupStatus('success', apiAuthentications.message || SIGN_UP_SUCCESS));
     }
   } catch (error) {
     let authError = inferErrorMessages(error?.message)?.[0];

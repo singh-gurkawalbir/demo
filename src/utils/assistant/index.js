@@ -16,6 +16,7 @@ import {
 } from 'lodash';
 import { getPathParams } from './pathParamUtils';
 import { getPublishedHttpConnectors } from '../../constants/applications';
+import {VALID_MONGO_ID} from '../../constants/regex';
 
 const OVERWRITABLE_PROPERTIES = Object.freeze([
   'allowUndefinedResource',
@@ -893,10 +894,10 @@ export function convertFromExport({ exportDoc: exportDocOrig, assistantData: ass
   const assistantData = cloneDeep(assistantDataOrig);
   let { version, resource, operation } = exportDoc.assistantMetadata || {};
 
-  if (exportDoc?.http) {
-    operation = operation || exportDoc.http._httpConnectorEndpointId;
-    resource = resource || exportDoc.http._httpConnectorResourceId;
-    version = version || exportDoc.http._httpConnectorVersionId;
+  if (exportDoc?.http && (exportDoc.http?._httpConnectorEndpointId && exportDoc.http?._httpConnectorResourceId)) {
+    operation = VALID_MONGO_ID.test(operation) ? operation : exportDoc.http?._httpConnectorEndpointId;
+    resource = VALID_MONGO_ID.test(resource) ? resource : exportDoc.http?._httpConnectorResourceId;
+    version = VALID_MONGO_ID.test(version) ? version : exportDoc.http?._httpConnectorVersionId;
   }
   const { exportType, dontConvert } = exportDoc.assistantMetadata || {};
   const assistantMetadata = {
@@ -1789,9 +1790,11 @@ export function convertFromImport({ importDoc: importDocOrig, assistantData: ass
     importDoc.assistantMetadata || {};
 
   if (importDoc?.http) {
-    operation = operation || importDoc.http._httpConnectorEndpointId;
-    resource = resource || importDoc.http._httpConnectorResourceId;
-    version = version || importDoc.http._httpConnectorVersionId;
+    if (importDoc.http?._httpConnectorEndpointId || importDoc.http?._httpConnectorResourceId) {
+      operation = VALID_MONGO_ID.test(operation) ? operation : importDoc.http?._httpConnectorEndpointId;
+      resource = VALID_MONGO_ID.test(resource) ? resource : importDoc.http?._httpConnectorResourceId;
+      version = VALID_MONGO_ID.test(version) ? version : importDoc.http?._httpConnectorVersionId;
+    }
     if ((isArray(operation) && operation.length > 1) || (isArray(importDoc.http._httpConnectorEndpointIds) && importDoc.http._httpConnectorEndpointIds.length > 1)) {
       [updateEndpoint, createEndpoint] = isArray(operation) ? operation : importDoc.http._httpConnectorEndpointIds;
     }

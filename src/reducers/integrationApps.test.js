@@ -3116,6 +3116,7 @@ describe('integrationApps selector testcases', () => {
         upgradeRequested: true,
         upgradeText: 'Upgrade requested',
         nextPlan: '',
+        isHighestPlan: false,
       });
     });
 
@@ -3163,6 +3164,7 @@ describe('integrationApps selector testcases', () => {
         upgradeRequested: false,
         upgradeText: '',
         nextPlan: '',
+        isHighestPlan: false,
       });
     });
 
@@ -3207,6 +3209,7 @@ describe('integrationApps selector testcases', () => {
         upgradeRequested: false,
         upgradeText: '',
         nextPlan: '',
+        isHighestPlan: false,
       });
     });
 
@@ -3252,6 +3255,7 @@ describe('integrationApps selector testcases', () => {
         upgradeRequested: false,
         upgradeText: '',
         nextPlan: '',
+        isHighestPlan: false,
       });
     });
 
@@ -3299,6 +3303,7 @@ describe('integrationApps selector testcases', () => {
         upgradeRequested: false,
         upgradeText: '',
         nextPlan: '',
+        isHighestPlan: false,
       });
     });
   });

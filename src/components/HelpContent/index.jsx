@@ -119,7 +119,8 @@ export default function HelpContent({ children, title, caption, fieldId, resourc
   return (
     <div className={classes.wrapper}>
       <div className={classes.titleWrapper}>
-        <Typography className={classes.title} variant="h6">
+        <Typography data-test="title" className={classes.title} variant="h6">
+
           {title}
         </Typography>
         <IconButton
@@ -151,7 +152,7 @@ export default function HelpContent({ children, title, caption, fieldId, resourc
         <>
           <Typography variant="subtitle2" component="div" className={classes.content}>{children}</Typography>
           <div className={classes.actionWrapper}>
-            <Typography variant="subtitle2">Was this helpful?</Typography>
+            <Typography data-test="feedback" variant="subtitle2">Was this helpful?</Typography>
             <IconButtonWithTooltip
               data-test="yesContentHelpful"
               tooltipProps={{title: 'Yes'}}

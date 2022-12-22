@@ -169,7 +169,6 @@ export const NO_ENVIRONMENT_RESOURCE_TYPES = Object.freeze([
   'templates',
   'published',
   'transfers',
-  'apis',
   'connectors',
 ]);
 
