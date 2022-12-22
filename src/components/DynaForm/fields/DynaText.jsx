@@ -14,6 +14,7 @@ import isLoggableAttr from '../../../utils/isLoggableAttr';
 import IconButtonWithTooltip from '../../IconButtonWithTooltip';
 import HelpLink from '../../HelpLink';
 import { selectors } from '../../../reducers';
+import { useSelectorMemo } from '../../../hooks';
 
 const useStyles = makeStyles(theme => ({
   dynaFieldWrapper: {
@@ -106,6 +107,12 @@ function DynaText(props) {
     selectors.resource(state, resourceType, resourceId)
   );
   let dataResourceType;
+  const { merged } =
+  useSelectorMemo(
+    selectors.makeResourceDataSelector,
+    resourceType,
+    resourceId
+  ) || {};
 
   if (resourceType === 'connections') {
     dataResourceType = 'connection';
@@ -183,7 +190,7 @@ function DynaText(props) {
     <FormControl className={classes.dynaTextFormControl}>
       <div className={classes.dynaTextLabelWrapper}>
         <FormLabel htmlFor={id} required={required} error={!isValid}>
-          {isLabelUpdate ? updatedLabel : label}
+          {(merged?.http?._httpConnectorId || merged?.isHttpConnector || merged?._httpConnectorId) && isLabelUpdate ? updatedLabel : label}
         </FormLabel>
         <FieldHelp {...props} />
         <HelpLink helpLink={props.helpLink} />
@@ -197,7 +204,7 @@ function DynaText(props) {
         name={name}
         InputProps={InputProps}
         type={inputType}
-        placeholder={isApplicationPlaceholder ? applicationPlaceholder : placeholder}
+        placeholder={isApplicationPlaceholder && (merged?.http?._httpConnectorId || merged?.isHttpConnector || merged?._httpConnectorId) ? applicationPlaceholder : placeholder}
         disabled={disabled || disableText}
         multiline={multiline}
         rowsMax={rowsMax}
