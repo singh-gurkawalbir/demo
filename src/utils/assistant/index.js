@@ -1790,8 +1790,10 @@ export function convertFromImport({ importDoc: importDocOrig, assistantData: ass
     importDoc.assistantMetadata || {};
 
   if (importDoc?.http) {
-    if (importDoc.http?._httpConnectorEndpointId || importDoc.http?._httpConnectorResourceId) {
-      operation = VALID_MONGO_ID.test(operation) ? operation : importDoc.http?._httpConnectorEndpointId;
+    if (importDoc.http?._httpConnectorEndpointId || importDoc.http?._httpConnectorEndpointIds || importDoc.http?._httpConnectorResourceId) {
+      const commonOperation = VALID_MONGO_ID.test(operation) ? operation : importDoc.http?._httpConnectorEndpointId;
+
+      operation = !isArray(operation) ? commonOperation : operation || importDoc.http?._httpConnectorEndpointIds;
       resource = VALID_MONGO_ID.test(resource) ? resource : importDoc.http?._httpConnectorResourceId;
       version = VALID_MONGO_ID.test(version) ? version : importDoc.http?._httpConnectorVersionId;
     }
@@ -1800,11 +1802,6 @@ export function convertFromImport({ importDoc: importDocOrig, assistantData: ass
     }
     if ((isArray(operation) && operation.length > 1)) { operation = 'create-update-id'; }
   }
-  // } else if (importDoc?.http) {
-  //   operation = operation || importDoc.http._httpConnectorEndpointId;
-  //   resource = resource || importDoc.http._httpConnectorResourceId;
-  //   version = version || importDoc.http._httpConnectorVersionId;
-  // }
   const { dontConvert, lookups } = importDoc.assistantMetadata || {};
   let sampleData;
   let { ignoreExisting, ignoreMissing } = importDoc;
