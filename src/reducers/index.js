@@ -62,7 +62,7 @@ import {
   MAX_DATA_RETENTION_PERIOD,
 } from '../constants';
 import messageStore from '../utils/messageStore';
-import { upgradeButtonText, expiresInfo } from '../utils/license';
+import { upgradeButtonText, expiresInfo, isNextTheHighestPlan } from '../utils/license';
 import commKeyGen from '../utils/commKeyGenerator';
 import {
   isNewId,
@@ -3005,6 +3005,11 @@ selectors.integrationAppLicense = (state, id) => {
     editions,
     connector?.twoDotZero
   );
+  const isHighestPlan = isNextTheHighestPlan(
+    license?._changeEditionId,
+    connector?.twoDotZero,
+    editions,
+  );
 
   return {
     ...license,
@@ -3014,6 +3019,7 @@ selectors.integrationAppLicense = (state, id) => {
     createdText: createdFormatted,
     showLicenseExpiringWarning: hasExpired || isExpiringSoon,
     nextPlan,
+    isHighestPlan,
   };
 };
 
