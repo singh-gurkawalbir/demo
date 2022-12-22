@@ -290,7 +290,7 @@ export function* initializeApp(opts) {
   if (opts?.reload) {
     yield put(actions.app.deleteDataState());
   }
-  if (opts.mfaVerifySuccess) {
+  if (opts?.mfaVerifySuccess) {
     yield put(actions.auth.mfaVerify.success());
   }
   try {
