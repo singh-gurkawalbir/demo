@@ -95,7 +95,7 @@ export default function menuItems({
           routeProps: getRoutePath('/reports'),
         },
         {
-          label: 'Dev playground',
+          label: 'Developer playground',
           Icon: EditorsPlaygroundIcon,
           path: '/playground',
         },
