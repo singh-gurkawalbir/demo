@@ -59,6 +59,22 @@ export default function Licenses(props) {
     dispatch(actions.patchFilter(filterKey, defaultFilter));
   },
   [dispatch]);
+
+  useEffect(() => {
+    const urlFields = location ? location?.pathname.split('/') : [];
+
+    // strip the '/add...' suffix from the url
+    // this is used since when user reloads the page with create license drawer open
+    // we will need to close the drawer since it requires some context which we are setting
+    // in handleClick methode below
+    if (urlFields.indexOf('add') !== -1) {
+      const redirectToParentRoute = urlFields.slice(0, urlFields.indexOf('add')).join('/');
+
+      history.replace(redirectToParentRoute);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const list = useSelectorMemo(
     selectors.makeResourceListSelector,
     connectorLicensesFilterConfig

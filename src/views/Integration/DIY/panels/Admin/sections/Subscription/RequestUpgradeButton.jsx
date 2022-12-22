@@ -39,6 +39,7 @@ export default function RequestUpgradeButton(props) {
     upgradeRequested,
     nextPlan,
     _changeEditionId: changeEditionId,
+    isHighestPlan,
   } = license;
   const disabledRequestUpgrade = (
     (istwoDotZeroFrameWork && accessLevel === 'monitor') ||
@@ -48,9 +49,13 @@ export default function RequestUpgradeButton(props) {
 
   useEffect(() => {
     if (status === 'done') {
-      childIntegrationsCount
-        ? enquesnackbar({message: <RawHtml html={messageStore('PARENT_WITH_CHILD_UPGRADE_MESSAGE', {plan: nextPlan})} />, variant: 'success'})
-        : enquesnackbar({message: <RawHtml html={messageStore('PARENT_WITHOUT_CHILD_UPGRADE_MESSAGE', {plan: nextPlan})} />, variant: 'success'});
+      if (childIntegrationsCount) {
+        enquesnackbar({message: <RawHtml html={messageStore('PARENT_WITH_CHILD_UPGRADE_MESSAGE', {plan: nextPlan})} />, variant: 'success'});
+      } else if (isHighestPlan) {
+        enquesnackbar({message: <RawHtml html={messageStore('PARENT_WITHOUT_CHILD_UPGRADE_MESSAGE_WITH_NO_FURTHER_PLANS', {plan: nextPlan})} />, variant: 'success'});
+      } else {
+        enquesnackbar({message: <RawHtml html={messageStore('PARENT_WITHOUT_CHILD_UPGRADE_MESSAGE', {plan: nextPlan})} />, variant: 'success'});
+      }
       dispatch(actions.integrationApp.upgrade.deleteStatus(id));
     }
 
@@ -60,12 +65,12 @@ export default function RequestUpgradeButton(props) {
       }));
       enquesnackbar({
         message: <ErrorContent
-            error={messageStore('PARENT_UPGRADE_ERROR_MESSAGE',
-              {
-                plan: nextPlan,
-                errorMessage: errMessage,
-              }
-            )} />,
+          error={messageStore('PARENT_UPGRADE_ERROR_MESSAGE',
+            {
+              plan: nextPlan,
+              errorMessage: errMessage,
+            }
+          )} />,
         variant: 'error',
       });
     }
@@ -81,7 +86,9 @@ export default function RequestUpgradeButton(props) {
 
   useEffect(() => {
     if (showFinalMessage && !isChildLicenseInUpgrade) {
-      enquesnackbar({message: <RawHtml html={messageStore('PARENT_AND_CHILD_FINAL_MESSAGE', {plan: nextPlan})} />, variant: 'success'});
+      isHighestPlan
+        ? enquesnackbar({message: <RawHtml html={messageStore('PARENT_AND_CHILD_FINAL_MESSAGE_WITH_NO_FURTHER_PLANS', {plan: nextPlan})} />, variant: 'success'})
+        : enquesnackbar({message: <RawHtml html={messageStore('PARENT_AND_CHILD_FINAL_MESSAGE', {plan: nextPlan})} />, variant: 'success'});
       dispatch(actions.integrationApp.upgrade.setStatus('successMessageFlags', { showFinalMessage: false }));
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
