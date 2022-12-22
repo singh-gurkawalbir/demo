@@ -13,7 +13,6 @@ export function AppRoutingWithAuth({ children }) {
   const isMFAAuthRequired = useSelector(selectors.isMFAAuthRequired);
   const isSignInRoute = location.pathname.split('?')[0] === getRoutePath('signin');
   const isConcurPage = location.pathname.startsWith('/concurconnect');
-  const isMFAVerifyPage = getRoutePath('/mfa/verify') === location.pathname;
   const shouldShowAppRouting = useSelector(selectors.shouldShowAppRouting);
   const isAuthInitialized = useSelector(selectors.isAuthInitialized);
   const isSessionExpired = useSelector(selectors.isSessionExpired);
@@ -44,7 +43,7 @@ export function AppRoutingWithAuth({ children }) {
   // this selector is used by the UI to hold off rendering any routes
   // till it determines the auth state
   if (isAuthenticated) {
-    if (isSignInRoute || isMFAVerifyPage) {
+    if (isSignInRoute) {
       const { state: routeState } = location;
       const redirectedTo = (routeState && routeState.attemptedRoute) || getRoutePath('');
 

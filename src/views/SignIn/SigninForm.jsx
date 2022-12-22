@@ -195,11 +195,10 @@ export default function SignIn({dialogOpen, className}) {
   };
   useEffect(() => {
     if (isMFAAuthRequired) {
-      history.push(getRoutePath('/mfa/verify'));
+      history.push(getRoutePath('/mfa/verify'), location.state);
     }
-  }, [history, isMFAAuthRequired]);
-  const attemptedRoute =
-      location && location.state && location.state.attemptedRoute;
+  }, [history, isMFAAuthRequired, location.state]);
+  const attemptedRoute = location.state?.attemptedRoute;
 
   return (
   // user's email can be listed here ...type passwords is anyways redacted by logrocket
