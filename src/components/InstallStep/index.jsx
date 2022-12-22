@@ -168,7 +168,7 @@ export default function InstallationStep(props) {
   });
 
   useEffect(() => {
-    if (step && !step.completed && !verified) {
+    if (step && step.isCurrentStep && !step.completed && !verified) {
       if (revisionId && step.isCurrentStep && step.url && step.connectionId) {
         dispatch(actions.integrationLCM.installSteps.updateStep(revisionId, 'verify'));
         dispatch(actions.integrationLCM.installSteps.verifyBundleOrPackageInstall({
