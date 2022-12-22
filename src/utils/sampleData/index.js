@@ -463,6 +463,28 @@ export const processOneToManySampleData = (sampleData, resource) => {
   return processedSampleData;
 };
 
+// These utils check if the sample data is in correct integrator.io canonical format
+export const isValidCanonicalFormForExportData = mockData => {
+  if (!mockData) return true;
+  if (!mockData.page_of_records) return false;
+  if (!Array.isArray(mockData.page_of_records)) return false;
+  if (mockData.page_of_records.every(item => typeof item.record === 'object' && !Array.isArray(item.record))) { return true; }
+  if (mockData.page_of_records.every(item => Array.isArray(item.rows))) { return true; }
+
+  return false;
+};
+
+export const isValidCanonicalFormForImportResponse = mockData => {
+  if (!mockData) return true;
+  const validFields = ['statusCode', 'errors', 'id', '_json', 'ignored', 'dataURI', '_headers'];
+
+  if (!Array.isArray(mockData)) return false;
+
+  return mockData.every(data =>
+    typeof data === 'object' &&
+    Object.keys(data).every(key => validFields.includes(key)));
+};
+
 /**
  * This util adds "page_of_records" on records/rows based on the sampleData structure
  * Ideally, we should be using a BE API for this structure
@@ -498,7 +520,7 @@ export const wrapExportFileSampleData = (records, status) => {
 
 // this util unwraps the sample data wrapped by wrapExportFileSampleData
 export const unwrapExportFileSampleData = sampleData => {
-  if (!sampleData || typeof sampleData !== 'object') return;
+  if (!sampleData || typeof sampleData !== 'object' || !isValidCanonicalFormForExportData(sampleData)) return;
 
   const {page_of_records} = sampleData;
 

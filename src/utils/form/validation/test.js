@@ -307,14 +307,16 @@ describe('getDefaultNumericalRangeErrorMessages', () => {
 describe('fallsWithinNumericalRange', () => {
   test('fails when given a non-numerical number', () => {
     expect(
-      // $FlowFixMe - Typing should prevent this, but we're testing the output
       fallsWithinNumericalRange({ value: 'abc', min: 5, message: 'Fail' })
     ).toBe('Fail');
   });
-
+  test('fails when given a non-numerical string with leading numbers', () => {
+    expect(
+      fallsWithinNumericalRange({ value: '123abc', min: 5, message: 'Fail' })
+    ).toBe('Fail');
+  });
   test('succeeds with just a max', () => {
     expect(
-      // $FlowFixMe - Typing should prevent this, but we're testing the output
       fallsWithinNumericalRange({
         value: '5',
         min: 1,
@@ -325,7 +327,6 @@ describe('fallsWithinNumericalRange', () => {
 
   test('fails with just a min', () => {
     expect(
-      // $FlowFixMe - Typing should prevent this, but we're testing the output
       fallsWithinNumericalRange({
         value: 6,
         max: 10,
@@ -336,7 +337,6 @@ describe('fallsWithinNumericalRange', () => {
 
   test('succeeds with null', () => {
     expect(
-      // $FlowFixMe - Typing should prevent this, but we're testing the output
       fallsWithinNumericalRange({
         value: null,
         min: 0,
@@ -347,7 +347,6 @@ describe('fallsWithinNumericalRange', () => {
   });
   test('succeeds with string null', () => {
     expect(
-      // $FlowFixMe - Typing should prevent this, but we're testing the output
       fallsWithinNumericalRange({
         value: 'null',
         min: 0,
@@ -359,7 +358,6 @@ describe('fallsWithinNumericalRange', () => {
 
   test('succeeds with undefined', () => {
     expect(
-      // $FlowFixMe - Typing should prevent this, but we're testing the output
       fallsWithinNumericalRange({
         value: undefined,
         min: 0,
@@ -371,7 +369,6 @@ describe('fallsWithinNumericalRange', () => {
 
   test('fails with whitespace', () => {
     expect(
-      // $FlowFixMe - Typing should prevent this, but we're testing the output
       fallsWithinNumericalRange({
         value: '       ',
         min: 10,
@@ -382,7 +379,6 @@ describe('fallsWithinNumericalRange', () => {
 
   test('fails with just a max', () => {
     expect(
-      // $FlowFixMe - Typing should prevent this, but we're testing the output
       fallsWithinNumericalRange({
         value: 6,
         max: 5,
@@ -393,7 +389,6 @@ describe('fallsWithinNumericalRange', () => {
 
   test('succeeds with empty string', () => {
     expect(
-      // $FlowFixMe - Typing should prevent this, but we're testing the output
       fallsWithinNumericalRange({
         value: '',
         min: 0,
@@ -405,7 +400,6 @@ describe('fallsWithinNumericalRange', () => {
 
   test('succeeds with null', () => {
     expect(
-      // $FlowFixMe - Typing should prevent this, but we're testing the output
       fallsWithinNumericalRange({
         value: null,
         min: 0,
@@ -416,7 +410,6 @@ describe('fallsWithinNumericalRange', () => {
   });
   test('succeeds with string null', () => {
     expect(
-      // $FlowFixMe - Typing should prevent this, but we're testing the output
       fallsWithinNumericalRange({
         value: null,
         min: 0,
@@ -428,7 +421,6 @@ describe('fallsWithinNumericalRange', () => {
 
   test('succeeds with undefined', () => {
     expect(
-      // $FlowFixMe - Typing should prevent this, but we're testing the output
       fallsWithinNumericalRange({
         value: undefined,
         min: 0,
@@ -440,7 +432,6 @@ describe('fallsWithinNumericalRange', () => {
 
   test('fails with whitespace', () => {
     expect(
-      // $FlowFixMe - Typing should prevent this, but we're testing the output
       fallsWithinNumericalRange({
         value: '',
         min: 0,

@@ -144,7 +144,7 @@ export const fallsWithinNumericalRange = ({ value, min, max, message }) => {
     return undefined;
   }
 
-  if (isNaN(parsedValue)) {
+  if (isNaN(value) || isNaN(parsedValue)) {
     return message || 'Value must be a number';
   }
 
