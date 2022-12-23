@@ -15,6 +15,7 @@ import getRoutePath from '../../utils/routePaths';
 import Spinner from '../../components/Spinner';
 import { FilledButton, OutlinedButton, TextButton } from '../../components/Buttons';
 import getImageUrl from '../../utils/image';
+import useQuery from '../../hooks/useQuery';
 
 const path = getImageUrl('images/googlelogo.png');
 
@@ -61,6 +62,10 @@ const useStyles = makeStyles(theme => ({
       fontSize: theme.spacing(2),
       marginRight: 5,
     },
+  },
+  errorMsg: {
+    fontSize: 16,
+    marginBottom: theme.spacing(2),
   },
   link: {
     paddingLeft: 4,
@@ -130,6 +135,8 @@ export default function SignIn({dialogOpen, className}) {
   const classes = useStyles();
   const [email, setEmail] = useState('');
   const history = useHistory();
+  const query = useQuery();
+
   const handleAuthentication = useCallback((email, password) => {
     dispatch(actions.auth.request(email, password, true));
   }, [dispatch]);
@@ -203,6 +210,16 @@ export default function SignIn({dialogOpen, className}) {
   return (
   // user's email can be listed here ...type passwords is anyways redacted by logrocket
     <div className={clsx(classes.editableFields, className)}>
+      {!isAuthenticating && !showError && query.get('msg') && (
+      <Typography
+        data-private
+        color="error"
+        component="div"
+        variant="h4"
+        className={classes.errorMsg}>
+        {query.get('msg')}
+      </Typography>
+      )}
       <form onSubmit={handleOnSubmit}>
         <TextField
           data-private
@@ -249,6 +266,7 @@ export default function SignIn({dialogOpen, className}) {
             <ErrorIcon /> {error}
           </Typography>
         )}
+
         { isAuthenticating ? <Spinner />
           : (
             <FilledButton
