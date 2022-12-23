@@ -73,6 +73,9 @@ export default function (state = defaultState, action) {
         break;
       case actionTypes.AUTH.SET_PASSWORD_REQUEST_SUCCESSFUL:
         draft.requestSetPasswordStatus = 'success';
+        if (!draft.signup) { draft.signup = {}; }
+        draft.signup.status = 'done';
+        draft.signup.message = action.setPasswordRequestInfo?.message;
         delete draft.requestSetPasswordError;
         break;
       case actionTypes.AUTH.INIT_SESSION:

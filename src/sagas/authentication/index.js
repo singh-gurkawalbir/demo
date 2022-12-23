@@ -290,6 +290,9 @@ export function* initializeApp(opts) {
   if (opts?.reload) {
     yield put(actions.app.deleteDataState());
   }
+  if (opts?.mfaVerifySuccess) {
+    yield put(actions.auth.mfaVerify.success());
+  }
   try {
     yield call(retrieveAppInitializationResources);
   } catch (e) {
@@ -524,7 +527,7 @@ export function* signup({payloadBody}) {
     });
 
     if (apiAuthentications.success) {
-      yield put(actions.auth.signupStatus('success', SIGN_UP_SUCCESS));
+      yield put(actions.auth.signupStatus('success', apiAuthentications.message || SIGN_UP_SUCCESS));
     }
   } catch (error) {
     let authError = inferErrorMessages(error?.message)?.[0];
@@ -679,6 +682,7 @@ function* mfaVerify({ payload }) {
 
     if (status?.success) {
       yield call(initializeSession);
+      yield call(initializeSession, {opts: {mfaVerifySuccess: true}});
 
       return yield put(actions.auth.mfaVerify.success());
     }

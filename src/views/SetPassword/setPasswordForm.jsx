@@ -7,7 +7,7 @@ import { useParams, useHistory } from 'react-router-dom';
 import clsx from 'clsx';
 import actions from '../../actions';
 import { selectors } from '../../reducers';
-import { AUTH_FAILURE_MESSAGE, PASSWORD_STRENGTH_ERROR } from '../../constants';
+import { AUTH_FAILURE_MESSAGE } from '../../constants';
 import Spinner from '../../components/Spinner';
 import { FilledButton, TextButton } from '../../components/Buttons';
 import ShowContentIcon from '../../components/icons/ShowContentIcon';
@@ -103,10 +103,14 @@ export default function SetPassword() {
   const inputFieldRef = useRef();
   const dispatch = useDispatch();
   const history = useHistory();
-  //  const showError = false;
   const classes = useStyles();
+  const [anchorEl, setAnchorEl] = useState(null);
+  const open = !!anchorEl;
   const [showErr, setShowErr] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [containDigits, setContainDigits] = useState(false);
+  const [containCapitalLetter, setContainCapitalLetter] = useState(false);
+  const [validLength, setValidLength] = useState(false);
   const handleClickShowPassword = () => setShowPassword(!showPassword);
   const handleMouseDownPassword = () => setShowPassword(!showPassword);
   const handleResetPassword = useCallback(password => {
@@ -132,16 +136,21 @@ export default function SetPassword() {
     return errorMessage;
   });
   const handleOnChangePassword = useCallback(e => {
-    // setPassword(e.target.value);
-    const regex = /^(?=.*\d)(?=.*[!@#$%^&*])(?=.*[a-z])(?=.*[A-Z]).{8,}$/;
-    const regexTest = regex.test(e.target.value);
+    const password = e.target.value;
+    const isValid = /[A-Z]/.test(password) && /\d/.test(password) && password.length > 9 && password.length < 256;
 
-    if (!regexTest) {
-      setShowErr(true);
-    } else {
-      setShowErr(false);
-    }
+    setContainCapitalLetter(/[A-Z]/.test(password));
+    setContainDigits(/\d/.test(password));
+    setValidLength(password.length > 9 && password.length < 256);
+    setShowErr(!isValid);
   }, []);
+
+  const handleFocusIn = e => {
+    setAnchorEl(e.currentTarget);
+  };
+  const handleFocusOut = () => {
+    setAnchorEl(null);
+  };
 
   const handleOnSubmit = useCallback(e => {
     e.preventDefault();
@@ -173,6 +182,8 @@ export default function SetPassword() {
           type={showPassword ? 'text' : 'password'}
           placeholder="Password"
           onChange={handleOnChangePassword}
+          onFocus={handleFocusIn}
+          onBlur={handleFocusOut}
           className={classes.textField}
           InputProps={{
             endAdornment: (true) &&
@@ -197,39 +208,32 @@ export default function SetPassword() {
         {/* Styling is little off will work once developed */}
         <ArrowPopper
           id="pageInfo"
-          open
-          anchorEl
+          open={open}
+          anchorEl={anchorEl}
           placement="right"
           classes={{ popper: classes.arrowPopperPassword }}
           preventOverflow>
           <TooltipContent className={classes.infoText}>
-            <Typography className={clsx(classes.passwordListItem, classes.redText)}>To help protect your account, choose a password that you haven’t used before.</Typography>
+            <Typography className={clsx(classes.passwordListItem, {[classes.redText]: showErr})}>To help protect your account, choose a password that you haven’t used before.</Typography>
             <Typography className={classes.passwordListItem} >Make sure your password:</Typography>
             <div className={classes.passwordListItem}>
-              <CloseIcon className={clsx(classes.icon, classes.errorIcon)} />
-              <Typography className={clsx(classes.passwordListItemText, {[classes.passwordListItemTextError]: true})}>Contains at least one capital letter</Typography>
+              {containCapitalLetter ? <CheckMarkIcon className={clsx(classes.icon, classes.successIcon)} />
+                : <CloseIcon className={clsx(classes.icon, classes.errorIcon)} />}
+              <Typography className={clsx(classes.passwordListItemText, {[classes.passwordListItemTextError]: !containCapitalLetter})}>Contains at least one capital letter</Typography>
             </div>
             <div className={classes.passwordListItem}>
-              <CheckMarkIcon className={clsx(classes.icon, classes.successIcon)} />
-              <Typography className={clsx(classes.passwordListItemText, {[classes.passwordListItemTextError]: false})}>Contains at least one number</Typography>
+              {containDigits ? <CheckMarkIcon className={clsx(classes.icon, classes.successIcon)} />
+                : <CloseIcon className={clsx(classes.icon, classes.errorIcon)} />}
+              <Typography className={clsx(classes.passwordListItemText, {[classes.passwordListItemTextError]: !containDigits})}>Contains at least one number</Typography>
             </div>
             <div className={classes.passwordListItem}>
-              <CheckMarkIcon className={clsx(classes.icon, classes.successIcon)} />
-              <Typography className={clsx(classes.passwordListItemText, {[classes.passwordListItemTextError]: false})}>Is at least 10 characters long and not greater than 256 characters.</Typography>
+              {validLength ? <CheckMarkIcon className={clsx(classes.icon, classes.successIcon)} />
+                : <CloseIcon className={clsx(classes.icon, classes.errorIcon)} />}
+              <Typography className={clsx(classes.passwordListItemText, {[classes.passwordListItemTextError]: !validLength})}>Is at least 10 characters long and not greater than 256 characters.</Typography>
             </div>
           </TooltipContent>
         </ArrowPopper>
 
-        { showErr && (
-          <Typography
-            data-private
-            color="error"
-            component="div"
-            variant="h5"
-            className={classes.alertMsg}>
-            {PASSWORD_STRENGTH_ERROR}
-          </Typography>
-        )}
         { isAuthenticating ? <Spinner />
           : (
             <FilledButton

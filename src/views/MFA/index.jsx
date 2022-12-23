@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles, Typography } from '@material-ui/core';
-import { useHistory } from 'react-router-dom';
+import { useHistory, useLocation } from 'react-router-dom';
 import messageStore from '../../utils/messageStore';
 import { selectors } from '../../reducers';
 import InfoIcon from '../../components/icons/InfoIcon';
@@ -119,9 +119,12 @@ const Title = () => {
 export default function MfaVerify() {
   const history = useHistory();
   const dispatch = useDispatch();
-  const isMFAAuthRequired = useSelector(state => selectors.isMFAAuthRequired(state));
+  const location = useLocation();
   const isMFASetupIncomplete = useSelector(selectors.isMFASetupIncomplete);
   const sessionInfoResolved = useSelector(selectors.mfaSessionInfoStatus) === 'received';
+  const attemptedRoute = location.state?.attemptedRoute;
+  const isMFAAuthRequired = useSelector(selectors.isMFAAuthRequired);
+  const isUserAuthenticated = useSelector(selectors.isUserAuthenticated);
 
   useEffect(() => {
     dispatch(actions.auth.validateSession());
@@ -133,9 +136,11 @@ export default function MfaVerify() {
         history.push(getRoutePath('/myAccount/security'));
       } else if (!isMFAAuthRequired) {
         history.push(getRoutePath('/signin'));
+      } else if (isUserAuthenticated) {
+        history.push(attemptedRoute || '/');
       }
     }
-  }, [history, isMFAAuthRequired, isMFASetupIncomplete, sessionInfoResolved]);
+  }, [attemptedRoute, history, isMFAAuthRequired, isMFASetupIncomplete, isUserAuthenticated, sessionInfoResolved]);
 
   if (!sessionInfoResolved) return <Loader open><Spinner /></Loader>;
 
