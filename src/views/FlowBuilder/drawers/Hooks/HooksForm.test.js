@@ -269,18 +269,18 @@ describe('HooksForm test cases', () => {
         path: '/hooks',
         value: {},
       },
-      {
-        op: 'replace',
-        path: '/netsuite_da/hooks',
-        value: {
-          postMap: {},
-          postSubmit: {},
-          preMap: {
-            fileInternalId: 'internal_id',
-            function: 'preMapFunction',
-          },
-        },
-      },
+      // {
+      //   op: 'replace',
+      //   path: '/netsuite_da/hooks',
+      //   value: {
+      //     postMap: {},
+      //     postSubmit: {},
+      //     preMap: {
+      //       fileInternalId: 'internal_id',
+      //       function: 'preMapFunction',
+      //     },
+      //   },
+      // },
     ], {
       context: { flowId: 'flow_id' },
       asyncKey: 'form_key',

@@ -41,6 +41,7 @@ import {
   addLastExecutedAtSortableProp,
   shouldHaveUnassignedSection,
   getPageProcessorFromFlow,
+  getAllPageProcessors,
 } from '../utils/flows';
 import {
   PASSWORD_MASK,
@@ -5719,6 +5720,27 @@ selectors.resourceHasMappings = (state, importId) => {
   const { fields = [], lists = [] } = mappings || {};
 
   return !!(fields.length || lists.length);
+};
+
+selectors.flowHasMappings = (state, flowId) => {
+  const flow = selectors.resource(state, 'flows', flowId);
+
+  if (!flow) return false;
+
+  const pageProcessors = getAllPageProcessors(flow)?.filter(pp => pp?.type === 'import');
+  const imports = pageProcessors?.map(pp => pp._importId);
+
+  if (!imports?.length) return false;
+
+  let hasMapping = false;
+
+  imports.forEach(imp => {
+    if (selectors.resourceHasMappings(state, imp)) {
+      hasMapping = true;
+    }
+  });
+
+  return hasMapping;
 };
 
 selectors.mappingEditorNotification = (state, editorId) => {

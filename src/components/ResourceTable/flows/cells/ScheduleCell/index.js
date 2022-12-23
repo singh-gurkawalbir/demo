@@ -38,6 +38,9 @@ export default function ScheduleCell({flowId, name, actionProps, schedule}) {
   const classes = useStyles();
   const { allowSchedule, type } = (actionProps.flowAttributes[flowId] || {});
   const isSetupInProgress = useSelector(state => selectors.isFlowSetupInProgress(state, flowId));
+  const tooltipTitle = isSetupInProgress
+    ? messageStore('INCOMPLETE_FLOW_SCHEDULE_TOOLTIP')
+    : `${schedule ? 'Edit' : 'Add'} schedule`;
 
   if (!allowSchedule) {
     if (type !== 'Scheduled') {
@@ -52,7 +55,7 @@ export default function ScheduleCell({flowId, name, actionProps, schedule}) {
       <div className={clsx(!!schedule && classes.circle)}>
         <IconButtonWithTooltip
           tooltipProps={{
-            title: isSetupInProgress ? messageStore('INCOMPLETE_FLOW_SCHEDULE_TOOLTIP') : 'Change schedule',
+            title: tooltipTitle,
             placement: 'bottom',
           }}
           className={{[classes.disabled]: isSetupInProgress}}

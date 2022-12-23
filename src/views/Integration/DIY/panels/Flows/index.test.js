@@ -281,7 +281,7 @@ describe('Flows Panel UI tests', () => {
     const props = {integrationId: '62d826bf5645756e8300beac', sectionId: '6257b33a722b313acd1df1bf', conn: '5357b33a722b313acd1df1bf'};
 
     initFlowsPanel(props);
-    const element = document.querySelector('[title="Edit mappings"]');
+    const element = document.querySelector('[title="Add mapping"]');
 
     userEvent.click(element);
     expect(screen.getByText('Mapping Drawer')).toBeInTheDocument();       // mocked component//
