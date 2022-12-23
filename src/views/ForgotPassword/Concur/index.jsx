@@ -28,7 +28,6 @@ const useStyles = makeStyles(theme => ({
   },
   link: {
     paddingLeft: 4,
-    color: theme.palette.warning.main,
   },
   signinWrapper: {
     background: theme.palette.background.paper,
@@ -53,12 +52,13 @@ const useStyles = makeStyles(theme => ({
     },
   },
   alertMsg: {
-    width: '300px',
-    margin: '0 auto 15px auto',
+    width: '100%',
     fontSize: 14,
     textAlign: 'left',
     display: 'flex',
     alignItems: 'flex-start',
+    justifyContent: 'center',
+    marginBottom: theme.spacing(2),
     lineHeight: `${theme.spacing(2)}px`,
     '& > svg': {
       fill: theme.palette.error.main,
@@ -117,6 +117,10 @@ const useStyles = makeStyles(theme => ({
       padding: '0 15px',
     },
   },
+  forgotPasswordEmail: {
+    marginTop: theme.spacing(-2),
+    marginBottom: theme.spacing(3),
+  },
 }));
 
 export default function ConcurForgotPassword(props) {
@@ -150,7 +154,7 @@ export default function ConcurForgotPassword(props) {
             Forgot your password?
           </Typography>
           {email && (
-          <Typography variant="h6" className={classes.title}>
+          <Typography variant="h4" className={classes.forgotPasswordEmail}>
             {email}
           </Typography>
           )}
