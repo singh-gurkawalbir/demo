@@ -65,6 +65,7 @@ const form = {
     { visible,
       disabled,
       required,
+      touched,
       isValid,
       errorMessages }
   ) =>
@@ -75,6 +76,7 @@ const form = {
         visible,
         disabled,
         required,
+        touched,
         isValid,
         errorMessages,
       },
