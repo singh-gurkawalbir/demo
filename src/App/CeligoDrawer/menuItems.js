@@ -191,7 +191,7 @@ export default function menuItems({
     let toolsSectionMenuItems = ['Reports'];
 
     if (isDeveloper) {
-      toolsSectionMenuItems = [...toolsSectionMenuItems, 'Dev playground'];
+      toolsSectionMenuItems = [...toolsSectionMenuItems, 'Developer playground'];
     }
 
     items[toolsSubSectIndex].children = items[toolsSubSectIndex].children.filter(i => toolsSectionMenuItems.includes(i.label));
