@@ -1,9 +1,9 @@
 import TextField from '@material-ui/core/TextField';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
-import React, { useState, useCallback, useEffect} from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { Typography} from '@material-ui/core';
-import { useLocation, Link, useHistory} from 'react-router-dom';
+import { useLocation, Link, useHistory } from 'react-router-dom';
 import clsx from 'clsx';
 import actions from '../../actions';
 import { selectors } from '../../reducers';
@@ -195,11 +195,10 @@ export default function SignIn({dialogOpen, className}) {
   };
   useEffect(() => {
     if (isMFAAuthRequired) {
-      history.push(getRoutePath('/mfa/verify'));
+      history.push(getRoutePath('/mfa/verify'), location.state);
     }
-  }, [history, isMFAAuthRequired]);
-  const attemptedRoute =
-      location && location.state && location.state.attemptedRoute;
+  }, [history, isMFAAuthRequired, location.state]);
+  const attemptedRoute = location.state?.attemptedRoute;
 
   return (
   // user's email can be listed here ...type passwords is anyways redacted by logrocket
