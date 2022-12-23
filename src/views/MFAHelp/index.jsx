@@ -34,7 +34,7 @@ export default function MfaHelp() {
       <UserSignInPage
         pageTitle="Need help authenticating?"
         pageSubHeading={<Label />}
-        footerLinkLabel='Don"t have an account?'
+        footerLinkLabel="Don't have an account?"
         footerLinkText="Sign up"
         footerLink="signup"
     />
