@@ -95,7 +95,7 @@ export default function menuItems({
           routeProps: getRoutePath('/reports'),
         },
         {
-          label: 'Dev playground',
+          label: 'Developer playground',
           Icon: EditorsPlaygroundIcon,
           path: '/playground',
         },
@@ -191,7 +191,7 @@ export default function menuItems({
     let toolsSectionMenuItems = ['Reports'];
 
     if (isDeveloper) {
-      toolsSectionMenuItems = [...toolsSectionMenuItems, 'Dev playground'];
+      toolsSectionMenuItems = [...toolsSectionMenuItems, 'Developer playground'];
     }
 
     items[toolsSubSectIndex].children = items[toolsSubSectIndex].children.filter(i => toolsSectionMenuItems.includes(i.label));
