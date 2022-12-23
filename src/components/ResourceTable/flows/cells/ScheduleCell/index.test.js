@@ -61,7 +61,7 @@ describe('Shecdule cell UI test cases', () => {
   test('should show tooltip for configure schedule', () => {
     initScheduleCell({flowAttributes: {someflowId: {allowSchedule: true, type: 'Scheduled'}}});
 
-    expect(screen.getByTitle('Change schedule')).toBeInTheDocument();
+    expect(screen.getByTitle('Add schedule')).toBeInTheDocument();
     const button = screen.getByRole('button');
 
     expect(button).toHaveAttribute('href', '/integrations/integration_id/flows/someflowId/schedule');
