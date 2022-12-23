@@ -1,7 +1,7 @@
 import TextField from '@material-ui/core/TextField';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
-import React, { useState, useCallback} from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { Typography} from '@material-ui/core';
 import { useLocation, useHistory} from 'react-router-dom';
 import clsx from 'clsx';
@@ -145,10 +145,12 @@ export default function SignIn({dialogOpen, className}) {
     reInitializeSession();
   };
 
-  if (isMFAAuthRequired) {
-    history.push(getRoutePath('/mfa/verify'));
-  }
-  const attemptedRoute = location && location.state && location.state.attemptedRoute;
+  useEffect(() => {
+    if (isMFAAuthRequired) {
+      history.push(getRoutePath('/mfa/verify'), location.state);
+    }
+  }, [history, isMFAAuthRequired, location.state]);
+  const attemptedRoute = location.state?.attemptedRoute;
 
   return (
   // user's email can be listed here ...type passwords is anyways redacted by logrocket
@@ -179,7 +181,7 @@ export default function SignIn({dialogOpen, className}) {
         />
 
         <ForgotPassworLink email={email} />
-        { showError && error && (
+        {!isAuthenticating && showError && error && (
           <Typography
             data-private
             color="error"
