@@ -56,6 +56,7 @@ const useStyles = makeStyles(theme => ({
     fontSize: '29px',
     lineHeight: `${theme.spacing(5)}px`,
     marginBottom: theme.spacing(2),
+    textAlign: 'center',
   },
   subHeading: {
     marginBottom: theme.spacing(2),
