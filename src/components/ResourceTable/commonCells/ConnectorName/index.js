@@ -19,7 +19,11 @@ export default function ConnectorName({ resource }) {
   const out = useMemo(() => {
     if (type === 'simple') return 'Data loader';
     if (_httpConnectorId) {
-      return getHttpConnector(_httpConnectorId)?.name;
+      const httpConnector = getHttpConnector(_httpConnectorId);
+
+      if (httpConnector) {
+        return httpConnector.name;
+      }
     }
 
     if (type !== 'rdbms') {
