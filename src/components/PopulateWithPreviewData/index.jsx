@@ -77,7 +77,7 @@ export default function PopulateWithPreviewData({
     const previewData = [responseMappingUtil.getResponseMappingDefaultInput(resourceType, {}, adaptorType)];
 
     dispatch(actions.form.fieldChange(formKey)(fieldId, previewData));
-    enquesnackbar({message: messageStore('POPULATE_WITH_PREVIEW_DATA_SUCCESS', {fieldName})});
+    enquesnackbar({message: messageStore('POPULATE_WITH_PREVIEW_DATA_SUCCESS', {fieldName, dataType: 'sample data'})});
   }, [adaptorType, dispatch, enquesnackbar, fieldId, fieldName, formKey, resourceType]);
 
   const handleClick = useCallback(e => {
@@ -100,7 +100,7 @@ export default function PopulateWithPreviewData({
   useEffect(() => {
     if (isPreviewRequested && resourceSampleDataStatus === 'error') {
       setIsPreviewRequested(false);
-      enquesnackbar({message: messageStore('POPULATE_WITH_PREVIEW_DATA_FAILED', {fieldName}), variant: 'error'});
+      enquesnackbar({message: messageStore('POPULATE_WITH_PREVIEW_DATA_FAILED', {fieldName: fieldName?.toLowerCase()}), variant: 'error'});
     }
   }, [enquesnackbar, fieldName, isPreviewRequested, resourceSampleDataStatus]);
 
@@ -114,7 +114,7 @@ export default function PopulateWithPreviewData({
         updateMockOutputContent(previewData);
       }
       dispatch(actions.form.fieldChange(formKey)(fieldId, previewData));
-      enquesnackbar({message: messageStore('POPULATE_WITH_PREVIEW_DATA_SUCCESS', {fieldName})});
+      enquesnackbar({message: messageStore('POPULATE_WITH_PREVIEW_DATA_SUCCESS', {fieldName, dataType: 'preview data'})});
     }
   }, [dispatch, enquesnackbar, fieldId, fieldName, formKey, isImport, isPreviewRequested, previewStageDataList, resourceSampleDataStatus, resourceType, updateMockOutputContent]);
 

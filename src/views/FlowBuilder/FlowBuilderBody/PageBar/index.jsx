@@ -169,6 +169,7 @@ const PageBarChildren = ({integrationId, flowId}) => {
   const isUserInErrMgtTwoDotZero = useSelector(state =>
     selectors.isOwnerUserInErrMgtTwoDotZero(state)
   );
+  const isSetupInProgress = useSelector(state => selectors.isFlowSetupInProgress(state, flowId));
 
   const allowSchedule = useSelectorMemo(selectors.mkFlowAllowsScheduling, flowId);
 
@@ -189,7 +190,6 @@ const PageBarChildren = ({integrationId, flowId}) => {
   );
 
   const flowDetails = useSelectorMemo(selectors.mkFlowDetails, flowId, match.params?.childId);
-  const isSetupInProgress = useSelector(state => selectors.isFlowSetupInProgress(state, flowId));
   const isDataLoaderFlow = useSelector(state => selectors.isDataLoaderFlow(state, flowId));
   const isMonitorLevelAccess = useSelector(state =>
     selectors.isFormAMonitorLevelAccess(state, integrationId)
@@ -218,7 +218,7 @@ const PageBarChildren = ({integrationId, flowId}) => {
       )}
 
       <RunFlowButtonWrapper flowId={flowId} />
-      {allowSchedule && (
+      {(isNewFlow || isSetupInProgress || allowSchedule) && (
         <IconButtonWithTooltip
           tooltipProps={isSetupInProgress ? tooltipScheduleFlowIncomplete : tooltipSchedule}
           disabled={isNewFlow || isSetupInProgress}

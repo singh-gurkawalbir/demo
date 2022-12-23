@@ -112,13 +112,9 @@ href="/marketplace"><u>Check out our Marketplace</u></a> to jumpstart your  inte
   // #endregion
 
   // #region populate with preview data
-  POPULATE_WITH_PREVIEW_DATA_FAILED: '{{fieldName}} field could not be populated.',
-  POPULATE_WITH_PREVIEW_DATA_SUCCESS: '{{fieldName}} field successfully populated with preview data.',
-  POPULATE_WITH_PREVIEW_DATA_DISABLED: 'Bring your connection online to enable this action.',
-  // #endregion
-
-  // #region populate with mock response
-  POPULATE_WITH_MOCK_RESPONSE_SUCCESS: 'Mock response field successfully populated with mock response.',
+  POPULATE_WITH_PREVIEW_DATA_FAILED: 'Failed to generate or populate {{fieldName}} data.',
+  POPULATE_WITH_PREVIEW_DATA_SUCCESS: '{{fieldName}} field successfully populated with {{dataType}}.',
+  POPULATE_WITH_PREVIEW_DATA_DISABLED: 'Connection must be online to enable this action.',
   // #endregion
 
   // #region shopify landing page
