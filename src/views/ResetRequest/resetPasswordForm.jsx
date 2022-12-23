@@ -16,12 +16,13 @@ import getRoutePath from '../../utils/routePaths';
 import RawHtml from '../../components/RawHtml';
 
 const useStyles = makeStyles(theme => ({
+  /* Have to update the CSS */
   submit: {
     width: '100%',
     borderRadius: 4,
     height: 38,
     fontSize: theme.spacing(2),
-    marginTop: theme.spacing(1),
+    marginTop: 30,
   },
   editableFields: {
     textAlign: 'center',
@@ -34,6 +35,20 @@ const useStyles = makeStyles(theme => ({
   },
   textField: {
     width: '100%',
+    minWidth: '100%',
+    marginBottom: theme.spacing(1),
+    position: 'relative',
+    border: '1px solid',
+    borderColor: theme.palette.secondary.lightest,
+    paddingRight: 4,
+    '&:hover': {
+      borderColor: theme.palette.primary.main,
+    },
+    '& >.MuiFilledInput-root': {
+      '& > input': {
+        border: 'none',
+      },
+    },
   },
   alertMsg: {
     fontSize: 12,
@@ -56,7 +71,7 @@ const useStyles = makeStyles(theme => ({
     textAlign: 'right',
     marginBottom: theme.spacing(3),
   },
-  icon: {
+  iconPassword: {
     cursor: 'pointer',
   },
 }));
@@ -135,9 +150,10 @@ export default function ResetPassword() {
           data-private
           data-test="password"
           id="password"
-          variant="outlined"
+          variant="filled"
+          required
           type={showPassword ? 'text' : 'password'}
-          placeholder="Password"
+          placeholder="Password*"
           onChange={handleOnChangePassword}
           className={classes.textField}
           InputProps={{
@@ -147,12 +163,12 @@ export default function ResetPassword() {
                     {showPassword ? (
                       <ShowContentIcon
                         onClick={handleClickShowPassword}
-                        className={classes.icon}
+                        className={classes.iconPassword}
                         onMouseDown={handleMouseDownPassword} />
                     )
                       : (
                         <HideContentIcon
-                          className={classes.icon}
+                          className={classes.iconPassword}
                           onClick={handleClickShowPassword}
                           onMouseDown={handleMouseDownPassword} />
                       )}
@@ -188,6 +204,7 @@ export default function ResetPassword() {
           href="/signin"
           data-test="cancel"
           type="cancel"
+          color="primary"
           className={classes.submit}
           value="Cancel">
           Cancel

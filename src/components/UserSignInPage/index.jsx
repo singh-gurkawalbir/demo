@@ -38,9 +38,7 @@ const useStyles = makeStyles(theme => ({
     justifyContent: 'center',
     flexDirection: 'column',
     position: 'relative',
-
     background: theme.palette.background.paper,
-
   },
   userSignInLeftContainerForm: {
     width: '300px',
@@ -68,7 +66,11 @@ const useStyles = makeStyles(theme => ({
   alertMsg: {
     color: theme.palette.error.dark,
   },
-
+  userSignInRightContainer: {
+    [theme.breakpoints.down('sm')]: {
+      display: 'none',
+    },
+  },
 }));
 export default function UserSignInPage(props) {
   const {

@@ -33,6 +33,8 @@ const useStyles = makeStyles(theme => ({
   },
   textField: {
     width: '100%',
+    background: theme.palette.background.paper,
+    marginBottom: 10,
   },
   alertMsg: {
     fontSize: 12,
@@ -127,7 +129,7 @@ export default function ResetPassword() {
           data-private
           data-test="password"
           id="password"
-          variant="outlined"
+          variant="filled"
           type={showPassword ? 'text' : 'password'}
           placeholder="Password"
           onChange={handleOnChangePassword}
