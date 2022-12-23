@@ -9,6 +9,7 @@ import actions from '../../../actions';
 import messageStore from '../../../utils/messageStore';
 import getImageUrl from '../../../utils/image';
 
+/* Todo: (Azhar) Concur form should be in a separate component */
 const useStyles = makeStyles(theme => ({
   wrapper: {
     margin: '0 auto',
