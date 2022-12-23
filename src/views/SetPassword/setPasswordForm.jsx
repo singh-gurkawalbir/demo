@@ -68,11 +68,6 @@ const useStyles = makeStyles(theme => ({
       marginRight: 5,
     },
   },
-  forgotPass: {
-    color: theme.palette.warning.main,
-    textAlign: 'right',
-    marginBottom: theme.spacing(3),
-  },
 
   redText: {
     color: theme.palette.error.dark,

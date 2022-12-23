@@ -43,7 +43,7 @@ const useStyles = makeStyles(theme => ({
     width: '100%',
     display: 'flex',
     alignItems: 'flex-start',
-    marginTop: theme.spacing(-2),
+    marginTop: theme.spacing(0),
     marginBottom: 0,
     lineHeight: `${theme.spacing(2)}px`,
     '& > svg': {
@@ -154,8 +154,6 @@ export default function ResetPassword() {
             ref: inputFieldRef,
           }}
             />
-
-        <div className={classes.forgotPass} />
         { showErr && (
           <Typography
             data-private

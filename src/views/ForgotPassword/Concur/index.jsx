@@ -11,14 +11,18 @@ import getImageUrl from '../../../utils/image';
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
-    maxWidth: '770px',
     margin: '0 auto',
     position: 'relative',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '100%',
+    height: '100vh',
+    background: theme.palette.background.paper,
   },
   logo: {
     margin: '0 0 40px 0',
     '& > img': {
-      height: '50px',
       width: 'auto',
     },
   },
@@ -28,17 +32,18 @@ const useStyles = makeStyles(theme => ({
   },
   signinWrapper: {
     background: theme.palette.background.paper,
-    width: '100%',
+    width: '770px',
+    height: '100vh',
     border: '0px none',
-    height: '679px',
     textAlign: 'center',
     position: 'relative',
     zIndex: 1,
     overflow: 'inherit !important',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   signinWrapperContent: {
-    width: '2500px',
-    height: '679px',
     display: 'table-cell',
     verticalAlign: 'middle',
     padding: '10px 0',

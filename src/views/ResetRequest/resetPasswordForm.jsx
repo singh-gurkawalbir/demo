@@ -178,8 +178,6 @@ export default function ResetPassword() {
             ref: inputFieldRef,
           }}
             />
-
-        <div className={classes.forgotPass} />
         { showErr && (
           <Typography
             data-private

@@ -41,11 +41,6 @@ const useStyles = makeStyles(theme => ({
     paddingLeft: 4,
     color: theme.palette.primary.dark,
   },
-  forgotPass: {
-    color: theme.palette.primary.dark,
-    textAlign: 'right',
-    marginBottom: theme.spacing(3),
-  },
   googleBtn: {
     borderRadius: 4,
     width: '100%',
