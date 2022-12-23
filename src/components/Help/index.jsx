@@ -43,6 +43,7 @@ export default function Help({ className, helpKey, helpText, escapeUnsecuredDoma
     [anchorEl]
   );
   const handleClose = useCallback(event => {
+    event.stopPropagation();
     const isPopperSecondParent = event.target.parentElement?.parentElement?.dataset?.test === 'arrowpopper';
     const isPopperthirdParent = event.target.parentElement?.parentElement?.parentElement?.dataset?.test === 'arrowpopper';
 
@@ -73,6 +74,8 @@ export default function Help({ className, helpKey, helpText, escapeUnsecuredDoma
         placement={placement}
         data-test="arrowpopper"
         id="helpBubble"
+        onClick={e => { e.stopPropagation(); }}
+        onClose={e => { e.stopPropagation(); }}
         open={open}
         disablePortal={disablePortal}
         popperRef={popperRef}
