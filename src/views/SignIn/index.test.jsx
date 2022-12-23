@@ -88,7 +88,7 @@ describe('Signin', () => {
 
     expect(signinHeadingNode).toBeInTheDocument();
     const email = screen.getByRole('textbox', {id: 'email'});
-    const password = screen.getByPlaceholderText('Password');
+    const password = screen.getByPlaceholderText('Password*');
 
     expect(email).toBeInTheDocument();
     expect(password).toBeInTheDocument();

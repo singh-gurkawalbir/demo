@@ -86,7 +86,7 @@ describe('ForgotPasswordWrapper', () => {
     const forgotpasswordHeadingNode = screen.getByRole('heading', {name: 'Forgot your password?'});
 
     expect(forgotpasswordHeadingNode).toBeInTheDocument();
-    const email = screen.getByPlaceholderText('Email');
+    const email = screen.getByPlaceholderText('Email*');
 
     expect(email).toBeInTheDocument();
 

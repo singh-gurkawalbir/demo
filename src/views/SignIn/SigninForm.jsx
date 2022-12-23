@@ -210,7 +210,8 @@ export default function SignIn({dialogOpen, className}) {
           id="email"
           type="email"
           variant="filled"
-          placeholder="Email"
+          placeholder="Email*"
+          required
           value={dialogOpen ? userEmail : email}
           onChange={handleOnChangeEmail}
           className={classes.textField}
@@ -222,7 +223,8 @@ export default function SignIn({dialogOpen, className}) {
           id="password"
           variant="filled"
           type="password"
-          placeholder="Password"
+          required
+          placeholder="Password*"
           className={classes.textField}
             />
 

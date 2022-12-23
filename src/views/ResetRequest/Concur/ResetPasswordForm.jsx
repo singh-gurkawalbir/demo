@@ -33,6 +33,8 @@ const useStyles = makeStyles(theme => ({
   },
   textField: {
     width: '100%',
+    background: theme.palette.background.paper,
+    marginBottom: 10,
   },
   alertMsg: {
     fontSize: 12,
@@ -41,7 +43,7 @@ const useStyles = makeStyles(theme => ({
     width: '100%',
     display: 'flex',
     alignItems: 'flex-start',
-    marginTop: theme.spacing(-2),
+    marginTop: theme.spacing(0),
     marginBottom: 0,
     lineHeight: `${theme.spacing(2)}px`,
     '& > svg': {
@@ -127,7 +129,7 @@ export default function ResetPassword() {
           data-private
           data-test="password"
           id="password"
-          variant="outlined"
+          variant="filled"
           type={showPassword ? 'text' : 'password'}
           placeholder="Password"
           onChange={handleOnChangePassword}
@@ -152,8 +154,6 @@ export default function ResetPassword() {
             ref: inputFieldRef,
           }}
             />
-
-        <div className={classes.forgotPass} />
         { showErr && (
           <Typography
             data-private

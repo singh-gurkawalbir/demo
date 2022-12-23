@@ -41,11 +41,6 @@ const useStyles = makeStyles(theme => ({
     paddingLeft: 4,
     color: theme.palette.primary.dark,
   },
-  forgotPass: {
-    color: theme.palette.primary.dark,
-    textAlign: 'right',
-    marginBottom: theme.spacing(3),
-  },
   googleBtn: {
     borderRadius: 4,
     width: '100%',
@@ -136,7 +131,8 @@ export default function ForgotPassword({setShowError, email}) {
           id="email"
           type="email"
           variant="filled"
-          placeholder="Email"
+          placeholder="Email*"
+          required
           value={userEmail}
           onChange={handleOnChangeEmail}
           className={classes.textField}
