@@ -4,16 +4,20 @@ import { makeStyles } from '@material-ui/core/styles';
 import React, { useState, useCallback, useRef, useEffect} from 'react';
 import { Typography, InputAdornment} from '@material-ui/core';
 import { useParams, useHistory} from 'react-router-dom';
+import clsx from 'clsx';
 import actions from '../../actions';
 import { selectors } from '../../reducers';
-import { AUTH_FAILURE_MESSAGE, PASSWORD_STRENGTH_ERROR } from '../../constants';
+import { AUTH_FAILURE_MESSAGE } from '../../constants';
 import Spinner from '../../components/Spinner';
 import { FilledButton, TextButton } from '../../components/Buttons';
-
 import ShowContentIcon from '../../components/icons/ShowContentIcon';
 import HideContentIcon from '../../components/icons/HideContentIcon';
 import getRoutePath from '../../utils/routePaths';
 import RawHtml from '../../components/RawHtml';
+import ArrowPopper from '../../components/ArrowPopper';
+import TooltipContent from '../../components/TooltipContent';
+import CheckMarkIcon from '../../components/icons/CheckmarkIcon';
+import CloseIcon from '../../components/icons/CloseIcon';
 
 const useStyles = makeStyles(theme => ({
   submit: {
@@ -21,7 +25,7 @@ const useStyles = makeStyles(theme => ({
     borderRadius: 4,
     height: 38,
     fontSize: theme.spacing(2),
-    marginTop: theme.spacing(1),
+    marginTop: 30,
   },
   editableFields: {
     textAlign: 'center',
@@ -34,6 +38,20 @@ const useStyles = makeStyles(theme => ({
   },
   textField: {
     width: '100%',
+    minWidth: '100%',
+    marginBottom: theme.spacing(1),
+    position: 'relative',
+    border: '1px solid',
+    borderColor: theme.palette.secondary.lightest,
+    paddingRight: 4,
+    '&:hover': {
+      borderColor: theme.palette.primary.main,
+    },
+    '& >.MuiFilledInput-root': {
+      '& > input': {
+        border: 'none',
+      },
+    },
   },
   alertMsg: {
     fontSize: 12,
@@ -42,7 +60,6 @@ const useStyles = makeStyles(theme => ({
     width: '100%',
     display: 'flex',
     alignItems: 'flex-start',
-    marginTop: theme.spacing(-2),
     marginBottom: theme.spacing(2),
     lineHeight: `${theme.spacing(2)}px`,
     '& > svg': {
@@ -51,13 +68,54 @@ const useStyles = makeStyles(theme => ({
       marginRight: 5,
     },
   },
+
+  redText: {
+    color: theme.palette.error.dark,
+  },
+  icon: {
+    border: '1px solid',
+    borderRadius: '50%',
+    fontSize: 18,
+    marginRight: theme.spacing(0.5),
+  },
+  successIcon: {
+    color: theme.palette.success.main,
+    borderColor: theme.palette.success.main,
+  },
+  errorIcon: {
+    color: theme.palette.error.dark,
+    borderColor: theme.palette.error.dark,
+  },
+  arrowPopperPassword: {
+    position: 'absolute',
+    left: '50px !important',
+    top: '0px !important',
+    [theme.breakpoints.down('sm')]: {
+      display: 'none',
+    },
+  },
+  passwordStrongSteps: {
+    [theme.breakpoints.up('md')]: {
+      display: 'none',
+    },
+  },
+  passwordListItem: {
+    display: 'flex',
+    marginBottom: theme.spacing(1),
+  },
+  setPasswordForm: {
+    position: 'relative',
+  },
+  passwordListItemTextError: {
+    color: theme.palette.error.dark,
+  },
+  iconPassword: {
+    cursor: 'pointer',
+  },
   forgotPass: {
     color: theme.palette.warning.main,
     textAlign: 'right',
     marginBottom: theme.spacing(3),
-  },
-  icon: {
-    cursor: 'pointer',
   },
 }));
 
@@ -68,8 +126,13 @@ export default function ResetPassword() {
   // const showError = false;
   const history = useHistory();
   const classes = useStyles();
+  const [anchorEl, setAnchorEl] = useState(null);
+  const open = !!anchorEl;
   const [showErr, setShowErr] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [containDigits, setContainDigits] = useState(false);
+  const [containCapitalLetter, setContainCapitalLetter] = useState(false);
+  const [validLength, setValidLength] = useState(false);
   const handleClickShowPassword = () => setShowPassword(!showPassword);
   const handleMouseDownPassword = () => setShowPassword(!showPassword);
   const handleResetPassword = useCallback(password => {
@@ -79,6 +142,13 @@ export default function ResetPassword() {
   const showErrMsg = isResetPasswordStatus === 'failed';
 
   const resetPasswordMsg = useSelector(state => selectors.requestResetPasswordMsg(state));
+
+  const handleFocusIn = e => {
+    setAnchorEl(e.currentTarget);
+  };
+  const handleFocusOut = () => {
+    setAnchorEl(null);
+  };
 
   useEffect(() => {
     if (isResetPasswordStatus === 'success') {
@@ -99,14 +169,13 @@ export default function ResetPassword() {
   });
 
   const handleOnChangePassword = useCallback(e => {
-    const regex = /^(?=.*\d)(?=.*[!@#$%^&*])(?=.*[a-z])(?=.*[A-Z]).{8,}$/;
-    const regexTest = regex.test(e.target.value);
+    const password = e.target.value;
+    const isValid = /[A-Z]/.test(password) && /\d/.test(password) && password.length > 9 && password.length < 256;
 
-    if (!regexTest) {
-      setShowErr(true);
-    } else {
-      setShowErr(false);
-    }
+    setContainCapitalLetter(/[A-Z]/.test(password));
+    setContainDigits(/\d/.test(password));
+    setValidLength(password.length > 9 && password.length < 256);
+    setShowErr(!isValid);
   }, []);
 
   const handleOnSubmit = useCallback(e => {
@@ -135,11 +204,14 @@ export default function ResetPassword() {
           data-private
           data-test="password"
           id="password"
-          variant="outlined"
+          variant="filled"
+          required
           type={showPassword ? 'text' : 'password'}
-          placeholder="Password"
+          placeholder="Password*"
           onChange={handleOnChangePassword}
           className={classes.textField}
+          onFocus={handleFocusIn}
+          onBlur={handleFocusOut}
           InputProps={{
             endAdornment: (true) &&
               (
@@ -147,12 +219,12 @@ export default function ResetPassword() {
                     {showPassword ? (
                       <ShowContentIcon
                         onClick={handleClickShowPassword}
-                        className={classes.icon}
+                        className={classes.iconPassword}
                         onMouseDown={handleMouseDownPassword} />
                     )
                       : (
                         <HideContentIcon
-                          className={classes.icon}
+                          className={classes.iconPassword}
                           onClick={handleClickShowPassword}
                           onMouseDown={handleMouseDownPassword} />
                       )}
@@ -162,18 +234,33 @@ export default function ResetPassword() {
             ref: inputFieldRef,
           }}
             />
-
-        <div className={classes.forgotPass} />
-        { showErr && (
-          <Typography
-            data-private
-            color="error"
-            component="div"
-            variant="h5"
-            className={classes.alertMsg}>
-            {PASSWORD_STRENGTH_ERROR}
-          </Typography>
-        )}
+        <ArrowPopper
+          id="pageInfo"
+          open={open}
+          anchorEl={anchorEl}
+          placement="right"
+          classes={{ popper: classes.arrowPopperPassword }}
+          preventOverflow>
+          <TooltipContent className={classes.infoText}>
+            <Typography className={clsx(classes.passwordListItem, {[classes.redText]: showErr})}>To help protect your account, choose a password that you haven’t used before.</Typography>
+            <Typography className={classes.passwordListItem} >Make sure your password:</Typography>
+            <div className={classes.passwordListItem}>
+              {containCapitalLetter ? <CheckMarkIcon className={clsx(classes.icon, classes.successIcon)} />
+                : <CloseIcon className={clsx(classes.icon, classes.errorIcon)} />}
+              <Typography className={clsx(classes.passwordListItemText, {[classes.passwordListItemTextError]: !containCapitalLetter})}>Contains at least one capital letter</Typography>
+            </div>
+            <div className={classes.passwordListItem}>
+              {containDigits ? <CheckMarkIcon className={clsx(classes.icon, classes.successIcon)} />
+                : <CloseIcon className={clsx(classes.icon, classes.errorIcon)} />}
+              <Typography className={clsx(classes.passwordListItemText, {[classes.passwordListItemTextError]: !containDigits})}>Contains at least one number</Typography>
+            </div>
+            <div className={classes.passwordListItem}>
+              {validLength ? <CheckMarkIcon className={clsx(classes.icon, classes.successIcon)} />
+                : <CloseIcon className={clsx(classes.icon, classes.errorIcon)} />}
+              <Typography className={clsx(classes.passwordListItemText, {[classes.passwordListItemTextError]: !validLength})}>Is at least 10 characters long and not greater than 256 characters.</Typography>
+            </div>
+          </TooltipContent>
+        </ArrowPopper>
         { isAuthenticating ? <Spinner />
           : (
             <FilledButton
@@ -188,6 +275,7 @@ export default function ResetPassword() {
           href="/signin"
           data-test="cancel"
           type="cancel"
+          color="primary"
           className={classes.submit}
           value="Cancel">
           Cancel
