@@ -246,6 +246,7 @@ export default function ConnectorInstallation() {
   useEffect(() => {
     if (isSetupComplete) {
       // redirect to integration Settings
+      // TODO: move this to data layer
       dispatch(actions.resource.request('integrations', integrationId));
       dispatch(actions.resource.requestCollection('flows', undefined, undefined, integrationId));
       dispatch(actions.resource.requestCollection('exports', undefined, undefined, integrationId));
@@ -253,6 +254,7 @@ export default function ConnectorInstallation() {
       dispatch(actions.resource.requestCollection('imports', undefined, undefined, integrationId));
       dispatch(actions.resource.requestCollection('connections', undefined, undefined, integrationId));
       dispatch(actions.resource.requestCollection('asynchelpers', undefined, undefined, integrationId));
+      dispatch(actions.resource.requestCollection('scripts'));
 
       if (mode === 'settings') {
         if (

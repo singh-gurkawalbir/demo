@@ -1,20 +1,10 @@
 /* eslint-disable valid-typeof */
 import sizeof from 'object-sizeof';
 import errorMessageStore from '../errorStore';
-import { unwrapExportFileSampleData } from '../sampleData';
+import { isValidCanonicalFormForExportData, isValidCanonicalFormForImportResponse, unwrapExportFileSampleData } from '../sampleData';
 import { safeParse } from '../string';
 
 const MAX_SIZE_IN_BYTES = 1000000;
-
-const importResponseCannonicalFormatFieldTypes = {
-  id: 'string',
-  errors: 'object',
-  ignored: 'boolean',
-  statusCode: 'number',
-  dataURI: 'string',
-  _json: 'object',
-  _headers: 'object',
-};
 
 export const validateMockOutputField = value => {
   if (value === '') return;
@@ -29,15 +19,13 @@ export const validateMockOutputField = value => {
     return errorMessageStore('MOCK_OUTPUT_SIZE_EXCEED');
   }
 
-  const unwrappedMockData = unwrapExportFileSampleData(jsonValue);
-
   // not in canonical format
-  if (!unwrappedMockData) {
+  if (!isValidCanonicalFormForExportData(jsonValue)) {
     return errorMessageStore('MOCK_OUTPUT_INVALID_FORMAT');
   }
 
   // more than 10 records
-  if (unwrappedMockData.length > 10) {
+  if (unwrapExportFileSampleData(jsonValue)?.length > 10) {
     return errorMessageStore('MOCK_OUTPUT_NUM_RECORDS_EXCEED');
   }
 };
@@ -56,22 +44,9 @@ export const validateMockResponseField = value => {
   }
 
   // not in canonical format
-  if (!Array.isArray(jsonValue)) {
+  if (!isValidCanonicalFormForImportResponse(jsonValue)) {
     return errorMessageStore('MOCK_RESPONSE_INVALID_FORMAT');
   }
-
-  let error;
-
-  jsonValue.forEach(mockResponse => {
-    Object.keys(mockResponse).forEach(key => {
-      if (!importResponseCannonicalFormatFieldTypes[key] ||
-        typeof mockResponse[key] !== importResponseCannonicalFormatFieldTypes[key]) {
-        error = errorMessageStore('MOCK_RESPONSE_INVALID_FORMAT');
-      }
-    });
-  });
-
-  return error;
 };
 
 export const getMockOutputFromResource = resource => {
