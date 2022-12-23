@@ -57,7 +57,6 @@ const useStyles = makeStyles(theme => ({
     width: '100%',
     display: 'flex',
     alignItems: 'flex-start',
-    marginTop: theme.spacing(-2),
     marginBottom: theme.spacing(2),
     lineHeight: `${theme.spacing(2)}px`,
     '& > svg': {
@@ -114,7 +113,7 @@ export default function ResetPassword() {
   });
 
   const handleOnChangePassword = useCallback(e => {
-    const regex = /^(?=.*\d)(?=.*[!@#$%^&*])(?=.*[a-z])(?=.*[A-Z]).{8,}$/;
+    const regex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}$/;
     const regexTest = regex.test(e.target.value);
 
     if (!regexTest) {

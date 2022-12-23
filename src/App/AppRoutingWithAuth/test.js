@@ -321,7 +321,7 @@ describe('AppRoutingWith authentication redirection behavior', () => {
     );
 
     expect(history.location.pathname).toBe(getRoutePath('signin'));
-    expect(getByPlaceholderText('Email')).toBeTruthy();
-    expect(getByPlaceholderText('Password')).toBeTruthy();
+    expect(getByPlaceholderText('Email*')).toBeTruthy();
+    expect(getByPlaceholderText('Password*')).toBeTruthy();
   });
 });
