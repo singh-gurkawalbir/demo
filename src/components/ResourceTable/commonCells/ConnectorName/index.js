@@ -46,6 +46,7 @@ export default function ConnectorName({ resource }) {
     }
 
     return 'RDBMS';
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [type, resourceType, rdbmsType, assistant, rdbmsConnType, useRestForm]);
 
   return out || null;
