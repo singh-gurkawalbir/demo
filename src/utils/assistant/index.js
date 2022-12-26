@@ -859,6 +859,9 @@ export function getMergedImportOperationDetails({
     assistantData,
   });
 
+  console.log('updateOperation', updateOperation);
+  console.log('createOperation', createOperation);
+
   const lengthisIdentifier = createOperation.parameters.length;
 
   const createorupdateoperation = cloneDeep(createOperation);
@@ -1791,11 +1794,15 @@ export function convertFromImport({ importDoc: importDocOrig, assistantData: ass
 
   if (importDoc?.http) {
     if (importDoc.http?._httpConnectorEndpointId || importDoc.http?._httpConnectorEndpointIds || importDoc.http?._httpConnectorResourceId) {
-      const commonOperation = VALID_MONGO_ID.test(operation) ? operation : importDoc.http?._httpConnectorEndpointId;
-
-      operation = !isArray(operation) ? commonOperation : operation || importDoc.http?._httpConnectorEndpointIds;
-      resource = VALID_MONGO_ID.test(resource) ? resource : importDoc.http?._httpConnectorResourceId;
-      version = VALID_MONGO_ID.test(version) ? version : importDoc.http?._httpConnectorVersionId;
+      if (operation === 'create-update-id' || isArray(operation)) {
+        operation = operation || importDoc.http._httpConnectorEndpointId;
+        resource = resource || importDoc.http._httpConnectorResourceId;
+        version = version || importDoc.http._httpConnectorVersionId;
+      } else {
+        operation = VALID_MONGO_ID.test(operation) ? operation : importDoc.http?._httpConnectorEndpointId;
+        resource = VALID_MONGO_ID.test(resource) ? resource : importDoc.http?._httpConnectorResourceId;
+        version = VALID_MONGO_ID.test(version) ? version : importDoc.http?._httpConnectorVersionId;
+      }
     }
     if ((isArray(operation) && operation.length > 1) || (isArray(importDoc.http._httpConnectorEndpointIds) && importDoc.http._httpConnectorEndpointIds.length > 1)) {
       [updateEndpoint, createEndpoint] = isArray(operation) ? operation : importDoc.http._httpConnectorEndpointIds;
@@ -1907,6 +1914,8 @@ export function convertFromImport({ importDoc: importDocOrig, assistantData: ass
       assistantData,
     });
   }
+  console.log('operationDetails', operationDetails);
+
   if (!operationDetails || !operationDetails.url) {
     return assistantMetadata;
   }
