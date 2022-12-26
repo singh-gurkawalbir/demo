@@ -1,13 +1,12 @@
 /* eslint-disable valid-typeof */
 import sizeof from 'object-sizeof';
+import { MAX_MOCK_DATA_SIZE } from '../../constants';
 import errorMessageStore from '../errorStore';
 import { isValidCanonicalFormForExportData, isValidCanonicalFormForImportResponse, unwrapExportFileSampleData } from '../sampleData';
 import { safeParse } from '../string';
 
-const MAX_SIZE_IN_BYTES = 1000000;
-
 export const validateMockOutputField = value => {
-  if (value === '') return;
+  if (value === '' || !value) return;
 
   const jsonValue = safeParse(value);
 
@@ -15,7 +14,7 @@ export const validateMockOutputField = value => {
   if (!jsonValue) return errorMessageStore('MOCK_OUTPUT_INVALID_JSON');
 
   // size greater than 1MB
-  if (sizeof(jsonValue) > MAX_SIZE_IN_BYTES) {
+  if (sizeof(jsonValue) > MAX_MOCK_DATA_SIZE) {
     return errorMessageStore('MOCK_OUTPUT_SIZE_EXCEED');
   }
 
@@ -31,7 +30,7 @@ export const validateMockOutputField = value => {
 };
 
 export const validateMockResponseField = value => {
-  if (value === '') return;
+  if (value === '' || !value) return;
 
   const jsonValue = safeParse(value);
 
@@ -39,7 +38,7 @@ export const validateMockResponseField = value => {
   if (!jsonValue) return errorMessageStore('MOCK_RESPONSE_INVALID_JSON');
 
   // size greater than 1MB
-  if (sizeof(jsonValue) > MAX_SIZE_IN_BYTES) {
+  if (sizeof(jsonValue) > MAX_MOCK_DATA_SIZE) {
     return errorMessageStore('MOCK_RESPONSE_SIZE_EXCEED');
   }
 

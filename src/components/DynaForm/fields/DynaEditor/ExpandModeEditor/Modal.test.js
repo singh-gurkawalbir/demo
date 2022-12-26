@@ -6,6 +6,8 @@ import {
 import userEvent from '@testing-library/user-event';
 import EditorModal from './Modal';
 import { renderWithProviders} from '../../../../../test/test-utils';
+import { validateMockOutputField } from '../../../../../utils/flowDebugger';
+import errorMessageStore from '../../../../../utils/errorStore';
 
 jest.mock('../../../../CodeEditor', () => ({
   __esModule: true,
@@ -36,6 +38,26 @@ describe('EditorModal UI tests', () => {
     expect(screen.queryByText('Settings must be a valid JSON')).toBeNull();
     userEvent.type(editorInputArea, 'a');
     expect(screen.getByText('Settings must be a valid JSON')).toBeInTheDocument();
+  });
+  test('should display the error message when validateContent returns error for the editor content', () => {
+    const editorProps = {...props, validateContent: validateMockOutputField, editorProps: {...props.editorProps, id: 'mockoutput'}};
+
+    renderWithProviders(<EditorModal {...editorProps} />);
+    const editorInputArea = screen.getByRole('textbox');
+
+    expect(screen.queryByText(errorMessageStore('MOCK_OUTPUT_INVALID_JSON'))).toBeNull();
+    userEvent.type(editorInputArea, 'a');
+    expect(screen.queryByText(errorMessageStore('MOCK_OUTPUT_INVALID_JSON'))).toBeInTheDocument();
+  });
+  test('should not display the error message when validateContent returns no error for the editor content', () => {
+    const editorProps = {...props, validateContent: () => {}, editorProps: {...props.editorProps, id: 'mockoutput'}};
+
+    renderWithProviders(<EditorModal {...editorProps} />);
+    const editorInputArea = screen.getByRole('textbox');
+
+    expect(screen.queryByText(errorMessageStore('MOCK_OUTPUT_INVALID_JSON'))).toBeNull();
+    userEvent.type(editorInputArea, 'a');
+    expect(screen.queryByText(errorMessageStore('MOCK_OUTPUT_INVALID_JSON'))).not.toBeInTheDocument();
   });
   test('should call both handleClose and handleUpdate functions passed in props when clicked on "Done"', () => {
     renderWithProviders(<EditorModal {...props} />);
