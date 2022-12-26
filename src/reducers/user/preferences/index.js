@@ -76,6 +76,11 @@ export default (state = { environment: 'production' }, action) => {
 
         break;
 
+      case actionTypes.USER.ACCOUNT.SWITCH:
+        updatePreferences(draft, preferences);
+
+        break;
+
       case actionTypes.USER.PREFERENCES.PIN_INTEGRATION:
         {
           let {dashboard} = getAccountPreferences(draft);

@@ -20,6 +20,7 @@ export function AppRoutingWithAuth({ children }) {
   const isUserLoggedOut = useSelector(selectors.isUserLoggedOut);
   const isMFASetupIncomplete = useSelector(selectors.isMFASetupIncomplete);
   const isUserAuthenticated = useSelector(state => selectors.sessionInfo(state)?.authenticated);
+  const isMFAVerified = useSelector(state => selectors.sessionInfo(state)?.mfaVerified);
 
   const dispatch = useDispatch();
 
@@ -66,6 +67,19 @@ export function AppRoutingWithAuth({ children }) {
       />
     );
   }
+
+  if (!isMFASetupIncomplete && isUserAuthenticated && isMFAAuthRequired && !isMFAVerified && !isMFASetupPage && !isSignInRoute) {
+    return (
+      <Redirect
+        push={false}
+        to={{
+          pathname: getRoutePath('/mfa/verify'),
+          state: location.state,
+        }}
+      />
+    );
+  }
+
   if (!isSessionExpired && !isSignInRoute && !isMFAAuthRequired && (isAuthInitialized || isUserLoggedOut)) {
     return (
       <Redirect
