@@ -141,11 +141,10 @@ export const getCurrentSampleDataStageStatus = (
 // Regex for parsing patchSet paths to listen field specific changes of a resource
 // sample Sequence path:  '/pageProcessors' or '/pageGenerators'
 // sample responseMapping path: '/pageProcessors/${resourceIndex}/responseMapping
-// when added a lookup to the flow path: '/pageProcessors/${resourceIndex}
 const pathRegex = {
   newPPSequence: /(\/routers\/(\d+)\/branches\/(\d+))?\/pageProcessors\/(\d+)$/,
   pgSequence: /(\/pageGenerators\/(\d+))/,
-  oldPPSequence: /(\/pageProcessors\/(\d+))$/,
+  oldPPSequence: /(\/pageProcessors\/(\d+)\/(_importId|_exportId))$/,
   responseMapping: /(\/routers\/(\d+)\/branches\/(\d+))?\/pageProcessors\/(\d+)\/responseMapping/,
   oldResponseMapping: /\/pageProcessors\/(\d+)\/responseMapping/,
   lookupAddition: /\/pageProcessors\/[0-9]+$/,
@@ -210,17 +209,6 @@ export const getPostDataForDeltaExport = resource => ({
   lastExportDateTime: getLastExportDateTime(resource),
   currentExportDateTime: getCurrentExportDateTime(resource),
 });
-
-export const getAddedLookupIdInFlow = (patchSet = []) => {
-  const pageProcessorsPatch = patchSet.find(
-    patch => pathRegex.lookupAddition.test(patch.path) &&
-      ['add', 'replace'].includes(patch.op)
-  );
-
-  if (pageProcessorsPatch?.value?.type === 'export') {
-    return pageProcessorsPatch.value._exportId;
-  }
-};
 
 // Goes through patchset changes to decide what is updated
 export const getFlowUpdatesFromPatch = (patchSet = []) => {
