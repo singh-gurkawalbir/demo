@@ -859,9 +859,6 @@ export function getMergedImportOperationDetails({
     assistantData,
   });
 
-  console.log('updateOperation', updateOperation);
-  console.log('createOperation', createOperation);
-
   const lengthisIdentifier = createOperation.parameters.length;
 
   const createorupdateoperation = cloneDeep(createOperation);
@@ -1914,7 +1911,6 @@ export function convertFromImport({ importDoc: importDocOrig, assistantData: ass
       assistantData,
     });
   }
-  console.log('operationDetails', operationDetails);
 
   if (!operationDetails || !operationDetails.url) {
     return assistantMetadata;
