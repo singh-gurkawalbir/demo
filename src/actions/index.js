@@ -2211,8 +2211,8 @@ const errorManager = {
       filters,
     }),
     purge: {
-      request: ({ flowId, resourceId, errors }) =>
-        action(actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.PURGE.REQUEST, {flowId, resourceId, errors}),
+      request: ({ flowId, resourceId, errors, isRowAction }) =>
+        action(actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.PURGE.REQUEST, {flowId, resourceId, errors, isRowAction}),
       success: ({ flowId, resourceId, message}) =>
         action(actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.PURGE.SUCCESS, { flowId, resourceId, message}),
       clear: ({ flowId, resourceId}) => action(actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.PURGE.CLEAR, { flowId, resourceId}),

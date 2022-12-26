@@ -816,7 +816,7 @@ describe('errorDetails sagas', () => {
         },
       };
 
-      return expectSaga(purgeError, { flowId, resourceId, errors })
+      return expectSaga(purgeError, { flowId, resourceId, errors, isRowAction: true })
         .provide([
           [matchers.call.fn(apiCallWithRetry)],
           [matchers.call.fn(requestErrorDetails)],
@@ -846,7 +846,7 @@ describe('errorDetails sagas', () => {
         },
       };
 
-      return expectSaga(purgeError, { flowId, resourceId })
+      return expectSaga(purgeError, { flowId, resourceId, isRowAction: false })
         .provide([
           [select(selectors.selectedErrorIds, { flowId, resourceId, isResolved: true }), errorIdList],
           [matchers.call.fn(apiCallWithRetry)],

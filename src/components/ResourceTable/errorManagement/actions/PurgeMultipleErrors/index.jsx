@@ -15,7 +15,7 @@ export default {
     const { confirmDialog } = useConfirmDialog();
 
     const handlePurge = useCallback(() => {
-      dispatch(actions.errorManager.flowErrorDetails.purge.request({flowId, resourceId}));
+      dispatch(actions.errorManager.flowErrorDetails.purge.request({flowId, resourceId, isRowAction: false}));
     }, [dispatch, flowId, resourceId]);
 
     const handleClick = useCallback(() => {
