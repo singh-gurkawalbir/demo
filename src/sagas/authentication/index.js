@@ -683,7 +683,6 @@ function* mfaVerify({ payload }) {
     });
 
     if (status?.success) {
-      yield call(initializeSession);
       yield call(initializeSession, {opts: {mfaVerifySuccess: true}});
 
       return yield put(actions.auth.mfaVerify.success());
