@@ -7,7 +7,7 @@ export default {
     let app = applications.find(a => a.id === application) || {};
     let httpConnectorId = app._httpConnectorId;
 
-    if (app._httpConnectorId) {
+    if (app._httpConnectorId && name) {
       app = applications.find(a => a.name === name) || {};
       // If it has multiple local connectors, right httpConnectorId should be picked
       httpConnectorId = app._httpConnectorId || httpConnectorId;
