@@ -859,6 +859,9 @@ export function getMergedImportOperationDetails({
     assistantData,
   });
 
+  if (!createOperation || !createOperation.url || !updateOperation || !updateOperation.url) {
+    return undefined;
+  }
   const lengthisIdentifier = createOperation.parameters.length;
 
   const createorupdateoperation = cloneDeep(createOperation);
@@ -1792,7 +1795,7 @@ export function convertFromImport({ importDoc: importDocOrig, assistantData: ass
   if (importDoc?.http) {
     if (importDoc.http?._httpConnectorEndpointId || importDoc.http?._httpConnectorEndpointIds || importDoc.http?._httpConnectorResourceId) {
       if (operation === 'create-update-id' || isArray(operation)) {
-        operation = operation || importDoc.http._httpConnectorEndpointId;
+        operation = operation || importDoc.http._httpConnectorEndpointIds;
         resource = resource || importDoc.http._httpConnectorResourceId;
         version = version || importDoc.http._httpConnectorVersionId;
       } else {
@@ -1801,7 +1804,7 @@ export function convertFromImport({ importDoc: importDocOrig, assistantData: ass
         version = VALID_MONGO_ID.test(version) ? version : importDoc.http?._httpConnectorVersionId;
       }
     }
-    if ((isArray(operation) && operation.length > 1) || (isArray(importDoc.http._httpConnectorEndpointIds) && importDoc.http._httpConnectorEndpointIds.length > 1)) {
+    if (operation !== 'create-update-id' && ((isArray(operation) && operation.length > 1) || (isArray(importDoc.http._httpConnectorEndpointIds) && importDoc.http._httpConnectorEndpointIds.length > 1))) {
       [updateEndpoint, createEndpoint] = isArray(operation) ? operation : importDoc.http._httpConnectorEndpointIds;
     }
     if ((isArray(operation) && operation.length > 1)) { operation = 'create-update-id'; }
@@ -1890,7 +1893,7 @@ export function convertFromImport({ importDoc: importDocOrig, assistantData: ass
   if (!operation) {
     return assistantMetadata;
   }
-  if (operation === 'create-update-id' && (!createEndpoint || !updateEndpoint)) {
+  if (operation === 'create-update-id' && (!createEndpoint || !updateEndpoint || createEndpoint === '' || updateEndpoint === '')) {
     return assistantMetadata;
   }
   let operationDetails;
