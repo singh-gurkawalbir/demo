@@ -46,9 +46,11 @@ export default function CloneCrumb({ resourceId, resourceType }) {
 
   return (
     <LoadResources resources={resourceType}>
-      <span onClick={handleClick}>
-        {resource ? resource.name : MODEL_PLURAL_TO_LABEL[resourceType]}
-      </span>
+      <a color="inherit" href={path}>
+        <span onClick={handleClick}>
+          {resource ? resource.name : MODEL_PLURAL_TO_LABEL[resourceType]}
+        </span>
+      </a>
     </LoadResources>
   );
 }

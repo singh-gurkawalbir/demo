@@ -419,7 +419,7 @@ export default function CeligoBreadcrumb() {
       aria-label="breadcrumb"
       className={classes.breadCrumb}>
       {breadcrumbs.map(({ breadcrumb: Crumb, url, isExact, params }) =>
-        isExact ? (
+        (isExact || url.startsWith('/clone')) ? (
           <Typography
             key={url}
             variant="body2"
