@@ -150,6 +150,15 @@ selectors.sampleDataRecordSize = (state, resourceId) => {
   return state?.[resourceId]?.[activeSendOrPreviewTab]?.recordSize || DEFAULT_RECORD_SIZE;
 };
 
+selectors.sampleDataError = (state, resourceId) => {
+  const activeSendOrPreviewTab = selectors.typeOfSampleData(state, resourceId);
+  const data = state?.[resourceId]?.[activeSendOrPreviewTab] || {};
+
+  if (data.status === 'error') {
+    return data.error;
+  }
+};
+
 export const getResourceSampleData = (resourceIdSampleData, stage) => {
   const resourceData = resourceIdSampleData?.data;
 
@@ -210,6 +219,18 @@ selectors.getAllParsableErrors = (state, resourceId) => {
   const {errors, stages} = data.find(val => val.name === 'parse')?.data || {};
 
   if (stages) { return null; }
+
+  const httpResponseStage = data.find(val => val.name === 'raw')?.data;
+
+  const previewError = selectors.sampleDataError(state, resourceId);
+
+  if (!errors && !httpResponseStage && previewError) {
+    // Incase of http/rest previews , we do get instances when
+    // preview has request stage but no response
+    // In that case, preview returns error which needs to be shown for parse stage
+    // Refer @IO-31463
+    return previewError;
+  }
 
   // if there are no stages return all errors and the complete error list would be visible in the preview editor
   return errors;
