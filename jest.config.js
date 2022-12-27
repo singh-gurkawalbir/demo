@@ -22,6 +22,12 @@ module.exports = {
     'src/reducers/**/*.{js,jsx}',
     'src/sagas/**/*.{js,jsx}',
     'src/utils/**/*.{js,jsx}',
+    'src/components/**/*.{js,jsx}',
+    '!src/components/icons/**/*.{js,jsx}',
+    '!src/components/SuiteScript/**/*.{js,jsx}',
+    '!src/components/DynaForm/fields/SuiteScript/**/*.{js,jsx}',
+    'src/views/**/*.{js,jsx}',
+    '!src/views/SuiteScript/**/*.{js,jsx}',
   ],
   setupFilesAfterEnv: ['<rootDir>/jest/setup.js', 'jest-date-mock', 'core-js', 'jest-canvas-mock'],
   coverageThreshold: {
