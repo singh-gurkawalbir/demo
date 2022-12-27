@@ -100,6 +100,8 @@ href="/marketplace"><u>Check out our Marketplace</u></a> to jumpstart your  inte
   MFA_OWNER_OTP_INFO: 'You are signing in from a new device. Enter your passcode to verify your account.',
   MFA_USER_OTP_INFO: 'Your account owner or admin has required you to sign in using multifactor authentication (MFA). Enter your passcode to verify your account.',
   MFA_USER_OTP_INFO_FOR_TRUSTED_NUMBER_OF_DAYS: 'Your account owner or admin has required you to sign in using multifactor authentication (MFA) after {{noOfDays}} days. Enter your passcode to verify your account.',
+  NEW_PASSWORD_EMPTY: 'New password is required',
+  CONFIRM_NEW_PASSWORD_EMPTY: 'Confirm new password is required',
   // #endregion
   // #region EM2.0 messages
   SELECT_ERROR_HOVER_MESSAGE: 'Selected errors are added to a batch, on which you can perform bulk retry and resolve actions.',

@@ -115,7 +115,7 @@ describe('ResetPassword', () => {
     const setpasswordHeadingNode = screen.getByRole('heading', {name: 'Reset password'});
 
     expect(setpasswordHeadingNode).toBeInTheDocument();
-    const password = screen.getByPlaceholderText('Password*');
+    const password = screen.getByPlaceholderText('Enter new password*');
 
     expect(password).toBeInTheDocument();
 

@@ -295,7 +295,7 @@ export default {
   netsuitedefaultvalue: DynaNetSuiteDefaultValue,
   ...SuiteScript,
   exportSelect: DynaExportSelect,
-  password: DynaPassword,
+  signinpassword: DynaPassword,
   textwithflowsuggestion: DynaTextWithFlowSuggestion,
   selectconditionallookup: DynaSelectConditionalLookup,
   csvhasheaderrow: DynaCsvHasHeaderRow,

@@ -38,34 +38,6 @@ export default function MfaHelp() {
         footerLinkText="Sign up"
         footerLink="signup"
     />
-      {/*
-      <div className={classes.wrapper}>
-        <div className={classes.signinWrapper}>
-          <div className={classes.signinWrapperContent}>
-            <div className={classes.logo}>
-              <CeligoLogo />
-            </div>
-            <Title />
-            <Label />
-            {getDomain() !== 'eu.integrator.io' && (
-            <Typography variant="body2" className={classes.signupLink}>
-              Don&apos;t have an account?
-              <TextButton
-                data-test="signup"
-                color="primary"
-                className={classes.link}
-                component={Link}
-                to="/signup">
-                Sign up
-              </TextButton>
-            </Typography>
-            )}
-          </div>
-        </div>
-        <div className={classes.marketingContentWrapper}>
-          <MarketingContentWithIframe contentUrl={contentUrl} />
-        </div>
-      </div> */}
     </>
   );
 }

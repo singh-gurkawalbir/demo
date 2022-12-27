@@ -249,7 +249,6 @@ export default function SignIn({dialogOpen, className}) {
           <TextButton
             data-test="forgotPassword"
             color="primary"
-            className={classes.forgotPass}
             component={Link}
             role="link"
             to={email ? getRoutePath(`/request-reset?email=${email}`) : getRoutePath('/request-reset')}>

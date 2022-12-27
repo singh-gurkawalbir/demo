@@ -17,7 +17,7 @@ export default function SetPassword(props) {
   return (
 
     <UserSignInPage
-      pageTitle="  Create your password"
+      pageTitle="Create your password"
       alertMessage={isActiveSession && ACTIVE_SESSION_MESSAGE}
     >
       {!isActiveSession && (
