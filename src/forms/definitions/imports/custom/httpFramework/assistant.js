@@ -71,6 +71,15 @@ export default function assistantDefinition(
         delete importDoc['/assistant'];
       }
       otherFormValues['/mockResponse'] = safeParse(otherFormValues['/mockResponse']);
+      if (Array.isArray(importDoc?.['/assistantMetadata']?.operation)) {
+        importDoc['/http/_httpConnectorEndpointIds'] = importDoc['/assistantMetadata'].operation;
+        importDoc['/http/_httpConnectorResourceId'] = importDoc['/assistantMetadata'].resource;
+        importDoc['/http/_httpConnectorVersionId'] = importDoc['/assistantMetadata'].version;
+      } else if (formValues['/assistantMetadata/operation'] !== 'create-update-id') {
+        importDoc['/http/_httpConnectorEndpointId'] = formValues['/assistantMetadata/operation'];
+        importDoc['/http/_httpConnectorResourceId'] = formValues['/assistantMetadata/resource'];
+        importDoc['/http/_httpConnectorVersionId'] = formValues['/assistantMetadata/version'];
+      }
 
       return { ...otherFormValues, ...importDoc };
     },
