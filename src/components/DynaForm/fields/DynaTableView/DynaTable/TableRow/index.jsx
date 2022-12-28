@@ -7,6 +7,7 @@ import DeleteIcon from '../../../../../icons/TrashIcon';
 import ActionButton from '../../../../../ActionButton';
 import actionTypes from '../actionTypes';
 import DynaAutocomplete from '../../../DynaAutocomplete';
+import DynaRefreshableSelect from '../../../DynaRefreshableSelect';
 
 const useStyles = makeStyles(theme => ({
   header: {
@@ -62,6 +63,7 @@ const TYPE_TO_ERROR_MESSAGE = {
   text: 'Please enter a value',
   autosuggest: 'Please select a value',
   select: 'Please select a value',
+  refreshableSelect: 'Please select a value',
 };
 
 const convertToSelectOptions = options => options.filter(Boolean).map(opt => ({
@@ -131,6 +133,18 @@ const RowCell = ({ fieldValue, optionsMap, op, isValid, rowIndex, colIndex, setT
   if (type === 'multiselect') {
     return (
       <DynaMultiSelect
+        {...basicProps}
+        value={fieldValue}
+        errorMessages={errorMessages}
+        onFieldChange={onFieldChange}
+        className={clsx(classes.root, classes.menuItemsWrapper)}
+    />
+    );
+  }
+
+  if (type === 'refreshableSelect') {
+    return (
+      <DynaRefreshableSelect
         {...basicProps}
         value={fieldValue}
         errorMessages={errorMessages}
