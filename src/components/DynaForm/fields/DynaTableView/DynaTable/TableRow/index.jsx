@@ -7,7 +7,7 @@ import DeleteIcon from '../../../../../icons/TrashIcon';
 import ActionButton from '../../../../../ActionButton';
 import actionTypes from '../actionTypes';
 import DynaAutocomplete from '../../../DynaAutocomplete';
-import DynaRefreshableSelect from '../../../DynaRefreshableSelect';
+import DynaExportSelect from '../../../DynaExportSelect';
 
 const useStyles = makeStyles(theme => ({
   header: {
@@ -63,7 +63,6 @@ const TYPE_TO_ERROR_MESSAGE = {
   text: 'Please enter a value',
   autosuggest: 'Please select a value',
   select: 'Please select a value',
-  refreshableSelect: 'Please select a value',
 };
 
 const convertToSelectOptions = options => options.filter(Boolean).map(opt => ({
@@ -97,7 +96,7 @@ const RowCell = ({ fieldValue, optionsMap, op, isValid, rowIndex, colIndex, setT
 
     const items = convertToSelectOptions(options);
 
-    if (type === 'select' || type === 'multiselect') {
+    if (type === 'select' || type === 'multiselect' || type === 'exportSelect') {
       return [{items}];
     }
 
@@ -142,10 +141,11 @@ const RowCell = ({ fieldValue, optionsMap, op, isValid, rowIndex, colIndex, setT
     );
   }
 
-  if (type === 'refreshableSelect') {
+  if (type === 'exportSelect') {
     return (
-      <DynaRefreshableSelect
+      <DynaExportSelect
         {...basicProps}
+        {...op}
         value={fieldValue}
         errorMessages={errorMessages}
         onFieldChange={onFieldChange}
