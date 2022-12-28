@@ -1759,9 +1759,9 @@ if you're using a production account, you'll find your API keys under the 'API M
   'import.googledrive.directoryPath':
 'Specify google drive folder containing the files to be transferred.  For example, if you set this field to \'MySite/Items\'. <a  href="http://integrator.io" title="http://integrator.io" >integrator.io</a> will first look for a parent folder \'MySite\', and then for a child folder \'Items\', and then transfer all files into folder \'Items\'',
   'import.box.directoryPath':
-'Specify box folder containing the files to be transferred.  For example, if you set this field to \'MySite/Items\'. <a  href="http://integrator.io" title="http://integrator.io" >integrator.io</a> will first look for a parent folder \'MySite\', and then for a child folder \'Items\', and then transfer all files into folder \'Items\'',
+'Enter the relative path to the Box directory that will store the imported files.',
   'import.dropbox.directoryPath':
-'Specify dropbox folder containing the files to be transferred.  For example, if you set this field to \'MySite/Items\'. <a  href="http://integrator.io" title="http://integrator.io" >integrator.io</a> will first look for a parent folder \'MySite\', and then for a child folder \'Items\', and then transfer all files into folder \'Items\'',
+'Enter the relative path to the Dropbox directory that will store the imported files.',
   'import.azure.containerName':
 'Specify the Azure blob storage container that has the files to be transferred. <a  href="http://integrator.io" title="http://integrator.io" >integrator.io</a> will transfer all files and also delete them from the folder once the transfer completes. You can also (optionally) configure <a  href="http://integrator.io" title="http://integrator.io" >integrator.io</a> to leave files in the folder or transfer files that match a certain \'starts with\' or \'ends with\' file name pattern.',
   'import.azure.fileName':
@@ -1769,9 +1769,9 @@ if you're using a production account, you'll find your API keys under the 'API M
   'import.file.backupPath':
 'Specify the directory path of the google drive folder where files will be backed up after the successful transfer.',
   'import.box.backupPath':
-'Specify the directory path of the box folder where files will be backed up after the successful transfer.',
+'Enter the relative path to the Box directory that will store backup files.',
   'import.dropbox.backupPath':
-'Specify the directory path of the dropbox folder where files will be backed up after the successful transfer.',
+'Enter the relative path to the Dropbox directory that will store backup files.',
   'import.azure.backupPath':
 'Specify the directory path of the Azure blob storage container where files will be backed up after the successful transfer.',
   'import.s3.region':
@@ -1935,9 +1935,9 @@ if you're using a production account, you'll find your API keys under the 'API M
   'export.googledrive.directoryPath':
 'Specify  google drive folder containing the files to be transferred.  For example, if you set this field to \'MySite/Items\'. <a  href="http://integrator.io" title="http://integrator.io" >integrator.io</a> will first look for a parent folder \'MySite\', and then for a child folder \'Items\', and then transfer all files from folder \'Items\'. <a  href="http://integrator.io" title="http://integrator.io" >integrator.io</a> will transfer all files and also delete them from the folder once the transfer completes.  You can also (optionally) configure <a href="http://integrator.io" title="http://integrator.io" >integrator.io</a> to leave files in the folder, or to transfer files that match a certain \'starts with\' or \'ends with\' file name pattern.',
   'export.box.directoryPath':
-'Specify  box folder containing the files to be transferred.  For example, if you set this field to \'MySite/Items\'. <a  href="http://integrator.io" title="http://integrator.io" >integrator.io</a> will first look for a parent folder \'MySite\', and then for a child folder \'Items\', and then transfer all files from folder \'Items\'. <a  href="http://integrator.io" title="http://integrator.io" >integrator.io</a> will transfer all files and also delete them from the folder once the transfer completes.  You can also (optionally) configure <a href="http://integrator.io" title="http://integrator.io" >integrator.io</a> to leave files in the folder, or to transfer files that match a certain \'starts with\' or \'ends with\' file name pattern.',
+'Enter the relative path to the Box directory that contains the files to export.',
   'export.dropbox.directoryPath':
-'Specify  dropbox folder containing the files to be transferred.  For example, if you set this field to \'MySite/Items\'. <a  href="http://integrator.io" title="http://integrator.io" >integrator.io</a> will first look for a parent folder \'MySite\', and then for a child folder \'Items\', and then transfer all files from folder \'Items\'. <a  href="http://integrator.io" title="http://integrator.io" >integrator.io</a> will transfer all files and also delete them from the folder once the transfer completes.  You can also (optionally) configure <a href="http://integrator.io" title="http://integrator.io" >integrator.io</a> to leave files in the folder, or to transfer files that match a certain \'starts with\' or \'ends with\' file name pattern.',
+'Enter the relative path to the Dropbox directory that contains the files to export.',
   'export.azure.containerName':
     'Specify the Azure blob storage container that has the files to be transferred. <a  href="http://integrator.io" title="http://integrator.io" >integrator.io</a> will transfer all files and also delete them from the folder once the transfer completes. You can also (optionally) configure <a  href="http://integrator.io" title="http://integrator.io" >integrator.io</a> to leave files in the folder or transfer files that match a certain \'starts with\' or \'ends with\' file name pattern.',
   'export.azure.skipDelete':

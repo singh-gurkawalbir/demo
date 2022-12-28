@@ -668,9 +668,7 @@ selectors.mkTileApplications = () => {
           const connection = connections.find(c => c._id === r);
 
           if (connection) {
-            if (connection?.http?.formType === 'graph_ql') {
-              applications.push('graph_ql');
-            } else if (connection.assistant) {
+            if (connection.assistant) {
               applications.push(connection.assistant);
             } else if (getHttpConnector(connection?.http?._httpConnectorId)) {
               const apps = applicationsList();
