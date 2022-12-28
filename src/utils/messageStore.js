@@ -102,6 +102,7 @@ href="/marketplace"><u>Check out our Marketplace</u></a> to jumpstart your  inte
   MFA_USER_OTP_INFO_FOR_TRUSTED_NUMBER_OF_DAYS: 'Your account owner or admin has required you to sign in using multifactor authentication (MFA) after {{noOfDays}} days. Enter your passcode to verify your account.',
   NEW_PASSWORD_EMPTY: 'New password is required',
   CONFIRM_NEW_PASSWORD_EMPTY: 'Confirm new password is required',
+  EMAIL_EMPTY: 'Email is required.',
   // #endregion
   // #region EM2.0 messages
   SELECT_ERROR_HOVER_MESSAGE: 'Selected errors are added to a batch, on which you can perform bulk retry and resolve actions.',
@@ -161,6 +162,7 @@ href="/marketplace"><u>Check out our Marketplace</u></a> to jumpstart your  inte
   NO_DRAG_FLOW_BRANCHING_INFO: 'You cannot reorder steps in a branched flow.<br/>Remove all branching to be able to drag and drop flow steps.',
   PARENT_UPGRADE_ERROR_MESSAGE: 'The upgrade to a {{plan}} plan has failed. {{errorMessage}}. Select the active upgrade button when you are ready to continue with your setup.',
   CHILD_UPGRADE_ERROR_MESSAGE: 'The upgrade for {{childName}} has failed. {{errorMessage}}. Select the active upgrade button when you are ready to continue with your setup.',
+
 };
 
 export default function messageStore(key, argsObj) {

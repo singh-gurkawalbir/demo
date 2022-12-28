@@ -2,10 +2,13 @@ import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import React, { useCallback, useEffect, useState} from 'react';
 import TextField from '@material-ui/core/TextField';
+import clsx from 'clsx';
 import actions from '../../actions';
 import { selectors } from '../../reducers';
 import { TextButton, FilledButton} from '../../components/Buttons';
 import getImageUrl from '../../utils/image';
+import FieldMessage from '../../components/DynaForm/fields/FieldMessage';
+import messageStore from '../../utils/messageStore';
 
 const path = getImageUrl('images/googlelogo.png');
 
@@ -35,7 +38,17 @@ const useStyles = makeStyles(theme => ({
   textField: {
     width: '100%',
     background: theme.palette.background.paper,
-    marginBottom: 10,
+  },
+  errorField: {
+    '&:hover': {
+      borderColor: theme.palette.error.dark,
+    },
+    '& > * input': {
+      '&:hover': {
+        borderColor: theme.palette.error.dark,
+      },
+      borderColor: theme.palette.error.dark,
+    },
   },
   link: {
     paddingLeft: 4,
@@ -98,6 +111,7 @@ export default function ForgotPassword({setShowError, email}) {
   const dispatch = useDispatch();
   const classes = useStyles();
   const [userEmail, SetuserEmail] = useState(email || '');
+  const [showError, SetshowError] = useState(false);
   const resetRequestStatus = useSelector(state => selectors.requestResetStatus(state));
   const resetRequestErrorMsg = useSelector(state => selectors.requestResetError(state));
 
@@ -116,9 +130,15 @@ export default function ForgotPassword({setShowError, email}) {
     e.preventDefault();
     const email = e?.target?.email?.value || e?.target?.elements?.email?.value;
 
-    handleAuthentication(email);
+    if (!email) {
+      SetshowError(true);
+    } else {
+      SetshowError(false);
+      handleAuthentication(email);
+    }
   }, [handleAuthentication]);
   const handleOnChangeEmail = useCallback(e => {
+    SetshowError(false);
     SetuserEmail(e.target.value);
   }, []);
 
@@ -134,8 +154,9 @@ export default function ForgotPassword({setShowError, email}) {
           placeholder="Email*"
           value={userEmail}
           onChange={handleOnChangeEmail}
-          className={classes.textField}
+          className={clsx(classes.textField, {[classes.errorField]: showError})}
         />
+        <FieldMessage errorMessages={showError ? messageStore('EMAIL_EMPTY') : ''} />
         <FilledButton
           data-test="submit"
           type="submit"
