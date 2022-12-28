@@ -188,7 +188,7 @@ export default {
     type: 'text',
     label: 'Header name',
     required: true,
-    defaultValue: r => r?.oauth2?.headerName || 'Authorization',
+    defaultValue: r => r?.oauth2?.accessTokenHeaderName || 'Authorization',
   },
   'oauth2.scheme': {
     isLoggable: true,
