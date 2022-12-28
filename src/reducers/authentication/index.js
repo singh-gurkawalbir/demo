@@ -172,9 +172,18 @@ export default function (state = defaultState, action) {
         delete draft.mfaAuthInfo;
         draft.mfaAuth = { status: 'success' };
         break;
+      case actionTypes.AUTH.ACCEPT_INVITE.VALIDATE:
+        draft.acceptInvite = {
+          status: 'requested',
+        };
+        break;
       case actionTypes.AUTH.ACCEPT_INVITE.VALIDATE_SUCCESS:
         if (!draft.acceptInvite) draft.acceptInvite = {};
-        draft.acceptInvite = {...payload};
+        draft.acceptInvite = {...payload, status: 'received'};
+        break;
+      case actionTypes.AUTH.ACCEPT_INVITE.VALIDATE_ERROR:
+        if (!draft.acceptInvite) draft.acceptInvite = {};
+        draft.acceptInvite = { status: 'errored'};
         break;
       case actionTypes.AUTH.ACCEPT_INVITE.SUCCESS:
         if (!draft.acceptInvite) draft.acceptInvite = {};

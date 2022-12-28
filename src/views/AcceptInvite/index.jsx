@@ -9,6 +9,8 @@ import { emptyObject } from '../../constants';
 import RawHtml from '../../components/RawHtml';
 import UserSignInPage from '../../components/UserSignInPage';
 import NotificationToaster from '../../components/NotificationToaster';
+import Spinner from '../../components/Spinner';
+import Loader from '../../components/Loader';
 
 const useStyles = makeStyles({
   disclaimer: {
@@ -25,6 +27,7 @@ export default function AcceptInvite(props) {
   // eslint-disable-next-line no-unused-vars
   const { message = [], type, skipPassword, ssoLink } = data;
   const showError = !!message.length && type === 'error';
+  const isLoading = data.status === 'requested';
   const dispatch = useDispatch();
   const history = useHistory();
 
@@ -39,9 +42,11 @@ export default function AcceptInvite(props) {
     dispatch(actions.auth.acceptInvite.validate(token));
   }, [dispatch, token]);
 
+  if (isLoading) return <Loader open>Loading...<Spinner /></Loader>;
+
   return (
     <>
-      {!showError ? (
+      {showError ? (
         <UserSignInPage
           alertMessage={showError && <RawHtml html={message[0]} />}
      />
