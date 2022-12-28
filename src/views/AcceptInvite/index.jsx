@@ -41,7 +41,7 @@ export default function AcceptInvite(props) {
 
   return (
     <>
-      {!showError ? (
+      {showError ? (
         <UserSignInPage
           alertMessage={showError && <RawHtml html={message[0]} />}
      />
