@@ -104,6 +104,7 @@ export const C_LOCKED_FIELDS = Object.freeze({
     'file.compressionFormat',
     'file.skipDelete',
     'file.csv',
+    'mockOutput',
     'test.limit',
     'delta.dateField',
     'delta.lagOffset',
