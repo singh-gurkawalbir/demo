@@ -566,7 +566,7 @@ export function* initializeSession({opts} = {}) {
       // existing session is invalid
       const isMFASetupIncomplete = yield select(selectors.isMFASetupIncomplete);
 
-      if (opts.switchAcc && resp.mfaRequired && !resp.mfaVerified) {
+      if (opts?.switchAcc && resp.mfaRequired && !resp.mfaVerified) {
         yield put(actions.auth.mfaRequired({...resp, isAccountUser: true, dontAllowTrustedDevices: true}));
       } else if (!isMFASetupIncomplete) {
         yield put(actions.auth.logout(true));
