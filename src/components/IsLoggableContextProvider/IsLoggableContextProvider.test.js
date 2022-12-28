@@ -1,4 +1,4 @@
-/* global describe, test, expect */
+
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import IsLoggableContextProvider, {withIsLoggable, useIsLoggable} from '.';
@@ -18,7 +18,7 @@ function ComponentToBeRendered({isLoggable}) {
   return withIsLoggable(ChildComponent)(props);
 }
 
-describe('IsLoggableContextProvider UI tests', () => {
+describe('isLoggableContextProvider UI tests', () => {
   test('should test the Isloggable context', () => {
     render(<IsLoggableContextProvider isLoggable="sometext"><Child /></IsLoggableContextProvider>);
     expect(screen.getByText('sometext')).toBeInTheDocument();

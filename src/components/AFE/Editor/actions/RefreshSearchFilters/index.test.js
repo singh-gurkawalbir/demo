@@ -1,4 +1,3 @@
-/* global describe, test, expect, beforeEach, afterEach, jest */
 import React from 'react';
 import {screen, waitFor} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -56,7 +55,7 @@ jest.mock('../../../../Spinner', () => ({
   ),
 }));
 
-describe('RefreshSearchFilters UI tests', () => {
+describe('refreshSearchFilters UI tests', () => {
   const data = {
     fields: [
       {
@@ -93,8 +92,8 @@ describe('RefreshSearchFilters UI tests', () => {
   });
   test('should make 2 dispatch calls on initial render', async () => {
     initRefreshSearchFilters({editorId: 'filecsv', data});
-    await waitFor(() => expect(mockDispatchFn).toBeCalledWith(actions.metadata.request('6b3c75dd5d3c125c88b5dd20', 'testCommMetaPath')));
-    await waitFor(() => expect(mockDispatchFn).toBeCalledWith(actions.editor.patchFeatures('filecsv', {
+    await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith(actions.metadata.request('6b3c75dd5d3c125c88b5dd20', 'testCommMetaPath')));
+    await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith(actions.editor.patchFeatures('filecsv', {
       filters: [
         {
           label: 'test label',
@@ -114,7 +113,7 @@ describe('RefreshSearchFilters UI tests', () => {
 
     expect(refreshIcon).toBeInTheDocument();
     userEvent.click(refreshIcon);
-    await waitFor(() => expect(mockDispatchFn).toBeCalledWith(actions.metadata.request('6b3c75dd5d3c125c88b5dd20', 'testCommMetaPath', {refreshCache: true })));
+    await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith(actions.metadata.request('6b3c75dd5d3c125c88b5dd20', 'testCommMetaPath', {refreshCache: true })));
   });
   test('should display the loading spinner when search filters are not present', () => {
     initRefreshSearchFilters({editorId: 'filecsv'});

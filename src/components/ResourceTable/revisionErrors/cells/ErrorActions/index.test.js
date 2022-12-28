@@ -1,4 +1,4 @@
-/* global describe, test, expect, jest, afterEach */
+
 import React from 'react';
 import { MemoryRouter, Route } from 'react-router-dom';
 import userEvent from '@testing-library/user-event';
@@ -32,7 +32,7 @@ jest.mock('react-router-dom', () => ({
   }),
 }));
 
-describe('Testsuite for ErrorActions', () => {
+describe('testsuite for ErrorActions', () => {
   afterEach(() => {
     mockHistoryPush.mockClear();
   });

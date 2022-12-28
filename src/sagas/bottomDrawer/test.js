@@ -1,4 +1,4 @@
-/* global describe, test */
+
 import { expectSaga } from 'redux-saga-test-plan';
 import { select } from 'redux-saga/effects';
 import moment from 'moment';
@@ -13,7 +13,7 @@ describe('flow builder bottom drawer sagas', () => {
   describe('bottomDrawerInit sagas', () => {
     const flowId = 'f1';
 
-    test('should trigger initComplete action correctly ', () => expectSaga(bottomDrawerInit, { flowId })
+    test('should trigger initComplete action correctly', () => expectSaga(bottomDrawerInit, { flowId })
       .provide([
         [select(selectors.isOwnerUserInErrMgtTwoDotZero), false],
         [select(selectors.getScriptsTiedToFlow, flowId), []],
@@ -126,7 +126,7 @@ describe('flow builder bottom drawer sagas', () => {
     test('should not do anything in case user tries to switch to current active tab which has resource id', () => {
       const index = 4;
 
-      return expectSaga(
+      expectSaga(
         switchTab, { index })
         .provide([
           [select(selectors.bottomDrawerTabs), {
@@ -147,7 +147,7 @@ describe('flow builder bottom drawer sagas', () => {
     test('should dispatch setActiveTab action when user tries to switch to same tabType but different resource id', () => {
       const index = 4;
 
-      return expectSaga(
+      expectSaga(
         switchTab, { index })
         .provide([
           [select(selectors.bottomDrawerTabs), {

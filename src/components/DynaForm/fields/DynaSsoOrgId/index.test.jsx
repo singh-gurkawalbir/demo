@@ -1,4 +1,4 @@
-/* global describe, test, expect, jest */
+
 import React from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import {screen} from '@testing-library/react';
@@ -23,8 +23,8 @@ function initDynaSsoOrgId(props = {}) {
   return renderWithProviders(ui, {initialStore});
 }
 
-describe('DynaSsoOrgId UI test cases', () => {
-  test('Should make dispatch calls when status is set to requested', () => {
+describe('dynaSsoOrgId UI test cases', () => {
+  test('should make dispatch calls when status is set to requested', () => {
     const data = {
       description: 'somedescription',
       errorMessages: 'someerrormessages',
@@ -43,7 +43,7 @@ describe('DynaSsoOrgId UI test cases', () => {
     expect(mockDispatch).toHaveBeenCalledWith(actions.form.forceFieldState('formkey')('someid', {isValid: false}));
     expect(screen.getByText('Verifying...')).toBeInTheDocument();
   });
-  test('Should make dispatch call when status is set to error', () => {
+  test('should make dispatch call when status is set to error', () => {
     const data =
     {
       description: 'somedescription',
@@ -64,7 +64,7 @@ describe('DynaSsoOrgId UI test cases', () => {
     expect(screen.getByText('someerrormessages')).toBeInTheDocument();
   });
 
-  test('Should make dispatch call when error is provided and no value provided', () => {
+  test('should make dispatch call when error is provided and no value provided', () => {
     const data =
     {
       description: 'somedescription',
@@ -83,7 +83,7 @@ describe('DynaSsoOrgId UI test cases', () => {
     expect(mockDispatch).toHaveBeenCalledWith(actions.form.forceFieldState('formkey')('someid', {isValid: false, errorMessages: 'A value must be provided'}));
     expect(screen.getByText('someerrormessages')).toBeInTheDocument();
   });
-  test('Should make dispatch calls when error, value is provided', () => {
+  test('should make dispatch calls when error, value is provided', () => {
     const data =
     {
       description: 'somedescription',
@@ -103,7 +103,7 @@ describe('DynaSsoOrgId UI test cases', () => {
     expect(mockDispatch).toHaveBeenCalledWith(actions.form.forceFieldState('formkey')('someid', {isValid: false, errorMessages: 'invalid sso org id' }));
   });
 
-  test('Should make dispatch call when status is set to success and no value provided', () => {
+  test('should make dispatch call when status is set to success and no value provided', () => {
     const data =
     {
       description: 'somedescription',

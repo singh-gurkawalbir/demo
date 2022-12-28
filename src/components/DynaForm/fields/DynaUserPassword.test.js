@@ -1,4 +1,4 @@
-/* global describe, test, expect, jest, afterEach */
+
 import React from 'react';
 import {screen} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -22,7 +22,7 @@ jest.mock('react-redux', () => ({
   useDispatch: () => mockDispatch,
 }));
 
-describe('DynaUserEmail UI test cases', () => {
+describe('dynaUserEmail UI test cases', () => {
   afterEach(() => {
     jest.clearAllMocks();
   });
@@ -32,7 +32,7 @@ describe('DynaUserEmail UI test cases', () => {
         label="PropsLabel"
         value="PropsValue"
         />);
-    expect(screen.getByText('PropsLabel'));
+    expect(screen.getByText('PropsLabel')).toBeInTheDocument();
     userEvent.click(screen.getByText('EditIcon'));
     expect(mockDispatch).toHaveBeenCalledWith(
       actions.api.clearComms()

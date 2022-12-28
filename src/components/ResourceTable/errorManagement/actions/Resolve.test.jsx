@@ -1,4 +1,4 @@
-/* global test, expect, describe, jest */
+
 import React from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { screen } from '@testing-library/react';
@@ -31,7 +31,7 @@ function renderFuntion(actionProps, data) {
   userEvent.click(screen.getByRole('button', {name: /more/i}));
 }
 
-describe('Error Management Resolve UI tests ', () => {
+describe('error Management Resolve UI tests', () => {
   test('should make dispatch call for Resolve click', () => {
     renderFuntion({
       isFlowDisabled: false,

@@ -1,4 +1,4 @@
-/* global describe, test, expect, beforeEach */
+
 import { screen } from '@testing-library/react';
 import React from 'react';
 import IntegrationUserName from '.';
@@ -26,7 +26,7 @@ function initIntegrationUserName(userId, integrationId, profileData) {
 
   return renderWithProviders(ui, {initialStore});
 }
-describe('Testsuite for IntegrationUserName', () => {
+describe('testsuite for IntegrationUserName', () => {
   beforeEach(() => {
     initialStore = getCreatedStore();
   });

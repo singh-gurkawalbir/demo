@@ -1,4 +1,4 @@
-/* global describe, test, expect,  beforeEach, jest */
+
 import React from 'react';
 import { screen } from '@testing-library/react';
 import { MemoryRouter, Route } from 'react-router-dom';
@@ -51,7 +51,7 @@ function indexOfCell(text, role) {
   return cells.findIndex(each => each.textContent === text);
 }
 
-describe('Metadata of stacks UI Tests', () => {
+describe('metadata of stacks UI Tests', () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
@@ -85,7 +85,7 @@ describe('Metadata of stacks UI Tests', () => {
     expect(cellI).toBeGreaterThan(-1);
     expect(cellI).toEqual(headerI);
   });
-  test('should verify the Host', () => {
+  test('should verify the Host dupliccate', () => {
     renderFunction(resource);
 
     const headerI = indexOfCell('Function name', 'columnheader');

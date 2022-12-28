@@ -1,4 +1,7 @@
-/* global describe, test, expect, fail, jest */
+/* eslint-disable no-undef */
+/* eslint-disable jest/no-jasmine-globals */
+/* eslint-disable jest/expect-expect */
+
 import getResourceFormAssets from '.';
 import mockExportAssist from '../../definitions/exports/custom/http/assistant';
 import mockImportAssist from '../../definitions/imports/custom/http/assistant';
@@ -176,7 +179,7 @@ describe('getResourceFromAssets load correct form', () => {
       const result = getResourceFormAssets({resourceType, resource, isNew: true, assistantData, connection });
 
       // should have field named application in a new export..the only unique field for new export
-      expect(result?.fieldMeta?.fieldMap?.application?.label).toEqual('Application');
+      expect(result?.fieldMeta?.fieldMap?.application?.label).toBe('Application');
       expect(result).toMatchSnapshot();
     });
     test('should not load a form and throw an error for non-valid schema', () => {
@@ -276,7 +279,7 @@ describe('getResourceFromAssets load correct form', () => {
       const result = getResourceFormAssets({resourceType, resource, isNew: true, assistantData, connection });
 
       // should have field named application in a new export..the only unique field for new export
-      expect(result?.fieldMeta?.fieldMap?.application?.label).toEqual('Application');
+      expect(result?.fieldMeta?.fieldMap?.application?.label).toBe('Application');
       expect(result).toMatchSnapshot();
     });
     // change this negative test case to throw an error
@@ -317,7 +320,7 @@ describe('getResourceFromAssets load correct form', () => {
 
       expect(mockExportAssist).toHaveBeenCalledWith('id2', resource, assistantData);
       // expect(exportAssistant).toHaveBeenCalled();
-      expect(result?.fieldMeta?.fieldMap?.someProp).toEqual('someValue');
+      expect(result?.fieldMeta?.fieldMap?.someProp).toBe('someValue');
     });
 
     test('should load a csv rest export form', () => {
@@ -326,7 +329,7 @@ describe('getResourceFromAssets load correct form', () => {
 
       const result = getResourceFormAssets({resourceType, resource, isNew: false, assistantData, connection });
 
-      expect(result?.fieldMeta?.fieldMap?.['file.csv']?.label).toEqual('CSV parser helper');
+      expect(result?.fieldMeta?.fieldMap?.['file.csv']?.label).toBe('CSV parser helper');
       expect(result).toMatchSnapshot();
     });
     test('should load a json rest export form', () => {
@@ -335,7 +338,7 @@ describe('getResourceFromAssets load correct form', () => {
 
       const result = getResourceFormAssets({resourceType, resource, isNew: false, assistantData, connection });
 
-      expect(result?.fieldMeta?.fieldMap?.['delta.lagOffset']?.fieldId).toEqual('delta.lagOffset');
+      expect(result?.fieldMeta?.fieldMap?.['delta.lagOffset']?.fieldId).toBe('delta.lagOffset');
       expect(result).toMatchSnapshot();
     });
     describe('all regular export driven forms', () => {
@@ -393,7 +396,7 @@ describe('getResourceFromAssets load correct form', () => {
       const result = getResourceFormAssets({resourceType, resource, isNew: true, assistantData, connection });
 
       // should have field named application in a new export..the only unique field for new export
-      expect(result?.fieldMeta?.fieldMap?.application?.label).toEqual('Application');
+      expect(result?.fieldMeta?.fieldMap?.application?.label).toBe('Application');
       expect(result).toMatchSnapshot();
     });
     // change this negative test case to throw an error
@@ -420,7 +423,7 @@ describe('getResourceFromAssets load correct form', () => {
 
       expect(mockImportAssist).toHaveBeenCalledWith('id1', resource, assistantData);
       // expect(exportAssistant).toHaveBeenCalled();
-      expect(result?.fieldMeta?.fieldMap?.someProp).toEqual('someValue');
+      expect(result?.fieldMeta?.fieldMap?.someProp).toBe('someValue');
     });
 
     const inputs = [

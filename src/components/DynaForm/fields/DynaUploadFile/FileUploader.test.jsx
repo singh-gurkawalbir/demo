@@ -1,8 +1,5 @@
-/* global describe, test, expect */
 import React from 'react';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import {screen} from '@testing-library/react';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import userEvent from '@testing-library/user-event';
 import FileUploader from './FileUploader';
 import { renderWithProviders } from '../../../../test/test-utils';
@@ -16,7 +13,7 @@ function fileUploader(props = {}) {
 }
 
 describe('FileUploader UI test cases', () => {
-  test('Should test the file upload and error message to be displayed ', () => {
+  test('Should test the file upload and error message to be displayed', () => {
     const data = {
       mode: 'csv',
       uploadInProgress: false,

@@ -1,4 +1,4 @@
-/* global describe, test, expect, beforeEach, afterEach, jest */
+
 import React from 'react';
 import {screen, waitFor} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -25,7 +25,7 @@ function initOutputFormatsList(props = {}) {
   return renderWithProviders(<OutputFormatsList {...props} />, {initialStore});
 }
 
-describe('OutputFormatsList UI tests', () => {
+describe('outputFormatsList UI tests', () => {
   let mockDispatchFn;
   let useDispatchSpy;
 
@@ -84,6 +84,6 @@ describe('OutputFormatsList UI tests', () => {
     const menuoption = screen.getByText('Create destination record { } from source rows [ ]');
 
     userEvent.click(menuoption);
-    await waitFor(() => expect(mockDispatchFn).toBeCalledWith(actions.mapping.v2.toggleOutput('record')));
+    await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith(actions.mapping.v2.toggleOutput('record')));
   });
 });

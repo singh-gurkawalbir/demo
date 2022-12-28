@@ -1,4 +1,3 @@
-/* global describe, test, expect, jest */
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { screen } from '@testing-library/react';
@@ -35,7 +34,7 @@ jest.mock('../../../../../components/ResourceReferences', () => ({
   ),
 }));
 
-describe('References test cases', () => {
+describe('references test cases', () => {
   runServer();
 
   test('should pass the initial render with default value', async () => {

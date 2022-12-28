@@ -1,4 +1,4 @@
-/* global describe, test, expect */
+
 import React from 'react';
 import {screen} from '@testing-library/react';
 import DateTimeDisplay from '.';
@@ -14,7 +14,7 @@ describe('Date and time UI tests', () => {
     store.dispatch(actions.user.profile.update(profile));
     store.dispatch(actions.resource.received(resourceType, {}));
   }
-  test('should run when no date is provided ', () => {
+  test('should run when no date is provided', () => {
     renderFunction();
     const dateTime = screen.queryByText('05/18/2022 11:46:31 pm');
 

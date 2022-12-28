@@ -1,4 +1,4 @@
-/* global describe, expect, test */
+
 import { selectors } from '.';
 
 describe('Metadata region selector testcases', () => {

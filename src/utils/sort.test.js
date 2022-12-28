@@ -1,4 +1,3 @@
-/* global describe, test, expect */
 const { stringCompare, celigoListCompare, sortJsonByKeys } = require('./sort');
 
 describe('Sort util function test', () => {
@@ -54,7 +53,7 @@ describe('Sort util function test', () => {
       ]);
     });
 
-    test('should return correct sorted data for array of objects with compare property as array and type number', () => {
+    test('should return correct sorted data for array of objects with compare property as array and type number duplicate', () => {
       const users = [
         { user: 'fred', age: 48 },
         { user: 'barney', age: 36 },
@@ -219,7 +218,7 @@ describe('Sort util function test', () => {
       expect(sampleArray).toEqual([1232, 999, 987, 876, 678, 456, 456, 432, 342, 321, 123, 78, 67, 34, 21, 3, 2]);
     });
 
-    test('should return correct sorted data for just numbers stored as strings ', () => {
+    test('should return correct sorted data for just numbers stored as strings', () => {
       const sampleArray = ['3', '67', '78', '34', '21', '456', '678', '432', '999', '342', '123', '456', '876', '2', '321', '987', '1232'];
 
       sampleArray.sort(stringCompare());
@@ -251,7 +250,7 @@ describe('Sort util function test', () => {
       );
     });
 
-    test('should return correct sorted data for array of strings with combination of small and capitalized letters and numbers', () => {
+    test('should return correct sorted data for array of strings with combination of small and capitalized letters and numbers duplicate', () => {
       const sampleArray = [123, 3, 335, 333345, '123Canada', 'Canada', 'USSR', 456, 4567, '456New zealand', '876Bangladesh', '1233', 'USA', '456India', 'indonesia', 'India', 'china', 'australia', 'Austria', 'Sweden', 'sri Lanka', 'germany', 'Greenland'];
 
       sampleArray.sort(stringCompare());
@@ -585,7 +584,7 @@ describe('Sort util function test', () => {
       ]);
     });
 
-    test('should return correct sorted data for array of strings with combination of small and capitalized letters and numbers', () => {
+    test('should return correct sorted data for array of strings with combination of small and capitalized letters and numbers duplicate1', () => {
       const sampleArray = [
         {id: 123},
         {id: 3},
@@ -640,7 +639,7 @@ describe('Sort util function test', () => {
       );
     });
 
-    test('should return correct sorted data for array of strings with combination of small and capitalized letters and numbers in descending order', () => {
+    test('should return correct sorted data for array of strings with combination of small and capitalized letters and numbers in descending order duplicate', () => {
       const sampleArray = [
         {id: 123},
         {id: 3},
@@ -938,7 +937,7 @@ describe('Sort util function test', () => {
     test('should return the passed param if it is not an array or object', () => {
       expect(sortJsonByKeys('test')).toBe('test');
       expect(sortJsonByKeys(123)).toBe(123);
-      expect(sortJsonByKeys(null)).toBe(null);
+      expect(sortJsonByKeys(null)).toBeNull();
     });
     test('should sort the json by keys and return the expected result', () => {
       const sample = {

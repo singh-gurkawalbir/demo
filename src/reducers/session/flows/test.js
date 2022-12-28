@@ -1,4 +1,5 @@
-/* global describe, test, expect */
+/* eslint-disable jest/no-standalone-expect */
+
 import each from 'jest-each';
 import reducer, { selectors } from '.';
 import actions from '../../../actions';
@@ -107,7 +108,7 @@ describe('session.flows reducers', () => {
 describe('session.flows selectors', () => {
   describe('getLastExportDateTime', () => {
     test('should return null when state is undefined.', () => {
-      expect(selectors.getLastExportDateTime(undefined, flowId)).toEqual(null);
+      expect(selectors.getLastExportDateTime(undefined, flowId)).toBeNull();
     });
 
     test('should return correct object with status', () => {
@@ -127,7 +128,7 @@ describe('session.flows selectors', () => {
         actions.flow.receivedLastExportDateTime(flowId, lastExportDateTimeResponse)
       );
 
-      expect(selectors.getLastExportDateTime(newState, undefined)).toEqual(null);
+      expect(selectors.getLastExportDateTime(newState, undefined)).toBeNull();
     });
     test('should return correct object when lastExportDateTime is null.', () => {
       const oldState = { };
@@ -142,7 +143,7 @@ describe('session.flows selectors', () => {
   });
   describe('isOnOffInProgress', () => {
     test('should return defaultObject when state is undefined.', () => {
-      expect(selectors.isOnOffInProgress(undefined, flowId)).toEqual(false);
+      expect(selectors.isOnOffInProgress(undefined, flowId)).toBe(false);
     });
 
     test('should return correct isOnOffInProgress flag', () => {
@@ -152,12 +153,12 @@ describe('session.flows selectors', () => {
         actions.flow.isOnOffActionInprogress(true, flowId)
       );
 
-      expect(selectors.isOnOffInProgress(newState, flowId)).toEqual(true);
+      expect(selectors.isOnOffInProgress(newState, flowId)).toBe(true);
       newState = reducer(oldState,
         actions.flow.isOnOffActionInprogress(false, flowId)
       );
 
-      expect(selectors.isOnOffInProgress(newState, flowId)).toEqual(false);
+      expect(selectors.isOnOffInProgress(newState, flowId)).toBe(false);
     });
   });
   describe('flowRunStatus', () => {

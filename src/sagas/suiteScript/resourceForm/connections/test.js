@@ -1,4 +1,5 @@
-/* global describe, test, expect, jest */
+/* eslint-disable jest/no-conditional-in-test */
+
 import { call, put, select, race, take } from 'redux-saga/effects';
 import { throwError } from 'redux-saga-test-plan/providers';
 import { expectSaga } from 'redux-saga-test-plan';
@@ -20,11 +21,11 @@ describe('ping connection saga', () => {
 
   const values = {name: 'conn1'};
 
-  test('should be able to ping connection successfully ', () => {
+  test('should be able to ping connection successfully', () => {
     const connectionPayload = { name: 'new Connection' };
     const response = {status: 'success'};
 
-    return expectSaga(pingConnection, { resourceId, values, ssLinkedConnectionId })
+    expectSaga(pingConnection, { resourceId, values, ssLinkedConnectionId })
       .provide([
         [matchers.call.fn(createPayload), connectionPayload],
         [matchers.call.fn(apiCallWithRetry), response],
@@ -44,7 +45,7 @@ describe('ping connection saga', () => {
     const connectionPayload = { name: 'new Connection' };
     const resp = { errors: ['Errors']};
 
-    return expectSaga(pingConnection, { resourceId, values, ssLinkedConnectionId })
+    expectSaga(pingConnection, { resourceId, values, ssLinkedConnectionId })
       .provide([
         [matchers.call.fn(createPayload), connectionPayload],
         [matchers.call.fn(apiCallWithRetry), resp],
@@ -64,7 +65,7 @@ describe('ping connection saga', () => {
     const connectionPayload = { name: 'new Connection' };
     const error = new Error('error');
 
-    return expectSaga(pingConnection, { resourceId, values, ssLinkedConnectionId })
+    expectSaga(pingConnection, { resourceId, values, ssLinkedConnectionId })
       .provide([
         [matchers.call.fn(createPayload), connectionPayload],
         [matchers.call.fn(apiCallWithRetry), throwError(error)],

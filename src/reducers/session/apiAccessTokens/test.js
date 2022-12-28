@@ -1,4 +1,3 @@
-/* global describe, test, expect */
 
 import reducer, { selectors } from '.';
 import actions from '../../../actions';
@@ -74,7 +73,7 @@ describe('api access tokens reducers', () => {
 });
 describe('apiAccessToken selector', () => {
   test('should return ***** if state is undefined', () => {
-    expect(selectors.apiAccessToken(undefined, 123)).toEqual('*****');
+    expect(selectors.apiAccessToken(undefined, 123)).toBe('*****');
   });
   test('should return api access token when valid id is given', () => {
     const apiAccessTokens = [
@@ -92,6 +91,6 @@ describe('apiAccessToken selector', () => {
     ];
     const state = reducer(apiAccessTokens, 'some action');
 
-    expect(selectors.apiAccessToken(state, 'id3')).toEqual('*****');
+    expect(selectors.apiAccessToken(state, 'id3')).toBe('*****');
   });
 });

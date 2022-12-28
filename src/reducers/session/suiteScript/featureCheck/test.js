@@ -1,4 +1,4 @@
-/* global describe, test, expect */
+
 import reducer, {selectors} from '.';
 import actions from '../../../../actions/suiteScript';
 import { COMM_STATES } from '../../../comms/networkComms';
@@ -136,6 +136,6 @@ describe('suiteScriptIAFeatureCheckState', () => {
 
   test('should return null correctly when invalid ids are sent through the selector', () => {
     expect(selectors.suiteScriptIAFeatureCheckState(state, {
-    })).toEqual(null);
+    })).toBeNull();
   });
 });

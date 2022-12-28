@@ -1,4 +1,4 @@
-/* global describe, test, expect, jest, afterEach */
+
 import React from 'react';
 import {screen} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -36,7 +36,7 @@ function initDynaAction(props = {}) {
   return renderWithProviders(ui, {initialStore});
 }
 
-describe('DynaAction ui test cases', () => {
+describe('dynaAction ui test cases', () => {
   afterEach(() => {
     jest.clearAllMocks();
   });

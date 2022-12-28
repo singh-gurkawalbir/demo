@@ -1,4 +1,4 @@
-/* global describe, test, expect, jest, beforeEach, afterEach */
+
 import React from 'react';
 import {
   screen, waitFor,
@@ -26,7 +26,7 @@ function initDynaRefreshCollection(props = {}) {
   return renderWithProviders(<DynaRefreshCollection {...props} />, {initialStore});
 }
 
-describe('DynaRefreshCollection UI tests', () => {
+describe('dynaRefreshCollection UI tests', () => {
   let mockDispatchFn;
   let useDispatchSpy;
 
@@ -58,6 +58,6 @@ describe('DynaRefreshCollection UI tests', () => {
 
     expect(refreshButton).toBeInTheDocument();
     userEvent.click(refreshButton);
-    await waitFor(() => expect(mockDispatchFn).toBeCalledWith(actions.resource.requestCollection('imports')));
+    await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith(actions.resource.requestCollection('imports')));
   });
 });

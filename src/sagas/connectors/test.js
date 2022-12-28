@@ -1,4 +1,3 @@
-/* global describe, test */
 
 import { expectSaga } from 'redux-saga-test-plan';
 import * as matchers from 'redux-saga-test-plan/matchers';
@@ -18,7 +17,7 @@ describe('evaluate fetchMetadata saga', () => {
     const options = {};
     const metadata = { a: 1 };
 
-    return expectSaga(fetchMetadata, { fieldType, fieldName, _integrationId, options })
+    expectSaga(fetchMetadata, { fieldType, fieldName, _integrationId, options })
       .provide([[matchers.call.fn(apiCallWithRetry), metadata]])
       .call.fn(apiCallWithRetry)
       .put(
@@ -50,13 +49,13 @@ describe('evaluate fetchMetadata saga', () => {
       )
     );
 
-    return saga.run();
+    saga.run();
   });
   test('If api successful, should dispatch receivedMetadata while metadata is not an array and options.autoPostBack is true', () => {
     const options = { autoPostBack: true };
     const metadata = { name: 'dummy' };
 
-    return expectSaga(fetchMetadata, { fieldType, fieldName, _integrationId, options })
+    expectSaga(fetchMetadata, { fieldType, fieldName, _integrationId, options })
       .provide([[matchers.call.fn(apiCallWithRetry), metadata]])
       .call.fn(apiCallWithRetry)
       .put(
@@ -73,7 +72,7 @@ describe('evaluate fetchMetadata saga', () => {
     const options = {};
     const error = new Error('error');
 
-    return expectSaga(fetchMetadata, { fieldType, fieldName, _integrationId, options })
+    expectSaga(fetchMetadata, { fieldType, fieldName, _integrationId, options })
       .provide([[matchers.call.fn(apiCallWithRetry), throwError(error)]])
       .call.fn(apiCallWithRetry)
       .put(actions.connectors.failedMetadata(fieldName, _integrationId))

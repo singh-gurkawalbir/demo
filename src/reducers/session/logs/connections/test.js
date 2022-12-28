@@ -1,4 +1,3 @@
-/* global describe, test, expect */
 
 import reducer, { selectors } from '.';
 import actions from '../../../../actions';
@@ -62,7 +61,7 @@ describe('Connections logs reducer', () => {
     };
     const state = reducer(initialState, actions.logs.connections.received(connectionId, ''));
 
-    expect(state.connections[connectionId].status).toEqual('success');
+    expect(state.connections[connectionId].status).toBe('success');
   });
   test('CONNECTIONS_LOGS_RECEIVED should set logs correctly', () => {
     const connectionId = 's123';
@@ -103,7 +102,7 @@ describe('Connections logs reducer', () => {
     };
     const state = reducer(initialState, actions.logs.connections.requestFailed(connectionId));
 
-    expect(state.connections[connectionId].status).toEqual('error');
+    expect(state.connections[connectionId].status).toBe('error');
   });
   test('CONNECTIONS_LOGS_PAUSE should set isPaused to true', () => {
     const connectionId = 's123';
@@ -116,7 +115,7 @@ describe('Connections logs reducer', () => {
     };
     const state = reducer(initialState, actions.logs.connections.pause(connectionId));
 
-    expect(state.connections[connectionId].isPaused).toEqual(true);
+    expect(state.connections[connectionId].isPaused).toBe(true);
   });
   test('CONNECTIONS_LOGS_CLEAR should not do anything if state.connections is not defined', () => {
     const connectionId = 's123';

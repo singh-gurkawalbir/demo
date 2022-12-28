@@ -1,4 +1,4 @@
-/* global test, expect, describe, jest, afterEach */
+
 import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -43,7 +43,7 @@ function initHomeTiles(data = {}, initialStore = null) {
   renderWithProviders(ui, {initialStore});
 }
 
-describe("HomeTiles's Reactivate Action UI tests", () => {
+describe("homeTiles's Reactivate Action UI tests", () => {
   afterEach(() => {
     jest.clearAllMocks();
   });

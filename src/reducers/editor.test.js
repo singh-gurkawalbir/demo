@@ -1,4 +1,4 @@
-/* global describe, expect, beforeEach, test */
+
 import { selectors } from '.';
 import { USER_ACCESS_LEVELS } from '../constants';
 
@@ -55,7 +55,7 @@ describe('AFE region selectors test cases', () => {
 
   describe('selectors.editorSupportsOnlyV2Data test cases', () => {
     test('should not throw any exception for invalid arguments', () => {
-      expect(selectors.editorSupportsOnlyV2Data()).toEqual(false);
+      expect(selectors.editorSupportsOnlyV2Data()).toBe(false);
     });
     test('should return true if mappings editor and active version is 2', () => {
       state.session.editors[editorId] = {
@@ -71,7 +71,7 @@ describe('AFE region selectors test cases', () => {
           version: 2,
         },
       };
-      expect(selectors.editorSupportsOnlyV2Data(state, editorId)).toEqual(true);
+      expect(selectors.editorSupportsOnlyV2Data(state, editorId)).toBe(true);
     });
     test('should return true for filters stage', () => {
       state.session.editors[editorId] = {
@@ -81,7 +81,7 @@ describe('AFE region selectors test cases', () => {
         editorType: 'exportFilter',
       };
 
-      expect(selectors.editorSupportsOnlyV2Data(state, editorId)).toEqual(true);
+      expect(selectors.editorSupportsOnlyV2Data(state, editorId)).toBe(true);
     });
     test('should return true for graphql resource and graphql http field', () => {
       state.data.resources.exports = [{
@@ -96,7 +96,7 @@ describe('AFE region selectors test cases', () => {
         stage: 'flowInput',
       };
 
-      expect(selectors.editorSupportsOnlyV2Data(state, editorId)).toEqual(true);
+      expect(selectors.editorSupportsOnlyV2Data(state, editorId)).toBe(true);
     });
     test('should return false for graphql resource when fieldId is not a graphql http field', () => {
       state.data.resources.exports = [{
@@ -111,7 +111,7 @@ describe('AFE region selectors test cases', () => {
         stage: 'flowInput',
       };
 
-      expect(selectors.editorSupportsOnlyV2Data(state, editorId)).toEqual(false);
+      expect(selectors.editorSupportsOnlyV2Data(state, editorId)).toBe(false);
     });
     test('should return false if resource is a page generator', () => {
       state.data.resources.exports = [{
@@ -126,7 +126,7 @@ describe('AFE region selectors test cases', () => {
         stage: 'flowInput',
       };
 
-      expect(selectors.editorSupportsOnlyV2Data(state, editorId)).toEqual(false);
+      expect(selectors.editorSupportsOnlyV2Data(state, editorId)).toBe(false);
     });
     test('should return true for csv generator, backup path, file json body and traceKeyTemplate fields', () => {
       state.session.editors[editorId] = {
@@ -162,10 +162,10 @@ describe('AFE region selectors test cases', () => {
         stage: 'flowInput',
       };
 
-      expect(selectors.editorSupportsOnlyV2Data(state, editorId)).toEqual(true);
-      expect(selectors.editorSupportsOnlyV2Data(state, 'def')).toEqual(true);
-      expect(selectors.editorSupportsOnlyV2Data(state, 'def1')).toEqual(true);
-      expect(selectors.editorSupportsOnlyV2Data(state, 'def2')).toEqual(true);
+      expect(selectors.editorSupportsOnlyV2Data(state, editorId)).toBe(true);
+      expect(selectors.editorSupportsOnlyV2Data(state, 'def')).toBe(true);
+      expect(selectors.editorSupportsOnlyV2Data(state, 'def1')).toBe(true);
+      expect(selectors.editorSupportsOnlyV2Data(state, 'def2')).toBe(true);
     });
     test('should return false for all other cases', () => {
       state.session.editors[editorId] = {
@@ -177,13 +177,13 @@ describe('AFE region selectors test cases', () => {
         stage: 'flowInput',
       };
 
-      expect(selectors.editorSupportsOnlyV2Data(state, editorId)).toEqual(false);
+      expect(selectors.editorSupportsOnlyV2Data(state, editorId)).toBe(false);
     });
   });
 
   describe('selectors.isEditorDisabled test cases', () => {
     test('should not throw any exception for invalid arguments', () => {
-      expect(selectors.isEditorDisabled()).toEqual(false);
+      expect(selectors.isEditorDisabled()).toBe(false);
     });
     test('should return true if formKey is present in the editor and the field state is disabled', () => {
       state.session.editors[editorId] = {
@@ -208,7 +208,7 @@ describe('AFE region selectors test cases', () => {
         },
       };
 
-      expect(selectors.isEditorDisabled(state, editorId)).toEqual(true);
+      expect(selectors.isEditorDisabled(state, editorId)).toBe(true);
     });
 
     test('should return false if formKey is present in the editor and the field type is iaexpression though field is disabled', () => {
@@ -234,7 +234,7 @@ describe('AFE region selectors test cases', () => {
         },
       };
 
-      expect(selectors.isEditorDisabled(state, editorId)).toEqual(false);
+      expect(selectors.isEditorDisabled(state, editorId)).toBe(false);
     });
     test('should return true for monitor user if stage is input/output filter and active mode is filter', () => {
       state.user = {
@@ -257,7 +257,7 @@ describe('AFE region selectors test cases', () => {
         activeProcessor: 'filter',
       };
 
-      expect(selectors.isEditorDisabled(state, editorId)).toEqual(true);
+      expect(selectors.isEditorDisabled(state, editorId)).toBe(true);
     });
     test('should return true for monitor user for mappings editor', () => {
       state.user = {
@@ -279,7 +279,7 @@ describe('AFE region selectors test cases', () => {
         stage: 'importMappingExtract',
       };
 
-      expect(selectors.isEditorDisabled(state, editorId)).toEqual(true);
+      expect(selectors.isEditorDisabled(state, editorId)).toBe(true);
     });
     test('should return false for manage user if stage is input/output filter and active mode is filter', () => {
       state.user = {
@@ -309,7 +309,7 @@ describe('AFE region selectors test cases', () => {
         activeProcessor: 'filter',
       };
 
-      expect(selectors.isEditorDisabled(state, editorId)).toEqual(false);
+      expect(selectors.isEditorDisabled(state, editorId)).toBe(false);
     });
     test('should return false for manage user for mappings editor', () => {
       state.user = {
@@ -338,7 +338,7 @@ describe('AFE region selectors test cases', () => {
         stage: 'importMappingExtract',
       };
 
-      expect(selectors.isEditorDisabled(state, editorId)).toEqual(false);
+      expect(selectors.isEditorDisabled(state, editorId)).toBe(false);
     });
     test('should return false for IA for response mappings editor', () => {
       state.user = {
@@ -361,7 +361,7 @@ describe('AFE region selectors test cases', () => {
         stage: 'responseMappingExtract',
       };
 
-      expect(selectors.isEditorDisabled(state, editorId)).toEqual(false);
+      expect(selectors.isEditorDisabled(state, editorId)).toBe(false);
     });
     test('should return true for monitor non IA user for response mappings editor', () => {
       state.user = {
@@ -383,7 +383,7 @@ describe('AFE region selectors test cases', () => {
         stage: 'responseMappingExtract',
       };
 
-      expect(selectors.isEditorDisabled(state, editorId)).toEqual(true);
+      expect(selectors.isEditorDisabled(state, editorId)).toBe(true);
     });
     test('should return false for manage user for response mappings editor', () => {
       state.user = {
@@ -412,7 +412,7 @@ describe('AFE region selectors test cases', () => {
         stage: 'responseMappingExtract',
       };
 
-      expect(selectors.isEditorDisabled(state, editorId)).toEqual(false);
+      expect(selectors.isEditorDisabled(state, editorId)).toBe(false);
     });
     test('should return true if user is in flow view mode', () => {
       state.data.resources.flows = [{
@@ -429,7 +429,7 @@ describe('AFE region selectors test cases', () => {
         stage: 'flowInput',
       };
 
-      expect(selectors.isEditorDisabled(state, editorId)).toEqual(true);
+      expect(selectors.isEditorDisabled(state, editorId)).toBe(true);
     });
     test('should return true if its a free flow', () => {
       state.data.resources.flows = [{
@@ -446,7 +446,7 @@ describe('AFE region selectors test cases', () => {
         stage: 'flowInput',
       };
 
-      expect(selectors.isEditorDisabled(state, editorId)).toEqual(true);
+      expect(selectors.isEditorDisabled(state, editorId)).toBe(true);
     });
     test('should return false if field state is not disabled', () => {
       state.session.editors[editorId] = {
@@ -471,7 +471,7 @@ describe('AFE region selectors test cases', () => {
         },
       };
 
-      expect(selectors.isEditorDisabled(state, editorId)).toEqual(false);
+      expect(selectors.isEditorDisabled(state, editorId)).toBe(false);
     });
     test('should return false if user has manage access to the flow', () => {
       state.data.resources.flows = [{
@@ -487,13 +487,13 @@ describe('AFE region selectors test cases', () => {
         stage: 'flowInput',
       };
 
-      expect(selectors.isEditorDisabled(state, editorId)).toEqual(false);
+      expect(selectors.isEditorDisabled(state, editorId)).toBe(false);
     });
   });
 
   describe('selectors.isEditorLookupSupported test cases', () => {
     test('should not throw any exception for invalid arguments', () => {
-      expect(selectors.isEditorLookupSupported()).toEqual(false);
+      expect(selectors.isEditorLookupSupported()).toBe(false);
     });
     test('should return false if resource type is exports', () => {
       state.session.editors[editorId] = {
@@ -502,7 +502,7 @@ describe('AFE region selectors test cases', () => {
         resourceId: '123',
         fieldId: 'abc.0',
       };
-      expect(selectors.isEditorLookupSupported(state, editorId)).toEqual(false);
+      expect(selectors.isEditorLookupSupported(state, editorId)).toBe(false);
     });
     test('should return false if field is of lookup type', () => {
       state.session.editors[editorId] = {
@@ -517,8 +517,8 @@ describe('AFE region selectors test cases', () => {
         resourceId: '657',
         fieldId: '_body',
       };
-      expect(selectors.isEditorLookupSupported(state, editorId)).toEqual(false);
-      expect(selectors.isEditorLookupSupported(state, 'def')).toEqual(false);
+      expect(selectors.isEditorLookupSupported(state, editorId)).toBe(false);
+      expect(selectors.isEditorLookupSupported(state, 'def')).toBe(false);
     });
     test('should return false if result mode is text for non-sql fields', () => {
       state.session.editors[editorId] = {
@@ -528,7 +528,7 @@ describe('AFE region selectors test cases', () => {
         fieldId: 'ftp.body',
         resultMode: 'text',
       };
-      expect(selectors.isEditorLookupSupported(state, editorId)).toEqual(false);
+      expect(selectors.isEditorLookupSupported(state, editorId)).toBe(false);
     });
     test('should return false if it is a import and its connection is of bigquery rdbms type', () => {
       state.session.editors[editorId] = {
@@ -551,7 +551,7 @@ describe('AFE region selectors test cases', () => {
           },
         }],
       };
-      expect(selectors.isEditorLookupSupported(state, editorId)).toEqual(false);
+      expect(selectors.isEditorLookupSupported(state, editorId)).toBe(false);
     });
     test('should return true if it is a import and its connection is of snowflake rdbms type', () => {
       state.session.editors[editorId] = {
@@ -574,7 +574,7 @@ describe('AFE region selectors test cases', () => {
           },
         }],
       };
-      expect(selectors.isEditorLookupSupported(state, editorId)).toEqual(true);
+      expect(selectors.isEditorLookupSupported(state, editorId)).toBe(true);
     });
     test('should return true for http body or sql fields', () => {
       state.session.editors[editorId] = {
@@ -593,8 +593,8 @@ describe('AFE region selectors test cases', () => {
         fieldId: 'http.body',
         resultMode: 'json',
       };
-      expect(selectors.isEditorLookupSupported(state, editorId)).toEqual(true);
-      expect(selectors.isEditorLookupSupported(state, 'def')).toEqual(true);
+      expect(selectors.isEditorLookupSupported(state, editorId)).toBe(true);
+      expect(selectors.isEditorLookupSupported(state, 'def')).toBe(true);
     });
     test('should return true for relative uri field', () => {
       state.session.editors[editorId] = {
@@ -605,7 +605,7 @@ describe('AFE region selectors test cases', () => {
         fieldId: 'http.relativeURI',
         resultMode: 'text',
       };
-      expect(selectors.isEditorLookupSupported(state, editorId)).toEqual(true);
+      expect(selectors.isEditorLookupSupported(state, editorId)).toBe(true);
     });
     test('should return true for editor type equal to databaseMapping for imports', () => {
       state.session.editors[editorId] = {
@@ -616,7 +616,7 @@ describe('AFE region selectors test cases', () => {
         fieldId: 'rdbms.query',
         resultMode: 'text',
       };
-      expect(selectors.isEditorLookupSupported(state, editorId)).toEqual(true);
+      expect(selectors.isEditorLookupSupported(state, editorId)).toBe(true);
     });
   });
 
@@ -818,7 +818,7 @@ describe('AFE region selectors test cases', () => {
         saveStatus: 'requested',
       };
 
-      expect(selectors.isEditorSaveInProgress(state, editorId)).toEqual(true);
+      expect(selectors.isEditorSaveInProgress(state, editorId)).toBe(true);
     });
     test('should return true if mapping state has in progress save status', () => {
       state.session.mapping = {
@@ -829,7 +829,7 @@ describe('AFE region selectors test cases', () => {
           saveStatus: 'requested',
         }};
 
-      expect(selectors.isEditorSaveInProgress(state, editorId)).toEqual(true);
+      expect(selectors.isEditorSaveInProgress(state, editorId)).toBe(true);
     });
     test('should return true if response mapping state has in progress save status', () => {
       state.session.responseMapping = {
@@ -840,7 +840,7 @@ describe('AFE region selectors test cases', () => {
           saveStatus: 'requested',
         }};
 
-      expect(selectors.isEditorSaveInProgress(state, editorId)).toEqual(true);
+      expect(selectors.isEditorSaveInProgress(state, editorId)).toBe(true);
     });
     test('should return false if no save is in progress', () => {
       state.session.editors[editorId] = {
@@ -865,7 +865,7 @@ describe('AFE region selectors test cases', () => {
           flowId: 'flow-456',
         }};
 
-      expect(selectors.isEditorSaveInProgress(state, editorId)).toEqual(false);
+      expect(selectors.isEditorSaveInProgress(state, editorId)).toBe(false);
     });
   });
 });

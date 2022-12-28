@@ -1,4 +1,4 @@
-/* global describe, test, expect, jest, afterEach */
+
 import React from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import {screen} from '@testing-library/react';
@@ -29,11 +29,11 @@ function initDynaSalesforceRefreshableSelect(props = {}) {
   return renderWithProviders(ui, {initialStore});
 }
 
-describe('DynaRefreshable UI test cases', () => {
+describe('dynaRefreshable UI test cases', () => {
   afterEach(() => {
     jest.clearAllMocks();
   });
-  test('Dispatch call should happen when clicked on refresh button and when entity name is provided ', () => {
+  test('dispatch call should happen when clicked on refresh button and when entity name is provided', () => {
     const data = {
       connectionId: '62f10f423dde9221e47c7a8b',
       filterKey: 'salesforce-sObjects',
@@ -81,7 +81,7 @@ describe('DynaRefreshable UI test cases', () => {
       refreshCache: true,
     }));
   });
-  test('Error message should be displayed', () => {
+  test('error message should be displayed', () => {
     const data = {connectionId: '62f10f423dde9221e47c7a8b',
       filterKey: 'salesforce-sObjects',
       fieldName: 'somefieldname',
@@ -117,7 +117,7 @@ describe('DynaRefreshable UI test cases', () => {
     userEvent.click(selectButton);
     expect(screen.getByText('A value must be provided')).toBeInTheDocument();
   });
-  test('Dispatch call should be made when clicked on refresh button for no entity provided', () => {
+  test('dispatch call should be made when clicked on refresh button for no entity provided', () => {
     const data = {connectionId: '62f10f423dde9221e47c7a8b',
       filterKey: 'salesforce-sObjects',
       fieldName: 'somefieldname',

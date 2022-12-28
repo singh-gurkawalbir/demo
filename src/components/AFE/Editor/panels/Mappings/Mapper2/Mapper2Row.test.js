@@ -1,4 +1,3 @@
-/* global describe, test, expect, jest */
 import React from 'react';
 import { screen} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -101,7 +100,7 @@ function initMapper2Row(props = {}, initialStore) {
   return renderWithProviders(ui, initialStore);
 }
 
-describe('Mapper2Row UI test cases ', () => {
+describe('Mapper2Row UI test cases', () => {
   test('should not show mapping row when hidden props is provided', () => {
     const {utils} = initMapper2Row({hidden: true});
 
@@ -184,7 +183,7 @@ describe('Mapper2Row UI test cases ', () => {
       actions.mapping.v2.updateActiveKey(nodeKey)
     );
   });
-  test('should show static Look UP icon when mapping is dynamic look up ', () => {
+  test('should show static Look UP icon when mapping is dynamic look up', () => {
     const nodeKey = 'somenodekey';
 
     initialStore.getState().session.mapping = {mapping: {importId: 'someimportID', lookups: [{name: 'someLookUpName', map: []}]}};
@@ -193,21 +192,21 @@ describe('Mapper2Row UI test cases ', () => {
 
     expect(screen.getByText('StaticLookupIcon')).toBeInTheDocument();
   });
-  test('should show Dynamic Look UP icon when mapping is dynamic look up ', () => {
+  test('should show Dynamic Look UP icon when mapping is dynamic look up', () => {
     const nodeKey = 'somenodekey';
 
     renderWithProviders(<ConfirmDialogProvider ><MemoryRouter><Mapper2Row lookupName="someLookUpName" nodeKey={nodeKey} >somechildren </Mapper2Row></MemoryRouter></ConfirmDialogProvider>);
 
     expect(screen.getByText('DynamicLookupIcon')).toBeInTheDocument();
   });
-  test('should icon of hardcode when mapping is hardcoded ', () => {
+  test('should icon of hardcode when mapping is hardcoded', () => {
     const nodeKey = 'somenodekey';
 
     renderWithProviders(<ConfirmDialogProvider ><MemoryRouter><Mapper2Row hardCodedValue="somevalue" nodeKey={nodeKey} >somechildren </Mapper2Row></MemoryRouter></ConfirmDialogProvider>);
 
     expect(screen.getByText('HardCodedIcon')).toBeInTheDocument();
   });
-  test('should icon of isHandlebarExp when mapping is hardcoded ', () => {
+  test('should icon of isHandlebarExp when mapping is hardcoded', () => {
     const nodeKey = 'somenodekey';
 
     renderWithProviders(<ConfirmDialogProvider ><MemoryRouter><Mapper2Row extract="/" nodeKey={nodeKey} >somechildren </Mapper2Row></MemoryRouter></ConfirmDialogProvider>);

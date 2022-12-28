@@ -1,11 +1,11 @@
-/* global describe, test, expect, jest */
+
 import React from 'react';
 import { screen} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import DynaCheckbox from './DynaCheckbox';
 import {renderWithProviders} from '../../../../test/test-utils';
 
-describe('DynaCheckbox UI tests', () => {
+describe('dynaCheckbox UI tests', () => {
   test('should pass the initial render', () => {
     renderWithProviders(<DynaCheckbox />);
     expect(screen.getByRole('checkbox')).toBeInTheDocument();
@@ -37,6 +37,6 @@ describe('DynaCheckbox UI tests', () => {
     const checkBox = screen.getByRole('checkbox');
 
     userEvent.click(checkBox);
-    expect(mockOnChange).toBeCalled();
+    expect(mockOnChange).toHaveBeenCalled();
   });
 });

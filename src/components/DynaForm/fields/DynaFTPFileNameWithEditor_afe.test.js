@@ -1,4 +1,4 @@
-/* global describe, expect, jest, test, afterEach, beforeEach */
+
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -107,7 +107,7 @@ describe('test suite for DynaFTPFileNameWithEditor field', () => {
     const openEditorBtn = screen.getByTitle('Open handlebars editor');
 
     userEvent.click(openEditorBtn);
-    expect(mockDispatchFn).toBeCalledWith(actions.editor.init('filefileName', 'handlebars', {
+    expect(mockDispatchFn).toHaveBeenCalledWith(actions.editor.init('filefileName', 'handlebars', {
       formKey: props.formKey,
       flowId: props.flowId,
       resourceId: props.resourceId,
@@ -116,7 +116,7 @@ describe('test suite for DynaFTPFileNameWithEditor field', () => {
       stage: 'importMappingExtract',
       onSave: expect.anything(),
     }));
-    expect(mockHistoryPush).toBeCalledWith(`${mockRouteMatch.url}/editor/filefileName`);
+    expect(mockHistoryPush).toHaveBeenCalledWith(`${mockRouteMatch.url}/editor/filefileName`);
   });
 
   test('should be able to save value in AFE editor', () => {
@@ -139,7 +139,7 @@ describe('test suite for DynaFTPFileNameWithEditor field', () => {
 
     userEvent.click(openEditorBtn);
     userEvent.click(screen.getByRole('button', {name: 'Save'}));
-    expect(onFieldChange).toBeCalledWith(props.id, 'SampleRule');
+    expect(onFieldChange).toHaveBeenCalledWith(props.id, 'SampleRule');
   });
 
   describe('should update file name extension on changing file type', () => {
@@ -169,7 +169,7 @@ describe('test suite for DynaFTPFileNameWithEditor field', () => {
       mockFormContext.fields['file.type'].value = 'json';
 
       rerender(<DynaFTPFileNameWithEditor {...props} />);
-      expect(onFieldChange).not.toBeCalled();
+      expect(onFieldChange).not.toHaveBeenCalled();
     });
 
     test('should give a default file name if not present beforehand', () => {
@@ -187,7 +187,7 @@ describe('test suite for DynaFTPFileNameWithEditor field', () => {
       mockFormContext.fields['file.type'].value = 'fixed';
 
       rerender(<DynaFTPFileNameWithEditor {...props} />);
-      expect(onFieldChange).toBeCalledWith(props.id, 'file-{{timestamp}}.edi');
+      expect(onFieldChange).toHaveBeenCalledWith(props.id, 'file-{{timestamp}}.edi');
     });
 
     test('should replace the extension if already has a valid extension', () => {
@@ -206,7 +206,7 @@ describe('test suite for DynaFTPFileNameWithEditor field', () => {
       mockFormContext.fields['file.type'].value = 'delimited/edifact';
 
       rerender(<DynaFTPFileNameWithEditor {...props} />);
-      expect(onFieldChange).toBeCalledWith(props.id, 'TC_9697.edi');
+      expect(onFieldChange).toHaveBeenCalledWith(props.id, 'TC_9697.edi');
     });
 
     test('should simply append the new extension if file name did not have a valid extension previously', () => {
@@ -225,7 +225,7 @@ describe('test suite for DynaFTPFileNameWithEditor field', () => {
       mockFormContext.fields['file.type'].value = 'filedefinition';
 
       rerender(<DynaFTPFileNameWithEditor {...props} />);
-      expect(onFieldChange).toBeCalledWith(props.id, 'TC_9697.pfx.edi');
+      expect(onFieldChange).toHaveBeenCalledWith(props.id, 'TC_9697.pfx.edi');
     });
   });
 });

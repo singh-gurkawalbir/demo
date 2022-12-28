@@ -1,4 +1,4 @@
-/* global describe, test, expect, jest, afterEach, beforeEach */
+
 import React from 'react';
 import {screen} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -56,7 +56,7 @@ function initDynaWebhookTokenGenerator(props = {}, initialStore = null) {
 
 const mockOnFieldChange = jest.fn();
 
-describe('DynaWebhookTokenGenerator UI test cases', () => {
+describe('dynaWebhookTokenGenerator UI test cases', () => {
   beforeEach(() => {
     jest.resetAllMocks();
     jest.spyOn(mockEnqueSnackbar, 'default').mockReturnValue([enqueueSnackbar]);

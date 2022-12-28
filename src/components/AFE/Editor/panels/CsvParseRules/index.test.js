@@ -1,4 +1,3 @@
-/* global describe, test, expect, beforeEach, afterEach, jest */
 import React from 'react';
 import {screen, waitFor} from '@testing-library/react';
 import * as reactRedux from 'react-redux';
@@ -41,7 +40,7 @@ function initCsvParseRules(props = {}) {
   return renderWithProviders(<CsvParseRules {...props} />, {initialStore});
 }
 
-describe('CsvParse Rules UI tests', () => {
+describe('csvParse Rules UI tests', () => {
   let mockDispatchFn;
   let useDispatchSpy;
 
@@ -85,6 +84,6 @@ describe('CsvParse Rules UI tests', () => {
     };
 
     initCsvParseRules({editorId: 'filecsv', keyColumns: ['demo']});
-    await waitFor(() => expect(mockDispatchFn).toBeCalledWith(actions.editor.patchRule('filecsv', formValue)));
+    await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith(actions.editor.patchRule('filecsv', formValue)));
   });
 });

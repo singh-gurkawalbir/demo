@@ -1,4 +1,4 @@
-/* global describe, test, afterEach, beforeEach, jest, expect */
+
 import React from 'react';
 import * as reactRedux from 'react-redux';
 import { screen } from '@testing-library/react';
@@ -26,7 +26,7 @@ function initOnOffCell(props, publishedStatusData) {
   return renderWithProviders(ui, {initialStore});
 }
 
-describe('Testsuite for OnOffCell', () => {
+describe('testsuite for OnOffCell', () => {
   let mockDispatchFn;
   let useDispatchSpy;
 
@@ -46,7 +46,7 @@ describe('Testsuite for OnOffCell', () => {
     useDispatchSpy.mockClear();
     mockDispatchFn.mockClear();
   });
-  test('should test the confirm published modal dialog box ', async () => {
+  test('should test the confirm published modal dialog box', async () => {
     const props = {
       templateId: '1234',
       published: false,
@@ -69,7 +69,7 @@ describe('Testsuite for OnOffCell', () => {
     await userEvent.click(publishButtonNode);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.template.publish.request(props.templateId, props.published));
   });
-  test('should test the confirm ununpublish modal dialog box ', async () => {
+  test('should test the confirm ununpublish modal dialog box', async () => {
     const props = {
       templateId: '1234',
       published: true,

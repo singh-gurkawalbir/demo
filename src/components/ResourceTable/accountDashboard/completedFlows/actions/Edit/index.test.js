@@ -1,4 +1,4 @@
-/* global describe, test, expect, jest */
+
 import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -44,7 +44,7 @@ function renderFunction() {
   userEvent.click(screen.getByRole('button', {name: /more/i}));
 }
 
-describe('Edit Flow action test cases', () => {
+describe('edit Flow action test cases', () => {
   test('should click on Edit Flow button', () => {
     renderFunction();
     userEvent.click(screen.getByText('Edit flow'));

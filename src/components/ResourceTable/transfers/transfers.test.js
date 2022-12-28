@@ -1,4 +1,4 @@
-/* global describe, expect, jest, test, beforeEach, afterEach */
+
 import React from 'react';
 import * as reactRedux from 'react-redux';
 import { screen } from '@testing-library/react';
@@ -25,7 +25,7 @@ function initTransfers(data = {}) {
   renderWithProviders(ui);
 }
 
-describe('Test suite for transfers', () => {
+describe('test suite for transfers', () => {
   let useDispatchSpy;
   let mockDispatchFn;
 
@@ -102,7 +102,7 @@ describe('Test suite for transfers', () => {
       const actionItems = screen.getAllByRole('menuitem');
 
       expect(actionItems).toHaveLength(1);
-      expect(actionItems[0].textContent).toEqual('Cancel transfer');
+      expect(actionItems[0].textContent).toBe('Cancel transfer');
       const cancelTransfer = actionItems[0];
 
       userEvent.click(cancelTransfer);
@@ -135,7 +135,7 @@ describe('Test suite for transfers', () => {
       const actionItems = screen.getAllByRole('menuitem');
 
       expect(actionItems).toHaveLength(1);
-      expect(actionItems[0].textContent).toEqual('Delete transfer');
+      expect(actionItems[0].textContent).toBe('Delete transfer');
       const deleteTransfer = actionItems[0];
 
       userEvent.click(deleteTransfer);

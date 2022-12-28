@@ -1,4 +1,4 @@
-/* global describe, test, expect, jest, beforeEach, afterEach */
+
 import React from 'react';
 import * as reactRedux from 'react-redux';
 import { MemoryRouter } from 'react-router-dom';
@@ -139,7 +139,7 @@ describe('test suite for ResourceFormFactory', () => {
     const validationsButton = screen.getByRole('button', {name: 'Handle Validations'});
 
     userEvent.click(initButton);
-    expect(mockDispatchFn).toBeCalledWith(actions.resourceForm.init(
+    expect(mockDispatchFn).toHaveBeenCalledWith(actions.resourceForm.init(
       resourceType, resourceId, isNew, true, undefined
     ));
     userEvent.click(optionsButton);

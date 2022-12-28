@@ -1,4 +1,4 @@
-/* global describe, test, expect, beforeEach, jest, afterEach */
+
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import * as reactRedux from 'react-redux';
@@ -21,7 +21,7 @@ async function initStackSystemToken({
   return renderWithProviders(ui);
 }
 
-describe('StackSystemToken test cases', () => {
+describe('stackSystemToken test cases', () => {
   runServer();
   let mockDispatchFn;
   let useDispatchSpy;
@@ -46,6 +46,6 @@ describe('StackSystemToken test cases', () => {
     const buttonRef = screen.getByRole('button');
 
     userEvent.click(buttonRef);
-    expect(mockDispatchFn).toBeCalledWith(actions.stack.displayToken()); // id will be undefined
+    expect(mockDispatchFn).toHaveBeenCalledWith(actions.stack.displayToken()); // id will be undefined
   });
 });

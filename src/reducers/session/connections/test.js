@@ -1,4 +1,3 @@
-/* global describe, test, expect */
 
 import reducer, { selectors } from '.';
 import actions from '../../../actions';
@@ -17,7 +16,7 @@ describe('Connections API', () => {
       test('should properly clear active connection when given no value', () => {
         const state = reducer(undefined, actions.connection.setActive());
 
-        expect(state.activeConnection).toEqual(undefined);
+        expect(state.activeConnection).toBeUndefined();
       });
 
       test('should update offline flag of connection once connection is authorized', () => {
@@ -251,7 +250,7 @@ describe('Connections API', () => {
       });
 
       test('should return null for debugLogs for empty state', () => {
-        expect(selectors.debugLogs(undefined)).toEqual(null);
+        expect(selectors.debugLogs(undefined)).toBeNull();
       });
 
       test('should return empty array for iclients for empty state', () => {

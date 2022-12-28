@@ -1,4 +1,4 @@
-/* global jest, expect, describe, test */
+
 import React from 'react';
 import { MemoryRouter, Route } from 'react-router-dom';
 import { screen } from '@testing-library/react';
@@ -34,7 +34,7 @@ jest.mock('react-router-dom', () => ({
     push: mockHistoryPush,
   }),
 }));
-describe('Testsuite for JobStatus', () => {
+describe('testsuite for JobStatus', () => {
   test('should test the Jobstatus when the status is in running', async () => {
     await initJobStatus({
       job: {
@@ -114,7 +114,7 @@ describe('Testsuite for JobStatus', () => {
     });
     expect(screen.getByText(/Completed/i)).toBeInTheDocument();
   });
-  test('should test the Jobstatus when the status is in queued', async () => {
+  test('should test the Jobstatus when the status is in queued duplicate', async () => {
     await initJobStatus({
       job: {
         id: 123,

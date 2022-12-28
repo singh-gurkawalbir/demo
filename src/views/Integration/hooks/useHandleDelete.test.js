@@ -1,4 +1,3 @@
-/* global describe, expect, jest, test, beforeEach, afterEach */
 import React from 'react';
 import * as reactRedux from 'react-redux';
 import { MemoryRouter } from 'react-router-dom';
@@ -198,7 +197,7 @@ describe('test suite for useHandleDelete hook', () => {
       const deleteButton = screen.getByRole('button', {name: 'Remove'});
 
       userEvent.click(deleteButton);
-      expect(screen.getByText('Contact your account owner to uninstall this integration app.')).toBeInTheDocument;
+      expect(screen.getByText('Contact your account owner to uninstall this integration app.')).toBeInTheDocument();
       expect(screen.queryByText('Confirm uninstall')).not.toBeInTheDocument();
     });
 
@@ -217,7 +216,7 @@ describe('test suite for useHandleDelete hook', () => {
       const deleteButton = screen.getByRole('button', {name: 'Remove'});
 
       userEvent.click(deleteButton);
-      expect(screen.getByText('To uninstall, please navigate to Admin → Uninstall inside the Integration App and select the desired store.')).toBeInTheDocument;
+      expect(screen.getByText('To uninstall, please navigate to Admin → Uninstall inside the Integration App and select the desired store.')).toBeInTheDocument();
       expect(screen.queryByText('Confirm uninstall')).not.toBeInTheDocument();
     });
   });

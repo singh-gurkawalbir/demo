@@ -1,4 +1,4 @@
-/* global describe, expect, test */
+
 import reducer, { selectors } from '.';
 import actions from '../actions';
 
@@ -28,7 +28,7 @@ describe('installer,uninstaller, clone and template region selector testcases', 
 
       expect(selectors.isSetupComplete(state, {
         templateId: 't1',
-      })).toEqual(true);
+      })).toBe(true);
     });
     test('should return false if installation steps not completed', () => {
       const installSteps = [
@@ -49,7 +49,7 @@ describe('installer,uninstaller, clone and template region selector testcases', 
 
       expect(selectors.isSetupComplete(state, {
         templateId: 't1',
-      })).toEqual(false);
+      })).toBe(false);
     });
     test('should return true if cloning is completed for a resource', () => {
       const installSteps = [
@@ -72,7 +72,7 @@ describe('installer,uninstaller, clone and template region selector testcases', 
       expect(selectors.isSetupComplete(state, {
         resourceType: 'imports',
         resourceId: 'i1',
-      })).toEqual(true);
+      })).toBe(true);
     });
     test('should return false if cloning is not completed for a resource', () => {
       const installSteps = [
@@ -89,7 +89,7 @@ describe('installer,uninstaller, clone and template region selector testcases', 
       expect(selectors.isSetupComplete(state, {
         resourceType: 'imports',
         resourceId: 'i1',
-      })).toEqual(false);
+      })).toBe(false);
     });
 
     test('should return false if empty install steps received for template', () => {
@@ -102,7 +102,7 @@ describe('installer,uninstaller, clone and template region selector testcases', 
 
       expect(selectors.isSetupComplete(state, {
         templateId: 't1',
-      })).toEqual(false);
+      })).toBe(false);
     });
   });
 
@@ -112,7 +112,7 @@ describe('installer,uninstaller, clone and template region selector testcases', 
     });
 
     test('should return undefined for if connection doesn\'t exist', () => {
-      expect(selectors.isIAConnectionSetupPending({}, 'c1')).toEqual(undefined);
+      expect(selectors.isIAConnectionSetupPending({}, 'c1')).toBeUndefined();
     });
 
     test('should return undefined if connection is not of connector type', () => {
@@ -125,7 +125,7 @@ describe('installer,uninstaller, clone and template region selector testcases', 
         actions.resource.received('connections', conn)
       );
 
-      expect(selectors.isIAConnectionSetupPending(state, 'c1')).toEqual(undefined);
+      expect(selectors.isIAConnectionSetupPending(state, 'c1')).toBeUndefined();
     });
 
     test('should return true if connection setup is not completed', () => {
@@ -150,7 +150,7 @@ describe('installer,uninstaller, clone and template region selector testcases', 
         actions.integrationApp.child.receivedNewChildSteps('i1', steps)
       );
 
-      expect(selectors.isIAConnectionSetupPending(state, 'c1')).toEqual(true);
+      expect(selectors.isIAConnectionSetupPending(state, 'c1')).toBe(true);
     });
 
     test('should return false if integration mode is settings', () => {
@@ -175,7 +175,7 @@ describe('installer,uninstaller, clone and template region selector testcases', 
         actions.resource.received('integrations', integration)
       );
 
-      expect(selectors.isIAConnectionSetupPending(state, 'c1')).toEqual(false);
+      expect(selectors.isIAConnectionSetupPending(state, 'c1')).toBe(false);
     });
 
     test('should return true if integration record installStep is not completed', () => {
@@ -205,7 +205,7 @@ describe('installer,uninstaller, clone and template region selector testcases', 
         actions.resource.received('integrations', integration)
       );
 
-      expect(selectors.isIAConnectionSetupPending(state, 'c1')).toEqual(true);
+      expect(selectors.isIAConnectionSetupPending(state, 'c1')).toBe(true);
     });
   });
 
@@ -231,7 +231,7 @@ describe('installer,uninstaller, clone and template region selector testcases', 
 
       expect(selectors.isUninstallComplete(state, {
         integrationId: 'i1',
-      })).toEqual(true);
+      })).toBe(true);
     });
 
     test('should return false if uninstallSteps are not completed', () => {
@@ -252,7 +252,7 @@ describe('installer,uninstaller, clone and template region selector testcases', 
 
       expect(selectors.isUninstallComplete(state, {
         integrationId: 'i1',
-      })).toEqual(false);
+      })).toBe(false);
     });
 
     test('should return false for empty uninstall steps', () => {
@@ -265,7 +265,7 @@ describe('installer,uninstaller, clone and template region selector testcases', 
 
       expect(selectors.isUninstallComplete(state, {
         integrationId: 'i1',
-      })).toEqual(false);
+      })).toBe(false);
     });
   });
 
@@ -526,8 +526,8 @@ describe('installer,uninstaller, clone and template region selector testcases', 
     const integrationId = '123';
 
     test('should not throw any exception for invalid arguments', () => {
-      expect(selectors.isIAV2UninstallComplete(undefined, {})).toEqual(true);
-      expect(selectors.isIAV2UninstallComplete({}, {})).toEqual(true);
+      expect(selectors.isIAV2UninstallComplete(undefined, {})).toBe(true);
+      expect(selectors.isIAV2UninstallComplete({}, {})).toBe(true);
     });
     test('should return false if integration mode is not uninstall', () => {
       const integration = {
@@ -543,7 +543,7 @@ describe('installer,uninstaller, clone and template region selector testcases', 
         },
       };
 
-      expect(selectors.isIAV2UninstallComplete(state, {integrationId})).toEqual(false);
+      expect(selectors.isIAV2UninstallComplete(state, {integrationId})).toBe(false);
     });
     test('should return false if integration steps are not fetched yet', () => {
       const integration = {
@@ -566,7 +566,7 @@ describe('installer,uninstaller, clone and template region selector testcases', 
         },
       };
 
-      expect(selectors.isIAV2UninstallComplete(state, {integrationId})).toEqual(false);
+      expect(selectors.isIAV2UninstallComplete(state, {integrationId})).toBe(false);
     });
     test('should return false if any step is incomplete', () => {
       const integration = {
@@ -606,7 +606,7 @@ describe('installer,uninstaller, clone and template region selector testcases', 
         },
       };
 
-      expect(selectors.isIAV2UninstallComplete(state, {integrationId})).toEqual(false);
+      expect(selectors.isIAV2UninstallComplete(state, {integrationId})).toBe(false);
     });
     test('should return true if all steps is are completed', () => {
       const integration = {
@@ -647,7 +647,7 @@ describe('installer,uninstaller, clone and template region selector testcases', 
         },
       };
 
-      expect(selectors.isIAV2UninstallComplete(state, {integrationId})).toEqual(true);
+      expect(selectors.isIAV2UninstallComplete(state, {integrationId})).toBe(true);
     });
   });
 

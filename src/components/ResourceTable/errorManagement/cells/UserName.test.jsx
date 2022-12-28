@@ -1,4 +1,3 @@
-/* global describe, test, expect  */
 
 import React from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
@@ -25,11 +24,11 @@ initialStore.getState().data.resources = {
   scripts: [],
 };
 
-describe('UI test cases for username', () => {
+describe('uI test cases for username', () => {
   const userId = 'auto';
   const flowId = '5ea16c600e2fab71928a6152';
 
-  test('should test autoretried should be there when userid is set to auto and jobtype is retry ', () => {
+  test('should test autoretried should be there when userid is set to auto and jobtype is retry', () => {
     renderWithProviders(<UserName
       userId={userId} flowId={flowId} jobType="retry" />);
     const res = screen.getByText('Auto-retried');

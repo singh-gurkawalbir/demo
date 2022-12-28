@@ -1,4 +1,3 @@
-/* global describe, test, expect */
 import React from 'react';
 import DropIcon from '.';
 import {renderWithProviders} from '../../../../test/test-utils';

@@ -1,4 +1,4 @@
-/* global describe, test, expect */
+
 import React from 'react';
 import {screen} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -27,7 +27,7 @@ async function initDynaSelectOverrideMediaType(props = {}) {
   return renderWithProviders(ui);
 }
 
-describe('DynaSelectAmazonSellerCentralAPIType UI test cases', () => {
+describe('dynaSelectAmazonSellerCentralAPIType UI test cases', () => {
   test('should show empty dom when no props provided', () => {
     renderWithProviders(<DynaSelectOverrideMediaType />);
     expect(screen.getByText('Please select')).toBeInTheDocument();

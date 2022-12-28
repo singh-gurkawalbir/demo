@@ -1,4 +1,4 @@
-/* global describe, test, expect, jest */
+
 import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -7,8 +7,8 @@ import DynaRadio from './DynaRadioGroup';
 
 const onFieldChange = jest.fn();
 
-describe('DynaRadio tests', () => {
-  test('Should able to test DynaRadio without Form label', async () => {
+describe('dynaRadio tests', () => {
+  test('should able to test DynaRadio without Form label', async () => {
     const props = {
       options: [{items: ['item1', {value: 'item2'}]}], onFieldChange,
 
@@ -21,7 +21,7 @@ describe('DynaRadio tests', () => {
     userEvent.click(screen.getByText('item1'));
     expect(onFieldChange).toHaveBeenCalledWith(undefined, 'item1');
   });
-  test('Should able to test DynaRadio without options', async () => {
+  test('should able to test DynaRadio without options', async () => {
     const props = {
       label: 'field label',
     };

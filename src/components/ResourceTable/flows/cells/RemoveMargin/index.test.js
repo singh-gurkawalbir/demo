@@ -1,9 +1,9 @@
-/* global describe, test,expect */
+
 import React from 'react';
 import { screen, render } from '@testing-library/react';
 import RemoveMargin from '.';
 
-describe('Remove Margin UI test cases', () => {
+describe('remove Margin UI test cases', () => {
   test('should show child component', () => {
     render(<RemoveMargin ><div>children component</div></RemoveMargin>);
     expect(screen.getByText('children component')).toBeInTheDocument();

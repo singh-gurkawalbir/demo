@@ -1,4 +1,4 @@
-/* global describe, test, expect, jest */
+
 import React from 'react';
 import {
   waitFor, screen,
@@ -15,7 +15,7 @@ jest.mock('../../../CodeEditor2', () => ({
   ),
 }));
 
-describe('DynaHandlebarPreview UI tests', () => {
+describe('dynaHandlebarPreview UI tests', () => {
   const mockOnFieldChange = jest.fn();
   const mockEditorClick = jest.fn();
   const props = {id: 'Id', value: 'editorValue', onFieldChange: mockOnFieldChange, label: 'Form Label', onEditorClick: mockEditorClick, isLoggable: true };
@@ -29,11 +29,11 @@ describe('DynaHandlebarPreview UI tests', () => {
   test('should call the onFieldChange function passed in props when editor is edited', async () => {
     renderWithProviders(<DynaHandlebarPreview {...props} />);
     userEvent.type(screen.getByRole('textbox'), 'a');
-    await waitFor(() => expect(mockOnFieldChange).toBeCalledWith('Id', 'editorValue'));
+    await waitFor(() => expect(mockOnFieldChange).toHaveBeenCalledWith('Id', 'editorValue'));
   });
   test('should call the onEditorClick function when clicked on the AFE icon', async () => {
     renderWithProviders(<DynaHandlebarPreview {...props} />);
     userEvent.click(screen.getByRole('button'));
-    await waitFor(() => expect(mockEditorClick).toBeCalled);
+    await waitFor(() => expect(mockEditorClick).toBeCalled());
   });
 });

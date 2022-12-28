@@ -1,4 +1,3 @@
-/* global describe, test, expect, beforeEach, afterEach, jest */
 import React from 'react';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -163,7 +162,7 @@ describe('PopulateWithPreviewData UI tests', () => {
 
     expect(buttonRef).toBeDisabled();
   });
-  test('should disable populate with preview data button if resource sample data is requested for exports', () => {
+  test('should disable populate with preview data button if resource sample data is requested for exports dupliccate', () => {
     initialStore.getState().session = {
       resourceFormSampleData: {
         export1: {

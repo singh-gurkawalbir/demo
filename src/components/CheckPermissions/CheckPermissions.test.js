@@ -1,4 +1,4 @@
-/* global describe, test, expect */
+
 import React from 'react';
 import { screen, waitFor} from '@testing-library/react';
 import {renderWithProviders, mockGetRequestOnce} from '../../test/test-utils';
@@ -7,7 +7,7 @@ import { runServer } from '../../test/api/server';
 import actions from '../../actions';
 import {PERMISSIONS} from '../../constants';
 
-describe('CheckPermissions UI tests', () => {
+describe('checkPermissions UI tests', () => {
   runServer();
   async function renderWithStore(defaultAShareId) {
     mockGetRequestOnce('/api/preferences', {
@@ -73,7 +73,7 @@ describe('CheckPermissions UI tests', () => {
     store.getState().auth = {authenticated: true, defaultAccountSet: true};
     await waitFor(() => expect(store?.getState()?.user?.profile?._id).toBeDefined());
     await waitFor(() => expect(store?.getState()?.user?.preferences?.environment).toBeDefined());
-    await waitFor(() => expect(store?.getState()?.user?.org?.accounts.length).toBeGreaterThan[1]);
+    await waitFor(() => expect(store?.getState()?.user?.org?.accounts.length).toBeGreaterThan(1));
 
     return store;
   }

@@ -1,4 +1,4 @@
-/* global describe, test, jest, expect, beforeEach, afterEach */
+
 import React from 'react';
 import { screen } from '@testing-library/react';
 import * as reactRedux from 'react-redux';
@@ -81,7 +81,7 @@ jest.mock('./ErrorCountCell', () => ({
   ...jest.requireActual('./ErrorCountCell'),
   default: (props, event) => mockErrorCountCell(props, event),
 }));
-describe('Testsuite for JobDetail', () => {
+describe('testsuite for JobDetail', () => {
   let mockDispatchFn;
   let useDispatchSpy;
 

@@ -1,11 +1,11 @@
-/* global describe, test, expect ,jest */
+
 import React from 'react';
 import { screen} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import {renderWithProviders} from '../../test/test-utils';
 import ChipInput from '.';
 
-describe('ChipInput testing', () => {
+describe('chipInput testing', () => {
   test('should test to store some value', () => {
     const onchange = jest.fn();
 

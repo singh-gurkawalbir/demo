@@ -1,4 +1,4 @@
-/* global describe, test, expect, jest, beforeEach, afterEach */
+
 import React from 'react';
 import { screen, waitFor} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -48,7 +48,7 @@ function initDynaCsvGenerate(props = {}) {
   return renderWithProviders(ui, {initialStore});
 }
 
-describe('DynaCsvGenerate_afe UI tests', () => {
+describe('dynaCsvGenerate_afe UI tests', () => {
   let mockDispatchFn;
   let useDispatchSpy;
 
@@ -109,7 +109,7 @@ describe('DynaCsvGenerate_afe UI tests', () => {
     const launchButton = screen.getByRole('button', {name: 'Launch'});
 
     userEvent.click(launchButton);
-    await waitFor(() => expect(mockDispatchFn).toBeCalled());
-    await waitFor(() => expect(mockHistoryPush).toBeCalledWith('/imports/edit/imports/63515cc28eab567612a83249/editor/filecsv/editor/filecsv'));
+    await waitFor(() => expect(mockDispatchFn).toHaveBeenCalled());
+    await waitFor(() => expect(mockHistoryPush).toHaveBeenCalledWith('/imports/edit/imports/63515cc28eab567612a83249/editor/filecsv/editor/filecsv'));
   });
 });

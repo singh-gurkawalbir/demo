@@ -1,4 +1,4 @@
-/* global describe, test */
+
 import { expectSaga } from 'redux-saga-test-plan';
 import { call, select } from 'redux-saga/effects';
 import { throwError } from 'redux-saga-test-plan/providers';
@@ -87,7 +87,7 @@ describe('requestFlowSampleData saga', () => {
       .run();
   });
 
-  test('should trigger suiteScript sampleData received action for fileCabinet/ftp ', () => {
+  test('should trigger suiteScript sampleData received action for fileCabinet/ftp', () => {
     const flow = {
       export: {
         type: 'fileCabinet',

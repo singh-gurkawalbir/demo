@@ -1,4 +1,4 @@
-/* global describe, test, expect, jest, beforeEach, afterEach */
+
 import React from 'react';
 import {
   waitFor, screen,
@@ -55,7 +55,7 @@ const mockisValidHookField = jest.fn();
 const mockhandleFieldChange = jest.fn();
 const mockhandleCreateScriptClick = jest.fn();
 
-describe('ScriptView UI tests', () => {
+describe('scriptView UI tests', () => {
   let mockDispatchFn;
   let useDispatchSpy;
 
@@ -105,7 +105,7 @@ describe('ScriptView UI tests', () => {
     const buttons = screen.getAllByRole('button');
 
     userEvent.click(buttons[2]);
-    expect(mockhandleCreateScriptClick).toBeCalled();
+    expect(mockhandleCreateScriptClick).toHaveBeenCalled();
   });
   test('should render disabled button for editscript when value prop does not contain scriptId', () => {
     initScriptView(props);
@@ -120,8 +120,8 @@ describe('ScriptView UI tests', () => {
     const buttons = screen.getAllByRole('button');
 
     userEvent.click(buttons[3]);
-    await waitFor(() => expect(mockDispatchFn).toBeCalled());
-    await waitFor(() => expect(mockHistoryPush).toBeCalledWith('//editor/id'));
+    await waitFor(() => expect(mockDispatchFn).toHaveBeenCalled());
+    await waitFor(() => expect(mockHistoryPush).toHaveBeenCalledWith('//editor/id'));
   });
   test('should render the scripts options when clicked on scripts dropdown', () => {
     initScriptView(props);

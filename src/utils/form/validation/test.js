@@ -1,5 +1,4 @@
 /* eslint-disable no-unused-vars */
-/* global describe,test,expect */
 import {
   comparedTo,
   fallsWithinNumericalRange,
@@ -288,17 +287,17 @@ describe('matchesRegEx validator', () => {
 
 describe('getDefaultNumericalRangeErrorMessages', () => {
   test('for min and max', () => {
-    expect(getDefaultNumericalRangeErrorMessages(1, 5)).toEqual(
+    expect(getDefaultNumericalRangeErrorMessages(1, 5)).toBe(
       'Value cannot be less than 1 or greater than 5'
     );
   });
   test('for just min', () => {
-    expect(getDefaultNumericalRangeErrorMessages(1)).toEqual(
+    expect(getDefaultNumericalRangeErrorMessages(1)).toBe(
       'Value cannot be less than 1'
     );
   });
   test('for just max', () => {
-    expect(getDefaultNumericalRangeErrorMessages(undefined, 5)).toEqual(
+    expect(getDefaultNumericalRangeErrorMessages(undefined, 5)).toBe(
       'Value cannot be greater than 5'
     );
   });
@@ -403,7 +402,7 @@ describe('fallsWithinNumericalRange', () => {
     ).toBeUndefined();
   });
 
-  test('succeeds with null', () => {
+  test('succeeds with null duplicate', () => {
     expect(
       // $FlowFixMe - Typing should prevent this, but we're testing the output
       fallsWithinNumericalRange({
@@ -414,7 +413,7 @@ describe('fallsWithinNumericalRange', () => {
       })
     ).toBeUndefined();
   });
-  test('succeeds with string null', () => {
+  test('succeeds with string null duplicate', () => {
     expect(
       // $FlowFixMe - Typing should prevent this, but we're testing the output
       fallsWithinNumericalRange({
@@ -426,7 +425,7 @@ describe('fallsWithinNumericalRange', () => {
     ).toBeUndefined();
   });
 
-  test('succeeds with undefined', () => {
+  test('succeeds with undefined duplicate', () => {
     expect(
       // $FlowFixMe - Typing should prevent this, but we're testing the output
       fallsWithinNumericalRange({
@@ -438,7 +437,7 @@ describe('fallsWithinNumericalRange', () => {
     ).toBeUndefined();
   });
 
-  test('fails with whitespace', () => {
+  test('fails with whitespace duplicate', () => {
     expect(
       // $FlowFixMe - Typing should prevent this, but we're testing the output
       fallsWithinNumericalRange({
@@ -829,34 +828,34 @@ describe('isNotValue', () => {
 
 describe('hasValue', () => {
   test('string', () => {
-    expect(hasValue('value')).toEqual(true);
+    expect(hasValue('value')).toBe(true);
   });
 
   test('array', () => {
-    expect(hasValue([1, 2])).toEqual(true);
+    expect(hasValue([1, 2])).toBe(true);
   });
 
   test('true', () => {
-    expect(hasValue(true)).toEqual(true);
+    expect(hasValue(true)).toBe(true);
   });
 
   test('false', () => {
-    expect(hasValue(false)).toEqual(true);
+    expect(hasValue(false)).toBe(true);
   });
 
   test('empty array', () => {
-    expect(hasValue([])).toEqual(false);
+    expect(hasValue([])).toBe(false);
   });
 
   test('empty string', () => {
-    expect(hasValue('')).toEqual(false);
+    expect(hasValue('')).toBe(false);
   });
 
   test('undefined', () => {
-    expect(hasValue(undefined)).toEqual(false);
+    expect(hasValue(undefined)).toBe(false);
   });
 
   test('null', () => {
-    expect(hasValue(null)).toEqual(false);
+    expect(hasValue(null)).toBe(false);
   });
 });

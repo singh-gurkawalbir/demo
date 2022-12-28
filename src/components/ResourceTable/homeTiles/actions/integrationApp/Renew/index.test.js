@@ -1,4 +1,4 @@
-/* global test, expect, describe, jest */
+
 import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -53,7 +53,7 @@ function initHomeTiles(data = {}, initialStore = null) {
   renderWithProviders(ui, {initialStore});
 }
 
-describe("HomeTile's Renew actions UI test", () => {
+describe("homeTile's Renew actions UI test", () => {
   test('should verify the Row action setup is pending no connector Id', () => {
     const data = {name: 'tileName', _connectorId: 'some_connectorId', pinned: true, status: 'is_pending_setup', _integrationId: '2_integrationId', supportsMultiStore: true, _id: 'modeText'};
 

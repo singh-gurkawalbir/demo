@@ -1,4 +1,4 @@
-/* global describe, test,expect */
+
 import React from 'react';
 import { screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
@@ -12,7 +12,7 @@ const metadata = {
   useRowActions: () => [Attach],
 };
 
-describe('Attach flow action test case', () => {
+describe('attach flow action test case', () => {
   test('should show modal dialog for attach flow', () => {
     renderWithProviders(
       <MemoryRouter>

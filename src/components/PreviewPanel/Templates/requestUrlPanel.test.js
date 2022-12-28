@@ -1,4 +1,3 @@
-/* global describe, test, beforeEach, expect */
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { screen } from '@testing-library/react';
@@ -59,7 +58,7 @@ async function initRequestUrlPanel({props} = {}) {
   return renderWithProviders(ui, {initialStore});
 }
 
-describe('Testsuite for Request Url Panel', () => {
+describe('testsuite for Request Url Panel', () => {
   runServer();
   beforeEach(() => {
     initialStore = getCreatedStore();

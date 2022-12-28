@@ -1,4 +1,4 @@
-/* global describe, test, beforeEach, jest, expect, afterEach */
+
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
@@ -45,7 +45,7 @@ async function initFilters({
 
 const mockActionClick = jest.fn();
 
-describe('Testsuite for Job Dashboard Filters', () => {
+describe('testsuite for Job Dashboard Filters', () => {
   runServer();
   let mockDispatchFn;
   let useDispatchSpy;
@@ -116,7 +116,7 @@ describe('Testsuite for Job Dashboard Filters', () => {
     expect(selectedEnabledFlowJobsNode.className).toEqual(expect.stringContaining('disabled'));
 
     userEvent.click(allEnabledFlowJobsNode);
-    expect(mockActionClick).toBeCalledTimes(1);
+    expect(mockActionClick).toHaveBeenCalledTimes(1);
   });
   test('should test the enabled retry button by setting disableRetry as false and isFlowBuilderView as true and by clicking on it', async () => {
     await initFilters({
@@ -144,7 +144,7 @@ describe('Testsuite for Job Dashboard Filters', () => {
     expect(selectedJobsNode).toBeInTheDocument();
     expect(selectedJobsNode.className).not.toEqual(expect.stringContaining('disabled'));
     userEvent.click(allJobsNode);
-    expect(mockActionClick).toBeCalledTimes(1);
+    expect(mockActionClick).toHaveBeenCalledTimes(1);
   });
   test('should test the resolve button by setting disableResolve by false and with no jobs', async () => {
     await initFilters({
@@ -208,7 +208,7 @@ describe('Testsuite for Job Dashboard Filters', () => {
     userEvent.click(allJobsNode);
     expect(mockActionClick).toHaveBeenCalledTimes(1);
   });
-  test('should test the resolve button by setting disableResolve by false and with jobs', async () => {
+  test('should test the resolve button by setting disableResolve by false and with jobs duplicate', async () => {
     await initFilters({
       integrationId: '1234',
       filterKey: 'jobs',
@@ -318,7 +318,7 @@ describe('Testsuite for Job Dashboard Filters', () => {
     expect(selectFlowsOptionNode).toBeInTheDocument();
     await userEvent.click(selectFlowsOptionNode);
     await waitFor(() => expect(selectFlowsOptionNode).not.toBeInTheDocument());
-    expect(mockDispatchFn).toBeCalledWith({
+    expect(mockDispatchFn).toHaveBeenCalledWith({
       type: 'PATCH_FILTER',
       name: 'jobs',
       filter: { flowId: '', currentPage: 0 },

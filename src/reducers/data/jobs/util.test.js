@@ -1,4 +1,5 @@
-/* global describe, test, expect */
+/* eslint-disable jest/no-standalone-expect */
+
 import each from 'jest-each';
 import moment from 'moment';
 import { JOB_TYPES, JOB_STATUS } from '../../../constants';

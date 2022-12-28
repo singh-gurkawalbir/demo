@@ -1,4 +1,4 @@
-/* global describe, beforeEach, test, jest, expect, afterEach */
+
 import { screen } from '@testing-library/react';
 import React from 'react';
 import { MemoryRouter, Route } from 'react-router-dom';
@@ -101,7 +101,7 @@ jest.mock('../../../ResourceTable', () => ({
   ),
 }));
 
-describe('Testsuite for Running flows', () => {
+describe('testsuite for Running flows', () => {
   runServer();
   let mockDispatchFn;
   let useDispatchSpy;

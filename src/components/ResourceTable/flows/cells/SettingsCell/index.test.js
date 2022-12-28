@@ -1,4 +1,4 @@
-/* global describe, test,expect, jest */
+
 import React from 'react';
 import { screen, waitFor, render } from '@testing-library/react';
 import { MemoryRouter, Route } from 'react-router-dom';
@@ -13,7 +13,7 @@ jest.mock('../../../../icons/SettingsIcon', () => ({
   ),
 }));
 
-describe('Setting cell test cases', () => {
+describe('setting cell test cases', () => {
   test('should show empty dom when flow doesnot supports settings', () => {
     const {container} = render(<MemoryRouter><RemoveMargin actionProps={{flowAttributes: {}}} /></MemoryRouter>);
 

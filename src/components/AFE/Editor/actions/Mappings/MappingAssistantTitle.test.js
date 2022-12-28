@@ -1,4 +1,3 @@
-/* global describe, test, expect, beforeEach, afterEach, jest */
 import React from 'react';
 import {screen, waitFor} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -70,7 +69,7 @@ function initMappingAssistantTitle(props = {}) {
   return renderWithProviders(<MappingAssistantTitle {...props} />, {initialStore});
 }
 
-describe('MappingAssistantTitle UI tests', () => {
+describe('mappingAssistantTitle UI tests', () => {
   let mockDispatchFn;
   let useDispatchSpy;
 
@@ -110,6 +109,6 @@ describe('MappingAssistantTitle UI tests', () => {
 
     expect(refreshIcon).toBeInTheDocument();
     userEvent.click(refreshIcon);
-    await waitFor(() => expect(mockDispatchFn).toBeCalledWith(actions.metadata.request('5efd8663a56953365bd28541', commMetaPath, {refreshCache: true})));
+    await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith(actions.metadata.request('5efd8663a56953365bd28541', commMetaPath, {refreshCache: true})));
   });
 });

@@ -1,4 +1,4 @@
-/* global describe, test, expect, jest, beforeEach, afterEach */
+
 import React from 'react';
 import { screen, waitFor} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -116,7 +116,7 @@ function initDynaSelect(props = {}) {
 
   return renderWithProviders(<DynaSelectAliasResource {...props} />, {initialStore});
 }
-describe('DynaAliasId UI tests', () => {
+describe('dynaAliasId UI tests', () => {
   let mockDispatchFn;
   let useDispatchSpy;
 
@@ -204,7 +204,7 @@ describe('DynaAliasId UI tests', () => {
   });
   test('should make a dispatch call with an error message when no resource is available for the selected resourceType', async () => {
     initDynaSelect({...props, value: undefined, options: {aliasResourceType: 'scripts'}});
-    await waitFor(() => expect(mockDispatchFn).toBeCalledWith(actions.form.forceFieldState('integration-alias')('aliasId', {
+    await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith(actions.form.forceFieldState('integration-alias')('aliasId', {
       isValid: false,
       errorMessages: errorMessageStore('NO_ALIAS_RESOURCE_MESSAGE', {
         label: MODEL_PLURAL_TO_LABEL.scripts.toLowerCase(),
@@ -214,7 +214,7 @@ describe('DynaAliasId UI tests', () => {
   });
   test('should make a dispatch call with an error message when no resource is selected for the passed resourceType', async () => {
     initDynaSelect({...props, value: undefined, options: {aliasResourceType: 'flows'}});
-    await waitFor(() => expect(mockDispatchFn).toBeCalledWith(actions.form.forceFieldState('integration-alias')('aliasId', {
+    await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith(actions.form.forceFieldState('integration-alias')('aliasId', {
       isValid: false,
       errorMessages: messageStore('REQUIRED_MESSAGE'),
     })));

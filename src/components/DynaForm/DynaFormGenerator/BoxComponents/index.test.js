@@ -1,4 +1,4 @@
-/* global describe, test, expect, */
+
 import React from 'react';
 import { screen } from '@testing-library/react';
 import BoxComponents from '.';
@@ -112,7 +112,7 @@ const props = {
   resourceId: '5ff687fa4f59bb348d41b332',
 };
 
-describe('BoxComponents UI tests', () => {
+describe('boxComponents UI tests', () => {
   test('should pass the initial render', () => {
     renderWithProviders(<BoxComponents {...props} />);
     expect(screen.getByText('General')).toBeInTheDocument();

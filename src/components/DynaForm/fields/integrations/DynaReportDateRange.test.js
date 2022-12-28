@@ -1,4 +1,4 @@
-/* global describe, test, expect, jest */
+
 import React from 'react';
 import {
   screen, waitFor,
@@ -35,7 +35,7 @@ jest.mock('../../../icons/ArrowDownIcon', () => ({
   ),
 }));
 
-describe('DynaReportDateRange UI tests', () => {
+describe('dynaReportDateRange UI tests', () => {
   const props = {
     formKey: 'formKey',
     id: 'testId',
@@ -106,7 +106,7 @@ describe('DynaReportDateRange UI tests', () => {
 
     expect(applyButton).toBeInTheDocument();
     userEvent.click(applyButton);
-    await waitFor(() => expect(mockonFieldChange).toBeCalled());
+    await waitFor(() => expect(mockonFieldChange).toHaveBeenCalled());
   });
   test('should not render the calendar views when preset is other than custom', () => {
     initDynaReportDateRange(props);

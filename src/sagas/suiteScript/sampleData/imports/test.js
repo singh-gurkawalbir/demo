@@ -1,4 +1,4 @@
-/* global describe, test */
+
 import { expectSaga } from 'redux-saga-test-plan';
 import { select } from 'redux-saga/effects';
 // eslint-disable-next-line no-unused-vars

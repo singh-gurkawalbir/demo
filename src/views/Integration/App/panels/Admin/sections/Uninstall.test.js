@@ -1,4 +1,3 @@
-/* global describe, test, expect, jest */
 import React from 'react';
 import {screen, waitFor} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -57,7 +56,7 @@ describe('UninstallSection UI tests', () => {
 
     expect(uninstallButtons).toHaveLength(2);
   });
-  test('should pass the initialRender when integration isParentView is false', async () => {
+  test('should pass the initialRender when integration isParentView is false duplicate', async () => {
     await initUninstallSection({integrationId: '5ff579d745ceef7dcd797c15', supportsMultiStore: true});
     expect(screen.getByText('Uninstall')).toBeInTheDocument();
     expect(screen.getByText('Choose an Amazon account from the account drop-down to uninstall.')).toBeInTheDocument();

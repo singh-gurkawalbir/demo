@@ -1,8 +1,8 @@
-/* global describe, test, expect */
+
 import { additionalFilter } from './util';
 
 describe('additionalFilter test cases', () => {
-  test('Should pass the additionalFilter with exports resource type', () => {
+  test('should pass the additionalFilter with exports resource type', () => {
     const response = additionalFilter('exports');
 
     expect(response).toEqual({
@@ -10,7 +10,7 @@ describe('additionalFilter test cases', () => {
     });
   });
 
-  test('Should pass the additionalFilter with imports resource type', () => {
+  test('should pass the additionalFilter with imports resource type', () => {
     const response = additionalFilter('imports');
 
     expect(response).toEqual({
@@ -18,13 +18,13 @@ describe('additionalFilter test cases', () => {
     });
   });
 
-  test('Should pass the additionalFilter with connections resource type', () => {
+  test('should pass the additionalFilter with connections resource type', () => {
     const response = additionalFilter('connections');
 
     expect(response).toBeNull();
   });
 
-  test('Should pass the additionalFilter with iClients resource type', () => {
+  test('should pass the additionalFilter with iClients resource type', () => {
     const response = additionalFilter('iClients');
 
     expect(response).toEqual({ provider: 'custom_oauth2' });

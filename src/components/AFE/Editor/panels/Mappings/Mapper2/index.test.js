@@ -1,4 +1,3 @@
-/* global describe, test, expect, jest, afterEach */
 import React from 'react';
 import {fireEvent, screen} from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
@@ -243,7 +242,7 @@ describe('ewrv', () => {
 
     fireEvent.scroll(screen.getAllByRole('tree')[1], { target: { scrollY: 100 } });
     fireEvent.wheel(screen.getAllByRole('tree')[1], { deltaX: 2 });
-    expect(document.querySelector('.rc-tree-list-holder').scrollLeft).toEqual(12);
+    expect(document.querySelector('.rc-tree-list-holder').scrollLeft).toBe(12);
   });
   test('should show message when no destination fiels is matched', () => {
     const initialStore = getCreatedStore();
@@ -259,7 +258,7 @@ describe('ewrv', () => {
     initialStore.getState().session.mapping = {mapping: {filter: [1]}};
     const {utils} = renderWithProviders(<MemoryRouter><Mapper2 /></MemoryRouter>, {initialStore});
 
-    expect(utils.container.textContent).toEqual(
+    expect(utils.container.textContent).toBe(
       'You don\'t have any fields that match the filter you applied.  Clear the filter by setting it to "All fields".'
     );
   });

@@ -1,4 +1,3 @@
-/* global describe, test, expect */
 import templateUtil from './template';
 
 const { getTemplateUrlName, getApplication } = require('./template');
@@ -15,20 +14,20 @@ describe('template util function test', () => {
     });
 
     test('should return correct name when applications are passed', () => {
-      expect(getTemplateUrlName(['netsuite', 'rest'])).toEqual('Netsuite-Rest');
-      expect(getTemplateUrlName(['salesforce', 'ftp'])).toEqual('Salesforce-Ftp');
-      expect(getTemplateUrlName(['netsuite', 'salesforce', 'ftp'])).toEqual('Netsuite-Salesforce-Ftp');
-      expect(getTemplateUrlName(['netsuite', 'salesforce', 'ftp', 'rest'])).toEqual('Netsuite-Salesforce-Ftp-Rest');
+      expect(getTemplateUrlName(['netsuite', 'rest'])).toBe('Netsuite-Rest');
+      expect(getTemplateUrlName(['salesforce', 'ftp'])).toBe('Salesforce-Ftp');
+      expect(getTemplateUrlName(['netsuite', 'salesforce', 'ftp'])).toBe('Netsuite-Salesforce-Ftp');
+      expect(getTemplateUrlName(['netsuite', 'salesforce', 'ftp', 'rest'])).toBe('Netsuite-Salesforce-Ftp-Rest');
     });
 
     test('should return correct name when applications length is 1', () => {
-      expect(getTemplateUrlName(['netsuite'])).toEqual('Netsuite-Netsuite');
-      expect(getTemplateUrlName(['salesforce'])).toEqual('Salesforce-Salesforce');
+      expect(getTemplateUrlName(['netsuite'])).toBe('Netsuite-Netsuite');
+      expect(getTemplateUrlName(['salesforce'])).toBe('Salesforce-Salesforce');
     });
 
     test('should return correct name when applications contains special characters', () => {
-      expect(getTemplateUrlName(['Salesforce.org', 'rest'])).toEqual('Salesforceorg-Rest');
-      expect(getTemplateUrlName(['rest', 'Salesforce.org'])).toEqual('Rest-Salesforceorg');
+      expect(getTemplateUrlName(['Salesforce.org', 'rest'])).toBe('Salesforceorg-Rest');
+      expect(getTemplateUrlName(['rest', 'Salesforce.org'])).toBe('Rest-Salesforceorg');
     });
   });
   describe('getApplication function test', () => {
@@ -371,7 +370,7 @@ describe('template util function test', () => {
       expect(received).toEqual(expectedResult);
     });
 
-    test('should return correct distributed steps incase of NS and SF ', () => {
+    test('should return correct distributed steps incase of NS and SF', () => {
       const previewData = {
         objects: [
           {

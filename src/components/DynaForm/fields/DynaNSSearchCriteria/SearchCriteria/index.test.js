@@ -1,4 +1,4 @@
-/* global describe, test, expect, jest, beforeEach, afterEach */
+
 import React from 'react';
 import {
   screen, waitFor, fireEvent,
@@ -71,7 +71,7 @@ jest.mock('../../../../icons/RefreshIcon', () => ({
 //   default: props => <input onClick={() => props.renderer} />,
 // }));
 
-describe('SearchCriteriaEditor UI tests', () => {
+describe('searchCriteriaEditor UI tests', () => {
   const mockOnRefresh = jest.fn();
   //   const [mockdisableSave, setMockDisableSave] = useState(true);
 
@@ -113,7 +113,7 @@ describe('SearchCriteriaEditor UI tests', () => {
   });
   test('should make a dispatch call on initial render', async () => {
     initSearchCriteriaEditor(props);
-    await waitFor(() => expect(mockDispatchFn).toBeCalledWith(actions.searchCriteria.init('filecsv', props.value)));
+    await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith(actions.searchCriteria.init('filecsv', props.value)));
   });
   test('should open the fields when clicked on the "Field" text field', async () => {
     initSearchCriteriaEditor({...props, editorId: 'filecsv1'});
@@ -131,18 +131,18 @@ describe('SearchCriteriaEditor UI tests', () => {
     fireEvent.focusIn(fields[0]);
     expect(screen.getByText('Audience Description')).toBeInTheDocument();
     userEvent.click(screen.getByText('Audience Description'));
-    await waitFor(() => expect(mockDispatchFn).toBeCalled());
+    await waitFor(() => expect(mockDispatchFn).toHaveBeenCalled());
   });
   test('should make a dispatch call whenever a row is deleted', async () => {
     initSearchCriteriaEditor({...props, editorId: 'filecsv1'});
     const deleteButtons = screen.getAllByRole('button');
 
     userEvent.click(deleteButtons[1]);
-    await waitFor(() => expect(mockDispatchFn).toBeCalledWith(actions.searchCriteria.delete('filecsv1', 0)));
+    await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith(actions.searchCriteria.delete('filecsv1', 0)));
   });
   test('should make a dipatch call on initial render', async () => {
     initSearchCriteriaEditor({...props, editorId: 'filecsv1', value: []});
-    await waitFor(() => expect(mockDispatchFn).toBeCalledWith(actions.searchCriteria.init('filecsv1', [])));
+    await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith(actions.searchCriteria.init('filecsv1', [])));
   });
   test('hould diplay the operator options when clicked on operator dropdown', async () => {
     initSearchCriteriaEditor({...props, editorId: 'filecsv1'});

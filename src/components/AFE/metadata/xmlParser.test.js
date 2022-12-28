@@ -1,4 +1,4 @@
-/* global describe, test, expect */
+
 import React from 'react';
 import metadata from './xmlParser';
 import DataPanel from '../Editor/panels/Data';
@@ -10,10 +10,10 @@ describe('xmlParser metadata test cases', () => {
   test('should pass the test case for each field', () => {
     const {type, fieldId, description, label, panels} = metadata;
 
-    expect(type).toEqual('xmlParser');
-    expect(fieldId).toEqual('file.xml');
-    expect(description).toEqual('Converts XML data into JSON');
-    expect(label).toEqual('XML parser helper');
+    expect(type).toBe('xmlParser');
+    expect(fieldId).toBe('file.xml');
+    expect(description).toBe('Converts XML data into JSON');
+    expect(label).toBe('XML parser helper');
 
     const xmlParserRules = panels.find(p => p.title === 'XML parse options');
     const resultPanel = panels.find(p => p.title === 'Parsed output');

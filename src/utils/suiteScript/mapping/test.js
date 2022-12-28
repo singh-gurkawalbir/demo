@@ -1,4 +1,3 @@
-/* global describe, test,  expect */
 import generateFieldAndListMappings, {
   isFileOrNetSuiteBatchExport,
   validateMappings,
@@ -11,7 +10,7 @@ import generateFieldAndListMappings, {
 
 describe('Suitescript utils', () => {
   describe('isFileOrNetSuiteBatchExport util', () => {
-    test('should return true for netsuite export ', () => {
+    test('should return true for netsuite export', () => {
       const testResources = [
         {
           netsuite: {
@@ -27,7 +26,7 @@ describe('Suitescript utils', () => {
 
       testResources.forEach(res => {
         expect(isFileOrNetSuiteBatchExport(res))
-          .toEqual(true);
+          .toBe(true);
       });
     });
   });
@@ -52,7 +51,7 @@ describe('Suitescript utils', () => {
 
     testResources.forEach(res => {
       expect(isFileOrNetSuiteBatchExport(res))
-        .toEqual(true);
+        .toBe(true);
     });
   });
 
@@ -97,7 +96,7 @@ describe('Suitescript utils', () => {
 
     testResources.forEach(res => {
       expect(isFileOrNetSuiteBatchExport(res))
-        .toEqual(false);
+        .toBe(false);
     });
   });
 
@@ -1064,13 +1063,13 @@ describe('Suitescript utils', () => {
     });
   });
 
-  describe('getSuiteScriptAppType util', () => {
+  describe('getSuiteScriptAppType util duplicate', () => {
     test('should return true in case 2 compared mapping is equal', () => {
       const mappingItem1 = {generate: 'a', extract: 'b', key: 'k1'};
       const mappingItem2 = {generate: 'a', extract: 'b', key: 'k3'};
 
       expect(isMappingObjEqual(mappingItem1, mappingItem2))
-        .toEqual(true);
+        .toBe(true);
     });
 
     test('should return false in case 2 compared mapping is equal[1]', () => {
@@ -1078,14 +1077,14 @@ describe('Suitescript utils', () => {
       const mappingItem2 = {generate: 'a', extract: 'w', key: 'k1'};
 
       expect(isMappingObjEqual(mappingItem1, mappingItem2))
-        .toEqual(false);
+        .toBe(false);
     });
     test('should return false in case 2 compared mapping is equal[2]', () => {
       const mappingItem1 = {generate: 'a', extract: 'b', key: 'k1'};
       const mappingItem2 = {generate: '', extract: 'w', key: 'k1'};
 
       expect(isMappingObjEqual(mappingItem1, mappingItem2))
-        .toEqual(false);
+        .toBe(false);
     });
   });
 });

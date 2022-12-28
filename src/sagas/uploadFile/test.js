@@ -1,4 +1,4 @@
-/* global describe, test, beforeAll, afterAll */
+
 import { throwError } from 'redux-saga-test-plan/providers';
 import { expectSaga } from 'redux-saga-test-plan';
 import * as matchers from 'redux-saga-test-plan/matchers';
@@ -42,7 +42,7 @@ describe('uploadFile saga', () => {
   test('should handle api error properly', () => {
     const error = new Error('error');
 
-    return expectSaga(uploadFile, { resourceType, resourceId, fileType, file })
+    expectSaga(uploadFile, { resourceType, resourceId, fileType, file })
       .provide([
         [matchers.call.fn(apiCallWithRetry), throwError(error)],
       ])
@@ -67,7 +67,7 @@ describe('uploadRawData saga', () => {
   test('should handle api error if exception is thrown on uploadFile call', () => {
     const error = new Error('error');
 
-    return expectSaga(uploadRawData, { file, fileType})
+    expectSaga(uploadRawData, { file, fileType})
       .provide([
         [matchers.call.fn(uploadFile), throwError(error)],
       ])
@@ -101,7 +101,7 @@ describe('previewZip saga', () => {
   test('should handle api error properly', () => {
     const error = new Error('error');
 
-    return expectSaga(previewZip, { file, fileType})
+    expectSaga(previewZip, { file, fileType})
       .provide([
         [matchers.call.fn(apiCallWithRetry), throwError(error)],
         [matchers.call.fn(uploadFile), runKey],
@@ -113,7 +113,7 @@ describe('previewZip saga', () => {
   test('should handle api error if exception is thrown on uploadFile call', () => {
     const error = new Error('error');
 
-    return expectSaga(previewZip, { file, fileType})
+    expectSaga(previewZip, { file, fileType})
       .provide([
         [matchers.call.fn(apiCallWithRetry), throwError(error)],
         [matchers.call.fn(uploadFile), throwError(error)],

@@ -1,4 +1,3 @@
-/* global describe, test */
 
 import { expectSaga } from 'redux-saga-test-plan';
 import * as matchers from 'redux-saga-test-plan/matchers';
@@ -14,7 +13,7 @@ describe('cancel saga', () => {
   test('should able to cancel trasfer successfully', () => {
     const cancelResponce = {status: '200'};
 
-    return expectSaga(cancel, { id })
+    expectSaga(cancel, { id })
       .provide([
         [matchers.call.fn(apiCallWithRetry), cancelResponce],
       ])
@@ -26,7 +25,7 @@ describe('cancel saga', () => {
     const error = new Error('error');
     const path = `/transfers/${id}/cancel`;
 
-    return expectSaga(cancel, { id })
+    expectSaga(cancel, { id })
       .provide([
         [matchers.call.fn(apiCallWithRetry), throwError(error)],
       ])
@@ -46,7 +45,7 @@ describe('preview saga', () => {
     };
     const response = {_integrationIds: ['123', '456']};
 
-    return expectSaga(preview, { data })
+    expectSaga(preview, { data })
       .provide([
         [call(apiCallWithRetry, args), response],
       ])
@@ -59,7 +58,7 @@ describe('preview saga', () => {
     const path = `/transfers/preview?email=${encodeURIComponent(data.email)}`;
     const error = TypeError('Do not know how to serialize a BigInt');
 
-    return expectSaga(preview, { data })
+    expectSaga(preview, { data })
       .put(actions.api.failure(path, 'GET', error, false))
       .not.call.fn(apiCallWithRetry)
       .returns(true)
@@ -74,7 +73,7 @@ describe('preview saga', () => {
       hidden: true,
     };
 
-    return expectSaga(preview, { data })
+    expectSaga(preview, { data })
       .provide([
         [call(apiCallWithRetry, args), response],
       ])
@@ -91,7 +90,7 @@ describe('preview saga', () => {
       hidden: true,
     };
 
-    return expectSaga(preview, { data })
+    expectSaga(preview, { data })
       .provide([
         [call(apiCallWithRetry, args), response],
       ])
@@ -108,7 +107,7 @@ describe('preview saga', () => {
     };
     const error = new Error('error');
 
-    return expectSaga(preview, { data })
+    expectSaga(preview, { data })
       .provide([
         [call(apiCallWithRetry, args), throwError(error)],
       ])
@@ -124,7 +123,7 @@ describe('create saga', () => {
   test('should able to create transfer successfully', () => {
     const transferResponse = { _transferId: 'j1', something: 'some thing' };
 
-    return expectSaga(create, { data })
+    expectSaga(create, { data })
       .provide([
         [matchers.call.fn(apiCallWithRetry), transferResponse],
       ])
@@ -137,7 +136,7 @@ describe('create saga', () => {
     const error = new Error();
     const path = '/transfers/invite';
 
-    return expectSaga(create, { data })
+    expectSaga(create, { data })
       .provide([
         [matchers.call.fn(apiCallWithRetry), throwError(error)],
       ])

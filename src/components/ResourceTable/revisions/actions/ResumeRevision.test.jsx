@@ -1,4 +1,4 @@
-/* global test, expect, describe, beforeEach, jest */
+
 import React from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { screen } from '@testing-library/react';
@@ -72,7 +72,7 @@ function renderFuntion(data) {
   userEvent.click(screen.getByRole('button', {name: /more/i}));
 }
 
-describe('UI tests for resume revision ', () => {
+describe('uI tests for resume revision', () => {
   beforeEach(() => {
     jest.resetAllMocks();
   });

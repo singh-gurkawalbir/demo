@@ -1,4 +1,3 @@
-/* global describe, test, expect, beforeEach, afterEach, jest */
 import React from 'react';
 import {screen, waitFor} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -40,7 +39,7 @@ function initFormPreview(props = {}) {
 
   return renderWithProviders(<CsvGeneratePanel {...props} />, {initialStore});
 }
-describe('CsvGeneratePanel UI tests', () => {
+describe('csvGeneratePanel UI tests', () => {
   let mockDispatchFn;
   let useDispatchSpy;
 
@@ -65,7 +64,7 @@ describe('CsvGeneratePanel UI tests', () => {
   test('should make the respective dispatch call when Test Form button is clicked', async () => {
     initFormPreview({editorId: 'filecsv', status: 'success'});
     userEvent.click(screen.getByText(/Test Form/i));
-    await waitFor(() => expect(mockDispatchFn).toBeCalledWith(actions.editor.patchFeatures('filecsv', {formOutput: 'data'})));
+    await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith(actions.editor.patchFeatures('filecsv', {formOutput: 'data'})));
   });
   test('should display the error message when there is an error', () => {
     initFormPreview({editorId: 'filecsv', status: 'error'});

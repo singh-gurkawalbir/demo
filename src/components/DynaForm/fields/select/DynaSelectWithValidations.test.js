@@ -1,4 +1,4 @@
-/* global describe, test, expect */
+
 import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -20,18 +20,18 @@ async function initDynaSelectWithValidations(props = {}) {
 
   return renderWithProviders(<DynaSelectWithValidations {...props} />, { initialStore });
 }
-describe('DynaSelectWithValidations tests', () => {
-  test('Should test dynaSelect field validation without proper formFields', async () => {
+describe('dynaSelectWithValidations tests', () => {
+  test('should test dynaSelect field validation without proper formFields', async () => {
     await initDynaSelectWithValidations({...props, formKey: 'random'});
     userEvent.click(screen.getByRole('button'));
     expect(screen.getByText('Please select')).toBeInTheDocument();
     expect(screen.queryByText('_description')).toBeInTheDocument();
   });
-  test('Should test dynaSelect field validation with proper formField', async () => {
+  test('should test dynaSelect field validation with proper formField', async () => {
     await initDynaSelectWithValidations(props);
     expect(screen.queryByText('_description')).not.toBeInTheDocument();
   });
-  test('Should test dynaSelect field validation without proper options', async () => {
+  test('should test dynaSelect field validation without proper options', async () => {
     await initDynaSelectWithValidations({...props, options: undefined});
     expect(screen.queryByText('_description')).not.toBeInTheDocument();
   });

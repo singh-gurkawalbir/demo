@@ -1,4 +1,4 @@
-/* global test, expect, describe,  jest */
+
 import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -24,7 +24,7 @@ function initRunHistoryTable(data = {}, initialStore = null) {
   userEvent.click(screen.queryByRole('button', {name: /more/i}));
 }
 
-describe("Run history's Download Files test cases", () => {
+describe("run history's Download Files test cases", () => {
   test('should click Download files button when only one files is there to download', () => {
     initRunHistoryTable({files: [1], _id: '_id'});
 

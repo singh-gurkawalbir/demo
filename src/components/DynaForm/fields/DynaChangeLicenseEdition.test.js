@@ -1,4 +1,4 @@
-/* global describe, test, expect,beforeEach, afterEach, jest */
+
 import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -6,7 +6,7 @@ import * as reactRedux from 'react-redux';
 import { renderWithProviders, reduxStore } from '../../../test/test-utils';
 import DynaChangeLicenseEdition from './DynaChangeLicenseEdition';
 
-describe('DynaChangeLicenseEdition tests', () => {
+describe('dynaChangeLicenseEdition tests', () => {
   const initialStore = reduxStore;
 
   initialStore.getState().data.resources = {
@@ -45,7 +45,7 @@ describe('DynaChangeLicenseEdition tests', () => {
     useDispatchSpy.mockClear();
   });
 
-  test('Should able to test DynaChangeLicenseEdition with edition2', async () => {
+  test('should able to test DynaChangeLicenseEdition with edition2', async () => {
     const props = {
       editionId: '_editionId2', connectorId: '_connectorId',
     };
@@ -54,7 +54,7 @@ describe('DynaChangeLicenseEdition tests', () => {
     userEvent.click(screen.getByRole('button', {name: 'Please select'}));
     expect(screen.getByRole('menuitem', {name: '_editionId3'})).toBeInTheDocument();
   });
-  test('Should able to test DynaChangeLicenseEdition with invalid connectorId', async () => {
+  test('should able to test DynaChangeLicenseEdition with invalid connectorId', async () => {
     const props = {
       editionId: '_editionId1', connectorId: '_connectorId2',
     };

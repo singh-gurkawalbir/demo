@@ -1,4 +1,4 @@
-/* global describe, test, expect */
+
 import React from 'react';
 import { screen } from '@testing-library/react';
 import { renderWithProviders, reduxStore } from '../../../test/test-utils';
@@ -27,12 +27,12 @@ async function initDynaAmazonRestrictedReportType(props) {
 
   return renderWithProviders(<DynaAmazonRestrictedReportType {...props} />, { initialStore });
 }
-describe('DynaAmazonRestrictedReportType tests', () => {
-  test('Should able to test DynaAmazonRestrictedReportType with showAmazonRestrictedReportType', async () => {
+describe('dynaAmazonRestrictedReportType tests', () => {
+  test('should able to test DynaAmazonRestrictedReportType with showAmazonRestrictedReportType', async () => {
     await initDynaAmazonRestrictedReportType({formKey: '_formKey'});
     expect(screen.queryByRole('checkbox')).toBeInTheDocument();
   });
-  test('Should able to test DynaAmazonRestrictedReportType with incorrect formKey', async () => {
+  test('should able to test DynaAmazonRestrictedReportType with incorrect formKey', async () => {
     await initDynaAmazonRestrictedReportType({formKey: 'rmKey'});
     expect(screen.queryByRole('textbox')).not.toBeInTheDocument();
   });

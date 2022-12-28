@@ -1,4 +1,5 @@
-/* global describe, jest, expect, test */
+/* eslint-disable jest/expect-expect */
+
 import React from 'react';
 import { runServer } from '../../../test/api/server';
 import { renderWithProviders } from '../../../test/test-utils';
@@ -44,15 +45,15 @@ describe('test cases for useTriggerCancelFromContext hook', () => {
     const onCloseWithDiscardWarning = jest.fn();
 
     await inituseTriggerCancelFromContext({formKey, onCloseWithDiscardWarning});
-    expect(mockCloseCancelTriggered).not.toBeCalled();
-    expect(onCloseWithDiscardWarning).not.toBeCalled();
+    expect(mockCloseCancelTriggered).not.toHaveBeenCalled();
+    expect(onCloseWithDiscardWarning).not.toHaveBeenCalled();
   });
 
   test('should not execute the functions in useEffect when onCloseWithDiscardWarning is not passed', async () => {
     const formKey = 'connections-123';
 
     await inituseTriggerCancelFromContext({formKey});
-    expect(mockCloseCancelTriggered).not.toBeCalled();
+    expect(mockCloseCancelTriggered).not.toHaveBeenCalled();
   });
 
   test('should execute the functions in useEffect when conditions satisfy', async () => {

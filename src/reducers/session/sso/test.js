@@ -1,4 +1,4 @@
-/* global describe, test, expect */
+
 import reducer, { selectors } from '.';
 import actionTypes from '../../../actions/types';
 
@@ -35,7 +35,7 @@ describe('sso validation reducers', () => {
     });
   });
   describe('SSO.ORG_ID.VALIDATION_SUCCESS action', () => {
-    test('should update status to success ', () => {
+    test('should update status to success', () => {
       const prevState = {};
       const reqState = reducer(prevState, { type: actionTypes.SSO.ORG_ID.VALIDATION_REQUEST });
       const currState = reducer(reqState, { type: actionTypes.SSO.ORG_ID.VALIDATION_SUCCESS });
@@ -61,7 +61,7 @@ describe('sso validation reducers', () => {
     });
   });
   describe('SSO.ORG_ID.VALIDATION_ERROR action', () => {
-    test('should update status to error and update error ', () => {
+    test('should update status to error and update error', () => {
       const prevState = {
         status: 'success',
       };
@@ -122,7 +122,7 @@ describe('sso validation selectors', () => {
       expect(selectors.orgIdValidationError(successState)).toBeUndefined();
       expect(selectors.orgIdValidationError(errorStateWithNoError)).toBeUndefined();
     });
-    test('should return the error for the error state ', () => {
+    test('should return the error for the error state', () => {
       expect(selectors.orgIdValidationError(errorState)).toBe(errorState.error);
     });
   });

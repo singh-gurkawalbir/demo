@@ -1,4 +1,3 @@
-/* global describe, test, jest, expect, afterEach */
 import React from 'react';
 import {screen, fireEvent} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -28,7 +27,7 @@ describe('DynaStaticMapWidget UI test cases', () => {
   afterEach(() => {
     jest.clearAllMocks();
   });
-  test('should test static mapping refresh buttons and selecting fail record radio button in action to take if unique match not found radio options and also handling the cleanup  ', () => {
+  test('should test static mapping refresh buttons and selecting fail record radio button in action to take if unique match not found radio options and also handling the cleanup', () => {
     initialStore.getState().session.connectors = {
       someIntegrationId: {
         someId: {

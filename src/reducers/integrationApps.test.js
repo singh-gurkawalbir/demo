@@ -1,4 +1,5 @@
-/* global describe, expect, test, beforeAll */
+/* eslint-disable jest/no-identical-title */
+
 import moment from 'moment';
 import reducer, { selectors } from '.';
 import actions from '../actions';
@@ -1978,9 +1979,9 @@ const flows = [
 describe('integrationApps selector testcases', () => {
   describe('selectors.getFlowsAssociatedExportFromIAMetadata test cases', () => {
     test('should not throw any exception for invalid arguments', () => {
-      expect(selectors.getFlowsAssociatedExportFromIAMetadata({}, {})).toBe(null);
-      expect(selectors.getFlowsAssociatedExportFromIAMetadata({})).toBe(null);
-      expect(selectors.getFlowsAssociatedExportFromIAMetadata(null, {})).toBe(null);
+      expect(selectors.getFlowsAssociatedExportFromIAMetadata({}, {})).toBeNull();
+      expect(selectors.getFlowsAssociatedExportFromIAMetadata({})).toBeNull();
+      expect(selectors.getFlowsAssociatedExportFromIAMetadata(null, {})).toBeNull();
     });
     test('should return correct Export details from IA metadata', () => {
       const state = {
@@ -2183,7 +2184,7 @@ describe('integrationApps selector testcases', () => {
 
   describe('selectors.integrationAppV2FlowList test cases', () => {
     test('should not throw any exception for invalid arguments', () => {
-      expect(selectors.integrationAppV2FlowList(undefined, {})).toBe(null);
+      expect(selectors.integrationAppV2FlowList(undefined, {})).toBeNull();
     });
     test('should return flows linked to the child integration', () => {
       const flows = [
@@ -2227,7 +2228,7 @@ describe('integrationApps selector testcases', () => {
 
   describe('selectors.integrationAppV2ConnectionList test cases', () => {
     test('should not throw any exception for invalid arguments', () => {
-      expect(selectors.integrationAppV2ConnectionList()).toBe(null);
+      expect(selectors.integrationAppV2ConnectionList()).toBeNull();
     });
 
     const conns = [
@@ -2887,7 +2888,7 @@ describe('integrationApps selector testcases', () => {
         },
       ]);
     });
-    test('should return correct connectionIds', () => {
+    test('should return correct connectionIds duplicate', () => {
       const state = reducer(
         {
           data: {
@@ -2973,21 +2974,21 @@ describe('integrationApps selector testcases', () => {
     test('should not throw any exception for invalid arguments', () => {
       const selector = selectors.integrationAppName();
 
-      expect(selector()).toEqual(null);
-      expect(selector({})).toEqual(null);
-      expect(selector(null)).toEqual(null);
-      expect(selector(null, null)).toEqual(null);
+      expect(selector()).toBeNull();
+      expect(selector({})).toBeNull();
+      expect(selector(null)).toBeNull();
+      expect(selector(null, null)).toBeNull();
     });
 
     test('should return correct value for integrationAppName', () => {
       const selector = selectors.integrationAppName();
 
-      expect(selector(state, 'i1')).toEqual('ABC');
-      expect(selector(state, 'i2')).toEqual('ABCDEF');
-      expect(selector(state, 'i3')).toEqual('ABCDEF');
-      expect(selector(state, 'i4')).toEqual('ABC');
-      expect(selector(state, 'i5')).toEqual('ABCDEF');
-      expect(selector(state, 'i6')).toEqual(null);
+      expect(selector(state, 'i1')).toBe('ABC');
+      expect(selector(state, 'i2')).toBe('ABCDEF');
+      expect(selector(state, 'i3')).toBe('ABCDEF');
+      expect(selector(state, 'i4')).toBe('ABC');
+      expect(selector(state, 'i5')).toBe('ABCDEF');
+      expect(selector(state, 'i6')).toBeNull();
     });
   });
 
@@ -3305,7 +3306,7 @@ describe('integrationApps selector testcases', () => {
 
   describe('selectors.isIntegrationAppLicenseExpired test cases', () => {
     test('should not throw any exception for invalid arguments', () => {
-      expect(selectors.isIntegrationAppLicenseExpired()).toEqual(true);
+      expect(selectors.isIntegrationAppLicenseExpired()).toBe(true);
     });
 
     const integration = {
@@ -3349,7 +3350,7 @@ describe('integrationApps selector testcases', () => {
         actions.integrationApp.settings.requestedUpgrade('l1')
       );
 
-      expect(selectors.isIntegrationAppLicenseExpired(state, 'i1')).toEqual(true);
+      expect(selectors.isIntegrationAppLicenseExpired(state, 'i1')).toBe(true);
     });
 
     test('should return if license expired as true for the integration app for owner user if license not found', () => {
@@ -3376,7 +3377,7 @@ describe('integrationApps selector testcases', () => {
         actions.resource.received('integrations', integration)
       );
 
-      expect(selectors.isIntegrationAppLicenseExpired(state, 'i1')).toEqual(true);
+      expect(selectors.isIntegrationAppLicenseExpired(state, 'i1')).toBe(true);
     });
 
     test('should return if license expired for the integration app for owner user for non-expired', () => {
@@ -3408,7 +3409,7 @@ describe('integrationApps selector testcases', () => {
         actions.resource.received('integrations', integration)
       );
 
-      expect(selectors.isIntegrationAppLicenseExpired(state, 'i1')).toEqual(false);
+      expect(selectors.isIntegrationAppLicenseExpired(state, 'i1')).toBe(false);
     });
 
     test('should return if license expired for the integration app for owner user for expiring soon', () => {
@@ -3441,7 +3442,7 @@ describe('integrationApps selector testcases', () => {
         actions.resource.received('integrations', integration)
       );
 
-      expect(selectors.isIntegrationAppLicenseExpired(state, 'i1')).toEqual(false);
+      expect(selectors.isIntegrationAppLicenseExpired(state, 'i1')).toBe(false);
     });
 
     test('should return if license expired for the integration app for non owner user for non-expired', () => {
@@ -3473,13 +3474,13 @@ describe('integrationApps selector testcases', () => {
         actions.resource.received('integrations', integration)
       );
 
-      expect(selectors.isIntegrationAppLicenseExpired(state, 'i1')).toEqual(false);
+      expect(selectors.isIntegrationAppLicenseExpired(state, 'i1')).toBe(false);
     });
   });
 
   describe('selectors.integrationAppEdition test cases', () => {
     test('should return default plan for invalid arguments', () => {
-      expect(selectors.integrationAppEdition()).toEqual('Standard plan');
+      expect(selectors.integrationAppEdition()).toBe('Standard plan');
     });
 
     const integration = {
@@ -3551,7 +3552,7 @@ describe('integrationApps selector testcases', () => {
         actions.resource.received('integrations', integration)
       );
 
-      expect(selectors.integrationAppEdition(state, 'i1')).toEqual('Edition1 plan');
+      expect(selectors.integrationAppEdition(state, 'i1')).toBe('Edition1 plan');
     });
     test('should return valid edition plan for IA1.0 connectors', () => {
       const state = reducer(
@@ -3583,7 +3584,7 @@ describe('integrationApps selector testcases', () => {
         actions.resource.received('integrations', integration2)
       );
 
-      expect(selectors.integrationAppEdition(state, 'i2')).toEqual('Premium plan');
+      expect(selectors.integrationAppEdition(state, 'i2')).toBe('Premium plan');
     });
     test('should return default plan if no edition exists', () => {
       const state = reducer(
@@ -3615,7 +3616,7 @@ describe('integrationApps selector testcases', () => {
         actions.resource.received('integrations', integration3)
       );
 
-      expect(selectors.integrationAppEdition(state, 'i3')).toEqual('Standard plan');
+      expect(selectors.integrationAppEdition(state, 'i3')).toBe('Standard plan');
     });
   });
 
@@ -6230,7 +6231,7 @@ describe('integrationApps selector testcases', () => {
 
   describe('selectors.hasGeneralSettings test cases', () => {
     test('should not throw any exception for invalid arguments', () => {
-      expect(selectors.hasGeneralSettings()).toEqual(false);
+      expect(selectors.hasGeneralSettings()).toBe(false);
     });
   });
 
@@ -6760,27 +6761,27 @@ describe('integrationApps selector testcases', () => {
     };
 
     test('should not throw any exception for invalid arguments', () => {
-      expect(selectors.isIntegrationAppVersion2()).toEqual(false);
-      expect(selectors.isIntegrationAppVersion2(null)).toEqual(false);
-      expect(selectors.isIntegrationAppVersion2({})).toEqual(false);
-      expect(selectors.isIntegrationAppVersion2({}, null)).toEqual(false);
+      expect(selectors.isIntegrationAppVersion2()).toBe(false);
+      expect(selectors.isIntegrationAppVersion2(null)).toBe(false);
+      expect(selectors.isIntegrationAppVersion2({})).toBe(false);
+      expect(selectors.isIntegrationAppVersion2({}, null)).toBe(false);
     });
     test('should return false when integration not found', () => {
-      expect(selectors.isIntegrationAppVersion2(state, 'invalid')).toEqual(false);
-      expect(selectors.isIntegrationAppVersion2(state, 'invalid', true)).toEqual(false);
-      expect(selectors.isIntegrationAppVersion2(state, 'invalid', false)).toEqual(false);
+      expect(selectors.isIntegrationAppVersion2(state, 'invalid')).toBe(false);
+      expect(selectors.isIntegrationAppVersion2(state, 'invalid', true)).toBe(false);
+      expect(selectors.isIntegrationAppVersion2(state, 'invalid', false)).toBe(false);
     });
     test('should return true when integration found and is cloned when skipClone is false', () => {
-      expect(selectors.isIntegrationAppVersion2(state, 'integration1')).toEqual(true);
-      expect(selectors.isIntegrationAppVersion2(state, 'integration1', false)).toEqual(true);
+      expect(selectors.isIntegrationAppVersion2(state, 'integration1')).toBe(true);
+      expect(selectors.isIntegrationAppVersion2(state, 'integration1', false)).toBe(true);
     });
     test('should return false when integration found and is cloned when skipClone is true', () => {
-      expect(selectors.isIntegrationAppVersion2(state, 'integration1', true)).toEqual(false);
+      expect(selectors.isIntegrationAppVersion2(state, 'integration1', true)).toBe(false);
     });
     test('should return true when integration found and is a IA2.0 integration', () => {
-      expect(selectors.isIntegrationAppVersion2(state, 'integration2', true)).toEqual(true);
-      expect(selectors.isIntegrationAppVersion2(state, 'integration3', true)).toEqual(true);
-      expect(selectors.isIntegrationAppVersion2(state, 'integration4', true)).toEqual(true);
+      expect(selectors.isIntegrationAppVersion2(state, 'integration2', true)).toBe(true);
+      expect(selectors.isIntegrationAppVersion2(state, 'integration3', true)).toBe(true);
+      expect(selectors.isIntegrationAppVersion2(state, 'integration4', true)).toBe(true);
     });
   });
 
@@ -6829,37 +6830,37 @@ describe('integrationApps selector testcases', () => {
     };
 
     test('should not throw any exception for invalid arguments', () => {
-      expect(selectors.isIntegrationAppV1()).toEqual(false);
-      expect(selectors.isIntegrationAppV1(null)).toEqual(false);
-      expect(selectors.isIntegrationAppV1({})).toEqual(false);
-      expect(selectors.isIntegrationAppV1({}, null)).toEqual(false);
+      expect(selectors.isIntegrationAppV1()).toBe(false);
+      expect(selectors.isIntegrationAppV1(null)).toBe(false);
+      expect(selectors.isIntegrationAppV1({})).toBe(false);
+      expect(selectors.isIntegrationAppV1({}, null)).toBe(false);
     });
     test('should return false when integration not found', () => {
-      expect(selectors.isIntegrationAppV1(state, 'invalid')).toEqual(false);
-      expect(selectors.isIntegrationAppV1(state, 'invalid')).toEqual(false);
-      expect(selectors.isIntegrationAppV1(state, 'invalid')).toEqual(false);
+      expect(selectors.isIntegrationAppV1(state, 'invalid')).toBe(false);
+      expect(selectors.isIntegrationAppV1(state, 'invalid')).toBe(false);
+      expect(selectors.isIntegrationAppV1(state, 'invalid')).toBe(false);
     });
 
     test('should return false when integration found and is a IA2.0 integration', () => {
-      expect(selectors.isIntegrationAppV1(state, 'integration2')).toEqual(false);
-      expect(selectors.isIntegrationAppV1(state, 'integration4')).toEqual(false);
+      expect(selectors.isIntegrationAppV1(state, 'integration2')).toBe(false);
+      expect(selectors.isIntegrationAppV1(state, 'integration4')).toBe(false);
     });
 
     test('should return false when integration found and is a DIY integration', () => {
-      expect(selectors.isIntegrationAppV1(state, 'integration6')).toEqual(false);
+      expect(selectors.isIntegrationAppV1(state, 'integration6')).toBe(false);
     });
     test('should return true when integration found and is a IA1.0 integration', () => {
-      expect(selectors.isIntegrationAppV1(state, 'integration5')).toEqual(true);
+      expect(selectors.isIntegrationAppV1(state, 'integration5')).toBe(true);
     });
 
     test('should return true when integration found and is a IA1.0 cloned integration', () => {
-      expect(selectors.isIntegrationAppV1(state, 'integration7')).toEqual(true);
+      expect(selectors.isIntegrationAppV1(state, 'integration7')).toBe(true);
     });
   });
 
   describe('selectors.integrationAppChildIdOfFlow test cases', () => {
     test('should not throw any exception for invalid arguments', () => {
-      expect(selectors.integrationAppChildIdOfFlow()).toEqual(null);
+      expect(selectors.integrationAppChildIdOfFlow()).toBeNull();
     });
     test('should return integrationId for v2 flow', () => {
       const flows = [
@@ -6889,11 +6890,10 @@ describe('integrationApps selector testcases', () => {
         })
       );
 
-      expect(selectors.integrationAppChildIdOfFlow(state, 'i1', 'f1')).toEqual(
+      expect(selectors.integrationAppChildIdOfFlow(state, 'i1', 'f1')).toBe(
         'i1'
       );
-      expect(selectors.integrationAppChildIdOfFlow(state, 'i1', 'f2')).toEqual(
-        undefined
+      expect(selectors.integrationAppChildIdOfFlow(state, 'i1', 'f2')).toBeUndefined(
       );
     });
 
@@ -6941,10 +6941,10 @@ describe('integrationApps selector testcases', () => {
         })
       );
 
-      expect(selectors.integrationAppChildIdOfFlow(state, 'i1', 'f1')).toEqual(
+      expect(selectors.integrationAppChildIdOfFlow(state, 'i1', 'f1')).toBe(
         'c1'
       );
-      expect(selectors.integrationAppChildIdOfFlow(state, 'i1', 'f2')).toEqual(
+      expect(selectors.integrationAppChildIdOfFlow(state, 'i1', 'f2')).toBe(
         'c1'
       );
     });

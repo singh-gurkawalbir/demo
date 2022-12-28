@@ -1,4 +1,3 @@
-/* global describe, test, jest, expect */
 import { render, screen } from '@testing-library/react';
 import React from 'react';
 import ForeignObject from '.';
@@ -15,8 +14,8 @@ describe('Testsuite for Foreign Object', () => {
       </ForeignObject>
     );
     expect(screen.getByText(/test children/i)).toBeInTheDocument();
-    expect(document.querySelector('foreignobject').getAttribute('x')).toEqual('90');
-    expect(document.querySelector('foreignobject').getAttribute('y')).toEqual('90');
+    expect(document.querySelector('foreignobject').getAttribute('x')).toBe('90');
+    expect(document.querySelector('foreignobject').getAttribute('y')).toBe('90');
   });
   test('should test the foreign object when edge x and edge y has no values', () => {
     jest.spyOn(mockGetPositionInEdge, 'getPositionInEdge').mockReturnValue([]);
@@ -26,7 +25,7 @@ describe('Testsuite for Foreign Object', () => {
       </ForeignObject>
     );
     expect(screen.getByText(/test children/i)).toBeInTheDocument();
-    expect(document.querySelector('foreignobject').getAttribute('x')).toEqual('NaN');
-    expect(document.querySelector('foreignobject').getAttribute('y')).toEqual('NaN');
+    expect(document.querySelector('foreignobject').getAttribute('x')).toBe('NaN');
+    expect(document.querySelector('foreignobject').getAttribute('y')).toBe('NaN');
   });
 });

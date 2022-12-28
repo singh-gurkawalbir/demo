@@ -1,4 +1,3 @@
-/* global describe, test, expect */
 import React from 'react';
 import {screen} from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
@@ -114,7 +113,7 @@ const demoFlow = {
 };
 
 describe('test cases for audit log table', () => {
-  test('should display all the row headers of the auditlog table ', () => {
+  test('should display all the row headers of the auditlog table', () => {
     const resourceType = 'flows';
     const resourceId = 'flow_id';
 

@@ -1,4 +1,3 @@
-/* global describe, test, expect, beforeEach */
 
 import processorLogic from './index';
 

@@ -1,4 +1,3 @@
-/* global describe, test, expect, jest */
 import React from 'react';
 import {screen} from '@testing-library/react';
 import {renderWithProviders} from '../../../../../test/test-utils';
@@ -29,7 +28,7 @@ jest.mock('../../../../Help', () => ({
   ),
 }));
 
-describe('InputOutputTitle UI tests', () => {
+describe('inputOutputTitle UI tests', () => {
   test('should pass the initial render for version 2 and inputGroupedSample data', () => {
     initInputOutputTitle({helpKey: 'test', title: 'Input', version: 2, sample: true});
     expect(screen.getByText('Source rows [ ]')).toBeInTheDocument();

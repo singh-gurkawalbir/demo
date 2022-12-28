@@ -1,4 +1,4 @@
-/* global describe, test, expect */
+
 import React from 'react';
 import splitViewOpenErrors from './metadata';
 import { runServer } from '../../../../test/api/server';
@@ -92,7 +92,7 @@ async function initDownloadErrors() {
   return { utils, store };
 }
 
-describe('ActionMenu component Test cases', () => {
+describe('actionMenu component Test cases', () => {
   runServer();
 
   test('should pass the calling of the functions', async () => {

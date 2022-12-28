@@ -1,4 +1,4 @@
-/* global describe, test, expect, jest */
+
 import React from 'react';
 import { screen, waitFor} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -13,7 +13,7 @@ jest.mock('../DynaAutoSuggest', () => ({
   ),
 }));
 
-describe('KeyValueRow UI tests', () => {
+describe('keyValueRow UI tests', () => {
   const mockhandleUpdate = jest.fn();
   const mockhandleKeyUpdate = jest.fn();
   const mockhandleValueUpdate = jest.fn();
@@ -72,14 +72,14 @@ describe('KeyValueRow UI tests', () => {
     const deleteButtons = screen.getAllByRole('button');
 
     userEvent.click(deleteButtons[1]);
-    await waitFor(() => expect(mockhandleDelete).toBeCalled());
+    await waitFor(() => expect(mockhandleDelete).toHaveBeenCalled());
   });
   test('should call the handleEditorClick function when clicked on openHandlebars button', async () => {
     renderWithProviders(<KeyValueRow {...props} />);
     const deleteButtons = screen.getAllByRole('button');
 
     userEvent.click(deleteButtons[2]);
-    await waitFor(() => expect(mockhandleEditorClick).toBeCalled());
+    await waitFor(() => expect(mockhandleEditorClick).toHaveBeenCalled());
   });
   test('should open the dropdown when clicked on the dropdown', () => {
     renderWithProviders(<KeyValueRow {...props} />);
@@ -93,7 +93,7 @@ describe('KeyValueRow UI tests', () => {
     userEvent.click(screen.getByText('Ascending'));
     expect(screen.getByText('Descending')).toBeInTheDocument();
     userEvent.click(screen.getByText('Descending'));
-    await waitFor(() => expect(mockhandleValueUpdate).toBeCalled());
+    await waitFor(() => expect(mockhandleValueUpdate).toHaveBeenCalled());
   });
   test('should call the handleValueUpdate when the textField is edited', async () => {
     const newprops = {...props,
@@ -108,7 +108,7 @@ describe('KeyValueRow UI tests', () => {
 
     expect(field).toBeInTheDocument();
     userEvent.type(field, 'a');
-    await waitFor(() => expect(mockhandleValueUpdate).toBeCalled());
+    await waitFor(() => expect(mockhandleValueUpdate).toHaveBeenCalled());
   });
   test('should call the handleKeyUpdate function passed in props when the field that appears when suggestKeyConfig prop is undefined is updated', async () => {
     const newprops = {...props,
@@ -122,7 +122,7 @@ describe('KeyValueRow UI tests', () => {
     const field = screen.getByRole('textbox');
 
     userEvent.type(field);
-    await waitFor(() => expect(mockhandleKeyUpdate).toBeCalled());
+    await waitFor(() => expect(mockhandleKeyUpdate).toHaveBeenCalled());
   });
   test('should display the sortable handle only when enableSorting and showGripper are true', () => {
     const newprops = {
@@ -158,6 +158,6 @@ describe('KeyValueRow UI tests', () => {
     renderWithProviders(<KeyValueRow {...props} />);
     expect(screen.getByText('AutoSuggest Component')).toBeInTheDocument();
     userEvent.click(screen.getByText('AutoSuggest Component'));
-    await waitFor(() => expect(mockhandleUpdate).toBeCalled());
+    await waitFor(() => expect(mockhandleUpdate).toHaveBeenCalled());
   });
 });

@@ -1,4 +1,6 @@
-/* global describe, test, expect */
+/* eslint-disable jest/no-conditional-in-test */
+/* eslint-disable jest/no-standalone-expect */
+
 import each from 'jest-each';
 import reducer, { selectors } from '.';
 import actions from '../../../actions';
@@ -120,7 +122,7 @@ describe('jobs reducer', () => {
       bulkRetryJobs: [{ _id: 2 }],
     });
   });
-  describe('should update state properly when setting jobs per page ', () => {
+  describe('should update state properly when setting jobs per page', () => {
     const testCases = [
       [6, 6],
       [DEFAULT_STATE.paging.rowsPerPage, 0],
@@ -150,7 +152,7 @@ describe('jobs reducer', () => {
     });
   });
 
-  describe('should update state properly when setting jobs current page ', () => {
+  describe('should update state properly when setting jobs current page', () => {
     const testCases = [
       [7, 7],
       [DEFAULT_STATE.paging.currentPage, 0],
@@ -4212,7 +4214,7 @@ describe('isBulkRetryInProgress selector', () => {
   test('should return false for default state', () => {
     const state = reducer(undefined, 'something');
 
-    expect(selectors.isBulkRetryInProgress(state)).toEqual(false);
+    expect(selectors.isBulkRetryInProgress(state)).toBe(false);
   });
   test('should return false when there are no bulk retry jobs in queued/running state', () => {
     const state = reducer(
@@ -4239,7 +4241,7 @@ describe('isBulkRetryInProgress selector', () => {
       })
     );
 
-    expect(selectors.isBulkRetryInProgress(state)).toEqual(false);
+    expect(selectors.isBulkRetryInProgress(state)).toBe(false);
   });
   test('should return true when there are bulk retry jobs in queued state', () => {
     const state = reducer(
@@ -4262,7 +4264,7 @@ describe('isBulkRetryInProgress selector', () => {
       })
     );
 
-    expect(selectors.isBulkRetryInProgress(state)).toEqual(true);
+    expect(selectors.isBulkRetryInProgress(state)).toBe(true);
   });
   test('should return true when there are bulk retry jobs in running state', () => {
     const state = reducer(
@@ -4285,7 +4287,7 @@ describe('isBulkRetryInProgress selector', () => {
       })
     );
 
-    expect(selectors.isBulkRetryInProgress(state)).toEqual(true);
+    expect(selectors.isBulkRetryInProgress(state)).toBe(true);
   });
 });
 

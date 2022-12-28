@@ -1,4 +1,3 @@
-/* global describe, test, expect */
 
 import reducer, { selectors } from '.';
 import actions from '../../../actions';
@@ -95,7 +94,7 @@ describe('bottom drawer reducers', () => {
       }}
     ).toEqual(state);
   });
-  test('when a connection log tab is removed , then it redirects to the connection tab ', () => {
+  test('when a connection log tab is removed , then it redirects to the connection tab', () => {
     const initialState = {bottomDrawer: { tabs: [
       {tabType: 'dashboard'},
       {tabType: 'connections'},
@@ -138,7 +137,7 @@ describe('bottom drawer reducers', () => {
     ).toEqual(state);
   });
 
-  test('should set active tab correctly', () => {
+  test('should set active tab correctly duplicate', () => {
     const initialState = {bottomDrawer: { tabs: [
       {tabType: 'dashboard'},
       {tabType: 'scripts'},
@@ -159,7 +158,7 @@ describe('bottom drawer reducers', () => {
     ).toEqual(state);
   });
 
-  test('should do nothing if neither an index nor tabType is provided ', () => {
+  test('should do nothing if neither an index nor tabType is provided', () => {
     const initialState = {bottomDrawer: { tabs: [
       {tabType: 'dashboard'},
       {tabType: 'scripts'},

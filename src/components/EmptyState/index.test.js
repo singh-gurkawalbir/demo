@@ -1,4 +1,4 @@
-/* global describe, test, expect, jest */
+
 import React from 'react';
 import {
   screen,
@@ -29,7 +29,7 @@ jest.mock('../../utils/image', () => ({
   default: jest.fn().mockReturnValue('somethingURL'),
 }));
 
-describe('EmptyState component Test cases', () => {
+describe('emptyState component Test cases', () => {
   test('should pass the intial render', async () => {
     await initEmptyState();
     expect(screen.getByRole('img')).toBeInTheDocument();

@@ -1,4 +1,4 @@
-/* global describe, test, expect */
+
 import metadata from './exportFilter';
 import filterMetadata from './filter';
 import javascriptMetadata from './javascript';
@@ -8,10 +8,10 @@ describe('exportFilter metadata test cases', () => {
     const {type, fieldId, description, label, panels} = metadata;
     let exportFilterPanelType = panels({activeProcessor: 'javascript'});
 
-    expect(type).toEqual('exportFilter');
-    expect(fieldId).toEqual(undefined);
-    expect(description).toEqual('Filters data');
-    expect(label).toEqual('Define output filter');
+    expect(type).toBe('exportFilter');
+    expect(fieldId).toBeUndefined();
+    expect(description).toBe('Filters data');
+    expect(label).toBe('Define output filter');
     expect(exportFilterPanelType).toEqual(javascriptMetadata.panels);
     exportFilterPanelType = panels({});
     expect(exportFilterPanelType).toEqual(filterMetadata.panels);

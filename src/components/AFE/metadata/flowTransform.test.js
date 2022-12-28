@@ -1,4 +1,4 @@
-/* global describe, test, expect */
+
 import metadata from './flowTransform';
 import transformMetadata from './transform';
 import javascriptMetadata from './javascript';
@@ -8,10 +8,10 @@ describe('flowTransform metadata test cases', () => {
     const {type, fieldId, description, label, panels} = metadata;
     let flowTransformPanelType = panels({activeProcessor: 'javascript'});
 
-    expect(type).toEqual('flowTransform');
-    expect(fieldId).toEqual(undefined);
-    expect(description).toEqual('Transforms raw data to desired structure');
-    expect(label).toEqual('Define transformation');
+    expect(type).toBe('flowTransform');
+    expect(fieldId).toBeUndefined();
+    expect(description).toBe('Transforms raw data to desired structure');
+    expect(label).toBe('Define transformation');
     expect(flowTransformPanelType).toEqual(javascriptMetadata.panels);
     flowTransformPanelType = panels({});
     expect(flowTransformPanelType).toEqual(transformMetadata.panels);

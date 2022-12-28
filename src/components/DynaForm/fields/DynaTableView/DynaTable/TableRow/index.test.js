@@ -1,4 +1,3 @@
-/* global describe, test, jest, expect, afterEach */
 import React from 'react';
 import {screen, fireEvent} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -259,7 +258,7 @@ describe('Table Row UI test cases', () => {
     expect(tableState).toHaveBeenCalledWith({type: 'TABLE_ROW_REMOVE', rowIndex: 0});
   });
 
-  test('should test rows data by providing type as select options at export fields and and multiselect at import fields ', () => {
+  test('should test rows data by providing type as select options at export fields and and multiselect at import fields', () => {
     const props = {
       rowValue: {
       },
@@ -357,7 +356,7 @@ describe('Table Row UI test cases', () => {
     userEvent.click(deleterow);
     expect(tableState).toHaveBeenCalledWith({type: 'TABLE_ROW_REMOVE', rowIndex: 0});
   });
-  test('should test rows data by providing type as autosuggest at export fields and and multiselect at import fields ', () => {
+  test('should test rows data by providing type as autosuggest at export fields and and multiselect at import fields', () => {
     const props = {
       rowValue: {
       },

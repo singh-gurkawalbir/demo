@@ -1,4 +1,4 @@
-/* global describe, test, beforeEach, expect, jest */
+/* eslint-disable jest/max-expects */
 import { screen } from '@testing-library/react';
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
@@ -80,11 +80,11 @@ jest.mock('react-router-dom', () => ({
   }),
 }));
 
-describe('ExplorerMenu test suite', () => {
+describe('explorerMenu test suite', () => {
   beforeEach(() => {
     initialStore = getCreatedStore();
   });
-  test('Should able to click on an integration and it should verify the expanded flow tree', async () => {
+  test('should able to click on an integration and it should verify the expanded flow tree', async () => {
     await initExplorerMenu({onEditorChange: jest.fn()});
 
     expect(screen.getByRole('treeitem', {name: /Test integration name/i})).toBeInTheDocument();
@@ -132,7 +132,7 @@ describe('ExplorerMenu test suite', () => {
     userEvent.click(viewImportConnectionNode);
     expect(mockHistoryPush).toHaveBeenCalledWith('/playground/edit/connections/fghijk');
   });
-  test('Should able to click on an integration and it should verify no flows text by expanding', async () => {
+  test('should able to click on an integration and it should verify no flows text by expanding', async () => {
     await initExplorerMenu({onEditorChange: jest.fn()});
     initialStore.getState().data.resources.flows = [];
 
@@ -144,7 +144,7 @@ describe('ExplorerMenu test suite', () => {
     expect(screen.getAllByRole('treeitem')).toHaveLength(2);
     expect(screen.getByText(/no flows/i)).toBeInTheDocument();
   });
-  test('Should able to click on an integration and verify the flow and exports tree id when there is no name for flows and export', async () => {
+  test('should able to click on an integration and verify the flow and exports tree id when there is no name for flows and export', async () => {
     await initExplorerMenu({onEditorChange: jest.fn()});
     initialStore.getState().data.resources.flows = [{
       _id: '67890',

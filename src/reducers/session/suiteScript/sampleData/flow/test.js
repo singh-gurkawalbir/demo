@@ -1,4 +1,4 @@
-/* global describe, test, expect */
+
 import reducer, { selectors } from '.';
 import actions from '../../../../../actions';
 
@@ -14,7 +14,7 @@ const expectedRequestState = {[id]: {status: 'requested'}};
 const expectedReceivedState = {[id]: {status: 'received', data: previewData}};
 const expectedReceivedErrorState = {[id]: {status: 'error', data: error}};
 
-describe('SuiteScript flow sample data reducer ', () => {
+describe('SuiteScript flow sample data reducer', () => {
   test('should retain previous state if the action is invalid', () => {
     const prevState = DEFAULT_STATE;
     const currState = reducer(prevState, { type: 'INVALID_ACTION'});

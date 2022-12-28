@@ -1,4 +1,4 @@
-/* global describe, test, beforeEach, expect */
+
 import { screen } from '@testing-library/react';
 import React from 'react';
 import ResourceName from '.';
@@ -17,7 +17,7 @@ function initResourceName(resourceId, resourceType, exportData) {
 
   return renderWithProviders(ui, {initialStore});
 }
-describe('Testsuite for Resource Name', () => {
+describe('testsuite for Resource Name', () => {
   beforeEach(() => {
     initialStore = getCreatedStore();
   });

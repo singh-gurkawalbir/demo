@@ -1,4 +1,4 @@
-/* global describe, test, expect, jest, beforeEach,afterEach */
+
 /* eslint-disable import/no-extraneous-dependencies */
 import React from 'react';
 import { screen } from '@testing-library/react';
@@ -110,7 +110,7 @@ describe('formbuilder button UI tests', () => {
   afterEach(() => {
     useDispatchSpy.mockClear();
   });
-  history.push = jest.fn();
+  jest.spyOn(history, 'push').mockImplementation();
   test('should display the button and make a dispatch call when clicked on it', async () => {
     const props = {resourceId: '626a1dd0d0d946269d48d379',
       resourceType: 'integrations',

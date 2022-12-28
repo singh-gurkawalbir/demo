@@ -1,4 +1,4 @@
-/* global describe, test, expect, jest, afterEach */
+
 import React from 'react';
 import {
   screen, fireEvent,
@@ -42,7 +42,7 @@ function initDynaSelectWithInput(props = {}) {
   return renderWithProviders(ui, {initialStore});
 }
 
-describe('DynaSelectAmazonSellerCentralAPIType UI test cases', () => {
+describe('dynaSelectAmazonSellerCentralAPIType UI test cases', () => {
   afterEach(() => {
     jest.clearAllMocks();
   });

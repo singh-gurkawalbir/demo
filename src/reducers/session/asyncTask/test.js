@@ -1,4 +1,4 @@
-/* global describe, test, expect */
+
 import reducer, { selectors } from '.';
 import actions from '../../../actions';
 import { FORM_SAVE_STATUS } from '../../../constants';
@@ -61,7 +61,7 @@ describe('asyncTask reducers', () => {
   });
 });
 
-describe('asyncTask selectors: ', () => {
+describe('asyncTask selectors:', () => {
   describe('asyncTaskStatus selector', () => {
     test('should not throw error for invalid arguments', () => {
       expect(selectors.asyncTaskStatus()).toBeUndefined();

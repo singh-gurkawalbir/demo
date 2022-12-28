@@ -1,4 +1,4 @@
-/* global describe, test, expect, jest, beforeEach, afterEach */
+
 import React from 'react';
 import { screen, waitFor} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -34,7 +34,7 @@ jest.mock('../../../DateRangeSelector', () => ({
   ,
 }));
 
-describe('DynaDateSelector UI tests', () => {
+describe('dynaDateSelector UI tests', () => {
   let mockDispatchFn;
   let useDispatchSpy;
 
@@ -70,11 +70,11 @@ describe('DynaDateSelector UI tests', () => {
   });
   test('should make a dispatch call when valid date is passed on initial render', async () => {
     initDynaDateSelector({...props, formKey: 'demo-formkey'});
-    await waitFor(() => expect(mockDispatchFn).toBeCalledWith(actions.form.forceFieldState('demo-formkey')('formId', {isValid: true})));
+    await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith(actions.form.forceFieldState('demo-formkey')('formId', {isValid: true})));
   });
   test('should make a dispatch call with error message when invalid date is passed on initial render', async () => {
     initDynaDateSelector({...props, value: '2018-06T0000.000Z'});
-    await waitFor(() => expect(mockDispatchFn).toBeCalledWith(actions.form.forceFieldState('demo-formkey')('formId', {isValid: false, errorMessages: 'Invalid date format'})));
+    await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith(actions.form.forceFieldState('demo-formkey')('formId', {isValid: false, errorMessages: 'Invalid date format'})));
   });
   test('should call the onChange function passed in props when field value is altered', () => {
     initDynaDateSelector({...props, formKey: 'demo-formkey'});
@@ -82,7 +82,7 @@ describe('DynaDateSelector UI tests', () => {
 
     expect(field).toBeInTheDocument();
     userEvent.type(field, 'a');
-    expect(mockOnFieldChange).toBeCalled();
+    expect(mockOnFieldChange).toHaveBeenCalled();
   });
   test('should call the "handleDateRangeChange" function when date is changed', () => {
     initDynaDateSelector(props);
@@ -91,6 +91,6 @@ describe('DynaDateSelector UI tests', () => {
     expect(dateField).toBeInTheDocument();
     userEvent.clear(dateField);
     userEvent.type(dateField, '06/06/2018');
-    expect(mockOnFieldChange).toBeCalled();
+    expect(mockOnFieldChange).toHaveBeenCalled();
   });
 });

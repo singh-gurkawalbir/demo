@@ -1,4 +1,4 @@
-/* global describe, expect, test */
+
 import reducer, { selectors } from '.';
 import actions from '../actions';
 import {
@@ -121,7 +121,7 @@ describe('tests for reducer selectors', () => {
         actions.resource.received(resourceType, resource)
       );
 
-      expect(selectors.getResourceEditUrl(state, resourceType, resourceId)).toEqual(
+      expect(selectors.getResourceEditUrl(state, resourceType, resourceId)).toBe(
         `/${resourceType}/edit/${resourceType}/${resourceId}`
       );
     });
@@ -135,7 +135,7 @@ describe('tests for reducer selectors', () => {
         actions.resource.received(resourceType, resource)
       );
 
-      expect(selectors.getResourceEditUrl(state, resourceType, resourceId)).toEqual(
+      expect(selectors.getResourceEditUrl(state, resourceType, resourceId)).toBe(
         `/${resourceType}/edit/${resourceType}/${resourceId}`
       );
     });
@@ -160,7 +160,7 @@ describe('tests for reducer selectors', () => {
         actions.resource.received(resourceType, resource)
       );
 
-      expect(selectors.getResourceEditUrl(state, resourceType, resourceId)).toEqual(
+      expect(selectors.getResourceEditUrl(state, resourceType, resourceId)).toBe(
         `/integrations/none/dataLoader/${resourceId}`
       );
     });
@@ -175,7 +175,7 @@ describe('tests for reducer selectors', () => {
         actions.resource.received(resourceType, resource)
       );
 
-      expect(selectors.getResourceEditUrl(state, resourceType, resourceId)).toEqual(
+      expect(selectors.getResourceEditUrl(state, resourceType, resourceId)).toBe(
         `/integrations/none/flowBuilder/${resourceId}`
       );
     });
@@ -190,7 +190,7 @@ describe('tests for reducer selectors', () => {
         actions.resource.received(resourceType, resource)
       );
 
-      expect(selectors.getResourceEditUrl(state, resourceType, resourceId)).toEqual(
+      expect(selectors.getResourceEditUrl(state, resourceType, resourceId)).toBe(
         `/integrations/${resourceId}/flows`
       );
     });
@@ -205,7 +205,7 @@ describe('tests for reducer selectors', () => {
         actions.resource.received(resourceType, resource)
       );
 
-      expect(selectors.getResourceEditUrl(state, resourceType, 'i1')).toEqual(
+      expect(selectors.getResourceEditUrl(state, resourceType, 'i1')).toBe(
         `/integrationapps/SalesforceNetSuiteIntegrationApp/${resourceId}/flows`
       );
     });
@@ -234,7 +234,7 @@ describe('tests for reducer selectors', () => {
         actions.resource.received(resourceType, childResource)
       );
 
-      expect(selectors.getResourceEditUrl(state, resourceType, 'i1', 'c1')).toEqual(
+      expect(selectors.getResourceEditUrl(state, resourceType, 'i1', 'c1')).toBe(
         `/integrationapps/SalesforceNetSuiteIntegrationApp/${resourceId}/child/${childId}/flows`
       );
     });
@@ -274,7 +274,7 @@ describe('tests for reducer selectors', () => {
         actions.resource.received('flows', flow)
       );
 
-      expect(selectors.getResourceEditUrl(state, 'flows', 'f1')).toEqual(
+      expect(selectors.getResourceEditUrl(state, 'flows', 'f1')).toBe(
         `/integrationapps/SalesforceNetSuiteIntegrationApp/${resourceId}/flowBuilder/f1`
       );
     });
@@ -313,7 +313,7 @@ describe('tests for reducer selectors', () => {
         actions.resource.received('flows', flow)
       );
 
-      expect(selectors.getResourceEditUrl(state, 'flows', 'f1', undefined, 'General')).toEqual(
+      expect(selectors.getResourceEditUrl(state, 'flows', 'f1', undefined, 'General')).toBe(
         `/integrationapps/SalesforceNetSuiteIntegrationApp/${resourceId}/flows/sections/General/flowBuilder/f1`
       );
     });
@@ -570,7 +570,7 @@ describe('tests for reducer selectors', () => {
     test('should return false for empty state and args', () => {
       const isAnyConnOfflineSelector = selectors.mkIsAnyFlowConnectionOffline();
 
-      expect(isAnyConnOfflineSelector()).toEqual(false);
+      expect(isAnyConnOfflineSelector()).toBe(false);
     });
     test('should return false for invalid connection id', () => {
       const isAnyConnOfflineSelector = selectors.mkIsAnyFlowConnectionOffline();
@@ -592,7 +592,7 @@ describe('tests for reducer selectors', () => {
         actions.resource.received('flows', flow)
       );
 
-      expect(isAnyConnOfflineSelector(state, 'invalidConnId')).toEqual(false);
+      expect(isAnyConnOfflineSelector(state, 'invalidConnId')).toBe(false);
     });
     test('should return true if any conn used in flow is offline', () => {
       const conns = [
@@ -645,7 +645,7 @@ describe('tests for reducer selectors', () => {
 
       const isAnyConnOfflineSelector = selectors.mkIsAnyFlowConnectionOffline();
 
-      expect(isAnyConnOfflineSelector(state, 'f1')).toEqual(true);
+      expect(isAnyConnOfflineSelector(state, 'f1')).toBe(true);
     });
 
     test('should return false if all connections are not offline', () => {
@@ -698,7 +698,7 @@ describe('tests for reducer selectors', () => {
 
       const isAnyConnOfflineSelector = selectors.mkIsAnyFlowConnectionOffline();
 
-      expect(isAnyConnOfflineSelector(state, 'f1')).toEqual(false);
+      expect(isAnyConnOfflineSelector(state, 'f1')).toBe(false);
     });
   });
 
@@ -904,7 +904,7 @@ describe('tests for reducer selectors', () => {
   });
   describe('tests for util isPageGenerator', () => {
     test('should return false if resourceType is imports', () => {
-      expect(selectors.isPageGenerator(undefined, 'f1', 'i1', 'imports')).toEqual(false);
+      expect(selectors.isPageGenerator(undefined, 'f1', 'i1', 'imports')).toBe(false);
     });
 
     test('should return true if resource is new and not of lookup type', () => {
@@ -916,7 +916,7 @@ describe('tests for reducer selectors', () => {
         })
       );
 
-      expect(selectors.isPageGenerator(state, 'f1', 'new-123', 'exports')).toEqual(true);
+      expect(selectors.isPageGenerator(state, 'f1', 'new-123', 'exports')).toBe(true);
     });
 
     test('should return false if resource is of lookup type', () => {
@@ -928,7 +928,7 @@ describe('tests for reducer selectors', () => {
         })
       );
 
-      expect(selectors.isPageGenerator(state, 'f1', 'new-123', 'exports')).toEqual(false);
+      expect(selectors.isPageGenerator(state, 'f1', 'new-123', 'exports')).toBe(false);
     });
 
     test('should return true if resource is of webhook type', () => {
@@ -940,7 +940,7 @@ describe('tests for reducer selectors', () => {
         })
       );
 
-      expect(selectors.isPageGenerator(state, 'f1', 'e1', 'exports')).toEqual(true);
+      expect(selectors.isPageGenerator(state, 'f1', 'e1', 'exports')).toBe(true);
     });
 
     test('should search in flow doc and return true if resource is of page generator type', () => {
@@ -962,7 +962,7 @@ describe('tests for reducer selectors', () => {
           ],
         })
       );
-      expect(selectors.isPageGenerator(state, 'f1', 'e1', 'exports')).toEqual(true);
+      expect(selectors.isPageGenerator(state, 'f1', 'e1', 'exports')).toBe(true);
     });
 
     test('should search in flow doc and return false if passed export is of page processor type', () => {
@@ -984,7 +984,7 @@ describe('tests for reducer selectors', () => {
           ],
         })
       );
-      expect(selectors.isPageGenerator(state, 'f1', 'e1', 'exports')).toEqual(false);
+      expect(selectors.isPageGenerator(state, 'f1', 'e1', 'exports')).toBe(false);
     });
   });
 
@@ -1290,7 +1290,7 @@ describe('tests for reducer selectors', () => {
         actions.resource.received('exports', exp)
       );
 
-      expect(selectors.isRestCsvMediaTypeExport(state, 'e1')).toEqual(false);
+      expect(selectors.isRestCsvMediaTypeExport(state, 'e1')).toBe(false);
     });
 
     test('should return true if export is of type rest and connection mediatype is of csv type', () => {
@@ -1318,7 +1318,7 @@ describe('tests for reducer selectors', () => {
         actions.resource.received('connections', conn)
       );
 
-      expect(selectors.isRestCsvMediaTypeExport(state, 'e1')).toEqual(true);
+      expect(selectors.isRestCsvMediaTypeExport(state, 'e1')).toBe(true);
     });
   });
 
@@ -1334,7 +1334,7 @@ describe('tests for reducer selectors', () => {
         actions.resource.received('exports', exp)
       );
 
-      expect(selectors.isDataLoaderExport(state, 'e1')).toEqual(false);
+      expect(selectors.isDataLoaderExport(state, 'e1')).toBe(false);
     });
 
     test('should return true if export is of dataloader type', () => {
@@ -1348,7 +1348,7 @@ describe('tests for reducer selectors', () => {
         actions.resource.received('exports', exp)
       );
 
-      expect(selectors.isDataLoaderExport(state, 'e1')).toEqual(true);
+      expect(selectors.isDataLoaderExport(state, 'e1')).toBe(true);
     });
 
     test('should return true for new resource and with flowId specified for dataloader Flow', () => {
@@ -1378,13 +1378,13 @@ describe('tests for reducer selectors', () => {
         )
       );
 
-      expect(selectors.isDataLoaderExport(state, 'new-1', 'f1')).toEqual(true);
+      expect(selectors.isDataLoaderExport(state, 'new-1', 'f1')).toBe(true);
     });
   });
 
   describe('tests for util isFreeFlowResource', () => {
     test('should return false on empty state', () => {
-      expect(selectors.isFreeFlowResource(undefined, 'f1')).toEqual(false);
+      expect(selectors.isFreeFlowResource(undefined, 'f1')).toBe(false);
     });
 
     test('should return true for free flow', () => {
@@ -1399,7 +1399,7 @@ describe('tests for reducer selectors', () => {
         )
       );
 
-      expect(selectors.isFreeFlowResource(state, 'f1')).toEqual(true);
+      expect(selectors.isFreeFlowResource(state, 'f1')).toBe(true);
     });
 
     test('should return false if flow is not free', () => {
@@ -1413,13 +1413,13 @@ describe('tests for reducer selectors', () => {
         )
       );
 
-      expect(selectors.isFreeFlowResource(state, 'f1')).toEqual(false);
+      expect(selectors.isFreeFlowResource(state, 'f1')).toBe(false);
     });
   });
 
   describe('tests for util isFlowViewMode', () => {
     test('should return false on empty state', () => {
-      expect(selectors.isFlowViewMode(undefined, 'i1', 'f1')).toEqual(false);
+      expect(selectors.isFlowViewMode(undefined, 'i1', 'f1')).toBe(false);
     });
 
     test('should return true for connector flow', () => {
@@ -1434,7 +1434,7 @@ describe('tests for reducer selectors', () => {
         )
       );
 
-      expect(selectors.isFlowViewMode(state, 'i1', 'f1')).toEqual(true);
+      expect(selectors.isFlowViewMode(state, 'i1', 'f1')).toBe(true);
     });
     test('should return true if accessLevel is monitor', () => {
       const acc = {
@@ -1451,7 +1451,7 @@ describe('tests for reducer selectors', () => {
           defaultAShareId: 'ashare1',
         }));
 
-      expect(selectors.isFlowViewMode(state, 'i1', 'f1')).toEqual(true);
+      expect(selectors.isFlowViewMode(state, 'i1', 'f1')).toBe(true);
     });
 
     test('should return true if access level is monitor for tile ashare', () => {
@@ -1491,7 +1491,7 @@ describe('tests for reducer selectors', () => {
           defaultAShareId: 'aShare3',
         }));
 
-      expect(selectors.isFlowViewMode(state, 'i1', 'f1')).toEqual(true);
+      expect(selectors.isFlowViewMode(state, 'i1', 'f1')).toBe(true);
     });
   });
 
@@ -1512,7 +1512,7 @@ describe('tests for reducer selectors', () => {
         )
       );
 
-      expect(selectors.isDataLoaderFlow(state, 'f1')).toEqual(false);
+      expect(selectors.isDataLoaderFlow(state, 'f1')).toBe(false);
     });
 
     test('should return true for dataLoader flow', () => {
@@ -1532,7 +1532,7 @@ describe('tests for reducer selectors', () => {
         )
       );
 
-      expect(selectors.isDataLoaderFlow(state, 'f1')).toEqual(true);
+      expect(selectors.isDataLoaderFlow(state, 'f1')).toBe(true);
     });
 
     test('should return true for dataLoader flow if export is of type simple', () => {
@@ -1562,7 +1562,7 @@ describe('tests for reducer selectors', () => {
         )
       );
 
-      expect(selectors.isDataLoaderFlow(state, 'f1')).toEqual(true);
+      expect(selectors.isDataLoaderFlow(state, 'f1')).toBe(true);
     });
   });
 
@@ -1583,7 +1583,7 @@ describe('tests for reducer selectors', () => {
         )
       );
 
-      expect(selectors.shouldShowAddPageProcessor(state, 'f1')).toEqual(true);
+      expect(selectors.shouldShowAddPageProcessor(state, 'f1')).toBe(true);
     });
 
     test('should return false for dataloader flow if page processor already exists', () => {
@@ -1608,7 +1608,7 @@ describe('tests for reducer selectors', () => {
         )
       );
 
-      expect(selectors.shouldShowAddPageProcessor(state, 'f1')).toEqual(false);
+      expect(selectors.shouldShowAddPageProcessor(state, 'f1')).toBe(false);
     });
 
     test('should return true for dataloader flow if page processor not exists', () => {
@@ -1628,7 +1628,7 @@ describe('tests for reducer selectors', () => {
         )
       );
 
-      expect(selectors.shouldShowAddPageProcessor(state, 'f1')).toEqual(true);
+      expect(selectors.shouldShowAddPageProcessor(state, 'f1')).toBe(true);
     });
   });
 
@@ -1638,7 +1638,7 @@ describe('tests for reducer selectors', () => {
         flowId: 'f1',
         resourceType: 'imports',
         resourceId: 'i1',
-      })).toEqual(false);
+      })).toBe(false);
     });
 
     test('should return true if export is lookup type', () => {
@@ -1657,7 +1657,7 @@ describe('tests for reducer selectors', () => {
         flowId: 'f1',
         resourceType: 'exports',
         resourceId: 'e1',
-      })).toEqual(true);
+      })).toBe(true);
     });
 
     test('should return true if export used as pp in flow', () => {
@@ -1690,7 +1690,7 @@ describe('tests for reducer selectors', () => {
         flowId: 'f1',
         resourceType: 'exports',
         resourceId: 'e1',
-      })).toEqual(true);
+      })).toBe(true);
     });
   });
 
@@ -1699,7 +1699,7 @@ describe('tests for reducer selectors', () => {
       expect(selectors.getCustomResourceLabel(undefined, {
         resourceId: 'e1',
         flowId: 'f1',
-      })).toEqual('');
+      })).toBe('');
     });
     test('should return resourceLabel as lookup for lookup exports', () => {
       const state = reducer(
@@ -1717,7 +1717,7 @@ describe('tests for reducer selectors', () => {
         resourceType: 'exports',
         flowId: 'f1',
         resourceId: 'e1',
-      })).toEqual('Lookup');
+      })).toBe('Lookup');
     });
 
     test('should return resourceLabel as import for dataloader pageprocessor', () => {
@@ -1751,7 +1751,7 @@ describe('tests for reducer selectors', () => {
         flowId: 'f1',
         resourceType: 'pageProcessor',
         resourceId: 'e1',
-      })).toEqual('Import');
+      })).toBe('Import');
     });
 
     test('should return resourceLabel on resourceType for new resources', () => {
@@ -1769,7 +1769,7 @@ describe('tests for reducer selectors', () => {
         resourceId: 'new-123',
         resourceType: 'exports',
         flowId: 'f1',
-      })).toEqual('Export');
+      })).toBe('Export');
 
       state = reducer(
         undefined,
@@ -1785,7 +1785,7 @@ describe('tests for reducer selectors', () => {
         resourceId: 'new-123',
         resourceType: 'exports',
         flowId: 'f1',
-      })).toEqual('Transfer');
+      })).toBe('Transfer');
 
       state = reducer(
         undefined,
@@ -1801,7 +1801,7 @@ describe('tests for reducer selectors', () => {
         resourceId: 'new-123',
         resourceType: 'exports',
         flowId: 'f1',
-      })).toEqual('Listener');
+      })).toBe('Listener');
 
       state = reducer(
         undefined,
@@ -1817,7 +1817,7 @@ describe('tests for reducer selectors', () => {
         resourceId: 'new-123',
         resourceType: 'exports',
         flowId: 'f1',
-      })).toEqual('Lookup');
+      })).toBe('Lookup');
 
       state = reducer(
         undefined,
@@ -1833,7 +1833,7 @@ describe('tests for reducer selectors', () => {
         resourceId: 'new-123',
         resourceType: 'imports',
         flowId: 'f1',
-      })).toEqual('Import');
+      })).toBe('Import');
     });
 
     test('should return resourceLabel as Transfer for blob resources', () => {
@@ -1852,7 +1852,7 @@ describe('tests for reducer selectors', () => {
         resourceType: 'exports',
         resourceId: 'e1',
         flowId: 'f1',
-      })).toEqual('Transfer');
+      })).toBe('Transfer');
 
       state = reducer(
         undefined,
@@ -1868,7 +1868,7 @@ describe('tests for reducer selectors', () => {
         resourceType: 'exports',
         resourceId: 'e1',
         flowId: 'f1',
-      })).toEqual('Transfer');
+      })).toBe('Transfer');
 
       state = reducer(
         undefined,
@@ -1884,7 +1884,7 @@ describe('tests for reducer selectors', () => {
         resourceType: 'imports',
         resourceId: 'i1',
         flowId: 'f1',
-      })).toEqual('Transfer');
+      })).toBe('Transfer');
 
       state = reducer(
         undefined,
@@ -1901,7 +1901,7 @@ describe('tests for reducer selectors', () => {
         resourceType: 'imports',
         resourceId: 'i1',
         flowId: 'f1',
-      })).toEqual('Transfer');
+      })).toBe('Transfer');
     });
 
     test('should return resourceLabel as Listener for realtime exports', () => {
@@ -1920,7 +1920,7 @@ describe('tests for reducer selectors', () => {
         resourceType: 'exports',
         resourceId: 'e1',
         flowId: 'f1',
-      })).toEqual('Listener');
+      })).toBe('Listener');
 
       state = reducer(
         undefined,
@@ -1937,7 +1937,7 @@ describe('tests for reducer selectors', () => {
         resourceType: 'exports',
         resourceId: 'e1',
         flowId: 'f1',
-      })).toEqual('Listener');
+      })).toBe('Listener');
     });
   });
 
@@ -2067,7 +2067,7 @@ describe('tests for reducer selectors', () => {
       expect(selectors.suiteScriptJob(undefined, {
         ssLinkedConnectionId,
         integrationId,
-      })).toEqual(undefined);
+      })).toBeUndefined();
     });
 
     test('should return job for given job Id and type', () => {
@@ -2105,7 +2105,7 @@ describe('tests for reducer selectors', () => {
 
   describe('tests for util netsuiteAccountHasSuiteScriptIntegrations', () => {
     test('should return false for empty state', () => {
-      expect(selectors.netsuiteAccountHasSuiteScriptIntegrations(undefined, 'c1')).toEqual(false);
+      expect(selectors.netsuiteAccountHasSuiteScriptIntegrations(undefined, 'c1')).toBe(false);
     });
 
     test('should return true if ns account has ss integrations', () => {
@@ -2124,7 +2124,7 @@ describe('tests for reducer selectors', () => {
         })
       );
 
-      expect(selectors.netsuiteAccountHasSuiteScriptIntegrations(state, 'c1')).toEqual(true);
+      expect(selectors.netsuiteAccountHasSuiteScriptIntegrations(state, 'c1')).toBe(true);
     });
 
     test('should return true if ns account doesnot have ss integrations', () => {
@@ -2143,13 +2143,13 @@ describe('tests for reducer selectors', () => {
         })
       );
 
-      expect(selectors.netsuiteAccountHasSuiteScriptIntegrations(state, 'c1')).toEqual(false);
+      expect(selectors.netsuiteAccountHasSuiteScriptIntegrations(state, 'c1')).toBe(false);
     });
   });
 
   describe('tests for util canLinkSuiteScriptIntegrator', () => {
     test('should return false for empty state', () => {
-      expect(selectors.canLinkSuiteScriptIntegrator(undefined, 'c1')).toEqual(false);
+      expect(selectors.canLinkSuiteScriptIntegrator(undefined, 'c1')).toBe(false);
     });
 
     test('should return false if connId present in ssLinkedConnectionList but not admin/owner', () => {
@@ -2165,7 +2165,7 @@ describe('tests for reducer selectors', () => {
         actions.resource.received('preferences', preferences)
       );
 
-      expect(selectors.canLinkSuiteScriptIntegrator(state, 'c1')).toEqual(false);
+      expect(selectors.canLinkSuiteScriptIntegrator(state, 'c1')).toBe(false);
     });
 
     test('should return true if connId present in ssLinkedConnectionList and user is owner', () => {
@@ -2196,7 +2196,7 @@ describe('tests for reducer selectors', () => {
         actions.resource.received('preferences', preferences)
       );
 
-      expect(selectors.canLinkSuiteScriptIntegrator(state, 'c1')).toEqual(true);
+      expect(selectors.canLinkSuiteScriptIntegrator(state, 'c1')).toBe(true);
     });
     test('should return true if connId present in ssLinkedConnectionList for admin', () => {
       const state = reducer(
@@ -2226,7 +2226,7 @@ describe('tests for reducer selectors', () => {
         actions.resource.received('RANDEOM')
       );
 
-      expect(selectors.canLinkSuiteScriptIntegrator(state, 'c1')).toEqual(true);
+      expect(selectors.canLinkSuiteScriptIntegrator(state, 'c1')).toBe(true);
     });
 
     test('should return false if connId not present in ssLinkedConnectionList', () => {
@@ -2242,7 +2242,7 @@ describe('tests for reducer selectors', () => {
         actions.resource.received('preferences', preferences)
       );
 
-      expect(selectors.canLinkSuiteScriptIntegrator(state, 'c3')).toEqual(false);
+      expect(selectors.canLinkSuiteScriptIntegrator(state, 'c3')).toBe(false);
     });
 
     test('should return false if given connId account already linked through another conn', () => {
@@ -2284,7 +2284,7 @@ describe('tests for reducer selectors', () => {
         actions.resource.received('preferences', preferences)
       );
 
-      expect(selectors.canLinkSuiteScriptIntegrator(state, 'c3')).toEqual(false);
+      expect(selectors.canLinkSuiteScriptIntegrator(state, 'c3')).toBe(false);
     });
 
     test('should return true if ns account has ns integrations', () => {
@@ -2303,13 +2303,13 @@ describe('tests for reducer selectors', () => {
         })
       );
 
-      expect(selectors.canLinkSuiteScriptIntegrator(state, 'c1')).toEqual(false);
+      expect(selectors.canLinkSuiteScriptIntegrator(state, 'c1')).toBe(false);
     });
   });
 
   describe('tests for util suiteScriptIntegratorLinkedConnectionId', () => {
     test('should return undefined for empty state', () => {
-      expect(selectors.suiteScriptIntegratorLinkedConnectionId()).toEqual(undefined);
+      expect(selectors.suiteScriptIntegratorLinkedConnectionId()).toBeUndefined();
     });
 
     test('should return linkedconnectionId for given ns account', () => {
@@ -2351,13 +2351,13 @@ describe('tests for reducer selectors', () => {
         actions.resource.received('preferences', preferences)
       );
 
-      expect(selectors.suiteScriptIntegratorLinkedConnectionId(state, 'a2')).toEqual('c2');
+      expect(selectors.suiteScriptIntegratorLinkedConnectionId(state, 'a2')).toBe('c2');
     });
   });
 
   describe('tests for util userHasManageAccessOnSuiteScriptAccount', () => {
     test('should return false for empty state', () => {
-      expect(selectors.userHasManageAccessOnSuiteScriptAccount(undefined, 'c1')).toEqual(false);
+      expect(selectors.userHasManageAccessOnSuiteScriptAccount(undefined, 'c1')).toBe(false);
     });
 
     test('should return true if account access Level is monitor', () => {
@@ -2383,7 +2383,7 @@ describe('tests for reducer selectors', () => {
         )
       );
 
-      expect(selectors.userHasManageAccessOnSuiteScriptAccount(state, 'c1')).toEqual(false);
+      expect(selectors.userHasManageAccessOnSuiteScriptAccount(state, 'c1')).toBe(false);
     });
 
     test('should return true if account access Level is manage', () => {
@@ -2409,7 +2409,7 @@ describe('tests for reducer selectors', () => {
         )
       );
 
-      expect(selectors.userHasManageAccessOnSuiteScriptAccount(state, 'c1')).toEqual(true);
+      expect(selectors.userHasManageAccessOnSuiteScriptAccount(state, 'c1')).toBe(true);
     });
 
     test('should verify if account access Level is tile and integration has manage access', () => {
@@ -2448,9 +2448,9 @@ describe('tests for reducer selectors', () => {
         actions.resource.received('preferences', {
           defaultAShareId: 'aShare3',
         }));
-      expect(selectors.userHasManageAccessOnSuiteScriptAccount(state, 'c1')).toEqual(false);
-      expect(selectors.userHasManageAccessOnSuiteScriptAccount(state, 'c2')).toEqual(true);
-      expect(selectors.userHasManageAccessOnSuiteScriptAccount(state, 'c3')).toEqual(true);
+      expect(selectors.userHasManageAccessOnSuiteScriptAccount(state, 'c1')).toBe(false);
+      expect(selectors.userHasManageAccessOnSuiteScriptAccount(state, 'c2')).toBe(true);
+      expect(selectors.userHasManageAccessOnSuiteScriptAccount(state, 'c3')).toBe(true);
     });
   });
 

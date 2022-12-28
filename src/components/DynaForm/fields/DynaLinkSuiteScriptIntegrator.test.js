@@ -1,4 +1,4 @@
-/* global describe, expect, jest, test, afterEach */
+
 import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -60,8 +60,8 @@ describe('test suite for DynaLinkSuiteScriptIntegrator field', () => {
 
     expect(checkBox).toBeChecked();
     userEvent.click(checkBox);
-    expect(onFieldChange).toBeCalledWith(props.id, false);
-    expect(mockDispatchFn).not.toBeCalled();
+    expect(onFieldChange).toHaveBeenCalledWith(props.id, false);
+    expect(mockDispatchFn).not.toHaveBeenCalled();
   });
 
   test('should check for integrations only if not checked', () => {
@@ -84,6 +84,6 @@ describe('test suite for DynaLinkSuiteScriptIntegrator field', () => {
       netsuite: {account: 'ns-123'},
     }];
     renderWithProviders(<DynaLinkSuiteScriptIntegrator {...props} />, {initialStore});
-    expect(mockDispatchFn).toBeCalledWith(actions.suiteScript.account.checkHasIntegrations(props.resourceContext.resourceId));
+    expect(mockDispatchFn).toHaveBeenCalledWith(actions.suiteScript.account.checkHasIntegrations(props.resourceContext.resourceId));
   });
 });
