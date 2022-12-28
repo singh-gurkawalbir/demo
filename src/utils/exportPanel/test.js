@@ -1,4 +1,3 @@
-/* global expect, describe, test */
 
 import {
   getAvailablePreviewStages,
@@ -229,7 +228,7 @@ describe('getRequestURL util', () => {
     };
     const previewData = { request: sampleWithMultipleRequests };
 
-    expect(getRequestURL(previewData)).toEqual('url3');
+    expect(getRequestURL(previewData)).toBe('url3');
   });
 });
 

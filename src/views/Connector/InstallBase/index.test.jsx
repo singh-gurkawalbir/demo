@@ -1,9 +1,6 @@
-/* global describe, test, expect, jest, beforeEach, afterEach */
 import React from 'react';
 import { MemoryRouter, Route} from 'react-router-dom';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { screen, cleanup, waitForElementToBeRemoved, waitFor } from '@testing-library/react';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import userEvent from '@testing-library/user-event';
 import * as reactRedux from 'react-redux';
 import { renderWithProviders } from '../../../test/test-utils';
@@ -46,7 +43,7 @@ async function initInstallBase(props) {
     utils,
   };
 }
-describe('Install Base', () => {
+describe('install Base', () => {
   runServer();
   let mockDispatchFn;
   let useDispatchSpy;
@@ -67,7 +64,7 @@ describe('Install Base', () => {
     mockDispatchFn.mockClear();
     cleanup();
   });
-  test('Should able to test the Install Base heading which has connector name attached', async () => {
+  test('should able to test the Install Base heading which has connector name attached', async () => {
     const props = {
       match: {
         params: {connectorId: '12345'},
@@ -84,7 +81,7 @@ describe('Install Base', () => {
 
     expect(installBaseHeadingNode).toBeInTheDocument();
   });
-  test('Should able to test the Install Base heading which doesn/t have any connector name', async () => {
+  test('should able to test the Install Base heading which doesn/t have any connector name', async () => {
     const props = {
       match: {
         params: {connectorId: '12345'},
@@ -101,7 +98,7 @@ describe('Install Base', () => {
 
     expect(installBaseHeadingNode).toBeInTheDocument();
   });
-  test('Should able to test the Install Base update button', async () => {
+  test('should able to test the Install Base update button', async () => {
     const props = {
       match: {
         params: {connectorId: '12345'},
@@ -124,7 +121,7 @@ describe('Install Base', () => {
     }));
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.resource.requestCollection('connectors/12345/installBase'));
   });
-  test('Should able to test the Install Base with no connectors', async () => {
+  test('should able to test the Install Base with no connectors', async () => {
     const props = {
       match: {
         params: {connectorId: ''},
@@ -140,7 +137,7 @@ describe('Install Base', () => {
 
     expect(utils.container).toBeEmptyDOMElement();
   });
-  test('Should able to test the Install Base search option', async () => {
+  test('should able to test the Install Base search option', async () => {
     const props = {
       match: {
         params: {connectorId: '12345'},
@@ -183,7 +180,7 @@ describe('Install Base', () => {
     await waitFor(() => expect(noMatchingResultNode).not.toBeInTheDocument());
     expect(screen.queryByText(/Testing Install Base Table/i)).toBeInTheDocument();
   });
-  test('Should able to test the Install Base with the sandbox account and when the version is in progress', async () => {
+  test('should able to test the Install Base with the sandbox account and when the version is in progress', async () => {
     const props = {
       match: {
         params: {connectorId: '12345'},
@@ -221,7 +218,7 @@ describe('Install Base', () => {
 
     expect(inProgressTextNode).toBeInTheDocument();
   });
-  test('Should able to test the Install Base handle select change and click on update 1 user button node', async () => {
+  test('should able to test the Install Base handle select change and click on update 1 user button node', async () => {
     const props = {
       match: {
         params: {connectorId: '12345'},

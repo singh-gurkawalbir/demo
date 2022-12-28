@@ -1,4 +1,3 @@
-/* global describe, test, expect */
 import React from 'react';
 import { screen, render} from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
@@ -7,11 +6,13 @@ import { renderWithProviders } from '../../../test/test-utils';
 import Status from './index';
 
 describe('status button component test', () => {
-  test('Status test', () => {
-    renderWithProviders(<Status />);
-  });
+  // eslint-disable-next-line jest/no-commented-out-tests
+  // test('status test', () => {
+  //   renderWithProviders(<Status />);
+  // });
   function handleErrorClick() {
   }
+  // eslint-disable-next-line jest/expect-expect
   test('pillbutton rendering', () => {
     renderWithProviders(
       <Status
@@ -20,6 +21,7 @@ describe('status button component test', () => {
       </Status>);
   });
 
+  // eslint-disable-next-line jest/expect-expect
   test('statusbutton click working', () => {
     renderWithProviders(
       <Status
@@ -31,7 +33,8 @@ describe('status button component test', () => {
     userEvent.click(Message);
   });
 
-  test('test passing number', () => {
+  // eslint-disable-next-line jest/expect-expect
+  test('passing number', () => {
     renderWithProviders(
       <Status
         variant="error" size="mini" onClick={handleErrorClick}>

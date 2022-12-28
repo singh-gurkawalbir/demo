@@ -1,4 +1,3 @@
-/* global describe, test */
 
 import { select } from 'redux-saga/effects';
 import { expectSaga } from 'redux-saga-test-plan';
@@ -20,7 +19,7 @@ describe('sampleData imports saga', () => {
         .returns(undefined)
         .run();
 
-      return expectSaga(requestSampleData, {})
+      expectSaga(requestSampleData, {})
         .returns(undefined)
         .run();
     });
@@ -30,7 +29,7 @@ describe('sampleData imports saga', () => {
         assistant: 'shipwire',
       };
 
-      return expectSaga(requestSampleData, { resourceId })
+      expectSaga(requestSampleData, { resourceId })
         .provide([
           [select(selectors.resourceData, 'imports', resourceId, SCOPES.VALUE), { merged }],
         ])
@@ -64,7 +63,7 @@ describe('sampleData imports saga', () => {
       };
       const expectedCommMetaPath2 = 'netsuite/metadata/suitescript/connections/789/recordTypes/accountParent';
 
-      return expectSaga(requestSampleData, { resourceId: '111', refreshCache: true })
+      expectSaga(requestSampleData, { resourceId: '111', refreshCache: true })
         .provide([
           [select(selectors.resourceData, 'imports', '111', SCOPES.VALUE), { merged: merged2 }],
         ])
@@ -92,7 +91,7 @@ describe('sampleData imports saga', () => {
       const expectedCommMetaPath1 = 'salesforce/metadata/connections/456/sObjectTypes/contact';
       const expectedCommMetaPath2 = 'salesforce/metadata/connections/456/sObjectTypes/opp';
 
-      return expectSaga(requestSampleData, { resourceId, options: {sObjects: ['contact', 'opp']}, refreshCache: true })
+      expectSaga(requestSampleData, { resourceId, options: {sObjects: ['contact', 'opp']}, refreshCache: true })
         .provide([
           [select(selectors.resourceData, 'imports', resourceId, SCOPES.VALUE), { merged }],
         ])
@@ -110,7 +109,7 @@ describe('sampleData imports saga', () => {
 
       };
 
-      return expectSaga(requestSampleData, { resourceId })
+      expectSaga(requestSampleData, { resourceId })
         .provide([
           [select(selectors.resourceData, 'imports', resourceId, SCOPES.VALUE), { merged }],
         ])
@@ -129,7 +128,7 @@ describe('sampleData imports saga', () => {
       const _importId = '_importId';
       const _integrationId = '_integrationId';
 
-      return expectSaga(_fetchIAMetaData, {
+      expectSaga(_fetchIAMetaData, {
         _importId,
         _integrationId,
         refreshMetadata: true,
@@ -152,7 +151,7 @@ describe('sampleData imports saga', () => {
       const _integrationId = '_integrationId';
       const sampleData = {key: 'value'};
 
-      return expectSaga(_fetchIAMetaData, {
+      expectSaga(_fetchIAMetaData, {
         _importId,
         _integrationId,
         sampleData,
@@ -171,7 +170,7 @@ describe('sampleData imports saga', () => {
       const _integrationId = '_integrationId';
       const response = {key: 'value'};
 
-      return expectSaga(_fetchIAMetaData, {
+      expectSaga(_fetchIAMetaData, {
         _importId,
         _integrationId,
         refreshMetadata: true,
@@ -192,7 +191,7 @@ describe('sampleData imports saga', () => {
       const _integrationId = '_integrationId';
       const sampleData = {key: 'value'};
 
-      return expectSaga(_fetchIAMetaData, {
+      expectSaga(_fetchIAMetaData, {
         _importId,
         _integrationId,
         refreshMetadata: true,
@@ -207,12 +206,12 @@ describe('sampleData imports saga', () => {
         )
         .run();
     });
-    test('should dispatch iaMetadataFailed action when there is neither any response from refreshMetadata call nor it throws any error ', () => {
+    test('should dispatch iaMetadataFailed action when there is neither any response from refreshMetadata call nor it throws any error', () => {
       const _importId = '_importId';
       const _integrationId = '_integrationId';
       const sampleData = {key: 'value'};
 
-      return expectSaga(_fetchIAMetaData, {
+      expectSaga(_fetchIAMetaData, {
         _importId,
         _integrationId,
         refreshMetadata: true,
@@ -240,7 +239,7 @@ describe('sampleData imports saga', () => {
         assistant: 'shipwire',
       };
 
-      return expectSaga(_fetchAssistantSampleData, { resource })
+      expectSaga(_fetchAssistantSampleData, { resource })
         .provide([
           [select(selectors.assistantData, {
             adaptorType: 'rest',
@@ -292,7 +291,7 @@ describe('sampleData imports saga', () => {
         externalId: 'narp',
       };
 
-      return expectSaga(_fetchAssistantSampleData, { resource })
+      expectSaga(_fetchAssistantSampleData, { resource })
         .provide([
           [select(selectors.assistantData, {
             adaptorType: 'rest',
@@ -336,7 +335,7 @@ describe('sampleData imports saga', () => {
         },
       };
 
-      return expectSaga(_fetchAssistantSampleData, { resource })
+      expectSaga(_fetchAssistantSampleData, { resource })
         .provide([
           [select(selectors.assistantData, {
             adaptorType: 'rest',
@@ -354,7 +353,7 @@ describe('sampleData imports saga', () => {
         assistant: 'shipwire',
       };
 
-      return expectSaga(_fetchAssistantSampleData, { resource })
+      expectSaga(_fetchAssistantSampleData, { resource })
         .provide([
           [select(selectors.assistantData, {
             adaptorType: 'rest',
@@ -435,7 +434,7 @@ describe('sampleData imports saga', () => {
           externalId: 'narp',
         };
 
-        return expectSaga(_fetchAssistantSampleData, { resource })
+        expectSaga(_fetchAssistantSampleData, { resource })
           .provide([
             [select(selectors.assistantData, {
               adaptorType: 'rest',

@@ -1,4 +1,4 @@
-/* global describe, test, expect */
+
 import reducer, { selectors } from '.';
 import actions from '../../../../actions';
 import {
@@ -260,7 +260,7 @@ describe('users (ashares) reducers', () => {
     test('should return [] when the state undefined', () => {
       const newState = reducer(undefined, 'someaction');
 
-      expect(selectors.userReinviteStatus(newState)).toEqual(null);
+      expect(selectors.userReinviteStatus(newState)).toBeNull();
     });
     test('should return correct user details', () => {
       const newState = reducer(
@@ -273,7 +273,7 @@ describe('users (ashares) reducers', () => {
 
       expect(selectors.userReinviteStatus(newState, 'one')).toEqual(REINVITE_STATES.LOADING);
 
-      expect(selectors.userReinviteStatus(newState, 'two')).toEqual(undefined);
+      expect(selectors.userReinviteStatus(newState, 'two')).toBeUndefined();
     });
   });
 });

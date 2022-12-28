@@ -1,11 +1,7 @@
-/* global describe, test, expect, jest, beforeEach, afterEach */
-
 import React from 'react';
 import { MemoryRouter, Route} from 'react-router-dom';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { screen, cleanup} from '@testing-library/react';
 import * as reactRedux from 'react-redux';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import userEvent from '@testing-library/user-event';
 import { renderWithProviders } from '../../test/test-utils';
 import MfaHelp from '.';
@@ -55,7 +51,7 @@ describe('MFAHelp', () => {
     mockDispatchFn.mockClear();
     cleanup();
   });
-  test('Should able to test MFA help ', async () => {
+  test('Should able to test MFA help', async () => {
     store();
     await initMFAHelp();
     const titleText = screen.getByText('Celigo Inc.');

@@ -1,4 +1,4 @@
-/* global test, expect, describe, jest, beforeEach, afterEach */
+
 import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -22,7 +22,7 @@ function initHomeTiles(data = {}, initialStore = null) {
   renderWithProviders(ui, {initialStore});
 }
 
-describe("HomeTile's Uninstall action UI tests", () => {
+describe("homeTile's Uninstall action UI tests", () => {
   const mockDelete = jest.fn();
   let mockuseHandleDelete;
 

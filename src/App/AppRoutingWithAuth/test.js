@@ -1,4 +1,4 @@
-/* global describe, test, expect, afterEach ,jest */
+
 import React from 'react';
 // add react-router in package.json as actual dependency breaks test, may be version related
 // eslint-disable-next-line import/no-extraneous-dependencies
@@ -7,8 +7,6 @@ import { createStore } from 'redux';
 import { Provider } from 'react-redux';
 import { Router } from 'react-router-dom';
 import { MuiThemeProvider } from '@material-ui/core';
-// add history in package.json as actual dependency breaks test, may be version related
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { createMemoryHistory } from 'history';
 import { render, cleanup } from '@testing-library/react';
 import { SnackbarProvider } from 'notistack';
@@ -177,7 +175,7 @@ describe('AppRoutingWith authentication redirection behavior', () => {
         getRoutePath(someRoute)
       );
     });
-    test('should redirect the user to attempted route when the user successfully authenticates ', () => {
+    test('should redirect the user to attempted route when the user successfully authenticates', () => {
       const history = createMemoryHistory({
         initialEntries: [
           {
@@ -197,9 +195,9 @@ describe('AppRoutingWith authentication redirection behavior', () => {
         })
       );
       expect(history.location.pathname).toBe(getRoutePath(someRoute));
-      expect(history.location.state).toBe(undefined);
+      expect(history.location.state).toBeUndefined();
     });
-    test('should preserve attempted route state when the user authentication attempts fails  ', () => {
+    test('should preserve attempted route state when the user authentication attempts fails', () => {
       const history = createMemoryHistory({
         initialEntries: [
           {
@@ -245,7 +243,7 @@ describe('AppRoutingWith authentication redirection behavior', () => {
       );
 
       expect(history.location.pathname).toBe(getRoutePath('/mfa/verify'));
-      expect(history.location.state).toBe(undefined);
+      expect(history.location.state).toBeUndefined();
     });
   });
 

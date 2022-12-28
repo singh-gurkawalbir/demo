@@ -11,6 +11,7 @@ import FieldHelp from '../../FieldHelp';
 import ExpandEditorModal from './ExpandModeEditor/Modal';
 import isLoggableAttr from '../../../../utils/isLoggableAttr';
 import { buildDrawerUrl, drawerPaths } from '../../../../utils/rightDrawer';
+import { isJsonString } from '../../../../utils/string';
 
 const useStyles = makeStyles(theme => ({
   label: {
@@ -64,13 +65,20 @@ export default function DynaEditor(props) {
     isValid,
     skipJsonParse,
     customHandleUpdate,
+    customHandleEditorClick,
     isLoggable,
+    validateContent,
   } = props;
   const history = useHistory();
   const match = useRouteMatch();
   const [showEditor, setShowEditor] = useState(false);
   const classes = useStyles();
   const handleEditorClick = useCallback(() => {
+    if (customHandleEditorClick) {
+      customHandleEditorClick();
+
+      return;
+    }
     if (expandMode === 'drawer') {
       const { formKey, id } = props;
 
@@ -82,7 +90,7 @@ export default function DynaEditor(props) {
     } else {
       setShowEditor(!showEditor);
     }
-  }, [showEditor, expandMode, match, history, props]);
+  }, [customHandleEditorClick, expandMode, props, history, match.url, showEditor]);
   const handleUpdate = useCallback(
     editorVal => {
       if (customHandleUpdate) {
@@ -107,10 +115,8 @@ export default function DynaEditor(props) {
           return;
         }
 
-        try {
+        if (isJsonString(editorVal)) {
           sanitizedVal = JSON.parse(editorVal);
-        } catch (e) {
-          return;
         }
       }
 
@@ -146,6 +152,7 @@ export default function DynaEditor(props) {
               show={showEditor}
               handleClose={handleEditorClick}
               label={label}
+              validateContent={validateContent}
               editorProps={{
                 id,
                 value,

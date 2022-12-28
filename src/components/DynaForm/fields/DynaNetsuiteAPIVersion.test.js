@@ -1,4 +1,4 @@
-/* global describe, expect, jest, test, afterEach */
+
 import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -56,12 +56,12 @@ describe('test suite for DynaNetsuiteAPIVersion field', () => {
 
     const {utils: {unmount}} = renderWithProviders(<DynaNetsuiteAPIVersion {...props} />);
 
-    expect(onFieldChange).toBeCalledWith(props.id, 'false');
-    expect(mockDispatchFn).toBeCalledWith(actions.metadata.getBundleInstallStatus(props.connectionId));
+    expect(onFieldChange).toHaveBeenCalledWith(props.id, 'false');
+    expect(mockDispatchFn).toHaveBeenCalledWith(actions.metadata.getBundleInstallStatus(props.connectionId));
     expect(screen.getByRole('progressbar')).toBeInTheDocument();
 
     unmount();
-    expect(mockDispatchFn).toBeCalledWith(actions.resourceForm.hideBundleInstallNotification(props.resourceType, props.resourceId));
+    expect(mockDispatchFn).toHaveBeenCalledWith(actions.resourceForm.hideBundleInstallNotification(props.resourceType, props.resourceId));
   });
 
   test('should populate the saved API version', () => {
@@ -112,7 +112,7 @@ describe('test suite for DynaNetsuiteAPIVersion field', () => {
       },
     };
     renderWithProviders(<DynaNetsuiteAPIVersion {...props} />, {initialStore});
-    expect(onFieldChange).toBeCalledWith(props.id, 'false');
+    expect(onFieldChange).toHaveBeenCalledWith(props.id, 'false');
     const radioGroup = screen.getByRole('radiogroup', {name: props.label});
     const apiVersions = screen.getAllByRole('radio');
 
@@ -122,8 +122,8 @@ describe('test suite for DynaNetsuiteAPIVersion field', () => {
     const selectedVersion = apiVersions.find(apiVersion => apiVersion.value === props.value);
 
     expect(selectedVersion).toBeChecked();
-    expect(mockDispatchFn).toBeCalledWith(actions.metadata.getBundleInstallStatus(props.connectionId));
-    expect(mockDispatchFn).toBeCalledWith(actions.resourceForm.hideBundleInstallNotification(props.resourceType, props.resourceId));
+    expect(mockDispatchFn).toHaveBeenCalledWith(actions.metadata.getBundleInstallStatus(props.connectionId));
+    expect(mockDispatchFn).toHaveBeenCalledWith(actions.resourceForm.hideBundleInstallNotification(props.resourceType, props.resourceId));
   });
 
   test('should show the error message if any', () => {
@@ -171,8 +171,8 @@ describe('test suite for DynaNetsuiteAPIVersion field', () => {
       },
     };
     renderWithProviders(<DynaNetsuiteAPIVersion {...props} />, {initialStore});
-    expect(onFieldChange).not.toBeCalled();
-    expect(mockDispatchFn).toBeCalledWith(actions.resourceForm.showBundleInstallNotification('2.0', 'https://sampleURL.com', props.resourceType, props.resourceId));
+    expect(onFieldChange).not.toHaveBeenCalled();
+    expect(mockDispatchFn).toHaveBeenCalledWith(actions.resourceForm.showBundleInstallNotification('2.0', 'https://sampleURL.com', props.resourceType, props.resourceId));
     expect(screen.getByText('Invalid URL')).toBeInTheDocument();
   });
 
@@ -224,10 +224,10 @@ describe('test suite for DynaNetsuiteAPIVersion field', () => {
       },
     };
     renderWithProviders(<DynaNetsuiteAPIVersion {...props} />, {initialStore});
-    expect(onFieldChange).not.toBeCalled();
+    expect(onFieldChange).not.toHaveBeenCalled();
     const apiVersion1 = screen.getByRole('radio', {name: 'SuiteScript 1.0'});
 
     userEvent.click(apiVersion1);
-    expect(onFieldChange).toBeCalledWith(props.id, 'false');
+    expect(onFieldChange).toHaveBeenCalledWith(props.id, 'false');
   });
 });

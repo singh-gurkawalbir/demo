@@ -1,4 +1,3 @@
-/* global describe, test, expect, jest */
 import React from 'react';
 import {render, screen} from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
@@ -39,7 +38,7 @@ function initFunction(props, renderFun = render) {
   return {utils};
 }
 
-describe('Source Data type Ui test cases', () => {
+describe('source Data type Ui test cases', () => {
   test('should show empty dom element when dynamic lookup is true', () => {
     const props = {
       isDynamicLookup: true,
@@ -59,7 +58,7 @@ describe('Source Data type Ui test cases', () => {
     const {utils} = initFunction(props);
 
     userEvent.click(screen.getByRole('button'));
-    expect(setAnchorEl).toHaveBeenCalled();
+    expect(setAnchorEl).toHaveBeenCalledTimes(1);
     const props2 = {
       nodeKey: 'someNodeKey',
       anchorEl,

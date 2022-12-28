@@ -1,4 +1,3 @@
-/* global describe, test, expect, jest, */
 import React from 'react';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -22,7 +21,7 @@ function initSettingsDialog(props = {}) {
   return renderWithProviders(<OperandSettingsDialog {...props} />, {initialStore});
 }
 
-describe('OperandSettingsDialog UI tests', () => {
+describe('operandSettingsDialog UI tests', () => {
   test('should pass the initial render', () => {
     initSettingsDialog({disabled: false, onClose: jest.fn()});
     expect(screen.getByRole('radio', {name: 'Value'})).toBeInTheDocument();

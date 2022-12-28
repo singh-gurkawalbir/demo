@@ -1,4 +1,4 @@
-/* global describe,test,expect,beforeEach */
+/* eslint-disable jest/no-export */
 
 import { MuiThemeProvider } from '@material-ui/core';
 import { fireEvent, render, configure } from '@testing-library/react';
@@ -104,7 +104,7 @@ describe('validation warnings', () => {
 
       expect(errorMsg).toBeTruthy();
 
-      expect(errorMsg.length).toBe(1);
+      expect(errorMsg).toHaveLength(1);
     });
     test('should show that the field FIELD1 state is invalid and the FIELD2 state is valid', () => {
       render(
@@ -148,7 +148,7 @@ describe('validation warnings', () => {
     test('should show no warnings when field is invalid', () => {
       const errorMsg = queryAllByText('Numbers only');
 
-      expect(errorMsg.length).toBe(0);
+      expect(errorMsg).toHaveLength(0);
     });
     test('should show that the field FIELD1 and FIELD2 state is valid initially,after a touch is simulated should we show that field error', () => {
       const formState = selectors.formState(store.getState(), formKey);
@@ -162,7 +162,7 @@ describe('validation warnings', () => {
 
       let errorMsg = queryAllByText('Numbers only');
 
-      expect(errorMsg.length).toBe(0);
+      expect(errorMsg).toHaveLength(0);
 
       const ele = queryByDisplayValue('test');
 
@@ -177,7 +177,7 @@ describe('validation warnings', () => {
 
       errorMsg = queryAllByText('Numbers only');
 
-      expect(errorMsg.length).toBe(1);
+      expect(errorMsg).toHaveLength(1);
     });
   });
 });
@@ -237,7 +237,7 @@ describe('visible behavior', () => {
     expect(queryByDisplayValue('test')).not.toBeTruthy();
   });
 
-  test('visibleField should be visible after it visible expression criteria ', () => {
+  test('visibleField should be visible after it visible expression criteria', () => {
     // find a field with that default value
     const ele = queryByDisplayValue('123');
 
@@ -249,7 +249,7 @@ describe('visible behavior', () => {
     expect(queryByDisplayValue('test')).toBeTruthy();
   });
 
-  test('visibleField should be again invisible after it visible expression criteria is not met ', () => {
+  test('visibleField should be again invisible after it visible expression criteria is not met', () => {
     let ele = queryByDisplayValue('123');
 
     // make it visible first
@@ -331,7 +331,7 @@ describe('required behavior', () => {
     expect(queryByDisplayValue(messageStore('REQUIRED_MESSAGE'))).not.toBeTruthy();
   });
 
-  test('requiredField should be required after it requiredWhen expression criteria is met ', () => {
+  test('requiredField should be required after it requiredWhen expression criteria is met', () => {
     // find a field with that default value
 
     const ele = queryByDisplayValue('123');
@@ -350,7 +350,7 @@ describe('required behavior', () => {
     // expect(queryByDisplayValue('A value must be provided')).toBeTruthy();
   });
 
-  test('requiredField should be again not required after it required expression criteria is not met ', () => {
+  test('requiredField should be again not required after it required expression criteria is not met', () => {
     // make it required first
 
     let ele = queryByDisplayValue('123');
@@ -443,7 +443,7 @@ describe('changing form value prop', () => {
   });
 });
 
-describe('various layout specific behavior ', () => {
+describe('various layout specific behavior', () => {
   describe('collapse component', () => {
     describe('expand behavior', () => {
       const formKey = '123';
@@ -513,7 +513,7 @@ describe('various layout specific behavior ', () => {
         const field2Ele = queryByDisplayValue('abc');
         const errorMsg = queryAllByText('Numbers only');
 
-        expect(errorMsg.length).toBe(1);
+        expect(errorMsg).toHaveLength(1);
         // feeding a non number again
 
         fireEvent.change(field2Ele, {
@@ -526,7 +526,7 @@ describe('various layout specific behavior ', () => {
 
         const errorMsgAfterNumberSet = queryAllByText('Numbers only');
 
-        expect(errorMsgAfterNumberSet.length).toBe(0);
+        expect(errorMsgAfterNumberSet).toHaveLength(0);
       });
     });
     describe('visible behavior', () => {
@@ -581,11 +581,11 @@ describe('various layout specific behavior ', () => {
         ));
       });
 
-      test('FIELD2 should be visible since it meets its visibleWhen criteria', () => {
+      test('fIELD2 should be visible since it meets its visibleWhen criteria', () => {
         expect(queryByDisplayValue('abc')).toBeTruthy();
       });
 
-      test('FIELD2 expansion panel should be invisible when its visibleWhen criteria is not met', () => {
+      test('fIELD2 expansion panel should be invisible when its visibleWhen criteria is not met', () => {
         const field1Ele = queryByDisplayValue('test');
         // feeding a non number again
 
@@ -601,7 +601,7 @@ describe('various layout specific behavior ', () => {
 
         expect(queryByTestId('expansion panel1')).not.toBeTruthy();
       });
-      test('FIELD2 expansion panel should be visible when its visibleWhen criteria is met', () => {
+      test('fIELD2 expansion panel should be visible when its visibleWhen criteria is met', () => {
         let field1Ele = queryByDisplayValue('test');
         // feeding a non number again
 

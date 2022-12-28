@@ -5,6 +5,7 @@ import isEmpty from 'lodash/isEmpty';
 import { FILE_PROVIDER_ASSISTANTS } from '../../constants';
 import { adaptorTypeMap } from '../resource';
 import {HTTP_BASED_ADAPTORS} from '../http';
+import { wrapExportFileSampleData } from '../sampleData';
 
 export const DEFAULT_RECORD_SIZE = 10;
 
@@ -120,6 +121,17 @@ export const previewFileData = (previewData, recordSize) => {
 
   // if preview data is an array
   return previewData.slice(0, recordSize);
+};
+
+export const getParsedData = (resourceType, previewStageDataList, numRecords) => {
+  if (!previewStageDataList) return;
+  let previewData = previewStageDataList.preview?.data;
+
+  if (numRecords && previewData) {
+    previewData = previewData.slice(0, numRecords);
+  }
+
+  return resourceType === 'imports' ? previewData : wrapExportFileSampleData(previewData);
 };
 
 export const getLatestReqResData = (previewData, stage) => {

@@ -1,4 +1,4 @@
-/* global describe, test, expect, jest */
+
 import React from 'react';
 import {screen} from '@testing-library/react';
 import FieldMessage from './FieldMessage';
@@ -30,7 +30,7 @@ function initFieldMessage(props = {}) {
   return renderWithProviders(ui);
 }
 
-describe('FieldMessage UI test case', () => {
+describe('fieldMessage UI test case', () => {
   test('should show empty dom element when no description, error or warning message given', () => {
     const {utils} = initFieldMessage();
 
@@ -50,7 +50,16 @@ describe('FieldMessage UI test case', () => {
         isValid: true}
     );
 
-    expect(screen.getByText('Some Description'));
+    expect(screen.getByText('Some Description')).toBeInTheDocument();
+  });
+  test('should show description with link when data is valid', () => {
+    initFieldMessage(
+      { description: 'Some Description <a href="https://docs.celigo.com">Learn more</a>',
+        isValid: true}
+    );
+
+    expect(screen.getByText('Some Description')).toBeInTheDocument();
+    expect(screen.getByText(/Learn more/i)).toHaveAttribute('href', 'https://docs.celigo.com');
   });
   test('should not show error message when data is valid', () => {
     initFieldMessage(
@@ -61,9 +70,9 @@ describe('FieldMessage UI test case', () => {
       }
     );
 
-    expect(screen.getAllByText('Some Description').length).toEqual(2);
+    expect(screen.getAllByText('Some Description')).toHaveLength(2);
   });
-  test('should show error message when data is invalid', () => {
+  test('should show error message and error icon when data is invalid', () => {
     initFieldMessage(
       {
         isValid: false,
@@ -73,6 +82,18 @@ describe('FieldMessage UI test case', () => {
 
     expect(screen.getByText('ErrorIcon')).toBeInTheDocument();
     expect(screen.getByText('errorMessages')).toBeInTheDocument();
+  });
+  test('should show error message and error icon with link when data is invalid', () => {
+    initFieldMessage(
+      {
+        isValid: false,
+        errorMessages: 'errorMessages <a href="https://docs.celigo.com">Learn more</a>',
+      }
+    );
+
+    expect(screen.getByText('ErrorIcon')).toBeInTheDocument();
+    expect(screen.getByText('errorMessages')).toBeInTheDocument();
+    expect(screen.getByText(/Learn more/i)).toHaveAttribute('href', 'https://docs.celigo.com');
   });
   test('should show warning message when data is invalid', () => {
     initFieldMessage(
@@ -84,7 +105,7 @@ describe('FieldMessage UI test case', () => {
 
     expect(screen.getByText('Warning Messages')).toBeInTheDocument();
   });
-  test('should show warning message and Error Icon when data is invalid', () => {
+  test('should show warning message and warning icon when data is invalid', () => {
     initFieldMessage(
       {
         isValid: false,
@@ -94,5 +115,17 @@ describe('FieldMessage UI test case', () => {
 
     expect(screen.getByText('WarningIcon')).toBeInTheDocument();
     expect(screen.getByText('Warning Messages')).toBeInTheDocument();
+  });
+  test('should show warning message and warning icon with link when data is invalid', () => {
+    initFieldMessage(
+      {
+        isValid: false,
+        warningMessages: 'Warning Messages <a href="https://docs.celigo.com">Learn more</a>',
+      }
+    );
+
+    expect(screen.getByText('WarningIcon')).toBeInTheDocument();
+    expect(screen.getByText('Warning Messages')).toBeInTheDocument();
+    expect(screen.getByText(/Learn more/i)).toHaveAttribute('href', 'https://docs.celigo.com');
   });
 });

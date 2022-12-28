@@ -1,4 +1,4 @@
-/* global describe, test, expect */
+
 import { makeExportResource } from './index';
 
 describe('exportData utils test cases', () => {

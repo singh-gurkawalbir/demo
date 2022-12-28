@@ -1,4 +1,4 @@
-/* global describe, jest, test, expect, beforeEach, afterEach */
+
 import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -45,7 +45,7 @@ jest.mock('../../CeligoTimeAgo', () => ({
   default: ({date}) => (<span>{date}</span>),
 }));
 
-describe('Script Logs test suite', () => {
+describe('script Logs test suite', () => {
   beforeEach(() => {
     mockIds = {};
   });

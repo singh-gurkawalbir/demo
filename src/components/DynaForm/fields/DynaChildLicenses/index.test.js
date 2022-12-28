@@ -1,4 +1,4 @@
-/* global describe, test, expect, jest, beforeEach, afterEach */
+
 import React from 'react';
 import { screen, waitFor} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -129,7 +129,7 @@ jest.mock('../../../../utils/resource', () => ({
   generateNewId: () => 'new-Id',
 }));
 
-describe('DynaChildLicense UI tests', () => {
+describe('dynaChildLicense UI tests', () => {
   const props = { connectorId: '62667711385b5c5d57b88224', resourceId: '631f34e4798cc1729e8b5118', id: 'demoId', formKey: 'demo-formKey'};
   let mockDispatchFn;
   let useDispatchSpy;
@@ -151,7 +151,6 @@ describe('DynaChildLicense UI tests', () => {
   test('should pass the initial render', () => {
     initDynaChildLicense(props);
     expect(screen.getByText('Create child license')).toBeInTheDocument();
-    expect().toBe;
     expect(screen.getByText('Created')).toBeInTheDocument();
     expect(screen.getByText('Status')).toBeInTheDocument();
     expect(screen.getByText('Integration ID')).toBeInTheDocument();
@@ -161,8 +160,8 @@ describe('DynaChildLicense UI tests', () => {
   });
   test('should make 2 dispatch calls on initial render', async () => {
     initDynaChildLicense(props);
-    await waitFor(() => expect(mockDispatchFn).toBeCalledWith(actions.patchFilter('connectorChildLicenses', { sort: { order: 'asc', orderBy: 'status' }})));
-    await waitFor(() => expect(mockDispatchFn).toBeCalledWith(actions.form.forceFieldState('demo-formKey')('demoId', { visible: false})));
+    await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith(actions.patchFilter('connectorChildLicenses', { sort: { order: 'asc', orderBy: 'status' }})));
+    await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith(actions.form.forceFieldState('demo-formKey')('demoId', { visible: false})));
   });
   test('should make a dipatch call and URL redirection when "Create child license" is clicked', async () => {
     const patchSet = [
@@ -193,7 +192,7 @@ describe('DynaChildLicense UI tests', () => {
 
     expect(createButton).toBeInTheDocument();
     userEvent.click(createButton);
-    await waitFor(() => expect(mockDispatchFn).toBeCalledWith(actions.resource.patchStaged('new-Id', patchSet, 'value')));
-    await waitFor(() => expect(mockHistoryPush).toBeCalledWith('connectors/62667711385b5c5d57b88224/connectorLicenses/edit/connectorLicenses/631f34e4798cc1729e8b5118/add/connectorLicenses/new-Id'));
+    await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith(actions.resource.patchStaged('new-Id', patchSet, 'value')));
+    await waitFor(() => expect(mockHistoryPush).toHaveBeenCalledWith('connectors/62667711385b5c5d57b88224/connectorLicenses/edit/connectorLicenses/631f34e4798cc1729e8b5118/add/connectorLicenses/new-Id'));
   });
 });

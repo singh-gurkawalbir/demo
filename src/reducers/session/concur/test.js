@@ -1,4 +1,3 @@
-/* global describe, test, expect */
 
 import reducer, { selectors } from '.';
 import actions from '../../../actions';
@@ -45,7 +44,7 @@ describe('concur selector', () => {
   test('selector concurData should return undefined in case state is not initialized', () => {
     const data = selectors.concurData(undefined);
 
-    expect().toEqual(data);
+    expect(data).toBeUndefined();
   });
   test('selector[concurData] should return state correctly', () => {
     const state = {
@@ -65,7 +64,7 @@ describe('concur selector', () => {
       otherProp: 'a',
     });
   });
-  test('selector[concurData] should return state correctly', () => {
+  test('selector[concurData] should return state correctly duplicate', () => {
     const state = {
       error: {
         tabs: [
@@ -89,7 +88,7 @@ describe('concur selector', () => {
     };
     const data = selectors.isConcurDataLoading(state);
 
-    expect(data).toEqual(true);
-    expect(selectors.isConcurDataLoading({})).toEqual(false);
+    expect(data).toBe(true);
+    expect(selectors.isConcurDataLoading({})).toBe(false);
   });
 });

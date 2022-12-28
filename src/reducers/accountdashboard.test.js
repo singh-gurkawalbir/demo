@@ -1,4 +1,4 @@
-/* global describe, expect, test */
+
 import { selectors } from '.';
 import { STANDALONE_INTEGRATION } from '../constants';
 import {FILTER_KEYS_AD} from '../utils/accountDashboard';

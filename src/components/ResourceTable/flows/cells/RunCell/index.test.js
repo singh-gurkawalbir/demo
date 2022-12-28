@@ -1,4 +1,4 @@
-/* global describe, test,expect, jest, afterEach */
+
 import React from 'react';
 import { screen, render } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
@@ -41,19 +41,19 @@ async function initRunCell(props = {}) {
   return render(ui);
 }
 
-describe('Run cell UI test cases', () => {
+describe('run cell UI test cases', () => {
   afterEach(() => {
     jest.clearAllMocks();
   });
   test('should redirect to dashboard of standalone flow when flow starts', () => {
     initRunCell();
-    expect(screen.getByText('Mocked RunFlowButton someflowId'));
+    expect(screen.getByText('Mocked RunFlowButton someflowId')).toBeInTheDocument();
     userEvent.click(screen.getByText('onRunStartButton'));
     expect(mockHistoryPush).toHaveBeenCalledWith('/templates/templateName/none/dashboard');
   });
   test('should redirect to dashboard of provided integration when flow starts', () => {
     initRunCell({flowId: 'someflowId', integrationId: 'someintegrationId' });
-    expect(screen.getByText('Mocked RunFlowButton someflowId'));
+    expect(screen.getByText('Mocked RunFlowButton someflowId')).toBeInTheDocument();
     userEvent.click(screen.getByText('onRunStartButton'));
     expect(mockHistoryPush).toHaveBeenCalledWith('/templates/templateName/someintegrationId/dashboard');
   });
@@ -66,7 +66,7 @@ describe('Run cell UI test cases', () => {
           flowId="someflowId"
           />
       </MemoryRouter>);
-    expect(screen.getByText('Mocked RunFlowButton someflowId'));
+    expect(screen.getByText('Mocked RunFlowButton someflowId')).toBeInTheDocument();
     userEvent.click(screen.getByText('onRunStartButton'));
     expect(mockHistoryPush).toHaveBeenCalledWith('/integrations/someintegrationId/dashboard');
   });
@@ -79,7 +79,7 @@ describe('Run cell UI test cases', () => {
           flowId="someflowId"
           />
       </MemoryRouter>);
-    expect(screen.getByText('Mocked RunFlowButton someflowId'));
+    expect(screen.getByText('Mocked RunFlowButton someflowId')).toBeInTheDocument();
     userEvent.click(screen.getByText('onRunStartButton'));
     expect(mockHistoryPush).toHaveBeenCalledWith('/integrations/someintegrationId/dashboard');
   });
@@ -94,7 +94,7 @@ describe('Run cell UI test cases', () => {
           flowId="someflowId"
           />
       </MemoryRouter>);
-    expect(screen.getByText('Mocked RunFlowButton someflowId'));
+    expect(screen.getByText('Mocked RunFlowButton someflowId')).toBeInTheDocument();
     userEvent.click(screen.getByText('onRunStartButton'));
     expect(mockHistoryPush).toHaveBeenCalledWith('/integrationapps/appName/someintegrationId/child/somechildId/dashboard');
   });
@@ -108,7 +108,7 @@ describe('Run cell UI test cases', () => {
           flowId="someflowId"
           />
       </MemoryRouter>);
-    expect(screen.getByText('Mocked RunFlowButton someflowId'));
+    expect(screen.getByText('Mocked RunFlowButton someflowId')).toBeInTheDocument();
     userEvent.click(screen.getByText('onRunStartButton'));
     expect(mockHistoryPush).toHaveBeenCalledWith('/integrationapps/appName/someintegrationId/dashboard');
   });
@@ -122,7 +122,7 @@ describe('Run cell UI test cases', () => {
           flowId="someflowId"
           />
       </MemoryRouter>);
-    expect(screen.getByText('Mocked RunFlowButton someflowId'));
+    expect(screen.getByText('Mocked RunFlowButton someflowId')).toBeInTheDocument();
     userEvent.click(screen.getByText('onRunStartButton'));
     expect(mockHistoryPush).not.toHaveBeenCalled();
   });

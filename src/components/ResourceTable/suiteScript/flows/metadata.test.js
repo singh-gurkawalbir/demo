@@ -1,4 +1,4 @@
-/* global test, expect, describe */
+
 import React from 'react';
 import { screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
@@ -31,7 +31,7 @@ function renderFunction(flow, actionProps) {
     </MemoryRouter>, {initialStore});
 }
 
-describe('Suite script flows metadata ui test', () => {
+describe('suite script flows metadata ui test', () => {
   test('should test the name field', () => {
     renderFunction(
       {_id: 'FlowId', _integrationId: 'integrationId'}, {ssLinkedConnectionId: 'ssLinkedConnectionId'});
@@ -64,7 +64,7 @@ describe('Suite script flows metadata ui test', () => {
   test('should test the Off/On field', () => {
     renderFunction({_id: 'FlowId', _integrationId: 'integrationId', type: 'EXPORT', editable: true}, {ssLinkedConnectionId: 'ssLinkedConnectionId'});
 
-    expect(screen.getByText('Off/On'));
+    expect(screen.getByText('Off/On')).toBeInTheDocument();
 
     const checkbox = screen.getAllByRole('checkbox');
 

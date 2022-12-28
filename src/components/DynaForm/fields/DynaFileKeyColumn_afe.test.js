@@ -1,4 +1,4 @@
-/* global describe, test, expect,beforeEach,afterEach, jest */
+
 import React from 'react';
 import * as reactRedux from 'react-redux';
 import { renderWithProviders, reduxStore } from '../../../test/test-utils';
@@ -57,7 +57,7 @@ async function initDynaFileDefinitionSelect(props, status) {
   return renderWithProviders(<DynaFileKeyColumnAFE {...props} />, { initialStore });
 }
 
-describe('DynaFileKeyColumn_afe tests', () => {
+describe('dynaFileKeyColumn_afe tests', () => {
   let mockDispatchFn;
   let useDispatchSpy;
 
@@ -74,7 +74,7 @@ describe('DynaFileKeyColumn_afe tests', () => {
     useDispatchSpy.mockClear();
     onFieldChange.mockClear();
   });
-  test('Should able to test DynaFileKeyColumn_afe with status as requested', async () => {
+  test('should able to test DynaFileKeyColumn_afe with status as requested', async () => {
     const props = { resourceId: 'exp-123', resourceType: 'exports', onFieldChange, value: ['v1'] };
 
     await initDynaFileDefinitionSelect(props, 'requested');
@@ -86,13 +86,13 @@ describe('DynaFileKeyColumn_afe tests', () => {
     }));
     expect(mockDispatchFn).toHaveBeenNthCalledWith(2, actions.editor.patchFileKeyColumn('filekeycolumns', 'data', '{}'));
   });
-  test('Should able to test DynaFileKeyColumn_afe with HTTPExport', async () => {
+  test('should able to test DynaFileKeyColumn_afe with HTTPExport', async () => {
     const props = { resourceId: 'expId', resourceType: 'exports', onFieldChange };
 
     await initDynaFileDefinitionSelect(props);
     expect(mockDispatchFn).not.toHaveBeenCalled();
   });
-  test('Should able to test DynaFileKeyColumn_afe with invalid values', async () => {
+  test('should able to test DynaFileKeyColumn_afe with invalid values', async () => {
     const props = { resourceId: 'expId', resourceType: 'exports', onFieldChange, value: {} };
 
     await initDynaFileDefinitionSelect(props);

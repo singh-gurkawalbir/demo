@@ -10,6 +10,7 @@ import fileAdvanced from './fileAdvanced';
 import graphql from './graphql';
 import graphqlCreate from './graphqlCreate';
 import graphqlUpdate from './graphqlUpdate';
+import mockResponseSection from './mockResponseSection';
 
 export default {
   common,
@@ -24,4 +25,5 @@ export default {
   graphql,
   graphqlCreate,
   graphqlUpdate,
+  mockResponseSection,
 };

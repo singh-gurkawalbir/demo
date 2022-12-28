@@ -1,4 +1,3 @@
-/* global describe, test, expect, jest */
 import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -23,7 +22,7 @@ async function initDataRow({ props, children = (<th>Item1</th>) } = {}) {
   return renderWithProviders(ui);
 }
 
-describe('DataRow component Test cases', () => {
+describe('dataRow component Test cases', () => {
   window.HTMLElement.prototype.scrollIntoView = jest.fn();
   runServer();
   test('should pass the intial render with default values', async () => {
@@ -45,7 +44,7 @@ describe('DataRow component Test cases', () => {
 
     expect(rowItem).toBeInTheDocument();
     userEvent.hover(rowItem);
-    expect(onRowOver).toBeCalledTimes(1);
+    expect(onRowOver).toHaveBeenCalledTimes(1);
   });
 
   test('should pass the intial render with onRowOut, onRowOver, onRowClick', async () => {
@@ -65,15 +64,15 @@ describe('DataRow component Test cases', () => {
     expect(rowItem1).toBeInTheDocument();
 
     userEvent.hover(rowItem1);
-    expect(onRowOver).toBeCalledTimes(1);
-    expect(onRowOut).toBeCalledTimes(0);
+    expect(onRowOver).toHaveBeenCalledTimes(1);
+    expect(onRowOut).toHaveBeenCalledTimes(0);
 
     userEvent.unhover(rowItem1);
-    expect(onRowOut).toBeCalledTimes(1);
-    expect(onRowOver).toBeCalledTimes(1);
+    expect(onRowOut).toHaveBeenCalledTimes(1);
+    expect(onRowOver).toHaveBeenCalledTimes(1);
 
     userEvent.click(rowItem1);
-    expect(onRowClick).toBeCalledTimes(1);
+    expect(onRowClick).toHaveBeenCalledTimes(1);
   });
 
   test('should pass the intial render without onRowClick and additionalConfigs', async () => {

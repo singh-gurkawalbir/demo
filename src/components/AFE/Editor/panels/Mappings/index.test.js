@@ -1,4 +1,3 @@
-/* global describe, test, expect, jest */
 import React from 'react';
 import { screen} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -172,7 +171,7 @@ function returnHundreMapping() {
   return array;
 }
 
-describe('MappingWrapper test cases', () => {
+describe('mappingWrapper test cases', () => {
   test('should show spinner when status is not received', () => {
     renderWithProviders(<MappingWrapper />, {initialStore});
     expect(screen.getByRole('progressbar')).toBeInTheDocument();

@@ -28,7 +28,7 @@ export function* _handlePreviewError({ e, resourceId }) {
 export function* _requestLookupMockInput({ resourceId, resourceType, flowId, refresh = false }) {
   const { formKey } = (yield select(selectors.getFlowDataState, flowId)) || {};
 
-  const { transform, filter, hooks, sampleData, ..._pageProcessorDoc } = yield call(getConstructedResourceObj, {
+  const { transform, filter, mockOutput, hooks, sampleData, ..._pageProcessorDoc } = yield call(getConstructedResourceObj, {
     resourceId,
     resourceType,
     formKey,
@@ -62,7 +62,7 @@ export function* _requestLookupMockInput({ resourceId, resourceType, flowId, ref
 export function* _requestImportMockInput({ resourceId, resourceType, flowId, refresh = false }) {
   const { formKey } = (yield select(selectors.getFlowDataState, flowId)) || {};
 
-  const { sampleData, ..._pageProcessorDoc } = yield call(getConstructedResourceObj, {
+  const { sampleData, mockResponse, ..._pageProcessorDoc } = yield call(getConstructedResourceObj, {
     resourceId,
     resourceType,
     formKey,

@@ -1,4 +1,3 @@
-/* global describe, test, expect, beforeEach, jest */
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { screen } from '@testing-library/react';
@@ -70,7 +69,7 @@ describe('Testsuite for MFA Code Generation', () => {
     userEvent.click(onCloseButtonNode);
     expect(onCloseButtonNode).not.toBeInTheDocument();
   });
-  test('should verify the MFA Code Generation generated QR code and click on view secret code and cancel the modal dialog', async () => {
+  test('should verify the MFA Code Generation generated QR code and click on view secret code and cancel the modal dialog duplicate', async () => {
     await initMFACodeGeneration({mfaValues: {codes: {
       secretCode: {
         secret: '12345',
@@ -94,7 +93,7 @@ describe('Testsuite for MFA Code Generation', () => {
     userEvent.click(onCloseButtonNode);
     expect(onCloseButtonNode).not.toBeInTheDocument();
   });
-  test('should verify the MFA Code Generation generated QR code and click on view secret code and cancel the modal dialog', async () => {
+  test('should verify the MFA Code Generation generated QR code and click on view secret code and cancel the modal dialog duplicate1', async () => {
     await initMFACodeGeneration({mfaValues: {codes: {
       secretCode: {
         secret: '12345',

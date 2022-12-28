@@ -1,4 +1,4 @@
-/* global describe, test, expect */
+
 import processorLogic from './index';
 
 const {

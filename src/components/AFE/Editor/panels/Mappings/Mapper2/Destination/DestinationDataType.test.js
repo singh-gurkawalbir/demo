@@ -1,4 +1,3 @@
-/* global describe, test, expect, jest, afterEach */
 import React from 'react';
 import {screen, render} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -40,7 +39,7 @@ function initFunction(dataType = 'string', anchorEl = null, renderFun = render) 
   return renderWithProviders(ui, {renderFun});
 }
 
-describe('Mapper2 DestinationDataType test cases', () => {
+describe('mapper2 DestinationDataType test cases', () => {
   afterEach(() => {
     jest.clearAllMocks();
   });

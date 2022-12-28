@@ -1,4 +1,4 @@
-/* global describe, test, expect, jest */
+
 import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -7,8 +7,8 @@ import DynaAutocomplete from './DynaAutocomplete';
 
 const onFieldChange = jest.fn();
 
-describe('DynaAutocomplete tests', () => {
-  test('Should able to test DynaAutocomplete with empty value', async () => {
+describe('dynaAutocomplete tests', () => {
+  test('should able to test DynaAutocomplete with empty value', async () => {
     const props = {
       options: [{value: 'val1', label: 'label1'}, {value: 'val2', label: 'label2'}, {value: '', label: 'Empty label'}],
       label: 'formLabel',
@@ -34,7 +34,7 @@ describe('DynaAutocomplete tests', () => {
     expect(onFieldChange).toHaveBeenNthCalledWith(1, 'text-1234', 'val1');
     expect(onFieldChange).toHaveBeenNthCalledWith(2, 'text-1234', 'val1');
   });
-  test('Should able to test DynaAutocomplete with non-empty value', async () => {
+  test('should able to test DynaAutocomplete with non-empty value', async () => {
     const props = {
       options: [{value: 'val1', label: 'label1'}, {value: 'val2'}, {value: 'val3'}, {value: 'val4'}, {value: 'val5'}, {value: 'val6'}, {value: 'val7'}],
       label: 'formLabel',

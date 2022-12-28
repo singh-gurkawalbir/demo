@@ -1,4 +1,5 @@
-/* global describe, test, expect , jest, beforeEach, afterEach */
+/* eslint-disable jest/expect-expect */
+
 import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -140,7 +141,7 @@ function initDynaHFAssistantOptions(props = {}, extraFields = {}) {
   renderWithProviders(<WrappedContextConsumer {...props} />, { initialStore });
 }
 
-describe('DynaHFAssistantOptions UI tests', () => {
+describe('dynaHFAssistantOptions UI tests', () => {
   let mockDispatchFn;
   let useDispatchSpy;
 

@@ -1,4 +1,4 @@
-/* global describe, test, expect, jest, beforeEach, afterEach */
+
 import React from 'react';
 import {
   screen, waitFor,
@@ -33,7 +33,7 @@ function initTokenGenerator(props = {}) {
   return renderWithProviders(<TokenGenerator {...props} />, {initialStore});
 }
 
-describe('TokenGenerator UI tests', () => {
+describe('tokenGenerator UI tests', () => {
   const mockonFieldChange = jest.fn();
   const props = {
     onFieldChange: mockonFieldChange,
@@ -65,16 +65,16 @@ describe('TokenGenerator UI tests', () => {
   test('should pass the initial render', () => {
     initTokenGenerator(props);
     expect(screen.getByRole('textbox')).toBeInTheDocument();
-    expect(screen.getByRole('button', {name: 'test label'}));
+    expect(screen.getByRole('button', {name: 'test label'})).toBeInTheDocument();
     screen.debug();
   });
   test('should run the onFieldChange function passed in props 4 times on initial render', async () => {
     initTokenGenerator(props);
-    await waitFor(() => expect(mockonFieldChange).toBeCalledTimes(4));
+    await waitFor(() => expect(mockonFieldChange).toHaveBeenCalledTimes(4));
   });
   test('should make a dispatch call on initial render', async () => {
     initTokenGenerator(props);
-    await waitFor(() => expect(mockDispatchFn).toBeCalledWith(actions.resource.connections.clearToken('5b3c75dd5d3c125c88b5dd20')));
+    await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith(actions.resource.connections.clearToken('5b3c75dd5d3c125c88b5dd20')));
   });
   test('should display an error message when connectionToken has message prop', async () => {
     initTokenGenerator({...props, message: 'test error message'});
@@ -84,6 +84,6 @@ describe('TokenGenerator UI tests', () => {
     initTokenGenerator({...props});
     await waitFor(() => expect(screen.getByText('test label')).toBeInTheDocument());
     userEvent.click(screen.getByText('test label'));
-    await waitFor(() => expect(mockDispatchFn).toBeCalledWith(actions.resource.connections.requestToken('5b3c75dd5d3c125c88b5dd20', 'testId', 'formValue')));
+    await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith(actions.resource.connections.requestToken('5b3c75dd5d3c125c88b5dd20', 'testId', 'formValue')));
   });
 });

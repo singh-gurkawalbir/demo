@@ -1,5 +1,3 @@
-
-/* global describe, test, expect, jest, beforeEach, afterEach */
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import * as reactRedux from 'react-redux';
@@ -82,7 +80,7 @@ async function initSubscription(
   };
 }
 
-describe('Subscription test cases', () => {
+describe('subscription test cases', () => {
   runServer();
   let mockDispatchFn;
   let useDispatchSpy;

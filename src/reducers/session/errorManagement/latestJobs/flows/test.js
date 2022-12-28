@@ -1,12 +1,12 @@
-/* global describe, test, expect */
+
 import reducer, { selectors } from '.';
 import actions from '../../../../../actions';
 
 describe('errorManagement latestJobs flows reducer test cases', () => {
   test('should return initial state when action is not matched', () => {
     expect(reducer(undefined, { type: 'RANDOM_ACTION' })).toEqual({});
-    expect(reducer(null, { type: 'RANDOM_ACTION' })).toEqual(null);
-    expect(reducer('string', { type: 'RANDOM_ACTION' })).toEqual('string');
+    expect(reducer(null, { type: 'RANDOM_ACTION' })).toBeNull();
+    expect(reducer('string', { type: 'RANDOM_ACTION' })).toBe('string');
     expect(reducer(undefined, { type: undefined })).toEqual({});
     expect(reducer(undefined, { type: null })).toEqual({});
   });
@@ -42,7 +42,7 @@ describe('errorManagement latestJobs flows reducer test cases', () => {
         });
       });
 
-      test('should find the flow with id and set requested flag to true and should not affect the existing data', () => {
+      test('should find the flow with id and set requested flag to true and should not affect the existing data duplicate', () => {
         const state = reducer(
           {
             flowId: { status: 'request', data: [{id: 'id1'}]},
@@ -771,7 +771,7 @@ describe('errorManagement latestJobs flows selectors test cases', () => {
       expect(selectors.getInProgressLatestJobs(newState, 'flowId', true)).toEqual(['5fbcc774186317194404c4e0']);
     });
 
-    test('should return correct state data when a match is found with considerChildJobs.', () => {
+    test('should return correct state data when a match is found with considerChildJobs', () => {
       let newState = reducer(
         {},
         actions.errorManager.latestFlowJobs.received({

@@ -1,4 +1,4 @@
-/* global describe, test, expect, jest */
+
 import { render, screen } from '@testing-library/react';
 import React from 'react';
 import HeaderWithHelpText from '.';

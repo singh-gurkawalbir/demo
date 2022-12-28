@@ -1,4 +1,5 @@
 import { isNewId } from '../../../utils/resource';
+import { safeParse } from '../../../utils/string';
 
 export default {
   preSave: ({ executionType, apiType, ...rest }) => {
@@ -47,7 +48,6 @@ export default {
         delete newValues['/delta/lagOffset'];
         delete newValues['/once/booleanField'];
       } else if (newValues['/type'] === 'test') {
-        newValues['/test/limit'] = 1;
         newValues['/delta'] = undefined;
         newValues['/once'] = undefined;
         delete newValues['/delta/dateField'];
@@ -92,7 +92,6 @@ export default {
         delete newValues['/delta/lagOffset'];
         delete newValues['/once/booleanField'];
       } else if (newValues['/type'] === 'test') {
-        newValues['/test/limit'] = 1;
         newValues['/delta'] = undefined;
         newValues['/once'] = undefined;
         delete newValues['/delta/dateField'];
@@ -124,6 +123,7 @@ export default {
     } catch (ex) {
       delete newValues['/netsuite/distributed/qualifier'];
     }
+    newValues['/mockOutput'] = safeParse(newValues['/mockOutput']);
 
     return newValues;
   },
@@ -411,13 +411,14 @@ export default {
 
         return output || 'all';
       },
+      skipSort: true,
       options: [
         {
           items: [
             { label: 'All – always export all data', value: 'all' },
             { label: 'Delta – export only modified data', value: 'delta' },
             { label: 'Once – export records only once', value: 'once' },
-            { label: 'Test – export only 1 record', value: 'test' },
+            { label: 'Limit – export a set number of records', value: 'test' },
           ],
         },
       ],
@@ -426,6 +427,10 @@ export default {
         { field: 'netsuite.execution.type', is: ['scheduled'] },
         { field: 'outputMode', is: ['records'] },
       ],
+    },
+    'test.limit': {
+      fieldId: 'test.limit',
+      visibleWhen: [{ field: 'restlet.type', is: ['test'] }],
     },
     'delta.lagOffset': {
       fieldId: 'delta.lagOffset',
@@ -454,11 +459,12 @@ export default {
 
         return output || 'all';
       },
+      skipSort: true,
       selectOptions: [
         { label: 'All – always export all data', value: 'all' },
         { label: 'Delta – export only modified data', value: 'delta' },
         { label: 'Once – export records only once', value: 'once' },
-        { label: 'Test – export only 1 record', value: 'test' },
+        { label: 'Limit – export a set number of records', value: 'test' },
       ],
       visibleWhenAll: [
         { field: 'outputMode', is: ['records'] },
@@ -536,6 +542,7 @@ export default {
         },
       },
     },
+    mockOutput: {fieldId: 'mockOutput'},
   },
   layout: {
     type: 'collapse',
@@ -558,7 +565,7 @@ export default {
           }
           if (
             r.resourceType === 'realtime' ||
-                r.type === 'distributed'
+                    r.type === 'distributed'
           ) {
             return 'Configure real-time export in source application';
           }
@@ -584,10 +591,17 @@ export default {
           'delta.lagOffset',
           'once.booleanField',
           'restlet.type',
+          'test.limit',
           'restlet.delta.dateField',
           'restlet.delta.lagOffset',
           'restlet.once.booleanField',
         ],
+      },
+      {
+        collapsed: true,
+        actionId: 'mockOutput',
+        label: 'Mock output',
+        fields: ['mockOutput'],
       },
       {
         collapsed: true,

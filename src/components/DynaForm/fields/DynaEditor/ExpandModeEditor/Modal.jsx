@@ -18,7 +18,7 @@ const useStyles = makeStyles(() => ({
 // Moved over existing modal related code here
 // Nothing specific changes to mention - User can change content and click on Done to close modal
 export default function EditorModal(props) {
-  const { handleClose, label, editorProps, isLoggable} = props;
+  const { handleClose, label, editorProps, isLoggable, validateContent} = props;
   const { id, value, mode, disabled, handleUpdate } = editorProps;
   const [content, setContent] = useState(value);
   const [errorMessage, setErrorMessage] = useState('');
@@ -36,6 +36,8 @@ export default function EditorModal(props) {
       } else {
         setErrorMessage('');
       }
+    } else if (validateContent) {
+      setErrorMessage(validateContent(content));
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [content, id]);

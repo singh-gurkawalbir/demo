@@ -1,4 +1,4 @@
-/* global describe, test, expect */
+
 import getHooksMetadata from './metadata';
 
 describe('getHooksMetadata test cases', () => {

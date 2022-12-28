@@ -1,5 +1,5 @@
 /* eslint-disable import/named */
-/* global describe, test, expect, beforeEach, afterEach, jest */
+
 import React from 'react';
 import * as reactRedux from 'react-redux';
 import {screen, waitFor} from '@testing-library/react';
@@ -37,7 +37,7 @@ initialStore.getState().session.resourceFormSampleData = {
   },
 };
 
-describe('UI test cases for DynaSortAndGroup', () => {
+describe('uI test cases for DynaSortAndGroup', () => {
   let mockDispatchFn;
   let useDispatchSpy;
   const initialStore = reduxStore;
@@ -86,7 +86,7 @@ describe('UI test cases for DynaSortAndGroup', () => {
   });
   test('should dispatch resourceFormSampleData request if the export has no sampleData', () => {
     renderWithProviders(<DynaSortAndGroup resourceId="export-id-2" formKey={formKey} />, {initialStore});
-    expect(mockDispatchFn).toBeCalledWith(actions.resourceFormSampleData.request(formKey));
+    expect(mockDispatchFn).toHaveBeenCalledWith(actions.resourceFormSampleData.request(formKey));
   });
   test('should display DynaSelectMultiApplication if enableSorting prop is falsy', () => {
     jest.mock('../DynaSelectMultiApplication', () => ({

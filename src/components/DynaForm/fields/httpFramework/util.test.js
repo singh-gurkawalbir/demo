@@ -1,7 +1,7 @@
-/* global describe, test, expect */
+
 import { selectOptions, semiAssistantExportConfig, semiAssistantExportOperationOptions } from './util';
 
-describe('Util functions\' tests', () => {
+describe('util functions', () => {
   test('should provide expected results for "selectedOptions" in different scenarios', () => {
     // field type version of length == 1
     let params = {

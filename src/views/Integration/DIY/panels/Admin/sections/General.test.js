@@ -1,4 +1,3 @@
-/* global describe, test, expect */
 import React from 'react';
 import {screen} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -36,7 +35,8 @@ describe('General Section UI tests', () => {
     const input = document.querySelector('[name="name"]');
 
     userEvent.click(input);
-    userEvent.type(input, 'demo');
+    await userEvent.type(input, 'demo');
     userEvent.click(screen.getByText('Save'));
+    expect(input).toHaveValue('demo integrationdemo');
   });
 });

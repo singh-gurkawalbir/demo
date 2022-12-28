@@ -1,4 +1,4 @@
-/* global describe, test, expect, jest, afterEach */
+
 import React from 'react';
 import {screen} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -56,7 +56,7 @@ function initDynaNetSuiteLookupFiltersafe(disableFetch = false) {
   return renderWithProviders(ui, {initialStore});
 }
 
-describe('DynaNetSuiteLookupFiltersafe UI test cases', () => {
+describe('dynaNetSuiteLookupFiltersafe UI test cases', () => {
   afterEach(() => {
     jest.clearAllMocks();
   });
@@ -99,7 +99,7 @@ describe('DynaNetSuiteLookupFiltersafe UI test cases', () => {
       })
     );
   });
-  test('should call onFieldChangeButton function when editor is initialised ', () => {
+  test('should call onFieldChangeButton function when editor is initialised', () => {
     initialStore.getState().session.editors = {'ns-mappingLookupFilter': {fieldId: 'someFieldID'}};
     initDynaNetSuiteLookupFiltersafe(true, initialStore);
     expect(screen.getByText('id: someID')).toBeInTheDocument();

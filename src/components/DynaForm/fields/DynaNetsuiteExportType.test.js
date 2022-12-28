@@ -1,4 +1,4 @@
-/* global describe, test, expect, jest, afterEach */
+
 import React from 'react';
 import {screen} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -32,7 +32,7 @@ const genralProps = {
   filterKey: 'suitescript-recordTypes',
 };
 
-describe('DynaNetsuiteExportType Ui test cases', () => {
+describe('dynaNetsuiteExportType Ui test cases', () => {
   afterEach(() => {
     jest.clearAllMocks();
   });
@@ -40,7 +40,7 @@ describe('DynaNetsuiteExportType Ui test cases', () => {
     initDynaNetsuiteExportType(genralProps);
     expect(mockOnFieldChange).toHaveBeenCalledWith('someID', 'someDefaultValue');
   });
-  test('should not call onfield change when value is not provided as once ', () => {
+  test('should not call onfield change when value is not provided as once', () => {
     initDynaNetsuiteExportType({...genralProps, value: 'anyvalue'});
     expect(mockOnFieldChange).not.toHaveBeenCalledWith();
   });
@@ -68,7 +68,7 @@ describe('DynaNetsuiteExportType Ui test cases', () => {
     userEvent.click(screen.getByRole('button'));
     const menuItems = screen.getAllByRole('menuitem');
 
-    expect(menuItems.length).toBe(3);
+    expect(menuItems).toHaveLength(3);
     expect(menuItems[1].textContent).toBe('once...');
     expect(menuItems[2].textContent).toBe('someLabel...');
 

@@ -1,4 +1,3 @@
-/* global describe, test, expect, beforeEach, afterEach, jest */
 import React from 'react';
 import * as reactRedux from 'react-redux';
 import { MemoryRouter } from 'react-router-dom';
@@ -82,7 +81,7 @@ jest.mock('../../../components/CeligoTable', () => ({
   },
 }));
 
-describe('InstallBase test cases', () => {
+describe('installBase test cases', () => {
   runServer();
   let mockDispatchFn;
   let useDispatchSpy;
@@ -124,13 +123,13 @@ describe('InstallBase test cases', () => {
     expect(screen.queryByText(/You don't have any install base/)).toBeInTheDocument();
     userEvent.click(updateButton);
 
-    expect(mockDispatchFn).toBeCalledWith(
+    expect(mockDispatchFn).toHaveBeenCalledWith(
       actions.connectors.installBase.update({
         _integrationIds: [],
         connectorId: 'connector_id_1',
       })
     );
-    expect(mockDispatchFn).toBeCalledWith(
+    expect(mockDispatchFn).toHaveBeenCalledWith(
       actions.resource.requestCollection(
         'connectors/connector_id_1/installBase'
       )
@@ -187,13 +186,13 @@ describe('InstallBase test cases', () => {
     mockDispatchFn.mockClear();
     userEvent.click(updateButton);
 
-    expect(mockDispatchFn).toBeCalledWith(
+    expect(mockDispatchFn).toHaveBeenCalledWith(
       actions.connectors.installBase.update({
         _integrationIds: ['integration_id_1'],
         connectorId: 'connector_id_1',
       })
     );
-    expect(mockDispatchFn).toBeCalledWith(
+    expect(mockDispatchFn).toHaveBeenCalledWith(
       actions.resource.requestCollection(
         'connectors/connector_id_1/installBase'
       )

@@ -1,4 +1,4 @@
-/* global describe, expect, jest, test, afterEach */
+
 import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -63,7 +63,7 @@ describe('test suite for DynaLicenseEdition field', () => {
 
     const {utils: {unmount}} = renderWithProviders(<DynaLicenseEdition {...props} />, {initialStore});
 
-    expect(mockDispatchFn).toBeCalledWith(actions.form.forceFieldState(props.formKey)(props.id, {required: true}));
+    expect(mockDispatchFn).toHaveBeenCalledWith(actions.form.forceFieldState(props.formKey)(props.id, {required: true}));
     userEvent.click(screen.getByRole('button', {name: 'Please select'}));
     [
       'Please select',
@@ -73,6 +73,6 @@ describe('test suite for DynaLicenseEdition field', () => {
     ].forEach(edition => expect(screen.getByRole('menuitem', {name: edition})).toBeInTheDocument());
 
     unmount();
-    expect(mockDispatchFn).toBeCalledWith(actions.form.clearForceFieldState(props.formKey)(props.id));
+    expect(mockDispatchFn).toHaveBeenCalledWith(actions.form.clearForceFieldState(props.formKey)(props.id));
   });
 });

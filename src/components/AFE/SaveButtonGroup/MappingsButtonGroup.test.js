@@ -1,4 +1,3 @@
-/* global describe, test, expect, afterEach, jest */
 import React from 'react';
 import { screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
@@ -48,7 +47,7 @@ async function initButtonWrapper(props = {editorId: 'responseMappings', onClose:
 
   return renderWithProviders(<MemoryRouter><ButtonWrapper {...props} /></MemoryRouter>, { initialStore });
 }
-describe('ButtonWrapper tests', () => {
+describe('buttonWrapper tests', () => {
   const useDispatchSpy = jest.spyOn(reactRedux, 'useDispatch');
   const mockDispatchFn = jest.fn();
 
@@ -56,7 +55,7 @@ describe('ButtonWrapper tests', () => {
   afterEach(() => {
     mockDispatchFn.mockClear();
   });
-  test('Should able to test ButtonWrapper when editorType is responseMappings', async () => {
+  test('should able to test ButtonWrapper when editorType is responseMappings', async () => {
     await initButtonWrapper();
     expect(screen.getByRole('button', {name: 'Save'})).toBeEnabled();
     expect(screen.getByRole('button', {name: 'Close'})).toBeEnabled();
@@ -64,17 +63,17 @@ describe('ButtonWrapper tests', () => {
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.responseMapping.save({match: {isExact: true, params: {}, path: '/', url: '/'}}));
   });
 
-  test('Should able to test ButtonWrapper when editorType is responseMappings and saveInProgress true', async () => {
+  test('should able to test ButtonWrapper when editorType is responseMappings and saveInProgress true', async () => {
     await initButtonWrapper({editorId: 'responseMappings'}, 'requested');
     expect(screen.getByRole('button', {name: 'Saving...'})).toBeInTheDocument();
   });
-  test('Should able to test ButtonWrapper when editorType is mappings without validationError', async () => {
+  test('should able to test ButtonWrapper when editorType is mappings without validationError', async () => {
     await initButtonWrapper({editorId: 'mappings'});
     expect(screen.getByRole('button', {name: 'Save'})).toBeEnabled();
     userEvent.click(screen.getByRole('button', {name: 'Save & close'}));
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.mapping.save({match: {isExact: true, params: {}, path: '/', url: '/'}}));
   });
-  test('Should able to test ButtonWrapper when editorType is mappings with validationError', async () => {
+  test('should able to test ButtonWrapper when editorType is mappings with validationError', async () => {
     await initButtonWrapper({editorId: 'mappings', onClose: mockClose}, 'completed', 'Some genuine mapping error');
     expect(screen.getByRole('button', {name: 'Save & close'})).toBeEnabled();
     userEvent.click(screen.getByRole('button', {name: 'Save'}));

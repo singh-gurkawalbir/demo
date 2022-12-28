@@ -1,4 +1,3 @@
-/* global describe, test, expect, jest, afterEach */
 import * as React from 'react';
 import {screen, fireEvent} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -36,7 +35,7 @@ function initFunction(disabled = false, isRequired = false) {
   renderWithProviders(ui);
 }
 
-describe('Mapper2Generates test cases', () => {
+describe('mapper2Generates test cases', () => {
   afterEach(() => {
     jest.clearAllMocks();
   });
@@ -57,14 +56,14 @@ describe('Mapper2Generates test cases', () => {
 
     userEvent.type(screen.getByRole('textbox'), 'number');
     userEvent.keyboard('{Escape}');
-    expect(mockOnBlur).toHaveBeenCalled();
+    expect(mockOnBlur).toHaveBeenCalledTimes(1);
   });
   test('should click outside the textbox and the textbox should be blurred', () => {
     initFunction();
 
     userEvent.type(screen.getByRole('textbox'), 'number');
     fireEvent.click(document);
-    expect(mockOnBlur).toHaveBeenCalled();
+    expect(mockOnBlur).toHaveBeenCalledTimes(1);
   });
   test('should should the Lock Icon when the field is mandatory', () => {
     initFunction(false, true);

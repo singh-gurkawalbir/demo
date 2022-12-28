@@ -1,4 +1,3 @@
-/* global describe, test, expect, jest */
 import React from 'react';
 import { screen, waitFor } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
@@ -45,7 +44,7 @@ describe('ConfigureSettings UI tests', () => {
     expect(screen.getByText('SomeOption2')).toBeInTheDocument();
     expect(screen.getByText('Save')).toBeInTheDocument();
   });
-  test('should test when the form status is loading ', async () => {
+  test('should test when the form status is loading', async () => {
     const {initialStore} = await addInteration();
     const mockDispatch = jest.fn();
 

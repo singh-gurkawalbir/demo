@@ -1,4 +1,3 @@
-/* global expect,describe, test */
 
 import { call, select, put, take, cancel, fork } from 'redux-saga/effects';
 import { expectSaga } from 'redux-saga-test-plan';
@@ -25,10 +24,10 @@ const integrationId = 'integration-1234';
 
 describe('openErrors info related sagas', () => {
   describe('_requestFlowOpenErrors saga', () => {
-    test('should not do any thing incase of api failure ', () => {
+    test('should not do any thing incase of api failure', () => {
       const error = { code: 422, message: 'unprocessable entity' };
 
-      return expectSaga(_requestFlowOpenErrors, { flowId })
+      expectSaga(_requestFlowOpenErrors, { flowId })
         .provide([
           [matchers.call.fn(apiCallWithRetry), throwError(error)],
         ])
@@ -49,7 +48,7 @@ describe('openErrors info related sagas', () => {
         ],
       };
 
-      return expectSaga(_requestFlowOpenErrors, { flowId })
+      expectSaga(_requestFlowOpenErrors, { flowId })
         .provide([
           [call(apiCallWithRetry, {
             path,
@@ -78,7 +77,7 @@ describe('openErrors info related sagas', () => {
         {flowId: 'flow-789', numError: 20},
       ];
 
-      const test1 = expectSaga(_requestIntegrationErrors, { integrationId })
+      expectSaga(_requestIntegrationErrors, { integrationId })
         .provide([
           [select(selectors.userPreferences), sandBoxEnvironment],
           [matchers.call.fn(apiCallWithRetry), integrationErrors],
@@ -88,7 +87,8 @@ describe('openErrors info related sagas', () => {
           integrationErrors,
         }))
         .run();
-      const test2 = expectSaga(_requestIntegrationErrors, { integrationId })
+
+      expectSaga(_requestIntegrationErrors, { integrationId })
         .provide([
           [select(selectors.userPreferences), productionEnvironment],
           [matchers.call.fn(apiCallWithRetry), integrationErrors],
@@ -98,13 +98,11 @@ describe('openErrors info related sagas', () => {
           integrationErrors,
         }))
         .run();
-
-      return test1 && test2;
     });
     test('should do nothing incase of integration errors api failure', () => {
       const error = { code: 422, message: 'unprocessable entity' };
 
-      return expectSaga(_requestIntegrationErrors, { integrationId })
+      expectSaga(_requestIntegrationErrors, { integrationId })
         .provide([
           [matchers.call.fn(apiCallWithRetry), throwError(error)],
         ])
@@ -140,7 +138,7 @@ describe('openErrors info related sagas', () => {
         },
       };
 
-      return expectSaga(_notifyErrorListOnUpdate, { flowId, newFlowErrors: { flowErrors }})
+      expectSaga(_notifyErrorListOnUpdate, { flowId, newFlowErrors: { flowErrors }})
         .provide([
           [select(selectors.openErrorsDetails, flowId), prevFlowOpenErrorDetails],
           [select(selectors.openErrorsMap, flowId), previousFlowErrorsMap],
@@ -180,7 +178,7 @@ describe('openErrors info related sagas', () => {
         },
       };
 
-      return expectSaga(_notifyErrorListOnUpdate, { flowId, newFlowErrors: { flowErrors }})
+      expectSaga(_notifyErrorListOnUpdate, { flowId, newFlowErrors: { flowErrors }})
         .provide([
           [select(selectors.openErrorsDetails, flowId), prevFlowOpenErrorDetails],
           [select(selectors.openErrorsMap, flowId), previousFlowErrorsMap],
@@ -205,7 +203,7 @@ describe('openErrors info related sagas', () => {
       expect(saga.next().value).toEqual(put(actions.errorManager.openFlowErrors.request({ flowId })));
       expect(saga.next().value).toEqual(call(pollApiRequests, {pollSaga: _requestFlowOpenErrors, pollSagaArgs: { flowId }, duration: 5000}));
 
-      expect(saga.next().done).toEqual(true);
+      expect(saga.next().done).toBe(true);
     });
   });
   describe('_pollForIntegrationErrors saga', () => {
@@ -215,7 +213,7 @@ describe('openErrors info related sagas', () => {
       expect(saga.next().value).toEqual(put(actions.errorManager.integrationErrors.request({ integrationId })));
       expect(saga.next().value).toEqual(call(pollApiRequests, {pollSaga: _requestIntegrationErrors, pollSagaArgs: { integrationId }, duration: 5000 }));
 
-      expect(saga.next().done).toEqual(true);
+      expect(saga.next().done).toBe(true);
     });
   });
   describe('startPollingForOpenErrors saga', () => {
@@ -228,7 +226,7 @@ describe('openErrors info related sagas', () => {
 
       expect(saga.next(mockTask).value).toEqual(take(actionTypes.ERROR_MANAGER.FLOW_OPEN_ERRORS.CANCEL_POLL));
       expect(saga.next({type: actionTypes.ERROR_MANAGER.FLOW_OPEN_ERRORS.CANCEL_POLL}).value).toEqual(cancel(mockTask));
-      expect(saga.next().done).toEqual(true);
+      expect(saga.next().done).toBe(true);
     });
   });
   describe('startPollingForIntegrationErrors saga', () => {
@@ -241,7 +239,7 @@ describe('openErrors info related sagas', () => {
 
       expect(saga.next(mockTask).value).toEqual(take(actionTypes.ERROR_MANAGER.INTEGRATION_ERRORS.CANCEL_POLL));
       expect(saga.next({type: actionTypes.ERROR_MANAGER.INTEGRATION_ERRORS.CANCEL_POLL}).value).toEqual(cancel(mockTask));
-      expect(saga.next().done).toEqual(true);
+      expect(saga.next().done).toBe(true);
     });
   });
 });

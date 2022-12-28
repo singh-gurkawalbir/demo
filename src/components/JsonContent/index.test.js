@@ -1,10 +1,10 @@
-/* global describe, test, expect, */
+
 import React from 'react';
 import {screen} from '@testing-library/react';
 import {renderWithProviders} from '../../test/test-utils';
 import JsonContent from '.';
 
-describe('JsonContent UI tests', () => {
+describe('jsonContent UI tests', () => {
   test('should render the json content in object form', () => {
     const props = {json: '{"name":"John", "age":30, "car":null}'};
 

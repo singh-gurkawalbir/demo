@@ -1,5 +1,6 @@
 import { omitBy } from 'lodash';
 import { convertToImport } from '../../../../../utils/assistant';
+import { safeParse } from '../../../../../utils/string';
 import { fieldMeta } from './util';
 
 export default function assistantDefinition(
@@ -55,6 +56,7 @@ export default function assistantDefinition(
         importDoc['/assistant'] = undefined;
         delete importDoc['/assistant'];
       }
+      otherFormValues['/mockResponse'] = safeParse(otherFormValues['/mockResponse']);
 
       return { ...otherFormValues, ...importDoc };
     },

@@ -1,4 +1,3 @@
-/* global describe,test,expect,beforeEach,afterEach,jest */
 
 import { render, fireEvent } from '@testing-library/react';
 import { createStore } from 'redux';
@@ -83,7 +82,7 @@ describe('options handler', () => {
   });
 
   test('options handler is called initially for each field', () => {
-    expect(optionsHandler.mock.calls.length).toBe(3); // Called for each field
+    expect(optionsHandler.mock.calls).toHaveLength(3); // Called for each field
   });
 
   test('options handler is called again when trigger field is updated', () => {
@@ -95,7 +94,7 @@ describe('options handler', () => {
       },
     });
 
-    expect(optionsHandler.mock.calls.length).toBe(4);
+    expect(optionsHandler.mock.calls).toHaveLength(4);
   });
 
   test('options handler is NOT called again if a non trigger field is changed', () => {
@@ -106,6 +105,6 @@ describe('options handler', () => {
         value: 'test2',
       },
     });
-    expect(optionsHandler.mock.calls.length).toBe(3);
+    expect(optionsHandler.mock.calls).toHaveLength(3);
   });
 });

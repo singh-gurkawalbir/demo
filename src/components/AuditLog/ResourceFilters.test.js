@@ -1,5 +1,3 @@
-/* eslint-disable react/jsx-closing-tag-location */
-/* global describe,expect, test */
 import React from 'react';
 import userEvent from '@testing-library/user-event';
 import {screen} from '@testing-library/react';
@@ -61,7 +59,7 @@ const affectedResources = {
   ],
 };
 
-describe('UI test cases for resource type filters', () => {
+describe('uI test cases for resource type filters', () => {
   test('should render empty DOM when resource type is one of accestokens, connections, stacks, scripts, apis', () => {
     const {utils} = renderWithProviders(<ResourceTypeFilter resourceType="connections" resourceDetails={resourceDetails} />);
 
@@ -104,7 +102,7 @@ describe('UI test cases for resource type filters', () => {
   });
 });
 
-describe('UI test cases for resource Id filters', () => {
+describe('uI test cases for resource Id filters', () => {
   test('should render empty DOM when filters.resourceType is "all"', () => {
     const {utils} = renderWithProviders(<ResourceIdFilter
       resourceType="integrations" resourceId="integration_id_1" resourceDetails={resourceDetails} affectedResources={affectedResources}
@@ -128,7 +126,7 @@ describe('UI test cases for resource Id filters', () => {
     userEvent.click(screen.getByText('All'));
     expect(screen.getAllByRole('option')).toHaveLength(2);
   });
-  test(' should display ResourceId filter with option "All" without menuoptions when filters.resourcetype is present in affectedResources but not in resourceDetails', () => {
+  test('should display ResourceId filter with option "All" without menuoptions when filters.resourcetype is present in affectedResources but not in resourceDetails', () => {
     renderWithProviders(<ResourceIdFilter
       resourceType="integrations" resourceId="integration_id_1" resourceDetails={resourceDetails} affectedResources={affectedResources}
       filters={{

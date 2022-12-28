@@ -1,4 +1,4 @@
-/* global jest, describe, test, expect */
+
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { screen, waitFor } from '@testing-library/react';
@@ -18,7 +18,7 @@ async function initJobFilesDownloadDialog({job, onCloseClick, initialStore}) {
 
   return renderWithProviders(ui, {initialStore});
 }
-describe('Testsuite for Job Files Download Dialog', () => {
+describe('testsuite for Job Files Download Dialog', () => {
   const closeMock = jest.fn();
 
   test('should test the download button by selecting a file', async () => {

@@ -1,4 +1,5 @@
-/* global describe, test, expect */
+/* eslint-disable jest/no-standalone-expect */
+
 import jsonPatch from 'fast-json-patch';
 import each from 'jest-each';
 import {
@@ -49,7 +50,7 @@ describe('Form Utils', () => {
         },
       });
     });
-    describe('missing patches for an empty resource ', () => {
+    describe('missing patches for an empty resource', () => {
       test('should find all missing node against empty obj where some paths share lineage', () => {
         const resource = {};
         const paths = ['/a/e/f', '/a/e/g', '/a/b', 'a/b/c'];
@@ -319,9 +320,9 @@ describe('Form Utils', () => {
     });
   });
 
-  describe('search field by id through the fieldMap ', () => {
+  describe('search field by id through the fieldMap', () => {
     test('should return null if there is no metadata', () => {
-      expect(getFieldById({meta: null})).toEqual(null);
+      expect(getFieldById({meta: null})).toBeNull();
     });
     test('should correctly search for a field in the metadata', () => {
       const testMeta = {
@@ -348,7 +349,7 @@ describe('Form Utils', () => {
     });
   });
 
-  describe('getFieldByIdFromLayout search field by name through the fieldMap ', () => {
+  describe('getFieldByIdFromLayout search field by name through the fieldMap', () => {
     test('should correctly search for a field in the fieldMap', () => {
       const testMeta = {
         fieldMap: {
@@ -377,7 +378,7 @@ describe('Form Utils', () => {
     });
   });
   describe('search for by id through the layout and check its corresponding fieldMap value', () => {
-    test('should find a field successfully when there is a field in layout and defined in the fieldMap as well ', () => {
+    test('should find a field successfully when there is a field in layout and defined in the fieldMap as well', () => {
       const metadata = {
         actions: undefined,
         fieldMap: {
@@ -464,7 +465,7 @@ describe('Form Utils', () => {
         resourceType: 'someResourceType',
       });
     });
-    test('should not find a field when there is a field in layout and not defined in the fieldMap ', () => {
+    test('should not find a field when there is a field in layout and not defined in the fieldMap', () => {
       const metadata = {
         actions: undefined,
         fieldMap: {
@@ -532,10 +533,10 @@ describe('Form Utils', () => {
         'exportData'
       );
 
-      expect(foundValue).toEqual(null);
+      expect(foundValue).toBeNull();
     });
 
-    test('should not find a field when the field does not exist in the fields and the fieldMap ', () => {
+    test('should not find a field when the field does not exist in the fields and the fieldMap', () => {
       const metadata = {
         actions: undefined,
         fieldMap: {
@@ -603,12 +604,12 @@ describe('Form Utils', () => {
         'exportData'
       );
 
-      expect(foundValue).toEqual(null);
+      expect(foundValue).toBeNull();
     });
     test('should return null if the field layout does not not exists', () => {
       const foundValue = getFieldByIdFromLayout();
 
-      expect(foundValue).toEqual(null);
+      expect(foundValue).toBeNull();
     });
   });
 
@@ -698,14 +699,14 @@ describe('Form Utils', () => {
             { layout: layout.containers[0], fieldMap },
             fieldStates
           )
-        ).toEqual(false);
+        ).toBe(false);
 
         expect(
           isExpansionPanelErrored(
             { layout: metadata.layout.containers[1], fieldMap },
             fieldStates
           )
-        ).toEqual(true);
+        ).toBe(true);
       });
 
       test('should error specific expansion panel only when those field states and unfulfilled for nested containers', () => {
@@ -799,21 +800,21 @@ describe('Form Utils', () => {
             { layout: layout.containers[0], fieldMap },
             fieldStates
           )
-        ).toEqual(false);
+        ).toBe(false);
 
         expect(
           isExpansionPanelErrored(
             { layout: metadata.layout.containers[1], fieldMap },
             fieldStates
           )
-        ).toEqual(true);
+        ).toBe(true);
 
         expect(
           isExpansionPanelErrored(
             { layout: metadata.layout.containers[1].containers[0], fieldMap },
             fieldStates
           )
-        ).toEqual(true);
+        ).toBe(true);
       });
     });
     describe('default isExpansionPanelErrored should consider only field isValid', () => {
@@ -911,7 +912,7 @@ describe('Form Utils', () => {
             true
           ),
 
-        ).toEqual(true);
+        ).toBe(true);
 
         expect(
           isExpansionPanelErrored(
@@ -919,7 +920,7 @@ describe('Form Utils', () => {
             fieldStates,
             true
           ),
-        ).toEqual(true);
+        ).toBe(true);
 
         expect(
           isExpansionPanelErrored(
@@ -927,11 +928,11 @@ describe('Form Utils', () => {
             fieldStates,
             true
           ),
-        ).toEqual(false);
+        ).toBe(false);
       });
     });
   });
-  describe('getAllFormValuesAssociatedToMeta ', () => {
+  describe('getAllFormValuesAssociatedToMeta', () => {
     test('should only gather values of form associated to its metadata', () => {
       const metadata = {
         actions: undefined,
@@ -1306,7 +1307,7 @@ describe('integrationSettingsToDynaFormMetadata', () => {
           },
         });
       });
-      test('should append visible props correctly for fields having an existing matching field prop ', () => {
+      test('should append visible props correctly for fields having an existing matching field prop', () => {
         const inputFieldMap = {
           fieldA: {
             id: 'fieldA',
@@ -1460,10 +1461,10 @@ describe('integrationSettingsToDynaFormMetadata', () => {
     });
   });
   describe('getFieldWithReferenceById', () => {
-    test('should return null if metadata is null ', () => {
+    test('should return null if metadata is null', () => {
       const res = getFieldWithReferenceById({meta: null});
 
-      expect(res).toEqual(null);
+      expect(res).toBeNull();
     });
     test('should get field with reference by id', () => {
       const testMeta = {
@@ -1483,15 +1484,15 @@ describe('integrationSettingsToDynaFormMetadata', () => {
     });
   });
   describe('fieldIDsExceptClockedFields', () => {
-    test('should return null if metadata is null ', () => {
+    test('should return null if metadata is null', () => {
       const res = fieldIDsExceptClockedFields();
 
-      expect(res).toEqual(null);
+      expect(res).toBeNull();
     });
-    test('should return null if fieldMap inside meta data is null ', () => {
+    test('should return null if fieldMap inside meta data is null', () => {
       const res = fieldIDsExceptClockedFields({fieldMap: null});
 
-      expect(res).toEqual(null);
+      expect(res).toBeNull();
     });
     test('should return all field ids except clocked fields for given resource type', () => {
       const testMeta = {
@@ -1520,13 +1521,13 @@ describe('integrationSettingsToDynaFormMetadata', () => {
     test('should return undefined when fields is null', () => {
       const res = isFormTouched();
 
-      expect(res).toEqual(undefined);
+      expect(res).toBeUndefined();
     });
     test('should return false if there are no fields at all', () => {
       const fields = [];
       const res = isFormTouched(fields);
 
-      expect(res).toEqual(false);
+      expect(res).toBe(false);
     });
     test('should return false if fields do not have any touched field', () => {
       const fields = [{
@@ -1535,7 +1536,7 @@ describe('integrationSettingsToDynaFormMetadata', () => {
       }];
       const res = isFormTouched(fields);
 
-      expect(res).toEqual(false);
+      expect(res).toBe(false);
     });
     test('should return true if any one of the field has a prop touched set to true', () => {
       const fields = [{
@@ -1545,7 +1546,7 @@ describe('integrationSettingsToDynaFormMetadata', () => {
       }];
       const res = isFormTouched(fields);
 
-      expect(res).toEqual(true);
+      expect(res).toBe(true);
     });
   });
   describe('alterFileDefinitionRulesVisibility', () => {
@@ -1799,15 +1800,15 @@ describe('integrationSettingsToDynaFormMetadata', () => {
     );
   });
   describe('integrationSettingsToDynaFormMetadata', () => {
-    test('should return null if metadata is null ', () => {
+    test('should return null if metadata is null', () => {
       const res = integrationSettingsToDynaFormMetadata();
 
-      expect(res).toEqual(null);
+      expect(res).toBeNull();
     });
-    test('should return null if metadata is empty object ', () => {
+    test('should return null if metadata is empty object', () => {
       const res = integrationSettingsToDynaFormMetadata({});
 
-      expect(res).toEqual(null);
+      expect(res).toBeNull();
     });
     test('should get dyna form data from integration settings  for given metadata with fields', () => {
       const meta = {fields: [{value: 'itemid', type: 'select', name: 'general_stat'}, { name: 'abc', required: false, value: '', type: 'date'}], sections: ''};

@@ -1,4 +1,4 @@
-/* global describe, expect, jest, test, beforeEach, afterEach */
+
 import React from 'react';
 import * as reactRedux from 'react-redux';
 import { MemoryRouter } from 'react-router-dom';
@@ -306,7 +306,7 @@ describe('test suite for SalesforceMappingAssistant', () => {
     const sObjectType = 'Salesforce';
 
     await initSalesforceMappingAssistant({sObjectType});
-    expect(screen.getByText(`${sObjectType} is a non-layoutable entity.`));
+    expect(screen.getByText(`${sObjectType} is a non-layoutable entity.`)).toBeInTheDocument();
   });
 
   test('should render only a spinner if status is requested', async () => {
@@ -328,7 +328,7 @@ describe('test suite for SalesforceMappingAssistant', () => {
 
     await initSalesforceMappingAssistant({connectionId, sObjectType, layoutId}, initialStore);
     expect(screen.getByText('Spinner')).toBeInTheDocument();
-    expect(mockDispatchFn).toBeCalledWith(actions.metadata.request(
+    expect(mockDispatchFn).toHaveBeenCalledWith(actions.metadata.request(
       connectionId, commMetaPath
     ));
   });
@@ -356,7 +356,7 @@ describe('test suite for SalesforceMappingAssistant', () => {
 
     const inputField = screen.getAllByRole('textbox')[0];
 
-    expect(onFieldClick).not.toBeCalled();
+    expect(onFieldClick).not.toHaveBeenCalled();
     userEvent.click(inputField);
     expect(onFieldClick).toHaveBeenCalledTimes(1);
   });

@@ -1,4 +1,3 @@
-/* global describe, test, expect  */
 import React from 'react';
 import { render, screen} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -19,8 +18,8 @@ function onChangeRowsPerPage(e) {
   render(<div> {display}</div>);
 }
 
-describe('CeligoPagination test', () => {
-  test('rendering and clicking on ', () => {
+describe('celigoPagination test', () => {
+  test('rendering and clicking on', () => {
     const props = {
       loading: false,
       page: 1,

@@ -1,4 +1,3 @@
-/* global describe, test, expect, beforeEach */
 
 import processorLogic from './index';
 
@@ -201,12 +200,12 @@ describe('flowTransform processor logic', () => {
     test('should correctly call the transform dirty util if active processor is transform type', () => {
       editor.activeProcessor = 'transform';
 
-      expect(dirty(editor)).toEqual(false);
+      expect(dirty(editor)).toBe(false);
     });
     test('should correctly call the javascript dirty util if active processor is script type', () => {
       editor.activeProcessor = 'javascript';
 
-      expect(dirty(editor)).toEqual(false);
+      expect(dirty(editor)).toBe(false);
     });
   });
   describe('processResult util', () => {

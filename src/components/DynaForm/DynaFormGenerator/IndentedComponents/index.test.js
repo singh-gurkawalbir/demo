@@ -1,4 +1,4 @@
-/* global describe, test, expect */
+
 import React from 'react';
 import { screen } from '@testing-library/react';
 import IndentedComponent from '.';
@@ -139,7 +139,7 @@ const props = {
   resourceId: '5ff687fa4f59bb348d41b332',
 };
 
-describe('Collapsed Components UI tests', () => {
+describe('collapsed Components UI tests', () => {
   test('should pass the initial render', () => {
     props.formfields = [{visible: true, required: true, id: 'name', isValid: false}, {visible: 'true', required: true, id: 'description', isValid: false}, {visible: 'true', required: true, id: 'content', isValid: false}, {visible: 'true', required: true, id: 'insertFunction', isValid: false}];
     initIndentedComponent(props);

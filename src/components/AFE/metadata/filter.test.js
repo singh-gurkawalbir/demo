@@ -1,4 +1,4 @@
-/* global describe, test, expect */
+
 import metadata from './filter';
 import DataPanel from '../Editor/panels/Data';
 import ResultPanel from '../Editor/panels/Result';
@@ -8,10 +8,10 @@ describe('filter metadata test cases', () => {
   test('should pass the test case for each field', () => {
     const {type, fieldId, description, label, panels} = metadata;
 
-    expect(type).toEqual('filter');
-    expect(fieldId).toEqual('transform');
-    expect(description).toEqual('Constructs filter rules against raw data');
-    expect(label).toEqual('Filter editor');
+    expect(type).toBe('filter');
+    expect(fieldId).toBe('transform');
+    expect(description).toBe('Constructs filter rules against raw data');
+    expect(label).toBe('Filter editor');
 
     const filterPanel = panels.find(eachPanel => eachPanel.title === 'Rules');
     const dataPanel = panels.find(eachPanel => eachPanel.title === 'Input');

@@ -1,4 +1,4 @@
-/* global describe, test, expect */
+
 import reducer, {selectors} from '.';
 import actions from '../../../actions';
 import {HOME_PAGE_PATH} from '../../../constants';
@@ -87,9 +87,9 @@ describe('Flow group create/update/delete failed action', () => {
 
 describe('shouldRedirect selector test', () => {
   test('should not throw exception for bad params', () => {
-    expect(selectors.shouldRedirect()).toEqual(null);
-    expect(selectors.shouldRedirect({})).toEqual(null);
-    expect(selectors.shouldRedirect(null)).toEqual(null);
+    expect(selectors.shouldRedirect()).toBeNull();
+    expect(selectors.shouldRedirect({})).toBeNull();
+    expect(selectors.shouldRedirect(null)).toBeNull();
   });
 
   test('should return correct saveStatus value for valid integration and flow', () => {
@@ -108,9 +108,9 @@ describe('shouldRedirect selector test', () => {
 
 describe('flowGroupStatus selector test', () => {
   test('should not throw exception for bad params', () => {
-    expect(selectors.flowGroupStatus()).toEqual(null);
-    expect(selectors.flowGroupStatus({})).toEqual(null);
-    expect(selectors.flowGroupStatus(null)).toEqual(null);
+    expect(selectors.flowGroupStatus()).toBeNull();
+    expect(selectors.flowGroupStatus({})).toBeNull();
+    expect(selectors.flowGroupStatus(null)).toBeNull();
   });
 
   test('should return flowGroupStatus for the passed integrationId', () => {
@@ -159,9 +159,9 @@ describe('Integration isTileClick action', () => {
 
 describe('isTileClick selector test', () => {
   test('should not throw exception for bad params', () => {
-    expect(selectors.isTileClick()).toEqual(null);
-    expect(selectors.isTileClick({})).toEqual(null);
-    expect(selectors.isTileClick(null)).toEqual(null);
+    expect(selectors.isTileClick()).toBeNull();
+    expect(selectors.isTileClick({})).toBeNull();
+    expect(selectors.isTileClick(null)).toBeNull();
   });
 
   test('should return correct saveStatus value for valid integration and flow', () => {

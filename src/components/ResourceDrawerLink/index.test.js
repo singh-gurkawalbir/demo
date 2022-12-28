@@ -1,4 +1,4 @@
-/* global describe, test, expect */
+
 import React from 'react';
 import { screen, waitFor } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
@@ -253,8 +253,8 @@ const connectorLicenses = {
 
 };
 
-describe('ResourceDrawer UI test', () => {
-  test('should test connection with linkLabel as name ', () => {
+describe('resourceDrawer UI test', () => {
+  test('should test connection with linkLabel as name', () => {
     renderWithProviders(<MemoryRouter><ResourceDrawerLink resourceType="connections" resource={resource1} /> </MemoryRouter>);
     const link = screen.getByText('3D Cart Staging delete');
 
@@ -265,7 +265,7 @@ describe('ResourceDrawer UI test', () => {
     expect(screen.getByText('abcdefgh')).toBeInTheDocument();
     expect(screen.getByText('Shared')).toBeInTheDocument();
   });
-  test('should test connection with linkLabel as unknown ', () => {
+  test('should test connection with linkLabel as unknown', () => {
     renderWithProviders(<MemoryRouter><ResourceDrawerLink resourceType="connections" resource={resource3} /> </MemoryRouter>);
     const link = screen.getByText('unknown');
 
@@ -276,7 +276,7 @@ describe('ResourceDrawer UI test', () => {
     expect(screen.getByText('abcdefgh')).toBeInTheDocument();
   });
 
-  test('should test connection with linkLabel as ID ', () => {
+  test('should test connection with linkLabel as ID', () => {
     renderWithProviders(<MemoryRouter><ResourceDrawerLink resourceType="connections" resource={resource2} /> </MemoryRouter>);
     const link = screen.getByText('5e7068331c056a75e6df19b1');
 
@@ -286,11 +286,11 @@ describe('ResourceDrawer UI test', () => {
     userEvent.click(button);
     expect(screen.getByText('abcdefgh')).toBeInTheDocument();
   });
-  test('should test connection with disable as true ', () => {
+  test('should test connection with disable as true', () => {
     renderWithProviders(<MemoryRouter><ResourceDrawerLink resourceType="connections" resource={resource2} disabled /> </MemoryRouter>);
     expect(screen.getByText('5e7068331c056a75e6df19b1')).toBeInTheDocument();
   });
-  test('should test connectorLicenses ', () => {
+  test('should test connectorLicenses', () => {
     renderWithProviders(<MemoryRouter><ResourceDrawerLink resourceType="connectorLicenses" resource={connectorLicenses} /> </MemoryRouter>);
     const link = screen.getByText('abc@abc.com');
 
@@ -298,7 +298,7 @@ describe('ResourceDrawer UI test', () => {
   });
 
   runServer();
-  test('should test connection resource link ', async () => {
+  test('should test connection resource link', async () => {
     mockGetRequestOnce('/api/shared/ashares', [
       {
         _id: '618cc96475f94b333a55bbd3',

@@ -1,4 +1,4 @@
-/* global describe, test, expect */
+
 import React from 'react';
 import { screen } from '@testing-library/react';
 import { renderWithProviders, reduxStore } from '../../../../test/test-utils';
@@ -26,20 +26,20 @@ async function initDynaTextWithConnectionContext(props, value = 'json') {
 
   return renderWithProviders(<DynaTextWithConnectionContext {...props} />, { initialStore });
 }
-describe('DynaTextWithConnectionContext tests', () => {
-  test('Should able to test DynaTextWithConnectionContext with requestMediaType JSON', async () => {
+describe('dynaTextWithConnectionContext tests', () => {
+  test('should able to test DynaTextWithConnectionContext with requestMediaType JSON', async () => {
     await initDynaTextWithConnectionContext(props);
     expect(screen.queryByRole('textbox')).toBeInTheDocument();
   });
-  test('Should able to test DynaTextWithConnectionContext with requestMediaType URLEncoded', async () => {
+  test('should able to test DynaTextWithConnectionContext with requestMediaType URLEncoded', async () => {
     await initDynaTextWithConnectionContext(props);
     expect(screen.queryByRole('textbox')).toBeInTheDocument();
   });
-  test('Should able to test DynaTextWithConnectionContext with requestMediaType null/undefined/empty', async () => {
+  test('should able to test DynaTextWithConnectionContext with requestMediaType null/undefined/empty', async () => {
     await initDynaTextWithConnectionContext(props, '');
     expect(screen.queryByRole('textbox')).toBeInTheDocument();
   });
-  test('Should able to test DynaTextWithConnectionContext without connectionMediaType and resourceMediaType', async () => {
+  test('should able to test DynaTextWithConnectionContext without connectionMediaType and resourceMediaType', async () => {
     await initDynaTextWithConnectionContext({...props, connectionId: '_randomId'}, 'xml');
     expect(screen.queryByRole('textbox')).not.toBeInTheDocument();
   });

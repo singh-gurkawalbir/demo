@@ -1,4 +1,5 @@
-/* global describe expect test */
+/* eslint-disable jest/no-standalone-expect */
+
 import each from 'jest-each';
 import {
   sampleDataStage,
@@ -71,7 +72,7 @@ describe('_compareSampleDataStage util', () => {
 
     expect(_compareSampleDataStage(previousStage, currentStage, 'exports')).toBe(-1);
   });
-  test('should return 2 for exports  if both stages have mutually exclusive paths and both needs to be run ', () => {
+  test('should return 2 for exports  if both stages have mutually exclusive paths and both needs to be run', () => {
     const previousStage = 'inputFilter';
     const currentStage = 'outputFilter';
 
@@ -89,7 +90,7 @@ describe('_compareSampleDataStage util', () => {
 
     expect(_compareSampleDataStage(previousStage, currentStage, 'imports')).toBe(1);
   });
-  test('should return 2 for imports  if both stages have mutually exclusive paths and both needs to be run ', () => {
+  test('should return 2 for imports  if both stages have mutually exclusive paths and both needs to be run', () => {
     const previousStage = 'postMap';
     const currentStage = 'postSubmit';
 
@@ -115,7 +116,7 @@ describe('getCurrentSampleDataStageStatus util', () => {
 
     expect(getCurrentSampleDataStageStatus(prevStagesRunning, 'transform', 'exports')).toEqual(expectedCurrentStageStatus);
   });
-  test('should return 1 if the previous stage is a subset of current stage  ', () => {
+  test('should return 1 if the previous stage is a subset of current stage', () => {
     const prevStagesRunning = ['inputFilter', 'transform'];
     const expectedCurrentStageStatus = {
       currentStageStatus: 1,
@@ -124,7 +125,7 @@ describe('getCurrentSampleDataStageStatus util', () => {
 
     expect(getCurrentSampleDataStageStatus(prevStagesRunning, 'responseMapping', 'exports')).toEqual(expectedCurrentStageStatus);
   });
-  test('should return 0 if the current stage already exists in the list of running previous stage sagas  ', () => {
+  test('should return 0 if the current stage already exists in the list of running previous stage sagas', () => {
     const prevStagesRunning = ['transform', 'inputFilter'];
     const expectedCurrentStageStatus = {
       currentStageStatus: 0,
@@ -285,7 +286,7 @@ describe('getPreviewStageData util', () => {
 });
 
 describe('getAddedLookupIdInFlow util', () => {
-  test('should return undefined when the patchSet is empty ', () => {
+  test('should return undefined when the patchSet is empty', () => {
     expect(getAddedLookupIdInFlow()).toBeUndefined();
   });
   test('should return undefined when the patchSet does not contain /pageProcessors/index which means no lookup has been added', () => {
@@ -666,7 +667,7 @@ describe('isPostDataNeededInResource util', () => {
 
     expect(isPostDataNeededInResource(salesforceScheduledExport)).toBeTruthy();
   });
-  test('should return false for resources other than salesforce ', () => {
+  test('should return false for resources other than salesforce', () => {
     const restExport = {
       name: 'Test export',
       _id: '1234',
@@ -704,7 +705,7 @@ describe('generateDefaultExtractsObject util', () => {
 
     expect(generateDefaultExtractsObject('imports')).toEqual(importDefaultExtracts);
   });
-  test('should return  by default exports related default extracts when there is no resource type ', () => {
+  test('should return  by default exports related default extracts when there is no resource type', () => {
     const lookupDefaultExtracts = {
       errors: '',
       data: '',
@@ -843,6 +844,7 @@ describe('generatePostResponseMapData util', () => {
       },
     ]);
   });
+  // eslint-disable-next-line jest/no-commented-out-tests
   // test('should return list of records of flowData merged with rawData on each record when flowData is an array and rawData is an array', () => {
   //   // const rawData = [{
   //   //   recordId: '123',
@@ -907,32 +909,7 @@ describe('getFormattedResourceForPreview util', () => {
 
     expect(getFormattedResourceForPreview(deltaResource)).toEqual(deltaResourceWithPostData);
   });
-  test('should update stringified sampleResponse to JSON sampleResponse on Page processor flow type resource for preview', () => {
-    const importResource = {
-      adaptorType: 'FTPImport',
-      ftp: {
-        directoryPath: '/users',
-        fileName: 'UserList.json',
-      },
-      _id: 'asdf2345',
-      name: 'FTP Import',
-      sampleResponseData: '{ "test": 5 }',
-    };
-    const formattedImportResource = {
-      adaptorType: 'FTPImport',
-      ftp: {
-        directoryPath: '/users',
-        fileName: 'UserList.json',
-      },
-      _id: 'asdf2345',
-      name: 'FTP Import',
-      sampleResponseData: {
-        test: 5,
-      },
-    };
 
-    expect(getFormattedResourceForPreview(importResource, 'imports', 'pageProcessors')).toEqual(formattedImportResource);
-  });
   test('should add default extracts object as sampleResponse on PP flow type resource to fetch pageProcessorPreview data', () => {
     const importResource = {
       adaptorType: 'FTPImport',
@@ -951,7 +928,7 @@ describe('getFormattedResourceForPreview util', () => {
       },
       _id: 'asdf2345',
       name: 'FTP Import',
-      sampleResponseData: {
+      mockResponse: {
         name: '',
         _json: '',
         dataURI: '',

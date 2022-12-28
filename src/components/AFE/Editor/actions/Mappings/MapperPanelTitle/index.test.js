@@ -1,4 +1,4 @@
-/* global describe, test, expect, beforeEach, afterEach, jest */
+
 import React from 'react';
 import {screen, waitFor} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -33,7 +33,7 @@ jest.mock('../../../../../icons/SearchIcon', () => ({
   ),
 }));
 
-describe('MapperPanelTitle UI tests', () => {
+describe('mapperPanelTitle UI tests', () => {
   let mockDispatchFn;
   let useDispatchSpy;
 
@@ -73,7 +73,7 @@ describe('MapperPanelTitle UI tests', () => {
 
     expect(collapseRowsButton).toBeInTheDocument();
     userEvent.click(collapseRowsButton);
-    await waitFor(() => expect(mockDispatchFn).toBeCalledWith(actions.mapping.v2.toggleRows(false)));
+    await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith(actions.mapping.v2.toggleRows(false)));
   });
   test('should make a dispatch call when clicked on the expandRows icon', async () => {
     initMapperPanelTitle({editorId: 'filecsv', helpKey: 'test-key'});
@@ -81,7 +81,7 @@ describe('MapperPanelTitle UI tests', () => {
 
     expect(expandRowsButton).toBeInTheDocument();
     userEvent.click(expandRowsButton);
-    await waitFor(() => expect(mockDispatchFn).toBeCalledWith(actions.mapping.v2.toggleRows(true)));
+    await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith(actions.mapping.v2.toggleRows(true)));
   });
   test('should make a dispatch call when clicked on the refresf filters icon', async () => {
     initMapperPanelTitle({editorId: 'filecsv', helpKey: 'test-key'});
@@ -89,7 +89,7 @@ describe('MapperPanelTitle UI tests', () => {
 
     expect(RefreshFiltersButton).toBeInTheDocument();
     userEvent.click(RefreshFiltersButton);
-    await waitFor(() => expect(mockDispatchFn).toBeCalledWith(actions.flowData.requestSampleData('5ea16c600e2fab71928a6152', '5ea16cd30e2fab71928a6166', 'imports', 'importMappingExtract', true)));
+    await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith(actions.flowData.requestSampleData('5ea16c600e2fab71928a6152', '5ea16cd30e2fab71928a6166', 'imports', 'importMappingExtract', true)));
   });
   test('should make a dispatch call when clicked on the search icon', async () => {
     initMapperPanelTitle({editorId: 'filecsv', helpKey: 'test-key'});
@@ -97,6 +97,6 @@ describe('MapperPanelTitle UI tests', () => {
 
     expect(searchIconButton).toBeInTheDocument();
     userEvent.click(searchIconButton);
-    await waitFor(() => expect(mockDispatchFn).toBeCalledWith(actions.mapping.v2.searchTree('')));
+    await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith(actions.mapping.v2.searchTree('')));
   });
 });

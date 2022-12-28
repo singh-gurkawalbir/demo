@@ -1,4 +1,4 @@
-/* global describe, test, expect,afterEach jest */
+
 import React from 'react';
 import { renderWithProviders, reduxStore } from '../../../../test/test-utils';
 import useHandleInvalidNewRevision from './useHandleInvalidNewRevision';

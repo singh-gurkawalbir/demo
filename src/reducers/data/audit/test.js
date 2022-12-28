@@ -1,4 +1,4 @@
-/* global describe, test, expect */
+
 import reducer, { selectors } from '.';
 import actions from '../../../actions';
 
@@ -207,10 +207,10 @@ describe('auditLogs selector', () => {
   });
   test('should return correct next page path from state', () => {
     expect(selectors.auditLogsNextPagePath()).toBeUndefined();
-    expect(selectors.auditLogsNextPagePath({nextPagePath: '/audit?123'})).toEqual('/audit?123');
+    expect(selectors.auditLogsNextPagePath({nextPagePath: '/audit?123'})).toBe('/audit?123');
   });
   test('should return correct load more status from state', () => {
     expect(selectors.auditLoadMoreStatus()).toBeUndefined();
-    expect(selectors.auditLoadMoreStatus({loadMoreStatus: 'requested'})).toEqual('requested');
+    expect(selectors.auditLoadMoreStatus({loadMoreStatus: 'requested'})).toBe('requested');
   });
 });

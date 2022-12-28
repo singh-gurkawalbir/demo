@@ -375,6 +375,8 @@ export function fieldMeta({ resource, assistantData }) {
     fieldId: 'settings',
   };
 
+  fieldMap.mockResponseSection = {formId: 'mockResponseSection'};
+
   return {
     fieldMap,
     layout: {
@@ -389,6 +391,12 @@ export function fieldMeta({ resource, assistantData }) {
           collapsed: true,
           label: 'How would you like the records imported?',
           fields: [...fieldIds],
+        },
+        {
+          actionId: 'mockResponse',
+          collapsed: true,
+          label: 'Mock response',
+          fields: ['mockResponseSection'],
         },
         {
           collapsed: true,

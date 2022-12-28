@@ -1290,7 +1290,6 @@ export function convertToExport({ assistantConfig, assistantData, headers = [] }
   }
 
   const deltaConfig = {};
-  const testConfig = {};
 
   if (exportType === 'delta' && operationDetails.delta) {
     ['dateFormat', 'lagOffset'].forEach(v => {
@@ -1298,8 +1297,6 @@ export function convertToExport({ assistantConfig, assistantData, headers = [] }
         deltaConfig[v] = operationDetails.delta[v];
       }
     });
-  } else if (exportType === 'test') {
-    testConfig.limit = 1;
   }
 
   if (operationDetails.mergePostBodyToPagingPostBody && exportDoc.postBody) {
@@ -1361,7 +1358,7 @@ export function convertToExport({ assistantConfig, assistantData, headers = [] }
       undefined /* populate file subschema if it is in metadata (ex: concurexpense assistant) */,
     '/type': exportType || undefined,
     '/delta': !isEmpty(deltaConfig) ? deltaConfig : undefined,
-    '/test': !isEmpty(testConfig) ? testConfig : undefined,
+    '/test': undefined,
     '/assistant': assistant,
     '/assistantMetadata': assistantMetadata,
   };

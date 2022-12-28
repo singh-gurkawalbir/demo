@@ -1,4 +1,4 @@
-/* global describe, test,expect, jest, afterEach */
+
 import React from 'react';
 import { screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
@@ -68,7 +68,7 @@ async function initflowTable(actionProps = {}, res = resource, initialStore = nu
   userEvent.click(screen.getByRole('button', {name: /more/i}));
 }
 
-describe('Edit action for flow Ui test cases', () => {
+describe('edit action for flow Ui test cases', () => {
   afterEach(() => {
     jest.clearAllMocks();
   });

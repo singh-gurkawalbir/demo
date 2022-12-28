@@ -1,4 +1,4 @@
-/* global test, expect, describe,beforeEach */
+
 import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -37,7 +37,7 @@ function expectFunction(header, cell) {
   expect(cell).toEqual(header);
 }
 
-describe('Agents metadata UI tests', () => {
+describe('agents metadata UI tests', () => {
   beforeEach(() => {
     renderWithProviders(
       <MemoryRouter>

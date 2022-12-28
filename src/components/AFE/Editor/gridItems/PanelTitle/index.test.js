@@ -1,4 +1,3 @@
-/* global describe, test, expect */
 import React from 'react';
 import { screen } from '@testing-library/react';
 import { renderWithProviders } from '../../../../../test/test-utils';
@@ -9,7 +8,7 @@ function MyComponent() {
     <div>Component</div>
   );
 }
-describe('SinglePanelGridItem UI tests', () => {
+describe('singlePanelGridItem UI tests', () => {
   test('should pass the initial render', () => {
     const props = {title: 'Demo title', helpKey: 'demo help key', children: <MyComponent />, isLoggable: true};
 

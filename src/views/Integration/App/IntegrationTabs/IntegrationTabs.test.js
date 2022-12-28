@@ -1,4 +1,3 @@
-/* global describe, test, expect */
 import React from 'react';
 import { screen, waitFor } from '@testing-library/react';
 import { MemoryRouter, Route } from 'react-router-dom';
@@ -20,7 +19,7 @@ describe('IntegrationTabs UI tests', () => {
     store.dispatch(actions.user.preferences.request());
     store.dispatch(actions.user.profile.request());
     store.dispatch(actions.user.org.accounts.requestCollection());
-    await waitFor(() => expect(store?.getState()?.user?.org?.accounts.length).toBeGreaterThan[1]);
+    await waitFor(() => expect(store?.getState()?.user?.org?.accounts.length).toBeGreaterThan(1));
     await waitFor(() => expect(store?.getState()?.user?.preferences?.defaultAShareId).toBeDefined());
     await waitFor(() => expect(store?.getState()?.user?.profile?.name).toBeDefined());
     await waitFor(() => expect(store?.getState()?.data?.resources?.integrations).toBeDefined());
@@ -34,7 +33,7 @@ describe('IntegrationTabs UI tests', () => {
     expect(screen.getByText('Audit log')).toBeInTheDocument();
     expect(screen.getByText('Users')).toBeInTheDocument();
     expect(screen.getByText('Admin')).toBeInTheDocument();
-    expect(screen.getAllByText('Settings').length).toBe(2);
+    expect(screen.getAllByText('Settings')).toHaveLength(2);
   });
   test('should test  monitor level tab', async () => {
     mockGetRequestOnce('/api/profile', {

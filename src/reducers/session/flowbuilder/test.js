@@ -1,4 +1,4 @@
-/* global describe, test, expect */
+
 import reducer, {selectors} from '.';
 import actions from '../../../actions';
 
@@ -62,7 +62,7 @@ describe('Reducers test cases', () => {
     test('should return correct state if flow is absent', () => {
       const state = reducer({}, actions.flow.initializeFlowGraph('123'));
 
-      return expect(state).toEqual({
+      expect(state).toEqual({
         123: {
           elements: undefined,
           elementsMap: {},
@@ -78,7 +78,7 @@ describe('Reducers test cases', () => {
     test('should return correct state for given flow and stepId', () => {
       const state = reducer(initializedState, actions.flow.dragStart('123', '123'));
 
-      return expect(state).toEqual({
+      expect(state).toEqual({
         123: {
           dragStepIdInProgress: '123',
           elements: undefined,
@@ -94,7 +94,7 @@ describe('Reducers test cases', () => {
       const state1 = reducer(initializedState, actions.flow.dragStart('123', '123'));
       const state = reducer(state1, actions.flow.setDragInProgress('123'));
 
-      return expect(state).toEqual({
+      expect(state).toEqual({
         123: {
           dragStepId: '123',
           elements: undefined,
@@ -108,14 +108,14 @@ describe('Reducers test cases', () => {
     test('should set the correct status on flow which is not initialized', () => {
       const state = reducer({}, actions.flow.setSaveStatus('123', 'failed'));
 
-      return expect(state).toEqual({
+      expect(state).toEqual({
         123: {status: 'failed'},
       });
     });
     test('should set the correct status on flow which is initialized', () => {
       const state = reducer(initializedState, actions.flow.setSaveStatus('123', 'failed'));
 
-      return expect(state).toEqual({
+      expect(state).toEqual({
         123: {
           status: 'failed',
           elements: undefined,
@@ -132,7 +132,7 @@ describe('Reducers test cases', () => {
       const state2 = reducer(state1, actions.flow.setDragInProgress('123'));
       const state = reducer(state2, actions.flow.dragEnd('123'));
 
-      return expect(state).toEqual({
+      expect(state).toEqual({
         123: {
           elements: undefined,
           elementsMap: {},
@@ -146,7 +146,7 @@ describe('Reducers test cases', () => {
     test('should return correct state for given flow, targetId and targetType', () => {
       const state = reducer(initializedState, actions.flow.mergeTargetSet('123', 'branch', '123'));
 
-      return expect(state).toEqual({
+      expect(state).toEqual({
         123: {
           elements: undefined,
           elementsMap: {},
@@ -163,7 +163,7 @@ describe('Reducers test cases', () => {
       const state1 = reducer(initializedState, actions.flow.mergeTargetSet('123', 'branch', '123'));
       const state = reducer(state1, actions.flow.mergeTargetClear('123'));
 
-      return expect(state).toEqual({
+      expect(state).toEqual({
         123: {
           elements: undefined,
           elementsMap: {},
@@ -177,7 +177,7 @@ describe('Reducers test cases', () => {
     test('should add info to the flow state', () => {
       const state1 = reducer(initializedState, actions.flow.addNewPPStepInfo('123', {branch: 'branch'}));
 
-      return expect(state1).toEqual({
+      expect(state1).toEqual({
         123: {
           elements: undefined,
           elementsMap: {},
@@ -203,7 +203,7 @@ describe('Reducers test cases', () => {
       });
       const state = reducer(state1, actions.flow.clearPPStepInfo('123'));
 
-      return expect(state).toEqual({
+      expect(state).toEqual({
         123: {
           elements: undefined,
           elementsMap: {},

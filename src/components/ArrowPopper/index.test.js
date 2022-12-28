@@ -1,4 +1,3 @@
-/* global describe, test, expect, beforeEach */
 import React, { useState } from 'react';
 import {
   screen,
@@ -54,7 +53,7 @@ async function initActionButton({placement = 'bottom-end', children = '', props 
   return renderWithProviders(ui);
 }
 
-describe('ArrowPopper component Test cases', () => {
+describe('arrowPopper component Test cases', () => {
   runServer();
   let renenderFun;
   let clickAway;

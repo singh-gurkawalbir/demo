@@ -1,4 +1,4 @@
-/* global describe, test, expect */
+
 import React from 'react';
 import {
   screen,
@@ -19,7 +19,7 @@ async function initMarketingContentWithImages({props = {}} = {}) {
   return renderWithProviders(ui);
 }
 
-describe('MarketingContentWithImages component', () => {
+describe('marketingContentWithImages component', () => {
   runServer();
 
   test('should pass the initial render', async () => {
@@ -51,7 +51,7 @@ describe('MarketingContentWithImages component', () => {
     expect(imgUrlRef.pathname).toBe('/foreground_image_url');
   });
 
-  test('should pass the initial render with props', async () => {
+  test('should pass the initial render with props1', async () => {
     await initMarketingContentWithImages({
       props: {
         backgroundImageUrl: 'background_image_url',

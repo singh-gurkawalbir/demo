@@ -1,4 +1,4 @@
-/* global describe, test, expect , jest, beforeEach, afterEach */
+
 import React from 'react';
 import { screen, waitFor} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -104,7 +104,7 @@ function initDynaDate(props = {}) {
   renderWithProviders(<WrappedContextConsumer {...props} />, {initialStore});
 }
 
-describe('WrappedContextConsumer UI tests', () => {
+describe('wrappedContextConsumer UI tests', () => {
   let mockDispatchFn;
   let useDispatchSpy;
 
@@ -227,12 +227,12 @@ describe('WrappedContextConsumer UI tests', () => {
 
     expect(option).toBeInTheDocument();
     userEvent.click(option);
-    await waitFor(() => expect(mockDispatchFn).toBeCalledWith(actions.resource.patchStaged(
+    await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith(actions.resource.patchStaged(
       '5bf18b09294767270c62fad9',
       patch,
       'value'
     )));
-    await waitFor(() => expect(mockDispatchFn).toBeCalledWith(
+    await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith(
       actions.resourceForm.init(
         'flows',
         '5bf18b09294767270c62fad9',
@@ -285,12 +285,12 @@ describe('WrappedContextConsumer UI tests', () => {
 
     expect(option).toBeInTheDocument();
     userEvent.click(option);
-    await waitFor(() => expect(mockDispatchFn).toBeCalledWith(actions.resource.patchStaged(
+    await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith(actions.resource.patchStaged(
       '5bf18b09294767270c62fad9',
       patch,
       'value'
     )));
-    await waitFor(() => expect(mockDispatchFn).toBeCalledWith(
+    await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith(
       actions.resourceForm.init(
         'flows',
         '5bf18b09294767270c62fad9',

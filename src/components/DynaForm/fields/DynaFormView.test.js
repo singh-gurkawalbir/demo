@@ -1,4 +1,5 @@
-/* global describe, test, expect,beforeEach,afterEach, jest */
+/* eslint-disable jest/expect-expect */
+
 import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -62,7 +63,7 @@ async function initFormView(props) {
   return renderWithProviders(<FormView {...props} />, { initialStore });
 }
 
-describe('FormView tests', () => {
+describe('formView tests', () => {
   let mockDispatchFn;
   let useDispatchSpy;
 
@@ -79,7 +80,7 @@ describe('FormView tests', () => {
     useDispatchSpy.mockClear();
     onFieldChange.mockClear();
   });
-  test('Should able to test FormView with googledrive Assistant type http', async () => {
+  test('should able to test FormView with googledrive Assistant type http', async () => {
     await initFormView(props);
     expect(screen.getByText('FieldLabel')).toBeInTheDocument();
     userEvent.click(screen.getByRole('button'));
@@ -87,12 +88,12 @@ describe('FormView tests', () => {
     userEvent.click(screen.getByRole('menuitem', { name: 'Google Drive' }));
     expect(mockDispatchFn).toHaveBeenCalled();
   });
-  test('Should able to test FormView with acumaticaecommerce Assistant type rest', async () => {
+  test('should able to test FormView with acumaticaecommerce Assistant type rest', async () => {
     await initFormView({...props, resourceId: 'imp3'});
     userEvent.click(screen.getByRole('button'));
     userEvent.click(screen.getByRole('menuitem', { name: 'REST API' }));
   });
-  test('Should able to test FormView with graph_ql', async () => {
+  test('should able to test FormView with graph_ql', async () => {
     await initFormView({...props, resourceId: 'imp2'});
     expect(screen.getByText('FieldLabel')).toBeInTheDocument();
     userEvent.click(screen.getByRole('button'));
@@ -101,7 +102,7 @@ describe('FormView tests', () => {
     userEvent.click(screen.getByRole('button'));
     userEvent.click(screen.getByRole('menuitem', { name: 'GraphQL' }));
   });
-  test('Should able to test FormView with invalid resource', async () => {
+  test('should able to test FormView with invalid resource', async () => {
     await initFormView({ ...props, resourceId: undefined, resourceType: 'something' });
     expect(screen.queryByText('FieldLabel')).not.toBeInTheDocument();
   });

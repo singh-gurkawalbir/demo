@@ -1,4 +1,4 @@
-/* global describe, expect, jest, test */
+
 import { act, screen } from '@testing-library/react';
 import React from 'react';
 import { renderWithProviders } from '../../../test/test-utils';
@@ -35,16 +35,16 @@ describe('test cases for useHandleCloseOnSave', () => {
     const onClose = jest.fn();
     const cb = await inituseHandleCloseOnSave({ onSave, onClose});
 
-    expect(onSave).not.toBeCalled();
-    expect(onClose).not.toBeCalled();
+    expect(onSave).not.toHaveBeenCalled();
+    expect(onClose).not.toHaveBeenCalled();
 
     act(() => {
       cb(true);
     });
 
-    expect(onSave).toBeCalledTimes(1);
+    expect(onSave).toHaveBeenCalledTimes(1);
     expect(onSave).toHaveBeenLastCalledWith(true);
-    expect(onClose).not.toBeCalled();
+    expect(onClose).not.toHaveBeenCalled();
   });
 
   test('should execute onClose whenever setCloseTriggered is called and status is complete', async () => {
@@ -58,7 +58,7 @@ describe('test cases for useHandleCloseOnSave', () => {
       cb();
     });
     expect(onSave).toHaveBeenCalledWith(undefined);
-    expect(onClose).toBeCalledTimes(1);
+    expect(onClose).toHaveBeenCalledTimes(1);
   });
 
   test('onClose should be called as many number of times as setCloseTriggered is called', async () => {
@@ -72,7 +72,7 @@ describe('test cases for useHandleCloseOnSave', () => {
       cb();
     });
     expect(onSave).toHaveBeenLastCalledWith(undefined);
-    expect(onClose).toBeCalledTimes(1);
+    expect(onClose).toHaveBeenCalledTimes(1);
     act(() => {
       cb(false);
     });

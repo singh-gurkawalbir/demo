@@ -1,4 +1,4 @@
-/* global describe, test, jest, expect, afterEach */
+
 import React from 'react';
 import {screen, fireEvent} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -19,7 +19,7 @@ jest.mock('lodash', () => ({
   ...jest.requireActual('lodash'),
   debounce: fn => fn,
 }));
-describe('VirtualizedTable UI test cases', () => {
+describe('virtualizedTable UI test cases', () => {
   afterEach(() => {
     jest.clearAllMocks();
   });
@@ -105,7 +105,7 @@ describe('VirtualizedTable UI test cases', () => {
     expect(screen.getByDisplayValue('Typechanged')).toBeInTheDocument();
   });
 
-  test('Should able to test the Circular progressbar is shown when isAnyColumnFetching is set to true', () => {
+  test('should able to test the Circular progressbar is shown when isAnyColumnFetching is set to true', () => {
     const props = {
       items: [{key: 'new-wgqeyV1KO--1899857161', value: {export: 'id', import: 'Id'}},
         {key: 'new-wgqeyV1KO--1899857161', value: {export: 'name', import: 'Name'}},

@@ -1,4 +1,4 @@
-/* global test, expect, describe */
+
 import React from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { screen } from '@testing-library/react';
@@ -8,7 +8,7 @@ import { renderWithProviders } from '../../../test/test-utils';
 import metadata from './metadata';
 import CeligoTable from '../../CeligoTable';
 
-describe('UI test cases for metadata', () => {
+describe('uI test cases for metadata', () => {
   test('should render the table accordingly', () => {
     renderWithProviders(
       <CeligoTable

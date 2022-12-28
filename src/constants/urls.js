@@ -75,3 +75,6 @@ export const SHOPIFY_APP_STORE_LINKS = {
   // MICROSOFT_BUSINESS_IA_APP: 'https://apps.shopify.com/IA/Microsoft',
   // SAP_BUSINESS_IA_APP: 'https://apps.shopify.com/IA/SAP',
 };
+
+export const MOCK_OUTPUT_CANONICAL_FORMAT_LINK = 'https://docs.celigo.com/hc/en-us/articles/4473437451163-integrator-io-canonical-format-for-mock-data';
+export const MOCK_RESPONSE_CANONICAL_FORMAT_LINK = 'https://docs.celigo.com/hc/en-us/articles/4473437451163';

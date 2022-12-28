@@ -1,3 +1,5 @@
+import { safeParse } from '../../../utils/string';
+
 export default {
   preSave: formValues => {
     const newValues = { ...formValues };
@@ -75,6 +77,7 @@ export default {
     if (newValues['/oneToMany'] === 'false') {
       newValues['/pathToMany'] = undefined;
     }
+    newValues['/mockResponse'] = safeParse(newValues['/mockResponse']);
 
     return {
       ...newValues,
@@ -221,6 +224,7 @@ export default {
     advancedSettings: {
       formId: 'advancedSettings',
     },
+    mockResponseSection: {formId: 'mockResponseSection'},
   },
   layout: {
     type: 'collapse',
@@ -266,6 +270,12 @@ export default {
           'salesforce.upsert.externalIdField',
           'salesforce.idLookup.extract',
         ],
+      },
+      {
+        actionId: 'mockResponse',
+        collapsed: true,
+        label: 'Mock response',
+        fields: ['mockResponseSection'],
       },
       {
         collapsed: true,

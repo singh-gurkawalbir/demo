@@ -1,4 +1,3 @@
-/* global describe, test, beforeEach,jest, expect  */
 
 import React from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
@@ -24,7 +23,7 @@ jest.mock('react-redux', () => ({
   useDispatch: () => mockDispatch,
 }));
 
-describe('UI test cases for select classification', () => {
+describe('uI test cases for select classification', () => {
   beforeEach(() => {
     jest.resetAllMocks();
   });
@@ -75,7 +74,7 @@ describe('UI test cases for select classification', () => {
     const apply = screen.getByText('Apply');
 
     userEvent.click(apply);
-    expect(mockDispatch).toBeCalledWith(actions.errorManager.flowErrorDetails.request({
+    expect(mockDispatch).toHaveBeenCalledWith(actions.errorManager.flowErrorDetails.request({
       flowId: '5ea16c600e2fab71928a6152',
       resourceId: '621ce7db7988314f51662c09',
       isResolved: false,

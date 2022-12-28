@@ -1,4 +1,4 @@
-/* global describe, test, expect, beforeEach */
+
 import React from 'react';
 import { screen, waitFor} from '@testing-library/react';
 import {MemoryRouter, Route} from 'react-router-dom';
@@ -126,7 +126,7 @@ function initRetryList({
   return renderWithProviders(ui, {initialStore});
 }
 
-describe('RetryList UI tests', () => {
+describe('retryList UI tests', () => {
   runServer();
 
   beforeEach(() => {

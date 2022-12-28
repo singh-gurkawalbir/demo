@@ -1,4 +1,4 @@
-/* global describe, test,expect, jest, afterEach */
+
 import React from 'react';
 import { screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
@@ -74,7 +74,7 @@ function initNameCell(props = {}, initialStore = null) {
   return link;
 }
 
-describe('Name Cell of Flow Table UI test cases', () => {
+describe('name Cell of Flow Table UI test cases', () => {
   afterEach(() => {
     jest.clearAllMocks();
   });

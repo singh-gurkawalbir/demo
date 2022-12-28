@@ -1,4 +1,4 @@
-/* global describe, test, expect */
+
 import reducer, { selectors } from '.';
 import actions from '../../../../actions';
 
@@ -7,8 +7,8 @@ describe('integrationApps reducer test cases', () => {
     expect(reducer(undefined, { type: 'RANDOM_ACTION' })).toEqual({});
     expect(reducer(undefined, { type: null })).toEqual({});
     expect(reducer(undefined, { type: undefined})).toEqual({});
-    expect(reducer(null, { type: 'RANDOM_ACTION' })).toEqual(null);
-    expect(reducer('string', { type: 'RANDOM_ACTION' })).toEqual('string');
+    expect(reducer(null, { type: 'RANDOM_ACTION' })).toBeNull();
+    expect(reducer('string', { type: 'RANDOM_ACTION' })).toBe('string');
     expect(reducer({}, { type: 'RANDOM_ACTION' })).toEqual({});
   });
 });
@@ -48,12 +48,12 @@ describe('intetgrationApps addon reducer', () => {
 describe('integrationApps addon selectors test cases', () => {
   describe('isAddOnInstallInProgress', () => {
     test('should return empty state when no match found.', () => {
-      expect(selectors.isAddOnInstallInProgress(undefined, 'dummy')).toEqual(false);
-      expect(selectors.isAddOnInstallInProgress(null, 'dummy')).toEqual(false);
-      expect(selectors.isAddOnInstallInProgress('string', 'dummy')).toEqual(false);
-      expect(selectors.isAddOnInstallInProgress()).toEqual(false);
-      expect(selectors.isAddOnInstallInProgress(undefined, null)).toEqual(false);
-      expect(selectors.isAddOnInstallInProgress({}, 123)).toEqual(false);
+      expect(selectors.isAddOnInstallInProgress(undefined, 'dummy')).toBe(false);
+      expect(selectors.isAddOnInstallInProgress(null, 'dummy')).toBe(false);
+      expect(selectors.isAddOnInstallInProgress('string', 'dummy')).toBe(false);
+      expect(selectors.isAddOnInstallInProgress()).toBe(false);
+      expect(selectors.isAddOnInstallInProgress(undefined, null)).toBe(false);
+      expect(selectors.isAddOnInstallInProgress({}, 123)).toBe(false);
     });
 
     test('should return correct state data when a match is found.', () => {

@@ -1,4 +1,4 @@
-/* global describe, jest, test, expect */
+
 import React from 'react';
 import { screen, render } from '@testing-library/react';
 import { SUPPORTED_RESOURCE_TYPES } from '../../utils/revisions';

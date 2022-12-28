@@ -1,3 +1,4 @@
+import { safeParse } from '../../../utils/string';
 import { getfileProviderImportsOptionsHandler, IMPORT_FILE_FIELD_MAP, updateFileProviderFormValues } from '../../metaDataUtils/fileUtil';
 
 export default {
@@ -37,6 +38,7 @@ export default {
     if (newValues['/oneToMany'] === 'false') {
       newValues['/pathToMany'] = undefined;
     }
+    newValues['/mockResponse'] = safeParse(newValues['/mockResponse']);
 
     return {
       ...newValues,
@@ -72,6 +74,12 @@ export default {
           'file.json.body',
           'file.lookups',
         ],
+      },
+      {
+        actionId: 'mockResponse',
+        collapsed: true,
+        label: 'Mock response',
+        fields: ['mockResponseSection'],
       },
       {
         collapsed: true,

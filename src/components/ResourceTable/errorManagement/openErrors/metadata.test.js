@@ -1,4 +1,5 @@
-/* global test, expect, describe, jest */
+/* eslint-disable jest/expect-expect */
+
 import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -70,7 +71,7 @@ function expectFunction(header, cell) {
   expect(cell).toEqual(header);
 }
 
-describe("OpenErros table's metadata UI tests", () => {
+describe("openErros table's metadata UI tests", () => {
   test('should verify when error is selected', () => {
     window.HTMLElement.prototype.scrollIntoView = jest.fn();
 

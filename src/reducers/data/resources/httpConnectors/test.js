@@ -1,4 +1,4 @@
-/* global describe, test, expect */
+
 import reducer from '.';
 import actions from '../../../../actions';
 
@@ -33,7 +33,7 @@ describe('http connectors reducer', () => {
       expect(newState).toEqual(expectedState);
     });
   });
-  describe('actionTypes.HTTP_CONNECTORS.RECEIVED_METADATA action', () => {
+  describe('actionTypes.HTTP_CONNECTORS.RECEIVED_METADATA action duplicate', () => {
     test('should update metadata in state in given key location', () => {
       const prevState = {
         application: {},

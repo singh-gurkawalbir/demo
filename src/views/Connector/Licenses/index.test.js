@@ -1,4 +1,3 @@
-/* global describe, test, expect, beforeEach, afterEach, jest */
 import React from 'react';
 import * as reactRedux from 'react-redux';
 import { MemoryRouter } from 'react-router-dom';
@@ -73,7 +72,7 @@ jest.mock('../../../utils/resource', () => ({
   generateNewId: () => 'mock_new_id',
 }));
 
-describe('Licenses test cases', () => {
+describe('licenses test cases', () => {
   runServer();
   let mockDispatchFn;
   let useDispatchSpy;
@@ -121,7 +120,7 @@ describe('Licenses test cases', () => {
     expect(screen.queryByText(/You don't have any licenses/)).toBeInTheDocument();
     await userEvent.click(newLicense);
 
-    expect(mockDispatchFn).toBeCalledWith(actions.resource.patchStaged('mock_new_id', [
+    expect(mockDispatchFn).toHaveBeenCalledWith(actions.resource.patchStaged('mock_new_id', [
       { op: 'add', path: '/_connectorId', value: 'connector_id_1' },
       { op: 'add', path: '/type', value: 'integrationApp' },
     ], SCOPES.VALUE));
@@ -156,7 +155,7 @@ describe('Licenses test cases', () => {
     expect(screen.queryByText(/You don't have any licenses/)).toBeInTheDocument();
     await userEvent.click(newLicense);
 
-    expect(mockDispatchFn).toBeCalledWith(actions.resource.patchStaged('mock_new_id', [
+    expect(mockDispatchFn).toHaveBeenCalledWith(actions.resource.patchStaged('mock_new_id', [
       { op: 'add', path: '/_connectorId', value: 'connector_id_2' },
     ], SCOPES.VALUE));
     expect(history).toEqual([

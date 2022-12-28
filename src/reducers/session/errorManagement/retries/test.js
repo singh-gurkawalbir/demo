@@ -1,4 +1,4 @@
-/* global describe, test, expect */
+
 import reducer, { selectors } from '.';
 import actions from '../../../../actions';
 import { JOB_STATUS, JOB_TYPES } from '../../../../constants';
@@ -147,7 +147,7 @@ describe('Retry list data in EM 2.0 reducers', () => {
 
       expect(currState2).toBe(existingState);
     });
-    test('should update status as received and update retries list ', () => {
+    test('should update status as received and update retries list', () => {
       const prevState = reducer(defaultState, actions.errorManager.retries.request({
         flowId,
         resourceId,
@@ -229,7 +229,7 @@ describe('retryListStatus selector', () => {
     expect(selectors.retryListStatus(existingState, '1234', '5678')).toBeUndefined();
   });
   test('should return retry list status of the passed flowId and resourceId', () => {
-    expect(selectors.retryListStatus(existingState, flowId, resourceId)).toEqual('requested');
+    expect(selectors.retryListStatus(existingState, flowId, resourceId)).toBe('requested');
   });
 });
 
