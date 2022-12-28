@@ -143,7 +143,7 @@ const auth = {
       isExistingSessionInvalid,
     }),
   userAlreadyLoggedIn: () => action(actionTypes.AUTH.USER_ALREADY_LOGGED_IN),
-  clearStore: () => action(actionTypes.AUTH.CLEAR_STORE),
+  clearStore: auth => action(actionTypes.AUTH.CLEAR_STORE, { auth }),
   abortAllSagasAndInitLR: opts => action(actionTypes.AUTH.ABORT_ALL_SAGAS_AND_INIT_LR, { opts }),
   abortAllSagasAndSwitchAcc: accountToSwitchTo => action(actionTypes.AUTH.ABORT_ALL_SAGAS_AND_SWITCH_ACC, { accountToSwitchTo }),
   initSession: opts => action(actionTypes.AUTH.INIT_SESSION, { opts }),
@@ -1437,7 +1437,7 @@ const user = {
       requestCollection: message =>
         resource.requestCollection('shared/ashares', undefined, message),
       leave: id => action(actionTypes.USER.ACCOUNT.LEAVE_REQUEST, { id }),
-      switchTo: ({ id }) => action(actionTypes.USER.ACCOUNT.SWITCH, { id }),
+      switchTo: ({ id }) => action(actionTypes.USER.ACCOUNT.SWITCH, { preferences: { defaultAShareId: id, environment: 'production' } }),
       addLinkedConnectionId: connectionId =>
         action(actionTypes.USER.ACCOUNT.ADD_SUITESCRIPT_LINKED_CONNECTION, {
           connectionId,
@@ -1744,7 +1744,7 @@ const searchCriteria = {
 };
 // #region DynaForm Actions
 const resourceForm = {
-  init: (resourceType, resourceId, isNew, skipCommit, flowId, initData, integrationId, fieldMeta) =>
+  init: (resourceType, resourceId, isNew, skipCommit, flowId, initData, integrationId, fieldMeta, parentConnectionId) =>
     action(actionTypes.RESOURCE_FORM.INIT, {
       resourceType,
       resourceId,
@@ -1754,6 +1754,7 @@ const resourceForm = {
       initData,
       integrationId,
       fieldMeta,
+      parentConnectionId,
     }),
   initComplete: (
     resourceType,

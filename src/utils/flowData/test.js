@@ -411,12 +411,24 @@ describe('getFlowUpdatesFromPatch util', () => {
       },
     ];
 
+    const lookupOrderChange = [
+      {
+        op: 'replace',
+        path: '/pageProcessors/0/_exportId',
+        value: 'expId1',
+      }, {
+        op: 'replace',
+        path: '/pageProcessors/1/_exportId',
+        value: 'expId0',
+      },
+    ];
     const expectedOutput = {
       sequence: true,
       responseMapping: false,
     };
 
     expect(getFlowUpdatesFromPatch(ppOrderChange)).toEqual(expectedOutput);
+    expect(getFlowUpdatesFromPatch(lookupOrderChange)).toEqual(expectedOutput);
     expect(getFlowUpdatesFromPatch(pgOrderChange)).toEqual(expectedOutput);
     expect(getFlowUpdatesFromPatch(pgOrderChangeWithSkipRetries)).toEqual(expectedOutput);
   });

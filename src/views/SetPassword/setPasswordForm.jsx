@@ -18,6 +18,8 @@ import ArrowPopper from '../../components/ArrowPopper';
 import TooltipContent from '../../components/TooltipContent';
 import CloseIcon from '../../components/icons/CloseIcon';
 import CheckMarkIcon from '../../components/icons/CheckmarkIcon';
+import FieldMessage from '../../components/DynaForm/fields/FieldMessage';
+import messageStore from '../../utils/messageStore';
 
 const useStyles = makeStyles(theme => ({
   submit: {
@@ -123,6 +125,7 @@ export default function SetPassword() {
   const [anchorEl, setAnchorEl] = useState(null);
   const open = !!anchorEl;
   const [showErr, setShowErr] = useState(false);
+  const [showError, setShowError] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [containDigits, setContainDigits] = useState(false);
   const [containCapitalLetter, setContainCapitalLetter] = useState(false);
@@ -152,6 +155,7 @@ export default function SetPassword() {
     return errorMessage;
   });
   const handleOnChangePassword = useCallback(e => {
+    setShowError(false);
     const password = e.target.value;
     const isValid = /[A-Z]/.test(password) && /\d/.test(password) && password.length > 9 && password.length < 256;
 
@@ -172,7 +176,9 @@ export default function SetPassword() {
     e.preventDefault();
     const password = e?.target?.password?.value || e?.target?.elements?.password?.value;
 
-    if (!showErr) {
+    if (!password) {
+      setShowError(true);
+    } else if (!showErr) {
       handleResetPassword(password);
     }
   }, [handleResetPassword, showErr]);
@@ -194,10 +200,9 @@ export default function SetPassword() {
           data-private
           data-test="password"
           id="password"
-          required
           variant="filled"
           type={showPassword ? 'text' : 'password'}
-          placeholder="Password*"
+          placeholder="Enter new password*"
           onChange={handleOnChangePassword}
           onFocus={handleFocusIn}
           onBlur={handleFocusOut}
@@ -224,6 +229,8 @@ export default function SetPassword() {
           }}
 
       />
+        <FieldMessage errorMessages={showError ? messageStore('NEW_PASSWORD_EMPTY') : null} />
+
         <div className={classes.passwordStrongSteps}>
           <Typography className={clsx(classes.passwordListItem, {[classes.redText]: showErr})}>To help protect your account, choose a password that you haven’t used before.</Typography>
           <Typography className={classes.passwordListItem} >Make sure your password:</Typography>

@@ -266,10 +266,7 @@ export function generateIOFilterExpression(rules, context) {
               lhs = Number.isNaN(parseFloat(rr.data.lhs.value)) ? rr.data.lhs.value : parseFloat(rr.data.lhs.value);
               break;
             case 'boolean':
-              lhs =
-                  lhs &&
-                  lhs.toString() &&
-                  lhs.toString().toLowerCase() === 'true';
+              lhs = (lhs?.toString()?.toLowerCase() === 'true') || (lhs?.toString()?.toLowerCase() === 'false' ? false : lhs);
               break;
             default:
           }
@@ -314,10 +311,7 @@ export function generateIOFilterExpression(rules, context) {
                 rhs = Number.isNaN(parseFloat(rr.data.rhs.value)) ? rr.data.rhs.value : parseFloat(rr.data.rhs.value);
                 break;
               case 'boolean':
-                rhs =
-                    rhs &&
-                    rhs.toString() &&
-                    rhs.toString().toLowerCase() === 'true';
+                rhs = (rhs?.toString()?.toLowerCase() === 'true') || (rhs?.toString()?.toLowerCase() === 'false' ? false : rhs);
                 break;
               default:
             }

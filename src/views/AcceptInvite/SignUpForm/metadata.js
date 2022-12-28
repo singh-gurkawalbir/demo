@@ -1,4 +1,5 @@
 import { EMAIL_REGEX } from '../../../constants';
+import messageStore from '../../../utils/messageStore';
 
 export default function getFieldMeta({email, token, _csrf, skipPassword} = {}) {
   const fieldMeta = {
@@ -59,17 +60,13 @@ export default function getFieldMeta({email, token, _csrf, skipPassword} = {}) {
           id: 'password',
           name: 'password',
           required: true,
-          type: 'text',
+          type: 'signinpassword',
           inputType: 'password',
+          errorMessage: messageStore('NEW_PASSWORD_EMPTY'),
           placeholder: 'Enter new password *',
           noApi: true,
           validWhen: {
             custom: ({value, allFields}) => {
-              const validPassword = /\d/.test(value) && /[a-z]/.test(value) && /[A-Z]/.test(value) && value.length > 10 && value.length < 256;
-
-              if (!validPassword) {
-                return 'Password should contain at least one uppercase, one number, is at least 10 characters long and not greater than 256 characters.';
-              }
               const confirmPassword = allFields.find(f => f.id === 'confirmPassword');
 
               if (confirmPassword.value && value !== confirmPassword.value) return 'Passwords should match';
@@ -82,17 +79,13 @@ export default function getFieldMeta({email, token, _csrf, skipPassword} = {}) {
           id: 'confirmPassword',
           required: true,
           name: 'confirmPassword',
-          type: 'text',
+          type: 'signinpassword',
           inputType: 'password',
+          errorMessage: messageStore('CONFIRM_NEW_PASSWORD_EMPTY'),
           placeholder: 'Confirm new password *',
           noApi: true,
           validWhen: {
             custom: ({value, allFields}) => {
-              const validPassword = /\d/.test(value) && /[a-z]/.test(value) && /[A-Z]/.test(value) && value.length > 10 && value.length < 256;
-
-              if (!validPassword) {
-                return 'Password should contain at least one uppercase, one number, is at least 10 characters long and not greater than 256 characters.';
-              }
               const password = allFields.find(f => f.id === 'password');
 
               if (password.value && value !== password.value) return 'Passwords should match';

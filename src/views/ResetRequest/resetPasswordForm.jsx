@@ -18,6 +18,8 @@ import ArrowPopper from '../../components/ArrowPopper';
 import TooltipContent from '../../components/TooltipContent';
 import CheckMarkIcon from '../../components/icons/CheckmarkIcon';
 import CloseIcon from '../../components/icons/CloseIcon';
+import FieldMessage from '../../components/DynaForm/fields/FieldMessage';
+import messageStore from '../../utils/messageStore';
 
 const useStyles = makeStyles(theme => ({
   submit: {
@@ -129,6 +131,7 @@ export default function ResetPassword() {
   const [anchorEl, setAnchorEl] = useState(null);
   const open = !!anchorEl;
   const [showErr, setShowErr] = useState(false);
+  const [showError, setShowError] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [containDigits, setContainDigits] = useState(false);
   const [containCapitalLetter, setContainCapitalLetter] = useState(false);
@@ -142,7 +145,6 @@ export default function ResetPassword() {
   const showErrMsg = isResetPasswordStatus === 'failed';
 
   const resetPasswordMsg = useSelector(state => selectors.requestResetPasswordMsg(state));
-
   const handleFocusIn = e => {
     setAnchorEl(e.currentTarget);
   };
@@ -169,6 +171,7 @@ export default function ResetPassword() {
   });
 
   const handleOnChangePassword = useCallback(e => {
+    setShowError(false);
     const password = e.target.value;
     const isValid = /[A-Z]/.test(password) && /\d/.test(password) && password.length > 9 && password.length < 256;
 
@@ -182,7 +185,9 @@ export default function ResetPassword() {
     e.preventDefault();
     const password = e?.target?.password?.value || e?.target?.elements?.password?.value;
 
-    if (!showErr) {
+    if (!password) {
+      setShowError(true);
+    } else if (!showErr) {
       handleResetPassword(password);
     }
   }, [handleResetPassword, showErr]);
@@ -200,20 +205,20 @@ export default function ResetPassword() {
       </Typography>
       )}
       <form onSubmit={handleOnSubmit}>
-        <TextField
-          data-private
-          data-test="password"
-          id="password"
-          variant="filled"
-          required
-          type={showPassword ? 'text' : 'password'}
-          placeholder="Password*"
-          onChange={handleOnChangePassword}
-          className={classes.textField}
-          onFocus={handleFocusIn}
-          onBlur={handleFocusOut}
-          InputProps={{
-            endAdornment: (true) &&
+        <div>
+          <TextField
+            data-private
+            data-test="password"
+            id="password"
+            variant="filled"
+            type={showPassword ? 'text' : 'password'}
+            placeholder="Enter new password*"
+            onChange={handleOnChangePassword}
+            className={classes.textField}
+            onFocus={handleFocusIn}
+            onBlur={handleFocusOut}
+            InputProps={{
+              endAdornment: (true) &&
               (
                 <InputAdornment position="end">
                     {showPassword ? (
@@ -231,9 +236,30 @@ export default function ResetPassword() {
 
                 </InputAdornment>
               ),
-            ref: inputFieldRef,
-          }}
+              ref: inputFieldRef,
+            }}
             />
+          <FieldMessage errorMessages={showError ? messageStore('NEW_PASSWORD_EMPTY') : null} />
+        </div>
+        <div className={classes.passwordStrongSteps}>
+          <Typography className={clsx(classes.passwordListItem, {[classes.redText]: showErr})}>To help protect your account, choose a password that you haven’t used before.</Typography>
+          <Typography className={classes.passwordListItem} >Make sure your password:</Typography>
+          <div className={classes.passwordListItem}>
+            {containCapitalLetter ? <CheckMarkIcon className={clsx(classes.icon, classes.successIcon)} />
+              : <CloseIcon className={clsx(classes.icon, classes.errorIcon)} />}
+            <Typography className={clsx(classes.passwordListItemText, {[classes.passwordListItemTextError]: !containCapitalLetter})}>Contains at least one capital letter</Typography>
+          </div>
+          <div className={classes.passwordListItem}>
+            {containDigits ? <CheckMarkIcon className={clsx(classes.icon, classes.successIcon)} />
+              : <CloseIcon className={clsx(classes.icon, classes.errorIcon)} />}
+            <Typography className={clsx(classes.passwordListItemText, {[classes.passwordListItemTextError]: !containDigits})}>Contains at least one number</Typography>
+          </div>
+          <div className={classes.passwordListItem}>
+            {validLength ? <CheckMarkIcon className={clsx(classes.icon, classes.successIcon)} />
+              : <CloseIcon className={clsx(classes.icon, classes.errorIcon)} />}
+            <Typography className={clsx(classes.passwordListItemText, {[classes.passwordListItemTextError]: !validLength})}>Is at least 10 characters long and not greater than 256 characters.</Typography>
+          </div>
+        </div>
         <ArrowPopper
           id="pageInfo"
           open={open}

@@ -237,21 +237,10 @@ export function* changeEmail({ updatedEmail }) {
   }
 }
 
-export function* switchAccount({ id }) {
-  const userPreferences = yield select(selectors.userPreferences);
+export function* switchAccount({ preferences }) {
+  yield call(updatePreferences);
 
-  if (userPreferences.defaultAShareId !== id) {
-    // lazily update preferences when reinitializing with the new session
-    // because abortAllSagasAndReset will kill the preferences call
-    return yield put(actions.auth.abortAllSagasAndSwitchAcc(id));
-  }
-
-  yield put(
-    actions.user.preferences.update({
-      defaultAShareId: id,
-      environment: 'production',
-    })
-  );
+  return yield put(actions.auth.abortAllSagasAndSwitchAcc(preferences?.defaultAShareId));
 }
 
 export function* leaveAccount({ id }) {

@@ -1246,10 +1246,74 @@ describe('sampleData selectors', () => {
     });
   });
 
+  describe('sampleDataError', () => {
+    test('should return undefined incase of invalid args', () => {
+      expect(selectors.sampleDataError()).toBeUndefined();
+      expect(selectors.sampleDataError({}, 123)).toBeUndefined();
+      expect(selectors.sampleDataError({123: {data: '123'}}, 123)).toBeUndefined();
+    });
+    test('should return undefined if the resource has no error for preview', () => {
+      const state = {
+        123: {
+          preview: {
+            status: 'received',
+            data: {
+              parse: [{
+                name: 'Bob',
+                age: 23,
+              }],
+              raw: [{
+                url: 'https://api.mocki.io/v1/awe',
+                statusCode: 200,
+                body: '{"name":"Bob","age":23}',
+              }],
+              request: [{
+                url: 'https://api.mocki.io/v1/awe',
+                method: 'GET',
+              }]},
+          },
+        },
+        456: { preview: { status: 'received', data: {} } },
+        789: { preview: { status: 'received', data: {} } },
+        111: { preview: { status: 'requested'} },
+      };
+
+      expect(selectors.sampleDataError(state, 123)).toBeUndefined();
+      expect(selectors.sampleDataError(state, 456)).toBeUndefined();
+      expect(selectors.sampleDataError(state, 111)).toBeUndefined();
+    });
+    test('should return error when the resource has preview error', () => {
+      const error = [{
+        classification: 'value',
+        code: 'cannot_evaluate_static_lookup',
+        message: 'Cannot evaluate the static lookup: "lookupName" using searchKey: "test".',
+        occurredAt: 1671780841390,
+        resolved: false,
+        source: 'application',
+      }];
+      const state = {
+        123: {
+          preview: {
+            status: 'error',
+            error,
+            data: {
+              request: [{
+                url: 'https://api.mocki.io/v1/awe',
+                method: 'GET',
+              }],
+            },
+          },
+        },
+      };
+
+      expect(selectors.sampleDataError(state, 123)).toEqual(error);
+    });
+  });
   describe('getAllParsableErrors', () => {
     test('should return all parsable errors when there are no stages in the response, this scenario occurs when IO errors out', () => {
       const error = {
         errors: [{field: 'http', code: 'missing_required_field', message: 'http subschema not defined'}],
+        stages: null,
       };
       const initialState = {
         [resourceId]: { preview: {status: 'requested'} },
@@ -1263,6 +1327,40 @@ describe('sampleData selectors', () => {
       expect(selectors.getAllParsableErrors(newState, resourceId))
         .toEqual([{field: 'http', code: 'missing_required_field', message: 'http subschema not defined'}]);
     });
+    test('should return errors when there are errors with request but no response returned from the connection', () => {
+      const previewError = {
+        errors: [{
+          classification: 'value',
+          code: 'cannot_evaluate_static_lookup',
+          message: 'Cannot evaluate the static lookup: "lookupName" using searchKey: "test".',
+          occurredAt: 1671780841390,
+          resolved: false,
+          source: 'application',
+        }],
+
+        stages: [{
+          name: 'request',
+          data: [{
+            body: { name: 'test', email: 'test', Name: '' },
+            headers: { 'content-type': 'application/json', accept: 'application/json'},
+            method: 'POST',
+            url: 'http://demo0822471.mockable.io/abcd',
+          }],
+        }],
+      };
+
+      const initialState = {
+        [resourceId]: { preview: {status: 'requested'} },
+      };
+
+      const newState = reducer(
+        initialState,
+        actions.resourceFormSampleData.receivedPreviewError(resourceId, previewError)
+      );
+
+      expect(selectors.getAllParsableErrors(newState, resourceId)).toEqual(previewError.errors);
+    });
+
     test('should return no errors when there are stages in the response, this scenario occurs when the endpoint errors out', () => {
       const error = {
         errors: [{
@@ -1315,9 +1413,9 @@ describe('sampleData selectors', () => {
             }]},
         },
       },
-      456: { status: 'received', data: {} },
-      789: { status: 'received', data: {} },
-      111: { status: 'requested'},
+      456: { preview: { status: 'received', data: {} } },
+      789: { preview: { status: 'received', data: {} } },
+      111: { preview: { status: 'requested'} },
     };
 
     test('should return empty list if there is no sample data for the passed resourceId', () => {

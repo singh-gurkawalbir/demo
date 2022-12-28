@@ -668,7 +668,16 @@ selectors.mkTileApplications = () => {
           const connection = connections.find(c => c._id === r);
 
           if (connection) {
-            applications.push(connection.assistant || connection.rdbms?.type || connection.http?.formType || connection.type);
+            if (connection.assistant) {
+              applications.push(connection.assistant);
+            } else if (getHttpConnector(connection?.http?._httpConnectorId)) {
+              const apps = applicationsList();
+              const app = apps.find(a => a._httpConnectorId === connection?.http?._httpConnectorId) || {};
+
+              applications.push(app.id || 'http');
+            } else {
+              applications.push(connection.rdbms?.type || connection?.http?.formType || connection.type);
+            }
           }
         });
 

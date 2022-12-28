@@ -103,9 +103,6 @@ function DynaText(props) {
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const match = isApplicationPlaceholder ? useRouteMatch() : {};
   const { id: resourceId, resourceType } = match.params || {};
-  const resource = useSelector(state =>
-    selectors.resource(state, resourceType, resourceId)
-  );
   let dataResourceType;
   const { merged } =
   useSelectorMemo(
@@ -117,7 +114,7 @@ function DynaText(props) {
   if (resourceType === 'connections') {
     dataResourceType = 'connection';
   } else {
-    dataResourceType = (resource?.isLookup === true) ? 'lookup' : resourceType?.slice(0, 6);
+    dataResourceType = (merged?.isLookup === true) ? 'lookup' : resourceType?.slice(0, 6);
   }
   const applicationType = useSelector(state => selectors.applicationType(state, resourceType, resourceId));
   const applicationPlaceholder = isApplicationPlaceholder ? `${applicationType} ${dataResourceType}` : '';
@@ -190,7 +187,7 @@ function DynaText(props) {
     <FormControl className={classes.dynaTextFormControl}>
       <div className={classes.dynaTextLabelWrapper}>
         <FormLabel htmlFor={id} required={required} error={!isValid}>
-          {(merged?.http?._httpConnectorId || merged?.isHttpConnector || merged?._httpConnectorId) && isLabelUpdate ? updatedLabel : label}
+          {(merged?.http?._httpConnectorId || merged?.isHttpConnector || merged?._httpConnectorId || merged?.http?._httpConnectorResourceId) && isLabelUpdate ? updatedLabel : label}
         </FormLabel>
         <FieldHelp {...props} />
         <HelpLink helpLink={props.helpLink} />
@@ -204,7 +201,7 @@ function DynaText(props) {
         name={name}
         InputProps={InputProps}
         type={inputType}
-        placeholder={isApplicationPlaceholder && (merged?.http?._httpConnectorId || merged?.isHttpConnector || merged?._httpConnectorId) ? applicationPlaceholder : placeholder}
+        placeholder={isApplicationPlaceholder && (merged?.http?._httpConnectorId || merged?.isHttpConnector || merged?._httpConnectorId || merged?.http?._httpConnectorResourceId) ? applicationPlaceholder : placeholder}
         disabled={disabled || disableText}
         multiline={multiline}
         rowsMax={rowsMax}

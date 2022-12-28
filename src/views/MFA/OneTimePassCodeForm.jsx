@@ -56,6 +56,7 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     justifyContent: 'space-between',
     marginTop: theme.spacing(1),
+    marginBottom: theme.spacing(2),
   },
   flexRight: {
     flexDirection: 'row-reverse',
