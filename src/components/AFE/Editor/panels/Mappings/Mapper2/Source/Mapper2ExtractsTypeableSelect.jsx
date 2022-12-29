@@ -180,6 +180,7 @@ export default function Mapper2ExtractsTypeableSelect({
     if (!isFocused) return;
     dispatch(actions.mapping.v2.patchExtractsFilter(value, propValue));
   });
+  const [cursorPosition, setCursorPosition] = useState('');
   const [isTruncated, setIsTruncated] = useState(false);
   const inputFieldRef = useRef();
   const [dataTypeSelector, selectDataType] = useState(false);
@@ -224,6 +225,10 @@ export default function Mapper2ExtractsTypeableSelect({
     setIsTruncated(inputFieldRef.current.offsetWidth < inputFieldRef.current.scrollWidth);
   }, []);
 
+  const handleOnClick = useCallback(event => {
+    setCursorPosition(event.target.selectionStart);
+  }, [setCursorPosition]);
+
   const hideSourceDropdown = isDynamicLookup || isHardCodedValue || isHandlebarExp;
 
   return (
@@ -260,6 +265,7 @@ export default function Mapper2ExtractsTypeableSelect({
           disabled={disabled}
           multiline={isFocused}
           placeholder={disabled ? '' : 'Source field'}
+          onClick={handleOnClick}
           InputProps={{
             endAdornment: !hideSourceDropdown &&
               (
@@ -319,6 +325,7 @@ export default function Mapper2ExtractsTypeableSelect({
             patchField={patchField}
             setInputValue={setInputValue}
             setIsFocused={setIsFocused}
+            cursorPosition={cursorPosition}
           />
         )}
       </ArrowPopper>
