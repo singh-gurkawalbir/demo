@@ -102,6 +102,7 @@ href="/marketplace"><u>Check out our Marketplace</u></a> to jumpstart your  inte
   MFA_USER_OTP_INFO_FOR_TRUSTED_NUMBER_OF_DAYS: 'Your account owner or admin has required you to sign in using multifactor authentication (MFA) after {{noOfDays}} days. Enter your passcode to verify your account.',
   NEW_PASSWORD_EMPTY: 'New password is required',
   CONFIRM_NEW_PASSWORD_EMPTY: 'Confirm new password is required',
+  INVALID_EMAIL: 'Please enter a valid email address.',
   EMAIL_EMPTY: 'Email is required.',
   // #endregion
   // #region EM2.0 messages

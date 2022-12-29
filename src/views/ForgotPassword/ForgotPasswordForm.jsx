@@ -9,6 +9,8 @@ import { TextButton, FilledButton} from '../../components/Buttons';
 import getImageUrl from '../../utils/image';
 import FieldMessage from '../../components/DynaForm/fields/FieldMessage';
 import messageStore from '../../utils/messageStore';
+import Spinner from '../../components/Spinner';
+import { EMAIL_REGEX } from '../../constants';
 
 const path = getImageUrl('images/googlelogo.png');
 
@@ -63,19 +65,6 @@ const useStyles = makeStyles(theme => ({
     fontSize: 16,
     backgroundColor: theme.palette.background.paper,
   },
-  ssoBtn: {
-    borderRadius: 4,
-    width: '100%',
-    backgroundSize: theme.spacing(2),
-    height: 38,
-    fontSize: 16,
-    margin: theme.spacing(0, 0, 2, 0),
-    backgroundColor: theme.palette.background.paper,
-    display: 'flex',
-    justifyContent: 'space-around',
-    paddingLeft: theme.spacing(5),
-    paddingRight: theme.spacing(16),
-  },
   or: {
     display: 'flex',
     alignItems: 'center',
@@ -106,14 +95,16 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
   },
 }));
-
 export default function ForgotPassword({setShowError, email}) {
   const dispatch = useDispatch();
   const classes = useStyles();
-  const [userEmail, SetuserEmail] = useState(email || '');
-  const [showError, SetshowError] = useState(false);
+  const [userEmail, setUserEmail] = useState(email || '');
+  const [showErr, setShowErr] = useState(false);
+  const [showInvalidEmailError, setShowInvalidEmailError] = useState(false);
+  const [showErrorMsg, setShowErrorMsg] = useState('EMAIL_EMPTY');
   const resetRequestStatus = useSelector(state => selectors.requestResetStatus(state));
   const resetRequestErrorMsg = useSelector(state => selectors.requestResetError(state));
+  const isAuthenticating = resetRequestStatus === 'requesting';
 
   useEffect(() => {
     if (resetRequestStatus === 'success') {
@@ -122,6 +113,7 @@ export default function ForgotPassword({setShowError, email}) {
       setShowError(true);
     }
   }, [resetRequestStatus, resetRequestErrorMsg, setShowError]);
+  const validateEmail = email => email.match(EMAIL_REGEX);
 
   const handleAuthentication = useCallback(userEmail => {
     dispatch(actions.auth.resetRequest(userEmail));
@@ -131,15 +123,22 @@ export default function ForgotPassword({setShowError, email}) {
     const email = e?.target?.email?.value || e?.target?.elements?.email?.value;
 
     if (!email) {
-      SetshowError(true);
+      setShowErrorMsg('EMAIL_EMPTY');
+      setShowErr(true);
     } else {
-      SetshowError(false);
-      handleAuthentication(email);
+      if (validateEmail(email)) {
+        setShowInvalidEmailError(false);
+        handleAuthentication(email);
+      } else {
+        setShowErrorMsg('INVALID_EMAIL');
+        setShowInvalidEmailError(true);
+      }
+      setShowErr(false);
     }
   }, [handleAuthentication]);
   const handleOnChangeEmail = useCallback(e => {
-    SetshowError(false);
-    SetuserEmail(e.target.value);
+    setShowErr(false);
+    setUserEmail(e.target.value);
   }, []);
 
   return (
@@ -149,21 +148,24 @@ export default function ForgotPassword({setShowError, email}) {
           data-private
           data-test="email"
           id="email"
-          type="email"
           variant="filled"
           placeholder="Email*"
           value={userEmail}
           onChange={handleOnChangeEmail}
-          className={clsx(classes.textField, {[classes.errorField]: showError})}
+          className={clsx(classes.textField, {[classes.errorField]: showErr || showInvalidEmailError})}
         />
-        <FieldMessage errorMessages={showError ? messageStore('EMAIL_EMPTY') : ''} />
-        <FilledButton
-          data-test="submit"
-          type="submit"
-          className={classes.submit}
-          value="Submit">
-          Submit
-        </FilledButton>
+        <FieldMessage errorMessages={showErr || showInvalidEmailError ? messageStore(showErrorMsg) : ''} />
+
+        { isAuthenticating ? <Spinner />
+          : (
+            <FilledButton
+              data-test="submit"
+              type="submit"
+              className={classes.submit}
+              value="Submit">
+              Submit
+            </FilledButton>
+          )}
         <TextButton
           href="/signin"
           data-test="cancel"
