@@ -1,9 +1,10 @@
 import { cloneDeep } from 'lodash';
 import { applicationsList } from '../../../constants/applications';
+import { CONNECTORS_TO_IGNORE } from '../../../constants';
 
 export default {
   init: (fieldMeta, resource, flow, httpConnectorData, application) => {
-    const applications = applicationsList();
+    const applications = applicationsList().filter(app => !CONNECTORS_TO_IGNORE.includes(app.id));
     const app = applications.find(a => a.name === application) || {};
 
     if (app.assistant && !app._httpConnectorId) {
