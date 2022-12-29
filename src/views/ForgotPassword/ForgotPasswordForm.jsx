@@ -10,6 +10,7 @@ import getImageUrl from '../../utils/image';
 import FieldMessage from '../../components/DynaForm/fields/FieldMessage';
 import messageStore from '../../utils/messageStore';
 import Spinner from '../../components/Spinner';
+import { EMAIL_REGEX } from '../../constants';
 
 const path = getImageUrl('images/googlelogo.png');
 
@@ -97,10 +98,10 @@ const useStyles = makeStyles(theme => ({
 export default function ForgotPassword({setShowError, email}) {
   const dispatch = useDispatch();
   const classes = useStyles();
-  const [userEmail, SetuserEmail] = useState(email || '');
-  const [showError, SetshowError] = useState(false);
-  const [showInvalidEmailError, SetshowInvalidEmailError] = useState(false);
-  const [showErrorMsg, SetshowErrorMsg] = useState('EMAIL_EMPTY');
+  const [userEmail, setUserEmail] = useState(email || '');
+  const [showErr, setShowErr] = useState(false);
+  const [showInvalidEmailError, setShowInvalidEmailError] = useState(false);
+  const [showErrorMsg, setShowErrorMsg] = useState('EMAIL_EMPTY');
   const resetRequestStatus = useSelector(state => selectors.requestResetStatus(state));
   const resetRequestErrorMsg = useSelector(state => selectors.requestResetError(state));
   const isAuthenticating = resetRequestStatus === 'requesting';
@@ -112,9 +113,7 @@ export default function ForgotPassword({setShowError, email}) {
       setShowError(true);
     }
   }, [resetRequestStatus, resetRequestErrorMsg, setShowError]);
-  const validateEmail = email =>
-    // eslint-disable-next-line no-useless-escape
-    email.match(/^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/);
+  const validateEmail = email => email.match(EMAIL_REGEX);
 
   const handleAuthentication = useCallback(userEmail => {
     dispatch(actions.auth.resetRequest(userEmail));
@@ -124,22 +123,22 @@ export default function ForgotPassword({setShowError, email}) {
     const email = e?.target?.email?.value || e?.target?.elements?.email?.value;
 
     if (!email) {
-      SetshowErrorMsg('EMAIL_EMPTY');
-      SetshowError(true);
+      setShowErrorMsg('EMAIL_EMPTY');
+      setShowErr(true);
     } else {
       if (validateEmail(email)) {
-        SetshowInvalidEmailError(false);
+        setShowInvalidEmailError(false);
         handleAuthentication(email);
       } else {
-        SetshowErrorMsg('INVALID_EMAIL');
-        SetshowInvalidEmailError(true);
+        setShowErrorMsg('INVALID_EMAIL');
+        setShowInvalidEmailError(true);
       }
-      SetshowError(false);
+      setShowErr(false);
     }
   }, [handleAuthentication]);
   const handleOnChangeEmail = useCallback(e => {
-    SetshowError(false);
-    SetuserEmail(e.target.value);
+    setShowErr(false);
+    setUserEmail(e.target.value);
   }, []);
 
   return (
@@ -153,9 +152,9 @@ export default function ForgotPassword({setShowError, email}) {
           placeholder="Email*"
           value={userEmail}
           onChange={handleOnChangeEmail}
-          className={clsx(classes.textField, {[classes.errorField]: showError || showInvalidEmailError})}
+          className={clsx(classes.textField, {[classes.errorField]: showErr || showInvalidEmailError})}
         />
-        <FieldMessage errorMessages={showError || showInvalidEmailError ? messageStore(showErrorMsg) : ''} />
+        <FieldMessage errorMessages={showErr || showInvalidEmailError ? messageStore(showErrorMsg) : ''} />
 
         { isAuthenticating ? <Spinner />
           : (
