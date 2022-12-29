@@ -9,6 +9,7 @@ import { TextButton, FilledButton} from '../../components/Buttons';
 import getImageUrl from '../../utils/image';
 import FieldMessage from '../../components/DynaForm/fields/FieldMessage';
 import messageStore from '../../utils/messageStore';
+import Spinner from '../../components/Spinner';
 
 const path = getImageUrl('images/googlelogo.png');
 
@@ -63,19 +64,6 @@ const useStyles = makeStyles(theme => ({
     fontSize: 16,
     backgroundColor: theme.palette.background.paper,
   },
-  ssoBtn: {
-    borderRadius: 4,
-    width: '100%',
-    backgroundSize: theme.spacing(2),
-    height: 38,
-    fontSize: 16,
-    margin: theme.spacing(0, 0, 2, 0),
-    backgroundColor: theme.palette.background.paper,
-    display: 'flex',
-    justifyContent: 'space-around',
-    paddingLeft: theme.spacing(5),
-    paddingRight: theme.spacing(16),
-  },
   or: {
     display: 'flex',
     alignItems: 'center',
@@ -106,14 +94,16 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
   },
 }));
-
 export default function ForgotPassword({setShowError, email}) {
   const dispatch = useDispatch();
   const classes = useStyles();
   const [userEmail, SetuserEmail] = useState(email || '');
   const [showError, SetshowError] = useState(false);
+  const [showInvalidEmailError, SetshowInvalidEmailError] = useState(false);
+  const [showErrorMsg, SetshowErrorMsg] = useState('EMAIL_EMPTY');
   const resetRequestStatus = useSelector(state => selectors.requestResetStatus(state));
   const resetRequestErrorMsg = useSelector(state => selectors.requestResetError(state));
+  const isAuthenticating = resetRequestStatus === 'requesting';
 
   useEffect(() => {
     if (resetRequestStatus === 'success') {
@@ -122,6 +112,9 @@ export default function ForgotPassword({setShowError, email}) {
       setShowError(true);
     }
   }, [resetRequestStatus, resetRequestErrorMsg, setShowError]);
+  const validateEmail = email =>
+    // eslint-disable-next-line no-useless-escape
+    email.match(/^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/);
 
   const handleAuthentication = useCallback(userEmail => {
     dispatch(actions.auth.resetRequest(userEmail));
@@ -131,10 +124,17 @@ export default function ForgotPassword({setShowError, email}) {
     const email = e?.target?.email?.value || e?.target?.elements?.email?.value;
 
     if (!email) {
+      SetshowErrorMsg('EMAIL_EMPTY');
       SetshowError(true);
     } else {
+      if (validateEmail(email)) {
+        SetshowInvalidEmailError(false);
+        handleAuthentication(email);
+      } else {
+        SetshowErrorMsg('INVALID_EMAIL');
+        SetshowInvalidEmailError(true);
+      }
       SetshowError(false);
-      handleAuthentication(email);
     }
   }, [handleAuthentication]);
   const handleOnChangeEmail = useCallback(e => {
@@ -149,21 +149,24 @@ export default function ForgotPassword({setShowError, email}) {
           data-private
           data-test="email"
           id="email"
-          type="email"
           variant="filled"
           placeholder="Email*"
           value={userEmail}
           onChange={handleOnChangeEmail}
-          className={clsx(classes.textField, {[classes.errorField]: showError})}
+          className={clsx(classes.textField, {[classes.errorField]: showError || showInvalidEmailError})}
         />
-        <FieldMessage errorMessages={showError ? messageStore('EMAIL_EMPTY') : ''} />
-        <FilledButton
-          data-test="submit"
-          type="submit"
-          className={classes.submit}
-          value="Submit">
-          Submit
-        </FilledButton>
+        <FieldMessage errorMessages={showError || showInvalidEmailError ? messageStore(showErrorMsg) : ''} />
+
+        { isAuthenticating ? <Spinner />
+          : (
+            <FilledButton
+              data-test="submit"
+              type="submit"
+              className={classes.submit}
+              value="Submit">
+              Submit
+            </FilledButton>
+          )}
         <TextButton
           href="/signin"
           data-test="cancel"
