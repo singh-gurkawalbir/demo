@@ -108,6 +108,14 @@ export function convertIOFilterExpression(filterExpression = [], context) {
                 }
               } while (!dataTypeFound);
 
+              if (i === 2 && exp[i][0].toLowerCase() === 'epochtime') {
+                temp.type = 'value';
+                temp.value = exp[i]?.[1];
+                temp.dataType = 'epochtime';
+                // eslint-disable-next-line no-continue
+                continue;
+              }
+
               temp.dataType = tempExp[0].toLowerCase();
               temp.type = 'field';
               [, [, temp.field]] = tempExp;
@@ -312,6 +320,9 @@ export function generateIOFilterExpression(rules, context) {
                 break;
               case 'boolean':
                 rhs = (rhs?.toString()?.toLowerCase() === 'true') || (rhs?.toString()?.toLowerCase() === 'false' ? false : rhs);
+                break;
+              case 'epochtime':
+                rhs = ['epochtime', rhs];
                 break;
               default:
             }
