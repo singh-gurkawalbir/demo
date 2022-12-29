@@ -1,4 +1,4 @@
-/* global describe, test, expect */
+
 import defaulty from './salesforce';
 
 describe('getLookupMetadata component Test cases', () => {
@@ -68,7 +68,7 @@ describe('getLookupMetadata component Test cases', () => {
 
     const whereClauseTextRes = response.optionsHandler('_whereClauseText', fields);
 
-    expect(whereClauseTextRes).toEqual(null);
+    expect(whereClauseTextRes).toBeNull();
     expect(fields).toEqual([
       { id: '_sObjectType', value: 'sObjectType' },
       { id: '_whereClause', value: 'whereClause' },
@@ -95,6 +95,6 @@ describe('getLookupMetadata component Test cases', () => {
 
     const dummyRes = response.optionsHandler('_resultData', []);
 
-    expect(dummyRes).toEqual(null);
+    expect(dummyRes).toBeNull();
   });
 });

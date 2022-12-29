@@ -1,6 +1,7 @@
 module.exports = {
   bail: false,
   testRegex: undefined,
+  testTimeout: 50000,
   roots: [
     '<rootDir>/src',
   ],

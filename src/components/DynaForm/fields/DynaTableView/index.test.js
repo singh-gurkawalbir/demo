@@ -1,4 +1,4 @@
-/* global describe, test, expect, jest */
+
 import React from 'react';
 import {
   screen,
@@ -41,7 +41,7 @@ jest.mock('./DynaTable', () => ({
   ...jest.requireActual('./DynaTable'),
   default: () => <div>DynaTable</div>,
 }));
-describe('DynaTable UI tests', () => {
+describe('dynaTable UI tests', () => {
   const mockonFieldChange = jest.fn();
   const props = {
     connectionId: '5b3c75dd5d3c125c88b5dd20',

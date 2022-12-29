@@ -1,4 +1,3 @@
-/* global describe, test, expect, beforeEach, afterEach, jest */
 import React from 'react';
 import {
   screen,
@@ -77,7 +76,7 @@ async function initActionButton({
   return renderWithProviders(ui, {initialStore});
 }
 
-describe('AlertDialog component', () => {
+describe('alertDialog component', () => {
   runServer();
   let initialStore;
   let mockDispatchFn;
@@ -108,7 +107,7 @@ describe('AlertDialog component', () => {
     useDispatchSpy.mockClear();
   });
 
-  describe('AlertDialog component related sessions', () => {
+  describe('alertDialog component related sessions', () => {
     test('should pass the render with session expires true', async () => {
       await initActionButton({sessionExpired: true, initialStore});
       expect(screen.queryByText('Your session has expired')).toBeInTheDocument();
@@ -124,37 +123,38 @@ describe('AlertDialog component', () => {
 
       expect(buttonRef).toBeInTheDocument();
       userEvent.click(buttonRef);
-      await expect(mockDispatchFn).toBeCalledWith(actions.auth.logout());
+      await expect(mockDispatchFn).toHaveBeenCalledWith(actions.auth.logout());
     });
   });
 
-  describe('AlertDialog component related warning sessions', () => {
+  describe('alertDialog component related warning sessions', () => {
     let SignMeIn;
     let signMeOut;
 
     beforeEach(async () => {
       await initActionButton({warning: true, authenticated: false, initialStore});
 
-      await waitFor(() => expect(screen.queryByText('Session expiring')).toBeInTheDocument());
       SignMeIn = screen.getByRole('button', {name: 'Yes, keep me signed in'});
       signMeOut = screen.getByRole('button', {name: 'No, sign me out'});
     });
     test('should pass the render with sign me in button', async () => {
+      await waitFor(() => expect(screen.queryByText('Session expiring')).toBeInTheDocument());
       await waitFor(() => expect(SignMeIn).toBeInTheDocument());
       userEvent.click(SignMeIn);
-      await expect(mockDispatchFn).not.toBeCalledWith(actions.auth.logout());
-      await expect(mockDispatchFn).toBeCalledWith(actions.user.profile.request('Refreshing session'));
+      await expect(mockDispatchFn).not.toHaveBeenCalledWith(actions.auth.logout());
+      await expect(mockDispatchFn).toHaveBeenCalledWith(actions.user.profile.request('Refreshing session'));
     });
 
     test('should pass the render with sign me out button', async () => {
+      await waitFor(() => expect(screen.queryByText('Session expiring')).toBeInTheDocument());
       await waitFor(() => expect(signMeOut).toBeInTheDocument());
       userEvent.click(signMeOut);
-      await expect(mockDispatchFn).toBeCalledWith(actions.auth.logout());
-      await expect(mockDispatchFn).not.toBeCalledWith(actions.user.profile.request('Refreshing session'));
+      await expect(mockDispatchFn).toHaveBeenCalledWith(actions.auth.logout());
+      await expect(mockDispatchFn).not.toHaveBeenCalledWith(actions.user.profile.request('Refreshing session'));
     });
   });
 
-  describe('AlertDialog component related react versions', () => {
+  describe('alertDialog component related react versions', () => {
     const { reload } = window.location;
 
     beforeEach(() => {
@@ -180,12 +180,12 @@ describe('AlertDialog component', () => {
       });
 
       await waitFor(() => {
-        expect(window.location.reload).toHaveBeenCalled();
+        expect(window.location.reload).toHaveBeenCalledTimes(1);
       });
     });
   });
 
-  describe('AlertDialog component related user account transfer', () => {
+  describe('alertDialog component related user account transfer', () => {
     const { reload } = window.location;
 
     beforeEach(() => {
@@ -209,12 +209,12 @@ describe('AlertDialog component', () => {
         userEvent.click(buttonRef);
       });
       await waitFor(() => {
-        expect(window.location.reload).toHaveBeenCalled();
+        expect(window.location.reload).toHaveBeenCalledTimes(1);
       });
     });
   });
 
-  describe('AlertDialog component related user login in different tab', () => {
+  describe('alertDialog component related user login in different tab', () => {
     const { replace } = window.location;
 
     beforeEach(() => {
@@ -238,12 +238,12 @@ describe('AlertDialog component', () => {
         userEvent.click(buttonRef);
       });
       await waitFor(() => {
-        expect(window.location.replace).toHaveBeenCalled();
+        expect(window.location.replace).toHaveBeenCalledTimes(1);
       });
     });
   });
 
-  describe('AlertDialog component related SSO sign in', () => {
+  describe('alertDialog component related SSO sign in', () => {
     test('should pass the render with SSO signIn', async () => {
       await initActionButton({defaultAShareId: 'not_own', sessionExpired: true, initialStore, accountSSORequired: true});
 

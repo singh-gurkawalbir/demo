@@ -1,4 +1,4 @@
-/* global describe, expect, jest, test */
+
 import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -43,7 +43,7 @@ describe('test suite for DynaTextList', () => {
 
     'record'.split('').forEach(char => {
       currVal += char;
-      expect(onFieldChange).toBeCalledWith(props.id, [currVal]);
+      expect(onFieldChange).toHaveBeenCalledWith(props.id, [currVal]);
     });
   });
 

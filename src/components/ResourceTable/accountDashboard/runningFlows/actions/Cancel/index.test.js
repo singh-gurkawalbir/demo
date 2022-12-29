@@ -1,4 +1,4 @@
-/* global describe, test, expect,  beforeEach, jest */
+
 import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -30,7 +30,7 @@ function renderFunction() {
   );
   userEvent.click(screen.getByRole('button', {name: /more/i}));
 }
-describe('Cancel Run UI Tests', () => {
+describe('cancel Run UI Tests', () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });

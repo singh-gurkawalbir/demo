@@ -1,5 +1,3 @@
-/* global describe, test, expect */
-
 import {
   getFlowResources,
   getFlowType,
@@ -701,19 +699,19 @@ describe('isSetupInProgress', () => {
   };
 
   test('should return false when flow is empty', () => {
-    expect(isSetupInProgress()).toEqual(false);
+    expect(isSetupInProgress()).toBe(false);
   });
 
   test('should return correct value when flow setup is in progress', () => {
-    expect(isSetupInProgress(flow1)).toEqual(true);
-    expect(isSetupInProgress(flow2)).toEqual(true);
-    expect(isSetupInProgress(flow3)).toEqual(false);
-    expect(isSetupInProgress(flow4)).toEqual(true);
-    expect(isSetupInProgress(flow5)).toEqual(true);
-    expect(isSetupInProgress(flow6)).toEqual(true);
-    expect(isSetupInProgress(flow7)).toEqual(false);
-    expect(isSetupInProgress(flow8)).toEqual(true);
-    expect(isSetupInProgress(flow9)).toEqual(true);
+    expect(isSetupInProgress(flow1)).toBe(true);
+    expect(isSetupInProgress(flow2)).toBe(true);
+    expect(isSetupInProgress(flow3)).toBe(false);
+    expect(isSetupInProgress(flow4)).toBe(true);
+    expect(isSetupInProgress(flow5)).toBe(true);
+    expect(isSetupInProgress(flow6)).toBe(true);
+    expect(isSetupInProgress(flow7)).toBe(false);
+    expect(isSetupInProgress(flow8)).toBe(true);
+    expect(isSetupInProgress(flow9)).toBe(true);
   });
 });
 
@@ -732,23 +730,23 @@ describe('isDeltaFlow', () => {
   ];
 
   test('should return false when flow is empty', () => {
-    expect(isDeltaFlow()).toEqual(false);
+    expect(isDeltaFlow()).toBe(false);
   });
   test('should return false when exports are empty', () => {
-    expect(isDeltaFlow(flowWithOnlyPGs)).toEqual(false);
+    expect(isDeltaFlow(flowWithOnlyPGs)).toBe(false);
   });
   test('should return true when flow has pageGenerators with type as delta', () => {
-    expect(isDeltaFlow(flowWithOnlyPGs, exportsWithDeltaType)).toEqual(true);
+    expect(isDeltaFlow(flowWithOnlyPGs, exportsWithDeltaType)).toBe(true);
   });
   test('should return true when flow is of old model type and with type as delta', () => {
-    expect(isDeltaFlow(oldFlow, exportsWithDeltaType)).toEqual(true);
+    expect(isDeltaFlow(oldFlow, exportsWithDeltaType)).toBe(true);
   });
   test('should return false when flow is of old model type and with type not as delta', () => {
-    expect(isDeltaFlow(oldFlow, exportsWithNonDeltaType)).toEqual(false);
+    expect(isDeltaFlow(oldFlow, exportsWithNonDeltaType)).toBe(false);
   });
 
   test('should return false when flow has pageGenerators with type is not a delta', () => {
-    expect(isDeltaFlow(flowWithOnlyPGs, exportsWithNonDeltaType)).toEqual(
+    expect(isDeltaFlow(flowWithOnlyPGs, exportsWithNonDeltaType)).toBe(
       false
     );
   });
@@ -804,49 +802,49 @@ describe('isIntegrationApp', () => {
   };
 
   test('should return true for integration app doc', () => {
-    expect(isIntegrationApp(integrationAppResource)).toEqual(true);
+    expect(isIntegrationApp(integrationAppResource)).toBe(true);
   });
   test('should return false for non integration app doc', () => {
-    expect(isIntegrationApp(nonIntegrationAppResource)).toEqual(false);
+    expect(isIntegrationApp(nonIntegrationAppResource)).toBe(false);
   });
   test('should return false for empty doc', () => {
-    expect(isIntegrationApp(undefined)).toEqual(false);
+    expect(isIntegrationApp(undefined)).toBe(false);
   });
 });
 
 describe('isPageGeneratorResource', () => {
   test('should return true when flow has requested resource as PG', () => {
-    expect(isPageGeneratorResource(flowWithOnlyPGs, 'e1')).toEqual(true);
+    expect(isPageGeneratorResource(flowWithOnlyPGs, 'e1')).toBe(true);
   });
   test('should return false when flow does not have requested resource as PG', () => {
-    expect(isPageGeneratorResource(flowWithOnlyPGs, 'e3')).toEqual(false);
+    expect(isPageGeneratorResource(flowWithOnlyPGs, 'e3')).toBe(false);
   });
   test('should return false for empty docs', () => {
-    expect(isPageGeneratorResource(undefined, undefined)).toEqual(false);
+    expect(isPageGeneratorResource(undefined, undefined)).toBe(false);
   });
 });
 
 describe('isFlowUpdatedWithPgOrPP', () => {
   test('should return true when flow has requested resource as PG', () => {
-    expect(isFlowUpdatedWithPgOrPP(flowWithPGsandPPs, 'e1')).toEqual(true);
+    expect(isFlowUpdatedWithPgOrPP(flowWithPGsandPPs, 'e1')).toBe(true);
   });
   test('should return true when flow has requested export resource as PP', () => {
-    expect(isFlowUpdatedWithPgOrPP(flowWithPGsandPPs, 'e3')).toEqual(true);
+    expect(isFlowUpdatedWithPgOrPP(flowWithPGsandPPs, 'e3')).toBe(true);
   });
   test('should return true when flow has requested import resource as PP', () => {
-    expect(isFlowUpdatedWithPgOrPP(flowWithPGsandPPs, 'i1')).toEqual(true);
+    expect(isFlowUpdatedWithPgOrPP(flowWithPGsandPPs, 'i1')).toBe(true);
   });
   test('should return false when flow does not have requested resource as PG', () => {
-    expect(isFlowUpdatedWithPgOrPP(flowWithOnlyPGs, 'e5')).toEqual(false);
+    expect(isFlowUpdatedWithPgOrPP(flowWithOnlyPGs, 'e5')).toBe(false);
   });
   test('should return false when flow does not have requested export resource as PP', () => {
-    expect(isFlowUpdatedWithPgOrPP(flowWithOnlyPGs, 'e6')).toEqual(false);
+    expect(isFlowUpdatedWithPgOrPP(flowWithOnlyPGs, 'e6')).toBe(false);
   });
   test('should return false when flow does not have requested import resource as PP', () => {
-    expect(isFlowUpdatedWithPgOrPP(flowWithOnlyPGs, 'i5')).toEqual(false);
+    expect(isFlowUpdatedWithPgOrPP(flowWithOnlyPGs, 'i5')).toBe(false);
   });
   test('should return false for empty docs', () => {
-    expect(isFlowUpdatedWithPgOrPP(undefined, undefined)).toEqual(false);
+    expect(isFlowUpdatedWithPgOrPP(undefined, undefined)).toBe(false);
   });
 });
 
@@ -1136,7 +1134,7 @@ describe('populateRestSchema', () => {
       });
     });
 
-    test('pagination pageNumberparameter with url containing the pageNumberqueryParam', () => {
+    test('pagination pageNumberparameter with url containing the pageNumberqueryParam duplicate', () => {
       expect(populateRestSchema(restWithNextPageNumberParam3)).toEqual({
         _rest: {
           lastPagePath: '/completePath',
@@ -1225,7 +1223,7 @@ describe('populateRestSchema', () => {
       });
     });
 
-    test('pagination skipNumberParameter with url containing the pageNumberqueryParam', () => {
+    test('pagination skipNumberParameter with url containing the pageNumberqueryParam duplicate', () => {
       expect(populateRestSchema(restWithSkipPageNumberParam3)).toEqual({
         _rest: {
           lastPagePath: '/complete',
@@ -1258,16 +1256,16 @@ describe('populateRestSchema', () => {
 
 describe('isOldFlowSchema', () => {
   test('should return true when old flow is passed', () => {
-    expect(isOldFlowSchema(oldFlow)).toEqual(true);
+    expect(isOldFlowSchema(oldFlow)).toBe(true);
   });
   test('should return false when new flow is passed', () => {
-    expect(isOldFlowSchema(flowWithOnlyPGs)).toEqual(false);
+    expect(isOldFlowSchema(flowWithOnlyPGs)).toBe(false);
   });
   test('should return false when converted flow is passed', () => {
-    expect(isOldFlowSchema(convertedFlow)).toEqual(false);
+    expect(isOldFlowSchema(convertedFlow)).toBe(false);
   });
   test('should return false for empty flow', () => {
-    expect(isOldFlowSchema(emptyFlow)).toEqual(false);
+    expect(isOldFlowSchema(emptyFlow)).toBe(false);
   });
 });
 
@@ -1294,112 +1292,112 @@ describe('getFirstExportFromFlow', () => {
     expect(getFirstExportFromFlow(oldFlow, exports)).toEqual(exports[0]);
   });
   test('should return undefined for empty docs', () => {
-    expect(getFirstExportFromFlow(undefined, undefined)).toEqual(undefined);
+    expect(getFirstExportFromFlow(undefined, undefined)).toBeUndefined();
   });
 });
 
 describe('isRealtimeExport', () => {
   test('should return true for distributed export', () => {
-    expect(isRealtimeExport(realtimeExports[0])).toEqual(true);
+    expect(isRealtimeExport(realtimeExports[0])).toBe(true);
   });
   test('should return true for webhook export', () => {
-    expect(isRealtimeExport(realtimeExports[1])).toEqual(true);
+    expect(isRealtimeExport(realtimeExports[1])).toBe(true);
   });
   test('should return true for AS2 export', () => {
-    expect(isRealtimeExport(realtimeExports[2])).toEqual(true);
+    expect(isRealtimeExport(realtimeExports[2])).toBe(true);
   });
   test('should return false for non realtime export', () => {
-    expect(isRealtimeExport(exports[0])).toEqual(false);
+    expect(isRealtimeExport(exports[0])).toBe(false);
   });
   test('should return false for empty export', () => {
-    expect(isRealtimeExport(undefined)).toEqual(false);
+    expect(isRealtimeExport(undefined)).toBe(false);
   });
 });
 
 describe('isSimpleImportFlow', () => {
   test('should return true for data loader flow', () => {
-    expect(isSimpleImportFlow(dataLoaderFlow, exports)).toEqual(true);
+    expect(isSimpleImportFlow(dataLoaderFlow, exports)).toBe(true);
   });
   test('should return false for non data loader flow', () => {
-    expect(isSimpleImportFlow(flowWithPGsandPPs, exports)).toEqual(false);
+    expect(isSimpleImportFlow(flowWithPGsandPPs, exports)).toBe(false);
   });
   test('should return false for invalid flow', () => {
-    expect(isSimpleImportFlow(invalidFlow, exports)).toEqual(false);
+    expect(isSimpleImportFlow(invalidFlow, exports)).toBe(false);
   });
 });
 
 describe('isRealtimeFlow', () => {
   test('should return true for old realtime flow', () => {
-    expect(isRealtimeFlow(oldRealtimeFlow, realtimeExports)).toEqual(true);
+    expect(isRealtimeFlow(oldRealtimeFlow, realtimeExports)).toBe(true);
   });
   test('should return true for realtime flow', () => {
-    expect(isRealtimeFlow(realtimeFlow, realtimeExports)).toEqual(true);
+    expect(isRealtimeFlow(realtimeFlow, realtimeExports)).toBe(true);
   });
   test('should return false for non realtime flow', () => {
-    expect(isRealtimeFlow(flowWithPGsandPPs, exports)).toEqual(false);
+    expect(isRealtimeFlow(flowWithPGsandPPs, exports)).toBe(false);
   });
   test('should return false for invalid flow', () => {
-    expect(isRealtimeFlow(invalidFlow, exports)).toEqual(false);
+    expect(isRealtimeFlow(invalidFlow, exports)).toBe(false);
   });
 });
 
 describe('hasBatchExport', () => {
   test('should return true for old batch flow', () => {
-    expect(hasBatchExport(oldFlow, exports)).toEqual(true);
+    expect(hasBatchExport(oldFlow, exports)).toBe(true);
   });
   test('should return true for batch flow', () => {
-    expect(hasBatchExport(flowWithPGsandPPs, exports)).toEqual(true);
+    expect(hasBatchExport(flowWithPGsandPPs, exports)).toBe(true);
   });
   test('should return false for old realtime flow', () => {
-    expect(hasBatchExport(oldRealtimeFlow, realtimeExports)).toEqual(false);
+    expect(hasBatchExport(oldRealtimeFlow, realtimeExports)).toBe(false);
   });
   test('should return false for  realtime flow', () => {
-    expect(hasBatchExport(realtimeFlow, realtimeExports)).toEqual(false);
+    expect(hasBatchExport(realtimeFlow, realtimeExports)).toBe(false);
   });
 });
 
 describe('showScheduleIcon', () => {
   test('should return true for batch flow', () => {
-    expect(showScheduleIcon(flowWithPGsandPPs, exports)).toEqual(true);
+    expect(showScheduleIcon(flowWithPGsandPPs, exports)).toBe(true);
   });
   test('should return false for realtime flow', () => {
-    expect(showScheduleIcon(realtimeFlow, realtimeExports)).toEqual(false);
+    expect(showScheduleIcon(realtimeFlow, realtimeExports)).toBe(false);
   });
   test('should return false for data loader flow', () => {
-    expect(showScheduleIcon(dataLoaderFlow, exports)).toEqual(false);
+    expect(showScheduleIcon(dataLoaderFlow, exports)).toBe(false);
   });
 });
 
 describe('isRunnable', () => {
   test('should return false for an undefined flow', () => {
-    expect(isRunnable(undefined, exports)).toEqual(false);
+    expect(isRunnable(undefined, exports)).toBe(false);
   });
   test('should return true for data loader flow', () => {
-    expect(isRunnable(dataLoaderFlow, exports)).toEqual(true);
+    expect(isRunnable(dataLoaderFlow, exports)).toBe(true);
   });
   test('should return false for disabled data loader flow', () => {
-    expect(isRunnable({...dataLoaderFlow, disabled: true}, exports)).toEqual(false);
+    expect(isRunnable({...dataLoaderFlow, disabled: true}, exports)).toBe(false);
   });
   test('should return true for enabled flow', () => {
-    expect(isRunnable(flowWithPGsandPPs, exports)).toEqual(true);
+    expect(isRunnable(flowWithPGsandPPs, exports)).toBe(true);
   });
   test('should return false for flow with only PGs', () => {
-    expect(isRunnable(flowWithOnlyPGs, exports)).toEqual(false);
+    expect(isRunnable(flowWithOnlyPGs, exports)).toBe(false);
   });
   test('should return false for flow with only PPs', () => {
-    expect(isRunnable(flowWithOnlyPPs, exports)).toEqual(false);
+    expect(isRunnable(flowWithOnlyPPs, exports)).toBe(false);
   });
   test('should return false for realtime flow', () => {
-    expect(isRunnable(realtimeFlow, realtimeExports)).toEqual(false);
+    expect(isRunnable(realtimeFlow, realtimeExports)).toBe(false);
   });
   test('should return false for disabled integration app flow', () => {
-    expect(isRunnable(disabledIAFlow, exports)).toEqual(false);
+    expect(isRunnable(disabledIAFlow, exports)).toBe(false);
   });
   test('should return false for disabled flow', () => {
-    expect(isRunnable(disabledFlow, exports)).toEqual(false);
+    expect(isRunnable(disabledFlow, exports)).toBe(false);
   });
   test('should return false for empty flow', () => {
-    expect(isRunnable(emptyFlow, exports)).toEqual(false);
+    expect(isRunnable(emptyFlow, exports)).toBe(false);
   });
 });
 
@@ -1521,19 +1519,19 @@ describe('flowbuilderUrl', () => {
 
 describe('getFlowType', () => {
   test('should return correct flow type for data loader flow', () => {
-    expect(getFlowType(dataLoaderFlow, exports)).toEqual('Data loader');
+    expect(getFlowType(dataLoaderFlow, exports)).toBe('Data loader');
   });
   test('should return correct flow type for normal flow', () => {
-    expect(getFlowType(flowWithPGsandPPs, exports)).toEqual('Scheduled');
+    expect(getFlowType(flowWithPGsandPPs, exports)).toBe('Scheduled');
   });
   test('should return correct flow type for realtime flow', () => {
-    expect(getFlowType(realtimeFlow, realtimeExports)).toEqual('Realtime');
+    expect(getFlowType(realtimeFlow, realtimeExports)).toBe('Realtime');
   });
   test('should return correct empty for empty flow', () => {
-    expect(getFlowType(undefined, exports)).toEqual('');
+    expect(getFlowType(undefined, exports)).toBe('');
   });
   test('should return correct empty for empty export docs', () => {
-    expect(getFlowType(flowWithPGsandPPs, undefined)).toEqual('');
+    expect(getFlowType(flowWithPGsandPPs, undefined)).toBe('');
   });
 });
 
@@ -1863,13 +1861,13 @@ describe('isFreeFlowResource', () => {
   };
 
   test('should return true for a free flow', () => {
-    expect(isFreeFlowResource(freeFlow)).toEqual(true);
+    expect(isFreeFlowResource(freeFlow)).toBe(true);
   });
   test('should return false for a non free flow', () => {
-    expect(isFreeFlowResource(nonFreeFlow)).toEqual(false);
+    expect(isFreeFlowResource(nonFreeFlow)).toBe(false);
   });
   test('should return false for an undefined flow', () => {
-    expect(isFreeFlowResource(undefined)).toEqual(false);
+    expect(isFreeFlowResource(undefined)).toBe(false);
   });
 });
 
@@ -1897,16 +1895,16 @@ describe('isActionUsed', () => {
     const resourceType = 'something';
 
     test('should return true if flowNode.schedule is true', () => {
-      expect(isActionUsed(resource, resourceType, { schedule: true }, action)).toEqual(true);
+      expect(isActionUsed(resource, resourceType, { schedule: true }, action)).toBe(true);
     });
     test('should return true if flowNode._keepDeltaBehindFlowId is true', () => {
-      expect(isActionUsed(resource, resourceType, { _keepDeltaBehindFlowId: true }, action)).toEqual(true);
+      expect(isActionUsed(resource, resourceType, { _keepDeltaBehindFlowId: true }, action)).toBe(true);
     });
     test('should return true if both schedule and _keepDeltaBehindFlowId of flowNode are true', () => {
-      expect(isActionUsed(resource, resourceType, { schedule: true, _keepDeltaBehindFlowId: true }, action)).toEqual(true);
+      expect(isActionUsed(resource, resourceType, { schedule: true, _keepDeltaBehindFlowId: true }, action)).toBe(true);
     });
     test('should return false if both schedule and _keepDeltaBehindFlowId of flowNode are false', () => {
-      expect(isActionUsed(resource, resourceType, {}, action)).toEqual(false);
+      expect(isActionUsed(resource, resourceType, {}, action)).toBe(false);
     });
   });
 
@@ -1923,28 +1921,28 @@ describe('isActionUsed', () => {
     };
 
     test('should return true if importResource has filter and is of expression type with rules', () => {
-      expect(isActionUsed({ filter: expressionWithRules }, importResourceType, {}, action)).toEqual(true);
+      expect(isActionUsed({ filter: expressionWithRules }, importResourceType, {}, action)).toBe(true);
     });
     test('should return false if importResource has filter and is of expression type without rules', () => {
-      expect(isActionUsed({ filter: expressionWithoutRules }, importResourceType, {}, action)).toEqual(false);
+      expect(isActionUsed({ filter: expressionWithoutRules }, importResourceType, {}, action)).toBe(false);
     });
     test('should return true if importresource has filter and is of script type with scriptId defined', () => {
-      expect(isActionUsed({ filter: scriptWithScriptId }, importResourceType, {}, action)).toEqual(true);
+      expect(isActionUsed({ filter: scriptWithScriptId }, importResourceType, {}, action)).toBe(true);
     });
     test('should return false if importresource has filter and is of script type without scriptId defined', () => {
-      expect(isActionUsed({ filter: scriptWithoutScriptId }, importResourceType, {}, action)).toEqual(false);
+      expect(isActionUsed({ filter: scriptWithoutScriptId }, importResourceType, {}, action)).toBe(false);
     });
     test('should return true if nonImportResource has inputFilter and is of expression type with rules', () => {
-      expect(isActionUsed({ inputFilter: expressionWithRules }, nonImportResourceType, {}, action)).toEqual(true);
+      expect(isActionUsed({ inputFilter: expressionWithRules }, nonImportResourceType, {}, action)).toBe(true);
     });
     test('should return false if nonImportResource has inputFilter and is of expression type without rules', () => {
-      expect(isActionUsed({ inputFilter: expressionWithoutRules }, nonImportResourceType, {}, action)).toEqual(false);
+      expect(isActionUsed({ inputFilter: expressionWithoutRules }, nonImportResourceType, {}, action)).toBe(false);
     });
     test('should return true if nonImportresource has inputFilter and is of script type with scriptId defined', () => {
-      expect(isActionUsed({ inputFilter: scriptWithScriptId }, nonImportResourceType, {}, action)).toEqual(true);
+      expect(isActionUsed({ inputFilter: scriptWithScriptId }, nonImportResourceType, {}, action)).toBe(true);
     });
     test('should return false if nonImportresource has inputFilter and is of script type without scriptId defined', () => {
-      expect(isActionUsed({ inputFilter: scriptWithoutScriptId }, nonImportResourceType, {}, action)).toEqual(false);
+      expect(isActionUsed({ inputFilter: scriptWithoutScriptId }, nonImportResourceType, {}, action)).toBe(false);
     });
   });
 
@@ -2005,19 +2003,19 @@ describe('isActionUsed', () => {
     };
 
     test('should return true if resource is of type netsuite distributed with mapping containing both fields and lists', () => {
-      expect(isActionUsed(importNSDistributedMappingWithFieldsAndLists, resourceType, flowNode, action)).toEqual(true);
+      expect(isActionUsed(importNSDistributedMappingWithFieldsAndLists, resourceType, flowNode, action)).toBe(true);
     });
     test('should return true if resource is of type netsuite distributed with mapping containing fields', () => {
-      expect(isActionUsed(importNSDistributedMappingWithFields, resourceType, flowNode, action)).toEqual(true);
+      expect(isActionUsed(importNSDistributedMappingWithFields, resourceType, flowNode, action)).toBe(true);
     });
     test('should return true if resource is of type netsuite distributed with mapping containing lists', () => {
-      expect(isActionUsed(importNSDistributedMappingWithLists, resourceType, flowNode, action)).toEqual(true);
+      expect(isActionUsed(importNSDistributedMappingWithLists, resourceType, flowNode, action)).toBe(true);
     });
     test('should return false if resource is of type netsuite distributed without both fields and lists defined in mapping', () => {
-      expect(isActionUsed(importNSDistributedMappingWithoutFieldsAndLists, resourceType, flowNode, action)).toEqual(false);
+      expect(isActionUsed(importNSDistributedMappingWithoutFieldsAndLists, resourceType, flowNode, action)).toBe(false);
     });
     test('should return true if only v2 mappings exist', () => {
-      expect(isActionUsed(importHTTPWithOnlyV2Mappings, resourceType, flowNode, action)).toEqual(true);
+      expect(isActionUsed(importHTTPWithOnlyV2Mappings, resourceType, flowNode, action)).toBe(true);
     });
   });
 
@@ -2037,16 +2035,16 @@ describe('isActionUsed', () => {
     const emptyHttp = {};
 
     test('should return true if resource has http and body field of http is of type string', () => {
-      expect(isActionUsed({ http: stringHttp }, resourceType, flowNode, action)).toEqual(true);
+      expect(isActionUsed({ http: stringHttp }, resourceType, flowNode, action)).toBe(true);
     });
     test('should return true if resource has http and body field of http is of type array with values', () => {
-      expect(isActionUsed({ http: arrayHttp }, resourceType, flowNode, action)).toEqual(true);
+      expect(isActionUsed({ http: arrayHttp }, resourceType, flowNode, action)).toBe(true);
     });
     test('should return true if resource has http and body field of http is of type array without values', () => {
-      expect(isActionUsed({ http: emptyArrayHttp }, resourceType, flowNode, action)).toEqual(false);
+      expect(isActionUsed({ http: emptyArrayHttp }, resourceType, flowNode, action)).toBe(false);
     });
     test('should return fasle if resource has empty http object', () => {
-      expect(isActionUsed({ http: emptyHttp }, resourceType, flowNode, action)).toEqual(false);
+      expect(isActionUsed({ http: emptyHttp }, resourceType, flowNode, action)).toBe(false);
     });
   });
 
@@ -2062,16 +2060,16 @@ describe('isActionUsed', () => {
     };
 
     test('should return true if resource has transform and is of expression type with rules', () => {
-      expect(isActionUsed({ transform: expressionWithRules }, resourceType, {}, action)).toEqual(true);
+      expect(isActionUsed({ transform: expressionWithRules }, resourceType, {}, action)).toBe(true);
     });
     test('should return false if resource has transform and is of expression type without rules', () => {
-      expect(isActionUsed({ transform: expressionWithoutRules }, resourceType, {}, action)).toEqual(false);
+      expect(isActionUsed({ transform: expressionWithoutRules }, resourceType, {}, action)).toBe(false);
     });
     test('should return true if resource has transform and is of script type with scriptId defined', () => {
-      expect(isActionUsed({ transform: scriptWithScriptId }, resourceType, {}, action)).toEqual(true);
+      expect(isActionUsed({ transform: scriptWithScriptId }, resourceType, {}, action)).toBe(true);
     });
     test('should return false if resource has transform and is of script type without scriptId defined', () => {
-      expect(isActionUsed({ transform: scriptWithoutScriptId }, resourceType, {}, action)).toEqual(false);
+      expect(isActionUsed({ transform: scriptWithoutScriptId }, resourceType, {}, action)).toBe(false);
     });
   });
 
@@ -2087,16 +2085,16 @@ describe('isActionUsed', () => {
     };
 
     test('should return true if resource has responseTransform and is of expression type with rules', () => {
-      expect(isActionUsed({ responseTransform: expressionWithRules }, resourceType, {}, action)).toEqual(true);
+      expect(isActionUsed({ responseTransform: expressionWithRules }, resourceType, {}, action)).toBe(true);
     });
     test('should return false if resource has responseTransform and is of expression type without rules', () => {
-      expect(isActionUsed({ responseTransform: expressionWithoutRules }, resourceType, {}, action)).toEqual(false);
+      expect(isActionUsed({ responseTransform: expressionWithoutRules }, resourceType, {}, action)).toBe(false);
     });
     test('should return true if resource has responseTransform and is of script type with scriptId defined', () => {
-      expect(isActionUsed({ responseTransform: scriptWithScriptId }, resourceType, {}, action)).toEqual(true);
+      expect(isActionUsed({ responseTransform: scriptWithScriptId }, resourceType, {}, action)).toBe(true);
     });
     test('should return false if resource has responseTransform and is of script type without scriptId defined', () => {
-      expect(isActionUsed({ responseTransform: scriptWithoutScriptId }, resourceType, {}, action)).toEqual(false);
+      expect(isActionUsed({ responseTransform: scriptWithoutScriptId }, resourceType, {}, action)).toBe(false);
     });
   });
 
@@ -2192,37 +2190,37 @@ describe('isActionUsed', () => {
     };
 
     test('should return true if the resorce has hooks field', () => {
-      expect(isActionUsed(resourceWithHooks, resourceType, flowNode, action)).toEqual(true);
+      expect(isActionUsed(resourceWithHooks, resourceType, flowNode, action)).toBe(true);
     });
     test('should return true if the resource has hooks defined in netsuite restlet schema and the hook has preSend function defined', () => {
-      expect(isActionUsed(netsuiteResourceRestletSchemaWithPreSendFunc, resourceType, flowNode, action)).toEqual(true);
+      expect(isActionUsed(netsuiteResourceRestletSchemaWithPreSendFunc, resourceType, flowNode, action)).toBe(true);
     });
     test('should return false if the resource has hooks defined in netsuite restlet schema and the hook does not have preSend function defined', () => {
-      expect(isActionUsed(netsuiteResourceRestletSchemaWithoutPreSendFunc, resourceType, flowNode, action)).toEqual(false);
+      expect(isActionUsed(netsuiteResourceRestletSchemaWithoutPreSendFunc, resourceType, flowNode, action)).toBe(false);
     });
     test('should return false if the resource does not have hooks defined in netsuite restlet schema', () => {
-      expect(isActionUsed(netsuiteResourceRestletSchemaWithoutHooks, resourceType, flowNode, action)).toEqual(false);
+      expect(isActionUsed(netsuiteResourceRestletSchemaWithoutHooks, resourceType, flowNode, action)).toBe(false);
     });
     test('should return true if the resource has hooks defined in netsuite distributed schema and the hook has preSend function defined', () => {
-      expect(isActionUsed(netsuiteResourceDistributedSchemaWithPreSendFunc, resourceType, flowNode, action)).toEqual(true);
+      expect(isActionUsed(netsuiteResourceDistributedSchemaWithPreSendFunc, resourceType, flowNode, action)).toBe(true);
     });
     test('should return false if the resource does not have hooks defined in netsuite distributed schema', () => {
-      expect(isActionUsed(netsuiteResourceDistributedSchemaWithoutPreSendFunc, resourceType, flowNode, action)).toEqual(false);
+      expect(isActionUsed(netsuiteResourceDistributedSchemaWithoutPreSendFunc, resourceType, flowNode, action)).toBe(false);
     });
-    test('should return false if the resource does not have hooks defined in netsuite distributed schema', () => {
-      expect(isActionUsed(netsuiteResourceDistributedSchemaWithoutHooks, resourceType, flowNode, action)).toEqual(false);
+    test('should return false if the resource does not have hooks defined in netsuite distributed schema duplicate', () => {
+      expect(isActionUsed(netsuiteResourceDistributedSchemaWithoutHooks, resourceType, flowNode, action)).toBe(false);
     });
     test('should return false if the netsuite resource does not have schema defined', () => {
-      expect(isActionUsed(netsuiteResoureWithoutSchema, resourceType, flowNode, action)).toEqual(false);
+      expect(isActionUsed(netsuiteResoureWithoutSchema, resourceType, flowNode, action)).toBe(false);
     });
     test('should return true if netsuite distributed resource has hooks defined', () => {
-      expect(isActionUsed(netsuiteDistributedResourceWithHooks, resourceType, flowNode, action)).toEqual(true);
+      expect(isActionUsed(netsuiteDistributedResourceWithHooks, resourceType, flowNode, action)).toBe(true);
     });
     test('should return false if netsuite distributed resource does not have hooks defined', () => {
-      expect(isActionUsed(netsuiteDistributedResourceWithoutHooks, resourceType, flowNode, action)).toEqual(false);
+      expect(isActionUsed(netsuiteDistributedResourceWithoutHooks, resourceType, flowNode, action)).toBe(false);
     });
     test('should return false if resource does not have any hooks', () => {
-      expect(isActionUsed({}, resourceType, flowNode, action)).toEqual(false);
+      expect(isActionUsed({}, resourceType, flowNode, action)).toBe(false);
     });
   });
 
@@ -2259,16 +2257,16 @@ describe('isActionUsed', () => {
     const resourceType = 'exports';
 
     test('should return true if responseMapping has both fields and lists', () => {
-      expect(isActionUsed(resource, resourceType, flowNodeResponseMappingWithFieldsAndLists, action)).toEqual(true);
+      expect(isActionUsed(resource, resourceType, flowNodeResponseMappingWithFieldsAndLists, action)).toBe(true);
     });
     test('should return true if responseMapping has only fields', () => {
-      expect(isActionUsed(resource, resourceType, flowNodeResponseMappingWithFields, action)).toEqual(true);
+      expect(isActionUsed(resource, resourceType, flowNodeResponseMappingWithFields, action)).toBe(true);
     });
     test('should return true if responseMapping has only lists', () => {
-      expect(isActionUsed(resource, resourceType, flowNodeResponseMappingWithLists, action)).toEqual(true);
+      expect(isActionUsed(resource, resourceType, flowNodeResponseMappingWithLists, action)).toBe(true);
     });
     test('should return false if responseMapping does not have both fields and lists', () => {
-      expect(isActionUsed(resource, resourceType, flowNodeResponseMappingWithoutFieldsAndLists, action)).toEqual(false);
+      expect(isActionUsed(resource, resourceType, flowNodeResponseMappingWithoutFieldsAndLists, action)).toBe(false);
     });
   });
 
@@ -2298,16 +2296,16 @@ describe('isActionUsed', () => {
     const resource = { _id: 'r1'};
 
     test('should return true if flowNode has postResponseMap hook of type script', () => {
-      expect(isActionUsed(resource, 'exports', flowNodeHooksWithScript, action)).toEqual(true);
+      expect(isActionUsed(resource, 'exports', flowNodeHooksWithScript, action)).toBe(true);
     });
     test('should return false if flowNode has postResponseMap hook without a script', () => {
-      expect(isActionUsed(resource, 'exports', flowNodeHooksWithoutScript, action)).toEqual(false);
+      expect(isActionUsed(resource, 'exports', flowNodeHooksWithoutScript, action)).toBe(false);
     });
     test('should return false if flowNode does not have postResponseMap', () => {
-      expect(isActionUsed(resource, 'exports', flowNodeHooksWithoutPostResponseMap, action)).toEqual(false);
+      expect(isActionUsed(resource, 'exports', flowNodeHooksWithoutPostResponseMap, action)).toBe(false);
     });
     test('should return false if flowNode does not have hooks', () => {
-      expect(isActionUsed(resource, 'exports', flowNodeWithoutHooks, action)).toEqual(false);
+      expect(isActionUsed(resource, 'exports', flowNodeWithoutHooks, action)).toBe(false);
     });
   });
 
@@ -2323,16 +2321,16 @@ describe('isActionUsed', () => {
     };
 
     test('should return true if resource has filter and is of expression type with rules', () => {
-      expect(isActionUsed({ filter: expressionWithRules }, resourceType, {}, action)).toEqual(true);
+      expect(isActionUsed({ filter: expressionWithRules }, resourceType, {}, action)).toBe(true);
     });
     test('should return false if resource has filter and is of expression type without rules', () => {
-      expect(isActionUsed({ filter: expressionWithoutRules }, resourceType, {}, action)).toEqual(false);
+      expect(isActionUsed({ filter: expressionWithoutRules }, resourceType, {}, action)).toBe(false);
     });
     test('should return true if resource has filter and is of script type with scriptId defined', () => {
-      expect(isActionUsed({ filter: scriptWithScriptId }, resourceType, {}, action)).toEqual(true);
+      expect(isActionUsed({ filter: scriptWithScriptId }, resourceType, {}, action)).toBe(true);
     });
     test('should return false if resource has filter and is of script type without scriptId defined', () => {
-      expect(isActionUsed({ filter: scriptWithoutScriptId }, resourceType, {}, action)).toEqual(false);
+      expect(isActionUsed({ filter: scriptWithoutScriptId }, resourceType, {}, action)).toBe(false);
     });
   });
 
@@ -2345,10 +2343,10 @@ describe('isActionUsed', () => {
     };
 
     test('should return true if flowNode has processedOnFailure as true', () => {
-      expect(isActionUsed(resource, resourceType, flowNodeWithProceedOnFailure, action)).toEqual(true);
+      expect(isActionUsed(resource, resourceType, flowNodeWithProceedOnFailure, action)).toBe(true);
     });
     test('should return false if flowNode does not have processedOnFailure defined', () => {
-      expect(isActionUsed(resource, resourceType, {}, action)).toEqual(false);
+      expect(isActionUsed(resource, resourceType, {}, action)).toBe(false);
     });
   });
 });
@@ -2489,22 +2487,22 @@ describe('isImportMappingAvailable', () => {
   };
 
   test('should return false if the resource is not defined', () => {
-    expect(isImportMappingAvailable(undefined)).toEqual(false);
+    expect(isImportMappingAvailable(undefined)).toBe(false);
   });
   test('should return false if the resource is of type blob', () => {
-    expect(isImportMappingAvailable(blobTypeResource)).toEqual(false);
+    expect(isImportMappingAvailable(blobTypeResource)).toBe(false);
   });
   test('should return true if the resource is a file Adaptor of type xml', () => {
-    expect(isImportMappingAvailable(fileAdaptorResource)).toEqual(true);
+    expect(isImportMappingAvailable(fileAdaptorResource)).toBe(true);
   });
   test('should return false if the resource is mongodb adaptor', () => {
-    expect(isImportMappingAvailable(mongodbResource)).toEqual(false);
+    expect(isImportMappingAvailable(mongodbResource)).toBe(false);
   });
   test('should return false if the resource is of type rdbms and the queryType does not consist BULK INSERT', () => {
-    expect(isImportMappingAvailable(rdbmsResource)).toEqual(false);
+    expect(isImportMappingAvailable(rdbmsResource)).toBe(false);
   });
   test('should return true if the resource', () => {
-    expect(isImportMappingAvailable({})).toEqual(true);
+    expect(isImportMappingAvailable({})).toBe(true);
   });
 });
 
@@ -2931,46 +2929,46 @@ describe('flowAllowsScheduling', () => {
   };
 
   test('should return false if flow is not defined', () => {
-    expect(flowAllowsScheduling(undefined, integration, exports, false)).toEqual(false);
+    expect(flowAllowsScheduling(undefined, integration, exports, false)).toBe(false);
   });
   test('should return true for a batch flow and integration is not an IA', () => {
-    expect(flowAllowsScheduling(flowWithPGsandPPs, integration, exports, false)).toEqual(true);
+    expect(flowAllowsScheduling(flowWithPGsandPPs, integration, exports, false)).toBe(true);
   });
   test('should return false if flow is not a batch flow and integration is not an IA', () => {
-    expect(flowAllowsScheduling(realtimeFlow, integration, realtimeExports, false)).toEqual(false);
+    expect(flowAllowsScheduling(realtimeFlow, integration, realtimeExports, false)).toBe(false);
   });
   test('should return true if flow a batch flow and integration is IA of version2', () => {
-    expect(flowAllowsScheduling(flowWithPGsandPPs, integrationAppV2, exports, appVersionTwoDotZero)).toEqual(true);
+    expect(flowAllowsScheduling(flowWithPGsandPPs, integrationAppV2, exports, appVersionTwoDotZero)).toBe(true);
   });
   test('should return false if flow is not a batch flow and integration is IA of version2', () => {
-    expect(flowAllowsScheduling(realtimeFlow, integrationAppV2, realtimeExports, appVersionTwoDotZero)).toEqual(false);
+    expect(flowAllowsScheduling(realtimeFlow, integrationAppV2, realtimeExports, appVersionTwoDotZero)).toBe(false);
   });
   test('should return true if flow is a batch flow and integration is IA not of version2 and flowSettings has showSchedule', () => {
-    expect(flowAllowsScheduling(batchFlow, IAWithFlowAllowsSchedule, exports, false)).toEqual(true);
+    expect(flowAllowsScheduling(batchFlow, IAWithFlowAllowsSchedule, exports, false)).toBe(true);
   });
   test('should return fasle if flow is a batch flow and integration is IA not of version2 and flowSettings has showSchedule as fasle', () => {
-    expect(flowAllowsScheduling(batchFlow, IAWithFlowNotAllowsSchedule, exports, false)).toEqual(false);
+    expect(flowAllowsScheduling(batchFlow, IAWithFlowNotAllowsSchedule, exports, false)).toBe(false);
   });
   test('should return fasle if flow is not a batch flow and integration is IA not of version2', () => {
-    expect(flowAllowsScheduling(realTimeFlow, IAWithFlowNotAllowsSchedule, realtimeExports, false)).toEqual(false);
+    expect(flowAllowsScheduling(realTimeFlow, IAWithFlowNotAllowsSchedule, realtimeExports, false)).toBe(false);
   });
 });
 
 describe('flowSupportsSettings', () => {
   test('should return false if flow is undefined', () => {
-    expect(flowSupportsSettings(undefined, diyIntegration, undefined)).toEqual(false);
+    expect(flowSupportsSettings(undefined, diyIntegration, undefined)).toBe(false);
   });
   test('should return false if integration is not an integration app', () => {
-    expect(flowSupportsSettings({_id: 'f1'}, diyIntegration, undefined)).toEqual(false);
+    expect(flowSupportsSettings({_id: 'f1'}, diyIntegration, undefined)).toBe(false);
   });
   test('should return false if integration is an integration app but the flow does not have either settings or sections defined', () => {
-    expect(flowSupportsSettings({_id: 'f2'}, integrationApp, undefined)).toEqual(false);
+    expect(flowSupportsSettings({_id: 'f2'}, integrationApp, undefined)).toBe(false);
   });
   test('should return true if integration is an integration app and the flow has settings defined', () => {
-    expect(flowSupportsSettings({_id: 'f1', _connectorId: 'ia2'}, integrationApp, undefined)).toEqual(true);
+    expect(flowSupportsSettings({_id: 'f1', _connectorId: 'ia2'}, integrationApp, undefined)).toBe(true);
   });
   test('should return true if integration is an multistore app and the flow has sections defined', () => {
-    expect(flowSupportsSettings({_id: 'f5', _connectorId: 'ia3'}, multiStoreApp, 'c1')).toEqual(true);
+    expect(flowSupportsSettings({_id: 'f5', _connectorId: 'ia3'}, multiStoreApp, 'c1')).toBe(true);
   });
 });
 
@@ -3015,7 +3013,7 @@ describe('getFlowDetails', () => {
       disableRunFlow: false,
     });
   });
-  test('should return correct object', () => {
+  test('should return correct object duplicate', () => {
     expect(getFlowDetails(dataLoaderFlow, integration, exports)).toEqual({
       _id: 'f7',
       _integrationId: 'i1',
@@ -3038,7 +3036,7 @@ describe('getFlowDetails', () => {
       disableRunFlow: false,
     });
   });
-  test('should return correct object', () => {
+  test('should return correct object duplicate1', () => {
     expect(getFlowDetails(flowWithOnlyPGs, integration, exportsWithDeltaType)).toEqual({
       _id: 'f4',
       _integrationId: 'i1',
@@ -3061,7 +3059,7 @@ describe('getFlowDetails', () => {
       disableRunFlow: false,
     });
   });
-  test('', () => {
+  test('getFlowDetails test cases', () => {
     expect(getFlowDetails(flow, integrationApp, exports)).toEqual({
       _id: 'f1',
       _integrationId: 'i1',
@@ -3251,16 +3249,16 @@ describe('shouldHaveUnassignedSection', () => {
   ];
 
   test('should return false if there are no flowGroupings or flows', () => {
-    expect(shouldHaveUnassignedSection(null, null)).toEqual(false);
+    expect(shouldHaveUnassignedSection(null, null)).toBe(false);
   });
   test('should return false if there are flowGroupings but no flows', () => {
-    expect(shouldHaveUnassignedSection(flowGroupings, null)).toEqual(false);
+    expect(shouldHaveUnassignedSection(flowGroupings, null)).toBe(false);
   });
   test('should return true if there is atleast one flow without a _flowGroupingId assigned to it', () => {
-    expect(shouldHaveUnassignedSection(flowGroupings, flowsWithNoFlowGroupingId)).toEqual(true);
+    expect(shouldHaveUnassignedSection(flowGroupings, flowsWithNoFlowGroupingId)).toBe(true);
   });
   test('should return false if there are flowGroupings and all the flows have a _flowGrupingId', () => {
-    expect(shouldHaveUnassignedSection(flowGroupings, allFlowsWithFlowGroupingId)).toEqual(false);
+    expect(shouldHaveUnassignedSection(flowGroupings, allFlowsWithFlowGroupingId)).toBe(false);
   });
 });
 
@@ -3277,7 +3275,7 @@ describe('getFlowGroup', () => {
   ];
 
   test('should return emptyObject if there are no flowGroupings', () => {
-    expect(getFlowGroup(null, null, null)).toEqual(null);
+    expect(getFlowGroup(null, null, null)).toBeNull();
   });
   test('should return correct object on passing either the groupName or groupId', () => {
     expect(getFlowGroup(flowGroupings, 'Flow Group 1', null)).toEqual({
@@ -3380,7 +3378,7 @@ describe('mappingFlowsToFlowGroupings', () => {
   ];
 
   test('should return flowObjects passed if there are no flowGroupings', () => {
-    expect(mappingFlowsToFlowGroupings(null, null, null)).toEqual(null);
+    expect(mappingFlowsToFlowGroupings(null, null, null)).toBeNull();
     expect(mappingFlowsToFlowGroupings(null, [], null)).toEqual([]);
     expect(mappingFlowsToFlowGroupings(null, undefined, totalObjectsLength)).toEqual([]);
     expect(mappingFlowsToFlowGroupings(null, flowObjects1, totalObjectsLength)).toEqual(flowObjects1);

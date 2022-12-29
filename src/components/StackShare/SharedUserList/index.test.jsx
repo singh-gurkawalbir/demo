@@ -1,4 +1,4 @@
-/* global describe, test, expect, afterEach */
+
 import React from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { cleanup, screen, waitForElementToBeRemoved } from '@testing-library/react';

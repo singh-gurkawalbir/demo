@@ -1,4 +1,3 @@
-/* global describe, test, expect, jest, beforeEach, afterEach */
 import React from 'react';
 import { screen, waitFor} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';

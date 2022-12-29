@@ -1,4 +1,3 @@
-/* global describe, test, expect */
 
 import React, { useCallback } from 'react';
 import { MemoryRouter } from 'react-router-dom';
@@ -132,7 +131,7 @@ function Test5() {
   );
 }
 
-describe('Confirm Dialogue Component Testing', async () => {
+describe('confirm Dialogue Component Testing', () => {
   test('testing what is rendered in the DOM', async () => {
     render(
       <MemoryRouter>

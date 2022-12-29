@@ -1,4 +1,4 @@
-/* global describe, test, expect , jest */
+
 import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -93,7 +93,7 @@ function initDynaSemiHFAssistantOperationSelect(props = {}) {
   return renderWithProviders(<ConfirmDialogProvider><DynaSemiHFAssistantOperationSelect {...props} /></ConfirmDialogProvider>, { initialStore });
 }
 
-describe('DynaSemiHFAssistantOperationSelect UI tests', () => {
+describe('dynaSemiHFAssistantOperationSelect UI tests', () => {
   test('should pass the initial render with openair assistant in exports', () => {
     initDynaSemiHFAssistantOperationSelect(props);
     expect(screen.getByText('Select an operation')).toBeInTheDocument();

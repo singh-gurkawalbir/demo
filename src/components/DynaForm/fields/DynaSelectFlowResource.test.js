@@ -1,4 +1,4 @@
-/* global describe, test, expect, jest */
+
 import React from 'react';
 import {screen} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -123,8 +123,8 @@ function initDynaSelectFlowResource(props = {}) {
   return renderWithProviders(ui, {initialStore});
 }
 
-describe('DynaSelectFlowResource UI test cases', () => {
-  describe('Normal flow', () => {
+describe('dynaSelectFlowResource UI test cases', () => {
+  describe('normal flow', () => {
     test('should show empty dom when field is supposed to be invisible', () => {
       const {utils} = initDynaSelectFlowResource({...props, options: { filter: {$and: []}, visible: false}});
 
@@ -189,7 +189,7 @@ describe('DynaSelectFlowResource UI test cases', () => {
       expect(items).toEqual(['Please select...', 'Test exports...']);
     });
   });
-  describe('Flow With Flow Branching', () => {
+  describe('flow With Flow Branching', () => {
     test('should pg the filtered export from route property have required connectionID', () => {
       initDynaSelectFlowResource({...props, resourceType: 'exports', flowId: '6377005b05853c7b611fceb4' });
 

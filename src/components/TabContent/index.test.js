@@ -1,4 +1,4 @@
-/* global describe, test, expect */
+
 import { screen } from '@testing-library/react';
 import React from 'react';
 import TabContent from '.';
@@ -14,7 +14,7 @@ async function initTabContent({children = ''} = {}) {
   return renderWithProviders(ui);
 }
 
-describe('Testsuite for Tab Content', () => {
+describe('testsuite for Tab Content', () => {
   test('should able to render empty children', async () => {
     const { utils } = await initTabContent();
 

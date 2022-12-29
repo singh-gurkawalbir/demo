@@ -1,4 +1,5 @@
-/* global describe, test, expect */
+/* eslint-disable jest/no-standalone-expect */
+
 import reducer, { selectors } from '.';
 import actions from '../../../../actions';
 
@@ -45,7 +46,7 @@ describe('lcm compare selectors', () => {
       },
     };
 
-    test('should update status to received and also cloneFamily ', () => {
+    test('should update status to received and also cloneFamily', () => {
       const prevState = reducer({}, actions.integrationLCM.compare.pullRequest(integrationId));
       const currentState = {
         [integrationId]: { status: 'received', diff },
@@ -65,7 +66,7 @@ describe('lcm compare selectors', () => {
   describe('COMPARE.RECEIVED_DIFF_ERROR action', () => {
     const error = 'invalid intID';
 
-    test('should update status to error and also error passed ', () => {
+    test('should update status to error and also error passed', () => {
       const prevState = reducer({}, actions.integrationLCM.compare.pullRequest(integrationId));
       const currentState = {
         [integrationId]: { status: 'error', error },
@@ -128,7 +129,7 @@ describe('lcm compare selectors', () => {
   });
 });
 
-describe('lcm compare selectors ', () => {
+describe('lcm compare selectors1', () => {
   describe('isResourceComparisonInProgress selector', () => {
     test('should return false for all the cases where the status is not requested', () => {
       expect(selectors.isResourceComparisonInProgress()).toBeFalsy();

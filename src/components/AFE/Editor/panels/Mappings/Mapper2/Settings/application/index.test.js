@@ -1,4 +1,3 @@
-/* global describe, test, expect */
 import ftpMappingSettings from './ftp';
 import httpMappingSettings from './http';
 import application from '.';
@@ -18,7 +17,7 @@ function formattedSettings(formVal) {
   return settings;
 }
 
-describe('Mapper2 setting form metadata test case', () => {
+describe('mapper2 setting form metadata test case', () => {
   test('should verify the metadata for various adaptor type', () => {
     let metadata;
     const restImportWithTypeFile = getParams({adaptorType: 'RESTImport', http: {type: 'file'}});
@@ -60,7 +59,7 @@ describe('Mapper2 setting form metadata test case', () => {
     expect(emptyStringAction.default).toBe('');
     const nullAction = formattedSettings({fieldMappingType: 'standard', standardAction: 'useNull'});
 
-    expect(nullAction.default).toBe(null);
+    expect(nullAction.default).toBeNull();
     const defaultAction = formattedSettings({fieldMappingType: 'standard', standardAction: 'default', default: 'someDefaultValue'});
 
     expect(defaultAction.default).toBe('someDefaultValue');
@@ -77,7 +76,7 @@ describe('Mapper2 setting form metadata test case', () => {
     expect(emptyStringAction.hardCodedValue).toBe('');
     const nullAction = formattedSettings({fieldMappingType: 'hardCoded', hardcodedAction: 'useNull'});
 
-    expect(nullAction.hardCodedValue).toBe(null);
+    expect(nullAction.hardCodedValue).toBeNull();
     const defaultAction = formattedSettings({fieldMappingType: 'hardCoded', hardcodedAction: 'default', hardcodedDefault: 'someHardcodeDefaultValue'});
 
     expect(defaultAction.hardCodedValue).toBe('someHardcodeDefaultValue');
@@ -97,7 +96,7 @@ describe('Mapper2 setting form metadata test case', () => {
     expect(emptyStringAction.default).toBe('');
     const nullAction = formattedSettings({fieldMappingType: 'multifield', multifieldAction: 'useNull'});
 
-    expect(nullAction.default).toBe(null);
+    expect(nullAction.default).toBeNull();
     const defaultAction = formattedSettings({fieldMappingType: 'multifield', multifieldAction: 'default', multifieldDefault: 'someDefaultValue'});
 
     expect(defaultAction.default).toBe('someDefaultValue');
@@ -111,7 +110,7 @@ describe('Mapper2 setting form metadata test case', () => {
   test('should return the value for various actions when copy source is yes', () => {
     const useNullAction = formattedSettings({objectAction: 'useNull', copySource: 'yes'});
 
-    expect(useNullAction.default).toBe(null);
+    expect(useNullAction.default).toBeNull();
     const discardIfEmpty = formattedSettings({objectAction: 'discardIfEmpty', copySource: 'yes'});
 
     expect(discardIfEmpty.conditional.when).toBe('extract_not_empty');
@@ -122,8 +121,8 @@ describe('Mapper2 setting form metadata test case', () => {
       {name: 'lookupName', _mode: 'dynamic', _relativeURI: 'URI', _extract: 'extract', _body: 'body content', lookupAction: 'useEmptyString', fieldMappingType: 'lookup', conditionalWhen: 'somecondition'},
       {});
 
-    expect(epmtyString.settings.lookupName).toEqual('lookupName');
-    expect(epmtyString.settings.conditional.when).toEqual('somecondition');
+    expect(epmtyString.settings.lookupName).toBe('lookupName');
+    expect(epmtyString.settings.conditional.when).toBe('somecondition');
     expect(epmtyString.updatedLookup.allowFailures).toBe(true);
     expect(epmtyString.updatedLookup.default).toBe('');
     const useNull = application.getFormattedValue(
@@ -131,7 +130,7 @@ describe('Mapper2 setting form metadata test case', () => {
       {name: 'lookupName', _mode: 'dynamic', _relativeURI: 'URI', _extract: 'extract', _body: 'body content', lookupAction: 'useNull', fieldMappingType: 'lookup', conditionalWhen: 'somecondition'},
       {});
 
-    expect(useNull.updatedLookup.default).toBe(null);
+    expect(useNull.updatedLookup.default).toBeNull();
     const defaultAction = application.getFormattedValue(
       {},
       {lookupDefault: 'defaultValue', name: 'lookupName', _mode: 'dynamic', _relativeURI: 'URI', _body: 'body content', lookupAction: 'default', fieldMappingType: 'lookup', conditionalWhen: 'somecondition'},

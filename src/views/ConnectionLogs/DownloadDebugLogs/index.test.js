@@ -1,4 +1,3 @@
-/* global describe, test, expect, jest, afterEach, beforeEach */
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import * as reactRedux from 'react-redux';
@@ -29,7 +28,7 @@ async function initDownloadDebugLogs({
   };
 }
 
-describe('DownloadDebugLogs_afe test cases', () => {
+describe('downloadDebugLogs_afe test cases', () => {
   runServer();
   let mockDispatchFn;
   let useDispatchSpy;
@@ -56,7 +55,7 @@ describe('DownloadDebugLogs_afe test cases', () => {
     expect(downloadButton).toBeInTheDocument();
     expect(downloadButton).not.toHaveAttribute('disabled');
     userEvent.click(downloadButton);
-    expect(mockDispatchFn).toBeCalledWith(actions.logs.connections.download('connection_id'));
+    expect(mockDispatchFn).toHaveBeenCalledWith(actions.logs.connections.download('connection_id'));
   });
 
   test('should pass the initial render with button disabled', async () => {

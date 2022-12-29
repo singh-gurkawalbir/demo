@@ -1,10 +1,10 @@
-/* global describe, test, expect */
+
 import React from 'react';
 import {screen} from '@testing-library/react';
 import RenderActionButtonWhenVisible from './RenderActionButtonWhenVisible';
 import { renderWithProviders, reduxStore} from '../../test/test-utils';
 
-describe('RenderActionButtonWhenVisible UI test cases', () => {
+describe('renderActionButtonWhenVisible UI test cases', () => {
   const initialStore = reduxStore;
   const DummyComponent = () => 'Dummy';
 
@@ -35,7 +35,7 @@ describe('RenderActionButtonWhenVisible UI test cases', () => {
     },
   };
 
-  test('Should validate if action button not visible with invalid formKey', async () => {
+  test('should validate if action button not visible with invalid formKey', async () => {
     const props = {id: '_id', formKey: '_'};
 
     await renderWithProviders(
@@ -45,7 +45,7 @@ describe('RenderActionButtonWhenVisible UI test cases', () => {
       </RenderActionButtonWhenVisible>, {initialStore});
     expect(screen.queryByText('Dummy')).not.toBeInTheDocument();
   });
-  test('Should validate if action button is visible', async () => {
+  test('should validate if action button is visible', async () => {
     const props = {id: 'saveandclosegroup', formKey: '_formKey'};
 
     await renderWithProviders(

@@ -1,4 +1,3 @@
-/* global describe, test, expect, jest */
 import util, {
   MAPPING_DATA_TYPES,
   getAllKeys,
@@ -73,18 +72,18 @@ describe('v2 mapping utils', () => {
 
   describe('isCsvOrXlsxResourceForMapper2 util', () => {
     test('should not throw exception for invalid args', () => {
-      expect(isCsvOrXlsxResourceForMapper2()).toEqual(false);
-      expect(isCsvOrXlsxResourceForMapper2({})).toEqual(false);
-      expect(isCsvOrXlsxResourceForMapper2(null)).toEqual(false);
+      expect(isCsvOrXlsxResourceForMapper2()).toBe(false);
+      expect(isCsvOrXlsxResourceForMapper2({})).toBe(false);
+      expect(isCsvOrXlsxResourceForMapper2(null)).toBe(false);
     });
     test('should correctly return the expected outcome', () => {
-      expect(isCsvOrXlsxResourceForMapper2({_id: 'id1', adaptorType: 'RDBMSImport'})).toEqual(false);
-      expect(isCsvOrXlsxResourceForMapper2({_id: 'id1', adaptorType: 'NetSuiteImport'})).toEqual(false);
-      expect(isCsvOrXlsxResourceForMapper2({_id: 'id1', adaptorType: 'FTPImport', file: {type: 'xml'}})).toEqual(false);
-      expect(isCsvOrXlsxResourceForMapper2({_id: 'id1', adaptorType: 'AS2Import', file: {type: 'filedefinition'}})).toEqual(false);
-      expect(isCsvOrXlsxResourceForMapper2({_id: 'id1', adaptorType: 'FTPImport', file: {type: 'csv'}})).toEqual(true);
-      expect(isCsvOrXlsxResourceForMapper2({_id: 'id1', adaptorType: 'S3Import', file: {type: 'xlsx'}})).toEqual(true);
-      expect(isCsvOrXlsxResourceForMapper2({_id: 'id1', adaptorType: 'AS2Import', file: {type: 'csv'}})).toEqual(true);
+      expect(isCsvOrXlsxResourceForMapper2({_id: 'id1', adaptorType: 'RDBMSImport'})).toBe(false);
+      expect(isCsvOrXlsxResourceForMapper2({_id: 'id1', adaptorType: 'NetSuiteImport'})).toBe(false);
+      expect(isCsvOrXlsxResourceForMapper2({_id: 'id1', adaptorType: 'FTPImport', file: {type: 'xml'}})).toBe(false);
+      expect(isCsvOrXlsxResourceForMapper2({_id: 'id1', adaptorType: 'AS2Import', file: {type: 'filedefinition'}})).toBe(false);
+      expect(isCsvOrXlsxResourceForMapper2({_id: 'id1', adaptorType: 'FTPImport', file: {type: 'csv'}})).toBe(true);
+      expect(isCsvOrXlsxResourceForMapper2({_id: 'id1', adaptorType: 'S3Import', file: {type: 'xlsx'}})).toBe(true);
+      expect(isCsvOrXlsxResourceForMapper2({_id: 'id1', adaptorType: 'AS2Import', file: {type: 'csv'}})).toBe(true);
     });
   });
 
@@ -1176,7 +1175,7 @@ describe('v2 mapping utils', () => {
 
       expect(rebuildObjectArrayNode(node, extract)).toEqual(newNode);
     });
-    test('should correctly update the node with empty generates with child nodes incase of Object array mapping for the first source ', () => {
+    test('should correctly update the node with empty generates with child nodes incase of Object array mapping for the first source', () => {
       generateUniqueKey.mockReturnValue('new_key');
 
       const node = {
@@ -1432,6 +1431,7 @@ describe('v2 mapping utils', () => {
     });
   });
 
+  // eslint-disable-next-line jest/no-commented-out-tests
   // describe('insertSiblingsOnDestinationUpdate util', () => {
   // });
 
@@ -1451,7 +1451,7 @@ describe('v2 mapping utils', () => {
 
       expect(findAllParentNodesForNode(v2TreeData, 'key1')).toEqual([]);
     });
-    test('should return all the parent nodes where treeData has only object array nodes in the parent levels ', () => {
+    test('should return all the parent nodes where treeData has only object array nodes in the parent levels', () => {
       const v2TreeData = [
         {
           key: 'key1',
@@ -1627,9 +1627,7 @@ describe('v2 mapping utils', () => {
 
       expect(findAllPossibleDestinationMatchingParentNodes(matchingNodes, parentNodes)).toEqual([]);
     });
-    // test('should ignore empty nodes with no generate and only match nodes with generate and data type match', () => {
 
-    // });
     test('should return the target parent nodes after complete match of matchingNodes', () => {
       const v2TreeData = [
         {
@@ -1682,9 +1680,6 @@ describe('v2 mapping utils', () => {
       expect(findAllPossibleDestinationMatchingParentNodes(matchingNodes, parentNodes)).toEqual([v2TreeData[0].children[0].children[0]]);
     });
   });
-
-  // describe('getNewChildrenToAdd util', () => {
-  // });
 
   describe('buildTreeFromV2Mappings util', () => {
     test('should not throw exception for invalid args', () => {
@@ -2934,9 +2929,9 @@ describe('v2 mapping utils', () => {
 
   describe('isMappingWithoutExtract util', () => {
     test('should not throw exception for invalid args', () => {
-      expect(isMappingWithoutExtract()).toEqual(true);
-      expect(isMappingWithoutExtract({})).toEqual(true);
-      expect(isMappingWithoutExtract(null)).toEqual(true);
+      expect(isMappingWithoutExtract()).toBe(true);
+      expect(isMappingWithoutExtract({})).toBe(true);
+      expect(isMappingWithoutExtract(null)).toBe(true);
     });
     test('should return true if primitive data type has no extract', () => {
       const mapping = {
@@ -2944,7 +2939,7 @@ describe('v2 mapping utils', () => {
         generate: 'test',
       };
 
-      expect(isMappingWithoutExtract(mapping)).toEqual(true);
+      expect(isMappingWithoutExtract(mapping)).toBe(true);
     });
     test('should return false if primitive data type has no extract but has hard coded value', () => {
       const mapping = {
@@ -2953,7 +2948,7 @@ describe('v2 mapping utils', () => {
         hardCodedValue: 'abc',
       };
 
-      expect(isMappingWithoutExtract(mapping)).toEqual(false);
+      expect(isMappingWithoutExtract(mapping)).toBe(false);
     });
     test('should return false if primitive data type has no extract but has dynamic lookup', () => {
       const mapping = {
@@ -2963,7 +2958,7 @@ describe('v2 mapping utils', () => {
       };
       const lookups = [{name: 'new-lookup'}];
 
-      expect(isMappingWithoutExtract(mapping, lookups)).toEqual(false);
+      expect(isMappingWithoutExtract(mapping, lookups)).toBe(false);
     });
     test('should return true if array data type has no extract', () => {
       const mapping = {
@@ -2972,7 +2967,7 @@ describe('v2 mapping utils', () => {
         extractsArrayHelper: [],
       };
 
-      expect(isMappingWithoutExtract(mapping)).toEqual(true);
+      expect(isMappingWithoutExtract(mapping)).toBe(true);
     });
     test('should return true if object data type has no extract with copy source as yes', () => {
       const mapping = {
@@ -2982,7 +2977,7 @@ describe('v2 mapping utils', () => {
         children: [],
       };
 
-      expect(isMappingWithoutExtract(mapping)).toEqual(true);
+      expect(isMappingWithoutExtract(mapping)).toBe(true);
     });
     test('should return false if object data type has no extract with copy source as no', () => {
       const mapping = {
@@ -2991,52 +2986,52 @@ describe('v2 mapping utils', () => {
         children: [],
       };
 
-      expect(isMappingWithoutExtract(mapping)).toEqual(false);
+      expect(isMappingWithoutExtract(mapping)).toBe(false);
     });
   });
 
   describe('hasV2MappingsInTreeData util', () => {
     test('should not throw exception for invalid args', () => {
-      expect(hasV2MappingsInTreeData()).toEqual(false);
-      expect(hasV2MappingsInTreeData([], [])).toEqual(false);
+      expect(hasV2MappingsInTreeData()).toBe(false);
+      expect(hasV2MappingsInTreeData([], [])).toBe(false);
     });
     test('should return true if no required mappings exist and any extract is present', () => {
       const mappings1 = [{key: 'key1', extract: '$.test'}];
       const mappings2 = [{key: 'key1', generateDisabled: true, extract: '$.test', children: [{key: 'c1', isEmptyRow: true}]}];
 
-      expect(hasV2MappingsInTreeData(mappings1)).toEqual(true);
-      expect(hasV2MappingsInTreeData(mappings2)).toEqual(true);
-      expect(hasV2MappingsInTreeData([{key: 'key1', extract: 'e1', generate: 'g1', dataType: 'string'}])).toEqual(true);
+      expect(hasV2MappingsInTreeData(mappings1)).toBe(true);
+      expect(hasV2MappingsInTreeData(mappings2)).toBe(true);
+      expect(hasV2MappingsInTreeData([{key: 'key1', extract: 'e1', generate: 'g1', dataType: 'string'}])).toBe(true);
     });
     test('should return true if no required mappings exist and any generate is present', () => {
       const mappings1 = [{key: 'key1', generate: 'test'}];
       const mappings2 = [{key: 'key1', children: [{key: 'c1', generate: 'test'}]}];
 
-      expect(hasV2MappingsInTreeData(mappings1)).toEqual(true);
-      expect(hasV2MappingsInTreeData(mappings2)).toEqual(true);
+      expect(hasV2MappingsInTreeData(mappings1)).toBe(true);
+      expect(hasV2MappingsInTreeData(mappings2)).toBe(true);
     });
     test('should return true if required mappings exist and any extra generate is present', () => {
       const mappings1 = [{key: 'key1', isRequired: true, generate: 'test'}, {key: 'key2', generate: 'address'}];
       const mappings2 = [{key: 'key1', isRequired: true, generate: 'test', children: [{key: 'c1', generate: 'address'}]}];
 
-      expect(hasV2MappingsInTreeData(mappings1)).toEqual(true);
-      expect(hasV2MappingsInTreeData(mappings2)).toEqual(true);
+      expect(hasV2MappingsInTreeData(mappings1)).toBe(true);
+      expect(hasV2MappingsInTreeData(mappings2)).toBe(true);
     });
     test('should return true if required mappings exist and extract is present in those', () => {
       const mappings = [{key: 'key1', isRequired: true, generate: 'test', extract: '$.abc'}];
 
-      expect(hasV2MappingsInTreeData(mappings)).toEqual(true);
+      expect(hasV2MappingsInTreeData(mappings)).toBe(true);
     });
     test('should return false if no valid mappings exist', () => {
       const mappings1 = [{key: 'key1'}];
       const mappings2 = [{key: 'key1', isRequired: true, generate: 'test'}];
       const mappings3 = [{key: 'key1', isRequired: true, generate: 'test', children: [{key: 'c1', isEmptyRow: true}]}];
 
-      expect(hasV2MappingsInTreeData(mappings1)).toEqual(false);
-      expect(hasV2MappingsInTreeData(mappings2)).toEqual(false);
-      expect(hasV2MappingsInTreeData(mappings3)).toEqual(false);
-      expect(hasV2MappingsInTreeData([{key: 'key1', isEmptyRow: true}])).toEqual(false);
-      expect(hasV2MappingsInTreeData([{key: 'key1', generateDisabled: true, children: [{key: 'c1', isEmptyRow: true}]}])).toEqual(false);
+      expect(hasV2MappingsInTreeData(mappings1)).toBe(false);
+      expect(hasV2MappingsInTreeData(mappings2)).toBe(false);
+      expect(hasV2MappingsInTreeData(mappings3)).toBe(false);
+      expect(hasV2MappingsInTreeData([{key: 'key1', isEmptyRow: true}])).toBe(false);
+      expect(hasV2MappingsInTreeData([{key: 'key1', generateDisabled: true, children: [{key: 'c1', isEmptyRow: true}]}])).toBe(false);
     });
   });
   describe('buildV2MappingsFromTree util', () => {
@@ -3805,7 +3800,7 @@ describe('v2 mapping utils', () => {
   });
   describe('allowDrop util', () => {
     test('should not throw exception for invalid args', () => {
-      expect(allowDrop({})).toEqual(false);
+      expect(allowDrop({})).toBe(false);
     });
     test('should return false if either node is hidden', () => {
       const dragNode = {
@@ -3815,9 +3810,9 @@ describe('v2 mapping utils', () => {
         hidden: true,
       };
 
-      expect(allowDrop({dragNode})).toEqual(false);
-      expect(allowDrop({dropNode})).toEqual(false);
-      expect(allowDrop({dragNode, dropNode})).toEqual(false);
+      expect(allowDrop({dragNode})).toBe(false);
+      expect(allowDrop({dropNode})).toBe(false);
+      expect(allowDrop({dragNode, dropNode})).toBe(false);
     });
     test('should return false if drag node is tab node', () => {
       const dragNode = {
@@ -3827,7 +3822,7 @@ describe('v2 mapping utils', () => {
         extract: '$.fname',
       };
 
-      expect(allowDrop({dragNode, dropNode})).toEqual(false);
+      expect(allowDrop({dragNode, dropNode})).toBe(false);
     });
     test('should return false if drop node has a tab child and drop position is 0', () => {
       const dragNode = {
@@ -3843,7 +3838,7 @@ describe('v2 mapping utils', () => {
         ],
       };
 
-      expect(allowDrop({dragNode, dropNode, dropPosition: 0})).toEqual(false);
+      expect(allowDrop({dragNode, dropNode, dropPosition: 0})).toBe(false);
     });
     test('should return true if drag node is a child to drop node and drop position is 0', () => {
       const dragNode = {
@@ -3865,7 +3860,7 @@ describe('v2 mapping utils', () => {
         ],
       };
 
-      expect(allowDrop({dragNode, dropNode, dropPosition: 0})).toEqual(true);
+      expect(allowDrop({dragNode, dropNode, dropPosition: 0})).toBe(true);
     });
     test('should return true if nodes are not at the same hierarchical level', () => {
       const dragNode = {
@@ -3893,7 +3888,7 @@ describe('v2 mapping utils', () => {
         ],
       };
 
-      expect(allowDrop({dragNode, dropNode, dropPosition: 2})).toEqual(true);
+      expect(allowDrop({dragNode, dropNode, dropPosition: 2})).toBe(true);
       expect(allowDrop({dragNode: {
         key: 'c2',
         extract: '$.lname',
@@ -3901,7 +3896,7 @@ describe('v2 mapping utils', () => {
         parentKey: 'key1',
       },
       dropNode,
-      dropPosition: 2})).toEqual(true);
+      dropPosition: 2})).toBe(true);
     });
     test('should return true if drop node is tab and drop position is 1', () => {
       const dragNode = {
@@ -3916,7 +3911,7 @@ describe('v2 mapping utils', () => {
         parentKey: 'key1',
       };
 
-      expect(allowDrop({dragNode, dropNode, dropPosition: 1})).toEqual(true);
+      expect(allowDrop({dragNode, dropNode, dropPosition: 1})).toBe(true);
     });
     test('should return false if drop node is tab and drop position is not 1', () => {
       const dragNode = {
@@ -3931,7 +3926,7 @@ describe('v2 mapping utils', () => {
         parentKey: 'key1',
       };
 
-      expect(allowDrop({dragNode, dropNode, dropPosition: 2})).toEqual(false);
+      expect(allowDrop({dragNode, dropNode, dropPosition: 2})).toBe(false);
     });
     test('should return false if drop node does not have a child and drop position is 0', () => {
       const dragNode = {
@@ -3945,7 +3940,7 @@ describe('v2 mapping utils', () => {
         generate: 'lname',
       };
 
-      expect(allowDrop({dragNode, dropNode, dropPosition: 0})).toEqual(false);
+      expect(allowDrop({dragNode, dropNode, dropPosition: 0})).toBe(false);
     });
     test('should return true for other cases', () => {
       const dragNode = {
@@ -3961,7 +3956,7 @@ describe('v2 mapping utils', () => {
         parentKey: 'key1',
       };
 
-      expect(allowDrop({dragNode, dropNode, dropPosition: 1})).toEqual(true);
+      expect(allowDrop({dragNode, dropNode, dropPosition: 1})).toBe(true);
     });
   });
   describe('findNodeInTree util', () => {
@@ -4754,7 +4749,7 @@ describe('v2 mapping utils', () => {
   describe('getSelectedKeys util', () => {
     test('should not throw exception for invalid args', () => {
       expect(getSelectedKeys()).toEqual([]);
-      expect(getSelectedKeys(null, null, null)).toEqual(null);
+      expect(getSelectedKeys(null, null, null)).toBeNull();
     });
     test('should correctly return the selected keys based on selected values', () => {
       const extractsTreeNode = {
@@ -4874,7 +4869,7 @@ describe('v2 mapping utils', () => {
 
     test('should not throw exception for invalid args', () => {
       expect(findAllParentExtractsForNode()).toEqual([]);
-      expect(findAllParentExtractsForNode(null, null, null)).toEqual(null);
+      expect(findAllParentExtractsForNode(null, null, null)).toBeNull();
     });
     test('should correctly return parent extracts for give node', () => {
       expect(findAllParentExtractsForNode(treeData, [], 'k1')).toEqual([]);
@@ -4929,24 +4924,24 @@ describe('v2 mapping utils', () => {
     ];
 
     test('should not throw exception for invalid args', () => {
-      expect(findNearestParentExtractForNode()).toEqual('');
-      expect(findNearestParentExtractForNode(null, null)).toEqual('');
+      expect(findNearestParentExtractForNode()).toBe('');
+      expect(findNearestParentExtractForNode(null, null)).toBe('');
     });
     test('should correctly return parent extracts for give node', () => {
-      expect(findNearestParentExtractForNode(v2TreeData, 'k1')).toEqual('');
-      expect(findNearestParentExtractForNode(v2TreeData, 'c2')).toEqual('$.siblings.children[*]');
-      expect(findNearestParentExtractForNode(v2TreeData, 'k3-c2')).toEqual('$.items[*]');
+      expect(findNearestParentExtractForNode(v2TreeData, 'k1')).toBe('');
+      expect(findNearestParentExtractForNode(v2TreeData, 'c2')).toBe('$.siblings.children[*]');
+      expect(findNearestParentExtractForNode(v2TreeData, 'k3-c2')).toBe('$.items[*]');
     });
   });
   describe('getFinalSelectedExtracts util', () => {
     test('should not throw exception for invalid args', () => {
-      expect(getFinalSelectedExtracts()).toEqual('$');
+      expect(getFinalSelectedExtracts()).toBe('$');
     });
     test('should correctly return the json path for non array data type node', () => {
-      expect(getFinalSelectedExtracts({jsonPath: 'children.lname'}, '$.fname')).toEqual('$.children.lname');
-      expect(getFinalSelectedExtracts({jsonPath: 'siblings[*]'}, 'test')).toEqual('$.siblings[*]');
-      expect(getFinalSelectedExtracts({jsonPath: 'siblings[*]'}, 'test', false, true)).toEqual('$[*].siblings[*]');
-      expect(getFinalSelectedExtracts({jsonPath: ''}, '', false, true)).toEqual('$[*]');
+      expect(getFinalSelectedExtracts({jsonPath: 'children.lname'}, '$.fname')).toBe('$.children.lname');
+      expect(getFinalSelectedExtracts({jsonPath: 'siblings[*]'}, 'test')).toBe('$.siblings[*]');
+      expect(getFinalSelectedExtracts({jsonPath: 'siblings[*]'}, 'test', false, true)).toBe('$[*].siblings[*]');
+      expect(getFinalSelectedExtracts({jsonPath: ''}, '', false, true)).toBe('$[*]');
     });
     test('should correctly return the json path for array data type node', () => {
       expect(getFinalSelectedExtracts({jsonPath: 'lname'}, '', true)).toEqual('$.lname');
@@ -4979,18 +4974,18 @@ describe('v2 mapping utils', () => {
         dataType: 'string',
       }];
 
-      expect(getFinalSelectedExtracts({jsonPath: 'items[*].inv_detail.name'}, '', true, false, 'c2', treeData)).toEqual('$.items.inv_detail.name');
-      expect(getFinalSelectedExtracts({jsonPath: 'items[*].name'}, '', true, false, 'key2', treeData)).toEqual('$.items[*].name');
+      expect(getFinalSelectedExtracts({jsonPath: 'items[*].inv_detail.name'}, '', true, false, 'c2', treeData)).toBe('$.items.inv_detail.name');
+      expect(getFinalSelectedExtracts({jsonPath: 'items[*].name'}, '', true, false, 'key2', treeData)).toBe('$.items[*].name');
     });
   });
   describe('compareV2Mappings util', () => {
     test('should return false if both mappings are empty', () => {
-      expect(compareV2Mappings()).toEqual(false);
-      expect(compareV2Mappings([], [])).toEqual(false);
+      expect(compareV2Mappings()).toBe(false);
+      expect(compareV2Mappings([], [])).toBe(false);
     });
     test('should return true if one mapping length is diff than other', () => {
-      expect(compareV2Mappings([{key: 'key1'}], [])).toEqual(true);
-      expect(compareV2Mappings([], [{key: 'key1'}])).toEqual(true);
+      expect(compareV2Mappings([{key: 'key1'}], [])).toBe(true);
+      expect(compareV2Mappings([], [{key: 'key1'}])).toBe(true);
     });
     test('should return true if any fields got changed', () => {
       const origData = [
@@ -5010,7 +5005,7 @@ describe('v2 mapping utils', () => {
         },
       ];
 
-      expect(compareV2Mappings(newData, origData)).toEqual(true);
+      expect(compareV2Mappings(newData, origData)).toBe(true);
     });
     test('should return true if any children fields got changed', () => {
       const origData = [
@@ -5047,7 +5042,7 @@ describe('v2 mapping utils', () => {
         },
       ];
 
-      expect(compareV2Mappings(newData, origData)).toEqual(true);
+      expect(compareV2Mappings(newData, origData)).toBe(true);
     });
     test('should return true if all children were removed', () => {
       const origData = [
@@ -5076,7 +5071,7 @@ describe('v2 mapping utils', () => {
         },
       ];
 
-      expect(compareV2Mappings(newData, origData)).toEqual(true);
+      expect(compareV2Mappings(newData, origData)).toBe(true);
     });
     test('should return true if some children were removed', () => {
       const origData = [
@@ -5118,7 +5113,7 @@ describe('v2 mapping utils', () => {
         },
       ];
 
-      expect(compareV2Mappings(newData, origData)).toEqual(true);
+      expect(compareV2Mappings(newData, origData)).toBe(true);
     });
     test('should return false if no crucial data changed', () => {
       const origData = [
@@ -5156,7 +5151,7 @@ describe('v2 mapping utils', () => {
         },
       ];
 
-      expect(compareV2Mappings(newData, origData)).toEqual(false);
+      expect(compareV2Mappings(newData, origData)).toBe(false);
     });
   });
   describe('getAllKeys util', () => {
@@ -5665,9 +5660,9 @@ describe('v2 mapping utils', () => {
   });
   describe('filterNode util', () => {
     test('should not throw exception for invalid args', () => {
-      expect(filterNode()).toEqual(false);
-      expect(filterNode({})).toEqual(false);
-      expect(filterNode(null)).toEqual(false);
+      expect(filterNode()).toBe(false);
+      expect(filterNode({})).toBe(false);
+      expect(filterNode(null)).toBe(false);
     });
     test('should return false if generate is not matched', () => {
       const node = {
@@ -5676,7 +5671,7 @@ describe('v2 mapping utils', () => {
         generate: 'abc',
       };
 
-      expect(filterNode(node, 'ABCdef')).toEqual(false);
+      expect(filterNode(node, 'ABCdef')).toBe(false);
     });
     test('should return true if generate is matched', () => {
       const node = {
@@ -5685,7 +5680,7 @@ describe('v2 mapping utils', () => {
         generate: 'abc',
       };
 
-      expect(filterNode(node, 'ABC')).toEqual(true);
+      expect(filterNode(node, 'ABC')).toBe(true);
     });
   });
   describe('parentHasAnyChildMatch util', () => {
@@ -5710,14 +5705,14 @@ describe('v2 mapping utils', () => {
     ];
 
     test('should not throw exception for invalid args', () => {
-      expect(parentHasAnyChildMatch()).toEqual(false);
-      expect(parentHasAnyChildMatch([])).toEqual(false);
+      expect(parentHasAnyChildMatch()).toBe(false);
+      expect(parentHasAnyChildMatch([])).toBe(false);
     });
     test('should return false if no children are matched', () => {
-      expect(parentHasAnyChildMatch(v2TreeData, 'test')).toEqual(false);
+      expect(parentHasAnyChildMatch(v2TreeData, 'test')).toBe(false);
     });
     test('should return true if any child matched', () => {
-      expect(parentHasAnyChildMatch(v2TreeData, 'child3')).toEqual(true);
+      expect(parentHasAnyChildMatch(v2TreeData, 'child3')).toBe(true);
     });
   });
   describe('applySearchFilter util', () => {
@@ -5914,8 +5909,8 @@ describe('v2 mapping utils', () => {
   });
   describe('countMatches util', () => {
     test('should not throw exception for invalid args', () => {
-      expect(countMatches()).toEqual(0);
-      expect(countMatches([])).toEqual(0);
+      expect(countMatches()).toBe(0);
+      expect(countMatches([])).toBe(0);
     });
     test('should return the correct matches count', () => {
       const v2TreeData = [
@@ -5998,7 +5993,7 @@ describe('v2 mapping utils', () => {
         },
       ];
 
-      expect(countMatches(v2TreeData, 'test')).toEqual(5);
+      expect(countMatches(v2TreeData, 'test')).toBe(5);
     });
   });
 });

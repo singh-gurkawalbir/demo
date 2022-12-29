@@ -1,4 +1,4 @@
-/* global describe, test,expect, jest */
+
 import React from 'react';
 import { screen, waitFor, cleanup } from '@testing-library/react';
 import { MemoryRouter, Route, Switch, useParams } from 'react-router-dom';
@@ -208,7 +208,7 @@ describe('Globalsearch feature tests', () => {
       expect(templates?.length).toBe(1);
       const IAs = screen.queryAllByLabelText(/Integration apps/i);
 
-      expect(IAs.length).toBe(1);
+      expect(IAs).toHaveLength(1);
     });
   });
   test('Should display filters allowed for Manager account', async () => {
@@ -487,7 +487,7 @@ describe('Globalsearch feature tests', () => {
     userEvent.click(marketplaceTab);
     expect(screen.queryByText(/Your search didn’t return any matching results. Try expanding your search criteria/i)).toBeInTheDocument();
   });
-  test('Should raise a request to backend and open a modal on clicking on marketplace app preview ', async () => {
+  test('Should raise a request to backend and open a modal on clicking on marketplace app preview', async () => {
     await initGlobalSearch();
     const mockResolverFunction = jest.fn();
     /* When checking if the route was requested, if we directly give
@@ -563,7 +563,7 @@ describe('Globalsearch feature tests', () => {
     userEvent.click(previewButton);
     expect(screen.queryByText(/^Templates Preview route application:acumatica templateId:5d4aa1dcdaf8cb66639f0a89/i)).toBeInTheDocument();
   });
-  test('Should navigate to that route on clicking on resource results ', async () => {
+  test('Should navigate to that route on clicking on resource results', async () => {
     const Connections = () => {
       const {id} = useParams();
 

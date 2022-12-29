@@ -1,4 +1,4 @@
-/* global describe, test, jest ,beforeAll , afterAll, expect */
+
 import { expectSaga } from 'redux-saga-test-plan';
 import * as matchers from 'redux-saga-test-plan/matchers';
 import { throwError } from 'redux-saga-test-plan/providers';
@@ -42,7 +42,7 @@ describe('sendRequest saga', () => {
       method: 'GET' };
     const errorResponseException = new APIException({status: 401, message: 'someErroredResponse'});
 
-    return expectSaga(sendRequest, request)
+    expectSaga(sendRequest, request)
       .provide([
         [matchers.call.fn(onRequestSaga), onRequestGeneratedPayload],
         [matchers.call.fn(fetch), someErrorResp],
@@ -56,7 +56,7 @@ describe('sendRequest saga', () => {
     // in cases like this it will try to retry until failure
     const fetchApiException = new Error('some fetch api error');
 
-    return expectSaga(sendRequest, request)
+    expectSaga(sendRequest, request)
       .provide([
         [matchers.call.fn(onRequestSaga), onRequestGeneratedPayload],
         [matchers.call.fn(fetch), throwError(fetchApiException)],
@@ -74,7 +74,7 @@ describe('sendRequest saga', () => {
 
     const parsedSuccessResponse = {...someSuccessResponse, data: JSON.parse(someSuccessResponse.data)};
 
-    return expectSaga(sendRequest, request)
+    expectSaga(sendRequest, request)
       .provide([
         [matchers.call.fn(onRequestSaga), onRequestGeneratedPayload],
         [matchers.call.fn(fetch), someSuccessResponse],

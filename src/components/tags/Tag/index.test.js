@@ -1,4 +1,4 @@
-/* global describe, test, expect */
+
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { screen } from '@testing-library/react';
@@ -18,7 +18,7 @@ async function initTag({
   return renderWithProviders(ui);
 }
 
-describe('Tag test cases', () => {
+describe('tag test cases', () => {
   runServer();
   test('should pass the initial render with default values', async () => {
     await initTag({

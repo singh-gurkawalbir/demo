@@ -1,4 +1,3 @@
-/* global describe, test, expect */
 
 import processorLogic, { _hasDefaultMetaData } from './index';
 
@@ -13,13 +12,13 @@ const {
 describe('sql processor logic', () => {
   describe('_hasDefaultMetaData util', () => {
     test('should return false for predefined list of fields', () => {
-      expect(_hasDefaultMetaData({fieldId: 'mongodb.filter', resourceType: 'exports'})).toEqual(false);
+      expect(_hasDefaultMetaData({fieldId: 'mongodb.filter', resourceType: 'exports'})).toBe(false);
     });
     test('should return false for rdbms export query fields', () => {
-      expect(_hasDefaultMetaData({fieldId: 'rdbms.query', resourceType: 'exports'})).toEqual(false);
+      expect(_hasDefaultMetaData({fieldId: 'rdbms.query', resourceType: 'exports'})).toBe(false);
     });
     test('should return true for all other cases', () => {
-      expect(_hasDefaultMetaData({fieldId: 'rdbms.query', resourceType: 'imports'})).toEqual(true);
+      expect(_hasDefaultMetaData({fieldId: 'rdbms.query', resourceType: 'imports'})).toBe(true);
     });
   });
   describe('init util', () => {
@@ -166,7 +165,7 @@ describe('sql processor logic', () => {
   });
   describe('dirty util', () => {
     test('should return false if default data is undefined', () => {
-      expect(dirty({})).toEqual(false);
+      expect(dirty({})).toBe(false);
     });
     test('should return true if original default data differs from patched default data', () => {
       const editor = {
@@ -193,7 +192,7 @@ describe('sql processor logic', () => {
         rule: 'some rule',
       };
 
-      expect(dirty(editor)).toEqual(true);
+      expect(dirty(editor)).toBe(true);
     });
     test('should return true if original rule differs from patched rule', () => {
       const editor = {
@@ -221,7 +220,7 @@ describe('sql processor logic', () => {
         originalRule: 'new rule',
       };
 
-      expect(dirty(editor)).toEqual(true);
+      expect(dirty(editor)).toBe(true);
     });
     test('should return false if default data and rule has not changed', () => {
       const editor = {
@@ -249,7 +248,7 @@ describe('sql processor logic', () => {
         originalRule: 'some rule',
       };
 
-      expect(dirty(editor)).toEqual(false);
+      expect(dirty(editor)).toBe(false);
     });
   });
   describe('validate util', () => {

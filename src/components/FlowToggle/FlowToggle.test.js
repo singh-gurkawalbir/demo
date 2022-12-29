@@ -1,4 +1,4 @@
-/* global test, expect, jest,describe,beforeEach,afterEach */
+
 import React from 'react';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -172,12 +172,12 @@ describe('unit tests for FlowToggle button', () => {
     expect(disButton).toBeInTheDocument();
     userEvent.click(disButton);
     await waitFor(() =>
-      expect(mockDispatchFn).toBeCalledWith(
+      expect(mockDispatchFn).toHaveBeenCalledWith(
         actions.flow.isOnOffActionInprogress(true, '626bdab2987bb423914b487d')
       )
     );
     await waitFor(() =>
-      expect(mockDispatchFn).toBeCalledWith(
+      expect(mockDispatchFn).toHaveBeenCalledWith(
         actions.resource.patchAndCommitStaged(
           'flows',
           '626bdab2987bb423914b487d',
@@ -200,12 +200,12 @@ describe('unit tests for FlowToggle button', () => {
 
     userEvent.click(disButton);
     await waitFor(() =>
-      expect(mockDispatchFn).toBeCalledWith(
+      expect(mockDispatchFn).toHaveBeenCalledWith(
         actions.flow.isOnOffActionInprogress(true, '626bdab2987bb423914b487d')
       )
     );
     await waitFor(() =>
-      expect(mockDispatchFn).toBeCalledWith(
+      expect(mockDispatchFn).toHaveBeenCalledWith(
         actions.integrationApp.settings.update(
           '626bda66987bb423914b486f',
           '626bdab2987bb423914b487d',

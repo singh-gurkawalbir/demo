@@ -1,4 +1,4 @@
-/* global describe, test, expect, jest, beforeEach, afterEach */
+
 import React from 'react';
 import {
   screen, waitFor,
@@ -188,7 +188,7 @@ jest.mock('../../../../utils/resource', () => ({
   getNetSuiteSubrecordImports: () => ([{value: 'value'}]),
 }));
 
-describe('DynaNetSuiteSubRecords UI tests', () => {
+describe('dynaNetSuiteSubRecords UI tests', () => {
   let mockDispatchFn;
   let useDispatchSpy;
 
@@ -240,7 +240,7 @@ describe('DynaNetSuiteSubRecords UI tests', () => {
       value: [{value: 'value'}],
     });
     initDynaNetSuiteSubRecords({...props, subrecords: undefined});
-    await waitFor(() => expect(mockDispatchFn).toBeCalledWith(actions.resource.patchStaged('633dc83108cc753ca5688d34', patchSet, 'value')));
+    await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith(actions.resource.patchStaged('633dc83108cc753ca5688d34', patchSet, 'value')));
   });
   test('should make a dispatch call with different patchset when importdoc does not contain netsuite_da', async () => {
     const patchSet = [];
@@ -256,7 +256,7 @@ describe('DynaNetSuiteSubRecords UI tests', () => {
       value: [],
     });
     initDynaNetSuiteSubRecords({resourceContext: {resourceId: '633dc83108cc753ca5688d45', recordType: 'dummy'}, hasRecord: true, onFieldChange: mockOnFieldChange});
-    await waitFor(() => expect(mockDispatchFn).toBeCalledWith(actions.resource.patchStaged('633dc83108cc753ca5688d45', patchSet, 'value')));
+    await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith(actions.resource.patchStaged('633dc83108cc753ca5688d45', patchSet, 'value')));
   });
   test('should display the subrecords if the importDoc already has some of them added', async () => {
     initDynaNetSuiteSubRecords({...props});
@@ -279,7 +279,7 @@ describe('DynaNetSuiteSubRecords UI tests', () => {
     userEvent.click(deleteButton);
     expect(screen.getByText('Remove')).toBeInTheDocument();
     userEvent.click(screen.getByText('Remove'));
-    await waitFor(() => expect(mockDispatchFn).toBeCalledWith(actions.resource.patchStaged(
+    await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith(actions.resource.patchStaged(
       '633dc83108cc753ca5688d34',
       [
         {

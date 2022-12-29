@@ -1,4 +1,3 @@
-/* global describe, test, expect */
 import { getReplaceConnectionExpression, getParentResourceContext, getFilterExpressionForAssistant, getConstantContactVersion, getAssistantFromConnection } from './index';
 
 describe('connections utils test cases', () => {
@@ -152,7 +151,7 @@ describe('connections utils test cases', () => {
   });
   describe('getConstantContactVersion test cases', () => {
     test('should return constantcontactv2 if base uri is not of constantcontactv3', () => {
-      expect(getConstantContactVersion()).toEqual('constantcontactv2');
+      expect(getConstantContactVersion()).toBe('constantcontactv2');
     });
     test('should return constantcontactv3 if base uri is of constantcontactv3', () => {
       const connection = {
@@ -161,7 +160,7 @@ describe('connections utils test cases', () => {
         },
       };
 
-      expect(getConstantContactVersion(connection)).toEqual('constantcontactv3');
+      expect(getConstantContactVersion(connection)).toBe('constantcontactv3');
     });
   });
   describe('getAssistantFromConnection test cases', () => {
@@ -169,9 +168,9 @@ describe('connections utils test cases', () => {
       expect(getAssistantFromConnection()).toBeUndefined();
     });
     test('should return the same assistant if it is not multiple auth type', () => {
-      expect(getAssistantFromConnection('square')).toEqual('square');
-      expect(getAssistantFromConnection('hubspot', {id: 123})).toEqual('hubspot');
-      expect(getAssistantFromConnection('zoom', {id: 234})).toEqual('zoom');
+      expect(getAssistantFromConnection('square')).toBe('square');
+      expect(getAssistantFromConnection('hubspot', {id: 123})).toBe('hubspot');
+      expect(getAssistantFromConnection('zoom', {id: 234})).toBe('zoom');
     });
     test('should return correct constant contact version based on connection', () => {
       const connection = {
@@ -180,22 +179,22 @@ describe('connections utils test cases', () => {
         },
       };
 
-      expect(getAssistantFromConnection('constantcontact', connection)).toEqual('constantcontactv3');
+      expect(getAssistantFromConnection('constantcontact', connection)).toBe('constantcontactv3');
     });
-    test('should return correct constant contact version based on connection', () => {
+    test('should return correct constant contact version based on connection1', () => {
       const connection = {
         http: {
           baseURI: 'https://api.constantcontact.com/',
         },
       };
 
-      expect(getAssistantFromConnection('constantcontact', connection)).toEqual('constantcontactv2');
+      expect(getAssistantFromConnection('constantcontact', connection)).toBe('constantcontactv2');
     });
     test('should return amazonmws if assistant is amazonmws', () => {
-      expect(getAssistantFromConnection('amazonmws')).toEqual('amazonmws');
+      expect(getAssistantFromConnection('amazonmws')).toBe('amazonmws');
     });
     test('should return zoom if assistant is zoom', () => {
-      expect(getAssistantFromConnection('zoom')).toEqual('zoom');
+      expect(getAssistantFromConnection('zoom')).toBe('zoom');
     });
   });
 });

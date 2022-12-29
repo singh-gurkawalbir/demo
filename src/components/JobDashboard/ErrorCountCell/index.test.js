@@ -1,4 +1,4 @@
-/* global jest, expect, test, describe */
+
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
@@ -14,7 +14,7 @@ function initErrorCountCell({count, isError, onClick = jest.fn(), isJobInProgres
   return render(ui);
 }
 
-describe('Testsuite for ErrorCountCell', () => {
+describe('testsuite for ErrorCountCell', () => {
   test('should test the error count cell when the count, isError, isJobInProgress is undefined', () => {
     initErrorCountCell();
     expect(document.querySelector('td[data-test="view-job-resolved"]')).toBeInTheDocument();

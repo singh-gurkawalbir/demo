@@ -1,4 +1,4 @@
-/* global describe, test, expect, jest, beforeEach */
+
 import React from 'react';
 import { screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
@@ -24,7 +24,7 @@ const collection = [
   [{_id: 'import1', _connectionId: 'connection1'}],
 ];
 
-describe('ConnectionStatusPanel UI tests', () => {
+describe('connectionStatusPanel UI tests', () => {
   beforeEach(() => {
     // jest.resetAllMocks();
     mockPostRequest('/api/connections/connection1/ping', {status: 200});

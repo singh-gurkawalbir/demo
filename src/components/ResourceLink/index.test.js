@@ -1,4 +1,4 @@
-/* global describe, test, expect, jest */
+
 import React from 'react';
 import { screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
@@ -24,7 +24,7 @@ jest.mock('../LoadResources', () => ({
   ),
 }));
 
-describe('ResourceLink UI test', () => {
+describe('resourceLink UI test', () => {
   test('should show the link button', () => {
     const mockFn = jest.fn();
 

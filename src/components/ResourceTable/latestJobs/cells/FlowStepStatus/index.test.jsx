@@ -1,4 +1,3 @@
-/* global describe, test, expect, beforeEach, jest */
 
 import React from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
@@ -41,7 +40,7 @@ const jobdata2 = {
   uiStatus: JOB_STATUS.COMPLETED,
 };
 
-describe('UI test cases for FlowStepStatus', () => {
+describe('uI test cases for FlowStepStatus', () => {
   beforeEach(() => {
     jest.resetAllMocks();
   });

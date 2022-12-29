@@ -1,4 +1,3 @@
-/* global describe, test, expect */
 import { render, screen } from '@testing-library/react';
 import React from 'react';
 import TitleTypography from '.';
@@ -26,6 +25,6 @@ describe('Testsuite for TitleTypography', () => {
     );
 
     expect(container.firstChild.className).toEqual(expect.stringContaining('test class'));
-    expect(container.textContent).toEqual('');
+    expect(container.textContent).toBe('');
   });
 });

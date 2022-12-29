@@ -1,4 +1,3 @@
-/* global expect, describe, test, beforeEach */
 import getFormattedSampleData, {
   getDefaultData,
   convertFileDataToJSON,
@@ -172,7 +171,7 @@ describe('convertFileDataToJSON util', () => {
     };
 
     expect(convertFileDataToJSON(sampleData)).toBe(sampleData);
-    expect(convertFileDataToJSON(null, resource)).toBe(null);
+    expect(convertFileDataToJSON(null, resource)).toBeNull();
   });
   test('should return original sample data if resource is a non file type adaptor', () => {
     const resource = {
@@ -319,16 +318,16 @@ describe('getSampleValue util', () => {
 
     const id2 = 'addressbook[*].addr1';
 
-    expect(getSampleValue('invalid_type', id2)).toEqual('addr1');
+    expect(getSampleValue('invalid_type', id2)).toBe('addr1');
   });
   test('should return correct sample value according to the type passed', () => {
     const id1 = 'daysoverdue';
 
-    expect(getSampleValue('integer', id1)).toEqual(999);
+    expect(getSampleValue('integer', id1)).toBe(999);
 
     const id2 = 'telephone';
 
-    expect(getSampleValue('phone', id2)).toEqual('(917)494-4476');
+    expect(getSampleValue('phone', id2)).toBe('(917)494-4476');
   });
 });
 

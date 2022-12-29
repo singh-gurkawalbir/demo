@@ -1,4 +1,4 @@
-/* global describe, test, expect, jest */
+
 import React from 'react';
 import {
   screen, waitFor,
@@ -49,7 +49,7 @@ function initSuggestions(props = {}) {
 }
 // : 'processedFlowInput',
 
-describe('Suggestions UI tests', () => {
+describe('suggestions UI tests', () => {
   const mockonValueUpdate = jest.fn();
   const mockonFieldChange = jest.fn();
 
@@ -88,12 +88,12 @@ describe('Suggestions UI tests', () => {
     initSuggestions(props);
 
     userEvent.click(screen.getByText('value1'));
-    await waitFor(() => expect(mockonValueUpdate).toBeCalledWith('{{lookup.value1}}'));
+    await waitFor(() => expect(mockonValueUpdate).toHaveBeenCalledWith('{{lookup.value1}}'));
   });
   test('should call the update function with a different argument when "showSuggestionsWithoutHandlebar" prop is true', async () => {
     initSuggestions({...props, showSuggestionsWithoutHandlebar: true});
     userEvent.click(screen.getByText('value1'));
-    await waitFor(() => expect(mockonValueUpdate).toBeCalledWith('value1'));
+    await waitFor(() => expect(mockonValueUpdate).toHaveBeenCalledWith('value1'));
   });
   test('should open the LookupActionMenu when clicked on "New label" button', () => {
     initSuggestions(props);
@@ -127,7 +127,7 @@ describe('Suggestions UI tests', () => {
     userEvent.click(screen.getByText('New lookup'));
     expect(screen.getByText('Save')).toBeInTheDocument();
     userEvent.click(screen.getByText('Save'));
-    await waitFor(() => expect(mockonFieldChange).toBeCalledWith('http.lookups', modifiedLookup));
+    await waitFor(() => expect(mockonFieldChange).toHaveBeenCalledWith('http.lookups', modifiedLookup));
   });
   test('should call the onFieldChange function passed in props when LookupActionMenu of filtered lookup is saved', async () => {
     const modifiedLookup = [
@@ -144,13 +144,13 @@ describe('Suggestions UI tests', () => {
     userEvent.click(screen.getAllByText('Edit')[0]);
     expect(screen.getByText('Save')).toBeInTheDocument();
     userEvent.click(screen.getByText('Save'));
-    await waitFor(() => expect(mockonFieldChange).toBeCalledWith('http.lookups', modifiedLookup));
+    await waitFor(() => expect(mockonFieldChange).toHaveBeenCalledWith('http.lookups', modifiedLookup));
   });
   test('should call the onValueUpdate function passed in props when clicked on sampledata object key', async () => {
     initSuggestions(props);
     expect(screen.getByText('record.id')).toBeInTheDocument();
     userEvent.click(screen.getByText('record.id'));
-    await waitFor(() => expect(mockonValueUpdate).toBeCalledWith('{{record.id}}'));
+    await waitFor(() => expect(mockonValueUpdate).toHaveBeenCalledWith('{{record.id}}'));
   });
   test('should only display the sampleData paths when showlookup prop is false', () => {
     initSuggestions({...props, showLookup: false});

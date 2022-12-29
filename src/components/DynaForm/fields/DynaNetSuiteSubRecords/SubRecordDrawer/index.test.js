@@ -1,4 +1,4 @@
-/* global describe, test, expect, jest, beforeEach, afterEach */
+
 import React from 'react';
 import {
   screen, waitFor,
@@ -195,7 +195,7 @@ function initSubRecordDrawer(props = {}) {
     </MemoryRouter>, {initialStore});
 }
 
-describe('SubRecordDrawer UI tests', () => {
+describe('subRecordDrawer UI tests', () => {
   const props = {
     resourceContext: {
       resourceId: '633dc83108cc753ca5688d34',
@@ -246,7 +246,7 @@ describe('SubRecordDrawer UI tests', () => {
     initSubRecordDrawer(props);
     expect(screen.getByText('Save')).toBeInTheDocument();
     userEvent.click(screen.getByText('Save'));
-    await waitFor(() => expect(mockDispatchFn).toBeCalledWith(actions.resource.patchStaged(
+    await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith(actions.resource.patchStaged(
       '633dc83108cc753ca5688d34',
       [
         {
@@ -262,12 +262,12 @@ describe('SubRecordDrawer UI tests', () => {
     initSubRecordDrawer(props);
     expect(screen.getByText('Save')).toBeInTheDocument();
     userEvent.click(screen.getByText('Save'));
-    await waitFor(() => expect(mockHistoryGoback).toBeCalled());
+    await waitFor(() => expect(mockHistoryGoback).toHaveBeenCalled());
   });
   test('should make a url redirection when clicked on cancel button', async () => {
     initSubRecordDrawer(props);
     expect(screen.getByText('Cancel')).toBeInTheDocument();
     userEvent.click(screen.getByText('Cancel'));
-    await waitFor(() => expect(mockHistoryGoback).toBeCalled());
+    await waitFor(() => expect(mockHistoryGoback).toHaveBeenCalled());
   });
 });

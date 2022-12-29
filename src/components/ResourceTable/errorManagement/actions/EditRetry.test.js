@@ -1,4 +1,4 @@
-/* global test, expect, describe, jest, afterEach */
+
 import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -45,7 +45,7 @@ async function renderFuntion(actionProps, data, errorType) {
   userEvent.click(screen.getByRole('button', {name: /more/i}));
 }
 
-describe('Error management edit retry data action tests ', () => {
+describe('error management edit retry data action tests', () => {
   afterEach(() => {
     jest.clearAllMocks();
   });

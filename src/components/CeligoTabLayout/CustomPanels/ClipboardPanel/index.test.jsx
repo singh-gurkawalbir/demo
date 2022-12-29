@@ -1,7 +1,5 @@
-/* global describe, test, expect */
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { fireEvent, screen } from '@testing-library/react';
 import {renderWithProviders} from '../../../../test/test-utils';
 import ClipboardPanel from '.';
@@ -14,7 +12,7 @@ const props = {
   },
 };
 
-describe('Testing Clipboard Panel', () => {
+describe('testing Clipboard Panel', () => {
   test('testing the Clipboard Panel by giving content as Object', async () => {
     renderWithProviders(
       <MemoryRouter>

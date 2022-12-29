@@ -1,4 +1,4 @@
-/* global describe, test, expect, jest */
+
 import { select } from 'redux-saga/effects';
 import { expectSaga } from 'redux-saga-test-plan';
 import * as matchers from 'redux-saga-test-plan/matchers';
@@ -172,7 +172,7 @@ describe('constructResourceFromFormValues saga', () => {
     const resourceType = 'imports';
     const formValues = [];
 
-    return expectSaga(constructResourceFromFormValues, {
+    expectSaga(constructResourceFromFormValues, {
       formValues,
       resourceId,
       resourceType,
@@ -201,7 +201,7 @@ describe('constructResourceFromFormValues saga', () => {
       patchKey: 'patchValue',
     };
 
-    return expectSaga(constructResourceFromFormValues, {
+    expectSaga(constructResourceFromFormValues, {
       formValues,
       resourceId,
       resourceType,
@@ -229,7 +229,7 @@ describe('constructResourceFromFormValues saga', () => {
       },
     ];
 
-    return expectSaga(constructResourceFromFormValues, {
+    expectSaga(constructResourceFromFormValues, {
       formValues,
       resourceId,
       resourceType,
@@ -246,7 +246,7 @@ describe('constructResourceFromFormValues saga', () => {
     const resourceType = 'imports';
     const formValues = [];
 
-    return expectSaga(constructResourceFromFormValues, {
+    expectSaga(constructResourceFromFormValues, {
       formValues,
       resourceType,
     })
@@ -369,7 +369,7 @@ describe('convertResourceFieldstoSampleData', () => {
   test('should return empty when there are no resource fields', () => {
     const sampleData = convertResourceFieldstoSampleData();
 
-    expect(sampleData).toEqual('');
+    expect(sampleData).toBe('');
   });
 });
 describe('getHTTPConnectorMetadata', () => {
@@ -1585,7 +1585,7 @@ describe('updateFinalMetadataWithHttpFramework', () => {
   test('should not throw any exception for invalid arguments', () => {
     const metaData = updateFinalMetadataWithHttpFramework();
 
-    expect(metaData).toEqual(undefined);
+    expect(metaData).toBeUndefined();
   });
 });
 
@@ -1682,7 +1682,7 @@ describe('getEndpointResourceFields', () => {
   test('should not throw any exception for invalid arguments', () => {
     const sampleData = getEndpointResourceFields();
 
-    expect(sampleData).toEqual(undefined);
+    expect(sampleData).toBeUndefined();
   });
   test('should return resourceFields directly if endpoint resource fields are empty', () => {
     const sampleData = getEndpointResourceFields('', resourceFields);
@@ -2255,7 +2255,7 @@ describe('updateWebhookFinalMetadataWithHttpFramework', () => {
   test('should not throw any exception for invalid arguments', () => {
     const metaData = updateWebhookFinalMetadataWithHttpFramework();
 
-    expect(metaData).toEqual(undefined);
+    expect(metaData).toBeUndefined();
   });
 });
 

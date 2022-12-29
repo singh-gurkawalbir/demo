@@ -1,4 +1,4 @@
-/* global describe test expect */
+
 import { deepClone } from 'fast-json-patch';
 
 import {

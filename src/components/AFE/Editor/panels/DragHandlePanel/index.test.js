@@ -1,9 +1,8 @@
-/* global describe, test, expect, jest */
 import React from 'react';
 import DragHandleGridItem from '.';
 import { renderWithProviders } from '../../../../../test/test-utils';
 
-describe('DragHandleGridItem UI tests', () => {
+describe('dragHandleGridItem UI tests', () => {
   test('should pass the initial render', () => {
     const props = {
       orientation: 'vertical',

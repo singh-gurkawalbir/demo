@@ -1,4 +1,4 @@
-/* global describe, test, jest, expect */
+
 import { screen } from '@testing-library/react';
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
@@ -30,12 +30,12 @@ jest.mock('../Mapping/MappingRow', () => ({
   default: ({children}) => <div>{children}</div>,
 }
 ));
-describe('Test suite for VirtualizedDragContainer', () => {
-  test('Should test the virtualized drag container with empty items list', async () => {
+describe('test suite for VirtualizedDragContainer', () => {
+  test('should test the virtualized drag container with empty items list', async () => {
     await initVirtualizedDragContainer();
     expect(document.querySelector('div > ul > div > div > div > div')).toBeEmptyDOMElement();
   });
-  test('Should test the virtualized drag container with items list without keys', async () => {
+  test('should test the virtualized drag container with items list without keys', async () => {
     await initVirtualizedDragContainer({
       disabled: false,
       items: Array.from(Array(102),
@@ -51,7 +51,7 @@ describe('Test suite for VirtualizedDragContainer', () => {
     expect(document.querySelectorAll('div > ul > div > div')).toHaveLength(1);
     expect(screen.getAllByRole('list')).toHaveLength(1);
   });
-  test('Should test the virtualized drag container with items list with keys', async () => {
+  test('should test the virtualized drag container with items list with keys', async () => {
     await initVirtualizedDragContainer({
       disabled: false,
       items: Array.from(Array(102),

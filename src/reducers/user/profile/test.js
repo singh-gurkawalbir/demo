@@ -1,4 +1,4 @@
-/* global describe, test, expect */
+
 import reducer, { selectors } from '.';
 import actionTypes from '../../../actions/types';
 import actions from '../../../actions';
@@ -100,7 +100,7 @@ describe('user reducers', () => {
         actions.resource.received('profile', mockProfile)
       );
 
-      expect(selectors.avatarUrl(state)).toEqual(
+      expect(selectors.avatarUrl(state)).toBe(
         `https://secure.gravatar.com/avatar/123?d=${CDN_BASE_URL}images/icons/icon-user-default.png&s=55`
       );
     });
@@ -113,13 +113,13 @@ describe('user reducers', () => {
         actions.resource.received('profile', mockProfile)
       );
 
-      expect(selectors.isUserInErrMgtTwoDotZero(state)).toEqual(
+      expect(selectors.isUserInErrMgtTwoDotZero(state)).toBe(
         true
       );
     });
     test('should return undefined if no error management exists', () => {
-      expect(selectors.isUserInErrMgtTwoDotZero(undefined)).toEqual(false);
-      expect(selectors.isUserInErrMgtTwoDotZero({})).toEqual(false);
+      expect(selectors.isUserInErrMgtTwoDotZero(undefined)).toBe(false);
+      expect(selectors.isUserInErrMgtTwoDotZero({})).toBe(false);
     });
   });
 });

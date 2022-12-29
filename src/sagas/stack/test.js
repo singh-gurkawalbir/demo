@@ -1,4 +1,4 @@
-/* global describe, test, expect */
+
 import { call, put, delay } from 'redux-saga/effects';
 import actions from '../../actions';
 import { apiCallWithRetry } from '../index';
@@ -49,7 +49,7 @@ describe('system token sagas', () => {
           })
         )
       );
-      expect(saga.next().done).toEqual(true);
+      expect(saga.next().done).toBe(true);
     });
     test('should handle api error properly while displaying token', () => {
       const saga = displayToken({ id: tokenId });
@@ -63,8 +63,8 @@ describe('system token sagas', () => {
           message: 'Getting Stack Token',
         })
       );
-      expect(saga.throw(new Error()).value).toEqual(undefined);
-      expect(saga.next().done).toEqual(true);
+      expect(saga.throw(new Error()).value).toBeUndefined();
+      expect(saga.next().done).toBe(true);
     });
   });
 
@@ -83,7 +83,7 @@ describe('system token sagas', () => {
       );
       expect(saga.next().value).toEqual(call(displayToken, { id: tokenId }));
 
-      expect(saga.next().done).toEqual(true);
+      expect(saga.next().done).toBe(true);
     });
     test('should handle api error properly while deleting or generating token', () => {
       const saga = generateToken({ id: tokenId });
@@ -97,8 +97,8 @@ describe('system token sagas', () => {
           message: 'Deleting Stack Token',
         })
       );
-      expect(saga.throw(new Error()).value).toEqual(undefined);
-      expect(saga.next().done).toEqual(true);
+      expect(saga.throw(new Error()).value).toBeUndefined();
+      expect(saga.next().done).toBe(true);
     });
   });
 });
@@ -143,8 +143,8 @@ describe('stack sharing sagas', () => {
           message: 'Inviting Stack Share User',
         })
       );
-      expect(saga.throw(new Error()).value).toEqual(undefined);
-      expect(saga.next().done).toEqual(true);
+      expect(saga.throw(new Error()).value).toBeUndefined();
+      expect(saga.next().done).toBe(true);
     });
   });
   describe('toggleUserStackSharing sagas', () => {
@@ -186,8 +186,8 @@ describe('stack sharing sagas', () => {
           message: 'Toggling User Stack Sharing',
         })
       );
-      expect(saga.throw(new Error()).value).toEqual(undefined);
-      expect(saga.next().done).toEqual(true);
+      expect(saga.throw(new Error()).value).toBeUndefined();
+      expect(saga.next().done).toBe(true);
     });
   });
   describe('reInviteStackUser sagas', () => {
@@ -230,8 +230,8 @@ describe('stack sharing sagas', () => {
           message: 'Re-inviting Stack User',
         })
       );
-      expect(saga.throw(new Error()).value).toEqual(undefined);
-      expect(saga.next().done).toEqual(true);
+      expect(saga.throw(new Error()).value).toBeUndefined();
+      expect(saga.next().done).toBe(true);
     });
   });
 });

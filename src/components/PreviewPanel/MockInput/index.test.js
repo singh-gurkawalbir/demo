@@ -1,6 +1,4 @@
-/* eslint-disable react/button-has-type */
-/* eslint-disable react/jsx-handler-names */
-/* global describe, test, jest, beforeEach, afterEach, expect */
+
 import { screen, waitFor } from '@testing-library/react';
 import React from 'react';
 import { MemoryRouter, Route } from 'react-router-dom';
@@ -78,6 +76,7 @@ jest.mock('../../drawer/Right', () => ({
   default: newProps => (
     <>
       <div>{newProps.children}</div>
+      {/* eslint-disable-next-line react/button-has-type, react/button-has-type, react/jsx-handler-names */}
       <div><button onClick={newProps.onClose}>On Close</button></div>
     </>
   ),
@@ -106,7 +105,7 @@ jest.mock('../../AFE/Editor/panels/Code', () => ({
   },
 }
 ));
-describe('Mock input drawer test cases', () => {
+describe('mock input drawer test cases', () => {
   runServer();
   let mockDispatchFn;
   let useDispatchSpy;

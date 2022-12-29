@@ -1,10 +1,8 @@
-/* global describe, test, expect */
-
 import React from 'react';
 import metadata from './metadata';
 import ExpiresOn from '../../../components/ResourceTable/commonCells/ExpiredOn';
 
-describe('Installbase metadata test cases', () => {
+describe('installbase metadata test cases', () => {
   test('should pass the test case for each field', () => {
     const useColumns = metadata.useColumns();
 
@@ -33,7 +31,7 @@ describe('Installbase metadata test cases', () => {
       },
     });
 
-    expect(integrationIdValue).toEqual('integration_id_1');
+    expect(integrationIdValue).toBe('integration_id_1');
 
     const expiresOn = useColumns.find(eachColumn => eachColumn.key === 'expiresOn');
     const expiresOnValue = expiresOn.Value({

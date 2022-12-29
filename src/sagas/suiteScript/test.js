@@ -1,4 +1,3 @@
-/* global describe, test */
 
 import { expectSaga } from 'redux-saga-test-plan';
 import { call } from 'redux-saga/effects';
@@ -28,7 +27,7 @@ describe('suiteScript sagas', () => {
           },
         };
 
-        return expectSaga(getPackageURLs, { ssLinkedConnectionId, connectorId })
+        expectSaga(getPackageURLs, { ssLinkedConnectionId, connectorId })
           .provide([[matchers.call.fn(apiCallWithRetry), expectedOut]])
           .call.fn(apiCallWithRetry)
           .put(
@@ -63,7 +62,7 @@ describe('suiteScript sagas', () => {
       test('should dispatch reset step action when response doesnt contain netsuite or salesforce connection', () => {
         const expectedOut = [{type: 'netsuite', id: 'CELIGO_JAVA_INTEGRATOR_NETSUITE_CONNECTION'}];
 
-        return expectSaga(verifySSConnection, { ssLinkedConnectionId, connectorId })
+        expectSaga(verifySSConnection, { ssLinkedConnectionId, connectorId })
           .provide([[matchers.call.fn(apiCallWithRetry), expectedOut]])
           .call.fn(apiCallWithRetry)
           .put(
@@ -77,7 +76,7 @@ describe('suiteScript sagas', () => {
       test('should dispatch update SS connection action when response contains the salesforce connection', () => {
         const expectedOut = [{_id: 1, type: 'salesforce', id: 'SALESFORCE_CONNECTION'}];
 
-        return expectSaga(verifySSConnection, { ssLinkedConnectionId, connectorId })
+        expectSaga(verifySSConnection, { ssLinkedConnectionId, connectorId })
           .provide([[matchers.call.fn(apiCallWithRetry), expectedOut]])
           .call.fn(apiCallWithRetry)
           .put(
@@ -93,7 +92,7 @@ describe('suiteScript sagas', () => {
         const expectedOut = [{_id: 1, type: 'salesforce', id: 'SALESFORCE_CONNECTION'},
           {_id: 2, type: 'netsuite', id: 'NETSUITE_CONNECTION'}];
 
-        return expectSaga(verifySSConnection, { ssLinkedConnectionId, connectorId })
+        expectSaga(verifySSConnection, { ssLinkedConnectionId, connectorId })
           .provide([[matchers.call.fn(apiCallWithRetry), expectedOut]])
           .call.fn(apiCallWithRetry)
           .put(
@@ -116,7 +115,7 @@ describe('suiteScript sagas', () => {
         const expectedOut = [{_id: 1, type: 'salesforce', id: 'SALESFORCE_CONNECTION'},
           {_id: 2, type: 'netsuite', id: 'NETSUITE_CONNECTION'}];
 
-        return expectSaga(verifySSConnection, { ssLinkedConnectionId, connectorId })
+        expectSaga(verifySSConnection, { ssLinkedConnectionId, connectorId })
           .provide([[call(apiCallWithRetry, {path: '/suitescript/connections/123/connections/NETSUITE_CONNECTION/ping', opts: {method: 'GET'}, message: undefined }), {code: 200}],
             [call(apiCallWithRetry, {path: '/suitescript/connections/123/connections', opts: {method: 'GET'}, message: undefined }), expectedOut],
           ])
@@ -134,7 +133,7 @@ describe('suiteScript sagas', () => {
         const expectedOut = [{_id: 1, type: 'salesforce', id: 'SALESFORCE_CONNECTION'},
           {_id: 2, type: 'netsuite', id: 'NETSUITE_CONNECTION'}];
 
-        return expectSaga(verifySSConnection, { ssLinkedConnectionId, connectorId })
+        expectSaga(verifySSConnection, { ssLinkedConnectionId, connectorId })
           .provide([[call(apiCallWithRetry, {path: '/suitescript/connections/123/connections/NETSUITE_CONNECTION/ping', opts: {method: 'GET'}, message: undefined }), {code: 200}],
             [call(apiCallWithRetry, {path: '/suitescript/connections/123/connections/SALESFORCE_CONNECTION/ping', opts: {method: 'GET'}, message: undefined }), {code: 200}],
             [call(apiCallWithRetry, {path: '/suitescript/connections/123/connections', opts: {method: 'GET'}, message: undefined }), expectedOut],
@@ -172,7 +171,7 @@ describe('suiteScript sagas', () => {
       test('should dispatch reset step action when response doesnt contain the required connector', () => {
         const expectedOut = [{isConnector: true, name: 'dummy'}];
 
-        return expectSaga(verifyConnectorBundle, { ssLinkedConnectionId, connectorId, ssName: 'Salesforce' })
+        expectSaga(verifyConnectorBundle, { ssLinkedConnectionId, connectorId, ssName: 'Salesforce' })
           .provide([[matchers.call.fn(apiCallWithRetry), expectedOut]])
           .call.fn(apiCallWithRetry)
           .put(
@@ -187,7 +186,7 @@ describe('suiteScript sagas', () => {
       test('should dispatch completed step action and call next generator when response contains the connector', () => {
         const expectedOut = [{_integrationId: '111', isConnector: true, name: 'Salesforce'}];
 
-        return expectSaga(verifyConnectorBundle, { ssLinkedConnectionId, connectorId, ssName: 'Salesforce' })
+        expectSaga(verifyConnectorBundle, { ssLinkedConnectionId, connectorId, ssName: 'Salesforce' })
           .provide([[matchers.call.fn(apiCallWithRetry), expectedOut]])
           .call.fn(apiCallWithRetry)
           .put(
@@ -217,7 +216,7 @@ describe('suiteScript sagas', () => {
       test('should dispatch completed step action when response is a success', () => {
         const expectedOut = { success: true};
 
-        return expectSaga(checkNetSuiteDABundle, { ssLinkedConnectionId, connectorId })
+        expectSaga(checkNetSuiteDABundle, { ssLinkedConnectionId, connectorId })
           .provide([[matchers.call.fn(apiCallWithRetry), expectedOut]])
           .call.fn(apiCallWithRetry)
           .put(
@@ -235,7 +234,7 @@ describe('suiteScript sagas', () => {
       test('should call verify connector bundle when response is a success and continue is true', () => {
         const expectedOut = { success: true};
 
-        return expectSaga(checkNetSuiteDABundle, { ssLinkedConnectionId, connectorId, shouldContinue: true, ssName: 'sfns' })
+        expectSaga(checkNetSuiteDABundle, { ssLinkedConnectionId, connectorId, shouldContinue: true, ssName: 'sfns' })
           .provide([[matchers.call.fn(apiCallWithRetry), expectedOut]])
           .call.fn(apiCallWithRetry)
           .put(
@@ -267,7 +266,7 @@ describe('suiteScript sagas', () => {
       test('should dispatch completed step action when response is a success', () => {
         const expectedOut = { success: true};
 
-        return expectSaga(verifyPackage, { ssLinkedConnectionId, connectorId, installerFunction: 'somefunc' })
+        expectSaga(verifyPackage, { ssLinkedConnectionId, connectorId, installerFunction: 'somefunc' })
           .provide([[matchers.call.fn(apiCallWithRetry), expectedOut]])
           .call.fn(apiCallWithRetry)
           .put(
@@ -294,7 +293,7 @@ describe('suiteScript sagas', () => {
       test('should dispatch done action when response is a success', () => {
         const expectedOut = { success: true};
 
-        return expectSaga(postInstallComplete, { ssLinkedConnectionId, connectorId })
+        expectSaga(postInstallComplete, { ssLinkedConnectionId, connectorId })
           .provide([[matchers.call.fn(apiCallWithRetry), expectedOut]])
           .call.fn(apiCallWithRetry)
           .put(
@@ -322,7 +321,7 @@ describe('suiteScript sagas', () => {
       test('should return true when response is a success', () => {
         const expectedOut = { code: 200};
 
-        return expectSaga(isConnectionOnline, { ssLinkedConnectionId, ssConnId: 'NETSUITE_CONNECTION' })
+        expectSaga(isConnectionOnline, { ssLinkedConnectionId, ssConnId: 'NETSUITE_CONNECTION' })
           .provide([[matchers.call.fn(apiCallWithRetry), expectedOut]])
           .call.fn(apiCallWithRetry)
           .returns(true)

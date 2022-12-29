@@ -1,10 +1,10 @@
-/* global describe, expect, test */
+
 import { selectors } from '.';
 
 describe('Flow builder region selector testcases', () => {
   describe('selectors.getResourceEditUrl test cases', () => {
     test('should not throw any exception for invalid arguments', () => {
-      expect(selectors.getResourceEditUrl()).toEqual('/edit/undefined/undefined');
+      expect(selectors.getResourceEditUrl()).toBe('/edit/undefined/undefined');
     });
   });
 
@@ -20,7 +20,7 @@ describe('Flow builder region selector testcases', () => {
     test('should not throw any exception for invalid arguments', () => {
       const selector = selectors.mkIsAnyFlowConnectionOffline();
 
-      expect(selector(undefined, {})).toEqual(false);
+      expect(selector(undefined, {})).toBe(false);
     });
   });
 
@@ -32,7 +32,7 @@ describe('Flow builder region selector testcases', () => {
 
   describe('selectors.isPageGenerator test cases', () => {
     test('should not throw any exception for invalid arguments', () => {
-      expect(selectors.isPageGenerator(undefined, {})).toEqual(false);
+      expect(selectors.isPageGenerator(undefined, {})).toBe(false);
     });
   });
 
@@ -50,49 +50,49 @@ describe('Flow builder region selector testcases', () => {
 
   describe('selectors.isRestCsvMediaTypeExport test cases', () => {
     test('should not throw any exception for invalid arguments', () => {
-      expect(selectors.isRestCsvMediaTypeExport()).toEqual(false);
+      expect(selectors.isRestCsvMediaTypeExport()).toBe(false);
     });
   });
 
   describe('selectors.isDataLoaderExport test cases', () => {
     test('should not throw any exception for invalid arguments', () => {
-      expect(selectors.isDataLoaderExport()).toEqual(false);
+      expect(selectors.isDataLoaderExport()).toBe(false);
     });
   });
 
   describe('selectors.isFreeFlowResource test cases', () => {
     test('should not throw any exception for invalid arguments', () => {
-      expect(selectors.isFreeFlowResource()).toEqual(false);
+      expect(selectors.isFreeFlowResource()).toBe(false);
     });
   });
 
   describe('selectors.isFlowViewMode test cases', () => {
     test('should not throw any exception for invalid arguments', () => {
-      expect(selectors.isFlowViewMode()).toEqual(false);
+      expect(selectors.isFlowViewMode()).toBe(false);
     });
   });
 
   describe('selectors.isDataLoaderFlow test cases', () => {
     test('should not throw any exception for invalid arguments', () => {
-      expect(selectors.isDataLoaderFlow()).toEqual(0);
+      expect(selectors.isDataLoaderFlow()).toBe(0);
     });
   });
 
   describe('selectors.shouldShowAddPageProcessor test cases', () => {
     test('should not throw any exception for invalid arguments', () => {
-      expect(selectors.shouldShowAddPageProcessor()).toEqual(true);
+      expect(selectors.shouldShowAddPageProcessor()).toBe(true);
     });
   });
 
   describe('selectors.isLookUpExport test cases', () => {
     test('should not throw any exception for invalid arguments', () => {
-      expect(selectors.isLookUpExport({}, {})).toEqual(false);
+      expect(selectors.isLookUpExport({}, {})).toBe(false);
     });
   });
 
   describe('selectors.getCustomResourceLabel test cases', () => {
     test('should not throw any exception for invalid arguments', () => {
-      expect(selectors.getCustomResourceLabel({}, {})).toEqual('');
+      expect(selectors.getCustomResourceLabel({}, {})).toBe('');
     });
   });
 });

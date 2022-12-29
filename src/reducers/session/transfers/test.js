@@ -1,4 +1,3 @@
-/* global describe, test, expect */
 
 import reducer, { selectors } from '.';
 import actions from '../../../actions';
@@ -48,8 +47,8 @@ describe('Transfers', () => {
 });
 describe('Get transfer preview data', () => {
   test('should return null if state or transfer does not exists', () => {
-    expect(selectors.getTransferPreviewData(undefined)).toEqual(null);
-    expect(selectors.getTransferPreviewData({})).toEqual(null);
+    expect(selectors.getTransferPreviewData(undefined)).toBeNull();
+    expect(selectors.getTransferPreviewData({})).toBeNull();
   });
   test('should get valid preview data', () => {
     const response = {exports: [{_id: 'id1', name: 'exp1'}], flows: [{_id: 'id2', name: 'flow1'}, {_id: 'id3', name: 'flow3'}]};

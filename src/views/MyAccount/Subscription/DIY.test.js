@@ -1,4 +1,3 @@
-/* global describe, test, expect */
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { screen } from '@testing-library/react';
@@ -38,7 +37,7 @@ async function initSubscription() {
   };
 }
 
-describe('Subscription test cases', () => {
+describe('subscription test cases', () => {
   runServer();
 
   test('should pass the initial render with default value', async () => {

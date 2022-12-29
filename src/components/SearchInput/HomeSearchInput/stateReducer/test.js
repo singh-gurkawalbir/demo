@@ -1,4 +1,4 @@
-/* global describe,test,expect */
+
 import reducer from '.';
 
 describe('home search input reducer', () => {

@@ -1,4 +1,4 @@
-/* global describe, expect, test */
+
 import produce from 'immer';
 import { selectors } from '.';
 import { STANDALONE_INTEGRATION } from '../constants';
@@ -150,18 +150,18 @@ const state = {
   },
 };
 
-describe('selectors.mkGetChildIntegrations ', () => {
+describe('selectors.mkGetChildIntegrations', () => {
   const childIntegrationSel = selectors.mkGetChildIntegrations();
 
   test('should return null for a an empty integrationId', () => {
     const result = childIntegrationSel(state, null);
 
-    expect(result).toEqual(null);
+    expect(result).toBeNull();
   });
   test('should return undefined for a non existent integrationId', () => {
     const result = childIntegrationSel(state, 'someRandomId');
 
-    expect(result).toEqual(undefined);
+    expect(result).toBeUndefined();
   });
   test('should return all v2 childIntegrations sorted', () => {
     const result = childIntegrationSel(state, someParentIntegrationIdv2);
@@ -199,16 +199,16 @@ describe('selectors.mkGetChildIntegrations ', () => {
   });
 });
 
-describe('selectors.getChildIntegrationLabelsTiedToFlows ', () => {
+describe('selectors.getChildIntegrationLabelsTiedToFlows', () => {
   test('should return null for a an empty integrationId', () => {
     const result = selectors.getChildIntegrationLabelsTiedToFlows(state, null);
 
-    expect(result).toEqual(null);
+    expect(result).toBeNull();
   });
   test('should return null for a non existent integrationId', () => {
     const result = selectors.getChildIntegrationLabelsTiedToFlows(state, 'someRandomId', ['someFlowId']);
 
-    expect(result).toEqual(null);
+    expect(result).toBeNull();
   });
   test('should return all v2 childIntegrations labels tied to the flows', () => {
     const result = selectors.getChildIntegrationLabelsTiedToFlows(state, someParentIntegrationIdv2, ['flow2', 'flow3']);
@@ -223,10 +223,10 @@ describe('selectors.getChildIntegrationLabelsTiedToFlows ', () => {
   test('should return null for a non multistore v1 childIntegrations', () => {
     const result = selectors.getChildIntegrationLabelsTiedToFlows(state, 'integrationId2', ['ia1.0Flow3']);
 
-    expect(result).toEqual(null);
+    expect(result).toBeNull();
   });
 });
-describe('selectors.mkAllFlowsTiedToIntegrations ', () => {
+describe('selectors.mkAllFlowsTiedToIntegrations', () => {
   const sortProperties = {
     lastExecutedAtSort: undefined,
     lastExecutedAtSortType: 'date',
@@ -236,7 +236,7 @@ describe('selectors.mkAllFlowsTiedToIntegrations ', () => {
   test('should return null for a an empty integrationId', () => {
     const result = getAllFlowsTiedToIntegrations(state, null);
 
-    expect(result).toEqual(null);
+    expect(result).toBeNull();
   });
   test('should return [] for a an invalid integrationId', () => {
     const result = getAllFlowsTiedToIntegrations(state, 'someRamdomIntegrationId');
@@ -244,10 +244,10 @@ describe('selectors.mkAllFlowsTiedToIntegrations ', () => {
     expect(result).toEqual([]);
   });
   describe('2.0', () => {
-    test('should return null when a parent integration is not provided and some childIntegrations are provided ', () => {
+    test('should return null when a parent integration is not provided and some childIntegrations are provided', () => {
       const result = getAllFlowsTiedToIntegrations(state, null, ['124']);
 
-      expect(result).toEqual(null);
+      expect(result).toBeNull();
     });
     test('should return all flows sorted by name when a v2 parent integration  all of its children integrationsProvided', () => {
       const result = getAllFlowsTiedToIntegrations(state, someParentIntegrationIdv2, ['124', '123']);
@@ -258,7 +258,7 @@ describe('selectors.mkAllFlowsTiedToIntegrations ', () => {
         {_integrationId: '123', _id: 'flow2', name: 'c'},
       ]);
     });
-    test('should return correct flows sorted by name when a v2 parent integration is provided any only one childIntegration ', () => {
+    test('should return correct flows sorted by name when a v2 parent integration is provided any only one childIntegration', () => {
       const result = getAllFlowsTiedToIntegrations(state, someParentIntegrationIdv2, ['124']);
 
       expect(result).toEqual([
@@ -280,7 +280,7 @@ describe('selectors.mkAllFlowsTiedToIntegrations ', () => {
     });
   });
   describe('1.0', () => {
-    test('should return allFlows related to the parent integration when just the integrationParent is provided for a 1.0 multi store integration ', () => {
+    test('should return allFlows related to the parent integration when just the integrationParent is provided for a 1.0 multi store integration', () => {
       const result = getAllFlowsTiedToIntegrations(state, 'integrationId');
 
       expect(result).toEqual([
@@ -320,7 +320,7 @@ describe('selectors.mkAllFlowsTiedToIntegrations ', () => {
         },
       ]);
     });
-    test('should return allFlows related to the parent integration when just the integrationParent is provided for a 1.0 non multistore integration ', () => {
+    test('should return allFlows related to the parent integration when just the integrationParent is provided for a 1.0 non multistore integration', () => {
       const result = getAllFlowsTiedToIntegrations(state, 'integrationId2');
 
       expect(result).toEqual([
@@ -394,12 +394,12 @@ describe('selectors.getAllValidIntegrations', () => {
   };
   const getAllValidIntegrations = selectors.mkGetAllValidIntegrations();
 
-  test('should return [] when integrations hasn`t loaded ', () => {
+  test('should return [] when integrations hasn`t loaded', () => {
     const result = getAllValidIntegrations({user: usersState});
 
     expect(result).toEqual([]);
   });
-  test('should return correct installed and not expired integrations ', () => {
+  test('should return correct installed and not expired integrations', () => {
     const result = getAllValidIntegrations(stateCopy);
     const notExpiredV1Int = v1Integrations.find(({_id}) => _id === 'integrationId');
 
@@ -425,33 +425,33 @@ describe('selectors.getAllValidIntegrations', () => {
 
 describe('selectors.isParentChildIntegration', () => {
   describe('1.0', () => {
-    test('should return true for a 1.0 integration which supports multistore ', () => {
+    test('should return true for a 1.0 integration which supports multistore', () => {
       const result = selectors.isParentChildIntegration(state, 'integrationId');
 
-      expect(result).toEqual(true);
+      expect(result).toBe(true);
     });
-    test('should return true for a 1.0 integration which does not support multistore ', () => {
+    test('should return true for a 1.0 integration which does not support multistore', () => {
       const result = selectors.isParentChildIntegration(state, 'integrationId2');
 
-      expect(result).toEqual(false);
+      expect(result).toBe(false);
     });
   });
   describe('2.0', () => {
-    test('should return true for a 2.0 integration which supports parentChild ', () => {
+    test('should return true for a 2.0 integration which supports parentChild', () => {
       const result = selectors.isParentChildIntegration(state, someParentIntegrationIdv2);
 
-      expect(result).toEqual(true);
+      expect(result).toBe(true);
     });
-    test('should return true for a 2.0 integration which does not support parentChild ', () => {
+    test('should return true for a 2.0 integration which does not support parentChild', () => {
       const result = selectors.isParentChildIntegration(state, '125');
 
-      expect(result).toEqual(false);
+      expect(result).toBe(false);
     });
   });
   test('should return false for diy integrations', () => {
     const result = selectors.isParentChildIntegration(state, 'diyIntegration');
 
-    expect(result).toEqual(false);
+    expect(result).toBe(false);
   });
 });
 describe('selectors.isAnyIntegrationConnectionOffline', () => {
@@ -481,21 +481,21 @@ describe('selectors.isAnyIntegrationConnectionOffline', () => {
   test('should return true if any connection is offline in given integration', () => {
     const result = selectors.isAnyIntegrationConnectionOffline(state1, 'integrationId');
 
-    expect(result).toEqual(true);
+    expect(result).toBe(true);
   });
   test('should return false if none of the connection is offline in given integration', () => {
     const result = selectors.isAnyIntegrationConnectionOffline(state2, 'integrationId');
 
-    expect(result).toEqual(false);
+    expect(result).toBe(false);
   });
   test('should return false if given state in null or undefined', () => {
     const result = selectors.isAnyIntegrationConnectionOffline();
 
-    expect(result).toEqual(false);
+    expect(result).toBe(false);
   });
   test('should return false if integration is undefined', () => {
     const result = selectors.isAnyIntegrationConnectionOffline(state2);
 
-    expect(result).toEqual(false);
+    expect(result).toBe(false);
   });
 });

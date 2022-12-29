@@ -1,13 +1,13 @@
-/* global describe, test, expect */
+
 import reducer, { selectors } from '.';
 import actions from '../../../../actions';
 
 describe('integrationApps utility reducer test cases', () => {
   test('should return initial state when action is not matched', () => {
     expect(reducer(undefined, { type: 'RANDOM_ACTION' })).toEqual({});
-    expect(reducer('string', { type: 'RANDOM_ACTION' })).toEqual('string');
-    expect(reducer(null, { type: 'RANDOM_ACTION' })).toEqual(null);
-    expect(reducer(123, { type: 'RANDOM_ACTION' })).toEqual(123);
+    expect(reducer('string', { type: 'RANDOM_ACTION' })).toBe('string');
+    expect(reducer(null, { type: 'RANDOM_ACTION' })).toBeNull();
+    expect(reducer(123, { type: 'RANDOM_ACTION' })).toBe(123);
     expect(reducer(undefined, { type: null })).toEqual({});
     expect(reducer(undefined, { type: undefined })).toEqual({});
   });
@@ -94,7 +94,7 @@ describe('integrationApps utility selectors', () => {
         )
       );
 
-      expect(selectors.integrationAppCustomTemplateRunKey(newState, '123')).toEqual('runKey1');
+      expect(selectors.integrationAppCustomTemplateRunKey(newState, '123')).toBe('runKey1');
     });
   });
 
@@ -119,9 +119,9 @@ describe('integrationApps utility selectors', () => {
         )
       );
 
-      expect(selectors.integrationAppCustomTemplateRunKeyStatus(newState, '123')).toEqual('received');
+      expect(selectors.integrationAppCustomTemplateRunKeyStatus(newState, '123')).toBe('received');
     });
-    test('should return correct state data when a match is found.', () => {
+    test('should return correct state data when a match is found', () => {
       const newState = reducer(
         undefined,
         actions.integrationApp.utility.requestS3Key(
@@ -131,7 +131,7 @@ describe('integrationApps utility selectors', () => {
         )
       );
 
-      expect(selectors.integrationAppCustomTemplateRunKeyStatus(newState, '123')).toEqual('requested');
+      expect(selectors.integrationAppCustomTemplateRunKeyStatus(newState, '123')).toBe('requested');
     });
   });
 });

@@ -1,4 +1,4 @@
-/* global describe, test, expect */
+
 import reducer, {selectors } from '.';
 import actions from '../../../../actions';
 import { COMM_STATES } from '../../../comms/networkComms';
@@ -14,7 +14,7 @@ const ssLinkedConnectionId = '1';
 const integrationId = '2';
 
 describe('reducer test cases', () => {
-  test('should initialize successfully when initComplete action is dispatched ', () => {
+  test('should initialize successfully when initComplete action is dispatched', () => {
     const state = reducer(initialState,
       actions.suiteScript.iaForm.initComplete(ssLinkedConnectionId, integrationId));
 
@@ -23,7 +23,7 @@ describe('reducer test cases', () => {
       '1-2': {initComplete: true}});
   });
 
-  test('should clear the corresponding form state when initClear action is dispatched ', () => {
+  test('should clear the corresponding form state when initClear action is dispatched', () => {
     const state = reducer(initialState,
       actions.suiteScript.iaForm.initClear(ssLinkedConnectionId, integrationId));
 
@@ -31,7 +31,7 @@ describe('reducer test cases', () => {
       '3-4': {initComplete: true},
     });
   });
-  test('should set the status to saving when submit action is dispatched ', () => {
+  test('should set the status to saving when submit action is dispatched', () => {
     const values = {a: '1', b: '2'};
     const state = reducer(initialStateWithInitComplete,
       actions.suiteScript.iaForm.submit(
@@ -41,7 +41,7 @@ describe('reducer test cases', () => {
       '3-4': {initComplete: true},
       '1-2': {initComplete: true, status: COMM_STATES.LOADING}});
   });
-  test('should set the status to success when submitComplete action is dispatched ', () => {
+  test('should set the status to success when submitComplete action is dispatched', () => {
     const state = reducer(initialStateWithInitComplete,
       actions.suiteScript.iaForm.submitComplete(ssLinkedConnectionId, integrationId));
 
@@ -49,7 +49,7 @@ describe('reducer test cases', () => {
       '3-4': {initComplete: true},
       '1-2': {initComplete: true, status: COMM_STATES.SUCCESS}});
   });
-  test('should set the status to success when submitFailed action is dispatched ', () => {
+  test('should set the status to success when submitFailed action is dispatched', () => {
     const state = reducer(
       initialStateWithInitComplete,
       actions.suiteScript.iaForm.submitFailed(
@@ -61,7 +61,7 @@ describe('reducer test cases', () => {
   });
 
   describe('workflow', () => {
-    test('save process of suiteScript form should indicate states correctly ', () => {
+    test('save process of suiteScript form should indicate states correctly', () => {
       let state = reducer(initialStateWithInitComplete,
         actions.suiteScript.iaForm.initComplete(ssLinkedConnectionId, integrationId));
 
@@ -150,7 +150,7 @@ describe('selectors', () => {
         actions.suiteScript.iaForm.submit(ssLinkedConnectionId, integrationId));
 
       expect(selectors.suiteScriptIAFormSaving(submitingState, {
-        ssLinkedConnectionId, integrationId})).toEqual(true);
+        ssLinkedConnectionId, integrationId})).toBe(true);
     });
     test('should indicate from is not loading when form has completed save', () => {
       const submitingState = reducer(initialState,
@@ -159,7 +159,7 @@ describe('selectors', () => {
         actions.suiteScript.iaForm.submitComplete(ssLinkedConnectionId, integrationId));
 
       expect(selectors.suiteScriptIAFormSaving(submitCompleteState, {
-        ssLinkedConnectionId, integrationId})).toEqual(false);
+        ssLinkedConnectionId, integrationId})).toBe(false);
     });
 
     test.each(
@@ -171,7 +171,7 @@ describe('selectors', () => {
 
         expect(selectors.suiteScriptIAFormSaving(initCompleteState, {
           ssLinkedConnectionId: ssLinkedConnectionIdInput, integrationId: integrationIdInput}))
-          .toEqual(false);
+          .toBe(false);
       });
   });
 });

@@ -1,4 +1,4 @@
-/* global describe, jest, expect, test, afterEach */
+
 import React from 'react';
 import { screen } from '@testing-library/react';
 import { renderWithProviders } from '../../../test/test-utils';
@@ -105,11 +105,11 @@ describe('test suite for DynaMarketplaceId field', () => {
 
     const {utils: {unmount}} = renderWithProviders(<DynaMarketplaceId {...props} />);
 
-    expect(mockDispatchFn).toBeCalledWith(actions.resource.requestReferences(props.resourceType, props.resourceId, {
+    expect(mockDispatchFn).toHaveBeenCalledWith(actions.resource.requestReferences(props.resourceType, props.resourceId, {
       ignoreError: true,
     }));
 
     unmount();
-    expect(mockDispatchFn).toBeCalledWith(actions.resource.clearReferences());
+    expect(mockDispatchFn).toHaveBeenCalledWith(actions.resource.clearReferences());
   });
 });

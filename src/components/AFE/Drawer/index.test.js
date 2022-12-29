@@ -1,4 +1,3 @@
-/* global describe, test, expect, jest, beforeEach, afterEach */
 import React from 'react';
 import {
   screen, waitFor,
@@ -63,7 +62,7 @@ jest.mock('react-router-dom', () => ({
   }),
 }));
 
-describe('EditorDrawer UI tests', () => {
+describe('editorDrawer UI tests', () => {
   let mockDispatchFn;
   let useDispatchSpy;
 
@@ -83,21 +82,21 @@ describe('EditorDrawer UI tests', () => {
   });
   test('should render the handlebars editor drawer when editorType is handlebars', () => {
     initEditorDrawer({type: 'handlebars'});
-    expect(screen.getByText('Type your handlebars template here'));
-    expect(screen.getByText('Resources available for your handlebars template'));
-    expect(screen.getByText('Click preview to evaluate your handlebars template'));
-    expect(screen.getByText('Error'));
-    expect(screen.getByText('Save'));
-    expect(screen.getByText('Close'));
+    expect(screen.getByText('Type your handlebars template here')).toBeInTheDocument();
+    expect(screen.getByText('Resources available for your handlebars template')).toBeInTheDocument();
+    expect(screen.getByText('Click preview to evaluate your handlebars template')).toBeInTheDocument();
+    expect(screen.getByText('Error')).toBeInTheDocument();
+    expect(screen.getByText('Save')).toBeInTheDocument();
+    expect(screen.getByText('Close')).toBeInTheDocument();
   });
   test('should make a dispatch call when editor is closed', async () => {
     initEditorDrawer({type: 'handlebars'});
     expect(screen.getByText('Close')).toBeInTheDocument();
     userEvent.click(screen.getByText('Close'));
-    await waitFor(() => expect(mockDispatchFn).toBeCalledWith(actions.editor.clear('httprelativeURI')));
+    await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith(actions.editor.clear('httprelativeURI')));
   });
   test('should make a url redirection when editorType is not passed in the editorData', async () => {
     initEditorDrawer();
-    await waitFor(() => expect(mockHistoryReplace).toBeCalled());
+    await waitFor(() => expect(mockHistoryReplace).toHaveBeenCalledTimes(1));
   });
 });

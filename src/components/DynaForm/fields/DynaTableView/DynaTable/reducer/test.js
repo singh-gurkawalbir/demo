@@ -1,4 +1,3 @@
-/* global describe,test,expect, beforeAll */
 
 import reducer, { preSubmit} from './index';
 import actionTypes from '../actionTypes';
@@ -24,7 +23,7 @@ const initialState = {
 describe('table reducer', () => {
   let state = initialState;
 
-  describe('nonRequired optionsMap ', () => {
+  describe('nonRequired optionsMap', () => {
     const optionsMapNonRequiredFields = [{id: 'extract' }, {id: 'generate'}];
 
     test('should update non last rows without adding a new row', () => {
@@ -94,7 +93,7 @@ describe('table reducer', () => {
         ],
       });
     });
-    test('should update a field row with the onRowChange logic when onRowChange function is provided ', () => {
+    test('should update a field row with the onRowChange logic when onRowChange function is provided', () => {
       const onRowChange = (rowValue, fieldId, value) => {
       // eslint-disable-next-line no-param-reassign
         rowValue[fieldId] = `${value}z`;

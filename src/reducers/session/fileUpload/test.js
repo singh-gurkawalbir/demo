@@ -1,4 +1,4 @@
-/* global describe, test, expect */
+
 import reducer, { selectors } from '.';
 import actionTypes from '../../../actions/types';
 
@@ -68,7 +68,7 @@ describe('fileUpload reducer', () => {
 
       expect(currState).toEqual(prevState);
     });
-    test('should update file state with the error occured ', () => {
+    test('should update file state with the error occured', () => {
       const fileId = 'id1';
       const prevState = { [fileId]: { status: 'requested' } };
       const error = { error: ' Cannot serialize the content '};
@@ -89,7 +89,7 @@ describe('fileUpload reducer', () => {
 
       expect(currState).toEqual(prevState);
     });
-    test('should clear file state for the passed fileId ', () => {
+    test('should clear file state for the passed fileId', () => {
       const file = { name: 'test', id: 2 };
       const prevState = { id1: { status: 'received', file }, id2: { status: 'requested'} };
       const currState = reducer(prevState, { type: actionTypes.FILE.RESET, fileId: 'id1' });
@@ -105,7 +105,7 @@ describe('fileUpload reducer', () => {
 
 describe('uploadedFile selector', () => {
   test('should return undefined when state is undefined', () => {
-    expect(selectors.getUploadedFile(undefined)).toEqual(undefined);
+    expect(selectors.getUploadedFile(undefined)).toBeUndefined();
   });
   test('should return undefined when fileId is undefined', () => {
     const state = {
@@ -120,7 +120,7 @@ describe('uploadedFile selector', () => {
       },
     };
 
-    expect(selectors.getUploadedFile(state)).toEqual(undefined);
+    expect(selectors.getUploadedFile(state)).toBeUndefined();
   });
   test('should return file state for the passed fileId', () => {
     const state = {

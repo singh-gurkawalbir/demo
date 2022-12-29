@@ -1,4 +1,4 @@
-/* global describe, jest, expect, test, beforeEach */
+
 import React from 'react';
 import { renderWithProviders } from '../../../test/test-utils';
 import { CLOSE_AFTER_SAVE } from '..';
@@ -45,32 +45,32 @@ describe('test suite for useHandleCancelBasic hook', () => {
     const onClose = jest.fn(() => 'onClose Called');
     const handleCancelClick = await inituseHandleCancelBasic({ isDirty: false, onClose });
 
-    expect(onClose).not.toBeCalled();
+    expect(onClose).not.toHaveBeenCalled();
     const val = handleCancelClick();
 
     expect(onClose).toHaveBeenCalledTimes(1);
-    expect(val).toEqual('onClose Called');
+    expect(val).toBe('onClose Called');
   });
 
   test('should execute onClose when shouldForceClose is set', async () => {
     const onClose = jest.fn(() => 'onClose Called');
     const handleCancelClick = await inituseHandleCancelBasic({ isDirty: true, onClose });
 
-    expect(onClose).not.toBeCalled();
+    expect(onClose).not.toHaveBeenCalled();
     const val = handleCancelClick(true);
 
     expect(onClose).toHaveBeenCalledTimes(1);
-    expect(val).toEqual('onClose Called');
+    expect(val).toBe('onClose Called');
   });
 
   test('should not execute onClose when Dirty and shouldForceClose is not set', async () => {
     const onClose = jest.fn(() => 'onClose Called');
     const handleCancelClick = await inituseHandleCancelBasic({ isDirty: true, onClose });
 
-    expect(onClose).not.toBeCalled();
+    expect(onClose).not.toHaveBeenCalled();
     const val = handleCancelClick();
 
-    expect(onClose).not.toBeCalled();
+    expect(onClose).not.toHaveBeenCalled();
     expect(val).toBeUndefined();
   });
 
@@ -84,18 +84,18 @@ describe('test suite for useHandleCancelBasic hook', () => {
 
     handleCancelClick();
 
-    expect(typeof mockSave).toEqual('function');
-    expect(typeof mockDiscard).toEqual('function');
-    expect(onClose).not.toBeCalled();
-    expect(handleSave).not.toBeCalled();
+    expect(typeof mockSave).toBe('function');
+    expect(typeof mockDiscard).toBe('function');
+    expect(onClose).not.toHaveBeenCalled();
+    expect(handleSave).not.toHaveBeenCalled();
 
     mockSave();
 
     expect(handleSave).toHaveBeenLastCalledWith(CLOSE_AFTER_SAVE);
-    expect(handleSave).toBeCalledTimes(1);
+    expect(handleSave).toHaveBeenCalledTimes(1);
 
     mockDiscard();
 
-    expect(onClose).toBeCalledTimes(1);
+    expect(onClose).toHaveBeenCalledTimes(1);
   });
 });

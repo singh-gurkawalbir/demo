@@ -1,7 +1,7 @@
-/* global describe, expect, test */
+
 import metadata from './metadata';
 
-describe('DynaRelatedList metadata UI tests', () => {
+describe('dynaRelatedList metadata UI tests', () => {
   test('should render row data correctly', () => {
     const useColumns = metadata.useColumns();
 
@@ -10,7 +10,7 @@ describe('DynaRelatedList metadata UI tests', () => {
       rowData: {relationshipName: 'test'},
     });
 
-    expect(relationShipName).toEqual('test');
+    expect(relationShipName).toBe('test');
 
     const sObject = useColumns.find(eachColumn => eachColumn.key === 'childSObject');
     const sObjectType = sObject.Value({
@@ -24,13 +24,13 @@ describe('DynaRelatedList metadata UI tests', () => {
       rowData: {referencedFields: 'test fields'},
     });
 
-    expect(referencedFields).toEqual('test fields');
+    expect(referencedFields).toBe('test fields');
 
     const filter = useColumns.find(eachColumn => eachColumn.key === 'filter');
     const filterValue = filter.Value({
       rowData: {filter: 'test filter'},
     });
 
-    expect(filterValue).toEqual('test filter');
+    expect(filterValue).toBe('test filter');
   });
 });

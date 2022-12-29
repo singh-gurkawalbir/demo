@@ -1,4 +1,4 @@
-/* global describe, test, beforeEach, afterEach, jest, expect */
+
 import React from 'react';
 import * as reactRedux from 'react-redux';
 import { screen } from '@testing-library/react';
@@ -65,7 +65,7 @@ jest.mock('../../ResourceTable', () => ({
     <div>Mocking Resource Table = {JSON.stringify(props.resources)}</div>
   ),
 }));
-describe('Testsuite for RunDashboardV2', () => {
+describe('testsuite for RunDashboardV2', () => {
   let mockDispatchFn;
   let useDispatchSpy;
 

@@ -1,5 +1,4 @@
 /* eslint-disable react/jsx-handler-names */
-/* global describe, test, jest, expect, afterEach */
 import { render, screen } from '@testing-library/react';
 import React from 'react';
 import { MemoryRouter, Route } from 'react-router-dom';

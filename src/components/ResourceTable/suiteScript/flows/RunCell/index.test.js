@@ -1,4 +1,4 @@
-/* global test, expect, jest, describe, afterEach */
+
 import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -38,7 +38,7 @@ initialStore.getState().data.suiteScript = {ssLinkedConnectionId: {integrations:
 },
 };
 
-describe('Suite script ScheduleCell ui test', () => {
+describe('suite script ScheduleCell ui test', () => {
   afterEach(() => {
     jest.clearAllMocks();
   });

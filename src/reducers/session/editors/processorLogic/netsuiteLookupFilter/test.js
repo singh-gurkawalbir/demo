@@ -1,4 +1,3 @@
-/* global describe, test, expect */
 
 import processorLogic from './index';
 
@@ -91,7 +90,7 @@ describe('netsuiteLookupFilter processor logic', () => {
 
       expect(buildData({ssLinkedConnectionId: '123'}, sampleData)).toEqual(expectedOutput);
     });
-    test('should return the json sample data if editor contains ssLinkedConnectionId', () => {
+    test('should return the json sample data if editor contains ssLinkedConnectionId.', () => {
       const sampleData = JSON.stringify([
         {name: 'id', id: 'id'},
         {name: 'recordType', id: 'recordType'},

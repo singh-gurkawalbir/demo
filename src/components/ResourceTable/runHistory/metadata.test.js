@@ -1,4 +1,5 @@
-/* global test, expect, describe */
+/* eslint-disable jest/expect-expect */
+
 import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -35,7 +36,7 @@ function expectFunction(header, cell) {
 
 const key = 'someKey';
 
-describe('JobStatusWithTag test cases', () => {
+describe('jobStatusWithTag test cases', () => {
   test('should show completed message with errors', () => {
     initRunHistoryTable({ key, status: 'completedWithErrors'});
     expect(indexOfCell('Status', 'columnheader')).toBeDefined();

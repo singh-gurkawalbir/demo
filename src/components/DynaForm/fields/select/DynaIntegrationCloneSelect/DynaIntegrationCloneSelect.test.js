@@ -1,4 +1,4 @@
-/* global describe, test, expect, jest */
+
 import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -48,8 +48,8 @@ async function initDynaIntegrationCloneSelect(props = {}, defaultAShareId = 'ash
 
   return renderWithProviders(<DynaIntegrationCloneSelect {...props} />, { initialStore });
 }
-describe('DynaIntegrationCloneSelect tests', () => {
-  test('Should be able to test component without account having Sandbox', async () => {
+describe('dynaIntegrationCloneSelect tests', () => {
+  test('should be able to test component without account having Sandbox', async () => {
     await initDynaIntegrationCloneSelect(props, 'ashare2');
     expect(screen.getByText('Please select')).toBeInTheDocument();
     expect(screen.getByText('_label')).toBeInTheDocument();
@@ -58,13 +58,13 @@ describe('DynaIntegrationCloneSelect tests', () => {
     userEvent.click(screen.getByText('_name2'));
     expect(onFieldChange).toHaveBeenCalledWith('_id', {environment: 'Production', label: '_name2', value: '_id2'});
   });
-  test('Should be able to test component with account having Sandbox', async () => {
+  test('should be able to test component with account having Sandbox', async () => {
     await initDynaIntegrationCloneSelect(props);
     expect(screen.getByText('_name1')).toBeInTheDocument();
     expect(screen.getByText('Sandbox')).toBeInTheDocument();
     expect(screen.getByText('Production')).toBeInTheDocument();
   });
-  test('Should be able to test component with cloneFamily still loading', async () => {
+  test('should be able to test component with cloneFamily still loading', async () => {
     await initDynaIntegrationCloneSelect({...props, integrationId: '_integrationId1'});
     expect(screen.getByRole('progressbar')).toBeInTheDocument();
     expect(screen.queryByText('_label')).not.toBeInTheDocument();

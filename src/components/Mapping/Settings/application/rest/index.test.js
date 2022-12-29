@@ -1,4 +1,4 @@
-/* global describe, test, expect */
+
 import restSettings from '.';
 
 describe('getLookupMetadata component Test cases', () => {

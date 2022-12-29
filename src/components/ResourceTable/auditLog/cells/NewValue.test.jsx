@@ -1,4 +1,4 @@
-/* global describe, expect, test */
+
 import React from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { screen } from '@testing-library/react';
@@ -16,7 +16,7 @@ function initImports(data = []) {
 
   renderWithProviders(ui);
 }
-describe('Test suite for NewValue', () => {
+describe('test suite for NewValue', () => {
   const testDate = new Date('2018-12-24T10:33:30.000+05:30');
 
   test('should display newValue after rendering celigo table', () => {

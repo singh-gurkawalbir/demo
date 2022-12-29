@@ -1,4 +1,5 @@
-/* global describe, test, expect */
+/* eslint-disable jest/no-standalone-expect */
+
 import each from 'jest-each';
 import reducer, {selectors} from '.';
 import actions from '../../../../actions/suiteScript';
@@ -42,11 +43,11 @@ describe('isSuiteScriptFlowOnOffInProgress selectors', () => {
   const state = reducer(initialState, actions.flow.isOnOffActionInprogress({onOffInProgress: true, ssLinkedConnectionId, _id}));
 
   test('should return state correctly when valid ids are sent through', () => {
-    expect(selectors.isSuiteScriptFlowOnOffInProgress(state, {ssLinkedConnectionId, _id})).toEqual(true);
+    expect(selectors.isSuiteScriptFlowOnOffInProgress(state, {ssLinkedConnectionId, _id})).toBe(true);
   });
 
   test('should return false correctly when invalid ids are sent through the selector', () => {
     expect(selectors.isSuiteScriptFlowOnOffInProgress(state, {
-    })).toEqual(false);
+    })).toBe(false);
   });
 });

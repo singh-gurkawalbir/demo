@@ -1,4 +1,4 @@
-/* global describe, expect, test */
+
 import { selectors } from '.';
 
 describe('Sample data region selector testcases', () => {
@@ -64,7 +64,7 @@ describe('Sample data region selector testcases', () => {
     test('should not throw any exception for invalid arguments', () => {
       expect(selectors.canSelectRecordsInPreviewPanel()).toBeFalsy();
     });
-    test('should return false for real time resources like distributed NS/SF/webhook ', () => {
+    test('should return false for real time resources like distributed NS/SF/webhook', () => {
       expect(selectors.canSelectRecordsInPreviewPanel(sampleState, 'exports-1234')).toBeFalsy();
       expect(selectors.canSelectRecordsInPreviewPanel(sampleState, 'exports-new-123')).toBeFalsy();
     });
@@ -346,7 +346,7 @@ describe('Sample data region selector testcases', () => {
 
       expect(selectors.getImportSampleData(sampleState, 'import-1234')).toEqual({});
     });
-    test('should return sampleData from the resourceObj if it is not an assistant/IA/NS/SF ', () => {
+    test('should return sampleData from the resourceObj if it is not an assistant/IA/NS/SF', () => {
       const jsonContent = { test: 5 };
       const sampleState = {
         data: {
@@ -581,7 +581,7 @@ describe('Sample data region selector testcases', () => {
     };
 
     test('should not throw any exception for invalid arguments', () => {
-      expect(selectors.isExportPreviewDisabled()).toEqual(true);
+      expect(selectors.isExportPreviewDisabled()).toBe(true);
     });
     test('should return false if the resource is a file type resource as we always allow user to preview', () => {
       expect(selectors.isExportPreviewDisabled(sampleState, 'exports-1111')).toBeFalsy();

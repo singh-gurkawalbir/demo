@@ -1,4 +1,4 @@
-/* global describe, test, expect, jest */
+
 import React from 'react';
 import { screen } from '@testing-library/react';
 import TimeAgo from 'react-timeago';
@@ -7,7 +7,7 @@ import { mockPutRequestOnce, renderWithProviders} from '../../test/test-utils';
 import actions from '../../actions';
 import { runServer } from '../../test/api/server';
 
-describe('CeligoTimeAgo UI tests', () => {
+describe('celigoTimeAgo UI tests', () => {
   runServer();
   function renderFunction(date = null, showRelativeDateTime = null) {
     const {store} = renderWithProviders(<CeligoTimeAgo date={date} />);

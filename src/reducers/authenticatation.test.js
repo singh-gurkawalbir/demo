@@ -1,4 +1,4 @@
-/* global describe, expect, test */
+
 import reducer, { selectors } from '.';
 import actions from '../actions';
 
@@ -59,7 +59,8 @@ describe('aunthentication region selector testcases', () => {
       const authFailedState = reducer(initializedState, actions.auth.failure());
 
       expect(selectors.isAuthInitialized(authFailedState)).toBe(true);
-    }); test('isAuthInitialized selector should be false when the app loads for the very first time and subsequently should be successfully set to true for auth failure or success', () => {
+    });
+    test('isAuthInitialized selector should be false when the app loads for the very first time and subsequently should be successfully set to true for auth failure or success duplicate', () => {
       const initializedState = reducer(undefined, { type: null });
 
       expect(selectors.isAuthInitialized(initializedState)).toBe(false);
@@ -103,7 +104,7 @@ describe('aunthentication region selector testcases', () => {
         },
       };
 
-      expect(selectors.authenticationErrored(state)).toEqual(true);
+      expect(selectors.authenticationErrored(state)).toBe(true);
     });
     test('should return false', () => {
       const state = {
@@ -112,15 +113,15 @@ describe('aunthentication region selector testcases', () => {
         },
       };
 
-      expect(selectors.authenticationErrored(state)).toEqual(false);
+      expect(selectors.authenticationErrored(state)).toBe(false);
     });
   });
 
   describe('selectors.isUserLoggedOut test cases', () => {
     test('should not throw any exception for invalid arguments', () => {
-      expect(selectors.isUserLoggedOut()).toEqual(false);
+      expect(selectors.isUserLoggedOut()).toBe(false);
     });
-    test('isUserLoggedOut selector should be set to true when the user logs out and for any other state it should be set to false ', () => {
+    test('isUserLoggedOut selector should be set to true when the user logs out and for any other state it should be set to false', () => {
       const initializedState = reducer(undefined, { type: null });
 
       expect(selectors.isUserLoggedOut(initializedState)).toBe(false);
@@ -133,31 +134,31 @@ describe('aunthentication region selector testcases', () => {
 
   describe('selectors.isDefaultAccountSetAfterAuth test cases', () => {
     test('should not throw any exception for invalid arguments', () => {
-      expect(selectors.isDefaultAccountSetAfterAuth(undefined, {})).toEqual(true);
+      expect(selectors.isDefaultAccountSetAfterAuth(undefined, {})).toBe(true);
     });
 
     const authStateLoading = reducer(undefined, actions.auth.request());
 
     test('should return false if the app is being authenticated', () => {
-      expect(selectors.isDefaultAccountSetAfterAuth(authStateLoading)).toEqual(false);
+      expect(selectors.isDefaultAccountSetAfterAuth(authStateLoading)).toBe(false);
     });
 
     const authStateSucceeded = reducer(authStateLoading, actions.auth.complete());
 
     test('should return false if app is authenticated and default account is not set', () => {
-      expect(selectors.isDefaultAccountSetAfterAuth(authStateSucceeded)).toEqual(false);
+      expect(selectors.isDefaultAccountSetAfterAuth(authStateSucceeded)).toBe(false);
     });
 
     const defaultAccountSetState = reducer(authStateSucceeded, actions.auth.defaultAccountSet());
 
     test('should return true if app is authenticated and default account is set', () => {
-      expect(selectors.isDefaultAccountSetAfterAuth(defaultAccountSetState)).toEqual(true);
+      expect(selectors.isDefaultAccountSetAfterAuth(defaultAccountSetState)).toBe(true);
     });
   });
 
   describe('selectors.shouldShowAppRouting test cases', () => {
     test('should not throw any exception for invalid arguments', () => {
-      expect(selectors.shouldShowAppRouting(undefined, {})).toEqual(true);
+      expect(selectors.shouldShowAppRouting(undefined, {})).toBe(true);
     });
     //  when the app is initalizing shouldShowAppRouting selector
     // should be set to false but ultimately set to
@@ -242,20 +243,20 @@ describe('aunthentication region selector testcases', () => {
 
   describe('selectors.isSessionExpired test cases', () => {
     test('should not throw any exception for invalid arguments', () => {
-      expect(selectors.isSessionExpired(undefined, {})).toEqual(false);
+      expect(selectors.isSessionExpired(undefined, {})).toBe(false);
     });
 
     test('should return true only if the user is already authenticated and the app fails otherwise it is false', () => {
       const authStateLoading = reducer(undefined, actions.auth.request());
 
-      expect(selectors.isSessionExpired(authStateLoading)).toEqual(false);
+      expect(selectors.isSessionExpired(authStateLoading)).toBe(false);
 
       const authStateSucceeded = reducer(authStateLoading, actions.auth.complete());
 
-      expect(selectors.isSessionExpired(authStateSucceeded)).toEqual(false);
+      expect(selectors.isSessionExpired(authStateSucceeded)).toBe(false);
       const authStateFailed = reducer(authStateSucceeded, actions.auth.failure());
 
-      expect(selectors.isSessionExpired(authStateFailed)).toEqual(true);
+      expect(selectors.isSessionExpired(authStateFailed)).toBe(true);
     });
   });
 

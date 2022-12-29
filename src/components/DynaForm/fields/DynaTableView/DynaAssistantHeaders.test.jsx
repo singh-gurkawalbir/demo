@@ -1,4 +1,4 @@
-/* global describe, test, jest, expect, */
+
 import React from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import {screen} from '@testing-library/react';
@@ -31,7 +31,7 @@ function initDynaAssistantHeaders(props = {}) {
   return renderWithProviders(ui);
 }
 
-describe('DynaAssistantHeaders UI test cases', () => {
+describe('dynaAssistantHeaders UI test cases', () => {
   test('should populate the assistant headers and make the dispatch call when the component is unmount and provided with no value', () => {
     const genralProps = {
       value: [{name: 'Name1', required: true}, {name: 'Name2', required: true}, {name: 'Name3', required: true}, {name: 'Name4', required: true}],
@@ -48,7 +48,7 @@ describe('DynaAssistantHeaders UI test cases', () => {
     expect(screen.getByDisplayValue('Name4')).toBeInTheDocument();
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.form.forceFieldState('someformkey')('someid', {isValid: false, errorMessages: 'Name1, Name2, Name3, Name4 headers are required'}));
     unmount();
-    expect(mockDispatchFn).toBeCalledWith(actions.form.clearForceFieldState('someformkey')('someid'));
+    expect(mockDispatchFn).toHaveBeenCalledWith(actions.form.clearForceFieldState('someformkey')('someid'));
   });
   test('should make the dispatch call when the component is unmount when provided with value', () => {
     const genralProps = {
@@ -72,9 +72,9 @@ describe('DynaAssistantHeaders UI test cases', () => {
 
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.form.forceFieldState('someformkey')('someid', {isValid: true}));
     unmount();
-    expect(mockDispatchFn).toBeCalledWith(actions.form.clearForceFieldState('someformkey')('someid'));
+    expect(mockDispatchFn).toHaveBeenCalledWith(actions.form.clearForceFieldState('someformkey')('someid'));
   });
-  test('Should call FieldMessage component when error message is provided', () => {
+  test('should call FieldMessage component when error message is provided', () => {
     const genralProps = {
       value: [{name: 'Name1', value: 'Value1', required: true}, {name: 'Name2', value: 'Value2', required: true}, {name: 'Name3', value: 'Value3', required: true}, {name: 'Name4', value: 'Value4', required: true}],
       formKey: 'someformkey',

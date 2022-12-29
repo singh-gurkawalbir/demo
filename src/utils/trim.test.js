@@ -1,10 +1,9 @@
-/* global describe, test, expect */
 import trimObj from './trim';
 
 describe('trim util test cases', () => {
   test('should return undefined/null if invalid or empty args are supplied', () => {
     expect(trimObj()).toBeUndefined();
-    expect(trimObj(null)).toEqual(null);
+    expect(trimObj(null)).toBeNull();
   });
   test('should not trim the values if input object has specific keys', () => {
     const obj = {

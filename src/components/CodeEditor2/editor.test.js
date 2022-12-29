@@ -1,4 +1,4 @@
-/* global describe, test, beforeEach, afterEach, jest, expect */
+
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
@@ -35,7 +35,7 @@ jest.mock('../AFE/Editor/panels/Handlebars/autocompleteSetup/editorCompleterSetu
   ...jest.requireActual('../AFE/Editor/panels/Handlebars/autocompleteSetup/editorCompleterSetup'),
   default: () => mockingHandlebarCompleterSetup(),
 }));
-describe('Testsuite for CodeEditor', () => {
+describe('testsuite for CodeEditor', () => {
   beforeEach(() => {
     initialStore = getCreatedStore();
   });
@@ -64,7 +64,7 @@ describe('Testsuite for CodeEditor', () => {
 
     initCodeEditor({props});
 
-    expect(mockingHandlebarCompleterSetup).toBeCalled();
+    expect(mockingHandlebarCompleterSetup).toHaveBeenCalled();
     expect(mockOnLoad).toHaveBeenCalled();
     expect(document.querySelector('div[id="result"]').className).toEqual(expect.stringContaining('makeStyles-editorReadOnlyPanel-'));
   });

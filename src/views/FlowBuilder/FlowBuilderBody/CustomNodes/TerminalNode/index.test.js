@@ -1,4 +1,3 @@
-/* global describe, test, beforeEach, jest, expect */
 import { screen } from '@testing-library/react';
 import React from 'react';
 import * as reactRedux from 'react-redux';
@@ -81,9 +80,9 @@ describe('Testsuite for TerminalNode', () => {
     const terminalNode = document.querySelectorAll('span');
 
     expect(terminalNode[1]).toBeInTheDocument();
-    expect(terminalNode[1].getAttribute('title')).toEqual('Drag to merge with other branch');
+    expect(terminalNode[1].getAttribute('title')).toBe('Drag to merge with other branch');
     await userEvent.hover(terminalNode[1]);
-    expect(terminalNode[1].getAttribute('title')).not.toEqual('Drag to merge with other branch');
+    expect(terminalNode[1].getAttribute('title')).not.toBe('Drag to merge with other branch');
   });
   test('should test the merge icon when the drag is not inprogress and not able to drag', async () => {
     jest.spyOn(mockContext, 'useFlowContext').mockReturnValue({
@@ -95,8 +94,8 @@ describe('Testsuite for TerminalNode', () => {
     const terminalNode = document.querySelectorAll('span');
 
     expect(terminalNode[1]).toBeInTheDocument();
-    expect(terminalNode[1].getAttribute('title')).toEqual('Merging to another branch is not possible here because your flow does not contain any branches or because there are no merge targets available. Add branching to your flow or modify your current flow layout to allow merging.');
+    expect(terminalNode[1].getAttribute('title')).toBe('Merging to another branch is not possible here because your flow does not contain any branches or because there are no merge targets available. Add branching to your flow or modify your current flow layout to allow merging.');
     await userEvent.hover(terminalNode[1]);
-    expect(terminalNode[1].getAttribute('title')).not.toEqual('Merging to another branch is not possible here because your flow does not contain any branches or because there are no merge targets available. Add branching to your flow or modify your current flow layout to allow merging.');
+    expect(terminalNode[1].getAttribute('title')).not.toBe('Merging to another branch is not possible here because your flow does not contain any branches or because there are no merge targets available. Add branching to your flow or modify your current flow layout to allow merging.');
   });
 });

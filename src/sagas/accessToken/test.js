@@ -1,4 +1,4 @@
-/* global describe, test, expect */
+
 import { call, put, delay, fork, take, select, cancel} from 'redux-saga/effects';
 import { expectSaga } from 'redux-saga-test-plan';
 import { createMockTask } from '@redux-saga/testing-utils';
@@ -47,7 +47,7 @@ describe('displayToken saga', () => {
         })
       )
     );
-    expect(saga.next().done).toEqual(true);
+    expect(saga.next().done).toBe(true);
   });
   test('should handle api error properly while displaying token', () => {
     const tokenId = 'something';
@@ -67,8 +67,8 @@ describe('displayToken saga', () => {
         message: 'Getting Token',
       })
     );
-    expect(saga.throw(new Error()).value).toEqual(true);
-    expect(saga.next().done).toEqual(true);
+    expect(saga.throw(new Error()).value).toBe(true);
+    expect(saga.next().done).toBe(true);
   });
 });
 
@@ -110,7 +110,7 @@ describe('generateToken saga', () => {
         })
       )
     );
-    expect(saga.next().done).toEqual(true);
+    expect(saga.next().done).toBe(true);
   });
   test('should handle api error properly while generating token', () => {
     const tokenId = 'something';
@@ -130,8 +130,8 @@ describe('generateToken saga', () => {
         message: 'Generating Token',
       })
     );
-    expect(saga.throw(new Error()).value).toEqual(true);
-    expect(saga.next().done).toEqual(true);
+    expect(saga.throw(new Error()).value).toBe(true);
+    expect(saga.next().done).toBe(true);
   });
 });
 describe('resourcesReceived saga', () => {
@@ -142,7 +142,7 @@ describe('resourcesReceived saga', () => {
   test('should able to skip update collection if resource type is not accesstokens', () => {
     const saga = resourcesReceived({ resourceType: 'connections' });
 
-    expect(saga.next().done).toEqual(true);
+    expect(saga.next().done).toBe(true);
   });
 });
 describe('Updated access tokens saga', () => {
@@ -157,14 +157,14 @@ describe('Updated access tokens saga', () => {
       take(actionTypes.ACCESSTOKEN.UPDATED_COLLECTION)
     );
     expect(saga.next().value).toEqual(cancel(mockTask));
-    expect(saga.next().done).toEqual(true);
+    expect(saga.next().done).toBe(true);
   });
 });
 describe('checkAndRemovePurgedTokens saga', () => {
   test('should return false and not dispatch any actions if there are no accessTokens present', () => {
     const data = { resources: undefined };
 
-    return expectSaga(checkAndRemovePurgedTokens)
+    expectSaga(checkAndRemovePurgedTokens)
       .provide([
         [select(selectors.resourceList, { type: 'accesstokens' }), data],
       ])
@@ -239,7 +239,7 @@ describe('checkAndRemovePurgedTokens saga', () => {
       ],
     };
 
-    return expectSaga(checkAndRemovePurgedTokens)
+    expectSaga(checkAndRemovePurgedTokens)
       .provide([
         [select(selectors.resourceList, { type: 'accesstokens' }), data],
       ])
@@ -296,7 +296,7 @@ describe('checkAndRemovePurgedTokens saga', () => {
       ],
     };
 
-    return expectSaga(checkAndRemovePurgedTokens)
+    expectSaga(checkAndRemovePurgedTokens)
       .provide([
         [select(selectors.resourceList, { type: 'accesstokens' }), data],
       ])

@@ -1,4 +1,5 @@
-/* global describe, expect, jest, test */
+/* eslint-disable jest/no-conditional-expect */
+
 import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -104,16 +105,16 @@ describe('test suite for Form Fragment', () => {
     const fieldRegisterBtn = screen.getByRole('button', {name: 'fieldRegister'});
 
     userEvent.click(fieldChangeBtn);
-    expect(mockDispatchFn).toBeCalledWith(actions.form.fieldChange(formKey)('type', 'csv', true));
+    expect(mockDispatchFn).toHaveBeenCalledWith(actions.form.fieldChange(formKey)('type', 'csv', true));
 
     userEvent.click(fieldBlurBtn);
-    expect(mockDispatchFn).toBeCalledWith(actions.form.fieldBlur(formKey)('type'));
+    expect(mockDispatchFn).toHaveBeenCalledWith(actions.form.fieldBlur(formKey)('type'));
 
     userEvent.click(fieldFocusBtn);
-    expect(mockDispatchFn).toBeCalledWith(actions.form.fieldFocus(formKey)('type'));
+    expect(mockDispatchFn).toHaveBeenCalledWith(actions.form.fieldFocus(formKey)('type'));
 
     userEvent.click(fieldRegisterBtn);
-    expect(mockDispatchFn).toBeCalledWith(actions.form.registerField(formKey)('type'));
+    expect(mockDispatchFn).toHaveBeenCalledWith(actions.form.registerField(formKey)('type'));
   });
 
   test('should render a message if field type is not available', () => {
@@ -180,7 +181,7 @@ describe('test suite for Form Fragment', () => {
       expect(true).toBeFalsy();
     } catch (err) {
       expect(err.constructor).toEqual(FieldDefinitionException);
-      expect(err.message).toEqual('Invalid field definition for field: uri');
+      expect(err.message).toBe('Invalid field definition for field: uri');
     }
   });
 

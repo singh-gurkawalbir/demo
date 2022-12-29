@@ -1,4 +1,3 @@
-/* global describe, test, expect, beforeEach, jest, afterEach */
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import * as reactRedux from 'react-redux';
@@ -21,7 +20,7 @@ async function initSecurity() {
   };
 }
 
-describe('Security test cases', () => {
+describe('security test cases', () => {
   runServer();
   let mockDispatchFn;
   let useDispatchSpy;

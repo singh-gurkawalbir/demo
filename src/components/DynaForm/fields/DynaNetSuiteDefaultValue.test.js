@@ -1,4 +1,4 @@
-/* global describe, test, expect, jest, afterEach */
+
 import React from 'react';
 import {
   screen, fireEvent,
@@ -54,7 +54,7 @@ async function initDynaNetSuiteDefaultValue(props = {}, initialStore) {
   return renderWithProviders(ui, {initialStore});
 }
 
-describe('DynaNetSuiteDefaultValue UI test cases', () => {
+describe('dynaNetSuiteDefaultValue UI test cases', () => {
   const mockOnFieldChange = jest.fn();
 
   afterEach(() => {
@@ -86,7 +86,7 @@ describe('DynaNetSuiteDefaultValue UI test cases', () => {
     expect(screen.getByText('someName')).toBeInTheDocument();
     expect(screen.getByRole('progressbar')).toBeInTheDocument();
   });
-  test('should show call the onField change when field is changed ', () => {
+  test('should show call the onField change when field is changed', () => {
     initialStore.getState().session.metadata = {application: {someconnectionId: {somePath: {
       data: [{name: 'someName1', scriptId: 'once', doesNotSupportCreate: true},
         {name: 'someName12', scriptId: 'somevalue12', doesNotSupportCreate: true},

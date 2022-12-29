@@ -1,4 +1,4 @@
-/* global describe, test,expect */
+
 import React from 'react';
 import { screen } from '@testing-library/react';
 import { MemoryRouter, Route } from 'react-router-dom';
@@ -38,7 +38,7 @@ function initScheduleCell(actionProps = {}, initialStore = null, schedule = '') 
   return renderWithProviders(ui, {initialStore});
 }
 
-describe('Shecdule cell UI test cases', () => {
+describe('shecdule cell UI test cases', () => {
   test('should show the type provided', () => {
     initScheduleCell({flowAttributes: {someflowId: {type: 'SomeType'}}});
 

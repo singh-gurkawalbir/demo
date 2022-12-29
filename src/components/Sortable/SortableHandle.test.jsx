@@ -1,11 +1,11 @@
-/* global describe, test, expect */
+
 import React from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { SortableDragHandle } from './SortableHandle';
 import { renderWithProviders } from '../../test/test-utils';
 
-describe('Sortable Handle', () => {
-  test('Should be able to verify the sortable handle when isvisible and draggable are set to true', () => {
+describe('sortable Handle', () => {
+  test('should be able to verify the sortable handle when isvisible and draggable are set to true', () => {
     const props = {
       isVisible: true,
       draggable: true,
@@ -18,7 +18,7 @@ describe('Sortable Handle', () => {
 
     expect(svg).toBeInTheDocument();
   });
-  test('Should be able to verify the sortable handle when isvisible and draggable are set to false', () => {
+  test('should be able to verify the sortable handle when isvisible and draggable are set to false', () => {
     const props = {
       isVisible: false,
       draggable: false,
@@ -30,7 +30,7 @@ describe('Sortable Handle', () => {
 
     expect(utils.container.firstChild).toBeEmptyDOMElement();
   });
-  test('Should be able to verify the sortable handle when isvisible is set to true and draggable is set to false', () => {
+  test('should be able to verify the sortable handle when isvisible is set to true and draggable is set to false', () => {
     const props = {
       isVisible: true,
       draggable: false,
@@ -44,7 +44,7 @@ describe('Sortable Handle', () => {
 
     expect(svg).toBeInTheDocument();
   });
-  test('Should be able to verify the sortable handle when isvisible is set to false and draggable is true to false', () => {
+  test('should be able to verify the sortable handle when isvisible is set to false and draggable is true to false', () => {
     const props = {
       isVisible: false,
       draggable: true,

@@ -1,7 +1,6 @@
-/* global describe, test, expect, */
 import getForm from './formMeta';
 
-describe('CsvParseRules UI tests', () => {
+describe('csvParseRules UI tests', () => {
   test('should return an object with the required properties when fieldId is passed as "keyColumns" to the optionsHandler function', () => {
     const options = {
       code: 'custom code',

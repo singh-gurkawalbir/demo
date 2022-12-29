@@ -1,4 +1,3 @@
-/* global describe, test, expect */
 import React from 'react';
 import {screen} from '@testing-library/react';
 import {renderWithProviders, reduxStore} from '../../../../../../test/test-utils';
@@ -26,7 +25,7 @@ initialStore.getState().session.responseMapping = { mapping: {
     },
   ],
 }};
-describe('FieldMappingForm for responemapping test cases', () => {
+describe('fieldMappingForm for responemapping test cases', () => {
   test('should show the form for response mapping', () => {
     renderWithProviders(
       <FieldMappingForm flowId="62f0bdfaf8b63672312bbe36" resourceId="62e6897976ce554057c0f28f" />, {initialStore});

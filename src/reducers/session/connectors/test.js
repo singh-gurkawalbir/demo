@@ -1,4 +1,3 @@
-/* global describe, test, expect */
 
 import reducer, {selectors} from '.';
 import actions from '../../../actions';
@@ -464,10 +463,10 @@ describe('Selectors test cases', () => {
     });
 
     test('should return correct status for valid integrationId', () => {
-      expect(selectors.connectorPublishStatus({integrationId: {publishStatus: 'success'}}, 'integrationId')).toEqual('success');
-      expect(selectors.connectorPublishStatus({integrationId: {publishStatus: 'error'}}, 'integrationId')).toEqual('error');
-      expect(selectors.connectorPublishStatus({integrationId: {publishStatus: 'loading'}}, 'integrationId')).toEqual('loading');
-      expect(selectors.connectorPublishStatus({integrationId1: {publishStatus: 'loading'}}, 'integration')).toEqual('failed');
+      expect(selectors.connectorPublishStatus({integrationId: {publishStatus: 'success'}}, 'integrationId')).toBe('success');
+      expect(selectors.connectorPublishStatus({integrationId: {publishStatus: 'error'}}, 'integrationId')).toBe('error');
+      expect(selectors.connectorPublishStatus({integrationId: {publishStatus: 'loading'}}, 'integrationId')).toBe('loading');
+      expect(selectors.connectorPublishStatus({integrationId1: {publishStatus: 'loading'}}, 'integration')).toBe('failed');
     });
   });
 });

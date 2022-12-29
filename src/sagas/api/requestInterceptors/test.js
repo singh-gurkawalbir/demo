@@ -1,4 +1,7 @@
-/* global describe, test, expect, jest, fail */
+/* eslint-disable no-undef */
+/* eslint-disable jest/expect-expect */
+/* eslint-disable jest/no-conditional-expect */
+/* eslint-disable jest/no-jasmine-globals */
 
 import { put, call, select, delay } from 'redux-saga/effects';
 import {
@@ -24,7 +27,7 @@ const status401 = new APIException({
   message: 'Session expired',
 });
 
-describe('request interceptors...testing the various stages of an api request on how it is handled  ', () => {
+describe('request interceptors...testing the various stages of an api request on how it is handled', () => {
   process.env.NODE_ENV = 'development';
   const jsonRespBody = JSON.stringify({ failure: 'some failure' });
   const textRespBody = "[{ failure: 'some failure' }]";
@@ -225,8 +228,8 @@ describe('request interceptors...testing the various stages of an api request on
     });
   });
   describe('onSuccessSaga', () => {
-    describe('session expired ', () => {
-      test('should throw a sessionExpired exception for 200 response with the signin uri ', () => {
+    describe('session expired', () => {
+      test('should throw a sessionExpired exception for 200 response with the signin uri', () => {
         apiConsts.getHostAndProtocol = jest.fn().mockImplementation(() => ({
           host,
           protocol,
@@ -239,10 +242,10 @@ describe('request interceptors...testing the various stages of an api request on
           // TODO: wanted to do this `expect(e).toEqual(status401);`
           // but the node env isn't being injected correactly
           // resorting to verifying the status code and not the message
-          expect(e.status).toEqual(401);
+          expect(e.status).toBe(401);
         }
       });
-      test('should not throw a sessionExpired exception for a non 200 response with the signin uri ', () => {
+      test('should not throw a sessionExpired exception for a non 200 response with the signin uri', () => {
         apiConsts.getHostAndProtocol = jest.fn().mockImplementation(() => ({
           host,
           protocol,
@@ -257,13 +260,13 @@ describe('request interceptors...testing the various stages of an api request on
 
     describe('isCsrfExpired', () => {
       test('should return true for a valid CSRF message body', () => {
-        expect(isCsrfExpired(some403Response)).toEqual(true);
+        expect(isCsrfExpired(some403Response)).toBe(true);
       });
 
       test('should return false for a invalid CSRF message body', () => {
-        expect(isCsrfExpired(null)).toEqual(false);
-        expect(isCsrfExpired({})).toEqual(false);
-        expect(isCsrfExpired(some400Response)).toEqual(false);
+        expect(isCsrfExpired(null)).toBe(false);
+        expect(isCsrfExpired({})).toBe(false);
+        expect(isCsrfExpired(some400Response)).toBe(false);
       });
     });
 
@@ -370,6 +373,7 @@ describe('request interceptors...testing the various stages of an api request on
 
   describe('onErrorSaga', () => {
     describe('400 level errors', () => {
+      // eslint-disable-next-line jest/no-commented-out-tests
       /*
       test('401 errors  should unauthenticate and delete', () => {
         const saga = onErrorSaga(

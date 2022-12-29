@@ -1,4 +1,4 @@
-/* global describe, test, expect */
+
 import {
   isValidFileType,
   isValidFileSize,
@@ -19,12 +19,12 @@ describe('isValidFileType util', () => {
       webkitRelativePath: '',
     };
 
-    expect(isValidFileType()).toEqual(true);
-    expect(isValidFileType(null, file)).toEqual(true);
+    expect(isValidFileType()).toBe(true);
+    expect(isValidFileType(null, file)).toBe(true);
   });
   test('should return true if fileType is passed but file is empty or does not have type', () => {
-    expect(isValidFileType('json')).toEqual(true);
-    expect(isValidFileType('json', { type: ''})).toEqual(true);
+    expect(isValidFileType('json')).toBe(true);
+    expect(isValidFileType('json', { type: ''})).toBe(true);
   });
   test('should return false if passed file has invalid type', () => {
     const fileType = 'json';
@@ -35,7 +35,7 @@ describe('isValidFileType util', () => {
       webkitRelativePath: '',
     };
 
-    expect(isValidFileType(fileType, file)).toEqual(false);
+    expect(isValidFileType(fileType, file)).toBe(false);
   });
   test('should return true if uploaded file\'s type is valid', () => {
     const fileType = 'xml';
@@ -46,15 +46,15 @@ describe('isValidFileType util', () => {
       webkitRelativePath: '',
     };
 
-    expect(isValidFileType(fileType, file)).toEqual(true);
+    expect(isValidFileType(fileType, file)).toBe(true);
   });
 });
 
 describe('isValidFileSize util', () => {
   test('should return false if file or max size is empty', () => {
-    expect(isValidFileSize()).toEqual(false);
-    expect(isValidFileSize(null, 5000)).toEqual(false);
-    expect(isValidFileSize({size: 500})).toEqual(false);
+    expect(isValidFileSize()).toBe(false);
+    expect(isValidFileSize(null, 5000)).toBe(false);
+    expect(isValidFileSize({size: 500})).toBe(false);
   });
   test('should return true if file size is less than max size', () => {
     const file = {
@@ -64,7 +64,7 @@ describe('isValidFileSize util', () => {
       webkitRelativePath: '',
     };
 
-    expect(isValidFileSize(file, 5000)).toEqual(true);
+    expect(isValidFileSize(file, 5000)).toBe(true);
   });
   test('should return false if file size is greater than max size', () => {
     const file = {
@@ -74,7 +74,7 @@ describe('isValidFileSize util', () => {
       webkitRelativePath: '',
     };
 
-    expect(isValidFileSize(file, 5000)).toEqual(false);
+    expect(isValidFileSize(file, 5000)).toBe(false);
   });
 });
 

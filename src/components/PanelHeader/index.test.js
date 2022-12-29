@@ -1,4 +1,3 @@
-/* global describe, test, expect */
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
@@ -22,7 +21,7 @@ async function initPanelheader({children = '', title = '', infoText = '', placem
   return renderWithProviders(ui);
 }
 
-describe('Testsuite for Panel Header', () => {
+describe('testsuite for Panel Header', () => {
   test('should test the panel header with empty children, title, infoText and placement', async () => {
     const { utils } = await initPanelheader();
 

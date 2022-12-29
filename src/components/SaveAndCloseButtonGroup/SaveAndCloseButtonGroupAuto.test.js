@@ -1,4 +1,4 @@
-/* global describe, jest, expect, test */
+
 import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -24,7 +24,7 @@ async function initSaveAndCloseButtonGroupAuto(props = {}) {
   return renderWithProviders(ui);
 }
 
-describe('SaveAndCloseButtonGroupAuto test suite', () => {
+describe('saveAndCloseButtonGroupAuto test suite', () => {
   test('should pass initial rendering', async () => {
     await initSaveAndCloseButtonGroupAuto();
     const saveButton = screen.getByRole('button', { name: 'Save' });
@@ -44,14 +44,14 @@ describe('SaveAndCloseButtonGroupAuto test suite', () => {
     const saveButton = screen.getByRole('button', { name: 'Save' });
     const closeButton = screen.getByRole('button', { name: 'Close' });
 
-    expect(onClose).not.toBeCalled();
-    expect(onSave).not.toBeCalled();
+    expect(onClose).not.toHaveBeenCalled();
+    expect(onSave).not.toHaveBeenCalled();
 
     userEvent.click(saveButton);
-    expect(onSave).toBeCalledTimes(1);
+    expect(onSave).toHaveBeenCalledTimes(1);
 
     userEvent.click(closeButton);
-    expect(onClose).toBeCalledTimes(1);
+    expect(onClose).toHaveBeenCalledTimes(1);
   });
 
   test('should not be able to save if no changes made', async () => {
@@ -68,13 +68,13 @@ describe('SaveAndCloseButtonGroupAuto test suite', () => {
     await initSaveAndCloseButtonGroupAuto({ onSave, onClose, shouldHandleCancel: true, disabled: false, isDirty: true });
     const closeButton = screen.getByRole('button', { name: 'Close' });
 
-    expect(onSave).not.toBeCalled();
-    expect(onClose).not.toBeCalled();
-    expect(mockHandleCancel).not.toBeCalled();
+    expect(onSave).not.toHaveBeenCalled();
+    expect(onClose).not.toHaveBeenCalled();
+    expect(mockHandleCancel).not.toHaveBeenCalled();
 
     userEvent.click(closeButton);
 
     expect(mockHandleCancel).toHaveBeenCalledTimes(1);
-    expect(onClose).not.toBeCalled();
+    expect(onClose).not.toHaveBeenCalled();
   });
 });

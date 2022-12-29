@@ -1,4 +1,3 @@
-/* global describe, test, expect, jest */
 import React from 'react';
 import { screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
@@ -25,7 +24,7 @@ async function initTableBodyContent(
   return renderWithProviders(ui);
 }
 
-describe('TableBodyContent component Test cases', () => {
+describe('tableBodyContent component Test cases', () => {
   runServer();
   test('should pass the intial render with default values', async () => {
     const { utils } = await initTableBodyContent();
@@ -33,7 +32,7 @@ describe('TableBodyContent component Test cases', () => {
     expect(utils.container.firstChild.firstChild).toBeEmptyDOMElement(); // table, tbody child
   });
 
-  describe('TableBodyContent component with data', () => {
+  describe('tableBodyContent component with data', () => {
     const data = [
       {
         key: 'id_1',

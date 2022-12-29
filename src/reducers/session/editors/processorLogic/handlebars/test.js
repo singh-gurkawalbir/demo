@@ -1,4 +1,3 @@
-/* global describe, test, expect */
 
 import processorLogic, { _constructEditorTitle, _editorSupportsV1V2data } from './index';
 
@@ -12,34 +11,34 @@ const {
 describe('handlebars processor logic', () => {
   describe('_constructEditorTitle util', () => {
     test('should return passed label if its falsy', () => {
-      expect(_constructEditorTitle('')).toEqual('');
+      expect(_constructEditorTitle('')).toBe('');
     });
     test('should return original label if it starts with Build', () => {
-      expect(_constructEditorTitle('Build file')).toEqual('Build file');
+      expect(_constructEditorTitle('Build file')).toBe('Build file');
     });
     test('should prefix Build and return the new label', () => {
-      expect(_constructEditorTitle('HTTP request body')).toEqual('Build HTTP request body');
+      expect(_constructEditorTitle('HTTP request body')).toBe('Build HTTP request body');
     });
     test('should prefix Build and convert first char to lowercase and return new label', () => {
-      expect(_constructEditorTitle('File name')).toEqual('Build file name');
+      expect(_constructEditorTitle('File name')).toBe('Build file name');
     });
     test('should prefix Build and drop Override from label', () => {
-      expect(_constructEditorTitle('Override HTTP request body')).toEqual('Build HTTP request body');
+      expect(_constructEditorTitle('Override HTTP request body')).toBe('Build HTTP request body');
     });
   });
   describe('_editorSupportsV1V2data util', () => {
     test('should not throw error for invalid arguments', () => {
-      expect(_editorSupportsV1V2data({})).toEqual(false);
-      expect(_editorSupportsV1V2data({resource: null, connection: null})).toEqual(false);
+      expect(_editorSupportsV1V2data({})).toBe(false);
+      expect(_editorSupportsV1V2data({resource: null, connection: null})).toBe(false);
     });
     test('should return false for all lookup fields', () => {
-      expect(_editorSupportsV1V2data({fieldId: '_query'})).toEqual(false);
-      expect(_editorSupportsV1V2data({fieldId: '_body'})).toEqual(false);
-      expect(_editorSupportsV1V2data({fieldId: '_relativeURI'})).toEqual(false);
-      expect(_editorSupportsV1V2data({fieldId: 'lookup.body'})).toEqual(false);
+      expect(_editorSupportsV1V2data({fieldId: '_query'})).toBe(false);
+      expect(_editorSupportsV1V2data({fieldId: '_body'})).toBe(false);
+      expect(_editorSupportsV1V2data({fieldId: '_relativeURI'})).toBe(false);
+      expect(_editorSupportsV1V2data({fieldId: 'lookup.body'})).toBe(false);
     });
     test('should return false for traceKeyTemplate field', () => {
-      expect(_editorSupportsV1V2data({fieldId: 'traceKeyTemplate'})).toEqual(false);
+      expect(_editorSupportsV1V2data({fieldId: 'traceKeyTemplate'})).toBe(false);
     });
     test('should return false for dataURI and idLockTemplate if resource is a standalone import', () => {
       const expResource = {
@@ -51,24 +50,24 @@ describe('handlebars processor logic', () => {
         _id: '123',
       };
 
-      expect(_editorSupportsV1V2data({resource: impResource, isStandaloneResource: true, fieldId: 'idLockTemplate'})).toEqual(false);
-      expect(_editorSupportsV1V2data({resource: impResource, isStandaloneResource: true, fieldId: 'dataURITemplate'})).toEqual(false);
-      expect(_editorSupportsV1V2data({resource: expResource, isStandaloneResource: true, fieldId: 'idLockTemplate'})).toEqual(true);
-      expect(_editorSupportsV1V2data({resource: expResource, isStandaloneResource: true, fieldId: 'dataURITemplate'})).toEqual(true);
+      expect(_editorSupportsV1V2data({resource: impResource, isStandaloneResource: true, fieldId: 'idLockTemplate'})).toBe(false);
+      expect(_editorSupportsV1V2data({resource: impResource, isStandaloneResource: true, fieldId: 'dataURITemplate'})).toBe(false);
+      expect(_editorSupportsV1V2data({resource: expResource, isStandaloneResource: true, fieldId: 'idLockTemplate'})).toBe(true);
+      expect(_editorSupportsV1V2data({resource: expResource, isStandaloneResource: true, fieldId: 'dataURITemplate'})).toBe(true);
     });
     test('should return true for data uri and concurrency fields', () => {
-      expect(_editorSupportsV1V2data({fieldId: 'idLockTemplate'})).toEqual(true);
-      expect(_editorSupportsV1V2data({fieldId: 'dataURITemplate'})).toEqual(true);
-      expect(_editorSupportsV1V2data({fieldId: 'rdbms.once.query'})).toEqual(true);
+      expect(_editorSupportsV1V2data({fieldId: 'idLockTemplate'})).toBe(true);
+      expect(_editorSupportsV1V2data({fieldId: 'dataURITemplate'})).toBe(true);
+      expect(_editorSupportsV1V2data({fieldId: 'rdbms.once.query'})).toBe(true);
     });
     test('should return false if resource is a page generator', () => {
-      expect(_editorSupportsV1V2data({isPageGenerator: true, fieldId: 'rdbms.query'})).toEqual(false);
+      expect(_editorSupportsV1V2data({isPageGenerator: true, fieldId: 'rdbms.query'})).toBe(false);
     });
     test('should return false if resource is a standalone resource', () => {
-      expect(_editorSupportsV1V2data({isStandaloneResource: true, fieldId: 'rdbms.query'})).toEqual(false);
+      expect(_editorSupportsV1V2data({isStandaloneResource: true, fieldId: 'rdbms.query'})).toBe(false);
     });
     test('should return true for paging related fields', () => {
-      expect(_editorSupportsV1V2data({fieldId: 'http.paging.body'})).toEqual(true);
+      expect(_editorSupportsV1V2data({fieldId: 'http.paging.body'})).toBe(true);
     });
     test('should return true for root level fields when paging is configured', () => {
       expect(_editorSupportsV1V2data(
@@ -76,13 +75,13 @@ describe('handlebars processor logic', () => {
           fieldId: 'rest.body',
           resource: {adaptorType: 'RESTExport', rest: { pagingMethod: 'relativeuri' }},
           connection: {isHTTP: true},
-        })).toEqual(true);
+        })).toBe(true);
       expect(_editorSupportsV1V2data(
         {isPageGenerator: false,
           fieldId: 'http.body',
           resource: {adaptorType: 'HTTPExport', http: { paging: { method: 'relativeuri' } }},
           connection: {isHTTP: true},
-        })).toEqual(true);
+        })).toBe(true);
     });
 
     test('should return false for native REST adaptor', () => {
@@ -91,25 +90,25 @@ describe('handlebars processor logic', () => {
           fieldId: 'rest.body',
           resource: {adaptorType: 'RESTImport'},
           connection: {isHTTP: false},
-        })).toEqual(false);
+        })).toBe(false);
       expect(_editorSupportsV1V2data(
         {isPageGenerator: false,
           fieldId: 'rest.body',
           resource: {adaptorType: 'RESTExport'},
           connection: {isHTTP: false},
-        })).toEqual(false);
+        })).toBe(false);
     });
     test('should return true for all other adaptor fields', () => {
       expect(_editorSupportsV1V2data(
         {isPageGenerator: false,
           fieldId: 'http.body',
           resource: {adaptorType: 'HTTPImport'},
-        })).toEqual(true);
+        })).toBe(true);
       expect(_editorSupportsV1V2data(
         {isPageGenerator: false,
           fieldId: 'ftp.directoryPath',
           resource: {adaptorType: 'FTPExport'},
-        })).toEqual(true);
+        })).toBe(true);
     });
   });
   describe('init util', () => {
@@ -258,7 +257,7 @@ describe('handlebars processor logic', () => {
         },
       };
 
-      expect(init({options, resource, fieldState}).rule).toEqual('value2');
+      expect(init({options, resource, fieldState}).rule).toBe('value2');
     });
   });
   describe('requestBody util', () => {

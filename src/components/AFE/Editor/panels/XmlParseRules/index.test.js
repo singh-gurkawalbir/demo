@@ -1,4 +1,3 @@
-/* global describe, test, expect */
 import React from 'react';
 import { screen } from '@testing-library/react';
 import { renderWithProviders, reduxStore } from '../../../../../test/test-utils';
@@ -23,15 +22,15 @@ async function initXmlParseRules(props = {editorId: 'parsers'}, inAmperSand = fa
 
   return renderWithProviders(<XmlParseRules {...props} />, { initialStore });
 }
-describe('XmlParseRules tests', () => {
-  test('Should able to test XmlParseRules in parsers editor panel in React', async () => {
+describe('xmlParseRules tests', () => {
+  test('should able to test XmlParseRules in parsers editor panel in React', async () => {
     await initXmlParseRules();
     expect(screen.getByRole('radiogroup', {name: 'Parse strategy'})).toBeInTheDocument();
     expect(screen.getByRole('radio', {name: 'Custom'})).toBeInTheDocument();
     expect(screen.getByRole('radio', {name: 'Automatic'})).toBeInTheDocument();
     expect(screen.getByText('Resource path')).toBeInTheDocument();
   });
-  test('Should able to test XmlParseRules in parsers editor panel in ampersand', async () => {
+  test('should able to test XmlParseRules in parsers editor panel in ampersand', async () => {
     await initXmlParseRules({editorId: 'parsers'}, true, '');
     expect(screen.getByRole('radiogroup', {name: 'Parse strategy'})).toBeInTheDocument();
   });

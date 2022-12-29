@@ -1,4 +1,5 @@
-/* global describe, test, expect, jest, beforeEach, afterEach */
+/* eslint-disable jest/no-standalone-expect */
+
 import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -57,7 +58,7 @@ jest.mock('../../DynaForm/DynaSubmit', () => ({
   },
 }));
 
-describe('ManageLookup component Test cases', () => {
+describe('manageLookup component Test cases', () => {
   runServer();
   test('should pass the intial render with default values', async () => {
     await initManageLookup();
@@ -99,12 +100,12 @@ describe('ManageLookup component Test cases', () => {
     expect(cancelButton).toBeInTheDocument();
 
     userEvent.click(cancelButton);
-    expect(onCancel).toBeCalledTimes(1);
+    expect(onCancel).toHaveBeenCalledTimes(1);
 
     userEvent.click(saveButton);
   });
 
-  describe('NetSuite Import Lookup save test cases', () => {
+  describe('netSuite Import Lookup save test cases', () => {
     const onSave = jest.fn();
 
     beforeEach(async () => {
@@ -145,8 +146,8 @@ describe('ManageLookup component Test cases', () => {
       const saveButton = screen.getByRole('button', {name: /save/i});
 
       userEvent.click(saveButton);
-      await expect(onSave).toBeCalledTimes(1);
-      expect(onSave).toBeCalledWith(true, {
+      await expect(onSave).toHaveBeenCalledTimes(1);
+      expect(onSave).toHaveBeenCalledWith(true, {
         recordType: '',
         resultField: '',
         expression: '',
@@ -167,8 +168,8 @@ describe('ManageLookup component Test cases', () => {
       const saveButton = screen.getByRole('button', {name: /save/i});
 
       userEvent.click(saveButton);
-      await expect(onSave).toBeCalledTimes(1);
-      expect(onSave).toBeCalledWith(true, {
+      await expect(onSave).toHaveBeenCalledTimes(1);
+      expect(onSave).toHaveBeenCalledWith(true, {
         map: {
           export_value: 'import_value',
         },
@@ -176,7 +177,7 @@ describe('ManageLookup component Test cases', () => {
     });
   });
 
-  describe('Salesforce Import Lookup save test cases', () => {
+  describe('salesforce Import Lookup save test cases', () => {
     const onSave = jest.fn();
 
     beforeEach(async () => {
@@ -217,8 +218,8 @@ describe('ManageLookup component Test cases', () => {
       const saveButton = screen.getByRole('button', {name: /save/i});
 
       userEvent.click(saveButton);
-      await expect(onSave).toBeCalledTimes(1);
-      expect(onSave).toBeCalledWith(true, {
+      await expect(onSave).toHaveBeenCalledTimes(1);
+      expect(onSave).toHaveBeenCalledWith(true, {
         whereClause: '',
         sObjectType: '',
         resultField: '',
@@ -240,8 +241,8 @@ describe('ManageLookup component Test cases', () => {
       const saveButton = screen.getByRole('button', {name: /save/i});
 
       userEvent.click(saveButton);
-      await expect(onSave).toBeCalledTimes(1);
-      expect(onSave).toBeCalledWith(true, {
+      await expect(onSave).toHaveBeenCalledTimes(1);
+      expect(onSave).toHaveBeenCalledWith(true, {
         map: {
           export_value: 'import_value',
         },
@@ -249,7 +250,7 @@ describe('ManageLookup component Test cases', () => {
     });
   });
 
-  describe('HTTP Import Lookup save test cases', () => {
+  describe('hTTP Import Lookup save test cases', () => {
     const onSave = jest.fn();
     const formVal = {
       _mode: 'dynamic',
@@ -300,8 +301,8 @@ describe('ManageLookup component Test cases', () => {
       const saveButton = screen.getByRole('button', {name: /save/i});
 
       userEvent.click(saveButton);
-      await expect(onSave).toBeCalledTimes(1);
-      expect(onSave).toBeCalledWith(true, response);
+      await expect(onSave).toHaveBeenCalledTimes(1);
+      expect(onSave).toHaveBeenCalledWith(true, response);
     });
 
     test('should pass the intial render with dynamic lookup useEmptyString', async () => {
@@ -312,8 +313,8 @@ describe('ManageLookup component Test cases', () => {
       const saveButton = screen.getByRole('button', {name: /save/i});
 
       userEvent.click(saveButton);
-      await expect(onSave).toBeCalledTimes(1);
-      expect(onSave).toBeCalledWith(true, {...response, allowFailures: true, default: ''});
+      await expect(onSave).toHaveBeenCalledTimes(1);
+      expect(onSave).toHaveBeenCalledWith(true, {...response, allowFailures: true, default: ''});
     });
 
     test('should pass the intial render with dynamic lookup useNull', async () => {
@@ -324,8 +325,8 @@ describe('ManageLookup component Test cases', () => {
       const saveButton = screen.getByRole('button', {name: /save/i});
 
       userEvent.click(saveButton);
-      await expect(onSave).toBeCalledTimes(1);
-      expect(onSave).toBeCalledWith(true, {...response, allowFailures: true, default: null});
+      await expect(onSave).toHaveBeenCalledTimes(1);
+      expect(onSave).toHaveBeenCalledWith(true, {...response, allowFailures: true, default: null});
     });
 
     test('should pass the intial render with dynamic lookup default custom value', async () => {
@@ -336,8 +337,8 @@ describe('ManageLookup component Test cases', () => {
       const saveButton = screen.getByRole('button', {name: /save/i});
 
       userEvent.click(saveButton);
-      await expect(onSave).toBeCalledTimes(1);
-      expect(onSave).toBeCalledWith(true, {...response, allowFailures: true, default: 'custom_value'});
+      await expect(onSave).toHaveBeenCalledTimes(1);
+      expect(onSave).toHaveBeenCalledWith(true, {...response, allowFailures: true, default: 'custom_value'});
     });
 
     test('should pass the intial render with static lookup with no map', async () => {
@@ -350,8 +351,8 @@ describe('ManageLookup component Test cases', () => {
       const saveButton = screen.getByRole('button', {name: /save/i});
 
       userEvent.click(saveButton);
-      await expect(onSave).toBeCalledTimes(1);
-      expect(onSave).toBeCalledWith(true, {
+      await expect(onSave).toHaveBeenCalledTimes(1);
+      expect(onSave).toHaveBeenCalledWith(true, {
         map: {},
       });
     });
@@ -372,8 +373,8 @@ describe('ManageLookup component Test cases', () => {
       const saveButton = screen.getByRole('button', {name: /save/i});
 
       userEvent.click(saveButton);
-      await expect(onSave).toBeCalledTimes(1);
-      expect(onSave).toBeCalledWith(true, {
+      await expect(onSave).toHaveBeenCalledTimes(1);
+      expect(onSave).toHaveBeenCalledWith(true, {
         map: {
           export_value: 'import_value',
         },
