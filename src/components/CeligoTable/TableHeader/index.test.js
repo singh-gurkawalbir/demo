@@ -1,4 +1,4 @@
-/* global describe, test, expect, jest */
+
 import React from 'react';
 import cloneDeep from 'lodash/cloneDeep';
 import { screen } from '@testing-library/react';
@@ -40,7 +40,7 @@ async function initTableHeader(
   return renderWithProviders(ui, { initialStore });
 }
 
-describe('TableHeader component Test cases', () => {
+describe('tableHeader component Test cases', () => {
   runServer();
   test('should pass the intial render with default values', async () => {
     const { utils } = await initTableHeader();

@@ -1,4 +1,4 @@
-/* global describe, test, expect ,jest */
+
 import React from 'react';
 import { screen, waitFor} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -6,7 +6,7 @@ import {renderWithProviders} from '../../test/test-utils';
 import DateRangeSelector from '.';
 import {AUDIT_LOGS_RANGE_FILTERS} from '../../utils/resource';
 
-describe('DateRangeSelector testing', () => {
+describe('dateRangeSelector testing', () => {
   test('should test when click on apply', () => {
     const onSave = jest.fn();
 

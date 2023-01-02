@@ -1,4 +1,3 @@
-/* global describe, test, expect,beforeEach, afterEach, jest */
 import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -36,7 +35,7 @@ async function initMoreActionsButton(props) {
   return renderWithProviders(ui, {initialStore});
 }
 
-describe('MoreActionsButton tests', () => {
+describe('moreActionsButton tests', () => {
   let mockDispatchFn;
   let useDispatchSpy;
 
@@ -54,13 +53,13 @@ describe('MoreActionsButton tests', () => {
     useDispatchSpy.mockClear();
     mockHistoryPush.mockClear();
   });
-  test('Should able to test the initial render with MoreActionsButton with only ellipses icon', async () => {
+  test('should able to test the initial render with MoreActionsButton with only ellipses icon', async () => {
     await initMoreActionsButton(props);
     expect(screen.queryByText('Edit branch name/description')).not.toBeInTheDocument();
     expect(screen.getByRole('button')).toBeInTheDocument();
   });
 
-  test('Should able to test MoreActionsButton with action options provided', async () => {
+  test('should able to test MoreActionsButton with action options provided', async () => {
     await initMoreActionsButton(props);
     // for delete banching
     userEvent.click(screen.getByRole('button'));
@@ -89,13 +88,13 @@ describe('MoreActionsButton tests', () => {
     userEvent.click(editBranchOption);
     expect(mockHistoryPush).toHaveBeenCalledWith('/integrations/intId/branch/');
   });
-  test('Should able to test MoreActionsButton deleteBranch option with last branch', async () => {
+  test('should able to test MoreActionsButton deleteBranch option with last branch', async () => {
     await initMoreActionsButton({...props, allowDeleting: false});
     userEvent.click(screen.getByRole('button'));
     const spans = document.querySelectorAll('span');
     const tooltip = spans[spans.length - 1];
 
-    expect(tooltip.getAttribute('title')).toEqual('Branch cannot be deleted. Branching must have at least one branch.');
+    expect(tooltip.getAttribute('title')).toBe('Branch cannot be deleted. Branching must have at least one branch.');
     userEvent.click(screen.getByRole('button'));
     expect(screen.getByRole('menuitem', {name: 'Delete branch'})).toHaveAttribute('aria-disabled', 'true');
   });

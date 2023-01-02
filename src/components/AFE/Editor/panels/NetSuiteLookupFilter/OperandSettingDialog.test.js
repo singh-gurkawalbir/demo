@@ -1,4 +1,3 @@
-/* global describe, test, expect, jest, afterEach */
 import React from 'react';
 import {screen} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -8,7 +7,7 @@ import OperandSettingsDialog from './OperandSettingsDialog';
 const onClose = jest.fn();
 const onSubmit = jest.fn();
 
-describe('OperandSettingsDialog UI test cases', () => {
+describe('operandSettingsDialog UI test cases', () => {
   afterEach(() => {
     jest.clearAllMocks();
   });
@@ -43,6 +42,6 @@ describe('OperandSettingsDialog UI test cases', () => {
     expect(screen.getByRole('dialog')).toBeInTheDocument();
     userEvent.click(screen.getByText('Cancel'));
 
-    expect(onClose).toHaveBeenCalled();
+    expect(onClose).toHaveBeenCalledTimes(1);
   });
 });

@@ -1,4 +1,3 @@
-/* global describe, test, expect, jest, beforeEach, afterEach */
 import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -69,14 +68,14 @@ describe('DynaNetSuiteLookupafe test cases', () => {
   test('should call on field change function with json stringify value', () => {
     initDynaNetSuiteLookupafe();
 
-    expect(screen.getByText('ProvidedLabel'));
+    expect(screen.getByText('ProvidedLabel')).toBeInTheDocument();
     const input = screen.getByPlaceholderText('someplaceholder');
     const value = input.getAttribute('value');
     const classOfInput = input.getAttribute('class');
 
     expect(classOfInput.indexOf('Mui-disabled')).toBeGreaterThan(-1);
     expect(value).toBe('providedValue');
-    expect(screen.getByText('someErrorMessage'));
+    expect(screen.getByText('someErrorMessage')).toBeInTheDocument();
 
     const actionButton = screen.getByRole('button');
 

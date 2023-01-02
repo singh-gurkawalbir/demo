@@ -1,4 +1,4 @@
-/* global describe, test, expect, beforeAll */
+
 import actions from '../../../actions';
 import forms, {selectors} from '.';
 
@@ -83,7 +83,7 @@ describe('reducer expression test cases', () => {
         expect(formState[formKey].isValid).toBe(true);
       });
 
-      test('should show again FIELD1 is errored when its validWhen criteria is not met and the form state should be errored ', () => {
+      test('should show again FIELD1 is errored when its validWhen criteria is not met and the form state should be errored', () => {
         formState = forms(
           formState,
           actions.form.fieldChange(formKey)('FIELD1', 'some text value')
@@ -223,7 +223,7 @@ describe('reducer expression test cases', () => {
         expect(FIELD1.required).toBe(false);
       });
 
-      test('requiredField should be required after its requiredWhen expression criteria is met ', () => {
+      test('requiredField should be required after its requiredWhen expression criteria is met', () => {
         formState = forms(
           formState,
           actions.form.fieldChange(formKey)('FIELD2', 'standard')
@@ -236,7 +236,7 @@ describe('reducer expression test cases', () => {
         expect(FIELD1.required).toBe(true);
       });
 
-      test('requiredField should be again not required after its required expression criteria is not met ', () => {
+      test('requiredField should be again not required after its required expression criteria is not met', () => {
       // find a field with that default value
         formState = forms(
           formState,
@@ -291,7 +291,7 @@ describe('reducer expression test cases', () => {
         expect(FIELD1.required).toBe(false);
       });
 
-      test('requiredField should be required after its requiredWhen expression criteria is met ', () => {
+      test('requiredField should be required after its requiredWhen expression criteria is met', () => {
         formState = forms(
           formState,
           actions.form.fieldChange(formKey)('FIELD2', 'standard')
@@ -406,7 +406,7 @@ describe('reducer expression test cases', () => {
         expect(FIELD1.visible).toBe(false);
       });
 
-      test('visibleField should be visible after its visibleWhen expression criteria is met ', () => {
+      test('visibleField should be visible after its visibleWhen expression criteria is met', () => {
         formState = forms(
           formState,
           actions.form.fieldChange(formKey)('FIELD2', 'standard')
@@ -419,7 +419,7 @@ describe('reducer expression test cases', () => {
         expect(FIELD1.visible).toBe(true);
       });
 
-      test('visibleField should be again not visible after its visible expression criteria is not met ', () => {
+      test('visibleField should be again not visible after its visible expression criteria is not met', () => {
       // find a field with that default value
         formState = forms(
           formState,
@@ -476,7 +476,7 @@ describe('reducer expression test cases', () => {
         expect(FIELD1.visible).toBe(false);
       });
 
-      test('visibleField should be visible after its visibleWhen expression criteria is met ', () => {
+      test('visibleField should be visible after its visibleWhen expression criteria is met', () => {
         formState = forms(
           formState,
           actions.form.fieldChange(formKey)('FIELD2', 'standard')
@@ -576,13 +576,13 @@ describe('reducer expression test cases', () => {
         );
         const { FIELD1 } = formState[formKey].fields;
 
-        expect(FIELD1[expression]).toEqual(true);
+        expect(FIELD1[expression]).toBe(true);
       });
     });
   });
 
   describe('force field state behavior', () => {
-    describe('visible behavior ', () => {
+    describe('visible behavior', () => {
       let formState;
       const fieldMeta = {
         fieldMap: {
@@ -867,7 +867,7 @@ describe('reducer expression test cases', () => {
           // form is invalid
           expect(formState[formKey].isValid).toBe(false);
         });
-        test('should delete error messages when isValid is true ', () => {
+        test('should delete error messages when isValid is true', () => {
           formState = forms(
             formState,
             actions.form.forceFieldState(formKey)(
@@ -915,7 +915,7 @@ describe('reducer expression test cases', () => {
       });
     });
   });
-  describe('form state clear ', () => {
+  describe('form state clear', () => {
     const fieldMeta = {
       fieldMap: {
         FIELD1: {
@@ -939,7 +939,7 @@ describe('reducer expression test cases', () => {
     test('should clear the form state of the passed formKey', () => {
       const updatedFormState = forms(formState, actions.form.clear(formKey));
 
-      expect(selectors.formState(updatedFormState, formKey)).toBe(null);
+      expect(selectors.formState(updatedFormState, formKey)).toBeNull();
     });
   });
   describe('field register behaviour', () => {
@@ -958,7 +958,7 @@ describe('reducer expression test cases', () => {
     const formKey = '1-2';
     const formState = forms(undefined, actions.form.init(formKey, '', { fieldMeta }));
 
-    test('should add the passed field metadata to the existing form state ', () => {
+    test('should add the passed field metadata to the existing form state', () => {
       const newFieldMetadata = {
         id: 'FIELD2',
         type: 'text',
@@ -1047,7 +1047,7 @@ describe('selectors test cases', () => {
     });
 
     test('should pick up null for a non existing form state', () => {
-      expect(selectors.formState(formState, 'someotherOne')).toEqual(null);
+      expect(selectors.formState(formState, 'someotherOne')).toBeNull();
     });
   });
 
@@ -1060,10 +1060,10 @@ describe('selectors test cases', () => {
     });
 
     test('should return null for a non existing form parent context state', () => {
-      expect(selectors.formParentContext(formState, 'someotherOne')).toEqual(null);
+      expect(selectors.formParentContext(formState, 'someotherOne')).toBeNull();
     });
   });
-  describe('formParentContext', () => {
+  describe('formParentContext1', () => {
     test('should pick up formParentContext correctly for a existing form state', () => {
       expect(selectors.formParentContext(formState, '1-2')).toEqual({
         resourceType: 'exports',
@@ -1072,7 +1072,7 @@ describe('selectors test cases', () => {
     });
 
     test('should return null for a non existing form state', () => {
-      expect(selectors.formParentContext(formState, 'someotherOne')).toEqual(null);
+      expect(selectors.formParentContext(formState, 'someotherOne')).toBeNull();
     });
   });
   describe('formFieldState', () => {
@@ -1082,7 +1082,7 @@ describe('selectors test cases', () => {
     });
 
     test('should pick up null for a non existing field state', () => {
-      expect(selectors.fieldState(formState, formKey, 'FIELD3')).toEqual(null);
+      expect(selectors.fieldState(formState, formKey, 'FIELD3')).toBeNull();
     });
   });
   describe('isActionButtonVisible', () => {

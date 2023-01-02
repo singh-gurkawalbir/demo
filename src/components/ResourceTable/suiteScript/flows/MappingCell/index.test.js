@@ -1,4 +1,4 @@
-/* global test, expect, jest, describe, afterEach */
+
 import React from 'react';
 import { screen, render} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -15,7 +15,7 @@ jest.mock('react-router-dom', () => ({
   }),
 }));
 
-describe('Suite script MappingCell ui test', () => {
+describe('suite script MappingCell ui test', () => {
   afterEach(() => {
     jest.clearAllMocks();
   });

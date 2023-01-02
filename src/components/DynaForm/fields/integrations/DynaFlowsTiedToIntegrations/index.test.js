@@ -1,4 +1,5 @@
-/* global describe, test, expect, jest */
+/* eslint-disable jest/no-conditional-expect */
+
 import React from 'react';
 import {
   screen,
@@ -90,7 +91,7 @@ function initDynaFlowsTiedToIntegration(props = {}) {
   return renderWithProviders(<DynaFlowsTiedToIntegration {...props} />, {initialStore});
 }
 
-describe('DynaFlowsTiedToIntegration UI tests', () => {
+describe('dynaFlowsTiedToIntegration UI tests', () => {
   const mockonFieldChange = jest.fn();
   const props = {
     formKey: 'formKey',
@@ -131,7 +132,7 @@ describe('DynaFlowsTiedToIntegration UI tests', () => {
     try {
       await userEvent.click(dropdownField);
     } catch (e) {
-      expect(e.message).toEqual('unable to click element as it has or inherits pointer-events set to "none".');
+      expect(e.message).toBe('unable to click element as it has or inherits pointer-events set to "none".');
     }
   });
 });

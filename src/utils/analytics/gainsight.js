@@ -1,4 +1,4 @@
-/* global aptrinsic */
+
 export function initialize({ tagKey }) {
   try {
     /* eslint-disable */
@@ -40,6 +40,7 @@ export function initialize({ tagKey }) {
 
 export function identify(userInfo, accountInfo) {
   try {
+    // eslint-disable-next-line no-undef
     aptrinsic('identify', userInfo, accountInfo);
   } catch (ex) {
     // We can't do anything here, just a safe check to prevent it from crashing our app.
@@ -48,6 +49,7 @@ export function identify(userInfo, accountInfo) {
 
 export function track(eventId, details = {}) {
   try {
+    // eslint-disable-next-line no-undef
     aptrinsic('track', eventId, details);
   } catch (ex) {
     // We can't do anything here, just a safe check to prevent it from crashing our app.

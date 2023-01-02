@@ -1,4 +1,3 @@
-/* global describe, test, expect, jest, beforeEach, afterEach */
 import React from 'react';
 import * as reactRedux from 'react-redux';
 import { MemoryRouter } from 'react-router-dom';
@@ -64,7 +63,7 @@ async function initButtonPanel({
   return renderWithProviders(ui, { initialStore });
 }
 
-describe('ButtonPanel component Test cases', () => {
+describe('buttonPanel component Test cases', () => {
   runServer();
   let mockDispatchFn;
   let useDispatchSpy;
@@ -93,8 +92,8 @@ describe('ButtonPanel component Test cases', () => {
     expect(previewButton).toBeInTheDocument();
 
     userEvent.click(saveButton);
-    expect(mockDispatchFn).toBeCalledTimes(1);
-    expect(mockDispatchFn).toBeCalledWith(actions.mapping.save({ match: {
+    expect(mockDispatchFn).toHaveBeenCalledTimes(1);
+    expect(mockDispatchFn).toHaveBeenCalledWith(actions.mapping.save({ match: {
       isExact: true,
       params: {},
       path: '/',
@@ -102,8 +101,8 @@ describe('ButtonPanel component Test cases', () => {
     } }));
 
     userEvent.click(previewButton);
-    expect(mockDispatchFn).toBeCalledTimes(2);
-    expect(mockDispatchFn).toBeCalledWith(actions.mapping.requestPreview());
+    expect(mockDispatchFn).toHaveBeenCalledTimes(2);
+    expect(mockDispatchFn).toHaveBeenCalledWith(actions.mapping.requestPreview());
   });
 
   test('should pass the initial render with error message', async () => {
@@ -119,9 +118,9 @@ describe('ButtonPanel component Test cases', () => {
     expect(previewButton).toBeInTheDocument();
 
     userEvent.click(saveButton);
-    expect(mockDispatchFn).toBeCalledTimes(0);
+    expect(mockDispatchFn).toHaveBeenCalledTimes(0);
 
-    expect(await screen.queryByText('just some random error')).toBeInTheDocument();
+    await expect(screen.findByText('just some random error')).resolves.toBeInTheDocument();
   });
 
   test('should pass the initial render with custom values', async () => {

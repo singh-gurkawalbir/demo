@@ -1,4 +1,4 @@
-/* global describe, test, expect */
+
 import reducer, { selectors } from '.';
 import actions from '../../../../actions';
 
@@ -1121,23 +1121,23 @@ describe('Flow step logs selectors', () => {
       expect(selectors.logsStatus({[resourceId]: {}}, resourceId)).toBeUndefined();
     });
     test('should return correct status when a match is found', () => {
-      expect(selectors.logsStatus(newState, resourceId)).toEqual('received');
+      expect(selectors.logsStatus(newState, resourceId)).toBe('received');
     });
   });
   describe('hasNewLogs', () => {
     test('should return false when no match found', () => {
-      expect(selectors.hasNewLogs(undefined, resourceId)).toEqual(false);
-      expect(selectors.hasNewLogs({}, resourceId)).toEqual(false);
-      expect(selectors.hasNewLogs({[resourceId]: {}}, resourceId)).toEqual(false);
+      expect(selectors.hasNewLogs(undefined, resourceId)).toBe(false);
+      expect(selectors.hasNewLogs({}, resourceId)).toBe(false);
+      expect(selectors.hasNewLogs({[resourceId]: {}}, resourceId)).toBe(false);
     });
     test('should return correct state prop when a match is found', () => {
-      expect(selectors.hasNewLogs(newState, resourceId)).toEqual(false);
+      expect(selectors.hasNewLogs(newState, resourceId)).toBe(false);
       const finalState = reducer(
         newState,
         actions.logs.flowStep.stopLogsPoll(resourceId, true)
       );
 
-      expect(selectors.hasNewLogs(finalState, resourceId)).toEqual(true);
+      expect(selectors.hasNewLogs(finalState, resourceId)).toBe(true);
     });
   });
   describe('logDetails', () => {
@@ -1154,9 +1154,9 @@ describe('Flow step logs selectors', () => {
   });
   describe('isDebugEnabled', () => {
     test('should return false when no match found', () => {
-      expect(selectors.isDebugEnabled(undefined, resourceId)).toEqual(false);
-      expect(selectors.isDebugEnabled({}, resourceId)).toEqual(false);
-      expect(selectors.isDebugEnabled({[resourceId]: {}}, resourceId)).toEqual(false);
+      expect(selectors.isDebugEnabled(undefined, resourceId)).toBe(false);
+      expect(selectors.isDebugEnabled({}, resourceId)).toBe(false);
+      expect(selectors.isDebugEnabled({[resourceId]: {}}, resourceId)).toBe(false);
     });
     test('should return correct state prop when a match is found', () => {
       const finalState = reducer(
@@ -1164,7 +1164,7 @@ describe('Flow step logs selectors', () => {
         actions.logs.flowStep.startDebug(flowId, resourceId, '15')
       );
 
-      expect(selectors.isDebugEnabled(finalState, resourceId)).toEqual(true);
+      expect(selectors.isDebugEnabled(finalState, resourceId)).toBe(true);
     });
   });
   describe('activeLogKey', () => {
@@ -1174,7 +1174,7 @@ describe('Flow step logs selectors', () => {
       expect(selectors.activeLogKey({[resourceId]: {}}, resourceId)).toBeUndefined();
     });
     test('should return correct active key when a match is found', () => {
-      expect(selectors.activeLogKey(newState, resourceId)).toEqual('5642310475121');
+      expect(selectors.activeLogKey(newState, resourceId)).toBe('5642310475121');
     });
   });
   describe('flowStepErrorMsg', () => {

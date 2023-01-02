@@ -1,4 +1,4 @@
-/* global describe, jest, expect, test, afterEach */
+
 import React from 'react';
 import { screen } from '@testing-library/react';
 import { renderWithProviders } from '../../../test/test-utils';
@@ -53,7 +53,7 @@ describe('test for relative uri field', () => {
     expect(screen.getByTestId('stage')).toHaveTextContent(EXPORT_FILTERED_DATA_STAGE);
     expect(screen.getByTestId('value')).toHaveTextContent(props.value);
     expect(screen.getByTestId('description')).toHaveTextContent(`Relative to: ${baseURI}`);
-    expect(mockDispatchFn).not.toBeCalled();
+    expect(mockDispatchFn).not.toHaveBeenCalled();
   });
 
   test('should render the description in case of rest connection', () => {

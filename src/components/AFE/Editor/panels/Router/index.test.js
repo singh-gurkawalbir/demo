@@ -1,4 +1,3 @@
-/* global describe, test, expect,beforeEach,afterEach, jest */
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { fireEvent, screen } from '@testing-library/react';
@@ -41,7 +40,7 @@ const initRouterPanel = (maxLimit = false, loading = false, props = {editorId: '
   return renderWithProviders(<MemoryRouter><RouterPanel {...props} /></MemoryRouter>, { initialStore });
 };
 
-describe('RouterPanel tests', () => {
+describe('routerPanel tests', () => {
   let mockDispatchFn;
   let useDispatchSpy;
 
@@ -56,7 +55,7 @@ describe('RouterPanel tests', () => {
     mockDispatchFn.mockClear();
   });
 
-  test('Should able to pass initial render with default values having branches = 2 and first matching branch', async () => {
+  test('should able to pass initial render with default values having branches = 2 and first matching branch', async () => {
     await initRouterPanel();
     expect(screen.getByRole('heading', {name: 'Branching type'})).toBeInTheDocument();
     expect(screen.getByRole('heading', {name: 'Branches'})).toBeInTheDocument();
@@ -69,6 +68,7 @@ describe('RouterPanel tests', () => {
     expect(allMatchingBranchesOption).toBeInTheDocument();
     const branches = [];
 
+    // eslint-disable-next-line jest/no-conditional-in-test
     document.querySelectorAll('svg').forEach(item => item.getAttribute('style') === 'cursor: grab;' ? branches.push(item) : null);
     fireEvent.mouseDown(branches[0]);
     fireEvent.mouseMove(branches[0]);
@@ -82,14 +82,14 @@ describe('RouterPanel tests', () => {
     userEvent.click(allMatchingBranchesOption);
     expect(mockDispatchFn).toHaveBeenNthCalledWith(3, actions.editor.patchRule('router-abcd', 'all_matching_branches', {rulePath: 'routeRecordsTo'}));
   });
-  test('Should able to pass initial render having branches >= 25', async () => {
+  test('should able to pass initial render having branches >= 25', async () => {
     await initRouterPanel(true);
     const spans = document.querySelectorAll('span');
     const tooltip = spans[spans.length - 2];
 
-    expect(tooltip.getAttribute('title')).toEqual('You have reached the maximum of 25 branches in a branching');
+    expect(tooltip.getAttribute('title')).toBe('You have reached the maximum of 25 branches in a branching');
   });
-  test('Should able to pass initial render with sampleData loading', async () => {
+  test('should able to pass initial render with sampleData loading', async () => {
     await initRouterPanel(false, true);
     expect(screen.getByRole('progressbar')).toBeInTheDocument();
     expect(screen.queryByText('R1B1')).not.toBeInTheDocument();

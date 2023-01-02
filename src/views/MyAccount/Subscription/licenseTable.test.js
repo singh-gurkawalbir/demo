@@ -1,4 +1,3 @@
-/* global describe, test, expect */
 import React from 'react';
 import { MemoryRouter, Route } from 'react-router-dom';
 import { screen } from '@testing-library/react';
@@ -85,7 +84,7 @@ async function initLicenseTable({
   };
 }
 
-describe('LicenseTable test cases', () => {
+describe('licenseTable test cases', () => {
   runServer();
 
   test('should pass the initial render with default value/endpoints', async () => {

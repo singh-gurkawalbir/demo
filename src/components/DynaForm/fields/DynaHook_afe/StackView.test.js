@@ -1,4 +1,4 @@
-/* global describe, test, expect, jest */
+
 import React from 'react';
 import {
   screen,
@@ -50,7 +50,7 @@ function initStackView(props = {}) {
   return renderWithProviders(ui, {initialStore});
 }
 
-describe('StackView UI tests', () => {
+describe('stackView UI tests', () => {
   const mockIsValidHookField = jest.fn();
   const mockhandleFieldChange = jest.fn();
   const props = {

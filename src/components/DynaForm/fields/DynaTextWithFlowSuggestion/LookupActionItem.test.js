@@ -1,4 +1,4 @@
-/* global describe, test, expect, jest */
+
 import React from 'react';
 import {
   screen, waitFor,
@@ -13,7 +13,7 @@ jest.mock('../../../../hooks/useEnableButtonOnTouchedForm', () => ({
   default: props => ({formTouched: true, onClickWhenValid: props.onClick}),
 }));
 
-describe('LookupActionItem UI tests', () => {
+describe('lookupActionItem UI tests', () => {
   test('should pass the initial render', () => {
     renderWithProviders(<LookupActionItem />);
     const button = screen.getByRole('button');
@@ -65,6 +65,6 @@ describe('LookupActionItem UI tests', () => {
     userEvent.click(button);
     screen.debug(undefined, Infinity);
     userEvent.click(screen.getByText('Save'));
-    await waitFor(() => expect(mockOnSave).toBeCalled());
+    await waitFor(() => expect(mockOnSave).toHaveBeenCalled());
   });
 });

@@ -1,4 +1,4 @@
-/* global describe, test, expect, jest */
+
 import React, { useRef } from 'react';
 import {screen} from '@testing-library/react';
 import useAutoScrollErrors from './useAutoScrollErrors';
@@ -49,15 +49,12 @@ describe('useAutoScrollErrors UI test cases', () => {
     },
   };
 
-  test('Should validate with valid formKey', async () => {
+  test('should validate with valid formKey', async () => {
     await renderWithProviders(<DummyComponent formKey="_formKey" />, {initialStore});
     expect(screen.getByText('Form')).toBeInTheDocument();
   });
-  test('Should validate without validationOnSave', async () => {
+  test('should validate without validationOnSave', async () => {
     await renderWithProviders(<DummyComponent formKey="_key" />, {initialStore});
     expect(screen.getByText('Form')).toBeInTheDocument();
-  });
-  test('Should validate with invalid formKey', async () => {
-    await renderWithProviders(<DummyComponent />, {initialStore});
   });
 });

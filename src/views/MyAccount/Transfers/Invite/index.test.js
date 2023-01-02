@@ -1,4 +1,3 @@
-/* global describe, test, expect, beforeEach, jest, afterEach */
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import * as reactRedux from 'react-redux';
@@ -51,7 +50,7 @@ jest.mock('../../../../components/DynaForm/DynaSubmit', () => ({
   },
 }));
 
-describe('Invite test cases', () => {
+describe('invite test cases', () => {
   runServer();
   let mockDispatchFn;
   let useDispatchSpy;
@@ -101,16 +100,16 @@ describe('Invite test cases', () => {
     expect(mockHandleButton).toBeInTheDocument();
 
     userEvent.click(backToButton);
-    expect(setShowInviteView).toBeCalledTimes(1);
-    expect(setShowInviteView).toBeCalledWith(false);
+    expect(setShowInviteView).toHaveBeenCalledTimes(1);
+    expect(setShowInviteView).toHaveBeenCalledWith(false);
 
     userEvent.click(transferButton);
-    expect(setShowInviteView).toBeCalledTimes(2);
-    expect(setShowInviteView).toBeCalledWith(false);
-    expect(mockDispatchFn).toBeCalledWith(actions.transfer.create({}));
+    expect(setShowInviteView).toHaveBeenCalledTimes(2);
+    expect(setShowInviteView).toHaveBeenCalledWith(false);
+    expect(mockDispatchFn).toHaveBeenCalledWith(actions.transfer.create({}));
 
     userEvent.click(mockHandleButton);
-    expect(mockDispatchFn).toBeCalledWith(actions.transfer.preview('mock value'));
+    expect(mockDispatchFn).toHaveBeenCalledWith(actions.transfer.preview('mock value'));
   });
 
   test('should pass the initial render with error data', async () => {

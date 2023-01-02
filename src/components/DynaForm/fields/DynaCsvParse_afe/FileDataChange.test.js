@@ -1,4 +1,4 @@
-/* global describe, test, expect, jest, beforeEach, afterEach */
+
 import React from 'react';
 import { waitFor} from '@testing-library/react';
 import * as reactRedux from 'react-redux';
@@ -25,7 +25,7 @@ function initFileDataChange(props = {}) {
   return renderWithProviders(<FileDataChange {...props} />, {initialStore});
 }
 
-describe('FileDataChange UI changes', () => {
+describe('fileDataChange UI changes', () => {
   let mockDispatchFn;
   let useDispatchSpy;
 
@@ -47,6 +47,6 @@ describe('FileDataChange UI changes', () => {
 
   test('should make a dispatch call on initial render', async () => {
     initFileDataChange(props);
-    await waitFor(() => expect(mockDispatchFn).toBeCalledWith(actions.editor.patchData('filecsv', {id: 'sample', data: 'data'})));
+    await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith(actions.editor.patchData('filecsv', {id: 'sample', data: 'data'})));
   });
 });

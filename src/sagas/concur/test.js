@@ -1,4 +1,4 @@
-/* global describe, test */
+
 import { expectSaga } from 'redux-saga-test-plan';
 import { throwError } from 'redux-saga-test-plan/providers';
 import { call } from 'redux-saga/effects';
@@ -11,7 +11,7 @@ import { APIException } from '../api/requestInterceptors/utils';
 import { getCSRFTokenBackend } from '../authentication';
 
 describe('concur connect sagas', () => {
-  test('should trigger success action correctly ', () => expectSaga(concurConnect, { module: 'expense', id: 'id', requestToken: '123' })
+  test('should trigger success action correctly', () => expectSaga(concurConnect, { module: 'expense', id: 'id', requestToken: '123' })
     .provide([
       [call(getCSRFTokenBackend), 'someCsrf'],
       [call(apiCallWithRetry, {
@@ -39,7 +39,7 @@ describe('concur connect sagas', () => {
     .put(actions.concur.connectSuccess({sample: 'response'}))
     .run());
 
-  test('should trigger error action correctly ', () => expectSaga(concurConnect, { module: 'expense', id: 'id', requestToken: '123' })
+  test('should trigger error action correctly', () => expectSaga(concurConnect, { module: 'expense', id: 'id', requestToken: '123' })
     .provide([
       [call(getCSRFTokenBackend), 'someCsrf'],
       [call(apiCallWithRetry, {

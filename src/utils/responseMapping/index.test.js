@@ -1,4 +1,4 @@
-/* global describe, test,  expect */
+
 import responseMappingUtil from '.';
 
 describe('response mapping utils', () => {

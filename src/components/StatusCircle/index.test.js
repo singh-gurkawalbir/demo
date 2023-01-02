@@ -1,4 +1,4 @@
-/* global describe, test, expect */
+
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import StatusCircle from '.';
@@ -23,7 +23,7 @@ async function initStatusCircle({
   };
 }
 
-describe('StatusCircle test cases', () => {
+describe('statusCircle test cases', () => {
   runServer();
 
   test('should pass the initial render with default value/no props', async () => {

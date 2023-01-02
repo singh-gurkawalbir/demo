@@ -1,4 +1,4 @@
-/* global describe, jest, test, expect, beforeEach, afterEach */
+
 import React from 'react';
 import * as reactRedux from 'react-redux';
 import { screen } from '@testing-library/react';
@@ -25,7 +25,7 @@ function initRecycleBin(data = {}) {
   renderWithProviders(ui);
 }
 
-describe('Recycle Bin TTL test suite', () => {
+describe('recycle Bin TTL test suite', () => {
   let useDispatchSpy;
   let mockDispatchFn;
 
@@ -95,7 +95,7 @@ describe('Recycle Bin TTL test suite', () => {
     const autoPurge = useColumns.find(eachColumn => eachColumn.key === 'autoPurge');
     const timeLeft1 = autoPurge.Value({ rowData: {} });
 
-    expect(timeLeft1).toEqual('NaN days');
+    expect(timeLeft1).toBe('NaN days');
 
     const timeLeft2 = autoPurge.Value({
       rowData: {
@@ -105,7 +105,7 @@ describe('Recycle Bin TTL test suite', () => {
       },
     });
 
-    expect(timeLeft2).toEqual('30 days');
+    expect(timeLeft2).toBe('30 days');
 
     const today = new Date();
     const timeLeft3 = autoPurge.Value({
@@ -116,7 +116,7 @@ describe('Recycle Bin TTL test suite', () => {
       },
     });
 
-    expect(timeLeft3).toEqual('4 hours');
+    expect(timeLeft3).toBe('4 hours');
 
     const timeLeft4 = autoPurge.Value({
       rowData: {
@@ -126,7 +126,7 @@ describe('Recycle Bin TTL test suite', () => {
       },
     });
 
-    expect(timeLeft4).toEqual('35 minutes');
+    expect(timeLeft4).toBe('35 minutes');
 
     const timeLeft5 = autoPurge.Value({
       rowData: {
@@ -136,7 +136,7 @@ describe('Recycle Bin TTL test suite', () => {
       },
     });
 
-    expect(timeLeft5).toEqual('51 seconds');
+    expect(timeLeft5).toBe('51 seconds');
 
     const timeLeft6 = autoPurge.Value({
       rowData: {
@@ -146,7 +146,7 @@ describe('Recycle Bin TTL test suite', () => {
       },
     });
 
-    expect(timeLeft6).toEqual('0 seconds');
+    expect(timeLeft6).toBe('0 seconds');
   });
 
   test('should be able to restore the deleted item', () => {

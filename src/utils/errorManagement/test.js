@@ -1,4 +1,4 @@
-/* global expect, describe, test */
+
 import moment from 'moment';
 import { getFilteredErrors, getErrorMapWithTotal, getOpenErrorDetailsMap, getErrorCountDiffMap, getSourceOptions, getJobDuration } from '.';
 
@@ -62,7 +62,7 @@ describe('getErrorMapWithTotal util', () => {
     expect(getErrorMapWithTotal(flowErrors)).toEqual(expectedEmptyMap);
     expect(getErrorMapWithTotal(flowErrors, '_exportId')).toEqual(expectedEmptyMap);
   });
-  test('should return map of resourceIds and respective error counts for data and total of all errors ', () => {
+  test('should return map of resourceIds and respective error counts for data and total of all errors', () => {
     const expectedMap = {
       data: {
         '5e44efa28015c94642722579': 10,
@@ -96,7 +96,7 @@ describe('getOpenErrorDetailsMap util', () => {
     expect(getOpenErrorDetailsMap(flowErrors)).toEqual(expectedEmptyMap);
     expect(getOpenErrorDetailsMap(flowErrors, '_exportId')).toEqual(expectedEmptyMap);
   });
-  test('should return map of resourceIds and respective error counts for data and total of all errors ', () => {
+  test('should return map of resourceIds and respective error counts for data and total of all errors', () => {
     const expectedMap = {
       '5e44efa28015c94642722579': { _flowId: '5e44efa28015c94642722579', numError: 10, lastErrorAt },
       '5f2c1b137cfd96633f3b327a': { _flowId: '5f2c1b137cfd96633f3b327a', numError: 20 },
@@ -197,7 +197,7 @@ describe('getSourceOptions util', () => {
 
     expect(getSourceOptions(sampleSourceList)).toEqual(result);
   });
-  test('should return passed sourceId as name also if the passed id is not a valid one from the list ', () => {
+  test('should return passed sourceId as name also if the passed id is not a valid one from the list', () => {
     const sampleSourceList = ['internal', 'resource', 'invalidId'];
     const result = [
       { _id: 'all', name: 'All sources'},
@@ -208,7 +208,7 @@ describe('getSourceOptions util', () => {
 
     expect(getSourceOptions(sampleSourceList)).toEqual(result);
   });
-  test('should return list with passed application name or default to Application if the source has application as id ', () => {
+  test('should return list with passed application name or default to Application if the source has application as id', () => {
     const sampleSourceList = ['internal', 'resource', 'application'];
     const applicationName = 'Zendesk';
     const result = [

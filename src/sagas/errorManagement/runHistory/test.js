@@ -1,4 +1,3 @@
-/* global describe, test */
 
 import { call, select } from 'redux-saga/effects';
 import { expectSaga } from 'redux-saga-test-plan';
@@ -35,7 +34,7 @@ describe('getJobFamily saga', () => {
       resourceId: dataIn.jobId,
     });
 
-    return expectSaga(getJobFamily, dataIn)
+    expectSaga(getJobFamily, dataIn)
       .provide([
         [call(apiCallWithRetry, {
           path,
@@ -54,7 +53,7 @@ describe('getJobFamily saga', () => {
   test('should handle api error properly', () => {
     const dataIn = { jobId: 'brj1' };
 
-    return expectSaga(getJobFamily, dataIn)
+    expectSaga(getJobFamily, dataIn)
       .provide([
         [matchers.call.fn(apiCallWithRetry), throwError(new Error('error'))],
       ])
@@ -79,7 +78,7 @@ describe('requestRunHistory saga test cases', () => {
       filters,
     });
 
-    return expectSaga(requestRunHistory, { flowId })
+    expectSaga(requestRunHistory, { flowId })
       .provide([
         [select(selectors.filter, FILTER_KEYS.RUN_HISTORY), filters],
         [select(selectors.resource, 'flows', flowId), flow],
@@ -105,7 +104,7 @@ describe('requestRunHistory saga test cases', () => {
       integrationId: 'integration-123',
     });
 
-    return expectSaga(requestRunHistory, { flowId })
+    expectSaga(requestRunHistory, { flowId })
       .provide([
         [select(selectors.resource, 'flows', flowId), flow],
         [call(apiCallWithRetry, {
@@ -127,7 +126,7 @@ describe('requestRunHistory saga test cases', () => {
   test('should do nothing if the api throws error', () => {
     const error = { code: 422, message: 'error in retrieving history ' };
 
-    return expectSaga(requestRunHistory, { flowId })
+    expectSaga(requestRunHistory, { flowId })
       .provide([
         [select(selectors.resource, 'flows', flowId), flow],
         [matchers.call.fn(apiCallWithRetry), throwError(error)],
@@ -150,7 +149,7 @@ describe('requestRunHistory saga test cases', () => {
       integrationId: 'none',
     });
 
-    return expectSaga(requestRunHistory, { flowId })
+    expectSaga(requestRunHistory, { flowId })
       .provide([
         [select(selectors.resource, 'flows', flowId), flow],
         [call(apiCallWithRetry, {

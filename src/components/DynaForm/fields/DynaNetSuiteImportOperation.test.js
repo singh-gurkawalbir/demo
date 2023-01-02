@@ -1,4 +1,4 @@
-/* global describe, test, expect, jest, afterEach */
+
 import React from 'react';
 import {screen} from '@testing-library/react';
 import DynaNetSuiteImportOperation from './DynaNetSuiteImportOperation';
@@ -35,7 +35,7 @@ function initDynaNetSuiteImportOperation(items = {}, supports) {
   return renderWithProviders(ui, {initialStore});
 }
 
-describe('DynaNetSuiteImportOperation UI test cases', () => {
+describe('dynaNetSuiteImportOperation UI test cases', () => {
   afterEach(() => {
     jest.clearAllMocks();
   });
@@ -46,7 +46,7 @@ describe('DynaNetSuiteImportOperation UI test cases', () => {
 
     const radioButtons = screen.getAllByRole('radio');
 
-    expect(radioButtons.length).toBe(1);
+    expect(radioButtons).toHaveLength(1);
     expect(screen.getByText('someLabel')).toBeInTheDocument();
   });
   test('should show add and delete option when create is not suported', () => {
@@ -55,7 +55,7 @@ describe('DynaNetSuiteImportOperation UI test cases', () => {
     });
     const radioButtons = screen.getAllByRole('radio');
 
-    expect(radioButtons.length).toBe(3);
+    expect(radioButtons).toHaveLength(3);
     expect(screen.getByText('someLabel')).toBeInTheDocument();
     expect(screen.getByText('delete')).toBeInTheDocument();
     expect(screen.getByText('update')).toBeInTheDocument();
@@ -67,7 +67,7 @@ describe('DynaNetSuiteImportOperation UI test cases', () => {
 
     const radioButtons = screen.getAllByRole('radio');
 
-    expect(radioButtons.length).toBe(3);
+    expect(radioButtons).toHaveLength(3);
     expect(screen.getByText('someLabel')).toBeInTheDocument();
     expect(screen.getByText('add')).toBeInTheDocument();
     expect(screen.getByText('delete')).toBeInTheDocument();
@@ -76,7 +76,7 @@ describe('DynaNetSuiteImportOperation UI test cases', () => {
     initDynaNetSuiteImportOperation(items, {});
     const radioButtons = screen.getAllByRole('radio');
 
-    expect(radioButtons.length).toBe(5);
+    expect(radioButtons).toHaveLength(5);
     expect(screen.getByText('someLabel')).toBeInTheDocument();
     expect(screen.getByText('delete')).toBeInTheDocument();
     expect(screen.getByText('update')).toBeInTheDocument();
@@ -97,7 +97,7 @@ describe('DynaNetSuiteImportOperation UI test cases', () => {
 
     const radioButtons = screen.getAllByRole('radio');
 
-    expect(radioButtons.length).toBe(5);
+    expect(radioButtons).toHaveLength(5);
     expect(screen.getByText('someLabel')).toBeInTheDocument();
     expect(screen.getByText('delete')).toBeInTheDocument();
     expect(screen.getByText('update')).toBeInTheDocument();

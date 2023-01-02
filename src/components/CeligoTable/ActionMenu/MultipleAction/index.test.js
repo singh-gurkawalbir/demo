@@ -1,4 +1,4 @@
-/* global describe, test, expect, jest */
+
 import React from 'react';
 import { screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
@@ -21,7 +21,7 @@ async function initMultipleAction({ rowData, handleMenuClose, setSelectedCompone
   return renderWithProviders(ui);
 }
 
-describe('MultipleAction component Test cases', () => {
+describe('multipleAction component Test cases', () => {
   runServer();
   test('should pass the intial render with default value', async () => {
     const { utils } = await initMultipleAction();

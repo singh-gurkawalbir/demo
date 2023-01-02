@@ -1,9 +1,9 @@
-/* global expect, test, describe */
+
 import { render, screen } from '@testing-library/react';
 import React from 'react';
 import JobErrorPreviewDialogContent from './JobErrorPreviewDialogContent';
 
-describe('Testsuite for Job Error Preview Dialog Content', () => {
+describe('testsuite for Job Error Preview Dialog Content', () => {
   test('should render the resolved, retries, remains, invalids, total and adds Job Error Preview Dialog Content when the preview data is of type string', () => {
     render(
       <JobErrorPreviewDialogContent

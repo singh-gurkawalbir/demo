@@ -1,4 +1,3 @@
-/* global describe, test, expect, jest */
 import React from 'react';
 import { screen, fireEvent } from '@testing-library/react';
 import { renderWithProviders, reduxStore } from '../../../test/test-utils';
@@ -46,8 +45,8 @@ async function initEditor(props = {editorId: 'mappings'}) {
 
   return renderWithProviders(<Editor {...props} />, { initialStore });
 }
-describe('Editor tests', () => {
-  test('Should able to test Editor in sql editor panel with saveMessage and verifying vertical drag', async () => {
+describe('editor tests', () => {
+  test('should able to test Editor in sql editor panel with saveMessage and verifying vertical drag', async () => {
     await initEditor({editorId: 'sql'});
 
     expect(screen.getByText('Resources available for your handlebars template')).toBeInTheDocument();
@@ -64,7 +63,7 @@ describe('Editor tests', () => {
     await fireEvent.mouseDown(screen.getByText('Resize'));
     // events fired to verify local state reducer functionality [changes not reflected in virtual DOM]
   });
-  test('Should able to test Editor in mappings editor panel with error and validate horizontal drag', async () => {
+  test('should able to test Editor in mappings editor panel with error and validate horizontal drag', async () => {
     await initEditor();
     expect(screen.getByText('Rules')).toBeInTheDocument();
     expect(screen.getByRole('progressbar')).toBeInTheDocument();

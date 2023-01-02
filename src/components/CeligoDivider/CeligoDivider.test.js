@@ -1,9 +1,8 @@
-/* global describe, test, expect */
 import React from 'react';
 import { render} from '@testing-library/react';
 import CeligoDivider from '.';
 
-describe('CeligoDivider UI test', () => {
+describe('celigoDivider UI test', () => {
   test('should render at left position', () => {
     const {container} = render(<CeligoDivider position="left" />);
 

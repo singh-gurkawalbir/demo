@@ -1,4 +1,3 @@
-/* global describe, test, expect, jest */
 import React from 'react';
 import { screen, render} from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
@@ -97,7 +96,7 @@ jest.mock('react-redux', () => ({
   useDispatch: () => mockDispatch,
 }));
 
-describe('Mapper2ExtractsTypeableSelect UI test case', () => {
+describe('mapper2ExtractsTypeableSelect UI test case', () => {
   test('should make dispatch call when the data type of Source field is changed to number', () => {
     renderWithProviders(<MemoryRouter><Mapper2ExtractsTypeableSelect onBlur={onBlur} /></MemoryRouter>);
     userEvent.type(screen.getByPlaceholderText('Source field'), 'Value');
@@ -117,7 +116,7 @@ describe('Mapper2ExtractsTypeableSelect UI test case', () => {
     );
     expect(onBlur).toHaveBeenCalledWith('$.name', 'name');
   });
-  describe('TooltipTitle test cases', () => {
+  describe('tooltipTitle test cases', () => {
     test('should show the field type as tooltip when tooltip is neighter truncated nor source dropdown is hidden', () => {
       renderWithProviders(<TooltipTitle
         inputValue="A,B"
@@ -145,7 +144,7 @@ describe('Mapper2ExtractsTypeableSelect UI test case', () => {
       expect(screen.getByRole('separator')).toBeInTheDocument();
       expect(screen.getByText('someFieldType: A')).toBeInTheDocument();
     });
-    test('should show the field type and input value and hrizontaline when souce dropdown is not hidden and lookup is not of dynamic type', () => {
+    test('should show the field type and input value and hrizontaline when souce dropdown is not hidden and lookup is not of dynamic type duplicate', () => {
       const utils = render(<TooltipTitle
         inputValue="A,B"
         isSource
@@ -158,7 +157,7 @@ describe('Mapper2ExtractsTypeableSelect UI test case', () => {
 
       expect(screen.getByRole('separator')).toBeInTheDocument();
       expect(screen.getByText('Source field / data type:')).toBeInTheDocument();
-      expect(utils.container.textContent).toEqual('Source field / data type: A / string  B / number ');
+      expect(utils.container.textContent).toBe('Source field / data type: A / string  B / number ');
     });
     test('should hide dropdown with message "Dynamic lookups values do not provide source field list"', () => {
       render(<TooltipTitle

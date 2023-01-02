@@ -1,4 +1,3 @@
-/* global describe, test */
 
 import { select, call } from 'redux-saga/effects';
 import { expectSaga } from 'redux-saga-test-plan';
@@ -9,13 +8,14 @@ import { uploadRawData } from '../../uploadFile';
 
 describe('rawDataUpdates utility sagas', () => {
   describe('saveRawDataOnResource saga', () => {
-    test('should do nothing when there is no resourceId or raw data to save', () => expectSaga(saveRawDataOnResource, {})
-      .not.call.fn(uploadRawData)
-      .run() &&
+    test('should do nothing when there is no resourceId or raw data to save', () => {
+      expectSaga(saveRawDataOnResource, {})
+        .not.call.fn(uploadRawData)
+        .run();
       expectSaga(saveRawDataOnResource, { resourceId: 'export-123' })
         .not.call.fn(uploadRawData)
-        .run()
-    );
+        .run();
+    });
     test('should dispatch patchStaged and commitStaged with the rawData patchSet', () => {
       const resourceId = 'export-123';
       const rawData = { test: 5 };
@@ -27,7 +27,7 @@ describe('rawDataUpdates utility sagas', () => {
         value: userId + runKey,
       }];
 
-      return expectSaga(saveRawDataOnResource, { resourceId, rawData })
+      expectSaga(saveRawDataOnResource, { resourceId, rawData })
         .provide([
           [call(uploadRawData, {
             file: rawData,

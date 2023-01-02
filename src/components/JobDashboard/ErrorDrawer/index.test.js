@@ -1,4 +1,4 @@
-/* global describe, test, jest, beforeEach, afterEach, expect */
+
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import * as reactRedux from 'react-redux';
@@ -143,7 +143,7 @@ jest.mock('../JobErrorTable', () => ({
       <div> jobErrorTable job data prop = {props.job._id} </div>
     </>
   )}));
-describe('Testsuite for ErrorDrawer', () => {
+describe('testsuite for ErrorDrawer', () => {
   runServer();
   let mockDispatchFn;
   let useDispatchSpy;
@@ -163,7 +163,7 @@ describe('Testsuite for ErrorDrawer', () => {
     mockDispatchFn.mockClear();
     mockOnClose.mockClear();
   });
-  test('Should test the spinner when child jobs are loading and click on close button', async () => {
+  test('should test the spinner when child jobs are loading and click on close button', async () => {
     await initErrorDrawer({
       jobId: '12345',
       onClose: mockOnClose,
@@ -178,7 +178,7 @@ describe('Testsuite for ErrorDrawer', () => {
     userEvent.click(closeButtonNode);
     expect(mockOnClose).toHaveBeenCalled();
   });
-  test('Should test the spinner and inprogress message of loading child jobs', async () => {
+  test('should test the spinner and inprogress message of loading child jobs', async () => {
     await initErrorDrawer({
       jobId: '12345',
       onClose: mockOnClose,
@@ -245,7 +245,7 @@ describe('Testsuite for ErrorDrawer', () => {
     expect(screen.getByText(/Child jobs are still in progress and the errors will be shown as soon as the child jobs are completed./i)).toBeInTheDocument();
     expect(mockDispatchFn).toHaveBeenCalledWith({ type: 'JOB_REQUEST_IN_PROGRESS_JOBS_STATUS' });
   });
-  test('Should test the error drawer when jobs has no errors with integration name as null', async () => {
+  test('should test the error drawer when jobs has no errors with integration name as null', async () => {
     await initErrorDrawer({
       jobId: '12345',
       onClose: mockOnClose,
@@ -305,7 +305,7 @@ describe('Testsuite for ErrorDrawer', () => {
     expect(screen.getByText(/Standalone flows > Test flows/i)).toBeInTheDocument();
     expect(screen.getByText(/no jobs with errors/i)).toBeInTheDocument();
   });
-  test('Should test the error job data by passing parent job id', async () => {
+  test('should test the error job data by passing parent job id', async () => {
     const retryObjectId = 'trf34t';
 
     await initErrorDrawer({
@@ -397,7 +397,7 @@ describe('Testsuite for ErrorDrawer', () => {
       parentJobId: undefined,
     });
   });
-  test('Should test the error job data by passing flow job id', async () => {
+  test('should test the error job data by passing flow job id', async () => {
     const retryObjectId = 'trf34t';
 
     await initErrorDrawer({

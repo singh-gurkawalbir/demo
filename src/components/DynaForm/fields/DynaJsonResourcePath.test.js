@@ -1,4 +1,3 @@
-/* global describe, test, expect, jest */
 import React from 'react';
 import userEvent from '@testing-library/user-event';
 import { renderWithProviders } from '../../../test/test-utils';

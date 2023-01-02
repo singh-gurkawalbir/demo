@@ -1,52 +1,51 @@
-/* global describe, test, expect */
 import jsonUtil from './json';
 
 describe('json util function test', () => {
   describe('containsAllKeys function test', () => {
     test('should not throw any exception for empty input', () => {
-      expect(jsonUtil.containsAllKeys()).toEqual(null);
+      expect(jsonUtil.containsAllKeys()).toBeNull();
     });
     test('should return valid errorMsg', () => {
-      expect(jsonUtil.containsAllKeys([{label: 'generate', value: 'gen'}], ['abc', 'label'])).toEqual('abc field missing at position 0');
-      expect(jsonUtil.containsAllKeys([{label: 'generate', value: 'gen'}], ['abc', 'def', 'label'])).toEqual('abc,def field missing at position 0');
-      expect(jsonUtil.containsAllKeys([{label: 'generate', value: 'gen'}, {def: 'generate', value: 'gen'}], ['abc', 'def', 'label'])).toEqual('abc,def field missing at position 0\nabc,label field missing at position 1');
+      expect(jsonUtil.containsAllKeys([{label: 'generate', value: 'gen'}], ['abc', 'label'])).toBe('abc field missing at position 0');
+      expect(jsonUtil.containsAllKeys([{label: 'generate', value: 'gen'}], ['abc', 'def', 'label'])).toBe('abc,def field missing at position 0');
+      expect(jsonUtil.containsAllKeys([{label: 'generate', value: 'gen'}, {def: 'generate', value: 'gen'}], ['abc', 'def', 'label'])).toBe('abc,def field missing at position 0\nabc,label field missing at position 1');
     });
 
     test('should return null if array objects contains all the keys', () => {
-      expect(jsonUtil.containsAllKeys([{label: 'generate', abc: '1', value: 'gen'}], ['abc', 'label'])).toEqual(null);
-      expect(jsonUtil.containsAllKeys([{label: 'generate', value: 'gen'}], [])).toEqual(null);
-      expect(jsonUtil.containsAllKeys([], ['abc', 'def', 'label'])).toEqual(null);
+      expect(jsonUtil.containsAllKeys([{label: 'generate', abc: '1', value: 'gen'}], ['abc', 'label'])).toBeNull();
+      expect(jsonUtil.containsAllKeys([{label: 'generate', value: 'gen'}], [])).toBeNull();
+      expect(jsonUtil.containsAllKeys([], ['abc', 'def', 'label'])).toBeNull();
     });
   });
 
   describe('validateJsonString function test', () => {
     test('should return null for valid json string', () => {
-      expect(jsonUtil.validateJsonString('{}')).toEqual(null);
-      expect(jsonUtil.validateJsonString('{"a":"1"}')).toEqual(null);
-      expect(jsonUtil.validateJsonString('{"a":[]}')).toEqual(null);
-      expect(jsonUtil.validateJsonString(2)).toEqual(null);
-      expect(jsonUtil.validateJsonString(null)).toEqual(null);
+      expect(jsonUtil.validateJsonString('{}')).toBeNull();
+      expect(jsonUtil.validateJsonString('{"a":"1"}')).toBeNull();
+      expect(jsonUtil.validateJsonString('{"a":[]}')).toBeNull();
+      expect(jsonUtil.validateJsonString(2)).toBeNull();
+      expect(jsonUtil.validateJsonString(null)).toBeNull();
     });
 
     test('should return valid error message for invalid json string', () => {
-      expect(jsonUtil.validateJsonString('')).toEqual('Unexpected end of JSON input');
-      expect(jsonUtil.validateJsonString(undefined)).toEqual('Unexpected token u in JSON at position 0');
-      expect(jsonUtil.validateJsonString('{"a":{"b":{"c":2}}')).toEqual('Unexpected end of JSON input');
-      expect(jsonUtil.validateJsonString({})).toEqual('Unexpected token o in JSON at position 1');
-      expect(jsonUtil.validateJsonString('{')).toEqual('Unexpected end of JSON input');
-      expect(jsonUtil.validateJsonString('{"a":1"}')).toEqual('Unexpected string in JSON at position 6');
-      expect(jsonUtil.validateJsonString('{"a":[]')).toEqual('Unexpected end of JSON input');
-      expect(jsonUtil.validateJsonString('{"a":{"b":{"c":{}}}')).toEqual('Unexpected end of JSON input');
+      expect(jsonUtil.validateJsonString('')).toBe('Unexpected end of JSON input');
+      expect(jsonUtil.validateJsonString(undefined)).toBe('Unexpected token u in JSON at position 0');
+      expect(jsonUtil.validateJsonString('{"a":{"b":{"c":2}}')).toBe('Unexpected end of JSON input');
+      expect(jsonUtil.validateJsonString({})).toBe('Unexpected token o in JSON at position 1');
+      expect(jsonUtil.validateJsonString('{')).toBe('Unexpected end of JSON input');
+      expect(jsonUtil.validateJsonString('{"a":1"}')).toBe('Unexpected string in JSON at position 6');
+      expect(jsonUtil.validateJsonString('{"a":[]')).toBe('Unexpected end of JSON input');
+      expect(jsonUtil.validateJsonString('{"a":{"b":{"c":{}}}')).toBe('Unexpected end of JSON input');
     });
   });
 
   describe('maskValues function test', () => {
     test('should return input as it is, in case its not valid object', () => {
-      expect(jsonUtil.maskValues('{}')).toEqual('{}');
-      expect(jsonUtil.maskValues(2)).toEqual(2);
-      expect(jsonUtil.maskValues('123')).toEqual('123');
-      expect(jsonUtil.maskValues(null)).toEqual(null);
-      expect(jsonUtil.maskValues(undefined)).toEqual(undefined);
+      expect(jsonUtil.maskValues('{}')).toBe('{}');
+      expect(jsonUtil.maskValues(2)).toBe(2);
+      expect(jsonUtil.maskValues('123')).toBe('123');
+      expect(jsonUtil.maskValues(null)).toBeNull();
+      expect(jsonUtil.maskValues(undefined)).toBeUndefined();
     });
 
     test('should return object with masked value', () => {
@@ -80,16 +79,16 @@ describe('json util function test', () => {
   });
 
   describe('getObjectKeyFromValue function test', () => {
-    test('should not throw error in case of invalid input ', () => {
-      expect(jsonUtil.getObjectKeyFromValue('a', 'b')).toEqual(undefined);
-      expect(jsonUtil.getObjectKeyFromValue({}, undefined)).toEqual(undefined);
+    test('should not throw error in case of invalid input', () => {
+      expect(jsonUtil.getObjectKeyFromValue('a', 'b')).toBeUndefined();
+      expect(jsonUtil.getObjectKeyFromValue({}, undefined)).toBeUndefined();
     });
 
     test('should return key from value correctly', () => {
-      expect(jsonUtil.getObjectKeyFromValue({a: 'b'}, 'b')).toEqual('a');
-      expect(jsonUtil.getObjectKeyFromValue({}, 'a')).toEqual(undefined);
-      expect(jsonUtil.getObjectKeyFromValue({a: {b: 1}}, 'b')).toEqual(undefined);
-      expect(jsonUtil.getObjectKeyFromValue({a: 1, c: 'str'}, 'str')).toEqual('c');
+      expect(jsonUtil.getObjectKeyFromValue({a: 'b'}, 'b')).toBe('a');
+      expect(jsonUtil.getObjectKeyFromValue({}, 'a')).toBeUndefined();
+      expect(jsonUtil.getObjectKeyFromValue({a: {b: 1}}, 'b')).toBeUndefined();
+      expect(jsonUtil.getObjectKeyFromValue({a: 1, c: 'str'}, 'str')).toBe('c');
     });
   });
 

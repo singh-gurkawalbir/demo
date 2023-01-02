@@ -1,4 +1,3 @@
-/* global describe, test */
 
 import { select, call } from 'redux-saga/effects';
 import { expectSaga } from 'redux-saga-test-plan';
@@ -28,7 +27,7 @@ describe('rawDataUpdates sagas', () => {
         adaptorType: 'RESTExport',
       };
 
-      return expectSaga(onResourceCreate, { id: resourceId, resourceType: 'exports', tempId})
+      expectSaga(onResourceCreate, { id: resourceId, resourceType: 'exports', tempId})
         .provide([
           [select(selectors.resource, 'exports', resourceId), resource],
           [select(selectors.resourceFormState, 'exports', tempId), {flowId}],
@@ -57,7 +56,7 @@ describe('rawDataUpdates sagas', () => {
         isLookup: true,
       };
 
-      return expectSaga(onResourceCreate, { id: resourceId, resourceType: 'exports', tempId})
+      expectSaga(onResourceCreate, { id: resourceId, resourceType: 'exports', tempId})
         .provide([
           [select(selectors.resource, 'exports', resourceId), resource],
           [select(selectors.resourceFormState, 'exports', tempId), {flowId}],
@@ -86,7 +85,7 @@ describe('rawDataUpdates sagas', () => {
         isLookup: true,
       };
 
-      return expectSaga(onResourceCreate, { id: resourceId, resourceType: 'exports', tempId})
+      expectSaga(onResourceCreate, { id: resourceId, resourceType: 'exports', tempId})
         .provide([
           [select(selectors.resource, 'exports', resourceId), resource],
           [select(selectors.resourceFormState, 'exports', tempId), {flowId}],
@@ -112,7 +111,7 @@ describe('rawDataUpdates sagas', () => {
         adaptorType: 'RESTImport',
       };
 
-      return expectSaga(onResourceCreate, { id: resourceId, resourceType: 'imports', tempId})
+      expectSaga(onResourceCreate, { id: resourceId, resourceType: 'imports', tempId})
         .provide([
           [select(selectors.resource, 'imports', resourceId), resource],
         ])
@@ -135,7 +134,7 @@ describe('rawDataUpdates sagas', () => {
     test('should do nothing if the patchSet is empty', () => {
       const patch = [];
 
-      return expectSaga(onResourceUpdate, { resourceId: 'export-123', resourceType: 'exports', patch})
+      expectSaga(onResourceUpdate, { resourceId: 'export-123', resourceType: 'exports', patch})
         .not.call.fn(_fetchAndSaveRawDataForResource)
         .run();
     });
@@ -152,11 +151,11 @@ describe('rawDataUpdates sagas', () => {
       const resourceId = 'flow-123';
       const resourceType = 'flows';
 
-      return expectSaga(onResourceUpdate, { resourceId, resourceType, patch: flowPatchSet })
+      expectSaga(onResourceUpdate, { resourceId, resourceType, patch: flowPatchSet })
         .not.call.fn(_fetchAndSaveRawDataForResource)
         .run();
     });
-    test('should call _fetchAndSaveRawDataForResource for flows with the newly added lookup id from the patchSet ', () => {
+    test('should call _fetchAndSaveRawDataForResource for flows with the newly added lookup id from the patchSet', () => {
       const flowPatchSet = [{
         op: 'add',
         path: '/pageProcessors/1',
@@ -168,7 +167,7 @@ describe('rawDataUpdates sagas', () => {
       const flowId = 'flow-123';
       const resourceType = 'flows';
 
-      return expectSaga(onResourceUpdate, { resourceId: flowId, resourceType, patch: flowPatchSet })
+      expectSaga(onResourceUpdate, { resourceId: flowId, resourceType, patch: flowPatchSet })
         .call(_fetchAndSaveRawDataForResource, {
           type: 'pageprocessors',
           flowId,
@@ -187,7 +186,7 @@ describe('rawDataUpdates sagas', () => {
       const resourceId = 'export-123';
       const resourceType = 'exports';
 
-      return expectSaga(onResourceUpdate, { resourceId, resourceType, patch: rawDataPatchSet })
+      expectSaga(onResourceUpdate, { resourceId, resourceType, patch: rawDataPatchSet })
         .not.call(_fetchAndSaveRawDataForResource)
         .run();
     });
@@ -216,7 +215,7 @@ describe('rawDataUpdates sagas', () => {
         pageProcessors: [{ type: 'export', _exportId: resourceId }, { type: 'import', _exportId: 'import-123' }],
       };
 
-      return expectSaga(onResourceUpdate, { resourceType, resourceId, patch: relativeUriPatchSet, master})
+      expectSaga(onResourceUpdate, { resourceType, resourceId, patch: relativeUriPatchSet, master})
         .provide([
           [select(
             selectors.resourceFormState,
@@ -255,7 +254,7 @@ describe('rawDataUpdates sagas', () => {
         isLookup: true,
       };
 
-      const test1 = expectSaga(onResourceUpdate, {resourceType, resourceId, patch: relativeUriPatchSet, master})
+      expectSaga(onResourceUpdate, {resourceType, resourceId, patch: relativeUriPatchSet, master})
         .provide([
           [select(
             selectors.resourceFormState,
@@ -274,7 +273,8 @@ describe('rawDataUpdates sagas', () => {
         name: 'rest lookup',
         adaptorType: 'RESTExport',
       };
-      const test2 = expectSaga(onResourceUpdate, { resourceType, resourceId, patch: relativeUriPatchSet, master: master2})
+
+      expectSaga(onResourceUpdate, { resourceType, resourceId, patch: relativeUriPatchSet, master: master2})
         .provide([
           [select(
             selectors.resourceFormState,
@@ -294,7 +294,8 @@ describe('rawDataUpdates sagas', () => {
         pageGenerators: [{_exportId: 'export-444' }],
         pageProcessors: [{ type: 'export', _exportId: resourceId }, { type: 'import', _exportId: 'import-123' }],
       };
-      const test3 = expectSaga(onResourceUpdate, { resourceType, resourceId, patch: relativeUriPatchSet, master})
+
+      expectSaga(onResourceUpdate, { resourceType, resourceId, patch: relativeUriPatchSet, master})
         .provide([
           [select(
             selectors.resourceFormState,
@@ -309,10 +310,8 @@ describe('rawDataUpdates sagas', () => {
           resourceId,
         })
         .run();
-
-      return test1 && test2 && test3;
     });
-    test('should call _fetchAndSaveRawDataForResource with imports type incase of imports resourceType ', () => {
+    test('should call _fetchAndSaveRawDataForResource with imports type incase of imports resourceType', () => {
       const patchSet = [{
         path: '/name',
         op: 'replace',
@@ -326,7 +325,7 @@ describe('rawDataUpdates sagas', () => {
         adaptorType: 'RESTImport',
       };
 
-      return expectSaga(onResourceUpdate, { resourceId, resourceType, patch: patchSet})
+      expectSaga(onResourceUpdate, { resourceId, resourceType, patch: patchSet})
         .provide([
           [select(
             selectors.resourceData,
@@ -355,7 +354,7 @@ describe('rawDataUpdates sagas', () => {
         assistant: 'bigcommerce',
       };
 
-      return expectSaga(onResourceUpdate, { resourceId, resourceType, patch: patchSet})
+      expectSaga(onResourceUpdate, { resourceId, resourceType, patch: patchSet})
         .provide([
           [select(
             selectors.resourceData,
@@ -371,7 +370,7 @@ describe('rawDataUpdates sagas', () => {
     });
   });
   describe('_fetchAndSaveRawDataForResource saga', () => {
-    test('should return nothing if the resource is blob type or real time ', () => {
+    test('should return nothing if the resource is blob type or real time', () => {
       const blobResource = {
         _id: 'blob-234',
         name: 'Blob export',
@@ -385,7 +384,7 @@ describe('rawDataUpdates sagas', () => {
       };
       const type = 'exports';
 
-      const test1 = expectSaga(_fetchAndSaveRawDataForResource, { type, resourceId: 'ns-1234'})
+      expectSaga(_fetchAndSaveRawDataForResource, { type, resourceId: 'ns-1234'})
         .provide([
           [select(
             selectors.resource,
@@ -397,7 +396,7 @@ describe('rawDataUpdates sagas', () => {
         .not.call.fn(exportPreview)
         .returns(undefined)
         .run();
-      const test2 = expectSaga(_fetchAndSaveRawDataForResource, { type, resourceId: 'blob-234'})
+      expectSaga(_fetchAndSaveRawDataForResource, { type, resourceId: 'blob-234'})
         .provide([
           [select(
             selectors.resource,
@@ -409,8 +408,6 @@ describe('rawDataUpdates sagas', () => {
         .not.call.fn(exportPreview)
         .returns(undefined)
         .run();
-
-      return test1 && test2;
     });
     test('should call exportPreview and saveRawDataOnResource incase it has preview data for exports', () => {
       const resourceId = 'export-123';
@@ -460,7 +457,7 @@ describe('rawDataUpdates sagas', () => {
         }],
       };
 
-      return expectSaga(_fetchAndSaveRawDataForResource, { type, resourceId, tempResourceId: tempId, flowId})
+      expectSaga(_fetchAndSaveRawDataForResource, { type, resourceId, tempResourceId: tempId, flowId})
         .provide([
           [select(
             selectors.resource,
@@ -488,7 +485,7 @@ describe('rawDataUpdates sagas', () => {
     test('should do nothing incase of type other than exports', () => {
       const type = 'imports';
 
-      return expectSaga(_fetchAndSaveRawDataForResource, { resourceId: 'import-123', type })
+      expectSaga(_fetchAndSaveRawDataForResource, { resourceId: 'import-123', type })
         .not.call.fn(saveRawDataForFileAdaptors)
         .not.call.fn(exportPreview)
         .not.call.fn(saveRawDataOnResource)

@@ -1,4 +1,3 @@
-/* global describe, expect, jest, test */
 import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -94,7 +93,7 @@ describe('test suite for DynaMatchingCriteriaWithModal field', () => {
     expect(inputLabels[3].textContent).toContain('Potentially Matched');
 
     Array.from(document.querySelectorAll('input')).forEach(inputField =>
-      expect(inputField).toBeRequired);
+      expect(inputField).toBeRequired());
 
     //  The first account type should be selected by default
     const accountTypeField = document.querySelectorAll('input')[0];
@@ -204,7 +203,7 @@ describe('test suite for DynaMatchingCriteriaWithModal field', () => {
     expect(onFieldChange).toBeCalledWith(props.id, props.content, true);
 
     Array.from(document.querySelectorAll('input')).forEach(inputField =>
-      expect(inputField).not.toBeRequired);
+      expect(inputField).not.toBeRequired());
 
     const inputLabels = Array.from(document.querySelectorAll('label')).map(ele => ele.textContent);
 
@@ -216,7 +215,7 @@ describe('test suite for DynaMatchingCriteriaWithModal field', () => {
     ]);
 
     Array.from(document.querySelectorAll('input')).forEach(inputField =>
-      expect(inputField).not.toBeRequired);
+      expect(inputField).not.toBeRequired());
 
     const matchedInputField = document.querySelectorAll('input')[1];
     const matchedSelected = screen.getByRole('button', {name: 'content lines'});

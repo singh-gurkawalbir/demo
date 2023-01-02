@@ -1,4 +1,4 @@
-/* global describe, test, expect ,jest, beforeEach, afterEach */
+
 import React from 'react';
 import { screen, waitFor } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
@@ -47,7 +47,7 @@ function initDebug(props = {}) {
   return renderWithProviders(ui, {initialStore});
 }
 
-describe('StartDebug UI tests', () => {
+describe('startDebug UI tests', () => {
   let mockDispatchFn;
   let useDispatchSpy;
 

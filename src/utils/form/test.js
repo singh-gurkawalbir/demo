@@ -1,6 +1,4 @@
 /* eslint-disable camelcase */
-/* global describe,test,expect,beforeEach */
-
 import { deepClone } from 'fast-json-patch/lib/core';
 import {
   evaluateAllRules,
@@ -29,7 +27,7 @@ import {
   fieldDefIsValidUpdated,
 } from './field';
 
-// eslint-disable-next-line import/prefer-default-export
+// eslint-disable-next-line jest/no-export
 export const createField = field => {
   const {
     id = '',
@@ -161,7 +159,7 @@ describe('registerFields', () => {
   test('fields with duplicate IDs are filtered out', () => {
     const registeredFields = registerFields(fieldMap, {});
 
-    expect(Object.values(registeredFields).length).toEqual(2);
+    expect(Object.values(registeredFields)).toHaveLength(2);
     expect(registeredFields.a).toBeTruthy();
     expect(registeredFields.b).toBeTruthy();
   });
@@ -169,17 +167,17 @@ describe('registerFields', () => {
 
 describe('fieldDefIsValidUpdated', () => {
   test('field is valid when the form does not contain a field with the same id', () => {
-    expect(fieldDefIsValidUpdated(field1, {})).toEqual(true);
+    expect(fieldDefIsValidUpdated(field1, {})).toBe(true);
   });
 
   test('field is not valid when form already contains a field with the same id', () => {
-    expect(fieldDefIsValidUpdated(field1, {[field1.id]: field1})).toEqual(false);
+    expect(fieldDefIsValidUpdated(field1, {[field1.id]: field1})).toBe(false);
   });
 });
 
 describe('evaluateRule', () => {
   test('evaluting a rule with no arguments', () => {
-    expect(evaluateRule()).toEqual(true);
+    expect(evaluateRule()).toBe(true);
   });
 
   test("successful 'is' rule", () => {
@@ -191,7 +189,7 @@ describe('evaluateRule', () => {
         },
         targetValue: true,
       })
-    ).toEqual(true);
+    ).toBe(true);
   });
 
   test("failing 'is' rule", () => {
@@ -203,7 +201,7 @@ describe('evaluateRule', () => {
         },
         true
       )
-    ).toEqual(false);
+    ).toBe(false);
   });
 
   test("successful 'isNot' rule", () => {
@@ -215,7 +213,7 @@ describe('evaluateRule', () => {
         },
         false
       )
-    ).toEqual(true);
+    ).toBe(true);
   });
 
   test("failing 'isNot' rule", () => {
@@ -227,7 +225,7 @@ describe('evaluateRule', () => {
         },
         false
       )
-    ).toEqual(false);
+    ).toBe(false);
   });
 
   test("successful combined 'is' and isNot' rule", () => {
@@ -240,7 +238,7 @@ describe('evaluateRule', () => {
         },
         true
       )
-    ).toEqual(true);
+    ).toBe(true);
   });
 
   test("failing combined 'is' and isNot' rule", () => {
@@ -253,7 +251,7 @@ describe('evaluateRule', () => {
         },
         false
       )
-    ).toEqual(false);
+    ).toBe(false);
   });
 
   // NOTE: This is one option for allowing form builder to construct rules, but is harder to implement
@@ -267,7 +265,7 @@ describe('evaluateRule', () => {
         },
         'bob'
       )
-    ).toEqual(true);
+    ).toBe(true);
   });
 });
 
@@ -299,7 +297,7 @@ describe('rule evaluation', () => {
 
       expect(
         evaluateAllRules({ rules, fieldsById })
-      ).toEqual(true);
+      ).toBe(true);
     });
     test('should return default result when there are no rules provided', () => {
       const rules = [];
@@ -307,7 +305,7 @@ describe('rule evaluation', () => {
 
       expect(
         evaluateAllRules({ rules, fieldsById, defaultResult: false })
-      ).toEqual(false);
+      ).toBe(false);
     });
     test('passes when there are no rules provided', () => {
       const rules = [];
@@ -315,7 +313,7 @@ describe('rule evaluation', () => {
 
       expect(
         evaluateAllRules({ rules, fieldsById, defaultResult: true })
-      ).toEqual(true);
+      ).toBe(true);
     });
 
     test('fails when one rule fails', () => {
@@ -328,7 +326,7 @@ describe('rule evaluation', () => {
 
       expect(
         evaluateAllRules({ rules, fieldsById, defaultResult: true })
-      ).toEqual(false);
+      ).toBe(false);
     });
 
     test('passes when all rules pass', () => {
@@ -341,7 +339,7 @@ describe('rule evaluation', () => {
 
       expect(
         evaluateAllRules({ rules, fieldsById, defaultResult: true })
-      ).toEqual(true);
+      ).toBe(true);
     });
 
     test('passes when all rules pass of combinations1', () => {
@@ -361,7 +359,7 @@ describe('rule evaluation', () => {
 
       expect(
         evaluateAllRules({ rules, fieldsById, defaultResult: false })
-      ).toEqual(true);
+      ).toBe(true);
     });
 
     test('passes when all rules pass of combinations2', () => {
@@ -381,7 +379,7 @@ describe('rule evaluation', () => {
 
       expect(
         evaluateAllRules({ rules, fieldsById, defaultResult: false })
-      ).toEqual(true);
+      ).toBe(true);
     });
 
     test('passes when all rules pass of combinations4', () => {
@@ -401,10 +399,10 @@ describe('rule evaluation', () => {
 
       expect(
         evaluateAllRules({ rules, fieldsById, defaultResult: false })
-      ).toEqual(true);
+      ).toBe(true);
     });
 
-    test('passes when all rules pass of combinations4', () => {
+    test('passes when all rules pass of combinations4 duplicate', () => {
       const rules = [{
         AND: [
           {AND: [aIs1, bIs2]},
@@ -421,7 +419,7 @@ describe('rule evaluation', () => {
 
       expect(
         evaluateAllRules({ rules, fieldsById, defaultResult: false })
-      ).toEqual(true);
+      ).toBe(true);
     });
 
     test('passes when all rules pass of combinations3', () => {
@@ -436,10 +434,10 @@ describe('rule evaluation', () => {
 
       expect(
         evaluateAllRules({ rules, fieldsById, defaultResult: true })
-      ).toEqual(true);
+      ).toBe(true);
       expect(
         evaluateAllRules({ rules, fieldsById, defaultResult: false })
-      ).toEqual(true);
+      ).toBe(true);
       expect(
         evaluateAllRules({ rules: [{
           AND: [
@@ -449,7 +447,7 @@ describe('rule evaluation', () => {
         }],
         fieldsById,
         defaultResult: true})
-      ).toEqual(false);
+      ).toBe(false);
     });
   });
 
@@ -460,7 +458,7 @@ describe('rule evaluation', () => {
 
       expect(
         evaluateSomeRules({ rules, fieldsById })
-      ).toEqual(true);
+      ).toBe(true);
     });
     test('should return defaultResult when there are no rules provided', () => {
       const rules = [];
@@ -468,7 +466,7 @@ describe('rule evaluation', () => {
 
       expect(
         evaluateSomeRules({ rules, fieldsById, defaultResult: false })
-      ).toEqual(false);
+      ).toBe(false);
     });
     test('passes when there are no rules provided', () => {
       const rules = [];
@@ -476,7 +474,7 @@ describe('rule evaluation', () => {
 
       expect(
         evaluateSomeRules({ rules, fieldsById, defaultResult: true })
-      ).toEqual(true);
+      ).toBe(true);
     });
     test('fails when all rules fail', () => {
       const rules = [cIs3];
@@ -486,7 +484,7 @@ describe('rule evaluation', () => {
 
       expect(
         evaluateSomeRules({ rules, fieldsById, defaultResult: true })
-      ).toEqual(false);
+      ).toBe(false);
     });
 
     test('passes when some rules pass but some fail', () => {
@@ -499,7 +497,7 @@ describe('rule evaluation', () => {
 
       expect(
         evaluateSomeRules({ rules, fieldsById, defaultResult: true })
-      ).toEqual(true);
+      ).toBe(true);
     });
 
     test('passes when all rules pass', () => {
@@ -512,7 +510,7 @@ describe('rule evaluation', () => {
 
       expect(
         evaluateSomeRules({ rules, fieldsById, defaultResult: true })
-      ).toEqual(true);
+      ).toBe(true);
     });
   });
 
@@ -928,7 +926,7 @@ describe('shouldOmitFieldValue', () => {
       visible: false,
     };
 
-    expect(shouldOmitFieldValue(field)).toEqual(true);
+    expect(shouldOmitFieldValue(field)).toBe(true);
   });
   test('value should be included when visible', () => {
     const field = {
@@ -937,7 +935,7 @@ describe('shouldOmitFieldValue', () => {
       visible: true,
     };
 
-    expect(shouldOmitFieldValue(field)).toEqual(false);
+    expect(shouldOmitFieldValue(field)).toBe(false);
   });
   test('value should be ommitted when value matches', () => {
     const field = {
@@ -945,7 +943,7 @@ describe('shouldOmitFieldValue', () => {
       omitWhenValueIs: ['foo'],
     };
 
-    expect(shouldOmitFieldValue(field)).toEqual(true);
+    expect(shouldOmitFieldValue(field)).toBe(true);
   });
   test('value should be included when value does not match', () => {
     const field = {
@@ -953,7 +951,7 @@ describe('shouldOmitFieldValue', () => {
       omitWhenValueIs: ['wrong'],
     };
 
-    expect(shouldOmitFieldValue(field)).toEqual(false);
+    expect(shouldOmitFieldValue(field)).toBe(false);
   });
 });
 
@@ -1006,22 +1004,22 @@ describe('calculateFormValue', () => {
   );
 
   test('two field values should be omitted', () => {
-    expect(Object.keys(value).length).toEqual(2);
+    expect(Object.keys(value)).toHaveLength(2);
   });
   test('hidden field value should not be included', () => {
-    expect(value.test).not.toBeDefined();
+    expect(value.test).toBeUndefined();
   });
   test('normal value should be included', () => {
-    expect(value.test2).toEqual('bar');
+    expect(value.test2).toBe('bar');
   });
   test('last field wins', () => {
-    expect(value.test3).toEqual('ted');
+    expect(value.test3).toBe('ted');
   });
 
   test('dot-notation names can be provided', () => {
     const value = calculateFormValue([field5]);
 
-    expect(value.test.dot.notation).toEqual('ted');
+    expect(value.test.dot.notation).toBe('ted');
   });
 
   test('get added and removed values', () => {
@@ -1035,10 +1033,11 @@ describe('calculateFormValue', () => {
     };
     const value = calculateFormValue(Object.values({ field1 }));
 
-    expect(value.test_added).toEqual('4,5');
-    expect(value.test_removed).toEqual('1,3');
+    expect(value.test_added).toBe('4,5');
+    expect(value.test_removed).toBe('1,3');
   });
 
+  // eslint-disable-next-line jest/no-commented-out-tests
   // test("dot-notation values setting", () => {
   //   const field1 = {
   //     name: "some.nested.prop",
@@ -1080,17 +1079,17 @@ describe('updateFieldValue', () => {
   updateFieldValue(fieldsById.B, 'oink');
 
   test('field is updated with new value', () => {
-    expect(fieldsById.B.value).toEqual('oink');
+    expect(fieldsById.B.value).toBe('oink');
   });
 });
 
 describe('joinDelimitedValue', () => {
   test('join with commas', () => {
-    expect(joinDelimitedValue([1, 2, 3], ',')).toEqual('1,2,3');
+    expect(joinDelimitedValue([1, 2, 3], ',')).toBe('1,2,3');
   });
 
   test('leave non-array values as-id', () => {
-    expect(joinDelimitedValue('test', ',')).toEqual('test');
+    expect(joinDelimitedValue('test', ',')).toBe('test');
   });
 });
 
@@ -1106,7 +1105,7 @@ describe('splitDelimitedValue', () => {
   });
 
   test('leave value as is if no delimiter provided', () => {
-    expect(splitDelimitedValue('test')).toEqual('test');
+    expect(splitDelimitedValue('test')).toBe('test');
   });
 
   test('array value remain unchanged', () => {
@@ -1131,9 +1130,9 @@ describe('determineChangedValues', () => {
   const changes = determineChangedValues(field);
 
   test('output structure is correct', () => {
-    expect(changes.length).toEqual(2);
-    expect(changes[0].name).toEqual('foo_added');
-    expect(changes[1].name).toEqual('foo_removed');
+    expect(changes).toHaveLength(2);
+    expect(changes[0].name).toBe('foo_added');
+    expect(changes[1].name).toBe('foo_removed');
   });
   test('e and f were added', () => {
     expect(changes[0].value).toEqual(['e', 'f']);
@@ -1145,12 +1144,12 @@ describe('determineChangedValues', () => {
 
 describe('getFirstDefinedValue', () => {
   test('boolean', () => {
-    expect(getFirstDefinedValue(undefined, undefined, false, true)).toEqual(
+    expect(getFirstDefinedValue(undefined, undefined, false, true)).toBe(
       false
     );
   });
   test('number', () => {
-    expect(getFirstDefinedValue(undefined, 0, 10)).toEqual(0);
+    expect(getFirstDefinedValue(undefined, 0, 10)).toBe(0);
   });
 });
 
@@ -1169,20 +1168,20 @@ describe('default value handling', () => {
   test('default value is assigned to value', () => {
     processFields(field, false, false);
 
-    expect(field.WITH_DEFAULT.value).toEqual('bob');
+    expect(field.WITH_DEFAULT.value).toBe('bob');
   });
   test('Value takes precedence over defaultValue', () => {
     field.WITH_DEFAULT.value = 'ted';
     processFields(field, false, false);
 
-    expect(field.WITH_DEFAULT.value).toEqual('ted');
+    expect(field.WITH_DEFAULT.value).toBe('ted');
   });
 
   test('Falsy value takes precedence over defaultValue', () => {
     field.WITH_DEFAULT.value = false;
     processFields(field, false, false);
 
-    expect(field.WITH_DEFAULT.value).toEqual(false);
+    expect(field.WITH_DEFAULT.value).toBe(false);
   });
 });
 
@@ -1353,7 +1352,7 @@ describe('getFirstErroredFieldId', () => {
 });
 
 describe('getFieldIdsInLayoutOrder', () => {
-  test('should return empty list incase of invalid layout ', () => {
+  test('should return empty list incase of invalid layout', () => {
     expect(getFieldIdsInLayoutOrder()).toEqual([]);
     expect(getFieldIdsInLayoutOrder({})).toEqual([]);
     expect(getFieldIdsInLayoutOrder({ fields: [], containers: []})).toEqual([]);

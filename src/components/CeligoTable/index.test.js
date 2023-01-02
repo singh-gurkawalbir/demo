@@ -1,4 +1,4 @@
-/* global describe, test, expect, jest */
+
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import CeligoTable from '.';
@@ -15,7 +15,7 @@ async function initCeligoTable({ props } = {}) {
   return renderWithProviders(ui);
 }
 
-describe('CeligoTable component Test cases', () => {
+describe('celigoTable component Test cases', () => {
   runServer();
   test('should pass the intial render with no column', async () => {
     const { utils } = await initCeligoTable();

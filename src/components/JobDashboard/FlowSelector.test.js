@@ -1,4 +1,4 @@
-/* global describe, test, beforeEach, jest, expect */
+
 import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -98,7 +98,7 @@ function initFlowSelector({integrationId, childId, value, onChange}) {
 
 const mockOnChange = jest.fn();
 
-describe('Testsuite for FlowSelector', () => {
+describe('testsuite for FlowSelector', () => {
   beforeEach(() => {
     initialStore = getCreatedStore();
   });

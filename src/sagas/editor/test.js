@@ -1,4 +1,5 @@
-/* global describe, test, beforeEach, expect, jest */
+/* eslint-disable jest/no-conditional-in-test */
+/* eslint-disable jest/valid-expect-in-promise */
 
 import { advanceTo, clear } from 'jest-date-mock';
 import { select, call, put } from 'redux-saga/effects';
@@ -63,7 +64,7 @@ describe('editor sagas', () => {
         },
       };
 
-      return expectSaga(invokeProcessor, { editorId, processor: 'handlebars', body })
+      expectSaga(invokeProcessor, { editorId, processor: 'handlebars', body })
         .provide([
           [matchers.call.fn(apiCallWithRetry), undefined],
           [select(selectors.userTimezone), 'Asia/Calcutta'],
@@ -134,7 +135,7 @@ describe('editor sagas', () => {
         },
       };
 
-      return expectSaga(invokeProcessor, { editorId, processor: 'handlebars', body })
+      expectSaga(invokeProcessor, { editorId, processor: 'handlebars', body })
         .provide([
           [matchers.call.fn(apiCallWithRetry), undefined],
           [select(selectors.userTimezone), null],
@@ -199,7 +200,7 @@ describe('editor sagas', () => {
         options: {},
       };
 
-      return expectSaga(invokeProcessor, { editorId, processor: 'mapperProcessor' })
+      expectSaga(invokeProcessor, { editorId, processor: 'mapperProcessor' })
         .provide([
           [matchers.call.fn(apiCallWithRetry), undefined],
           [select(selectors.mapping), {mappings, lookups: []}],
@@ -243,7 +244,7 @@ describe('editor sagas', () => {
         key: '17RxsaFmJW',
       }];
 
-      return expectSaga(invokeProcessor, { editorId, processor: 'mapperProcessor' })
+      expectSaga(invokeProcessor, { editorId, processor: 'mapperProcessor' })
         .provide([
           [matchers.call.fn(apiCallWithRetry), undefined],
           [select(selectors.mapping), {mappings, lookups: [], preview: {data: 'some data', status: 'requested'}}],
@@ -285,7 +286,7 @@ describe('editor sagas', () => {
         key: '17RxsaFmJW',
       }];
 
-      return expectSaga(invokeProcessor, { editorId, processor: 'mapperProcessor' })
+      expectSaga(invokeProcessor, { editorId, processor: 'mapperProcessor' })
         .provide([
           [matchers.call.fn(apiCallWithRetry), undefined],
           [select(selectors.mapping), {mappings, lookups: [], preview: {data: 'some data', status: 'success'}}],
@@ -373,7 +374,7 @@ describe('editor sagas', () => {
         options: {},
       };
 
-      return expectSaga(invokeProcessor, { editorId, processor: 'mapperProcessor' })
+      expectSaga(invokeProcessor, { editorId, processor: 'mapperProcessor' })
         .provide([
           [matchers.call.fn(apiCallWithRetry), undefined],
           [select(selectors.mapping), {mappings, lookups}],
@@ -415,7 +416,7 @@ describe('editor sagas', () => {
         options: {},
       };
 
-      return expectSaga(invokeProcessor, { editorId, processor: 'mapperProcessor' })
+      expectSaga(invokeProcessor, { editorId, processor: 'mapperProcessor' })
         .provide([
           [matchers.call.fn(apiCallWithRetry), undefined],
           [select(selectors.responseMapping), {mappings}],
@@ -489,7 +490,7 @@ describe('editor sagas', () => {
         },
       };
 
-      return expectSaga(invokeProcessor, { editorId, processor: 'mapperProcessor' })
+      expectSaga(invokeProcessor, { editorId, processor: 'mapperProcessor' })
         .provide([
           [matchers.call.fn(apiCallWithRetry), undefined],
           [select(selectors.mapping), {v2TreeData, mappings, lookups: []}],
@@ -510,7 +511,7 @@ describe('editor sagas', () => {
     test('should make api call with passed arguments', () => {
       const body = 'somebody';
 
-      return expectSaga(invokeProcessor, { processor: 'transform', body })
+      expectSaga(invokeProcessor, { processor: 'transform', body })
         .provide([
           [matchers.call.fn(apiCallWithRetry), undefined],
         ])
@@ -538,7 +539,7 @@ describe('editor sagas', () => {
         formKey: 'new-123',
       };
 
-      return expectSaga(requestPreview, { id: editorId})
+      expectSaga(requestPreview, { id: editorId})
         .provide([
           [select(selectors.editor, editorId), editor],
         ])
@@ -555,7 +556,7 @@ describe('editor sagas', () => {
         rule: '{{id}}',
       };
 
-      return expectSaga(requestPreview, { id: editorId})
+      expectSaga(requestPreview, { id: editorId})
         .provide([
           [select(selectors.editor, editorId), editor],
         ])
@@ -577,7 +578,7 @@ describe('editor sagas', () => {
         rule: '{{id}}',
       };
 
-      return expectSaga(requestPreview, { id: editorId})
+      expectSaga(requestPreview, { id: editorId})
         .provide([
           [select(selectors.editor, editorId), editor],
           [call(invokeProcessor, {
@@ -603,7 +604,7 @@ describe('editor sagas', () => {
         rule: '{{id}}',
       };
 
-      return expectSaga(requestPreview, { id: editorId})
+      expectSaga(requestPreview, { id: editorId})
         .provide([
           [select(selectors.editor, editorId), editor],
           [call(invokeProcessor, {
@@ -628,7 +629,7 @@ describe('editor sagas', () => {
       };
       const mappings = [{extract: 'e1', generate: 'g1', lookupName: 'l1'}];
 
-      return expectSaga(requestPreview, { id: editorId})
+      expectSaga(requestPreview, { id: editorId})
         .provide([
           [select(selectors.editor, editorId), editor],
           [select(selectors.mapping), {mappings}],
@@ -652,7 +653,7 @@ describe('editor sagas', () => {
       };
       const mappings = [{extract: 'e1', generate: 'g1', lookupName: 'l1'}];
 
-      return expectSaga(requestPreview, { id: editorId})
+      expectSaga(requestPreview, { id: editorId})
         .provide([
           [select(selectors.editor, editorId), editor],
           [select(selectors.mapping), {mappings}],
@@ -677,7 +678,7 @@ describe('editor sagas', () => {
       };
       const mappings = [{extract: 'e1', generate: 'g1', lookupName: 'l1'}];
 
-      return expectSaga(requestPreview, { id: editorId})
+      expectSaga(requestPreview, { id: editorId})
         .provide([
           [select(selectors.editor, editorId), editor],
           [select(selectors.mapping), {mappings}],
@@ -737,7 +738,7 @@ describe('editor sagas', () => {
       };
       const mappings = [{extract: 'e1', generate: 'g1', lookupName: 'l1'}];
 
-      return expectSaga(requestPreview, { id: editorId})
+      expectSaga(requestPreview, { id: editorId})
         .provide([
           [select(selectors.editor, editorId), editor],
           [select(selectors.mapping), {mappings, isNSAssistantFormLoaded: true}],
@@ -761,7 +762,7 @@ describe('editor sagas', () => {
       };
       const mappings = [{generate: 'g1'}];
 
-      return expectSaga(requestPreview, { id: editorId})
+      expectSaga(requestPreview, { id: editorId})
         .provide([
           [select(selectors.editor, editorId), editor],
           [select(selectors.mapping), {mappings}],
@@ -781,7 +782,7 @@ describe('editor sagas', () => {
         rule: ['id'],
       };
 
-      return expectSaga(evaluateExternalProcessor, {processorData})
+      expectSaga(evaluateExternalProcessor, {processorData})
         .not.call.fn(invokeProcessor)
         .returns({violations: {dataError: 'Must provide some sample data.'}})
         .run();
@@ -793,7 +794,7 @@ describe('editor sagas', () => {
         rule: ['id'],
       };
 
-      return expectSaga(evaluateExternalProcessor, {processorData})
+      expectSaga(evaluateExternalProcessor, {processorData})
         .provide([
           [matchers.call.fn(invokeProcessor), throwError(new APIException({
             status: 401,
@@ -814,7 +815,7 @@ describe('editor sagas', () => {
         rule: ['id'],
       };
 
-      return expectSaga(evaluateExternalProcessor, {processorData})
+      expectSaga(evaluateExternalProcessor, {processorData})
         .provide([
           [matchers.call.fn(invokeProcessor), ''],
         ])
@@ -869,7 +870,7 @@ describe('editor sagas', () => {
     test('should call requestPreview when previewOnSave is true and dispatch save failed action in case preview fails', () => {
       const editor = { editorType: 'settingsForm', previewOnSave: true };
 
-      return expectSaga(save, { id: editorId })
+      expectSaga(save, { id: editorId })
         .provide([
           [select(selectors.editor, editorId), editor],
           [matchers.call.fn(requestPreview), { error: 'some error' }],
@@ -891,7 +892,7 @@ describe('editor sagas', () => {
 
       processorLogic.preSaveValidate = jest.fn().mockImplementationOnce(() => preSaveValidate);
 
-      return expectSaga(save, { id: editorId })
+      expectSaga(save, { id: editorId })
         .provide([
           [select(selectors.editor, editorId), editor],
         ])
@@ -910,7 +911,7 @@ describe('editor sagas', () => {
         .not.put(actions.editor.saveFailed(editorId))
         .run();
 
-      expect(editor.onSave.mock.calls.length).toBe(1);
+      expect(editor.onSave.mock.calls).toHaveLength(1);
 
       // since there are 3 foreground patches, total call to commitStagedChanges would be 3
       expect(effects.call).toHaveLength(3);
@@ -921,7 +922,7 @@ describe('editor sagas', () => {
     test('should dispatch save failed action if no patch sets are given and onSave handler is also undefined', () => {
       processorLogic.getPatchSet = jest.fn().mockImplementationOnce(() => null);
 
-      return expectSaga(save, { id: editorId })
+      expectSaga(save, { id: editorId })
         .provide([
           [select(selectors.editor, editorId), editor],
         ])
@@ -1049,7 +1050,7 @@ describe('editor sagas', () => {
         autoEvaluate: true,
       };
 
-      return expectSaga(autoEvaluateProcessor, { id: editorId})
+      expectSaga(autoEvaluateProcessor, { id: editorId})
         .provide([
           [select(selectors.editor, editorId), editor],
         ])
@@ -1084,12 +1085,12 @@ describe('editor sagas', () => {
         })
       );
 
-      return expectSaga(refreshHelperFunctions)
+      expectSaga(refreshHelperFunctions)
         .not.call.fn(getResource)
         .put(actions.editor.updateHelperFunctions(mockHelperFunctions))
         .run();
     });
-    test('should create a new helperFunction instance when there isn\'t any in the local storage ', () => {
+    test('should create a new helperFunction instance when there isn\'t any in the local storage', () => {
       localStorage.getItem = jest.fn().mockImplementationOnce(() => null);
       const someDateEpoch = 1234;
 
@@ -1118,7 +1119,7 @@ describe('editor sagas', () => {
       );
     });
 
-    test('should check the updateTime in the localStorage for the helper Function to detemine if the helperFunctions need to be updated, lets consider the scenario where the update interval is larger ', () => {
+    test('should check the updateTime in the localStorage for the helper Function to detemine if the helperFunctions need to be updated, lets consider the scenario where the update interval is larger', () => {
       const recentDateEpoch = 1100;
       const olderDateEpoch = 1000;
       const mockHelperFunctions = ['add', 'substract'];
@@ -1135,13 +1136,13 @@ describe('editor sagas', () => {
       // advance the time to be less than the interval
       advanceTo(recentDateEpoch);
 
-      return expectSaga(refreshHelperFunctions)
+      expectSaga(refreshHelperFunctions)
         .not.call.fn(getResource)
         .put(actions.editor.updateHelperFunctions(mockHelperFunctions))
         .run();
     });
 
-    test('should check the updateTime in the localStorage for the helper Function to determine if the helperFunctions need to be updated, lets consider the scenario where the update interval is smaller ', () => {
+    test('should check the updateTime in the localStorage for the helper Function to determine if the helperFunctions need to be updated, lets consider the scenario where the update interval is smaller', () => {
       const recentDateEpoch = 1100;
       const olderDateEpoch = 1000;
 
@@ -1182,7 +1183,7 @@ describe('editor sagas', () => {
     test('should exit gracefully when the getResource api call fails and should not dispatch update helper function action', () => {
       localStorage.getItem = jest.fn().mockImplementationOnce(() => null);
 
-      return expectSaga(refreshHelperFunctions)
+      expectSaga(refreshHelperFunctions)
         .provide([
           [call(getResource, {
             resourceType: 'processors',
@@ -1212,7 +1213,7 @@ describe('editor sagas', () => {
         insertStubKey: 'handleRequest',
       };
 
-      return expectSaga(requestEditorSampleData, { id: 'script' })
+      expectSaga(requestEditorSampleData, { id: 'script' })
         .provide([
           [select(selectors.editor, 'script'), editor],
           [matchers.call.fn(constructResourceFromFormValues), {}],
@@ -1231,7 +1232,7 @@ describe('editor sagas', () => {
         stage: 'contentBasedFlowRouter',
       };
 
-      return expectSaga(requestEditorSampleData, { id: 'as2content' })
+      expectSaga(requestEditorSampleData, { id: 'as2content' })
         .provide([
           [select(selectors.editor, 'as2content'), editor],
           [matchers.call.fn(constructResourceFromFormValues), {}],
@@ -1262,7 +1263,7 @@ describe('editor sagas', () => {
         formKey: 'new-123',
       };
 
-      return expectSaga(requestEditorSampleData, { id: 'filexml' })
+      expectSaga(requestEditorSampleData, { id: 'filexml' })
         .provide([
           [select(selectors.editor, 'filexml'), editor],
           [matchers.call.fn(constructResourceFromFormValues), {}],
@@ -1283,7 +1284,7 @@ describe('editor sagas', () => {
         formKey: 'new-123',
       };
 
-      return expectSaga(requestEditorSampleData, { id: 'filefiledefinition' })
+      expectSaga(requestEditorSampleData, { id: 'filefiledefinition' })
         .provide([
           [select(selectors.editor, 'filefiledefinition'), editor],
           [matchers.call.fn(constructResourceFromFormValues), {}],
@@ -1301,7 +1302,7 @@ describe('editor sagas', () => {
         formKey: 'new-123',
       };
 
-      return expectSaga(requestEditorSampleData, { id: 'dataURITemplate' })
+      expectSaga(requestEditorSampleData, { id: 'dataURITemplate' })
         .provide([
           [select(selectors.editor, 'dataURITemplate'), editor],
           [matchers.call.fn(constructResourceFromFormValues), {}],
@@ -1326,7 +1327,7 @@ describe('editor sagas', () => {
         formKey: 'new-123',
       };
 
-      return expectSaga(requestEditorSampleData, { id: 'traceKeyTemplate' })
+      expectSaga(requestEditorSampleData, { id: 'traceKeyTemplate' })
         .provide([
           [select(selectors.editor, 'traceKeyTemplate'), editor],
           [matchers.call.fn(constructResourceFromFormValues), {}],
@@ -1350,7 +1351,7 @@ describe('editor sagas', () => {
         formKey: 'new-123',
       };
 
-      return expectSaga(requestEditorSampleData, { id: 'webhook.successBody' })
+      expectSaga(requestEditorSampleData, { id: 'webhook.successBody' })
         .provide([
           [select(selectors.editor, 'webhook.successBody'), editor],
           [matchers.call.fn(constructResourceFromFormValues), {}],
@@ -1383,7 +1384,7 @@ describe('editor sagas', () => {
       };
       const formValues = [];
 
-      return expectSaga(requestEditorSampleData, { id: 'restrelativeuri' })
+      expectSaga(requestEditorSampleData, { id: 'restrelativeuri' })
         .provide([
           [select(selectors.editor, 'restrelativeuri'), editor],
           [select(selectors.formState, 'new-123'), { value: formValues}],
@@ -1406,7 +1407,7 @@ describe('editor sagas', () => {
         stage: 'transform',
       };
 
-      return expectSaga(requestEditorSampleData, { id: 'tx-123' })
+      expectSaga(requestEditorSampleData, { id: 'tx-123' })
         .provide([
           [select(selectors.editor, 'tx-123'), editor],
           [matchers.call.fn(constructResourceFromFormValues), {}],
@@ -1426,7 +1427,7 @@ describe('editor sagas', () => {
         stage: 'transform',
       };
 
-      return expectSaga(requestEditorSampleData, { id: 'tx-123' })
+      expectSaga(requestEditorSampleData, { id: 'tx-123' })
         .provide([
           [select(selectors.editor, 'tx-123'), editor],
           [matchers.call.fn(constructResourceFromFormValues), {}],
@@ -1447,7 +1448,7 @@ describe('editor sagas', () => {
         stage: 'exportFilter',
       };
 
-      return expectSaga(requestEditorSampleData, { id: 'eFilter' })
+      expectSaga(requestEditorSampleData, { id: 'eFilter' })
         .provide([
           [select(selectors.editor, 'eFilter'), editor],
           [matchers.call.fn(constructResourceFromFormValues), {}],
@@ -1473,7 +1474,7 @@ describe('editor sagas', () => {
         stage: 'exportFilter',
       };
 
-      return expectSaga(requestEditorSampleData, { id: 'eFilter' })
+      expectSaga(requestEditorSampleData, { id: 'eFilter' })
         .provide([
           [select(selectors.editor, 'eFilter'), editor],
           [matchers.call.fn(constructResourceFromFormValues), {}],
@@ -1497,7 +1498,7 @@ describe('editor sagas', () => {
         stage: 'exportFilter',
       };
 
-      return expectSaga(requestEditorSampleData, { id: 'eFilter' })
+      expectSaga(requestEditorSampleData, { id: 'eFilter' })
         .provide([
           [select(selectors.editor, 'eFilter'), editor],
           [matchers.call.fn(constructResourceFromFormValues), {}],
@@ -1537,7 +1538,7 @@ describe('editor sagas', () => {
         fieldId: 'file.csv',
       };
 
-      return expectSaga(requestEditorSampleData, { id: 'filecsv' })
+      expectSaga(requestEditorSampleData, { id: 'filecsv' })
         .provide([
           [select(selectors.editor, 'filecsv'), editor],
           [matchers.call.fn(constructResourceFromFormValues), {}],
@@ -1562,7 +1563,7 @@ describe('editor sagas', () => {
         fieldId: 'whereclause',
       };
 
-      return expectSaga(requestEditorSampleData, { id: 'salesforceid' })
+      expectSaga(requestEditorSampleData, { id: 'salesforceid' })
         .provide([
           [select(selectors.editor, 'salesforceid'), editor],
           [matchers.call.fn(constructResourceFromFormValues), {}],
@@ -1585,7 +1586,7 @@ describe('editor sagas', () => {
         stage: 'transform',
       };
 
-      return expectSaga(requestEditorSampleData, { id: 'tx-123' })
+      expectSaga(requestEditorSampleData, { id: 'tx-123' })
         .provide([
           [select(selectors.editor, 'tx-123'), editor],
           [matchers.call.fn(constructResourceFromFormValues), {}],
@@ -1608,7 +1609,7 @@ describe('editor sagas', () => {
         fieldId: 'http.ping.body',
       };
 
-      return expectSaga(requestEditorSampleData, { id: 'httppingbody' })
+      expectSaga(requestEditorSampleData, { id: 'httppingbody' })
         .provide([
           [select(selectors.editor, 'httppingbody'), editor],
           [matchers.call.fn(constructResourceFromFormValues), {}],
@@ -1646,7 +1647,7 @@ describe('editor sagas', () => {
         parentType: 'exports',
       };
 
-      return expectSaga(requestEditorSampleData, { id: 'httppingbody' })
+      expectSaga(requestEditorSampleData, { id: 'httppingbody' })
         .provide([
           [select(selectors.editor, 'httppingbody'), editor],
           [matchers.call.fn(constructResourceFromFormValues), {}],
@@ -1685,7 +1686,7 @@ describe('editor sagas', () => {
         fieldId: 'expression',
       };
 
-      return expectSaga(requestEditorSampleData, { id: 'expression' })
+      expectSaga(requestEditorSampleData, { id: 'expression' })
         .provide([
           [select(selectors.editor, 'expression'), editor],
           [matchers.call.fn(constructResourceFromFormValues), {}],
@@ -1726,7 +1727,7 @@ describe('editor sagas', () => {
         mapper2RowKey: 'c2',
       };
 
-      return expectSaga(requestEditorSampleData, { id: 'expression' })
+      expectSaga(requestEditorSampleData, { id: 'expression' })
         .provide([
           [select(selectors.editor, 'expression'), editor],
           [matchers.call.fn(constructResourceFromFormValues), {}],
@@ -1793,7 +1794,7 @@ describe('editor sagas', () => {
         mapper2RowKey: 'k1',
       };
 
-      return expectSaga(requestEditorSampleData, { id: 'expression' })
+      expectSaga(requestEditorSampleData, { id: 'expression' })
         .provide([
           [select(selectors.editor, 'expression'), editor],
           [matchers.call.fn(constructResourceFromFormValues), {}],
@@ -1854,7 +1855,7 @@ describe('editor sagas', () => {
         data: '{"id": "999"}',
       };
 
-      return expectSaga(initSampleData, { id: editorId })
+      expectSaga(initSampleData, { id: editorId })
         .provide([
           [select(selectors.editor, editorId), editor],
           [call(refreshHelperFunctions), undefined],
@@ -1873,7 +1874,7 @@ describe('editor sagas', () => {
         editorType: 'handlebars',
       };
 
-      return expectSaga(initSampleData, { id: editorId })
+      expectSaga(initSampleData, { id: editorId })
         .provide([
           [select(selectors.editor, editorId), editor],
           [call(requestEditorSampleData, {id: editorId}), {data: '{"id": "999"}', templateVersion: 2}],
@@ -1894,7 +1895,7 @@ describe('editor sagas', () => {
         sampleDataStatus: 'requested',
       };
 
-      return expectSaga(initSampleData, { id: editorId })
+      expectSaga(initSampleData, { id: editorId })
         .provide([
           [select(selectors.editor, editorId), editor],
           [call(requestEditorSampleData, {id: editorId}), {data: '{"id": "999"}', templateVersion: 2}],
@@ -1926,7 +1927,7 @@ describe('editor sagas', () => {
         sampleDataStatus: 'requested',
       };
 
-      return expectSaga(initEditor, { id: editorId, editorType: 'filter', options })
+      expectSaga(initEditor, { id: editorId, editorType: 'filter', options })
         .provide([
           [matchers.call.fn(initSampleData), undefined],
         ])
@@ -1975,7 +1976,7 @@ describe('editor sagas', () => {
         },
       };
 
-      return expectSaga(initEditor, { id, editorType: 'csvParser', options })
+      expectSaga(initEditor, { id, editorType: 'csvParser', options })
         .provide([
           [select(selectors.fieldState, 'new-123', 'file.csv'), {}],
           [select(selectors.formState, 'new-123'), {fieldMap: {}}],
@@ -2021,7 +2022,7 @@ describe('editor sagas', () => {
         resultMode: 'text',
       };
 
-      return expectSaga(initEditor, { id, editorType: 'sql', options })
+      expectSaga(initEditor, { id, editorType: 'sql', options })
         .provide([
           [select(selectors.fieldState, 'new-123', 'query'), {}],
           [select(selectors.formState, 'new-123'), {fieldMap: {}}],
@@ -2094,7 +2095,7 @@ describe('editor sagas', () => {
         },
       };
 
-      return expectSaga(initEditor, { id, editorType: 'settingsForm', options })
+      expectSaga(initEditor, { id, editorType: 'settingsForm', options })
         .provide([
           [select(selectors.fieldState, 'new-123', 'settings'), {}],
           [select(selectors.formState, 'new-123'), {fieldMap: {}}],
@@ -2176,7 +2177,7 @@ describe('editor sagas', () => {
         flowGrouping: { title: 'Customers', sectionId: 'Cus-1234567', settingsForm: {} },
       };
 
-      return expectSaga(initEditor, { id, editorType: 'settingsForm', options })
+      expectSaga(initEditor, { id, editorType: 'settingsForm', options })
         .provide([
           [select(selectors.fieldState, 'new-123', 'settings'), {}],
           [select(selectors.formState, 'new-123'), {fieldMap: {}}],
@@ -2289,7 +2290,7 @@ describe('editor sagas', () => {
         flowGrouping: { title: 'Customers', sectionId: 'Cus-1234567', settingsForm: {} },
       };
 
-      return expectSaga(initEditor, { id, editorType: 'settingsForm', options })
+      expectSaga(initEditor, { id, editorType: 'settingsForm', options })
         .provide([
           [select(selectors.fieldState, 'new-123', 'settings'), {}],
           [select(selectors.formState, 'new-123'), {fieldMap: {}}],
@@ -2342,7 +2343,7 @@ describe('editor sagas', () => {
         sortByFields: [],
       };
 
-      return expectSaga(initEditor, { id, editorType: 'structuredFileParser', options })
+      expectSaga(initEditor, { id, editorType: 'structuredFileParser', options })
         .provide([
           [select(selectors.fieldState, 'new-123', 'query'), {}],
           [select(selectors.formState, 'new-123'), {fieldMap: {}}],
@@ -2393,7 +2394,7 @@ describe('editor sagas', () => {
         fieldId: '',
       };
 
-      return expectSaga(initEditor, { id, editorType: 'javascript', options })
+      expectSaga(initEditor, { id, editorType: 'javascript', options })
         .provide([
           [matchers.call.fn(initSampleData), undefined],
           [matchers.call.fn(constructResourceFromFormValues), {}],
@@ -2431,7 +2432,7 @@ describe('editor sagas', () => {
 describe('editor utils', () => {
   describe('extractResourcePath util', () => {
     test('should return initialResourcePath if no value is passed', () => {
-      expect(extractResourcePath(null, '/initial')).toEqual('/initial');
+      expect(extractResourcePath(null, '/initial')).toBe('/initial');
     });
     test('should return the resourcePath present inside value if passed', () => {
       const value = {
@@ -2440,7 +2441,7 @@ describe('editor utils', () => {
         resourcePath: '/path',
       };
 
-      expect(extractResourcePath(value, '/initial')).toEqual('/path');
+      expect(extractResourcePath(value, '/initial')).toBe('/path');
       expect(extractResourcePath({}, '/initial')).toBeUndefined();
     });
   });

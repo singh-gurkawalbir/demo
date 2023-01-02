@@ -1,9 +1,6 @@
-/* global describe, test, expect, beforeEach, afterEach, jest */
 import React from 'react';
 import { MemoryRouter, Route} from 'react-router-dom';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { screen, cleanup } from '@testing-library/react';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { renderWithProviders } from '../../test/test-utils';
 import MyAccount from '.';
 import { getCreatedStore } from '../../store';
@@ -708,7 +705,7 @@ async function initMyAccount(match, tab) {
   };
 }
 
-describe('MyAccount', () => {
+describe('myAccount', () => {
   beforeEach(() => {
     initialStore = getCreatedStore();
     jest.clearAllMocks();
@@ -718,7 +715,7 @@ describe('MyAccount', () => {
     jest.clearAllTimers();
     cleanup();
   });
-  test('Should able to acess the profile tab with owner access', async () => {
+  test('should able to acess the profile tab with owner access', async () => {
     const accounts = [
       {
         _id: 'own',
@@ -754,7 +751,7 @@ describe('MyAccount', () => {
 
     expect(screen.getByText('Data retention')).toBeInTheDocument();
   });
-  test('Should able to acess the subscription tab', async () => {
+  test('should able to acess the subscription tab', async () => {
     const match = {
       path: '/myAccount/:tab',
       url: '/myAccount/subscription',
@@ -779,7 +776,7 @@ describe('MyAccount', () => {
 
     expect(subscriptionText).toBeInTheDocument();
   });
-  test('Should able to access the Myaccount tab with the account which has manage access', async () => {
+  test('should able to access the Myaccount tab with the account which has manage access', async () => {
     const accounts = [
       {
         _id: '12345',
@@ -809,7 +806,7 @@ describe('MyAccount', () => {
 
     expect(tabCount).toHaveLength(2);
   });
-  test('Should able to acess the audit tab', async () => {
+  test('should able to acess the audit tab', async () => {
     const match = {
       path: '/myAccount/:tab',
       url: '/myAccount/audit',
@@ -834,7 +831,7 @@ describe('MyAccount', () => {
 
     expect(auditText).toBeInTheDocument();
   });
-  test('Should able to acess the transfers tab', async () => {
+  test('should able to acess the transfers tab', async () => {
     const match = {
       path: '/myAccount/:tab',
       url: '/myAccount/transfers',
@@ -859,7 +856,7 @@ describe('MyAccount', () => {
 
     expect(transfersText).toBeInTheDocument();
   });
-  test('Should able to acess the security tab', async () => {
+  test('should able to acess the security tab', async () => {
     const match = {
       path: '/myAccount/:tab',
       url: '/myAccount/security',
@@ -884,7 +881,7 @@ describe('MyAccount', () => {
 
     expect(securityText).toBeInTheDocument();
   });
-  test('Should able to acess the data retention tab', async () => {
+  test('should able to acess the data retention tab', async () => {
     const match = {
       path: '/myAccount/:tab',
       url: '/myAccount/dataretention',

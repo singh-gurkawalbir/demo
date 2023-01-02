@@ -1,4 +1,3 @@
-/* global describe, test, expect  */
 
 import React from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
@@ -30,7 +29,7 @@ initialStore.getState().data.resources = {
   }],
 };
 
-describe('UI test cases for selectedmultiselectfilterlabel', () => {
+describe('uI test cases for selectedmultiselectfilterlabel', () => {
   test('should display name when there are no flowgroupings', () => {
     renderWithProviders(<SelectedLabelImp name="flowGroupingTest" id="453245676527707a465432d" />);
     const res = screen.getByText('flowGroupingTest');

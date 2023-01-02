@@ -1,4 +1,3 @@
-/* global , test, describe, expect */
 import {
   getFilterRuleId,
   getFilterList,
@@ -10,7 +9,7 @@ import {
 
 describe("SalesForceLokkupFilter's util test cases", () => {
   test('getFilterRuleId function test case', () => {
-    expect(getFilterRuleId({ id: 'firstText_rule_expectedText' })).toEqual(
+    expect(getFilterRuleId({ id: 'firstText_rule_expectedText' })).toBe(
       'expectedText'
     );
   });
@@ -41,7 +40,7 @@ describe("SalesForceLokkupFilter's util test cases", () => {
     });
   });
   describe('generateRulesState function test', () => {
-    test('should call the function with condition as or ', () => {
+    test('should call the function with condition as or', () => {
       const rule = {
         condition: 'OR',
         rules: [
@@ -120,7 +119,7 @@ describe("SalesForceLokkupFilter's util test cases", () => {
           qbRules,
           salesforceFilterDataTypes
         )
-      ).toEqual('((Id = Account.Id) AND (Fax = {{{phone AssistantPhone}}}))');
+      ).toBe('((Id = Account.Id) AND (Fax = {{{phone AssistantPhone}}}))');
     });
     test('should show the formuladate in the LHS expression', () => {
       const qbRules = {
@@ -171,7 +170,7 @@ describe("SalesForceLokkupFilter's util test cases", () => {
           qbRules,
           salesforceFilterDataTypes
         )
-      ).toEqual(
+      ).toBe(
         '((formuladate:somexpresion = Account.Id) AND (Fax = {{{phone AssistantPhone}}}))'
       );
     });
@@ -225,7 +224,7 @@ describe("SalesForceLokkupFilter's util test cases", () => {
           qbRules,
           salesforceFilterDataTypes
         )
-      ).toEqual(
+      ).toBe(
         '((formulanumeric:somexpresion = Account.Id) AND (Fax = {{{phone AssistantPhone}}}))'
       );
     });
@@ -279,7 +278,7 @@ describe("SalesForceLokkupFilter's util test cases", () => {
           qbRules,
           salesforceFilterDataTypes
         )
-      ).toEqual(
+      ).toBe(
         '((formulatext:somexpresion = Account.Id) AND (Fax = {{{phone AssistantPhone}}}))'
       );
     });
@@ -316,7 +315,7 @@ describe("SalesForceLokkupFilter's util test cases", () => {
           qbRules,
           salesforceFilterDataTypes
         )
-      ).toEqual('(Fax = {{{phone AssistantPhone}}})');
+      ).toBe('(Fax = {{{phone AssistantPhone}}})');
     });
     test('should take field as by default type when type of data data is not provided', () => {
       const qbRules = {
@@ -349,7 +348,7 @@ describe("SalesForceLokkupFilter's util test cases", () => {
           qbRules,
           salesforceFilterDataTypes
         )
-      ).toEqual('(Fax = AssistantPhone)');
+      ).toBe('(Fax = AssistantPhone)');
     });
     test('should wrap the rules in extra bracket when more than 2 rules are present', () => {
       const qbRules = {
@@ -417,7 +416,7 @@ describe("SalesForceLokkupFilter's util test cases", () => {
           qbRules,
           salesforceFilterDataTypes
         )
-      ).toEqual('((Fax = {{{phone AssistantPhone}}}) AND ((Fax = {{{phone AssistantPhone}}}) AND (Fax = {{{phone AssistantPhone}}})))');
+      ).toBe('((Fax = {{{phone AssistantPhone}}}) AND ((Fax = {{{phone AssistantPhone}}}) AND (Fax = {{{phone AssistantPhone}}})))');
     });
     test('should by default take type as field in rhs when nno provided', () => {
       const qbRules = {
@@ -451,28 +450,28 @@ describe("SalesForceLokkupFilter's util test cases", () => {
           qbRules,
           salesforceFilterDataTypes
         )
-      ).toEqual('(Fax = Fax)');
+      ).toBe('(Fax = Fax)');
     });
   });
   describe('convertValueToSuiteScriptSupportedExpression function test cases', () => {
     test('should convert the expression into suite script supported expression', () => {
       expect(convertValueToSuiteScriptSupportedExpression(
         '((Id = Account.Id) AND (Fax = {{{phone AssistantPhone}}}))'
-      )).toEqual(
+      )).toBe(
         '[["Id","=","Account.Id"],"and",["Fax","=","AssistantPhone"]]'
       );
     });
     test('should remove any extra spaces from the expression', () => {
       expect(convertValueToSuiteScriptSupportedExpression(
         '((Id = Account.Id)      OR (Fax = {{{phone AssistantPhone}}}))'
-      )).toEqual(
+      )).toBe(
         '[["Id","=","Account.Id"],"or",["Fax","=","AssistantPhone"]]'
       );
     });
     test('should return string with doubled quotes added', () => {
       expect(convertValueToSuiteScriptSupportedExpression(
         'a.sometext'
-      )).toEqual(
+      )).toBe(
         '"a.sometext"'
       );
     });

@@ -1,10 +1,9 @@
-/* global describe, test, expect */
 import { render, screen } from '@testing-library/react';
 import React from 'react';
 import OverflowTreeItem from '.';
 
-describe('Test suite for OverflowTreeItem', () => {
-  test('Should able to render the OverflowTreeItem', async () => {
+describe('test suite for OverflowTreeItem', () => {
+  test('should able to render the OverflowTreeItem', async () => {
     const props = {
       label: 'Test Integration Name',
       nodeId: '12345',

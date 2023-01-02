@@ -1,4 +1,3 @@
-/* global describe, test, expect, jest, beforeEach */
 import React from 'react';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -166,7 +165,7 @@ describe('PageGenerator UI tests', () => {
     expect(history.replace).toHaveBeenCalledWith('someinitiaUrL/add/pageGenerator/somePGId');
     expect(screen.getByText('Connector Type: rest')).toBeInTheDocument();
   });
-  test('should test the case when resource is FileAdaptor ', async () => {
+  test('should test the case when resource is FileAdaptor', async () => {
     const pg = {
       id: 'somePGId',
       webhookOnly: true,
@@ -182,7 +181,7 @@ describe('PageGenerator UI tests', () => {
     expect(screen.getByText('blockType: exportTransfer')).toBeInTheDocument();
     expect(screen.getByText('Connector Type: HTTPExport')).toBeInTheDocument();
   });
-  test('should test when no export and no resource Id and only application is provided ', () => {
+  test('should test when no export and no resource Id and only application is provided', () => {
     const pg = {
       id: 'somePGId',
       application: 'activecampaign',

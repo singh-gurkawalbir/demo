@@ -1,4 +1,3 @@
-/* global describe, test, jest, expect, beforeEach, afterEach */
 import { screen } from '@testing-library/react';
 import React from 'react';
 import * as reactRedux from 'react-redux';
@@ -200,10 +199,10 @@ describe('Testsuite for SelectApplications', () => {
     const textBox = screen.getByRole('textbox');
 
     expect(textBox).toBeInTheDocument();
-    expect(document.querySelector('input').getAttribute('value')).toEqual('');
+    expect(document.querySelector('input').getAttribute('value')).toBe('');
     await userEvent.type(textBox, 'test');
     expect(screen.getByText('test')).toBeInTheDocument();
-    expect(document.querySelector('input').getAttribute('value')).toEqual('test');
+    expect(document.querySelector('input').getAttribute('value')).toBe('test');
     expect(screen.getByText(/test_label/i)).toBeInTheDocument();
     userEvent.click(screen.getByText('Test Group App'));
     expect(screen.queryByText(/test_label/i)).not.toBeInTheDocument();

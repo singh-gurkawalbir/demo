@@ -1,4 +1,4 @@
-/* global test, expect, describe, jest */
+
 import React from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { screen } from '@testing-library/react';
@@ -38,7 +38,7 @@ function renderFuntion(actionProps, data) {
   userEvent.click(screen.getByRole('button', {name: /more/i}));
 }
 
-describe('Error Management Retry UI tests ', () => {
+describe('error Management Retry UI tests', () => {
   const resourceId = '6439276e7uybwe78292878';
   const flowId = '6938764rh739d3378';
   const source = 'ftp_bridge';

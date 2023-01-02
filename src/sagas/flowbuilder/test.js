@@ -1,4 +1,3 @@
-/* global describe, test, jest, beforeEach */
 
 import { select } from 'redux-saga/effects';
 import { expectSaga } from 'redux-saga-test-plan';
@@ -57,7 +56,7 @@ describe('flowbuilder sagas', () => {
 
       getChangesPatchSet.mockReturnValue(patchSet);
 
-      return expectSaga(moveStep, {flowId, stepInfo})
+      expectSaga(moveStep, {flowId, stepInfo})
         .provide([
           [select(selectors.resourceData, 'flows', flowId), {merged: originalFlow}],
         ])
@@ -84,7 +83,7 @@ describe('flowbuilder sagas', () => {
 
       getChangesPatchSet.mockReturnValue(mockPatchSet);
 
-      return expectSaga(createNewPGStep, {flowId})
+      expectSaga(createNewPGStep, {flowId})
         .provide([
           [select(selectors.resourceData, 'flows', flowId), {merged: {}}],
         ])
@@ -181,7 +180,7 @@ describe('flowbuilder sagas', () => {
 
       getChangesPatchSet.mockReturnValue(patchSet);
 
-      return expectSaga(deleteStep, {flowId, stepId})
+      expectSaga(deleteStep, {flowId, stepId})
         .provide([
           [select(selectors.fbGraphElementsMap, flowId), elementsMap],
           [select(selectors.fbFlow, flowId), flow],
@@ -350,7 +349,7 @@ describe('flowbuilder sagas', () => {
 
       getChangesPatchSet.mockReturnValue(patchSet);
 
-      return expectSaga(deleteStep, {flowId, stepId})
+      expectSaga(deleteStep, {flowId, stepId})
         .provide([
           [select(selectors.fbGraphElementsMap, flowId), elementsMap],
           [select(selectors.fbFlow, flowId), flow],
@@ -703,7 +702,7 @@ describe('flowbuilder sagas', () => {
 
       getChangesPatchSet.mockReturnValue(patchSet);
 
-      return expectSaga(deleteStep, {flowId, stepId})
+      expectSaga(deleteStep, {flowId, stepId})
         .provide([
           [select(selectors.fbGraphElementsMap, flowId), elementsMap],
           [select(selectors.fbFlow, flowId), flow],
@@ -721,7 +720,7 @@ describe('flowbuilder sagas', () => {
 
       getChangesPatchSet.mockReturnValue(patchSet);
 
-      return expectSaga(createNewPPStep, {flowId, path: undefined, processorIndex: undefined})
+      expectSaga(createNewPPStep, {flowId, path: undefined, processorIndex: undefined})
         .provide([
           [select(selectors.resourceData, 'flows', flowId), {merged: {}}],
         ])
@@ -817,7 +816,7 @@ describe('flowbuilder sagas', () => {
 
       getChangesPatchSet.mockReturnValue(patchSet);
 
-      return expectSaga(deleteEdge, {flowId, edgeId})
+      expectSaga(deleteEdge, {flowId, edgeId})
         .provide([
           [select(selectors.fbGraphElementsMap, flowId), elementsMap],
         ])
@@ -963,7 +962,7 @@ describe('flowbuilder sagas', () => {
         },
       ];
 
-      return expectSaga(deleteRouter, {flowId, routerId, prePatches})
+      expectSaga(deleteRouter, {flowId, routerId, prePatches})
         .provide([
           [select(selectors.fbFlow, flowId), flow],
         ])
@@ -1143,7 +1142,7 @@ describe('flowbuilder sagas', () => {
         },
       ];
 
-      return expectSaga(deleteRouter, {flowId, routerId, prePatches})
+      expectSaga(deleteRouter, {flowId, routerId, prePatches})
         .provide([
           [select(selectors.fbFlow, flowId), flow],
         ])
@@ -1217,7 +1216,7 @@ describe('flowbuilder sagas', () => {
         { op: 'remove', path: '/routers/0/routeRecordsUsing' },
       ];
 
-      return expectSaga(deleteRouter, {flowId, routerId, prePatches})
+      expectSaga(deleteRouter, {flowId, routerId, prePatches})
         .provide([
           [select(selectors.fbFlow, flowId), flow],
         ])
@@ -1337,7 +1336,7 @@ describe('flowbuilder sagas', () => {
         },
       ];
 
-      return expectSaga(deleteRouter, {flowId, routerId, prePatches})
+      expectSaga(deleteRouter, {flowId, routerId, prePatches})
         .provide([
           [select(selectors.fbFlow, flowId), flow],
         ])

@@ -1,4 +1,4 @@
-/* global describe, test, expect, beforeEach, jest */
+
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { screen } from '@testing-library/react';
@@ -31,7 +31,7 @@ async function initResourceReferences({
   };
 }
 
-describe('ResourceReferences test cases', () => {
+describe('resourceReferences test cases', () => {
   runServer();
 
   beforeEach(() => {
@@ -100,7 +100,7 @@ describe('ResourceReferences test cases', () => {
 
     expect(closeButton).toBeInTheDocument();
     userEvent.click(closeButton);
-    expect(onClose).toBeCalled();
+    expect(onClose).toHaveBeenCalled();
   });
 
   test('should pass the initial render with with wrong resource type', async () => {

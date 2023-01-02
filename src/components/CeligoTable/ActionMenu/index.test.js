@@ -1,4 +1,3 @@
-/* global describe, test, expect, jest */
 import React from 'react';
 import {
   screen, waitFor,
@@ -61,7 +60,7 @@ jest.mock('../../ArrowPopper', () => ({
   ),
 }));
 
-describe('ActionMenu component Test cases', () => {
+describe('actionMenu component Test cases', () => {
   runServer();
   test('should pass the intial render with no actions', async () => {
     const useRowActions = jest.fn().mockReturnValue([]);
@@ -90,7 +89,7 @@ describe('ActionMenu component Test cases', () => {
 
     expect(iconButton).toBeInTheDocument();
     userEvent.click(iconButton);
-    await waitFor(() => expect(setSelectedComponent).toBeCalledTimes(1));
+    await waitFor(() => expect(setSelectedComponent).toHaveBeenCalledTimes(1));
   });
 
   test('should pass the intial render without iconLabel', async () => {
@@ -103,7 +102,7 @@ describe('ActionMenu component Test cases', () => {
 
     expect(iconButton).toBeInTheDocument();
     userEvent.click(iconButton);
-    await waitFor(() => expect(setSelectedComponent).toBeCalledTimes(1));
+    await waitFor(() => expect(setSelectedComponent).toHaveBeenCalledTimes(1));
   });
 
   test('should pass for handleMenuClose', async () => {

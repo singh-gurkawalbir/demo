@@ -1,4 +1,4 @@
-/* global describe,  expect, jest, beforeEach, afterEach */
+/* eslint-disable jest/no-standalone-expect */
 import each from 'jest-each';
 import IntegrationApp, {
   getIntegrationAppUrlName,

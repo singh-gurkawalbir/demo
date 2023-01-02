@@ -1,4 +1,4 @@
-/* global describe, test, expect, jest */
+
 import React from 'react';
 import {
   screen,
@@ -14,7 +14,7 @@ jest.mock('../../../../CodeEditor', () => ({
     <><div>Editor</div><input type="text" onClick={() => props.onChange('a')} /></>
   ),
 }));
-describe('EditorModal UI tests', () => {
+describe('editorModal UI tests', () => {
   const mockHandleClose = jest.fn();
   const mockHandleUpdate = jest.fn();
   const props = {
@@ -41,7 +41,7 @@ describe('EditorModal UI tests', () => {
     renderWithProviders(<EditorModal {...props} />);
     expect(screen.getByText('Done')).toBeInTheDocument();
     userEvent.click(screen.getByText('Done'));
-    expect(mockHandleClose).toBeCalled();
-    expect(mockHandleUpdate).toBeCalled();
+    expect(mockHandleClose).toHaveBeenCalled();
+    expect(mockHandleUpdate).toHaveBeenCalled();
   });
 });

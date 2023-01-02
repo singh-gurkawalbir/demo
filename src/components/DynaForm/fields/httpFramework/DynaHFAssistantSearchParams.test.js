@@ -1,4 +1,4 @@
-/* global describe, test, expect , jest, beforeEach, afterEach */
+
 import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -65,7 +65,7 @@ jest.mock('react-router-dom', () => ({
 function initDynaHFAssistantSearchParams(props = {}) {
   return renderWithProviders(<MemoryRouter><DynaHFAssistantSearchParams {...props} /></MemoryRouter>);
 }
-describe('DynaHFAssistantSearchParams UI tests', () => {
+describe('dynaHFAssistantSearchParams UI tests', () => {
   let mockDispatchFn;
   let useDispatchSpy;
 

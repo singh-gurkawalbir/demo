@@ -1,4 +1,3 @@
-/* global describe, test, expect, jest, beforeEach, afterEach */
 import { screen } from '@testing-library/react';
 import React from 'react';
 import { MemoryRouter, Route } from 'react-router-dom';
@@ -129,7 +128,7 @@ jest.mock('react-router-dom', () => ({
     push: mockHistoryPush,
   }),
 }));
-describe('Testsuite for Resource Items Branch', () => {
+describe('testsuite for Resource Items Branch', () => {
   let mockDispatchFn;
   let useDispatchSpy;
 

@@ -1,4 +1,3 @@
-/* global describe, test, expect, jest, beforeEach, afterEach */
 import React from 'react';
 import {screen, waitFor} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -17,7 +16,7 @@ async function initAddonButton(props = {}) {
   return renderWithProviders(<ConfirmDialogProvider><AddonInstallerButton {...props} /></ConfirmDialogProvider>, {initialStore});
 }
 
-describe('AddonInstallerButton UI tests', () => {
+describe('addonInstallerButton UI tests', () => {
   let mockDispatchFn;
   let useDispatchSpy;
 
@@ -60,8 +59,8 @@ describe('AddonInstallerButton UI tests', () => {
 
     await initAddonButton(props);
     userEvent.click(screen.getByText(/Resume Uninstall/i));
-    await waitFor(() => expect(mockDispatchFn).toBeCalledWith(actions.integrationApp.isAddonInstallInprogress(true, '678901234567890')));
-    await waitFor(() => expect(mockDispatchFn).toBeCalledWith(actions.integrationApp.uninstaller.stepUninstall(
+    await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith(actions.integrationApp.isAddonInstallInprogress(true, '678901234567890')));
+    await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith(actions.integrationApp.uninstaller.stepUninstall(
       '678901234567892',
       '678901234567891',
       undefined,
@@ -73,8 +72,8 @@ describe('AddonInstallerButton UI tests', () => {
 
     await initAddonButton(props);
     userEvent.click(screen.getByText(/Resume Install/i));
-    await waitFor(() => expect(mockDispatchFn).toBeCalledWith(actions.integrationApp.isAddonInstallInprogress(true, '678901234567890')));
-    await waitFor(() => expect(mockDispatchFn).toBeCalledWith(actions.integrationApp.installer.installStep(
+    await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith(actions.integrationApp.isAddonInstallInprogress(true, '678901234567890')));
+    await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith(actions.integrationApp.installer.installStep(
       '678901234567891',
       undefined,
       '678901234567892',

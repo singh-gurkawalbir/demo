@@ -1,4 +1,3 @@
-/* global describe, test, expect, jest, */
 import React from 'react';
 import { screen } from '@testing-library/react';
 import FilterPanelWrapper from '.';
@@ -28,7 +27,7 @@ jest.mock('./FilterPanel', () => ({
     <div>FilterPanel</div>
   ),
 }));
-describe('FilterPanelWrapper UI tests', () => {
+describe('filterPanelWrapper UI tests', () => {
   test('should render the loading spinner when editor status is "requested"', () => {
     initFilterPanelWrapper({status: 'requested', editorId: 'filecsv'});
     expect(screen.getByText('Loading Spinner')).toBeInTheDocument();

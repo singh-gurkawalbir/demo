@@ -1,4 +1,4 @@
-/* global describe, test, expect, jest */
+
 import React from 'react';
 import { screen } from '@testing-library/react';
 import FormGenerator from '.';
@@ -138,7 +138,7 @@ const props = {
   formKey: 'scripts-5ff687fa4f59bb348d41b332',
 };
 
-describe('DynaFormGenerator UI tests', () => {
+describe('dynaFormGenerator UI tests', () => {
   test('should pass the initial render with default form values', () => {
     props.layout.type = 'collapse';
     renderWithProviders(<FormGenerator {...props} />);

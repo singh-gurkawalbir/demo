@@ -1,9 +1,7 @@
-/* global describe, test, expect, jest, afterEach */
 import * as React from 'react';
 import {screen, waitFor, fireEvent} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter, Router, Route } from 'react-router-dom';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { createMemoryHistory } from 'history';
 import MappingsSettingsV2Wrapper from './index';
 import { renderWithProviders, reduxStore} from '../../../../../../../test/test-utils';
@@ -88,17 +86,19 @@ function initFunction() {
   renderWithProviders(ui, {initialStore});
 }
 
-describe('MappingsSettingsV2Wrapper test cases', () => {
+describe('mappingsSettingsV2Wrapper test cases', () => {
   afterEach(() => {
     jest.clearAllMocks();
   });
+  // eslint-disable-next-line jest/prefer-spy-on
   window.HTMLElement.prototype.scrollIntoView = jest.fn();
+
   test('should redirect when generate is not presented in URL', () => {
     const history = createMemoryHistory();
 
-    history.replace = jest.fn();
+    jest.spyOn(history, 'replace').mockImplementation();
     renderWithProviders(<Router history={history} ><MappingsSettingsV2Wrapper /></Router>);
-    expect(history.replace).toHaveBeenCalled();
+    expect(history.replace).toHaveBeenCalledTimes(1);
   });
   test('should call history goback when clicked on close button', () => {
     initFunction();
@@ -168,7 +168,7 @@ describe('MappingsSettingsV2Wrapper test cases', () => {
     );
     expect(mockGoback).toHaveBeenCalledWith();
   });
-  test('should make dispatch call of patch for object array ', () => {
+  test('should make dispatch call of patch for object array', () => {
     initFunction();
 
     const stringType = screen.getAllByRole('textbox');
@@ -189,7 +189,7 @@ describe('MappingsSettingsV2Wrapper test cases', () => {
         }
       )
     );
-    expect(mockGoback).toHaveBeenCalled();
+    expect(mockGoback).toHaveBeenCalledTimes(1);
   });
   test('should show error message when no value is mapped', () => {
     initFunction();

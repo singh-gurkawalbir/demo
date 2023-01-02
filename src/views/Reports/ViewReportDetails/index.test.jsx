@@ -1,9 +1,6 @@
-/* global describe, test, expect, jest, beforeEach, afterEach */
 import React from 'react';
 import { MemoryRouter, Route } from 'react-router-dom';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { screen, cleanup } from '@testing-library/react';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import userEvent from '@testing-library/user-event';
 import ViewReportDetails from './index';
 import { renderWithProviders, reduxStore } from '../../../test/test-utils';
@@ -84,7 +81,7 @@ jest.mock('react-router-dom', () => ({
   }),
 }));
 
-describe('ViewReportDetails', () => {
+describe('viewReportDetails', () => {
   beforeEach(() => {
     initialStore = reduxStore;
   });
@@ -92,7 +89,7 @@ describe('ViewReportDetails', () => {
   afterEach(() => {
     cleanup();
   });
-  test('Should able to test the view report details pane by clicking on close button', () => {
+  test('should able to test the view report details pane by clicking on close button', () => {
     const eventReports = [
       {
         _id: '62f15359f8b63672312c3299',
@@ -164,7 +161,7 @@ describe('ViewReportDetails', () => {
     userEvent.click(closeButtonNode);
     expect(mockGoBackFn).toHaveBeenCalledTimes(1);
   });
-  test('Should able to test the view report details pane by giving wrong report type', () => {
+  test('should able to test the view report details pane by giving wrong report type', () => {
     const eventReports = [
       {
         _id: '62f15359f8b63672312c3299',
@@ -228,7 +225,7 @@ describe('ViewReportDetails', () => {
 
     expect(closeButtonNode).toBeInTheDocument();
   });
-  test('Should able to test the view report details pane by having no flows', () => {
+  test('should able to test the view report details pane by having no flows', () => {
     const eventReports = [
       {
         _id: '62f15359f8b63672312c3299',
@@ -258,7 +255,7 @@ describe('ViewReportDetails', () => {
 
     expect(flowDetailsNode).toBeInTheDocument();
   });
-  test('Should able to test the view report details pane which has only email id as the Requested by details', () => {
+  test('should able to test the view report details pane which has only email id as the Requested by details', () => {
     const eventReports = [
       {
         _id: '62f15359f8b63672312c3299',

@@ -1,10 +1,8 @@
-/* global describe, test, expect, jest, beforeEach, afterEach */
+/* eslint-disable jest/max-expects */
 import React from 'react';
 import { MemoryRouter, Route } from 'react-router-dom';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { screen, cleanup, within } from '@testing-library/react';
 import * as reactRedux from 'react-redux';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import userEvent from '@testing-library/user-event';
 import Clone from './Setup';
 import { reduxStore, renderWithProviders } from '../../test/test-utils';
@@ -255,7 +253,7 @@ jest.mock('react-router-dom', () => ({
   }),
 }));
 
-describe('Clone Setup', () => {
+describe('clone Setup', () => {
   runServer();
   let mockDispatchFn;
   let useDispatchSpy;
@@ -277,7 +275,7 @@ describe('Clone Setup', () => {
     mockDispatchFn.mockClear();
     cleanup();
   });
-  test('Should able to access the setup page which has is installed failure as false and click on configure', async () => {
+  test('should able to access the setup page which has is installed failure as false and click on configure', async () => {
     const integrationSession = {
       'flows-60db46af9433830f8f0e0fe7': {
         preview: {
@@ -442,7 +440,7 @@ describe('Clone Setup', () => {
     await userEvent.click(configureNode[1]);
     expect(mockDispatchFn).toHaveBeenCalledTimes(2);
   });
-  test('Should able to access the setup page which has is installed failure as true and click on configure', async () => {
+  test('should able to access the setup page which has is installed failure as true and click on configure', async () => {
     const integrationSession = {
       'flows-60db46af9433830f8f0e0fe7': {
         preview: {
@@ -587,7 +585,7 @@ describe('Clone Setup', () => {
       ]
     `);
   });
-  test('Should able to verify the cloning text when the cloned flow has isSetupComplete as true', async () => {
+  test('should able to verify the cloning text when the cloned flow has isSetupComplete as true', async () => {
     const integrationSession = {
       'flows-60db46af9433830f8f0e0fe7': {
         preview: {
@@ -719,7 +717,7 @@ describe('Clone Setup', () => {
 
     expect(cloningNode).toBeInTheDocument();
   });
-  test('Should able to access the setup page which has is installed failure as false and click on configure along with install bundle option', async () => {
+  test('should able to access the setup page which has is installed failure as false and click on configure along with install bundle option', async () => {
     const integrationSession = {
       'flows-61924a4aaba738048023c161': {
         preview: {
@@ -925,7 +923,7 @@ describe('Clone Setup', () => {
 
     expect(verifyingNode).toBeInTheDocument();
   });
-  test('Should able to access the setup page which has is installed failure as false and click on configure along with install bundle option by setting is trigger as false and verifying as true', async () => {
+  test('should able to access the setup page which has is installed failure as false and click on configure along with install bundle option by setting is trigger as false and verifying as true', async () => {
     const integrationSession = {
       'flows-61924a4aaba738048023c161': {
         preview: {
@@ -1129,7 +1127,7 @@ describe('Clone Setup', () => {
 
     expect(verifyingNode).toBeInTheDocument();
   });
-  test('Should able to access the setup page without flow name', async () => {
+  test('should able to access the setup page without flow name', async () => {
     const integrationSession = {
       'flows-60db46af9433830f8f0e0fe8': {
         preview: {

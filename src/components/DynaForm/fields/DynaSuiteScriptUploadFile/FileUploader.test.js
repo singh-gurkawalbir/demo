@@ -1,4 +1,3 @@
-/* global describe, test, expect */
 import React from 'react';
 import {screen} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -14,7 +13,7 @@ function fileUploader(props = {}) {
 }
 
 describe('FileUploader UI test cases', () => {
-  test('Should test the file uploading and error message to be displayed ', () => {
+  test('Should test the file uploading and error message to be displayed', () => {
     const data = {
       id: 'uploadFile',
       disabled: false,

@@ -1,4 +1,3 @@
-/* global describe, test, expect */
 import getJSONPaths from './jsonPaths';
 
 const {
@@ -11,7 +10,7 @@ const {
 
 describe('jsonPaths util function test', () => {
   describe('getUnionObject function test', () => {
-    test('should not throw any exception for invalid inputs ', () => {
+    test('should not throw any exception for invalid inputs', () => {
       const sampleArray = ['Canada', 'USA', 'India', 'China', 'Australia', 'Swden', 'Sri Lanka', 'Germany'];
 
       expect(getUnionObject(sampleArray)).toEqual({});
@@ -39,7 +38,7 @@ describe('jsonPaths util function test', () => {
   });
 
   describe('getJSONPaths function test', () => {
-    test('should not throw any exception for invalid inputs ', () => {
+    test('should not throw any exception for invalid inputs', () => {
       const sampleArray = ['Canada', 'USA', 'India', 'China', 'Australia', 'Swden', 'Sri Lanka', 'Germany'];
 
       expect(getJSONPaths(sampleArray)).toEqual([
@@ -420,7 +419,7 @@ describe('jsonPaths util function test', () => {
     });
   });
   describe('getTransform Paths function test', () => {
-    test('should not throw any exception for invalid inputs ', () => {
+    test('should not throw any exception for invalid inputs', () => {
       const sampleArray = ['Canada', 'USA', 'India', 'China', 'Australia', 'Swden', 'Sri Lanka', 'Germany'];
 
       expect(getTransformPaths(sampleArray)).toEqual([0, 1, 2, 3, 4, 5, 6, 7]);
@@ -528,7 +527,7 @@ describe('jsonPaths util function test', () => {
   });
 
   describe('pickFirstObject function test', () => {
-    test('should not throw any exception for invalid inputs ', () => {
+    test('should not throw any exception for invalid inputs', () => {
       const sampleArray = ['Canada', 'USA', 'India', 'China', 'Australia', 'Swden', 'Sri Lanka', 'Germany'];
 
       expect(pickFirstObject(sampleArray)).toEqual({});
@@ -556,7 +555,7 @@ describe('jsonPaths util function test', () => {
   });
 
   describe('getJSONPathArrayWithSpecialCharactersWrapped function test', () => {
-    test('should not throw any exception for invalid inputs ', () => {
+    test('should not throw any exception for invalid inputs', () => {
       const sampleArray = ['Canada', 'USA', 'India', 'China', 'Australia', 'Swden', 'Sri Lanka', 'Germany'];
 
       expect(getJSONPathArrayWithSpecialCharactersWrapped(sampleArray)).toEqual([
@@ -806,13 +805,13 @@ describe('jsonPaths util function test', () => {
   });
 
   describe('wrapSpecialChars function test', () => {
-    test('should not throw any exception for invalid inputs ', () => {
+    test('should not throw any exception for invalid inputs', () => {
       const sampleArray = ['Canada', 'USA', 'India', 'China', 'Australia', 'Swden', 'Sri Lanka', 'Germany'];
 
       expect(sampleArray.map(wrapSpecialChars)).toEqual(sampleArray);
       expect(wrapSpecialChars()).toEqual({});
-      expect(wrapSpecialChars(null)).toEqual(null);
-      expect(wrapSpecialChars(1)).toEqual(1);
+      expect(wrapSpecialChars(null)).toBeNull();
+      expect(wrapSpecialChars(1)).toBe(1);
       expect(wrapSpecialChars([])).toEqual({});
       expect(wrapSpecialChars({})).toEqual({});
     });

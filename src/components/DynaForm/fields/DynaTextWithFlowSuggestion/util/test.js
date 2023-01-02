@@ -1,4 +1,4 @@
-/* global describe, test, expect */
+
 import getValueAfterInsert from '.';
 
 describe('getValueAfterInsert util method for TextWithFlowSuggestion', () => {
@@ -13,7 +13,7 @@ describe('getValueAfterInsert util method for TextWithFlowSuggestion', () => {
     );
   });
 
-  test('insert value after "{{xxx", without "}}" or "{{" following it ', () => {
+  test('insert value after "{{xxx", without "}}" or "{{" following it', () => {
     const value = 'Hello{{John';
     const insertPosition = 9;
     const insertedVal = 'Jonny';

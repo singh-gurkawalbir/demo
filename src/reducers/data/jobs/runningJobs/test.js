@@ -1,4 +1,4 @@
-/* global describe, test, expect */
+
 import reducer, { selectors} from '.';
 import actions from '../../../../actions';
 import { JOB_TYPES, JOB_STATUS } from '../../../../constants';
@@ -343,14 +343,14 @@ describe('Running jobs selectors', () => {
 
   describe('isRunningJobsCollectionLoading', () => {
     test('should return false when state is empty', () => {
-      expect(selectors.isRunningJobsCollectionLoading()).toEqual(false);
+      expect(selectors.isRunningJobsCollectionLoading()).toBe(false);
     });
 
     test('should return true when state contains status as loading', () => {
       const jobsRequestedAction = actions.job.dashboard.running.requestCollection({});
       const state = reducer(undefined, jobsRequestedAction);
 
-      expect(selectors.isRunningJobsCollectionLoading(state)).toEqual(true);
+      expect(selectors.isRunningJobsCollectionLoading(state)).toBe(true);
     });
   });
 });

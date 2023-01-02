@@ -1,4 +1,4 @@
-/* global describe, test, expect, jest */
+
 import React from 'react';
 import { screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
@@ -28,8 +28,8 @@ jest.mock('../ResourceDrawerLink', () => ({
   },
 }));
 
-describe('ResourceDrawer connections UI test', () => {
-  test('should show the resource content and type when and disabled text ', () => {
+describe('resourceDrawer connections UI test', () => {
+  test('should show the resource content and type when and disabled text', () => {
     renderWithProviders(<MemoryRouter><ConnectionResourceDrawerLink integrationId="integrationId" resource="resourceContent" /> </MemoryRouter>);
 
     const resourceType = screen.getByText('resourceType= connections');
@@ -41,7 +41,7 @@ describe('ResourceDrawer connections UI test', () => {
     expect(resource).toBeInTheDocument();
     expect(disabled).toBeInTheDocument();
   });
-  test('should show the resource content and type when and not disabled text ', () => {
+  test('should show the resource content and type when and not disabled text', () => {
     renderWithProviders(<MemoryRouter><ConnectionResourceDrawerLink integrationId="integrationId" resource="resourceContent" /> </MemoryRouter>, {initialStore});
     const resourceType = screen.getByText('resourceType= connections');
     const resource = screen.getByText('resource= resourceContent');

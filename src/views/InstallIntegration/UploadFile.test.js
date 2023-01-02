@@ -1,9 +1,7 @@
-/* global describe, test, expect, jest, beforeEach, afterEach */
 import React from 'react';
 import {screen, waitFor} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import {Router} from 'react-router-dom';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import {createMemoryHistory} from 'history';
 import * as reactRedux from 'react-redux';
 import {renderWithProviders } from '../../test/test-utils';
@@ -40,7 +38,7 @@ describe('UploadFile UI tests', () => {
   afterEach(() => {
     useDispatchSpy.mockClear();
   });
-  test('should pass the initial render ', () => {
+  test('should pass the initial render', () => {
     const props = {history, obj: {installIntegration: true}};
 
     initUploadFile(props);

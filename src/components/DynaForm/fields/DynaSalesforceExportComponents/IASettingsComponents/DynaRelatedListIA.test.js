@@ -1,4 +1,4 @@
-/* global describe, expect, jest, test, */
+
 import React from 'react';
 import { waitFor } from '@testing-library/react';
 import DynaRelatedListIA from './DynaRelatedListIA';
@@ -21,11 +21,11 @@ jest.mock('./DynaReferencedFieldsIA', () => ({
   useGetSalesforceExportDetails: () => ({ sObjectType: 'Quote', connectionId: '5efd8663a56953365bd28541'}),
 }));
 
-describe('DynaRelatedListIA UI tests', () => {
+describe('dynaRelatedListIA UI tests', () => {
   test('should pass the initial render', async () => {
     const props = {fieldMetaProps: {}};
 
     renderWithProviders(<DynaRelatedListIA {...props} />);
-    await waitFor(() => expect(mockDynaRelatedList).toBeCalledWith({fieldMetaProps: {}, options: 'Quote', connectionId: '5efd8663a56953365bd28541'}));
+    await waitFor(() => expect(mockDynaRelatedList).toHaveBeenCalledWith({fieldMetaProps: {}, options: 'Quote', connectionId: '5efd8663a56953365bd28541'}));
   });
 });

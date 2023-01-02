@@ -1,4 +1,3 @@
-/* global describe, test, expect */
 import { render, screen } from '@testing-library/react';
 import React from 'react';
 import { FlowProvider, useFlowContext } from '.';
@@ -45,7 +44,7 @@ describe('Testsuite for context', () => {
     expect(a).toEqual({ test: 'testflow' });
     expect(b).toEqual({elements: 'test elements'});
     expect(c).toEqual({elementsMap: 'test element map'});
-    expect(d).toEqual('234');
-    expect(e).toEqual('123');
+    expect(d).toBe('234');
+    expect(e).toBe('123');
   });
 });

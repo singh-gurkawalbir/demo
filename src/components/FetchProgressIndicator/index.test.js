@@ -1,4 +1,4 @@
-/* global describe, test, expect, jest */
+
 import React from 'react';
 import { screen } from '@testing-library/react';
 import { renderWithProviders, reduxStore } from '../../test/test-utils';
@@ -14,7 +14,7 @@ function ProgressIndicator(props = {}) {
   return renderWithProviders(ui, { initialStore });
 }
 
-describe('FetchProgressIndicator UI tests', () => {
+describe('fetchProgressIndicator UI tests', () => {
   const mockFunc = jest.fn();
 
   test('should render empty DOM for input status completed', () => {

@@ -1,4 +1,3 @@
-/* global describe, test, expect, beforeEach, afterEach, jest */
 import React from 'react';
 import {screen, waitFor} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -43,7 +42,7 @@ function initFileDataPanelTitle(props = {}) {
   return renderWithProviders(<FileDataPanelTitle {...props} />, {initialStore});
 }
 
-describe('FileDataPanelTitle UI tests', () => {
+describe('fileDataPanelTitle UI tests', () => {
   let mockDispatchFn;
   let useDispatchSpy;
 
@@ -73,7 +72,7 @@ describe('FileDataPanelTitle UI tests', () => {
 
     expect(uploadButton).toBeInTheDocument();
     userEvent.upload(uploadButton, file);
-    await waitFor(() => expect(mockDispatchFn).toBeCalledWith({file, fileId: '5b3c75dd5d3c125c88b5dd20-uploadFile', fileProps: {maxSize: undefined}, fileType: 'csv', type: 'FILE_PROCESS'}));
+    await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith({file, fileId: '5b3c75dd5d3c125c88b5dd20-uploadFile', fileProps: {maxSize: undefined}, fileType: 'csv', type: 'FILE_PROCESS'}));
   });
   test('should not render the uploadFile option for adaptorTypes other than ftp,s3 and simple', () => {
     initFileDataPanelTitle({editorId: 'filescsv', fileType: 'csv'});

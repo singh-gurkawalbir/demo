@@ -1,4 +1,4 @@
-/* global describe, test, expect ,jest */
+
 import React from 'react';
 import { screen, waitFor, fireEvent } from '@testing-library/react';
 import {renderWithProviders} from '../../../test/test-utils';
@@ -94,7 +94,7 @@ const props = {
   },
 };
 
-describe('FlowChart UI Tests', () => {
+describe('flowChart UI Tests', () => {
   runServer();
 
   async function renderWithProps(props) {
@@ -124,7 +124,7 @@ describe('FlowChart UI Tests', () => {
     expect(screen.getByText('Opacity : 1')).toBeInTheDocument();
   });
 
-  test('should test Custom tooltip ', async () => {
+  test('should test Custom tooltip', async () => {
     const store = await renderWithProps(props);
 
     store.dispatch(actions.flowMetrics.received('629f0dcfccb94d35de6f436b', []));

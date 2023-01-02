@@ -1,9 +1,8 @@
-/* global describe, test, expect */
 import { render, screen } from '@testing-library/react';
 import React from 'react';
 import CeligoLogo from '.';
 
-describe('Testsuite for Celigo Logo', () => {
+describe('testsuite for Celigo Logo', () => {
   test('should test the celigo logo', () => {
     render(
       <CeligoLogo />

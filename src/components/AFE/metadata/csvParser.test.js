@@ -1,4 +1,4 @@
-/* global describe, test, expect */
+
 import React from 'react';
 import metadata from './csvParser';
 import DataPanel from '../Editor/panels/Data';
@@ -10,10 +10,10 @@ describe('csvParser metadata test cases', () => {
   test('should pass the test case for each field', () => {
     const {type, fieldId, description, label, panels} = metadata;
 
-    expect(type).toEqual('csvParser');
-    expect(fieldId).toEqual('file.csv');
-    expect(description).toEqual('Converts delimited data into JSON');
-    expect(label).toEqual('CSV parser helper');
+    expect(type).toBe('csvParser');
+    expect(fieldId).toBe('file.csv');
+    expect(description).toBe('Converts delimited data into JSON');
+    expect(label).toBe('CSV parser helper');
 
     const csvParserRules = panels.find(p => p.title === 'CSV parser options');
     const resultPanel = panels.find(p => p.title === 'Parsed output');

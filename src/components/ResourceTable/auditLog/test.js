@@ -1,4 +1,5 @@
-/* global describe, expect */
+/* eslint-disable jest/no-standalone-expect */
+
 import each from 'jest-each';
 import {
   hasLongLength,
@@ -18,7 +19,7 @@ function getSampleObject(length) {
   return { a: 'x'.repeat(length - 8) };
 }
 
-describe.only('hasLongLength util method', () => {
+describe('hasLongLength util method', () => {
   const testCases = [
     [
       'should return false, if oldValue & newValue are undefined',

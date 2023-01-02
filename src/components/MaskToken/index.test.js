@@ -1,4 +1,3 @@
-/* global describe, test, expect */
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import MaskToken from '.';
@@ -14,7 +13,7 @@ async function initMaskToken({count = ''} = {}) {
   return renderWithProviders(ui);
 }
 
-describe('Testsuite for MaskToken', () => {
+describe('testsuite for MaskToken', () => {
   test('should able to test the mask token when count is empty', async () => {
     const {utils} = await initMaskToken();
 

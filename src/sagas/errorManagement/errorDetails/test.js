@@ -1,4 +1,6 @@
-/* global describe, test */
+/* eslint-disable jest/no-conditional-in-test */
+/* eslint-disable jest/no-test-return-statement */
+
 import { expectSaga } from 'redux-saga-test-plan';
 import { select } from 'redux-saga/effects';
 import * as matchers from 'redux-saga-test-plan/matchers';
@@ -167,7 +169,7 @@ describe('errorDetails sagas', () => {
 
       return test1 && test2;
     });
-    test('should call _formatErrors to add application name for source ', () => {
+    test('should call _formatErrors to add application name for source', () => {
       const openErrors = {
         errors: [
           { errorId: 'error123', source: 'application' },
@@ -175,14 +177,14 @@ describe('errorDetails sagas', () => {
         ],
       };
 
-      return expectSaga(requestErrorDetails, { flowId, resourceId })
+      expectSaga(requestErrorDetails, { flowId, resourceId })
         .provide([
           [matchers.call.fn(apiCallWithRetry), openErrors],
         ])
         .call(_formatErrors, { resourceId, errors: openErrors.errors })
         .run();
     });
-    test('should dispatch received action with formatted errors incase of api success ', () => {
+    test('should dispatch received action with formatted errors incase of api success', () => {
       const openErrors = {
         errors: [
           { errorId: 'error123', source: 'application', classification: 'connection' },
@@ -197,7 +199,7 @@ describe('errorDetails sagas', () => {
         ],
       };
 
-      return expectSaga(requestErrorDetails, { flowId, resourceId })
+      expectSaga(requestErrorDetails, { flowId, resourceId })
         .provide([
           [select(selectors.applicationName, resourceId), applicationName],
           [matchers.call.fn(apiCallWithRetry), openErrors],
@@ -215,7 +217,7 @@ describe('errorDetails sagas', () => {
     test('should do nothing incase of api failure', () => {
       const error = { status: 422, message: 'error'};
 
-      return expectSaga(requestErrorDetails, { flowId, resourceId })
+      expectSaga(requestErrorDetails, { flowId, resourceId })
         .provide([
           [matchers.call.fn(apiCallWithRetry), throwError(error)],
         ])
@@ -272,7 +274,7 @@ describe('errorDetails sagas', () => {
       const retryIds = ['id1', 'id2', 'id3'];
       const error = { status: 422, message: 'error'};
 
-      return expectSaga(retryErrors, { flowId, resourceId, retryIds, retryAll: false })
+      expectSaga(retryErrors, { flowId, resourceId, retryIds, retryAll: false })
         .provide([
           [matchers.call.fn(apiCallWithRetry), throwError(error)],
         ])
@@ -285,7 +287,7 @@ describe('errorDetails sagas', () => {
         }))
         .run();
     });
-    test('should dispatch selectErrors action to unselect retried errors if they are from resolved error list ', () => {
+    test('should dispatch selectErrors action to unselect retried errors if they are from resolved error list', () => {
       const retryIds = ['id1', 'id2', 'id3'];
       const response = { _jobId: 'job-123' };
       const errors = [
@@ -294,7 +296,7 @@ describe('errorDetails sagas', () => {
         { errorId: 'error3', message: 'invalid id', retryDataKey: 'id3' },
       ];
 
-      return expectSaga(retryErrors, { flowId, resourceId, retryIds, isResolved: true })
+      expectSaga(retryErrors, { flowId, resourceId, retryIds, isResolved: true })
         .provide([
           [matchers.call.fn(apiCallWithRetry), response],
           [select(selectors.allResourceErrorDetails, {
@@ -327,7 +329,7 @@ describe('errorDetails sagas', () => {
       ];
       const errorIds = ['error1', 'error2', 'error3'];
 
-      return expectSaga(retryErrors, { flowId, resourceId, retryIds })
+      expectSaga(retryErrors, { flowId, resourceId, retryIds })
         .provide([
           [matchers.call.fn(apiCallWithRetry), response],
           [select(selectors.allResourceErrorDetails, {
@@ -364,7 +366,7 @@ describe('errorDetails sagas', () => {
         { errorId: 'error3', message: 'invalid id', retryDataKey: 'id3', traceKey: 't2' },
       ];
 
-      return expectSaga(retryErrors, { flowId, resourceId, retryIds })
+      expectSaga(retryErrors, { flowId, resourceId, retryIds })
         .provide([
           [matchers.call.fn(apiCallWithRetry), response],
           [select(selectors.allResourceErrorDetails, {
@@ -385,7 +387,7 @@ describe('errorDetails sagas', () => {
         { errorId: 'error3', message: 'invalid id', retryDataKey: 'id3', traceKey: 't2' },
       ];
 
-      return expectSaga(retryErrors, { flowId, resourceId, retryIds })
+      expectSaga(retryErrors, { flowId, resourceId, retryIds })
         .provide([
           [matchers.call.fn(apiCallWithRetry), response],
           [select(selectors.allResourceErrorDetails, {
@@ -397,7 +399,7 @@ describe('errorDetails sagas', () => {
         .not.put(actions.errorManager.retryStatus.requestPoll({ flowId, resourceId }))
         .run();
     });
-    test('should retry all the filtered errors using resourceFilteredErrorDetails selector when retryAll is true ', () => {
+    test('should retry all the filtered errors using resourceFilteredErrorDetails selector when retryAll is true', () => {
       const response = { _jobId: 'job-123' };
       const errors = [
         { errorId: 'error1', message: 'application error', retryDataKey: 'id1' },
@@ -409,7 +411,7 @@ describe('errorDetails sagas', () => {
         { errorId: 'error2', message: 'source error', retryDataKey: 'id2' },
       ];
 
-      return expectSaga(retryErrors, { flowId, resourceId, retryAll: true })
+      expectSaga(retryErrors, { flowId, resourceId, retryAll: true })
         .provide([
           [matchers.call.fn(apiCallWithRetry), response],
           [select(selectors.resourceFilteredErrorDetails, {
@@ -491,7 +493,7 @@ describe('errorDetails sagas', () => {
       const errorIds = ['error1', 'error2', 'error3'];
       const error = { status: 422, message: 'error'};
 
-      return expectSaga(resolveErrors, { flowId, resourceId, errorIds })
+      expectSaga(resolveErrors, { flowId, resourceId, errorIds })
         .provide([
           [matchers.call.fn(apiCallWithRetry), throwError(error)],
         ])
@@ -510,7 +512,7 @@ describe('errorDetails sagas', () => {
     test('should dispatch remove action with all errorIds successfully resolved to remove from the list', () => {
       const errorIds = ['error1', 'error2', 'error3'];
 
-      return expectSaga(resolveErrors, { flowId, resourceId, errorIds })
+      expectSaga(resolveErrors, { flowId, resourceId, errorIds })
         .provide([
           [matchers.call.fn(apiCallWithRetry), undefined],
         ])
@@ -526,13 +528,13 @@ describe('errorDetails sagas', () => {
         }))
         .run();
     });
-    test('should resolve all the filtered errors using resourceFilteredErrorDetails selector when resolveAll is true, ', () => {
+    test('should resolve all the filtered errors using resourceFilteredErrorDetails selector when resolveAll is true,', () => {
       const filteredErrors = [
         { errorId: 'error1', message: 'application error', retryDataKey: 'id1' },
         { errorId: 'error2', message: 'source error', retryDataKey: 'id2' },
       ];
 
-      return expectSaga(resolveErrors, { flowId, resourceId, resolveAll: true })
+      expectSaga(resolveErrors, { flowId, resourceId, resolveAll: true })
         .provide([
           [matchers.call.fn(apiCallWithRetry), undefined],
           [select(selectors.resourceFilteredErrorDetails, { flowId, resourceId }), { errors: filteredErrors}],
@@ -579,7 +581,7 @@ describe('errorDetails sagas', () => {
         { errorId: 'error3', message: 'invalid id', source: 'Post map hook', classification: undefined},
       ];
 
-      return expectSaga(_formatErrors, { errors, resourceId })
+      expectSaga(_formatErrors, { errors, resourceId })
         .provide([
           [select(selectors.applicationName, resourceId), 'bigcommerce'],
         ])
@@ -603,24 +605,23 @@ describe('errorDetails sagas', () => {
         { errorId: 'error2', message: 'source error', source: 'Application', classification: 'Connection'},
         { errorId: 'error3', message: 'invalid id', source: 'Application', classification: 'Connection'},
       ];
-      const testWithValidApplicationName = expectSaga(_formatErrors, { errors, resourceId })
+
+      expectSaga(_formatErrors, { errors, resourceId })
         .provide([
           [select(selectors.applicationName, resourceId), applicationName],
         ])
         .returns(formattedErrors)
         .run();
-      const testWithoutApplicationName = expectSaga(_formatErrors, { errors, resourceId })
+      expectSaga(_formatErrors, { errors, resourceId })
         .returns(formattedErrorsWithoutApp)
         .run();
-
-      return testWithValidApplicationName && testWithoutApplicationName;
     });
   });
   describe('saveAndRetryError saga', () => {
-    test('should call updateRetryData saga and dispatch retry action to retry the error with updated retry data ', () => {
+    test('should call updateRetryData saga and dispatch retry action to retry the error with updated retry data', () => {
       const retryData = { test: 4 };
 
-      return expectSaga(saveAndRetryError, { flowId, resourceId, retryId, retryData})
+      expectSaga(saveAndRetryError, { flowId, resourceId, retryId, retryData})
         .provide([
           [matchers.call.fn(updateRetryData), undefined],
         ])
@@ -643,7 +644,8 @@ describe('errorDetails sagas', () => {
         { flowId, resourceId, isResolved: true }
       );
       const response = { signedURL: 'http://mockUrl.com/SHA256/2345sdcv' };
-      const downloadOpenErrorsTest = expectSaga(downloadErrors, { flowId, resourceId })
+
+      expectSaga(downloadErrors, { flowId, resourceId })
         .provide([
           [matchers.call.fn(apiCallWithRetry), response],
         ])
@@ -653,7 +655,8 @@ describe('errorDetails sagas', () => {
         })
         .call(openExternalUrl, { url: response.signedURL })
         .run();
-      const downloadResolvedErrorsTest = expectSaga(downloadErrors, { flowId, resourceId, isResolved: true })
+
+      expectSaga(downloadErrors, { flowId, resourceId, isResolved: true })
         .provide([
           [matchers.call.fn(apiCallWithRetry), response],
         ])
@@ -663,8 +666,6 @@ describe('errorDetails sagas', () => {
         })
         .call(openExternalUrl, { url: response.signedURL })
         .run();
-
-      return downloadOpenErrorsTest && downloadResolvedErrorsTest;
     });
     test('should invoke download errors api for open errors with occuredAt date filters', () => {
       const filters = {
@@ -678,7 +679,7 @@ describe('errorDetails sagas', () => {
 
       const response = { signedURL: 'http://mockUrl.com/SHA256/2345sdcv' };
 
-      return expectSaga(downloadErrors, { flowId, resourceId, filters })
+      expectSaga(downloadErrors, { flowId, resourceId, filters })
         .provide([
           [matchers.call.fn(apiCallWithRetry), response],
         ])
@@ -701,7 +702,7 @@ describe('errorDetails sagas', () => {
 
       const response = { signedURL: 'http://mockUrl.com/SHA256/2345sdcv' };
 
-      return expectSaga(downloadErrors, { flowId, resourceId, filters, isResolved: true })
+      expectSaga(downloadErrors, { flowId, resourceId, filters, isResolved: true })
         .provide([
           [matchers.call.fn(apiCallWithRetry), response],
         ])
@@ -720,7 +721,7 @@ describe('errorDetails sagas', () => {
         { errorId: 'error2', message: 'source error', retryDataKey: 'id2' },
       ];
 
-      const openErrorsTest = expectSaga(selectAllErrorDetailsInCurrPage, { flowId, resourceId, checked: true })
+      expectSaga(selectAllErrorDetailsInCurrPage, { flowId, resourceId, checked: true })
         .provide([
           [select(selectors.resourceFilteredErrorsInCurrPage, {
             flowId,
@@ -739,7 +740,7 @@ describe('errorDetails sagas', () => {
         )
         .run();
 
-      const resolvedErrorsTest = expectSaga(selectAllErrorDetailsInCurrPage, { flowId, resourceId, checked: true, isResolved: true })
+      expectSaga(selectAllErrorDetailsInCurrPage, { flowId, resourceId, checked: true, isResolved: true })
         .provide([
           [select(selectors.resourceFilteredErrorsInCurrPage, {
             flowId,
@@ -757,15 +758,13 @@ describe('errorDetails sagas', () => {
           })
         )
         .run();
-
-      return openErrorsTest && resolvedErrorsTest;
     });
   });
   describe('deselectAllErrors saga test cases', () => {
     test('should use selectedErrorIds selector to get all selected errorIds and dispatch selectErrors action for them', () => {
       const errorIds = ['id1', 'id2', 'id3'];
 
-      const openErrorsTest = expectSaga(deselectAllErrors, { flowId, resourceId })
+      expectSaga(deselectAllErrors, { flowId, resourceId })
         .provide([
           [select(selectors.selectedErrorIds, {
             flowId,
@@ -780,29 +779,28 @@ describe('errorDetails sagas', () => {
             errorIds,
             checked: false,
             isResolved: false,
-          })
-        )
-        .run();
-      const resolvedErrorsTest = expectSaga(deselectAllErrors, { flowId, resourceId, isResolved: true })
-        .provide([
-          [select(selectors.selectedErrorIds, {
-            flowId,
-            resourceId,
-            isResolved: true,
-          }), errorIds],
-        ])
-        .put(
-          actions.errorManager.flowErrorDetails.selectErrors({
-            flowId,
-            resourceId,
-            errorIds,
-            checked: false,
-            isResolved: true,
           })
         )
         .run();
 
-      return openErrorsTest && resolvedErrorsTest;
+      expectSaga(deselectAllErrors, { flowId, resourceId, isResolved: true })
+        .provide([
+          [select(selectors.selectedErrorIds, {
+            flowId,
+            resourceId,
+            isResolved: true,
+          }), errorIds],
+        ])
+        .put(
+          actions.errorManager.flowErrorDetails.selectErrors({
+            flowId,
+            resourceId,
+            errorIds,
+            checked: false,
+            isResolved: true,
+          })
+        )
+        .run();
     });
   });
   describe('purgeErrors saga test cases', () => {
@@ -816,7 +814,7 @@ describe('errorDetails sagas', () => {
         },
       };
 
-      return expectSaga(purgeError, { flowId, resourceId, errors })
+      expectSaga(purgeError, { flowId, resourceId, errors })
         .provide([
           [matchers.call.fn(apiCallWithRetry)],
           [matchers.call.fn(requestErrorDetails)],
@@ -846,7 +844,7 @@ describe('errorDetails sagas', () => {
         },
       };
 
-      return expectSaga(purgeError, { flowId, resourceId })
+      expectSaga(purgeError, { flowId, resourceId })
         .provide([
           [select(selectors.selectedErrorIds, { flowId, resourceId, isResolved: true }), errorIdList],
           [matchers.call.fn(apiCallWithRetry)],
@@ -878,7 +876,7 @@ describe('errorDetails sagas', () => {
       };
       const error = new Error();
 
-      return expectSaga(purgeError, { flowId, resourceId })
+      expectSaga(purgeError, { flowId, resourceId })
         .provide([
           [select(selectors.selectedErrorIds, { flowId, resourceId, isResolved: true }), errorIdList],
           [matchers.call.fn(apiCallWithRetry), throwError(error)],
