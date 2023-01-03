@@ -1,4 +1,4 @@
-/* global describe, test, expect, jest, afterEach */
+
 import React from 'react';
 import { screen} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -104,8 +104,8 @@ describe('OfflineConnectionDrawer UI test cases', () => {
 
     const links = screen.getAllByRole('link');
 
-    expect(links[0].textContent).toEqual('First Connection');
-    expect(links[1].textContent).toEqual('Second Connection');
+    expect(links[0].textContent).toBe('First Connection');
+    expect(links[1].textContent).toBe('Second Connection');
 
     userEvent.click(screen.getByText('Submit'));
     expect(mockHistoryGoBack).toHaveBeenCalled();
@@ -120,7 +120,7 @@ describe('OfflineConnectionDrawer UI test cases', () => {
 
     const list = screen.queryByRole('list');
 
-    expect(list).toBe(null);
+    expect(list).toBeNull();
   });
   test('should show connection Id as name when connection has no name', () => {
     initOfflineConnectionDrawer('5d53a5cdfb8d224f46042991', '5d2c5f22c6f53438803dd3b9');
