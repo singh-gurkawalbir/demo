@@ -540,6 +540,20 @@ export function* signup({payloadBody}) {
   }
 }
 
+export function* validateAndInitSession() {
+  const resp = yield call(validateSession);
+  let isUserAuthenticated = resp.authenticated;
+
+  if (resp.mfaRequired) {
+    isUserAuthenticated = resp.mfaVerified;
+  }
+
+  if (isUserAuthenticated) {
+    yield put(actions.auth.complete());
+    yield call(initializeApp);
+  }
+}
+
 export function* initializeSession({opts} = {}) {
   try {
     const resp = yield call(validateSession);
@@ -698,6 +712,7 @@ export const authenticationSagas = [
   takeEvery(actionTypes.AUTH.ACCEPT_INVITE.VALIDATE, validateAcceptInviteToken),
   takeEvery(actionTypes.AUTH.ACCEPT_INVITE.SUBMIT, submitAcceptInvite),
   takeEvery(actionTypes.AUTH.INIT_SESSION, initializeSession),
+  takeEvery(actionTypes.AUTH.VALIDATE_AND_INIT_SESSION, validateAndInitSession),
   takeEvery(actionTypes.AUTH.REQUEST, auth),
   takeEvery(actionTypes.AUTH.SIGNUP, signup),
   takeEvery(actionTypes.APP.UI_VERSION_FETCH, fetchUIVersion),

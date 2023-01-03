@@ -32,6 +32,8 @@ export function AppRoutingWithAuth({ children }) {
           state: { attemptedRoute: currentRoute, search },
         });
         dispatch(actions.auth.initSession());
+      } else {
+        dispatch(actions.auth.validateAndInitSession())
       }
     }
 
