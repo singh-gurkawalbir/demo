@@ -104,8 +104,9 @@ export const useSnackbarStyles = makeStyles({
 
 function NonSigninHeaderComponents() {
   const isAuthInitialized = useSelector(selectors.isAuthInitialized);
+  const isUserAuthenticated = useSelector(state => selectors.sessionInfo(state)?.authenticated);
 
-  if (!isAuthInitialized) return <Loader open>Loading...<Spinner /></Loader>;
+  if (!isAuthInitialized && !isUserAuthenticated) return <Loader open>Loading...<Spinner /></Loader>;
 
   return (
     <>
