@@ -33,7 +33,7 @@ export function AppRoutingWithAuth({ children }) {
         });
         dispatch(actions.auth.initSession());
       } else {
-        dispatch(actions.auth.validateAndInitSession())
+        dispatch(actions.auth.validateAndInitSession());
       }
     }
 
