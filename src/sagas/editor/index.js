@@ -660,8 +660,11 @@ export function* requestEditorSampleData({
       delete body.templateVersion;
     } else if (resourceType === 'iClients') {
       body.type = 'iclient';
-      body.connectionId = editor.connectionId;
       body.iClient = resource || {};
+
+      if (!isNewId(editor.connectionId)) {
+        body.connectionId = editor.connectionId;
+      }
 
       if (parentType) {
         body[parentType === 'exports' ? 'exportId' : 'importId'] = parentId;
