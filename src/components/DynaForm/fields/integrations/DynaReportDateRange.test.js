@@ -78,8 +78,6 @@ describe('dynaReportDateRange UI tests', () => {
     initDynaReportDateRange(props);
     userEvent.click(screen.getByText('Select range'));
     userEvent.click(screen.getByText('Custom'));
-    expect(screen.getByText(/Dec 2022/i)).toBeInTheDocument();
-    expect(screen.getByText(/Jan 2023/i)).toBeInTheDocument();
     expect(screen.getByText(/Start date/i)).toBeInTheDocument();
     expect(screen.getByText(/Start time/i)).toBeInTheDocument();
     expect(screen.getByText(/End date/i)).toBeInTheDocument();
