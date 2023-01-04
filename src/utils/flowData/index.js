@@ -406,16 +406,25 @@ export const getFormattedResourceForPreview = (
 
 /**
  * @input patchSet
- * @input resourceType
+ * @input resourceType : Default value is exports
  * @outPut stage /  undefined
  * The stage returned is used to determine what parts of resource's stages need to be updated
  * If none of the below paths are matched, returns undefined which implies reset the entire resource's state
  */
-export const getResourceStageUpdatedFromPatch = (patchSet = []) => {
+export const getResourceStageUpdatedFromPatch = (patchSet = [], resourceType = 'exports') => {
   const { path: patchSetPath, value: patchSetValue = {} } = patchSet[0] || {};
 
   if (patchSetPath === '/transform') return 'transform';
-  if (patchSetPath === '/filter') return 'outputFilter';
+  if (patchSetPath === '/filter') {
+    if (resourceType === 'imports') {
+      // Incase of imports, patchSet is filter for inputFilter
+      return 'inputFilter';
+    }
+
+    // Incase of pgs/lookups, patchSet is filter for outputFilter
+    // and inputFilter for inputFilter
+    return 'outputFilter';
+  }
   if (patchSetPath === '/inputFilter') return 'inputFilter';
   if (patchSetPath === '/hooks') {
     if (patchSetValue.preSavePage) return 'preSavePage';

@@ -79,7 +79,7 @@ export function* updateFlowOnResourceUpdate({
 
   if (['exports', 'imports', 'scripts'].includes(resourceType)) {
     const stagesToReset = [];
-    const updatedStage = getResourceStageUpdatedFromPatch(patch);
+    const updatedStage = getResourceStageUpdatedFromPatch(patch, resourceType);
 
     // No need to update the resources if the patch set is a raw data patch set
     if (!isRawDataPatchSet(patch)) {

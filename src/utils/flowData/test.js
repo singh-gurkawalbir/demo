@@ -1019,6 +1019,26 @@ describe('getResourceStageUpdatedFromPatch util', () => {
     expect(getResourceStageUpdatedFromPatch(hooksPatchSet)).toBe('preSavePage');
     expect(getResourceStageUpdatedFromPatch(transformPatchSet)).toBe('transform');
   });
+  test('should return inputFilter stage if the patchSet has filter and resourceType is imports else outputFilter for exports', () => {
+    const patchSet = [{
+      path: '/filter',
+      op: 'replace',
+      value: {
+        type: 'expression',
+        expression: {
+          rules: [
+            'equals',
+            ['string', ['extract', 'userId']],
+            'id1',
+          ],
+          version: 1,
+        },
+      },
+    }];
+
+    expect(getResourceStageUpdatedFromPatch(patchSet, 'exports')).toBe('outputFilter');
+    expect(getResourceStageUpdatedFromPatch(patchSet, 'imports')).toBe('inputFilter');
+  });
 });
 describe('getSampleFileMeta util', () => {
   test('should return correct fileMeta for non FTP file exports', () => {
