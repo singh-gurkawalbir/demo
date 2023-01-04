@@ -1,4 +1,4 @@
-/* global describe, expect */
+
 import each from 'jest-each';
 import { sortTiles } from '../../utils/home';
 
@@ -54,6 +54,7 @@ describe('sortTiles util method', () => {
   each(testCases).test(
     'should return %o for tiles %o and tilesOrder %o',
     (expected, tiles, tilesOrder) => {
+      // eslint-disable-next-line jest/no-standalone-expect
       expect(sortTiles(tiles, tilesOrder)).toEqual(expected);
     }
   );

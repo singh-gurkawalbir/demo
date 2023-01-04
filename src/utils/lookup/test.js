@@ -1,14 +1,13 @@
-/* global describe, test, expect */
 import lookupUtil from './index';
 
 describe('lookup utils test cases', () => {
   describe('getLookupFromResource util', () => {
     test('should not throw exception for invalid arguments', () => {
-      expect(lookupUtil.getLookupFromResource()).toEqual(undefined);
-      expect(lookupUtil.getLookupFromResource(null)).toEqual(undefined);
+      expect(lookupUtil.getLookupFromResource()).toBeUndefined();
+      expect(lookupUtil.getLookupFromResource(null)).toBeUndefined();
     });
     test('should return undefined if adaptorType does not match', () => {
-      expect(lookupUtil.getLookupFromResource({adaptorType: 'RDBMSImport'})).toEqual(undefined);
+      expect(lookupUtil.getLookupFromResource({adaptorType: 'RDBMSImport'})).toBeUndefined();
     });
     const lookups = [
       [
@@ -116,27 +115,27 @@ describe('lookup utils test cases', () => {
 
   describe('getLookupPath util', () => {
     test('should not throw exception for invalid arguments', () => {
-      expect(lookupUtil.getLookupPath()).toEqual(undefined);
-      expect(lookupUtil.getLookupPath(null)).toEqual(undefined);
+      expect(lookupUtil.getLookupPath()).toBeUndefined();
+      expect(lookupUtil.getLookupPath(null)).toBeUndefined();
     });
     test('should return undefined if adaptor type does not match', () => {
-      expect(lookupUtil.getLookupPath('FTPExport')).toEqual(undefined);
+      expect(lookupUtil.getLookupPath('FTPExport')).toBeUndefined();
     });
     test('should return correct path if adaptor type matches', () => {
-      expect(lookupUtil.getLookupPath('S3Import')).toEqual('/file/lookups');
+      expect(lookupUtil.getLookupPath('S3Import')).toBe('/file/lookups');
     });
   });
 
   describe('getLookupFieldId util', () => {
     test('should not throw exception for invalid arguments', () => {
-      expect(lookupUtil.getLookupFieldId()).toEqual(undefined);
-      expect(lookupUtil.getLookupFieldId(null)).toEqual(undefined);
+      expect(lookupUtil.getLookupFieldId()).toBeUndefined();
+      expect(lookupUtil.getLookupFieldId(null)).toBeUndefined();
     });
     test('should return undefined if adaptor type does not match', () => {
-      expect(lookupUtil.getLookupFieldId('FTPExport')).toEqual(undefined);
+      expect(lookupUtil.getLookupFieldId('FTPExport')).toBeUndefined();
     });
     test('should replace / with . and return if lookup path is found', () => {
-      expect(lookupUtil.getLookupFieldId('NetSuiteDistributedImport')).toEqual('netsuite_da.lookups');
+      expect(lookupUtil.getLookupFieldId('NetSuiteDistributedImport')).toBe('netsuite_da.lookups');
     });
   });
 
@@ -153,7 +152,7 @@ describe('lookup utils test cases', () => {
       expect(lookupUtil.getLookupFromFormContext({fields: {'/path': {id: 'path', value: 'abc'}}}, 'FTPExport')).toEqual([]);
     });
     test('should return the correct lookup context for passed adaptor type', () => {
-      expect(lookupUtil.getLookupFromFormContext({fields: {'/http/lookups': {id: 'http.lookups', value: 'some lookup'}}}, 'HTTPImport')).toEqual('some lookup');
+      expect(lookupUtil.getLookupFromFormContext({fields: {'/http/lookups': {id: 'http.lookups', value: 'some lookup'}}}, 'HTTPImport')).toBe('some lookup');
     });
   });
 });

@@ -1,4 +1,4 @@
-/* global describe, test, expect, jest, afterEach */
+
 import React from 'react';
 import {screen} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -24,13 +24,13 @@ function initDynaUserEmail(props = {}) {
   return renderWithProviders(ui);
 }
 
-describe('DynaUserEmail UI test cases', () => {
+describe('dynaUserEmail UI test cases', () => {
   afterEach(() => {
     jest.clearAllMocks();
   });
   test('should show the modal dialog when clicked on action button', () => {
     initDynaUserEmail({label: 'PropsLabel', value: 'PropsValue', readOnly: false});
-    expect(screen.getByText('PropsLabel'));
+    expect(screen.getByText('PropsLabel')).toBeInTheDocument();
     expect(screen.getByRole('textbox')).toBeDisabled();
     userEvent.click(screen.getByRole('button'));
     expect(mockDispatch).toHaveBeenCalledWith(
@@ -43,14 +43,14 @@ describe('DynaUserEmail UI test cases', () => {
   test('should not have action button when read only mode is avaiable', () => {
     initDynaUserEmail({label: 'PropsLabel', value: 'PropsValue', readOnly: true});
 
-    expect(screen.getByText('PropsLabel'));
+    expect(screen.getByText('PropsLabel')).toBeInTheDocument();
     expect(screen.getByRole('textbox')).toBeDisabled();
     expect(screen.queryByRole('button')).not.toBeInTheDocument();
   });
   test('should show help text', () => {
     initDynaUserEmail({label: 'PropsLabel', value: 'PropsValue', readOnly: true, helpText: 'Provided help text'});
 
-    expect(screen.getByText('PropsLabel'));
+    expect(screen.getByText('PropsLabel')).toBeInTheDocument();
     expect(screen.getByRole('textbox')).toBeDisabled();
     userEvent.click(screen.getByRole('button'));
     expect(screen.getByText('Provided help text')).toBeInTheDocument();

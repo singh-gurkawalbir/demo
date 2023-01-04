@@ -43,7 +43,7 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     alignItems: 'flex-start',
     marginTop: theme.spacing(-2),
-    marginBottom: 0,
+    marginBottom: theme.spacing(2),
     lineHeight: `${theme.spacing(2)}px`,
     '& > svg': {
       fill: theme.palette.error.main,
@@ -55,6 +55,9 @@ const useStyles = makeStyles(theme => ({
     color: theme.palette.warning.main,
     textAlign: 'right',
     marginBottom: theme.spacing(3),
+  },
+  icon: {
+    cursor: 'pointer',
   },
 }));
 
@@ -144,10 +147,12 @@ export default function ResetPassword() {
                     {showPassword ? (
                       <ShowContentIcon
                         onClick={handleClickShowPassword}
+                        className={classes.icon}
                         onMouseDown={handleMouseDownPassword} />
                     )
                       : (
                         <HideContentIcon
+                          className={classes.icon}
                           onClick={handleClickShowPassword}
                           onMouseDown={handleMouseDownPassword} />
                       )}

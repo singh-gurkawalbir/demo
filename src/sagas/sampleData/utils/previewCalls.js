@@ -116,12 +116,18 @@ export function* pageProcessorPreview({
     const updatePageProcessorToImport = pageProcessor => {
       if (pageProcessor._exportId === updatedPageProcessorId) {
         pageProcessorMap[updatedPageProcessorId].options = {};
+        // for lookup, remove inputFilters configured while making preview call for flowInput
+        delete pageProcessorMap[updatedPageProcessorId].doc?.inputFilter;
 
         return {
           ...pageProcessor,
           type: 'import',
           _importId: pageProcessor._exportId,
         };
+      }
+      if (pageProcessor._importId === updatedPageProcessorId) {
+        // for imports, remove inputFilters configured while making preview call for flowInput
+        delete pageProcessorMap[updatedPageProcessorId].doc?.filter;
       }
 
       return pageProcessor;

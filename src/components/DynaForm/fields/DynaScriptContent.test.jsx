@@ -1,4 +1,4 @@
-/* global describe, test, expect, jest, afterEach */
+
 import React from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import {screen} from '@testing-library/react';
@@ -61,11 +61,11 @@ function initDynaScriptContent(props = {}) {
   return renderWithProviders(ui, {initialStore});
 }
 
-describe('DynaScriptContent UI test cases', () => {
+describe('dynaScriptContent UI test cases', () => {
   afterEach(() => {
     jest.clearAllMocks();
   });
-  test('Script content should be displayed in the script drawer', () => {
+  test('script content should be displayed in the script drawer', () => {
     initialStore.getState().session.stage = {
       new638538b6c7d76c583e7593da: {
         master: null,
@@ -103,7 +103,7 @@ describe('DynaScriptContent UI test cases', () => {
     expect(screen.getByText('function preSavePage (options) {return "presave";}')).toBeInTheDocument();
   });
 
-  test('Mock on field change should be called when the script content is updated', () => {
+  test('mock on field change should be called when the script content is updated', () => {
     initialStore.getState().session.stage = {
       new638538b6c7d76c583e7593da: {
         master: null,
@@ -148,13 +148,13 @@ describe('DynaScriptContent UI test cases', () => {
 
     expect(textBoxNode).toBeInTheDocument();
     expect(document.querySelector('textarea[data-test="code-editor"]')).toHaveTextContent('function preSavePage (options) {return "sometext";}');
-    expect(mockOnFieldChange).toBeCalledWith('content', '123', true);
+    expect(mockOnFieldChange).toHaveBeenCalledWith('content', '123', true);
     const updatedScriptContent =
         `function preSavePage (options) {return "sometext";}${scriptHookStubs.preSavePage}`;
 
     expect(mockOnFieldChange).toHaveBeenCalledWith('content', updatedScriptContent, true);
   });
-  test('Should be able to test the script drawer when the script content is undefined', () => {
+  test('should be able to test the script drawer when the script content is undefined', () => {
     const data =
     {
       id: 'content',
@@ -178,7 +178,7 @@ describe('DynaScriptContent UI test cases', () => {
     expect(mockDispatch).toHaveBeenCalledWith(actions.resource.request('scripts', '638538b6c7d76c583e7593da'));
   });
 
-  test('Mock on field change should be called when content is uppdated in the empty script', () => {
+  test('mock on field change should be called when content is uppdated in the empty script', () => {
     initialStore.getState().session.stage = {
       new638538b6c7d76c583e7593da: {
         master: null,
@@ -222,7 +222,7 @@ describe('DynaScriptContent UI test cases', () => {
 
     expect(textBoxNode).toBeInTheDocument();
     expect(document.querySelector('textarea[data-test="code-editor"]')).toHaveTextContent('function preSavePage (options) {return "sometext";}');
-    expect(mockOnFieldChange).toBeCalledWith('content', '', true);
+    expect(mockOnFieldChange).toHaveBeenCalledWith('content', '', true);
     const updatedScriptContent =
         `function preSavePage (options) {return "sometext";}${scriptHookStubs.preSavePage}`;
 

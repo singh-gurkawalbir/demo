@@ -59,6 +59,7 @@ function generateConnectionRestSubDocFromHttpSubDoc(httpDoc, assistantName) {
     'auth.basic.password_salt': 'basicAuth.password_salt',
     'auth.basic.password': 'basicAuth.password', // For test cases
     'auth.oauth.authURI': 'authURI',
+    'auth.oauth.useIClientFields': 'oauth.useIClientFields',
     'auth.oauth.tokenURI': 'oauthTokenURI',
     'auth.oauth.scope': 'scope',
     'auth.oauth.scopeDelimiter': 'scopeDelimiter',

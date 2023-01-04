@@ -1,4 +1,3 @@
-/* global describe, test, expect,jest  */
 
 import React from 'react';
 import { screen } from '@testing-library/react';
@@ -17,7 +16,7 @@ jest.mock('../CeligoTable', () => ({
     </div>
   ),
 }));
-describe('UI test cases for ResourceTable', () => {
+describe('uI test cases for ResourceTable', () => {
   test('should display the data of the resource', () => {
     renderWithProviders(<ResourceTable data="connections" />);
     expect(screen.getByText('data = connections')).toBeInTheDocument();

@@ -1,3 +1,5 @@
+import { safeParse } from '../../../utils/string';
+
 export default {
   preSave: formValues => {
     const retValues = {
@@ -12,6 +14,7 @@ export default {
     } else {
       retValues['/dynamodb/itemDocument'] = undefined;
     }
+    retValues['/mockResponse'] = safeParse(retValues['/mockResponse']);
 
     return {
       ...retValues,
@@ -96,6 +99,7 @@ export default {
     },
     dataMappings: { formId: 'dataMappings' },
     advancedSettings: { formId: 'advancedSettings' },
+    mockResponseSection: {formId: 'mockResponseSection'},
   },
   layout: {
     type: 'collapse',
@@ -123,6 +127,12 @@ export default {
           'dynamodb.itemDocument',
           'dynamodb.updateExpression',
         ],
+      },
+      {
+        actionId: 'mockResponse',
+        collapsed: true,
+        label: 'Mock response',
+        fields: ['mockResponseSection'],
       },
       { collapsed: true, label: 'Advanced', fields: ['advancedSettings'] },
     ],

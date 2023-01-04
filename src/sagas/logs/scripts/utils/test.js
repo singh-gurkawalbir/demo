@@ -1,4 +1,4 @@
-/* global describe, test, expect */
+
 import getFetchLogsPath from '.';
 
 describe('Script logs saga Utils', () => {

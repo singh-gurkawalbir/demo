@@ -1,4 +1,4 @@
-/* global describe, test, expect */
+
 import reducer, { selectors } from '.';
 import actions from '../../../actions';
 
@@ -90,7 +90,7 @@ describe('revisions reducer', () => {
 
       expect(newState).toEqual(prevState);
     });
-    test('should add the revision at the end if the resource\'s id does not match with any of the existing revisions ', () => {
+    test('should add the revision at the end if the resource\'s id does not match with any of the existing revisions', () => {
       const prevState = {
         [integrationId]: {
           status: 'received',
@@ -114,7 +114,7 @@ describe('revisions reducer', () => {
 
       expect(newState).toEqual(expectedState);
     });
-    test('should update the existing revision if the resource\'s id matches with any of the existing revisions ', () => {
+    test('should update the existing revision if the resource\'s id matches with any of the existing revisions', () => {
       const prevState = {
         [integrationId]: {
           status: 'received',
@@ -195,7 +195,7 @@ describe('revisions selectors', () => {
   };
 
   describe('revisions selector', () => {
-    test('should return undefined incase of invalid params ', () => {
+    test('should return undefined incase of invalid params', () => {
       expect(selectors.revisions()).toBeUndefined();
       expect(selectors.revisions({})).toBeUndefined();
       expect(selectors.revisions({}, 'i-23')).toBeUndefined();
@@ -205,12 +205,12 @@ describe('revisions selectors', () => {
     });
   });
   describe('revision selector', () => {
-    test('should return undefined incase of invalid params ', () => {
+    test('should return undefined incase of invalid params', () => {
       expect(selectors.revision()).toBeUndefined();
       expect(selectors.revision({})).toBeUndefined();
       expect(selectors.revision({}, 'i-23', 'r-123')).toBeUndefined();
     });
-    test('should return the undefined if the passed revisionId does not exist in the state ', () => {
+    test('should return the undefined if the passed revisionId does not exist in the state', () => {
       expect(selectors.revision(state, integrationId, 'rev-7')).toBeUndefined();
     });
     test('should return the revision for the passed revisionId', () => {
@@ -228,7 +228,7 @@ describe('revisions selectors', () => {
     });
   });
   describe('revisionsFetchStatus selector', () => {
-    test('should return undefined incase of invalid params ', () => {
+    test('should return undefined incase of invalid params', () => {
       expect(selectors.revisionsFetchStatus()).toBeUndefined();
       expect(selectors.revisionsFetchStatus({})).toBeUndefined();
       expect(selectors.revisionsFetchStatus({}, 'i-23')).toBeUndefined();
@@ -241,8 +241,8 @@ describe('revisions selectors', () => {
         [integrationId]: {},
       };
 
-      expect(selectors.revisionsFetchStatus(state, integrationId)).toEqual('received');
-      expect(selectors.revisionsFetchStatus(state1, integrationId)).toEqual('requested');
+      expect(selectors.revisionsFetchStatus(state, integrationId)).toBe('received');
+      expect(selectors.revisionsFetchStatus(state1, integrationId)).toBe('requested');
       expect(selectors.revisionsFetchStatus(state2, integrationId)).toBeUndefined();
     });
   });
@@ -298,13 +298,13 @@ describe('revisions selectors', () => {
       expect(selectors.revisionType({})).toBeUndefined();
       expect(selectors.revisionType({}, 'i-23')).toBeUndefined();
     });
-    test('should return revision\'s type for the passed revisionId ', () => {
+    test('should return revision\'s type for the passed revisionId', () => {
       expect(selectors.revisionType(state, integrationId, 'rev-1')).toBe('pull');
       expect(selectors.revisionType(state, integrationId, 'rev-2')).toBe('revert');
     });
   });
   describe('isLoadingRevisions selector', () => {
-    test('should return false if the revisions are already loaded ', () => {
+    test('should return false if the revisions are already loaded', () => {
       expect(selectors.isLoadingRevisions(state, integrationId)).toBeFalsy();
     });
     test('should return true if the revisions are still loading', () => {
@@ -325,7 +325,7 @@ describe('revisions selectors', () => {
       expect(selectors.integrationHasNoRevisions({})).toBeFalsy();
       expect(selectors.integrationHasNoRevisions({}, 'i-23')).toBeFalsy();
     });
-    test('should return false if the integration has loaded revisions ', () => {
+    test('should return false if the integration has loaded revisions', () => {
       expect(selectors.integrationHasNoRevisions(state, integrationId)).toBeFalsy();
     });
     test('should return true if the request is completed but received no revisions', () => {

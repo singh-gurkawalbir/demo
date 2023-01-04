@@ -106,8 +106,20 @@ href="/marketplace"><u>Check out our Marketplace</u></a> to jumpstart your  inte
   VIEW_ACTIONS_HOVER_MESSAGE: 'View actions for this error',
   RETRY_ACTION_HOVER_MESSAGE: 'Before retrying, you must save your edits for each error in the batch. Click “Save & next” on this error to continue.',
   // #endregion
+
   // #region Edit mock input
   MOCK_INPUT_REFRESH_SUCCESS: 'Successfully fetched latest input data.',
+  // #endregion
+
+  // #region populate with preview data
+  POPULATE_WITH_PREVIEW_DATA_FAILED: '{{fieldName}} field could not be populated.',
+  POPULATE_WITH_PREVIEW_DATA_SUCCESS: '{{fieldName}} field successfully populated with preview data.',
+  POPULATE_WITH_PREVIEW_DATA_DISABLED: 'Bring your connection online to enable this action.',
+  // #endregion
+
+  // #region populate with mock response
+  POPULATE_WITH_MOCK_RESPONSE_SUCCESS: 'Mock response field successfully populated with mock response.',
+  // #endregion
 
   // #region shopify landing page
   OFFLINE_CONNECTION_MESSAGE: 'Save & authorize offline connections to bring them back online.',

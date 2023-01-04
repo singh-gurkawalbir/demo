@@ -1,4 +1,4 @@
-/* global describe, test, beforeEach, jest, expect, afterEach */
+
 import { screen, waitFor } from '@testing-library/react';
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
@@ -72,7 +72,7 @@ jest.mock('../DateTimeDisplay', () => ({
   ),
 }));
 
-describe('Testsuite for JobErrorTable', () => {
+describe('testsuite for JobErrorTable', () => {
   let mockDispatchFn;
   let useDispatchSpy;
 
@@ -197,6 +197,7 @@ describe('Testsuite for JobErrorTable', () => {
     expect(uploadProcessedErrorsButtonNode).toBeInTheDocument();
     expect(uploadProcessedErrorsButtonNode).toBeDisabled();
   });
+  // eslint-disable-next-line jest/no-commented-out-tests
   //   test('should test the retry all button when there are job errors and the job status is success when number of errors is 1', () => {
   //     initJobErrorTable({
   //       job: {
@@ -501,7 +502,7 @@ describe('Testsuite for JobErrorTable', () => {
 
     expect(checkboxNode[0]).toBeInTheDocument();
     userEvent.click(checkboxNode[0]);
-    expect(markResolvedButtonNode.textContent).toEqual('Mark resolved 1 error');
+    expect(markResolvedButtonNode.textContent).toBe('Mark resolved 1 error');
     userEvent.click(markResolvedButtonNode);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.job.resolveSelectedErrors({jobId: '123',
       flowJobId: '234',
@@ -550,7 +551,7 @@ describe('Testsuite for JobErrorTable', () => {
 
     expect(checkboxNode[0]).toBeInTheDocument();
     userEvent.click(checkboxNode[0]);
-    expect(markResolvedButtonNode.textContent).toEqual('Mark resolved 2 errors');
+    expect(markResolvedButtonNode.textContent).toBe('Mark resolved 2 errors');
     userEvent.click(markResolvedButtonNode);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.job.resolveSelectedErrors({
       jobId: '123',

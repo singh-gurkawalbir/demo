@@ -1,13 +1,13 @@
-/* global describe, test, expect */
+
 import reducer, { selectors } from '.';
 import actions from '../../../../actions';
 
 describe('integrationApps reducer test cases', () => {
   test('should return initial state when action is not matched', () => {
     expect(reducer(undefined, { type: 'RANDOM_ACTION' })).toEqual({});
-    expect(reducer(null, { type: 'RANDOM_ACTION' })).toEqual(null);
-    expect(reducer('string', { type: 'RANDOM_ACTION' })).toEqual('string');
-    expect(reducer(123, { type: 'RANDOM_ACTION' })).toEqual(123);
+    expect(reducer(null, { type: 'RANDOM_ACTION' })).toBeNull();
+    expect(reducer('string', { type: 'RANDOM_ACTION' })).toBe('string');
+    expect(reducer(123, { type: 'RANDOM_ACTION' })).toBe(123);
     expect(reducer(undefined, { type: null })).toEqual({});
     expect(reducer(undefined, { type: undefined })).toEqual({});
   });

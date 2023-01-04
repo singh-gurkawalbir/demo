@@ -1,4 +1,3 @@
-/* global describe, test, expect, jest, afterEach */
 import * as React from 'react';
 import {screen, waitFor} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -66,7 +65,7 @@ function initFunction() {
   renderWithProviders(ui, {initialStore});
 }
 
-describe('Metadata for FTP type file test cases', () => {
+describe('metadata for FTP type file test cases', () => {
   window.HTMLElement.prototype.scrollIntoView = jest.fn();
   afterEach(() => {
     jest.clearAllMocks();

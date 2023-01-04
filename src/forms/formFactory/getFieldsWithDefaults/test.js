@@ -1,5 +1,7 @@
+/* eslint-disable no-undef */
+/* eslint-disable jest/no-jasmine-globals */
+/* eslint-disable jest/no-conditional-expect */
 
-/* global describe, test, expect, fail, jest */
 import getFieldsWithDefaults from '.';
 
 jest.mock('../../definitions/index', () => ({
@@ -99,7 +101,7 @@ jest.mock('../../fieldDefinitions/index', () => ({
 
 describe('form factory new layout', () => {
   describe('field references filling behavior', () => {
-    test('should set defaults for multiple fields references correctly ', () => {
+    test('should set defaults for multiple fields references correctly', () => {
       const resourceType = 'someResourceType';
       const resource = {};
       const testMeta = {
@@ -262,7 +264,7 @@ describe('form factory new layout', () => {
         },
       });
     });
-    test('should set defaults for multiple fields references located in different containers correctly ', () => {
+    test('should set defaults for multiple fields references located in different containers correctly', () => {
       const resourceType = 'someResourceType';
       const resource = {};
       const testMeta = {
@@ -585,7 +587,7 @@ describe('form factory new layout', () => {
           getFieldsWithDefaults(testMeta, resourceType, resource);
           fail();
         } catch (e) {
-          expect(e.message).toEqual(
+          expect(e.message).toBe(
             'could not find fieldMap for given form id bunchOfFieldsWithoutfieldMap'
           );
         }

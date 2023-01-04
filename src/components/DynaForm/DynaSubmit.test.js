@@ -1,4 +1,4 @@
-/* global describe, test, expect, jest, afterEach */
+
 import React from 'react';
 import {screen} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -36,7 +36,7 @@ function initDynaSubmit(props = {}) {
 
 const mockOnClick = jest.fn();
 
-describe('DynaSubmit Ui test cases', () => {
+describe('dynaSubmit Ui test cases', () => {
   afterEach(() => {
     jest.clearAllMocks();
   });

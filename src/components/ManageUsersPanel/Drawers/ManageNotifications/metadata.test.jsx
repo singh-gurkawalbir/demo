@@ -1,4 +1,4 @@
-/* global describe, test, expect */
+
 import notificationsMetadata from './metadata';
 
 describe('metdata flows test cases', () => {

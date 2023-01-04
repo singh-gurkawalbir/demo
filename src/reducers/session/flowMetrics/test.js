@@ -1,4 +1,5 @@
-/* global describe, test, expect */
+/* eslint-disable jest/no-standalone-expect */
+
 import each from 'jest-each';
 import reducer, {selectors} from '.';
 import actions from '../../../actions';
@@ -158,10 +159,10 @@ describe('selectors testcases', () => {
     });
 
     test('should return null correctly when invalid id is sent through the selector', () => {
-      expect(selectors.flowMetricsData(initialState, null)).toEqual(null);
+      expect(selectors.flowMetricsData(initialState, null)).toBeNull();
     });
     test('should return null correctly when valid id not in state is sent through the selector', () => {
-      expect(selectors.flowMetricsData(initialState, 'missing_id')).toEqual(null);
+      expect(selectors.flowMetricsData(initialState, 'missing_id')).toBeNull();
     });
   });
 

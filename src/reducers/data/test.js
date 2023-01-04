@@ -1,4 +1,5 @@
-/* global describe, test, expect */
+/* eslint-disable jest/no-standalone-expect */
+
 import each from 'jest-each';
 import reducer, { selectors } from '.';
 import { RESOURCE_TYPE_PLURAL_TO_SINGULAR } from '../../constants/resource';
@@ -201,7 +202,7 @@ describe('auditLogs selector', () => {
     );
   });
 
-  describe('account audit logs selector ', () => {
+  describe('account audit logs selector', () => {
     const logs = [];
 
     Object.keys(allResources).forEach(rt => {
@@ -234,7 +235,7 @@ describe('auditLogs selector', () => {
           expect(resultLogs.length).toBeGreaterThan(0);
           expect(resultLogs).toEqual(getExpectedLogs(logs));
         } else {
-          expect(resultLogs.length).toEqual(0);
+          expect(resultLogs).toHaveLength(0);
         }
       }
     );
@@ -286,7 +287,7 @@ describe('auditLogs selector', () => {
           expect(resultLogs.length).toBeGreaterThan(0);
           expect(resultLogs).toEqual(getExpectedLogs(logs));
         } else {
-          expect(resultLogs.length).toEqual(0);
+          expect(resultLogs).toHaveLength(0);
         }
       }
     );
@@ -338,7 +339,7 @@ describe('auditLogs selector', () => {
           expect(resultLogs.length).toBeGreaterThan(0);
           expect(resultLogs).toEqual(getExpectedLogs(logs));
         } else {
-          expect(resultLogs.length).toEqual(0);
+          expect(resultLogs).toHaveLength(0);
         }
       }
     );

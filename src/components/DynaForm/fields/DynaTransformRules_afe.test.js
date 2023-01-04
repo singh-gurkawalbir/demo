@@ -1,9 +1,10 @@
-/* global describe, expect, jest, test, afterEach */
+
 import React from 'react';
 import { screen, render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import DynaTransformRules from './DynaTransformRules_afe';
 import actions from '../../../actions';
+import { IMPORT_FILTERED_DATA_STAGE } from '../../../utils/flowData';
 
 const asyncHelperId = 'async-123';
 let mockSave = jest.fn();
@@ -113,7 +114,7 @@ describe('test suite for DynaTransformRules_afe', () => {
 
     userEvent.click(openAfeBtn);
 
-    expect(mockDispatchFn).toBeCalledWith(actions.editor.init('httpsubmittransform', 'transform', {
+    expect(mockDispatchFn).toHaveBeenCalledWith(actions.editor.init('httpsubmittransform', 'transform', {
       data: {},
       rule: undefined,
       formKey: props.formKey,
@@ -121,11 +122,11 @@ describe('test suite for DynaTransformRules_afe', () => {
       resourceId: props.resourceId,
       resourceType: props.resourceType,
       fieldId: props.id,
-      stage: 'inputFilter',
+      stage: IMPORT_FILTERED_DATA_STAGE,
       onSave: expect.anything(),
     }));
 
-    expect(mockHistoryPush).toBeCalledWith('/imports/edit/imports/import-123/edit/asyncHelpers/async-123/editor/httpsubmittransform');
+    expect(mockHistoryPush).toHaveBeenCalledWith('/imports/edit/imports/import-123/edit/asyncHelpers/async-123/editor/httpsubmittransform');
   });
 
   test('should be able to save the modified code in AFE', () => {
@@ -150,7 +151,7 @@ describe('test suite for DynaTransformRules_afe', () => {
     const saveBtn = screen.getByRole('button', {name: /save/i});
 
     userEvent.click(saveBtn);
-    expect(onFieldChange).toBeCalledWith(props.id, {
+    expect(onFieldChange).toHaveBeenCalledWith(props.id, {
       rules: ['sampleNewRule'],
       rulesCollection: {
         mappings: ['sampleNewRule'],

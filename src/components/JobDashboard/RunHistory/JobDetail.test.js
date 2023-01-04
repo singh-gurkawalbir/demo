@@ -1,4 +1,4 @@
-/* global describe, test, beforeEach, jest, afterEach, expect */
+
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { screen } from '@testing-library/react';
@@ -23,7 +23,7 @@ function initJobDetail({ job, flowData }) {
   return renderWithProviders(ui, { initialStore });
 }
 
-describe('Testsuite for JobDetail', () => {
+describe('testsuite for JobDetail', () => {
   let mockDispatchFn;
   let useDispatchSpy;
 

@@ -1,4 +1,3 @@
-/* global describe, test, expect */
 import React from 'react';
 import {
   screen,
@@ -24,7 +23,7 @@ function initActionsRibbon(props = {}) {
   return renderWithProviders(<MemoryRouter><ActionsRibbon {...props} /></MemoryRouter>, {initialStore});
 }
 
-describe('ActionsRibbon UI tests', () => {
+describe('actionsRibbon UI tests', () => {
   test('should pass the initial render with no editor data', () => {
     renderWithProviders(<ActionsRibbon editorId="file.csv" />);
     expect(screen.getByText('Auto preview')).toBeInTheDocument();

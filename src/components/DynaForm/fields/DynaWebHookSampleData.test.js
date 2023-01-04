@@ -1,4 +1,4 @@
-/* global describe, test, expect, jest, afterEach, beforeEach */
+
 import React from 'react';
 import {screen, fireEvent} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -67,7 +67,7 @@ function initDynaWebHookSampleData(props = {}) {
 }
 const mockOnFieldChange = jest.fn();
 
-describe('DynaWebHookSampleData UI test cases', () => {
+describe('dynaWebHookSampleData UI test cases', () => {
   beforeEach(() => {
     jest.resetAllMocks();
     jest.spyOn(mockEnqueSnackbar, 'default').mockReturnValue([enqueueSnackbar]);
@@ -75,7 +75,7 @@ describe('DynaWebHookSampleData UI test cases', () => {
   afterEach(() => {
     jest.clearAllMocks();
   });
-  test('should show the message "Webhook url is mandatory" ', () => {
+  test('should show the message "Webhook url is mandatory"', () => {
     initDynaWebHookSampleData(
       {label: 'PropsLabel', value: 'PropsValue', id: 'SomeId', options: {}, onFieldChange: mockOnFieldChange }
     );
@@ -83,7 +83,7 @@ describe('DynaWebHookSampleData UI test cases', () => {
     userEvent.click(screen.getByText('Click to show'));
     expect(enqueueSnackbar).toHaveBeenCalledWith({message: 'Webhook url is mandatory.', variant: 'error'});
   });
-  test('should make resource request dispatch call when clicked on "Click to show" button ', () => {
+  test('should make resource request dispatch call when clicked on "Click to show" button', () => {
     initDynaWebHookSampleData(
       {label: 'PropsLabel', value: 'PropsValue', id: 'SomeId', resourceId: 'someresourceId', options: {webHookUrl: '/webHookUrl'}, onFieldChange: mockOnFieldChange }
     );

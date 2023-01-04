@@ -27,7 +27,7 @@ export function AppRoutingWithAuth({ children }) {
     if (!isAuthInitialized && !hasPageReloaded) {
       if (!isSignInRoute) {
         history.replace({
-          search: isConcurPage ? '?application=concur' : search,
+          search,
           state: { attemptedRoute: currentRoute, search },
         });
         dispatch(actions.auth.initSession());
@@ -72,6 +72,7 @@ export function AppRoutingWithAuth({ children }) {
         push={false}
         to={{
           pathname: getRoutePath('signin'),
+          search: isConcurPage ? '?application=concur' : '',
           state: location.state,
         }}
       />

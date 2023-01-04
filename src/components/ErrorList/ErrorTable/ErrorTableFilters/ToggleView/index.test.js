@@ -1,4 +1,4 @@
-/* global describe, test, expect, beforeEach, afterEach, jest */
+
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import * as reactRedux from 'react-redux';
@@ -24,7 +24,7 @@ async function initToggleViewSelect({ props = {}} = {}) {
   return renderWithProviders(ui);
 }
 
-describe('ToggleViewSelect component Test cases', () => {
+describe('toggleViewSelect component Test cases', () => {
   runServer();
   let mockDispatchFn;
   let useDispatchSpy;
@@ -68,6 +68,6 @@ describe('ToggleViewSelect component Test cases', () => {
 
     expect(drawerOption).toBeInTheDocument();
     userEvent.click(drawerOption);
-    expect(handleToggleChange).toBeCalledTimes(1);
+    expect(handleToggleChange).toHaveBeenCalledTimes(1);
   });
 });

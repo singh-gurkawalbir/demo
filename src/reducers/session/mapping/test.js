@@ -1,4 +1,4 @@
-/* global describe, test, expect, jest */
+
 import reducer, { selectors, expandRow, updateChildrenProps, updateDestinationDataType } from '.';
 import actions from '../../../actions';
 import {MAPPING_DATA_TYPES} from '../../../utils/mapping';
@@ -300,7 +300,7 @@ describe('mapping reducer', () => {
     expect(expectedState).toEqual(newState);
   });
 
-  test('should patch hardcoded extract correctly', () => {
+  test('should patch hardcoded extract correctly duplicate', () => {
     const initialState = {
       mapping: {
         mappings: [
@@ -454,7 +454,7 @@ describe('mapping reducer', () => {
 
     expect(expectedNextState).toEqual(nextState);
   });
-  test('should patch settings correctly', () => {
+  test('should patch settings correctly duplicate', () => {
     const initialState = {
       mapping: {
         mappings: [
@@ -703,7 +703,7 @@ describe('mapping reducer', () => {
 
     expect(expectedState).toEqual(newState);
   });
-  test('should set last touched field correctly', () => {
+  test('should set last touched field correctly duplicate', () => {
     const initialState = {
       mapping: {
       },
@@ -717,7 +717,7 @@ describe('mapping reducer', () => {
 
     expect(expectedState).toEqual(newState);
   });
-  test('should delete associated lookup and unset last tocuhed field while deleting particular row ', () => {
+  test('should delete associated lookup and unset last tocuhed field while deleting particular row', () => {
     const initialState = {
       mapping: {
         lookups: [
@@ -745,7 +745,7 @@ describe('mapping reducer', () => {
 
     expect(expectedState).toEqual(newState);
   });
-  test('should delete isKey in case generate changes from sublist to field item ', () => {
+  test('should delete isKey in case generate changes from sublist to field item', () => {
     const initialState = {
       mapping: {
         mappings: [
@@ -767,7 +767,7 @@ describe('mapping reducer', () => {
 
     expect(expectedState).toEqual(newState);
   });
-  test('should delete useFirstRow in case generate changes from sublist to field item ', () => {
+  test('should delete useFirstRow in case generate changes from sublist to field item', () => {
     const initialState = {
       mapping: {
         mappings: [
@@ -4307,7 +4307,7 @@ describe('mapping reducer', () => {
 
       expect(state).toEqual(expectedState);
     });
-    test('should add child nodes incase the data type is changed from string to object array with single source ', () => {
+    test('should add child nodes incase the data type is changed from string to object array with single source', () => {
       generateUniqueKey.mockReturnValue('new_key');
 
       const initialState = {
@@ -4368,7 +4368,7 @@ describe('mapping reducer', () => {
 
       expect(state).toEqual(expectedState);
     });
-    test('should add multiple child nodes with tab node incase the data type is changed from string to object array with multiple sources ', () => {
+    test('should add multiple child nodes with tab node incase the data type is changed from string to object array with multiple sources', () => {
       generateUniqueKey.mockReturnValue('new_key');
 
       const initialState = {
@@ -4451,7 +4451,7 @@ describe('mapping reducer', () => {
 
       expect(state).toEqual(expectedState);
     });
-    test('should add child nodes incase the data type is changed from string to object array with multiple sources and multiple settings ', () => {
+    test('should add child nodes incase the data type is changed from string to object array with multiple sources and multiple settings', () => {
       generateUniqueKey.mockReturnValue('new_key');
 
       const initialState = {
@@ -4520,7 +4520,7 @@ describe('mapping reducer', () => {
 
       expect(state).toEqual(expectedState);
     });
-    test('should update child nodes properly if the node has children and data type is changed from Object to Object array with multiple sources ', () => {
+    test('should update child nodes properly if the node has children and data type is changed from Object to Object array with multiple sources', () => {
       generateUniqueKey.mockReturnValue('new_key');
 
       const initialState = {
@@ -5676,10 +5676,10 @@ describe('mapping reducer', () => {
 describe('mapping selectors', () => {
   describe('selectors.mappingChanged', () => {
     test('should return false if state does not exist', () => {
-      expect(selectors.mappingChanged()).toEqual(false);
-      expect(selectors.mappingChanged(null)).toEqual(false);
-      expect(selectors.mappingChanged({})).toEqual(false);
-      expect(selectors.mappingChanged({mapping: {}})).toEqual(false);
+      expect(selectors.mappingChanged()).toBe(false);
+      expect(selectors.mappingChanged(null)).toBe(false);
+      expect(selectors.mappingChanged({})).toBe(false);
+      expect(selectors.mappingChanged({mapping: {}})).toBe(false);
     });
     test('should return true if mappings changed', () => {
       const state = {
@@ -5699,7 +5699,7 @@ describe('mapping selectors', () => {
         },
       };
 
-      expect(selectors.mappingChanged(state)).toEqual(true);
+      expect(selectors.mappingChanged(state)).toBe(true);
     });
     test('should return true if lookups changed', () => {
       const state = {
@@ -5726,7 +5726,7 @@ describe('mapping selectors', () => {
         },
       };
 
-      expect(selectors.mappingChanged(state)).toEqual(true);
+      expect(selectors.mappingChanged(state)).toBe(true);
     });
     test('should return false if nothing changed', () => {
       const state = {
@@ -5753,7 +5753,7 @@ describe('mapping selectors', () => {
         },
       };
 
-      expect(selectors.mappingChanged(state)).toEqual(false);
+      expect(selectors.mappingChanged(state)).toBe(false);
     });
     test('should return true if v1 mappings not changed but v2 changed', () => {
       const state = {
@@ -5796,7 +5796,7 @@ describe('mapping selectors', () => {
         },
       };
 
-      expect(selectors.mappingChanged(state)).toEqual(true);
+      expect(selectors.mappingChanged(state)).toBe(true);
     });
     test('should return false if v1,v2 mappings and lookups did not change', () => {
       const state = {
@@ -5839,15 +5839,15 @@ describe('mapping selectors', () => {
         },
       };
 
-      expect(selectors.mappingChanged(state)).toEqual(false);
+      expect(selectors.mappingChanged(state)).toBe(false);
     });
   });
   describe('selectors.v2MappingChanged', () => {
     test('should return false if state does not exist', () => {
-      expect(selectors.v2MappingChanged()).toEqual(false);
-      expect(selectors.v2MappingChanged(null)).toEqual(false);
-      expect(selectors.v2MappingChanged({})).toEqual(false);
-      expect(selectors.v2MappingChanged({mapping: {}})).toEqual(false);
+      expect(selectors.v2MappingChanged()).toBe(false);
+      expect(selectors.v2MappingChanged(null)).toBe(false);
+      expect(selectors.v2MappingChanged({})).toBe(false);
+      expect(selectors.v2MappingChanged({mapping: {}})).toBe(false);
     });
     test('should return false if v2 mappings not changed', () => {
       const state = {
@@ -5882,7 +5882,7 @@ describe('mapping selectors', () => {
         },
       };
 
-      expect(selectors.v2MappingChanged(state)).toEqual(false);
+      expect(selectors.v2MappingChanged(state)).toBe(false);
     });
     test('should return true if v2 mappings not changed', () => {
       const state = {
@@ -5919,7 +5919,7 @@ describe('mapping selectors', () => {
         },
       };
 
-      expect(selectors.v2MappingChanged(state)).toEqual(true);
+      expect(selectors.v2MappingChanged(state)).toBe(true);
     });
   });
   describe('selectors.autoMapper', () => {
@@ -6014,7 +6014,7 @@ describe('mapping selectors', () => {
         },
       };
 
-      expect(selectors.mappingVersion(state)).toEqual(2);
+      expect(selectors.mappingVersion(state)).toBe(2);
     });
   });
   describe('selectors.v2MappingExpandedKeys', () => {
@@ -6076,7 +6076,7 @@ describe('mapping selectors', () => {
         },
       };
 
-      expect(selectors.v2ActiveKey(state)).toEqual('key1');
+      expect(selectors.v2ActiveKey(state)).toBe('key1');
     });
   });
 });

@@ -1,4 +1,4 @@
-/* global describe, test, expect, jest, beforeEach, afterEach */
+
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
@@ -15,7 +15,7 @@ jest.mock('../../utils/window', () => ({
   ...jest.requireActual('../../utils/window'),
   default: () => mockExternalURL,
 }));
-describe('Testsuite for Job Error Message', () => {
+describe('testsuite for Job Error Message', () => {
   beforeEach(() => {
     windowSpy.mockImplementation(() => ({
       ...originalWindow, // In case you need other window properties to be in place

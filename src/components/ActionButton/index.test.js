@@ -1,4 +1,3 @@
-/* global describe, test, expect, jest */
 import React from 'react';
 import {
   screen,
@@ -26,7 +25,7 @@ async function initActionButton({ children = '', placement = 'bottom', props = {
   return renderWithProviders(ui);
 }
 
-describe('ActionButton component Test cases', () => {
+describe('actionButton component Test cases', () => {
   runServer();
   test('should pass the intial render', async () => {
     await initActionButton({placement: 'top'});
@@ -69,7 +68,7 @@ describe('ActionButton component Test cases', () => {
     userEvent.click(buttonRef);
 
     await waitFor(() => {
-      expect(mockOnClick).toBeCalledTimes(1);
+      expect(mockOnClick).toHaveBeenCalledTimes(1);
     });
   });
 

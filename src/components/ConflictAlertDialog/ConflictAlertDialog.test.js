@@ -1,4 +1,4 @@
-/* global describe, test, expect ,jest, beforeAll, afterAll */
+
 import React from 'react';
 import { screen} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -8,7 +8,7 @@ import actions from '../../actions/index';
 
 const { location } = window;
 
-describe('ConflictAlertDialog testing', () => {
+describe('conflictAlertDialog testing', () => {
   beforeAll(() => {
     delete window.location;
     window.location = { reload: jest.fn() };

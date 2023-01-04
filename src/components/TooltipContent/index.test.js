@@ -1,10 +1,10 @@
-/* global describe, test, expect, */
+
 import React from 'react';
 import {screen} from '@testing-library/react';
 import {renderWithProviders} from '../../test/test-utils';
 import ToolTipContent from '.';
 
-describe('TooltipContent UI tests', () => {
+describe('tooltipContent UI tests', () => {
   test('should display the content displayed in the props', () => {
     const props = {children: 'Sample tooltip content'};
 

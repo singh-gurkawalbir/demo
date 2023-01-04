@@ -1,4 +1,3 @@
-/* eslint-disable no-restricted-globals */
 import React, { useCallback, useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { DEFAULT_RECORD_SIZE } from '../../../utils/exportPanel';

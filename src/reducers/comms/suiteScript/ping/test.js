@@ -1,4 +1,4 @@
-/* global describe, test, expect */
+
 import reducer, {PING_STATES, selectors} from '.';
 import actions from '../../../../actions';
 
@@ -10,7 +10,7 @@ const ssLinkedConnectionId = '1';
 const resourceId = '2';
 
 describe('reducer test cases', () => {
-  test('should set status to loading when test action is dispatched ', () => {
+  test('should set status to loading when test action is dispatched', () => {
     const values = {a: 1};
     const state = reducer(initialState,
       actions.suiteScript.resource.connections.test(resourceId, values, ssLinkedConnectionId));
@@ -38,7 +38,7 @@ describe('reducer test cases', () => {
       3: {4: {status: PING_STATES.SUCCESS }},
       1: {2: {status: PING_STATES.SUCCESS}}});
   });
-  test('should set the status to aborted when aborted action is dispatched ', () => {
+  test('should set the status to aborted when aborted action is dispatched', () => {
     const message = 'abortMessage';
     const state = reducer(initialState,
       actions.suiteScript.resource.connections.testCancelled(
@@ -92,7 +92,7 @@ describe('reducer test cases', () => {
   });
 
   describe('workflow', () => {
-    test('ping process of suiteScript form should indicate states correctly ', () => {
+    test('ping process of suiteScript form should indicate states correctly', () => {
       let state = reducer(initialState,
         actions.suiteScript.resource.connections.test(resourceId, {a: 1}, ssLinkedConnectionId));
 
@@ -105,7 +105,7 @@ describe('reducer test cases', () => {
       state = reducer(state,
         actions.suiteScript.resource.connections.testClear(resourceId, null, ssLinkedConnectionId));
       expect(selectors.suiteScriptTestConnectionStatus(state, resourceId, ssLinkedConnectionId))
-        .toEqual(null);
+        .toBeNull();
     });
     test('save process failing of a suiteScript form should indicate states correctly', () => {
       let state = reducer(initialState,
@@ -120,7 +120,7 @@ describe('reducer test cases', () => {
       state = reducer(state,
         actions.suiteScript.resource.connections.testClear(resourceId, null, ssLinkedConnectionId));
       expect(selectors.suiteScriptTestConnectionStatus(state, resourceId, ssLinkedConnectionId))
-        .toEqual(null);
+        .toBeNull();
     });
   });
 });
@@ -142,11 +142,11 @@ describe('selectors', () => {
         .toEqual(PING_STATES.ERROR);
     });
     test('should return null for non existent state', () => {
-      expect(selectors.suiteScriptTestConnectionStatus(state, '5', '6')).toEqual(null);
+      expect(selectors.suiteScriptTestConnectionStatus(state, '5', '6')).toBeNull();
     });
     test.each(badInputs)('should return null for bad inputs resourceId %s ssLinkedConnectionId %s',
       (resourceId, ssLinkedConnectionId) => {
-        expect(selectors.suiteScriptTestConnectionStatus(state, resourceId, ssLinkedConnectionId)).toEqual(null);
+        expect(selectors.suiteScriptTestConnectionStatus(state, resourceId, ssLinkedConnectionId)).toBeNull();
       });
   });
   describe('suiteScriptTestConnectionMessage', () => {
@@ -157,11 +157,11 @@ describe('selectors', () => {
         .toEqual(error);
     });
     test('should return null for non existent state', () => {
-      expect(selectors.suiteScriptTestConnectionMessage(state, '5', '6')).toEqual(null);
+      expect(selectors.suiteScriptTestConnectionMessage(state, '5', '6')).toBeNull();
     });
     test.each(badInputs)('should return null for bad inputs resourceId %s ssLinkedConnectionId %s',
       (resourceId, ssLinkedConnectionId) => {
-        expect(selectors.suiteScriptTestConnectionMessage(state, resourceId, ssLinkedConnectionId)).toEqual(null);
+        expect(selectors.suiteScriptTestConnectionMessage(state, resourceId, ssLinkedConnectionId)).toBeNull();
       });
   });
 });

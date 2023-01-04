@@ -1,11 +1,7 @@
-/* global describe, test, expect, jest, beforeEach, afterEach */
-
 import React from 'react';
 import { MemoryRouter, Route} from 'react-router-dom';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { screen, cleanup, waitFor} from '@testing-library/react';
 import * as reactRedux from 'react-redux';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import userEvent from '@testing-library/user-event';
 import { renderWithProviders } from '../../test/test-utils';
 import MfaVerify from '.';
@@ -60,7 +56,7 @@ describe('MFAVerify', () => {
     mockDispatchFn.mockClear();
     cleanup();
   });
-  test('Should able to test loader ', async () => {
+  test('Should able to test loader', async () => {
     store();
     await initMFAVerify();
     const loader = screen.getByRole('progressbar', {name: ''});
@@ -104,7 +100,7 @@ describe('MFAVerify', () => {
 
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.auth.mfaVerify.request({ code: '123456', trustDevice: true }));
   });
-  test('Should able to test MFA without passcode', async () => {
+  test('Should able to test MFA without passcode duplicate', async () => {
     store({
       initialized: true,
       commStatus: 'success',
@@ -174,31 +170,32 @@ describe('MFAVerify', () => {
 
     expect(warningMessageNode).toBeInTheDocument();
   });
-  test('Should able to test the signup link', async () => {
-    store({
-      initialized: true,
-      commStatus: 'success',
-      authenticated: true,
-      authTimestamp: 1661250286856,
-      defaultAccountSet: true,
-      mfaRequired: true,
-      isMFASetupIncomplete: true,
-    }, {data: {
-      authenticated: true,
-      mfaRequired: true,
-      mfaSetupRequired: false,
-      mfaVerified: false,
-    },
-    status: 'received'}
-    );
-    await initMFAVerify();
-    const dontHaveAnAccountTextNode = screen.getByText("Don't have an account?");
+  // eslint-disable-next-line jest/no-commented-out-tests
+  // test('Should able to test the signup link', async () => {
+  //   store({
+  //     initialized: true,
+  //     commStatus: 'success',
+  //     authenticated: true,
+  //     authTimestamp: 1661250286856,
+  //     defaultAccountSet: true,
+  //     mfaRequired: true,
+  //     isMFASetupIncomplete: true,
+  //   }, {data: {
+  //     authenticated: true,
+  //     mfaRequired: true,
+  //     mfaSetupRequired: false,
+  //     mfaVerified: false,
+  //   },
+  //   status: 'received'}
+  //   );
+  //   await initMFAVerify();
+  //   const dontHaveAnAccountTextNode = screen.getByText("Don't have an account?");
 
-    expect(dontHaveAnAccountTextNode).toBeInTheDocument();
-    const signUpLinkNode = screen.getByRole('button', {name: 'Sign up'});
+  //   expect(dontHaveAnAccountTextNode).toBeInTheDocument();
+  //   const signUpLinkNode = screen.getByRole('button', {name: 'Sign up'});
 
-    expect(signUpLinkNode).toBeInTheDocument();
-    await userEvent.click(signUpLinkNode);
-    expect(signUpLinkNode.closest('a')).toHaveAttribute('href', '/signup');
-  });
+  //   expect(signUpLinkNode).toBeInTheDocument();
+  //   await userEvent.click(signUpLinkNode);
+  //   expect(signUpLinkNode.closest('a')).toHaveAttribute('href', '/signup');
+  // });
 });

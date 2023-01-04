@@ -1,4 +1,4 @@
-/* global describe, test, expect, jest */
+
 import React from 'react';
 import { screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
@@ -11,8 +11,8 @@ jest.mock('react-router-dom', () => ({
     push: jest.fn(),
   }),
 }));
-describe('RawView tests', () => {
-  test('Should able to test RawView ', async () => {
+describe('rawView tests', () => {
+  test('should able to test RawView', async () => {
     await renderWithProviders(<MemoryRouter> <RawView /></MemoryRouter>);
     expect(screen.getByText('Settings')).toBeInTheDocument();
   });

@@ -1,4 +1,4 @@
-/* global describe, test, jest, expect, afterEach */
+
 import React from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import {screen} from '@testing-library/react';
@@ -26,7 +26,7 @@ function initDynaRoutingRules(props = {}) {
   return renderWithProviders(ui);
 }
 
-describe('DynaRoutingRules UI test cases', () => {
+describe('dynaRoutingRules UI test cases', () => {
   afterEach(() => {
     jest.clearAllMocks();
   });

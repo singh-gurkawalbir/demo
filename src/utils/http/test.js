@@ -1,4 +1,3 @@
-/* global expect, describe, test */
 import { getContentType, getErrorReqResFields } from '.';
 
 describe('getErrorReqResFields util', () => {
@@ -23,7 +22,7 @@ describe('getErrorReqResFields util', () => {
 
     expect(getErrorReqResFields(httpPayload)).toEqual(expectedHttpFields);
   });
-  test('should return with body, headers and all other properties from httpPayload included in others ', () => {
+  test('should return with body, headers and all other properties from httpPayload included in others', () => {
     const httpPayloadWithBody = {
       body: { test: 5},
       headers: { 'content-type': 'application/json' },

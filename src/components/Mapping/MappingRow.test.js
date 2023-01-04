@@ -1,4 +1,3 @@
-/* global describe, test, expect, jest, beforeEach, afterEach */
 import React from 'react';
 import * as reactRedux from 'react-redux';
 import { MemoryRouter } from 'react-router-dom';
@@ -141,7 +140,7 @@ jest.mock('../DynaForm/fields/DynaTypeableSelect', () => ({
   },
 }));
 
-describe('MappingRow component Test cases', () => {
+describe('mappingRow component Test cases', () => {
   runServer();
   let mockDispatchFn;
   let useDispatchSpy;
@@ -168,7 +167,7 @@ describe('MappingRow component Test cases', () => {
 
     expect(extractBlurButton).toBeInTheDocument();
     userEvent.click(extractBlurButton);
-    expect(mockDispatchFn).toBeCalledWith(actions.mapping.patchField('extract', 'key_1', 'value'));
+    expect(mockDispatchFn).toHaveBeenCalledWith(actions.mapping.patchField('extract', 'key_1', 'value'));
 
     const generateBlurButton = screen.getByRole('button', {name: 'mock handleBlur generate_1'});
 
@@ -176,19 +175,19 @@ describe('MappingRow component Test cases', () => {
     userEvent.hover(generateBlurButton);
     userEvent.unhover(generateBlurButton);
     userEvent.click(generateBlurButton);
-    expect(mockDispatchFn).toBeCalledWith(actions.mapping.patchField('extract', 'key_1', 'value'));
+    expect(mockDispatchFn).toHaveBeenCalledWith(actions.mapping.patchField('extract', 'key_1', 'value'));
 
     const deleteButton = screen.getAllByRole('button').find(eachButton => eachButton.getAttribute('data-test') === 'fieldMappingRemove-1'); // 1 is default index props
 
     userEvent.click(deleteButton);
-    expect(mockDispatchFn).toBeCalledWith(actions.mapping.delete('key_1'));
+    expect(mockDispatchFn).toHaveBeenCalledWith(actions.mapping.delete('key_1'));
 
     mockHandleBlur.mockReturnValue({
       _id: '_id',
       value: '',
     });
     userEvent.click(extractBlurButton);
-    expect(mockDispatchFn).toBeCalledWith(actions.mapping.patchField('extract', 'key_1', 'value'));
+    expect(mockDispatchFn).toHaveBeenCalledWith(actions.mapping.patchField('extract', 'key_1', 'value'));
   });
 
   test('should pass the initial render with custom values', async () => {
@@ -215,14 +214,14 @@ describe('MappingRow component Test cases', () => {
 
     expect(generateBlurButton).toBeInTheDocument();
     userEvent.click(generateBlurButton);
-    expect(mockDispatchFn).toBeCalledWith(actions.mapping.delete('key_2'));
+    expect(mockDispatchFn).toHaveBeenCalledWith(actions.mapping.delete('key_2'));
     userEvent.hover(generateBlurButton);
 
     const generateTouchButton = screen.getByRole('button', {name: 'mock handleFieldTouch generate_2'});
 
     expect(generateTouchButton).toBeInTheDocument();
     userEvent.click(generateTouchButton);
-    expect(mockDispatchFn).toBeCalledWith(actions.mapping.updateLastFieldTouched('key_2'));
+    expect(mockDispatchFn).toHaveBeenCalledWith(actions.mapping.updateLastFieldTouched('key_2'));
   });
 
   test('should pass the initial render with hardcoded values', async () => {
@@ -308,7 +307,7 @@ describe('MappingRow component Test cases', () => {
 
     expect(bulrField[0]).toBeInTheDocument();
     userEvent.click(bulrField[0]);
-    expect(mockDispatchFn).toBeCalledWith(actions.mapping.delete('key_90'));
+    expect(mockDispatchFn).toHaveBeenCalledWith(actions.mapping.delete('key_90'));
   });
 
   test('should pass the initial render with isNotEditable mapping', async () => {

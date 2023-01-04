@@ -1,4 +1,4 @@
-/* global describe, test, expect, jest, beforeEach, afterEach */
+
 import React from 'react';
 import { screen, waitFor} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -79,7 +79,7 @@ jest.mock('../../../../Buttons', () => ({
   TextButton: props => <button type="button" onClick={props.onClick}>Cancel</button>,
 }));
 
-describe('ExpandModeDrawer UI tests', () => {
+describe('expandModeDrawer UI tests', () => {
   let mockDispatchFn;
   let useDispatchSpy;
 
@@ -105,9 +105,9 @@ describe('ExpandModeDrawer UI tests', () => {
     expect(screen.getByText('Save')).toBeInTheDocument();
     expect(screen.getByText('Close')).toBeInTheDocument();
     userEvent.click(screen.getByText('Save'));
-    await waitFor(() => expect(mockDispatchFn).toBeCalledWith(actions.resource.patchAndCommitStaged('scripts', '62fb62165ac68227ae0974ad', patchSet)));
+    await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith(actions.resource.patchAndCommitStaged('scripts', '62fb62165ac68227ae0974ad', patchSet)));
     userEvent.click(screen.getByText('Close'));
-    await waitFor(() => expect(mockHistoryGoBack).toBeCalled());
+    await waitFor(() => expect(mockHistoryGoBack).toHaveBeenCalled());
   });
   test('should render the done and cancel buttons for newly formed resource and should make a dispatch call and redirection when clicked on "Done"', async () => {
     initExpandModeDrawer('new-resourceId');
@@ -115,7 +115,7 @@ describe('ExpandModeDrawer UI tests', () => {
     expect(screen.getByText('Done')).toBeInTheDocument();
     expect(screen.getByText('Cancel')).toBeInTheDocument();
     userEvent.click(screen.getByText('Done'));
-    await waitFor(() => expect(mockDispatchFn).toBeCalledWith(actions.form.fieldChange('scripts-62fb62165ac68227ae0974ad')('content', editorValue)));
-    await waitFor(() => expect(mockHistoryGoBack).toBeCalled());
+    await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith(actions.form.fieldChange('scripts-62fb62165ac68227ae0974ad')('content', editorValue)));
+    await waitFor(() => expect(mockHistoryGoBack).toHaveBeenCalled());
   });
 });

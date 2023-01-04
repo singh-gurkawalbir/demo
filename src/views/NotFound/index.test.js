@@ -1,4 +1,3 @@
-/* global describe, test, expect, jest */
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { screen } from '@testing-library/react';
@@ -30,7 +29,7 @@ jest.mock('react-router-dom', () => ({
   }),
 }));
 
-describe('NotFound test cases', () => {
+describe('notFound test cases', () => {
   runServer();
 
   test('should pass the initial render with redirectTo', async () => {
@@ -54,6 +53,6 @@ describe('NotFound test cases', () => {
     expect(goBackButton).toBeInTheDocument();
 
     userEvent.click(goBackButton);
-    expect(mockHistoryGoBack).toBeCalled();
+    expect(mockHistoryGoBack).toHaveBeenCalled();
   });
 });

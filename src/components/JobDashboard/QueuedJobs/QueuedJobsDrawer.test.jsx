@@ -1,5 +1,5 @@
 /* eslint-disable import/no-extraneous-dependencies */
-/* global describe, test, beforeEach, jest, expect, afterEach */
+
 import React from 'react';
 import { MemoryRouter, Route } from 'react-router-dom';
 import { screen, waitFor } from '@testing-library/react';
@@ -95,7 +95,7 @@ jest.mock('../../../utils/jobdashboard', () => ({
   getStatus: jest.fn().mockReturnValue('Mocking get Status'),
   getPages: jest.fn().mockReturnValue('Mocking get Pages'),
 }));
-describe('Testsuite for Queued Jobs Drawer', () => {
+describe('testsuite for Queued Jobs Drawer', () => {
   let mockDispatchFn;
   let useDispatchSpy;
 

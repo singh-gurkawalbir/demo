@@ -1,4 +1,4 @@
-/* global describe, test, expect, jest */
+
 import React from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import {screen, waitFor} from '@testing-library/react';
@@ -26,8 +26,8 @@ function initDynaSuiteScriptUploadFile(props = {}) {
   return renderWithProviders(ui, {initialStore});
 }
 
-describe('DynaSuiteScriptUploadFile UI test cases', () => {
-  test('Should make dispatch calls when status is set to received and persistData is set to false and reset with no files and uploaded a file', async () => {
+describe('dynaSuiteScriptUploadFile UI test cases', () => {
+  test('should make dispatch calls when status is set to received and persistData is set to false and reset with no files and uploaded a file', async () => {
     initialStore.getState().session.fileUpload = {
       '6386915c8dab534c4614b941-uploadFile': { status: 'received',
         file: {
@@ -47,11 +47,11 @@ describe('DynaSuiteScriptUploadFile UI test cases', () => {
     };
 
     initDynaSuiteScriptUploadFile(data);
-    expect(mockOnField).toBeCalledWith('uploadFile', {fileName: 'fileA.csv', type: 'csv'});
-    expect(mockDispatch).toBeCalledWith(actions.resourceFormSampleData.request('exports-6386915c8dab534c4614b941'));
+    expect(mockOnField).toHaveBeenCalledWith('uploadFile', {fileName: 'fileA.csv', type: 'csv'});
+    expect(mockDispatch).toHaveBeenCalledWith(actions.resourceFormSampleData.request('exports-6386915c8dab534c4614b941'));
     expect(mockDispatch).toHaveBeenCalledWith(actions.resourceFormSampleData.clear('6386915c8dab534c4614b941'));
     expect(mockDispatch).toHaveBeenCalledWith(actions.file.reset('6386915c8dab534c4614b941-uploadFile'));
-    expect(mockOnField).toBeCalledWith('uploadFile', '', true);
+    expect(mockOnField).toHaveBeenCalledWith('uploadFile', '', true);
     expect(screen.getByText('No file chosen')).toBeInTheDocument();
     const input = document.querySelector('input[data-test="uploadFile"]');
 
@@ -72,9 +72,9 @@ describe('DynaSuiteScriptUploadFile UI test cases', () => {
     await waitFor(() => userEvent.upload(inputupload, file));
     expect(inputupload.files).toHaveLength(1);
     expect(input.files[0].name).toBe('somegeneratedID.csv');
-    expect(mockDispatch).toBeCalledWith(actions.file.processFile({fileId: '6386915c8dab534c4614b941-uploadFile', fileType: 'csv', fileProps: {maxSize: '4 KB'}, file}));
+    expect(mockDispatch).toHaveBeenCalledWith(actions.file.processFile({fileId: '6386915c8dab534c4614b941-uploadFile', fileType: 'csv', fileProps: {maxSize: '4 KB'}, file}));
   });
-  test('Should make dispatch calls when status is set to received and upload the file', async () => {
+  test('should make dispatch calls when status is set to received and upload the file', async () => {
     initialStore.getState().session.fileUpload = {
       '6386915c8dab534c4614b941-uploadFile': {
         status: 'received',
@@ -102,8 +102,8 @@ describe('DynaSuiteScriptUploadFile UI test cases', () => {
     };
 
     initDynaSuiteScriptUploadFile(data);
-    expect(mockOnField).toBeCalledWith('uploadFile', 'User,Id ,2 ,3 ,4 ,5 ');
-    expect(mockDispatch).toBeCalledWith(actions.resourceFormSampleData.request('exports-6386915c8dab534c4614b941'));
+    expect(mockOnField).toHaveBeenCalledWith('uploadFile', 'User,Id ,2 ,3 ,4 ,5 ');
+    expect(mockDispatch).toHaveBeenCalledWith(actions.resourceFormSampleData.request('exports-6386915c8dab534c4614b941'));
     expect(screen.getByText('Sample file (that would be parsed)')).toBeInTheDocument();
     expect(screen.getByText('Choose file')).toBeInTheDocument();
     expect(screen.getByText('fileA.csv')).toBeInTheDocument();
@@ -124,9 +124,9 @@ describe('DynaSuiteScriptUploadFile UI test cases', () => {
 
     expect(input.files).toHaveLength(1);
     expect(input.files[0].name).toBe('somegeneratedID.csv');
-    expect(mockDispatch).toBeCalledWith(actions.file.processFile({fileId: '6386915c8dab534c4614b941-uploadFile', fileType: 'csv', fileProps: {maxSize: '4 KB'}, file}));
+    expect(mockDispatch).toHaveBeenCalledWith(actions.file.processFile({fileId: '6386915c8dab534c4614b941-uploadFile', fileType: 'csv', fileProps: {maxSize: '4 KB'}, file}));
   });
-  test('Should make dispatch calls when uploaded file is empty and reset files and uploaded no file', async () => {
+  test('should make dispatch calls when uploaded file is empty and reset files and uploaded no file', async () => {
     initialStore.getState().session.fileUpload = {};
     const data = {
       id: 'uploadFile',
@@ -143,7 +143,7 @@ describe('DynaSuiteScriptUploadFile UI test cases', () => {
     // expect(mockDispatch).toBeCalledWith(actions.resourceFormSampleData.request('exports-6386915c8dab534c4614b941'));
     expect(mockDispatch).toHaveBeenCalledWith(actions.resourceFormSampleData.clear('6386915c8dab534c4614b941'));
     expect(mockDispatch).toHaveBeenCalledWith(actions.file.reset('6386915c8dab534c4614b941-uploadFile'));
-    expect(mockOnField).toBeCalledWith('uploadFile', '', true);
+    expect(mockOnField).toHaveBeenCalledWith('uploadFile', '', true);
     expect(screen.getByText('No file chosen')).toBeInTheDocument();
     const input = document.querySelector('input[data-test="uploadFile"]');
 

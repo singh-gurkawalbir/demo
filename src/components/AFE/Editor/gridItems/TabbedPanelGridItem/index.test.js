@@ -1,4 +1,3 @@
-/* global describe, test, expect */
 import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -6,7 +5,7 @@ import { renderWithProviders } from '../../../../../test/test-utils';
 import TabbedPanelGridItem from '.';
 import IsLoggableContextProvider from '../../../../IsLoggableContextProvider';
 
-describe('TabbedPanelGridItem UI tests', () => {
+describe('tabbedPanelGridItem UI tests', () => {
   const panelGroup = {panels: [{key: 'key1', Panel: 'panel1', name: 'tab1', props: {}}, {key: 'key2', Panel: 'panel1', name: 'tab2', props: {}}, {key: 'key3', Panel: 'panel1', name: 'tab3', props: {}}]};
 
   test('should pass the initial render', () => {

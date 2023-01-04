@@ -4,6 +4,7 @@ export default {
     '/type': 'rest',
     '/assistant': 'nimble',
     '/rest/authType': 'oauth',
+    '/rest/oauth/useIClientFields': false,
     '/rest/mediaType': 'json',
     '/rest/baseURI': 'https://api.nimble.com/api',
     '/rest/tokenLocation': 'header',

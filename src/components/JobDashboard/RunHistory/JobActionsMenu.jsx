@@ -42,7 +42,7 @@ export default function JobActionsMenu({
       icon: <DownloadIcon />,
     });
     menuOptions.push({
-      label: `${job.files.length > 1 ? 'Purge files' : 'Purge file'}`,
+      label: 'Purge files',
       action: 'purgeFiles',
       icon: <PurgeIcon />,
     });

@@ -1,4 +1,4 @@
-/* global describe, test, expect */
+
 import React from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import {screen} from '@testing-library/react';
@@ -15,8 +15,8 @@ function initVerifyTag(props = {}) {
   return renderWithProviders(ui, {initialStore});
 }
 
-describe('VerifyTag UI test cases', () => {
-  test('Should display verifying when status is set to requested', () => {
+describe('verifyTag UI test cases', () => {
+  test('should display verifying when status is set to requested', () => {
     initialStore.getState().session.sso = {
       status: 'requested',
     };
@@ -26,7 +26,7 @@ describe('VerifyTag UI test cases', () => {
     expect(progressBar).toBeInTheDocument();
     expect(screen.getByText('Verifying...')).toBeInTheDocument();
   });
-  test('Should display error message when error is provided', () => {
+  test('should display error message when error is provided', () => {
     const data =
     {
       error: 'someerror',
@@ -38,7 +38,7 @@ describe('VerifyTag UI test cases', () => {
     initVerifyTag(data);
     expect(screen.getByText('someerror')).toBeInTheDocument();
   });
-  test('Should display verifying when status is set to success', () => {
+  test('should display verifying when status is set to success', () => {
     initialStore.getState().session.sso = {
       status: 'success',
     };

@@ -1,4 +1,4 @@
-/* global describe, expect, jest, test */
+
 import React from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { screen } from '@testing-library/react';
@@ -110,7 +110,7 @@ function initImports(data = []) {
 
   renderWithProviders(ui, {initialStore});
 }
-describe('Test suite for eventreports', () => {
+describe('test suite for eventreports', () => {
   const startDate = new Date('2018-12-24T10:33:30.000+05:30');
   const endDate = new Date('2022-10-02T10:33:30.000+05:30');
   const createdDate = new Date('2022-12-22T10:33:30.000+05:30');

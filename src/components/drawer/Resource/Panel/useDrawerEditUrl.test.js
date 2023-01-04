@@ -1,4 +1,4 @@
-/* global describe, test, expect */
+
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { renderWithProviders } from '../../../../test/test-utils';
@@ -19,19 +19,19 @@ async function inituseDrawerEditUrl(resourceType) {
   return returnData;
 }
 describe('useDrawerEditUrl tests', () => {
-  test('Should able to test the custom useDrawerEditUrl hook with resourcetype pageGenerator ', async () => {
+  test('Should able to test the custom useDrawerEditUrl hook with resourcetype pageGenerator', async () => {
     const url = await inituseDrawerEditUrl('pageGenerator');
 
-    expect(url).toEqual('/integrations/_integrationId/flowBuilder/_flowId/edit/exports/edit/exports/_exportId');
+    expect(url).toBe('/integrations/_integrationId/flowBuilder/_flowId/edit/exports/edit/exports/_exportId');
   });
   test('Should able to test the custom useDrawerEditUrl hook with resourcetype pageProcessor', async () => {
     const url = await inituseDrawerEditUrl('pageProcessor');
 
-    expect(url).toEqual('/integrations/_integrationId/flowBuilder/_flowId/edit/exports/edit//_exportId');
+    expect(url).toBe('/integrations/_integrationId/flowBuilder/_flowId/edit/exports/edit//_exportId');
   });
   test('Should able to test the custom useDrawerEditUrl hook with wrong resourcetype', async () => {
     const url = await inituseDrawerEditUrl('random');
 
-    expect(url).toEqual('/integrations/_integrationId/flowBuilder/_flowId/edit/exports/edit/editor/_exportId');
+    expect(url).toBe('/integrations/_integrationId/flowBuilder/_flowId/edit/exports/edit/editor/_exportId');
   });
 });

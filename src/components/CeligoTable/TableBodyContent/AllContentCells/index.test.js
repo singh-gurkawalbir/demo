@@ -1,4 +1,4 @@
-/* global describe, test, expect, jest */
+
 import React from 'react';
 import { screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
@@ -25,7 +25,7 @@ async function initAllContentCells({ useColumns = jest.fn().mockReturnValue([]),
   return renderWithProviders(ui);
 }
 
-describe('AllContentCells component Test cases', () => {
+describe('allContentCells component Test cases', () => {
   runServer();
   test('should pass the intial render with default values', async () => {
     const { utils } = await initAllContentCells();
@@ -33,7 +33,7 @@ describe('AllContentCells component Test cases', () => {
     expect(utils.container.firstChild.firstChild.firstChild).toBeEmptyDOMElement();
   });
 
-  test('should pass the intial render with default values', async () => {
+  test('should pass the intial render with default values.', async () => {
     const useColumns = jest.fn(() => [
       {
         key: 'name',

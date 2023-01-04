@@ -27,6 +27,7 @@ export default function RequestUpgradeButton(props) {
   const errMessage = useSelector(state => selectors.getStatus(state, id)?.errMessage);
   const showMessage = useSelector(state => selectors.getStatus(state, 'successMessageFlags')?.showMessage);
   const showFinalMessage = useSelector(state => selectors.getStatus(state, 'successMessageFlags')?.showFinalMessage);
+  const showChildLeftMessageFlag = useSelector(state => selectors.getStatus(state, 'successMessageFlags')?.showChildLeftMessageFlag);
   const isChildLicenseInUpgrade = useSelector(state => selectors.isChildLicenseInUpgrade(state, id));
   const accessLevel = useSelector(
     state => selectors.resourcePermissions(state, 'integrations', id).accessLevel
@@ -72,11 +73,11 @@ export default function RequestUpgradeButton(props) {
   }, [status]);
 
   useEffect(() => {
-    if (showMessage && currentChild === 'none') {
+    if (showMessage && currentChild === 'none' && showChildLeftMessageFlag) {
       enquesnackbar({message: <RawHtml html={messageStore('CHILD_UPGRADE_LEFT_MESSAGE')} />, variant: 'success'});
-      dispatch(actions.integrationApp.upgrade.setStatus('successMessageFlags', { showMessage: false }));
+      dispatch(actions.integrationApp.upgrade.setStatus('successMessageFlags', { showMessage: false, showChildLeftMessageFlag: false }));
     }
-  }, [currentChild, dispatch, enquesnackbar, id, showMessage]);
+  }, [currentChild, dispatch, enquesnackbar, id, showChildLeftMessageFlag, showMessage]);
 
   useEffect(() => {
     if (showFinalMessage && !isChildLicenseInUpgrade) {
@@ -86,7 +87,7 @@ export default function RequestUpgradeButton(props) {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch, enquesnackbar, isChildLicenseInUpgrade, showFinalMessage]);
 
-  if (isChildLicenseInUpgrade) {
+  if (isChildLicenseInUpgrade && !changeEditionId) {
     return (
       <FilledButton
         className={className}

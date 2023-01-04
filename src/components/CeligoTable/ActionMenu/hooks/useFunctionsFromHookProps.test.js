@@ -1,4 +1,4 @@
-/* global describe, test, expect, jest */
+
 import React from 'react';
 import { useFunctionsFromHookProps } from './useFunctionsFromHookProps';
 import { runServer } from '../../../../test/api/server';

@@ -1,4 +1,3 @@
-/* global describe, test, expect, jest, beforeEach, afterEach */
 import React from 'react';
 import * as reactRedux from 'react-redux';
 import { MemoryRouter } from 'react-router-dom';
@@ -90,7 +89,7 @@ async function initTopPanel({ props = {}, adaptorType = 'HTTPImport' } = {}) {
   return renderWithProviders(ui, { initialStore });
 }
 
-describe('TopPanel component Test cases', () => {
+describe('topPanel component Test cases', () => {
   runServer();
   let mockDispatchFn;
   let useDispatchSpy;
@@ -133,8 +132,8 @@ describe('TopPanel component Test cases', () => {
     expect(refreshExtracts).toBeInTheDocument();
     expect(refreshGenerates).toBeInTheDocument();
     userEvent.click(refreshExtracts);
-    expect(mockDispatchFn).toBeCalledTimes(1);
-    expect(mockDispatchFn).toBeCalledWith(actions.flowData.requestSampleData(
+    expect(mockDispatchFn).toHaveBeenCalledTimes(1);
+    expect(mockDispatchFn).toHaveBeenCalledWith(actions.flowData.requestSampleData(
       'flow_id',
       'import_id',
       'imports',
@@ -143,11 +142,11 @@ describe('TopPanel component Test cases', () => {
     ));
 
     userEvent.click(refreshGenerates);
-    expect(mockDispatchFn).toBeCalledTimes(2);
-    expect(mockDispatchFn).toBeCalledWith(actions.mapping.refreshGenerates());
+    expect(mockDispatchFn).toHaveBeenCalledTimes(2);
+    expect(mockDispatchFn).toHaveBeenCalledWith(actions.mapping.refreshGenerates());
   });
 
-  test('should pass the initial render with custom props', async () => {
+  test('should render the Source record and destination record fields', async () => {
     await initTopPanel({
       props: {
         flowId: 'flow_id',

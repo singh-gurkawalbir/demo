@@ -1,4 +1,3 @@
-/* global describe, test, expect, beforeEach, jest, afterEach */
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import * as reactRedux from 'react-redux';
@@ -22,7 +21,7 @@ async function initTransfers() {
   };
 }
 
-describe('Transfers test cases', () => {
+describe('transfers test cases', () => {
   runServer();
   let mockDispatchFn;
   let useDispatchSpy;

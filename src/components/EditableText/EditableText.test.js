@@ -1,10 +1,10 @@
-/* global describe, test, expect ,jest */
+
 import React from 'react';
 import { render, screen, fireEvent} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import EditableText from '.';
 
-describe('EditableText testing', () => {
+describe('editableText testing', () => {
   test('should enter some value in input', () => {
     const onchange = jest.fn();
 

@@ -1,4 +1,4 @@
-/* global describe, test, expect */
+
 import { call, put, all, select } from 'redux-saga/effects';
 import actions from '../../actions';
 import { apiCallWithRetry } from '../index';
@@ -45,7 +45,7 @@ describe('restore saga', () => {
     expect(saga.next(redirectTo).value).toEqual(
       put(actions.recycleBin.restoreRedirectUrl(redirectTo))
     );
-    expect(saga.next().done).toEqual(true);
+    expect(saga.next().done).toBe(true);
   });
   test('should handle if api call fails', () => {
     const saga = restore({ resourceType, resourceId });
@@ -59,8 +59,8 @@ describe('restore saga', () => {
         },
       })
     );
-    expect(saga.throw(new Error()).value).toEqual(undefined);
-    expect(saga.next().done).toEqual(true);
+    expect(saga.throw(new Error()).value).toBeUndefined();
+    expect(saga.next().done).toBe(true);
   });
 });
 describe('purge saga', () => {
@@ -82,7 +82,7 @@ describe('purge saga', () => {
     expect(saga.next().value).toEqual(
       put(actions.resource.requestCollection('recycleBinTTL'))
     );
-    expect(saga.next().done).toEqual(true);
+    expect(saga.next().done).toBe(true);
   });
   test('should handle if api call fails', () => {
     const saga = purge({ resourceType, resourceId });
@@ -95,7 +95,7 @@ describe('purge saga', () => {
         },
       })
     );
-    expect(saga.throw(new Error()).value).toEqual(undefined);
-    expect(saga.next().done).toEqual(true);
+    expect(saga.throw(new Error()).value).toBeUndefined();
+    expect(saga.next().done).toBe(true);
   });
 });

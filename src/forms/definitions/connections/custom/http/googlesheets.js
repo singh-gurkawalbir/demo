@@ -4,6 +4,7 @@ export default {
     '/type': 'http',
     '/assistant': 'googlesheets',
     '/http/auth/type': 'oauth',
+    '/http/auth/oauth/useIClientFields': false,
     '/http/mediaType': 'json',
     '/http/baseURI': 'https://sheets.googleapis.com/',
     '/http/auth/oauth/authURI': 'https://accounts.google.com/o/oauth2/auth',

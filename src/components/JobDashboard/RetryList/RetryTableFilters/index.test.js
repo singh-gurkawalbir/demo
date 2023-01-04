@@ -1,4 +1,4 @@
-/* global describe, test, expect, beforeEach, afterEach, jest */
+
 import React from 'react';
 import * as reactRedux from 'react-redux';
 import { screen} from '@testing-library/react';
@@ -175,7 +175,7 @@ function initRetryTableFilters({
   return renderWithProviders(ui, {initialStore});
 }
 
-describe('RetryTableFilters UI tests', () => {
+describe('retryTableFilters UI tests', () => {
   let mockDispatchFn;
   let useDispatchSpy;
 
@@ -241,6 +241,6 @@ describe('RetryTableFilters UI tests', () => {
 
     userEvent.click(buttonRef);
 
-    await expect(mockDispatchFn).toBeCalledWith(actions.errorManager.retries.request({flowId: 'flow1', resourceId: 'res1'}));
+    await expect(mockDispatchFn).toHaveBeenCalledWith(actions.errorManager.retries.request({flowId: 'flow1', resourceId: 'res1'}));
   });
 });

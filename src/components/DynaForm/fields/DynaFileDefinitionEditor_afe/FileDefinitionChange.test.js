@@ -1,4 +1,4 @@
-/* global describe, test, expect, jest, beforeEach, afterEach */
+
 import React from 'react';
 import {
   waitFor,
@@ -55,7 +55,7 @@ async function initFileDefinitionChange(props = {}) {
   return renderWithProviders(<FileDefinitionChange {...props} />, {initialStore});
 }
 
-describe('FileDefinitionChange UI tests', () => {
+describe('fileDefinitionChange UI tests', () => {
   let mockDispatchFn;
   let useDispatchSpy;
 
@@ -84,14 +84,14 @@ describe('FileDefinitionChange UI tests', () => {
 
   test('should make 2 dispatch calls when editor is not active', async () => {
     initFileDefinitionChange(props);
-    await waitFor(() => expect(mockDispatchFn).toBeCalledWith(actions.resourceFormSampleData.request('imports-5b3c75dd5d3c125c88b5dd20')));
-    await waitFor(() => expect(mockDispatchFn).toBeCalledWith(actions.form.fieldChange('imports-5b3c75dd5d3c125c88b5dd20')('fieldId', '{}', true)));
+    await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith(actions.resourceFormSampleData.request('imports-5b3c75dd5d3c125c88b5dd20')));
+    await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith(actions.form.fieldChange('imports-5b3c75dd5d3c125c88b5dd20')('fieldId', '{}', true)));
   });
   test('should make 2 additional dispatch calls along with the above calls when editor is active', async () => {
     initFileDefinitionChange({...props, id: 'id'});
-    await waitFor(() => expect(mockDispatchFn).toBeCalledWith(actions.resourceFormSampleData.request('imports-5b3c75dd5d3c125c88b5dd20')));
-    await waitFor(() => expect(mockDispatchFn).toBeCalledWith(actions.form.fieldChange('imports-5b3c75dd5d3c125c88b5dd20')('fieldId', '{}', true)));
-    await waitFor(() => expect(mockDispatchFn).toBeCalledWith(actions.editor.patchData('filecsv', '{}')));
-    await waitFor(() => expect(mockDispatchFn).toBeCalledWith(actions.editor.patchRule('filecsv', '{}')));
+    await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith(actions.resourceFormSampleData.request('imports-5b3c75dd5d3c125c88b5dd20')));
+    await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith(actions.form.fieldChange('imports-5b3c75dd5d3c125c88b5dd20')('fieldId', '{}', true)));
+    await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith(actions.editor.patchData('filecsv', '{}')));
+    await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith(actions.editor.patchRule('filecsv', '{}')));
   });
 });

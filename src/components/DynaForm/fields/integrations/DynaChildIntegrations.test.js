@@ -1,4 +1,4 @@
-/* global describe, test, expect, jest */
+
 import React from 'react';
 import {
   screen, waitFor,
@@ -59,7 +59,7 @@ jest.mock('../../../LoadResources', () => ({
   default: props => props.children,
 }));
 
-describe('DynaChildIntegrations UI tests', () => {
+describe('dynaChildIntegrations UI tests', () => {
   const mockonFieldChange = jest.fn();
   const props = {
     formKey: 'formKey',

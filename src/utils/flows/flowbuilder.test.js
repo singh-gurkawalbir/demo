@@ -1,4 +1,3 @@
-/* global describe, test, expect */
 import { cloneDeep, keyBy } from 'lodash';
 import { GRAPH_ELEMENTS_TYPE } from '../../constants';
 import { shortId } from '../string';
@@ -1024,7 +1023,7 @@ describe('deletePPStepForOldSchema util function test', () => {
     const flow = undefined;
 
     deletePPStepForOldSchema(flow, '/routers/0/branches/0/pageProcessors/1');
-    expect(flow).toEqual(undefined);
+    expect(flow).toBeUndefined();
   });
   test('should delete the pageProcessor as per path given', () => {
     const flow = {pageProcessors: [{setupInProgress: true}, {_importId: '1234'}]};
@@ -1038,7 +1037,7 @@ describe('deletePPStepForOldSchema util function test', () => {
     deletePPStepForOldSchema(flow, 'routers/2/branches/0/pageProcessors/1');
     expect(flow).toEqual({pageProcessors: [{setupInProgress: true}, {_importId: '1234'}]});
   });
-  test('should not change anything with path is not valid', () => {
+  test('should not change anything with path is not valid1', () => {
     const flow = {pageProcessors: [{setupInProgress: true}, {_importId: '1234'}]};
 
     deletePPStepForOldSchema(flow, '/routers/0/branches/0/pageProcessors/11');
@@ -1124,7 +1123,7 @@ describe('deletePGOrPPStepForRouters util function test', () => {
         routers: [{branches: [{pageProcessors: [{id: 'abcd', setupInProgress: true}, {_importId: '0000', id: '0000'}]}], id: 'router1'}],
       });
     });
-    test('should delete the pageGenerator by stepId', () => {
+    test('should delete the pageGenerator by stepId1', () => {
       const flow = cloneDeep(flow1);
 
       deletePGOrPPStepForRouters(flow, flow1, '5678', elementsMap);
@@ -1150,7 +1149,7 @@ describe('deletePGOrPPStepForRouters util function test', () => {
       });
     });
   });
-  describe('should delete the pageProcessor correctly', () => {
+  test('should delete the pageProcessor correctly', () => {
     const flow = cloneDeep(flow1);
 
     deletePGOrPPStepForRouters(flow, flow, 'abcd', elementsMap);
@@ -1159,7 +1158,7 @@ describe('deletePGOrPPStepForRouters util function test', () => {
       routers: [{branches: [{pageProcessors: [{_importId: '0000', id: '0000'}]}], id: 'router1'}],
     });
   });
-  describe('should not delete the pageProcessor if incorrect step passed', () => {
+  test('should not delete the pageProcessor if incorrect step passed', () => {
     const flow = cloneDeep(flow1);
 
     deletePGOrPPStepForRouters(flow, flow, 'abcd1', elementsMap);
@@ -1253,7 +1252,7 @@ describe('generateDefaultEdge util function', () => {
       type: 'default',
     });
   });
-  test('should return correct edge object with valid params and branch params', () => {
+  test('should return correct edge object with valid params and branch params1', () => {
     const edge = generateDefaultEdge('source', 'target', {routerIndex: 1, branchIndex: 1, index: 2, hidden: true, processorCount: 3});
 
     expect(edge).toEqual({
@@ -1294,7 +1293,7 @@ describe('generateRouterNode util function', () => {
     expect(obj).toEqual({data: {path: '/routers/0'}, id: anyShortId, type: 'merge'});
   });
 
-  test('should return expected router object', () => {
+  test('should return expected router object1', () => {
     const obj = generateRouterNode({id: 'routerId', branches: [{name: 'branch1', pageProcessors: [{setupInProgress: true}]}]}, 1);
 
     expect(obj).toEqual({data: {path: '/routers/1'}, id: 'routerId', type: 'merge'});
@@ -1324,7 +1323,7 @@ describe('generateNewTerminal util function', () => {
     expect(terminal).toEqual({data: {path: '/routers/1/branches/1/pageProcessors/2'}, draggable: false, id: anyShortId, type: 'terminal'});
   });
 
-  test('should return correct terminal object with branch details', () => {
+  test('should return correct terminal object with branch details1', () => {
     const terminal = generateNewTerminal({branch: {}, branchIndex: 1, routerIndex: 1});
 
     expect(terminal).toEqual({data: { path: '/routers/1/branches/1/pageProcessors/-'}, draggable: false, id: anyShortId, type: 'terminal'});
@@ -1343,7 +1342,7 @@ describe('generateNewEmptyNode util function', () => {
     expect(terminal).toEqual({data: { path: '/routers/1/branches/1/pageProcessors/2'}, id: anyShortId, type: 'empty'});
   });
 
-  test('should return correct terminal object with branch details', () => {
+  test('should return correct terminal object with branch details1', () => {
     const terminal = generateNewEmptyNode({branch: {}, branchIndex: 1, routerIndex: 1});
 
     expect(terminal).toEqual({data: {path: '/routers/1/branches/1/pageProcessors/-'}, id: anyShortId, type: 'empty'});
@@ -1432,7 +1431,7 @@ describe('generatePageGeneratorNodesAndEdges util function', () => {
       {data: {path: '/routers/-1/branches/-1', processorCount: undefined, processorIndex: 0}, hidden: undefined, id: '12234-1234', source: '12234', target: '1234', type: 'default'},
     ]);
   });
-  test('should return array of nodes and edges when pageGenerators exist', () => {
+  test('should return array of nodes and edges when pageGenerators exist1', () => {
     expect(generatePageGeneratorNodesAndEdges([{id: '1', setupInProgress: true}, {id: '2', setupInProgress: true}, {id: '3', setupInProgress: true}], '1234')).toEqual(
       [
         {data: {hideDelete: undefined, id: '1', path: '/pageGenerators/0', setupInProgress: true}, id: '1', type: 'pg'},
@@ -1715,6 +1714,7 @@ describe('populateMergeData util function test', () => {
 
     populateMergeData(flow4, elements);
     const terminalNodes = elements.filter(el => el.type === GRAPH_ELEMENTS_TYPE.TERMINAL);
+    // eslint-disable-next-line jest/no-conditional-in-test
     const edges = elements.filter(el => el.type === GRAPH_ELEMENTS_TYPE.EDGE && !!el.data.mergableTerminals);
 
     expect(terminalNodes).toHaveLength(1);
@@ -1726,6 +1726,7 @@ describe('populateMergeData util function test', () => {
 
     populateMergeData(flow5, elements);
     const terminalNodes = elements.filter(el => el.type === GRAPH_ELEMENTS_TYPE.TERMINAL);
+    // eslint-disable-next-line jest/no-conditional-in-test
     const edges = elements.filter(el => el.type === GRAPH_ELEMENTS_TYPE.EDGE && !!el.data.mergableTerminals);
 
     expect(terminalNodes).toHaveLength(3);
@@ -3335,7 +3336,7 @@ describe('mergeTerminalToAnEdge util function test', () => {
 
     mergeTerminalToAnEdge({ flowDoc, elements, patchSet, sourceElement, targetElement });
 
-    return expect(patchSet).toEqual(
+    expect(patchSet).toEqual(
       [{op: 'add', path: '/routers/-', value: {branches: [{nextRouterId: undefined, pageProcessors: [{id: 'new-OKMTLa', responseMapping: {fields: [], lists: []}, setupInProgress: true}]}], id: anyShortId}},
         {op: 'replace', path: '/routers/0/branches/1/nextRouterId', value: anyShortId},
         {op: 'replace', path: '/routers/1/branches/1/pageProcessors', value: []},
@@ -3550,7 +3551,7 @@ describe('mergeTerminalToAnEdge util function test', () => {
 
     mergeTerminalToAnEdge({ flowDoc, elements, patchSet, sourceElement, targetElement });
 
-    return expect(patchSet).toEqual(
+    expect(patchSet).toEqual(
       [
         {
           op: 'add',
@@ -3761,7 +3762,7 @@ describe('mergeTerminalToAnEdge util function test', () => {
 
     mergeTerminalToAnEdge({ flowDoc, elements, patchSet, sourceElement, targetElement });
 
-    return expect(patchSet).toEqual(
+    expect(patchSet).toEqual(
       [
         {
           op: 'add',
@@ -4566,7 +4567,7 @@ describe('getNewRouterPatchSet util function test', () => {
       routerIndex: 1,
     };
 
-    return expect(getNewRouterPatchSet({elementsMap, flow, router, edgeId, originalFlow})).toEqual(expected);
+    expect(getNewRouterPatchSet({elementsMap, flow, router, edgeId, originalFlow})).toEqual(expected);
   });
   test('should return correct patchSet and routerindex if replacing first router', () => {
     const flow = {
@@ -4721,7 +4722,7 @@ describe('getNewRouterPatchSet util function test', () => {
       routerIndex: 0,
     };
 
-    return expect(getNewRouterPatchSet({elementsMap, flow, router, edgeId, originalFlow})).toEqual(expected);
+    expect(getNewRouterPatchSet({elementsMap, flow, router, edgeId, originalFlow})).toEqual(expected);
   });
   test('should add pageGenerators if none exist on the flowdoc', () => {
     const flow = {
@@ -4866,7 +4867,7 @@ describe('getNewRouterPatchSet util function test', () => {
       routerIndex: 0,
     };
 
-    return expect(getNewRouterPatchSet({elementsMap, flow, router, edgeId, originalFlow})).toEqual(expected);
+    expect(getNewRouterPatchSet({elementsMap, flow, router, edgeId, originalFlow})).toEqual(expected);
   });
   test('should return correct patchSet and routerIndex if inserting first router', () => {
     const flow = {
@@ -5137,7 +5138,7 @@ describe('getNewRouterPatchSet util function test', () => {
       routerIndex: 0,
     };
 
-    return expect(getNewRouterPatchSet({elementsMap, flow, router, edgeId, originalFlow})).toEqual(expected);
+    expect(getNewRouterPatchSet({elementsMap, flow, router, edgeId, originalFlow})).toEqual(expected);
   });
   test('should return correct patchSet and routerIndex for replacing first router if 1 or more routers already exists', () => {
     const flow = {
@@ -5412,7 +5413,7 @@ describe('getNewRouterPatchSet util function test', () => {
       routerIndex: 0,
     };
 
-    return expect(getNewRouterPatchSet({elementsMap, flow, router, edgeId, originalFlow})).toEqual(expected);
+    expect(getNewRouterPatchSet({elementsMap, flow, router, edgeId, originalFlow})).toEqual(expected);
   });
 });
 

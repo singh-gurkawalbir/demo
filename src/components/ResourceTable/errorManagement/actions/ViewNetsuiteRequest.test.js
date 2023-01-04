@@ -1,4 +1,4 @@
-/* global test, expect, describe, jest, afterEach */
+
 import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -46,7 +46,7 @@ function renderFuntion(actionProps, data, errorType) {
   userEvent.click(screen.getByRole('button', {name: /more/i}));
 }
 
-describe('Error management View netsuite request action tests', () => {
+describe('error management View netsuite request action tests', () => {
   afterEach(() => {
     jest.clearAllMocks();
   });

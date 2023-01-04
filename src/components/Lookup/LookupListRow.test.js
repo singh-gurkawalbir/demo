@@ -1,4 +1,4 @@
-/* global describe, test, expect, jest */
+
 import React from 'react';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -31,7 +31,7 @@ async function initLookupListRow({ props, value = {name: 'DummyName'}, classes =
   return renderWithProviders(ui);
 }
 
-describe('LookupListRow component Test cases', () => {
+describe('lookupListRow component Test cases', () => {
   runServer();
   test('should pass the intial render with default values', async () => {
     await initLookupListRow();
@@ -66,10 +66,10 @@ describe('LookupListRow component Test cases', () => {
     expect(deleteLookup).toBeInTheDocument();
 
     userEvent.click(editLookup);
-    expect(onEdit).toBeCalledTimes(1);
+    expect(onEdit).toHaveBeenCalledTimes(1);
 
     userEvent.click(deleteLookup);
-    expect(onDelete).toBeCalledTimes(1);
+    expect(onDelete).toHaveBeenCalledTimes(1);
 
     userEvent.keyboard('{esc}');
 

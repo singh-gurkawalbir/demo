@@ -1,4 +1,4 @@
-/* global describe, test, expect, jest */
+
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 // eslint-disable-next-line import/no-extraneous-dependencies
@@ -14,8 +14,8 @@ const props = {
   onSortEnd: jest.fn(),
 };
 
-describe('Drag Container', () => {
-  test('Should able to test the Drag Container with the list of items which have keys', async () => {
+describe('drag Container', () => {
+  test('should able to test the Drag Container with the list of items which have keys', async () => {
     renderWithProviders(
       <MemoryRouter>
         <DragContainer
@@ -41,7 +41,7 @@ describe('Drag Container', () => {
 
     expect(mock2).toBeInTheDocument();
   });
-  test('Should able to test the Drag Container with the empty list of items', () => {
+  test('should able to test the Drag Container with the empty list of items', () => {
     renderWithProviders(
       <MemoryRouter>
         <DragContainer {...props} />
@@ -51,7 +51,7 @@ describe('Drag Container', () => {
 
     expect(mock2).toBeInTheDocument();
   });
-  test('Should able to test the Drag Container with the list of items which has section id', async () => {
+  test('should able to test the Drag Container with the list of items which has section id', async () => {
     renderWithProviders(
       <MemoryRouter>
         <DragContainer
@@ -77,7 +77,7 @@ describe('Drag Container', () => {
 
     expect(mock2).toBeInTheDocument();
   });
-  test('Should able to test the Drag Container with the list of items which has section id and disabled as true', async () => {
+  test('should able to test the Drag Container with the list of items which has section id and disabled as true', async () => {
     renderWithProviders(
       <MemoryRouter>
         <DragContainer

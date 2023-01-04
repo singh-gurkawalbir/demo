@@ -4,6 +4,7 @@ export default {
     '/type': 'rest',
     '/assistant': 'yammer',
     '/rest/authType': 'oauth',
+    '/rest/oauth/useIClientFields': false,
     '/rest/mediaType': 'json',
     '/rest/baseURI': 'https://www.yammer.com/api',
     '/rest/tokenLocation': 'header',

@@ -9,6 +9,7 @@ import { getValidRelativePath } from '../../../../utils/routePaths';
 import { buildDrawerUrl, drawerPaths } from '../../../../utils/rightDrawer';
 import { isMetaRequiredValuesMet, PARAMETER_LOCATION } from '../../../../utils/assistant';
 import messageStore from '../../../../utils/messageStore';
+import { EXPORT_FILTERED_DATA_STAGE, IMPORT_FLOW_DATA_STAGE } from '../../../../utils/flowData';
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -76,7 +77,7 @@ export default function DynaHFAssistantSearchParams(props) {
   const match = useRouteMatch();
 
   const editorId = getValidRelativePath(id);
-  const flowDataStage = resourceType === 'exports' ? 'inputFilter' : 'importMappingExtract';
+  const flowDataStage = resourceType === 'exports' ? EXPORT_FILTERED_DATA_STAGE : IMPORT_FLOW_DATA_STAGE;
   const isMetaValid = isMetaRequiredValuesMet(paramMeta, value);
   const requiredFields = useMemo(() => paramMeta?.fields.filter(field => field.required).map(field => field.id), [paramMeta]);
   const selectTypeList = useMemo(() => {

@@ -1,3 +1,5 @@
+import { safeParse } from '../../../utils/string';
+
 /* eslint-disable no-param-reassign */
 export default {
   preSave: (formValues, _, { connection } = {}) => {
@@ -327,6 +329,7 @@ export default {
       retValues['/http/_asyncHelperId'] = undefined;
     }
     retValues['/adaptorType'] = 'HTTPImport';
+    retValues['/mockResponse'] = safeParse(retValues['/mockResponse']);
 
     return {
       ...retValues,
@@ -1301,6 +1304,7 @@ export default {
     },
     'unencrypted.apiType': {fieldId: 'unencrypted.apiType'},
     'unencrypted.feedType': {fieldId: 'unencrypted.feedType'},
+    mockResponseSection: {formId: 'mockResponseSection'},
   },
   layout: {
     type: 'collapse',
@@ -1430,6 +1434,12 @@ export default {
             ],
           },
         ],
+      },
+      {
+        actionId: 'mockResponse',
+        collapsed: true,
+        label: 'Mock response',
+        fields: ['mockResponseSection'],
       },
       {
         collapsed: true,

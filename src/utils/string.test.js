@@ -1,51 +1,50 @@
-/* global describe, test, expect */
 import { getTextAfterCount, camelCase, isHTML, getTrimmedTitle, getParsedMessage, escapeSpecialChars, hasWhiteSpace } from './string';
 
 describe('getTextAfterCount util test cases', () => {
   test('should return correct string when count is zero', () => {
-    expect(getTextAfterCount('value', 0)).toEqual('0 values');
+    expect(getTextAfterCount('value', 0)).toBe('0 values');
   });
   test('should return correct string when count is 1', () => {
-    expect(getTextAfterCount('value', 1)).toEqual('1 value');
+    expect(getTextAfterCount('value', 1)).toBe('1 value');
   });
   test('should return correct string when count is greater than 1', () => {
-    expect(getTextAfterCount('value', 2)).toEqual('2 values');
-    expect(getTextAfterCount('value', 3)).toEqual('3 values');
-    expect(getTextAfterCount('value', 4)).toEqual('4 values');
-    expect(getTextAfterCount('error')).toEqual('0 errors');
+    expect(getTextAfterCount('value', 2)).toBe('2 values');
+    expect(getTextAfterCount('value', 3)).toBe('3 values');
+    expect(getTextAfterCount('value', 4)).toBe('4 values');
+    expect(getTextAfterCount('error')).toBe('0 errors');
   });
 });
 
 describe('camelCase util test cases', () => {
   test('should not throw exception if invalid or empty args are supplied', () => {
-    expect(camelCase()).toEqual('');
-    expect(camelCase('')).toEqual('');
-    expect(camelCase(null)).toEqual(null);
+    expect(camelCase()).toBe('');
+    expect(camelCase('')).toBe('');
+    expect(camelCase(null)).toBeNull();
   });
   test('should return camel cases string', () => {
-    expect(camelCase('Magento store')).toEqual('magento store');
-    expect(camelCase('Shopify')).toEqual('shopify');
+    expect(camelCase('Magento store')).toBe('magento store');
+    expect(camelCase('Shopify')).toBe('shopify');
   });
 });
 
 describe('isHTML util test cases', () => {
   test('should not throw exception if invalid or empty args are supplied', () => {
-    expect(isHTML()).toEqual(false);
-    expect(isHTML(null)).toEqual(false);
+    expect(isHTML()).toBe(false);
+    expect(isHTML(null)).toBe(false);
   });
   test('should return false if invalid html is provided', () => {
-    expect(isHTML('test string')).toEqual(false);
-    expect(isHTML('<xml')).toEqual(false);
+    expect(isHTML('test string')).toBe(false);
+    expect(isHTML('<xml')).toBe(false);
   });
   test('should return true if passed string is html', () => {
-    expect(isHTML('<br></br>')).toEqual(true);
+    expect(isHTML('<br></br>')).toBe(true);
   });
 });
 describe('getTrimmedTitle util test cases', () => {
   const longTitle = 'TITLE WITH LENGTH GREATER THAN FORTY CHARACTERS';
 
   test('should return empty string if no title is passed', () => {
-    expect(getTrimmedTitle()).toEqual('');
+    expect(getTrimmedTitle()).toBe('');
   });
   test('should consider maxLength as 40 by default when no maxLength is passed', () => {
     const trimmedTitle = 'TITLE WITH LENGTH GREATER THAN FORTY ...';
@@ -69,7 +68,7 @@ describe('getTrimmedTitle util test cases', () => {
 describe('getParsedMessage util test cases', () => {
   test('should not throw exception for invalid arguments', () => {
     expect(getParsedMessage()).toBeUndefined();
-    expect(getParsedMessage(null)).toEqual(null);
+    expect(getParsedMessage(null)).toBeNull();
   });
   test('should return original string if its not a valid json string', () => {
     const message = '"{\\"error\\":\\"invalid_grant\\",\\"error_description\\":\\"AADSTS700082: The refresh token has expired due to inactivity.\\\\r\\\\nTrace ID: 7878\\\\r\\\\nCorrelation ID: 999\\\\r\\",\\"error_codes\\":[700082,\\"correlation_id\\":\\"9996c...';
@@ -103,28 +102,28 @@ describe('getParsedMessage util test cases', () => {
 describe('escapeSpecialChars util test cases', () => {
   test('should not throw exception for invalid arguments', () => {
     expect(escapeSpecialChars()).toBeUndefined();
-    expect(escapeSpecialChars(null)).toEqual(null);
+    expect(escapeSpecialChars(null)).toBeNull();
   });
   test('should return correct string with escaped chars if present', () => {
-    expect(escapeSpecialChars('false')).toEqual('false');
-    expect(escapeSpecialChars(true)).toEqual('true');
-    expect(escapeSpecialChars('\n')).toEqual('\\n');
-    expect(escapeSpecialChars('\r\n')).toEqual('\\r\\n');
-    expect(escapeSpecialChars('*')).toEqual('*');
+    expect(escapeSpecialChars('false')).toBe('false');
+    expect(escapeSpecialChars(true)).toBe('true');
+    expect(escapeSpecialChars('\n')).toBe('\\n');
+    expect(escapeSpecialChars('\r\n')).toBe('\\r\\n');
+    expect(escapeSpecialChars('*')).toBe('*');
     expect(escapeSpecialChars({id: '[]'})).toEqual(JSON.stringify({id: '[]'}));
   });
 });
 
 describe('hasWhiteSpace util test cases', () => {
   test('should not throw exception for invalid arguments', () => {
-    expect(hasWhiteSpace()).toEqual(false);
-    expect(hasWhiteSpace(null)).toEqual(false);
+    expect(hasWhiteSpace()).toBe(false);
+    expect(hasWhiteSpace(null)).toBe(false);
   });
   test('should return correct boolean value for given string', () => {
-    expect(hasWhiteSpace('valid')).toEqual(false);
-    expect(hasWhiteSpace('valid string')).toEqual(true);
-    expect(hasWhiteSpace('valid  string')).toEqual(true);
+    expect(hasWhiteSpace('valid')).toBe(false);
+    expect(hasWhiteSpace('valid string')).toBe(true);
+    expect(hasWhiteSpace('valid  string')).toBe(true);
     expect(hasWhiteSpace(`valid
-    string`)).toEqual(true);
+    string`)).toBe(true);
   });
 });

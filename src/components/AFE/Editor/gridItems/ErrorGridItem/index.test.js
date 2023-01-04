@@ -1,4 +1,3 @@
-/* global describe, test, expect, jest */
 import React from 'react';
 import { screen } from '@testing-library/react';
 import { renderWithProviders } from '../../../../../test/test-utils';
@@ -47,7 +46,7 @@ function initErrorGridItem(props = {}) {
   return renderWithProviders(<ErrorGridItem {...props} />, {initialStore});
 }
 
-describe('ErrorGridItem UI tests', () => {
+describe('errorGridItem UI tests', () => {
   test('should pass the initial render', () => {
     initErrorGridItem({editorId: 'javascript1', status: 'received'});
     expect(screen.getByText('Message: SyntaxError: Unexpected identifier', {exact: false})).toBeInTheDocument();
@@ -59,7 +58,7 @@ describe('ErrorGridItem UI tests', () => {
 
     expect(utils.container).toBeEmptyDOMElement();
   });
-  test('should render empty DOM when editorId is invalid and when editor rule is valid ', () => {
+  test('should render empty DOM when editorId is invalid and when editor rule is valid', () => {
     const {utils} = initErrorGridItem({editorId: 'file.csv', status: 'requested'});
 
     expect(utils.container).toBeEmptyDOMElement();

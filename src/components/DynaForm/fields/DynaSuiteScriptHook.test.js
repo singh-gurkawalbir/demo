@@ -1,4 +1,4 @@
-/* global describe, expect, jest, test */
+
 import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -37,12 +37,12 @@ describe('test suite for Suite Script Hook', () => {
 
     userEvent.type(functionInput, 'fun');
     'fun'.split('').forEach(char => {
-      expect(onFieldChange).toBeCalledWith(props.id, { function: char });
+      expect(onFieldChange).toHaveBeenCalledWith(props.id, { function: char });
     });
 
     userEvent.type(internalIdInput, 'value');
     'value'.split('').forEach(char => {
-      expect(onFieldChange).toBeCalledWith(props.id, { fileInternalId: char });
+      expect(onFieldChange).toHaveBeenCalledWith(props.id, { fileInternalId: char });
     });
 
     //  should not show error in field validation if both field are empty

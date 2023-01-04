@@ -1,4 +1,3 @@
-/* global describe, test, beforeEach, expect, jest */
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { screen } from '@testing-library/react';
@@ -29,12 +28,12 @@ jest.mock('../../CeligoTabLayout/CustomPanels/DefaultPanel', () => ({
 }
 ));
 
-describe('Testsuite for Error Panel', () => {
+describe('testsuite for Error Panel', () => {
   runServer();
   beforeEach(() => {
     initialStore = getCreatedStore();
   });
-  test('Should test the error panel when there is no data', async () => {
+  test('should test the error panel when there is no data', async () => {
     await initErrorPanel({resourceId: '12345',
       data: {
         preview: {
@@ -47,7 +46,7 @@ describe('Testsuite for Error Panel', () => {
       }});
     expect(screen.getByText(/no data to show - application responded with an error/i)).toBeInTheDocument();
   });
-  test('Should test the error panel when there is data', async () => {
+  test('should test the error panel when there is data', async () => {
     await initErrorPanel({resourceId: '12345',
       data: {
         preview: {

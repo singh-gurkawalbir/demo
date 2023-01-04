@@ -1,4 +1,4 @@
-/* global describe, test, expect */
+
 import salesforceSettings from '.';
 
 describe('getLookupMetadata component Test cases', () => {

@@ -1,12 +1,12 @@
-/* global describe, test, expect, jest */
+
 import React from 'react';
 import { reduxStore, renderWithProviders } from '../../../test/test-utils';
 import DynaDynamicSelect from './DynaDynamicSelect';
 
 const onFieldChange = jest.fn();
 
-describe('DynaDynamicSelect tests', () => {
-  test('Should able to test DynaDynamicSelect ', async () => {
+describe('dynaDynamicSelect tests', () => {
+  test('should able to test DynaDynamicSelect', async () => {
     const props = {
       formKey: '_formKey', onFieldChange, id: '_id', optionsMap: {}, dependentFieldId: '_fieldId',
     };

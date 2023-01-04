@@ -1,4 +1,4 @@
-/* global describe, expect, jest, test, beforeEach, afterEach */
+
 import React from 'react';
 import * as reactRedux from 'react-redux';
 import { screen } from '@testing-library/react';
@@ -60,7 +60,7 @@ function initConnections(data = {}, initialStore) {
   renderWithProviders(ui, {initialStore});
 }
 
-describe('Test suite for Connections', () => {
+describe('test suite for Connections', () => {
   const globalStore = getCreatedStore();
   let useDispatchSpy;
   let mockDispatchFn;
@@ -477,7 +477,7 @@ describe('Test suite for Connections', () => {
       const refreshMetadata = screen.getByRole('menuitem', {name: 'Refresh metadata'});
 
       userEvent.click(refreshMetadata);
-      expect(document.querySelector('[aria-describedby="client-snackbar"]').textContent).toEqual('Connection is offline.');
+      expect(document.querySelector('[aria-describedby="client-snackbar"]').textContent).toBe('Connection is offline.');
     });
   });
 

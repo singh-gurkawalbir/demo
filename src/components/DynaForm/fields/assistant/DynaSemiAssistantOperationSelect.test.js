@@ -1,4 +1,4 @@
-/* global describe, test, expect , jest */
+
 import React from 'react';
 import { screen} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -89,7 +89,7 @@ function initDynaSemiAssistantOperationSelect(props = {}) {
   return renderWithProviders(<ConfirmDialogProvider><DynaSemiAssistantOperationSelect {...props} /></ConfirmDialogProvider>, {initialStore});
 }
 
-describe('DynaAssistantSearchParams UI tests', () => {
+describe('dynaAssistantSearchParams UI tests', () => {
   const mockOnFieldChangeFn = jest.fn();
 
   test('should pass the initial render', () => {
@@ -172,7 +172,7 @@ describe('DynaAssistantSearchParams UI tests', () => {
 
     userEvent.click(option);
     userEvent.click(screen.getByText('Yes'));
-    expect(mockOnFieldChangeFn).toBeCalled();
+    expect(mockOnFieldChangeFn).toHaveBeenCalled();
   });
   test('should render the dropdown only when assistant is "openair', () => {
     const props = {

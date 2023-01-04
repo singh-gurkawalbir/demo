@@ -1,4 +1,3 @@
-/* global describe, test, expect ,jest */
 import React, {useRef} from 'react';
 import { render, fireEvent, waitFor} from '@testing-library/react';
 import AutoScrollEditorTerminal from '.';
@@ -25,7 +24,7 @@ jest.mock('react', () => {
     useRef: mUseRef,
   };
 });
-describe('Autoscrooleditor UI tests', () => {
+describe('autoscrooleditor UI tests', () => {
   test('should complete positve testing of component', async () => {
     const mRef = { current: { } };
 

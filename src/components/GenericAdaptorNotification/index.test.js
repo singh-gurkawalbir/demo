@@ -1,11 +1,11 @@
-/* global describe, test, expect, jest */
+
 import React from 'react';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { renderWithProviders } from '../../test/test-utils';
 import GenericAdaptorNotification from '.';
 
-describe('GenericAdaptorNotification ui tests', () => {
+describe('genericAdaptorNotification ui tests', () => {
   test('should display the predefined notification content', () => {
     const mockFunc = jest.fn();
 

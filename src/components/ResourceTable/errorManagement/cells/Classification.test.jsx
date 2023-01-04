@@ -1,4 +1,3 @@
-/* global describe, test,jest, expect  */
 
 import React from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
@@ -15,7 +14,7 @@ jest.mock('../../../icons/AutoRetryIcon', () => ({
     <div>MockAutoRetryIcon</div>
   ),
 }));
-describe('UI test cases for classification', () => {
+describe('uI test cases for classification', () => {
   test('should display next auto retry with time when classification is set to intermittent', async () => {
     const error = {
       classification: 'Intermittent',

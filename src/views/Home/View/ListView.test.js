@@ -1,4 +1,4 @@
-/* global describe, test, expect, jest */
+
 import React from 'react';
 import {screen} from '@testing-library/react';
 import { Router } from 'react-router-dom';

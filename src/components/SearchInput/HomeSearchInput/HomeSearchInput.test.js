@@ -1,4 +1,4 @@
-/* global describe, test, expect ,jest */
+
 import React, {useReducer} from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -14,7 +14,7 @@ jest.mock('react', () => {
     useReducer: mUseReducer,
   };
 });
-describe('HomeSearchInput UI tests', () => {
+describe('homeSearchInput UI tests', () => {
   test('should call the onChange and dispatch function when input is changed', () => {
     const mockdispatch = jest.fn();
     const onchange = jest.fn();

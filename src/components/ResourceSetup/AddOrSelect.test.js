@@ -1,4 +1,4 @@
-/* global describe, test, expect, beforeEach, jest, afterEach */
+
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import * as reactRedux from 'react-redux';
@@ -140,7 +140,7 @@ jest.mock('../drawer/Resource/Panel/ResourceFormActionsPanel', () => ({
   },
 }));
 
-describe('AddOrSelect test cases', () => {
+describe('addOrSelect test cases', () => {
   runServer();
   let mockDispatchFn;
   let useDispatchSpy;
@@ -205,7 +205,7 @@ describe('AddOrSelect test cases', () => {
     expect(submitButton).toBeInTheDocument();
 
     userEvent.click(submitButton);
-    expect(onSubmitComplete).toBeCalledTimes(1);
+    expect(onSubmitComplete).toHaveBeenCalledTimes(1);
 
     // existing connection
     userEvent.click(existingConn);
@@ -217,7 +217,7 @@ describe('AddOrSelect test cases', () => {
 
     userEvent.click(doneButton);
     userEvent.click(cancelButton);
-    expect(onClose).toBeCalled();
+    expect(onClose).toHaveBeenCalled();
 
     const dispatch = reactRedux.useDispatch();
 
@@ -243,7 +243,7 @@ describe('AddOrSelect test cases', () => {
     });
 
     userEvent.click(doneButton);
-    expect(onSubmitComplete).toBeCalledTimes(2);
+    expect(onSubmitComplete).toHaveBeenCalledTimes(2);
   });
 });
 

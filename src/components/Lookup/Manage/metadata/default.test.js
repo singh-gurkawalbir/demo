@@ -1,4 +1,4 @@
-/* global describe, test, expect */
+
 import defaulty from './default';
 
 describe('getLookupMetadata component Test cases', () => {

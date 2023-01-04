@@ -1,4 +1,3 @@
-/* global describe, test, expect,beforeEach, afterEach, jest */
 import React from 'react';
 import { screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
@@ -39,7 +38,7 @@ async function initBranchDrawer(props = {editorId: 'router-abcd'}) {
   return renderWithProviders(ui, {initialStore});
 }
 
-describe('BranchDrawer tests', () => {
+describe('branchDrawer tests', () => {
   let mockDispatchFn;
   let useDispatchSpy;
   let initialStore;
@@ -62,7 +61,7 @@ describe('BranchDrawer tests', () => {
     mockHistoryPush.mockClear();
     mockHistoryGoBack.mockClear();
   });
-  test('Should able to test the initial render when description is updated and closed drawer', async () => {
+  test('should able to test the initial render when description is updated and closed drawer', async () => {
     await initBranchDrawer();
     expect(screen.getByRole('heading', {name: 'Edit branch name/description'})).toBeInTheDocument();
     expect(screen.getByText('Name')).toBeInTheDocument();
@@ -71,7 +70,7 @@ describe('BranchDrawer tests', () => {
     const closeIcon = screen.getAllByRole('button').find(btn => btn.getAttribute('data-test') === 'closeRightDrawer');
 
     userEvent.click(closeIcon);
-    expect(mockHistoryGoBack).toHaveBeenCalled();
+    expect(mockHistoryGoBack).toHaveBeenCalledTimes(1);
     expect(screen.getByRole('button', {name: 'Save'})).toBeDisabled();
     const closeBtn = screen.getAllByRole('button').find(btn => btn.getAttribute('data-test') === 'cancel');
 
@@ -82,7 +81,7 @@ describe('BranchDrawer tests', () => {
     expect(mockDispatchFn).toHaveBeenNthCalledWith(2, actions.editor.patchRule('router-abcd', {description: 'updated description for branch', name: 'R1B1'}, {rulePath: 'branches[0]'}));
     expect(mockHistoryGoBack).toHaveBeenCalledTimes(2);
   });
-  test('Should able to test the initial render when branch name is updated and only saved', async () => {
+  test('should able to test the initial render when branch name is updated and only saved', async () => {
     await initBranchDrawer();
     const nameInput = screen.getAllByRole('textbox')[0];
 

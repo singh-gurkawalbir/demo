@@ -1,4 +1,3 @@
-/*  global describe, expect, jest, test */
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { screen } from '@testing-library/react';
@@ -31,8 +30,8 @@ jest.mock('../SelectPreviewRecordsSize', () => ({
   ),
 }));
 
-describe('Preview Info Component', () => {
-  test('Should pass initial rendering', async () => {
+describe('preview Info Component', () => {
+  test('should pass initial rendering', async () => {
     const formKey = 'export-123';
     const fetchExportPreviewData = jest.fn();
     const resourceSampleData = {};

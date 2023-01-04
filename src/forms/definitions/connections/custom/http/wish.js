@@ -7,6 +7,7 @@ export default {
       '/type': 'http',
       '/assistant': 'wish',
       '/http/auth/type': 'oauth',
+      '/http/auth/oauth/useIClientFields': false,
       '/http/mediaType': 'urlencoded',
       '/http/auth/token/headerName': 'Authorization',
       '/http/auth/token/scheme': 'Bearer',

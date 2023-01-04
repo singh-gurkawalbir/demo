@@ -1,10 +1,9 @@
-/* global describe, test, expect ,jest */
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import ModalDialog from '.';
 
-describe('ModalDialog UI tests', () => {
+describe('modalDialog UI tests', () => {
   test('should not show the modal dialog when the prop "show" is false', () => {
     const {container} = render(
       <ModalDialog show={false}>
@@ -45,7 +44,7 @@ describe('ModalDialog UI tests', () => {
 
     userEvent.click(button);
 
-    expect(onclose).toHaveBeenCalled();
+    expect(onclose).toHaveBeenCalledTimes(1);
   });
 
   test('should disable the close button', () => {

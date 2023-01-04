@@ -1,4 +1,4 @@
-/* global describe, test, expect */
+
 import reducer, { selectors, extractStages, getResourceSampleData } from '.';
 import actions from '../../../../actions';
 
@@ -555,7 +555,7 @@ describe('resourceFormSampleData reducer', () => {
 
       expect(newStateSend).toEqual(expectedStateSend);
     });
-    test('should update parse stage as undefined if no parse data is passed ', () => {
+    test('should update parse stage as undefined if no parse data is passed', () => {
       const expectedState = {
         456: { preview: {status: 'received', data: { parse: undefined}}},
         ...initialState,
@@ -1014,19 +1014,19 @@ describe('sampleData selectors', () => {
 
   describe('typeOfSampleData selector', () => {
     test('should return default sample data type for invalid arguments', () => {
-      expect(selectors.typeOfSampleData()).toEqual('preview');
-      expect(selectors.typeOfSampleData({}, 123)).toEqual('preview');
-      expect(selectors.typeOfSampleData({123: {data: '123'}}, 123)).toEqual('preview');
+      expect(selectors.typeOfSampleData()).toBe('preview');
+      expect(selectors.typeOfSampleData({}, 123)).toBe('preview');
+      expect(selectors.typeOfSampleData({123: {data: '123'}}, 123)).toBe('preview');
     });
     test('should return correct sample data type for send sample data type', () => {
       const state = reducer({}, actions.resourceFormSampleData.updateType(resourceId, 'send'));
 
-      expect(selectors.typeOfSampleData(state, resourceId)).toEqual('send');
+      expect(selectors.typeOfSampleData(state, resourceId)).toBe('send');
     });
     test('should return correct sample data type for preview sample data type', () => {
       const state = reducer({}, actions.resourceFormSampleData.updateType(resourceId, 'preview'));
 
-      expect(selectors.typeOfSampleData(state, resourceId)).toEqual('preview');
+      expect(selectors.typeOfSampleData(state, resourceId)).toBe('preview');
     });
   });
   describe('getResourceSampleDataWithStatus', () => {
@@ -1291,7 +1291,7 @@ describe('sampleData selectors', () => {
         actions.resourceFormSampleData.receivedPreviewError(resourceId, error)
       );
 
-      expect(selectors.getAllParsableErrors(newState, '[resourceId]')).toEqual(undefined);
+      expect(selectors.getAllParsableErrors(newState, '[resourceId]')).toBeUndefined();
     });
   });
   describe('getResourceSampleDataStages', () => {
@@ -1470,7 +1470,7 @@ describe('sampleData getResourceSampleData util function', () => {
       status: 'requested',
     };
 
-    expect(getResourceSampleData(resourceIdSampleData, 'raw')).toEqual(undefined);
+    expect(getResourceSampleData(resourceIdSampleData, 'raw')).toBeUndefined();
   });
 
   test('should return undefined if the asked stage does not exist in the state', () => {
@@ -1482,7 +1482,7 @@ describe('sampleData getResourceSampleData util function', () => {
       }]},
     };
 
-    expect(getResourceSampleData(resourceIdSampleData, 'raw')).toEqual(undefined);
+    expect(getResourceSampleData(resourceIdSampleData, 'raw')).toBeUndefined();
   });
 
   test('should return the asked stage data from the resource state', () => {

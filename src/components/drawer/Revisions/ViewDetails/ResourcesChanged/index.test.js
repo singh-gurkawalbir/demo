@@ -1,4 +1,4 @@
-/* global describe, test, expect,afterEach, beforeEach, jest */
+
 import React from 'react';
 import * as reactRedux from 'react-redux';
 import actions from '../../../../../actions';

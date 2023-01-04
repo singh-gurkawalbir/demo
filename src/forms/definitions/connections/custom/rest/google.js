@@ -4,6 +4,7 @@ export default {
     '/type': 'rest',
     '/assistant': 'google',
     '/rest/authType': 'oauth',
+    '/rest/oauth/useIClientFields': false,
     '/rest/mediaType': 'json',
     '/rest/baseURI': 'https://www.googleapis.com/',
     '/rest/authURI': 'https://accounts.google.com/o/oauth2/auth',

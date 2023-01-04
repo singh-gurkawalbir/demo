@@ -1,10 +1,7 @@
-/* global describe, test, expect, jest, beforeEach, afterEach */
 import React from 'react';
 import { MemoryRouter, Route } from 'react-router-dom';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { screen, cleanup, waitForElementToBeRemoved, waitFor } from '@testing-library/react';
 import * as reactRedux from 'react-redux';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import userEvent from '@testing-library/user-event';
 import ClonePreview from './Preview';
 import { renderWithProviders } from '../../test/test-utils';
@@ -474,11 +471,11 @@ describe('Clone Preview', () => {
     expect(flowButtonNode).toHaveAttribute('aria-expanded', 'false');
     const tableNode = screen.getAllByRole('rowgroup');
 
-    expect(tableNode[0].querySelectorAll('thead').length).toBe(0);
-    expect(tableNode[1].querySelectorAll('tbody').length).toBe(0);
+    expect(tableNode[0].querySelectorAll('thead')).toHaveLength(0);
+    expect(tableNode[1].querySelectorAll('tbody')).toHaveLength(0);
     const tableRow = screen.getAllByRole('row', {name: 'Name Description'});
 
-    expect(tableRow[0].querySelectorAll('th').length).toBe(2);
+    expect(tableRow[0].querySelectorAll('th')).toHaveLength(2);
     const integrationsButtonNode = screen.getByRole('button', {name: 'Integrations'});
 
     expect(integrationsButtonNode).toBeInTheDocument();
@@ -642,11 +639,11 @@ describe('Clone Preview', () => {
     expect(flowButtonNode).toHaveAttribute('aria-expanded', 'false');
     const tableNode = screen.getAllByRole('rowgroup');
 
-    expect(tableNode[0].querySelectorAll('thead').length).toBe(0);
-    expect(tableNode[1].querySelectorAll('tbody').length).toBe(0);
+    expect(tableNode[0].querySelectorAll('thead')).toHaveLength(0);
+    expect(tableNode[1].querySelectorAll('tbody')).toHaveLength(0);
     const tableRow = screen.getAllByRole('row', {name: 'Name Description'});
 
-    expect(tableRow[0].querySelectorAll('th').length).toBe(2);
+    expect(tableRow[0].querySelectorAll('th')).toHaveLength(2);
     const exportButtonNode = screen.getByRole('button', {name: 'Exports'});
 
     expect(exportButtonNode).toBeInTheDocument();
@@ -833,11 +830,11 @@ describe('Clone Preview', () => {
     expect(flowButtonNode).toHaveAttribute('aria-expanded', 'false');
     const tableNode = screen.getAllByRole('rowgroup');
 
-    expect(tableNode[0].querySelectorAll('thead').length).toBe(0);
-    expect(tableNode[1].querySelectorAll('tbody').length).toBe(0);
+    expect(tableNode[0].querySelectorAll('thead')).toHaveLength(0);
+    expect(tableNode[1].querySelectorAll('tbody')).toHaveLength(0);
     const tableRow = screen.getAllByRole('row', {name: 'Name Description'});
 
-    expect(tableRow[0].querySelectorAll('th').length).toBe(2);
+    expect(tableRow[0].querySelectorAll('th')).toHaveLength(2);
     const integrationsButtonNode = screen.getByRole('button', {name: 'Integrations'});
 
     expect(integrationsButtonNode).toBeInTheDocument();
@@ -1012,11 +1009,11 @@ describe('Clone Preview', () => {
     expect(flowButtonNode).toHaveAttribute('aria-expanded', 'false');
     const tableNode = screen.getAllByRole('rowgroup');
 
-    expect(tableNode[0].querySelectorAll('thead').length).toBe(0);
-    expect(tableNode[1].querySelectorAll('tbody').length).toBe(0);
+    expect(tableNode[0].querySelectorAll('thead')).toHaveLength(0);
+    expect(tableNode[1].querySelectorAll('tbody')).toHaveLength(0);
     const tableRow = screen.getAllByRole('row', {name: 'Name Description'});
 
-    expect(tableRow[0].querySelectorAll('th').length).toBe(2);
+    expect(tableRow[0].querySelectorAll('th')).toHaveLength(2);
     const integrationsButtonNode = screen.getByRole('button', {name: 'Integrations'});
 
     expect(integrationsButtonNode).toBeInTheDocument();

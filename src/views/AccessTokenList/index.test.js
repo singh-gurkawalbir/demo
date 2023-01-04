@@ -1,4 +1,4 @@
-/* global describe, test, expect, afterEach */
+
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { screen, waitFor, cleanup } from '@testing-library/react';

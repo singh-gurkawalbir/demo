@@ -1,9 +1,9 @@
-/* global describe, test, expect */
+
 import React from 'react';
 import CeligoTimeAgo from '../../../CeligoTimeAgo';
 import metadata from './metadata';
 
-describe('DynaChildLicenses metaData tests', () => {
+describe('dynaChildLicenses metaData tests', () => {
   test('should pass the test case for each field', () => {
     const useColumns = metadata.useColumns();
 
@@ -19,14 +19,14 @@ describe('DynaChildLicenses metaData tests', () => {
       rowData: {_integrationId: '683091116265186'},
     });
 
-    expect(integrationStatus).toEqual('Installed');
+    expect(integrationStatus).toBe('Installed');
 
     status = useColumns.find(eachColumn => eachColumn.key === 'status');
     integrationStatus = status.Value({
       rowData: {},
     });
 
-    expect(integrationStatus).toEqual('Pending');
+    expect(integrationStatus).toBe('Pending');
 
     const id = useColumns.find(eachColumn => eachColumn.key === 'integrationId');
 
@@ -34,6 +34,6 @@ describe('DynaChildLicenses metaData tests', () => {
       rowData: {_integrationId: '683091116265186'},
     });
 
-    expect(integrationId).toEqual('683091116265186');
+    expect(integrationId).toBe('683091116265186');
   });
 });

@@ -18,7 +18,7 @@ const useStyles = makeStyles(theme => ({
     borderRadius: 4,
     height: 38,
     fontSize: theme.spacing(2),
-    marginTop: theme.spacing(1),
+    marginTop: theme.spacing(4),
   },
   editableFields: {
     textAlign: 'center',
@@ -151,6 +151,7 @@ export default function ForgotPassword({setShowError, email}) {
         <TextButton
           href="/signin"
           data-test="cancel"
+          color="primary"
           type="cancel"
           className={classes.submit}
           value="Cancel">

@@ -1,4 +1,4 @@
-/* global describe, test, beforeEach, expect, jest, afterEach */
+
 import { screen, waitFor } from '@testing-library/react';
 import React from 'react';
 import * as reactRedux from 'react-redux';
@@ -86,7 +86,7 @@ async function initFilters({filterKey = 'completedFlows', completedJobs, dataRet
 }
 const mockActionClick = jest.fn();
 
-describe('Testsuite for Job Dashboard Filters', () => {
+describe('testsuite for Job Dashboard Filters', () => {
   runServer();
   let mockDispatchFn;
   let useDispatchSpy;

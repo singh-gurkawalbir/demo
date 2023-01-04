@@ -1,4 +1,3 @@
-/* global describe, test, expect ,jest */
 import React from 'react';
 import { screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
@@ -6,7 +5,7 @@ import userEvent from '@testing-library/user-event';
 import PingMessageSnackbar from '.';
 import { renderWithProviders} from '../../test/test-utils';
 
-describe('PingMessageSnackbar UI tests', () => {
+describe('pingMessageSnackbar UI tests', () => {
   test('should pass the initial render for comm status equal to success', () => {
     const mockOnClose = jest.fn();
     const mockOnCancel = jest.fn();
@@ -34,7 +33,7 @@ describe('PingMessageSnackbar UI tests', () => {
     expect(screen.getByText(/Testing your connection/i, {exact: false})).toBeInTheDocument();
     expect(screen.getByText(/Cancel/i, {exact: false})).toBeInTheDocument();
     userEvent.click(screen.getByText(/Cancel/i, {exact: false}));
-    expect(mockOnCancel).toBeCalled();
+    expect(mockOnCancel).toHaveBeenCalledTimes(1);
   });
   test('should pass the initial render for comm status error', () => {
     const mockOnClose = jest.fn();

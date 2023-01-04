@@ -1,4 +1,4 @@
-/* global test, expect, describe, jest, afterEach */
+
 import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -52,7 +52,7 @@ function initHomeTiles(data = {}, initialStore = null) {
   renderWithProviders(ui, {initialStore});
 }
 
-describe('HomeTiles metadata UI tests', () => {
+describe('homeTiles metadata UI tests', () => {
   afterEach(() => {
     jest.clearAllMocks();
   });
@@ -99,16 +99,16 @@ describe('HomeTiles metadata UI tests', () => {
     expect(row[0].textContent.indexOf('Type')).toBeGreaterThan(-1);
     expect(row[1].textContent.indexOf('Integration app')).toBeGreaterThan(-1);
   });
-  test('should verify the Row action for standalone ', () => {
+  test('should verify the Row action for standalone', () => {
     initHomeTiles({name: 'tileName', _integrationId: 'none', _id: 'someId'}, initialStore);
     expect(screen.queryByRole('button', {name: /more/i})).not.toBeInTheDocument();
   });
-  test('should verify the Row action only for UnpinAction ', () => {
+  test('should verify the Row action only for UnpinAction', () => {
     initHomeTiles({name: 'tileName', ssLinkedConnectionId: 'ssLinkedConnectionId', pinned: true, _id: 'someId'}, initialStore);
     userEvent.click(screen.queryByRole('button', {name: /more/i}));
     expect(screen.getByText('Unpin integration')).toBeInTheDocument();
   });
-  test('should verify the Row action only for PinAction ', () => {
+  test('should verify the Row action only for PinAction', () => {
     initHomeTiles({name: 'tileName', ssLinkedConnectionId: 'ssLinkedConnectionId', pinned: false, _id: 'someId'}, initialStore);
     userEvent.click(screen.queryByRole('button', {name: /more/i}));
     expect(screen.getByText('Pin integration')).toBeInTheDocument();

@@ -1,4 +1,4 @@
-/* global describe, test, expect, jest */
+
 import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -76,7 +76,7 @@ describe('useGetAllActionProps component Test cases', () => {
 
     expect(testButton).toBeInTheDocument();
     userEvent.click(testButton);
-    await expect(mockOnClick).toBeCalledTimes(1);
+    await expect(mockOnClick).toHaveBeenCalledTimes(1);
   });
 
   test('should pass the intial render handleActionClick with Component', async () => {
@@ -99,6 +99,6 @@ describe('useGetAllActionProps component Test cases', () => {
 
     expect(testButton).toBeInTheDocument();
     userEvent.click(testButton);
-    await expect(setSelectedComponent).toBeCalledTimes(1);
+    await expect(setSelectedComponent).toHaveBeenCalledTimes(1);
   });
 });

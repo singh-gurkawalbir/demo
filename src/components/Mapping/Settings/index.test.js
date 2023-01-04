@@ -1,4 +1,3 @@
-/* global describe, test, expect, jest, afterEach */
 import React from 'react';
 import { cloneDeep } from 'lodash';
 import { screen } from '@testing-library/react';
@@ -179,14 +178,14 @@ jest.mock('../../AFE/Editor/panels/Mappings/Mapper2/Settings', () => ({
   ),
 }));
 
-describe('SettingsDrawer test cases', () => {
+describe('settingsDrawer test cases', () => {
   runServer();
 
   afterEach(() => {
     mockHistorygoBack.mockClear();
   });
 
-  describe('SettingsDrawer component CATEGORY MAPPING SETTINGS Test cases', () => {
+  describe('settingsDrawer component CATEGORY MAPPING SETTINGS Test cases', () => {
     const url = 'settings/category/editor_id/sections/section_id/depth/mapping_key';
 
     const params = {
@@ -218,7 +217,7 @@ describe('SettingsDrawer test cases', () => {
       expect(screen.queryByText(/Close/i)).toBeInTheDocument();
       userEvent.click(screen.getByRole('button', {name: /Save/i}));
 
-      expect(await screen.queryByText(/You need to map at least one value./i)).toBeInTheDocument();
+      await expect(screen.findByText(/You need to map at least one value./i)).resolves.toBeInTheDocument();
       expect(screen.queryByText('V2 SETTINGS render')).not.toBeInTheDocument();
     });
 
@@ -234,7 +233,7 @@ describe('SettingsDrawer test cases', () => {
       expect(screen.queryByText(/Close/i)).toBeInTheDocument();
       userEvent.click(screen.getByRole('button', {name: /Save/i}));
 
-      expect(await screen.queryByText(/You need to map at least one value./i)).not.toBeInTheDocument();
+      expect(screen.queryByText(/You need to map at least one value./i)).not.toBeInTheDocument();
       expect(screen.queryByText('V2 SETTINGS render')).not.toBeInTheDocument();
     });
 
@@ -253,12 +252,12 @@ describe('SettingsDrawer test cases', () => {
       expect(screen.queryByText(/Close/i)).toBeInTheDocument();
       userEvent.click(screen.getByRole('button', {name: /Save/i}));
 
-      expect(await screen.queryByText(/You need to map at least one value./i)).not.toBeInTheDocument();
+      expect(screen.queryByText(/You need to map at least one value./i)).not.toBeInTheDocument();
       expect(screen.queryByText('V2 SETTINGS render')).not.toBeInTheDocument();
     });
   });
 
-  describe('SettingsDrawer component V2 SETTINGS Test cases', () => {
+  describe('settingsDrawer component V2 SETTINGS Test cases', () => {
     const url = 'settings/v2/node_key/generate';
 
     const params = {
@@ -276,7 +275,7 @@ describe('SettingsDrawer test cases', () => {
     });
   });
 
-  describe('SettingsDrawer component SETTINGS Test cases', () => {
+  describe('settingsDrawer component SETTINGS Test cases', () => {
     const url = 'settings/mapping_key';
 
     const params = {
@@ -308,7 +307,7 @@ describe('SettingsDrawer test cases', () => {
       userEvent.click(screen.getByRole('button', {name: /Mock Close/i}));
       userEvent.click(screen.getByRole('button', {name: /Save/i}));
 
-      expect(await mockHistorygoBack).toBeCalledTimes(1);
+      expect(mockHistorygoBack).toHaveBeenCalledTimes(1);
     });
 
     test('should pass the initial render for save/close button without change different key', async () => {
@@ -335,7 +334,7 @@ describe('SettingsDrawer test cases', () => {
       userEvent.click(screen.getByRole('button', {name: /Mock Close/i}));
       userEvent.click(screen.getByRole('button', {name: /Save/i}));
 
-      expect(await mockHistorygoBack).toBeCalledTimes(1);
+      expect(mockHistorygoBack).toHaveBeenCalledTimes(1);
     });
   });
 });
