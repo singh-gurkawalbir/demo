@@ -229,7 +229,7 @@ const getFormMeta = ({resourceType, isNew, resource, connection, assistantData, 
 
         if (meta) {
           // @TODO to remove this changes after shopify approves the production app
-          if (assistant === 'shopify' && !shopifyUserIds.includes(accountOwner?._id)) {
+          if (assistant === 'shopify' && !shopifyUserIds.includes(accountOwner?._id) && !resource?._connectorId) {
             meta = meta.shopifyOld;
           } else {
             meta = meta[assistant];
