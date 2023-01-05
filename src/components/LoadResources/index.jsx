@@ -16,6 +16,12 @@ export default function LoadResources({ children, resources, required, lazyResou
     ? lazyResources.split(',').map(r => r?.trim())
     : lazyResources,
   [lazyResources]);
+
+  // at many places, connection info is dependent on its linked iClient
+  // so we need to load iClients as well
+  if (requiredResources.includes('connections') || lazyLoadResources.includes('connections')) {
+    lazyLoadResources.push('iClients');
+  }
   const allResources = useMemo(() => [...requiredResources, ...lazyLoadResources], [requiredResources, lazyLoadResources]);
 
   const resourceStatus = useSelectorMemo(selectors.mkResourceStatus, allResources, integrationId);
