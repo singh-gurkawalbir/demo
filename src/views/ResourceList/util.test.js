@@ -21,9 +21,7 @@ describe('additionalFilter test cases', () => {
   test('Should pass the additionalFilter with connections resource type', () => {
     const response = additionalFilter('connections');
 
-    expect(response).toEqual({
-      _connectorId: { $exists: false },
-    });
+    expect(response).toBeNull();
   });
 
   test('Should pass the additionalFilter with iClients resource type', () => {
