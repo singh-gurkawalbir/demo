@@ -1,4 +1,4 @@
-/* global describe, test, jest, beforeEach, expect */
+
 import { screen } from '@testing-library/react';
 import React from 'react';
 import ConnectorName from '.';
@@ -30,7 +30,7 @@ function initConnectorName({resource}) {
   return renderWithProviders(ui, {initialStore});
 }
 
-describe('Testsuite for ConnectorName', () => {
+describe('testsuite for ConnectorName', () => {
   beforeEach(() => {
     initialStore = getCreatedStore();
   });

@@ -1,4 +1,4 @@
-/* global describe, test, expect, jest */
+
 import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -13,8 +13,8 @@ const props = {
   onFieldChange,
 };
 
-describe('DynaCronGenerator tests', () => {
-  test('Should able to test DynaCronGenerator', async () => {
+describe('dynaCronGenerator tests', () => {
+  test('should able to test DynaCronGenerator', async () => {
     await renderWithProviders(<DynaCronGenerator {...props} />);
     expect(screen.getByRole('textbox')).toBeInTheDocument();
     userEvent.click(screen.getByRole('button', {name: 'Reset'}));

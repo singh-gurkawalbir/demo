@@ -1,4 +1,3 @@
-/* global pendo */
 export function init({apiKey}) {
   try {
     /* eslint-disable */
@@ -18,6 +17,7 @@ export function init({apiKey}) {
 }
 export function identify(userInfo, accountInfo) {
   try {
+    // eslint-disable-next-line no-undef
     pendo.initialize({
       visitor: userInfo,
       account: accountInfo,
@@ -28,6 +28,7 @@ export function identify(userInfo, accountInfo) {
 }
 export function track(eventId, details = {}) {
   try {
+    // eslint-disable-next-line no-undef
     pendo.track(eventId, details);
   } catch (ex) {
     // We can't do anything here, just a safe check to prevent it from crashing our app.

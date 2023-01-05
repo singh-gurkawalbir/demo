@@ -1,4 +1,4 @@
-/* global describe, expect, jest, test, afterEach */
+
 import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -40,7 +40,7 @@ describe('test suite for DynaIclient field', () => {
 
     renderWithProviders(<DynaIclient {...props} />);
     expect(document.querySelector('body > div')).toBeEmptyDOMElement();
-    expect(mockDispatchFn).not.toBeCalled();
+    expect(mockDispatchFn).not.toHaveBeenCalled();
   });
 
   test('should be able to select from available iClients if associated with a connector', () => {
@@ -64,7 +64,7 @@ describe('test suite for DynaIclient field', () => {
     };
 
     renderWithProviders(<DynaIclient {...props} />, {initialStore});
-    expect(mockDispatchFn).not.toBeCalled();
+    expect(mockDispatchFn).not.toHaveBeenCalled();
     userEvent.click(screen.getByRole('button', {name: 'Please select'}));
     const availableIclients = screen.getAllByRole('menuitem').map(ele => ele.textContent);
 
@@ -93,7 +93,7 @@ describe('test suite for DynaIclient field', () => {
     expect(screen.getByTestId('addTitle')).toHaveTextContent('Create iClient');
     expect(screen.getByTestId('editTitle')).toHaveTextContent('Edit iClient');
     expect(screen.getByTestId('disabledTitle')).toHaveTextContent('Select an iClient to allow editing');
-    expect(mockDispatchFn).not.toBeCalled();
+    expect(mockDispatchFn).not.toHaveBeenCalled();
   });
 
   test('should request for iClients if assosciated with connector', () => {
@@ -111,6 +111,6 @@ describe('test suite for DynaIclient field', () => {
     };
 
     renderWithProviders(<DynaIclient {...props} />);
-    expect(mockDispatchFn).toBeCalledWith(actions.resource.connections.requestIClients(props.connectionId));
+    expect(mockDispatchFn).toHaveBeenCalledWith(actions.resource.connections.requestIClients(props.connectionId));
   });
 });

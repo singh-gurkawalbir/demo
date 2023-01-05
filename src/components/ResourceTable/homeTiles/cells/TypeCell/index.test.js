@@ -1,4 +1,4 @@
-/* global test, expect, describe */
+
 import React from 'react';
 import { screen } from '@testing-library/react';
 import { renderWithProviders, reduxStore } from '../../../../../test/test-utils';
@@ -22,7 +22,7 @@ initialStore.getState().user.org.accounts = [
       {_integrationId: '3_integrationId', _connectorId: 'some_connectorId', expires: notExpired},
     ]}}];
 
-describe('TypeCell UI tests', () => {
+describe('typeCell UI tests', () => {
   test('should show custom message with 2 flow error', () => {
     renderWithProviders(<TypeCell tile={{numFlows: 2}} />);
     expect(screen.getByText('Custom')).toBeInTheDocument();

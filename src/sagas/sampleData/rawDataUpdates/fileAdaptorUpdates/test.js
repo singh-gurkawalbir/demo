@@ -1,4 +1,3 @@
-/* global describe, test */
 
 import { select, call } from 'redux-saga/effects';
 import { expectSaga } from 'redux-saga-test-plan';
@@ -11,7 +10,7 @@ describe('fileAdaptorUpdates sagas', () => {
     test('should do nothing if there is no resourceId', () => expectSaga(_fetchRawDataForFileAdaptors, {})
       .returns(undefined)
       .run());
-    test('should consider type as exports when not passed ', () => {
+    test('should consider type as exports when not passed', () => {
       const resourceId = 'ftp-123';
       const ftpExport = {
         _id: 'ftp-123',
@@ -26,7 +25,7 @@ describe('fileAdaptorUpdates sagas', () => {
       };
       const rawData = { test: 5 };
 
-      return expectSaga(_fetchRawDataForFileAdaptors, { resourceId })
+      expectSaga(_fetchRawDataForFileAdaptors, { resourceId })
         .provide([
           [select(
             selectors.resource,
@@ -66,7 +65,7 @@ describe('fileAdaptorUpdates sagas', () => {
       };
       const rawData = "CUSTOMER_NUMBER|VENDOR_NAME|VENDOR_PART_NUM|DISTRIBUTOR_PART_NUM|LIST_PRICE|DESCRIPTION|CONTRACT_PRICE|QUANTITY_AVAILABLE\nC1000010839|Sato|12S000357CS|12S000357CS|99.12|wax rib 3.00\"X84',T113L,CSO,1\"core,24/cs|60.53|0\nC1000010839|Unitech|1400-900035G|1400-900035G|80.00|PA720/PA726 3.6V 3120mAH BATTERY -20C|43.53|0\nC1000010839|Magtek|21073131-NMI|21073131NMI|150.00|iDynamo 5 with NMI Encryption|89.29|0";
 
-      return expectSaga(_fetchRawDataForFileAdaptors, { resourceId })
+      expectSaga(_fetchRawDataForFileAdaptors, { resourceId })
         .provide([
           [select(
             selectors.resource,
@@ -103,7 +102,7 @@ describe('fileAdaptorUpdates sagas', () => {
         },
       };
 
-      return expectSaga(_fetchRawDataForFileAdaptors, { resourceId })
+      expectSaga(_fetchRawDataForFileAdaptors, { resourceId })
         .provide([
           [select(
             selectors.resource,
@@ -141,7 +140,7 @@ describe('fileAdaptorUpdates sagas', () => {
       const resourceType = 'exports';
       const values = {};
 
-      return expectSaga(_fetchRawDataForFileAdaptors, { resourceId, resourceType, values })
+      expectSaga(_fetchRawDataForFileAdaptors, { resourceId, resourceType, values })
         .provide([
           [call(constructResourceFromFormValues, { resourceId, resourceType, formValues: values }), ftpExport],
           [select(
@@ -181,7 +180,7 @@ describe('fileAdaptorUpdates sagas', () => {
         adaptorType: 'FTPImport',
       };
 
-      return expectSaga(_fetchRawDataForFileAdaptors, { resourceId, resourceType: 'imports', values })
+      expectSaga(_fetchRawDataForFileAdaptors, { resourceId, resourceType: 'imports', values })
         .provide([
           [call(constructResourceFromFormValues, { resourceId, resourceType: 'imports', formValues: values }), ftpImport],
           [select(

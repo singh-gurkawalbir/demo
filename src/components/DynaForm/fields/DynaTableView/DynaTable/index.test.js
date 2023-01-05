@@ -1,4 +1,4 @@
-/* global describe, test, jest, expect, afterEach */
+
 import React from 'react';
 import {screen, fireEvent} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -18,11 +18,11 @@ function initDynaTable(props = {}) {
   return renderWithProviders(ui);
 }
 
-describe('DynaTable UI test cases', () => {
+describe('dynaTable UI test cases', () => {
   afterEach(() => {
     jest.clearAllMocks();
   });
-  test('Should render the values accordingly in static mappings dynatable', () => {
+  test('should render the values accordingly in static mappings dynatable', () => {
     const props = {
       label: '',
       value: [{export: 'Id', import: 'id'}, {export: 'Name', import: 'name'}, {export: 'Type', import: 'type'}, {export: 'Invoice', import: 'invoice'}],
@@ -67,7 +67,7 @@ describe('DynaTable UI test cases', () => {
     expect(screen.getByDisplayValue('Type')).toBeInTheDocument();
     expect(screen.getByDisplayValue('type')).toBeInTheDocument();
   });
-  test('Test for updating the text in a row in static map dynatable', () => {
+  test('for updating the text in a row in static map dynatable', () => {
     const props = {
       label: '',
       rowIndex: 2,

@@ -1,4 +1,4 @@
-/* global describe, test, expect, jest */
+
 import React from 'react';
 import { screen} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -18,7 +18,7 @@ describe('clipborad UI test', () => {
     expect(onShowToken).toHaveBeenCalled();
   });
 
-  test('should test the condition when token value is not sent as props', () => {
+  test('should test the condition when token value is not sent as props.', () => {
     const onShowToken = jest.fn();
 
     renderWithProviders(<Clipboard token="******" onShowToken={onShowToken} />);

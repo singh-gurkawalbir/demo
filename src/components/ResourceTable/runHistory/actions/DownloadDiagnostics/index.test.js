@@ -1,4 +1,4 @@
-/* global test, expect, describe, jest */
+
 import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -34,8 +34,8 @@ function initRunHistoryTable(data, initialStore = null) {
   renderWithProviders(ui, {initialStore});
   userEvent.click(screen.queryByRole('button', {name: /more/i}));
 }
-describe("RunHistory's Downlaod diagnostics Action UI test case", () => {
-  test('should click on Download diagnostics button ', () => {
+describe("runHistory's Downlaod diagnostics Action UI test case", () => {
+  test('should click on Download diagnostics button', () => {
     initRunHistoryTable({ _id: '_id'});
     userEvent.click(screen.getByText('Download diagnostics'));
     expect(mockDispatch).toHaveBeenCalledWith(actions.job.downloadFiles({ jobId: '_id', fileType: 'diagnostics' }));

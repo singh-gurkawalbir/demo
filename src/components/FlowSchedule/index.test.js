@@ -1,4 +1,4 @@
-/* global test, expect, jest */
+
 import React from 'react';
 import { screen } from '@testing-library/react';
 import { renderWithProviders } from '../../test/test-utils';
@@ -30,8 +30,11 @@ jest.mock('./Form', () => ({
   ),
 }));
 
-test('should render the Flow schedule component', () => {
-  renderWithProviders(<FlowSchedule {...newprops} />);
-  expect(screen.getByText(/FlowSchedule Buttons/i)).toBeInTheDocument();
-  expect(screen.getByText(/Flowschedule Form/i)).toBeInTheDocument();
+describe('Flow schedule test', () => {
+  test('should render the Flow schedule component', () => {
+    renderWithProviders(<FlowSchedule {...newprops} />);
+    expect(screen.getByText(/FlowSchedule Buttons/i)).toBeInTheDocument();
+    expect(screen.getByText(/Flowschedule Form/i)).toBeInTheDocument();
+  });
 });
+

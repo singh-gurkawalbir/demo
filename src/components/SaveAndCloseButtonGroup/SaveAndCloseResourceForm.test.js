@@ -1,4 +1,4 @@
-/* global describe, jest, expect, test */
+
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { screen } from '@testing-library/react';
@@ -63,7 +63,7 @@ describe('test cases for SaveAndCloseResourceForm', () => {
     expect(onClose).toHaveBeenCalledTimes(2);
   });
 
-  test('Save and Save & close buttons should behave same when disableOnCloseAfterSave flag is set', async () => {
+  test('save and Save & close buttons should behave same when disableOnCloseAfterSave flag is set', async () => {
     const formKey = 'form-123';
     const onSave = jest.fn();
     const onClose = jest.fn();
@@ -86,7 +86,7 @@ describe('test cases for SaveAndCloseResourceForm', () => {
     expect(onSave).toHaveBeenCalledTimes(2);
   });
 
-  test('Save button should be disabled when disabled flag is set', async () => {
+  test('save button should be disabled when disabled flag is set', async () => {
     const formKey = 'form-123';
     const initialStore = getCreatedStore();
 

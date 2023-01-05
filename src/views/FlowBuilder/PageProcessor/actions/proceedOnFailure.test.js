@@ -1,5 +1,5 @@
 /* eslint-disable react/jsx-handler-names */
-/* global describe, test, expect, beforeEach, afterEach, jest */
+
 import React from 'react';
 import * as reactRedux from 'react-redux';
 import { MemoryRouter } from 'react-router-dom';

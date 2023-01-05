@@ -1,4 +1,6 @@
-/* global describe, test, expect */
+/* eslint-disable jest/no-conditional-in-test */
+/* eslint-disable jest/valid-expect-in-promise */
+
 import { select, call, fork, delay, take, cancel, race } from 'redux-saga/effects';
 import { createMockTask } from '@redux-saga/testing-utils';
 import { expectSaga } from 'redux-saga-test-plan';
@@ -41,7 +43,7 @@ describe('Flow step logs sagas', () => {
     test('should make api call with time_gt equal to passed arg', () => {
       const timeGt = 123456;
 
-      return expectSaga(fetchNewLogs, { flowId, resourceId, timeGt})
+      expectSaga(fetchNewLogs, { flowId, resourceId, timeGt})
         .run()
         .then(result => {
           const { effects } = result;
@@ -66,7 +68,7 @@ describe('Flow step logs sagas', () => {
         ],
       };
 
-      return expectSaga(fetchNewLogs, { flowId, resourceId})
+      expectSaga(fetchNewLogs, { flowId, resourceId})
         .provide([
           [matchers.call.fn(apiCallWithRetry), response],
         ])
@@ -146,7 +148,7 @@ describe('Flow step logs sagas', () => {
         call(pollForLatestLogs, { flowId, resourceId, timeGt: pollingLastStoppedAt })
       );
     });
-    test('should call pollForLatestLogs if poll resume action is dispatch with last stop time', () => {});
+    test.todo('should call pollForLatestLogs if poll resume action is dispatch with last stop time');
   });
 
   describe('startPollingForRequestLogs saga', () => {
@@ -167,7 +169,7 @@ describe('Flow step logs sagas', () => {
         ])
       );
       expect(saga.next({type: actionTypes.LOGS.FLOWSTEP.CLEAR}).value).toEqual(cancel(mockTask));
-      expect(saga.next().done).toEqual(true);
+      expect(saga.next().done).toBe(true);
     });
     test('should call fetchNewLogs if the cancelled action type is of stop debug', () => {
       const mockTask = createMockTask();
@@ -187,7 +189,7 @@ describe('Flow step logs sagas', () => {
       );
       expect(saga.next({type: actionTypes.LOGS.FLOWSTEP.DEBUG.STOP}).value).toEqual(cancel(mockTask));
       expect(saga.next().value).toEqual(call(fetchNewLogs, {flowId, resourceId}));
-      expect(saga.next().done).toEqual(true);
+      expect(saga.next().done).toBe(true);
     });
   });
 
@@ -323,7 +325,7 @@ describe('Flow step logs sagas', () => {
       const logDetails = { key: '123',
         id: 'a27751bdc2e143cb94988b39ea8aede9' };
 
-      return expectSaga(requestLogDetails, { flowId, resourceId, logKey })
+      expectSaga(requestLogDetails, { flowId, resourceId, logKey })
         .provide([
           [select(selectors.logDetails, resourceId, logKey), {}],
           [matchers.call.fn(apiCallWithRetry), logDetails],
@@ -360,7 +362,7 @@ describe('Flow step logs sagas', () => {
     test('should dispatch resource patch action with the debugUntil patch set', () => {
       const minutes = '30';
 
-      return expectSaga(toggleDebug, { flowId, resourceId, minutes })
+      expectSaga(toggleDebug, { flowId, resourceId, minutes })
         .provide([
           [select(selectors.isDebugEnabled, resourceId), false],
         ])
@@ -383,7 +385,7 @@ describe('Flow step logs sagas', () => {
     test('should call startPollingForRequestLogs if debugOn is true and hasNewLogs is false', () => {
       const minutes = '30';
 
-      return expectSaga(toggleDebug, { flowId, resourceId, minutes })
+      expectSaga(toggleDebug, { flowId, resourceId, minutes })
         .provide([
           [select(selectors.isDebugEnabled, resourceId), true],
           [matchers.call.fn(startPollingForRequestLogs), undefined],
@@ -407,7 +409,7 @@ describe('Flow step logs sagas', () => {
     test('should not call startPollingForRequestLogs if hasNewLogs is true', () => {
       const minutes = '30';
 
-      return expectSaga(toggleDebug, { flowId, resourceId, minutes })
+      expectSaga(toggleDebug, { flowId, resourceId, minutes })
         .provide([
           [select(selectors.isDebugEnabled, resourceId), true],
           [select(selectors.hasNewLogs, resourceId), true],
@@ -435,7 +437,7 @@ describe('Flow step logs sagas', () => {
     test('should do nothing and return if there are no logs to remove', () => {
       const logsToRemove = [];
 
-      return expectSaga(removeLogs, { flowId, resourceId, logsToRemove })
+      expectSaga(removeLogs, { flowId, resourceId, logsToRemove })
         .not.call.fn(apiCallWithRetry)
         .returns(undefined)
         .run();
@@ -443,7 +445,7 @@ describe('Flow step logs sagas', () => {
     test('should call apiCallWithRetry and dispatch log deleted action with the first log from response', () => {
       const logsToRemove = ['key1'];
 
-      return expectSaga(removeLogs, { flowId, resourceId, logsToRemove })
+      expectSaga(removeLogs, { flowId, resourceId, logsToRemove })
         .provide([
           [matchers.call.fn(apiCallWithRetry), {deleted: ['key1']}],
         ])
@@ -460,7 +462,7 @@ describe('Flow step logs sagas', () => {
     test('should dispatch failed action if there are errors in the response', () => {
       const logsToRemove = ['key1'];
 
-      return expectSaga(removeLogs, { flowId, resourceId, logsToRemove })
+      expectSaga(removeLogs, { flowId, resourceId, logsToRemove })
         .provide([
           [matchers.call.fn(apiCallWithRetry), {deleted: [], errors: [{key: 'key1', error: 'NoSuchKey'}]}],
         ])

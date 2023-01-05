@@ -1,4 +1,3 @@
-/* global describe, test, expect, jest, beforeEach, afterEach */
 import React from 'react';
 import cloneDeep from 'lodash/cloneDeep';
 import {
@@ -24,7 +23,7 @@ async function initAgentToken({ agentId = '', initialStore = reduxStore} = {}) {
   return renderWithProviders(ui, { initialStore });
 }
 
-describe('AgentToken component Test cases', () => {
+describe('agentToken component Test cases', () => {
   runServer();
   let initialStore;
   let mockDispatchFn;
@@ -57,14 +56,14 @@ describe('AgentToken component Test cases', () => {
     useDispatchSpy.mockClear();
   });
 
-  describe('AgentToken component custom agent render', () => {
+  describe('agentToken component custom agent render', () => {
     test('should pass the handleInstallerClick custom agent id', async () => {
       await initAgentToken({agentId: 'agent_id', initialStore});
       const showTokenButton = screen.getByRole('button', {name: 'Show token'});
 
       expect(showTokenButton).toBeInTheDocument();
       userEvent.click(showTokenButton);
-      await expect(mockDispatchFn).toBeCalledWith(actions.agent.displayToken('agent_id'));
+      await expect(mockDispatchFn).toHaveBeenCalledWith(actions.agent.displayToken('agent_id'));
     });
 
     test('should pass the handleInstallerClick token render', async () => {
@@ -76,7 +75,7 @@ describe('AgentToken component Test cases', () => {
       const showTokenId = screen.queryByText('token_id');
 
       expect(showTokenId).toBeInTheDocument();
-      await expect(mockDispatchFn).not.toBeCalledWith(actions.agent.displayToken('agent_id'));
+      await expect(mockDispatchFn).not.toHaveBeenCalledWith(actions.agent.displayToken('agent_id'));
     });
   });
 });

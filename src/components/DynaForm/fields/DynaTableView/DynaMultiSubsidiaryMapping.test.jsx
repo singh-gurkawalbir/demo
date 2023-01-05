@@ -1,4 +1,4 @@
-/* global describe, test, jest, expect, */
+
 import React from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import {screen} from '@testing-library/react';
@@ -61,7 +61,7 @@ initialStore.getState().session.connectors = {
       fieldType: 'somefieldtype',
     },
   }};
-describe('DynaMultiSubsidiaryMapping UI test cases', () => {
+describe('dynaMultiSubsidiaryMapping UI test cases', () => {
   test('should populate the saved values and refreshing the fields of exports', () => {
     initDynaMultiSubsidiaryMapping(genralProps);
     expect(screen.getByText('Export field value')).toBeInTheDocument();

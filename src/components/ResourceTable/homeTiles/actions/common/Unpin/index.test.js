@@ -1,4 +1,4 @@
-/* global test, expect, describe, jest */
+
 import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -26,7 +26,7 @@ function initHomeTiles(data = {}) {
   renderWithProviders(ui);
 }
 
-describe('Tiles Upin action UI tests', () => {
+describe('tiles Upin action UI tests', () => {
   test('should make dispatch for unpin integration when clicked on unpin action', () => {
     initHomeTiles({key: 'somekey', name: 'tileName', pinned: true, status: 'is_pending_setup', _integrationId: '2_integrationId', supportsMultiStore: true, mode: 'modeText'});
     userEvent.click(screen.queryByRole('button', {name: /more/i}));

@@ -1,4 +1,3 @@
-/* global describe, test, expect */
 
 import processorLogic from './index';
 
@@ -70,7 +69,7 @@ describe('structuredFileGenerator processor logic', () => {
         originalData: '{"SYNTAX IDENTIFIER": {"Syntax identifier": "UNOC_ashu123_gupta88","Syntax version number": "3"}}',
       };
 
-      expect(dirty(editor)).toEqual(true);
+      expect(dirty(editor)).toBe(true);
     });
     test('should return true if original rule does not match new rule', () => {
       const editor = {
@@ -85,7 +84,7 @@ describe('structuredFileGenerator processor logic', () => {
         originalData: '{"SYNTAX IDENTIFIER": {"Syntax identifier": "UNOC_ashu123_gupta","Syntax version number": "3"}}',
       };
 
-      expect(dirty(editor)).toEqual(true);
+      expect(dirty(editor)).toBe(true);
     });
     test('should return false if both data and rule has not changed', () => {
       const editor = {
@@ -100,7 +99,7 @@ describe('structuredFileGenerator processor logic', () => {
         originalData: '{"SYNTAX IDENTIFIER": {"Syntax identifier": "UNOC_ashu123_gupta","Syntax version number": "3"}}',
       };
 
-      expect(dirty(editor)).toEqual(false);
+      expect(dirty(editor)).toBe(false);
     });
   });
   describe('requestBody util', () => {

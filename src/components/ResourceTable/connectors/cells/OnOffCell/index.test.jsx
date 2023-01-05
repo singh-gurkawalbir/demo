@@ -1,4 +1,3 @@
-/* global describe, test, beforeEach, expect,jest  */
 
 import React from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
@@ -26,18 +25,18 @@ jest.mock('react-redux', () => ({
   ...jest.requireActual('react-redux'),
   useDispatch: () => mockDispatch,
 }));
-describe('UI test cases for OnOffCell', () => {
+describe('uI test cases for OnOffCell', () => {
   beforeEach(() => {
     jest.resetAllMocks();
   });
-  test('should show empty DOM ', () => {
+  test('should show empty DOM', () => {
     const { utils } = renderWithProviders(
       <ConfirmDialogProvider>
         <OnOffCell />
       </ConfirmDialogProvider>
     );
 
-    expect(utils.container.textContent).toEqual('');
+    expect(utils.container.textContent).toBe('');
   });
   test('should display unpublish button', () => {
     renderWithProviders(

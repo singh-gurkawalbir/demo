@@ -1,4 +1,4 @@
-/* global describe, test,expect */
+
 import React from 'react';
 import { screen, render } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
@@ -11,7 +11,7 @@ initialStore.getState().user.profile = {
   timezone: 'Asia/Calcutta',
 };
 
-describe('Status Cell of Flow Table UI test cases', () => {
+describe('status Cell of Flow Table UI test cases', () => {
   test('should show undefined as name when no props are provided', () => {
     const utils = render(<MemoryRouter><StatusCell /></MemoryRouter>);
 

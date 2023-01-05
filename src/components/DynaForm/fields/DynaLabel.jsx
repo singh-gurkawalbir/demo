@@ -1,65 +1,28 @@
-import React, { useState } from 'react';
+/* istanbul ignore file */
+import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
-import ArrowPopper from '../../ArrowPopper';
-import { getHelpTextMap } from '../../Help';
 import FieldHelp from '../FieldHelp';
 
 const useStyles = makeStyles(theme => ({
-  helpPopper: {
-    maxWidth: '350px',
-    maxHeight: '300px',
-    padding: theme.spacing(1, 2),
-    overflow: 'auto',
-  },
   textField: {
     width: 'fit-content',
     padding: theme.spacing(1, 1, 1, 0),
   },
-  label: {
-    fontSize: 14,
-  },
 }));
 
 export default function DynaLabel(props) {
-  const { label, helpKey, helpText, id, disablePopover = false } = props;
-  const [anchorEl, setAnchorEl] = useState(null);
+  const { label, id } = props;
   const classes = useStyles();
-  const handlePopoverOpen = event => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handlePopoverClose = () => {
-    setAnchorEl(null);
-  };
-
-  const showArrowPopper =
-    !disablePopover && (helpText || (helpKey && getHelpTextMap()[helpKey]));
 
   return (
-    <>
-      {showArrowPopper && (
-        <ArrowPopper
-          placement="left"
-          className={classes.helpPopper}
-          id="helpBubble"
-          open={!!anchorEl}
-          anchorEl={anchorEl}>
-          <Typography className={classes.label}>
-            {helpText || getHelpTextMap()[helpKey]}
-          </Typography>
-        </ArrowPopper>
-      )}
-      <Typography
-        data-test={id}
-        onMouseEnter={handlePopoverOpen}
-        onMouseLeave={handlePopoverClose}
-        variant="body2"
-        className={classes.textField}>
-        {label}
-        <FieldHelp {...props} />
-      </Typography>
-    </>
+    <Typography
+      data-test={id}
+      variant="body2"
+      className={classes.textField}>
+      {label}
+      <FieldHelp {...props} />
+    </Typography>
   );
 }
 

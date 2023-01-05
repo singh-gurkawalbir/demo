@@ -1,4 +1,4 @@
-/* global describe, test, expect,beforeEach, afterEach, jest */
+
 import React from 'react';
 import { screen } from '@testing-library/react';
 import * as reactRedux from 'react-redux';
@@ -16,7 +16,7 @@ jest.mock('react-router-dom', () => ({
   }),
 }));
 
-describe('DynaExportSelect tests', () => {
+describe('dynaExportSelect tests', () => {
   const initialStore = reduxStore;
 
   initialStore.getState().data.resources = {
@@ -42,7 +42,7 @@ describe('DynaExportSelect tests', () => {
     useDispatchSpy.mockClear();
   });
 
-  test('Should able to test DynaExportSelect with proper resource', async () => {
+  test('should able to test DynaExportSelect with proper resource', async () => {
     const props = {
       onFieldChange,
       resource: {virtual: { key: '_key'}},
@@ -64,7 +64,7 @@ describe('DynaExportSelect tests', () => {
         _integrationId: '_integrationId',
       }}));
   });
-  test('Should able to test DynaExportSelect without required resource', async () => {
+  test('should able to test DynaExportSelect without required resource', async () => {
     const props = {
       resource: {}, type: '', id: '_id', resourceContext: {resourceType: 'integrations', resourceId: ''},
     };

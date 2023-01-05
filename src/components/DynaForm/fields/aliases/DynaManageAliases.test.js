@@ -1,4 +1,4 @@
-/* global describe, test, expect, jest */
+
 import React from 'react';
 import { screen, waitFor} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -47,7 +47,7 @@ jest.mock('react-router-dom', () => ({
     push: mockHistorypush,
   }),
 }));
-describe('DynaAliasId UI tests', () => {
+describe('dynaAliasId UI tests', () => {
   const props = {
     id: 'aliasId',
     required: true,
@@ -73,6 +73,6 @@ describe('DynaAliasId UI tests', () => {
 
     expect(ManageButton).toBeInTheDocument();
     userEvent.click(ManageButton);
-    await waitFor(() => expect(mockHistorypush).toBeCalledWith('/integrations/63368c92bb74b66e32ab05ee/aliases/manage'));
+    await waitFor(() => expect(mockHistorypush).toHaveBeenCalledWith('/integrations/63368c92bb74b66e32ab05ee/aliases/manage'));
   });
 });

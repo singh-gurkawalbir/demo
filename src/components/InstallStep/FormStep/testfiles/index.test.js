@@ -1,4 +1,5 @@
-/* global describe, test, expect, jest, */
+/* eslint-disable jest/expect-expect */
+
 import React from 'react';
 import { screen, waitFor } from '@testing-library/react';
 import { MemoryRouter, Route} from 'react-router-dom';
@@ -146,7 +147,7 @@ function initFormDrawer(props = {}) {
   return renderWithProviders(ui, {initialStore});
 }
 
-describe('FormStepDrawer UI tests', () => {
+describe('formStepDrawer UI tests', () => {
   const mockSubmitHandler = jest.fn();
   const mockCloseHandler = jest.fn();
 
@@ -182,9 +183,9 @@ describe('FormStepDrawer UI tests', () => {
 
     initFormDrawer(props);
     userEvent.click(screen.getByText(/Submit/i));
-    expect(mockSubmitHandler).toBeCalled();
+    expect(mockSubmitHandler).toHaveBeenCalled();
   });
-  test('should run the mockCloseHandler on clicking ', () => {
+  test('should run the mockCloseHandler on clicking', () => {
     const props = {
       integrationId: '62beb29aa0f5f2144816f80c',
       formSubmitHandler: mockSubmitHandler,
@@ -195,7 +196,7 @@ describe('FormStepDrawer UI tests', () => {
     const element = document.querySelector('[aria-label="Close"]');
 
     userEvent.click(element);
-    expect(mockCloseHandler).toBeCalled();
+    expect(mockCloseHandler).toHaveBeenCalled();
   });
   test('should run the predefined handleclose function when formCloseHandler is not passed', () => {
     const props = {
@@ -220,7 +221,7 @@ describe('FormStepDrawer UI tests', () => {
     waitFor(() => expect(screen.getByText(/Submit/i)).toBeInTheDocument());
     userEvent.click(screen.getByText(/Submit/i));
   });
-  test('Should render empty DOM when no integrationId is passed', () => {
+  test('should render empty DOM when no integrationId is passed', () => {
     const props = {
       integrationId: null,
       formCloseHandler: jest.fn(),

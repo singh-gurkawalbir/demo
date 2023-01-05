@@ -1,10 +1,7 @@
-/* global describe, expect, jest, test */
+
 import React from 'react';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { screen } from '@testing-library/react';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { MemoryRouter, Route } from 'react-router-dom';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import userEvent from '@testing-library/user-event';
 import { reduxStore, renderWithProviders } from '../../../test/test-utils';
 import metadata from './metadata';
@@ -68,7 +65,7 @@ function initImports(data) {
 
   renderWithProviders(ui, { initialStore });
 }
-describe('Test suite for revisions metadata', () => {
+describe('test suite for revisions metadata', () => {
   const date = new Date().toUTCString();
 
   test('should render the table accordingly for rowactions when status is inprogress and type is revert', () => {
@@ -275,7 +272,7 @@ describe('Test suite for revisions metadata', () => {
       'View details',
     ]);
   });
-  test('should render the table accordingly for rowactions when status is completed and type is snapshot', () => {
+  test('should render the table accordingly for rowactions when status is completed and type is snapshot duplicate', () => {
     initialStore.getState().user = {
       preferences: {
         defaultAShareId: '5f7011605b2e3244837309f9',

@@ -1,4 +1,5 @@
-/* global describe, test, expect ,jest */
+/* eslint-disable jest/expect-expect */
+
 import React from 'react';
 import { fireEvent, screen} from '@testing-library/react';
 import {renderWithProviders} from '../../../../test/test-utils';
@@ -31,7 +32,7 @@ jest.mock('../../../icons/CalendarIcon', () => ({
   ,
 }));
 
-describe('DynaDate UI tests', () => {
+describe('dynaDate UI tests', () => {
   test('should pass the initial render', () => {
     const props = {
       label: 'formLabel',
@@ -63,7 +64,7 @@ describe('DynaDate UI tests', () => {
     };
 
     initDynaDate(props);
-    expect(mockOnFieldChangeFn).toBeCalled();
+    expect(mockOnFieldChangeFn).toHaveBeenCalled();
   });
   test('should be able to perform keyboard events on the respective fields', () => {
     const mockOnFieldChangeFn = jest.fn();

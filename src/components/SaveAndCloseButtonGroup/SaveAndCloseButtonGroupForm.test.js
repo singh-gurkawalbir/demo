@@ -1,4 +1,4 @@
-/* global describe, expect, jest, test */
+
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { screen } from '@testing-library/react';
@@ -63,7 +63,7 @@ describe('test cases for SaveAndCloseButtonGroupForm', () => {
     expect(store.getState().session.asyncTask[formKey]).toBeUndefined();
   });
 
-  test('Save and Close buttons should be disabled when inProgress', async () => {
+  test('save and Close buttons should be disabled when inProgress', async () => {
     status = FORM_SAVE_STATUS.LOADING;
     await initSaveAndCloseButtonGroupForm({formKey: 'form-123', disabled: true, disableOnCloseAfterSave: true});
 
@@ -93,8 +93,8 @@ describe('test cases for SaveAndCloseButtonGroupForm', () => {
     const saveAndCloseButton = screen.getByRole('button', {name: 'Save & close'});
     const closeButton = screen.getByRole('button', {name: 'Close'});
 
-    expect(onSave).not.toBeCalled();
-    expect(onClose).not.toBeCalled();
+    expect(onSave).not.toHaveBeenCalled();
+    expect(onClose).not.toHaveBeenCalled();
 
     userEvent.click(saveButton);
     expect(onSave).toHaveBeenLastCalledWith(!CLOSE_AFTER_SAVE);

@@ -1,4 +1,4 @@
-/* global describe, expect, test, beforeAll */
+
 import reducer, { selectors } from '.';
 import actions from '../actions';
 import { FILTER_KEYS } from '../utils/errorManagement';
@@ -786,7 +786,7 @@ describe('Error Management region selector testcases', () => {
         ]
       );
     });
-    test('should return the required type of jobs(flows)', () => {
+    test('should return the required type of jobs(flows) duplicate', () => {
       expect(selectors.allJobs(state, {type: JOB_TYPES.BULK_RETRY})).toEqual([
         {
           type: JOB_TYPES.BULK_RETRY,
@@ -1244,7 +1244,7 @@ describe('Error Management region selector testcases', () => {
       expect(selectors.isAllErrorsSelectedInCurrPage(sampleState, { flowId, resourceId })).toBeTruthy();
       expect(selectors.isAllErrorsSelectedInCurrPage(sampleState, { flowId, resourceId, isResolved: true })).toBeTruthy();
     });
-    test('should return false if there is search filter and all the filtered errors in the current page are not selected ', () => {
+    test('should return false if there is search filter and all the filtered errors in the current page are not selected', () => {
       const sampleState = {
         session: {
           errorManagement: {
@@ -1287,7 +1287,7 @@ describe('Error Management region selector testcases', () => {
       expect(selectors.isAllErrorsSelectedInCurrPage(sampleState, { flowId, resourceId })).toBeFalsy();
       expect(selectors.isAllErrorsSelectedInCurrPage(sampleState, { flowId, resourceId, isResolved: true })).toBeFalsy();
     });
-    test('should return true if there is search filter and all the filtered errors in the current page are selected ', () => {
+    test('should return true if there is search filter and all the filtered errors in the current page are selected', () => {
       const sampleState = {
         session: {
           errorManagement: {
@@ -2258,7 +2258,7 @@ describe('Error Management region selector testcases', () => {
       expect(selectors.getIntegrationUserNameById()).toEqual();
     });
     test('should return user name if the userId is logged in user', () => {
-      expect(selectors.getIntegrationUserNameById(orgOwnerState, '5f686ef49daecd32740e2710')).toEqual('Raghuvamsi');
+      expect(selectors.getIntegrationUserNameById(orgOwnerState, '5f686ef49daecd32740e2710')).toBe('Raghuvamsi');
     });
     test('should return undefined if the userId is not loggedUser and no flowId is passed', () => {
       const orgUserState = {

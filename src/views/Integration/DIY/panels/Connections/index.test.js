@@ -1,4 +1,3 @@
-/* global describe, test, expect, jest, beforeEach */
 import React from 'react';
 import { screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
@@ -189,7 +188,7 @@ describe('ConnectionsPanel(DIY) UI tests', () => {
       }
     );
   });
-  test('should test table', () => {
+  test('should test table duplicate', () => {
     initStoreAndRender(null, '5ff579d745ceef7dcd797c15');
     expect(screen.getAllByRole('row')[0].textContent).toBe('NameStatusTypeAPILast updatedQueue sizeActions');
     expect(screen.getAllByRole('row')[1].textContent).toBe('Acumatica Agent HTTPOffline07/08/2020 10:02:09 am0');

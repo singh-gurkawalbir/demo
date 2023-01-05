@@ -1,4 +1,4 @@
-/* global describe, expect, test */
+
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { getCreatedStore } from '../../../../store';

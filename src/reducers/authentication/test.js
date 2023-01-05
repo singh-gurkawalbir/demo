@@ -1,4 +1,4 @@
-/* global describe, test, expect */
+
 import reducer, { selectors } from '.';
 import actions from '../../actions';
 import { COMM_STATES } from '../comms/networkComms';
@@ -113,7 +113,7 @@ describe('authentication reducers', () => {
       });
     });
 
-    test('previously authenticated user should set authDialog to true when ever a auth failure is encountered ', () => {
+    test('previously authenticated user should set authDialog to true when ever a auth failure is encountered', () => {
       const someFailureMsg = 'Error';
       const authenticatedState = reducer(undefined, actions.auth.complete());
       const newState = reducer(
@@ -154,7 +154,7 @@ describe('auth selectors', () => {
   describe('isAuthLoading', () => {
     const state = reducer(undefined, actions.auth.request());
 
-    test('should return true during an authentication request ', () => {
+    test('should return true during an authentication request', () => {
       expect(selectors.isAuthLoading(state)).toBe(true);
     });
     test('should return false during an authentication terminal state either failure or success', () => {
@@ -171,18 +171,18 @@ describe('auth selectors', () => {
   describe('isAuthenticating', () => {
     const state = reducer(undefined, actions.auth.request());
 
-    test('should return true during an authentication request ', () => {
+    test('should return true during an authentication request', () => {
       expect(selectors.isAuthenticating(state)).toBe(true);
     });
 
     describe('logout', () => {
       const logoutState = reducer(state, actions.auth.clearStore());
 
-      test('should return false during a logout ', () => {
+      test('should return false during a logout', () => {
         expect(selectors.isAuthenticating(logoutState)).toBe(false);
       });
 
-      test('should return true during authentication after logout ', () => {
+      test('should return true during authentication after logout', () => {
         const authRequestState = reducer(logoutState, actions.auth.request());
 
         expect(selectors.isAuthenticating(authRequestState)).toBe(true);
@@ -204,7 +204,7 @@ describe('auth selectors', () => {
         actions.auth.request()
       );
 
-      test('should return true during authentication after sessionExpiration ', () => {
+      test('should return true during authentication after sessionExpiration', () => {
         expect(selectors.isAuthenticating(authRequestState)).toBe(true);
       });
 
@@ -254,14 +254,14 @@ describe('auth selectors', () => {
     });
   });
 
-  describe('showAuthError', () => {
+  describe('showAuthError duplicate', () => {
     describe('warning state', () => {
       test('should return warning when auth warning action is dispatched', () => {
       // after auth completes
         let state = reducer(undefined, actions.auth.complete());
 
         // no status yet
-        expect(selectors.showSessionStatus(state)).toBe(undefined);
+        expect(selectors.showSessionStatus(state)).toBeUndefined();
 
         // after auth warning dispatched
         state = reducer(state, actions.auth.warning());
@@ -271,12 +271,12 @@ describe('auth selectors', () => {
     });
 
     describe('expired state', () => {
-      test('should return expired when session has expired ', () => {
+      test('should return expired when session has expired', () => {
       // after auth completes
         let state = reducer(undefined, actions.auth.complete());
 
         // no status yet
-        expect(selectors.showSessionStatus(state)).toBe(undefined);
+        expect(selectors.showSessionStatus(state)).toBeUndefined();
 
         // after auth warning dispatched
         state = reducer(state, actions.auth.failure());
@@ -289,7 +289,7 @@ describe('auth selectors', () => {
         let state = reducer(undefined, actions.auth.complete());
 
         // no status yet
-        expect(selectors.showSessionStatus(state)).toBe(undefined);
+        expect(selectors.showSessionStatus(state)).toBeUndefined();
 
         // after auth warning dispatched
         state = reducer(state, actions.auth.failure());

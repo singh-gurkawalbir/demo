@@ -1,4 +1,3 @@
-/* global describe, test, expect, jest, beforeEach, afterEach */
 import React from 'react';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -33,7 +32,7 @@ function initFeature(props = {}) {
 
   return renderWithProviders(<Feature {...props} />, {initialStore});
 }
-describe('AFE DataPanel UI tests', () => {
+describe('aFE DataPanel UI tests', () => {
   let mockDispatchFn;
   let useDispatchSpy;
 
@@ -76,7 +75,7 @@ describe('AFE DataPanel UI tests', () => {
     expect(CodePanel).toBeInTheDocument();
 
     userEvent.click(CodePanel);
-    await waitFor(() => expect(mockDispatchFn).toBeCalledWith(actions.editor.patchFeatures('filecsv', {data: 'new feature value'})));
+    await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith(actions.editor.patchFeatures('filecsv', {data: 'new feature value'})));
     expect(screen.getByText('new feature value')).toBeInTheDocument();
     await waitFor(() => expect(screen.queryByText('initial feature value')).toBeNull());
   });

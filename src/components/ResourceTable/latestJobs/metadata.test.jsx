@@ -1,4 +1,3 @@
-/* global describe, test, expect */
 
 import React from 'react';
 import defaultRef from './metadata';
@@ -97,12 +96,12 @@ describe('metdata flows test cases', () => {
       rowData: jobdata,
     });
 
-    expect(value3Ref).toEqual(1);
+    expect(value3Ref).toBe(1);
     const value4Ref = columns[3].Value({
       rowData: jobdata,
     });
 
-    expect(value4Ref).toEqual(0);
+    expect(value4Ref).toBe(0);
     const value5Ref = columns[4].Value({
       rowData: jobdata,
     });
@@ -138,17 +137,17 @@ describe('metdata flows test cases', () => {
     );
     const valuecomRef = columns[5].Value({ rowData: jobdata });
 
-    expect(valuecomRef).toEqual(0);
+    expect(valuecomRef).toBe(0);
     const value7Ref = columns[6].Value({ rowData: jobdata1 });
 
-    expect(value7Ref).toEqual(1);
+    expect(value7Ref).toBe(1);
     const value7Ref1 = columns[6].Value({ rowData: jobdata });
 
-    expect(value7Ref1).toEqual(1);
+    expect(value7Ref1).toBe(1);
 
     const value8Ref = columns[7].Value({ rowData: jobdata });
 
-    expect(value8Ref).toEqual('00:00:40');
+    expect(value8Ref).toBe('00:00:40');
 
     const value9Ref = columns[8].Value({ rowData: jobdata });
 

@@ -1,4 +1,3 @@
-/* global describe, test, expect, jest, beforeEach */
 import React from 'react';
 import { screen } from '@testing-library/react';
 import { MemoryRouter, Route } from 'react-router-dom';
@@ -86,7 +85,7 @@ describe('TabRedirection(DIY) UI tests', () => {
     expect(screen.getByText('Children')).toBeInTheDocument();
   });
 
-  test('should redirect when no template is provided from params but integration has templateID ', async () => {
+  test('should redirect when no template is provided from params but integration has templateID', async () => {
     const initialStore = getCreatedStore();
 
     initialStore.getState().data.resources.integrations = [
@@ -139,7 +138,7 @@ describe('TabRedirection(DIY) UI tests', () => {
       '/integrations/:integrationId/:childId/:tab',
     );
 
-    expect(screen.getByText('Redirected to " /integrationapps/AFE20refactoringforDBs/5ff579d745ceef7dcd797c15/setup'));
+    expect(screen.getByText('Redirected to " /integrationapps/AFE20refactoringforDBs/5ff579d745ceef7dcd797c15/setup')).toBeInTheDocument();
   });
   test('should redirect to required page when child is not provided to integration (mode uninstall)', async () => {
     const initialStore = initStore('uninstall');
@@ -150,7 +149,7 @@ describe('TabRedirection(DIY) UI tests', () => {
       '/integrations/:integrationId/:childId/:tab',
     );
 
-    expect(screen.getByText('Redirected to " /integrationapps/AFE20refactoringforDBs/5ff579d745ceef7dcd797c15/uninstall/child/5ff579d745ceef7dcd797c16'));
+    expect(screen.getByText('Redirected to " /integrationapps/AFE20refactoringforDBs/5ff579d745ceef7dcd797c15/uninstall/child/5ff579d745ceef7dcd797c16')).toBeInTheDocument();
   });
   test('should redirect to required page when no tab is provided', async () => {
     const initialStore = initStore();
@@ -161,7 +160,7 @@ describe('TabRedirection(DIY) UI tests', () => {
       '/integrations/:integrationId/:childId',
     );
 
-    expect(screen.getByText('Redirected to " /integrations/5ff579d745ceef7dcd797c15/5ff579d745ceef7dcd797c16/flows'));
+    expect(screen.getByText('Redirected to " /integrations/5ff579d745ceef7dcd797c15/5ff579d745ceef7dcd797c16/flows')).toBeInTheDocument();
   });
 
   test('should redirect to provided URL', async () => {

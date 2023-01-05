@@ -1,4 +1,4 @@
-/* global test, expect, describe, jest */
+
 import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -42,7 +42,7 @@ async function renderFuntion(actionProps, data, errorType) {
   userEvent.click(screen.getByRole('button', {name: /more/i}));
 }
 
-describe('Error Management Purge error UI tests ', () => {
+describe('error Management Purge error UI tests', () => {
   const resourceId = '6439276e7uybwe78292878';
   const flowId = '6938764rh739d3378';
   const errorId = 'someerrorId';

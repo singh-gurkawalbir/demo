@@ -1,4 +1,4 @@
-/* global describe, test, expect,afterEach, beforeEach jest */
+
 import React from 'react';
 import { screen } from '@testing-library/react';
 import * as reactRedux from 'react-redux';
@@ -34,7 +34,7 @@ async function initTransformPanel(props = {editorId: '_editorId'}, error = '', d
 
   return renderWithProviders(<TransformPanel {...props} />, { initialStore });
 }
-describe('TransformPanel tests', () => {
+describe('transformPanel tests', () => {
   let mockDispatchFn;
   let useDispatchSpy;
   let initialStore;
@@ -53,17 +53,17 @@ describe('TransformPanel tests', () => {
     useDispatchSpy.mockClear();
     mockDispatchFn.mockClear();
   });
-  test('Should able to test editor panel with data as JSON string', async () => {
+  test('should able to test editor panel with data as JSON string', async () => {
     await initTransformPanel();
     expect(screen.getByText('[{"id":"*.id"}]')).toBeInTheDocument();
   });
-  test('Should able to test editor panel with data as Object and Error', async () => {
+  test('should able to test editor panel with data as Object and Error', async () => {
     await initTransformPanel({editorId: '_editorId'}, 'Some editor error', {id: '123'});
     expect(screen.getByText('[{"id":"id"}]')).toBeInTheDocument();
     userEvent.click(screen.getByRole('button', {name: 'FieldUpdate'}));
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.editor.patchRule('_editorId', true));
   });
-  test('Should able to test editor panel without data', async () => {
+  test('should able to test editor panel without data', async () => {
     await initTransformPanel({editorId: '_editorId'}, 'Some editor error', '');
     expect(screen.getByText('[]')).toBeInTheDocument();
   });

@@ -1,4 +1,4 @@
-/* global describe, expect, jest, test */
+
 import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -82,7 +82,7 @@ describe('test suite for netsuite saved search field', () => {
     userEvent.click(privateSearch);
 
     //  should reset value on changing the search type
-    expect(onFieldChange).toBeCalledWith(props.id, '');
+    expect(onFieldChange).toHaveBeenCalledWith(props.id, '');
 
     expect(screen.getByRole('radio', {name: 'Private'})).toBeChecked();
     expect(screen.getByTestId('DynaNSSavedSearchInternalID')).toBeInTheDocument();

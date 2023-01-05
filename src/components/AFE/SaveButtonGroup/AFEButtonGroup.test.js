@@ -1,4 +1,3 @@
-/* global describe, test, expect, jest */
 import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -24,21 +23,21 @@ async function initSaveButtonGroup(props = {editorId: 'mappings', onClose: mockC
 
   return renderWithProviders(<SaveButtonGroup {...props} />, { initialStore });
 }
-describe('SaveButtonGroup tests', () => {
+describe('saveButtonGroup tests', () => {
   const useDispatchSpy = jest.spyOn(reactRedux, 'useDispatch');
   const mockDispatchFn = jest.fn();
 
   useDispatchSpy.mockReturnValue(mockDispatchFn);
-  test('Should able to test SaveButtonGroup when form is not dirty', async () => {
+  test('should able to test SaveButtonGroup when form is not dirty', async () => {
     await initSaveButtonGroup();
     const close = screen.getByRole('button', {name: 'Close'});
 
     expect(screen.getByRole('button', {name: 'Save'})).toBeDisabled();
     expect(close).toBeEnabled();
     userEvent.click(close);
-    expect(mockClose).toHaveBeenCalled();
+    expect(mockClose).toHaveBeenCalledTimes(1);
   });
-  test('Should able to test SaveButtonGroup when form is dirty', async () => {
+  test('should able to test SaveButtonGroup when form is dirty', async () => {
     await initSaveButtonGroup({makeDirty: true, editorId: 'inputFilter'});
     expect(screen.getByRole('button', {name: 'Save & close'})).toBeEnabled();
     userEvent.click(screen.getByRole('button', {name: 'Save'}));

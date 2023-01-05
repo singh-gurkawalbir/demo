@@ -1,4 +1,4 @@
-/* global test, expect, describe, jest */
+
 import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -37,7 +37,7 @@ function renderFuntion(data, actionProps) {
   );
 }
 
-describe('FlowStepLogs meta data UI tests', () => {
+describe('flowStepLogs meta data UI tests', () => {
   test('should verify the time column', () => {
     renderFuntion({key: 'someKey', utcDateTime: '2022-05-18T18:16:31.989Z'}, {resourceId: 'someresourceId', flowId: 'someflowId'});
     expect(screen.getByText('05/18/2022 11:46:31 pm')).toBeInTheDocument();

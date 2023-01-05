@@ -1,4 +1,4 @@
-/* global describe, test, expect */
+
 import metadata from './csvGenerator';
 import DataPanel from '../Editor/panels/Data';
 import ResultPanel from '../Editor/panels/Result';
@@ -8,10 +8,10 @@ describe('csvGenerator metadata test cases', () => {
   test('should pass the test case for each field', () => {
     const {type, fieldId, description, label, panels} = metadata;
 
-    expect(type).toEqual('csvGenerator');
-    expect(fieldId).toEqual('file.csv');
-    expect(description).toEqual('Converts JSON data into delimited file');
-    expect(label).toEqual('CSV generator helper');
+    expect(type).toBe('csvGenerator');
+    expect(fieldId).toBe('file.csv');
+    expect(description).toBe('Converts JSON data into delimited file');
+    expect(label).toBe('CSV generator helper');
 
     const csvGeneratorRules = panels.find(eachPanel => eachPanel.title === 'CSV generator options');
     const dataPanel = panels.find(eachPanel => eachPanel.title === 'Sample flow data');

@@ -1,11 +1,7 @@
-/* global describe, test, expect, jest, beforeEach, afterEach */
-
 import React from 'react';
 import { MemoryRouter, Route} from 'react-router-dom';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { screen, cleanup } from '@testing-library/react';
 import * as reactRedux from 'react-redux';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import userEvent from '@testing-library/user-event';
 import { renderWithProviders } from '../../test/test-utils';
 import Signup from '.';
@@ -34,7 +30,7 @@ async function initSignUp() {
   };
 }
 
-describe('SignUp', () => {
+describe('signUp', () => {
   runServer();
   let mockDispatchFn;
   let useDispatchSpy;
@@ -56,7 +52,7 @@ describe('SignUp', () => {
     cleanup();
   });
 
-  test('Should able to test the Signup ', async () => {
+  test('should able to test the Signup', async () => {
     store({});
     await initSignUp();
     const titleText = screen.getByText('Celigo Inc.');
@@ -78,7 +74,7 @@ describe('SignUp', () => {
     expect(phone).toBeInTheDocument();
   });
 
-  test('Should able to test the  signin link', async () => {
+  test('should able to test the  signin link', async () => {
     store({});
     await initSignUp();
     const signInLinkNode = screen.getByRole('link', {name: 'Sign in'});

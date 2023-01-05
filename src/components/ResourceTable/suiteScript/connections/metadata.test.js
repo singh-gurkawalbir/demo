@@ -1,4 +1,5 @@
-/* global test, expect, describe */
+/* eslint-disable jest/expect-expect */
+
 import React from 'react';
 import { screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
@@ -47,7 +48,7 @@ function renderFunction(resource) {
   );
 }
 
-describe('Suite script connection metadata UI test', () => {
+describe('suite script connection metadata UI test', () => {
   let headerI;
   let cellI;
 
@@ -70,7 +71,7 @@ describe('Suite script connection metadata UI test', () => {
     cellI = existanceOfCellInDom('SomeUserName', 'cell');
     expectFunction(headerI, cellI);
   });
-  test('should verify the coulmns for ftp Type field ', () => {
+  test('should verify the coulmns for ftp Type field', () => {
     renderFunction({...resource, type: 'sftp', ftp: {hostURI: 'FTPhostURI', username: 'FTP userName'}});
     headerI = existanceOfCellInDom('Name', 'columnheader');
     cellI = existanceOfCellInDom('3D Cart Staging delete', 'cell');

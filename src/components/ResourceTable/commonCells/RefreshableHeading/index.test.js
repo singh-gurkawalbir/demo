@@ -1,4 +1,4 @@
-/* global describe, test, beforeEach, expect, jest, afterEach */
+
 import { screen } from '@testing-library/react';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
@@ -24,7 +24,7 @@ function initRefreshableHeading(label, resourceType, status) {
   return renderWithProviders(ui, {initialStore});
 }
 
-describe('Testsuite for Refresable Heading', () => {
+describe('testsuite for Refresable Heading', () => {
   let mockDispatchFn;
   let useDispatchSpy;
 

@@ -1,4 +1,5 @@
-/* global describe, test,expect, jest */
+/* eslint-disable jest/expect-expect */
+
 import React from 'react';
 import { screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';

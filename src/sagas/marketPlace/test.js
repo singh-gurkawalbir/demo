@@ -1,4 +1,4 @@
-/* global describe, test, expect */
+
 import { call, put, select } from 'redux-saga/effects';
 import { expectSaga } from 'redux-saga-test-plan';
 import actions from '../../actions';
@@ -29,7 +29,7 @@ describe('requestConnectors saga', () => {
         actions.marketplace.receivedConnectors({ connectors: testConnectors })
       )
     );
-    expect(saga.next().done).toEqual(true);
+    expect(saga.next().done).toBe(true);
   });
   test('should handle if api call fails', () => {
     const saga = requestConnectors();
@@ -40,8 +40,8 @@ describe('requestConnectors saga', () => {
         message: 'Requesting integration apps',
       })
     );
-    expect(saga.throw(new Error()).value).toEqual(undefined);
-    expect(saga.next().done).toEqual(true);
+    expect(saga.throw(new Error()).value).toBeUndefined();
+    expect(saga.next().done).toBe(true);
   });
 });
 describe('requestTemplates saga', () => {
@@ -60,7 +60,7 @@ describe('requestTemplates saga', () => {
     expect(saga.next(testTemplates).value).toEqual(
       put(actions.marketplace.receivedTemplates({ templates: testTemplates }))
     );
-    expect(saga.next().done).toEqual(true);
+    expect(saga.next().done).toBe(true);
   });
   test('should handle if api call fails', () => {
     const saga = requestTemplates();
@@ -71,8 +71,8 @@ describe('requestTemplates saga', () => {
         message: 'Requesting Templates',
       })
     );
-    expect(saga.throw(new Error()).value).toEqual(undefined);
-    expect(saga.next().done).toEqual(true);
+    expect(saga.throw(new Error()).value).toBeUndefined();
+    expect(saga.next().done).toBe(true);
   });
 });
 
@@ -111,7 +111,7 @@ describe('installConnector saga', () => {
       put(actions.license.refreshCollection())
     );
 
-    expect(saga.next().done).toEqual(true);
+    expect(saga.next().done).toBe(true);
   });
   test('should handle if api call fails', () => {
     const saga = installConnector({ connectorId, sandbox });
@@ -129,8 +129,8 @@ describe('installConnector saga', () => {
         },
       })
     );
-    expect(saga.throw(new Error()).value).toEqual(undefined);
-    expect(saga.next().done).toEqual(true);
+    expect(saga.throw(new Error()).value).toBeUndefined();
+    expect(saga.next().done).toBe(true);
   });
   test('should request collections of integrations, tiles, connections and licenses, if api call is successful and connector is of framework twoDotZero', () => {
     const tag = 'something';
@@ -152,7 +152,7 @@ describe('installConnector saga', () => {
       },
     };
 
-    return expectSaga(installConnector, { connectorId, sandbox, tag })
+    expectSaga(installConnector, { connectorId, sandbox, tag })
       .provide([
         [select(selectors.integrationAppList), integrationAppList],
         [call(apiCallWithRetry, args)],
@@ -184,7 +184,7 @@ describe('contactSales saga', () => {
       })
     );
 
-    expect(saga.next().done).toEqual(true);
+    expect(saga.next().done).toBe(true);
   });
   test('should handle if api call fails', () => {
     const saga = contactSales({ connectorName, _connectorId });
@@ -199,7 +199,7 @@ describe('contactSales saga', () => {
       })
     );
 
-    expect(saga.throw(new Error()).value).toEqual(true);
-    expect(saga.next().done).toEqual(true);
+    expect(saga.throw(new Error()).value).toBe(true);
+    expect(saga.next().done).toBe(true);
   });
 });

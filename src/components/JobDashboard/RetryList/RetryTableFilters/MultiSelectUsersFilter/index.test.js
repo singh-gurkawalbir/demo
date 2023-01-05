@@ -1,4 +1,4 @@
-/* global describe, test, expect */
+
 import React from 'react';
 import { screen} from '@testing-library/react';
 import {MemoryRouter} from 'react-router-dom';
@@ -173,7 +173,7 @@ function initMultiSelectUsersFilter({
   return renderWithProviders(ui, {initialStore});
 }
 
-describe('MultiSelectUsersFilter UI tests', () => {
+describe('multiSelectUsersFilter UI tests', () => {
   test('should return null when there are no retries', () => {
     const props = {
       flowId: 'flow1',
@@ -224,7 +224,7 @@ describe('MultiSelectUsersFilter UI tests', () => {
     expect(screen.getByText(/Select/i)).toBeInTheDocument();
   });
 
-  test('should pass the initial render when a user is selected', () => {
+  test('should pass the initial render when a user is selected duplicate', () => {
     initMultiSelectUsersFilter({
       props: {
         flowId: 'flow1',

@@ -1,4 +1,4 @@
-/* global describe, test, expect ,jest */
+
 import React from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { screen, waitFor, fireEvent } from '@testing-library/react';
@@ -98,7 +98,7 @@ const props = { integrationId: '629f0dcfccb94d35de6f436b',
     endDate: '2022-07-04T12:16:31.435Z',
     preset: 'last30days' }};
 
-describe('FlowChart(dashborad) UI tests', () => {
+describe('flowChart(dashborad) UI tests', () => {
   runServer();
 
   async function renderFunction(props) {

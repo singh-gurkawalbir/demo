@@ -1,4 +1,4 @@
-/* global describe, test, expect,beforeEach, afterEach, jest */
+
 import React from 'react';
 import { MemoryRouter, Route } from 'react-router-dom';
 import { screen, waitFor } from '@testing-library/react';

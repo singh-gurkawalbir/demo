@@ -1,4 +1,4 @@
-/* global describe, test, expect */
+
 import moment from 'moment';
 import reducer, { selectors } from '.';
 import actions from '../../../../actions';
@@ -533,16 +533,14 @@ describe('account (ashares) reducers', () => {
           actions.resource.receivedCollection('shared/ashares', [])
         );
 
-        expect(selectors.platformLicense(state, 'invalid_account')).toEqual(
-          null
+        expect(selectors.platformLicense(state, 'invalid_account')).toBeNull(
         );
         const state2 = reducer(
           state,
           actions.resource.receivedCollection('shared/ashares', testAccounts)
         );
 
-        expect(selectors.platformLicense(state2, 'invalid_account')).toEqual(
-          null
+        expect(selectors.platformLicense(state2, 'invalid_account')).toBeNull(
         );
       });
       test('should return correct integrator license', () => {
@@ -1048,7 +1046,7 @@ describe('account (ashares) reducers', () => {
           },
         };
 
-        expect(Object.isFrozen(permissions)).toEqual(true);
+        expect(Object.isFrozen(permissions)).toBe(true);
         expect(permissions).toEqual(ownerPermissions);
         const permissionsWithAllowedToPublish = selectors.permissions(
           state,
@@ -1056,7 +1054,7 @@ describe('account (ashares) reducers', () => {
           { allowedToPublish: true }
         );
 
-        expect(Object.isFrozen(permissionsWithAllowedToPublish)).toEqual(true);
+        expect(Object.isFrozen(permissionsWithAllowedToPublish)).toBe(true);
         expect(permissionsWithAllowedToPublish).toEqual({
           ...ownerPermissions,
           connectors: {
@@ -1160,7 +1158,7 @@ describe('account (ashares) reducers', () => {
           users: {},
         };
 
-        expect(Object.isFrozen(permissions)).toEqual(true);
+        expect(Object.isFrozen(permissions)).toBe(true);
         expect(permissions).toEqual(manageUserPermissions);
       });
       test('should return correct permissions for account level monitor user', () => {
@@ -1212,7 +1210,7 @@ describe('account (ashares) reducers', () => {
           users: {},
         };
 
-        expect(Object.isFrozen(permissions)).toEqual(true);
+        expect(Object.isFrozen(permissions)).toBe(true);
         expect(permissions).toEqual(monitorUserPermissions);
       });
       test('should return correct permissions for tile level access user', () => {
@@ -1278,7 +1276,7 @@ describe('account (ashares) reducers', () => {
           users: {},
         };
 
-        expect(Object.isFrozen(permissions)).toEqual(true);
+        expect(Object.isFrozen(permissions)).toBe(true);
         expect(permissions).toEqual(tileUserPermissions);
       });
     });
@@ -1286,8 +1284,8 @@ describe('account (ashares) reducers', () => {
       test('should return correct access level when state is undefined', () => {
         const state = reducer(undefined, 'some action');
 
-        expect(selectors.accessLevel(state)).toEqual(undefined);
-        expect(selectors.accessLevel(state, 'something')).toEqual(undefined);
+        expect(selectors.accessLevel(state)).toBeUndefined();
+        expect(selectors.accessLevel(state, 'something')).toBeUndefined();
         expect(selectors.accessLevel(state, ACCOUNT_IDS.OWN)).toEqual(
           USER_ACCESS_LEVELS.ACCOUNT_OWNER
         );
@@ -1361,7 +1359,7 @@ describe('account (ashares) reducers', () => {
       test('should return undefined if state is undefined', () => {
         const state = reducer(undefined, 'some action');
 
-        expect(selectors.owner(state, 'ashare1')).toEqual(undefined);
+        expect(selectors.owner(state, 'ashare1')).toBeUndefined();
       });
       test('should return correct owner info', () => {
         const state = reducer(
@@ -1386,7 +1384,7 @@ describe('account (ashares) reducers', () => {
           email: 'owner2@test.com',
           name: 'Owner Two',
         });
-        expect(selectors.owner(state, 'invalid')).toEqual(undefined);
+        expect(selectors.owner(state, 'invalid')).toBeUndefined();
       });
     });
     describe('isAccountSSORequired', () => {

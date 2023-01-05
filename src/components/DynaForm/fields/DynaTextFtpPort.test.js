@@ -1,4 +1,4 @@
-/* global describe, expect, test, jest */
+
 import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -50,7 +50,7 @@ describe('test suite for Port field in FTP connection', () => {
     expect(label).toHaveTextContent(props.label);
     expect(inputField).toHaveValue(props.value.toString());
 
-    expect(onFieldChange).toBeCalledWith(props.id, props.options, true);
+    expect(onFieldChange).toHaveBeenCalledWith(props.id, props.options, true);
   });
 
   test('should respond to change in value', () => {
@@ -82,7 +82,7 @@ describe('test suite for Port field in FTP connection', () => {
       },
     };
     renderWithProviders(<DynaTextFtpPort {...props} />, {initialStore});
-    expect(onFieldChange).toBeCalledWith(props.id, props.options, true);
+    expect(onFieldChange).toHaveBeenCalledWith(props.id, props.options, true);
     const inputField = screen.getByRole('textbox');
 
     expect(inputField).toHaveAttribute('placeholder', props.placeholder);
@@ -93,7 +93,7 @@ describe('test suite for Port field in FTP connection', () => {
 
     '8080'.split('').forEach(char => {
       currVal += char;
-      expect(onFieldChange).toBeCalledWith(props.id, currVal);
+      expect(onFieldChange).toHaveBeenCalledWith(props.id, currVal);
     });
   });
 
@@ -127,7 +127,7 @@ describe('test suite for Port field in FTP connection', () => {
     };
     renderWithProviders(<DynaTextFtpPort {...props} />, {initialStore});
 
-    expect(onFieldChange).not.toBeCalled();
+    expect(onFieldChange).not.toHaveBeenCalled();
     expect(screen.getByText(props.errorMessages)).toBeInTheDocument();
   });
 

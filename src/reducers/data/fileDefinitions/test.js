@@ -1,4 +1,3 @@
-/* global describe, test, expect */
 
 import { deepClone } from 'fast-json-patch';
 import reducer, { selectors, _addDefinition, _generateFileDefinitionOptions } from '.';
@@ -352,7 +351,7 @@ describe('_addDefinition util', () => {
     expect(_addDefinition([], '234')).toEqual([]);
     expect(_addDefinition(definitions)).toBe(definitions);
   });
-  test('should add template to the passed definitionId and return the definitions ', () => {
+  test('should add template to the passed definitionId and return the definitions', () => {
     const definitionsCopy = deepClone(definitions);
     const definition = {
       generate: {},

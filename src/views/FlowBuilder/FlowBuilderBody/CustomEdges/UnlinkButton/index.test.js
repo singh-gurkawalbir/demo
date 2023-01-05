@@ -1,4 +1,4 @@
-/* global describe, test, expect, beforeEach, jest, afterEach */
+
 import { screen } from '@testing-library/react';
 import React from 'react';
 import * as reactRedux from 'react-redux';

@@ -17,7 +17,6 @@ import DynaRelativeUri_afe from './DynaRelativeUri_afe';
 import DynaKeyValue from './DynaKeyValue';
 import DynaTextList from './DynaTextList';
 import DynaToggleSelectToText from './select/DynaToggleSelectToText';
-import DynaKeyWithAction from './DynaKeyWithAction';
 import DynaHttpRequestBody_afe from './DynaHttpRequestBody_afe';
 import DynaEditor from './DynaEditor';
 import DynaCsvParse_afe from './DynaCsvParse_afe';
@@ -241,7 +240,6 @@ export default {
   assistantoptions: DynaAssistantOptions,
   assistantsearchparams: DynaAssistantSearchParams,
   semiassistantoperationselect: DynaSemiAssistantOperationSelect,
-  keywithaction: DynaKeyWithAction,
   fieldexpressionselect: DynaFieldExpressionSelect,
   autosuggest: DynaAutoSuggest,
   generateurl: DynaGenerateUrl,

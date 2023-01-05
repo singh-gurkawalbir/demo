@@ -1,4 +1,3 @@
-/* global describe, test, expect */
 
 import processorLogic, { getLogic } from './index';
 import handlebars from './handlebars';
@@ -39,7 +38,7 @@ describe('processorLogic index utils', () => {
         data: '{"name": "Bob"}',
       };
 
-      expect(validate(editor)).toEqual(false);
+      expect(validate(editor)).toBe(false);
     });
     test('should return the data and rule violations if exist', () => {
       const editor = {
@@ -101,7 +100,7 @@ describe('processorLogic index utils', () => {
         },
       };
 
-      expect(isDirty(editor)).toEqual(true);
+      expect(isDirty(editor)).toBe(true);
     });
     test('should compare original and new rule from editor if processor logic does not exist', () => {
       const editor = {
@@ -110,7 +109,7 @@ describe('processorLogic index utils', () => {
         originalRule: '{{name}}',
       };
 
-      expect(isDirty(editor)).toEqual(true);
+      expect(isDirty(editor)).toBe(true);
     });
   });
   describe('init util', () => {

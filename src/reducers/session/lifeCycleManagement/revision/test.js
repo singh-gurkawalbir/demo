@@ -1,4 +1,4 @@
-/* global describe, test, expect */
+
 import reducer, { selectors } from '.';
 import actions from '../../../../actions';
 import { REVISION_CREATION_STATUS, REVISION_TYPES } from '../../../../constants';
@@ -387,6 +387,7 @@ describe('lcm revision reducer test cases', () => {
     });
   });
   // TODO @Raghu: Add test cases for this action
+  // eslint-disable-next-line jest/no-commented-out-tests
   // describe('REVISION.RECEIVED_ERRORS action', () => {
 
   // });
@@ -394,7 +395,7 @@ describe('lcm revision reducer test cases', () => {
 
 describe('lcm revision selector test cases', () => {
   describe('tempRevisionInfo selector', () => {
-    test('should return undefined incase of invalid params ', () => {
+    test('should return undefined incase of invalid params', () => {
       expect(selectors.tempRevisionInfo()).toBeUndefined();
       expect(selectors.tempRevisionInfo({})).toBeUndefined();
       expect(selectors.tempRevisionInfo({}, 'i-23')).toBeUndefined();
@@ -426,7 +427,7 @@ describe('lcm revision selector test cases', () => {
     });
   });
   describe('revisionErrorsInfo selector', () => {
-    test('should return undefined incase of invalid params ', () => {
+    test('should return undefined incase of invalid params', () => {
       expect(selectors.revisionErrorsInfo()).toBeUndefined();
       expect(selectors.revisionErrorsInfo({})).toBeUndefined();
       expect(selectors.revisionErrorsInfo({}, 'i-23')).toBeUndefined();
@@ -451,7 +452,7 @@ describe('lcm revision selector test cases', () => {
     });
   });
   describe('tempRevisionType selector', () => {
-    test('should return undefined incase of invalid params ', () => {
+    test('should return undefined incase of invalid params', () => {
       expect(selectors.tempRevisionType()).toBeUndefined();
       expect(selectors.tempRevisionType({})).toBeUndefined();
       expect(selectors.tempRevisionType({}, 'i-23')).toBeUndefined();
@@ -473,7 +474,7 @@ describe('lcm revision selector test cases', () => {
     });
   });
   describe('isRevisionCreationInProgress selector', () => {
-    test('should return false incase of invalid params ', () => {
+    test('should return false incase of invalid params', () => {
       expect(selectors.isRevisionCreationInProgress()).toBeFalsy();
       expect(selectors.isRevisionCreationInProgress({})).toBeFalsy();
       expect(selectors.isRevisionCreationInProgress({}, 'i-23')).toBeFalsy();
@@ -492,7 +493,7 @@ describe('lcm revision selector test cases', () => {
     });
   });
   describe('isRevisionErrorsFetchInProgress selector', () => {
-    test('should return false incase of invalid params ', () => {
+    test('should return false incase of invalid params', () => {
       expect(selectors.isRevisionErrorsFetchInProgress()).toBeFalsy();
       expect(selectors.isRevisionErrorsFetchInProgress({})).toBeFalsy();
       expect(selectors.isRevisionErrorsFetchInProgress({}, 'i-23')).toBeFalsy();
@@ -538,7 +539,7 @@ describe('lcm revision selector test cases', () => {
     });
   });
   describe('revisionErrors selector', () => {
-    test('should return undefined incase of invalid params ', () => {
+    test('should return undefined incase of invalid params', () => {
       expect(selectors.revisionErrors()).toBeUndefined();
       expect(selectors.revisionErrors({})).toBeUndefined();
       expect(selectors.revisionErrors({}, 'i-23')).toBeUndefined();
@@ -563,7 +564,7 @@ describe('lcm revision selector test cases', () => {
     });
   });
   describe('revisionError selector', () => {
-    test('should return undefined incase of invalid params ', () => {
+    test('should return undefined incase of invalid params', () => {
       expect(selectors.revisionError()).toBeUndefined();
       expect(selectors.revisionError({})).toBeUndefined();
       expect(selectors.revisionError({}, 'i-23')).toBeUndefined();
@@ -588,7 +589,7 @@ describe('lcm revision selector test cases', () => {
     });
   });
   describe('revisionCreationError selector', () => {
-    test('should return undefined incase of invalid params ', () => {
+    test('should return undefined incase of invalid params', () => {
       expect(selectors.revisionCreationError()).toBeUndefined();
       expect(selectors.revisionCreationError({})).toBeUndefined();
       expect(selectors.revisionCreationError({}, 'i-23')).toBeUndefined();
@@ -606,7 +607,7 @@ describe('lcm revision selector test cases', () => {
         },
       };
 
-      expect(selectors.revisionCreationError(state, integrationId, revisionId)).toEqual('invalid integrationId');
+      expect(selectors.revisionCreationError(state, integrationId, revisionId)).toBe('invalid integrationId');
     });
   });
 });

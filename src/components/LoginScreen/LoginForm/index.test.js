@@ -1,4 +1,6 @@
-/* global describe, test, expect, beforeEach */
+/* eslint-disable jest/expect-expect */
+/* eslint-disable jest/no-standalone-expect */
+
 import React from 'react';
 import {
   screen,
@@ -19,7 +21,7 @@ async function initLoginForm() {
   return renderWithProviders(ui);
 }
 
-describe('LoginForm component', () => {
+describe('loginForm component', () => {
   runServer();
 
   beforeEach(async () => {

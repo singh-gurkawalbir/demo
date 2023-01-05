@@ -1,4 +1,4 @@
-/* global describe, test, expect, jest */
+
 import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -7,8 +7,8 @@ import DynaRadioGroupForResetFields from './DynaRadioGroupForResetFields';
 
 const onFieldChange = jest.fn();
 
-describe('DynaRadioGroupForResetFields tests', () => {
-  test('Should able to test DynaRadioGroupForResetFields without fieldsToReset', async () => {
+describe('dynaRadioGroupForResetFields tests', () => {
+  test('should able to test DynaRadioGroupForResetFields without fieldsToReset', async () => {
     const props = {
       options: [{items: ['item1', {value: 'item2'}]}],
       onFieldChange,
@@ -19,7 +19,7 @@ describe('DynaRadioGroupForResetFields tests', () => {
     userEvent.click(screen.getByText('item2'));
     expect(onFieldChange).toHaveBeenCalledWith('id1', 'item2');
   });
-  test('Should able to test DynaRadioGroupForResetFields with fieldsToReset', async () => {
+  test('should able to test DynaRadioGroupForResetFields with fieldsToReset', async () => {
     const props = {
       options: [{items: ['item1', {value: 'item2'}]}],
       fieldsToReset: [{type: 'checkbox', id: '_id1'}, {type: 'button', id: '_id2'}],

@@ -1,4 +1,3 @@
-/* global describe, test */
 
 import { expectSaga } from 'redux-saga-test-plan';
 import { throwError } from 'redux-saga-test-plan/providers';

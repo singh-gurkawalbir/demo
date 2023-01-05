@@ -1,10 +1,10 @@
-/* global describe, expect, test */
+
 import reducer, { selectors } from '.';
 import actions from '../actions';
 
 describe('selectors.assistantName test cases', () => {
   test('should not throw any exception for invalid arguments', () => {
-    expect(selectors.assistantName(undefined)).toEqual(undefined);
+    expect(selectors.assistantName(undefined)).toBeUndefined();
   });
   test('should return undefined in case of resourceId is not present', () => {
     const testExports = [{ _id: 234, name: 'A' }, { _id: 567, name: 'B' }];
@@ -13,7 +13,7 @@ describe('selectors.assistantName test cases', () => {
       actions.resource.receivedCollection('exports', testExports)
     );
 
-    expect(selectors.assistantName(state, 'exports', 99)).toEqual(undefined);
+    expect(selectors.assistantName(state, 'exports', 99)).toBeUndefined();
   });
   test('should return assistant name in case correct resource id is passed', () => {
     const testExports = [{ _id: 234, name: 'A' }, { _id: 567, name: 'B', assistant: 'myAssistant' }];
@@ -23,7 +23,7 @@ describe('selectors.assistantName test cases', () => {
       actions.resource.receivedCollection('exports', testExports)
     );
 
-    expect(selectors.assistantName(state, 'exports', 567)).toEqual('myAssistant');
+    expect(selectors.assistantName(state, 'exports', 567)).toBe('myAssistant');
   });
   test('should return assistant name in case assistant name is present in connection resource', () => {
     const testExports = [{ _id: 234, name: 'A' }, { _id: 567, name: 'B', _connectionId: 768 }];
@@ -38,7 +38,7 @@ describe('selectors.assistantName test cases', () => {
       actions.resource.receivedCollection('connections', testConnections)
     );
 
-    expect(selectors.assistantName(newState, 'exports', 567)).toEqual('myAssistant');
+    expect(selectors.assistantName(newState, 'exports', 567)).toBe('myAssistant');
   });
 
   test('should return undefined in case resource is not an assistant', () => {
@@ -54,13 +54,13 @@ describe('selectors.assistantName test cases', () => {
       actions.resource.receivedCollection('connections', testConnections)
     );
 
-    expect(selectors.assistantName(newState, 'exports', 567)).toEqual(undefined);
+    expect(selectors.assistantName(newState, 'exports', 567)).toBeUndefined();
   });
 });
 
 describe('selectors.recordTypeForAutoMapper test cases', () => {
   test('should not throw any exception for invalid arguments', () => {
-    expect(selectors.recordTypeForAutoMapper(undefined)).toEqual('');
+    expect(selectors.recordTypeForAutoMapper(undefined)).toBe('');
   });
 
   test('should return through exception in case of resourceId is not present', () => {
@@ -70,7 +70,7 @@ describe('selectors.recordTypeForAutoMapper test cases', () => {
       actions.resource.receivedCollection('exports', testExports)
     );
 
-    expect(selectors.recordTypeForAutoMapper(state, 'exports', 99)).toEqual('');
+    expect(selectors.recordTypeForAutoMapper(state, 'exports', 99)).toBe('');
   });
 
   test('should return recordType for netsuite export [restlet]', () => {
@@ -93,7 +93,7 @@ describe('selectors.recordTypeForAutoMapper test cases', () => {
       actions.resource.receivedCollection('exports', testExports)
     );
 
-    expect(selectors.recordTypeForAutoMapper(state, 'exports', 567)).toEqual('employee');
+    expect(selectors.recordTypeForAutoMapper(state, 'exports', 567)).toBe('employee');
   });
 
   test('should return recordType for netsuite export [distributed]', () => {
@@ -116,7 +116,7 @@ describe('selectors.recordTypeForAutoMapper test cases', () => {
       actions.resource.receivedCollection('exports', testExports)
     );
 
-    expect(selectors.recordTypeForAutoMapper(state, 'exports', 567)).toEqual('employee');
+    expect(selectors.recordTypeForAutoMapper(state, 'exports', 567)).toBe('employee');
   });
 
   test('should return recordType for netsuite import', () => {
@@ -138,7 +138,7 @@ describe('selectors.recordTypeForAutoMapper test cases', () => {
       actions.resource.receivedCollection('imports', testImport)
     );
 
-    expect(selectors.recordTypeForAutoMapper(state, 'imports', 567)).toEqual('employee');
+    expect(selectors.recordTypeForAutoMapper(state, 'imports', 567)).toBe('employee');
   });
 
   test('should return recordType for netsuite import[subrecord]', () => {
@@ -172,7 +172,7 @@ describe('selectors.recordTypeForAutoMapper test cases', () => {
       actions.resource.receivedCollection('imports', testImport)
     );
 
-    expect(selectors.recordTypeForAutoMapper(state, 'imports', 567, 'item[*].test')).toEqual('inventorydetail');
+    expect(selectors.recordTypeForAutoMapper(state, 'imports', 567, 'item[*].test')).toBe('inventorydetail');
   });
 
   test('should return recordType for salesforce', () => {
@@ -192,7 +192,7 @@ describe('selectors.recordTypeForAutoMapper test cases', () => {
       actions.resource.receivedCollection('imports', testImport)
     );
 
-    expect(selectors.recordTypeForAutoMapper(state, 'imports', 567)).toEqual('employee');
+    expect(selectors.recordTypeForAutoMapper(state, 'imports', 567)).toBe('employee');
   });
 
   test('should return recordType for assistant', () => {
@@ -213,6 +213,6 @@ describe('selectors.recordTypeForAutoMapper test cases', () => {
       actions.resource.receivedCollection('imports', testImport)
     );
 
-    expect(selectors.recordTypeForAutoMapper(state, 'imports', 567)).toEqual('organizations');
+    expect(selectors.recordTypeForAutoMapper(state, 'imports', 567)).toBe('organizations');
   });
 });

@@ -1,4 +1,4 @@
-/* global describe, test, expect, jest */
+
 import React from 'react';
 import {
   screen, waitFor,
@@ -13,7 +13,7 @@ jest.mock('./Suggestions', () => ({
   default: () => <div>Suggestions Component</div>,
 }));
 
-describe('DynaTextWithFlowSuggestion UI tests', () => {
+describe('dynaTextWithFlowSuggestion UI tests', () => {
   test('should pass the initial render', () => {
     renderWithProviders(<DynaTextWithFlowSuggestion />);
     expect(screen.getByText('Suggestions Component')).toBeInTheDocument();
@@ -27,7 +27,7 @@ describe('DynaTextWithFlowSuggestion UI tests', () => {
     const textfield = screen.getByRole('textbox');
 
     userEvent.type(textfield, 'a');
-    await waitFor(() => expect(mockOnFieldChange).toBeCalled());
+    await waitFor(() => expect(mockOnFieldChange).toHaveBeenCalled());
   });
   test('should not render the suggestions component when both showExtract and showLookup props are false', () => {
     renderWithProviders(<DynaTextWithFlowSuggestion showLookup={false} showExtract={false} />);

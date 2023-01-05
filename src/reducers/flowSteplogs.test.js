@@ -1,4 +1,4 @@
-/* global describe, expect, beforeEach, test */
+
 import { selectors } from '.';
 import { FILTER_KEY } from '../utils/flowStepLogs';
 import * as constants from '../utils/flowStepLogs';
@@ -162,40 +162,40 @@ describe('Flow step request logs region selectors test cases', () => {
   });
   describe('selectors.hasLogsAccess test cases', () => {
     test('should not throw any exception for invalid arguments', () => {
-      expect(selectors.hasLogsAccess()).toEqual(false);
+      expect(selectors.hasLogsAccess()).toBe(false);
     });
     test('should return false if resource type is HTTP export file provider', () => {
-      expect(selectors.hasLogsAccess(state, 'exp-125', 'exports', false, flowId)).toEqual(false);
+      expect(selectors.hasLogsAccess(state, 'exp-125', 'exports', false, flowId)).toBe(false);
     });
     test('should return true if resource type is HTTP export', () => {
-      expect(selectors.hasLogsAccess(state, 'exp-126', 'exports', false, flowId)).toEqual(true);
+      expect(selectors.hasLogsAccess(state, 'exp-126', 'exports', false, flowId)).toBe(true);
     });
     test('should return true if resource type is HTTP import', () => {
-      expect(selectors.hasLogsAccess(state, 'imp-126', 'imports', false, flowId)).toEqual(true);
+      expect(selectors.hasLogsAccess(state, 'imp-126', 'imports', false, flowId)).toBe(true);
     });
     test('should return false if resource is not a realtime export and not generic export', () => {
-      expect(selectors.hasLogsAccess(state, '789', 'exports')).toEqual(false);
-      expect(selectors.hasLogsAccess(state, '1234', 'exports')).toEqual(false);
+      expect(selectors.hasLogsAccess(state, '789', 'exports')).toBe(false);
+      expect(selectors.hasLogsAccess(state, '1234', 'exports')).toBe(false);
     });
     test('should return true if resource is a realtime export and isNew is false', () => {
-      expect(selectors.hasLogsAccess(state, exportId, 'exports', false, '123')).toEqual(true);
+      expect(selectors.hasLogsAccess(state, exportId, 'exports', false, '123')).toBe(true);
     });
     test('should return false if resource is a realtime export, isNew is false and flow id is not set', () => {
-      expect(selectors.hasLogsAccess(state, exportId, 'exports', false)).toEqual(false);
+      expect(selectors.hasLogsAccess(state, exportId, 'exports', false)).toBe(false);
     });
     test('should return false if resource is a realtime export and isNew is true', () => {
-      expect(selectors.hasLogsAccess(state, exportId, 'exports', true, '123')).toEqual(false);
+      expect(selectors.hasLogsAccess(state, exportId, 'exports', true, '123')).toBe(false);
     });
     test('should return true if resource is a rest export and isHTTP set to true in connection', () => {
-      expect(selectors.hasLogsAccess(state, 'exp-127', 'exports', false, flowId)).toEqual(true);
+      expect(selectors.hasLogsAccess(state, 'exp-127', 'exports', false, flowId)).toBe(true);
     });
     test('should return false if resource is a rest export and isHTTP set to false in connection', () => {
-      expect(selectors.hasLogsAccess(state, 'exp-128', 'exports', false, flowId)).toEqual(false);
+      expect(selectors.hasLogsAccess(state, 'exp-128', 'exports', false, flowId)).toBe(false);
     });
   });
   describe('selectors.canEnableDebug test cases', () => {
     test('should not throw any exception for invalid arguments', () => {
-      expect(selectors.canEnableDebug()).toEqual(false);
+      expect(selectors.canEnableDebug()).toBe(false);
     });
     test('should return true if user has non-monitor user access', () => {
       state.user.org.accounts = [
@@ -206,13 +206,13 @@ describe('Flow step request logs region selectors test cases', () => {
           accessLevel: 'manage',
           integrationAccessLevel: [],
         }];
-      expect(selectors.canEnableDebug(state, exportId, flowId)).toEqual(true);
+      expect(selectors.canEnableDebug(state, exportId, flowId)).toBe(true);
     });
     test('should return true if user has tile level permissions but has manage access on integration', () => {
-      expect(selectors.canEnableDebug(state, exportId, flowId)).toEqual(true);
+      expect(selectors.canEnableDebug(state, exportId, flowId)).toBe(true);
     });
     test('should return false for monitor access', () => {
-      expect(selectors.canEnableDebug(state, 'exp-456', 'flow-456')).toEqual(false);
+      expect(selectors.canEnableDebug(state, 'exp-456', 'flow-456')).toBe(false);
     });
   });
   describe('selectors.mkLogsInCurrPageSelector test cases', () => {

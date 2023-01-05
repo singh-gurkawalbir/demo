@@ -1,9 +1,6 @@
-/* global describe, test, expect, beforeEach, jest */
 
 import React from 'react';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { screen } from '@testing-library/react';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import userEvent from '@testing-library/user-event';
 import FlowStepName from '.';
 import { JOB_STATUS } from '../../../../../constants';
@@ -200,7 +197,7 @@ const jobdata4 = {
   type: 'export',
 };
 
-describe('UI test cases for Flowstep name', () => {
+describe('uI test cases for Flowstep name', () => {
   beforeEach(() => {
     jest.resetAllMocks();
   });
@@ -228,14 +225,14 @@ describe('UI test cases for Flowstep name', () => {
 
     expect(res).toBeInTheDocument();
   });
-  test('should pass the initialsd render with default value', () => {
+  test('should pass the initialsd render with default value duplicate', () => {
     renderWithProviders(<FlowStepName job={jobdata} />, { initialStore });
 
     const res = screen.getByText('Exportname1');
 
     expect(res).toBeInTheDocument();
   });
-  test('should display provided export name in the export ', () => {
+  test('should display provided export name in the export', () => {
     renderWithProviders(<FlowStepName job={jobdata4} />, { initialStore });
 
     const res = screen.getByText('Exportname2');

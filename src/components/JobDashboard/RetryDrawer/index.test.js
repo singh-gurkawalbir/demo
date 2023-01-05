@@ -1,4 +1,4 @@
-/* global describe, test, beforeEach, afterEach, jest, expect */
+
 import { fireEvent, screen } from '@testing-library/react';
 import React from 'react';
 import { MemoryRouter, Route } from 'react-router-dom';
@@ -82,7 +82,7 @@ jest.mock('../../CodeEditor', () => ({
   },
 }
 ));
-describe('Testsuite for Retry Drawer', () => {
+describe('testsuite for Retry Drawer', () => {
   runServer();
   let mockDispatchFn;
   let useDispatchSpy;

@@ -1,4 +1,3 @@
-/* global describe, test, expect, jest, beforeEach, afterEach */
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import * as reactRedux from 'react-redux';
@@ -19,7 +18,7 @@ async function initTransferList(props) {
   return renderWithProviders(ui);
 }
 
-describe('ExampleMenu test cases', () => {
+describe('exampleMenu test cases', () => {
   runServer();
   let mockDispatchFn;
   let useDispatchSpy;
@@ -59,8 +58,8 @@ describe('ExampleMenu test cases', () => {
     expect(childEle).toBeInTheDocument();
     userEvent.click(childEle);
 
-    expect(mockDispatchFn).toBeCalledTimes(1);
-    expect(mockDispatchFn).toBeCalledWith(actions.editor.init('csvParse1', 'csvParser', {
+    expect(mockDispatchFn).toHaveBeenCalledTimes(1);
+    expect(mockDispatchFn).toHaveBeenCalledWith(actions.editor.init('csvParse1', 'csvParser', {
       rule: {
         columnDelimiter: ',',
         hasHeaderRow: true,
@@ -68,7 +67,7 @@ describe('ExampleMenu test cases', () => {
       },
       data: 'id, name, age\n1, Bob, 34\n2, Bill, 45\n3, Dan, 33',
     }));
-    expect(onEditorChange).toBeCalledTimes(1);
-    expect(onEditorChange).toBeCalledWith('csvParse1');
+    expect(onEditorChange).toHaveBeenCalledTimes(1);
+    expect(onEditorChange).toHaveBeenCalledWith('csvParse1');
   });
 });

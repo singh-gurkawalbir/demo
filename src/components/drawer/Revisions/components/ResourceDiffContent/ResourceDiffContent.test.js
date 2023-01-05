@@ -1,4 +1,4 @@
-/* global describe, test, expect, jest */
+
 import React from 'react';
 import { screen } from '@testing-library/react';
 import { renderWithProviders, reduxStore } from '../../../../../test/test-utils';
@@ -44,7 +44,7 @@ describe('ResourceDiffContent tests', () => {
     await initResourceDiffContent(props, false, 'requested');
     expect(screen.getByRole('progressbar')).toBeInTheDocument();
   });
-  test('Should able to test the ResourceDiffContent with Invalid REVERT ', async () => {
+  test('Should able to test the ResourceDiffContent with Invalid REVERT', async () => {
     await initResourceDiffContent({...props, type: REVISION_TYPES.REVERT});
     expect(screen.getByRole('alert')).toBeInTheDocument();
     expect(screen.getByText('Your revert is not allowed. Your operation is already on the same revision you\'re trying to revert to.')).toBeInTheDocument();

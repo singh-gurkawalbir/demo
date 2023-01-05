@@ -1,4 +1,4 @@
-/* global describe, test, expect, beforeEach, afterEach, jest */
+
 import React from 'react';
 import { screen } from '@testing-library/react';
 import * as reactRedux from 'react-redux';
@@ -52,7 +52,7 @@ describe('RevisionErrorDetails tests', () => {
     const expandButton = screen.getByRole('button', {name: 'Errors'});
     const expandicon = document.querySelector('svg');
 
-    expect(expandButton.getAttribute('aria-expanded')).toEqual('true');
+    expect(expandButton.getAttribute('aria-expanded')).toBe('true');
     userEvent.click(expandicon);
   });
 

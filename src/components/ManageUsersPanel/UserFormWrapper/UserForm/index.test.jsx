@@ -1,9 +1,6 @@
-/* global describe, test, jest, expect */
 import React from 'react';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import userEvent from '@testing-library/user-event';
 import { reduxStore, renderWithProviders } from '../../../../test/test-utils';
 import UserForm from '.';
@@ -117,8 +114,8 @@ jest.mock('../../../LoadResources', () => ({
 }
 ));
 
-describe('Userform UI test cases', () => {
-  test('Should display userform with cancel button when disabled is set to true', () => {
+describe('userform UI test cases', () => {
+  test('should display userform with cancel button when disabled is set to true', () => {
     const onsaveclick = jest.fn();
     const onCancelClick = jest.fn();
 
@@ -130,7 +127,7 @@ describe('Userform UI test cases', () => {
     userEvent.click(cancelButton);
   });
 
-  test('Should display userform with cancel button when disabled is set to false', () => {
+  test('should display userform with cancel button when disabled is set to false', () => {
     const onSaveClick = jest.fn();
     const onCancelClick = jest.fn();
 
@@ -142,7 +139,7 @@ describe('Userform UI test cases', () => {
     userEvent.click(cancelButton);
   });
 
-  test('Should display userform with save button when disabled is set to false', () => {
+  test('should display userform with save button when disabled is set to false', () => {
     const onSaveClick = jest.fn();
     const onCancelClick = jest.fn();
 
@@ -152,7 +149,7 @@ describe('Userform UI test cases', () => {
     expect(saveButton).toBeInTheDocument();
   });
 
-  test('Should display userform with saving... button when disabled is set to true', () => {
+  test('should display userform with saving... button when disabled is set to true', () => {
     const onSaveClick = jest.fn();
     const onCancelClick = jest.fn();
 

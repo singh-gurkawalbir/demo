@@ -1,4 +1,4 @@
-/* global describe, test, jest, beforeEach, afterEach, expect */
+
 import React from 'react';
 import { screen, waitFor } from '@testing-library/react';
 import * as reactRedux from 'react-redux';
@@ -72,7 +72,7 @@ function initRunHistory({flowId, runHistoryData, filterData, dataRetentionPeriod
   return renderWithProviders(ui, {initialStore});
 }
 
-describe('Testsuite for RunHistory', () => {
+describe('testsuite for RunHistory', () => {
   let mockDispatchFn;
   let useDispatchSpy;
 

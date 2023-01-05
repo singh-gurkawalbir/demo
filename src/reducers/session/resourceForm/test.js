@@ -1,4 +1,4 @@
-/* global describe, test, expect */
+
 import reducer, { selectors } from '.';
 import actions from '../../../actions';
 import {FORM_SAVE_STATUS} from '../../../constants';
@@ -130,7 +130,7 @@ describe('session.resourceForm form reducers', () => {
 
       const state = reducer(tempState, actions.resourceForm.clearInitData('exports', resourceId));
 
-      expect(state[key].initComplete).toEqual(false);
+      expect(state[key].initComplete).toBe(false);
     });
   });
   describe('RESOURCE_FORM.SUBMIT action', () => {
@@ -251,7 +251,7 @@ describe('session.resourceForm form reducers', () => {
   });
   describe('resourceFormSaveProcessTerminated selector', () => {
     test('should return false when state is undefined', () => {
-      expect(selectors.resourceFormSaveProcessTerminated(undefined)).toEqual(false);
+      expect(selectors.resourceFormSaveProcessTerminated(undefined)).toBe(false);
     });
     test('should return valid form state', () => {
       const stateAborted = reducer(undefined, actions.resourceForm.submitAborted(resourceType, resourceId));
@@ -260,10 +260,10 @@ describe('session.resourceForm form reducers', () => {
       const stateCompleted = reducer(undefined, actions.resourceForm.submitComplete(resourceType, resourceId));
       const stateCleared = reducer(undefined, actions.resourceForm.clear(resourceType, resourceId));
 
-      expect(selectors.resourceFormSaveProcessTerminated(stateAborted, resourceType, resourceId)).toEqual(true);
-      expect(selectors.resourceFormSaveProcessTerminated(stateFailed, resourceType, resourceId)).toEqual(true);
-      expect(selectors.resourceFormSaveProcessTerminated(stateCompleted, resourceType, resourceId)).toEqual(true);
-      expect(selectors.resourceFormSaveProcessTerminated(stateCleared, resourceType, resourceId)).toEqual(false);
+      expect(selectors.resourceFormSaveProcessTerminated(stateAborted, resourceType, resourceId)).toBe(true);
+      expect(selectors.resourceFormSaveProcessTerminated(stateFailed, resourceType, resourceId)).toBe(true);
+      expect(selectors.resourceFormSaveProcessTerminated(stateCompleted, resourceType, resourceId)).toBe(true);
+      expect(selectors.resourceFormSaveProcessTerminated(stateCleared, resourceType, resourceId)).toBe(false);
     });
   });
 });

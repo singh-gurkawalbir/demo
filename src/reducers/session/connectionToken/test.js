@@ -1,4 +1,3 @@
-/* global describe, test, expect */
 
 import reducer, { selectors } from '.';
 import actions from '../../../actions';
@@ -97,8 +96,8 @@ describe('connection tokens', () => {
 });
 describe('Token request loading', () => {
   test('should return false if state or resource id does not exists', () => {
-    expect(selectors.tokenRequestLoading(undefined)).toEqual(false);
-    expect(selectors.tokenRequestLoading({})).toEqual(false);
+    expect(selectors.tokenRequestLoading(undefined)).toBe(false);
+    expect(selectors.tokenRequestLoading({})).toBe(false);
   });
   test('should return true if token status is loading', () => {
     const resourceId = '1234';
@@ -106,7 +105,7 @@ describe('Token request loading', () => {
       undefined,
       actions.resource.connections.requestToken(resourceId));
 
-    expect(selectors.tokenRequestLoading(state, resourceId)).toEqual(
+    expect(selectors.tokenRequestLoading(state, resourceId)).toBe(
       true
     );
   });
@@ -116,7 +115,7 @@ describe('Token request loading', () => {
       undefined,
       actions.resource.connections.clearToken(resourceId));
 
-    expect(selectors.tokenRequestLoading(state, resourceId)).toEqual(
+    expect(selectors.tokenRequestLoading(state, resourceId)).toBe(
       false
     );
   });

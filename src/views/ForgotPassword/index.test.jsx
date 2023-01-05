@@ -1,11 +1,7 @@
-/* global describe, test, expect, jest, beforeEach, afterEach */
-
 import React from 'react';
 import { MemoryRouter, Route} from 'react-router-dom';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { screen, cleanup } from '@testing-library/react';
 import * as reactRedux from 'react-redux';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import userEvent from '@testing-library/user-event';
 import { renderWithProviders } from '../../test/test-utils';
 import ForgotPasswordWrapper from '.';
@@ -100,7 +96,7 @@ describe('ForgotPasswordWrapper', () => {
 
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.auth.resetRequest(email.value));
   });
-  test('Should able to test the ForgotPassword success view ', async () => {
+  test('Should able to test the ForgotPassword success view', async () => {
     store({
       initialized: true,
       commStatus: 'success',

@@ -1,4 +1,3 @@
-/* global describe, test, expect, jest, beforeEach, afterEach */
 import React from 'react';
 import {
   screen,
@@ -24,7 +23,7 @@ async function initAgentDownloadInstaller({ agentId = ''} = {}) {
   return renderWithProviders(ui);
 }
 
-describe('AgentDownloadInstaller component Test cases', () => {
+describe('agentDownloadInstaller component Test cases', () => {
   runServer();
   let mockDispatchFn;
   let useDispatchSpy;
@@ -43,26 +42,25 @@ describe('AgentDownloadInstaller component Test cases', () => {
     useDispatchSpy.mockClear();
   });
 
-  describe('AgentDownloadInstaller component initial render', () => {
+  describe('agentDownloadInstaller component initial render', () => {
     let downloadButton;
 
     beforeEach(async () => {
       await initAgentDownloadInstaller();
       downloadButton = screen.getByRole('button', {name: 'Download'});
-      expect(downloadButton).toBeInTheDocument();
     });
 
     test('should pass the intial render', () => {
+      expect(downloadButton).toBeInTheDocument();
       expect(screen.queryByText('Windows')).not.toBeInTheDocument();
     });
 
-    describe('AgentDownloadInstaller component menuItem render', () => {
+    describe('agentDownloadInstaller component menuItem render', () => {
       let windowItem;
 
       beforeEach(async () => {
         userEvent.click(downloadButton);
         windowItem = await screen.getByRole('menuitem', {name: 'Windows'});
-        expect(windowItem).toBeInTheDocument();
       });
 
       test('should pass the handleMenuClick', () => {
@@ -71,14 +69,14 @@ describe('AgentDownloadInstaller component Test cases', () => {
 
       test('should pass the handleInstallerClick with default agent id', async () => {
         userEvent.click(windowItem);
-        await expect(mockDispatchFn).toBeCalledWith(actions.agent.downloadInstaller('windows', ''));
+        await expect(mockDispatchFn).toHaveBeenCalledWith(actions.agent.downloadInstaller('windows', ''));
 
         await waitFor(() => expect(screen.queryByText('Windows')).not.toBeInTheDocument());
       });
     });
   });
 
-  describe('AgentDownloadInstaller component custom agent render', () => {
+  describe('agentDownloadInstaller component custom agent render', () => {
     test('should pass the handleInstallerClick custom agent id', async () => {
       await initAgentDownloadInstaller({agentId: 'agent_id'});
       const downloadButton = screen.getByRole('button', {name: 'Download'});
@@ -89,7 +87,7 @@ describe('AgentDownloadInstaller component Test cases', () => {
 
       expect(windowItem).toBeInTheDocument();
       userEvent.click(windowItem);
-      await expect(mockDispatchFn).toBeCalledWith(actions.agent.downloadInstaller('windows', 'agent_id'));
+      await expect(mockDispatchFn).toHaveBeenCalledWith(actions.agent.downloadInstaller('windows', 'agent_id'));
 
       await waitFor(() => expect(screen.queryByText('Windows')).not.toBeInTheDocument());
     });

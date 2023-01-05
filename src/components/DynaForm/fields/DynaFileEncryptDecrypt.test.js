@@ -1,4 +1,4 @@
-/* global describe, test, expect, jest */
+
 import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -7,7 +7,7 @@ import DynaFileEncryptDecrypt from './DynaFileEncryptDecrypt';
 
 const onFieldChange = jest.fn();
 
-describe('DynaFileEncryptDecrypt tests', () => {
+describe('dynaFileEncryptDecrypt tests', () => {
   const initialStore = reduxStore;
 
   initialStore.getState().data.resources = {
@@ -17,7 +17,7 @@ describe('DynaFileEncryptDecrypt tests', () => {
     }],
   };
 
-  test('Should able to test DynaFileEncryptDecrypt with connection having privatekey', async () => {
+  test('should able to test DynaFileEncryptDecrypt with connection having privatekey', async () => {
     const props = {
       connectionId: '_conn1', type: '', id: '_id', onFieldChange,
     };
@@ -27,7 +27,7 @@ describe('DynaFileEncryptDecrypt tests', () => {
     expect(onFieldChange).toHaveBeenNthCalledWith(1, '_id', undefined, true);
     expect(onFieldChange).toHaveBeenNthCalledWith(2, '_id', true);
   });
-  test('Should able to test DynaFileEncryptDecrypt without connection having any key', async () => {
+  test('should able to test DynaFileEncryptDecrypt without connection having any key', async () => {
     const props = {
       connectionId: '_conn2', type: '', id: '_id', onFieldChange,
     };

@@ -1,4 +1,4 @@
-/* global describe, test,expect, jest,  afterEach */
+
 import React from 'react';
 import { screen } from '@testing-library/react';
 import { MemoryRouter, Route } from 'react-router-dom';
@@ -24,7 +24,7 @@ const metadata = {
   useRowActions: () => [CreateFlowGroup],
 };
 
-describe('Create flow group UI test cases', () => {
+describe('create flow group UI test cases', () => {
   afterEach(() => {
     jest.clearAllMocks();
   });

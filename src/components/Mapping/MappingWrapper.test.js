@@ -1,4 +1,3 @@
-/* global describe, test, expect, jest, beforeEach, afterEach */
 import React from 'react';
 import * as reactRedux from 'react-redux';
 import { MemoryRouter } from 'react-router-dom';
@@ -138,7 +137,7 @@ jest.mock('../DragContainer', () => ({
   },
 }));
 
-describe('MappingWrapper component Test cases', () => {
+describe('mappingWrapper component Test cases', () => {
   runServer();
   let mockDispatchFn;
   let useDispatchSpy;
@@ -164,11 +163,11 @@ describe('MappingWrapper component Test cases', () => {
 
     userEvent.click(onSortEnd);
 
-    expect(mockDispatchFn).toBeCalledTimes(1);
-    expect(mockDispatchFn).toBeCalledWith(actions.mapping.shiftOrder('key_2', 2));
+    expect(mockDispatchFn).toHaveBeenCalledTimes(1);
+    expect(mockDispatchFn).toHaveBeenCalledWith(actions.mapping.shiftOrder('key_2', 2));
   });
 
-  test('should pass the initial render with default values', async () => {
+  test('should pass the initial render and render the sortEnd button', async () => {
     await initMappingWrapper({
       props: {
         importId: 'import_id',

@@ -1,4 +1,4 @@
-/* global describe, jest, test, expect, beforeEach, afterEach */
+
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import * as reactRedux from 'react-redux';
@@ -38,7 +38,7 @@ function initAccessTokens(data = {}, initialStore, renderFun) {
   return renderWithProviders(ui, {initialStore, renderFun});
 }
 
-describe('Access Tokens test suite', () => {
+describe('access Tokens test suite', () => {
   const globalStore = getCreatedStore();
   let useDispatchSpy;
   let mockDispatchFn;
@@ -387,7 +387,7 @@ describe('Access Tokens test suite', () => {
       },
     });
 
-    expect(scopeValue1).toEqual('Full Access');
+    expect(scopeValue1).toBe('Full Access');
     const scopeValue2 = scope.Value({
       rowData: {
         _connectorId: 'conn123',
@@ -395,20 +395,20 @@ describe('Access Tokens test suite', () => {
       },
     });
 
-    expect(scopeValue2).toEqual('Full Access');
+    expect(scopeValue2).toBe('Full Access');
     const scopeValue3 = scope.Value({
       rowData: {
         fullAccess: false,
       },
     });
 
-    expect(scopeValue3).toEqual('Custom');
+    expect(scopeValue3).toBe('Custom');
     const scopeValue4 = scope.Value({
       rowData: {
         _connectorId: 'conn123',
       },
     });
 
-    expect(scopeValue4).toEqual('Custom');
+    expect(scopeValue4).toBe('Custom');
   });
 });

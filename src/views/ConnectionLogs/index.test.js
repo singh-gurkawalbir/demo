@@ -1,4 +1,3 @@
-/* global describe, test, expect, jest, afterEach, beforeEach */
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import * as reactRedux from 'react-redux';
@@ -61,7 +60,7 @@ jest.mock('../../components/AutoScrollEditorTerminal', () => ({
 
 }));
 
-describe('ConnectionLogs_afe test cases', () => {
+describe('connectionLogs_afe test cases', () => {
   runServer();
   let mockDispatchFn;
   let useDispatchSpy;
@@ -95,9 +94,9 @@ describe('ConnectionLogs_afe test cases', () => {
     expect(clearButton).toBeInTheDocument();
 
     userEvent.click(refreshButton);
-    expect(mockDispatchFn).toBeCalledWith(actions.logs.connections.refresh('connection_id'));
+    expect(mockDispatchFn).toHaveBeenCalledWith(actions.logs.connections.refresh('connection_id'));
     userEvent.click(clearButton);
-    expect(mockDispatchFn).toBeCalledWith(actions.logs.connections.delete('connection_id'));
+    expect(mockDispatchFn).toHaveBeenCalledWith(actions.logs.connections.delete('connection_id'));
   });
 
   test('should pass the initial render with connection which doesn\'t have logs', async () => {

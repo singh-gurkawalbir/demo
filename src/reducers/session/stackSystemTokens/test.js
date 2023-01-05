@@ -1,4 +1,3 @@
-/* global describe, test, expect */
 
 import reducer, { selectors } from '.';
 import actions from '../../../actions';
@@ -65,7 +64,7 @@ describe('system tokens reducers', () => {
 });
 describe('stackSystemToken selector', () => {
   test('should return ***** if state is undefined', () => {
-    expect(selectors.stackSystemToken(undefined, 123)).toEqual('*****');
+    expect(selectors.stackSystemToken(undefined, 123)).toBe('*****');
   });
   test('should return stack token when valid id is given', () => {
     const stackTokens = [
@@ -83,6 +82,6 @@ describe('stackSystemToken selector', () => {
     ];
     const state = reducer(stackTokens, 'some action');
 
-    expect(selectors.stackSystemToken(state, 'id3')).toEqual('*****');
+    expect(selectors.stackSystemToken(state, 'id3')).toBe('*****');
   });
 });

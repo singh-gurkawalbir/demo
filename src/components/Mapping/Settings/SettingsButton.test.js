@@ -1,4 +1,3 @@
-/* global describe, test, expect, jest, afterEach */
 import React from 'react';
 import { cloneDeep } from 'lodash';
 import { screen } from '@testing-library/react';
@@ -105,7 +104,7 @@ jest.mock('../../ActionButton', () => ({
   ),
 }));
 
-describe('MappingSettingsButton test cases', () => {
+describe('mappingSettingsButton test cases', () => {
   runServer();
 
   afterEach(() => {
@@ -120,7 +119,7 @@ describe('MappingSettingsButton test cases', () => {
     expect(buttonRef).toBeInTheDocument();
     userEvent.click(buttonRef);
 
-    await expect(mockHistoryPush).toBeCalledTimes(0);
+    await expect(mockHistoryPush).toHaveBeenCalledTimes(0);
   });
 
   test('should pass the initial render to disable true', async () => {
@@ -136,7 +135,7 @@ describe('MappingSettingsButton test cases', () => {
     expect(buttonRef).toBeInTheDocument();
     userEvent.click(buttonRef);
 
-    await expect(mockHistoryPush).toBeCalledTimes(0);
+    await expect(mockHistoryPush).toHaveBeenCalledTimes(0);
   });
 
   test('should pass the initial render to disable false', async () => {
@@ -155,7 +154,7 @@ describe('MappingSettingsButton test cases', () => {
     expect(buttonRef).toBeInTheDocument();
     userEvent.click(buttonRef);
 
-    await expect(mockHistoryPush).toBeCalledTimes(1);
+    await expect(mockHistoryPush).toHaveBeenCalledTimes(1);
   });
 
   test('should pass the initial render to isCategoryMapping false', async () => {
@@ -170,6 +169,6 @@ describe('MappingSettingsButton test cases', () => {
     expect(buttonRef).toBeInTheDocument();
     userEvent.click(buttonRef);
 
-    await expect(mockHistoryPush).toBeCalledTimes(1);
+    await expect(mockHistoryPush).toHaveBeenCalledTimes(1);
   });
 });

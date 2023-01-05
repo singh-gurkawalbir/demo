@@ -1,4 +1,4 @@
-/* global describe, expect, test, jest */
+
 import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -21,7 +21,7 @@ jest.mock('../../CeligoTable/TableContext', () => ({
   useGetTableContext: () => mockTableContext,
 }));
 
-describe('Test suite for scripts', () => {
+describe('test suite for scripts', () => {
   test('should render the table accordingly', () => {
     const lastModified = new Date().toISOString();
     const data = [{

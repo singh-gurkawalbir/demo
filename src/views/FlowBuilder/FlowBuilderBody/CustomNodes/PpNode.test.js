@@ -1,4 +1,4 @@
-/* global describe, test, jest, expect, beforeEach, afterEach */
+
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import * as reactRedux from 'react-redux';

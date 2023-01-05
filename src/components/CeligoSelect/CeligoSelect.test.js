@@ -1,4 +1,3 @@
-/* global describe, test, expect */
 import React, { useState } from 'react';
 import { screen } from '@testing-library/react';
 import { MenuItem } from '@material-ui/core';
@@ -6,7 +5,7 @@ import userEvent from '@testing-library/user-event';
 import CeligoSelect from '.';
 import { renderWithProviders } from '../../test/test-utils';
 
-export default function SingleSelect() {
+function SingleSelect() {
   const [country, setCountry] = useState('brazil');
 
   return (
@@ -27,7 +26,7 @@ export default function SingleSelect() {
   );
 }
 
-export function MultipleSelect() {
+function MultipleSelect() {
   const [country, setCountry] = useState(['brazil']);
 
   return (
@@ -47,7 +46,7 @@ export function MultipleSelect() {
   );
 }
 
-describe('CeligoSelect UI Test', () => {
+describe('celigoSelect UI Test', () => {
   test('should test for single select option', async () => {
     renderWithProviders(<SingleSelect />);
 

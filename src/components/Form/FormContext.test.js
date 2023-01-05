@@ -1,4 +1,4 @@
-/* global describe, expect, test */
+
 import React from 'react';
 import { renderWithProviders, reduxStore } from '../../test/test-utils';
 import useFormContext from './FormContext';

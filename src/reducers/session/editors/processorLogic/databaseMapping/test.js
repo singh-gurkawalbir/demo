@@ -1,4 +1,3 @@
-/* global describe, test, expect */
 
 import processorLogic, { getEditorTitle } from './index';
 
@@ -10,14 +9,14 @@ const {
 describe('readme processor logic', () => {
   describe('getEditorTitle util', () => {
     test('should return empty string for invalid or unsupported adaptor type', () => {
-      expect(getEditorTitle()).toEqual('');
-      expect(getEditorTitle(null)).toEqual('');
-      expect(getEditorTitle('FTPImport')).toEqual('');
+      expect(getEditorTitle()).toBe('');
+      expect(getEditorTitle(null)).toBe('');
+      expect(getEditorTitle('FTPImport')).toBe('');
     });
     test('should return correct title for the passed adaptor type', () => {
-      expect(getEditorTitle('MongodbImport')).toEqual('MongoDB document builder');
-      expect(getEditorTitle('DynamodbImport')).toEqual('DynamoDB query builder');
-      expect(getEditorTitle('RDBMSImport')).toEqual('SQL query builder');
+      expect(getEditorTitle('MongodbImport')).toBe('MongoDB document builder');
+      expect(getEditorTitle('DynamodbImport')).toBe('DynamoDB query builder');
+      expect(getEditorTitle('RDBMSImport')).toBe('SQL query builder');
     });
   });
   describe('init util', () => {

@@ -1,4 +1,4 @@
-/* global describe, test, expect, beforeAll */
+
 // import { advanceBy, advanceTo, clear } from 'jest-date-mock';
 import { createSelector } from 'reselect';
 import reducer, { selectors } from '.';
@@ -36,8 +36,8 @@ describe('Reducers in the root reducer', () => {
       appErrored: false,
       count: 1,
     });
-    expect(state.data).toEqual(undefined);
-    expect(state.session.loadResources).toEqual(undefined);
+    expect(state.data).toBeUndefined();
+    expect(state.session.loadResources).toBeUndefined();
   });
 });
 
@@ -138,8 +138,8 @@ describe('utils', () => {
       };
 
       genSelectors(to, fr);
-      expect(to.method1(state)).toEqual(42);
-      expect(to.method2(state)).toEqual(43);
+      expect(to.method1(state)).toBe(42);
+      expect(to.method2(state)).toBe(43);
     });
 
     test('should work for reselectors', () => {
@@ -196,8 +196,8 @@ describe('utils', () => {
       };
 
       genSelectors(to, fr);
-      expect(to.mkMethodSimpleProxy).not.toBeUndefined();
-      expect(to.makeMethodSimpleProxy).not.toBeUndefined();
+      expect(to.mkMethodSimpleProxy).toBeDefined();
+      expect(to.makeMethodSimpleProxy).toBeDefined();
       const sel1 = to.mkMethod1();
       const sel2 = to.mkMethod1();
 
@@ -233,7 +233,7 @@ describe('utils', () => {
 
       genSelectors(to, fr);
       expect(to.method1).toBeUndefined();
-      expect(to.method2(state)).toEqual(43);
+      expect(to.method2(state)).toBe(43);
     });
 
     test('should throw error on duplication', () => {

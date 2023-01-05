@@ -1,4 +1,3 @@
-/* global , test, describe, expect */
 import {
   getFilterRuleId,
   convertNetSuiteQualifierExpressionToQueryBuilderRules,
@@ -7,13 +6,13 @@ import {
   generateNetSuiteQualifierExpression,
 } from './util';
 
-describe('NetSuiteQualitificationCriteria UI test cases', () => {
+describe('netSuiteQualitificationCriteria UI test cases', () => {
   describe('getFilterRuleId function test case', () => {
     test('should call the getFilterRuleId function', () => {
-      expect(getFilterRuleId({id: 'intialText_rule_someId'})).toEqual('someId');
+      expect(getFilterRuleId({id: 'intialText_rule_someId'})).toBe('someId');
     });
     test('should call the function with invalid props', () => {
-      expect(getFilterRuleId({id: 'sometext'})).toEqual(undefined);
+      expect(getFilterRuleId({id: 'sometext'})).toBeUndefined();
     });
   });
   describe('convertNetSuiteQualifierExpressionToQueryBuilderRules function test', () => {
@@ -237,7 +236,7 @@ describe('NetSuiteQualitificationCriteria UI test cases', () => {
     });
   });
   describe('generateRulesState function test', () => {
-    test('should call the function with condition as or ', () => {
+    test('should call the function with condition as or', () => {
       const rule = {
         condition: 'OR',
         rules: [

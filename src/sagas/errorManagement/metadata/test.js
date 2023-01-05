@@ -1,4 +1,4 @@
-/* global expect,describe, test */
+
 import { expectSaga } from 'redux-saga-test-plan';
 import { createMockTask } from '@redux-saga/testing-utils';
 import { select, call, put, fork, take, cancel } from 'redux-saga/effects';
@@ -39,7 +39,7 @@ describe('EM2.0 metadata sagas', () => {
         traceKey: 2345,
       };
 
-      return expectSaga(requestRetryData, { flowId, resourceId, retryId })
+      expectSaga(requestRetryData, { flowId, resourceId, retryId })
         .provide([
           [call(apiCallWithRetry, {
             path: `/flows/${flowId}/${resourceId}/${retryId}/data`,
@@ -60,7 +60,7 @@ describe('EM2.0 metadata sagas', () => {
       const errorMessage = { message: 'Invalid id' };
       const error = { status: 500, message: errorMessage};
 
-      return expectSaga(requestRetryData, { flowId, resourceId, retryId })
+      expectSaga(requestRetryData, { flowId, resourceId, retryId })
         .provide([
           [matchers.call.fn(apiCallWithRetry), throwError(error)],
         ])
@@ -82,7 +82,7 @@ describe('EM2.0 metadata sagas', () => {
       const errorMessage = { code: 422, message: 'unprocessable entity' };
       const error = { status: 422, message: JSON.stringify(errorMessage) };
 
-      return expectSaga(requestRetryData, { flowId, resourceId, retryId })
+      expectSaga(requestRetryData, { flowId, resourceId, retryId })
         .provide([
           [matchers.call.fn(apiCallWithRetry), throwError(error)],
         ])
@@ -102,7 +102,7 @@ describe('EM2.0 metadata sagas', () => {
     });
   });
   describe('updateRetryData saga', () => {
-    test('should merge retryData Object with the passed retryData to be updated and invoke update api ', () => {
+    test('should merge retryData Object with the passed retryData to be updated and invoke update api', () => {
       const previousRetryDataObj = {
         data: { test: 5},
         stage: 'page_processor_import',
@@ -114,7 +114,7 @@ describe('EM2.0 metadata sagas', () => {
         data: updatedRetryData,
       };
 
-      return expectSaga(updateRetryData, { flowId, resourceId, retryId, retryData: updatedRetryData, test: true })
+      expectSaga(updateRetryData, { flowId, resourceId, retryId, retryData: updatedRetryData, test: true })
         .provide([
           [select(selectors.retryDataContext, retryId), { data: previousRetryDataObj }],
           [matchers.call.fn(apiCallWithRetry), undefined],
@@ -137,7 +137,7 @@ describe('EM2.0 metadata sagas', () => {
       const errorMessage = { code: 422, message: 'unprocessable entity' };
       const error = { status: 422, message: JSON.stringify(errorMessage) };
 
-      return expectSaga(updateRetryData, { flowId, resourceId, retryId, retryData: updatedRetryData })
+      expectSaga(updateRetryData, { flowId, resourceId, retryId, retryData: updatedRetryData })
         .provide([
           [select(selectors.retryDataContext, retryId), { data: previousRetryDataObj }],
           [matchers.call.fn(apiCallWithRetry), throwError(error)],
@@ -165,7 +165,7 @@ describe('EM2.0 metadata sagas', () => {
       const updatedRetryData = { newTest: 20 };
       const error = { status: 500, message: 'Invalid id' };
 
-      return expectSaga(updateRetryData, { flowId, resourceId, retryId, retryData: updatedRetryData })
+      expectSaga(updateRetryData, { flowId, resourceId, retryId, retryData: updatedRetryData })
         .provide([
           [select(selectors.retryDataContext, retryId), { data: previousRetryDataObj }],
           [matchers.call.fn(apiCallWithRetry), throwError(error)],
@@ -190,12 +190,12 @@ describe('EM2.0 metadata sagas', () => {
       _integrationId: integrationId,
     };
 
-    test('should invoke api call with exports/imports resourceType based on the passed resourceId ', () => {
+    test('should invoke api call with exports/imports resourceType based on the passed resourceId', () => {
       const exportPath = `/jobs?_integrationId=${integrationId}&_flowId=${flowId}&type=retry&status=queued&status=running&_exportId=${resourceId}`;
       const importPath = `/jobs?_integrationId=${standaloneIntegrationId}&_flowId=${flowId}&type=retry&status=queued&status=running&_importId=${resourceId}`;
       const pendingJobs = [];
 
-      const test1 = expectSaga(_requestRetryStatus, { flowId, resourceId })
+      expectSaga(_requestRetryStatus, { flowId, resourceId })
         .provide([
           [select(selectors.resource, 'flows', flowId), flow],
           [call(apiCallWithRetry, {
@@ -211,7 +211,7 @@ describe('EM2.0 metadata sagas', () => {
         .not.call.fn(getRetryJobCollection)
         .run();
 
-      const test2 = expectSaga(_requestRetryStatus, { flowId, resourceId })
+      expectSaga(_requestRetryStatus, { flowId, resourceId })
         .provide([
           [select(selectors.resource, 'flows', flowId), {}],
           [select(selectors.resource, 'imports', resourceId), { _id: 'id1', name: 'test import' }],
@@ -227,14 +227,12 @@ describe('EM2.0 metadata sagas', () => {
         .put(actions.errorManager.retryStatus.received({ flowId, resourceId, status: undefined }))
         .not.call.fn(getRetryJobCollection)
         .run();
-
-      return test1 && test2;
     });
     test('should do nothing if the api call fails', () => {
       const errorMessage = { code: 422, message: 'unprocessable entity' };
       const error = { status: 422, message: JSON.stringify(errorMessage) };
 
-      return expectSaga(_requestRetryStatus, { flowId, resourceId })
+      expectSaga(_requestRetryStatus, { flowId, resourceId })
         .provide([
           [matchers.call.fn(apiCallWithRetry), throwError(error)],
         ])
@@ -251,7 +249,7 @@ describe('EM2.0 metadata sagas', () => {
       ];
       const updatedStatus = 'inProgress';
 
-      return expectSaga(_requestRetryStatus, { flowId, resourceId })
+      expectSaga(_requestRetryStatus, { flowId, resourceId })
         .provide([
           [select(selectors.resource, 'flows', flowId), flow],
           [call(apiCallWithRetry, {
@@ -273,7 +271,7 @@ describe('EM2.0 metadata sagas', () => {
         { _jobId: '5678' },
       ];
 
-      return expectSaga(_requestRetryStatus, { flowId, resourceId })
+      expectSaga(_requestRetryStatus, { flowId, resourceId })
         .provide([
           [select(selectors.resource, 'flows', flowId), flow],
           [call(apiCallWithRetry, {
@@ -293,7 +291,7 @@ describe('EM2.0 metadata sagas', () => {
       const pendingJobs = [];
       const updatedStatus = 'completed';
 
-      return expectSaga(_requestRetryStatus, { flowId, resourceId })
+      expectSaga(_requestRetryStatus, { flowId, resourceId })
         .provide([
           [select(selectors.resource, 'flows', flowId), flow],
           [select(selectors.retryStatus, flowId, resourceId), 'inProgress'],
@@ -314,7 +312,7 @@ describe('EM2.0 metadata sagas', () => {
       const exportPath = `/jobs?_integrationId=${integrationId}&_flowId=${flowId}&type=retry&status=queued&status=running&_exportId=${resourceId}`;
       const pendingJobs = [];
 
-      return expectSaga(_requestRetryStatus, { flowId, resourceId })
+      expectSaga(_requestRetryStatus, { flowId, resourceId })
         .provide([
           [select(selectors.resource, 'flows', flowId), flow],
           [select(selectors.retryStatus, flowId, resourceId), undefined],
@@ -336,7 +334,7 @@ describe('EM2.0 metadata sagas', () => {
       const exportPath = `/jobs?_integrationId=${integrationId}&_flowId=${flowId}&type=retry&status=queued&status=running&_exportId=${resourceId}`;
       const pendingJobs = [];
 
-      return expectSaga(_requestRetryStatus, { flowId, resourceId })
+      expectSaga(_requestRetryStatus, { flowId, resourceId })
         .provide([
           [select(selectors.resource, 'flows', flowId), flow],
           [select(selectors.retryStatus, flowId, resourceId), undefined],
@@ -358,7 +356,7 @@ describe('EM2.0 metadata sagas', () => {
       const pendingJobs = [];
       const updatedStatus = 'completed';
 
-      return expectSaga(_requestRetryStatus, { flowId, resourceId })
+      expectSaga(_requestRetryStatus, { flowId, resourceId })
         .provide([
           [select(selectors.resource, 'flows', flowId), flow],
           [select(selectors.retryStatus, flowId, resourceId), 'inProgress'],
@@ -382,7 +380,7 @@ describe('EM2.0 metadata sagas', () => {
       const pendingJobs = [];
       const updatedStatus = 'completed';
 
-      return expectSaga(_requestRetryStatus, { flowId, resourceId })
+      expectSaga(_requestRetryStatus, { flowId, resourceId })
         .provide([
           [select(selectors.resource, 'flows', flowId), flow],
           [select(selectors.retryStatus, flowId, resourceId), 'inProgress'],
@@ -400,11 +398,11 @@ describe('EM2.0 metadata sagas', () => {
         .put(actions.errorManager.retryStatus.stopPoll())
         .run();
     });
-    test('should dispatch status undefined if there is no previous status and no in progress retry jobs ', () => {
+    test('should dispatch status undefined if there is no previous status and no in progress retry jobs', () => {
       const exportPath = `/jobs?_integrationId=${integrationId}&_flowId=${flowId}&type=retry&status=queued&status=running&_exportId=${resourceId}`;
       const pendingJobs = [];
 
-      return expectSaga(_requestRetryStatus, { flowId, resourceId })
+      expectSaga(_requestRetryStatus, { flowId, resourceId })
         .provide([
           [select(selectors.resource, 'flows', flowId), flow],
           [call(apiCallWithRetry, {
@@ -432,7 +430,7 @@ describe('EM2.0 metadata sagas', () => {
         }],
       };
 
-      return expectSaga(requestFilterMetadata)
+      expectSaga(requestFilterMetadata)
         .provide([
           [call(apiCallWithRetry, {
             path: '/errors/filterMetadata',
@@ -448,7 +446,7 @@ describe('EM2.0 metadata sagas', () => {
       const errorMessage = { code: 422, message: 'unprocessable entity' };
       const error = { status: 422, message: JSON.stringify(errorMessage) };
 
-      return expectSaga(requestFilterMetadata)
+      expectSaga(requestFilterMetadata)
         .provide([
           [matchers.call.fn(apiCallWithRetry), throwError(error)],
         ])
@@ -462,7 +460,7 @@ describe('EM2.0 metadata sagas', () => {
     test('should invoke api to get http document and the response is dispatched as a received action on success', () => {
       const mockResponse = getMockHttpErrorDoc();
 
-      return expectSaga(requestErrorHttpDocument, { flowId, resourceId, reqAndResKey })
+      expectSaga(requestErrorHttpDocument, { flowId, resourceId, reqAndResKey })
         .provide([
           [call(apiCallWithRetry, {
             path: `/flows/${flowId}/${resourceId}/requests/${reqAndResKey}`,
@@ -479,7 +477,7 @@ describe('EM2.0 metadata sagas', () => {
       const errorMessage = {errors: [{ message: 'S3 key is expired' }]};
       const error = { status: 402, message: JSON.stringify(errorMessage) };
 
-      return expectSaga(requestErrorHttpDocument, { flowId, resourceId, reqAndResKey })
+      expectSaga(requestErrorHttpDocument, { flowId, resourceId, reqAndResKey })
         .provide([
           [matchers.call.fn(apiCallWithRetry), throwError(error)],
         ])
@@ -553,14 +551,14 @@ describe('EM2.0 metadata sagas', () => {
     });
   });
   describe('_pollForRetryStatus saga', () => {
-    test('should call _requestRetryStatus within pollApiRequests saga with a polling duration of 5 seconds ', () => {
+    test('should call _requestRetryStatus within pollApiRequests saga with a polling duration of 5 seconds', () => {
       const saga = _pollForRetryStatus({ flowId, resourceId });
 
       expect(saga.next().value).toEqual(put(actions.errorManager.retryStatus.request({ flowId, resourceId })));
 
       expect(saga.next().value).toEqual(call(pollApiRequests, {pollSaga: _requestRetryStatus, pollSagaArgs: { flowId, resourceId }, duration: 5 * 1000}));
 
-      expect(saga.next().done).toEqual(true);
+      expect(saga.next().done).toBe(true);
     });
   });
   describe('startPollingForRetryStatus saga', () => {
@@ -573,7 +571,7 @@ describe('EM2.0 metadata sagas', () => {
 
       expect(saga.next(mockTask).value).toEqual(take(actionTypes.ERROR_MANAGER.RETRY_STATUS.STOP_POLL));
       expect(saga.next({type: actionTypes.ERROR_MANAGER.RETRY_STATUS.STOP_POLL}).value).toEqual(cancel(mockTask));
-      expect(saga.next().done).toEqual(true);
+      expect(saga.next().done).toBe(true);
     });
   });
 });

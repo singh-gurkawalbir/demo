@@ -1,4 +1,3 @@
-/* global describe, test, jest, beforeEach, expect, afterEach */
 import { screen } from '@testing-library/react';
 import React from 'react';
 import * as ReactFlowRenderer from 'react-flow-renderer';
@@ -76,16 +75,17 @@ jest.mock('../../../../components/icons/FullScreenOpenIcon', () => ({
   ),
 }));
 describe('Testsuite for Canvas Controls', () => {
+  beforeEach(() => {
+    jest.spyOn(ReactFlowRenderer, 'useZoomPanHelper').mockReturnValue({zoomIn: mockZommIn, zoomOut: mockZoomOut, fitView: mockFitView});
+    initialStore = getCreatedStore();
+  });
   afterEach(() => {
     mockToggleMiniMap.mockClear();
     mockZommIn.mockClear();
     mockZoomOut.mockClear();
     mockFitView.mockClear();
   });
-  beforeEach(() => {
-    jest.spyOn(ReactFlowRenderer, 'useZoomPanHelper').mockReturnValue({zoomIn: mockZommIn, zoomOut: mockZoomOut, fitView: mockFitView});
-    initialStore = getCreatedStore();
-  });
+
   test('should test the camvas controls when show mini map is set to true and click on zoom in button', () => {
     initCanvasControls({showMiniMap: true, toggleMiniMap: mockToggleMiniMap});
     expect(screen.getByText(/showinteractive=/i)).toBeInTheDocument();

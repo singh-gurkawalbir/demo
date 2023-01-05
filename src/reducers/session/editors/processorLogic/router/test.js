@@ -1,4 +1,3 @@
-/* global describe, test, expect */
 
 import processorLogic from './index';
 
@@ -414,12 +413,12 @@ describe('router processor logic', () => {
 
       expect(data).toEqual({data: 'The record will pass through branch 0: b1 ', logs: ['a', 'b']});
     });
-    test('should return correct output for result', () => {
+    test('should return correct output for result1', () => {
       const data = processResult({rule: {branches: [{name: 'b1'}, {name: 'b2'}]}}, {data: [[]]});
 
       expect(data).toEqual({data: 'The record will not pass through any of the branches.', logs: undefined});
     });
-    test('should return correct output for result', () => {
+    test('should return correct output for result duplicate', () => {
       const data = processResult({rule: {branches: [{name: 'b1'}, {name: 'b2'}]}}, {mediaType: 'json', data: [{data: [0, 1]}], duration: 3});
 
       expect(data).toEqual({data: 'The record will pass through branches:\nbranch 0: b1\nbranch 1: b2', logs: undefined});

@@ -1,4 +1,4 @@
-/* global test, expect, jest, describe, afterEach */
+
 import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -21,7 +21,7 @@ initialStore.getState().user.preferences = {
   defaultAShareId: 'own',
 };
 
-describe('On/Off cell UI tests', () => {
+describe('on/Off cell UI tests', () => {
   afterEach(() => {
     jest.clearAllMocks();
   });

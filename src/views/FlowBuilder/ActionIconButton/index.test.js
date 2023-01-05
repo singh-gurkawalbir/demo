@@ -1,4 +1,3 @@
-/* global describe, test, expect, jest */
 import React from 'react';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -43,7 +42,7 @@ describe('Testsuite for Action Icon Button', () => {
     });
     const buttonNode = screen.getByRole('button');
 
-    expect(buttonNode.getAttribute('title')).toEqual('Test help Text');
+    expect(buttonNode.getAttribute('title')).toBe('Test help Text');
     userEvent.hover(buttonNode);
     expect(buttonNode).not.toHaveAttribute('title');
     await waitFor(() => expect(buttonNode).toHaveAttribute('aria-describedBy'));
@@ -63,7 +62,7 @@ describe('Testsuite for Action Icon Button', () => {
     });
     const buttonNode = screen.getByRole('button');
 
-    expect(buttonNode.getAttribute('title')).toEqual('Test help key');
+    expect(buttonNode.getAttribute('title')).toBe('Test help key');
     userEvent.hover(buttonNode);
     expect(buttonNode).not.toHaveAttribute('title');
     await waitFor(() => expect(buttonNode).toHaveAttribute('aria-describedBy'));

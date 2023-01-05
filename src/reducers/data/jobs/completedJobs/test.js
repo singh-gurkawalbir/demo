@@ -1,4 +1,5 @@
-/* global describe, test, expect */
+/* eslint-disable jest/no-standalone-expect */
+
 import reducer, { selectors} from '.';
 import actions from '../../../../actions';
 import { JOB_TYPES, JOB_STATUS } from '../../../../constants';
@@ -142,14 +143,14 @@ describe('Completed jobs selectors', () => {
   });
   describe('isCompletedJobsCollectionLoading', () => {
     test('should return false when state is empty', () => {
-      expect(selectors.isCompletedJobsCollectionLoading()).toEqual(false);
+      expect(selectors.isCompletedJobsCollectionLoading()).toBe(false);
     });
 
     describe('should return false when status is loading in state', () => {
       const jobsRequestedAction = actions.job.dashboard.completed.requestCollection({});
       const state = reducer(undefined, jobsRequestedAction);
 
-      expect(selectors.isCompletedJobsCollectionLoading(state)).toEqual(true);
+      expect(selectors.isCompletedJobsCollectionLoading(state)).toBe(true);
     });
   });
 });

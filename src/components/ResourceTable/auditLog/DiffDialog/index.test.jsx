@@ -1,4 +1,3 @@
-/* global describe, test, expect */
 
 import React from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
@@ -6,7 +5,7 @@ import { screen } from '@testing-library/react';
 import DiffDialog from '.';
 import { renderWithProviders } from '../../../../test/test-utils';
 
-describe('UI test cases for DiffDialog', () => {
+describe('uI test cases for DiffDialog', () => {
   const data = {
     byUser: {
       name: 'auditlogs',

@@ -1,4 +1,4 @@
-/* global test, expect, jest,describe */
+
 import React from 'react';
 import { screen, render} from '@testing-library/react';
 import { MemoryRouter, Route } from 'react-router-dom';
@@ -12,7 +12,7 @@ jest.mock('../../../../icons/CalendarIcon', () => ({
   ),
 }));
 
-describe('Suite script ScheduleCell ui test', () => {
+describe('suite script ScheduleCell ui test', () => {
   test('should show empty dom when no props are provided', () => {
     const utils = render(<MemoryRouter><ScheduleCell /></MemoryRouter>);
 

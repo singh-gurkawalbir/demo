@@ -1,4 +1,4 @@
-/* global describe, test, expect */
+
 import reducer, { PING_STATES, selectors } from '.';
 import actions from '../../../actions';
 
@@ -13,7 +13,7 @@ const initialState = {
 describe('ping reducer', () => {
   const resId = 1;
 
-  describe('invalid action payloads should not make any changes to the state and return default state ', () => {
+  describe('invalid action payloads should not make any changes to the state and return default state', () => {
     const allActions = [
       { name: 'actions.resource.connections.test', action: actions.resource.connections.test},
       { name: 'actions.resource.connections.testSuccessful', action: actions.resource.connections.testSuccessful},
@@ -120,11 +120,11 @@ describe('selectors', () => {
       expect(selectors.testConnectionStatus(newState, resId)).toEqual(PING_STATES.ERROR);
     });
     test('should return null for non valid resource Id', () => {
-      expect(selectors.testConnectionStatus(newState, 'someother resourceId')).toEqual(null);
+      expect(selectors.testConnectionStatus(newState, 'someother resourceId')).toBeNull();
     });
     test('should return null for a null or undefined resource Id', () => {
-      expect(selectors.testConnectionStatus(newState, undefined)).toEqual(null);
-      expect(selectors.testConnectionStatus(newState, null)).toEqual(null);
+      expect(selectors.testConnectionStatus(newState, undefined)).toBeNull();
+      expect(selectors.testConnectionStatus(newState, null)).toBeNull();
     });
   });
   describe('testConnectionMessage', () => {
@@ -132,12 +132,12 @@ describe('selectors', () => {
       expect(selectors.testConnectionMessage(newState, resId)).toEqual(error);
     });
     test('should return null for non valid resource Id', () => {
-      expect(selectors.testConnectionMessage(newState, 'someother resourceId')).toEqual(null);
+      expect(selectors.testConnectionMessage(newState, 'someother resourceId')).toBeNull();
     });
 
     test('should return null for a null or undefined resource Id', () => {
-      expect(selectors.testConnectionMessage(newState, undefined)).toEqual(null);
-      expect(selectors.testConnectionMessage(newState, null)).toEqual(null);
+      expect(selectors.testConnectionMessage(newState, undefined)).toBeNull();
+      expect(selectors.testConnectionMessage(newState, null)).toBeNull();
     });
   });
 });

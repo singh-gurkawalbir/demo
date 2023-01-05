@@ -1,9 +1,8 @@
-/* global describe, test, expect, jest */
+
 import React from 'react';
 import { screen, waitFor } from '@testing-library/react';
 import { MemoryRouter, Route, Router } from 'react-router-dom';
 import userEvent from '@testing-library/user-event';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { createMemoryHistory } from 'history';
 import { renderWithProviders} from '../../../../../test/test-utils';
 import { runServer } from '../../../../../test/api/server';
@@ -75,7 +74,7 @@ describe('SettingsPanel UI tests', () => {
   test('should test the history.replace call', async () => {
     const history = createMemoryHistory({ initialEntries: ['/wrongsectionId'] });
 
-    history.replace = jest.fn();
+    jest.spyOn(history, 'replace').mockImplementation();
     const {initialStore} = await initStoreOnly();
 
     renderWithProviders(

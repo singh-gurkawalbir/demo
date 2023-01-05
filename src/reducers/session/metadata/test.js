@@ -1,4 +1,4 @@
-/* global describe, test, expect */
+
 // TODO:(Aditya): Work on test cases for Netsuite and Salesforce.
 import reducer, { selectors } from '.';
 import actions from '../../../actions';
