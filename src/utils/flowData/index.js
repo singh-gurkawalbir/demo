@@ -24,6 +24,8 @@ export const IMPORT_FILTERED_DATA_STAGE = 'preMap';
 export const EXPORT_FILTERED_DATA_STAGE = 'postInputFilter';
 export const IMPORT_POST_MAPPED_DATA_STAGE = 'postMapOutput';
 
+export const STAGES_TO_RESET_FLOW_DATA = ['inputFilter'];
+
 export const sampleDataStage = {
   exports: {
     processedFlowInput: 'flowInput',
