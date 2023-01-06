@@ -112,7 +112,6 @@ describe('dynaFlowGroupName UI tests', () => {
 
   test('should pass the initial render', () => {
     initDynaFlowGroupName(props);
-    screen.debug(undefined, Infinity);
     expect(screen.getByText('Delete flow group')).toBeInTheDocument();
   });
   test('should make a dispatch call when flowGroupingId passed in props is valid', async () => {

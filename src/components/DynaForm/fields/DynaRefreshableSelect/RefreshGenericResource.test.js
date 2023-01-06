@@ -69,8 +69,6 @@ describe('refreshGenericResource UI tests', () => {
     const removeRefreshButton = document.querySelector('[data-test="refreshResource"]');
 
     expect(removeRefreshButton).toBeInTheDocument();
-
-    screen.debug();
   });
   test('should not render the buttons when removeRefresh prop is true and urlToOpen is absent', () => {
     initRefreshGenericResource({...props, removeRefresh: true, urlToOpen: undefined});

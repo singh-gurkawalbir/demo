@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { screen, waitFor } from '@testing-library/react';
 import * as reactRedux from 'react-redux';
@@ -86,7 +85,6 @@ describe('refreshableIntegrationAppSetting UI tests', () => {
     const refreshButton = document.querySelector('[title="Refresh"]');
 
     expect(refreshButton).toBeInTheDocument();
-    screen.debug();
   });
   test('should open the dropdown when clicked on dropdown', () => {
     initRefreshableIntegrationAppSetting(props);
@@ -97,7 +95,6 @@ describe('refreshableIntegrationAppSetting UI tests', () => {
     expect(screen.getByText('label1')).toBeInTheDocument();
     expect(screen.getByText('label2')).toBeInTheDocument();
     expect(screen.getByText('label3')).toBeInTheDocument();
-    screen.debug();
   });
   test('should call the onFieldChange function when an option is selected from the dropdown', () => {
     initRefreshableIntegrationAppSetting(props);
