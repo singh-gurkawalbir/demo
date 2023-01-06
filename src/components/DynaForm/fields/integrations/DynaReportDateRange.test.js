@@ -1,4 +1,3 @@
-
 import React from 'react';
 import {
   screen, waitFor,
@@ -58,7 +57,6 @@ describe('dynaReportDateRange UI tests', () => {
     initDynaReportDateRange(props);
     expect(screen.getByText('Resource')).toBeInTheDocument();
     expect(screen.getByText('Select range')).toBeInTheDocument();
-    screen.debug(undefined, Infinity);
   });
   test('should display the date ranges when clicked on Select range option', () => {
     initDynaReportDateRange(props);
@@ -78,25 +76,26 @@ describe('dynaReportDateRange UI tests', () => {
     initDynaReportDateRange(props);
     userEvent.click(screen.getByText('Select range'));
     userEvent.click(screen.getByText('Custom'));
-    expect(screen.getByText(/Dec 2022/i)).toBeInTheDocument();
-    expect(screen.getByText(/Jan 2023/i)).toBeInTheDocument();
     expect(screen.getByText(/Start date/i)).toBeInTheDocument();
     expect(screen.getByText(/Start time/i)).toBeInTheDocument();
     expect(screen.getByText(/End date/i)).toBeInTheDocument();
     expect(screen.getByText(/End time/i)).toBeInTheDocument();
+    const months = screen.getAllByText(/[a-zA-Z]{3} [0-9]{4}\s*/g);
+
+    expect(months).toHaveLength(3);
+    expect(screen.getAllByText('Sun')).toHaveLength(2);
+    expect(screen.getAllByText('Sat')).toHaveLength(2);
     expect(screen.getByText('You can generate a report for up to 3 days of data.')).toBeInTheDocument();
-    screen.debug(undefined, Infinity);
   });
   test('should display the range in the field when range is already passed', () => {
     initDynaReportDateRange({...props,
       value: {
-        startDate: '2022-12-09T18:30:00.000Z',
-        endDate: '2022-12-10T18:55:13.184Z',
+        startDate: '2022-12-09T18:30:00.000',
+        endDate: '2022-12-10T18:55:13.184',
         preset: 'custom',
       },
     });
     expect(screen.getByText('09/12/22-10/12/22')).toBeInTheDocument();
-    screen.debug(undefined, Infinity);
   });
   test('should call the onFieldChange function passed in props when clicked on apply button', async () => {
     initDynaReportDateRange(props);

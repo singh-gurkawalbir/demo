@@ -273,6 +273,7 @@ const routes = [
       {
         path: '/:resourceType/:resourceId',
         breadcrumb: CloneCrumb,
+        skipLink: true,
         childRoutes: [
           { path: '/preview', breadcrumb: 'Clone details' },
           { path: '/setup', breadcrumb: 'Install' },
@@ -350,6 +351,7 @@ function parseUrl(pathname, routes, url = '', params = {}) {
           params: newParams,
           url: newUrl,
           breadcrumb: r.breadcrumb,
+          skipLink: r.skipLink, // to avoid creating link OR if required, adding Link to child component
         });
       }
 
@@ -418,8 +420,8 @@ export default function CeligoBreadcrumb() {
       separator={<ArrowRightIcon fontSize="small" />}
       aria-label="breadcrumb"
       className={classes.breadCrumb}>
-      {breadcrumbs.map(({ breadcrumb: Crumb, url, isExact, params }) =>
-        isExact ? (
+      {breadcrumbs.map(({ breadcrumb: Crumb, url, isExact, params, skipLink }) =>
+        (isExact || skipLink) ? (
           <Typography
             key={url}
             variant="body2"
