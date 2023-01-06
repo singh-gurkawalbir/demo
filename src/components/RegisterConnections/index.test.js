@@ -1,4 +1,4 @@
-/* global describe, jest, test, expect, beforeEach, afterEach */
+
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import * as reactRedux from 'react-redux';
@@ -24,7 +24,7 @@ function initRegisterConnections(props = {}, initialStore) {
   renderWithProviders(ui, {initialStore});
 }
 
-describe('Test suite for RegisterConnections component', () => {
+describe('test suite for RegisterConnections component', () => {
   let useDispatchSpy;
   let mockDispatchFn;
 

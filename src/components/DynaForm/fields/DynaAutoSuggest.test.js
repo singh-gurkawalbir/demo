@@ -1,4 +1,4 @@
-/* global describe, test, expect, jest */
+
 import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -7,8 +7,8 @@ import DynaAutoSuggest from './DynaAutoSuggest';
 
 const onFieldChange = jest.fn();
 
-describe('DynaAutoSuggest tests', () => {
-  test('Should able to test DynaAutoSuggest with no suggestions', async () => {
+describe('dynaAutoSuggest tests', () => {
+  test('should able to test DynaAutoSuggest with no suggestions', async () => {
     const props = {
       onFieldChange,
       isValid: true,
@@ -22,7 +22,7 @@ describe('DynaAutoSuggest tests', () => {
     userEvent.click(screen.getByRole('textbox'));
     expect(screen.queryAllByRole('option')).toHaveLength(0);
   });
-  test('Should able to test DynaAutoSuggest with some suggestions with labelName, valueName', async () => {
+  test('should able to test DynaAutoSuggest with some suggestions with labelName, valueName', async () => {
     const props = {
       options: {suggestions: [{customLabel: 'label1', customValue: 'val1'}, {customLabel: 'label2', customValue: 'val2'}]},
       value: 'val1',
@@ -43,7 +43,7 @@ describe('DynaAutoSuggest tests', () => {
     userEvent.click(screen.getByRole('option', {name: 'label2'}));
     expect(onFieldChange).not.toHaveBeenCalledWith('text-1234', 'val2');
   });
-  test('Should able to test DynaAutoSuggest with some suggestions without labelName, valueName', async () => {
+  test('should able to test DynaAutoSuggest with some suggestions without labelName, valueName', async () => {
     const props = {
       onFieldChange,
       options: {suggestions: ['val1', 'val2a']},

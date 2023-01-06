@@ -1,4 +1,4 @@
-/* global describe, test, expect, jest */
+
 import { render, screen } from '@testing-library/react';
 import React from 'react';
 import HeaderWithHelpText from '.';
@@ -14,7 +14,7 @@ jest.mock('../../../Help', () => ({
   ),
 }));
 
-describe('Testsuite for Header with help text', () => {
+describe('testsuite for Header with help text', () => {
   test('should test the Header with help text by passing title and helpKey as props', () => {
     render(
       <HeaderWithHelpText title="Test title" helpKey="Test Help Key" />

@@ -1,4 +1,4 @@
-/* global test, expect, describe, jest, afterEach */
+
 import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -32,7 +32,7 @@ function renderFuntion(actionProps, data) {
   userEvent.click(screen.getByRole('button', {name: /more/i}));
 }
 
-describe('Error management retry action tests', () => {
+describe('error management retry action tests', () => {
   afterEach(() => {
     jest.clearAllMocks();
   });
@@ -67,7 +67,7 @@ describe('Error management retry action tests', () => {
       )
     );
   });
-  test('should show "Enable the flow to retry" message when flow is disabled', () => {
+  test('should show "Enable the flow to retry" message when flow is disabled.', () => {
     renderFuntion({
       isFlowDisabled: false,
       isResolved: true,

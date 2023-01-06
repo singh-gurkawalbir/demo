@@ -4,6 +4,7 @@ export default {
     '/type': 'http',
     '/assistant': 'practicepanther',
     '/http/auth/type': 'oauth',
+    '/http/auth/oauth/useIClientFields': false,
     '/http/mediaType': 'json',
     '/http/baseURI': 'https://app.practicepanther.com/',
     '/http/auth/oauth/authURI':

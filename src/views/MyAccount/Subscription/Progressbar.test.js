@@ -1,4 +1,3 @@
-/* global describe, test, expect, jest, afterEach */
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { screen } from '@testing-library/react';
@@ -34,7 +33,7 @@ jest.mock('react-router-dom', () => ({
   }),
 }));
 
-describe('ProgressBar test cases', () => {
+describe('progressBar test cases', () => {
   runServer();
 
   afterEach(() => {
@@ -49,7 +48,7 @@ describe('ProgressBar test cases', () => {
     expect(screen.queryByText(/List/i)).toBeInTheDocument();
   });
 
-  test('should pass the initial render with default value', async () => {
+  test('should pass the initial render with default value duplicate', async () => {
     const setTitle = jest.fn();
 
     await initProgressBar(
@@ -71,11 +70,11 @@ describe('ProgressBar test cases', () => {
     expect(listButton).toBeInTheDocument();
 
     userEvent.click(listButton);
-    expect(mockReplacePush).toBeCalledWith(buildDrawerUrl({
+    expect(mockReplacePush).toHaveBeenCalledWith(buildDrawerUrl({
       path: drawerPaths.ACCOUNT.SUBSCRIPTION,
       baseUrl: '/',
       params: { env: 'production', type: 'endpoints' },
     }));
-    expect(setTitle).toBeCalledWith('endpoints');
+    expect(setTitle).toHaveBeenCalledWith('endpoints');
   });
 });

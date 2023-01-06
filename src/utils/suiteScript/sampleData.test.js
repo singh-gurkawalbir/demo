@@ -1,5 +1,3 @@
-/* global describe, test, expect */
-
 import { getFormattedNetsuiteMetadataData, getSuiteScriptNetsuiteRealTimeSampleData } from './sampleData';
 
 describe('utils/suiteScript/sampleData test cases', () => {

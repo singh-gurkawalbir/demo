@@ -1,4 +1,4 @@
-/* global describe, test, expect,jest  */
+
 import React from 'react';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -122,7 +122,7 @@ const deltaExports = [
   },
 ];
 
-describe('RunflowComponent UI testing', () => {
+describe('runflowComponent UI testing', () => {
   async function renderWithProps(props) {
     const initialStore = getCreatedStore();
 
@@ -148,7 +148,7 @@ describe('RunflowComponent UI testing', () => {
 
       return {store};
     }
-    test('should test run flow button for delta flows ', async () => {
+    test('should test run flow button for delta flows', async () => {
       const props = {
         flowId: '5f1535beef4fb87bc5e5fb3e',
         runOnMount: false,
@@ -166,7 +166,7 @@ describe('RunflowComponent UI testing', () => {
 
       expect(screen.queryByText('Delta flow')).not.toBeInTheDocument();
     });
-    test('should test the cancel run flow button for delta export ', async () => {
+    test('should test the cancel run flow button for delta export', async () => {
       const props = {
         flowId: '5f1535beef4fb87bc5e5fb3e',
         runOnMount: false,
@@ -188,7 +188,7 @@ describe('RunflowComponent UI testing', () => {
 
       expect(screen.queryByText('Delta flow')).not.toBeInTheDocument();
     });
-    test('should test for error api call ', async () => {
+    test('should test for error api call', async () => {
       const props = {
         flowId: '5f1535beef4fb87bc5e5fb3e',
         runOnMount: false,
@@ -201,7 +201,7 @@ describe('RunflowComponent UI testing', () => {
 
       expect(screen.queryByText('Delta flow')).not.toBeInTheDocument();
     });
-    test('should test for error api call ', async () => {
+    test('should test for error api call duplicate', async () => {
       const props = {
         flowId: '5f1535beef4fb87bc5e5fb3e',
         runOnMount: false,
@@ -241,7 +241,7 @@ describe('RunflowComponent UI testing', () => {
 
     const input = screen.getByDisplayValue('');
 
-    input.click = jest.fn();
+    jest.spyOn(input, 'click').mockImplementation();
 
     userEvent.upload(input, files);
     await waitFor(() => expect(input.files).toHaveLength(1));
@@ -269,7 +269,7 @@ describe('RunflowComponent UI testing', () => {
 
     const input = screen.getByDisplayValue('');
 
-    input.click = jest.fn();
+    jest.spyOn(input, 'click').mockImplementation();
 
     userEvent.upload(input, files);
     await waitFor(() => expect(input.files).toHaveLength(1));
@@ -298,7 +298,7 @@ describe('RunflowComponent UI testing', () => {
 
     const input = screen.getByDisplayValue('');
 
-    input.click = jest.fn();
+    jest.spyOn(input, 'click').mockImplementation();
 
     userEvent.upload(input, files);
     await waitFor(() => expect(input.files).toHaveLength(1));

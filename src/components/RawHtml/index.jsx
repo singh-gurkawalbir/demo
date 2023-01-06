@@ -1,5 +1,6 @@
 import React, { useMemo } from 'react';
 import { makeStyles } from '@material-ui/core';
+import clsx from 'clsx';
 import getDomPurify from '../../utils/domPurify';
 import { ALLOWED_HTML_TAGS } from '../../constants';
 import isLoggableAttr from '../../utils/isLoggableAttr';
@@ -12,7 +13,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function RawHtml({ html, options = {}, isLoggable, ...props }) {
+export default function RawHtml({ html, options = {}, isLoggable, className, ...props }) {
   const classes = useStyles();
   const sanitizedHtml = useMemo(() => {
     const { sanitize } = getDomPurify(options);
@@ -24,7 +25,7 @@ export default function RawHtml({ html, options = {}, isLoggable, ...props }) {
 
   return (
     <div
-      className={classes.rawHtmlWrapper}
+      className={clsx(classes.rawHtmlWrapper, className)}
       {...props}
       {...isLoggableAttr(isLoggable)}
       // Since we sanitize the html, as long as dompurify is

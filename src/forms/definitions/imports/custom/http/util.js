@@ -375,20 +375,28 @@ export function fieldMeta({ resource, assistantData }) {
     fieldId: 'settings',
   };
 
+  fieldMap.mockResponseSection = {formId: 'mockResponseSection'};
+
   return {
     fieldMap,
     layout: {
       type: 'collapse',
       containers: [
         {
-          collapsed: true,
+          collapsed: false,
           label: 'General',
           fields: ['common', 'dataMappings', 'formView'],
         },
         {
-          collapsed: true,
+          collapsed: false,
           label: 'How would you like the records imported?',
           fields: [...fieldIds],
+        },
+        {
+          actionId: 'mockResponse',
+          collapsed: true,
+          label: 'Mock response',
+          fields: ['mockResponseSection'],
         },
         {
           collapsed: true,

@@ -1,4 +1,4 @@
-/* global describe, test, jest, expect, afterEach */
+
 import { render } from '@testing-library/react';
 import React from 'react';
 import userEvent from '@testing-library/user-event';

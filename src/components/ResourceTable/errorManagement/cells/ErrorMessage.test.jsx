@@ -1,4 +1,3 @@
-/* global describe, test,jest, expect  */
 
 import React from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
@@ -15,9 +14,9 @@ initialStore.getState().session.errorManagement.errorDetails = {
 
   }} };
 
-describe('UI test cases for errormessage', () => {
+describe('uI test cases for errormessage', () => {
   test('should test view export record link and view import record links are working fine when valid urls are provided', () => {
-    window.open = jest.fn();
+    jest.spyOn(window, 'open').mockImplementation();
     renderWithProviders(<ErrorMessage
       errorId="68399487hnfi093i839209" message="errors in the data" flowId="5ea16c600e2fab71928a6152" resourceId="621ce7db7988314f51662c09"
       exportDataURI="http://google.com" importDataURI="http://yahoo.com" />);

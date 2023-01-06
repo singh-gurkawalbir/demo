@@ -1,4 +1,4 @@
-/* global describe, test,expect */
+
 import React from 'react';
 import { screen } from '@testing-library/react';
 import { MemoryRouter, Route } from 'react-router-dom';
@@ -30,7 +30,7 @@ function initErrorCell(flowID, initialStore = null) {
   return renderWithProviders(ui, {initialStore});
 }
 
-describe('Error Cell of flow table ui test cases', () => {
+describe('error Cell of flow table ui test cases', () => {
   test('should show success messsage when no props provided', () => {
     renderWithProviders(<MemoryRouter><RunCell /></MemoryRouter>);
     const link = screen.getByRole('link');

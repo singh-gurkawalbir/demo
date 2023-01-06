@@ -1,4 +1,3 @@
-/* global describe, test, expect */
 
 import reducer, { selectors } from '.';
 import actions from '../../../actions';
@@ -65,7 +64,7 @@ describe('access tokens reducers', () => {
 });
 describe('agentAccessToken selector', () => {
   test('should return ***** if state is undefined', () => {
-    expect(selectors.agentAccessToken(undefined, 123)).toEqual('*****');
+    expect(selectors.agentAccessToken(undefined, 123)).toBe('*****');
   });
   test('should return agent token when valid id is given', () => {
     const agentTokens = [
@@ -83,6 +82,6 @@ describe('agentAccessToken selector', () => {
     ];
     const state = reducer(agentTokens, 'some action');
 
-    expect(selectors.agentAccessToken(state, 'id3')).toEqual('*****');
+    expect(selectors.agentAccessToken(state, 'id3')).toBe('*****');
   });
 });

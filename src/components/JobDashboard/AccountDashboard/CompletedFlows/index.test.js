@@ -1,4 +1,4 @@
-/* global describe, test, expect, jest, beforeEach, afterEach  */
+
 import { screen } from '@testing-library/react';
 import React from 'react';
 import CompletedFlows from '.';
@@ -44,7 +44,7 @@ jest.mock('../../../ResourceTable', () => ({
   ),
 }));
 
-describe('Testsuite for Completed Flows', () => {
+describe('testsuite for Completed Flows', () => {
   beforeEach(() => {
     initialStore = getCreatedStore();
   });

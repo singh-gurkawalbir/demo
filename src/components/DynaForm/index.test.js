@@ -1,4 +1,5 @@
-/* global describe, test, expect, jest */
+/* eslint-disable jest/no-conditional-expect */
+
 import React from 'react';
 import { screen } from '@testing-library/react';
 import { renderWithProviders, reduxStore } from '../../test/test-utils';
@@ -50,22 +51,22 @@ function initDynaSubmit(props = {}, lfields = [], fieldMap) {
 
   return renderWithProviders(<DynaForm {...props} />, { initialStore });
 }
-describe('DynaForm UI test cases', () => {
-  test('Should validate DynaForm error boundary with error thrown', () => {
+describe('dynaForm UI test cases', () => {
+  test('should validate DynaForm error boundary with error thrown', () => {
     try {
       initDynaSubmit({ formKey: '_formKey' }, fields, {});
     } catch (err) {
       expect(screen.getByText('Some unknown error')).toBeInTheDocument();
     }
   });
-  test('Should validate DynaForm error boundary with FieldDefinitionException error', () => {
+  test('should validate DynaForm error boundary with FieldDefinitionException error', () => {
     try {
       initDynaSubmit({ formKey: '_formKey' }, ['a'], fields);
     } catch (err) {
       expect(screen.getByText('Invalid field definition for field: a')).toBeInTheDocument();
     }
   });
-  test('Should validate DynaForm invalid fieldMap', () => {
+  test('should validate DynaForm invalid fieldMap', () => {
     initDynaSubmit({ formKey: '_formKey' }, [], undefined);
     expect(screen.queryAllByText('No mapped field for type: [mode]')).toHaveLength(0);
   });

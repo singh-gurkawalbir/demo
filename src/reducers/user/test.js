@@ -1,4 +1,4 @@
-/* global describe, test, expect */
+
 import moment from 'moment';
 import actions from '../../actions';
 import { ACCOUNT_IDS } from '../../constants';
@@ -63,7 +63,7 @@ describe('user selectors', () => {
         'some action'
       );
 
-      expect(selectors.userTimezone(state)).toEqual('Asia/Calcutta');
+      expect(selectors.userTimezone(state)).toBe('Asia/Calcutta');
     });
     test('should return correct user time zone info for an org user', () => {
       const state = reducer(
@@ -93,7 +93,7 @@ describe('user selectors', () => {
         'some action'
       );
 
-      expect(selectors.userTimezone(state)).toEqual('Asia/Calcutta');
+      expect(selectors.userTimezone(state)).toBe('Asia/Calcutta');
     });
 
     test('should return owner user time zone info for an org user when user doesnt have timezone set', () => {
@@ -124,7 +124,7 @@ describe('user selectors', () => {
         'some action'
       );
 
-      expect(selectors.userTimezone(state)).toEqual('America/LosAngeles');
+      expect(selectors.userTimezone(state)).toBe('America/LosAngeles');
     });
   });
   describe('accountSummary', () => {
@@ -420,7 +420,7 @@ describe('user selectors', () => {
   });
   describe('Owner user selector', () => {
     test('should return undefined if no state exists', () => {
-      expect(selectors.ownerUser(undefined)).toEqual(undefined);
+      expect(selectors.ownerUser(undefined)).toBeUndefined();
     });
     test('should return correct owner user for an org user', () => {
       const state = reducer(
@@ -482,7 +482,7 @@ describe('user selectors', () => {
 
   describe('Owner user id selector', () => {
     test('should return undefined if no state exists', () => {
-      expect(selectors.ownerUserId(undefined)).toEqual(undefined);
+      expect(selectors.ownerUserId(undefined)).toBeUndefined();
     });
     test('should return correct owner user id for an org user', () => {
       const state = reducer(
@@ -513,7 +513,7 @@ describe('user selectors', () => {
         'some action'
       );
 
-      expect(selectors.ownerUserId(state)).toEqual('owner1');
+      expect(selectors.ownerUserId(state)).toBe('owner1');
     });
     test('should return correct owner user id info for an org owner', () => {
       const state = reducer(
@@ -524,7 +524,7 @@ describe('user selectors', () => {
         'some action'
       );
 
-      expect(selectors.ownerUserId(state)).toEqual('owner');
+      expect(selectors.ownerUserId(state)).toBe('owner');
     });
     test('should return correct owner user id info for an org owner when there are no preferences', () => {
       const state = reducer(
@@ -534,12 +534,12 @@ describe('user selectors', () => {
         'some action'
       );
 
-      expect(selectors.ownerUserId(state)).toEqual('owner');
+      expect(selectors.ownerUserId(state)).toBe('owner');
     });
   });
   describe('isOwnerUserInErrMgtTwoDotZero selector', () => {
     test('should return false if no state exists', () => {
-      expect(selectors.isOwnerUserInErrMgtTwoDotZero(undefined)).toEqual(false);
+      expect(selectors.isOwnerUserInErrMgtTwoDotZero(undefined)).toBe(false);
     });
     test('should return correct owner user error management 2.0 flag for an org user', () => {
       const state = reducer(
@@ -572,7 +572,7 @@ describe('user selectors', () => {
         'some action'
       );
 
-      expect(selectors.isOwnerUserInErrMgtTwoDotZero(state)).toEqual(true);
+      expect(selectors.isOwnerUserInErrMgtTwoDotZero(state)).toBe(true);
     });
     test('should return correct owner user error management 2.0 flag info for an org owner', () => {
       const state = reducer(
@@ -583,7 +583,7 @@ describe('user selectors', () => {
         'some action'
       );
 
-      expect(selectors.isOwnerUserInErrMgtTwoDotZero(state)).toEqual(true);
+      expect(selectors.isOwnerUserInErrMgtTwoDotZero(state)).toBe(true);
     });
     test('should return correct owner user error management 2.0 flag info for an org owner when there are no preferences', () => {
       const state = reducer(
@@ -593,9 +593,9 @@ describe('user selectors', () => {
         'some action'
       );
 
-      expect(selectors.isOwnerUserInErrMgtTwoDotZero(state)).toEqual(true);
+      expect(selectors.isOwnerUserInErrMgtTwoDotZero(state)).toBe(true);
     });
-    test('should return correct owner user error management 2.0 flag for an org user', () => {
+    test('should return correct owner user error management 2.0 flag for an org user duplicate', () => {
       const state = reducer(
         {
           profile: { email: 'something@test.com', name: 'First Last' },
@@ -625,9 +625,9 @@ describe('user selectors', () => {
         'some action'
       );
 
-      expect(selectors.isOwnerUserInErrMgtTwoDotZero(state)).toEqual(false);
+      expect(selectors.isOwnerUserInErrMgtTwoDotZero(state)).toBe(false);
     });
-    test('should return correct owner user error management 2.0 flag info for an org owner', () => {
+    test('should return correct owner user error management 2.0 flag info for an org owner duplicate', () => {
       const state = reducer(
         {
           profile: { email: 'something@test.com', name: 'First Last', _id: 'owner' },
@@ -636,9 +636,9 @@ describe('user selectors', () => {
         'some action'
       );
 
-      expect(selectors.isOwnerUserInErrMgtTwoDotZero(state)).toEqual(false);
+      expect(selectors.isOwnerUserInErrMgtTwoDotZero(state)).toBe(false);
     });
-    test('should return correct owner user error management 2.0 flag info for an org owner when there are no preferences', () => {
+    test('should return correct owner user error management 2.0 flag info for an org owner when there are no preferences duplicate', () => {
       const state = reducer(
         {
           profile: { email: 'something@test.com', name: 'First Last', _id: 'owner' },
@@ -646,12 +646,12 @@ describe('user selectors', () => {
         'some action'
       );
 
-      expect(selectors.isOwnerUserInErrMgtTwoDotZero(state)).toEqual(false);
+      expect(selectors.isOwnerUserInErrMgtTwoDotZero(state)).toBe(false);
     });
   });
   describe('drawerOpened selector', () => {
     test('should return true if no state exists', () => {
-      expect(selectors.drawerOpened(undefined)).toEqual(true);
+      expect(selectors.drawerOpened(undefined)).toBe(true);
     });
 
     test('should return correct drawer opened flag for an org owner', () => {
@@ -663,7 +663,7 @@ describe('user selectors', () => {
         'some action'
       );
 
-      expect(selectors.drawerOpened(state)).toEqual(true);
+      expect(selectors.drawerOpened(state)).toBe(true);
     });
     test('should return true for any org owner account', () => {
       const state = reducer(
@@ -674,12 +674,12 @@ describe('user selectors', () => {
         'some action'
       );
 
-      expect(selectors.drawerOpened(state)).toEqual(true);
+      expect(selectors.drawerOpened(state)).toBe(true);
     });
   });
   describe('expandSelected selector', () => {
     test('should return undefined if no state exists', () => {
-      expect(selectors.expandSelected(undefined)).toEqual(undefined);
+      expect(selectors.expandSelected(undefined)).toBeUndefined();
     });
     test('should return correct expand selected label for an org owner', () => {
       const state = reducer(
@@ -690,7 +690,7 @@ describe('user selectors', () => {
         'some action'
       );
 
-      expect(selectors.expandSelected(state)).toEqual('expand');
+      expect(selectors.expandSelected(state)).toBe('expand');
     });
     test('should return undefined for specific org owner account', () => {
       const state = reducer(
@@ -701,12 +701,12 @@ describe('user selectors', () => {
         'some action'
       );
 
-      expect(selectors.expandSelected(state)).toEqual(undefined);
+      expect(selectors.expandSelected(state)).toBeUndefined();
     });
   });
   describe('userAccessLevel selector', () => {
     test('should return false if no state exists', () => {
-      expect(selectors.userAccessLevel(undefined)).toEqual(undefined);
+      expect(selectors.userAccessLevel(undefined)).toBeUndefined();
     });
     test('should return "tile" for an org user', () => {
       const state = reducer(
@@ -728,7 +728,7 @@ describe('user selectors', () => {
         'some action'
       );
 
-      expect(selectors.userAccessLevel(state)).toEqual('tile');
+      expect(selectors.userAccessLevel(state)).toBe('tile');
     });
     test('should return "monitor" for an org user', () => {
       const state = reducer(
@@ -751,7 +751,7 @@ describe('user selectors', () => {
         'some action'
       );
 
-      expect(selectors.userAccessLevel(state)).toEqual('monitor');
+      expect(selectors.userAccessLevel(state)).toBe('monitor');
     });
     test('should return "manage" for an org user', () => {
       const state = reducer(
@@ -774,7 +774,7 @@ describe('user selectors', () => {
         'some action'
       );
 
-      expect(selectors.userAccessLevel(state)).toEqual('manage');
+      expect(selectors.userAccessLevel(state)).toBe('manage');
     });
 
     test('should return "tile" for an org user if it has integration access level', () => {
@@ -799,7 +799,7 @@ describe('user selectors', () => {
         'some action'
       );
 
-      expect(selectors.userAccessLevel(state)).toEqual('tile');
+      expect(selectors.userAccessLevel(state)).toBe('tile');
     });
     test('should return correct user access level info info for an org owner', () => {
       const state = reducer(
@@ -810,13 +810,13 @@ describe('user selectors', () => {
         'some action'
       );
 
-      expect(selectors.userAccessLevel(state)).toEqual('owner');
+      expect(selectors.userAccessLevel(state)).toBe('owner');
     });
   });
 
   describe('canUserPublish selector', () => {
     test('should return false if no state exists', () => {
-      expect(selectors.canUserPublish(undefined)).toEqual(false);
+      expect(selectors.canUserPublish(undefined)).toBe(false);
     });
 
     test('should return false for an account owner user if user cant publish', () => {
@@ -836,7 +836,7 @@ describe('user selectors', () => {
         'some action'
       );
 
-      expect(selectors.canUserPublish(state)).toEqual(false);
+      expect(selectors.canUserPublish(state)).toBe(false);
     });
 
     test('should return true for an account owner user if user can publish', () => {
@@ -856,7 +856,7 @@ describe('user selectors', () => {
         'some action'
       );
 
-      expect(selectors.canUserPublish(state)).toEqual(true);
+      expect(selectors.canUserPublish(state)).toBe(true);
     });
 
     test('should return false for an org monitor user', () => {
@@ -880,7 +880,7 @@ describe('user selectors', () => {
         'some action'
       );
 
-      expect(selectors.canUserPublish(state)).toEqual(false);
+      expect(selectors.canUserPublish(state)).toBe(false);
     });
 
     test('should return false for an org monitor user even owner can publish', () => {
@@ -905,7 +905,7 @@ describe('user selectors', () => {
         'some action'
       );
 
-      expect(selectors.canUserPublish(state)).toEqual(false);
+      expect(selectors.canUserPublish(state)).toBe(false);
     });
     test('should return false for manage level user', () => {
       const state = reducer(
@@ -929,7 +929,7 @@ describe('user selectors', () => {
         'some action'
       );
 
-      expect(selectors.canUserPublish(state)).toEqual(false);
+      expect(selectors.canUserPublish(state)).toBe(false);
     });
     test('should return false for manage level user even when account owner can publish', () => {
       const state = reducer(
@@ -953,7 +953,7 @@ describe('user selectors', () => {
         'some action'
       );
 
-      expect(selectors.canUserPublish(state)).toEqual(false);
+      expect(selectors.canUserPublish(state)).toBe(false);
     });
     test('should return false for an admin user when account owner doesnt have permission to publish', () => {
       const state = reducer(
@@ -977,7 +977,7 @@ describe('user selectors', () => {
         'some action'
       );
 
-      expect(selectors.canUserPublish(state)).toEqual(false);
+      expect(selectors.canUserPublish(state)).toBe(false);
     });
 
     test('should return false for an admin user when account owner doesnt have permission to publish and user can publish', () => {
@@ -1002,7 +1002,7 @@ describe('user selectors', () => {
         'some action'
       );
 
-      expect(selectors.canUserPublish(state)).toEqual(false);
+      expect(selectors.canUserPublish(state)).toBe(false);
     });
 
     test('should return true for an admin user when account owner have permission to publish', () => {
@@ -1027,7 +1027,7 @@ describe('user selectors', () => {
         'some action'
       );
 
-      expect(selectors.canUserPublish(state)).toEqual(true);
+      expect(selectors.canUserPublish(state)).toBe(true);
     });
   });
 

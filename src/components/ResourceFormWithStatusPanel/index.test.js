@@ -1,4 +1,4 @@
-/* global describe, test, expect ,jest */
+
 import React from 'react';
 import { screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
@@ -132,7 +132,7 @@ const connections = [
   },
 ];
 
-describe('ResourceFormWithStatusPanel UI test', () => {
+describe('resourceFormWithStatusPanel UI test', () => {
   async function readyStore() {
     const initialStore = getCreatedStore();
 

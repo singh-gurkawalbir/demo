@@ -411,6 +411,8 @@ export function fieldMeta({ resource, assistantData }) {
   };
   const createEndpointIndex = fieldIds.indexOf('assistantMetadata.createEndpoint');
 
+  fieldMap.mockResponseSection = {formId: 'mockResponseSection'};
+
   return {
     fieldMap,
     layout: {
@@ -438,6 +440,12 @@ export function fieldMeta({ resource, assistantData }) {
             fields: fieldIds.slice(createEndpointIndex + 2),
           },
           ],
+        },
+        {
+          actionId: 'mockResponse',
+          collapsed: true,
+          label: 'Mock response',
+          fields: ['mockResponseSection'],
         },
         {
           collapsed: true,

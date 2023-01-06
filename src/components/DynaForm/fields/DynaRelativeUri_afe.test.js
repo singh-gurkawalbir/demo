@@ -1,10 +1,11 @@
-/* global describe, jest, expect, test, afterEach */
+
 import React from 'react';
 import { screen } from '@testing-library/react';
 import { renderWithProviders } from '../../../test/test-utils';
 import { getCreatedStore } from '../../../store';
 import actions from '../../../actions';
 import DynaRelativeUriAFE from './DynaRelativeUri_afe';
+import { EXPORT_FILTERED_DATA_STAGE } from '../../../utils/flowData';
 
 const mockDispatchFn = jest.fn();
 
@@ -49,10 +50,10 @@ describe('test for relative uri field', () => {
       http: { baseURI },
     }];
     renderWithProviders(<DynaRelativeUriAFE {...props} />, {initialStore});
-    expect(screen.getByTestId('stage')).toHaveTextContent('inputFilter');
+    expect(screen.getByTestId('stage')).toHaveTextContent(EXPORT_FILTERED_DATA_STAGE);
     expect(screen.getByTestId('value')).toHaveTextContent(props.value);
     expect(screen.getByTestId('description')).toHaveTextContent(`Relative to: ${baseURI}`);
-    expect(mockDispatchFn).not.toBeCalled();
+    expect(mockDispatchFn).not.toHaveBeenCalled();
   });
 
   test('should render the description in case of rest connection', () => {

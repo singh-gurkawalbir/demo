@@ -16,34 +16,35 @@ import responseMappingUtil from '../responseMapping';
 import arrayUtils from '../array';
 import jsonUtils from '../json';
 import { isIntegrationApp } from '../flows';
-import { isJsonString } from '../string';
+import { getMockOutputFromResource, validateMockOutputField } from '../flowDebugger';
 
 export const BASE_FLOW_INPUT_STAGE = 'flowInput';
-export const LOOKUP_FLOW_DATA_STAGE = 'inputFilter';
 export const IMPORT_FLOW_DATA_STAGE = 'importMappingExtract';
+export const IMPORT_FILTERED_DATA_STAGE = 'preMap';
+export const EXPORT_FILTERED_DATA_STAGE = 'postInputFilter';
+export const IMPORT_POST_MAPPED_DATA_STAGE = 'postMapOutput';
 
-// TODO @RAGHU : Add comments on the different stages and their use cases
 export const sampleDataStage = {
   exports: {
     processedFlowInput: 'flowInput',
     inputFilter: 'processedFlowInput',
+    postInputFilter: 'inputFilter',
     transform: 'raw',
-    preSavePage: 'transform', // preSavePage indicates export hooks
     outputFilter: 'transform',
+    preSavePage: 'outputFilter', // preSavePage indicates export hooks
     responseMappingExtract: 'preSavePage',
     responseMapping: 'responseMappingExtract',
     postResponseMap: 'responseMapping',
     postResponseMapHook: 'postResponseMap',
   },
   /**
-   * flowInput, processedFlowInput, inputFilter
-   * raw, processedFlowInput, transform, preSavePage, responseMappingExtract, responseMapping, postResponseMap, postResponseMapHook
-   * raw, transform, outputFilter
+   * flowInput, processedFlowInput, inputFilter, postInputFilter
+   * raw, transform, outputFilter, preSavePage, responseMappingExtract, responseMapping, postResponseMap, postResponseMapHook
    */
   imports: {
     processedFlowInput: 'flowInput',
     inputFilter: 'processedFlowInput',
-    preMap: 'processedFlowInput',
+    preMap: 'inputFilter',
     importMappingExtract: 'preMap',
     importMapping: 'importMappingExtract',
     responseMappingExtract: 'responseTransform',
@@ -59,8 +60,7 @@ export const sampleDataStage = {
     router: 'router',
   },
   /**
-   * flowInput, processedFlowInput, inputFilter
-   * flowInput, preMap, importMappingExtract, importMapping, postMap,
+   * flowInput, processedFlowInput, inputFilter, preMap, importMappingExtract, importMapping, postMap,
    * sampleResponse, responseTransform, postSubmit
    * sampleResponse, responseTransform, responseMappingExtract, responseMapping, postResponseMap, postResponseMapHook
    */
@@ -286,12 +286,16 @@ export const isRawDataPatchSet = (patchSet = []) =>
 /*
  * File adaptor / Real time( NS/ SF/ Webhooks)/ Blob type/ Rest CSV resources need UI Data to be passed in Page processor preview
  */
-export const isUIDataExpectedForResource = (resource, connection) =>
-  isRealTimeOrDistributedResource(resource) ||
-  isFileAdaptor(resource) ||
-  isRestCsvMediaTypeExport(resource, connection) ||
-  isBlobTypeResource(resource) ||
-  isIntegrationApp(resource); // Need to do
+export const isUIDataExpectedForResource = (resource, connection) => {
+  // if mockoutput data is populated on the resource, we don't need to send UI data
+  if (getMockOutputFromResource(resource)) return false;
+
+  return isRealTimeOrDistributedResource(resource) ||
+        isFileAdaptor(resource) ||
+        isRestCsvMediaTypeExport(resource, connection) ||
+        isBlobTypeResource(resource) ||
+        isIntegrationApp(resource);
+};
 
 export const isFileMetaExpectedForResource = resource => isFileAdaptor(resource);
 // Gives sample file data
@@ -399,18 +403,14 @@ export const getFormattedResourceForPreview = (
     resource.postData = getPostDataForDeltaExport(resource);
   }
 
-  // Incase of pp , morph sampleResponseData to support Response Mapping
-  if (flowType === 'pageProcessors') {
-    if (resource.sampleResponseData) {
-      // If there is sampleResponseData, update it to json if not a json
-      // @Raghu Make changes to save it as json in the first place, once ampersand is deprecated
-      if (isJsonString(resource.sampleResponseData)) {
-        resource.sampleResponseData = JSON.parse(resource.sampleResponseData);
-      }
-    } else {
-      // If there is no sampleResponseData, add default fields for lookups/imports
-      resource.sampleResponseData = generateDefaultExtractsObject(resourceType, resource?.adaptorType);
-    }
+  if (resource.mockOutput && validateMockOutputField(resource.mockOutput)) {
+    delete resource.mockOutput;
+  }
+
+  if (flowType === 'pageProcessors' && !resource.mockResponse) {
+    // Incase of pp , morph mockResponse to support Response Mapping
+    // If there is no mockResponse, add default fields for lookups/imports
+    resource.mockResponse = generateDefaultExtractsObject(resourceType, resource?.adaptorType);
   }
 
   return resource;
@@ -434,7 +434,6 @@ export const getResourceStageUpdatedFromPatch = (patchSet = []) => {
     if (patchSetValue.preMap) return 'preMap';
     if (patchSetValue.postMap) return 'postMap';
   }
-  if (patchSetPath === '/sampleResponseData') return 'sampleResponse';
   if (patchSetPath?.includes('/mapping')) return 'importMapping';
 };
 

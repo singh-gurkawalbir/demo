@@ -1,9 +1,8 @@
-/* global test, expect, jest,describe,beforeEach,afterEach */
+
 import React from 'react';
 import { screen, waitFor } from '@testing-library/react';
 import { Router } from 'react-router-dom';
 import userEvent from '@testing-library/user-event';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { createMemoryHistory } from 'history';
 import * as reactRedux from 'react-redux';
 import { renderWithProviders, reduxStore } from '../../test/test-utils';
@@ -269,7 +268,7 @@ describe('Flow ellipsis menu ui tests', () => {
 
     expect(auditlogButton).toBeInTheDocument();
     userEvent.click(auditlogButton);
-    waitFor(() => expect(screen.getByText('/Audit Log/i').toBeInTheDocument()));
+    waitFor(() => expect(screen.getByText('/Audit Log/i')).toBeInTheDocument());
   });
   test('should display and perform the functionality of Usedby references button', async () => {
     history.push = jest.fn();
@@ -282,7 +281,7 @@ describe('Flow ellipsis menu ui tests', () => {
 
     expect(referencesButton).toBeInTheDocument();
     userEvent.click(referencesButton);
-    waitFor(() => expect(screen.getByText('/This resource is not being used anywhere/i').toBeInTheDocument()));
+    waitFor(() => expect(screen.getByText('/This resource is not being used anywhere/i')).toBeInTheDocument());
   });
 });
 

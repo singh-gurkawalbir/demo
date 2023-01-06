@@ -1,4 +1,4 @@
-/* global describe, test, expect,  */
+
 import React from 'react';
 import { screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
@@ -116,7 +116,7 @@ const initialStore = reduxStore;
 initialStore.getState().data.resources.integrations = integrations;
 initialStore.getState().data.resources.flows = flows;
 
-describe('FlowNameWithFlowGroupCell UI Tests', () => {
+describe('flowNameWithFlowGroupCell UI Tests', () => {
   test('should render link with no text when no props are provided', () => {
     renderWithProviders(<MemoryRouter><FlowNameWithFlowGroupCell /></MemoryRouter>);
     const link = screen.getByRole('link');

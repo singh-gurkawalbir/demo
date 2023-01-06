@@ -1,4 +1,3 @@
-/* global describe, test, expect ,jest */
 import React from 'react';
 import { screen } from '@testing-library/react';
 import { MemoryRouter, Router } from 'react-router-dom';
@@ -8,7 +7,7 @@ import {createMemoryHistory} from 'history';
 import CeligoPageBar from '.';
 import {renderWithProviders} from '../../test/test-utils';
 
-describe('Celigopagebar UI tests', () => {
+describe('celigopagebar UI tests', () => {
   function renderFunction(history) {
     if (!history) {
       renderWithProviders(
@@ -43,7 +42,7 @@ describe('Celigopagebar UI tests', () => {
   test('should test the go back to parent button', () => {
     const history = createMemoryHistory();
 
-    history.replace = jest.fn();
+    jest.spyOn(history, 'replace').mockImplementation();
     renderFunction(history);
     const parentbutton = screen.getByRole('button');
 
@@ -54,7 +53,7 @@ describe('Celigopagebar UI tests', () => {
   test('should test the back button when history.length > 2', () => {
     const history = createMemoryHistory();
 
-    history.goBack = jest.fn();
+    jest.spyOn(history, 'goBack').mockImplementation();
     history.length = 3;
     renderFunction(history);
     const parentbutton = screen.getByRole('button');

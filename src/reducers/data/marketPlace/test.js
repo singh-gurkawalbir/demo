@@ -1,4 +1,4 @@
-/* global describe, test, expect */
+
 import moment from 'moment';
 import reducer, { selectors } from '.';
 import actions from '../../../actions';
@@ -351,8 +351,8 @@ describe('marketplace selectors', () => {
     ];
 
     test('should return undefined on empty/undefined state', () => {
-      expect(selectors.marketplaceTemplateById(undefined)).toEqual(undefined);
-      expect(selectors.marketplaceTemplateById({})).toEqual(undefined);
+      expect(selectors.marketplaceTemplateById(undefined)).toBeUndefined();
+      expect(selectors.marketplaceTemplateById({})).toBeUndefined();
     });
     test('should return template on valid state', () => {
       const state = reducer(

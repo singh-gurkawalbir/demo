@@ -1,4 +1,4 @@
-/* global describe, test, expect, jest */
+
 import { select } from 'redux-saga/effects';
 import { expectSaga } from 'redux-saga-test-plan';
 import * as matchers from 'redux-saga-test-plan/matchers';
@@ -172,7 +172,7 @@ describe('constructResourceFromFormValues saga', () => {
     const resourceType = 'imports';
     const formValues = [];
 
-    return expectSaga(constructResourceFromFormValues, {
+    expectSaga(constructResourceFromFormValues, {
       formValues,
       resourceId,
       resourceType,
@@ -201,7 +201,7 @@ describe('constructResourceFromFormValues saga', () => {
       patchKey: 'patchValue',
     };
 
-    return expectSaga(constructResourceFromFormValues, {
+    expectSaga(constructResourceFromFormValues, {
       formValues,
       resourceId,
       resourceType,
@@ -229,7 +229,7 @@ describe('constructResourceFromFormValues saga', () => {
       },
     ];
 
-    return expectSaga(constructResourceFromFormValues, {
+    expectSaga(constructResourceFromFormValues, {
       formValues,
       resourceId,
       resourceType,
@@ -246,7 +246,7 @@ describe('constructResourceFromFormValues saga', () => {
     const resourceType = 'imports';
     const formValues = [];
 
-    return expectSaga(constructResourceFromFormValues, {
+    expectSaga(constructResourceFromFormValues, {
       formValues,
       resourceType,
     })
@@ -369,7 +369,7 @@ describe('convertResourceFieldstoSampleData', () => {
   test('should return empty when there are no resource fields', () => {
     const sampleData = convertResourceFieldstoSampleData();
 
-    expect(sampleData).toEqual('');
+    expect(sampleData).toBe('');
   });
 });
 describe('getHTTPConnectorMetadata', () => {
@@ -1585,7 +1585,7 @@ describe('updateFinalMetadataWithHttpFramework', () => {
   test('should not throw any exception for invalid arguments', () => {
     const metaData = updateFinalMetadataWithHttpFramework();
 
-    expect(metaData).toEqual(undefined);
+    expect(metaData).toBeUndefined();
   });
 });
 
@@ -1613,6 +1613,18 @@ describe('getEndpointResourceFields', () => {
 
     expect(sampleData).toEqual(expected);
   });
+  test('should return correct endpoint sample data for array of objects fields when type is inclusion', () => {
+    const endpointResourceFields = [{type: 'inclusion', fields: ['address[*].shipping_lines_override', 'address[*].shipping_lines', 'address[*].shipping_goods']}];
+
+    const sampleData = getEndpointResourceFields(endpointResourceFields, resourceFields);
+    const expected = {address: [{
+      shipping_lines_override: 'default',
+      shipping_lines: 'default',
+      shipping_goods: 'default',
+    }]};
+
+    expect(sampleData).toEqual(expected);
+  });
   test('should return correct endpoint sample data for resource fields when type is exclusion', () => {
     const endpointResourceFields = [{type: 'exclusion', fields: ['address.shipping_lines_override']}];
 
@@ -1630,10 +1642,47 @@ describe('getEndpointResourceFields', () => {
 
     expect(sampleData).toEqual(expected);
   });
+
+  test('should return correct endpoint sample data for array of objects fields when type is exclusion', () => {
+    const endpointResourceFields = [{type: 'exclusion', fields: ['address.shipping_lines_override', 'address.original_shipping_lines[*].code']}];
+    const input = {
+      address: {
+        address1: 'address1',
+        address2: 'address2',
+        original_shipping_lines: [
+          {
+            code: 'code',
+            name: 'name1',
+          },
+          {
+            name: 'Raj3',
+          },
+        ],
+        shipping_lines_override: 'shipping_lines_override',
+      },
+    };
+
+    const sampleData = getEndpointResourceFields(endpointResourceFields, input);
+    const expected = {
+      address: {
+        address1: 'address1',
+        address2: 'address2',
+        original_shipping_lines: [
+          {
+            name: 'name1',
+          },
+          {
+            name: 'Raj3',
+          },
+        ] },
+    };
+
+    expect(sampleData).toEqual(expected);
+  });
   test('should not throw any exception for invalid arguments', () => {
     const sampleData = getEndpointResourceFields();
 
-    expect(sampleData).toEqual(undefined);
+    expect(sampleData).toBeUndefined();
   });
   test('should return resourceFields directly if endpoint resource fields are empty', () => {
     const sampleData = getEndpointResourceFields('', resourceFields);
@@ -2206,7 +2255,7 @@ describe('updateWebhookFinalMetadataWithHttpFramework', () => {
   test('should not throw any exception for invalid arguments', () => {
     const metaData = updateWebhookFinalMetadataWithHttpFramework();
 
-    expect(metaData).toEqual(undefined);
+    expect(metaData).toBeUndefined();
   });
 });
 

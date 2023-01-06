@@ -6,6 +6,7 @@ import { selectors } from '../../../reducers';
 import { getValidRelativePath } from '../../../utils/routePaths';
 import actions from '../../../actions';
 import { buildDrawerUrl, drawerPaths } from '../../../utils/rightDrawer';
+import { IMPORT_FLOW_DATA_STAGE } from '../../../utils/flowData';
 
 const emptyObject = {};
 
@@ -34,7 +35,7 @@ export default function DatabaseMapping_afe() {
       fieldId,
       resourceId: importId,
       resourceType: 'imports',
-      stage: 'importMappingExtract',
+      stage: IMPORT_FLOW_DATA_STAGE,
       arrayIndex: index && parseInt(index, 10),
     }));
   // eslint-disable-next-line react-hooks/exhaustive-deps

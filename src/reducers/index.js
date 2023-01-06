@@ -769,7 +769,6 @@ selectors.makeResourceListSelector = () =>
         sandbox = currentEnvironment === 'sandbox';
       }
       result.type = type;
-      // console.log('selector args', state, name, take, keyword);
 
       if (!resources) {
         return result;
@@ -779,8 +778,6 @@ selectors.makeResourceListSelector = () =>
       // if (type === 'ui/assistants') {
       //   return state[type];
       // }
-
-      if (!resources) return result;
 
       result.total = resources.length;
       result.count = resources.length;

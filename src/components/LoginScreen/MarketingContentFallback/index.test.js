@@ -1,4 +1,4 @@
-/* global describe, test, expect */
+
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import MarketingContentFallback from '.';
@@ -15,7 +15,7 @@ async function initMarketingContentFallback() {
   return renderWithProviders(ui);
 }
 
-describe('MarketingContentFallback component', () => {
+describe('marketingContentFallback component', () => {
   runServer();
 
   test('should pass the initial render', async () => {

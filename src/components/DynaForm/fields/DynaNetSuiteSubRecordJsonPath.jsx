@@ -3,6 +3,7 @@ import { useSelector } from 'react-redux';
 import { uniq } from 'lodash';
 import { selectors } from '../../../reducers';
 import getJSONPaths, { pickFirstObject } from '../../../utils/jsonPaths';
+import { IMPORT_FILTERED_DATA_STAGE } from '../../../utils/flowData';
 import DynaAutoSuggest from './DynaAutoSuggest';
 
 export default function DynaNetSuiteSubRecordJsonPath(props) {
@@ -12,7 +13,7 @@ export default function DynaNetSuiteSubRecordJsonPath(props) {
       flowId,
       resourceId,
       resourceType: 'imports',
-      stage: 'inputFilter',
+      stage: IMPORT_FILTERED_DATA_STAGE,
     }).data
   );
 

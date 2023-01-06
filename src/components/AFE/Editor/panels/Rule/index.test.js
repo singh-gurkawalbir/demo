@@ -1,4 +1,3 @@
-/* global describe, test, expect, jest */
 import React from 'react';
 import { screen } from '@testing-library/react';
 import * as reactRedux from 'react-redux';
@@ -15,7 +14,7 @@ jest.mock('../Code', () => ({
   ...jest.requireActual('../Code'),
   default: props => <button type="button" onClick={() => props.onChange('updatedRule')}>{props.value}</button>,
 }));
-describe('AFE RulePanel UI tests', () => {
+describe('aFE RulePanel UI tests', () => {
   const useDispatchSpy = jest.spyOn(reactRedux, 'useDispatch');
   const mockDispatchFn = jest.fn();
 

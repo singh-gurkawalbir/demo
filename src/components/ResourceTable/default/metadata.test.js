@@ -1,4 +1,4 @@
-/* global describe, expect, jest, test */
+
 import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -31,7 +31,7 @@ function initDefault(data = {}) {
   renderWithProviders(ui);
 }
 
-describe('Test suite for default', () => {
+describe('test suite for default', () => {
   test('should render the table accordingly', () => {
     const data = [{
       _id: 'exp123',

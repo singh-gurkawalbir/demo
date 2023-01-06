@@ -17,8 +17,6 @@ import DynaRelativeUri_afe from './DynaRelativeUri_afe';
 import DynaKeyValue from './DynaKeyValue';
 import DynaTextList from './DynaTextList';
 import DynaToggleSelectToText from './select/DynaToggleSelectToText';
-import DynaLookupEditor from './DynaLookupEditor';
-import DynaKeyWithAction from './DynaKeyWithAction';
 import DynaHttpRequestBody_afe from './DynaHttpRequestBody_afe';
 import DynaEditor from './DynaEditor';
 import DynaCsvParse_afe from './DynaCsvParse_afe';
@@ -162,6 +160,8 @@ import DynaSignupConsent from './DynaSignupConsent';
 import DynaSignupName from './DynaSignupName';
 import DynaSignupEmail from './DynaSignupEmail';
 import DynaSalesforceSObject from './DynaSalesforceSObject';
+import DynaMockOutput from './DynaMockOutput';
+import DynaMockResponse from './DynaMockResponse';
 import DynaSelectDataRetentionPeriod from './DynaSelectDataRetentionPeriod';
 import DynaChangeLicenseEdition from './DynaChangeLicenseEdition';
 import DynaIClientHeaders from './DynaIClientHeaders';
@@ -209,7 +209,6 @@ export default {
   relativeuri: DynaRelativeUri_afe,
   uri: DynaURI_afe,
   httprequestbody: DynaHttpRequestBody_afe,
-  importLookup: DynaLookupEditor,
   keyvalue: DynaKeyValue,
   staticMap: DynaStaticMap,
   csvparse: DynaCsvParse_afe,
@@ -241,7 +240,6 @@ export default {
   assistantoptions: DynaAssistantOptions,
   assistantsearchparams: DynaAssistantSearchParams,
   semiassistantoperationselect: DynaSemiAssistantOperationSelect,
-  keywithaction: DynaKeyWithAction,
   fieldexpressionselect: DynaFieldExpressionSelect,
   autosuggest: DynaAutoSuggest,
   generateurl: DynaGenerateUrl,
@@ -339,6 +337,8 @@ export default {
   switch: DynaSwitch,
   mapper2sourcefield: DynaMapper2SourceField,
   mapper2tabbedextracts: DynaMapper2TabbedExtracts,
+  mockoutput: DynaMockOutput,
+  mockResponse: DynaMockResponse,
   signupconsent: DynaSignupConsent,
   signupname: DynaSignupName,
   signupemail: DynaSignupEmail,

@@ -1,11 +1,7 @@
-/* global describe, test, expect, jest, beforeEach, afterEach */
-
 import React from 'react';
 import { MemoryRouter, Route} from 'react-router-dom';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { screen, cleanup } from '@testing-library/react';
 import * as reactRedux from 'react-redux';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import userEvent from '@testing-library/user-event';
 import { renderWithProviders } from '../../test/test-utils';
 import RequestResetWrapper from '.';
@@ -37,7 +33,7 @@ async function initResetPassword() {
   };
 }
 
-describe('ResetPassword', () => {
+describe('resetPassword', () => {
   runServer();
   let mockDispatchFn;
   let useDispatchSpy;
@@ -59,7 +55,7 @@ describe('ResetPassword', () => {
     cleanup();
   });
 
-  test('Should able to test save button', async () => {
+  test('should able to test save button', async () => {
     store({mfa: {
       sessionInfo: {
         data: {
@@ -77,7 +73,7 @@ describe('ResetPassword', () => {
     expect(SaveButton).toBeInTheDocument();
   });
 
-  test('Should able to test the cancel button', async () => {
+  test('should able to test the cancel button', async () => {
     store({mfa: {
       sessionInfo: {
         data: {
@@ -96,7 +92,7 @@ describe('ResetPassword', () => {
     await userEvent.click(cancelButton);
     expect(cancelButton.closest('a')).toHaveAttribute('href', '/signin');
   });
-  test('Should able to test the SetPassword form by entering the password', async () => {
+  test('should able to test the SetPassword form by entering the password', async () => {
     store({mfa: {
       sessionInfo: {
         data: {
@@ -112,7 +108,7 @@ describe('ResetPassword', () => {
     const titleText = screen.getByText('Celigo Inc.');
 
     expect(titleText).toBeInTheDocument();
-    const setpasswordHeadingNode = screen.getByRole('heading', {name: 'Reset Password'});
+    const setpasswordHeadingNode = screen.getByRole('heading', {name: 'Reset password'});
 
     expect(setpasswordHeadingNode).toBeInTheDocument();
     const password = screen.getByPlaceholderText('Password');

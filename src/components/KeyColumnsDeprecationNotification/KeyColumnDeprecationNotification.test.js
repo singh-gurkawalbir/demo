@@ -1,10 +1,10 @@
-/* global describe, test, expect */
+
 import React from 'react';
 import { screen } from '@testing-library/react';
 import {renderWithProviders, reduxStore} from '../../test/test-utils';
 import KeyColumnsDeprecationNotification from '.';
 
-describe('KeyColumnsDeprecationNotification UI testing', () => {
+describe('keyColumnsDeprecationNotification UI testing', () => {
   async function renderWithStore(file, adaptorType, mediaType) {
     const initialStore = reduxStore;
 
@@ -43,7 +43,7 @@ describe('KeyColumnsDeprecationNotification UI testing', () => {
 
     return utils.container;
   }
-  test('Should do test for showing notfication', async () => {
+  test('should do test for showing notfication', async () => {
     await renderWithStore({csv: {keyColumns: [1, 2]}}, '', '');
     const message = screen.getByText('Learn more');
 
@@ -52,17 +52,17 @@ describe('KeyColumnsDeprecationNotification UI testing', () => {
       'https://integrator.io/zendesk/sso?return_to=https://docs.celigo.com/hc/en-us/articles/4405373029019-Sort-and-group-content-for-all-file-providers'
     );
   });
-  test('Should not show notification because of adaptor type', async () => {
+  test('should not show notification because of adaptor type', async () => {
     const container = await renderWithStore({csv: {keyColumns: [1, 2]}}, 'HTTPExport', '');
 
     expect(container).toBeEmptyDOMElement();
   });
-  test('Should not show notification because of key clumns length = 0', async () => {
+  test('should not show notification because of key clumns length = 0', async () => {
     const container = await renderWithStore({csv: {keyColumns: []}}, 'something');
 
     expect(container).toBeEmptyDOMElement();
   });
-  test('Should not show notification because of csv media type', async () => {
+  test('should not show notification because of csv media type', async () => {
     const container = await renderWithStore({csv: {keyColumns: [1, 2]}}, 'something', 'csv');
 
     expect(container).toBeEmptyDOMElement();

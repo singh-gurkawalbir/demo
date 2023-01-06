@@ -1,4 +1,4 @@
-/* global describe, test, expect */
+
 import React from 'react';
 import {
   screen,
@@ -18,7 +18,7 @@ async function initLoginScreen({props = {}} = {}) {
   return renderWithProviders(ui);
 }
 
-describe('LoginScreen component', () => {
+describe('loginScreen component', () => {
   runServer();
 
   test('should pass the initial render', async () => {
@@ -29,7 +29,7 @@ describe('LoginScreen component', () => {
     expect(utils.container.lastChild.lastChild.className).toEqual(expect.stringContaining('makeStyles-fallBackWrapper-'));
   });
 
-  test('should pass the initial render', async () => {
+  test('should pass the initial render duplicate', async () => {
     await initLoginScreen({
       props: {
         contentUrl: 'content_url',
@@ -41,7 +41,7 @@ describe('LoginScreen component', () => {
     expect(iframeRef).toBeInTheDocument();
   });
 
-  test('should pass the initial render', async () => {
+  test('should pass the initial render duplicate2', async () => {
     await initLoginScreen({
       props: {
         backgroundImageUrl: 'background_image_url',
@@ -51,7 +51,7 @@ describe('LoginScreen component', () => {
     expect(screen.getByRole('img', {name: 'Information'})).toBeInTheDocument();
   });
 
-  test('should pass the initial render', async () => {
+  test('should pass the initial render duplicate3', async () => {
     await initLoginScreen({
       props: {
         backgroundImageUrl: 'background_image_url',

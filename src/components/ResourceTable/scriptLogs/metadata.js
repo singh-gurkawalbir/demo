@@ -7,8 +7,8 @@ import ViewLogDetail from './actions/ViewLogDetail';
 export default {
   useColumns: () => [
     {
-      key: 'date',
-      heading: 'Date',
+      key: 'time',
+      heading: 'Time',
       Value: ({rowData: r}) => <CeligoTimeAgo date={r.time} />,
     },
     {

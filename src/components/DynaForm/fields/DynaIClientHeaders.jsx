@@ -6,6 +6,7 @@ import actions from '../../../actions';
 import { getValidRelativePath } from '../../../utils/routePaths';
 import { buildDrawerUrl, drawerPaths } from '../../../utils/rightDrawer';
 import { RESOURCE_DRAWER_PATH, CONN_DRAWER_PATH, ICLIENT_DRAWER_PATH } from '../../../utils/connections';
+import { EXPORT_FILTERED_DATA_STAGE, IMPORT_FLOW_DATA_STAGE } from '../../../utils/flowData';
 
 export default function DynaIClientHeaders(props) {
   const {
@@ -23,7 +24,7 @@ export default function DynaIClientHeaders(props) {
   const match = useRouteMatch();
 
   const editorId = getValidRelativePath(id);
-  const flowDataStage = stage || (resourceType === 'exports' ? 'inputFilter' : 'importMappingExtract');
+  const flowDataStage = stage || (resourceType === 'exports' ? EXPORT_FILTERED_DATA_STAGE : IMPORT_FLOW_DATA_STAGE);
   const {parentType, parentId, connectionId} = matchPath(match.url, {
     path: `/**${RESOURCE_DRAWER_PATH}${CONN_DRAWER_PATH}${ICLIENT_DRAWER_PATH}`,
     exact: true})?.params || {};

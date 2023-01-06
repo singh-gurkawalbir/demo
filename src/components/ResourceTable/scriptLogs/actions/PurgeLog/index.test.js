@@ -1,4 +1,4 @@
-/* global describe, test, expect, jest, afterEach */
+
 import React from 'react';
 import {
   screen,
@@ -48,7 +48,7 @@ jest.mock('react-router-dom', () => ({
   }),
 }));
 
-describe('PurgeMultipleErrors action Test cases', () => {
+describe('purgeMultipleErrors action Test cases', () => {
   runServer();
   afterEach(() => {
     mockHistoryPush.mockClear();
@@ -67,9 +67,9 @@ describe('PurgeMultipleErrors action Test cases', () => {
     const purgeLogs = screen.getByText(/Purge all logs of this script/i);
 
     expect(purgeLogs).toBeInTheDocument();
-    expect(purgeLogs.getAttribute('aria-disabled')).toBeTruthy;
+    expect(purgeLogs.getAttribute('aria-disabled')).toBeTruthy();
   });
-  test('should pass the intial render with disabled action', async () => {
+  test('should pass the intial render with disabled action duplicate', async () => {
     const scriptId = '6439276e7uybwe78292878';
     const flowId = '6938764rh739d3378';
     const isPurgeAvailable = true;
@@ -83,7 +83,7 @@ describe('PurgeMultipleErrors action Test cases', () => {
     const purgeLogs = screen.getByText(/Purge all logs of this script/i);
 
     expect(purgeLogs).toBeInTheDocument();
-    expect(purgeLogs.getAttribute('aria-disabled')).toBeFalsy;
+    expect(purgeLogs.getAttribute('aria-disabled')).toBe('false');
 
     userEvent.click(purgeLogs);
     expect(screen.getByText('Are you sure you want to purge all logs of this script? This cannot be undone.')).toBeInTheDocument();

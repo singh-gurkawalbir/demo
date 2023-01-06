@@ -1,4 +1,4 @@
-/* global describe, jest, expect, test */
+
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -59,8 +59,8 @@ describe('test suite for SaveAndCloseMiniButtons', () => {
     const saveButton = screen.getByRole('button', { name: /save/i });
     const closeButton = screen.getByRole('button', { name: /close/i });
 
-    expect(handleSave).not.toBeCalled();
-    expect(handleCancel).not.toBeCalled();
+    expect(handleSave).not.toHaveBeenCalled();
+    expect(handleCancel).not.toHaveBeenCalled();
 
     userEvent.click(saveButton);
     expect(handleSave).toHaveBeenCalledTimes(1);

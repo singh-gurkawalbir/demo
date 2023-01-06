@@ -1,4 +1,4 @@
-/* global test, expect, describe */
+
 import React from 'react';
 import { screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
@@ -18,7 +18,7 @@ initialStore.getState().data.suiteScript = {ssLinkedConnectionId: {integrations:
   },
 ]}};
 
-describe('Suite script Name Cell ui test', () => {
+describe('suite script Name Cell ui test', () => {
   test('should show unamed as name when no name is provided', () => {
     renderWithProviders(<MemoryRouter><NameCell ssLinkedConnectionId="ssLinkedConnectionId" flow={{_id: 'flowId', _integrationId: 'inetgrationId'}} /></MemoryRouter>, {initialStore});
     const link = screen.getByRole('link');

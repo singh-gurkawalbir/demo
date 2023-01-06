@@ -1,4 +1,3 @@
-/* global describe, test,  expect */
 import util from './netsuite';
 
 describe('tests for netsuite mapping util', () => {
@@ -383,7 +382,7 @@ describe('tests for netsuite mapping util', () => {
       ]);
     });
 
-    test('should mark all the required mappings as isRequired true if selected import operation is attach', () => {
+    test('should mark all the required mappings as isRequired true if selected import operation is attach duplicate', () => {
       const mappings = {
         fields: [
           {

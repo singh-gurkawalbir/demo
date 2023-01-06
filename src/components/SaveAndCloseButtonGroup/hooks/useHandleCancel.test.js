@@ -1,4 +1,4 @@
-/* global describe, expect, jest, test */
+
 import React from 'react';
 import { renderWithProviders } from '../../../test/test-utils';
 import useHandleCancel from './useHandleCancel';

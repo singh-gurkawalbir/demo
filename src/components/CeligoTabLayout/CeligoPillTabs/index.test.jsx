@@ -1,28 +1,11 @@
-/* global describe, test, expect */
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { render, screen } from '@testing-library/react';
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import CeligoPillTabs from '.';
 import {CeligoTabWrapper } from '../CeligoTabWrapper';
 
-const props = {
-  defaultTab: 'Preview',
-  tabs: [],
-};
-
-describe('Testing Celigo Pills Tab', () => {
-  test('Testing Celigo Pills Tab with defaultTab and empty tabs Props', () => {
-    render(
-      <MemoryRouter>
-        <CeligoTabWrapper>
-          <CeligoPillTabs {...props} />
-        </CeligoTabWrapper>
-      </MemoryRouter>
-    );
-  });
-
-  test('Testing Celigo Pills Tab with defaultTab and one tabs Props', () => {
+describe('testing Celigo Pills Tab', () => {
+  test('testing Celigo Pills Tab with defaultTab and one tabs Props', () => {
     render(
       <MemoryRouter>
         <CeligoTabWrapper>
@@ -37,7 +20,7 @@ describe('Testing Celigo Pills Tab', () => {
 
     expect(value2).toBeInTheDocument();
   });
-  test('Testing Celigo Pills Tab with defaultTab as null and array of tabs Props', () => {
+  test('testing Celigo Pills Tab with defaultTab as null and array of tabs Props', () => {
     render(
       <MemoryRouter>
         <CeligoTabWrapper>

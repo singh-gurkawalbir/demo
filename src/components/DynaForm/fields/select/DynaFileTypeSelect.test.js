@@ -1,4 +1,4 @@
-/* global describe, test, expect, jest, afterEach */
+
 import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -35,29 +35,29 @@ async function initDynaFileTypeSelect(props = {}, fileType) {
 
   return renderWithProviders(<DynaFileTypeSelect {...props} />, { initialStore });
 }
-describe('DynaFileTypeSelect tests', () => {
+describe('dynaFileTypeSelect tests', () => {
   afterEach(() => {
     onFieldChange.mockClear();
   });
-  test('Should render dynaSelect with fileType xml', async () => {
+  test('should render dynaSelect with fileType xml', async () => {
     await initDynaFileTypeSelect(props, 'xml');
     userEvent.click(screen.getByRole('button'));
     expect(screen.getByText('Please select')).toBeInTheDocument();
     expect(onFieldChange).toHaveBeenCalledWith('file.type', 'filedefinition', true);
   });
-  test('Should render dynaSelect with fileType csv', async () => {
+  test('should render dynaSelect with fileType csv', async () => {
     await initDynaFileTypeSelect({...props, userDefinitionId: undefined}, 'csv');
     expect(onFieldChange).not.toHaveBeenCalledWith('file.type', 'none', true);
   });
-  test('Should render dynaSelect with fileType xlsx', async () => {
+  test('should render dynaSelect with fileType xlsx', async () => {
     await initDynaFileTypeSelect(props, 'xlsx');
     expect(onFieldChange).not.toHaveBeenCalledWith('file.type', 'none', true);
   });
-  test('Should render dynaSelect with fileType json', async () => {
+  test('should render dynaSelect with fileType json', async () => {
     await initDynaFileTypeSelect({...props, userDefinitionId: '_userDefinitionId1'}, 'json');
     expect(onFieldChange).toHaveBeenCalledWith('file.type', 'fixedWidth', true);
   });
-  test('Should render dynaSelect with fileType undefined', async () => {
+  test('should render dynaSelect with fileType undefined', async () => {
     await initDynaFileTypeSelect({...props, userDefinitionId: '_userDefinitionId1'});
     expect(onFieldChange).toHaveBeenCalledWith('file.type', 'fixedWidth', true);
   });

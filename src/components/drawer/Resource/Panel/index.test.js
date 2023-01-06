@@ -1,4 +1,4 @@
-/* global describe, test, expect, jest, afterEach, beforeEach */
+
 import React from 'react';
 import { MemoryRouter, Route } from 'react-router-dom';
 import * as reactRedux from 'react-redux';
@@ -153,7 +153,7 @@ describe('Panel tests', () => {
     expect(mockDispatchFn).toHaveBeenNthCalledWith(3, actions.resourceFormSampleData.updateType('_resourceId', 'preview'));
     userEvent.click(screen.getByRole('button', {name: 'Submit'}));
     expect(mockHistoryReplace).toHaveBeenCalledWith('/parentURL/edit/exports/_resourceId');
-    expect(isNestedDrawer('/add/pageGenerator/_id')).toEqual(false);
+    expect(isNestedDrawer('/add/pageGenerator/_id')).toBe(false);
     userEvent.click(screen.getByRole('button', {name: 'Close notification'}));
     expect(screen.queryByText('Snackbar')).not.toBeInTheDocument();
   });

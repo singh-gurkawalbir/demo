@@ -1,4 +1,4 @@
-/* global describe, test, jest */
+
 import { expectSaga } from 'redux-saga-test-plan';
 import { call, select, take } from 'redux-saga/effects';
 import moment from 'moment';
@@ -36,7 +36,7 @@ describe('Scripts logs sagas', () => {
     test('should dispatch setDependency action after fetching depedencies', () => {
       const scriptId = 's1';
 
-      return expectSaga(getScriptDependencies, { scriptId })
+      expectSaga(getScriptDependencies, { scriptId })
         .provide([
           [call(requestReferences, {
             resourceType: 'scripts',
@@ -74,7 +74,7 @@ describe('Scripts logs sagas', () => {
       const flowId = 'f1';
       const scriptId = 's1';
 
-      return expectSaga(getScriptDependencies, { flowId, scriptId })
+      expectSaga(getScriptDependencies, { flowId, scriptId })
         .provide([
           [call(requestReferences, {
             resourceType: 'scripts',
@@ -225,7 +225,7 @@ describe('Scripts logs sagas', () => {
       const scriptId = 's1';
       const flowId = 'f1';
 
-      return expectSaga(requestScriptLogs, { scriptId, flowId, fetchNextPage: true })
+      expectSaga(requestScriptLogs, { scriptId, flowId, fetchNextPage: true })
         .provide([
           [select(selectors.scriptLog, {
             flowId,
@@ -250,7 +250,7 @@ describe('Scripts logs sagas', () => {
       const scriptId = 's1';
       const flowId = 'f1';
 
-      return expectSaga(requestScriptLogs, { scriptId, flowId, isInit: true })
+      expectSaga(requestScriptLogs, { scriptId, flowId, isInit: true })
         .put(actions.logs.scripts.getDependency({
           scriptId,
           flowId,
@@ -261,7 +261,7 @@ describe('Scripts logs sagas', () => {
       const scriptId = 's1';
       const flowId = 'f1';
 
-      return expectSaga(requestScriptLogs, { scriptId, flowId, fetchNextPage: true })
+      expectSaga(requestScriptLogs, { scriptId, flowId, fetchNextPage: true })
         .provide([
           [select(selectors.scriptLog, {
             flowId,
@@ -286,6 +286,7 @@ describe('Scripts logs sagas', () => {
         .race({
           callAPI: call(requestScriptLogs, params),
           cancelCallAPI: take(action =>
+            // eslint-disable-next-line jest/no-conditional-in-test
             action.type === actionTypes.LOGS.SCRIPTS.CLEAR ||
           action.type === actionTypes.LOGS.SCRIPTS.PAUSE_FETCH
           ),
@@ -352,7 +353,7 @@ describe('Scripts logs sagas', () => {
         ],
       };
 
-      return expectSaga(requestAllLogs, {scriptId, flowId})
+      expectSaga(requestAllLogs, {scriptId, flowId})
         .provide([
           [matchers.call.fn(apiCallWithRetry), response],
         ])
@@ -369,7 +370,7 @@ describe('Scripts logs sagas', () => {
         logs: [],
       };
 
-      return expectSaga(requestAllLogs, {scriptId, flowId})
+      expectSaga(requestAllLogs, {scriptId, flowId})
         .provide([
           [matchers.call.fn(apiCallWithRetry), response],
         ])
@@ -384,7 +385,7 @@ describe('Scripts logs sagas', () => {
       const opts = { method: 'GET' };
       const error = new Error();
 
-      return expectSaga(requestAllLogs, {scriptId, flowId})
+      expectSaga(requestAllLogs, {scriptId, flowId})
         .provide([
           [matchers.call.fn(apiCallWithRetry), throwError(error)],
         ])
@@ -400,7 +401,7 @@ describe('Scripts logs sagas', () => {
       const path = `/scripts/${scriptId}/logs`;
       const opts = { method: 'DELETE' };
 
-      return expectSaga(purgeLogs, {scriptId, flowId})
+      expectSaga(purgeLogs, {scriptId, flowId})
         .provide([
           [matchers.call.fn(apiCallWithRetry)],
         ])
@@ -415,7 +416,7 @@ describe('Scripts logs sagas', () => {
       const opts = { method: 'DELETE' };
       const error = new Error();
 
-      return expectSaga(purgeLogs, {scriptId, flowId})
+      expectSaga(purgeLogs, {scriptId, flowId})
         .provide([
           [matchers.call.fn(apiCallWithRetry), throwError(error)],
         ])

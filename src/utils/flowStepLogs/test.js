@@ -1,4 +1,4 @@
-/* global describe, test, expect */
+
 import { getStaticCodesList, getFlowStepLabel } from './index';
 
 describe('flowStepLogs utils test cases', () => {
@@ -30,16 +30,16 @@ describe('flowStepLogs utils test cases', () => {
       expect(getFlowStepLabel(null)).toBeUndefined();
     });
     test('should return import if resource type is imports', () => {
-      expect(getFlowStepLabel('imports')).toEqual('import');
+      expect(getFlowStepLabel('imports')).toBe('import');
     });
     test('should return listener if resource type is realtime exports', () => {
-      expect(getFlowStepLabel('exports', {adaptorType: 'AS2Export'})).toEqual('listener');
+      expect(getFlowStepLabel('exports', {adaptorType: 'AS2Export'})).toBe('listener');
     });
     test('should return lookup if resource type is lookup', () => {
-      expect(getFlowStepLabel('exports', {isLookup: true})).toEqual('lookup');
+      expect(getFlowStepLabel('exports', {isLookup: true})).toBe('lookup');
     });
     test('should return export for all other exports', () => {
-      expect(getFlowStepLabel('exports')).toEqual('export');
+      expect(getFlowStepLabel('exports')).toBe('export');
     });
   });
 });

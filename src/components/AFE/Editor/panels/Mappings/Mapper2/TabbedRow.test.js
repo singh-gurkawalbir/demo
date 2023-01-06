@@ -1,4 +1,3 @@
-/* global describe, test, expect, jest */
 import React from 'react';
 import {screen} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -60,7 +59,7 @@ jest.mock('react-redux', () => ({
   useDispatch: () => mockDispatch,
 }));
 
-describe('TabbedRow test case', () => {
+describe('tabbedRow test case', () => {
   test('should make a dispatch call when a tab is selected', () => {
     renderWithProviders(<TabbedRow parentKey="qruRI-RD35w_UbFrJz_m5" />, {initialStore});
     const tabs = screen.getAllByRole('tab');

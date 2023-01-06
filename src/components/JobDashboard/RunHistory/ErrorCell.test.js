@@ -1,4 +1,4 @@
-/* global describe, test, expect, beforeEach, jest, afterEach */
+
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { screen } from '@testing-library/react';
@@ -61,7 +61,7 @@ jest.mock('react-router-dom', () => ({
   }),
 }));
 
-describe('Testsuite for ErrorCell', () => {
+describe('testsuite for ErrorCell', () => {
   let mockDispatchFn;
   let useDispatchSpy;
 

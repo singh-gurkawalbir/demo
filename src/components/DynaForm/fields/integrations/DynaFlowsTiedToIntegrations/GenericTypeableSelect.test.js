@@ -1,4 +1,4 @@
-/* global describe, test, expect, jest */
+
 import React from 'react';
 import {
   screen,
@@ -97,7 +97,7 @@ function initGenericTypeableSelect(props = {}) {
   return renderWithProviders(<GenericTypeableSelect {...props} />, {initialStore});
 }
 
-describe('GenericTypeableSelect UI tests', () => {
+describe('genericTypeableSelect UI tests', () => {
   const mockonFieldChange = jest.fn();
   const props = {
     formKey: 'formKey',
@@ -156,7 +156,7 @@ describe('GenericTypeableSelect UI tests', () => {
     userEvent.click(dropdown);
     expect(screen.getByText('integration2')).toBeInTheDocument();
     userEvent.click(screen.getByText('integration2'));
-    expect(mockonFieldChange).toBeCalled();
+    expect(mockonFieldChange).toHaveBeenCalled();
     screen.debug();
   });
 });

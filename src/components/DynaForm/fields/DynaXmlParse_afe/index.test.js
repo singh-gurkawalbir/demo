@@ -1,4 +1,4 @@
-/* global describe, test, expect, jest */
+
 import React from 'react';
 import {
   screen, waitFor,
@@ -130,7 +130,7 @@ jest.mock('react-router-dom', () => ({
   }),
 }));
 
-describe('DynaXmlParse_afe UI tests', () => {
+describe('dynaXmlParse_afe UI tests', () => {
   const mockonFieldChange = jest.fn();
   const props = {
     id: 'testId',
@@ -176,7 +176,7 @@ describe('DynaXmlParse_afe UI tests', () => {
     expect(launchButton).toBeInTheDocument();
     userEvent.click(launchButton);
     userEvent.click(screen.getByText('Save'));
-    await waitFor(() => expect(mockHistoryPush).toBeCalledWith('//editor/testId'));
+    await waitFor(() => expect(mockHistoryPush).toHaveBeenCalledWith('//editor/testId'));
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.editor.init('testId', 'xmlParser', {
       formKey: 'formKey',
       flowId: '6b3c75dd5d3c125c88b5dd20',

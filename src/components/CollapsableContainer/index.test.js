@@ -1,4 +1,4 @@
-/* global describe, test, expect */
+
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
@@ -18,7 +18,7 @@ async function initCollapsableContainer({props} = {}) {
   return renderWithProviders(ui, {initialStore});
 }
 
-describe('Testsuite for CollapsableContainer', () => {
+describe('testsuite for CollapsableContainer', () => {
   test('should click on the button and check if expanded', async () => {
     const props = { props: {
       title: 'test',

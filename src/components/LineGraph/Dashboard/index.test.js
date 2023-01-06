@@ -1,4 +1,4 @@
-/* global describe, test, expect */
+
 import React from 'react';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -7,7 +7,7 @@ import { runServer } from '../../../test/api/server';
 import actions from '../../../actions';
 import LineGraphDrawer from '.';
 
-describe('Linegraph UI Tests', () => {
+describe('linegraph UI Tests', () => {
   runServer();
 
   async function renderWithStore() {

@@ -20,7 +20,7 @@ export default {
       '/http/auth/token/refreshMediaType': 'urlencoded',
       '/http/auth/oauth/grantType': 'authorizecode',
       '/http/auth/oauth/scopeDelimiter': ' ',
-      '/http/auth/oauth/authURI': 'https://www.dropbox.com/oauth2/authorize',
+      '/http/auth/oauth/authURI': 'https://www.dropbox.com/oauth2/authorize?token_access_type=offline',
       '/http/auth/oauth/tokenURI': 'https://api.dropboxapi.com/oauth2/token',
       '/http/auth/oauth/clientCredentialsLocation': 'body',
       '/http/auth/oauth/accessTokenPath': 'access_token',

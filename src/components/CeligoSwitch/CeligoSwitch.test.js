@@ -1,11 +1,10 @@
-/* global describe, test, expect , jest */
 import React from 'react';
 import { screen} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import {renderWithProviders} from '../../test/test-utils';
 import CeligoSwitch from '.';
 
-describe('CeligoSwitch test', () => {
+describe('celigoSwitch test', () => {
   test('should do click on checkbox', () => {
     const onChange = jest.fn();
 
@@ -13,7 +12,7 @@ describe('CeligoSwitch test', () => {
     const checkbox = screen.getByRole('checkbox');
 
     userEvent.click(checkbox);
-    expect(onChange).toHaveBeenCalled();
+    expect(onChange).toHaveBeenCalledTimes(1);
   });
 
   test('should do the test for disable button', () => {
@@ -31,7 +30,7 @@ describe('CeligoSwitch test', () => {
     const checkbox = screen.getByRole('checkbox');
 
     userEvent.click(checkbox);
-    expect(onChange).toHaveBeenCalled();
+    expect(onChange).toHaveBeenCalledTimes(1);
   });
 });
 

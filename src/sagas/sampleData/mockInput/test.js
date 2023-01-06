@@ -1,4 +1,3 @@
-/* global describe, test */
 
 import { select, call } from 'redux-saga/effects';
 import { expectSaga } from 'redux-saga-test-plan';
@@ -21,17 +20,16 @@ describe('mockInput sagas', () => {
         status: 401,
         message: '{"message":"invalid processor", "code":"code"}',
       };
-      const test1 = expectSaga(_handlePreviewError, { e })
-        .returns(undefined)
-        .run();
-      const test2 = expectSaga(_handlePreviewError, { e: {} })
-        .returns(undefined)
-        .run();
-      const test3 = expectSaga(_handlePreviewError, { resourceId })
-        .returns(undefined)
-        .run();
 
-      return test1 && test2 && test3;
+      expectSaga(_handlePreviewError, { e })
+        .returns(undefined)
+        .run();
+      expectSaga(_handlePreviewError, { e: {} })
+        .returns(undefined)
+        .run();
+      expectSaga(_handlePreviewError, { resourceId })
+        .returns(undefined)
+        .run();
     });
     test('should dispatch receivedPreviewError action when there is a valid error', () => {
       const e = {
@@ -40,7 +38,7 @@ describe('mockInput sagas', () => {
       };
       const parsedMessage = { message: 'invalid processor', code: 'code'};
 
-      return expectSaga(_handlePreviewError, { e, resourceId })
+      expectSaga(_handlePreviewError, { e, resourceId })
         .put(actions.mockInput.receivedError(resourceId, parsedMessage))
         .run();
     });
@@ -51,16 +49,14 @@ describe('mockInput sagas', () => {
       };
       const parsedMessage = { message: 'invalid processor', code: 'code'};
 
-      const test1 = expectSaga(_handlePreviewError, { e, resourceId })
+      expectSaga(_handlePreviewError, { e, resourceId })
         .not.put(actions.mockInput.receivedError(resourceId, parsedMessage))
         .run();
 
       e.status = 500;
-      const test2 = expectSaga(_handlePreviewError, { e, resourceId })
+      expectSaga(_handlePreviewError, { e, resourceId })
         .not.put(actions.mockInput.receivedError(resourceId, parsedMessage))
         .run();
-
-      return test1 && test2;
     });
   });
   describe('_requestLookupMockInput saga', () => {
@@ -75,7 +71,7 @@ describe('mockInput sagas', () => {
         test: { limit: 10 },
       };
 
-      return expectSaga(_requestLookupMockInput, { resourceId, resourceType, flowId, refresh })
+      expectSaga(_requestLookupMockInput, { resourceId, resourceType, flowId, refresh })
         .provide([
           [call(getConstructedResourceObj, { resourceId, resourceType, formKey: undefined }),
             _pageProcessorDoc],
@@ -116,7 +112,7 @@ describe('mockInput sagas', () => {
         test: { limit: 10 },
       };
 
-      return expectSaga(_requestLookupMockInput, { resourceId, resourceType, flowId, refresh })
+      expectSaga(_requestLookupMockInput, { resourceId, resourceType, flowId, refresh })
         .provide([
           [call(getConstructedResourceObj, { resourceId, resourceType, formKey: undefined }),
             _pageProcessorDoc],
@@ -154,7 +150,7 @@ describe('mockInput sagas', () => {
       };
       const error = { status: 401, message: '{"code":"error code"}' };
 
-      return expectSaga(_requestLookupMockInput, { resourceId, resourceType, flowId, refresh })
+      expectSaga(_requestLookupMockInput, { resourceId, resourceType, flowId, refresh })
         .provide([
           [call(getConstructedResourceObj, { resourceId, resourceType, formKey: undefined }), { resourceId, flowId, resourceObj: restResource}],
           [matchers.call.fn(pageProcessorPreview), throwError(error)],
@@ -177,7 +173,7 @@ describe('mockInput sagas', () => {
         test: { limit: 10 },
       };
 
-      return expectSaga(_requestImportMockInput, { resourceId, resourceType, flowId, refresh })
+      expectSaga(_requestImportMockInput, { resourceId, resourceType, flowId, refresh })
         .provide([
           [call(getConstructedResourceObj, { resourceId, resourceType, formKey: undefined }),
             _pageProcessorDoc],
@@ -216,7 +212,7 @@ describe('mockInput sagas', () => {
         test: { limit: 10 },
       };
 
-      return expectSaga(_requestLookupMockInput, { resourceId, resourceType, flowId, refresh })
+      expectSaga(_requestLookupMockInput, { resourceId, resourceType, flowId, refresh })
         .provide([
           [call(getConstructedResourceObj, { resourceId, resourceType, formKey: undefined }),
             _pageProcessorDoc],
@@ -254,7 +250,7 @@ describe('mockInput sagas', () => {
       };
       const error = { status: 401, message: '{"code":"error code"}' };
 
-      return expectSaga(_requestLookupMockInput, { resourceId, resourceType, flowId, refresh })
+      expectSaga(_requestLookupMockInput, { resourceId, resourceType, flowId, refresh })
         .provide([
           [call(getConstructedResourceObj, { resourceId, resourceType, formKey: undefined }), { resourceId, flowId, resourceObj: restResource}],
           [matchers.call.fn(pageProcessorPreview), throwError(error)],
@@ -277,7 +273,7 @@ describe('mockInput sagas', () => {
     test('should call _requestLookupMockInput with refreshCache option incase of lookups', () => {
       const resourceId = 'import-123';
 
-      return expectSaga(requestMockInput, { resourceId, resourceType: 'exports', flowId, options: {refreshCache: refresh} })
+      expectSaga(requestMockInput, { resourceId, resourceType: 'exports', flowId, options: {refreshCache: refresh} })
         .provide([
           [call(_requestLookupMockInput, { resourceId, resourceType: 'exports', flowId, refresh }), {}],
           [select(selectors.isLookUpExport, { flowId, resourceId, resourceType: 'exports' }), true],
@@ -289,7 +285,7 @@ describe('mockInput sagas', () => {
     test('should call _requestImportMockInput with refreshCache option incase of imports', () => {
       const resourceId = 'import-123';
 
-      return expectSaga(requestMockInput, { resourceId, resourceType: 'imports', flowId, options: {refreshCache: refresh} })
+      expectSaga(requestMockInput, { resourceId, resourceType: 'imports', flowId, options: {refreshCache: refresh} })
         .provide([
           [call(_requestImportMockInput, { resourceId, resourceType: 'imports', flowId, refresh }), {}],
           [select(selectors.isLookUpExport, { flowId, resourceId, resourceType: 'imports' }), false],

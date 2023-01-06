@@ -1,4 +1,3 @@
-/* global describe, test, expect, jest */
 import React from 'react';
 import { screen } from '@testing-library/react';
 import ChildJobDetail from './ChildDetails';
@@ -27,7 +26,7 @@ async function initTableBodyContent({
   return renderWithProviders(ui);
 }
 
-describe('ChildJobDetail component Test cases', () => {
+describe('childJobDetail component Test cases', () => {
   runServer();
   test('should pass the intial render with default values', async () => {
     await initTableBodyContent();

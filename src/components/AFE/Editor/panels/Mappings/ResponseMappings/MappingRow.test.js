@@ -1,4 +1,3 @@
-/* global describe, test, expect, jest, afterEach */
 import React from 'react';
 import {screen, fireEvent} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -69,7 +68,7 @@ initialStore.getState().data.resources.imports = [
     _id: '62e6897976ce554057c0f28f',
   },
 ];
-describe('Response Mapping MappingRow test cases', () => {
+describe('response Mapping MappingRow test cases', () => {
   afterEach(() => {
     jest.clearAllMocks();
   });

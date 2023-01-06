@@ -1,10 +1,11 @@
-/* global describe, expect, jest, test, afterEach */
+
 import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { renderWithProviders } from '../../../test/test-utils';
 import DynaURI from './DynaURI_afe';
 import actions from '../../../actions';
+import { EXPORT_FILTERED_DATA_STAGE } from '../../../utils/flowData';
 
 const resourceId = 'export-123';
 let mockSave = jest.fn();
@@ -88,19 +89,19 @@ describe('test suite for DynaURI_afe field', () => {
     expect(openAfeBtn).toHaveAttribute('title', 'Open handlebars editor');
 
     userEvent.click(openAfeBtn);
-    expect(mockDispatchFn).toBeCalledWith(actions.editor.init('ftpfileNameStartsWith', 'handlebars', {
+    expect(mockDispatchFn).toHaveBeenCalledWith(actions.editor.init('ftpfileNameStartsWith', 'handlebars', {
       formKey: props.formKey,
       flowId: props.flowId,
       resourceId,
       resourceType: props.resourceType,
       fieldId: props.id,
-      stage: 'inputFilter',
+      stage: EXPORT_FILTERED_DATA_STAGE,
       onSave: expect.anything(),
       parentType: undefined,
       parentId: undefined,
       mapper2RowKey: props.mapper2RowKey,
     }));
-    expect(mockHistoryPush).toBeCalledWith(`/exports/edit/exports/${resourceId}/editor/ftpfileNameStartsWith`);
+    expect(mockHistoryPush).toHaveBeenCalledWith(`/exports/edit/exports/${resourceId}/editor/ftpfileNameStartsWith`);
   });
 
   test('should be able to save the changes in AFE', () => {
@@ -136,7 +137,7 @@ describe('test suite for DynaURI_afe field', () => {
     const openAfeBtn = screen.getByRole('button', {name: 'tooltip'});
 
     userEvent.click(openAfeBtn);
-    expect(mockDispatchFn).toBeCalledWith(actions.editor.init('ftpfileNameStartsWith', 'handlebars', {
+    expect(mockDispatchFn).toHaveBeenCalledWith(actions.editor.init('ftpfileNameStartsWith', 'handlebars', {
       formKey: props.formKey,
       flowId: props.flowId,
       resourceId,
@@ -148,9 +149,9 @@ describe('test suite for DynaURI_afe field', () => {
       parentId: undefined,
       mapper2RowKey: props.mapper2RowKey,
     }));
-    expect(mockHistoryPush).toBeCalledWith(`/imports/edit/imports/${resourceId}/editor/ftpfileNameStartsWith`);
+    expect(mockHistoryPush).toHaveBeenCalledWith(`/imports/edit/imports/${resourceId}/editor/ftpfileNameStartsWith`);
 
     userEvent.click(screen.getByRole('button', {name: 'Save'}));
-    expect(onFieldChange).toBeCalledWith(props.id, 'SampleRule');
+    expect(onFieldChange).toHaveBeenCalledWith(props.id, 'SampleRule');
   });
 });

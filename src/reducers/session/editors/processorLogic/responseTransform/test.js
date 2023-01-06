@@ -1,4 +1,3 @@
-/* global describe, test, expect, beforeEach */
 
 import processorLogic from './index';
 
@@ -136,32 +135,28 @@ describe('responseTransform processor logic', () => {
       editor.activeProcessor = 'javascript';
       const expectedPatches = {
         foregroundPatches: [{
-          patch: [{
-            op: 'replace',
-            path: '/sampleResponseData',
-            value: '{"id": 123}',
-          },
-          { op: 'replace',
-            path: '/responseTransform',
-            value: {
-              type: 'script',
-              expression: {
-                version: 1,
-                rules: [
-                  [{
-                    extract: 'id',
-                    generate: 'new-id',
-                  },
-                  {
-                    extract: 'name',
-                    generate: 'new-name',
-                  }],
-                ],
-              },
-              script: {
-                function: 'transform',
-              },
-            } }],
+          patch: [
+            { op: 'replace',
+              path: '/responseTransform',
+              value: {
+                type: 'script',
+                expression: {
+                  version: 1,
+                  rules: [
+                    [{
+                      extract: 'id',
+                      generate: 'new-id',
+                    },
+                    {
+                      extract: 'name',
+                      generate: 'new-name',
+                    }],
+                  ],
+                },
+                script: {
+                  function: 'transform',
+                },
+              } }],
           resourceType: 'exports',
           resourceId: '99999',
         }],
@@ -182,32 +177,28 @@ describe('responseTransform processor logic', () => {
       editor.activeProcessor = 'transform';
       const expectedPatches = {
         foregroundPatches: [{
-          patch: [{
-            op: 'replace',
-            path: '/sampleResponseData',
-            value: '{"id": 123}',
-          },
-          { op: 'replace',
-            path: '/responseTransform',
-            value: {
-              type: 'expression',
-              expression: {
-                version: 1,
-                rules: [
-                  [{
-                    extract: 'id',
-                    generate: 'new-id',
-                  },
-                  {
-                    extract: 'name',
-                    generate: 'new-name',
-                  }],
-                ],
-              },
-              script: {
-                function: 'transform',
-              },
-            } }],
+          patch: [
+            { op: 'replace',
+              path: '/responseTransform',
+              value: {
+                type: 'expression',
+                expression: {
+                  version: 1,
+                  rules: [
+                    [{
+                      extract: 'id',
+                      generate: 'new-id',
+                    },
+                    {
+                      extract: 'name',
+                      generate: 'new-name',
+                    }],
+                  ],
+                },
+                script: {
+                  function: 'transform',
+                },
+              } }],
           resourceType: 'exports',
           resourceId: '99999',
         }],

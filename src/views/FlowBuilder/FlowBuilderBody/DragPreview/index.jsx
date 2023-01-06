@@ -99,7 +99,7 @@ export default function CustomDragLayer() {
     isDragging: monitor.isDragging(),
   }));
 
-  if (!isDragging) {
+  if (!isDragging || item.noDrag) {
     return null;
   }
 

@@ -1,6 +1,6 @@
 import { omitBy } from 'lodash';
-import { updateExportAndImportFinalMetadata } from '../../../../../sagas/utils';
 import { convertToExport } from '../../../../../utils/assistant';
+import { safeParse } from '../../../../../utils/string';
 import { fieldMeta } from './util';
 
 export default function assistantDefinition(
@@ -9,7 +9,6 @@ export default function assistantDefinition(
   assistantData
 ) {
   return {
-    init: (fieldMeta, resource, flow, httpConnector) => updateExportAndImportFinalMetadata(fieldMeta, httpConnector, resource),
     ...fieldMeta({ resource, assistantData }),
     preSave: formValues => {
       const assistantMetadata = {
@@ -51,6 +50,11 @@ export default function assistantDefinition(
       if (exportDoc && !exportDoc['/assistant']) {
         exportDoc['/assistant'] = undefined;
         delete exportDoc['/assistant'];
+      }
+      otherFormValues['/mockOutput'] = safeParse(otherFormValues['/mockOutput']);
+
+      if (formValues['/assistantMetadata/exportType'] !== 'test') {
+        otherFormValues['/test/limit'] = undefined;
       }
 
       return { ...otherFormValues, ...exportDoc };

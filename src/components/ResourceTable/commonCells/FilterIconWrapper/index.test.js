@@ -1,9 +1,9 @@
-/* global describe, test, expect */
+
 import { render } from '@testing-library/react';
 import React from 'react';
 import FilterIconWrapper from '.';
 
-describe('Testsuite for FilterIconWrapper', () => {
+describe('testsuite for FilterIconWrapper', () => {
   test('should test the Filter Icon Wrapper when the selected prop is set to false', () => {
     render(
       <FilterIconWrapper selected={false} />

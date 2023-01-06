@@ -1,4 +1,4 @@
-/* global beforeAll,jest, afterAll, afterEach */
+/* eslint-disable jest/require-top-level-describe */
 import {setupServer} from 'msw/node';
 import path from 'path';
 import { cleanup } from '@testing-library/react';

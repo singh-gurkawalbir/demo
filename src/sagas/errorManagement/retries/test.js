@@ -1,4 +1,3 @@
-/* global describe, test */
 
 import { call, select } from 'redux-saga/effects';
 import { expectSaga } from 'redux-saga-test-plan';
@@ -33,7 +32,7 @@ describe('retries info related sagas', () => {
       };
       const error = { code: 422, message: 'unprocessable entity' };
 
-      return expectSaga(getRetryJobCollection, { flowId, resourceId })
+      expectSaga(getRetryJobCollection, { flowId, resourceId })
         .provide([
           [select(selectors.resource, 'imports', resourceId), undefined],
           [select(selectors.resource, 'flows', flowId), flow],
@@ -64,7 +63,7 @@ describe('retries info related sagas', () => {
       };
       const error = { code: 422, message: 'unprocessable entity' };
 
-      return expectSaga(getRetryJobCollection, { flowId, resourceId })
+      expectSaga(getRetryJobCollection, { flowId, resourceId })
         .provide([
           [select(selectors.resource, 'imports', resourceId), importResource],
           [select(selectors.resource, 'flows', flowId), flow],
@@ -94,7 +93,7 @@ describe('retries info related sagas', () => {
         _id: 'jobId',
       }];
 
-      return expectSaga(getRetryJobCollection, { flowId, resourceId })
+      expectSaga(getRetryJobCollection, { flowId, resourceId })
         .provide([
           [select(selectors.resource, 'imports', resourceId), undefined],
           [select(selectors.resource, 'flows', flowId), flow],
@@ -127,7 +126,7 @@ describe('retries info related sagas', () => {
       };
       const retriesList = [];
 
-      return expectSaga(getRetryJobCollection, { flowId, resourceId })
+      expectSaga(getRetryJobCollection, { flowId, resourceId })
         .provide([
           [select(selectors.resource, 'imports', resourceId), importResource],
           [select(selectors.resource, 'flows', flowId), flow],
@@ -155,7 +154,7 @@ describe('retries info related sagas', () => {
       };
       const error = { code: 422, message: 'unprocessable entity' };
 
-      return expectSaga(cancelRetry, { flowId, resourceId, jobId })
+      expectSaga(cancelRetry, { flowId, resourceId, jobId })
         .provide([
           [call(apiCallWithRetry, args), throwError(error)],
         ])
@@ -172,7 +171,7 @@ describe('retries info related sagas', () => {
         },
       };
 
-      return expectSaga(cancelRetry, { flowId, resourceId, jobId })
+      expectSaga(cancelRetry, { flowId, resourceId, jobId })
         .provide([
           [call(apiCallWithRetry, args)],
         ])

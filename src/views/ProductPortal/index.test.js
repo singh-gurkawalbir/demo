@@ -1,4 +1,4 @@
-/* global describe, expect, test */
+
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import ProductPortal from '.';
@@ -17,7 +17,7 @@ async function initProductPortal() {
 
 describe('test suite for product portal', () => {
   runServer();
-  test('Should able to test the product portal page', async () => {
+  test('should able to test the product portal page', async () => {
     await initProductPortal();
     const iframeTitle = document.querySelector('iframe[title="Product portal"]');
 

@@ -8,6 +8,7 @@ import { selectors } from '../../../../reducers';
 import { isNewId, multiStepSaveResourceTypes } from '../../../../utils/resource';
 import EditorDrawer from '../../../AFE/Drawer';
 import ExpandModeEditorDrawer from '../../../DynaForm/fields/DynaEditor/ExpandModeEditor/Drawer';
+import MockOutputDrawer from '../../../DynaForm/fields/DynaMockOutput/MockOutputDrawer';
 import PreviewPanel from '../../../PreviewPanel';
 import LoadResources from '../../../LoadResources';
 import ResourceFormWithStatusPanel from '../../../ResourceFormWithStatusPanel';
@@ -223,6 +224,7 @@ export default function Panel(props) {
         />
       <EditorDrawer />
       <ExpandModeEditorDrawer />
+      <MockOutputDrawer />
       <FlowStepRequestLogsDrawer flowId={flowId} resourceType={resourceType} resourceId={id} />
     </>
   );

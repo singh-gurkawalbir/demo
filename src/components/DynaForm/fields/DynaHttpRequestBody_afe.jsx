@@ -7,6 +7,7 @@ import { getValidRelativePath } from '../../../utils/routePaths';
 import { getParentResourceContext } from '../../../utils/connections';
 import DynaHandlebarPreview from './DynaHandlebarPreview';
 import { buildDrawerUrl, drawerPaths } from '../../../utils/rightDrawer';
+import { EXPORT_FILTERED_DATA_STAGE, IMPORT_POST_MAPPED_DATA_STAGE } from '../../../utils/flowData';
 
 export default function DynaHttpRequestBody_afe(props) {
   const {
@@ -44,7 +45,7 @@ export default function DynaHttpRequestBody_afe(props) {
     }
   }, [arrayIndex, id, onFieldChange, value]);
 
-  const flowDataStage = stage || (resourceType === 'exports' ? 'inputFilter' : 'postMapOutput');
+  const flowDataStage = stage || (resourceType === 'exports' ? EXPORT_FILTERED_DATA_STAGE : IMPORT_POST_MAPPED_DATA_STAGE);
 
   const handleEditorClick = useCallback(() => {
     dispatch(actions.editor.init(editorId, 'handlebars', {

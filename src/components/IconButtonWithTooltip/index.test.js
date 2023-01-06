@@ -1,4 +1,4 @@
-/* global describe, test, expect, jest */
+
 import React from 'react';
 import {screen} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -19,7 +19,7 @@ jest.mock('../HelpContent', () => ({
     )
   ,
 }));
-describe('IconButtonWithTooltip UI tests', () => {
+describe('iconButtonWithTooltip UI tests', () => {
   test('should render the button', () => {
     const props = { tooltipProps: {title: 'title'} };
 

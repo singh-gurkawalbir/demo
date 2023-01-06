@@ -1,4 +1,4 @@
-/* global describe, expect, test */
+
 import { selectors } from '.';
 import { USER_ACCESS_LEVELS, ACCOUNT_IDS, emptyList } from '../constants';
 
@@ -34,8 +34,8 @@ describe('selectors.oidcSSOClient test cases', () => {
       },
     };
 
-    expect(selectors.oidcSSOClient()).toBe(undefined);
-    expect(selectors.oidcSSOClient(sampleState)).toBe(undefined);
+    expect(selectors.oidcSSOClient()).toBeUndefined();
+    expect(selectors.oidcSSOClient(sampleState)).toBeUndefined();
   });
   test('should return client with type oidc from the list of sso clients', () => {
     const sampleState = {
@@ -73,7 +73,7 @@ describe('selectors.isSSOEnabled test cases', () => {
     expect(selectors.isSSOEnabled(sampleState)).toBeFalsy();
   });
 
-  test('should return true if the oidc sso client does not have disabled true ', () => {
+  test('should return true if the oidc sso client does not have disabled true', () => {
     const sampleState = {
       data: {
         resources: {
@@ -192,7 +192,7 @@ describe('selectors.userLinkedSSOClientId test cases', () => {
       },
     };
 
-    expect(selectors.userLinkedSSOClientId(sampleState)).toBe(undefined);
+    expect(selectors.userLinkedSSOClientId(sampleState)).toBeUndefined();
   });
 });
 describe('selectors.isUserAllowedOnlySSOSignIn test cases', () => {

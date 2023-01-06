@@ -1,4 +1,4 @@
-/* global describe, expect, jest, test */
+
 import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -41,11 +41,11 @@ describe('test suite for skipRetries field', () => {
 
     userEvent.click(checkBox);
     expect(checkBox).toBeChecked();
-    expect(onFieldChange).toBeCalledWith(props.id, true);
+    expect(onFieldChange).toHaveBeenCalledWith(props.id, true);
 
     userEvent.click(checkBox);
     expect(checkBox).not.toBeChecked();
-    expect(onFieldChange).toBeCalledWith(props.id, false);
+    expect(onFieldChange).toHaveBeenCalledWith(props.id, false);
   });
 
   test('should populate the previously saved value', () => {

@@ -1,4 +1,3 @@
-/* global describe, test */
 
 import { expectSaga } from 'redux-saga-test-plan';
 import { call, race, select, take } from 'redux-saga/effects';
@@ -25,13 +24,13 @@ import { commitStagedChanges } from '../resources';
 
 describe('Suitescript sagas', () => {
   describe('mappingInit saga', () => {
-    test('should dispatch initFailed in case there is no flow ', () => {
+    test('should dispatch initFailed in case there is no flow', () => {
       const ssLinkedConnectionId = 'c1';
       const integrationId = 'i1';
       const flowId = 'f1';
       const subRecordMappingId = undefined;
 
-      return expectSaga(mappingInit, { ssLinkedConnectionId, integrationId, flowId, subRecordMappingId })
+      expectSaga(mappingInit, { ssLinkedConnectionId, integrationId, flowId, subRecordMappingId })
         .provide([
           [select(selectors.suiteScriptFlowDetail, {
             integrationId,
@@ -58,7 +57,7 @@ describe('Suitescript sagas', () => {
       const flowId = 'f1';
       const subRecordMappingId = undefined;
 
-      return expectSaga(mappingInit, { ssLinkedConnectionId, integrationId, flowId, subRecordMappingId })
+      expectSaga(mappingInit, { ssLinkedConnectionId, integrationId, flowId, subRecordMappingId })
         .provide([
           [
             race({
@@ -80,7 +79,7 @@ describe('Suitescript sagas', () => {
       const flowId = 'f1';
       const subRecordMappingId = undefined;
 
-      return expectSaga(mappingInit, { ssLinkedConnectionId, integrationId, flowId, subRecordMappingId })
+      expectSaga(mappingInit, { ssLinkedConnectionId, integrationId, flowId, subRecordMappingId })
         .provide([
           [select(selectors.suiteScriptFlowDetail, {
             integrationId,
@@ -134,7 +133,7 @@ describe('Suitescript sagas', () => {
       const flowId = 'f1';
       const subRecordMappingId = undefined;
 
-      return expectSaga(mappingInit, { ssLinkedConnectionId, integrationId, flowId, subRecordMappingId })
+      expectSaga(mappingInit, { ssLinkedConnectionId, integrationId, flowId, subRecordMappingId })
         .provide([
           [select(selectors.suiteScriptFlowDetail, {
             integrationId,
@@ -194,7 +193,7 @@ describe('Suitescript sagas', () => {
       const flowId = 'f1';
       const subRecordMappingId = 'subRecordId';
 
-      return expectSaga(mappingInit, { ssLinkedConnectionId, integrationId, flowId, subRecordMappingId })
+      expectSaga(mappingInit, { ssLinkedConnectionId, integrationId, flowId, subRecordMappingId })
         .provide([
           [select(selectors.suiteScriptFlowDetail, {
             integrationId,
@@ -266,7 +265,7 @@ describe('Suitescript sagas', () => {
       const flowId = 'f1';
       const subRecordMappingId = undefined;
 
-      return expectSaga(mappingInit, { ssLinkedConnectionId, integrationId, flowId, subRecordMappingId })
+      expectSaga(mappingInit, { ssLinkedConnectionId, integrationId, flowId, subRecordMappingId })
         .provide([
           [select(selectors.suiteScriptFlowDetail, {
             integrationId,
@@ -320,7 +319,7 @@ describe('Suitescript sagas', () => {
       const flowId = 'f1';
       const subRecordMappingId = undefined;
 
-      return expectSaga(mappingInit, { ssLinkedConnectionId, integrationId, flowId, subRecordMappingId })
+      expectSaga(mappingInit, { ssLinkedConnectionId, integrationId, flowId, subRecordMappingId })
         .provide([
           [select(selectors.suiteScriptFlowDetail, {
             integrationId,
@@ -378,7 +377,7 @@ describe('Suitescript sagas', () => {
       const subRecordMappingId = undefined;
       const subRecordType = 's';
 
-      return expectSaga(fetchRequiredMappingData, { ssLinkedConnectionId, integrationId, flowId, subRecordMappingId })
+      expectSaga(fetchRequiredMappingData, { ssLinkedConnectionId, integrationId, flowId, subRecordMappingId })
         .provide([
           [select(selectors.suiteScriptNetsuiteMappingSubRecord,
             {ssLinkedConnectionId,
@@ -410,7 +409,7 @@ describe('Suitescript sagas', () => {
       const subRecordMappingId = undefined;
       const subRecordType = 's';
 
-      return expectSaga(fetchRequiredMappingData, { ssLinkedConnectionId, integrationId, flowId, subRecordMappingId })
+      expectSaga(fetchRequiredMappingData, { ssLinkedConnectionId, integrationId, flowId, subRecordMappingId })
         .provide([
           [select(selectors.suiteScriptNetsuiteMappingSubRecord,
             {ssLinkedConnectionId,
@@ -445,7 +444,7 @@ describe('Suitescript sagas', () => {
       const _connectionId = 'xyz';
       const sObjectType = 'parentSObject';
 
-      return expectSaga(refreshGenerates, { isInit: true})
+      expectSaga(refreshGenerates, { isInit: true})
         .provide([
           [select(selectors.suiteScriptMapping), {
             mappings: [],
@@ -500,7 +499,7 @@ describe('Suitescript sagas', () => {
       const _connectionId = 'xyz';
       const sObjectType = 'parentSObject';
 
-      return expectSaga(refreshGenerates, { isInit: false})
+      expectSaga(refreshGenerates, { isInit: false})
         .provide([
           [select(selectors.suiteScriptMapping), {
             mappings: [],
@@ -555,7 +554,7 @@ describe('Suitescript sagas', () => {
       const _connectionId = 'xyz';
       const sObjectType = 'parentSObject';
 
-      return expectSaga(refreshGenerates, { isInit: false})
+      expectSaga(refreshGenerates, { isInit: false})
         .provide([
           [select(selectors.suiteScriptMapping), {
             mappings: [],
@@ -620,7 +619,7 @@ describe('Suitescript sagas', () => {
       const _connectionId = 'xyz';
       const sObjectType = 'parentSObject';
 
-      return expectSaga(refreshGenerates, { isInit: false})
+      expectSaga(refreshGenerates, { isInit: false})
         .provide([
           [select(selectors.suiteScriptMapping), {
             mappings: [
@@ -685,7 +684,7 @@ describe('Suitescript sagas', () => {
       const _connectionId = 'xyz';
       const sObjectType = 'parentSObject';
 
-      return expectSaga(refreshGenerates, { isInit: true})
+      expectSaga(refreshGenerates, { isInit: true})
         .provide([
           [select(selectors.suiteScriptMapping), {
             mappings: [
@@ -750,7 +749,7 @@ describe('Suitescript sagas', () => {
       const _connectionId = 'xyz';
       const sObjectType = 'parentSObject';
 
-      return expectSaga(refreshGenerates, { isInit: false})
+      expectSaga(refreshGenerates, { isInit: false})
         .provide([
           [select(selectors.suiteScriptMapping), {
             mappings: [
@@ -815,7 +814,7 @@ describe('Suitescript sagas', () => {
       const _connectionId = 'xyz';
       const sObjectType = 'parentSObject';
 
-      return expectSaga(refreshGenerates, { isInit: false})
+      expectSaga(refreshGenerates, { isInit: false})
         .provide([
           [select(selectors.suiteScriptMapping), {
             mappings: [
@@ -887,7 +886,7 @@ describe('Suitescript sagas', () => {
       const subRecordMappingId = undefined;
       const connectionId = 'conn';
 
-      return expectSaga(saveMappings, {})
+      expectSaga(saveMappings, {})
         .provide([
           [select(selectors.suiteScriptMapping),
             {
@@ -980,7 +979,7 @@ describe('Suitescript sagas', () => {
       const subRecordMappingId = 'subRecordId';
       const connectionId = 'conn';
 
-      return expectSaga(saveMappings, {})
+      expectSaga(saveMappings, {})
         .provide([
           [select(selectors.suiteScriptMapping),
             {
@@ -1075,7 +1074,7 @@ describe('Suitescript sagas', () => {
       const subRecordMappingId = 'subRecordId';
       const connectionId = 'conn';
 
-      return expectSaga(saveMappings, {})
+      expectSaga(saveMappings, {})
         .provide([
           [select(selectors.suiteScriptMapping),
             {
@@ -1183,7 +1182,7 @@ describe('Suitescript sagas', () => {
       const connectionId = 'conn';
       // const importId = '_i_1';
 
-      return expectSaga(saveMappings, {})
+      expectSaga(saveMappings, {})
         .provide([
           [select(selectors.suiteScriptMapping),
             {
@@ -1289,7 +1288,7 @@ describe('Suitescript sagas', () => {
       const connectionId = 'conn';
       // const importId = '_i_1';
 
-      return expectSaga(saveMappings, {})
+      expectSaga(saveMappings, {})
         .provide([
           [select(selectors.suiteScriptMapping),
             {
@@ -1388,7 +1387,7 @@ describe('Suitescript sagas', () => {
   });
 
   describe('checkForIncompleteSFGenerateWhilePatch saga', () => {
-    test('should not trigger patchIncompleteGenerates action in case generate value  doesnt have _child_ ', () => {
+    test('should not trigger patchIncompleteGenerates action in case generate value  doesnt have _child_', () => {
       const ssLinkedConnectionId = 'c1';
       const integrationId = 'i1';
       const flowId = 'f1';
@@ -1397,7 +1396,7 @@ describe('Suitescript sagas', () => {
       const connectionId = 'conn';
       // const importId = '_i_1';
 
-      return expectSaga(checkForIncompleteSFGenerateWhilePatch, { field: 'generate', value: 'xyz' })
+      expectSaga(checkForIncompleteSFGenerateWhilePatch, { field: 'generate', value: 'xyz' })
         .provide([
           [select(selectors.suiteScriptMapping),
             {
@@ -1437,14 +1436,14 @@ describe('Suitescript sagas', () => {
         .run();
     });
 
-    test('should not trigger patchIncompleteGenerates action in case of non-salesforce import and value has _child_ ', () => {
+    test('should not trigger patchIncompleteGenerates action in case of non-salesforce import and value has _child_', () => {
       const ssLinkedConnectionId = 'c1';
       const integrationId = 'i1';
       const flowId = 'f1';
       const subRecordMappingId = undefined;
       const connectionId = 'conn';
 
-      return expectSaga(checkForIncompleteSFGenerateWhilePatch, { field: 'generate', value: '_child_' })
+      expectSaga(checkForIncompleteSFGenerateWhilePatch, { field: 'generate', value: '_child_' })
         .provide([
           [select(selectors.suiteScriptMapping),
             {
@@ -1492,7 +1491,7 @@ describe('Suitescript sagas', () => {
       const connectionId = 'conn';
       // const importId = '_i_1';
 
-      return expectSaga(checkForIncompleteSFGenerateWhilePatch, { field: 'generate', value: '_child_abcd' })
+      expectSaga(checkForIncompleteSFGenerateWhilePatch, { field: 'generate', value: '_child_abcd' })
         .provide([
           [select(selectors.suiteScriptMapping),
             {
@@ -1561,7 +1560,7 @@ describe('Suitescript sagas', () => {
       const subRecordMappingId = undefined;
       const key = 'key';
 
-      return expectSaga(checkForSFSublistExtractPatch, {key, value })
+      expectSaga(checkForSFSublistExtractPatch, {key, value })
         .provide([
           [select(selectors.suiteScriptMapping),
             {
@@ -1599,7 +1598,7 @@ describe('Suitescript sagas', () => {
       const subRecordMappingId = undefined;
       const key = 'key';
 
-      return expectSaga(updateImportSampleData, {key, value })
+      expectSaga(updateImportSampleData, {key, value })
         .provide([
           [select(selectors.suiteScriptMapping),
             {
@@ -1625,7 +1624,7 @@ describe('Suitescript sagas', () => {
       const subRecordMappingId = undefined;
       const key = 'key';
 
-      return expectSaga(updateImportSampleData, {key, value })
+      expectSaga(updateImportSampleData, {key, value })
         .provide([
           [select(selectors.suiteScriptMapping),
             {
@@ -1674,7 +1673,7 @@ describe('Suitescript sagas', () => {
       const subRecordMappingId = undefined;
       const key = 'key';
 
-      return expectSaga(updateImportSampleData, {key, value })
+      expectSaga(updateImportSampleData, {key, value })
         .provide([
           [select(selectors.suiteScriptMapping),
             {
@@ -1720,7 +1719,7 @@ describe('Suitescript sagas', () => {
     test('check not trigger patchField if user has not touched any form row yet', () => {
       const value = 'abcd';
 
-      return expectSaga(patchGenerateThroughAssistant, {value })
+      expectSaga(patchGenerateThroughAssistant, {value })
         .provide([
           [select(selectors.suiteScriptMapping),
             {
@@ -1740,7 +1739,7 @@ describe('Suitescript sagas', () => {
       const value = 'abcd';
       const lastModifiedRowKey = 'xyz';
 
-      return expectSaga(patchGenerateThroughAssistant, {value })
+      expectSaga(patchGenerateThroughAssistant, {value })
         .provide([
           [select(selectors.suiteScriptMapping),
             {
@@ -1763,7 +1762,7 @@ describe('Suitescript sagas', () => {
       const key = 'key1';
       const field = 'generate';
 
-      return expectSaga(requestPatchField, {key, field, value })
+      expectSaga(requestPatchField, {key, field, value })
         .provide([
           [select(selectors.suiteScriptMapping),
             {
@@ -1784,7 +1783,7 @@ describe('Suitescript sagas', () => {
       const key = 'key1';
       const field = 'generate';
 
-      return expectSaga(requestPatchField, {key, field, value })
+      expectSaga(requestPatchField, {key, field, value })
         .provide([
           [select(selectors.suiteScriptMapping),
             {
@@ -1805,7 +1804,7 @@ describe('Suitescript sagas', () => {
       const key = 'key1';
       const field = 'generate';
 
-      return expectSaga(requestPatchField, {key, field, value })
+      expectSaga(requestPatchField, {key, field, value })
         .provide([
           [select(selectors.suiteScriptMapping),
             {
@@ -1821,12 +1820,12 @@ describe('Suitescript sagas', () => {
         .run();
     });
 
-    test('should trigger delete action correctly[2]', () => {
+    test('should trigger delete action correctly[2] duplicate', () => {
       const value = '';
       const key = 'key1';
       const field = 'extract';
 
-      return expectSaga(requestPatchField, {key, field, value })
+      expectSaga(requestPatchField, {key, field, value })
         .provide([
           [select(selectors.suiteScriptMapping),
             {
@@ -1847,7 +1846,7 @@ describe('Suitescript sagas', () => {
       const key = 'key2';
       const field = 'extract';
 
-      return expectSaga(requestPatchField, {key, field, value })
+      expectSaga(requestPatchField, {key, field, value })
         .provide([
           [select(selectors.suiteScriptMapping),
             {
@@ -1868,7 +1867,7 @@ describe('Suitescript sagas', () => {
       const key = 'key1';
       const field = 'extract';
 
-      return expectSaga(requestPatchField, {key, field, value })
+      expectSaga(requestPatchField, {key, field, value })
         .provide([
           [select(selectors.suiteScriptMapping),
             {
@@ -1892,7 +1891,7 @@ describe('Suitescript sagas', () => {
       const field = 'extract';
       const newValidationErrMsg = undefined;
 
-      return expectSaga(validateSuitescriptMappings, {key, field, value })
+      expectSaga(validateSuitescriptMappings, {key, field, value })
         .provide([
           [select(selectors.suiteScriptMapping),
             {
@@ -1911,7 +1910,7 @@ describe('Suitescript sagas', () => {
     test('should set setValidation message if validation error occured', () => {
       const newValidationErrMsg = 'Extract Fields missing for field(s): jhg';
 
-      return expectSaga(validateSuitescriptMappings)
+      expectSaga(validateSuitescriptMappings)
         .provide([
           [select(selectors.suiteScriptMapping),
             {
@@ -1929,7 +1928,7 @@ describe('Suitescript sagas', () => {
     test('should trigger setValidationMsg action if validation error occured', () => {
       const newValidationErrMsg = 'Extract Fields missing for field(s): jhg';
 
-      return expectSaga(validateSuitescriptMappings)
+      expectSaga(validateSuitescriptMappings)
         .provide([
           [select(selectors.suiteScriptMapping),
             {
@@ -1947,7 +1946,7 @@ describe('Suitescript sagas', () => {
     test('should trigger setValidationMsg action with value=undefined if validation error is resolved', () => {
       const newValidationErrMsg = undefined;
 
-      return expectSaga(validateSuitescriptMappings)
+      expectSaga(validateSuitescriptMappings)
         .provide([
           [select(selectors.suiteScriptMapping),
             {

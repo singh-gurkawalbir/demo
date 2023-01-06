@@ -1,10 +1,7 @@
-/* global describe, test, expect, beforeEach, afterEach, jest */
-
 import React from 'react';
 import {screen} from '@testing-library/react';
 import { Router } from 'react-router-dom';
 import * as reactRedux from 'react-redux';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import {createMemoryHistory} from 'history';
 import userEvent from '@testing-library/user-event';
 import {renderWithProviders} from '../../../../test/test-utils';
@@ -218,20 +215,20 @@ describe('TileActions UI tests', () => {
 
     expect(utils.container).toBeEmptyDOMElement();
   });
-  test('should not display the clone integration option for IA ', () => {
+  test('should not display the clone integration option for IA', () => {
     props.tile.isStandlone = true;
     props.tile._connectorId = '5b61ae4aeb538642c26bdbe6';
     // props.tile.name = 'Salesforce - NetSuite Connector';
     initTileActions(props);
-    expect(screen.queryByText('CloneApp')).toBeNull;
-    expect(screen.getByText(/LESSOPTIONS/i)).toBeInTheDocument;
+    expect(screen.queryByText('CloneApp')).toBeNull();
+    expect(screen.getByText(/LESSOPTIONS/i)).toBeInTheDocument();
   });
-  test('should not display the clone integration option IA ', () => {
+  test('should not display the clone integration option IA', () => {
     props.tile.isStandlone = true;
     props.tile._connectorId = '5b61ae4aeb538642c26bdbe6';
     props.tile.name = 'Salesforce - NetSuite Connector';
     initTileActions(props);
-    expect(screen.getByText('CloneApp')).toBeInTheDocument;
-    expect(screen.queryByText(/LESSOPTIONS/i)).toBeNull;
+    expect(screen.getByText('CloneApp')).toBeInTheDocument();
+    expect(screen.queryByText(/LESSOPTIONS/i)).toBeNull();
   });
 });

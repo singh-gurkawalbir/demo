@@ -1,4 +1,3 @@
-/* global describe, test, expect, beforeEach */
 
 import processorLogic from './index';
 
@@ -99,10 +98,10 @@ describe('transform processor logic', () => {
   describe('dirty util', () => {
     test('should return true if original rule is different from new rule', () => {
       editor.rule[0].generate = 'changed-id';
-      expect(dirty(editor)).toEqual(true);
+      expect(dirty(editor)).toBe(true);
     });
     test('should return false if no changes to rule has been made', () => {
-      expect(dirty(editor)).toEqual(false);
+      expect(dirty(editor)).toBe(false);
     });
   });
   describe('preSaveValidate util', () => {

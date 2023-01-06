@@ -1,4 +1,3 @@
-/* global describe, test, expect, jest, afterEach */
 import React from 'react';
 import {screen} from '@testing-library/react';
 import {renderWithProviders, reduxStore} from '../../../../../../test/test-utils';
@@ -65,7 +64,7 @@ function getInitialStore() {
   return initialStore;
 }
 
-describe('Response mappings test cases', () => {
+describe('response mappings test cases', () => {
   afterEach(() => {
     jest.clearAllMocks();
   });
@@ -83,7 +82,7 @@ describe('Response mappings test cases', () => {
     initialStore.getState().session.responseMapping = { mapping: { status: 'error' }};
     const {utils} = renderWithProviders(<ResponseMapping />, {initialStore});
 
-    expect(utils.container.textContent).toEqual('Failed to load response mapping.');
+    expect(utils.container.textContent).toBe('Failed to load response mapping.');
   });
   test('should show the error message as Failed to load result mapping when status of response mapping is error and resouce type exports', () => {
     const initialStore = getInitialStore();
@@ -93,7 +92,7 @@ describe('Response mappings test cases', () => {
 
     const {utils} = renderWithProviders(<ResponseMapping editorId="someeditorId" />, {initialStore});
 
-    expect(utils.container.textContent).toEqual('Failed to load results mapping.');
+    expect(utils.container.textContent).toBe('Failed to load results mapping.');
   });
   test('should show the Import response mapping fields', () => {
     const initialStore = getInitialStore();

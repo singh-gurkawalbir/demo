@@ -4,6 +4,7 @@ export default {
     '/type': 'http',
     '/assistant': 'zohomail',
     '/http/auth/type': 'oauth',
+    '/http/auth/oauth/useIClientFields': false,
     '/http/mediaType': 'json',
     '/http/baseURI': 'https://mail.zoho.com/api',
     '/http/auth/token/location': 'header',

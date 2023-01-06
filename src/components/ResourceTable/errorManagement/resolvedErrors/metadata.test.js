@@ -1,4 +1,5 @@
-/* global test, expect, describe, jest */
+/* eslint-disable jest/expect-expect */
+
 import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -71,7 +72,7 @@ const props = {
   occurredAt: '2022-05-18T18:16:31.989Z',
 };
 
-describe("ResolvedErros table's metadata UI tests", () => {
+describe("resolvedErros table's metadata UI tests", () => {
   test('should verify the Select All column', () => {
     initFunction(props);
     headerIndex = indexOfCell('MockedSelectAll', 'columnheader');

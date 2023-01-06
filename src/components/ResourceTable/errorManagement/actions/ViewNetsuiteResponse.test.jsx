@@ -1,4 +1,4 @@
-/* global test, expect, describe, beforeEach, jest */
+
 import React from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { screen } from '@testing-library/react';
@@ -48,7 +48,7 @@ function renderFuntion(actionProps, data, errorType) {
   userEvent.click(screen.getByRole('button', {name: /more/i}));
 }
 
-describe('Error Management Netsuite Response UI tests ', () => {
+describe('error Management Netsuite Response UI tests', () => {
   beforeEach(() => {
     jest.resetAllMocks();
   });

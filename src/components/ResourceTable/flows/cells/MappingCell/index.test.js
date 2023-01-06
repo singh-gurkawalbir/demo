@@ -1,4 +1,4 @@
-/* global describe, test,expect, jest, afterEach */
+
 import React from 'react';
 import { screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
@@ -50,7 +50,7 @@ async function initMappingPage(props) {
   return renderWithProviders(ui, {initialStore});
 }
 
-describe('Mapping cell  ui test cases', () => {
+describe('mapping cell  ui test cases', () => {
   afterEach(() => {
     jest.clearAllMocks();
   });

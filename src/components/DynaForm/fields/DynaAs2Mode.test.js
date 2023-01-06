@@ -1,12 +1,12 @@
-/* global describe, test, expect */
+
 import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { renderWithProviders } from '../../../test/test-utils';
 import AS2url from './DynaAs2Mode';
 
-describe('AS2url tests', () => {
-  test('Should able to test AS2url ', async () => {
+describe('aS2url tests', () => {
+  test('should able to test AS2url', async () => {
     await renderWithProviders(<AS2url />);
     expect(screen.getByLabelText('AS2 mode')).toBeInTheDocument();
     userEvent.click(screen.getAllByRole('button')[0]);

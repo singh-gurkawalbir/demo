@@ -1,4 +1,3 @@
-/* global describe, test, expect, jest, beforeEach, afterEach, beforeAll, afterAll */
 import {
   getResourceSubType,
   getResourceSubTypeFromAdaptorType,
@@ -189,25 +188,25 @@ describe('resource util tests', () => {
 
   describe('tests for util rdbmsSubTypeToAppType', () => {
     test('should return correct appType for bigquery subtype', () => {
-      expect(rdbmsSubTypeToAppType('bigquery')).toEqual('bigquerydatawarehouse');
+      expect(rdbmsSubTypeToAppType('bigquery')).toBe('bigquerydatawarehouse');
     });
     test('should return correct appType for redshift subtype', () => {
-      expect(rdbmsSubTypeToAppType('redshift')).toEqual('redshiftdatawarehouse');
+      expect(rdbmsSubTypeToAppType('redshift')).toBe('redshiftdatawarehouse');
     });
     test('should return correct appType for snowflake subtype', () => {
-      expect(rdbmsSubTypeToAppType('snowflake')).toEqual('snowflake');
+      expect(rdbmsSubTypeToAppType('snowflake')).toBe('snowflake');
     });
   });
 
   describe('tests for util rdbmsAppTypeToSubType', () => {
     test('should return correct subtype for bigquerydatawarehouse apptype', () => {
-      expect(rdbmsAppTypeToSubType('bigquerydatawarehouse')).toEqual('bigquery');
+      expect(rdbmsAppTypeToSubType('bigquerydatawarehouse')).toBe('bigquery');
     });
     test('should return correct subtype for redshiftdatawarehouse apptype', () => {
-      expect(rdbmsAppTypeToSubType('redshiftdatawarehouse')).toEqual('redshift');
+      expect(rdbmsAppTypeToSubType('redshiftdatawarehouse')).toBe('redshift');
     });
     test('should return correct appType for snowflake subtype', () => {
-      expect(rdbmsAppTypeToSubType('snowflake')).toEqual('snowflake');
+      expect(rdbmsAppTypeToSubType('snowflake')).toBe('snowflake');
     });
   });
 
@@ -217,21 +216,21 @@ describe('resource util tests', () => {
         fieldChange: {
           fieldPath: '_connectionId',
         },
-      })).toEqual('connections');
+      })).toBe('connections');
     });
     test('should return flows for a given flow notification audit log', () => {
       expect(getNotificationResourceType({
         fieldChange: {
           fieldPath: '_flowId',
         },
-      })).toEqual('flows');
+      })).toBe('flows');
     });
     test('should return integrations for a given intgeration notification audit log', () => {
       expect(getNotificationResourceType({
         fieldChange: {
           fieldPath: '_integrationId',
         },
-      })).toEqual('integrations');
+      })).toBe('integrations');
     });
   });
 
@@ -354,26 +353,26 @@ describe('resource util tests', () => {
 
   describe('tests for functions isNewId', () => {
     test('should return undefined for undefined id value', () => {
-      expect(isNewId(undefined)).toEqual(undefined);
+      expect(isNewId(undefined)).toBeUndefined();
     });
 
     test('should return true for newId value', () => {
-      expect(isNewId('new12342')).toEqual(true);
+      expect(isNewId('new12342')).toBe(true);
     });
 
     test('should return false for id value', () => {
-      expect(isNewId('5f688b789daecd32740e2d5a')).toEqual(false);
+      expect(isNewId('5f688b789daecd32740e2d5a')).toBe(false);
     });
   });
   describe('tests for util getWebhookUrl', () => {
     test('should return empty string for empty arguments', () => {
-      expect(getWebhookUrl()).toEqual('');
+      expect(getWebhookUrl()).toBe('');
     });
 
     test('should return correct webhook url with resource id', () => {
       expect(getWebhookUrl({
         webHookProvider: 'aha',
-      }, '123')).toEqual(
+      }, '123')).toBe(
         'https://api.localhost/v1/exports/123/data'
       );
     });
@@ -382,7 +381,7 @@ describe('resource util tests', () => {
       expect(getWebhookUrl({
         webHookProvider: 'aha',
         webHookToken: 'abcd',
-      }, '123')).toEqual(
+      }, '123')).toBe(
         'https://api.localhost/v1/exports/123/abcd/data'
       );
     });
@@ -390,7 +389,7 @@ describe('resource util tests', () => {
       expect(getWebhookUrl({
         webHookProvider: 'aha',
         webHookToken: 'abcd',
-        webHookVerify: 'token'}, '123')).toEqual(
+        webHookVerify: 'token'}, '123')).toBe(
         'https://api.localhost/v1/exports/123/data'
       );
     });
@@ -399,7 +398,7 @@ describe('resource util tests', () => {
       expect(getWebhookUrl({
         webHookProvider: 'custom',
         webHookToken: 'abcd',
-        webHookVerify: 'secret_url'}, '123')).toEqual(
+        webHookVerify: 'secret_url'}, '123')).toBe(
         'https://api.localhost/v1/exports/123/abcd/data'
       );
     });
@@ -408,7 +407,7 @@ describe('resource util tests', () => {
       expect(getWebhookUrl({
         webHookProvider: 'custom',
         webHookToken: 'abcd',
-        webHookVerify: 'hmac'}, '123')).toEqual(
+        webHookVerify: 'hmac'}, '123')).toBe(
         'https://api.localhost/v1/exports/123/data'
       );
     });
@@ -417,7 +416,7 @@ describe('resource util tests', () => {
       expect(getWebhookUrl({
         webHookProvider: 'custom',
         webHookToken: 'abcd',
-        webHookVerify: 'basic'}, '123')).toEqual(
+        webHookVerify: 'basic'}, '123')).toBe(
         'https://api.localhost/v1/exports/123/data'
       );
     });
@@ -445,9 +444,9 @@ describe('resource util tests', () => {
         },
       }));
 
-      expect(getDomain()).toEqual('localhost.io');
-      expect(getDomainUrl()).toEqual('http://localhost.io:4000');
-      expect(getApiUrl()).toEqual('http://api.localhost.io:4000');
+      expect(getDomain()).toBe('localhost.io');
+      expect(getDomainUrl()).toBe('http://localhost.io:4000');
+      expect(getApiUrl()).toBe('http://api.localhost.io:4000');
     });
 
     test('should return correct urls for localhost (process.env.API_ENDPOINT set)', () => {
@@ -461,9 +460,9 @@ describe('resource util tests', () => {
         },
       }));
 
-      expect(getDomain()).toEqual('localhost.io');
-      expect(getDomainUrl()).toEqual('http://localhost.io:4000');
-      expect(getApiUrl()).toEqual('https://api.something');
+      expect(getDomain()).toBe('localhost.io');
+      expect(getDomainUrl()).toBe('http://localhost.io:4000');
+      expect(getApiUrl()).toBe('https://api.something');
       process.env.API_ENDPOINT = '';
     });
 
@@ -477,9 +476,9 @@ describe('resource util tests', () => {
         },
       }));
 
-      expect(getDomain()).toEqual('staging.integrator.io');
-      expect(getDomainUrl()).toEqual('https://staging.integrator.io');
-      expect(getApiUrl()).toEqual('https://api.staging.integrator.io');
+      expect(getDomain()).toBe('staging.integrator.io');
+      expect(getDomainUrl()).toBe('https://staging.integrator.io');
+      expect(getApiUrl()).toBe('https://api.staging.integrator.io');
     });
 
     test('should return correct urls for staging integrator (process.env.API_ENDPOINT set)', () => {
@@ -492,9 +491,9 @@ describe('resource util tests', () => {
         },
       }));
 
-      expect(getDomain()).toEqual('staging.integrator.io');
-      expect(getDomainUrl()).toEqual('https://staging.integrator.io');
-      expect(getApiUrl()).toEqual('https://api.staging.integrator.io');
+      expect(getDomain()).toBe('staging.integrator.io');
+      expect(getDomainUrl()).toBe('https://staging.integrator.io');
+      expect(getApiUrl()).toBe('https://api.staging.integrator.io');
       process.env.API_ENDPOINT = '';
     });
 
@@ -507,22 +506,22 @@ describe('resource util tests', () => {
         },
       }));
 
-      expect(getDomain()).toEqual('integrator.io');
-      expect(getDomainUrl()).toEqual('https://integrator.io');
-      expect(getApiUrl()).toEqual('https://api.integrator.io');
+      expect(getDomain()).toBe('integrator.io');
+      expect(getDomainUrl()).toBe('https://integrator.io');
+      expect(getApiUrl()).toBe('https://api.integrator.io');
     });
   });
   describe('tests for util isScriptIdUsedInResource', () => {
     test('should return false for empty resource and empty script id', () => {
-      expect(isScriptIdUsedInResource(undefined, undefined)).toEqual(false);
+      expect(isScriptIdUsedInResource(undefined, undefined)).toBe(false);
     });
 
     test('should return false for empty resource and script id', () => {
-      expect(isScriptIdUsedInResource(undefined, '123')).toEqual(false);
+      expect(isScriptIdUsedInResource(undefined, '123')).toBe(false);
     });
 
     test('should return false for resource and empty script id', () => {
-      expect(isScriptIdUsedInResource({}, undefined)).toEqual(false);
+      expect(isScriptIdUsedInResource({}, undefined)).toBe(false);
     });
 
     test('should return true for resource and script id', () => {
@@ -541,7 +540,7 @@ describe('resource util tests', () => {
             function: 'test',
           },
         },
-      }, '5432')).toEqual(true);
+      }, '5432')).toBe(true);
     });
 
     test('should return false for resource and script id', () => {
@@ -560,21 +559,21 @@ describe('resource util tests', () => {
             function: 'test',
           },
         },
-      }, '5432123')).toEqual(false);
+      }, '5432123')).toBe(false);
     });
   });
 
   describe('tests for util isFileDefinitionIdUsedInResource', () => {
     test('should return false for undefined resource and definition', () => {
-      expect(isFileDefinitionIdUsedInResource(undefined, undefined)).toEqual(false);
+      expect(isFileDefinitionIdUsedInResource(undefined, undefined)).toBe(false);
     });
 
     test('should return false for undefined resource', () => {
-      expect(isFileDefinitionIdUsedInResource(undefined, '1234')).toEqual(false);
+      expect(isFileDefinitionIdUsedInResource(undefined, '1234')).toBe(false);
     });
 
     test('should return false for undefined filedefinition id', () => {
-      expect(isFileDefinitionIdUsedInResource({}, undefined)).toEqual(false);
+      expect(isFileDefinitionIdUsedInResource({}, undefined)).toBe(false);
     });
 
     test('should return true for valid resource and filedefinition id', () => {
@@ -584,7 +583,7 @@ describe('resource util tests', () => {
             _fileDefinitionId: '1234',
           },
         },
-      }, '1234')).toEqual(true);
+      }, '1234')).toBe(true);
     });
 
     test('should return false for if filedefinition id not used', () => {
@@ -594,25 +593,25 @@ describe('resource util tests', () => {
             _fileDefinitionId: '1234',
           },
         },
-      }, '12345')).toEqual(false);
+      }, '12345')).toBe(false);
     });
   });
 
   describe('tests for util isValidResourceReference', () => {
     test('should return undefined for undefined inputs', () => {
-      expect(isValidResourceReference()).toEqual(undefined);
+      expect(isValidResourceReference()).toBeUndefined();
     });
 
     test('should return true for exports with valid inputs', () => {
-      expect(isValidResourceReference(null, '123', 'exports', '123')).toEqual(true);
+      expect(isValidResourceReference(null, '123', 'exports', '123')).toBe(true);
     });
 
     test('should return true for imports with valid inputs', () => {
-      expect(isValidResourceReference(null, '123', 'imports', '123')).toEqual(true);
+      expect(isValidResourceReference(null, '123', 'imports', '123')).toBe(true);
     });
 
     test('should return false for exports with invalid inputs', () => {
-      expect(isValidResourceReference(null, '1234', 'imports', '123')).toEqual(false);
+      expect(isValidResourceReference(null, '1234', 'imports', '123')).toBe(false);
     });
 
     test('should return true for scripts with valid inputs', () => {
@@ -633,7 +632,7 @@ describe('resource util tests', () => {
             },
           },
         },
-        null, 'scripts', '1234')).toEqual(true);
+        null, 'scripts', '1234')).toBe(true);
     });
 
     test('should return true for filedefinitions with valid inputs', () => {
@@ -645,13 +644,13 @@ describe('resource util tests', () => {
             },
           },
         },
-        null, 'filedefinitions', '1234')).toEqual(true);
+        null, 'filedefinitions', '1234')).toBe(true);
     });
   });
 
   describe('tests for util salesforceExportSelectOptions', () => {
     test('should return undefined for undefined input args', () => {
-      expect(salesforceExportSelectOptions()).toEqual(undefined);
+      expect(salesforceExportSelectOptions()).toBeUndefined();
     });
 
     test('should return date & datetime fields for option deltaExportDateFields', () => {
@@ -833,246 +832,246 @@ describe('resource util tests', () => {
 
   describe('tests for util isFileAdaptor', () => {
     test('should return false for undefined resource', () => {
-      expect(isFileAdaptor()).toEqual(false);
+      expect(isFileAdaptor()).toBe(false);
     });
 
     test('should return true for valid file resources', () => {
       expect(isFileAdaptor({
         type: 'simple',
-      })).toEqual(true);
+      })).toBe(true);
 
       expect(isFileAdaptor({
         adaptorType: 'S3Export',
-      })).toEqual(true);
+      })).toBe(true);
 
       expect(isFileAdaptor({
         adaptorType: 'S3Import',
-      })).toEqual(true);
+      })).toBe(true);
 
       expect(isFileAdaptor({
         adaptorType: 'FTPExport',
-      })).toEqual(true);
+      })).toBe(true);
 
       expect(isFileAdaptor({
         adaptorType: 'FTPImport',
-      })).toEqual(true);
+      })).toBe(true);
       expect(isFileAdaptor({
         adaptorType: 'HTTPExport',
         http: {
           type: 'file',
         },
-      })).toEqual(true);
+      })).toBe(true);
       expect(isFileAdaptor({
         adaptorType: 'HTTPImport',
         http: {
           type: 'file',
         },
-      })).toEqual(true);
+      })).toBe(true);
     });
 
     test('should return false for valid file resources', () => {
       expect(isFileAdaptor({
         adaptorType: 'SalesforceExport',
-      })).toEqual(false);
+      })).toBe(false);
 
       expect(isFileAdaptor({
         adaptorType: 'NetSuiteImport',
-      })).toEqual(false);
+      })).toBe(false);
 
       expect(isFileAdaptor({
         adaptorType: 'HTTPExport',
-      })).toEqual(false);
+      })).toBe(false);
 
       expect(isFileAdaptor({
         adaptorType: 'RestImport',
-      })).toEqual(false);
+      })).toBe(false);
     });
   });
 
   describe('tests for util isRealTimeOrDistributedResource', () => {
     test('should return false for undefined input', () => {
-      expect(isRealTimeOrDistributedResource()).toEqual(false);
+      expect(isRealTimeOrDistributedResource()).toBe(false);
     });
 
     test('should return true for valid realtime resources', () => {
       expect(isRealTimeOrDistributedResource({
         adaptorType: 'AS2Export',
-      }, 'exports')).toEqual(true);
+      }, 'exports')).toBe(true);
 
       expect(isRealTimeOrDistributedResource({
         type: 'distributed',
-      }, 'exports')).toEqual(true);
+      }, 'exports')).toBe(true);
 
       expect(isRealTimeOrDistributedResource({
         type: 'webhook',
-      }, 'exports')).toEqual(true);
+      }, 'exports')).toBe(true);
 
       expect(isRealTimeOrDistributedResource({
         adaptorType: 'SalesforceImport',
-      }, 'imports')).toEqual(true);
+      }, 'imports')).toBe(true);
 
       expect(isRealTimeOrDistributedResource({
         adaptorType: 'NetSuiteImport',
-      }, 'imports')).toEqual(true);
+      }, 'imports')).toBe(true);
     });
 
     test('should return false for not realtime resources', () => {
       expect(isRealTimeOrDistributedResource({
         adaptorType: 'AS2Import',
-      }, 'imports')).toEqual(false);
+      }, 'imports')).toBe(false);
 
       expect(isRealTimeOrDistributedResource({
         adaptorType: 'HTTPExport',
-      }, 'exports')).toEqual(false);
+      }, 'exports')).toBe(false);
 
       expect(isRealTimeOrDistributedResource({
         adaptorType: 'RestExport',
-      }, 'exports')).toEqual(false);
+      }, 'exports')).toBe(false);
     });
   });
 
   describe('tests for util resourceCategory', () => {
     test('should return export for undefined props', () => {
-      expect(resourceCategory()).toEqual('export');
+      expect(resourceCategory()).toBe('export');
     });
 
     test('should return category as dataloader for dataloader exp', () => {
       expect(resourceCategory({
         adaptorType: 'SimpleExport',
-      })).toEqual('dataLoader');
+      })).toBe('dataLoader');
     });
 
     test('should return category as listener for realtime exports', () => {
       expect(resourceCategory({
         type: 'distributed',
-      })).toEqual('listener');
+      })).toBe('listener');
 
       expect(resourceCategory({
         adaptorType: 'AS2Export',
-      })).toEqual('listener');
+      })).toBe('listener');
 
       expect(resourceCategory({
         type: 'webhook',
-      })).toEqual('listener');
+      })).toBe('listener');
     });
 
     test('should return category as transfer for blob resources', () => {
       expect(resourceCategory({
         type: 'blob',
         adaptorType: 'SalesforceExport',
-      })).toEqual('exportTransfer');
+      })).toBe('exportTransfer');
 
       expect(resourceCategory({
         type: 'blob',
         adaptorType: 'NetSuiteExport',
-      })).toEqual('exportTransfer');
+      })).toBe('exportTransfer');
 
       expect(resourceCategory({
         type: 'blob',
         adaptorType: 'HTTPExport',
-      })).toEqual('exportTransfer');
+      })).toBe('exportTransfer');
 
       expect(resourceCategory({
         type: 'blob',
         adaptorType: 'RESTExport',
-      })).toEqual('exportTransfer');
+      })).toBe('exportTransfer');
 
       expect(resourceCategory({
         adaptorType: 'FTPExport',
-      })).toEqual('exportTransfer');
+      })).toBe('exportTransfer');
 
       expect(resourceCategory({
         type: 'blob',
         adaptorType: 'S3Export',
-      })).toEqual('exportTransfer');
+      })).toBe('exportTransfer');
 
       expect(resourceCategory({
         blob: true,
         adaptorType: 'SalesforceImport',
-      })).toEqual('importTransfer');
+      })).toBe('importTransfer');
 
       expect(resourceCategory({
         blob: true,
         adaptorType: 'NetSuiteImport',
-      })).toEqual('importTransfer');
+      })).toBe('importTransfer');
 
       expect(resourceCategory({
         blob: true,
         adaptorType: 'HTTPImport',
-      })).toEqual('importTransfer');
+      })).toBe('importTransfer');
 
       expect(resourceCategory({
         blob: true,
         adaptorType: 'RESTImport',
-      })).toEqual('importTransfer');
+      })).toBe('importTransfer');
 
       expect(resourceCategory({
         adaptorType: 'FTPImport',
-      })).toEqual('importTransfer');
+      })).toBe('importTransfer');
 
       expect(resourceCategory({
         blob: true,
         adaptorType: 'S3Import',
-      })).toEqual('importTransfer');
+      })).toBe('importTransfer');
     });
   });
 
   describe('tests for util isBlobTypeResource', () => {
     test('should return undefined for undefined resource', () => {
-      expect(isBlobTypeResource()).toEqual(undefined);
+      expect(isBlobTypeResource()).toBeUndefined();
     });
 
     test('should return true for blob exports', () => {
       expect(isBlobTypeResource({
         type: 'blob',
-      })).toEqual(true);
+      })).toBe(true);
     });
 
     test('should return true for blob imports', () => {
       expect(isBlobTypeResource({
         blob: true,
-      })).toEqual(true);
+      })).toBe(true);
     });
 
     test('should return false for blob imports', () => {
       expect(isBlobTypeResource({
         type: 'distributed',
         blob: false,
-      })).toEqual(false);
+      })).toBe(false);
     });
   });
 
   describe('tests for util isAS2Resource', () => {
     test('should return false for undefined resource', () => {
-      expect(isAS2Resource()).toEqual(false);
+      expect(isAS2Resource()).toBe(false);
     });
 
     test('should return true for as2 exports', () => {
       expect(isAS2Resource({
         adaptorType: 'AS2Export',
-      })).toEqual(true);
+      })).toBe(true);
     });
 
     test('should return true for as2 imports', () => {
       expect(isAS2Resource({
         adaptorType: 'AS2Import',
-      })).toEqual(true);
+      })).toBe(true);
     });
 
     test('should return false for non-as2 imports', () => {
       expect(isAS2Resource({
         adaptorType: 'RESTImport',
-      })).toEqual(false);
+      })).toBe(false);
 
       expect(isAS2Resource({
         adaptorType: 'HTTPImport',
-      })).toEqual(false);
+      })).toBe(false);
     });
   });
 
   describe('tests for util isRestCsvMediaTypeExport', () => {
     test('should return false for undefined resource', () => {
-      expect(isRestCsvMediaTypeExport()).toEqual(false);
+      expect(isRestCsvMediaTypeExport()).toBe(false);
     });
 
     test('should return true for rest exports', () => {
@@ -1082,7 +1081,7 @@ describe('resource util tests', () => {
         rest: {
           mediaType: 'csv',
         },
-      })).toEqual(true);
+      })).toBe(true);
     });
 
     test('should return true for rest imports', () => {
@@ -1092,7 +1091,7 @@ describe('resource util tests', () => {
         rest: {
           mediaType: 'csv',
         },
-      })).toEqual(true);
+      })).toBe(true);
     });
 
     test('should return false for non-rest resources', () => {
@@ -1102,14 +1101,14 @@ describe('resource util tests', () => {
         rest: {
           mediaType: 'csv',
         },
-      })).toEqual(false);
+      })).toBe(false);
       expect(isRestCsvMediaTypeExport({
         adaptorType: 'HTTPImport',
       }, {
         rest: {
           mediaType: 'csv',
         },
-      })).toEqual(false);
+      })).toBe(false);
     });
 
     test('should return false for mediatype not equal to csv', () => {
@@ -1119,20 +1118,20 @@ describe('resource util tests', () => {
         rest: {
           mediaType: 'json',
         },
-      })).toEqual(false);
+      })).toBe(false);
       expect(isRestCsvMediaTypeExport({
         adaptorType: 'RESTImport',
       }, {
         rest: {
           mediaType: 'json',
         },
-      })).toEqual(false);
+      })).toBe(false);
     });
   });
 
   describe('tests for util isFlowResource', () => {
     test('should return false for undefined props', () => {
-      expect(isFlowResource()).toEqual(false);
+      expect(isFlowResource()).toBe(false);
     });
 
     test('should return true if resource is linked to flow', () => {
@@ -1147,7 +1146,7 @@ describe('resource util tests', () => {
         }, {
           _importId: '9875',
         }],
-      }, '1234', 'exports')).toEqual(true);
+      }, '1234', 'exports')).toBe(true);
 
       expect(isFlowResource({
         pageGenerators: [{
@@ -1160,7 +1159,7 @@ describe('resource util tests', () => {
         }, {
           _importId: '9875',
         }],
-      }, '9876', 'exports')).toEqual(true);
+      }, '9876', 'exports')).toBe(true);
 
       expect(isFlowResource({
         pageGenerators: [{
@@ -1173,7 +1172,7 @@ describe('resource util tests', () => {
         }, {
           _importId: '9875',
         }],
-      }, '9875', 'imports')).toEqual(true);
+      }, '9875', 'imports')).toBe(true);
     });
 
     test('should return false if resource is not linked to flow', () => {
@@ -1188,7 +1187,7 @@ describe('resource util tests', () => {
         }, {
           _importId: '9875',
         }],
-      }, '5432', 'exports')).toEqual(false);
+      }, '5432', 'exports')).toBe(false);
     });
   });
 
@@ -1212,23 +1211,23 @@ describe('resource util tests', () => {
         },
       }));
 
-      expect(getHelpUrlForConnector('5656f5e3bebf89c03f5dd77e')).toEqual(
+      expect(getHelpUrlForConnector('5656f5e3bebf89c03f5dd77e')).toBe(
         'https://integrator.io/zendesk/sso?return_to=https://docs.celigo.com/hc/en-us/categories/203963787'
       );
 
-      expect(getHelpUrlForConnector('5666865f67c1650309224904')).toEqual(
+      expect(getHelpUrlForConnector('5666865f67c1650309224904')).toBe(
         'https://integrator.io/zendesk/sso?return_to=https://docs.celigo.com/hc/en-us/categories/203958808'
       );
 
-      expect(getHelpUrlForConnector('58ee6029319bd30cc2fee160')).toEqual(
+      expect(getHelpUrlForConnector('58ee6029319bd30cc2fee160')).toBe(
         'https://integrator.io/zendesk/sso?return_to=https://docs.celigo.com/hc/en-us/sections/115000327151'
       );
 
-      expect(getHelpUrlForConnector('suitescript-salesforce-netsuite')).toEqual(
+      expect(getHelpUrlForConnector('suitescript-salesforce-netsuite')).toBe(
         'https://integrator.io/zendesk/sso?return_to=https://docs.celigo.com/hc/en-us/categories/203964847'
       );
 
-      expect(getHelpUrlForConnector('suitescript-svb-netsuite')).toEqual(
+      expect(getHelpUrlForConnector('suitescript-svb-netsuite')).toBe(
         'https://integrator.io/zendesk/sso?return_to=https://docs.celigo.com/hc/en-us/categories/203958788'
       );
     });
@@ -1242,23 +1241,23 @@ describe('resource util tests', () => {
         },
       }));
 
-      expect(getHelpUrlForConnector('54fa0b38a7044f9252000036')).toEqual(
+      expect(getHelpUrlForConnector('54fa0b38a7044f9252000036')).toBe(
         'https://integrator.io/zendesk/sso?return_to=https://docs.celigo.com/hc/en-us/categories/203963787'
       );
 
-      expect(getHelpUrlForConnector('5728756afee45a8d11e79cb7')).toEqual(
+      expect(getHelpUrlForConnector('5728756afee45a8d11e79cb7')).toBe(
         'https://integrator.io/zendesk/sso?return_to=https://docs.celigo.com/hc/en-us/categories/203958668'
       );
 
-      expect(getHelpUrlForConnector('592e8679c95560380ff1325c')).toEqual(
+      expect(getHelpUrlForConnector('592e8679c95560380ff1325c')).toBe(
         'https://integrator.io/zendesk/sso?return_to=https://docs.celigo.com/hc/en-us/sections/115000327151'
       );
 
-      expect(getHelpUrlForConnector('suitescript-salesforce-netsuite')).toEqual(
+      expect(getHelpUrlForConnector('suitescript-salesforce-netsuite')).toBe(
         'https://integrator.io/zendesk/sso?return_to=https://docs.celigo.com/hc/en-us/categories/203964847'
       );
 
-      expect(getHelpUrlForConnector('suitescript-svb-netsuite')).toEqual(
+      expect(getHelpUrlForConnector('suitescript-svb-netsuite')).toBe(
         'https://integrator.io/zendesk/sso?return_to=https://docs.celigo.com/hc/en-us/categories/203958788'
       );
     });
@@ -1272,15 +1271,15 @@ describe('resource util tests', () => {
         },
       }));
 
-      expect(getHelpUrlForConnector('5e8d6f912387e356b6769bc5')).toEqual(
+      expect(getHelpUrlForConnector('5e8d6f912387e356b6769bc5')).toBe(
         'https://integrator.io/zendesk/sso?return_to=https://docs.celigo.com/hc/en-us/categories/115000816227'
       );
 
-      expect(getHelpUrlForConnector('5e8d6ca02387e356b6769bb8')).toEqual(
+      expect(getHelpUrlForConnector('5e8d6ca02387e356b6769bb8')).toBe(
         'https://integrator.io/zendesk/sso?return_to=https://docs.celigo.com/hc/en-us/categories/203963787'
       );
 
-      expect(getHelpUrlForConnector('5e7d921e2387e356b67669ce')).toEqual(
+      expect(getHelpUrlForConnector('5e7d921e2387e356b67669ce')).toBe(
         'https://integrator.io/zendesk/sso?return_to=https://docs.celigo.com/hc/en-us/categories/360001649831'
       );
     });
@@ -1299,7 +1298,7 @@ describe('resource util tests', () => {
           _id: '1234',
           name: 'Shopify - NetSuite Connector',
         },
-      ])).toEqual(
+      ])).toBe(
         'https://integrator.io/zendesk/sso?return_to=https://docs.celigo.com/hc/en-us/categories/203963787'
       );
 
@@ -1308,7 +1307,7 @@ describe('resource util tests', () => {
           _id: '1234',
           name: 'Salesforce - NetSuite Connector (IO)',
         },
-      ])).toEqual(
+      ])).toBe(
         'https://integrator.io/zendesk/sso?return_to=https://docs.celigo.com/hc/en-us/categories/360001649831'
       );
 
@@ -1317,7 +1316,7 @@ describe('resource util tests', () => {
           _id: '1234',
           name: 'Cash Application Manager for NetSuite',
         },
-      ])).toEqual(
+      ])).toBe(
         'https://integrator.io/zendesk/sso?return_to=https://docs.celigo.com/hc/en-us/categories/203958648'
       );
     });
@@ -1350,7 +1349,7 @@ describe('resource util tests', () => {
         _id: '5e09c64142748f7b5a3380a3',
         _connectorId: '54fa0b38a7044f9252000036',
       },
-      ])).toEqual(
+      ])).toBe(
         'https://integrator.io/zendesk/sso?return_to=https://docs.celigo.com/hc/en-us/categories/203963787'
       );
     });
@@ -1371,7 +1370,7 @@ describe('resource util tests', () => {
         _id: '5e09c64142748f7b5a3380a3',
         _connectorId: '5656f5e3bebf89c03f5dd77e',
       },
-      ])).toEqual(
+      ])).toBe(
         'https://integrator.io/zendesk/sso?return_to=https://docs.celigo.com/hc/en-us/categories/203963787'
       );
     });
@@ -1379,12 +1378,12 @@ describe('resource util tests', () => {
 
   describe('tests for util getNetSuiteSubrecordLabel', () => {
     test('should return empty string for undefined props', () => {
-      expect(getNetSuiteSubrecordLabel()).toEqual('');
+      expect(getNetSuiteSubrecordLabel()).toBe('');
     });
     test('should return subrecord label for inventorydetail', () => {
       expect(getNetSuiteSubrecordLabel(
         'item[*]._celigo_inventory_details',
-        'inventorydetail')).toEqual(
+        'inventorydetail')).toBe(
         'Items : Inventory Details'
       );
     });
@@ -1392,7 +1391,7 @@ describe('resource util tests', () => {
     test('should return subrecord label for componentinventorydetail', () => {
       expect(getNetSuiteSubrecordLabel(
         'component[*]._celigo_comp_inventory_details',
-        'componentinventorydetail')).toEqual(
+        'componentinventorydetail')).toBe(
         'Components : Inventory Details'
       );
     });
@@ -1400,7 +1399,7 @@ describe('resource util tests', () => {
     test('should return subrecord label for landedcost', () => {
       expect(getNetSuiteSubrecordLabel(
         'inventory[*].landedcost',
-        'landedcost')).toEqual(
+        'landedcost')).toBe(
         'Adjustments : Landed Cost'
       );
     });
@@ -1518,7 +1517,7 @@ describe('resource util tests', () => {
 
   describe('tests for util updateMappingsBasedOnNetSuiteSubrecords', () => {
     test('should return undefined for empty props', () => {
-      expect(updateMappingsBasedOnNetSuiteSubrecords()).toEqual(undefined);
+      expect(updateMappingsBasedOnNetSuiteSubrecords()).toBeUndefined();
     });
 
     test('should update mapping based on line level subrecord', () => {
@@ -1729,7 +1728,7 @@ describe('resource util tests', () => {
 
   describe('tests for util isOauth', () => {
     test('should return false if conn doc is undefined', () => {
-      expect(isOauth()).toEqual(false);
+      expect(isOauth()).toBe(false);
     });
 
     test('should return true for oauth conns', () => {
@@ -1740,7 +1739,7 @@ describe('resource util tests', () => {
             authType: 'oauth',
           },
         }
-      )).toEqual(true);
+      )).toBe(true);
 
       expect(isOauth(
         {
@@ -1751,7 +1750,7 @@ describe('resource util tests', () => {
             },
           },
         }
-      )).toEqual(true);
+      )).toBe(true);
 
       expect(isOauth(
         {
@@ -1760,7 +1759,7 @@ describe('resource util tests', () => {
             oauth2FlowType: 'refreshToken',
           },
         }
-      )).toEqual(true);
+      )).toBe(true);
 
       expect(isOauth(
         {
@@ -1769,7 +1768,7 @@ describe('resource util tests', () => {
             authType: 'token-auto',
           },
         }
-      )).toEqual(true);
+      )).toBe(true);
     });
 
     test('should return false for non-oauth conns', () => {
@@ -1780,7 +1779,7 @@ describe('resource util tests', () => {
             authType: 'cookie',
           },
         }
-      )).toEqual(false);
+      )).toBe(false);
 
       expect(isOauth(
         {
@@ -1791,7 +1790,7 @@ describe('resource util tests', () => {
             },
           },
         }
-      )).toEqual(false);
+      )).toBe(false);
 
       expect(isOauth(
         {
@@ -1800,19 +1799,19 @@ describe('resource util tests', () => {
             authType: 'basic',
           },
         }
-      )).toEqual(false);
+      )).toBe(false);
 
       expect(isOauth(
         {
           type: 'rdbms',
         }
-      )).toEqual(false);
+      )).toBe(false);
     });
   });
 
   describe('tests for util getConnectionType', () => {
     test('should return undefined for undefined ip', () => {
-      expect(getConnectionType()).toEqual(undefined);
+      expect(getConnectionType()).toBeUndefined();
     });
 
     test('should return correct type for oauth conns', () => {
@@ -1824,7 +1823,7 @@ describe('resource util tests', () => {
             type: 'oauth',
           },
         },
-      })).toEqual('shopify-oauth');
+      })).toBe('shopify-oauth');
 
       expect(getConnectionType({
         assistant: 'acumatica',
@@ -1834,14 +1833,14 @@ describe('resource util tests', () => {
             type: 'oauth',
           },
         },
-      })).toEqual('acumatica-oauth');
+      })).toBe('acumatica-oauth');
 
       expect(getConnectionType({
         type: 'netsuite',
         netsuite: {
           authType: 'token-auto',
         },
-      })).toEqual('netsuite-oauth');
+      })).toBe('netsuite-oauth');
     });
 
     test('should return correct type for all conns', () => {
@@ -1853,7 +1852,7 @@ describe('resource util tests', () => {
             type: 'cookie',
           },
         },
-      })).toEqual('shopify');
+      })).toBe('shopify');
 
       expect(getConnectionType({
         assistant: 'acumatica',
@@ -1863,38 +1862,38 @@ describe('resource util tests', () => {
             type: 'cookie',
           },
         },
-      })).toEqual('acumatica');
+      })).toBe('acumatica');
 
       expect(getConnectionType({
         type: 'netsuite',
         netsuite: {
           authType: 'basic',
         },
-      })).toEqual('netsuite');
+      })).toBe('netsuite');
 
       expect(getConnectionType({
         type: 'salesforce',
-      })).toEqual('salesforce');
+      })).toBe('salesforce');
 
       expect(getConnectionType({
         type: 'rdbms',
-      })).toEqual('rdbms');
+      })).toBe('rdbms');
 
       expect(getConnectionType({
         type: 'rest',
         assistant: 'zendesk',
-      })).toEqual('zendesk');
+      })).toBe('zendesk');
 
       expect(getConnectionType({
         type: 'http',
         assistant: 'paypal',
-      })).toEqual('paypal');
+      })).toBe('paypal');
     });
   });
 
   describe('tests for util isTradingPartnerSupported', () => {
     test('should return false  if no parameters are passed', () => {
-      expect(isTradingPartnerSupported()).toEqual(false);
+      expect(isTradingPartnerSupported()).toBe(false);
     });
 
     test('should return true if trading partner licenses are present', () => {
@@ -1905,7 +1904,7 @@ describe('resource util tests', () => {
           totalNumberofProductionTradingPartners: 5,
         },
         accessLevel: 'manage',
-      })).toEqual(true);
+      })).toBe(true);
 
       expect(isTradingPartnerSupported({
         environment: 'production',
@@ -1914,7 +1913,7 @@ describe('resource util tests', () => {
           totalNumberofProductionTradingPartners: 5,
         },
         accessLevel: 'owner',
-      })).toEqual(true);
+      })).toBe(true);
 
       expect(isTradingPartnerSupported({
         environment: 'sandbox',
@@ -1923,7 +1922,7 @@ describe('resource util tests', () => {
           totalNumberofSandboxTradingPartners: 5,
         },
         accessLevel: 'owner',
-      })).toEqual(true);
+      })).toBe(true);
 
       expect(isTradingPartnerSupported({
         environment: 'sandbox',
@@ -1932,7 +1931,7 @@ describe('resource util tests', () => {
           totalNumberofSandboxTradingPartners: 5,
         },
         accessLevel: 'manage',
-      })).toEqual(true);
+      })).toBe(true);
     });
 
     test('should return false if trading partner licenses are not present or unaccessible', () => {
@@ -1943,7 +1942,7 @@ describe('resource util tests', () => {
           totalNumberofProductionTradingPartners: 5,
         },
         accessLevel: 'monitor',
-      })).toEqual(false);
+      })).toBe(false);
 
       expect(isTradingPartnerSupported({
         environment: 'production',
@@ -1952,7 +1951,7 @@ describe('resource util tests', () => {
           totalNumberofProductionTradingPartners: 0,
         },
         accessLevel: 'owner',
-      })).toEqual(false);
+      })).toBe(false);
 
       expect(isTradingPartnerSupported({
         environment: 'sandbox',
@@ -1961,7 +1960,7 @@ describe('resource util tests', () => {
           totalNumberofSandboxTradingPartners: 5,
         },
         accessLevel: 'monitor',
-      })).toEqual(false);
+      })).toBe(false);
 
       expect(isTradingPartnerSupported({
         environment: 'sandbox',
@@ -1970,13 +1969,13 @@ describe('resource util tests', () => {
           totalNumberofSandboxTradingPartners: 0,
         },
         accessLevel: 'manage',
-      })).toEqual(false);
+      })).toBe(false);
     });
   });
 
   describe('tests for util isNetSuiteBatchExport', () => {
     test('should return false if no parameters are passed', () => {
-      expect(isNetSuiteBatchExport()).toEqual(false);
+      expect(isNetSuiteBatchExport()).toBe(false);
     });
 
     test('should return true for ns batch exp docs', () => {
@@ -1984,7 +1983,7 @@ describe('resource util tests', () => {
         netsuite: {
           type: 'search',
         },
-      })).toEqual(true);
+      })).toBe(true);
 
       expect(isNetSuiteBatchExport({
         netsuite: {
@@ -1992,7 +1991,7 @@ describe('resource util tests', () => {
             searchId: '1234',
           },
         },
-      })).toEqual(true);
+      })).toBe(true);
     });
 
     test('should return false for ns realtime exp docs', () => {
@@ -2000,81 +1999,81 @@ describe('resource util tests', () => {
         netsuite: {
           type: 'distributed',
         },
-      })).toEqual(false);
+      })).toBe(false);
     });
   });
 
   describe('tests for util isQueryBuilderSupported', () => {
     test('should return false  if no parameters are passed', () => {
-      expect(isQueryBuilderSupported()).toEqual(false);
+      expect(isQueryBuilderSupported()).toBe(false);
     });
 
     test('should return true for query builder supported db imps', () => {
       expect(isQueryBuilderSupported({
         adaptorType: 'MongoDbImport',
-      })).toEqual(true);
+      })).toBe(true);
 
       expect(isQueryBuilderSupported({
         adaptorType: 'DynamodbImport',
-      })).toEqual(true);
+      })).toBe(true);
 
       expect(isQueryBuilderSupported({
         adaptorType: 'RDBMSImport',
         rdbms: {
           queryType: ['INSERT'],
         },
-      })).toEqual(true);
+      })).toBe(true);
 
       expect(isQueryBuilderSupported({
         adaptorType: 'RDBMSImport',
         rdbms: {
           queryType: ['UPDATE'],
         },
-      })).toEqual(true);
+      })).toBe(true);
     });
 
     test('should return false if query builder not supported', () => {
       expect(isQueryBuilderSupported({
         adaptorType: 'SalesforceImport',
-      })).toEqual(false);
+      })).toBe(false);
 
       expect(isQueryBuilderSupported({
         adaptorType: 'NetSuiteImport',
-      })).toEqual(false);
+      })).toBe(false);
 
       expect(isQueryBuilderSupported({
         adaptorType: 'RDBMSImport',
         rdbms: {
           queryType: ['INSERT', 'MERGE'],
         },
-      })).toEqual(false);
+      })).toBe(false);
 
       expect(isQueryBuilderSupported({
         adaptorType: 'RDBMSImport',
         rdbms: {
           queryType: ['UPDATE', 'BULK INSERT'],
         },
-      })).toEqual(false);
+      })).toBe(false);
     });
   });
 
   describe('tests for util getUserAccessLevelOnConnection', () => {
     test('should return undefined  if no parameters are passed', () => {
-      expect(getUserAccessLevelOnConnection()).toEqual(undefined);
+      expect(getUserAccessLevelOnConnection()).toBeUndefined();
     });
 
     test('should return same accessLevel if not of type tile', () => {
       expect(getUserAccessLevelOnConnection({
         accessLevel: 'manage',
-      })).toEqual('manage');
+      })).toBe('manage');
 
       expect(getUserAccessLevelOnConnection({
         accessLevel: 'monitor',
-      })).toEqual('monitor');
+      })).toBe('monitor');
 
       expect(getUserAccessLevelOnConnection({
         accessLevel: 'owner',
-      })).toEqual('owner');
+      })).toBe('owner');
     });
 
     test('should return accessLevel on tile with registered connection', () => {
@@ -2099,7 +2098,7 @@ describe('resource util tests', () => {
           _registeredConnectionIds: ['555'],
           _id: '3',
         },
-      ], '555')).toEqual('monitor');
+      ], '555')).toBe('monitor');
     });
 
     test('should return highest access if multiple tiles are registered', () => {
@@ -2127,7 +2126,7 @@ describe('resource util tests', () => {
           _registeredConnectionIds: ['555'],
           _id: '3',
         },
-      ], '111')).toEqual('manage');
+      ], '111')).toBe('manage');
     });
 
     test('should return undefined if no tile is registered or accessible', () => {
@@ -2155,7 +2154,7 @@ describe('resource util tests', () => {
           _registeredConnectionIds: ['555'],
           _id: '3',
         },
-      ], '666')).toEqual(undefined);
+      ], '666')).toBeUndefined();
 
       expect(getUserAccessLevelOnConnection({
         accessLevel: 'tile',
@@ -2181,22 +2180,22 @@ describe('resource util tests', () => {
           _registeredConnectionIds: ['555'],
           _id: '3',
         },
-      ], '555')).toEqual(undefined);
+      ], '555')).toBeUndefined();
     });
   });
   describe('getAssistantFromResource test cases', () => {
     test('should return the same assistant if it is not constantcontact', () => {
-      expect(getAssistantFromResource({assistant: 'square'})).toEqual('square');
-      expect(getAssistantFromResource({assistant: 'amazonmws'})).toEqual('amazonmws');
-      expect(getAssistantFromResource({assistant: 'zoom'})).toEqual('zoom');
-      expect(getAssistantFromResource({assistant: 'hubspot'})).toEqual('hubspot');
-      expect(getAssistantFromResource({assistant: 'zendesk'})).toEqual('zendesk');
+      expect(getAssistantFromResource({assistant: 'square'})).toBe('square');
+      expect(getAssistantFromResource({assistant: 'amazonmws'})).toBe('amazonmws');
+      expect(getAssistantFromResource({assistant: 'zoom'})).toBe('zoom');
+      expect(getAssistantFromResource({assistant: 'hubspot'})).toBe('hubspot');
+      expect(getAssistantFromResource({assistant: 'zendesk'})).toBe('zendesk');
     });
     test('should return constantcontact if the assistant is constantcontactv2', () => {
-      expect(getAssistantFromResource({assistant: 'constantcontactv2'})).toEqual('constantcontact');
+      expect(getAssistantFromResource({assistant: 'constantcontactv2'})).toBe('constantcontact');
     });
     test('should return constantcontact if the assistant is constantcontactv3', () => {
-      expect(getAssistantFromResource({assistant: 'constantcontactv3'})).toEqual('constantcontact');
+      expect(getAssistantFromResource({assistant: 'constantcontactv3'})).toBe('constantcontact');
     });
     test('should not throw error if resource is undefined', () => {
       expect(getAssistantFromResource()).toBeUndefined();
@@ -2219,28 +2218,28 @@ describe('resource util tests', () => {
     });
 
     test('should return empty string if link header is not present', () => {
-      expect(getNextLinkRelativeUrl(null)).toEqual('');
-      expect(getNextLinkRelativeUrl()).toEqual('');
+      expect(getNextLinkRelativeUrl(null)).toBe('');
+      expect(getNextLinkRelativeUrl()).toBe('');
     });
     test('should return empty string if link header is not of string type', () => {
-      expect(getNextLinkRelativeUrl({})).toEqual('');
+      expect(getNextLinkRelativeUrl({})).toBe('');
     });
     test('should return empty string if link header does not contain "next" relation', () => {
-      expect(getNextLinkRelativeUrl(prevLink)).toEqual('');
+      expect(getNextLinkRelativeUrl(prevLink)).toBe('');
     });
     test('should return relative url by extracting "next" url from link', () => {
-      expect(getNextLinkRelativeUrl(nextLink)).toEqual('/connections?after=xxxx');
+      expect(getNextLinkRelativeUrl(nextLink)).toBe('/connections?after=xxxx');
     });
     test('should return empty string in case of any exception', () => {
       const invalidLink = "['a', 'b', 'c']";
 
-      expect(getNextLinkRelativeUrl(invalidLink)).toEqual('');
+      expect(getNextLinkRelativeUrl(invalidLink)).toBe('');
     });
   });
 });
 
 describe('isOldRestAdaptor test cases', () => {
-  test('should return false in case of invalid resource ', () => {
+  test('should return false in case of invalid resource', () => {
     const resource = {
       _id: '123',
       adaptorType: 'HTTPExport',

@@ -1,4 +1,4 @@
-/* global describe, test, expect */
+
 import resourceSettings from '.';
 
 describe('getMetaData function Test cases', () => {
@@ -33,19 +33,21 @@ describe('getMetaData function Test cases', () => {
   });
 });
 
-test('should pass the initial render without useAsAnInitializeValue', async () => {
-  const response = resourceSettings.getMetaData({
-    value: {
-      isNotEditable: true,
-      generate: 'generate',
-    },
-    isCategoryMapping: true,
-    importResource: {
-      adaptorType: 'NetSuiteDistributedImport',
-    },
-  });
+describe('should pass the initial render without useAsAnInitializeValue test', () => {
+  test('should pass the initial render without useAsAnInitializeValue', async () => {
+    const response = resourceSettings.getMetaData({
+      value: {
+        isNotEditable: true,
+        generate: 'generate',
+      },
+      isCategoryMapping: true,
+      importResource: {
+        adaptorType: 'NetSuiteDistributedImport',
+      },
+    });
 
-  expect(response).not.toEqual({});
+    expect(response).not.toEqual({});
+  });
 });
 
 describe('getFormattedValue test cases', () => {

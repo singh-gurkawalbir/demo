@@ -1,4 +1,4 @@
-/* global describe, test, expect, */
+
 import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -121,7 +121,7 @@ const props = {
 //   default: () => <div>Form Fragment</div>,
 // }));
 
-describe('BoxComponents UI tests', () => {
+describe('boxComponents UI tests', () => {
   test('should pass the initial render for simple Tab component', () => {
     const Component = Components.TabComponentSimple;
 
@@ -139,7 +139,7 @@ describe('BoxComponents UI tests', () => {
     expect(screen.getByText('Script content')).toBeInTheDocument();
     expect(screen.getByText('Save')).toBeInTheDocument();
   });
-  test('should pass the initial render for  TabIAComponent', () => {
+  test('should pass the initial render for  TabIAComponent.', () => {
     const Component = Components.TabIAComponent;
 
     renderWithProviders(<Component {...props} />);
@@ -166,7 +166,7 @@ describe('BoxComponents UI tests', () => {
     expect(screen.getByText('General')).toBeInTheDocument();
     expect(screen.getByText('Script content')).toBeInTheDocument();
   });
-  test('should pass the initial render for  TabComponentWithoutSave Component', () => {
+  test('should pass the initial render for  TabComponentWithoutSave Component.', () => {
     const Component = Components.TabComponentWithoutSave;
 
     renderWithProviders(<Component {...props} />);

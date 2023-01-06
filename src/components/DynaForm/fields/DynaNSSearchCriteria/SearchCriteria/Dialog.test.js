@@ -1,4 +1,4 @@
-/* global describe, test, expect, jest */
+
 import React from 'react';
 import {
   screen,
@@ -51,7 +51,7 @@ function initSearchCriteriaDialog(props = {}) {
   return renderWithProviders(<SearchCriteriaDialog {...props} />, {initialStore});
 }
 
-describe('SearchCriteriaDialog UI tests', () => {
+describe('searchCriteriaDialog UI tests', () => {
   const mockOnSave = jest.fn();
   const mockOnClose = jest.fn();
   const mockOnRefresh = jest.fn();
@@ -106,7 +106,7 @@ describe('SearchCriteriaDialog UI tests', () => {
     userEvent.click(deleteButton);
 
     userEvent.click(screen.getByText('Save'));
-    expect(mockOnSave).toBeCalled();
+    expect(mockOnSave).toHaveBeenCalled();
   });
   test('should change the window size of the form when clicked on fullscreen button', () => {
     initSearchCriteriaDialog(props);

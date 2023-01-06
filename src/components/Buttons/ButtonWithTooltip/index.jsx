@@ -4,9 +4,10 @@ import { Tooltip } from '@material-ui/core';
 export default function ButtonWithTooltip({
   tooltipProps = {},
   children,
+  className,
 }) {
   return (
-    <Tooltip key={tooltipProps.title} {...tooltipProps}>
+    <Tooltip key={tooltipProps.title} {...tooltipProps} className={className}>
       <span>
         {children}
       </span>
