@@ -58,7 +58,6 @@ describe('dynaReportDateRange UI tests', () => {
     initDynaReportDateRange(props);
     expect(screen.getByText('Resource')).toBeInTheDocument();
     expect(screen.getByText('Select range')).toBeInTheDocument();
-    screen.debug(undefined, Infinity);
   });
   test('should display the date ranges when clicked on Select range option', () => {
     initDynaReportDateRange(props);
@@ -83,7 +82,6 @@ describe('dynaReportDateRange UI tests', () => {
     expect(screen.getByText(/End date/i)).toBeInTheDocument();
     expect(screen.getByText(/End time/i)).toBeInTheDocument();
     expect(screen.getByText('You can generate a report for up to 3 days of data.')).toBeInTheDocument();
-    screen.debug(undefined, Infinity);
   });
   test('should display the range in the field when range is already passed', () => {
     initDynaReportDateRange({...props,
@@ -94,7 +92,6 @@ describe('dynaReportDateRange UI tests', () => {
       },
     });
     expect(screen.getByText('09/12/22-10/12/22')).toBeInTheDocument();
-    screen.debug(undefined, Infinity);
   });
   test('should call the onFieldChange function passed in props when clicked on apply button', async () => {
     initDynaReportDateRange(props);
