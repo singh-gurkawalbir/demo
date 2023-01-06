@@ -46,12 +46,13 @@ export default function Help({ className, helpKey, helpText, escapeUnsecuredDoma
     event.stopPropagation();
     const isPopperSecondParent = event.target.parentElement?.parentElement?.dataset?.test === 'arrowpopper';
     const isPopperthirdParent = event.target.parentElement?.parentElement?.parentElement?.dataset?.test === 'arrowpopper';
+    const isSubmitButton = event.target.dataset?.test === 'submitButton';
 
     // if clicking interacting with feedback text field  or if clicking on No button
     // do not close popper
-    if (isPopperSecondParent || isPopperthirdParent || event.target.name === 'feedbackText' ||
+    if (!isSubmitButton && (isPopperSecondParent || isPopperthirdParent || event.target.name === 'feedbackText' ||
     event.target.textContent === 'No' ||
-    ['thumbsdownicon', 'noContentHelpful', 'title', 'feedback'].includes(event.target.dataset?.test)
+    ['thumbsdownicon', 'noContentHelpful', 'title', 'feedback'].includes(event.target.dataset?.test))
     ) return;
     setAnchorEl(null);
   }, []);
