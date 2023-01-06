@@ -1,4 +1,3 @@
-/* global describe, test, jest, expect */
 import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -61,7 +60,7 @@ function initToggleAFEButton(props = {}) {
 }
 
 describe('ToggleAFEButton UI tests', () => {
-  test('Should test the initial render toggle is set to AFE 2.0 ', () => {
+  test('Should test the initial render toggle is set to AFE 2.0', () => {
     initToggleAFEButton({editorId: 'httprelativeURI'});
     const afe2dot0Button = screen.getByRole('button', {name: 'AFE 2.0'});
 

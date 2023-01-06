@@ -1,4 +1,3 @@
-
 import React from 'react';
 import {
   screen, waitFor,
@@ -81,13 +80,18 @@ describe('dynaReportDateRange UI tests', () => {
     expect(screen.getByText(/Start time/i)).toBeInTheDocument();
     expect(screen.getByText(/End date/i)).toBeInTheDocument();
     expect(screen.getByText(/End time/i)).toBeInTheDocument();
+    const months = screen.getAllByText(/[a-zA-Z]{3} [0-9]{4}\s*/g);
+
+    expect(months).toHaveLength(3);
+    expect(screen.getAllByText('Sun')).toHaveLength(2);
+    expect(screen.getAllByText('Sat')).toHaveLength(2);
     expect(screen.getByText('You can generate a report for up to 3 days of data.')).toBeInTheDocument();
   });
   test('should display the range in the field when range is already passed', () => {
     initDynaReportDateRange({...props,
       value: {
-        startDate: '2022-12-09T18:30:00.000Z',
-        endDate: '2022-12-10T18:55:13.184Z',
+        startDate: '2022-12-09T18:30:00.000',
+        endDate: '2022-12-10T18:55:13.184',
         preset: 'custom',
       },
     });
