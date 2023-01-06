@@ -146,7 +146,8 @@ export default function HelpContent({ children, title, caption, fieldId, resourc
           />
           <OutlinedButton
             className={classes.feedbackActionButton}
-            onClick={handleSendFeedbackText}>
+            onClick={handleSendFeedbackText}
+            data-test="submitButton">
             Submit
           </OutlinedButton>
         </>
