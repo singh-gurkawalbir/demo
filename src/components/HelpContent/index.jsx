@@ -60,10 +60,14 @@ const useStyles = makeStyles(theme => ({
     },
   },
   feedbackTextField: {
-    marginBottom: theme.spacing(1),
+    margin: theme.spacing(1, 0),
     width: '100%',
     '& > div': {
       padding: theme.spacing(1.5),
+    },
+    '& .MuiInputBase-input::placeholder': {
+      color: theme.palette.secondary.light,
+      opacity: 1,
     },
   },
   actionWrapper: {
