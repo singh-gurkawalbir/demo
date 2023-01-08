@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { screen, waitFor } from '@testing-library/react';
 import * as reactRedux from 'react-redux';
@@ -67,12 +66,10 @@ describe('dynaSelectOptionsGenerator UI tests', () => {
     const dropdown = document.querySelector('[class="MuiSelect-nativeInput"]');
 
     expect(dropdown).toBeInTheDocument();
-    screen.debug();
   });
   test('should display the html error message when ignoreValidation prop is false', () => {
     initDynaSelectOptionsGenerator(props);
     expect(screen.getByText('Test Error Message')).toBeInTheDocument();
-    screen.debug();
   });
   test('should make a dispatch call when clicked on refresh', async () => {
     initDynaSelectOptionsGenerator(props);

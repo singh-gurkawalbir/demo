@@ -30,6 +30,22 @@ export default {
       delete retValues['/delta/dateField'];
     }
 
+    if (retValues['/dynamodb/expressionAttributeNames']) {
+      try {
+        retValues['/dynamodb/expressionAttributeNames'] = JSON.stringify(JSON.parse(retValues['/dynamodb/expressionAttributeNames']));
+      } catch (ex) {
+        // do nothing
+      }
+    }
+
+    if (retValues['/dynamodb/expressionAttributeValues']) {
+      try {
+        retValues['/dynamodb/expressionAttributeValues'] = JSON.stringify(JSON.parse(retValues['/dynamodb/expressionAttributeValues']));
+      } catch (ex) {
+        // do nothing
+      }
+    }
+
     retValues['/mockOutput'] = safeParse(retValues['/mockOutput']);
 
     return {
