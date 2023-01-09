@@ -2,11 +2,14 @@ import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Position } from 'react-flow-renderer';
 import { Badge, IconButton, Tooltip } from '@material-ui/core';
+import { useSelector } from 'react-redux';
 import clsx from 'clsx';
 import Icon from '../../../../../components/icons/BranchIcon';
 import DefaultHandle from '../Handles/DefaultHandle';
 import { useHandleRouterClick } from '../../../hooks';
 import CeligoTruncate from '../../../../../components/CeligoTruncate';
+import { useFlowContext } from '../../Context';
+import { selectors } from '../../../../../reducers';
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -47,6 +50,10 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function RouterNode({id: routerId, data = {}}) {
+  const { flowId } = useFlowContext();
+  const isFlowSaveInProgress = useSelector(state =>
+    selectors.isFlowSaveInProgress(state, flowId)
+  );
   const { routeRecordsTo, name = '' } = data;
   const badgeContent = routeRecordsTo === 'all_matching_branches' ? 'ALL' : '1ST';
   const classes = useStyles();
@@ -65,6 +72,7 @@ export default function RouterNode({id: routerId, data = {}}) {
           data-test={`router-${routerId}`}
           className={classes.button}
           onClick={handleRouterClick}
+          disabled={isFlowSaveInProgress}
         >
           <Badge
             badgeContent={badgeContent}

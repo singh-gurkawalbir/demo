@@ -74,12 +74,16 @@ export default function LookupDrawer({
   const { isExact } = matchPath(location.pathname, rootLookupPath) || {};
 
   let drawerTitle;
+  let showBackButton;
 
   if (location.pathname.includes('lookup/add')) {
     drawerTitle = 'Create lookup';
+    showBackButton = !!value?.length;
   } else if (location.pathname.includes('lookup/edit')) {
+    showBackButton = true;
     drawerTitle = 'Edit lookup';
   } else {
+    showBackButton = false;
     drawerTitle = 'Manage lookups';
   }
 
@@ -155,7 +159,7 @@ export default function LookupDrawer({
       height="tall"
       width="default"
       onClose={history.goBack}>
-      <DrawerHeader title={drawerTitle} handleClose={handleClose} showBackButton />
+      <DrawerHeader title={drawerTitle} handleClose={handleClose} showBackButton={showBackButton} />
       <DrawerContent>
         <Switch>
           <Route

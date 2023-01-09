@@ -40,6 +40,12 @@ export default {
     }
     newValues['/mockResponse'] = safeParse(newValues['/mockResponse']);
 
+    if (!newValues['/s3/serverSideEncryptionType']) {
+      newValues['/s3/serverSideEncryptionType'] = undefined;
+    } else {
+      newValues['/s3/serverSideEncryptionType'] = 'AES256';
+    }
+
     return {
       ...newValues,
     };
@@ -73,6 +79,7 @@ export default {
           'file.xml.body',
           'file.json.body',
           'file.lookups',
+          's3.serverSideEncryptionType',
         ],
       },
       {
