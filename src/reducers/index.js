@@ -1128,15 +1128,15 @@ selectors.requestOptionsOfDashboardJobs = (state, {filterKey, nextPageURL, integ
   let allFlowIds = [];
   const {startDate, endDate, preset} = getSelectedRange(jobFilter?.range) || {};
   const currentDate = new Date();
-  const isSameDay = () => {
+  const isSameDay = () =>{
     return !!(endDate.getFullYear() === currentDate.getFullYear() &&
       endDate.getMonth() === currentDate.getMonth() &&
       endDate.getDate() === currentDate.getDate());
-  };
+  }
   if (filterKey === FILTER_KEYS_AD.COMPLETED) {
     if (startDate) { body.time_gt = startDate.getTime(); }
-     // Parameter time_lte is expected only for custom date range when the end date is not same as the current date
-     // Ref: IO-24960
+    // Parameter time_lte is expected only for custom date range when the end date is not same as the current date
+    // Ref: IO-24960
     if (preset === 'custom' && !isSameDay()) {
       // When current date is selected in custom date filter, the end date considers time to be the last minute 23:59
       // which could be future date for the user as the time does not match
