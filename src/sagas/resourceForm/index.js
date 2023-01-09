@@ -825,7 +825,9 @@ export function* initFormValues({
   flowId,
   integrationId,
   fieldMeta: customFieldMeta,
+  parentConnectionId,
 }) {
+  const applicationFieldState = yield select(selectors.fieldState, getAsyncKey('connections', parentConnectionId), 'application');
   const developerMode = yield select(selectors.developerMode);
   const accountOwner = yield select(selectors.accountOwner);
   const resource = (yield select(
@@ -939,7 +941,7 @@ export function* initFormValues({
         });
       }
       // standard form init fn...
-      finalFieldMeta = defaultFormAssets.init(fieldMeta, newResource, flow, httpConnectorData);
+      finalFieldMeta = defaultFormAssets.init(fieldMeta, newResource, flow, httpConnectorData, applicationFieldState?.value);
     }
 
     // console.log('finalFieldMeta', finalFieldMeta);

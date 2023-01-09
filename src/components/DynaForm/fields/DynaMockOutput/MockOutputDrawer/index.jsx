@@ -171,7 +171,7 @@ function MockOutputDrawerContent() {
       <DrawerFooter>
         <FilledButton
           data-test="saveContent"
-          disabled={value === editorContent || errorMessage}
+          disabled={value === editorContent || !!errorMessage}
           onClick={handleDone}>
           Done
         </FilledButton>

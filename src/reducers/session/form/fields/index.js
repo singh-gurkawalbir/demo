@@ -19,10 +19,11 @@ export default function fields(state = {}, action) {
     visible,
     disabled,
     required,
+    touched,
     isValid,
     errorMessages,
   } = fieldProps;
-  const fieldStateProps = { visible, required, disabled, isValid };
+  const fieldStateProps = { visible, required, disabled, isValid, touched };
 
   return produce(state, draft => {
     if (!draft[formKey]) {

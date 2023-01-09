@@ -157,14 +157,16 @@ export const isSuiteScriptHooksSupportedForResource = (
   // Invalid for Web services NS type
   if (resourceType === 'exports' && netsuite.type === 'search') return false;
 
+  if (resourceType === 'imports') return false;
+
   return true;
 };
 
-export const getSelectedHooksPatchSet = (selectedHooks, resource) => {
+export const getSelectedHooksPatchSet = (selectedHooks, resource, resourceType) => {
   const { hooks, suiteScriptHooks } = selectedHooks;
   const patchSet = [{ op: 'replace', path: '/hooks', value: hooks }];
 
-  if (isSuiteScriptHooksSupportedForResource(resource)) {
+  if (isSuiteScriptHooksSupportedForResource(resource, resourceType)) {
     // Sample Paths for NS Export is : netsuite/distributed/hooks incase of real time NS Export
     // Path for NS Import is : '/netsuite_da/hooks' as netsuite_da is the only sub doc for NS Import
     // eslint-disable-next-line camelcase

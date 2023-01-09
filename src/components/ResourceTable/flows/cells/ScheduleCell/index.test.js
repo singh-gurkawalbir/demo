@@ -51,7 +51,7 @@ describe('Shecdule cell UI test cases', () => {
   });
   test('should show tooltip for configure all steps', () => {
     initScheduleCell({flowAttributes: {someflowId: {allowSchedule: true, type: 'Scheduled'}}}, initialStore);
-    expect(screen.getByTitle('Configure all steps to allow scheduling your flow')).toBeInTheDocument();
+    expect(screen.getByTitle('Remove or configure all unconfigured flow steps to edit the flow schedule')).toBeInTheDocument();
     const button = screen.getByRole('button');
 
     expect(button).toHaveAttribute('aria-disabled', 'true');
@@ -61,7 +61,7 @@ describe('Shecdule cell UI test cases', () => {
   test('should show tooltip for configure schedule', () => {
     initScheduleCell({flowAttributes: {someflowId: {allowSchedule: true, type: 'Scheduled'}}});
 
-    expect(screen.getByTitle('Change schedule')).toBeInTheDocument();
+    expect(screen.getByTitle('Add schedule')).toBeInTheDocument();
     const button = screen.getByRole('button');
 
     expect(button).toHaveAttribute('href', '/integrations/integration_id/flows/someflowId/schedule');

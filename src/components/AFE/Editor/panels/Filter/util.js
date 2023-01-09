@@ -108,6 +108,14 @@ export function convertIOFilterExpression(filterExpression = [], context) {
                 }
               } while (!dataTypeFound);
 
+              if (i === 2 && exp[i][0].toLowerCase() === 'epochtime') {
+                temp.type = 'value';
+                temp.value = exp[i]?.[1];
+                temp.dataType = 'epochtime';
+                // eslint-disable-next-line no-continue
+                continue;
+              }
+
               temp.dataType = tempExp[0].toLowerCase();
               temp.type = 'field';
               [, [, temp.field]] = tempExp;
@@ -266,10 +274,7 @@ export function generateIOFilterExpression(rules, context) {
               lhs = Number.isNaN(parseFloat(rr.data.lhs.value)) ? rr.data.lhs.value : parseFloat(rr.data.lhs.value);
               break;
             case 'boolean':
-              lhs =
-                  lhs &&
-                  lhs.toString() &&
-                  lhs.toString().toLowerCase() === 'true';
+              lhs = !['0', 'false'].includes(lhs?.toString()?.toLowerCase());
               break;
             default:
           }
@@ -314,10 +319,10 @@ export function generateIOFilterExpression(rules, context) {
                 rhs = Number.isNaN(parseFloat(rr.data.rhs.value)) ? rr.data.rhs.value : parseFloat(rr.data.rhs.value);
                 break;
               case 'boolean':
-                rhs =
-                    rhs &&
-                    rhs.toString() &&
-                    rhs.toString().toLowerCase() === 'true';
+                rhs = !['0', 'false'].includes(rhs?.toString()?.toLowerCase());
+                break;
+              case 'epochtime':
+                rhs = ['epochtime', rhs];
                 break;
               default:
             }

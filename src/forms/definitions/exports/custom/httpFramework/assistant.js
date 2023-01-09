@@ -69,6 +69,11 @@ export default function assistantDefinition(
       if (formValues['/assistantMetadata/exportType'] !== 'test') {
         otherFormValues['/test/limit'] = undefined;
       }
+      if (formValues['/assistantMetadata/operation']) {
+        exportDoc['/http/_httpConnectorEndpointId'] = formValues['/assistantMetadata/operation'];
+        exportDoc['/http/_httpConnectorResourceId'] = formValues['/assistantMetadata/resource'];
+        exportDoc['/http/_httpConnectorVersionId'] = formValues['/assistantMetadata/version'];
+      }
 
       return { ...otherFormValues, ...exportDoc };
     },

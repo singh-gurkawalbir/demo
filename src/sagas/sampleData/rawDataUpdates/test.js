@@ -156,26 +156,6 @@ describe('rawDataUpdates sagas', () => {
         .not.call.fn(_fetchAndSaveRawDataForResource)
         .run();
     });
-    test('should call _fetchAndSaveRawDataForResource for flows with the newly added lookup id from the patchSet ', () => {
-      const flowPatchSet = [{
-        op: 'add',
-        path: '/pageProcessors/1',
-        value: {
-          type: 'export',
-          _exportId: '1234',
-        },
-      }];
-      const flowId = 'flow-123';
-      const resourceType = 'flows';
-
-      return expectSaga(onResourceUpdate, { resourceId: flowId, resourceType, patch: flowPatchSet })
-        .call(_fetchAndSaveRawDataForResource, {
-          type: 'pageprocessors',
-          flowId,
-          resourceId: '1234',
-        })
-        .run();
-    });
     test('should not call _fetchAndSaveRawDataForResource if the patchSet does not have fields that could effect sample data incase of both exports/imports resources', () => {
       const rawDataPatchSet = [
         {

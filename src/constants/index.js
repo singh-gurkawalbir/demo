@@ -22,6 +22,8 @@ export const NETSUITE_BUNDLE_URL =
   '/app/bundler/bundledetails.nl?sourcecompanyid=TSTDRV916910&domain=PRODUCTION&config=F&id=20038';
 
 export const PASSWORD_MASK = '******';
+
+export const MAX_MOCK_DATA_SIZE = 1024 * 1024; /* 1 MB */
 export const MAX_TEMPLATE_ZIP_SIZE = 1024 * 1024; /* 1 MB */
 export const MAX_FILE_SIZE = 10 * 1024 * 1024; /* 10 MB */
 export const MAX_DATA_LOADER_FILE_SIZE = 100 * 1024 * 1024; /* 100 MB */

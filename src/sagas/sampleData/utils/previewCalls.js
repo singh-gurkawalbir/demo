@@ -116,8 +116,9 @@ export function* pageProcessorPreview({
     const updatePageProcessorToImport = pageProcessor => {
       if (pageProcessor._exportId === updatedPageProcessorId) {
         pageProcessorMap[updatedPageProcessorId].options = {};
-        // for lookup, remove inputFilters configured while making preview call for flowInput
+        // for lookup, remove inputFilters & output filters configured while making preview call for flowInput
         delete pageProcessorMap[updatedPageProcessorId].doc?.inputFilter;
+        delete pageProcessorMap[updatedPageProcessorId].doc?.filter;
 
         return {
           ...pageProcessor,

@@ -30,11 +30,29 @@ initialStore.getState().data.resources.flows = [
   {
     _id: '5ea16c600e2fab71928a6152',
     _integrationId: '62662cc4e06ff462c3db470e',
+    pageProcessors: [{ type: 'import', _importId: 'import-id-1'}],
+  },
+  {
+    _id: '600ec2928a6152fab5ea1671',
+    _integrationId: '62662cc4e06ff462c3db470e',
+    pageProcessors: [{ type: 'import', _importId: 'import-id-2'}],
   },
   {
     _id: '5ea16c600e2fab71928a6153',
     _connectorId: 'qrf',
     _integrationId: '62662cc4e06ff462c3db470e',
+  },
+];
+initialStore.getState().data.resources.imports = [
+  {
+    _id: 'import-id-1',
+    mappings: [
+      {extract: '$.name', generate: 'name'},
+      {extract: '$.age', generate: 'age'},
+    ],
+  },
+  {
+    _id: 'import-id-2',
   },
 ];
 
@@ -69,5 +87,13 @@ describe('Mapping cell  ui test cases', () => {
 
     userEvent.click(screen.getByRole('button'));
     expect(mockHistoryPush).toHaveBeenCalledWith('/integrations/62662cc4e06ff462c3db470e/flows/5ea16c600e2fab71928a6153/utilitymapping/commonAttributes');
+  });
+  test('should show icon indicator if flow has mappings', () => {
+    initMappingPage({ flowId: '5ea16c600e2fab71928a6152' });
+    expect(document.querySelector('div div div').className).toContain('circle');
+  });
+  test('should not show icon indicator for flows without mappings', () => {
+    initMappingPage({ flowId: '600ec2928a6152fab5ea1671' });
+    expect(document.querySelector('div div div').className).not.toContain('circle');
   });
 });

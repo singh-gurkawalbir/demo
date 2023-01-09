@@ -832,16 +832,11 @@ describe('rootSaga', () => {
         .toEqual(spawn(rootSaga));
       expect(forkEffectRes.cancel).toHaveBeenCalled();
 
-      expect(saga.next().value)
-        .toEqual(put(actions.user.preferences.update({
-          defaultAShareId: account,
-          environment: 'production',
-        })));
       expect(saga.next().value).toEqual(
-        put(actions.auth.clearStore())
+        put(actions.auth.clearStore({ authenticated: true }))
       );
       expect(saga.next().value).toEqual(
-        put(actions.auth.initSession())
+        put(actions.auth.initSession({ switchAcc: true }))
       );
 
       expect(saga.next().done).toBe(true);

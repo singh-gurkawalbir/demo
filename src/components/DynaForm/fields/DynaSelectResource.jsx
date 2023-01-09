@@ -400,24 +400,13 @@ export default function DynaSelectResource(props) {
 
       dispatch(actions.resource.patchStaged(value, patchSet, 'value'));
     }
-    if (resourceType === 'iClients') {
-      const patchSet = [
-        {
-          op: 'add',
-          path: '/assistant',
-          value: assistant,
-        },
-      ];
-
-      dispatch(actions.resource.patchStaged(value, patchSet, 'value'));
-    }
 
     history.push(buildDrawerUrl({
       path: drawerPaths.RESOURCE.EDIT,
       baseUrl: location.pathname,
       params: { resourceType, id: value },
     }));
-  }, [isFrameWork2, connectorId, dispatch, expConnId, history, location.pathname, resourceType, statusExport, value, assistant]);
+  }, [isFrameWork2, connectorId, dispatch, expConnId, history, location.pathname, resourceType, statusExport, value]);
   const truncatedItems = items =>
     items.sort(stringCompare('label')).map(i => ({
       label: (

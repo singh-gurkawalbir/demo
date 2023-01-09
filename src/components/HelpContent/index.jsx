@@ -60,10 +60,14 @@ const useStyles = makeStyles(theme => ({
     },
   },
   feedbackTextField: {
-    marginBottom: theme.spacing(1),
+    margin: theme.spacing(1, 0),
     width: '100%',
     '& > div': {
       padding: theme.spacing(1.5),
+    },
+    '& .MuiInputBase-input::placeholder': {
+      color: theme.palette.secondary.light,
+      opacity: 1,
     },
   },
   actionWrapper: {
@@ -96,7 +100,8 @@ export default function HelpContent({ children, title, caption, fieldId, resourc
   const [feedbackText, setFeedbackText] = useState(false);
   const [feedbackTextValue, setFeedbackTextValue] = useState('');
   const handleUpdateFeedBack = useCallback(
-    helpful => () => {
+    helpful => e => {
+      e.stopPropagation();
       if (helpful) {
         dispatch(actions.app.postFeedback(resourceType, fieldId, helpful));
       } else {
@@ -120,13 +125,13 @@ export default function HelpContent({ children, title, caption, fieldId, resourc
     <div className={classes.wrapper}>
       <div className={classes.titleWrapper}>
         <Typography data-test="title" className={classes.title} variant="h6">
-
           {title}
         </Typography>
         <IconButton
           size="small"
           data-test="close"
           aria-label="Close"
+          onClick={e => { e.stopPropagation(); }}
           className={classes.closeButton}>
           <CloseIcon />
         </IconButton>
@@ -138,13 +143,15 @@ export default function HelpContent({ children, title, caption, fieldId, resourc
             name="feedbackText"
             placeholder="How can we make this information more helpful?"
             multiline
+            onClick={e => { e.stopPropagation(); }}
             onChange={onChange}
             variant="outlined"
             className={classes.feedbackTextField}
           />
           <OutlinedButton
             className={classes.feedbackActionButton}
-            onClick={handleSendFeedbackText}>
+            onClick={handleSendFeedbackText}
+            data-test="submitButton">
             Submit
           </OutlinedButton>
         </>

@@ -13,7 +13,6 @@ export function AppRoutingWithAuth({ children }) {
   const isMFAAuthRequired = useSelector(selectors.isMFAAuthRequired);
   const isSignInRoute = location.pathname.split('?')[0] === getRoutePath('signin');
   const isConcurPage = location.pathname.startsWith('/concurconnect');
-  const isMFAVerifyPage = getRoutePath('/mfa/verify') === location.pathname;
   const shouldShowAppRouting = useSelector(selectors.shouldShowAppRouting);
   const isAuthInitialized = useSelector(selectors.isAuthInitialized);
   const isSessionExpired = useSelector(selectors.isSessionExpired);
@@ -21,6 +20,7 @@ export function AppRoutingWithAuth({ children }) {
   const isUserLoggedOut = useSelector(selectors.isUserLoggedOut);
   const isMFASetupIncomplete = useSelector(selectors.isMFASetupIncomplete);
   const isUserAuthenticated = useSelector(state => selectors.sessionInfo(state)?.authenticated);
+  const isMFAVerified = useSelector(state => selectors.sessionInfo(state)?.mfaVerified);
 
   const dispatch = useDispatch();
 
@@ -32,6 +32,8 @@ export function AppRoutingWithAuth({ children }) {
           state: { attemptedRoute: currentRoute, search },
         });
         dispatch(actions.auth.initSession());
+      } else {
+        dispatch(actions.auth.validateAndInitSession());
       }
     }
 
@@ -44,7 +46,7 @@ export function AppRoutingWithAuth({ children }) {
   // this selector is used by the UI to hold off rendering any routes
   // till it determines the auth state
   if (isAuthenticated) {
-    if (isSignInRoute || isMFAVerifyPage) {
+    if (isSignInRoute) {
       const { state: routeState } = location;
       const redirectedTo = (routeState && routeState.attemptedRoute) || getRoutePath('');
 
@@ -67,6 +69,19 @@ export function AppRoutingWithAuth({ children }) {
       />
     );
   }
+
+  if (!isMFASetupIncomplete && isUserAuthenticated && isMFAAuthRequired && !isMFAVerified && !isMFASetupPage && !isSignInRoute) {
+    return (
+      <Redirect
+        push={false}
+        to={{
+          pathname: getRoutePath('/mfa/verify'),
+          state: location.state,
+        }}
+      />
+    );
+  }
+
   if (!isSessionExpired && !isSignInRoute && !isMFAAuthRequired && (isAuthInitialized || isUserLoggedOut)) {
     return (
       <Redirect
