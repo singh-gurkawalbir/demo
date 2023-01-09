@@ -1140,7 +1140,7 @@ selectors.requestOptionsOfDashboardJobs = (state, {filterKey, nextPageURL, integ
     if (preset === 'custom' && !isSameDay()) {
       // When current date is selected in custom date filter, the end date considers time to be the last minute 23:59
       // which could be future date for the user as the time does not match
-      // Update end date is those cases to current date
+      // Update end date in those cases to current date
       // Ref: IO-24139
       const currentDate = new Date();
 
