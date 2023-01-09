@@ -275,7 +275,7 @@ export function generateIOFilterExpression(rules, context) {
           }
         } else if (rr.data.lhs.type === 'expression') {
           try {
-            lhs = JSON.parse(rr.data.lhs.expression);
+            lhs = JSON.parse(typeof rr.data.lhs.expression === 'string' ? rr.data.lhs.expression : JSON.stringify(rr.data.lhs.expression));
           } catch (ex) {
             // error in parsing expression
           }
