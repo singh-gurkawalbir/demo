@@ -18,7 +18,6 @@ describe('dynaTextWithFlowSuggestion UI tests', () => {
     renderWithProviders(<DynaTextWithFlowSuggestion />);
     expect(screen.getByText('Suggestions Component')).toBeInTheDocument();
     expect(screen.getByRole('textbox')).toBeInTheDocument();
-    screen.debug(undefined, Infinity);
   });
   test('should call the onFieldChange function passed in props when field is edited', async () => {
     const mockOnFieldChange = jest.fn();
