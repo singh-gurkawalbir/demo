@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { CopyToClipboard } from 'react-copy-to-clipboard';
-import {v4} from 'uuid';
 import { makeStyles } from '@material-ui/core/styles';
+import { generateUUID } from '../../../utils/string';
 import { selectors } from '../../../reducers';
 import actions from '../../../actions';
 import DynaTextForSetFields from './text/DynaTextForSetFields';
@@ -57,7 +57,7 @@ export default function DynaWebhookTokenGenerator(props) {
   const handleCopy = useCallback(() =>
     enquesnackbar({ message: 'Token copied to clipboard.' }), [enquesnackbar]);
   const handleGenerateClick = useCallback(() => {
-    const tokenValue = v4().replace(/-/g, '');
+    const tokenValue = generateUUID();
 
     setToken(tokenValue);
     onFieldChange(id, tokenValue);

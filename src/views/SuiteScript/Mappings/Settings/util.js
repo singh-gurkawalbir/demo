@@ -1,4 +1,5 @@
-import shortid from 'shortid';
+
+import { generateId } from '../../../../utils/string';
 
 const getFormattedLookup = (lookup, formVal) => {
   const lookupTmp = {};
@@ -7,7 +8,7 @@ const getFormattedLookup = (lookup, formVal) => {
     lookupTmp.name = lookup.name;
   } else {
     // generating random lookup name
-    lookupTmp.name = shortid.generate();
+    lookupTmp.name = generateId();
   }
 
   if (formVal._mode === 'dynamic') {

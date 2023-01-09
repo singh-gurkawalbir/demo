@@ -2,19 +2,19 @@
 import { cloneDeep, uniq, uniqBy } from 'lodash';
 import jsonPatch from 'fast-json-patch';
 import { BranchPathRegex, GRAPH_ELEMENTS_TYPE, PageProcessorPathRegex, FLOW_SAVE_ASYNC_KEY } from '../../constants';
-import { shortId } from '../string';
+import { generateId } from '../string';
 import { setObjectValue } from '../json';
 import messageStore from '../messageStore';
 
 export const isVirtualRouter = (router = {}) => !router.routeRecordsTo && !router.routeRecordsUsing && (!router.branches || router.branches.length <= 1);
 
 export const generateEmptyRouter = isVirtual => isVirtual ? {
-  id: shortId(),
+  id: generateId(),
   branches: [{
     pageProcessors: [{setupInProgress: true}],
   }],
 } : {
-  id: shortId(),
+  id: generateId(),
   routeRecordsTo: 'first_matching_branch',
   routeRecordsUsing: 'input_filters',
   branches: [{
@@ -215,7 +215,7 @@ export const getSomePpImport = _importId =>
   ({responseMapping: {fields: [], lists: []}, type: 'import', _importId});
 
 export const generateRouterNode = (router, routerIndex) => ({
-  id: router?.id || shortId(),
+  id: router?.id || generateId(),
   type: isVirtualRouter(router) ? GRAPH_ELEMENTS_TYPE.MERGE : GRAPH_ELEMENTS_TYPE.ROUTER,
   data: {
     name: router.name,
@@ -225,7 +225,7 @@ export const generateRouterNode = (router, routerIndex) => ({
 });
 
 export const generateNewTerminal = ({branch = {}, branchIndex, routerIndex} = {}) => ({
-  id: shortId(),
+  id: generateId(),
   type: GRAPH_ELEMENTS_TYPE.TERMINAL,
   draggable: false,
   data: {
@@ -235,7 +235,7 @@ export const generateNewTerminal = ({branch = {}, branchIndex, routerIndex} = {}
 });
 
 export const generateNewEmptyNode = ({branch = {}, branchIndex, routerIndex} = {}) => ({
-  id: shortId(),
+  id: generateId(),
   type: GRAPH_ELEMENTS_TYPE.EMPTY,
   data: {
     name: branch.name,
@@ -255,11 +255,11 @@ export const initializeFlowForReactFlow = flowDoc => {
     flow.pageProcessors = [{setupInProgress: true}];
   }
   flow.pageGenerators.forEach(pg => {
-    pg.id = pg._exportId || `new-${shortId()}`;
+    pg.id = pg._exportId || `new-${generateId()}`;
   });
   if (flow.pageProcessors?.length && !flow.routers?.length) {
     flow.routers = [{
-      id: shortId(),
+      id: generateId(),
       branches: [{name: 'Branch 1.0', pageProcessors: flow.pageProcessors}],
     }];
     delete flow.pageProcessors;
@@ -269,7 +269,7 @@ export const initializeFlowForReactFlow = flowDoc => {
       const {pageProcessors = []} = branch;
 
       pageProcessors.forEach(pp => {
-        pp.id = pp._importId || pp._exportId || `new-${shortId()}`;
+        pp.id = pp._importId || pp._exportId || `new-${generateId()}`;
       });
     });
   });

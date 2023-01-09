@@ -2,7 +2,7 @@
 import reducer, { selectors, expandRow, updateChildrenProps, updateDestinationDataType } from '.';
 import actions from '../../../actions';
 import {MAPPING_DATA_TYPES} from '../../../utils/mapping';
-import {generateUniqueKey} from '../../../utils/string';
+import {generateId} from '../../../utils/string';
 
 jest.mock('../../../utils/string');
 
@@ -180,6 +180,7 @@ describe('mapping reducer', () => {
   });
 
   test('should create new row with generate value while patching new generate', () => {
+    generateId.mockReturnValue('new-key');
     const initialState = {
       mapping: {
         mappings: [
@@ -1377,7 +1378,7 @@ describe('mapping reducer', () => {
       expect(state).toEqual(expectedState);
     });
     test('should correctly insert parent node if new format is rows', () => {
-      generateUniqueKey.mockReturnValue('new-key');
+      generateId.mockReturnValue('new-key');
 
       const initialState = {
         mapping: {
@@ -1470,7 +1471,7 @@ describe('mapping reducer', () => {
       expect(state).toEqual(expectedState);
     });
     test('should correctly remove parent node if new format is record', () => {
-      generateUniqueKey.mockReturnValue('new-key');
+      generateId.mockReturnValue('new-key');
 
       const initialState = {
         mapping: {
@@ -1530,7 +1531,7 @@ describe('mapping reducer', () => {
       expect(state).toEqual(expectedState);
     });
     test('should correctly add empty row if no matching children were found for record format', () => {
-      generateUniqueKey.mockReturnValue('new-key');
+      generateId.mockReturnValue('new-key');
 
       const initialState = {
         mapping: {
@@ -1738,7 +1739,7 @@ describe('mapping reducer', () => {
       expect(state).toEqual(expectedState);
     });
     test('should delete the row from the tree data and insert empty row if all mappings are removed', () => {
-      generateUniqueKey.mockReturnValue('new_key');
+      generateId.mockReturnValue('new_key');
 
       const initialState = {
         mapping: {
@@ -1787,7 +1788,7 @@ describe('mapping reducer', () => {
       expect(state).toBe(initialState);
     });
     test('should add a new row at next sibling index of the passed row', () => {
-      generateUniqueKey.mockReturnValue('new_key');
+      generateId.mockReturnValue('new_key');
 
       const initialState = {
         mapping: {
@@ -1924,7 +1925,7 @@ describe('mapping reducer', () => {
       expect(state).toEqual(expectedState);
     });
     test('should correctly update the new data type as object', () => {
-      generateUniqueKey.mockReturnValue('new_key');
+      generateId.mockReturnValue('new_key');
 
       const initialState = {
         mapping: {
@@ -3825,7 +3826,7 @@ describe('mapping reducer', () => {
       expect(state).toEqual(expectedState);
     });
     test('should update correctly when new extract is empty and data type is object array', () => {
-      generateUniqueKey.mockReturnValue('new_key');
+      generateId.mockReturnValue('new_key');
 
       const initialState = {
         mapping: {
@@ -3878,7 +3879,7 @@ describe('mapping reducer', () => {
       expect(state).toEqual(expectedState);
     });
     test('should update correctly when new extract is not empty and data type is object array', () => {
-      generateUniqueKey.mockReturnValue('new_key');
+      generateId.mockReturnValue('new_key');
 
       const initialState = {
         mapping: {
@@ -4113,7 +4114,7 @@ describe('mapping reducer', () => {
       expect(state).toEqual(expectedState);
     });
     test('should patch new data type correctly', () => {
-      generateUniqueKey.mockReturnValue('new_key');
+      generateId.mockReturnValue('new_key');
 
       const initialState = {
         mapping: {
@@ -4260,7 +4261,7 @@ describe('mapping reducer', () => {
       expect(state).toEqual(expectedState);
     });
     test('should add empty child row if copySource is no and children do not exist', () => {
-      generateUniqueKey.mockReturnValue('new_key');
+      generateId.mockReturnValue('new_key');
 
       const initialState = {
         mapping: {
@@ -4308,7 +4309,7 @@ describe('mapping reducer', () => {
       expect(state).toEqual(expectedState);
     });
     test('should add child nodes incase the data type is changed from string to object array with single source', () => {
-      generateUniqueKey.mockReturnValue('new_key');
+      generateId.mockReturnValue('new_key');
 
       const initialState = {
         mapping: {
@@ -4369,7 +4370,7 @@ describe('mapping reducer', () => {
       expect(state).toEqual(expectedState);
     });
     test('should add multiple child nodes with tab node incase the data type is changed from string to object array with multiple sources', () => {
-      generateUniqueKey.mockReturnValue('new_key');
+      generateId.mockReturnValue('new_key');
 
       const initialState = {
         mapping: {
@@ -4452,7 +4453,7 @@ describe('mapping reducer', () => {
       expect(state).toEqual(expectedState);
     });
     test('should add child nodes incase the data type is changed from string to object array with multiple sources and multiple settings', () => {
-      generateUniqueKey.mockReturnValue('new_key');
+      generateId.mockReturnValue('new_key');
 
       const initialState = {
         mapping: {
@@ -4521,7 +4522,7 @@ describe('mapping reducer', () => {
       expect(state).toEqual(expectedState);
     });
     test('should update child nodes properly if the node has children and data type is changed from Object to Object array with multiple sources', () => {
-      generateUniqueKey.mockReturnValue('new_key');
+      generateId.mockReturnValue('new_key');
 
       const initialState = {
         mapping: {
@@ -5351,7 +5352,7 @@ describe('mapping reducer', () => {
   });
   describe('MAPPING.V2.DELETE_ALL', () => {
     test('should keep v2 data empty if no v2TreeData is present in state', () => {
-      generateUniqueKey.mockReturnValue('new_key');
+      generateId.mockReturnValue('new_key');
 
       const initialState = {
         mapping: {
@@ -5374,7 +5375,7 @@ describe('mapping reducer', () => {
       expect(state).toEqual(initialState);
     });
     test('should empty v2TreeData and make it as grouped output if its a csv or xlsx resource', () => {
-      generateUniqueKey.mockReturnValue('new_key');
+      generateId.mockReturnValue('new_key');
 
       const initialState = {
         mapping: {
@@ -5426,7 +5427,7 @@ describe('mapping reducer', () => {
   });
   describe('MAPPING.V2.AUTO_CREATE_STRUCTURE', () => {
     test('should correctly update treeData based on sample data for non csv/xlsx with required mappings', () => {
-      generateUniqueKey.mockReturnValue('new_key');
+      generateId.mockReturnValue('new_key');
 
       const importSampleData = {
         id: 12,
@@ -5537,7 +5538,7 @@ describe('mapping reducer', () => {
       expect(state).toEqual(newState);
     });
     test('should correctly update treeData based on sample data for csv/xlsx', () => {
-      generateUniqueKey.mockReturnValue('new_key');
+      generateId.mockReturnValue('new_key');
 
       const importSampleData = {
         id: 12,
@@ -6225,7 +6226,7 @@ describe('mapping utils', () => {
       expect(updateDestinationDataType(state, node, MAPPING_DATA_TYPES.STRING, MAPPING_DATA_TYPES.STRING)).toBe(node);
     });
     test('should add empty row child if new data type is object array with copy source as yes', () => {
-      generateUniqueKey.mockReturnValue('new_key');
+      generateId.mockReturnValue('new_key');
 
       const node = {
         key: 'key1',
@@ -6253,7 +6254,7 @@ describe('mapping utils', () => {
       expect(updateDestinationDataType(state, node, MAPPING_DATA_TYPES.OBJECT, MAPPING_DATA_TYPES.OBJECTARRAY)).toEqual(newNode);
     });
     test('should add empty row to children if new data type is object array with copy source as no and no existing children', () => {
-      generateUniqueKey.mockReturnValue('new_key');
+      generateId.mockReturnValue('new_key');
 
       const node = {
         key: 'key1',
@@ -6303,7 +6304,7 @@ describe('mapping utils', () => {
       expect(updateDestinationDataType(state, node, MAPPING_DATA_TYPES.OBJECTARRAY, MAPPING_DATA_TYPES.OBJECT)).toEqual(newNode);
     });
     test('should delete existing children and add empty row to children if new data type is object with copy source as no', () => {
-      generateUniqueKey.mockReturnValue('new_key');
+      generateId.mockReturnValue('new_key');
 
       const node = {
         key: 'key1',

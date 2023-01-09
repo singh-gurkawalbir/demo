@@ -1,9 +1,8 @@
-
 import { expectSaga } from 'redux-saga-test-plan';
 import { call, select } from 'redux-saga/effects';
-import shortid from 'shortid';
 import { throwError } from 'redux-saga-test-plan/providers';
 import * as matchers from 'redux-saga-test-plan/matchers';
+import * as GenerateMediumId from '../../utils/string';
 import {requestSampleData as requestImportSampleData} from '../sampleData/imports';
 import { apiCallWithRetry } from '..';
 import actions from '../../actions';
@@ -26,7 +25,7 @@ import {requestSampleData as requestFlowSampleData, _getContextSampleData} from 
 import { SCOPES } from '../resourceForm';
 import { commitStagedChanges } from '../resources';
 import { autoEvaluateProcessorWithCancel } from '../editor';
-import {generateUniqueKey} from '../../utils/string';
+import {generateId} from '../../utils/string';
 import { MAPPING_DATA_TYPES } from '../../utils/mapping';
 import errorMessageStore from '../../utils/errorStore';
 
@@ -366,10 +365,9 @@ describe('mappingInit saga', () => {
     const flowId = 'flow24';
     const importId = 'import24';
     const exportId = 'export24';
-    const mock = jest.spyOn(shortid, 'generate');  // spy on otherFn
+    const mock = jest.spyOn(GenerateMediumId, 'generateId');  // spy on otherFn
 
     mock.mockReturnValue('mock_key');
-    generateUniqueKey.mockReturnValue('unique-key');
 
     const saga1 = await expectSaga(mappingInit, {flowId, importId})
       .provide([
@@ -396,14 +394,14 @@ describe('mappingInit saga', () => {
         version: 1,
         requiredMappings: [],
         importSampleData: undefined,
-        v2TreeData: [{key: 'unique-key', isEmptyRow: true, title: '', disabled: false, dataType: MAPPING_DATA_TYPES.STRING, sourceDataType: MAPPING_DATA_TYPES.STRING}],
+        v2TreeData: [{key: 'mock_key', isEmptyRow: true, title: '', disabled: false, dataType: MAPPING_DATA_TYPES.STRING, sourceDataType: MAPPING_DATA_TYPES.STRING}],
         extractsTree: [
-          {key: 'unique-key',
+          {key: 'mock_key',
             title: '',
             dataType: '[object]',
             propName: '$',
             children: [
-              {key: 'unique-key', parentKey: 'unique-key', title: '', jsonPath: 'id', propName: 'id', dataType: MAPPING_DATA_TYPES.STRING},
+              {key: 'mock_key', parentKey: 'mock_key', title: '', jsonPath: 'id', propName: 'id', dataType: MAPPING_DATA_TYPES.STRING},
             ]}],
         isMonitorLevelAccess: false,
       }))
@@ -414,7 +412,7 @@ describe('mappingInit saga', () => {
   });
 
   test('should trigger mapping init correctly for Netsuite import', async () => {
-    const mock = jest.spyOn(shortid, 'generate');  // spy on otherFn
+    const mock = jest.spyOn(GenerateMediumId, 'generateId');  // spy on otherFn
 
     const flowId = 'flow25';
     const importId = 'import25';
@@ -460,7 +458,7 @@ describe('mappingInit saga', () => {
 
   test('should trigger mapping init correctly for Netsuite subrecord import mapping', async () => {
     const subRecordMappingId = 'item[*].celigo_inventorydetail';
-    const mock = jest.spyOn(shortid, 'generate');  // spy on otherFn
+    const mock = jest.spyOn(GenerateMediumId, 'generateId');  // spy on otherFn
 
     const flowId = 'flow26';
     const importId = 'import26';
@@ -503,9 +501,8 @@ describe('mappingInit saga', () => {
   });
 
   test('should trigger mapping init correctly for assistants', async () => {
-    const mock = jest.spyOn(shortid, 'generate');  // spy on otherFn
+    const mock = jest.spyOn(GenerateMediumId, 'generateId');  // spy on otherFn
 
-    generateUniqueKey.mockReturnValue('unique-key');
     const flowId = 'flow27';
     const importId = 'import27';
     const exportId = 'export27';
@@ -562,7 +559,7 @@ describe('mappingInit saga', () => {
         requiredMappings: [],
         importSampleData: undefined,
         v2TreeData: [{
-          key: 'unique-key',
+          key: 'mock_key',
           isEmptyRow: true,
           title: '',
           disabled: false,
@@ -570,12 +567,12 @@ describe('mappingInit saga', () => {
           sourceDataType: MAPPING_DATA_TYPES.STRING,
         }],
         extractsTree: [
-          {key: 'unique-key',
+          {key: 'mock_key',
             title: '',
             dataType: '[object]',
             propName: '$',
             children: [
-              {key: 'unique-key', parentKey: 'unique-key', title: '', jsonPath: 'id', propName: 'id', dataType: MAPPING_DATA_TYPES.STRING},
+              {key: 'mock_key', parentKey: 'mock_key', title: '', jsonPath: 'id', propName: 'id', dataType: MAPPING_DATA_TYPES.STRING},
             ]}],
         isMonitorLevelAccess: false,
       }))
@@ -586,7 +583,7 @@ describe('mappingInit saga', () => {
   });
 
   test('should trigger mapping init correctly for IA', async () => {
-    const mock = jest.spyOn(shortid, 'generate');  // spy on otherFn
+    const mock = jest.spyOn(GenerateMediumId, 'generateId');  // spy on otherFn
     const flowId = 'flow28';
     const importId = 'import28';
     const exportId = 'export28';
@@ -654,13 +651,12 @@ describe('mappingInit saga', () => {
     mock.mockRestore();
   });
   test('should trigger mapping init correctly for IA which has mappings2', async () => {
-    const mock = jest.spyOn(shortid, 'generate');  // spy on otherFn
+    const mock = jest.spyOn(GenerateMediumId, 'generateId');  // spy on otherFn
     const flowId = 'flow28';
     const importId = 'import28';
     const exportId = 'export28';
 
     mock.mockReturnValue('mock_key');
-    generateUniqueKey.mockReturnValue('unique-key');
 
     const saga5 = await expectSaga(mappingInit, {flowId, importId})
       .provide([
@@ -710,7 +706,7 @@ describe('mappingInit saga', () => {
         requiredMappings: [],
         importSampleData: undefined,
         v2TreeData: [{
-          key: 'unique-key',
+          key: 'mock_key',
           title: '',
           parentKey: undefined,
           parentExtract: undefined,
@@ -725,12 +721,12 @@ describe('mappingInit saga', () => {
           sourceDataType: MAPPING_DATA_TYPES.STRING,
         }],
         extractsTree: [
-          {key: 'unique-key',
+          {key: 'mock_key',
             title: '',
             dataType: '[object]',
             propName: '$',
             children: [
-              {key: 'unique-key', parentKey: 'unique-key', title: '', jsonPath: 'id', propName: 'id', dataType: MAPPING_DATA_TYPES.STRING},
+              {key: 'mock_key', parentKey: 'mock_key', title: '', jsonPath: 'id', propName: 'id', dataType: MAPPING_DATA_TYPES.STRING},
             ]}],
         isMonitorLevelAccess: false,
       }))
@@ -743,7 +739,7 @@ describe('mappingInit saga', () => {
     const flowId = 'flow24';
     const importId = 'import24';
     const exportId = 'export24';
-    const mock = jest.spyOn(shortid, 'generate');  // spy on otherFn
+    const mock = jest.spyOn(GenerateMediumId, 'generateId');  // spy on otherFn
 
     mock.mockReturnValue('mock_key');
     const dbSaga = await expectSaga(mappingInit, {flowId, importId})
@@ -789,10 +785,9 @@ describe('mappingInit saga', () => {
     const flowId = 'flow24';
     const importId = 'import24';
     const exportId = 'export24';
-    const mock = jest.spyOn(shortid, 'generate');  // spy on otherFn
+    const mock = jest.spyOn(GenerateMediumId, 'generateId');  // spy on otherFn
 
     mock.mockReturnValue('mock_key');
-    generateUniqueKey.mockReturnValue('unique-key');
 
     const as2Saga = await expectSaga(mappingInit, {flowId, importId})
       .provide([
@@ -825,23 +820,23 @@ describe('mappingInit saga', () => {
         requiredMappings: [],
         importSampleData: undefined,
         v2TreeData: [
-          {key: 'unique-key',
+          {key: 'mock_key',
             generateDisabled: true,
             title: '',
             disabled: false,
             dataType: 'objectarray',
             children: [
               {
-                key: 'unique-key', parentKey: 'unique-key', isEmptyRow: true, title: '', disabled: false, dataType: MAPPING_DATA_TYPES.STRING, sourceDataType: MAPPING_DATA_TYPES.STRING,
+                key: 'mock_key', parentKey: 'mock_key', isEmptyRow: true, title: '', disabled: false, dataType: MAPPING_DATA_TYPES.STRING, sourceDataType: MAPPING_DATA_TYPES.STRING,
               },
             ]}],
         extractsTree: [
-          {key: 'unique-key',
+          {key: 'mock_key',
             title: '',
             dataType: '[object]',
             propName: '$',
             children: [
-              {key: 'unique-key', parentKey: 'unique-key', title: '', jsonPath: 'id', propName: 'id', dataType: MAPPING_DATA_TYPES.STRING},
+              {key: 'mock_key', parentKey: 'mock_key', title: '', jsonPath: 'id', propName: 'id', dataType: MAPPING_DATA_TYPES.STRING},
             ]}],
         isMonitorLevelAccess: false,
       }))
@@ -855,7 +850,7 @@ describe('mappingInit saga', () => {
     const importId = 'import24';
     const exportId = 'export24';
 
-    generateUniqueKey.mockReturnValue('unique-key');
+    generateId.mockReturnValue('unique-key');
 
     expectSaga(mappingInit, {flowId, importId})
       .provide([
@@ -2059,7 +2054,7 @@ describe('getAutoMapperSuggestion saga', () => {
     .run());
 
   test('should trigger autoMapper received action correctly', async () => {
-    const mock = jest.spyOn(shortid, 'generate');  // spy on otherFn
+    const mock = jest.spyOn(GenerateMediumId, 'generateId');  // spy on otherFn
 
     mock.mockReturnValue('mock_key');
     const mapperSaga = await expectSaga(getAutoMapperSuggestion, {importId, flowId})
@@ -2150,7 +2145,7 @@ describe('getAutoMapperSuggestion saga', () => {
     mock.mockRestore();
   });
   test('should not consider mapping if already present trigger autoMapper received action correctly', async () => {
-    const mock = jest.spyOn(shortid, 'generate');  // spy on otherFn
+    const mock = jest.spyOn(GenerateMediumId, 'generateId');  // spy on otherFn
 
     mock.mockReturnValue('mock_key');
     const autoMapSaga = await expectSaga(getAutoMapperSuggestion, {importId, flowId})
@@ -2243,7 +2238,7 @@ describe('getAutoMapperSuggestion saga', () => {
   });
 
   test('should trigger autoMapper failed action with warning correctly', async () => {
-    const mock = jest.spyOn(shortid, 'generate');  // spy on otherFn
+    const mock = jest.spyOn(GenerateMediumId, 'generateId');  // spy on otherFn
 
     mock.mockReturnValue('mock_key');
     const autoMapSaga1 = await expectSaga(getAutoMapperSuggestion, {importId, flowId})
@@ -2321,7 +2316,7 @@ describe('getAutoMapperSuggestion saga', () => {
   });
 
   test('should trigger autoMapper failed action if no response is returned from api call', async () => {
-    const mock = jest.spyOn(shortid, 'generate');  // spy on otherFn
+    const mock = jest.spyOn(GenerateMediumId, 'generateId');  // spy on otherFn
 
     mock.mockReturnValue('mock_key');
     const autoMapSaga2 = await expectSaga(getAutoMapperSuggestion, {importId, flowId})
@@ -2390,7 +2385,7 @@ describe('getAutoMapperSuggestion saga', () => {
     mock.mockRestore();
   });
   test('should should trigger autoMapper failed action on api error', async () => {
-    const mock = jest.spyOn(shortid, 'generate');  // spy on otherFn
+    const mock = jest.spyOn(GenerateMediumId, 'generateId');  // spy on otherFn
 
     mock.mockReturnValue('mock_key');
     const autoMapSaga3 = await expectSaga(getAutoMapperSuggestion, {importId, flowId})

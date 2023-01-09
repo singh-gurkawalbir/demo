@@ -14,7 +14,7 @@ import { isNewId } from '../../../utils/resource';
 import { EMPTY_RAW_DATA, STANDALONE_INTEGRATION } from '../../../constants';
 import { getConstructedResourceObj } from '../flows/utils';
 import getPreviewOptionsForResource from '../flows/pageProcessorPreviewOptions';
-import { generateId } from '../../../utils/string';
+import { generateMongoDBId } from '../../../utils/string';
 
 export function* pageProcessorPreview({
   flowId,
@@ -72,7 +72,7 @@ export function* pageProcessorPreview({
   }
 
   let updatedPageProcessorId = _pageProcessorId;
-  const uniqId = generateId(24);
+  const uniqId = generateMongoDBId();
 
   // Incase of a new Lookup / Import add that doc to flow explicitly as it is not yet saved
   if (isNewId(_pageProcessorId)) {

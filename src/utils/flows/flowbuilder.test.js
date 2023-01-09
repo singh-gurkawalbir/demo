@@ -1,6 +1,6 @@
 import { cloneDeep, keyBy } from 'lodash';
 import { GRAPH_ELEMENTS_TYPE } from '../../constants';
-import { shortId } from '../string';
+import { generateId } from '../string';
 import {
   getAllRouterPaths,
   getPreceedingRoutersMap,
@@ -34,8 +34,8 @@ import {
   moveStepFunction,
 } from './flowbuilder';
 
-const anyShortId = expect.stringMatching(/^[a-zA-Z0-9-_]{6}$/);
-const anyPPId = expect.stringMatching(/^new-[a-zA-Z0-9-_]{6}$/);
+const anyShortId = expect.stringMatching(/^[a-zA-Z0-9-_]{11}$/);
+const anyPPId = expect.stringMatching(/^new-[a-zA-Z0-9-_]{11}$/);
 
 const flow1 = {
   routers: [{
@@ -514,7 +514,7 @@ const flow6 = {
   autoResolveMatchingTraceKeys: true,
   routers: [
     {
-      id: 'fMyI3i',
+      id: 'fMyI3iHer12',
       branches: [
         {
           name: '',
@@ -525,16 +525,16 @@ const flow6 = {
                 lists: [],
               },
               setupInProgress: true,
-              id: 'new-mlNjkm',
+              id: 'new-mlNjkmHer12',
             },
           ],
-          nextRouterId: 'Ko7qmy',
+          nextRouterId: 'Ko7qmyHer12',
         },
       ],
     },
     {
       routeRecordsUsing: 'input_filters',
-      id: 'Ko7qmy',
+      id: 'Ko7qmyHer12',
       routeRecordsTo: 'first_matching_branch',
       branches: [
         {
@@ -569,7 +569,7 @@ const flow6 = {
               id: '62cda4fb80c105471745f0f1',
             },
           ],
-          nextRouterId: 'VlrnY7',
+          nextRouterId: 'VlrnY7Her12',
         },
         {
           name: 'Branch 1.1',
@@ -584,7 +584,7 @@ const flow6 = {
               id: '62cda0873d0dab426139b793',
             },
           ],
-          nextRouterId: 'VlrnY7',
+          nextRouterId: 'VlrnY7Her12',
         },
         {
           name: 'Branch 3.2',
@@ -595,7 +595,7 @@ const flow6 = {
                 lists: [],
               },
               setupInProgress: true,
-              id: 'new-z0jzjM',
+              id: 'new-z0jzjMHer12',
             },
           ],
         },
@@ -605,7 +605,7 @@ const flow6 = {
       },
     },
     {
-      id: 'xwELf2',
+      id: 'xwELf2Her12',
       branches: [
         {
           name: 'Branch 2.0',
@@ -616,7 +616,7 @@ const flow6 = {
                 lists: [],
               },
               setupInProgress: true,
-              id: 'new-3LxDQf',
+              id: 'new-3LxDQfHer12',
             },
           ],
         },
@@ -629,7 +629,7 @@ const flow6 = {
                 lists: [],
               },
               setupInProgress: true,
-              id: 'new-vYHBhY',
+              id: 'new-vYHBhYHer12',
             },
           ],
         },
@@ -641,11 +641,11 @@ const flow6 = {
       },
     },
     {
-      id: 'VlrnY7',
+      id: 'VlrnY7Her12',
       branches: [
         {
           name: '',
-          nextRouterId: 'xwELf2',
+          nextRouterId: 'xwELf2Her12',
           pageProcessors: [],
         },
       ],
@@ -653,20 +653,20 @@ const flow6 = {
   ],
 };
 
-describe('shortId function', () => {
-  test('shortId should return random string', () => {
-    const id1 = shortId();
-    const id2 = shortId();
-    const id3 = shortId();
+describe('generateId function', () => {
+  test('generateId should return random string', () => {
+    const id1 = generateId();
+    const id2 = generateId();
+    const id3 = generateId();
 
     expect(id1).not.toEqual(id2);
     expect(id2).not.toEqual(id3);
     expect(id1).not.toEqual(id3);
   });
-  test('shortId should have a length of 6', () => {
-    const id = shortId();
+  test('generateId should have a length of 11', () => {
+    const id = generateId();
 
-    expect(id).toHaveLength(6);
+    expect(id).toHaveLength(11);
   });
 });
 
@@ -1764,7 +1764,7 @@ describe('generateNodesAndEdgesFromBranchedFlow util function test', () => {
         },
       },
       {
-        id: '62cd472e8a7b1e641f295c4a-new-mlNjkm',
+        id: '62cd472e8a7b1e641f295c4a-new-mlNjkmHer12',
         source: '62cd472e8a7b1e641f295c4a',
         target: anyPPId,
         data: {
@@ -1785,7 +1785,7 @@ describe('generateNodesAndEdgesFromBranchedFlow util function test', () => {
         type: 'default',
       },
       {
-        id: 'Ko7qmy',
+        id: 'Ko7qmyHer12',
         type: 'router',
         data: {
           path: '/routers/1',
@@ -1793,8 +1793,8 @@ describe('generateNodesAndEdgesFromBranchedFlow util function test', () => {
         },
       },
       {
-        id: 'Ko7qmy-62cbc0908c8337627f657872',
-        source: 'Ko7qmy',
+        id: 'Ko7qmyHer12-62cbc0908c8337627f657872',
+        source: 'Ko7qmyHer12',
         target: '62cbc0908c8337627f657872',
         data: {
           path: '/routers/1/branches/0',
@@ -1806,9 +1806,9 @@ describe('generateNodesAndEdgesFromBranchedFlow util function test', () => {
         type: 'default',
       },
       {
-        id: '62cda4fb80c105471745f0f1-VlrnY7',
+        id: '62cda4fb80c105471745f0f1-VlrnY7Her12',
         source: '62cda4fb80c105471745f0f1',
-        target: 'VlrnY7',
+        target: 'VlrnY7Her12',
         data: {
           path: '/routers/1/branches/0',
           processorCount: 3,
@@ -1817,7 +1817,7 @@ describe('generateNodesAndEdgesFromBranchedFlow util function test', () => {
         type: 'default',
       },
       {
-        id: 'VlrnY7',
+        id: 'VlrnY7Her12',
         type: 'merge',
         data: {
           path: '/routers/3',
@@ -1836,7 +1836,7 @@ describe('generateNodesAndEdgesFromBranchedFlow util function test', () => {
       },
       {
         id: expect.any(String),
-        source: 'VlrnY7',
+        source: 'VlrnY7Her12',
         target: anyShortId,
         data: {
           path: '/routers/3/branches/0',
@@ -1847,7 +1847,7 @@ describe('generateNodesAndEdgesFromBranchedFlow util function test', () => {
       {
         id: expect.any(String),
         source: anyShortId,
-        target: 'xwELf2',
+        target: 'xwELf2Her12',
         data: {
           path: '/routers/3/branches/0',
           processorIndex: 0,
@@ -1858,7 +1858,7 @@ describe('generateNodesAndEdgesFromBranchedFlow util function test', () => {
         type: 'default',
       },
       {
-        id: 'xwELf2',
+        id: 'xwELf2Her12',
         type: 'router',
         data: {
           path: '/routers/2',
@@ -1867,7 +1867,7 @@ describe('generateNodesAndEdgesFromBranchedFlow util function test', () => {
       },
       {
         id: expect.any(String),
-        source: 'xwELf2',
+        source: 'xwELf2Her12',
         target: anyPPId,
         data: {
           path: '/routers/2/branches/0',
@@ -1891,7 +1891,7 @@ describe('generateNodesAndEdgesFromBranchedFlow util function test', () => {
       },
       {
         id: expect.any(String),
-        source: 'new-3LxDQf',
+        source: 'new-3LxDQfHer12',
         target: anyShortId,
         data: {
           path: '/routers/2/branches/0',
@@ -1900,7 +1900,7 @@ describe('generateNodesAndEdgesFromBranchedFlow util function test', () => {
         type: 'default',
       },
       {
-        id: 'new-3LxDQf',
+        id: 'new-3LxDQfHer12',
         type: 'pp',
         data: {
           resource: {
@@ -1913,7 +1913,7 @@ describe('generateNodesAndEdgesFromBranchedFlow util function test', () => {
               ],
             },
             setupInProgress: true,
-            id: 'new-3LxDQf',
+            id: 'new-3LxDQfHer12',
           },
           branch: {
             name: 'Branch 2.0',
@@ -1928,7 +1928,7 @@ describe('generateNodesAndEdgesFromBranchedFlow util function test', () => {
                   ],
                 },
                 setupInProgress: true,
-                id: 'new-3LxDQf',
+                id: 'new-3LxDQfHer12',
               },
             ],
           },
@@ -1942,9 +1942,9 @@ describe('generateNodesAndEdgesFromBranchedFlow util function test', () => {
         },
       },
       {
-        id: 'xwELf2-new-vYHBhY',
-        source: 'xwELf2',
-        target: 'new-vYHBhY',
+        id: 'xwELf2Her12-new-vYHBhYHer12',
+        source: 'xwELf2Her12',
+        target: 'new-vYHBhYHer12',
         data: {
           path: '/routers/2/branches/1',
           processorIndex: 0,
@@ -1967,7 +1967,7 @@ describe('generateNodesAndEdgesFromBranchedFlow util function test', () => {
       },
       {
         id: expect.any(String),
-        source: 'new-vYHBhY',
+        source: 'new-vYHBhYHer12',
         target: anyShortId,
         data: {
           path: '/routers/2/branches/1',
@@ -1976,7 +1976,7 @@ describe('generateNodesAndEdgesFromBranchedFlow util function test', () => {
         type: 'default',
       },
       {
-        id: 'new-vYHBhY',
+        id: 'new-vYHBhYHer12',
         type: 'pp',
         data: {
           resource: {
@@ -1989,7 +1989,7 @@ describe('generateNodesAndEdgesFromBranchedFlow util function test', () => {
               ],
             },
             setupInProgress: true,
-            id: 'new-vYHBhY',
+            id: 'new-vYHBhYHer12',
           },
           branch: {
             name: 'Branch 2.1',
@@ -2004,7 +2004,7 @@ describe('generateNodesAndEdgesFromBranchedFlow util function test', () => {
                   ],
                 },
                 setupInProgress: true,
-                id: 'new-vYHBhY',
+                id: 'new-vYHBhYHer12',
               },
             ],
           },
@@ -2087,7 +2087,7 @@ describe('generateNodesAndEdgesFromBranchedFlow util function test', () => {
                 id: '62cda4fb80c105471745f0f1',
               },
             ],
-            nextRouterId: 'VlrnY7',
+            nextRouterId: 'VlrnY7Her12',
           },
           hideDelete: false,
           isVirtual: false,
@@ -2154,7 +2154,7 @@ describe('generateNodesAndEdgesFromBranchedFlow util function test', () => {
                 id: '62cda4fb80c105471745f0f1',
               },
             ],
-            nextRouterId: 'VlrnY7',
+            nextRouterId: 'VlrnY7Her12',
           },
           hideDelete: false,
           isVirtual: false,
@@ -2165,8 +2165,8 @@ describe('generateNodesAndEdgesFromBranchedFlow util function test', () => {
         },
       },
       {
-        id: 'Ko7qmy-62cda0873d0dab426139b793',
-        source: 'Ko7qmy',
+        id: 'Ko7qmyHer12-62cda0873d0dab426139b793',
+        source: 'Ko7qmyHer12',
         target: '62cda0873d0dab426139b793',
         data: {
           path: '/routers/1/branches/1',
@@ -2178,9 +2178,9 @@ describe('generateNodesAndEdgesFromBranchedFlow util function test', () => {
         type: 'default',
       },
       {
-        id: '62cda0873d0dab426139b793-VlrnY7',
+        id: '62cda0873d0dab426139b793-VlrnY7Her12',
         source: '62cda0873d0dab426139b793',
-        target: 'VlrnY7',
+        target: 'VlrnY7Her12',
         data: {
           path: '/routers/1/branches/1',
           processorCount: 3,
@@ -2222,7 +2222,7 @@ describe('generateNodesAndEdgesFromBranchedFlow util function test', () => {
                 id: '62cda0873d0dab426139b793',
               },
             ],
-            nextRouterId: 'VlrnY7',
+            nextRouterId: 'VlrnY7Her12',
           },
           hideDelete: false,
           isVirtual: false,
@@ -2234,8 +2234,8 @@ describe('generateNodesAndEdgesFromBranchedFlow util function test', () => {
         },
       },
       {
-        id: 'Ko7qmy-new-z0jzjM',
-        source: 'Ko7qmy',
+        id: 'Ko7qmyHer12-new-z0jzjMHer12',
+        source: 'Ko7qmyHer12',
         target: anyPPId,
         data: {
           path: '/routers/1/branches/2',
@@ -2264,7 +2264,7 @@ describe('generateNodesAndEdgesFromBranchedFlow util function test', () => {
         type: 'default',
       },
       {
-        id: 'new-z0jzjM',
+        id: 'new-z0jzjMHer12',
         type: 'pp',
         data: {
           resource: {
@@ -2277,7 +2277,7 @@ describe('generateNodesAndEdgesFromBranchedFlow util function test', () => {
               ],
             },
             setupInProgress: true,
-            id: 'new-z0jzjM',
+            id: 'new-z0jzjMHer12',
           },
           branch: {
             name: 'Branch 3.2',
@@ -2292,7 +2292,7 @@ describe('generateNodesAndEdgesFromBranchedFlow util function test', () => {
                   ],
                 },
                 setupInProgress: true,
-                id: 'new-z0jzjM',
+                id: 'new-z0jzjMHer12',
               },
             ],
           },
@@ -2306,7 +2306,7 @@ describe('generateNodesAndEdgesFromBranchedFlow util function test', () => {
         },
       },
       {
-        id: 'new-mlNjkm',
+        id: 'new-mlNjkmHer12',
         type: 'pp',
         data: {
           resource: {
@@ -2319,7 +2319,7 @@ describe('generateNodesAndEdgesFromBranchedFlow util function test', () => {
               ],
             },
             setupInProgress: true,
-            id: 'new-mlNjkm',
+            id: 'new-mlNjkmHer12',
           },
           branch: {
             name: '',
@@ -2334,10 +2334,10 @@ describe('generateNodesAndEdgesFromBranchedFlow util function test', () => {
                   ],
                 },
                 setupInProgress: true,
-                id: 'new-mlNjkm',
+                id: 'new-mlNjkmHer12',
               },
             ],
-            nextRouterId: 'Ko7qmy',
+            nextRouterId: 'Ko7qmyHer12',
           },
           hideDelete: false,
           isVirtual: true,
@@ -2450,7 +2450,7 @@ describe('generateReactFlowGraph util function test', () => {
         },
       },
       {
-        id: '62cd472e8a7b1e641f295c4a-new-mlNjkm',
+        id: '62cd472e8a7b1e641f295c4a-new-mlNjkmHer12',
         source: '62cd472e8a7b1e641f295c4a',
         target: anyPPId,
         data: {
@@ -2471,7 +2471,7 @@ describe('generateReactFlowGraph util function test', () => {
         type: 'default',
       },
       {
-        id: 'Ko7qmy',
+        id: 'Ko7qmyHer12',
         type: 'router',
         data: {
           path: '/routers/1',
@@ -2479,8 +2479,8 @@ describe('generateReactFlowGraph util function test', () => {
         },
       },
       {
-        id: 'Ko7qmy-62cbc0908c8337627f657872',
-        source: 'Ko7qmy',
+        id: 'Ko7qmyHer12-62cbc0908c8337627f657872',
+        source: 'Ko7qmyHer12',
         target: '62cbc0908c8337627f657872',
         data: {
           path: '/routers/1/branches/0',
@@ -2492,9 +2492,9 @@ describe('generateReactFlowGraph util function test', () => {
         type: 'default',
       },
       {
-        id: '62cda4fb80c105471745f0f1-VlrnY7',
+        id: '62cda4fb80c105471745f0f1-VlrnY7Her12',
         source: '62cda4fb80c105471745f0f1',
-        target: 'VlrnY7',
+        target: 'VlrnY7Her12',
         data: {
           path: '/routers/1/branches/0',
           processorCount: 3,
@@ -2503,7 +2503,7 @@ describe('generateReactFlowGraph util function test', () => {
         type: 'default',
       },
       {
-        id: 'VlrnY7',
+        id: 'VlrnY7Her12',
         type: 'merge',
         data: {
           path: '/routers/3',
@@ -2522,7 +2522,7 @@ describe('generateReactFlowGraph util function test', () => {
       },
       {
         id: expect.any(String),
-        source: 'VlrnY7',
+        source: 'VlrnY7Her12',
         target: anyShortId,
         data: {
           path: '/routers/3/branches/0',
@@ -2533,7 +2533,7 @@ describe('generateReactFlowGraph util function test', () => {
       {
         id: expect.any(String),
         source: anyShortId,
-        target: 'xwELf2',
+        target: 'xwELf2Her12',
         data: {
           path: '/routers/3/branches/0',
           processorIndex: 0,
@@ -2544,7 +2544,7 @@ describe('generateReactFlowGraph util function test', () => {
         type: 'default',
       },
       {
-        id: 'xwELf2',
+        id: 'xwELf2Her12',
         type: 'router',
         data: {
           path: '/routers/2',
@@ -2553,7 +2553,7 @@ describe('generateReactFlowGraph util function test', () => {
       },
       {
         id: expect.any(String),
-        source: 'xwELf2',
+        source: 'xwELf2Her12',
         target: anyPPId,
         data: {
           path: '/routers/2/branches/0',
@@ -2577,7 +2577,7 @@ describe('generateReactFlowGraph util function test', () => {
       },
       {
         id: expect.any(String),
-        source: 'new-3LxDQf',
+        source: 'new-3LxDQfHer12',
         target: anyShortId,
         data: {
           path: '/routers/2/branches/0',
@@ -2586,7 +2586,7 @@ describe('generateReactFlowGraph util function test', () => {
         type: 'default',
       },
       {
-        id: 'new-3LxDQf',
+        id: 'new-3LxDQfHer12',
         type: 'pp',
         data: {
           resource: {
@@ -2599,7 +2599,7 @@ describe('generateReactFlowGraph util function test', () => {
               ],
             },
             setupInProgress: true,
-            id: 'new-3LxDQf',
+            id: 'new-3LxDQfHer12',
           },
           branch: {
             name: 'Branch 2.0',
@@ -2614,7 +2614,7 @@ describe('generateReactFlowGraph util function test', () => {
                   ],
                 },
                 setupInProgress: true,
-                id: 'new-3LxDQf',
+                id: 'new-3LxDQfHer12',
               },
             ],
           },
@@ -2628,9 +2628,9 @@ describe('generateReactFlowGraph util function test', () => {
         },
       },
       {
-        id: 'xwELf2-new-vYHBhY',
-        source: 'xwELf2',
-        target: 'new-vYHBhY',
+        id: 'xwELf2Her12-new-vYHBhYHer12',
+        source: 'xwELf2Her12',
+        target: 'new-vYHBhYHer12',
         data: {
           path: '/routers/2/branches/1',
           processorIndex: 0,
@@ -2653,7 +2653,7 @@ describe('generateReactFlowGraph util function test', () => {
       },
       {
         id: expect.any(String),
-        source: 'new-vYHBhY',
+        source: 'new-vYHBhYHer12',
         target: anyShortId,
         data: {
           path: '/routers/2/branches/1',
@@ -2662,7 +2662,7 @@ describe('generateReactFlowGraph util function test', () => {
         type: 'default',
       },
       {
-        id: 'new-vYHBhY',
+        id: 'new-vYHBhYHer12',
         type: 'pp',
         data: {
           resource: {
@@ -2675,7 +2675,7 @@ describe('generateReactFlowGraph util function test', () => {
               ],
             },
             setupInProgress: true,
-            id: 'new-vYHBhY',
+            id: 'new-vYHBhYHer12',
           },
           branch: {
             name: 'Branch 2.1',
@@ -2690,7 +2690,7 @@ describe('generateReactFlowGraph util function test', () => {
                   ],
                 },
                 setupInProgress: true,
-                id: 'new-vYHBhY',
+                id: 'new-vYHBhYHer12',
               },
             ],
           },
@@ -2773,7 +2773,7 @@ describe('generateReactFlowGraph util function test', () => {
                 id: '62cda4fb80c105471745f0f1',
               },
             ],
-            nextRouterId: 'VlrnY7',
+            nextRouterId: 'VlrnY7Her12',
           },
           hideDelete: false,
           isVirtual: false,
@@ -2840,7 +2840,7 @@ describe('generateReactFlowGraph util function test', () => {
                 id: '62cda4fb80c105471745f0f1',
               },
             ],
-            nextRouterId: 'VlrnY7',
+            nextRouterId: 'VlrnY7Her12',
           },
           hideDelete: false,
           isVirtual: false,
@@ -2851,8 +2851,8 @@ describe('generateReactFlowGraph util function test', () => {
         },
       },
       {
-        id: 'Ko7qmy-62cda0873d0dab426139b793',
-        source: 'Ko7qmy',
+        id: 'Ko7qmyHer12-62cda0873d0dab426139b793',
+        source: 'Ko7qmyHer12',
         target: '62cda0873d0dab426139b793',
         data: {
           path: '/routers/1/branches/1',
@@ -2864,9 +2864,9 @@ describe('generateReactFlowGraph util function test', () => {
         type: 'default',
       },
       {
-        id: '62cda0873d0dab426139b793-VlrnY7',
+        id: '62cda0873d0dab426139b793-VlrnY7Her12',
         source: '62cda0873d0dab426139b793',
-        target: 'VlrnY7',
+        target: 'VlrnY7Her12',
         data: {
           path: '/routers/1/branches/1',
           processorCount: 3,
@@ -2908,7 +2908,7 @@ describe('generateReactFlowGraph util function test', () => {
                 id: '62cda0873d0dab426139b793',
               },
             ],
-            nextRouterId: 'VlrnY7',
+            nextRouterId: 'VlrnY7Her12',
           },
           hideDelete: false,
           isVirtual: false,
@@ -2920,8 +2920,8 @@ describe('generateReactFlowGraph util function test', () => {
         },
       },
       {
-        id: 'Ko7qmy-new-z0jzjM',
-        source: 'Ko7qmy',
+        id: 'Ko7qmyHer12-new-z0jzjMHer12',
+        source: 'Ko7qmyHer12',
         target: anyPPId,
         data: {
           path: '/routers/1/branches/2',
@@ -2950,7 +2950,7 @@ describe('generateReactFlowGraph util function test', () => {
         type: 'default',
       },
       {
-        id: 'new-z0jzjM',
+        id: 'new-z0jzjMHer12',
         type: 'pp',
         data: {
           resource: {
@@ -2963,7 +2963,7 @@ describe('generateReactFlowGraph util function test', () => {
               ],
             },
             setupInProgress: true,
-            id: 'new-z0jzjM',
+            id: 'new-z0jzjMHer12',
           },
           branch: {
             name: 'Branch 3.2',
@@ -2978,7 +2978,7 @@ describe('generateReactFlowGraph util function test', () => {
                   ],
                 },
                 setupInProgress: true,
-                id: 'new-z0jzjM',
+                id: 'new-z0jzjMHer12',
               },
             ],
           },
@@ -2992,7 +2992,7 @@ describe('generateReactFlowGraph util function test', () => {
         },
       },
       {
-        id: 'new-mlNjkm',
+        id: 'new-mlNjkmHer12',
         type: 'pp',
         data: {
           resource: {
@@ -3005,7 +3005,7 @@ describe('generateReactFlowGraph util function test', () => {
               ],
             },
             setupInProgress: true,
-            id: 'new-mlNjkm',
+            id: 'new-mlNjkmHer12',
           },
           branch: {
             name: '',
@@ -3020,10 +3020,10 @@ describe('generateReactFlowGraph util function test', () => {
                   ],
                 },
                 setupInProgress: true,
-                id: 'new-mlNjkm',
+                id: 'new-mlNjkmHer12',
               },
             ],
-            nextRouterId: 'Ko7qmy',
+            nextRouterId: 'Ko7qmyHer12',
           },
           hideDelete: false,
           isVirtual: true,
