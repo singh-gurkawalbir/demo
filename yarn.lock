@@ -11510,10 +11510,10 @@ loglevel@^1.6.8:
   resolved "https://registry.yarnpkg.com/loglevel/-/loglevel-1.6.8.tgz#8a25fb75d092230ecd4457270d80b54e28011171"
   integrity sha512-bsU7+gc9AJ2SqpzxwU3+1fedl8zAntbtC5XYlt3s2j1hJcn2PsXSmgN8TaLG/J1/2mod4+cE/3vNL70/c1RNCA==
 
-logrocket-cli@^0.12.0:
-  version "0.12.0"
-  resolved "https://registry.yarnpkg.com/logrocket-cli/-/logrocket-cli-0.12.0.tgz#a736f85e9730de919a7b39c76314bcc899550972"
-  integrity sha512-Cjezmll/JncT0QLlfMFF7xTS5O5DYVUbs6SBZ+NYWF1a5sgUDtsSTwDGkM5lUa5MF5YJd3Ug5qrdGMWt0Y2Mpw==
+logrocket-cli@^0.13.0:
+  version "0.13.0"
+  resolved "https://registry.yarnpkg.com/logrocket-cli/-/logrocket-cli-0.13.0.tgz#d3d9b866a2f53c1e7a0706115376b1fc83d6d2c3"
+  integrity sha512-umDhxJJwEM0Sz4j8xRrAofKgHGvVPJtQeJCcN4Y5SeEQVYcclKDYwuugiVWQljdhmdCU4DQIauEtxej4Mzwwqw==
   dependencies:
     babel-runtime "^6.20.0"
     glob "^7.1.1"
@@ -11525,10 +11525,10 @@ logrocket-react@^4.0.1:
   resolved "https://registry.yarnpkg.com/logrocket-react/-/logrocket-react-4.0.1.tgz#e8e5405ee5f47f2c25b511931e360713a623f927"
   integrity sha512-TbQELEaDQspKHH0XylAeVZpsHoAcz+sIEG/enUQiH+LoYLW7cMK000XIS6W3Zz14zS0V2Db+KyKi8ivBpGYkzg==
 
-logrocket@^1.0.12:
-  version "1.0.12"
-  resolved "https://registry.yarnpkg.com/logrocket/-/logrocket-1.0.12.tgz#cfbc52f307bd514dd2b491ba6e9856621cb92b1b"
-  integrity sha512-bagUTmYh2Vj8LphePYIM9UHLdoR2j2Lwd7Q3SjsJlnuY6lF1zALHcamVz0PyHc2XfjSwZUvdpRET5izBrMgYYw==
+logrocket@^3.0.1:
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/logrocket/-/logrocket-3.0.1.tgz#c746e8df3d5fee999b152975e51db1908357a6f0"
+  integrity sha512-jOWG+jEzobKVxGytzZ+4KGm2kiMQMRTHab2uDWQyVZcHfEF38BlCH1yjQVY4LCmuQUwZitP9biMzJZnyUQ0dtQ==
 
 longest-streak@^3.0.0:
   version "3.1.0"
