@@ -1780,6 +1780,7 @@ if you're using a production account, you'll find your API keys under the 'API M
 'Name of the bucket in S3, where you want file to be saved',
   'import.s3.backupBucket': 'Specify the bucket name where files will be backed up after successful transfer.',
   'import.s3.fileKey': 'Name of the file',
+  'import.s3.serverSideEncryptionType': 'Use this field to instruct Amazon S3 to server-side encrypt files using Amazon S3 managed keys (SSE-S3). Please note that integrator.io also supports the ability to encrypt files before they are sent to Amazon S3.',
   'import.wrapper.function':
 'The name of the extension wrapper function in your code that needs to be invoked as part of the import process.',
   'import.wrapper.configuration':

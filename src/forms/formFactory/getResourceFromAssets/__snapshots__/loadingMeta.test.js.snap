@@ -8868,6 +8868,9 @@ Object {
       "s3.region": Object {
         "fieldId": "s3.region",
       },
+      "s3.serverSideEncryptionType": Object {
+        "fieldId": "s3.serverSideEncryptionType",
+      },
       "settings": Object {
         "fieldId": "settings",
       },
@@ -10921,6 +10924,9 @@ Object {
       "s3.region": Object {
         "fieldId": "s3.region",
       },
+      "s3.serverSideEncryptionType": Object {
+        "fieldId": "s3.serverSideEncryptionType",
+      },
       "settings": Object {
         "fieldId": "settings",
       },
@@ -10975,6 +10981,7 @@ Object {
                 "file.xml.body",
                 "file.json.body",
                 "file.lookups",
+                "s3.serverSideEncryptionType",
               ],
               "label": "Where would you like the files transferred?",
             },
