@@ -552,7 +552,7 @@ export default function FilterPanel({editorId}) {
 
           // https://celigo.atlassian.net/browse/IO-28905
           // we can remove the qoutes for value(value=${rhsValue}) or convert all the qoutes when type is string
-          if (rulesState[ruleId].data.rhs.dataType === 'string') {
+          if (rulesState[ruleId].data.rhs.dataType === 'string' && typeof rhsValue === 'string') {
             rhsValue = rhsValue?.replaceAll('"', '&quot;');
           }
 
