@@ -309,10 +309,9 @@ export default {
             'write_gift_cards',
           ]},
       ],
-      required: true,
       visible: false,
       defaultValue: r =>
-        r?.http?.auth === 'oauth' && !r?.http?._iClientId ? r?.http?.auth?.oauth?.scope || SHOPIFY_SCOPES : undefined,
+        r?.http?.auth?.oauth?.scope || (r?.http?.auth?.type === 'oauth' && !r?.http?._iClientId ? SHOPIFY_SCOPES : undefined),
     },
     application: {
       fieldId: 'application',
