@@ -158,9 +158,12 @@ export const updateDestinationDataType = (draft, node, oldDataType, newDataType)
     const oldSourceDataType = PRIMITIVE_DATA_TYPES.includes(oldDataType) ? newNode.sourceDataType : undefined;
 
     newNode.extractsArrayHelper = newNode.extractsArrayHelper || buildExtractsHelperFromExtract({sourceField: newNode.extract, extractsTree: draft.mapping.extractsTree, oldSourceDataType});
-
+    // if array helper does not exist (eg when extract is empty)
+    // then we keep the old sourceDataType for reference
+    if (newNode.extractsArrayHelper?.length) {
+      delete newNode.sourceDataType;
+    }
     delete newNode.extract;
-    delete newNode.sourceDataType;
 
     return newNode;
   }
@@ -886,7 +889,10 @@ export default (state = {}, action) => {
                   delete nodeSubArray[nodeIndexInSubArray].hardCodedValue;
                   // object array is already handled in rebuildObjectArrayNode
                   if (node.dataType !== MAPPING_DATA_TYPES.OBJECTARRAY) {
-                    nodeSubArray[nodeIndexInSubArray].extractsArrayHelper = buildExtractsHelperFromExtract({existingExtractsArray: nodeSubArray[nodeIndexInSubArray].extractsArrayHelper, sourceField: value, extractsTree: draft.mapping.extractsTree, selectedExtractJsonPath});
+                    nodeSubArray[nodeIndexInSubArray].extractsArrayHelper = buildExtractsHelperFromExtract({existingExtractsArray: nodeSubArray[nodeIndexInSubArray].extractsArrayHelper, sourceField: value, extractsTree: draft.mapping.extractsTree, selectedExtractJsonPath, oldSourceDataType: nodeSubArray[nodeIndexInSubArray].sourceDataType});
+                  }
+                  if (nodeSubArray[nodeIndexInSubArray].extractsArrayHelper?.length) {
+                    delete nodeSubArray[nodeIndexInSubArray].sourceDataType;
                   }
                 }
               } else if (node.dataType !== MAPPING_DATA_TYPES.OBJECT || node.copySource === 'yes') {

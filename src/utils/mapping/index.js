@@ -749,7 +749,8 @@ export const buildExtractsHelperFromExtract = ({
         sourceDataType: getSelectedExtractDataTypes({extractsTree, selectedValue: e, selectedExtractJsonPath})[0] || MAPPING_DATA_TYPES.STRING});
     } else {
       // add extract
-      toReturn.push(formKey ? newExtractObj : {extract: uniqueExtract,
+      toReturn.push(formKey ? newExtractObj : {
+        extract: uniqueExtract,
         sourceDataType: oldSourceDataType || getSelectedExtractDataTypes({extractsTree, selectedValue: e, selectedExtractJsonPath})[0] || MAPPING_DATA_TYPES.STRING});
     }
   });
@@ -912,7 +913,7 @@ export const rebuildObjectArrayNode = (node, extract = '', prevActiveExtract, ex
     return (childNode.parentExtract || '') === previousFirstExtract;
   }) || [];
 
-  clonedNode.extractsArrayHelper = buildExtractsHelperFromExtract({existingExtractsArray: clonedNode.extractsArrayHelper, sourceField: extract, extractsTree, selectedExtractJsonPath});
+  clonedNode.extractsArrayHelper = buildExtractsHelperFromExtract({existingExtractsArray: clonedNode.extractsArrayHelper, sourceField: extract, extractsTree, selectedExtractJsonPath, oldSourceDataType: clonedNode.sourceDataType});
   const hasNoExtract = isEmpty(clonedNode.extractsArrayHelper);
 
   const {activeTab, activeExtract} = getFirstActiveTab(clonedNode);
