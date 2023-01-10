@@ -1092,8 +1092,8 @@ export function* cancelQueuedJob({ jobId }) {
     yield put(actions.api.failure(path, 'PUT', error?.message, false));
   }
 }
-export function* replaceConnection({ _resourceId, _connectionId, _newConnectionId }) {
-  const path = `/flows/${_resourceId}/replaceConnection`;
+export function* replaceConnection({ _resourceId, _connectionId, _newConnectionId, resourceType }) {
+  const path = `/${resourceType}/${_resourceId}/replaceConnection`;
 
   try {
     yield call(apiCallWithRetry, {

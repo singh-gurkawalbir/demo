@@ -280,8 +280,8 @@ const flowMetrics = {
   updateLastRunRange: (resourceId, startDate, endDate) => action(actionTypes.FLOW_METRICS.UPDATE_LAST_RUN_RANGE, { resourceId, startDate, endDate }),
 };
 const resource = {
-  replaceConnection: (_resourceId, _connectionId, _newConnectionId) =>
-    action(actionTypes.RESOURCE.REPLACE_CONNECTION, { _resourceId, _connectionId, _newConnectionId }),
+  replaceConnection: (_resourceId, _connectionId, _newConnectionId, resourceType = 'flows') =>
+    action(actionTypes.RESOURCE.REPLACE_CONNECTION, { _resourceId, _connectionId, _newConnectionId, resourceType }),
 
   downloadFile: (id, resourceType) =>
     action(actionTypes.RESOURCE.DOWNLOAD_FILE, { resourceType, id }),
