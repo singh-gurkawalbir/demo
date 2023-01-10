@@ -24,7 +24,6 @@ This respository hosts the codebase for the Integrator Frontend.
 - ```Node - v14.18.1``` - Cross-platform runtime environment for developing server-side and networking applications.
    - Link: https://nodejs.org/download/release/v14.18.1/
 - ```YARN``` - Used to handle packages.
-- ```Travis CI`` - Used to handle PR test running and storybook deployment.
 
 **Dependencies**
 - ```Material-UI``` - Material UI is an open-source React component library that implements Google's Material Design.
@@ -69,5 +68,5 @@ This respository hosts the codebase for the Integrator Frontend.
 **Build**
 - Run ``$yarn build``
 
-**Further Reading**
-
+**CI/CD**
+``Travis CI`` - Used to handle PR test running and storybook deployment.
