@@ -101,7 +101,7 @@ export default {
       // tokenPaths are only supported for custom auth type refresh token
       newValues['/http/auth/token/tokenPaths'] = undefined;
     }
-    if (newValues['/http/auth/type'] === 'token') {
+    if (newValues['/http/auth/type'] === 'token' || newValues['/http/auth/type'] === 'oauth') {
       if (newValues['/http/auth/token/scheme'] === 'Custom') {
         newValues['/http/auth/token/scheme'] = newValues['/http/customAuthScheme'];
       }
