@@ -1095,10 +1095,11 @@ export function* cancelQueuedJob({ jobId }) {
 export function* replaceConnection({ resourceType, _resourceId, _connectionId, _newConnectionId }) {
   const path = `/${resourceType}/${_resourceId}/replaceConnection`;
   let body;
-  if(resourceType === 'flows') {
-    body =  { _connectionId, _newConnectionId }
+
+  if (resourceType === 'flows') {
+    body = { _connectionId, _newConnectionId };
   } else {
-    body = {_newConnectionId}
+    body = { _newConnectionId };
   }
   try {
     yield call(apiCallWithRetry, {
