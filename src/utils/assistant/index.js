@@ -1183,7 +1183,8 @@ export function convertToExport({ assistantConfig, assistantData, headers = [] }
     encode: false,
     indices: false,
   });
-  const finalQueryString = hardcodedQueries.includes(queryString) ? hardcodedQueries : queryString
+  const finalQueryString = hardcodedQueries.includes(queryString) ? hardcodedQueries : queryString;
+
   if (finalQueryString) {
     const [pathPart, queryPart] = relativeURI.split('?');
     const queryStringObj = new URLSearchParams(finalQueryString);
