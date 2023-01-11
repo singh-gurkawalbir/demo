@@ -3,8 +3,8 @@ import Draggable from 'react-draggable';
 import {makeStyles} from '@material-ui/core/styles';
 import { IconButton } from '@material-ui/core';
 import { useSelector, shallowEqual } from 'react-redux';
+import clsx from 'clsx';
 import ZendeskChatIcon from '../icons/ZendeskChatIcon';
-import CloseIcon from '../icons/CloseIcon';
 import useScript from '../../hooks/useScript';
 import { selectors } from '../../reducers';
 
@@ -23,6 +23,9 @@ const useStyles = makeStyles(theme => ({
   },
   chatIcon: {
     fontSize: theme.spacing(7),
+  },
+  hide: {
+    display: 'none',
   },
 }));
 
@@ -91,14 +94,8 @@ const ChatbotWidget = () => {
 
   return (
     <Draggable onDrag={onDrag}>
-      <IconButton className={classes.chatbotIcon} onClick={handleWidget}>
-        {
-          isOpen ? (
-            <CloseIcon data-test="close-zd-chatbot" />
-          ) : (
-            <ZendeskChatIcon className={classes.chatIcon} data-test="open-zd-chatbot" />
-          )
-        }
+      <IconButton className={clsx(classes.chatbotIcon, { [classes.hide]: isOpen })} onClick={handleWidget}>
+        <ZendeskChatIcon className={classes.chatIcon} data-test="open-zd-chatbot" />
       </IconButton>
     </Draggable>
   );

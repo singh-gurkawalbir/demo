@@ -493,67 +493,20 @@ describe('all modal sagas', () => {
     describe('switching account', () => {
       const defaultAShareId = 'something';
 
-      describe('switching to the same account, different environment', () => {
-        test('should switch to production environment successfuly', () => {
-          const aShare = {
-            id: defaultAShareId,
-          };
-          const saga = switchAccount(aShare);
-
-          expect(saga.next().value).toEqual(select(selectors.userPreferences));
-          expect(saga.next({ defaultAShareId }).value).toEqual(
-            put(
-              actions.user.preferences.update({
-                defaultAShareId: aShare.id,
-                environment: 'production',
-              }),
-            ),
-          );
-          expect(saga.next().done).toBe(true);
-        });
-        test('should switch to sandbox environment successfuly', () => {
-          const aShare = {
-            id: defaultAShareId,
-          };
-          const saga = switchAccount(aShare);
-
-          expect(saga.next().value).toEqual(select(selectors.userPreferences));
-          expect(saga.next({ defaultAShareId }).value).toEqual(
-            put(
-              actions.user.preferences.update({
-                defaultAShareId: aShare.id,
-                environment: 'production',
-              }),
-            ),
-          );
-          expect(saga.next().done).toBe(true);
-        });
-      });
       describe('switching to a different account', () => {
         test('should switch to production environment successfuly', () => {
           const aShare = {
-            id: 'somethingelse',
+            preferences: {
+              defaultAShareId: 'somethingelse',
+            },
           };
           const saga = switchAccount(aShare);
 
-          expect(saga.next().value).toEqual(select(selectors.userPreferences));
+          expect(saga.next().value).toEqual(call(updatePreferences));
           expect(saga.next({ defaultAShareId }).value).toEqual(
-            put(actions.auth.abortAllSagasAndSwitchAcc(aShare.id))
+            put(actions.auth.abortAllSagasAndSwitchAcc(aShare.preferences.defaultAShareId))
           );
 
-          expect(saga.next().done).toBe(true);
-        });
-        test('should switch to sandbox environment successfuly', () => {
-          const aShare = {
-            id: 'somethingelse',
-          };
-          const saga = switchAccount(aShare);
-
-          expect(saga.next().value).toEqual(select(selectors.userPreferences));
-
-          expect(saga.next({ defaultAShareId }).value).toEqual(
-            put(actions.auth.abortAllSagasAndSwitchAcc(aShare.id))
-          );
           expect(saga.next().done).toBe(true);
         });
       });

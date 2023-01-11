@@ -52,7 +52,8 @@ export default function SignInSSOForm() {
         id="email"
         type="email"
         variant="filled"
-        placeholder="Email"
+        placeholder="Email*"
+        required
         value={userEmail}
         className={classes.textField}
         disabled />

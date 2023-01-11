@@ -16,6 +16,7 @@ import {
 } from 'lodash';
 import { getPathParams } from './pathParamUtils';
 import { getPublishedHttpConnectors } from '../../constants/applications';
+import {VALID_MONGO_ID} from '../../constants/regex';
 
 const OVERWRITABLE_PROPERTIES = Object.freeze([
   'allowUndefinedResource',
@@ -858,6 +859,9 @@ export function getMergedImportOperationDetails({
     assistantData,
   });
 
+  if (!createOperation || !createOperation.url || !updateOperation || !updateOperation.url) {
+    return undefined;
+  }
   const lengthisIdentifier = createOperation.parameters.length;
 
   const createorupdateoperation = cloneDeep(createOperation);
@@ -893,10 +897,10 @@ export function convertFromExport({ exportDoc: exportDocOrig, assistantData: ass
   const assistantData = cloneDeep(assistantDataOrig);
   let { version, resource, operation } = exportDoc.assistantMetadata || {};
 
-  if (exportDoc?.http) {
-    operation = operation || exportDoc.http._httpConnectorEndpointId;
-    resource = resource || exportDoc.http._httpConnectorResourceId;
-    version = version || exportDoc.http._httpConnectorVersionId;
+  if (exportDoc?.http && (exportDoc.http?._httpConnectorEndpointId && exportDoc.http?._httpConnectorResourceId)) {
+    operation = VALID_MONGO_ID.test(operation) ? operation : exportDoc.http?._httpConnectorEndpointId;
+    resource = VALID_MONGO_ID.test(resource) ? resource : exportDoc.http?._httpConnectorResourceId;
+    version = VALID_MONGO_ID.test(version) ? version : exportDoc.http?._httpConnectorVersionId;
   }
   const { exportType, dontConvert } = exportDoc.assistantMetadata || {};
   const assistantMetadata = {
@@ -1798,19 +1802,22 @@ export function convertFromImport({ importDoc: importDocOrig, assistantData: ass
     importDoc.assistantMetadata || {};
 
   if (importDoc?.http) {
-    operation = operation || importDoc.http._httpConnectorEndpointId;
-    resource = resource || importDoc.http._httpConnectorResourceId;
-    version = version || importDoc.http._httpConnectorVersionId;
-    if ((isArray(operation) && operation.length > 1) || (isArray(importDoc.http._httpConnectorEndpointIds) && importDoc.http._httpConnectorEndpointIds.length > 1)) {
+    if (importDoc.http?._httpConnectorEndpointId || importDoc.http?._httpConnectorEndpointIds || importDoc.http?._httpConnectorResourceId) {
+      if (operation === 'create-update-id' || isArray(operation)) {
+        operation = operation || importDoc.http._httpConnectorEndpointIds;
+        resource = resource || importDoc.http._httpConnectorResourceId;
+        version = version || importDoc.http._httpConnectorVersionId;
+      } else {
+        operation = VALID_MONGO_ID.test(operation) ? operation : importDoc.http?._httpConnectorEndpointId;
+        resource = VALID_MONGO_ID.test(resource) ? resource : importDoc.http?._httpConnectorResourceId;
+        version = VALID_MONGO_ID.test(version) ? version : importDoc.http?._httpConnectorVersionId;
+      }
+    }
+    if (operation !== 'create-update-id' && ((isArray(operation) && operation.length > 1) || (isArray(importDoc.http._httpConnectorEndpointIds) && importDoc.http._httpConnectorEndpointIds.length > 1))) {
       [updateEndpoint, createEndpoint] = isArray(operation) ? operation : importDoc.http._httpConnectorEndpointIds;
     }
     if ((isArray(operation) && operation.length > 1)) { operation = 'create-update-id'; }
   }
-  // } else if (importDoc?.http) {
-  //   operation = operation || importDoc.http._httpConnectorEndpointId;
-  //   resource = resource || importDoc.http._httpConnectorResourceId;
-  //   version = version || importDoc.http._httpConnectorVersionId;
-  // }
   const { dontConvert, lookups } = importDoc.assistantMetadata || {};
   let sampleData;
   let { ignoreExisting, ignoreMissing } = importDoc;
@@ -1895,7 +1902,7 @@ export function convertFromImport({ importDoc: importDocOrig, assistantData: ass
   if (!operation) {
     return assistantMetadata;
   }
-  if (operation === 'create-update-id' && (!createEndpoint || !updateEndpoint)) {
+  if (operation === 'create-update-id' && (!createEndpoint || !updateEndpoint || createEndpoint === '' || updateEndpoint === '')) {
     return assistantMetadata;
   }
   let operationDetails;
@@ -1916,6 +1923,7 @@ export function convertFromImport({ importDoc: importDocOrig, assistantData: ass
       assistantData,
     });
   }
+
   if (!operationDetails || !operationDetails.url) {
     return assistantMetadata;
   }

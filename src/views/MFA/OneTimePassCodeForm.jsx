@@ -16,6 +16,7 @@ import ErrorIcon from '../../components/icons/ErrorIcon';
 import { NUMBER_REGEX } from '../../constants';
 import getRoutePath from '../../utils/routePaths';
 
+/** ***TODO (Azhar): forms CSS Optimization needed*** */
 const useStyles = makeStyles(theme => ({
   submit: {
     width: '100%',
@@ -55,6 +56,7 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     justifyContent: 'space-between',
     marginTop: theme.spacing(1),
+    marginBottom: theme.spacing(2),
   },
   flexRight: {
     flexDirection: 'row-reverse',

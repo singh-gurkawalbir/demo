@@ -17,6 +17,7 @@ import {
   fetchPageProcessorPreview,
   fetchPageGeneratorPreview,
   requestProcessorData,
+  _processResponseTransformData,
 } from '.';
 import requestRealTimeMetadata from '../sampleDataGenerator/realTimeSampleData';
 import requestFileAdaptorSampleData from '../sampleDataGenerator/fileAdaptorSampleData';
@@ -455,6 +456,77 @@ describe('flow sample data sagas', () => {
         .run();
     });
   });
+  describe('_processResponseTransformData saga', () => {
+    const flowId = 'flow-123';
+    const resourceId = 'export-123';
+
+    test('should call evaluateExternalProcessor saga to fetch processor data and call updateStateForProcessorData saga with the response of processor data merged with mock response', () => {
+      const processorData = { editorType: 'transform', rules: [] };
+      const mockResponse = [{id: '123', _json: {somedata: {}}}];
+      const resource = { mockResponse };
+      const stage = 'responseTransform';
+      const transformedData = { data: {test: 5} };
+      const processedData = {
+        data: [
+          {
+            ...mockResponse[0],
+            _json: transformedData.data,
+          },
+        ],
+      };
+
+      return expectSaga(_processResponseTransformData, {
+        flowId,
+        resourceId,
+        processorData,
+        stage,
+        hasNoRulesToProcess: false,
+        resource,
+      })
+        .provide([
+          [call(evaluateExternalProcessor, {
+            processorData,
+          }), transformedData],
+        ])
+        .call(updateStateForProcessorData, {
+          flowId,
+          resourceId,
+          stage,
+          processedData,
+          wrapInArrayProcessedData: undefined,
+          removeDataPropFromProcessedData: undefined,
+        })
+        .run();
+    });
+    test('should not call evaluateExternalProcessor saga if there are no rules to process and call updateStateForProcessorData saga with mock response', () => {
+      const processorData = { editorType: 'transform', rules: [] };
+      const mockResponse = [{id: '123', _json: {somedata: {}}}];
+      const resource = { mockResponse };
+      const stage = 'responseTransform';
+      const processedData = {
+        data: mockResponse,
+      };
+
+      return expectSaga(_processResponseTransformData, {
+        flowId,
+        resourceId,
+        processorData,
+        stage,
+        hasNoRulesToProcess: true,
+        resource,
+      })
+        .not.call(evaluateExternalProcessor, {processorData })
+        .call(updateStateForProcessorData, {
+          flowId,
+          resourceId,
+          stage,
+          processedData,
+          wrapInArrayProcessedData: undefined,
+          removeDataPropFromProcessedData: undefined,
+        })
+        .run();
+    });
+  });
   describe('fetchPageProcessorPreview saga', () => {
     test('should do nothing incase of no flowId/_pageProcessorId', () => expectSaga(fetchPageProcessorPreview, {}).returns(undefined).run());
     test('should call pageProcessorPreview and the result is dispatched to receivedPreviewData action', () => {
@@ -876,6 +948,60 @@ describe('flow sample data sagas', () => {
           flowId,
           resourceId,
           processorData,
+          stage,
+        })
+        .run();
+    });
+    test('should call _processResponseTransformData for transform processor when stage is responseTransform with preProcessedData', () => {
+      const restExport = {
+        _id: resourceId,
+        name: 'NS export',
+        adaptorType: 'RESTExport',
+        responseTransform: {
+          type: 'expression',
+          expression: {
+            rules: [[{ extract: 'count', generate: 'total'}]],
+          },
+        },
+      };
+      const preProcessedSampleData = { count: 5 };
+      const preProcessedData = {
+        records: {
+          count: 5,
+        },
+        setting: {},
+      };
+      const stage = 'responseTransform';
+      const processorData = {
+        data: preProcessedSampleData,
+        rule: [{ extract: 'count', generate: 'total'}],
+        editorType: 'transform',
+      };
+      const responseTransformData = {};
+
+      return expectSaga(requestProcessorData, {
+        flowId,
+        resourceId,
+        resourceType,
+        processor: stage,
+      })
+        .provide([
+          [select(selectors.resourceData, resourceType, resourceId, SCOPES.VALUE), { merged: restExport }],
+          [matchers.call.fn(getFlowStageData), preProcessedData],
+          [matchers.call.fn(_processResponseTransformData), responseTransformData],
+          [select(selectors.getSampleDataContext, {
+            flowId,
+            resourceId,
+            resourceType,
+            stage,
+          }), {data: preProcessedSampleData}],
+        ])
+        .call(_processResponseTransformData, {
+          flowId,
+          resource: restExport,
+          resourceId,
+          processorData,
+          hasNoRulesToProcess: false,
           stage,
         })
         .run();

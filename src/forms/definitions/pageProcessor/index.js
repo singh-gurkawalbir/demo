@@ -195,7 +195,19 @@ export default {
       } else if (appType === 'graph_ql') {
         expression.push({ 'http.formType': 'graph_ql' });
       } else if (appType === 'http') {
-        if (app._httpConnectorId) { expression.push({ 'http._httpConnectorId': app._httpConnectorId }); }
+        if (app._httpConnectorId) {
+          // get all possible applications with same type (global and local connectors)
+          const apps = applications.filter(a => a.id === appField.value) || [];
+          const allConnectorIds = [];
+
+          // show all connections with same http connector legacyId
+          apps.forEach(a => {
+            if (a._httpConnectorId) allConnectorIds.push(a._httpConnectorId);
+          });
+
+          expression.push({ 'http._httpConnectorId': {$in: allConnectorIds} });
+        }
+
         expression.push({ 'http.formType': { $ne: 'rest' } });
         expression.push({ type: appType });
       } else {

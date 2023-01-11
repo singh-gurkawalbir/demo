@@ -23,9 +23,9 @@ const useStyles = makeStyles(theme => ({
 
 export default function PageContent() {
   const classes = useStyles();
-
   const isNoneTierLicense = useSelector(state => selectors.platformLicenseWithMetadata(state).isNone);
-  const isDefaultAccountSetAfterAuth = useSelector(selectors.isDefaultAccountSetAfterAuth);
+  const isDefaultAccountSet = useSelector(selectors.isDefaultAccountSet);
+  const isMFASetupIncomplete = useSelector(selectors.isMFASetupIncomplete);
 
   const [enqueueSnackbar] = useEnqueueSnackbar();
 
@@ -38,7 +38,7 @@ export default function PageContent() {
     });
   }, [enqueueSnackbar, isNoneTierLicense]);
   if (isNoneTierLicense) return null;
-  if (!isDefaultAccountSetAfterAuth) {
+  if (!isDefaultAccountSet && !isMFASetupIncomplete) {
     return <Loader open>Loading...<Spinner /></Loader>;
   }
 

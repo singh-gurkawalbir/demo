@@ -331,7 +331,7 @@ export default function getRequestOptions(
     case actionTypes.RESOURCE.DOWNLOAD_AUDIT_LOGS: {
       // There won't be any resource type for account level audit logs, in that GET route should be used
       const method = resourceType ? 'POST' : 'GET';
-      let path = resourceType ? `/${childId ? 'flows' : resourceType}/audit/signedURL` : '/audit/signedURL';
+      let path = resourceType ? `/${childId ? 'flows' : resourceType}/audit/signedURL?` : '/audit/signedURL?';
 
       const body = resourceType && {_resourceIds: flowIds || [resourceId]};
       const { fromDate, toDate, byUser, resourceType: filterResourceType, source, event, _resourceId } = filters || {};
@@ -346,11 +346,11 @@ export default function getRequestOptions(
           body[toKey] = toDate;
         }
       } else if (fromDate && toDate) {
-        path += `?${fromKey}=${fromDate}&${toKey}=${toDate}`;
+        path += `${fromKey}=${fromDate}&${toKey}=${toDate}`;
       } else if (fromDate) {
-        path += `?${fromKey}=${fromDate}`;
+        path += `${fromKey}=${fromDate}`;
       } else if (toDate) {
-        path += `?${toKey}=${toDate}`;
+        path += `${toKey}=${toDate}`;
       }
       if (byUser !== 'all') {
         resourceType ? body._byUserId = byUser : path += `&_byUserId=${byUser}`;

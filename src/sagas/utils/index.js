@@ -1,6 +1,6 @@
 import jsonPatch, { deepClone, applyPatch } from 'fast-json-patch';
 import { select, call } from 'redux-saga/effects';
-import { isEmpty, cloneDeep, set, unset } from 'lodash';
+import { isEmpty, cloneDeep, set, unset, get } from 'lodash';
 import util from '../../utils/array';
 import { isNewId } from '../../utils/resource';
 import { selectors } from '../../reducers';
@@ -8,6 +8,11 @@ import { createFormValuesPatchSet, SCOPES } from '../resourceForm';
 import { createFormValuesPatchSet as createSuiteScriptFormValuesPatchSet } from '../suiteScript/resourceForm';
 import { AUTHENTICATION_LABELS, emptyObject } from '../../constants';
 
+export const getDataTypeDefaultValue = (dataType = 'string') => {
+  const data = {string: 'abc', number: 123, boolean: true, stringarray: ['a', 'b'], numberarray: [1, 2], booleanarray: [true, false], objectarray: [{a: 'b'}, {c: 'd'}], object: {a: 'b'} };
+
+  return data[dataType] || 'abc';
+};
 export const convertResourceFieldstoSampleData = (resourceFields, dataType = 'object') => {
   if (!resourceFields) {
     return '';
@@ -18,7 +23,7 @@ export const convertResourceFieldstoSampleData = (resourceFields, dataType = 'ob
     resourceFields.forEach(rf => {
       if (rf.resourceFields) {
         output[rf.id] = convertResourceFieldstoSampleData(rf.resourceFields, rf.dataType);
-      } else { output[rf.id] = rf.id; }
+      } else { output[rf.id] = getDataTypeDefaultValue(rf.dataType); }
     });
 
     return output;
@@ -29,7 +34,7 @@ export const convertResourceFieldstoSampleData = (resourceFields, dataType = 'ob
     resourceFields.forEach(rf => {
       if (rf.resourceFields) {
         tempOutput[rf.id] = convertResourceFieldstoSampleData(rf.resourceFields, rf.dataType);
-      } else { tempOutput[rf.id] = rf.id; }
+      } else { tempOutput[rf.id] = getDataTypeDefaultValue(rf.dataType); }
     });
 
     return [tempOutput];
@@ -44,7 +49,12 @@ export const getEndpointResourceFields = (endpointFields, resourceFields) => {
 
   if (type === 'inclusion') {
     fields.forEach(field => {
-      returnData = set(returnData, field?.replaceAll('[*]', '[0]'), 'default');
+      const tempField = field?.replaceAll('[*]', '[0]');
+      const value = get(resourceFields, tempField);
+
+      if (value) {
+        returnData = set(returnData, tempField, value);
+      }
     });
   } if (type === 'exclusion') {
     returnData = resourceFields;
@@ -95,8 +105,6 @@ export const getExportMetadata = (connectorMetadata, connectionVersion) => {
 
   let versions = connectorMetadata.versions?.map(v => ({version: v.name, _id: v._id}));
 
-  exportData.versions = cloneDeep(versions);
-
   if (!versions || !versions.length) {
     versions = [
       {
@@ -108,6 +116,7 @@ export const getExportMetadata = (connectorMetadata, connectionVersion) => {
     versions = versions.filter(v => v.version === connectionVersion);
     httpResources = httpResources.filter(r => r._versionIds?.includes(versions[0]._id));
   }
+  exportData.versions = cloneDeep(versions);
 
   exportData.resources = httpResources.map(httpResource => {
     const exportPreConfiguredFields = cloneDeep(httpResource.supportedBy?.export?.preConfiguredFields);

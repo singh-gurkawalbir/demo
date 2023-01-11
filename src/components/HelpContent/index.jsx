@@ -60,10 +60,14 @@ const useStyles = makeStyles(theme => ({
     },
   },
   feedbackTextField: {
-    marginBottom: theme.spacing(1),
+    margin: theme.spacing(1, 0),
     width: '100%',
     '& > div': {
       padding: theme.spacing(1.5),
+    },
+    '& .MuiInputBase-input::placeholder': {
+      color: theme.palette.secondary.light,
+      opacity: 1,
     },
   },
   actionWrapper: {
@@ -126,6 +130,7 @@ export default function HelpContent({ children, title, caption, fieldId, resourc
           size="small"
           data-test="close"
           aria-label="Close"
+          // onClick={e => { e.stopPropagation(); }}
           className={classes.closeButton}>
           <CloseIcon />
         </IconButton>
@@ -137,15 +142,18 @@ export default function HelpContent({ children, title, caption, fieldId, resourc
             name="feedbackText"
             placeholder="How can we make this information more helpful?"
             multiline
+            // onClick={e => { e.stopPropagation(); }}
             onChange={onChange}
             variant="outlined"
             className={classes.feedbackTextField}
           />
-          <OutlinedButton
-            className={classes.feedbackActionButton}
-            onClick={handleSendFeedbackText}>
-            Submit
-          </OutlinedButton>
+          <span data-test="helpFeedbackSubmit">
+            <OutlinedButton
+              className={classes.feedbackActionButton}
+              onClick={handleSendFeedbackText}>
+              Submit
+            </OutlinedButton>
+          </span>
         </>
       ) : (
         <>

@@ -37,6 +37,8 @@ import UserActivityMonitor from './UserActivityMonitor';
 import * as pendo from '../utils/analytics/pendo';
 import MfaHelp from '../views/MFAHelp';
 import ConcurConnect from '../views/ConcurConnect';
+import Spinner from '../components/Spinner';
+import Loader from '../components/Loader';
 
 // The makeStyles function below does not have access to the theme.
 // We can only use the theme in components that are children of
@@ -101,6 +103,11 @@ export const useSnackbarStyles = makeStyles({
 });
 
 function NonSigninHeaderComponents() {
+  const isAuthInitialized = useSelector(selectors.isAuthInitialized);
+  const isUserAuthenticated = useSelector(state => selectors.sessionInfo(state)?.authenticated);
+
+  if (!isAuthInitialized && !isUserAuthenticated) return <Loader open>Loading...<Spinner /></Loader>;
+
   return (
     <>
       <CeligoAppBar />

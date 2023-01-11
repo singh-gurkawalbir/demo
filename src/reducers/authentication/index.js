@@ -7,6 +7,8 @@ const defaultState = { initialized: false, commStatus: COMM_STATES.LOADING };
 
 // #region Reducers
 export default function (state = defaultState, action) {
+  const { auth = {} } = action;
+
   // Since the CLEAR_STORE action resets the state, it can not be placed in
   // the produce function since the draft object within the 'produce' fn context
   // should not be re-assigned. (only its properties)
@@ -15,6 +17,7 @@ export default function (state = defaultState, action) {
       initialized: false,
       commStatus: COMM_STATES.LOADING,
       loggedOut: true, // why is this not in the defaultState?
+      ...auth,
     };
   }
   const { type, showAuthError, mfaError, mfaAuthInfo, payload, response } = action;
@@ -73,6 +76,9 @@ export default function (state = defaultState, action) {
         break;
       case actionTypes.AUTH.SET_PASSWORD_REQUEST_SUCCESSFUL:
         draft.requestSetPasswordStatus = 'success';
+        if (!draft.signup) { draft.signup = {}; }
+        draft.signup.status = 'done';
+        draft.signup.message = action.setPasswordRequestInfo?.message;
         delete draft.requestSetPasswordError;
         break;
       case actionTypes.AUTH.INIT_SESSION:
@@ -166,9 +172,18 @@ export default function (state = defaultState, action) {
         delete draft.mfaAuthInfo;
         draft.mfaAuth = { status: 'success' };
         break;
+      case actionTypes.AUTH.ACCEPT_INVITE.VALIDATE:
+        draft.acceptInvite = {
+          status: 'requested',
+        };
+        break;
       case actionTypes.AUTH.ACCEPT_INVITE.VALIDATE_SUCCESS:
         if (!draft.acceptInvite) draft.acceptInvite = {};
-        draft.acceptInvite = {...payload};
+        draft.acceptInvite = {...payload, status: 'received'};
+        break;
+      case actionTypes.AUTH.ACCEPT_INVITE.VALIDATE_ERROR:
+        if (!draft.acceptInvite) draft.acceptInvite = {};
+        draft.acceptInvite = { status: 'errored'};
         break;
       case actionTypes.AUTH.ACCEPT_INVITE.SUCCESS:
         if (!draft.acceptInvite) draft.acceptInvite = {};

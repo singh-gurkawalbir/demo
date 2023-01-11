@@ -163,7 +163,7 @@ describe('getRequestOptions util method', () => {
     ],
     [
       {
-        path: '/integrations/audit/signedURL',
+        path: '/integrations/audit/signedURL?',
         opts: {
           method: 'POST',
           body: {

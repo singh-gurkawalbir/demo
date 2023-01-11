@@ -77,7 +77,7 @@ describe('purgeMultipleErrors action Test cases', () => {
     expect(cancelButton).toBeInTheDocument();
     userEvent.click(confirmPurgeButton);
     expect(mockDispatch).toHaveBeenCalledWith(
-      actions.errorManager.flowErrorDetails.purge.request({flowId, resourceId})
+      actions.errorManager.flowErrorDetails.purge.request({flowId, resourceId, isRowAction: false})
     );
   });
 });

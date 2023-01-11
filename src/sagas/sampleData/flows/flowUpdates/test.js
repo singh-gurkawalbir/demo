@@ -223,6 +223,46 @@ describe('flow updates sagas', () => {
         .put(actions.flowData.updateFlowsForResource('export-123', 'exports', stagesToReset))
         .run();
     });
+    test('should dispatch updateFlowsForResource action with empty stagesToReset when the patch is of inputFilter change for export/import', () => {
+      const exportInputFilterPatchSet = [{
+        path: '/inputFilter',
+        op: 'replace',
+        value: {
+          type: 'expression',
+          expression: {
+            rules: ['equals', ['string', ['extract', 'id']], '456'],
+          },
+        },
+      }];
+      const importInputFilterPatchSet = [{
+        path: '/filter',
+        op: 'replace',
+        value: {
+          type: 'expression',
+          expression: {
+            rules: ['equals', ['string', ['extract', 'id']], '456'],
+          },
+
+        },
+      }];
+
+      const test1 = expectSaga(updateFlowOnResourceUpdate, {
+        resourceId: 'export-123',
+        resourceType: 'exports',
+        patch: exportInputFilterPatchSet,
+      })
+        .put(actions.flowData.updateFlowsForResource('export-123', 'exports', []))
+        .run();
+      const test2 = expectSaga(updateFlowOnResourceUpdate, {
+        resourceId: 'import-123',
+        resourceType: 'imports',
+        patch: importInputFilterPatchSet,
+      })
+        .put(actions.flowData.updateFlowsForResource('import-123', 'imports', []))
+        .run();
+
+      return test1 && test2;
+    });
   });
   describe('_updateResponseMapping saga', () => {
     test('should not dispatch updateResponseMapping, resetStages action incase of invalid flowId/resourceIndex', () => expectSaga(_updateResponseMapping, { flowId: 'INVALID_FLOW_ID' })

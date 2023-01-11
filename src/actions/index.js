@@ -65,6 +65,7 @@ const form = {
     { visible,
       disabled,
       required,
+      touched,
       isValid,
       errorMessages }
   ) =>
@@ -75,6 +76,7 @@ const form = {
         visible,
         disabled,
         required,
+        touched,
         isValid,
         errorMessages,
       },
@@ -141,10 +143,11 @@ const auth = {
       isExistingSessionInvalid,
     }),
   userAlreadyLoggedIn: () => action(actionTypes.AUTH.USER_ALREADY_LOGGED_IN),
-  clearStore: () => action(actionTypes.AUTH.CLEAR_STORE),
+  clearStore: auth => action(actionTypes.AUTH.CLEAR_STORE, { auth }),
   abortAllSagasAndInitLR: opts => action(actionTypes.AUTH.ABORT_ALL_SAGAS_AND_INIT_LR, { opts }),
   abortAllSagasAndSwitchAcc: accountToSwitchTo => action(actionTypes.AUTH.ABORT_ALL_SAGAS_AND_SWITCH_ACC, { accountToSwitchTo }),
   initSession: opts => action(actionTypes.AUTH.INIT_SESSION, { opts }),
+  validateAndInitSession: () => action(actionTypes.AUTH.VALIDATE_AND_INIT_SESSION),
   validateSession: () => action(actionTypes.AUTH.VALIDATE_SESSION),
   changePassword: updatedPassword =>
     action(actionTypes.AUTH.USER.CHANGE_PASSWORD, { updatedPassword }),
@@ -1435,7 +1438,7 @@ const user = {
       requestCollection: message =>
         resource.requestCollection('shared/ashares', undefined, message),
       leave: id => action(actionTypes.USER.ACCOUNT.LEAVE_REQUEST, { id }),
-      switchTo: ({ id }) => action(actionTypes.USER.ACCOUNT.SWITCH, { id }),
+      switchTo: ({ id }) => action(actionTypes.USER.ACCOUNT.SWITCH, { preferences: { defaultAShareId: id, environment: 'production' } }),
       addLinkedConnectionId: connectionId =>
         action(actionTypes.USER.ACCOUNT.ADD_SUITESCRIPT_LINKED_CONNECTION, {
           connectionId,
@@ -1742,7 +1745,7 @@ const searchCriteria = {
 };
 // #region DynaForm Actions
 const resourceForm = {
-  init: (resourceType, resourceId, isNew, skipCommit, flowId, initData, integrationId, fieldMeta) =>
+  init: (resourceType, resourceId, isNew, skipCommit, flowId, initData, integrationId, fieldMeta, parentConnectionId) =>
     action(actionTypes.RESOURCE_FORM.INIT, {
       resourceType,
       resourceId,
@@ -1752,6 +1755,7 @@ const resourceForm = {
       initData,
       integrationId,
       fieldMeta,
+      parentConnectionId,
     }),
   initComplete: (
     resourceType,
@@ -2209,8 +2213,8 @@ const errorManager = {
       filters,
     }),
     purge: {
-      request: ({ flowId, resourceId, errors }) =>
-        action(actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.PURGE.REQUEST, {flowId, resourceId, errors}),
+      request: ({ flowId, resourceId, errors, isRowAction }) =>
+        action(actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.PURGE.REQUEST, {flowId, resourceId, errors, isRowAction}),
       success: ({ flowId, resourceId, message}) =>
         action(actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.PURGE.SUCCESS, { flowId, resourceId, message}),
       clear: ({ flowId, resourceId}) => action(actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.PURGE.CLEAR, { flowId, resourceId}),
