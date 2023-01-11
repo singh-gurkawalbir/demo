@@ -138,7 +138,7 @@ describe('ReplaceConnection test cases', () => {
 
     expect(replaceDialogButton).toBeInTheDocument();
     userEvent.click(replaceDialogButton);
-    expect(mockDispatchFn).toBeCalledWith(actions.resource.replaceConnection('flow_id', 'connection_id', undefined));
+    expect(mockDispatchFn).toBeCalledWith(actions.resource.replaceConnection('flows', 'flow_id', 'connection_id', undefined));
   });
 
   test('should pass the initial render with invalid connection id', async () => {
