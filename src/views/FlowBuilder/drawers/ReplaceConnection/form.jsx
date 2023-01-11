@@ -67,7 +67,7 @@ export default function ReplaceConnection(props) {
         {
           label: 'Replace',
           onClick: () => {
-            dispatch(actions.resource.replaceConnection(flowId, connection._id, formVal._connectionId));
+            dispatch(actions.resource.replaceConnection('flows', flowId, connection._id, formVal._connectionId));
             onClose();
           },
         },

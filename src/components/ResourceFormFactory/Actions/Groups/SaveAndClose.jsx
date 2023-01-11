@@ -75,14 +75,11 @@ export default function SaveAndClose(props) {
                 if (integration?._id) {
                   const registeredConnections = integration?._registeredConnectionIds || [];
 
-                  dispatch(actions.resource.replaceConnection(flowId, resource?._connectionId, values?.['/_connectionId'], 'flows'));
                   if (!(registeredConnections.includes(values?.['/_connectionId']))) {
                     dispatch(actions.connection.completeRegister([values?.['/_connectionId']], integration._id));
                   }
-                } else {
-                  dispatch(actions.resource.replaceConnection(resource?._id, resource?._connectionId, values?.['/_connectionId'], resourceType));
                 }
-
+                dispatch(actions.resource.replaceConnection(resourceType, resource?._id, resource?._connectionId, values?.['/_connectionId']));
                 saveResource(closeAfterSave);
               },
             },

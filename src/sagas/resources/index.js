@@ -1092,14 +1092,19 @@ export function* cancelQueuedJob({ jobId }) {
     yield put(actions.api.failure(path, 'PUT', error?.message, false));
   }
 }
-export function* replaceConnection({ _resourceId, _connectionId, _newConnectionId, resourceType }) {
+export function* replaceConnection({ resourceType, _resourceId, _connectionId, _newConnectionId }) {
   const path = `/${resourceType}/${_resourceId}/replaceConnection`;
-
+  let body;
+  if(resourceType === 'flows') {
+    body =  { _connectionId, _newConnectionId }
+  } else {
+    body = {_newConnectionId}
+  }
   try {
     yield call(apiCallWithRetry, {
       path,
       opts: {
-        body: { _connectionId, _newConnectionId },
+        body,
         method: 'PUT',
       },
     });
