@@ -304,10 +304,10 @@ describe('test suite for Connections', () => {
       'Used by',
       'Delete connection',
     ]);
-    const downloadDebugLogs = screen.getByRole('menuitem', {name: 'Download debug logs'});
+    const downloadDebugLogs = screen.getByRole('link', {name: 'Download debug logs'});
 
-    userEvent.click(downloadDebugLogs);
-    expect(mockDispatchFn).toHaveBeenCalledWith(actions.logs.connections.download('conn123'));
+    expect(downloadDebugLogs).toHaveAttribute('download');
+    expect(downloadDebugLogs).toHaveAttribute('href', '/api/connections/conn123/debug');
   });
 
   test('should be able to debug a connection when not in flowBuilder', () => {
