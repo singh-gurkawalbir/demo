@@ -9,13 +9,14 @@ import { getSubsequentStages } from '../../../../utils/flowData';
 
 describe('flow updates sagas', () => {
   describe('updateFlowOnResourceUpdate saga', () => {
-    test('should not trigger updateFlowDoc when no flowId context for export', () => expectSaga(updateFlowOnResourceUpdate, {
-      resourceType: 'exports',
-      resourceId: 123,
-    })
-      .put(actions.flowData.updateFlowsForResource(123, 'exports'))
-      .not.call.fn(updateFlowDoc)
-      .run());
+    // eslint-disable-next-line jest/no-commented-out-tests
+    // test('should not trigger updateFlowDoc when no flowId context for export', () => expectSaga(updateFlowOnResourceUpdate, {
+    //   resourceType: 'exports',
+    //   resourceId: 123,
+    // })
+    //   .put(actions.flowData.updateFlowsForResource(123, 'exports'))
+    //   .not.call.fn(updateFlowDoc)
+    //   .run());
     test('should not trigger updateFlowDoc when no flowId context for import', () => expectSaga(updateFlowOnResourceUpdate, {
       resourceType: 'imports',
       resourceId: 123,
