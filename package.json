@@ -4,6 +4,9 @@
   "author": "Celigo Inc.",
   "private": true,
   "license": "",
+  "engines": {
+    "node": "18.13.0"
+  },
   "repository": {
     "type": "git",
     "url": "git://github.com/celigo/integrator-ui.git"
