@@ -1029,10 +1029,10 @@ describe('Mappings region selector testcases', () => {
 
   describe('selectors.flowHasMappings test cases', () => {
     test('should not throw any exception for invalid arguments', () => {
-      expect(selectors.flowHasMappings()).toEqual(false);
-      expect(selectors.flowHasMappings(null, null)).toEqual(false);
+      expect(selectors.flowHasMappings()).toBe(false);
+      expect(selectors.flowHasMappings(null, null)).toBe(false);
     });
-    test('should return false if the flow has neither page processors nor routers ', () => {
+    test('should return false if the flow has neither page processors nor routers', () => {
       const state = {
         data: {
           resources: {
@@ -1045,7 +1045,7 @@ describe('Mappings region selector testcases', () => {
         },
       };
 
-      expect(selectors.flowHasMappings(state, 'flow-id-1')).toEqual(false);
+      expect(selectors.flowHasMappings(state, 'flow-id-1')).toBe(false);
     });
     test('should return false if the flow has page processors without mappings', () => {
       const state = {
@@ -1067,7 +1067,7 @@ describe('Mappings region selector testcases', () => {
         },
       };
 
-      expect(selectors.flowHasMappings(state, 'flow-id-1')).toEqual(false);
+      expect(selectors.flowHasMappings(state, 'flow-id-1')).toBe(false);
     });
     test('should return true if the flow has page processors with mappings', () => {
       const state = {
@@ -1092,7 +1092,7 @@ describe('Mappings region selector testcases', () => {
         },
       };
 
-      expect(selectors.flowHasMappings(state, 'flow-id-1')).toEqual(true);
+      expect(selectors.flowHasMappings(state, 'flow-id-1')).toBe(true);
     });
     test('should return false if the flow has routers without mappings', () => {
       const state = {
@@ -1122,7 +1122,7 @@ describe('Mappings region selector testcases', () => {
         },
       };
 
-      expect(selectors.flowHasMappings(state, 'flow-id-1')).toEqual(false);
+      expect(selectors.flowHasMappings(state, 'flow-id-1')).toBe(false);
     });
     test('should return true if the flow has routers with mappings', () => {
       const state = {
@@ -1155,7 +1155,7 @@ describe('Mappings region selector testcases', () => {
         },
       };
 
-      expect(selectors.flowHasMappings(state, 'flow-id-1')).toEqual(true);
+      expect(selectors.flowHasMappings(state, 'flow-id-1')).toBe(true);
     });
   });
 

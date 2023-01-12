@@ -2308,10 +2308,10 @@ describe('updateWebhookFinalMetadataWithHttpFramework', () => {
 });
 describe('getDataTypeDefaultValue', () => {
   test('should verify all default values for given datatype', () => {
-    expect(getDataTypeDefaultValue('string')).toEqual('abc');
-    expect(getDataTypeDefaultValue('number')).toEqual(123);
+    expect(getDataTypeDefaultValue('string')).toBe('abc');
+    expect(getDataTypeDefaultValue('number')).toBe(123);
 
-    expect(getDataTypeDefaultValue('boolean')).toEqual(true);
+    expect(getDataTypeDefaultValue('boolean')).toBe(true);
 
     expect(getDataTypeDefaultValue('stringarray')).toEqual(['a', 'b']);
 
@@ -2321,8 +2321,8 @@ describe('getDataTypeDefaultValue', () => {
 
     expect(getDataTypeDefaultValue('objectarray')).toEqual([{a: 'b'}, {c: 'd'}]);
     expect(getDataTypeDefaultValue('object')).toEqual({a: 'b'});
-    expect(getDataTypeDefaultValue()).toEqual('abc');
-    expect(getDataTypeDefaultValue('unknown')).toEqual('abc');
+    expect(getDataTypeDefaultValue()).toBe('abc');
+    expect(getDataTypeDefaultValue('unknown')).toBe('abc');
   });
 });
 

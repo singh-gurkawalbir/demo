@@ -279,16 +279,16 @@ describe('license util function test', () => {
 
   describe('isNextTheHighestPlan function test', () => {
     test('should not throw any exception for invalid arguments', () => {
-      expect(isNextTheHighestPlan()).toEqual(false);
-      expect(isNextTheHighestPlan('', false, [])).toEqual(false);
-      expect(isNextTheHighestPlan('')).toEqual(false);
-      expect(isNextTheHighestPlan('231', false)).toEqual(false);
-      expect(isNextTheHighestPlan('231', true, [])).toEqual(false);
+      expect(isNextTheHighestPlan()).toBe(false);
+      expect(isNextTheHighestPlan('', false, [])).toBe(false);
+      expect(isNextTheHighestPlan('')).toBe(false);
+      expect(isNextTheHighestPlan('231', false)).toBe(false);
+      expect(isNextTheHighestPlan('231', true, [])).toBe(false);
     });
 
     test('should return correct value for correct arguments', () => {
-      expect(isNextTheHighestPlan('123')).toEqual(false);
-      expect(isNextTheHighestPlan('123', false, [])).toEqual(false);
+      expect(isNextTheHighestPlan('123')).toBe(false);
+      expect(isNextTheHighestPlan('123', false, [])).toBe(false);
       expect(isNextTheHighestPlan('123', true, [
         {
           _id: '111',
@@ -302,7 +302,7 @@ describe('license util function test', () => {
           _id: '123',
           order: 2,
         },
-      ])).toEqual(true);
+      ])).toBe(true);
     });
   });
 });
