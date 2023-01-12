@@ -1,9 +1,9 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { FormLabel, FormControl } from '@material-ui/core';
-import shortid from 'shortid';
 import { isEqual } from 'lodash';
 import clsx from 'clsx';
+import { generateId } from '../../../../utils/string';
 import FieldMessage from '../FieldMessage';
 import FieldHelp from '../../FieldHelp';
 import KeyValueRow from './Row';
@@ -100,11 +100,11 @@ export function KeyValueComponent(props) {
       }
     }
 
-    return [...val, {key: shortid.generate()}];
+    return [...val, {key: generateId()}];
   }, [keyName, valueName]);
   const getInitVal = useCallback(
     () => {
-      const formattedValue = (value || []).map(val => ({...val, key: shortid.generate()}));
+      const formattedValue = (value || []).map(val => ({...val, key: generateId()}));
 
       return addEmptyLastRowIfNotExist(formattedValue);
     },
@@ -142,7 +142,7 @@ export function KeyValueComponent(props) {
 
       valuesCopy[row][field] = value;
     } else {
-      valuesCopy.push({ [field]: value, key: shortid.generate() });
+      valuesCopy.push({ [field]: value, key: generateId() });
     }
 
     const removedEmptyValues = valuesCopy.filter(

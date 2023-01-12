@@ -1,8 +1,8 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
-import { nanoid } from 'nanoid';
 import { Link } from 'react-router-dom';
 import { makeStyles, Typography } from '@material-ui/core';
+import { generateId } from '../../../../../../utils/string';
 import { selectors } from '../../../../../../reducers';
 import { REVISION_TYPES } from '../../../../../../constants';
 import { drawerPaths, buildDrawerUrl } from '../../../../../../utils/rightDrawer';
@@ -22,7 +22,7 @@ export default function ResourceDiffError({ integrationId, type, parentUrl }) {
     const openPullDrawerUrl = buildDrawerUrl({
       path: drawerPaths.LCM.OPEN_PULL,
       baseUrl: parentUrl,
-      params: { revId: nanoid() },
+      params: { revId: generateId() },
     });
 
     return (

@@ -34,7 +34,7 @@ import util, {
   applySearchFilter,
   countMatches,
 } from '.';
-import {generateUniqueKey} from '../string';
+import {generateId} from '../string';
 
 jest.mock('../string');
 
@@ -738,7 +738,7 @@ describe('v2 mapping utils', () => {
       expect(rebuildObjectArrayNode({key: 'k1', dataType: 'string'})).toEqual({key: 'k1', dataType: 'string'});
     });
     test('should correctly update the node if prev source was 1 and now 2 sources are added', () => {
-      generateUniqueKey.mockReturnValue('new_key');
+      generateId.mockReturnValue('new_key');
 
       const node = {
         activeTab: 0,
@@ -805,7 +805,7 @@ describe('v2 mapping utils', () => {
       expect(rebuildObjectArrayNode(node, extract)).toEqual(newNode);
     });
     test('should correctly update the node if prev sources were 2 and a third source is added in between', () => {
-      generateUniqueKey.mockReturnValue('new_key');
+      generateId.mockReturnValue('new_key');
 
       const node = {
         extractsArrayHelper: [{extract: '$.children[*]'}, {extract: '$.siblings[*]'}],
@@ -898,7 +898,7 @@ describe('v2 mapping utils', () => {
       expect(rebuildObjectArrayNode(node, extract)).toEqual(newNode);
     });
     test('should correctly update the node if prev sources were 2 and first source is removed', () => {
-      generateUniqueKey.mockReturnValue('new_key');
+      generateId.mockReturnValue('new_key');
 
       const node = {
         extractsArrayHelper: [{extract: '$.children[*]'}, {extract: '$.siblings[*]'}],
@@ -963,7 +963,7 @@ describe('v2 mapping utils', () => {
       expect(rebuildObjectArrayNode(node, extract)).toEqual(newNode);
     });
     test('should correctly update the node if prev source was empty and now 2 same root sources are added', () => {
-      generateUniqueKey.mockReturnValue('new_key');
+      generateId.mockReturnValue('new_key');
 
       const node = {
         extractsArrayHelper: [],
@@ -1022,7 +1022,7 @@ describe('v2 mapping utils', () => {
       expect(rebuildObjectArrayNode(node, extract)).toEqual(newNode);
     });
     test('should correctly update the node children and link to first source if they were not linked already', () => {
-      generateUniqueKey.mockReturnValue('new_key');
+      generateId.mockReturnValue('new_key');
       const node = {
         extractsArrayHelper: [],
         dataType: 'objectarray',
@@ -1073,7 +1073,7 @@ describe('v2 mapping utils', () => {
       expect(rebuildObjectArrayNode(node, extract)).toEqual(newNode);
     });
     test('should correctly update the node with empty generates with child nodes for the new source incase the first source has an object mapping', () => {
-      generateUniqueKey.mockReturnValue('new_key');
+      generateId.mockReturnValue('new_key');
 
       const node = {
         extractsArrayHelper: [{extract: '$[*].feeds[*]'}],
@@ -1176,7 +1176,7 @@ describe('v2 mapping utils', () => {
       expect(rebuildObjectArrayNode(node, extract)).toEqual(newNode);
     });
     test('should correctly update the node with empty generates with child nodes incase of Object array mapping for the first source', () => {
-      generateUniqueKey.mockReturnValue('new_key');
+      generateId.mockReturnValue('new_key');
 
       const node = {
         extractsArrayHelper: [{extract: '$[*].feeds[*]'}],
@@ -1287,7 +1287,7 @@ describe('v2 mapping utils', () => {
       expect(rebuildObjectArrayNode(node, extract)).toEqual(newNode);
     });
     test('should correctly update node with object array mapped child nodes of first source when child has multiple sources incase of object array mapping for the first source', () => {
-      generateUniqueKey.mockReturnValue('new_key');
+      generateId.mockReturnValue('new_key');
 
       const node = {
         extractsArrayHelper: [{extract: '$[*].feeds[*]'}],
@@ -1683,7 +1683,7 @@ describe('v2 mapping utils', () => {
 
   describe('buildTreeFromV2Mappings util', () => {
     test('should not throw exception for invalid args', () => {
-      generateUniqueKey.mockReturnValue('new_key');
+      generateId.mockReturnValue('new_key');
 
       const defaultTree = [{
         key: 'new_key',
@@ -1697,7 +1697,7 @@ describe('v2 mapping utils', () => {
       expect(buildTreeFromV2Mappings({importResource: {mappings: []}})).toEqual(defaultTree);
     });
     test('should correctly generate the tree structure based on resource mappings if record based mappings', () => {
-      generateUniqueKey.mockReturnValue('new_key');
+      generateId.mockReturnValue('new_key');
       const requiredMappings = ['my_full_name', 'family_tree_from_mom_perspective.children[*].grandchildren[*].first_name', 'my_mothers_name.last_name', 'two_of_my_fav_names[*].my_first_name'];
 
       const importResource = {
@@ -2797,7 +2797,7 @@ describe('v2 mapping utils', () => {
       expect(buildTreeFromV2Mappings({importResource, isGroupedSampleData: false, disabled: false, requiredMappings})).toEqual(v2TreeData);
     });
     test('should correctly generate the tree structure based on resource mappings if row based mappings', () => {
-      generateUniqueKey.mockReturnValue('new_key');
+      generateId.mockReturnValue('new_key');
 
       const importResource = {
         mappings: [
@@ -2896,7 +2896,7 @@ describe('v2 mapping utils', () => {
       expect(buildTreeFromV2Mappings({importResource, isGroupedSampleData: true, disabled: true})).toEqual(v2TreeData);
     });
     test('should correctly generate default tree structure for csv/xlsx resource with no existing mappings', () => {
-      generateUniqueKey.mockReturnValue('new_key');
+      generateId.mockReturnValue('new_key');
 
       const importResource = {
         _id: 'id1',
@@ -4041,7 +4041,7 @@ describe('v2 mapping utils', () => {
   });
   describe('autoCreateDestinationStructure util', () => {
     test('should correctly return tree data for non csv/xlsx resource with required mappings', () => {
-      generateUniqueKey.mockReturnValue('new_key');
+      generateId.mockReturnValue('new_key');
       const importSampleData = {
         id: '123',
         rowNumber: 3,
@@ -4166,7 +4166,7 @@ describe('v2 mapping utils', () => {
       expect(autoCreateDestinationStructure(importSampleData, requiredMappings)).toEqual(treeData);
     });
     test('should correctly return tree data for csv/xlsx resource', () => {
-      generateUniqueKey.mockReturnValue('new_key');
+      generateId.mockReturnValue('new_key');
       const importSampleData = {
         id: '123',
         rowNumber: 3,
@@ -4435,7 +4435,7 @@ describe('v2 mapping utils', () => {
       expect(buildExtractsTree('invalid string data')).toEqual([]);
     });
     test('should correctly return the tree structure based on passed non-array sample data', () => {
-      generateUniqueKey.mockReturnValue('new_key');
+      generateId.mockReturnValue('new_key');
 
       const sampleData = {
         fName: 'scott',
@@ -4657,7 +4657,7 @@ describe('v2 mapping utils', () => {
       expect(buildExtractsTree(sampleData)).toEqual(treeData);
     });
     test('should correctly return the tree structure based on passed sample data', () => {
-      generateUniqueKey.mockReturnValue('new_key');
+      generateId.mockReturnValue('new_key');
 
       const sampleData = [
         {

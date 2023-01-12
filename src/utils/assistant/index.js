@@ -1181,7 +1181,16 @@ export function convertToExport({ assistantConfig, assistantData, headers = [] }
   }); /* indices should be false to handle IO-1776 */
 
   if (queryString) {
-    relativeURI += (relativeURI.includes('?') ? '&' : '?') + queryString;
+    const [pathPart, queryPart] = relativeURI.split('?');
+    const queryStringObj = new URLSearchParams(queryString);
+    const queryObj = new URLSearchParams(queryPart);
+
+    if (queryPart) {
+      [...queryStringObj.entries()].forEach(([key, value]) => {
+        queryObj.set(key, value);
+      });
+      relativeURI = `${pathPart}?${decodeURI(queryObj.toString())}`;
+    } else { relativeURI += (relativeURI.includes('?') ? '&' : '?') + queryString; }
     if (pagingRelativeURI) {
       pagingRelativeURI += (pagingRelativeURI.includes('?') ? '&' : '?') + queryString;
     }

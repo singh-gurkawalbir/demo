@@ -1,7 +1,7 @@
 import React, { useCallback, useState, useRef, useEffect } from 'react';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { makeStyles } from '@material-ui/core';
-import shortid from 'shortid';
+import { generateId } from '../../utils/string';
 import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
 import RunIcon from '../icons/RunIcon';
 import { selectors } from '../../reducers';
@@ -98,7 +98,7 @@ export default function RunFlowButton({
     false
   );
   const isSetupInProgress = useSelector(state => selectors.isFlowSetupInProgress(state, flowId));
-  const [fileId] = useState(`${flowId}-${shortid.generate()}`);
+  const [fileId] = useState(`${flowId}-${generateId()}`);
   const flowDetails = useSelector(
     state => selectors.flowDetails(state, flowId),
     shallowEqual

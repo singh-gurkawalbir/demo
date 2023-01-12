@@ -13,7 +13,7 @@ import BranchDrawer from './BranchDrawer';
 import BranchItem from './BranchItem';
 import messageStore from '../../../../../utils/messageStore';
 import Spinner from '../../../../Spinner';
-import { shortId } from '../../../../../utils/string';
+import { generateId } from '../../../../../utils/string';
 import DynaText from '../../../../DynaForm/fields/DynaText';
 import NotificationToaster from '../../../../NotificationToaster';
 
@@ -123,7 +123,7 @@ export default function RouterPanel({ editorId }) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const branchesLength = useSelector(state => selectors.editorRule(state, editorId).branches?.length);
-  const branches = useMemo(() => Array(branchesLength).fill().map(() => ({id: shortId()})), [branchesLength]);
+  const branches = useMemo(() => Array(branchesLength).fill().map(() => ({id: generateId()})), [branchesLength]);
   const isLoading = useSelector(state => selectors.editor(state, editorId).sampleDataStatus === 'requested');
   const maxBranchesLimitReached = branches.length >= 25;
   const {

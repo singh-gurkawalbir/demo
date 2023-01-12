@@ -113,7 +113,6 @@ describe('dynaDateTime UI tests', () => {
   });
   test('should be able to edit both date and time', () => {
     initDynaDateTime(props);
-    screen.debug(null, Infinity);
     const dateField = screen.getByPlaceholderText('MM/DD/YYYY');
 
     fireEvent.keyPress(dateField, {key: 'Enter', code: 'Enter', charCode: 13});
@@ -125,7 +124,6 @@ describe('dynaDateTime UI tests', () => {
     });
     fireEvent.change(dateField, {target: {value: '24/05/2020'}});
     expect(dateField).toHaveValue('24/05/2020');
-    screen.debug(undefined, Infinity);
     const timeField = document.querySelector('[value="12:00 AM"]');
 
     fireEvent.keyPress(timeField, {key: 'Enter', code: 'Enter', charCode: 13});

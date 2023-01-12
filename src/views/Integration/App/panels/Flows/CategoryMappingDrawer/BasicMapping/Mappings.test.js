@@ -1,9 +1,8 @@
-
 import React from 'react';
 import { screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import userEvent from '@testing-library/user-event';
-import shortId from 'shortid';
+import * as GenerateMediumId from '../../../../../../../utils/string';
 import { renderWithProviders} from '../../../../../../../test/test-utils';
 import { getCreatedStore } from '../../../../../../../store';
 import ImportMapping from './Mappings';
@@ -81,7 +80,7 @@ describe('Mappings UI tests', () => {
     );
   });
   test('should choose a field mapping generate option', () => {
-    jest.spyOn(shortId, 'generate').mockReturnValue('someGeneratedId');
+    jest.spyOn(GenerateMediumId, 'generateId').mockReturnValue('someGeneratedId');
     const initialStore = getCreatedStore();
 
     initialStore.getState().session.integrationApps.settings['5ea16c600e2fab71928a6152-5ff579d745ceef7dcd797c15'] = {
@@ -107,7 +106,7 @@ describe('Mappings UI tests', () => {
     expect(mockDispatch).toHaveBeenCalled();
   });
   test('should choose a Field mapping extract option', () => {
-    jest.spyOn(shortId, 'generate').mockReturnValue('someGeneratedId');
+    jest.spyOn(GenerateMediumId, 'generateId').mockReturnValue('someGeneratedId');
 
     const initialStore = getCreatedStore();
 
@@ -136,7 +135,7 @@ describe('Mappings UI tests', () => {
     expect(mockDispatch).toHaveBeenCalled();
   });
   test('should check different icon for different filters', () => {
-    jest.spyOn(shortId, 'generate').mockReturnValue('someGeneratedId');
+    jest.spyOn(GenerateMediumId, 'generateId').mockReturnValue('someGeneratedId');
 
     const initialStore = getCreatedStore();
 

@@ -349,6 +349,9 @@ fileApiIdentifier: {
 's3.bucket': {
   fieldId: 's3.bucket',
 },
+'s3.serverSideEncryptionType': {
+  fieldId: 's3.serverSideEncryptionType',
+},
 traceKeyTemplate: {fieldId: 'traceKeyTemplate'},
 mockResponseSection: {formId: 'mockResponseSection'},
 };

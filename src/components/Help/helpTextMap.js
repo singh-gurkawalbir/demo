@@ -758,7 +758,7 @@ if you're using a production account, you'll find your API keys under the 'API M
 'Provide an optional description, or any information you like that will help you keep track of this agent. This information is displayed when viewing/editing an agent or in the Agent List page.',
   'api.name': 'Name your API so that you can easily reference it from other parts of the application.',
   'api.description': 'Describe your API in more detail here so that other users can understand the problem you are solving, and also how your API works. Be sure to highlight any nuances that a user making changes in the future might want to know.',
-  'api.function': 'Enter the name of the function that will get called when a request is sent to this <a href="https://docs.celigo.com/hc/en-us/articles/360047267771-What-is-My-API-" target="_blank">My API</a>. The name of the function in the default <b>Handle request</b> stub is handleRequest. Although your script may contain additional functions, only the single entry point specified here is initially called and receives any data passed in the HTTP header and body.',
+  'api.function': 'Enter the name of the function that will get called when a request is sent to this <a href="https://docs.celigo.com/hc/en-us/articles/360047267771-What-is-My-API-" target="_blank">My API</a>. Although your script may contain additional functions, only the single entry point specified here is initially called and receives any data passed in the HTTP header and body. <br />The name of the function in the default <b>Handle request</b> stub is &#60;tt&#62;handleRequest&#60;/tt&#62;. If you used a different name, you can click the <b>Edit script</b> button to open it and copy the exact name (without parentheses).',
   'api.scripts': 'Select a <a href="https://docs.celigo.com/hc/en-us/articles/360047267771-What-is-My-API-" target="_blank">My API</a> script from the list that you’ve already written, or click + to start writing your own code. The easiest way to start from scratch is to select the <b>Handle request</b> function stub, which fully documents the options passed to the function and the expected response object.',
   'api.shipworks.username': 'Enter the username that was entered during the ShipWorks store setup.',
   'api.shipworks.password': 'Enter the password that was entered during the ShipWorks store setup.',
@@ -1756,6 +1756,7 @@ if you're using a production account, you'll find your API keys under the 'API M
 'Set this field to limit the number of files processed in a single batch request. Setting this field will not limit the total number of files you can process in a flow. This field allows you to optimize for really big files where bigger batches might experience network timeout errors vs. really small files where processing 1000 files in a single batch keeps the flow more performant. 1000 is the max value allowed.',
   'import.ftp.backupDirectoryPath': 'Specify the directory path of the FTP folder where files will be backed up after successful transfer.',
   'import.ftp.XMLDocument': 'This field is used to define the XML document that will get sent to the destination application endpoint.',
+  'import.ftp.blobUseTempFile': 'Check this box if the destination folder where your file is being generated is also being watched by another service. If checked, integrator․io will "hide" the file being generated until the upload is complete.',
   'import.googledrive.directoryPath':
 'Specify google drive folder containing the files to be transferred.  For example, if you set this field to \'MySite/Items\'. <a  href="http://integrator.io" title="http://integrator.io" >integrator.io</a> will first look for a parent folder \'MySite\', and then for a child folder \'Items\', and then transfer all files into folder \'Items\'',
   'import.box.directoryPath':
@@ -1780,6 +1781,7 @@ if you're using a production account, you'll find your API keys under the 'API M
 'Name of the bucket in S3, where you want file to be saved',
   'import.s3.backupBucket': 'Specify the bucket name where files will be backed up after successful transfer.',
   'import.s3.fileKey': 'Name of the file',
+  'import.s3.serverSideEncryptionType': 'Use this field to instruct Amazon S3 to server-side encrypt files using Amazon S3 managed keys (SSE-S3). Please note that integrator.io also supports the ability to encrypt files before they are sent to Amazon S3.',
   'import.wrapper.function':
 'The name of the extension wrapper function in your code that needs to be invoked as part of the import process.',
   'import.wrapper.configuration':

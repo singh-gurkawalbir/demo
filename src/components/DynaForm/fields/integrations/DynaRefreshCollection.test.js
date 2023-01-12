@@ -1,8 +1,6 @@
 
 import React from 'react';
-import {
-  screen, waitFor,
-} from '@testing-library/react';
+import {screen, waitFor} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import * as reactRedux from 'react-redux';
 import actions from '../../../../actions';
@@ -47,10 +45,10 @@ describe('dynaRefreshCollection UI tests', () => {
   test('should pass the initial render', () => {
     initDynaRefreshCollection({resourceType: 'imports'});
     expect(screen.getByText('Please select')).toBeInTheDocument();
+
     const refreshButton = document.querySelector('[data-test="refreshResource"]');
 
     expect(refreshButton).toBeInTheDocument();
-    screen.debug();
   });
   test('should make a dispatch call when clicked on refresh button', async () => {
     initDynaRefreshCollection({resourceType: 'imports'});

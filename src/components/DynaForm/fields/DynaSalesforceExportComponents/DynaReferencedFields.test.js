@@ -85,7 +85,6 @@ describe('dynaReferencedFields UI tests', () => {
 
     expect(editButton).toBeInTheDocument();
     userEvent.click(editButton);
-    screen.debug();
   });
   test('should render the form inside the modal when clicked on edit button', () => {
     initDynaReferencedFields(props);

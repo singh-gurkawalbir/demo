@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
-import { nanoid } from 'nanoid';
 import { useHistory, useRouteMatch } from 'react-router-dom';
+import { generateId } from '../../../../utils/string';
 import CreatePullIcon from '../../../icons/AddIcon';
 import { buildDrawerUrl, drawerPaths } from '../../../../utils/rightDrawer';
 
@@ -15,7 +15,7 @@ export default {
       history.push(buildDrawerUrl({
         path: drawerPaths.LCM.OPEN_PULL,
         baseUrl: match.url,
-        params: { revId: nanoid() },
+        params: { revId: generateId() },
       }));
     }, [history, match.url]);
 

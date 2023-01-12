@@ -1,4 +1,3 @@
-
 import React from 'react';
 import {
   screen, waitFor,
@@ -25,7 +24,6 @@ describe('dynaXMLMapper UI tests', () => {
     const textFields = screen.getAllByRole('textbox');
 
     expect(textFields).toHaveLength(4);
-    screen.debug();
   });
   test('should call the onFieldChange function passed in props on initial render', async () => {
     renderWithProviders(<DynaXMLMapper {...props} />);

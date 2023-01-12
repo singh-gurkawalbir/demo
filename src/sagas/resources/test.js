@@ -2530,13 +2530,14 @@ describe('replaceConnection saga', () => {
   const _resourceId = '123';
   const _connectionId = 'old';
   const _newConnectionId = 'new';
+  const resourceType = 'flows';
 
-  test('should dispatch request collection actions if api call succeeds', () => expectSaga(replaceConnection, { _resourceId, _connectionId, _newConnectionId })
+  test('should dispatch request collection actions if api call succeeds', () => expectSaga(replaceConnection, { _resourceId, _connectionId, _newConnectionId, resourceType })
     .provide([
       [matchers.call.fn(apiCallWithRetry), {}],
     ])
     .call(apiCallWithRetry, {
-      path: `/flows/${_resourceId}/replaceConnection`,
+      path: `/${resourceType}/${_resourceId}/replaceConnection`,
       opts: {
         body: {_connectionId, _newConnectionId},
         method: 'PUT',
@@ -2546,18 +2547,18 @@ describe('replaceConnection saga', () => {
     .put(actions.resource.requestCollection('exports', null, true))
     .put(actions.resource.requestCollection('imports', null, true))
     .run());
-  test('should dispatch api failure action and not request collections if call fails', () => expectSaga(replaceConnection, { _resourceId, _connectionId, _newConnectionId })
+  test('should dispatch api failure action and not request collections if call fails', () => expectSaga(replaceConnection, { _resourceId, _connectionId, _newConnectionId, resourceType })
     .provide([
       [matchers.call.fn(apiCallWithRetry), apiError],
     ])
     .call(apiCallWithRetry, {
-      path: `/flows/${_resourceId}/replaceConnection`,
+      path: `/${resourceType}/${_resourceId}/replaceConnection`,
       opts: {
         body: {_connectionId, _newConnectionId},
         method: 'PUT',
       },
     })
-    .put(actions.api.failure(`/flows/${_resourceId}/replaceConnection`, 'PUT', '{"message":"invalid", "code":"code"}', false))
+    .put(actions.api.failure(`/${resourceType}/${_resourceId}/replaceConnection`, 'PUT', '{"message":"invalid", "code":"code"}', false))
     .not.put(actions.resource.requestCollection('flows', null, true))
     .not.put(actions.resource.requestCollection('exports', null, true))
     .not.put(actions.resource.requestCollection('imports', null, true))

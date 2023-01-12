@@ -135,7 +135,6 @@ describe('genericTypeableSelect UI tests', () => {
     const dropdown = screen.getByRole('textbox');
 
     expect(dropdown).toBeInTheDocument();
-    screen.debug();
   });
   test('should open the dropdown with options when dropdown field is clicked', () => {
     initGenericTypeableSelect(props);
@@ -146,7 +145,6 @@ describe('genericTypeableSelect UI tests', () => {
     expect(screen.getByText('integration2')).toBeInTheDocument();
     expect(screen.getByText('integration3')).toBeInTheDocument();
     expect(screen.getByText('integration4')).toBeInTheDocument();
-    screen.debug();
   });
   test('should call the onchange function passed in props when selected option is changed', () => {
     initGenericTypeableSelect(props);
@@ -157,6 +155,5 @@ describe('genericTypeableSelect UI tests', () => {
     expect(screen.getByText('integration2')).toBeInTheDocument();
     userEvent.click(screen.getByText('integration2'));
     expect(mockonFieldChange).toHaveBeenCalled();
-    screen.debug();
   });
 });

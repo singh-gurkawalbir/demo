@@ -2,7 +2,7 @@ import { isEdge, isNode } from 'react-flow-renderer';
 import dagre from 'dagre';
 import { isVirtualRouter } from '../../../utils/flows/flowbuilder';
 import { GRAPH_ELEMENTS_TYPE } from '../../../constants';
-import { shortId } from '../../../utils/string';
+import { generateId } from '../../../utils/string';
 import { stringCompare } from '../../../utils/sort';
 
 // react-flow handles by default sit just outside of the node boundary.
@@ -50,7 +50,7 @@ const options = {
 };
 
 export function generateNewNode() {
-  const newId = shortId();
+  const newId = generateId();
 
   return {
     id: newId,
@@ -162,7 +162,7 @@ export function getAllFlowBranches(flow) {
       if (!isVirtualRouter(router)) {
         router.branches?.forEach((branch = {}, branchIndex) => {
           branches.push({
-            id: shortId(),
+            id: generateId(),
             name: branch.name,
             path: `/routers/${routerIndex}/branches/${branchIndex}`,
           });

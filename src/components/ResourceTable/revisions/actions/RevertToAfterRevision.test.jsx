@@ -62,9 +62,9 @@ jest.mock('react-router-dom', () => ({
   }),
 }));
 
-jest.mock('nanoid', () => ({
-  ...jest.requireActual('nanoid'),
-  nanoid: () => (
+jest.mock('../../../../utils/string', () => ({
+  ...jest.requireActual('../../../../utils/string'),
+  generateId: () => (
     'randomvalue'
   ),
 }));
