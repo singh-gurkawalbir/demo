@@ -475,7 +475,7 @@ describe('flow sample data sagas', () => {
         ],
       };
 
-      return expectSaga(_processResponseTransformData, {
+      expectSaga(_processResponseTransformData, {
         flowId,
         resourceId,
         processorData,
@@ -507,7 +507,7 @@ describe('flow sample data sagas', () => {
         data: mockResponse,
       };
 
-      return expectSaga(_processResponseTransformData, {
+      expectSaga(_processResponseTransformData, {
         flowId,
         resourceId,
         processorData,
@@ -979,7 +979,7 @@ describe('flow sample data sagas', () => {
       };
       const responseTransformData = {};
 
-      return expectSaga(requestProcessorData, {
+      expectSaga(requestProcessorData, {
         flowId,
         resourceId,
         resourceType,
