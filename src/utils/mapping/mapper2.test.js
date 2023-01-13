@@ -4945,10 +4945,12 @@ describe('v2 mapping utils', () => {
     });
     test('should correctly return the json path for array data type node', () => {
       expect(getFinalSelectedExtracts({jsonPath: 'lname'}, '', true)).toBe('$.lname');
+      expect(getFinalSelectedExtracts({jsonPath: 'children.lname'}, '$.fname', true)).toBe('$.children.lname');
+      expect(getFinalSelectedExtracts({jsonPath: 'siblings[*]'}, '$.fname,$.lname', true)).toBe('$.fname,$.siblings[*]');
+      expect(getFinalSelectedExtracts({jsonPath: 'lname'}, '$.fname,', true, true)).toBe('$.fname,$[*].lname');
       expect(getFinalSelectedExtracts({jsonPath: 'children.lname'}, '$.fname', true, undefined, undefined, undefined, '$.fname'.length - 1)).toBe('$.children.lname');
       expect(getFinalSelectedExtracts({jsonPath: 'siblings[*]'}, '$.fname,$.lname', true, undefined, undefined, undefined, '$.fname,$.lname'.length - 1)).toBe('$.fname,$.siblings[*]');
       expect(getFinalSelectedExtracts({jsonPath: 'siblings[*]'}, '$.fname,$.lname', true, undefined, undefined, undefined, 1)).toBe('$.siblings[*],$.lname');
-      expect(getFinalSelectedExtracts({jsonPath: 'lname'}, '$.fname,', true, true)).toBe('$.fname,$[*].lname');
     });
     test('should correctly return the json path if parent key and parent extract are present', () => {
       const treeData = [{

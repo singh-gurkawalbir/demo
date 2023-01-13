@@ -1,4 +1,4 @@
-import React, { useState, useRef, useCallback } from 'react';
+import React, { useRef, useCallback, useReducer } from 'react';
 import { useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import { FormControl, TextField, InputAdornment, Typography, Tooltip, Divider } from '@material-ui/core';
@@ -12,6 +12,7 @@ import ArrowPopper from '../../../../../../ArrowPopper';
 import useDebouncedValue from '../../../../../../../hooks/useDebouncedInput';
 import actions from '../../../../../../../actions';
 import SourceDataType from './SourceDataType';
+import reducer from './stateReducer';
 
 const useStyles = makeStyles(theme => ({
   customTextField: {
@@ -171,27 +172,35 @@ export default function Mapper2ExtractsTypeableSelect({
   displaySourceDataType,
 }) {
   const classes = useStyles();
-  const [anchorEl, setAnchorEl] = useState(null);
   const dispatch = useDispatch();
-  const [isFocused, setIsFocused] = useState(false);
+  const [mapper2ExtractsState, dispatchLocalAction] = useReducer(reducer, {
+    cursorPosition: '',
+    isTruncated: false,
+    anchorEl: null,
+    isFocused: false,
+    dataTypeSelector: false,
+  });
+
+  const {cursorPosition, isTruncated, isFocused, dataTypeSelector, anchorEl} = mapper2ExtractsState;
+
+  const setIsFocused = value => dispatchLocalAction({type: 'onFocused', value});
+
+  const selectDataType = value => dispatchLocalAction({type: 'onDataTypeSelector', value});
+
   const [inputValue, setInputValue] = useDebouncedValue(propValue, value => {
     // do not dispatch action if the field is not clicked yet as there can be
     // multiple rows and it will unnecessarily dispatch actions slowing down the UI
     if (!isFocused) return;
     dispatch(actions.mapping.v2.patchExtractsFilter(value, propValue));
   });
-  const [cursorPosition, setCursorPosition] = useState('');
-  const [isTruncated, setIsTruncated] = useState(false);
   const inputFieldRef = useRef();
-  const [dataTypeSelector, selectDataType] = useState(false);
-
   const handleChange = useCallback(event => {
     setInputValue(event.target.value);
   }, [setInputValue]);
 
   const handleFocus = useCallback(e => {
     e.stopPropagation();
-    setAnchorEl(e.currentTarget);
+    dispatchLocalAction({type: 'setAnchorEL', value: e.currentTarget});
     const { value } = e.target;
 
     // this is required to get the input field offsets during handleMouseOver
@@ -215,19 +224,19 @@ export default function Mapper2ExtractsTypeableSelect({
     if (event?.target?.id === `${nodeKey}-mapper2SourceTextField`) return;
 
     setIsFocused(false);
-    setAnchorEl(null);
+    dispatchLocalAction({type: 'setAnchorEL', value: null});
     patchField(propValue, inputValue);
   }, [nodeKey, propValue, inputValue, patchField]);
 
   useKeyboardShortcut(['Escape'], handleBlur, {ignoreBlacklist: true});
 
   const handleMouseOver = useCallback(() => {
-    setIsTruncated(inputFieldRef.current.offsetWidth < inputFieldRef.current.scrollWidth);
+    dispatchLocalAction({type: 'onTruncate', value: inputFieldRef.current.offsetWidth < inputFieldRef.current.scrollWidth});
   }, []);
 
   const handleOnClick = useCallback(event => {
-    setCursorPosition(event.target.selectionStart);
-  }, [setCursorPosition]);
+    dispatchLocalAction({type: 'onCursorChange', value: event.target.selectionStart});
+  }, []);
 
   const hideSourceDropdown = isDynamicLookup || isHardCodedValue || isHandlebarExp;
 
