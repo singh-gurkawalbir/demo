@@ -64,6 +64,7 @@ const useStyles = makeStyles(theme => ({
   },
   resourceFormWrapper: {
     overflow: 'auto',
+    paddingBottom: theme.spacing(1),
     '& .MuiTableCell-root': {
       padding: theme.spacing(1),
     },
@@ -71,7 +72,7 @@ const useStyles = makeStyles(theme => ({
       marginRight: 0,
     },
     [theme.breakpoints.down('lg')]: {
-      width: '135%',
+      width: '150%',
     },
   },
   panelWrapper: {

@@ -73,7 +73,7 @@ describe('testsuite for SSOUserSettings', () => {
     // checking help text for use this account for SSO
     expect(screen.getByText(/choose the account that you would like to use for sso\. every time you sign in via sso, integrator\.io will verify that the sso provider is linked to this specific account\./i)).toBeInTheDocument();
     expect(screen.getByText(/was this helpful\?/i)).toBeInTheDocument();
-    const helpTextYesButtonNode = document.querySelector('button[data-test="yesContentHelpful"]');
+    const helpTextYesButtonNode = document.querySelector('button[data-test="yesContentHelpful"] *');
 
     expect(helpTextYesButtonNode).toBeInTheDocument();
     userEvent.click(helpTextYesButtonNode);

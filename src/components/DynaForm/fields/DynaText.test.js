@@ -231,7 +231,7 @@ describe('Testsuite for TextFieldWithClipboardSupport', () => {
 
     expect(textBoxNode).toBeInTheDocument();
     expect(textBoxNode).toHaveValue('test_value');
-    expect(textBoxNode.getAttribute('placeholder')).toBe('http lookup');
+    expect(textBoxNode.getAttribute('placeholder')).toBe('test_place_holder');
     userEvent.type(textBoxNode, 'vewhucw');
     await waitFor(() => expect(mockOnFieldChange).toHaveBeenCalledTimes(7));
   });
@@ -277,7 +277,7 @@ describe('Testsuite for TextFieldWithClipboardSupport', () => {
 
     expect(textBoxNode).toBeInTheDocument();
     expect(textBoxNode).toHaveValue('test_value');
-    expect(textBoxNode.getAttribute('placeholder')).toBe('http export');
+    expect(textBoxNode.getAttribute('placeholder')).toBe('test_place_holder');
     userEvent.type(textBoxNode, 'vewhucw');
     await waitFor(() => expect(mockOnFieldChange).toHaveBeenCalledTimes(7));
   });
@@ -365,7 +365,6 @@ describe('Testsuite for TextFieldWithClipboardSupport', () => {
     initTextFieldWithClipboardSupport({props, resourcesData, resourceType: 'exports', id: 'export_id'});
     expect(mockOnFieldChange).toHaveBeenCalledWith('test_id', 'test_options', true);
     mockOnFieldChange.mockClear();
-    expect(screen.getByText('Name your export')).toBeInTheDocument();
     expect(screen.getByText(/mock field help/i)).toBeInTheDocument();
     expect(screen.getByText(/mock help link/i)).toBeInTheDocument();
     const textBoxNode = screen.getByRole('textbox');

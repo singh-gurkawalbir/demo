@@ -1,9 +1,9 @@
 import TextField from '@material-ui/core/TextField';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
-import React, { useState, useCallback, useEffect} from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { Typography} from '@material-ui/core';
-import { useLocation, Link, useHistory} from 'react-router-dom';
+import { useLocation, Link, useHistory } from 'react-router-dom';
 import clsx from 'clsx';
 import actions from '../../actions';
 import { selectors } from '../../reducers';
@@ -15,6 +15,7 @@ import getRoutePath from '../../utils/routePaths';
 import Spinner from '../../components/Spinner';
 import { FilledButton, OutlinedButton, TextButton } from '../../components/Buttons';
 import getImageUrl from '../../utils/image';
+import useQuery from '../../hooks/useQuery';
 
 const path = getImageUrl('images/googlelogo.png');
 
@@ -61,6 +62,10 @@ const useStyles = makeStyles(theme => ({
       fontSize: theme.spacing(2),
       marginRight: 5,
     },
+  },
+  errorMsg: {
+    fontSize: 16,
+    marginBottom: theme.spacing(2),
   },
   link: {
     paddingLeft: 4,
@@ -130,6 +135,8 @@ export default function SignIn({dialogOpen, className}) {
   const classes = useStyles();
   const [email, setEmail] = useState('');
   const history = useHistory();
+  const query = useQuery();
+
   const handleAuthentication = useCallback((email, password) => {
     dispatch(actions.auth.request(email, password, true));
   }, [dispatch]);
@@ -195,15 +202,24 @@ export default function SignIn({dialogOpen, className}) {
   };
   useEffect(() => {
     if (isMFAAuthRequired) {
-      history.push(getRoutePath('/mfa/verify'));
+      history.push(getRoutePath('/mfa/verify'), location.state);
     }
-  }, [history, isMFAAuthRequired]);
-  const attemptedRoute =
-      location && location.state && location.state.attemptedRoute;
+  }, [history, isMFAAuthRequired, location.state]);
+  const attemptedRoute = location.state?.attemptedRoute;
 
   return (
   // user's email can be listed here ...type passwords is anyways redacted by logrocket
     <div className={clsx(classes.editableFields, className)}>
+      {!isAuthenticating && !showError && query.get('msg') && (
+      <Typography
+        data-private
+        color="error"
+        component="div"
+        variant="h4"
+        className={classes.errorMsg}>
+        {query.get('msg')}
+      </Typography>
+      )}
       <form onSubmit={handleOnSubmit}>
         <TextField
           data-private
@@ -211,7 +227,8 @@ export default function SignIn({dialogOpen, className}) {
           id="email"
           type="email"
           variant="filled"
-          placeholder="Email"
+          placeholder="Email*"
+          required
           value={dialogOpen ? userEmail : email}
           onChange={handleOnChangeEmail}
           className={classes.textField}
@@ -223,7 +240,8 @@ export default function SignIn({dialogOpen, className}) {
           id="password"
           variant="filled"
           type="password"
-          placeholder="Password"
+          required
+          placeholder="Password*"
           className={classes.textField}
             />
 
@@ -231,7 +249,6 @@ export default function SignIn({dialogOpen, className}) {
           <TextButton
             data-test="forgotPassword"
             color="primary"
-            className={classes.forgotPass}
             component={Link}
             role="link"
             to={email ? getRoutePath(`/request-reset?email=${email}`) : getRoutePath('/request-reset')}>
@@ -248,6 +265,7 @@ export default function SignIn({dialogOpen, className}) {
             <ErrorIcon /> {error}
           </Typography>
         )}
+
         { isAuthenticating ? <Spinner />
           : (
             <FilledButton

@@ -1,17 +1,25 @@
 import {applicationsList, applicationsPlaceHolderText} from '../../../../constants/applications';
 
 export default {
-  preSave: ({ application, ...rest }) => {
+  preSave: ({ application, name, ...rest }) => {
     const applications = applicationsList();
 
-    const app = applications.find(a => a.id === application) || {};
+    let app = applications.find(a => a.id === application) || {};
+    let httpConnectorId = app._httpConnectorId;
+
+    if (app._httpConnectorId && name && applications.find(a => a.name === name)?._httpConnectorId) {
+      app = applications.find(a => a.name === name) || {};
+      // If it has multiple local connectors, right httpConnectorId should be picked
+      httpConnectorId = app._httpConnectorId || httpConnectorId;
+    }
     const appType = (app.type === 'rest' && !app.assistant) ? 'http' : app.type;
     const newValues = {
       ...rest,
       '/adaptorType': `${appType.toUpperCase()}Connection`,
       '/type': appType,
       '/application': app.name,
-      '/_httpConnectorId': app._httpConnectorId,
+      '/_httpConnectorId': httpConnectorId
+      ,
     };
 
     if (app.assistant) {

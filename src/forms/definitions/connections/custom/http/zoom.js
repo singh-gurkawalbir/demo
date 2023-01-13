@@ -7,6 +7,7 @@ export default {
         'https://zoom.us/oauth/authorize';
       retValues['/http/auth/token/refreshMethod'] = 'POST';
       retValues['/http/auth/token/refreshMediaType'] = 'urlencoded';
+      retValues['/http/auth/oauth/useIClientFields'] = false;
       retValues['/http/auth/oauth/tokenURI'] =
         'https://zoom.us/oauth/token';
       retValues['/http/auth/token/location'] = 'header';
@@ -81,6 +82,11 @@ export default {
       helpKey: 'zoom.connection.http._iClientId',
       visibleWhen: [{ field: 'http.auth.type', is: ['oauth'] }],
     },
+    'http.auth.oauth.callbackURL': {
+      fieldId: 'http.auth.oauth.callbackURL',
+      copyToClipboard: true,
+      visibleWhen: [{ field: 'http.auth.type', is: ['oauth'] }],
+    },
     application: {
       fieldId: 'application',
     },
@@ -92,7 +98,7 @@ export default {
       { collapsed: true, label: 'General', fields: ['name', 'application'] },
       { collapsed: true,
         label: 'Application details',
-        fields: ['http.auth.type', 'http.encrypted.apiKey', 'http.encrypted.apiSecret', 'http._iClientId'] },
+        fields: ['http.auth.type', 'http.encrypted.apiKey', 'http.encrypted.apiSecret', 'http._iClientId', 'http.auth.oauth.callbackURL'] },
       { collapsed: true, label: 'Advanced', fields: ['httpAdvanced'] },
     ],
   },
