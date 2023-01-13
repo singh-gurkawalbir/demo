@@ -1183,10 +1183,15 @@ export function convertToExport({ assistantConfig, assistantData, headers = [] }
     encode: false,
     indices: false,
   }); /* indices should be false to handle IO-1776 */
+  const hardcodedQueries = qs.stringify(assistantConfig.queryParams, {
+    encode: false,
+    indices: false,
+  });
+  const finalQueryString = hardcodedQueries.includes(queryString) ? hardcodedQueries : queryString;
 
-  if (queryString) {
+  if (finalQueryString) {
     const [pathPart, queryPart] = relativeURI.split('?');
-    const queryStringObj = new URLSearchParams(queryString);
+    const queryStringObj = new URLSearchParams(finalQueryString);
     const queryObj = new URLSearchParams(queryPart);
 
     if (queryPart) {
@@ -1194,9 +1199,9 @@ export function convertToExport({ assistantConfig, assistantData, headers = [] }
         queryObj.set(key, value);
       });
       relativeURI = `${pathPart}?${decodeURI(queryObj.toString())}`;
-    } else { relativeURI += (relativeURI.includes('?') ? '&' : '?') + queryString; }
+    } else { relativeURI += (relativeURI.includes('?') ? '&' : '?') + finalQueryString; }
     if (pagingRelativeURI) {
-      pagingRelativeURI += (pagingRelativeURI.includes('?') ? '&' : '?') + queryString;
+      pagingRelativeURI += (pagingRelativeURI.includes('?') ? '&' : '?') + finalQueryString;
     }
   }
 
