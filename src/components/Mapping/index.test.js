@@ -1,4 +1,3 @@
-/* global describe, test, expect, jest */
 import React from 'react';
 import { cloneDeep } from 'lodash';
 import { screen } from '@testing-library/react';
@@ -61,7 +60,7 @@ jest.mock('react-router-dom', () => ({
   Redirect: jest.fn(({ to }) => `Redirected to ${to}`),
 }));
 
-describe('TableBodyContent component Test cases', () => {
+describe('tableBodyContent component Test cases', () => {
   runServer();
   test('should pass the initial render with default values', async () => {
     mockGetRequestOnce('/api/processors', {

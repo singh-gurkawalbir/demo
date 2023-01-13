@@ -3,7 +3,6 @@ export const REST_ASSISTANTS = [
   'certify',
   'chargify',
   'docusign',
-  'dropbox',
   'jet',
   'jira',
   'jobvite',
@@ -28,7 +27,6 @@ export const REST_ASSISTANTS = [
   'chargebee',
   'googlesheets',
   'googlemail',
-  'googlecontacts',
   'googlecontactspeople',
   'hubspot',
   'freshdesk',
@@ -116,16 +114,14 @@ export const CONNECTORS_TO_IGNORE = [
   'constantcontactv2',
   'constantcontactv3',
   'amazonsellingpartner',
-  'googlecontacts',
   'ebayfinance',
   'recurlyv3',
   'loopreturnsv2',
   'acumaticaecommerce',
 ];
 
-export const WEBHOOK_ONLY_APPLICATIONS = ['travis-org', 'helpscout', 'errorception', 'aha', 'mailparser-io', 'dropbox', 'travis', 'sapariba',
-  'box'];
-export const FILE_PROVIDER_ASSISTANTS = ['googledrive', 'azurestorageaccount'];
+export const WEBHOOK_ONLY_APPLICATIONS = ['travis-org', 'helpscout', 'errorception', 'aha', 'mailparser-io', 'travis', 'sapariba'];
+export const FILE_PROVIDER_ASSISTANTS = ['googledrive', 'azurestorageaccount', 'box', 'dropbox'];
 export const RDBMS_TYPES = ['mysql', 'postgresql', 'mssql', 'snowflake', 'oracle', 'bigquerydatawarehouse', 'redshiftdatawarehouse'];
 
 export const MULTIPLE_AUTH_TYPE_ASSISTANTS = [
@@ -155,3 +151,51 @@ export const AUTHENTICATION_LABELS = Object.freeze({
   digest: 'Digest',
   wsse: 'WSSE',
 });
+
+export const SHOPIFY_SCOPES = [
+  'read_content',
+  'write_content',
+  'read_themes',
+  'write_themes',
+  'read_products',
+  'write_products',
+  'read_product_listings',
+  'read_customers',
+  'write_customers',
+  'read_orders',
+  'write_orders',
+  'read_all_orders',
+  'read_draft_orders',
+  'write_draft_orders',
+  'read_inventory',
+  'write_inventory',
+  'read_locations',
+  'read_script_tags',
+  'write_script_tags',
+  'read_fulfillments',
+  'write_fulfillments',
+  'read_shipping',
+  'write_shipping',
+  'read_analytics',
+  'read_checkouts',
+  'write_checkouts',
+  'read_reports',
+  'write_reports',
+  'read_price_rules',
+  'write_price_rules',
+  'read_marketing_events',
+  'write_marketing_events',
+  'read_resource_feedbacks',
+  'write_resource_feedbacks',
+  'read_shopify_payments_payouts',
+  'unauthenticated_read_product_listings',
+  'unauthenticated_write_checkouts',
+  'unauthenticated_write_customers',
+  'unauthenticated_read_content',
+  'read_assigned_fulfillment_orders',
+  'write_assigned_fulfillment_orders',
+  'read_merchant_managed_fulfillment_orders',
+  'write_merchant_managed_fulfillment_orders',
+  'read_third_party_fulfillment_orders',
+  'write_third_party_fulfillment_orders',
+];

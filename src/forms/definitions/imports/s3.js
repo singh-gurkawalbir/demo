@@ -1,3 +1,4 @@
+import { safeParse } from '../../../utils/string';
 import { getfileProviderImportsOptionsHandler, IMPORT_FILE_FIELD_MAP, updateFileProviderFormValues } from '../../metaDataUtils/fileUtil';
 
 export default {
@@ -37,6 +38,13 @@ export default {
     if (newValues['/oneToMany'] === 'false') {
       newValues['/pathToMany'] = undefined;
     }
+    newValues['/mockResponse'] = safeParse(newValues['/mockResponse']);
+
+    if (!newValues['/s3/serverSideEncryptionType']) {
+      newValues['/s3/serverSideEncryptionType'] = undefined;
+    } else {
+      newValues['/s3/serverSideEncryptionType'] = 'AES256';
+    }
 
     return {
       ...newValues,
@@ -71,7 +79,14 @@ export default {
           'file.xml.body',
           'file.json.body',
           'file.lookups',
+          's3.serverSideEncryptionType',
         ],
+      },
+      {
+        actionId: 'mockResponse',
+        collapsed: true,
+        label: 'Mock response',
+        fields: ['mockResponseSection'],
       },
       {
         collapsed: true,

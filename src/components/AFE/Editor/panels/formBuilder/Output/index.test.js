@@ -1,4 +1,3 @@
-/* global describe, test, expect, jest */
 import React from 'react';
 import {screen} from '@testing-library/react';
 import {renderWithProviders} from '../../../../../../test/test-utils';
@@ -27,7 +26,7 @@ function initOutputPanel(props = {}) {
 
   return renderWithProviders(<OutputPanel {...props} />, {initialStore});
 }
-describe('Output Panel UI tests', () => {
+describe('output Panel UI tests', () => {
   test('should pass the initial render', () => {
     initOutputPanel({editorId: 'filecsv', status: 'success', data: 'custom value'});
     expect(screen.getByText('custom value')).toBeInTheDocument();

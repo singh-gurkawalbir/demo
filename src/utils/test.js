@@ -1,4 +1,7 @@
-/* global describe, test, expect */
+/* eslint-disable jest/no-conditional-in-test */
+/* eslint-disable jest/no-conditional-expect */
+/* eslint-disable jest/no-test-return-statement */
+/* eslint-disable jest/no-standalone-expect */
 import each from 'jest-each';
 import moment from 'moment-timezone';
 import { addDays } from 'date-fns';
@@ -62,24 +65,24 @@ describe('Json paths util method', () => {
 
 describe('Route paths util method', () => {
   test('should return valid path', () => {
-    expect(getRoutePath()).toEqual(`${uiRoutePathPrefix}/`);
+    expect(getRoutePath()).toBe(`${uiRoutePathPrefix}/`);
     ['', '/', {}].forEach(r => {
-      expect(getRoutePath(r)).toEqual(`${uiRoutePathPrefix}/`);
+      expect(getRoutePath(r)).toBe(`${uiRoutePathPrefix}/`);
     });
-    expect(getRoutePath('/')).toEqual(`${uiRoutePathPrefix}/`);
+    expect(getRoutePath('/')).toBe(`${uiRoutePathPrefix}/`);
     ['editors', 'resources'].forEach(r => {
-      expect(getRoutePath(`/${r}`)).toEqual(`${uiRoutePathPrefix}/${r}`);
+      expect(getRoutePath(`/${r}`)).toBe(`${uiRoutePathPrefix}/${r}`);
     });
     ['something', '  something  '].forEach(r => {
-      expect(getRoutePath(r)).toEqual(`${uiRoutePathPrefix}/${r.trim()}`);
+      expect(getRoutePath(r)).toBe(`${uiRoutePathPrefix}/${r.trim()}`);
     });
   });
   test('should return valid relative path', () => {
     expect(getValidRelativePath()).toBeUndefined();
-    expect(getValidRelativePath(null)).toEqual(null);
-    expect(getValidRelativePath('httpbody')).toEqual('httpbody');
-    expect(getValidRelativePath('rest.body')).toEqual('restbody');
-    expect(getValidRelativePath('field id')).toEqual('fieldid');
+    expect(getValidRelativePath(null)).toBeNull();
+    expect(getValidRelativePath('httpbody')).toBe('httpbody');
+    expect(getValidRelativePath('rest.body')).toBe('restbody');
+    expect(getValidRelativePath('field id')).toBe('fieldid');
   });
 });
 
@@ -160,7 +163,7 @@ describe('getRequestOptions util method', () => {
     ],
     [
       {
-        path: '/integrations/audit/signedURL',
+        path: '/integrations/audit/signedURL?',
         opts: {
           method: 'POST',
           body: {
@@ -190,6 +193,14 @@ describe('getRequestOptions util method', () => {
         },
       },
     ],
+    [
+      {
+        path: '/jobs/j1/files',
+        opts: { method: 'DELETE' },
+      },
+      actionTypes.JOB.PURGE.REQUEST,
+      { resourceId: 'j1' },
+    ],
   ];
 
   each(testCases).test(
@@ -212,8 +223,8 @@ describe('retry util', () => {
       // should not reach here
       throw new Error('unreachable');
     }).catch(ex => {
-      expect(c).toEqual(5);
-      expect(ex.message).toEqual('fail');
+      expect(c).toBe(5);
+      expect(ex.message).toBe('fail');
     });
   });
 
@@ -225,8 +236,8 @@ describe('retry util', () => {
 
       return Promise.resolve(42);
     }).then(v => {
-      expect(c).toEqual(1);
-      expect(v).toEqual(42);
+      expect(c).toBe(1);
+      expect(v).toBe(42);
     }).catch(() => {
       // should not reach here
       throw new Error('unreachable');
@@ -241,8 +252,8 @@ describe('retry util', () => {
 
       return c > 2 ? Promise.resolve(42) : Promise.reject(new Error('fail'));
     }).then(v => {
-      expect(c).toEqual(3);
-      expect(v).toEqual(42);
+      expect(c).toBe(3);
+      expect(v).toBe(42);
     }).catch(() => {
       // should not reach here
       throw new Error('unreachable');
@@ -260,8 +271,8 @@ describe('retry util', () => {
       // should not reach here
       throw new Error('unreachable');
     }).catch(ex => {
-      expect(c).toEqual(1);
-      expect(ex.message).toEqual('fail');
+      expect(c).toBe(1);
+      expect(ex.message).toBe('fail');
     });
   });
 
@@ -276,8 +287,8 @@ describe('retry util', () => {
       // should not reach here
       throw new Error('unreachable');
     }).catch(ex => {
-      expect(c).toEqual(1);
-      expect(ex.message).toEqual('fail');
+      expect(c).toBe(1);
+      expect(ex.message).toBe('fail');
     });
   });
 });
@@ -287,7 +298,7 @@ describe('adjustTimezone', () => {
     const zone = 'America/Los_Angeles';
     const corruptedDateTime = '2013-11-2';
 
-    expect(adjustTimezone(corruptedDateTime, zone)).toEqual(null);
+    expect(adjustTimezone(corruptedDateTime, zone)).toBeNull();
   });
   test('should successfully adjust timezone for PST', () => {
     const zone = 'America/Los_Angeles';
@@ -301,7 +312,7 @@ describe('adjustTimezone', () => {
 
     expect(adjustTimezone(dateNow, zone)).toEqual(expectedOutTime);
   });
-  describe('daylight saving time ', () => {
+  describe('daylight saving time', () => {
     test('should successfully adjust timezone with daylight saving time -07:00 offset for PST', () => {
       const zone = 'America/Los_Angeles';
       // local time stamp internally set in the component
@@ -342,7 +353,7 @@ describe('adjustTimezone', () => {
   });
 });
 
-describe('inferErrorMessages expect errored api message in this format { message, errors } ', () => {
+describe('inferErrorMessages expect errored api message in this format { message, errors }', () => {
   describe('invalid inputs', () => {
     test('should return [] for null or undefined inputs', () => {
       expect(inferErrorMessages(null)).toEqual([]);
@@ -408,7 +419,7 @@ describe('flowgroupingsRedirectTo', () => {
     };
     const flowGroupings = [{ sectionId: defaultSectionId}];
 
-    expect(flowgroupingsRedirectTo(match, flowGroupings, defaultSectionId)).toEqual(`${baseRoute}/sections/general`);
+    expect(flowgroupingsRedirectTo(match, flowGroupings, defaultSectionId)).toBe(`${baseRoute}/sections/general`);
   });
 
   test('should return null when attempting a valid sectionId for an IA with flowgroupings', () => {
@@ -421,7 +432,7 @@ describe('flowgroupingsRedirectTo', () => {
     };
     const flowGroupings = [{ sectionId: defaultSectionId}, { sectionId: 'validSectionId' }];
 
-    expect(flowgroupingsRedirectTo(match, flowGroupings, defaultSectionId)).toEqual(null);
+    expect(flowgroupingsRedirectTo(match, flowGroupings, defaultSectionId)).toBeNull();
   });
 
   test('should return default sectionId route when attempting a route without a sectionId but has flowGroupings', () => {
@@ -433,7 +444,7 @@ describe('flowgroupingsRedirectTo', () => {
     };
     const flowGroupings = [{ sectionId: defaultSectionId}];
 
-    expect(flowgroupingsRedirectTo(match, flowGroupings, defaultSectionId)).toEqual(`${baseRoute}/sections/general`);
+    expect(flowgroupingsRedirectTo(match, flowGroupings, defaultSectionId)).toBe(`${baseRoute}/sections/general`);
   });
   test('should return null when attempting a route without flowGroupings', () => {
     const match = {
@@ -444,14 +455,14 @@ describe('flowgroupingsRedirectTo', () => {
     };
     const flowGroupings = null;
 
-    expect(flowgroupingsRedirectTo(match, flowGroupings, defaultSectionId)).toEqual(null);
+    expect(flowgroupingsRedirectTo(match, flowGroupings, defaultSectionId)).toBeNull();
   });
 });
 
 describe('redirectFirstFlowGrouping', () => {
   const baseRoute = '/baseRoute';
 
-  test('when attempting an invalid route with no flowGrouping redirect to baseRoute ', () => {
+  test('when attempting an invalid route with no flowGrouping redirect to baseRoute', () => {
     const match = {
       path: `${baseRoute}/sections/:sectionId`,
       params: {
@@ -462,7 +473,7 @@ describe('redirectFirstFlowGrouping', () => {
     const flowGroupings = null;
     const hasUnassignedSection = null;
 
-    expect(redirectToFirstFlowGrouping(flowGroupings, match, hasUnassignedSection)).toEqual(`${baseRoute}`);
+    expect(redirectToFirstFlowGrouping(flowGroupings, match, hasUnassignedSection)).toBe(`${baseRoute}`);
   });
 
   test('when attempting an invalid route with flowGroupings present should redirect to first flowgrouping', () => {
@@ -476,7 +487,7 @@ describe('redirectFirstFlowGrouping', () => {
     const flowGroupings = [{ sectionId: 'firstGroupId'}];
     const hasUnassignedSection = false;
 
-    expect(redirectToFirstFlowGrouping(flowGroupings, match, hasUnassignedSection)).toEqual(`${baseRoute}/sections/firstGroupId`);
+    expect(redirectToFirstFlowGrouping(flowGroupings, match, hasUnassignedSection)).toBe(`${baseRoute}/sections/firstGroupId`);
   });
   test('when attempting an unassigned section route with hasUnassignedSection as true then should return null since it is a valid route', () => {
     // in this case we will have a unassigned section
@@ -491,7 +502,7 @@ describe('redirectFirstFlowGrouping', () => {
     const flowGroupings = [{ sectionId: 'firstGroupId'}];
     const hasUnassignedSection = true;
 
-    expect(redirectToFirstFlowGrouping(flowGroupings, match, hasUnassignedSection)).toEqual(null);
+    expect(redirectToFirstFlowGrouping(flowGroupings, match, hasUnassignedSection)).toBeNull();
   });
   test('when attempting a flow group route with hasUnassignedSection as true but without flow groupings then should return path to unassigned section', () => {
     // this case is trigerred when we are searching for a flow in Unassigned section
@@ -506,7 +517,7 @@ describe('redirectFirstFlowGrouping', () => {
     const flowGroupings = [];
     const hasUnassignedSection = true;
 
-    expect(redirectToFirstFlowGrouping(flowGroupings, match, hasUnassignedSection)).toEqual(`${baseRoute}/sections/${UNASSIGNED_SECTION_ID}`);
+    expect(redirectToFirstFlowGrouping(flowGroupings, match, hasUnassignedSection)).toBe(`${baseRoute}/sections/${UNASSIGNED_SECTION_ID}`);
   });
 
   test('when attempting a unassigned section route with hasUnassignedSection as false then should return firstFlowGroupId', () => {
@@ -521,17 +532,17 @@ describe('redirectFirstFlowGrouping', () => {
     const flowGroupings = [{ sectionId: 'firstGroupId'}];
     const hasUnassignedSection = false;
 
-    expect(redirectToFirstFlowGrouping(flowGroupings, match, hasUnassignedSection)).toEqual(`${baseRoute}/sections/firstGroupId`);
+    expect(redirectToFirstFlowGrouping(flowGroupings, match, hasUnassignedSection)).toBe(`${baseRoute}/sections/firstGroupId`);
   });
 });
 
 describe('saveAndCloseButtons tests', () => {
   describe('getAsyncKey tests', () => {
     test('should not throw errors on invalid props', () => {
-      expect(getAsyncKey()).toEqual('undefined-undefined');
+      expect(getAsyncKey()).toBe('undefined-undefined');
     });
     test('should return resourceType-resourceId as a string on passing correct arguments', () => {
-      expect(getAsyncKey('exports', '324324')).toEqual('exports-324324');
+      expect(getAsyncKey('exports', '324324')).toBe('exports-324324');
     });
   });
 });

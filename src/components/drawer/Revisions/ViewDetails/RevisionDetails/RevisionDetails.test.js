@@ -1,4 +1,4 @@
-/* global describe, test, expect */
+
 import React from 'react';
 import { screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
@@ -102,7 +102,7 @@ describe('RevisionDetails tests', () => {
     const collapseContainer = screen.getByRole('button', {name: 'General'});
     const expandicon = document.querySelector('svg');
 
-    expect(collapseContainer.getAttribute('aria-expanded')).toEqual('true');
+    expect(collapseContainer.getAttribute('aria-expanded')).toBe('true');
     userEvent.click(expandicon);
   });
 

@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import CeligoSwitch from '../../../../CeligoSwitch';
 import { ACCOUNT_IDS } from '../../../../../constants';
@@ -8,12 +8,14 @@ import actionTypes from '../../../../../actions/types';
 import { COMM_STATES } from '../../../../../reducers/comms/networkComms';
 import useEnqueueSnackbar from '../../../../../hooks/enqueueSnackbar';
 import useCommStatus from '../../../../../hooks/useCommStatus';
+import Spinner from '../../../../Spinner';
 
 export default function EnableUser({ user }) {
   const { confirmDialog } = useConfirmDialog();
   const { sharedWithUser, disabled, _id: userId, accepted } = user;
   const dispatch = useDispatch();
   const [enquesnackbar] = useEnqueueSnackbar();
+  const [isLoading, setLoading] = useState(false);
 
   const handleSwitch = useCallback(() => {
     confirmDialog({
@@ -57,6 +59,12 @@ export default function EnableUser({ user }) {
           variant: status,
         });
       }
+
+      if (status === COMM_STATES.LOADING) {
+        setLoading(true);
+      } else {
+        setLoading(false);
+      }
     },
     [enquesnackbar, getStatusMessage]
   );
@@ -69,12 +77,18 @@ export default function EnableUser({ user }) {
     commStatusHandler,
   });
 
+  if (isLoading) {
+    return <Spinner />;
+  }
+
   return (
     <CeligoSwitch
       data-test="disableUser"
       disabled={!accepted || userId === ACCOUNT_IDS.OWN}
       checked={!disabled}
       onChange={handleSwitch}
+      tooltip="Disable / Enable"
+      noPadding
       />
   );
 }

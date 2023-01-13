@@ -11,6 +11,7 @@ import {
   getFormattedNetsuiteMetadataData,
 } from '../metadata';
 import { getUnionObject, getTransformPaths } from '../jsonPaths';
+import { isFileMetaExpectedForResource } from '../flowData';
 
 // wrap the function inside useMemo since result may contain property 'lastExportDateTime' which refers to new Date()
 export default function getFormattedSampleData({
@@ -462,6 +463,28 @@ export const processOneToManySampleData = (sampleData, resource) => {
   return processedSampleData;
 };
 
+// These utils check if the sample data is in correct integrator.io canonical format
+export const isValidCanonicalFormForExportData = mockData => {
+  if (!mockData) return true;
+  if (!mockData.page_of_records) return false;
+  if (!Array.isArray(mockData.page_of_records)) return false;
+  if (mockData.page_of_records.every(item => typeof item.record === 'object' && !Array.isArray(item.record))) { return true; }
+  if (mockData.page_of_records.every(item => Array.isArray(item.rows))) { return true; }
+
+  return false;
+};
+
+export const isValidCanonicalFormForImportResponse = mockData => {
+  if (!mockData) return true;
+  const validFields = ['statusCode', 'errors', 'id', '_json', 'ignored', 'dataURI', '_headers'];
+
+  if (!Array.isArray(mockData)) return false;
+
+  return mockData.every(data =>
+    typeof data === 'object' &&
+    Object.keys(data).every(key => validFields.includes(key)));
+};
+
 /**
  * This util adds "page_of_records" on records/rows based on the sampleData structure
  * Ideally, we should be using a BE API for this structure
@@ -497,7 +520,7 @@ export const wrapExportFileSampleData = (records, status) => {
 
 // this util unwraps the sample data wrapped by wrapExportFileSampleData
 export const unwrapExportFileSampleData = sampleData => {
-  if (!sampleData || typeof sampleData !== 'object') return;
+  if (!sampleData || typeof sampleData !== 'object' || !isValidCanonicalFormForExportData(sampleData)) return;
 
   const {page_of_records} = sampleData;
 
@@ -623,6 +646,7 @@ export const wrapSampleDataWithContext = ({
   switch (stage) {
     case 'transform':
     case 'sampleResponse':
+    case 'responseTransform':
     case 'outputFilter':
       contextFields.pageIndex = 0;
 
@@ -641,7 +665,7 @@ export const wrapSampleDataWithContext = ({
         status,
         data: {
           data: data ? [data] : [],
-          files: [
+          files: isFileMetaExpectedForResource(resource) ? [
             {
               fileMeta:
                 {
@@ -649,7 +673,7 @@ export const wrapSampleDataWithContext = ({
                   fileSize: resource.adaptorType === 'FTPExport' ? 1234 : undefined,
                 },
             },
-          ],
+          ] : undefined,
           errors: [],
           ...resourceIds,
           ...contextFields,
@@ -681,14 +705,15 @@ export const wrapSampleDataWithContext = ({
         data: {
           preMapData: preMapSampleData?.data ? [preMapSampleData.data] : [],
           postMapData: postMapSampleData?.data ? [postMapSampleData.data] : [],
-          responseData: [data].map(() => ({
+          // if data is undefined, show a sample responseData
+          responseData: data ? [data] : [{
             statusCode: 200,
             errors: [{ code: '', message: '', source: '' }],
             ignored: false,
             id: '',
-            _json: data || {},
+            _json: {},
             dataURI: '',
-          })),
+          }],
           ...resourceIds,
           settings,
         },
@@ -722,3 +747,6 @@ export const wrapSampleDataWithContext = ({
       return { status, data, templateVersion };
   }
 };
+
+export const wrapMockInputData = sampleData =>
+  wrapExportFileSampleData(Array.isArray(sampleData) ? [sampleData] : sampleData);

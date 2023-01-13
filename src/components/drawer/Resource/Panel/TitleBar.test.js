@@ -1,4 +1,4 @@
-/* global describe, test, expect */
+
 import React from 'react';
 import { MemoryRouter, Route } from 'react-router-dom';
 import { screen } from '@testing-library/react';
@@ -62,5 +62,9 @@ describe('TitleBar tests', () => {
   test('Should able to test the TitleBar is there without resource', async () => {
     await initTitleBar(props, 'wrongResourceType');
     expect(screen.getByRole('heading', {name: ''})).toBeInTheDocument();
+  });
+  test('Should able to test the TitleBar is there with iClients', async () => {
+    await initTitleBar(props, 'iClients');
+    expect(screen.getByRole('heading', {name: 'Edit iClient'})).toBeInTheDocument();
   });
 });

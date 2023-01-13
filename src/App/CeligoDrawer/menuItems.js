@@ -10,6 +10,7 @@ import FileIcon from '../../components/icons/FileIcon';
 import EditorsPlaygroundIcon from '../../components/icons/EditorsPlaygroundIcon';
 import ConnectionsIcon from '../../components/icons/ConnectionsIcon';
 import AgentsIcon from '../../components/icons/AgentsIcon';
+import IClientsIcon from '../../components/icons/IClientsIcon';
 import ScriptsIcon from '../../components/icons/ScriptsIcon';
 import ImportsIcon from '../../components/icons/ImportsIcon';
 import StacksIcon from '../../components/icons/StacksIcon';
@@ -27,6 +28,7 @@ import MyApiIcon from '../../components/icons/MyApiIcon';
 import IntegrationAppsIcon from '../../components/icons/IntegrationAppsIcon';
 import getRoutePath from '../../utils/routePaths';
 import PortalIcon from '../../components/icons/PortalIcon';
+import { isProduction } from '../../forms/formFactory/utils';
 
 export default function menuItems({
   userProfile,
@@ -93,7 +95,7 @@ export default function menuItems({
           routeProps: getRoutePath('/reports'),
         },
         {
-          label: 'Dev playground',
+          label: 'Developer playground',
           Icon: EditorsPlaygroundIcon,
           path: '/playground',
         },
@@ -108,6 +110,7 @@ export default function menuItems({
         getRoutePath('/connections'),
         getRoutePath('/scripts'),
         getRoutePath('/agents'),
+        getRoutePath('/iClients'),
         getRoutePath('/stacks'),
         getRoutePath('/templates'),
         getRoutePath('/connectors'),
@@ -121,6 +124,7 @@ export default function menuItems({
         { label: 'Exports', path: '/exports', Icon: ExportsIcon },
         { label: 'Scripts', path: '/scripts', Icon: ScriptsIcon },
         { label: 'Agents', path: '/agents', Icon: AgentsIcon },
+        { label: 'iClients', path: '/iClients', Icon: IClientsIcon },
         { label: 'Stacks', path: '/stacks', Icon: StacksIcon },
         { label: 'My APIs', path: '/apis', Icon: MyApiIcon },
         { label: 'API tokens', path: '/accesstokens', Icon: TokensApiIcon },
@@ -161,13 +165,14 @@ export default function menuItems({
         },
       ],
     },
-    {
+    // Celigo university should only be accessible in production
+    ...(isProduction() ? [{
       label: 'Celigo university',
       Icon: UniversityIcon,
       href: getUniversityUrl,
       component: 'a',
       dataTest: 'celigo_university',
-    },
+    }] : []),
     {
       label: 'Marketplace',
       Icon: MarketplaceIcon,
@@ -186,7 +191,7 @@ export default function menuItems({
     let toolsSectionMenuItems = ['Reports'];
 
     if (isDeveloper) {
-      toolsSectionMenuItems = [...toolsSectionMenuItems, 'Dev playground'];
+      toolsSectionMenuItems = [...toolsSectionMenuItems, 'Developer playground'];
     }
 
     items[toolsSubSectIndex].children = items[toolsSubSectIndex].children.filter(i => toolsSectionMenuItems.includes(i.label));

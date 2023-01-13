@@ -1,6 +1,7 @@
 module.exports = {
   bail: false,
   testRegex: undefined,
+  testTimeout: 50000,
   roots: [
     '<rootDir>/src',
   ],
@@ -10,8 +11,10 @@ module.exports = {
     '^(?!.*\\.(js|jsx|ts|tsx|mjs|cjs|css|json)$)': '<rootDir>/jest/fileTransform.js',
   },
   transformIgnorePatterns: [
-    '[/\\\\]node_modules[/\\\\].+\\.(js|jsx|ts|tsx|mjs|cjs)$',
     '^.+\\.module\\.(css|sass|scss)$',
+    '/node_modules/(?!react-dnd|core-dnd|@react-dnd|dnd-core|react-dnd-html5-backend|react-toggle|react-date-range|jQuery-QueryBuilder)',
+    // '[/\\\\]node_modules[/\\\\].+\\.(js|jsx|ts|tsx|mjs|cjs)$',
+
   ],
   collectCoverageFrom: [
     // If we consistently follow the current abstractions,
@@ -20,7 +23,12 @@ module.exports = {
     'src/reducers/**/*.{js,jsx}',
     'src/sagas/**/*.{js,jsx}',
     'src/utils/**/*.{js,jsx}',
-    'src/components/AFE/Drawer/**/*.{js,jsx}',
+    'src/components/**/*.{js,jsx}',
+    '!src/components/icons/**/*.{js,jsx}',
+    '!src/components/SuiteScript/**/*.{js,jsx}',
+    '!src/components/DynaForm/fields/SuiteScript/**/*.{js,jsx}',
+    'src/views/**/*.{js,jsx}',
+    '!src/views/SuiteScript/**/*.{js,jsx}',
   ],
   setupFilesAfterEnv: ['<rootDir>/jest/setup.js', 'jest-date-mock', 'core-js', 'jest-canvas-mock'],
   coverageThreshold: {
@@ -42,5 +50,6 @@ module.exports = {
     CDN_BASE_URI: 'CDN_BASE_URI',
     IO_LOGIN_PROMOTION_URL: 'https://staging.celigo.com/login/display',
     PORTAL_URL: 'https://portal.productboard.com/wcpkv3awtdpkze4x7wwbpog7',
+    SHOPIFY_USER_IDS: '',
   },
 };

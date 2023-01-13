@@ -1,10 +1,9 @@
-/* global describe, test, expect ,jest */
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import NotificationToaster from '.';
 
-describe('NotifcationToaster UI tests', () => {
+describe('notifcationToaster UI tests', () => {
   test('should click on the close button', () => {
     const onClose = jest.fn();
 
@@ -16,7 +15,7 @@ describe('NotifcationToaster UI tests', () => {
     const button = screen.getByRole('button');
 
     userEvent.click(button);
-    expect(onClose).toHaveBeenCalled();
+    expect(onClose).toHaveBeenCalledTimes(1);
   });
   test('should not show the close button as the onClose function is not passed as prop', () => {
     render(

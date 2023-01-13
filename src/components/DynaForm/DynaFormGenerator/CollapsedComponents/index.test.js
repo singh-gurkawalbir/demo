@@ -1,4 +1,4 @@
-/* global describe, test, expect */
+
 import React from 'react';
 import { screen } from '@testing-library/react';
 import CollapsedComponents from '.';
@@ -39,6 +39,14 @@ const props = {
       fields: [
         'insertFunction',
         'content',
+      ],
+    },
+    {
+      collapsed: false,
+      actionId: 'mockResponse',
+      label: 'Mock response',
+      fields: [
+        'mockResponse',
       ],
     },
   ],
@@ -104,6 +112,17 @@ const props = {
       ],
       id: 'content',
     },
+    mockResponse: {
+      resourceId: '5ff687fa4f59bb348d41b332',
+      resourceType: 'imports',
+      isLoggable: true,
+      type: 'text',
+      label: 'Mock response',
+      required: true,
+      fieldId: 'mockResponse',
+      id: 'mockResponse',
+      defaultValue: 'test',
+    },
   },
   layout: {
     type: 'collapse',
@@ -128,6 +147,14 @@ const props = {
           'content',
         ],
       },
+      {
+        collapsed: false,
+        actionId: 'mockResponse',
+        label: 'Mock response',
+        fields: [
+          'mockResponse',
+        ],
+      },
     ],
   },
   formKey: 'scripts-5ff687fa4f59bb348d41b332',
@@ -135,7 +162,7 @@ const props = {
   resourceId: '5ff687fa4f59bb348d41b332',
 };
 
-describe('Collapsed Components UI tests', () => {
+describe('collapsed Components UI tests', () => {
   test('should pass the initial render', () => {
     props.formfields = [{visible: true, required: true, id: 'name', isValid: false}, {visible: 'true', required: true, id: 'description', isValid: false}, {visible: 'true', required: true, id: 'content', isValid: false}, {visible: 'true', required: true, id: 'insertFunction', isValid: false}];
     initCollapsedComponent(props);
@@ -147,5 +174,12 @@ describe('Collapsed Components UI tests', () => {
     const {utils} = initCollapsedComponent(props);
 
     expect(utils.container).toContainHTML('<div></div>');
+  });
+  test('should render CollapsedComponentActions if layout has actionId', () => {
+    const formfields = [{visible: true, required: true, id: 'mockResponse', isValid: false}];
+    const resourceType = 'imports';
+
+    initCollapsedComponent({...props, formfields, resourceType});
+    expect(screen.getByText(/Populate with sample response data/i)).toBeInTheDocument();
   });
 });

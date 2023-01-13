@@ -1,4 +1,3 @@
-/* global describe, test, expect, beforeEach, afterEach, jest */
 import React from 'react';
 import {screen, waitFor} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -17,7 +16,7 @@ jest.mock('../../../../DynaForm/fields/DynaSelectWithInput', () => ({
   default: props => (
     <div>
       Column Delimiter
-      <input onChange={e => props.onFieldChange(props.id, e.target.value)} data-testId={props.label} type="text" value={props.value} />
+      <input onChange={e => props.onFieldChange(props.id, e.target.value)} data-testid={props.label} type="text" value={props.value} />
       {/* <span>{props.errorMessages}</span> */}
     </div>
 
@@ -86,7 +85,7 @@ function initCsvGeneratePanel(props = {}) {
 let mockDispatchFn;
 let useDispatchSpy;
 
-describe('CsvGeneratePanel UI tests', () => {
+describe('csvGeneratePanel UI tests', () => {
   beforeEach(done => {
     useDispatchSpy = jest.spyOn(reactRedux, 'useDispatch');
     mockDispatchFn = jest.fn(action => {
@@ -149,7 +148,7 @@ describe('CsvGeneratePanel UI tests', () => {
 
     expect(searchInput).toBeInTheDocument();
     userEvent.type(searchInput, 'a');
-    await waitFor(() => expect(mockDispatchFn).toBeCalledWith(actions.editor.patchRule('filecsv', {...rule, customHeaderRows: 'custom valuea'})));  // an extra alphabet 'a' is added to the text already present //
+    await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith(actions.editor.patchRule('filecsv', {...rule, customHeaderRows: 'custom valuea'})));  // an extra alphabet 'a' is added to the text already present //
   });
   test('should make the respective dispatch call when value is changed in column delimiter', async () => {
     initCsvGeneratePanel({editorId: 'filecsv', disabled: false});
@@ -160,7 +159,7 @@ describe('CsvGeneratePanel UI tests', () => {
 
     userEvent.click(columnField);
     userEvent.type(columnField, 'S');
-    await waitFor(() => expect(mockDispatchFn).toBeCalledWith(actions.editor.patchRule('filecsv', {...rule,
+    await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith(actions.editor.patchRule('filecsv', {...rule,
       columnDelimiter: 'Comma (,)S',
     })));
   });
@@ -174,7 +173,7 @@ describe('CsvGeneratePanel UI tests', () => {
     userEvent.click(rowField);
 
     userEvent.click(document.querySelector('[value="\r"]'));
-    await waitFor(() => expect(mockDispatchFn).toBeCalled());
+    await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledTimes(1));
   });
   test('should make a dispatch call when Include Header checkbox is checked', async () => {
     initCsvGeneratePanel({editorId: 'filecsv', disabled: false});
@@ -183,7 +182,7 @@ describe('CsvGeneratePanel UI tests', () => {
     expect(checkbox1).toBeInTheDocument();
 
     userEvent.click(checkbox1);
-    await waitFor(() => expect(mockDispatchFn).toBeCalledWith(actions.editor.patchRule('filecsv', {...rule, includeHeader: true})));
+    await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith(actions.editor.patchRule('filecsv', {...rule, includeHeader: true})));
   });
   test('should make a dispatch call when Truncate last row delimiter checkbox is checked', async () => {
     initCsvGeneratePanel({editorId: 'filecsv', disabled: false});
@@ -192,7 +191,7 @@ describe('CsvGeneratePanel UI tests', () => {
     expect(checkbox2).toBeInTheDocument();
 
     userEvent.click(checkbox2);
-    await waitFor(() => expect(mockDispatchFn).toBeCalledWith(actions.editor.patchRule('filecsv', {...rule, truncateLastRowDelimiter: true})));
+    await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith(actions.editor.patchRule('filecsv', {...rule, truncateLastRowDelimiter: true})));
   });
   test('should make a dispatch call when Wrap with quotes checkbox is checked', async () => {
     initCsvGeneratePanel({editorId: 'filecsv', disabled: false});
@@ -201,7 +200,7 @@ describe('CsvGeneratePanel UI tests', () => {
     expect(checkbox3).toBeInTheDocument();
 
     userEvent.click(checkbox3);
-    await waitFor(() => expect(mockDispatchFn).toBeCalledWith(actions.editor.patchRule('filecsv', {...rule, wrapWithQuotes: true})));
+    await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith(actions.editor.patchRule('filecsv', {...rule, wrapWithQuotes: true})));
   });
   test('should make a dispatch call when Replace tab with space checkbox is checked', async () => {
     initCsvGeneratePanel({editorId: 'filecsv', disabled: false});
@@ -210,7 +209,7 @@ describe('CsvGeneratePanel UI tests', () => {
     expect(checkbox4).toBeInTheDocument();
 
     userEvent.click(checkbox4);
-    await waitFor(() => expect(mockDispatchFn).toBeCalledWith(actions.editor.patchRule('filecsv', {...rule, replaceTabWithSpace: true})));
+    await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith(actions.editor.patchRule('filecsv', {...rule, replaceTabWithSpace: true})));
   });
   test('should make a dispatch call when Replace new line with space checkbox is checked', async () => {
     initCsvGeneratePanel({editorId: 'filecsv', disabled: false});
@@ -219,7 +218,7 @@ describe('CsvGeneratePanel UI tests', () => {
     expect(checkbox5).toBeInTheDocument();
 
     userEvent.click(checkbox5);
-    await waitFor(() => expect(mockDispatchFn).toBeCalledWith(actions.editor.patchRule('filecsv', {...rule, replaceNewlineWithSpace: true})));
+    await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith(actions.editor.patchRule('filecsv', {...rule, replaceNewlineWithSpace: true})));
   });
 });
 

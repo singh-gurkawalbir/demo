@@ -1,10 +1,11 @@
-/* global describe, test, expect, afterEach */
+
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { screen, waitFor, cleanup } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import AccessTokenList from '.';
 import { runServer } from '../../test/api/server';
+import { NO_RESULT_SEARCH_MESSAGE } from '../../constants';
 import { renderWithProviders, reduxStore, mockGetRequestOnce } from '../../test/test-utils';
 
 async function initAccessTokenList({
@@ -30,6 +31,10 @@ async function initAccessTokenList({
   };
   initialStore.getState().data.resources = resources;
   initialStore.getState().session.filters = filters;
+  initialStore.getState().auth = {
+    defaultAccountSet: true,
+    authenticated: true,
+  };
   initialStore.getState().session.loadResources = {}; // have to clone store somehow or else it using the same store
   const ui = (
     <MemoryRouter>
@@ -81,9 +86,7 @@ describe('AccessTokenList test cases', () => {
 
     expect(searchInput).toBeInTheDocument();
     userEvent.type(searchInput, 'typ');
-    await waitFor(() => expect(screen.queryByText(/Name/i)).toBeInTheDocument());
-    expect(screen.queryByText(/Action/i)).toBeInTheDocument();
-    expect(screen.queryByText(/Status/i)).toBeInTheDocument();
+    await waitFor(() => expect(screen.queryByText(NO_RESULT_SEARCH_MESSAGE)).toBeInTheDocument());
   });
 
   test('should pass the initial render with different user', async () => {

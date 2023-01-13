@@ -1,4 +1,3 @@
-/* global describe, test, expect, jest, beforeEach, afterEach */
 import React from 'react';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -13,7 +12,7 @@ jest.mock('../Code', () => ({
   ...jest.requireActual('../Code'),
   default: props => (
 
-    <input onChange={() => props.onChange('a')} data-testId="codepanel" />
+    <input onChange={() => props.onChange('a')} data-testid="codepanel" />
   ),
 }));
 const initialStore = getCreatedStore();
@@ -31,7 +30,7 @@ function initHandlebarsPanel(props = {}) {
   return renderWithProviders(<HandlebarsPanel {...props} />, {initialStore});
 }
 
-describe('Handelbars UI tests', () => {
+describe('handelbars UI tests', () => {
   let mockDispatchFn;
   let useDispatchSpy;
 
@@ -60,6 +59,6 @@ describe('Handelbars UI tests', () => {
     const codePanel = screen.getByTestId('codepanel');
 
     userEvent.type(codePanel, 'a');
-    await waitFor(() => expect(mockDispatchFn).toBeCalledWith(actions.editor.patchRule('filecsv', 'a')));
+    await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith(actions.editor.patchRule('filecsv', 'a')));
   });
 });

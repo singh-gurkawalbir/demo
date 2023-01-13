@@ -1,136 +1,127 @@
-/* eslint-disable no-undef */
-import { screen, waitFor } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
 import React from 'react';
-import * as reactRedux from 'react-redux';
-import { MemoryRouter } from 'react-router-dom';
-import actions from '../../../../actions';
-import { getCreatedStore } from '../../../../store';
-import { renderWithProviders } from '../../../../test/test-utils';
+import { screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import ToggleLayout from './ToggleLayout';
+import { getCreatedStore } from '../../../../store';
+import actions from '../../../../actions';
+import { renderWithProviders } from '../../../../test/test-utils';
 
-let initialStore;
+const initialStore = getCreatedStore();
+const mockDispatch = jest.fn();
 
-async function initToggleLayout(editorId, mappingPreviewType, editorType, layout) {
+jest.mock('react-redux', () => ({
+  __esModule: true,
+  ...jest.requireActual('react-redux'),
+  useDispatch: () => mockDispatch,
+}));
+
+function initToggleLayout(props = {}) {
   initialStore.getState().session.editors = {
-    [editorId]: {
-      mappingPreviewType,
-      editorType,
-      layout,
+    'mappings-6320bf1151852e73fb07fcf8': {
+      editorType: 'mappings',
+      flowId: '6320262d51852e73fb077993',
+      resourceId: '6320bf1151852e73fb07fcf8',
+      resourceType: 'imports',
+      stage: 'importMappingExtract',
+      editorTitle: 'Edit mapping: S3 import',
+      fieldId: '',
+      layout: 'compact2',
+      autoEvaluate: false,
+      mappingPreviewType: 'sometype',
+      sampleDataStatus: 'received',
     },
-  };
-  const ui = (
-    <MemoryRouter>
-      <ToggleLayout editorId={editorId} />
-    </MemoryRouter>
-  );
+    'iFilter-631f9f1d3bfc725f006327e3': {
+      editorType: 'inputFilter',
+      flowId: '63271e1fb144bd24fd6f7cd2',
+      resourceId: '631f9f1d3bfc725f006327e3',
+      resourceType: 'imports',
+      stage: 'inputFilter',
+      rule: {
+        filter: [],
+        javascript: {
+          fetchScriptContent: true,
+          entryFunction: 'filter',
+        },
+      },
+      activeProcessor: 'filter',
+      context: {
+        type: 'hook',
+        container: 'integration',
+        _integrationId: '62ecc42648570015ab65cfa5',
+        _flowId: '63271e1fb144bd24fd6f7cd2',
+      },
+      fieldId: '',
+      layout: 'compact',
+      insertStubKey: 'filter',
+      originalRule: {
+        filter: [],
+        javascript: {
+          fetchScriptContent: true,
+          entryFunction: 'filter',
+        },
+      },
+      sampleDataStatus: 'received',
+      data: {
+        filter: '{\n  "record": {\n    "hns": 922\n  },\n  "settings": {\n    "integration": {},\n    "flow": {},\n    "flowGrouping": {},\n    "connection": {},\n    "import": {}\n  }\n}',
+        javascript: '{\n  "record": {\n    "hns": 922\n  },\n  "settings": {\n    "integration": {},\n    "flow": {},\n    "flowGrouping": {},\n    "connection": {},\n    "import": {}\n  }\n}',
+      },
+      dataVersion: 2,
+      lastValidData: '{\n  "record": {\n    "hns": 922\n  },\n  "settings": {\n    "integration": {},\n    "flow": {},\n    "flowGrouping": {},\n    "connection": {},\n    "import": {}\n  }\n}',
+    }};
 
-  return renderWithProviders(ui, { initialStore });
+  return renderWithProviders(<ToggleLayout {...props} />, {initialStore});
 }
 
-jest.mock('../../../icons/LayoutTriVerticalIcon', () => ({
-  __esModule: true,
-  ...jest.requireActual('../../../icons/LayoutTriVerticalIcon'),
-  default: () => (
-    <div>ViewColumnIcon</div>
-  ),
-}));
-jest.mock('../../../icons/LayoutLgLeftSmrightIcon', () => ({
-  __esModule: true,
-  ...jest.requireActual('../../../icons/LayoutLgLeftSmrightIcon'),
-  default: () => (
-    <div>ViewCompactIcon</div>
-  ),
-}));
-jest.mock('../../../icons/LayoutLgTopSmBottomIcon', () => ({
-  __esModule: true,
-  ...jest.requireActual('../../../icons/LayoutLgTopSmBottomIcon'),
-  default: () => (
-    <div>ViewCompactRowIcon</div>
-  ),
-}));
-jest.mock('../../../icons/LayoutAssistantRightIcon', () => ({
-  __esModule: true,
-  ...jest.requireActual('../../../icons/LayoutAssistantRightIcon'),
-  default: () => (
-    <div>ViewAssistantRightIcon</div>
-  ),
-}));
-jest.mock('../../../icons/LayoutAssistantTopRightIcon', () => ({
-  __esModule: true,
-  ...jest.requireActual('../../../icons/LayoutAssistantTopRightIcon'),
-  default: () => (
-    <div>ViewAssistantTopRightIcon</div>
-  ),
-}));
-jest.mock('../../../icons/VerticalLayoutIcon', () => ({
-  __esModule: true,
-  ...jest.requireActual('../../../icons/VerticalLayoutIcon'),
-  default: () => (
-    <div>ViewRowIcon</div>
-  ),
-}));
-
-describe('test suite for ToggleLayout', () => {
-  let mockDispatchFn;
-  let useDispatchSpy;
-
-  beforeEach(() => {
-    initialStore = getCreatedStore();
-    useDispatchSpy = jest.spyOn(reactRedux, 'useDispatch');
-    mockDispatchFn = jest.fn(action => {
-      switch (action.type) {
-        default:
-          initialStore.dispatch(action);
-      }
-    });
-    useDispatchSpy.mockReturnValue(mockDispatchFn);
+describe('ToggleLayout UI tests', () => {
+  test('Should test the initial render where the input is set to compact2 layout', () => {
+    initToggleLayout({editorId: 'mappings-6320bf1151852e73fb07fcf8'});
+    expect(document.querySelector('input')).toHaveValue('compact2');
   });
+  test('Should make a dispatch call when toggle layout is set to compactRow', () => {
+    initToggleLayout({editorId: 'mappings-6320bf1151852e73fb07fcf8'});
+    userEvent.click(screen.getByRole('button'));
+    const layoutOption = screen.getAllByRole('option').find(eachOption => eachOption.getAttribute('data-value') === 'compactRow');
 
-  afterEach(() => {
-    useDispatchSpy.mockClear();
-    mockDispatchFn.mockClear();
+    expect(layoutOption).toBeInTheDocument();
+    userEvent.click(layoutOption);
+    expect(mockDispatch).toHaveBeenCalledWith(actions.editor.changeLayout('mappings-6320bf1151852e73fb07fcf8', 'compactRow'));
   });
+  test('Should make a dispatch call when toggle layout is set to assistantTopRight', () => {
+    initToggleLayout({editorId: 'mappings-6320bf1151852e73fb07fcf8'});
+    userEvent.click(screen.getByRole('button'));
+    const layoutOption = screen.getAllByRole('option').find(eachOption => eachOption.getAttribute('data-value') === 'assistantTopRight');
 
-  test('Should render properly when new dropdown is selected', async () => {
-    await initToggleLayout('1', false, 'map', 'row');
-    const inputbutton = screen.getByText('ViewRowIcon');
-
-    expect(inputbutton).toBeInTheDocument();
-    userEvent.click(inputbutton);
-    const itemSelection = screen.getByText('ViewColumnIcon');
-
-    userEvent.click(itemSelection);
-    await expect(mockDispatchFn).toBeCalledWith(actions.editor.changeLayout('1', 'column'));
-    await waitFor(() => expect(screen.queryByText('ViewRowIcon')).toBeNull());
+    expect(layoutOption).toBeInTheDocument();
+    userEvent.click(layoutOption);
+    expect(mockDispatch).toHaveBeenCalledWith(actions.editor.changeLayout('mappings-6320bf1151852e73fb07fcf8', 'assistantTopRight'));
   });
-  test('Should render properly when isMappingsEditor is false and mappingPreviewType is not set', async () => {
-    await initToggleLayout('1', false, 'map', 'row');
-    const inputbutton = screen.getByText('ViewRowIcon');
+  test('Should make a dispatch call when toggle layout is set to assistantRight', () => {
+    initToggleLayout({editorId: 'mappings-6320bf1151852e73fb07fcf8'});
+    userEvent.click(screen.getByRole('button'));
+    const layoutOption = screen.getAllByRole('option').find(eachOption => eachOption.getAttribute('data-value') === 'assistantRight');
 
-    expect(inputbutton).toBeInTheDocument();
-    userEvent.click(inputbutton);
-    // dropdowns should should show correct components
-    expect(screen.getByText('ViewColumnIcon')).toBeInTheDocument();
-    expect(screen.getByText('ViewCompactIcon')).toBeInTheDocument();
-    expect(screen.getByRole('option', {
-      name: /viewrowicon/i,
-      hidden: true,
-    })).toBeInTheDocument();
+    expect(layoutOption).toBeInTheDocument();
+    userEvent.click(layoutOption);
+    expect(mockDispatch).toHaveBeenCalledWith(actions.editor.changeLayout('mappings-6320bf1151852e73fb07fcf8', 'assistantRight'));
   });
-  test('Should render properly when isMappingsEditor is true and mappingPreviewType is set', async () => {
-    await initToggleLayout('1', true, 'mappings', 'compact2');
-    const inputbutton = screen.getByText('ViewCompactIcon');
+  test('Should make a dispatch call when toggle layout is set to column', () => {
+    initToggleLayout({editorId: 'iFilter-631f9f1d3bfc725f006327e3' });
+    expect(document.querySelector('input')).toHaveValue('compact');
+    userEvent.click(screen.getByRole('button'));
+    const layoutOption = screen.getAllByRole('option').find(eachOption => eachOption.getAttribute('data-value') === 'column');
 
-    expect(inputbutton).toBeInTheDocument();
-    userEvent.click(inputbutton);
-    // dropdowns should should show correct components
-    expect(screen.getByText('ViewCompactRowIcon')).toBeInTheDocument();
-    expect(screen.getByText('ViewAssistantRightIcon')).toBeInTheDocument();
-    expect(screen.getByText('ViewAssistantTopRightIcon')).toBeInTheDocument();
-    expect(screen.getByRole('option', {
-      name: /ViewCompactIcon/i,
-      hidden: true,
-    })).toBeInTheDocument();
+    expect(layoutOption).toBeInTheDocument();
+    userEvent.click(layoutOption);
+    expect(mockDispatch).toHaveBeenCalledWith(actions.editor.changeLayout('iFilter-631f9f1d3bfc725f006327e3', 'column'));
+  });
+  test('Should make a dispatch call when toggle layout is set to row', () => {
+    initToggleLayout({editorId: 'iFilter-631f9f1d3bfc725f006327e3' });
+    expect(document.querySelector('input')).toHaveValue('compact');
+    userEvent.click(screen.getByRole('button'));
+    const layoutOption = screen.getAllByRole('option').find(eachOption => eachOption.getAttribute('data-value') === 'row');
+
+    expect(layoutOption).toBeInTheDocument();
+    userEvent.click(layoutOption);
+    expect(mockDispatch).toHaveBeenCalledWith(actions.editor.changeLayout('iFilter-631f9f1d3bfc725f006327e3', 'row'));
   });
 });

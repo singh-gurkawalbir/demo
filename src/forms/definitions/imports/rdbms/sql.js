@@ -1,3 +1,5 @@
+import { safeParse } from '../../../../utils/string';
+
 export default {
   preSave: formValues => {
     const retValues = { ...formValues };
@@ -67,6 +69,7 @@ export default {
     if (retValues['/oneToMany'] === 'false') {
       retValues['/pathToMany'] = undefined;
     }
+    retValues['/mockResponse'] = safeParse(retValues['/mockResponse']);
 
     return {
       ...retValues,
@@ -177,6 +180,7 @@ export default {
       fieldId: 'rdbms.updateLookupName',
     },
     dataMappings: { formId: 'dataMappings' },
+    mockResponseSection: {formId: 'mockResponseSection'},
   },
   layout: {
     type: 'collapse',
@@ -206,6 +210,12 @@ export default {
           'rdbms.queryInsert',
           'rdbms.queryUpdate',
         ],
+      },
+      {
+        actionId: 'mockResponse',
+        collapsed: true,
+        label: 'Mock response',
+        fields: ['mockResponseSection'],
       },
       {
         collapsed: true,

@@ -141,6 +141,7 @@ export function getFilterList(jsonPaths, rules) {
     });
   }
 
+  // skipping this condition for the unit test case because it is not reachable
   if (rules.length > 0) {
     iterate(rules);
   }

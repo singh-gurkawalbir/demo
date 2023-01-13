@@ -7,7 +7,6 @@ const DotenvPlugin = require('dotenv-webpack');
 const dotenv = require('dotenv').config({ path: path.join(__dirname, '.env') }).parsed;
 const ReactRefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
-const { UnusedFilesWebpackPlugin } = require('unused-files-webpack-plugin');
 
 const config = {
   target: 'web',
@@ -71,23 +70,15 @@ const config = {
     ],
   },
   resolve: {
-    extensions: ['*', '.js', '.jsx'],
+    extensions: ['*', '.js', '.jsx', '.ts', '.tsx'],
+    fallback: {
+      path: require.resolve('path-browserify'),
+    },
   },
   plugins: [
     new DotenvPlugin(),
     new webpack.ProvidePlugin({
       React: 'react',
-    }),
-    new UnusedFilesWebpackPlugin({
-      patterns: ['src/**/*.js', 'src/**/*.jsx'],
-      globOptions: {
-        // test are standalone files are always unreferenced so lets ignore it
-        // some icons could be used in the future lets not delete all the unused ones
-        // stories are also standalone so lets ignore it as well
-        ignore: ['**/*test.js', '**/components/icons/**', '**/stories/**',
-          // this folder has some js data files used primarily for test cases
-          'src/utils/assistant/assistantTestcases/**'],
-      },
     }),
     new CleanWebpackPlugin(),
     new HtmlWebpackPlugin({
@@ -111,6 +102,7 @@ const config = {
       IO_LOGIN_PROMOTION_URL: JSON.stringify(process.env.IO_LOGIN_PROMOTION_URL),
       IO_LOGIN_PROMOTION_URL_EU: JSON.stringify(process.env.IO_LOGIN_PROMOTION_URL_EU),
       PORTAL_URL: JSON.stringify(process.env.PORTAL_URL),
+      SHOPIFY_USER_IDS: JSON.stringify(process.env.SHOPIFY_USER_IDS),
     }),
   ],
   output: {
@@ -169,7 +161,7 @@ module.exports = (env, argv) => {
     config.devtool = 'eval-cheap-module-source-map';
     config.optimization.minimize = false;
   }
-  const getProxyOpts = () => {
+  const getProxyOpts = shouldBypass => {
     // eslint-disable-next-line no-console
     console.log(`API endpoint: [${dotenv.API_ENDPOINT}]`);
 
@@ -182,12 +174,21 @@ module.exports = (env, argv) => {
       // eslint-disable-next-line no-console
       console.log('Cookie rewrite needed for secure API host.');
     }
+    // eslint-disable-next-line func-names
+    let bypass = function (req) {
+      if (req.method !== 'POST') return '/';
+    };
+
+    if (!shouldBypass) {
+      bypass = '';
+    }
 
     const opts = {
       target,
       secure,
       changeOrigin: true,
       timeout: 10 * 60 * 1000,
+      bypass,
       // pathRewrite: {
       //  '^/api': '',
       // },
@@ -218,12 +219,11 @@ module.exports = (env, argv) => {
 
     return opts;
   };
-
   const isDevServer = argv && argv.$0.endsWith('webpack-dev-server');
 
   if (isDevServer) {
     config.output.filename = '[name].js';
-    const proxyOpts = getProxyOpts();
+    const proxyOpts = getProxyOpts(false);
 
     config.devServer = {
       hot: true,
@@ -236,11 +236,19 @@ module.exports = (env, argv) => {
         index: '/index.html',
       },
       proxy: {
-        '/signin': proxyOpts,
+        '/signin': getProxyOpts(true),
+        '/signup': getProxyOpts(true),
+        '/request-reset': getProxyOpts(true),
+        '/accept-invite': getProxyOpts(true),
+        '/change-email/*': getProxyOpts(true),
+        '/reset-password/*': getProxyOpts(true),
+        '/set-initial-password/*': getProxyOpts(true),
+        '/request-reset-sent': getProxyOpts(true),
+        '/mfa/verify': getProxyOpts(true),
         '/litmos/sso': proxyOpts,
         '/auth/google': proxyOpts,
+        '/accept-invite-metadata': proxyOpts,
         '/reSigninWithGoogle': proxyOpts,
-        '/mfa/verify': proxyOpts,
         '/reSigninWithSSO/*': proxyOpts,
         '/sso/*': proxyOpts,
         '/link/google': proxyOpts,
@@ -250,7 +258,7 @@ module.exports = (env, argv) => {
         '/api': proxyOpts,
         '/netSuiteWS': proxyOpts,
         '/netsuiteDA': proxyOpts,
-        '/connection': proxyOpts,
+        '/connection/': proxyOpts,
         '/ui': proxyOpts,
       },
     };

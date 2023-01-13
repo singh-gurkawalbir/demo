@@ -34,6 +34,7 @@ export default {
       }/entity/${formValues['/http/unencrypted/endpointName'].toLowerCase()}/${
         formValues['/http/unencrypted/endpointVersion']
       }`;
+      retValues['/http/auth/oauth/useIClientFields'] = false;
       retValues['/http/auth/oauth/authURI'] = `${
         formValues['/oauth/instanceURI']
       }/identity/connect/authorize`;

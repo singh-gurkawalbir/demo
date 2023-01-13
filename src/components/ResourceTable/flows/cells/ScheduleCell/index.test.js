@@ -1,4 +1,4 @@
-/* global describe, test,expect */
+
 import React from 'react';
 import { screen } from '@testing-library/react';
 import { MemoryRouter, Route } from 'react-router-dom';
@@ -21,7 +21,7 @@ initialStore.getState().data.resources.flows = [
   },
 ];
 
-function initScheduleCell(actionProps = {}, initialStore = null) {
+function initScheduleCell(actionProps = {}, initialStore = null, schedule = '') {
   const ui = (
     <MemoryRouter initialEntries={['/integrations/integration_id/flows']}>
       <Route path="/integrations/integration_id">
@@ -29,6 +29,7 @@ function initScheduleCell(actionProps = {}, initialStore = null) {
           flowId="someflowId"
           name="someName"
           actionProps={actionProps}
+          schedule={schedule}
         />
       </Route>
     </MemoryRouter>
@@ -37,7 +38,7 @@ function initScheduleCell(actionProps = {}, initialStore = null) {
   return renderWithProviders(ui, {initialStore});
 }
 
-describe('Shecdule cell UI test cases', () => {
+describe('shecdule cell UI test cases', () => {
   test('should show the type provided', () => {
     initScheduleCell({flowAttributes: {someflowId: {type: 'SomeType'}}});
 
@@ -50,7 +51,7 @@ describe('Shecdule cell UI test cases', () => {
   });
   test('should show tooltip for configure all steps', () => {
     initScheduleCell({flowAttributes: {someflowId: {allowSchedule: true, type: 'Scheduled'}}}, initialStore);
-    expect(screen.getByTitle('Configure all steps to allow scheduling your flow')).toBeInTheDocument();
+    expect(screen.getByTitle('Remove or configure all unconfigured flow steps to edit the flow schedule')).toBeInTheDocument();
     const button = screen.getByRole('button');
 
     expect(button).toHaveAttribute('aria-disabled', 'true');
@@ -60,9 +61,19 @@ describe('Shecdule cell UI test cases', () => {
   test('should show tooltip for configure schedule', () => {
     initScheduleCell({flowAttributes: {someflowId: {allowSchedule: true, type: 'Scheduled'}}});
 
-    expect(screen.getByTitle('Change schedule')).toBeInTheDocument();
+    expect(screen.getByTitle('Add schedule')).toBeInTheDocument();
     const button = screen.getByRole('button');
 
     expect(button).toHaveAttribute('href', '/integrations/integration_id/flows/someflowId/schedule');
+  });
+  test('should show icon indicator for scheduled flows', () => {
+    initScheduleCell({flowAttributes: {someflowId: {allowSchedule: true}}}, null, 'some schedule');
+
+    expect(document.querySelector('div div div').className).toContain('circle');
+  });
+  test('should not show icon indicator for unscheduled flows', () => {
+    initScheduleCell({flowAttributes: {someflowId: {allowSchedule: true}}}, null);
+
+    expect(document.querySelector('div div div').className).not.toContain('circle');
   });
 });

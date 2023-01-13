@@ -1,4 +1,4 @@
-/* global describe, test, expect, beforeEach, afterEach, jest */
+
 import React from 'react';
 import {screen} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -7,7 +7,7 @@ import {renderWithProviders} from '../../test/test-utils';
 import HelpContent from '.';
 import actions from '../../actions';
 
-describe('HelpContent UI tests', () => {
+describe('helpContent UI tests', () => {
   let mockDispatchFn;
   let useDispatchSpy;
 
@@ -30,23 +30,29 @@ describe('HelpContent UI tests', () => {
     renderWithProviders(<HelpContent {...props} />);
     expect(screen.getByText('This is the sample text')).toBeInTheDocument();
     expect(screen.getByText('Sample title')).toBeInTheDocument();
-    expect(screen.getByText('Sample caption')).toBeInTheDocument();
     expect(screen.getByText(/Was this helpful/i)).toBeInTheDocument();
-    expect(screen.getByText(/Yes/)).toBeInTheDocument();
-    expect(screen.getByText(/No/i)).toBeInTheDocument();
+    const thumbsup = document.querySelector('[data-test="yesContentHelpful"]');
+    const thumbsdown = document.querySelector('[data-test="noContentHelpful"]');
+
+    expect(thumbsup).toBeInTheDocument();
+    expect(thumbsdown).toBeInTheDocument();
   });
   test('should run the respective dipatch function when "yes" is clicked', () => {
     const props = { children: 'This is the sample text', title: 'Sample title', caption: 'Sample caption' };
 
     renderWithProviders(<HelpContent {...props} />);
-    userEvent.click((screen.getByText(/Yes/)));
-    expect(mockDispatchFn).toBeCalledWith(actions.app.postFeedback(undefined, undefined, true));
+    const thumbsup = document.querySelector('[data-test="yesContentHelpful"]');
+
+    userEvent.click(thumbsup);
+    expect(mockDispatchFn).toHaveBeenCalledWith(actions.app.postFeedback(undefined, undefined, true));
   });
   test('should display the user entry field when clicked "No"', () => {
     const props = { children: 'This is the sample text', title: 'Sample title', caption: 'Sample caption' };
 
     renderWithProviders(<HelpContent {...props} />);
-    userEvent.click((screen.getByText(/No/)));
+    const thumbsdown = document.querySelector('[data-test="noContentHelpful"]');
+
+    userEvent.click(thumbsdown);
     expect(screen.getByText(/Submit/i)).toBeInTheDocument();
     expect(screen.getByPlaceholderText('How can we make this information more helpful?')).toBeInTheDocument();
   });
@@ -54,17 +60,23 @@ describe('HelpContent UI tests', () => {
     const props = { children: 'This is the sample text', title: 'Sample title', caption: 'Sample caption' };
 
     renderWithProviders(<HelpContent {...props} />);
-    userEvent.click((screen.getByText(/No/)));
+    const thumbsdown = document.querySelector('[data-test="noContentHelpful"]');
+
+    expect(thumbsdown).toBeInTheDocument();
+    userEvent.click(thumbsdown);
     const input = screen.getByPlaceholderText('How can we make this information more helpful?');
 
     userEvent.type(input, 'sample userInput');
     userEvent.click(screen.getByText(/Submit/i));
-    expect(mockDispatchFn).toBeCalledWith(actions.app.postFeedback(undefined, undefined, false, 'sample userInput'));
+    expect(mockDispatchFn).toHaveBeenCalledWith(actions.app.postFeedback(undefined, undefined, false, 'sample userInput'));
   });
   test('should render the help content with blank heading and content when props are not passed', () => {
     renderWithProviders(<HelpContent />);
     expect(screen.getByText(/Was this helpful/i)).toBeInTheDocument();
-    expect(screen.getByText(/Yes/)).toBeInTheDocument();
-    expect(screen.getByText(/No/i)).toBeInTheDocument();
+    const thumbsup = document.querySelector('[data-test="yesContentHelpful"]');
+    const thumbsdown = document.querySelector('[data-test="noContentHelpful"]');
+
+    expect(thumbsup).toBeInTheDocument();
+    expect(thumbsdown).toBeInTheDocument();
   });
 });

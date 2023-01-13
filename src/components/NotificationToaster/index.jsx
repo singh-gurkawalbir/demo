@@ -178,10 +178,11 @@ export default function NotificationToaster(props) {
     className,
     children,
     onClose,
-    variant,
+    variant = 'info',
     transparent = false,
     italic = false,
     noBorder = false,
+    textSize = '',
     size = 'small',
     ...other
   } = props;
@@ -202,10 +203,12 @@ export default function NotificationToaster(props) {
       className={clsx(
         classes[variant],
         classes[size],
+        classes[textSize],
         classes.root,
         {[classes.transparent]: transparent},
         {[classes.italic]: italic},
         {[classes.noBorder]: noBorder},
+        {[classes.noBorderWithColorIcons]: noBorder && variant},
         className
       )}
       aria-describedby="client-snackbar"
@@ -241,6 +244,7 @@ NotificationToaster.propTypes = {
   onClose: PropTypes.func,
   variant: PropTypes.oneOf(['warning', 'error', 'success', 'info']),
   size: PropTypes.oneOf(['small', 'medium', 'large']),
+  textSize: PropTypes.oneOf(['small', 'medium', 'large']),
 };
 
 NotificationToaster.defaultProps = {

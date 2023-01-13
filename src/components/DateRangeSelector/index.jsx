@@ -81,7 +81,7 @@ const useStyles = makeStyles(theme => ({
     justifyContent: 'space-between',
   },
   listBtn: {
-    background: theme.palette.common.white,
+    background: theme.palette.background.paper,
     marginBottom: theme.spacing(1),
     border: '1px solid',
     minWidth: 212,
@@ -95,7 +95,7 @@ const useStyles = makeStyles(theme => ({
       background: theme.palette.primary.dark,
       borderColor: theme.palette.primary.dark,
       '& > * .MuiTypography-root': {
-        color: theme.palette.common.white,
+        color: theme.palette.background.paper,
       },
       '&:hover': {
         background: theme.palette.primary.dark,
@@ -106,7 +106,7 @@ const useStyles = makeStyles(theme => ({
       borderColor: theme.palette.primary.dark,
       background: theme.palette.primary.dark,
       '& > * .MuiTypography-root': {
-        color: theme.palette.common.white,
+        color: theme.palette.background.paper,
       },
     },
   },

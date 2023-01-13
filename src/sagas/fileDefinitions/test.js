@@ -1,4 +1,3 @@
-/* global describe, test */
 
 import { select, call } from 'redux-saga/effects';
 import { expectSaga } from 'redux-saga-test-plan';
@@ -22,7 +21,7 @@ describe('fileDefinitions sagas', () => {
       const definitionId = 'def-1234';
       const format = 'fixed';
 
-      return expectSaga(getDefinition, {definitionId, format})
+      expectSaga(getDefinition, {definitionId, format})
         .provide([
           [call(apiCallWithRetry, {
             path: `/ui/filedefinitions/${definitionId}`,
@@ -45,7 +44,7 @@ describe('fileDefinitions sagas', () => {
         message: '{"code":"error code"}',
       };
 
-      return expectSaga(getDefinition, {definitionId, format})
+      expectSaga(getDefinition, {definitionId, format})
         .provide([
           [call(apiCallWithRetry, {
             path: `/ui/filedefinitions/${definitionId}`,
@@ -59,7 +58,7 @@ describe('fileDefinitions sagas', () => {
     test('should invoke api to get all the preBuilt file definitions available and dispatch received action on success', () => {
       const fileDefinitions = {};
 
-      return expectSaga(getFileDefinitions)
+      expectSaga(getFileDefinitions)
         .provide([
           [call(apiCallWithRetry, {
             path: '/ui/filedefinitions',
@@ -79,7 +78,7 @@ describe('fileDefinitions sagas', () => {
       };
       const parsedError = { code: 'error code'};
 
-      return expectSaga(getFileDefinitions)
+      expectSaga(getFileDefinitions)
         .provide([
           [call(apiCallWithRetry, {
             path: '/ui/filedefinitions',
@@ -99,7 +98,7 @@ describe('fileDefinitions sagas', () => {
       };
       const parsedError = { code: 'error code'};
 
-      return expectSaga(getFileDefinitions)
+      expectSaga(getFileDefinitions)
         .provide([
           [call(apiCallWithRetry, {
             path: '/ui/filedefinitions',
@@ -146,7 +145,7 @@ describe('fileDefinitions sagas', () => {
         resourcePath: definitionRules.resourcePath,
       };
 
-      return expectSaga(saveUserFileDefinition, { definitionRules, formValues, flowId })
+      expectSaga(saveUserFileDefinition, { definitionRules, formValues, flowId })
 
         .call(commitStagedChanges, {
           resourceType: 'filedefinitions',
@@ -172,7 +171,7 @@ describe('fileDefinitions sagas', () => {
         resourcePath: newDefinitionRules.resourcePath,
       };
 
-      return expectSaga(saveUserFileDefinition, { definitionRules: newDefinitionRules, formValues, flowId })
+      expectSaga(saveUserFileDefinition, { definitionRules: newDefinitionRules, formValues, flowId })
         .provide([
           [select(selectors.createdResourceId, 'new-123'), createdDefinitionId],
         ])
@@ -195,7 +194,7 @@ describe('fileDefinitions sagas', () => {
       newDefinitionRules.fileDefinition._id = 'new-123';
       const flowId = 'flow-123';
 
-      return expectSaga(saveUserFileDefinition, { definitionRules: newDefinitionRules, formValues, flowId })
+      expectSaga(saveUserFileDefinition, { definitionRules: newDefinitionRules, formValues, flowId })
         .provide([
           [select(selectors.createdResourceId, 'new-123'), undefined],
         ])
@@ -207,7 +206,7 @@ describe('fileDefinitions sagas', () => {
         .not.call.fn(saveResourceWithDefinitionID)
         .run();
     });
-    test('should pass empty resourcePath incase of imports ', () => {
+    test('should pass empty resourcePath incase of imports', () => {
       const definitionRules = {
         _id: '5fda05801730a97681d30444',
         lastModified: '2020-12-16T13:04:39.296Z',
@@ -236,7 +235,7 @@ describe('fileDefinitions sagas', () => {
         resourcePath: '',
       };
 
-      return expectSaga(saveUserFileDefinition, { definitionRules, formValues, flowId })
+      expectSaga(saveUserFileDefinition, { definitionRules, formValues, flowId })
 
         .call(commitStagedChanges, {
           resourceType: 'filedefinitions',

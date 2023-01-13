@@ -3,7 +3,7 @@ import { adaptorTypeMap, isFileAdaptor, isAS2Resource } from '../../../../../../
 import httpMappingSettings from './http';
 import ftpMappingSettings from './ftp';
 import { MAPPING_DATA_TYPES, ARRAY_DATA_TYPES, buildExtractsHelperFromExtract } from '../../../../../../../../utils/mapping';
-import { generateUniqueKey } from '../../../../../../../../utils/string';
+import { generateId } from '../../../../../../../../utils/string';
 
 const getFormattedLookup = (lookup, formVal, settings) => {
   const lookupTmp = {};
@@ -12,7 +12,7 @@ const getFormattedLookup = (lookup, formVal, settings) => {
     lookupTmp.name = formVal.name;
   } else {
     // generating random lookup name
-    lookupTmp.name = generateUniqueKey();
+    lookupTmp.name = generateId();
   }
 
   if (formVal._mode === 'dynamic') {
@@ -108,7 +108,7 @@ export default {
       settings.dataType = formVal.dataType || MAPPING_DATA_TYPES.STRING;
     }
     if (ARRAY_DATA_TYPES.includes(settings.dataType)) {
-      settings.extractsArrayHelper = buildExtractsHelperFromExtract(formVal.extractsArrayHelper, formVal.sourceField);
+      settings.extractsArrayHelper = buildExtractsHelperFromExtract({existingExtractsArray: formVal.extractsArrayHelper, sourceField: formVal.sourceField});
     }
 
     settings.copySource = formVal.copySource;

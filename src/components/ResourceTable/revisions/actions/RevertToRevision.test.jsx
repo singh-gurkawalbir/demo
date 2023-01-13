@@ -1,4 +1,4 @@
-/* global test, expect, describe, beforeEach, afterEach, jest */
+
 import React from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { screen } from '@testing-library/react';
@@ -62,9 +62,9 @@ jest.mock('react-router-dom', () => ({
   }),
 }));
 
-jest.mock('nanoid', () => ({
-  ...jest.requireActual('nanoid'),
-  nanoid: () => (
+jest.mock('../../../../utils/string', () => ({
+  ...jest.requireActual('../../../../utils/string'),
+  generateId: () => (
     'randomvalue'
   ),
 }));
@@ -82,7 +82,7 @@ function renderFuntion(data) {
   userEvent.click(screen.getByRole('button', {name: /more/i}));
 }
 
-describe('UI test cases for revert to revision ', () => {
+describe('uI test cases for revert to revision', () => {
   beforeEach(() => {
     jest.resetAllMocks();
     jest.spyOn(mockEnqueSnackbar, 'default').mockReturnValue([enqueueSnackbar]);
@@ -90,7 +90,7 @@ describe('UI test cases for revert to revision ', () => {
   afterEach(() => {
     enqueueSnackbar.mockClear();
   });
-  test('Redirect to revert revision URL when clicked on revert to this revision button', () => {
+  test('redirect to revert revision URL when clicked on revert to this revision button', () => {
     renderFuntion({_id: '5cadc8b42b1034709483790', _createdByUserId: '5f7011605b2e3244837309f9', status: 'completed', integrationId: '5e44efa28015c9464272256f', type: 'snapshot'});
     const revertrevisionButton = screen.getByText('Revert to this revision');
 

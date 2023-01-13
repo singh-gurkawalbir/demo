@@ -1,4 +1,5 @@
-/* global describe, test, expect */
+/* eslint-disable jest/no-standalone-expect */
+
 import each from 'jest-each';
 import reducer, { selectors } from '.';
 import actions from '../../../actions';
@@ -490,7 +491,7 @@ describe('suiteScript reducer', () => {
     });
   });
   describe('tests for job actions reducer', () => {
-    describe('should update state properly when setting jobs current page ', () => {
+    describe('should update state properly when setting jobs current page', () => {
       const testCases = [
         [7, 7],
         [defaultState.paging.jobs.currentPage, 0],
@@ -515,7 +516,7 @@ describe('suiteScript reducer', () => {
       });
     });
 
-    describe('should update state properly when setting jobs rows per page ', () => {
+    describe('should update state properly when setting jobs rows per page', () => {
       const testCases = [
         [7, 7],
         [defaultState.paging.jobs.rowsPerPage, 0],
@@ -1664,7 +1665,7 @@ describe('testcases for suitescript selectors', () => {
         resourceType: 'connections',
         id: '1',
         ssLinkedConnectionId: 'connId',
-      })).toEqual(null);
+      })).toBeNull();
     });
     test('should return connection from selectors', () => {
       const state = reducer(undefined, actions.resource.receivedCollection(
@@ -1765,7 +1766,7 @@ describe('testcases for suitescript selectors', () => {
 
     describe('hasSuiteScriptData selector tests', () => {
       test('should return false if doesn\'t have suitescript data', () => {
-        expect(selectors.hasSuiteScriptData(undefined)).toEqual(false);
+        expect(selectors.hasSuiteScriptData(undefined)).toBe(false);
       });
 
       test('should return true if state has settings', () => {
@@ -1788,7 +1789,7 @@ describe('testcases for suitescript selectors', () => {
           resourceType: 'settings',
           integrationId: 'int1',
           ssLinkedConnectionId: 'connId',
-        })).toEqual(true);
+        })).toBe(true);
       });
       test('should return true if state has flows', () => {
         const flowCollection = [
@@ -1814,7 +1815,7 @@ describe('testcases for suitescript selectors', () => {
           resourceType: 'flows',
           integrationId: 'intid',
           ssLinkedConnectionId: 'connId',
-        })).toEqual(true);
+        })).toBe(true);
       });
     });
   });
@@ -1952,7 +1953,7 @@ describe('testcases for suitescript selectors', () => {
     test('should return empty obj/list when selected on empty state', () => {
       expect(selectors.suiteScriptJobsPagingDetails(undefined)).toEqual({});
       expect(selectors.jobs(undefined)).toEqual([]);
-      expect(selectors.suiteScriptJobErrors(undefined)).toEqual(undefined);
+      expect(selectors.suiteScriptJobErrors(undefined)).toBeUndefined();
     });
 
     test('should return paging details for non-empty state', () => {

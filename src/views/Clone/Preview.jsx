@@ -64,7 +64,22 @@ const useColumns = () => [
     Value: ({rowData: r}) => {
       const classes = useStyles();
 
-      if (r.groupName || r.emptyMessage) return <Typography variant={r?.groupName ? 'overline' : 'body2'} component="div" color="textSecondary" className={clsx({[classes.flowGroupTitle]: r?.groupName, [classes.emptyMessageContent]: r?.emptyMessage})}>{r?.groupName || r?.emptyMessage}</Typography>;
+      if (r.groupName || r.emptyMessage) {
+        return (
+          <Typography
+            variant={r?.groupName ? 'overline' : 'body2'}
+            component="div"
+            color="textSecondary"
+            className={
+            clsx({
+              [classes.flowGroupTitle]: r?.groupName,
+              [classes.emptyMessageContent]: r?.emptyMessage,
+            })
+          }>
+            {r?.groupName || r?.emptyMessage}
+          </Typography>
+        );
+      }
 
       return r?.doc?.name || r?.doc?._id;
     },
@@ -130,16 +145,16 @@ export default function ClonePreview(props) {
         if (!sandbox === (preferences.environment === 'sandbox')) {
           confirmDialog({
             title: 'Confirm switch',
-            message: `Your ${isIAIntegration ? 'integration app' : 'integration'} has been successfully cloned to your ${sandbox ? 'sandbox' : 'production'}. Congratulations! Switch back to your ${!sandbox ? 'sandbox' : 'production'} account?.`,
+            message: `Your ${isIAIntegration ? 'integration app' : 'integration'} has been successfully cloned to your ${sandbox ? 'Sandbox' : 'Production'} environment. Switch back to your ${!sandbox ? 'Sandbox' : 'Production'} environment?`,
             buttons: [
               {
-                label: 'Yes, switch',
+                label: `Yes, switch to ${!sandbox ? 'Sandbox' : 'Production'}`,
                 onClick: () => {
                   props.history.push(getRoutePath('/'));
                 },
               },
               {
-                label: 'No, go back',
+                label: `No, stay in ${sandbox ? 'Sandbox' : 'Production'}`,
                 variant: 'text',
                 onClick: () => {
                   dispatch(actions.user.preferences.update({ environment: sandbox ? 'sandbox' : 'production' }));
@@ -379,15 +394,6 @@ export default function ClonePreview(props) {
     );
   }
 
-  if (!components || isEmpty(components)) {
-    return (
-      <Loader open>
-        <Typography variant="h4">Loading Clone Preview</Typography>
-        <Spinner />
-      </Loader>
-    );
-  }
-
   const clone = ({ name, environment, integration, flowGroup, tag }) => {
     const { installSteps, connectionMap } =
       templateUtil.getInstallSteps(components) || {};
@@ -463,7 +469,7 @@ export default function ClonePreview(props) {
   }
 
   return (
-    <LoadResources resources="flows,exports,imports,integrations" required>
+    <LoadResources resources="flows,connections,exports,imports,integrations" required>
       <CeligoPageBar title={`Clone ${MODEL_PLURAL_TO_LABEL[resourceType].toLowerCase()}`} infoText={messageStore('CLONE_DESCRIPTION')} />
       <PageContent>
         <div className={classes.componentPadding}>

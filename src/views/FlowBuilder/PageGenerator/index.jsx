@@ -38,6 +38,7 @@ const PageGenerator = ({
   integrationId,
   isViewMode,
   onDelete,
+  onMove,
   openErrorCount,
   className,
   ...pg
@@ -188,6 +189,16 @@ const PageGenerator = ({
         ) {
           connectorType = resource.webhook.provider;
         }
+        const httpConnectorId = resource._httpConnectorId || resource.webhook?._httpConnectorId;
+
+        if (httpConnectorId) {
+          const applications = applicationsList();
+          const httpApp = applications.find(a => a._httpConnectorId === httpConnectorId);
+
+          if (httpConnectorId && httpApp) {
+            connectorType = httpApp._legacyId || httpApp.id;
+          }
+        }
       }
 
       blockType = isRealTimeOrDistributedResource(resource)
@@ -232,6 +243,7 @@ const PageGenerator = ({
   const blockName = pending
     ? ''
     : resource.name || resource.id;
+
   const { connectorType, assistant, blockType } = getApplication();
 
   // #region Configure available generator actions
@@ -285,7 +297,7 @@ const PageGenerator = ({
   // console.log('render: <PageGenerator>');
 
   return (
-    <div className={clsx(classes.pgContainer, className)}>
+    <div className={clsx(classes.pgContainer, className)} >
       <AppBlock
         integrationId={integrationId}
         name={blockName}
@@ -307,6 +319,7 @@ const PageGenerator = ({
         isPageGenerator
       />
     </div>
+
   );
 };
 

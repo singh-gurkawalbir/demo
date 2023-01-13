@@ -1,94 +1,151 @@
-/* eslint-disable no-undef */
+import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import React from 'react';
-import * as reactRedux from 'react-redux';
-import { MemoryRouter } from 'react-router-dom';
-import actions from '../../../../actions';
-import { getCreatedStore } from '../../../../store';
-import { renderWithProviders } from '../../../../test/test-utils';
 import ToggleMapperVersion from './ToggleMapperVersion';
+import { getCreatedStore } from '../../../../store';
+import actions from '../../../../actions';
+import { renderWithProviders } from '../../../../test/test-utils';
 
-let initialStore;
+const initialStore = getCreatedStore();
+const mockDispatch = jest.fn();
 
-async function initToggleMapperVersion({ editorId, version, adaptorType, saveStatus }) {
-  initialStore.getState().session.editors = {
-    '25bc3': {
-      saveStatus,
-    },
-  };
+jest.mock('react-redux', () => ({
+  __esModule: true,
+  ...jest.requireActual('react-redux'),
+  useDispatch: () => mockDispatch,
+}));
+
+function initToggleMapperVersion(props = {}) {
   initialStore.getState().session.mapping = {
     mapping: {
-      version,
-      importId: '26ab1',
-    },
-  };
+      mappings: [
+        {
+          extract: 'Company',
+          generate: 'organization.name',
+          dataType: 'string',
+          key: 'Ueyz5rCd9',
+        },
+      ],
+      lookups: [],
+      v2TreeData: [
+        {
+          key: 'kM5GnZYZhyNtcdhSXLA3j',
+          isEmptyRow: true,
+          title: '',
+          disabled: false,
+          dataType: 'string',
+          sourceDataType: 'string',
+        },
+      ],
+      expandedKeys: [
+        'kM5GnZYZhyNtcdhSXLA3j',
+      ],
+      flowId: '63a54e63d9e20c15d94da0f1',
+      importId: '632950280dbc53086e899759',
+      status: 'received',
+      isGroupedSampleData: false,
+      isMonitorLevelAccess: false,
+      version: 1,
+    }};
   initialStore.getState().data.resources = {
     imports: [
       {
-        _id: '26ab1',
-        adaptorType,
+        _id: '632950280dbc53086e899759',
+        createdAt: '2022-09-20T05:31:20.542Z',
+        lastModified: '2022-09-20T05:31:20.618Z',
+        name: 'Test ZD Import',
+        _connectionId: '62fb430f5fb285335fc1bed6',
+        apiIdentifier: 'i40d0edd33',
+        ignoreExisting: false,
+        ignoreMissing: false,
+        oneToMany: false,
+        mapping: {
+          fields: [
+            {
+              extract: 'Company',
+              generate: 'organization.name',
+              dataType: 'string',
+            },
+          ],
+        },
+        http: {
+          relativeURI: [
+            '/organizations',
+          ],
+          method: [
+            'POST',
+          ],
+          body: [
+            '{\n    "organization": {\n      "name": "{{timestamp format "Asia/Calcutta"}} {{record.organization.name}}"\n    }\n}',
+          ],
+          headers: [
+            {
+              name: 'mediaType',
+              value: '{{connection.http.mediaType}}',
+            },
+          ],
+          batchSize: 1,
+          sendPostMappedData: true,
+          formType: 'http',
+        },
+        filter: {
+          type: 'expression',
+          expression: {
+            rules: [],
+            version: '1',
+          },
+          version: '1',
+          rules: [],
+        },
+        adaptorType: 'HTTPImport',
       },
     ],
   };
-  const ui = (
-    <MemoryRouter>
-      <ToggleMapperVersion editorId={editorId} />
-    </MemoryRouter>
-  );
+  initialStore.getState().session.editors = {
+    'mappings-632950280dbc53086e899759': {
+      editorType: 'mappings',
+      flowId: '63a54e63d9e20c15d94da0f1',
+      resourceId: '632950280dbc53086e899759',
+      resourceType: 'imports',
+      stage: 'importMappingExtract',
+      data: 'somedata',
+      fieldId: '',
+      layout: 'compact2',
+      autoEvaluate: false,
+      sampleDataStatus: 'received',
+    },
+  };
 
-  return renderWithProviders(ui, { initialStore });
+  return renderWithProviders(<ToggleMapperVersion {...props} />, {initialStore});
 }
 
-describe('test suite for ToggleMapperVersion', () => {
-  let mockDispatchFn;
-  let useDispatchSpy;
+describe('ToggleMapperVersion UI tests', () => {
+  test('Should test the initial render where mapper version is initially set to mapper 1.0', () => {
+    initToggleMapperVersion({editorId: 'mappings-632950280dbc53086e899759'});
+    const mapper1dotOButton = screen.getByRole('button', {name: 'Mapper 1.0'});
 
-  beforeEach(() => {
-    initialStore = getCreatedStore();
-    useDispatchSpy = jest.spyOn(reactRedux, 'useDispatch');
-    mockDispatchFn = jest.fn(action => {
-      switch (action.type) {
-        default:
-          initialStore.dispatch(action);
-      }
-    });
-    useDispatchSpy.mockReturnValue(mockDispatchFn);
+    expect(mapper1dotOButton).toHaveAttribute('aria-pressed', 'true');
   });
 
-  afterEach(() => {
-    useDispatchSpy.mockClear();
-    mockDispatchFn.mockClear();
-  });
+  test('Should make a dispatch call when toggle map version is set to Mapper 2.0', async () => {
+    initToggleMapperVersion({editorId: 'mappings-632950280dbc53086e899759'});
+    const mapper2dotOButton = screen.getByRole('button', {name: 'Mapper 2.0'});
 
-  test('Should render ToggleMapperVersion', async () => {
-    await initToggleMapperVersion({
-      editorId: '25bc3', version: '1', adaptorType: 'HTTPImport', saveStatus: true,
-    });
-    expect(screen.getByRole('button', {
-      name: /mapper 1\.0/i,
-    })).toBeInTheDocument();
-    expect(screen.getByRole('button', {
-      name: /mapper 2\.0/i,
-    })).toBeInTheDocument();
-    screen.debug(null, Infinity);
-  });
-  test('Toggling ToggleMapperVersion and checking the functionality', async () => {
-    await initToggleMapperVersion({
-      editorId: '25bc3', version: '1', adaptorType: 'HTTPImport', saveStatus: true,
-    });
-    const afeButton = screen.getByRole('button', {
-      name: /mapper 2\.0/i,
-    });
+    expect(mapper2dotOButton).toBeInTheDocument();
+    userEvent.click(mapper2dotOButton);
+    expect(mockDispatch).toHaveBeenCalledWith(actions.mapping.toggleVersion(2));
+    const mapper1dotOButton = screen.getByRole('button', {name: 'Mapper 1.0'});
 
-    userEvent.click(afeButton);
-    await expect(mockDispatchFn).toBeCalledWith(actions.mapping.toggleVersion(2));
+    expect(mapper1dotOButton).toBeInTheDocument();
   });
-  test('Should render null when showToggle is false', async () => {
-    const { utils } = await initToggleMapperVersion({
-      editorId: '25bc3', version: '1', adaptorType: 'HTTPExport', saveStatus: true,
-    });
+  test('Should display help text when clicked on Help text button', () => {
+    initToggleMapperVersion({editorId: 'mappings-632950280dbc53086e899759'});
+    const helpTextButton = screen.getAllByRole('button');
 
-    expect(utils.container).toBeEmptyDOMElement();
+    expect(helpTextButton[2]).toBeInTheDocument();
+    userEvent.click(helpTextButton[2]);
+    const tooltip = screen.getByRole('tooltip');
+
+    expect(tooltip).toBeInTheDocument();
   });
 });

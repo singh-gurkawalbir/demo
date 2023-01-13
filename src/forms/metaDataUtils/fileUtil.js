@@ -45,10 +45,10 @@ export const EXPORT_FILE_FIELD_MAP = {common: { formId: 'common' },
   'http.fileRelativeURI': {
     fieldId: 'http.fileRelativeURI',
     defaultValue: r => r.http?.relativeURI,
-    label: r => r?.assistant === 'googledrive' ? 'Directory path' : 'Container name',
+    label: r => ['googledrive', 'box', 'dropbox'].includes(r?.assistant) ? 'Directory path' : 'Container name',
     required: true,
     type: 'uri',
-    helpKey: r => r?.assistant === 'googledrive' ? 'export.gdrive.directoryPath' : 'export.azure.containerName',
+    helpKey: r => ['googledrive', 'box', 'dropbox'].includes(r?.assistant) ? `export.${r?.assistant}.directoryPath` : 'export.azure.containerName',
   },
   'file.fileNameStartsWith': { fieldId: 'file.fileNameStartsWith' },
   'file.fileNameEndsWith': { fieldId: 'file.fileNameEndsWith' },
@@ -187,6 +187,7 @@ export const EXPORT_FILE_FIELD_MAP = {common: { formId: 'common' },
   's3.keyEndsWith': { fieldId: 's3.keyEndsWith' },
   'file.sortByFields': { fieldId: 'file.sortByFields' },
   'file.groupByFields': { fieldId: 'file.groupByFields' },
+  mockOutput: { fieldId: 'mockOutput' },
 };
 export const IMPORT_FILE_FIELD_MAP = {common: {
   formId: 'common',
@@ -205,10 +206,11 @@ blobKeyPath: {
 },
 'http.relativeURI': {
   fieldId: 'http.relativeURI',
-  label: r => r?.assistant === 'googledrive' ? 'Directory path' : 'Container name',
+  label: r => ['googledrive', 'box', 'dropbox'].includes(r?.assistant) ? 'Directory path' : 'Container name',
   required: true,
   type: 'uri',
-  helpKey: r => r?.assistant === 'googledrive' ? 'import.gdrive.directoryPath' : 'import.azure.containerName',
+  helpKey: r => ['googledrive', 'box', 'dropbox'].includes(r?.assistant) ? `import.${r?.assistant}.directoryPath` : 'import.azure.containerName',
+
 },
 'file.fileName': {
   fieldId: 'file.fileName', required: true,
@@ -347,7 +349,11 @@ fileApiIdentifier: {
 's3.bucket': {
   fieldId: 's3.bucket',
 },
+'s3.serverSideEncryptionType': {
+  fieldId: 's3.serverSideEncryptionType',
+},
 traceKeyTemplate: {fieldId: 'traceKeyTemplate'},
+mockResponseSection: {formId: 'mockResponseSection'},
 };
 export const updatePGPFormValues = formValues => {
   const newValues = { ...formValues };
@@ -674,9 +680,9 @@ export const updateHTTPFrameworkFormValues = (formValues, resource, httpConnecto
     if (httpHeaders?.find(header => header.name === headerName)) {
       const index = httpHeaders?.findIndex(header => header.name === headerName);
 
-      httpHeaders[index].value = retValues['/http/unencrypted/version'];
+      httpHeaders[index].value = retValues['/http/unencrypted/version'] || retValues['/http/unencrypted']?.version;
     } else {
-      httpHeaders.push({name: headerName, value: retValues['/http/unencrypted/version']});
+      httpHeaders.push({name: headerName, value: retValues['/http/unencrypted/version'] || retValues['/http/unencrypted']?.version});
     }
     retValues['/http/headers'] = httpHeaders;
   }

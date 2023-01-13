@@ -62,7 +62,9 @@ const useStyles = makeStyles(theme => ({
       border: 'none  !important',
     },
   },
-
+  noPadding: {
+    padding: 0,
+  },
 }));
 
 export default function CeligoSwitch({
@@ -71,13 +73,15 @@ export default function CeligoSwitch({
   onChange,
   className,
   tooltip,
+  placement = 'bottom',
+  noPadding = false,
   ...props
 }) {
   const classes = useStyles();
 
   if (tooltip) {
     return (
-      <IconButtonWithTooltip tooltipProps={{title: tooltip, placement: 'bottom'}}>
+      <IconButtonWithTooltip tooltipProps={{title: tooltip, placement}} className={clsx({[classes.noPadding]: noPadding}, className)}>
         <Toggle
           {...props}
           className={clsx(classes.customSwitch, {[classes.customSwitchChecked]: checked}, className)}
@@ -113,6 +117,7 @@ CeligoSwitch.propTypes = {
   checked: PropTypes.bool,
   onChange: PropTypes.func.isRequired,
   tooltip: PropTypes.string,
+  noPadding: PropTypes.bool,
 };
 
 CeligoSwitch.defaultProps = {

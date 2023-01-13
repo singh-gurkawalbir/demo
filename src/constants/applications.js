@@ -1,5 +1,6 @@
 import { stringCompare } from '../utils/sort';
 import {CONNECTORS_TO_IGNORE, REST_ASSISTANTS, WEBHOOK_ONLY_APPLICATIONS} from '.';
+import { getConnectorId } from '../utils/assistant';
 
 // Schema details:
 // ---------------
@@ -176,15 +177,6 @@ const connectors = [
   // { id: 'amazonaws', name: 'Amazon AWS', type: 'http', assistant: 'amazonaws' },
 
   { id: 'sapariba', name: 'SAP Ariba', type: 'webhook', webhookOnly: true },
-
-  { id: 'box', name: 'Box', type: 'http', webhookOnly: true, icon: 'box' },
-  {
-    id: 'dropbox',
-    name: 'Dropbox',
-    type: 'rest',
-    webhookOnly: true,
-    icon: 'dropbox',
-  },
   {
     id: 'github',
     name: 'GitHub',
@@ -316,6 +308,18 @@ const newConnections = [
     assistant: 'googledrive',
     helpURL: 'https://docs.celigo.com/hc/en-us/articles/360056026892-Set-up-a-connection-to-Google-Drive',
   },
+  {id: 'box',
+    name: 'Box',
+    type: 'http',
+    assistant: 'box',
+    helpURL: 'https://docs.celigo.com/hc/en-us/articles/11282046646299-Set-up-a-connection-to-Box',
+  },
+  {id: 'dropbox',
+    name: 'Dropbox',
+    helpURL: 'https://docs.celigo.com/hc/en-us/articles/11282086837275-Set-up-a-connection-to-Dropbox',
+    type: 'http',
+    assistant: 'dropbox',
+  },
   {id: 'azurestorageaccount', name: 'Azure Blob Storage', type: 'http', assistant: 'azurestorageaccount', helpURL: 'https://docs.celigo.com/hc/en-us/articles/4405704367771-Set-up-a-connection-to-Azure-Blob-Storage'},
   {
     id: 'constantcontact',
@@ -403,20 +407,20 @@ export const groupApplications = (
     });
   }
   assistantConnectors = assistantConnectors.filter(app =>
-    !publishedConnectors?.find(pc => pc.name === app.name)
+    !publishedConnectors?.find(pc => getConnectorId(pc.legacyId, pc.name) === app.id)
   );
     publishedConnectors?.forEach(pc => {
       assistantConnectors.push({
-        id: pc.name,
+        id: getConnectorId(pc.legacyId, pc.name),
         name: pc.name,
         type: 'http',
         export: true,
         import: true,
         icon: pc.legacyId || pc.name.toLowerCase().replace(/\.|\s/g, ''),
         assistant: pc.legacyId,
-        application: pc.name.toLowerCase().replace(/\.|\s/g, ''),
         _httpConnectorId: pc._id,
         helpURL: pc.helpURL,
+        webhook: pc.supportsWebhook,
       });
     });
 
@@ -501,20 +505,20 @@ export const applicationsList = () => {
     });
   });
   applications = applications.filter(app =>
-    !publishedConnectors?.find(pc => pc.name === app.name)
+    !publishedConnectors?.find(pc => getConnectorId(pc.legacyId, pc.name) === app.id)
 
   );
   publishedConnectors?.forEach(pc => {
     applications.push({
-      id: pc.name,
+      id: getConnectorId(pc.legacyId, pc.name),
       name: pc.name,
       type: 'http',
       export: true,
       import: true,
       assistant: pc.legacyId,
-      application: pc.name.toLowerCase().replace(/\.|\s/g, ''),
       _httpConnectorId: pc._id,
       helpURL: pc.helpURL,
+      webhook: pc.supportsWebhook,
     });
   });
 
@@ -537,6 +541,8 @@ export const getApp = (type, assistant, _httpConnectorId) => {
   if (!assistant && _httpConnectorId) {
     return applications.find(c => c._httpConnectorId === _httpConnectorId) || {};
   }
+
+  if (!id) return {};
 
   return applications.find(c => [c.id, c.assistant].includes(id)) || {};
 };
@@ -578,7 +584,7 @@ export const connectorsList = () => {
   const publishedConnectors = getPublishedHttpConnectors();
 
   applications = applications.filter(app =>
-    !publishedConnectors?.find(pc => pc.name === app.name)
+    !publishedConnectors?.find(pc => getConnectorId(pc.legacyId, pc.name) === app.id)
   );
 
   applications.forEach(asst => {
@@ -597,7 +603,7 @@ export const connectorsList = () => {
 
   publishedConnectors?.forEach(pc => {
     connectors.push({
-      value: pc.name,
+      value: getConnectorId(pc.legacyId, pc.name),
       label: pc.name,
       icon: pc.legacyId || pc.name.toLowerCase().replace(/\.|\s/g, ''),
       _httpConnectorId: pc._id,

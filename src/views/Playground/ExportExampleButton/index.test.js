@@ -1,4 +1,3 @@
-/* global describe, test, expect, beforeEach */
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { screen, waitForElementToBeRemoved } from '@testing-library/react';
@@ -36,18 +35,18 @@ async function initExportExampleButton({editorId = ''} = {}) {
   };
 }
 
-describe('Test suite for Export Example Button', () => {
+describe('test suite for Export Example Button', () => {
   runServer();
 
   beforeEach(() => {
     initialStore = getCreatedStore();
   });
-  test('Should not able to click on Export example button when there is not editor id', async () => {
+  test('should not able to click on Export example button when there is not editor id', async () => {
     const { utils } = await initExportExampleButton({editorId: ''});
 
     expect(utils.container).toBeEmptyDOMElement();
   });
-  test('Should be able to click on Export example button and click on dialog box close button', async () => {
+  test('should be able to click on Export example button and click on dialog box close button', async () => {
     await initExportExampleButton({editorId: '123'});
     const exportExampleButtonNode = screen.getByRole('button', {name: /Export example/i});
 

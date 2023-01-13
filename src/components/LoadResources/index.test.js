@@ -1,4 +1,4 @@
-/* global describe, test, expect, jest, beforeEach, afterEach */
+
 import React from 'react';
 import {
   screen,
@@ -29,7 +29,7 @@ async function initLoadResources({resources = 'resources', props = {}, children 
   return renderWithProviders(ui, {initialStore});
 }
 
-describe('LoadResources component', () => {
+describe('loadResources component', () => {
   runServer();
   let initialStore;
   let mockDispatchFn;
@@ -53,12 +53,12 @@ describe('LoadResources component', () => {
     useDispatchSpy.mockClear();
   });
 
-  describe('LoadResources component ways to send resources', () => {
+  describe('loadResources component ways to send resources', () => {
     test('should pass the initial render', async () => {
       const { utils } = await initLoadResources({initialStore, resources: 'resources'});
 
-      await expect(mockDispatchFn).toBeCalledWith(actions.resource.requestCollection('resources', undefined, undefined, undefined));
-      expect(mockDispatchFn).not.toBeCalledWith(actions.resource.requestCollection('resources_1', undefined, undefined, undefined));
+      await expect(mockDispatchFn).toHaveBeenCalledWith(actions.resource.requestCollection('resources', undefined, undefined, undefined));
+      expect(mockDispatchFn).not.toHaveBeenCalledWith(actions.resource.requestCollection('resources_1', undefined, undefined, undefined));
 
       expect(utils.container).toBeEmptyDOMElement();
     });
@@ -66,39 +66,39 @@ describe('LoadResources component', () => {
     test('should pass the initial render with multiple resources', async () => {
       const { utils } = await initLoadResources({initialStore, resources: 'resources_2, resources_3'});
 
-      await expect(mockDispatchFn).toBeCalledWith(actions.resource.requestCollection('resources_2', undefined, undefined, undefined));
-      expect(mockDispatchFn).toBeCalledWith(actions.resource.requestCollection('resources_3', undefined, undefined, undefined));
-      expect(mockDispatchFn).not.toBeCalledWith(actions.resource.requestCollection('resources', undefined, undefined, undefined));
+      await expect(mockDispatchFn).toHaveBeenCalledWith(actions.resource.requestCollection('resources_2', undefined, undefined, undefined));
+      expect(mockDispatchFn).toHaveBeenCalledWith(actions.resource.requestCollection('resources_3', undefined, undefined, undefined));
+      expect(mockDispatchFn).not.toHaveBeenCalledWith(actions.resource.requestCollection('resources', undefined, undefined, undefined));
       expect(utils.container).toBeEmptyDOMElement();
     });
 
     test('should pass the initial render array of resources', async () => {
       const { utils } = await initLoadResources({initialStore, resources: ['resources_4', 'resources_5']});
 
-      await expect(mockDispatchFn).toBeCalledWith(actions.resource.requestCollection('resources_4', undefined, undefined, undefined));
-      expect(mockDispatchFn).toBeCalledWith(actions.resource.requestCollection('resources_5', undefined, undefined, undefined));
-      expect(mockDispatchFn).not.toBeCalledWith(actions.resource.requestCollection('resources', undefined, undefined, undefined));
+      await expect(mockDispatchFn).toHaveBeenCalledWith(actions.resource.requestCollection('resources_4', undefined, undefined, undefined));
+      expect(mockDispatchFn).toHaveBeenCalledWith(actions.resource.requestCollection('resources_5', undefined, undefined, undefined));
+      expect(mockDispatchFn).not.toHaveBeenCalledWith(actions.resource.requestCollection('resources', undefined, undefined, undefined));
       expect(utils.container).toBeEmptyDOMElement();
     });
 
     test('should pass the initial render send resource as recycleBinTTL', async () => {
       const { utils } = await initLoadResources({initialStore, resources: 'recycleBinTTL', defaultAShareId: ''});
 
-      await expect(mockDispatchFn).not.toBeCalledWith(actions.resource.requestCollection('recycleBinTTL', undefined, undefined, undefined));
+      await expect(mockDispatchFn).not.toHaveBeenCalledWith(actions.resource.requestCollection('recycleBinTTL', undefined, undefined, undefined));
       expect(utils.container).toBeEmptyDOMElement();
     });
   });
 
-  describe('LoadResources component ways to send lazyResources', () => {
+  describe('loadResources component ways to send lazyResources', () => {
     test('should pass the initial render array of lazyResources', async () => {
       const { utils } = await initLoadResources({initialStore,
         props: {
           lazyResources: ['resources_6', 'resources_7'],
         }});
 
-      await expect(mockDispatchFn).toBeCalledWith(actions.resource.requestCollection('resources_6', undefined, undefined, undefined));
-      await expect(mockDispatchFn).toBeCalledWith(actions.resource.requestCollection('resources_7', undefined, undefined, undefined));
-      await expect(mockDispatchFn).toBeCalledWith(actions.resource.requestCollection('resources', undefined, undefined, undefined));
+      await expect(mockDispatchFn).toHaveBeenCalledWith(actions.resource.requestCollection('resources_6', undefined, undefined, undefined));
+      await expect(mockDispatchFn).toHaveBeenCalledWith(actions.resource.requestCollection('resources_7', undefined, undefined, undefined));
+      await expect(mockDispatchFn).toHaveBeenCalledWith(actions.resource.requestCollection('resources', undefined, undefined, undefined));
       expect(utils.container).toBeEmptyDOMElement();
     });
 
@@ -108,9 +108,9 @@ describe('LoadResources component', () => {
           lazyResources: 'resources_6, resources_7',
         }});
 
-      await expect(mockDispatchFn).toBeCalledWith(actions.resource.requestCollection('resources', undefined, undefined, undefined));
-      await expect(mockDispatchFn).toBeCalledWith(actions.resource.requestCollection('resources_6', undefined, undefined, undefined));
-      await expect(mockDispatchFn).toBeCalledWith(actions.resource.requestCollection('resources_7', undefined, undefined, undefined));
+      await expect(mockDispatchFn).toHaveBeenCalledWith(actions.resource.requestCollection('resources', undefined, undefined, undefined));
+      await expect(mockDispatchFn).toHaveBeenCalledWith(actions.resource.requestCollection('resources_6', undefined, undefined, undefined));
+      await expect(mockDispatchFn).toHaveBeenCalledWith(actions.resource.requestCollection('resources_7', undefined, undefined, undefined));
       expect(utils.container).toBeEmptyDOMElement();
     });
 
@@ -120,12 +120,12 @@ describe('LoadResources component', () => {
           lazyResources: ['resources', 'resources_7'],
         }});
 
-      await expect(mockDispatchFn).toBeCalledWith(actions.resource.requestCollection('resources', undefined, undefined, undefined));
+      await expect(mockDispatchFn).toHaveBeenCalledWith(actions.resource.requestCollection('resources', undefined, undefined, undefined));
       expect(utils.container).toBeEmptyDOMElement();
     });
   });
 
-  describe('LoadResources component required', () => {
+  describe('loadResources component required', () => {
     test('should pass the initial render required true', async () => {
       const { utils } = await initLoadResources({initialStore,
         props: {
@@ -136,7 +136,7 @@ describe('LoadResources component', () => {
     });
   });
 
-  describe('LoadResources component spinner', () => {
+  describe('loadResources component spinner', () => {
     test('should pass the initial render spinner', async () => {
       await initLoadResources({initialStore,
         children: 'Test Child',
@@ -150,7 +150,7 @@ describe('LoadResources component', () => {
     });
   });
 
-  describe('LoadResources component children', () => {
+  describe('loadResources component children', () => {
     test('should pass the initial render childer when resource = lazyResources and not ready', async () => {
       await initLoadResources({initialStore,
         children: 'Test Child',

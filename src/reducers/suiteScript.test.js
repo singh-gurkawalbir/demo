@@ -1,4 +1,5 @@
-/* global describe, expect, test, beforeEach */
+/* eslint-disable jest/no-standalone-expect */
+
 import each from 'jest-each';
 import reducer, { selectors } from '.';
 import actions from '../actions';
@@ -1011,7 +1012,7 @@ describe('suiteScriptResourceData selector', () => {
 
 describe('suiteScriptIASettings selector', () => {
   test('should not throw any exception for invalid arguments', () => {
-    expect(selectors.suiteScriptIASettings(undefined, {})).toEqual(null);
+    expect(selectors.suiteScriptIASettings(undefined, {})).toBeNull();
   });
   test('should return correct object', () => {
     const settings = {
@@ -1332,13 +1333,13 @@ describe('suiteScriptJob selector', () => {
 
 describe('netsuiteAccountHasSuiteScriptIntegrations selector', () => {
   test('should not throw any exception for invalid arguments', () => {
-    expect(selectors.netsuiteAccountHasSuiteScriptIntegrations(undefined, {})).toEqual(false);
+    expect(selectors.netsuiteAccountHasSuiteScriptIntegrations(undefined, {})).toBe(false);
   });
 });
 
 describe('canLinkSuiteScriptIntegrator selector', () => {
   test('should not throw any exception for invalid arguments', () => {
-    expect(selectors.canLinkSuiteScriptIntegrator(undefined, {})).toEqual(false);
+    expect(selectors.canLinkSuiteScriptIntegrator(undefined, {})).toBe(false);
   });
 });
 
@@ -1350,7 +1351,7 @@ describe('suiteScriptIntegratorLinkedConnectionId selector', () => {
 
 describe('suiteScriptIntegrationAppInstallerData selector', () => {
   test('should not throw any exception for invalid arguments', () => {
-    expect(selectors.suiteScriptIntegrationAppInstallerData(undefined, {})).toEqual(null);
+    expect(selectors.suiteScriptIntegrationAppInstallerData(undefined, {})).toBeNull();
     expect(selectors.suiteScriptIntegrationAppInstallerData({}, {})).toEqual({steps: []});
   });
   test('should correctly update the current step flag on install steps', () => {
@@ -1400,8 +1401,8 @@ describe('suiteScriptIntegrationAppInstallerData selector', () => {
 
 describe('isSuiteScriptIntegrationAppInstallComplete selector', () => {
   test('should not throw any exception for invalid arguments', () => {
-    expect(selectors.isSuiteScriptIntegrationAppInstallComplete(undefined, {})).toEqual(null);
-    expect(selectors.isSuiteScriptIntegrationAppInstallComplete({}, {})).toEqual(false);
+    expect(selectors.isSuiteScriptIntegrationAppInstallComplete(undefined, {})).toBeNull();
+    expect(selectors.isSuiteScriptIntegrationAppInstallComplete({}, {})).toBe(false);
   });
   test('should return false if install steps are empty or undefined', () => {
     const integrationId = 'sf-ns';
@@ -1418,8 +1419,8 @@ describe('isSuiteScriptIntegrationAppInstallComplete selector', () => {
       },
     };
 
-    expect(selectors.isSuiteScriptIntegrationAppInstallComplete(state, integrationId)).toEqual(false);
-    expect(selectors.isSuiteScriptIntegrationAppInstallComplete(state, 'svb-ns')).toEqual(false);
+    expect(selectors.isSuiteScriptIntegrationAppInstallComplete(state, integrationId)).toBe(false);
+    expect(selectors.isSuiteScriptIntegrationAppInstallComplete(state, 'svb-ns')).toBe(false);
   });
   test('should return false if any step is incomplete', () => {
     const integrationId = 'sf-ns';
@@ -1446,7 +1447,7 @@ describe('isSuiteScriptIntegrationAppInstallComplete selector', () => {
       },
     };
 
-    expect(selectors.isSuiteScriptIntegrationAppInstallComplete(state, integrationId)).toEqual(false);
+    expect(selectors.isSuiteScriptIntegrationAppInstallComplete(state, integrationId)).toBe(false);
   });
   test('should return true if all steps are completed', () => {
     const integrationId = 'sf-ns';
@@ -1473,13 +1474,13 @@ describe('isSuiteScriptIntegrationAppInstallComplete selector', () => {
       },
     };
 
-    expect(selectors.isSuiteScriptIntegrationAppInstallComplete(state, integrationId)).toEqual(true);
+    expect(selectors.isSuiteScriptIntegrationAppInstallComplete(state, integrationId)).toBe(true);
   });
 });
 
 describe('userHasManageAccessOnSuiteScriptAccount selector', () => {
   test('should not throw any exception for invalid arguments', () => {
-    expect(selectors.userHasManageAccessOnSuiteScriptAccount(undefined, {})).toEqual(false);
+    expect(selectors.userHasManageAccessOnSuiteScriptAccount(undefined, {})).toBe(false);
   });
 });
 
@@ -1502,7 +1503,7 @@ describe('suiteScriptFlowDetail selector', () => {
       },
     };
 
-    expect(selectors.suiteScriptFlowDetail(state, {ssLinkedConnectionId, integrationId, flowId})).toEqual(undefined);
+    expect(selectors.suiteScriptFlowDetail(state, {ssLinkedConnectionId, integrationId, flowId})).toBeUndefined();
   });
   test('should return undefined if requested flow does not exist in flows list', () => {
     const ssLinkedConnectionId = 'linked-ns-id';
@@ -1522,7 +1523,7 @@ describe('suiteScriptFlowDetail selector', () => {
       },
     };
 
-    expect(selectors.suiteScriptFlowDetail(state, {ssLinkedConnectionId, integrationId, flowId})).toEqual(undefined);
+    expect(selectors.suiteScriptFlowDetail(state, {ssLinkedConnectionId, integrationId, flowId})).toBeUndefined();
   });
   test('should return requested flow details from flows list', () => {
     const ssLinkedConnectionId = 'linked-ns-id';
@@ -2095,7 +2096,7 @@ describe('suiteScriptFileExportSampleData selector', () => {
       sampleData: 'NAME|AGE\nTest|30',
     };
 
-    expect(selectors.suiteScriptFileExportSampleData(state, { ssLinkedConnectionId, resourceType, resourceId})).toEqual('NAME|AGE\nTest|30');
+    expect(selectors.suiteScriptFileExportSampleData(state, { ssLinkedConnectionId, resourceType, resourceId})).toBe('NAME|AGE\nTest|30');
   });
   test('should return state sample data if exists', () => {
     state.data.suiteScript[ssLinkedConnectionId].flows[0].export = {
@@ -2113,7 +2114,7 @@ describe('suiteScriptFileExportSampleData selector', () => {
         },
       },
     };
-    expect(selectors.suiteScriptFileExportSampleData(state, { ssLinkedConnectionId, resourceType, resourceId})).toEqual('CUSTOMER|ID|TYPE\nDummy|123|Retail');
+    expect(selectors.suiteScriptFileExportSampleData(state, { ssLinkedConnectionId, resourceType, resourceId})).toBe('CUSTOMER|ID|TYPE\nDummy|123|Retail');
   });
 });
 

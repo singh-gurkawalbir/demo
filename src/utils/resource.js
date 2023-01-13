@@ -1,6 +1,6 @@
 import { values, keyBy, cloneDeep } from 'lodash';
-import shortid from 'shortid';
 import parseLinkHeader from 'parse-link-header';
+import { generateId } from './string';
 import { getAllPageProcessors, isPageGeneratorResource } from './flows';
 import { USER_ACCESS_LEVELS, HELP_CENTER_BASE_URL, INTEGRATION_ACCESS_LEVELS, emptyList, emptyObject } from '../constants';
 import { stringCompare } from './sort';
@@ -31,6 +31,12 @@ export const MODEL_PLURAL_TO_LABEL = Object.freeze({
   eventreports: 'Event Report',
   users: 'User',
 });
+
+export const convertResourceLabelToLowercase = resourceLabel => {
+  if (resourceLabel === 'IClient') return 'iClient';
+
+  return resourceLabel.toLowerCase();
+};
 
 export const appTypeToAdaptorType = {
   salesforce: 'Salesforce',
@@ -231,7 +237,7 @@ export const getDomainUrl = () => {
 };
 
 export const getApiUrl = () => {
-  if (getDomain() === 'localhost.io' && process?.env?.API_ENDPOINT) {
+  if (getDomain() === 'localhost.io' && process.env?.API_ENDPOINT) {
     return process.env.API_ENDPOINT.replace('://', '://api.');
   }
 
@@ -423,7 +429,7 @@ export function isFileAdaptor(resource) {
   );
 }
 
-export const generateNewId = () => `new-${shortid.generate()}`;
+export const generateNewId = () => `new-${generateId()}`;
 
 export function isRealTimeOrDistributedResource(
   resource,
@@ -989,10 +995,6 @@ export const getAssistantFromResource = resource => {
     return 'ebay';
   }
 
-  if (assistant === 'googlecontacts' || assistant === 'googlecontactspeople') {
-    return 'googlecontacts';
-  }
-
   return assistant;
 };
 
@@ -1103,3 +1105,4 @@ export const finalSuccessMediaType = (formValues, connection) => {
 
   return mediaType;
 };
+

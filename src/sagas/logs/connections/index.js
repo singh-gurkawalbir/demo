@@ -103,7 +103,7 @@ export function* deleteConnectionDebugLogs({ connectionId}) {
   } catch (e) {
     // do nothing
   }
-  startPollingForConnectionDebugLogs();
+  yield call(startPollingForConnectionDebugLogs, { connectionId });
 }
 
 export function* downloadConnectionDebugLogs({ connectionId}) {

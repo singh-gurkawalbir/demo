@@ -1,4 +1,4 @@
-/* global describe, test */
+/* eslint-disable jest/no-conditional-in-test */
 
 import { call, select } from 'redux-saga/effects';
 import { expectSaga } from 'redux-saga-test-plan';
@@ -31,7 +31,7 @@ describe('generateZip sagas', () => {
   test('should return undefined if api call fails', () => {
     const error = new Error('error');
 
-    return expectSaga(generateZip, { integrationId })
+    expectSaga(generateZip, { integrationId })
       .provide([[matchers.call.fn(apiCallWithRetry), throwError(error)]])
       .call.fn(apiCallWithRetry)
       .run();
@@ -54,7 +54,7 @@ describe('requestPreviews sagas', () => {
       ],
     };
 
-    return expectSaga(requestPreview, { templateId })
+    expectSaga(requestPreview, { templateId })
       .provide([[matchers.call.fn(apiCallWithRetry), testComponents]])
       .call.fn(apiCallWithRetry)
       .put(actions.template.receivedPreview(testComponents, templateId))
@@ -63,7 +63,7 @@ describe('requestPreviews sagas', () => {
   test('should dispatch failedPreview if api call fails', () => {
     const error = new Error('error');
 
-    return expectSaga(requestPreview, { templateId })
+    expectSaga(requestPreview, { templateId })
       .provide([[matchers.call.fn(apiCallWithRetry), throwError(error)]])
       .call.fn(apiCallWithRetry)
       .put(actions.template.failedPreview(templateId))
@@ -113,7 +113,7 @@ describe('createComponents sagas', () => {
       saga.call(getResource, dependentResource)
     ));
 
-    return saga.put(actions.template.createdComponents(components, templateId)).run();
+    saga.put(actions.template.createdComponents(components, templateId)).run();
   });
   test('should dispatch receivedIntegrationClonedStatus if template is an integration on successfull api call', () => {
     const templateData = {
@@ -128,7 +128,7 @@ describe('createComponents sagas', () => {
       _integrationId: 'something',
     };
 
-    return expectSaga(createComponents, { templateId, runKey })
+    expectSaga(createComponents, { templateId, runKey })
       .provide([
         [select(selectors.templateSetup, templateId), templateData],
         [(select(selectors.marketplaceTemplateById, { templateId }), template)],
@@ -158,7 +158,7 @@ describe('createComponents sagas', () => {
     const userPreferences = { environment: 'something' };
     const error = new Error('error');
 
-    return expectSaga(createComponents, { templateId, runKey })
+    expectSaga(createComponents, { templateId, runKey })
       .provide([
         [select(selectors.templateSetup, templateId), templateData],
         [(select(selectors.marketplaceTemplateById, { templateId }), template)],
@@ -182,7 +182,7 @@ describe('verifyBundleOrPackageInstall sagas', () => {
   test('the status should be completed if response.success is true on successfull api call', () => {
     const response = { success: true };
 
-    return expectSaga(verifyBundleOrPackageInstall, {
+    expectSaga(verifyBundleOrPackageInstall, {
       step,
       connection,
       templateId,
@@ -206,7 +206,7 @@ describe('verifyBundleOrPackageInstall sagas', () => {
       },
     };
 
-    return expectSaga(verifyBundleOrPackageInstall, {
+    expectSaga(verifyBundleOrPackageInstall, {
       step,
       connection,
       templateId,
@@ -226,7 +226,7 @@ describe('verifyBundleOrPackageInstall sagas', () => {
   test('status should be failed if there is no response on successfull api call', () => {
     const response = {};
 
-    return expectSaga(verifyBundleOrPackageInstall, {
+    expectSaga(verifyBundleOrPackageInstall, {
       step,
       connection,
       templateId,
@@ -244,7 +244,7 @@ describe('verifyBundleOrPackageInstall sagas', () => {
   test('status should be failed if api call fails', () => {
     const error = new Error('error');
 
-    return expectSaga(verifyBundleOrPackageInstall, {
+    expectSaga(verifyBundleOrPackageInstall, {
       step,
       connection,
       templateId,
@@ -272,7 +272,7 @@ describe('publishStatus saga', () => {
     const templateId = '1';
     const isPublished = false;
 
-    return expectSaga(publishStatus, {templateId, isPublished})
+    expectSaga(publishStatus, {templateId, isPublished})
       .provide([
         [
           call(commitStagedChanges, {
@@ -297,7 +297,7 @@ describe('publishStatus saga', () => {
     const templateId = '2';
     const isPublished = false;
 
-    return expectSaga(publishStatus, {templateId, isPublished})
+    expectSaga(publishStatus, {templateId, isPublished})
       .provide([
         [
           call(commitStagedChanges, {

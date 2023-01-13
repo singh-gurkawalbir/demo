@@ -1,4 +1,4 @@
-/* global describe, test, expect, jest */
+
 import { select, delay, call } from 'redux-saga/effects';
 import { expectSaga } from 'redux-saga-test-plan';
 import * as matchers from 'redux-saga-test-plan/matchers';
@@ -93,7 +93,7 @@ describe('resourceForm sagas', () => {
         finalValues: { '/id': 123, '/name': 'Bob' } })
         .run();
 
-      expect(getResourceFormAssets.mock.calls.length).toBe(1);
+      expect(getResourceFormAssets.mock.calls).toHaveLength(1);
       expect(getResourceFormAssets).toHaveBeenCalledWith(
         {
           resourceType,
@@ -185,7 +185,7 @@ describe('resourceForm sagas', () => {
         '/formView': 'rest',
       };
 
-      return expectSaga(deleteUISpecificValues, { values, resourceId: '123' })
+      expectSaga(deleteUISpecificValues, { values, resourceId: '123' })
         .put.actionType('RESOURCE_STAGE_REMOVE')
         .returns({
           '/name': 'test',
@@ -201,7 +201,7 @@ describe('resourceForm sagas', () => {
         '/file/groupByFields': 'name',
       };
 
-      return expectSaga(deleteUISpecificValues, { values, resourceId: '123' })
+      expectSaga(deleteUISpecificValues, { values, resourceId: '123' })
         .put.actionType('RESOURCE_STAGE_REMOVE')
         .returns({
           '/file/csv': {keyColumns: undefined},
@@ -218,7 +218,7 @@ describe('resourceForm sagas', () => {
         '/formView': 'rest',
       };
 
-      return expectSaga(deleteUISpecificValues, { values, resourceId: '123' })
+      expectSaga(deleteUISpecificValues, { values, resourceId: '123' })
         .put.actionType('RESOURCE_STAGE_REMOVE')
         .returns({
           '/file/csv': {keyColumns: ['name']},
@@ -343,7 +343,7 @@ describe('resourceForm sagas', () => {
         installStepConnection: {id: 'conn'},
       };
 
-      return expectSaga(newIAFrameWorkPayload, {resourceId})
+      expectSaga(newIAFrameWorkPayload, {resourceId})
         .provide([
           [select(
             selectors.stagedResource,
@@ -429,7 +429,7 @@ describe('resourceForm sagas', () => {
         { op: 'replace', path: '/id', value: 123 },
       ] };
 
-      return expectSaga(submitFormValues, { resourceType, resourceId})
+      expectSaga(submitFormValues, { resourceType, resourceId})
         .provide([
           [call(newIAFrameWorkPayload, {
             resourceId,
@@ -448,7 +448,7 @@ describe('resourceForm sagas', () => {
     test('should dispatch submitComplete action and return if skipCommit is true', () => {
       const response = { patchSet: [], finalValues: {'/name': 'some name'} };
 
-      return expectSaga(submitFormValues, { resourceType, resourceId})
+      expectSaga(submitFormValues, { resourceType, resourceId})
         .provide([
           [call(newIAFrameWorkPayload, {
             resourceId,
@@ -472,7 +472,7 @@ describe('resourceForm sagas', () => {
     test('should call commitStagedChanges with correct resource type if given type is connectorLicenses', () => {
       const response = { patchSet: [], finalValues: {'/name': 'some name'} };
 
-      return expectSaga(submitFormValues, { resourceType: 'connectorLicenses', resourceId, match: {url: '/connectors/edit/connectors/999/'}})
+      expectSaga(submitFormValues, { resourceType: 'connectorLicenses', resourceId, match: {url: '/connectors/edit/connectors/999/'}})
         .provide([
           [call(newIAFrameWorkPayload, {
             resourceId,
@@ -505,7 +505,7 @@ describe('resourceForm sagas', () => {
     test('should call commitStagedChanges with correct resource type if given type is accesstokens', () => {
       const response = { patchSet: [], finalValues: {'/name': 'some name'} };
 
-      return expectSaga(submitFormValues, { resourceType: 'accesstokens', resourceId})
+      expectSaga(submitFormValues, { resourceType: 'accesstokens', resourceId})
         .provide([
           [call(newIAFrameWorkPayload, {
             resourceId,
@@ -539,7 +539,7 @@ describe('resourceForm sagas', () => {
     test('should dispatch submitFailed and not submitComplete if there is a stage conflict', () => {
       const response = { patchSet: [], finalValues: {'/name': 'some name'} };
 
-      return expectSaga(submitFormValues, { resourceType, resourceId})
+      expectSaga(submitFormValues, { resourceType, resourceId})
         .provide([
           [call(newIAFrameWorkPayload, {
             resourceId,
@@ -588,7 +588,7 @@ describe('resourceForm sagas', () => {
         },
       };
 
-      return expectSaga(getFlowUpdatePatchesForNewPGorPP, 'exports', 'res-123', 'flow-123')
+      expectSaga(getFlowUpdatePatchesForNewPGorPP, 'exports', 'res-123', 'flow-123')
         .provide([
           [select(
             selectors.resourceData,
@@ -608,7 +608,7 @@ describe('resourceForm sagas', () => {
         path: '/pageGenerators',
         value: [{ _exportId: 'res-123' }] }];
 
-      return expectSaga(getFlowUpdatePatchesForNewPGorPP, 'exports', 'new-123.0', 'flow-123')
+      expectSaga(getFlowUpdatePatchesForNewPGorPP, 'exports', 'new-123.0', 'flow-123')
         .provide([
           [select(
             selectors.resourceData,
@@ -628,7 +628,7 @@ describe('resourceForm sagas', () => {
         path: '/pageProcessors/1',
         value: { type: 'export', _exportId: 'res-123' } }];
 
-      return expectSaga(getFlowUpdatePatchesForNewPGorPP, 'exports', 'res-123', 'flow-123')
+      expectSaga(getFlowUpdatePatchesForNewPGorPP, 'exports', 'res-123', 'flow-123')
         .provide([
           [select(
             selectors.resourceData,
@@ -653,7 +653,7 @@ describe('resourceForm sagas', () => {
           path: '/pageGenerators/0/_exportId',
           value: 'res-123' }];
 
-      return expectSaga(getFlowUpdatePatchesForNewPGorPP, 'exports', 'res-123', 'flow-123')
+      expectSaga(getFlowUpdatePatchesForNewPGorPP, 'exports', 'res-123', 'flow-123')
         .provide([
           [select(
             selectors.resourceData,
@@ -678,7 +678,7 @@ describe('resourceForm sagas', () => {
         value:
        [{ type: 'import', _importId: 'res-123' }] }];
 
-      return expectSaga(getFlowUpdatePatchesForNewPGorPP, 'imports', 'res-123', 'flow-123')
+      expectSaga(getFlowUpdatePatchesForNewPGorPP, 'imports', 'res-123', 'flow-123')
         .provide([
           [select(
             selectors.resourceData,
@@ -748,7 +748,7 @@ describe('resourceForm sagas', () => {
     test('should return empty array if no flow', () => {
       const exp = { _id: 2, name: 'exp', lastModified: new Date().toISOString() };
 
-      return expectSaga(touchFlow, 1, 'exports', 2)
+      expectSaga(touchFlow, 1, 'exports', 2)
         .provide([
           [select(selectors.resource, 'flows', 1), undefined],
           [select(selectors.resource, 'exports', 2), exp],
@@ -772,7 +772,7 @@ describe('resourceForm sagas', () => {
       const flow = { _id: 1, name: 'flow' };
       const exp = { _id: 2, name: 'exp', lastModified: d2 };
 
-      return expectSaga(touchFlow, 1, 'exports', 2)
+      expectSaga(touchFlow, 1, 'exports', 2)
         .provide([
           [select(selectors.resource, 'flows', 1), flow],
           [select(selectors.resource, 'exports', 2), exp],
@@ -785,7 +785,7 @@ describe('resourceForm sagas', () => {
       const flow = { _id: 1, name: 'flow', lastModified: d1 };
       const exp = { _id: 2, name: 'exp' };
 
-      return expectSaga(touchFlow, 1, 'exports', 2)
+      expectSaga(touchFlow, 1, 'exports', 2)
         .provide([
           [select(selectors.resource, 'flows', 1), flow],
           [select(selectors.resource, 'exports', 2), exp],
@@ -800,7 +800,7 @@ describe('resourceForm sagas', () => {
       const flow = { _id: 1, name: 'flow', lastModified: d2 };
       const exp = { _id: 2, name: 'exp', lastModified: d1 };
 
-      return expectSaga(touchFlow, 1, 'exports', 2)
+      expectSaga(touchFlow, 1, 'exports', 2)
         .provide([
           [select(selectors.resource, 'flows', 1), flow],
           [select(selectors.resource, 'exports', 2), exp],
@@ -815,7 +815,7 @@ describe('resourceForm sagas', () => {
       const flow = { _id: 1, name: 'flow', lastModified: d1 };
       const exp = { _id: 2, name: 'exp', lastModified: d2 };
 
-      return expectSaga(touchFlow, 1, 'exports', 2)
+      expectSaga(touchFlow, 1, 'exports', 2)
         .provide([
           [select(selectors.resource, 'flows', 1), flow],
           [select(selectors.resource, 'exports', 2), exp],
@@ -867,7 +867,7 @@ describe('resourceForm sagas', () => {
       };
       const exp = { _id: 2, name: 'exp', lastModified: d2 };
 
-      return expectSaga(touchFlow, 1, 'exports', 2)
+      expectSaga(touchFlow, 1, 'exports', 2)
         .provide([
           [select(selectors.resource, 'flows', 1), flow],
           [select(selectors.resource, 'exports', 2), exp],
@@ -915,7 +915,7 @@ describe('resourceForm sagas', () => {
       };
       const exp = { _id: 2, name: 'exp', lastModified: d2 };
 
-      return expectSaga(touchFlow, 1, 'exports', 2)
+      expectSaga(touchFlow, 1, 'exports', 2)
         .provide([
           [select(selectors.resource, 'flows', 1), flow],
           [select(selectors.resource, 'exports', 2), exp],
@@ -955,7 +955,7 @@ describe('resourceForm sagas', () => {
         },
       ];
 
-      return expectSaga(updateFlowDoc, { flowId, resourceType, resourceId, resourceValues: {'/skipRetries': true}})
+      expectSaga(updateFlowDoc, { flowId, resourceType, resourceId, resourceValues: {'/skipRetries': true}})
         .provide([
           [matchers.call.fn(getFlowUpdatePatchesForNewPGorPP), flowPatches],
           [matchers.call.fn(skipRetriesPatches), []],
@@ -1208,7 +1208,7 @@ describe('resourceForm sagas', () => {
         '/file/fileDefinition/resourcePath': fileDefinitionDetails.resourcePath,
       };
 
-      return expectSaga(saveResourceWithDefinitionID, {
+      expectSaga(saveResourceWithDefinitionID, {
         formValues: exportFormValues,
         fileDefinitionDetails,
         flowId})
@@ -1231,7 +1231,7 @@ describe('resourceForm sagas', () => {
         '/file/fileDefinition/_fileDefinitionId': fileDefinitionDetails.definitionId,
       };
 
-      return expectSaga(saveResourceWithDefinitionID, {
+      expectSaga(saveResourceWithDefinitionID, {
         formValues: importFormValues,
         fileDefinitionDetails,
         flowId,
@@ -1341,7 +1341,7 @@ describe('resourceForm sagas', () => {
       getResourceFormAssets.mockReturnValue(defaultFormAssets);
       getFieldsWithDefaults.mockReturnValue(fieldMeta);
 
-      return expectSaga(initFormValues, {
+      expectSaga(initFormValues, {
         resourceType,
         resourceId,
         flowId,
@@ -1382,7 +1382,7 @@ describe('resourceForm sagas', () => {
         throw new Error('some error');
       });
 
-      return expectSaga(initFormValues, {
+      expectSaga(initFormValues, {
         resourceType,
         resourceId,
         flowId,

@@ -11,6 +11,7 @@ export default {
     '/http/auth/token/location': 'header',
     '/http/auth/token/headerName': 'Authorization',
     '/http/auth/token/scheme': 'Bearer',
+    '/http/auth/oauth/useIClientFields': false,
     '/http/auth/oauth/authURI': 'https://api.getbase.com/oauth2/authorize',
     '/http/auth/oauth/tokenURI': 'https://api.getbase.com/oauth2/token',
     '/http/auth/oauth/clientCredentialsLocation': 'basicauthheader',

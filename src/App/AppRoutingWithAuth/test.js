@@ -1,4 +1,4 @@
-/* global describe, test, expect, afterEach ,jest */
+
 import React from 'react';
 // add react-router in package.json as actual dependency breaks test, may be version related
 // eslint-disable-next-line import/no-extraneous-dependencies
@@ -7,8 +7,6 @@ import { createStore } from 'redux';
 import { Provider } from 'react-redux';
 import { Router } from 'react-router-dom';
 import { MuiThemeProvider } from '@material-ui/core';
-// add history in package.json as actual dependency breaks test, may be version related
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { createMemoryHistory } from 'history';
 import { render, cleanup } from '@testing-library/react';
 import { SnackbarProvider } from 'notistack';
@@ -18,6 +16,7 @@ import getRoutePath from '../../utils/routePaths';
 import themeProvider from '../../theme/themeProvider';
 import { PageContentComponents as AppRouting } from '..';
 import {HOME_PAGE_PATH} from '../../constants';
+import actions from '../../actions';
 
 // fireEvent
 // Ok, so here's what your tests might look like
@@ -99,6 +98,7 @@ describe('AppRoutingWith authentication redirection behavior', () => {
       const history = createMemoryHistory({
         initialEntries: [getRoutePath(someRoute)],
       });
+      const store = createStore(reducer, {app: {appErrored: true}});
 
       // app mounting for the first time or refreshing app
       render(
@@ -110,13 +110,15 @@ describe('AppRoutingWith authentication redirection behavior', () => {
         })
       );
 
-      expect(clearAppError).toHaveBeenCalled();
+      expect(store.getState().app).toEqual({});
     });
 
     test('should not clear the app error message in any state after refresh', () => {
       const history = createMemoryHistory({
         initialEntries: [getRoutePath(someRoute)],
       });
+      const store = createStore(reducer, {app: {errored: true}});
+
       const { rerender } = render(
         reduxRouterWrappedComponent({
           Component: wrappedHistory,
@@ -136,7 +138,7 @@ describe('AppRoutingWith authentication redirection behavior', () => {
         })
       );
 
-      expect(clearAppError).toHaveBeenCalledTimes(1);
+      expect(store.getState().app).toEqual({errored: true});
     });
   });
   describe('test attempted Route state behavior', () => {
@@ -144,6 +146,7 @@ describe('AppRoutingWith authentication redirection behavior', () => {
       const history = createMemoryHistory({
         initialEntries: [getRoutePath(someRoute)],
       });
+      const store = createStore(reducer, {});
       const { rerender } = render(
         reduxRouterWrappedComponent({
           Component: wrappedHistory,
@@ -153,8 +156,8 @@ describe('AppRoutingWith authentication redirection behavior', () => {
         })
       );
 
-      expect(initSession).toHaveBeenCalled();
-
+      expect(store.getState().auth).toEqual({ initialized: false, commStatus: 'loading', authenticated: false });
+      store.dispatch(actions.auth.failure('Session expired due to extended inactivity'));
       // if the session is invalid and the authentication
       // has failed redirect to signin page preserving the
       // state of attempted url
@@ -172,7 +175,7 @@ describe('AppRoutingWith authentication redirection behavior', () => {
         getRoutePath(someRoute)
       );
     });
-    test('should redirect the user to attempted route when the user successfully authenticates ', () => {
+    test('should redirect the user to attempted route when the user successfully authenticates', () => {
       const history = createMemoryHistory({
         initialEntries: [
           {
@@ -181,6 +184,7 @@ describe('AppRoutingWith authentication redirection behavior', () => {
           },
         ],
       });
+      const store = createStore(reducer, {auth: {authenticated: true}});
 
       render(
         reduxRouterWrappedComponent({
@@ -191,9 +195,9 @@ describe('AppRoutingWith authentication redirection behavior', () => {
         })
       );
       expect(history.location.pathname).toBe(getRoutePath(someRoute));
-      expect(history.location.state).toBe(undefined);
+      expect(history.location.state).toBeUndefined();
     });
-    test('should preserve attempted route state when the user authentication attempts fails  ', () => {
+    test('should preserve attempted route state when the user authentication attempts fails', () => {
       const history = createMemoryHistory({
         initialEntries: [
           {
@@ -218,7 +222,7 @@ describe('AppRoutingWith authentication redirection behavior', () => {
       );
     });
 
-    test('should redirect the user to the /pg route when the user successfully authenticates and the user has never previously intialized to a route', () => {
+    test('should redirect the user to the mfa verify route when the user successfully authenticates and the user has mfa configured', () => {
       const history = createMemoryHistory({
         initialEntries: [
           {
@@ -227,19 +231,7 @@ describe('AppRoutingWith authentication redirection behavior', () => {
         ],
       });
 
-      const sessionState = {
-        mfa: {
-          sessionInfo:
-          {
-            status: 'received',
-            data: {
-              mfaVerified: true, mfaRequired: true, mfaSetupRequired: true,
-            },
-          },
-        },
-      };
-
-      const store = createStore(reducer, { session: sessionState });
+      const store = createStore(reducer, { auth: { mfaRequired: true } });
 
       render(
         reduxRouterWrappedComponent({
@@ -250,8 +242,8 @@ describe('AppRoutingWith authentication redirection behavior', () => {
         })
       );
 
-      expect(history.location.pathname).toBe(getRoutePath(HOME_PAGE_PATH));
-      expect(history.location.state).toBe(undefined);
+      expect(history.location.pathname).toBe(getRoutePath('/mfa/verify'));
+      expect(history.location.state).toBeUndefined();
     });
   });
 
@@ -268,7 +260,7 @@ describe('AppRoutingWith authentication redirection behavior', () => {
     const history = createMemoryHistory({
       initialEntries: [
         {
-          pathname: getRoutePath(''),
+          pathname: getRoutePath(HOME_PAGE_PATH),
         },
       ],
     });
@@ -316,6 +308,7 @@ describe('AppRoutingWith authentication redirection behavior', () => {
         },
       ],
     });
+    const store = createStore(reducer, { auth: {loggedOut: true} });
     const { getByPlaceholderText } = render(
       reduxRouterWrappedComponent({
         Component: wrappedHistory,
@@ -326,7 +319,7 @@ describe('AppRoutingWith authentication redirection behavior', () => {
     );
 
     expect(history.location.pathname).toBe(getRoutePath('signin'));
-    expect(getByPlaceholderText('Email')).toBeTruthy();
-    expect(getByPlaceholderText('Password')).toBeTruthy();
+    expect(getByPlaceholderText('Email*')).toBeTruthy();
+    expect(getByPlaceholderText('Password*')).toBeTruthy();
   });
 });

@@ -1,4 +1,3 @@
-/* global describe, expect, jest, test, beforeEach, afterEach */
 import React from 'react';
 import * as reactRedux from 'react-redux';
 import { MemoryRouter } from 'react-router-dom';
@@ -110,7 +109,7 @@ describe('test suite for NetSuiteMappingAssistant', () => {
     const { getAllByRole } = within(list);
     const items = getAllByRole('listitem');
 
-    expect(items.length).toBe(3);
+    expect(items).toHaveLength(3);
     const launchSteps = items.map(item => item.textContent);
 
     expect(launchSteps).toEqual([
@@ -222,7 +221,7 @@ describe('test suite for NetSuiteMappingAssistant', () => {
     const { utils: {unmount}} = await initNetSuiteMappingAssistant({netSuiteConnectionId, netSuiteRecordType}, initialStore);
 
     unmount();
-    expect(mockDispatchFn).toBeCalledWith(actions.mapping.setNSAssistantFormLoaded(false));
+    expect(mockDispatchFn).toHaveBeenCalledWith(actions.mapping.setNSAssistantFormLoaded(false));
   });
 
   test('should throw error if data is provided but isNSAssistantFormLoaded is true', async () => {
@@ -264,6 +263,7 @@ describe('test suite for NetSuiteMappingAssistant', () => {
     try {
       await initNetSuiteMappingAssistant({netSuiteConnectionId, netSuiteRecordType, data}, initialStore);
     } catch (e) {
+      // eslint-disable-next-line jest/no-conditional-expect
       expect(e).toEqual(expect.any(TypeError));
     }
   });

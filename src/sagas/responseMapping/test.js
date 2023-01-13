@@ -1,21 +1,21 @@
-/* global describe, test,jest */
 import { expectSaga } from 'redux-saga-test-plan';
 import { call, select } from 'redux-saga/effects';
-import shortid from 'shortid';
+import * as matchers from 'redux-saga-test-plan/matchers';
+import * as GenerateMediumId from '../../utils/string';
 import { responseMappingInit, responseMappingSave } from '.';
 import { SCOPES } from '../resourceForm';
 import actions from '../../actions';
 import { selectors } from '../../reducers';
 import responseMappingUtil from '../../utils/responseMapping';
 import { commitStagedChanges } from '../resources';
-import { requestSampleData } from '../sampleData/flows';
+import { requestSampleData, _getContextSampleData } from '../sampleData/flows';
 
 describe('responseMappingInit saga', () => {
-  test('should dispatch initFailed in case there is no flow page processor ', () => {
+  test('should dispatch initFailed in case there is no flow page processor', () => {
     const flowId = 'f1';
     const resourceId = 'r1';
 
-    return expectSaga(responseMappingInit, { flowId, resourceId })
+    expectSaga(responseMappingInit, { flowId, resourceId })
       .provide([
         [select(selectors.resourceData, 'flows', flowId), {
           merged: {
@@ -36,7 +36,7 @@ describe('responseMappingInit saga', () => {
       },
     };
 
-    return expectSaga(responseMappingInit, { flowId, resourceId })
+    expectSaga(responseMappingInit, { flowId, resourceId })
       .provide([
         [select(selectors.resourceData, 'flows', flowId), flowResource],
       ]).put(actions.responseMapping.initFailed())
@@ -56,7 +56,7 @@ describe('responseMappingInit saga', () => {
       },
     };
 
-    return expectSaga(responseMappingInit, { flowId, resourceId, resourceType })
+    expectSaga(responseMappingInit, { flowId, resourceId, resourceType })
       .provide([
         [select(selectors.resourceData, 'flows', flowId), flowResource],
         [select(selectors.getSampleDataContext, {
@@ -87,7 +87,7 @@ describe('responseMappingInit saga', () => {
       },
     };
 
-    return expectSaga(responseMappingInit, { flowId, resourceId, resourceType })
+    expectSaga(responseMappingInit, { flowId, resourceId, resourceType })
       .provide([
         [select(selectors.resourceData, 'flows', flowId), flowResource],
         [select(selectors.getSampleDataContext, {
@@ -118,7 +118,7 @@ describe('responseMappingInit saga', () => {
       },
     };
 
-    return expectSaga(responseMappingInit, { flowId, resourceId, resourceType })
+    expectSaga(responseMappingInit, { flowId, resourceId, resourceType })
       .provide([
         [select(selectors.resourceData, 'flows', flowId), flowResource],
         [select(selectors.getSampleDataContext, {
@@ -149,7 +149,7 @@ describe('responseMappingInit saga', () => {
       },
     };
 
-    return expectSaga(responseMappingInit, { flowId, resourceId, resourceType })
+    expectSaga(responseMappingInit, { flowId, resourceId, resourceType })
       .provide([
         [select(selectors.resourceData, 'flows', flowId), flowResource],
         [select(selectors.getSampleDataContext, {
@@ -202,11 +202,11 @@ describe('responseMappingInit saga', () => {
       },
     };
 
-    const mock = jest.spyOn(shortid, 'generate');  // spy on otherFn
+    const mock = jest.spyOn(GenerateMediumId, 'generateId');  // spy on otherFn
 
     mock.mockReturnValue('mock_key');
 
-    const expectedSaga = expectSaga(responseMappingInit, { flowId, resourceId, resourceType })
+    expectSaga(responseMappingInit, { flowId, resourceId, resourceType })
       .provide([
         [select(selectors.resourceData, 'flows', flowId), flowResource],
         [select(selectors.getSampleDataContext, {
@@ -229,8 +229,6 @@ describe('responseMappingInit saga', () => {
       .run();
 
     mock.mockRestore();
-
-    return expectedSaga;
   });
 
   test('should complete init and trigger initComplete successfully in case of export pageProcessor', () => {
@@ -268,13 +266,14 @@ describe('responseMappingInit saga', () => {
       },
     };
 
-    const mock = jest.spyOn(shortid, 'generate');  // spy on otherFn
+    const mock = jest.spyOn(GenerateMediumId, 'generateId');  // spy on otherFn
 
     mock.mockReturnValue('mock_key');
 
-    const expectedSaga = expectSaga(responseMappingInit, { flowId, resourceId, resourceType })
+    expectSaga(responseMappingInit, { flowId, resourceId, resourceType })
       .provide([
         [select(selectors.resourceData, 'flows', flowId), flowResource],
+        [matchers.call.fn(_getContextSampleData), {}],
       ])
       .put(
         actions.responseMapping.initComplete({
@@ -289,8 +288,6 @@ describe('responseMappingInit saga', () => {
       .run();
 
     mock.mockRestore();
-
-    return expectedSaga;
   });
 });
 
@@ -304,7 +301,7 @@ describe('responseMappingSave saga', () => {
       },
     };
 
-    return expectSaga(responseMappingSave)
+    expectSaga(responseMappingSave)
       .provide([
         [select(selectors.responseMapping), {flowId: 'f1', mappings: [], resourceId: 'r1'}],
         [select(selectors.resourceData, 'flows', 'f1'), flowResource],
@@ -328,7 +325,7 @@ describe('responseMappingSave saga', () => {
     };
     const mappingsWithListsAndFields = responseMappingUtil.generateMappingFieldsAndList(listMapping);
 
-    return expectSaga(responseMappingSave)
+    expectSaga(responseMappingSave)
       .provide([
         [select(selectors.responseMapping), {flowId: 'f1', mappings: listMapping, resourceId: 'r1'}],
         [select(selectors.resourceData, 'flows', 'f1'), flowResource],
@@ -356,7 +353,7 @@ describe('responseMappingSave saga', () => {
       },
     };
 
-    return expectSaga(responseMappingSave)
+    expectSaga(responseMappingSave)
       .provide([
         [select(selectors.responseMapping), {flowId: 'f1', mappings: listMapping, resourceId: 'r1'}],
         [select(selectors.resourceData, 'flows', 'f1'), flowResource],
@@ -385,7 +382,7 @@ describe('responseMappingSave saga', () => {
       },
     };
 
-    return expectSaga(responseMappingSave)
+    expectSaga(responseMappingSave)
       .provide([
         [select(selectors.responseMapping), {flowId: 'f1', mappings: listMapping, resourceId: 'r1'}],
         [select(selectors.resourceData, 'flows', 'f1'), flowResource],

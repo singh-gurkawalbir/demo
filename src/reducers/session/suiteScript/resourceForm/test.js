@@ -1,4 +1,4 @@
-/* global describe, test, expect */
+
 import reducer, { selectors } from '.';
 import actions from '../../../../actions';
 import {FORM_SAVE_STATUS} from '../../../../constants';
@@ -75,7 +75,7 @@ describe('session.suiteScript.resourceForm form reducers', () => {
       expect(state).toEqual(expected);
     });
   });
-  describe('RESOURCE_FORM.INIT action', () => {
+  describe('RESOURCE_FORM.INIT action duplicate', () => {
     test('should store the failed form data', () => {
       let state = reducer(undefined, actions.suiteScript.resourceForm.init(
         ssLinkedConnectionId,
@@ -223,7 +223,7 @@ describe('session.suiteScript.resourceForm form reducers', () => {
   });
   describe('suiteScriptResourceFormSaveProcessTerminated selector', () => {
     test('should return false when state is undefined', () => {
-      expect(selectors.suiteScriptResourceFormSaveProcessTerminated(undefined, {})).toEqual(false);
+      expect(selectors.suiteScriptResourceFormSaveProcessTerminated(undefined, {})).toBe(false);
     });
     test('should return valid form state', () => {
       const stateAborted = reducer(undefined, actions.suiteScript.resourceForm.submitAborted(ssLinkedConnectionId,
@@ -243,10 +243,10 @@ describe('session.suiteScript.resourceForm form reducers', () => {
         resourceType,
         resourceId));
 
-      expect(selectors.suiteScriptResourceFormSaveProcessTerminated(stateAborted, {ssLinkedConnectionId, resourceType, resourceId})).toEqual(true);
-      expect(selectors.suiteScriptResourceFormSaveProcessTerminated(stateFailed, {ssLinkedConnectionId, resourceType, resourceId})).toEqual(true);
-      expect(selectors.suiteScriptResourceFormSaveProcessTerminated(stateCompleted, {ssLinkedConnectionId, resourceType, resourceId})).toEqual(true);
-      expect(selectors.suiteScriptResourceFormSaveProcessTerminated(stateCleared, {ssLinkedConnectionId, resourceType, resourceId})).toEqual(false);
+      expect(selectors.suiteScriptResourceFormSaveProcessTerminated(stateAborted, {ssLinkedConnectionId, resourceType, resourceId})).toBe(true);
+      expect(selectors.suiteScriptResourceFormSaveProcessTerminated(stateFailed, {ssLinkedConnectionId, resourceType, resourceId})).toBe(true);
+      expect(selectors.suiteScriptResourceFormSaveProcessTerminated(stateCompleted, {ssLinkedConnectionId, resourceType, resourceId})).toBe(true);
+      expect(selectors.suiteScriptResourceFormSaveProcessTerminated(stateCleared, {ssLinkedConnectionId, resourceType, resourceId})).toBe(false);
     });
   });
 });

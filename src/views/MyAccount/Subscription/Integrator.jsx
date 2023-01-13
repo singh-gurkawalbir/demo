@@ -14,7 +14,7 @@ import useConfirmDialog from '../../../components/ConfirmDialog';
 
 const useStyles = makeStyles(theme => ({
   root: {
-    backgroundColor: theme.palette.common.white,
+    backgroundColor: theme.palette.background.paper,
     border: '1px solid',
     borderColor: theme.palette.secondary.lightest,
     overflowX: 'auto',
@@ -319,7 +319,7 @@ export default function Subscription() {
                       {licenseActionDetails.subscriptionActions.actions.indexOf(
                         'start-free-trial'
                       ) > -1 && (
-                        <FilledButton onClick={onStartFreeTrialClick} >
+                        <FilledButton onClick={onStartFreeTrialClick} id="unlimited-flows-button">
                           Get unlimited flows
                         </FilledButton>
                       )}
@@ -329,6 +329,7 @@ export default function Subscription() {
                         <FilledButton
                           onClick={onRequestSubscriptionClick}
                           disabled={upgradeRequested}
+                          id="request-subscription-button"
                          >
                           Request subscription
                         </FilledButton>
@@ -339,6 +340,7 @@ export default function Subscription() {
                         <FilledButton
                           onClick={onRequestUpgradeClick}
                           disabled={upgradeRequested}
+                          id="request-upgrade-buttton"
                          >
                           Request upgrade
                         </FilledButton>

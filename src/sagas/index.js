@@ -27,9 +27,11 @@ import { logoutParams } from './api/apiPaths';
 import { agentSagas } from './agent';
 import { templateSagas } from './template';
 import { cloneSagas } from './clone';
+import { concurSagas } from './concur';
 import { uploadFileSagas } from './uploadFile';
 import { stackSagas } from './stack';
 import resourceFormSampleDataSagas from './sampleData/resourceForm';
+import mockInput from './sampleData/mockInput';
 import flowDataSagas from './sampleData/flows';
 import rawDataUpdateSagas from './sampleData/rawDataUpdates';
 import importsSampleDataSagas from './sampleData/imports';
@@ -189,6 +191,7 @@ export function* allSagas() {
     ...connectorSagas,
     ...templateSagas,
     ...cloneSagas,
+    ...concurSagas,
     ...editor,
     ...userSagas,
     ...authenticationSagas,
@@ -201,6 +204,7 @@ export function* allSagas() {
     ...uploadFileSagas,
     ...stackSagas,
     ...resourceFormSampleDataSagas,
+    ...mockInput,
     ...flowDataSagas,
     ...rawDataUpdateSagas,
     ...importsSampleDataSagas,
@@ -274,15 +278,11 @@ export default function* rootSaga() {
     // so when we perform initialization the app knows which account to show
     // TODO: we should wait for update preferences to complete...inorder to prevent a race
     // with initSession to get preferences.
-    yield put(
-      actions.user.preferences.update({
-        defaultAShareId: switchAcc.accountToSwitchTo,
-        environment: 'production',
-      })
-    );
-    yield put(actions.auth.clearStore());
+    yield put(actions.auth.clearStore({
+      authenticated: true,
+    }));
 
-    yield put(actions.auth.initSession());
+    yield put(actions.auth.initSession({ switchAcc: true }));
   }
 }
 

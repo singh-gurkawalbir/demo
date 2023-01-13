@@ -1,4 +1,4 @@
-/* global describe, test, expect ,jest */
+
 import React from 'react';
 import { screen, render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -7,7 +7,7 @@ import SelectResource from './SelectResource';
 const flowResources = [{_id: 's1', name: 'name'}, {_id: 's2'}, {_id: 's3'}, {_id: 's4'}, {_id: 's5'}, {_id: 's6'}, {_id: 's7'}, {_id: 's8'}, {_id: 's9'}];
 const selectedResources = ['s1', 's2'];
 
-describe('SelectResource UI Tests', () => {
+describe('selectResource UI Tests', () => {
   test('should select one more flow through checkbox', () => {
     const onSave = jest.fn();
 

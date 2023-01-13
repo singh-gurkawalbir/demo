@@ -40,11 +40,11 @@ export default {
 
         return <SelectError error={error} {...tableContext} />;
       },
+      width: '32px',
     },
     {
       key: 'message',
       heading: 'Message',
-      width: '40%',
       Value: ({rowData: r}) => {
         const {flowId, resourceId} = useGetTableContext();
 
@@ -64,7 +64,6 @@ export default {
       key: 'code',
       heading: 'Code',
       Value: ({rowData: r}) => <CodeCell message={r.code} />,
-      width: '15%',
     },
     {
       key: 'selectSource',
@@ -74,7 +73,6 @@ export default {
         return <SelectSource {...tableContext} />;
       },
       Value: ({rowData: r}) => <TextOverflowCell message={r.source} />,
-      width: '15%',
     },
     {
       key: 'selectClassification',
@@ -85,7 +83,6 @@ export default {
       },
       isLoggable: true,
       Value: ({rowData: r}) => <Classification error={r} />,
-      width: '10%',
     },
     {
       key: 'selectDate',
@@ -95,7 +92,6 @@ export default {
 
         return <SelectDate {...tableContext} />;
       },
-      width: '15%',
       Value: ({rowData: r}) => <CeligoTimeAgo date={r.occurredAt} />,
     },
   ],

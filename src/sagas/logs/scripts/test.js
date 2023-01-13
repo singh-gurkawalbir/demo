@@ -1,4 +1,4 @@
-/* global describe, test, jest */
+
 import { expectSaga } from 'redux-saga-test-plan';
 import { call, select, take } from 'redux-saga/effects';
 import moment from 'moment';
@@ -15,6 +15,8 @@ import {
   requestScriptLogs,
   startDebug,
   requestLogsWithCancel,
+  requestAllLogs,
+  purgeLogs,
 } from '.';
 import { apiCallWithRetry } from '../..';
 import { APIException } from '../../api/requestInterceptors/utils';
@@ -34,7 +36,7 @@ describe('Scripts logs sagas', () => {
     test('should dispatch setDependency action after fetching depedencies', () => {
       const scriptId = 's1';
 
-      return expectSaga(getScriptDependencies, { scriptId })
+      expectSaga(getScriptDependencies, { scriptId })
         .provide([
           [call(requestReferences, {
             resourceType: 'scripts',
@@ -72,7 +74,7 @@ describe('Scripts logs sagas', () => {
       const flowId = 'f1';
       const scriptId = 's1';
 
-      return expectSaga(getScriptDependencies, { flowId, scriptId })
+      expectSaga(getScriptDependencies, { flowId, scriptId })
         .provide([
           [call(requestReferences, {
             resourceType: 'scripts',
@@ -223,7 +225,7 @@ describe('Scripts logs sagas', () => {
       const scriptId = 's1';
       const flowId = 'f1';
 
-      return expectSaga(requestScriptLogs, { scriptId, flowId, fetchNextPage: true })
+      expectSaga(requestScriptLogs, { scriptId, flowId, fetchNextPage: true })
         .provide([
           [select(selectors.scriptLog, {
             flowId,
@@ -248,7 +250,7 @@ describe('Scripts logs sagas', () => {
       const scriptId = 's1';
       const flowId = 'f1';
 
-      return expectSaga(requestScriptLogs, { scriptId, flowId, isInit: true })
+      expectSaga(requestScriptLogs, { scriptId, flowId, isInit: true })
         .put(actions.logs.scripts.getDependency({
           scriptId,
           flowId,
@@ -259,7 +261,7 @@ describe('Scripts logs sagas', () => {
       const scriptId = 's1';
       const flowId = 'f1';
 
-      return expectSaga(requestScriptLogs, { scriptId, flowId, fetchNextPage: true })
+      expectSaga(requestScriptLogs, { scriptId, flowId, fetchNextPage: true })
         .provide([
           [select(selectors.scriptLog, {
             flowId,
@@ -284,6 +286,7 @@ describe('Scripts logs sagas', () => {
         .race({
           callAPI: call(requestScriptLogs, params),
           cancelCallAPI: take(action =>
+            // eslint-disable-next-line jest/no-conditional-in-test
             action.type === actionTypes.LOGS.SCRIPTS.CLEAR ||
           action.type === actionTypes.LOGS.SCRIPTS.PAUSE_FETCH
           ),
@@ -334,6 +337,92 @@ describe('Scripts logs sagas', () => {
         ))
         .run();
       mock.mockRestore();
+    });
+  });
+  describe('requestAllLogs saga', () => {
+    test('should dispatch receivedAllLogs action with isPurgeAvailable as true if api call is successful and response has logs', () => {
+      const scriptId = 's1';
+      const flowId = 'f1';
+      const path = `/scripts/${scriptId}/logs`;
+      const opts = { method: 'GET' };
+      const response = {
+        logs: [
+          {message: 'm1', logLevel: 'WARN' },
+          {message: 'm2', logLevel: 'DEBUG' },
+          {message: 'm3', logLevel: 'DEBUG' },
+        ],
+      };
+
+      expectSaga(requestAllLogs, {scriptId, flowId})
+        .provide([
+          [matchers.call.fn(apiCallWithRetry), response],
+        ])
+        .call(apiCallWithRetry, { path, opts })
+        .put(actions.logs.scripts.receivedAllLogs({scriptId, flowId, isPurgeAvailable: true}))
+        .run();
+    });
+    test('should dispatch receivedAllLogs action with isPurgeAvailable as false if api call is successful and response has empty logs', () => {
+      const scriptId = 's1';
+      const flowId = 'f1';
+      const path = `/scripts/${scriptId}/logs`;
+      const opts = { method: 'GET' };
+      const response = {
+        logs: [],
+      };
+
+      expectSaga(requestAllLogs, {scriptId, flowId})
+        .provide([
+          [matchers.call.fn(apiCallWithRetry), response],
+        ])
+        .call(apiCallWithRetry, { path, opts })
+        .put(actions.logs.scripts.receivedAllLogs({scriptId, flowId, isPurgeAvailable: false}))
+        .run();
+    });
+    test('should do nothing if api call fails', () => {
+      const scriptId = 's1';
+      const flowId = 'f1';
+      const path = `/scripts/${scriptId}/logs`;
+      const opts = { method: 'GET' };
+      const error = new Error();
+
+      expectSaga(requestAllLogs, {scriptId, flowId})
+        .provide([
+          [matchers.call.fn(apiCallWithRetry), throwError(error)],
+        ])
+        .call(apiCallWithRetry, { path, opts })
+        .not.put(actions.logs.scripts.receivedAllLogs({scriptId, flowId, isPurgeAvailable: true}))
+        .run();
+    });
+  });
+  describe('purgeLogs saga', () => {
+    test('should dispatch purge success action if api call is successful', () => {
+      const scriptId = 's1';
+      const flowId = 'f1';
+      const path = `/scripts/${scriptId}/logs`;
+      const opts = { method: 'DELETE' };
+
+      expectSaga(purgeLogs, {scriptId, flowId})
+        .provide([
+          [matchers.call.fn(apiCallWithRetry)],
+        ])
+        .call(apiCallWithRetry, { path, opts })
+        .put(actions.logs.scripts.purge.success({scriptId, flowId}))
+        .run();
+    });
+    test('should do nothing if api call fails', () => {
+      const scriptId = 's1';
+      const flowId = 'f1';
+      const path = `/scripts/${scriptId}/logs`;
+      const opts = { method: 'DELETE' };
+      const error = new Error();
+
+      expectSaga(purgeLogs, {scriptId, flowId})
+        .provide([
+          [matchers.call.fn(apiCallWithRetry), throwError(error)],
+        ])
+        .call(apiCallWithRetry, { path, opts })
+        .not.put(actions.logs.scripts.purge.success({scriptId, flowId}))
+        .run();
     });
   });
 });

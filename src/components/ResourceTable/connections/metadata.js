@@ -1,5 +1,6 @@
 import React from 'react';
 import moment from 'moment';
+import { useSelector } from 'react-redux';
 import ConnectionResourceDrawerLink from '../../ResourceDrawerLink/connection';
 import CeligoTimeAgo from '../../CeligoTimeAgo';
 import ConnectorName from '../commonCells/ConnectorName';
@@ -18,6 +19,7 @@ import actions from '../../../actions';
 import ReplaceConnection from './actions/ReplaceConnection';
 import { useGetTableContext } from '../../CeligoTable/TableContext';
 import OnlineStatus from '../../OnlineStatus';
+import { selectors } from '../../../reducers';
 
 export default {
   useColumns: () => {
@@ -108,7 +110,9 @@ export default {
       actions.push(RefreshMetadata);
     }
 
-    if (r.type === 'http' && !!r.http?.auth?.token?.revoke?.uri) {
+    const iClientResource = useSelector(state => selectors.resource(state, 'iClients', r.http?._iClientId));
+
+    if (r.type === 'http' && (!!r.http?.auth?.token?.revoke?.uri || !!iClientResource?.oauth2?.revoke?.uri)) {
       actions.push(Revoke);
     }
     if (r.type === 'ftp' && !r._connectorId && tableContext?.showTradingPartner) {

@@ -1,4 +1,6 @@
-/* global describe, test, expect, beforeEach, jest */
+/* eslint-disable jest/no-conditional-expect */
+/* eslint-disable jest/no-conditional-in-test */
+
 import { call, put, select, take, race, fork, cancel } from 'redux-saga/effects';
 import * as matchers from 'redux-saga-test-plan/matchers';
 import { expectSaga } from 'redux-saga-test-plan';
@@ -38,6 +40,7 @@ import {
   commitStagedChangesWrapper,
   startPollingForQueuedJobs,
   startPollingForConnectionStatus,
+  requestAuditLogs,
 } from '.';
 import { apiCallWithRetry, apiCallWithPaging } from '..';
 import { selectors } from '../../reducers';
@@ -57,6 +60,7 @@ import { APIException } from '../api/requestInterceptors/utils';
 import getRequestOptions from '../../utils/requestOptions';
 import openExternalUrl from '../../utils/window';
 import { pingConnectionWithId } from '../resourceForm/connections';
+import { AUDIT_LOG_FILTER_KEY, getAuditLogFilterKey } from '../../constants/auditLog';
 
 const apiError = throwError(new APIException({
   status: 401,
@@ -162,7 +166,7 @@ describe('resourceConflictDetermination saga', () => {
     });
   });
 
-  test('should not report a conflict when the resourceConflictResolution determines there isn`t any conflict ', () => {
+  test('should not report a conflict when the resourceConflictResolution determines there isn`t any conflict', () => {
     expect(saga.next().value).toEqual(call(apiCallWithRetry, { path }));
     expect(saga.next(someOrigin).value).toEqual(
       put(actions.resource.received(resourceType, someOrigin))
@@ -339,11 +343,11 @@ describe('commitStagedChanges saga', () => {
 
     const effect = saga.next({});
 
-    expect(effect.done).toEqual(true);
+    expect(effect.done).toBe(true);
   });
 
   describe('update existing resource', () => {
-    test('the commitStagedChanges saga should exit when the resourceConflictDetermination reports an error or a conflict ', () => {
+    test('the commitStagedChanges saga should exit when the resourceConflictDetermination reports an error or a conflict', () => {
       const saga = commitStagedChanges({ resourceType, id });
       const selectEffect = saga.next().value;
 
@@ -513,7 +517,7 @@ describe('commitStagedChanges saga', () => {
       const path = `/connections/${id}`;
       const master = { _id: id, lastModified: 100, netsuite: { authType: 'token-auto' } };
 
-      return expectSaga(commitStagedChanges, {resourceType: resourceType2, id, scope, options: {refetchResources: true}})
+      expectSaga(commitStagedChanges, {resourceType: resourceType2, id, scope, options: {refetchResources: true}})
         .provide([
           [select(selectors.userPreferences), { environment: 'sandbox' }],
           [select(selectors.resourceData, resourceType2, id, scope), { patch: somePatch, master, merged }],
@@ -612,7 +616,7 @@ describe('commitStagedChanges saga', () => {
         autoResolveMatchingTraceKeys: true,
       };
 
-      return expectSaga(commitStagedChanges, {resourceType, id, scope, options: {action: 'flowEnableDisable'}})
+      expectSaga(commitStagedChanges, {resourceType, id, scope, options: {action: 'flowEnableDisable'}})
         .provide([
           [select(selectors.userPreferences), { environment: 'production' }],
           [select(selectors.resourceData, resourceType, id, scope), { patch, master, merged }],
@@ -691,7 +695,7 @@ describe('commitStagedChanges saga', () => {
         message: 'something',
       };
 
-      return expectSaga(commitStagedChanges, {resourceType, id, scope, options: {action: 'flowEnableDisable'}})
+      expectSaga(commitStagedChanges, {resourceType, id, scope, options: {action: 'flowEnableDisable'}})
         .provide([
           [select(selectors.userPreferences), { environment: 'production' }],
           [select(selectors.resourceData, resourceType, id, scope), { patch, master, merged }],
@@ -761,7 +765,7 @@ describe('commitStagedChanges saga', () => {
         _id: 's1',
       };
 
-      return expectSaga(commitStagedChanges, {resourceType, id, scope, options: {}})
+      expectSaga(commitStagedChanges, {resourceType, id, scope, options: {}})
         .provide([
           [select(selectors.userPreferences), { environment: 'production' }],
           [select(selectors.resourceData, resourceType, id, scope), { patch, master, merged }],
@@ -894,7 +898,7 @@ describe('commitStagedChanges saga', () => {
         },
       };
 
-      return expectSaga(commitStagedChanges, {resourceType: resourceType2, id: tempId, scope, options: {refetchResources: true}})
+      expectSaga(commitStagedChanges, {resourceType: resourceType2, id: tempId, scope, options: {refetchResources: true}})
         .provide([
           [select(selectors.userPreferences), { environment: 'production' }],
           [select(selectors.resourceData, resourceType2, tempId, scope), { patch: somePatch, master, merged }],
@@ -970,7 +974,7 @@ describe('commitStagedChanges saga', () => {
         },
       };
 
-      return expectSaga(commitStagedChanges, {resourceType, id: tempId, scope, options: {refetchResources: true}})
+      expectSaga(commitStagedChanges, {resourceType, id: tempId, scope, options: {refetchResources: true}})
         .provide([
           [select(selectors.userPreferences), { environment: 'production' }],
           [select(selectors.resourceData, resourceType, tempId, scope), { patch: somePatch, master, merged }],
@@ -1057,7 +1061,7 @@ describe('commitStagedChanges saga', () => {
         adaptorType: 'RESTExport',
       };
 
-      return expectSaga(commitStagedChanges, {resourceType, id: tempId, scope, options: {}})
+      expectSaga(commitStagedChanges, {resourceType, id: tempId, scope, options: {}})
         .provide([
           [select(selectors.userPreferences), {}],
           [select(selectors.resourceData, resourceType, tempId, scope), { patch: somePatch, master, merged }],
@@ -1154,7 +1158,7 @@ describe('commitStagedChanges saga', () => {
         autoResolveMatchingTraceKeys: true,
       };
 
-      return expectSaga(commitStagedChanges, {resourceType, id: tempId, scope, options: {}})
+      expectSaga(commitStagedChanges, {resourceType, id: tempId, scope, options: {}})
         .provide([
           [select(selectors.userPreferences), {}],
           [select(selectors.resourceData, resourceType, tempId, scope), { patch: somePatch, master, merged }],
@@ -1215,7 +1219,7 @@ describe('commitStagedChangesWrapper saga', () => {
     const asyncKey = 'k1';
     const response = { done: true, value: undefined };
 
-    return expectSaga(commitStagedChangesWrapper, { asyncKey, ...props})
+    expectSaga(commitStagedChangesWrapper, { asyncKey, ...props})
       .provide([
         [call(commitStagedChanges, props), response],
       ])
@@ -1231,7 +1235,7 @@ describe('commitStagedChangesWrapper saga', () => {
       message: 'something',
     } };
 
-    return expectSaga(commitStagedChangesWrapper, { asyncKey, ...props})
+    expectSaga(commitStagedChangesWrapper, { asyncKey, ...props})
       .provide([
         [call(commitStagedChanges, props), response],
       ])
@@ -1289,7 +1293,7 @@ describe('normalizeFlow saga', () => {
       _exportId: 'e1',
     };
 
-    return expectSaga(normalizeFlow, flow)
+    expectSaga(normalizeFlow, flow)
       .provide([
         [call(isDataLoaderFlow, flow), false],
       ])
@@ -1303,7 +1307,7 @@ describe('normalizeFlow saga', () => {
       _importId: 'i1',
     };
 
-    return expectSaga(normalizeFlow, flow)
+    expectSaga(normalizeFlow, flow)
       .provide([
         [call(isDataLoaderFlow, flow), true],
       ])
@@ -1319,7 +1323,7 @@ describe('normalizeFlow saga', () => {
       _id: 'f1',
     };
 
-    return expectSaga(normalizeFlow, flow)
+    expectSaga(normalizeFlow, flow)
       .provide([
         [call(isDataLoaderFlow, flow), true],
       ])
@@ -1494,7 +1498,7 @@ availableResources.forEach(type => {
       );
       const final = saga.next(resourceReferences);
 
-      expect(final.value).toEqual(undefined);
+      expect(final.value).toBeUndefined();
 
       expect(final.done).toBe(true);
     });
@@ -1570,7 +1574,7 @@ availableResources.forEach(type => {
         exports: [{ name: 'export1', id: 1 }, { name: 'export2', id: 2 }],
       };
 
-      return expectSaga(requestReferences, {resourceType: type, id, skipSave: true, options})
+      expectSaga(requestReferences, {resourceType: type, id, skipSave: true, options})
         .provide([
           [call(apiCallWithRetry, args), resourceReferences],
         ])
@@ -1615,7 +1619,7 @@ describe('getResourceCollection saga', () => {
     const path = '/templates/published';
     const collection = [{ id: 1 }, { id: 2 }];
 
-    return expectSaga(getResourceCollection, {resourceType, refresh})
+    expectSaga(getResourceCollection, {resourceType, refresh})
       .provide([
         [call(apiCallWithPaging, {
           path,
@@ -1641,7 +1645,7 @@ describe('getResourceCollection saga', () => {
       message: 'something',
     };
 
-    return expectSaga(getResourceCollection, {resourceType, refresh})
+    expectSaga(getResourceCollection, {resourceType, refresh})
       .provide([
         [call(apiCallWithPaging, {
           path,
@@ -1664,7 +1668,7 @@ describe('getResourceCollection saga', () => {
     const collection = [{ id: 1 }, { id: 2 }];
     const collection2 = [{id: 3}];
 
-    return expectSaga(getResourceCollection, {resourceType, refresh})
+    expectSaga(getResourceCollection, {resourceType, refresh})
       .provide([
         [call(apiCallWithPaging, {
           path,
@@ -1695,7 +1699,7 @@ describe('getResourceCollection saga', () => {
     const path = '/transfers';
     const nonArrayCollection = {id: 3};
 
-    return expectSaga(getResourceCollection, {resourceType, refresh})
+    expectSaga(getResourceCollection, {resourceType, refresh})
       .provide([
         [call(apiCallWithPaging, {
           path,
@@ -1718,26 +1722,6 @@ describe('getResourceCollection saga', () => {
       })
       .put(actions.resource.receivedCollection(resourceType, undefined))
       .returns(undefined)
-      .run();
-  });
-  test('should dispatch receivedNextPagePath for audit logs resource type if nextLinkPath is present', () => {
-    const resourceType = 'audit';
-    const path = '/audit';
-    const collection = [{ id: 1 }, { id: 2 }];
-    const nextLinkPath = '/audit?123';
-
-    return expectSaga(getResourceCollection, {resourceType})
-      .provide([
-        [call(apiCallWithPaging, {
-          path,
-          hidden: undefined,
-          refresh: undefined,
-        }), {data: collection, nextLinkPath}],
-      ])
-      .call(apiCallWithPaging, {path, hidden: undefined, refresh: undefined})
-      .put(actions.auditLogs.receivedNextPagePath(nextLinkPath))
-      .put(actions.resource.receivedCollection(resourceType, collection))
-      .returns(collection)
       .run();
   });
 });
@@ -1763,7 +1747,7 @@ describe('updateIntegrationSettings saga', () => {
       },
     };
 
-    return expectSaga(updateIntegrationSettings, {
+    expectSaga(updateIntegrationSettings, {
       integrationId,
       values,
       flowId,
@@ -1872,7 +1856,7 @@ describe('updateIntegrationSettings saga', () => {
       },
     ];
 
-    return expectSaga(updateIntegrationSettings, {
+    expectSaga(updateIntegrationSettings, {
       integrationId,
       values,
       flowId,
@@ -1943,16 +1927,14 @@ describe('updateIntegrationSettings saga', () => {
 
 describe('patchResource saga', () => {
   test('should do nothing and returns undefined if patchSet is empty or if new resource', () => {
-    const noPatch = expectSaga(patchResource, { id: '123'})
+    expectSaga(patchResource, { id: '123'})
       .not.call.fn(apiCallWithRetry)
       .returns(undefined)
       .run();
-    const newId = expectSaga(patchResource, { id: 'new-123', patchSet: {}})
+    expectSaga(patchResource, { id: 'new-123', patchSet: {}})
       .not.call.fn(apiCallWithRetry)
       .returns(undefined)
       .run();
-
-    return noPatch && newId;
   });
   test('should make api call and dispatch resource received and asynctask success action if doNotRefetch is false', () => expectSaga(patchResource, { resourceType: 'exports', id: '123', patchSet: {}, options: {doNotRefetch: false} })
     .provide([
@@ -2046,7 +2028,7 @@ describe('validateResource saga', () => {
   const resourceId = '123';
 
   test('should return undefined and not call getResource if type or id is undefined or resource is not empty', () => {
-    const emptyResource = expectSaga(validateResource, { resourceType, resourceId })
+    expectSaga(validateResource, { resourceType, resourceId })
       .provide([
         [select(selectors.resource, resourceType, resourceId), {_id: '123'}],
       ])
@@ -2054,7 +2036,7 @@ describe('validateResource saga', () => {
       .returns(undefined)
       .run();
 
-    const emptyType = expectSaga(validateResource, { resourceId })
+    expectSaga(validateResource, { resourceId })
       .provide([
         [select(selectors.resource, resourceType, resourceId), {}],
       ])
@@ -2062,15 +2044,13 @@ describe('validateResource saga', () => {
       .returns(undefined)
       .run();
 
-    const emptyId = expectSaga(validateResource, { resourceType })
+    expectSaga(validateResource, { resourceType })
       .provide([
         [select(selectors.resource, resourceType, resourceId), {}],
       ])
       .not.call.fn(getResource)
       .returns(undefined)
       .run();
-
-    return emptyResource && emptyType && emptyId;
   });
   test('should call getResource to validate', () => expectSaga(validateResource, { resourceType, resourceId })
     .provide([
@@ -2119,7 +2099,7 @@ describe('updateTileNotifications saga', () => {
       },
     ];
 
-    return expectSaga(updateTileNotifications, { resourcesToUpdate, integrationId, childId, userEmail, asyncKey })
+    expectSaga(updateTileNotifications, { resourcesToUpdate, integrationId, childId, userEmail, asyncKey })
       .provide([
         [select(selectors.integrationNotificationResources, integrationId, { childId, userEmail }), selectorResponse],
         [matchers.call.fn(apiCallWithRetry), {success: true}],
@@ -2143,7 +2123,7 @@ describe('updateTileNotifications saga', () => {
       connections: [{_id: 'conn1'}],
     };
 
-    return expectSaga(updateTileNotifications, { resourcesToUpdate, integrationId, childId, userEmail, asyncKey })
+    expectSaga(updateTileNotifications, { resourcesToUpdate, integrationId, childId, userEmail, asyncKey })
       .provide([
         [select(selectors.integrationNotificationResources, integrationId, { childId, userEmail }), selectorResponse],
         [matchers.call.fn(apiCallWithRetry), apiError],
@@ -2200,7 +2180,7 @@ describe('updateFlowNotification saga', () => {
       },
     ];
 
-    return expectSaga(updateFlowNotification, { flowId })
+    expectSaga(updateFlowNotification, { flowId })
       .provide([
         [select(selectors.resource, 'flows', flowId), flow],
         [select(selectors.integrationNotificationResources, 'int-123'), selectorResponse],
@@ -2229,7 +2209,7 @@ describe('updateFlowNotification saga', () => {
       },
     ];
 
-    return expectSaga(updateFlowNotification, { flowId, isSubscribed: false })
+    expectSaga(updateFlowNotification, { flowId, isSubscribed: false })
       .provide([
         [select(selectors.resource, 'flows', flowId), flow],
         [select(selectors.integrationNotificationResources, 'int-123'), {}],
@@ -2383,15 +2363,13 @@ describe('receivedResource saga', () => {
     .put(actions.connection.madeOnline('conn1'))
     .run());
   test('should not dispatch madeOnline action for other types or if connection is offline', () => {
-    const invalidType = expectSaga(receivedResource, { resourceType: 'exports', resource: {_id: 'conn1'} })
+    expectSaga(receivedResource, { resourceType: 'exports', resource: {_id: 'conn1'} })
       .not.put.actionType('CONNECTION_MADE_ONLINE')
       .run();
 
-    const offline = expectSaga(receivedResource, { resourceType: 'connections', resource: {_id: 'conn1', offline: true} })
+    expectSaga(receivedResource, { resourceType: 'connections', resource: {_id: 'conn1', offline: true} })
       .not.put.actionType('CONNECTION_MADE_ONLINE')
       .run();
-
-    return invalidType && offline;
   });
 });
 
@@ -2495,7 +2473,7 @@ describe('startPollingForQueuedJobs saga', () => {
       take(actionTypes.CONNECTION.QUEUED_JOBS_CANCEL_POLL)
     );
     expect(saga.next().value).toEqual(cancel(mockTask));
-    expect(saga.next().done).toEqual(true);
+    expect(saga.next().done).toBe(true);
   });
 });
 
@@ -2513,7 +2491,7 @@ describe('startPollingForConnectionStatus saga', () => {
       take(actionTypes.CONNECTION.STATUS_CANCEL_POLL)
     );
     expect(saga.next().value).toEqual(cancel(mockTask));
-    expect(saga.next().done).toEqual(true);
+    expect(saga.next().done).toBe(true);
   });
 });
 
@@ -2552,13 +2530,14 @@ describe('replaceConnection saga', () => {
   const _resourceId = '123';
   const _connectionId = 'old';
   const _newConnectionId = 'new';
+  const resourceType = 'flows';
 
-  test('should dispatch request collection actions if api call succeeds', () => expectSaga(replaceConnection, { _resourceId, _connectionId, _newConnectionId })
+  test('should dispatch request collection actions if api call succeeds', () => expectSaga(replaceConnection, { _resourceId, _connectionId, _newConnectionId, resourceType })
     .provide([
       [matchers.call.fn(apiCallWithRetry), {}],
     ])
     .call(apiCallWithRetry, {
-      path: `/flows/${_resourceId}/replaceConnection`,
+      path: `/${resourceType}/${_resourceId}/replaceConnection`,
       opts: {
         body: {_connectionId, _newConnectionId},
         method: 'PUT',
@@ -2568,18 +2547,18 @@ describe('replaceConnection saga', () => {
     .put(actions.resource.requestCollection('exports', null, true))
     .put(actions.resource.requestCollection('imports', null, true))
     .run());
-  test('should dispatch api failure action and not request collections if call fails', () => expectSaga(replaceConnection, { _resourceId, _connectionId, _newConnectionId })
+  test('should dispatch api failure action and not request collections if call fails', () => expectSaga(replaceConnection, { _resourceId, _connectionId, _newConnectionId, resourceType })
     .provide([
       [matchers.call.fn(apiCallWithRetry), apiError],
     ])
     .call(apiCallWithRetry, {
-      path: `/flows/${_resourceId}/replaceConnection`,
+      path: `/${resourceType}/${_resourceId}/replaceConnection`,
       opts: {
         body: {_connectionId, _newConnectionId},
         method: 'PUT',
       },
     })
-    .put(actions.api.failure(`/flows/${_resourceId}/replaceConnection`, 'PUT', '{"message":"invalid", "code":"code"}', false))
+    .put(actions.api.failure(`/${resourceType}/${_resourceId}/replaceConnection`, 'PUT', '{"message":"invalid", "code":"code"}', false))
     .not.put(actions.resource.requestCollection('flows', null, true))
     .not.put(actions.resource.requestCollection('exports', null, true))
     .not.put(actions.resource.requestCollection('imports', null, true))
@@ -2736,7 +2715,7 @@ describe('tests for metadata sagas', () => {
         doesNotSupportCreate: false,
       }];
 
-      return expectSaga(getNetsuiteOrSalesforceMeta, {
+      expectSaga(getNetsuiteOrSalesforceMeta, {
         connectionId: connId,
         commMetaPath: metaPath,
       })
@@ -2778,7 +2757,7 @@ describe('tests for metadata sagas', () => {
       const query = 'select id,name from account';
       const newpath = `/${metaPath}?refreshCache=true&q=${encodeURIComponent(query)}`;
 
-      return expectSaga(getNetsuiteOrSalesforceMeta, {
+      expectSaga(getNetsuiteOrSalesforceMeta, {
         connectionId: connId,
         commMetaPath: metaPath,
         addInfo: {
@@ -2822,7 +2801,7 @@ describe('tests for metadata sagas', () => {
         ],
       };
 
-      return expectSaga(getNetsuiteOrSalesforceMeta, {
+      expectSaga(getNetsuiteOrSalesforceMeta, {
         connectionId: connId,
         commMetaPath: metaPath,
       })
@@ -2896,7 +2875,7 @@ describe('tests for metadata sagas', () => {
         },
       };
 
-      return expectSaga(getNetsuiteOrSalesforceBundleInstallStatus, {
+      expectSaga(getNetsuiteOrSalesforceBundleInstallStatus, {
         connectionId: connId,
       })
         .provide([
@@ -2929,7 +2908,7 @@ describe('tests for metadata sagas', () => {
         ],
       };
 
-      return expectSaga(getNetsuiteOrSalesforceBundleInstallStatus, {
+      expectSaga(getNetsuiteOrSalesforceBundleInstallStatus, {
         connectionId: connId,
       })
         .provide([
@@ -3023,7 +3002,7 @@ describe('tests for metadata sagas', () => {
         recordType: 'order',
       };
 
-      return expectSaga(requestAssistantMetadata, {
+      expectSaga(requestAssistantMetadata, {
         adaptorType, assistant,
       })
         .provide([
@@ -3084,7 +3063,7 @@ describe('downloadAuditlogs saga', () => {
     );
     const response = { signedURL: 'http://mockUrl.com/SHA256/2345sdcv' };
 
-    return expectSaga(downloadAuditlogs, { resourceType, resourceId, filters })
+    expectSaga(downloadAuditlogs, { resourceType, resourceId, filters })
       .provide([
         [matchers.call.fn(apiCallWithRetry), response],
       ])
@@ -3107,7 +3086,7 @@ describe('downloadAuditlogs saga', () => {
 
     const response = { signedURL: 'http://mockUrl.com/SHA256/2345sdcv' };
 
-    return expectSaga(downloadAuditlogs, { resourceType, resourceId, filters })
+    expectSaga(downloadAuditlogs, { resourceType, resourceId, filters })
       .provide([
         [matchers.call.fn(apiCallWithRetry), response],
       ])
@@ -3135,7 +3114,7 @@ describe('downloadAuditlogs saga', () => {
 
     const response = { signedURL: 'http://mockUrl.com/SHA256/2345sdcv' };
 
-    return expectSaga(downloadAuditlogs, { resourceType, resourceId, filters })
+    expectSaga(downloadAuditlogs, { resourceType, resourceId, filters })
       .provide([
         [matchers.call.fn(apiCallWithRetry), response],
       ])
@@ -3160,7 +3139,7 @@ describe('downloadAuditlogs saga', () => {
 
     const response = { signedURL: 'http://mockUrl.com/SHA256/2345sdcv' };
 
-    return expectSaga(downloadAuditlogs, { resourceType, resourceId, filters, childId })
+    expectSaga(downloadAuditlogs, { resourceType, resourceId, filters, childId })
       .provide([
         [select(
           selectors.integrationAppFlowIds,
@@ -3192,7 +3171,7 @@ describe('downloadAuditlogs saga', () => {
 
     const response = {};
 
-    return expectSaga(downloadAuditlogs, { resourceType, resourceId, filters, childId })
+    expectSaga(downloadAuditlogs, { resourceType, resourceId, filters, childId })
       .provide([
         [select(
           selectors.integrationAppFlowIds,
@@ -3208,6 +3187,88 @@ describe('downloadAuditlogs saga', () => {
         opts: requestOptions.opts,
       })
       .not.call(openExternalUrl, { url: '' })
+      .run();
+  });
+  test('should dispatch toggleHasMoreDownloads if response contains hasMore', () => {
+    const requestOptions = getRequestOptions(
+      actionTypes.RESOURCE.DOWNLOAD_AUDIT_LOGS,
+      { resourceType, resourceId, filters }
+    );
+    const response = { signedURL: 'http://mockUrl.com/SHA256/2345sdcv', hasMore: true };
+
+    expectSaga(downloadAuditlogs, { resourceType, resourceId, filters })
+      .provide([
+        [matchers.call.fn(apiCallWithRetry), response],
+      ])
+      .call(apiCallWithRetry, {
+        path: requestOptions.path,
+        opts: requestOptions.opts,
+      })
+      .call(openExternalUrl, { url: response.signedURL })
+      .put(actions.auditLogs.toggleHasMoreDownloads(true))
+      .run();
+  });
+});
+describe('requestAuditLogs saga', () => {
+  test('should dispatch receivedNextPagePath for audit logs resource type if nextLinkPath is present', () => {
+    const resourceType = 'audit';
+    const path = '/audit?&resourceType=connection';
+    const collection = [{ id: 1 }, { id: 2 }];
+    const nextLinkPath = '/audit?123';
+
+    expectSaga(requestAuditLogs, {resourceType})
+      .provide([
+        [select(selectors.filter, AUDIT_LOG_FILTER_KEY), {resourceType: 'connection'}],
+        [call(apiCallWithPaging, {
+          path,
+          hidden: undefined,
+        }), {data: collection, nextLinkPath}],
+      ])
+      .call(apiCallWithPaging, {path, hidden: undefined})
+      .put(actions.auditLogs.receivedNextPagePath(nextLinkPath))
+      .put(actions.resource.receivedCollection(resourceType, collection))
+      .returns(collection)
+      .run();
+  });
+  test('should dispatch receivedNextPagePath for integration audit logs resource type if nextLinkPath is present', () => {
+    const resourceType = 'integrations/i1/audit';
+    const auditResource = 'integrations';
+    const resourceId = 'i1';
+    const path = '/integrations/i1/audit?&resourceType=connection';
+    const collection = [{ id: 1 }, { id: 2 }];
+    const nextLinkPath = '/audit?123';
+
+    expectSaga(requestAuditLogs, {resourceType, auditResource, resourceId})
+      .provide([
+        [select(selectors.filter, getAuditLogFilterKey(auditResource, resourceId)), {resourceType: 'connection'}],
+        [call(apiCallWithPaging, {
+          path,
+          hidden: undefined,
+        }), {data: collection, nextLinkPath}],
+      ])
+      .call(apiCallWithPaging, {path, hidden: undefined})
+      .put(actions.auditLogs.receivedNextPagePath(nextLinkPath))
+      .put(actions.resource.receivedCollection(resourceType, collection))
+      .returns(collection)
+      .run();
+  });
+  test('should dispatch receivedNextPagePath for audit logs resource type even if nextLinkPath is not present', () => {
+    const resourceType = 'audit';
+    const path = '/audit?&resourceType=connection';
+    const collection = [{ id: 1 }, { id: 2 }];
+
+    expectSaga(requestAuditLogs, {resourceType})
+      .provide([
+        [select(selectors.filter, AUDIT_LOG_FILTER_KEY), {resourceType: 'connection'}],
+        [call(apiCallWithPaging, {
+          path,
+          hidden: undefined,
+        }), {data: collection}],
+      ])
+      .call(apiCallWithPaging, {path, hidden: undefined})
+      .put(actions.auditLogs.receivedNextPagePath(undefined))
+      .put(actions.resource.receivedCollection(resourceType, collection))
+      .returns(collection)
       .run();
   });
 });

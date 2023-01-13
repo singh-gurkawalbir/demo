@@ -1,5 +1,3 @@
-/* global describe, test, expect */
-
 import React from 'react';
 import defaultRef from '.';
 import ConnectorName from '../../../../../components/ResourceTable/commonCells/ConnectorName';

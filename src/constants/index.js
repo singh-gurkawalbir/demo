@@ -22,6 +22,8 @@ export const NETSUITE_BUNDLE_URL =
   '/app/bundler/bundledetails.nl?sourcecompanyid=TSTDRV916910&domain=PRODUCTION&config=F&id=20038';
 
 export const PASSWORD_MASK = '******';
+
+export const MAX_MOCK_DATA_SIZE = 1024 * 1024; /* 1 MB */
 export const MAX_TEMPLATE_ZIP_SIZE = 1024 * 1024; /* 1 MB */
 export const MAX_FILE_SIZE = 10 * 1024 * 1024; /* 10 MB */
 export const MAX_DATA_LOADER_FILE_SIZE = 100 * 1024 * 1024; /* 100 MB */
@@ -34,6 +36,11 @@ export const LICENSE_UPGRADE_REQUEST_SUBMITTED_MESSAGE = 'Your request has been 
 export const REQUEST_UPGRADE_SUCCESS_MESSAGE = 'Your request to upgrade has been sent. Keep an eye out for an email from one of our associates soon.';
 export const LICENSE_REACTIVATED_MESSAGE = 'Reactivation successful.';
 export const AUTH_FAILURE_MESSAGE = 'Authentication Failure';
+export const SIGN_UP_SUCCESS = 'Please check your email!';
+export const RESET_PASSWORD_SUCCESS = 'Reset successful! Please sign in.';
+export const CHANGE_EMAIL_SUCCESS = 'invited successfully';
+export const ACTIVE_SESSION_MESSAGE = 'You already have an active session running. Please signout from the account and try again.';
+export const PASSWORD_STRENGTH_ERROR = 'Password should be minimum 8 letter , with at least a symbol, upper and lower case letters and a number';
 export const NO_RESULT_SEARCH_MESSAGE = 'Your search didn’t return any matching results. Try expanding your search criteria.';
 
 export const POLLING_STATUS = Object.freeze({
@@ -45,6 +52,8 @@ export const MFA_RESET_ASYNC_KEY = 'MFA_RESET_ASYNC_KEY';
 export const MFA_SETUP_ASYNC_KEY = 'MFA_SETUP_ASYNC_KEY';
 export const MFA_ACCOUNT_SETTINGS_ASYNC_KEY = 'MFA_ACCOUNT_SETTINGS_ASYNC_KEY';
 export const MFA_DELETE_DEVICE_ASYNC_KEY = 'MFA_DELETE_DEVICE_ASYNC_KEY';
+
+export const TEMPLATE_ZIP_UPLOAD_ASYNC_KEY = 'TEMPLATE_ZIP_UPLOAD_ASYNC_KEY';
 
 export const ACCOUNT_SETTINGS_DATA_RETENTION_ASYNC_KEY = 'ACCOUNT_SETTINGS_DATA_RETENTION_ASYNC_KEY';
 export const MAX_DATA_RETENTION_PERIOD = 180;

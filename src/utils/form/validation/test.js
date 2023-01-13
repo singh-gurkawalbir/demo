@@ -1,5 +1,4 @@
 /* eslint-disable no-unused-vars */
-/* global describe,test,expect */
 import {
   comparedTo,
   fallsWithinNumericalRange,
@@ -288,17 +287,17 @@ describe('matchesRegEx validator', () => {
 
 describe('getDefaultNumericalRangeErrorMessages', () => {
   test('for min and max', () => {
-    expect(getDefaultNumericalRangeErrorMessages(1, 5)).toEqual(
+    expect(getDefaultNumericalRangeErrorMessages(1, 5)).toBe(
       'Value cannot be less than 1 or greater than 5'
     );
   });
   test('for just min', () => {
-    expect(getDefaultNumericalRangeErrorMessages(1)).toEqual(
+    expect(getDefaultNumericalRangeErrorMessages(1)).toBe(
       'Value cannot be less than 1'
     );
   });
   test('for just max', () => {
-    expect(getDefaultNumericalRangeErrorMessages(undefined, 5)).toEqual(
+    expect(getDefaultNumericalRangeErrorMessages(undefined, 5)).toBe(
       'Value cannot be greater than 5'
     );
   });
@@ -307,14 +306,16 @@ describe('getDefaultNumericalRangeErrorMessages', () => {
 describe('fallsWithinNumericalRange', () => {
   test('fails when given a non-numerical number', () => {
     expect(
-      // $FlowFixMe - Typing should prevent this, but we're testing the output
       fallsWithinNumericalRange({ value: 'abc', min: 5, message: 'Fail' })
     ).toBe('Fail');
   });
-
+  test('fails when given a non-numerical string with leading numbers', () => {
+    expect(
+      fallsWithinNumericalRange({ value: '123abc', min: 5, message: 'Fail' })
+    ).toBe('Fail');
+  });
   test('succeeds with just a max', () => {
     expect(
-      // $FlowFixMe - Typing should prevent this, but we're testing the output
       fallsWithinNumericalRange({
         value: '5',
         min: 1,
@@ -325,7 +326,6 @@ describe('fallsWithinNumericalRange', () => {
 
   test('fails with just a min', () => {
     expect(
-      // $FlowFixMe - Typing should prevent this, but we're testing the output
       fallsWithinNumericalRange({
         value: 6,
         max: 10,
@@ -336,7 +336,6 @@ describe('fallsWithinNumericalRange', () => {
 
   test('succeeds with null', () => {
     expect(
-      // $FlowFixMe - Typing should prevent this, but we're testing the output
       fallsWithinNumericalRange({
         value: null,
         min: 0,
@@ -347,7 +346,6 @@ describe('fallsWithinNumericalRange', () => {
   });
   test('succeeds with string null', () => {
     expect(
-      // $FlowFixMe - Typing should prevent this, but we're testing the output
       fallsWithinNumericalRange({
         value: 'null',
         min: 0,
@@ -359,7 +357,6 @@ describe('fallsWithinNumericalRange', () => {
 
   test('succeeds with undefined', () => {
     expect(
-      // $FlowFixMe - Typing should prevent this, but we're testing the output
       fallsWithinNumericalRange({
         value: undefined,
         min: 0,
@@ -371,7 +368,6 @@ describe('fallsWithinNumericalRange', () => {
 
   test('fails with whitespace', () => {
     expect(
-      // $FlowFixMe - Typing should prevent this, but we're testing the output
       fallsWithinNumericalRange({
         value: '       ',
         min: 10,
@@ -382,7 +378,6 @@ describe('fallsWithinNumericalRange', () => {
 
   test('fails with just a max', () => {
     expect(
-      // $FlowFixMe - Typing should prevent this, but we're testing the output
       fallsWithinNumericalRange({
         value: 6,
         max: 5,
@@ -393,7 +388,6 @@ describe('fallsWithinNumericalRange', () => {
 
   test('succeeds with empty string', () => {
     expect(
-      // $FlowFixMe - Typing should prevent this, but we're testing the output
       fallsWithinNumericalRange({
         value: '',
         min: 0,
@@ -403,9 +397,8 @@ describe('fallsWithinNumericalRange', () => {
     ).toBeUndefined();
   });
 
-  test('succeeds with null', () => {
+  test('succeeds with null duplicate', () => {
     expect(
-      // $FlowFixMe - Typing should prevent this, but we're testing the output
       fallsWithinNumericalRange({
         value: null,
         min: 0,
@@ -414,9 +407,8 @@ describe('fallsWithinNumericalRange', () => {
       })
     ).toBeUndefined();
   });
-  test('succeeds with string null', () => {
+  test('succeeds with string null duplicate', () => {
     expect(
-      // $FlowFixMe - Typing should prevent this, but we're testing the output
       fallsWithinNumericalRange({
         value: null,
         min: 0,
@@ -426,9 +418,8 @@ describe('fallsWithinNumericalRange', () => {
     ).toBeUndefined();
   });
 
-  test('succeeds with undefined', () => {
+  test('succeeds with undefined duplicate', () => {
     expect(
-      // $FlowFixMe - Typing should prevent this, but we're testing the output
       fallsWithinNumericalRange({
         value: undefined,
         min: 0,
@@ -438,9 +429,8 @@ describe('fallsWithinNumericalRange', () => {
     ).toBeUndefined();
   });
 
-  test('fails with whitespace', () => {
+  test('fails with whitespace duplicate', () => {
     expect(
-      // $FlowFixMe - Typing should prevent this, but we're testing the output
       fallsWithinNumericalRange({
         value: '',
         min: 0,
@@ -829,34 +819,34 @@ describe('isNotValue', () => {
 
 describe('hasValue', () => {
   test('string', () => {
-    expect(hasValue('value')).toEqual(true);
+    expect(hasValue('value')).toBe(true);
   });
 
   test('array', () => {
-    expect(hasValue([1, 2])).toEqual(true);
+    expect(hasValue([1, 2])).toBe(true);
   });
 
   test('true', () => {
-    expect(hasValue(true)).toEqual(true);
+    expect(hasValue(true)).toBe(true);
   });
 
   test('false', () => {
-    expect(hasValue(false)).toEqual(true);
+    expect(hasValue(false)).toBe(true);
   });
 
   test('empty array', () => {
-    expect(hasValue([])).toEqual(false);
+    expect(hasValue([])).toBe(false);
   });
 
   test('empty string', () => {
-    expect(hasValue('')).toEqual(false);
+    expect(hasValue('')).toBe(false);
   });
 
   test('undefined', () => {
-    expect(hasValue(undefined)).toEqual(false);
+    expect(hasValue(undefined)).toBe(false);
   });
 
   test('null', () => {
-    expect(hasValue(null)).toEqual(false);
+    expect(hasValue(null)).toBe(false);
   });
 });

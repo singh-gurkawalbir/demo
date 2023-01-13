@@ -1,75 +1,90 @@
-/* eslint-disable no-undef */
+import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import React from 'react';
-import * as reactRedux from 'react-redux';
-import { MemoryRouter } from 'react-router-dom';
-import actions from '../../../../actions';
-import { getCreatedStore } from '../../../../store';
-import { renderWithProviders } from '../../../../test/test-utils';
 import ToggleAFEButton from './ToggleAFEButton';
+import { getCreatedStore } from '../../../../store';
+import actions from '../../../../actions';
+import { renderWithProviders } from '../../../../test/test-utils';
 
-let initialStore;
+const initialStore = getCreatedStore();
+const mockDispatch = jest.fn();
 
-async function initToggleAFEButton(editorId, saveStatus, editorSupportsV1V2data, dataVersion) {
+jest.mock('react-redux', () => ({
+  __esModule: true,
+  ...jest.requireActual('react-redux'),
+  useDispatch: () => mockDispatch,
+}));
+
+function initToggleAFEButton(props = {}) {
   initialStore.getState().session.editors = {
-    [editorId]: {
-      saveStatus,
-      editorSupportsV1V2data,
-      dataVersion,
+    httprelativeURI: {
+      editorType: 'handlebars',
+      formKey: 'imports-632950280dbc53086e899759',
+      flowId: '63a54e63d9e20c15d94da0f1',
+      resourceId: '632950280dbc53086e899759',
+      resourceType: 'imports',
+      fieldId: 'http.relativeURI',
+      stage: 'importMappingExtract',
+      rule: '/organizations',
+      editorSupportsV1V2data: true,
+      resultMode: 'text',
+      editorTitle: 'Build relative URI',
+      v1Rule: '/organizations',
+      v2Rule: '/organizations',
+      autoEvaluate: false,
+      strict: false,
+      layout: 'compact',
+      originalRule: '/organizations',
+      sampleDataStatus: 'received',
+      data: '{\n  "record": {\n    "thirdpartyacct": "thirdpartyacct",\n    "thirdpartycarrier": {\n      "internalid": "thirdpartycarrier.internalid",\n      "name": "thirdpartycarrier.name"\n    },\n    "thirdpartycountry": {\n      "internalid": "thirdpartycountry.internalid",\n      "name": "thirdpartycountry.name"\n    },\n  "flowGrouping": {},\n    "connection": {},\n    "import": {}\n  }\n}',
+      dataVersion: 2,
+      saveStatus: 'received',
+    },
+
+  };
+  initialStore.getState().session.stage = {
+    '632950280dbc53086e899759': {
+      patch: [
+        {
+          op: 'add',
+          path: '/assistantMetadata',
+          value: {},
+          timestamp: 1672134765451,
+          scope: 'value',
+        },
+      ],
     },
   };
-  const ui = (
-    <MemoryRouter>
-      <ToggleAFEButton editorId={editorId} />
-    </MemoryRouter>
-  );
 
-  return renderWithProviders(ui, { initialStore });
+  return renderWithProviders(<ToggleAFEButton {...props} />, {initialStore});
 }
 
-describe('test suite for ToggleAFEButton', () => {
-  let mockDispatchFn;
-  let useDispatchSpy;
+describe('ToggleAFEButton UI tests', () => {
+  test('Should test the initial render toggle is set to AFE 2.0', () => {
+    initToggleAFEButton({editorId: 'httprelativeURI'});
+    const afe2dot0Button = screen.getByRole('button', {name: 'AFE 2.0'});
 
-  beforeEach(() => {
-    initialStore = getCreatedStore();
-    useDispatchSpy = jest.spyOn(reactRedux, 'useDispatch');
-    mockDispatchFn = jest.fn(action => {
-      switch (action.type) {
-        default:
-          initialStore.dispatch(action);
-      }
-    });
-    useDispatchSpy.mockReturnValue(mockDispatchFn);
+    expect(afe2dot0Button).toHaveAttribute('aria-pressed', 'true');
   });
+  test('Should make a dispatch call when toggle afe button is set to AFE 1.0', () => {
+    initToggleAFEButton({editorId: 'httprelativeURI'});
+    const afe1dot0Button = screen.getByRole('button', {name: 'AFE 1.0'});
 
-  afterEach(() => {
-    useDispatchSpy.mockClear();
-    mockDispatchFn.mockClear();
+    expect(afe1dot0Button).toBeInTheDocument();
+    userEvent.click(afe1dot0Button);
+    expect(mockDispatch).toHaveBeenCalledWith(actions.editor.toggleVersion('httprelativeURI', 1));
+    const afe2dot0Button = screen.getByRole('button', {name: 'AFE 2.0'});
+
+    expect(afe2dot0Button).toBeInTheDocument();
   });
+  test('Should display help text when clicked on Help text button', () => {
+    initToggleAFEButton({editorId: 'httprelativeURI'});
+    const helpTextButton = screen.getAllByRole('button');
 
-  test('Should render ToggleAFEButton', async () => {
-    await initToggleAFEButton('1', 'requested', true, 1);
-    expect(screen.getByRole('button', {
-      name: /afe 1\.0/i,
-    })).toBeInTheDocument();
-    expect(screen.getByRole('button', {
-      name: /afe 2\.0/i,
-    })).toBeInTheDocument();
-  });
-  test('Toggling ToggleAFEButton and checking the functionality', async () => {
-    await initToggleAFEButton('1', 'random', true, 1);
-    const afeButton = screen.getByRole('button', {
-      name: /afe 2\.0/i,
-    });
+    expect(helpTextButton[2]).toBeInTheDocument();
+    userEvent.click(helpTextButton[2]);
+    const tooltip = screen.getByRole('tooltip');
 
-    userEvent.click(afeButton);
-    await expect(mockDispatchFn).toBeCalledWith(actions.editor.toggleVersion('1', 2));
-  });
-  test('Should render null when handleAFEToggle is false', async () => {
-    const { utils } = await initToggleAFEButton('1', 'random', false, 1);
-
-    expect(utils.container).toBeEmptyDOMElement();
+    expect(tooltip).toBeInTheDocument();
   });
 });

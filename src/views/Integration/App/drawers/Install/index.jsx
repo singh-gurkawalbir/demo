@@ -75,12 +75,14 @@ export default function ConnectorInstallation() {
   const [stackId, setShowStackDialog] = useState(null);
   const history = useHistory();
   const match = useRouteMatch();
-  const { integrationId } = match.params;
+  const { integrationId: _integrationId, childId } = match.params;
   const [connection, setConnection] = useState(null);
   const { confirmDialog } = useConfirmDialog();
   const [isSetupComplete, setIsSetupComplete] = useState(false);
   const [isResourceStaged, setIsResourceStaged] = useState(false);
   const dispatch = useDispatch();
+
+  const integrationId = childId || _integrationId;
 
   const integration = useSelectorMemo(selectors.mkIntegrationAppSettings, integrationId);
 
@@ -244,6 +246,7 @@ export default function ConnectorInstallation() {
   useEffect(() => {
     if (isSetupComplete) {
       // redirect to integration Settings
+      // TODO: move this to data layer
       dispatch(actions.resource.request('integrations', integrationId));
       dispatch(actions.resource.requestCollection('flows', undefined, undefined, integrationId));
       dispatch(actions.resource.requestCollection('exports', undefined, undefined, integrationId));
@@ -251,6 +254,7 @@ export default function ConnectorInstallation() {
       dispatch(actions.resource.requestCollection('imports', undefined, undefined, integrationId));
       dispatch(actions.resource.requestCollection('connections', undefined, undefined, integrationId));
       dispatch(actions.resource.requestCollection('asynchelpers', undefined, undefined, integrationId));
+      dispatch(actions.resource.requestCollection('scripts'));
 
       if (mode === 'settings') {
         if (
@@ -309,6 +313,7 @@ export default function ConnectorInstallation() {
       buttons: [
         {
           label: 'Uninstall',
+          error: true,
           onClick: () => {
             if (!_connectorId) {
               dispatch(actions.resource.integrations.delete(integrationId));

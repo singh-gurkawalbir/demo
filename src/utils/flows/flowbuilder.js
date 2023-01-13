@@ -2,19 +2,19 @@
 import { cloneDeep, uniq, uniqBy } from 'lodash';
 import jsonPatch from 'fast-json-patch';
 import { BranchPathRegex, GRAPH_ELEMENTS_TYPE, PageProcessorPathRegex, FLOW_SAVE_ASYNC_KEY } from '../../constants';
-import { shortId } from '../string';
+import { generateId } from '../string';
 import { setObjectValue } from '../json';
 import messageStore from '../messageStore';
 
 export const isVirtualRouter = (router = {}) => !router.routeRecordsTo && !router.routeRecordsUsing && (!router.branches || router.branches.length <= 1);
 
 export const generateEmptyRouter = isVirtual => isVirtual ? {
-  id: shortId(),
+  id: generateId(),
   branches: [{
     pageProcessors: [{setupInProgress: true}],
   }],
 } : {
-  id: shortId(),
+  id: generateId(),
   routeRecordsTo: 'first_matching_branch',
   routeRecordsUsing: 'input_filters',
   branches: [{
@@ -62,6 +62,29 @@ export const addPageGenerators = flow => {
     flow.pageGenerators = [{setupInProgress: true}];
   }
   flow.pageGenerators.push({setupInProgress: true});
+};
+
+export const moveStepFunction = (flow, stepInfo) => {
+  if (!flow || !stepInfo) return;
+  if (stepInfo.itemType === 'pg') {
+    flow.pageGenerators.splice(stepInfo.targetIndex, 0, flow.pageGenerators.splice(stepInfo.sourceIndex, 1)[0]);
+  } else if (flow.routers?.length) {
+    if (!stepInfo.sourcePath || !stepInfo.targetPath) return;
+    const {sourcePath, targetPath, position} = stepInfo;
+    const [, srcRouterIndex, srcBranchIndex, srcPageProcessorIndex] = PageProcessorPathRegex.exec(sourcePath);
+    const [, targetRouterIndex, targetBranchIndex, targetPageProcessorIndex] = PageProcessorPathRegex.exec(targetPath);
+    const index = position === 'right' ? +targetPageProcessorIndex + 1 : targetPageProcessorIndex;
+    // Remove pp from its current location
+    const [pp] = flow.routers[srcRouterIndex].branches[srcBranchIndex].pageProcessors.splice(srcPageProcessorIndex, 1);
+
+    // Insert it in to its new dropped location.
+    flow.routers[targetRouterIndex].branches[targetBranchIndex].pageProcessors.splice(index, 0, pp);
+  } else if (flow.pageProcessors?.length) {
+    const {sourceIndex, targetIndex, position} = stepInfo;
+    const index = position === 'right' && sourceIndex > targetIndex ? targetIndex + 1 : targetIndex;
+
+    flow.pageProcessors.splice(index, 0, flow.pageProcessors.splice(stepInfo.sourceIndex, 1)[0]);
+  }
 };
 
 export const addPageProcessor = (flow, insertAtIndex, branchPath, ppData) => {
@@ -192,16 +215,17 @@ export const getSomePpImport = _importId =>
   ({responseMapping: {fields: [], lists: []}, type: 'import', _importId});
 
 export const generateRouterNode = (router, routerIndex) => ({
-  id: router?.id || shortId(),
+  id: router?.id || generateId(),
   type: isVirtualRouter(router) ? GRAPH_ELEMENTS_TYPE.MERGE : GRAPH_ELEMENTS_TYPE.ROUTER,
   data: {
+    name: router.name,
     path: `/routers/${routerIndex}`,
     routeRecordsTo: router.routeRecordsTo,
   },
 });
 
 export const generateNewTerminal = ({branch = {}, branchIndex, routerIndex} = {}) => ({
-  id: shortId(),
+  id: generateId(),
   type: GRAPH_ELEMENTS_TYPE.TERMINAL,
   draggable: false,
   data: {
@@ -211,7 +235,7 @@ export const generateNewTerminal = ({branch = {}, branchIndex, routerIndex} = {}
 });
 
 export const generateNewEmptyNode = ({branch = {}, branchIndex, routerIndex} = {}) => ({
-  id: shortId(),
+  id: generateId(),
   type: GRAPH_ELEMENTS_TYPE.EMPTY,
   data: {
     name: branch.name,
@@ -231,11 +255,11 @@ export const initializeFlowForReactFlow = flowDoc => {
     flow.pageProcessors = [{setupInProgress: true}];
   }
   flow.pageGenerators.forEach(pg => {
-    pg.id = pg._exportId || `new-${shortId()}`;
+    pg.id = pg._exportId || `new-${generateId()}`;
   });
   if (flow.pageProcessors?.length && !flow.routers?.length) {
     flow.routers = [{
-      id: shortId(),
+      id: generateId(),
       branches: [{name: 'Branch 1.0', pageProcessors: flow.pageProcessors}],
     }];
     delete flow.pageProcessors;
@@ -245,7 +269,7 @@ export const initializeFlowForReactFlow = flowDoc => {
       const {pageProcessors = []} = branch;
 
       pageProcessors.forEach(pp => {
-        pp.id = pp._importId || pp._exportId || `new-${shortId()}`;
+        pp.id = pp._importId || pp._exportId || `new-${generateId()}`;
       });
     });
   });
@@ -330,6 +354,20 @@ export const generateNodesAndEdgesFromNonBranchedFlow = (flow, isViewMode) => {
   ];
 };
 
+export const populateDragDropData = (source, target) => {
+  if (target.type === GRAPH_ELEMENTS_TYPE.PP_STEP || source.type === GRAPH_ELEMENTS_TYPE.PP_STEP) {
+    if (target.type === GRAPH_ELEMENTS_TYPE.PP_STEP && source.type === GRAPH_ELEMENTS_TYPE.PP_STEP) {
+      source.data.showRight = true;
+    }
+    if (target.type === GRAPH_ELEMENTS_TYPE.PP_STEP && [GRAPH_ELEMENTS_TYPE.ROUTER, GRAPH_ELEMENTS_TYPE.MERGE, GRAPH_ELEMENTS_TYPE.PG_STEP].includes(source.type)) {
+      target.data.showLeft = true;
+    }
+    if (source.type === GRAPH_ELEMENTS_TYPE.PP_STEP && [GRAPH_ELEMENTS_TYPE.ROUTER, GRAPH_ELEMENTS_TYPE.MERGE, GRAPH_ELEMENTS_TYPE.PG_STEP, GRAPH_ELEMENTS_TYPE.TERMINAL].includes(target.type)) {
+      source.data.showRight = true;
+    }
+  }
+};
+
 export const populateMergeData = (flow, elements) => {
   const terminalNodes = elements.filter(el => el.type === GRAPH_ELEMENTS_TYPE.TERMINAL);
   const { routers = [] } = flow;
@@ -348,6 +386,8 @@ export const populateMergeData = (flow, elements) => {
     if (element.type === GRAPH_ELEMENTS_TYPE.EDGE) {
       const targetElement = elements.find(el => el.id === element.target);
       const sourceElement = elements.find(el => el.id === element.source);
+
+      populateDragDropData(sourceElement, targetElement);
 
       if (sourceElement && targetElement && (
         sourceElement.type === GRAPH_ELEMENTS_TYPE.PG_STEP || // is connected to Page generator => cant merge to page generators

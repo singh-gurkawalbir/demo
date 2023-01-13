@@ -1,4 +1,5 @@
-/* global describe expect test */
+/* eslint-disable jest/no-standalone-expect */
+
 import each from 'jest-each';
 import {
   sampleDataStage,
@@ -7,7 +8,6 @@ import {
   getCurrentSampleDataStageStatus,
   getSubsequentStages,
   getPreviewStageData,
-  getAddedLookupIdInFlow,
   getFlowUpdatesFromPatch,
   isRawDataPatchSet,
   isUIDataExpectedForResource,
@@ -23,13 +23,11 @@ import {
 } from '.';
 
 const possibleExportSampleDataStagePaths = [
-  ['flowInput', 'processedFlowInput', 'inputFilter'],
-  ['raw', 'transform', 'preSavePage', 'responseMappingExtract', 'responseMapping', 'postResponseMap', 'postResponseMapHook'],
-  ['raw', 'transform', 'outputFilter'],
+  ['flowInput', 'processedFlowInput', 'inputFilter', 'postInputFilter'],
+  ['raw', 'transform', 'outputFilter', 'preSavePage', 'responseMappingExtract', 'responseMapping', 'postResponseMap', 'postResponseMapHook'],
 ];
 const possibleImportSampleDataStagePaths = [
-  ['flowInput', 'processedFlowInput', 'inputFilter'],
-  ['flowInput', 'processedFlowInput', 'preMap', 'importMappingExtract', 'importMapping', 'postMap', 'postMapOutput'],
+  ['flowInput', 'processedFlowInput', 'inputFilter', 'preMap', 'importMappingExtract', 'importMapping', 'postMap', 'postMapOutput'],
   ['sampleResponse', 'responseTransform', 'postSubmit'],
   ['sampleResponse', 'responseTransform', 'responseMappingExtract', 'responseMapping', 'postResponseMap', 'postResponseMapHook'],
 ];
@@ -73,7 +71,7 @@ describe('_compareSampleDataStage util', () => {
 
     expect(_compareSampleDataStage(previousStage, currentStage, 'exports')).toBe(-1);
   });
-  test('should return 2 for exports  if both stages have mutually exclusive paths and both needs to be run ', () => {
+  test('should return 2 for exports  if both stages have mutually exclusive paths and both needs to be run', () => {
     const previousStage = 'inputFilter';
     const currentStage = 'outputFilter';
 
@@ -91,7 +89,7 @@ describe('_compareSampleDataStage util', () => {
 
     expect(_compareSampleDataStage(previousStage, currentStage, 'imports')).toBe(1);
   });
-  test('should return 2 for imports  if both stages have mutually exclusive paths and both needs to be run ', () => {
+  test('should return 2 for imports  if both stages have mutually exclusive paths and both needs to be run', () => {
     const previousStage = 'postMap';
     const currentStage = 'postSubmit';
 
@@ -117,7 +115,7 @@ describe('getCurrentSampleDataStageStatus util', () => {
 
     expect(getCurrentSampleDataStageStatus(prevStagesRunning, 'transform', 'exports')).toEqual(expectedCurrentStageStatus);
   });
-  test('should return 1 if the previous stage is a subset of current stage  ', () => {
+  test('should return 1 if the previous stage is a subset of current stage', () => {
     const prevStagesRunning = ['inputFilter', 'transform'];
     const expectedCurrentStageStatus = {
       currentStageStatus: 1,
@@ -126,7 +124,7 @@ describe('getCurrentSampleDataStageStatus util', () => {
 
     expect(getCurrentSampleDataStageStatus(prevStagesRunning, 'responseMapping', 'exports')).toEqual(expectedCurrentStageStatus);
   });
-  test('should return 0 if the current stage already exists in the list of running previous stage sagas  ', () => {
+  test('should return 0 if the current stage already exists in the list of running previous stage sagas', () => {
     const prevStagesRunning = ['transform', 'inputFilter'];
     const expectedCurrentStageStatus = {
       currentStageStatus: 0,
@@ -286,48 +284,6 @@ describe('getPreviewStageData util', () => {
   });
 });
 
-describe('getAddedLookupIdInFlow util', () => {
-  test('should return undefined when the patchSet is empty ', () => {
-    expect(getAddedLookupIdInFlow()).toBeUndefined();
-  });
-  test('should return undefined when the patchSet does not contain /pageProcessors/index which means no lookup has been added', () => {
-    const flowPatchSet = [{
-      op: 'replace',
-      path: '/lastModified',
-      value: '2020-12-03T11:49:53.921Z',
-    },
-    {
-      op: 'remove',
-      path: '/pageProcessors/0/responseMapping',
-    }];
-
-    expect(getAddedLookupIdInFlow(flowPatchSet)).toBeUndefined();
-  });
-  test('should return undefined when the patchSet has /pageProcessors/index but an import has been added to the flow', () => {
-    const flowPatchSet = [{
-      op: 'add',
-      path: '/pageProcessors/1',
-      value: {
-        type: 'import',
-        _importId: '1234',
-      },
-    }];
-
-    expect(getAddedLookupIdInFlow(flowPatchSet)).toBeUndefined();
-  });
-  test('should return exportId when the patchSet has /pageProcessors/index and a lookup has been added to the flow', () => {
-    const flowPatchSet = [{
-      op: 'add',
-      path: '/pageProcessors/12',
-      value: {
-        type: 'export',
-        _exportId: '1234',
-      },
-    }];
-
-    expect(getAddedLookupIdInFlow(flowPatchSet)).toBe('1234');
-  });
-});
 describe('getFlowUpdatesFromPatch util', () => {
   test('should return empty object when the patchSet is empty', () => {
     expect(getFlowUpdatesFromPatch()).toEqual({});
@@ -347,7 +303,7 @@ describe('getFlowUpdatesFromPatch util', () => {
   });
   test('should return sequence as true if the patchSet is related to modification of PG/PP of new flow format', () => {
     const addPG = [{
-      op: 'replace',
+      op: 'add',
       path: '/pageGenerators/0',
       scope: 'value',
       value: { _exportId: '1234'},
@@ -377,24 +333,107 @@ describe('getFlowUpdatesFromPatch util', () => {
       path: '/routers/0/branches/0/pageProcessors/0',
       scope: 'value',
     }];
+    const addOldPP = [{
+      op: 'add',
+      path: '/pageProcessors/0',
+      scope: 'value',
+      value: {type: 'import', _importId: '5de8a7a6bc312979ba242e47'},
+    }];
 
-    expect(getFlowUpdatesFromPatch(addPG)).toEqual({
-      responseMapping: false,
+    const expectedOutput = {
       sequence: true,
-    });
-    expect(getFlowUpdatesFromPatch(deletePG)).toEqual({
       responseMapping: false,
-      sequence: true,
-    });
-    expect(getFlowUpdatesFromPatch(addPP)).toEqual({
-      responseMapping: false,
-      sequence: true,
-    });
-    expect(getFlowUpdatesFromPatch(deletePP)).toEqual({
-      responseMapping: false,
-      sequence: true,
-    });
+    };
+
+    expect(getFlowUpdatesFromPatch(addPG)).toEqual(expectedOutput);
+    expect(getFlowUpdatesFromPatch(deletePG)).toEqual(expectedOutput);
+    expect(getFlowUpdatesFromPatch(addPP)).toEqual(expectedOutput);
+    expect(getFlowUpdatesFromPatch(addOldPP)).toEqual(expectedOutput);
+    expect(getFlowUpdatesFromPatch(deletePP)).toEqual(expectedOutput);
   });
+  test('should return sequence as true if the pgs or pps are dragged and dropped to change the order', () => {
+    const ppOrderChange = [
+      {
+        op: 'replace',
+        path: '/pageProcessors/0/type',
+        value: 'export',
+      }, {
+        op: 'replace',
+        path: '/pageProcessors/1/type',
+        value: 'import',
+      }, {
+        op: 'remove',
+        path: '/pageProcessors/0/_importId',
+      }, {
+        op: 'remove',
+        path: '/pageProcessors/1/_exportId',
+      }, {
+        op: 'add',
+        path: '/pageGenerators/0/_exportId',
+        value: 'expId1',
+      }, {
+        op: 'add',
+        path: '/pageProcessors/1/_importId',
+        value: 'impId1',
+      },
+    ];
+    const pgOrderChange = [
+      {
+        op: 'replace',
+        path: '/pageGenerators/1/_exportId',
+        value: 'expId1',
+      },
+      {
+        op: 'replace',
+        path: '/pageGenerators/0/_exportId',
+        value: 'expId2',
+      },
+    ];
+    const pgOrderChangeWithSkipRetries = [
+      {
+        op: 'replace',
+        path: '/pageGenerators/1/_exportId',
+        value: 'expId1',
+      },
+      {
+        op: 'replace',
+        path: '/pageGenerators/0/_exportId',
+        value: 'expId2',
+      },
+      {
+        op: 'add',
+        path: '/pageGenerators/1/skipRetries',
+        value: false,
+      },
+      {
+        op: 'remove',
+        path: '/pageGenerators/0/skipRetries',
+        value: 'expId2',
+      },
+    ];
+
+    const lookupOrderChange = [
+      {
+        op: 'replace',
+        path: '/pageProcessors/0/_exportId',
+        value: 'expId1',
+      }, {
+        op: 'replace',
+        path: '/pageProcessors/1/_exportId',
+        value: 'expId0',
+      },
+    ];
+    const expectedOutput = {
+      sequence: true,
+      responseMapping: false,
+    };
+
+    expect(getFlowUpdatesFromPatch(ppOrderChange)).toEqual(expectedOutput);
+    expect(getFlowUpdatesFromPatch(lookupOrderChange)).toEqual(expectedOutput);
+    expect(getFlowUpdatesFromPatch(pgOrderChange)).toEqual(expectedOutput);
+    expect(getFlowUpdatesFromPatch(pgOrderChangeWithSkipRetries)).toEqual(expectedOutput);
+  });
+
   test('should return responseMapping with resourceIndex if the patchSet has pageProcessors/resourceIndex/responseMapping as the path', () => {
     const flowPatchSet = [
       {
@@ -668,7 +707,7 @@ describe('isPostDataNeededInResource util', () => {
 
     expect(isPostDataNeededInResource(salesforceScheduledExport)).toBeTruthy();
   });
-  test('should return false for resources other than salesforce ', () => {
+  test('should return false for resources other than salesforce', () => {
     const restExport = {
       name: 'Test export',
       _id: '1234',
@@ -706,7 +745,7 @@ describe('generateDefaultExtractsObject util', () => {
 
     expect(generateDefaultExtractsObject('imports')).toEqual(importDefaultExtracts);
   });
-  test('should return  by default exports related default extracts when there is no resource type ', () => {
+  test('should return  by default exports related default extracts when there is no resource type', () => {
     const lookupDefaultExtracts = {
       errors: '',
       data: '',
@@ -763,6 +802,33 @@ describe('generatePostResponseMapData util', () => {
       name: 'User1',
     });
   });
+  test('should return single record object of flowData merged with rawData when flowData is a nested object', () => {
+    const rawData = {
+      _id: '123',
+      address: {
+        area: 'area',
+        street: 'street',
+      },
+    };
+    const flowData = {
+      users: [{ _id: 'userId1', name: 'userName1'}, { _id: 'userId2', name: 'userName2'}],
+      tickets: [{ _id: 'ticketId1', name: 'ticket1'}, { _id: 'ticketId2', name: 'ticket2'}],
+      address: {
+        flatNo: '123',
+      },
+    };
+
+    expect(generatePostResponseMapData(flowData, rawData)).toEqual({
+      users: [{ _id: 'userId1', name: 'userName1'}, { _id: 'userId2', name: 'userName2'}],
+      tickets: [{ _id: 'ticketId1', name: 'ticket1'}, { _id: 'ticketId2', name: 'ticket2'}],
+      _id: '123',
+      address: {
+        flatNo: '123',
+        area: 'area',
+        street: 'street',
+      },
+    });
+  });
   test('should return list of records of flowData merged with rawData on each record when flowData is an array', () => {
     const rawData = {
       _id: '123',
@@ -785,121 +851,40 @@ describe('generatePostResponseMapData util', () => {
       },
     ]);
   });
-  test('should return rawData merged with editorData when flowData is empty', () => {
+  test('should return list of records of flowData merged with rawData on each record when flowData is an array of nested objects', () => {
     const rawData = {
-      _id: {
-        next: {
-          prev: '2',
-        },
+      _id: '123',
+      address: {
+        area: 'area',
+        street: 'street',
       },
     };
-    const editorData = {
-      _id: {
-        id: '1',
-        name: 'something',
-        next: {
-          _id: '123',
-          prev: '1',
-        },
-      },
-    };
+    const flowData = [{ id: 'userId1', name: 'userName1', address: {flatNo: '123'}}, { id: 'userId2', name: 'userName2', address: {flatNo: '1234'}}];
 
-    expect(generatePostResponseMapData(undefined, rawData, editorData)).toEqual({
-      _id: {
-        id: '1',
-        name: 'something',
-        next: {
-          _id: '123',
-          prev: '2',
+    expect(generatePostResponseMapData(flowData, rawData)).toEqual([
+      {
+        id: 'userId1',
+        name: 'userName1',
+        _id: '123',
+        address: {
+          area: 'area',
+          street: 'street',
+          flatNo: '123',
         },
       },
-    });
+      {
+        id: 'userId2',
+        name: 'userName2',
+        _id: '123',
+        address: {
+          area: 'area',
+          street: 'street',
+          flatNo: '1234',
+        },
+      },
+    ]);
   });
-  test('should return single record object of flowData merged with postResponseMapData (rawData merged with editorData) when flowData is an object', () => {
-    const rawData = {
-      _id: {
-        next: {
-          prev: '2',
-        },
-      },
-    };
-    const editorData = {
-      _id: {
-        id: '1',
-        name: 'something',
-        next: {
-          _id: '123',
-          prev: '1',
-        },
-      },
-    };
-    const flowData = {
-      users: [{ _id: 'userId1', name: 'userName1'}, { _id: 'userId2', name: 'userName2'}],
-      tickets: [{ _id: 'ticketId1', name: 'ticket1'}, { _id: 'ticketId2', name: 'ticket2'}],
-    };
-
-    expect(generatePostResponseMapData(flowData, rawData, editorData)).toEqual({
-      _id: {
-        id: '1',
-        name: 'something',
-        next: {
-          _id: '123',
-          prev: '2',
-        },
-      },
-      tickets: [
-        {_id: 'ticketId1', name: 'ticket1'},
-        {_id: 'ticketId2', name: 'ticket2'},
-      ],
-      users: [
-        {_id: 'userId1', name: 'userName1'},
-        {_id: 'userId2', name: 'userName2'},
-      ],
-    });
-  });
-  test('should return list of records of flowData merged with postResponseMapData (rawData merged with editorData) on each record when flowData is an array', () => {
-    const rawData = {
-      _id: {
-        next: {
-          prev: '2',
-        },
-      },
-    };
-    const editorData = {
-      _id: {
-        id: '1',
-        name: 'something',
-        next: {
-          _id: '123',
-          prev: '1',
-        },
-      },
-    };
-    const flowData = [{ id: 'userId1', name: 'userName1'}, { id: 'userId2', name: 'userName2'}];
-
-    expect(generatePostResponseMapData(flowData, rawData, editorData)).toEqual(
-      [
-        {
-          _id: {
-            id: '1',
-            name: 'something',
-            next: {_id: '123', prev: '2'},
-          },
-          id: 'userId1',
-          name: 'userName1',
-        },
-        {
-          _id: {
-            id: '1',
-            name: 'something',
-            next: {_id: '123', prev: '2'},
-          },
-          id: 'userId2',
-          name: 'userName2',
-        },
-      ]
-    );
-  });
+  // eslint-disable-next-line jest/no-commented-out-tests
   // test('should return list of records of flowData merged with rawData on each record when flowData is an array and rawData is an array', () => {
   //   // const rawData = [{
   //   //   recordId: '123',
@@ -964,32 +949,7 @@ describe('getFormattedResourceForPreview util', () => {
 
     expect(getFormattedResourceForPreview(deltaResource)).toEqual(deltaResourceWithPostData);
   });
-  test('should update stringified sampleResponse to JSON sampleResponse on Page processor flow type resource for preview', () => {
-    const importResource = {
-      adaptorType: 'FTPImport',
-      ftp: {
-        directoryPath: '/users',
-        fileName: 'UserList.json',
-      },
-      _id: 'asdf2345',
-      name: 'FTP Import',
-      sampleResponseData: '{ "test": 5 }',
-    };
-    const formattedImportResource = {
-      adaptorType: 'FTPImport',
-      ftp: {
-        directoryPath: '/users',
-        fileName: 'UserList.json',
-      },
-      _id: 'asdf2345',
-      name: 'FTP Import',
-      sampleResponseData: {
-        test: 5,
-      },
-    };
 
-    expect(getFormattedResourceForPreview(importResource, 'imports', 'pageProcessors')).toEqual(formattedImportResource);
-  });
   test('should add default extracts object as sampleResponse on PP flow type resource to fetch pageProcessorPreview data', () => {
     const importResource = {
       adaptorType: 'FTPImport',
@@ -1008,7 +968,7 @@ describe('getFormattedResourceForPreview util', () => {
       },
       _id: 'asdf2345',
       name: 'FTP Import',
-      sampleResponseData: {
+      mockResponse: {
         name: '',
         _json: '',
         dataURI: '',
@@ -1060,6 +1020,26 @@ describe('getResourceStageUpdatedFromPatch util', () => {
 
     expect(getResourceStageUpdatedFromPatch(hooksPatchSet)).toBe('preSavePage');
     expect(getResourceStageUpdatedFromPatch(transformPatchSet)).toBe('transform');
+  });
+  test('should return inputFilter stage if the patchSet has filter and resourceType is imports else outputFilter for exports', () => {
+    const patchSet = [{
+      path: '/filter',
+      op: 'replace',
+      value: {
+        type: 'expression',
+        expression: {
+          rules: [
+            'equals',
+            ['string', ['extract', 'userId']],
+            'id1',
+          ],
+          version: 1,
+        },
+      },
+    }];
+
+    expect(getResourceStageUpdatedFromPatch(patchSet, 'exports')).toBe('outputFilter');
+    expect(getResourceStageUpdatedFromPatch(patchSet, 'imports')).toBe('inputFilter');
   });
 });
 describe('getSampleFileMeta util', () => {

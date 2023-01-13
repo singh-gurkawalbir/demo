@@ -1,4 +1,3 @@
-/* global describe, test, expect */
 import { screen } from '@testing-library/react';
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
@@ -19,7 +18,7 @@ async function initPageContent({children = '', showPagingBar, hidePagingBar} = {
 
   return renderWithProviders(ui);
 }
-describe('Testsuite for Page Content', () => {
+describe('testsuite for Page Content', () => {
   test('should able to render empty children for page content', async () => {
     const { utils } = await initPageContent();
 

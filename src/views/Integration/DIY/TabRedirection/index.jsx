@@ -73,13 +73,15 @@ export default function TabRedirection({children: componentChildren}) {
     return integration?.mode;
   });
 
-  const defaultChild = ((children.find(s => (s.value !== integrationId && s.mode === 'settings')) || {})
-    .value) || integrationId;
+  const defaultChild = ((children.find(s => (s.value !== integrationId)) || {}).value) || integrationId;
   const currentEnvironment = useSelector(state =>
     selectors.currentEnvironment(state)
   );
   const redirectTo = useSelector(state =>
     selectors.shouldRedirect(state, integrationId)
+  );
+  const isTileClick = useSelector(state =>
+    selectors.isTileClick(state, integrationId)
   );
   // Addons are currently not supported in 2.0.
   // This piece of code works when addon structure is introduced and may require minor changes.
@@ -114,6 +116,18 @@ export default function TabRedirection({children: componentChildren}) {
       })
     );
   }
+
+  useEffect(() => {
+    if (isTileClick) {
+      dispatch(actions.resource.integrations.clearIsTileClick(integrationId));
+      // length is 2(1 parent & 1 child) navigate to child
+      // if tile has more than 1 child navigate to parent(similar to 1.0)
+      if (defaultChild !== integrationId && children.length === 2) {
+        history.push(`/integrationapps/${integrationAppName}/${integrationId}/child/${defaultChild}/${tab || 'flows'}`);
+      }
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     if (isIntegrationApp && !addOnStatus) {
@@ -189,7 +203,7 @@ export default function TabRedirection({children: componentChildren}) {
       return (
         <Redirect
           push={false}
-          to={getRoutePath(`/integrationapps/${integrationAppName}/${integrationId}/child/${defaultChild}/${tab ||
+          to={getRoutePath(`/integrationapps/${integrationAppName}/${integrationId}/child/${integrationId}/${tab ||
             'flows'}`)}
         />
       );
@@ -208,6 +222,10 @@ export default function TabRedirection({children: componentChildren}) {
   if (currentChildMode === 'uninstall') {
     redirectToPage = getRoutePath(
       `integrationapps/${integrationAppName}/${integrationId}/uninstall/child/${childId}`
+    );
+  } else if (currentChildMode === 'install') {
+    redirectToPage = getRoutePath(
+      `integrationapps/${integrationAppName}/${integrationId}/child/${childId}/setup`
     );
   } else if (installSteps?.length && mode === 'install') {
     redirectToPage = getRoutePath(
@@ -229,7 +247,7 @@ export default function TabRedirection({children: componentChildren}) {
   // of the 'useRouteMatch' hook now available in react-router-dom to break
   // the need for parent components passing any props at all.
   return supportsChild ? (
-    <LoadResources required resources="flows,exports,imports">
+    <LoadResources required resources="flows,connections,exports,imports">
       {componentChildren}
     </LoadResources>
   ) : componentChildren;

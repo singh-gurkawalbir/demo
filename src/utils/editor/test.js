@@ -1,10 +1,10 @@
-/* global describe, test, expect */
+
 import { dataAsString, getFormSaveStatusFromCommStatus, getUniqueFieldId, getFormSaveStatusFromEditorStatus, resolveValue } from './index';
 
 describe('editor utils test cases', () => {
   describe('dataAsString util', () => {
     test('should not throw exception for invalid arguments', () => {
-      expect(dataAsString()).toEqual(undefined);
+      expect(dataAsString()).toBeUndefined();
     });
     test('should return the passed data if its of string type', () => {
       const data = '{"id": "45"}';
@@ -16,39 +16,39 @@ describe('editor utils test cases', () => {
       const expectedString = JSON.stringify(data, null, 2);
 
       expect(dataAsString(data)).toEqual(expectedString);
-      expect(dataAsString({})).toEqual('{}');
+      expect(dataAsString({})).toBe('{}');
     });
   });
   describe('getFormSaveStatusFromEditorStatus util', () => {
     test('should not throw exception for invalid arguments', () => {
-      expect(getFormSaveStatusFromEditorStatus()).toEqual('failed');
+      expect(getFormSaveStatusFromEditorStatus()).toBe('failed');
     });
     test('should return complete if status is success', () => {
-      expect(getFormSaveStatusFromEditorStatus('success')).toEqual('complete');
+      expect(getFormSaveStatusFromEditorStatus('success')).toBe('complete');
     });
     test('should return loading if status is requested', () => {
-      expect(getFormSaveStatusFromEditorStatus('requested')).toEqual('loading');
+      expect(getFormSaveStatusFromEditorStatus('requested')).toBe('loading');
     });
   });
 
   describe('getFormSaveStatusFromCommStatus util', () => {
     test('should not throw exception for invalid arguments', () => {
-      expect(getFormSaveStatusFromCommStatus()).toEqual('complete');
+      expect(getFormSaveStatusFromCommStatus()).toBe('complete');
     });
     test('should return complete if commStatus is success', () => {
-      expect(getFormSaveStatusFromCommStatus('success')).toEqual('complete');
+      expect(getFormSaveStatusFromCommStatus('success')).toBe('complete');
     });
     test('should return loading if commStatus is loading', () => {
-      expect(getFormSaveStatusFromCommStatus('loading')).toEqual('loading');
+      expect(getFormSaveStatusFromCommStatus('loading')).toBe('loading');
     });
     test('should return failed if commStatus is error', () => {
-      expect(getFormSaveStatusFromCommStatus('error')).toEqual('failed');
+      expect(getFormSaveStatusFromCommStatus('error')).toBe('failed');
     });
   });
 
   describe('getUniqueFieldId util', () => {
     test('should return empty string if no parameters are passed', () => {
-      expect(getUniqueFieldId()).toEqual('');
+      expect(getUniqueFieldId()).toBe('');
     });
     test('should correctly return field id in case ignoreExisting/ignoreMissing is set on the resource', () => {
       const resource1 = {
@@ -62,10 +62,10 @@ describe('editor utils test cases', () => {
         ignoreExisting: false,
       };
 
-      expect(getUniqueFieldId('http.bodyCreate', resource1)).toEqual('http.body');
-      expect(getUniqueFieldId('http.bodyUpdate', resource2)).toEqual('http.body.0');
+      expect(getUniqueFieldId('http.bodyCreate', resource1)).toBe('http.body');
+      expect(getUniqueFieldId('http.bodyUpdate', resource2)).toBe('http.body.0');
     });
-    test('should return rest field ids for old rest imports incase of http fields  ', () => {
+    test('should return rest field ids for old rest imports incase of http fields', () => {
       const resource1 = {
         _id: '123',
         adaptorType: 'RESTImport',
@@ -77,42 +77,41 @@ describe('editor utils test cases', () => {
         ignoreExisting: false,
       };
 
-      expect(getUniqueFieldId('http.relativeURICreate', resource1)).toEqual('rest.relativeURI');
-      expect(getUniqueFieldId('http.relativeURIUpdate', resource2)).toEqual('rest.relativeURI.0');
-      expect(getUniqueFieldId('http.bodyCreate', resource1)).toEqual('rest.body');
-      expect(getUniqueFieldId('http.bodyUpdate', resource2)).toEqual('rest.body.0');
-      expect(getUniqueFieldId('http.relativeURI', resource2)).toEqual('rest.relativeURI');
-      expect(getUniqueFieldId('http.once.relativeURI', resource2)).toEqual('rest.once.relativeURI');
-      expect(getUniqueFieldId('http.body', resource2)).toEqual('rest.body');
+      expect(getUniqueFieldId('http.relativeURICreate', resource1)).toBe('rest.relativeURI');
+      expect(getUniqueFieldId('http.relativeURIUpdate', resource2)).toBe('rest.relativeURI.0');
+      expect(getUniqueFieldId('http.bodyCreate', resource1)).toBe('rest.body');
+      expect(getUniqueFieldId('http.bodyUpdate', resource2)).toBe('rest.body.0');
+      expect(getUniqueFieldId('http.relativeURI', resource2)).toBe('rest.relativeURI');
+      expect(getUniqueFieldId('http.once.relativeURI', resource2)).toBe('rest.once.relativeURI');
+      expect(getUniqueFieldId('http.body', resource2)).toBe('rest.body');
     });
 
-    test('should return http field ids for new rest exports incase of rest fields  ', () => {
+    test('should return http field ids for new rest exports incase of rest fields', () => {
       const resource = {
         _id: '123',
         adaptorType: 'HTTPExport',
       };
 
-      expect(getUniqueFieldId('rest.relativeURI', resource)).toEqual('http.relativeURI');
-      expect(getUniqueFieldId('rest.postBody', resource)).toEqual('http.body');
-      expect(getUniqueFieldId('rest.once.postBody', resource)).toEqual('http.once.body');
-      expect(getUniqueFieldId('rest.pagingPostBody', resource)).toEqual('http.paging.body');
-      expect(getUniqueFieldId('rest.nextPageRelativeURI', resource)).toEqual('http.paging.relativeURI');
+      expect(getUniqueFieldId('rest.relativeURI', resource)).toBe('http.relativeURI');
+      expect(getUniqueFieldId('rest.postBody', resource)).toBe('http.body');
+      expect(getUniqueFieldId('rest.once.postBody', resource)).toBe('http.once.body');
+      expect(getUniqueFieldId('rest.pagingPostBody', resource)).toBe('http.paging.body');
+      expect(getUniqueFieldId('rest.nextPageRelativeURI', resource)).toBe('http.paging.relativeURI');
     });
 
     test('should return unique fieldId', () => {
-      expect(getUniqueFieldId('rdbms.queryInsert')).toEqual('rdbms.query.1');
-      expect(getUniqueFieldId('rdbms.queryUpdate')).toEqual('rdbms.query.0');
-      expect(getUniqueFieldId('http.bodyCreate')).toEqual('http.body.1');
-      expect(getUniqueFieldId('http.bodyUpdate')).toEqual('http.body.0');
-      expect(getUniqueFieldId('http.relativeURIUpdate')).toEqual('http.relativeURI.0');
-      expect(getUniqueFieldId('http.relativeURICreate')).toEqual('http.relativeURI.1');
-      expect(getUniqueFieldId('rdbms.query1')).toEqual('rdbms.query');
-      expect(getUniqueFieldId('rdbms.query2')).toEqual('rdbms.query');
-      expect(getUniqueFieldId('http.auth.oauth.refreshBody')).toEqual('http.auth.token.refreshBody');
+      expect(getUniqueFieldId('rdbms.queryInsert')).toBe('rdbms.query.1');
+      expect(getUniqueFieldId('rdbms.queryUpdate')).toBe('rdbms.query.0');
+      expect(getUniqueFieldId('http.bodyCreate')).toBe('http.body.1');
+      expect(getUniqueFieldId('http.bodyUpdate')).toBe('http.body.0');
+      expect(getUniqueFieldId('http.relativeURIUpdate')).toBe('http.relativeURI.0');
+      expect(getUniqueFieldId('http.relativeURICreate')).toBe('http.relativeURI.1');
+      expect(getUniqueFieldId('rdbms.query1')).toBe('rdbms.query');
+      expect(getUniqueFieldId('rdbms.query2')).toBe('rdbms.query');
     });
     test('should correctly return field id in case of graphql field', () => {
-      expect(getUniqueFieldId('graphql.query')).toEqual('http.body');
-      expect(getUniqueFieldId('graphql.variables', {}, {}, 'connections')).toEqual('http.ping.body');
+      expect(getUniqueFieldId('graphql.query')).toBe('http.body');
+      expect(getUniqueFieldId('graphql.variables', {}, {}, 'connections')).toBe('http.ping.body');
     });
   });
 

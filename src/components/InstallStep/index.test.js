@@ -1,4 +1,4 @@
-/* global describe, test, expect, jest, beforeEach, afterEach */
+
 import React from 'react';
 import { screen } from '@testing-library/react';
 import { MemoryRouter} from 'react-router-dom';
@@ -89,7 +89,7 @@ function initInstallation(props = {}) {
   return renderWithProviders(ui, {initialStore});
 }
 
-describe('InstallationStep UI tests', () => {
+describe('installationStep UI tests', () => {
   let mockDispatchFn;
   let useDispatchSpy;
 
@@ -106,7 +106,7 @@ describe('InstallationStep UI tests', () => {
   afterEach(() => {
     useDispatchSpy.mockClear();
   });
-  test('Should render all the options in the ui correctly', () => {
+  test('should render all the options in the ui correctly', () => {
     let type = 'connection';
     const props = {
       index: 1,
@@ -161,7 +161,7 @@ describe('InstallationStep UI tests', () => {
     initInstallation(props);
     userEvent.click(screen.getByText(/configure/i));
 
-    expect(mockClick).toBeCalled();
+    expect(mockClick).toHaveBeenCalled();
   });
   test('should make the respective dispatch calls when step.type equals "install package"', () => {
     const mockClick = jest.fn();
@@ -276,7 +276,7 @@ describe('InstallationStep UI tests', () => {
       3
     ));
   });
-  test('Should render empty DOM when improper props are provided', () => {
+  test('should render empty DOM when improper props are provided', () => {
     const props = {
       index: 1,
       integrationId: '62bd4ab37b94d20de64e9eaa',

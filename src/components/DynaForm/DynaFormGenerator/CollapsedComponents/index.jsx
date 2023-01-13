@@ -10,6 +10,7 @@ import { selectors } from '../../../../reducers';
 import ExpandMoreIcon from '../../../icons/ArrowDownIcon';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import { emptyObject } from '../../../../constants';
+import CollapsedComponentActions from './CollapsedComponentActions';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -25,6 +26,14 @@ const useStyles = makeStyles(theme => ({
     borderColor: theme.palette.secondary.lightest,
     borderRadius: theme.spacing(0.5),
   },
+  header: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    width: '100%',
+  },
+  accordionHeader: {
+    display: 'flex',
+  },
 }));
 
 export default function CollapsedComponents(props) {
@@ -35,7 +44,7 @@ export default function CollapsedComponents(props) {
   const transformedContainers =
     containers &&
     containers.map((container, index) => {
-      const { label, collapsed = true, ...rest } = container;
+      const { label, collapsed = true, actionId, ...rest } = container;
       const header = typeof label === 'function' ? label(resource) : label;
 
       return (
@@ -51,6 +60,7 @@ export default function CollapsedComponents(props) {
           formKey={formKey}
           resourceType={resourceType}
           resourceId={resourceId}
+          actionId={actionId}
         />
       );
     });
@@ -109,8 +119,12 @@ const ExpansionPanelExpandOnInValidState = props => {
         <AccordionSummary
           data-test={header}
           onClick={toggleExpansionPanel}
-          expandIcon={<ExpandMoreIcon />}>
-          <Typography className={classes.expPanelTitle}>{header}</Typography>
+          expandIcon={<ExpandMoreIcon />}
+          className={classes.accordionHeader}>
+          <div className={classes.header}>
+            <Typography className={classes.expPanelTitle}>{header}</Typography>
+            {shouldExpand && <CollapsedComponentActions className={classes.actions} {...props} />}
+          </div>
         </AccordionSummary>
         <AccordionDetails >
           <FormGenerator {...props} layout={layout} fieldMap={fieldMap} />

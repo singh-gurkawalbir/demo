@@ -1,4 +1,4 @@
-/* global describe, test, expect */
+
 import reducer, { selectors } from '.';
 import actions from '../../../actions';
 
@@ -29,7 +29,7 @@ describe('stage reducers', () => {
         state,
         actions.resource.patchStaged(id, [{ ...patch, path: '/other' }])
       );
-      expect(state[id].patch.length).toEqual(2);
+      expect(state[id].patch).toHaveLength(2);
 
       state = reducer(state, actions.resource.clearStaged(id));
       expect(state[id].patch).toBeUndefined();
@@ -44,7 +44,7 @@ describe('stage reducers', () => {
         state,
         actions.resource.patchStaged(id, [{ ...patch, path: '/other' }])
       );
-      expect(state[id].patch.length).toEqual(2);
+      expect(state[id].patch).toHaveLength(2);
 
       state = reducer(state, actions.resource.clearStaged(id, 'value'));
       expect(state[id].patch).toEqual([{...patch, path: '/other', timestamp: expect.any(Number)}]);
@@ -68,7 +68,7 @@ describe('stage reducers', () => {
         state,
         actions.resource.patchStaged(id, [{ ...patch, path: '/other' }])
       );
-      expect(state[id].patch.length).toEqual(2);
+      expect(state[id].patch).toHaveLength(2);
       const predicateForPatchFilter = patch => patch.path !== '/other';
 
       state = reducer(state, actions.resource.removeStage(id, predicateForPatchFilter));
@@ -94,7 +94,7 @@ describe('stage reducers', () => {
         state,
         actions.resource.patchStaged(id, [{ ...patch, path: '/other' }])
       );
-      expect(state[id].patch.length).toEqual(2);
+      expect(state[id].patch).toHaveLength(2);
 
       state = reducer(state, actions.resource.undoStaged(id));
       expect(state[id].patch).toEqual([
@@ -242,13 +242,13 @@ describe('stage reducers', () => {
 describe('stage selectors', () => {
   describe('stagedResource', () => {
     test('should return null when no match found.', () => {
-      expect(selectors.stagedResource(undefined, 'key')).toEqual(null);
-      expect(selectors.stagedResource({}, 'key')).toEqual(null);
+      expect(selectors.stagedResource(undefined, 'key')).toBeNull();
+      expect(selectors.stagedResource({}, 'key')).toBeNull();
     });
     test('should return empty object when invalid resourceId is sent.', () => {
-      expect(selectors.stagedResource({}, '')).toEqual(null);
-      expect(selectors.stagedResource({}, null)).toEqual(null);
-      expect(selectors.stagedResource({}, undefined)).toEqual(null);
+      expect(selectors.stagedResource({}, '')).toBeNull();
+      expect(selectors.stagedResource({}, null)).toBeNull();
+      expect(selectors.stagedResource({}, undefined)).toBeNull();
     });
 
     test('should return staged resource when match found.', () => {
@@ -323,14 +323,14 @@ describe('stage selectors', () => {
       const patch = [{ op: 'replace', path: '/adaptorType', value: 'HTTPExport' }];
       const state = reducer(undefined, actions.resource.patchStaged(id, patch));
 
-      expect(selectors.lookupProcessorResourceType(state, id)).toEqual('exports');
+      expect(selectors.lookupProcessorResourceType(state, id)).toBe('exports');
     });
     test('should return imports if adaptor type of staged resource includes import', () => {
       const id = 123;
       const patch = [{ op: 'replace', path: '/adaptorType', value: 'HTTPImport' }];
       const state = reducer(undefined, actions.resource.patchStaged(id, patch));
 
-      expect(selectors.lookupProcessorResourceType(state, id)).toEqual('imports');
+      expect(selectors.lookupProcessorResourceType(state, id)).toBe('imports');
     });
   });
 });

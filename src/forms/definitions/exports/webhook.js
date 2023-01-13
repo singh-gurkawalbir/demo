@@ -1,6 +1,11 @@
-import { isJsonString } from '../../../utils/string';
+import { isJsonString, safeParse } from '../../../utils/string';
+import {
+  updateWebhookFinalMetadataWithHttpFramework,
+} from '../../../sagas/utils';
 
 export default {
+  init: (fieldMeta, resource, flow, httpConnector) => updateWebhookFinalMetadataWithHttpFramework(fieldMeta, httpConnector, resource),
+
   validationHandler: field => {
     // Used to validate sampleData field
     // Incase of invalid json throws error to be shown on the field
@@ -57,6 +62,7 @@ export default {
 
     delete retValues['/webhook/generateToken'];
     delete retValues['/webhook/slackKey'];
+    retValues['/mockOutput'] = safeParse(retValues['/mockOutput']);
 
     return {
       ...retValues,
@@ -107,6 +113,12 @@ export default {
     'webhook.successBody': {
       fieldId: 'webhook.successBody',
     },
+    mockOutput: {fieldId: 'mockOutput'},
+    'webhook._httpConnectorId': {
+      id: 'webhook._httpConnectorId',
+      type: 'text',
+      visible: false,
+    },
   },
   layout: {
     type: 'collapse',
@@ -131,6 +143,7 @@ export default {
           'webhook.path',
           'webhook.username',
           'webhook.password',
+          'webhook._httpConnectorId',
         ],
       },
       {
@@ -138,7 +151,14 @@ export default {
         label: 'Generate URL & sample data',
         fields: ['webhook.url', 'webhook.sampledata'],
       },
-      { collapsed: true,
+      {
+        collapsed: true,
+        actionId: 'mockOutput',
+        label: 'Mock output',
+        fields: ['mockOutput'],
+      },
+      {
+        collapsed: true,
         label: 'Advanced',
         fields: [
           'webhook.successStatusCode',

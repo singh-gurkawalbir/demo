@@ -1,4 +1,3 @@
-/* global describe, test, expect, jest */
 import React from 'react';
 import cloneDeep from 'lodash/cloneDeep';
 import { MemoryRouter, Route } from 'react-router-dom';
@@ -33,6 +32,10 @@ async function initRecycleBin(
     redirectTo,
   };
   initialStore.getState().data.resources = resources;
+  initialStore.getState().auth = {
+    authenticated: true,
+    defaultAccountSet: true,
+  };
   initialStore.getState().session.filters = filters;
   const ui = (
     <MemoryRouter
@@ -62,14 +65,14 @@ jest.mock('react-router-dom', () => ({
   }),
 }));
 
-describe('RecycleBin test cases', () => {
+describe('recycleBin test cases', () => {
   runServer();
 
   test('should pass the initial render with redirectTo', async () => {
     await initRecycleBin({
       redirectTo: '/home',
     });
-    expect(mockHistoryPush).toBeCalledWith('/home');
+    expect(mockHistoryPush).toHaveBeenCalledWith('/home');
   });
 
   test('should pass the initial render with requested status', async () => {
@@ -110,7 +113,7 @@ describe('RecycleBin test cases', () => {
       },
     });
 
-    expect(await screen.queryByText(/Recycle bin/i)).toBeInTheDocument();
+    await expect(screen.findByText(/Recycle bin/i)).resolves.toBeInTheDocument();
     const inputRef = screen.getByRole('textbox');
 
     expect(inputRef).toBeInTheDocument();
@@ -145,7 +148,7 @@ describe('RecycleBin test cases', () => {
       },
     });
 
-    expect(await screen.queryByText(/Recycle bin/i)).toBeInTheDocument();
+    await expect(screen.findByText(/Recycle bin/i)).resolves.toBeInTheDocument();
     await waitFor(() => expect(screen.queryByText(/Your search didn’t return any matching results. Try expanding your search criteria./i)).toBeInTheDocument());
   });
 

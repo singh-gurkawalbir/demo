@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { isEmpty } from 'lodash';
-import { useSelector, shallowEqual } from 'react-redux';
+import { useSelector, shallowEqual, useDispatch } from 'react-redux';
 import { makeStyles, Typography } from '@material-ui/core';
 import { useHistory, useRouteMatch, useLocation, matchPath } from 'react-router-dom';
 import { selectors } from '../../../../reducers';
@@ -16,6 +16,8 @@ import { buildDrawerUrl, drawerPaths } from '../../../../utils/rightDrawer';
 import { useEditRetryConfirmDialog } from '../../../../components/ErrorList/ErrorTable/hooks/useEditRetryConfirmDialog';
 import RetryList from '../../../../components/JobDashboard/RetryList';
 import { FILTER_KEYS } from '../../../../utils/errorManagement';
+import actions from '../../../../actions';
+import { getTextAfterCount } from '../../../../utils/string';
 
 const emptySet = [];
 
@@ -26,13 +28,11 @@ const useStyles = makeStyles(theme => ({
   boldErrorsCount: {
     fontWeight: 'bold',
   },
-  removeBottomLine: {
-    borderBottom: 0,
-  },
-  title: {
-    flexGrow: 1,
-    color: theme.palette.secondary.main,
-    wordBreak: 'break-word',
+  drawerErrorTitle: {
+    borderBottom: 'none',
+    '&>.MuiTypography-root': {
+      alignSelf: 'flex-start',
+    },
   },
   errorDetailsDrawerContent: {
     overflowY: 'hidden',
@@ -42,6 +42,7 @@ export default function ErrorDetailsDrawer({ flowId }) {
   const history = useHistory();
   const classes = useStyles();
   const match = useRouteMatch();
+  const dispatch = useDispatch();
   const { pathname } = useLocation();
   const [changeTab, setChangeTab] = useState(true);
 
@@ -92,8 +93,8 @@ export default function ErrorDetailsDrawer({ flowId }) {
 
   const childJob = useSelector(
     state => selectors.filter(state, `${flowId}-${flowJobId}-${matchErrorDrawerPathWithFilter?.params?.resourceId}`), shallowEqual
-  );
-
+  ) || {};
+  const {endedAt, isLatestJob, numOpenError} = childJob;
   const resourceName = useSelector(state => {
     const { resourceId } = matchErrorDrawerPath?.params || {};
 
@@ -112,6 +113,7 @@ export default function ErrorDetailsDrawer({ flowId }) {
     } else {
       history.replace(match.url);
     }
+    setChangeTab(true);
   }, [history, match.url]);
 
   const showRetryDataChangedConfirmDialog = useEditRetryConfirmDialog({flowId, resourceId, isResolved: errorType !== 'open'});
@@ -139,6 +141,39 @@ export default function ErrorDetailsDrawer({ flowId }) {
     }
   }, [matchErrorDrawerPathWithFilter, history, match.url, matchErrorDrawerPath]);
 
+  const {data: latestFlowJobs = emptySet} = useSelector(
+    state => selectors.flowDashboardJobs(state, flowId),
+    shallowEqual
+  ) || {};
+
+  const integrationId = useSelector(state =>
+    selectors.resource(state, 'flows', flowId)?._integrationId || 'none'
+  );
+  const isIntegrationUsersRequested = useSelector(state =>
+    !!selectors.integrationUsers(state, integrationId)
+  );
+  const users = useSelector(state =>
+    selectors.availableUsersList(state, integrationId)
+  );
+  const isOwnerOrAdmin = useSelector(state =>
+    selectors.isAccountOwnerOrAdmin(state)
+  );
+
+  const totalErrorsCount = (isLatestJob && latestFlowJobs.find(job => {
+    const { _flowJobId, _parentJobId, _exportId, _importId, _expOrImpId } = job;
+    const id = _expOrImpId || _exportId || _importId;
+    const jobFlowJobId = _flowJobId || _parentJobId;
+
+    return resourceId === id && flowJobId === jobFlowJobId;
+  })?.numError) || numOpenError;
+
+  useEffect(() => () => {
+    dispatch(actions.errorManager.flowErrorDetails.clear({ flowId, resourceId }));
+    dispatch(actions.clearFilter(FILTER_KEYS.OPEN));
+    dispatch(actions.clearFilter(FILTER_KEYS.RESOLVED));
+    dispatch(actions.clearFilter(FILTER_KEYS.RETRIES));
+  }, [dispatch, flowId, resourceId]);
+
   useEffect(() => {
     if (isOpenErrorsLoaded && !allErrors.length && errorType === 'open' && changeTab) {
       handleErrorTypeChange('resolved');
@@ -150,19 +185,36 @@ export default function ErrorDetailsDrawer({ flowId }) {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isOpenErrorsLoaded]);
 
-  // Child job information will not be available if we reload the page. Page should be redirected to old url for this case.
-  if (flowJobId && (!childJob || isEmpty(childJob))) {
-    handleClose();
+  useEffect(() => {
+    // Child job information will not be available if we reload the page. Page should be redirected to parent url for this case.
+    if (flowJobId && (!childJob || isEmpty(childJob))) {
+      handleClose();
+    }
+  }, [childJob, flowJobId, handleClose]);
 
-    return null;
-  }
-  const endedAt = childJob?.endedAt;
+  const requestIntegrationUsers = useCallback(() => {
+    if (!users?.length && isOwnerOrAdmin) {
+      dispatch(actions.user.org.users.requestCollection('Retrieving org users'));
+    } else if (!isOwnerOrAdmin && !isIntegrationUsersRequested) {
+      dispatch(actions.resource.requestCollection(`integrations/${integrationId}/ashares`));
+    }
+  }, [dispatch, integrationId, isIntegrationUsersRequested, isOwnerOrAdmin, users?.length]);
+
+  useEffect(() => {
+    requestIntegrationUsers();
+  }, [requestIntegrationUsers]);
+
   const Title = () => (
     <>
-      <Typography variant="h4" className={classes.title} >{`Errors: ${resourceName}`}</Typography>
+      {`Errors: ${resourceName}`}
       {endedAt && <DrawerHeaderSubTitle>Run completed: <CeligoTimeAgo date={endedAt} /></DrawerHeaderSubTitle>}
     </>
   );
+
+  if (flowJobId && (!childJob || isEmpty(childJob))) {
+    // we redirect in case of no flow job id
+    return null;
+  }
 
   return (
     <RightDrawer
@@ -172,16 +224,16 @@ export default function ErrorDetailsDrawer({ flowId }) {
       ]}
       width="full"
       onClose={handleClose}>
-      <DrawerHeader className={classes.removeBottomLine} title={<Title />} handleClose={handleDrawerClose} hideBackButton>
+      <DrawerHeader className={classes.drawerErrorTitle} title={<Title />} handleClose={handleDrawerClose} hideBackButton>
         <ErrorDrawerAction flowId={flowId} onChange={handleErrorTypeChange} errorType={errorType} />
       </DrawerHeader>
       <Tabs flowId={flowId} onChange={handleErrorTypeChange} />
 
       <DrawerContent className={classes.errorDetailsDrawerContent}>
-        {flowJobId && allErrors.length < 1000 ? (
+        {flowJobId && isOpenErrorsLoaded ? (
           <Typography variant="body2" className={classes.errorsInRun}>
-            <span className={classes.boldErrorsCount}>{childJob?.numOpenError} error{childJob?.numOpenError !== 1 ? 's' : ''} in this run </span>
-            <span><span>: {allErrors.length} open  |  </span><span>{childJob?.numOpenError - allErrors.length} resolved</span></span>
+            <span className={classes.boldErrorsCount}>{getTextAfterCount('error', totalErrorsCount)} in this run </span>
+            {totalErrorsCount < 1000 && !isEmpty(allErrors) ? (<span><span>: {allErrors.length} open  |  </span><span>{totalErrorsCount - allErrors.length} resolved</span></span>) : ''}
           </Typography>
         ) : ''}
         {errorType === FILTER_KEYS.RETRIES ? <RetryList flowId={flowId} /> : <ErrorList flowId={flowId} errorsInRun={flowJobId} />}

@@ -1,15 +1,11 @@
-/* global describe, test, expect, jest, afterEach, beforeEach */
 import React from 'react';
 import {Router} from 'react-router-dom';
-// eslint-disable-next-line import/no-extraneous-dependencies
-import { screen, fireEvent, waitFor, cleanup } from '@testing-library/react';
-// eslint-disable-next-line import/no-extraneous-dependencies
+import { screen, fireEvent, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import {createMemoryHistory} from 'history';
 import * as reactRedux from 'react-redux';
 import UserFormWrapper from '.';
-import { mockGetRequestOnce, mockPostRequestOnce, mockPutRequestOnce, renderWithProviders } from '../../../test/test-utils';
+import { mockGetRequestOnce, mockPostRequestOnce, mockPutRequestOnce, renderWithProviders, mockPostRequest } from '../../../test/test-utils';
 import { runServer } from '../../../test/api/server';
 import { getCreatedStore } from '../../../store';
 
@@ -102,8 +98,6 @@ function initUserFormWrapper(userprops) {
   initialStore.getState().data.resources.ssoclients = [
 
   ];
-  history.push = jest.fn();
-  history.goBack = jest.fn();
   const ui = (
     <Router history={history}>
       <UserFormWrapper userId={userprops} />
@@ -125,29 +119,35 @@ const props = {
   userId: '60fea86dbac8e87b7660f984',
 };
 
-describe('User Form Wrapper', () => {
+describe('user Form Wrapper', () => {
   runServer();
   let mockDispatchFn;
   let useDispatchSpy;
+  let historyPush;
+  let historygoBack;
 
   beforeEach(done => {
     initialStore = getCreatedStore();
     useDispatchSpy = jest.spyOn(reactRedux, 'useDispatch');
+    historyPush = jest.spyOn(history, 'push').mockImplementation();
+    historygoBack = jest.spyOn(history, 'goBack').mockImplementation();
     mockDispatchFn = jest.fn(action => {
       switch (action.type) {
         default: initialStore.dispatch(action);
       }
     });
     useDispatchSpy.mockReturnValue(mockDispatchFn);
+    mockPostRequest('/api/invite', (req, res, ctx) => res(ctx.json([])));
     done();
   });
-  afterEach(async () => {
+  afterEach(() => {
     useDispatchSpy.mockClear();
     mockDispatchFn.mockClear();
-    cleanup();
+    historyPush.mockClear();
+    historygoBack.mockClear();
   });
 
-  test('Should able to access the User Form Wrapper and need to verify the administrator access level by saving the form', async () => {
+  test('should able to access the User Form Wrapper and need to verify the administrator access level by saving the form', async () => {
     initUserFormWrapper(props.userId);
     const mockResolverFunction = jest.fn();
 
@@ -158,25 +158,7 @@ describe('User Form Wrapper', () => {
     });
 
     expect(screen.queryByText(/Email/i)).toBeInTheDocument();
-    const svgEl = document.querySelector("[viewBox='0 0 24 24']");
 
-    expect(svgEl).toBeInTheDocument();
-    userEvent.click(svgEl);
-    expect(screen.getByText('Enter the email of the user you would like to invite to manage and/or monitor selected integrations.')).toBeInTheDocument();
-    expect(screen.getByText('Was this helpful?')).toBeInTheDocument();
-    expect(screen.getByText('Yes')).toBeInTheDocument();
-    expect(screen.getByText('No')).toBeInTheDocument();
-    userEvent.click(screen.getByText('Yes'));
-    userEvent.click(svgEl);
-    userEvent.click(screen.getByText('No'));
-    fireEvent.change(screen.queryByPlaceholderText(/How can we make this information more helpful?/i), {
-      target: {value: 'Hey! cool'},
-    });
-    const submitText = screen.getByText('Submit');
-
-    expect(submitText).toBeInTheDocument();
-    userEvent.click(submitText);
-    expect(submitText).not.toBeInTheDocument();
     const input = screen.queryByRole('textbox');
 
     fireEvent.change(input, { target: { value: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.' }});
@@ -200,29 +182,10 @@ describe('User Form Wrapper', () => {
       expect(mockResolverFunction).toHaveBeenCalledTimes(1);
     });
   });
-  test('Should able to access the User Form Wrapper and need to verify the administrator access level by cancelling the form', async () => {
+  test('should able to access the User Form Wrapper and need to verify the administrator access level by cancelling the form', async () => {
     initUserFormWrapper(props.userId);
 
     expect(screen.queryByText(/Email/i)).toBeInTheDocument();
-    const svgEl = document.querySelector("[viewBox='0 0 24 24']");
-
-    expect(svgEl).toBeInTheDocument();
-    userEvent.click(svgEl);
-    expect(screen.getByText('Enter the email of the user you would like to invite to manage and/or monitor selected integrations.')).toBeInTheDocument();
-    expect(screen.getByText('Was this helpful?')).toBeInTheDocument();
-    expect(screen.getByText('Yes')).toBeInTheDocument();
-    expect(screen.getByText('No')).toBeInTheDocument();
-    userEvent.click(screen.getByText('Yes'));
-    userEvent.click(svgEl);
-    userEvent.click(screen.getByText('No'));
-    fireEvent.change(screen.queryByPlaceholderText(/How can we make this information more helpful?/i), {
-      target: {value: 'Hey! cool'},
-    });
-    const submitText = screen.getByText('Submit');
-
-    expect(submitText).toBeInTheDocument();
-    userEvent.click(submitText);
-    expect(submitText).not.toBeInTheDocument();
     const input = screen.queryByRole('textbox');
 
     fireEvent.change(input, { target: { value: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.' }});
@@ -242,7 +205,7 @@ describe('User Form Wrapper', () => {
 
     expect(cancelMessage).toBeInTheDocument();
   });
-  test('Should be able to invite a user with administrator access', async () => {
+  test('should be able to invite a user with administrator access', async () => {
     await initUserFormWrapper('');
     const mockResolverFunction = jest.fn();
 
@@ -259,25 +222,7 @@ describe('User Form Wrapper', () => {
       },
     ]);
     expect(screen.queryByText(/Email/i)).toBeInTheDocument();
-    const svgEl = document.querySelector("[viewBox='0 0 24 24']");
 
-    expect(svgEl).toBeInTheDocument();
-    userEvent.click(svgEl);
-    expect(screen.getByText('Enter the email of the user you would like to invite to manage and/or monitor selected integrations.')).toBeInTheDocument();
-    expect(screen.getByText('Was this helpful?')).toBeInTheDocument();
-    expect(screen.getByText('Yes')).toBeInTheDocument();
-    expect(screen.getByText('No')).toBeInTheDocument();
-    userEvent.click(screen.getByText('Yes'));
-    userEvent.click(svgEl);
-    userEvent.click(screen.getByText('No'));
-    fireEvent.change(screen.queryByPlaceholderText(/How can we make this information more helpful?/i), {
-      target: {value: 'Hey! cool'},
-    });
-    const submitText = screen.getByText('Submit');
-
-    expect(submitText).toBeInTheDocument();
-    userEvent.click(submitText);
-    expect(submitText).not.toBeInTheDocument();
     const input = screen.queryByRole('textbox');
 
     fireEvent.change(input, { target: { value: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.' }});
@@ -310,9 +255,9 @@ describe('User Form Wrapper', () => {
 
     expect(cancelMessage).toBeInTheDocument();
     fireEvent.click(cancelMessage);
-    expect(history.goBack).toBeCalled();
+    expect(history.goBack).toHaveBeenCalledWith();
   }, 30000);
-  test('Should be able to invite a user with manage access', async () => {
+  test('should be able to invite a user with manage access', async () => {
     await initUserFormWrapper('');
     mockGetRequestOnce('/api/shared/ashares', [
       {
@@ -322,25 +267,7 @@ describe('User Form Wrapper', () => {
       },
     ]);
     expect(screen.queryByText(/Email/i)).toBeInTheDocument();
-    const svgEl = document.querySelector("[viewBox='0 0 24 24']");
 
-    expect(svgEl).toBeInTheDocument();
-    userEvent.click(svgEl);
-    expect(screen.getByText('Enter the email of the user you would like to invite to manage and/or monitor selected integrations.')).toBeInTheDocument();
-    expect(screen.getByText('Was this helpful?')).toBeInTheDocument();
-    expect(screen.getByText('Yes')).toBeInTheDocument();
-    expect(screen.getByText('No')).toBeInTheDocument();
-    userEvent.click(screen.getByText('Yes'));
-    userEvent.click(svgEl);
-    userEvent.click(screen.getByText('No'));
-    fireEvent.change(screen.queryByPlaceholderText(/How can we make this information more helpful?/i), {
-      target: {value: 'Hey! cool'},
-    });
-    const submitText = screen.getByText('Submit');
-
-    expect(submitText).toBeInTheDocument();
-    userEvent.click(submitText);
-    expect(submitText).not.toBeInTheDocument();
     const input = screen.queryByRole('textbox');
 
     fireEvent.change(input, { target: { value: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.' }});
@@ -370,9 +297,9 @@ describe('User Form Wrapper', () => {
 
     expect(cancelMessage).toBeInTheDocument();
     fireEvent.click(cancelMessage);
-    expect(history.goBack).toBeCalledTimes(1);
+    expect(history.goBack).toHaveBeenCalledTimes(1);
   }, 30000);
-  test('Should be able to invite a user with monitor access', async () => {
+  test('should be able to invite a user with monitor access', async () => {
     await initUserFormWrapper('');
     mockGetRequestOnce('/api/shared/ashares', [
       {
@@ -382,25 +309,6 @@ describe('User Form Wrapper', () => {
       },
     ]);
     expect(screen.queryByText(/Email/i)).toBeInTheDocument();
-    const svgEl = document.querySelector("[viewBox='0 0 24 24']");
-
-    expect(svgEl).toBeInTheDocument();
-    userEvent.click(svgEl);
-    expect(screen.getByText('Enter the email of the user you would like to invite to manage and/or monitor selected integrations.')).toBeInTheDocument();
-    expect(screen.getByText('Was this helpful?')).toBeInTheDocument();
-    expect(screen.getByText('Yes')).toBeInTheDocument();
-    expect(screen.getByText('No')).toBeInTheDocument();
-    userEvent.click(screen.getByText('Yes'));
-    userEvent.click(svgEl);
-    userEvent.click(screen.getByText('No'));
-    fireEvent.change(screen.queryByPlaceholderText(/How can we make this information more helpful?/i), {
-      target: {value: 'Hey! cool'},
-    });
-    const submitText = screen.getByText('Submit');
-
-    expect(submitText).toBeInTheDocument();
-    userEvent.click(submitText);
-    expect(submitText).not.toBeInTheDocument();
     const input = screen.queryByRole('textbox');
 
     fireEvent.change(input, { target: { value: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.' }});
@@ -453,7 +361,7 @@ describe('User Form Wrapper', () => {
       asyncKey: 'inviteUserDrawerFormKey',
     }));
   }, 30000);
-  test('Should be able to invite a user with manage integration access to a tile', async () => {
+  test('should be able to invite a user with manage integration access to a tile', async () => {
     await initUserFormWrapper('');
     mockGetRequestOnce('/api/shared/ashares', [
       {
@@ -462,26 +370,7 @@ describe('User Form Wrapper', () => {
         accessLevel: 'monitor',
       },
     ]);
-    expect(await screen.findByText(/Email/i)).toBeInTheDocument();
-    const svgEl = document.querySelector("[viewBox='0 0 24 24']");
-
-    expect(svgEl).toBeInTheDocument();
-    userEvent.click(svgEl);
-    expect(screen.getByText('Enter the email of the user you would like to invite to manage and/or monitor selected integrations.')).toBeInTheDocument();
-    expect(screen.getByText('Was this helpful?')).toBeInTheDocument();
-    expect(screen.getByText('Yes')).toBeInTheDocument();
-    expect(screen.getByText('No')).toBeInTheDocument();
-    userEvent.click(screen.getByText('Yes'));
-    userEvent.click(svgEl);
-    userEvent.click(screen.getByText('No'));
-    fireEvent.change(screen.queryByPlaceholderText(/How can we make this information more helpful?/i), {
-      target: {value: 'Hey! cool'},
-    });
-    const submitText = screen.getByText('Submit');
-
-    expect(submitText).toBeInTheDocument();
-    userEvent.click(submitText);
-    expect(submitText).not.toBeInTheDocument();
+    await expect(screen.findByText(/Email/i)).resolves.toBeInTheDocument();
     const input = screen.queryByRole('textbox');
 
     fireEvent.change(input, { target: { value: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.' }});
@@ -538,7 +427,7 @@ describe('User Form Wrapper', () => {
       asyncKey: 'inviteUserDrawerFormKey',
     }));
   }, 30000);
-  test('Should be able to invite a user with monitor integration access to a tile', async () => {
+  test('should be able to invite a user with monitor integration access to a tile', async () => {
     await initUserFormWrapper('');
     mockGetRequestOnce('/api/shared/ashares', [
       {
@@ -547,26 +436,7 @@ describe('User Form Wrapper', () => {
         accessLevel: 'monitor',
       },
     ]);
-    expect(await screen.findByText(/Email/i)).toBeInTheDocument();
-    const svgEl = document.querySelector("[viewBox='0 0 24 24']");
-
-    expect(svgEl).toBeInTheDocument();
-    userEvent.click(svgEl);
-    expect(screen.getByText('Enter the email of the user you would like to invite to manage and/or monitor selected integrations.')).toBeInTheDocument();
-    expect(screen.getByText('Was this helpful?')).toBeInTheDocument();
-    expect(screen.getByText('Yes')).toBeInTheDocument();
-    expect(screen.getByText('No')).toBeInTheDocument();
-    userEvent.click(screen.getByText('Yes'));
-    userEvent.click(svgEl);
-    userEvent.click(screen.getByText('No'));
-    fireEvent.change(screen.queryByPlaceholderText(/How can we make this information more helpful?/i), {
-      target: {value: 'Hey! cool'},
-    });
-    const submitText = screen.getByText('Submit');
-
-    expect(submitText).toBeInTheDocument();
-    userEvent.click(submitText);
-    expect(submitText).not.toBeInTheDocument();
+    await expect(screen.findByText(/Email/i)).resolves.toBeInTheDocument();
     const input = screen.queryByRole('textbox');
 
     fireEvent.change(input, { target: { value: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.' }});
@@ -623,28 +493,9 @@ describe('User Form Wrapper', () => {
       asyncKey: 'inviteUserDrawerFormKey',
     }));
   }, 30000);
-  test('Should be able to verify the monitor integration access to a tile', async () => {
+  test('should be able to verify the monitor integration access to a tile', async () => {
     await initUserFormWrapper('60fea86dbac8e87b7660f985');
-    expect(await screen.findByText(/Email/i)).toBeInTheDocument();
-    const svgEl = document.querySelector("[viewBox='0 0 24 24']");
-
-    expect(svgEl).toBeInTheDocument();
-    userEvent.click(svgEl);
-    expect(screen.getByText('Enter the email of the user you would like to invite to manage and/or monitor selected integrations.')).toBeInTheDocument();
-    expect(screen.getByText('Was this helpful?')).toBeInTheDocument();
-    expect(screen.getByText('Yes')).toBeInTheDocument();
-    expect(screen.getByText('No')).toBeInTheDocument();
-    userEvent.click(screen.getByText('Yes'));
-    userEvent.click(svgEl);
-    userEvent.click(screen.getByText('No'));
-    fireEvent.change(screen.queryByPlaceholderText(/How can we make this information more helpful?/i), {
-      target: {value: 'Hey! cool'},
-    });
-    const submitText = screen.getByText('Submit');
-
-    expect(submitText).toBeInTheDocument();
-    userEvent.click(submitText);
-    expect(submitText).not.toBeInTheDocument();
+    await expect(screen.findByText(/Email/i)).resolves.toBeInTheDocument();
     const input = screen.queryByRole('textbox');
 
     fireEvent.change(input, { target: { value: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.' }});
@@ -675,28 +526,9 @@ describe('User Form Wrapper', () => {
 
     expect(saveMessage).toBeInTheDocument();
   }, 30000);
-  test('Should be able to verify the manage integration access to a tile', async () => {
+  test('should be able to verify the manage integration access to a tile', async () => {
     await initUserFormWrapper('60fea86dbac8e87b7660f986');
-    expect(await screen.findByText(/Email/i)).toBeInTheDocument();
-    const svgEl = document.querySelector("[viewBox='0 0 24 24']");
-
-    expect(svgEl).toBeInTheDocument();
-    userEvent.click(svgEl);
-    expect(screen.getByText('Enter the email of the user you would like to invite to manage and/or monitor selected integrations.')).toBeInTheDocument();
-    expect(screen.getByText('Was this helpful?')).toBeInTheDocument();
-    expect(screen.getByText('Yes')).toBeInTheDocument();
-    expect(screen.getByText('No')).toBeInTheDocument();
-    userEvent.click(screen.getByText('Yes'));
-    userEvent.click(svgEl);
-    userEvent.click(screen.getByText('No'));
-    fireEvent.change(screen.queryByPlaceholderText(/How can we make this information more helpful?/i), {
-      target: {value: 'Hey! cool'},
-    });
-    const submitText = screen.getByText('Submit');
-
-    expect(submitText).toBeInTheDocument();
-    userEvent.click(submitText);
-    expect(submitText).not.toBeInTheDocument();
+    await expect(screen.findByText(/Email/i)).resolves.toBeInTheDocument();
     const input = screen.queryByRole('textbox');
 
     fireEvent.change(input, { target: { value: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.' }});

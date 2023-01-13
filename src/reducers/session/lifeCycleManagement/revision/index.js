@@ -1,6 +1,6 @@
 
-import { nanoid } from 'nanoid';
 import produce from 'immer';
+import { generateId } from '../../../../utils/string';
 import actionTypes from '../../../../actions/types';
 import { REVISION_TYPES, REVISION_CREATION_STATUS } from '../../../../constants';
 
@@ -90,7 +90,7 @@ export default (state = {}, action) => {
         if (!draft[integrationId][revisionId].errors) {
           draft[integrationId][revisionId].errors = {};
         }
-        const errorList = errors.map(e => ({...e, _id: nanoid() }));
+        const errorList = errors.map(e => ({...e, _id: generateId() }));
 
         draft[integrationId][revisionId].errors.status = 'received';
         draft[integrationId][revisionId].errors.data = errorList || [];

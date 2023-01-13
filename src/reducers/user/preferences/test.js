@@ -1,4 +1,4 @@
-/* global describe, test, expect */
+
 import each from 'jest-each';
 import reducer, { selectors } from '.';
 import actions from '../../../actions';
@@ -42,7 +42,7 @@ describe('user reducers', () => {
       });
     });
 
-    describe('Update preferences ', () => {
+    describe('Update preferences', () => {
       describe('for various user account types', () => {
         test('should update the correct set of preferences when the user is an owner', () => {
           const ownerAccountPreferences = {
@@ -253,7 +253,7 @@ describe('user reducers', () => {
       });
     });
 
-    test('should generate the correct set of preferences when the user is an owner', () => {
+    test('should generate the correct set of preferences when the user is an owner duplicate', () => {
       const invitedUserAccountPreferences = {
         defaultAShareId: '123',
         timeFormat: 'something',
@@ -287,10 +287,10 @@ describe('user defaultAShareId selectors', () => {
     );
     const state = reducer(undefined, receivedPreferencesAction);
 
-    expect(selectors.defaultAShareId(state)).toEqual(undefined);
+    expect(selectors.defaultAShareId(state)).toBeUndefined();
   });
   test('should return undefined if state is empty', () => {
-    expect(selectors.defaultAShareId()).toEqual(undefined);
+    expect(selectors.defaultAShareId()).toBeUndefined();
   });
 
   test('should return defaultAShareId if preferences contains defaultAShareId', () => {
@@ -305,7 +305,7 @@ describe('user defaultAShareId selectors', () => {
     );
     const state = reducer(undefined, receivedPreferences);
 
-    expect(selectors.defaultAShareId(state)).toEqual('own');
+    expect(selectors.defaultAShareId(state)).toBe('own');
   });
 });
 
@@ -347,6 +347,7 @@ describe('accountShareHeader reducers', () => {
   each(testCases).test(
     'should return %o for an %s when path is "%s"',
     (expected, userType, path, preferences) => {
+      // eslint-disable-next-line jest/no-standalone-expect
       expect(selectors.accountShareHeader(preferences, path)).toEqual(expected);
     }
   );

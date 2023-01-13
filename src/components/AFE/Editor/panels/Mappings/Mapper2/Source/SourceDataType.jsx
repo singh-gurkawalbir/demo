@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import clsx from 'clsx';
 import { Divider, Tooltip } from '@material-ui/core';
@@ -13,7 +13,6 @@ import { TextButton } from '../../../../../../Buttons';
 import ArrowPopper from '../../../../../../ArrowPopper';
 import ArrowDownFilledIcon from '../../../../../../icons/ArrowDownFilledIcon';
 import { buildDrawerUrl, drawerPaths } from '../../../../../../../utils/rightDrawer';
-import useSyncedRef from '../../../../../../../hooks/useSyncedRef';
 
 const useStyles = makeStyles(theme => ({
   dataType: {
@@ -125,6 +124,7 @@ const useStyles = makeStyles(theme => ({
     width: theme.spacing(8),
     wordBreak: 'break-word',
     textAlign: 'right',
+    whiteSpace: 'normal',
   },
   dataTypeSelected: {
     width: theme.spacing(8),
@@ -147,7 +147,6 @@ const getToolTipTitle = (isHandlebarExp, isHardCodedValue) => {
 };
 
 export default function SourceDataType({
-  dataType = 'string',
   disabled,
   nodeKey,
   className,
@@ -156,18 +155,31 @@ export default function SourceDataType({
   sourceDataTypes,
   isHardCodedValue,
   isHandlebarExp,
+  isDynamicLookup,
   isFocused,
 }) {
   const classes = useStyles();
   const dispatch = useDispatch();
   const history = useHistory();
-  const sourceDataTypeRef = useSyncedRef(!sourceDataTypes?.length ? [MAPPING_DATA_TYPES.STRING] : sourceDataTypes);
+  const [sourceDataTypeState, setSourceDataType] = useState([]);
   const open = !!anchorEl;
-  const selectedDataTypeLabels = [];
+
+  useEffect(() => {
+    const selectedDataTypeLabels = [];
+
+    if (sourceDataTypes?.length) {
+      sourceDataTypes.forEach(datatype => {
+        selectedDataTypeLabels.push(DATA_TYPES_REPRESENTATION_LIST[[datatype]]);
+      });
+    } else {
+      selectedDataTypeLabels.push(MAPPING_DATA_TYPES.STRING);
+    }
+    setSourceDataType(selectedDataTypeLabels);
+  }, [sourceDataTypes]);
 
   const handleMenu = useCallback(
     event => {
-      if (selectedDataTypeLabels && selectedDataTypeLabels.length > 1) {
+      if (sourceDataTypeState && sourceDataTypeState.length > 1) {
         dispatch(actions.mapping.v2.updateActiveKey(nodeKey));
 
         history.push(buildDrawerUrl({
@@ -179,21 +191,22 @@ export default function SourceDataType({
         setAnchorEl(anchorEl ? null : event.currentTarget);
       }
     },
-    [anchorEl, dispatch, history, setAnchorEl, nodeKey, selectedDataTypeLabels]
+    [sourceDataTypeState, dispatch, nodeKey, history, setAnchorEl, anchorEl]
   );
   const handleClose = useCallback(() => {
     setAnchorEl(null);
   }, [setAnchorEl]);
 
-  sourceDataTypeRef.current && sourceDataTypeRef.current.forEach(datatype => {
-    selectedDataTypeLabels.push(DATA_TYPES_REPRESENTATION_LIST[[datatype]]);
-  });
-
   const onDataTypeChange = useCallback(newDataType => {
     handleClose();
-    sourceDataTypeRef.current = [newDataType];
+    setSourceDataType([newDataType]);
     dispatch(actions.mapping.v2.updateDataType(nodeKey, newDataType, true));
-  }, [handleClose, dispatch, nodeKey, sourceDataTypeRef]);
+  }, [handleClose, dispatch, nodeKey]);
+
+  // dynamic lookup does not support source field and source data type
+  if (isDynamicLookup) {
+    return null;
+  }
 
   return (
     <div className={clsx(classes.sourceDataTypeDropDown, className)}>
@@ -210,9 +223,9 @@ export default function SourceDataType({
             className={classes.dataType}
             color="primary">
             {// CeligoTruncate is not used here since it effects the drag and drop functionality
-            isFocused ? <span className={classes.dataTypeList}>{selectedDataTypeLabels.join()}</span> : (
+            isFocused ? <span className={classes.dataTypeList}>{sourceDataTypeState.join()}</span> : (
               <span className={classes.dataTypeSelected}>
-                {selectedDataTypeLabels.join()}
+                {sourceDataTypeState.join()}
               </span>
             )
             }
@@ -240,7 +253,7 @@ export default function SourceDataType({
                 onDataTypeChange(opt.id);
               }}
               className={clsx(classes.itemRoot, {
-                [classes.itemSelected]: opt.id === dataType,
+                [classes.itemSelected]: opt.label === sourceDataTypeState[0],
               })}
               classes={{
                 root: classes.itemRoot,

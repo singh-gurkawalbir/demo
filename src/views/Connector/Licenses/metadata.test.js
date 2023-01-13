@@ -1,5 +1,3 @@
-/* global describe, test, expect */
-
 import React from 'react';
 import metadata from './metadata';
 import ResourceDrawerLink from '../../../components/ResourceDrawerLink';
@@ -8,7 +6,7 @@ import ExpiresOn from '../../../components/ResourceTable/commonCells/ExpiredOn';
 import Delete from '../../../components/ResourceTable/commonActions/Delete';
 import Edit from '../../../components/ResourceTable/commonActions/Edit';
 
-describe('Licenses metadata test cases', () => {
+describe('licenses metadata test cases', () => {
   test('should pass the test case for each field', () => {
     const useColumns = metadata.useColumns();
 
@@ -24,14 +22,14 @@ describe('Licenses metadata test cases', () => {
       rowData: {},
     });
 
-    expect(statusValue).toEqual('Pending install');
+    expect(statusValue).toBe('Pending install');
     const status1Value = status.Value({
       rowData: {
         _integrationId: 'id_1',
       },
     });
 
-    expect(status1Value).toEqual('Installed');
+    expect(status1Value).toBe('Installed');
 
     const created = useColumns.find(eachColumn => eachColumn.key === 'created');
     const createdValue = created.Value({
@@ -49,7 +47,7 @@ describe('Licenses metadata test cases', () => {
       },
     });
 
-    expect(integrationIdValue).toEqual('integration_id_1');
+    expect(integrationIdValue).toBe('integration_id_1');
 
     const expires = useColumns.find(eachColumn => eachColumn.key === 'expires');
     const expiresValue = expires.Value({

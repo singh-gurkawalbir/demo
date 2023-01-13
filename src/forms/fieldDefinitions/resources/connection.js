@@ -343,6 +343,7 @@ export default {
   'rest.scope': {
     type: 'selectscopes',
     label: 'Configure scopes',
+    required: true,
     helpKey: 'connection.http.auth.oauth.scope',
   },
 
@@ -358,11 +359,73 @@ export default {
           { label: 'Token', value: 'token' },
           { label: 'Custom', value: 'custom' },
           { label: 'Cookie', value: 'cookie' },
+          { label: 'OAuth 1.0', value: 'oauth1' },
         ],
       },
     ],
   },
-
+  'rest.oauth.oauth1.signatureMethod': {
+    type: 'select',
+    label: 'Signature method',
+    helpKey: 'http.auth.oauth.oauth1.signatureMethod',
+    required: true,
+    options: [
+      {
+        items: [
+          { label: 'HMAC-SHA1', value: 'hmac-sha1' },
+          { label: 'HMAC-SHA256', value: 'hmac-sha256' },
+          { label: 'HMAC-SHA512', value: 'hmac-sha512' },
+          { label: 'RSA-SHA1', value: 'rsa-sha1' },
+          { label: 'RSA-SHA256', value: 'rsa-sha256' },
+          { label: 'RSA-SHA512', value: 'rsa-sha512' },
+          { label: 'PLAINTEXT', value: 'plaintext' },
+        ],
+      },
+    ],
+  },
+  'rest.oauth.oauth1.consumerKey': {
+    type: 'text',
+    label: 'Consumer key',
+    helpKey: 'http.auth.oauth.oauth1.consumerKey',
+    required: true,
+  },
+  'rest.oauth.oauth1.consumerSecret': {
+    type: 'text',
+    inputType: 'password',
+    label: 'Consumer secret',
+    helpKey: 'http.auth.oauth.oauth1.consumerSecret',
+    defaultValue: '',
+    required: true,
+    description: 'Note: for security reasons this field must always be re-entered.',
+  },
+  'rest.oauth.oauth1.accessToken': {
+    type: 'text',
+    inputType: 'password',
+    defaultValue: '',
+    label: 'Access token',
+    helpKey: 'http.auth.oauth.oauth1.accessToken',
+    required: true,
+    description: 'Note: for security reasons this field must always be re-entered.',
+  },
+  'rest.oauth.oauth1.tokenSecret': {
+    type: 'text',
+    inputType: 'password',
+    label: 'Token secret',
+    helpKey: 'http.auth.oauth.oauth1.tokenSecret',
+    defaultValue: '',
+    required: true,
+    description: 'Note: for security reasons this field must always be re-entered.',
+  },
+  'rest.oauth.oauth1.consumerPrivateKey': {
+    type: 'text',
+    inputType: 'password',
+    multiline: true,
+    defaultValue: '',
+    label: 'Consumer private key',
+    helpKey: 'http.auth.oauth.oauth1.consumerPrivateKey',
+    required: true,
+    description: 'Note: for security reasons this field must always be re-entered.',
+  },
   'rest.authScheme': {
     isLoggable: true,
     type: 'select',
@@ -486,6 +549,7 @@ export default {
           { label: 'Cookie', value: 'cookie' },
           { label: 'Digest', value: 'digest' },
           { label: 'WSSE', value: 'wsse' },
+          { label: 'OAuth 1.0', value: 'oauth1' },
         ],
       },
     ],
@@ -678,12 +742,51 @@ export default {
     isLoggable: true,
     type: 'text',
     label: 'Path to auth error field in HTTP response body',
+    visibleWhen: [
+      {
+        field: 'http.auth.type',
+        isNot: ['oauth'],
+      },
+    ],
+  },
+  'http.auth.failPathForOauth': {
+    isLoggable: true,
+    type: 'text',
+    helpKey: 'connection.http.auth.failPath',
+    label: 'Override path to auth error field in HTTP response body',
+    defaultValue: r => r?.http?.auth?.failPath,
+    visibleWhen: [
+      {
+        field: 'http.auth.type',
+        is: ['oauth'],
+      },
+    ],
   },
   'http.auth.failValues': {
     isLoggable: true,
     type: 'text',
     delimiter: ',',
     label: 'Auth error values',
+    visibleWhen: [
+      {
+        field: 'http.auth.type',
+        isNot: ['oauth'],
+      },
+    ],
+  },
+  'http.auth.failValuesForOauth': {
+    isLoggable: true,
+    type: 'text',
+    helpKey: 'connection.http.auth.failPath',
+    delimiter: ',',
+    label: 'Override auth error values',
+    defaultValue: r => r?.http?.auth?.failValues,
+    visibleWhen: [
+      {
+        field: 'http.auth.type',
+        is: ['oauth'],
+      },
+    ],
   },
   'http.auth.basic.username': {
     type: 'text',
@@ -699,59 +802,15 @@ export default {
       'Note: for security reasons this field must always be re-entered.',
     required: true,
   },
-  'http.auth.oauth.tokenURI': {
-    type: 'text',
-    label: 'Access token URL',
-  },
   'http.auth.oauth.scope': {
     type: 'selectscopes',
     label: 'Configure scopes',
-  },
-  'http.auth.oauth.scopeDelimiter': {
-    isLoggable: true,
-    type: 'text',
-    label: 'Override default scope delimiter',
+    required: true,
   },
   'http.auth.oauth.accessTokenPath': {
     isLoggable: true,
     type: 'text',
     label: 'Http auth oauth access token path',
-  },
-  'http.auth.oauth.authURI': {
-    type: 'text',
-    label: 'Authorization URL',
-  },
-  'http.auth.oauth.clientCredentialsLocation': {
-    isLoggable: true,
-    type: 'select',
-    label: 'Send client credentials via',
-    defaultValue: r =>
-      (r &&
-        r.http &&
-        r.http.auth &&
-        r.http.auth.oauth &&
-        r.http.auth.oauth.clientCredentialsLocation) ||
-      'body',
-    options: [
-      {
-        items: [
-          { label: 'Basic auth header', value: 'basicauthheader' },
-          { label: 'HTTP body', value: 'body' },
-        ],
-      },
-    ],
-  },
-  'http.auth.oauth.accessTokenHeaders': {
-    type: 'keyvalue',
-    keyName: 'name',
-    valueName: 'value',
-    valueType: 'keyvalue',
-    label: 'Override access token HTTP headers',
-  },
-  'http.auth.oauth.accessTokenBody': {
-    type: 'httprequestbody',
-    contentType: 'json',
-    label: 'Override access token HTTP request body',
   },
   'http._iClientId': {
     isLoggable: true,
@@ -761,45 +820,9 @@ export default {
     allowNew: true,
     allowEdit: true,
   },
-  'http.auth.oauth.grantType': {
-    isLoggable: true,
-    type: 'select',
-    label: 'Grant type',
-    options: [
-      {
-        items: [
-          { label: 'Authorization code', value: 'authorizecode' },
-          // { label: 'Password', value: 'password' },
-          { label: 'Client credentials', value: 'clientcredentials' },
-        ],
-      },
-    ],
-  },
   'http.auth.oauth.username': {
     type: 'text',
     label: 'Http auth oauth username',
-  },
-  'http.auth.oauth.applicationType': {
-    isLoggable: true,
-    type: 'select',
-    label: 'Provider',
-    defaultValue: r =>
-      r &&
-      r.http &&
-      r.http.auth &&
-      r.http.auth.oauth &&
-      r.http.auth.oauth.grantType
-        ? 'custom'
-        : r &&
-          r.http &&
-          r.http.auth &&
-          r.http.auth.oauth &&
-          r.http.auth.oauth.applicationType,
-    options: [
-      {
-        items: [{ label: 'Custom', value: 'custom' }],
-      },
-    ],
   },
   'http.auth.oauth.callbackURL': {
     isLoggable: true,
@@ -811,22 +834,6 @@ export default {
   'http.auth.oauth.type': {
     isLoggable: true,
     defaultValue: 'custom',
-  },
-  'http.auth.token.revoke.uri': {
-    type: 'text',
-    label: 'Revoke token URL',
-  },
-  'http.auth.token.revoke.body': {
-    type: 'httprequestbody',
-    contentType: 'json',
-    label: 'Override revoke token HTTP request body',
-  },
-  'http.auth.token.revoke.headers': {
-    type: 'keyvalue',
-    keyName: 'name',
-    valueName: 'value',
-    valueType: 'keyvalue',
-    label: 'Override revoke token HTTP headers',
   },
   'http.auth.oauth.password': {
     type: 'text',
@@ -1044,11 +1051,9 @@ export default {
     required: true,
     helpKey: 'amazonmws.connection.http.type',
     defaultDisabled: r => !isNewId(r?._id),
-    defaultValue: r => isNewId(r?._id) ? '' : (r?.http?.type || 'Amazon-MWS'),
+    defaultValue: r => isNewId(r?._id) ? (r?.http?.type || '') : (r?.http?.type || 'Amazon-MWS'),
     skipSort: true,
     resourceId: r => r?._id,
-    omitWhenHidden: true,
-
   },
   'http.unencrypted': {
     isLoggable: true,
@@ -1108,6 +1113,68 @@ export default {
     type: 'text',
     label: 'SSL passphrase',
     helpKey: 'connection.http.clientCertificates.passphrase',
+  },
+  'http.auth.oauth.oauth1.signatureMethod': {
+    type: 'select',
+    label: 'Signature method',
+    helpKey: 'http.auth.oauth.oauth1.signatureMethod',
+    required: true,
+    options: [
+      {
+        items: [
+          { label: 'HMAC-SHA1', value: 'hmac-sha1' },
+          { label: 'HMAC-SHA256', value: 'hmac-sha256' },
+          { label: 'HMAC-SHA512', value: 'hmac-sha512' },
+          { label: 'RSA-SHA1', value: 'rsa-sha1' },
+          { label: 'RSA-SHA256', value: 'rsa-sha256' },
+          { label: 'RSA-SHA512', value: 'rsa-sha512' },
+          { label: 'PLAINTEXT', value: 'plaintext' },
+        ],
+      },
+    ],
+  },
+  'http.auth.oauth.oauth1.consumerKey': {
+    type: 'text',
+    label: 'Consumer key',
+    helpKey: 'http.auth.oauth.oauth1.consumerKey',
+    required: true,
+  },
+  'http.auth.oauth.oauth1.consumerSecret': {
+    type: 'text',
+    inputType: 'password',
+    defaultValue: '',
+    label: 'Consumer secret',
+    helpKey: 'http.auth.oauth.oauth1.consumerSecret',
+    required: true,
+    description: 'Note: for security reasons this field must always be re-entered.',
+  },
+  'http.auth.oauth.oauth1.accessToken': {
+    type: 'text',
+    inputType: 'password',
+    defaultValue: '',
+    label: 'Access token',
+    helpKey: 'http.auth.oauth.oauth1.accessToken',
+    required: true,
+    description: 'Note: for security reasons this field must always be re-entered.',
+  },
+  'http.auth.oauth.oauth1.tokenSecret': {
+    type: 'text',
+    inputType: 'password',
+    label: 'Token secret',
+    helpKey: 'http.auth.oauth.oauth1.tokenSecret',
+    defaultValue: '',
+    required: true,
+    description: 'Note: for security reasons this field must always be re-entered.',
+  },
+  'http.auth.oauth.oauth1.consumerPrivateKey': {
+    type: 'text',
+    inputType: 'password',
+    multiline: true,
+    defaultValue: '',
+    label: 'Consumer private key',
+    helpKey: 'http.auth.oauth.oauth1.consumerPrivateKey',
+    required: true,
+    description: 'Note: for security reasons this field must always be re-entered.',
   },
   // #endregion http
   // #region ftp
@@ -1180,7 +1247,7 @@ export default {
     isLoggable: true,
     type: 'checkbox',
     label: 'Use passive mode',
-    defaultValue: r => (r && r.ftp && r.ftp.usePassiveMode) || 'true',
+    defaultValue: r => r?.ftp?.usePassiveMode !== false,
   },
   'ftp.entryParser': {
     isLoggable: true,
@@ -2544,6 +2611,23 @@ export default {
       },
     ],
   },
+  connectionFormView: {
+    isLoggable: true,
+    id: 'connectionFormView',
+    type: 'connectionFormView',
+    label: 'Form view',
+    required: true,
+    resourceType: 'connections',
+    visible: true,
+    defaultValue: r => {
+      if (!r) return 'false';
+      if (!r.http) return 'false';
+      if (!r.http.formType) return 'false';
+
+      return r.http?.formType === 'assistant' ? 'false' : 'true';
+    },
+    helpKey: 'formView',
+  },
   configureCutomAuthTokenRefresh: {
     id: 'configureCutomAuthTokenRefresh',
     type: 'checkbox',
@@ -2560,5 +2644,10 @@ export default {
     type: 'text',
     label: 'Paths to encrypted field in the HTTP response body',
     delimiter: ',',
+  },
+  'shopify.form.header': {
+    id: 'shopify.form.header',
+    label: 'Header',
+    type: 'shopifyheaderlink',
   },
 };

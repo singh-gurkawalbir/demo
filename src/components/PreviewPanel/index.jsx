@@ -1,10 +1,9 @@
 import { Typography, FormLabel } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { useRouteMatch, useHistory } from 'react-router-dom';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { shallowEqual, useDispatch, useSelector } from 'react-redux';
+import React, { useCallback, useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import actions from '../../actions';
-import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
 import { selectors } from '../../reducers';
 import Panels from './Panels';
 import { DEFAULT_RECORD_SIZE, IMPORT_PREVIEW_ERROR_TYPES } from '../../utils/exportPanel';
@@ -18,6 +17,9 @@ import MockInput from './MockInput';
 import {drawerPaths, buildDrawerUrl} from '../../utils/rightDrawer';
 import { adaptorTypeMap } from '../../utils/resource';
 import { HTTP_BASED_ADAPTORS } from '../../utils/http';
+import { getAsyncKey } from '../../utils/saveAndCloseButtons';
+import { FORM_SAVE_STATUS } from '../../constants';
+import useResourceFormSampleData from '../../hooks/useResourceFormSampleData';
 
 const useStyles = makeStyles(theme => ({
   previewPanelWrapper: {
@@ -34,7 +36,7 @@ const useStyles = makeStyles(theme => ({
     alignItems: 'flex-start',
   },
   container: {
-    background: theme.palette.common.white,
+    background: theme.palette.background.paper,
     padding: theme.spacing(2),
     height: `calc((100vh - ${250}px) - ${theme.spacing(2)}px)`,
     overflowY: 'auto',
@@ -105,10 +107,6 @@ export default function PreviewPanel({resourceId, formKey, resourceType, flowId 
   const classes = useStyles();
   const match = useRouteMatch();
   const history = useHistory();
-  const availablePreviewStages = useSelector(state =>
-    selectors.getAvailableResourcePreviewStages(state, resourceId, resourceType, flowId),
-  shallowEqual
-  );
   const resource = useSelector(state => selectors.resourceData(state, resourceType, resourceId)?.merged);
   const {adaptorType, isLookup} = resource || {};
   const appType = adaptorTypeMap[adaptorType];
@@ -118,21 +116,17 @@ export default function PreviewPanel({resourceId, formKey, resourceType, flowId 
   const toggleValue = useSelector(state =>
     selectors.typeOfSampleData(state, resourceId)
   );
-  // TODO @Raghu: Refactor preview state as it is currently using sample data state
-  // this local state controls view to show sample data only when user requests by clicking preview
+  const asyncTaskStatus = useSelector(state => selectors.asyncTaskStatus(state, getAsyncKey(resourceType, resourceId)));
   const [showPreviewData, setShowPreviewData] = useState({preview: false, send: false});
-  // get the map of all the stages with their respective sampleData for the stages
-  const previewStages = useMemo(() => availablePreviewStages.map(({value}) => value), [availablePreviewStages]);
 
-  const previewStageDataList = useSelectorMemo(selectors.mkPreviewStageDataList, resourceId, previewStages);
+  const { availablePreviewStages, previewStageDataList, resourceSampleData } = useResourceFormSampleData(resourceType, resourceId, flowId);
 
-  // get the default raw stage sampleData to track the status of the request
-  // As the status is same for all the stages
-  // TODO @Raghu : what if later on there is a need of individual status for each stage?
-  const resourceSampleData = useSelector(state =>
-    selectors.getResourceSampleDataWithStatus(state, resourceId, 'raw'),
-  shallowEqual
-  );
+  useEffect(() => {
+    if (asyncTaskStatus === FORM_SAVE_STATUS.LOADING && !showPreviewData[toggleValue]) {
+      setShowPreviewData(showPreviewData => ({...showPreviewData, [toggleValue]: true}));
+    }
+  }, [asyncTaskStatus, showPreviewData, toggleValue]);
+
   const onChange = useCallback(value => {
     dispatch(actions.resourceFormSampleData.updateType(resourceId, value));
   }, [dispatch, resourceId]);

@@ -1,16 +1,12 @@
-/* eslint-disable quotes */
-
-/* global describe, test, expect */
 import React from 'react';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { fireEvent, screen } from '@testing-library/react';
 import RequestResponsePanel from '.';
 import { renderWithProviders } from '../../../../test/test-utils';
 
 const props = {variant: ''};
 
-describe('Testing Request Response panel', async () => {
-  test('Testing the Request Response Panel', async () => {
+describe('testing Request Response panel', () => {
+  test('testing the Request Response Panel', async () => {
     renderWithProviders(
       <RequestResponsePanel {...props} />
     );

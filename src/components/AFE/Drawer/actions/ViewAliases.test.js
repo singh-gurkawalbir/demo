@@ -1,82 +1,76 @@
-/* eslint-disable no-undef */
+import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import React from 'react';
-import { MemoryRouter } from 'react-router-dom';
+import { MemoryRouter, Route } from 'react-router-dom';
+import ViewAliases from './ViewAliases';
 import { getCreatedStore } from '../../../../store';
 import { renderWithProviders } from '../../../../test/test-utils';
-import ViewAliases from './ViewAliases';
 
-let initialStore;
-const mockPush = jest.fn();
-
-async function initViewAliases(editorId) {
-  initialStore.getState().session.editors = {
-    '23c72': {
-      integrationId: '27c21',
-      flowId: '3761',
-      resourceId: '298y1',
-      resourceType: 'integrations',
-    },
-    '21a71': {
-      flowId: '376ac',
-      resourceId: '2b311',
-      resourceType: 'flows',
-    },
-  };
-  initialStore.getState().data.resources = {
-    integrations: [
-      {
-        _id: '272a1',
-        _connectorId: '28cu1',
-      },
-    ],
-    flows: [
-      {
-        _id: '376ac',
-        // _connectorId: '21d31',
-      },
-    ],
-  };
-  const ui = (
-    <MemoryRouter>
-      <ViewAliases editorId={editorId} />
-    </MemoryRouter>
-  );
-
-  return renderWithProviders(ui, { initialStore });
-}
+const initialStore = getCreatedStore();
+const mockHistoryPush = jest.fn();
 
 jest.mock('react-router-dom', () => ({
   __esModule: true,
   ...jest.requireActual('react-router-dom'),
   useHistory: () => ({
-    push: mockPush,
+    push: mockHistoryPush,
   }),
 }));
 
-describe('test suite for RouterGuide', () => {
-  beforeEach(() => {
-    initialStore = getCreatedStore();
+function initViewAliases(props = {}) {
+  initialStore.getState().data.resources = {
+    flows: [
+      {
+        _id: '63a9330112b8264c6c2393b0',
+        name: '21497',
+        _integrationId: '63433f87ba338228f2401609',
+      },
+    ],
+    integrations: [{
+      _id: '63433f87ba338228f2401609',
+      lastModified: '2022-12-27T15:08:42.650Z',
+      name: 'Integration1',
+      install: [],
+      _registeredConnectionIds: [
+        '631a1bd9abf51e7a86c8123c',
+      ],
+    }]};
+
+  return renderWithProviders(
+    <MemoryRouter initialEntries={[{pathname: '/integrations/63433f87ba338228f2401609/flowBuilder/63a9330112b8264c6c2393b0/hooks/exports/63a55e14d9e20c15d94dacb6/editor/preSavePagescript'}]}>
+      <Route path="/integrations/63433f87ba338228f2401609/flowBuilder/63a9330112b8264c6c2393b0/hooks/exports/63a55e14d9e20c15d94dacb6/editor/preSavePagescript">
+        <ViewAliases {...props} />
+      </Route>
+    </MemoryRouter>, {initialStore});
+}
+
+describe('ViewAliases UI tests', () => {
+  test('Should test the ViewAliases button when resource type is of exports', () => {
+    initialStore.getState().session.editors = {
+      preSavePagescript: {
+        editorType: 'javascript',
+        flowId: '63a9330112b8264c6c2393b0',
+        resourceId: '63a55e14d9e20c15d94dacb6',
+        integrationId: '63433f87ba338228f2401609',
+        resourceType: 'exports',
+      },
+    };
+    initViewAliases({editorId: 'preSavePagescript'});
+    userEvent.click(screen.getByRole('button', {name: 'View aliases'}));
+    expect(mockHistoryPush).toHaveBeenCalledWith('/integrations/63433f87ba338228f2401609/flowBuilder/63a9330112b8264c6c2393b0/hooks/exports/63a55e14d9e20c15d94dacb6/editor/preSavePagescript/aliases/view');
   });
-
-  afterEach(() => {
-    mockPush.mockClear();
-  });
-
-  test('Should render ViewAliases and clicking should work', async () => {
-    await initViewAliases('23c72');
-    const button = screen.getByRole('button', {
-      name: /view aliases/i,
-    });
-
-    expect(button).toBeInTheDocument();
-    userEvent.click(button);
-    expect(mockPush).toHaveBeenCalledTimes(1);
-  });
-  test('Should render null when integrationId is false or isIntegrationApp is true', async () => {
-    const { utils } = await initViewAliases('21a71');
-
-    expect(utils.container).toBeEmptyDOMElement();
+  test('Should test the ViewAliases button when resource type is of integrations', () => {
+    initialStore.getState().session.editors = {
+      preSavePagescript: {
+        editorType: 'javascript',
+        flowId: '63a9330112b8264c6c2393b0',
+        resourceId: '63a55e14d9e20c15d94dacb6',
+        integrationId: '63433f87ba338228f2401609',
+        resourceType: 'integrations',
+      },
+    };
+    initViewAliases({editorId: 'preSavePagescript'});
+    userEvent.click(screen.getByRole('button', {name: 'View aliases'}));
+    expect(mockHistoryPush).toHaveBeenCalledWith('/integrations/63433f87ba338228f2401609/flowBuilder/63a9330112b8264c6c2393b0/hooks/exports/63a55e14d9e20c15d94dacb6/editor/preSavePagescript/aliases/view');
   });
 });

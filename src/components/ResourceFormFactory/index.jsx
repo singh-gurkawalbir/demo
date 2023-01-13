@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import {makeStyles} from '@material-ui/core';
+import { useRouteMatch } from 'react-router-dom';
 import actions from '../../actions';
 import getResourceFormAssets from '../../forms/formFactory/getResourceFromAssets';
 import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
@@ -10,6 +11,7 @@ import { FORM_SAVE_STATUS } from '../../constants';
 import DynaForm from '../DynaForm';
 import Spinner from '../Spinner';
 import { getHttpConnector} from '../../constants/applications';
+import {getParentResourceContext} from '../../utils/connections';
 
 const Form = props => {
   const formKey = useFormInitWithPermissions(props);
@@ -64,7 +66,10 @@ export const FormStateManager = ({ formState, handleInitForm, onSubmitComplete, 
 
 const ResourceFormFactory = props => {
   const dispatch = useDispatch();
+  const match = useRouteMatch();
   const { resourceType, resourceId, isNew, flowId, integrationId } = props;
+  const {connId: parentConnectionId} = getParentResourceContext(match.url, resourceType);
+
   const formState = useSelector(state =>
     selectors.resourceFormState(state, resourceType, resourceId)
   );
@@ -73,6 +78,7 @@ const ResourceFormFactory = props => {
     resourceType,
     resourceId
   ).merged;
+
   let assistantData;
   const connection = useSelector(state =>
     selectors.resource(state, 'connections', resource && resource._connectionId)
@@ -80,6 +86,7 @@ const ResourceFormFactory = props => {
   const connectorMetaData = useSelector(state =>
     selectors.httpConnectorMetaData(state, connection?.http?._httpConnectorId, connection?.http?._httpConnectorVersionId, connection?.http?._httpConnectorApiId)
   );
+  const accountOwner = useSelector(() => selectors.accountOwner(), shallowEqual);
 
   const _httpConnectorId = getHttpConnector(connection?.http?._httpConnectorId)?._id;
 
@@ -105,11 +112,15 @@ const ResourceFormFactory = props => {
           resourceId,
           isNew,
           skipCommit,
-          flowId
+          flowId,
+          undefined,
+          undefined,
+          undefined,
+          resourceType === 'iClients' ? parentConnectionId : undefined
         )
       );
     },
-    [dispatch, flowId, isNew, resourceId, resourceType]
+    [parentConnectionId, dispatch, flowId, isNew, resourceId, resourceType]
   );
   const handleClearResourceForm = useCallback(
     () => {
@@ -137,6 +148,7 @@ const ResourceFormFactory = props => {
           connection,
           integrationId,
           assistantData,
+          accountOwner,
         });
       } catch (e) {
         metadataAssets = {};
@@ -144,7 +156,7 @@ const ResourceFormFactory = props => {
 
       return metadataAssets;
     },
-    [resourceType, resource, isNew, connection, integrationId, assistantData]
+    [resourceType, resource, isNew, connection, integrationId, assistantData, accountOwner]
   );
   const { fieldMeta, skipClose } = formState;
 
@@ -152,6 +164,8 @@ const ResourceFormFactory = props => {
   // operations like saveAndClose should also skip initialization...its only when ur performing just save do you perform initialization
   // during that case does skipClose become false
   const skipInitFormOnSubmit = !skipClose;
+  // Incase of shared stack, user has no edit access
+  const isSharedStack = resourceType === 'stacks' && resource.shared;
 
   return (
     <FormStateManager
@@ -162,6 +176,7 @@ const ResourceFormFactory = props => {
       optionsHandler={optionsHandler}
       validationHandler={validationHandler}
       skipInitFormOnSubmit={skipInitFormOnSubmit}
+      disabled={isSharedStack}
     />
   );
 };

@@ -308,7 +308,7 @@ export const sanitizePatchSet = ({
     // different object which is why its not failing when applying patches.
 
     // eslint-disable-next-line
-    console.log(error, newSet, resource);
+    // console.log(error, newSet, resource);
     // throw new Error('Something wrong with the patchSet operations ', error);
   }
 
@@ -801,6 +801,18 @@ export const sourceOptions = {
       value: 'transferFiles',
     },
   ],
+  box: [
+    {
+      label: 'Transfer files out of source application',
+      value: 'transferFiles',
+    },
+  ],
+  dropbox: [
+    {
+      label: 'Transfer files out of source application',
+      value: 'transferFiles',
+    },
+  ],
   azurestorageaccount: [
     {
       label: 'Transfer files out of source application',
@@ -864,6 +876,26 @@ export const destinationOptions = {
     },
   ],
   googledrive: [
+    {
+      label: 'Transfer files into destination application',
+      value: 'transferFiles',
+    },
+    {
+      label: 'Look up additional files (per record)',
+      value: 'lookupFiles',
+    },
+  ],
+  box: [
+    {
+      label: 'Transfer files into destination application',
+      value: 'transferFiles',
+    },
+    {
+      label: 'Look up additional files (per record)',
+      value: 'lookupFiles',
+    },
+  ],
+  dropbox: [
     {
       label: 'Transfer files into destination application',
       value: 'transferFiles',

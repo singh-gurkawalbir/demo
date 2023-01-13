@@ -8,6 +8,7 @@ export default {
       retValues['/http/auth/token/headerName'] = 'Authorization';
       retValues['/http/auth/token/scheme'] = 'Bearer';
       retValues['/http/auth/oauth/grantType'] = 'clientcredentials';
+      retValues['/http/auth/oauth/useIClientFields'] = false;
       retValues['/http/auth/oauth/clientCredentialsLocation'] = 'body';
       retValues['/http/auth/oauth/refreshTokenPath'] = 'refresh_token';
       retValues['/http/auth/oauth/accessTokenPath'] = 'access_token';

@@ -6,6 +6,8 @@ import useFormContext from '../../../Form/FormContext';
 import FieldHelp from '../../FieldHelp';
 import FieldMessage from '../FieldMessage';
 import isLoggableAttr from '../../../../utils/isLoggableAttr';
+import { EXPORT_FILTERED_DATA_STAGE, IMPORT_FLOW_DATA_STAGE } from '../../../../utils/flowData';
+import { handlebarRegex } from '../../../../utils/mapping';
 
 const useStyles = makeStyles({
   dynaTextWithFlowFormControl: {
@@ -50,7 +52,7 @@ export default function DynaTextWithFlowSuggestion(props) {
     textInsertPosition: 0,
   });
   const { hideSuggestion, textInsertPosition } = state;
-  const flowDataStage = stage || (resourceType === 'exports' ? 'inputFilter' : 'importMappingExtract');
+  const flowDataStage = stage || (resourceType === 'exports' ? EXPORT_FILTERED_DATA_STAGE : IMPORT_FLOW_DATA_STAGE);
 
   const handleUpdateAfterSuggestionInsert = useCallback(
     newValue => {
@@ -71,8 +73,12 @@ export default function DynaTextWithFlowSuggestion(props) {
     });
   }, []);
   const handleFieldChange = e => {
-    const inpValue = e.target.value;
+    let inpValue = e.target.value;
+    const isHandlebarExp = handlebarRegex.test(inpValue);
 
+    if (isHandlebarExp) {
+      inpValue = inpValue.replace(/"/g, '\'');
+    }
     onFieldChange(id, inpValue);
   };
 

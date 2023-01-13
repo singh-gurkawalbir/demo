@@ -1,4 +1,4 @@
-/* global describe, test, expect, jest */
+
 import React from 'react';
 import {screen} from '@testing-library/react';
 import { Router } from 'react-router-dom';
@@ -77,9 +77,9 @@ function initListView(props = {}) {
   return renderWithProviders(<Router history={history}><ListView {...props} /></Router>, {initialStore});
 }
 
-jest.mock('../../ResourceList/ResourceEmptyState', () => ({
+jest.mock('../../../components/ResourceTableWrapper/ResourceEmptyState', () => ({
   __esModule: true,
-  ...jest.requireActual('../../ResourceList/ResourceEmptyState'),
+  ...jest.requireActual('../../../components/ResourceTableWrapper/ResourceEmptyState'),
   default: () =>
     (
       <>

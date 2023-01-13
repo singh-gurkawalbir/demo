@@ -1,4 +1,3 @@
-/* global describe, test, expect, jest, beforeEach, afterEach */
 import React from 'react';
 import { MemoryRouter, Route } from 'react-router-dom';
 import * as reactRedux from 'react-redux';
@@ -29,7 +28,7 @@ async function initUpgradeDrawer() {
   };
 }
 
-describe('UpgradeDrawer test cases', () => {
+describe('upgradeDrawer test cases', () => {
   runServer();
   let mockDispatchFn;
   let useDispatchSpy;
@@ -57,8 +56,8 @@ describe('UpgradeDrawer test cases', () => {
     expect(screen.queryByText(/Upgrade your subscription/i)).toBeInTheDocument();
     expect(yesButton).toBeInTheDocument();
     userEvent.click(yesButton);
-    expect(mockDispatchFn).toBeCalledTimes(2);
-    expect(mockDispatchFn).toBeCalledWith(actions.analytics.gainsight.trackEvent('GO_UNLIMITED_BUTTON_CLICKED'));
-    expect(mockDispatchFn).toBeCalledWith(actions.license.requestTrialLicense());
+    expect(mockDispatchFn).toHaveBeenCalledTimes(2);
+    expect(mockDispatchFn).toHaveBeenCalledWith(actions.analytics.gainsight.trackEvent('GO_UNLIMITED_BUTTON_CLICKED'));
+    expect(mockDispatchFn).toHaveBeenCalledWith(actions.license.requestTrialLicense());
   });
 });

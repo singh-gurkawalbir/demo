@@ -17,10 +17,19 @@ export default {
       ...rest,
     };
 
+    if (app._httpConnectorId || application === 'webhook') {
+      newValues['/webhook/provider'] = 'custom';
+      newValues['/_httpConnectorId'] = app._httpConnectorId;
+    }
     if (type === 'webhook' || (application !== 'webhook' && app.webhookOnly)) {
       newValues['/type'] = 'webhook';
       newValues['/adaptorType'] = 'WebhookExport';
-      newValues['/webhook/provider'] = application;
+      if (app._httpConnectorId || application === 'webhook') {
+        newValues['/webhook/provider'] = 'custom';
+        newValues['/_httpConnectorId'] = app._httpConnectorId;
+      } else {
+        newValues['/webhook/provider'] = (application === 'integratorio' ? 'integrator-extension' : application);
+      }
       delete newValues['/_connectionId'];
     } else {
       newValues['/adaptorType'] = `${appTypeToAdaptorType[appType]}Export`;
@@ -49,6 +58,7 @@ export default {
       name: 'application',
       type: 'selectapplication',
       label: 'Application',
+      helpKey: 'application',
       isLoggable: true,
       appType: 'export',
       placeholder: applicationsPlaceHolderText(),
@@ -126,7 +136,12 @@ export default {
     },
   },
   layout: {
-    fields: ['application', 'type', 'connection', 'name', 'description'],
+    type: 'box',
+    containers: [
+      {
+        fields: ['application', 'type', 'connection', 'name', 'description'],
+      },
+    ],
   },
   optionsHandler: (fieldId, fields) => {
     const appField = fields.find(field => field.id === 'application');
@@ -155,7 +170,7 @@ export default {
       const andingExpressions = { $and: expression };
 
       if (app._httpConnectorId) {
-        return { filter: andingExpressions, appType: app.name };
+        return { filter: andingExpressions, appType: app.id };
       }
 
       if (app.assistant) {

@@ -1,4 +1,4 @@
-/* global describe, test, expect */
+
 import actionTypes from '../actionTypes';
 
 import reducer, {cronExpr} from './index';
@@ -68,50 +68,50 @@ describe('cronBuilder reducer', () => {
   let nextState;
 
   test('should set Hour parent tab as active and the component as touched', () => {
-    expect(initState.activeTab).toEqual('Minute');
-    expect(initState.touched).toEqual(false);
+    expect(initState.activeTab).toBe('Minute');
+    expect(initState.touched).toBe(false);
     nextState = reducer(initState, {type: actionTypes.SET_PARENT_TAB, value: 'Hour'});
 
-    expect(nextState.activeTab).toEqual('Hour');
-    expect(nextState.touched).toEqual(true);
+    expect(nextState.activeTab).toBe('Hour');
+    expect(nextState.touched).toBe(true);
   });
 
-  test('should set child tab everyNHours as active when everyNHours is selected and value to be set */1 ', () => {
+  test('should set child tab everyNHours as active when everyNHours is selected and value to be set */1', () => {
     nextState = reducer(nextState, {type: actionTypes.SET_CHILD_TAB, value: 'everyNHours'});
-    expect(nextState.childTabState.Hour.everyNHours.value).toEqual('*/1');
+    expect(nextState.childTabState.Hour.everyNHours.value).toBe('*/1');
 
-    expect(nextState.childTabState.Hour.everyNHours.active).toEqual(true);
+    expect(nextState.childTabState.Hour.everyNHours.active).toBe(true);
   });
 
-  test('should set child tab everyNHours value to every 6 hrs */6 ', () => {
+  test('should set child tab everyNHours value to every 6 hrs */6', () => {
     nextState = reducer(nextState, {type: actionTypes.SET_VALUE, value: '*/6'});
 
-    expect(nextState.childTabState.Hour.everyNHours.value).toEqual('*/6');
+    expect(nextState.childTabState.Hour.everyNHours.value).toBe('*/6');
   });
   test('switching childTabs back to everyNHours should hold its value', () => {
     nextState = reducer(nextState, {type: actionTypes.SET_CHILD_TAB, value: 'everyHour'});
     nextState = reducer(nextState, {type: actionTypes.SET_CHILD_TAB, value: 'everyNHours'});
 
-    expect(nextState.childTabState.Hour.everyNHours.value).toEqual('*/6');
+    expect(nextState.childTabState.Hour.everyNHours.value).toBe('*/6');
   });
   test('should set child tab eachSelectedHour value to 4,6 hrs', () => {
     nextState = reducer(nextState, {type: actionTypes.SET_CHILD_TAB, value: 'eachSelectedHour'});
 
     nextState = reducer(nextState, {type: actionTypes.SET_VALUE, value: '4,6'});
 
-    expect(nextState.childTabState.Hour.eachSelectedHour.value).toEqual('4,6');
+    expect(nextState.childTabState.Hour.eachSelectedHour.value).toBe('4,6');
   });
   test('switching childTabs back to eachSelectedHour should reset it *', () => {
     nextState = reducer(nextState, {type: actionTypes.SET_CHILD_TAB, value: 'everyNHours'});
     nextState = reducer(nextState, {type: actionTypes.SET_CHILD_TAB, value: 'eachSelectedHour'});
 
-    expect(nextState.childTabState.Hour.eachSelectedHour.value).toEqual('*');
+    expect(nextState.childTabState.Hour.eachSelectedHour.value).toBe('*');
   });
 });
 describe('cronBuilder selector', () => {
   describe('cronExpr', () => {
-    test('should generate "? */5 * * * *" ', () => {
-      expect(cronExpr(initState.childTabState)).toEqual('? */5 * * * *');
+    test('should generate "? */5 * * * *"', () => {
+      expect(cronExpr(initState.childTabState)).toBe('? */5 * * * *');
     });
 
     test('should generate "? */5 */6 * * *" when every hour is set to */6', () => {
@@ -120,7 +120,7 @@ describe('cronBuilder selector', () => {
       nextState = reducer(nextState, {type: actionTypes.SET_CHILD_TAB, value: 'everyNHours'});
       nextState = reducer(nextState, {type: actionTypes.SET_VALUE, value: '*/6'});
 
-      expect(cronExpr(nextState.childTabState)).toEqual('? */5 */6 * * *');
+      expect(cronExpr(nextState.childTabState)).toBe('? */5 */6 * * *');
     });
     test('should generate "? */5 */6 * 3,6 *" when every hour is set to */6 and every month is set to 3,6', () => {
       let nextState = reducer(initState, {type: actionTypes.SET_PARENT_TAB, value: 'Hour'});
@@ -133,7 +133,7 @@ describe('cronBuilder selector', () => {
       nextState = reducer(nextState, {type: actionTypes.SET_CHILD_TAB, value: 'eachMonth'});
       nextState = reducer(nextState, {type: actionTypes.SET_VALUE, value: '3,6'});
 
-      expect(cronExpr(nextState.childTabState)).toEqual('? */5 */6 * 3,6 *');
+      expect(cronExpr(nextState.childTabState)).toBe('? */5 */6 * 3,6 *');
     });
   });
 });

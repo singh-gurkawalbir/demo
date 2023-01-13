@@ -1,11 +1,11 @@
-/* global describe, test, expect, jest, beforeEach */
+
 import React from 'react';
 import { screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import userEvent from '@testing-library/user-event';
 import ConnectionStatusPanel from '.';
 import actions from '../../actions';
-import { renderWithProviders } from '../../test/test-utils';
+import { mockPostRequest, renderWithProviders } from '../../test/test-utils';
 
 const mockHistoryPush = jest.fn();
 
@@ -24,9 +24,12 @@ const collection = [
   [{_id: 'import1', _connectionId: 'connection1'}],
 ];
 
-describe('ConnectionStatusPanel UI tests', () => {
+describe('connectionStatusPanel UI tests', () => {
   beforeEach(() => {
-    jest.resetAllMocks();
+    // jest.resetAllMocks();
+    mockPostRequest('/api/connections/connection1/ping', {status: 200});
+    mockPostRequest('/api/connections/connection2/ping', {status: 200});
+    mockPostRequest('/api/connections/connection3/ping', {status: 200});
   });
   function renderWithStore(resourcetype, resourceId) {
     const {store} = renderWithProviders(<MemoryRouter ><ConnectionStatusPanel resourceId={resourceId} resourceType={resourcetype} /></MemoryRouter>);

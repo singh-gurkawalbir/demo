@@ -1,5 +1,3 @@
-/* global describe, test */
-
 import { select, call } from 'redux-saga/effects';
 import { expectSaga } from 'redux-saga-test-plan';
 import * as matchers from 'redux-saga-test-plan/matchers';
@@ -44,7 +42,7 @@ describe('resource form sample data util saga test cases', () => {
         flowId: 'flow-123',
       };
 
-      return expectSaga(_fetchResourceInfoFromFormKey, { formKey })
+      expectSaga(_fetchResourceInfoFromFormKey, { formKey })
         .provide([
           [select(selectors.formState, formKey), formState],
           [select(selectors.formParentContext, formKey), parentContext],
@@ -57,7 +55,7 @@ describe('resource form sample data util saga test cases', () => {
         .returns(output)
         .run();
     });
-    test('should return suitescript resource info incase of parent context with ssLinkedConnectionId ', () => {
+    test('should return suitescript resource info incase of parent context with ssLinkedConnectionId', () => {
       const ssResource = {
         _id: '123',
         adaptorType: 'NetsuiteExport',
@@ -77,7 +75,7 @@ describe('resource form sample data util saga test cases', () => {
         integrationId: 'i-1',
       };
 
-      return expectSaga(_fetchResourceInfoFromFormKey, { formKey })
+      expectSaga(_fetchResourceInfoFromFormKey, { formKey })
         .provide([
           [select(selectors.formState, formKey), formState],
           [select(selectors.formParentContext, formKey), ssParentContext],
@@ -118,7 +116,7 @@ describe('resource form sample data util saga test cases', () => {
         resourceType: 'exports',
       };
 
-      return expectSaga(_hasSampleDataOnResource, { formKey })
+      expectSaga(_hasSampleDataOnResource, { formKey })
         .provide([
           [call(_fetchResourceInfoFromFormKey, { formKey }), formInfo],
           [select(selectors.resource, 'exports', 'id-123'), resource],
@@ -144,7 +142,7 @@ describe('resource form sample data util saga test cases', () => {
         resourceType: 'exports',
       };
 
-      return expectSaga(_hasSampleDataOnResource, { formKey })
+      expectSaga(_hasSampleDataOnResource, { formKey })
         .provide([
           [call(_fetchResourceInfoFromFormKey, { formKey }), formInfo],
           [select(selectors.resource, 'exports', 'id-123'), resource],
@@ -170,7 +168,7 @@ describe('resource form sample data util saga test cases', () => {
         resourceType: 'exports',
       };
 
-      return expectSaga(_hasSampleDataOnResource, { formKey })
+      expectSaga(_hasSampleDataOnResource, { formKey })
         .provide([
           [call(_fetchResourceInfoFromFormKey, { formKey }), formInfo],
           [select(selectors.resource, 'exports', 'id-123'), resource],
@@ -209,7 +207,7 @@ describe('resource form sample data util saga test cases', () => {
         },
       };
 
-      return expectSaga(extractFileSampleDataProps, { formKey })
+      expectSaga(extractFileSampleDataProps, { formKey })
         .provide([
           [call(_fetchResourceInfoFromFormKey, { formKey }), formInfo],
           [select(selectors.getUploadedFile, 'id-123-uploadFile'), uploadedFileObj],
@@ -246,7 +244,7 @@ describe('resource form sample data util saga test cases', () => {
         },
       };
 
-      return expectSaga(extractFileSampleDataProps, { formKey })
+      expectSaga(extractFileSampleDataProps, { formKey })
         .provide([
           [call(_fetchResourceInfoFromFormKey, { formKey }), formInfo],
           [select(selectors.getUploadedFile, 'id-123-uploadFile'), uploadedFileObj],
@@ -256,7 +254,7 @@ describe('resource form sample data util saga test cases', () => {
         .run();
     });
 
-    test('should return file definitions related data using file definition selectors ', () => {
+    test('should return file definitions related data using file definition selectors', () => {
       const formInfo = {
         resourceObj: {
           file: {
@@ -290,7 +288,7 @@ describe('resource form sample data util saga test cases', () => {
         definitionId: '123',
       };
 
-      return expectSaga(extractFileSampleDataProps, { formKey })
+      expectSaga(extractFileSampleDataProps, { formKey })
         .provide([
           [call(_fetchResourceInfoFromFormKey, { formKey }), formInfo],
           [select(selectors.fieldState, formKey, 'file.filedefinition.rules'), { value: rule, options }],
@@ -329,7 +327,7 @@ describe('resource form sample data util saga test cases', () => {
         },
       };
 
-      return expectSaga(extractFileSampleDataProps, { formKey })
+      expectSaga(extractFileSampleDataProps, { formKey })
         .provide([
           [call(_fetchResourceInfoFromFormKey, { formKey }), formInfo],
           [call(_hasSampleDataOnResource, { formKey }), true],
@@ -348,7 +346,7 @@ describe('resource form sample data util saga test cases', () => {
         resourceType: 'exports',
       };
 
-      return expectSaga(extractFileSampleDataProps, { formKey })
+      expectSaga(extractFileSampleDataProps, { formKey })
         .provide([
           [call(_fetchResourceInfoFromFormKey, { formKey }), formInfo],
         ])
@@ -358,17 +356,15 @@ describe('resource form sample data util saga test cases', () => {
   });
   describe('executeTransformationRules saga', () => {
     test('should return no rules prop if there are no rules configured', () => {
-      const test1 = expectSaga(executeTransformationRules, {})
+      expectSaga(executeTransformationRules, {})
         .returns({ hasNoRulesToProcess: true})
         .run();
-      const test2 = expectSaga(executeTransformationRules, { transform: { type: 'expression', expression: {}}})
+      expectSaga(executeTransformationRules, { transform: { type: 'expression', expression: {}}})
         .returns({ hasNoRulesToProcess: true})
         .run();
-      const test3 = expectSaga(executeTransformationRules, { transform: { type: 'script', script: {}}})
+      expectSaga(executeTransformationRules, { transform: { type: 'script', script: {}}})
         .returns({ hasNoRulesToProcess: true})
         .run();
-
-      return test1 && test2 && test3;
     });
     test('should make transform processor call and return output of transformation for type expression', () => {
       const transform = {
@@ -428,14 +424,12 @@ describe('resource form sample data util saga test cases', () => {
   });
   describe('executeJavascriptHook saga', () => {
     test('should return no rules prop if there is no hook configured', () => {
-      const test1 = expectSaga(executeJavascriptHook, {})
+      expectSaga(executeJavascriptHook, {})
         .returns({ hasNoRulesToProcess: true})
         .run();
-      const test2 = expectSaga(executeJavascriptHook, { hook: {}})
+      expectSaga(executeJavascriptHook, { hook: {}})
         .returns({ hasNoRulesToProcess: true})
         .run();
-
-      return test1 && test2;
     });
     test('should make processor call and return output of hook', () => {
       const hook = {
@@ -446,7 +440,7 @@ describe('resource form sample data util saga test cases', () => {
       const sampleData = { active: 'yes' };
       const output = { active: 'yes', newProp: '' };
 
-      return expectSaga(executeJavascriptHook, { hook, sampleData })
+      expectSaga(executeJavascriptHook, { hook, sampleData })
         .provide([
           [call(getResource, {
             resourceType: 'scripts',
@@ -466,7 +460,7 @@ describe('resource form sample data util saga test cases', () => {
       const sampleData = { active: 'yes' };
       const error = { error: 'processor error' };
 
-      return expectSaga(executeJavascriptHook, { hook, sampleData })
+      expectSaga(executeJavascriptHook, { hook, sampleData })
         .provide([
           [call(getResource, {
             resourceType: 'scripts',

@@ -1,4 +1,4 @@
-/* global describe, test, expect, jest */
+
 import React from 'react';
 import {screen} from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
@@ -127,9 +127,9 @@ jest.mock('./HomeCard', () => ({
   ,
 }));
 
-jest.mock('../../../ResourceList/ResourceEmptyState', () => ({
+jest.mock('../../../../components/ResourceTableWrapper/ResourceEmptyState', () => ({
   __esModule: true,
-  ...jest.requireActual('../../../ResourceList/ResourceEmptyState'),
+  ...jest.requireActual('../../../../components/ResourceTableWrapper/ResourceEmptyState'),
   default: () =>
     (
       <>

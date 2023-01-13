@@ -1,49 +1,29 @@
-/* eslint-disable no-undef */
-import { screen } from '@testing-library/react';
+
 import React from 'react';
-import { MemoryRouter } from 'react-router-dom';
-import { getCreatedStore } from '../../../../store';
-import { renderWithProviders } from '../../../../test/test-utils';
+import { screen } from '@testing-library/react';
 import HandlebarGuide from './HandlebarGuide';
+import { renderWithProviders } from '../../../../test/test-utils';
 
-let initialStore;
-let mockValue = false;
-
-async function initHandlebarGuide() {
-  initialStore.getState().session.editors = {
-    1: {
-      autoEvaluate: false,
-    },
-  };
-  const ui = (
-    <MemoryRouter>
-      <HandlebarGuide />
-    </MemoryRouter>
+function SetWidth({width}) {
+  // width based on material-ui theme. eg. theme.breakpoints.up('md') = @media (min-width: 960px)
+  window.matchMedia = jest.fn().mockImplementation(
+    query => ({
+      matches: width >= 960,
+      media: query,
+      onchange: null,
+      addListener: jest.fn(),
+      removeListener: jest.fn(),
+    })
   );
 
-  return renderWithProviders(ui, { initialStore });
+  return null;
 }
+describe('HandlebarGuide tests', () => {
+  test('Should able to test the Handlebar Guide Link is there when screen sizes are different', async () => {
+    const {utils} = await renderWithProviders(<><SetWidth width={1280} /><HandlebarGuide /></>);
 
-jest.mock('@material-ui/core', () => ({
-  __esModule: true,
-  ...jest.requireActual('@material-ui/core'),
-  useMediaQuery: () => (jest.fn(() => mockValue))(),
-}));
-
-describe('test suite for HandlebarGuide', () => {
-  beforeEach(() => {
-    initialStore = getCreatedStore();
-  });
-
-  test('Should render HandlebarGuide', async () => {
-    await initHandlebarGuide();
-    const anchor = screen.getByRole('link', {
-      name: /handlebars guide/i,
-    });
-
-    expect(anchor).toHaveAttribute('title', 'Handlebars guide');
-    mockValue = true;
-    await initHandlebarGuide();
-    expect(screen.getByText(/handlebars guide/i)).toBeInTheDocument();
+    expect(screen.getByRole('link', {name: 'Handlebars guide'})).toBeInTheDocument();
+    utils.rerender(<><SetWidth width={680} /><HandlebarGuide /></>);
+    expect(screen.getByRole('link', {name: 'handlebars guide'})).toBeInTheDocument();
   });
 });

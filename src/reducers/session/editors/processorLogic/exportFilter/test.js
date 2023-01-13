@@ -1,4 +1,3 @@
-/* global describe, test, expect, beforeEach */
 
 import processorLogic from './index';
 
@@ -202,12 +201,12 @@ describe('exportFilter processor logic', () => {
     test('should correctly call the javascript dirty util if active processor is script type', () => {
       editor.activeProcessor = 'javascript';
 
-      expect(dirty(editor)).toEqual(false);
+      expect(dirty(editor)).toBe(false);
     });
     test('should compare original rule and new rule for the filter if active processor is of filter type', () => {
       editor.activeProcessor = 'filter';
 
-      expect(dirty(editor)).toEqual(true);
+      expect(dirty(editor)).toBe(true);
     });
   });
   describe('processResult util', () => {

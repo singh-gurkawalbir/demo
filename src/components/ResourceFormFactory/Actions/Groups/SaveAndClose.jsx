@@ -79,7 +79,7 @@ export default function SaveAndClose(props) {
                     dispatch(actions.connection.completeRegister([values?.['/_connectionId']], integration._id));
                   }
                 }
-
+                dispatch(actions.resource.replaceConnection(resourceType, resource?._id, resource?._connectionId, values?.['/_connectionId']));
                 saveResource(closeAfterSave);
               },
             },

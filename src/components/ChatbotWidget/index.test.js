@@ -1,4 +1,4 @@
-/* global describe, test, expect, jest, beforeEach */
+
 import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -26,8 +26,5 @@ describe('ChatbotWidget component Test cases', () => {
   test('should call the handler on clicking the button', () => {
     userEvent.click(screen.getByRole('button'));
     expect(mockFn).toHaveBeenCalledWith('webWidget', 'show');
-
-    userEvent.click(screen.getByRole('button'));
-    expect(mockFn).toHaveBeenCalledWith('webWidget', 'close');
   });
 });

@@ -15,7 +15,15 @@ const useStyles = makeStyles(theme => ({
   },
   rowSelected: {
     '&$selected': {
-      borderLeft: `6px solid ${theme.palette.primary.main}`,
+      '&>.MuiTableCell-root:first-child:before': {
+        content: '""',
+        width: 6,
+        height: '100%',
+        backgroundColor: theme.palette.primary.main,
+        position: 'absolute',
+        top: 0,
+        left: 0,
+      },
       backgroundColor: theme.palette.primary.lightest2,
       '&:hover': {
         backgroundColor: theme.palette.primary.lightest2,
@@ -23,10 +31,6 @@ const useStyles = makeStyles(theme => ({
     },
   },
   selected: {},
-  currentNavItem: {
-    borderLeft: `6px solid ${theme.palette.primary.main}`,
-    backgroundColor: theme.palette.background.paper2,
-  },
   pointer: {
     cursor: 'pointer',
   },
@@ -35,7 +39,7 @@ const useStyles = makeStyles(theme => ({
 export default function DataRow({ children, rowData, onRowOver, onRowOut, className, additionalConfigs, onRowClick }) {
   const classes = useStyles();
   const dispatch = useDispatch();
-  const {IsActiveRow, IsCurrentNavItem} = additionalConfigs || {};
+  const { IsActiveRow } = additionalConfigs || {};
   const rowRef = useRef();
 
   useScrollIntoView(rowRef, IsActiveRow?.({ rowData }), 'nearest');
@@ -56,8 +60,7 @@ export default function DataRow({ children, rowData, onRowOver, onRowOut, classN
     <TableRow
       hover
       className={clsx(classes.tableRow, className, {
-        [classes.currentNavItem]: IsCurrentNavItem?.({ rowData }),
-        [classes.pointer]: !!onRowClick,
+        [classes.pointer]: !!onRowClick && !IsActiveRow?.({ rowData }),
       })}
       classes={{
         root: classes.rowSelected,

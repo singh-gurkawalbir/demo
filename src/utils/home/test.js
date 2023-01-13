@@ -1,4 +1,3 @@
-/* global expect, describe, test */
 import sortBy from 'lodash/sortBy';
 import { getAllApplications, getTileId, sortTiles, tileCompare, tileStatus } from '.';
 import { applicationsList } from '../../constants/applications';
@@ -194,10 +193,10 @@ describe('tileStatus util', () => {
 
 describe('getTileId util', () => {
   test('should not throw error for invalid argumets', () => {
-    expect(getTileId()).toEqual('');
+    expect(getTileId()).toBe('');
   });
   test('should return integrationId if tile is not suitescript', () => {
-    expect(getTileId(tiles[0])).toEqual('integration1');
+    expect(getTileId(tiles[0])).toBe('integration1');
   });
   test('should return a combination of ssLinkedConnectionId and integrationId if tile is suitescript', () => {
     const ssTile = {
@@ -205,7 +204,7 @@ describe('getTileId util', () => {
       ssLinkedConnectionId: 'suitescript1',
     };
 
-    expect(getTileId(ssTile)).toEqual('suitescript1_ssIntegration1');
+    expect(getTileId(ssTile)).toBe('suitescript1_ssIntegration1');
   });
 });
 
@@ -218,7 +217,7 @@ describe('tileCompare function test', () => {
       name: 'b',
     };
 
-    expect(tileCompare('name', false)(tileA, tileB)).toEqual(-1);
+    expect(tileCompare('name', false)(tileA, tileB)).toBe(-1);
   });
   test('should give higher priority to tile with connection errors', () => {
     const tileA = {
@@ -228,10 +227,10 @@ describe('tileCompare function test', () => {
       numError: 2,
     };
 
-    expect(tileCompare('status', false)(tileA, tileB)).toEqual(2);
-    expect(tileCompare('status', true)(tileA, tileB)).toEqual(-2);
-    expect(tileCompare('status', false)(tileB, tileA)).toEqual(-2);
-    expect(tileCompare('status', true)(tileB, tileA)).toEqual(2);
+    expect(tileCompare('status', false)(tileA, tileB)).toBe(2);
+    expect(tileCompare('status', true)(tileA, tileB)).toBe(-2);
+    expect(tileCompare('status', false)(tileB, tileA)).toBe(-2);
+    expect(tileCompare('status', true)(tileB, tileA)).toBe(2);
   });
   test('should give higher priority to tile with more errors', () => {
     const tileA = {
@@ -243,8 +242,8 @@ describe('tileCompare function test', () => {
       status: TILE_STATUS.HAS_ERRORS,
     };
 
-    expect(tileCompare('status', false)(tileA, tileB)).toEqual(1);
-    expect(tileCompare('status', true)(tileA, tileB)).toEqual(-1);
+    expect(tileCompare('status', false)(tileA, tileB)).toBe(1);
+    expect(tileCompare('status', true)(tileA, tileB)).toBe(-1);
   });
   test('should give higher priority to tile with more errors if the status of tiles is same', () => {
     const tileA = {
@@ -257,8 +256,8 @@ describe('tileCompare function test', () => {
       status: TILE_STATUS.HAS_ERRORS,
     };
 
-    expect(tileCompare('status', false)(tileA, tileB)).toEqual(1);
-    expect(tileCompare('status', true)(tileA, tileB)).toEqual(-1);
+    expect(tileCompare('status', false)(tileA, tileB)).toBe(1);
+    expect(tileCompare('status', true)(tileA, tileB)).toBe(-1);
   });
 
   test('should give higher priority to successful tiles than continue setup/uninstall', () => {
@@ -269,10 +268,10 @@ describe('tileCompare function test', () => {
       status: TILE_STATUS.IS_PENDING_SETUP,
     };
 
-    expect(tileCompare('status', false)(tileA, tileB)).toEqual(1);
-    expect(tileCompare('status', true)(tileA, tileB)).toEqual(-1);
-    expect(tileCompare('status', false)(tileB, tileA)).toEqual(-1);
-    expect(tileCompare('status', true)(tileB, tileA)).toEqual(1);
+    expect(tileCompare('status', false)(tileA, tileB)).toBe(1);
+    expect(tileCompare('status', true)(tileA, tileB)).toBe(-1);
+    expect(tileCompare('status', false)(tileB, tileA)).toBe(-1);
+    expect(tileCompare('status', true)(tileB, tileA)).toBe(1);
   });
   test('should give higher priority to continue setup tiles than continue uninstall', () => {
     const tileA = {
@@ -282,9 +281,9 @@ describe('tileCompare function test', () => {
       status: TILE_STATUS.UNINSTALL,
     };
 
-    expect(tileCompare('status', false)(tileA, tileB)).toEqual(1);
-    expect(tileCompare('status', true)(tileA, tileB)).toEqual(-1);
-    expect(tileCompare('status', false)(tileB, tileA)).toEqual(-1);
-    expect(tileCompare('status', true)(tileB, tileA)).toEqual(1);
+    expect(tileCompare('status', false)(tileA, tileB)).toBe(1);
+    expect(tileCompare('status', true)(tileA, tileB)).toBe(-1);
+    expect(tileCompare('status', false)(tileB, tileA)).toBe(-1);
+    expect(tileCompare('status', true)(tileB, tileA)).toBe(1);
   });
 });

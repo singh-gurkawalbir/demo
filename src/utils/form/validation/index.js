@@ -144,7 +144,7 @@ export const fallsWithinNumericalRange = ({ value, min, max, message }) => {
     return undefined;
   }
 
-  if (isNaN(parsedValue)) {
+  if (isNaN(value) || isNaN(parsedValue)) {
     return message || 'Value must be a number';
   }
 
@@ -266,7 +266,19 @@ export const validateField = (
 
     isValid =
       Object.keys(validWhen).reduce((allValidatorsPass, validator) => {
-        if (typeof validators[validator] === 'function') {
+        if (validator === 'custom' && typeof validWhen[validator] === 'function') {
+          const validationConfig = {
+            value,
+            allFields: Object.values(fieldsById),
+          };
+          // $FlowFixMe - covered by tests
+          const message = validWhen[validator](validationConfig);
+
+          if (message) {
+            allValidatorsPass = false;
+            errorMessages.push(message);
+          }
+        } else if (typeof validators[validator] === 'function') {
           const validationConfig = {
             ...validWhen[validator],
             value,

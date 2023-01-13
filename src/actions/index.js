@@ -65,6 +65,7 @@ const form = {
     { visible,
       disabled,
       required,
+      touched,
       isValid,
       errorMessages }
   ) =>
@@ -75,6 +76,7 @@ const form = {
         visible,
         disabled,
         required,
+        touched,
         isValid,
         errorMessages,
       },
@@ -87,8 +89,38 @@ const form = {
 };
 // #endregion
 const auth = {
+  acceptInvite: {
+    validate: token => action(actionTypes.AUTH.ACCEPT_INVITE.VALIDATE, { token }),
+    validateError: error => action(actionTypes.AUTH.ACCEPT_INVITE.VALIDATE_ERROR, {error}),
+    validateSuccess: payload => action(actionTypes.AUTH.ACCEPT_INVITE.VALIDATE_SUCCESS, {payload}),
+    submit: payload => action(actionTypes.AUTH.ACCEPT_INVITE.SUBMIT, { payload }),
+    success: response => action(actionTypes.AUTH.ACCEPT_INVITE.SUCCESS, { response }),
+    failure: error => action(actionTypes.AUTH.ACCEPT_INVITE.FAILED, { error }),
+    clear: () => action(actionTypes.AUTH.ACCEPT_INVITE.CLEAR),
+  },
+  changeEmailRequest: token =>
+    action(actionTypes.AUTH.CHANGE_EMAIL_REQUEST, { token }),
+  changeEmailSuccess: requestInfo => action(actionTypes.AUTH.CHANGE_EMAIL_SUCCESSFUL, {requestInfo}),
+  changeEmailFailed: error => action(actionTypes.AUTH.CHANGE_EMAIL_FAILED, {error}),
+  setPasswordRequest: (password, token) =>
+    action(actionTypes.AUTH.SET_PASSWORD_REQUEST, { password, token }),
+  setPasswordRequestFailed: error => action(actionTypes.AUTH.SET_PASSWORD_REQUEST_FAILED, {error}),
+  setPasswordRequestSuccess: setPasswordRequestInfo => action(actionTypes.AUTH.SET_PASSWORD_REQUEST_SUCCESSFUL, {setPasswordRequestInfo}),
+  resetRequestSent: () => action(actionTypes.AUTH.RESET_REQUEST_SENT),
+  resetRequestSuccess: restRequestInfo => action(actionTypes.AUTH.RESET_REQUEST_SUCCESSFUL, {restRequestInfo}),
+  resetRequestFailed: error => action(actionTypes.AUTH.RESET_REQUEST_FAILED, {error}),
+  resetRequest: email =>
+    action(actionTypes.AUTH.RESET_REQUEST, { email }),
   request: (email, password, showAuthError) =>
     action(actionTypes.AUTH.REQUEST, { email, password, showAuthError }),
+  resetPasswordRequest: (password, token) =>
+    action(actionTypes.AUTH.RESET_PASSWORD_REQUEST, { password, token }),
+  resetPasswordSuccess: resetPasswordRequestInfo => action(actionTypes.AUTH.RESET_PASSWORD_REQUEST_SUCCESSFUL, {resetPasswordRequestInfo}),
+  resetPasswordFailed: error => action(actionTypes.AUTH.RESET_PASSWORD_REQUEST_FAILED, {error}),
+  signup: payloadBody =>
+    action(actionTypes.AUTH.SIGNUP, { payloadBody }),
+  signupStatus: (status, message) =>
+    action(actionTypes.AUTH.SIGNUP_STATUS, {status, message}),
   signInWithGoogle: returnTo =>
     action(actionTypes.AUTH.SIGNIN_WITH_GOOGLE, { returnTo }),
   reSignInWithGoogle: email =>
@@ -111,10 +143,12 @@ const auth = {
       isExistingSessionInvalid,
     }),
   userAlreadyLoggedIn: () => action(actionTypes.AUTH.USER_ALREADY_LOGGED_IN),
-  clearStore: () => action(actionTypes.AUTH.CLEAR_STORE),
+  clearStore: auth => action(actionTypes.AUTH.CLEAR_STORE, { auth }),
   abortAllSagasAndInitLR: opts => action(actionTypes.AUTH.ABORT_ALL_SAGAS_AND_INIT_LR, { opts }),
   abortAllSagasAndSwitchAcc: accountToSwitchTo => action(actionTypes.AUTH.ABORT_ALL_SAGAS_AND_SWITCH_ACC, { accountToSwitchTo }),
   initSession: opts => action(actionTypes.AUTH.INIT_SESSION, { opts }),
+  validateAndInitSession: () => action(actionTypes.AUTH.VALIDATE_AND_INIT_SESSION),
+  validateSession: () => action(actionTypes.AUTH.VALIDATE_SESSION),
   changePassword: updatedPassword =>
     action(actionTypes.AUTH.USER.CHANGE_PASSWORD, { updatedPassword }),
   changeEmail: updatedEmail =>
@@ -249,8 +283,8 @@ const flowMetrics = {
   updateLastRunRange: (resourceId, startDate, endDate) => action(actionTypes.FLOW_METRICS.UPDATE_LAST_RUN_RANGE, { resourceId, startDate, endDate }),
 };
 const resource = {
-  replaceConnection: (_resourceId, _connectionId, _newConnectionId) =>
-    action(actionTypes.RESOURCE.REPLACE_CONNECTION, { _resourceId, _connectionId, _newConnectionId }),
+  replaceConnection: (resourceType, _resourceId, _connectionId, _newConnectionId) =>
+    action(actionTypes.RESOURCE.REPLACE_CONNECTION, {resourceType, _resourceId, _connectionId, _newConnectionId}),
 
   downloadFile: (id, resourceType) =>
     action(actionTypes.RESOURCE.DOWNLOAD_FILE, { resourceType, id }),
@@ -529,8 +563,10 @@ const resource = {
 // #endregion
 
 const auditLogs = {
-  request: (resourceType, resourceId, nextPagePath) => action(actionTypes.RESOURCE.REQUEST_COLLECTION, {
+  request: (resourceType, resourceId, nextPagePath) => action(actionTypes.RESOURCE.REQUEST_AUDIT_LOGS, {
     resourceType: auditResourceTypePath(resourceType, resourceId),
+    auditResource: resourceType,
+    resourceId,
     nextPagePath,
   }),
   receivedNextPagePath: nextPagePath => action(actionTypes.RESOURCE.AUDIT_LOGS_NEXT_PATH, {
@@ -542,6 +578,7 @@ const auditLogs = {
     childId,
     filters,
   }),
+  toggleHasMoreDownloads: hasMoreDownloads => action(actionTypes.RESOURCE.AUDIT_LOGS_HAS_MORE_DOWNLOADS, {hasMoreDownloads}),
   clear: () => action(actionTypes.RESOURCE.AUDIT_LOGS_CLEAR),
 };
 const connectors = {
@@ -859,6 +896,12 @@ const integrationApp = {
           { integrationId, flowId, mappingData }
         ),
     },
+    integrationAppV2: {
+      upgrade: integrationId =>
+        action(actionTypes.INTEGRATION_APPS.SETTINGS.V2.UPGRADE, {
+          integrationId,
+        }),
+    },
     initComplete: (integrationId, flowId, sectionId) =>
       action(actionTypes.INTEGRATION_APPS.SETTINGS.FORM.INIT_COMPLETE, {
         integrationId,
@@ -1049,6 +1092,17 @@ const integrationApp = {
           isFrameWork2,
         }),
     },
+    upgrade: {
+      installer: {
+        verifyBundleOrPackageInstall: (id, connectionId, installerFunction, isFrameWork2) =>
+          action(actionTypes.INTEGRATION_APPS.TEMPLATES.INSTALLER.VERIFY_BUNDLE_INSTALL, {
+            id,
+            connectionId,
+            installerFunction,
+            isFrameWork2,
+          }),
+      },
+    },
   },
   uninstaller2: {
     init: integrationId =>
@@ -1148,7 +1202,90 @@ const integrationApp = {
       integrationId,
     }),
   },
-
+  upgrade: {
+    setStatus: (integrationId, statusObj) =>
+      action(actionTypes.INTEGRATION_APPS.SETTINGS.V2.SET_STATUS, {
+        id: integrationId,
+        statusObj,
+      }),
+    getSteps: integrationId =>
+      action(actionTypes.INTEGRATION_APPS.SETTINGS.V2.GET_STEPS, {
+        integrationId,
+      }),
+    postChangeEditonSteps: integrationId =>
+      action(actionTypes.INTEGRATION_APPS.SETTINGS.V2.POST_CHANGE_EDITION_STEPS, {
+        integrationId,
+      }),
+    addChildForUpgrade: childList =>
+      action(actionTypes.INTEGRATION_APPS.SETTINGS.V2.ADD_CHILD_UPGRADE_LIST, {
+        childList,
+      }),
+    deleteStatus: integrationId =>
+      action(actionTypes.INTEGRATION_APPS.SETTINGS.V2.DELETE_STATUS, {
+        id: integrationId,
+      }),
+    installer: {
+      init: integrationId => action(actionTypes.INTEGRATION_APPS.INSTALLER.V2.INIT, {
+        id: integrationId,
+      }),
+      setOauthConnectionMode: (connectionId, openOauthConnection, id) =>
+        action(actionTypes.INTEGRATION_APPS.INSTALLER.V2.RECEIVED_OAUTH_CONNECTION_STATUS, {
+          connectionId, openOauthConnection, id,
+        }),
+      initChild: integrationId => action(actionTypes.INTEGRATION_APPS.INSTALLER.V2.INIT_CHILD, {
+        id: integrationId,
+      }),
+      installStep: (integrationId, installerFunction, childId, addOnId, formVal) =>
+        action(actionTypes.INTEGRATION_APPS.INSTALLER.V2.STEP.REQUEST, {
+          id: integrationId,
+          installerFunction,
+          childId,
+          addOnId,
+          formVal,
+        }),
+      scriptInstallStep: (
+        integrationId,
+        connectionId,
+        connectionDoc,
+        formSubmission,
+        stackId
+      ) =>
+        action(actionTypes.INTEGRATION_APPS.INSTALLER.V2.STEP.SCRIPT_REQUEST, {
+          id: integrationId,
+          connectionId,
+          connectionDoc,
+          formSubmission,
+          stackId,
+        }),
+      updateStep: (integrationId, installerFunction, update, formMeta, url) =>
+        action(actionTypes.INTEGRATION_APPS.INSTALLER.V2.STEP.UPDATE, {
+          id: integrationId,
+          installerFunction,
+          update,
+          formMeta,
+          url,
+        }),
+      completedStepInstall: (stepCompleteResponse, id, installerFunction) =>
+        action(actionTypes.INTEGRATION_APPS.INSTALLER.V2.STEP.DONE, {
+          stepsToUpdate: stepCompleteResponse.stepsToUpdate,
+          id,
+          installerFunction,
+        }),
+      getCurrentStep: (integrationId, step) =>
+        action(actionTypes.INTEGRATION_APPS.INSTALLER.V2.STEP.CURRENT_STEP, {
+          id: integrationId,
+          step,
+        }),
+    },
+  },
+  landingPage: {
+    requestIntegrations: ({ clientId }) => action(actionTypes.INTEGRATION_APPS.LANDING_PAGE.REQUEST_INTEGRATIONS, {
+      clientId,
+    }),
+    receivedIntegrations: ({ integrations }) => action(actionTypes.INTEGRATION_APPS.LANDING_PAGE.RECEIVED_INTEGRATIONS, {
+      integrations,
+    }),
+  },
 };
 const clone = {
   requestPreview: (resourceType, resourceId) =>
@@ -1221,12 +1358,13 @@ const agent = {
 };
 const file = {
   previewZip: file => action(actionTypes.FILE.PREVIEW_ZIP, { file }),
-  upload: (resourceType, resourceId, fileType, file) =>
+  upload: ({resourceType, resourceId, fileType, file, asyncKey}) =>
     action(actionTypes.FILE.UPLOAD, {
       resourceType,
       resourceId,
       fileType,
       file,
+      asyncKey,
     }),
   processFile: ({ fileId, file, fileType, fileProps }) =>
     action(actionTypes.FILE.PROCESS, {
@@ -1300,7 +1438,7 @@ const user = {
       requestCollection: message =>
         resource.requestCollection('shared/ashares', undefined, message),
       leave: id => action(actionTypes.USER.ACCOUNT.LEAVE_REQUEST, { id }),
-      switchTo: ({ id }) => action(actionTypes.USER.ACCOUNT.SWITCH, { id }),
+      switchTo: ({ id }) => action(actionTypes.USER.ACCOUNT.SWITCH, { preferences: { defaultAShareId: id, environment: 'production' } }),
       addLinkedConnectionId: connectionId =>
         action(actionTypes.USER.ACCOUNT.ADD_SUITESCRIPT_LINKED_CONNECTION, {
           connectionId,
@@ -1450,11 +1588,17 @@ const resourceFormSampleData = {
   setPreviewData: (resourceId, previewData) => action(actionTypes.RESOURCE_FORM_SAMPLE_DATA.SET_PREVIEW_DATA, { resourceId, previewData }),
   setCsvFileData: (resourceId, csvData) => action(actionTypes.RESOURCE_FORM_SAMPLE_DATA.SET_CSV_FILE_DATA, { resourceId, csvData }),
   setProcessorData: ({resourceId, processor, processorData}) => action(actionTypes.RESOURCE_FORM_SAMPLE_DATA.SET_PROCESSOR_DATA, { resourceId, processor, processorData }),
-  setMockData: (resourceId, mockData) => action(actionTypes.RESOURCE_FORM_SAMPLE_DATA.SET_MOCK_DATA, { resourceId, mockData }),
   updateRecordSize: (resourceId, recordSize) => action(actionTypes.RESOURCE_FORM_SAMPLE_DATA.UPDATE_RECORD_SIZE, { resourceId, recordSize }),
   clear: resourceId => action(actionTypes.RESOURCE_FORM_SAMPLE_DATA.CLEAR, { resourceId }),
   clearStages: resourceId => action(actionTypes.RESOURCE_FORM_SAMPLE_DATA.CLEAR_STAGES, { resourceId }),
   updateType: (resourceId, sampleDataType) => action(actionTypes.RESOURCE_FORM_SAMPLE_DATA.UPDATE_DATA_TYPE, { resourceId, sampleDataType }),
+};
+const mockInput = {
+  request: (resourceId, resourceType, flowId, options) => action(actionTypes.MOCK_INPUT.REQUEST, {resourceId, resourceType, flowId, options}),
+  received: (resourceId, data) => action(actionTypes.MOCK_INPUT.RECEIVED, {resourceId, data}),
+  receivedError: (resourceId, error) => action(actionTypes.MOCK_INPUT.RECEIVED_ERROR, {resourceId, error}),
+  updateUserMockInput: (resourceId, data) => action(actionTypes.MOCK_INPUT.UPDATE_USER_MOCK_INPUT, {resourceId, data}),
+  clear: resourceId => action(actionTypes.MOCK_INPUT.CLEAR, {resourceId}),
 };
 const app = {
   polling: {
@@ -1478,6 +1622,12 @@ const app = {
       helpful,
       feedback,
     }),
+};
+
+const concur = {
+  connect: data => action(actionTypes.CONCUR.CONNECT, data),
+  connectError: error => action(actionTypes.CONCUR.CONNECT_ERROR, {error}),
+  connectSuccess: payload => action(actionTypes.CONCUR.CONNECT_SUCCESS, {payload}),
 };
 
 const patchFilter = (name, filter) =>
@@ -1565,14 +1715,13 @@ const mapping = {
     addRow: v2Key => action(actionTypes.MAPPING.V2.ADD_ROW, { v2Key }),
     updateDataType: (v2Key, newDataType, isSource) => action(actionTypes.MAPPING.V2.UPDATE_DATA_TYPE, { v2Key, newDataType, isSource }),
     changeArrayTab: (v2Key, newTabValue, newTabExtractId) => action(actionTypes.MAPPING.V2.CHANGE_ARRAY_TAB, { v2Key, newTabValue, newTabExtractId }),
-    patchField: (field, v2Key, value) => action(actionTypes.MAPPING.V2.PATCH_FIELD, { field, v2Key, value }),
+    patchField: (field, v2Key, value, isSettingsPatch, selectedExtractJsonPath) => action(actionTypes.MAPPING.V2.PATCH_FIELD, { field, v2Key, value, isSettingsPatch, selectedExtractJsonPath }),
     patchSettings: (v2Key, value) => action(actionTypes.MAPPING.V2.PATCH_SETTINGS, { v2Key, value }),
     patchExtractsFilter: (inputValue, propValue) => action(actionTypes.MAPPING.V2.PATCH_EXTRACTS_FILTER, { inputValue, propValue }),
     deleteAll: isCSVOrXLSX => action(actionTypes.MAPPING.V2.DELETE_ALL, { isCSVOrXLSX }),
     autoCreateStructure: (uploadedData, isCSVOrXLSX) => action(actionTypes.MAPPING.V2.AUTO_CREATE_STRUCTURE, { uploadedData, isCSVOrXLSX }),
     toggleAutoCreateFlag: () => action(actionTypes.MAPPING.V2.TOGGLE_AUTO_CREATE_FLAG, {}),
-    updateHighlightedIndex: index => action(actionTypes.MAPPING.V2.UPDATE_HIGHLIGHTED_INDEX, {index}),
-    searchTree: ({ searchKey, showKey }) => action(actionTypes.MAPPING.V2.SEARCH_TREE, { searchKey, showKey }),
+    searchTree: searchKey => action(actionTypes.MAPPING.V2.SEARCH_TREE, { searchKey }),
     updateFilter: filter => action(actionTypes.MAPPING.V2.UPDATE_FILTER, { filter }),
     deleteNewRowKey: () => action(actionTypes.MAPPING.V2.DELETE_NEW_ROW_KEY, {}),
   },
@@ -1596,7 +1745,7 @@ const searchCriteria = {
 };
 // #region DynaForm Actions
 const resourceForm = {
-  init: (resourceType, resourceId, isNew, skipCommit, flowId, initData, integrationId) =>
+  init: (resourceType, resourceId, isNew, skipCommit, flowId, initData, integrationId, fieldMeta, parentConnectionId) =>
     action(actionTypes.RESOURCE_FORM.INIT, {
       resourceType,
       resourceId,
@@ -1605,6 +1754,8 @@ const resourceForm = {
       flowId,
       initData,
       integrationId,
+      fieldMeta,
+      parentConnectionId,
     }),
   initComplete: (
     resourceType,
@@ -1749,7 +1900,14 @@ const job = {
   downloadFiles: ({ jobId, fileType, fileIds }) =>
     action(actionTypes.JOB.DOWNLOAD_FILES, { jobId, fileType, fileIds }),
   clear: () => action(actionTypes.JOB.CLEAR),
-
+  purge: {
+    request: ({ jobId }) =>
+      action(actionTypes.JOB.PURGE.REQUEST, {jobId}),
+    success: () =>
+      action(actionTypes.JOB.PURGE.SUCCESS),
+    clear: () =>
+      action(actionTypes.JOB.PURGE.CLEAR),
+  },
   cancel: ({ jobId, flowJobId }) =>
     action(actionTypes.JOB.CANCEL, { jobId, flowJobId }),
   resolveAllPending: () => action(actionTypes.JOB.RESOLVE_ALL_PENDING),
@@ -2054,6 +2212,13 @@ const errorManager = {
       isResolved,
       filters,
     }),
+    purge: {
+      request: ({ flowId, resourceId, errors, isRowAction }) =>
+        action(actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.PURGE.REQUEST, {flowId, resourceId, errors, isRowAction}),
+      success: ({ flowId, resourceId, message}) =>
+        action(actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.PURGE.SUCCESS, { flowId, resourceId, message}),
+      clear: ({ flowId, resourceId}) => action(actionTypes.ERROR_MANAGER.FLOW_ERROR_DETAILS.PURGE.CLEAR, { flowId, resourceId}),
+    },
   },
   retries: {
     request: ({ flowId, resourceId }) =>
@@ -2135,6 +2300,7 @@ const errorManager = {
 const flow = {
   addNewPGStep: flowId => action(actionTypes.FLOW.ADD_NEW_PG_STEP, { flowId }),
   addNewPPStep: (flowId, path, processorIndex) => action(actionTypes.FLOW.ADD_NEW_PP_STEP, { flowId, path, processorIndex }),
+  moveStep: (flowId, stepInfo) => action(actionTypes.FLOW.MOVE_STEP, {flowId, stepInfo}),
   addNewPPStepInfo: (flowId, info) => action(actionTypes.FLOW.ADD_NEW_PP_STEP_INFO, { flowId, info }),
   clearPPStepInfo: flowId => action(actionTypes.FLOW.CLEAR_PP_STEP_INFO, { flowId }),
   addNewRouter: (flowId, router) => action(actionTypes.FLOW.ADD_NEW_ROUTER, { flowId, router }),
@@ -2325,6 +2491,16 @@ const logs = {
       action(actionTypes.LOGS.SCRIPTS.START_DEBUG, { scriptId, value }),
     setFetchStatus: ({ scriptId, flowId, fetchStatus }) => action(actionTypes.LOGS.SCRIPTS.FETCH_STATUS, { scriptId, flowId, fetchStatus }),
     pauseFetch: ({ scriptId, flowId }) => action(actionTypes.LOGS.SCRIPTS.PAUSE_FETCH, { scriptId, flowId }),
+    requestAllLogs: ({scriptId, flowId}) => action(actionTypes.LOGS.SCRIPTS.REQUEST_ALL_LOGS, {scriptId, flowId}),
+    receivedAllLogs: ({scriptId, flowId, isPurgeAvailable}) => action(actionTypes.LOGS.SCRIPTS.RECEIVED_ALL_LOGS, {scriptId, flowId, isPurgeAvailable}),
+    purge: {
+      request: ({ scriptId, flowId }) =>
+        action(actionTypes.LOGS.SCRIPTS.PURGE.REQUEST, {scriptId, flowId}),
+      success: ({scriptId, flowId}) =>
+        action(actionTypes.LOGS.SCRIPTS.PURGE.SUCCESS, {scriptId, flowId}),
+      clear: () =>
+        action(actionTypes.LOGS.SCRIPTS.PURGE.CLEAR),
+    },
   },
   connections: {
     request: connectionId =>
@@ -2457,6 +2633,7 @@ export default {
   asyncTask,
   form,
   app,
+  concur,
   metadata,
   fileDefinitions,
   connectors,
@@ -2483,6 +2660,7 @@ export default {
   assistantMetadata,
   stack,
   resourceFormSampleData,
+  mockInput,
   importSampleData,
   flowData,
   connection,

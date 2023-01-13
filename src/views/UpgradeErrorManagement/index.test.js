@@ -1,4 +1,3 @@
-/* global describe, expect, jest, test, beforeEach, afterEach */
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { screen, waitFor, within } from '@testing-library/react';
@@ -85,7 +84,7 @@ describe('test suite for UpgradeErrorManagement', () => {
     const { getAllByRole } = within(list);
     const items = getAllByRole('listitem');
 
-    expect(items.length).toBe(3);
+    expect(items).toHaveLength(3);
 
     const upgradeButton = document.querySelector('[data-test="em2.0_upgrade"]');
     const cancelButton = document.querySelector('[data-test="em2.0_later"]');

@@ -4,6 +4,7 @@ export default {
     '/type': 'http',
     '/assistant': 'lightspeed',
     '/http/auth/type': 'oauth',
+    '/http/auth/oauth/useIClientFields': false,
     '/http/mediaType': 'json',
     '/http/baseURI': 'https://api.merchantos.com',
     '/http/auth/token/location': 'header',

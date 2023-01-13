@@ -1,4 +1,3 @@
-/* global describe, test */
 import { select } from 'redux-saga/effects';
 import { expectSaga } from 'redux-saga-test-plan';
 import * as matchers from 'redux-saga-test-plan/matchers';
@@ -22,7 +21,7 @@ describe('validateOrgId saga', () => {
     const orgId = 'testOrgId';
     const sampleSSOClient = {_id: '123', orgId };
 
-    return expectSaga(validateOrgId, { orgId })
+    expectSaga(validateOrgId, { orgId })
       .delay(500)
       .provide([
         [select(selectors.oidcSSOClient), sampleSSOClient],
@@ -33,7 +32,7 @@ describe('validateOrgId saga', () => {
   test('should dispatch validation error if the orgId is not a valid orgId', () => {
     const orgId = '12345';
 
-    return expectSaga(validateOrgId, { orgId })
+    expectSaga(validateOrgId, { orgId })
       .delay(500)
       .put(actions.sso.validationError(invalidOrgIdErrorMessage))
       .run(500);
@@ -41,7 +40,7 @@ describe('validateOrgId saga', () => {
   test('should make an api call to validate unique orgId if orgId satisfies basic regex validation', () => {
     const orgId = 'orgId1234';
 
-    return expectSaga(validateOrgId, { orgId })
+    expectSaga(validateOrgId, { orgId })
       .delay(500)
       .call.fn(apiCallWithRetry)
       .run(500);
@@ -49,7 +48,7 @@ describe('validateOrgId saga', () => {
   test('should dispatch validation success on api call success for the passed orgId', () => {
     const orgId = 'orgId1234';
 
-    return expectSaga(validateOrgId, { orgId })
+    expectSaga(validateOrgId, { orgId })
       .provide([[matchers.call.fn(apiCallWithRetry), { valid: true}]])
       .call.fn(apiCallWithRetry)
       .put(actions.sso.validationSuccess())
@@ -59,7 +58,7 @@ describe('validateOrgId saga', () => {
     const orgId = 'orgId1234';
     const error = { valid: false, errors: [{ message: invalidOrgIdErrorMessage}] };
 
-    return expectSaga(validateOrgId, { orgId })
+    expectSaga(validateOrgId, { orgId })
       .provide([[matchers.call.fn(apiCallWithRetry), error]])
       .call.fn(apiCallWithRetry)
       .put(actions.sso.validationError(invalidOrgIdErrorMessage))
@@ -69,17 +68,17 @@ describe('validateOrgId saga', () => {
     const orgId = 'orgId1234';
     const error = { valid: false };
 
-    return expectSaga(validateOrgId, { orgId })
+    expectSaga(validateOrgId, { orgId })
       .provide([[matchers.call.fn(apiCallWithRetry), error]])
       .call.fn(apiCallWithRetry)
       .put(actions.sso.validationError())
       .run(500);
   });
-  test('should dispatch validation error on api call returns error message incase of invalid orgId passed', () => {
+  test('should dispatch validation error on api call returns error message incase of invalid orgId passed duplicate', () => {
     const orgId = 'orgId1234';
     const error = { code: 422, message: 'unprocessable entity' };
 
-    return expectSaga(validateOrgId, { orgId })
+    expectSaga(validateOrgId, { orgId })
       .provide([[matchers.call.fn(apiCallWithRetry), throwError(error)]])
       .call.fn(apiCallWithRetry)
       .put(actions.sso.validationError(defaultErrorMessage))

@@ -126,7 +126,7 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing(0, 2),
     border: '1px solid',
     borderColor: theme.palette.secondary.lightest,
-    backgroundColor: theme.palette.common.white,
+    backgroundColor: theme.palette.background.paper,
   },
 }));
 
@@ -348,7 +348,8 @@ export default function Endpoint() {
               ) > -1 && (
               <FilledButton
                 onClick={onStartFreeTrialClick}
-                className={classes.subscriptionUpgradeBtn}>
+                className={classes.subscriptionUpgradeBtn}
+                id="myaccout-unlimited-flows-button">
                 Get unlimited flows
               </FilledButton>
               )}
@@ -361,6 +362,7 @@ export default function Endpoint() {
                 onClick={onRequestUpgradeClick}
                 disabled={upgradeRequested}
                 className={classes.subscriptionUpgradeBtn}
+                id="myaccout-request-upgrade-buttton"
              >
                 {upgradeRequested ? 'Upgrade requested' : 'Request upgrade'}
               </FilledButton>

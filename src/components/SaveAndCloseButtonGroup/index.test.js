@@ -1,4 +1,4 @@
-/* global describe, test, expect, jest */
+
 import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -24,7 +24,7 @@ async function initSaveAndCloseButtonGroup({ disabled, isDirty, status, onClose 
   return renderWithProviders(ui);
 }
 
-describe('SaveAndCloseButtonGroup test cases', () => {
+describe('saveAndCloseButtonGroup test cases', () => {
   runServer();
 
   describe('should pass the initial render', () => {
@@ -87,7 +87,7 @@ describe('SaveAndCloseButtonGroup test cases', () => {
 
       userEvent.click(closeButtonRef);
 
-      expect(onClose).toBeCalledTimes(1);
+      expect(onClose).toHaveBeenCalledTimes(1);
       expect(handleSave).not.toHaveBeenCalled();
       expect(handleSaveAndClose).not.toHaveBeenCalled();
     });
@@ -104,7 +104,7 @@ describe('SaveAndCloseButtonGroup test cases', () => {
       userEvent.click(saveButtonRef);
 
       expect(onClose).not.toHaveBeenCalled();
-      expect(handleSave).toBeCalledTimes(1);
+      expect(handleSave).toHaveBeenCalledTimes(1);
       expect(handleSaveAndClose).not.toHaveBeenCalled();
     });
 
@@ -121,7 +121,7 @@ describe('SaveAndCloseButtonGroup test cases', () => {
 
       expect(onClose).not.toHaveBeenCalled();
       expect(handleSave).not.toHaveBeenCalled();
-      expect(handleSaveAndClose).toBeCalledTimes(1);
+      expect(handleSaveAndClose).toHaveBeenCalledTimes(1);
     });
   });
 });

@@ -1,7 +1,8 @@
+import { safeParse } from '../../../utils/string';
 import { EXPORT_FILE_FIELD_MAP, getFileProviderExportsOptionsHandler, updateFileProviderFormValues } from '../../metaDataUtils/fileUtil';
 
 export default {
-  preSave: formValues => {
+  preSave: (formValues, res) => {
     const newValues = updateFileProviderFormValues(formValues);
 
     const jsonResourcePath = newValues['/file/json/resourcePath'] || {};
@@ -37,7 +38,7 @@ export default {
     if (!newValues['/file/encoding']) {
       newValues['/file/encoding'] = undefined;
     }
-    newValues['/http/method'] = 'GET';
+    newValues['/http/method'] = res?.assistant === 'dropbox' ? 'POST' : 'GET';
     newValues['/http/type'] = 'file';
     newValues['/http/response'] = {
       resourcePath: 'files',
@@ -79,6 +80,8 @@ export default {
     }
     newValues['/http/relativeURI'] = newValues['/http/fileRelativeURI'];
     delete newValues['/http/fileRelativeURI'];
+
+    newValues['/mockOutput'] = safeParse(newValues['/mockOutput']);
 
     return {
       ...newValues,
@@ -132,6 +135,12 @@ export default {
           'file.sortByFields',
           'file.groupByFields',
         ],
+      },
+      {
+        collapsed: true,
+        actionId: 'mockOutput',
+        label: 'Mock output',
+        fields: ['mockOutput'],
       },
       {
         collapsed: true,

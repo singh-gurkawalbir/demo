@@ -12,6 +12,7 @@ export default {
     '/http/ping/method': 'GET',
     '/http/auth/token/refreshMethod': 'POST',
     '/http/auth/token/refreshMediaType': 'urlencoded',
+    '/http/auth/oauth/useIClientFields': false,
     '/http/auth/oauth/grantType': 'clientcredentials',
     '/http/auth/oauth/clientCredentialsLocation': 'basicauthheader',
     '/http/auth/oauth/tokenURI': `https://${

@@ -1,4 +1,8 @@
-/* global describe, expect, beforeAll, test */
+/* eslint-disable jest/no-disabled-tests */
+/* eslint-disable jest/no-identical-title */
+/* eslint-disable jest/no-conditional-in-test */
+/* eslint-disable jest/no-standalone-expect */
+
 import each from 'jest-each';
 import moment from 'moment';
 import reducer, { selectors } from '.';
@@ -406,19 +410,19 @@ describe('resource region selector testcases', () => {
         actions.resource.received('flows', flow)
       );
 
-      expect(selectors.flowDetails(state, 'f1').isRealtime).toEqual(true);
-      expect(selectors.flowDetails(state, 'f1').isRunnable).toEqual(false);
-      expect(selectors.flowDetails(state, 'f1').canSchedule).toEqual(false);
-      expect(selectors.flowDetails(state, 'f1').isSimpleImport).toEqual(false);
-      expect(selectors.flowDetails(state, 'f1').isDeltaFlow).toEqual(false);
+      expect(selectors.flowDetails(state, 'f1').isRealtime).toBe(true);
+      expect(selectors.flowDetails(state, 'f1').isRunnable).toBe(false);
+      expect(selectors.flowDetails(state, 'f1').canSchedule).toBe(false);
+      expect(selectors.flowDetails(state, 'f1').isSimpleImport).toBe(false);
+      expect(selectors.flowDetails(state, 'f1').isDeltaFlow).toBe(false);
 
       const selector = selectors.mkFlowDetails();
 
-      expect(selector(state, 'f1').isRealtime).toEqual(true);
-      expect(selector(state, 'f1').isRunnable).toEqual(false);
-      expect(selector(state, 'f1').canSchedule).toEqual(false);
-      expect(selector(state, 'f1').isSimpleImport).toEqual(false);
-      expect(selector(state, 'f1').isDeltaFlow).toEqual(false);
+      expect(selector(state, 'f1').isRealtime).toBe(true);
+      expect(selector(state, 'f1').isRunnable).toBe(false);
+      expect(selector(state, 'f1').canSchedule).toBe(false);
+      expect(selector(state, 'f1').isSimpleImport).toBe(false);
+      expect(selector(state, 'f1').isDeltaFlow).toBe(false);
     });
 
     test('should verify flowDetails for data-loader flow', () => {
@@ -461,19 +465,19 @@ describe('resource region selector testcases', () => {
         actions.resource.received('flows', flow)
       );
 
-      expect(selectors.flowDetails(state, 'f1').isRealtime).toEqual(false);
-      expect(selectors.flowDetails(state, 'f1').isRunnable).toEqual(true);
-      expect(selectors.flowDetails(state, 'f1').canSchedule).toEqual(false);
-      expect(selectors.flowDetails(state, 'f1').isSimpleImport).toEqual(true);
-      expect(selectors.flowDetails(state, 'f1').isDeltaFlow).toEqual(false);
+      expect(selectors.flowDetails(state, 'f1').isRealtime).toBe(false);
+      expect(selectors.flowDetails(state, 'f1').isRunnable).toBe(true);
+      expect(selectors.flowDetails(state, 'f1').canSchedule).toBe(false);
+      expect(selectors.flowDetails(state, 'f1').isSimpleImport).toBe(true);
+      expect(selectors.flowDetails(state, 'f1').isDeltaFlow).toBe(false);
 
       const selector = selectors.mkFlowDetails();
 
-      expect(selector(state, 'f1').isRealtime).toEqual(false);
-      expect(selector(state, 'f1').isRunnable).toEqual(true);
-      expect(selector(state, 'f1').canSchedule).toEqual(false);
-      expect(selector(state, 'f1').isSimpleImport).toEqual(true);
-      expect(selector(state, 'f1').isDeltaFlow).toEqual(false);
+      expect(selector(state, 'f1').isRealtime).toBe(false);
+      expect(selector(state, 'f1').isRunnable).toBe(true);
+      expect(selector(state, 'f1').canSchedule).toBe(false);
+      expect(selector(state, 'f1').isSimpleImport).toBe(true);
+      expect(selector(state, 'f1').isDeltaFlow).toBe(false);
     });
 
     test('should verify flowDetails for batch delta flow', () => {
@@ -519,19 +523,19 @@ describe('resource region selector testcases', () => {
         actions.resource.received('flows', flow)
       );
 
-      expect(selectors.flowDetails(state, 'f1').isRealtime).toEqual(false);
-      expect(selectors.flowDetails(state, 'f1').isRunnable).toEqual(true);
-      expect(selectors.flowDetails(state, 'f1').canSchedule).toEqual(true);
-      expect(selectors.flowDetails(state, 'f1').isSimpleImport).toEqual(false);
-      expect(selectors.flowDetails(state, 'f1').isDeltaFlow).toEqual(true);
+      expect(selectors.flowDetails(state, 'f1').isRealtime).toBe(false);
+      expect(selectors.flowDetails(state, 'f1').isRunnable).toBe(true);
+      expect(selectors.flowDetails(state, 'f1').canSchedule).toBe(true);
+      expect(selectors.flowDetails(state, 'f1').isSimpleImport).toBe(false);
+      expect(selectors.flowDetails(state, 'f1').isDeltaFlow).toBe(true);
 
       const selector = selectors.mkFlowDetails();
 
-      expect(selector(state, 'f1').isRealtime).toEqual(false);
-      expect(selector(state, 'f1').isRunnable).toEqual(true);
-      expect(selector(state, 'f1').canSchedule).toEqual(true);
-      expect(selector(state, 'f1').isSimpleImport).toEqual(false);
-      expect(selector(state, 'f1').isDeltaFlow).toEqual(true);
+      expect(selector(state, 'f1').isRealtime).toBe(false);
+      expect(selector(state, 'f1').isRunnable).toBe(true);
+      expect(selector(state, 'f1').canSchedule).toBe(true);
+      expect(selector(state, 'f1').isSimpleImport).toBe(false);
+      expect(selector(state, 'f1').isDeltaFlow).toBe(true);
     });
     test('should verify flowDetails for IA flow', () => {
       const exp = {
@@ -785,7 +789,7 @@ describe('resource region selector testcases', () => {
 
   describe('selectors.isDataLoader test cases', () => {
     test('should not throw any exception for invalid arguments', () => {
-      expect(selectors.isDataLoader()).toEqual(false);
+      expect(selectors.isDataLoader()).toBe(false);
     });
 
     test('should return true for dataLoader flow', () => {
@@ -813,7 +817,7 @@ describe('resource region selector testcases', () => {
         actions.resource.received('flows', flow)
       );
 
-      expect(selectors.isDataLoader(state, 'f1')).toEqual(true);
+      expect(selectors.isDataLoader(state, 'f1')).toBe(true);
     });
 
     test('should return true for dataLoader flow if flow is in OLD DL format', () => {
@@ -837,7 +841,7 @@ describe('resource region selector testcases', () => {
         actions.resource.received('flows', flow)
       );
 
-      expect(selectors.isDataLoader(state, 'f1')).toEqual(true);
+      expect(selectors.isDataLoader(state, 'f1')).toBe(true);
     });
 
     test('should return false for non-dataLoader flow', () => {
@@ -861,7 +865,7 @@ describe('resource region selector testcases', () => {
         actions.resource.received('flows', flow)
       );
 
-      expect(selectors.isDataLoader(state, 'f1')).toEqual(false);
+      expect(selectors.isDataLoader(state, 'f1')).toBe(false);
     });
   });
 
@@ -1167,7 +1171,7 @@ describe('resource region selector testcases', () => {
 
   describe('selectors.flowType test cases', () => {
     test('should not throw any exception for invalid arguments', () => {
-      expect(selectors.flowType()).toEqual('');
+      expect(selectors.flowType()).toBe('');
     });
 
     test('should return empty string if export does not exist', () => {
@@ -1185,7 +1189,7 @@ describe('resource region selector testcases', () => {
         actions.resource.received('flows', flow)
       );
 
-      expect(selectors.flowType(state, 'f1')).toEqual('');
+      expect(selectors.flowType(state, 'f1')).toBe('');
     });
 
     test('should return real-time if flow is real-time', () => {
@@ -1213,7 +1217,7 @@ describe('resource region selector testcases', () => {
         actions.resource.received('exports', exp)
       );
 
-      expect(selectors.flowType(state, 'f1')).toEqual('Realtime');
+      expect(selectors.flowType(state, 'f1')).toBe('Realtime');
     });
 
     test('should return dataloader if flow is of simple type', () => {
@@ -1241,7 +1245,7 @@ describe('resource region selector testcases', () => {
         actions.resource.received('exports', exp)
       );
 
-      expect(selectors.flowType(state, 'f1')).toEqual('Data loader');
+      expect(selectors.flowType(state, 'f1')).toBe('Data loader');
     });
 
     test('should return Scheduled for normal flow', () => {
@@ -1269,7 +1273,7 @@ describe('resource region selector testcases', () => {
         actions.resource.received('exports', exp)
       );
 
-      expect(selectors.flowType(state, 'f1')).toEqual('Scheduled');
+      expect(selectors.flowType(state, 'f1')).toBe('Scheduled');
     });
   });
 
@@ -1277,7 +1281,7 @@ describe('resource region selector testcases', () => {
     test('should not throw any exception for invalid arguments', () => {
       const selector = selectors.mkFlowAllowsScheduling();
 
-      expect(selector()).toEqual(false);
+      expect(selector()).toBe(false);
     });
     test('should return true for standalone batch flow', () => {
       const exp = {
@@ -1306,7 +1310,7 @@ describe('resource region selector testcases', () => {
 
       const selector = selectors.mkFlowAllowsScheduling();
 
-      expect(selector(state, 'f1')).toEqual(true);
+      expect(selector(state, 'f1')).toBe(true);
     });
 
     test('should return false for standalone real-time flow', () => {
@@ -1336,7 +1340,7 @@ describe('resource region selector testcases', () => {
 
       const selector = selectors.mkFlowAllowsScheduling();
 
-      expect(selector(state, 'f1')).toEqual(false);
+      expect(selector(state, 'f1')).toBe(false);
     });
 
     test('should return true for v2 scheduled flow', () => {
@@ -1380,7 +1384,7 @@ describe('resource region selector testcases', () => {
 
       const selector = selectors.mkFlowAllowsScheduling();
 
-      expect(selector(state, 'f1')).toEqual(true);
+      expect(selector(state, 'f1')).toBe(true);
     });
 
     test('should return from IA setting for IA flow', () => {
@@ -1432,7 +1436,7 @@ describe('resource region selector testcases', () => {
 
       const selector = selectors.mkFlowAllowsScheduling();
 
-      expect(selector(state, 'f1')).toEqual(false);
+      expect(selector(state, 'f1')).toBe(false);
     });
   });
 
@@ -1514,24 +1518,24 @@ describe('resource region selector testcases', () => {
     };
 
     test('should not throw any exception for invalid arguments', () => {
-      expect(selectors.flowUsesUtilityMapping()).toEqual(false);
-      expect(selectors.flowUsesUtilityMapping(null)).toEqual(false);
-      expect(selectors.flowUsesUtilityMapping(null, null)).toEqual(false);
-      expect(selectors.flowUsesUtilityMapping({}, {})).toEqual(false);
-      expect(selectors.flowUsesUtilityMapping(123, 124)).toEqual(false);
+      expect(selectors.flowUsesUtilityMapping()).toBe(false);
+      expect(selectors.flowUsesUtilityMapping(null)).toBe(false);
+      expect(selectors.flowUsesUtilityMapping(null, null)).toBe(false);
+      expect(selectors.flowUsesUtilityMapping({}, {})).toBe(false);
+      expect(selectors.flowUsesUtilityMapping(123, 124)).toBe(false);
     });
 
     test('should return correct value for single store connector', () => {
-      expect(selectors.flowUsesUtilityMapping(state, 'invalidFlowId')).toEqual(false);
-      expect(selectors.flowUsesUtilityMapping(state, 'flowId3')).toEqual(false);
-      expect(selectors.flowUsesUtilityMapping(state, 'flowId4')).toEqual(true);
+      expect(selectors.flowUsesUtilityMapping(state, 'invalidFlowId')).toBe(false);
+      expect(selectors.flowUsesUtilityMapping(state, 'flowId3')).toBe(false);
+      expect(selectors.flowUsesUtilityMapping(state, 'flowId4')).toBe(true);
     });
 
     test('should return correct value for mullti store connector', () => {
-      expect(selectors.flowUsesUtilityMapping(state, 'flowId1', 'child1')).toEqual(false);
-      expect(selectors.flowUsesUtilityMapping(state, 'flowId2')).toEqual(true);
-      expect(selectors.flowUsesUtilityMapping(state, 'flowId2', 'child1')).toEqual(true);
-      expect(selectors.flowUsesUtilityMapping(state, 'flowId2', 'child2')).toEqual(false);
+      expect(selectors.flowUsesUtilityMapping(state, 'flowId1', 'child1')).toBe(false);
+      expect(selectors.flowUsesUtilityMapping(state, 'flowId2')).toBe(true);
+      expect(selectors.flowUsesUtilityMapping(state, 'flowId2', 'child1')).toBe(true);
+      expect(selectors.flowUsesUtilityMapping(state, 'flowId2', 'child2')).toBe(false);
     });
   });
 
@@ -1668,25 +1672,25 @@ describe('resource region selector testcases', () => {
     };
 
     test('should not throw any exception for invalid arguments', () => {
-      expect(selectors.flowSupportsMapping()).toEqual(false);
-      expect(selectors.flowSupportsMapping(null)).toEqual(false);
-      expect(selectors.flowSupportsMapping(null, null)).toEqual(false);
-      expect(selectors.flowSupportsMapping({}, {})).toEqual(false);
-      expect(selectors.flowSupportsMapping(123, 124)).toEqual(false);
+      expect(selectors.flowSupportsMapping()).toBe(false);
+      expect(selectors.flowSupportsMapping(null)).toBe(false);
+      expect(selectors.flowSupportsMapping(null, null)).toBe(false);
+      expect(selectors.flowSupportsMapping({}, {})).toBe(false);
+      expect(selectors.flowSupportsMapping(123, 124)).toBe(false);
     });
 
     test('should return correct value for single store connector', () => {
-      expect(selectors.flowSupportsMapping(state, 'integrationId1')).toEqual(false);
-      expect(selectors.flowSupportsMapping(state, 'flowId7')).toEqual(true);
-      expect(selectors.flowSupportsMapping(state, 'flowId4')).toEqual(true);
-      expect(selectors.flowSupportsMapping(state, 'flowId3')).toEqual(false);
+      expect(selectors.flowSupportsMapping(state, 'integrationId1')).toBe(false);
+      expect(selectors.flowSupportsMapping(state, 'flowId7')).toBe(true);
+      expect(selectors.flowSupportsMapping(state, 'flowId4')).toBe(true);
+      expect(selectors.flowSupportsMapping(state, 'flowId3')).toBe(false);
     });
 
     test('should return correct value for mullti store connector', () => {
-      expect(selectors.flowSupportsMapping(state, 'flowId1', 'child1')).toEqual(false);
-      expect(selectors.flowSupportsMapping(state, 'flowId2')).toEqual(true);
-      expect(selectors.flowSupportsMapping(state, 'flowId2', 'child1')).toEqual(true);
-      expect(selectors.flowSupportsMapping(state, 'flowId2', 'child2')).toEqual(false);
+      expect(selectors.flowSupportsMapping(state, 'flowId1', 'child1')).toBe(false);
+      expect(selectors.flowSupportsMapping(state, 'flowId2')).toBe(true);
+      expect(selectors.flowSupportsMapping(state, 'flowId2', 'child1')).toBe(true);
+      expect(selectors.flowSupportsMapping(state, 'flowId2', 'child2')).toBe(false);
     });
   });
 
@@ -1799,24 +1803,24 @@ describe('resource region selector testcases', () => {
     };
 
     test('should not throw any exception for invalid arguments', () => {
-      expect(selectors.flowSupportsSettings()).toEqual(false);
-      expect(selectors.flowSupportsSettings(null)).toEqual(false);
-      expect(selectors.flowSupportsSettings(null, null)).toEqual(false);
-      expect(selectors.flowSupportsSettings({}, {})).toEqual(false);
-      expect(selectors.flowSupportsSettings(123, 124)).toEqual(false);
+      expect(selectors.flowSupportsSettings()).toBe(false);
+      expect(selectors.flowSupportsSettings(null)).toBe(false);
+      expect(selectors.flowSupportsSettings(null, null)).toBe(false);
+      expect(selectors.flowSupportsSettings({}, {})).toBe(false);
+      expect(selectors.flowSupportsSettings(123, 124)).toBe(false);
     });
 
     test('should return correct value for single store connector', () => {
-      expect(selectors.flowSupportsSettings(state, 'integrationId1')).toEqual(false);
-      expect(selectors.flowSupportsSettings(state, 'flowId4')).toEqual(true);
-      expect(selectors.flowSupportsSettings(state, 'flowId3')).toEqual(false);
+      expect(selectors.flowSupportsSettings(state, 'integrationId1')).toBe(false);
+      expect(selectors.flowSupportsSettings(state, 'flowId4')).toBe(true);
+      expect(selectors.flowSupportsSettings(state, 'flowId3')).toBe(false);
     });
 
     test('should return correct value for multi store connector', () => {
-      expect(selectors.flowSupportsSettings(state, 'flowId1', 'child1')).toEqual(false);
-      expect(selectors.flowSupportsSettings(state, 'flowId2')).toEqual(true);
-      expect(selectors.flowSupportsSettings(state, 'flowId2', 'child1')).toEqual(true);
-      expect(selectors.flowSupportsSettings(state, 'flowId2', 'child2')).toEqual(false);
+      expect(selectors.flowSupportsSettings(state, 'flowId1', 'child1')).toBe(false);
+      expect(selectors.flowSupportsSettings(state, 'flowId2')).toBe(true);
+      expect(selectors.flowSupportsSettings(state, 'flowId2', 'child1')).toBe(true);
+      expect(selectors.flowSupportsSettings(state, 'flowId2', 'child2')).toBe(false);
     });
   });
 
@@ -1974,13 +1978,13 @@ describe('resource region selector testcases', () => {
     );
 
     test('should not throw any exception for invalid arguments', () => {
-      expect(selectors.isConnectionOffline()).toEqual(false);
+      expect(selectors.isConnectionOffline()).toBe(false);
     });
     test('should return true if given connection is offline', () => {
-      expect(selectors.isConnectionOffline(connState, 'connection1')).toEqual(true);
+      expect(selectors.isConnectionOffline(connState, 'connection1')).toBe(true);
     });
     test('should return undefined if given connection is online', () => {
-      expect(selectors.isConnectionOffline(connState, 'connection2')).toEqual(false);
+      expect(selectors.isConnectionOffline(connState, 'connection2')).toBe(false);
     });
   });
 
@@ -4206,7 +4210,7 @@ describe('resource region selector testcases', () => {
 
       expect(filteredHomeTiles(newState)).toEqual(expected);
     });
-    describe('should return tiles filtered by applications for list view ', () => {
+    describe('should return tiles filtered by applications for list view', () => {
       test('for applications with single version', () => {
         const initialState = reducer(state, actions.patchFilter(FILTER_KEY,
           {
@@ -5173,7 +5177,7 @@ describe('resource region selector testcases', () => {
   });
   describe('selectors.isHomeListView test cases', () => {
     test('should not throw exception for invalid arguments', () => {
-      expect(selectors.isHomeListView()).toEqual(false);
+      expect(selectors.isHomeListView()).toBe(false);
     });
 
     test('should return true if dashboard view is list view', () => {
@@ -5204,7 +5208,7 @@ describe('resource region selector testcases', () => {
   });
   describe('selectors.isResourceCollectionLoading test cases', () => {
     test('should not throw any exception for invalid arguments', () => {
-      expect(selectors.isResourceCollectionLoading()).toEqual(false);
+      expect(selectors.isResourceCollectionLoading()).toBe(false);
     });
 
     const resource = 'someResource';
@@ -5214,13 +5218,13 @@ describe('resource region selector testcases', () => {
     const newState = reducer(undefined, actions.api.request(path, method));
 
     test('should return true when the api request is made', () => {
-      expect(selectors.isResourceCollectionLoading(newState, resource)).toEqual(true);
+      expect(selectors.isResourceCollectionLoading(newState, resource)).toBe(true);
     });
 
     const state = reducer(newState, actions.api.complete(path, method));
 
     test('should return false when the api request is complete', () => {
-      expect(selectors.isResourceCollectionLoading(state, resource)).toEqual(false);
+      expect(selectors.isResourceCollectionLoading(state, resource)).toBe(false);
     });
 
     const resource2 = 'transfers';
@@ -5230,28 +5234,28 @@ describe('resource region selector testcases', () => {
     const state1 = reducer(undefined, actions.api.request(path1, method));
 
     test('should return true when the api request is made', () => {
-      expect(selectors.isResourceCollectionLoading(state1, resource2)).toEqual(true);
+      expect(selectors.isResourceCollectionLoading(state1, resource2)).toBe(true);
     });
     const state2 = reducer(state1, actions.api.complete(path1, method));
 
     test('should return false when the api request is complete', () => {
-      expect(selectors.isResourceCollectionLoading(state2, resource2)).toEqual(false);
+      expect(selectors.isResourceCollectionLoading(state2, resource2)).toBe(false);
     });
 
     const state3 = reducer(undefined, actions.api.request(path2, method));
 
     test('should return true when the api request is made', () => {
-      expect(selectors.isResourceCollectionLoading(state3, resource2)).toEqual(true);
+      expect(selectors.isResourceCollectionLoading(state3, resource2)).toBe(true);
     });
     const state4 = reducer(state3, actions.api.complete(path2, method));
 
     test('should return false when the api request is complete', () => {
-      expect(selectors.isResourceCollectionLoading(state4, resource2)).toEqual(false);
+      expect(selectors.isResourceCollectionLoading(state4, resource2)).toBe(false);
     });
   });
 
-  describe('resourceStatus ', () => {
-    describe('GET resource calls ', () => {
+  describe('resourceStatus', () => {
+    describe('GET resource calls', () => {
       const method = 'GET';
 
       test('should correctly indicate the resource is not Ready for a loading resource call', () => {
@@ -5534,7 +5538,7 @@ describe('resource region selector testcases', () => {
     });
   });
 
-  describe('resourceData cache ', () => {
+  describe('resourceData cache', () => {
     const resourceData = selectors.makeResourceDataSelector();
 
     test('should return {} on bad state or args.', () => {
@@ -5883,7 +5887,7 @@ describe('resource region selector testcases', () => {
         actions.resource.receivedCollection('audit', logs)
       );
 
-      expect(selectors.auditLogs(state, undefined, 'i1', undefined, {
+      expect(selectors.auditLogs(state, undefined, 'i1', {
         childId: 's1',
       })).toEqual({
         logs: [
@@ -6119,7 +6123,7 @@ describe('resource region selector testcases', () => {
 
       expect(selector(state, flowId)).toEqual([]);
     });
-    test('should return expected error steps for the passed flow with corresponding open error info ', () => {
+    test('should return expected error steps for the passed flow with corresponding open error info', () => {
       const flowId = 'f6';
       const integrationId = 'i1';
       const lastErrorAt = new Date().toISOString();
@@ -6464,15 +6468,15 @@ describe('resource region selector testcases', () => {
     });
     test('should return undefined if given flow does not contains integrtion id', () => {
       expect(selectors.getScriptContext(state, {contextType: 'hook',
-        flowId: 'flow1'})).toEqual(undefined);
+        flowId: 'flow1'})).toBeUndefined();
     });
     test('should return undefined if given input does not contains context type', () => {
       expect(selectors.getScriptContext(state, {
-        flowId: 'flow2'})).toEqual(undefined);
+        flowId: 'flow2'})).toBeUndefined();
     });
     test('should return undefined if given input does not contains flow id', () => {
       expect(selectors.getScriptContext(state, {contextType: 'hook',
-      })).toEqual(undefined);
+      })).toBeUndefined();
     });
   });
 
@@ -6762,6 +6766,25 @@ describe('resource region selector testcases', () => {
                 name: 'flow name 5',
                 _id: 'flow5',
                 _integrationId: 'integrationId3',
+              }, {
+                name: 'flow name 8',
+                _id: 'flow8',
+                _integrationId: 'integrationId4',
+                _flowGroupingId: 'flowGroup1',
+              }, {
+                name: 'flow name 9',
+                _id: 'flow9',
+                _integrationId: 'integrationId4',
+              }, {
+                name: 'flow name 10',
+                _id: 'flow10',
+                _integrationId: 'integrationId5',
+                _flowGroupingId: 'flowGroup1',
+              }, {
+                name: 'flow name 11',
+                _id: 'flow11',
+                _integrationId: 'integrationId5',
+                _flowGroupingId: 'flowGroup2',
               }],
               integrations: [{
                 _id: 'integrationId1',
@@ -6773,6 +6796,62 @@ describe('resource region selector testcases', () => {
                 _id: 'integrationId3',
                 _parentId: 'integrationId2',
                 _registeredConnectionIds: ['connection2'],
+              }, {
+                _id: 'integrationId4',
+                _registeredConnectionIds: ['connection3'],
+                _connectorId: 'connector1',
+                flowGroupings: [
+                  {
+                    name: 'flow group 1',
+                    _id: 'flowGroup1',
+                  },
+                  {
+                    name: 'flow group 2',
+                    _id: 'flowGroup2',
+                  },
+                  {
+                    name: 'flow group 3',
+                    _id: 'flowGroup3',
+                  },
+                ],
+              }, {
+                _id: 'integrationId5',
+                _parentId: 'integrationId4',
+                _registeredConnectionIds: ['connection3'],
+                _connectorId: 'connector1',
+                flowGroupings: [
+                  {
+                    name: 'flow group 1',
+                    _id: 'flowGroup1',
+                  },
+                  {
+                    name: 'flow group 2',
+                    _id: 'flowGroup2',
+                  },
+                  {
+                    name: 'flow group 3',
+                    _id: 'flowGroup3',
+                  },
+                ],
+              }, {
+                _id: 'integrationId6',
+                _parentId: 'integrationId4',
+                _registeredConnectionIds: ['connection3'],
+                _connectorId: 'connector1',
+                flowGroupings: [
+                  {
+                    name: 'flow group 1',
+                    _id: 'flowGroup1',
+                  },
+                  {
+                    name: 'flow group 2',
+                    _id: 'flowGroup2',
+                  },
+                  {
+                    name: 'flow group 3',
+                    _id: 'flowGroup3',
+                  },
+                ],
               }],
               connections: [{
                 _id: 'connection1',
@@ -6780,6 +6859,9 @@ describe('resource region selector testcases', () => {
               }, {
                 _id: 'connection2',
                 name: 'connection2',
+              }, {
+                _id: 'connection3',
+                name: 'connection3',
               }],
             },
           },
@@ -6881,6 +6963,45 @@ describe('resource region selector testcases', () => {
             _id: 'flow7',
           },
         ]);
+      });
+
+      test('should return correct flow list for a parent integration with flowGroupings', () => {
+        expect(selector(state, 'integrationId4', 'integrationId4')).toEqual([{
+          ...sortProperties,
+          name: 'flow name 8',
+          _id: 'flow8',
+          _integrationId: 'integrationId4',
+          _flowGroupingId: 'flowGroup1',
+          errors: 0,
+        }, {
+          ...sortProperties,
+          errors: 0,
+          name: 'flow name 9',
+          _id: 'flow9',
+          _integrationId: 'integrationId4',
+        }]);
+      });
+
+      test('should return correct flow list for a child integration with flowGroupings', () => {
+        expect(selector(state, 'integrationId4', 'integrationId5')).toEqual([{
+          ...sortProperties,
+          name: 'flow name 10',
+          _id: 'flow10',
+          _integrationId: 'integrationId5',
+          _flowGroupingId: 'flowGroup1',
+          errors: 0,
+        }, {
+          ...sortProperties,
+          errors: 0,
+          name: 'flow name 11',
+          _id: 'flow11',
+          _integrationId: 'integrationId5',
+          _flowGroupingId: 'flowGroup2',
+        }]);
+      });
+
+      test('should return correct flow list for a child integration with flowGroupings and has no flows', () => {
+        expect(selector(state, 'integrationId4', 'integrationId6')).toEqual([]);
       });
 
       // Skipping all these test cases for noo as ccurrent errorMap doesnt work for IAF2.0
@@ -7706,16 +7827,16 @@ describe('resource region selector testcases', () => {
     };
 
     test('should return exports if passed resource type is pageGenerator', () => {
-      expect(selectors.getResourceType(state, { resourceType: 'pageGenerator', resourceId: 'res-123' })).toEqual('exports');
+      expect(selectors.getResourceType(state, { resourceType: 'pageGenerator', resourceId: 'res-123' })).toBe('exports');
     });
     test('should return imports if passed resource type is pageProcessor and an import resource exists with that id', () => {
-      expect(selectors.getResourceType(state, { resourceType: 'pageProcessor', resourceId: 'res-id1' })).toEqual('imports');
+      expect(selectors.getResourceType(state, { resourceType: 'pageProcessor', resourceId: 'res-id1' })).toBe('imports');
     });
     test('should return exports if passed resource type is pageProcessor and no import resource exists with that id', () => {
-      expect(selectors.getResourceType(state, { resourceType: 'pageProcessor', resourceId: 'res-id2' })).toEqual('exports');
+      expect(selectors.getResourceType(state, { resourceType: 'pageProcessor', resourceId: 'res-id2' })).toBe('exports');
     });
     test('should return passed resource type if its neither pageGenerator nor pageProcessor', () => {
-      expect(selectors.getResourceType(state, { resourceType: 'imports', resourceId: 'res-123' })).toEqual('imports');
+      expect(selectors.getResourceType(state, { resourceType: 'imports', resourceId: 'res-123' })).toBe('imports');
     });
   });
 
@@ -7755,19 +7876,19 @@ describe('resource region selector testcases', () => {
     };
 
     test('should return false if the connection is of bigquery rdbms subtype', () => {
-      expect(selectors.mappingHasLookupOption(state, 'connections', 'connection2')).toEqual(false);
+      expect(selectors.mappingHasLookupOption(state, 'connections', 'connection2')).toBe(false);
     });
     test('should return false if the connection is of redshift rdbms subtype', () => {
-      expect(selectors.mappingHasLookupOption(state, 'connections', 'connection3')).toEqual(false);
+      expect(selectors.mappingHasLookupOption(state, 'connections', 'connection3')).toBe(false);
     });
     test('should return false if the connection is of snowflake rdbms subtype', () => {
-      expect(selectors.mappingHasLookupOption(state, 'connections', 'connection4')).toEqual(false);
+      expect(selectors.mappingHasLookupOption(state, 'connections', 'connection4')).toBe(false);
     });
     test('should return true if the connection is not of bigquery, redshift or snowflake rdbms subtype', () => {
-      expect(selectors.mappingHasLookupOption(state, 'connections', 'connection5')).toEqual(true);
+      expect(selectors.mappingHasLookupOption(state, 'connections', 'connection5')).toBe(true);
     });
     test('should return true if the connection is of not rdbms type', () => {
-      expect(selectors.mappingHasLookupOption(state, 'connections', 'connection1')).toEqual(true);
+      expect(selectors.mappingHasLookupOption(state, 'connections', 'connection1')).toBe(true);
     });
   });
 
@@ -7912,7 +8033,7 @@ describe('resource region selector testcases', () => {
 
 describe('selectors.isParserSupported test cases', () => {
   test('should not throw any exception for invalid arguments', () => {
-    expect(selectors.isParserSupported()).toEqual(true);
+    expect(selectors.isParserSupported()).toBe(true);
   });
 
   test("should return false if it's a new HTTP export and final success media type is not xml or csv", () => {
@@ -7942,7 +8063,7 @@ describe('selectors.isParserSupported test cases', () => {
 
     resource.merged.adaptorType = 'HTTPExport';
 
-    expect(selectors.isParserSupported(state, formKey, parser)).toEqual(false);
+    expect(selectors.isParserSupported(state, formKey, parser)).toBe(false);
   });
 
   test("should return true if it's a new export but not an HTTP Export", () => {
@@ -7972,7 +8093,7 @@ describe('selectors.isParserSupported test cases', () => {
 
     resource.merged.adaptorType = 'FTPExport';
 
-    expect(selectors.isParserSupported(state, formKey, parser)).toEqual(true);
+    expect(selectors.isParserSupported(state, formKey, parser)).toBe(true);
   });
 
   test("should return true if it's a new export with adaptorType as 'HTTPExport' but not an HTTP Export", () => {
@@ -8003,7 +8124,7 @@ describe('selectors.isParserSupported test cases', () => {
     resource.merged.adaptorType = 'HTTPExport';
     resource.merged.assistant = 'googledrive';
 
-    expect(selectors.isParserSupported(state, formKey, parser)).toEqual(true);
+    expect(selectors.isParserSupported(state, formKey, parser)).toBe(true);
   });
 
   test('should return true if not an HTTP export but adaptorType as "HTTPExport"', () => {
@@ -8026,7 +8147,7 @@ describe('selectors.isParserSupported test cases', () => {
 
     state = reducer(state, actions.form.init(formKey, '', { fieldMeta, parentContext: {resourceId: 'e1'} }));
 
-    expect(selectors.isParserSupported(state, formKey, parser)).toEqual(true);
+    expect(selectors.isParserSupported(state, formKey, parser)).toBe(true);
   });
 
   test('should return true if not an HTTP export', () => {
@@ -8048,7 +8169,7 @@ describe('selectors.isParserSupported test cases', () => {
 
     state = reducer(state, actions.form.init(formKey, '', { fieldMeta, parentContext: {resourceId: 'e1'} }));
 
-    expect(selectors.isParserSupported(state, formKey, parser)).toEqual(true);
+    expect(selectors.isParserSupported(state, formKey, parser)).toBe(true);
   });
 
   test('should return true for HTTP export with overridden success media type as parser', () => {
@@ -8072,7 +8193,7 @@ describe('selectors.isParserSupported test cases', () => {
     state = reducer(state, actions.form.init(formKey, '', { fieldMeta, parentContext: {resourceId: 'e1'} }));
     state.session.form[formKey].value = { '/http/successMediaType': parser };
 
-    expect(selectors.isParserSupported(state, formKey, parser)).toEqual(true);
+    expect(selectors.isParserSupported(state, formKey, parser)).toBe(true);
   });
 
   test('should return false for HTTP export with overridden success media type different from parser', () => {
@@ -8096,7 +8217,7 @@ describe('selectors.isParserSupported test cases', () => {
     state = reducer(state, actions.form.init(formKey, '', { fieldMeta, parentContext: {resourceId: 'e1'} }));
     state.session.form[formKey].value = { '/http/successMediaType': 'csv' };
 
-    expect(selectors.isParserSupported(state, formKey, parser)).toEqual(false);
+    expect(selectors.isParserSupported(state, formKey, parser)).toBe(false);
   });
 
   test('should not rely on success media type of connection', () => {
@@ -8134,7 +8255,7 @@ describe('selectors.isParserSupported test cases', () => {
 
     state = reducer(state, actions.form.init(formKey, '', { fieldMeta, parentContext: {resourceId: 'e1'} }));
 
-    expect(selectors.isParserSupported(state, formKey, parser)).toEqual(false);
+    expect(selectors.isParserSupported(state, formKey, parser)).toBe(false);
   });
 
   test('should return true for HTTP export with media type as parser', () => {
@@ -8172,7 +8293,7 @@ describe('selectors.isParserSupported test cases', () => {
 
     state = reducer(state, actions.form.init(formKey, '', { fieldMeta, parentContext: {resourceId: 'e1'} }));
 
-    expect(selectors.isParserSupported(state, formKey, parser)).toEqual(true);
+    expect(selectors.isParserSupported(state, formKey, parser)).toBe(true);
   });
 
   test('should return false for HTTP export with media different from parser', () => {
@@ -8210,6 +8331,6 @@ describe('selectors.isParserSupported test cases', () => {
 
     state = reducer(state, actions.form.init(formKey, '', { fieldMeta, parentContext: {resourceId: 'e1'} }));
 
-    expect(selectors.isParserSupported(state, formKey, parser)).toEqual(false);
+    expect(selectors.isParserSupported(state, formKey, parser)).toBe(false);
   });
 });

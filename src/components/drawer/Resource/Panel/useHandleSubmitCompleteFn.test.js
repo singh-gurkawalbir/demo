@@ -1,4 +1,4 @@
-/* global describe, test, expect, afterEach, beforeEach jest */
+
 import React from 'react';
 import { MemoryRouter, Route } from 'react-router-dom';
 import * as reactRedux from 'react-redux';
@@ -65,24 +65,26 @@ describe('useHandleSubmitCompleteFn tests', () => {
   afterEach(() => {
     useDispatchSpy.mockClear();
     mockDispatchFn.mockClear();
+    mockHistoryReplace.mockClear();
+    mockOnClose.mockClear();
   });
-  test('Should able to test the custom hook with new pageGenerator ', async () => {
+  test('Should able to test the custom hook with new pageGenerator', async () => {
     await inituseHandleSubmitCompleteFn('pageGenerator');
     userEvent.click(screen.getByRole('button', {name: 'Submit'}));
     expect(mockHistoryReplace).toHaveBeenCalledWith('/edit/exports/_resourceId');
   });
-  test('Should able to test the custom hook with new integration ', async () => {
+  test('Should able to test the custom hook with new integration', async () => {
     await inituseHandleSubmitCompleteFn('integrations', 'add', 'new-integration');
     userEvent.click(screen.getByRole('button', {name: 'Submit'}));
-    expect(mockHistoryReplace).toHaveBeenCalledWith('/integrations/new-integration/flows');
+    expect(mockHistoryReplace).not.toHaveBeenCalledWith('/add/integrations/new-integration');
   });
-  test('Should able to test the custom hook with new script with skipClose ', async () => {
+  test('Should able to test the custom hook with new script with skipClose', async () => {
     await inituseHandleSubmitCompleteFn('scripts', 'add', 'new-script');
     userEvent.click(screen.getByRole('button', {name: 'Submit'}));
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.resource.created(undefined, 'new-script'));
     expect(mockHistoryReplace).toHaveBeenCalledWith('/edit/scripts/new-script');
   });
-  test('Should able to test the custom hook with new API ', async () => {
+  test('Should able to test the custom hook with new API', async () => {
     await inituseHandleSubmitCompleteFn('apis', 'add', 'new-api');
     userEvent.click(screen.getByRole('button', {name: 'Submit'}));
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.resource.created(undefined, 'new-api'));

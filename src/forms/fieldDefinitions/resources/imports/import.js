@@ -179,9 +179,9 @@ export default {
     label: 'Use tech adaptor form',
     defaultValue: false,
   },
-  sampleResponseData: {
-    type: 'text',
-    label: 'Sample response data',
+  mockResponse: {
+    type: 'mockResponse',
+    label: 'Mock response',
   },
   modelMetadata: { type: 'text', label: 'Model metadata' },
   adaptorType: {

@@ -1,4 +1,3 @@
-/* global describe, test, expect, jest  */
 
 import { addMinutes } from 'date-fns';
 import reducer, { selectors } from '.';
@@ -198,6 +197,7 @@ describe('Scripts logs reducer', () => {
           logs: [{a: 1, index: 0}],
           nextPageURL: 'abc',
           status: 'success',
+          isPurgeAvailable: true,
         },
       },
     };
@@ -218,6 +218,7 @@ describe('Scripts logs reducer', () => {
             {a: 2, index: 1},
           ],
           status: 'success',
+          isPurgeAvailable: true,
         },
       },
     };
@@ -240,6 +241,7 @@ describe('Scripts logs reducer', () => {
           ],
           nextPageURL: 'abc',
           status: 'success',
+          isPurgeAvailable: true,
         },
       },
     };
@@ -632,6 +634,126 @@ describe('Scripts logs reducer', () => {
 
     expect(state).toEqual(expectedState);
   });
+  test('LOGS.SCRIPTS.RECEIVED_ALL_LOGS should set the status of the purge in the state', () => {
+    const flowId = 'f123';
+    const scriptId = 's123';
+    const currentState = {
+      scripts: {
+        's123-f123': {
+          scriptId: 's123',
+          flowId: 'f123',
+          logs: [
+            {a: 1, index: 0},
+            {a: 2, index: 1},
+          ],
+          nextPageURL: 'abc',
+          status: 'success',
+        },
+      },
+    };
+    const state = reducer(currentState, actions.logs.scripts.receivedAllLogs({
+      scriptId,
+      flowId,
+      isPurgeAvailable: true,
+    }));
+    const expectedState = {
+      scripts: {
+        's123-f123': {
+          scriptId: 's123',
+          flowId: 'f123',
+          logs: [
+            {a: 1, index: 0},
+            {a: 2, index: 1},
+          ],
+          nextPageURL: 'abc',
+          status: 'success',
+          isPurgeAvailable: true,
+          allLogsStatus: 'success',
+        },
+      },
+    };
+
+    expect(state).toEqual(expectedState);
+  });
+  test('LOGS.SCRIPTS.PURGE.SUCCESS should set the status of the purge in the state', () => {
+    const flowId = 'f123';
+    const scriptId = 's123';
+    const currentState = {
+      scripts: {
+        's123-f123': {
+          scriptId: 's123',
+          flowId: 'f123',
+          logs: [
+            {a: 1, index: 0},
+            {a: 2, index: 1},
+          ],
+          nextPageURL: 'abc',
+          status: 'success',
+        },
+      },
+    };
+    const state = reducer(currentState, actions.logs.scripts.purge.success({
+      scriptId,
+      flowId,
+    }));
+    const expectedState = {
+      scripts: {
+        's123-f123': {
+          scriptId: 's123',
+          flowId: 'f123',
+          logs: [
+            {a: 1, index: 0},
+            {a: 2, index: 1},
+          ],
+          nextPageURL: 'abc',
+          status: 'success',
+          isPurgeAvailable: false,
+        },
+      },
+      purgeLogStatus: 'success',
+    };
+
+    expect(state).toEqual(expectedState);
+  });
+  test('LOGS.SCRIPTS.PURGE.CLEAR action should clear the purge status details', () => {
+    const flowId = 'f123';
+    const scriptId = 's123';
+    const currentState = {
+      scripts: {
+        's123-f123': {
+          scriptId: 's123',
+          flowId: 'f123',
+          logs: [
+            {a: 1, index: 0},
+            {a: 2, index: 1},
+          ],
+          nextPageURL: 'abc',
+          status: 'success',
+        },
+      },
+      purgeLogStatus: 'success',
+    };
+    const state = reducer(currentState, actions.logs.scripts.purge.clear({
+      scriptId,
+      flowId,
+    }));
+    const expectedState = {
+      scripts: {
+        's123-f123': {
+          scriptId: 's123',
+          flowId: 'f123',
+          logs: [
+            {a: 1, index: 0},
+            {a: 2, index: 1},
+          ],
+          nextPageURL: 'abc',
+          status: 'success',
+        },
+      },
+    };
+
+    expect(state).toEqual(expectedState);
+  });
 
   test('should not alter state in case script with particular scriptId is not present in state', () => {
     const originalState = {
@@ -856,5 +978,136 @@ describe('script selector', () => {
     const scriptLog = selectors.flowExecutionLogScripts(state);
 
     expect([]).toEqual(scriptLog);
+  });
+  test('selector[isPurgeAvailable] should return undefined in case state is not initialized', () => {
+    const isPurgeAvailable = selectors.isPurgeAvailable(undefined, {});
+
+    expect(undefined).toEqual(isPurgeAvailable);
+  });
+  test('selector[isPurgeAvailable] should return undefined if purgeAvailable is not set', () => {
+    const scriptId = 's1';
+    const flowId = 'f1';
+    const state = {scripts: {
+      's1-f1': {
+        scriptId: 's1',
+        flowId: 'f1',
+        logs: [
+          {message: 'm1', logLevel: 'WARN' },
+          {message: 'm2', logLevel: 'DEBUG' },
+          {message: 'm3', logLevel: 'DEBUG' },
+        ],
+      },
+    },
+    };
+    const isPurgeAvailable = selectors.isPurgeAvailable(state, {scriptId, flowId});
+
+    expect(undefined).toEqual(isPurgeAvailable);
+  });
+  test('selector[isPurgeAvailable] should return correct value if isPurgeAvailable is set', () => {
+    const scriptId = 's1';
+    const flowId = 'f1';
+    const state = {scripts: {
+      's1-f1': {
+        scriptId: 's1',
+        flowId: 'f1',
+        logs: [
+          {message: 'm1', logLevel: 'WARN' },
+          {message: 'm2', logLevel: 'DEBUG' },
+          {message: 'm3', logLevel: 'DEBUG' },
+        ],
+        isPurgeAvailable: true,
+      },
+    },
+    };
+    const isPurgeAvailable = selectors.isPurgeAvailable(state, {scriptId, flowId});
+
+    expect(true).toEqual(isPurgeAvailable);
+  });
+  test('selector[isAllLogsReceived] should false in case state is not initialized', () => {
+    const isAllLogsReceived = selectors.isAllLogsReceived(undefined, {});
+
+    expect(false).toEqual(isAllLogsReceived);
+  });
+  test('selector[isAllLogsReceived] should return false if allLogsStatus is not set', () => {
+    const scriptId = 's1';
+    const flowId = 'f1';
+    const state = {scripts: {
+      's1-f1': {
+        scriptId: 's1',
+        flowId: 'f1',
+        logs: [
+          {message: 'm1', logLevel: 'WARN' },
+          {message: 'm2', logLevel: 'DEBUG' },
+          {message: 'm3', logLevel: 'DEBUG' },
+        ],
+      },
+    },
+    };
+    const isAllLogsReceived = selectors.isAllLogsReceived(state, {scriptId, flowId});
+
+    expect(false).toEqual(isAllLogsReceived);
+  });
+  test('selector[isAllLogsReceived] should return true if allLogsStatus is success', () => {
+    const scriptId = 's1';
+    const flowId = 'f1';
+    const state = {scripts: {
+      's1-f1': {
+        scriptId: 's1',
+        flowId: 'f1',
+        logs: [
+          {message: 'm1', logLevel: 'WARN' },
+          {message: 'm2', logLevel: 'DEBUG' },
+          {message: 'm3', logLevel: 'DEBUG' },
+        ],
+        isPurgeAvailable: true,
+        allLogsStatus: 'success',
+      },
+    },
+    };
+    const isAllLogsReceived = selectors.isAllLogsReceived(state, {scriptId, flowId});
+
+    expect(true).toEqual(isAllLogsReceived);
+  });
+  test('selector[isPurgeLogSuccess] should false in case state is not initialized', () => {
+    const isPurgeLogSuccess = selectors.isPurgeLogSuccess(undefined);
+
+    expect(false).toEqual(isPurgeLogSuccess);
+  });
+  test('selector[isPurgeLogSuccess] should return false if purgeLogStatus is not set', () => {
+    const state = {scripts: {
+      's1-f1': {
+        scriptId: 's1',
+        flowId: 'f1',
+        logs: [
+          {message: 'm1', logLevel: 'WARN' },
+          {message: 'm2', logLevel: 'DEBUG' },
+          {message: 'm3', logLevel: 'DEBUG' },
+        ],
+      },
+    },
+    };
+    const isPurgeLogSuccess = selectors.isPurgeLogSuccess(state);
+
+    expect(false).toEqual(isPurgeLogSuccess);
+  });
+  test('selector[isPurgeLogSuccess] should return true if purgeLogStatus is success', () => {
+    const state = {scripts: {
+      's1-f1': {
+        scriptId: 's1',
+        flowId: 'f1',
+        logs: [
+          {message: 'm1', logLevel: 'WARN' },
+          {message: 'm2', logLevel: 'DEBUG' },
+          {message: 'm3', logLevel: 'DEBUG' },
+        ],
+        isPurgeAvailable: true,
+        allLogsStatus: 'success',
+      },
+    },
+    purgeLogStatus: 'success',
+    };
+    const isPurgeLogSuccess = selectors.isPurgeLogSuccess(state);
+
+    expect(true).toEqual(isPurgeLogSuccess);
   });
 });

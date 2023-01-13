@@ -1,4 +1,3 @@
-/* global describe, test, expect, jest */
 import React from 'react';
 import { screen } from '@testing-library/react';
 import { renderWithProviders } from '../../../../../test/test-utils';
@@ -24,12 +23,11 @@ function initWarningGridItem(props = {}) {
   return renderWithProviders(<WarningGridItem {...props} />, {initialStore});
 }
 
-describe('WarningGridItem UI tests', () => {
+describe('warningGridItem UI tests', () => {
   test('should pass the initial render', () => {
     initWarningGridItem({editorId: 'file.csv', status: 'recieved', warning: 'Invalid data format'});
     expect(screen.getByText('Warning')).toBeInTheDocument();
     expect(screen.getByText('Invalid data format')).toBeInTheDocument();
-    screen.debug();
   });
   test('should render empty DOM when editor result status is "requested"', () => {
     const {utils} = initWarningGridItem({editorId: 'files.csv', status: 'requested'});

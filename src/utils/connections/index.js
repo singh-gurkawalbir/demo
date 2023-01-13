@@ -3,6 +3,7 @@ import { PING_STATES } from '../../reducers/comms/ping';
 import { CONSTANT_CONTACT_VERSIONS, EBAY_TYPES, emptyObject, MULTIPLE_AUTH_TYPE_ASSISTANTS, RDBMS_TYPES } from '../../constants';
 import { rdbmsSubTypeToAppType } from '../resource';
 import {getHttpConnector} from '../../constants/applications';
+import { getConnectorId } from '../assistant';
 
 export const getStatusVariantAndMessage = ({
   resourceType,
@@ -113,7 +114,7 @@ export const getReplaceConnectionExpression = (connection, isFrameWork2, childId
   if (connector) {
     return {
       filter: andingExpressions,
-      appType: connector.name,
+      appType: getConnectorId(connector.legacyId, connector.name),
     };
   }
 
@@ -240,6 +241,7 @@ export const amazonSellerCentralAuthURI = {
   A1VC38T7YXB528: 'https://sellercentral.amazon.co.jp/apps/authorize/consent',
   ARBP9OOSHTCHU: 'https://sellercentral.amazon.eg/apps/authorize/consent',
   A17E79C6D8DWNP: 'https://sellercentral.amazon.sa/apps/authorize/consent',
+  AMEN7PMS3EDWL: 'https://sellercentral.amazon.com.be/apps/authorize/consent',
 };
 
 export const amazonSellerCentralMarketPlaceOptions = {
@@ -263,6 +265,7 @@ export const amazonSellerCentralMarketPlaceOptions = {
     {label: 'Saudi Arabia', value: 'A17E79C6D8DWNP'},
     {label: 'United Arab Emirates', value: 'A2VIGQ35RCS4UG'},
     {label: 'India', value: 'A21TJRUUN4KGV'},
+    {label: 'Belgium', value: 'AMEN7PMS3EDWL'},
   ],
   farEast: [
     {label: 'Singapore', value: 'A19VAU5U5O7RUS'},
@@ -286,13 +289,24 @@ export const amazonSellerCentralBaseUriForMWSConnection = {
   australia: 'https://mws.amazonservices.com.au',
 };
 
+export const RESOURCE_DRAWER_PATH = '/:operation(add|edit)/:parentType/:parentId';
+export const CONN_DRAWER_PATH = '/:operation(add|edit)/connections/:connId';
+export const ICLIENT_DRAWER_PATH = '/:operation(add|edit)/iClients/:iClientId';
+
 // given a url, this util returns the path params
 // to identify the parent export/import type and id
 // This is used when a connection is opened inside a resource
-export const getParentResourceContext = url => {
+export const getParentResourceContext = (url, resourceType) => {
   if (!url) return {};
-  const RESOURCE_DRAWER_PATH = '/:operation(add|edit)/:parentType/:parentId';
-  const CONN_DRAWER_PATH = '/:operation(add|edit)/connections/:connId';
+
+  if (resourceType === 'iClients') {
+    return matchPath(url, {
+      path: [
+        `/**${RESOURCE_DRAWER_PATH}${CONN_DRAWER_PATH}${ICLIENT_DRAWER_PATH}`,
+        `/**${CONN_DRAWER_PATH}${ICLIENT_DRAWER_PATH}`,
+      ],
+      exact: true})?.params || {};
+  }
 
   return matchPath(url, {
     path: `/**${RESOURCE_DRAWER_PATH}${CONN_DRAWER_PATH}`,

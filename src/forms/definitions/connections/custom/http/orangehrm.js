@@ -11,6 +11,7 @@ export default {
     '/http/auth/token/location': 'header',
     '/http/auth/token/headerName': 'Authorization',
     '/http/auth/token/scheme': 'Bearer',
+    '/http/auth/oauth/useIClientFields': false,
     '/http/auth/oauth/tokenURI': `https://${formValues['/http/unencrypted/subdomain']}.orangehrm.com/oauth/issueToken`,
     '/http/auth/oauth/clientCredentialsLocation': 'body',
     '/http/auth/oauth/grantType': 'clientcredentials',

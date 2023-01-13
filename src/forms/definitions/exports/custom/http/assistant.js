@@ -1,5 +1,6 @@
 import { omitBy } from 'lodash';
 import { convertToExport } from '../../../../../utils/assistant';
+import { safeParse } from '../../../../../utils/string';
 import { fieldMeta } from './util';
 
 export default function assistantDefinition(
@@ -58,6 +59,11 @@ export default function assistantDefinition(
 
       if (connection?.http?.type === 'Amazon-SP-API') {
         otherFormValues['/unencrypted/apiType'] = 'Amazon-SP-API';
+      }
+      otherFormValues['/mockOutput'] = safeParse(otherFormValues['/mockOutput']);
+
+      if (formValues['/assistantMetadata/exportType'] !== 'test') {
+        otherFormValues['/test/limit'] = undefined;
       }
 
       return { ...otherFormValues, ...exportDoc };

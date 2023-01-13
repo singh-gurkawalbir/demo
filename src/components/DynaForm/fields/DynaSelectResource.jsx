@@ -1,9 +1,10 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import sift from 'sift';
 import clsx from 'clsx';
 import { makeStyles } from '@material-ui/core/styles';
 import { useSelector, useDispatch } from 'react-redux';
 import { useHistory, useLocation } from 'react-router-dom';
+import { isEqual } from 'lodash';
 import { selectors } from '../../../reducers';
 import AddIcon from '../../icons/AddIcon';
 import EditIcon from '../../icons/EditIcon';
@@ -12,7 +13,7 @@ import DynaSelect from './DynaSelect';
 import DynaMultiSelect from './DynaMultiSelect';
 import actions from '../../../actions';
 import resourceMeta from '../../../forms/definitions';
-import { generateNewId } from '../../../utils/resource';
+import { generateNewId, MODEL_PLURAL_TO_LABEL } from '../../../utils/resource';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 import useIntegration from '../../../hooks/useIntegration';
 import { stringCompare } from '../../../utils/sort';
@@ -21,6 +22,7 @@ import OnlineStatus from '../../OnlineStatus';
 import { drawerPaths, buildDrawerUrl } from '../../../utils/rightDrawer';
 import Spinner from '../../Spinner';
 import IconButtonWithTooltip from '../../IconButtonWithTooltip';
+import { RESOURCE_TYPE_PLURAL_TO_SINGULAR } from '../../../constants';
 
 const emptyArray = [];
 const handleAddNewResource = args => {
@@ -56,7 +58,7 @@ const handleAddNewResource = args => {
 
     if (['pageProcessor', 'pageGenerator'].includes(resourceType)) {
       values = resourceMeta[resourceType].preSave({
-        application: options.appType,
+        application: options?.appType,
       });
     } else if (['iClients'].includes(resourceType)) {
       values = {
@@ -78,7 +80,7 @@ const handleAddNewResource = args => {
       }
     } else {
       values = resourceMeta[resourceType].new.preSave({
-        application: options.appType,
+        application: options?.appType,
       });
 
       if (resourceType === 'asyncHelpers' || statusExport) {
@@ -117,6 +119,42 @@ const handleAddNewResource = args => {
     baseUrl: location.pathname,
     params: { resourceType, id: newResourceId },
   }));
+};
+
+const getType = resourceType => {
+  let type = 'connection';
+
+  if (['connectorLicenses'].includes(resourceType)) {
+    type = MODEL_PLURAL_TO_LABEL[resourceType]?.toLowerCase();
+  } else if (RESOURCE_TYPE_PLURAL_TO_SINGULAR[resourceType]) {
+    type = RESOURCE_TYPE_PLURAL_TO_SINGULAR[resourceType];
+  }
+
+  return type;
+};
+
+const addIconTitle = (resourceType, title) => {
+  if (title) {
+    return title;
+  }
+
+  return `Add ${getType(resourceType)}`;
+};
+
+const ediIconTitle = (resourceType, title) => {
+  if (title) {
+    return title;
+  }
+
+  return `Edit ${getType(resourceType)}`;
+};
+
+const disabledIconTitle = (resourceType, title) => {
+  if (title) {
+    return title;
+  }
+
+  return `Select a ${getType(resourceType)} to allow editing`;
 };
 
 const useStyles = makeStyles(theme => ({
@@ -198,14 +236,24 @@ export default function DynaSelectResource(props) {
     integrationId,
     connectorId,
     flowId,
+    addTitle,
+    editTitle,
+    disabledTitle,
   } = props;
-  const {options} = props;
+  const { options = {}, getItemInfo } = props;
   const classes = useStyles();
   const location = useLocation();
   const integrationIdFromUrl = useIntegration(resourceType, id);
   const dispatch = useDispatch();
   const history = useHistory();
   const [newResourceId, setNewResourceId] = useState(generateNewId());
+  const optionRef = useRef(options);
+
+  useEffect(() => {
+    if (!isEqual(optionRef.current, options)) {
+      optionRef.current = options;
+    }
+  }, [options]);
   const filterConfig = useMemo(
     () => ({
       type: resourceType,
@@ -231,11 +279,11 @@ export default function DynaSelectResource(props) {
   const allRegisteredConnectionIdsFromManagedIntegrations = useSelector(state => selectors.allRegisteredConnectionIdsFromManagedIntegrations(state));
 
   useEffect(() => {
-    if (!appTypeIsStatic && options.appType && !!value) {
+    if (!appTypeIsStatic && options?.appType && !!value) {
       onFieldChange(id, '', true);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [id, options.appType]);
+  }, [id, options?.appType]);
 
   useEffect(() => {
     if (createdId) {
@@ -268,8 +316,10 @@ export default function DynaSelectResource(props) {
     return filteredResources.map(conn => ({
       label: conn.offline ? `${conn.name || conn._id} - Offline` : conn.name || conn._id,
       value: conn._id,
+      itemInfo: getItemInfo?.(conn),
     }));
-  }, [resources, options, filter, resourceType, checkPermissions, allRegisteredConnectionIdsFromManagedIntegrations]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [resources, optionRef.current, filter, resourceType, checkPermissions, allRegisteredConnectionIdsFromManagedIntegrations]);
   const { merged } =
     useSelectorMemo(
       selectors.makeResourceDataSelector,
@@ -366,7 +416,22 @@ export default function DynaSelectResource(props) {
       ),
       optionSearch: i.label,
       value: i.value,
+      itemInfo: i.itemInfo,
     }));
+
+  useEffect(() => {
+    if (!appTypeIsStatic && value && !Array.isArray(value)) {
+      const isValuePresentInOption = resourceItems.find(eachItem => eachItem.value === value);
+
+      if (!isValuePresentInOption) {
+        onFieldChange(id, '', true);
+      }
+    }
+
+  // resourceItems are filtered by options,
+  // if options change then resourceItems also change, hence adding options as a dependency here
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [optionRef.current]);
 
   if (!resourceItems.length && hideOnEmptyList && hasResourceTypeLoaded) {
     return null;
@@ -408,7 +473,7 @@ export default function DynaSelectResource(props) {
           <div className={classes.dynaSelectMultiSelectActions}>
             {allowNew && (
             <IconButtonWithTooltip
-              tooltipProps={{title: 'Create connection'}}
+              tooltipProps={{title: `${addIconTitle(resourceType, addTitle)}`}}
               data-test="addNewResource"
               onClick={handleAddNewResourceMemo}
               buttonSize="small">
@@ -419,8 +484,7 @@ export default function DynaSelectResource(props) {
             {allowEdit && (
             // Disable adding a new resource when the user has selected an existing resource
             <IconButtonWithTooltip
-              tooltipProps={{title: 'Edit connection'}}
-              disabled={!value}
+              tooltipProps={{title: value ? `${ediIconTitle(resourceType, editTitle)}` : `${disabledIconTitle(resourceType, disabledTitle)}`}} disabled={!value}
               data-test="editNewResource"
               onClick={handleEditResource}
               buttonSize="small">

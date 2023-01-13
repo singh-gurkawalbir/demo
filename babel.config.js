@@ -10,7 +10,7 @@ module.exports = api => {
 
       ['@babel/plugin-transform-runtime', { regenerator: true }],
       ['@babel/plugin-proposal-decorators', { legacy: true }],
-      ['@babel/plugin-proposal-class-properties', { loose: true }],
+      ['@babel/plugin-proposal-class-properties'],
       ['@babel/plugin-transform-modules-commonjs', { strict: false }],
       ['@babel/plugin-proposal-optional-chaining'],
       ['babel-plugin-transform-react-remove-prop-types', { removeImport: true }],

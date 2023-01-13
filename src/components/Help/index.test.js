@@ -1,11 +1,11 @@
-/* global describe, test, expect, */
+
 import React from 'react';
-import {screen} from '@testing-library/react';
+import {screen, waitFor} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import {renderWithProviders} from '../../test/test-utils';
 import Help from '.';
 
-describe('Help UI tests', () => {
+describe('help UI tests', () => {
   test('should render the help icon', () => {
     const props = {
       helpText: 'Sample help text',
@@ -37,7 +37,7 @@ describe('Help UI tests', () => {
     userEvent.click(screen.getByText('exterior'));
     expect(screen.queryByText(/Sample help text/i)).toBeNull();
   });
-  test('should not close arrowpopper when clicked on "NO" or User feedback field', () => {
+  test('should not close arrowpopper when clicked on "NO" or User feedback field', async () => {
     const props = {
       helpText: 'Sample help text',
       helpKey: 'connections',
@@ -45,9 +45,11 @@ describe('Help UI tests', () => {
 
     renderWithProviders(<Help {...props} />);
     userEvent.click(screen.getByRole('button'));
-    expect(screen.getByText(/Sample help text/i)).toBeInTheDocument();
-    userEvent.click(screen.getByText(/No/i));
-    expect(screen.getByText(/Submit/i)).toBeInTheDocument();
+    const thumbsdown = document.querySelector('[data-test="noContentHelpful"]');
+
+    expect(thumbsdown).toBeInTheDocument();
+    userEvent.click(thumbsdown);
+    await waitFor(() => expect(screen.getByRole('textbox')).toBeInTheDocument());
     const field = screen.getByPlaceholderText('How can we make this information more helpful?');
 
     userEvent.click(field);

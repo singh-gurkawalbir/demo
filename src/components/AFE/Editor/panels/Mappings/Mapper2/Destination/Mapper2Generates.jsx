@@ -10,8 +10,8 @@ import { TooltipTitle } from '../Source/Mapper2ExtractsTypeableSelect';
 import DestinationDataType from './DestinationDataType';
 import LockIcon from '../../../../../../icons/LockIcon';
 import { selectors } from '../../../../../../../reducers';
-import useScrollIntoView from '../../../../../../../hooks/useScrollIntoView';
 import actions from '../../../../../../../actions';
+import useScrollIntoView from '../../../../../../../hooks/useScrollIntoView';
 
 const useStyles = makeStyles(theme => ({
   customTextField: {
@@ -25,9 +25,6 @@ const useStyles = makeStyles(theme => ({
     '& .MuiFilledInput-multiline': {
       border: 'none',
     },
-  },
-  highlightedField: {
-    borderColor: `${theme.palette.primary.main} !important`,
   },
   mapField: {
     display: 'flex',
@@ -73,7 +70,6 @@ export default function Mapper2Generates(props) {
     isRequired,
   } = props;
   const dispatch = useDispatch();
-  const highlightedKey = useSelector(state => selectors.highlightedKey(state));
   const newRowKey = useSelector(state => selectors.newRowKey(state));
   const classes = useStyles();
   const [isFocused, setIsFocused] = useState(false);
@@ -91,9 +87,7 @@ export default function Mapper2Generates(props) {
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  // bring the highlighted key into focus
-  useScrollIntoView(containerRef, nodeKey === highlightedKey);
+  useScrollIntoView(containerRef, nodeKey === newRowKey);
 
   const handleChange = useCallback(event => {
     setInputValue(event.target.value);
@@ -126,7 +120,6 @@ export default function Mapper2Generates(props) {
 
   return (
     <FormControl
-      className={{[classes.highlightedField]: nodeKey === highlightedKey}}
       data-test={id}
       key={id}
       ref={containerRef} >

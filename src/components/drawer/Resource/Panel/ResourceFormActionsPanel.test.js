@@ -1,4 +1,4 @@
-/* global describe, test, expect, jest */
+
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { screen, waitFor } from '@testing-library/react';
@@ -168,22 +168,22 @@ describe('ResourceFormActionsPanel tests', () => {
     await waitFor(() => expect(screen.getByRole('button', {name: /Close/i})).toBeEnabled());
   });
 
-  test('Should able to test the ActionsFactory ', async () => {
+  test('Should able to test the ActionsFactory', async () => {
     await initActionsFactory(actionsFactoryProps);
     expect(screen.getByRole('button', {name: /save/i})).toBeInTheDocument();
   });
 
-  test('Should able to test the ActionsFactory with variant = view ', async () => {
+  test('Should able to test the ActionsFactory with variant = view', async () => {
     await initActionsFactory({...actionsFactoryProps, variant: 'view'});
     expect(screen.queryByText(/save/i)).not.toBeInTheDocument();
   });
 
-  test('Should able to test the ActionsFactory with proceedOnChange ', async () => {
+  test('Should able to test the ActionsFactory with proceedOnChange', async () => {
     await initActionsFactory({...actionsFactoryProps, isNew: true, resourceType: 'connections'});
     expect(screen.queryByText(/close/i)).not.toBeInTheDocument();
   });
 
-  test('Should able to test the ActionsFactory without actions ', async () => {
+  test('Should able to test the ActionsFactory without actions', async () => {
     await initActionsFactory({...actionsFactoryProps, actions: []});
     expect(screen.queryByText(/save/i)).not.toBeInTheDocument();
   });

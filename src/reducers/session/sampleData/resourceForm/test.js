@@ -1,4 +1,4 @@
-/* global describe, test, expect */
+
 import reducer, { selectors, extractStages, getResourceSampleData } from '.';
 import actions from '../../../../actions';
 
@@ -555,7 +555,7 @@ describe('resourceFormSampleData reducer', () => {
 
       expect(newStateSend).toEqual(expectedStateSend);
     });
-    test('should update parse stage as undefined if no parse data is passed ', () => {
+    test('should update parse stage as undefined if no parse data is passed', () => {
       const expectedState = {
         456: { preview: {status: 'received', data: { parse: undefined}}},
         ...initialState,
@@ -1007,67 +1007,6 @@ describe('resourceFormSampleData reducer', () => {
       expect(newState).toEqual(expectedState);
     });
   });
-  describe('SET_MOCK_DATA action', () => {
-    const initialState = {
-      456: { preview: {status: 'received', data: {}} },
-      789: { send: {status: 'received', data: {}}, typeOfSampleData: 'send' },
-    };
-    const mockData = {
-      name: 'user1',
-      id: '1',
-    };
-
-    test('should set the mock input data on the resource', () => {
-      const expectedState = {
-        456: { preview: {status: 'received', data: {}}, data: {mockData}},
-        789: { send: {status: 'received', data: {}}, typeOfSampleData: 'send' },
-      };
-      const newState = reducer(
-        initialState,
-        actions.resourceFormSampleData.setMockData('456', mockData)
-      );
-
-      expect(newState).toEqual(expectedState);
-
-      const expectedState1 = {
-        456: { preview: {status: 'received', data: {}} },
-        789: { send: {status: 'received', data: {}}, typeOfSampleData: 'send', data: {mockData}},
-      };
-      const newState1 = reducer(
-        initialState,
-        actions.resourceFormSampleData.setMockData('789', mockData)
-      );
-
-      expect(newState1).toEqual(expectedState1);
-    });
-    test('should add new resource state with parse stage filled with parse data passed for send and preview sample data types', () => {
-      const expectedState = {
-        [resourceId]: { preview: {}, data: {mockData}},
-        ...initialState,
-      };
-      const newState = reducer(
-        initialState,
-        actions.resourceFormSampleData.setMockData(resourceId, mockData)
-      );
-
-      expect(newState).toEqual(expectedState);
-
-      const expectedStateSend = {
-        [resourceId]: { preview: {}, send: {}, typeOfSampleData: 'send', data: {mockData}},
-        ...initialState,
-      };
-      const sendState = reducer(
-        initialState,
-        actions.resourceFormSampleData.updateType(resourceId, 'send')
-      );
-      const newStateSend = reducer(
-        sendState,
-        actions.resourceFormSampleData.setMockData(resourceId, mockData)
-      );
-
-      expect(newStateSend).toEqual(expectedStateSend);
-    });
-  });
 });
 
 describe('sampleData selectors', () => {
@@ -1075,19 +1014,19 @@ describe('sampleData selectors', () => {
 
   describe('typeOfSampleData selector', () => {
     test('should return default sample data type for invalid arguments', () => {
-      expect(selectors.typeOfSampleData()).toEqual('preview');
-      expect(selectors.typeOfSampleData({}, 123)).toEqual('preview');
-      expect(selectors.typeOfSampleData({123: {data: '123'}}, 123)).toEqual('preview');
+      expect(selectors.typeOfSampleData()).toBe('preview');
+      expect(selectors.typeOfSampleData({}, 123)).toBe('preview');
+      expect(selectors.typeOfSampleData({123: {data: '123'}}, 123)).toBe('preview');
     });
     test('should return correct sample data type for send sample data type', () => {
       const state = reducer({}, actions.resourceFormSampleData.updateType(resourceId, 'send'));
 
-      expect(selectors.typeOfSampleData(state, resourceId)).toEqual('send');
+      expect(selectors.typeOfSampleData(state, resourceId)).toBe('send');
     });
     test('should return correct sample data type for preview sample data type', () => {
       const state = reducer({}, actions.resourceFormSampleData.updateType(resourceId, 'preview'));
 
-      expect(selectors.typeOfSampleData(state, resourceId)).toEqual('preview');
+      expect(selectors.typeOfSampleData(state, resourceId)).toBe('preview');
     });
   });
   describe('getResourceSampleDataWithStatus', () => {
@@ -1307,10 +1246,74 @@ describe('sampleData selectors', () => {
     });
   });
 
+  describe('sampleDataError', () => {
+    test('should return undefined incase of invalid args', () => {
+      expect(selectors.sampleDataError()).toBeUndefined();
+      expect(selectors.sampleDataError({}, 123)).toBeUndefined();
+      expect(selectors.sampleDataError({123: {data: '123'}}, 123)).toBeUndefined();
+    });
+    test('should return undefined if the resource has no error for preview', () => {
+      const state = {
+        123: {
+          preview: {
+            status: 'received',
+            data: {
+              parse: [{
+                name: 'Bob',
+                age: 23,
+              }],
+              raw: [{
+                url: 'https://api.mocki.io/v1/awe',
+                statusCode: 200,
+                body: '{"name":"Bob","age":23}',
+              }],
+              request: [{
+                url: 'https://api.mocki.io/v1/awe',
+                method: 'GET',
+              }]},
+          },
+        },
+        456: { preview: { status: 'received', data: {} } },
+        789: { preview: { status: 'received', data: {} } },
+        111: { preview: { status: 'requested'} },
+      };
+
+      expect(selectors.sampleDataError(state, 123)).toBeUndefined();
+      expect(selectors.sampleDataError(state, 456)).toBeUndefined();
+      expect(selectors.sampleDataError(state, 111)).toBeUndefined();
+    });
+    test('should return error when the resource has preview error', () => {
+      const error = [{
+        classification: 'value',
+        code: 'cannot_evaluate_static_lookup',
+        message: 'Cannot evaluate the static lookup: "lookupName" using searchKey: "test".',
+        occurredAt: 1671780841390,
+        resolved: false,
+        source: 'application',
+      }];
+      const state = {
+        123: {
+          preview: {
+            status: 'error',
+            error,
+            data: {
+              request: [{
+                url: 'https://api.mocki.io/v1/awe',
+                method: 'GET',
+              }],
+            },
+          },
+        },
+      };
+
+      expect(selectors.sampleDataError(state, 123)).toEqual(error);
+    });
+  });
   describe('getAllParsableErrors', () => {
     test('should return all parsable errors when there are no stages in the response, this scenario occurs when IO errors out', () => {
       const error = {
         errors: [{field: 'http', code: 'missing_required_field', message: 'http subschema not defined'}],
+        stages: null,
       };
       const initialState = {
         [resourceId]: { preview: {status: 'requested'} },
@@ -1324,6 +1327,40 @@ describe('sampleData selectors', () => {
       expect(selectors.getAllParsableErrors(newState, resourceId))
         .toEqual([{field: 'http', code: 'missing_required_field', message: 'http subschema not defined'}]);
     });
+    test('should return errors when there are errors with request but no response returned from the connection', () => {
+      const previewError = {
+        errors: [{
+          classification: 'value',
+          code: 'cannot_evaluate_static_lookup',
+          message: 'Cannot evaluate the static lookup: "lookupName" using searchKey: "test".',
+          occurredAt: 1671780841390,
+          resolved: false,
+          source: 'application',
+        }],
+
+        stages: [{
+          name: 'request',
+          data: [{
+            body: { name: 'test', email: 'test', Name: '' },
+            headers: { 'content-type': 'application/json', accept: 'application/json'},
+            method: 'POST',
+            url: 'http://demo0822471.mockable.io/abcd',
+          }],
+        }],
+      };
+
+      const initialState = {
+        [resourceId]: { preview: {status: 'requested'} },
+      };
+
+      const newState = reducer(
+        initialState,
+        actions.resourceFormSampleData.receivedPreviewError(resourceId, previewError)
+      );
+
+      expect(selectors.getAllParsableErrors(newState, resourceId)).toEqual(previewError.errors);
+    });
+
     test('should return no errors when there are stages in the response, this scenario occurs when the endpoint errors out', () => {
       const error = {
         errors: [{
@@ -1352,7 +1389,7 @@ describe('sampleData selectors', () => {
         actions.resourceFormSampleData.receivedPreviewError(resourceId, error)
       );
 
-      expect(selectors.getAllParsableErrors(newState, '[resourceId]')).toEqual(undefined);
+      expect(selectors.getAllParsableErrors(newState, '[resourceId]')).toBeUndefined();
     });
   });
   describe('getResourceSampleDataStages', () => {
@@ -1376,9 +1413,9 @@ describe('sampleData selectors', () => {
             }]},
         },
       },
-      456: { status: 'received', data: {} },
-      789: { status: 'received', data: {} },
-      111: { status: 'requested'},
+      456: { preview: { status: 'received', data: {} } },
+      789: { preview: { status: 'received', data: {} } },
+      111: { preview: { status: 'requested'} },
     };
 
     test('should return empty list if there is no sample data for the passed resourceId', () => {
@@ -1468,20 +1505,6 @@ describe('sampleData selectors', () => {
       expect(selectors.getResourceSampleDataStages(initialSendState, '123')).toEqual(expectedOutput);
     });
   });
-  describe('getResourceMockData', () => {
-    test('should not throw exception for invalid arguments', () => {
-      expect(selectors.getResourceMockData({}, resourceId)).toBeUndefined();
-      expect(selectors.getResourceMockData({})).toBeUndefined();
-      expect(selectors.getResourceMockData({123: {}}, resourceId)).toBeUndefined();
-    });
-    test('should return correct mock data for a resourceid', () => {
-      const state = reducer(
-        {}, actions.resourceFormSampleData.setMockData(resourceId, {data: '123'})
-      );
-
-      expect(selectors.getResourceMockData(state, resourceId)).toEqual({data: '123'});
-    });
-  });
 });
 
 describe('sampleData extractStages util function', () => {
@@ -1545,7 +1568,7 @@ describe('sampleData getResourceSampleData util function', () => {
       status: 'requested',
     };
 
-    expect(getResourceSampleData(resourceIdSampleData, 'raw')).toEqual(undefined);
+    expect(getResourceSampleData(resourceIdSampleData, 'raw')).toBeUndefined();
   });
 
   test('should return undefined if the asked stage does not exist in the state', () => {
@@ -1557,7 +1580,7 @@ describe('sampleData getResourceSampleData util function', () => {
       }]},
     };
 
-    expect(getResourceSampleData(resourceIdSampleData, 'raw')).toEqual(undefined);
+    expect(getResourceSampleData(resourceIdSampleData, 'raw')).toBeUndefined();
   });
 
   test('should return the asked stage data from the resource state', () => {

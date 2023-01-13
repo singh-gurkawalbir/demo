@@ -1,4 +1,4 @@
-/* global test, expect, describe, jest, beforeEach */
+
 import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -37,7 +37,7 @@ function initStatusCell(tileData = null, initialStore = null) {
   renderWithProviders(ui, {initialStore});
 }
 
-describe("Home Tile's Status cell ui tests", () => {
+describe("home Tile's Status cell ui tests", () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });

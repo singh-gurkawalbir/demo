@@ -1,4 +1,4 @@
-/* global describe, test,expect, jest, beforeEach, afterEach */
+
 import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -64,7 +64,7 @@ function initonoffCell(props = {}, initialStore = null) {
   return renderWithProviders(ui, {initialStore});
 }
 
-describe('On/Off cell UI test case', () => {
+describe('on/Off cell UI test case', () => {
   const enqueueSnackbar = jest.fn();
 
   beforeEach(() => {

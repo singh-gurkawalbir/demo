@@ -1,4 +1,4 @@
-/* global describe, test, expect, afterEach, jest, beforeEach */
+
 import React from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { screen, fireEvent, waitFor } from '@testing-library/react';
@@ -9,7 +9,7 @@ import userEvent from '@testing-library/user-event';
 import * as reactRouterDom from 'react-router-dom';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import * as reactRedux from 'react-redux';
-import { renderWithProviders, mockPostRequestOnce, mockPutRequestOnce } from '../../../../test/test-utils';
+import { renderWithProviders, mockPutRequestOnce } from '../../../../test/test-utils';
 import ManageNotificationsDrawer from '.';
 import { runServer } from '../../../../test/api/server';
 import { getCreatedStore } from '../../../../store';
@@ -234,14 +234,8 @@ describe('Manage Notifications', () => {
     mockDispatchFn.mockClear();
   });
   test('Should able to access the Notification Drawer and notify the user when a flow throws error by selecting a flow and save the notication drawer', async () => {
-    const mockResolverFunction = jest.fn();
     const mockNotificationUpdateFunction = jest.fn();
 
-    mockPostRequestOnce('/api/fieldHelp', (req, res, ctx) => {
-      mockResolverFunction();
-
-      return res(ctx.json([]));
-    });
     mockPutRequestOnce('/api/notifications', (req, res, ctx) => {
       mockNotificationUpdateFunction();
 
@@ -252,34 +246,7 @@ describe('Manage Notifications', () => {
       integrationId: '602aac4c53b612272ca1f54b',
     });
 
-    expect(screen.getByText('Notify user on flow error')).toBeInTheDocument();
-    const svg = document.querySelector("[viewBox='0 0 24 24']");
-
-    expect(svg).toBeInTheDocument();
-    userEvent.click(svg);
-
-    expect(screen.getByText("Please choose 'All flows' to receive an email notification whenever any flow in this integration has a job error, or select individual flows to focus your email traffic to just higher priority data flows.")).toBeInTheDocument();
-
-    expect(screen.getByText('Was this helpful?')).toBeInTheDocument();
-    const helpTextYesButton = screen.getByText('Yes');
-
-    expect(helpTextYesButton).toBeInTheDocument();
-    userEvent.click(helpTextYesButton);
-    userEvent.click(svg);
-    const helpTextNoButton = screen.getByText('No');
-
-    expect(helpTextNoButton).toBeInTheDocument();
-    userEvent.click(helpTextNoButton);
-    fireEvent.change(screen.queryByPlaceholderText(/How can we make this information more helpful?/i), {
-      target: {value: 'Hey! cool'},
-    });
-    const submitText = screen.getByText('Submit');
-
-    expect(submitText).toBeInTheDocument();
-    userEvent.click(submitText);
-    await waitFor(() => {
-      expect(mockResolverFunction).toHaveBeenCalledTimes(2);
-    });
+    expect(screen.getByText('Notify user of flow error')).toBeInTheDocument();
     const pleaseSelectText = await screen.queryAllByRole('button', { name: 'Please select'}).find(eachOption => eachOption.getAttribute('id') === 'mui-component-select-flows');
 
     expect(pleaseSelectText).toBeInTheDocument();
@@ -317,31 +284,7 @@ describe('Manage Notifications', () => {
       integrationId: '602aac4c53b612272ca1f54b',
     });
 
-    expect(screen.getByText('Notify user on flow error')).toBeInTheDocument();
-    const svg = document.querySelector("[viewBox='0 0 24 24']");
-
-    expect(svg).toBeInTheDocument();
-    userEvent.click(svg);
-
-    expect(screen.getByText("Please choose 'All flows' to receive an email notification whenever any flow in this integration has a job error, or select individual flows to focus your email traffic to just higher priority data flows.")).toBeInTheDocument();
-
-    expect(screen.getByText('Was this helpful?')).toBeInTheDocument();
-    const helpTextYesButton = screen.getByText('Yes');
-
-    expect(helpTextYesButton).toBeInTheDocument();
-    userEvent.click(helpTextYesButton);
-    userEvent.click(svg);
-    const helpTextNoButton = screen.getByText('No');
-
-    expect(helpTextNoButton).toBeInTheDocument();
-    userEvent.click(helpTextNoButton);
-    fireEvent.change(screen.queryByPlaceholderText(/How can we make this information more helpful?/i), {
-      target: {value: 'Hey! cool'},
-    });
-    const submitText = screen.getByText('Submit');
-
-    expect(submitText).toBeInTheDocument();
-    userEvent.click(submitText);
+    expect(screen.getByText('Notify user of flow error')).toBeInTheDocument();
 
     expect(screen.getByText('Notify user when connection goes offline')).toBeInTheDocument();
     const pleaseSelectText = await screen.queryAllByRole('button', { name: 'Please select'}).find(eachOption => eachOption.getAttribute('id') === 'mui-component-select-connections');
@@ -397,33 +340,9 @@ describe('Manage Notifications', () => {
       integrationId: '602aac4c53b612272ca1f54b',
     });
 
-    expect(screen.getByText('Notify user on flow error')).toBeInTheDocument();
-    const svg = document.querySelector("[viewBox='0 0 24 24']");
+    expect(screen.getByText('Notify user of flow error')).toBeInTheDocument();
 
-    expect(svg).toBeInTheDocument();
-    userEvent.click(svg);
-
-    expect(screen.getByText("Please choose 'All flows' to receive an email notification whenever any flow in this integration has a job error, or select individual flows to focus your email traffic to just higher priority data flows.")).toBeInTheDocument();
-
-    expect(screen.getByText('Was this helpful?')).toBeInTheDocument();
-    const helpTextYesButton = screen.getByText('Yes');
-
-    expect(helpTextYesButton).toBeInTheDocument();
-    userEvent.click(helpTextYesButton);
-    userEvent.click(svg);
-    const helpTextNoButton = screen.getByText('No');
-
-    expect(helpTextNoButton).toBeInTheDocument();
-    userEvent.click(helpTextNoButton);
-    fireEvent.change(screen.queryByPlaceholderText(/How can we make this information more helpful?/i), {
-      target: {value: 'Hey! cool'},
-    });
-    const submitText = screen.getByText('Submit');
-
-    expect(submitText).toBeInTheDocument();
-    userEvent.click(submitText);
-
-    expect(screen.getByText('Notify user on flow error')).toBeInTheDocument();
+    expect(screen.getByText('Notify user of flow error')).toBeInTheDocument();
 
     expect(screen.getByText('Sample1')).toBeInTheDocument();
 
@@ -466,33 +385,9 @@ describe('Manage Notifications', () => {
       integrationId: '602aac4c53b612272ca1f54b',
     });
 
-    expect(screen.getByText('Notify user on flow error')).toBeInTheDocument();
-    const svg = document.querySelector("[viewBox='0 0 24 24']");
+    expect(screen.getByText('Notify user of flow error')).toBeInTheDocument();
 
-    expect(svg).toBeInTheDocument();
-    userEvent.click(svg);
-
-    expect(screen.getByText("Please choose 'All flows' to receive an email notification whenever any flow in this integration has a job error, or select individual flows to focus your email traffic to just higher priority data flows.")).toBeInTheDocument();
-
-    expect(screen.getByText('Was this helpful?')).toBeInTheDocument();
-    const helpTextYesButton = screen.getByText('Yes');
-
-    expect(helpTextYesButton).toBeInTheDocument();
-    userEvent.click(helpTextYesButton);
-    userEvent.click(svg);
-    const helpTextNoButton = screen.getByText('No');
-
-    expect(helpTextNoButton).toBeInTheDocument();
-    userEvent.click(helpTextNoButton);
-    fireEvent.change(screen.queryByPlaceholderText(/How can we make this information more helpful?/i), {
-      target: {value: 'Hey! cool'},
-    });
-    const submitText = screen.getByText('Submit');
-
-    expect(submitText).toBeInTheDocument();
-    userEvent.click(submitText);
-
-    expect(screen.getByText('Notify user on flow error')).toBeInTheDocument();
+    expect(screen.getByText('Notify user of flow error')).toBeInTheDocument();
     const flowSelected = screen.getByText('Sample1');
 
     expect(flowSelected).toBeInTheDocument();
@@ -538,33 +433,9 @@ describe('Manage Notifications', () => {
       integrationId: '602aac4c53b612272ca1f54b',
     });
 
-    expect(screen.getByText('Notify user on flow error')).toBeInTheDocument();
-    const svg = document.querySelector("[viewBox='0 0 24 24']");
+    expect(screen.getByText('Notify user of flow error')).toBeInTheDocument();
 
-    expect(svg).toBeInTheDocument();
-    userEvent.click(svg);
-
-    expect(screen.getByText("Please choose 'All flows' to receive an email notification whenever any flow in this integration has a job error, or select individual flows to focus your email traffic to just higher priority data flows.")).toBeInTheDocument();
-
-    expect(screen.getByText('Was this helpful?')).toBeInTheDocument();
-    const helpTextYesButton = screen.getByText('Yes');
-
-    expect(helpTextYesButton).toBeInTheDocument();
-    userEvent.click(helpTextYesButton);
-    userEvent.click(svg);
-    const helpTextNoButton = screen.getByText('No');
-
-    expect(helpTextNoButton).toBeInTheDocument();
-    userEvent.click(helpTextNoButton);
-    fireEvent.change(screen.queryByPlaceholderText(/How can we make this information more helpful?/i), {
-      target: {value: 'Hey! cool'},
-    });
-    const submitText = screen.getByText('Submit');
-
-    expect(submitText).toBeInTheDocument();
-    userEvent.click(submitText);
-
-    expect(screen.getByText('Notify user on flow error')).toBeInTheDocument();
+    expect(screen.getByText('Notify user of flow error')).toBeInTheDocument();
     const flowSelected = await screen.queryAllByRole('button', { name: 'Please select'}).find(eachOption => eachOption.getAttribute('id') === 'mui-component-select-flows');
 
     expect(flowSelected).toBeInTheDocument();

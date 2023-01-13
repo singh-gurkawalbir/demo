@@ -5,6 +5,7 @@ import isEmpty from 'lodash/isEmpty';
 import { FILE_PROVIDER_ASSISTANTS } from '../../constants';
 import { adaptorTypeMap } from '../resource';
 import {HTTP_BASED_ADAPTORS} from '../http';
+import { wrapExportFileSampleData } from '../sampleData';
 
 export const DEFAULT_RECORD_SIZE = 10;
 
@@ -23,11 +24,6 @@ const applicationsWithPreviewPanel = [
   's3',
   'simple',
   'as2',
-];
-
-const noImportPreviewAssistants = [
-  'googledrive',
-  'azurestorageaccount',
 ];
 
 const emptyList = [];
@@ -83,7 +79,7 @@ export const getAvailablePreviewStages = (resource, { isDataLoader, isRestCsvExp
 export const isPreviewPanelAvailable = (resource, resourceType, connection) => {
   if (!resource) return false;
   if (resourceType === 'imports') {
-    if (noImportPreviewAssistants.includes(resource.assistant)) return false;
+    if (FILE_PROVIDER_ASSISTANTS.includes(resource.assistant)) return false;
 
     return resource.adaptorType === 'HTTPImport' ||
     (connection && HTTP_BASED_ADAPTORS.includes(connection.type || connection.http?.formType));
@@ -125,6 +121,17 @@ export const previewFileData = (previewData, recordSize) => {
 
   // if preview data is an array
   return previewData.slice(0, recordSize);
+};
+
+export const getParsedData = (resourceType, previewStageDataList, numRecords) => {
+  if (!previewStageDataList) return;
+  let previewData = previewStageDataList.preview?.data;
+
+  if (numRecords && previewData) {
+    previewData = previewData.slice(0, numRecords);
+  }
+
+  return resourceType === 'imports' ? previewData : wrapExportFileSampleData(previewData);
 };
 
 export const getLatestReqResData = (previewData, stage) => {

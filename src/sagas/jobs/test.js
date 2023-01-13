@@ -1,4 +1,4 @@
-/* global describe, test, expect */
+/* eslint-disable jest/no-conditional-in-test */
 
 import {
   call,
@@ -56,6 +56,7 @@ import {
   startPollingForDashboardInProgressJobs,
   getDashboardJobFamily,
   downloadRetryData,
+  purgeFiles,
 } from '.';
 import { selectors } from '../../reducers';
 import { JOB_TYPES, JOB_STATUS, STANDALONE_INTEGRATION } from '../../constants';
@@ -83,7 +84,7 @@ describe('job sagas', () => {
       expect(saga.next(job).value).toEqual(
         put(actions.job.receivedFamily({ job }))
       );
-      expect(saga.next().done).toEqual(true);
+      expect(saga.next().done).toBe(true);
     });
     test('should succeed on successful api call for flow job', () => {
       const dataIn = { jobId: 'fj1' };
@@ -103,7 +104,7 @@ describe('job sagas', () => {
       expect(saga.next(job).value).toEqual(
         put(actions.job.receivedFamily({ job }))
       );
-      expect(saga.next().done).toEqual(true);
+      expect(saga.next().done).toBe(true);
     });
     test('should handle api error properly', () => {
       const dataIn = { jobId: 'fj1' };
@@ -119,8 +120,8 @@ describe('job sagas', () => {
         })
       );
 
-      expect(saga.throw(new Error()).value).toEqual(true);
-      expect(saga.next().done).toEqual(true);
+      expect(saga.throw(new Error()).value).toBe(true);
+      expect(saga.next().done).toBe(true);
     });
   });
 
@@ -132,7 +133,7 @@ describe('job sagas', () => {
       expect(saga.next({ flowJobs: [], bulkRetryJobs: [] }).value).toEqual(
         put(actions.job.noInProgressJobs())
       );
-      expect(saga.next().done).toEqual(true);
+      expect(saga.next().done).toBe(true);
     });
     test('should call getJobFamily for each flow job in running state', () => {
       const saga = getInProgressJobsStatus();
@@ -148,7 +149,7 @@ describe('job sagas', () => {
           inProgressJobIds.flowJobs.map(jobId => call(getJobFamily, { jobId }))
         )
       );
-      expect(saga.next().done).toEqual(true);
+      expect(saga.next().done).toBe(true);
     });
     test('should call getJobFamily for each bulk retry job in running state', () => {
       const saga = getInProgressJobsStatus();
@@ -166,7 +167,7 @@ describe('job sagas', () => {
           )
         )
       );
-      expect(saga.next().done).toEqual(true);
+      expect(saga.next().done).toBe(true);
     });
   });
 
@@ -175,7 +176,7 @@ describe('job sagas', () => {
       const saga = pollForInProgressJobs();
 
       expect(saga.next().value).toEqual(call(pollApiRequests, {pollSaga: getInProgressJobsStatus, pollSagaArgs: {}, duration: 5000}));
-      expect(saga.next().done).toEqual(true);
+      expect(saga.next().done).toBe(true);
     });
   });
 
@@ -192,7 +193,7 @@ describe('job sagas', () => {
         numSuccess: 1,
       };
 
-      return expectSaga(getJobDetails, { jobId })
+      expectSaga(getJobDetails, { jobId })
         .provide([
           [call(apiCallWithRetry, { path, opts }), jobResponse],
         ])
@@ -236,7 +237,7 @@ describe('job sagas', () => {
         ])
       );
       expect(saga.next().value).toEqual(cancel(watcherTask));
-      expect(saga.next().done).toEqual(true);
+      expect(saga.next().done).toBe(true);
     });
   });
 
@@ -268,7 +269,7 @@ describe('job sagas', () => {
       expect(saga.next().value).toEqual(
         put(actions.job.requestInProgressJobStatus())
       );
-      expect(saga.next().done).toEqual(true);
+      expect(saga.next().done).toBe(true);
     });
     test('should succeed on successful api call (with filters)', () => {
       const dataIn = {
@@ -298,7 +299,7 @@ describe('job sagas', () => {
       expect(saga.next().value).toEqual(
         put(actions.job.requestInProgressJobStatus())
       );
-      expect(saga.next().done).toEqual(true);
+      expect(saga.next().done).toBe(true);
     });
     describe('should succeed on successful api call (with filters) and options', () => {
       test('contan flowJobId', () => {
@@ -335,7 +336,7 @@ describe('job sagas', () => {
         expect(saga.next().value).toEqual(
           put(actions.job.requestInProgressJobStatus())
         );
-        expect(saga.next().done).toEqual(true);
+        expect(saga.next().done).toBe(true);
       });
       test('contan flowJobId but collection received is not an array', () => {
         const dataIn = {
@@ -370,7 +371,7 @@ describe('job sagas', () => {
         expect(saga.next().value).toEqual(
           put(actions.job.requestInProgressJobStatus())
         );
-        expect(saga.next().done).toEqual(true);
+        expect(saga.next().done).toBe(true);
       });
     });
     test('should succeed on successful api call (with filters) when collection received is not an array', () => {
@@ -401,7 +402,7 @@ describe('job sagas', () => {
       expect(saga.next().value).toEqual(
         put(actions.job.requestInProgressJobStatus())
       );
-      expect(saga.next().done).toEqual(true);
+      expect(saga.next().done).toBe(true);
     });
     describe('should succeed on various jobFilter statuses', () => {
       test('should succeed on successful api call (with filters) and status is all', () => {
@@ -432,7 +433,7 @@ describe('job sagas', () => {
         expect(saga.next().value).toEqual(
           put(actions.job.requestInProgressJobStatus())
         );
-        expect(saga.next().done).toEqual(true);
+        expect(saga.next().done).toBe(true);
       });
       test('should succeed on successful api call (with filters) and status is error', () => {
         const dataIn = {
@@ -462,7 +463,7 @@ describe('job sagas', () => {
         expect(saga.next().value).toEqual(
           put(actions.job.requestInProgressJobStatus())
         );
-        expect(saga.next().done).toEqual(true);
+        expect(saga.next().done).toBe(true);
       });
       test('should succeed on successful api call (with filters) and status is resolved', () => {
         const dataIn = {
@@ -492,7 +493,7 @@ describe('job sagas', () => {
         expect(saga.next().value).toEqual(
           put(actions.job.requestInProgressJobStatus())
         );
-        expect(saga.next().done).toEqual(true);
+        expect(saga.next().done).toBe(true);
       });
     });
     test('should succeed on successful api call (with filters) for standalone integration', () => {
@@ -539,7 +540,7 @@ describe('job sagas', () => {
       expect(saga.next().value).toEqual(
         put(actions.job.requestInProgressJobStatus())
       );
-      expect(saga.next().done).toEqual(true);
+      expect(saga.next().done).toBe(true);
     });
     test('should succeed on successful api call with filters, no flowId and childId', () => {
       const dataIn = {
@@ -572,7 +573,7 @@ describe('job sagas', () => {
       expect(saga.next().value).toEqual(
         put(actions.job.requestInProgressJobStatus())
       );
-      expect(saga.next().done).toEqual(true);
+      expect(saga.next().done).toBe(true);
     });
 
     test('should handle api error properly', () => {
@@ -594,8 +595,8 @@ describe('job sagas', () => {
           opts,
         })
       );
-      expect(saga.throw(new Error()).value).toEqual(true);
-      expect(saga.next().done).toEqual(true);
+      expect(saga.throw(new Error()).value).toBe(true);
+      expect(saga.next().done).toBe(true);
     });
   });
 
@@ -614,7 +615,7 @@ describe('job sagas', () => {
 
       expect(saga.next(watcherTask).value).toEqual(take(actionTypes.JOB.CLEAR));
       expect(saga.next().value).toEqual(cancel(watcherTask));
-      expect(saga.next().done).toEqual(true);
+      expect(saga.next().done).toBe(true);
     });
   });
 
@@ -642,7 +643,7 @@ describe('job sagas', () => {
           )
         )
       );
-      expect(saga.next().done).toEqual(true);
+      expect(saga.next().done).toBe(true);
     });
 
     test('download errors file - should succeed on successful api call', () => {
@@ -668,7 +669,7 @@ describe('job sagas', () => {
           )
         )
       );
-      expect(saga.next().done).toEqual(true);
+      expect(saga.next().done).toBe(true);
     });
 
     test('download all files of a job - should succeed on successful api call', () => {
@@ -696,7 +697,7 @@ describe('job sagas', () => {
           )
         )
       );
-      expect(saga.next().done).toEqual(true);
+      expect(saga.next().done).toBe(true);
     });
 
     test('download selected files of a job - should succeed on successful api call', () => {
@@ -724,7 +725,7 @@ describe('job sagas', () => {
           )
         )
       );
-      expect(saga.next().done).toEqual(true);
+      expect(saga.next().done).toBe(true);
     });
 
     test('should handle api error properly', () => {
@@ -741,8 +742,8 @@ describe('job sagas', () => {
           opts,
         })
       );
-      expect(saga.throw(new Error()).value).toEqual(true);
-      expect(saga.next().done).toEqual(true);
+      expect(saga.throw(new Error()).value).toBe(true);
+      expect(saga.next().done).toBe(true);
     });
   });
 
@@ -765,7 +766,7 @@ describe('job sagas', () => {
       expect(saga.next(response).value).toEqual(
         put(actions.job.receivedFamily({ job: response }))
       );
-      expect(saga.next().done).toEqual(true);
+      expect(saga.next().done).toBe(true);
     });
     test('should succeed on successful api call (flow job)', () => {
       const jobId = 'fj1';
@@ -785,7 +786,7 @@ describe('job sagas', () => {
       expect(saga.next(response).value).toEqual(
         put(actions.job.receivedFamily({ job: response }))
       );
-      expect(saga.next().done).toEqual(true);
+      expect(saga.next().done).toBe(true);
     });
     test('should succeed on successful api call (flow child job)', () => {
       const jobId = 'fj1i1';
@@ -805,7 +806,7 @@ describe('job sagas', () => {
       expect(saga.next(response).value).toEqual(
         call(getJobFamily, { jobId: 'fj1' })
       );
-      expect(saga.next().done).toEqual(true);
+      expect(saga.next().done).toBe(true);
     });
     test('should handle api error properly', () => {
       const jobId = 'fj1';
@@ -820,8 +821,8 @@ describe('job sagas', () => {
           opts,
         })
       );
-      expect(saga.throw(new Error()).value).toEqual(true);
-      expect(saga.next().done).toEqual(true);
+      expect(saga.throw(new Error()).value).toBe(true);
+      expect(saga.next().done).toBe(true);
     });
   });
 
@@ -846,7 +847,7 @@ describe('job sagas', () => {
       expect(saga.next().value).toEqual(
         all(['fj1', 'fj2'].map(jobId => call(getJobFamily, { jobId })))
       );
-      expect(saga.next().done).toEqual(true);
+      expect(saga.next().done).toBe(true);
     });
     test('should handle api error properly', () => {
       const jobs = [
@@ -865,8 +866,8 @@ describe('job sagas', () => {
           opts,
         })
       );
-      expect(saga.throw(new Error()).value).toEqual(true);
-      expect(saga.next().done).toEqual(true);
+      expect(saga.throw(new Error()).value).toBe(true);
+      expect(saga.next().done).toBe(true);
     });
   });
 
@@ -887,7 +888,7 @@ describe('job sagas', () => {
           opts,
         })
       );
-      expect(saga.next().done).toEqual(true);
+      expect(saga.next().done).toBe(true);
     });
     test('should succeed on successful api call (flow level resolve)', () => {
       const dataIn = { flowId: 'f1' };
@@ -905,7 +906,7 @@ describe('job sagas', () => {
           opts,
         })
       );
-      expect(saga.next().done).toEqual(true);
+      expect(saga.next().done).toBe(true);
     });
     test('should handle api error properly', () => {
       const dataIn = { integrationId: 'i1' };
@@ -923,8 +924,8 @@ describe('job sagas', () => {
           opts,
         })
       );
-      expect(saga.throw(new Error()).value).toEqual(true);
-      expect(saga.next().done).toEqual(true);
+      expect(saga.throw(new Error()).value).toBe(true);
+      expect(saga.next().done).toBe(true);
     });
 
     test('should call resolveCommit for filteredJobs if filtersJobsOnly is true', () => {
@@ -933,7 +934,7 @@ describe('job sagas', () => {
       };
       const path = '/jobs/resolve';
 
-      return expectSaga(resolveAllCommit, { filteredJobsOnly: true })
+      expectSaga(resolveAllCommit, { filteredJobsOnly: true })
         .provide([
           [select(selectors.allJobs, { type: 'flowJobs' }),
             [{
@@ -965,7 +966,7 @@ describe('job sagas', () => {
       };
       const path = '/flows/jobs/resolve';
 
-      return expectSaga(resolveAllCommit, { childId: '123' })
+      expectSaga(resolveAllCommit, { childId: '123' })
         .provide([
           [select(
             selectors.integrationAppFlowIds,
@@ -1019,7 +1020,7 @@ describe('job sagas', () => {
       expect(saga.next(actions.job.resolveAllPending()).value).toEqual(
         call(resolveCommit, { jobs })
       );
-      expect(saga.next().done).toEqual(true);
+      expect(saga.next().done).toBe(true);
     });
 
     test('should resolve all pending and init resolve for passed in jobs, wait for resolve commit and then commit resolve', () => {
@@ -1054,7 +1055,7 @@ describe('job sagas', () => {
       expect(saga.next(actions.job.resolveCommit({ jobs })).value).toEqual(
         call(resolveCommit, { jobs })
       );
-      expect(saga.next().done).toEqual(true);
+      expect(saga.next().done).toBe(true);
     });
 
     test('should resolve all pending and init resolve for passed in jobs, wait for resolve undo and then return', () => {
@@ -1088,7 +1089,7 @@ describe('job sagas', () => {
       );
       expect(
         saga.next(actions.job.resolveUndo({ parentJobId: 'something' })).done
-      ).toEqual(true);
+      ).toBe(true);
     });
   });
 
@@ -1113,7 +1114,7 @@ describe('job sagas', () => {
         expect(saga.next(actions.job.resolveAllPending()).value).toEqual(
           call(resolveAllCommit, { integrationId, childId })
         );
-        expect(saga.next().done).toEqual(true);
+        expect(saga.next().done).toBe(true);
       });
 
       test('should resolve all pending and init resolve all, wait for resolve all commit and then commit resolve all', () => {
@@ -1132,7 +1133,7 @@ describe('job sagas', () => {
         expect(saga.next(actions.job.resolveAllCommit()).value).toEqual(
           call(resolveAllCommit, { integrationId, childId })
         );
-        expect(saga.next().done).toEqual(true);
+        expect(saga.next().done).toBe(true);
       });
 
       test('should resolve all pending and init resolve all, wait for resolve all undo and then return', () => {
@@ -1148,7 +1149,7 @@ describe('job sagas', () => {
             actionTypes.JOB.RESOLVE_ALL_PENDING,
           ])
         );
-        expect(saga.next(actions.job.resolveAllUndo()).done).toEqual(true);
+        expect(saga.next(actions.job.resolveAllUndo()).done).toBe(true);
       });
     });
 
@@ -1171,7 +1172,7 @@ describe('job sagas', () => {
         expect(saga.next(actions.job.resolveAllPending()).value).toEqual(
           call(resolveAllCommit, { flowId, integrationId })
         );
-        expect(saga.next().done).toEqual(true);
+        expect(saga.next().done).toBe(true);
       });
 
       test('should resolve all pending and init resolve all, wait for resolve all commit and then commit resolve all', () => {
@@ -1190,7 +1191,7 @@ describe('job sagas', () => {
         expect(saga.next(actions.job.resolveAllCommit()).value).toEqual(
           call(resolveAllCommit, { flowId, integrationId })
         );
-        expect(saga.next().done).toEqual(true);
+        expect(saga.next().done).toBe(true);
       });
 
       test('should resolve all pending and init resolve all, wait for resolve all undo and then return', () => {
@@ -1206,7 +1207,7 @@ describe('job sagas', () => {
             actionTypes.JOB.RESOLVE_ALL_PENDING,
           ])
         );
-        expect(saga.next(actions.job.resolveAllUndo()).done).toEqual(true);
+        expect(saga.next(actions.job.resolveAllUndo()).done).toBe(true);
       });
     });
   });
@@ -1235,7 +1236,7 @@ describe('job sagas', () => {
       expect(saga.next().value).toEqual(
         put(actions.job.requestInProgressJobStatus())
       );
-      expect(saga.next().done).toEqual(true);
+      expect(saga.next().done).toBe(true);
     });
     test('should handle api error properly', () => {
       const jobs = [
@@ -1254,8 +1255,8 @@ describe('job sagas', () => {
           opts,
         })
       );
-      expect(saga.throw(new Error()).value).toEqual(true);
-      expect(saga.next().done).toEqual(true);
+      expect(saga.throw(new Error()).value).toBe(true);
+      expect(saga.next().done).toBe(true);
     });
   });
 
@@ -1293,7 +1294,7 @@ describe('job sagas', () => {
       expect(saga.next(actions.job.retryAllPending()).value).toEqual(
         call(retryCommit, { jobs })
       );
-      expect(saga.next().done).toEqual(true);
+      expect(saga.next().done).toBe(true);
     });
 
     test('should retry all pending and init retry for passed in jobs, wait for retry commit and then commit retry', () => {
@@ -1329,7 +1330,7 @@ describe('job sagas', () => {
       expect(saga.next(actions.job.retryCommit()).value).toEqual(
         call(retryCommit, { jobs })
       );
-      expect(saga.next().done).toEqual(true);
+      expect(saga.next().done).toBe(true);
     });
 
     test('should retry all pending and init retry for passed in jobs, wait for retry flow job commit and then commit retry', () => {
@@ -1365,7 +1366,7 @@ describe('job sagas', () => {
       expect(
         saga.next(actions.job.retryFlowJobCommit({ jobId: 'something' })).value
       ).toEqual(call(retryCommit, { jobs }));
-      expect(saga.next().done).toEqual(true);
+      expect(saga.next().done).toBe(true);
     });
 
     test('should retry all pending and init retry for passed in jobs, wait for retry undo and then return', () => {
@@ -1398,7 +1399,7 @@ describe('job sagas', () => {
           actionTypes.JOB.RETRY_FLOW_JOB_COMMIT,
         ])
       );
-      expect(saga.next(actions.job.retryUndo({})).done).toEqual(true);
+      expect(saga.next(actions.job.retryUndo({})).done).toBe(true);
     });
   });
 
@@ -1411,8 +1412,8 @@ describe('job sagas', () => {
       expect(saga.next().value).toEqual(
         select(selectors.job, { type: JOB_TYPES.FLOW, jobId })
       );
-      expect(saga.next().value).toEqual(true);
-      expect(saga.next().done).toEqual(true);
+      expect(saga.next().value).toBe(true);
+      expect(saga.next().done).toBe(true);
     });
 
     test('should call getJobFamily and re-select job if children not loaded', () => {
@@ -1441,8 +1442,8 @@ describe('job sagas', () => {
       expect(saga.next().value).toEqual(
         select(selectors.job, { type: JOB_TYPES.FLOW, jobId })
       );
-      expect(saga.next({ children: [] }).value).toEqual(true);
-      expect(saga.next().done).toEqual(true);
+      expect(saga.next({ children: [] }).value).toBe(true);
+      expect(saga.next().done).toBe(true);
     });
 
     test('should return true if retriable children not exist', () => {
@@ -1459,10 +1460,10 @@ describe('job sagas', () => {
       );
       expect(
         saga.next({ children: [{ _id: 'c1' }, { _id: 'c2' }] }).value
-      ).toEqual(true);
-      expect(saga.next().done).toEqual(true);
+      ).toBe(true);
+      expect(saga.next().done).toBe(true);
     });
-    test('should return true if retriable children not exist and ', () => {
+    test('should return true if retriable children not exist and', () => {
       const saga = retryFlowJob({ jobId });
 
       expect(saga.next().value).toEqual(
@@ -1479,7 +1480,7 @@ describe('job sagas', () => {
       ).toEqual(
         put(actions.api.failure('JOBS', 'PUT', 'Retry operation failed.', false))
       );
-      expect(saga.next().done).toEqual(true);
+      expect(saga.next().done).toBe(true);
     });
 
     test('should call retrySelected if retriable children exists', () => {
@@ -1510,7 +1511,7 @@ describe('job sagas', () => {
           ],
         })
       );
-      expect(saga.next().done).toEqual(true);
+      expect(saga.next().done).toBe(true);
     });
   });
 
@@ -1543,7 +1544,7 @@ describe('job sagas', () => {
       expect(saga.next(response).value).toEqual(
         put(actions.patchFilter('jobs', {refreshAt: response[0].job._id}))
       );
-      expect(saga.next().done).toEqual(true);
+      expect(saga.next().done).toBe(true);
     });
     test('should succeed on successful api call (flow level retry)', () => {
       const dataIn = { flowIds: ['f1'] };
@@ -1575,7 +1576,7 @@ describe('job sagas', () => {
       expect(saga.next(bulkRetryJob).value).toEqual(
         put(actions.patchFilter('jobs', {refreshAt: bulkRetryJob[0].job._id}))
       );
-      expect(saga.next().done).toEqual(true);
+      expect(saga.next().done).toBe(true);
     });
     test('should handle api error properly', () => {
       const dataIn = { flowIds: 'f1' };
@@ -1594,8 +1595,8 @@ describe('job sagas', () => {
         })
       );
 
-      expect(saga.throw(new Error()).value).toEqual(true);
-      expect(saga.next().done).toEqual(true);
+      expect(saga.throw(new Error()).value).toBe(true);
+      expect(saga.next().done).toBe(true);
     });
   });
 
@@ -1633,7 +1634,7 @@ describe('job sagas', () => {
         expect(saga.next(actions.job.retryAllPending()).value).toEqual(
           call(retryAllCommit, { flowIds: enabledIntegrationFlowIds })
         );
-        expect(saga.next().done).toEqual(true);
+        expect(saga.next().done).toBe(true);
       });
       test('should retry all pending and init retry all, wait for retry all pending and then commit retry all flows with children', () => {
         const saga = retryAll({ integrationId, childId });
@@ -1654,7 +1655,7 @@ describe('job sagas', () => {
         expect(saga.next(actions.job.retryAllPending()).value).toEqual(
           call(retryAllCommit, { flowIds: childFlowIds })
         );
-        expect(saga.next().done).toEqual(true);
+        expect(saga.next().done).toBe(true);
       });
       test('should retry all pending and init retry all, wait for retry all commit and then commit retry all', () => {
         const saga = retryAll({ integrationId });
@@ -1674,7 +1675,7 @@ describe('job sagas', () => {
         expect(saga.next(actions.job.retryAllCommit()).value).toEqual(
           call(retryAllCommit, { flowIds: enabledIntegrationFlowIds })
         );
-        expect(saga.next().done).toEqual(true);
+        expect(saga.next().done).toBe(true);
       });
 
       test('should retry all pending and init retry all, wait for retry flow job commit and then commit retry all', () => {
@@ -1695,7 +1696,7 @@ describe('job sagas', () => {
         expect(saga.next(actions.job.retryFlowJobCommit()).value).toEqual(
           call(retryAllCommit, { flowIds: enabledIntegrationFlowIds })
         );
-        expect(saga.next().done).toEqual(true);
+        expect(saga.next().done).toBe(true);
       });
 
       test('should retry all pending and init retry all, wait for retry all undo and then return', () => {
@@ -1713,7 +1714,7 @@ describe('job sagas', () => {
             actionTypes.JOB.RETRY_FLOW_JOB_COMMIT,
           ])
         );
-        expect(saga.next(actions.job.retryAllUndo()).done).toEqual(true);
+        expect(saga.next(actions.job.retryAllUndo()).done).toBe(true);
       });
     });
 
@@ -1737,7 +1738,7 @@ describe('job sagas', () => {
         expect(saga.next(actions.job.retryAllPending()).value).toEqual(
           call(retryAllCommit, { flowIds: [flowId] })
         );
-        expect(saga.next().done).toEqual(true);
+        expect(saga.next().done).toBe(true);
       });
 
       test('should retry all pending and init retry all, wait for retry all commit and then commit retry all', () => {
@@ -1757,7 +1758,7 @@ describe('job sagas', () => {
         expect(saga.next(actions.job.retryAllCommit()).value).toEqual(
           call(retryAllCommit, { flowIds: [flowId] })
         );
-        expect(saga.next().done).toEqual(true);
+        expect(saga.next().done).toBe(true);
       });
 
       test('should retry all pending and init retry all, wait for retry flow job commit and then commit retry all', () => {
@@ -1777,7 +1778,7 @@ describe('job sagas', () => {
         expect(saga.next(actions.job.retryFlowJobCommit()).value).toEqual(
           call(retryAllCommit, { flowIds: [flowId] })
         );
-        expect(saga.next().done).toEqual(true);
+        expect(saga.next().done).toBe(true);
       });
 
       test('should retry all pending and init retry all, wait for retry all undo and then return', () => {
@@ -1794,7 +1795,7 @@ describe('job sagas', () => {
             actionTypes.JOB.RETRY_FLOW_JOB_COMMIT,
           ])
         );
-        expect(saga.next(actions.job.retryAllUndo()).done).toEqual(true);
+        expect(saga.next(actions.job.retryAllUndo()).done).toBe(true);
       });
     });
   });
@@ -1816,7 +1817,7 @@ describe('job sagas', () => {
       expect(saga.next(collection).value).toEqual(
         put(actions.job.receivedRetryObjects({ collection, jobId }))
       );
-      expect(saga.next().done).toEqual(true);
+      expect(saga.next().done).toBe(true);
     });
 
     test('should handle api error propely', () => {
@@ -1828,8 +1829,8 @@ describe('job sagas', () => {
 
       expect(saga.next().value).toEqual(call(apiCallWithRetry, { path, opts }));
 
-      expect(saga.throw(new Error()).value).toEqual(true);
-      expect(saga.next().done).toEqual(true);
+      expect(saga.throw(new Error()).value).toBe(true);
+      expect(saga.next().done).toBe(true);
     });
   });
 
@@ -1853,7 +1854,7 @@ describe('job sagas', () => {
       expect(saga.next(collection).value).toEqual(
         put(actions.job.receivedErrors({ collection, jobId }))
       );
-      expect(saga.next().done).toEqual(true);
+      expect(saga.next().done).toBe(true);
     });
 
     test('should handle api error propely', () => {
@@ -1865,8 +1866,8 @@ describe('job sagas', () => {
 
       expect(saga.next().value).toEqual(call(apiCallWithRetry, { path, opts }));
 
-      expect(saga.throw(new Error()).value).toEqual(true);
-      expect(saga.next().done).toEqual(true);
+      expect(saga.throw(new Error()).value).toBe(true);
+      expect(saga.next().done).toBe(true);
     });
   });
 
@@ -1882,7 +1883,7 @@ describe('job sagas', () => {
       expect(saga.next().value).toEqual(
         call(requestJobErrorCollection, { jobId })
       );
-      expect(saga.next().done).toEqual(true);
+      expect(saga.next().done).toBe(true);
     });
   });
 
@@ -1901,7 +1902,7 @@ describe('job sagas', () => {
         take(actionTypes.JOB.ERROR.CLEAR)
       );
       expect(saga.next().value).toEqual(cancel(watcherTask));
-      expect(saga.next().done).toEqual(true);
+      expect(saga.next().done).toBe(true);
     });
   });
 
@@ -1975,7 +1976,7 @@ describe('job sagas', () => {
       expect(saga.next().value).toEqual(
         call(getJobFamily, { jobId: dataIn.flowJobId })
       );
-      expect(saga.next().done).toEqual(true);
+      expect(saga.next().done).toBe(true);
     });
 
     test('should succeed on successful api call and add similar error to options', () => {
@@ -2029,7 +2030,7 @@ describe('job sagas', () => {
       expect(saga.next().value).toEqual(
         call(getJobFamily, { jobId: dataIn.flowJobId })
       );
-      expect(saga.next().done).toEqual(true);
+      expect(saga.next().done).toBe(true);
     });
 
     test('should handle api error properly', () => {
@@ -2060,8 +2061,8 @@ describe('job sagas', () => {
       expect(saga.next(jobErrors).value).toEqual(
         call(apiCallWithRetry, { path, opts })
       );
-      expect(saga.throw(new Error()).value).toEqual(true);
-      expect(saga.next().done).toEqual(true);
+      expect(saga.throw(new Error()).value).toBe(true);
+      expect(saga.next().done).toBe(true);
     });
   });
 
@@ -2088,7 +2089,7 @@ describe('job sagas', () => {
       expect(saga.next().value).toEqual(
         put(actions.job.requestInProgressJobStatus())
       );
-      expect(saga.next().done).toEqual(true);
+      expect(saga.next().done).toBe(true);
     });
 
     test('should handle api error properly', () => {
@@ -2103,8 +2104,8 @@ describe('job sagas', () => {
       opts.body = selectedRetryIds;
 
       expect(saga.next().value).toEqual(call(apiCallWithRetry, { path, opts }));
-      expect(saga.throw(new Error()).value).toEqual(true);
-      expect(saga.next().done).toEqual(true);
+      expect(saga.throw(new Error()).value).toBe(true);
+      expect(saga.next().done).toBe(true);
     });
   });
 
@@ -2126,7 +2127,7 @@ describe('job sagas', () => {
       expect(saga.next(retryData).value).toEqual(
         put(actions.job.receivedRetryData({ retryData, retryId }))
       );
-      expect(saga.next().done).toEqual(true);
+      expect(saga.next().done).toBe(true);
     });
 
     test('should handle api error properly', () => {
@@ -2140,8 +2141,8 @@ describe('job sagas', () => {
 
       expect(saga.next().value).toEqual(call(apiCallWithRetry, { path, opts }));
 
-      expect(saga.throw(new Error()).value).toEqual(true);
-      expect(saga.next().done).toEqual(true);
+      expect(saga.throw(new Error()).value).toBe(true);
+      expect(saga.next().done).toBe(true);
     });
   });
 
@@ -2164,7 +2165,7 @@ describe('job sagas', () => {
       expect(saga.next().value).toEqual(
         put(actions.job.receivedRetryData({ retryData, retryId }))
       );
-      expect(saga.next().done).toEqual(true);
+      expect(saga.next().done).toBe(true);
     });
 
     test('should handle api error properly', () => {
@@ -2179,8 +2180,8 @@ describe('job sagas', () => {
       opts.body = retryData;
 
       expect(saga.next().value).toEqual(call(apiCallWithRetry, { path, opts }));
-      expect(saga.throw(new Error()).value).toEqual(true);
-      expect(saga.next().done).toEqual(true);
+      expect(saga.throw(new Error()).value).toBe(true);
+      expect(saga.next().done).toBe(true);
     });
   });
 
@@ -2258,7 +2259,7 @@ describe('getDashboardRunningJobCollection saga', () => {
 
     expect(saga.next(watcherTask).value).toEqual(take(actionTypes.JOB.DASHBOARD.RUNNING.CLEAR));
     expect(saga.next().value).toEqual(cancel(watcherTask));
-    expect(saga.next().done).toEqual(true);
+    expect(saga.next().done).toBe(true);
   });
 });
 describe('requestRunningJobCollection saga', () => {
@@ -2291,7 +2292,7 @@ describe('requestRunningJobCollection saga', () => {
     expect(saga.next().value).toEqual(
       put(actions.job.dashboard.running.requestInProgressJobStatus())
     );
-    expect(saga.next().done).toEqual(true);
+    expect(saga.next().done).toBe(true);
   });
   test('should succeed on successful api call when collection.jobs is not an array', () => {
     const dataIn = {
@@ -2322,7 +2323,7 @@ describe('requestRunningJobCollection saga', () => {
     expect(saga.next().value).toEqual(
       put(actions.job.dashboard.running.requestInProgressJobStatus())
     );
-    expect(saga.next().done).toEqual(true);
+    expect(saga.next().done).toBe(true);
   });
   test('should handle api error properly', () => {
     const dataIn = {
@@ -2345,7 +2346,7 @@ describe('requestRunningJobCollection saga', () => {
     );
 
     expect(saga.throw(new Error()).value).toEqual(put(actions.job.dashboard.running.error()));
-    expect(saga.next().done).toEqual(true);
+    expect(saga.next().done).toBe(true);
   });
 });
 describe('cancelDashboardJob saga', () => {
@@ -2367,7 +2368,7 @@ describe('cancelDashboardJob saga', () => {
     expect(saga.next(response).value).toEqual(
       put(actions.job.dashboard.running.canceled({ jobId }))
     );
-    expect(saga.next().done).toEqual(true);
+    expect(saga.next().done).toBe(true);
   });
 
   test('should handle api error properly', () => {
@@ -2383,8 +2384,8 @@ describe('cancelDashboardJob saga', () => {
         opts,
       })
     );
-    expect(saga.throw(new Error()).value).toEqual(true);
-    expect(saga.next().done).toEqual(true);
+    expect(saga.throw(new Error()).value).toBe(true);
+    expect(saga.next().done).toBe(true);
   });
 });
 
@@ -2394,7 +2395,7 @@ describe('pollForDashboardInProgressJobs saga', () => {
 
     expect(saga.next().value).toEqual(delay(10000));
     expect(saga.next().value).toEqual(call(getDasboardInProgressJobsStatus));
-    expect(saga.next().done).toEqual(false);
+    expect(saga.next().done).toBe(false);
   });
 });
 describe('startPollingForDashboardInProgressJobs saga', () => {
@@ -2413,7 +2414,7 @@ describe('startPollingForDashboardInProgressJobs saga', () => {
       ])
     );
     expect(saga.next().value).toEqual(cancel(watcherTask));
-    expect(saga.next().done).toEqual(true);
+    expect(saga.next().done).toBe(true);
   });
 });
 
@@ -2425,7 +2426,7 @@ describe('getDasboardInProgressJobsStatus saga', () => {
     expect(saga.next([]).value).toEqual(
       put(actions.job.dashboard.running.noInProgressJobs())
     );
-    expect(saga.next().done).toEqual(true);
+    expect(saga.next().done).toBe(true);
   });
   test('should call getJobFamily for jobs in running state', () => {
     const saga = getDasboardInProgressJobsStatus();
@@ -2436,7 +2437,7 @@ describe('getDasboardInProgressJobsStatus saga', () => {
     expect(saga.next(inProgressJobIds).value).toEqual(
       call(getDashboardJobFamily, { inProgressJobIds })
     );
-    expect(saga.next().done).toEqual(true);
+    expect(saga.next().done).toBe(true);
   });
 });
 describe('getDashboardJobFamily saga', () => {
@@ -2455,7 +2456,7 @@ describe('getDashboardJobFamily saga', () => {
     expect(saga.next(jobs).value).toEqual(
       put(actions.job.dashboard.running.receivedFamily({ collection: jobs }))
     );
-    expect(saga.next().done).toEqual(true);
+    expect(saga.next().done).toBe(true);
   });
   test('should handle api error properly', () => {
     const inProgressJobIds = ['fj1', 'fj1'];
@@ -2468,8 +2469,8 @@ describe('getDashboardJobFamily saga', () => {
       call(apiCallWithRetry, requestOptions)
     );
 
-    expect(saga.throw(new Error()).value).toEqual(true);
-    expect(saga.next().done).toEqual(true);
+    expect(saga.throw(new Error()).value).toBe(true);
+    expect(saga.next().done).toBe(true);
   });
 });
 
@@ -2486,7 +2487,7 @@ describe('getDashboardCompletedJobCollection saga', () => {
 
     expect(saga.next(watcherTask).value).toEqual(take(actionTypes.JOB.DASHBOARD.COMPLETED.CLEAR));
     expect(saga.next().value).toEqual(cancel(watcherTask));
-    expect(saga.next().done).toEqual(true);
+    expect(saga.next().done).toBe(true);
   });
 });
 
@@ -2518,7 +2519,7 @@ describe('requestCompletedJobCollection saga', () => {
       put(actions.job.dashboard.completed.receivedCollection({ collection: collection.stats, nextPageURL: collection.nextPageURL, loadMore: !!dataIn.nextPageURL }))
     );
 
-    expect(saga.next().done).toEqual(true);
+    expect(saga.next().done).toBe(true);
   });
   test('should succeed on successful api call when collection stats is not an array', () => {
     const dataIn = {
@@ -2547,7 +2548,7 @@ describe('requestCompletedJobCollection saga', () => {
       put(actions.job.dashboard.completed.receivedCollection({ collection: undefined, nextPageURL: undefined, loadMore: !!dataIn.nextPageURL }))
     );
 
-    expect(saga.next().done).toEqual(true);
+    expect(saga.next().done).toBe(true);
   });
   test('should handle api error properly', () => {
     const dataIn = {
@@ -2570,7 +2571,7 @@ describe('requestCompletedJobCollection saga', () => {
     );
 
     expect(saga.throw(new Error()).value).toEqual(put(actions.job.dashboard.completed.error()));
-    expect(saga.next().done).toEqual(true);
+    expect(saga.next().done).toBe(true);
   });
 });
 
@@ -2598,4 +2599,36 @@ describe('downloadRetryData saga', () => {
     ])
     .call(apiCallWithRetry, { path: '/retries/1/signedURL', opts: { method: 'GET' } })
     .run());
+});
+
+describe('purgeFiles saga', () => {
+  test('should dispatch purge success action if api call is successful', () => {
+    const jobId = 'j1';
+    const path = `/jobs/${jobId}/files`;
+    const opts = { method: 'DELETE' };
+
+    expectSaga(purgeFiles, {jobId})
+      .provide([
+        [matchers.call.fn(getRequestOptions), { path, opts }],
+        [matchers.call.fn(apiCallWithRetry)],
+      ])
+      .call(apiCallWithRetry, { path, opts })
+      .put(actions.job.purge.success())
+      .run();
+  });
+  test('should do nothing if api call fails', () => {
+    const jobId = 'j1';
+    const path = `/jobs/${jobId}/files`;
+    const opts = { method: 'DELETE' };
+    const error = new Error();
+
+    expectSaga(purgeFiles, {jobId})
+      .provide([
+        [matchers.call.fn(getRequestOptions), { path, opts }],
+        [matchers.call.fn(apiCallWithRetry), throwError(error)],
+      ])
+      .call(apiCallWithRetry, { path, opts })
+      .not.put(actions.job.purge.success())
+      .run();
+  });
 });

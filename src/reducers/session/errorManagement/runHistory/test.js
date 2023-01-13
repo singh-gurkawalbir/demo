@@ -1,4 +1,4 @@
-/* global describe, test, expect */
+
 import reducer, { selectors } from '.';
 import actionTypes from '../../../../actions/types';
 import { JOB_STATUS, JOB_TYPES } from '../../../../constants';
@@ -36,7 +36,7 @@ describe('RUN_HISTORY.RECEIVED_FAMILY action', () => {
     ],
   };
 
-  test('should retain previous state if the passed job is null or undefined ', () => {
+  test('should retain previous state if the passed job is null or undefined', () => {
     const prevState = {
       [flowId]: {
         status: 'received',
@@ -47,7 +47,7 @@ describe('RUN_HISTORY.RECEIVED_FAMILY action', () => {
 
     expect(currState).toBe(prevState);
   });
-  test('should update job family when job family is received ', () => {
+  test('should update job family when job family is received', () => {
     const prevState = {
       f2: {
         status: 'received',
@@ -172,7 +172,7 @@ describe('runHistory in EM2.0 reducers', () => {
     });
   });
   describe('RUN_HISTORY.RECEIVED action', () => {
-    test('should retain previous state if the passed flowId does exist ', () => {
+    test('should retain previous state if the passed flowId does exist', () => {
       const prevState = {
         [flowId]: {
           status: 'received',
@@ -183,7 +183,7 @@ describe('runHistory in EM2.0 reducers', () => {
 
       expect(currState).toBe(prevState);
     });
-    test('should update status to received and data as passed runHistory ', () => {
+    test('should update status to received and data as passed runHistory', () => {
       const prevState = {
         [flowId]: {
           status: 'received',
@@ -254,7 +254,7 @@ describe('runHistory in EM2.0 reducers', () => {
       ],
     };
 
-    test('should retain previous state if the passed job is null or undefined ', () => {
+    test('should retain previous state if the passed job is null or undefined', () => {
       const prevState = {
         [flowId]: {
           status: 'received',
@@ -265,7 +265,7 @@ describe('runHistory in EM2.0 reducers', () => {
 
       expect(currState).toBe(prevState);
     });
-    test('should update job family when job family is received ', () => {
+    test('should update job family when job family is received', () => {
       const prevState = {
         f2: {
           status: 'received',
@@ -347,7 +347,7 @@ describe('runHistory in EM2.0 reducers', () => {
     });
   });
   describe('RUN_HISTORY.CLEAR action', () => {
-    test('should clear the flowId\'s  state when the passed flowId\'s state exist ', () => {
+    test('should clear the flowId\'s  state when the passed flowId\'s state exist', () => {
       const prevState = {
         [flowId]: {
           status: 'received',
@@ -401,7 +401,7 @@ describe('runHistory selectors', () => {
       expect(selectors.runHistoryContext(sampleState)).toEqual(defaultState);
       expect(selectors.runHistoryContext(sampleState, 'flow-111')).toEqual(defaultState);
     });
-    test('should return flowId\'s state  if exist ', () => {
+    test('should return flowId\'s state  if exist', () => {
       expect(selectors.runHistoryContext(sampleState, 'flow-456')).toEqual(sampleState['flow-456']);
       expect(selectors.runHistoryContext(sampleState, flowId)).toEqual(sampleState[flowId]);
     });

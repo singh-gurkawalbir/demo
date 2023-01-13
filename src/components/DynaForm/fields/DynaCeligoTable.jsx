@@ -39,7 +39,7 @@ export default function DynaCeligoTable(props) {
         data-test={title}
         onClick={() => setShouldExpand(expand => !expand)}
         expandIcon={<ExpandMoreIcon />}>
-        <Typography variant={isTitleBold ? 'h6' : ''}>{title}</Typography>
+        <Typography variant={isTitleBold ? 'h6' : undefined}>{title}</Typography>
       </AccordionSummary>
       <AccordionDetails className={classes.accordianDetails}>
         {(!data?.length && noDataMessage) ? <NoResultTypography>{noDataMessage}</NoResultTypography> : <CeligoTable {...props} />}

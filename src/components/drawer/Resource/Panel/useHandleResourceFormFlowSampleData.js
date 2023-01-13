@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useCallback } from 'react';
 import { cloneDeep, debounce } from 'lodash';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
@@ -7,14 +8,15 @@ import {
   getAllDependentSampleDataStages,
   getSubsequentStages,
   BASE_FLOW_INPUT_STAGE,
-  LOOKUP_FLOW_DATA_STAGE,
+  EXPORT_FILTERED_DATA_STAGE,
   IMPORT_FLOW_DATA_STAGE,
 } from '../../../../utils/flowData';
+import { isNewId } from '../../../../utils/resource';
 
 const ELIGIBLE_RESOURCE_TYPES = ['exports', 'imports'];
 const DEBOUNCE_DURATION = 300;
+const debounceFn = fn => debounce(fn, DEBOUNCE_DURATION);
 
-// TODO @Raghu: Add comments
 export default function useHandleResourceFormFlowSampleData(formKey) {
   const dispatch = useDispatch();
   const { flowId, resourceType, resourceId, initComplete, skipCommit} = useSelector(state => {
@@ -51,48 +53,61 @@ export default function useHandleResourceFormFlowSampleData(formKey) {
         flowId,
         resourceId,
         resourceType,
-        stage: resourceType === 'exports' ? LOOKUP_FLOW_DATA_STAGE : IMPORT_FLOW_DATA_STAGE,
+        stage: resourceType === 'exports' ? EXPORT_FILTERED_DATA_STAGE : IMPORT_FLOW_DATA_STAGE,
       })
   );
 
-  const resetFlowInputData = useCallback(() => {
+  const resetFlowInputData = useCallback(debounceFn(() => {
     const flowInputDependentStages = getSubsequentStages(BASE_FLOW_INPUT_STAGE, resourceType);
 
     dispatch(actions.flowData.resetStages(flowId, resourceId, flowInputDependentStages));
-  }, [dispatch, resourceId, flowId, resourceType]);
+  }), [dispatch, resourceId, flowId, resourceType]);
 
-  const resetExportSampleData = useCallback(() => {
+  const resetExportSampleData = useCallback(debounceFn(() => {
     const exportSampleDataStages = getAllDependentSampleDataStages('postResponseMap', 'exports');
 
     dispatch(actions.flowData.resetStages(flowId, resourceId, exportSampleDataStages));
-  }, [dispatch, resourceId, flowId]);
+  }), [dispatch, resourceId, flowId]);
+
+  const resetStages = useCallback(debounceFn(() => {
+    dispatch(actions.flowData.resetStages(flowId, resourceId));
+  }), [flowId, resourceId]);
 
   useEffect(() => {
     if (isLookUpExport || resourceType === 'imports') {
-      debounce(resetFlowInputData, DEBOUNCE_DURATION)();
+      resetFlowInputData();
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [oneToManyValues]);
 
   useEffect(() => {
     if (isLookUpExport) {
-      debounce(resetExportSampleData, DEBOUNCE_DURATION)();
+      resetExportSampleData();
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [formValuesWithoutOneToMany]);
 
   useEffect(() => {
     if (resourceType === 'exports' && !isLookUpExport) {
       // standalone/PG exports  - reset everything
-      debounce(() => dispatch(actions.flowData.resetStages(flowId, resourceId)), DEBOUNCE_DURATION)();
+      resetStages();
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [formValues]);
 
   useEffect(() =>
     () => {
       if (formKey && flowId && resourceId) {
-        dispatch(actions.flowData.resetStages(flowId, resourceId));
+        if (isNewId(resourceId)) {
+          // Incase of a new resource, clear sample data when the resourceForm is closed
+          resetStages();
+        } else {
+          if (resourceType === 'exports') {
+            // Incase of exports, we reset all related stages for preview data
+            resetExportSampleData();
+          }
+          if (isLookUpExport || resourceType === 'imports') {
+            // Incase of lookups and imports, reset flowInput dependent stages once closed
+            resetFlowInputData();
+          }
+        }
       }
     },
   [flowId, resourceId, dispatch, formKey]);
@@ -106,7 +121,7 @@ export default function useHandleResourceFormFlowSampleData(formKey) {
             flowId,
             resourceId,
             resourceType,
-            LOOKUP_FLOW_DATA_STAGE,
+            EXPORT_FILTERED_DATA_STAGE,
             undefined,
             formKey,
           )

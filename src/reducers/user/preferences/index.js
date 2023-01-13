@@ -15,6 +15,7 @@ const GLOBAL_PREFERENCES = [
   'timeFormat',
   'scheduleShiftForFlowsCreatedAfter',
   'lastLoginAt',
+  'darkTheme',
 ];
 
 const getAccountPreferences = draft => {
@@ -71,6 +72,11 @@ export default (state = { environment: 'production' }, action) => {
 
         break;
       case actionTypes.USER.PREFERENCES.UPDATE:
+        updatePreferences(draft, preferences);
+
+        break;
+
+      case actionTypes.USER.ACCOUNT.SWITCH:
         updatePreferences(draft, preferences);
 
         break;

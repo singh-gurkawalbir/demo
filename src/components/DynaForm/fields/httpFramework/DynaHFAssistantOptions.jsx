@@ -80,6 +80,7 @@ function DynaAssistantOptions(props) {
     id,
     onFieldChange: onFieldChangeFn,
     flowId,
+    disabled,
   } = props;
 
   const fields = Object.values(fieldsById);
@@ -87,10 +88,12 @@ function DynaAssistantOptions(props) {
     () =>
       [
         'adaptorType',
-        'version',
         'resource',
         'operation',
+        'version',
         'exportType',
+        'updateEndpoint',
+        'createEndpoint',
       ].reduce(
         (values, fId) => ({
           ...values,
@@ -115,7 +118,7 @@ function DynaAssistantOptions(props) {
       selectors.makeResourceDataSelector,
       resourceType,
       resourceId
-    ) || {};
+    ) || /* istanbul ignore next */ {};
   const staggedResource = merged || emptyObject;
 
   const connection = useSelector(
@@ -130,7 +133,7 @@ function DynaAssistantOptions(props) {
 
   const dispatch = useDispatch();
   const selectOptionsItems = useMemo(() => {
-    if (['version', 'resource', 'operation'].includes(assistantFieldType)) {
+    if (['version', 'resource', 'operation', 'createEndpoint', 'updateEndpoint'].includes(assistantFieldType)) {
       return selectOptions({
         assistantFieldType,
         assistantData,
@@ -148,6 +151,12 @@ function DynaAssistantOptions(props) {
     resourceContext.resourceType,
   ]);
 
+  const {isSkipSort, updatedselectOptionsItems} = useMemo(() => {
+    const isSkipSort = selectOptionsItems?.filter(option => option.value === 'create-update-id').length > 0;
+
+    return {isSkipSort, updatedselectOptionsItems: isSkipSort ? [...selectOptionsItems.slice(0, selectOptionsItems.length - 1).sort((a, b) => a.label.localeCompare(b.label)), selectOptionsItems[selectOptionsItems.length - 1]] : selectOptionsItems};
+  }, [selectOptionsItems]);
+
   useHFSetInitializeFormData(props);
 
   // I have to adjust value when there is no option with the matching value
@@ -162,23 +171,38 @@ function DynaAssistantOptions(props) {
   }, [id, value]);
   function onFieldChange(id, value) {
     onFieldChangeFn(id, value);
+    const resourceTypeSingular = resourceType === 'imports' ? 'import' : 'export';
+    const versions = assistantData?.[resourceTypeSingular]?.versions;
+
     if (
-      ['version', 'resource', 'operation', 'exportType'].includes(
+      ['version', 'resource', 'operation', 'exportType', 'updateEndpoint', 'createEndpoint'].includes(
         assistantFieldType
       )
     ) {
-      const fieldDependencyMap = {
+      let fieldDependencyMap = {
         exports: {
-          version: ['resource', 'operation', 'exportType'],
-          resource: ['operation', 'exportType'],
+          resource: ['operation', 'version', 'exportType'],
           operation: ['exportType'],
+          version: ['exportType'],
         },
         imports: {
-          version: ['resource', 'operation'],
-          resource: ['operation'],
+          resource: ['operation', 'version', 'updateEndpoint', 'createEndpoint'],
         },
       };
 
+      if (versions?.length > 1) {
+        fieldDependencyMap = {
+          exports: {
+            resource: ['operation', 'version', 'exportType'],
+            operation: ['exportType', 'version'],
+            version: ['exportType'],
+          },
+          imports: {
+            resource: ['version', 'operation', 'updateEndpoint', 'createEndpoint'],
+            operation: ['version'],
+          },
+        };
+      }
       const patch = [];
 
       patch.push({
@@ -206,11 +230,19 @@ function DynaAssistantOptions(props) {
         });
       }
 
-      if (assistantFieldType === 'operation') {
+      if (['operation', 'updateEndpoint', 'createEndpoint'].includes(assistantFieldType)) {
         patch.push({
           op: 'replace',
           path: '/assistantMetadata/operationChanged',
           value: true,
+        });
+      }
+
+      if (assistantFieldType === 'resource' && versions.length === 1) {
+        patch.push({
+          op: 'replace',
+          path: '/assistantMetadata/version',
+          value: versions[0]._id,
         });
       }
 
@@ -262,13 +294,21 @@ function DynaAssistantOptions(props) {
       );
     }
   }
+  useEffect(() => {
+    if (['createEndpoint', 'updateEndpoint'].includes(assistantFieldType) && (!value || value === '') && selectOptionsItems.length === 1) {
+      onFieldChange(id, selectOptionsItems[0].value);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id, value, assistantFieldType]);
 
   return (
     <MaterialUiSelect
       {...props}
       label={label}
-      options={[{ items: selectOptionsItems }]}
+      options={[{ items: isSkipSort ? updatedselectOptionsItems : selectOptionsItems }]}
       onFieldChange={onFieldChange}
+      disabled={disabled || (['createEndpoint', 'updateEndpoint'].includes(assistantFieldType) && selectOptionsItems.length === 1)}
+      skipSort={isSkipSort}
     />
   );
 }
@@ -276,6 +316,7 @@ function DynaAssistantOptions(props) {
 export default function WrappedContextConsumer(props) {
   const form = useFormContext(props.formKey);
 
+  /* istanbul ignore if */
   if (!form) return null;
 
   return <DynaAssistantOptions {...form} {...props} />;

@@ -12,9 +12,9 @@ const useStyles = makeStyles(theme => ({
     fontFamily: 'Roboto500',
     borderColor: theme.palette.primary.main,
     background: theme.palette.primary.main,
-    color: theme.palette.common.white,
+    color: theme.palette.background.paper,
     '&:hover': {
-      color: theme.palette.common.white,
+      color: theme.palette.background.paper,
       background: theme.palette.primary.light,
     },
 

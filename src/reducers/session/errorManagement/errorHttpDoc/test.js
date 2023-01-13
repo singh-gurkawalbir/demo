@@ -1,4 +1,4 @@
-/* global describe, test, expect */
+
 import reducer, { selectors } from '.';
 import actionTypes from '../../../../actions/types';
 import { getMockHttpErrorDoc } from '../../../../utils/errorManagement';
@@ -47,7 +47,7 @@ describe('errorHttpDoc in EM2.0 reducers', () => {
     });
   });
   describe('ERROR_HTTP_DOC.RECEIVED action', () => {
-    test('should retain previous state if the passed reqAndResKey does exist ', () => {
+    test('should retain previous state if the passed reqAndResKey does exist', () => {
       const prevState = {
         [reqAndResKey]: {
           status: 'received',
@@ -58,7 +58,7 @@ describe('errorHttpDoc in EM2.0 reducers', () => {
 
       expect(currState).toBe(prevState);
     });
-    test('should update status to received and data as passed http doc ', () => {
+    test('should update status to received and data as passed http doc', () => {
       const prevState = {
         [reqAndResKey]: {
           status: 'received',
@@ -100,7 +100,7 @@ describe('errorHttpDoc in EM2.0 reducers', () => {
     });
   });
   describe('ERROR_HTTP_DOC.ERROR action', () => {
-    test('should retain previous state if the passed reqAndResKey does exist ', () => {
+    test('should retain previous state if the passed reqAndResKey does exist', () => {
       const prevState = {
         [reqAndResKey]: {
           status: 'received',
@@ -111,7 +111,7 @@ describe('errorHttpDoc in EM2.0 reducers', () => {
 
       expect(currState).toBe(prevState);
     });
-    test('should update status to error and update error ', () => {
+    test('should update status to error and update error', () => {
       const prevState = {
         [reqAndResKey]: {
           status: 'received',
@@ -132,7 +132,7 @@ describe('errorHttpDoc in EM2.0 reducers', () => {
 
       expect(currState).toEqual(expectedState);
     });
-    test('should update status to error and update error by retaining any data if exist before for that reqAndResKey ', () => {
+    test('should update status to error and update error by retaining any data if exist before for that reqAndResKey', () => {
       const prevState = {
         [reqAndResKey]: {
           status: 'received',

@@ -1,4 +1,4 @@
-/* global describe, test, expect */
+
 import React from 'react';
 import {
   screen,
@@ -18,7 +18,7 @@ async function initMarketingContentWithIframe({contentUrl = ''} = {}) {
   return renderWithProviders(ui);
 }
 
-describe('MarketingContentWithIframe component', () => {
+describe('marketingContentWithIframe component', () => {
   runServer();
 
   test('should pass the initial render', async () => {
@@ -33,7 +33,7 @@ describe('MarketingContentWithIframe component', () => {
     expect(urlRef.pathname).toBe('/');
   });
 
-  test('should pass the initial render', async () => {
+  test('should pass the initial render duplicate', async () => {
     await initMarketingContentWithIframe({contentUrl: 'test_url'});
 
     const iframeRef = screen.getByTitle('Announcement');

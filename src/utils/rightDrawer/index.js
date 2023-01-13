@@ -73,6 +73,8 @@ export const drawerPaths = {
     V2: {
       ERROR_DETAILS: 'errors/:resourceId/:errorType',
       JOB_ERROR_DETAILS: 'errors/:resourceId/filter/:flowJobId/:errorType',
+      // TODO: Siddharth, once all error drawer tabs have uniform urls, viewType can be moved to parent level
+      OPEN_ERROR_VIEW: ':viewType',
       DOWNLOAD_ERRORS: 'download/:type',
       VIEW_ERROR_DETAILS: 'details/:errorId/:mode',
       FLOW_ERROR_LIST: ':flowId/errorsList',
@@ -125,6 +127,10 @@ export const drawerPaths = {
   EDITOR: 'editor/:editorId',
   DYNA_EDITOR_EXPAND: 'expand/:formKey/:fieldId',
   PREVIEW_PANEL_MOCK_INPUT: 'inputData',
+  EXPORT_MOCK_OUTPUT: 'mockOutput/:formKey/:fieldId',
+  UPGRADE: {
+    INSTALL: 'changeEditions/:type/:currentIntegrationId',
+  },
 };
 
 export const hasMultipleDrawers = url =>

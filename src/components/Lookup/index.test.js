@@ -1,4 +1,5 @@
-/* global describe, test, expect, jest, afterEach, beforeEach */
+/* eslint-disable jest/no-standalone-expect */
+
 import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -16,7 +17,7 @@ async function initLookup({ props } = {}) {
 
   const {utils, store} = await renderWithProviders(ui);
 
-  expect(await screen.queryByText(/Manage lookups/i)).toBeInTheDocument();
+  await expect(screen.findByText(/Manage lookups/i)).resolves.toBeInTheDocument();
   expect(screen.queryByText(/Create lookup/i)).toBeInTheDocument();
   expect(screen.queryByText(/Name/i)).toBeInTheDocument();
   expect(screen.queryByText(/Actions/i)).toBeInTheDocument();
@@ -72,7 +73,7 @@ jest.mock('./Manage', () => ({
   },
 }));
 
-describe('Lookup component Test cases', () => {
+describe('lookup component Test cases', () => {
   runServer();
 
   test('should pass the intial render with default values and null lookups', async () => {
@@ -91,7 +92,7 @@ describe('Lookup component Test cases', () => {
     expect(screen.queryByText(/Lookup type/i)).not.toBeInTheDocument();
     userEvent.click(createLookup);
 
-    expect(await screen.queryByText(/Test Button 1/i)).toBeInTheDocument();
+    await expect(screen.findByText(/Test Button 1/i)).resolves.toBeInTheDocument();
     expect(screen.queryByText(/Test Button 2/i)).toBeInTheDocument();
 
     expect(screen.queryByText(/Manage lookups/i)).toBeInTheDocument(); // not sure why it displays as heading
@@ -113,10 +114,10 @@ describe('Lookup component Test cases', () => {
 
     userEvent.click(closeButton);
 
-    await expect(onCancel).toBeCalledTimes(1);
+    await expect(onCancel).toHaveBeenCalledTimes(1);
   });
 
-  describe('Actions menu test cases', () => {
+  describe('actions menu test cases', () => {
     let onSave;
     let lookups;
 
@@ -142,7 +143,7 @@ describe('Lookup component Test cases', () => {
 
       userEvent.click(ActionButton);
 
-      expect(await screen.queryByText(/Edit lookup/i)).toBeInTheDocument();
+      await expect(screen.findByText(/Edit lookup/i)).resolves.toBeInTheDocument();
       expect(screen.queryByText(/Delete lookup/i)).toBeInTheDocument();
     });
 
@@ -158,7 +159,7 @@ describe('Lookup component Test cases', () => {
 
       userEvent.click(deleteLookup);
 
-      expect(onSave).toBeCalledTimes(1);
+      expect(onSave).toHaveBeenCalledTimes(1);
     });
 
     describe('handleSubmit test cases', () => {
@@ -170,7 +171,7 @@ describe('Lookup component Test cases', () => {
         expect(editLookup).toBeInTheDocument();
         userEvent.click(editLookup);
 
-        expect(await screen.queryByText(/Test Button 1/i)).toBeInTheDocument();
+        await expect(screen.findByText(/Test Button 1/i)).resolves.toBeInTheDocument();
 
         testButton1 = screen.getByRole('button', {name: /Test Button 1/i});
 
@@ -180,9 +181,9 @@ describe('Lookup component Test cases', () => {
       test('should pass the intial render with create Lookups and handleSubmit sucess!', async () => {
         expect(testButton1).toBeInTheDocument();
         userEvent.click(testButton1);
-        expect(onSave).toBeCalledTimes(1);
-        expect(mockHandleSubmit).toBeCalledTimes(1);
-        expect(onSave).toBeCalledWith([{
+        expect(onSave).toHaveBeenCalledTimes(1);
+        expect(mockHandleSubmit).toHaveBeenCalledTimes(1);
+        expect(onSave).toHaveBeenCalledWith([{
           name: 'TestLookup1',
         }, {
           name: 'mockName1',
@@ -197,8 +198,8 @@ describe('Lookup component Test cases', () => {
         });
 
         userEvent.click(testButton1);
-        expect(onSave).toBeCalledTimes(0);
-        expect(mockHandleSubmit).toBeCalledTimes(1);
+        expect(onSave).toHaveBeenCalledTimes(0);
+        expect(mockHandleSubmit).toHaveBeenCalledTimes(1);
         expect(screen.queryByText(/Lookup with same name is already present!/i)).toBeInTheDocument();
       });
 
@@ -210,9 +211,9 @@ describe('Lookup component Test cases', () => {
         });
 
         userEvent.click(testButton1);
-        expect(onSave).toBeCalledTimes(1);
-        expect(mockHandleSubmit).toBeCalledTimes(1);
-        expect(onSave).toBeCalledWith([{
+        expect(onSave).toHaveBeenCalledTimes(1);
+        expect(mockHandleSubmit).toHaveBeenCalledTimes(1);
+        expect(onSave).toHaveBeenCalledWith([{
           name: 'TestLookup2',
         }]);
       });

@@ -1,4 +1,4 @@
-/* global describe, test, expect */
+
 import defaulty from './rdbms';
 
 describe('getLookupMetadata component Test cases', () => {

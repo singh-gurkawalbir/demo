@@ -3,23 +3,38 @@ import format from 'xml-formatter';
 import { deepClone } from 'fast-json-patch';
 import { stringCompare } from '../../../../utils/sort';
 
-function versionOptions({ assistantData }) {
-  return assistantData?.versions?.map(version => ({
-    label: version.version,
-    value: version._id || version.version,
+function resourceOptions({ assistantData }) {
+  return assistantData?.resources?.filter(res => !res.hidden)?.map(resource => ({
+    label: resource.name,
+    value: resource.id,
   }));
 }
 
-function resourceOptions({ versionData = { resources: [] } }) {
-  return versionData.resources?.map(resource => ({
-    label: resource.name,
-    value: resource.id,
-  }))
+function versionOptions({ resourceData = { versions: [] }, operation, resources, resourceType }) {
+  if (!resourceData.id.includes('+')) {
+    return resourceData.versions?.map(version => ({
+      label: version.version,
+      value: version._id || version.version,
+    }))
     .sort(stringCompare('label'));
+  }
+
+  const operations = operation.split('+');
+  const endpoints = resourceType === 'imports' ? resourceData.operations : resourceData.endpoints;
+  const resourceIds = endpoints.filter(e => operations.includes(e.id))?.map(ep => ep._httpConnectorResourceIds)?.flat(1);
+
+  const filteredResources = resources.filter(res => resourceIds.includes(res.id));
+  const versionIds = filteredResources.map(fRes => fRes._versionIds)?.flat(1);
+
+  return resourceData.versions?.filter(v => versionIds.includes(v._id))?.map(version => ({
+    label: version.version,
+    value: version._id || version.version,
+  }))
+  .sort(stringCompare('label'));
 }
 
 function exportOperationOptions({ resourceData = { endpoints: [] } }) {
-  return resourceData.endpoints?.map(operation => ({
+  return resourceData.endpoints?.filter(ep => !ep.hidden)?.map(operation => ({
     label: operation.name,
     value: operation.id || operation.url,
   }));
@@ -38,21 +53,48 @@ function importOperationKey(operation) {
 }
 
 function importOperationOptions({ resourceData = { operations: [] } }) {
-  return resourceData.operations.map(operation => ({
+  const returnOptions = resourceData.operations.filter(op => !op.hidden).map(operation => ({
     label: operation.name,
     value: importOperationKey(operation),
   }));
-}
+  const ignoreExisting = resourceData.operations.find(operation => operation.ignoreExisting);
+  const ignoreMissing = resourceData.operations.find(operation => operation.ignoreMissing);
 
-function versionData({ versions = [], versionId }) {
-  let version = versions.find(v => v._id === versionId);
-
-  if (!version && versions.length === 1) {
-    [version] = versions;
+  if (ignoreExisting && ignoreMissing) {
+    returnOptions.push({
+      label: 'Composite: create new records & update existing records',
+      value: 'create-update-id',
+    });
   }
 
-  return version;
+  return returnOptions;
 }
+function importcreateEndpointOptions({ resourceData = { operations: [] } }) {
+  const returnOptions = resourceData.operations.filter(operation => !operation.hidden && operation.ignoreExisting).map(operation => ({
+    label: operation.name,
+    value: importOperationKey(operation),
+  }));
+
+  return returnOptions;
+}
+function importupdateEndpointOptions({ resourceData = { operations: [] } }) {
+  const returnOptions = resourceData.operations.filter(operation => !operation.hidden && operation.ignoreMissing).map(operation => ({
+    label: operation.name,
+    value: importOperationKey(operation),
+  }));
+
+  return returnOptions;
+}
+
+// function versionData({ versions = [], versionId }) {
+//   let version = versions.find(v => v._id === versionId);
+
+//   if (!version && versions.length === 1) {
+//     [version] = versions;
+//   }
+
+//   return version;
+// }
 
 function resourceData({ resources = [], resourceId }) {
   return resources.find(r => r.id === resourceId);
@@ -66,48 +108,72 @@ export function selectOptions({
 }) {
   const resourceTypeSingular = resourceType === 'imports' ? 'import' : 'export';
 
-  if (assistantFieldType === 'version') {
-    return versionOptions({
+  if (assistantFieldType === 'version' && assistantData?.[resourceTypeSingular]?.versions?.length === 1) {
+    const versions = assistantData?.[resourceTypeSingular]?.versions?.filter(v => !v.hidden);
+
+    return versions?.map(version => ({
+      label: version.version,
+      value: version._id || version.version,
+    }))
+      .sort(stringCompare('label'));
+  }
+  if (assistantFieldType === 'resource') {
+    return resourceOptions({
       assistantData: assistantData?.[resourceTypeSingular],
     });
   }
 
-  const selectedVersion = versionData({
-    versions: assistantData?.[resourceTypeSingular]?.versions,
-    versionId: formContext.version,
+  const selectedResource = resourceData({
+    resources: assistantData?.[resourceTypeSingular]?.resources,
+    resourceId: formContext.resource,
   });
 
-  if (!selectedVersion) {
+  if (!selectedResource) {
     return [];
   }
 
-  if (assistantFieldType === 'resource') {
-    return resourceOptions({
-      versionData: selectedVersion,
-    });
-  }
   if (assistantFieldType === 'operation') {
     if (resourceType === 'imports') {
       return importOperationOptions({
-        resourceData: resourceData({
-          resources: selectedVersion.resources,
-          resourceId: formContext.resource,
-        }),
+        resourceData: selectedResource,
       });
     }
 
     return exportOperationOptions({
-      resourceData: resourceData({
-        resources: selectedVersion.resources,
-        resourceId: formContext.resource,
-      }),
+      resourceData: selectedResource,
     });
+  }
+
+  if (!formContext.operation) {
+    return [];
+  }
+
+  if (assistantFieldType === 'version') {
+    return versionOptions({
+      resourceData: selectedResource,
+      operation: formContext.operation,
+      resources: assistantData?.[resourceTypeSingular]?.resources,
+      resourceType,
+    });
+  }
+  if (formContext.operation === 'create-update-id' && resourceType === 'imports') {
+    if (assistantFieldType === 'createEndpoint') {
+      return importcreateEndpointOptions({
+        resourceData: selectedResource,
+      });
+    }
+    if (assistantFieldType === 'updateEndpoint') {
+      return importupdateEndpointOptions({
+        resourceData: selectedResource,
+      });
+    }
   }
 
   return [];
 }
 
-function semiAssistantOperationOptions(endpoints = [], parent = {key: []}) {
+// parent obj will always be there
+function semiAssistantOperationOptions(endpoints = [], /* istanbul ignore next */ parent = {key: []}) {
   let options = [];
   let endpointName;
 
@@ -121,7 +187,7 @@ function semiAssistantOperationOptions(endpoints = [], parent = {key: []}) {
       }
       options.push({
         label: endpointName,
-        value: parent ? [...parent.key, ep.key].join('.') : ep.key,
+        value: parent ? [...parent.key, ep.key].join('.') : /* istanbul ignore next */ep.key,
       });
     }
   });

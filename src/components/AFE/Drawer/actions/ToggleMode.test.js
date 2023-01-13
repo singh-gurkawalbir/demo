@@ -1,103 +1,104 @@
-/* eslint-disable no-undef */
+import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import React from 'react';
-import * as reactRedux from 'react-redux';
-import { MemoryRouter } from 'react-router-dom';
-import actions from '../../../../actions';
-import { getCreatedStore } from '../../../../store';
-import { renderWithProviders } from '../../../../test/test-utils';
 import ToggleMode from './ToggleMode';
+import { getCreatedStore } from '../../../../store';
+import actions from '../../../../actions';
+import { renderWithProviders } from '../../../../test/test-utils';
 
-let initialStore;
+const initialStore = getCreatedStore();
+const mockDispatch = jest.fn();
 
-async function initToggleMode({ editorId, variant, activeProcessor, saveStatus }) {
+jest.mock('react-redux', () => ({
+  __esModule: true,
+  ...jest.requireActual('react-redux'),
+  useDispatch: () => mockDispatch,
+}));
+
+function initToggleMode(props = {}) {
   initialStore.getState().session.editors = {
-    '25bc3': {
-      saveStatus,
-      activeProcessor,
+    'tx-63a55e08d9e20c15d94daca9': {
+      editorType: 'flowTransform',
+      flowId: '63a54e63d9e20c15d94da0f1',
+      resourceId: '63a55e08d9e20c15d94daca9',
+      resourceType: 'exports',
+      stage: 'transform',
+      rule: {
+        javascript: {
+          fetchScriptContent: true,
+          entryFunction: 'transform',
+        },
+      },
+      activeProcessor: 'filter',
+    },
+    'tx-6': {
+      editorType: 'flowTransform',
+      flowId: '63a54e63d9e20c15d94da0f1',
+      resourceId: '63a55e08d9e20c15d94daca9',
+      resourceType: 'exports',
+      stage: 'transform',
+      rule: {
+        javascript: {
+          fetchScriptContent: true,
+          entryFunction: 'transform',
+        },
+      },
+      activeProcessor: 'json',
+      context: {
+        type: 'hook',
+        container: 'integration',
+        _integrationId: '63433f87ba338228f2401609',
+        _flowId: '63a54e63d9e20c15d94da0f1',
+      },
+    },
+    'tx-61': {
+      editorType: 'flowTransform',
+      flowId: '63a54e63d9e20c15d94da0f1',
+      resourceId: '63a55e08d9e20c15d94daca9',
+      resourceType: 'exports',
+      stage: 'transform',
+      rule: {
+        javascript: {
+          fetchScriptContent: true,
+          entryFunction: 'transform',
+        },
+      },
+      activeProcessor: 'javascript',
     },
   };
-  const ui = (
-    <MemoryRouter>
-      <ToggleMode editorId={editorId} variant={variant} />
-    </MemoryRouter>
-  );
 
-  return renderWithProviders(ui, { initialStore });
+  return renderWithProviders(<ToggleMode {...props} />, {initialStore});
 }
 
-describe('test suite for ToggleMode', () => {
-  let mockDispatchFn;
-  let useDispatchSpy;
+describe('ToggleMode UI tests', () => {
+  test('Should make a dispatch on clicking javascript mode for variant set to filters where initially toggle mode is set to Rules', () => {
+    initToggleMode({editorId: 'tx-63a55e08d9e20c15d94daca9'});
+    const Rules = screen.getByRole('button', {name: 'Rules'});
+    const JavaScript = screen.getByRole('button', {name: 'JavaScript'});
 
-  beforeEach(() => {
-    initialStore = getCreatedStore();
-    useDispatchSpy = jest.spyOn(reactRedux, 'useDispatch');
-    mockDispatchFn = jest.fn(action => {
-      switch (action.type) {
-        default:
-          initialStore.dispatch(action);
-      }
-    });
-    useDispatchSpy.mockReturnValue(mockDispatchFn);
+    expect(Rules).toBeInTheDocument();
+    expect(JavaScript).toBeInTheDocument();
+    userEvent.click(JavaScript);
+    expect(mockDispatch).toHaveBeenCalledWith(actions.editor.patchFeatures('tx-63a55e08d9e20c15d94daca9', {activeProcessor: 'javascript'}));
   });
+  test('Should make a dispatch on clicking Script mode for variant set to form where initially toggle mode is set to JSON', () => {
+    initToggleMode({editorId: 'tx-6', variant: 'form'});
+    const JSON = screen.getByRole('button', {name: 'JSON'});
+    const Script = screen.getByRole('button', {name: 'Script'});
 
-  afterEach(() => {
-    useDispatchSpy.mockClear();
-    mockDispatchFn.mockClear();
+    expect(JSON).toBeInTheDocument();
+    expect(Script).toBeInTheDocument();
+    userEvent.click(Script);
+    expect(mockDispatch).toHaveBeenCalledWith(actions.editor.patchFeatures('tx-6', {activeProcessor: 'script'}));
   });
+  test('Should make a dispatch call on clicking Rules mode for variant set to transform where initially toggle mode is set to Javascript', () => {
+    initToggleMode({editorId: 'tx-61', variant: 'transform'});
+    const Rules = screen.getByRole('button', {name: 'Rules'});
+    const JavaScript = screen.getByRole('button', {name: 'JavaScript'});
 
-  test('Should render ToggleMode for variant filter', async () => {
-    await initToggleMode({
-      editorId: '25bc3', variant: 'filter', activeProcessor: 'filter', saveStatus: 'done',
-    });
-    expect(screen.getByRole('button', {
-      name: /rules/i,
-    })).toBeInTheDocument();
-    expect(screen.getByRole('button', {
-      name: /javascript/i,
-    })).toBeInTheDocument();
+    expect(Rules).toBeInTheDocument();
+    expect(JavaScript).toBeInTheDocument();
+    userEvent.click(Rules);
+    expect(mockDispatch).toHaveBeenCalledWith(actions.editor.patchFeatures('tx-61', {activeProcessor: 'transform'}));
   });
-  test('Should render ToggleMode for variant form', async () => {
-    await initToggleMode({
-      editorId: '25bc3', variant: 'form', activeProcessor: 'json', saveStatus: 'done',
-    });
-    expect(screen.getByRole('button', {
-      name: /json/i,
-    })).toBeInTheDocument();
-    expect(screen.getByRole('button', {
-      name: /script/i,
-    })).toBeInTheDocument();
-  });
-  test('Should render ToggleMode for variant transform', async () => {
-    await initToggleMode({
-      editorId: '25bc3', variant: 'transform', activeProcessor: 'transform', saveStatus: 'done',
-    });
-    expect(screen.getByRole('button', {
-      name: /rules/i,
-    })).toBeInTheDocument();
-    expect(screen.getByRole('button', {
-      name: /javascript/i,
-    })).toBeInTheDocument();
-  });
-  test('Toggling ToggleMode and checking the functionality', async () => {
-    await initToggleMode({
-      editorId: '25bc3', variant: 'filter', activeProcessor: 'filter', saveStatus: 'done',
-    });
-    const afeButton = screen.getByRole('button', {
-      name: /javascript/i,
-    });
-
-    userEvent.click(afeButton);
-    await expect(mockDispatchFn).toBeCalledWith(actions.editor.patchFeatures('25bc3', { activeProcessor: 'javascript' }));
-  });
-  // test('Should render null when showToggle is false', async () => {
-  //   await initToggleMode({
-  //     editorId: '25bc3', variant: 'filter', activeProcessor: 'filter', saveStatus: 'requested',
-  //   });
-
-  //   // expect(utils.container).toBeEmptyDOMElement();
-  //   screen.debug(null, Infinity);
-  // });
 });

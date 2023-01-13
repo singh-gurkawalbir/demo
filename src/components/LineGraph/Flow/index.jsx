@@ -66,7 +66,7 @@ const useStyles = makeStyles(theme => ({
     color: '#57A05C',
   },
   CustomTooltip: {
-    background: theme.palette.common.white,
+    background: theme.palette.background.paper,
     color: theme.palette.secondary.main,
     border: '1px solid',
     borderColor: theme.palette.secondary.lightest,
@@ -74,7 +74,7 @@ const useStyles = makeStyles(theme => ({
     borderRadius: 2,
   },
   responsiveContainer: {
-    background: theme.palette.common.white,
+    background: theme.palette.background.paper,
     padding: theme.spacing(2),
     border: '1px solid',
     borderColor: theme.palette.secondary.lightest,

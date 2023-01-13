@@ -1,4 +1,3 @@
-/* global describe, test, expect */
 import React from 'react';
 import { screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
@@ -22,7 +21,7 @@ describe('FlowSectionTile UI tests', () => {
   }
   test('should just show the title', () => {
     initialStoreAndRender(false, true, 0);
-    expect(screen.getByText('someTitle'));
+    expect(screen.getByText('someTitle')).toBeInTheDocument();
   });
   test('should show the title and no flow text', () => {
     initialStoreAndRender(true, true, 0);

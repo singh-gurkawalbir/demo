@@ -108,6 +108,14 @@ export function convertIOFilterExpression(filterExpression = [], context) {
                 }
               } while (!dataTypeFound);
 
+              if (i === 2 && exp[i][0].toLowerCase() === 'epochtime') {
+                temp.type = 'value';
+                temp.value = exp[i]?.[1];
+                temp.dataType = 'epochtime';
+                // eslint-disable-next-line no-continue
+                continue;
+              }
+
               temp.dataType = tempExp[0].toLowerCase();
               temp.type = 'field';
               [, [, temp.field]] = tempExp;
@@ -263,19 +271,16 @@ export function generateIOFilterExpression(rules, context) {
 
           switch (rr.data.lhs.dataType) {
             case 'number':
-              lhs = parseFloat(rr.data.lhs.value);
+              lhs = Number.isNaN(parseFloat(rr.data.lhs.value)) ? rr.data.lhs.value : parseFloat(rr.data.lhs.value);
               break;
             case 'boolean':
-              lhs =
-                  lhs &&
-                  lhs.toString() &&
-                  lhs.toString().toLowerCase() === 'true';
+              lhs = !['0', 'false'].includes(lhs?.toString()?.toLowerCase());
               break;
             default:
           }
         } else if (rr.data.lhs.type === 'expression') {
           try {
-            lhs = JSON.parse(rr.data.lhs.expression);
+            lhs = JSON.parse(typeof rr.data.lhs.expression === 'string' ? rr.data.lhs.expression : JSON.stringify(rr.data.lhs.expression));
           } catch (ex) {
             // error in parsing expression
           }
@@ -311,13 +316,13 @@ export function generateIOFilterExpression(rules, context) {
 
             switch (rr.data.rhs.dataType) {
               case 'number':
-                rhs = parseFloat(rr.data.rhs.value);
+                rhs = Number.isNaN(parseFloat(rr.data.rhs.value)) ? rr.data.rhs.value : parseFloat(rr.data.rhs.value);
                 break;
               case 'boolean':
-                rhs =
-                    rhs &&
-                    rhs.toString() &&
-                    rhs.toString().toLowerCase() === 'true';
+                rhs = !['0', 'false'].includes(rhs?.toString()?.toLowerCase());
+                break;
+              case 'epochtime':
+                rhs = ['epochtime', rhs];
                 break;
               default:
             }

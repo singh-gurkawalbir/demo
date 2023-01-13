@@ -4,6 +4,7 @@ export default {
     '/type': 'http',
     '/assistant': 'googleanalytics',
     '/http/auth/type': 'oauth',
+    '/http/auth/oauth/useIClientFields': false,
     '/http/mediaType': 'json',
     '/http/baseURI': 'https://www.googleapis.com/analytics/',
     '/http/auth/oauth/authURI': 'https://accounts.google.com/o/oauth2/auth',

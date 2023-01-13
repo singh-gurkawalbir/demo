@@ -1,4 +1,3 @@
-/* global describe, test, expect */
 import each from 'jest-each';
 import {
   flowTypeFromId,
@@ -14,37 +13,37 @@ import {
 
 describe('flowTypeFromId util method', () => {
   test('should return flow type as REALTIME_EXPORT for flow id re1234', () => {
-    expect(flowTypeFromId('re1234')).toEqual('REALTIME_EXPORT');
+    expect(flowTypeFromId('re1234')).toBe('REALTIME_EXPORT');
   });
   test('should return flow type as REALTIME_IMPORT for flow id ri567', () => {
-    expect(flowTypeFromId('ri567')).toEqual('REALTIME_IMPORT');
+    expect(flowTypeFromId('ri567')).toBe('REALTIME_IMPORT');
   });
   test('should return flow type as EXPORT for flow id e2', () => {
-    expect(flowTypeFromId('e2')).toEqual('EXPORT');
+    expect(flowTypeFromId('e2')).toBe('EXPORT');
   });
   test('should return flow type as IMPORT for flow id i1234', () => {
-    expect(flowTypeFromId('i1234')).toEqual('IMPORT');
+    expect(flowTypeFromId('i1234')).toBe('IMPORT');
   });
   test('should return flow type as undefined for flow id 3456', () => {
-    expect(flowTypeFromId('3456')).toEqual(undefined);
+    expect(flowTypeFromId('3456')).toBeUndefined();
   });
 });
 
 describe('generateUniqueFlowId util method', () => {
   test('should return e3456 when flow type is export and id is 3456', () => {
-    expect(generateUniqueFlowId('3456', 'EXPORT')).toEqual('e3456');
+    expect(generateUniqueFlowId('3456', 'EXPORT')).toBe('e3456');
   });
   test('should return i345 when flow type is import and id is 345', () => {
-    expect(generateUniqueFlowId('345', 'IMPORT')).toEqual('i345');
+    expect(generateUniqueFlowId('345', 'IMPORT')).toBe('i345');
   });
   test('should return re345 when flow type is realtime export and id is 345', () => {
-    expect(generateUniqueFlowId('345', 'REALTIME_EXPORT')).toEqual('re345');
+    expect(generateUniqueFlowId('345', 'REALTIME_EXPORT')).toBe('re345');
   });
   test('should return ri345 when flow type is realtime import and id is 345', () => {
-    expect(generateUniqueFlowId('345', 'REALTIME_IMPORT')).toEqual('ri345');
+    expect(generateUniqueFlowId('345', 'REALTIME_IMPORT')).toBe('ri345');
   });
   test('should return undefined345 when flow type is something and id is 345', () => {
-    expect(generateUniqueFlowId('345', 'something')).toEqual('undefined345');
+    expect(generateUniqueFlowId('345', 'something')).toBe('undefined345');
   });
 });
 
@@ -85,6 +84,7 @@ describe('suiteScriptResourceKey util method', () => {
   each(testCases).test(
     'should return %s for %o',
     (expected, input) => {
+      // eslint-disable-next-line jest/no-standalone-expect
       expect(suiteScriptResourceKey(input)).toEqual(expected);
     }
   );
@@ -145,6 +145,7 @@ describe('isJavaFlow util method', () => {
   each(testCases).test(
     'should return %s for %o',
     (expected, input) => {
+      // eslint-disable-next-line jest/no-standalone-expect
       expect(isJavaFlow(input)).toEqual(expected);
     }
   );
@@ -185,6 +186,7 @@ describe('flowType util method', () => {
   each(testCases).test(
     'should return %s for %o',
     (expected, input) => {
+      // eslint-disable-next-line jest/no-standalone-expect
       expect(flowType(input)).toEqual(expected);
     }
   );
@@ -249,6 +251,7 @@ describe('flowSupportsMapping util method', () => {
   each(testCases).test(
     'should return %s for %o',
     (expected, input) => {
+      // eslint-disable-next-line jest/no-standalone-expect
       expect(flowSupportsMapping(input)).toEqual(expected);
     }
   );
@@ -293,6 +296,7 @@ describe('flowAllowsScheduling util method', () => {
   each(testCases).test(
     'should return %s for %o',
     (expected, input) => {
+      // eslint-disable-next-line jest/no-standalone-expect
       expect(flowAllowsScheduling(input)).toEqual(expected);
     }
   );
@@ -361,6 +365,7 @@ describe('isFlowRunnable util method', () => {
   each(testCases).test(
     'should return %s for %o',
     (expected, input) => {
+      // eslint-disable-next-line jest/no-standalone-expect
       expect(isFlowRunnable(input)).toEqual(expected);
     }
   );

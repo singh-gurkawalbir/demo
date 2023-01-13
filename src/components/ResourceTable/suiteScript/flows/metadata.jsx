@@ -71,6 +71,7 @@ export default {
           <OnOffCell
             ssLinkedConnectionId={tableContext.ssLinkedConnectionId}
             flow={resource}
+            tooltip="Off / On"
         />
         ),
       },

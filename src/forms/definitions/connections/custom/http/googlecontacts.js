@@ -11,6 +11,7 @@ export default {
       '/http/baseURI': 'https://people.googleapis.com/v1',
       '/http/ping/relativeURI': '/contactGroups',
       '/http/ping/method': 'GET',
+      '/http/auth/oauth/useIClientFields': false,
       '/http/auth/oauth/authURI': 'https://accounts.google.com/o/oauth2/auth',
       '/http/auth/oauth/tokenURI': 'https://accounts.google.com/o/oauth2/token',
       '/http/auth/oauth/scopeDelimiter': ' ',

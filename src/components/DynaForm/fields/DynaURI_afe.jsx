@@ -10,6 +10,7 @@ import actions from '../../../actions';
 import { getValidRelativePath } from '../../../utils/routePaths';
 import { getParentResourceContext } from '../../../utils/connections';
 import { buildDrawerUrl, drawerPaths } from '../../../utils/rightDrawer';
+import { EXPORT_FILTERED_DATA_STAGE, IMPORT_FLOW_DATA_STAGE } from '../../../utils/flowData';
 
 const useStyles = makeStyles(theme => ({
   dynaURIActionButton: {
@@ -43,9 +44,9 @@ export default function DynaURI_afe(props) {
   const history = useHistory();
   const match = useRouteMatch();
   const editorId = getValidRelativePath(id);
-  const flowDataStage = stage || (resourceType === 'exports' ? 'inputFilter' : 'importMappingExtract');
+  const flowDataStage = stage || (resourceType === 'exports' ? EXPORT_FILTERED_DATA_STAGE : IMPORT_FLOW_DATA_STAGE);
 
-  const {parentType, parentId} = getParentResourceContext(match.url);
+  const {parentType, parentId, connId: connectionId} = getParentResourceContext(match.url, resourceType);
 
   const handleSave = useCallback(editorValues => {
     onFieldChange(id, editorValues.rule);
@@ -62,6 +63,7 @@ export default function DynaURI_afe(props) {
       onSave: handleSave,
       parentType,
       parentId,
+      connectionId,
       mapper2RowKey,
     }));
 
@@ -70,7 +72,7 @@ export default function DynaURI_afe(props) {
       baseUrl: match.url,
       params: { editorId },
     }));
-  }, [dispatch, flowDataStage, editorId, formKey, flowId, resourceId, resourceType, id, handleSave, parentType, parentId, history, match.url, mapper2RowKey]);
+  }, [dispatch, editorId, formKey, flowId, resourceId, resourceType, id, flowDataStage, handleSave, parentType, parentId, connectionId, mapper2RowKey, history, match.url]);
 
   return (
     <>

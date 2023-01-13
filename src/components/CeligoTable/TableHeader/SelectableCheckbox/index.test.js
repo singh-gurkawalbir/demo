@@ -1,4 +1,4 @@
-/* global describe, test, expect, jest */
+
 import React from 'react';
 import cloneDeep from 'lodash/cloneDeep';
 import { screen } from '@testing-library/react';
@@ -43,7 +43,7 @@ async function initSelectableCheckBox(
   return renderWithProviders(ui, { initialStore });
 }
 
-describe('SelectableCheckBox component Test cases', () => {
+describe('selectableCheckBox component Test cases', () => {
   runServer();
   test('should pass the intial render with default values', async () => {
     const { utils } = await initSelectableCheckBox();
@@ -239,14 +239,14 @@ describe('SelectableCheckBox component Test cases', () => {
       userEvent.click(checkBox);
 
       await expect(store.getState()?.session?.filters?.[filterKey]?.isAllSelected).toBeFalsy();
-      expect(onSelectChange).toBeCalledTimes(1);
+      expect(onSelectChange).toHaveBeenCalledTimes(1);
       const checkBox1 = await screen.getByRole('checkbox');
 
       expect(checkBox1).toBeInTheDocument();
 
       userEvent.click(checkBox1);
       await expect(store.getState()?.session?.filters?.[filterKey]?.isAllSelected).toBeTruthy();
-      expect(onSelectChange).toBeCalledTimes(2);
+      expect(onSelectChange).toHaveBeenCalledTimes(2);
     });
 
     test('should pass the intial render with handleSelectAllChange with isSelectableRow', async () => {
@@ -282,7 +282,7 @@ describe('SelectableCheckBox component Test cases', () => {
       userEvent.click(checkBox);
 
       await expect(store.getState()?.session?.filters?.[filterKey]?.isAllSelected).toBeFalsy();
-      expect(onSelectChange).toBeCalledTimes(1);
+      expect(onSelectChange).toHaveBeenCalledTimes(1);
 
       const checkBox1 = await screen.getByRole('checkbox');
 
@@ -291,7 +291,7 @@ describe('SelectableCheckBox component Test cases', () => {
       userEvent.click(checkBox1);
 
       await expect(store.getState()?.session?.filters?.[filterKey]?.isAllSelected).toBeTruthy();
-      expect(onSelectChange).toBeCalledTimes(2);
+      expect(onSelectChange).toHaveBeenCalledTimes(2);
     });
   });
 });

@@ -1,5 +1,3 @@
-/* global describe, test, expect */
-
 import { emptyList } from '../constants';
 import { filterSubListProperties, getFormattedNetsuiteMetadataData, getFormattedSalesForceMetadata, getReferenceFieldsMap, getWSRecordId, isTransactionWSRecordType } from './metadata';
 
@@ -52,16 +50,16 @@ describe('isTransactionWSRecordType util', () => {
 
 describe('getWSRecordId util', () => {
   test('should not throw exception for invalid arguments', () => {
-    expect(getWSRecordId()).toEqual('');
+    expect(getWSRecordId()).toBe('');
   });
   test('should return scriptId if record has scriptId', () => {
-    expect(getWSRecordId({scriptId: 'AbC'})).toEqual('abc');
+    expect(getWSRecordId({scriptId: 'AbC'})).toBe('abc');
   });
   test('should return metadataId if record has metadataId', () => {
-    expect(getWSRecordId({metadataId: 'AbC'})).toEqual('abc');
+    expect(getWSRecordId({metadataId: 'AbC'})).toBe('abc');
   });
   test('should return internalId if record has internalId', () => {
-    expect(getWSRecordId({internalId: 'AbC'})).toEqual('abc');
+    expect(getWSRecordId({internalId: 'AbC'})).toBe('abc');
   });
 });
 

@@ -16,6 +16,7 @@ import actions from '../../../../actions';
 import { emptyObject } from '../../../../constants';
 import OutlinedButton from '../../../Buttons/OutlinedButton';
 import { buildDrawerUrl, drawerPaths } from '../../../../utils/rightDrawer';
+import { EXPORT_FILTERED_DATA_STAGE, IMPORT_POST_MAPPED_DATA_STAGE } from '../../../../utils/flowData';
 
 const useStyles = makeStyles(theme => ({
   csvContainer: {
@@ -142,7 +143,7 @@ export default function DynaCsvGenerate_afe(props) {
       resourceId,
       resourceType,
       fieldId: id,
-      stage: resourceType === 'exports' ? 'inputFilter' : 'postMapOutput',
+      stage: resourceType === 'exports' ? EXPORT_FILTERED_DATA_STAGE : IMPORT_POST_MAPPED_DATA_STAGE,
       onSave: handleSave,
     }));
 

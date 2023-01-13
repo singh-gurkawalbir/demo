@@ -1,9 +1,8 @@
-/* eslint-disable import/named */
-/* global describe, test, expect, afterAll */
 import React from 'react';
 import {screen} from '@testing-library/react';
-import {renderWithProviders, reduxStore} from '../../test/test-utils';
+import {renderWithProviders, reduxStore, mockGetRequestOnce} from '../../test/test-utils';
 import AuditLogDialog from './AuditLogDialog';
+import { runServer } from '../../test/api/server';
 
 const resourceType = 'flows';
 const resourceId = 'flow_id';
@@ -21,7 +20,8 @@ initialStore.getState().data.resources.flows = [
     }],
   },
 ];
-describe('UI test cases for audit log dialog box', () => {
+describe('uI test cases for audit log dialog box', () => {
+  runServer();
   afterAll(async () => {
     // normal cleanup things
     await new Promise(resolve => {
@@ -32,10 +32,12 @@ describe('UI test cases for audit log dialog box', () => {
   });
 
   test('should display the auditlog header along with the resource name', () => {
+    mockGetRequestOnce('/api/flows/flow_id/audit', []);
     renderWithProviders(<AuditLogDialog resourceId={resourceId} resourceType={resourceType} />, {initialStore});
     expect(screen.getByText(/Audit log: demo flow/i)).toBeInTheDocument();
   });
   test('should only display the auditlog header when no resource is passed', () => {
+    mockGetRequestOnce('/api/flows/flow_id/audit', []);
     renderWithProviders(<AuditLogDialog resourceId={resourceId} resourceType={resourceType} />);
     expect(screen.getByText(/Audit log/i)).toBeInTheDocument();
   });

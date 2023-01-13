@@ -16,7 +16,8 @@ import httpWsse from './httpWsse';
 import httpRefreshToken from './httpRefreshToken';
 import restRefreshToken from './restRefreshToken';
 import httpOAuth from './httpOAuth';
-import httpOAuthOverrides from './httpOAuthOverrides';
+import httpOAuth1 from './httpOAuth1';
+import restOAuth1 from './restOAuth1';
 import graphql from './graphql';
 
 export default {
@@ -31,7 +32,8 @@ export default {
   restToken,
   restRefreshToken,
   httpOAuth,
-  httpOAuthOverrides,
+  httpOAuth1,
+  restOAuth1,
   restAdvanced,
   httpAdvanced,
   restCookie,
@@ -41,3 +43,4 @@ export default {
   fileAdvanced,
   graphql,
 };
+

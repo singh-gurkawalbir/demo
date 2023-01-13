@@ -1,4 +1,4 @@
-/* global describe, test, expect,beforeEach,afterEach, jest */
+
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { screen } from '@testing-library/react';
@@ -10,7 +10,6 @@ import actions from '../../../../../actions';
 
 const props = {integrationId: '_integrationId'};
 const mockHistoryReplace = jest.fn();
-const reviewChangesHelpText = 'Review the changes between the current and remote integration. You can see all your integration resource changes, except for sensitive resources like API tokens and connections. You must resolve conflicts before you can continue to merge your changes. You’ll configure any new connections in the Merge changes step.';
 
 async function initReviewChangesDrawer(props = {}, isCreatedRevId = false, creationInProgress = false) {
   const initialStore = reduxStore;
@@ -68,8 +67,6 @@ describe('ReviewChangesDrawer tests', () => {
     await initReviewChangesDrawer(props);
     expect(screen.getByRole('heading', {name: 'Review changes'})).toBeInTheDocument();
     expect(screen.getByRole('button', {name: 'Expand all'})).toBeInTheDocument();
-    userEvent.click(document.querySelector('svg'));
-    expect(screen.getByText(reviewChangesHelpText)).toBeInTheDocument();
     const close = screen.getAllByRole('button', {name: 'Close'})[0];
     const next = screen.getByRole('button', {name: 'Next'});
 

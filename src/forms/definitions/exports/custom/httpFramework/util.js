@@ -15,27 +15,40 @@ function hiddenFieldsMeta({ values }) {
 }
 
 function basicFieldsMeta({ assistant, assistantConfig, assistantData }) {
+  let resourceDefaultValue = assistantConfig.resource;
+  let operationDefaultValue = assistantConfig.operation || assistantConfig.operationUrl;
+
+  if (assistantData?.resources?.find(res => res.id === resourceDefaultValue)?.hidden) {
+    resourceDefaultValue = assistantData?.resources?.find(res => res.id !== resourceDefaultValue && res.id.includes(resourceDefaultValue))?.id;
+  }
+  const resourceObj = assistantData?.resources?.find(res => res.id === resourceDefaultValue);
+
+  if (resourceObj?.endpoints?.find(ep => ep.id === operationDefaultValue)?.hidden) {
+    operationDefaultValue = resourceObj?.endpoints?.find(ep => ep.id !== operationDefaultValue && ep.id.includes(operationDefaultValue))?.id;
+  }
+
   const fieldDefinitions = {
+    resource: {
+      fieldId: 'assistantMetadata.resource',
+      value: resourceDefaultValue,
+      required: true,
+      type: 'hfoptions',
+      label: 'Resources',
+    },
+    operation: {
+      fieldId: 'assistantMetadata.operation',
+      value: operationDefaultValue,
+      required: true,
+      type: 'hfoptions',
+      label: 'API endpoint',
+    },
     version: {
       fieldId: 'assistantMetadata.version',
       value: assistantConfig.version,
       required: true,
       type: 'hfoptions',
     },
-    resource: {
-      fieldId: 'assistantMetadata.resource',
-      value: assistantConfig.resource,
-      required: true,
-      type: 'hfoptions',
-      label: 'Resource',
-    },
-    operation: {
-      fieldId: 'assistantMetadata.operation',
-      value: assistantConfig.operation || assistantConfig.operationUrl,
-      required: true,
-      type: 'hfoptions',
-      label: 'API endpoint',
-    },
+
   };
   const { labels = {}, versions = [], helpTexts = {} } = assistantData;
 
@@ -45,6 +58,7 @@ function basicFieldsMeta({ assistant, assistantConfig, assistantData }) {
 
       if (!fieldDefinitions[fieldId].value && versions.length === 1) {
         fieldDefinitions[fieldId].value = versions[0]._id;
+        fieldDefinitions[fieldId].defaultValue = versions[0]._id;
       }
     }
 
@@ -141,7 +155,7 @@ function exportTypeFieldsMeta({
   }
 
   if (supportedExportTypes.includes('test')) {
-    exportTypeOptions.push({ value: 'test', label: 'Test – export only 1 record' });
+    exportTypeOptions.push({ value: 'test', label: 'Limit – export a set number of records' });
   }
 
   if (exportTypeOptions.length <= 1) {
@@ -160,6 +174,12 @@ function exportTypeFieldsMeta({
       ],
       value: exportType || 'all',
     },
+    {
+      fieldId: 'test.limit',
+      visibleWhen: [
+        {field: 'assistantMetadata.exportType', is: ['test']},
+      ],
+    },
   ];
 }
 
@@ -172,9 +192,23 @@ function searchParameterFieldsMeta({
   operationChanged,
   deltaDefaults = {},
   isDeltaExport,
+  url,
 }) {
   let searchParamsField;
   const defaultValue = {};
+  const filteredValues = value;
+
+  if (url) {
+    const [, queryPart] = url?.split('?');
+    const queryObj = new URLSearchParams(queryPart);
+    const parameterIds = parameters.map(param => param.id);
+
+    if (queryPart) {
+      [...queryObj.entries()].filter(([key]) => !parameterIds.includes(key)).map(([key]) => key).forEach(key => {
+        delete filteredValues[key];
+      });
+    }
+  }
 
   parameters.forEach(p => {
     if (Object.prototype.hasOwnProperty.call(p, 'defaultValue') && operationChanged) {
@@ -199,9 +233,10 @@ function searchParameterFieldsMeta({
           ? 'assistantMetadata.queryParams'
           : 'assistantMetadata.bodyParams',
       label,
-      value: !isEmpty(value) ? value : defaultValue,
+      value: !isEmpty(filteredValues) ? filteredValues : defaultValue,
       keyName: 'name',
       valueName: 'value',
+      keyPlaceholder: 'Search, select or add a name',
       paramMeta: {
         paramLocation,
         fields: parameters,
@@ -304,6 +339,7 @@ export function fieldMeta({ resource, assistantData }) {
             operationDetails.delta.defaults
               ? operationDetails.delta.defaults
               : {},
+          url: operationDetails.url,
         });
       }
       if (
@@ -344,6 +380,7 @@ export function fieldMeta({ resource, assistantData }) {
     pageSize: { fieldId: 'pageSize' },
     formView: { fieldId: 'formView' },
     skipRetries: { fieldId: 'skipRetries' },
+    'test.limit': {fieldId: 'test.limit'},
   };
   const fieldIds = [];
   const exportTypeFieldIds = [];
@@ -364,6 +401,8 @@ export function fieldMeta({ resource, assistantData }) {
     fieldId: 'traceKeyTemplate',
   };
 
+  fieldMap.mockOutput = {fieldId: 'mockOutput'};
+
   return {
     fieldMap,
     layout: {
@@ -383,6 +422,12 @@ export function fieldMeta({ resource, assistantData }) {
           collapsed: true,
           label: 'Configure export type',
           fields: [...exportTypeFieldIds],
+        },
+        {
+          collapsed: true,
+          actionId: 'mockOutput',
+          label: 'Mock output',
+          fields: ['mockOutput'],
         },
         {
           collapsed: true,

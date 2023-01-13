@@ -1,4 +1,3 @@
-/* global describe, test, beforeEach, afterEach, expect, jest */
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import React from 'react';
@@ -46,7 +45,7 @@ jest.mock('../../DynaForm/fields/DynaSelectWithInput', () => ({
   ),
 }));
 
-describe('Testsuite for SelectPreviewRecordsSize', () => {
+describe('testsuite for SelectPreviewRecordsSize', () => {
   runServer();
   let mockDispatchFn;
   let useDispatchSpy;
@@ -91,7 +90,7 @@ describe('Testsuite for SelectPreviewRecordsSize', () => {
     const recordSizeTextInputNode = document.querySelector('input[data-test="record-size"]');
 
     userEvent.clear(recordSizeTextInputNode);
-    expect(mocksetIsValidRecordSize).toHaveBeenCalled();
+    expect(mocksetIsValidRecordSize).toHaveBeenCalledTimes(9);
   });
   test('should enter the value which is of type text instead of number', async () => {
     await initSelectPreviewRecordsSize();

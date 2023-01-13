@@ -2927,6 +2927,7 @@ Object {
     "fieldMap": Object {
       "application": Object {
         "defaultValue": "",
+        "helpKey": "application",
         "id": "application",
         "isLoggable": true,
         "label": "Application",
@@ -3160,6 +3161,9 @@ Object {
         "required": true,
         "type": "uri",
       },
+      "mockOutput": Object {
+        "fieldId": "mockOutput",
+      },
       "outputMode": Object {
         "defaultDisabled": [Function],
         "defaultValue": [Function],
@@ -3280,6 +3284,14 @@ Object {
                 "file.groupByFields",
               ],
               "label": "How would you like to group and sort records?",
+            },
+            Object {
+              "actionId": "mockOutput",
+              "collapsed": true,
+              "fields": Array [
+                "mockOutput",
+              ],
+              "label": "Mock output",
             },
             Object {
               "collapsed": true,
@@ -3434,6 +3446,9 @@ Object {
       "dynamodb.tableName": Object {
         "fieldId": "dynamodb.tableName",
       },
+      "mockOutput": Object {
+        "fieldId": "mockOutput",
+      },
       "once.booleanField": Object {
         "fieldId": "once.booleanField",
         "label": "Once boolean field",
@@ -3452,6 +3467,9 @@ Object {
       },
       "settings": Object {
         "fieldId": "settings",
+      },
+      "test.limit": Object {
+        "fieldId": "test.limit",
       },
       "type": Object {
         "defaultValue": [Function],
@@ -3473,13 +3491,14 @@ Object {
                 "value": "once",
               },
               Object {
-                "label": "Test – export only 1 record",
+                "label": "Limit – export a set number of records",
                 "value": "test",
               },
             ],
           },
         ],
         "required": true,
+        "skipSort": true,
         "type": "select",
       },
     },
@@ -3512,6 +3531,7 @@ Object {
               "collapsed": true,
               "fields": Array [
                 "type",
+                "test.limit",
                 "delta.dateField",
                 "once.booleanField",
                 "dynamodb.onceExportPartitionKey",
@@ -3525,6 +3545,14 @@ Object {
                 "rdbmsGrouping",
               ],
               "label": "Would you like to group records?",
+            },
+            Object {
+              "actionId": "mockOutput",
+              "collapsed": true,
+              "fields": Array [
+                "mockOutput",
+              ],
+              "label": "Mock output",
             },
             Object {
               "collapsed": true,
@@ -3743,6 +3771,9 @@ Object {
         "required": true,
         "type": "uri",
       },
+      "mockOutput": Object {
+        "fieldId": "mockOutput",
+      },
       "outputMode": Object {
         "defaultDisabled": [Function],
         "defaultValue": [Function],
@@ -3872,6 +3903,14 @@ Object {
                 "file.groupByFields",
               ],
               "label": "How would you like to group and sort records?",
+            },
+            Object {
+              "actionId": "mockOutput",
+              "collapsed": true,
+              "fields": Array [
+                "mockOutput",
+              ],
+              "label": "Mock output",
             },
             Object {
               "collapsed": true,
@@ -4079,6 +4118,9 @@ Object {
       "http.successMediaType": Object {
         "fieldId": "http.successMediaType",
       },
+      "mockOutput": Object {
+        "fieldId": "mockOutput",
+      },
       "once.booleanField": Object {
         "connectionId": [Function],
         "id": "once.booleanField",
@@ -4141,6 +4183,9 @@ Object {
       "settings": Object {
         "fieldId": "settings",
       },
+      "test.limit": Object {
+        "fieldId": "test.limit",
+      },
       "type": Object {
         "defaultValue": [Function],
         "id": "type",
@@ -4168,13 +4213,14 @@ Object {
                 "value": "once",
               },
               Object {
-                "label": "Test – export only 1 record",
+                "label": "Limit – export a set number of records",
                 "value": "test",
               },
             ],
           },
         ],
         "required": true,
+        "skipSort": true,
         "type": "selectwithvalidations",
         "visibleWhen": Array [
           Object {
@@ -4226,6 +4272,7 @@ Object {
               "collapsed": true,
               "fields": Array [
                 "type",
+                "test.limit",
                 "delta.dateFormat",
                 "delta.lagOffset",
                 "once.booleanField",
@@ -4300,6 +4347,14 @@ Object {
               "label": "Would you like to group records?",
             },
             Object {
+              "actionId": "mockOutput",
+              "collapsed": true,
+              "fields": Array [
+                "mockOutput",
+              ],
+              "label": "Mock output",
+            },
+            Object {
               "collapsed": true,
               "fields": Array [
                 "configureAsyncHelper",
@@ -4343,6 +4398,9 @@ Object {
       "exportOneToMany": Object {
         "formId": "exportOneToMany",
       },
+      "mockOutput": Object {
+        "fieldId": "mockOutput",
+      },
       "mongodb.collection": Object {
         "fieldId": "mongodb.collection",
       },
@@ -4360,6 +4418,9 @@ Object {
       },
       "settings": Object {
         "fieldId": "settings",
+      },
+      "test.limit": Object {
+        "fieldId": "test.limit",
       },
       "type": Object {
         "defaultValue": [Function],
@@ -4381,13 +4442,14 @@ Object {
                 "value": "once",
               },
               Object {
-                "label": "Test – export only 1 record",
+                "label": "Limit – export a set number of records",
                 "value": "test",
               },
             ],
           },
         ],
         "required": true,
+        "skipSort": true,
         "type": "select",
       },
     },
@@ -4416,6 +4478,7 @@ Object {
               "collapsed": true,
               "fields": Array [
                 "type",
+                "test.limit",
                 "delta.dateField",
                 "once.booleanField",
               ],
@@ -4427,6 +4490,14 @@ Object {
                 "rdbmsGrouping",
               ],
               "label": "Would you like to group records?",
+            },
+            Object {
+              "actionId": "mockOutput",
+              "collapsed": true,
+              "fields": Array [
+                "mockOutput",
+              ],
+              "label": "Mock output",
             },
             Object {
               "collapsed": true,
@@ -4567,6 +4638,9 @@ Object {
       },
       "exportOneToMany": Object {
         "formId": "exportOneToMany",
+      },
+      "mockOutput": Object {
+        "fieldId": "mockOutput",
       },
       "netsuite.api.type": Object {
         "defaultDisabled": [Function],
@@ -5128,10 +5202,11 @@ Object {
             "value": "once",
           },
           Object {
-            "label": "Test – export only 1 record",
+            "label": "Limit – export a set number of records",
             "value": "test",
           },
         ],
+        "skipSort": true,
         "type": "netsuiteexporttype",
         "visibleWhenAll": Array [
           Object {
@@ -5180,6 +5255,17 @@ Object {
       "settings": Object {
         "fieldId": "settings",
       },
+      "test.limit": Object {
+        "fieldId": "test.limit",
+        "visibleWhen": Array [
+          Object {
+            "field": "restlet.type",
+            "is": Array [
+              "test",
+            ],
+          },
+        ],
+      },
       "type": Object {
         "defaultValue": [Function],
         "id": "type",
@@ -5200,13 +5286,14 @@ Object {
                 "value": "once",
               },
               Object {
-                "label": "Test – export only 1 record",
+                "label": "Limit – export a set number of records",
                 "value": "test",
               },
             ],
           },
         ],
         "required": true,
+        "skipSort": true,
         "type": "select",
         "visibleWhenAll": Array [
           Object {
@@ -5265,11 +5352,20 @@ Object {
                 "delta.lagOffset",
                 "once.booleanField",
                 "restlet.type",
+                "test.limit",
                 "restlet.delta.dateField",
                 "restlet.delta.lagOffset",
                 "restlet.once.booleanField",
               ],
               "label": "Configure export type",
+            },
+            Object {
+              "actionId": "mockOutput",
+              "collapsed": true,
+              "fields": Array [
+                "mockOutput",
+              ],
+              "label": "Mock output",
             },
             Object {
               "collapsed": true,
@@ -5539,6 +5635,9 @@ Object {
         "required": true,
         "type": "uri",
       },
+      "mockOutput": Object {
+        "fieldId": "mockOutput",
+      },
       "outputMode": Object {
         "defaultDisabled": [Function],
         "defaultValue": [Function],
@@ -5671,6 +5770,14 @@ Object {
               "label": "How would you like to group and sort records?",
             },
             Object {
+              "actionId": "mockOutput",
+              "collapsed": true,
+              "fields": Array [
+                "mockOutput",
+              ],
+              "label": "Mock output",
+            },
+            Object {
               "collapsed": true,
               "fields": Array [
                 "fileAdvanced",
@@ -5746,6 +5853,9 @@ Object {
       },
       "exportOneToMany": Object {
         "formId": "exportOneToMany",
+      },
+      "mockOutput": Object {
+        "fieldId": "mockOutput",
       },
       "once.booleanField": Object {
         "connectionId": [Function],
@@ -5910,6 +6020,9 @@ Object {
       "settings": Object {
         "fieldId": "settings",
       },
+      "test.limit": Object {
+        "fieldId": "test.limit",
+      },
       "type": Object {
         "defaultValue": [Function],
         "id": "type",
@@ -5930,13 +6043,14 @@ Object {
                 "value": "once",
               },
               Object {
-                "label": "Test – export only 1 record",
+                "label": "Limit – export a set number of records",
                 "value": "test",
               },
             ],
           },
         ],
         "required": true,
+        "skipSort": true,
         "type": "select",
         "visibleWhenAll": Array [
           Object {
@@ -5986,11 +6100,20 @@ Object {
               "collapsed": true,
               "fields": Array [
                 "type",
+                "test.limit",
                 "delta.dateField",
                 "delta.lagOffset",
                 "once.booleanField",
               ],
               "label": "Configure export type",
+            },
+            Object {
+              "actionId": "mockOutput",
+              "collapsed": true,
+              "fields": Array [
+                "mockOutput",
+              ],
+              "label": "Mock output",
             },
             Object {
               "collapsed": true,
@@ -6224,6 +6347,9 @@ Object {
       "dataURITemplate": Object {
         "fieldId": "dataURITemplate",
       },
+      "mockOutput": Object {
+        "fieldId": "mockOutput",
+      },
       "pageSize": Object {
         "fieldId": "pageSize",
       },
@@ -6235,6 +6361,11 @@ Object {
       },
       "traceKeyTemplate": Object {
         "fieldId": "traceKeyTemplate",
+      },
+      "webhook._httpConnectorId": Object {
+        "id": "webhook._httpConnectorId",
+        "type": "text",
+        "visible": false,
       },
       "webhook.algorithm": Object {
         "fieldId": "webhook.algorithm",
@@ -6322,6 +6453,7 @@ Object {
                 "webhook.path",
                 "webhook.username",
                 "webhook.password",
+                "webhook._httpConnectorId",
               ],
               "label": "Secure the listener",
             },
@@ -6332,6 +6464,14 @@ Object {
                 "webhook.sampledata",
               ],
               "label": "Generate URL & sample data",
+            },
+            Object {
+              "actionId": "mockOutput",
+              "collapsed": true,
+              "fields": Array [
+                "mockOutput",
+              ],
+              "label": "Mock output",
             },
             Object {
               "collapsed": true,
@@ -6357,7 +6497,7 @@ Object {
       ],
     },
   },
-  "init": undefined,
+  "init": [Function],
   "optionsHandler": [Function],
   "preSave": [Function],
   "validationHandler": [Function],
@@ -6381,11 +6521,17 @@ Object {
       "exportOneToMany": Object {
         "formId": "exportOneToMany",
       },
+      "mockOutput": Object {
+        "fieldId": "mockOutput",
+      },
       "once.booleanField": Object {
         "fieldId": "once.booleanField",
       },
       "settings": Object {
         "fieldId": "settings",
+      },
+      "test.limit": Object {
+        "fieldId": "test.limit",
       },
       "type": Object {
         "defaultValue": [Function],
@@ -6407,13 +6553,14 @@ Object {
                 "value": "once",
               },
               Object {
-                "label": "Test – export only 1 record",
+                "label": "Limit – export a set number of records",
                 "value": "test",
               },
             ],
           },
         ],
         "required": true,
+        "skipSort": true,
         "type": "select",
       },
       "wrapper.configuration": Object {
@@ -6447,10 +6594,19 @@ Object {
               "collapsed": true,
               "fields": Array [
                 "type",
+                "test.limit",
                 "delta.dateField",
                 "once.booleanField",
               ],
               "label": "Configure export type",
+            },
+            Object {
+              "actionId": "mockOutput",
+              "collapsed": true,
+              "fields": Array [
+                "mockOutput",
+              ],
+              "label": "Mock output",
             },
             Object {
               "collapsed": true,
@@ -6529,6 +6685,9 @@ Object {
             ],
           },
         ],
+      },
+      "mockOutput": Object {
+        "fieldId": "mockOutput",
       },
       "outputMode": Object {
         "defaultValue": [Function],
@@ -6625,6 +6784,14 @@ Object {
               "label": "Non-standard API response patterns",
             },
             Object {
+              "actionId": "mockOutput",
+              "collapsed": true,
+              "fields": Array [
+                "mockOutput",
+              ],
+              "label": "Mock output",
+            },
+            Object {
               "collapsed": "true",
               "fields": Array [
                 "advancedSettings",
@@ -6689,6 +6856,9 @@ Object {
       },
       "exportOneToMany": Object {
         "formId": "exportOneToMany",
+      },
+      "mockOutput": Object {
+        "fieldId": "mockOutput",
       },
       "once.booleanField": Object {
         "connectionId": [Function],
@@ -6853,6 +7023,9 @@ Object {
       "settings": Object {
         "fieldId": "settings",
       },
+      "test.limit": Object {
+        "fieldId": "test.limit",
+      },
       "type": Object {
         "defaultValue": [Function],
         "id": "type",
@@ -6873,13 +7046,14 @@ Object {
                 "value": "once",
               },
               Object {
-                "label": "Test – export only 1 record",
+                "label": "Limit – export a set number of records",
                 "value": "test",
               },
             ],
           },
         ],
         "required": true,
+        "skipSort": true,
         "type": "select",
         "visibleWhenAll": Array [
           Object {
@@ -6929,11 +7103,20 @@ Object {
               "collapsed": true,
               "fields": Array [
                 "type",
+                "test.limit",
                 "delta.dateField",
                 "delta.lagOffset",
                 "once.booleanField",
               ],
               "label": "Configure export type",
+            },
+            Object {
+              "actionId": "mockOutput",
+              "collapsed": true,
+              "fields": Array [
+                "mockOutput",
+              ],
+              "label": "Mock output",
             },
             Object {
               "collapsed": true,
@@ -7014,6 +7197,9 @@ Object {
       },
       "http.response.successValues": Object {
         "fieldId": "http.response.successValues",
+      },
+      "mockOutput": Object {
+        "fieldId": "mockOutput",
       },
       "once.booleanField": Object {
         "connectionId": [Function],
@@ -7143,6 +7329,9 @@ Object {
       "settings": Object {
         "fieldId": "settings",
       },
+      "test.limit": Object {
+        "fieldId": "test.limit",
+      },
       "type": Object {
         "defaultValue": [Function],
         "id": "type",
@@ -7170,13 +7359,14 @@ Object {
                 "value": "once",
               },
               Object {
-                "label": "Test – export only 1 record",
+                "label": "Limit – export a set number of records",
                 "value": "test",
               },
             ],
           },
         ],
         "required": true,
+        "skipSort": true,
         "type": "selectwithvalidations",
         "visibleWhen": Array [
           Object {
@@ -7218,6 +7408,7 @@ Object {
               "collapsed": true,
               "fields": Array [
                 "type",
+                "test.limit",
                 "delta.dateFormat",
                 "delta.lagOffset",
                 "once.booleanField",
@@ -7257,6 +7448,14 @@ Object {
               "label": "Non-standard API response patterns",
             },
             Object {
+              "actionId": "mockOutput",
+              "collapsed": true,
+              "fields": Array [
+                "mockOutput",
+              ],
+              "label": "Mock output",
+            },
+            Object {
               "collapsed": "true",
               "fields": Array [
                 "advancedSettings",
@@ -7289,6 +7488,7 @@ Object {
       "application": Object {
         "appType": "export",
         "defaultValue": [Function],
+        "helpKey": "application",
         "id": "application",
         "isLoggable": true,
         "label": "Application",
@@ -7331,8 +7531,6 @@ Object {
             "isNot": Array [
               "",
               "aha",
-              "box",
-              "dropbox",
               "errorception",
               "helpscout",
               "mailparser-io",
@@ -7436,14 +7634,18 @@ Object {
       },
     },
     "layout": Object {
-      "fields": Array [
-        "application",
-        "type",
-        "connection",
-        "name",
-        "description",
-        "settings",
+      "containers": Array [
+        Object {
+          "fields": Array [
+            "application",
+            "type",
+            "connection",
+            "name",
+            "description",
+          ],
+        },
       ],
+      "type": "box",
     },
   },
   "init": undefined,
@@ -7493,6 +7695,9 @@ Object {
       },
       "exportOneToMany": Object {
         "formId": "exportOneToMany",
+      },
+      "mockOutput": Object {
+        "fieldId": "mockOutput",
       },
       "once.booleanField": Object {
         "connectionId": [Function],
@@ -7657,6 +7862,9 @@ Object {
       "settings": Object {
         "fieldId": "settings",
       },
+      "test.limit": Object {
+        "fieldId": "test.limit",
+      },
       "type": Object {
         "defaultValue": [Function],
         "id": "type",
@@ -7677,13 +7885,14 @@ Object {
                 "value": "once",
               },
               Object {
-                "label": "Test – export only 1 record",
+                "label": "Limit – export a set number of records",
                 "value": "test",
               },
             ],
           },
         ],
         "required": true,
+        "skipSort": true,
         "type": "select",
         "visibleWhenAll": Array [
           Object {
@@ -7733,11 +7942,20 @@ Object {
               "collapsed": true,
               "fields": Array [
                 "type",
+                "test.limit",
                 "delta.dateField",
                 "delta.lagOffset",
                 "once.booleanField",
               ],
               "label": "Configure export type",
+            },
+            Object {
+              "actionId": "mockOutput",
+              "collapsed": true,
+              "fields": Array [
+                "mockOutput",
+              ],
+              "label": "Mock output",
             },
             Object {
               "collapsed": true,
@@ -7780,6 +7998,9 @@ Object {
       "exportOneToMany": Object {
         "formId": "exportOneToMany",
       },
+      "mockOutput": Object {
+        "fieldId": "mockOutput",
+      },
       "rdbms.once.query": Object {
         "fieldId": "rdbms.once.query",
         "visibleWhen": Array [
@@ -7799,6 +8020,9 @@ Object {
       },
       "settings": Object {
         "fieldId": "settings",
+      },
+      "test.limit": Object {
+        "fieldId": "test.limit",
       },
       "type": Object {
         "defaultValue": [Function],
@@ -7820,13 +8044,14 @@ Object {
                 "value": "once",
               },
               Object {
-                "label": "Test – export only 1 record",
+                "label": "Limit – export a set number of records",
                 "value": "test",
               },
             ],
           },
         ],
         "required": true,
+        "skipSort": true,
         "type": "select",
       },
     },
@@ -7853,6 +8078,7 @@ Object {
               "collapsed": true,
               "fields": Array [
                 "type",
+                "test.limit",
                 "rdbms.once.query",
               ],
               "label": "Configure export type",
@@ -7863,6 +8089,14 @@ Object {
                 "rdbmsGrouping",
               ],
               "label": "Would you like to group records?",
+            },
+            Object {
+              "actionId": "mockOutput",
+              "collapsed": true,
+              "fields": Array [
+                "mockOutput",
+              ],
+              "label": "Mock output",
             },
             Object {
               "collapsed": true,
@@ -7903,6 +8137,9 @@ Object {
       "exportOneToMany": Object {
         "formId": "exportOneToMany",
       },
+      "mockOutput": Object {
+        "fieldId": "mockOutput",
+      },
       "rdbms.once.query": Object {
         "fieldId": "rdbms.once.query",
         "visibleWhen": Array [
@@ -7922,6 +8159,9 @@ Object {
       },
       "settings": Object {
         "fieldId": "settings",
+      },
+      "test.limit": Object {
+        "fieldId": "test.limit",
       },
       "type": Object {
         "defaultValue": [Function],
@@ -7943,13 +8183,14 @@ Object {
                 "value": "once",
               },
               Object {
-                "label": "Test – export only 1 record",
+                "label": "Limit – export a set number of records",
                 "value": "test",
               },
             ],
           },
         ],
         "required": true,
+        "skipSort": true,
         "type": "select",
       },
     },
@@ -7976,6 +8217,7 @@ Object {
               "collapsed": true,
               "fields": Array [
                 "type",
+                "test.limit",
                 "rdbms.once.query",
               ],
               "label": "Configure export type",
@@ -7986,6 +8228,14 @@ Object {
                 "rdbmsGrouping",
               ],
               "label": "Would you like to group records?",
+            },
+            Object {
+              "actionId": "mockOutput",
+              "collapsed": true,
+              "fields": Array [
+                "mockOutput",
+              ],
+              "label": "Mock output",
             },
             Object {
               "collapsed": true,
@@ -8141,6 +8391,9 @@ Object {
       "fixed.format": Object {
         "fieldId": "fixed.format",
       },
+      "mockResponseSection": Object {
+        "formId": "mockResponseSection",
+      },
       "settings": Object {
         "fieldId": "settings",
       },
@@ -8186,6 +8439,14 @@ Object {
               ],
               "label": "How would you like the records imported?",
               "type": "indent",
+            },
+            Object {
+              "actionId": "mockResponse",
+              "collapsed": true,
+              "fields": Array [
+                "mockResponseSection",
+              ],
+              "label": "Mock response",
             },
             Object {
               "collapsed": true,
@@ -8323,6 +8584,9 @@ Object {
           },
         ],
       },
+      "mockResponseSection": Object {
+        "formId": "mockResponseSection",
+      },
       "settings": Object {
         "fieldId": "settings",
       },
@@ -8356,6 +8620,14 @@ Object {
                 "dynamodb.updateExpression",
               ],
               "label": "How would you like the records imported?",
+            },
+            Object {
+              "actionId": "mockResponse",
+              "collapsed": true,
+              "fields": Array [
+                "mockResponseSection",
+              ],
+              "label": "Mock response",
             },
             Object {
               "collapsed": true,
@@ -8587,11 +8859,17 @@ Object {
         ],
         "type": "mode",
       },
+      "mockResponseSection": Object {
+        "formId": "mockResponseSection",
+      },
       "s3.bucket": Object {
         "fieldId": "s3.bucket",
       },
       "s3.region": Object {
         "fieldId": "s3.region",
+      },
+      "s3.serverSideEncryptionType": Object {
+        "fieldId": "s3.serverSideEncryptionType",
       },
       "settings": Object {
         "fieldId": "settings",
@@ -8649,6 +8927,14 @@ Object {
                 "file.lookups",
               ],
               "label": "Where would you like the files transferred?",
+            },
+            Object {
+              "actionId": "mockResponse",
+              "collapsed": true,
+              "fields": Array [
+                "mockResponseSection",
+              ],
+              "label": "Mock response",
             },
             Object {
               "collapsed": true,
@@ -9416,6 +9702,9 @@ Object {
         "type": "mode",
         "visible": false,
       },
+      "mockResponseSection": Object {
+        "formId": "mockResponseSection",
+      },
       "settings": Object {
         "fieldId": "settings",
       },
@@ -9592,6 +9881,14 @@ Object {
               "label": "Non-standard API response patterns",
             },
             Object {
+              "actionId": "mockResponse",
+              "collapsed": true,
+              "fields": Array [
+                "mockResponseSection",
+              ],
+              "label": "Mock response",
+            },
+            Object {
               "collapsed": true,
               "fields": Array [
                 "http.ignoreEmptyNodes",
@@ -9645,6 +9942,9 @@ Object {
             ],
           },
         ],
+      },
+      "mockResponseSection": Object {
+        "formId": "mockResponseSection",
       },
       "mongodb.collection": Object {
         "fieldId": "mongodb.collection",
@@ -9704,6 +10004,14 @@ Object {
                 "mongodb.upsert",
               ],
               "label": "How would you like the records imported?",
+            },
+            Object {
+              "actionId": "mockResponse",
+              "collapsed": true,
+              "fields": Array [
+                "mockResponseSection",
+              ],
+              "label": "Mock response",
             },
             Object {
               "collapsed": true,
@@ -10231,6 +10539,9 @@ Object {
         "type": "mode",
         "visible": false,
       },
+      "mockResponseSection": Object {
+        "formId": "mockResponseSection",
+      },
       "sampleData": Object {
         "fieldId": "sampleData",
         "visibleWhenAll": Array [
@@ -10363,6 +10674,14 @@ Object {
               ],
               "label": "Non-standard API response patterns",
               "type": "collapse",
+            },
+            Object {
+              "actionId": "mockResponse",
+              "collapsed": true,
+              "fields": Array [
+                "mockResponseSection",
+              ],
+              "label": "Mock response",
             },
             Object {
               "collapsed": true,
@@ -10596,11 +10915,17 @@ Object {
         ],
         "type": "mode",
       },
+      "mockResponseSection": Object {
+        "formId": "mockResponseSection",
+      },
       "s3.bucket": Object {
         "fieldId": "s3.bucket",
       },
       "s3.region": Object {
         "fieldId": "s3.region",
+      },
+      "s3.serverSideEncryptionType": Object {
+        "fieldId": "s3.serverSideEncryptionType",
       },
       "settings": Object {
         "fieldId": "settings",
@@ -10656,8 +10981,17 @@ Object {
                 "file.xml.body",
                 "file.json.body",
                 "file.lookups",
+                "s3.serverSideEncryptionType",
               ],
               "label": "Where would you like the files transferred?",
+            },
+            Object {
+              "actionId": "mockResponse",
+              "collapsed": true,
+              "fields": Array [
+                "mockResponseSection",
+              ],
+              "label": "Mock response",
             },
             Object {
               "collapsed": true,
@@ -10705,6 +11039,9 @@ Object {
       "dataMappings": Object {
         "formId": "dataMappings",
       },
+      "mockResponseSection": Object {
+        "formId": "mockResponseSection",
+      },
       "sampleData": Object {
         "fieldId": "sampleData",
       },
@@ -10751,6 +11088,14 @@ Object {
               "label": "Do you have a sample destination record?",
             },
             Object {
+              "actionId": "mockResponse",
+              "collapsed": true,
+              "fields": Array [
+                "mockResponseSection",
+              ],
+              "label": "Mock response",
+            },
+            Object {
               "collapsed": true,
               "fields": Array [
                 "advancedSettings",
@@ -10783,6 +11128,7 @@ Object {
       "application": Object {
         "appType": "import",
         "defaultValue": "",
+        "helpKey": "application",
         "id": "application",
         "isLoggable": true,
         "label": "Application",
@@ -10873,13 +11219,17 @@ Object {
       },
     },
     "layout": Object {
-      "fields": Array [
-        "application",
-        "connection",
-        "name",
-        "description",
-        "settings",
+      "containers": Array [
+        Object {
+          "fields": Array [
+            "application",
+            "connection",
+            "name",
+            "description",
+          ],
+        },
       ],
+      "type": "box",
     },
   },
   "init": undefined,
@@ -10987,6 +11337,9 @@ Object {
         ],
         "type": "mode",
         "visible": false,
+      },
+      "mockResponseSection": Object {
+        "formId": "mockResponseSection",
       },
       "salesforce.api": Object {
         "fieldId": "salesforce.api",
@@ -11140,6 +11493,14 @@ Object {
               "label": "How would you like the records imported?",
             },
             Object {
+              "actionId": "mockResponse",
+              "collapsed": true,
+              "fields": Array [
+                "mockResponseSection",
+              ],
+              "label": "Mock response",
+            },
+            Object {
               "collapsed": true,
               "fields": Array [
                 "blobKeyPath",
@@ -11283,6 +11644,9 @@ Object {
         "type": "mode",
         "visible": false,
       },
+      "mockResponseSection": Object {
+        "formId": "mockResponseSection",
+      },
       "netsuite.file.fileType": Object {
         "fieldId": "netsuite.file.fileType",
       },
@@ -11366,6 +11730,14 @@ Object {
                 "netsuite.file.folder",
               ],
               "label": [Function],
+            },
+            Object {
+              "actionId": "mockResponse",
+              "collapsed": true,
+              "fields": Array [
+                "mockResponseSection",
+              ],
+              "label": "Mock response",
             },
             Object {
               "collapsed": true,
@@ -11516,6 +11888,9 @@ Object {
         "type": "mode",
         "visible": false,
       },
+      "mockResponseSection": Object {
+        "formId": "mockResponseSection",
+      },
       "netsuite.file.fileType": Object {
         "fieldId": "netsuite.file.fileType",
       },
@@ -11599,6 +11974,14 @@ Object {
                 "netsuite.file.folder",
               ],
               "label": [Function],
+            },
+            Object {
+              "actionId": "mockResponse",
+              "collapsed": true,
+              "fields": Array [
+                "mockResponseSection",
+              ],
+              "label": "Mock response",
             },
             Object {
               "collapsed": true,
@@ -11730,6 +12113,9 @@ Object {
         ],
         "type": "mode",
         "visible": false,
+      },
+      "mockResponseSection": Object {
+        "formId": "mockResponseSection",
       },
       "salesforce.api": Object {
         "fieldId": "salesforce.api",
@@ -11883,6 +12269,14 @@ Object {
               "label": "How would you like the records imported?",
             },
             Object {
+              "actionId": "mockResponse",
+              "collapsed": true,
+              "fields": Array [
+                "mockResponseSection",
+              ],
+              "label": "Mock response",
+            },
+            Object {
               "collapsed": true,
               "fields": Array [
                 "blobKeyPath",
@@ -11922,6 +12316,9 @@ Object {
       },
       "dataMappings": Object {
         "formId": "dataMappings",
+      },
+      "mockResponseSection": Object {
+        "formId": "mockResponseSection",
       },
       "modelMetadata": Object {
         "fieldId": "modelMetadata",
@@ -12029,6 +12426,14 @@ Object {
               "label": "How would you like the records imported?",
             },
             Object {
+              "actionId": "mockResponse",
+              "collapsed": true,
+              "fields": Array [
+                "mockResponseSection",
+              ],
+              "label": "Mock response",
+            },
+            Object {
               "collapsed": true,
               "fields": Array [
                 "rdbms.bulkInsert.batchSize",
@@ -12091,6 +12496,9 @@ Object {
             ],
           },
         ],
+      },
+      "mockResponseSection": Object {
+        "formId": "mockResponseSection",
       },
       "modelMetadata": Object {
         "fieldId": "modelMetadata",
@@ -12187,6 +12595,14 @@ Object {
                 "rdbms.queryUpdate",
               ],
               "label": "How would you like the records imported?",
+            },
+            Object {
+              "actionId": "mockResponse",
+              "collapsed": true,
+              "fields": Array [
+                "mockResponseSection",
+              ],
+              "label": "Mock response",
             },
             Object {
               "collapsed": true,
@@ -12727,29 +13143,107 @@ Object {
       "name": Object {
         "fieldId": "name",
       },
+      "oauth2.auth.uri": Object {
+        "fieldId": "oauth2.auth.uri",
+      },
+      "oauth2.callbackURL": Object {
+        "fieldId": "oauth2.callbackURL",
+      },
+      "oauth2.clientCredentialsLocation": Object {
+        "fieldId": "oauth2.clientCredentialsLocation",
+      },
       "oauth2.clientId": Object {
         "fieldId": "oauth2.clientId",
       },
       "oauth2.clientSecret": Object {
         "fieldId": "oauth2.clientSecret",
       },
+      "oauth2.failPath": Object {
+        "fieldId": "oauth2.failPath",
+      },
+      "oauth2.failStatusCode": Object {
+        "fieldId": "oauth2.failStatusCode",
+      },
+      "oauth2.failValues": Object {
+        "fieldId": "oauth2.failValues",
+      },
+      "oauth2.grantType": Object {
+        "fieldId": "oauth2.grantType",
+      },
+      "oauth2.revoke.uri": Object {
+        "fieldId": "oauth2.revoke.uri",
+      },
+      "oauth2.token.uri": Object {
+        "fieldId": "oauth2.token.uri",
+      },
+      "oauth2.validDomainNames": Object {
+        "fieldId": "oauth2.validDomainNames",
+      },
+      "oauthOverrides": Object {
+        "formId": "oauthOverrides",
+      },
+      "oauthToken": Object {
+        "formId": "oauthToken",
+      },
+      "provider": Object {
+        "fieldId": "provider",
+      },
     },
     "layout": Object {
       "containers": Array [
         Object {
+          "collapsed": true,
           "fields": Array [
             "name",
+            "provider",
+          ],
+          "label": "General",
+        },
+        Object {
+          "collapsed": true,
+          "fields": Array [
             "oauth2.clientId",
             "oauth2.clientSecret",
             "amazonmws.accessKeyId",
             "amazonmws.secretKey",
+            "oauth2.grantType",
+            "oauth2.clientCredentialsLocation",
+            "oauth2.auth.uri",
+            "oauth2.callbackURL",
+            "oauth2.token.uri",
+            "oauth2.revoke.uri",
+            "oauth2.validDomainNames",
           ],
+          "label": "Configure OAuth 2.0",
+        },
+        Object {
+          "collapsed": true,
+          "fields": Array [
+            "oauthOverrides",
+          ],
+          "label": "OAuth 2.0 overrides",
+        },
+        Object {
+          "collapsed": true,
+          "fields": Array [
+            "oauthToken",
+          ],
+          "label": "Configure token auth",
+        },
+        Object {
+          "collapsed": true,
+          "fields": Array [
+            "oauth2.failStatusCode",
+            "oauth2.failPath",
+            "oauth2.failValues",
+          ],
+          "label": "Non-standard API response patterns",
         },
       ],
-      "type": "box",
+      "type": "collapse",
     },
   },
-  "init": undefined,
+  "init": [Function],
   "optionsHandler": [Function],
   "preSave": [Function],
   "validationHandler": undefined,
@@ -12759,7 +13253,11 @@ Object {
 exports[`getResourceFromAssets load correct form other resource types resouceType integrations 1`] = `
 Object {
   "fieldMeta": Object {
-    "actions": undefined,
+    "actions": Array [
+      Object {
+        "id": "saveandcreateflow",
+      },
+    ],
     "fieldMap": Object {
       "description": Object {
         "fieldId": "description",
@@ -12795,6 +13293,7 @@ Object {
       "application": Object {
         "appType": "export",
         "defaultValue": [Function],
+        "helpKey": "application",
         "id": "application",
         "isLoggable": true,
         "label": "Application",
@@ -12823,8 +13322,6 @@ Object {
             "isNot": Array [
               "",
               "aha",
-              "box",
-              "dropbox",
               "errorception",
               "helpscout",
               "mailparser-io",
@@ -12919,6 +13416,7 @@ Object {
     "fieldMap": Object {
       "application": Object {
         "defaultValue": [Function],
+        "helpKey": "application",
         "id": "application",
         "isLoggable": true,
         "label": "Application",

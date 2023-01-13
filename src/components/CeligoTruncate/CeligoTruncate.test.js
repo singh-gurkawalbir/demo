@@ -1,4 +1,4 @@
-/* global describe, test, expect ,jest */
+
 import React from 'react';
 import { render, screen, waitFor} from '@testing-library/react';
 import CeligoTruncate from '.';

@@ -1,7 +1,8 @@
-/* global describe, expect, test */
+
 import reducer, { selectors } from '.';
 import actions from '../actions';
 import messageStore from '../utils/messageStore';
+import { MAPPING_DATA_TYPES } from '../utils/mapping';
 
 describe('Mappings region selector testcases', () => {
   const flows = [
@@ -225,7 +226,7 @@ describe('Mappings region selector testcases', () => {
     test('should not throw any exception for invalid arguments', () => {
       expect(selector()).toEqual([]);
     });
-    test('should return empty array if importId and flowId are undefined ', () => {
+    test('should return empty array if importId and flowId are undefined', () => {
       expect(selector(state)).toEqual([]);
     });
     test('should return correct import if importId is passed and flowId is undefined', () => {
@@ -272,13 +273,13 @@ describe('Mappings region selector testcases', () => {
     });
     describe('If adaptor type is netsuite', () => {
       test('should return netsuite if adaptor type is NetSuiteDistributedImport', () => {
-        expect(selectors.mappingPreviewType(state, 13)).toEqual('netsuite');
+        expect(selectors.mappingPreviewType(state, 13)).toBe('netsuite');
       });
       test('should return netsuite if adaptor type is NetSuiteImport', () => {
-        expect(selectors.mappingPreviewType(state, 14)).toEqual('netsuite');
+        expect(selectors.mappingPreviewType(state, 14)).toBe('netsuite');
       });
-      test('should return netsuite if adaptor type is NetSuiteImport', () => {
-        expect(selectors.mappingPreviewType(state, 10)).not.toEqual('netsuite');
+      test('should return netsuite if adaptor type is NetSuiteImport1', () => {
+        expect(selectors.mappingPreviewType(state, 10)).not.toBe('netsuite');
       });
     });
     describe('If adaptorType is SalesforceImport', () => {
@@ -334,12 +335,12 @@ describe('Mappings region selector testcases', () => {
         expect(selectors.mappingPreviewType(newState, 'i2')).toBeUndefined();
       });
       test('should return salesforce if record type info is available for the import', () => {
-        expect(selectors.mappingPreviewType(newState, 'i1')).toEqual('salesforce');
+        expect(selectors.mappingPreviewType(newState, 'i1')).toBe('salesforce');
       });
     });
     describe('If import is http', () => {
       test('should return http if http assistant supports mapping preview', () => {
-        expect(selectors.mappingPreviewType(state, 4)).toEqual('http');
+        expect(selectors.mappingPreviewType(state, 4)).toBe('http');
       });
       test('should return undefined if http assistant does not supports mapping preview', () => {
         expect(selectors.mappingPreviewType(state, 3)).toBeUndefined();
@@ -370,7 +371,7 @@ describe('Mappings region selector testcases', () => {
 
   describe('selectors.applicationType test cases', () => {
     test('should not throw any exception for invalid arguments', () => {
-      expect(selectors.applicationType()).toEqual('');
+      expect(selectors.applicationType()).toBe('');
     });
     const newState = {
       ...state,
@@ -411,10 +412,10 @@ describe('Mappings region selector testcases', () => {
 
     describe('adaptor type is WebhookExport', () => {
       test('should return webhook provider for the export', () => {
-        expect(selectors.applicationType(state, 'exports', 16)).toEqual('webhookprovider');
+        expect(selectors.applicationType(state, 'exports', 16)).toBe('webhookprovider');
       });
       test('should return staged value of the resource with path /webhook/provider', () => {
-        expect(selectors.applicationType(newState, 'exports', 16)).toEqual('webhookstagedprovider');
+        expect(selectors.applicationType(newState, 'exports', 16)).toBe('webhookstagedprovider');
       });
       test('should return undefined if export does not have webhook provider and is not staged', () => {
         expect(selectors.applicationType(state, 'exports', 17)).toBeFalsy();
@@ -422,48 +423,48 @@ describe('Mappings region selector testcases', () => {
     });
 
     test('should return rest if adaptor type is http and form type is rest', () => {
-      expect(selectors.applicationType(state, 'exports', 19)).toEqual('rest');
+      expect(selectors.applicationType(state, 'exports', 19)).toBe('rest');
     });
 
     describe('resource is data loader', () => {
       test('should return empty string in case of data loader', () => {
-        expect(selectors.applicationType(state, 'exports', 2)).toEqual('');
+        expect(selectors.applicationType(state, 'exports', 2)).toBe('');
       });
       test('should return empty string if a resource is patched to be a data loader', () => {
-        expect(selectors.applicationType(newState, 'exports', 10)).toEqual('');
+        expect(selectors.applicationType(newState, 'exports', 10)).toBe('');
       });
     });
     describe('adaptor type is rdbms', () => {
       test('should return correct connection rdbms type', () => {
-        expect(selectors.applicationType(state, 'exports', 20)).toEqual('rdbmsconnection');
+        expect(selectors.applicationType(state, 'exports', 20)).toBe('rdbmsconnection');
       });
       test('should return correct connection rdbms type from staged resource with connectionId patched', () => {
-        expect(selectors.applicationType(newState, 'exports', 23)).toEqual('rdbmsconnection');
+        expect(selectors.applicationType(newState, 'exports', 23)).toBe('rdbmsconnection');
       });
     });
     describe('resource is a connection', () => {
       test('should return connection type', () => {
-        expect(selectors.applicationType(state, 'connections', 7)).toEqual('http');
+        expect(selectors.applicationType(state, 'connections', 7)).toBe('http');
       });
       test('should return staged connection type', () => {
-        expect(selectors.applicationType(newState, 'connections', 2)).toEqual('rest');
+        expect(selectors.applicationType(newState, 'connections', 2)).toBe('rest');
       });
       test('should return connection rdbms type if connection is of type rdbms', () => {
-        expect(selectors.applicationType(newState, 'connections', 8)).toEqual('rdbmsconnection');
+        expect(selectors.applicationType(newState, 'connections', 8)).toBe('rdbmsconnection');
       });
       test('should return connection http type if connection is of type http and http connectorId exists', () => {
-        expect(selectors.applicationType(newState, 'connections', 9)).toEqual('http');
+        expect(selectors.applicationType(newState, 'connections', 9)).toBe('http');
       });
     });
 
     test('should replace HTTP with REST if adaptor type starts with HTTP and form type is rest', () => {
-      expect(selectors.applicationType(state, 'exports', 21)).toEqual('RESTExport');
+      expect(selectors.applicationType(state, 'exports', 21)).toBe('RESTExport');
     });
     test('should return assistant if resource has assistant prop', () => {
-      expect(selectors.applicationType(state, 'exports', 22)).toEqual('square');
+      expect(selectors.applicationType(state, 'exports', 22)).toBe('square');
     });
     test('should return empty string if staged resource exists but resource does not exist', () => {
-      expect(selectors.applicationType(newState, 'exports', 44)).toEqual('');
+      expect(selectors.applicationType(newState, 'exports', 44)).toBe('');
     });
   });
 
@@ -802,8 +803,8 @@ describe('Mappings region selector testcases', () => {
 
   describe('selectors.isMapper2Supported test cases', () => {
     test('should not throw any exception for invalid arguments', () => {
-      expect(selectors.isMapper2Supported()).toEqual(false);
-      expect(selectors.isMapper2Supported(null)).toEqual(false);
+      expect(selectors.isMapper2Supported()).toBe(false);
+      expect(selectors.isMapper2Supported(null)).toBe(false);
     });
     test('should return false for exports', () => {
       const state = {
@@ -824,15 +825,16 @@ describe('Mappings region selector testcases', () => {
         },
       };
 
-      expect(selectors.isMapper2Supported(state)).toEqual(false);
+      expect(selectors.isMapper2Supported(state)).toBe(false);
     });
-    test('should return false for IAs', () => {
+    test('should return false for IAs if the doc does not have mappings2', () => {
       const state = {
         data: {
           resources: {
             imports: [{
               _id: 'imp-123',
               _connectorId: 'test123',
+              adaptorType: 'HTTPImport',
             }],
           },
         },
@@ -845,7 +847,30 @@ describe('Mappings region selector testcases', () => {
         },
       };
 
-      expect(selectors.isMapper2Supported(state)).toEqual(false);
+      expect(selectors.isMapper2Supported(state)).toBe(false);
+    });
+    test('should return true for IAs if the doc has mappings2', () => {
+      const state = {
+        data: {
+          resources: {
+            imports: [{
+              _id: 'imp-123',
+              _connectorId: 'test123',
+              adaptorType: 'HTTPImport',
+              mappings: [{generate: 'id', extract: '$.id', dataType: MAPPING_DATA_TYPES.STRING}],
+            }],
+          },
+        },
+        session: {
+          mapping: {
+            mapping: {
+              importId: 'imp-123',
+            },
+          },
+        },
+      };
+
+      expect(selectors.isMapper2Supported(state)).toBe(true);
     });
     test('should return false for db imports', () => {
       const state = {
@@ -866,7 +891,7 @@ describe('Mappings region selector testcases', () => {
         },
       };
 
-      expect(selectors.isMapper2Supported(state)).toEqual(false);
+      expect(selectors.isMapper2Supported(state)).toBe(false);
     });
     test('should return true for file imports', () => {
       const state = {
@@ -887,7 +912,7 @@ describe('Mappings region selector testcases', () => {
         },
       };
 
-      expect(selectors.isMapper2Supported(state)).toEqual(true);
+      expect(selectors.isMapper2Supported(state)).toBe(true);
     });
     test('should return true for http/rest import', () => {
       const state = {
@@ -908,14 +933,14 @@ describe('Mappings region selector testcases', () => {
         },
       };
 
-      expect(selectors.isMapper2Supported(state)).toEqual(true);
+      expect(selectors.isMapper2Supported(state)).toBe(true);
     });
   });
 
   describe('selectors.resourceHasMappings test cases', () => {
     test('should not throw any exception for invalid arguments', () => {
-      expect(selectors.resourceHasMappings()).toEqual(false);
-      expect(selectors.resourceHasMappings(null, null)).toEqual(false);
+      expect(selectors.resourceHasMappings()).toBe(false);
+      expect(selectors.resourceHasMappings(null, null)).toBe(false);
     });
     test('should return false if neither v1 nor v2 mappings exist', () => {
       const state = {
@@ -931,7 +956,7 @@ describe('Mappings region selector testcases', () => {
         },
       };
 
-      expect(selectors.resourceHasMappings(state, 'imp-123')).toEqual(false);
+      expect(selectors.resourceHasMappings(state, 'imp-123')).toBe(false);
     });
     test('should return true if both v1 and v2 mappings exist', () => {
       const state = {
@@ -956,7 +981,7 @@ describe('Mappings region selector testcases', () => {
         },
       };
 
-      expect(selectors.resourceHasMappings(state, 'imp-123')).toEqual(true);
+      expect(selectors.resourceHasMappings(state, 'imp-123')).toBe(true);
     });
     test('should return true if only v1 mappings exist', () => {
       const state = {
@@ -976,7 +1001,7 @@ describe('Mappings region selector testcases', () => {
         },
       };
 
-      expect(selectors.resourceHasMappings(state, 'imp-123')).toEqual(true);
+      expect(selectors.resourceHasMappings(state, 'imp-123')).toBe(true);
     });
     test('should return true if only v2 mappings exist', () => {
       const state = {
@@ -998,7 +1023,139 @@ describe('Mappings region selector testcases', () => {
         },
       };
 
-      expect(selectors.resourceHasMappings(state, 'imp-123')).toEqual(true);
+      expect(selectors.resourceHasMappings(state, 'imp-123')).toBe(true);
+    });
+  });
+
+  describe('selectors.flowHasMappings test cases', () => {
+    test('should not throw any exception for invalid arguments', () => {
+      expect(selectors.flowHasMappings()).toBe(false);
+      expect(selectors.flowHasMappings(null, null)).toBe(false);
+    });
+    test('should return false if the flow has neither page processors nor routers', () => {
+      const state = {
+        data: {
+          resources: {
+            flows: [
+              {
+                _id: 'flow-id-1',
+              },
+            ],
+          },
+        },
+      };
+
+      expect(selectors.flowHasMappings(state, 'flow-id-1')).toBe(false);
+    });
+    test('should return false if the flow has page processors without mappings', () => {
+      const state = {
+        data: {
+          resources: {
+            flows: [
+              {
+                _id: 'flow-id-1',
+                pageProcessors: [{ type: 'import', _importId: 'import-id-1'}],
+              },
+            ],
+            imports: [{
+              _id: 'import-id-1',
+              name: 'Test import',
+              mapping: {},
+              mappings: [],
+            }],
+          },
+        },
+      };
+
+      expect(selectors.flowHasMappings(state, 'flow-id-1')).toBe(false);
+    });
+    test('should return true if the flow has page processors with mappings', () => {
+      const state = {
+        data: {
+          resources: {
+            flows: [
+              {
+                _id: 'flow-id-1',
+                pageProcessors: [{ type: 'import', _importId: 'import-id-1'}],
+              },
+            ],
+            imports: [{
+              _id: 'import-id-1',
+              name: 'Test import',
+              mapping: {},
+              mappings: [
+                {extract: '$.name', generate: 'name'},
+                {extract: '$.age', generate: 'age'},
+              ],
+            }],
+          },
+        },
+      };
+
+      expect(selectors.flowHasMappings(state, 'flow-id-1')).toBe(true);
+    });
+    test('should return false if the flow has routers without mappings', () => {
+      const state = {
+        data: {
+          resources: {
+            flows: [
+              {
+                _id: 'flow-id-1',
+                routers: [{
+                  branches: [{
+                    name: 'Branch 1.0',
+                    pageProcessors: [{ type: 'import', _importId: 'import-id-1'}],
+                  }, {
+                    name: 'Branch 1.1',
+                    pageProcessors: [{ type: 'import', _importId: 'import-id-2'}],
+                  }],
+                }],
+              },
+            ],
+            imports: [{
+              _id: 'import-id-1',
+              name: 'Test import',
+              mapping: {},
+              mappings: [],
+            }],
+          },
+        },
+      };
+
+      expect(selectors.flowHasMappings(state, 'flow-id-1')).toBe(false);
+    });
+    test('should return true if the flow has routers with mappings', () => {
+      const state = {
+        data: {
+          resources: {
+            flows: [
+              {
+                _id: 'flow-id-1',
+                routers: [{
+                  branches: [{
+                    name: 'Branch 1.0',
+                    pageProcessors: [{ type: 'import', _importId: 'import-id-1'}],
+                  }, {
+                    name: 'Branch 1.1',
+                    pageProcessors: [{ type: 'import', _importId: 'import-id-2'}],
+                  }],
+                }],
+              },
+            ],
+            imports: [{
+              _id: 'import-id-1',
+              name: 'Test import',
+              mapping: {},
+              mappings: [
+                {extract: '$.name', generate: 'name'},
+                {extract: '$.age', generate: 'age'},
+              ],
+            }],
+          },
+        },
+      };
+
+      expect(selectors.flowHasMappings(state, 'flow-id-1')).toBe(true);
     });
   });
 
@@ -1229,6 +1386,653 @@ describe('Mappings region selector testcases', () => {
         message: messageStore('MAPPER2_BANNER_WARNING'),
         variant: 'warning',
       });
+    });
+  });
+
+  describe('selectors.filteredV2TreeData', () => {
+    test('should return empty array if state does not exist', () => {
+      expect(selectors.filteredV2TreeData()).toEqual({filteredTreeData: []});
+      expect(selectors.filteredV2TreeData(null)).toEqual({filteredTreeData: []});
+      expect(selectors.filteredV2TreeData({})).toEqual({filteredTreeData: []});
+    });
+    test('should return actual v2TreeData if no filter or All Fields filter is applied', () => {
+      const state = {
+        session: {
+          mapping: {
+            mapping: {
+              importId: 'imp-123',
+              v2TreeData: [
+                {
+                  key: 'key1',
+                  dataType: MAPPING_DATA_TYPES.STRING,
+                  generate: 'fname',
+                  extract: '$.fname',
+                },
+              ],
+            },
+          },
+        },
+      };
+      const expectedData = [
+        {
+          key: 'key1',
+          dataType: MAPPING_DATA_TYPES.STRING,
+          generate: 'fname',
+          extract: '$.fname',
+        },
+      ];
+
+      expect(selectors.filteredV2TreeData(state)).toEqual({filteredTreeData: expectedData});
+    });
+    test('should return filtered v2TreeData if Required Fields filter is applied', () => {
+      const state = {
+        session: {
+          mapping: {
+            mapping: {
+              importId: 'imp-123',
+              filter: ['required'],
+              v2TreeData: [
+                {
+                  key: 'key1',
+                  dataType: MAPPING_DATA_TYPES.STRING,
+                  generate: 'id',
+                  extract: 'id',
+                  isRequired: true,
+                },
+                {
+                  key: 'key2',
+                  dataType: MAPPING_DATA_TYPES.NUMBER,
+                  generate: 'age',
+                  extract: 'age',
+                },
+                {
+                  key: 'key3',
+                  dataType: MAPPING_DATA_TYPES.OBJECT,
+                  generate: 'parent1',
+                  isRequired: true,
+                  children: [
+                    {
+                      key: 'c1',
+                      dataType: MAPPING_DATA_TYPES.STRING,
+                      generate: 'child1',
+                      extract: 'child1',
+                      isRequired: true,
+                    },
+                    {
+                      key: 'c2',
+                      dataType: MAPPING_DATA_TYPES.STRING,
+                      generate: 'child2',
+                      extract: 'child2',
+                      isRequired: false,
+                    },
+                  ],
+                },
+                {
+                  key: 'key4',
+                  dataType: MAPPING_DATA_TYPES.OBJECTARRAY,
+                  generate: 'parent2',
+                  extract: 'parent2',
+                  isRequired: true,
+                  children: [
+                    {
+                      key: 'c3',
+                      dataType: MAPPING_DATA_TYPES.STRING,
+                      generate: 'child3',
+                      extract: 'child3',
+                      isRequired: true,
+                      parentKey: 'key4',
+                    },
+                    {
+                      key: 'c4',
+                      dataType: MAPPING_DATA_TYPES.STRING,
+                      generate: 'child4',
+                      extract: 'child4',
+                      isRequired: false,
+                      parentKey: 'key4',
+                    },
+                  ],
+                },
+              ],
+            },
+          },
+        },
+      };
+      const expectedData = [
+        {
+          key: 'key1',
+          dataType: MAPPING_DATA_TYPES.STRING,
+          generate: 'id',
+          extract: 'id',
+          isRequired: true,
+        },
+        {
+          key: 'key3',
+          dataType: MAPPING_DATA_TYPES.OBJECT,
+          generate: 'parent1',
+          isRequired: true,
+          children: [
+            {
+              key: 'c1',
+              dataType: MAPPING_DATA_TYPES.STRING,
+              generate: 'child1',
+              extract: 'child1',
+              isRequired: true,
+            },
+          ],
+        },
+        {
+          key: 'key4',
+          dataType: MAPPING_DATA_TYPES.OBJECTARRAY,
+          generate: 'parent2',
+          extract: 'parent2',
+          isRequired: true,
+          children: [
+            {
+              key: 'c3',
+              dataType: MAPPING_DATA_TYPES.STRING,
+              generate: 'child3',
+              extract: 'child3',
+              isRequired: true,
+              parentKey: 'key4',
+            },
+          ],
+        },
+      ];
+
+      expect(selectors.filteredV2TreeData(state)).toEqual({filteredTreeData: expectedData});
+    });
+    test('should return filtered v2TreeData if Mapped Fields filter is applied', () => {
+      const state = {
+        session: {
+          mapping: {
+            mapping: {
+              importId: 'imp-123',
+              filter: ['mapped'],
+              v2TreeData: [
+                {
+                  key: 'key1',
+                  dataType: MAPPING_DATA_TYPES.STRING,
+                  generate: 'id',
+                  extract: 'id',
+                },
+                {
+                  key: 'key2',
+                  dataType: MAPPING_DATA_TYPES.STRING,
+                  generate: 'fname',
+                },
+                {
+                  key: 'key3',
+                  dataType: MAPPING_DATA_TYPES.OBJECT,
+                  generate: 'parent1',
+                  children: [
+                    {
+                      key: 'c1',
+                      dataType: MAPPING_DATA_TYPES.STRING,
+                      generate: 'child1',
+                      extract: 'child1',
+                    },
+                    {
+                      key: 'c2',
+                      dataType: MAPPING_DATA_TYPES.STRING,
+                      generate: 'child2',
+                    },
+                  ],
+                },
+                {
+                  key: 'key4',
+                  dataType: MAPPING_DATA_TYPES.OBJECTARRAY,
+                  generate: 'parent2',
+                  children: [
+                    {
+                      key: 'c3',
+                      dataType: MAPPING_DATA_TYPES.STRING,
+                      generate: 'child3',
+                      extract: 'child3',
+                      parentKey: 'key4',
+                    },
+                    {
+                      key: 'c4',
+                      dataType: MAPPING_DATA_TYPES.STRING,
+                      generate: 'child4',
+                      parentKey: 'key4',
+                    },
+                  ],
+                },
+                {
+                  key: 'key5',
+                  dataType: MAPPING_DATA_TYPES.OBJECTARRAY,
+                  generate: 'parent3',
+                  activeTab: 1,
+                  extractsArrayHelper: [
+                    {
+                      extract: 'tab1',
+                    },
+                    {
+                      extract: 'tab2',
+                    },
+                  ],
+                  children: [
+                    {
+                      key: 'c0',
+                      isTabNode: true,
+                      parentKey: 'key5',
+                    },
+                    {
+                      key: 'c5',
+                      dataType: MAPPING_DATA_TYPES.STRING,
+                      generate: 'child5',
+                      extract: 'tab1.child5',
+                      parentKey: 'key5',
+                      parentExtract: 'tab1',
+                    },
+                    {
+                      key: 'c6',
+                      dataType: MAPPING_DATA_TYPES.STRING,
+                      generate: 'child6',
+                      parentKey: 'key5',
+                      parentExtract: 'tab2',
+                      className: 'hideRow',
+                      hidden: true,
+                    },
+                  ],
+                },
+              ],
+            },
+          },
+        },
+      };
+      const expectedData = [
+        {
+          key: 'key1',
+          dataType: MAPPING_DATA_TYPES.STRING,
+          generate: 'id',
+          extract: 'id',
+        },
+        {
+          key: 'key3',
+          dataType: MAPPING_DATA_TYPES.OBJECT,
+          generate: 'parent1',
+          children: [
+            {
+              key: 'c1',
+              dataType: MAPPING_DATA_TYPES.STRING,
+              generate: 'child1',
+              extract: 'child1',
+            },
+          ],
+        },
+        {
+          key: 'key4',
+          dataType: MAPPING_DATA_TYPES.OBJECTARRAY,
+          generate: 'parent2',
+          extractsWithoutMappings: [],
+          children: [
+            {
+              key: 'c3',
+              dataType: MAPPING_DATA_TYPES.STRING,
+              generate: 'child3',
+              extract: 'child3',
+              parentKey: 'key4',
+            },
+          ],
+        },
+        {
+          key: 'key5',
+          dataType: MAPPING_DATA_TYPES.OBJECTARRAY,
+          generate: 'parent3',
+          activeTab: 0,
+          extractsWithoutMappings: ['tab2'],
+          extractsArrayHelper: [
+            {
+              extract: 'tab1',
+            },
+            {
+              extract: 'tab2',
+            },
+          ],
+          children: [
+            {
+              key: 'c0',
+              isTabNode: true,
+              parentKey: 'key5',
+            },
+            {
+              key: 'c5',
+              dataType: MAPPING_DATA_TYPES.STRING,
+              generate: 'child5',
+              extract: 'tab1.child5',
+              parentKey: 'key5',
+              parentExtract: 'tab1',
+            },
+          ],
+        },
+      ];
+
+      expect(selectors.filteredV2TreeData(state)).toEqual({filteredTreeData: expectedData});
+    });
+    test('should return filtered v2TreeData if both filters are applied', () => {
+      const state = {
+        session: {
+          mapping: {
+            mapping: {
+              importId: 'imp-123',
+              filter: ['required', 'mapped'],
+              v2TreeData: [
+                {
+                  key: 'key1',
+                  dataType: MAPPING_DATA_TYPES.STRING,
+                  generate: 'id',
+                  isRequired: true,
+                },
+                {
+                  key: 'key2',
+                  dataType: MAPPING_DATA_TYPES.STRING,
+                  generate: 'fname',
+                  extract: 'fname',
+                },
+                {
+                  key: 'key3',
+                  dataType: MAPPING_DATA_TYPES.OBJECT,
+                  generate: 'parent1',
+                  isRequired: true,
+                  children: [
+                    {
+                      key: 'c1',
+                      dataType: MAPPING_DATA_TYPES.STRING,
+                      generate: 'child1',
+                      isRequired: true,
+                    },
+                    {
+                      key: 'c2',
+                      dataType: MAPPING_DATA_TYPES.STRING,
+                      generate: 'child2',
+                      extract: 'child2',
+                    },
+                    {
+                      key: 'c3',
+                      dataType: MAPPING_DATA_TYPES.STRING,
+                      generate: 'child3',
+                    },
+                  ],
+                },
+                {
+                  key: 'key4',
+                  dataType: MAPPING_DATA_TYPES.OBJECTARRAY,
+                  generate: 'parent2',
+                  isRequired: true,
+                  children: [
+                    {
+                      key: 'c4',
+                      dataType: MAPPING_DATA_TYPES.STRING,
+                      generate: 'child4',
+                      extract: 'child4',
+                      parentKey: 'key4',
+                      isRequired: true,
+                    },
+                    {
+                      key: 'c5',
+                      dataType: MAPPING_DATA_TYPES.STRING,
+                      generate: 'child5',
+                      parentKey: 'key4',
+                    },
+                  ],
+                },
+                {
+                  key: 'key5',
+                  dataType: MAPPING_DATA_TYPES.OBJECTARRAY,
+                  generate: 'parent3',
+                  activeTab: 1,
+                  extractsArrayHelper: [
+                    {
+                      extract: 'tab1',
+                    },
+                    {
+                      extract: 'tab2',
+                    },
+                  ],
+                  children: [
+                    {
+                      key: 'c0',
+                      isTabNode: true,
+                      parentKey: 'key5',
+                    },
+                    {
+                      key: 'c6',
+                      dataType: MAPPING_DATA_TYPES.STRING,
+                      generate: 'child6',
+                      extract: 'tab1.child6',
+                      parentKey: 'key5',
+                      parentExtract: 'tab1',
+                    },
+                    {
+                      key: 'c7',
+                      dataType: MAPPING_DATA_TYPES.STRING,
+                      generate: 'child7',
+                      parentKey: 'key5',
+                      parentExtract: 'tab2',
+                      className: 'hideRow',
+                      hidden: true,
+                    },
+                  ],
+                },
+              ],
+            },
+          },
+        },
+      };
+      const expectedData = [
+        {
+          key: 'key1',
+          dataType: MAPPING_DATA_TYPES.STRING,
+          generate: 'id',
+          isRequired: true,
+        },
+        {
+          key: 'key2',
+          dataType: MAPPING_DATA_TYPES.STRING,
+          generate: 'fname',
+          extract: 'fname',
+        },
+        {
+          key: 'key3',
+          dataType: MAPPING_DATA_TYPES.OBJECT,
+          generate: 'parent1',
+          isRequired: true,
+          children: [
+            {
+              key: 'c1',
+              dataType: MAPPING_DATA_TYPES.STRING,
+              generate: 'child1',
+              isRequired: true,
+            },
+            {
+              key: 'c2',
+              dataType: MAPPING_DATA_TYPES.STRING,
+              generate: 'child2',
+              extract: 'child2',
+            },
+          ],
+        },
+        {
+          key: 'key4',
+          dataType: MAPPING_DATA_TYPES.OBJECTARRAY,
+          generate: 'parent2',
+          isRequired: true,
+          extractsWithoutMappings: [],
+          children: [
+            {
+              key: 'c4',
+              dataType: MAPPING_DATA_TYPES.STRING,
+              generate: 'child4',
+              extract: 'child4',
+              parentKey: 'key4',
+              isRequired: true,
+            },
+          ],
+        },
+        {
+          key: 'key5',
+          dataType: MAPPING_DATA_TYPES.OBJECTARRAY,
+          generate: 'parent3',
+          activeTab: 0,
+          extractsWithoutMappings: ['tab2'],
+          extractsArrayHelper: [
+            {
+              extract: 'tab1',
+            },
+            {
+              extract: 'tab2',
+            },
+          ],
+          children: [
+            {
+              key: 'c0',
+              isTabNode: true,
+              parentKey: 'key5',
+            },
+            {
+              key: 'c6',
+              dataType: MAPPING_DATA_TYPES.STRING,
+              generate: 'child6',
+              extract: 'tab1.child6',
+              parentKey: 'key5',
+              parentExtract: 'tab1',
+            },
+          ],
+        },
+      ];
+
+      expect(selectors.filteredV2TreeData(state)).toEqual({filteredTreeData: expectedData});
+    });
+    test('should correctly return the search count and expanded keys if search key is present', () => {
+      const state = {
+        session: {
+          mapping: {
+            mapping: {
+              importId: 'imp-123',
+              searchKey: 'parent1',
+              v2TreeData: [
+                {
+                  key: 'key1',
+                  dataType: MAPPING_DATA_TYPES.STRING,
+                  generate: 'id',
+                  isRequired: true,
+                },
+                {
+                  key: 'key2',
+                  dataType: MAPPING_DATA_TYPES.STRING,
+                  generate: 'fname',
+                  extract: 'fname',
+                },
+                {
+                  key: 'key3',
+                  dataType: MAPPING_DATA_TYPES.OBJECT,
+                  generate: 'parent1',
+                  isRequired: true,
+                  children: [
+                    {
+                      key: 'c1',
+                      dataType: MAPPING_DATA_TYPES.STRING,
+                      generate: 'child1',
+                      isRequired: true,
+                    },
+                    {
+                      key: 'c2',
+                      dataType: MAPPING_DATA_TYPES.STRING,
+                      generate: 'child2',
+                      extract: 'child2',
+                    },
+                    {
+                      key: 'c3',
+                      dataType: MAPPING_DATA_TYPES.STRING,
+                      generate: 'child3',
+                    },
+                  ],
+                },
+                {
+                  key: 'key4',
+                  dataType: MAPPING_DATA_TYPES.OBJECT,
+                  generate: 'parent2',
+                  isRequired: true,
+                  children: [
+                    {
+                      key: 'c4',
+                      dataType: MAPPING_DATA_TYPES.STRING,
+                      generate: 'child4',
+                      extract: 'child4',
+                      parentKey: 'key4',
+                      isRequired: true,
+                    },
+                    {
+                      key: 'c5',
+                      dataType: MAPPING_DATA_TYPES.OBJECT,
+                      generate: 'child5',
+                      parentKey: 'key4',
+                      children: [{
+                        key: 'c6',
+                        dataType: MAPPING_DATA_TYPES.STRING,
+                        generate: 'parent1',
+                        extract: 'child6',
+                        parentKey: 'c5',
+                      }],
+                    },
+                  ],
+                },
+              ],
+            },
+          },
+        },
+      };
+      const expectedData = [
+        {
+          key: 'key3',
+          dataType: MAPPING_DATA_TYPES.OBJECT,
+          generate: 'parent1',
+          isRequired: true,
+          children: [
+            {
+              key: 'c1',
+              dataType: MAPPING_DATA_TYPES.STRING,
+              generate: 'child1',
+              isRequired: true,
+            },
+            {
+              key: 'c2',
+              dataType: MAPPING_DATA_TYPES.STRING,
+              generate: 'child2',
+              extract: 'child2',
+            },
+            {
+              key: 'c3',
+              dataType: MAPPING_DATA_TYPES.STRING,
+              generate: 'child3',
+            },
+          ],
+        },
+        {
+          key: 'key4',
+          dataType: MAPPING_DATA_TYPES.OBJECT,
+          generate: 'parent2',
+          isRequired: true,
+          children: [
+            {
+              key: 'c5',
+              dataType: MAPPING_DATA_TYPES.OBJECT,
+              generate: 'child5',
+              parentKey: 'key4',
+              children: [{
+                key: 'c6',
+                dataType: MAPPING_DATA_TYPES.STRING,
+                generate: 'parent1',
+                extract: 'child6',
+                parentKey: 'c5',
+              }],
+            },
+          ],
+        },
+      ];
+
+      expect(selectors.filteredV2TreeData(state)).toEqual({filteredTreeData: expectedData, searchCount: 2, expandedKeys: ['c5', 'key4']});
     });
   });
 });

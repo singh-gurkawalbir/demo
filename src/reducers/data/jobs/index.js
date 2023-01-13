@@ -1,8 +1,8 @@
 import produce from 'immer';
-import shortid from 'shortid';
 import { groupBy } from 'lodash';
 import { createSelector } from 'reselect';
 import cloneDeep from 'lodash/cloneDeep';
+import { generateId } from '../../../utils/string';
 import actionTypes from '../../../actions/types';
 import {
   JOB_TYPES,
@@ -40,7 +40,7 @@ function getChildJobIndexDetails(jobs, parentJobId, jobId) {
 
 function parseJobErrors(collection) {
   const errors = (collection || []).map(je => ({
-    _id: shortid.generate(),
+    _id: generateId(),
     ...je,
   }));
   const errorsGroupedByRetryId = groupBy(errors, je => je._retryId || je._id);
@@ -607,6 +607,13 @@ export default (state = DEFAULT_STATE, action) => {
         break;
       }
 
+      case actionTypes.JOB.PURGE.SUCCESS:
+        draft.purgeFilesStatus = 'success';
+        break;
+      case actionTypes.JOB.PURGE.CLEAR:
+        delete draft.purgeFilesStatus;
+        break;
+
       default:
     }
   });
@@ -935,5 +942,7 @@ selectors.jobErrorRetryObject = (state, retryId) => {
 };
 
 selectors.isFlowJobsCollectionLoading = state => state?.status === 'loading';
+
+selectors.isPurgeFilesSuccess = state => state?.purgeFilesStatus === 'success';
 
 // #endregion

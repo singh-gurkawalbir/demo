@@ -1,4 +1,4 @@
-/* global describe, expect, test, beforeAll */
+
 import reducer, { selectors } from '.';
 import actions from '../actions';
 import { FILTER_KEYS } from '../utils/errorManagement';
@@ -786,7 +786,7 @@ describe('Error Management region selector testcases', () => {
         ]
       );
     });
-    test('should return the required type of jobs(flows)', () => {
+    test('should return the required type of jobs(flows) duplicate', () => {
       expect(selectors.allJobs(state, {type: JOB_TYPES.BULK_RETRY})).toEqual([
         {
           type: JOB_TYPES.BULK_RETRY,
@@ -1244,7 +1244,7 @@ describe('Error Management region selector testcases', () => {
       expect(selectors.isAllErrorsSelectedInCurrPage(sampleState, { flowId, resourceId })).toBeTruthy();
       expect(selectors.isAllErrorsSelectedInCurrPage(sampleState, { flowId, resourceId, isResolved: true })).toBeTruthy();
     });
-    test('should return false if there is search filter and all the filtered errors in the current page are not selected ', () => {
+    test('should return false if there is search filter and all the filtered errors in the current page are not selected', () => {
       const sampleState = {
         session: {
           errorManagement: {
@@ -1287,7 +1287,7 @@ describe('Error Management region selector testcases', () => {
       expect(selectors.isAllErrorsSelectedInCurrPage(sampleState, { flowId, resourceId })).toBeFalsy();
       expect(selectors.isAllErrorsSelectedInCurrPage(sampleState, { flowId, resourceId, isResolved: true })).toBeFalsy();
     });
-    test('should return true if there is search filter and all the filtered errors in the current page are selected ', () => {
+    test('should return true if there is search filter and all the filtered errors in the current page are selected', () => {
       const sampleState = {
         session: {
           errorManagement: {
@@ -2175,6 +2175,21 @@ describe('Error Management region selector testcases', () => {
                 name: 'Raghuvamsi C',
               },
             },
+            {
+              _id: '5f770d4b96ae3b4bf0fddeff',
+              accepted: true,
+              accessLevel: 'monitor',
+              integrationAccessLevel: [
+                {
+                  _integrationId: '5e44ee816fb284424f693b43',
+                  accessLevel: 'manage',
+                },
+              ],
+              sharedWithUser: {
+                _id: '5f770d4b96ae3b4bf0fdd888',
+                email: 'useremail@celigo.com',
+              },
+            },
           ],
           accounts: [
             {
@@ -2183,50 +2198,59 @@ describe('Error Management region selector testcases', () => {
             },
           ],
         },
-        data: {
-          resources: {
-            flows: [{
-              _id: 'flow-123',
-              _integrationId: '5e44ee816fb284424f693b43',
-              name: 'test flow',
-            }],
-          },
-          integrationAShares: {
-            '5e44ee816fb284424f693b43': [
-              {
-                _id: '5f7011605b2e3244837309f9',
-                accepted: true,
-                accessLevel: 'monitor',
-                sharedWithUser: {
-                  _id: '5f6882679daecd32740e2c38',
-                  email: 'raghuvamsi.chandrabhatla+3@celigo.com',
-                  name: 'Raghuvamsi4 Chandrabhatla',
-                },
-              },
-              {
-                _id: '5f72fae75b2e32448373575e',
-                accepted: true,
-                sharedWithUser: {
-                  _id: '5f686ef49daecd32740e2710',
-                  email: 'raghuvamsi.chandrabhatla+2@celigo.com',
-                  name: 'Raghuvamsi',
-                },
-                accessLevel: 'monitor',
-              },
-              {
-                _id: '5f770d4b96ae3b4bf0fdd8f1',
-                accepted: true,
-                accessLevel: 'monitor',
-                sharedWithUser: {
-                  _id: '5f770d4b96ae3b4bf0fdd8ee',
-                  email: 'raghuvamsi.chandrabhatla+6@celigo.com',
-                  name: 'Raghuvamsi C',
-                },
-              },
-            ],
-          },
-        },
         debug: false,
+      },
+      data: {
+        resources: {
+          flows: [{
+            _id: 'flow-123',
+            _integrationId: '5e44ee816fb284424f693b43',
+            name: 'test flow',
+          }],
+        },
+        integrationAShares: {
+          '5e44ee816fb284424f693b43': [
+            {
+              _id: '5f7011605b2e3244837309f9',
+              accepted: true,
+              accessLevel: 'monitor',
+              sharedWithUser: {
+                _id: '5f6882679daecd32740e2c38',
+                email: 'raghuvamsi.chandrabhatla+3@celigo.com',
+                name: 'Raghuvamsi4 Chandrabhatla',
+              },
+            },
+            {
+              _id: '5f72fae75b2e32448373575e',
+              accepted: true,
+              sharedWithUser: {
+                _id: '5f686ef49daecd32740e2710',
+                email: 'raghuvamsi.chandrabhatla+2@celigo.com',
+                name: 'Raghuvamsi',
+              },
+              accessLevel: 'monitor',
+            },
+            {
+              _id: '5f770d4b96ae3b4bf0fdd8f1',
+              accepted: true,
+              accessLevel: 'monitor',
+              sharedWithUser: {
+                _id: '5f770d4b96ae3b4bf0fdd8ee',
+                email: 'raghuvamsi.chandrabhatla+6@celigo.com',
+                name: 'Raghuvamsi C',
+              },
+            },
+            {
+              _id: '5f770d4b96ae3b4bf0fddeff',
+              accepted: true,
+              accessLevel: 'manage',
+              sharedWithUser: {
+                _id: '5f770d4b96ae3b4bf0fdd888',
+                email: 'useremail@celigo.com',
+              },
+            },
+          ],
+        },
       },
     };
 
@@ -2234,7 +2258,7 @@ describe('Error Management region selector testcases', () => {
       expect(selectors.getIntegrationUserNameById()).toEqual();
     });
     test('should return user name if the userId is logged in user', () => {
-      expect(selectors.getIntegrationUserNameById(orgOwnerState, '5f686ef49daecd32740e2710')).toEqual('Raghuvamsi');
+      expect(selectors.getIntegrationUserNameById(orgOwnerState, '5f686ef49daecd32740e2710')).toBe('Raghuvamsi');
     });
     test('should return undefined if the userId is not loggedUser and no flowId is passed', () => {
       const orgUserState = {
@@ -2292,6 +2316,12 @@ describe('Error Management region selector testcases', () => {
       const flowId = 'flow-123';
 
       expect(selectors.getIntegrationUserNameById(orgOwnerState, userId, flowId)).toBe('Raghuvamsi4 Chandrabhatla');
+    });
+    test('should return user email from the integration usersList if valid userId and flowId are passed and user does not have user name', () => {
+      const userId = '5f770d4b96ae3b4bf0fdd888';
+      const flowId = 'flow-123';
+
+      expect(selectors.getIntegrationUserNameById(orgOwnerState, userId, flowId)).toBe('useremail@celigo.com');
     });
   });
 });

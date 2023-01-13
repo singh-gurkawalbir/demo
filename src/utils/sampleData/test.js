@@ -1,4 +1,3 @@
-/* global expect, describe, test, beforeEach */
 import getFormattedSampleData, {
   getDefaultData,
   convertFileDataToJSON,
@@ -172,7 +171,7 @@ describe('convertFileDataToJSON util', () => {
     };
 
     expect(convertFileDataToJSON(sampleData)).toBe(sampleData);
-    expect(convertFileDataToJSON(null, resource)).toBe(null);
+    expect(convertFileDataToJSON(null, resource)).toBeNull();
   });
   test('should return original sample data if resource is a non file type adaptor', () => {
     const resource = {
@@ -319,16 +318,16 @@ describe('getSampleValue util', () => {
 
     const id2 = 'addressbook[*].addr1';
 
-    expect(getSampleValue('invalid_type', id2)).toEqual('addr1');
+    expect(getSampleValue('invalid_type', id2)).toBe('addr1');
   });
   test('should return correct sample value according to the type passed', () => {
     const id1 = 'daysoverdue';
 
-    expect(getSampleValue('integer', id1)).toEqual(999);
+    expect(getSampleValue('integer', id1)).toBe(999);
 
     const id2 = 'telephone';
 
-    expect(getSampleValue('phone', id2)).toEqual('(917)494-4476');
+    expect(getSampleValue('phone', id2)).toBe('(917)494-4476');
   });
 });
 
@@ -1193,6 +1192,90 @@ describe('wrapSampleDataWithContext util', () => {
 
     expect(wrapSampleDataWithContext({sampleData, flow, resource, connection, integration, stage})).toEqual(expectedData);
   });
+  test('should return correctly wrapped sample data without files array if stage is preSavePage and resource is HTTP export', () => {
+    const stage = 'preSavePage';
+
+    const expectedData = {
+      status: 'received',
+      data: {
+        data: [{
+          id: 333,
+          phone: '1234',
+        }],
+        files: undefined,
+        errors: [],
+        _exportId: 'some resource id',
+        _connectionId: 'some connection id',
+        _flowId: 'some flow id',
+        _integrationId: 'some integration id',
+        pageIndex: 0,
+        settings: {
+          integration: {
+            store: 'shopify',
+          },
+          flowGrouping: {},
+          flow: {},
+          export: {resourceSet: 'custom settings'},
+          connection: {conn1: 'conn1'},
+        },
+      },
+    };
+
+    // delta type resource
+    resource.type = 'delta';
+    resource.adaptorType = 'HTTPExport';
+    expectedData.data.lastExportDateTime = expect.any(String);
+    expectedData.data.currentExportDateTime = expect.any(String);
+
+    expect(wrapSampleDataWithContext({sampleData, flow, resource, connection, integration, stage})).toEqual(expectedData);
+  });
+  test('should return correctly wrapped sample data without files array if stage is preSavePage and resource is HTTP export and with type file', () => {
+    const stage = 'preSavePage';
+
+    const expectedData = {
+      status: 'received',
+      data: {
+        data: [{
+          id: 333,
+          phone: '1234',
+        }],
+        files: [
+          {
+            fileMeta:
+              {
+                fileName: 'sampleFileName',
+              },
+          },
+        ],
+        errors: [],
+        _exportId: 'some resource id',
+        _connectionId: 'some connection id',
+        _flowId: 'some flow id',
+        _integrationId: 'some integration id',
+        pageIndex: 0,
+        settings: {
+          integration: {
+            store: 'shopify',
+          },
+          flowGrouping: {},
+          flow: {},
+          export: {resourceSet: 'custom settings'},
+          connection: {conn1: 'conn1'},
+        },
+      },
+    };
+
+    // delta type resource
+    resource.type = 'delta';
+    resource.adaptorType = 'HTTPExport';
+    resource.http = {
+      type: 'file',
+    };
+    expectedData.data.lastExportDateTime = expect.any(String);
+    expectedData.data.currentExportDateTime = expect.any(String);
+
+    expect(wrapSampleDataWithContext({sampleData, flow, resource, connection, integration, stage})).toEqual(expectedData);
+  });
   test('should return correctly wrapped sample data if stage is preSavePage and resource is FTP export', () => {
     const stage = 'preSavePage';
 
@@ -1343,15 +1426,8 @@ describe('wrapSampleDataWithContext util', () => {
           isValid: true,
         }],
         responseData: [{
-          statusCode: 200,
-          errors: [{ code: '', message: '', source: '' }],
-          ignored: false,
-          id: '',
-          _json: {
-            success: true,
-            id: 2001,
-          },
-          dataURI: '',
+          success: true,
+          id: 2001,
         }],
         _exportId: 'some resource id',
         _connectionId: 'some connection id',

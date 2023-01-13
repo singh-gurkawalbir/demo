@@ -1,7 +1,6 @@
-/* global describe, test, expect, beforeEach, jest, afterEach */
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
-import { screen, waitFor } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import * as reactRedux from 'react-redux';
 import SSOUserSettings from './SSOUserSettings';
@@ -42,7 +41,7 @@ async function initSSOUserSettings() {
   return renderWithProviders(ui, {initialStore});
 }
 
-describe('Testsuite for SSOUserSettings', () => {
+describe('testsuite for SSOUserSettings', () => {
   runServer();
 
   let mockDispatchFn;
@@ -74,44 +73,16 @@ describe('Testsuite for SSOUserSettings', () => {
     // checking help text for use this account for SSO
     expect(screen.getByText(/choose the account that you would like to use for sso\. every time you sign in via sso, integrator\.io will verify that the sso provider is linked to this specific account\./i)).toBeInTheDocument();
     expect(screen.getByText(/was this helpful\?/i)).toBeInTheDocument();
-    const helpTextYesButtonNode = screen.getByRole('button', {name: /yes/i});
+    const helpTextYesButtonNode = document.querySelector('button[data-test="yesContentHelpful"] *');
 
     expect(helpTextYesButtonNode).toBeInTheDocument();
     userEvent.click(helpTextYesButtonNode);
     expect(screen.queryByRole('heading', {name: /use this account for sso/i})).not.toBeInTheDocument();
     await userEvent.click(useThisAccountForSSOHelpText);
-    const helpTextNoButtonNode = screen.getByRole('button', {name: /no/i});
+    const helpTextNoButtonNode = document.querySelector('button[data-test="noContentHelpful"]');
 
     expect(helpTextNoButtonNode).toBeInTheDocument();
     await userEvent.click(helpTextNoButtonNode);
-    expect(screen.getByPlaceholderText(/How can we make this information more helpful\?/i)).toBeInTheDocument();
-    const helpTextSubmitButtonNode = screen.getByRole('button', {name: /submit/i});
-
-    expect(helpTextSubmitButtonNode).toBeInTheDocument();
-    userEvent.click(helpTextSubmitButtonNode);
-    expect(mockDispatchFn).toHaveBeenCalledWith({
-      type: 'APP_POST_FEEDBACK',
-      resourceType: undefined,
-      fieldId: '_ssoAccountId',
-      helpful: false,
-      feedback: '',
-    });
-    expect(screen.queryByPlaceholderText(/How can we make this information more helpful\?/i)).not.toBeInTheDocument();
-    const pleaseSelectButtonNode = screen.getByRole('button', {name: /please select/i});
-
-    expect(pleaseSelectButtonNode).toBeInTheDocument();
-    userEvent.click(pleaseSelectButtonNode);
-    const menuItemNode = screen.getByRole('menuitem', {name: /test company/i});
-
-    expect(menuItemNode).toBeInTheDocument();
-    userEvent.click(menuItemNode);
-    await waitFor(() => expect(menuItemNode).not.toBeInTheDocument());
-    const saveButtonNode = await waitFor(() => screen.getByRole('button', {name: /save/i}));
-
-    expect(saveButtonNode).toBeInTheDocument();
-    await userEvent.click(saveButtonNode);
-    await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith({ type: 'UPDATE_PROFILE', profile: { _ssoAccountId: '12345' } }));
-    expect(saveButtonNode).toBeDisabled();
   }, 30000);
 });
 

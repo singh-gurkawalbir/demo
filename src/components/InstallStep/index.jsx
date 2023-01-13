@@ -24,15 +24,15 @@ const useStyles = makeStyles(theme => ({
   stepNumber: step => ({
     // eslint-disable-next-line no-nested-ternary
     background: step.completed
-      ? theme.palette.common.white
+      ? theme.palette.background.paper
       : step.isCurrentStep
         ? theme.palette.primary.main
-        : theme.palette.common.white,
+        : theme.palette.background.paper,
     // eslint-disable-next-line no-nested-ternary
     color: step.completed
       ? theme.palette.secondary.contrastText
       : step.isCurrentStep
-        ? theme.palette.common.white
+        ? theme.palette.background.paper
         : theme.palette.secondary.contrastText,
     border: '1px solid',
     // eslint-disable-next-line no-nested-ternary
@@ -168,8 +168,8 @@ export default function InstallationStep(props) {
   });
 
   useEffect(() => {
-    if (step && !step.completed && !verified) {
-      if (revisionId && step.isCurrentStep && step.url && step.connectionId) {
+    if (step && step.isCurrentStep && !step.completed && !verified) {
+      if (revisionId && step.url && step.connectionId) {
         dispatch(actions.integrationLCM.installSteps.updateStep(revisionId, 'verify'));
         dispatch(actions.integrationLCM.installSteps.verifyBundleOrPackageInstall({
           integrationId,
@@ -196,7 +196,6 @@ export default function InstallationStep(props) {
         );
         setVerified(true);
       } else if (
-        step.isCurrentStep &&
         (step.installURL || step.url) &&
         !isIntegrationApp &&
         step._connId

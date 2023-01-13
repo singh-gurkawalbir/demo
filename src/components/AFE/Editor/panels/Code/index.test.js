@@ -1,4 +1,3 @@
-/* global describe, test, expect, jest */
 import React from 'react';
 import { screen, waitFor } from '@testing-library/react';
 import { renderWithProviders } from '../../../../../test/test-utils';
@@ -12,7 +11,7 @@ jest.mock('../../../../CodeEditor2', () => ({
   ),
 }));
 
-describe('AFE CodePanel UI tests', () => {
+describe('aFE CodePanel UI tests', () => {
   test('should pass the initial render', async () => {
     const props = {
       name: 'data',

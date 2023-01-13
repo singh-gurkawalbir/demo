@@ -1,4 +1,4 @@
-/* global describe,test  expect */
+/* eslint-disable jest/no-standalone-expect */
 import each from 'jest-each';
 import recurly from './recurly';
 import servicenow from './servicenow';
@@ -29,6 +29,7 @@ import {
   isAmazonSellingPartnerConnection,
   shouldLoadAssistantFormForImports,
   shouldLoadAssistantFormForExports,
+  getConnectorId,
 } from '..';
 import { getPathParams } from '../pathParamUtils';
 
@@ -4073,21 +4074,21 @@ describe('convertToImport', () => {
 
 describe('isMetaRequiredValuesMet', () => {
   test('should return true for invalidMeta', () => {
-    expect(isMetaRequiredValuesMet({}, null)).toEqual(true);
+    expect(isMetaRequiredValuesMet({}, null)).toBe(true);
   });
   test('should return true for no fields having required meta', () => {
-    expect(isMetaRequiredValuesMet({fields: [{id: 'something.a'}, {id: 'something.b'}]}, null)).toEqual(true);
+    expect(isMetaRequiredValuesMet({fields: [{id: 'something.a'}, {id: 'something.b'}]}, null)).toBe(true);
   });
   test('should return false for satisfied required fields', () => {
     expect(isMetaRequiredValuesMet({fields: [{id: 'something.a', required: true}, {id: 'something.b', required: true}]}, {something: {
       a: 'val1', b: 'val2',
-    }})).toEqual(true);
+    }})).toBe(true);
   });
 
   test('should return true for unsatisfied required fields', () => {
     expect(isMetaRequiredValuesMet({fields: [{id: 'something.a', required: true}, {id: 'something.b', required: true}]}, {something: {
       a: 'val1',
-    }})).toEqual(false);
+    }})).toBe(false);
   });
   describe('files of type repeat', () => {
     test('should return true for satisfied required field with type repeat', () => {
@@ -4097,7 +4098,7 @@ describe('isMetaRequiredValuesMet', () => {
       ]},
       {'something.a.1': 'val1',
         'something.b': 'b',
-      })).toEqual(true);
+      })).toBe(true);
     });
     test('should return false for unsatisfied required field with type repeat', () => {
       expect(isMetaRequiredValuesMet({fields: [
@@ -4105,7 +4106,7 @@ describe('isMetaRequiredValuesMet', () => {
         {id: 'something.b', required: true},
       ]},
       {}
-      )).toEqual(false);
+      )).toBe(false);
     });
   });
   describe('isAppConstantContact test cases', () => {
@@ -4429,4 +4430,47 @@ describe('shouldLoadAssistantFormForExports util', () => {
   test('should return false if resource is openair assistant', () => {
     expect(shouldLoadAssistantFormForExports({assistant: 'openair', useTechAdaptorForm: true}, {assistant: 'amazonmws', http: {type: 'Amazon-SP-API'}})).toBeFalsy();
   });
+});
+
+describe('getConnectorId util', () => {
+  const testCases = [
+    [
+      '3plcentral',
+      {
+        name: '3PL Central',
+        legacyId: '3plcentral',
+      },
+    ],
+    [
+      'braintree',
+      {
+        name: 'Braintree',
+        legacyId: 'braintree',
+      },
+    ],
+    ['etsy', {name: 'Etsy'}],
+    [
+      'loopreturns',
+      {
+        name: 'Loop Returns',
+        legacyId: 'loopreturns',
+      },
+    ],
+    ['narvar', {name: 'Narvar'}],
+    [
+      'orderful',
+      {
+        name: 'Orderful',
+        legacyId: 'orderful',
+      },
+    ],
+    ['orderful-local', {name: 'orderful-local'}],
+  ];
+
+  each(testCases).test(
+    'should return %s when integrationAppName = %s',
+    (expected, connector) => {
+      expect(getConnectorId(connector.legacyId, connector.name)).toEqual(expected);
+    }
+  );
 });

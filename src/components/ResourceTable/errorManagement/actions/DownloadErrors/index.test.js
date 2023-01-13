@@ -1,4 +1,4 @@
-/* global describe, test, expect, jest, afterEach */
+
 import React from 'react';
 import {
   screen,
@@ -44,7 +44,7 @@ jest.mock('react-router-dom', () => ({
   }),
 }));
 
-describe('ActionMenu component Test cases', () => {
+describe('actionMenu component Test cases', () => {
   runServer();
   afterEach(() => {
     mockHistoryPush.mockClear();
@@ -60,14 +60,14 @@ describe('ActionMenu component Test cases', () => {
     expect(downloadErrorsWithRowData).toBeInTheDocument();
 
     userEvent.click(downloadErrorsWithOutRowData);
-    expect(mockHistoryPush).toBeCalledWith(buildDrawerUrl({
+    expect(mockHistoryPush).toHaveBeenCalledWith(buildDrawerUrl({
       path: drawerPaths.ERROR_MANAGEMENT.V2.DOWNLOAD_ERRORS,
       baseUrl: '/',
       params: { type: 'open' },
     }));
 
     userEvent.click(downloadErrorsWithRowData);
-    expect(mockHistoryPush).toBeCalledWith(buildDrawerUrl({
+    expect(mockHistoryPush).toHaveBeenCalledWith(buildDrawerUrl({
       path: drawerPaths.ERROR_MANAGEMENT.V2.DOWNLOAD_ERRORS,
       baseUrl: '/',
       params: { type: 'resolved' },

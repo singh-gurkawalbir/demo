@@ -1,4 +1,4 @@
-/* global describe, test, expect */
+
 import reducer, { selectors } from '.';
 import actions from '../../../actions';
 
@@ -48,13 +48,11 @@ describe('integrationAShares reducers', () => {
   test('integrationUsers should return undefined if there are no ashares/users for an integration', () => {
     let newState = reducer(undefined, 'someaction');
 
-    expect(selectors.integrationUsers(newState, 'integration1')).toEqual(
-      undefined
+    expect(selectors.integrationUsers(newState, 'integration1')).toBeUndefined(
     );
     newState = reducer({}, 'someaction');
 
-    expect(selectors.integrationUsers(newState, 'integration1')).toEqual(
-      undefined
+    expect(selectors.integrationUsers(newState, 'integration1')).toBeUndefined(
     );
   });
   test('integrationUsers should return correct ashares/users for an integration', () => {

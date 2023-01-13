@@ -10,7 +10,7 @@ export const RESOURCE_TYPE_SINGULAR_TO_PLURAL = Object.freeze({
   export: 'exports',
   filedefinition: 'filedefinitions',
   flow: 'flows',
-  iClient: 'iClients',
+  iclient: 'iClients',
   import: 'imports',
   integration: 'integrations',
   script: 'scripts',
@@ -104,6 +104,7 @@ export const C_LOCKED_FIELDS = Object.freeze({
     'file.compressionFormat',
     'file.skipDelete',
     'file.csv',
+    'mockOutput',
     'test.limit',
     'delta.dateField',
     'delta.lagOffset',
@@ -120,6 +121,7 @@ export const C_LOCKED_FIELDS = Object.freeze({
     '_connectionId',
     'lookups',
     'batchSize',
+    'netsuite.file.folder',
     'netsuite_da.batchSize',
     'netsuite_da.internalIdLookup.extract',
     'netsuite_da.internalIdLookup.searchField',
@@ -131,6 +133,7 @@ export const C_LOCKED_FIELDS = Object.freeze({
     'salesforce.upsert.externalIdField',
     'salesforce.lookups',
     'settings',
+    'mockResponse',
   ],
   flows: [
     '_runNextFlowIds',
@@ -164,16 +167,14 @@ export const NO_ENVIRONMENT_RESOURCE_TYPES = Object.freeze([
   'accesstokens',
   'agents',
   'iClients',
-  'scripts',
   'stacks',
   'templates',
   'published',
   'transfers',
-  'apis',
   'connectors',
 ]);
 
-export const NO_ENVIRONMENT_MODELS_FOR_BIN = Object.freeze(['Agent', 'Script', 'Stack']);
+export const NO_ENVIRONMENT_MODELS_FOR_BIN = Object.freeze(['Agent', 'Stack']);
 
 export const AWS_REGIONS_LIST = [
   {
@@ -253,4 +254,14 @@ export const CATEGORY_MAPPING_SAVE_STATUS = {
   SAVED: 'saved',
   CLOSE: 'close',
   FAILED: 'failed',
+};
+
+export const MOCK_INPUT_STATUS = {
+  REQUESTED: 'requested',
+  RECEIVED: 'received',
+  ERROR: 'error',
+};
+export const OPEN_ERRORS_VIEW_TYPES = {
+  SPLIT: 'split', // new view
+  LIST: 'list', // old view
 };

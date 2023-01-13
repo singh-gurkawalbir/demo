@@ -68,7 +68,9 @@ export default function RequireAccountMFA({ user }) {
           <CeligoSwitch
             data-test="ssoRequired"
             disabled
+            tooltip="No / Yes"
             checked={accountMFARequired}
+            noPadding
             onChange={handleSwitch} />
         </div>
       </Tooltip>
@@ -81,6 +83,8 @@ export default function RequireAccountMFA({ user }) {
       checked={accountMFARequired}
       onChange={handleSwitch}
       disabled={switchInProgress}
+      tooltip="No / Yes"
+      noPadding
       />
   );
 }

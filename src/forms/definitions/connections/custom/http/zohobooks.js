@@ -4,6 +4,7 @@ export default {
     '/type': 'http',
     '/assistant': 'zohobooks',
     '/http/auth/type': 'oauth',
+    '/http/auth/oauth/useIClientFields': false,
     '/http/mediaType': 'urlencoded',
     '/http/baseURI': 'https://books.zoho.com/api/v3',
     '/http/auth/token/location': 'header',
