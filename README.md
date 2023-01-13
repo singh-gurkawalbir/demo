@@ -21,7 +21,7 @@ This respository hosts the codebase for the Integrator Frontend.
 
 
 **Prerequisites**
-- ```Node - v14.18.1``` - Cross-platform runtime environment for developing server-side and networking applications.
+- ```Node - v18.13.0``` - Cross-platform runtime environment for developing server-side and networking applications.
    - Link: https://nodejs.org/download/release/v14.18.1/
 - ```YARN``` - Used to handle packages.
 
