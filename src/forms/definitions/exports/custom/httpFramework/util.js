@@ -192,9 +192,23 @@ function searchParameterFieldsMeta({
   operationChanged,
   deltaDefaults = {},
   isDeltaExport,
+  url,
 }) {
   let searchParamsField;
   const defaultValue = {};
+  const filteredValues = value;
+
+  if (url) {
+    const [, queryPart] = url?.split('?');
+    const queryObj = new URLSearchParams(queryPart);
+    const parameterIds = parameters.map(param => param.id);
+
+    if (queryPart) {
+      [...queryObj.entries()].filter(([key]) => !parameterIds.includes(key)).map(([key]) => key).forEach(key => {
+        delete filteredValues[key];
+      });
+    }
+  }
 
   parameters.forEach(p => {
     if (Object.prototype.hasOwnProperty.call(p, 'defaultValue') && operationChanged) {
@@ -219,7 +233,7 @@ function searchParameterFieldsMeta({
           ? 'assistantMetadata.queryParams'
           : 'assistantMetadata.bodyParams',
       label,
-      value: !isEmpty(value) ? value : defaultValue,
+      value: !isEmpty(filteredValues) ? filteredValues : defaultValue,
       keyName: 'name',
       valueName: 'value',
       keyPlaceholder: 'Search, select or add a name',
@@ -325,6 +339,7 @@ export function fieldMeta({ resource, assistantData }) {
             operationDetails.delta.defaults
               ? operationDetails.delta.defaults
               : {},
+          url: operationDetails.url,
         });
       }
       if (
