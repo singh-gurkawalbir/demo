@@ -1,13 +1,16 @@
 import {applicationsList, applicationsPlaceHolderText} from '../../../../constants/applications';
 
 export default {
-  preSave: ({ application, name, ...rest }) => {
+  preSave: ({ application, name, _httpConnectorId, ...rest }) => {
     const applications = applicationsList();
 
     let app = applications.find(a => a.id === application) || {};
     let httpConnectorId = app._httpConnectorId;
 
-    if (app._httpConnectorId && name && applications.find(a => a.name === name)?._httpConnectorId) {
+    if (_httpConnectorId) {
+      httpConnectorId = _httpConnectorId;
+      app = applications.find(a => a._httpConnectorId === _httpConnectorId) || {};
+    } else if (app._httpConnectorId && name && applications.find(a => a.name === name)?._httpConnectorId) {
       app = applications.find(a => a.name === name) || {};
       // If it has multiple local connectors, right httpConnectorId should be picked
       httpConnectorId = app._httpConnectorId || httpConnectorId;
