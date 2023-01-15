@@ -299,8 +299,8 @@ const resource = {
     action(actionTypes.RESOURCE.REQUEST_COLLECTION, { resourceType, message, refresh, integrationId }),
   received: (resourceType, resource) =>
     action(actionTypes.RESOURCE.RECEIVED, { resourceType, resource }),
-  collectionRequestSent: (resourceType, integrationId) =>
-    action(actionTypes.RESOURCE.COLLECTION_REQUEST_SENT, {integrationId, resourceType}),
+  collectionRequestSent: (resourceType, integrationId, refresh) =>
+    action(actionTypes.RESOURCE.COLLECTION_REQUEST_SENT, {integrationId, resourceType, refresh}),
   collectionRequestSucceeded: ({ resourceType, integrationId }) => action(actionTypes.RESOURCE.COLLECTION_REQUEST_SUCCEEDED, { resourceType, integrationId }),
   collectionRequestFailed: ({resourceType, integrationId}) => action(actionTypes.RESOURCE.COLLECTION_REQUEST_FAILED, {resourceType, integrationId}),
 

@@ -784,7 +784,7 @@ export function* getResourceCollection({ resourceType, refresh, integrationId })
     if (/connectors\/.*\/licenses/.test(resourceType)) {
       updatedResourceType = 'connectorLicenses';
     }
-    yield put(actions.resource.collectionRequestSent(updatedResourceType, integrationId));
+    yield put(actions.resource.collectionRequestSent(updatedResourceType, integrationId, refresh));
 
     let collection = yield call(apiCallWithPaging, {
       path,
