@@ -45,6 +45,13 @@ export default function Help({ className, helpKey, helpText, escapeUnsecuredDoma
   const handleClose = useCallback(event => {
     // if clicking interacting with feedback text field  or if clicking on No button
     // do not close popper
+    if (popperRef.current?.popper && popperRef.current.popper.contains(event.target)) {
+      const isCloseButton = event.target.matches('button[data-test=close] *');
+      const isYesButton = event.target.matches('button[data-test=yesContentHelpful] *');
+      const isFeedbackSubmitButton = event.target.matches('span[data-test=helpFeedbackSubmit] button, span[data-test=helpFeedbackSubmit] *');
+
+      if (!isCloseButton && !isYesButton && !isFeedbackSubmitButton) { return; }
+    }
     if (event.target.name === 'feedbackText' ||
     event.target.textContent === 'No' ||
     ['thumbsdownicon', 'noContentHelpful'].includes(event.target.dataset?.test)

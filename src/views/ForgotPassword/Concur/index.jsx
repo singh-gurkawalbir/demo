@@ -9,36 +9,41 @@ import actions from '../../../actions';
 import messageStore from '../../../utils/messageStore';
 import getImageUrl from '../../../utils/image';
 
+/* Todo: (Azhar) Concur form should be in a separate component */
 const useStyles = makeStyles(theme => ({
   wrapper: {
-    maxWidth: '770px',
     margin: '0 auto',
     position: 'relative',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '100%',
+    height: '100vh',
+    background: theme.palette.background.paper,
   },
   logo: {
     margin: '0 0 40px 0',
     '& > img': {
-      height: '50px',
       width: 'auto',
     },
   },
   link: {
     paddingLeft: 4,
-    color: theme.palette.warning.main,
   },
   signinWrapper: {
     background: theme.palette.background.paper,
-    width: '100%',
+    width: '770px',
+    height: '100vh',
     border: '0px none',
-    height: '679px',
     textAlign: 'center',
     position: 'relative',
     zIndex: 1,
     overflow: 'inherit !important',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   signinWrapperContent: {
-    width: '2500px',
-    height: '679px',
     display: 'table-cell',
     verticalAlign: 'middle',
     padding: '10px 0',
@@ -48,12 +53,13 @@ const useStyles = makeStyles(theme => ({
     },
   },
   alertMsg: {
-    width: '300px',
-    margin: '0 auto 15px auto',
+    width: '100%',
     fontSize: 14,
     textAlign: 'left',
     display: 'flex',
     alignItems: 'flex-start',
+    justifyContent: 'center',
+    marginBottom: theme.spacing(2),
     lineHeight: `${theme.spacing(2)}px`,
     '& > svg': {
       fill: theme.palette.error.main,
@@ -112,6 +118,10 @@ const useStyles = makeStyles(theme => ({
       padding: '0 15px',
     },
   },
+  forgotPasswordEmail: {
+    marginTop: theme.spacing(-2),
+    marginBottom: theme.spacing(3),
+  },
 }));
 
 export default function ConcurForgotPassword(props) {
@@ -145,7 +155,7 @@ export default function ConcurForgotPassword(props) {
             Forgot your password?
           </Typography>
           {email && (
-          <Typography variant="h6" className={classes.title}>
+          <Typography variant="h4" className={classes.forgotPasswordEmail}>
             {email}
           </Typography>
           )}

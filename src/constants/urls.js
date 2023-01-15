@@ -68,7 +68,7 @@ export const SHOPIFY_OAUTH_CONNECTION_VIEW_INSTRUCTIONS_LINK = 'https://docs.cel
 
 // Shopify store listing urls
 export const SHOPIFY_APP_STORE_LINKS = {
-  NETSUITE_IA_APP: 'https://apps.shopify.com',
+  NETSUITE_IA_APP: 'https://apps.shopify.com/celigo-netsuite-smartconnector',
   DIY_APP: 'https://apps.shopify.com',
 
   // in future when these apps are published, change the URLs

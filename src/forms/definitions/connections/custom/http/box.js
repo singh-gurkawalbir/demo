@@ -50,7 +50,7 @@ export default {
         'manage_webhook',
         'manage_enterprise_properties',
         'manage_data_retention',
-        'sign_requests',
+        'sign_requests.readwrite',
       ],
     },
     'http._iClientId': {

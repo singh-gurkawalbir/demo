@@ -43,9 +43,9 @@ const useStyles = makeStyles(theme => ({
   },
   draggable: {
     '&:hover': {
-      cursor: 'move',
+      cursor: ({ noDragInfo }) => noDragInfo ? '' : 'move',
       '& > div:last-child': {
-        boxShadow: '0 5px 10px rgba(0,0,0,0.19)',
+        boxShadow: ({ noDragInfo }) => noDragInfo ? '' : '0 5px 10px rgba(0,0,0,0.19)',
       },
     },
   },
@@ -156,7 +156,7 @@ const useStyles = makeStyles(theme => ({
     top: -theme.spacing(0.5),
     zIndex: 1,
     transition: theme.transitions.create('color'),
-    color: ({ isHover }) => isHover ? 'unset' : 'rgb(0,0,0,0)',
+    color: ({ isHover, noDragInfo }) => (isHover && !noDragInfo) ? 'unset' : 'rgb(0,0,0,0)',
     cursor: 'move',
     '&:hover': {
       background: 'none',
@@ -205,7 +205,6 @@ export default function AppBlock({
   ...rest
 }) {
   const [isHover, setIsHover] = useState(false);
-  const classes = useStyles({ isHover });
   const dispatch = useDispatch();
   const [expanded, setExpanded] = useState(false);
   const [isOver, setIsOver] = useState(false);
@@ -234,6 +233,7 @@ export default function AppBlock({
     noDragInfo = <RawHtml html={messageStore('NO_DRAG_FLOW_BRANCHING_INFO')} />;
   }
 
+  const classes = useStyles({ isHover, noDragInfo });
   const isFlowSaveInProgress = useSelector(state => selectors.isFlowSaveInProgress(state, flowId));
   const iconType = useSelector(state => {
     if (blockType === 'dataLoader') return;
@@ -412,7 +412,7 @@ export default function AppBlock({
     <div
       ref={drag}
       className={clsx(classes.root, className, { [classes.draggable]: isDraggable })}
-      style={{ opacity, cursor: isDragging ? 'move' : '' }}
+      style={{ opacity }}
       onMouseEnter={handleMouseHover(true)}
       onMouseLeave={handleMouseHover(false)}
       >

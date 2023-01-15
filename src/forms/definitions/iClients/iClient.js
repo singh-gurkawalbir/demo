@@ -1,41 +1,48 @@
 import { cloneDeep } from 'lodash';
+import { applicationsList } from '../../../constants/applications';
+import { CONNECTORS_TO_IGNORE } from '../../../constants';
 
 export default {
-  init: (fieldMeta, resource) => {
-    if (!resource?.assistant) {
-      return fieldMeta;
-    }
-    // for assistants, old iClients form is used
-    const finalFieldMeta = {
-      fieldMap: {},
-    };
+  init: (fieldMeta, resource, flow, httpConnectorData, application) => {
+    const applications = applicationsList().filter(app => !CONNECTORS_TO_IGNORE.includes(app.id));
+    const app = applications.find(a => a.name === application) || {};
 
-    Object.keys(fieldMeta.fieldMap).forEach(key => {
-      if (key === 'name' ||
+    if (app.assistant && !app._httpConnectorId) {
+      // pure assistant without http2.0
+      // should use old iClient form
+      const finalFieldMeta = {
+        fieldMap: {},
+      };
+
+      Object.keys(fieldMeta.fieldMap).forEach(key => {
+        if (key === 'name' ||
           key === 'oauth2.clientId' ||
           key === 'oauth2.clientSecret' ||
           key === 'amazonmws.accessKeyId' ||
           key === 'amazonmws.secretKey') {
-        finalFieldMeta.fieldMap[key] = cloneDeep(fieldMeta.fieldMap[key]);
-      }
-    });
+          finalFieldMeta.fieldMap[key] = cloneDeep(fieldMeta.fieldMap[key]);
+        }
+      });
 
-    finalFieldMeta.layout = {
-      type: 'box',
-      containers: [
-        {
-          fields: [
-            'name',
-            'oauth2.clientId',
-            'oauth2.clientSecret',
-            'amazonmws.accessKeyId',
-            'amazonmws.secretKey',
-          ],
-        },
-      ],
-    };
+      finalFieldMeta.layout = {
+        type: 'box',
+        containers: [
+          {
+            fields: [
+              'name',
+              'oauth2.clientId',
+              'oauth2.clientSecret',
+              'amazonmws.accessKeyId',
+              'amazonmws.secretKey',
+            ],
+          },
+        ],
+      };
 
-    return finalFieldMeta;
+      return finalFieldMeta;
+    }
+
+    return fieldMeta;
   },
   preSave: formValues => {
     const newValues = { ...formValues };

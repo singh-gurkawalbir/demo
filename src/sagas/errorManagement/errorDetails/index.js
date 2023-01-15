@@ -269,7 +269,7 @@ export function* downloadErrors({ flowId, resourceId, isResolved, filters }) {
   }
 }
 
-export function* purgeError({ flowId, resourceId, errors }) {
+export function* purgeError({ flowId, resourceId, errors, isRowAction }) {
   const errorIdList = yield select(selectors.selectedErrorIds, { flowId, resourceId, isResolved: true });
 
   try {
@@ -278,7 +278,7 @@ export function* purgeError({ flowId, resourceId, errors }) {
       opts: {
         method: 'DELETE',
         body: {
-          errors: errorIdList?.length ? errorIdList : errors,
+          errors: !isRowAction ? errorIdList : errors,
         },
       },
       hidden: true,

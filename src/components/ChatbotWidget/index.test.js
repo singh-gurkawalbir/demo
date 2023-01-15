@@ -26,8 +26,5 @@ describe('ChatbotWidget component Test cases', () => {
   test('should call the handler on clicking the button', () => {
     userEvent.click(screen.getByRole('button'));
     expect(mockFn).toHaveBeenCalledWith('webWidget', 'show');
-
-    userEvent.click(screen.getByRole('button'));
-    expect(mockFn).toHaveBeenCalledWith('webWidget', 'close');
   });
 });

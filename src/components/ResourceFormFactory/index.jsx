@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import {makeStyles} from '@material-ui/core';
+import { useRouteMatch } from 'react-router-dom';
 import actions from '../../actions';
 import getResourceFormAssets from '../../forms/formFactory/getResourceFromAssets';
 import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
@@ -10,6 +11,7 @@ import { FORM_SAVE_STATUS } from '../../constants';
 import DynaForm from '../DynaForm';
 import Spinner from '../Spinner';
 import { getHttpConnector} from '../../constants/applications';
+import {getParentResourceContext} from '../../utils/connections';
 
 const Form = props => {
   const formKey = useFormInitWithPermissions(props);
@@ -64,7 +66,10 @@ export const FormStateManager = ({ formState, handleInitForm, onSubmitComplete, 
 
 const ResourceFormFactory = props => {
   const dispatch = useDispatch();
+  const match = useRouteMatch();
   const { resourceType, resourceId, isNew, flowId, integrationId } = props;
+  const {connId: parentConnectionId} = getParentResourceContext(match.url, resourceType);
+
   const formState = useSelector(state =>
     selectors.resourceFormState(state, resourceType, resourceId)
   );
@@ -107,11 +112,15 @@ const ResourceFormFactory = props => {
           resourceId,
           isNew,
           skipCommit,
-          flowId
+          flowId,
+          undefined,
+          undefined,
+          undefined,
+          resourceType === 'iClients' ? parentConnectionId : undefined
         )
       );
     },
-    [dispatch, flowId, isNew, resourceId, resourceType]
+    [parentConnectionId, dispatch, flowId, isNew, resourceId, resourceType]
   );
   const handleClearResourceForm = useCallback(
     () => {

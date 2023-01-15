@@ -387,7 +387,7 @@ export function* _processResponseTransformData({ flowId, resourceId, resource, p
       data: [
         {
           ...mockResponse[0],
-          _json: transformedData.data[0] || transformedData.data,
+          _json: transformedData?.data[0] || transformedData?.data || transformedData,
         },
       ],
     } : transformedData;
