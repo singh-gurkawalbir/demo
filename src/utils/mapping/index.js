@@ -2002,7 +2002,7 @@ export const findNearestParentExtractForNode = (treeData, nodeKey) => {
   return findNearestParentExtractForNode(treeData, node.parentKey);
 };
 
-const getWord = (value, cursorPosition) => {
+const getCursorPositionWord = (value, cursorPosition) => {
   const wordAfterPosition = value.substring(cursorPosition).match(/^[^,]+/);
   const wordBeforePosition = value.substring(0, cursorPosition).match(/[^,]+$/);
 
@@ -2064,7 +2064,7 @@ export const getFinalSelectedExtracts = (node, inputValue = '', isArrayType, isG
 
         return newValue;
       }
-      const word = getWord(inputValue, cursorPosition);
+      const word = getCursorPositionWord(inputValue, cursorPosition);
       const updatedValue = inputValue.replace(word, fullJsonPath);
 
       newValue = updatedValue;

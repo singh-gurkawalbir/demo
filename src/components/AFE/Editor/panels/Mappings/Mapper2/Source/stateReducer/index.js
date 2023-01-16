@@ -1,6 +1,8 @@
+import { cloneDeep } from 'lodash';
+
 export default function reducer(state, action) {
   const { type, value } = action;
-  const draft = {...state};
+  const draft = cloneDeep(state);
 
   switch (type) {
     case 'onCursorChange':
