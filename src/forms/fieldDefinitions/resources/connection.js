@@ -2334,6 +2334,53 @@ export default {
     type: 'text',
     label: 'Net suite distributed adaptor URI',
   },
+  // netsuite JDBC fields
+  'jdbc.host': {
+    type: 'text',
+    required: true,
+    label: 'Server Name',
+  },
+  'jdbc.port': {
+    isLoggable: true,
+    type: 'text',
+    label: 'Port number',
+    validWhen: {
+      fallsWithinNumericalRange: {
+        min: 0,
+        max: 65535,
+      },
+    },
+  },
+  'jdbc.serverDataSource': {
+    isLoggable: true,
+    required: true,
+    type: 'select',
+    label: 'Server Data Source',
+    options: [{
+      items: [
+        {label: 'Netsuite.com', value: 'Netsuite.com'},
+        {label: 'Netsuite2.com', value: 'Netsuite2.com'},
+      ],
+    }],
+  },
+  'jdbc.staticschemaexport': {
+    isLoggable: true,
+    type: 'checkbox',
+    label: 'Static schema export',
+    visibleWhen: [
+      {
+        field: 'jdbc.serverDataSource',
+        is: ['Netsuite2.com'],
+      },
+    ],
+  },
+  'jdbc.authType': {
+    id: 'netsuite.authType',
+    label: 'Authentication type',
+    type: 'nsauthtype',
+    required: true,
+    skipSort: true,
+  },
   // #endregion netSuiteDistributedAdaptor
   // #region salesforce
   'salesforce.sandbox': {

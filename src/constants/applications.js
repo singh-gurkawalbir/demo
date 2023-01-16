@@ -158,6 +158,14 @@ const connectors = [
     helpURL: 'https://docs.celigo.com/hc/en-us/articles/360042875872-Set-up-a-connection-to-Amazon-Redshift',
   },
   {
+    id: 'netsuitejdbc',
+    name: 'Netsuite JDBC',
+    type: 'netsuitejdbc',
+    keywords: 'database,db',
+    group: 'db',
+    helpURL: 'https://docs.celigo.com/hc/en-us/articles/4843857027227',
+  },
+  {
     id: 'graph_ql',
     name: 'GraphQL',
     type: 'graph_ql',
