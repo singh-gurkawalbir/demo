@@ -78,6 +78,7 @@ export default {
             filter: resourceFilter,
             appType: 'shopify',
           },
+          isValueValid: true,
           defaultValue: '',
           appTypeIsStatic: !isIA,
           removeHelperText: true,
