@@ -2,10 +2,15 @@ import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import React, { useCallback, useEffect, useState} from 'react';
 import TextField from '@material-ui/core/TextField';
+import clsx from 'clsx';
 import actions from '../../actions';
 import { selectors } from '../../reducers';
 import { TextButton, FilledButton} from '../../components/Buttons';
 import getImageUrl from '../../utils/image';
+import FieldMessage from '../../components/DynaForm/fields/FieldMessage';
+import messageStore from '../../utils/messageStore';
+import Spinner from '../../components/Spinner';
+import { EMAIL_REGEX } from '../../constants';
 
 const path = getImageUrl('images/googlelogo.png');
 
@@ -35,16 +40,21 @@ const useStyles = makeStyles(theme => ({
   textField: {
     width: '100%',
     background: theme.palette.background.paper,
-    marginBottom: 10,
+  },
+  errorField: {
+    '&:hover': {
+      borderColor: theme.palette.error.dark,
+    },
+    '& > * input': {
+      '&:hover': {
+        borderColor: theme.palette.error.dark,
+      },
+      borderColor: theme.palette.error.dark,
+    },
   },
   link: {
     paddingLeft: 4,
     color: theme.palette.primary.dark,
-  },
-  forgotPass: {
-    color: theme.palette.primary.dark,
-    textAlign: 'right',
-    marginBottom: theme.spacing(3),
   },
   googleBtn: {
     borderRadius: 4,
@@ -54,19 +64,6 @@ const useStyles = makeStyles(theme => ({
     height: 38,
     fontSize: 16,
     backgroundColor: theme.palette.background.paper,
-  },
-  ssoBtn: {
-    borderRadius: 4,
-    width: '100%',
-    backgroundSize: theme.spacing(2),
-    height: 38,
-    fontSize: 16,
-    margin: theme.spacing(0, 0, 2, 0),
-    backgroundColor: theme.palette.background.paper,
-    display: 'flex',
-    justifyContent: 'space-around',
-    paddingLeft: theme.spacing(5),
-    paddingRight: theme.spacing(16),
   },
   or: {
     display: 'flex',
@@ -98,13 +95,16 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
   },
 }));
-
 export default function ForgotPassword({setShowError, email}) {
   const dispatch = useDispatch();
   const classes = useStyles();
-  const [userEmail, SetuserEmail] = useState(email || '');
+  const [userEmail, setUserEmail] = useState(email || '');
+  const [showErr, setShowErr] = useState(false);
+  const [showInvalidEmailError, setShowInvalidEmailError] = useState(false);
+  const [showErrorMsg, setShowErrorMsg] = useState('EMAIL_EMPTY');
   const resetRequestStatus = useSelector(state => selectors.requestResetStatus(state));
   const resetRequestErrorMsg = useSelector(state => selectors.requestResetError(state));
+  const isAuthenticating = resetRequestStatus === 'requesting';
 
   useEffect(() => {
     if (resetRequestStatus === 'success') {
@@ -113,6 +113,7 @@ export default function ForgotPassword({setShowError, email}) {
       setShowError(true);
     }
   }, [resetRequestStatus, resetRequestErrorMsg, setShowError]);
+  const validateEmail = email => email.match(EMAIL_REGEX);
 
   const handleAuthentication = useCallback(userEmail => {
     dispatch(actions.auth.resetRequest(userEmail));
@@ -121,10 +122,23 @@ export default function ForgotPassword({setShowError, email}) {
     e.preventDefault();
     const email = e?.target?.email?.value || e?.target?.elements?.email?.value;
 
-    handleAuthentication(email);
+    if (!email) {
+      setShowErrorMsg('EMAIL_EMPTY');
+      setShowErr(true);
+    } else {
+      if (validateEmail(email)) {
+        setShowInvalidEmailError(false);
+        handleAuthentication(email);
+      } else {
+        setShowErrorMsg('INVALID_EMAIL');
+        setShowInvalidEmailError(true);
+      }
+      setShowErr(false);
+    }
   }, [handleAuthentication]);
   const handleOnChangeEmail = useCallback(e => {
-    SetuserEmail(e.target.value);
+    setShowErr(false);
+    setUserEmail(e.target.value);
   }, []);
 
   return (
@@ -134,20 +148,24 @@ export default function ForgotPassword({setShowError, email}) {
           data-private
           data-test="email"
           id="email"
-          type="email"
           variant="filled"
-          placeholder="Email"
+          placeholder="Email*"
           value={userEmail}
           onChange={handleOnChangeEmail}
-          className={classes.textField}
+          className={clsx(classes.textField, {[classes.errorField]: showErr || showInvalidEmailError})}
         />
-        <FilledButton
-          data-test="submit"
-          type="submit"
-          className={classes.submit}
-          value="Submit">
-          Submit
-        </FilledButton>
+        <FieldMessage errorMessages={showErr || showInvalidEmailError ? messageStore(showErrorMsg) : ''} />
+
+        { isAuthenticating ? <Spinner />
+          : (
+            <FilledButton
+              data-test="submit"
+              type="submit"
+              className={classes.submit}
+              value="Submit">
+              Submit
+            </FilledButton>
+          )}
         <TextButton
           href="/signin"
           data-test="cancel"

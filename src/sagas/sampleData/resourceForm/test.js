@@ -21,6 +21,7 @@ import {
   _handlePreviewError,
   _getProcessorOutput,
   _fetchFBActionsSampleData,
+  _requestPageProcessorSampleData,
 } from '.';
 import { _fetchResourceInfoFromFormKey, extractFileSampleDataProps, executeTransformationRules, executeJavascriptHook } from './utils';
 import requestRealTimeMetadata from '../sampleDataGenerator/realTimeSampleData';
@@ -383,6 +384,23 @@ describe('resourceFormSampleData sagas', () => {
         .not.call.fn(_requestImportSampleData)
         .run(500);
     });
+    test('should dispatch requested status and call _requestExportSampleData incase of exports resourceType and put async task start and end actions if async key is present', () => {
+      const refreshCache = true;
+      const asyncKey = 'export-123';
+
+      expectSaga(requestResourceFormSampleData, { formKey, options: {refreshCache, asyncKey} })
+        .provide([
+          [call(_fetchResourceInfoFromFormKey, { formKey }), { resourceId, resourceType: 'exports' }],
+          [call(_requestExportSampleData, { formKey, refreshCache, executeProcessors: undefined }), {}],
+        ])
+        .delay(500)
+        .put(actions.resourceFormSampleData.setStatus(resourceId, 'requested'))
+        . put(actions.asyncTask.start(asyncKey))
+        .call(_requestExportSampleData, { formKey, refreshCache, executeProcessors: undefined})
+        .not.call.fn(_requestImportSampleData)
+        .put(actions.asyncTask.success(asyncKey))
+        .run(500);
+    });
   });
   describe('_requestExportSampleData saga', () => {
     const refreshCache = true;
@@ -602,6 +620,53 @@ describe('resourceFormSampleData sagas', () => {
             function: 'fn',
           },
         },
+      };
+      const flow = {
+        _id: flowId,
+        pageGenerators: [],
+        pageProcessors: [],
+        settings: {},
+      };
+
+      const path = `/integrations/${integrationId}/flows/${flowId}/exports/preview`;
+      const body = {
+        _id: '123',
+        adaptorType: 'RESTExport',
+        test: {
+          limit: sampleDataRecordSize,
+        },
+      };
+
+      expectSaga(_requestExportPreviewData, { formKey })
+        .provide([
+          [call(_fetchResourceInfoFromFormKey, { formKey }), { resourceObj, resourceId, flowId, integrationId }],
+          [select(selectors.resource, 'flows', flowId), flow],
+          [select(selectors.sampleDataRecordSize, resourceId), sampleDataRecordSize],
+          [call(apiCallWithRetry, {
+            path,
+            opts: { method: 'POST', body },
+            hidden: true,
+          }), { test: 5 }],
+        ])
+        .call(apiCallWithRetry, {
+          path,
+          opts: { method: 'POST', body },
+          hidden: true,
+        })
+        .run();
+    });
+    test('should construct body with needed props and remove mockOutput if present, for making preview call and dispatch receivedPreviewStages on success', () => {
+      const resourceObj = {
+        _id: '123',
+        adaptorType: 'RESTExport',
+        transform: { rules: []},
+        hooks: {
+          preSavePage: {
+            _scriptId: 'script-23',
+            function: 'fn',
+          },
+        },
+        mockOutput: {data: 'dat'},
       };
       const flow = {
         _id: flowId,
@@ -960,6 +1025,7 @@ describe('resourceFormSampleData sagas', () => {
         _id: resourceId,
         adaptorType: 'RESTExport',
         transform: {},
+        mockOutput: {},
         oneToMany: 'true',
       };
       const previewData = {
@@ -1015,6 +1081,79 @@ describe('resourceFormSampleData sagas', () => {
       const error = { status: 401, message: '{"code":"error code"}' };
 
       expectSaga(_requestLookupSampleData, { formKey })
+        .provide([
+          [call(_fetchResourceInfoFromFormKey, { formKey }), { resourceId, flowId, resourceObj: restResource}],
+          [matchers.call.fn(pageProcessorPreview), throwError(error)],
+        ])
+        .not.call.fn(_requestFileSampleData)
+        .call.fn(pageProcessorPreview)
+        .not.put(actions.resourceFormSampleData.receivedPreviewStages(resourceId, undefined))
+        .call(_handlePreviewError, { e: error, resourceId })
+        .run();
+    });
+  });
+  describe('_requestPageProcessorSampleData saga', () => {
+    test('should call pageProcessorPreview saga to fetch preview data for import and dispatch receivedPreviewStages on success', () => {
+      const restResource = {
+        _id: resourceId,
+        adaptorType: 'HTTPImport',
+        transform: {},
+        oneToMany: 'true',
+        mockResponse: [{id: '123'}],
+      };
+      const previewData = {
+        stages: [{
+          name: 'parse',
+          data: {
+            test: 5,
+          },
+        }],
+      };
+      const ppDoc = {
+        _id: resourceId,
+        adaptorType: 'HTTPImport',
+        oneToMany: true,
+        transform: {},
+      };
+
+      expectSaga(_requestPageProcessorSampleData, { formKey, addMockData: true })
+        .provide([
+          [call(_fetchResourceInfoFromFormKey, { formKey }), { resourceId, flowId, resourceObj: restResource}],
+          [call(pageProcessorPreview, {
+            flowId,
+            _pageProcessorId: resourceId,
+            resourceType: 'imports',
+            hidden: true,
+            _pageProcessorDoc: ppDoc,
+            throwOnError: true,
+            includeStages: true,
+            refresh: false,
+            addMockData: true,
+          }), previewData],
+        ])
+        .not.call.fn(_requestFileSampleData)
+        .call(pageProcessorPreview, {
+          flowId,
+          _pageProcessorId: resourceId,
+          resourceType: 'imports',
+          hidden: true,
+          _pageProcessorDoc: ppDoc,
+          throwOnError: true,
+          includeStages: true,
+          refresh: false,
+          addMockData: true,
+        })
+        .put(actions.resourceFormSampleData.receivedPreviewStages(resourceId, previewData))
+        .run();
+    });
+    test('should call pageProcessorPreview saga to fetch preview data for import and call _handlePreviewError saga on failure', () => {
+      const restResource = {
+        _id: resourceId,
+        adaptorType: 'HTTPImport',
+      };
+      const error = { status: 401, message: '{"code":"error code"}' };
+
+      expectSaga(_requestPageProcessorSampleData, { formKey })
         .provide([
           [call(_fetchResourceInfoFromFormKey, { formKey }), { resourceId, flowId, resourceObj: restResource}],
           [matchers.call.fn(pageProcessorPreview), throwError(error)],

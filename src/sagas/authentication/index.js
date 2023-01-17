@@ -290,6 +290,9 @@ export function* initializeApp(opts) {
   if (opts?.reload) {
     yield put(actions.app.deleteDataState());
   }
+  if (opts?.mfaVerifySuccess) {
+    yield put(actions.auth.mfaVerify.success());
+  }
   try {
     yield call(retrieveAppInitializationResources);
   } catch (e) {
@@ -524,7 +527,7 @@ export function* signup({payloadBody}) {
     });
 
     if (apiAuthentications.success) {
-      yield put(actions.auth.signupStatus('success', SIGN_UP_SUCCESS));
+      yield put(actions.auth.signupStatus('success', apiAuthentications.message || SIGN_UP_SUCCESS));
     }
   } catch (error) {
     let authError = inferErrorMessages(error?.message)?.[0];
@@ -534,6 +537,20 @@ export function* signup({payloadBody}) {
     }
     yield put(actions.auth.signupStatus('failed', authError));
     yield put(actions.user.profile.delete());
+  }
+}
+
+export function* validateAndInitSession() {
+  const resp = yield call(validateSession);
+  let isUserAuthenticated = resp.authenticated;
+
+  if (resp.mfaRequired) {
+    isUserAuthenticated = resp.mfaVerified;
+  }
+
+  if (isUserAuthenticated) {
+    yield put(actions.auth.complete());
+    yield call(initializeApp);
   }
 }
 
@@ -563,7 +580,9 @@ export function* initializeSession({opts} = {}) {
       // existing session is invalid
       const isMFASetupIncomplete = yield select(selectors.isMFASetupIncomplete);
 
-      if (!isMFASetupIncomplete) {
+      if (opts?.switchAcc && resp.mfaRequired && !resp.mfaVerified) {
+        yield put(actions.auth.mfaRequired({...resp, isAccountUser: true, dontAllowTrustedDevices: true}));
+      } else if (!isMFASetupIncomplete) {
         yield put(actions.auth.logout(true));
       } else {
         yield call(retrieveAppInitializationResources);
@@ -678,7 +697,7 @@ function* mfaVerify({ payload }) {
     });
 
     if (status?.success) {
-      yield call(initializeSession);
+      yield call(initializeSession, {opts: {mfaVerifySuccess: true}});
 
       return yield put(actions.auth.mfaVerify.success());
     }
@@ -693,6 +712,7 @@ export const authenticationSagas = [
   takeEvery(actionTypes.AUTH.ACCEPT_INVITE.VALIDATE, validateAcceptInviteToken),
   takeEvery(actionTypes.AUTH.ACCEPT_INVITE.SUBMIT, submitAcceptInvite),
   takeEvery(actionTypes.AUTH.INIT_SESSION, initializeSession),
+  takeEvery(actionTypes.AUTH.VALIDATE_AND_INIT_SESSION, validateAndInitSession),
   takeEvery(actionTypes.AUTH.REQUEST, auth),
   takeEvery(actionTypes.AUTH.SIGNUP, signup),
   takeEvery(actionTypes.APP.UI_VERSION_FETCH, fetchUIVersion),

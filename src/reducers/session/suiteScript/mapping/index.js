@@ -1,8 +1,8 @@
 import produce from 'immer';
 import {differenceWith, isEqual } from 'lodash';
-import shortid from 'shortid';
 import deepClone from 'lodash/cloneDeep';
 import actionTypes from '../../../../actions/types';
+import { generateId } from '../../../../utils/string';
 import { getSuiteScriptAppType, isMappingObjEqual } from '../../../../utils/suiteScript/mapping';
 
 const emptyObj = {};
@@ -46,7 +46,7 @@ export default (state = {}, action) => {
          * }
          */
 
-        const _mappings = mappings.map(m => ({...m, key: shortid.generate()}));
+        const _mappings = mappings.map(m => ({...m, key: generateId()}));
 
         draft.mapping = {
           mappings: _mappings,
@@ -106,7 +106,7 @@ export default (state = {}, action) => {
           draft.mapping.mappings[index] = mapping;
           draft.mapping.lastModifiedRowKey = mapping.key;
         } else if (value) {
-          const newKey = shortid.generate();
+          const newKey = generateId();
           const newRow = {
             key: newKey,
           };
@@ -230,7 +230,7 @@ export default (state = {}, action) => {
               const newMapping = {
                 extract: ext,
                 rowIdentifier: 0,
-                key: shortid.generate(),
+                key: generateId(),
               };
 
               draft.mapping.mappings.splice(positionToInsert, 0, newMapping);
@@ -243,7 +243,7 @@ export default (state = {}, action) => {
               const newMapping = {
                 extract: ext,
                 rowIdentifier: 0,
-                key: shortid.generate(),
+                key: generateId(),
               };
 
               draft.mapping.mappings.splice(positionToInsert, 0, newMapping);

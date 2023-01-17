@@ -784,7 +784,7 @@ export function* getResourceCollection({ resourceType, refresh, integrationId })
     if (/connectors\/.*\/licenses/.test(resourceType)) {
       updatedResourceType = 'connectorLicenses';
     }
-    yield put(actions.resource.collectionRequestSent(updatedResourceType, integrationId));
+    yield put(actions.resource.collectionRequestSent(updatedResourceType, integrationId, refresh));
 
     let collection = yield call(apiCallWithPaging, {
       path,
@@ -1092,14 +1092,20 @@ export function* cancelQueuedJob({ jobId }) {
     yield put(actions.api.failure(path, 'PUT', error?.message, false));
   }
 }
-export function* replaceConnection({ _resourceId, _connectionId, _newConnectionId }) {
-  const path = `/flows/${_resourceId}/replaceConnection`;
+export function* replaceConnection({ resourceType, _resourceId, _connectionId, _newConnectionId }) {
+  const path = `/${resourceType}/${_resourceId}/replaceConnection`;
+  let body;
 
+  if (resourceType === 'flows') {
+    body = { _connectionId, _newConnectionId };
+  } else {
+    body = { _newConnectionId };
+  }
   try {
     yield call(apiCallWithRetry, {
       path,
       opts: {
-        body: { _connectionId, _newConnectionId },
+        body,
         method: 'PUT',
       },
     });

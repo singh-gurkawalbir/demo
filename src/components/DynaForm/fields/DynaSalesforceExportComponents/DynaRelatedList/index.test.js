@@ -98,7 +98,6 @@ describe('dynaRelatedList UI tests', () => {
 
     expect(screen.getByText('test relation')).toBeInTheDocument();
     expect(screen.getByText('Quote')).toBeInTheDocument();
-    screen.debug();
   });
   test('should display the edit and delete actions when clicked on the ellipsis menu in the table', () => {
     initDynaRelatedList(props);
@@ -106,14 +105,12 @@ describe('dynaRelatedList UI tests', () => {
     const editButton = screen.getByRole('button');
 
     userEvent.click(editButton);
-    screen.debug();
     const ellipsisButton = document.querySelector('[data-test="openActionsMenu"]');
 
     expect(ellipsisButton).toBeInTheDocument();
     userEvent.click(ellipsisButton);
     expect(screen.getByText('Edit')).toBeInTheDocument();
     expect(screen.getByText('Delete')).toBeInTheDocument();
-    screen.debug(null, Infinity);
   });
   test('should close the current open Modal and open another modal when clicked on the edit button from the menu', () => {
     initDynaRelatedList(props);
@@ -121,7 +118,6 @@ describe('dynaRelatedList UI tests', () => {
     const editButton = screen.getByRole('button');
 
     userEvent.click(editButton);
-    screen.debug();
     const ellipsisButton = document.querySelector('[data-test="openActionsMenu"]');
 
     expect(ellipsisButton).toBeInTheDocument();
@@ -139,7 +135,6 @@ describe('dynaRelatedList UI tests', () => {
     const editButton = screen.getByRole('button');
 
     userEvent.click(editButton);
-    screen.debug();
     const ellipsisButton = document.querySelector('[data-test="openActionsMenu"]');
 
     expect(ellipsisButton).toBeInTheDocument();

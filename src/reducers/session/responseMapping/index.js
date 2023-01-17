@@ -1,7 +1,7 @@
 import produce from 'immer';
 import { isEqual } from 'lodash';
-import shortid from 'shortid';
 import deepClone from 'lodash/cloneDeep';
+import { generateId } from '../../../utils/string';
 import actionTypes from '../../../actions/types';
 
 const emptyObj = {};
@@ -45,7 +45,7 @@ export default function reducer(state = {}, action) {
         if (draft.mapping.mappings[index]) {
           draft.mapping.mappings[index][field] = value;
         } else if (value) {
-          const newKey = shortid.generate();
+          const newKey = generateId();
           const newRow = {
             key: newKey,
           };

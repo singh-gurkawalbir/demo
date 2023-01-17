@@ -1,4 +1,3 @@
-import shortid from 'shortid';
 import { original, produce } from 'immer';
 import { differenceWith, isEqual, isEmpty } from 'lodash';
 import deepClone from 'lodash/cloneDeep';
@@ -23,7 +22,7 @@ import {
   buildExtractsHelperFromExtract,
   getSelectedExtractDataTypes,
   isMapper2HandlebarExpression} from '../../../utils/mapping';
-import { generateUniqueKey } from '../../../utils/string';
+import { generateId } from '../../../utils/string';
 
 export const expandRow = (draft, key) => {
   if (!draft || !key) return;
@@ -99,7 +98,7 @@ export const updateDestinationDataType = (draft, node, oldDataType, newDataType)
   if (!node) return node;
 
   const newNode = deepClone(node);
-  const newRowKey = generateUniqueKey();
+  const newRowKey = generateId();
 
   // data type not changed, nothing to do
   if (oldDataType === newDataType) return node;
@@ -158,9 +157,12 @@ export const updateDestinationDataType = (draft, node, oldDataType, newDataType)
     const oldSourceDataType = PRIMITIVE_DATA_TYPES.includes(oldDataType) ? newNode.sourceDataType : undefined;
 
     newNode.extractsArrayHelper = newNode.extractsArrayHelper || buildExtractsHelperFromExtract({sourceField: newNode.extract, extractsTree: draft.mapping.extractsTree, oldSourceDataType});
-
+    // if array helper does not exist (eg when extract is empty)
+    // then we keep the old sourceDataType for reference
+    if (newNode.extractsArrayHelper?.length) {
+      delete newNode.sourceDataType;
+    }
     delete newNode.extract;
-    delete newNode.sourceDataType;
 
     return newNode;
   }
@@ -391,7 +393,7 @@ export default (state = {}, action) => {
           draft.mapping.mappings[index] = mapping;
           draft.mapping.lastModifiedRowKey = mapping.key;
         } else if (value) {
-          const newKey = shortid.generate();
+          const newKey = generateId();
           const newRow = {
             key: newKey,
           };
@@ -601,7 +603,7 @@ export default (state = {}, action) => {
           // top disabled row already exists
           if (draft.mapping.v2TreeData[0]?.generateDisabled) break;
 
-          const newRowKey = generateUniqueKey();
+          const newRowKey = generateId();
 
           const node = {
             key: newRowKey,
@@ -627,7 +629,7 @@ export default (state = {}, action) => {
 
           // add empty row if no children were found
           if (isEmpty(draft.mapping.v2TreeData)) {
-            const emptyRowKey = generateUniqueKey();
+            const emptyRowKey = generateId();
 
             draft.mapping.v2TreeData = [{
               key: emptyRowKey,
@@ -667,7 +669,7 @@ export default (state = {}, action) => {
 
           // add empty row if all the mappings have been deleted
           if (isEmpty(nodeSubArray) || isEmpty(matchingChildren)) {
-            const emptyRowKey = generateUniqueKey();
+            const emptyRowKey = generateId();
 
             nodeSubArray.push({
               key: emptyRowKey,
@@ -690,7 +692,7 @@ export default (state = {}, action) => {
         const {node, nodeSubArray, nodeIndexInSubArray} = findNodeInTree(draft.mapping.v2TreeData, 'key', v2Key);
 
         if (nodeIndexInSubArray >= 0) {
-          const newRowKey = generateUniqueKey();
+          const newRowKey = generateId();
 
           nodeSubArray.splice(nodeIndexInSubArray + 1, 0, {
             key: newRowKey,
@@ -828,7 +830,7 @@ export default (state = {}, action) => {
         // sometimes child array wouldn't be empty (in case of tabbed object arrays), in that case, checking the parentExtract
         if (dragParentKey && (isEmpty(dragSubArr) || !dragSubArr.some(item => (item.parentExtract || '') === (dragParentExtract || '')))) {
           const newChild = {
-            key: generateUniqueKey(),
+            key: generateId(),
             title: '',
             parentKey: dragParentKey,
             dataType: MAPPING_DATA_TYPES.STRING,
@@ -866,7 +868,7 @@ export default (state = {}, action) => {
                 if (!value && node.dataType === MAPPING_DATA_TYPES.OBJECT) {
                   delete node.extractsArrayHelper;
                   // delete all children if extract is empty
-                  const newRowKey = generateUniqueKey();
+                  const newRowKey = generateId();
 
                   node.children = [{
                     key: newRowKey,
@@ -886,7 +888,10 @@ export default (state = {}, action) => {
                   delete nodeSubArray[nodeIndexInSubArray].hardCodedValue;
                   // object array is already handled in rebuildObjectArrayNode
                   if (node.dataType !== MAPPING_DATA_TYPES.OBJECTARRAY) {
-                    nodeSubArray[nodeIndexInSubArray].extractsArrayHelper = buildExtractsHelperFromExtract({existingExtractsArray: nodeSubArray[nodeIndexInSubArray].extractsArrayHelper, sourceField: value, extractsTree: draft.mapping.extractsTree, selectedExtractJsonPath});
+                    nodeSubArray[nodeIndexInSubArray].extractsArrayHelper = buildExtractsHelperFromExtract({existingExtractsArray: nodeSubArray[nodeIndexInSubArray].extractsArrayHelper, sourceField: value, extractsTree: draft.mapping.extractsTree, selectedExtractJsonPath, oldSourceDataType: nodeSubArray[nodeIndexInSubArray].sourceDataType});
+                  }
+                  if (nodeSubArray[nodeIndexInSubArray].extractsArrayHelper?.length) {
+                    delete nodeSubArray[nodeIndexInSubArray].sourceDataType;
                   }
                 }
               } else if (node.dataType !== MAPPING_DATA_TYPES.OBJECT || node.copySource === 'yes') {
@@ -977,7 +982,7 @@ export default (state = {}, action) => {
 
               if (isEmpty(node.children)) {
                 node.children = [{
-                  key: generateUniqueKey(),
+                  key: generateId(),
                   title: '',
                   parentKey: node.key,
                   dataType: MAPPING_DATA_TYPES.STRING,
@@ -1043,7 +1048,7 @@ export default (state = {}, action) => {
 
         draft.mapping.v2TreeData = deleteNonRequiredMappings(draft.mapping.v2TreeData);
         if (isEmpty(draft.mapping.v2TreeData)) {
-          const key = generateUniqueKey();
+          const key = generateId();
 
           if (isCSVOrXLSX) {
             draft.mapping.v2TreeData = [{
@@ -1054,7 +1059,7 @@ export default (state = {}, action) => {
               disabled: draft.mapping.isMonitorLevelAccess,
               children: [
                 {
-                  key: generateUniqueKey(),
+                  key: generateId(),
                   title: '',
                   dataType: MAPPING_DATA_TYPES.STRING,
                   disabled: draft.mapping.isMonitorLevelAccess,

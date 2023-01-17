@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { screen, waitFor} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -54,7 +53,6 @@ describe('keyValueRow UI tests', () => {
     const sortableHandle = document.querySelector('[id="dragHandle"]');
 
     expect(sortableHandle).toBeInTheDocument();
-    screen.debug(undefined, Infinity);
   });
   test('should display the dropdown only when showSortOrder prop is false', () => {
     const newprops = {...props,
@@ -86,7 +84,6 @@ describe('keyValueRow UI tests', () => {
     expect(screen.queryByText('Descending')).toBeNull();
     userEvent.click(screen.getByText('Ascending'));
     expect(screen.getByText('Descending')).toBeInTheDocument();
-    screen.debug(undefined, Infinity);
   });
   test('should call the handleValueUpdate function when the dropdown value is changed', async () => {
     renderWithProviders(<KeyValueRow {...props} />);

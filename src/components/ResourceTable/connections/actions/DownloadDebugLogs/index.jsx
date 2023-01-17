@@ -1,18 +1,18 @@
-import { useCallback } from 'react';
-import { useDispatch } from 'react-redux';
-import actions from '../../../../../actions';
+import React from 'react';
 import DownloadIcon from '../../../../icons/DownloadIcon';
+import DownloadFileWithURL from '../../../../DownloadFileWithURL';
 
 export default {
   key: 'downloadDebugLogs',
-  useLabel: () => 'Download debug logs',
-  icon: DownloadIcon,
-  useOnClick: rowData => {
-    const dispatch = useDispatch();
+  useLabel: rowData => {
     const { _id: connectionId } = rowData;
+    const downloadUrl = `/api/connections/${connectionId}/debug`;
 
-    return useCallback(() => {
-      dispatch(actions.logs.connections.download(connectionId));
-    }, [connectionId, dispatch]);
+    return (
+      <DownloadFileWithURL downloadUrl={downloadUrl}>
+        Download debug logs
+      </DownloadFileWithURL>
+    );
   },
+  icon: DownloadIcon,
 };

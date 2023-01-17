@@ -117,10 +117,17 @@ export default function OperandSettingsDialog({
   );
   const handleSubmit = useCallback(
     formValues => {
+      let trans = formValues.transformations || [];
+
+      if (formValues.dataType) {
+        const allowedTransformations = transformations[formValues.dataType]?.map(val => val.value) || [];
+
+        trans = trans?.filter(val => allowedTransformations?.includes(val));
+      }
       const updatedFormValues = {
         type: formValues.type,
         dataType: formValues.type === 'expression' ? '' : formValues.dataType,
-        transformations: formValues.transformations,
+        transformations: trans,
       };
 
       onSubmit(updatedFormValues);

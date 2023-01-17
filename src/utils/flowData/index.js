@@ -24,6 +24,8 @@ export const IMPORT_FILTERED_DATA_STAGE = 'preMap';
 export const EXPORT_FILTERED_DATA_STAGE = 'postInputFilter';
 export const IMPORT_POST_MAPPED_DATA_STAGE = 'postMapOutput';
 
+export const STAGES_TO_RESET_FLOW_DATA = ['inputFilter'];
+
 export const sampleDataStage = {
   exports: {
     processedFlowInput: 'flowInput',
@@ -141,11 +143,10 @@ export const getCurrentSampleDataStageStatus = (
 // Regex for parsing patchSet paths to listen field specific changes of a resource
 // sample Sequence path:  '/pageProcessors' or '/pageGenerators'
 // sample responseMapping path: '/pageProcessors/${resourceIndex}/responseMapping
-// when added a lookup to the flow path: '/pageProcessors/${resourceIndex}
 const pathRegex = {
   newPPSequence: /(\/routers\/(\d+)\/branches\/(\d+))?\/pageProcessors\/(\d+)$/,
   pgSequence: /(\/pageGenerators\/(\d+))/,
-  oldPPSequence: /(\/pageProcessors\/(\d+))$/,
+  oldPPSequence: /(\/pageProcessors\/(\d+)\/(_importId|_exportId))$/,
   responseMapping: /(\/routers\/(\d+)\/branches\/(\d+))?\/pageProcessors\/(\d+)\/responseMapping/,
   oldResponseMapping: /\/pageProcessors\/(\d+)\/responseMapping/,
   lookupAddition: /\/pageProcessors\/[0-9]+$/,
@@ -210,17 +211,6 @@ export const getPostDataForDeltaExport = resource => ({
   lastExportDateTime: getLastExportDateTime(resource),
   currentExportDateTime: getCurrentExportDateTime(resource),
 });
-
-export const getAddedLookupIdInFlow = (patchSet = []) => {
-  const pageProcessorsPatch = patchSet.find(
-    patch => pathRegex.lookupAddition.test(patch.path) &&
-      ['add', 'replace'].includes(patch.op)
-  );
-
-  if (pageProcessorsPatch?.value?.type === 'export') {
-    return pageProcessorsPatch.value._exportId;
-  }
-};
 
 // Goes through patchset changes to decide what is updated
 export const getFlowUpdatesFromPatch = (patchSet = []) => {
@@ -418,16 +408,25 @@ export const getFormattedResourceForPreview = (
 
 /**
  * @input patchSet
- * @input resourceType
+ * @input resourceType : Default value is exports
  * @outPut stage /  undefined
  * The stage returned is used to determine what parts of resource's stages need to be updated
  * If none of the below paths are matched, returns undefined which implies reset the entire resource's state
  */
-export const getResourceStageUpdatedFromPatch = (patchSet = []) => {
+export const getResourceStageUpdatedFromPatch = (patchSet = [], resourceType = 'exports') => {
   const { path: patchSetPath, value: patchSetValue = {} } = patchSet[0] || {};
 
   if (patchSetPath === '/transform') return 'transform';
-  if (patchSetPath === '/filter') return 'outputFilter';
+  if (patchSetPath === '/filter') {
+    if (resourceType === 'imports') {
+      // Incase of imports, patchSet is filter for inputFilter
+      return 'inputFilter';
+    }
+
+    // Incase of pgs/lookups, patchSet is filter for outputFilter
+    // and inputFilter for inputFilter
+    return 'outputFilter';
+  }
   if (patchSetPath === '/inputFilter') return 'inputFilter';
   if (patchSetPath === '/hooks') {
     if (patchSetValue.preSavePage) return 'preSavePage';

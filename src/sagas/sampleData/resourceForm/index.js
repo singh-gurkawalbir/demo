@@ -431,7 +431,7 @@ export function* _requestImportFileSampleData({ formKey }) {
 
   if (FILE_DEFINITION_TYPES.includes(fileType)) {
     const fieldState = yield select(selectors.fieldState, formKey, 'file.filedefinition.rules');
-    const {userDefinitionId, options: fieldOptions} = fieldState;
+    const {userDefinitionId, options: fieldOptions} = fieldState || {};
     const { format, definitionId } = fieldOptions || {};
 
     const fileDefinitionData = yield select(selectors.fileDefinitionSampleData, {

@@ -278,15 +278,11 @@ export default function* rootSaga() {
     // so when we perform initialization the app knows which account to show
     // TODO: we should wait for update preferences to complete...inorder to prevent a race
     // with initSession to get preferences.
-    yield put(
-      actions.user.preferences.update({
-        defaultAShareId: switchAcc.accountToSwitchTo,
-        environment: 'production',
-      })
-    );
-    yield put(actions.auth.clearStore());
+    yield put(actions.auth.clearStore({
+      authenticated: true,
+    }));
 
-    yield put(actions.auth.initSession());
+    yield put(actions.auth.initSession({ switchAcc: true }));
   }
 }
 

@@ -158,7 +158,7 @@ describe('mock input drawer test cases', () => {
     expect(fetchLatestInputButton).toBeInTheDocument();
     userEvent.clear(inputNode);
     userEvent.type(inputNode, '{}'.replace(/[{[]/g, '$&$&'));
-    expect(screen.getByText(errorMessageStore('MOCK_INPUT_INVALID_FORMAT'))).toBeInTheDocument();
+    expect(screen.getByText(/Mock input must be in integrator.io canonical format./)).toBeInTheDocument();
     const onCloseButtonNode = screen.getByRole('button', {name: 'On Close'});
 
     expect(onCloseButtonNode).toBeInTheDocument();
