@@ -1,5 +1,5 @@
 import React from 'react';
-import { screen, waitFor} from '@testing-library/react';
+import { fireEvent, screen, waitFor} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import KeyValueRow from './Row';
 import {renderWithProviders} from '../../../../test/test-utils';
@@ -8,7 +8,7 @@ jest.mock('../DynaAutoSuggest', () => ({
   __esModule: true,
   ...jest.requireActual('../DynaAutoSuggest'),
   default: props => (
-    <button type="button" onClick={() => props.onFieldChange()}>AutoSuggest Component</button>
+    <button type="button" onClick={() => props.onFieldChange()}>AutoSuggest Component {props.id}</button>
   ),
 }));
 
@@ -48,7 +48,7 @@ describe('keyValueRow UI tests', () => {
 
   test('should pass the initial render', () => {
     renderWithProviders(<KeyValueRow {...props} />);
-    expect(screen.getByText('AutoSuggest Component')).toBeInTheDocument();
+    expect(screen.getByText('AutoSuggest Component key1-0')).toBeInTheDocument();
     expect(screen.getAllByRole('button')).toHaveLength(4);
     const sortableHandle = document.querySelector('[id="dragHandle"]');
 
@@ -62,7 +62,7 @@ describe('keyValueRow UI tests', () => {
       showSortOrder: false};
 
     renderWithProviders(<KeyValueRow {...newprops} />);
-    expect(screen.getByText('AutoSuggest Component')).toBeInTheDocument();
+    expect(screen.getByText('AutoSuggest Component key1-0')).toBeInTheDocument();
     expect(screen.getByRole('textbox')).toBeInTheDocument();
   });
   test('should call the handledelete function when clicked on the delete button', async () => {
@@ -124,13 +124,18 @@ describe('keyValueRow UI tests', () => {
   test('should display the sortable handle only when enableSorting and showGripper are true', () => {
     const newprops = {
       ...props,
+      suggestionConfig: undefined,
+      keyPlaceholder: undefined,
       enableSorting: true,
       isRowDragged: true,
     };
 
     renderWithProviders(<KeyValueRow {...newprops} />);
+    expect(screen.getByRole('textbox').getAttribute('placeholder')).toBe('key1');
     const sortableHandle = document.querySelector('[id="dragHandle"]');
 
+    fireEvent.mouseDown(sortableHandle);
+    fireEvent.mouseLeave(sortableHandle);
     expect(sortableHandle).toBeInTheDocument();
   });
   test('should render the inLineClose button additionally when r.disableRowKey is true', () => {
@@ -144,17 +149,20 @@ describe('keyValueRow UI tests', () => {
         disableRowKey: true,
       },
       isInlineClose: false,
+      showSortOrder: false,
     };
 
     renderWithProviders(<KeyValueRow {...newprops} />);
     const buttons = screen.getAllByRole('button');
 
     expect(buttons).toHaveLength(4);
+    userEvent.click(screen.getByText('AutoSuggest Component value1-0'));
+    expect(mockhandleUpdate).toHaveBeenCalled();
   });
   test('function wbcefv', async () => {
     renderWithProviders(<KeyValueRow {...props} />);
-    expect(screen.getByText('AutoSuggest Component')).toBeInTheDocument();
-    userEvent.click(screen.getByText('AutoSuggest Component'));
+    expect(screen.getByText('AutoSuggest Component key1-0')).toBeInTheDocument();
+    userEvent.click(screen.getByText('AutoSuggest Component key1-0'));
     await waitFor(() => expect(mockhandleUpdate).toHaveBeenCalled());
   });
 });
