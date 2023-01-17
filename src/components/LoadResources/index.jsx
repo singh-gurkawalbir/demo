@@ -1,10 +1,11 @@
 import { useEffect, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import actions from '../../actions';
+import { emptyList } from '../../constants';
 import { useSelectorMemo } from '../../hooks';
 import { selectors } from '../../reducers';
 
-export default function LoadResources({ children, resources, required, lazyResources = [], integrationId, spinner }) {
+export default function LoadResources({ children, resources, required, lazyResources = emptyList, integrationId, spinner }) {
   const dispatch = useDispatch();
   const defaultAShareId = useSelector(state => state?.user?.preferences?.defaultAShareId);
 
