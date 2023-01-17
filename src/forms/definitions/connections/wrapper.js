@@ -33,7 +33,7 @@ export default {
           id: 'wrapper.unencrypted',
           fieldId: 'wrapper.unencrypted',
           type: 'editor',
-          required: true,
+          required: false,
           defaultValue: unEncryptedText || '{"field": "value"}',
         },
       });
@@ -63,7 +63,7 @@ export default {
           id: 'wrapper.encrypted',
           fieldId: 'wrapper.encrypted',
           type: 'editor',
-          required: true,
+          required: false,
           defaultValue: (isNewId(resource && resource._id)) ? '{"field": "value"}' : '',
         },
       });
