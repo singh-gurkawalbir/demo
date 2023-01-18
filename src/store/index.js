@@ -3,6 +3,7 @@ import { createStore, applyMiddleware, compose } from 'redux';
 import createSagaMiddleware from 'redux-saga';
 import { createLogger } from 'redux-logger';
 import LogRocket from 'logrocket';
+import { cloneDeep } from 'lodash';
 import rootReducer from '../reducers';
 import rootSaga from '../sagas';
 import actions from '../actions';
@@ -62,6 +63,17 @@ export const getCreatedStore = () => {
   );
 
   sagaMiddleware.run(rootSaga);
+
+  if (env === 'test') {
+    const devStore = cloneDeep(store.getState());
+
+    store = {
+      ...store,
+      getState: () => devStore,
+    };
+
+    return store;
+  }
 
   return store;
 };
