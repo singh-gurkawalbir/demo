@@ -100,8 +100,7 @@ export default function HelpContent({ children, title, caption, fieldId, resourc
   const [feedbackText, setFeedbackText] = useState(false);
   const [feedbackTextValue, setFeedbackTextValue] = useState('');
   const handleUpdateFeedBack = useCallback(
-    helpful => e => {
-      e.stopPropagation();
+    helpful => () => {
       if (helpful) {
         dispatch(actions.app.postFeedback(resourceType, fieldId, helpful));
       } else {
@@ -124,14 +123,14 @@ export default function HelpContent({ children, title, caption, fieldId, resourc
   return (
     <div className={classes.wrapper}>
       <div className={classes.titleWrapper}>
-        <Typography data-test="title" className={classes.title} variant="h6">
+        <Typography className={classes.title} variant="h6">
           {title}
         </Typography>
         <IconButton
           size="small"
           data-test="close"
           aria-label="Close"
-          onClick={e => { e.stopPropagation(); }}
+          // onClick={e => { e.stopPropagation(); }}
           className={classes.closeButton}>
           <CloseIcon />
         </IconButton>
@@ -143,23 +142,24 @@ export default function HelpContent({ children, title, caption, fieldId, resourc
             name="feedbackText"
             placeholder="How can we make this information more helpful?"
             multiline
-            onClick={e => { e.stopPropagation(); }}
+            // onClick={e => { e.stopPropagation(); }}
             onChange={onChange}
             variant="outlined"
             className={classes.feedbackTextField}
           />
-          <OutlinedButton
-            className={classes.feedbackActionButton}
-            onClick={handleSendFeedbackText}
-            data-test="submitButton">
-            Submit
-          </OutlinedButton>
+          <span data-test="helpFeedbackSubmit">
+            <OutlinedButton
+              className={classes.feedbackActionButton}
+              onClick={handleSendFeedbackText}>
+              Submit
+            </OutlinedButton>
+          </span>
         </>
       ) : (
         <>
           <Typography variant="subtitle2" component="div" className={classes.content}>{children}</Typography>
           <div className={classes.actionWrapper}>
-            <Typography data-test="feedback" variant="subtitle2">Was this helpful?</Typography>
+            <Typography variant="subtitle2">Was this helpful?</Typography>
             <IconButtonWithTooltip
               data-test="yesContentHelpful"
               tooltipProps={{title: 'Yes'}}

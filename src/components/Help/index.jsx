@@ -43,16 +43,18 @@ export default function Help({ className, helpKey, helpText, escapeUnsecuredDoma
     [anchorEl]
   );
   const handleClose = useCallback(event => {
-    event.stopPropagation();
-    const isPopperSecondParent = event.target.parentElement?.parentElement?.dataset?.test === 'arrowpopper';
-    const isPopperthirdParent = event.target.parentElement?.parentElement?.parentElement?.dataset?.test === 'arrowpopper';
-    const isSubmitButton = event.target.dataset?.test === 'submitButton';
-
     // if clicking interacting with feedback text field  or if clicking on No button
     // do not close popper
-    if (!isSubmitButton && (isPopperSecondParent || isPopperthirdParent || event.target.name === 'feedbackText' ||
+    if (popperRef.current?.popper && popperRef.current.popper.contains(event.target)) {
+      const isCloseButton = event.target.matches('button[data-test=close] *');
+      const isYesButton = event.target.matches('button[data-test=yesContentHelpful] *');
+      const isFeedbackSubmitButton = event.target.matches('span[data-test=helpFeedbackSubmit] button, span[data-test=helpFeedbackSubmit] *');
+
+      if (!isCloseButton && !isYesButton && !isFeedbackSubmitButton) { return; }
+    }
+    if (event.target.name === 'feedbackText' ||
     event.target.textContent === 'No' ||
-    ['thumbsdownicon', 'noContentHelpful', 'title', 'feedback'].includes(event.target.dataset?.test))
+    ['thumbsdownicon', 'noContentHelpful'].includes(event.target.dataset?.test)
     ) return;
     setAnchorEl(null);
   }, []);
@@ -73,10 +75,7 @@ export default function Help({ className, helpKey, helpText, escapeUnsecuredDoma
       </ClickAwayListener>
       <ArrowPopper
         placement={placement}
-        data-test="arrowpopper"
         id="helpBubble"
-        onClick={e => { e.stopPropagation(); }}
-        onClose={e => { e.stopPropagation(); }}
         open={open}
         disablePortal={disablePortal}
         popperRef={popperRef}

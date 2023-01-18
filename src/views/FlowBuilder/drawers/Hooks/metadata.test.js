@@ -56,6 +56,10 @@ describe('getHooksMetadata test cases', () => {
       'hookType',
       'preMap.script',
       'postSubmit.script',
+      'suiteScript-header',
+      'preMap.suiteScript',
+      'postMap.suiteScript',
+      'postSubmit.suiteScript',
     ]);
   });
 
