@@ -145,6 +145,17 @@ export default function DynaHFAssistantSearchParams(props) {
     dispatch(actions.form.clearForceFieldState(formKey)(id));
   }, [dispatch, formKey, id]);
 
+  useEffect(() => {
+    if (requiredFields && requiredFields.length > 0) {
+      const valueKeys = Object.keys(value);
+      const newValues = {};
+
+      requiredFields.filter(field => !valueKeys.includes(field)).forEach(field => {
+        newValues[field] = undefined;
+      });
+      Object.keys(newValues).length > 0 && onFieldChange(id, {...value, ...newValues});
+    }
+  }, [id, onFieldChange, requiredFields, value]);
   /* istanbul ignore next: handleSave not invoked in test script */
   const handleSave = useCallback(editorValues => {
     const newValue = {...value, [Object.keys(value)[editorValues.paramIndex]]: editorValues.rule};
