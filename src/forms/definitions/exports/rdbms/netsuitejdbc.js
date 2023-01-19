@@ -18,9 +18,8 @@ export default {
     }
     retValues['/mockOutput'] = safeParse(retValues['/mockOutput']);
     retValues['/jdbc/query'] = retValues['/rdbms/query'];
-    retValues['/jdbc/batchsize'] = retValues['/test/limit'];
 
-    // will have to remove rdbms.query and test.limit
+    // will have to remove rdbms.query
 
     return {
       ...retValues,

@@ -27,6 +27,7 @@ export default {
       ['roleId', newValues['/netsuite/token/auto/roleId']],
       ['serverDataSource', newValues['/jdbc/serverDataSource']],
     ];
+    newValues['/jdbc/type'] = 'netsuitejdbc';
 
     delete newValues['/netsuite/token/auto'];
     delete newValues['/netsuite/token/auto/roleId'];
@@ -122,19 +123,32 @@ export default {
       {
         collapsed: true,
         label: 'Application details',
-        fields: [
-          'jdbc.host',
-          'jdbc.port',
-          'jdbc.serverDataSource',
-          'jdbc.staticschemaexport',
-          'jdbc.authType',
-          'netsuite.tokenEnvironment',
-          'netsuite.tokenAccount',
-          'netsuite.token.auto.account',
-          'netsuite.token.auto.roleId',
-          'netsuite.token.auto.roleId',
-          'netsuite.tokenId',
-          'netsuite.tokenSecret',
+        containers: [
+          {
+            fields:
+            [
+              'jdbc.host',
+              'jdbc.port',
+              'jdbc.serverDataSource',
+            ],
+          },
+          {
+            type: 'indent',
+            containers: [
+              {fields: ['jdbc.staticschemaexport']},
+            ],
+          },
+          { fields: [
+            'jdbc.authType',
+            'netsuite.tokenEnvironment',
+            'netsuite.tokenAccount',
+            'netsuite.token.auto.account',
+            'netsuite.token.auto.roleId',
+            'netsuite.token.auto.roleId',
+            'netsuite.tokenId',
+            'netsuite.tokenSecret',
+          ]},
+
         ],
       },
       {
@@ -144,4 +158,33 @@ export default {
       },
     ],
   },
+  actions: [
+    {
+      id: 'saveandclosegroup',
+      visibleWhen: [
+        {
+          field: 'netsuite.authType',
+          is: [''],
+        },
+      ],
+    },
+    {
+      id: 'oauthandcancel',
+      visibleWhen: [
+        {
+          field: 'netsuite.authType',
+          is: ['token-auto'],
+        },
+      ],
+    },
+    {
+      id: 'testandsavegroup',
+      visibleWhen: [
+        {
+          field: 'netsuite.authType',
+          is: ['token'],
+        },
+      ],
+    },
+  ],
 };

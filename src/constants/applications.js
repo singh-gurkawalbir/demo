@@ -163,6 +163,7 @@ const connectors = [
     type: 'netsuitejdbc',
     keywords: 'database,db',
     group: 'db',
+    noimport: true,
     helpURL: 'https://docs.celigo.com/hc/en-us/articles/4843857027227',
   },
   {
@@ -447,6 +448,11 @@ export const groupApplications = (
       // Do not show FTP/S3 import for DataLoader flows
       if (resourceType === 'pageProcessor' && isSimpleImport) {
         return !['ftp', 's3'].includes(connector.id) && !connector.webhookOnly;
+      }
+
+      // connector having noimport true as property should not be shown in the list of standalone imports
+      if (resourceType === 'imports' && connector.noimport) {
+        return false;
       }
 
       // Webhooks are shown only for exports and for page generators in flow context
