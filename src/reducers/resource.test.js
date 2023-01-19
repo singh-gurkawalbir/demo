@@ -12,6 +12,8 @@ import { FILTER_KEY, LIST_VIEW, TILE_VIEW } from '../utils/home';
 import getRoutePath from '../utils/routePaths';
 import { COMM_STATES } from './comms/networkComms';
 
+const clone = require('rfdc')();
+
 const suitescriptConnectors = [
   {
     _id: 'suitescript-salesforce-netsuite',
@@ -8191,9 +8193,11 @@ describe('selectors.isParserSupported test cases', () => {
     );
 
     state = reducer(state, actions.form.init(formKey, '', { fieldMeta, parentContext: {resourceId: 'e1'} }));
-    state.session.form[formKey].value = { '/http/successMediaType': parser };
+    const cloneState = clone(state);
 
-    expect(selectors.isParserSupported(state, formKey, parser)).toBe(true);
+    cloneState.session.form[formKey].value = { '/http/successMediaType': parser };
+
+    expect(selectors.isParserSupported(cloneState, formKey, parser)).toBe(true);
   });
 
   test('should return false for HTTP export with overridden success media type different from parser', () => {
@@ -8215,9 +8219,12 @@ describe('selectors.isParserSupported test cases', () => {
     );
 
     state = reducer(state, actions.form.init(formKey, '', { fieldMeta, parentContext: {resourceId: 'e1'} }));
-    state.session.form[formKey].value = { '/http/successMediaType': 'csv' };
 
-    expect(selectors.isParserSupported(state, formKey, parser)).toBe(false);
+    const cloneState = clone(state);
+
+    cloneState.session.form[formKey].value = { '/http/successMediaType': 'csv' };
+
+    expect(selectors.isParserSupported(cloneState, formKey, parser)).toBe(false);
   });
 
   test('should not rely on success media type of connection', () => {

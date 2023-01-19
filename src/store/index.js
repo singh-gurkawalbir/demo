@@ -3,10 +3,11 @@ import { createStore, applyMiddleware, compose } from 'redux';
 import createSagaMiddleware from 'redux-saga';
 import { createLogger } from 'redux-logger';
 import LogRocket from 'logrocket';
-import { cloneDeep } from 'lodash';
 import rootReducer from '../reducers';
 import rootSaga from '../sagas';
 import actions from '../actions';
+
+const clone = require('rfdc')();
 
 export const getCreatedStore = () => {
 // eslint-disable-next-line import/no-mutable-exports
@@ -65,7 +66,7 @@ export const getCreatedStore = () => {
   sagaMiddleware.run(rootSaga);
 
   if (env === 'test') {
-    const devStore = cloneDeep(store.getState());
+    const devStore = clone(store.getState());
 
     store = {
       ...store,

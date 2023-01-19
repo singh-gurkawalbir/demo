@@ -8,6 +8,8 @@ import {getCreatedStore} from '../store';
 import server from './api/server';
 import { API } from './api/utils';
 
+const clone = require('rfdc')();
+
 const theme = themeProvider();
 export const renderWithProviders = (ui, { initialStore, renderFun = render } = {}) => {
   const reduxStore = initialStore || getCreatedStore();
@@ -27,7 +29,17 @@ export const renderWithProviders = (ui, { initialStore, renderFun = render } = {
   };
 };
 
-export const reduxStore = getCreatedStore();
+export const reduxStore = (() => {
+  let initialStore = getCreatedStore();
+  const store = clone(initialStore.getState());
+
+  initialStore = {
+    ...initialStore,
+    getState: () => store,
+  };
+
+  return initialStore;
+})();
 
 export const mockGetRequestOnce = (url, resolver) => {
   server.use(API.getOnce(url, resolver));
