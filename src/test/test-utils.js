@@ -3,12 +3,13 @@ import React from 'react';
 import { SnackbarProvider } from 'notistack';
 import { Provider } from 'react-redux';
 import { render } from '@testing-library/react';
+import rfdc from 'rfdc';
 import themeProvider from '../theme/themeProvider';
 import {getCreatedStore} from '../store';
 import server from './api/server';
 import { API } from './api/utils';
 
-const clone = require('rfdc')();
+const clone = rfdc({proto: true});
 
 const theme = themeProvider();
 export const renderWithProviders = (ui, { initialStore, renderFun = render } = {}) => {

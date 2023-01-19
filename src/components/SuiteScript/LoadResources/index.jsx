@@ -1,7 +1,10 @@
 import { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import rfdc from 'rfdc';
 import actions from '../../../actions';
 import { selectors } from '../../../reducers';
+
+const clone = rfdc({proto: true});
 
 export default function LoadResources({
   children,
@@ -40,7 +43,7 @@ export default function LoadResources({
 
   useEffect(() => {
     if (!isAllDataReady) {
-      resourceStatus.forEach(resource => {
+      clone(resourceStatus).forEach(resource => {
         if (!resource.hasData) {
           let path = `suitescript/connections/${ssLinkedConnectionId}/`;
 

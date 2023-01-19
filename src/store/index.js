@@ -3,11 +3,12 @@ import { createStore, applyMiddleware, compose } from 'redux';
 import createSagaMiddleware from 'redux-saga';
 import { createLogger } from 'redux-logger';
 import LogRocket from 'logrocket';
+import rfdc from 'rfdc';
 import rootReducer from '../reducers';
 import rootSaga from '../sagas';
 import actions from '../actions';
 
-const clone = require('rfdc')();
+const clone = rfdc({proto: true});
 
 export const getCreatedStore = () => {
 // eslint-disable-next-line import/no-mutable-exports
