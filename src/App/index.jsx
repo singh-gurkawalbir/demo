@@ -47,10 +47,11 @@ import Loader from '../components/Loader';
 const useStyles = makeStyles({
   root: {
     display: 'flex',
+    alignItems: 'flex-start',
   },
 });
 
-export const useSnackbarStyles = makeStyles({
+export const useSnackbarStyles = makeStyles(theme => ({
   variantInfo: {
     backgroundColor: colors.celigoWhite,
     '&:before': {
@@ -88,19 +89,20 @@ export const useSnackbarStyles = makeStyles({
     },
   },
   message: {
-    marginLeft: 40,
+    marginLeft: theme.spacing(5),
     display: 'grid',
     gridTemplateColumns: 'auto 1fr',
     wordBreak: 'break-word',
+    paddingTop: '6px',
     '& > svg': {
       position: 'fixed',
-      left: 16,
-      top: '47%',
-      transform: 'translateY(-47%)',
+      left: theme.spacing(2),
+      top: theme.spacing(2),
+      transform: `translateY(${theme.spacing(-2)})px`,
     },
   },
 
-});
+}));
 
 function NonSigninHeaderComponents() {
   const isAuthInitialized = useSelector(selectors.isAuthInitialized);
