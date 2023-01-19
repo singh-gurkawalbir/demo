@@ -1834,6 +1834,10 @@ const resourceForm = {
     action(actionTypes.RESOURCE_FORM.SHOW_BUNDLE_INSTALL_NOTIFICATION, { bundleVersion, bundleUrl, resourceType, resourceId }),
   hideBundleInstallNotification: (resourceType, resourceId) =>
     action(actionTypes.RESOURCE_FORM.HIDE_BUNDLE_INSTALL_NOTIFICATION, { resourceType, resourceId }),
+  showSuiteAppInstallNotification: (suiteAppUrl, resourceType, resourceId) =>
+    action(actionTypes.RESOURCE_FORM.SHOW_SUITEAPP_INSTALL_NOTIFICATION, {suiteAppUrl, resourceType, resourceId}),
+  hideSuiteAppInstallNotification: (resourceType, resourceId) =>
+    action(actionTypes.RESOURCE_FORM.HIDE_SUITEAPP_INSTALL_NOTIFICATION, { resourceType, resourceId }),
 };
 const accessToken = {
   displayToken: id => action(actionTypes.ACCESSTOKEN.DISPLAY, { id }),

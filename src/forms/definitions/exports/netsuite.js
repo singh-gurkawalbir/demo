@@ -281,7 +281,8 @@ export default {
       fieldId: 'netsuite.distributed.useSS2Framework',
       type: 'netsuiteapiversion',
       label: 'NetSuite API version',
-      defaultValue: r => r?.netsuite?.distributed?.useSS2Framework ? 'true' : 'false',
+      // eslint-disable-next-line camelcase
+      defaultValue: r => r?.netsuite_da?.distributed?.useSS2Framework ? 'suiteapp2.x' : 'suitebundle',
       defaultDisabled: r => {
         if (!isNewId(r._id)) {
           return true;
@@ -292,8 +293,10 @@ export default {
       options: [
         {
           items: [
-            { label: 'SuiteScript 1.0', value: 'false' },
-            { label: 'SuiteScript 2.0', value: 'true' },
+            { label: 'SuiteApp SuiteScript 2.x', value: 'suiteapp2.x' },
+            { label: 'SuiteApp SuiteScript 1.0', value: 'suiteapp1.0' },
+            // eslint-disable-next-line react/react-in-jsx-scope
+            { label: 'SuiteBundle SuiteScript 1.0', value: 'suitebundle' },
           ],
         },
       ],
@@ -318,7 +321,8 @@ export default {
       fieldId: 'netsuite.restlet.useSS2Restlets',
       type: 'netsuiteapiversion',
       label: 'NetSuite API version',
-      defaultValue: r => r?.netsuite?.restlet?.useSS2Restlets ? 'true' : 'false',
+      // eslint-disable-next-line camelcase
+      defaultValue: r => r?.netsuite_da?.restlet?.useSS2Restlets ? 'suiteapp2.x' : 'suitebundle',
       defaultDisabled: r => {
         if (!isNewId(r._id)) {
           return true;
@@ -329,8 +333,9 @@ export default {
       options: [
         {
           items: [
-            { label: 'SuiteScript 1.0', value: 'false' },
-            { label: 'SuiteScript 2.0', value: 'true' },
+            { label: 'SuiteApp SuiteScript 2.x (Recommended)', value: 'suiteapp2.x'},
+            { label: 'SuiteApp SuiteScript 1.0', value: 'suiteapp1.0' },
+            { label: 'SuiteBundle SuiteScript 1.0', value: 'suitebundle', warning: 'To be deprecated.<a target="_blank" rel="noreferrer" href="https://docs.celigo.com/hc/en-us/articles/360050643132"><u>Learn more.</u></a>' },
           ],
         },
       ],
@@ -604,7 +609,7 @@ export default {
         fields: ['mockOutput'],
       },
       {
-        collapsed: true,
+        collapsed: id => !isNewId(id),
         label: 'Advanced',
         containers: [
           {
