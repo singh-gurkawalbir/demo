@@ -71,6 +71,7 @@ export default {
       type: 'select',
       helpKey: 'slack.connection.http.auth.type',
       label: 'Authentication Type',
+      isLoggable: true,
       options: [
         {
           items: [

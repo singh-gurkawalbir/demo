@@ -4,8 +4,8 @@ import 'jQuery-QueryBuilder';
 import 'jQuery-QueryBuilder/dist/css/query-builder.default.css';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectors } from '../../../../../reducers';
-import BranchFilterPanel from '../../../../BranchFilterPanel';
 import actions from '../../../../../actions';
+import BranchFilterPanel from '../../../../BranchFilterPanel';
 
 const useStyles = makeStyles(theme => ({
   container: {

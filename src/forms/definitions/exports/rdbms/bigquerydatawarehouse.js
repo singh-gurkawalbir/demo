@@ -29,6 +29,7 @@ export default {
       id: 'type',
       type: 'select',
       label: 'Export type',
+      isLoggable: true,
       helpKey: 'export.bigquery.type',
       defaultValue: r => {
         if (isNewId(r._id)) return '';

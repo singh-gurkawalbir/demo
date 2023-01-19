@@ -39,6 +39,7 @@ export default {
       id: 'mode',
       type: 'radiogroup',
       label: 'Mode',
+      isLoggable: true,
       defaultValue: r => (r && r._agentId ? 'onpremise' : 'cloud'),
       options: [
         {
