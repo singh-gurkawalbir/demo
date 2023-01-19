@@ -81,13 +81,7 @@ export default function DynaHFAssistantSearchParams(props) {
   const flowDataStage = resourceType === 'exports' ? EXPORT_FILTERED_DATA_STAGE : IMPORT_FLOW_DATA_STAGE;
   const isMetaValid = isMetaRequiredValuesMet(paramMeta, value);
   const requiredFields = useMemo(() => paramMeta?.fields.filter(field => field.required).map(field => field.id), [paramMeta]);
-  const valueFieldType = useMemo(() => {
-    const types = {};
-
-    paramMeta?.fields.forEach(field => { types[field.id] = field.fieldType; });
-
-    return types;
-  }, [paramMeta]);
+  const valueFieldType = useMemo(() => paramMeta?.fields.reduce((fieldMap, {id, fieldType}) => ({...fieldMap, [id]: fieldType}), {}), [paramMeta]);
 
   const selectTypeList = useMemo(() => {
     const selectFields = {};
