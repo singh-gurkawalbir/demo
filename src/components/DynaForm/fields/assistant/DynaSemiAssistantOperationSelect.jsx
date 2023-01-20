@@ -40,7 +40,7 @@ export default function DynaSemiAssistantOperationSelect(props) {
         {
           label: 'Yes',
           onClick: () => {
-            const assistantConfig = semiAssistantExportConfig(assistantData, value);
+            const assistantConfig = semiAssistantExportConfig(assistantData, value, assistant);
             const flattenedAssistantConfig = flatten(assistantConfig);
 
             onFieldChange(id, value);

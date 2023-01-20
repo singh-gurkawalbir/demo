@@ -69,6 +69,7 @@ export default {
       fieldId: 'http.auth.type',
       type: 'select',
       label: 'Authentication type',
+      isLoggable: true,
       helpKey: 'servicenow.connection.http.auth.type',
       options: [
         {

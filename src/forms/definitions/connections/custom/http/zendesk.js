@@ -31,6 +31,7 @@ export default {
       required: true,
       type: 'select',
       label: 'Authentication type',
+      isLoggable: true,
       helpKey: 'zendesk.connection.http.auth.type',
       defaultValue: r =>
         r &&

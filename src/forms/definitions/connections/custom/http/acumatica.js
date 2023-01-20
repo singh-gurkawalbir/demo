@@ -69,6 +69,7 @@ export default {
   fieldMap: {
     name: { fieldId: 'name' },
     'http.auth.type': {
+      isLoggable: true,
       id: 'http.auth.type',
       required: true,
       type: 'select',
@@ -87,6 +88,7 @@ export default {
       id: 'mode',
       type: 'radiogroup',
       label: 'Mode',
+      isLoggable: true,
       defaultValue: r => (r && r._agentId ? 'onpremise' : 'cloud'),
       options: [
         {

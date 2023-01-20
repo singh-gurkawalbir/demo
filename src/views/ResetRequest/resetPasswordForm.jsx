@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import React, { useState, useCallback, useRef, useEffect} from 'react';
 import { Typography, InputAdornment} from '@material-ui/core';
-import { useParams, useHistory} from 'react-router-dom';
+import { useParams, useHistory, Link} from 'react-router-dom';
 import clsx from 'clsx';
 import actions from '../../actions';
 import { selectors } from '../../reducers';
@@ -298,12 +298,13 @@ export default function ResetPassword() {
             </FilledButton>
           )}
         <TextButton
-          href="/signin"
-          data-test="cancel"
-          type="cancel"
+          to={getRoutePath('/signin')}
+          data-test="cancelResetPassword"
           color="primary"
+          component={Link}
+          role="link"
           className={classes.submit}
-          value="Cancel">
+        >
           Cancel
         </TextButton>
       </form>
