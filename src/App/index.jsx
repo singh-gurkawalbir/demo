@@ -51,7 +51,7 @@ const useStyles = makeStyles({
   },
 });
 
-export const useSnackbarStyles = makeStyles(theme => ({
+export const useSnackbarStyles = makeStyles({
   variantInfo: {
     backgroundColor: colors.celigoWhite,
     '&:before': {
@@ -89,20 +89,19 @@ export const useSnackbarStyles = makeStyles(theme => ({
     },
   },
   message: {
-    marginLeft: theme.spacing(5),
+    marginLeft: 40,
     display: 'grid',
     gridTemplateColumns: 'auto 1fr',
     wordBreak: 'break-word',
     paddingTop: '6px',
     '& > svg': {
       position: 'fixed',
-      left: theme.spacing(2),
-      top: theme.spacing(2),
-      transform: `translateY(${theme.spacing(-2)})px`,
+      left: 16,
+      top: 16,
     },
   },
 
-}));
+});
 
 function NonSigninHeaderComponents() {
   const isAuthInitialized = useSelector(selectors.isAuthInitialized);
