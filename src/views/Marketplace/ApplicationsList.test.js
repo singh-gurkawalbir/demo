@@ -89,8 +89,9 @@ describe('ApplicationsList test cases', () => {
 
   test('should pass the initial render with default value', async () => {
     await initApplicationsList();
-    expect(screen.queryByText(/NetSuite/i)).toBeInTheDocument();
+    expect(screen.queryByText('NetSuite')).toBeInTheDocument();
     expect(screen.queryByText(/Salesforce/i)).toBeInTheDocument();
+    screen.debug(null, Infinity);
   });
 
   test('should pass the initial render with search key as netsuite', async () => {
@@ -101,7 +102,7 @@ describe('ApplicationsList test cases', () => {
         },
       },
     });
-    expect(screen.queryByText(/NetSuite/i)).toBeInTheDocument();
+    expect(screen.queryByText('NetSuite')).toBeInTheDocument();
     expect(screen.queryByText(/Salesforce/i)).not.toBeInTheDocument();
   });
 

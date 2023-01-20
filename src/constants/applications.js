@@ -163,7 +163,7 @@ const connectors = [
     type: 'netsuitejdbc',
     keywords: 'database,db',
     group: 'db',
-    noimport: true,
+    exportOnly: true,
     helpURL: 'https://docs.celigo.com/hc/en-us/articles/4843857027227',
   },
   {
@@ -450,8 +450,9 @@ export const groupApplications = (
         return !['ftp', 's3'].includes(connector.id) && !connector.webhookOnly;
       }
 
-      // connector having noimport true as property should not be shown in the list of standalone imports
-      if (resourceType === 'imports' && connector.noimport) {
+      // connector having exportOnly true as property should not be shown in the list of standalone imports
+      // It is different from webhookOnly because it has option to create connections also.
+      if (resourceType === 'imports' && connector.exportOnly) {
         return false;
       }
 
