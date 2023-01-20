@@ -6,6 +6,7 @@ import { IconButton } from '@material-ui/core';
 import ArrowPopper from '../ArrowPopper';
 import TooltipContent from '../TooltipContent';
 import InfoIcon from '../icons/InfoIcon';
+import HelpContent from '../HelpContent';
 
 const useStyles = makeStyles(theme => ({
   small: {
@@ -24,7 +25,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function InfoIconButton({ info, size = 'small', className, escapeUnsecuredDomains, tabIndex = 0, placement = 'right-start', preventOverflow }) {
+export default function InfoIconButton({ info, size = 'small', className, escapeUnsecuredDomains, tabIndex = 0, placement = 'right-start', preventOverflow, title }) {
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = useState(null);
 
@@ -59,8 +60,11 @@ export default function InfoIconButton({ info, size = 'small', className, escape
         anchorEl={anchorEl}
         placement={placement}
         onClose={handleInfoClose}
-        preventOverflow={preventOverflow}>
-        <TooltipContent className={classes.infoText} escapeUnsecuredDomains={escapeUnsecuredDomains}>{info}</TooltipContent>
+        preventOverflow={preventOverflow}
+      >
+        <HelpContent title={title} supportFeedback={false} onClose={handleInfoClose}>
+          <TooltipContent className={classes.infoText} escapeUnsecuredDomains={escapeUnsecuredDomains}>{info}</TooltipContent>
+        </HelpContent>
       </ArrowPopper>
     </>
   );
