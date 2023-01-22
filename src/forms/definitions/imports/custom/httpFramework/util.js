@@ -135,7 +135,7 @@ function pathParameterFieldsMeta({ operationParameters = [], values }) {
       const pathParamField = {
         id: `assistantMetadata.pathParams.${pathParam.id}`,
         label: pathParam.name,
-        type: 'textwithflowsuggestion',
+        type: 'hfpathparams',
         showLookup: false,
         value: values[pathParam.id],
         required: !!pathParam.required,
@@ -143,7 +143,6 @@ function pathParameterFieldsMeta({ operationParameters = [], values }) {
       };
 
       if (pathParam.options && pathParam.options.length > 0) {
-        pathParamField.type = 'select';
         pathParamField.options = [
           {
             items: pathParam.options.map(opt => ({
@@ -155,7 +154,6 @@ function pathParameterFieldsMeta({ operationParameters = [], values }) {
       }
 
       if (pathParam.suggestions && pathParam.suggestions.length > 0) {
-        pathParamField.type = 'autosuggest';
         pathParamField.labelName = 'name';
         pathParamField.valueName = 'value';
         pathParamField.options = {
