@@ -33,7 +33,7 @@ export default function NetSuiteBundleInstallNotification({resourceType, resourc
             target="_blank"
             rel="noreferrer"
             href={bundleUrl}>
-            <u>install the integrator.io SuiteBundle</u>
+            <u>Integrator.io SuiteBundle</u>
           </a>
           {' '}in your NetSuite account {isRealTimeExport ? ' to enable Real-time export capabilities.' : ' to integrate with SuiteScript APIs.'}
 

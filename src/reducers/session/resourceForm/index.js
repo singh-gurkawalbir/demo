@@ -20,7 +20,6 @@ export default function reducer(state = {}, action) {
     initData,
     bundleUrl,
     suiteAppUrl,
-    bundleVersion,
   } = action;
   const key = `${resourceType}-${resourceId}`;
 
@@ -80,7 +79,6 @@ export default function reducer(state = {}, action) {
           draft[key] = {};
         }
 
-        draft[key].bundleVersion = bundleVersion;
         draft[key].bundleUrl = bundleUrl;
         draft[key].showBundleInstallNotification = true;
         break;
