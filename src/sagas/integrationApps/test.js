@@ -16,6 +16,7 @@ import {
   installStep,
   installScriptStep,
   verifyBundleOrPackageInstall,
+  verifySuiteAppInstall,
   getCurrentStep,
   addNewChild,
   installChildStep,
@@ -26,6 +27,7 @@ import {
   getSteps,
   postChangeEditionSteps,
   upgradeVerifyBundleOrPackageInstall,
+  upgradeVerifySuiteAppInstall,
   upgradeInstallScriptStep,
   upgradeGetCurrentStep,
 } from './upgrade';
@@ -693,6 +695,127 @@ describe('installer saga', () => {
       };
 
       expectSaga(verifyBundleOrPackageInstall, { id, connectionId, installerFunction, isFrameWork2})
+        .provide([[call(apiCallWithRetry, args), throwError(error)]])
+        .call(apiCallWithRetry, args)
+        .put(
+          actions.integrationApp.installer.updateStep(
+            id,
+            '',
+            'failed'
+          )
+        )
+        .run();
+    });
+  });
+  describe('verifySuiteAppInstall generator', () => {
+    const id = '1234';
+    const connectionId = '5678';
+    const path = `/connection/${connectionId}/distributed?restletVersion=suiteapp2.0`;
+    const installerFunction = 'Installer_Function';
+
+    test('if the api call is successful and the response is success, should dispatch integrationApp script installStep if isFrameWork2 true', () => {
+      const args = {
+        path,
+        message: 'Verifying SuiteApp Installation...',
+      };
+      const isFrameWork2 = true;
+      const response = { success: true };
+
+      expectSaga(verifySuiteAppInstall, { id, connectionId, installerFunction, isFrameWork2})
+        .provide([[call(apiCallWithRetry, args), response]])
+        .call(apiCallWithRetry, args)
+        .put(
+          actions.integrationApp.installer.scriptInstallStep(id)
+        )
+        .not.put(
+          actions.integrationApp.installer.installStep(
+            id,
+            installerFunction,
+          )
+        )
+        .not.put(
+          actions.api.failure(
+            path,
+            'GET',
+            response.resBody || response.message,
+            false
+          )
+        )
+        .run();
+    });
+    test('if the api call is successful and the response is success, should dispatch integrationApp installStep if isFrameWork2 false', () => {
+      const args = {
+        path,
+        message: 'Verifying SuiteApp Installation...',
+      };
+      const isFrameWork2 = false;
+      const response = { success: true };
+
+      expectSaga(verifySuiteAppInstall, { id, connectionId, installerFunction, isFrameWork2})
+        .provide([[call(apiCallWithRetry, args), response]])
+        .call(apiCallWithRetry, args)
+        .not.put(
+          actions.integrationApp.installer.scriptInstallStep(id)
+        )
+        .put(
+          actions.integrationApp.installer.installStep(
+            id,
+            installerFunction,
+          )
+        )
+        .not.put(
+          actions.api.failure(
+            path,
+            'GET',
+            response.resBody || response.message,
+            false
+          )
+        )
+        .run();
+    });
+    test('if the api call is successful but response is not true, should dispatch update install step and api.failure', () => {
+      const args = {
+        path,
+        message: 'Verifying SuiteApp Installation...',
+      };
+      const isFrameWork2 = true;
+      const response = {
+        success: false,
+        message: 'something',
+      };
+
+      expectSaga(verifySuiteAppInstall, { id, connectionId, installerFunction, isFrameWork2})
+        .provide([[call(apiCallWithRetry, args), response]])
+        .call(apiCallWithRetry, args)
+        .put(
+          actions.integrationApp.installer.updateStep(
+            id,
+            installerFunction,
+            'failed'
+          )
+        )
+        .put(
+          actions.api.failure(
+            path,
+            'GET',
+            response.resBody || response.message,
+            false
+          )
+        )
+        .run();
+    });
+    test('if api call fails, should dispatch integrationApp installer update step', () => {
+      const args = {
+        path,
+        message: 'Verifying SuiteApp Installation...',
+      };
+      const isFrameWork2 = true;
+      const error = {
+        code: '400',
+        message: 'something',
+      };
+
+      expectSaga(verifySuiteAppInstall, { id, connectionId, installerFunction, isFrameWork2})
         .provide([[call(apiCallWithRetry, args), throwError(error)]])
         .call(apiCallWithRetry, args)
         .put(
@@ -2634,6 +2757,129 @@ describe('upgrade saga', () => {
         .run();
     });
   });
+
+  describe('upgradeVerifySuiteAppInstall generator', () => {
+    const id = '1234';
+    const connectionId = '5678';
+    const path = `/connection/${connectionId}/distributed?restletVersion=suiteapp2.0`;
+    const installerFunction = 'Installer_Function';
+
+    test('if the api call is successful and the response is success, should dispatch integrationApp script installStep if isFrameWork2 true', () => {
+      const args = {
+        path,
+        message: 'Verifying SuiteApp Installation...',
+      };
+      const isFrameWork2 = true;
+      const response = { success: true };
+
+      expectSaga(upgradeVerifySuiteAppInstall, { id, connectionId, installerFunction, isFrameWork2})
+        .provide([[call(apiCallWithRetry, args), response]])
+        .call(apiCallWithRetry, args)
+        .put(
+          actions.integrationApp.installer.scriptInstallStep(id)
+        )
+        .not.put(
+          actions.integrationApp.installer.installStep(
+            id,
+            installerFunction,
+          )
+        )
+        .not.put(
+          actions.api.failure(
+            path,
+            'GET',
+            response.resBody || response.message,
+            false
+          )
+        )
+        .run();
+    });
+    test('if the api call is successful and the response is success, should dispatch integrationApp installStep if isFrameWork2 false', () => {
+      const args = {
+        path,
+        message: 'Verifying SuiteApp Installation...',
+      };
+      const isFrameWork2 = false;
+      const response = { success: true };
+
+      expectSaga(upgradeVerifySuiteAppInstall, { id, connectionId, installerFunction, isFrameWork2})
+        .provide([[call(apiCallWithRetry, args), response]])
+        .call(apiCallWithRetry, args)
+        .not.put(
+          actions.integrationApp.installer.scriptInstallStep(id)
+        )
+        .put(
+          actions.integrationApp.installer.installStep(
+            id,
+            installerFunction,
+          )
+        )
+        .not.put(
+          actions.api.failure(
+            path,
+            'GET',
+            response.resBody || response.message,
+            false
+          )
+        )
+        .run();
+    });
+    test('if the api call is successful but response is not true, should dispatch update install step and api.failure', () => {
+      const args = {
+        path,
+        message: 'Verifying SuiteApp Installation...',
+      };
+      const isFrameWork2 = true;
+      const response = {
+        success: false,
+        message: 'something',
+      };
+
+      expectSaga(upgradeVerifySuiteAppInstall, { id, connectionId, installerFunction, isFrameWork2})
+        .provide([[call(apiCallWithRetry, args), response]])
+        .call(apiCallWithRetry, args)
+        .put(
+          actions.integrationApp.installer.updateStep(
+            id,
+            installerFunction,
+            'failed'
+          )
+        )
+        .put(
+          actions.api.failure(
+            path,
+            'GET',
+            response.resBody || response.message,
+            false
+          )
+        )
+        .run();
+    });
+    test('if api call fails, should dispatch integrationApp installer update step', () => {
+      const args = {
+        path,
+        message: 'Verifying SuiteApp Installation...',
+      };
+      const isFrameWork2 = true;
+      const error = {
+        code: '400',
+        message: 'something',
+      };
+
+      expectSaga(upgradeVerifySuiteAppInstall, { id, connectionId, installerFunction, isFrameWork2})
+        .provide([[call(apiCallWithRetry, args), throwError(error)]])
+        .call(apiCallWithRetry, args)
+        .put(
+          actions.integrationApp.installer.updateStep(
+            id,
+            '',
+            'failed'
+          )
+        )
+        .run();
+    });
+  });
+
   describe('upgradeGetCurrentStep generator', () => {
     const id = '1234';
     const form = {

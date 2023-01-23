@@ -171,11 +171,19 @@ export default function InstallationStep(props) {
     if (step && step.isCurrentStep && !step.completed && !verified) {
       if (revisionId && step.url && step.connectionId) {
         dispatch(actions.integrationLCM.installSteps.updateStep(revisionId, 'verify'));
-        dispatch(actions.integrationLCM.installSteps.verifyBundleOrPackageInstall({
-          integrationId,
-          connectionId: step.connectionId,
-          revisionId,
-        }));
+        if (step.name.startsWith('Integrator Bundle')) {
+          dispatch(actions.integrationLCM.installSteps.verifyBundleOrPackageInstall({
+            integrationId,
+            connectionId: step.connectionId,
+            revisionId,
+          }));
+        } else {
+          dispatch(actions.integrationLCM.installSteps.verifySuiteAppInstall({
+            integrationId,
+            connectionId: step.connectionId,
+            revisionId,
+          }));
+        }
         setVerified(true);
       } else if (
         connection &&
@@ -187,13 +195,17 @@ export default function InstallationStep(props) {
             templateId
           )
         );
-        dispatch(
-          actions.template.verifyBundleOrPackageInstall(
-            step,
-            connection,
-            templateId
-          )
-        );
+        if (step.name.startsWith('Integrator Bundle')) {
+          dispatch(
+            actions.template.verifyBundleOrPackageInstall(
+              step,
+              connection,
+              templateId
+            )
+          );
+        } else {
+          dispatch(actions.template.verifySuiteAppInstall(step, connection, templateId));
+        }
         setVerified(true);
       } else if (
         (step.installURL || step.url) &&
@@ -207,14 +219,25 @@ export default function InstallationStep(props) {
             'verify'
           )
         );
-        dispatch(
-          actions.integrationApp.templates.installer.verifyBundleOrPackageInstall(
-            integrationId,
-            step._connId,
-            step.installerFunction,
-            isFrameWork2
-          )
-        );
+        if (step.name.startsWith('Integrator Bundle')) {
+          dispatch(
+            actions.integrationApp.templates.installer.verifyBundleOrPackageInstall(
+              integrationId,
+              step._connId,
+              step.installerFunction,
+              isFrameWork2
+            )
+          );
+        } else {
+          dispatch(
+            actions.integrationApp.templates.installer.verifySuiteAppInstall(
+              integrationId,
+              step._connId,
+              step.installerFunction,
+              isFrameWork2
+            )
+          );
+        }
         setVerified(true);
       }
     }

@@ -1091,11 +1091,25 @@ const integrationApp = {
           installerFunction,
           isFrameWork2,
         }),
+      verifySuiteAppInstall: (id, connectionId, installerFunction, isFrameWork2) =>
+        action(actionTypes.INTEGRATION_APPS.TEMPLATES.INSTALLER.VERIFY_SUITEAPP_INSTALL, {
+          id,
+          connectionId,
+          installerFunction,
+          isFrameWork2,
+        }),
     },
     upgrade: {
       installer: {
         verifyBundleOrPackageInstall: (id, connectionId, installerFunction, isFrameWork2) =>
           action(actionTypes.INTEGRATION_APPS.TEMPLATES.INSTALLER.VERIFY_BUNDLE_INSTALL, {
+            id,
+            connectionId,
+            installerFunction,
+            isFrameWork2,
+          }),
+        verifySuiteAppInstall: (id, connectionId, installerFunction, isFrameWork2) =>
+          action(actionTypes.INTEGRATION_APPS.TEMPLATES.INSTALLER.VERIFY_SUITEAPP_INSTALL, {
             id,
             connectionId,
             installerFunction,
@@ -1327,6 +1341,12 @@ const template = {
     action(actionTypes.TEMPLATE.CLEAR_TEMPLATE, { templateId }),
   verifyBundleOrPackageInstall: (step, connection, templateId) =>
     action(actionTypes.TEMPLATE.VERIFY_BUNDLE_INSTALL, {
+      step,
+      connection,
+      templateId,
+    }),
+  verifySuiteAppInstall: (step, connection, templateId) =>
+    action(actionTypes.TEMPLATE.VERIFY_SUITEAPP_INSTALL, {
       step,
       connection,
       templateId,
@@ -2588,6 +2608,12 @@ const integrationLCM = {
       }),
     verifyBundleOrPackageInstall: ({ revisionId, connectionId, integrationId }) =>
       action(actionTypes.INTEGRATION_LCM.INSTALL_STEPS.STEP.VERIFY_BUNDLE_INSTALL, {
+        revisionId,
+        connectionId,
+        integrationId,
+      }),
+    verifySuiteAppInstall: ({ revisionId, connectionId, integrationId }) =>
+      action(actionTypes.INTEGRATION_LCM.INSTALL_STEPS.STEP.VERIFY_SUITEAPP_INSTALL, {
         revisionId,
         connectionId,
         integrationId,

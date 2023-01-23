@@ -13,6 +13,7 @@ import {
   requestPreview,
   createComponents,
   verifyBundleOrPackageInstall,
+  verifySuiteAppInstall,
   publishStatus,
 } from '.';
 import templateUtil from '../../utils/template';
@@ -260,6 +261,98 @@ describe('verifyBundleOrPackageInstall sagas', () => {
       .run();
   });
 });
+
+describe('verifySuiteAppInstall sagas', () => {
+  const step = {
+    installURL: 'url',
+  };
+  const connection = {
+    _id: '111',
+  };
+  const templateId = '123';
+
+  test('the status should be completed if response.success is true on successfull api call', () => {
+    const response = { success: true };
+
+    expectSaga(verifySuiteAppInstall, {
+      step,
+      connection,
+      templateId,
+    })
+      .provide([[matchers.call.fn(apiCallWithRetry), response]])
+      .call.fn(apiCallWithRetry)
+      .put(
+        actions.template.updateStep(
+          { status: 'completed', installURL: step.installURL },
+          templateId
+        )
+      )
+      .run();
+  });
+  test('the status should be failed if response.success is false on successfull api call', () => {
+    const path = `/connection/${connection._Id}/distributed?restletVersion=suiteapp2.0`;
+    const response = {
+      success: false,
+      resBody: {
+        dummy: 'dummy',
+      },
+    };
+
+    expectSaga(verifySuiteAppInstall, {
+      step,
+      connection,
+      templateId,
+    })
+      .provide([[matchers.call.fn(apiCallWithRetry), response]])
+      .call.fn(apiCallWithRetry)
+      .put(
+        actions.api.failure(
+          path,
+          'GET',
+          response.resBody || response.message,
+          false
+        )
+      )
+      .run();
+  });
+  test('status should be failed if there is no response on successfull api call', () => {
+    const response = {};
+
+    expectSaga(verifySuiteAppInstall, {
+      step,
+      connection,
+      templateId,
+    })
+      .provide([[matchers.call.fn(apiCallWithRetry), response]])
+      .call.fn(apiCallWithRetry)
+      .put(
+        actions.template.updateStep(
+          { status: 'failed', installURL: step.installURL },
+          templateId
+        )
+      )
+      .run();
+  });
+  test('status should be failed if api call fails', () => {
+    const error = new Error('error');
+
+    expectSaga(verifySuiteAppInstall, {
+      step,
+      connection,
+      templateId,
+    })
+      .provide([[matchers.call.fn(apiCallWithRetry), throwError(error)]])
+      .call.fn(apiCallWithRetry)
+      .put(
+        actions.template.updateStep(
+          { status: 'failed', installURL: step.installURL },
+          templateId
+        )
+      )
+      .run();
+  });
+});
+
 describe('publishStatus saga', () => {
   test('should publish template correctly', () => {
     const patchSet = [

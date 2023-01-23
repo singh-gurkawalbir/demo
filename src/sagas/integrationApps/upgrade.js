@@ -290,6 +290,68 @@ export function* upgradeVerifyBundleOrPackageInstall({
   }
 }
 
+export function* upgradeVerifySuiteAppInstall({
+  id,
+  connectionId,
+  installerFunction,
+  isFrameWork2,
+}) {
+  const path = `/connection/${connectionId}/distributed?restletVersion=suiteapp2.0`;
+  let response;
+
+  try {
+    response = yield call(apiCallWithRetry, {
+      path,
+      message: 'Verifying SuiteApp Installation...',
+    });
+  } catch (error) {
+    yield put(
+      actions.integrationApp.installer.updateStep(
+        id,
+        '',
+        'failed'
+      )
+    );
+
+    return undefined;
+  }
+
+  if (response?.success) {
+    if (isFrameWork2) {
+      yield put(
+        actions.integrationApp.installer.scriptInstallStep(id)
+      );
+    } else {
+      yield put(
+        actions.integrationApp.installer.installStep(
+          id,
+          installerFunction,
+        )
+      );
+    }
+  } else if (
+    response &&
+      !response.success &&
+      (response.resBody || response.message)
+  ) {
+    yield put(
+      actions.integrationApp.installer.updateStep(
+        id,
+        installerFunction,
+        'failed'
+      )
+    );
+    yield put(
+      actions.api.failure(
+        path,
+        'GET',
+        response.resBody || response.message,
+        false
+      )
+    );
+  }
+}
+
 // for certain type of steps ('form'/'url' for now), in order to display the step for the user,
 // we need to invoke get /currentStep route to get the form metadata or url
 export function* upgradeGetCurrentStep({ id, step }) {
@@ -369,6 +431,7 @@ export default [
   takeLatest(actionTypes.INTEGRATION_APPS.SETTINGS.V2.GET_STEPS, getSteps),
   takeLatest(actionTypes.INTEGRATION_APPS.SETTINGS.V2.POST_CHANGE_EDITION_STEPS, postChangeEditionSteps),
   takeEvery(actionTypes.INTEGRATION_APPS.TEMPLATES.V2.INSTALLER.VERIFY_BUNDLE_INSTALL, upgradeVerifyBundleOrPackageInstall),
+  takeEvery(actionTypes.INTEGRATION_APPS.TEMPLATES.V2.INSTALLER.VERIFY_SUITEAPP_INSTALL, upgradeVerifySuiteAppInstall),
   takeEvery(
     actionTypes.INTEGRATION_APPS.INSTALLER.V2.STEP.SCRIPT_REQUEST,
     upgradeInstallScriptStep

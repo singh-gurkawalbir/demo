@@ -169,7 +169,7 @@ describe('installationStep UI tests', () => {
       index: 1,
       handleStepClick: mockClick,
       step: {
-        name: 'demo',
+        name: 'Integrator Bundle',
         completed: false,
         type: 'installPackage',
         options: {_connectionId: '62bd43c87b94d20de64e9ab3' },
@@ -206,7 +206,7 @@ describe('installationStep UI tests', () => {
       index: 1,
       handleStepClick: mockClick,
       step: {
-        name: 'demo',
+        name: 'Integrator Bundle',
         completed: false,
         url: 'http://demourlforTests',
         type: 'installPackage',
@@ -242,7 +242,7 @@ describe('installationStep UI tests', () => {
       index: 1,
       handleStepClick: mockClick,
       step: {
-        name: 'demo',
+        name: 'Integrator Bundle',
         completed: false,
         url: 'http://demourlforTests',
         _connId: '987654321abcdefgh',

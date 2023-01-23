@@ -154,6 +154,68 @@ export function* verifyBundleOrPackageInstall({
   }
 }
 
+export function* verifySuiteAppInstall({
+  id,
+  connectionId,
+  installerFunction,
+  isFrameWork2,
+}) {
+  const path = `/connection/${connectionId}/distributed?restletVersion=suiteapp2.0`;
+  let response;
+
+  try {
+    response = yield call(apiCallWithRetry, {
+      path,
+      message: 'Verifying SuiteApp Installation...',
+    });
+  } catch (error) {
+    yield put(
+      actions.integrationApp.installer.updateStep(
+        id,
+        '',
+        'failed'
+      )
+    );
+
+    return undefined;
+  }
+
+  if (response?.success) {
+    if (isFrameWork2) {
+      yield put(
+        actions.integrationApp.installer.scriptInstallStep(id)
+      );
+    } else {
+      yield put(
+        actions.integrationApp.installer.installStep(
+          id,
+          installerFunction,
+        )
+      );
+    }
+  } else if (
+    response &&
+      !response.success &&
+      (response.resBody || response.message)
+  ) {
+    yield put(
+      actions.integrationApp.installer.updateStep(
+        id,
+        installerFunction,
+        'failed'
+      )
+    );
+    yield put(
+      actions.api.failure(
+        path,
+        'GET',
+        response.resBody || response.message,
+        false
+      )
+    );
+  }
+}
+
 export function* publishStatus({ templateId, isPublished }) {
   const patchSet = [
     {
@@ -184,6 +246,10 @@ export const templateSagas = [
   takeEvery(
     actionTypes.TEMPLATE.VERIFY_BUNDLE_INSTALL,
     verifyBundleOrPackageInstall
+  ),
+  takeEvery(
+    actionTypes.TEMPLATE.VERIFY_SUITEAPP_INSTALL,
+    verifySuiteAppInstall
   ),
   takeEvery(actionTypes.TEMPLATE.CREATE_COMPONENTS, createComponents),
   takeEvery(actionTypes.TEMPLATE.PUBLISH.REQUEST, publishStatus),
