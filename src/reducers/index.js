@@ -7081,6 +7081,8 @@ selectors.userLinkedSSOClientId = state => {
   return profile.authTypeSSO?._ssoClientId;
 };
 
+selectors.userRequiredToAgreeTOSAndPP = state => selectors.agreeTOSAndPPRequired(state) && !selectors.userAgreedTOSAndPP(state);
+
 selectors.isUserAllowedOnlySSOSignIn = state => {
   if (selectors.isAccountOwner(state)) {
     return false;

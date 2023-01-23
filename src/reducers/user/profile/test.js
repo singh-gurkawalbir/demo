@@ -122,4 +122,19 @@ describe('user reducers', () => {
       expect(selectors.isUserInErrMgtTwoDotZero({})).toBe(false);
     });
   });
+  describe('User agreeTOSAndPP test', () => {
+    test('should return true if user has not not agreed to TOS', () => {
+      const mockProfile = { agreeTOSAndPP: false };
+      const state = reducer(
+        undefined,
+        actions.resource.received('profile', mockProfile)
+      );
+
+      expect(selectors.userAgreedTOSAndPP(state)).toBe(false);
+    });
+    test('should return undefined if no error management exists', () => {
+      expect(selectors.userAgreedTOSAndPP(undefined)).toBe(false);
+      expect(selectors.userAgreedTOSAndPP({})).toBe(false);
+    });
+  });
 });

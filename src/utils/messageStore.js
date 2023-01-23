@@ -163,7 +163,7 @@ href="/marketplace"><u>Check out our Marketplace</u></a> to jumpstart your  inte
   NO_DRAG_FLOW_BRANCHING_INFO: 'You cannot reorder steps in a branched flow.<br/>Remove all branching to be able to drag and drop flow steps.',
   PARENT_UPGRADE_ERROR_MESSAGE: 'The upgrade to a {{plan}} plan has failed. {{errorMessage}}. Select the active upgrade button when you are ready to continue with your setup.',
   CHILD_UPGRADE_ERROR_MESSAGE: 'The upgrade for {{childName}} has failed. {{errorMessage}}. Select the active upgrade button when you are ready to continue with your setup.',
-
+  AGREE_TOS_AND_PP: 'Review and agree to the following terms of use to start using your integrator.io account, Celigo services, and products.',
 };
 
 export default function messageStore(key, argsObj) {
