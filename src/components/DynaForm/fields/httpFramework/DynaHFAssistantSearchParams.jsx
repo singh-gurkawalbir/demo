@@ -183,7 +183,7 @@ export default function DynaHFAssistantSearchParams(props) {
       let value = val[valueName];
 
       if (value && !isArray(value) && val.valueType === 'array') {
-        value = value.trim().split(',').filter(val => val.length > 0);
+        value = value.trim().split(',');
       }
 
       return { ...fv, [val[keyName]]: value};
