@@ -6274,7 +6274,7 @@ Object {
         "maxSize": 104857600,
         "mode": [Function],
         "name": "/uploadFile",
-        "placeholder": "Upload the file to use",
+        "placeholder": "Sample file (that would be parsed)",
         "refreshOptionsOnChangesTo": "file.type",
         "required": [Function],
         "type": "uploadfile",
