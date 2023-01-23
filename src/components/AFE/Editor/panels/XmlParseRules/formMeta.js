@@ -18,6 +18,7 @@ export default function getForm(options, resourceId, isParserSupported) {
         name: 'V0_json',
         type: 'radiogroup',
         label: 'Parse strategy',
+        isLoggable: true,
         helpKey: 'parser.xml.V0_json',
         defaultValue: defaultParser,
         options: [
@@ -33,6 +34,7 @@ export default function getForm(options, resourceId, isParserSupported) {
         id: 'resourcePath',
         name: 'resourcePath',
         label: 'Resource path',
+        isLoggable: true,
         type: 'text',
         defaultValue: options?.resourcePath || '',
         required: !(isParserSupported === false),
@@ -51,6 +53,7 @@ export default function getForm(options, resourceId, isParserSupported) {
         helpKey: 'parser.xml.trimSpaces',
         label: 'Trim leading and trailing spaces',
         visibleWhen: visibleWhenCustom,
+        isLoggable: true,
       },
       stripNewLineChars: {
         id: 'stripNewLineChars',
@@ -59,6 +62,7 @@ export default function getForm(options, resourceId, isParserSupported) {
         defaultValue: !!options?.stripNewLineChars,
         label: 'Strip new line characters',
         visibleWhen: visibleWhenCustom,
+        isLoggable: true,
       },
       attributePrefix: {
         id: 'attributePrefix',
@@ -68,6 +72,7 @@ export default function getForm(options, resourceId, isParserSupported) {
         defaultValue: options?.attributePrefix,
         label: 'Character to prepend on attribute names',
         visibleWhen: visibleWhenCustom,
+        isLoggable: true,
       },
       textNodeName: {
         id: 'textNodeName',
@@ -77,6 +82,7 @@ export default function getForm(options, resourceId, isParserSupported) {
         defaultValue: options?.textNodeName,
         label: 'Text node name',
         visibleWhen: visibleWhenCustom,
+        isLoggable: true,
       },
       listNodes: {
         id: 'listNodes',
@@ -87,6 +93,7 @@ export default function getForm(options, resourceId, isParserSupported) {
         helpKey: 'parser.xml.listNodes',
         label: 'List nodes',
         visibleWhen: visibleWhenCustom,
+        isLoggable: true,
       },
       includeNodes: {
         id: 'includeNodes',
@@ -97,6 +104,7 @@ export default function getForm(options, resourceId, isParserSupported) {
         helpKey: 'parser.xml.includeNodes',
         label: 'Include only these nodes',
         visibleWhen: visibleWhenCustom,
+        isLoggable: true,
       },
       excludeNodes: {
         id: 'excludeNodes',
@@ -107,6 +115,7 @@ export default function getForm(options, resourceId, isParserSupported) {
         helpKey: 'parser.xml.excludeNodes',
         label: 'Exclude any of these nodes',
         visibleWhen: visibleWhenCustom,
+        isLoggable: true,
       },
     },
   };

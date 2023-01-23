@@ -36,7 +36,9 @@ const RetriesTabLabel = () => {
       <InfoIconButton
         className={classes.tabInfoIcon}
         info={messageStore('RETRIES_TAB_INFO')} size="xs" placement="right-start"
-        preventOverflow={false} />
+        preventOverflow={false}
+        title="Retries"
+      />
     </>
   );
 };

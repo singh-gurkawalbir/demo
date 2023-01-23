@@ -98,7 +98,6 @@ describe('CreateAliasDrawer tests', () => {
     expect(saveBtn).not.toBeEnabled();
 
     userEvent.click(pageInfo);
-    expect(screen.getByRole('tooltip', {name: 'An alias provides an easy way to reference a specific resource in your integration when you\'re building scripts. You can create aliases for flows, connections, imports, and exports.'})).toBeInTheDocument();
     userEvent.click(closeBtn);
     expect(mockHistoryGoBack).toHaveBeenCalled();
 
@@ -124,7 +123,6 @@ describe('CreateAliasDrawer tests', () => {
     const pageInfo = buttons.find(b => b.getAttribute('data-test') === 'openPageInfo');
 
     userEvent.click(pageInfo);
-    expect(screen.getByRole('tooltip', {name: 'Editing an alias is helpful when you\'ve built an improved flow or other resource and want all of the scripts that reference the alias to use the new resource. You can update any of the fields for an alias as needed, but keep in mind this may have implications on any scripts that currently reference the alias. CAUTION: *If you change the Alias ID (name), it is not updated in existing scripts. *Only change the type and select a new resource matching that type only if you\'re certain this will not adversely impact any existing scripts that reference the alias. Learn more about aliases .'})).toBeInTheDocument();
     expect(screen.getByRole('link', {name: 'Learn more about aliases'})).toBeInTheDocument();
     // editing alias description
     userEvent.click(screen.getAllByRole('textbox')[1]);

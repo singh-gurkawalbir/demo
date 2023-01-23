@@ -35,7 +35,9 @@ export default function PreviewButtonGroup({ editorId }) {
         onFieldChange={handleToggle}
         disabled={saveInProgress}
         label="Auto preview"
-        value={autoEvaluate} />
+        value={autoEvaluate}
+        isLoggable
+        />
       {!autoEvaluate && (
         <OutlinedButton
           color="primary"

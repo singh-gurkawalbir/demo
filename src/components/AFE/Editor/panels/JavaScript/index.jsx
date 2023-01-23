@@ -214,7 +214,7 @@ export default function JavaScriptPanel({ editorId }) {
               onChange={handleCodeChange}
               errorLine={errorLine}
               hasError={hasError}
-              onLoad={handleAceEditorLoad}
+              onLoad={handleAceEditorLoad} isLoggable
             />
           )}
         </div>

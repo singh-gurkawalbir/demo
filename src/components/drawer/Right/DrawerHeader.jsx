@@ -95,7 +95,7 @@ export default function DrawerHeader({
             fieldId={helpKey}
       />
         )}
-        {infoText && <InfoIconButton info={infoText} />}
+        {infoText && <InfoIconButton info={infoText} title={title} />}
       </Typography>
 
       {/* Typically children are the action icons/buttons */}

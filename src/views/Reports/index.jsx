@@ -269,7 +269,7 @@ export default function Reports() {
               component="div"
               className={classes.reportsHeading}
               >
-              {reportTypeLabel} report results  {info && <InfoIconButton info={info} />}
+              {reportTypeLabel} report results  {info && <InfoIconButton info={info} title={`${reportTypeLabel} report results`} />}
             </Typography>
             <ActionGroup position="right">
               <TextButton
