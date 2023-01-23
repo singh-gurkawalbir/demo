@@ -84,6 +84,18 @@ selectors.isUserAuthenticated = state => {
 
   return authenticated && (!mfaRequired || (mfaRequired && mfaVerified)) && !mfaSetupRequired;
 };
+selectors.agreeTOSAndPPRequired = state => {
+  if (!state || !state.sessionInfo || !state.sessionInfo.data) return false;
+  const {authenticated, mfaVerified, mfaRequired, agreeTOSAndPPRequired } = state.sessionInfo.data;
+
+  return authenticated && (!mfaRequired || (mfaRequired && mfaVerified)) && agreeTOSAndPPRequired;
+};
+selectors.isUserInfoResolved = state => {
+  if (!state || !state.sessionInfo || !state.sessionInfo.data) return false;
+  const {authenticated, mfaVerified, mfaRequired } = state.sessionInfo.data;
+
+  return authenticated && (!mfaRequired || (mfaRequired && mfaVerified));
+};
 
 selectors.getSetupContext = state => state?.context;
 // #endregion

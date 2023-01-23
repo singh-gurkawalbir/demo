@@ -21,6 +21,8 @@ export function AppRoutingWithAuth({ children }) {
   const isMFASetupIncomplete = useSelector(selectors.isMFASetupIncomplete);
   const isUserAuthenticated = useSelector(state => selectors.sessionInfo(state)?.authenticated);
   const isMFAVerified = useSelector(state => selectors.sessionInfo(state)?.mfaVerified);
+  const agreeTOSAndPPRequired = useSelector(selectors.userRequiredToAgreeTOSAndPP);
+  const isUserInfoLoaded = useSelector(selectors.isUserInfoResolved);
 
   const dispatch = useDispatch();
 
@@ -42,7 +44,19 @@ export function AppRoutingWithAuth({ children }) {
     }
     setHasPageReloaded(true);
   }, [hasPageReloaded, currentRoute, history, search, isAuthInitialized, dispatch, isSignInRoute, isConcurPage]);
+  const agreeTOSAndPPPage = getRoutePath('/agreeTOSAndPP') === location.pathname;
 
+  if (isUserInfoLoaded && agreeTOSAndPPRequired && !agreeTOSAndPPPage) {
+    return (
+      <Redirect
+        push={false}
+        to={{
+          pathname: getRoutePath('/agreeTOSAndPP'),
+          state: location.state,
+        }}
+      />
+    );
+  }
   // this selector is used by the UI to hold off rendering any routes
   // till it determines the auth state
   if (isAuthenticated) {
