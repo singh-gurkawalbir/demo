@@ -82,7 +82,7 @@ export default {
     },
     'http.auth.oauth.scope': {
       fieldId: 'http.auth.oauth.scope',
-      helpKey: 'slack.connection.http.unencrypted.scopes',
+      helpKey: 'slack.connection.http.auth.oauth.scope',
       required: true,
       scopes: [
         'calls:read',
