@@ -20,6 +20,7 @@ export default function OperandSettingsDialog({
         name: 'type',
         type: 'radiogroup',
         label: 'Operand type',
+        isLoggable: true,
         showOptionsHorizontally: true,
         fullWidth: true,
         options: [

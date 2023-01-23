@@ -39,6 +39,7 @@ export default {
       type: 'select',
       defaultValue: r => r?.http?.auth?.type || '',
       label: 'Authentication type',
+      isLoggable: true,
       helpKey: 'zoom.connection.http.auth.type',
       options: [
         {

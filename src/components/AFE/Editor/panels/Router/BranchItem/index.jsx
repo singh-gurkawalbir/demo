@@ -226,7 +226,7 @@ export default function BranchItem({
               </div>
 
               <div className={classes.description}>
-                {description && <InfoIconButton size="xs" info={description} />}
+                {description && <InfoIconButton size="xs" info={description} title={branchName} />}
               </div>
 
               {!isViewMode && (

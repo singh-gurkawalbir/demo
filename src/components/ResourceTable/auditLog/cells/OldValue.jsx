@@ -33,9 +33,9 @@ export default function OldValue({ auditLog, oldValue = '', newValue = '' }) {
 
       <TextButton
         data-test="auditLogChanges"
-        className={classes.clickBtn}
+        className={classes.clickBtn} color="primary"
         onClick={() => setShowDialog(true)}>
-        Click to view
+        View
       </TextButton>
     </>
   );

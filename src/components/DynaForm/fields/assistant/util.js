@@ -154,7 +154,7 @@ function deepObjectExtend(target, source) {
   return target;
 }
 
-export function semiAssistantExportConfig(assistantData, operationId) {
+export function semiAssistantExportConfig(assistantData, operationId, application) {
   const keys = operationId.split('.');
   let toReturn = {};
   let node = deepClone(assistantData.export);
@@ -172,7 +172,11 @@ export function semiAssistantExportConfig(assistantData, operationId) {
 
   if (toReturn?.http?.body) {
     try {
-      toReturn.http.body = format(toReturn.http.body);
+      if (application === 'openair') {
+        toReturn.http.body = toReturn.http.body.replace('/\\/g', '');
+      } else {
+        toReturn.http.body = format(toReturn.http.body);
+      }
     } catch (ex) {
       // ex
     }

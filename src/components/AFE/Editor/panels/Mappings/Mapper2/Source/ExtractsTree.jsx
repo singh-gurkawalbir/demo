@@ -121,6 +121,7 @@ const ExtractsTree = React.memo((
     setInputValue,
     setIsFocused,
     patchField,
+    cursorPosition,
   }) => {
   const classes = useStyles();
   const isArrayType = destDataType.includes('array');
@@ -139,12 +140,12 @@ const ExtractsTree = React.memo((
   }, [extractsTreeData, propValue]);
 
   const onSelect = useCallback((keys, e) => {
-    const newValue = getFinalSelectedExtracts(e.node, inputValue, isArrayType, isGroupedSampleData, nodeKey, mappingsTreeData);
+    const newValue = getFinalSelectedExtracts(e.node, inputValue, isArrayType, isGroupedSampleData, nodeKey, mappingsTreeData, cursorPosition);
 
     setInputValue(newValue);
     setIsFocused(false);
     patchField(propValue, newValue, e.node?.jsonPath);
-  }, [inputValue, isArrayType, isGroupedSampleData, patchField, propValue, setInputValue, setIsFocused, nodeKey, mappingsTreeData]);
+  }, [inputValue, isArrayType, isGroupedSampleData, nodeKey, mappingsTreeData, cursorPosition, setInputValue, setIsFocused, patchField, propValue]);
 
   if (isEmpty(extractsTreeData)) return null;
 
