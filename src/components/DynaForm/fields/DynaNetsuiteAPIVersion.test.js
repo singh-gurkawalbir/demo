@@ -34,8 +34,8 @@ describe('test suite for DynaNetsuiteAPIVersion field', () => {
         {
           items: [
             {
-              label: 'SuiteApp SuiteScript 2.x',
-              value: 'suiteapp2.x',
+              label: 'SuiteApp SuiteScript 2.x (Recommended)',
+              value: 'suiteapp2.0',
             },
             {
               label: 'SuiteApp SuiteScript 1.0',
@@ -60,7 +60,7 @@ describe('test suite for DynaNetsuiteAPIVersion field', () => {
 
     const {utils: {unmount}} = renderWithProviders(<DynaNetsuiteAPIVersion {...props} />);
 
-    expect(onFieldChange).toHaveBeenCalledWith(props.id, 'suiteapp2.x');
+    expect(onFieldChange).toHaveBeenCalledWith(props.id, 'suiteapp2.0');
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.metadata.getBundleInstallStatus(props.connectionId));
     expect(screen.getByRole('progressbar')).toBeInTheDocument();
 
@@ -80,8 +80,8 @@ describe('test suite for DynaNetsuiteAPIVersion field', () => {
         {
           items: [
             {
-              label: 'SuiteApp SuiteScript 2.x',
-              value: 'suiteapp2.x',
+              label: 'SuiteApp SuiteScript 2.x (Recommended)',
+              value: 'suiteapp2.0',
             },
             {
               label: 'SuiteApp SuiteScript 1.0',
@@ -99,7 +99,7 @@ describe('test suite for DynaNetsuiteAPIVersion field', () => {
       id: 'netsuite.restlet.useSS2Restlets',
       name: '/netsuite/restlet/useSS2Restlets',
       formKey: 'exports-new-So3JJHSqd4',
-      value: 'suiteapp2.x',
+      value: 'suiteapp2.0',
       visible: true,
       isValid: true,
     };
@@ -120,7 +120,7 @@ describe('test suite for DynaNetsuiteAPIVersion field', () => {
       },
     };
     renderWithProviders(<DynaNetsuiteAPIVersion {...props} />, {initialStore});
-    expect(onFieldChange).toHaveBeenCalledWith(props.id, 'suiteapp2.x');
+    expect(onFieldChange).toHaveBeenCalledWith(props.id, 'suiteapp2.0');
     const radioGroup = screen.getByRole('radiogroup', {name: props.label});
     const apiVersions = screen.getAllByRole('radio');
 
@@ -146,8 +146,8 @@ describe('test suite for DynaNetsuiteAPIVersion field', () => {
         {
           items: [
             {
-              label: 'SuiteApp SuiteScript 2.x',
-              value: 'suiteapp2.x',
+              label: 'SuiteApp SuiteScript 2.x (Recommended)',
+              value: 'suiteapp2.0',
             },
             {
               label: 'SuiteApp SuiteScript 1.0',
@@ -165,7 +165,7 @@ describe('test suite for DynaNetsuiteAPIVersion field', () => {
       id: 'netsuite.restlet.useSS2Restlets',
       name: '/netsuite/restlet/useSS2Restlets',
       formKey: 'exports-new-So3JJHSqd4',
-      value: 'suiteapp2.x',
+      value: 'suiteapp2.0',
       visible: true,
       isValid: true,
     };
@@ -186,7 +186,7 @@ describe('test suite for DynaNetsuiteAPIVersion field', () => {
       },
     };
     renderWithProviders(<DynaNetsuiteAPIVersion {...props} />, {initialStore});
-    expect(onFieldChange).toHaveBeenCalledWith(props.id, 'suiteapp2.x');
+    expect(onFieldChange).toHaveBeenCalledWith(props.id, 'suiteapp2.0');
     const radioGroup = screen.getByRole('radiogroup', {name: props.label});
     const apiVersions = screen.getAllByRole('radio');
 
@@ -213,8 +213,8 @@ describe('test suite for DynaNetsuiteAPIVersion field', () => {
         {
           items: [
             {
-              label: 'SuiteApp SuiteScript 2.x',
-              value: 'suiteapp2.x',
+              label: 'SuiteApp SuiteScript 2.x (Recommended)',
+              value: 'suiteapp2.0',
             },
             {
               label: 'SuiteApp SuiteScript 1.0',
@@ -232,7 +232,7 @@ describe('test suite for DynaNetsuiteAPIVersion field', () => {
       id: 'netsuite.restlet.useSS2Restlets',
       name: '/netsuite/restlet/useSS2Restlets',
       formKey: 'exports-new-So3JJHSqd4',
-      value: 'suiteapp2.x',
+      value: 'suiteapp2.0',
       visible: true,
       isValid: true,
     };
@@ -253,7 +253,7 @@ describe('test suite for DynaNetsuiteAPIVersion field', () => {
       },
     };
     renderWithProviders(<DynaNetsuiteAPIVersion {...props} />, {initialStore});
-    expect(onFieldChange).toHaveBeenCalledWith(props.id, 'suiteapp2.x');
+    expect(onFieldChange).toHaveBeenCalledWith(props.id, 'suiteapp2.0');
     const radioGroup = screen.getByRole('radiogroup', {name: props.label});
     const apiVersions = screen.getAllByRole('radio');
 
@@ -284,8 +284,8 @@ describe('test suite for DynaNetsuiteAPIVersion field', () => {
         {
           items: [
             {
-              label: 'SuiteApp SuiteScript 2.x',
-              value: 'suiteapp2.x',
+              label: 'SuiteApp SuiteScript 2.x (Recommended)',
+              value: 'suiteapp2.0',
             },
             {
               label: 'SuiteApp SuiteScript 1.0',
@@ -324,7 +324,7 @@ describe('test suite for DynaNetsuiteAPIVersion field', () => {
       },
     };
     renderWithProviders(<DynaNetsuiteAPIVersion {...props} />, {initialStore});
-    expect(onFieldChange).toHaveBeenCalledWith(props.id, 'suiteapp2.x');
+    expect(onFieldChange).toHaveBeenCalledWith(props.id, 'suiteapp2.0');
     const radioGroup = screen.getByRole('radiogroup', {name: props.label});
     const apiVersions = screen.getAllByRole('radio');
 
@@ -353,7 +353,7 @@ describe('test suite for DynaNetsuiteAPIVersion field', () => {
         {
           items: [
             {
-              label: 'SuiteApp SuiteScript 2.x',
+              label: 'SuiteApp SuiteScript 2.x (Recommended)',
               value: 'false',
             },
             {
@@ -408,8 +408,8 @@ describe('test suite for DynaNetsuiteAPIVersion field', () => {
         {
           items: [
             {
-              label: 'SuiteApp SuiteScript 2.x',
-              value: 'suiteapp2.x',
+              label: 'SuiteApp SuiteScript 2.x (Recommended)',
+              value: 'suiteapp2.0',
             },
             {
               label: 'SuiteApp SuiteScript 1.0',
@@ -426,7 +426,7 @@ describe('test suite for DynaNetsuiteAPIVersion field', () => {
       id: 'netsuite.restlet.useSS2Restlets',
       name: '/netsuite/restlet/useSS2Restlets',
       formKey: 'exports-So3JJHSqd4',
-      value: 'suiteapp2.x',
+      value: 'suiteapp2.0',
       visible: true,
       isValid: true,
     };

@@ -87,11 +87,11 @@ export default {
     type: 'netsuiteapiversion',
     label: 'NetSuite API version',
     // eslint-disable-next-line camelcase
-    defaultValue: r => (r?.netsuite_da?.useSS2Restlets || isNewId(r._id)) ? 'suiteapp2.x' : 'suitebundle',
+    defaultValue: r => r?.netsuite_da?.restletVersion,
     options: [
       {
         items: [
-          { label: 'SuiteApp SuiteScript 2.x', value: 'suiteapp2.x' },
+          { label: 'SuiteApp SuiteScript 2.x (Recommended)', value: 'suiteapp2.0' },
           { label: 'SuiteApp SuiteScript 1.0', value: 'suiteapp1.0' },
           { label: 'SuiteBundle SuiteScript 1.0', value: 'suitebundle', warning: 'To be deprecated.<a target="_blank" rel="noreferrer" href="https://docs.celigo.com/hc/en-us/articles/360050643132"><u>Learn more.</u></a>' },
         ],

@@ -39,7 +39,7 @@ export default function DynaNetsuiteAPIVersion(props) {
   const isSuiteBundleInstalled = data?.bundle?.success;
   const isSuiteAppInstalled = data?.suiteapp?.success;
   const isLoadingMetadata = !status || status === 'requested';
-  const url = (value === 'suiteapp2.x' || value === 'suiteapp1.0') ? data?.suiteapp?.URL : data?.bundle?.URL;
+  const url = (value === 'suiteapp2.0' || value === 'suiteapp1.0') ? data?.suiteapp?.URL : data?.bundle?.URL;
 
   const handleFieldChange = useCallback(
     (id, value) => {
@@ -56,7 +56,7 @@ export default function DynaNetsuiteAPIVersion(props) {
     // this also gets triggered, when the connection is changed on the resource form
       // const fieldValue = !isSuiteBundleInstalled && isSuiteAppInstalled ? 'true' : 'false';
       // dispatch(actions.resourceForm.showSuiteAppInstallNotification(url, resourceType, resourceId));
-      onFieldChange(id, 'suiteapp2.x');
+      onFieldChange(id, 'suiteapp2.0');
     }
   }, [connectionId, isNew, id, isFieldChanged, isSuiteAppInstalled, isSuiteBundleInstalled, onFieldChange, dispatch, url, resourceType, resourceId]);
 
@@ -68,7 +68,7 @@ export default function DynaNetsuiteAPIVersion(props) {
 
     if (!isLoadingMetadata && !refreshBundleInstalledInfo && !isOffline) {
       const showBundleInstallNotification = value === 'suitebundle' && !isSuiteBundleInstalled;
-      const showSuiteAppInstallNotification = (value === 'suiteapp2.x' || value === 'suiteapp1.0') && !isSuiteAppInstalled;
+      const showSuiteAppInstallNotification = (value === 'suiteapp2.0' || value === 'suiteapp1.0') && !isSuiteAppInstalled;
 
       if (!showBundleInstallNotification) dispatch(actions.resourceForm.hideBundleInstallNotification(resourceType, resourceId));
       if (!showSuiteAppInstallNotification) dispatch(actions.resourceForm.hideSuiteAppInstallNotification(resourceType, resourceId));

@@ -4740,8 +4740,8 @@ Object {
           Object {
             "items": Array [
               Object {
-                "label": "SuiteApp SuiteScript 2.x",
-                "value": "suiteapp2.x",
+                "label": "SuiteApp SuiteScript 2.0",
+                "value": "suiteapp2.0",
               },
               Object {
                 "label": "SuiteApp SuiteScript 1.0",
@@ -4881,7 +4881,7 @@ Object {
             "items": Array [
               Object {
                 "label": "SuiteApp SuiteScript 2.x (Recommended)",
-                "value": "suiteapp2.x",
+                "value": "suiteapp2.0",
               },
               Object {
                 "label": "SuiteApp SuiteScript 1.0",
