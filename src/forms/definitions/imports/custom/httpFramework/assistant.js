@@ -75,16 +75,17 @@ export default function assistantDefinition(
         importDoc['/http/_httpConnectorEndpointIds'] = importDoc['/assistantMetadata'].operation;
         importDoc['/http/_httpConnectorResourceId'] = importDoc['/assistantMetadata'].resource;
         importDoc['/http/_httpConnectorVersionId'] = importDoc['/assistantMetadata'].version;
-      } else if (formValues['/assistantMetadata'] && formValues['/assistantMetadata/operation'] && formValues['/assistantMetadata/operation'] !== 'create-update-id') {
-        importDoc['/http/_httpConnectorEndpointId'] = formValues['/assistantMetadata/operation'];
+      } else if (formValues['/assistantMetadata/operation'] && formValues['/assistantMetadata/operation'] !== 'create-update-id') {
+        importDoc['/http/_httpConnectorEndpointIds'] = [formValues['/assistantMetadata/operation']];
         importDoc['/http/_httpConnectorResourceId'] = formValues['/assistantMetadata/resource'];
         importDoc['/http/_httpConnectorVersionId'] = formValues['/assistantMetadata/version'];
       }
       if (importDoc?.['/assistantMetadata'] && importDoc?.['/http/_httpConnectorResourceId']) {
-        importDoc['/assistantMetadata/resource'] = undefined;
-        importDoc['/assistantMetadata/version'] = undefined;
-        importDoc['/assistantMetadata/operation'] = undefined;
-        importDoc['/assistantMetadata/lookups'] = undefined;
+        importDoc['/assistantMetadata'] = undefined;
+        delete importDoc['/assistantMetadata/resource'];
+        delete importDoc['/assistantMetadata/version'];
+        delete importDoc['/assistantMetadata/operation'];
+        delete importDoc['/assistantMetadata/lookups'];
       }
 
       return { ...otherFormValues, ...importDoc };

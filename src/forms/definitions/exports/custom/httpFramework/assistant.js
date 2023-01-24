@@ -73,9 +73,10 @@ export default function assistantDefinition(
         exportDoc['/http/_httpConnectorEndpointId'] = formValues['/assistantMetadata/operation'];
         exportDoc['/http/_httpConnectorResourceId'] = formValues['/assistantMetadata/resource'];
         exportDoc['/http/_httpConnectorVersionId'] = formValues['/assistantMetadata/version'];
-        exportDoc['/assistantMetadata/resource'] = undefined;
-        exportDoc['/assistantMetadata/version'] = undefined;
-        exportDoc['/assistantMetadata/operation'] = undefined;
+        exportDoc['/assistantMetadata'] = undefined;
+        delete exportDoc['/assistantMetadata/resource'];
+        delete exportDoc['/assistantMetadata/version'];
+        delete exportDoc['/assistantMetadata/operation'];
       }
 
       return { ...otherFormValues, ...exportDoc };
