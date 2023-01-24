@@ -103,7 +103,7 @@ function GenericRow({result, children, includeDivider, focussed, type}) {
         <Typography className={classes.text} variant="body2">{resultText}</Typography>
         {result.description && (
         <div onClick={preventEventBubblingHandler}>
-          <InfoIconButton tabIndex={-1} size="xs" info={result.description} />
+          <InfoIconButton tabIndex={-1} size="xs" info={result.description} title={resultText} />
         </div>
         )}
 

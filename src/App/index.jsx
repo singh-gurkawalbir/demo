@@ -47,6 +47,7 @@ import Loader from '../components/Loader';
 const useStyles = makeStyles({
   root: {
     display: 'flex',
+    alignItems: 'flex-start',
   },
 });
 
@@ -92,11 +93,11 @@ export const useSnackbarStyles = makeStyles({
     display: 'grid',
     gridTemplateColumns: 'auto 1fr',
     wordBreak: 'break-word',
+    paddingTop: '6px',
     '& > svg': {
       position: 'fixed',
       left: 16,
-      top: '47%',
-      transform: 'translateY(-47%)',
+      top: 16,
     },
   },
 

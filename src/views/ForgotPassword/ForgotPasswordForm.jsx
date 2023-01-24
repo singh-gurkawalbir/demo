@@ -3,6 +3,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import React, { useCallback, useEffect, useState} from 'react';
 import TextField from '@material-ui/core/TextField';
 import clsx from 'clsx';
+import { Link } from 'react-router-dom';
 import actions from '../../actions';
 import { selectors } from '../../reducers';
 import { TextButton, FilledButton} from '../../components/Buttons';
@@ -11,6 +12,7 @@ import FieldMessage from '../../components/DynaForm/fields/FieldMessage';
 import messageStore from '../../utils/messageStore';
 import Spinner from '../../components/Spinner';
 import { EMAIL_REGEX } from '../../constants';
+import getRoutePath from '../../utils/routePaths';
 
 const path = getImageUrl('images/googlelogo.png');
 
@@ -167,12 +169,14 @@ export default function ForgotPassword({setShowError, email}) {
             </FilledButton>
           )}
         <TextButton
-          href="/signin"
-          data-test="cancel"
+          to={getRoutePath('/signin')}
+          data-test="cancelForgotPassword"
           color="primary"
+          component={Link}
+          role="link"
           type="cancel"
           className={classes.submit}
-          value="Cancel">
+        >
           Cancel
         </TextButton>
       </form>

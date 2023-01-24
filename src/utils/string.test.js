@@ -1,4 +1,5 @@
-import { getTextAfterCount, camelCase, isHTML, getTrimmedTitle, getParsedMessage, escapeSpecialChars, hasWhiteSpace } from './string';
+import each from 'jest-each';
+import { getTextAfterCount, camelCase, isHTML, getTrimmedTitle, getParsedMessage, escapeSpecialChars, hasWhiteSpace, isNumber } from './string';
 
 describe('getTextAfterCount util test cases', () => {
   test('should return correct string when count is zero', () => {
@@ -125,5 +126,45 @@ describe('hasWhiteSpace util test cases', () => {
     expect(hasWhiteSpace('valid  string')).toBe(true);
     expect(hasWhiteSpace(`valid
     string`)).toBe(true);
+  });
+});
+
+describe('isNumber function test', () => {
+  const testCases = [
+    [
+      'should return false for string',
+      'value',
+      false,
+    ],
+    [
+      'should return true for number string',
+      '1234',
+      true,
+    ],
+    [
+      'should return false for non numeric string',
+      '1234abc',
+      false,
+    ],
+    [
+      'should return true for float string',
+      '1.23',
+      true,
+    ],
+    [
+      'should return false for empty string',
+      '',
+      false,
+    ],
+    [
+      'should return true for number',
+      123,
+      true,
+    ],
+  ];
+
+  each(testCases).test('%s', (testName, inpValue, expected) => {
+    // eslint-disable-next-line jest/no-standalone-expect
+    expect(isNumber(inpValue)).toBe(expected);
   });
 });

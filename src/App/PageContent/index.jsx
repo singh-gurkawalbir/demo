@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+import { useHistory } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import { selectors } from '../../reducers';
 import AppRouting from '../AppRouting';
@@ -8,6 +9,8 @@ import { NONE_TIER_USER_ERROR } from '../../utils/messageStore';
 import ChatbotWidget from '../../components/ChatbotWidget';
 import Spinner from '../../components/Spinner';
 import Loader from '../../components/Loader';
+import actions from '../../actions';
+import getRoutePath from '../../utils/routePaths';
 
 const useStyles = makeStyles(theme => ({
   content: {
@@ -23,9 +26,13 @@ const useStyles = makeStyles(theme => ({
 
 export default function PageContent() {
   const classes = useStyles();
+  const dispatch = useDispatch();
+  const history = useHistory();
   const isNoneTierLicense = useSelector(state => selectors.platformLicenseWithMetadata(state).isNone);
   const isDefaultAccountSet = useSelector(selectors.isDefaultAccountSet);
   const isMFASetupIncomplete = useSelector(selectors.isMFASetupIncomplete);
+  const environment = useSelector(state => selectors.userPreferences(state)?.environment);
+  const isSandboxAllowed = useSelector(selectors.accountHasSandbox);
 
   const [enqueueSnackbar] = useEnqueueSnackbar();
 
@@ -37,6 +44,16 @@ export default function PageContent() {
       persist: true,
     });
   }, [enqueueSnackbar, isNoneTierLicense]);
+
+  useEffect(() => {
+    // If the Sandbox license got cancelled but the current environment is Sandbox,
+    // then redirecting to Production
+    if (isDefaultAccountSet && !isSandboxAllowed && (environment === 'sandbox')) {
+      dispatch(actions.user.preferences.update({ environment: 'production' }));
+      history.push(getRoutePath('/'));
+    }
+  }, [isDefaultAccountSet, environment, isSandboxAllowed, dispatch, history]);
+
   if (isNoneTierLicense) return null;
   if (!isDefaultAccountSet && !isMFASetupIncomplete) {
     return <Loader open>Loading...<Spinner /></Loader>;
