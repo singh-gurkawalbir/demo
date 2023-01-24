@@ -98,12 +98,12 @@ describe('dynaHFAssistantSearchParams UI tests', () => {
     initDynaHFAssistantSearchParams({ ...props, required: true, label: null });
     expect(screen.getByText('Query parameters')).toBeInTheDocument();
     userEvent.click(screen.getAllByRole('button', { name: 'tooltip' })[2]); // delete button
-    expect(mockOnFieldChangeFn).toHaveBeenCalledWith('formId', {});
+    expect(mockOnFieldChangeFn).toHaveBeenCalledWith('formId', {role: 'something'});
   });
   test('should pass the initial render with key-value provided using props', () => {
     initDynaHFAssistantSearchParams({ ...props, required: true, keyName: 'name', valueName: 'updated_permission_set', showDelete: true });
     userEvent.click(screen.getAllByRole('button', { name: 'tooltip' })[2]); // delete button
-    expect(mockOnFieldChangeFn).toHaveBeenCalledWith('formId', {});
+    expect(mockOnFieldChangeFn).toHaveBeenCalledWith('formId', {role: 'something'});
   });
   test('should pass the initial render with paramLocation as "query"', () => {
     props.paramMeta.paramLocation = 'body';

@@ -44,6 +44,27 @@ describe('keyValueRow UI tests', () => {
     handleEditorClick: mockhandleEditorClick,
     isEndSearchIcon: false,
     keyPlaceholder: 'placeholder',
+    paramMeta: {
+      paramLocation: 'query',
+      fields: [
+        {
+          name: 'beginDate',
+          id: 'beginDate',
+          description: 'DateRange, Enter the Begin Date that charges were billed for the month to export to the invoicing system. eg: MM-DD-YYYY',
+          required: true,
+          fieldType: 'input',
+        },
+        {
+          name: 'endDate',
+          id: 'endDate',
+          description: 'DateRange, Enter the End Date that charges were billed for the month to export to the invoicing system. eg: MM-DD-YYYY',
+          required: true,
+          fieldType: 'input',
+        },
+      ],
+      isDeltaExport: false,
+      defaultValuesForDeltaExport: {},
+    },
   };
 
   test('should pass the initial render', () => {
@@ -151,6 +172,7 @@ describe('keyValueRow UI tests', () => {
 
     expect(buttons).toHaveLength(4);
   });
+  // to check the key and value fields when r.disableRowKey is true
   test('function wbcefv', async () => {
     renderWithProviders(<KeyValueRow {...props} />);
     expect(screen.getByText('AutoSuggest Component')).toBeInTheDocument();
