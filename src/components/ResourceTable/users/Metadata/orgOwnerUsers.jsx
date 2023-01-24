@@ -101,6 +101,7 @@ export default {
       }
       columns.push({
         key: 'requireMFA',
+        isLoggable: true,
         HeaderValue: () => <HeaderWithHelpText title="Require MFA?" helpKey="users.requireAccountMFA" />,
         Value: ({rowData: r}) => <RequireMFA user={r} />,
         align: 'center',

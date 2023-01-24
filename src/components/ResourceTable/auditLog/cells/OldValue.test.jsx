@@ -121,7 +121,7 @@ describe('test suite for oldValue', () => {
     }];
 
     initImports(data);
-    const clickToViewButton = screen.getByText('Click to view');
+    const clickToViewButton = screen.getByText('View');
 
     expect(clickToViewButton).toBeInTheDocument();
 

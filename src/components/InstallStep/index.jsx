@@ -247,7 +247,7 @@ export default function InstallationStep(props) {
             <Typography className={clsx(classes.stepTextAll, {[classes.stepTextInstall]: (step.isCurrentStep && !step.completed)})}>
               {step.name}
             </Typography>
-            <InfoIconButton info={step.description} className={classes.installInfoBtn} />
+            <InfoIconButton info={step.description} className={classes.installInfoBtn} title={step.name} />
           </div>
         </div>
         <div className={classes.logoWithAction}>

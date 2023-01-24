@@ -46,6 +46,7 @@ export default function OperandSettingsDialog({
           name: 'type',
           type: 'radiogroup',
           label: 'Operand type',
+          isLoggable: true,
           fullWidth: true,
           options: [
             {
@@ -63,6 +64,7 @@ export default function OperandSettingsDialog({
           name: 'dataType',
           type: 'select',
           label: 'Data type',
+          isLoggable: true,
           options: [
             {
               items: [
@@ -89,6 +91,7 @@ export default function OperandSettingsDialog({
           id: 'transformations',
           name: 'transformations',
           type: 'multiselect',
+          isLoggable: true,
           label: 'Apply functions',
           refreshOptionsOnChangesTo: ['dataType'],
           options: [

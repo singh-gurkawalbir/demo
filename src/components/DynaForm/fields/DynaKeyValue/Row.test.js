@@ -80,11 +80,19 @@ describe('keyValueRow UI tests', () => {
       suggestionConfig: {
         keyConfig: {},
       },
+      r: {key1: 'key', isSelect: true},
       showSortOrder: false};
 
     renderWithProviders(<KeyValueRow {...newprops} />);
+    expect(screen.getAllByRole('button', {name: 'AutoSuggest Component'})).toHaveLength(2);
+  });
+  test('should display the multiselect dropdown only when row value fieldType is multiselect', () => {
+    const newprops = {...props,
+      r: {key1: 'key', value1: 'option1', isMultiSelect: true, options: [{name: 'option1', value: 'option1'}]}};
+
+    renderWithProviders(<KeyValueRow {...newprops} />);
     expect(screen.getByText('AutoSuggest Component')).toBeInTheDocument();
-    expect(screen.getByRole('textbox')).toBeInTheDocument();
+    expect(screen.getByText('option1')).toBeInTheDocument();
   });
   test('should call the handledelete function when clicked on the delete button', async () => {
     renderWithProviders(<KeyValueRow {...props} />);

@@ -234,7 +234,7 @@ export default function Filters(props) {
         />
           <FormControl className={classes.formControl}>
             <CeligoSelect
-              isLoggable={false}
+              isLoggable
               inputProps={userInput}
               onChange={handleChange}
               value={byUser || ''}>
