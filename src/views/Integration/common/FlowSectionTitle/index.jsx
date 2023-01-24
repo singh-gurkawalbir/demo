@@ -46,7 +46,7 @@ export default function FlowSectionTitle({ title, errorCount = 0, groupHasNoFlow
 
   return (
     <span className={classes.gridContainer}>
-      <CeligoTruncate placement="right" lines={3}>
+      <CeligoTruncate placement="right" lines={3} isLoggable>
         {title}
       </CeligoTruncate>
       <span> { groupHasNoFlows ? <NoFlowsSection /> : errorStatus} </span>

@@ -383,6 +383,7 @@ export default {
     'once.booleanField': {
       id: 'once.booleanField',
       label: 'Boolean field to mark records as exported',
+      isLoggable: true,
       type: 'refreshableselect',
       placeholder: 'Please select a boolean field',
       required: true,
@@ -401,6 +402,7 @@ export default {
       id: 'type',
       type: 'select',
       label: 'Export type',
+      isLoggable: true,
       required: true,
       defaultValue: r => {
         const isNew = isNewId(r._id);
@@ -445,6 +447,7 @@ export default {
       id: 'restlet.type',
       type: 'netsuiteexporttype',
       label: 'Export Type',
+      isLoggable: true,
       required: true,
       helpKey: 'export.type',
       connectionId: r => r && r._connectionId,
@@ -508,6 +511,7 @@ export default {
     },
     'restlet.once.booleanField': {
       id: 'restlet.once.booleanField',
+      isLoggable: true,
       label: 'Boolean field to mark records as exported',
       type: 'refreshableselect',
       helpKey: 'export.once.booleanField',

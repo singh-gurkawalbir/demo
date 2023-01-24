@@ -59,11 +59,20 @@ describe('keyValueRow UI tests', () => {
       suggestionConfig: {
         keyConfig: {},
       },
+      r: {key1: 'key', isSelect: true},
       showSortOrder: false};
 
     renderWithProviders(<KeyValueRow {...newprops} />);
     expect(screen.getByText('AutoSuggest Component key1-0')).toBeInTheDocument();
-    expect(screen.getByRole('textbox')).toBeInTheDocument();
+    expect(screen.getByText('AutoSuggest Component value1-0')).toBeInTheDocument();
+  });
+  test('should display the multiselect dropdown only when row value fieldType is multiselect', () => {
+    const newprops = {...props,
+      r: {key1: 'key', value1: 'option1', isMultiSelect: true, options: [{name: 'option1', value: 'option1'}]}};
+
+    renderWithProviders(<KeyValueRow {...newprops} />);
+    expect(screen.getByText('AutoSuggest Component key1-0')).toBeInTheDocument();
+    expect(screen.getByText('option1')).toBeInTheDocument();
   });
   test('should call the handledelete function when clicked on the delete button', async () => {
     renderWithProviders(<KeyValueRow {...props} />);
@@ -159,7 +168,7 @@ describe('keyValueRow UI tests', () => {
     userEvent.click(screen.getByText('AutoSuggest Component value1-0'));
     expect(mockhandleUpdate).toHaveBeenCalled();
   });
-  test('function wbcefv', async () => {
+  test('should validate handleUpdate function when key is changed', async () => {
     renderWithProviders(<KeyValueRow {...props} />);
     expect(screen.getByText('AutoSuggest Component key1-0')).toBeInTheDocument();
     userEvent.click(screen.getByText('AutoSuggest Component key1-0'));

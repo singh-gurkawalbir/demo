@@ -71,6 +71,7 @@ export default {
       type: 'select',
       helpKey: 'slack.connection.http.auth.type',
       label: 'Authentication Type',
+      isLoggable: true,
       options: [
         {
           items: [
@@ -82,6 +83,7 @@ export default {
     },
     'http.auth.oauth.scope': {
       fieldId: 'http.auth.oauth.scope',
+      helpKey: 'slack.connection.http.auth.oauth.scope',
       required: true,
       scopes: [
         'calls:read',

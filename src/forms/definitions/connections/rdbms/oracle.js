@@ -21,6 +21,7 @@ export default {
       id: 'mode',
       type: 'radiogroup',
       label: 'Mode',
+      isLoggable: true,
       defaultValue: 'onpremise',
       defaultDisabled: true,
       options: [

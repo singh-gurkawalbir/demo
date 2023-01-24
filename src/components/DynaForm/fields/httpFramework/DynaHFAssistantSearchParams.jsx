@@ -83,15 +83,12 @@ export default function DynaHFAssistantSearchParams(props) {
   const requiredFields = useMemo(() => paramMeta?.fields.filter(field => field.required).map(field => field.id), [paramMeta]);
   const valueFieldType = useMemo(() => paramMeta?.fields.reduce((fieldMap, {id, fieldType}) => ({...fieldMap, [id]: fieldType}), {}), [paramMeta]);
 
-  const selectTypeList = useMemo(() => {
-    const selectFields = {};
-
-    paramMeta?.fields.filter(field => field.fieldType === 'select').forEach(field => {
-      selectFields[field.id] = field.options;
-    });
-
-    return selectFields;
-  }, [paramMeta]);
+  const selectTypeList = useMemo(() => paramMeta?.fields.
+       filter(({fieldType}) => fieldType.includes('select')).
+       reduce((mapObj, {id, fieldType, options}) =>
+         ({...mapObj, [id]: {options, supportsMultiple: fieldType === 'multiselect'}}),
+         {}),
+  [paramMeta]);
 
   const updatedValue = useMemo(() => {
     const keyValues = [];
@@ -101,8 +98,10 @@ export default function DynaHFAssistantSearchParams(props) {
         name: field,
         disableRowKey: true,
         valueType: valueFieldType[field],
-        isSelect: !!selectTypeList[field],
-        options: selectTypeList[field] && selectTypeList[field].map(value => ({ name: value, value}))});
+        isSelect: !!selectTypeList[field] && !selectTypeList[field].supportsMultiple,
+        isMultiSelect: !!selectTypeList[field] && selectTypeList[field].supportsMultiple,
+        options: selectTypeList[field] && selectTypeList[field].options.map(value => ({ name: value, value})),
+      });
     });
     /* istanbul ignore else: value should never be undefined or null Otherwise need the same check above */
     if (value) {
@@ -111,13 +110,15 @@ export default function DynaHFAssistantSearchParams(props) {
         value: value[key],
         disableRowKey: requiredFields.includes(key),
         valueType: valueFieldType[key],
-        isSelect: !!selectTypeList[key],
-        options: selectTypeList[key] && selectTypeList[key].map(value => ({ name: value, value})),
+        isSelect: !!selectTypeList[key] && !selectTypeList[key].supportsMultiple,
+        isMultiSelect: !!selectTypeList[key] && selectTypeList[key].supportsMultiple,
+        options: selectTypeList[key] && selectTypeList[key].options.map(value => ({ name: value, value})),
       }));
     }
 
     return keyValues;
   }, [requiredFields, selectTypeList, value, valueFieldType]);
+
   const dataFields = useMemo(() =>
     paramMeta.fields.map(({id, description}) => ({
       name: <KeyLabel id={id} description={description} />,

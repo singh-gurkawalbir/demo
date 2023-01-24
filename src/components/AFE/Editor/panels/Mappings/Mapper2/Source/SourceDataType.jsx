@@ -222,13 +222,12 @@ export default function SourceDataType({
             endIcon={sourceDataTypes && sourceDataTypes.length > 1 ? '' : <ArrowDownFilledIcon />}
             className={classes.dataType}
             color="primary">
-            {// CeligoTruncate is not used here since it effects the drag and drop functionality
-            isFocused ? <span className={classes.dataTypeList}>{sourceDataTypeState.join()}</span> : (
+            {/* CeligoTruncate is not used here since it effects the drag and drop functionality */}
+            {isFocused ? <span className={classes.dataTypeList}>{sourceDataTypeState.join(', ')}</span> : (
               <span className={classes.dataTypeSelected}>
                 {sourceDataTypeState.join()}
               </span>
-            )
-            }
+            )}
           </TextButton>
         </span>
       </Tooltip>

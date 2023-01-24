@@ -49,6 +49,7 @@ export default {
   fieldMap: {
     name: { fieldId: 'name' },
     'netsuite.authType': {
+      isLoggable: true,
       id: 'netsuite.authType',
       label: 'Authentication type',
       type: 'nsauthtype',
@@ -146,6 +147,7 @@ export default {
       fieldId: 'netsuite.token.auto.roleId',
       type: 'text',
       label: 'Role',
+      isLoggable: true,
       defaultDisabled: true,
       visible: r => r && !isNewId(r._id),
       visibleWhen: r => {

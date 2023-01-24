@@ -14,7 +14,7 @@ const props = {
   assistantFieldType: 'operation',
   id: 'formId',
   formKey: 'imports-5bf18b09294767270c62fad9',
-  value: { status: 'HOLD' },
+  value: { status: 'HOLD', levels: '3' },
   resourceId: '5bf18b09294767270c62fad9',
   resourceType: 'exports',
   paramMeta: {
@@ -41,6 +41,17 @@ const props = {
         name: 'Permission set',
         required: true,
         fieldType: 'input',
+      },
+      {
+        id: 'levels',
+        name: 'Levels',
+        fieldType: 'multiselect',
+        options: [
+          '1',
+          '2',
+          '3',
+          '5',
+        ],
       },
     ],
     isDeltaExport: false,
@@ -104,7 +115,7 @@ describe('DynaHFAssistantSearchParams UI tests', () => {
   test('should pass the initial render with key-value provided using props', () => {
     initDynaHFAssistantSearchParams({ ...props, required: true, keyName: 'name', valueName: 'value', showDelete: true });
     userEvent.click(screen.getAllByRole('button', { name: 'tooltip' })[2]); // delete button
-    expect(mockOnFieldChangeFn).toHaveBeenCalledWith('formId', {role: undefined, status: ['HOLD']});
+    expect(mockOnFieldChangeFn).toHaveBeenCalledWith('formId', {role: undefined, status: ['HOLD'], levels: '3'});
   });
   test('should pass the initial render with paramLocation as "body"', () => {
     props.paramMeta.paramLocation = 'body';
