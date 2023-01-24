@@ -49,6 +49,7 @@ export default {
           {
             key: 'default',
             name: 'Defaults',
+            isLoggable: true,
             // is this loggable?
             Panel: FeaturePanel,
             props: {

@@ -2,7 +2,7 @@ import moment from 'moment';
 import { selectors } from '../reducers';
 import { ACCOUNT_IDS, USER_ACCESS_LEVELS } from '../constants';
 
-const { upgradeStatus, upgradeButtonText, expiresInfo, platformLicenseActionDetails } = require('./license');
+const { upgradeStatus, upgradeButtonText, expiresInfo, platformLicenseActionDetails, isNextTheHighestPlan } = require('./license');
 
 const getRandomDatesOfToday = (n = 5) => {
   const dates = [];
@@ -274,6 +274,35 @@ describe('license util function test', () => {
       dates.forEach(date => {
         expect(expiresInfo({expires: date})).toBe(`Expires on ${moment().add(1, 'days').format('MMM Do, YYYY')} (Tomorrow)`);
       });
+    });
+  });
+
+  describe('isNextTheHighestPlan function test', () => {
+    test('should not throw any exception for invalid arguments', () => {
+      expect(isNextTheHighestPlan()).toBe(false);
+      expect(isNextTheHighestPlan('', false, [])).toBe(false);
+      expect(isNextTheHighestPlan('')).toBe(false);
+      expect(isNextTheHighestPlan('231', false)).toBe(false);
+      expect(isNextTheHighestPlan('231', true, [])).toBe(false);
+    });
+
+    test('should return correct value for correct arguments', () => {
+      expect(isNextTheHighestPlan('123')).toBe(false);
+      expect(isNextTheHighestPlan('123', false, [])).toBe(false);
+      expect(isNextTheHighestPlan('123', true, [
+        {
+          _id: '111',
+          order: 0,
+        },
+        {
+          _id: '112',
+          order: 1,
+        },
+        {
+          _id: '123',
+          order: 2,
+        },
+      ])).toBe(true);
     });
   });
 });

@@ -1,8 +1,7 @@
-
 import { expectSaga } from 'redux-saga-test-plan';
 import { call, select } from 'redux-saga/effects';
-import shortid from 'shortid';
 import * as matchers from 'redux-saga-test-plan/matchers';
+import * as GenerateMediumId from '../../utils/string';
 import { responseMappingInit, responseMappingSave } from '.';
 import { SCOPES } from '../resourceForm';
 import actions from '../../actions';
@@ -203,7 +202,7 @@ describe('responseMappingInit saga', () => {
       },
     };
 
-    const mock = jest.spyOn(shortid, 'generate');  // spy on otherFn
+    const mock = jest.spyOn(GenerateMediumId, 'generateId');  // spy on otherFn
 
     mock.mockReturnValue('mock_key');
 
@@ -267,7 +266,7 @@ describe('responseMappingInit saga', () => {
       },
     };
 
-    const mock = jest.spyOn(shortid, 'generate');  // spy on otherFn
+    const mock = jest.spyOn(GenerateMediumId, 'generateId');  // spy on otherFn
 
     mock.mockReturnValue('mock_key');
 

@@ -46,6 +46,10 @@ async function initChildUpgradeButton(props) {
       showWizard: true,
     },
     childList: ['123', '122'],
+    878: {
+      status: 'error',
+      errMessage: 'some error',
+    },
   };
   const ui = (
     <MemoryRouter>
@@ -155,5 +159,21 @@ describe('ChildUpgradeButton Unit tests', () => {
     }));
     expect(mockHistoryPush).toBeCalledWith('baseUrl/changeEditions/child/645');
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.integrationApp.upgrade.setStatus('successMessageFlags', { showChildLeftMessageFlag: true }));
+  });
+  test('Should render in case of error', async () => {
+    const props = {
+      resource: {
+        id: '878',
+        changeEditionId: '32jn2na9',
+        name: 'Child IA',
+      },
+    };
+
+    await initChildUpgradeButton(props);
+
+    expect(mockDispatchFn).toHaveBeenCalledWith(actions.integrationApp.upgrade.deleteStatus('878'));
+    const errorMessage = screen.getByRole('alert');
+
+    expect(errorMessage).toHaveTextContent('The upgrade for Child IA has failed. some error. Select the active upgrade button when you are ready to continue with your setup.');
   });
 });

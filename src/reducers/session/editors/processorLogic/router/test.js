@@ -1,5 +1,6 @@
 
 import processorLogic from './index';
+import * as GenerateMediumId from '../../../../../utils/string';
 
 const {
   init,
@@ -50,6 +51,7 @@ describe('router processor logic', () => {
       expect(init({options})).toEqual(expectedOutput);
     });
     test('should correctly return the rule along with options', () => {
+      jest.spyOn(GenerateMediumId, 'generateId').mockReturnValue('new_key');
       const options = {
         router: {id: 'r1', name: 'router1', branches: [{pageProcessors: [{id: 'p1'}]}, {pageProcessors: [{id: 'p2'}]}]},
         branchNamingIndex: 1,
@@ -82,6 +84,7 @@ describe('router processor logic', () => {
           activeProcessor: 'filter',
           branches: [
             {
+              id: 'new_key',
               inputFilter: {
                 rules: undefined,
               },
@@ -93,6 +96,7 @@ describe('router processor logic', () => {
               ],
             },
             {
+              id: 'new_key',
               inputFilter: {
                 rules: undefined,
               },
@@ -342,6 +346,7 @@ describe('router processor logic', () => {
               id: 3,
             },
             {
+              id: 'new_key',
               name: 'Branch 1.1',
               pageProcessors: [
                 {

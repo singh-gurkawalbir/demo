@@ -233,7 +233,7 @@ describe('PopulateWithPreviewData UI tests', () => {
       actions.form.fieldChange(formKey)('mockResponse', previewData)
     ));
 
-    expect(screen.getByText(messageStore('POPULATE_WITH_PREVIEW_DATA_SUCCESS', {fieldName: 'Mock response'}))).toBeInTheDocument();
+    expect(screen.getByText(messageStore('POPULATE_WITH_PREVIEW_DATA_SUCCESS', {fieldName: 'Mock response', dataType: 'sample data'}))).toBeInTheDocument();
   });
   test('should dispatch correct action and render correct snackbar on success on click for exports', async () => {
     const resourceType = 'exports';
@@ -275,7 +275,7 @@ describe('PopulateWithPreviewData UI tests', () => {
     await waitFor(() => expect(mockDispatchFn).toBeCalledWith(
       actions.form.fieldChange(formKey)('mockOutput', wrapExportFileSampleData(previewData))
     ));
-    await waitFor(() => expect(screen.getByText(messageStore('POPULATE_WITH_PREVIEW_DATA_SUCCESS', {fieldName: 'Mock output'}))).toBeInTheDocument());
+    await waitFor(() => expect(screen.getByText(messageStore('POPULATE_WITH_PREVIEW_DATA_SUCCESS', {fieldName: 'Mock output', dataType: 'preview data'}))).toBeInTheDocument());
   });
   test('should dispatch correct action and render correct snackbar on error on click for exports', async () => {
     const resourceType = 'exports';
@@ -299,6 +299,6 @@ describe('PopulateWithPreviewData UI tests', () => {
       actions.resourceFormSampleData.receivedPreviewError(resourceId, 'someError')
     );
     await waitFor(() => expect(buttonRef).toBeEnabled());
-    await waitFor(() => expect(screen.getByText(messageStore('POPULATE_WITH_PREVIEW_DATA_FAILED', {fieldName: 'Mock output'}))).toBeInTheDocument());
+    await waitFor(() => expect(screen.getByText(messageStore('POPULATE_WITH_PREVIEW_DATA_FAILED', {fieldName: 'mock output'}))).toBeInTheDocument());
   });
 });

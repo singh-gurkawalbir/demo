@@ -136,6 +136,7 @@ export default {
       id: 'http.auth.type',
       type: 'select',
       label: 'Authentication type',
+      isLoggable: true,
       helpKey: 'shopify.connection.http.auth.type',
       options: [
         {

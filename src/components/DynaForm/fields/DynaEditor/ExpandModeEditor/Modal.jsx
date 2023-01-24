@@ -36,7 +36,7 @@ export default function EditorModal(props) {
       } else {
         setErrorMessage('');
       }
-    } else if (validateContent) {
+    } else if (typeof validateContent === 'function') {
       setErrorMessage(validateContent(content));
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps

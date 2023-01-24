@@ -60,10 +60,14 @@ const useStyles = makeStyles(theme => ({
     },
   },
   feedbackTextField: {
-    marginBottom: theme.spacing(1),
+    margin: theme.spacing(1, 0),
     width: '100%',
     '& > div': {
       padding: theme.spacing(1.5),
+    },
+    '& .MuiInputBase-input::placeholder': {
+      color: theme.palette.secondary.light,
+      opacity: 1,
     },
   },
   actionWrapper: {
@@ -90,7 +94,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-export default function HelpContent({ children, title, caption, fieldId, resourceType, updatePosition }) {
+const FeedBackComponent = ({ children, fieldId, resourceType, updatePosition}) => {
   const classes = useStyles();
   const dispatch = useDispatch();
   const [feedbackText, setFeedbackText] = useState(false);
@@ -116,6 +120,57 @@ export default function HelpContent({ children, title, caption, fieldId, resourc
     setFeedbackTextValue(e.target.value);
   }, []);
 
+  return feedbackText ? (
+    <>
+      <TextField
+        data-private
+        name="feedbackText"
+        placeholder="How can we make this information more helpful?"
+        multiline
+          // onClick={e => { e.stopPropagation(); }}
+        onChange={onChange}
+        variant="outlined"
+        className={classes.feedbackTextField}
+        />
+      <span data-test="helpFeedbackSubmit">
+        <OutlinedButton
+          className={classes.feedbackActionButton}
+          onClick={handleSendFeedbackText}>
+          Submit
+        </OutlinedButton>
+      </span>
+    </>
+  ) : (
+    <>
+      <Typography variant="subtitle2" component="div" className={classes.content}>{children}</Typography>
+      <div className={classes.actionWrapper}>
+        <Typography variant="subtitle2">Was this helpful?</Typography>
+        <IconButtonWithTooltip
+          data-test="yesContentHelpful"
+          tooltipProps={{title: 'Yes'}}
+          buttonSize={{size: 'small'}}
+          className={classes.actionButton}
+          onClick={handleUpdateFeedBack(true)}
+          noPadding>
+          <ThumbsUpIcon />
+        </IconButtonWithTooltip>
+        <IconButtonWithTooltip
+          data-test="noContentHelpful"
+          tooltipProps={{title: 'No'}}
+          buttonSize={{size: 'small'}}
+          className={classes.actionButton}
+          onClick={handleUpdateFeedBack(false)}
+          noPadding>
+          <ThumbsDownIcon data-test="thumbsdownicon" />
+        </IconButtonWithTooltip>
+      </div>
+    </>
+  );
+};
+
+export default function HelpContent({ title, caption, children, supportFeedback = true, onClose = () => {}, ...rest }) {
+  const classes = useStyles();
+
   return (
     <div className={classes.wrapper}>
       <div className={classes.titleWrapper}>
@@ -126,53 +181,20 @@ export default function HelpContent({ children, title, caption, fieldId, resourc
           size="small"
           data-test="close"
           aria-label="Close"
+          // onClick={e => { e.stopPropagation(); }}
+          onClick={onClose}
           className={classes.closeButton}>
           <CloseIcon />
         </IconButton>
       </div>
-      {feedbackText ? (
-        <>
-          <TextField
-            data-private
-            name="feedbackText"
-            placeholder="How can we make this information more helpful?"
-            multiline
-            onChange={onChange}
-            variant="outlined"
-            className={classes.feedbackTextField}
-          />
-          <OutlinedButton
-            className={classes.feedbackActionButton}
-            onClick={handleSendFeedbackText}>
-            Submit
-          </OutlinedButton>
-        </>
-      ) : (
-        <>
-          <Typography variant="subtitle2" component="div" className={classes.content}>{children}</Typography>
-          <div className={classes.actionWrapper}>
-            <Typography variant="subtitle2">Was this helpful?</Typography>
-            <IconButtonWithTooltip
-              data-test="yesContentHelpful"
-              tooltipProps={{title: 'Yes'}}
-              buttonSize={{size: 'small'}}
-              className={classes.actionButton}
-              onClick={handleUpdateFeedBack(true)}
-              noPadding>
-              <ThumbsUpIcon />
-            </IconButtonWithTooltip>
-            <IconButtonWithTooltip
-              data-test="noContentHelpful"
-              tooltipProps={{title: 'No'}}
-              buttonSize={{size: 'small'}}
-              className={classes.actionButton}
-              onClick={handleUpdateFeedBack(false)}
-              noPadding>
-              <ThumbsDownIcon data-test="thumbsdownicon" />
-            </IconButtonWithTooltip>
-          </div>
-        </>
-      )}
+      {supportFeedback ? (
+        <FeedBackComponent
+          {...rest}
+        >
+          {children}
+        </FeedBackComponent>
+      )
+        : <Typography variant="subtitle2" component="div" className={classes.content}>{children}</Typography>}
       {caption && (
       <Typography variant="subtitle2" className={classes.caption}>
         Field path: {caption}

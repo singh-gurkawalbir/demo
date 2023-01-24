@@ -74,7 +74,7 @@ export default function Redirection({children}) {
   }, [dispatch, flowGroupingId, flowId, match.url, patchNewFlow]);
 
   // NEW FLOW REDIRECTION
-  if (flowId === 'new') {
+  if (flowId === 'new' || flowId === 'new*') {
     const tempId = generateNewId();
 
     history.replace(rewriteUrl(tempId));

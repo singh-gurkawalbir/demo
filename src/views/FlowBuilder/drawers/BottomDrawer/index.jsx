@@ -341,6 +341,7 @@ export default function BottomDrawer({
                       {...tabProps(tabIndex++)}
                       id={tabType}
                       key={tabType}
+                      data-test={tabType}
                       icon={isUserInErrMgtTwoDotZero ? <RunningFlowsIcon /> : <DashboardIcon />}
                       label={dashboardLabel} />
                   );
@@ -349,6 +350,7 @@ export default function BottomDrawer({
                     <Tab
                       id={tabType}
                       key={tabType}
+                      data-test={tabType}
                       {...tabProps(tabIndex++)}
                       icon={<RunHistoryIcon />}
                       label={label} />
@@ -359,6 +361,7 @@ export default function BottomDrawer({
                       {...tabProps(tabIndex++)}
                       id={tabType}
                       key={tabType}
+                      data-test={tabType}
                       icon={
                         isAnyFlowConnectionOffline ? (
                           <OfflineConnectionsIcon />
@@ -375,6 +378,7 @@ export default function BottomDrawer({
                       {...tabProps(tabIndex++)}
                       id={tabType}
                       key={tabType}
+                      data-test={tabType}
                       icon={<ScriptsIcon />}
                       label={label}
                       />
@@ -385,6 +389,7 @@ export default function BottomDrawer({
                       {...tabProps(tabIndex++)}
                       id={tabType}
                       key={tabType}
+                      data-test={tabType}
                       icon={<AuditLogIcon />}
                       label={label}
                       />
@@ -395,6 +400,7 @@ export default function BottomDrawer({
                       className={classes.customTab}
                       key={`${tabType}-${resourceId}`}
                       id={`${tabType}-${resourceId}`}
+                      data-test={`${tabType}-${resourceId}`}
                       {...tabProps(tabIndex++)}
                       icon={<AuditLogIcon />}
                       component="div"
@@ -422,6 +428,7 @@ export default function BottomDrawer({
                       key={`${tabType}-${resourceId}`}
                       // id={`connection-logs-${resourceId}`}
                       id={`${tabType}-${resourceId}`}
+                      data-test={`${tabType}-${resourceId}`}
                       {...tabProps(tabIndex++)}
                       icon={<DebugIcon />}
                       component="div"

@@ -101,7 +101,7 @@ export default {
       newValues['/http/auth/token/refreshMediaType'] = undefined;
     }
 
-    if (newValues['/http/auth/type'] === 'token') {
+    if (newValues['/http/auth/type'] === 'token' || newValues['/http/auth/type'] === 'oauth') {
       if (newValues['/http/auth/token/scheme'] === 'Custom') {
         newValues['/http/auth/token/scheme'] = newValues['/http/customAuthScheme'];
       }
@@ -192,6 +192,7 @@ export default {
       id: 'mode',
       type: 'radiogroup',
       label: 'Mode',
+      isLoggable: true,
       defaultValue: r => (r && r._agentId ? 'onpremise' : 'cloud'),
       options: [
         {

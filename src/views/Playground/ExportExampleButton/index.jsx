@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useSelector, shallowEqual } from 'react-redux';
 import { makeStyles, Button, Dialog, DialogTitle, DialogContent, DialogActions }
   from '@material-ui/core';
-import shortid from 'shortid';
+import { generateId } from '../../../utils/string';
 import { selectors } from '../../../reducers';
 import CodeEditor from '../../../components/CodeEditor2/editor';
 
@@ -52,7 +52,7 @@ export default function ExportExampleButton({ editorId }) {
     if (open) {
       setExample({
         type,
-        key: `${type}-${shortid.generate()}`,
+        key: `${type}-${generateId()}`,
         name: 'node text in example tree',
         description: 'Not used yet.',
         rule,

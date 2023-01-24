@@ -1,8 +1,10 @@
 import { makeStyles, TextField, MenuItem } from '@material-ui/core';
 import React, { useCallback, useEffect, useState } from 'react';
 import clsx from 'clsx';
+import { isArray } from 'lodash';
 import TrashIcon from '../../../icons/TrashIcon';
 import AutoSuggest from '../DynaAutoSuggest';
+import MultiSelect from '../DynaMultiSelect';
 import ActionButton from '../../../ActionButton';
 import SortableHandle from '../../../Sortable/SortableHandle';
 import isLoggableAttr from '../../../../utils/isLoggableAttr';
@@ -62,7 +64,7 @@ export default function KeyValueRow(props) {
     keyConfig: suggestKeyConfig,
     valueConfig: suggestValueConfig,
   } = suggestionConfig;
-
+  const showMultiSelectValue = r.isMultiSelect && (!r[valueName] || isArray(r[valueName]) || r.options.find(({value}) => value === r[valueName]));
   const rowComponentClasses = useStyles();
   const [showGripper, setShowGripper] = useState(false);
   const handleOnMouseEnter = useCallback(() => {
@@ -140,23 +142,37 @@ export default function KeyValueRow(props) {
         )}
 
         { (r.isSelect || suggestValueConfig) && !showSortOrder && (
-        <AutoSuggest
-          disabled={disabled}
-          value={r[valueName]}
-          id={`${valueName}-${index}`}
-          data-test={`${valueName}-${index}`}
+        <div className={r.isSelect ? clsx(classes.dynaField, classes.dynaValueField) : ''}>
+          <AutoSuggest
+            disabled={disabled}
+            value={r[valueName]}
+            id={`${valueName}-${index}`}
+            data-test={`${valueName}-${index}`}
                 // autoFocus={r.row === rowInd && isKey}
-          placeholder={valueName}
-          variant="filled"
-          labelName={r.isSelect ? 'name' : suggestValueConfig.labelName}
-          valueName={r.isSelect ? 'value' : suggestValueConfig.valueName}
-          onFieldChange={(_, _value) =>
-            handleUpdate(r.key, _value, valueName)}
-          options={r.isSelect ? {suggestions: r.options} : { suggestions: suggestValueConfig.suggestions }}
-          fullWidth
+            placeholder={valueName}
+            variant="filled"
+            labelName={r.isSelect ? 'name' : suggestValueConfig.labelName}
+            valueName={r.isSelect ? 'value' : suggestValueConfig.valueName}
+            onFieldChange={(_, _value) =>
+              handleUpdate(r.key, _value, valueName)}
+            options={r.isSelect ? {suggestions: r.options} : { suggestions: suggestValueConfig.suggestions }}
+            fullWidth
               />
+        </div>
         )}
-        {!r.isSelect && !suggestValueConfig && !showSortOrder && (
+        { showMultiSelectValue && (
+        <div className={clsx(classes.dynaField, classes.dynaValueField)}>
+          <MultiSelect
+            disabled={disabled}
+            value={r[valueName]}
+            id={`${valueName}-${index}`}
+            name={`${valueName}-${index}`}
+            onFieldChange={(_, _value) => handleUpdate(r.key, _value, valueName)}
+            options={[{ items: r.options || [] }]}
+          />
+        </div>
+        )}
+        {!r.isSelect && !showMultiSelectValue && !suggestValueConfig && !showSortOrder && (
         <TextField
           disabled={disabled}
           autoFocus={index === rowInd && !isKey}

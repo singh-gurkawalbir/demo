@@ -1,4 +1,3 @@
-
 import { select } from 'redux-saga/effects';
 import { expectSaga } from 'redux-saga-test-plan';
 import actions from '../../../../actions';

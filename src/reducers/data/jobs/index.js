@@ -1,8 +1,8 @@
 import produce from 'immer';
-import shortid from 'shortid';
 import { groupBy } from 'lodash';
 import { createSelector } from 'reselect';
 import cloneDeep from 'lodash/cloneDeep';
+import { generateId } from '../../../utils/string';
 import actionTypes from '../../../actions/types';
 import {
   JOB_TYPES,
@@ -40,7 +40,7 @@ function getChildJobIndexDetails(jobs, parentJobId, jobId) {
 
 function parseJobErrors(collection) {
   const errors = (collection || []).map(je => ({
-    _id: shortid.generate(),
+    _id: generateId(),
     ...je,
   }));
   const errorsGroupedByRetryId = groupBy(errors, je => je._retryId || je._id);

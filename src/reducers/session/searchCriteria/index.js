@@ -1,5 +1,5 @@
 import produce from 'immer';
-import shortid from 'shortid';
+import { generateId } from '../../../utils/string';
 import actionTypes from '../../../actions/types';
 
 const emptySet = [];
@@ -29,7 +29,7 @@ export default function reducer(state = {}, action) {
             );
             const showFormulaField = !!(m.formula && isFormulaField(m.field));
 
-            return { ...m, key: shortid.generate(), searchValue2Enabled, showFormulaField };
+            return { ...m, key: generateId(), searchValue2Enabled, showFormulaField };
           }),
         };
         break;
@@ -75,7 +75,7 @@ export default function reducer(state = {}, action) {
         } else if (value) {
           const newObj = {
             [field]: value,
-            key: shortid.generate(),
+            key: generateId(),
           };
 
           if (field === 'operator') {

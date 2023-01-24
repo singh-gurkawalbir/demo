@@ -2,11 +2,7 @@ import { select, call, put, takeEvery } from 'redux-saga/effects';
 import actionTypes from '../../../actions/types';
 import actions from '../../../actions';
 import { selectors } from '../../../reducers';
-import {
-  getAddedLookupIdInFlow,
-  getPreviewStageData,
-  shouldUpdateResourceSampleData,
-} from '../../../utils/flowData';
+import { getPreviewStageData, shouldUpdateResourceSampleData } from '../../../utils/flowData';
 import {
   isFileAdaptor,
   isRealTimeOrDistributedResource,
@@ -71,22 +67,6 @@ export function* _fetchAndSaveRawDataForResource({ type, resourceId, flowId }) {
         rawData: parseData && JSON.stringify(parseData),
       });
     }
-  } else {
-    // TODO @Raghu : Commenting this now as there is no BE Support on saving raw data for PPs
-    // Add it back when BE supports offline mode for PPs
-    // const pageProcessorPreviewData = yield call(pageProcessorPreview, {
-    //   flowId,
-    //   _pageProcessorId: resourceId,
-    //   previewType: 'raw',
-    //   hidden: true,
-    // });
-    // if (pageProcessorPreviewData) {
-    //   yield call(saveRawDataOnResource, {
-    //     resourceId,
-    //     rawData:
-    //       pageProcessorPreviewData && JSON.stringify(pageProcessorPreviewData),
-    //   });
-    // }
   }
 }
 
@@ -166,18 +146,6 @@ export function* onResourceUpdate({
         type: 'exports',
         resourceId,
         flowId,
-      });
-    }
-  }
-
-  if (resourceType === 'flows') {
-    const addedPageProcessorId = getAddedLookupIdInFlow(patch);
-
-    if (addedPageProcessorId) {
-      yield call(_fetchAndSaveRawDataForResource, {
-        type: 'pageprocessors',
-        flowId: resourceId,
-        resourceId: addedPageProcessorId,
       });
     }
   }

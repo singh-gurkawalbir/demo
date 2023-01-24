@@ -104,6 +104,7 @@ export const C_LOCKED_FIELDS = Object.freeze({
     'file.compressionFormat',
     'file.skipDelete',
     'file.csv',
+    'mockOutput',
     'test.limit',
     'delta.dateField',
     'delta.lagOffset',
@@ -132,6 +133,7 @@ export const C_LOCKED_FIELDS = Object.freeze({
     'salesforce.upsert.externalIdField',
     'salesforce.lookups',
     'settings',
+    'mockResponse',
   ],
   flows: [
     '_runNextFlowIds',
@@ -169,7 +171,6 @@ export const NO_ENVIRONMENT_RESOURCE_TYPES = Object.freeze([
   'templates',
   'published',
   'transfers',
-  'apis',
   'connectors',
 ]);
 

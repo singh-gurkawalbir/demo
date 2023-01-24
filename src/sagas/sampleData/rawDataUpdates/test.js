@@ -165,13 +165,20 @@ describe('rawDataUpdates sagas', () => {
         },
       }];
       const flowId = 'flow-123';
-      const resourceType = 'flows';
+      const resourceType = 'exports';
 
-      expectSaga(onResourceUpdate, { resourceId: flowId, resourceType, patch: flowPatchSet })
+      expectSaga(onResourceUpdate, { resourceId: flowId, resourceType, master: {isLookup: true}, patch: flowPatchSet })
+        .provide([
+          [select(
+            selectors.resourceFormState,
+            resourceType,
+            flowId
+          ), {flowId}],
+        ])
         .call(_fetchAndSaveRawDataForResource, {
           type: 'pageprocessors',
           flowId,
-          resourceId: '1234',
+          resourceId: flowId,
         })
         .run();
     });

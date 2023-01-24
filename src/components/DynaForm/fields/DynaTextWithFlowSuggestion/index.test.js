@@ -32,4 +32,13 @@ describe('dynaTextWithFlowSuggestion UI tests', () => {
     renderWithProviders(<DynaTextWithFlowSuggestion showLookup={false} showExtract={false} />);
     expect(screen.queryByText('Suggestions Component')).toBeNull();
   });
+  test('should call the onFieldChange function passed in props when field is a handlebar expression', async () => {
+    const mockOnFieldChange = jest.fn();
+
+    renderWithProviders(<DynaTextWithFlowSuggestion onFieldChange={mockOnFieldChange} />);
+    const textfield = screen.getByRole('textbox');
+
+    userEvent.paste(textfield, '{{"data"}}');
+    await waitFor(() => expect(mockOnFieldChange).toHaveBeenCalledWith(undefined, "{{'data'}}"));
+  });
 });

@@ -169,6 +169,7 @@ import DynaShopifyHeaderLink from './Shopify/DynaShopifyHeaderLink';
 import DynaShopifyStoreName from './Shopify/DynaShopifyStoreName';
 import DynaIANameSelect from './Shopify/DynaIANameSelect';
 import DynaShopifyConnectionSelect from './Shopify/SelectConnection';
+import DynaHashAlgorithm from './DynaHashAlgorithm';
 
 export default {
   updateoptions: DynaUpdateOptions,
@@ -293,7 +294,7 @@ export default {
   netsuitedefaultvalue: DynaNetSuiteDefaultValue,
   ...SuiteScript,
   exportSelect: DynaExportSelect,
-  password: DynaPassword,
+  signinpassword: DynaPassword,
   textwithflowsuggestion: DynaTextWithFlowSuggestion,
   selectconditionallookup: DynaSelectConditionalLookup,
   csvhasheaderrow: DynaCsvHasHeaderRow,
@@ -349,4 +350,5 @@ export default {
   shopifyheaderlink: DynaShopifyHeaderLink,
   ianameselect: DynaIANameSelect,
   shopifyconnectionselect: DynaShopifyConnectionSelect,
+  hashalgorithm: DynaHashAlgorithm,
 };
