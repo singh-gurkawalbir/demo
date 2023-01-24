@@ -24,7 +24,10 @@ const metadata = {
         Value: ({rowData: r}) => (
           <>
             {r?.name}
-            <InfoIconButton info={r.description} escapeUnsecuredDomains size="xs" />
+            <InfoIconButton
+              info={r.description} escapeUnsecuredDomains size="xs"
+              title={r?.name}
+            />
           </>
         ),
       },
