@@ -40,7 +40,7 @@ export function* generateS3Key({ integrationId, childId, file, fileType, fileNam
       fileName,
     });
     if (runKey) {
-      yield put(actions.integrationApp.utility.receivedS3Key(runKey));
+      yield put(actions.integrationApp.utility.receivedS3Key({integrationId, runKey}));
     }
   } catch (error) {
     return yield put(actions.integrationApp.utility.s3KeyError({integrationId, error}));
