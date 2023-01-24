@@ -3,6 +3,7 @@ import React, { useCallback } from 'react';
 import { makeStyles } from '@material-ui/core';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
+import { isEmpty } from 'lodash';
 import ActionButton from '../../../ActionButton';
 import AfeIcon from '../../../icons/AfeIcon';
 import InputField from '../DynaTextWithFlowSuggestion';
@@ -37,7 +38,7 @@ export default function DynaHFAssistantPathParams(props) {
     flowId,
     description,
     formKey,
-    options,
+    options = {},
   } = props;
   const classes = useStyles();
   const dispatch = useDispatch();
@@ -76,7 +77,7 @@ export default function DynaHFAssistantPathParams(props) {
   return (
     <>
       <div className={classes.dynaPathParamWrapper}>
-        {options ? (
+        {!isEmpty(options) ? (
           <AutoSuggest
             description={description}
             id={id}
