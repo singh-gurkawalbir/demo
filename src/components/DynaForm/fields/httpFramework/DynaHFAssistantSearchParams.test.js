@@ -115,7 +115,7 @@ describe('DynaHFAssistantSearchParams UI tests', () => {
   test('should pass the initial render with key-value provided using props', () => {
     initDynaHFAssistantSearchParams({ ...props, required: true, keyName: 'name', valueName: 'value', showDelete: true });
     userEvent.click(screen.getAllByRole('button', { name: 'tooltip' })[2]); // delete button
-    expect(mockOnFieldChangeFn).toHaveBeenCalledWith('formId', {role: undefined, status: ['HOLD'], levels: '3'});
+    expect(mockOnFieldChangeFn).toHaveBeenCalledWith('formId', {role: undefined, status: 'HOLD', levels: '3'});
   });
   test('should pass the initial render with paramLocation as "body"', () => {
     props.paramMeta.paramLocation = 'body';
