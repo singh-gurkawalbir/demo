@@ -3,6 +3,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import { Typography } from '@material-ui/core';
 import { useDispatch } from 'react-redux';
 import { useHistory, useRouteMatch } from 'react-router-dom';
+import { isArray } from 'lodash';
 import { KeyValueComponent } from '../DynaKeyValue';
 import actions from '../../../../actions';
 import { getValidRelativePath } from '../../../../utils/routePaths';
@@ -180,8 +181,13 @@ export default function DynaHFAssistantSearchParams(props) {
       if (!val[keyName]) {
         return fv;
       }
+      let value = val[valueName];
 
-      return { ...fv, [val[keyName]]: val[valueName]};
+      if (value && !isArray(value) && val.valueType === 'array') {
+        value = value.trim().split(',');
+      }
+
+      return { ...fv, [val[keyName]]: value};
     }, {});
 
     onFieldChange(id, finalValue);
