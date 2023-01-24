@@ -2620,6 +2620,9 @@ export function isLoopReturnsv2Connection(connection) {
 export function isAcumaticaEcommerceConnection(connection) {
   return connection?.assistant === 'acumatica' && connection?.http?.unencrypted?.endpointName === 'ecommerce';
 }
+export function isAcumaticaManufacturingConnection(connection) {
+  return connection?.assistant === 'acumatica' && connection?.http?.unencrypted?.endpointName === 'manufacturing';
+}
 export function isMicrosoftBusinessCentralOdataConnection(connection) {
   return connection?.assistant === 'microsoftbusinesscentral' && connection?.http?.unencrypted?.apiType === 'odata';
 }
