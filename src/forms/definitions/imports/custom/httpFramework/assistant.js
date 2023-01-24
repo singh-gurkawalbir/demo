@@ -80,7 +80,12 @@ export default function assistantDefinition(
         importDoc['/http/_httpConnectorResourceId'] = formValues['/assistantMetadata/resource'];
         importDoc['/http/_httpConnectorVersionId'] = formValues['/assistantMetadata/version'];
       }
-      importDoc['/assistantMetadata'] = undefined;
+      if (importDoc?.['/assistantMetadata'] && importDoc?.['/http/_httpConnectorResourceId']) {
+        importDoc['/assistantMetadata/resource'] = undefined;
+        importDoc['/assistantMetadata/version'] = undefined;
+        importDoc['/assistantMetadata/operation'] = undefined;
+        importDoc['/assistantMetadata/lookups'] = undefined;
+      }
 
       return { ...otherFormValues, ...importDoc };
     },
