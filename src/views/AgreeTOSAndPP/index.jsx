@@ -2,15 +2,14 @@ import React, { useEffect, useState } from 'react';
 import { makeStyles, Typography } from '@material-ui/core';
 import { useHistory } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
+import clsx from 'clsx';
 import CeligoLogo from '../../components/CeligoLogo';
 import DynaCheckbox from '../../components/DynaForm/fields/checkbox/DynaCheckbox';
-import Spinner from '../../components/Spinner';
 import { FilledButton, TextButton } from '../../components/Buttons';
 import getRoutePath from '../../utils/routePaths';
 import { selectors } from '../../reducers';
 import { HOME_PAGE_PATH } from '../../constants';
 import actions from '../../actions';
-import clsx from 'clsx';
 import messageStore from '../../utils/messageStore';
 
 const useStyles = makeStyles(theme => ({
@@ -54,30 +53,30 @@ const useStyles = makeStyles(theme => ({
     display: 'table-cell',
     verticalAlign: 'middle',
   },
-  message:{
+  message: {
     fontSize: 15,
   },
   line: {
     borderTop: `1px solid ${theme.palette.secondary.lightest}`,
     padding: theme.spacing(1, 0),
   },
-  topMargin:{
-    margin: theme.spacing(3, 0, 0)
+  topMargin: {
+    margin: theme.spacing(3, 0, 0),
   },
-  consent:{
+  consent: {
     padding: theme.spacing(2, 0),
-    '& p.MuiTypography-body1':{
+    '& p.MuiTypography-body1': {
       fontSize: 15,
-    }
+    },
   },
-  submit:{
+  submit: {
     marginRight: theme.spacing(2),
     fontSize: 15,
   },
-  cancel:{
+  cancel: {
     fontSize: 15,
     color: 'inherit',
-  }
+  },
 }));
 
 export default function AgreeTOSAndPP() {
@@ -112,15 +111,15 @@ export default function AgreeTOSAndPP() {
           </div>
           <Typography variant="h3">Review & agree to terms of use</Typography>
           <div className={clsx(classes.line, classes.topMargin)} />
-            <Typography variant="body2" className={classes.message}>
-              {messageStore('AGREE_TOS_AND_PP')}
-            </Typography>
-            <DynaCheckbox
-              id="agreeTOSAndPP"
-              className={classes.consent}
-              onFieldChange={handleToggle}
-              label={<Typography variant="body1">I agree to the <a href="https://www.celigo.com/terms-of-service/" target='_blank' rel="noopener noreferrer">Terms of Service / Service Subscription Agreement</a> and <a href="https://www.celigo.com/privacy/" target='_blank' rel="noopener noreferrer">Privacy Policy</a>.</Typography>}
-              value={agree}
+          <Typography variant="body2" className={classes.message}>
+            {messageStore('AGREE_TOS_AND_PP')}
+          </Typography>
+          <DynaCheckbox
+            id="agreeTOSAndPP"
+            className={classes.consent}
+            onFieldChange={handleToggle}
+            label={<Typography variant="body1">I agree to the <a href="https://www.celigo.com/terms-of-service/" target="_blank" rel="noopener noreferrer">Terms of Service / Service Subscription Agreement</a> and <a href="https://www.celigo.com/privacy/" target="_blank" rel="noopener noreferrer">Privacy Policy</a>.</Typography>}
+            value={agree}
             />
           <div className={classes.line} />
           <FilledButton
