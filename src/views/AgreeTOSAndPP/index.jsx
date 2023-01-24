@@ -116,6 +116,7 @@ export default function AgreeTOSAndPP() {
           </Typography>
           <DynaCheckbox
             id="agreeTOSAndPP"
+            data-test="agreeTOSAndPP"
             className={classes.consent}
             onFieldChange={handleToggle}
             label={<Typography variant="body1">I agree to the <a href="https://www.celigo.com/terms-of-service/" target="_blank" rel="noopener noreferrer">Terms of Service / Service Subscription Agreement</a> and <a href="https://www.celigo.com/privacy/" target="_blank" rel="noopener noreferrer">Privacy Policy</a>.</Typography>}
@@ -123,7 +124,7 @@ export default function AgreeTOSAndPP() {
             />
           <div className={classes.line} />
           <FilledButton
-            data-test="submit"
+            data-test="agree"
             type="submit"
             disabled={!agree}
             onClick={handleSubmit}
@@ -132,7 +133,7 @@ export default function AgreeTOSAndPP() {
             Continue
           </FilledButton>
           <TextButton
-            data-test="cancelForgotPassword"
+            data-test="signout"
             color="primary"
             onClick={handleUserLogout}
             className={classes.cancel}

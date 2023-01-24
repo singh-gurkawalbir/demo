@@ -4,8 +4,7 @@ import actions from '../../actions';
 import { useSelectorMemo } from '../../hooks';
 import { selectors } from '../../reducers';
 
-const emptyList = [];
-export default function LoadResources({ children, resources, required, lazyResources = emptyList, integrationId, spinner }) {
+export default function LoadResources({ children, resources, required, lazyResources = [], integrationId, spinner }) {
   const dispatch = useDispatch();
   const defaultAShareId = useSelector(state => state?.user?.preferences?.defaultAShareId);
 
