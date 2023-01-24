@@ -80,6 +80,7 @@ export default function assistantDefinition(
         importDoc['/http/_httpConnectorResourceId'] = formValues['/assistantMetadata/resource'];
         importDoc['/http/_httpConnectorVersionId'] = formValues['/assistantMetadata/version'];
       }
+      importDoc['/assistantMetadata'] = undefined;
 
       return { ...otherFormValues, ...importDoc };
     },

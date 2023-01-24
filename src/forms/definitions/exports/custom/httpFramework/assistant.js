@@ -74,6 +74,7 @@ export default function assistantDefinition(
         exportDoc['/http/_httpConnectorResourceId'] = formValues['/assistantMetadata/resource'];
         exportDoc['/http/_httpConnectorVersionId'] = formValues['/assistantMetadata/version'];
       }
+      exportDoc['/assistantMetadata'] = undefined;
 
       return { ...otherFormValues, ...exportDoc };
     },
