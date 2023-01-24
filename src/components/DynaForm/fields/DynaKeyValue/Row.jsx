@@ -90,16 +90,18 @@ export default function KeyValueRow(props) {
       description,
     })), [props?.paramMeta?.fields]);
 
-  const closeComponent = isInlineClose ? (
+  const RemoveButton = ({icon}) => (
     <ActionButton
       disabled={disabled || (!(r[keyName] || r[valueName]))}
       id={`delete-${index}`}
       data-test={`delete-${index}`}
       tooltip="Delete"
       onClick={handleDelete(r.key)}>
-      <CloseIcon />
+      {icon}
     </ActionButton>
-  ) : undefined;
+  );
+
+  const closeComponent = isInlineClose ? (<RemoveButton icon={<CloseIcon />} />) : undefined;
 
   return (
     <div
@@ -108,9 +110,7 @@ export default function KeyValueRow(props) {
       onMouseEnter={handleOnMouseEnter}
       onMouseLeave={handleOnMouseLeave}
     >
-      {enableSorting && (
-        <SortableHandle isVisible={showGripper} />
-      )}
+      {enableSorting && (<SortableHandle isVisible={showGripper} />)}
       <div className={clsx(classes.rowContainer, rowComponentClasses.textFieldRowContainer, {[rowComponentClasses.rowContainerWrapper]: !suggestKeyConfig && !suggestValueConfig})}>
         {suggestKeyConfig && (
         <AutoSuggest
@@ -210,16 +210,7 @@ export default function KeyValueRow(props) {
         </CeligoSelect>
         )}
 
-        {showDelete && (
-        <ActionButton
-          disabled={disabled || (!(r[keyName] || r[valueName]))}
-          id={`delete-${index}`}
-          data-test={`delete-${index}`}
-          tooltip="Delete"
-          onClick={handleDelete(r.key)}>
-          <TrashIcon />
-        </ActionButton>
-        )}
+        {showDelete && <RemoveButton icon={<TrashIcon />} />}
         {handleEditorClick && (
           <ActionButton
             id={`handleBar-${index}`}
