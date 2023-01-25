@@ -22,7 +22,6 @@ export function AppRoutingWithAuth({ children }) {
   const isUserAuthenticated = useSelector(state => selectors.sessionInfo(state)?.authenticated);
   const isMFAVerified = useSelector(state => selectors.sessionInfo(state)?.mfaVerified);
   const agreeTOSAndPPRequired = useSelector(selectors.userRequiredToAgreeTOSAndPP);
-  const isUserInfoLoaded = useSelector(selectors.isUserInfoResolved);
 
   const dispatch = useDispatch();
 
@@ -46,7 +45,7 @@ export function AppRoutingWithAuth({ children }) {
   }, [hasPageReloaded, currentRoute, history, search, isAuthInitialized, dispatch, isSignInRoute, isConcurPage]);
   const agreeTOSAndPPPage = getRoutePath('/agreeTOSAndPP') === location.pathname;
 
-  if (isUserInfoLoaded && agreeTOSAndPPRequired && !agreeTOSAndPPPage) {
+  if (agreeTOSAndPPRequired && !agreeTOSAndPPPage) {
     return (
       <Redirect
         push={false}

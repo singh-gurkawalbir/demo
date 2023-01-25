@@ -78,23 +78,26 @@ selectors.isMFASetupIncomplete = state => {
   // when setup is required and it is not verified, then mfa setup is incomplete
   return mfaSetupRequired && mfaRequired && !mfaVerified;
 };
-selectors.isUserAuthenticated = state => {
-  if (!state || !state.sessionInfo || !state.sessionInfo.data) return false;
-  const {authenticated, mfaVerified, mfaRequired, mfaSetupRequired } = state.sessionInfo.data;
 
-  return authenticated && (!mfaRequired || (mfaRequired && mfaVerified)) && !mfaSetupRequired;
-};
-selectors.agreeTOSAndPPRequired = state => {
-  if (!state || !state.sessionInfo || !state.sessionInfo.data) return false;
-  const {authenticated, mfaVerified, mfaRequired, agreeTOSAndPPRequired } = state.sessionInfo.data;
-
-  return authenticated && (!mfaRequired || (mfaRequired && mfaVerified)) && agreeTOSAndPPRequired;
-};
-selectors.isUserInfoResolved = state => {
+selectors.isMFAResolved = state => {
   if (!state || !state.sessionInfo || !state.sessionInfo.data) return false;
   const {authenticated, mfaVerified, mfaRequired } = state.sessionInfo.data;
 
   return authenticated && (!mfaRequired || (mfaRequired && mfaVerified));
+};
+selectors.isUserAuthenticated = state => {
+  if (!state || !state.sessionInfo || !state.sessionInfo.data) return false;
+  const { mfaSetupRequired } = state.sessionInfo.data;
+  const isMFAResolved = selectors.isMFAResolved(state);
+
+  return isMFAResolved && !mfaSetupRequired;
+};
+selectors.agreeTOSAndPPRequired = state => {
+  if (!state || !state.sessionInfo || !state.sessionInfo.data) return false;
+  const { agreeTOSAndPPRequired } = state.sessionInfo.data;
+  const isMFAResolved = selectors.isMFAResolved(state);
+
+  return isMFAResolved && agreeTOSAndPPRequired;
 };
 
 selectors.getSetupContext = state => state?.context;
