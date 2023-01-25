@@ -466,7 +466,7 @@ export default {
   'acumatica.connection.http.auth.type':
 'Select the authentication method, either <b>Cookie</b> or <b>OAuth 2.0</b>.<br><b>Cookie</b>: If your service relies on session-based authentication. This method includes a unique cookie in the HTTP request header. When you select this option, the platform automatically creates and inserts this cookie into every HTTP request it sends to your application.<br><b>OAuth 2.0</b>: If your application supports the OAuth2.0 authentication.',
   'acumatica.connection.instanceURI':
-'Please enter URL of your instance with Acumatica. For example, http://try.acumatica.com/isv/entity/Default/6.00.001, then the Instance URI would be http://try.acumatica.com/isv.',
+'Please enter URL of your instance with Acumatica provided by system administrator. For example, http://try.acumatica.com/isv/entity/Default/6.00.001.',
   'acumatica.connection.http.unencrypted.endpointName':
 'Please enter endpoint name of your Acumatica account.',
   'acumatica.connection.http.unencrypted.endpointVersion':
