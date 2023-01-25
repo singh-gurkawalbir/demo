@@ -88,11 +88,12 @@ export default function DynaHFAssistantPathParams(props) {
         )
           : (
             <InputField
+              {...props}
+              showExtract={false}
               description={description}
               id={id}
               value={value}
               stage={flowDataStage}
-              {...props}
             />
           )}
         <ActionButton
