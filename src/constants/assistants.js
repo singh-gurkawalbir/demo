@@ -150,6 +150,7 @@ export const AUTHENTICATION_LABELS = Object.freeze({
   cookie: 'Cookie',
   digest: 'Digest',
   wsse: 'WSSE',
+  oauth1: 'OAuth 1.0',
 });
 
 export const SHOPIFY_SCOPES = [

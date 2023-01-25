@@ -1,5 +1,5 @@
 import { makeStyles, TextField, MenuItem } from '@material-ui/core';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import clsx from 'clsx';
 import { isArray } from 'lodash';
 import TrashIcon from '../../../icons/TrashIcon';
@@ -11,6 +11,7 @@ import isLoggableAttr from '../../../../utils/isLoggableAttr';
 import CeligoSelect from '../../../CeligoSelect';
 import AfeIcon from '../../../icons/AfeIcon';
 import CloseIcon from '../../../icons/CloseIcon';
+import FieldHelp from '../../FieldHelp';
 
 const emptySet = {};
 
@@ -83,6 +84,11 @@ export default function KeyValueRow(props) {
       setShowGripper(true);
     }
   }, [enableSorting, isRowDragged]);
+  const dataFields = useMemo(() =>
+    props?.paramMeta?.fields.map(({id, description}) => ({
+      id,
+      description,
+    })), [props?.paramMeta?.fields]);
 
   const RemoveButton = ({icon}) => (
     <ActionButton
@@ -123,7 +129,7 @@ export default function KeyValueRow(props) {
           showAllSuggestions={suggestKeyConfig.showAllSuggestions}
           fullWidth
           isEndSearchIcon={isEndSearchIcon}
-          showInlineClose={!r.disableRowKey ? closeComponent : <></>}
+          showInlineClose={!r.disableRowKey ? closeComponent : <ActionButton><FieldHelp title={dataFields[index].id} helpText={dataFields[index].description} /></ActionButton>}
           />
 
         )}
