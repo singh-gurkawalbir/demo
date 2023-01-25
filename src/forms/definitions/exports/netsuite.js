@@ -282,7 +282,7 @@ export default {
       type: 'netsuiteapiversion',
       label: 'NetSuite API version',
       // eslint-disable-next-line camelcase
-      defaultValue: r => r?.netsuite_da?.distributed?.frameworkVersion,
+      defaultValue: r => r?.netsuite?.distributed?.frameworkVersion,
       defaultDisabled: r => {
         if (!isNewId(r._id)) {
           return true;
@@ -321,7 +321,7 @@ export default {
       type: 'netsuiteapiversion',
       label: 'NetSuite API version',
       // eslint-disable-next-line camelcase
-      defaultValue: r => r?.netsuite_da?.restlet?.restletVersion,
+      defaultValue: r => r?.netsuite?.restlet?.restletVersion,
       defaultDisabled: r => {
         if (!isNewId(r._id)) {
           return true;
