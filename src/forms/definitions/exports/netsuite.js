@@ -293,9 +293,9 @@ export default {
       options: [
         {
           items: [
-            { label: 'SuiteApp SuiteScript 2.x (Recommended)', value: 'suiteapp2.0' },
+            { label: 'SuiteApp SuiteScript 2.x', value: 'suiteapp2.0', description: 'Recommended'},
             { label: 'SuiteApp SuiteScript 1.0', value: 'suiteapp1.0' },
-            { label: 'SuiteBundle SuiteScript 1.0', value: 'suitebundle', warning: 'To be deprecated.<a target="_blank" rel="noreferrer" href="https://docs.celigo.com/hc/en-us/articles/360050643132"><u>Learn more.</u></a>' },
+            { label: 'SuiteBundle SuiteScript 1.0', value: 'suitebundle', description: 'To be deprecated.<a target="_blank" rel="noreferrer" href="https://docs.celigo.com/hc/en-us/articles/360050643132"><u>Learn more.</u></a>', isWarningMessage: true },
           ],
         },
       ],
@@ -332,9 +332,9 @@ export default {
       options: [
         {
           items: [
-            { label: 'SuiteApp SuiteScript 2.x (Recommended)', value: 'suiteapp2.0'},
+            { label: 'SuiteApp SuiteScript 2.x', value: 'suiteapp2.0', description: 'Recommended'},
             { label: 'SuiteApp SuiteScript 1.0', value: 'suiteapp1.0' },
-            { label: 'SuiteBundle SuiteScript 1.0', value: 'suitebundle', warning: 'To be deprecated.<a target="_blank" rel="noreferrer" href="https://docs.celigo.com/hc/en-us/articles/360050643132"><u>Learn more.</u></a>' },
+            { label: 'SuiteBundle SuiteScript 1.0', value: 'suitebundle', description: 'To be deprecated.<a target="_blank" rel="noreferrer" href="https://docs.celigo.com/hc/en-us/articles/360050643132"><u>Learn more.</u></a>', isWarningMessage: true },
           ],
         },
       ],

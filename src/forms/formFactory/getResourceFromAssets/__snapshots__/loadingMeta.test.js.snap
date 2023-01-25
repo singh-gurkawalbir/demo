@@ -4740,7 +4740,8 @@ Object {
           Object {
             "items": Array [
               Object {
-                "label": "SuiteApp SuiteScript 2.0",
+                "description": "Recommended",
+                "label": "SuiteApp SuiteScript 2.x",
                 "value": "suiteapp2.0",
               },
               Object {
@@ -4748,6 +4749,8 @@ Object {
                 "value": "suiteapp1.0",
               },
               Object {
+                "description": "To be deprecated.<a target=\\"_blank\\" rel=\\"noreferrer\\" href=\\"https://docs.celigo.com/hc/en-us/articles/360050643132\\"><u>Learn more.</u></a>",
+                "isWarningMessage": true,
                 "label": "SuiteBundle SuiteScript 1.0",
                 "value": "suitebundle",
               },
@@ -4880,7 +4883,8 @@ Object {
           Object {
             "items": Array [
               Object {
-                "label": "SuiteApp SuiteScript 2.x (Recommended)",
+                "description": "Recommended",
+                "label": "SuiteApp SuiteScript 2.x",
                 "value": "suiteapp2.0",
               },
               Object {
@@ -4888,9 +4892,10 @@ Object {
                 "value": "suiteapp1.0",
               },
               Object {
+                "description": "To be deprecated.<a target=\\"_blank\\" rel=\\"noreferrer\\" href=\\"https://docs.celigo.com/hc/en-us/articles/360050643132\\"><u>Learn more.</u></a>",
+                "isWarningMessage": true,
                 "label": "SuiteBundle SuiteScript 1.0",
                 "value": "suitebundle",
-                "warning": "To be deprecated.<a target=\\"_blank\\" rel=\\"noreferrer\\" href=\\"https://docs.celigo.com/hc/en-us/articles/360050643132\\"><u>Learn more.</u></a>",
               },
             ],
           },

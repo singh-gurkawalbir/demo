@@ -134,7 +134,7 @@ describe('netSuiteBundleInstallNotification test cases', () => {
     expect(screen.queryByText(/in your NetSuite account to integrate with SuiteScript APIs./i)).toBeInTheDocument();
   });
 
-  test('should pass the initial render with showBundleInstallNotification false', async () => {
+  test('should not render the install notification for suitebundle when showBundleInstallNotification is false', async () => {
     const { utils } = await initNetSuiteBundleInstallNotification({
       resourceForm: {
         'imports-resource_id': {
@@ -146,5 +146,45 @@ describe('netSuiteBundleInstallNotification test cases', () => {
     });
 
     expect(utils.container).toBeEmptyDOMElement();
+  });
+  test('should not show the install notification for suiteapp when showSuiteAppInstallNotification is false', async () => {
+    const { utils } = await initNetSuiteBundleInstallNotification({
+      resourceForm: {
+        'imports-resource_id': {
+          showSuiteAppInstallNotification: false,
+          bundleUrl: '/',
+          bundleVersion: '1.4',
+        },
+      },
+    });
+
+    expect(utils.container).toBeEmptyDOMElement();
+  });
+  test('should only display one of the 2 notifications since only one option can be selected', async () => {
+    await initNetSuiteBundleInstallNotification({
+      props: {
+        resourceId: 'resource_id',
+        resourceType: 'imports',
+      },
+      resourceForm: {
+        'imports-resource_id': {
+          showSuiteAppInstallNotification: true,
+          bundleUrl: '/',
+          bundleVersion: '1.0',
+        },
+      },
+      resources: {
+        imports: [{
+          _id: 'resource_id',
+        }],
+      },
+    });
+    const closeButton = screen.getByRole('button');
+
+    expect(closeButton).toBeInTheDocument();
+    expect(screen.queryByText(/install the/i)).toBeInTheDocument();
+    expect(screen.queryByText(/integrator.io SuiteApp/i)).toBeInTheDocument();
+    expect(screen.queryByText(/in your NetSuite account to integrate with SuiteScript APIs./i)).toBeInTheDocument();
+    expect(screen.queryByText(/in your NetSuite account to integrate with SuiteBundle APIs./i)).toBeNull();
   });
 });
