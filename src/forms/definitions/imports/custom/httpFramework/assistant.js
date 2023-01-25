@@ -44,7 +44,7 @@ export default function assistantDefinition(
       if (assistantMetadata.assistant === 'loopreturnsv2') {
         assistantMetadata.assistant = 'loopreturns';
       }
-      if (assistantMetadata.assistant === 'acumaticaecommerce') {
+      if (assistantMetadata.assistant === 'acumaticaecommerce' || assistantMetadata.assistant === 'acumaticamanufacturing') {
         assistantMetadata.assistant = 'acumatica';
       }
 
