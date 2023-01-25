@@ -179,7 +179,6 @@ const Loading = ({resourceType}) => {
 };
 
 export default function Reports() {
-  console.log('RERENDER');
   const match = useRouteMatch();
   const history = useHistory();
   // all reportTypes can be considered as a resourceList collection
