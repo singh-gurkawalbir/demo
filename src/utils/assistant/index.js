@@ -1808,7 +1808,7 @@ export function convertFromImport({ importDoc: importDocOrig, assistantData: ass
 
   if (importDoc?.http) {
     if (importDoc.http?._httpConnectorEndpointId || importDoc.http?._httpConnectorEndpointIds || importDoc.http?._httpConnectorResourceId) {
-      if (operation === 'create-update-id' || isArray(operation)) {
+      if (operation === 'create-update-id' || isArray(operation) || importDoc.http._httpConnectorEndpointIds?.length > 1) {
         operation = operation || importDoc.http._httpConnectorEndpointIds;
         resource = resource || importDoc.http._httpConnectorResourceId;
         version = version || importDoc.http._httpConnectorVersionId;
