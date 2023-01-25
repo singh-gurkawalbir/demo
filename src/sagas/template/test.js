@@ -199,7 +199,7 @@ describe('verifyBundleOrPackageInstall sagas', () => {
       .run();
   });
   test('the status should be failed if response.success is false on successfull api call', () => {
-    const path = `/connections/${connection._id}/distributed`;
+    const path = `/connections/${connection._id}/distributed?type=suitebundle`;
     const response = {
       success: false,
       resBody: {
@@ -290,7 +290,7 @@ describe('verifySuiteAppInstall sagas', () => {
       .run();
   });
   test('the status should be failed if response.success is false on successfull api call', () => {
-    const path = `/connection/${connection._Id}/distributed?restletVersion=suiteapp2.0`;
+    const path = `/connection/${connection._Id}/distributed?type=suiteapp2.0`;
     const response = {
       success: false,
       resBody: {

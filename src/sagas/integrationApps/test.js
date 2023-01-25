@@ -589,7 +589,7 @@ describe('installer saga', () => {
   describe('verifyBundleOrPackageInstall generator', () => {
     const id = '1234';
     const connectionId = '5678';
-    const path = `/connections/${connectionId}/distributed`;
+    const path = `/connections/${connectionId}/distributed?type=suitebundle`;
     const installerFunction = 'Installer_Function';
 
     test('if the api call is successful and the response is success, should dispatch integrationApp script installStep if isFrameWork2 true', () => {
@@ -710,7 +710,7 @@ describe('installer saga', () => {
   describe('verifySuiteAppInstall generator', () => {
     const id = '1234';
     const connectionId = '5678';
-    const path = `/connection/${connectionId}/distributed?restletVersion=suiteapp2.0`;
+    const path = `/connection/${connectionId}/distributed?type=suiteapp`;
     const installerFunction = 'Installer_Function';
 
     test('if the api call is successful and the response is success, should dispatch integrationApp script installStep if isFrameWork2 true', () => {
@@ -2669,7 +2669,7 @@ describe('upgrade saga', () => {
   describe('upgradeVerifyBundleOrPackageInstall generator', () => {
     const id = '1234';
     const connectionId = '5678';
-    const path = `/connections/${connectionId}/distributed`;
+    const path = `/connections/${connectionId}/distributed?type=suitebundle`;
     const installerFunction = 'Installer_Function';
 
     test('if the api call is successful and the response is success, should dispatch integrationApp script installStep if isFrameWork2 true', () => {
@@ -2761,7 +2761,7 @@ describe('upgrade saga', () => {
   describe('upgradeVerifySuiteAppInstall generator', () => {
     const id = '1234';
     const connectionId = '5678';
-    const path = `/connection/${connectionId}/distributed?restletVersion=suiteapp2.0`;
+    const path = `/connection/${connectionId}/distributed?type=suiteapp`;
     const installerFunction = 'Installer_Function';
 
     test('if the api call is successful and the response is success, should dispatch integrationApp script installStep if isFrameWork2 true', () => {

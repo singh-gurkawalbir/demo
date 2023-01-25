@@ -253,7 +253,7 @@ export function* verifyBundleOrPackageInstall({
   installerFunction,
   isFrameWork2,
 }) {
-  const path = `/connections/${connectionId}/distributed`;
+  const path = `/connections/${connectionId}/distributed?type=suitebundle`;
   let response;
 
   try {
@@ -315,7 +315,7 @@ export function* verifySuiteAppInstall({
   installerFunction,
   isFrameWork2,
 }) {
-  const path = `/connection/${connectionId}/distributed?restletVersion=suiteapp2.0`;
+  const path = `/connection/${connectionId}/distributed?type=suiteapp`;
   let response;
 
   try {
