@@ -337,7 +337,7 @@ describe('AppRoutingWith authentication redirection behavior', () => {
         {
           status: 'received',
           data: {
-            mfaVerified: true, mfaRequired: true, mfaSetupRequired: false, authenticated: true, agreeTOSAndPPRequired: true,
+            mfaVerified: true, mfaRequired: true, mfaSetupRequired: false, authenticated: true, agreeTOSAndPP: false,
           },
         },
       },

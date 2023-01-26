@@ -94,10 +94,10 @@ selectors.isUserAuthenticated = state => {
 };
 selectors.agreeTOSAndPPRequired = state => {
   if (!state || !state.sessionInfo || !state.sessionInfo.data) return false;
-  const { agreeTOSAndPPRequired } = state.sessionInfo.data;
+  const { agreeTOSAndPP } = state.sessionInfo.data;
   const isMFAResolved = selectors.isMFAResolved(state);
 
-  return isMFAResolved && agreeTOSAndPPRequired;
+  return isMFAResolved && !agreeTOSAndPP;
 };
 
 selectors.getSetupContext = state => state?.context;
