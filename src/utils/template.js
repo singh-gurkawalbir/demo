@@ -4,6 +4,7 @@ import { applicationsList } from '../constants/applications';
 import {
   NETSUITE_BUNDLE_URL,
   SALESFORCE_DA_PACKAGE_URL,
+  NETSUITE_SUITEAPP_URL,
   INSTALL_STEP_TYPES,
 } from '../constants';
 import { rdbmsSubTypeToAppType } from './resource';
@@ -63,6 +64,7 @@ export default {
   getInstallSteps: previewData => {
     const connectionMap = {};
     const netsuiteBundleNeededForConnections = [];
+    const netsuiteSuiteAppNeededForConnections = [];
     const salesforceBundleNeededForConnections = [];
     const installSteps = [];
 
@@ -119,6 +121,14 @@ export default {
       const conn = connections?.find(c => c._id === exp._connectionId);
 
       if (
+        (exp?.netsuite || {}).type === 'restlet' &&
+          ((exp?.netsuite?.restlet?.restletVersion === 'suiteapp1.0') || (exp?.netsuite?.restlet?.restletVersion === 'suiteapp2.0') ||
+          (exp?.netsuite?.distributed?.frameworkVersion === 'suiteapp1.0') || (exp?.netsuite?.distributed?.frameworkVersion === 'suiteapp2.0')) &&
+          conn?.type === 'netsuite' &&
+          !netsuiteSuiteAppNeededForConnections.includes(conn)) {
+        netsuiteSuiteAppNeededForConnections.push(conn);
+      }
+      if (
         (((exp?.netsuite || {}).type === 'restlet' &&
           exp?.netsuite?.restlet?.recordType) ||
           (exp?.type === 'distributed' && conn?.type === 'netsuite')) &&
@@ -138,6 +148,14 @@ export default {
         netsuiteBundleNeededForConnections.push(conn);
       }
     });
+    (importDocs || []).forEach(imp => {
+      const conn = connections?.find(c => c._id === imp._connectionId);
+
+      // eslint-disable-next-line camelcase
+      if (((imp?.netsuite_da || {}).restletVersion === 'suiteapp1.0' || (imp?.netsuite_da || {}).restletVersion === 'suiteapp2.0') && conn?.type === 'netsuite' && (!netsuiteSuiteAppNeededForConnections.includes(conn))) {
+        netsuiteSuiteAppNeededForConnections.push(conn);
+      }
+    });
 
     netsuiteBundleNeededForConnections.forEach((conn, index) => installSteps.push({
       key: `NetSuite account ${index + 1}`,
@@ -147,7 +165,20 @@ export default {
       description: `Please install Integrator bundle in ${
         netsuiteBundleNeededForConnections.length > 1 ? conn.name : 'NetSuite'
       } account`,
-      name: 'Integrator Bundle',
+      name: conn.name.toLowerCase().includes('connection') ? `Integrator bundle for "${conn.name}"` : `Integrator bundle for "${conn.name}" connection`,
+      application: 'netsuite',
+      type: INSTALL_STEP_TYPES.INSTALL_PACKAGE,
+      options: {},
+    }));
+    netsuiteSuiteAppNeededForConnections.forEach((conn, index) => installSteps.push({
+      key: `NetSuite account ${index + 1}`,
+      installURL: NETSUITE_SUITEAPP_URL,
+      imageURL: 'images/company-logos/netsuite.png',
+      completed: false,
+      description: `Please install Integrator suiteapp in ${
+        netsuiteSuiteAppNeededForConnections.length > 1 ? conn.name : 'NetSuite'
+      } account`,
+      name: conn.name.toLowerCase().includes('connection') ? `Integrator suiteapp for ${conn.name}` : `Integrator suiteapp for ${conn.name} connection`,
       application: 'netsuite',
       type: INSTALL_STEP_TYPES.INSTALL_PACKAGE,
       options: {},
