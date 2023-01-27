@@ -9,6 +9,8 @@ import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
 import { stringCompare } from '../../utils/sort';
 import { getFlowGroup } from '../../utils/flows';
 
+const clone = rfdc({ proto: true });
+
 const useStyles = makeStyles(theme => ({
   flow: {
     minWidth: 130,
@@ -86,7 +88,7 @@ export default function FlowSelector({
     selectors.makeResourceListSelector,
     flowsFilterConfig
   ).resources;
-  const filteredFlows = useMemo(() => rfdc({ proto: true })(tempFilteredFlows), [tempFilteredFlows]);
+  const filteredFlows = useMemo(() => clone(tempFilteredFlows), [tempFilteredFlows]);
 
   return (
     <CeligoSelect

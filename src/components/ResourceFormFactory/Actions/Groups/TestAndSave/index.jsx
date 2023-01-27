@@ -11,6 +11,8 @@ import useHandleClickWhenValid from '../hooks/useHandleClickWhenValid';
 import { FORM_SAVE_STATUS } from '../../../../../constants';
 import SaveAndCloseResourceForm from '../../../../SaveAndCloseButtonGroup/SaveAndCloseResourceForm';
 
+const clone = rfdc({ proto: true });
+
 const ConfirmDialog = props => {
   const {
     formValues,
@@ -103,7 +105,7 @@ export function TestSaveAndClose(props) {
 
   const handleSaveForm = useCallback(
     () => {
-      const newValues = rfdc({ proto: true })(values);
+      const newValues = clone(values);
 
       if (!newValues['/_borrowConcurrencyFromConnectionId']) {
         newValues['/_borrowConcurrencyFromConnectionId'] = undefined;

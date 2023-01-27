@@ -15,6 +15,8 @@ import { SCOPES } from '../../../../../../sagas/resourceForm';
 import useFormInitWithPermissions from '../../../../../../hooks/useFormInitWithPermissions';
 import EditorDrawer from '../../../../../AFE/Drawer';
 
+const clone = rfdc({ proto: true });
+
 const useStyles = makeStyles(theme => ({
   drawerPaper: {
     width: 624,
@@ -108,7 +110,7 @@ function SubRecordDrawer(props) {
         expression: updatedFormValues.internalIdLookupExpression && JSON.parse(updatedFormValues.internalIdLookupExpression),
       };
       delete updatedFormValues.internalIdLookupExpression;
-      const updatedSubrecords = rfdc({ proto: true })(flow?.import?.netsuite?.subRecordImports || []);
+      const updatedSubrecords = clone(flow?.import?.netsuite?.subRecordImports || []);
 
       if (referenceFieldId) {
         const srIndex = updatedSubrecords.findIndex(

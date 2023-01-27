@@ -8,6 +8,8 @@ import { getAsyncKey } from '../../../../utils/saveAndCloseButtons';
 import SaveAndCloseMiniResourceForm from '../../../SaveAndCloseButtonGroup/SaveAndCloseMiniResourceForm';
 import TestButton from './TestAndSave/TestButton';
 
+const clone = rfdc({ proto: true });
+
 export default function SaveAndContinueGroup(props) {
   const {
     // we are removing this label let it change per button Group
@@ -41,7 +43,7 @@ export default function SaveAndContinueGroup(props) {
 
   const handleSaveAndContinue = useCallback(
     () => {
-      const newValues = rfdc({ proto: true })(values);
+      const newValues = clone(values);
 
       if (!newValues['/_borrowConcurrencyFromConnectionId']) {
         newValues['/_borrowConcurrencyFromConnectionId'] = undefined;

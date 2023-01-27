@@ -13,6 +13,8 @@ import DynaForm from '../../../DynaForm';
 import LoadResources from '../../../LoadResources';
 import { drawerPaths } from '../../../../utils/rightDrawer';
 
+const clone = rfdc({ proto: true });
+
 function ViewNotifications({ integrationId, childId, onClose }) {
   const match = useRouteMatch();
   const [count, setCount] = useState(0);
@@ -30,8 +32,8 @@ function ViewNotifications({ integrationId, childId, onClose }) {
 
   const { flowValues = [], connectionValues = [], connections, flows } = notifications;
 
-  const flowHash = useMemo(() => rfdc({ proto: true })(flowValues).sort().join(''), [flowValues]);
-  const connHash = useMemo(() => rfdc({ proto: true })(connectionValues).sort().join(''), [connectionValues]);
+  const flowHash = useMemo(() => clone(flowValues).sort().join(''), [flowValues]);
+  const connHash = useMemo(() => clone(connectionValues).sort().join(''), [connectionValues]);
 
   const isValidUserEmail = !!users.find(user => user.sharedWithUser.email === userEmail);
 

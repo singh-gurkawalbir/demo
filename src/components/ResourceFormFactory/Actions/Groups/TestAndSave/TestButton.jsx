@@ -11,6 +11,7 @@ import { PING_STATES } from '../../../../../reducers/comms/ping';
 import { getParentResourceContext } from '../../../../../utils/connections';
 
 const emptyObj = {};
+const clone = rfdc({ proto: true });
 
 export const PingMessage = props => {
   const { resourceId } = props;
@@ -52,7 +53,7 @@ export default function TestButton(props) {
 
   const handleTestConnection = useCallback(
     () => {
-      const newValues = rfdc({ proto: true })(values);
+      const newValues = clone(values);
 
       if (!newValues['/_borrowConcurrencyFromConnectionId']) {
         newValues['/_borrowConcurrencyFromConnectionId'] = undefined;

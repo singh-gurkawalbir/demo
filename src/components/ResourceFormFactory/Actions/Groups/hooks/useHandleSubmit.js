@@ -8,6 +8,8 @@ import { selectors } from '../../../../../reducers';
 import { useLoadIClientOnce } from '../../../../DynaForm/fields/DynaIclient';
 import { useSelectorMemo } from '../../../../../hooks';
 
+const clone = rfdc({ proto: true });
+
 export default function useHandleSubmit({
   resourceType,
   resourceId,
@@ -35,7 +37,7 @@ export default function useHandleSubmit({
 
   return useCallback(
     closeAfterSave => {
-      const newValues = rfdc({ proto: true })(values);
+      const newValues = clone(values);
 
       if (resource._connectorId &&
           (['shopify'].includes(resource.assistant) && values['/http/auth/type'] === 'oauth')) {

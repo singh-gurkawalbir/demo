@@ -16,6 +16,8 @@ import { emptyObject } from '../../../../constants';
 import { drawerPaths, buildDrawerUrl } from '../../../../utils/rightDrawer';
 import OutlinedButton from '../../../Buttons/OutlinedButton';
 
+const clone = rfdc({ proto: true });
+
 const useStyles = makeStyles({
   button: {
     display: 'flex',
@@ -31,7 +33,7 @@ export default function ManageLookup({ editorId }) {
   const tempHandlebarHelperFunction = useSelector(state =>
     selectors.editorHelperFunctions(state), shallowEqual
   );
-  const handlebarHelperFunction = useMemo(() => rfdc({ proto: true })(tempHandlebarHelperFunction), [tempHandlebarHelperFunction]);
+  const handlebarHelperFunction = useMemo(() => clone(tempHandlebarHelperFunction), [tempHandlebarHelperFunction]);
 
   const showLookup = useSelector(state => selectors.isEditorLookupSupported(state, editorId));
   const {resourceType, formKey, resourceId, flowId, lastValidData, editorLookups, fieldId} = useSelector(state => {
