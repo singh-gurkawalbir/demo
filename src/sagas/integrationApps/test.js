@@ -1973,7 +1973,7 @@ describe('integrationApp utility Saga', () => {
       .provide([
         [matchers.call.fn(uploadFile), 'runKey'],
       ])
-      .put(actions.integrationApp.utility.receivedS3Key('runKey'))
+      .put(actions.integrationApp.utility.receivedS3Key({integrationId, runKey: 'runKey'}))
       .run());
 
   test('should dispatch failed action if API call throws error', () => {
