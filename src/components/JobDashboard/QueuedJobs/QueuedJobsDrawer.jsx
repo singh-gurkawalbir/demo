@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useRouteMatch, useHistory, useLocation, matchPath } from 'react-router-dom';
 import { Typography, makeStyles, Divider } from '@material-ui/core';
+import rfdc from 'rfdc';
 import CeligoTable from '../../CeligoTable';
 import actions from '../../../actions';
 import { selectors } from '../../../reducers';
@@ -15,6 +16,8 @@ import DrawerHeader from '../../drawer/Right/DrawerHeader';
 import DrawerContent from '../../drawer/Right/DrawerContent';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 import DynaSelect from '../../DynaForm/fields/DynaSelect';
+
+const clone = rfdc({proto: true});
 
 const metadata = {
   useColumns: () => [
@@ -149,7 +152,7 @@ function QueuedJobs({ connectionId }) {
       </div>
       <div className={classes.info}>
         {connectionJobs && connectionJobs.length > 0 ? (
-          <CeligoTable data={connectionJobs} {...metadata} />
+          <CeligoTable data={clone(connectionJobs)} {...metadata} />
         ) : (
           <Typography variant="body1">{messageStore('NO_PENDING_QUEUED_JOBS')}</Typography>
         )}

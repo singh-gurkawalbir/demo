@@ -3,6 +3,7 @@ import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { useLocation, useHistory } from 'react-router-dom';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { makeStyles } from '@material-ui/styles';
+import rfdc from 'rfdc';
 import RegisterConnections from '../../../../../components/RegisterConnections';
 import LoadResources from '../../../../../components/LoadResources';
 import CeligoTable from '../../../../../components/CeligoTable';
@@ -18,6 +19,8 @@ import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
 import { TextButton } from '../../../../../components/Buttons';
 import ActionGroup from '../../../../../components/ActionGroup';
 import { buildDrawerUrl, drawerPaths } from '../../../../../utils/rightDrawer';
+
+const clone = rfdc({proto: true});
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -157,7 +160,7 @@ export default function ConnectionsPanel({ integrationId, childId }) {
 
       <LoadResources required integrationId={integrationId} resources="connections,flows,exports,imports">
         <CeligoTable
-          data={connections}
+          data={clone(connections)}
           filterKey={filterKey}
           {...metadata}
           actionProps={{ integrationId, resourceType: 'connections', showTradingPartner,

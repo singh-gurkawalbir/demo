@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import rfdc from 'rfdc';
 import CeligoPageBar from '../../../components/CeligoPageBar';
 import AddIcon from '../../../components/icons/AddIcon';
 import { selectors } from '../../../reducers';
@@ -20,6 +21,8 @@ import NoResultTypography from '../../../components/NoResultTypography';
 import { buildDrawerUrl, drawerPaths } from '../../../utils/rightDrawer';
 import ActionGroup from '../../../components/ActionGroup';
 import PageContent from '../../../components/PageContent';
+
+const clone = rfdc({proto: true});
 
 const defaultFilter = {
   take: parseInt(process.env.DEFAULT_TABLE_ROW_COUNT, 10) || 10,
@@ -139,7 +142,7 @@ export default function Licenses(props) {
             </div>
           ) : (
             <CeligoTable
-              data={list.resources}
+              data={clone(list.resources)}
               {...metadata}
               filterKey={filterKey}
               actionProps={{

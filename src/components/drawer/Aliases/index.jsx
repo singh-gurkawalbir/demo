@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useMemo } from 'react';
 import { Route, Switch, useHistory, useRouteMatch } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core';
+import rfdc from 'rfdc';
 import { useSelectorMemo } from '../../../hooks';
 import { selectors } from '../../../reducers';
 import FilledButton from '../../Buttons/FilledButton';
@@ -24,6 +25,8 @@ import { drawerPaths, buildDrawerUrl } from '../../../utils/rightDrawer';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import NoResultTypography from '../../NoResultTypography';
 import LoadResources from '../../LoadResources';
+
+const clone = rfdc({proto: true});
 
 const useStyles = makeStyles(theme => ({
   accordianWrapper: {
@@ -93,7 +96,7 @@ const ManageAliases = ({ flowId, hasManageAccess, height }) => {
           <DynaCeligoTable
             className={classes.accordianWrapper}
             title={tableData.title}
-            data={tableData.data}
+            data={clone(tableData.data)}
             filterKey={tableData.filterKey}
             {...metadata}
             collapsable
@@ -133,7 +136,7 @@ const ViewAliases = ({ resourceId, resourceType, height }) => {
       {allAliases.length ? (
         <CeligoTable
           className={classes.accordianWrapper}
-          data={allAliases}
+          data={clone(allAliases)}
           filterKey={filterKey}
           {...metadata}
           actionProps={actionProps}
