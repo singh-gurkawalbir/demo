@@ -1,5 +1,6 @@
 import { makeStyles, MenuItem } from '@material-ui/core';
 import React, { useMemo } from 'react';
+import rfdc from 'rfdc';
 import { useSelector } from 'react-redux';
 import { selectors } from '../../reducers';
 import { STANDALONE_INTEGRATION } from '../../constants';
@@ -81,10 +82,11 @@ export default function FlowSelector({
     }),
     [integrationId, childFlows, childId]
   );
-  const filteredFlows = useSelectorMemo(
+  const tempFilteredFlows = useSelectorMemo(
     selectors.makeResourceListSelector,
     flowsFilterConfig
   ).resources;
+  const filteredFlows = useMemo(() => rfdc({ proto: true })(tempFilteredFlows), [tempFilteredFlows]);
 
   return (
     <CeligoSelect

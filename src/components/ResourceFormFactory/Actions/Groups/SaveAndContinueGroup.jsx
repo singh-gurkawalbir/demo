@@ -1,6 +1,7 @@
 import React, { useCallback, useMemo } from 'react';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 import { useRouteMatch } from 'react-router-dom';
+import rfdc from 'rfdc';
 import actions from '../../../../actions';
 import { selectors } from '../../../../reducers';
 import { getAsyncKey } from '../../../../utils/saveAndCloseButtons';
@@ -40,7 +41,7 @@ export default function SaveAndContinueGroup(props) {
 
   const handleSaveAndContinue = useCallback(
     () => {
-      const newValues = {...values};
+      const newValues = rfdc({ proto: true })(values);
 
       if (!newValues['/_borrowConcurrencyFromConnectionId']) {
         newValues['/_borrowConcurrencyFromConnectionId'] = undefined;

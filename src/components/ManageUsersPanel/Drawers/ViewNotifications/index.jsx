@@ -1,6 +1,7 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useRouteMatch, useHistory } from 'react-router-dom';
 import { useSelector, shallowEqual } from 'react-redux';
+import rfdc from 'rfdc';
 import RightDrawer from '../../../drawer/Right';
 import DrawerContent from '../../../drawer/Right/DrawerContent';
 import DrawerHeader from '../../../drawer/Right/DrawerHeader';
@@ -29,8 +30,8 @@ function ViewNotifications({ integrationId, childId, onClose }) {
 
   const { flowValues = [], connectionValues = [], connections, flows } = notifications;
 
-  const flowHash = flowValues.sort().join('');
-  const connHash = connectionValues.sort().join('');
+  const flowHash = useMemo(() => rfdc({ proto: true })(flowValues).sort().join(''), [flowValues]);
+  const connHash = useMemo(() => rfdc({ proto: true })(connectionValues).sort().join(''), [connectionValues]);
 
   const isValidUserEmail = !!users.find(user => user.sharedWithUser.email === userEmail);
 

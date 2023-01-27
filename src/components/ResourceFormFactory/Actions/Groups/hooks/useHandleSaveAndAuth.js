@@ -1,6 +1,7 @@
 
 import { useCallback } from 'react';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
+import rfdc from 'rfdc';
 import resourceConstants from '../../../../../forms/constants/connection';
 import actions from '../../../../../actions';
 import { useSelectorMemo } from '../../../../../hooks';
@@ -28,7 +29,7 @@ export default function useHandleSaveAndAuth({formKey, resourceType, resourceId,
   });
   const handleSaveAndAuthorizeConnection = useCallback(
     values => {
-      const newValues = { ...values };
+      const newValues = rfdc({ proto: true })(values);
 
       if (
         resource._connectorId &&

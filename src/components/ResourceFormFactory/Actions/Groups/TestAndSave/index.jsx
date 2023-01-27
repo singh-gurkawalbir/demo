@@ -1,5 +1,6 @@
 import React, { useEffect, useCallback, useReducer, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import rfdc from 'rfdc';
 import shallowEqual from 'react-redux/lib/utils/shallowEqual';
 import actions from '../../../../../actions';
 import { selectors } from '../../../../../reducers/index';
@@ -102,7 +103,7 @@ export function TestSaveAndClose(props) {
 
   const handleSaveForm = useCallback(
     () => {
-      const newValues = { ...values };
+      const newValues = rfdc({ proto: true })(values);
 
       if (!newValues['/_borrowConcurrencyFromConnectionId']) {
         newValues['/_borrowConcurrencyFromConnectionId'] = undefined;
@@ -121,7 +122,7 @@ export function TestSaveAndClose(props) {
     [closeAfterSave, dispatch, resourceId, resourceType, values, parentContext]
   );
   const handleTestConnection = useCallback(() => {
-    const newValues = { ...values };
+    const newValues = rfdc({ proto: true })(values);
 
     if (!newValues['/_borrowConcurrencyFromConnectionId']) {
       newValues['/_borrowConcurrencyFromConnectionId'] = undefined;

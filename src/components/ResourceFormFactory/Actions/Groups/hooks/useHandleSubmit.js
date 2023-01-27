@@ -1,5 +1,6 @@
 import { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import rfdc from 'rfdc';
 import shallowEqual from 'react-redux/lib/utils/shallowEqual';
 import { useRouteMatch } from 'react-router-dom';
 import actions from '../../../../../actions';
@@ -34,7 +35,7 @@ export default function useHandleSubmit({
 
   return useCallback(
     closeAfterSave => {
-      const newValues = { ...values };
+      const newValues = rfdc({ proto: true })(values);
 
       if (resource._connectorId &&
           (['shopify'].includes(resource.assistant) && values['/http/auth/type'] === 'oauth')) {
