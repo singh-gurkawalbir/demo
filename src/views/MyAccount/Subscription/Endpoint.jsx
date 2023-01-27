@@ -362,6 +362,7 @@ export default function Endpoint() {
                 onClick={onRequestUpgradeClick}
                 disabled={upgradeRequested}
                 className={classes.subscriptionUpgradeBtn}
+                data-test={upgradeRequested ? 'Upgrade requested' : 'Request upgrade'}
                 id="myaccout-request-upgrade-buttton"
              >
                 {upgradeRequested ? 'Upgrade requested' : 'Request upgrade'}

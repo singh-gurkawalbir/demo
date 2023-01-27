@@ -232,6 +232,7 @@ export function KeyValueComponent(props) {
                 hideSortableGhost={false}
                 value={(
                   <KeyValueRow
+                    {...props}
                     isLoggable={isLoggable}
                     suggestionConfig={suggestionConfig}
                     isDragInProgress={dragItemIndex !== undefined}

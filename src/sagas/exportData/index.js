@@ -3,6 +3,7 @@ import { isEqual } from 'lodash';
 import actionTypes from '../../actions/types';
 import actions from '../../actions';
 import { apiCallWithRetry } from '../index';
+import inferErrorMessages from '../../utils/inferErrorMessages';
 
 // technically BigInt and Symbol are now also primitives but not yet applicable in this specific case
 const isPrimitive = p =>
@@ -71,15 +72,11 @@ function* getData({ kind, identifier: id, resource, resourceContext = {} }) {
     yield put(actions.exportData.receive(kind, id, data));
   } catch (e) {
     if (e.status >= 400 && e.status < 500) {
-      let parsedError;
+      let parsedError = inferErrorMessages(e?.message)?.[0];
 
-      try {
-        parsedError = JSON.parse(e.message);
-        parsedError = parsedError?.errors?.[0]?.message || parsedError;
-      } catch (ex) {
-        parsedError = String(e.message);
+      if (typeof authError !== 'string') {
+        parsedError = 'unknown error';
       }
-
       yield put(actions.exportData.receiveError(kind, id, parsedError));
 
       return;

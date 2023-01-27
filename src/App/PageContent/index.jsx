@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
+import clsx from 'clsx';
 import { selectors } from '../../reducers';
 import AppRouting from '../AppRouting';
 import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
@@ -31,6 +32,7 @@ export default function PageContent() {
   const isNoneTierLicense = useSelector(state => selectors.platformLicenseWithMetadata(state).isNone);
   const isDefaultAccountSet = useSelector(selectors.isDefaultAccountSet);
   const isMFASetupIncomplete = useSelector(selectors.isMFASetupIncomplete);
+  const agreeTOSAndPPRequired = useSelector(selectors.agreeTOSAndPPRequired);
   const environment = useSelector(state => selectors.userPreferences(state)?.environment);
   const isSandboxAllowed = useSelector(selectors.accountHasSandbox);
 
@@ -62,11 +64,9 @@ export default function PageContent() {
   return (
     <main className={classes.content}>
       <div
-        className={
-          // This empty div is used to push the scrollable
-          // page content below the app/page bars.
-          classes.toolbar
-        }
+        // This empty div is used to push the scrollable
+        // page content below the app/page bars.
+        className={clsx({[classes.toolbar]: !agreeTOSAndPPRequired })}
       />
       <ChatbotWidget />
       <AppRouting />

@@ -5201,7 +5201,7 @@ Object {
         "helpKey": "export.type",
         "id": "restlet.type",
         "isLoggable": true,
-        "label": "Export Type",
+        "label": "Export type",
         "refreshOptionsOnChangesTo": Array [
           "netsuite.restlet.recordType",
         ],
@@ -5277,9 +5277,39 @@ Object {
         "fieldId": "test.limit",
         "visibleWhen": Array [
           Object {
-            "field": "restlet.type",
-            "is": Array [
-              "test",
+            "OR": Array [
+              Object {
+                "AND": Array [
+                  Object {
+                    "field": "netsuite.api.type",
+                    "is": Array [
+                      "search",
+                    ],
+                  },
+                  Object {
+                    "field": "type",
+                    "is": Array [
+                      "test",
+                    ],
+                  },
+                ],
+              },
+              Object {
+                "AND": Array [
+                  Object {
+                    "field": "restlet.type",
+                    "is": Array [
+                      "test",
+                    ],
+                  },
+                  Object {
+                    "field": "netsuite.api.type",
+                    "is": Array [
+                      "restlet",
+                    ],
+                  },
+                ],
+              },
             ],
           },
         ],
@@ -6274,7 +6304,7 @@ Object {
         "maxSize": 104857600,
         "mode": [Function],
         "name": "/uploadFile",
-        "placeholder": "Upload the file to use",
+        "placeholder": "Sample file (that would be parsed)",
         "refreshOptionsOnChangesTo": "file.type",
         "required": [Function],
         "type": "uploadfile",

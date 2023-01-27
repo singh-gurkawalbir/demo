@@ -2003,9 +2003,18 @@ export const findNearestParentExtractForNode = (treeData, nodeKey) => {
   return findNearestParentExtractForNode(treeData, node.parentKey);
 };
 
+const getCursorPositionWord = (value, cursorPosition) => {
+  const wordAfterPosition = value.substring(cursorPosition).match(/^[^,]+/);
+  const wordBeforePosition = value.substring(0, cursorPosition).match(/[^,]+$/);
+
+  if (!wordBeforePosition && !wordAfterPosition) return '';
+
+  return (wordBeforePosition || '') + (wordAfterPosition || '');
+};
+
 // this util handles the comma separated values use-case
 // and returns the final input after user selects a node
-export const getFinalSelectedExtracts = (node, inputValue = '', isArrayType, isGroupedSampleData, nodeKey, treeData) => {
+export const getFinalSelectedExtracts = (node, inputValue = '', isArrayType, isGroupedSampleData, nodeKey, treeData, cursorPosition) => {
   const prefix = getDefaultExtractPath(isGroupedSampleData);
   const {jsonPath = ''} = node || {};
   let fullJsonPath = jsonPath ? `${prefix}.${jsonPath}` : prefix;
@@ -2049,8 +2058,17 @@ export const getFinalSelectedExtracts = (node, inputValue = '', isArrayType, isG
     if (lastChar === ',') {
       newValue = inputValue + fullJsonPath;
     } else {
-      splitInput[valuesLen - 1] = fullJsonPath;
-      newValue = splitInput.join(',');
+      // handle edge case when user don't click on last position
+      if (!cursorPosition) {
+        splitInput[valuesLen - 1] = fullJsonPath;
+        newValue = splitInput.join(',');
+
+        return newValue;
+      }
+      const word = getCursorPositionWord(inputValue, cursorPosition);
+      const updatedValue = inputValue.replace(word, fullJsonPath);
+
+      newValue = updatedValue;
     }
   }
 
