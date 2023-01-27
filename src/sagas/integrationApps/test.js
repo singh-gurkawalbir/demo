@@ -16,7 +16,6 @@ import {
   installStep,
   installScriptStep,
   verifyBundleOrPackageInstall,
-  verifySuiteAppInstall,
   getCurrentStep,
   addNewChild,
   installChildStep,

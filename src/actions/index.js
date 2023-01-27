@@ -1084,36 +1084,40 @@ const integrationApp = {
   },
   templates: {
     installer: {
-      verifyBundleOrPackageInstall: (id, connectionId, installerFunction, isFrameWork2) =>
+      verifyBundleOrPackageInstall: (id, connectionId, installerFunction, isFrameWork2, type = 'suitebundle') =>
         action(actionTypes.INTEGRATION_APPS.TEMPLATES.INSTALLER.VERIFY_BUNDLE_INSTALL, {
           id,
           connectionId,
           installerFunction,
           isFrameWork2,
+          type,
         }),
-      verifySuiteAppInstall: (id, connectionId, installerFunction, isFrameWork2) =>
+      verifySuiteAppInstall: (id, connectionId, installerFunction, isFrameWork2, type = 'suiteapp') =>
         action(actionTypes.INTEGRATION_APPS.TEMPLATES.INSTALLER.VERIFY_SUITEAPP_INSTALL, {
           id,
           connectionId,
           installerFunction,
           isFrameWork2,
+          type,
         }),
     },
     upgrade: {
       installer: {
-        verifyBundleOrPackageInstall: (id, connectionId, installerFunction, isFrameWork2) =>
+        verifyBundleOrPackageInstall: (id, connectionId, installerFunction, isFrameWork2, type = 'suitebundle') =>
           action(actionTypes.INTEGRATION_APPS.TEMPLATES.INSTALLER.VERIFY_BUNDLE_INSTALL, {
             id,
             connectionId,
             installerFunction,
             isFrameWork2,
+            type,
           }),
-        verifySuiteAppInstall: (id, connectionId, installerFunction, isFrameWork2) =>
+        verifySuiteAppInstall: (id, connectionId, installerFunction, isFrameWork2, type = 'suiteapp') =>
           action(actionTypes.INTEGRATION_APPS.TEMPLATES.INSTALLER.VERIFY_SUITEAPP_INSTALL, {
             id,
             connectionId,
             installerFunction,
             isFrameWork2,
+            type,
           }),
       },
     },
@@ -1339,17 +1343,19 @@ const template = {
     action(actionTypes.TEMPLATE.CLEAR_UPLOADED, { templateId }),
   clearTemplate: templateId =>
     action(actionTypes.TEMPLATE.CLEAR_TEMPLATE, { templateId }),
-  verifyBundleOrPackageInstall: (step, connection, templateId) =>
+  verifyBundleOrPackageInstall: (step, connection, templateId, type = 'suitebundle') =>
     action(actionTypes.TEMPLATE.VERIFY_BUNDLE_INSTALL, {
       step,
       connection,
       templateId,
+      type,
     }),
-  verifySuiteAppInstall: (step, connection, templateId) =>
+  verifySuiteAppInstall: (step, connection, templateId, type = 'suiteapp') =>
     action(actionTypes.TEMPLATE.VERIFY_SUITEAPP_INSTALL, {
       step,
       connection,
       templateId,
+      type,
     }),
   publish: {
     request: (templateId, isPublished) =>
@@ -2606,17 +2612,19 @@ const integrationLCM = {
         connectionId,
         openOauthConnection,
       }),
-    verifyBundleOrPackageInstall: ({ revisionId, connectionId, integrationId }) =>
+    verifyBundleOrPackageInstall: ({ revisionId, connectionId, integrationId, type = 'suitebundle' }) =>
       action(actionTypes.INTEGRATION_LCM.INSTALL_STEPS.STEP.VERIFY_BUNDLE_INSTALL, {
         revisionId,
         connectionId,
         integrationId,
+        type,
       }),
-    verifySuiteAppInstall: ({ revisionId, connectionId, integrationId }) =>
+    verifySuiteAppInstall: ({ revisionId, connectionId, integrationId, type = 'suiteapp' }) =>
       action(actionTypes.INTEGRATION_LCM.INSTALL_STEPS.STEP.VERIFY_SUITEAPP_INSTALL, {
         revisionId,
         connectionId,
         integrationId,
+        type,
       }),
   },
   revisions: {

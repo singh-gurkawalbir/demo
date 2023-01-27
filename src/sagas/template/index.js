@@ -102,14 +102,15 @@ export function* verifyBundleOrPackageInstall({
   step,
   connection,
   templateId,
+  type,
 }) {
-  const path = `/connections/${connection._id}/distributed?type=suitebundle`;
+  const path = type ? `/connections/${connection._id}/distributed?type=${type}` : `/connections/${connection._id}/distributed`;
   let response;
 
   try {
     response = yield call(apiCallWithRetry, {
       path,
-      message: 'Verifying Bundle/Package Installation...',
+      message: type ? `Verifying ${type} Installation...` : 'Verifying Bundle/Package Installation...',
     });
   } catch (error) {
     yield put(
@@ -154,68 +155,6 @@ export function* verifyBundleOrPackageInstall({
   }
 }
 
-export function* verifySuiteAppInstall({
-  id,
-  connectionId,
-  installerFunction,
-  isFrameWork2,
-}) {
-  const path = `/connection/${connectionId}/distributed?type=suiteapp`;
-  let response;
-
-  try {
-    response = yield call(apiCallWithRetry, {
-      path,
-      message: 'Verifying SuiteApp Installation...',
-    });
-  } catch (error) {
-    yield put(
-      actions.integrationApp.installer.updateStep(
-        id,
-        '',
-        'failed'
-      )
-    );
-
-    return undefined;
-  }
-
-  if (response?.success) {
-    if (isFrameWork2) {
-      yield put(
-        actions.integrationApp.installer.scriptInstallStep(id)
-      );
-    } else {
-      yield put(
-        actions.integrationApp.installer.installStep(
-          id,
-          installerFunction,
-        )
-      );
-    }
-  } else if (
-    response &&
-      !response.success &&
-      (response.resBody || response.message)
-  ) {
-    yield put(
-      actions.integrationApp.installer.updateStep(
-        id,
-        installerFunction,
-        'failed'
-      )
-    );
-    yield put(
-      actions.api.failure(
-        path,
-        'GET',
-        response.resBody || response.message,
-        false
-      )
-    );
-  }
-}
-
 export function* publishStatus({ templateId, isPublished }) {
   const patchSet = [
     {
@@ -249,7 +188,7 @@ export const templateSagas = [
   ),
   takeEvery(
     actionTypes.TEMPLATE.VERIFY_SUITEAPP_INSTALL,
-    verifySuiteAppInstall
+    verifyBundleOrPackageInstall
   ),
   takeEvery(actionTypes.TEMPLATE.CREATE_COMPONENTS, createComponents),
   takeEvery(actionTypes.TEMPLATE.PUBLISH.REQUEST, publishStatus),

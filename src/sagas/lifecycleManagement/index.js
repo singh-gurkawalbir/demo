@@ -221,14 +221,15 @@ export function* verifyBundleOrPackageInstall({
   integrationId,
   connectionId,
   revisionId,
+  type,
 }) {
-  const path = `/connections/${connectionId}/distributed?type=suitebundle`;
+  const path = type ? `/connections/${connectionId}/distributed?type=${type}` : `/connections/${connectionId}/distributed`;
   let response;
 
   try {
     response = yield call(apiCallWithRetry, {
       path,
-      message: 'Verifying Bundle/Package Installation...',
+      message: type ? `Verifying ${type} Installation...` : 'Verifying Bundle/Package Installation...',
     });
   } catch (error) {
     yield put(actions.integrationLCM.installSteps.updateStep(revisionId, 'failed'));
