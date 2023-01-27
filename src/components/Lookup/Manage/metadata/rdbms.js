@@ -101,6 +101,7 @@ export default {
           type: 'radiogroup',
           label: 'Action to take if unique match not found',
           showOptionsVertically: true,
+          helpKey: 'mapping.lookupAction',
           defaultValue: getFailedRecordDefault(lookup) || 'disallowFailure',
           isLoggable: true,
           options: [

@@ -200,7 +200,7 @@ describe('reports', () => {
 
     expect(refreshButtonNode).toBeInTheDocument();
     userEvent.click(refreshButtonNode);
-    expect(mockDispatchFn).toHaveBeenCalledWith(actions.resource.requestCollection('eventreports', null));
+    expect(mockDispatchFn).toHaveBeenCalledWith(actions.resource.requestCollection('eventreports', null, true));
   });
   test('should able to test report page with the reports which has status loading', async () => {
     const eventReports = [

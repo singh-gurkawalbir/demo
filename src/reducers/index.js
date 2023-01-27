@@ -1277,23 +1277,28 @@ selectors.getAllIntegrationsTiedToEventReports = createSelector(state => {
 integrations => integrations
 );
 
-selectors.getAllFlowsTiedToEventReports = createSelector(state => {
-  const eventReports = resourceListSel(state, reportsFilter)?.resources;
-  const flows = resourceListSel(state, flowsFilter)?.resources;
+selectors.mkGetAllFlowsTiedToEventReports = () => {
+  const eventReportsSel = selectors.makeResourceListSelector();
+  const flowsSel = selectors.makeResourceListSelector();
 
-  if (!eventReports) { return emptyArray; }
+  return createSelector(
+    state => eventReportsSel(state, reportsFilter)?.resources,
+    state => flowsSel(state, flowsFilter)?.resources,
+    (eventReports, flows) => {
+      if (!eventReports) { return emptyArray; }
 
-  const allFlowIdsTiedToEvenReports = uniq(eventReports.flatMap(r =>
+      const allFlowIdsTiedToEvenReports = uniq(eventReports.flatMap(r =>
     r?._flowIds || []
-  ).filter(Boolean));
+      ).filter(Boolean));
 
-  if (!allFlowIdsTiedToEvenReports) { return emptyArray; }
+      if (!allFlowIdsTiedToEvenReports) { return emptyArray; }
 
-  return flows.filter(({_id: flowId}) =>
-    allFlowIdsTiedToEvenReports.includes(flowId)).sort(stringCompare('name'));
-},
-flows => flows
-);
+      return flows.filter(({_id: flowId}) =>
+        allFlowIdsTiedToEvenReports.includes(flowId)).sort(stringCompare('name'));
+    }
+  );
+};
+selectors.getAllFlowsTiedToEventReports = selectors.mkGetAllFlowsTiedToEventReports();
 selectors.mkGetFlowsTiedToEventReports = () => {
   const eventReportsSel = selectors.makeResourceListSelector();
   const flowsSel = selectors.makeResourceListSelector();
@@ -7075,6 +7080,8 @@ selectors.userLinkedSSOClientId = state => {
 
   return profile.authTypeSSO?._ssoClientId;
 };
+
+selectors.userRequiredToAgreeTOSAndPP = state => selectors.agreeTOSAndPPRequired(state) && !selectors.userAgreedTOSAndPP(state);
 
 selectors.isUserAllowedOnlySSOSignIn = state => {
   if (selectors.isAccountOwner(state)) {

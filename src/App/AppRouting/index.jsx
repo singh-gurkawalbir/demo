@@ -110,6 +110,10 @@ const ShopifyLandingPage = loadable(() =>
     /* webpackChunkName: 'ShopifyLandingPage' */ '../../views/LandingPages/Shopify'
   ))
 );
+const AgreeTOSAndPP = loadable(() =>
+  retry(() => import(
+  /* webpackChunkName: 'AgreeTOSAndPP' */ '../../views/AgreeTOSAndPP'
+  )));
 
 function ResourceListRouteCatcher(props) {
   const { match } = props;
@@ -159,6 +163,7 @@ export default function AppRouting() {
         exact
         component={UpgradeEM}
         />
+      <Route path={getRoutePath('/agreeTOSAndPP')} exact component={AgreeTOSAndPP} />
       <Route
         path={getRoutePath('/clone/:resourceType/:resourceId/preview')}
         component={ClonePreview}

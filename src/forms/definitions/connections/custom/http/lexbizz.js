@@ -68,6 +68,7 @@ export default {
       required: true,
       type: 'select',
       label: 'Authentication type',
+      isLoggable: true,
       helpKey: 'lexbizz.connection.http.auth.type',
       options: [
         {

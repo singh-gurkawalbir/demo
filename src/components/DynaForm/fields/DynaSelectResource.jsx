@@ -244,6 +244,7 @@ export default function DynaSelectResource(props) {
     addTitle,
     editTitle,
     disabledTitle,
+    isValueValid = false,
   } = props;
   const { options = {}, getItemInfo } = props;
   const classes = useStyles();
@@ -429,7 +430,7 @@ export default function DynaSelectResource(props) {
     }));
 
   useEffect(() => {
-    if (!appTypeIsStatic && value && !Array.isArray(value)) {
+    if (!appTypeIsStatic && value && !Array.isArray(value) && isValueValid) {
       const isValuePresentInOption = resourceItems.find(eachItem => eachItem.value === value);
 
       if (!isValuePresentInOption) {

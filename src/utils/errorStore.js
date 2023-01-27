@@ -23,7 +23,7 @@ const messages = {
   MAPPER2_WRONG_HANDLEBAR_FOR_ROWS: "Mapper 2.0: The source field values should start with 'rows' since input data is of the type rows. For instance rows.field1, rows.field2, etc.",
   MAPPER2_WRONG_HANDLEBAR_FOR_RECORD: "Mapper 2.0: The source field values should start with 'record' since input data is of the type record. For instance record.field1, record.field2, etc.",
   MAPPER2_WRONG_SOURCE_DATA_TYPE: "Mapper 2.0: {{{jsonPath}}}: You can't map {{{sourceDataType}}} (source) to {{{dataType}}} (destination)",
-  SIGN_UP_CONSENT: 'You must agree to the Terms of Service, Privacy Policy and Service Subscription Agreement to continue.',
+  SIGN_UP_CONSENT: 'You must agree to the Terms of Service / Service Subscription Agreement and Privacy Policy to continue.',
   SIGN_UP_NAME: 'Name is required.',
   SIGN_UP_EMAIL: 'Business email is required.',
   // #endregion

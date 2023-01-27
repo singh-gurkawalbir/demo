@@ -26,7 +26,7 @@ import OperandSettingsDialog from '../AFE/Editor/panels/Filter/OperandSettingsDi
 import actions from '../../actions';
 import { selectors } from '../../reducers';
 import getJSONPaths from '../../utils/jsonPaths';
-import { safeParse } from '../../utils/string';
+import { safeParse, isNumber } from '../../utils/string';
 
 const defaultData = {};
 
@@ -436,6 +436,23 @@ export default function BranchFilterPanel({ editorId, position, type, rule, hand
 
     if (!toReturn.isValid) {
       return toReturn;
+    }
+
+    if (r.rhs.type === 'value' || r.lhs.type === 'value') {
+      const {dataType: dataTypeRhs, value: valueRhs, type: typeRhs} = r.rhs;
+      const {dataType: dataTypeLhs, value: valueLhs, type: typeLhs} = r.lhs;
+
+      // skipping check for other data types because
+      // string: value will always be a string
+      // boolean: we convert boolean values automatically
+      // datetime: we don't have validations for datetime
+      if ((typeRhs === 'value' && dataTypeRhs === 'number' && !isNumber(valueRhs)) ||
+          (typeLhs === 'value' && dataTypeLhs === 'number' && !isNumber(valueLhs))) {
+        toReturn.isValid = false;
+        toReturn.error = 'Value should have correct data type';
+
+        return toReturn;
+      }
     }
 
     /*

@@ -64,10 +64,8 @@ describe('test suite for PreviewButtonGroup', () => {
     });
 
     expect(button).toBeInTheDocument();
-    screen.debug(null, Infinity);
     userEvent.click(button);
     await waitFor(() => expect(button).toBeChecked());
-    // screen.debug(null, Infinity);
   });
   test('Preview button should call action on clicking', async () => {
     await initPreviewButtonGroup('1');

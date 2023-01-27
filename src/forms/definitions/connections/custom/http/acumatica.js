@@ -3,16 +3,18 @@ export default {
     const retValues = { ...formValues };
 
     if (retValues['/http/auth/type'] === 'cookie') {
-      retValues['/http/baseURI'] = `${formValues['/instanceURI']}/entity/${
+      retValues['/http/baseURI'] = `${formValues['/instanceURI']}/${
         formValues['/http/unencrypted/endpointName'].toLowerCase()
       }/${formValues['/http/unencrypted/endpointVersion']}`;
       retValues['/http/auth/cookie/method'] = 'POST';
       retValues['/http/auth/cookie/successStatusCode'] = 204;
       retValues['/http/ping/method'] = 'GET';
-      retValues['/http/ping/relativeURI'] = '/FinancialPeriod';
+      retValues['/http/ping/relativeURI'] = `${
+        formValues['/http/unencrypted/endpointName'].toLowerCase() === 'manufacturing' ? '/ProductionOrder' : '/FinancialPeriod'
+      }`;
       retValues['/http/auth/cookie/uri'] = `${
         formValues['/instanceURI']
-      }/entity/auth/login`;
+      }/auth/login`;
       retValues['/http/auth/cookie/body'] = `{"name": "${
         formValues['/http/unencrypted/username']
       }","password": "{{{connection.http.encrypted.password}}}","company": "${
@@ -31,16 +33,14 @@ export default {
     } else {
       retValues['/http/baseURI'] = `${
         formValues['/oauth/instanceURI']
-      }/entity/${formValues['/http/unencrypted/endpointName'].toLowerCase()}/${
+      }/${formValues['/http/unencrypted/endpointName'].toLowerCase()}/${
         formValues['/http/unencrypted/endpointVersion']
       }`;
       retValues['/http/auth/oauth/useIClientFields'] = false;
       retValues['/http/auth/oauth/authURI'] = `${
-        formValues['/oauth/instanceURI']
-      }/identity/connect/authorize`;
+        formValues['/oauth/instanceURI'].replace('/entity', '')}/identity/connect/authorize`;
       retValues['/http/auth/oauth/tokenURI'] = `${
-        formValues['/oauth/instanceURI']
-      }/identity/connect/token`;
+        formValues['/oauth/instanceURI'].replace('/entity', '')}/identity/connect/token`;
       retValues['/http/unencrypted/endpointName'] = `${formValues['/http/unencrypted/endpointName'].toLowerCase()}`;
       retValues['/http/auth/oauth/scopeDelimiter'] = ' ';
       delete retValues['/http/auth/cookie/method'];
@@ -69,6 +69,7 @@ export default {
   fieldMap: {
     name: { fieldId: 'name' },
     'http.auth.type': {
+      isLoggable: true,
       id: 'http.auth.type',
       required: true,
       type: 'select',
@@ -87,6 +88,7 @@ export default {
       id: 'mode',
       type: 'radiogroup',
       label: 'Mode',
+      isLoggable: true,
       defaultValue: r => (r && r._agentId ? 'onpremise' : 'cloud'),
       options: [
         {
@@ -104,33 +106,35 @@ export default {
     instanceURI: {
       id: 'instanceURI',
       type: 'text',
-      endAdornment: '/entity',
       label: 'Instance URI',
       required: true,
       visibleWhen: [{ field: 'http.auth.type', is: ['cookie'] }],
       helpKey: 'acumatica.connection.instanceURI',
       defaultValue: r => {
         const baseUri = r?.http?.baseURI;
-        const subdomain =
-          baseUri && baseUri.substring(0, baseUri.indexOf('/entity'));
 
-        return subdomain;
+        if (baseUri && baseUri.includes('/entity')) {
+          return baseUri && baseUri.substring(0, baseUri.indexOf('/entity') + 7);
+        }
+
+        return baseUri && baseUri.substring(0, baseUri.indexOf(r?.http?.unencrypted?.endpointName));
       },
     },
     'oauth.instanceURI': {
       id: 'oauth.instanceURI',
       type: 'text',
-      endAdornment: '/entity',
       label: 'Instance URI',
       required: true,
       visibleWhen: [{ field: 'http.auth.type', is: ['oauth'] }],
       helpKey: 'acumatica.connection.instanceURI',
       defaultValue: r => {
         const baseUri = r?.http?.baseURI;
-        const subdomain =
-          baseUri && baseUri.substring(0, baseUri.indexOf('/entity'));
 
-        return subdomain;
+        if (baseUri && baseUri.includes('/entity')) {
+          return baseUri && baseUri.substring(0, baseUri.indexOf('/entity') + 7);
+        }
+
+        return baseUri && baseUri.substring(0, baseUri.indexOf(r?.http?.unencrypted?.endpointName));
       },
     },
     'http.unencrypted.endpointName': {
@@ -187,8 +191,20 @@ export default {
       scopes: ['api', 'offline_access', 'api:concurrent_access'],
       visibleWhen: [{ field: 'http.auth.type', is: ['oauth'] }],
     },
-    genericOauthConnector: {
-      formId: 'genericOauthConnector',
+    'http._iClientId': {
+      fieldId: 'http._iClientId',
+      required: true,
+      filter: { provider: 'custom_oauth2' },
+      type: 'dynaiclient',
+      connectionId: r => r && r._id,
+      connectorId: r => r && r._connectorId,
+      ignoreEnvironmentFilter: true,
+      helpKey: 'connection.http._iClientId',
+      visibleWhenAll: [{ field: 'http.auth.type', is: ['oauth'] }],
+    },
+    'http.auth.oauth.callbackURL': {
+      fieldId: 'http.auth.oauth.callbackURL',
+      copyToClipboard: true,
       visibleWhenAll: [{ field: 'http.auth.type', is: ['oauth'] }],
     },
     httpAdvanced: { formId: 'httpAdvanced' },
@@ -212,7 +228,8 @@ export default {
           'http.encrypted.password',
           'http.unencrypted.company',
           'http.auth.oauth.scope',
-          'genericOauthConnector'] },
+          'http._iClientId',
+          'http.auth.oauth.callbackURL'] },
       { collapsed: true, label: 'Advanced', fields: ['httpAdvanced'] },
     ],
   },

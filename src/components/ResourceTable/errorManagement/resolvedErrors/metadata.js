@@ -61,11 +61,13 @@ export default {
     {
       key: 'code',
       heading: 'Code',
+      isLoggable: true,
       width: '18%',
       Value: ({rowData: r}) => <TextOverflowCell message={r.code} />,
     },
     {
       key: 'selectResource',
+      isLoggable: true,
       HeaderValue: () => {
         const tableContext = useGetTableContext();
 
