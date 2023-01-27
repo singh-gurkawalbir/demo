@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect } from 'react';
 import clsx from 'clsx';
+import rfdc from 'rfdc';
 import { useSelector, useDispatch } from 'react-redux';
 import { Route, useHistory, useRouteMatch } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
@@ -13,6 +14,8 @@ import { getFormFieldMetadata } from './util';
 import { SCOPES } from '../../../../../../sagas/resourceForm';
 import useFormInitWithPermissions from '../../../../../../hooks/useFormInitWithPermissions';
 import EditorDrawer from '../../../../../AFE/Drawer';
+
+const clone = rfdc({ proto: true });
 
 const useStyles = makeStyles(theme => ({
   drawerPaper: {
@@ -107,7 +110,7 @@ function SubRecordDrawer(props) {
         expression: updatedFormValues.internalIdLookupExpression && JSON.parse(updatedFormValues.internalIdLookupExpression),
       };
       delete updatedFormValues.internalIdLookupExpression;
-      const updatedSubrecords = flow?.import?.netsuite?.subRecordImports || [];
+      const updatedSubrecords = clone(flow?.import?.netsuite?.subRecordImports || []);
 
       if (referenceFieldId) {
         const srIndex = updatedSubrecords.findIndex(

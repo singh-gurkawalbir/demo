@@ -1,8 +1,8 @@
 import React, { useCallback, useEffect, useMemo } from 'react';
 import { Route, Switch, useHistory, useRouteMatch } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { makeStyles } from '@material-ui/core';
 import rfdc from 'rfdc';
+import { makeStyles } from '@material-ui/core';
 import { useSelectorMemo } from '../../../hooks';
 import { selectors } from '../../../reducers';
 import FilledButton from '../../Buttons/FilledButton';
@@ -48,8 +48,10 @@ const ManageAliases = ({ flowId, hasManageAccess, height }) => {
   const aliasesFilterKey = `${flowId}-aliases`;
   const inheritedAliasesFilterKey = `${flowId}-inheritedAliases`;
   const flow = useSelectorMemo(selectors.makeResourceSelector, 'flows', flowId);
-  const resourceAliases = useSelector(state => selectors.ownAliases(state, 'flows', flowId, aliasesFilterKey));
-  const inheritedAliases = useSelector(state => selectors.inheritedAliases(state, flowId, inheritedAliasesFilterKey));
+  const tempResourceAliases = useSelector(state => selectors.ownAliases(state, 'flows', flowId, aliasesFilterKey));
+  const resourceAliases = useMemo(() => clone(tempResourceAliases), [tempResourceAliases]);
+  const tempInheritedAliases = useSelector(state => selectors.inheritedAliases(state, flowId, inheritedAliasesFilterKey));
+  const inheritedAliases = useMemo(() => clone(tempInheritedAliases), [tempInheritedAliases]);
   const isAliasActionCompleted = useSelector(state => selectors.aliasActionStatus(state, flowId));
   const actionProps = useMemo(() => ({
     resourceType: 'flows',
