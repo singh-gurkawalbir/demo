@@ -199,6 +199,42 @@ describe('installationStep UI tests', () => {
       undefined
     ));
   });
+  test('should make a dispatch call for suiteapp verification for templates when the Installation step name starts with "Integrator SuiteApp"', () => {
+    const mockClick = jest.fn();
+    const props = {
+      index: 1,
+      handleStepClick: mockClick,
+      step: {
+        name: 'Integrator SuiteApp',
+        completed: false,
+        type: 'installPackage',
+        options: {_connectionId: '62bd43c87b94d20de64e9ab3' },
+        sourceConnection: {
+          _id: '62bd43c87b94d20de64e9ab3',
+          type: 'http',
+          name: 'demo',
+          http: {
+            formType: 'rest',
+          },
+        },
+        isCurrentStep: true,
+      },
+      integrationId: '62bd4ab37b94d20de64e9eaa',
+      isFrameWork2: 3,
+    };
+
+    initInstallation(props);
+    expect(mockDispatchFn).toHaveBeenCalledTimes(2);
+    expect(mockDispatchFn).toHaveBeenCalledWith(actions.template.updateStep(
+      { ...props.step, status: 'verifying' },
+      undefined
+    ));
+    expect(mockDispatchFn).toHaveBeenCalledWith(actions.template.verifySuiteAppInstall(
+      props.step,
+      initialStore.getState().data.resources.connections[0],
+      undefined
+    ));
+  });
   test('should make the respective dispatch calls when revisionId,step.isCurrentStep,step.url,step.connectionId are defined', () => {
     const mockClick = jest.fn();
     const props = {
@@ -230,6 +266,42 @@ describe('installationStep UI tests', () => {
     expect(mockDispatchFn).toHaveBeenCalledTimes(2);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.integrationLCM.installSteps.updateStep('123456789abcdefgh', 'verify'));
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.integrationLCM.installSteps.verifyBundleOrPackageInstall({
+      integrationId: '62bd4ab37b94d20de64e9eaa',
+      connectionId: '62bd43c87b94d20de64e9ab3',
+      revisionId: '123456789abcdefgh',
+    }));
+  });
+  test('should make dispatch call to verify suiteApp installation for integration LCM when step name starts with "Integration SuiteApp"', () => {
+    const mockClick = jest.fn();
+    const props = {
+      revisionId: '123456789abcdefgh',
+      index: 1,
+      handleStepClick: mockClick,
+      step: {
+        name: 'Integrator SuiteApp',
+        completed: false,
+        url: 'http://demourlforTests',
+        type: 'installPackage',
+        connectionId: '62bd43c87b94d20de64e9ab3',
+        options: {_connectionId: '62bd43c87b94d20de64e9ab3' },
+        sourceConnection: {
+          _id: '62bd43c87b94d20de64e9ab3',
+          type: 'http',
+          name: 'demo',
+          http: {
+            formType: 'rest',
+          },
+        },
+        isCurrentStep: true,
+      },
+      integrationId: '62bd4ab37b94d20de64e9eaa',
+      isFrameWork2: 3,
+    };
+
+    initInstallation(props);
+    expect(mockDispatchFn).toHaveBeenCalledTimes(2);
+    expect(mockDispatchFn).toHaveBeenCalledWith(actions.integrationLCM.installSteps.updateStep('123456789abcdefgh', 'verify'));
+    expect(mockDispatchFn).toHaveBeenCalledWith(actions.integrationLCM.installSteps.verifySuiteAppInstall({
       integrationId: '62bd4ab37b94d20de64e9eaa',
       connectionId: '62bd43c87b94d20de64e9ab3',
       revisionId: '123456789abcdefgh',
@@ -274,6 +346,47 @@ describe('installationStep UI tests', () => {
       '987654321abcdefgh',
       undefined,
       3
+    ));
+  });
+  test('should make the dispatch calls for suiteapp verification for integrationApp when installStep name starts with "Integrator SuiteApp"', () => {
+    const mockClick = jest.fn();
+    const props = {
+      revisionId: '123456789abcdefgh',
+      index: 1,
+      handleStepClick: mockClick,
+      step: {
+        name: 'Integrator SuiteApp',
+        completed: false,
+        url: 'http://demourlforTests',
+        _connId: '987654321abcdefgh',
+        type: 'connection',
+        options: {_connectionId: '62bd43c87b94d20de64e9ab3' },
+        sourceConnection: {
+          _id: '62bd43c87b94d20de64e9ab3',
+          type: 'http',
+          name: 'demo',
+          http: {
+            formType: 'rest',
+          },
+        },
+        isCurrentStep: true,
+      },
+      integrationId: '62bd4ab37b94d20de64e9eaa',
+      isFrameWork2: true,
+    };
+
+    initInstallation(props);
+    expect(mockDispatchFn).toHaveBeenCalledTimes(2);
+    expect(mockDispatchFn).toHaveBeenCalledWith(actions.integrationApp.installer.updateStep(
+      '62bd4ab37b94d20de64e9eaa',
+      undefined,
+      'verify'
+    ));
+    expect(mockDispatchFn).toHaveBeenCalledWith(actions.integrationApp.templates.installer.verifySuiteAppInstall(
+      '62bd4ab37b94d20de64e9eaa',
+      '987654321abcdefgh',
+      undefined,
+      true
     ));
   });
   test('should render empty DOM when improper props are provided', () => {
