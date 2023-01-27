@@ -2,12 +2,14 @@ import TextField from '@material-ui/core/TextField';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import React, { useState, useCallback, useEffect } from 'react';
-import { Typography} from '@material-ui/core';
+import { Typography, InputAdornment} from '@material-ui/core';
 import { useLocation, Link, useHistory } from 'react-router-dom';
 import clsx from 'clsx';
 import actions from '../../actions';
 import { selectors } from '../../reducers';
 import ErrorIcon from '../../components/icons/ErrorIcon';
+import ShowContentIcon from '../../components/icons/ShowContentIcon';
+import HideContentIcon from '../../components/icons/HideContentIcon';
 import SecurityIcon from '../../components/icons/SecurityIcon';
 import { getDomain } from '../../utils/resource';
 import { AUTH_FAILURE_MESSAGE } from '../../constants';
@@ -44,8 +46,20 @@ const useStyles = makeStyles(theme => ({
   },
   textField: {
     width: '100%',
-    background: theme.palette.background.paper,
-    marginBottom: 10,
+    minWidth: '100%',
+    marginBottom: theme.spacing(1),
+    position: 'relative',
+    border: '1px solid',
+    borderColor: theme.palette.secondary.lightest,
+    paddingRight: 4,
+    '&:hover': {
+      borderColor: theme.palette.primary.main,
+    },
+    '& >.MuiFilledInput-root': {
+      '& > input': {
+        border: 'none',
+      },
+    },
   },
   alertMsg: {
     fontSize: 12,
@@ -127,6 +141,9 @@ const useStyles = makeStyles(theme => ({
   label: {
     display: 'flex',
   },
+  iconPassword: {
+    cursor: 'pointer',
+  },
 }));
 
 export default function SignIn({dialogOpen, className}) {
@@ -134,6 +151,7 @@ export default function SignIn({dialogOpen, className}) {
   const location = useLocation();
   const classes = useStyles();
   const [email, setEmail] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const history = useHistory();
   const query = useQuery();
 
@@ -194,6 +212,8 @@ export default function SignIn({dialogOpen, className}) {
     dispatch(actions.auth.reSignInWithSSO());
   };
 
+  const handleShowPassword = () => setShowPassword(showPassword => !showPassword);
+
   window.signedInWithGoogle = () => {
     reInitializeSession();
   };
@@ -239,10 +259,27 @@ export default function SignIn({dialogOpen, className}) {
           data-test="password"
           id="password"
           variant="filled"
-          type="password"
+          type={showPassword ? 'text' : 'password'}
           required
           placeholder="Password*"
           className={classes.textField}
+          InputProps={{
+            endAdornment: (true) &&
+              (
+                <InputAdornment position="end">
+                    {showPassword ? (
+                      <ShowContentIcon
+                        className={classes.iconPassword}
+                        onClick={handleShowPassword} />
+                    )
+                      : (
+                        <HideContentIcon
+                          className={classes.iconPassword}
+                          onClick={handleShowPassword} />
+                      )}
+                </InputAdornment>
+              ),
+          }}
             />
 
         <div className={classes.forgotPass}>
