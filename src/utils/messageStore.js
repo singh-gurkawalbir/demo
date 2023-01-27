@@ -55,7 +55,7 @@ href="/marketplace"><u>Check out our Marketplace</u></a> to jumpstart your  inte
   DATA_RETENTION_TAB_INFO: 'If you’re an <a href="https://docs.celigo.com/hc/en-us/articles/115003929872" target="_blank">account owner or administrator</a>, you can <a href="https://docs.celigo.com/hc/en-us/articles/6359380074779" target="_blank">access your integrator.io data for 30 or more days</a>. The data retention period varies based on your Celigo license, which you can upgrade anytime. You can also delete these records. This functionality is compliant with <a href="https://www.celigo.com/security-privacy-compliance/" target="_blank">GDPR and CCPA rules.</a>',
   DATA_RETENTION_LICENSE_UPGRADE: '<b>More options available</b> - Upgrade your account for longer data retention periods. ',
   DATA_RETENTION_PERIOD_CHANGE_INFO: '<b><a href="https://docs.celigo.com/hc/en-us/articles/6359380074779-Access-data-for-more-than-30-days" target="_blank">Learn more about data retention</a></b> and consult with your security/privacy team before saving a new retention period.',
-  DATA_RETENTION_PERIOD_UPDATE_CONFIRM: 'The new retention period of <b>{{newDataRetentionPeriod}} days</b> will apply only to new flow runs. All other data in your account will persist up until its current retention period of <b>{{currentDataRetentionPeriod}} days</b>. <br> <a href="https://docs.celigo.com/hc/en-us/articles/6359380074779-Access-data-for-more-than-30-days" target="_blank">Learn more about data retention</a> and consult with your security/privacy team before saving.',
+  DATA_RETENTION_PERIOD_UPDATE_CONFIRM: 'Changing the retention period will apply to new data only. Data retained before this retention period change will continue to expire based on the retention period defined at the time of retention.',
   DATA_RETENTION_PERIOD_UPDATED: 'New data retention period successfully saved.',
   // #endregion
   // #region mapper2 messages
@@ -78,7 +78,7 @@ href="/marketplace"><u>Check out our Marketplace</u></a> to jumpstart your  inte
   SNAPSHOT_SUCCESS: 'You\'ve successfully created a snapshot.',
   // #endregion
   INCOMPLETE_FLOW_TOOLTIP: 'Configure all steps to allow running your flow',
-  INCOMPLETE_FLOW_SCHEDULE_TOOLTIP: 'Configure all steps to allow scheduling your flow',
+  INCOMPLETE_FLOW_SCHEDULE_TOOLTIP: 'Remove or configure all unconfigured flow steps to edit the flow schedule',
   BRANCH_EMPTY_FILTER_RECORD_PASS: 'No conditions defined. All records will flow through this branch.',
   BRANCH_EMPTY_FILTER: 'No conditions defined.',
   // #region MFA
@@ -100,6 +100,10 @@ href="/marketplace"><u>Check out our Marketplace</u></a> to jumpstart your  inte
   MFA_OWNER_OTP_INFO: 'You are signing in from a new device. Enter your passcode to verify your account.',
   MFA_USER_OTP_INFO: 'Your account owner or admin has required you to sign in using multifactor authentication (MFA). Enter your passcode to verify your account.',
   MFA_USER_OTP_INFO_FOR_TRUSTED_NUMBER_OF_DAYS: 'Your account owner or admin has required you to sign in using multifactor authentication (MFA) after {{noOfDays}} days. Enter your passcode to verify your account.',
+  NEW_PASSWORD_EMPTY: 'New password is required',
+  CONFIRM_NEW_PASSWORD_EMPTY: 'Confirm new password is required',
+  INVALID_EMAIL: 'Please enter a valid email address.',
+  EMAIL_EMPTY: 'Email is required.',
   // #endregion
   // #region EM2.0 messages
   SELECT_ERROR_HOVER_MESSAGE: 'Selected errors are added to a batch, on which you can perform bulk retry and resolve actions.',
@@ -112,13 +116,9 @@ href="/marketplace"><u>Check out our Marketplace</u></a> to jumpstart your  inte
   // #endregion
 
   // #region populate with preview data
-  POPULATE_WITH_PREVIEW_DATA_FAILED: '{{fieldName}} field could not be populated.',
-  POPULATE_WITH_PREVIEW_DATA_SUCCESS: '{{fieldName}} field successfully populated with preview data.',
-  POPULATE_WITH_PREVIEW_DATA_DISABLED: 'Bring your connection online to enable this action.',
-  // #endregion
-
-  // #region populate with mock response
-  POPULATE_WITH_MOCK_RESPONSE_SUCCESS: 'Mock response field successfully populated with mock response.',
+  POPULATE_WITH_PREVIEW_DATA_FAILED: 'Failed to generate or populate {{fieldName}} data.',
+  POPULATE_WITH_PREVIEW_DATA_SUCCESS: '{{fieldName}} field successfully populated with {{dataType}}.',
+  POPULATE_WITH_PREVIEW_DATA_DISABLED: 'Connection must be online to enable this action.',
   // #endregion
 
   // #region shopify landing page
@@ -152,15 +152,18 @@ href="/marketplace"><u>Check out our Marketplace</u></a> to jumpstart your  inte
   PURGE_SCRIPT_LOG_SUCCESS_MESSAGE: 'All logs of this script successfully purged.',
   BRANCH_NAME_LENGTH_INFO: 'You have reached the maximum amount of characters for this field.',
   PARENT_WITHOUT_CHILD_UPGRADE_MESSAGE: 'You’ve successfuly upgraded to a {{plan}} plan. Additional plans<br>are available for request from the admin tab if you need it later on.',
+  PARENT_WITHOUT_CHILD_UPGRADE_MESSAGE_WITH_NO_FURTHER_PLANS: 'You’ve successfuly upgraded to a {{plan}} plan.',
   PARENT_WITH_CHILD_UPGRADE_MESSAGE: 'You’ve successfuly upgraded to a {{plan}} plan. Moving onto<br> upgrading the accounts tied to this integration app.',
   PARENT_DRAWER_SAVE_MESSAGE: 'Your upgrade has been saved. Select the active upgrade button in the Subscription<br>details when you are ready to continue with your setup.',
   CHILD_DRAWER_SAVE_MESSAGE: 'Your upgrade has been saved. Select the active upgrade buttons under<br>{{displayName}} when you are ready to continue with your setup.',
   CHILD_UPGRADE_LEFT_MESSAGE: 'There are accounts tied to this integration app that requires additional information.<br>Go ahead and begin to upgrade the accounts that are still active.',
   PARENT_AND_CHILD_FINAL_MESSAGE: 'You’ve successfuly upgraded the accounts tied to this integration app to a {{plan}} <br>plan. Additional plans are available for request from the admin tab if you need it later on.',
+  PARENT_AND_CHILD_FINAL_MESSAGE_WITH_NO_FURTHER_PLANS: 'You’ve successfuly upgraded the accounts tied to this integration app to a {{plan}} <br>plan.',
   LEFTOUT_CHILD_UPGRADE_MESSAGE: 'The {{childName}} acount has successfully upgraded to a {{nextPlan}} plan',
   NO_DRAG_FLOW_BRANCHING_INFO: 'You cannot reorder steps in a branched flow.<br/>Remove all branching to be able to drag and drop flow steps.',
   PARENT_UPGRADE_ERROR_MESSAGE: 'The upgrade to a {{plan}} plan has failed. {{errorMessage}}. Select the active upgrade button when you are ready to continue with your setup.',
   CHILD_UPGRADE_ERROR_MESSAGE: 'The upgrade for {{childName}} has failed. {{errorMessage}}. Select the active upgrade button when you are ready to continue with your setup.',
+  AGREE_TOS_AND_PP: 'Review and agree to the following terms of use to start using your integrator.io account, Celigo services, and products.',
 };
 
 export default function messageStore(key, argsObj) {

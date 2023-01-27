@@ -1,5 +1,5 @@
 import { call, takeEvery, put, select, takeLatest } from 'redux-saga/effects';
-import shortid from 'shortid';
+import { generateId } from '../../utils/string';
 import actionTypes from '../../actions/types';
 import actions from '../../actions';
 import { SCOPES } from '../resourceForm';
@@ -63,7 +63,7 @@ export function* responseMappingInit({ flowId, resourceId, resourceType }) {
     actions.responseMapping.initComplete({
       mappings: mappings.map(m => ({
         ...m,
-        key: shortid.generate(),
+        key: generateId(),
       })),
       flowId,
       resourceId,

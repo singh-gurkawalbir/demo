@@ -1,6 +1,6 @@
 import { values, keyBy, cloneDeep } from 'lodash';
-import shortid from 'shortid';
 import parseLinkHeader from 'parse-link-header';
+import { generateId } from './string';
 import { getAllPageProcessors, isPageGeneratorResource } from './flows';
 import { USER_ACCESS_LEVELS, HELP_CENTER_BASE_URL, INTEGRATION_ACCESS_LEVELS, emptyList, emptyObject } from '../constants';
 import { stringCompare } from './sort';
@@ -429,7 +429,7 @@ export function isFileAdaptor(resource) {
   );
 }
 
-export const generateNewId = () => `new-${shortid.generate()}`;
+export const generateNewId = () => `new-${generateId()}`;
 
 export function isRealTimeOrDistributedResource(
   resource,

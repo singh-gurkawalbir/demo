@@ -46,5 +46,6 @@ selectors.avatarUrl = state => {
 
 selectors.isUserInErrMgtTwoDotZero = state => !!(state && state.useErrMgtTwoDotZero);
 selectors.isFlowBranchingEnabled = state => !state?.disableFlowBranching;
+selectors.userAgreedTOSAndPP = state => state?.agreeTOSAndPP === true;
 
 // #endregion PUBLIC SELECTORS

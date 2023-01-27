@@ -59,7 +59,6 @@ describe('dynaTable UI tests', () => {
   test('should pass the initial render when extractFieldHeader and extracts are present', () => {
     renderWithProviders(<DynaTable {...props} />);
     expect(screen.getByText('DynaStaticMapWidget')).toBeInTheDocument();
-    screen.debug();
   });
   test('should render DynaStaticMap when keyResource,valueResource,connectionId are not passed', () => {
     const newProps = {...props, extractFieldHeader: null, extracts: null, keyResource: undefined, valueResource: undefined, connectionId: undefined};

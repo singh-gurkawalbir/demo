@@ -48,7 +48,6 @@ describe('dynaAllIntegrations UI tests', () => {
   test('should pass the initial render', () => {
     renderWithProviders(<DynaAllIntegrations />);
     expect(screen.getByText('Please select')).toBeInTheDocument();
-    screen.debug();
   });
   test('should display integrations in the dropdown when clicked on please select option', () => {
     initialStore.getState().data.resources = {

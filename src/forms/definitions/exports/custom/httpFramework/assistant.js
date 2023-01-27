@@ -28,6 +28,19 @@ export default function assistantDefinition(
         assistantMetadata[prop] = formValues[`/assistantMetadata/${prop}`];
       });
 
+      if (assistantMetadata.assistant === 'amazonsellingpartner') {
+        assistantMetadata.assistant = 'amazonmws';
+      }
+      if (assistantMetadata.assistant === 'recurlyv3') {
+        assistantMetadata.assistant = 'recurly';
+      }
+      if (assistantMetadata.assistant === 'loopreturnsv2') {
+        assistantMetadata.assistant = 'loopreturns';
+      }
+      if (assistantMetadata.assistant === 'acumaticaecommerce' || assistantMetadata.assistant === 'acumaticamanufacturing') {
+        assistantMetadata.assistant = 'acumatica';
+      }
+
       const otherFormValues = omitBy(formValues, (v, k) =>
         k.includes('/assistantMetadata/')
       );
@@ -55,6 +68,14 @@ export default function assistantDefinition(
 
       if (formValues['/assistantMetadata/exportType'] !== 'test') {
         otherFormValues['/test/limit'] = undefined;
+      }
+      if (formValues['/assistantMetadata/operation']) {
+        exportDoc['/http/_httpConnectorEndpointId'] = formValues['/assistantMetadata/operation'];
+        exportDoc['/http/_httpConnectorResourceId'] = formValues['/assistantMetadata/resource'];
+        exportDoc['/http/_httpConnectorVersionId'] = formValues['/assistantMetadata/version'];
+        exportDoc['/assistantMetadata/resource'] = undefined;
+        exportDoc['/assistantMetadata/version'] = undefined;
+        exportDoc['/assistantMetadata/operation'] = undefined;
       }
 
       return { ...otherFormValues, ...exportDoc };

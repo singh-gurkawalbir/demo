@@ -70,6 +70,7 @@ export default function IntegrationTabs({ tabs, className }) {
           <Tab
             className={classes.tab}
             key={label}
+            data-test={label}
             id={`tab-${i}`}
             {...{ 'aria-controls': `tabpanel-${i}` }}
             icon={<Icon />}

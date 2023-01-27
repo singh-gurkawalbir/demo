@@ -110,7 +110,6 @@ describe('dynaFlowsTiedToIntegration UI tests', () => {
     initDynaFlowsTiedToIntegration(props);
     expect(screen.getByText('Resource')).toBeInTheDocument();
     expect(screen.getByText('Select...')).toBeInTheDocument();
-    screen.debug();
   });
   test('should diplay the attached flows when clicked on the dropdown', () => {
     initDynaFlowsTiedToIntegration(props);
@@ -122,7 +121,6 @@ describe('dynaFlowsTiedToIntegration UI tests', () => {
     expect(screen.getByText('flow3')).toBeInTheDocument();
     expect(screen.getByText('flow4')).toBeInTheDocument();
     expect(screen.getByText('Done')).toBeInTheDocument();
-    screen.debug();
   });
   test('should render disabled dropdown when integrationId is not passed', async () => {
     initDynaFlowsTiedToIntegration({...props, formKey: 'newFormKey'});

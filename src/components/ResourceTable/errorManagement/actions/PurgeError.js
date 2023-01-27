@@ -17,7 +17,7 @@ export default {
     const {flowId, resourceId } = useGetTableContext();
 
     const purgeError = useCallback(() => {
-      dispatch(actions.errorManager.flowErrorDetails.purge.request({flowId, resourceId, errors: [errorId]}));
+      dispatch(actions.errorManager.flowErrorDetails.purge.request({flowId, resourceId, errors: [errorId], isRowAction: true}));
     }, [dispatch, flowId, resourceId, errorId]);
 
     const handleClick = useCallback(() => {

@@ -1,5 +1,5 @@
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
-import React, { useMemo, useState } from 'react';
+import React, { useState } from 'react';
 import { makeStyles, Divider, Typography, Tooltip } from '@material-ui/core';
 import { sortableContainer, sortableElement } from 'react-sortable-hoc';
 import clsx from 'clsx';
@@ -13,7 +13,6 @@ import BranchDrawer from './BranchDrawer';
 import BranchItem from './BranchItem';
 import messageStore from '../../../../../utils/messageStore';
 import Spinner from '../../../../Spinner';
-import { shortId } from '../../../../../utils/string';
 import DynaText from '../../../../DynaForm/fields/DynaText';
 import NotificationToaster from '../../../../NotificationToaster';
 
@@ -122,8 +121,8 @@ const BranchName = ({ editorId, isViewMode, name, classes }) => {
 export default function RouterPanel({ editorId }) {
   const classes = useStyles();
   const dispatch = useDispatch();
-  const branchesLength = useSelector(state => selectors.editorRule(state, editorId).branches?.length);
-  const branches = useMemo(() => Array(branchesLength).fill().map(() => ({id: shortId()})), [branchesLength]);
+  const {branches} = useSelector(state => selectors.editorRule(state, editorId), shallowEqual);
+
   const isLoading = useSelector(state => selectors.editor(state, editorId).sampleDataStatus === 'requested');
   const maxBranchesLimitReached = branches.length >= 25;
   const {
@@ -201,10 +200,10 @@ export default function RouterPanel({ editorId }) {
           onSortStart={handleSortStart}
           onSortEnd={handleSortEnd}
           useDragHandle>
-          {branches.map((b, i) => (
+          {branches.map(({id}, i) => (
             <SortableItem
               expandable={activeProcessor === 'filter'}
-              key={b.id}
+              key={id}
               index={i} // The HOC does not proxy index to child, so we need `position` as well.
               position={i}
               isViewMode={isViewMode}

@@ -19,7 +19,11 @@ export default function ConnectorName({ resource }) {
   const out = useMemo(() => {
     if (type === 'simple') return 'Data loader';
     if (_httpConnectorId) {
-      return getHttpConnector(_httpConnectorId)?.name;
+      const httpConnector = getHttpConnector(_httpConnectorId);
+
+      if (httpConnector) {
+        return httpConnector.name;
+      }
     }
 
     if (type !== 'rdbms') {
@@ -42,6 +46,7 @@ export default function ConnectorName({ resource }) {
     }
 
     return 'RDBMS';
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [type, resourceType, rdbmsType, assistant, rdbmsConnType, useRestForm]);
 
   return out || null;

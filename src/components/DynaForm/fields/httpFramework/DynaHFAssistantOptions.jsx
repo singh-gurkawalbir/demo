@@ -151,6 +151,12 @@ function DynaAssistantOptions(props) {
     resourceContext.resourceType,
   ]);
 
+  const {isSkipSort, updatedselectOptionsItems} = useMemo(() => {
+    const isSkipSort = selectOptionsItems?.filter(option => option.value === 'create-update-id').length > 0;
+
+    return {isSkipSort, updatedselectOptionsItems: isSkipSort ? [...selectOptionsItems.slice(0, selectOptionsItems.length - 1).sort((a, b) => a.label.localeCompare(b.label)), selectOptionsItems[selectOptionsItems.length - 1]] : selectOptionsItems};
+  }, [selectOptionsItems]);
+
   useHFSetInitializeFormData(props);
 
   // I have to adjust value when there is no option with the matching value
@@ -299,9 +305,10 @@ function DynaAssistantOptions(props) {
     <MaterialUiSelect
       {...props}
       label={label}
-      options={[{ items: selectOptionsItems }]}
+      options={[{ items: isSkipSort ? updatedselectOptionsItems : selectOptionsItems }]}
       onFieldChange={onFieldChange}
       disabled={disabled || (['createEndpoint', 'updateEndpoint'].includes(assistantFieldType) && selectOptionsItems.length === 1)}
+      skipSort={isSkipSort}
     />
   );
 }

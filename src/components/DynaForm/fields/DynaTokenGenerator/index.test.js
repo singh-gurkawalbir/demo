@@ -66,7 +66,6 @@ describe('tokenGenerator UI tests', () => {
     initTokenGenerator(props);
     expect(screen.getByRole('textbox')).toBeInTheDocument();
     expect(screen.getByRole('button', {name: 'test label'})).toBeInTheDocument();
-    screen.debug();
   });
   test('should run the onFieldChange function passed in props 4 times on initial render', async () => {
     initTokenGenerator(props);

@@ -219,7 +219,7 @@ module.exports = (env, argv) => {
 
     return opts;
   };
-  const isDevServer = argv && argv.$0.endsWith('webpack-dev-server');
+  const isDevServer = argv.mode === 'development';
 
   if (isDevServer) {
     config.output.filename = '[name].js';
@@ -227,11 +227,17 @@ module.exports = (env, argv) => {
 
     config.devServer = {
       hot: true,
-      contentBase: path.join(__dirname, 'build'),
+      allowedHosts: 'all',
       compress: true,
       port: 4000,
-      publicPath: '/',
       host: 'localhost.io',
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+      },
+      static: {
+        directory: path.join(__dirname, 'build'),
+        publicPath: '/',
+      },
       historyApiFallback: {
         index: '/index.html',
       },

@@ -373,7 +373,7 @@ export function* handleFlowDataStageErrors({
         flowId,
         resourceId,
         stage,
-        errors[0].message
+        errors?.[0]?.message
       )
     );
   }

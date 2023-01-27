@@ -68,7 +68,7 @@ export default function ForgotPassword({setShowError, email, className}) {
           id="email"
           type="email"
           variant="filled"
-          placeholder="Email"
+          placeholder="Email*"
           value={userEmail}
           onChange={handleOnChangeEmail}
           className={classes.textField}

@@ -33,22 +33,15 @@ export default function DynaSignupConsent(props) {
         target="_blank"
         rel="noreferrer"
       >
-        Terms of Service,&nbsp;
+        Terms of Service / Service Subscription Agreement&nbsp;
       </a>
+      and&nbsp;
       <a
         href="https://www.celigo.com/privacy/"
         target="_blank"
         rel="noreferrer"
       >
         Privacy Policy
-      </a>
-      &nbsp;and the&nbsp;
-      <a
-        href="https://www.celigo.com/agreements/ssa-2019-03/"
-        target="_blank"
-        rel="noreferrer"
-      >
-        Service Subscription Agreement.
       </a>
     </span>
   );

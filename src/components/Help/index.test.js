@@ -49,8 +49,6 @@ describe('help UI tests', () => {
 
     expect(thumbsdown).toBeInTheDocument();
     userEvent.click(thumbsdown);
-    screen.debug(undefined, Infinity);
-
     await waitFor(() => expect(screen.getByRole('textbox')).toBeInTheDocument());
     const field = screen.getByPlaceholderText('How can we make this information more helpful?');
 

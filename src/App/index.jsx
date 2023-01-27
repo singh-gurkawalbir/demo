@@ -37,6 +37,8 @@ import UserActivityMonitor from './UserActivityMonitor';
 import * as pendo from '../utils/analytics/pendo';
 import MfaHelp from '../views/MFAHelp';
 import ConcurConnect from '../views/ConcurConnect';
+import Spinner from '../components/Spinner';
+import Loader from '../components/Loader';
 
 // The makeStyles function below does not have access to the theme.
 // We can only use the theme in components that are children of
@@ -45,6 +47,7 @@ import ConcurConnect from '../views/ConcurConnect';
 const useStyles = makeStyles({
   root: {
     display: 'flex',
+    alignItems: 'flex-start',
   },
 });
 
@@ -90,17 +93,22 @@ export const useSnackbarStyles = makeStyles({
     display: 'grid',
     gridTemplateColumns: 'auto 1fr',
     wordBreak: 'break-word',
+    paddingTop: '6px',
     '& > svg': {
       position: 'fixed',
       left: 16,
-      top: '47%',
-      transform: 'translateY(-47%)',
+      top: 16,
     },
   },
 
 });
 
 function NonSigninHeaderComponents() {
+  const isAuthInitialized = useSelector(selectors.isAuthInitialized);
+  const isUserAuthenticated = useSelector(state => selectors.sessionInfo(state)?.authenticated);
+
+  if (!isAuthInitialized && !isUserAuthenticated) return <Loader open>Loading...<Spinner /></Loader>;
+
   return (
     <>
       <CeligoAppBar />
@@ -152,8 +160,9 @@ const Headers = () => {
   const isMFAVerifyPage = location.pathname === '/mfa/verify';
   const isPublicPage = PUBLIC_ROUTES.includes(location.pathname?.split('/')?.[1]);
   const isLandingPage = location.pathname.startsWith('/landing');
+  const isAgreeTOSAndPPPage = location.pathname.startsWith('/agreeTOSAndPP');
 
-  if (isConcurLandingPage || isPublicPage || isMFAVerifyPage || isLandingPage) return null;
+  if (isConcurLandingPage || isPublicPage || isMFAVerifyPage || isLandingPage || isAgreeTOSAndPPPage) return null;
 
   return <NonSigninHeaderComponents />;
 };
