@@ -6,6 +6,7 @@ import {
   useHistory,
 } from 'react-router-dom';
 import { makeStyles, Grid, List, ListItem, Tabs, Tab, Typography } from '@material-ui/core';
+import rfdc from 'rfdc';
 import { selectors } from '../../../../../reducers';
 import LoadResources from '../../../../../components/LoadResources';
 import PanelHeader from '../../../../../components/PanelHeader';
@@ -30,6 +31,8 @@ import { FORM_SAVE_STATUS, NO_RESULT_SEARCH_MESSAGE } from '../../../../../const
 import DrawerTitleBar from '../../../../../components/drawer/TitleBar';
 import ActionGroup from '../../../../../components/ActionGroup';
 import NoResultTypography from '../../../../../components/NoResultTypography';
+
+const clone = rfdc({proto: true});
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -373,7 +376,7 @@ const FlowsTable = ({integrationId, childId}) => {
   return (
     <LoadResources required integrationId={integrationId} resources="flows,connections,exports">
       <CeligoTable
-        data={flows}
+        data={clone(flows)}
         filterKey={filterKey}
         {...flowTableMeta}
         actionProps={actionProps}

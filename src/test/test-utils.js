@@ -3,10 +3,13 @@ import React from 'react';
 import { SnackbarProvider } from 'notistack';
 import { Provider } from 'react-redux';
 import { render } from '@testing-library/react';
+import rfdc from 'rfdc';
 import themeProvider from '../theme/themeProvider';
 import {getCreatedStore} from '../store';
 import server from './api/server';
 import { API } from './api/utils';
+
+const clone = rfdc({proto: true});
 
 const theme = themeProvider();
 export const renderWithProviders = (ui, { initialStore, renderFun = render } = {}) => {
@@ -27,7 +30,17 @@ export const renderWithProviders = (ui, { initialStore, renderFun = render } = {
   };
 };
 
-export const reduxStore = getCreatedStore();
+export const reduxStore = (() => {
+  let initialStore = getCreatedStore();
+  const store = clone(initialStore.getState());
+
+  initialStore = {
+    ...initialStore,
+    getState: () => store,
+  };
+
+  return initialStore;
+})();
 
 export const mockGetRequestOnce = (url, resolver) => {
   server.use(API.getOnce(url, resolver));

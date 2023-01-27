@@ -2,6 +2,7 @@ import React, { useCallback, useState, useEffect } from 'react';
 import { deepClone } from 'fast-json-patch';
 import { useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
+import rfdc from 'rfdc';
 import EditIcon from '../../../../icons/EditIcon';
 import ArrowLeftIcon from '../../../../icons/ArrowLeftIcon';
 import ModalDialog from '../../../../ModalDialog';
@@ -20,6 +21,8 @@ import useFormInitWithPermissions from '../../../../../hooks/useFormInitWithPerm
 import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
 import ActionGroup from '../../../../ActionGroup';
 import { FilledButton, TextButton } from '../../../../Buttons/index';
+
+const clone = rfdc({proto: true});
 
 const useStyles = makeStyles(theme => ({
   inlineEditorContainer: {
@@ -237,7 +240,7 @@ function RelatedListView(props) {
   return (
     <div className={classes.dynaRelatedListTable}>
       <CeligoTable
-        data={updatedValue}
+        data={clone(updatedValue)}
         key={count}
         {...metadata}
         actionProps={{ handleDeleteItem, handleEditItem }}

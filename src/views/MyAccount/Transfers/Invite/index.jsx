@@ -1,6 +1,7 @@
 import { useSelector, useDispatch } from 'react-redux';
 import React, { useCallback, useEffect, useState } from 'react';
 import {makeStyles} from '@material-ui/core/styles';
+import rfdc from 'rfdc';
 import CeligoTable from '../../../../components/CeligoTable';
 import { selectors } from '../../../../reducers';
 import actions from '../../../../actions';
@@ -12,6 +13,8 @@ import useFormInitWithPermissions from '../../../../hooks/useFormInitWithPermiss
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import FilledButton from '../../../../components/Buttons/FilledButton';
 import OutlinedButton from '../../../../components/Buttons/OutlinedButton';
+
+const clone = rfdc({proto: true});
 
 const useStyles = makeStyles(theme => ({
   infoTransfers: {
@@ -144,7 +147,7 @@ export default function Invite(props) {
       </div>
       {response && response.length && (
         <div className={classes.initiateTransferWrapper}>
-          <CeligoTable resourceType="transfers" data={response} {...metadata} />
+          <CeligoTable resourceType="transfers" data={clone(response)} {...metadata} />
           <FilledButton
             data-test="invite"
             className={classes.initiateTransferBtn}

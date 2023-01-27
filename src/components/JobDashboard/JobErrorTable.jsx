@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import { Link, useRouteMatch} from 'react-router-dom';
 import {makeStyles, TablePagination, IconButton, Tooltip, Divider, Typography} from '@material-ui/core';
+import rfdc from 'rfdc';
 import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
 import actions from '../../actions';
 import { selectors } from '../../reducers';
@@ -22,6 +23,8 @@ import ActionGroup from '../ActionGroup';
 import OutlinedButton from '../Buttons/OutlinedButton';
 import { getTextAfterCount } from '../../utils/string';
 import { drawerPaths, buildDrawerUrl } from '../../utils/rightDrawer';
+
+const clone = rfdc({proto: true});
 
 const useStyles = makeStyles(theme => ({
   tablePaginationRoot: { float: 'right' },
@@ -532,7 +535,7 @@ export default function JobErrorTable({
 
               <CeligoTable
                 className={classes.celigoTableWrapper}
-                data={jobErrorsData}
+                data={clone(jobErrorsData)}
                 selectableRows={
                   !isJobInProgress && hasUnresolvedErrorsInCurrentPage
                 }

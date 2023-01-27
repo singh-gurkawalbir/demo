@@ -1,5 +1,6 @@
 import React, { useState, useMemo, useCallback } from 'react';
 import { useDispatch } from 'react-redux';
+import rfdc from 'rfdc';
 import { selectors } from '../../reducers';
 import actions from '../../actions';
 import LoadResources from '../LoadResources';
@@ -10,6 +11,8 @@ import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
 import {FilledButton, TextButton} from '../Buttons';
 import { UNASSIGNED_SECTION_ID } from '../../constants';
 import ActionGroup from '../ActionGroup';
+
+const clone = rfdc({proto: true});
 
 const flowsFilterConfig = { type: 'flows' };
 
@@ -93,7 +96,7 @@ export default function AttachFlows({ integrationId, flowGroupingId }) {
               required
               resources="flows,connections,exports,imports">
               <CeligoTable
-                data={flows}
+                data={clone(flows)}
                 onSelectChange={handleSelectChange}
                 {...metadata}
                 selectableRows

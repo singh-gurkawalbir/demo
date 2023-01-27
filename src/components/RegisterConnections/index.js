@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import rfdc from 'rfdc';
 import actions from '../../actions';
 import LoadResources from '../LoadResources';
 import CeligoTable from '../CeligoTable';
@@ -7,6 +8,8 @@ import { selectors } from '../../reducers';
 import metadata from './metadata';
 import ModalDialog from '../ModalDialog';
 import { FilledButton } from '../Buttons';
+
+const clone = rfdc({proto: true});
 
 export default function RegisterConnections({ onClose, integrationId }) {
   const tableConfig = useSelector(state => selectors.filter(state, 'registerConnections'));
@@ -40,7 +43,7 @@ export default function RegisterConnections({ onClose, integrationId }) {
           <CeligoTable
             filterKey="registerConnections"
             actionProps={{ onClose }}
-            data={connectionsToReg}
+            data={clone(connectionsToReg)}
             onSelectChange={handleSelectChange}
             {...metadata}
             selectableRows

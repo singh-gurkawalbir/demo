@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core';
+import rfdc from 'rfdc';
 import LoadResources from '../../../../../components/LoadResources';
 import CeligoTable from '../../../../../components/CeligoTable';
 import metadata from '../../../../../components/ResourceTable/connections/metadata';
@@ -10,6 +11,8 @@ import {
   isTradingPartnerSupported,
 } from '../../../../../utils/resource';
 import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
+
+const clone = rfdc({proto: true});
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -55,7 +58,7 @@ export default function ConnectionPanel({ flowId }) {
     <div className={classes.root}>
       <LoadResources integrationId={integrationId} required resources="connections">
         <CeligoTable
-          data={flowConnections}
+          data={clone(flowConnections)}
           filterKey="connections"
           {...metadata}
           actionProps={actionProps}

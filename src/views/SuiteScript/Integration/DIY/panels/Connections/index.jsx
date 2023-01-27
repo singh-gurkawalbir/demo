@@ -1,11 +1,14 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { useSelector } from 'react-redux';
+import rfdc from 'rfdc';
 import { selectors } from '../../../../../../reducers';
 import PanelHeader from '../../../../../../components/PanelHeader';
 import LoadSuiteScriptResources from '../../../../../../components/SuiteScript/LoadResources';
 import CeligoTable from '../../../../../../components/CeligoTable';
 import metadata from '../../../../../../components/ResourceTable/suiteScript/connections/metadata';
+
+const clone = rfdc({proto: true});
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -39,7 +42,7 @@ export default function ConnectionsPanel({
         resources="flows,connections"
         integrationId={integrationId}>
         <CeligoTable
-          data={connections}
+          data={clone(connections)}
           {...metadata}
           actionProps={{ ssLinkedConnectionId, integrationId }}
         />

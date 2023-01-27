@@ -3,6 +3,7 @@ import { Link, useRouteMatch } from 'react-router-dom';
 import moment from 'moment';
 import { makeStyles, Typography } from '@material-ui/core';
 import { useSelector } from 'react-redux';
+import rfdc from 'rfdc';
 import CeligoTable from '../../../../../../../components/CeligoTable';
 import AddonInstallerButton from './AddonInstallerButton';
 import InfoIconButton from '../../../../../../../components/InfoIconButton';
@@ -10,6 +11,8 @@ import useSelectorMemo from '../../../../../../../hooks/selectors/useSelectorMem
 import { selectors } from '../../../../../../../reducers';
 import { useGetTableContext } from '../../../../../../../components/CeligoTable/TableContext';
 import FilledButton from '../../../../../../../components/Buttons/FilledButton';
+
+const clone = rfdc({proto: true});
 
 const metadata = {
   useColumns: () => {
@@ -179,7 +182,7 @@ export default function AddOns({integrationId, childId}) {
           </Typography>
         </div>
 
-        <CeligoTable data={subscribedAddOns} {...metadata} actionProps={{ supportsMultiStore, childId, storeLabel, children }} />
+        <CeligoTable data={clone(subscribedAddOns)} {...metadata} actionProps={{ supportsMultiStore, childId, storeLabel, children }} />
       </>
       )}
     </>

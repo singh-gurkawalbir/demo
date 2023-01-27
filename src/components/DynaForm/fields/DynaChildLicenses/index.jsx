@@ -2,6 +2,7 @@ import React, { useCallback, useMemo, useEffect } from 'react';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import { useDispatch, useSelector } from 'react-redux';
+import rfdc from 'rfdc';
 import { selectors } from '../../../../reducers';
 import actions from '../../../../actions';
 import AddIcon from '../../../icons/AddIcon';
@@ -13,6 +14,8 @@ import { SCOPES } from '../../../../sagas/resourceForm';
 import LoadResources from '../../../LoadResources';
 import { TextButton } from '../../../Buttons';
 import { drawerPaths, buildDrawerUrl } from '../../../../utils/rightDrawer';
+
+const clone = rfdc({proto: true});
 
 const useStyles = makeStyles(theme => ({
   actionChildLicense: {
@@ -107,7 +110,7 @@ export default function DynaChildLicense({ connectorId, resourceId, id, formKey}
       <div>
         <LoadResources required resources="integrations,connectors" >
           <CeligoTable
-            data={childLicenses}
+            data={clone(childLicenses)}
             {...metadata}
             filterKey={sortFilterKey}
             actionProps={{
