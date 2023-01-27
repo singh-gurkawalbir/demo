@@ -388,16 +388,6 @@ export function fieldMeta({ resource, assistantData }) {
       fieldId: 'configureAsyncHelper',
       defaultValue: r => !!(r && r.http && r.http._asyncHelperId),
       visible: r => !(r && r.statusExport),
-      visibleWhen: r => {
-        if (r && r.statusExport) return [];
-
-        return [
-          {
-            field: 'outputMode',
-            is: ['records'],
-          },
-        ];
-      },
     },
     'http._asyncHelperId': {
       fieldId: 'http._asyncHelperId',
