@@ -387,6 +387,7 @@ export default {
     'once.booleanField': {
       id: 'once.booleanField',
       label: 'Boolean field to mark records as exported',
+      isLoggable: true,
       type: 'refreshableselect',
       placeholder: 'Please select a boolean field',
       required: true,
@@ -405,6 +406,7 @@ export default {
       id: 'type',
       type: 'select',
       label: 'Export type',
+      isLoggable: true,
       required: true,
       defaultValue: r => {
         const isNew = isNewId(r._id);
@@ -413,7 +415,11 @@ export default {
         if (isNew) return '';
         const output = r && r.type;
 
-        return output || 'all';
+        if (r?.netsuite?.type === 'search') {
+          return output || 'all';
+        }
+
+        return '';
       },
       skipSort: true,
       options: [
@@ -434,7 +440,18 @@ export default {
     },
     'test.limit': {
       fieldId: 'test.limit',
-      visibleWhen: [{ field: 'restlet.type', is: ['test'] }],
+      visibleWhen: [{
+        OR: [{
+          AND: [
+            { field: 'netsuite.api.type', is: ['search'] },
+            { field: 'type', is: ['test'] },
+          ],
+        }, {
+          AND: [
+            { field: 'restlet.type', is: ['test'] },
+            { field: 'netsuite.api.type', is: ['restlet'] }],
+        }],
+      }],
     },
     'delta.lagOffset': {
       fieldId: 'delta.lagOffset',
@@ -448,7 +465,8 @@ export default {
     'restlet.type': {
       id: 'restlet.type',
       type: 'netsuiteexporttype',
-      label: 'Export Type',
+      label: 'Export type',
+      isLoggable: true,
       required: true,
       helpKey: 'export.type',
       connectionId: r => r && r._connectionId,
@@ -461,7 +479,11 @@ export default {
         if (isNew) return '';
         const output = r && r.type;
 
-        return output || 'all';
+        if (r?.netsuite?.type === 'restlet') {
+          return output || 'all';
+        }
+
+        return '';
       },
       skipSort: true,
       selectOptions: [
@@ -512,6 +534,7 @@ export default {
     },
     'restlet.once.booleanField': {
       id: 'restlet.once.booleanField',
+      isLoggable: true,
       label: 'Boolean field to mark records as exported',
       type: 'refreshableselect',
       helpKey: 'export.once.booleanField',

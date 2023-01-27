@@ -469,7 +469,7 @@ export default function ClonePreview(props) {
   }
 
   return (
-    <LoadResources resources="flows,connections,exports,imports,integrations" required>
+    <LoadResources resources="flows,connections,exports,imports,integrations" required integrationId={resourceType === 'integrations' ? resourceId : undefined}>
       <CeligoPageBar title={`Clone ${MODEL_PLURAL_TO_LABEL[resourceType].toLowerCase()}`} infoText={messageStore('CLONE_DESCRIPTION')} />
       <PageContent>
         <div className={classes.componentPadding}>

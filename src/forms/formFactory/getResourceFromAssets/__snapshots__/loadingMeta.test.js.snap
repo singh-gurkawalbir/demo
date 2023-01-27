@@ -888,6 +888,7 @@ Object {
       "mode": Object {
         "defaultValue": [Function],
         "id": "mode",
+        "isLoggable": true,
         "label": "Mode",
         "options": Array [
           Object {
@@ -1134,6 +1135,7 @@ Object {
       },
       "netsuite.authType": Object {
         "id": "netsuite.authType",
+        "isLoggable": true,
         "label": "Authentication type",
         "required": true,
         "skipSort": true,
@@ -1233,6 +1235,7 @@ Object {
         "defaultDisabled": true,
         "defaultValue": [Function],
         "fieldId": "netsuite.token.auto.roleId",
+        "isLoggable": true,
         "label": "Role",
         "type": "text",
         "visible": [Function],
@@ -1628,6 +1631,7 @@ Object {
       "mode": Object {
         "defaultValue": [Function],
         "id": "mode",
+        "isLoggable": true,
         "label": "Mode",
         "options": Array [
           Object {
@@ -1739,6 +1743,7 @@ Object {
       "mode": Object {
         "defaultValue": [Function],
         "id": "mode",
+        "isLoggable": true,
         "label": "Mode",
         "options": Array [
           Object {
@@ -1869,6 +1874,7 @@ Object {
         "defaultDisabled": true,
         "defaultValue": "onpremise",
         "id": "mode",
+        "isLoggable": true,
         "label": "Mode",
         "options": Array [
           Object {
@@ -2014,6 +2020,7 @@ Object {
       "mode": Object {
         "defaultValue": [Function],
         "id": "mode",
+        "isLoggable": true,
         "label": "Mode",
         "options": Array [
           Object {
@@ -2285,6 +2292,7 @@ Object {
       "mode": Object {
         "defaultValue": [Function],
         "id": "mode",
+        "isLoggable": true,
         "label": "Mode",
         "options": Array [
           Object {
@@ -2396,6 +2404,7 @@ Object {
       "mode": Object {
         "defaultValue": [Function],
         "id": "mode",
+        "isLoggable": true,
         "label": "Mode",
         "options": Array [
           Object {
@@ -2526,6 +2535,7 @@ Object {
         "defaultDisabled": true,
         "defaultValue": "onpremise",
         "id": "mode",
+        "isLoggable": true,
         "label": "Mode",
         "options": Array [
           Object {
@@ -2671,6 +2681,7 @@ Object {
       "mode": Object {
         "defaultValue": [Function],
         "id": "mode",
+        "isLoggable": true,
         "label": "Mode",
         "options": Array [
           Object {
@@ -3474,6 +3485,7 @@ Object {
       "type": Object {
         "defaultValue": [Function],
         "id": "type",
+        "isLoggable": true,
         "label": "Export type",
         "options": Array [
           Object {
@@ -4124,6 +4136,7 @@ Object {
       "once.booleanField": Object {
         "connectionId": [Function],
         "id": "once.booleanField",
+        "isLoggable": true,
         "label": "Boolean field to mark records as exported",
         "type": "textwithconnectioncontext",
         "visibleWhenAll": Array [
@@ -4189,6 +4202,7 @@ Object {
       "type": Object {
         "defaultValue": [Function],
         "id": "type",
+        "isLoggable": true,
         "label": "Export type",
         "options": Array [
           Object {
@@ -4425,6 +4439,7 @@ Object {
       "type": Object {
         "defaultValue": [Function],
         "id": "type",
+        "isLoggable": true,
         "label": "Export type",
         "options": Array [
           Object {
@@ -4975,6 +4990,7 @@ Object {
         "connectionId": [Function],
         "filterKey": "webservices-booleanField",
         "id": "once.booleanField",
+        "isLoggable": true,
         "label": "Boolean field to mark records as exported",
         "placeholder": "Please select a boolean field",
         "refreshOptionsOnChangesTo": Array [
@@ -5151,6 +5167,7 @@ Object {
         "filterKey": "suitescript-booleanField",
         "helpKey": "export.once.booleanField",
         "id": "restlet.once.booleanField",
+        "isLoggable": true,
         "label": "Boolean field to mark records as exported",
         "placeholder": "Please select a boolean field",
         "refreshOptionsOnChangesTo": Array [
@@ -5197,7 +5214,8 @@ Object {
         "filterKey": "suitescript-recordTypes",
         "helpKey": "export.type",
         "id": "restlet.type",
-        "label": "Export Type",
+        "isLoggable": true,
+        "label": "Export type",
         "refreshOptionsOnChangesTo": Array [
           "netsuite.restlet.recordType",
         ],
@@ -5273,9 +5291,39 @@ Object {
         "fieldId": "test.limit",
         "visibleWhen": Array [
           Object {
-            "field": "restlet.type",
-            "is": Array [
-              "test",
+            "OR": Array [
+              Object {
+                "AND": Array [
+                  Object {
+                    "field": "netsuite.api.type",
+                    "is": Array [
+                      "search",
+                    ],
+                  },
+                  Object {
+                    "field": "type",
+                    "is": Array [
+                      "test",
+                    ],
+                  },
+                ],
+              },
+              Object {
+                "AND": Array [
+                  Object {
+                    "field": "restlet.type",
+                    "is": Array [
+                      "test",
+                    ],
+                  },
+                  Object {
+                    "field": "netsuite.api.type",
+                    "is": Array [
+                      "restlet",
+                    ],
+                  },
+                ],
+              },
             ],
           },
         ],
@@ -5283,6 +5331,7 @@ Object {
       "type": Object {
         "defaultValue": [Function],
         "id": "type",
+        "isLoggable": true,
         "label": "Export type",
         "options": Array [
           Object {
@@ -5877,6 +5926,7 @@ Object {
         "filterKey": "salesforce-recordType",
         "helpKey": "export.once.booleanField",
         "id": "once.booleanField",
+        "isLoggable": true,
         "label": "Boolean field to mark records as exported",
         "placeholder": "Please select a boolean field",
         "required": true,
@@ -6040,6 +6090,7 @@ Object {
       "type": Object {
         "defaultValue": [Function],
         "id": "type",
+        "isLoggable": true,
         "label": "Export type",
         "options": Array [
           Object {
@@ -6267,7 +6318,7 @@ Object {
         "maxSize": 104857600,
         "mode": [Function],
         "name": "/uploadFile",
-        "placeholder": "Upload the file to use",
+        "placeholder": "Sample file (that would be parsed)",
         "refreshOptionsOnChangesTo": "file.type",
         "required": [Function],
         "type": "uploadfile",
@@ -6550,6 +6601,7 @@ Object {
       "type": Object {
         "defaultValue": [Function],
         "id": "type",
+        "isLoggable": true,
         "label": "Export type",
         "options": Array [
           Object {
@@ -6880,6 +6932,7 @@ Object {
         "filterKey": "salesforce-recordType",
         "helpKey": "export.once.booleanField",
         "id": "once.booleanField",
+        "isLoggable": true,
         "label": "Boolean field to mark records as exported",
         "placeholder": "Please select a boolean field",
         "required": true,
@@ -7043,6 +7096,7 @@ Object {
       "type": Object {
         "defaultValue": [Function],
         "id": "type",
+        "isLoggable": true,
         "label": "Export type",
         "options": Array [
           Object {
@@ -7218,6 +7272,7 @@ Object {
       "once.booleanField": Object {
         "connectionId": [Function],
         "id": "once.booleanField",
+        "isLoggable": true,
         "label": "Boolean field to mark records as exported",
         "type": "textwithconnectioncontext",
         "visibleWhen": Array [
@@ -7349,6 +7404,7 @@ Object {
       "type": Object {
         "defaultValue": [Function],
         "id": "type",
+        "isLoggable": true,
         "label": "Export type",
         "options": Array [
           Object {
@@ -7719,6 +7775,7 @@ Object {
         "filterKey": "salesforce-recordType",
         "helpKey": "export.once.booleanField",
         "id": "once.booleanField",
+        "isLoggable": true,
         "label": "Boolean field to mark records as exported",
         "placeholder": "Please select a boolean field",
         "required": true,
@@ -7882,6 +7939,7 @@ Object {
       "type": Object {
         "defaultValue": [Function],
         "id": "type",
+        "isLoggable": true,
         "label": "Export type",
         "options": Array [
           Object {
@@ -8041,6 +8099,7 @@ Object {
       "type": Object {
         "defaultValue": [Function],
         "id": "type",
+        "isLoggable": true,
         "label": "Export type",
         "options": Array [
           Object {
@@ -8180,6 +8239,7 @@ Object {
       "type": Object {
         "defaultValue": [Function],
         "id": "type",
+        "isLoggable": true,
         "label": "Export type",
         "options": Array [
           Object {
