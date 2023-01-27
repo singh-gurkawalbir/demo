@@ -19,7 +19,6 @@ export default function DynaNetsuiteAPIVersion(props) {
 
   const classes = useStyles();
   const dispatch = useDispatch();
-  const labelRef = React.useRef(null);
 
   const isOffline = useSelector(state =>
     selectors.isConnectionOffline(state, connectionId)
@@ -51,14 +50,11 @@ export default function DynaNetsuiteAPIVersion(props) {
 
   useEffect(() => {
     if (isNew && !isFieldChanged) {
-    // update field to 2.0 version if the field is not touched yet and has only suiteApp installed
-    // else 1.0 version
-    // this also gets triggered, when the connection is changed on the resource form
-      // const fieldValue = !isSuiteBundleInstalled && isSuiteAppInstalled ? 'true' : 'false';
-      // dispatch(actions.resourceForm.showSuiteAppInstallNotification(url, resourceType, resourceId));
+    // update field to SuiteApp 2.x version if the field is not touched yet
+
       onFieldChange(id, 'suiteapp2.0');
     }
-  }, [connectionId, isNew, id, isFieldChanged, isSuiteAppInstalled, isSuiteBundleInstalled, onFieldChange, dispatch, url, resourceType, resourceId]);
+  }, [isNew, id, isFieldChanged, onFieldChange]);
 
   useEffect(() => {
     if ((!data || refreshBundleInstalledInfo) && !isOffline) {
@@ -70,14 +66,15 @@ export default function DynaNetsuiteAPIVersion(props) {
       const showBundleInstallNotification = value === 'suitebundle' && !isSuiteBundleInstalled;
       const showSuiteAppInstallNotification = (value === 'suiteapp2.0' || value === 'suiteapp1.0') && !isSuiteAppInstalled;
 
-      if (!showBundleInstallNotification) dispatch(actions.resourceForm.hideBundleInstallNotification(resourceType, resourceId));
-      if (!showSuiteAppInstallNotification) dispatch(actions.resourceForm.hideSuiteAppInstallNotification(resourceType, resourceId));
-
       if (showBundleInstallNotification) {
+        dispatch(actions.resourceForm.hideSuiteAppInstallNotification(resourceType, resourceId));
         dispatch(actions.resourceForm.showBundleInstallNotification(url, resourceType, resourceId));
       }
 
-      if (showSuiteAppInstallNotification) dispatch(actions.resourceForm.showSuiteAppInstallNotification(url, resourceType, resourceId));
+      if (showSuiteAppInstallNotification) {
+        dispatch(actions.resourceForm.hideBundleInstallNotification(resourceType, resourceId));
+        dispatch(actions.resourceForm.showSuiteAppInstallNotification(url, resourceType, resourceId));
+      }
     }
 
     return () => {
@@ -96,7 +93,7 @@ export default function DynaNetsuiteAPIVersion(props) {
 
   return (
     <>
-      <DynaRadio {...props} labelRef={labelRef} onFieldChange={handleFieldChange} />
+      <DynaRadio {...props} onFieldChange={handleFieldChange} />
       <FieldMessage errorMessages={errorMessage} />
     </>
   );

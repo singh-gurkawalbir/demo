@@ -25,7 +25,7 @@ export default function NetSuiteBundleInstallNotification({resourceType, resourc
 
   return (
     <>
-      {showBundleInstallNotification && (
+      {(showBundleInstallNotification || showSuiteAppInstallNotification) && (
       <NotificationToaster className={className} variant="warning" size="large" onClose={handleClose}>
         <Typography variant="h6">
           Install the{' '}
@@ -33,22 +33,7 @@ export default function NetSuiteBundleInstallNotification({resourceType, resourc
             target="_blank"
             rel="noreferrer"
             href={bundleUrl}>
-            <u>Integrator.io SuiteBundle</u>
-          </a>
-          {' '}in your NetSuite account {isRealTimeExport ? ' to enable Real-time export capabilities.' : ' to integrate with SuiteScript APIs.'}
-
-        </Typography>
-      </NotificationToaster>
-      )}
-      {showSuiteAppInstallNotification && (
-      <NotificationToaster className={className} variant="warning" size="large" onClose={handleClose}>
-        <Typography variant="h6">
-          Install the{' '}
-          <a
-            target="_blank"
-            rel="noreferrer"
-            href={bundleUrl}>
-            <u>Integrator.io SuiteApp</u>
+            <u>{(showBundleInstallNotification && !showSuiteAppInstallNotification) ? 'Integrator.io SuiteBundle' : 'Integrator.io SuiteApp'}</u>
           </a>
           {' '}in your NetSuite account {isRealTimeExport ? ' to enable Real-time export capabilities.' : ' to integrate with SuiteScript APIs.'}
 
