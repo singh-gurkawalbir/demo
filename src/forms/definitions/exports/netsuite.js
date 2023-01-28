@@ -282,7 +282,13 @@ export default {
       type: 'netsuiteapiversion',
       label: 'NetSuite API version',
       // eslint-disable-next-line camelcase
-      defaultValue: r => r?.netsuite?.distributed?.frameworkVersion,
+      defaultValue: r => {
+        const newFieldValue = r?.netsuite?.distributed?.frameworkVersion;
+
+        if (newFieldValue) return newFieldValue;
+
+        return r?.netsuite?.distributed?.useSS2Framework ? 'suiteapp2.0' : 'suitebundle';
+      },
       defaultDisabled: r => {
         if (!isNewId(r._id)) {
           return true;
@@ -321,7 +327,13 @@ export default {
       type: 'netsuiteapiversion',
       label: 'NetSuite API version',
       // eslint-disable-next-line camelcase
-      defaultValue: r => r?.netsuite?.restlet?.restletVersion,
+      defaultValue: r => {
+        const newFieldValue = r?.netsuite?.restlet?.restletVersion;
+
+        if (newFieldValue) return newFieldValue;
+
+        return r?.netsuite?.restlet?.useSS2Restlets ? 'suiteapp2.0' : 'suitebundle';
+      },
       defaultDisabled: r => {
         if (!isNewId(r._id)) {
           return true;

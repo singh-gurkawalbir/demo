@@ -86,8 +86,15 @@ export default {
     fieldId: 'netsuite_da.useSS2Restlets',
     type: 'netsuiteapiversion',
     label: 'NetSuite API version',
-    // eslint-disable-next-line camelcase
-    defaultValue: r => r?.netsuite_da?.restletVersion,
+    defaultValue: r => {
+      // eslint-disable-next-line camelcase
+      const newFieldValue = r?.netsuite_da?.restletVersion;
+
+      if (newFieldValue) return newFieldValue;
+
+      // eslint-disable-next-line camelcase
+      return r?.netsuite_da?.useSS2Restlets ? 'suiteapp2.0' : 'suitebundle';
+    },
     options: [
       {
         items: [
