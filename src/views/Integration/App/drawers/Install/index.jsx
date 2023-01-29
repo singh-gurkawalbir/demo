@@ -25,7 +25,6 @@ import ResourceSetupDrawer from '../../../../../components/ResourceSetup/Drawer'
 import InstallationStep from '../../../../../components/InstallStep';
 import useConfirmDialog from '../../../../../components/ConfirmDialog';
 import { getIntegrationAppUrlName } from '../../../../../utils/integrationApps';
-import { SCOPES } from '../../../../../sagas/resourceForm';
 import jsonUtil from '../../../../../utils/json';
 import { INSTALL_STEP_TYPES, emptyObject,
 } from '../../../../../constants';
@@ -398,7 +397,6 @@ export default function ConnectorInstallation() {
               _connectorId,
               installStepConnection: true,
             }),
-            SCOPES.VALUE
           )
         );
         setIsResourceStaged(true);

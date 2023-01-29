@@ -9,7 +9,6 @@ import InstallationStep from '../../../../InstallStep';
 import ResourceSetupDrawer from '../../../../ResourceSetup/Drawer';
 import { generateNewId } from '../../../../../utils/resource';
 import jsonUtil from '../../../../../utils/json';
-import { SCOPES } from '../../../../../sagas/resourceForm';
 import openExternalUrl from '../../../../../utils/window';
 import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
 import useEnqueueSnackbar from '../../../../../hooks/enqueueSnackbar';
@@ -112,7 +111,6 @@ export default function InstallSteps({ integrationId, revisionId, onClose }) {
               newIA: true, // this prop is used to stop from saving the connection in resourceForm saga
               // TODO @Raghu: refactor this and rename this prop to make it more generic
             }),
-            SCOPES.VALUE
           )
         );
       }

@@ -13,7 +13,6 @@ import { selectors } from '../../../../../../reducers';
 import ResourceSetupDrawer from '../../../../../../components/ResourceSetup/Drawer';
 import { generateNewId } from '../../../../../../utils/resource';
 import jsonUtil from '../../../../../../utils/json';
-import { SCOPES } from '../../../../../../sagas/resourceForm';
 import useConfirmDialog from '../../../../../../components/ConfirmDialog';
 import useFormInitWithPermissions from '../../../../../../hooks/useFormInitWithPermissions';
 import TextButton from '../../../../../../components/Buttons/TextButton';
@@ -100,7 +99,6 @@ export default function ConnectionDrawer({
         actions.resource.patchStaged(
           newId,
           jsonUtil.objectToPatchSet(conn),
-          SCOPES.VALUE
         )
       );
       history.push(`${match.url}/configure/connections/${newId}`);

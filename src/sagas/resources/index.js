@@ -53,7 +53,6 @@ export function* resourceConflictDetermination({
   path,
   merged,
   id,
-  scope,
   resourceType,
   master,
 }) {
@@ -74,7 +73,7 @@ export function* resourceConflictDetermination({
   });
 
   if (conflict) {
-    yield put(actions.resource.commitConflict(id, conflict, scope));
+    yield put(actions.resource.commitConflict(id, conflict));
   }
 
   return { conflict: !!conflict, merged: updatedMerged };
@@ -138,12 +137,12 @@ export function* requestRevoke({ connectionId, hideNetWorkSnackbar = false }) {
   }
 }
 
-export function* commitStagedChanges({ resourceType, id, scope, options, context, parentContext }) {
+export function* commitStagedChanges({ resourceType, id, options, context, parentContext }) {
   const userPreferences = yield select(selectors.userPreferences);
   const isSandbox = userPreferences
     ? userPreferences.environment === 'sandbox'
     : false;
-  const data = yield select(selectors.resourceData, resourceType, id, scope);
+  const data = yield select(selectors.resourceData, resourceType, id);
   const { patch, master } = data;
   let { merged } = data;
   const isNew = isNewId(id);
@@ -167,7 +166,6 @@ export function* commitStagedChanges({ resourceType, id, scope, options, context
       path,
       merged,
       id,
-      scope,
       resourceType,
       master,
     });
@@ -304,7 +302,7 @@ export function* commitStagedChanges({ resourceType, id, scope, options, context
     }
     if (resourceType === 'flows') {
       if (options?.revertChangesOnFailure) {
-        yield put(actions.resource.clearStaged(id, scope));
+        yield put(actions.resource.clearStaged(id));
       }
     }
 
@@ -406,7 +404,7 @@ export function* commitStagedChanges({ resourceType, id, scope, options, context
     }
   }
 
-  yield put(actions.resource.clearStaged(id, scope));
+  yield put(actions.resource.clearStaged(id));
 
   yield put(actions.resource.received(resourceType, updated));
 

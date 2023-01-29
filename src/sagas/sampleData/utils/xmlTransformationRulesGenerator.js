@@ -6,7 +6,6 @@ import { generateTransformationRulesOnXMLData } from '../../../utils/sampleData'
 import { parseFileData } from './fileParserUtils';
 import { pageProcessorPreview, exportPreview } from './previewCalls';
 import { getPreviewStageData } from '../../../utils/flowData';
-import { SCOPES } from '../../resourceForm';
 import { emptyObject } from '../../../constants';
 import { commitStagedChanges } from '../../resources';
 
@@ -73,7 +72,6 @@ function* getHTTPSuccessMedia(resource) {
     selectors.resourceData,
     'connections',
     _connectionId,
-    SCOPES.VALUE
   ))?.merged || emptyObject;
 
   return connection.type === 'http' ? connection.http?.mediaType : connection.rest?.mediaType;
@@ -90,7 +88,6 @@ export default function* saveTransformationRulesForNewXMLExport({
     selectors.resourceData,
     'exports',
     resourceId,
-    SCOPES.VALUE
   ))?.merged || emptyObject;
 
   const isXmlFileAdaptor =
@@ -124,12 +121,11 @@ export default function* saveTransformationRulesForNewXMLExport({
   };
   const patchSet = [{ op: 'replace', path: '/transform', value }];
 
-  yield put(actions.resource.patchStaged(resourceId, patchSet, SCOPES.VALUE));
+  yield put(actions.resource.patchStaged(resourceId, patchSet));
 
   yield call(
     commitStagedChanges, {
       resourceType: 'exports',
       id: resourceId,
-      scope: SCOPES.VALUE,
     });
 }

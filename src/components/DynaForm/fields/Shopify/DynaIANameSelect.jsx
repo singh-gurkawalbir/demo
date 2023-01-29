@@ -81,7 +81,7 @@ export default function DynaIANameSelect(props) {
       //   );
       // }
 
-      dispatch(actions.resource.patchStaged(options.connectionId, patch, 'value'));
+      dispatch(actions.resource.patchStaged(options.connectionId, patch));
     }
 
     return () => {

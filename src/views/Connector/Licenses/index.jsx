@@ -13,7 +13,6 @@ import metadata from './metadata';
 import { generateNewId } from '../../../utils/resource';
 import LoadResources from '../../../components/LoadResources';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
-import { SCOPES } from '../../../sagas/resourceForm';
 import { TextButton } from '../../../components/Buttons';
 import { NO_RESULT_SEARCH_MESSAGE } from '../../../constants';
 import NoResultTypography from '../../../components/NoResultTypography';
@@ -111,7 +110,7 @@ export default function Licenses(props) {
       });
     }
 
-    dispatch(actions.resource.patchStaged(newId, patchSet, SCOPES.VALUE));
+    dispatch(actions.resource.patchStaged(newId, patchSet));
 
     history.push(buildDrawerUrl({
       path: drawerPaths.RESOURCE.ADD,

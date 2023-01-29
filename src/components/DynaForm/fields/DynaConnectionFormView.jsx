@@ -4,7 +4,6 @@ import { makeStyles } from '@material-ui/core';
 import actions from '../../../actions';
 import { getApp, getHttpConnector} from '../../../constants/applications';
 import { selectors } from '../../../reducers';
-import { SCOPES } from '../../../sagas/resourceForm';
 import useFormContext from '../../Form/FormContext';
 import {useHFSetInitializeFormData} from './httpFramework/DynaHFAssistantOptions';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
@@ -129,7 +128,7 @@ export default function FormView(props) {
 
     dispatch(actions.resource.clearStaged(resourceId));
     dispatch(
-      actions.resource.patchStaged(resourceId, allPatches, SCOPES.VALUE)
+      actions.resource.patchStaged(resourceId, allPatches)
     );
 
     let allTouchedFields = Object.values(formContext.fields)

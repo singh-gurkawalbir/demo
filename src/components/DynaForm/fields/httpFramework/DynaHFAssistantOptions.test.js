@@ -202,7 +202,6 @@ describe('dynaHFAssistantOptions UI tests', () => {
     expect(mockDispatchFn).toHaveBeenNthCalledWith(1, actions.resource.patchStaged(
       '_exportId',
       patch,
-      'value'
     ));
   });
   test('should display options for resources in the dropdown when assistantFieldType is "resource"', () => {

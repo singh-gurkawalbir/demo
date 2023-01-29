@@ -87,7 +87,6 @@ export default function FlowSchedule({ flow, onClose }) {
           'flows',
           flow._id,
           patchSet,
-          'value',
         )
       );
       dispatch(
@@ -96,7 +95,6 @@ export default function FlowSchedule({ flow, onClose }) {
           flow._integrationId,
           'flows',
           flow._id,
-          'value',
         )
       );
       onClose();

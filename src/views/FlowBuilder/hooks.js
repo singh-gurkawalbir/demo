@@ -173,7 +173,7 @@ export const usePatchNewFlow = integrationId => {
         });
       }
 
-      dispatch(actions.resource.patchStaged(newFlowId, patchSet, 'value'));
+      dispatch(actions.resource.patchStaged(newFlowId, patchSet));
     },
     [dispatch, integrationId]
   );

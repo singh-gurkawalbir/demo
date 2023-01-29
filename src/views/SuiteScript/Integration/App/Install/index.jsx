@@ -13,7 +13,6 @@ import RightDrawer from '../../../../../components/drawer/Right';
 import DrawerHeader from '../../../../../components/drawer/Right/DrawerHeader';
 import DrawerContent from '../../../../../components/drawer/Right/DrawerContent';
 import jsonUtil from '../../../../../utils/json';
-import { SCOPES } from '../../../../../sagas/resourceForm';
 import ResourceForm from '../../../../../components/SuiteScript/ResourceFormFactory';
 import useEnqueueSnackbar from '../../../../../hooks/enqueueSnackbar';
 import { COMM_STATES } from '../../../../../reducers/comms/networkComms';
@@ -224,7 +223,6 @@ export default function SuiteScriptIntegrationAppInstallation() {
             'connections',
             doc._id,
             jsonUtil.objectToPatchSet(doc),
-            SCOPES.VALUE,
           )
         );
         setSSConnection({

@@ -349,18 +349,17 @@ const resource = {
   removeStage: (id, predicateForPatchFilter) =>
     action(actionTypes.RESOURCE.STAGE_REMOVE, { id, predicateForPatchFilter }),
 
-  clearStaged: (id, scope) =>
-    action(actionTypes.RESOURCE.STAGE_CLEAR, { id, scope }),
+  clearStaged: id =>
+    action(actionTypes.RESOURCE.STAGE_CLEAR, { id }),
 
-  undoStaged: (id, scope) =>
-    action(actionTypes.RESOURCE.STAGE_UNDO, { id, scope }),
+  undoStaged: id =>
+    action(actionTypes.RESOURCE.STAGE_UNDO, { id }),
 
   patchAndCommitStaged: (
     resourceType,
     resourceId,
     patch,
     {
-      scope,
       context,
       asyncKey,
       parentContext,
@@ -369,28 +368,26 @@ const resource = {
     resourceType,
     id: resourceId,
     patch,
-    scope: scope || 'value',
     options,
     context,
     parentContext,
     asyncKey,
   }),
 
-  patchStaged: (id, patch, scope) =>
-    action(actionTypes.RESOURCE.STAGE_PATCH, { patch, id, scope }),
+  patchStaged: (id, patch) =>
+    action(actionTypes.RESOURCE.STAGE_PATCH, { patch, id }),
 
-  commitStaged: (resourceType, id, scope, options, context, asyncKey) =>
+  commitStaged: (resourceType, id, options, context, asyncKey) =>
     action(actionTypes.RESOURCE.STAGE_COMMIT, {
       resourceType,
       id,
-      scope,
       options,
       context,
       asyncKey,
     }),
 
-  commitConflict: (id, conflict, scope) =>
-    action(actionTypes.RESOURCE.STAGE_CONFLICT, { conflict, id, scope }),
+  commitConflict: (id, conflict) =>
+    action(actionTypes.RESOURCE.STAGE_CONFLICT, { conflict, id }),
 
   aliases: {
     requestAll: (id, resourceType) =>

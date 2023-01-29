@@ -16,7 +16,6 @@ import LoadResources from '../../../../../components/LoadResources';
 import openExternalUrl from '../../../../../utils/window';
 import ResourceSetupDrawer from '../../../../../components/ResourceSetup/Drawer';
 import InstallationStep from '../../../../../components/InstallStep';
-import { SCOPES } from '../../../../../sagas/resourceForm';
 import jsonUtil from '../../../../../utils/json';
 import { INSTALL_STEP_TYPES, emptyObject,
 } from '../../../../../constants';
@@ -209,7 +208,6 @@ const UpgradeInstallation = forwardRef(({ parentId, parentUrl }, ref) => {
               _connectorId,
               installStepConnection: true,
             }),
-            SCOPES.VALUE
           )
         );
         setIsResourceStaged(true);

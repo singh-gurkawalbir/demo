@@ -10,10 +10,11 @@ export default (state = {}, action) => {
     id,
     patch: newPatch,
     conflict,
-    scope,
     predicateForPatchFilter,
+    undoPatchByTimestamp = false,
   } = action;
   const timestamp = Date.now();
+  let timestampOfPatch;
 
   return produce(state, draft => {
     switch (type) {
@@ -23,14 +24,8 @@ export default (state = {}, action) => {
           return;
         }
 
-        if (scope) {
-          draft[id].patch = draft[id].patch.filter(
-            patch => patch.scope !== scope
-          );
-        } else {
-          // drop all staged patches.
-          delete draft[id].patch;
-        }
+        // drop all staged patches.
+        delete draft[id].patch;
 
         return;
 
@@ -48,12 +43,9 @@ export default (state = {}, action) => {
         if (!draft[id] || !draft[id].patch) {
           return;
         }
-
-        if (scope) {
-          let timestampOfPatch;
-
+        if (undoPatchByTimestamp) {
           for (let i = draft[id].patch.length - 1; i >= 0; i -= 1) {
-            if (!timestampOfPatch && draft[id].patch[i].scope === scope) {
+            if (!timestampOfPatch) {
               timestampOfPatch = draft[id].patch.timestamp;
               draft[id].patch.splice(i, 1);
             }
@@ -69,7 +61,6 @@ export default (state = {}, action) => {
 
           return;
         }
-
         // drop last patch.
         if (draft[id].patch.length > 1) {
           draft[id].patch.pop();
@@ -105,16 +96,10 @@ export default (state = {}, action) => {
           ) draft[id].patch.pop();
         }
 
-        const scopedPatchWithTimestamp = scope
-          ? newPatch.map(patch => ({
-            ...patch,
-            timestamp,
-            scope,
-          }))
-          : newPatch.map(patch => ({
-            ...patch,
-            timestamp,
-          }));
+        const scopedPatchWithTimestamp = newPatch.map(patch => ({
+          ...patch,
+          timestamp,
+        }));
 
         draft[id].patch = [...draft[id].patch, ...scopedPatchWithTimestamp];
 
@@ -126,10 +111,6 @@ export default (state = {}, action) => {
         }
 
         draft[id].conflict = conflict;
-
-        if (scope) {
-          draft[id].scope = scope;
-        }
 
         return;
 
@@ -151,17 +132,10 @@ selectors.stagedIdState = (state, id) => {
 
 // #region PUBLIC SELECTORS
 
-const transformStagedResource = (stagedIdState, scope) => {
+const transformStagedResource = stagedIdState => {
   if (!stagedIdState) return null;
 
-  let updatedPatches;
-
-  if (scope) {
-    updatedPatches =
-      stagedIdState &&
-      stagedIdState.patch &&
-      stagedIdState.patch.filter(patch => patch.scope === scope);
-  } else updatedPatches = stagedIdState && stagedIdState.patch;
+  const updatedPatches = stagedIdState && stagedIdState.patch;
 
   return { ...stagedIdState, patch: updatedPatches };
 };
@@ -169,8 +143,7 @@ const transformStagedResource = (stagedIdState, scope) => {
 selectors.makeTransformStagedResource = () =>
   createSelector(
     selectors.stagedIdState,
-    (_1, _2, scope) => scope,
-    (stagedIdState, scope) => transformStagedResource(stagedIdState, scope)
+    stagedIdState => transformStagedResource(stagedIdState)
   );
 selectors.stagedResource = selectors.makeTransformStagedResource();
 
