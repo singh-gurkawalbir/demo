@@ -366,21 +366,30 @@ selectors.integrationInstallSteps = createSelector(
     if (_connectorId) return installSteps;
     // Else do below changes to the install steps incase of a template
     // @Sravan review the logic below - moved from the component
+    const bundleInstallationForNetsuiteConnections = installSteps.filter(step => step.sourceConnection?.type === 'netsuite');
     const bundleInstallationForSalesforceConnections = installSteps.filter(step => step.sourceConnection?.type === 'salesforce');
 
+    let netsuiteConnIndex = 0;
     let salesforceConnIndex = 0;
+
+    const useOldImplementationForNetSuiteURLSteps = installSteps.some(stepp => stepp.type === 'url' && (stepp.name.startsWith('Integrator Bundle') || stepp.name.startsWith('Integrator SuiteApp')) && !stepp._forSourceConnectionId);
     // passing connectionId as _connId in case of 'Integrator Bundle' and 'Integrator Adaptor Package'
 
     return installSteps.map(step => {
       if (step.installURL || step.url) {
-        if (
-          step.name.includes('Integrator Bundle') || step.name.includes('Integrator SuiteApp')
-        ) {
-          const connectionId = installSteps.find(ele => step._forSourceConnectionId === ele?.sourceConnection?._id)?._connectionId;
+        if (step.name.startsWith('Integrator Bundle') || step.name.startsWith('Integrator SuiteApp')) {
+          if (useOldImplementationForNetSuiteURLSteps) {
+            return {
+              ...step,
+              // eslint-disable-next-line no-plusplus
+              _connId: bundleInstallationForNetsuiteConnections[netsuiteConnIndex++]?._connectionId,
+            };
+          }
+          const matchingNetSuiteConnection = installSteps.find(installStep => installStep?.sourceConnection?._id === step?._forSourceConnectionId);
 
           return {
             ...step,
-            _connId: connectionId,
+            _connId: matchingNetSuiteConnection?._connectionId,
           };
         } if (step.name.includes('Integrator Adaptor Package')) {
           const connectionId = bundleInstallationForSalesforceConnections[salesforceConnIndex]?._connectionId;
