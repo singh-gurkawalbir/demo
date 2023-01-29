@@ -13,6 +13,7 @@ import Spinner from '../../../../../components/Spinner';
 import CeligoPageBar from '../../../../../components/CeligoPageBar';
 import openExternalUrl from '../../../../../utils/window';
 import { drawerPaths, buildDrawerUrl } from '../../../../../utils/rightDrawer';
+import { message } from '../../../../../utils/messageStore';
 
 const useStyles = makeStyles(theme => ({
   installIntegrationWrapper: {
@@ -183,7 +184,7 @@ export default function Uninstaller2({ integration, integrationId }) {
       <div className={classes.installIntegrationWrapper}>
         <div className={classes.installIntegrationWrapperContent}>
           <Typography className={classes.message}>
-            Complete the below steps to uninstall your integration app.
+            {message.INTEGRATION.UNINSTALL}
           </Typography>
 
           <div className={classes.installIntegrationSteps}>

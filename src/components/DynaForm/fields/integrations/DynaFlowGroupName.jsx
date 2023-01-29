@@ -6,7 +6,7 @@ import actions from '../../../../actions';
 import { useSelectorMemo } from '../../../../hooks';
 import { selectors } from '../../../../reducers';
 import { FORM_SAVE_STATUS, UNASSIGNED_SECTION_NAME } from '../../../../constants';
-import messageStore from '../../../../utils/messageStore';
+import { message } from '../../../../utils/messageStore';
 import { TextButton } from '../../../Buttons';
 import ButtonWithTooltip from '../../../Buttons/ButtonWithTooltip';
 import useConfirmDialog from '../../../ConfirmDialog';
@@ -97,7 +97,7 @@ export default function DynaFlowGroupName(props) {
     <div className={classes.textFieldWithDeleteSupport}>
       <DynaText {...props} className={classes.dynaTextField} />
       <ButtonWithTooltip
-        tooltipProps={{title: messageStore('FLOW_GROUP_DELETE_MESSAGE')}}>
+        tooltipProps={{title: message.FLOWS.FLOW_GROUP_DELETE_MESSAGE}}>
         <TextButton
           onClick={handleDeleteFlowGroupClick}
           startIcon={<TrashIcon />}

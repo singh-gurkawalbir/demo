@@ -23,7 +23,7 @@ import { selectors } from '../../../reducers';
 import getRequestOptions from '../../../utils/requestOptions';
 import actionTypes from '../../../actions/types';
 import openExternalUrl from '../../../utils/window';
-import messageStore from '../../../utils/messageStore';
+import { message } from '../../../utils/messageStore';
 
 const flowId = 'flow-123';
 const resourceId = 'id-123';
@@ -843,7 +843,7 @@ describe('errorDetails sagas', () => {
           actions.errorManager.flowErrorDetails.purge.success({
             flowId,
             resourceId,
-            message: messageStore('ERROR_PURGE_SUCCESS_MESSAGE'),
+            message: message.PURGE.ERROR_PURGE_SUCCESS_MESSAGE,
           })
         )
         .run();
@@ -874,7 +874,7 @@ describe('errorDetails sagas', () => {
           actions.errorManager.flowErrorDetails.purge.success({
             flowId,
             resourceId,
-            message: messageStore('MULTIPLE_ERROR_PURGE_SUCCESS_MESSAGE'),
+            message: message.PURGE.MULTIPLE_ERROR_PURGE_SUCCESS_MESSAGE,
           })
         )
         .run();
@@ -905,7 +905,7 @@ describe('errorDetails sagas', () => {
           actions.errorManager.flowErrorDetails.purge.success({
             flowId,
             resourceId,
-            message: messageStore('MULTIPLE_ERROR_PURGE_SUCCESS_MESSAGE'),
+            message: message.PURGE.MULTIPLE_ERROR_PURGE_SUCCESS_MESSAGE,
           })
         )
         .run();

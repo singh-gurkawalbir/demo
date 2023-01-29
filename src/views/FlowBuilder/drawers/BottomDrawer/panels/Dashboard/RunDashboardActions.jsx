@@ -14,6 +14,7 @@ import JobFilesDownloadDialog from '../../../../../../components/JobDashboard/Jo
 import { DRAGGABLE_SECTION_DIV_ID } from '../..';
 import { TextButton } from '../../../../../../components/Buttons';
 import ActionGroup from '../../../../../../components/ActionGroup';
+import { message } from '../../../../../../utils/messageStore';
 
 const useStyles = makeStyles(theme => ({
   rightActionContainer: {
@@ -87,8 +88,7 @@ export default function RunDashboardActions({ flowId }) {
   const handleCancel = useCallback(() => {
     confirmDialog({
       title: 'Confirm cancel run',
-      message:
-          'You have unsaved changes that will be lost if you continue. Canceling this job will delete all associated data currently queued for processing.',
+      message: message.CONFIRM_CANCEL_RUN,
       buttons: [
         {
           label: 'Cancel run',

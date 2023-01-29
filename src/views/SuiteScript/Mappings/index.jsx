@@ -13,6 +13,7 @@ import PreviewPanel from './Preview/Panel';
 import DrawerFooter from '../../../components/drawer/Right/DrawerFooter';
 import ButtonPanel from './ButtonPanel';
 import SalesforceSubListDialog from './SalesforceSubList';
+import { message } from '../../../utils/messageStore';
 
 const useStyles = makeStyles({
   root: {
@@ -93,7 +94,7 @@ export default function SuiteScriptMappingWrapper(props) {
   }, [dispatch, flowId, integrationId, ssLinkedConnectionId, subRecordMappingId]);
 
   if (mappingStatus === 'error') {
-    return (<Typography>Failed to load mapping.</Typography>);
+    return (<Typography>{message.MAPPER2.FAILED_TO_LOAD_MAPPING}</Typography>);
   }
   if (mappingStatus !== 'received') {
     return (

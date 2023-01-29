@@ -62,7 +62,7 @@ import {
   emptyList,
   MAX_DATA_RETENTION_PERIOD,
 } from '../constants';
-import messageStore from '../utils/messageStore';
+import { message } from '../utils/messageStore';
 import { upgradeButtonText, expiresInfo, isNextTheHighestPlan } from '../utils/license';
 import commKeyGen from '../utils/commKeyGenerator';
 import {
@@ -3823,7 +3823,7 @@ selectors.isLicenseValidToEnableFlow = state => {
 
   if (license.hasExpired) {
     licenseDetails.enable = false;
-    licenseDetails.message = messageStore('LICENSE_EXPIRED');
+    licenseDetails.message = message.SUBSCRIPTION.LICENSE_EXPIRED;
   }
 
   return licenseDetails;
@@ -5787,14 +5787,14 @@ selectors.mappingEditorNotification = (state, editorId) => {
     if (mappingVersion === 2) return emptyObject;
 
     return {
-      message: messageStore('MAPPER1_REFERENCE_INFO'),
+      message: message.MAPPER2.MAPPER1_REFERENCE_INFO,
       variant: 'info',
     };
   }
   if (mappingVersion === 1) return emptyObject;
 
   return {
-    message: messageStore('MAPPER2_BANNER_WARNING'),
+    message: message.MAPPER2.BANNER_WARNING,
     variant: 'warning',
   };
 };

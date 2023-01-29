@@ -29,7 +29,7 @@ import DrawerContent from '../../../../../components/drawer/Right/DrawerContent'
 import DrawerFooter from '../../../../../components/drawer/Right/DrawerFooter';
 import FilledButton from '../../../../../components/Buttons/FilledButton';
 import useEnqueueSnackbar from '../../../../../hooks/enqueueSnackbar';
-import messageStore from '../../../../../utils/messageStore';
+import messageStore, {message as messageStoreMessage} from '../../../../../utils/messageStore';
 
 const useStyles = makeStyles(theme => ({
   installIntegrationWrapper: {
@@ -98,9 +98,9 @@ const UpgradeInstallation = forwardRef(({ parentId, parentUrl }, ref) => {
     onClose() {
       if (status !== 'done') {
         if (type === 'parent') {
-          enquesnackbar({message: <RawHtml html={messageStore('PARENT_DRAWER_SAVE_MESSAGE')} />, variant: 'success'});
+          enquesnackbar({message: <RawHtml html={messageStoreMessage.SUBSCRIPTION.PARENT_DRAWER_SAVE_MESSAGE} />, variant: 'success'});
         } else {
-          enquesnackbar({message: <RawHtml html={messageStore('CHILD_DRAWER_SAVE_MESSAGE', { displayName: parentIntegration?.childDisplayName || '' })} />, variant: 'success'});
+          enquesnackbar({message: <RawHtml html={messageStore('SUBSCRIPTION.CHILD_DRAWER_SAVE_MESSAGE', { displayName: parentIntegration?.childDisplayName || '' })} />, variant: 'success'});
         }
       }
     },
@@ -134,7 +134,7 @@ const UpgradeInstallation = forwardRef(({ parentId, parentUrl }, ref) => {
       dispatch(actions.integrationApp.upgrade.setStatus(integrationId, { showWizard: false }));
       history.replace(parentUrl);
       if (type === 'child') {
-        enquesnackbar({message: <RawHtml html={messageStore('LEFTOUT_CHILD_UPGRADE_MESSAGE', { childName: integration?.name || '', nextPlan})} />, variant: 'success'});
+        enquesnackbar({message: <RawHtml html={messageStore('SUBSCRIPTION.LEFTOUT_CHILD_UPGRADE_MESSAGE', { childName: integration?.name || '', nextPlan})} />, variant: 'success'});
       }
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps

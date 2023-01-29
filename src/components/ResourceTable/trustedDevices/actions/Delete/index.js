@@ -2,7 +2,7 @@ import { useCallback, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import actions from '../../../../../actions';
 import { selectors } from '../../../../../reducers';
-import messageStore from '../../../../../utils/messageStore';
+import { message } from '../../../../../utils/messageStore';
 import { MFA_DELETE_DEVICE_ASYNC_KEY, FORM_SAVE_STATUS } from '../../../../../constants';
 import TrashIcon from '../../../../icons/TrashIcon';
 import useConfirmDialog from '../../../../ConfirmDialog';
@@ -21,7 +21,7 @@ export default {
     const handleClick = useCallback(() => {
       confirmDialog({
         title: 'Delete trusted MFA device?',
-        message: messageStore('DELETE_TRUSTED_DEVICE'),
+        message: message.MFA.DELETE_TRUSTED_DEVICE,
         buttons: [
           {
             label: 'Delete',
@@ -45,7 +45,7 @@ export default {
     useEffect(() => {
       if (deleteDeviceSuccess) {
         enquesnackbar({
-          message: messageStore('DELETE_DEVICE_SUCCESS'),
+          message: message.MFA.DELETE_DEVICE_SUCCESS,
           variant: 'success',
         });
         dispatch(actions.asyncTask.clear(MFA_DELETE_DEVICE_ASYNC_KEY));

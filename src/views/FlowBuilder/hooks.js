@@ -12,6 +12,7 @@ import itemTypes from './itemTypes';
 import { drawerPaths, buildDrawerUrl } from '../../utils/rightDrawer';
 import { useFlowContext } from './FlowBuilderBody/Context';
 import { generateEmptyRouter, getNewRouterPatchSet, isVirtualRouter } from '../../utils/flows/flowbuilder';
+import messageStore from '../../utils/messageStore';
 
 export const isNewFlowFn = flowId => !flowId || flowId?.startsWith('new');
 export const usePatchFlow = flowId => {
@@ -48,7 +49,7 @@ export const useHandleDelete = flowId => {
     type => () => index => {
       confirmDialog({
         title: 'Confirm remove',
-        message: 'Are you sure you want to remove this resource?',
+        message: messageStore('CONFIRM_REMOVE'),
         buttons: [
           {
             label: 'Remove',

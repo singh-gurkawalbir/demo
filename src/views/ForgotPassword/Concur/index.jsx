@@ -6,7 +6,7 @@ import ForgotPasswordForm from './ForgotPasswordForm';
 import { selectors } from '../../../reducers';
 import { TextButton } from '../../../components/Buttons';
 import actions from '../../../actions';
-import messageStore from '../../../utils/messageStore';
+import messageStore, { message } from '../../../utils/messageStore';
 import getImageUrl from '../../../utils/image';
 
 /* Todo: (Azhar) Concur form should be in a separate component */
@@ -138,11 +138,6 @@ export default function ConcurForgotPassword(props) {
   function handleClick() {
     dispatch(actions.auth.resetRequestSent());
   }
-  let message = 'Please note that after you reset your password, you have to go back to the Concur App Center and connect again to the Celigo app.';
-
-  if (successView) {
-    message = `If ${email} ${messageStore('FORGOT_PASSWORD_USER_EXIST')}`;
-  }
 
   return (
     <div className={classes.wrapper}>
@@ -170,7 +165,10 @@ export default function ConcurForgotPassword(props) {
           </Typography>
           )}
           <div className={classes.mfaInfo}>
-            <span className={classes.infoText}>{message}</span>
+            <span className={classes.infoText}>
+              {successView ? messageStore('USER_SIGN_IN.FORGOT_PASSWORD_USER_EXIST', {email})
+                : message.USER_SIGN_IN.RESET_PASSWORD_CONCUR}
+            </span>
           </div>
           {!successView
             ? (

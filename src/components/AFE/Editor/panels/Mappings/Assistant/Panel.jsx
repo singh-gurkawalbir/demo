@@ -6,6 +6,7 @@ import {selectors} from '../../../../../../reducers';
 import SalesforceMappingAssistant from '../../../../../SalesforceMappingAssistant';
 import NetSuiteMappingAssistant from '../../../../../NetSuiteMappingAssistant';
 import Spinner from '../../../../../Spinner';
+import { message } from '../../../../../../utils/messageStore';
 
 function PreviewPanel({importId, subRecordMappingId, disabled}) {
   const dispatch = useDispatch();
@@ -116,7 +117,7 @@ export default function PreviewPanelWrapper({editorId}) {
   const mappingStatus = useSelector(state => selectors.mapping(state, flowId, importId, subRecordMappingId).status);
 
   if (mappingStatus === 'error') {
-    return (<Typography>Failed to load mapping.</Typography>);
+    return (<Typography>{message.MAPPER2.FAILED_TO_LOAD_MAPPING}</Typography>);
   }
   if (mappingStatus !== 'received') {
     return (

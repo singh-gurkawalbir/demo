@@ -5,12 +5,7 @@ export const MOCK_INPUT_RECORD_ABSENT = 'At least 1 mock input record is require
 const messages = {
   FILE_SIZE_EXCEEDED: 'File exceeds max file size',
   FILE_TYPE_INVALID: 'Please select valid {{{fileType}}} file',
-  NO_ALIAS_RESOURCE_MESSAGE: 'A value must be provided. Create a {{{label}}} if you don’t have any {{{resourceType}}} configured.',
-  NO_ALIASES_MESSAGE: 'You don’t have any aliases.',
-  NO_CUSTOM_ALIASES_MESSAGE: 'You don’t have any custom aliases.',
-  NO_INHERITED_ALIASES_MESSAGE: 'You don’t have any inherited aliases.',
-  DUPLICATE_ALIAS_ERROR_MESSAGE: 'An alias with the same ID already exists. Provide a different ID.',
-  ALIAS_VALIDATION_ERROR_MESSAGE: 'Aliases can only contain alphanumeric, hyphen (-), or underscore (_) characters.',
+
   // #region mapper error messages
   MAPPER1_DUP_GENERATE: 'Mapper 1.0: Duplicate mappings exist for destination field(s): {{{fields}}}',
   MAPPER1_MISSING_GENERATE: 'Mapper 1.0: One or more destination field values not entered.',
@@ -26,11 +21,6 @@ const messages = {
   SIGN_UP_CONSENT: 'You must agree to the Terms of Service / Service Subscription Agreement and Privacy Policy to continue.',
   SIGN_UP_NAME: 'Name is required.',
   SIGN_UP_EMAIL: 'Business email is required.',
-  // #endregion
-  // #region Edit mock input error messages
-  MOCK_INPUT_REFRESH_FAILED: 'Failed to fetch latest input data.',
-  MOCK_INPUT_INVALID_JSON: 'Mock input must be valid JSON',
-  MOCK_INPUT_INVALID_FORMAT: `Mock input must be in integrator.io canonical format. <a href=${MOCK_OUTPUT_CANONICAL_FORMAT_LINK} target="_blank" rel="noreferrer">Learn more.</a>`,
   // #endregion
 
   // #region Mock output error messages

@@ -6,7 +6,7 @@ import clsx from 'clsx';
 import { selectors } from '../../reducers';
 import AppRouting from '../AppRouting';
 import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
-import { NONE_TIER_USER_ERROR } from '../../utils/messageStore';
+import { message } from '../../utils/messageStore';
 import ChatbotWidget from '../../components/ChatbotWidget';
 import Spinner from '../../components/Spinner';
 import Loader from '../../components/Loader';
@@ -41,7 +41,7 @@ export default function PageContent() {
   useEffect(() => {
     if (!isNoneTierLicense) return;
     enqueueSnackbar({
-      message: NONE_TIER_USER_ERROR,
+      message: message.NONE_TIER_USER_ERROR,
       variant: 'error',
       persist: true,
     });

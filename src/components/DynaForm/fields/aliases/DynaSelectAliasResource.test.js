@@ -8,7 +8,7 @@ import DynaSelectAliasResource from './DynaSelectAliasResource';
 import {renderWithProviders} from '../../../../test/test-utils';
 import { getCreatedStore } from '../../../../store';
 import errorMessageStore from '../../../../utils/errorStore';
-import messageStore from '../../../../utils/messageStore';
+import { message } from '../../../../utils/messageStore';
 import { MODEL_PLURAL_TO_LABEL } from '../../../../utils/resource';
 
 const initialStore = getCreatedStore();
@@ -216,7 +216,7 @@ describe('dynaAliasId UI tests', () => {
     initDynaSelect({...props, value: undefined, options: {aliasResourceType: 'flows'}});
     await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith(actions.form.forceFieldState('integration-alias')('aliasId', {
       isValid: false,
-      errorMessages: messageStore('REQUIRED_MESSAGE'),
+      errorMessages: message.REQUIRED_MESSAGE,
     })));
   });
 });

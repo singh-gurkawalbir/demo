@@ -141,8 +141,18 @@ const useStyles = makeStyles(theme => ({
   label: {
     display: 'flex',
   },
+  passwordTextField: {
+    '& * >.MuiFilledInput-input': {
+      letterSpacing: '2px',
+      '&::placeholder': {
+        letterSpacing: '1px',
+      },
+    },
+  },
+
   iconPassword: {
     cursor: 'pointer',
+    marginRight: theme.spacing(1),
   },
 }));
 
@@ -262,7 +272,7 @@ export default function SignIn({dialogOpen, className}) {
           type={showPassword ? 'text' : 'password'}
           required
           placeholder="Password*"
-          className={classes.textField}
+          className={clsx(classes.textField, classes.passwordTextField)}
           InputProps={{
             endAdornment: (true) &&
               (

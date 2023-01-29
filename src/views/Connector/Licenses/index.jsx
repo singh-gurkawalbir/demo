@@ -19,6 +19,7 @@ import NoResultTypography from '../../../components/NoResultTypography';
 import { buildDrawerUrl, drawerPaths } from '../../../utils/rightDrawer';
 import ActionGroup from '../../../components/ActionGroup';
 import PageContent from '../../../components/PageContent';
+import messageStore from '../../../utils/messageStore';
 
 const defaultFilter = {
   take: parseInt(process.env.DEFAULT_TABLE_ROW_COUNT, 10) || 10,
@@ -149,7 +150,8 @@ export default function Licenses(props) {
           {list.count === 0 ? (
             <div>
               {list.total === 0
-                ? <NoResultTypography>You don&apos;t have any licenses</NoResultTypography>
+
+                ? <NoResultTypography> {messageStore('NO_RESULT', {message: 'licenses'})}</NoResultTypography>
                 : <NoResultTypography>{NO_RESULT_SEARCH_MESSAGE}</NoResultTypography>}
             </div>
           ) : (

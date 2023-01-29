@@ -37,6 +37,7 @@ import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
 import TrashIcon from '../../../../../components/icons/TrashIcon';
 import { TextButton } from '../../../../../components/Buttons';
 import { buildDrawerUrl, drawerPaths } from '../../../../../utils/rightDrawer';
+import { message } from '../../../../../utils/messageStore';
 
 const useStyles = makeStyles(theme => ({
   installIntegrationWrapper: {
@@ -308,7 +309,7 @@ export default function ConnectorInstallation() {
     e.preventDefault();
     confirmDialog({
       title: 'Confirm uninstall',
-      message: 'Are you sure you want to uninstall?',
+      message: message.SURE_UNINSTALL,
       buttons: [
         {
           label: 'Uninstall',

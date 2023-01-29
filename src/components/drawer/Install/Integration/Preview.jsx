@@ -8,7 +8,7 @@ import actions from '../../../../actions';
 import useConfirmDialog from '../../../ConfirmDialog';
 import PreviewTable from '../common/PreviewTable';
 import getRoutePath from '../../../../utils/routePaths';
-import messageStore from '../../../../utils/messageStore';
+import { message } from '../../../../utils/messageStore';
 import FilledButton from '../../../Buttons/FilledButton';
 
 const emptyObject = {};
@@ -63,7 +63,7 @@ export default function IntegrationPreview() {
   const handleInstallIntegration = () => {
     confirmDialog({
       title: 'Disclaimer',
-      message: messageStore('DIY_INSTALL_DISCLAIMER'),
+      message: message.DISCLAIMER.DIY_INSTALL_DISCLAIMER,
       buttons: [
         {
           label: 'Proceed',
@@ -81,7 +81,7 @@ export default function IntegrationPreview() {
     <div>
       <Typography variant="h4">Preview</Typography>
       <Typography>
-        The following components are created with this integration:
+        {message.COMPONENT_INFO}
       </Typography>
 
       <div className={classes.preview}>

@@ -11,6 +11,7 @@ import Spinner from '../../Spinner';
 import PreviewLogDetails from './PreviewLogDetails';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 import { FILTER_KEY } from '../../../utils/flowStepLogs';
+import { message } from '../../../utils/messageStore';
 
 const useStyles = makeStyles(theme => ({
   listContainer: {
@@ -118,7 +119,7 @@ export default function LogsTable({ flowId, resourceType, resourceId }) {
             actionProps={actionProps} />
           {!hasDebugLogs && !hasNextPage && (
           <Typography className={classes.textWrapper}>
-            You don’t have any debug log entries.
+            {message.NO_DEBUG_LOG}
           </Typography>
           )}
           {!hasDebugLogs && hasNextPage && fetchStatus === 'inProgress' && (

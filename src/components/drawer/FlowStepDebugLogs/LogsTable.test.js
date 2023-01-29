@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { screen } from '@testing-library/react';
@@ -7,6 +6,7 @@ import * as reactRedux from 'react-redux';
 import { renderWithProviders, reduxStore } from '../../../test/test-utils';
 import LogsTable from './LogsTable';
 import actionTypes from '../../../actions/types';
+import { message } from '../../../utils/messageStore';
 
 const props = {
   flowId: 'random_mock_flowId',
@@ -88,7 +88,7 @@ describe('LogsTable tests', () => {
     expect(screen.queryByText(/Stage/i)).toBeInTheDocument();
     expect(screen.queryByText(/Response code/i)).toBeInTheDocument();
     expect(screen.queryByText(/Actions/i)).toBeInTheDocument();
-    expect(screen.queryByText(/You don’t have any debug log entries./i)).toBeInTheDocument();
+    expect(screen.queryByText(message.NO_DEBUG_LOG)).toBeInTheDocument();
   });
   test('Should able to show spinner without any logs and has next page with fetching in progress', async () => {
     await initLogsTable({props, nextPageURL: '/v1(api)/flows/:_flowId', fetchStatus: 'inProgress'});

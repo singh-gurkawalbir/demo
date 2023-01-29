@@ -70,6 +70,14 @@ const useStyles = makeStyles(theme => ({
     minWidth: '240px',
     margin: theme.spacing(0, 0, 2, 0),
   },
+  passwordTextField: {
+    '& * >.MuiFilledInput-input': {
+      letterSpacing: '2px',
+      '&::placeholder': {
+        letterSpacing: '1px',
+      },
+    },
+  },
 }));
 
 function ForgotPassworLink({email = ''}) {
@@ -177,7 +185,7 @@ export default function SignIn({dialogOpen, className}) {
           required
           type="password"
           placeholder="Password*"
-          className={classes.textField}
+          className={clsx(classes.textField, classes.passwordTextField)}
         />
 
         <ForgotPassworLink email={email} />

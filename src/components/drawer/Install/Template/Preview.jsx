@@ -9,7 +9,7 @@ import useConfirmDialog from '../../../ConfirmDialog';
 import PreviewTable from '../common/PreviewTable';
 import AddIcon from '../../../icons/AddIcon';
 import getRoutePath from '../../../../utils/routePaths';
-import messageStore from '../../../../utils/messageStore';
+import { message } from '../../../../utils/messageStore';
 import { OutlinedButton } from '../../../Buttons';
 
 const useStyles = makeStyles(theme => ({
@@ -176,10 +176,10 @@ export default function TemplatePreview() {
 
   const getMessageForTemplate = () => {
     if (template?.user.company === 'Celigo') {
-      return messageStore('CELIGO_AUTHORED_TEMPLATE_DISCLAIMER');
+      return message.DISCLAIMER.CELIGO_AUTHORED_TEMPLATE_DISCLAIMER;
     }
 
-    return messageStore('THIRD_PARTY_TEMPLATE_DISCLAIMER');
+    return message.DISCLAIMER.THIRD_PARTY_TEMPLATE_DISCLAIMER;
   };
 
   const handleInstallIntegration = () => {
