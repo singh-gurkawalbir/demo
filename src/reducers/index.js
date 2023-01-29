@@ -366,21 +366,17 @@ selectors.integrationInstallSteps = createSelector(
     if (_connectorId) return installSteps;
     // Else do below changes to the install steps incase of a template
     // @Sravan review the logic below - moved from the component
-    const bundleInstallationForNetsuiteConnections = installSteps.filter(step => step.sourceConnection?.type === 'netsuite');
     const bundleInstallationForSalesforceConnections = installSteps.filter(step => step.sourceConnection?.type === 'salesforce');
 
-    let netsuiteConnIndex = 0;
     let salesforceConnIndex = 0;
     // passing connectionId as _connId in case of 'Integrator Bundle' and 'Integrator Adaptor Package'
 
     return installSteps.map(step => {
       if (step.installURL || step.url) {
         if (
-          step.name.includes('Integrator Bundle')
+          step.name.includes('Integrator Bundle') || step.name.includes('Integrator SuiteApp')
         ) {
-          const connectionId = bundleInstallationForNetsuiteConnections[netsuiteConnIndex]?._connectionId;
-
-          netsuiteConnIndex += 1;
+          const connectionId = installSteps.find(ele => step._forSourceConnectionId === ele?.sourceConnection?._id)?._connectionId;
 
           return {
             ...step,

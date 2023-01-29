@@ -121,9 +121,9 @@ export default {
       const conn = connections?.find(c => c._id === exp._connectionId);
 
       if (
-        (exp?.netsuite || {}).type === 'restlet' &&
-          ((exp?.netsuite?.restlet?.restletVersion === 'suiteapp1.0') || (exp?.netsuite?.restlet?.restletVersion === 'suiteapp2.0') ||
-          (exp?.netsuite?.distributed?.frameworkVersion === 'suiteapp1.0') || (exp?.netsuite?.distributed?.frameworkVersion === 'suiteapp2.0')) &&
+        (((exp?.netsuite || {}).type === 'restlet' && exp?.netsuite?.restlet?.recordType &&
+          (['suiteapp1.0', 'suitescript2.0'].includes(exp?.netsuite?.restlet?.restletVersion) || exp.netsuite.restlet.useSS2Restlets)) ||
+          ((exp?.type === 'distributed' || exp?.netsuite?.type === 'distributed') && exp?.netsuite?.distributed?.recordType && (['suiteapp1.0', 'suitescript2.0'].includes(exp?.netsuite?.distributed?.frameworkVersion) || exp?.netsuite?.distributed?.useSS2Framework))) &&
           conn?.type === 'netsuite' &&
           !netsuiteSuiteAppNeededForConnections.includes(conn)) {
         netsuiteSuiteAppNeededForConnections.push(conn);
@@ -144,15 +144,9 @@ export default {
     (importDocs || []).forEach(imp => {
       const conn = connections?.find(c => c._id === imp._connectionId);
 
-      if (imp.distributed && conn?.type === 'netsuite' && (!netsuiteBundleNeededForConnections.includes(conn))) {
+      if (conn?.type === 'netsuite' && (imp.netsuite_da?.restletVersion === 'suitebundle' || imp.netsuite_da?.useSS2Restlets === false) && (!netsuiteBundleNeededForConnections.includes(conn))) {
         netsuiteBundleNeededForConnections.push(conn);
-      }
-    });
-    (importDocs || []).forEach(imp => {
-      const conn = connections?.find(c => c._id === imp._connectionId);
-
-      // eslint-disable-next-line camelcase
-      if (((imp?.netsuite_da || {}).restletVersion === 'suiteapp1.0' || (imp?.netsuite_da || {}).restletVersion === 'suiteapp2.0') && conn?.type === 'netsuite' && (!netsuiteSuiteAppNeededForConnections.includes(conn))) {
+      } else if (conn?.type === 'netsuite' && (['suiteapp1.0', 'suiteapp2.0'].includes(imp.netsuite_da?.restletVersion) || imp.netsuite_da?.useSS2Restlets === true) && (!netsuiteSuiteAppNeededForConnections.includes(conn))) {
         netsuiteSuiteAppNeededForConnections.push(conn);
       }
     });
