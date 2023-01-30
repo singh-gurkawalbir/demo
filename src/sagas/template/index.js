@@ -102,15 +102,15 @@ export function* verifyBundleOrPackageInstall({
   step,
   connection,
   templateId,
-  type,
+  variant,
 }) {
-  const path = type ? `/connections/${connection._id}/distributed?type=${type}` : `/connections/${connection._id}/distributed`;
+  const path = variant ? `/connections/${connection._id}/distributed?type=${variant}` : `/connections/${connection._id}/distributed`;
   let response;
 
   try {
     response = yield call(apiCallWithRetry, {
       path,
-      message: type ? `Verifying ${type} Installation...` : 'Verifying Bundle/Package Installation...',
+      message: variant ? `Verifying ${variant} Installation...` : 'Verifying Bundle/Package Installation...',
     });
   } catch (error) {
     yield put(

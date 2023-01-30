@@ -159,7 +159,7 @@ export default {
       description: `Please install Integrator bundle in ${
         netsuiteBundleNeededForConnections.length > 1 ? conn.name : 'NetSuite'
       } account`,
-      name: conn.name.toLowerCase().includes('connection') ? `Integrator bundle for "${conn.name}"` : `Integrator bundle for "${conn.name}" connection`,
+      name: conn.name.toLowerCase().includes('connection') ? `Integrator Bundle for "${conn.name}"` : `Integrator Bundle for "${conn.name}" connection`,
       application: 'netsuite',
       type: INSTALL_STEP_TYPES.INSTALL_PACKAGE,
       options: {},
@@ -172,7 +172,7 @@ export default {
       description: `Please install Integrator suiteapp in ${
         netsuiteSuiteAppNeededForConnections.length > 1 ? conn.name : 'NetSuite'
       } account`,
-      name: conn.name.toLowerCase().includes('connection') ? `Integrator suiteapp for ${conn.name}` : `Integrator suiteapp for ${conn.name} connection`,
+      name: conn.name.toLowerCase().includes('connection') ? `Integrator Suiteapp for ${conn.name}` : `Integrator Suiteapp for ${conn.name} connection`,
       application: 'netsuite',
       type: INSTALL_STEP_TYPES.INSTALL_PACKAGE,
       options: {},
