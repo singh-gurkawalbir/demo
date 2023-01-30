@@ -254,7 +254,6 @@ export function* verifyBundleOrPackageInstall({
   isFrameWork2,
   variant,
 }) {
-  console.log(variant);
   const path = variant ? `/connections/${connectionId}/distributed?type=${variant}` : `/connections/${connectionId}/distributed`;
   let response;
 

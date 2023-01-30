@@ -258,68 +258,6 @@ export function* verifyBundleOrPackageInstall({
   }
 }
 
-export function* verifySuiteAppInstall({
-  id,
-  connectionId,
-  installerFunction,
-  isFrameWork2,
-}) {
-  const path = `/connection/${connectionId}/distributed?type=suiteapp`;
-  let response;
-
-  try {
-    response = yield call(apiCallWithRetry, {
-      path,
-      message: 'Verifying SuiteApp Installation...',
-    });
-  } catch (error) {
-    yield put(
-      actions.integrationApp.installer.updateStep(
-        id,
-        '',
-        'failed'
-      )
-    );
-
-    return undefined;
-  }
-
-  if (response?.success) {
-    if (isFrameWork2) {
-      yield put(
-        actions.integrationApp.installer.scriptInstallStep(id)
-      );
-    } else {
-      yield put(
-        actions.integrationApp.installer.installStep(
-          id,
-          installerFunction,
-        )
-      );
-    }
-  } else if (
-    response &&
-      !response.success &&
-      (response.resBody || response.message)
-  ) {
-    yield put(
-      actions.integrationApp.installer.updateStep(
-        id,
-        installerFunction,
-        'failed'
-      )
-    );
-    yield put(
-      actions.api.failure(
-        path,
-        'GET',
-        response.resBody || response.message,
-        false
-      )
-    );
-  }
-}
-
 export default [
   takeLatest(actionTypes.INTEGRATION_LCM.CLONE_FAMILY.REQUEST, requestIntegrationCloneFamily),
   takeLatest(actionTypes.INTEGRATION_LCM.REVISION.CREATE, createRevision),
@@ -331,5 +269,5 @@ export default [
   takeLatest(actionTypes.INTEGRATION_LCM.INSTALL_STEPS.STEP.INSTALL, installStep),
   takeLatest(actionTypes.INTEGRATION_LCM.REVISION.FETCH_ERRORS, fetchRevisionErrors),
   takeLatest(actionTypes.INTEGRATION_LCM.INSTALL_STEPS.STEP.VERIFY_BUNDLE_INSTALL, verifyBundleOrPackageInstall),
-  takeLatest(actionTypes.INTEGRATION_LCM.INSTALL_STEPS.STEP.VERIFY_SUITEAPP_INSTALL, verifySuiteAppInstall),
+  takeLatest(actionTypes.INTEGRATION_LCM.INSTALL_STEPS.STEP.VERIFY_SUITEAPP_INSTALL, verifyBundleOrPackageInstall),
 ];
