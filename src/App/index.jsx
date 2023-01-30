@@ -27,6 +27,7 @@ import colors from '../theme/colors';
 import AppErroredModal from './AppErroredModal';
 import WithAuth from './AppRoutingWithAuth';
 import CrashReporter from './CrashReporter';
+import ShopifyError from '../views/LandingPages/Shopify/Error';
 import LoadingNotification from './LoadingNotification';
 import ErrorNotifications from './ErrorNotifications';
 import CeligoAppBar from './CeligoAppBar';
@@ -129,6 +130,7 @@ const PUBLIC_ROUTES = [
   'signin',
   'signup',
   'mfa',
+  'shopify',
 ];
 
 const pageContentPaths = [getRoutePath('/*'), getRoutePath('/')];
@@ -146,6 +148,7 @@ export const PageContentComponents = () => (
         getRoutePath('/request-reset?email'),
         getRoutePath('/request-reset'),
       ]} component={ForgotPassword} />
+    <Route path={getRoutePath('/shopify/error')} component={ShopifyError} />
     <Route path={getRoutePath('/request-reset-sent')} component={ForgotPassword} />
     <Route path={getRoutePath('/accept-invite/:token')} component={AcceptInvite} />
     <Route path={getRoutePath('/concurconnect/:module')} component={ConcurConnect} />
