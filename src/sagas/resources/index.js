@@ -818,7 +818,15 @@ export function* getResourceCollection({ resourceType, refresh, integrationId })
       collection = undefined;
     }
 
-    yield put(actions.resource.receivedCollection(resourceType, collection, integrationId));
+    if (resourceType.startsWith('/integrations') && resourceType.endsWith('/tree/metadata')) {
+      const _integrationId = resourceType?.split('/')?.[1];
+      const newCollection = collection?.childIntegrations || [];
+
+      yield put(actions.resource.receivedCollection('integrations', newCollection, _integrationId));
+    } else {
+      yield put(actions.resource.receivedCollection(resourceType, collection, integrationId));
+    }
+
     yield put(actions.resource.collectionRequestSucceeded({resourceType: updatedResourceType, integrationId}));
 
     return collection;
