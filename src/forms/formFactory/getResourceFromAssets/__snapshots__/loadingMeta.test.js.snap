@@ -5201,7 +5201,7 @@ Object {
         "helpKey": "export.type",
         "id": "restlet.type",
         "isLoggable": true,
-        "label": "Export Type",
+        "label": "Export type",
         "refreshOptionsOnChangesTo": Array [
           "netsuite.restlet.recordType",
         ],
@@ -5277,9 +5277,39 @@ Object {
         "fieldId": "test.limit",
         "visibleWhen": Array [
           Object {
-            "field": "restlet.type",
-            "is": Array [
-              "test",
+            "OR": Array [
+              Object {
+                "AND": Array [
+                  Object {
+                    "field": "netsuite.api.type",
+                    "is": Array [
+                      "search",
+                    ],
+                  },
+                  Object {
+                    "field": "type",
+                    "is": Array [
+                      "test",
+                    ],
+                  },
+                ],
+              },
+              Object {
+                "AND": Array [
+                  Object {
+                    "field": "restlet.type",
+                    "is": Array [
+                      "test",
+                    ],
+                  },
+                  Object {
+                    "field": "netsuite.api.type",
+                    "is": Array [
+                      "restlet",
+                    ],
+                  },
+                ],
+              },
             ],
           },
         ],

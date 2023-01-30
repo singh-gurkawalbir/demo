@@ -7,6 +7,7 @@ import useConfirmDialog from '../../../../../../../components/ConfirmDialog';
 import actions from '../../../../../../../actions';
 import Spinner from '../../../../../../../components/Spinner';
 import Loader from '../../../../../../../components/Loader'; import OutlinedButton from '../../../../../../../components/Buttons/OutlinedButton';
+import { message } from '../../../../../../../utils/messageStore';
 
 const useStyles = makeStyles(theme => ({
   unInstallBtn: {
@@ -39,7 +40,7 @@ export default function AddonInstallerButton({ resource }) {
     if (resource.status === 'installed') {
       confirmDialog({
         title: 'Confirm uninstall',
-        message: 'Are you sure you want to uninstall?',
+        message: message.SURE_UNINSTALL,
         buttons: [
           {
             label: 'Uninstall',

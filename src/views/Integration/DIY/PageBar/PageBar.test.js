@@ -135,7 +135,6 @@ describe('PageBar2 UI tests', () => {
       parentContext: undefined,
       patch: [{op: 'replace', path: '/name', value: " AFE 2.0 refactoring for DB'schanged"}],
       resourceType: 'integrations',
-      scope: 'value',
       type: 'RESOURCE_STAGE_PATCH_AND_COMMIT'});
   });
   test('should test clonebutton', async () => {

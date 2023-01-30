@@ -20,7 +20,7 @@ import ActionGroup from '../../ActionGroup';
 import {RUN_HISTORY_STATUS_OPTIONS} from '../../../utils/accountDashboard';
 import JobTable from './JobTable';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
-import messageStore from '../../../utils/messageStore';
+import messageStore, { message } from '../../../utils/messageStore';
 
 const useStyles = makeStyles(theme => ({
   actions: {
@@ -195,7 +195,7 @@ export default function RunHistory({ flowId, className }) {
       dispatch(actions.job.purge.clear());
       dispatch(actions.errorManager.runHistory.request({ flowId }));
       enqueueSnackbar({
-        message: messageStore('FILE_PURGE_SUCCESS_MESSAGE'),
+        message: message.PURGE.FILE_PURGE_SUCCESS_MESSAGE,
         variant: 'success',
       });
     }
@@ -269,7 +269,7 @@ export default function RunHistory({ flowId, className }) {
       {(!hasFlowRunHistory && !isLoadingHistory) &&
         (
         <NoResultTypography isBackground className={clsx({[classes.hideWrapper]: isLoadingHistory})}>
-          You don&apos;t have any run history.
+          {messageStore('NO_RESULT', {message: 'run history'})}
         </NoResultTypography>
         )}
     </div>

@@ -13,6 +13,7 @@ import LoadResources from '../../components/LoadResources';
 import ActionGroup from '../../components/ActionGroup';
 import TextButton from '../../components/Buttons/TextButton';
 import FilledButton from '../../components/Buttons/FilledButton';
+import { message } from '../../utils/messageStore';
 
 const useStyles = makeStyles(theme => ({
   upgradeContainer: {
@@ -62,7 +63,7 @@ export default function UpgradeErrorManagement() {
     () => {
       confirmDialog({
         title: 'Confirm upgrade',
-        message: "Just as a reminder, you won't be able to switch back to the current error management platform.",
+        message: message.ERROR_MANAGEMENT_2.CONFIRM_UPGRADE_ERROR_MANAGEMENT,
         buttons: [
           {
             label: 'Yes, upgrade',

@@ -876,7 +876,7 @@ describe('suiteScriptResourceData selector', () => {
       merged: {},
     };
 
-    expect(selectors.suiteScriptResourceData(state, {resourceType, id, ssLinkedConnectionId, integrationId, scope: 'value'})).toEqual(expectedOutput);
+    expect(selectors.suiteScriptResourceData(state, {resourceType, id, ssLinkedConnectionId, integrationId})).toEqual(expectedOutput);
   });
   test('should return original resource data if no patch exists', () => {
     const state = {
@@ -910,7 +910,7 @@ describe('suiteScriptResourceData selector', () => {
       },
     };
 
-    expect(selectors.suiteScriptResourceData(state, {resourceType, id, ssLinkedConnectionId, integrationId, scope: 'value'})).toEqual(expectedOutput);
+    expect(selectors.suiteScriptResourceData(state, {resourceType, id, ssLinkedConnectionId, integrationId})).toEqual(expectedOutput);
   });
   test('should return original, patched and merged data along with lastChange if patch exists', () => {
     const state = {
@@ -941,7 +941,6 @@ describe('suiteScriptResourceData selector', () => {
             patch: [
               {op: 'replace',
                 path: '/import/netsuite/subRecordImports',
-                scope: 'value',
                 timestamp: 123455,
                 value: [
                   {
@@ -975,7 +974,6 @@ describe('suiteScriptResourceData selector', () => {
       patch: [
         {op: 'replace',
           path: '/import/netsuite/subRecordImports',
-          scope: 'value',
           timestamp: 123455,
           value: [
             {
@@ -1006,7 +1004,7 @@ describe('suiteScriptResourceData selector', () => {
         } },
     };
 
-    expect(selectors.suiteScriptResourceData(state, {resourceType, id, ssLinkedConnectionId, integrationId, scope: 'value'})).toEqual(expectedOutput);
+    expect(selectors.suiteScriptResourceData(state, {resourceType, id, ssLinkedConnectionId, integrationId})).toEqual(expectedOutput);
   });
 });
 

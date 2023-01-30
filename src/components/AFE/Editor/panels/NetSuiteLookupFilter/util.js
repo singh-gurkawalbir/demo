@@ -1,5 +1,6 @@
 /* eslint-disable no-param-reassign */
 import { isString, isArray, tail, filter } from 'lodash';
+import { message } from '../../../../../utils/messageStore';
 
 export function getFilterRuleId(rule) {
   return rule.id.split('_rule_')[1];
@@ -443,7 +444,7 @@ export function validateFilterRule(rule) {
 
   if (r.lhs.type && !r.lhs[r.lhs.type]) {
     validation.isValid = false;
-    validation.error = 'Please select left operand.';
+    validation.error = message.FILTER_PANEL.SELECT_LEFT_OPERAND;
   }
 
   if (!validation.isValid) {
@@ -452,7 +453,7 @@ export function validateFilterRule(rule) {
 
   if (r.rhs.type && !r.rhs[r.rhs.type]) {
     validation.isValid = false;
-    validation.error = 'Please select right operand.';
+    validation.error = message.FILTER_PANEL.SELECT_RIGHT_OPERAND;
   }
 
   if (!validation.isValid) {

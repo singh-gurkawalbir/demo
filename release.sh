@@ -48,7 +48,8 @@ NODE_ENV=production webpack --mode=production
 
 echo "creating logrocket release and uploading source maps for $LOGROCKET_IDENTIFIER ..."
 logrocket release $version --apikey=$LOGROCKET_API_KEY
-logrocket upload build/ --release=$version --apikey=$LOGROCKET_API_KEY --url-prefix=$URL_PREFIX
+# temporarily removing logrocket build to unblock QA
+# logrocket upload build/ --release=$version --apikey=$LOGROCKET_API_KEY --url-prefix=$URL_PREFIX
 
 if [ ! -z "$LOGROCKET_IDENTIFIER_EU" ]; then
   echo "creating logrocket release (for EU) and uploading source maps for $LOGROCKET_IDENTIFIER_EU ..."

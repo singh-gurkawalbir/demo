@@ -3,7 +3,7 @@ import React from 'react';
 import {fireEvent, screen} from '@testing-library/react';
 import { renderWithProviders } from '../../../test/test-utils';
 import ButtonWithTooltip from './index';
-import messageStore from '../../../utils/messageStore';
+import { message } from '../../../utils/messageStore';
 import TextButton from '../TextButton';
 
 import TrashIcon from '../../icons/TrashIcon';
@@ -15,7 +15,7 @@ function handleDeleteFlowGroupClick() {
 describe('buttontooltip component test', () => {
   test('before hovering over the button the title is displayed', () => {
     renderWithProviders(
-      <ButtonWithTooltip tooltipProps={{title: messageStore('FLOW_GROUP_DELETE_MESSAGE') }}>
+      <ButtonWithTooltip tooltipProps={{title: message.FLOWS.FLOW_GROUP_DELETE_MESSAGE }}>
         <TextButton onClick={handleDeleteFlowGroupClick} startIcon={<TrashIcon />}> Delete flow group </TextButton>
       </ButtonWithTooltip>
     );
@@ -30,7 +30,7 @@ describe('buttontooltip component test', () => {
 
   test('whenever hovering over the button then title is disappeared', () => {
     renderWithProviders(
-      <ButtonWithTooltip tooltipProps={{title: messageStore('FLOW_GROUP_DELETE_MESSAGE') }}>
+      <ButtonWithTooltip tooltipProps={{title: message.FLOWS.FLOW_GROUP_DELETE_MESSAGE }}>
         <TextButton onClick={handleDeleteFlowGroupClick} startIcon={<TrashIcon />}> Delete flow group </TextButton>
       </ButtonWithTooltip>
     );
@@ -48,7 +48,7 @@ describe('buttontooltip component test', () => {
 
   test('whenever hovering over the button then title is disappeared duplicate', () => {
     renderWithProviders(
-      <ButtonWithTooltip tooltipProps={{title: messageStore('FLOW_GROUP_DELETE_MESSAGE') }}>
+      <ButtonWithTooltip tooltipProps={{title: message.FLOWS.FLOW_GROUP_DELETE_MESSAGE}}>
         <TextButton onClick={handleDeleteFlowGroupClick} startIcon={<TrashIcon />}> Delete flow group </TextButton>
       </ButtonWithTooltip>
     );

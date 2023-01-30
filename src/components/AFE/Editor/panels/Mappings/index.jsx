@@ -14,6 +14,7 @@ import { emptyObject } from '../../../../../constants';
 import Mapper2 from './Mapper2';
 import NoResultTypography from '../../../../NoResultTypography';
 import VirtualizedDragContainer from '../../../../VirtualizedDragContainer';
+import { message } from '../../../../../utils/messageStore';
 
 const useStyles = makeStyles(theme => ({
   mappingDrawerContent: {
@@ -135,7 +136,7 @@ export default function MappingWrapper({ editorId }) {
   }, [mappingStatus]);
 
   if (mappingStatus === 'error') {
-    return (<NoResultTypography size="small" >Failed to load mapping.</NoResultTypography>);
+    return (<NoResultTypography size="small" >{message.MAPPER2.FAILED_TO_LOAD_MAPPING}</NoResultTypography>);
   }
   if (mappingStatus !== 'received') {
     return (

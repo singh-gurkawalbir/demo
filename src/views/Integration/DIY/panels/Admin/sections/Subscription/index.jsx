@@ -19,6 +19,7 @@ import ChildIntegrationsTable from './ChildIntegrationsTable';
 import UpgradeDrawer from '../../../../../App/drawers/Upgrade';
 import RequestUpgradeButton from './RequestUpgradeButton';
 import LoadResources from '../../../../../../../components/LoadResources';
+import messageStore, { message } from '../../../../../../../utils/messageStore';
 
 const emptyObject = {};
 const metadata = {
@@ -199,7 +200,7 @@ export default function SubscriptionSection({ childId, integrationId }) {
     if (upgradeText === 'Request upgrade') {
       confirmDialog({
         title: 'Request upgrade',
-        message: istwoDotZeroFrameWork ? 'You’ll receive a follow-up email from an associate shortly to discuss different plan options, resources & features available in each plan, and pricing.' : 'We will contact you to discuss your business needs and recommend an ideal subscription plan.',
+        message: istwoDotZeroFrameWork ? messageStore('SUBSCRIPTION.RECEIVE_FOLLOW_UP_EMAIL') : messageStore('SUBSCRIPTION.CONTACT_FOR_BUSINESS_NEEDS', {plan: 'ideal'}),
         buttons: [
           {
             label: 'Submit request',
@@ -226,7 +227,7 @@ export default function SubscriptionSection({ childId, integrationId }) {
   const handleUpgradeEdition = useCallback(() => {
     confirmDialog({
       title: 'Upgrade plan',
-      message: `Upgrade to a ${nextPlan} plan. Upgrades might require additional install steps to complete. If there are multiple accounts tied to this integration app, those accounts will begin installing once the subscription upgrade is complete.`,
+      message: messageStore('SUBSCRIPTION.UPGRADE_TO_NEXT_PLAN', {nextPlan}),
       buttons: [
         {
           label: 'Continue',
@@ -289,9 +290,7 @@ export default function SubscriptionSection({ childId, integrationId }) {
           <Divider />
         </div>
         <Typography className={classes.message}>
-          Your subscription gives you access to install and run one instance
-          (tile) of this Integration App. Contact your Account Manager for more
-          info.
+          {message.SUBSCRIPTION.CONTACT_ACCOUNT_MANAGER}
         </Typography>
         <LoadResources required integrationId={integrationId} resources="integrations">
           {allChildIntegrations.length ? (
@@ -308,8 +307,7 @@ export default function SubscriptionSection({ childId, integrationId }) {
                 Add-ons
               </Typography>
               <Typography className={classes.message}>
-                You don’t have any add-ons yet. Add-ons let you customize
-                subscription to meet your specific business requirements.
+                {message.ADDONS.NOT_EXIST}
               </Typography>
             </div>
             <div>
@@ -330,9 +328,7 @@ export default function SubscriptionSection({ childId, integrationId }) {
                 Add-ons
               </Typography>
               <Typography variant="body2">
-                Add-ons let you customize your subscription to meet your
-                specific business requirements. They will expire when your
-                Integration App subscription expires.
+                {message.ADDONS.CUSTOMIZE}
               </Typography>
             </div>
 

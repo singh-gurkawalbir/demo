@@ -19,6 +19,8 @@ import getRoutePath from '../../../../utils/routePaths';
 import { camelCase } from '../../../../utils/string';
 import useHandleDelete from '../../hooks/useHandleDelete';
 import { useAvailableTabs } from '../useAvailableTabs';
+import LoadResources from '../../../../components/LoadResources';
+import { emptyList } from '../../../../constants';
 
 const integrationsFilterConfig = { type: 'integrations' };
 const useStyles = makeStyles(theme => ({
@@ -52,6 +54,8 @@ export default function PageBar() {
     hasIntegration,
     supportsChild,
     tag,
+    isIAV2,
+    parentId,
   } = useSelector(state => {
     const integration = selectors.resource(
       state,
@@ -73,6 +77,8 @@ export default function PageBar() {
         uninstallSteps: integration.uninstallSteps,
         supportsChild: integration.initChild?.function,
         tag: integration.tag,
+        isIAV2: integration._sourceId || integration._parentId,
+        parentId: integration._parentId,
       };
     }
 
@@ -80,6 +86,7 @@ export default function PageBar() {
   }, shallowEqual);
 
   const children = useSelectorMemo(selectors.mkIntegrationChildren, integrationId);
+  const resourcesToLoad = isIntegrationApp && isIAV2 ? `integrations/${parentId || integrationId}/tree/metadata` : emptyList;
 
   const integrations = useSelectorMemo(
     selectors.makeResourceListSelector,
@@ -239,23 +246,25 @@ export default function PageBar() {
             data-test="addNewStore">
             {`Add new ${camelCase(childDisplayName) || 'child'}`}
           </TextButton>
-          <Select
-            displayEmpty
-            data-test="select Child"
-            className={classes.storeSelect}
-            onChange={handleChildChange}
-            IconComponent={ArrowDownIcon}
-            value={childId}>
-            <MenuItem disabled value="">
-              {`Select ${camelCase(childDisplayName) || 'child'}`}
-            </MenuItem>
-
-            {children.map(s => (
-              <MenuItem key={s.value} value={s.value}>
-                {s.label}
+          <LoadResources required resources={resourcesToLoad}>
+            <Select
+              displayEmpty
+              data-test="select Child"
+              className={classes.storeSelect}
+              onChange={handleChildChange}
+              IconComponent={ArrowDownIcon}
+              value={childId}>
+              <MenuItem disabled value="">
+                {`Select ${camelCase(childDisplayName) || 'child'}`}
               </MenuItem>
-            ))}
-          </Select>
+
+              {children.map(s => (
+                <MenuItem key={s.value} value={s.value}>
+                  {s.label}
+                </MenuItem>
+              ))}
+            </Select>
+          </LoadResources>
         </>
         )}
 

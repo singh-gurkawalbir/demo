@@ -69,7 +69,7 @@ export default function Redirection({children}) {
     }
 
     return () => {
-      dispatch(actions.resource.clearStaged(flowId, 'values'));
+      dispatch(actions.resource.clearStaged(flowId));
     };
   }, [dispatch, flowGroupingId, flowId, match.url, patchNewFlow]);
 

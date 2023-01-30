@@ -8,6 +8,7 @@ import PreviewButtonGroup from '../actions/PreviewButtonGroup';
 import ToggleLayout from '../actions/ToggleLayout';
 import ActionGroup from '../../../ActionGroup';
 import CeligoDivider from '../../../CeligoDivider';
+import messageStore from '../../../../utils/messageStore';
 
 const useStyles = makeStyles({
   ribbon: {
@@ -33,7 +34,7 @@ export default function ActionsRibbon({ editorId, className }) {
   const menuActions = drawerActions.filter(a => a.position === 'menu');
 
   if (menuActions.length > 1) {
-    throw new Error(`Only 1 menu action is allowed. Found ${menuActions.length}`);
+    throw new Error(messageStore('AFE_EDITOR_PANELS_INFO.DRAWER_ACTIONS_RIBBON_LENGTH', {length: menuActions.length}));
   }
 
   const MenuAction = menuActions.length ? menuActions[0].component : null;

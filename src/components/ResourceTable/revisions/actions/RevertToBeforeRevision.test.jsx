@@ -1,8 +1,5 @@
-
 import React from 'react';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { screen } from '@testing-library/react';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter, Route } from 'react-router-dom';
 import { renderWithProviders, reduxStore } from '../../../../test/test-utils';
