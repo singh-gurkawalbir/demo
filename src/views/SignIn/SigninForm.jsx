@@ -11,7 +11,6 @@ import ErrorIcon from '../../components/icons/ErrorIcon';
 import ShowContentIcon from '../../components/icons/ShowContentIcon';
 import HideContentIcon from '../../components/icons/HideContentIcon';
 import SecurityIcon from '../../components/icons/SecurityIcon';
-import { getDomain } from '../../utils/resource';
 import { AUTH_FAILURE_MESSAGE } from '../../constants';
 import getRoutePath from '../../utils/routePaths';
 import Spinner from '../../components/Spinner';
@@ -325,27 +324,29 @@ export default function SignIn({dialogOpen, className}) {
             </FilledButton>
           )}
       </form>
-      { !isAuthenticating && getDomain() !== 'eu.integrator.io' && (
+      { !isAuthenticating && (
       <div>
-        {!dialogOpen && (
-        <form onSubmit={handleSignInWithGoogle}>
-          <TextField
-            data-private
-            type="hidden"
-            id="attemptedRoute"
-            name="attemptedRoute"
-            value={attemptedRoute || getRoutePath('/')}
+        {!dialogOpen &&
+        // eslint-disable-next-line no-undef
+        ALLOW_GOOGLE_SIGNIN === 'true' && (
+          <form onSubmit={handleSignInWithGoogle}>
+            <TextField
+              data-private
+              type="hidden"
+              id="attemptedRoute"
+              name="attemptedRoute"
+              value={attemptedRoute || getRoutePath('/')}
                 />
-          <div className={classes.or}>
-            <Typography variant="body1">or</Typography>
-          </div>
-          <OutlinedButton
-            type="submit"
-            color="secondary"
-            className={classes.googleBtn}>
-            Sign in with Google
-          </OutlinedButton>
-        </form>
+            <div className={classes.or}>
+              <Typography variant="body1">or</Typography>
+            </div>
+            <OutlinedButton
+              type="submit"
+              color="secondary"
+              className={classes.googleBtn}>
+              Sign in with Google
+            </OutlinedButton>
+          </form>
         )}
         {dialogOpen && userHasOtherLoginOptions && (
           <div className={classes.or}>
@@ -363,7 +364,9 @@ export default function SignIn({dialogOpen, className}) {
             </OutlinedButton>
           </form>
         )}
-        {dialogOpen && userEmail && userProfileLinkedWithGoogle && (
+        {dialogOpen && userEmail && userProfileLinkedWithGoogle &&
+        // eslint-disable-next-line no-undef
+        ALLOW_GOOGLE_SIGNIN === 'true' && (
         <form onSubmit={handleReSignInWithGoogle}>
           <OutlinedButton
             type="submit"
