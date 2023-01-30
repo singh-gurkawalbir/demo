@@ -396,8 +396,12 @@ export function fieldMeta({ resource, assistantData }) {
     },
     formView: { fieldId: 'formView' },
     dataMappings: { formId: 'dataMappings' },
-    apiIdentifier: { fieldId: 'apiIdentifier' },
-    traceKeyTemplate: { fieldId: 'traceKeyTemplate' },
+    'http.ignoreEmptyNodes': { fieldId: 'http.ignoreEmptyNodes' },
+    advancedSettings: {
+      formId: 'advancedSettings',
+    },
+    'http.configureAsyncHelper': { fieldId: 'http.configureAsyncHelper' },
+    'http._asyncHelperId': { fieldId: 'http._asyncHelperId' },
   };
   const fieldIds = [];
 
@@ -450,7 +454,10 @@ export function fieldMeta({ resource, assistantData }) {
         {
           collapsed: true,
           label: 'Advanced',
-          fields: ['traceKeyTemplate', 'apiIdentifier'],
+          fields: ['http.ignoreEmptyNodes',
+            'advancedSettings',
+            'http.configureAsyncHelper',
+            'http._asyncHelperId'],
         },
       ],
     },
