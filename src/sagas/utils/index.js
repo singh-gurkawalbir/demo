@@ -701,15 +701,15 @@ export const updateFinalMetadataWithHttpFramework = (finalFieldMeta, connector, 
         const baseURIValue = tempFiledMeta?.fieldMap['http.baseURI']?.defaultValue;
 
         fieldIds.forEach(field => {
-          (new RegExp(`{{{(.)*(${field})(.)*}}}`)).test(baseURIValue) ? baseURIFields.push(field) : authFields.push(field);
+          (new RegExp(`{{(.)*(${field})(.)*}}`)).test(baseURIValue) ? baseURIFields.push(field) : authFields.push(field);
         });
         if (baseURIFields.length > 0) {
               tempFiledMeta?.layout?.containers[1]?.containers[1].containers.splice(0, 1, {fields: baseURIFields});
         } else if (preConfiguredField) {
           preConfiguredField.forEach(field => {
             if (field._conditionIds?.length) {
-              const conditionFields = connectionTemplate.conditions?.filter(field1 => field1._id === field._conditionIds[0]);
-              const dependentField = conditionFields[0].condition.rules[1][1][1];
+              const conditionFields = connectionTemplate?.conditions?.filter(field1 => field1._id === field?._conditionIds[0]);
+              const dependentField = conditionFields[0]?.condition?.rules[1][1][1];
 
               tempFiledMeta?.layout?.containers[1]?.containers[1].containers.splice(0, 1, {fields: [dependentField]});
             }
@@ -721,7 +721,7 @@ export const updateFinalMetadataWithHttpFramework = (finalFieldMeta, connector, 
           delete tempFiledMeta?.layout?.containers[3]?.containers[1]?.type;
         }
         if (tempFiledMeta?.layout?.containers[1]?.containers[1].containers[0].fields.length > 0) {
-          const baseurlDependentFields = tempFiledMeta?.layout?.containers[1]?.containers[1].containers[0].fields;
+          const baseurlDependentFields = tempFiledMeta?.layout?.containers[1]?.containers[1]?.containers[0].fields;
 
           baseurlDependentFields.forEach(field => {
             const indexcheck = fieldIds.indexOf(field);
