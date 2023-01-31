@@ -4,6 +4,8 @@ import { screen } from '@testing-library/react';
 import { MemoryRouter, Route } from 'react-router-dom';
 import userEvent from '@testing-library/user-event';
 import * as reactRedux from 'react-redux';
+import { DndProvider } from 'react-dnd';
+import { HTML5Backend } from 'react-dnd-html5-backend';
 import { renderWithProviders } from '../../../test/test-utils';
 import FlowBuilderBody from '.';
 import { getCreatedStore } from '../../../store';
@@ -109,18 +111,20 @@ function initFlowBuilderBody(props = {}) {
     },
   };
   const ui = (
-    <MemoryRouter
-      initialEntries={[
-        {
-          pathname:
+    <DndProvider backend={HTML5Backend}>
+      <MemoryRouter
+        initialEntries={[
+          {
+            pathname:
             '/integrations/6253af74cddb8a1ba550a010/flowBuilder/62c6f122a2f4a703c3dee3d0',
-        },
-      ]}
+          },
+        ]}
     >
-      <Route path="/integrations/:integrationId/flowBuilder/:flowId">
-        <FlowBuilderBody {...props} />
-      </Route>
-    </MemoryRouter>
+        <Route path="/integrations/:integrationId/flowBuilder/:flowId">
+          <FlowBuilderBody {...props} />
+        </Route>
+      </MemoryRouter>
+    </DndProvider>
   );
 
   renderWithProviders(ui, { initialStore });
