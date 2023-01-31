@@ -14,13 +14,13 @@ import metadata from './metadata';
 import { generateNewId } from '../../../utils/resource';
 import LoadResources from '../../../components/LoadResources';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
-import { SCOPES } from '../../../sagas/resourceForm';
 import { TextButton } from '../../../components/Buttons';
 import { NO_RESULT_SEARCH_MESSAGE } from '../../../constants';
 import NoResultTypography from '../../../components/NoResultTypography';
 import { buildDrawerUrl, drawerPaths } from '../../../utils/rightDrawer';
 import ActionGroup from '../../../components/ActionGroup';
 import PageContent from '../../../components/PageContent';
+import messageStore from '../../../utils/messageStore';
 
 const clone = rfdc({proto: true});
 
@@ -114,7 +114,7 @@ export default function Licenses(props) {
       });
     }
 
-    dispatch(actions.resource.patchStaged(newId, patchSet, SCOPES.VALUE));
+    dispatch(actions.resource.patchStaged(newId, patchSet));
 
     history.push(buildDrawerUrl({
       path: drawerPaths.RESOURCE.ADD,
@@ -153,7 +153,8 @@ export default function Licenses(props) {
           {list.count === 0 ? (
             <div>
               {list.total === 0
-                ? <NoResultTypography>You don&apos;t have any licenses</NoResultTypography>
+
+                ? <NoResultTypography> {messageStore('NO_RESULT', {message: 'licenses'})}</NoResultTypography>
                 : <NoResultTypography>{NO_RESULT_SEARCH_MESSAGE}</NoResultTypography>}
             </div>
           ) : (

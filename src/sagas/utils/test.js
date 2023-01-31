@@ -207,7 +207,7 @@ describe('constructResourceFromFormValues saga', () => {
       resourceType,
     })
       .provide([
-        [select(selectors.resourceData, 'imports', resourceId, 'value'), { merged }],
+        [select(selectors.resourceData, 'imports', resourceId), { merged }],
         [matchers.call.fn(createFormValuesPatchSet), {patchSet}],
       ])
       .returns(expectedOutput)
@@ -235,7 +235,7 @@ describe('constructResourceFromFormValues saga', () => {
       resourceType,
     })
       .provide([
-        [select(selectors.resourceData, 'imports', resourceId, 'value'), { merged }],
+        [select(selectors.resourceData, 'imports', resourceId), { merged }],
         [matchers.call.fn(createFormValuesPatchSet), {patchSet}],
       ])
       .returns({})

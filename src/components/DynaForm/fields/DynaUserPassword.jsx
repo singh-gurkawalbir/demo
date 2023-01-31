@@ -2,6 +2,7 @@ import React, { useState, useCallback } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { useDispatch } from 'react-redux';
 import { FormControl, FormLabel, TextField } from '@material-ui/core';
+import clsx from 'clsx';
 import ChangePassword from '../../../views/MyAccount/ChangePassword';
 import actions from '../../../actions';
 import FieldHelp from '../FieldHelp';
@@ -22,6 +23,14 @@ const useStyles = makeStyles(() => ({
   },
   field: {
     width: '100%',
+  },
+  dynaPasswordTextField: {
+    '& * >.MuiFilledInput-input': {
+      letterSpacing: '2px',
+      '&::placeholder': {
+        letterSpacing: '1px',
+      },
+    },
   },
 }));
 
@@ -54,7 +63,7 @@ export default function DynaUserPassword(props) {
           type="password"
           value="**********"
           disabled
-          className={classes.field}
+          className={clsx(classes.field, classes.dynaPasswordTextField)}
           variant="filled"
         />
         <ActionButton

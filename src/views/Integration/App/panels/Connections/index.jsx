@@ -144,7 +144,7 @@ export default function ConnectionsPanel({ integrationId, childId }) {
                 }
 
                 dispatch(
-                  actions.resource.patchStaged(newId, patchSet, 'value')
+                  actions.resource.patchStaged(newId, patchSet)
                 );
               }}>
               Create connection

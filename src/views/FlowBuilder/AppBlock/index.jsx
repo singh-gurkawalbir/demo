@@ -30,7 +30,7 @@ import { useIsDragInProgress } from '../hooks';
 import { getConnectorId } from '../../../utils/assistant';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import RawHtml from '../../../components/RawHtml';
-import messageStore from '../../../utils/messageStore';
+import { message } from '../../../utils/messageStore';
 
 const blockHeight = 170;
 const blockWidth = 275;
@@ -230,7 +230,7 @@ export default function AppBlock({
   ) {
     noDragInfo = 'There are no available locations this step can be moved to.';
   } else if (!isLinearFlow) {
-    noDragInfo = <RawHtml html={messageStore('NO_DRAG_FLOW_BRANCHING_INFO')} />;
+    noDragInfo = <RawHtml html={message.FLOWS.NO_DRAG_FLOW_BRANCHING_INFO} />;
   }
 
   const classes = useStyles({ isHover, noDragInfo });

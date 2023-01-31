@@ -3,7 +3,6 @@ import actions from '../../actions';
 import actionTypes from '../../actions/types';
 import { apiCallWithRetry } from '../index';
 import { commitStagedChanges } from '../resources';
-import { SCOPES } from '../suiteScript/resourceForm';
 
 export function* fetchMetadata({
   fieldType,
@@ -100,12 +99,11 @@ export function* publishStatus({ _integrationId: connectorId, isPublished }) {
     },
   ];
 
-  yield put(actions.resource.patchStaged(connectorId, patchSet, SCOPES.VALUE));
+  yield put(actions.resource.patchStaged(connectorId, patchSet));
 
   const resp = yield call(commitStagedChanges, {
     resourceType: 'connectors',
     id: connectorId,
-    scope: SCOPES.VALUE,
   });
 
   if (resp?.error) {

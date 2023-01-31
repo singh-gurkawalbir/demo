@@ -7,12 +7,12 @@ import ArrowDownIcon from '../../../../../../icons/ArrowDownIcon';
 import useKeyboardShortcut from '../../../../../../../hooks/useKeyboardShortcut';
 import ExtractsTree from './ExtractsTree';
 import { DATA_TYPES_REPRESENTATION_LIST, MAPPING_DATA_TYPES } from '../../../../../../../utils/mapping';
-import messageStore from '../../../../../../../utils/messageStore';
 import ArrowPopper from '../../../../../../ArrowPopper';
 import useDebouncedValue from '../../../../../../../hooks/useDebouncedInput';
 import actions from '../../../../../../../actions';
 import SourceDataType from './SourceDataType';
 import reducer from './stateReducer';
+import messageStore from '../../../../../../../utils/messageStore';
 
 const useStyles = makeStyles(theme => ({
   customTextField: {
@@ -110,11 +110,11 @@ export const TooltipTitle = ({
 
   if (hideSourceDropdown) {
     if (isDynamicLookup) {
-      hideDropdownMsgKey = 'DYNAMIC_LOOKUP_SOURCE_TOOLTIP';
+      hideDropdownMsgKey = 'MAPPER2.DYNAMIC_LOOKUP_SOURCE_TOOLTIP';
     } else if (isHardCodedValue) {
-      hideDropdownMsgKey = 'HARD_CODED_SOURCE_TOOLTIP';
+      hideDropdownMsgKey = 'MAPPER2.HARD_CODED_SOURCE_TOOLTIP';
     } else if (isHandlebarExp) {
-      hideDropdownMsgKey = 'HANDLEBARS_SOURCE_TOOLTIP';
+      hideDropdownMsgKey = 'MAPPER2.HANDLEBARS_SOURCE_TOOLTIP';
     }
   }
 

@@ -1,7 +1,7 @@
 dist: focal
 language: node_js
 node_js:
-  - '18.13.0'
+  - '18.12.1'
 git:
   depth: 1
   submodules: false

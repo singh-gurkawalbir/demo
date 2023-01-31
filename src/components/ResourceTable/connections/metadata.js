@@ -22,6 +22,7 @@ import OnlineStatus from '../../OnlineStatus';
 import { selectors } from '../../../reducers';
 
 export default {
+  key: 'connections',
   useColumns: () => {
     const tableContext = useGetTableContext();
     const columns = [

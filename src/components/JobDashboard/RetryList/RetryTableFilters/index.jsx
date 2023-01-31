@@ -5,7 +5,7 @@ import { selectors } from '../../../../reducers';
 import actions from '../../../../actions';
 import Icon from '../../../icons/RefreshIcon';
 import TextButton from '../../../Buttons/TextButton';
-import messageStore from '../../../../utils/messageStore';
+import { message } from '../../../../utils/messageStore';
 import MultiSelectUsersFilter from './MultiSelectUsersFilter';
 import NotificationToaster from '../../../NotificationToaster';
 
@@ -66,7 +66,7 @@ export default function RetryTableFilters({flowId, resourceId, filterKey}) {
         </div>
         {(!retryStatus && (isOpenErrorsUpdated || isResolvedErrorsUpdated)) ? (
           <NotificationToaster variant="info" transparent italic noBorder >
-            {messageStore('RETRIES_TAB_ERRORS_UPDATED_INFO')}
+            {message.RETRY.RETRIES_TAB_ERRORS_UPDATED_INFO}
           </NotificationToaster>
         ) : ''}
       </div>

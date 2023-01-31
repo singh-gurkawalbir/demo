@@ -5,7 +5,6 @@ import { Typography } from '@material-ui/core';
 import { selectors } from '../../../../../reducers';
 import SubRecordDrawer from './SubRecordDrawer';
 import actions from '../../../../../actions';
-import { SCOPES } from '../../../../../sagas/resourceForm';
 import EditIcon from '../../../../icons/EditIcon';
 import DeleteIcon from '../../../../icons/TrashIcon';
 import ActionButton from '../../../../ActionButton';
@@ -91,7 +90,6 @@ export default function DynaNetSuiteSubRecords(props) {
                       value: updatedSubrecords,
                     },
                   ],
-                  SCOPES.VALUE
                 )
               );
             },

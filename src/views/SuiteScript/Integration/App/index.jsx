@@ -72,7 +72,6 @@ export default function Integration({ match }) {
         actions.suiteScript.resource.patchStaged(
           integrationId,
           [{ op: 'replace', path: '/name', value: title }],
-          'value',
           ssLinkedConnectionId,
           integrationId,
           'integrations'
@@ -81,7 +80,6 @@ export default function Integration({ match }) {
       dispatch(
         actions.suiteScript.resource.commitStaged(
           integrationId,
-          'value',
           ssLinkedConnectionId,
           integrationId,
           'integrations'

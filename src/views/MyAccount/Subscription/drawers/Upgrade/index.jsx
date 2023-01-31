@@ -8,6 +8,7 @@ import RightDrawer from '../../../../../components/drawer/Right';
 import DrawerContent from '../../../../../components/drawer/Right/DrawerContent';
 import DrawerHeader from '../../../../../components/drawer/Right/DrawerHeader';
 import FilledButton from '../../../../../components/Buttons/FilledButton';
+import { message } from '../../../../../utils/messageStore';
 
 const useStyles = makeStyles(theme => ({
   button: {
@@ -33,10 +34,7 @@ export default function UpgradeDrawer() {
       <DrawerHeader title="Upgrade your subscription" />
       <DrawerContent>
         <Typography>
-          You are currently on the Free Edition of integrator.io, which gives
-          you one active flow at any given time. Upgrade to one of our paid
-          subscriptions and unlock multiple flow activation to fulfill all
-          your integration needs.
+          {message.SUBSCRIPTION.UPGRADE_YOUR_SUBSCRIPTION}
         </Typography>
 
         <FilledButton
@@ -50,7 +48,7 @@ export default function UpgradeDrawer() {
           data-test="learnmore-link"
           href="https://www.celigo.com/ipaas-integration-platform/#Pricing">
           <Typography variant="h5" color="primary">
-            Learn more about integrator.io premium packages
+            {message.INTEGRATION.LEARN_PREMIUM}
           </Typography>
         </a>
       </DrawerContent>

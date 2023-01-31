@@ -104,6 +104,7 @@ const useStyles = makeStyles(theme => ({
   },
   iconPassword: {
     cursor: 'pointer',
+    marginRight: theme.spacing(1),
   },
 }));
 

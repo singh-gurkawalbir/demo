@@ -1,5 +1,4 @@
 /* eslint-disable jest/no-standalone-expect */
-
 import each from 'jest-each';
 import { deepClone } from 'fast-json-patch';
 import moment from 'moment';
@@ -7,7 +6,7 @@ import reducer, { selectors } from '.';
 import actions from '../actions';
 import { ACCOUNT_IDS, INTEGRATION_ACCESS_LEVELS, USER_ACCESS_LEVELS } from '../constants';
 import { stringCompare } from '../utils/sort';
-import messageStore from '../utils/messageStore';
+import { message } from '../utils/messageStore';
 
 describe('Accounts region selector testcases', () => {
   describe('isAccountOwnerOrAdmin selector', () => {
@@ -1010,7 +1009,7 @@ describe('Accounts region selector testcases', () => {
           },
         };
 
-    const expected = {enable: false, message: messageStore('LICENSE_EXPIRED')};
+    const expected = {enable: false, message: message.SUBSCRIPTION.LICENSE_EXPIRED};
 
     test('should return false for expired license', () => {
       expect(selectors.isLicenseValidToEnableFlow(expiredState)).toEqual(expected);

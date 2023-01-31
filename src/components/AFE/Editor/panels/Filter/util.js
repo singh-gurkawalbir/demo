@@ -8,6 +8,7 @@ import {
   tail,
   filter,
 } from 'lodash';
+import { message } from '../../../../../utils/messageStore';
 
 const operatorsMap = {
   jQueryToIOFilters: {
@@ -386,11 +387,11 @@ export function validateFilterRule(rule) {
 
       if (JSON.parse(r.lhs.expression).length < 2) {
         toReturn.isValid = false;
-        toReturn.error = 'Please enter a valid expression.';
+        toReturn.error = message.FILTER_PANEL.INVALID_EXPRESSION;
       }
     } catch (ex) {
       toReturn.isValid = false;
-      toReturn.error = 'Expression should be a valid JSON.';
+      toReturn.error = message.FILTER_PANEL.INVALID_EXPRESSION_JSON;
     }
 
     if (toReturn.isValid) {
@@ -418,11 +419,11 @@ export function validateFilterRule(rule) {
 
       if (JSON.parse(r.rhs.expression).length < 2) {
         toReturn.isValid = false;
-        toReturn.error = 'Please enter a valid expression.';
+        toReturn.error = message.FILTER_PANEL.INVALID_EXPRESSION;
       }
     } catch (ex) {
       toReturn.isValid = false;
-      toReturn.error = 'Expression should be a valid JSON.';
+      toReturn.error = message.FILTER_PANEL.INVALID_EXPRESSION_JSON;
     }
 
     if (toReturn.isValid) {
@@ -451,7 +452,7 @@ export function validateFilterRule(rule) {
     */
   if (r.lhs.dataType && r.rhs.dataType && r.lhs.dataType !== r.rhs.dataType) {
     toReturn.isValid = false;
-    toReturn.error = 'Data types of both the operands should match.';
+    toReturn.error = message.FILTER_PANEL.INVALID_DATATYPES_OPERANDS;
   }
 
   if (!toReturn.isValid) {
@@ -460,7 +461,7 @@ export function validateFilterRule(rule) {
 
   if (r.lhs.type && !r.lhs[r.lhs.type]) {
     toReturn.isValid = false;
-    toReturn.error = 'Please select left operand.';
+    toReturn.error = message.FILTER_PANEL.SELECT_LEFT_OPERAND;
   }
 
   if (!toReturn.isValid) {
@@ -469,7 +470,7 @@ export function validateFilterRule(rule) {
 
   if (r.rhs.type && !r.rhs[r.rhs.type]) {
     toReturn.isValid = false;
-    toReturn.error = 'Please select right operand.';
+    toReturn.error = message.FILTER_PANEL.SELECT_RIGHT_OPERAND;
   }
 
   if (!toReturn.isValid) {

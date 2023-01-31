@@ -9,7 +9,7 @@ import actions from '../../../../actions';
 import { getValidRelativePath } from '../../../../utils/routePaths';
 import { buildDrawerUrl, drawerPaths } from '../../../../utils/rightDrawer';
 import { isMetaRequiredValuesMet, PARAMETER_LOCATION } from '../../../../utils/assistant';
-import messageStore from '../../../../utils/messageStore';
+import { message } from '../../../../utils/messageStore';
 import { EXPORT_FILTERED_DATA_STAGE, IMPORT_FLOW_DATA_STAGE } from '../../../../utils/flowData';
 
 const useStyles = makeStyles(theme => ({
@@ -144,7 +144,7 @@ export default function DynaHFAssistantSearchParams(props) {
 
       return;
     }
-    dispatch(actions.form.forceFieldState(formKey)(id, {isValid: isMetaValid, errorMessages: messageStore('REQUIRED_MESSAGE')}));
+    dispatch(actions.form.forceFieldState(formKey)(id, {isValid: isMetaValid, errorMessages: message.REQUIRED_MESSAGE}));
   }, [dispatch, formKey, id, isMetaValid, required]);
 
   useEffect(() => () => {

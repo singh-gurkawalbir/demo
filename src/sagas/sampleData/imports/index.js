@@ -3,7 +3,9 @@ import jsonPatch from 'fast-json-patch';
 import { deepClone } from 'fast-json-patch/lib/core';
 import actionTypes from '../../../actions/types';
 import { selectors } from '../../../reducers';
-import { SCOPES } from '../../resourceForm';
+// removing this import creates a cyclic dependency which breaks some test cases
+// eslint-disable-next-line no-unused-vars
+import { initFormValues } from '../../resourceForm';
 import { convertFromImport, convertToExport } from '../../../utils/assistant';
 import { requestAssistantMetadata, getNetsuiteOrSalesforceMeta} from '../../resources/meta';
 import { apiCallWithRetry } from '../..';
@@ -243,7 +245,6 @@ export function* requestSampleData({ resourceId, options = {}, refreshCache }) {
     selectors.resourceData,
     'imports',
     resourceId,
-    SCOPES.VALUE
   );
 
   if (!resource) return;

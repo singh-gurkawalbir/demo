@@ -17,6 +17,7 @@ import OutputFormatsList from './OutputFormatsList';
 import MoreActions from './MoreActions';
 import SearchIcon from '../../../../../icons/SearchIcon';
 import Mapper2Filter from '../../../panels/Mappings/Mapper2/Mapper2Filter';
+import { message } from '../../../../../../utils/messageStore';
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
@@ -148,7 +149,7 @@ export default function MapperPanelTitle({editorId, title, helpKey}) {
         <Mapper2Filter />
 
         {(searchKey === undefined) && (
-          <Tooltip title={isFilterApplied ? "You can't search while a filter is applied. Clear your filter to allow searching." : ''} placement="bottom">
+          <Tooltip title={isFilterApplied ? message.AFE_EDITOR_PANELS_INFO.FILTER_APPLIED : ''} placement="bottom">
             {/* This span is needed to render the tooltip correctly */}
             <span>
               <IconButton

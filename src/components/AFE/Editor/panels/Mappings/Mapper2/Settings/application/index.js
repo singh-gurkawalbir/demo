@@ -4,6 +4,7 @@ import httpMappingSettings from './http';
 import ftpMappingSettings from './ftp';
 import { MAPPING_DATA_TYPES, ARRAY_DATA_TYPES, buildExtractsHelperFromExtract } from '../../../../../../../../utils/mapping';
 import { generateId } from '../../../../../../../../utils/string';
+import messageStore, { message } from '../../../../../../../../utils/messageStore';
 
 const getFormattedLookup = (lookup, formVal, settings) => {
   const lookupTmp = {};
@@ -202,7 +203,7 @@ export default {
         });
 
         if (!atleastOneValMapped) {
-          errorMessage = 'You need to map at least one value.';
+          errorMessage = message.MAPPER2.ATLEAST_MAPPED_ONE_VALUE;
         }
 
         const formattedSourceValues = _mapList
@@ -215,9 +216,7 @@ export default {
           .map(e => formattedSourceValues[e]);
 
         if (duplicateKeys.length) {
-          errorMessage = `You cannot have duplicate source field values: ${duplicateKeys.join(
-            ','
-          )}`;
+          errorMessage = messageStore('MAPPER2.DUPLICATE_SOURCE_FIELD_VALUES', {duplicateKeys: duplicateKeys.join(',')});
         }
 
         if (errorMessage) {

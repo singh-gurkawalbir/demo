@@ -8,7 +8,6 @@ import DynaForm from '../../components/DynaForm';
 import DynaSubmit from '../../components/DynaForm/DynaSubmit';
 import PanelHeader from '../../components/PanelHeader';
 import dateTimezones from '../../utils/dateTimezones';
-import { getDomain } from '../../utils/resource';
 import getImageUrl from '../../utils/image';
 import getRoutePath from '../../utils/routePaths';
 import useFormInitWithPermissions from '../../hooks/useFormInitWithPermissions';
@@ -342,7 +341,9 @@ export default function ProfilePanel() {
           disabled={disableSave}>
           {defaultLabels.saveLabel}
         </DynaSubmit>
-        {getDomain() !== 'eu.integrator.io' && (
+        {
+        // eslint-disable-next-line no-undef
+        ALLOW_GOOGLE_SIGNIN === 'true' && (
         <div className={classes.googleSignInPanel}>
           <PanelHeader
             title="Sign in via Google"
@@ -377,7 +378,8 @@ export default function ProfilePanel() {
               </InputLabel>
           )}
         </div>
-        )}
+        )
+}
       </LoadResources>
     </div>
   );

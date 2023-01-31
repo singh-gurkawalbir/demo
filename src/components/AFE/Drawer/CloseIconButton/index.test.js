@@ -67,7 +67,6 @@ describe('test suite for RouterGuide', () => {
   });
   test('Should test EditorDrawerCloseIconButton button if it is diabled or not', async () => {
     await initEditorDrawerCloseIconButton('231c3', mockOnClose, false, 'requested');
-    screen.debug(null, Infinity);
     expect(screen.getByRole('button')).toBeDisabled();
   });
 });
