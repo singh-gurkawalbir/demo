@@ -7,7 +7,7 @@ import {
   INTEGRATION_ACCESS_LEVELS,
   EMAIL_REGEX,
 } from '../../../../constants';
-import messageStore from '../../../../utils/messageStore';
+import { message } from '../../../../utils/messageStore';
 import useFormInitWithPermissions from '../../../../hooks/useFormInitWithPermissions';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import LoadResources from '../../../LoadResources';
@@ -193,7 +193,7 @@ export default function UserForm({
         id: 'accountSSORequired',
         name: 'accountSSORequired',
         label: 'Require SSO?',
-        tooltip: messageStore('ACCOUNT_SSO_OR_MFA_REQUIRED_TOOLTIP'),
+        tooltip: message.MFA.ACCOUNT_SSO_OR_MFA_REQUIRED_TOOLTIP,
         defaultValue: isEditMode && isValidUser ? !!data.accountSSORequired : false,
         visible: !isEditMode && isAccountOwnerOrAdmin && isSSOEnabled,
         // Incase of invite, this field should not be passed if the owner has not enabled SSO
@@ -211,7 +211,7 @@ export default function UserForm({
         defaultValue: isEditMode && isValidUser ? !!data.accountMFARequired : false,
         visible: !isEditMode && isAccountOwnerOrAdmin,
         disabledWhen: [{ field: 'accountSSORequired', is: [true] }],
-        tooltip: messageStore('ACCOUNT_SSO_OR_MFA_REQUIRED_TOOLTIP'),
+        tooltip: message.MFA.ACCOUNT_SSO_OR_MFA_REQUIRED_TOOLTIP,
         helpKey: 'userForm.accountMFARequired',
         noApi: true,
       },

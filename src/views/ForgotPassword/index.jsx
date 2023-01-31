@@ -8,7 +8,7 @@ import { TextButton } from '../../components/Buttons';
 import actions from '../../actions';
 import ConcurForgotPassword from './Concur';
 import useQuery from '../../hooks/useQuery';
-import messageStore from '../../utils/messageStore';
+import messageStore, {message as messageStoreMessage} from '../../utils/messageStore';
 import UserSignInPage from '../../components/UserSignInPage';
 import RawHtml from '../../components/RawHtml';
 
@@ -44,12 +44,12 @@ function ForgotPassword(props) {
   function handleClick() {
     dispatch(actions.auth.resetRequestSent());
   }
-  let message = messageStore('FORGOT_PASSWORD_DEFAULT');
+  let message = messageStoreMessage.USER_SIGN_IN.FORGOT_PASSWORD_DEFAULT;
 
   if (successView) {
     message = `
-    <p className={classes.email}> ${email} </p>
-    If <b>${email}</b> ${messageStore('FORGOT_PASSWORD_USER_EXIST')}
+    <p> <b>${email}</b> </p>
+    <p>${messageStore('USER_SIGN_IN.FORGOT_PASSWORD_USER_EXIST', {email})}</p>
     `;
   }
 

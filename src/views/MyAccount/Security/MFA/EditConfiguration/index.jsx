@@ -13,7 +13,7 @@ import ResetAuthorizeModal from './MFAResetAuthorization';
 import ManageDevicesDrawer from './ManageDevicesDrawer';
 import { selectors } from '../../../../../reducers';
 import actions from '../../../../../actions';
-import messageStore from '../../../../../utils/messageStore';
+import { message } from '../../../../../utils/messageStore';
 import { drawerPaths, buildDrawerUrl } from '../../../../../utils/rightDrawer';
 import useConfirmDialog from '../../../../../components/ConfirmDialog';
 
@@ -35,7 +35,7 @@ function ResetMFA() {
   const handleResetMFA = useCallback(() => {
     confirmDialog({
       title: 'Reset MFA?',
-      message: messageStore('RESET_MFA'),
+      message: message.MFA.RESET_MFA,
       buttons: [
         {
           label: 'Reset',

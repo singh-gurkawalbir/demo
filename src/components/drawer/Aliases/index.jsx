@@ -18,8 +18,7 @@ import DrawerContent from '../Right/DrawerContent';
 import CeligoDivider from '../../CeligoDivider';
 import ViewAliasDetailsDrawer from './ViewAliasesDetails';
 import actions from '../../../actions';
-import messageStore from '../../../utils/messageStore';
-import errorMessageStore from '../../../utils/errorStore';
+import { message } from '../../../utils/messageStore';
 import { drawerPaths, buildDrawerUrl } from '../../../utils/rightDrawer';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import NoResultTypography from '../../NoResultTypography';
@@ -59,14 +58,14 @@ const ManageAliases = ({ flowId, hasManageAccess, height }) => {
       title: 'Aliases',
       filterKey: aliasesFilterKey,
       actionProps: {...actionProps, hasManageAccess},
-      noAliasesMessage: errorMessageStore('NO_CUSTOM_ALIASES_MESSAGE'),
+      noAliasesMessage: message.ALIAS.NO_CUSTOM_ALIASES_MESSAGE,
     },
     {
       data: inheritedAliases.map(aliasData => ({...aliasData, _id: `${flow._integrationId}-${aliasData.alias}`})),
       title: 'Inherited aliases',
       filterKey: inheritedAliasesFilterKey,
       actionProps,
-      noAliasesMessage: errorMessageStore('NO_INHERITED_ALIASES_MESSAGE'),
+      noAliasesMessage: message.ALIAS.NO_INHERITED_ALIASES_MESSAGE,
     },
   ]), [resourceAliases, inheritedAliases, flowId, flow, aliasesFilterKey, inheritedAliasesFilterKey, actionProps, hasManageAccess]);
 
@@ -74,11 +73,11 @@ const ManageAliases = ({ flowId, hasManageAccess, height }) => {
     if (!isAliasActionCompleted) return;
 
     if (isAliasActionCompleted === 'delete') {
-      enqueueSnackbar({ message: messageStore('ALIAS_DELETE_MESSAGE')});
+      enqueueSnackbar({ message: message.ALIAS.DELETE_MESSAGE});
     }
 
     if (isAliasActionCompleted === 'save') {
-      enqueueSnackbar({ message: messageStore('ALIAS_SAVE_MESSAGE')});
+      enqueueSnackbar({ message: message.ALIAS.SAVE_MESSAGE});
     }
 
     dispatch(actions.resource.aliases.clear(flowId));
@@ -138,7 +137,7 @@ const ViewAliases = ({ resourceId, resourceType, height }) => {
           {...metadata}
           actionProps={actionProps}
         />
-      ) : (<NoResultTypography>{errorMessageStore('NO_ALIASES_MESSAGE')}</NoResultTypography>)}
+      ) : (<NoResultTypography>{message.ALIAS.NO_ALIASES_MESSAGE}</NoResultTypography>)}
     </LoadResources>
   );
 };
@@ -181,7 +180,7 @@ export default function AliasDrawerWrapper({ resourceId, resourceType, height = 
         <Route path={manageAliasesDrawerUrl} >
           <DrawerHeader
             title="Manage Aliases"
-            infoText={messageStore('MANAGE_ALIASES_HELPINFO')}>
+            infoText={message.ALIAS.MANAGE_ALIASES_HELPINFO}>
             {hasManageAccess ? (
               <>
                 <TextButton
@@ -207,7 +206,7 @@ export default function AliasDrawerWrapper({ resourceId, resourceType, height = 
         <Route path={viewAliasesDrawerUrl} >
           <DrawerHeader
             title="View Aliases"
-            infoText={messageStore('VIEW_ALIASES_HELPINFO')} />
+            infoText={message.ALIAS.VIEW_ALIASES_HELPINFO} />
           <DrawerContent>
             <ViewAliases resourceId={resourceId} resourceType={resourceType} height={height} />
           </DrawerContent>

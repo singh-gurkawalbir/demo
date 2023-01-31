@@ -3,7 +3,6 @@ import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import MaterialUiSelect from '../DynaSelect';
 import { selectors } from '../../../../reducers/index';
 import actions from '../../../../actions';
-import { SCOPES } from '../../../../sagas/resourceForm';
 import { selectOptions } from './util';
 import useFormContext from '../../../Form/FormContext';
 import { emptyObject } from '../../../../constants';
@@ -250,7 +249,6 @@ function DynaAssistantOptions(props) {
         actions.resource.patchStaged(
           resourceContext.resourceId,
           patch,
-          SCOPES.VALUE
         )
       );
 

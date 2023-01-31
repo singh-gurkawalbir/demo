@@ -9,6 +9,7 @@ import JobDashboard from '../../../../../components/JobDashboard';
 import IntegrationDashboard from '../../../../Dashboard';
 import PanelHeader from '../../../../../components/PanelHeader';
 import LoadResources from '../../../../../components/LoadResources';
+import { message } from '../../../../../utils/messageStore';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -33,7 +34,7 @@ export default function DashboardPanel({ integrationId, childId }) {
   let infoTextDashboard;
 
   if (isUserInErrMgtTwoDotZero) {
-    infoTextDashboard = 'Use this dashboard to visualize the stats of an integration flow – for example, how many successes vs. errors did my integration experience over the last 30 days? The dashboard shows graphs of total stats (success, error, ignore count) produced in the flow steps, helping you to see trends and identify performance issues or unexpected spikes in integration activity. Integration flow stats are available for up to one year.';
+    infoTextDashboard = message.ERROR_MANAGEMENT_2.ERROR_MANAGEMENT_DASHBOARD_INFO;
   }
 
   // We may not have an IA that supports children, but those who do,

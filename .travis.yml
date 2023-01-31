@@ -1,21 +1,31 @@
 dist: focal
 language: node_js
 node_js:
-  - '18.13.0'
+  - '18.12.1'
 git:
   depth: 1
   submodules: false
+before_install:
+  git fetch --depth=50 origin refs/heads/$TRAVIS_BRANCH:refs/heads/$TRAVIS_BRANCH
 cache: false
 jobs:
   fast_finish: true
   include:
     - stage: ui/ux test cases
       name: 'Data layer test cases and lint errors'
-      script: yarn test ".*\/(utils|reducers|sagas)\/(.*.)?test.js" && 
-              yarn run lint
-    - script: yarn test "src/views\/(.*.)?test.js"
+      script:
+        - if [[ $TRAVIS_BRANCH == "master" ]]; then yarn test ".*\/(utils|reducers|sagas)\/(.*.)?test.js" --changedSince=$TRAVIS_BRANCH -i && 
+              yarn run lint; fi
+        - if [[ $TRAVIS_BRANCH != "master" ]]; then yarn test ".*\/(utils|reducers|sagas)\/(.*.)?test.js" -i && 
+              yarn run lint; fi
+    - script: 
+      - if [[ $TRAVIS_BRANCH == "master" ]]; then yarn test "src/views\/(.*.)?test.js" --changedSince=$TRAVIS_BRANCH -i; fi
+      - if [[ $TRAVIS_BRANCH != "master" ]]; then yarn test "src/views\/(.*.)?test.js" -i; fi
+
       name: 'UX test cases - part 1'
-    - script: yarn test --testPathIgnorePatterns=".*\/(utils|reducers|sagas)\/(.*.)?test.js" --testPathIgnorePatterns="src/views\/(.*.)?test.js"
+    - script: 
+        - if [[ $TRAVIS_BRANCH == "master" ]]; then yarn test --testPathIgnorePatterns=".*\/(utils|reducers|sagas)\/(.*.)?test.js" --testPathIgnorePatterns="src/views\/(.*.)?test.js" --changedSince=$TRAVIS_BRANCH -i; fi
+        - if [[ $TRAVIS_BRANCH != "master" ]]; then yarn test --testPathIgnorePatterns=".*\/(utils|reducers|sagas)\/(.*.)?test.js" --testPathIgnorePatterns="src/views\/(.*.)?test.js" -i; fi
       name: 'UX test cases - part 2'
     - stage: build storybook
       if: branch = storybook

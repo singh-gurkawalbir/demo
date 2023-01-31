@@ -17,7 +17,7 @@ import useSaveStatusIndicator from '../../../../hooks/useSaveStatusIndicator';
 import CollapsableContainer from '../../../../components/CollapsableContainer';
 import NotificationToaster from '../../../../components/NotificationToaster';
 import RawHtml from '../../../../components/RawHtml';
-import messageStore from '../../../../utils/messageStore';
+import messageStore, { message } from '../../../../utils/messageStore';
 import FilledButton from '../../../../components/Buttons/FilledButton';
 import useConfirmDialog from '../../../../components/ConfirmDialog';
 import ButtonWithTooltip from '../../../../components/Buttons/ButtonWithTooltip';
@@ -109,7 +109,7 @@ const SSOLicenseUpgradeContainer = () => {
   );
 
   useEffect(() => {
-    if (platformLicenseActionMessage === messageStore('FEATURE_LICENSE_UPGRADE_REQUEST_SUBMITTED_MESSAGE')) {
+    if (platformLicenseActionMessage === message.SUBSCRIPTION.FEATURE_LICENSE_UPGRADE_REQUEST_SUBMITTED_MESSAGE) {
       enquesnackbar({message: <RawHtml html={platformLicenseActionMessage} />, variant: 'success'});
       dispatch(actions.license.clearActionMessage());
     }
@@ -118,7 +118,7 @@ const SSOLicenseUpgradeContainer = () => {
   const onRequestUpgradeClick = useCallback(() => {
     confirmDialog({
       title: 'Request upgrade',
-      message: 'We will contact you to discuss your business needs and recommend an ideal subscription plan.',
+      message: messageStore('SUBSCRIPTION.CONTACT_FOR_BUSINESS_NEEDS', {plan: 'ideal'}),
       buttons: [
         { label: 'Submit request',
           onClick: () => {
@@ -138,10 +138,10 @@ const SSOLicenseUpgradeContainer = () => {
       <NotificationToaster variant="info" size="large" className={classes.licenseUpdgradeNotification} >
         Single sign-on is a premium feature that is not included in your account’s current subscription plan.
       </NotificationToaster>
-      <RawHtml html={messageStore('SSO_LICENSE_UPGRADE_INFO')} />
+      <RawHtml html={message.SUBSCRIPTION.SSO_LICENSE_UPGRADE_INFO} />
       <ButtonWithTooltip
         tooltipProps={{
-          title: ssoLicenseUpgradeRequested ? messageStore('FEATURE_LICENSE_UPGRADE_REQUESTED_TOOLTIP_MESSAGE') : '',
+          title: ssoLicenseUpgradeRequested ? message.SUBSCRIPTION.FEATURE_LICENSE_UPGRADE_REQUESTED_TOOLTIP_MESSAGE : '',
           placement: 'bottom-start'}}>
         <FilledButton
           onClick={onRequestUpgradeClick}

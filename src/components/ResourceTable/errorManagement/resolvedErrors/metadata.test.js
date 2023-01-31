@@ -7,7 +7,7 @@ import { MemoryRouter } from 'react-router-dom';
 import { renderWithProviders, reduxStore } from '../../../../test/test-utils';
 import metadata from './metadata';
 import CeligoTable from '../../../CeligoTable';
-import messageStore from '../../../../utils/messageStore';
+import { message } from '../../../../utils/messageStore';
 
 jest.mock('../cells/SelectAllErrors', () => ({
   __esModule: true,
@@ -77,7 +77,7 @@ describe("resolvedErros table's metadata UI tests", () => {
     initFunction(props);
     headerIndex = indexOfCell('MockedSelectAll', 'columnheader');
     expect(headerIndex).toBeGreaterThan(-1);
-    expect(screen.getByTitle(messageStore('SELECT_ERROR_HOVER_MESSAGE'))).toBeInTheDocument();
+    expect(screen.getByTitle(message.ERROR_MANAGEMENT_2.SELECT_ERROR_HOVER_MESSAGE)).toBeInTheDocument();
   });
   test('should verify Message cloumn', () => {
     initFunction(props);

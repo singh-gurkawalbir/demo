@@ -114,7 +114,6 @@ const handleAddNewResource = args => {
       actions.resource.patchStaged(
         newResourceId,
         [...missingPatches, ...patchValues],
-        'value'
       )
     );
   }
@@ -384,7 +383,7 @@ export default function DynaSelectResource(props) {
       }
 
       // this not an actual value we would like to commit...this is just to load the right form
-      dispatch(actions.resource.patchStaged(value, patchSet, 'value'));
+      dispatch(actions.resource.patchStaged(value, patchSet));
     }
     if (resourceType === 'connectorLicenses') {
       const patchSet = [
@@ -408,7 +407,7 @@ export default function DynaSelectResource(props) {
         });
       }
 
-      dispatch(actions.resource.patchStaged(value, patchSet, 'value'));
+      dispatch(actions.resource.patchStaged(value, patchSet));
     }
 
     history.push(buildDrawerUrl({

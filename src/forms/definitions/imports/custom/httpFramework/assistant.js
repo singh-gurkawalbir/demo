@@ -44,7 +44,7 @@ export default function assistantDefinition(
       if (assistantMetadata.assistant === 'loopreturnsv2') {
         assistantMetadata.assistant = 'loopreturns';
       }
-      if (assistantMetadata.assistant === 'acumaticaecommerce') {
+      if (assistantMetadata.assistant === 'acumaticaecommerce' || assistantMetadata.assistant === 'acumaticamanufacturing') {
         assistantMetadata.assistant = 'acumatica';
       }
 
@@ -79,6 +79,12 @@ export default function assistantDefinition(
         importDoc['/http/_httpConnectorEndpointId'] = formValues['/assistantMetadata/operation'];
         importDoc['/http/_httpConnectorResourceId'] = formValues['/assistantMetadata/resource'];
         importDoc['/http/_httpConnectorVersionId'] = formValues['/assistantMetadata/version'];
+      }
+      if (importDoc?.['/assistantMetadata'] && importDoc?.['/http/_httpConnectorResourceId']) {
+        importDoc['/assistantMetadata/resource'] = undefined;
+        importDoc['/assistantMetadata/version'] = undefined;
+        importDoc['/assistantMetadata/operation'] = undefined;
+        importDoc['/assistantMetadata/lookups'] = undefined;
       }
 
       return { ...otherFormValues, ...importDoc };

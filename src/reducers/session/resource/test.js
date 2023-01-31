@@ -2,7 +2,7 @@
 import reducer, { selectors } from '.';
 import actions from '../../../actions';
 import { LICENSE_REACTIVATED_MESSAGE, LICENSE_UPGRADE_REQUEST_SUBMITTED_MESSAGE, REQUEST_UPGRADE_SUCCESS_MESSAGE} from '../../../constants';
-import messageStore from '../../../utils/messageStore';
+import { message } from '../../../utils/messageStore';
 
 describe('session.resource reducers', () => {
   test('reducer should return previous state if action is not handled.', () => {
@@ -107,7 +107,7 @@ describe('session.resource reducers', () => {
         undefined,
         actions.license.licenseUpgradeRequestSubmitted(undefined, feature)
       );
-      const expected = {platformLicenseActionMessage: messageStore('FEATURE_LICENSE_UPGRADE_REQUEST_SUBMITTED_MESSAGE')};
+      const expected = { platformLicenseActionMessage: message.SUBSCRIPTION.FEATURE_LICENSE_UPGRADE_REQUEST_SUBMITTED_MESSAGE };
 
       expect(state).toEqual(expected);
     });

@@ -3,6 +3,7 @@ import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 import { useLocation } from 'react-router-dom';
 import actions from '../../../../actions';
 import { selectors } from '../../../../reducers';
+import { message } from '../../../../utils/messageStore';
 import { isNewId } from '../../../../utils/resource';
 import useConfirmDialog from '../../../ConfirmDialog';
 import { isNestedDrawer } from '../../../drawer/Resource/Panel';
@@ -66,7 +67,7 @@ export default function SaveAndClose(props) {
       if (!isNewId(resourceId) && ['exports', 'imports'].includes(resourceType) && resource?._connectionId !== values?.['/_connectionId']) {
         confirmDialog({
           title: 'Confirm replace',
-          message: 'Are you sure you want to replace the connection for this flow step? Replacing a connection will cancel all jobs currently running for this flow.',
+          message: message.CONNECTION.CONFIRM_REPLACE_CONNECTION,
           onDialogClose: onCancel,
           buttons: [
             {

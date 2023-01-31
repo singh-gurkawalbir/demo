@@ -136,7 +136,7 @@ const PageGenerator = ({
 
       // for pending resource, passing the PG index in newId
       // which will be used in saga to add or replace the pending resource
-      dispatch(actions.resource.patchStaged(pg.id, patchSet, 'value'));
+      dispatch(actions.resource.patchStaged(pg.id, patchSet));
     }
 
     let to = pending

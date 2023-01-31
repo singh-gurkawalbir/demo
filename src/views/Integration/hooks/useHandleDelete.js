@@ -7,7 +7,7 @@ import getRoutePath from '../../../utils/routePaths';
 import { getIntegrationAppUrlName } from '../../../utils/integrationApps';
 import { emptyObject, INTEGRATION_ACCESS_LEVELS, USER_ACCESS_LEVELS } from '../../../constants';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
-import messageStore from '../../../utils/messageStore';
+import { message } from '../../../utils/messageStore';
 import actions from '../../../actions';
 
 export default function useHandleDelete(_integrationId, ops = emptyObject) {
@@ -34,13 +34,13 @@ export default function useHandleDelete(_integrationId, ops = emptyObject) {
   // For IA
   const handleUninstall = useCallback(() => {
     if (![INTEGRATION_ACCESS_LEVELS.OWNER, USER_ACCESS_LEVELS.ACCOUNT_ADMIN].includes(accessLevel)) {
-      enqueueSnackbar({ message: 'Contact your account owner to uninstall this integration app.' });
+      enqueueSnackbar({message: message.INTEGRATION.CONTACT_OWNER, variant: 'error'});
     } else if (supportsMultiStore) {
-      enqueueSnackbar({ message: 'To uninstall, please navigate to Admin → Uninstall inside the Integration App and select the desired store.', variant: 'error' });
+      enqueueSnackbar({ message: message.INTEGRATION.UNINSTALL_SELECT_STORE, variant: 'error' });
     } else {
       confirmDialog({
         title: 'Confirm uninstall',
-        message: 'Are you sure you want to uninstall?',
+        message: message.SURE_UNINSTALL,
         buttons: [
           {
             label: 'Uninstall',
@@ -64,7 +64,7 @@ export default function useHandleDelete(_integrationId, ops = emptyObject) {
   // For Diy/templates
   if (showSnackbar && (cantDelete || hasConnectorDependency)) {
     enqueueSnackbar({
-      message: messageStore(cantDelete ? 'INTEGRATION_DELETE_VALIDATE' : 'INTEGRATION_WITH_CONNECTORS_DELETE_VALIDATE'),
+      message: cantDelete ? message.INTEGRATION.INTEGRATION_DELETE_VALIDATE : message.INTEGRATION.INTEGRATION_WITH_CONNECTORS_DELETE_VALIDATE,
       variant: 'info',
     });
     dispatch(actions.resource.clearReferences());
@@ -73,7 +73,7 @@ export default function useHandleDelete(_integrationId, ops = emptyObject) {
   const handleDelete = useCallback(() => {
     confirmDialog({
       title: 'Confirm delete',
-      message: 'Are you sure you want to delete this integration?',
+      message: message.INTEGRATION.DELETE_INTEGRATION,
       buttons: [
         {
           label: 'Delete',

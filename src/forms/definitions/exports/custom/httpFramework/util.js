@@ -381,6 +381,17 @@ export function fieldMeta({ resource, assistantData }) {
     formView: { fieldId: 'formView' },
     skipRetries: { fieldId: 'skipRetries' },
     'test.limit': {fieldId: 'test.limit'},
+    advancedSettings: {
+      formId: 'advancedSettings',
+    },
+    configureAsyncHelper: {
+      fieldId: 'configureAsyncHelper',
+      defaultValue: r => !!(r && r.http && r.http._asyncHelperId),
+      visible: r => !(r && r.statusExport),
+    },
+    'http._asyncHelperId': {
+      fieldId: 'http._asyncHelperId',
+    },
   };
   const fieldIds = [];
   const exportTypeFieldIds = [];
@@ -432,7 +443,9 @@ export function fieldMeta({ resource, assistantData }) {
         {
           collapsed: true,
           label: 'Advanced',
-          fields: ['pageSize', 'skipRetries', 'traceKeyTemplate', 'apiIdentifier'],
+          fields: ['configureAsyncHelper',
+            'http._asyncHelperId',
+            'advancedSettings'],
         },
       ],
     },

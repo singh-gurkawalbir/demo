@@ -150,11 +150,7 @@ export default {
       defaultValue: r => {
         const authType = r && r.http && r.http.auth && r.http.auth.type;
 
-        if (authType === 'oauth') {
-          return 'oauth';
-        }
-
-        return 'basic';
+        return authType || 'basic';
       },
     },
     'http.storeURL': {

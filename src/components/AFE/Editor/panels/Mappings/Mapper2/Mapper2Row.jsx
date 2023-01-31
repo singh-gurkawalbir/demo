@@ -20,7 +20,7 @@ import actions from '../../../../../../actions';
 import useConfirmDialog from '../../../../../ConfirmDialog';
 import { buildDrawerUrl, drawerPaths } from '../../../../../../utils/rightDrawer';
 import { MAPPING_DATA_TYPES, isMapper2HandlebarExpression, getCombinedExtract, getExtractDataType } from '../../../../../../utils/mapping';
-import messageStore from '../../../../../../utils/messageStore';
+import { message } from '../../../../../../utils/messageStore';
 import TabRow from './TabbedRow';
 import { getMappingsEditorId } from '../../../../../../utils/editor';
 
@@ -151,7 +151,7 @@ const Mapper2Row = React.memo(props => {
     }
     confirmDialog({
       title: 'Confirm delete',
-      message: messageStore('MAPPER2_DELETE_ROW_WARNING'),
+      message: message.MAPPER2.DELETE_ROW_WARNING,
       buttons: [
         {
           label: 'Delete',

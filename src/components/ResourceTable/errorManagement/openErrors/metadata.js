@@ -22,12 +22,12 @@ import { useGetTableContext } from '../../../CeligoTable/TableContext';
 import ViewNetsuiteRequest from '../actions/ViewNetsuiteRequest';
 import ViewNetsuiteResponse from '../actions/ViewNetsuiteResponse';
 import { FILTER_KEYS } from '../../../../utils/errorManagement';
-import messageStore from '../../../../utils/messageStore';
+import { message } from '../../../../utils/messageStore';
 
 export default {
   rowKey: 'errorId',
   additionalConfigs: {
-    actionMenuTooltip: messageStore('VIEW_ACTIONS_HOVER_MESSAGE'),
+    actionMenuTooltip: message.ERROR_MANAGEMENT_2.VIEW_ACTIONS_HOVER_MESSAGE,
     IsActiveRow: ({ rowData }) => {
       const errorFilter = useSelector(
         state => selectors.filter(state, FILTER_KEYS.OPEN), shallowEqual

@@ -136,7 +136,7 @@ describe('dynaWebhookTokenGenerator UI test cases', () => {
       }, initialStore
     );
     expect(mockDispatch).toHaveBeenCalledWith(
-      actions.resource.patchStaged('finalResId', patchSet, 'value')
+      actions.resource.patchStaged('finalResId', patchSet)
     );
   });
 });

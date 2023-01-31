@@ -2086,15 +2086,15 @@ export function convertFromImport({ importDoc: importDocOrig, assistantData: ass
           if (
             howToFindIdentifierLookupConfig.id &&
             assistantMetadata &&
-            assistantMetadata.lookups &&
-            assistantMetadata.lookups[pathParams[p.id] || existingLookupName]
+            ((assistantMetadata.lookups &&
+            assistantMetadata.lookups[pathParams[p.id] || existingLookupName]) || importDoc.http?._httpConnectorEndpointId)
           ) {
             const luEndpoint = getExportOperationDetails({
               version: assistantMetadata.version,
               resource:
-                assistantMetadata.lookups[pathParams[p.id] || existingLookupName].resource ||
-                assistantMetadata.resource,
-              operation: assistantMetadata.lookups[pathParams[p.id] || existingLookupName].operation,
+                assistantMetadata.lookups?.[pathParams[p.id] || existingLookupName]?.resource || operationDetails.lookupOperationDetails?.resource ||
+                 assistantMetadata.resource,
+              operation: assistantMetadata.lookups?.[pathParams[p.id] || existingLookupName]?.operation || operationDetails.lookupOperationDetails?.id,
               assistantData,
             });
 
@@ -2619,6 +2619,9 @@ export function isLoopReturnsv2Connection(connection) {
 }
 export function isAcumaticaEcommerceConnection(connection) {
   return connection?.assistant === 'acumatica' && connection?.http?.unencrypted?.endpointName === 'ecommerce';
+}
+export function isAcumaticaManufacturingConnection(connection) {
+  return connection?.assistant === 'acumatica' && connection?.http?.unencrypted?.endpointName === 'manufacturing';
 }
 export function isMicrosoftBusinessCentralOdataConnection(connection) {
   return connection?.assistant === 'microsoftbusinesscentral' && connection?.http?.unencrypted?.apiType === 'odata';

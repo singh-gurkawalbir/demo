@@ -12,6 +12,7 @@ import PageProcessor from '../../PageProcessor';
 import { PageProcessorPathRegex } from '../../../../constants';
 import useConfirmDialog from '../../../../components/ConfirmDialog';
 import { useHandleMovePP } from '../../hooks';
+import messageStore from '../../../../utils/messageStore';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -72,7 +73,7 @@ export default function PageProcessorNode({ data = {} }) {
     } else {
       confirmDialog({
         title: 'Confirm remove',
-        message: 'Are you sure you want to remove this resource?',
+        message: messageStore('CONFIRM_REMOVE'),
         buttons: [
           {
             label: 'Remove',
