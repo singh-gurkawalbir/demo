@@ -278,7 +278,7 @@ export default {
       ],
     },
     'netsuite.distributed.useSS2Framework': {
-      fieldId: 'netsuite.distributed.useSS2Framework',
+      fieldId: 'netsuite.distributed.frameworkVersion',
       type: 'netsuiteapiversion',
       label: 'NetSuite API version',
       // eslint-disable-next-line camelcase
@@ -323,7 +323,7 @@ export default {
       ],
     },
     'netsuite.restlet.useSS2Restlets': {
-      fieldId: 'netsuite.restlet.useSS2Restlets',
+      fieldId: 'netsuite.restlet.restletVersion',
       type: 'netsuiteapiversion',
       label: 'NetSuite API version',
       // eslint-disable-next-line camelcase
