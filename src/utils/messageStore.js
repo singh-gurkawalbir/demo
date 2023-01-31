@@ -243,6 +243,7 @@ const AFE_EDITOR_PANELS_INFO = {
   ({{configuredCount}} configured steps, {{unconfiguredCount}} unconfigured steps).</p>`,
   DELETE_LAST_BRANCH_MESSAGE: 'Branch cannot be deleted. Branching must have at least one branch.',
   FILTER_APPLIED: 'You can\'t search while a filter is applied. Clear your filter to allow searching.',
+  EDITOR_PREVIEW_DISABLED: 'Cannot preview when there are errors.',
 };
 // #endregion
 
