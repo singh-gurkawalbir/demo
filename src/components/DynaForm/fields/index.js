@@ -148,6 +148,7 @@ import DynaSelectAliasResource from './aliases/DynaSelectAliasResource';
 import DynaIntegrationCloneSelect from './select/DynaIntegrationCloneSelect';
 import DynaHFAssistantOptions from './httpFramework/DynaHFAssistantOptions';
 import DynaHFAssistantSearchParams from './httpFramework/DynaHFAssistantSearchParams';
+import DynaHFAssistantPathParams from './httpFramework/DynaHFAssistantPathParams';
 import DynaSemiHFAssistantOperationSelect from './httpFramework/DynaSemiHFAssistantOperationSelect';
 import DynaAmazonmwsType from './DynaAmazonmwsType';
 import DynaMFAMobileCode from './DynaMFAMobileCode';
@@ -330,6 +331,7 @@ export default {
   integrationcloneselect: DynaIntegrationCloneSelect,
   hfoptions: DynaHFAssistantOptions,
   hfsearchparams: DynaHFAssistantSearchParams,
+  hfpathparams: DynaHFAssistantPathParams,
   semihfoperationselect: DynaSemiHFAssistantOperationSelect,
   amazonmwstype: DynaAmazonmwsType,
   mfamobilecode: DynaMFAMobileCode,
