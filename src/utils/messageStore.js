@@ -1,6 +1,7 @@
 import { get } from 'lodash';
 import { MFA_URL, MOCK_OUTPUT_CANONICAL_FORMAT_LINK, REVISIONS_GUIDE_URL } from '../constants';
 
+const AGREE_TOS_AND_PP = 'Review and agree to the following terms of use to start using your integrator.io account, Celigo services, and products.';
 const REQUIRED_MESSAGE = 'A value must be provided';
 const INVALID_DATE = 'Invalid date format';
 const REVERT_NOT_ALLOWED = 'Your revert is not allowed. Your operation is already on the same revision you\'re trying to revert to.';
@@ -378,7 +379,6 @@ const SUBSCRIPTION = {
   UNINSTALL_INSTANCE: ' Use this page to uninstall this instance (i.e. this tile) of the Integration App. Uninstalling an Integration App will remove all components, including the integration tile, from your integrator.io account. After uninstalling you can re-install from the marketplace as long as you have a valid subscription. Please be very certain that you want to uninstall as this action cannot be undone.',
   UNINSTALL_INFO: 'Once you uninstall this Integration App there is no going back. Please be certain.',
 
-  AGREE_TOS_AND_PP: 'Review and agree to the following terms of use to start using your integrator.io account, Celigo services, and products.',
 };
 // #endregion
 
@@ -401,6 +401,7 @@ const JOBS = {
 // Todo (Categorize on the basis of views, eg: CONTACT_TO_RENEW: message.regionLiscence.CONTACT_TO_RENEW, {{}})
 
 const messages = {
+  AGREE_TOS_AND_PP,
   INTEGRATION,
   REVERT_NOT_ALLOWED,
   MARKETPLACE,
