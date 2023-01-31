@@ -129,6 +129,14 @@ export default {
         netsuiteSuiteAppNeededForConnections.push(conn);
       }
       if (
+        (((exp?.netsuite || {}).type === 'restlet' && exp?.netsuite?.restlet?.recordType &&
+          (exp?.netsuite?.restlet?.restletVersion === 'suitebundle' || !exp.netsuite.restlet.useSS2Restlets)) ||
+          ((exp?.type === 'distributed' || exp?.netsuite?.type === 'distributed') && exp?.netsuite?.distributed?.recordType && (exp?.netsuite?.distributed?.frameworkVersion === 'suitebundle' || !exp?.netsuite?.distributed?.useSS2Framework))) &&
+          conn?.type === 'netsuite' &&
+          !netsuiteBundleNeededForConnections.includes(conn)) {
+        netsuiteBundleNeededForConnections.push(conn);
+      }
+      if (
         (((exp?.netsuite || {}).type === 'restlet' &&
           exp?.netsuite?.restlet?.recordType) ||
           (exp?.type === 'distributed' && conn?.type === 'netsuite')) &&
