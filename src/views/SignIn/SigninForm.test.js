@@ -205,7 +205,6 @@ describe('SigninForm UI testcases', () => {
     initialStore = getCreatedStore();
 
     initfunction(initialStore);
-
     expect(screen.queryByText('Sign in with Google')).not.toBeInTheDocument();
   });
 });
