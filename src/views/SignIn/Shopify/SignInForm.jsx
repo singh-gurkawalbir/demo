@@ -106,7 +106,7 @@ function ForgotPassworLink({email = ''}) {
   );
 }
 
-export default function SignIn({dialogOpen, className}) {
+export default function SignIn({ dialogOpen, className, queryParam }) {
   const dispatch = useDispatch();
   const location = useLocation();
   const classes = useStyles();
@@ -240,7 +240,7 @@ export default function SignIn({dialogOpen, className}) {
           </OutlinedButton>
         </form>
         )}
-        <a className={classes.switchDomain} href="https://eu.integrator.io">Switch to EU domain</a>
+        {getDomain() !== 'eu.integrator.io' && <a className={classes.switchDomain} href={`https://eu.integrator.io/connection/shopify/oauth2callback?${queryParam}`}>Switch to EU domain</a>}
       </div>
       )}
     </div>
