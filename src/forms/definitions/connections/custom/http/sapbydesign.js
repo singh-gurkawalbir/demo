@@ -79,11 +79,7 @@ export default {
           ],
         },
       ],
-      defaultValue: r => {
-        if (r?.http?.unencrypted?.apiType) {
-          return r.http.unencrypted.apiType;
-        }
-      },
+      defaultValue: r => (r?.http?.unencrypted?.apiType) || 'odata',
     },
     httpAdvanced: { formId: 'httpAdvanced' },
   },
