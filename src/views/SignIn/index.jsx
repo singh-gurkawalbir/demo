@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import SigninForm from './SigninForm';
 import { selectors } from '../../reducers';
 import ConcurSignInPage from './Concur';
+import ShopifySignInPage from './Shopify';
 import useQuery from '../../hooks/useQuery';
 import UserSignInPage from '../../components/UserSignInPage';
 import actions from '../../actions';
@@ -40,6 +41,9 @@ export default function SignInWrapper(props) {
     switch (application) {
       case 'concur':
         SignInPage = ConcurSignInPage;
+        break;
+      case 'shopify':
+        SignInPage = ShopifySignInPage;
         break;
       default:
         break;
