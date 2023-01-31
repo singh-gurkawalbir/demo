@@ -97,7 +97,7 @@ selectors.agreeTOSAndPPRequired = state => {
   const { agreeTOSAndPP } = state.sessionInfo.data;
   const isMFAResolved = selectors.isMFAResolved(state);
 
-  return isMFAResolved && !agreeTOSAndPP;
+  return isMFAResolved && agreeTOSAndPP === false;
 };
 
 selectors.getSetupContext = state => state?.context;

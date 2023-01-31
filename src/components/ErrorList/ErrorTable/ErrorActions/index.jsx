@@ -19,6 +19,7 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
   },
   actionBtn: {
+    backgroundColor: theme.palette.background.paper,
     borderRadius: theme.spacing(0.5),
     height: theme.spacing(4),
   },

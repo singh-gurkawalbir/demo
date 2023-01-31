@@ -60,6 +60,7 @@ const useStyles = makeStyles(theme => ({
     marginLeft: theme.spacing(1),
   },
   filterButton: {
+    backgroundColor: theme.palette.background.paper,
     borderRadius: theme.spacing(0.5),
     height: theme.spacing(4.5),
     '&:first-child': {
