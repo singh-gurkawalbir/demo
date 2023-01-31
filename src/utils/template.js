@@ -122,8 +122,8 @@ export default {
 
       if (
         (((exp?.netsuite || {}).type === 'restlet' && exp?.netsuite?.restlet?.recordType &&
-          (['suiteapp1.0', 'suitescript2.0'].includes(exp?.netsuite?.restlet?.restletVersion) || exp.netsuite.restlet.useSS2Restlets)) ||
-          ((exp?.type === 'distributed' || exp?.netsuite?.type === 'distributed') && exp?.netsuite?.distributed?.recordType && (['suiteapp1.0', 'suitescript2.0'].includes(exp?.netsuite?.distributed?.frameworkVersion) || exp?.netsuite?.distributed?.useSS2Framework))) &&
+          (['suiteapp1.0', 'suiteapp2.0'].includes(exp?.netsuite?.restlet?.restletVersion) || exp.netsuite.restlet.useSS2Restlets)) ||
+          ((exp?.type === 'distributed' || exp?.netsuite?.type === 'distributed') && exp?.netsuite?.distributed?.recordType && (['suiteapp1.0', 'suiteapp2.0'].includes(exp?.netsuite?.distributed?.frameworkVersion) || exp?.netsuite?.distributed?.useSS2Framework))) &&
           conn?.type === 'netsuite' &&
           !netsuiteSuiteAppNeededForConnections.includes(conn)) {
         netsuiteSuiteAppNeededForConnections.push(conn);

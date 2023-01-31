@@ -22,7 +22,7 @@ export const NETSUITE_BUNDLE_URL =
   '/app/bundler/bundledetails.nl?sourcecompanyid=TSTDRV916910&domain=PRODUCTION&config=F&id=20038';
 
 export const NETSUITE_SUITEAPP_URL =
-  '/app/bundler/bundledetails.nl?sourcecompanyid=TSTDRV916910&domain=PRODUCTION&config=F&id=20038';     // has to be updated with correct url and this comment should be removed before merge //
+  '/suiteapp/ui/marketplace.nl?whence=#/app?id=com.celigo.integratorio';
 
 export const PASSWORD_MASK = '******';
 
