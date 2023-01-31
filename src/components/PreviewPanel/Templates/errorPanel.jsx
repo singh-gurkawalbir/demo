@@ -3,6 +3,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import {shallowEqual, useSelector} from 'react-redux';
 import DefaultPanel from '../../CeligoTabLayout/CustomPanels/DefaultPanel';
 import { selectors } from '../../../reducers';
+import { message } from '../../../utils/messageStore';
 
 const useStyles = makeStyles(theme => ({
   error: {
@@ -10,8 +11,6 @@ const useStyles = makeStyles(theme => ({
     color: theme.palette.error.main,
   },
 }));
-
-const DEFAULT_ERROR = 'No data to show - application responded with an error';
 
 export default function ErrorPanel({resourceId}) {
   const classes = useStyles();
@@ -21,5 +20,5 @@ export default function ErrorPanel({resourceId}) {
     return <DefaultPanel value={parseAllErrors} isLoggable={false} />;
   }
 
-  return <span className={classes.error}> { DEFAULT_ERROR } </span>;
+  return <span className={classes.error}> { message.DEFAULT_ERROR } </span>;
 }

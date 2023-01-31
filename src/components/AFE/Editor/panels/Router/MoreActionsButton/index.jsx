@@ -17,7 +17,7 @@ import useConfirmDialog from '../../../../../ConfirmDialog';
 import { buildDrawerUrl, drawerPaths } from '../../../../../../utils/rightDrawer';
 import RawHtml from '../../../../../RawHtml';
 import actions from '../../../../../../actions';
-import messageStore from '../../../../../../utils/messageStore';
+import messageStore, { message } from '../../../../../../utils/messageStore';
 
 export default function MoreActionsButton({editorId, position, pageProcessors = [], allowDeleting}) {
   const history = useHistory();
@@ -50,7 +50,7 @@ export default function MoreActionsButton({editorId, position, pageProcessors = 
 
     const configuredCount = pageProcessors.filter(pp => !!pp.type).length;
     const unconfiguredCount = pageProcessors.filter(pp => !pp.type).length;
-    const message = messageStore('BRANCH_DELETE_CONFIRMATION_MESSAGE', {configuredCount, unconfiguredCount});
+    const message = messageStore('AFE_EDITOR_PANELS_INFO.BRANCH_DELETE_CONFIRMATION_MESSAGE', {configuredCount, unconfiguredCount});
 
     confirmDialog({
       title: 'Confirm delete',
@@ -96,7 +96,7 @@ export default function MoreActionsButton({editorId, position, pageProcessors = 
           <EditIcon /> Edit branch name/description
         </MenuItem>
 
-        <Tooltip title={allowDeleting ? '' : messageStore('DELETE_LAST_BRANCH_MESSAGE')} placement="bottom" aria-label="no notifications">
+        <Tooltip title={allowDeleting ? '' : message.AFE_EDITOR_PANELS_INFO.DELETE_LAST_BRANCH_MESSAGE} placement="bottom" aria-label="no notifications">
           <span>
             <MenuItem disabled={!allowDeleting} data-test={`deleteBranch-${position}`} onClick={handleDeleteBranch}>
               <TrashIcon /> Delete branch

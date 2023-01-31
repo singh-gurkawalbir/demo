@@ -4,7 +4,7 @@ import { isEmpty, cloneDeep, set, unset, get } from 'lodash';
 import util from '../../utils/array';
 import { isNewId } from '../../utils/resource';
 import { selectors } from '../../reducers';
-import { createFormValuesPatchSet, SCOPES } from '../resourceForm';
+import { createFormValuesPatchSet } from '../resourceForm';
 import { createFormValuesPatchSet as createSuiteScriptFormValuesPatchSet } from '../suiteScript/resourceForm';
 import { AUTHENTICATION_LABELS, emptyObject } from '../../constants';
 
@@ -687,6 +687,7 @@ export const updateFinalMetadataWithHttpFramework = (finalFieldMeta, connector, 
 
     if (fields) {
       const fieldIds = [];
+      const preConfiguredField = connectionTemplate.preConfiguredFields?.filter(field => field.path === 'http.baseURI');
 
       for (let i = 0; i < fields.length; i += 1) {
         fields[i] = fields[i].field;
@@ -696,22 +697,51 @@ export const updateFinalMetadataWithHttpFramework = (finalFieldMeta, connector, 
       if (isGenericHTTP && isNewId(resource._id)) {
           tempFiledMeta.layout?.containers?.push({fields: fieldIds, label: 'Custom settings'});
       } else if (!isGenericHTTP) {
+        const baseURIFields = []; const authFields = [];
+        const baseURIValue = tempFiledMeta?.fieldMap['http.baseURI']?.defaultValue;
+
+        fieldIds.forEach(field => {
+          (new RegExp(`{{{(.)*(${field})(.)*}}}`)).test(baseURIValue) ? baseURIFields.push(field) : authFields.push(field);
+        });
+        if (baseURIFields.length > 0) {
+              tempFiledMeta?.layout?.containers[1]?.containers[1].containers.splice(0, 1, {fields: baseURIFields});
+        } else if (preConfiguredField) {
+          preConfiguredField.forEach(field => {
+            if (field._conditionIds?.length) {
+              const conditionFields = connectionTemplate.conditions?.filter(field1 => field1._id === field._conditionIds[0]);
+              const dependentField = conditionFields[0].condition.rules[1][1][1];
+
+              tempFiledMeta?.layout?.containers[1]?.containers[1].containers.splice(0, 1, {fields: [dependentField]});
+            }
+          });
+        } else {
+              tempFiledMeta?.layout?.containers[1]?.containers?.splice(1, 1);
+        }
         if (tempFiledMeta?.fieldMap['http.auth.type']?.visible === false) {
           delete tempFiledMeta?.layout?.containers[3]?.containers[1]?.type;
         }
-        tempFiledMeta?.layout?.containers[7].containers?.push({fields: fieldIds});
-        tempFiledMeta?.layout?.containers[7]?.containers?.splice(0, 1);
-        Object.keys(tempFiledMeta.fieldMap).map(key => {
-          const fieldUserMustSet = connectionTemplate.fieldsUserMustSet?.find(field => key === field.path);
+        if (tempFiledMeta?.layout?.containers[1]?.containers[1].containers[0].fields.length > 0) {
+          const baseurlDependentFields = tempFiledMeta?.layout?.containers[1]?.containers[1].containers[0].fields;
 
-          if (fieldUserMustSet && fieldUserMustSet.helpURL) {
-            tempFiledMeta.fieldMap[key].helpLink = `${fieldUserMustSet.helpURL}`;
+          baseurlDependentFields.forEach(field => {
+            const indexcheck = fieldIds.indexOf(field);
+
+            delete fieldIds[indexcheck];
+          });
+        }
+        tempFiledMeta?.layout?.containers[7].containers?.push({fields: fieldIds});
+          tempFiledMeta?.layout?.containers[7]?.containers?.splice(0, 1);
+          Object.keys(tempFiledMeta.fieldMap).map(key => {
+            const fieldUserMustSet = connectionTemplate.fieldsUserMustSet?.find(field => key === field.path);
+
+            if (fieldUserMustSet && fieldUserMustSet.helpURL) {
+              tempFiledMeta.fieldMap[key].helpLink = `${fieldUserMustSet.helpURL}`;
+            }
+
+            return tempFiledMeta.fieldMap[key];
           }
 
-          return tempFiledMeta.fieldMap[key];
-        }
-
-        );
+          );
       }
     }
   } else if (!isGenericHTTP) {
@@ -862,14 +892,12 @@ export function* constructResourceFromFormValues({
     resourceType,
     resourceId,
     values: formValues,
-    scope: SCOPES.VALUE,
   });
 
   const { merged } = yield select(
     selectors.resourceData,
     resourceType,
     resourceId,
-    SCOPES.VALUE
   );
 
   try {
@@ -891,7 +919,6 @@ export function* constructSuiteScriptResourceFromFormValues({
     resourceType,
     resourceId,
     values: formValues,
-    scope: SCOPES.VALUE,
     ssLinkedConnectionId,
     integrationId,
   });
@@ -901,7 +928,6 @@ export function* constructSuiteScriptResourceFromFormValues({
     id: resourceId,
     ssLinkedConnectionId,
     integrationId,
-    scope: SCOPES.VALUE,
   });
 
   try {

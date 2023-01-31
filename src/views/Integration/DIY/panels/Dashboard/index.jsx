@@ -9,6 +9,7 @@ import LoadResources from '../../../../../components/LoadResources';
 import { selectors } from '../../../../../reducers';
 import PanelHeader from '../../../../../components/PanelHeader';
 import infoText from '../infoText';
+import { message } from '../../../../../utils/messageStore';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -30,7 +31,7 @@ export default function DashboardPanel({ integrationId, childId }) {
   let infoTextDashboard = infoText.Dashboard;
 
   if (isUserInErrMgtTwoDotZero) {
-    infoTextDashboard = infoText.errorMgtDashboard;
+    infoTextDashboard = message.ERROR_MANAGEMENT_2.ERROR_MANAGEMENT_DASHBOARD_INFO;
   }
   if (isUserInErrMgtTwoDotZero && !(match.url?.includes('/runningFlows') || match.url?.includes('/completedFlows'))) {
     history.replace(`${match.url}/runningFlows`);

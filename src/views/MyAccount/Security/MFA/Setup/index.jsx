@@ -9,6 +9,7 @@ import ConnectDevice from '../ConnectDevice';
 import HeaderWithHelpText from '../HeaderWithHelpText';
 import actions from '../../../../../actions';
 import RouterPrompt from '../RouterPrompt';
+import { message } from '../../../../../utils/messageStore';
 
 const useStyles = makeStyles(() => ({
   verificationLabel: {
@@ -32,7 +33,7 @@ export default function MFASetup() {
         <HeaderWithHelpText title="Get verification app" helpKey="mfa.getVerificationApp">
           <Typography variant="h5" component="span">Get verification app</Typography>
         </HeaderWithHelpText>
-        <div>Install any authenticator app that supports TOTP protocol or time-based one time password.</div>
+        <div>{message.MFA.INSTALL_AUTHENTICATOR}</div>
       </Stepper>
       <Stepper index={2}>
         <MFACodeGeneration />

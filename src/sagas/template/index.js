@@ -5,7 +5,6 @@ import { apiCallWithRetry } from '../index';
 import { selectors } from '../../reducers';
 import templateUtil from '../../utils/template';
 import { commitStagedChanges, getResource } from '../resources';
-import { SCOPES } from '../resourceForm';
 
 export function* generateZip({ integrationId }) {
   const path = `/integrations/${integrationId}/template`;
@@ -164,12 +163,11 @@ export function* publishStatus({ templateId, isPublished }) {
     },
   ];
 
-  yield put(actions.resource.patchStaged(templateId, patchSet, SCOPES.VALUE));
+  yield put(actions.resource.patchStaged(templateId, patchSet));
 
   const resp = yield call(commitStagedChanges, {
     resourceType: 'templates',
     id: templateId,
-    scope: SCOPES.VALUE,
   });
 
   if (resp?.error) {

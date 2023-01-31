@@ -4,7 +4,6 @@ import DynaSelectResource from './DynaSelectResource';
 import { selectors } from '../../../reducers';
 import { getReplaceConnectionExpression } from '../../../utils/connections';
 import actions from '../../../actions';
-import { SCOPES } from '../../../sagas/resourceForm';
 import useFormContext from '../../Form/FormContext';
 import { useSetInitializeFormData } from './assistant/DynaAssistantOptions';
 import {useHFSetInitializeFormData} from './httpFramework/DynaHFAssistantOptions';
@@ -94,7 +93,6 @@ export default function DynaReplaceConnection(props) {
       actions.resource.patchStaged(
         resourceId,
         patch,
-        SCOPES.VALUE
       )
     );
 

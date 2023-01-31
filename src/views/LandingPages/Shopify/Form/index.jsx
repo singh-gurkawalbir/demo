@@ -159,7 +159,7 @@ export default function AddOrSelectForm({
   const handleSave = handleSubmit;
 
   useEffect(() => {
-    dispatch(actions.resource.patchStaged(connId, fieldMeta?.patchSet?.(), 'value'));
+    dispatch(actions.resource.patchStaged(connId, fieldMeta?.patchSet?.()));
 
     return () => {
       dispatch(actions.resource.clearStaged(connId));

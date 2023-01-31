@@ -123,7 +123,7 @@ describe('test suite for SaveAndClose', () => {
     userEvent.click(saveButton);
     expect(screen.getByRole('dialog')).toBeInTheDocument();
     expect(screen.getByText('Confirm replace')).toBeInTheDocument();
-    expect(screen.getByText('Are you sure you want to replace the connection for this flow step? Replacing a connection will cancel all jobs currently running for this flow.')).toBeInTheDocument();
+    expect(screen.getByText('Are you sure you want to replace the connection for this flow? Replacing a connection will cancel all jobs currently running.')).toBeInTheDocument();
     const cancelButton = screen.getByRole('button', {name: 'Cancel'});
 
     userEvent.click(cancelButton);

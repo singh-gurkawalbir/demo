@@ -11,6 +11,7 @@ import UserSignInPage from '../../components/UserSignInPage';
 import NotificationToaster from '../../components/NotificationToaster';
 import Spinner from '../../components/Spinner';
 import Loader from '../../components/Loader';
+import {message as messageStoreMessage} from '../../utils/messageStore';
 
 const useStyles = makeStyles({
   disclaimer: {
@@ -59,7 +60,7 @@ export default function AcceptInvite(props) {
           {skipPassword && (
             <>
               <NotificationToaster variant="info" className={classes.disclaimer}>
-                <RawHtml html={'This is an SSO sign-up. Make sure you have access to <a className="link" href=ssoLink>this</a> SSO provider'} />
+                <RawHtml html={messageStoreMessage.MFA.SSO_SIGN_UP} />
               </NotificationToaster>
             </>
           )}

@@ -167,7 +167,6 @@ export default {
       resourceType,
       id,
       patch,
-      scope,
     ) =>
       action(actionTypes.RESOURCE.STAGE_PATCH, {
         patch,
@@ -176,19 +175,16 @@ export default {
           resourceType,
           resourceId: id,
         }),
-        scope,
       }),
     commitStaged: (
       ssLinkedConnectionId,
       integrationId,
       resourceType,
       id,
-      scope,
     ) =>
       action(actionTypes.SUITESCRIPT.RESOURCE.STAGE_COMMIT, {
         resourceType,
         id,
-        scope,
         ssLinkedConnectionId,
         integrationId,
       }),
@@ -196,7 +192,6 @@ export default {
       ssLinkedConnectionId,
       resourceType,
       id,
-      scope,
     ) =>
       action(actionTypes.RESOURCE.STAGE_CLEAR, {
         id: suiteScriptResourceKey({
@@ -204,7 +199,6 @@ export default {
           resourceType,
           resourceId: id,
         }),
-        scope,
       }),
 
     request: (

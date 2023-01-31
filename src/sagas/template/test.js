@@ -16,7 +16,6 @@ import {
   publishStatus,
 } from '.';
 import templateUtil from '../../utils/template';
-import { SCOPES } from '../resourceForm';
 
 describe('generateZip sagas', () => {
   const integrationId = '123';
@@ -351,11 +350,10 @@ describe('publishStatus saga', () => {
           call(commitStagedChanges, {
             resourceType: 'templates',
             id: templateId,
-            scope: SCOPES.VALUE,
           }), {},
         ],
       ])
-      .put(actions.resource.patchStaged(templateId, patchSet, SCOPES.VALUE))
+      .put(actions.resource.patchStaged(templateId, patchSet))
       .put(actions.template.publish.success(templateId))
       .run();
   });
@@ -376,11 +374,10 @@ describe('publishStatus saga', () => {
           call(commitStagedChanges, {
             resourceType: 'templates',
             id: templateId,
-            scope: SCOPES.VALUE,
           }), {error: {msg: '123'}},
         ],
       ])
-      .put(actions.resource.patchStaged(templateId, patchSet, SCOPES.VALUE))
+      .put(actions.resource.patchStaged(templateId, patchSet))
       .put(actions.template.publish.error(templateId))
       .run();
   });

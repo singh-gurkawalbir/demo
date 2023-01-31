@@ -6,7 +6,7 @@ import clsx from 'clsx';
 import { selectors } from '../../reducers';
 import AppRouting from '../AppRouting';
 import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
-import { NONE_TIER_USER_ERROR } from '../../utils/messageStore';
+import { message } from '../../utils/messageStore';
 import ChatbotWidget from '../../components/ChatbotWidget';
 import Spinner from '../../components/Spinner';
 import Loader from '../../components/Loader';
@@ -35,13 +35,14 @@ export default function PageContent() {
   const agreeTOSAndPPRequired = useSelector(selectors.agreeTOSAndPPRequired);
   const environment = useSelector(state => selectors.userPreferences(state)?.environment);
   const isSandboxAllowed = useSelector(selectors.accountHasSandbox);
+  const isAccountSwitchInProgress = useSelector(state => selectors.isAccountSwitchInProgress(state));
 
   const [enqueueSnackbar] = useEnqueueSnackbar();
 
   useEffect(() => {
     if (!isNoneTierLicense) return;
     enqueueSnackbar({
-      message: NONE_TIER_USER_ERROR,
+      message: message.NONE_TIER_USER_ERROR,
       variant: 'error',
       persist: true,
     });
@@ -57,7 +58,7 @@ export default function PageContent() {
   }, [isDefaultAccountSet, environment, isSandboxAllowed, dispatch, history]);
 
   if (isNoneTierLicense) return null;
-  if (!isDefaultAccountSet && !isMFASetupIncomplete) {
+  if ((!isDefaultAccountSet && !isMFASetupIncomplete) || isAccountSwitchInProgress) {
     return <Loader open>Loading...<Spinner /></Loader>;
   }
 

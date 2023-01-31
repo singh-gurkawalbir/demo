@@ -22,8 +22,8 @@ import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
 import useConfirmDialog from '../../components/ConfirmDialog';
 import { hashCode } from '../../utils/string';
 import { emptyObject, HOME_PAGE_PATH, UNASSIGNED_SECTION_ID } from '../../constants';
-import messageStore from '../../utils/messageStore';
 import PageContent from '../../components/PageContent';
+import { message } from '../../utils/messageStore';
 
 const useStyles = makeStyles(theme => ({
   componentPadding: {
@@ -470,7 +470,7 @@ export default function ClonePreview(props) {
 
   return (
     <LoadResources resources="flows,connections,exports,imports,integrations" required integrationId={resourceType === 'integrations' ? resourceId : undefined}>
-      <CeligoPageBar title={`Clone ${MODEL_PLURAL_TO_LABEL[resourceType].toLowerCase()}`} infoText={messageStore('CLONE_DESCRIPTION')} />
+      <CeligoPageBar title={`Clone ${MODEL_PLURAL_TO_LABEL[resourceType].toLowerCase()}`} infoText={message.INTEGRATION.CLONE_DESCRIPTION} />
       <PageContent>
         <div className={classes.componentPadding}>
           <DynaForm

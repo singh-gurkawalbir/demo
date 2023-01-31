@@ -4,6 +4,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import {findNodeInTree, getExtractFromUniqueId} from '../../../../../../utils/mapping';
 import {selectors} from '../../../../../../reducers';
 import actions from '../../../../../../actions';
+import { message } from '../../../../../../utils/messageStore';
 
 const useStyles = makeStyles(theme => ({
   tabComponentRoot: {
@@ -39,7 +40,7 @@ function generateTabs(parentNode) {
         id: extractConfig.extract,
         label: getExtractFromUniqueId(extractConfig.extract),
         disabled: (extractConfig.copySource === 'yes') || shouldDisableTab,
-        disabledInfo: shouldDisableTab ? 'No matching fields in this tab' : 'No fields need to be configured because this source has the setting "Copy an object array from the source as-is" set to "Yes".',
+        disabledInfo: shouldDisableTab ? message.MAPPER2.DISABLE_TAB : message.MAPPER2.SHOULD_NOT_DISABLE_TAB,
       });
     });
   }

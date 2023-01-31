@@ -25,7 +25,7 @@ describe('conflictAlertDialog testing', () => {
   test('should test when some value is present in the store commmit conflict', () => {
     const {store} = renderWithProviders(<ConflictAlertDialog />);
 
-    store.dispatch(actions.resource.commitConflict('1', [{path: '//', value: '12'}], 'scope'));
+    store.dispatch(actions.resource.commitConflict('1', [{path: '//', value: '12'}]));
 
     expect(screen.getByText('Resource conflict for resourceId: 1')).toBeInTheDocument();
     expect(screen.getByText('//')).toBeInTheDocument();
@@ -35,7 +35,7 @@ describe('conflictAlertDialog testing', () => {
   test('should test for non string value', () => {
     const {store} = renderWithProviders(<ConflictAlertDialog />);
 
-    store.dispatch(actions.resource.commitConflict('1', [{path: '//', value: 12}], 'scope'));
+    store.dispatch(actions.resource.commitConflict('1', [{path: '//', value: 12}]));
 
     expect(screen.getByText('Resource conflict for resourceId: 1')).toBeInTheDocument();
     expect(screen.getByText('//')).toBeInTheDocument();
@@ -45,7 +45,7 @@ describe('conflictAlertDialog testing', () => {
   test('should click on refresh button', () => {
     const {store} = renderWithProviders(<ConflictAlertDialog />);
 
-    store.dispatch(actions.resource.commitConflict('1', [{path: '//', value: '12'}], 'scope'));
+    store.dispatch(actions.resource.commitConflict('1', [{path: '//', value: '12'}]));
 
     const refresh = screen.getByText('Refresh');
 

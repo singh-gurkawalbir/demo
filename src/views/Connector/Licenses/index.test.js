@@ -6,7 +6,6 @@ import userEvent from '@testing-library/user-event';
 import Licenses from '.';
 import { runServer } from '../../../test/api/server';
 import actions from '../../../actions';
-import { SCOPES } from '../../../sagas/resourceForm';
 import { buildDrawerUrl, drawerPaths } from '../../../utils/rightDrawer';
 import { renderWithProviders, reduxStore } from '../../../test/test-utils';
 
@@ -123,7 +122,7 @@ describe('licenses test cases', () => {
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.resource.patchStaged('mock_new_id', [
       { op: 'add', path: '/_connectorId', value: 'connector_id_1' },
       { op: 'add', path: '/type', value: 'integrationApp' },
-    ], SCOPES.VALUE));
+    ]));
     expect(history).toEqual([
       buildDrawerUrl({
         path: drawerPaths.RESOURCE.ADD,
@@ -157,7 +156,7 @@ describe('licenses test cases', () => {
 
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.resource.patchStaged('mock_new_id', [
       { op: 'add', path: '/_connectorId', value: 'connector_id_2' },
-    ], SCOPES.VALUE));
+    ]));
     expect(history).toEqual([
       buildDrawerUrl({
         path: drawerPaths.RESOURCE.ADD,

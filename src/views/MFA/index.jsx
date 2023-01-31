@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core';
 import { useHistory, useLocation } from 'react-router-dom';
-import messageStore from '../../utils/messageStore';
+import messageStore, { message } from '../../utils/messageStore';
 import { selectors } from '../../reducers';
 import getRoutePath from '../../utils/routePaths';
 import OneTimePassCodeForm from './OneTimePassCodeForm';
@@ -43,9 +43,10 @@ export default function MfaVerify() {
   const { isAccountUser, noOfDays } = useSelector(selectors.mfaAuthInfo);
 
   if (isAccountUser) {
-    infoMessage = messageStore(noOfDays ? 'MFA_USER_OTP_INFO_FOR_TRUSTED_NUMBER_OF_DAYS' : 'MFA_USER_OTP_INFO', { noOfDays });
+    infoMessage = messageStore(noOfDays
+      ? messageStore('MFA.USER_OTP_INFO_FOR_TRUSTED_NUMBER_OF_DAYS', { noOfDays }) : message.MFA.MFA_USER_OTP_INFO);
   } else {
-    infoMessage = messageStore('MFA_OWNER_OTP_INFO');
+    infoMessage = message.MFA.OWNER_OTP_INFO;
   }
   useEffect(() => {
     dispatch(actions.auth.validateSession());

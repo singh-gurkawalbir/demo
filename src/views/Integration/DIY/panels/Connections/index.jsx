@@ -141,7 +141,7 @@ export default function ConnectionsPanel({ integrationId, childId }) {
       }
 
       dispatch(
-        actions.resource.patchStaged(newId, patchSet, 'value')
+        actions.resource.patchStaged(newId, patchSet)
       );
     }
   }, [_integrationId, applications, childId, dispatch, history, integration?._connectorId, isStandalone, location.pathname]);

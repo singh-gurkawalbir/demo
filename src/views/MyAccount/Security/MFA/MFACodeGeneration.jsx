@@ -7,6 +7,7 @@ import ReAuthModal from './ReAuthModal';
 import HeaderWithHelpText from './HeaderWithHelpText';
 import OutlinedButton from '../../../../components/Buttons/OutlinedButton';
 import { selectors } from '../../../../reducers';
+import { message } from '../../../../utils/messageStore';
 
 const useStyles = makeStyles(theme => ({
   scanCodeWrapper: {
@@ -40,7 +41,7 @@ function ViewSecretCode() {
   return (
     <>
       <div >
-        Can&apos;t scan your QR code? Authenticate with your account and secret key.
+        {message.MFA.CANNOT_SCAN}
         <div>
           {
             showSecretCode ? (
@@ -75,7 +76,7 @@ function ViewQRCode() {
     <>
       <div className={classes.scanCodeWrapper}>
         <div>
-          Scan the QR code below with your verification app. Once your app reads the QR code, you&apos;ll get a 6-digit code.
+          {message.MFA.SCAN_QR}
         </div>
         { showQrCode
           ? <QRCode value={qrCode} size={84} className={classes.qrCode} />

@@ -62,7 +62,7 @@ import {
   emptyList,
   MAX_DATA_RETENTION_PERIOD,
 } from '../constants';
-import messageStore from '../utils/messageStore';
+import { message } from '../utils/messageStore';
 import { upgradeButtonText, expiresInfo, isNextTheHighestPlan } from '../utils/license';
 import commKeyGen from '../utils/commKeyGenerator';
 import {
@@ -2250,11 +2250,10 @@ selectors.makeResourceDataSelector = () => {
         id
       );
     },
-    (state, resourceType, id, scope) =>
+    (state, resourceType, id) =>
       cachedStageSelector(
         state,
         id,
-        scope
       ),
     (_1, resourceType) => resourceType,
     (_1, _2, id) => id,
@@ -2809,8 +2808,10 @@ selectors.getFlowsAssociatedExportFromIAMetadata = (state, fieldMeta) => {
 
 selectors.integrationConnectionList = (state, integrationId, childId, tableConfig) => {
   const integration = selectors.resource(state, 'integrations', integrationId) || {};
+
   // eslint-disable-next-line no-use-before-define
   const childIntegrations = map(selectors.integrationChildren(state, integrationId), 'value');
+
   let { resources = [] } = selectors.resourceList(state, {
     type: 'connections',
     ...(tableConfig || {}),
@@ -3828,7 +3829,7 @@ selectors.isLicenseValidToEnableFlow = state => {
 
   if (license.hasExpired) {
     licenseDetails.enable = false;
-    licenseDetails.message = messageStore('LICENSE_EXPIRED');
+    licenseDetails.message = message.SUBSCRIPTION.LICENSE_EXPIRED;
   }
 
   return licenseDetails;
@@ -4539,7 +4540,6 @@ selectors.sampleDataWrapper = createSelector(
         state,
         resourceType,
         resourceId,
-        'value'
       );
 
       return merged || emptyObject;
@@ -4607,7 +4607,6 @@ selectors.isExportPreviewDisabled = (state, formKey) => {
     state,
     resourceType,
     resourceId,
-    'value',
   )?.merged || emptyObject;
 
   // Incase of File adaptors(ftp, s3)/As2/Rest csv where file upload is supported
@@ -4639,7 +4638,6 @@ selectors.getAvailableResourcePreviewStages = (
     state,
     resourceType,
     resourceId,
-    'value'
   )?.merged || emptyObject;
 
   const isDataLoader = selectors.isDataLoaderExport(state, resourceId, flowId);
@@ -4653,7 +4651,6 @@ selectors.isRequestUrlAvailableForPreviewPanel = (state, resourceId, resourceTyp
     state,
     resourceType,
     resourceId,
-    'value'
   ).merged;
   // for rest and http
   const appType = adaptorTypeMap[resourceObj?.adaptorType];
@@ -4814,7 +4811,7 @@ selectors.suiteScriptResourceStatus = (
 
 selectors.suiteScriptResourceData = (
   state,
-  { resourceType, id, ssLinkedConnectionId, integrationId, scope }
+  { resourceType, id, ssLinkedConnectionId, integrationId }
 ) => {
   if (!state || !resourceType || !id || !ssLinkedConnectionId) {
     return emptyObject;
@@ -4833,7 +4830,6 @@ selectors.suiteScriptResourceData = (
       resourceType,
       resourceId: id,
     }),
-    scope
   ) || {};
 
   if (!master && !patch) return { merged: {} };
@@ -5480,7 +5476,6 @@ selectors.isPreviewPanelAvailableForResource = (
     state,
     resourceType,
     resourceId,
-    'value'
   )?.merged || emptyObject;
   const connectionObj = selectors.resource(
     state,
@@ -5798,14 +5793,14 @@ selectors.mappingEditorNotification = (state, editorId) => {
     if (mappingVersion === 2) return emptyObject;
 
     return {
-      message: messageStore('MAPPER1_REFERENCE_INFO'),
+      message: message.MAPPER2.MAPPER1_REFERENCE_INFO,
       variant: 'info',
     };
   }
   if (mappingVersion === 1) return emptyObject;
 
   return {
-    message: messageStore('MAPPER2_BANNER_WARNING'),
+    message: message.MAPPER2.BANNER_WARNING,
     variant: 'warning',
   };
 };
@@ -6383,7 +6378,7 @@ selectors.isStandaloneExport = (state, flowId, exportId) => {
     return false;
   }
 
-  const { merged: flow = {} } = selectors.resourceData(state, 'flows', flowId, 'value');
+  const { merged: flow = {} } = selectors.resourceData(state, 'flows', flowId);
 
   return !flow.pageProcessors?.find(pp => pp._exportId === exportId) &&
   !flow.routers?.some(r => !r.branches?.some(b => b.pageProcessors?.some(pp => pp._exportId === exportId)));
@@ -6415,7 +6410,7 @@ selectors.isPageGenerator = (state, flowId, resourceId, resourceType) => {
   }
 
   // Search in flow doc to determine pg/pp
-  const { merged: flow } = selectors.resourceData(state, 'flows', flowId, 'value');
+  const { merged: flow } = selectors.resourceData(state, 'flows', flowId);
 
   return isPageGeneratorResource(flow, resourceId);
 };
@@ -6493,7 +6488,7 @@ selectors.isRestCsvMediaTypeExport = (state, resourceId) => {
 selectors.isDataLoaderExport = (state, resourceId, flowId) => {
   if (isNewId(resourceId)) {
     if (!flowId) return false;
-    const flowObj = selectors.resourceData(state, 'flows', flowId, 'value')?.merged || emptyObject;
+    const flowObj = selectors.resourceData(state, 'flows', flowId)?.merged || emptyObject;
 
     return !!(flowObj.pageGenerators &&
               flowObj.pageGenerators[0] &&
@@ -6503,7 +6498,6 @@ selectors.isDataLoaderExport = (state, resourceId, flowId) => {
     state,
     'exports',
     resourceId,
-    'value'
   )?.merged || emptyObject;
 
   return resourceObj.type === 'simple';
@@ -7504,7 +7498,6 @@ selectors.getShopifyStoreLink = (state, resourceId) => {
     state,
     'connections',
     resourceId,
-    'value'
   )?.merged || emptyObject;
 
   if (!_connectorId) return SHOPIFY_APP_STORE_LINKS.DIY_APP;
