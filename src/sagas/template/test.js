@@ -169,7 +169,8 @@ describe('createComponents sagas', () => {
       .run();
   });
 });
-describe('verifyBundleOrPackageInstall sagas', () => {
+
+describe('verifyBundleOrPackageInstall sagas for packages', () => {
   const step = {
     installURL: 'url',
   };
@@ -177,32 +178,14 @@ describe('verifyBundleOrPackageInstall sagas', () => {
     _id: '111',
   };
   const templateId = '123';
-  const type1 = 'suitebundle';
-  const type2 = 'suiteapp';
 
-  test('the status should be completed if response.success is true on successfull api call for both suiteapp and suitebundle', () => {
+  test('the status should be completed if response.success is true on successfull api call', () => {
     const response = { success: true };
 
     expectSaga(verifyBundleOrPackageInstall, {
       step,
       connection,
       templateId,
-      type1,
-    })
-      .provide([[matchers.call.fn(apiCallWithRetry), response]])
-      .call.fn(apiCallWithRetry)
-      .put(
-        actions.template.updateStep(
-          { status: 'completed', installURL: step.installURL },
-          templateId
-        )
-      )
-      .run();
-    expectSaga(verifyBundleOrPackageInstall, {
-      step,
-      connection,
-      templateId,
-      type2,
     })
       .provide([[matchers.call.fn(apiCallWithRetry), response]])
       .call.fn(apiCallWithRetry)
@@ -214,8 +197,8 @@ describe('verifyBundleOrPackageInstall sagas', () => {
       )
       .run();
   });
-  test('the status should be failed if response.success is false on successfull api call for both suiteapp and suitebundle', () => {
-    let path = `/connections/${connection._id}/distributed?type=${type1}`;
+  test('the status should be failed if response.success is false on successfull api call', () => {
+    const path = `/connections/${connection._id}/distributed`;
     const response = {
       success: false,
       resBody: {
@@ -227,26 +210,6 @@ describe('verifyBundleOrPackageInstall sagas', () => {
       step,
       connection,
       templateId,
-      type1,
-    })
-      .provide([[matchers.call.fn(apiCallWithRetry), response]])
-      .call.fn(apiCallWithRetry)
-      .put(
-        actions.api.failure(
-          path,
-          'GET',
-          response.resBody || response.message,
-          false
-        )
-      )
-      .run();
-
-    path = `/connections/${connection._id}/distributed?type=${type2}`;
-    expectSaga(verifyBundleOrPackageInstall, {
-      step,
-      connection,
-      templateId,
-      type2,
     })
       .provide([[matchers.call.fn(apiCallWithRetry), response]])
       .call.fn(apiCallWithRetry)
@@ -260,30 +223,13 @@ describe('verifyBundleOrPackageInstall sagas', () => {
       )
       .run();
   });
-  test('status should be failed if there is no response on successfull api call for both suiteapp and suitebundle', () => {
+  test('status should be failed if there is no response on successfull api call', () => {
     const response = {};
 
     expectSaga(verifyBundleOrPackageInstall, {
       step,
       connection,
       templateId,
-      type1,
-    })
-      .provide([[matchers.call.fn(apiCallWithRetry), response]])
-      .call.fn(apiCallWithRetry)
-      .put(
-        actions.template.updateStep(
-          { status: 'failed', installURL: step.installURL },
-          templateId
-        )
-      )
-      .run();
-
-    expectSaga(verifyBundleOrPackageInstall, {
-      step,
-      connection,
-      templateId,
-      type2,
     })
       .provide([[matchers.call.fn(apiCallWithRetry), response]])
       .call.fn(apiCallWithRetry)
@@ -295,14 +241,13 @@ describe('verifyBundleOrPackageInstall sagas', () => {
       )
       .run();
   });
-  test('status should be failed if api call fails for both suiteapp and suitebundle', () => {
+  test('status should be failed if api call fails', () => {
     const error = new Error('error');
 
     expectSaga(verifyBundleOrPackageInstall, {
       step,
       connection,
       templateId,
-      type1,
     })
       .provide([[matchers.call.fn(apiCallWithRetry), throwError(error)]])
       .call.fn(apiCallWithRetry)
@@ -313,12 +258,188 @@ describe('verifyBundleOrPackageInstall sagas', () => {
         )
       )
       .run();
+  });
+});
+
+describe('netsuite suitebundle verifyBundleOrPackageInstall sagas', () => {
+  const step = {
+    installURL: 'url',
+  };
+  const connection = {
+    _id: '111',
+  };
+  const templateId = '123';
+  const variant = 'suitebundle';
+
+  test('the status should be completed if response.success is true on successfull api call', () => {
+    const response = { success: true };
 
     expectSaga(verifyBundleOrPackageInstall, {
       step,
       connection,
       templateId,
-      type2,
+      variant,
+    })
+      .provide([[matchers.call.fn(apiCallWithRetry), response]])
+      .call.fn(apiCallWithRetry)
+      .put(
+        actions.template.updateStep(
+          { status: 'completed', installURL: step.installURL },
+          templateId
+        )
+      )
+      .run();
+  });
+  test('the status should be failed if response.success is false on successfull api call', () => {
+    const path = `/connections/${connection._id}/distributed?type=suitebundle`;
+    const response = {
+      success: false,
+      resBody: {
+        dummy: 'dummy',
+      },
+    };
+
+    expectSaga(verifyBundleOrPackageInstall, {
+      step,
+      connection,
+      templateId,
+      variant,
+    })
+      .provide([[matchers.call.fn(apiCallWithRetry), response]])
+      .call.fn(apiCallWithRetry)
+      .put(
+        actions.api.failure(
+          path,
+          'GET',
+          response.resBody || response.message,
+          false
+        )
+      )
+      .run();
+  });
+  test('status should be failed if there is no response on successfull api call', () => {
+    const response = {};
+
+    expectSaga(verifyBundleOrPackageInstall, {
+      step,
+      connection,
+      templateId,
+      variant,
+    })
+      .provide([[matchers.call.fn(apiCallWithRetry), response]])
+      .call.fn(apiCallWithRetry)
+      .put(
+        actions.template.updateStep(
+          { status: 'failed', installURL: step.installURL },
+          templateId
+        )
+      )
+      .run();
+  });
+  test('status should be failed if api call fails', () => {
+    const error = new Error('error');
+
+    expectSaga(verifyBundleOrPackageInstall, {
+      step,
+      connection,
+      templateId,
+      variant,
+    })
+      .provide([[matchers.call.fn(apiCallWithRetry), throwError(error)]])
+      .call.fn(apiCallWithRetry)
+      .put(
+        actions.template.updateStep(
+          { status: 'failed', installURL: step.installURL },
+          templateId
+        )
+      )
+      .run();
+  });
+});
+
+describe('netsuite suiteapp variant verifyBundleOrPackageInstall sagas', () => {
+  const step = {
+    installURL: 'url',
+  };
+  const connection = {
+    _id: '111',
+  };
+  const templateId = '123';
+  const variant = 'suiteapp';
+
+  test('the status should be completed if response.success is true on successfull api call', () => {
+    const response = { success: true };
+
+    expectSaga(verifyBundleOrPackageInstall, {
+      step,
+      connection,
+      templateId,
+      variant,
+    })
+      .provide([[matchers.call.fn(apiCallWithRetry), response]])
+      .call.fn(apiCallWithRetry)
+      .put(
+        actions.template.updateStep(
+          { status: 'completed', installURL: step.installURL },
+          templateId
+        )
+      )
+      .run();
+  });
+  test('the status should be failed if response.success is false on successfull api call', () => {
+    const path = `/connections/${connection._id}/distributed?type=suiteapp`;
+    const response = {
+      success: false,
+      resBody: {
+        dummy: 'dummy',
+      },
+    };
+
+    expectSaga(verifyBundleOrPackageInstall, {
+      step,
+      connection,
+      templateId,
+      variant,
+    })
+      .provide([[matchers.call.fn(apiCallWithRetry), response]])
+      .call.fn(apiCallWithRetry)
+      .put(
+        actions.api.failure(
+          path,
+          'GET',
+          response.resBody || response.message,
+          false
+        )
+      )
+      .run();
+  });
+  test('status should be failed if there is no response on successfull api call', () => {
+    const response = {};
+
+    expectSaga(verifyBundleOrPackageInstall, {
+      step,
+      connection,
+      templateId,
+      variant,
+    })
+      .provide([[matchers.call.fn(apiCallWithRetry), response]])
+      .call.fn(apiCallWithRetry)
+      .put(
+        actions.template.updateStep(
+          { status: 'failed', installURL: step.installURL },
+          templateId
+        )
+      )
+      .run();
+  });
+  test('status should be failed if api call fails', () => {
+    const error = new Error('error');
+
+    expectSaga(verifyBundleOrPackageInstall, {
+      step,
+      connection,
+      templateId,
+      variant,
     })
       .provide([[matchers.call.fn(apiCallWithRetry), throwError(error)]])
       .call.fn(apiCallWithRetry)
