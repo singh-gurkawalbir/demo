@@ -2,7 +2,6 @@ import { deepClone } from 'fast-json-patch';
 import { put, select, call } from 'redux-saga/effects';
 import { flattenDeep, isEmpty } from 'lodash';
 import { selectors } from '../../../reducers';
-import { SCOPES } from '../../resourceForm';
 import actions from '../../../actions';
 import {
   fetchPageProcessorPreview,
@@ -31,7 +30,6 @@ export function* getFlowResourceNode({ flowId, resourceId, resourceType }) {
     selectors.resourceData,
     'flows',
     flowId,
-    SCOPES.VALUE
   ))?.merged || emptyObject;
   // check if resource is a pg/pp
   const isPageGeneratorExport = yield select(
@@ -94,7 +92,6 @@ export function* fetchResourceDataForNewFlowResource({
     selectors.resourceData,
     resourceType,
     resourceId,
-    SCOPES.VALUE
   ))?.merged || emptyObject;
 
   // TODO @Raghu: Should handle in metadata to pass boolean instead of string
@@ -138,7 +135,6 @@ export function* fetchFlowResources({
         selectors.resourceData,
         resourceType,
         resourceId,
-        SCOPES.VALUE
       );
 
       if (resource) {
@@ -227,7 +223,6 @@ export function* requestSampleDataForImports({
         selectors.resourceData,
         'imports',
         resourceId,
-        SCOPES.VALUE
       ))?.merged?.mockResponse || emptyObject;
 
       yield put(

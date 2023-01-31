@@ -18,7 +18,6 @@ import { drawerPaths, buildDrawerUrl } from '../../../utils/rightDrawer';
 import resourceConstants from '../../../forms/constants/connection';
 import EditorDrawer from '../../AFE/Drawer';
 import jsonUtil from '../../../utils/json';
-import { SCOPES } from '../../../sagas/resourceForm';
 
 const oAuthApplications = [
   ...resourceConstants.OAUTH_APPLICATIONS,
@@ -125,7 +124,6 @@ function ResourceSetupDrawerContent({
             _integrationId: integrationId,
             installStepConnection: true,
           }),
-          SCOPES.VALUE
         )
       );
       if (typeof setIsResourceStaged === 'function') {

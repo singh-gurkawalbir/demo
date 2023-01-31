@@ -44,7 +44,7 @@ import {
 } from '.';
 import { apiCallWithRetry, apiCallWithPaging } from '..';
 import { selectors } from '../../reducers';
-import { SCOPES, updateFlowDoc } from '../resourceForm';
+import { updateFlowDoc } from '../resourceForm';
 import { resourceConflictResolution } from '../utils';
 import {
   getNetsuiteOrSalesforceMeta,
@@ -125,7 +125,6 @@ describe('resourceConflictDetermination saga', () => {
     commonProp2: 'c',
   };
   const id = '123';
-  const scope = SCOPES.VALUE;
   const resourceType = 'someResourceType';
   const someConflicts = [
     { path: '/a', value: 'abcddfdfd', operation: 'replace' },
@@ -137,7 +136,6 @@ describe('resourceConflictDetermination saga', () => {
       path,
       merged: someMerged,
       id,
-      scope,
       resourceType,
       master: someMaster,
     });
@@ -159,7 +157,7 @@ describe('resourceConflictDetermination saga', () => {
 
     expect(
       saga.next({ conflict: someConflicts, merged: someMerged }).value
-    ).toEqual(put(actions.resource.commitConflict(id, someConflicts, scope)));
+    ).toEqual(put(actions.resource.commitConflict(id, someConflicts)));
     expect(saga.next()).toEqual({
       done: true,
       value: { merged: someMerged, conflict: true },
@@ -338,7 +336,7 @@ describe('commitStagedChanges saga', () => {
     expect(selectEffect).toEqual(select(selectors.userPreferences));
 
     expect(saga.next().value).toEqual(
-      select(selectors.resourceData, resourceType, id, undefined)
+      select(selectors.resourceData, resourceType, id)
     );
 
     const effect = saga.next({});
@@ -354,7 +352,7 @@ describe('commitStagedChanges saga', () => {
       expect(selectEffect).toEqual(select(selectors.userPreferences));
 
       expect(saga.next().value).toEqual(
-        select(selectors.resourceData, resourceType, id, undefined)
+        select(selectors.resourceData, resourceType, id)
       );
       const merged = { lastModified: 50 };
 
@@ -363,7 +361,6 @@ describe('commitStagedChanges saga', () => {
           path,
           merged,
           id,
-          scope: undefined,
           resourceType,
         })
       );
@@ -380,7 +377,7 @@ describe('commitStagedChanges saga', () => {
       expect(selectEffect).toEqual(select(selectors.userPreferences));
 
       expect(saga.next().value).toEqual(
-        select(selectors.resourceData, resourceType, id, undefined)
+        select(selectors.resourceData, resourceType, id)
       );
 
       const merged = { id, lastModified: 100 };
@@ -397,7 +394,6 @@ describe('commitStagedChanges saga', () => {
           path,
           merged,
           id,
-          scope: undefined,
           resourceType,
           master,
         })
@@ -446,7 +442,7 @@ describe('commitStagedChanges saga', () => {
       expect(selectEffect).toEqual(select(selectors.userPreferences));
 
       expect(saga.next().value).toEqual(
-        select(selectors.resourceData, resourceType, id, undefined)
+        select(selectors.resourceData, resourceType, id)
       );
 
       const merged = { id, lastModified: 100 };
@@ -463,7 +459,6 @@ describe('commitStagedChanges saga', () => {
           path,
           merged,
           id,
-          scope: undefined,
           resourceType,
           master,
         })
@@ -512,20 +507,18 @@ describe('commitStagedChanges saga', () => {
     });
     test('should call corresponding api calls, clear the stage and update the resource if connections is updated from integrations page', () => {
       const resourceType2 = 'integrations/1/connections';
-      const scope = 'value';
       const merged = { _id: id, lastModified: 100, assistant: 'http', type: 'netsuite', netsuite: { linkSuiteScriptIntegrator: true }};
       const path = `/connections/${id}`;
       const master = { _id: id, lastModified: 100, netsuite: { authType: 'token-auto' } };
 
-      expectSaga(commitStagedChanges, {resourceType: resourceType2, id, scope, options: {refetchResources: true}})
+      expectSaga(commitStagedChanges, {resourceType: resourceType2, id, options: {refetchResources: true}})
         .provide([
           [select(selectors.userPreferences), { environment: 'sandbox' }],
-          [select(selectors.resourceData, resourceType2, id, scope), { patch: somePatch, master, merged }],
+          [select(selectors.resourceData, resourceType2, id), { patch: somePatch, master, merged }],
           [call(resourceConflictDetermination, {
             path,
             merged,
             id,
-            scope,
             resourceType: 'connections',
             master,
           }), {
@@ -549,7 +542,6 @@ describe('commitStagedChanges saga', () => {
           path,
           merged,
           id,
-          scope,
           resourceType: 'connections',
           master,
         })
@@ -570,7 +562,7 @@ describe('commitStagedChanges saga', () => {
         .put(actions.resource.requestCollection('connections', null, true))
         .put(actions.resource.requestCollection('exports', null, true))
         .put(actions.resource.requestCollection('imports', null, true))
-        .put(actions.resource.clearStaged(id, scope))
+        .put(actions.resource.clearStaged(id))
         .put(actions.resource.received('connections', { _id: id, lastModified: 100, assistant: 'http', type: 'netsuite', netsuite: { linkSuiteScriptIntegrator: true } }))
         .put(actions.resource.updated('connections', id, master, somePatch))
         .run();
@@ -579,12 +571,10 @@ describe('commitStagedChanges saga', () => {
       const resourceType = 'flows';
       const id = 'f1';
       const path = '/flows/f1';
-      const scope = 'value';
       const patch = [
         {
           op: 'replace',
           path: '/disabled',
-          scope: 'value',
           value: false,
         },
       ];
@@ -616,15 +606,14 @@ describe('commitStagedChanges saga', () => {
         autoResolveMatchingTraceKeys: true,
       };
 
-      expectSaga(commitStagedChanges, {resourceType, id, scope, options: {action: 'flowEnableDisable'}})
+      expectSaga(commitStagedChanges, {resourceType, id, options: {action: 'flowEnableDisable'}})
         .provide([
           [select(selectors.userPreferences), { environment: 'production' }],
-          [select(selectors.resourceData, resourceType, id, scope), { patch, master, merged }],
+          [select(selectors.resourceData, resourceType, id), { patch, master, merged }],
           [call(resourceConflictDetermination, {
             path,
             merged,
             id,
-            scope,
             resourceType,
             master,
           }), { merged }],
@@ -641,7 +630,6 @@ describe('commitStagedChanges saga', () => {
           path,
           merged,
           id,
-          scope,
           resourceType,
           master,
         })
@@ -653,7 +641,7 @@ describe('commitStagedChanges saga', () => {
             body: merged,
           },
         })
-        .put(actions.resource.clearStaged(id, scope))
+        .put(actions.resource.clearStaged(id))
         .put(actions.resource.received('flows', updated))
         .put(actions.resource.updated(resourceType, updated._id, master, patch))
         .put(actions.flow.isOnOffActionInprogress(false, id))
@@ -663,12 +651,10 @@ describe('commitStagedChanges saga', () => {
       const resourceType = 'flows';
       const id = 'f1';
       const path = '/flows/f1';
-      const scope = 'value';
       const patch = [
         {
           op: 'replace',
           path: '/disabled',
-          scope: 'value',
           value: false,
         },
       ];
@@ -695,15 +681,14 @@ describe('commitStagedChanges saga', () => {
         message: 'something',
       };
 
-      expectSaga(commitStagedChanges, {resourceType, id, scope, options: {action: 'flowEnableDisable'}})
+      expectSaga(commitStagedChanges, {resourceType, id, options: {action: 'flowEnableDisable'}})
         .provide([
           [select(selectors.userPreferences), { environment: 'production' }],
-          [select(selectors.resourceData, resourceType, id, scope), { patch, master, merged }],
+          [select(selectors.resourceData, resourceType, id), { patch, master, merged }],
           [call(resourceConflictDetermination, {
             path,
             merged,
             id,
-            scope,
             resourceType,
             master,
           }), { merged }],
@@ -720,7 +705,6 @@ describe('commitStagedChanges saga', () => {
           path,
           merged,
           id,
-          scope,
           resourceType,
           master,
         })
@@ -740,12 +724,10 @@ describe('commitStagedChanges saga', () => {
       const resourceType = 'scripts';
       const id = 's1';
       const path = '/scripts/s1';
-      const scope = 'value';
       const patch = [
         {
           op: 'replace',
           path: '/somepath',
-          scope: 'value',
           value: false,
         },
       ];
@@ -765,15 +747,14 @@ describe('commitStagedChanges saga', () => {
         _id: 's1',
       };
 
-      expectSaga(commitStagedChanges, {resourceType, id, scope, options: {}})
+      expectSaga(commitStagedChanges, {resourceType, id, options: {}})
         .provide([
           [select(selectors.userPreferences), { environment: 'production' }],
-          [select(selectors.resourceData, resourceType, id, scope), { patch, master, merged }],
+          [select(selectors.resourceData, resourceType, id), { patch, master, merged }],
           [call(resourceConflictDetermination, {
             path,
             merged,
             id,
-            scope,
             resourceType,
             master,
           }), { merged }],
@@ -792,7 +773,7 @@ describe('commitStagedChanges saga', () => {
             body: merged,
           },
         })
-        .put(actions.resource.clearStaged(id, scope))
+        .put(actions.resource.clearStaged(id))
         .put(actions.resource.received(resourceType, { ...updated, content: '/*\n* preSavePageFunction stub:\n*\n*' }))
         .put(actions.resource.updated(resourceType, updated._id, master, patch))
         .run();
@@ -809,7 +790,7 @@ describe('commitStagedChanges saga', () => {
       expect(selectEffect).toEqual(select(selectors.userPreferences));
 
       expect(saga.next().value).toEqual(
-        select(selectors.resourceData, resourceType, tempId, undefined)
+        select(selectors.resourceData, resourceType, tempId)
       );
 
       const path = `/${resourceType}`;
@@ -853,7 +834,6 @@ describe('commitStagedChanges saga', () => {
     test('should call corresponding api calls, clear the stage and create the resource if connections is created from integrations page', () => {
       const tempId = 'new-123';
       const resourceType2 = 'integrations/1/connections';
-      const scope = 'value';
       const merged = {
         adaptorType: 'RESTConnection',
         application: 'Zendesk Support',
@@ -898,10 +878,10 @@ describe('commitStagedChanges saga', () => {
         },
       };
 
-      expectSaga(commitStagedChanges, {resourceType: resourceType2, id: tempId, scope, options: {refetchResources: true}})
+      expectSaga(commitStagedChanges, {resourceType: resourceType2, id: tempId, options: {refetchResources: true}})
         .provide([
           [select(selectors.userPreferences), { environment: 'production' }],
-          [select(selectors.resourceData, resourceType2, tempId, scope), { patch: somePatch, master, merged }],
+          [select(selectors.resourceData, resourceType2, tempId), { patch: somePatch, master, merged }],
           [call(apiCallWithRetry, {
             path,
             opts: {
@@ -921,7 +901,7 @@ describe('commitStagedChanges saga', () => {
         .put(actions.resource.requestCollection('connections', null, true))
         .put(actions.resource.requestCollection('exports', null, true))
         .put(actions.resource.requestCollection('imports', null, true))
-        .put(actions.resource.clearStaged(tempId, scope))
+        .put(actions.resource.clearStaged(tempId))
         .put(actions.resource.received('integrations/1/connections', updated))
         .put(actions.resource.created(updated._id, tempId, resourceType2))
         .run();
@@ -929,7 +909,6 @@ describe('commitStagedChanges saga', () => {
     test('should call corresponding api calls, clear the stage and create the resource if connections is created from connections page and connection has integrationId', () => {
       const tempId = 'new-123';
       const resourceType = 'connections';
-      const scope = 'value';
       const merged = {
         adaptorType: 'RESTConnection',
         application: 'Zendesk Support',
@@ -974,10 +953,10 @@ describe('commitStagedChanges saga', () => {
         },
       };
 
-      expectSaga(commitStagedChanges, {resourceType, id: tempId, scope, options: {refetchResources: true}})
+      expectSaga(commitStagedChanges, {resourceType, id: tempId, options: {refetchResources: true}})
         .provide([
           [select(selectors.userPreferences), { environment: 'production' }],
-          [select(selectors.resourceData, resourceType, tempId, scope), { patch: somePatch, master, merged }],
+          [select(selectors.resourceData, resourceType, tempId), { patch: somePatch, master, merged }],
           [call(apiCallWithRetry, {
             path,
             opts: {
@@ -1001,7 +980,7 @@ describe('commitStagedChanges saga', () => {
         .put(actions.resource.requestCollection('connections', null, true))
         .put(actions.resource.requestCollection('exports', null, true))
         .put(actions.resource.requestCollection('imports', null, true))
-        .put(actions.resource.clearStaged(tempId, scope))
+        .put(actions.resource.clearStaged(tempId))
         .put(actions.resource.received('connections', updated))
         .put(actions.resource.created(updated._id, tempId, resourceType))
         .run();
@@ -1009,7 +988,6 @@ describe('commitStagedChanges saga', () => {
     test('should call corresponding api calls, clear the stage and create the resource if export is created from a flow buider page', () => {
       const tempId = 'new-123';
       const resourceType = 'exports';
-      const scope = 'value';
       const merged = {
         _connectionId: '61ee2b2d2959b91c0ab9cc2b',
         adaptorType: 'RESTExport',
@@ -1061,10 +1039,10 @@ describe('commitStagedChanges saga', () => {
         adaptorType: 'RESTExport',
       };
 
-      expectSaga(commitStagedChanges, {resourceType, id: tempId, scope, options: {}})
+      expectSaga(commitStagedChanges, {resourceType, id: tempId, options: {}})
         .provide([
           [select(selectors.userPreferences), {}],
-          [select(selectors.resourceData, resourceType, tempId, scope), { patch: somePatch, master, merged }],
+          [select(selectors.resourceData, resourceType, tempId), { patch: somePatch, master, merged }],
           [call(apiCallWithRetry, {
             path,
             opts: {
@@ -1110,7 +1088,7 @@ describe('commitStagedChanges saga', () => {
           },
         })
         .call(apiCallWithRetry, { path: `/${resourceType}/${updated._id}` })
-        .put(actions.resource.clearStaged(tempId, scope))
+        .put(actions.resource.clearStaged(tempId))
         .put(actions.resource.received('exports', {
           ...updated,
           assistantMetadata: {
@@ -1126,7 +1104,6 @@ describe('commitStagedChanges saga', () => {
     test('should call corresponding api calls, clear the stage and create the resource if flow is created from a flow buider page', () => {
       const tempId = 'new-123';
       const resourceType = 'flows';
-      const scope = 'value';
       const merged = {
         name: 'DataLoader',
         pageGenerators: [
@@ -1158,10 +1135,10 @@ describe('commitStagedChanges saga', () => {
         autoResolveMatchingTraceKeys: true,
       };
 
-      expectSaga(commitStagedChanges, {resourceType, id: tempId, scope, options: {}})
+      expectSaga(commitStagedChanges, {resourceType, id: tempId, options: {}})
         .provide([
           [select(selectors.userPreferences), {}],
-          [select(selectors.resourceData, resourceType, tempId, scope), { patch: somePatch, master, merged }],
+          [select(selectors.resourceData, resourceType, tempId), { patch: somePatch, master, merged }],
           [call(isDataLoaderFlow, merged), true],
           [call(apiCallWithRetry, {
             path,
@@ -1187,7 +1164,7 @@ describe('commitStagedChanges saga', () => {
             body: merged,
           },
         })
-        .put(actions.resource.clearStaged(tempId, scope))
+        .put(actions.resource.clearStaged(tempId))
         .put(actions.resource.received(resourceType, {
           _id: '61ee3d2b12a1c627b7a9798a',
           lastModified: '2022-01-24T05:46:19.903Z',
@@ -1208,7 +1185,7 @@ describe('commitStagedChanges saga', () => {
 });
 
 describe('commitStagedChangesWrapper saga', () => {
-  const props = { resourceType: 'someResource', id: 'i1', scope: SCOPES.VALUE };
+  const props = { resourceType: 'someResource', id: 'i1' };
 
   test('should call commitStagedChanges if no asyncKey is present', () => expectSaga(commitStagedChangesWrapper, { asyncKey: undefined, ...props})
     .provide([[call(commitStagedChanges, props)]])

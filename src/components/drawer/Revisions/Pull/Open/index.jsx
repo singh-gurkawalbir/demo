@@ -16,7 +16,7 @@ import getMetadata from './metadata';
 import RevisionHeader from '../../components/RevisionHeader';
 import { drawerPaths, buildDrawerUrl } from '../../../../../utils/rightDrawer';
 import ErrorContent from '../../../../ErrorContent';
-import messageStore from '../../../../../utils/messageStore';
+import { message } from '../../../../../utils/messageStore';
 import useEnqueueSnackbar from '../../../../../hooks/enqueueSnackbar';
 
 const useStyles = makeStyles(() => ({
@@ -67,7 +67,7 @@ function OpenPullDrawerContent({ integrationId, parentUrl }) {
       onClose();
 
       enquesnackbar({
-        message: <ErrorContent error={messageStore('NO_CLONE_FAMILY_TO_PULL_FROM_ERROR')} />,
+        message: <ErrorContent error={message.LCM.NO_CLONE_FAMILY_TO_PULL_FROM_ERROR} />,
         variant: 'error',
       });
     }
@@ -75,7 +75,7 @@ function OpenPullDrawerContent({ integrationId, parentUrl }) {
 
   return (
     <>
-      <DrawerHeader title="Create pull" infoText={messageStore('CREATE_PULL_FORM_HELPINFO')} className={classes.drawerHeader} handleClose={onClose}>
+      <DrawerHeader title="Create pull" infoText={message.LCM.CREATE_PULL_FORM_HELPINFO} className={classes.drawerHeader} handleClose={onClose}>
         <RevisionHeader />
       </DrawerHeader>
       <DrawerContent>

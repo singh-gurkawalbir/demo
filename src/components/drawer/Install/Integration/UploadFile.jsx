@@ -10,6 +10,7 @@ import { buildDrawerUrl, drawerPaths } from '../../../../utils/rightDrawer';
 import FieldMessage from '../../../DynaForm/fields/FieldMessage';
 import errorMessageStore from '../../../../utils/errorStore';
 import { MAX_TEMPLATE_ZIP_SIZE } from '../../../../constants';
+import { message } from '../../../../utils/messageStore';
 
 const useStyles = makeStyles(theme => ({
   uploadButton: {
@@ -108,7 +109,7 @@ export default function UploadFile() {
 
   return (
     <div>
-      <Typography variant="h5">Your installation will begin after choosing a zip file.</Typography>
+      <Typography variant="h5">{message.INSTALL_ZIP_FILE}</Typography>
       <FormControl className={classes.formControlUploadFile}>
         <div className={classes.fileUploadLabelWrapper}>
           <FormLabel required>

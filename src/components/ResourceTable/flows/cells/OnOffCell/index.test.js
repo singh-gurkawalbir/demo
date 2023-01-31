@@ -7,7 +7,7 @@ import OnOffCell from '.';
 import actions from '../../../../../actions';
 import {ConfirmDialogProvider} from '../../../../ConfirmDialog';
 import * as mockEnqueSnackbar from '../../../../../hooks/enqueueSnackbar';
-import messageStore from '../../../../../utils/messageStore';
+import { message } from '../../../../../utils/messageStore';
 
 const mockDispatch = jest.fn();
 
@@ -150,7 +150,7 @@ describe('on/Off cell UI test case', () => {
     expect(enqueueSnackbar).toHaveBeenCalledWith(
       {
         variant: 'error',
-        message: messageStore('LICENSE_EXPIRED'),
+        message: message.SUBSCRIPTION.LICENSE_EXPIRED,
       }
     );
   });

@@ -48,7 +48,7 @@ export default function ChildUpgradeButton({ resource }) {
       dispatch(actions.integrationApp.upgrade.deleteStatus(id));
       enquesnackbar({
         message: <ErrorContent
-          error={messageStore('CHILD_UPGRADE_ERROR_MESSAGE',
+          error={messageStore('SUBSCRIPTION.CHILD_UPGRADE_ERROR_MESSAGE',
             {
               childName: name,
               errorMessage: errMessage,

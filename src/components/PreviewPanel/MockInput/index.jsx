@@ -21,8 +21,7 @@ import { drawerPaths } from '../../../utils/rightDrawer';
 import FetchLatestMockInputDataButton from './FetchLatestMockInputDataButton';
 import useEnqueueSnackbar from '../../../hooks/enqueueSnackbar';
 import { MOCK_INPUT_STATUS } from '../../../constants';
-import messageStore from '../../../utils/messageStore';
-import errorMessageStore from '../../../utils/errorStore';
+import { message } from '../../../utils/messageStore';
 
 const useStyles = makeStyles(theme => ({
   editMockContentWrapper: {
@@ -71,9 +70,9 @@ function RouterWrappedContent(props) {
     if (!parsedMockData || !unwrappedMockData) {
       // throw error for invalid json and data not being in the connonical format
       if (!parsedMockData) {
-        setError(errorMessageStore('MOCK_INPUT_INVALID_JSON'));
+        setError(message.MOCK_INPUT_REFRESH.INVALID_JSON);
       } else {
-        setError(errorMessageStore('MOCK_INPUT_INVALID_FORMAT'));
+        setError(message.MOCK_INPUT_REFRESH.INVALID_FORMAT);
       }
 
       return;
@@ -108,10 +107,10 @@ function RouterWrappedContent(props) {
     if (status === MOCK_INPUT_STATUS.RECEIVED) {
       dispatch(actions.mockInput.updateUserMockInput(resourceId));
       setValue(wrapMockInputData(mockInput));
-      enquesnackbar({ message: messageStore('MOCK_INPUT_REFRESH_SUCCESS')});
+      enquesnackbar({ message: message.MOCK_INPUT_REFRESH.SUCCESS});
       setRefreshMockInputData(false);
     } else if (status === MOCK_INPUT_STATUS.ERROR) {
-      enquesnackbar({ message: errorMessageStore('MOCK_INPUT_REFRESH_FAILED'), variant: 'error' });
+      enquesnackbar({ message: message.MOCK_INPUT_REFRESH.FAILED, variant: 'error' });
       setRefreshMockInputData(false);
     }
   }, [dispatch, enquesnackbar, mockInput, refreshMockInputData, resourceId, status]);

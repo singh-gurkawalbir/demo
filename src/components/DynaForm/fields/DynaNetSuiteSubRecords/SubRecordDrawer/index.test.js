@@ -255,7 +255,6 @@ describe('subRecordDrawer UI tests', () => {
           value: updatedSubrecords,
         },
       ],
-      'value'
     )));
   });
   test('should make a url redirection when clicked on save button', async () => {

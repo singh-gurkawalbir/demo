@@ -12,6 +12,7 @@ import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
 import { emptyObject } from '../../constants';
 import { getStatusVariantAndMessage } from '../../utils/connections';
 import { TextButton } from '../Buttons';
+import {message as messageStore} from '../../utils/messageStore';
 
 const useStyles = makeStyles(theme => ({
   fixConnectionBtn: {
@@ -108,8 +109,7 @@ export default function ConnectionStatusPanel({ className, resourceId, resourceT
           <Typography variant="h6" className={classes.titleStatusPanel}>{message}</Typography>
         ) : (
           <Typography component="div" variant="h6" className={classes.titleStatusPanel}>
-            The connection associated with this resource is currently offline
-            and configuration is limited.
+            {messageStore.CONNECTION_OFFLINE}
             <TextButton
               data-test="fixConnection"
               color="primary"

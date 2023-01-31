@@ -33,7 +33,6 @@ import {
   getFlowStageData,
 } from '../utils/flowDataUtils';
 import { getAllDependentSampleDataStages, getSampleDataStage, getBlobResourceSampleData, getSampleFileMeta } from '../../../utils/flowData';
-import { SCOPES } from '../../resourceForm';
 import getPreviewOptionsForResource, { _getUIDataForResource } from './pageProcessorPreviewOptions';
 
 describe('flow sample data sagas', () => {
@@ -49,13 +48,13 @@ describe('flow sample data sagas', () => {
 
       expectSaga(_initFlowData, { flowId, resourceId: exportId, resourceType: 'exports'})
         .provide([
-          [select(selectors.resourceData, 'flows', flowId, SCOPES.VALUE), { merged: flow }],
+          [select(selectors.resourceData, 'flows', flowId), { merged: flow }],
         ])
         .put(actions.flowData.init({...flow, refresh: false}))
         .run();
       expectSaga(_initFlowData, { flowId, resourceId: exportId, resourceType: 'exports', refresh: true, formKey: 'form-123'})
         .provide([
-          [select(selectors.resourceData, 'flows', flowId, SCOPES.VALUE), { merged: flow }],
+          [select(selectors.resourceData, 'flows', flowId), { merged: flow }],
         ])
         .put(actions.flowData.init({...flow, refresh: true, formKey: 'form-123'}))
         .run();
@@ -73,8 +72,8 @@ describe('flow sample data sagas', () => {
 
       expectSaga(_initFlowData, { flowId, resourceId: newExportId, resourceType: 'exports'})
         .provide([
-          [select(selectors.resourceData, 'flows', flowId, SCOPES.VALUE), { merged: flow }],
-          [select(selectors.resourceData, 'exports', newExportId, SCOPES.VALUE), { merged: newExport }],
+          [select(selectors.resourceData, 'flows', flowId), { merged: flow }],
+          [select(selectors.resourceData, 'exports', newExportId), { merged: newExport }],
         ])
         .put(actions.flowData.init(flowObjectToInit))
         .run();
@@ -92,8 +91,8 @@ describe('flow sample data sagas', () => {
 
       expectSaga(_initFlowData, { flowId, resourceId: newExportId, resourceType: 'exports'})
         .provide([
-          [select(selectors.resourceData, 'flows', flowId, SCOPES.VALUE), { merged: flow }],
-          [select(selectors.resourceData, 'exports', newExportId, SCOPES.VALUE), { merged: newLookup }],
+          [select(selectors.resourceData, 'flows', flowId), { merged: flow }],
+          [select(selectors.resourceData, 'exports', newExportId), { merged: newLookup }],
         ])
         .put(actions.flowData.init(flowObjectToInit))
         .run();
@@ -111,8 +110,8 @@ describe('flow sample data sagas', () => {
 
       expectSaga(_initFlowData, { flowId, resourceId: newImportId, resourceType: 'imports'})
         .provide([
-          [select(selectors.resourceData, 'flows', flowId, SCOPES.VALUE), { merged: flow }],
-          [select(selectors.resourceData, 'imports', newImport, SCOPES.VALUE), { merged: newImport }],
+          [select(selectors.resourceData, 'flows', flowId), { merged: flow }],
+          [select(selectors.resourceData, 'imports', newImport), { merged: newImport }],
         ])
         .put(actions.flowData.init(flowObjectToInit))
         .run();
@@ -133,8 +132,8 @@ describe('flow sample data sagas', () => {
 
       expectSaga(_initFlowData, { flowId: newFlowId, resourceId: newImportId, resourceType: 'imports' })
         .provide([
-          [select(selectors.resourceData, 'flows', newFlowId, SCOPES.VALUE), { merged: flow }],
-          [select(selectors.resourceData, 'imports', newImport, SCOPES.VALUE), { merged: newImport }],
+          [select(selectors.resourceData, 'flows', newFlowId), { merged: flow }],
+          [select(selectors.resourceData, 'imports', newImport), { merged: newImport }],
         ])
         .put(actions.flowData.init(flowObjectToInit))
         .run();
@@ -655,7 +654,7 @@ describe('flow sample data sagas', () => {
 
       expectSaga(fetchPageGeneratorPreview, { flowId, _pageGeneratorId })
         .provide([
-          [select(selectors.resourceData, 'exports', _pageGeneratorId, SCOPES.VALUE), { merged: blobResource }],
+          [select(selectors.resourceData, 'exports', _pageGeneratorId), { merged: blobResource }],
         ])
         .put(
           actions.flowData.receivedPreviewData(
@@ -685,8 +684,8 @@ describe('flow sample data sagas', () => {
 
       expectSaga(fetchPageGeneratorPreview, { flowId, _pageGeneratorId })
         .provide([
-          [select(selectors.resourceData, 'exports', _pageGeneratorId, SCOPES.VALUE), { merged: IAResource }],
-          [select(selectors.resourceData, 'flows', flowId, SCOPES.VALUE), { merged: flow }],
+          [select(selectors.resourceData, 'exports', _pageGeneratorId), { merged: IAResource }],
+          [select(selectors.resourceData, 'flows', flowId), { merged: flow }],
         ])
         .put(
           actions.flowData.receivedPreviewData(
@@ -712,7 +711,7 @@ describe('flow sample data sagas', () => {
 
       expectSaga(fetchPageGeneratorPreview, { flowId, _pageGeneratorId })
         .provide([
-          [select(selectors.resourceData, 'exports', _pageGeneratorId, SCOPES.VALUE), { merged: ftpResource }],
+          [select(selectors.resourceData, 'exports', _pageGeneratorId), { merged: ftpResource }],
           [call(requestFileAdaptorSampleData, { resource: ftpResource, formKey: undefined }), fileSampleData],
         ])
         .call(requestFileAdaptorSampleData, { resource: ftpResource, formKey: undefined })
@@ -737,7 +736,7 @@ describe('flow sample data sagas', () => {
 
       expectSaga(fetchPageGeneratorPreview, { flowId, _pageGeneratorId })
         .provide([
-          [select(selectors.resourceData, 'exports', _pageGeneratorId, SCOPES.VALUE), { merged: netsuiteResource }],
+          [select(selectors.resourceData, 'exports', _pageGeneratorId), { merged: netsuiteResource }],
           [call(requestRealTimeMetadata, { resource: netsuiteResource }), metadata],
         ])
         .call(requestRealTimeMetadata, { resource: netsuiteResource })
@@ -873,7 +872,7 @@ describe('flow sample data sagas', () => {
         processor: stage,
       })
         .provide([
-          [select(selectors.resourceData, resourceType, resourceId, SCOPES.VALUE), { merged: restExport }],
+          [select(selectors.resourceData, resourceType, resourceId), { merged: restExport }],
           [call(getFlowStageData, {
             flowId,
             resourceId,
@@ -929,7 +928,7 @@ describe('flow sample data sagas', () => {
         processor: stage,
       })
         .provide([
-          [select(selectors.resourceData, resourceType, resourceId, SCOPES.VALUE), { merged: restExport }],
+          [select(selectors.resourceData, resourceType, resourceId), { merged: restExport }],
           [call(getFlowStageData, {
             flowId,
             resourceId,
@@ -986,7 +985,7 @@ describe('flow sample data sagas', () => {
         processor: stage,
       })
         .provide([
-          [select(selectors.resourceData, resourceType, resourceId, SCOPES.VALUE), { merged: restExport }],
+          [select(selectors.resourceData, resourceType, resourceId), { merged: restExport }],
           [matchers.call.fn(getFlowStageData), preProcessedData],
           [matchers.call.fn(_processResponseTransformData), responseTransformData],
           [select(selectors.getSampleDataContext, {
@@ -1046,7 +1045,7 @@ describe('flow sample data sagas', () => {
         processor: stage,
       })
         .provide([
-          [select(selectors.resourceData, resourceType, resourceId, SCOPES.VALUE), { merged: restExport }],
+          [select(selectors.resourceData, resourceType, resourceId), { merged: restExport }],
           [call(getFlowStageData, {
             flowId,
             resourceId,
@@ -1114,7 +1113,7 @@ describe('flow sample data sagas', () => {
         processor: stage,
       })
         .provide([
-          [select(selectors.resourceData, resourceType, resourceId, SCOPES.VALUE), { merged: restExport }],
+          [select(selectors.resourceData, resourceType, resourceId), { merged: restExport }],
           [call(getFlowStageData, {
             flowId,
             resourceId,
@@ -1180,7 +1179,7 @@ describe('flow sample data sagas', () => {
         processor: stage,
       })
         .provide([
-          [select(selectors.resourceData, resourceType, resourceId, SCOPES.VALUE), { merged: restImport }],
+          [select(selectors.resourceData, resourceType, resourceId), { merged: restImport }],
           [call(getFlowStageData, {
             flowId,
             resourceId,
@@ -1242,7 +1241,7 @@ describe('flow sample data sagas', () => {
         processor: stage,
       })
         .provide([
-          [select(selectors.resourceData, resourceType, resourceId, SCOPES.VALUE), { merged: restImport }],
+          [select(selectors.resourceData, resourceType, resourceId), { merged: restImport }],
           [call(getFlowStageData, {
             flowId,
             resourceId,
@@ -1313,7 +1312,7 @@ describe('flow sample data sagas', () => {
         processor: stage,
       })
         .provide([
-          [select(selectors.resourceData, resourceType, resourceId, SCOPES.VALUE), { merged: restExport }],
+          [select(selectors.resourceData, resourceType, resourceId), { merged: restExport }],
           [call(getFlowStageData, {
             flowId,
             resourceId,
@@ -1449,7 +1448,7 @@ describe('flow sample data sagas', () => {
         processor: stage,
       })
         .provide([
-          [select(selectors.resourceData, resourceType, resourceId, SCOPES.VALUE), { merged: restExport }],
+          [select(selectors.resourceData, resourceType, resourceId), { merged: restExport }],
           [call(getFlowStageData, {
             flowId,
             resourceId,
@@ -1493,7 +1492,7 @@ describe('flow sample data sagas', () => {
         processor: stage,
       })
         .provide([
-          [select(selectors.resourceData, resourceType, resourceId, SCOPES.VALUE), { merged: restExport }],
+          [select(selectors.resourceData, resourceType, resourceId), { merged: restExport }],
           [call(getFlowStageData, {
             flowId,
             resourceId,

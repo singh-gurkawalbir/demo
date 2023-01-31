@@ -9,7 +9,7 @@ import DefaultHandle from '../Handles/DefaultHandle';
 import { useFlowContext } from '../../Context';
 import { selectors } from '../../../../../reducers';
 import actions from '../../../../../actions';
-import messageStore from '../../../../../utils/messageStore';
+import { message } from '../../../../../utils/messageStore';
 import { GRAPH_ELEMENTS_TYPE } from '../../../../../constants';
 
 const useStyles = makeStyles(theme => ({
@@ -99,11 +99,11 @@ export default function TerminalNode({ id, data = {} }) {
               <TerminalIcon className={classes.dragging} />
             ) : (
               <Tooltip
-                title={messageStore(
+                title={
                   data.draggable
-                    ? 'TERMINAL_NODE_TOOLTIP'
-                    : 'TERMINAL_NODE_FROZEN_TOOLTIP'
-                )}
+                    ? message.FLOWBUILDER.TERMINAL_NODE_TOOLTIP
+                    : message.FLOWBUILDER.TERMINAL_NODE_FROZEN_TOOLTIP
+                }
                 position="top"
               >
                 <span>

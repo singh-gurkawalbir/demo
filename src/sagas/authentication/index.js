@@ -20,7 +20,7 @@ import {
 import { selectors } from '../../reducers';
 import { initializationResources } from '../../reducers/data/resources/resourceUpdate';
 import { ACCOUNT_IDS, AUTH_FAILURE_MESSAGE, SIGN_UP_SUCCESS } from '../../constants';
-import messageStore from '../../utils/messageStore';
+import { message } from '../../utils/messageStore';
 import getRoutePath from '../../utils/routePaths';
 import { getDomain } from '../../utils/resource';
 import inferErrorMessages from '../../utils/inferErrorMessages';
@@ -562,6 +562,9 @@ export function* initializeSession({opts} = {}) {
     if (resp.mfaRequired) {
       isUserAuthenticated = resp.mfaVerified;
     }
+    if (opts?.switchAcc) {
+      yield put(actions.user.org.accounts.switchToComplete());
+    }
     if (resp.authenticated) {
       const _csrf = yield call(getCSRFTokenBackend);
 
@@ -684,7 +687,7 @@ export function* linkWithGoogle({ returnTo }) {
 function* mfaVerify({ payload }) {
   const { code, trustDevice } = payload || {};
   const _csrf = yield call(getCSRFTokenBackend);
-  const authFailedMsg = messageStore('MFA_AUTH_FAILED');
+  const authFailedMsg = message.MFA.MFA_AUTH_FAILED;
 
   try {
     const status = yield call(apiCallWithRetry, {

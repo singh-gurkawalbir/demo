@@ -1,5 +1,6 @@
 import React from 'react';
 import { makeStyles, TextField, Typography, Button } from '@material-ui/core';
+import clsx from 'clsx';
 import CeligoLogo from '../../CeligoLogo';
 
 const useStyles = makeStyles(theme => ({
@@ -139,6 +140,14 @@ const useStyles = makeStyles(theme => ({
     textAlign: 'center',
     marginBottom: 130,
   },
+  passwordTextField: {
+    '& * >.MuiFilledInput-input': {
+      letterSpacing: '2px',
+      '&::placeholder': {
+        letterSpacing: '1px',
+      },
+    },
+  },
   gridImgWrapper: {
     background: `center / contain no-repeat url('https://integrator-staging-ui-resources.s3.amazonaws.com/react/static/images/public-pages.svg'), ${theme.palette.background.default}`,
     padding: theme.spacing(2),
@@ -168,7 +177,7 @@ export default function LoginForm() {
             name="email"
             className={classes.fieldWrapper} />
           <TextField
-            className={classes.fieldWrapper}
+            className={clsx(classes.fieldWrappe, classes.passwordTextField)}
             htmlFor="password"
             placeholder="Password*"
             variant="filled"

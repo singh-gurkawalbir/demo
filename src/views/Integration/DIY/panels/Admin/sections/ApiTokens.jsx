@@ -13,6 +13,7 @@ import { generateNewId } from '../../../../../../utils/resource';
 import actions from '../../../../../../actions';
 import { TextButton } from '../../../../../../components/Buttons';
 import { drawerPaths, buildDrawerUrl } from '../../../../../../utils/rightDrawer';
+import { message } from '../../../../../../utils/messageStore';
 
 const useStyles = makeStyles(theme => ({
   resultContainer: {
@@ -61,7 +62,7 @@ export default function ApiTokenSection({ integrationId }) {
               },
             ];
 
-            dispatch(actions.resource.patchStaged(newId, patchSet, 'value'));
+            dispatch(actions.resource.patchStaged(newId, patchSet));
           }}
           startIcon={<AddIcon />}>
           Create API token
@@ -77,7 +78,7 @@ export default function ApiTokenSection({ integrationId }) {
             />
           ) : (
             <Typography>
-              No API tokens yet exist for this integration.
+              {message.API_TOKENS_NOT_EXIST}
             </Typography>
           )}
         </LoadResources>

@@ -10,7 +10,7 @@ import useForm from '..';
 import actions from '../../../actions';
 import reducer, { selectors } from '../../../reducers';
 import themeProvider from '../../../theme/themeProvider';
-import messageStore from '../../../utils/messageStore';
+import { message } from '../../../utils/messageStore';
 import FormGenerator from '../../DynaForm/DynaFormGenerator';
 
 // fireEvent
@@ -328,7 +328,7 @@ describe('required behavior', () => {
     const formState = selectors.formState(store.getState(), '123');
 
     expect(formState.fields.FIELD1.required).toBe(false);
-    expect(queryByDisplayValue(messageStore('REQUIRED_MESSAGE'))).not.toBeTruthy();
+    expect(queryByDisplayValue(message.REQUIRED_MESSAGE)).not.toBeTruthy();
   });
 
   test('requiredField should be required after it requiredWhen expression criteria is met', () => {
@@ -372,7 +372,7 @@ describe('required behavior', () => {
         value: 'something else',
       },
     });
-    expect(queryByDisplayValue(messageStore('REQUIRED_MESSAGE'))).not.toBeTruthy();
+    expect(queryByDisplayValue(message.REQUIRED_MESSAGE)).not.toBeTruthy();
   });
 });
 

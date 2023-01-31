@@ -17,6 +17,7 @@ import actions from '../../../../../../actions';
 import useEnqueueSnackbar from '../../../../../../hooks/enqueueSnackbar';
 import SearchBar from './SearchBar';
 import { getMappingsEditorId } from '../../../../../../utils/editor';
+import { message } from '../../../../../../utils/messageStore';
 
 const useStyles = makeStyles(theme => ({
   treeRoot: {
@@ -332,12 +333,12 @@ export default function Mapper2({editorId}) {
   }, [handleMouseMove, handleWheelEvent]);
 
   const isFilterApplied = !isEmpty(mapper2Filter) && !mapper2Filter.includes('all');
-  let filterInfo = 'Filtered by mapped fields (clear filter to enable editing)';
+  let filterInfo = message.MAPPER2.FILTER_BY_MAPPED_FIELDS;
 
   if (mapper2Filter.includes('required') && mapper2Filter.includes('mapped')) {
-    filterInfo = 'Filtered by mapped fields and required fields (clear filter to enable editing)';
+    filterInfo = message.MAPPER2.FILTER_BY_REQUIRED_AND_MAPPED_FIELDS;
   } else if (mapper2Filter.includes('required')) {
-    filterInfo = 'Filtered by required fields (clear filter to enable editing)';
+    filterInfo = message.MAPPER2.FILTER_BY_REQUIRED_FIELDS;
   }
 
   return (

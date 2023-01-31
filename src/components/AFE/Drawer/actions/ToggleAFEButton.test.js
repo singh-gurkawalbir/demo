@@ -50,7 +50,6 @@ function initToggleAFEButton(props = {}) {
           path: '/assistantMetadata',
           value: {},
           timestamp: 1672134765451,
-          scope: 'value',
         },
       ],
     },

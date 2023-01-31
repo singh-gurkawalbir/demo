@@ -4,7 +4,7 @@ import { isEmpty, cloneDeep, set, unset, get } from 'lodash';
 import util from '../../utils/array';
 import { isNewId } from '../../utils/resource';
 import { selectors } from '../../reducers';
-import { createFormValuesPatchSet, SCOPES } from '../resourceForm';
+import { createFormValuesPatchSet } from '../resourceForm';
 import { createFormValuesPatchSet as createSuiteScriptFormValuesPatchSet } from '../suiteScript/resourceForm';
 import { AUTHENTICATION_LABELS, emptyObject } from '../../constants';
 
@@ -862,14 +862,12 @@ export function* constructResourceFromFormValues({
     resourceType,
     resourceId,
     values: formValues,
-    scope: SCOPES.VALUE,
   });
 
   const { merged } = yield select(
     selectors.resourceData,
     resourceType,
     resourceId,
-    SCOPES.VALUE
   );
 
   try {
@@ -891,7 +889,6 @@ export function* constructSuiteScriptResourceFromFormValues({
     resourceType,
     resourceId,
     values: formValues,
-    scope: SCOPES.VALUE,
     ssLinkedConnectionId,
     integrationId,
   });
@@ -901,7 +898,6 @@ export function* constructSuiteScriptResourceFromFormValues({
     id: resourceId,
     ssLinkedConnectionId,
     integrationId,
-    scope: SCOPES.VALUE,
   });
 
   try {

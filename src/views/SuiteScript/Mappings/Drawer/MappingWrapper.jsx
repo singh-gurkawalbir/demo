@@ -5,6 +5,7 @@ import { Button, makeStyles, Typography } from '@material-ui/core';
 import { selectors } from '../../../../reducers';
 import SuiteScriptMapping from '..';
 import DrawerContent from '../../../../components/drawer/Right/DrawerContent';
+import { message } from '../../../../utils/messageStore';
 
 const useStyles = makeStyles(theme => ({
   text: {
@@ -37,8 +38,7 @@ export default function MappingWrapper(props) {
           <DrawerContent>
             <div>
               <Typography className={classes.text} variant="h5">
-                This import contains subrecord imports, select which import
-                you would like to edit the mapping for.
+                {message.MAPPER2.CONTAINS_SUBRECORDS}
               </Typography>
               {mappingList.map((sr, index) => (
                 <div key={sr.id}>

@@ -6,7 +6,6 @@ import { renderWithProviders, reduxStore } from '../../test/test-utils';
 import Signin from './SigninForm';
 import actions from '../../actions';
 import { getCreatedStore } from '../../store';
-import * as utilResource from '../../utils/resource';
 import * as useQuery from '../../hooks/useQuery';
 
 let initialStore = reduxStore;
@@ -55,6 +54,7 @@ function initfunction(initialStore, dialogOpen = false) {
 describe('SigninForm UI testcases', () => {
   afterEach(() => {
     jest.clearAllMocks();
+    jest.resetModules();
   });
   test('should show sign in page form and click on Sign in with google', () => {
     initialStore = getCreatedStore();
@@ -201,11 +201,10 @@ describe('SigninForm UI testcases', () => {
     );
   });
   test('should not show the option for sing in with google when domain is eu.inetgrator.io', () => {
-    jest.spyOn(utilResource, 'getDomain').mockReturnValue('eu.integrator.io');
+    global.ALLOW_GOOGLE_SIGNIN = 'false';
     initialStore = getCreatedStore();
 
     initfunction(initialStore);
-
     expect(screen.queryByText('Sign in with Google')).not.toBeInTheDocument();
   });
 });

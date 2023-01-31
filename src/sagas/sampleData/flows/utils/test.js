@@ -3,7 +3,6 @@ import { select, call } from 'redux-saga/effects';
 import { expectSaga } from 'redux-saga-test-plan';
 import { selectors } from '../../../../reducers';
 import { getConstructedResourceObj } from '.';
-import { SCOPES } from '../../../resourceForm';
 import { constructResourceFromFormValues } from '../../../utils';
 
 describe('flow sample data util sagas', () => {
@@ -25,7 +24,7 @@ describe('flow sample data util sagas', () => {
 
       expectSaga(getConstructedResourceObj, { resourceId, resourceType })
         .provide([
-          [select(selectors.resourceData, resourceType, resourceId, SCOPES.VALUE), { merged: resource }],
+          [select(selectors.resourceData, resourceType, resourceId), { merged: resource }],
         ])
         .returns(resource)
         .run();
@@ -68,7 +67,7 @@ describe('flow sample data util sagas', () => {
         .run();
       expectSaga(getConstructedResourceObj, { resourceId, resourceType })
         .provide([
-          [select(selectors.resourceData, resourceType, resourceId, SCOPES.VALUE), { merged: resource }],
+          [select(selectors.resourceData, resourceType, resourceId), { merged: resource }],
         ])
         .returns(updatedResource)
         .run();
@@ -86,7 +85,7 @@ describe('flow sample data util sagas', () => {
         .run();
       expectSaga(getConstructedResourceObj, { resourceId, resourceType })
         .provide([
-          [select(selectors.resourceData, resourceType, resourceId, SCOPES.VALUE), { merged: resource }],
+          [select(selectors.resourceData, resourceType, resourceId), { merged: resource }],
         ])
         .returns({})
         .run();

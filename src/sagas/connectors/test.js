@@ -5,7 +5,6 @@ import { throwError } from 'redux-saga-test-plan/providers';
 import actions from '../../actions';
 import { apiCallWithRetry } from '../index';
 import { fetchMetadata, publishStatus, updateInstallBase } from '.';
-import { SCOPES } from '../resourceForm';
 import { commitStagedChanges } from '../resources';
 
 describe('evaluate fetchMetadata saga', () => {
@@ -112,7 +111,7 @@ describe('publishStatus saga', () => {
       .provide([
         [matchers.call.fn(commitStagedChanges), successResponse],
       ])
-      .put(actions.resource.patchStaged('1', patchSet, SCOPES.VALUE))
+      .put(actions.resource.patchStaged('1', patchSet))
       .call.fn(commitStagedChanges)
       .put(actions.connectors.publish.success('1'))
       .run();
@@ -122,7 +121,7 @@ describe('publishStatus saga', () => {
       .provide([
         [matchers.call.fn(commitStagedChanges), errorResponse],
       ])
-      .put(actions.resource.patchStaged('1', patchSet, SCOPES.VALUE))
+      .put(actions.resource.patchStaged('1', patchSet))
       .call.fn(commitStagedChanges)
       .put(actions.connectors.publish.error('1'))
       .run();

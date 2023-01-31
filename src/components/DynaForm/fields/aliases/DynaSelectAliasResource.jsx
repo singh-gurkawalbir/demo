@@ -3,7 +3,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import actions from '../../../../actions';
 import { selectors } from '../../../../reducers';
 import { emptyList } from '../../../../constants';
-import errorMessageStore from '../../../../utils/errorStore';
 import messageStore from '../../../../utils/messageStore';
 import { MODEL_PLURAL_TO_LABEL } from '../../../../utils/resource';
 import DynaSelect from '../DynaSelect';
@@ -24,7 +23,7 @@ export default function DynaSelectAliasResource({ options = {}, ...props}) {
     if (!resourceList.length && !value) {
       dispatch(actions.form.forceFieldState(formKey)(id, {
         isValid: false,
-        errorMessages: errorMessageStore('NO_ALIAS_RESOURCE_MESSAGE', {
+        errorMessages: messageStore('NO_ALIAS_RESOURCE_MESSAGE', {
           label: MODEL_PLURAL_TO_LABEL[aliasResourceType].toLowerCase(),
           resourceType: aliasResourceType,
         }),
