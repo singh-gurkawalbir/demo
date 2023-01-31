@@ -10,7 +10,6 @@ export default {
     newValues['/netsuite/type'] = netsuiteType;
     if (newValues['/netsuite/type'] === 'distributed') {
       newValues['/type'] = 'distributed';
-      newValues['/netsuite/distributed/useSS2Framework'] = newValues['/netsuite/distributed/useSS2Framework'] === 'true';
       // removing other netsuiteType's Sub Doc @BugFix IO-12678
       newValues['/netsuite/restlet'] = undefined;
       newValues['/netsuite/searches'] = undefined;
@@ -72,7 +71,6 @@ export default {
       newValues['/delta/lagOffset'] = newValues['/restlet/delta/lagOffset'];
       newValues['/delta/dateField'] = newValues['/restlet/delta/dateField'] && Array.isArray(newValues['/restlet/delta/dateField']) ? newValues['/restlet/delta/dateField'].join(',') : newValues['/restlet/delta/dateField'];
       newValues['/once/booleanField'] = newValues['/restlet/once/booleanField'];
-      newValues['/netsuite/restlet/useSS2Restlets'] = newValues['/netsuite/restlet/useSS2Restlets'] === 'true';
       delete newValues['/restlet/type'];
       delete newValues['/restlet/delta/lagOffset'];
       delete newValues['/restlet/delta/dateField'];
@@ -277,7 +275,7 @@ export default {
         { field: 'outputMode', is: ['records'] },
       ],
     },
-    'netsuite.distributed.useSS2Framework': {
+    'netsuite.distributed.frameworkVersion': {
       fieldId: 'netsuite.distributed.frameworkVersion',
       type: 'netsuiteapiversion',
       label: 'NetSuite API version',
@@ -322,7 +320,7 @@ export default {
         { field: 'outputMode', is: ['records'] },
       ],
     },
-    'netsuite.restlet.useSS2Restlets': {
+    'netsuite.restlet.restletVersion': {
       fieldId: 'netsuite.restlet.restletVersion',
       type: 'netsuiteapiversion',
       label: 'NetSuite API version',
@@ -656,7 +654,7 @@ export default {
             containers: [
               {
                 fields: [
-                  'netsuite.restlet.useSS2Restlets',
+                  'netsuite.restlet.restletVersion',
                 ],
               },
             ],
@@ -664,7 +662,7 @@ export default {
           {
             fields: [
               'netsuite.blob.purgeFileAfterExport',
-              'netsuite.distributed.useSS2Framework',
+              'netsuite.distributed.frameworkVersion',
               'netsuite.distributed.skipExportFieldId',
               'netsuite.distributed.forceReload',
               'netsuite.restlet.batchSize',

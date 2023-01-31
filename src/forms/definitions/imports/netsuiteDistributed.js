@@ -22,7 +22,7 @@ export default {
 
     const subrecords = newValues['/netsuite_da/subrecords'];
 
-    const useSS2RestletsValue = newValues['/netsuite_da/useSS2Restlets'] === 'true';
+    const useSS2RestletsValue = newValues['/netsuite_da/restletVersion'];
 
     let mapping = newValues['/netsuite_da/mapping'];
 
