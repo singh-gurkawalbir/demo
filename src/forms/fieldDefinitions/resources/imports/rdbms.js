@@ -69,7 +69,7 @@ export default {
   'rdbms.bulkInsert.tableName': {
     isLoggable: true,
     id: 'rdbms.bulkInsert.tableName',
-    type: 'text',
+    type: 'uri',
     label: 'Target table',
     helpText: 'Please enter the table name where the data needs to be inserted. Applicable only for bulk-inserts.',
     required: true,
@@ -87,7 +87,6 @@ export default {
     helpKey: 'import.rdbms.query',
     label: 'SQL query (for inserts)',
     refreshOptionsOnChangesTo: [
-      'rdbms.lookups',
       'rdbms.queryType',
       'modelMetadata',
     ],
@@ -105,7 +104,6 @@ export default {
     helpKey: 'import.rdbms.query',
     label: 'SQL query (for updates)',
     refreshOptionsOnChangesTo: [
-      'rdbms.lookups',
       'rdbms.queryType',
       'modelMetadata',
     ],
