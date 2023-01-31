@@ -1436,6 +1436,7 @@ const user = {
         resource.requestCollection('shared/ashares', undefined, message),
       leave: id => action(actionTypes.USER.ACCOUNT.LEAVE_REQUEST, { id }),
       switchTo: ({ id }) => action(actionTypes.USER.ACCOUNT.SWITCH, { preferences: { defaultAShareId: id, environment: 'production' } }),
+      switchToComplete: () => action(actionTypes.USER.ACCOUNT.SWITCH_COMPLETE),
       addLinkedConnectionId: connectionId =>
         action(actionTypes.USER.ACCOUNT.ADD_SUITESCRIPT_LINKED_CONNECTION, {
           connectionId,

@@ -35,6 +35,7 @@ export default function PageContent() {
   const agreeTOSAndPPRequired = useSelector(selectors.agreeTOSAndPPRequired);
   const environment = useSelector(state => selectors.userPreferences(state)?.environment);
   const isSandboxAllowed = useSelector(selectors.accountHasSandbox);
+  const isAccountSwitchInProgress = useSelector(state => selectors.isAccountSwitchInProgress(state));
 
   const [enqueueSnackbar] = useEnqueueSnackbar();
 
@@ -57,7 +58,7 @@ export default function PageContent() {
   }, [isDefaultAccountSet, environment, isSandboxAllowed, dispatch, history]);
 
   if (isNoneTierLicense) return null;
-  if (!isDefaultAccountSet && !isMFASetupIncomplete) {
+  if ((!isDefaultAccountSet && !isMFASetupIncomplete) || isAccountSwitchInProgress) {
     return <Loader open>Loading...<Spinner /></Loader>;
   }
 

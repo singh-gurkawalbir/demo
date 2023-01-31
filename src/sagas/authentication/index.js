@@ -562,6 +562,9 @@ export function* initializeSession({opts} = {}) {
     if (resp.mfaRequired) {
       isUserAuthenticated = resp.mfaVerified;
     }
+    if (opts?.switchAcc) {
+      yield put(actions.user.org.accounts.switchToComplete());
+    }
     if (resp.authenticated) {
       const _csrf = yield call(getCSRFTokenBackend);
 
