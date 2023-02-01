@@ -1,8 +1,8 @@
 /* eslint-disable jest/no-identical-title */
 
-import shortid from 'shortid';
 import cloneDeep from 'lodash/cloneDeep';
 import reducer, {selectors} from '.';
+import * as GenerateId from '../../../../utils/string';
 import actions from '../../../../actions';
 import {HOME_PAGE_PATH} from '../../../../constants';
 import errorMessageStore from '../../../../utils/errorStore';
@@ -3084,7 +3084,7 @@ describe('integrationApps reducer test cases', () => {
             },
           },
         };
-        const mock = jest.spyOn(shortid, 'generate');  // spy on otherFn
+        const mock = jest.spyOn(GenerateId, 'generateId');  // spy on otherFn
 
         mock.mockReturnValue('mock_key');
         state = reducer(state, actions.integrationApp.settings.categoryMappings.patchField('integrationId', 'flowId', 'mappingId', 'generate', 'key1', 'value'));
@@ -3270,7 +3270,7 @@ describe('integrationApps reducer test cases', () => {
           },
         };
 
-        const mock = jest.spyOn(shortid, 'generate');  // spy on otherFn
+        const mock = jest.spyOn(GenerateId, 'generateId');  // spy on otherFn
 
         mock.mockReturnValue('mock_key');
         state = reducer(state, actions.integrationApp.settings.categoryMappings.patchField('integrationId', 'flowId', 'mappingId', 'extract', 'key11', '"value"'));

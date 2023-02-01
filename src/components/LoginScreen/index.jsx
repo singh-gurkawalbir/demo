@@ -16,12 +16,14 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 export default function LoginScreen(props) {
-  const { backgroundImageUrl,
+  const {
+    backgroundImageUrl,
     foregroundImageUrl,
     targetUrl,
     direction,
     contentUrl,
-    size} = props;
+    size,
+  } = props;
   const classes = useStyles();
 
   if (contentUrl) {

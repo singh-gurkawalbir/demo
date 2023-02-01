@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import useConfirmDialog from '../../../../../components/ConfirmDialog';
-import messageStore from '../../../../../utils/messageStore';
+import { message } from '../../../../../utils/messageStore';
 
 // Ref: https://medium.com/nerd-for-tech/custom-react-router-prompt-d325538b4d2b
 export default function RouterPrompt({ show }) {
@@ -48,7 +48,7 @@ export default function RouterPrompt({ show }) {
     if (showPrompt) {
       confirmDialog({
         title: 'Cancel MFA setup?',
-        message: messageStore('CONFIRM_LEAVE_MFA'),
+        message: message.MFA.CONFIRM_LEAVE_MFA,
         buttons: [
           {
             label: 'Cancel',

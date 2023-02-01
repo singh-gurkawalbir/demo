@@ -12,8 +12,7 @@ import actionTypes from '../../../actions/types';
 import { MOCK_INPUT_STATUS } from '../../../constants';
 import { DrawerProvider } from '../../drawer/Right/DrawerContext';
 import actions from '../../../actions';
-import errorMessageStore from '../../../utils/errorStore';
-import messageStore from '../../../utils/messageStore';
+import { message } from '../../../utils/messageStore';
 
 let initialStore;
 
@@ -158,7 +157,7 @@ describe('mock input drawer test cases', () => {
     expect(fetchLatestInputButton).toBeInTheDocument();
     userEvent.clear(inputNode);
     userEvent.type(inputNode, '{}'.replace(/[{[]/g, '$&$&'));
-    expect(screen.getByText(errorMessageStore('MOCK_INPUT_INVALID_FORMAT'))).toBeInTheDocument();
+    expect(screen.getByText(/Mock input must be in integrator.io canonical format./)).toBeInTheDocument();
     const onCloseButtonNode = screen.getByRole('button', {name: 'On Close'});
 
     expect(onCloseButtonNode).toBeInTheDocument();
@@ -172,7 +171,7 @@ describe('mock input drawer test cases', () => {
     userEvent.clear(inputNode);
     userEvent.type(inputNode, 'userinput');
     expect(screen.getByText(/userinput/i)).toBeInTheDocument();
-    expect(screen.getByText(errorMessageStore('MOCK_INPUT_INVALID_JSON'))).toBeInTheDocument();
+    expect(screen.getByText(message.MOCK_INPUT_REFRESH.INVALID_JSON)).toBeInTheDocument();
   });
   test('should wrap array data type correctly', async () => {
     initMockInput({ status: 'received', data: [{id: '123'}] });
@@ -246,7 +245,7 @@ describe('mock input drawer test cases', () => {
         type: actionTypes.MOCK_INPUT.UPDATE_USER_MOCK_INPUT,
         resourceId,
       });
-      expect(screen.getByText(messageStore('MOCK_INPUT_REFRESH_SUCCESS'))).toBeInTheDocument();
+      expect(screen.getByText(message.MOCK_INPUT_REFRESH.SUCCESS)).toBeInTheDocument();
     });
   });
   test('should dispatch correct action on click of "Fetch latest input data" button and show error snackbar', async () => {
@@ -269,7 +268,7 @@ describe('mock input drawer test cases', () => {
     await initialStore.dispatch(actions.mockInput.receivedError(resourceId, 'Not found'));
 
     await waitFor(() => {
-      expect(screen.getByText(errorMessageStore('MOCK_INPUT_REFRESH_FAILED'))).toBeInTheDocument();
+      expect(screen.getByText(message.MOCK_INPUT_REFRESH.FAILED)).toBeInTheDocument();
     });
   });
 });

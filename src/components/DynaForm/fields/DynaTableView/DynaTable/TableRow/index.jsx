@@ -7,6 +7,7 @@ import DeleteIcon from '../../../../../icons/TrashIcon';
 import ActionButton from '../../../../../ActionButton';
 import actionTypes from '../actionTypes';
 import DynaAutocomplete from '../../../DynaAutocomplete';
+import DynaExportSelect from '../../../DynaExportSelect';
 
 const useStyles = makeStyles(theme => ({
   header: {
@@ -95,7 +96,7 @@ const RowCell = ({ fieldValue, optionsMap, op, isValid, rowIndex, colIndex, setT
 
     const items = convertToSelectOptions(options);
 
-    if (type === 'select' || type === 'multiselect') {
+    if (type === 'select' || type === 'multiselect' || type === 'exportSelect') {
       return [{items}];
     }
 
@@ -132,6 +133,19 @@ const RowCell = ({ fieldValue, optionsMap, op, isValid, rowIndex, colIndex, setT
     return (
       <DynaMultiSelect
         {...basicProps}
+        value={fieldValue}
+        errorMessages={errorMessages}
+        onFieldChange={onFieldChange}
+        className={clsx(classes.root, classes.menuItemsWrapper)}
+    />
+    );
+  }
+
+  if (type === 'exportSelect') {
+    return (
+      <DynaExportSelect
+        {...basicProps}
+        {...op}
         value={fieldValue}
         errorMessages={errorMessages}
         onFieldChange={onFieldChange}

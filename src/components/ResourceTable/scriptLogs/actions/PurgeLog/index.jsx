@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import actions from '../../../../../actions';
-import messageStore from '../../../../../utils/messageStore';
+import { message } from '../../../../../utils/messageStore';
 import useConfirmDialog from '../../../../ConfirmDialog';
 import PurgeIcon from '../../../../icons/PurgeIcon';
 
@@ -21,7 +21,7 @@ export default {
     const handleClick = useCallback(() => {
       confirmDialog({
         title: 'Confirm purge all logs of the script',
-        message: messageStore('PURGE_SCRIPT_LOG_CONFIRM_MESSAGE'),
+        message: message.PURGE.SCRIPT_LOG_CONFIRM_MESSAGE,
         buttons: [
           {
             label: 'Purge all logs of this script',

@@ -23,7 +23,7 @@ import { selectors } from '../../../reducers';
 import getRequestOptions from '../../../utils/requestOptions';
 import actionTypes from '../../../actions/types';
 import openExternalUrl from '../../../utils/window';
-import messageStore from '../../../utils/messageStore';
+import { message } from '../../../utils/messageStore';
 
 const flowId = 'flow-123';
 const resourceId = 'id-123';
@@ -43,12 +43,18 @@ describe('errorDetails sagas', () => {
       });
 
       const test1 = expectSaga(requestErrorDetails, { flowId, resourceId })
+        .provide([
+          [matchers.call.fn(apiCallWithRetry)],
+        ])
         .call(apiCallWithRetry, {
           path: openErrorOptions.path,
           opts: openErrorOptions.opts,
         })
         .run();
       const test2 = expectSaga(requestErrorDetails, { flowId, resourceId, isResolved: true })
+        .provide([
+          [matchers.call.fn(apiCallWithRetry)],
+        ])
         .call(apiCallWithRetry, {
           path: resolvedErrorOptions.path,
           opts: resolvedErrorOptions.opts,
@@ -85,6 +91,7 @@ describe('errorDetails sagas', () => {
             resourceId,
             isResolved: false,
           }), openErrors],
+          [matchers.call.fn(apiCallWithRetry)],
         ])
         .call(apiCallWithRetry, {
           path: openErrorOptions.path,
@@ -98,6 +105,7 @@ describe('errorDetails sagas', () => {
             resourceId,
             isResolved: true,
           }), resolvedErrors],
+          [matchers.call.fn(apiCallWithRetry)],
         ])
         .call(apiCallWithRetry, {
           path: resolvedErrorOptions.path,
@@ -146,6 +154,7 @@ describe('errorDetails sagas', () => {
             resourceId,
             isResolved: false,
           }), openErrors],
+          [matchers.call.fn(apiCallWithRetry)],
         ])
         .call(apiCallWithRetry, {
           path: openErrorOptions.path,
@@ -160,6 +169,7 @@ describe('errorDetails sagas', () => {
             resourceId,
             isResolved: true,
           }), resolvedErrors],
+          [matchers.call.fn(apiCallWithRetry)],
         ])
         .call(apiCallWithRetry, {
           path: resolvedErrorOptions.path,
@@ -237,6 +247,9 @@ describe('errorDetails sagas', () => {
       const retryIds = ['id1', 'id2', 'id3'];
 
       const testWithPassingRetryIds = expectSaga(retryErrors, { flowId, resourceId, retryIds })
+        .provide([
+          [matchers.call.fn(apiCallWithRetry)],
+        ])
         .call(apiCallWithRetry, {
           path: `/flows/${flowId}/${resourceId}/retry`,
           opts: {
@@ -255,6 +268,7 @@ describe('errorDetails sagas', () => {
             resourceId,
             isResolved: false,
           }), retryIds],
+          [matchers.call.fn(apiCallWithRetry)],
         ])
         .call(apiCallWithRetry, {
           path: `/flows/${flowId}/${resourceId}/retry`,
@@ -814,7 +828,7 @@ describe('errorDetails sagas', () => {
         },
       };
 
-      expectSaga(purgeError, { flowId, resourceId, errors })
+      expectSaga(purgeError, { flowId, resourceId, errors, isRowAction: true })
         .provide([
           [matchers.call.fn(apiCallWithRetry)],
           [matchers.call.fn(requestErrorDetails)],
@@ -829,7 +843,7 @@ describe('errorDetails sagas', () => {
           actions.errorManager.flowErrorDetails.purge.success({
             flowId,
             resourceId,
-            message: messageStore('ERROR_PURGE_SUCCESS_MESSAGE'),
+            message: message.PURGE.ERROR_PURGE_SUCCESS_MESSAGE,
           })
         )
         .run();
@@ -860,7 +874,7 @@ describe('errorDetails sagas', () => {
           actions.errorManager.flowErrorDetails.purge.success({
             flowId,
             resourceId,
-            message: messageStore('MULTIPLE_ERROR_PURGE_SUCCESS_MESSAGE'),
+            message: message.PURGE.MULTIPLE_ERROR_PURGE_SUCCESS_MESSAGE,
           })
         )
         .run();
@@ -891,7 +905,7 @@ describe('errorDetails sagas', () => {
           actions.errorManager.flowErrorDetails.purge.success({
             flowId,
             resourceId,
-            message: messageStore('MULTIPLE_ERROR_PURGE_SUCCESS_MESSAGE'),
+            message: message.PURGE.MULTIPLE_ERROR_PURGE_SUCCESS_MESSAGE,
           })
         )
         .run();

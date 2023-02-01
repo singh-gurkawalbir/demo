@@ -14,6 +14,23 @@ export default {
     } else {
       retValues['/dynamodb/itemDocument'] = undefined;
     }
+
+    if (retValues['/dynamodb/expressionAttributeNames']) {
+      try {
+        retValues['/dynamodb/expressionAttributeNames'] = JSON.stringify(JSON.parse(retValues['/dynamodb/expressionAttributeNames']));
+      } catch (ex) {
+        // do nothing
+      }
+    }
+
+    if (retValues['/dynamodb/expressionAttributeValues']) {
+      try {
+        retValues['/dynamodb/expressionAttributeValues'] = JSON.stringify(JSON.parse(retValues['/dynamodb/expressionAttributeValues']));
+      } catch (ex) {
+        // do nothing
+      }
+    }
+
     retValues['/mockResponse'] = safeParse(retValues['/mockResponse']);
 
     return {

@@ -20,6 +20,7 @@ import UpgradeDrawer from './drawers/Upgrade';
 import { TextButton, FilledButton } from '../../../components/Buttons';
 import { drawerPaths, buildDrawerUrl } from '../../../utils/rightDrawer';
 import infoText from '../../../components/Help/infoText';
+import messageStore, { message } from '../../../utils/messageStore';
 
 const useStyles = makeStyles(theme => ({
   itemsList: {
@@ -164,7 +165,7 @@ export default function Endpoint() {
     setUpgradeRequested(true);
     confirmDialog({
       title: 'Upgrade and keep all my flows running',
-      message: 'Great idea. Who wants to stop the magic?.We`ll be in touch shortly to get you upgraded!',
+      message: message.FLOWS.UPGRADE_AND_KEEP_FLOWS_RUNNING,
       buttons: [
         {
           label: 'Close',
@@ -178,7 +179,7 @@ export default function Endpoint() {
   const onRequestUpgradeClick = useCallback(() => {
     confirmDialog({
       title: 'Request upgrade',
-      message: 'We will contact you to discuss your business needs and recommend an ideal subscription plan.',
+      message: messageStore('SUBSCRIPTION.CONTACT_FOR_BUSINESS_NEEDS', {plan: 'ideal'}),
       buttons: [
         { label: 'Submit request',
           onClick: () => {
@@ -198,7 +199,7 @@ export default function Endpoint() {
   const onRequestFlowsUpgradeClick = useCallback(() => {
     confirmDialog({
       title: 'Request more flows',
-      message: 'We will contact you to discuss your business needs and recommend an upgrade to your subscription.',
+      message: messageStore('SUBSCRIPTION.CONTACT_FOR_BUSINESS_NEEDS', {plan: 'upgrade to your'}),
       buttons: [
         { label: 'Submit request',
           onClick: () => {
@@ -362,6 +363,7 @@ export default function Endpoint() {
                 onClick={onRequestUpgradeClick}
                 disabled={upgradeRequested}
                 className={classes.subscriptionUpgradeBtn}
+                data-test={upgradeRequested ? 'Upgrade requested' : 'Request upgrade'}
                 id="myaccout-request-upgrade-buttton"
              >
                 {upgradeRequested ? 'Upgrade requested' : 'Request upgrade'}

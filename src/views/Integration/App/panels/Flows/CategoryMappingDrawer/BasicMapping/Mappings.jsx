@@ -2,11 +2,11 @@ import React, { useCallback, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
-import shortid from 'shortid';
 import { FixedSizeList } from 'react-window';
 import { InputAdornment, TextField } from '@material-ui/core';
 import { Autocomplete } from '@material-ui/lab';
 import ListIcon from '@material-ui/icons/List';
+import { generateId } from '../../../../../../../utils/string';
 import { selectors } from '../../../../../../../reducers';
 import actions from '../../../../../../../actions';
 import ActionButton from '../../../../../../../components/ActionButton';
@@ -467,7 +467,7 @@ export default function ImportMapping(props) {
         return visible;
       });
 
-    mappingsCopy.push({key: shortid.generate()});
+    mappingsCopy.push({key: generateId()});
 
     return mappingsCopy;
   }, [mappings, attributes, mappingFilter]);

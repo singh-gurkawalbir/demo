@@ -22,7 +22,6 @@ import {
   generateNewId,
 } from '../../utils/resource';
 import jsonUtil from '../../utils/json';
-import { SCOPES } from '../../sagas/resourceForm';
 import Loader from '../../components/Loader';
 import Spinner from '../../components/Spinner';
 import { getApplication } from '../../utils/template';
@@ -162,7 +161,6 @@ export default function Clone() {
         actions.resource.patchStaged(
           newId,
           jsonUtil.objectToPatchSet(connObj),
-          SCOPES.VALUE
         )
       );
       setSelectedConnectionId({ newId, doc: connectionMap[_connectionId] });

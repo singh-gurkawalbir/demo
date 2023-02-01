@@ -4,7 +4,6 @@ import { makeStyles } from '@material-ui/core';
 import actions from '../../../actions';
 import { getApp, getHttpConnector} from '../../../constants/applications';
 import { selectors } from '../../../reducers';
-import { SCOPES } from '../../../sagas/resourceForm';
 import useFormContext from '../../Form/FormContext';
 import {useHFSetInitializeFormData} from './httpFramework/DynaHFAssistantOptions';
 import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
@@ -39,9 +38,9 @@ export default function DynaHTTPFrameworkBubbleFormView(props) {
     ) || {};
   const stagedResource = merged || emptyObject;
   const value = useMemo(() => {
-    if (!stagedResource || !stagedResource.http || !stagedResource.http.sessionFormType) return 'false';
+    if (!stagedResource || !stagedResource.http || !stagedResource.http.formType) return 'false';
 
-    return stagedResource.http?.sessionFormType === 'assistant' ? 'false' : 'true';
+    return stagedResource.http?.formType === 'assistant' ? 'false' : 'true';
   }, [stagedResource]);
   const resourceFormState = useSelector(
     state =>
@@ -116,12 +115,12 @@ export default function DynaHTTPFrameworkBubbleFormView(props) {
       staggedRes['/isHttpConnector'] = true;
       newFinalValues['/isHttpConnector'] = true;
       if (selectedApplication !== `${isParent}`) {
-        staggedRes['/http/sessionFormType'] = 'assistant';
-        newFinalValues['/http/sessionFormType'] = 'assistant';
+        staggedRes['/http/formType'] = 'assistant';
+        newFinalValues['/http/formType'] = 'assistant';
       } else {
         // set http.sessionFormType prop to http to use http form from the export/import as it is now using parent form');
-        staggedRes['/http/sessionFormType'] = 'http';
-        newFinalValues['/http/sessionFormType'] = 'http';
+        staggedRes['/http/formType'] = 'http';
+        newFinalValues['/http/formType'] = 'http';
       }
     }
     const allPatches = sanitizePatchSet({
@@ -132,7 +131,7 @@ export default function DynaHTTPFrameworkBubbleFormView(props) {
 
     dispatch(actions.resource.clearStaged(resourceId));
     dispatch(
-      actions.resource.patchStaged(resourceId, allPatches, SCOPES.VALUE)
+      actions.resource.patchStaged(resourceId, allPatches)
     );
 
     let allTouchedFields = Object.values(formContext.fields)

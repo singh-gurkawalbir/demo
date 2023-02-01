@@ -43,7 +43,7 @@ export default function ResourceDrawerLink({
         })}>
         {linkLabel}
       </Link>
-      { resource.description && <InfoIconButton info={resource.description} escapeUnsecuredDomains size="xs" />}
+      { resource.description && <InfoIconButton info={resource.description} escapeUnsecuredDomains size="xs" title={linkLabel} />}
       {resource.shared && <Typography>Shared</Typography>}
     </>
   );

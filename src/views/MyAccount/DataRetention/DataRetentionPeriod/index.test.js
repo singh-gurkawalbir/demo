@@ -127,7 +127,7 @@ describe('DataRetentionPeriod component tests', () => {
     expect(saveButton).toBeInTheDocument();
     userEvent.click(saveButton);
 
-    expect(screen.getByText(/The new retention period of/i)).toBeInTheDocument();
+    expect(screen.getByText(/Changing the retention period will/i)).toBeInTheDocument();
     const confirmSaveButton = screen.getByRole('button', {name: 'Save'});
     const cancelButton = screen.getByRole('button', {name: 'Cancel'});
 

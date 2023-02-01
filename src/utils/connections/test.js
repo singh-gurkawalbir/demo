@@ -120,6 +120,53 @@ describe('connections utils test cases', () => {
 
       expect(getParentResourceContext(url)).toEqual(returnValue);
     });
+    test('should correctly return the parent params if passed url contains parent context for iClients', () => {
+      const url1 = '/iClients/edit/iClients/i-123';
+
+      expect(getParentResourceContext(url1, 'iClients')).toEqual({});
+
+      const url2 = '/connections/edit/connections/999/edit/iClients/i-123';
+
+      expect(getParentResourceContext(url2, 'iClients')).toEqual({
+        0: 'connections',
+        1: '',
+        connId: '999',
+        operation: 'edit',
+        iClientId: 'i-123',
+      });
+
+      const url3 = '/integrations/123/connections/sections/777/edit/connections/999/edit/iClients/i-123';
+
+      expect(getParentResourceContext(url3, 'iClients')).toEqual({
+        0: 'integrations/123/connections/sections/777',
+        1: '',
+        connId: '999',
+        operation: 'edit',
+        iClientId: 'i-123',
+      });
+
+      const url4 = '/integrations/123/flows/sections/777/flowBuilder/456/edit/connections/999/edit/iClients/i-123';
+
+      expect(getParentResourceContext(url4, 'iClients')).toEqual({
+        0: 'integrations/123/flows/sections/777/flowBuilder/456',
+        1: '',
+        connId: '999',
+        operation: 'edit',
+        iClientId: 'i-123',
+      });
+
+      const url5 = '/integrations/123/flowBuilder/456/edit/imports/789/edit/connections/999/edit/iClients/i-123';
+
+      expect(getParentResourceContext(url5, 'iClients')).toEqual({
+        0: 'integrations/123/flowBuilder/456',
+        1: '',
+        connId: '999',
+        operation: 'edit',
+        parentId: '789',
+        parentType: 'imports',
+        iClientId: 'i-123',
+      });
+    });
   });
   describe('getFilterExpressionForAssistant test cases', () => {
     test('should return correct filter expression if assistant is not constant contact', () => {

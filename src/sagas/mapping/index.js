@@ -1,10 +1,8 @@
 import { call, takeEvery, put, select, takeLatest, all, take, race } from 'redux-saga/effects';
 import { deepClone } from 'fast-json-patch';
-import shortid from 'shortid';
 import { uniqBy, isEmpty } from 'lodash';
 import actionTypes from '../../actions/types';
 import actions from '../../actions';
-import { SCOPES } from '../resourceForm';
 import {selectors} from '../../reducers';
 import { commitStagedChanges } from '../resources';
 import mappingUtil, {buildTreeFromV2Mappings, buildV2MappingsFromTree, buildExtractsTree} from '../../utils/mapping';
@@ -19,7 +17,7 @@ import { getMappingMetadata as getIAMappingMetadata } from '../integrationApps/s
 import { getAssistantConnectorType, getHttpConnector} from '../../constants/applications';
 import { autoEvaluateProcessorWithCancel } from '../editor';
 import { getAssistantFromConnection } from '../../utils/connections';
-import { safeParse } from '../../utils/string';
+import { safeParse, generateId } from '../../utils/string';
 import { getMappingsEditorId } from '../../utils/editor';
 
 export function* fetchRequiredMappingData({
@@ -301,7 +299,7 @@ export function* mappingInit({
     actions.mapping.initComplete({
       mappings: (formattedMappings || []).map(m => ({
         ...m,
-        key: shortid.generate(),
+        key: generateId(),
       })),
       lookups,
       v2TreeData: mappingsTreeData,
@@ -422,13 +420,12 @@ export function* saveMappings() {
     });
   }
 
-  yield put(actions.resource.patchStaged(importId, patch, SCOPES.VALUE));
+  yield put(actions.resource.patchStaged(importId, patch));
 
   const { cancelSave, resp } = yield race({
     resp: call(commitStagedChanges, {
       resourceType: 'imports',
       id: importId,
-      scope: SCOPES.VALUE,
       context: { flowId },
     }),
     cancelSave: take(actionTypes.MAPPING.CLEAR),
@@ -733,7 +730,7 @@ export function* getAutoMapperSuggestion() {
 
         if (itemWithSameGenerateIndex === -1 || weight > suggestedMapping[itemWithSameGenerateIndex]?.weight) {
           if (!mappings.find(item => item.generate === generate)) {
-            const newMappingObj = { generate, key: shortid.generate()};
+            const newMappingObj = { generate, key: generateId()};
 
             if ('hardCodedValue' in field) {
               newMappingObj.hardCodedValue = field.hardCodedValue;
@@ -748,7 +745,7 @@ export function* getAutoMapperSuggestion() {
     if (suggestedMapping?.length) {
       suggestedMapping.map(m => ({
         ...m,
-        key: shortid.generate(),
+        key: generateId(),
       }));
       yield put(actions.mapping.autoMapper.received(suggestedMapping));
     } else {

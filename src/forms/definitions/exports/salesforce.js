@@ -165,6 +165,7 @@ export default {
       id: 'type',
       type: 'select',
       label: 'Export type',
+      isLoggable: true,
       defaultValue: r => {
         const isNew = isNewId(r._id);
 
@@ -213,6 +214,7 @@ export default {
       id: 'once.booleanField',
       type: 'salesforcerefreshableselect',
       label: 'Boolean field to mark records as exported',
+      isLoggable: true,
       placeholder: 'Please select a boolean field',
       helpKey: 'export.once.booleanField',
       fieldName: 'onceExportBooleanFields',

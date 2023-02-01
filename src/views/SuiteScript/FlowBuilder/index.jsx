@@ -185,7 +185,6 @@ function FlowBuilder() {
           'flows',
           flowId,
           [{ op: 'replace', path: '/name', value: title }],
-          'value',
         )
       );
       dispatch(
@@ -194,7 +193,6 @@ function FlowBuilder() {
           integrationId,
           'flows',
           flowId,
-          'value',
         )
       );
     },

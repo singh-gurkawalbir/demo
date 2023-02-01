@@ -11,6 +11,7 @@ import { getIntegrationAppUrlName } from '../../../../../../utils/integrationApp
 import getRoutePath from '../../../../../../utils/routePaths';
 import useSelectorMemo from '../../../../../../hooks/selectors/useSelectorMemo';
 import OutlinedButton from '../../../../../../components/Buttons/OutlinedButton';
+import { message } from '../../../../../../utils/messageStore';
 
 const useStyles = makeStyles(theme => ({
   content: {
@@ -38,7 +39,7 @@ export default function UninstallSection({ childId, integrationId }) {
   const handleUninstall = () => {
     confirmDialog({
       title: 'Confirm uninstall',
-      message: 'Are you sure you want to uninstall?',
+      message: message.SURE_UNINSTALL,
       buttons: [
         {
           label: 'Uninstall',
@@ -88,17 +89,11 @@ export default function UninstallSection({ childId, integrationId }) {
 
       <div className={classes.content}>
         <Typography>
-          Use this page to uninstall this instance (i.e. this tile) of the
-          Integration App. Uninstalling an Integration App will remove all
-          components, including the integration tile, from your integrator.io
-          account. After uninstalling you can re-install from the marketplace as
-          long as you have a valid subscription. Please be very certain that you
-          want to uninstall as this action cannot be undone.
+          {message.SUBSCRIPTION.UNINSTALL_INSTANCE}
         </Typography>
         <Divider className={classes.divider} />
         <Typography>
-          Once you uninstall this Integration App there is no going back. Please
-          be certain.
+          {message.SUBSCRIPTION.UNINSTALL_INFO}
         </Typography>
         <OutlinedButton
           data-test="uninstallConnector"

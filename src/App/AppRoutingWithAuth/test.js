@@ -319,7 +319,40 @@ describe('AppRoutingWith authentication redirection behavior', () => {
     );
 
     expect(history.location.pathname).toBe(getRoutePath('signin'));
-    expect(getByPlaceholderText('Email')).toBeTruthy();
-    expect(getByPlaceholderText('Password')).toBeTruthy();
+    expect(getByPlaceholderText('Email*')).toBeTruthy();
+    expect(getByPlaceholderText('Password*')).toBeTruthy();
+  });
+
+  test('should redirect the user to the agreeTOSAndPP route when the user has not agreed to TOS', () => {
+    const history = createMemoryHistory({
+      initialEntries: [
+        {
+          pathname: getRoutePath('/home'),
+        },
+      ],
+    });
+    const sessionState = {
+      mfa: {
+        sessionInfo:
+        {
+          status: 'received',
+          data: {
+            mfaVerified: true, mfaRequired: true, mfaSetupRequired: false, authenticated: true, agreeTOSAndPP: false,
+          },
+        },
+      },
+    };
+    const store = createStore(reducer, { session: sessionState, user: {profile: {agreeTOSAndPP: false}} });
+
+    render(
+      reduxRouterWrappedComponent({
+        Component: wrappedHistory,
+        componentProps: loggedOut,
+        history,
+        store,
+      })
+    );
+
+    expect(history.location.pathname).toBe(getRoutePath('/agreeTOSAndPP'));
   });
 });

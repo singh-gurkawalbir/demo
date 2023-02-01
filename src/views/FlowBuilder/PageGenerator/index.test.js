@@ -122,7 +122,6 @@ describe('PageGenerator UI tests', () => {
           { op: 'add', path: '/rdbmsAppType', value: undefined },
         ],
         id: 'somePGId',
-        scope: 'value',
       }
     );
 
@@ -158,7 +157,6 @@ describe('PageGenerator UI tests', () => {
           { op: 'add', path: '/rdbmsAppType', value: undefined },
         ],
         id: 'somePGId',
-        scope: 'value',
       }
     );
 
@@ -216,7 +214,6 @@ describe('PageGenerator UI tests', () => {
           { op: 'add', path: '/name', value: 'Data loader' },
         ],
         id: 'somePGId',
-        scope: 'value',
       }
     );
 

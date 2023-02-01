@@ -20,7 +20,7 @@ import FetchProgressIndicator from '../../components/FetchProgressIndicator';
 import ViewLogDetailDrawer from './DetailDrawer';
 import NoResultTypography from '../../components/NoResultTypography';
 import { TextButton } from '../../components/Buttons';
-import messageStore from '../../utils/messageStore';
+import messageStore, { message } from '../../utils/messageStore';
 import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
 import ActionMenu from '../../components/CeligoTable/ActionMenu';
 import PurgeLog from '../../components/ResourceTable/scriptLogs/actions/PurgeLog';
@@ -217,7 +217,7 @@ export default function ScriptLogs({ flowId, scriptId }) {
         dispatch(actions.logs.scripts.refresh({scriptId, flowId}));
       }
       enqueueSnackbar({
-        message: messageStore('PURGE_SCRIPT_LOG_SUCCESS_MESSAGE'),
+        message: message.PURGE.SCRIPT_LOG_SUCCESS_MESSAGE,
         variant: 'success',
       });
       dispatch(actions.logs.scripts.purge.clear());
@@ -352,7 +352,7 @@ export default function ScriptLogs({ flowId, scriptId }) {
         ) : null}
         {!logs.length && !nextPageURL && status !== 'requested' && (
           <NoResultTypography isBackground>
-            You don’t have any execution logs in the selected time frame.
+            {messageStore('NO_RESULT', {message: 'execution logs in the selected time frame'})}
           </NoResultTypography>
         )}
         {!logs.length && !!nextPageURL && fetchStatus === 'inProgress' && (

@@ -11,7 +11,6 @@ import {
 import { deepClone } from 'fast-json-patch';
 import { keys, cloneDeep } from 'lodash';
 import { selectors } from '../../../reducers';
-import { SCOPES } from '../../resourceForm';
 import actionTypes from '../../../actions/types';
 import actions from '../../../actions';
 import { apiCallWithRetry } from '../..';
@@ -64,7 +63,7 @@ import { getMockOutputFromResource } from '../../../utils/flowDebugger';
 const VALID_RESOURCE_TYPES_FOR_FLOW_DATA = ['flows', 'exports', 'imports', 'connections'];
 
 export function* _initFlowData({ flowId, resourceId, resourceType, refresh, formKey }) {
-  const { merged: flow } = yield select(selectors.resourceData, 'flows', flowId, SCOPES.VALUE);
+  const { merged: flow } = yield select(selectors.resourceData, 'flows', flowId);
   const clonedFlow = deepClone(flow || {});
 
   if (isNewId(flowId)) {
@@ -77,7 +76,6 @@ export function* _initFlowData({ flowId, resourceId, resourceType, refresh, form
       selectors.resourceData,
       resourceType,
       resourceId,
-      SCOPES.VALUE
     ))?.merged || emptyObject;
     const isPageGenerator = resourceType === 'exports' && !resource.isLookup;
     const processorType = isPageGenerator ? 'pageGenerators' : 'pageProcessors';
@@ -260,9 +258,8 @@ export function* fetchPageGeneratorPreview({ flowId, _pageGeneratorId }) {
     selectors.resourceData,
     'connections',
     resource._connectionId,
-    SCOPES.VALUE
   );
-  const { merged: flow = {} } = yield select(selectors.resourceData, 'flows', flowId, SCOPES.VALUE);
+  const { merged: flow = {} } = yield select(selectors.resourceData, 'flows', flowId);
 
   let previewData;
 
@@ -387,7 +384,7 @@ export function* _processResponseTransformData({ flowId, resourceId, resource, p
       data: [
         {
           ...mockResponse[0],
-          _json: transformedData.data[0] || transformedData.data,
+          _json: transformedData?.data[0] || transformedData?.data || transformedData,
         },
       ],
     } : transformedData;
@@ -450,7 +447,6 @@ export function* requestProcessorData({
     selectors.resourceData,
     resourceType,
     resourceId,
-    SCOPES.VALUE
   );
   const isPageGeneratorExport = yield select(
     selectors.isPageGenerator,

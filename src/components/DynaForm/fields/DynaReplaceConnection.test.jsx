@@ -240,7 +240,7 @@ describe('dynaReplaceConnection UI test cases', () => {
     const button = screen.getByText('Replace Connection');
 
     userEvent.click(button);
-    expect(mockDispatch).toHaveBeenCalledWith({id: '12', patch: [{op: 'replace', path: '/_connectionId', value: 'newId'}, {op: 'remove', path: '/assistantMetadata'}], scope: 'value', type: 'RESOURCE_STAGE_PATCH'});
+    expect(mockDispatch).toHaveBeenCalledWith({id: '12', patch: [{op: 'replace', path: '/_connectionId', value: 'newId'}, {op: 'remove', path: '/assistantMetadata'}], type: 'RESOURCE_STAGE_PATCH'});
     expect(mockDispatch).toHaveBeenCalledWith({flowId: '67890', initData: [{id: undefined, value: '62f76fd2dd7931633948ee7a'}, {id: 'oldId', value: 'newId'}], integrationId: undefined, isNew: false, resourceId: '12', resourceType: 'integrations', skipCommit: false, type: 'RESOURCE_FORM_INIT'});
   });
 
@@ -257,7 +257,7 @@ describe('dynaReplaceConnection UI test cases', () => {
     const button = screen.getByText('Replace Connection');
 
     userEvent.click(button);
-    expect(mockDispatch).toHaveBeenCalledWith({id: '12', patch: [{op: 'replace', path: '/_connectionId', value: 'newId'}, {op: 'remove', path: '/assistantMetadata'}], scope: 'value', type: 'RESOURCE_STAGE_PATCH'});
+    expect(mockDispatch).toHaveBeenCalledWith({id: '12', patch: [{op: 'replace', path: '/_connectionId', value: 'newId'}, {op: 'remove', path: '/assistantMetadata'}], type: 'RESOURCE_STAGE_PATCH'});
     expect(mockDispatch).toHaveBeenCalledWith({flowId: '67890', initData: [{id: 'oldId', value: 'newId'}], integrationId: undefined, isNew: false, resourceId: '12', resourceType: 'integrations', skipCommit: false, type: 'RESOURCE_FORM_INIT'});
   });
 
@@ -285,7 +285,7 @@ describe('dynaReplaceConnection UI test cases', () => {
     const button = screen.getByText('Replace Connection');
 
     userEvent.click(button);
-    expect(mockDispatch).toHaveBeenCalledWith({id: '12', patch: [{op: 'replace', path: '/_connectionId', value: 'newId'}], scope: 'value', type: 'RESOURCE_STAGE_PATCH'});
+    expect(mockDispatch).toHaveBeenCalledWith({id: '12', patch: [{op: 'replace', path: '/_connectionId', value: 'newId'}], type: 'RESOURCE_STAGE_PATCH'});
     expect(mockDispatch).toHaveBeenCalledWith({flowId: '67890', initData: [{id: 'oldId', value: 'newId'}], integrationId: undefined, isNew: false, resourceId: '12', resourceType: 'integrations', skipCommit: false, type: 'RESOURCE_FORM_INIT'});
   });
   test('should test replace connection with touched set to true and no assistant', () => {
@@ -312,7 +312,7 @@ describe('dynaReplaceConnection UI test cases', () => {
     const button = screen.getByText('Replace Connection');
 
     userEvent.click(button);
-    expect(mockDispatch).toHaveBeenCalledWith({id: '12', patch: [{op: 'replace', path: '/_connectionId', value: 'newId'}], scope: 'value', type: 'RESOURCE_STAGE_PATCH'});
+    expect(mockDispatch).toHaveBeenCalledWith({id: '12', patch: [{op: 'replace', path: '/_connectionId', value: 'newId'}], type: 'RESOURCE_STAGE_PATCH'});
     expect(mockDispatch).toHaveBeenCalledWith({flowId: '67890', initData: [{id: undefined, value: '123'}, {id: 'oldId', value: 'newId'}], integrationId: undefined, isNew: false, resourceId: '12', resourceType: 'integrations', skipCommit: false, type: 'RESOURCE_FORM_INIT'});
   });
 
@@ -344,7 +344,7 @@ describe('dynaReplaceConnection UI test cases', () => {
     const button = screen.getByText('Replace Connection');
 
     userEvent.click(button);
-    expect(mockDispatch).toHaveBeenCalledWith({id: '12', patch: [{op: 'replace', path: '/_connectionId', value: 'newId'}, {op: 'remove', path: '/assistantMetadata'}], scope: 'value', type: 'RESOURCE_STAGE_PATCH'});
+    expect(mockDispatch).toHaveBeenCalledWith({id: '12', patch: [{op: 'replace', path: '/_connectionId', value: 'newId'}, {op: 'remove', path: '/assistantMetadata'}], type: 'RESOURCE_STAGE_PATCH'});
     expect(mockDispatch).toHaveBeenCalledWith({flowId: '67890', initData: [{id: [{assistantMetadata: {operation: 'update', resource: 'someresource', version: 'v1'}}], value: undefined}, {id: 'oldId', value: 'newId'}], integrationId: undefined, isNew: false, resourceId: '12', resourceType: 'integrations', skipCommit: false, type: 'RESOURCE_FORM_INIT'});
   });
   test('should test replace connection without store', () => {
@@ -367,6 +367,6 @@ describe('dynaReplaceConnection UI test cases', () => {
     const button = screen.getByText('Replace Connection');
 
     userEvent.click(button);
-    expect(mockDispatch).toHaveBeenCalledWith({id: '12', patch: [{op: 'replace', path: '/_connectionId', value: 'newId'}], scope: 'value', type: 'RESOURCE_STAGE_PATCH'});
+    expect(mockDispatch).toHaveBeenCalledWith({id: '12', patch: [{op: 'replace', path: '/_connectionId', value: 'newId'}], type: 'RESOURCE_STAGE_PATCH'});
   });
 });

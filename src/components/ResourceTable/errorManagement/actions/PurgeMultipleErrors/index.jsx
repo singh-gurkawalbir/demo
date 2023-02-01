@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import actions from '../../../../../actions';
-import messageStore from '../../../../../utils/messageStore';
+import { message } from '../../../../../utils/messageStore';
 import useConfirmDialog from '../../../../ConfirmDialog';
 import PurgeIcon from '../../../../icons/PurgeIcon';
 
@@ -15,13 +15,14 @@ export default {
     const { confirmDialog } = useConfirmDialog();
 
     const handlePurge = useCallback(() => {
-      dispatch(actions.errorManager.flowErrorDetails.purge.request({flowId, resourceId}));
+      dispatch(actions.errorManager.flowErrorDetails.purge.request({flowId, resourceId, isRowAction: false}));
     }, [dispatch, flowId, resourceId]);
 
     const handleClick = useCallback(() => {
       confirmDialog({
         title: 'Confirm purge error(s)',
-        message: messageStore('MULTIPLE_ERROR_PURGE_CONFIRM_MESSAGE'),
+
+        message: message.PURGE.MULTIPLE_ERROR_PURGE_CONFIRM_MESSAGE,
         buttons: [
           {
             label: 'Purge error(s)',

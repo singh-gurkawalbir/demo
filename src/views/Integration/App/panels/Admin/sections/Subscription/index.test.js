@@ -140,6 +140,7 @@ describe('Subscription Section UI tests', () => {
       lastModified: '2022-06-27T07:52:09.014Z',
       expires: '2023-05-05T00:00:00.000Z',
       nextPlan: '',
+      isHighestPlan: false,
       type: 'connector',
       _connectorId: '58777a2b1008fb325e6c0953',
       opts: { connectorEdition: 'premium',

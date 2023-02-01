@@ -45,7 +45,6 @@ export default function HooksForm({flowId, integrationId, formKey}) {
     selectors.makeResourceDataSelector,
     resourceType,
     resourceId,
-    'value'
   );
 
   const defaultValue = useMemo(() => getDefaultValuesForHooks(resource), [

@@ -17,7 +17,7 @@ import InstallationGuideIcon from '../../icons/InstallationGuideIcon';
 import ActionGroup from '../../ActionGroup';
 import CeligoDivider from '../../CeligoDivider';
 import getFieldMeta from './CreateAliasFormMeta';
-import messageStore from '../../../utils/messageStore';
+import { message } from '../../../utils/messageStore';
 import { drawerPaths, buildDrawerUrl } from '../../../utils/rightDrawer';
 
 const anchorProps = {
@@ -111,7 +111,7 @@ export default function CreateAliasDrawer({resourceId, resourceType, height = 's
       path={[drawerPaths.ALIASES.ADD, drawerPaths.ALIASES.EDIT]} >
       <DrawerHeader
         title={isEdit ? 'Edit alias' : 'Create alias'}
-        infoText={isEdit ? messageStore('EDIT_ALIAS_FORM_HELPINFO') : messageStore('CREATE_ALIAS_FORM_HELPINFO')}
+        infoText={isEdit ? message.ALIAS.EDIT_ALIAS_FORM_HELPINFO : message.ALIAS.CREATE_ALIAS_FORM_HELPINFO}
         disableClose={disabled}
         handleClose={setCancelTriggered} >
         <ActionGroup>

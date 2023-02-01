@@ -20,6 +20,8 @@ export function AppRoutingWithAuth({ children }) {
   const isUserLoggedOut = useSelector(selectors.isUserLoggedOut);
   const isMFASetupIncomplete = useSelector(selectors.isMFASetupIncomplete);
   const isUserAuthenticated = useSelector(state => selectors.sessionInfo(state)?.authenticated);
+  const isMFAVerified = useSelector(state => selectors.sessionInfo(state)?.mfaVerified);
+  const agreeTOSAndPPRequired = useSelector(selectors.userRequiredToAgreeTOSAndPP);
 
   const dispatch = useDispatch();
 
@@ -31,6 +33,8 @@ export function AppRoutingWithAuth({ children }) {
           state: { attemptedRoute: currentRoute, search },
         });
         dispatch(actions.auth.initSession());
+      } else {
+        dispatch(actions.auth.validateAndInitSession());
       }
     }
 
@@ -39,7 +43,19 @@ export function AppRoutingWithAuth({ children }) {
     }
     setHasPageReloaded(true);
   }, [hasPageReloaded, currentRoute, history, search, isAuthInitialized, dispatch, isSignInRoute, isConcurPage]);
+  const agreeTOSAndPPPage = getRoutePath('/agreeTOSAndPP') === location.pathname;
 
+  if (agreeTOSAndPPRequired && !agreeTOSAndPPPage) {
+    return (
+      <Redirect
+        push={false}
+        to={{
+          pathname: getRoutePath('/agreeTOSAndPP'),
+          state: location.state,
+        }}
+      />
+    );
+  }
   // this selector is used by the UI to hold off rendering any routes
   // till it determines the auth state
   if (isAuthenticated) {
@@ -66,6 +82,19 @@ export function AppRoutingWithAuth({ children }) {
       />
     );
   }
+
+  if (!isMFASetupIncomplete && isUserAuthenticated && isMFAAuthRequired && !isMFAVerified && !isMFASetupPage && !isSignInRoute) {
+    return (
+      <Redirect
+        push={false}
+        to={{
+          pathname: getRoutePath('/mfa/verify'),
+          state: location.state,
+        }}
+      />
+    );
+  }
+
   if (!isSessionExpired && !isSignInRoute && !isMFAAuthRequired && (isAuthInitialized || isUserLoggedOut)) {
     return (
       <Redirect

@@ -9,6 +9,7 @@ import useSelectorMemo from '../../../../../../../hooks/selectors/useSelectorMem
 import Addons from './Addons';
 import { FilledButton } from '../../../../../../../components/Buttons';
 import useConfirmDialog from '../../../../../../../components/ConfirmDialog';
+import messageStore from '../../../../../../../utils/messageStore';
 
 const useStyles = makeStyles(theme => ({
   header: {
@@ -75,7 +76,7 @@ export default function SubscriptionSection({ childId, integrationId }) {
     if (upgradeText === 'Request upgrade') {
       confirmDialog({
         title: 'Request upgrade',
-        message: 'We will contact you to discuss your business needs and recommend an ideal subscription plan.',
+        message: messageStore('SUBSCRIPTION.CONTACT_FOR_BUSINESS_NEEDS', {plan: 'ideal'}),
         buttons: [
           {
             label: 'Submit request',

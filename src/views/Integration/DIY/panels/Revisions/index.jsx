@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles, Typography } from '@material-ui/core';
 import { useRouteMatch } from 'react-router-dom';
-import { nanoid } from 'nanoid';
+import { generateId } from '../../../../../utils/string';
 import { TextButton } from '../../../../../components/Buttons';
 import actions from '../../../../../actions';
 import { selectors } from '../../../../../reducers';
@@ -137,7 +137,7 @@ export default function Revisions({ integrationId }) {
     drawerURL: buildDrawerUrl({
       path: drawerPaths.LCM.OPEN_PULL,
       baseUrl: match.url,
-      params: { revId: nanoid() },
+      params: { revId: generateId() },
     }),
     isCreatePull: true,
   });
@@ -146,7 +146,7 @@ export default function Revisions({ integrationId }) {
     drawerURL: buildDrawerUrl({
       path: drawerPaths.LCM.CREATE_SNAPSHOT,
       baseUrl: match.url,
-      params: { revId: nanoid() },
+      params: { revId: generateId() },
     }),
   });
 

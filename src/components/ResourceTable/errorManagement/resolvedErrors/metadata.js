@@ -19,14 +19,14 @@ import { selectors } from '../../../../reducers';
 import ViewNetsuiteRequest from '../actions/ViewNetsuiteRequest';
 import ViewNetsuiteResponse from '../actions/ViewNetsuiteResponse';
 import { FILTER_KEYS } from '../../../../utils/errorManagement';
-import messageStore from '../../../../utils/messageStore';
+import { message } from '../../../../utils/messageStore';
 import PurgeError from '../actions/PurgeError';
 
 const options = {allowedTags: ['a']};
 export default {
   rowKey: 'errorId',
   additionalConfigs: {
-    actionMenuTooltip: messageStore('VIEW_ACTIONS_HOVER_MESSAGE'),
+    actionMenuTooltip: message.ERROR_MANAGEMENT_2.VIEW_ACTIONS_HOVER_MESSAGE,
     IsActiveRow: ({ rowData }) => {
       const activeErrorId = useSelector(
         state => selectors.filter(state, FILTER_KEYS.RESOLVED)?.activeErrorId
@@ -61,11 +61,13 @@ export default {
     {
       key: 'code',
       heading: 'Code',
+      isLoggable: true,
       width: '18%',
       Value: ({rowData: r}) => <TextOverflowCell message={r.code} />,
     },
     {
       key: 'selectResource',
+      isLoggable: true,
       HeaderValue: () => {
         const tableContext = useGetTableContext();
 

@@ -197,6 +197,7 @@ function* installStep({ integrationId, revisionId, stepInfo }) {
       connectionDoc: stepInfo.connection,
     });
   } catch (e) {
+    yield put(actions.integrationLCM.installSteps.updateStep(revisionId, 'failed'));
   // TODO: Handle errors and trigger failed action
   }
 }

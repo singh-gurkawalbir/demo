@@ -6,7 +6,6 @@ import actions from '../../../../../actions';
 import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
 import useFormInitWithPermissions from '../../../../../hooks/useFormInitWithPermissions';
 import { selectors } from '../../../../../reducers';
-import { SCOPES } from '../../../../../sagas/resourceForm';
 import { TextButton } from '../../../../Buttons';
 import DynaSubmit from '../../../DynaSubmit';
 import getFormFieldMetadata from './util';
@@ -100,7 +99,6 @@ function SubRecordDrawer(props) {
               value: updatedSubrecords,
             },
           ],
-          SCOPES.VALUE
         )
       );
       history.goBack();

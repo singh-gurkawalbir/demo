@@ -73,7 +73,13 @@ export default function NameCell({ tile }) {
       <div className={classes.nameCellDescription}>
         {pinned && <IntegrationPinnedIcon />}
         <Link to={urlToIntegrationSettings} className={classes.nameCellLink} onClick={handleClick}>{name}</Link>
-        <InfoIconButton info={description} escapeUnsecuredDomains size="xs" className={classes.nameCellInfoIcon} />
+        <InfoIconButton
+          info={description}
+          escapeUnsecuredDomains
+          size="xs"
+          className={classes.nameCellInfoIcon}
+          title={name}
+        />
       </div>
       {(integrationTag || accessLevel) && (
       <div className={clsx(classes.nameCellDescription, classes.nameCellTags)}>

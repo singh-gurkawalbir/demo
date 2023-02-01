@@ -1,5 +1,5 @@
 import produce from 'immer';
-import shortid from 'shortid';
+import { generateId } from '../../../utils/string';
 import actionTypes from '../../../actions/types';
 
 export default function reducer(state = {}, action) {
@@ -20,7 +20,7 @@ export default function reducer(state = {}, action) {
         draft[resourceId].status = 'received';
         draft[resourceId].meta = formMeta;
         draft[resourceId].scriptId = scriptId;
-        draft[resourceId].key = shortid.generate();
+        draft[resourceId].key = generateId();
         break;
 
       case actionTypes.CUSTOM_SETTINGS.FORM_ERROR:

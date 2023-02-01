@@ -37,6 +37,9 @@ export default function assistantDefinition(
       if (assistantMetadata.assistant === 'recurlyv3') {
         assistantMetadata.assistant = 'recurly';
       }
+      if (assistantMetadata.assistant === 'acumaticamanufacturing') {
+        assistantMetadata.assistant = 'acumatica';
+      }
       const otherFormValues = omitBy(formValues, (v, k) =>
         k.includes('/assistantMetadata/')
       );

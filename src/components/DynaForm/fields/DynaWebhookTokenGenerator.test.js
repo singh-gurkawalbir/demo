@@ -15,7 +15,7 @@ jest.mock('react-redux', () => ({
   useDispatch: () => mockDispatch,
 }));
 
-jest.mock('uuid', () => ({ v4: () => '123456789' }));
+jest.mock('../../../utils/string', () => ({ generateUUID: () => '123456789' }));
 
 const enqueueSnackbar = jest.fn();
 
@@ -136,7 +136,7 @@ describe('dynaWebhookTokenGenerator UI test cases', () => {
       }, initialStore
     );
     expect(mockDispatch).toHaveBeenCalledWith(
-      actions.resource.patchStaged('finalResId', patchSet, 'value')
+      actions.resource.patchStaged('finalResId', patchSet)
     );
   });
 });

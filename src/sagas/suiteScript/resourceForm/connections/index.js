@@ -33,7 +33,6 @@ export function* createPayload({ values, resourceId, ssLinkedConnectionId }) {
     resourceType,
     id: resourceId,
     ssLinkedConnectionId,
-    scope: 'value',
   });
   const { patchSet } = yield call(createFormValuesPatchSet, {
     resourceType,

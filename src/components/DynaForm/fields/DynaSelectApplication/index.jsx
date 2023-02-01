@@ -146,6 +146,7 @@ export default function SelectApplication(props) {
   const handleChange = useCallback(e => {
     ref?.current?.select?.blur();
     const newValue = isMulti ? [...value, e.value] : e.value;
+    const label = !isMulti && e.label;
 
     setInputValue(value.label);
     setMenuIsOpen(false);
@@ -159,6 +160,7 @@ export default function SelectApplication(props) {
       const values = {};
 
       values[id] = newValue;
+      values.name = label;
       dispatch(
         actions.resourceForm.submit(
           resourceType,

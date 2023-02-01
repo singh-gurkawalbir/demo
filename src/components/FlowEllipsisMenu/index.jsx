@@ -22,6 +22,7 @@ import { getTemplateUrlName } from '../../utils/template';
 import getRoutePath from '../../utils/routePaths';
 import { buildDrawerUrl, drawerPaths } from '../../utils/rightDrawer';
 import { isNewId } from '../../utils/resource';
+import { message } from '../../utils/messageStore';
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
@@ -123,7 +124,7 @@ export default function FlowEllipsisMenu({ flowId, exclude }) {
         case 'detach':
           confirmDialog({
             title: 'Confirm detach',
-            message: 'Are you sure you want to detach this flow? The flow will be moved to the standalone flows tile.',
+            message: message.FLOWS.DETACH,
             buttons: [
               {
                 label: 'Detach',
@@ -165,7 +166,7 @@ export default function FlowEllipsisMenu({ flowId, exclude }) {
         case 'delete':
           confirmDialog({
             title: 'Confirm delete',
-            message: 'Are you sure you want to delete this flow? Deleting a flow will cancel the run that is currently running.',
+            message: message.FLOWS.DELETE_FLOW,
             buttons: [
               {
                 label: 'Delete',

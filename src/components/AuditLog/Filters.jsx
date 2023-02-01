@@ -17,7 +17,7 @@ import Help from '../Help';
 import { getSelectedRange } from '../../utils/flowMetrics';
 import { emptyObject } from '../../constants';
 import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
-import messageStore from '../../utils/messageStore';
+import { message } from '../../utils/messageStore';
 
 const OPTION_ALL = { id: 'all', label: 'All' };
 
@@ -203,7 +203,7 @@ export default function Filters(props) {
   useEffect(() => {
     if (hasMoreDownloads) {
       enqueueSnackbar({
-        message: messageStore('AUDIT_LOGS_HAS_MORE_DOWNLOADS'),
+        message: message.AUDIT_LOGS_HAS_MORE_DOWNLOADS,
         variant: 'info',
         persist: true,
       });
@@ -234,7 +234,7 @@ export default function Filters(props) {
         />
           <FormControl className={classes.formControl}>
             <CeligoSelect
-              isLoggable={false}
+              isLoggable
               inputProps={userInput}
               onChange={handleChange}
               value={byUser || ''}>

@@ -41,6 +41,7 @@ import {
   addLastExecutedAtSortableProp,
   shouldHaveUnassignedSection,
   getPageProcessorFromFlow,
+  getAllPageProcessors,
 } from '../utils/flows';
 import {
   PASSWORD_MASK,
@@ -61,8 +62,8 @@ import {
   emptyList,
   MAX_DATA_RETENTION_PERIOD,
 } from '../constants';
-import messageStore from '../utils/messageStore';
-import { upgradeButtonText, expiresInfo } from '../utils/license';
+import { message } from '../utils/messageStore';
+import { upgradeButtonText, expiresInfo, isNextTheHighestPlan } from '../utils/license';
 import commKeyGen from '../utils/commKeyGenerator';
 import {
   isNewId,
@@ -667,7 +668,16 @@ selectors.mkTileApplications = () => {
           const connection = connections.find(c => c._id === r);
 
           if (connection) {
-            applications.push(connection.assistant || connection.rdbms?.type || connection.http?.formType || connection.type);
+            if (connection.assistant) {
+              applications.push(connection.assistant);
+            } else if (getHttpConnector(connection?.http?._httpConnectorId)) {
+              const apps = applicationsList();
+              const app = apps.find(a => a._httpConnectorId === connection?.http?._httpConnectorId) || {};
+
+              applications.push(app.id || 'http');
+            } else {
+              applications.push(connection.rdbms?.type || connection?.http?.formType || connection.type);
+            }
           }
         });
 
@@ -1126,14 +1136,23 @@ selectors.requestOptionsOfDashboardJobs = (state, {filterKey, nextPageURL, integ
   let storeId;
   let { resources: allFlows } = selectors.resourceList(state, { type: 'flows' });
   let allFlowIds = [];
-  const {startDate, endDate} = getSelectedRange(jobFilter?.range) || {};
+  const {startDate, endDate, preset} = getSelectedRange(jobFilter?.range) || {};
+  const currentDate = new Date();
+
+  function isSameDay() {
+    return !!(endDate.getFullYear() === currentDate.getFullYear() &&
+      endDate.getMonth() === currentDate.getMonth() &&
+      endDate.getDate() === currentDate.getDate());
+  }
 
   if (filterKey === FILTER_KEYS_AD.COMPLETED) {
     if (startDate) { body.time_gt = startDate.getTime(); }
-    if (endDate) {
+    // Parameter time_lte is expected only for custom date range when the end date is not same as the current date
+    // Ref: IO-24960
+    if (preset === 'custom' && !isSameDay()) {
       // When current date is selected in custom date filter, the end date considers time to be the last minute 23:59
       // which could be future date for the user as the time does not match
-      // Update end date is those cases to current date
+      // Update end date in those cases to current date
       // Ref: IO-24139
       const currentDate = new Date();
 
@@ -1258,23 +1277,28 @@ selectors.getAllIntegrationsTiedToEventReports = createSelector(state => {
 integrations => integrations
 );
 
-selectors.getAllFlowsTiedToEventReports = createSelector(state => {
-  const eventReports = resourceListSel(state, reportsFilter)?.resources;
-  const flows = resourceListSel(state, flowsFilter)?.resources;
+selectors.mkGetAllFlowsTiedToEventReports = () => {
+  const eventReportsSel = selectors.makeResourceListSelector();
+  const flowsSel = selectors.makeResourceListSelector();
 
-  if (!eventReports) { return emptyArray; }
+  return createSelector(
+    state => eventReportsSel(state, reportsFilter)?.resources,
+    state => flowsSel(state, flowsFilter)?.resources,
+    (eventReports, flows) => {
+      if (!eventReports) { return emptyArray; }
 
-  const allFlowIdsTiedToEvenReports = uniq(eventReports.flatMap(r =>
+      const allFlowIdsTiedToEvenReports = uniq(eventReports.flatMap(r =>
     r?._flowIds || []
-  ).filter(Boolean));
+      ).filter(Boolean));
 
-  if (!allFlowIdsTiedToEvenReports) { return emptyArray; }
+      if (!allFlowIdsTiedToEvenReports) { return emptyArray; }
 
-  return flows.filter(({_id: flowId}) =>
-    allFlowIdsTiedToEvenReports.includes(flowId)).sort(stringCompare('name'));
-},
-flows => flows
-);
+      return flows.filter(({_id: flowId}) =>
+        allFlowIdsTiedToEvenReports.includes(flowId)).sort(stringCompare('name'));
+    }
+  );
+};
+selectors.getAllFlowsTiedToEventReports = selectors.mkGetAllFlowsTiedToEventReports();
 selectors.mkGetFlowsTiedToEventReports = () => {
   const eventReportsSel = selectors.makeResourceListSelector();
   const flowsSel = selectors.makeResourceListSelector();
@@ -2220,11 +2244,10 @@ selectors.makeResourceDataSelector = () => {
         id
       );
     },
-    (state, resourceType, id, scope) =>
+    (state, resourceType, id) =>
       cachedStageSelector(
         state,
         id,
-        scope
       ),
     (_1, resourceType) => resourceType,
     (_1, _2, id) => id,
@@ -2779,8 +2802,10 @@ selectors.getFlowsAssociatedExportFromIAMetadata = (state, fieldMeta) => {
 
 selectors.integrationConnectionList = (state, integrationId, childId, tableConfig) => {
   const integration = selectors.resource(state, 'integrations', integrationId) || {};
+
   // eslint-disable-next-line no-use-before-define
   const childIntegrations = map(selectors.integrationChildren(state, integrationId), 'value');
+
   let { resources = [] } = selectors.resourceList(state, {
     type: 'connections',
     ...(tableConfig || {}),
@@ -3002,6 +3027,11 @@ selectors.integrationAppLicense = (state, id) => {
     editions,
     connector?.twoDotZero
   );
+  const isHighestPlan = isNextTheHighestPlan(
+    license?._changeEditionId,
+    connector?.twoDotZero,
+    editions,
+  );
 
   return {
     ...license,
@@ -3011,6 +3041,7 @@ selectors.integrationAppLicense = (state, id) => {
     createdText: createdFormatted,
     showLicenseExpiringWarning: hasExpired || isExpiringSoon,
     nextPlan,
+    isHighestPlan,
   };
 };
 
@@ -3792,7 +3823,7 @@ selectors.isLicenseValidToEnableFlow = state => {
 
   if (license.hasExpired) {
     licenseDetails.enable = false;
-    licenseDetails.message = messageStore('LICENSE_EXPIRED');
+    licenseDetails.message = message.SUBSCRIPTION.LICENSE_EXPIRED;
   }
 
   return licenseDetails;
@@ -4503,7 +4534,6 @@ selectors.sampleDataWrapper = createSelector(
         state,
         resourceType,
         resourceId,
-        'value'
       );
 
       return merged || emptyObject;
@@ -4571,7 +4601,6 @@ selectors.isExportPreviewDisabled = (state, formKey) => {
     state,
     resourceType,
     resourceId,
-    'value',
   )?.merged || emptyObject;
 
   // Incase of File adaptors(ftp, s3)/As2/Rest csv where file upload is supported
@@ -4603,7 +4632,6 @@ selectors.getAvailableResourcePreviewStages = (
     state,
     resourceType,
     resourceId,
-    'value'
   )?.merged || emptyObject;
 
   const isDataLoader = selectors.isDataLoaderExport(state, resourceId, flowId);
@@ -4617,7 +4645,6 @@ selectors.isRequestUrlAvailableForPreviewPanel = (state, resourceId, resourceTyp
     state,
     resourceType,
     resourceId,
-    'value'
   ).merged;
   // for rest and http
   const appType = adaptorTypeMap[resourceObj?.adaptorType];
@@ -4778,7 +4805,7 @@ selectors.suiteScriptResourceStatus = (
 
 selectors.suiteScriptResourceData = (
   state,
-  { resourceType, id, ssLinkedConnectionId, integrationId, scope }
+  { resourceType, id, ssLinkedConnectionId, integrationId }
 ) => {
   if (!state || !resourceType || !id || !ssLinkedConnectionId) {
     return emptyObject;
@@ -4797,7 +4824,6 @@ selectors.suiteScriptResourceData = (
       resourceType,
       resourceId: id,
     }),
-    scope
   ) || {};
 
   if (!master && !patch) return { merged: {} };
@@ -5444,7 +5470,6 @@ selectors.isPreviewPanelAvailableForResource = (
     state,
     resourceType,
     resourceId,
-    'value'
   )?.merged || emptyObject;
   const connectionObj = selectors.resource(
     state,
@@ -5712,6 +5737,27 @@ selectors.resourceHasMappings = (state, importId) => {
   return !!(fields.length || lists.length);
 };
 
+selectors.flowHasMappings = (state, flowId) => {
+  const flow = selectors.resource(state, 'flows', flowId);
+
+  if (!flow) return false;
+
+  const pageProcessors = getAllPageProcessors(flow)?.filter(pp => pp?.type === 'import');
+  const imports = pageProcessors?.map(pp => pp._importId);
+
+  if (!imports?.length) return false;
+
+  let hasMapping = false;
+
+  imports.forEach(imp => {
+    if (selectors.resourceHasMappings(state, imp)) {
+      hasMapping = true;
+    }
+  });
+
+  return hasMapping;
+};
+
 selectors.mappingEditorNotification = (state, editorId) => {
   const {editorType, resourceId} = fromSession.editor(state?.session, editorId);
   const isMapper2Supported = selectors.isMapper2Supported(state);
@@ -5741,14 +5787,14 @@ selectors.mappingEditorNotification = (state, editorId) => {
     if (mappingVersion === 2) return emptyObject;
 
     return {
-      message: messageStore('MAPPER1_REFERENCE_INFO'),
+      message: message.MAPPER2.MAPPER1_REFERENCE_INFO,
       variant: 'info',
     };
   }
   if (mappingVersion === 1) return emptyObject;
 
   return {
-    message: messageStore('MAPPER2_BANNER_WARNING'),
+    message: message.MAPPER2.BANNER_WARNING,
     variant: 'warning',
   };
 };
@@ -6326,7 +6372,7 @@ selectors.isStandaloneExport = (state, flowId, exportId) => {
     return false;
   }
 
-  const { merged: flow = {} } = selectors.resourceData(state, 'flows', flowId, 'value');
+  const { merged: flow = {} } = selectors.resourceData(state, 'flows', flowId);
 
   return !flow.pageProcessors?.find(pp => pp._exportId === exportId) &&
   !flow.routers?.some(r => !r.branches?.some(b => b.pageProcessors?.some(pp => pp._exportId === exportId)));
@@ -6358,7 +6404,7 @@ selectors.isPageGenerator = (state, flowId, resourceId, resourceType) => {
   }
 
   // Search in flow doc to determine pg/pp
-  const { merged: flow } = selectors.resourceData(state, 'flows', flowId, 'value');
+  const { merged: flow } = selectors.resourceData(state, 'flows', flowId);
 
   return isPageGeneratorResource(flow, resourceId);
 };
@@ -6436,7 +6482,7 @@ selectors.isRestCsvMediaTypeExport = (state, resourceId) => {
 selectors.isDataLoaderExport = (state, resourceId, flowId) => {
   if (isNewId(resourceId)) {
     if (!flowId) return false;
-    const flowObj = selectors.resourceData(state, 'flows', flowId, 'value')?.merged || emptyObject;
+    const flowObj = selectors.resourceData(state, 'flows', flowId)?.merged || emptyObject;
 
     return !!(flowObj.pageGenerators &&
               flowObj.pageGenerators[0] &&
@@ -6446,7 +6492,6 @@ selectors.isDataLoaderExport = (state, resourceId, flowId) => {
     state,
     'exports',
     resourceId,
-    'value'
   )?.merged || emptyObject;
 
   return resourceObj.type === 'simple';
@@ -7030,6 +7075,8 @@ selectors.userLinkedSSOClientId = state => {
   return profile.authTypeSSO?._ssoClientId;
 };
 
+selectors.userRequiredToAgreeTOSAndPP = state => selectors.agreeTOSAndPPRequired(state) && !selectors.userAgreedTOSAndPP(state);
+
 selectors.isUserAllowedOnlySSOSignIn = state => {
   if (selectors.isAccountOwner(state)) {
     return false;
@@ -7445,7 +7492,6 @@ selectors.getShopifyStoreLink = (state, resourceId) => {
     state,
     'connections',
     resourceId,
-    'value'
   )?.merged || emptyObject;
 
   if (!_connectorId) return SHOPIFY_APP_STORE_LINKS.DIY_APP;
