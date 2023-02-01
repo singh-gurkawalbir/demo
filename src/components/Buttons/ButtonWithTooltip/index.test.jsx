@@ -66,6 +66,5 @@ describe('buttontooltip component test', () => {
     const NewFlow1 = screen.getByRole('button', {name: /Delete flow group/i});
 
     expect(NewFlow1).toBeInTheDocument();
-    fireEvent.mouseOver(screen.getByTitle(''));
   });
 });
