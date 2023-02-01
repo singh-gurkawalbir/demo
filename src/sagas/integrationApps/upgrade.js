@@ -431,7 +431,6 @@ export default [
   takeLatest(actionTypes.INTEGRATION_APPS.SETTINGS.V2.GET_STEPS, getSteps),
   takeLatest(actionTypes.INTEGRATION_APPS.SETTINGS.V2.POST_CHANGE_EDITION_STEPS, postChangeEditionSteps),
   takeEvery(actionTypes.INTEGRATION_APPS.TEMPLATES.V2.INSTALLER.VERIFY_BUNDLE_INSTALL, upgradeVerifyBundleOrPackageInstall),
-  takeEvery(actionTypes.INTEGRATION_APPS.TEMPLATES.V2.INSTALLER.VERIFY_SUITEAPP_INSTALL, upgradeVerifySuiteAppInstall),
   takeEvery(
     actionTypes.INTEGRATION_APPS.INSTALLER.V2.STEP.SCRIPT_REQUEST,
     upgradeInstallScriptStep

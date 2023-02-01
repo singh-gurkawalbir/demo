@@ -196,7 +196,8 @@ describe('installationStep UI tests', () => {
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.template.verifyBundleOrPackageInstall(
       props.step,
       initialStore.getState().data.resources.connections[0],
-      undefined
+      undefined,
+      'suitebundle'
     ));
   });
   test('should make a dispatch call for suiteapp verification for templates when the Installation step name starts with "Integrator SuiteApp"', () => {
@@ -229,10 +230,11 @@ describe('installationStep UI tests', () => {
       { ...props.step, status: 'verifying' },
       undefined
     ));
-    expect(mockDispatchFn).toHaveBeenCalledWith(actions.template.verifySuiteAppInstall(
+    expect(mockDispatchFn).toHaveBeenCalledWith(actions.template.verifyBundleOrPackageInstall(
       props.step,
       initialStore.getState().data.resources.connections[0],
-      undefined
+      undefined,
+      'suiteapp'
     ));
   });
   test('should make the respective dispatch calls when revisionId,step.isCurrentStep,step.url,step.connectionId are defined', () => {
@@ -269,6 +271,7 @@ describe('installationStep UI tests', () => {
       integrationId: '62bd4ab37b94d20de64e9eaa',
       connectionId: '62bd43c87b94d20de64e9ab3',
       revisionId: '123456789abcdefgh',
+      variant: 'suitebundle',
     }));
   });
   test('should make dispatch call to verify suiteApp installation for integration LCM when step name starts with "Integration SuiteApp"', () => {
@@ -301,10 +304,11 @@ describe('installationStep UI tests', () => {
     initInstallation(props);
     expect(mockDispatchFn).toHaveBeenCalledTimes(2);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.integrationLCM.installSteps.updateStep('123456789abcdefgh', 'verify'));
-    expect(mockDispatchFn).toHaveBeenCalledWith(actions.integrationLCM.installSteps.verifySuiteAppInstall({
+    expect(mockDispatchFn).toHaveBeenCalledWith(actions.integrationLCM.installSteps.verifyBundleOrPackageInstall({
       integrationId: '62bd4ab37b94d20de64e9eaa',
       connectionId: '62bd43c87b94d20de64e9ab3',
       revisionId: '123456789abcdefgh',
+      variant: 'suiteapp',
     }));
   });
   test('should make the respective dispatch calls when currentStep,connectionId,installURL, are defined and it is not an integration App', () => {
@@ -345,7 +349,8 @@ describe('installationStep UI tests', () => {
       '62bd4ab37b94d20de64e9eaa',
       '987654321abcdefgh',
       undefined,
-      3
+      3,
+      'suitebundle'
     ));
   });
   test('should make the dispatch calls for suiteapp verification for integrationApp when installStep name starts with "Integrator SuiteApp"', () => {
@@ -382,11 +387,12 @@ describe('installationStep UI tests', () => {
       undefined,
       'verify'
     ));
-    expect(mockDispatchFn).toHaveBeenCalledWith(actions.integrationApp.templates.installer.verifySuiteAppInstall(
+    expect(mockDispatchFn).toHaveBeenCalledWith(actions.integrationApp.templates.installer.verifyBundleOrPackageInstall(
       '62bd4ab37b94d20de64e9eaa',
       '987654321abcdefgh',
       undefined,
-      true
+      true,
+      'suiteapp'
     ));
   });
   test('should render empty DOM when improper props are provided', () => {

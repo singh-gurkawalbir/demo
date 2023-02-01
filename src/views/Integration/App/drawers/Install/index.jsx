@@ -461,14 +461,27 @@ export default function ConnectorInstallation() {
         );
 
         if (!_connectorId && step._connId) {
-          dispatch(
-            actions.integrationApp.templates.installer.verifyBundleOrPackageInstall(
-              integrationId,
-              step._connId,
-              installerFunction,
-              isFrameWork2
-            )
-          );
+          if (step.name.startsWith('Integrator SuiteBundle')) {
+            dispatch(
+              actions.integrationApp.templates.installer.verifyBundleOrPackageInstall(
+                integrationId,
+                step._connId,
+                installerFunction,
+                isFrameWork2,
+                'suitebundle'
+              )
+            );
+          } else {
+            dispatch(
+              actions.integrationApp.templates.installer.verifyBundleOrPackageInstall(
+                integrationId,
+                step._connId,
+                installerFunction,
+                isFrameWork2,
+                'suiteapp'
+              )
+            );
+          }
         } else if (isFrameWork2) {
           dispatch(
             actions.integrationApp.installer.scriptInstallStep(integrationId)

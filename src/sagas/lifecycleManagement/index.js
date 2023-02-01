@@ -269,5 +269,4 @@ export default [
   takeLatest(actionTypes.INTEGRATION_LCM.INSTALL_STEPS.STEP.INSTALL, installStep),
   takeLatest(actionTypes.INTEGRATION_LCM.REVISION.FETCH_ERRORS, fetchRevisionErrors),
   takeLatest(actionTypes.INTEGRATION_LCM.INSTALL_STEPS.STEP.VERIFY_BUNDLE_INSTALL, verifyBundleOrPackageInstall),
-  takeLatest(actionTypes.INTEGRATION_LCM.INSTALL_STEPS.STEP.VERIFY_SUITEAPP_INSTALL, verifyBundleOrPackageInstall),
 ];

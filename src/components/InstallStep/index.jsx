@@ -176,12 +176,14 @@ export default function InstallationStep(props) {
             integrationId,
             connectionId: step.connectionId,
             revisionId,
+            variant: 'suitebundle',
           }));
         } else {
-          dispatch(actions.integrationLCM.installSteps.verifySuiteAppInstall({
+          dispatch(actions.integrationLCM.installSteps.verifyBundleOrPackageInstall({
             integrationId,
             connectionId: step.connectionId,
             revisionId,
+            variant: 'suiteapp',
           }));
         }
         setVerified(true);
@@ -200,11 +202,12 @@ export default function InstallationStep(props) {
             actions.template.verifyBundleOrPackageInstall(
               step,
               connection,
-              templateId
+              templateId,
+              'suitebundle'
             )
           );
         } else {
-          dispatch(actions.template.verifySuiteAppInstall(step, connection, templateId));
+          dispatch(actions.template.verifyBundleOrPackageInstall(step, connection, templateId, 'suiteapp'));
         }
         setVerified(true);
       } else if (
@@ -225,16 +228,18 @@ export default function InstallationStep(props) {
               integrationId,
               step._connId,
               step.installerFunction,
-              isFrameWork2
+              isFrameWork2,
+              'suitebundle'
             )
           );
         } else {
           dispatch(
-            actions.integrationApp.templates.installer.verifySuiteAppInstall(
+            actions.integrationApp.templates.installer.verifyBundleOrPackageInstall(
               integrationId,
               step._connId,
               step.installerFunction,
-              isFrameWork2
+              isFrameWork2,
+              'suiteapp'
             )
           );
         }

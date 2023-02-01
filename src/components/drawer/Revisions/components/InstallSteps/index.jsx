@@ -133,11 +133,21 @@ export default function InstallSteps({ integrationId, revisionId, onClose }) {
         if (step.connectionId) {
           // Incase of url step, step is expected to have a linked connectionId for which the bundle install is verified
           // If step is already triggered, first verify if package is installed and further install the step else show error
-          dispatch(actions.integrationLCM.installSteps.verifyBundleOrPackageInstall({
-            integrationId,
-            connectionId: step.connectionId,
-            revisionId,
-          }));
+          if (step.name.startsWith('Integrator Bundle')) {
+            dispatch(actions.integrationLCM.installSteps.verifyBundleOrPackageInstall({
+              integrationId,
+              connectionId: step.connectionId,
+              revisionId,
+              variant: 'suitebundle',
+            }));
+          } else {
+            dispatch(actions.integrationLCM.installSteps.verifyBundleOrPackageInstall({
+              integrationId,
+              connectionId: step.connectionId,
+              revisionId,
+              variant: 'suiteapp',
+            }));
+          }
         }
       }
     } else if (!step.isTriggered) {

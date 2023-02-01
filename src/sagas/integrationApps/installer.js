@@ -464,7 +464,6 @@ export function* getCurrentStep({ id, step }) {
 export default [
   takeEvery(actionTypes.INTEGRATION_APPS.INSTALLER.STEP.REQUEST, installStep),
   takeEvery(actionTypes.INTEGRATION_APPS.TEMPLATES.INSTALLER.VERIFY_BUNDLE_INSTALL, verifyBundleOrPackageInstall),
-  takeEvery(actionTypes.INTEGRATION_APPS.TEMPLATES.INSTALLER.VERIFY_SUITEAPP_INSTALL, verifyBundleOrPackageInstall),
   takeEvery(
     actionTypes.INTEGRATION_APPS.INSTALLER.STEP.SCRIPT_REQUEST,
     installScriptStep

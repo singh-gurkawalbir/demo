@@ -184,10 +184,6 @@ export const templateSagas = [
     actionTypes.TEMPLATE.VERIFY_BUNDLE_INSTALL,
     verifyBundleOrPackageInstall
   ),
-  takeEvery(
-    actionTypes.TEMPLATE.VERIFY_SUITEAPP_INSTALL,
-    verifyBundleOrPackageInstall
-  ),
   takeEvery(actionTypes.TEMPLATE.CREATE_COMPONENTS, createComponents),
   takeEvery(actionTypes.TEMPLATE.PUBLISH.REQUEST, publishStatus),
 ];

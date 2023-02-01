@@ -271,14 +271,27 @@ const UpgradeInstallation = forwardRef(({ parentId, parentUrl }, ref) => {
         );
 
         if (!_connectorId && step._connId) {
-          dispatch(
-            actions.integrationApp.templates.upgrade.installer.verifyBundleOrPackageInstall(
-              integrationId,
-              step._connId,
-              installerFunction,
-              isFrameWork2
-            )
-          );
+          if (step.name.startsWith('Integrator Bundle')) {
+            dispatch(
+              actions.integrationApp.templates.upgrade.installer.verifyBundleOrPackageInstall(
+                integrationId,
+                step._connId,
+                installerFunction,
+                isFrameWork2,
+                'suitebundle'
+              )
+            );
+          } else {
+            dispatch(
+              actions.integrationApp.templates.upgrade.installer.verifyBundleOrPackageInstall(
+                integrationId,
+                step._connId,
+                installerFunction,
+                isFrameWork2,
+                'suiteapp'
+              )
+            );
+          }
         } else if (isFrameWork2) {
           dispatch(
             actions.integrationApp.upgrade.installer.scriptInstallStep(integrationId)

@@ -199,13 +199,25 @@ export default function Clone() {
             templateId
           )
         );
-        dispatch(
-          actions.template.verifyBundleOrPackageInstall(
-            step,
-            { _id: step.options._connectionId },
-            templateId
-          )
-        );
+        if (step.name.startsWith('Integrator Bundle')) {
+          dispatch(
+            actions.template.verifyBundleOrPackageInstall(
+              step,
+              { _id: step.options._connectionId },
+              templateId,
+              'suitebundle'
+            )
+          );
+        } else {
+          dispatch(
+            actions.template.verifyBundleOrPackageInstall(
+              step,
+              { _id: step.options._connectionId },
+              templateId,
+              'suiteapp'
+            )
+          );
+        }
       }
     } else if (type === INSTALL_STEP_TYPES.STACK) {
       const newStackId = generateNewId();
