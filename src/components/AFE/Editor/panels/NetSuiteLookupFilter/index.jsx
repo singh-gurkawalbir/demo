@@ -28,7 +28,7 @@ import actions from '../../../../../actions';
 import { useIsLoggable } from '../../../../IsLoggableContextProvider';
 import Spinner from '../../../../Spinner';
 import { message } from '../../../../../utils/messageStore';
-import { customCloneDeep } from '../../../../../utils/customCloneDeep';
+import customCloneDeep from '../../../../../utils/customCloneDeep';
 
 const useStyles = makeStyles(theme => ({
   container: {

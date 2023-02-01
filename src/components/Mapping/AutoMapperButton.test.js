@@ -7,7 +7,7 @@ import AutoMapperButton from './AutoMapperButton';
 import actions from '../../actions';
 import { runServer } from '../../test/api/server';
 import { renderWithProviders, reduxStore } from '../../test/test-utils';
-import { customCloneDeep } from '../../utils/customCloneDeep';
+import customCloneDeep from '../../utils/customCloneDeep';
 
 async function initAutoMapperButton({
   props = {

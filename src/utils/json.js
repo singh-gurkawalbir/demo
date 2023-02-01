@@ -1,7 +1,7 @@
 import isObject from 'lodash/isObject';
 import set from 'lodash/set';
 import jsonPatch from 'fast-json-patch';
-import { customCloneDeep } from './customCloneDeep';
+import customCloneDeep from './customCloneDeep';
 
 export default {
   /*

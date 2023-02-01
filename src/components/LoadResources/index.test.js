@@ -9,7 +9,7 @@ import LoadResources from '.';
 import { runServer } from '../../test/api/server';
 import { renderWithProviders, reduxStore } from '../../test/test-utils';
 import actions from '../../actions';
-import { customCloneDeep } from '../../utils/customCloneDeep';
+import customCloneDeep from '../../utils/customCloneDeep';
 
 async function initLoadResources({resources = 'resources', props = {}, children = '', initialStore = reduxStore, defaultAShareId = 'own'} = {}) {
   /* eslint no-param-reassign: "error" */

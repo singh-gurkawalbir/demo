@@ -15,7 +15,7 @@ import {generateCSVFields} from '../file';
 import jsonUtils from '../json';
 import { emptyList, emptyObject, FORM_SAVE_STATUS, MAPPING_SAVE_STATUS } from '../../constants';
 import errorMessageStore from '../errorStore';
-import { customCloneDeep } from '../customCloneDeep';
+import customCloneDeep from '../customCloneDeep';
 
 const isCsvOrXlsxResource = resource => {
   const { file } = resource;

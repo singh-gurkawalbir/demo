@@ -7,7 +7,7 @@ import TopPanel from './TopPanel';
 import actions from '../../actions';
 import { runServer } from '../../test/api/server';
 import { renderWithProviders, reduxStore } from '../../test/test-utils';
-import { customCloneDeep } from '../../utils/customCloneDeep';
+import customCloneDeep from '../../utils/customCloneDeep';
 
 async function initTopPanel({ props = {}, adaptorType = 'HTTPImport' } = {}) {
   const initialStore = customCloneDeep(reduxStore);

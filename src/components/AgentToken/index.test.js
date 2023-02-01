@@ -9,7 +9,7 @@ import actions from '../../actions';
 import AgentToken from '.';
 import { runServer } from '../../test/api/server';
 import { renderWithProviders, reduxStore } from '../../test/test-utils';
-import { customCloneDeep } from '../../utils/customCloneDeep';
+import customCloneDeep from '../../utils/customCloneDeep';
 
 async function initAgentToken({ agentId = '', initialStore = reduxStore} = {}) {
   const ui = (

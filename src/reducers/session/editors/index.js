@@ -2,7 +2,7 @@
 import { original, produce } from 'immer';
 import { set } from 'lodash';
 import actionTypes from '../../../actions/types';
-import { customCloneDeep } from '../../../utils/customCloneDeep';
+import customCloneDeep from '../../../utils/customCloneDeep';
 import processorLogic from './processorLogic';
 import { toggleData } from './processorLogic/settingsForm';
 

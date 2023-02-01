@@ -59,7 +59,7 @@ import { isIntegrationApp } from '../../../utils/flows';
 import { emptyObject } from '../../../constants';
 import { getConstructedResourceObj } from './utils';
 import { getMockOutputFromResource } from '../../../utils/flowDebugger';
-import { customCloneDeep } from '../../../utils/customCloneDeep';
+import customCloneDeep from '../../../utils/customCloneDeep';
 
 const VALID_RESOURCE_TYPES_FOR_FLOW_DATA = ['flows', 'exports', 'imports', 'connections'];
 

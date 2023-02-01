@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const { customCloneDeep } = require('./customCloneDeep');
+const customCloneDeep = require('./customCloneDeep');
 
 /**
  * Generates rest sub document using http subdocument and

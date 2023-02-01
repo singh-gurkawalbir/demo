@@ -6,7 +6,7 @@ import { renderWithProviders, reduxStore } from '../../../test/test-utils';
 import LogsTable from './LogsTable';
 import actionTypes from '../../../actions/types';
 import { message } from '../../../utils/messageStore';
-import { customCloneDeep } from '../../../utils/customCloneDeep';
+import customCloneDeep from '../../../utils/customCloneDeep';
 
 const props = {
   flowId: 'random_mock_flowId',

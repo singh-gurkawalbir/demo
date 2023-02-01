@@ -12,7 +12,7 @@ import {
   IMPORT_FLOW_DATA_STAGE,
 } from '../../../../utils/flowData';
 import { isNewId } from '../../../../utils/resource';
-import { customCloneDeep } from '../../../../utils/customCloneDeep';
+import customCloneDeep from '../../../../utils/customCloneDeep';
 
 const ELIGIBLE_RESOURCE_TYPES = ['exports', 'imports'];
 const DEBOUNCE_DURATION = 300;

@@ -9,7 +9,7 @@ import FlowgroupDrawer from '.';
 import actions from '../../../actions';
 import { runServer } from '../../../test/api/server';
 import types from '../../../actions/types';
-import { customCloneDeep } from '../../../utils/customCloneDeep';
+import customCloneDeep from '../../../utils/customCloneDeep';
 
 const props = {
   integrationId: '_integrationId',

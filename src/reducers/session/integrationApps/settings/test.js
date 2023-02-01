@@ -5,7 +5,7 @@ import * as GenerateId from '../../../../utils/string';
 import actions from '../../../../actions';
 import {HOME_PAGE_PATH} from '../../../../constants';
 import errorMessageStore from '../../../../utils/errorStore';
-import { customCloneDeep } from '../../../../utils/customCloneDeep';
+import customCloneDeep from '../../../../utils/customCloneDeep';
 
 const amazonCategoryMappings = {
   uiAssistant: 'amazon',

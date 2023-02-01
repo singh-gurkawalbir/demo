@@ -5,7 +5,7 @@ import { MemoryRouter, Route } from 'react-router-dom';
 import SettingsDrawer from '.';
 import { runServer } from '../../../test/api/server';
 import { renderWithProviders, reduxStore } from '../../../test/test-utils';
-import { customCloneDeep } from '../../../utils/customCloneDeep';
+import customCloneDeep from '../../../utils/customCloneDeep';
 
 async function initSettingsDrawer({
   props = {

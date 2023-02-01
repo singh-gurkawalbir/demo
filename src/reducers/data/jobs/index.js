@@ -16,7 +16,7 @@ import {
   getJobDuration,
   RETRY_OBJECT_TYPES,
 } from './util';
-import { customCloneDeep } from '../../../utils/customCloneDeep';
+import customCloneDeep from '../../../utils/customCloneDeep';
 
 function getParentJobIndex(jobs, jobId) {
   return jobs.findIndex(j => j._id === jobId);

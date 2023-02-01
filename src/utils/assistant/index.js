@@ -16,7 +16,7 @@ import {
 import { getPathParams } from './pathParamUtils';
 import { getPublishedHttpConnectors } from '../../constants/applications';
 import {VALID_MONGO_ID} from '../../constants/regex';
-import { customCloneDeep } from '../customCloneDeep';
+import customCloneDeep from '../customCloneDeep';
 
 const OVERWRITABLE_PROPERTIES = Object.freeze([
   'allowUndefinedResource',

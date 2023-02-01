@@ -11,7 +11,7 @@ import { ConfirmDialogProvider } from '../ConfirmDialog';
 import { runServer } from '../../test/api/server';
 import { renderWithProviders, reduxStore } from '../../test/test-utils';
 import actions from '../../actions';
-import { customCloneDeep } from '../../utils/customCloneDeep';
+import customCloneDeep from '../../utils/customCloneDeep';
 
 async function initActionButton({
   defaultAShareId = 'own',

@@ -6,7 +6,7 @@ import { MemoryRouter } from 'react-router-dom';
 import SelectableCheckBoxCell from '.';
 import { runServer } from '../../../../test/api/server';
 import { renderWithProviders, reduxStore } from '../../../../test/test-utils';
-import { customCloneDeep } from '../../../../utils/customCloneDeep';
+import customCloneDeep from '../../../../utils/customCloneDeep';
 
 async function initSelectableCheckBoxCell({ props = {}, rowData = {} } = {}) {
   const initialStore = customCloneDeep(reduxStore);

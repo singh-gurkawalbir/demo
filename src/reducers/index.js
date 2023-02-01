@@ -118,7 +118,7 @@ import { initializeFlowForReactFlow, getFlowAsyncKey } from '../utils/flows/flow
 import { HTTP_BASED_ADAPTORS } from '../utils/http';
 import { getAuditLogFilterKey } from '../constants/auditLog';
 import { SHOPIFY_APP_STORE_LINKS } from '../constants/urls';
-import { customCloneDeep } from '../utils/customCloneDeep';
+import customCloneDeep from '../utils/customCloneDeep';
 
 const emptyArray = [];
 const emptyObject = {};

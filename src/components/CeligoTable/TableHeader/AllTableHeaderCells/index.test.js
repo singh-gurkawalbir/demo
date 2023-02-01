@@ -6,7 +6,7 @@ import { MemoryRouter } from 'react-router-dom';
 import AllTableHeaderCells from '.';
 import { runServer } from '../../../../test/api/server';
 import { renderWithProviders, reduxStore } from '../../../../test/test-utils';
-import { customCloneDeep } from '../../../../utils/customCloneDeep';
+import customCloneDeep from '../../../../utils/customCloneDeep';
 
 async function initAllTableHeaderCells(
   {

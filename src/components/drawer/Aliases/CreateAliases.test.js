@@ -8,7 +8,7 @@ import { renderWithProviders, reduxStore } from '../../../test/test-utils';
 import CreateAliasDrawer from './CreateAliases';
 import actions from '../../../actions';
 import actionTypes from '../../../actions/types';
-import { customCloneDeep } from '../../../utils/customCloneDeep';
+import customCloneDeep from '../../../utils/customCloneDeep';
 
 const props = {
   resourceId: '_integrationId',

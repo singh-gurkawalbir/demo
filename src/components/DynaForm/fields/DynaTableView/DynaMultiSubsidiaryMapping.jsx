@@ -3,7 +3,7 @@ import React, { useCallback, useMemo } from 'react';
 import { selectors } from '../../../../reducers';
 import actions from '../../../../actions';
 import DynaTableView from './DynaTable';
-import { customCloneDeep } from '../../../../utils/customCloneDeep';
+import customCloneDeep from '../../../../utils/customCloneDeep';
 
 const addSupportsRefreshToOptions = option => ({
   ...option,

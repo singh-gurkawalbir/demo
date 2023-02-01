@@ -7,7 +7,7 @@ import { renderWithProviders, reduxStore } from '../../../../../../test/test-uti
 import BranchDrawer from '.';
 import actions from '../../../../../../actions';
 import actionTypes from '../../../../../../actions/types';
-import { customCloneDeep } from '../../../../../../utils/customCloneDeep';
+import customCloneDeep from '../../../../../../utils/customCloneDeep';
 
 const mockHistoryPush = jest.fn();
 const mockHistoryGoBack = jest.fn();

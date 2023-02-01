@@ -5,7 +5,7 @@ import { MemoryRouter } from 'react-router-dom';
 import HttpMappingAssistant from './HttpMappingAssistant_afe';
 import { runServer } from '../../../test/api/server';
 import { renderWithProviders, reduxStore, mockPostRequestOnce } from '../../../test/test-utils';
-import { customCloneDeep } from '../../../utils/customCloneDeep';
+import customCloneDeep from '../../../utils/customCloneDeep';
 
 async function initHttpMappingAssistant({props = {} } = {}) {
   const initialStore = customCloneDeep(reduxStore);

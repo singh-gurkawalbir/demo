@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import { customCloneDeep } from './customCloneDeep';
+import customCloneDeep from './customCloneDeep';
 import { celigoListCompare } from './sort';
 
 const emptySet = [];

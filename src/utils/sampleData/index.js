@@ -11,7 +11,7 @@ import {
 } from '../metadata';
 import { getUnionObject, getTransformPaths } from '../jsonPaths';
 import { isFileMetaExpectedForResource } from '../flowData';
-import { customCloneDeep } from '../customCloneDeep';
+import customCloneDeep from '../customCloneDeep';
 
 // wrap the function inside useMemo since result may contain property 'lastExportDateTime' which refers to new Date()
 export default function getFormattedSampleData({

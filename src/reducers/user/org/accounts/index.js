@@ -9,7 +9,7 @@ import {
   USAGE_TIER_NAMES,
   USAGE_TIER_HOURS,
 } from '../../../../constants';
-import { customCloneDeep } from '../../../../utils/customCloneDeep';
+import customCloneDeep from '../../../../utils/customCloneDeep';
 
 const emptyList = [];
 

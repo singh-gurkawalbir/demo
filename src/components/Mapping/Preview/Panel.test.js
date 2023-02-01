@@ -8,7 +8,7 @@ import Panel from './Panel';
 import { runServer } from '../../../test/api/server';
 import { renderWithProviders, reduxStore, mockGetRequestOnce } from '../../../test/test-utils';
 import actions from '../../../actions';
-import { customCloneDeep } from '../../../utils/customCloneDeep';
+import customCloneDeep from '../../../utils/customCloneDeep';
 
 async function initPanel({props = {}, adaptorType = 'SalesforceImport', initialStore, searchLayoutable = true } = {}) {
   // eslint-disable-next-line no-param-reassign

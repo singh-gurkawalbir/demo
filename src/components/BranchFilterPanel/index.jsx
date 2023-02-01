@@ -27,7 +27,7 @@ import actions from '../../actions';
 import { selectors } from '../../reducers';
 import getJSONPaths from '../../utils/jsonPaths';
 import { safeParse, isNumber } from '../../utils/string';
-import { customCloneDeep } from '../../utils/customCloneDeep';
+import customCloneDeep from '../../utils/customCloneDeep';
 
 const defaultData = {};
 

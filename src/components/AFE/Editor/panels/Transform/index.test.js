@@ -6,7 +6,7 @@ import userEvent from '@testing-library/user-event';
 import { renderWithProviders, reduxStore } from '../../../../../test/test-utils';
 import TransformPanel from '.';
 import actions from '../../../../../actions';
-import { customCloneDeep } from '../../../../../utils/customCloneDeep';
+import customCloneDeep from '../../../../../utils/customCloneDeep';
 
 jest.mock('../../../../DynaForm/fields/DynaKeyValue', () => ({
   __esModule: true,

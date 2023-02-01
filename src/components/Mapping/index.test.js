@@ -4,7 +4,7 @@ import { MemoryRouter } from 'react-router-dom';
 import TableBodyContent from '.';
 import { runServer } from '../../test/api/server';
 import { renderWithProviders, reduxStore, mockGetRequestOnce } from '../../test/test-utils';
-import { customCloneDeep } from '../../utils/customCloneDeep';
+import customCloneDeep from '../../utils/customCloneDeep';
 
 async function initTableBodyContent({ props = {}, mappingStatus = 'requested', editorType = '', mappingPreviewType = '', adaptorType = 'NetSuiteImport' } = {}) {
   const initialStore = customCloneDeep(reduxStore);

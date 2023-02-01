@@ -6,7 +6,7 @@ import { getDefaultData } from '../../../../../utils/sampleData';
 import { getUnionObject } from '../../../../../utils/jsonPaths';
 import { safeParse } from '../../../../../utils/string';
 import { isNewId } from '../../../../../utils/resource';
-import { customCloneDeep } from '../../../../../utils/customCloneDeep';
+import customCloneDeep from '../../../../../utils/customCloneDeep';
 
 export function _hasDefaultMetaData({fieldId, resourceType}) {
   const hideDefaultDataFields = [

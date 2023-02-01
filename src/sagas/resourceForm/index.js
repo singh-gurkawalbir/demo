@@ -32,7 +32,7 @@ import { constructResourceFromFormValues } from '../utils';
 import {getConnector, getConnectorMetadata} from '../resources/httpConnectors';
 import { setObjectValue } from '../../utils/json';
 import { addPageProcessor, getFlowAsyncKey } from '../../utils/flows/flowbuilder';
-import { customCloneDeep } from '../../utils/customCloneDeep';
+import customCloneDeep from '../../utils/customCloneDeep';
 
 export function* createFormValuesPatchSet({
   resourceType,

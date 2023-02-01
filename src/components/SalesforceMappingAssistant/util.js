@@ -1,4 +1,4 @@
-import { customCloneDeep } from '../../utils/customCloneDeep';
+import customCloneDeep from '../../utils/customCloneDeep';
 
 export function generateLayoutColumns(layoutSection) {
   return layoutSection.map(sec => {

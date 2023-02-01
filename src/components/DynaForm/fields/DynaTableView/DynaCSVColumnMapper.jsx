@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import DynaTableView from './DynaTable';
-import { customCloneDeep } from '../../../../utils/customCloneDeep';
+import customCloneDeep from '../../../../utils/customCloneDeep';
 
 export default function DynaCSVColumnMapper(props) {
   const {

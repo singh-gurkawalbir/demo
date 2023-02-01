@@ -1,6 +1,6 @@
 import { applicationsList } from '../../../constants/applications';
 import { CONNECTORS_TO_IGNORE } from '../../../constants';
-import { customCloneDeep } from '../../../utils/customCloneDeep';
+import customCloneDeep from '../../../utils/customCloneDeep';
 
 export default {
   init: (fieldMeta, resource, flow, httpConnectorData, application) => {

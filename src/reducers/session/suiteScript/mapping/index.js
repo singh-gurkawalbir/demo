@@ -1,7 +1,7 @@
 import produce from 'immer';
 import {differenceWith, isEqual } from 'lodash';
 import actionTypes from '../../../../actions/types';
-import { customCloneDeep } from '../../../../utils/customCloneDeep';
+import customCloneDeep from '../../../../utils/customCloneDeep';
 import { generateId } from '../../../../utils/string';
 import { getSuiteScriptAppType, isMappingObjEqual } from '../../../../utils/suiteScript/mapping';
 

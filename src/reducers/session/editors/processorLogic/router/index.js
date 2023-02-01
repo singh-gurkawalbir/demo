@@ -1,5 +1,5 @@
 import { isEqual, pick } from 'lodash';
-import { customCloneDeep } from '../../../../../utils/customCloneDeep';
+import customCloneDeep from '../../../../../utils/customCloneDeep';
 import { hooksToFunctionNamesMap } from '../../../../../utils/hooks';
 import { generateId, safeParse } from '../../../../../utils/string';
 import filter from '../filter';

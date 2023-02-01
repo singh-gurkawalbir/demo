@@ -5,7 +5,7 @@ import { BranchPathRegex, GRAPH_ELEMENTS_TYPE, PageProcessorPathRegex, FLOW_SAVE
 import { generateId } from '../string';
 import { setObjectValue } from '../json';
 import messageStore from '../messageStore';
-import { customCloneDeep } from '../customCloneDeep';
+import customCloneDeep from '../customCloneDeep';
 
 export const isVirtualRouter = (router = {}) => !router.routeRecordsTo && !router.routeRecordsUsing && (!router.branches || router.branches.length <= 1);
 

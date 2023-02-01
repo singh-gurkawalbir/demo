@@ -2,7 +2,7 @@ import produce from 'immer';
 import { createSelector } from 'reselect';
 import actionTypes from '../../../actions/types';
 import { REVISION_STATUS } from '../../../constants';
-import { customCloneDeep } from '../../../utils/customCloneDeep';
+import customCloneDeep from '../../../utils/customCloneDeep';
 
 const defaultState = {};
 

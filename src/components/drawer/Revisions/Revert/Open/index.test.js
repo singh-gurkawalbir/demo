@@ -6,7 +6,7 @@ import * as reactRedux from 'react-redux';
 import userEvent from '@testing-library/user-event';
 import { renderWithProviders, reduxStore } from '../../../../../test/test-utils';
 import OpenRevertDrawer from '.';
-import { customCloneDeep } from '../../../../../utils/customCloneDeep';
+import customCloneDeep from '../../../../../utils/customCloneDeep';
 
 const props = {integrationId: '_integrationId'};
 const mockHistoryReplace = jest.fn();

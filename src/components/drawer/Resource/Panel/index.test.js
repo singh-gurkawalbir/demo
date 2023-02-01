@@ -7,7 +7,7 @@ import userEvent from '@testing-library/user-event';
 import { renderWithProviders, reduxStore } from '../../../../test/test-utils';
 import Panel, {isNestedDrawer} from '.';
 import actions from '../../../../actions';
-import { customCloneDeep } from '../../../../utils/customCloneDeep';
+import customCloneDeep from '../../../../utils/customCloneDeep';
 
 const mockHistoryReplace = jest.fn();
 const mockClose = jest.fn();

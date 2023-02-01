@@ -2,7 +2,7 @@ import produce from 'immer';
 import { isEqual } from 'lodash';
 import { generateId } from '../../../utils/string';
 import actionTypes from '../../../actions/types';
-import { customCloneDeep } from '../../../utils/customCloneDeep';
+import customCloneDeep from '../../../utils/customCloneDeep';
 
 const emptyObj = {};
 // TODO: Support error message display

@@ -5,7 +5,7 @@ import userEvent from '@testing-library/user-event';
 import RecycleBin from '.';
 import { runServer } from '../../test/api/server';
 import { renderWithProviders, reduxStore, mockGetRequestOnce } from '../../test/test-utils';
-import { customCloneDeep } from '../../utils/customCloneDeep';
+import customCloneDeep from '../../utils/customCloneDeep';
 
 async function initRecycleBin(
   {

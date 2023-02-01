@@ -1,4 +1,4 @@
-import { customCloneDeep } from '../customCloneDeep';
+import customCloneDeep from '../customCloneDeep';
 
 export default {
   getLookupFromResource: (resourceObj = {}) => {

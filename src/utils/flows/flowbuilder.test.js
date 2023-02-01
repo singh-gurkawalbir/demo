@@ -1,6 +1,6 @@
 import { keyBy } from 'lodash';
 import { GRAPH_ELEMENTS_TYPE } from '../../constants';
-import { customCloneDeep } from '../customCloneDeep';
+import customCloneDeep from '../customCloneDeep';
 import { generateId } from '../string';
 import {
   getAllRouterPaths,

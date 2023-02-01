@@ -1,7 +1,7 @@
 import { original, produce } from 'immer';
 import { differenceWith, isEqual, isEmpty } from 'lodash';
 import actionTypes from '../../../actions/types';
-import { customCloneDeep } from '../../../utils/customCloneDeep';
+import customCloneDeep from '../../../utils/customCloneDeep';
 import {
   isMappingEqual,
   compareV2Mappings,
