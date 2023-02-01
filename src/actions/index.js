@@ -1828,10 +1828,14 @@ const resourceForm = {
     }),
   clear: (resourceType, resourceId) =>
     action(actionTypes.RESOURCE_FORM.CLEAR, { resourceType, resourceId }),
-  showBundleInstallNotification: (bundleVersion, bundleUrl, resourceType, resourceId) =>
-    action(actionTypes.RESOURCE_FORM.SHOW_BUNDLE_INSTALL_NOTIFICATION, { bundleVersion, bundleUrl, resourceType, resourceId }),
+  showBundleInstallNotification: (bundleUrl, resourceType, resourceId) =>
+    action(actionTypes.RESOURCE_FORM.SHOW_BUNDLE_INSTALL_NOTIFICATION, {bundleUrl, resourceType, resourceId }),
   hideBundleInstallNotification: (resourceType, resourceId) =>
     action(actionTypes.RESOURCE_FORM.HIDE_BUNDLE_INSTALL_NOTIFICATION, { resourceType, resourceId }),
+  showSuiteAppInstallNotification: (suiteAppUrl, resourceType, resourceId) =>
+    action(actionTypes.RESOURCE_FORM.SHOW_SUITEAPP_INSTALL_NOTIFICATION, {suiteAppUrl, resourceType, resourceId}),
+  hideSuiteAppInstallNotification: (resourceType, resourceId) =>
+    action(actionTypes.RESOURCE_FORM.HIDE_SUITEAPP_INSTALL_NOTIFICATION, { resourceType, resourceId }),
 };
 const accessToken = {
   displayToken: id => action(actionTypes.ACCESSTOKEN.DISPLAY, { id }),

@@ -266,7 +266,7 @@ module.exports = (env, argv) => {
         '/api': proxyOpts,
         '/netSuiteWS': proxyOpts,
         '/netsuiteDA': proxyOpts,
-        '/connection/': proxyOpts,
+        '/connection': proxyOpts,
         '/ui': proxyOpts,
       },
     };
