@@ -88,9 +88,13 @@ export default function InstallSteps({ integrationId, revisionId, onClose }) {
 
   const handleStepClick = step => {
     const { type, completed, isTriggered, _connectionId, sourceConnection, url } = step;
-    let NSpackageType = null;
+    let netsuitePackageType = null;
 
-    if (step?.name.startsWith('Integrator Bundle')) { NSpackageType = 'suitebundle'; } else if (step?.name.startsWith('Integrator SuiteApp')) { NSpackageType = 'suiteapp'; }
+    if (step?.name.startsWith('Integrator Bundle')) {
+      netsuitePackageType = 'suitebundle';
+    } else if (step?.name.startsWith('Integrator SuiteApp')) {
+      netsuitePackageType = 'suiteapp';
+    }
 
     if (completed) {
       return false;
@@ -140,7 +144,7 @@ export default function InstallSteps({ integrationId, revisionId, onClose }) {
             integrationId,
             connectionId: step.connectionId,
             revisionId,
-            variant: NSpackageType,
+            variant: netsuitePackageType,
           }));
         }
       }

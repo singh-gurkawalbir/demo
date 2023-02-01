@@ -168,9 +168,13 @@ export default function InstallationStep(props) {
   });
 
   useEffect(() => {
-    let NSpackageType = null;
+    let netsuitePackageType = null;
 
-    if (step?.name.startsWith('Integrator Bundle')) { NSpackageType = 'suitebundle'; } else if (step?.name.startsWith('Integrator SuiteApp')) { NSpackageType = 'suiteapp'; }
+    if (step?.name.startsWith('Integrator Bundle')) {
+      netsuitePackageType = 'suitebundle';
+    } else if (step?.name.startsWith('Integrator SuiteApp')) {
+      netsuitePackageType = 'suiteapp';
+    }
 
     if (step && step.isCurrentStep && !step.completed && !verified) {
       if (revisionId && step.url && step.connectionId) {
@@ -180,7 +184,7 @@ export default function InstallationStep(props) {
           integrationId,
           connectionId: step.connectionId,
           revisionId,
-          variant: NSpackageType,
+          variant: netsuitePackageType,
         }));
 
         setVerified(true);
@@ -199,7 +203,7 @@ export default function InstallationStep(props) {
             step,
             connection,
             templateId,
-            NSpackageType
+            netsuitePackageType
           )
         );
         setVerified(true);
@@ -221,7 +225,7 @@ export default function InstallationStep(props) {
             step._connId,
             step.installerFunction,
             isFrameWork2,
-            NSpackageType
+            netsuitePackageType
           )
         );
         setVerified(true);

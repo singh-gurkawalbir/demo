@@ -375,9 +375,13 @@ export default function ConnectorInstallation() {
       form,
     } = step;
 
-    let NSpackageType = null;
+    let netsuitePackageType = null;
 
-    if (step?.name.startsWith('Integrator Bundle')) { NSpackageType = 'suitebundle'; } else if (step?.name.startsWith('Integrator SuiteApp')) { NSpackageType = 'suiteapp'; }
+    if (step?.name.startsWith('Integrator Bundle')) {
+      netsuitePackageType = 'suitebundle';
+    } else if (step?.name.startsWith('Integrator SuiteApp')) {
+      netsuitePackageType = 'suiteapp';
+    }
 
     if (completed) {
       return false;
@@ -471,7 +475,7 @@ export default function ConnectorInstallation() {
               step._connId,
               installerFunction,
               isFrameWork2,
-              NSpackageType
+              netsuitePackageType
             )
           );
         } else if (isFrameWork2) {

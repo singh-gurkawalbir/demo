@@ -138,9 +138,13 @@ export default function Clone() {
   const handleStepClick = (step, conn) => {
     const { _connectionId, installURL, type, completed } = step;
     let bundleURL = installURL;
-    let NSpackageType = null;
+    let netsuitePackageType = null;
 
-    if (step?.name.startsWith('Integrator Bundle')) { NSpackageType = 'suitebundle'; } else if (step?.name.startsWith('Integrator SuiteApp')) { NSpackageType = 'suiteapp'; }
+    if (step?.name.startsWith('Integrator Bundle')) {
+      netsuitePackageType = 'suitebundle';
+    } else if (step?.name.startsWith('Integrator SuiteApp')) {
+      netsuitePackageType = 'suiteapp';
+    }
 
     if (completed) {
       return false;
@@ -207,7 +211,7 @@ export default function Clone() {
             step,
             { _id: step.options._connectionId },
             templateId,
-            NSpackageType
+            netsuitePackageType
           )
         );
       }
