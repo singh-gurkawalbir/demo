@@ -66,16 +66,10 @@ export const getCreatedStore = () => {
 
   sagaMiddleware.run(rootSaga);
 
-  if (env === 'test') {
-    const devStore = clone(store.getState());
+  // if (env === 'test') {
+  //   return store;
+  // }
 
-    store = {
-      ...store,
-      getState: () => devStore,
-    };
-
-    return store;
-  }
 
   return store;
 };

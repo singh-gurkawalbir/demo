@@ -3,11 +3,12 @@ import React from 'react';
 import { SnackbarProvider } from 'notistack';
 import { Provider } from 'react-redux';
 import { render } from '@testing-library/react';
-import rfdc from 'rfdc';
+import produce from 'immer';
 import themeProvider from '../theme/themeProvider';
 import {getCreatedStore} from '../store';
 import server from './api/server';
 import { API } from './api/utils';
+import rootReducer from '../reducers';
 
 const clone = rfdc({proto: true});
 
@@ -30,14 +31,16 @@ export const renderWithProviders = (ui, { initialStore, renderFun = render } = {
   };
 };
 
-export const reduxStore = (() => {
-  let initialStore = getCreatedStore();
-  const store = clone(initialStore.getState());
 
-  initialStore = {
-    ...initialStore,
-    getState: () => store,
-  };
+const returnReducer = mutationFunction => state => produce(state, mutationFunction);
+
+export const mutateStore = (store, mutationFunction = () => {}) => {
+  store.replaceReducer(returnReducer(mutationFunction));
+  store.replaceReducer(rootReducer);
+};
+
+export const reduxStore = (() => {
+  const initialStore = getCreatedStore();
 
   return initialStore;
 })();
