@@ -81,7 +81,7 @@ export default {
       },
     ],
   },
-  'netsuite_da.useSS2Restlets': {
+  'netsuite_da.restletVersion': {
     isLoggable: true,
     fieldId: 'netsuite_da.restletVersion',
     type: 'netsuiteapiversion',

@@ -4721,34 +4721,11 @@ Object {
           },
         ],
       },
-      "netsuite.distributed.skipExportFieldId": Object {
-        "connectionId": [Function],
-        "fieldId": "netsuite.distributed.skipExportFieldId",
-        "filterKey": "suitescript-booleanField",
-        "refreshOptionsOnChangesTo": Array [
-          "netsuite.distributed.recordType",
-        ],
-        "type": "refreshableselect",
-        "visibleWhenAll": Array [
-          Object {
-            "field": "netsuite.execution.type",
-            "is": Array [
-              "distributed",
-            ],
-          },
-          Object {
-            "field": "outputMode",
-            "is": Array [
-              "records",
-            ],
-          },
-        ],
-      },
-      "netsuite.distributed.useSS2Framework": Object {
+      "netsuite.distributed.frameworkVersion": Object {
         "connectionId": [Function],
         "defaultDisabled": [Function],
         "defaultValue": [Function],
-        "fieldId": "netsuite.distributed.useSS2Framework",
+        "fieldId": "netsuite.distributed.frameworkVersion",
         "isNew": [Function],
         "label": "NetSuite API version",
         "options": Array [
@@ -4775,6 +4752,29 @@ Object {
         "resourceId": [Function],
         "resourceType": "exports",
         "type": "netsuiteapiversion",
+        "visibleWhenAll": Array [
+          Object {
+            "field": "netsuite.execution.type",
+            "is": Array [
+              "distributed",
+            ],
+          },
+          Object {
+            "field": "outputMode",
+            "is": Array [
+              "records",
+            ],
+          },
+        ],
+      },
+      "netsuite.distributed.skipExportFieldId": Object {
+        "connectionId": [Function],
+        "fieldId": "netsuite.distributed.skipExportFieldId",
+        "filterKey": "suitescript-booleanField",
+        "refreshOptionsOnChangesTo": Array [
+          "netsuite.distributed.recordType",
+        ],
+        "type": "refreshableselect",
         "visibleWhenAll": Array [
           Object {
             "field": "netsuite.execution.type",
@@ -4887,11 +4887,11 @@ Object {
           },
         ],
       },
-      "netsuite.restlet.useSS2Restlets": Object {
+      "netsuite.restlet.restletVersion": Object {
         "connectionId": [Function],
         "defaultDisabled": [Function],
         "defaultValue": [Function],
-        "fieldId": "netsuite.restlet.useSS2Restlets",
+        "fieldId": "netsuite.restlet.restletVersion",
         "isNew": [Function],
         "label": "NetSuite API version",
         "options": Array [
@@ -5442,7 +5442,7 @@ Object {
                   "containers": Array [
                     Object {
                       "fields": Array [
-                        "netsuite.restlet.useSS2Restlets",
+                        "netsuite.restlet.restletVersion",
                       ],
                     },
                   ],
@@ -5451,7 +5451,7 @@ Object {
                 Object {
                   "fields": Array [
                     "netsuite.blob.purgeFileAfterExport",
-                    "netsuite.distributed.useSS2Framework",
+                    "netsuite.distributed.frameworkVersion",
                     "netsuite.distributed.skipExportFieldId",
                     "netsuite.distributed.forceReload",
                     "netsuite.restlet.batchSize",
@@ -11757,14 +11757,14 @@ Object {
       "netsuite_da.recordType": Object {
         "fieldId": "netsuite_da.recordType",
       },
+      "netsuite_da.restletVersion": Object {
+        "fieldId": "netsuite_da.restletVersion",
+      },
       "netsuite_da.subrecords": Object {
         "fieldId": "netsuite_da.subrecords",
         "refreshOptionsOnChangesTo": Array [
           "netsuite_da.recordType",
         ],
-      },
-      "netsuite_da.useSS2Restlets": Object {
-        "fieldId": "netsuite_da.useSS2Restlets",
       },
       "settings": Object {
         "fieldId": "settings",
@@ -11814,9 +11814,9 @@ Object {
               "label": "Mock response",
             },
             Object {
-              "collapsed": true,
+              "collapsed": [Function],
               "fields": Array [
-                "netsuite_da.useSS2Restlets",
+                "netsuite_da.restletVersion",
                 "blobKeyPath",
                 "idLockTemplate",
                 "dataURITemplate",
@@ -12001,14 +12001,14 @@ Object {
       "netsuite_da.recordType": Object {
         "fieldId": "netsuite_da.recordType",
       },
+      "netsuite_da.restletVersion": Object {
+        "fieldId": "netsuite_da.restletVersion",
+      },
       "netsuite_da.subrecords": Object {
         "fieldId": "netsuite_da.subrecords",
         "refreshOptionsOnChangesTo": Array [
           "netsuite_da.recordType",
         ],
-      },
-      "netsuite_da.useSS2Restlets": Object {
-        "fieldId": "netsuite_da.useSS2Restlets",
       },
       "settings": Object {
         "fieldId": "settings",
@@ -12058,9 +12058,9 @@ Object {
               "label": "Mock response",
             },
             Object {
-              "collapsed": true,
+              "collapsed": [Function],
               "fields": Array [
-                "netsuite_da.useSS2Restlets",
+                "netsuite_da.restletVersion",
                 "blobKeyPath",
                 "idLockTemplate",
                 "dataURITemplate",
