@@ -5,7 +5,7 @@ import { screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { renderWithProviders } from '../../test/test-utils';
 import { getCreatedStore } from '../../store';
-import messageStore from '../../utils/messageStore';
+import { message } from '../../utils/messageStore';
 import NetSuiteMappingAssistant from '.';
 import actions from '../../actions';
 
@@ -155,7 +155,7 @@ describe('test suite for NetSuiteMappingAssistant', () => {
     userEvent.click(launchButton);
     const snackBar = screen.getByRole('alert');
 
-    expect(snackBar.textContent).toEqual(messageStore('NETSUITE_ASSISTANT_LAUNCH_ERROR'));
+    expect(snackBar.textContent).toEqual(message.NETSUITE_ASSISTANT_LAUNCH_ERROR);
   });
 
   test('should be able to successfully launch assistant', async () => {

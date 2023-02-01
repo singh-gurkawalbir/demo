@@ -13,7 +13,6 @@ import {
   isMetaRequiredValuesMet,
 } from '../../../../utils/assistant';
 import { selectors } from '../../../../reducers/index';
-import { SCOPES } from '../../../../sagas/resourceForm';
 import FieldMessage from '../FieldMessage';
 import useFormInitWithPermissions from '../../../../hooks/useFormInitWithPermissions';
 import FieldHelp from '../../FieldHelp';
@@ -88,7 +87,6 @@ const SearchParamsModal = props => {
           path: '/assistantMetadata/operationChanged',
           value: false,
         }],
-        SCOPES.VALUE
       )
     );
     onClose();

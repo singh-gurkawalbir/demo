@@ -14,6 +14,7 @@ import useSelectorMemo from '../../../hooks/selectors/useSelectorMemo';
 import { TextButton } from '../../../components/Buttons';
 import { NO_RESULT_SEARCH_MESSAGE } from '../../../constants';
 import NoResultTypography from '../../../components/NoResultTypography';
+import messageStore from '../../../utils/messageStore';
 
 const useStyles = makeStyles(theme => ({
   actions: {
@@ -139,7 +140,7 @@ export default function InstallBase(props) {
         {list.count === 0 ? (
           <div>
             {list.total === 0
-              ? <NoResultTypography>You don&apos;t have any install base</NoResultTypography>
+              ? <NoResultTypography>{messageStore('NO_RESULT', {message: 'install base'})}</NoResultTypography>
               : <NoResultTypography>{NO_RESULT_SEARCH_MESSAGE}</NoResultTypography>}
           </div>
         ) : (

@@ -10,6 +10,7 @@ import RetryTableFilters from './RetryTableFilters';
 import Spinner from '../../Spinner';
 import NoResultTypography from '../../NoResultTypography';
 import { DEFAULT_FILTERS, FILTER_KEYS } from '../../../utils/errorManagement';
+import messageStore, { message } from '../../../utils/messageStore';
 
 const useStyles = makeStyles(() => ({
   retriesList: {
@@ -64,8 +65,9 @@ export default function RetryList({ flowId }) {
             actionProps={actionProps} />
           {!retries.length && (
           <div>
-            <NoResultTypography>You don’t have any retries.</NoResultTypography>
-            <NoResultTypography>Errors can be retried from the Open errors and Resolved errors tabs.</NoResultTypography>
+            <NoResultTypography>{messageStore('NO_RESULT', {message: 'retries'})}</NoResultTypography>
+            <NoResultTypography>{message.RETRY.ERRORS_RETRIEVE}</NoResultTypography>
+            {/* <NoResultTypography>{messageDisplay('RETRY.ERRORS_RETRIEVE')}</NoResultTypography> */}
           </div>
           )}
         </div>

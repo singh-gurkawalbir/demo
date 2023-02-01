@@ -9,7 +9,6 @@ import { selectors } from '../../reducers';
 import { TextButton, FilledButton} from '../../components/Buttons';
 import getImageUrl from '../../utils/image';
 import FieldMessage from '../../components/DynaForm/fields/FieldMessage';
-import messageStore from '../../utils/messageStore';
 import Spinner from '../../components/Spinner';
 import { EMAIL_REGEX } from '../../constants';
 import getRoutePath from '../../utils/routePaths';
@@ -156,7 +155,7 @@ export default function ForgotPassword({setShowError, email}) {
           onChange={handleOnChangeEmail}
           className={clsx(classes.textField, {[classes.errorField]: showErr || showInvalidEmailError})}
         />
-        <FieldMessage errorMessages={showErr || showInvalidEmailError ? messageStore(showErrorMsg) : ''} />
+        <FieldMessage errorMessages={showErr || showInvalidEmailError ? showErrorMsg : ''} />
 
         { isAuthenticating ? <Spinner />
           : (

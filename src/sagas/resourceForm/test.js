@@ -8,7 +8,6 @@ import actions from '../../actions';
 import { commitStagedChanges } from '../resources';
 import { uploadRawData } from '../uploadFile';
 import {
-  SCOPES,
   createFormValuesPatchSet,
   saveDataLoaderRawData,
   deleteUISpecificValues,
@@ -52,15 +51,13 @@ describe('resourceForm sagas', () => {
       '/name': 'ftp test',
       '/description': 'desc',
     };
-    const scope = 'value';
 
-    test('should return empty patchSet array if resource does not exist', () => expectSaga(createFormValuesPatchSet, {resourceType, resourceId, values, scope})
+    test('should return empty patchSet array if resource does not exist', () => expectSaga(createFormValuesPatchSet, {resourceType, resourceId, values})
       .provide([
         [select(
           selectors.resourceData,
           resourceType,
           resourceId,
-          scope
         ), {}],
       ])
       .returns({ patchSet: [], finalValues: null })
@@ -71,13 +68,12 @@ describe('resourceForm sagas', () => {
 
       getResourceFormAssets.mockReturnValue({fieldMap: {field1: {fieldId: 'a'}}, preSave});
 
-      await expectSaga(createFormValuesPatchSet, {resourceType, resourceId, values, scope})
+      await expectSaga(createFormValuesPatchSet, {resourceType, resourceId, values})
         .provide([
           [select(
             selectors.resourceData,
             resourceType,
             resourceId,
-            scope
           ), {merged: {_connectionId: 'conn1'}}],
           [select(
             selectors.resource,
@@ -239,21 +235,18 @@ describe('resourceForm sagas', () => {
           selectors.resourceData,
           resourceType,
           resourceId,
-          'value'
         ), {merged: {useParentForm: true}}],
       ])
       .put(
         actions.resource.patchStaged(
           resourceId,
           [{ op: 'remove', path: '/assistant' }],
-          'value'
         )
       )
       .put(
         actions.resource.patchStaged(
           resourceId,
           [{ op: 'remove', path: '/useParentForm' }],
-          'value'
         )
       )
       .run()
@@ -264,21 +257,18 @@ describe('resourceForm sagas', () => {
           selectors.resourceData,
           resourceType,
           resourceId,
-          'value'
         ), {merged: {}}],
       ])
       .not.put(
         actions.resource.patchStaged(
           resourceId,
           [{ op: 'remove', path: '/assistant' }],
-          'value'
         )
       )
       .put(
         actions.resource.patchStaged(
           resourceId,
           [{ op: 'remove', path: '/useParentForm' }],
-          'value'
         )
       )
       .run());
@@ -420,7 +410,6 @@ describe('resourceForm sagas', () => {
         resourceType,
         resourceId,
         values: {},
-        scope: SCOPES.VALUE,
       })
       .put(actions.resourceForm.submitFailed(resourceType, resourceId))
       .run());
@@ -440,9 +429,8 @@ describe('resourceForm sagas', () => {
           resourceType,
           resourceId,
           values: {},
-          scope: SCOPES.VALUE,
         })
-        .put(actions.resource.patchStaged(resourceId, response.patchSet, SCOPES.VALUE))
+        .put(actions.resource.patchStaged(resourceId, response.patchSet))
         .run();
     });
     test('should dispatch submitComplete action and return if skipCommit is true', () => {
@@ -464,7 +452,6 @@ describe('resourceForm sagas', () => {
           resourceType,
           resourceId,
           values: {},
-          scope: SCOPES.VALUE,
         })
         .put(actions.resourceForm.submitComplete(resourceType, resourceId, response.finalValues))
         .run();
@@ -481,7 +468,6 @@ describe('resourceForm sagas', () => {
           [select(
             selectors.stagedResource,
             resourceId,
-            SCOPES.VALUE
           ), {patch: [{
             path: '/newIA',
             value: true,
@@ -491,12 +477,10 @@ describe('resourceForm sagas', () => {
           resourceType: 'connectorLicenses',
           resourceId,
           values: {},
-          scope: SCOPES.VALUE,
         })
         .call(commitStagedChanges, {
           resourceType: 'connectors/999/licenses',
           id: resourceId,
-          scope: SCOPES.VALUE,
           parentContext: undefined,
         })
         .put(actions.resourceForm.submitComplete('connectorLicenses', resourceId, response.finalValues))
@@ -514,7 +498,6 @@ describe('resourceForm sagas', () => {
           [select(
             selectors.stagedResource,
             resourceId,
-            SCOPES.VALUE
           ), {patch: [{
             path: '/_integrationId',
             op: 'add',
@@ -525,12 +508,10 @@ describe('resourceForm sagas', () => {
           resourceType: 'accesstokens',
           resourceId,
           values: {},
-          scope: SCOPES.VALUE,
         })
         .call(commitStagedChanges, {
           resourceType: 'integrations/new-int-id/accesstokens',
           id: resourceId,
-          scope: SCOPES.VALUE,
           parentContext: undefined,
         })
         .put(actions.resourceForm.submitComplete('accesstokens', resourceId, response.finalValues))
@@ -548,7 +529,6 @@ describe('resourceForm sagas', () => {
           [select(
             selectors.stagedResource,
             resourceId,
-            SCOPES.VALUE
           ), {patch: [{
             path: '/_integrationId',
             op: 'add',
@@ -559,7 +539,6 @@ describe('resourceForm sagas', () => {
         .call(commitStagedChanges, {
           resourceType,
           id: resourceId,
-          scope: SCOPES.VALUE,
           parentContext: undefined,
         })
         .not.put.actionType('RESOURCE_FORM_SUBMIT_COMPLETE')
@@ -960,7 +939,7 @@ describe('resourceForm sagas', () => {
           [matchers.call.fn(getFlowUpdatePatchesForNewPGorPP), flowPatches],
           [matchers.call.fn(skipRetriesPatches), []],
         ])
-        .put(actions.resource.patchStaged(flowId, flowPatches, SCOPES.VALUE))
+        .put(actions.resource.patchStaged(flowId, flowPatches))
         .call(
           skipRetriesPatches,
           resourceType,
@@ -968,11 +947,10 @@ describe('resourceForm sagas', () => {
           resourceId,
           true
         )
-        .put(actions.resource.patchStaged(flowId, [], SCOPES.VALUE))
+        .put(actions.resource.patchStaged(flowId, []))
         .call(commitStagedChanges, {
           resourceType: 'flows',
           id: flowId,
-          scope: SCOPES.VALUE,
         })
         .put(actions.flowData.updateFlow(flowId))
         .run();
@@ -1268,7 +1246,6 @@ describe('resourceForm sagas', () => {
           selectors.resourceData,
           resourceType,
           resourceId,
-          SCOPES.VALUE
         ), {merged: {}}],
       ])
       .put(actions.resourceForm.initFailed(resourceType, resourceId))
@@ -1286,14 +1263,12 @@ describe('resourceForm sagas', () => {
           selectors.resourceData,
           resourceType,
           resourceId,
-          SCOPES.VALUE
         ), {merged: {adaptorType: 'RESTExport', assistant: 'shopify'}}],
       ])
       .put(
         actions.resource.patchStaged(
           resourceId,
           [{ op: 'add', path: '/assistantMetadata', value: {} }],
-          SCOPES.VALUE
         )
       )
       .run());
@@ -1308,7 +1283,6 @@ describe('resourceForm sagas', () => {
           selectors.resourceData,
           resourceType,
           resourceId,
-          SCOPES.VALUE
         ), {merged: {adaptorType: 'RESTExport', assistant: 'shopify', assistantMetadata: 'some data'}}],
         [select(selectors.assistantData, {
           adaptorType: 'rest',
@@ -1353,7 +1327,6 @@ describe('resourceForm sagas', () => {
             selectors.resourceData,
             resourceType,
             resourceId,
-            SCOPES.VALUE
           ), {merged: {adaptorType: 'RESTExport'}}],
         ])
         .put(
@@ -1394,7 +1367,6 @@ describe('resourceForm sagas', () => {
             selectors.resourceData,
             resourceType,
             resourceId,
-            SCOPES.VALUE
           ), {merged: {adaptorType: 'RESTExport'}}],
         ])
         .not.put.actionType('RESOURCE_FORM_INIT_COMPLETE')

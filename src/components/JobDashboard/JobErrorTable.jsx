@@ -22,6 +22,7 @@ import ActionGroup from '../ActionGroup';
 import OutlinedButton from '../Buttons/OutlinedButton';
 import { getTextAfterCount } from '../../utils/string';
 import { drawerPaths, buildDrawerUrl } from '../../utils/rightDrawer';
+import { message } from '../../utils/messageStore';
 
 const useStyles = makeStyles(theme => ({
   tablePaginationRoot: { float: 'right' },
@@ -175,7 +176,7 @@ export default function JobErrorTable({
       // else take the confirmation from the user for the same and proceed if yes
       confirmDialog({
         title: 'Confirm upload',
-        message: 'Are you sure you want to proceed with this upload? The name of the file you are uploading does not match the name of the latest file associated with this job. We strongly recommend that you always work from the most recent file.',
+        message: message.JOBS.CONFIRM_UPLOAD,
         buttons: [
           {
             label: 'Upload',

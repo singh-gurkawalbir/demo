@@ -50,11 +50,11 @@ export default function RequestUpgradeButton(props) {
   useEffect(() => {
     if (status === 'done') {
       if (childIntegrationsCount) {
-        enquesnackbar({message: <RawHtml html={messageStore('PARENT_WITH_CHILD_UPGRADE_MESSAGE', {plan: nextPlan})} />, variant: 'success'});
+        enquesnackbar({message: <RawHtml html={messageStore('SUBSCRIPTION.ARENT_WITH_CHILD_UPGRADE_MESSAGE', {plan: nextPlan})} />, variant: 'success'});
       } else if (isHighestPlan) {
-        enquesnackbar({message: <RawHtml html={messageStore('PARENT_WITHOUT_CHILD_UPGRADE_MESSAGE_WITH_NO_FURTHER_PLANS', {plan: nextPlan})} />, variant: 'success'});
+        enquesnackbar({message: <RawHtml html={messageStore('SUBSCRIPTION.PARENT_WITHOUT_CHILD_UPGRADE_MESSAGE_WITH_NO_FURTHER_PLANS', {plan: nextPlan})} />, variant: 'success'});
       } else {
-        enquesnackbar({message: <RawHtml html={messageStore('PARENT_WITHOUT_CHILD_UPGRADE_MESSAGE', {plan: nextPlan})} />, variant: 'success'});
+        enquesnackbar({message: <RawHtml html={messageStore('SUBSCRIPTION.PARENT_WITHOUT_CHILD_UPGRADE_MESSAGE', {plan: nextPlan})} />, variant: 'success'});
       }
       dispatch(actions.integrationApp.upgrade.deleteStatus(id));
     }
@@ -65,7 +65,7 @@ export default function RequestUpgradeButton(props) {
       }));
       enquesnackbar({
         message: <ErrorContent
-          error={messageStore('PARENT_UPGRADE_ERROR_MESSAGE',
+          error={messageStore('SUBSCRIPTION.PARENT_UPGRADE_ERROR_MESSAGE',
             {
               plan: nextPlan,
               errorMessage: errMessage,
@@ -79,7 +79,7 @@ export default function RequestUpgradeButton(props) {
 
   useEffect(() => {
     if (showMessage && currentChild === 'none' && showChildLeftMessageFlag) {
-      enquesnackbar({message: <RawHtml html={messageStore('CHILD_UPGRADE_LEFT_MESSAGE')} />, variant: 'success'});
+      enquesnackbar({message: <RawHtml html={messageStore('SUBSCRIPTION.HILD_UPGRADE_LEFT_MESSAGE')} />, variant: 'success'});
       dispatch(actions.integrationApp.upgrade.setStatus('successMessageFlags', { showMessage: false, showChildLeftMessageFlag: false }));
     }
   }, [currentChild, dispatch, enquesnackbar, id, showChildLeftMessageFlag, showMessage]);
@@ -87,8 +87,8 @@ export default function RequestUpgradeButton(props) {
   useEffect(() => {
     if (showFinalMessage && !isChildLicenseInUpgrade) {
       isHighestPlan
-        ? enquesnackbar({message: <RawHtml html={messageStore('PARENT_AND_CHILD_FINAL_MESSAGE_WITH_NO_FURTHER_PLANS', {plan: nextPlan})} />, variant: 'success'})
-        : enquesnackbar({message: <RawHtml html={messageStore('PARENT_AND_CHILD_FINAL_MESSAGE', {plan: nextPlan})} />, variant: 'success'});
+        ? enquesnackbar({message: <RawHtml html={messageStore('SUBSCRIPTION.PARENT_AND_CHILD_FINAL_MESSAGE_WITH_NO_FURTHER_PLANS', {plan: nextPlan})} />, variant: 'success'})
+        : enquesnackbar({message: <RawHtml html={messageStore('SUBSCRIPTION.PARENT_AND_CHILD_FINAL_MESSAGE', {plan: nextPlan})} />, variant: 'success'});
       dispatch(actions.integrationApp.upgrade.setStatus('successMessageFlags', { showFinalMessage: false }));
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps

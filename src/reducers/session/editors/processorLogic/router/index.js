@@ -117,6 +117,7 @@ export default {
       return filter.validate({
         data: editor.data?.filter,
         rule: editor.rule,
+        isInvalid: editor.isInvalid,
       });
     }
 

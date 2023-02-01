@@ -1,9 +1,7 @@
 
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import userEvent from '@testing-library/user-event';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { screen, waitFor } from '@testing-library/react';
 import * as reactRedux from 'react-redux';
 import actions from '../../../actions';
@@ -11,6 +9,7 @@ import { renderWithProviders } from '../../../test/test-utils';
 import TileNotification from '.';
 import { ConfirmDialogProvider } from '../../ConfirmDialog';
 import { runServer } from '../../../test/api/server';
+import {message as messageStore} from '../../../utils/messageStore';
 
 const props = {
   content: 'Your subscription expired on 03/31/2022. Contact sales to renew your subscription.',
@@ -101,7 +100,7 @@ describe('testing Tile Notification Component', () => {
     expect(reactivate).toBeInTheDocument();
 
     userEvent.click(reactivate);
-    const message = screen.getByText('Contact your account owner to reactivate this integration app.');
+    const message = screen.getByText(messageStore.INTEGRATION.CONTACT_OWNER);
 
     expect(message).toBeInTheDocument();
   });

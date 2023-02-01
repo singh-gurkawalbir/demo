@@ -11,6 +11,7 @@ import PanelHeader from '../../../components/PanelHeader';
 import UpgradeDrawer from './drawers/Upgrade';
 import FilledButton from '../../../components/Buttons/FilledButton';
 import useConfirmDialog from '../../../components/ConfirmDialog';
+import messageStore, { message } from '../../../utils/messageStore';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -158,7 +159,7 @@ export default function Subscription() {
   const onRequestUpgradeClick = useCallback(() => {
     confirmDialog({
       title: 'Request upgrade',
-      message: 'We will contact you to discuss your business needs and recommend an ideal subscription plan.',
+      message: messageStore('SUBSCRIPTION.CONTACT_FOR_BUSINESS_NEEDS', {plan: 'ideal'}),
       buttons: [
         { label: 'Submit request',
           onClick: () => {
@@ -195,9 +196,7 @@ export default function Subscription() {
               Get unlimited flows
             </FilledButton>
             <Typography variant="body2" className={classes.description}>
-              Start a 30 day free trial to explore the full capabilities of
-              integrator.io. At the end of the trial, you get to keep one
-              active flow forever.
+              {message.SUBSCRIPTION.FREE_ONE_ACTIVE_FLOW_FOREEVER}
             </Typography>
           </div>
         </div>

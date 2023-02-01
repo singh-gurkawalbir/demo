@@ -103,6 +103,8 @@ const config = {
       IO_LOGIN_PROMOTION_URL_EU: JSON.stringify(process.env.IO_LOGIN_PROMOTION_URL_EU),
       PORTAL_URL: JSON.stringify(process.env.PORTAL_URL),
       SHOPIFY_USER_IDS: JSON.stringify(process.env.SHOPIFY_USER_IDS),
+      ALLOW_SIGNUP: JSON.stringify(process.env.ALLOW_SIGNUP) || 'true',
+      ALLOW_GOOGLE_SIGNIN: JSON.stringify(process.env.ALLOW_GOOGLE_SIGNIN) || 'true',
     }),
   ],
   output: {

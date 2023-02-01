@@ -30,7 +30,6 @@ export function* createFormValuesPatchSet({
   resourceType,
   resourceId,
   values,
-  scope,
   ssLinkedConnectionId,
   integrationId,
 }) {
@@ -39,7 +38,6 @@ export function* createFormValuesPatchSet({
     id: resourceId,
     ssLinkedConnectionId,
     integrationId,
-    scope,
   });
 
   if (!resource) return { patchSet: [], finalValues: null }; // nothing to do.
@@ -102,7 +100,6 @@ function* submitFormValues({
       resourceType,
       resourceId,
       values: formValues,
-      scope: SCOPES.VALUE,
       ssLinkedConnectionId,
       integrationId,
     }));
@@ -118,7 +115,6 @@ function* submitFormValues({
         resourceType,
         resourceId,
         patchSet,
-        SCOPES.VALUE,
       )
     );
   }
@@ -139,7 +135,6 @@ function* submitFormValues({
         resourceType,
         resourceId,
       }),
-      SCOPES.VALUE
     )) || {};
     // In most cases there would be no other pending staged changes, since most
     // times a patch is followed by an immediate commit.  If however some
@@ -151,7 +146,6 @@ function* submitFormValues({
       const resp = yield call(commitStagedChangesWrapper, {
         resourceType,
         id: resourceId,
-        scope: SCOPES.VALUE,
         ssLinkedConnectionId,
         integrationId,
         asyncKey: getAsyncKey(resourceType, resourceId),
@@ -214,7 +208,6 @@ export function* initFormValues({
     id: resourceId,
     ssLinkedConnectionId,
     integrationId,
-    scope: SCOPES.VALUE,
   });
 
   // ({ merged: flow } = yield select(selectors.resourceData, 'flows', flowId));

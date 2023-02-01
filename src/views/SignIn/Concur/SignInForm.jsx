@@ -8,7 +8,6 @@ import clsx from 'clsx';
 import actions from '../../../actions';
 import { selectors } from '../../../reducers';
 import ErrorIcon from '../../../components/icons/ErrorIcon';
-import { getDomain } from '../../../utils/resource';
 import { AUTH_FAILURE_MESSAGE } from '../../../constants';
 import getRoutePath from '../../../utils/routePaths';
 import Spinner from '../../../components/Spinner';
@@ -69,6 +68,14 @@ const useStyles = makeStyles(theme => ({
     backgroundColor: theme.palette.background.paper,
     minWidth: '240px',
     margin: theme.spacing(0, 0, 2, 0),
+  },
+  passwordTextField: {
+    '& * >.MuiFilledInput-input': {
+      letterSpacing: '2px',
+      '&::placeholder': {
+        letterSpacing: '1px',
+      },
+    },
   },
 }));
 
@@ -177,7 +184,7 @@ export default function SignIn({dialogOpen, className}) {
           required
           type="password"
           placeholder="Password*"
-          className={classes.textField}
+          className={clsx(classes.textField, classes.passwordTextField)}
         />
 
         <ForgotPassworLink email={email} />
@@ -202,7 +209,9 @@ export default function SignIn({dialogOpen, className}) {
             </FilledButton>
           )}
       </form>
-      { !isAuthenticating && getDomain() !== 'eu.integrator.io' && (
+      { !isAuthenticating &&
+      // eslint-disable-next-line no-undef
+      ALLOW_GOOGLE_SIGNIN === 'true' && (
       <div>
         {!dialogOpen && (
         <form onSubmit={handleSignInWithGoogle}>
@@ -222,15 +231,17 @@ export default function SignIn({dialogOpen, className}) {
           </OutlinedButton>
         </form>
         )}
-        {dialogOpen && userEmail && userProfileLinkedWithGoogle && (
-        <form onSubmit={handleReSignInWithGoogle}>
-          <OutlinedButton
-            type="submit"
-            color="secondary"
-            className={classes.googleBtn}>
-            Sign in with Google
-          </OutlinedButton>
-        </form>
+        {dialogOpen && userEmail && userProfileLinkedWithGoogle &&
+         // eslint-disable-next-line no-undef
+         ALLOW_GOOGLE_SIGNIN === 'true' && (
+         <form onSubmit={handleReSignInWithGoogle}>
+           <OutlinedButton
+             type="submit"
+             color="secondary"
+             className={classes.googleBtn}>
+             Sign in with Google
+           </OutlinedButton>
+         </form>
         )}
       </div>
       )}

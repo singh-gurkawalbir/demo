@@ -8,7 +8,7 @@ import Spinner from '../Spinner';
 import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
 import { getAsyncKey } from '../../utils/saveAndCloseButtons';
 import { DEFAULT_RECORD_SIZE, getParsedData } from '../../utils/exportPanel';
-import messageStore from '../../utils/messageStore';
+import messageStore, { message } from '../../utils/messageStore';
 import ButtonWithTooltip from '../Buttons/ButtonWithTooltip';
 import useClearAsyncStateOnUnmount from '../SaveAndCloseButtonGroup/hooks/useClearAsyncStateOnUnmount';
 import useResourceFormSampleData from '../../hooks/useResourceFormSampleData';
@@ -77,7 +77,7 @@ export default function PopulateWithPreviewData({
     const previewData = [responseMappingUtil.getResponseMappingDefaultInput(resourceType, {}, adaptorType)];
 
     dispatch(actions.form.fieldChange(formKey)(fieldId, previewData));
-    enquesnackbar({message: messageStore('POPULATE_WITH_PREVIEW_DATA_SUCCESS', {fieldName, dataType: 'sample data'})});
+    enquesnackbar({message: messageStore('POPULATE_WITH_PREVIEW_DATA.SUCCESS', {fieldName, dataType: 'sample data'})});
   }, [adaptorType, dispatch, enquesnackbar, fieldId, fieldName, formKey, resourceType]);
 
   const handleClick = useCallback(e => {
@@ -100,7 +100,7 @@ export default function PopulateWithPreviewData({
   useEffect(() => {
     if (isPreviewRequested && resourceSampleDataStatus === 'error') {
       setIsPreviewRequested(false);
-      enquesnackbar({message: messageStore('POPULATE_WITH_PREVIEW_DATA_FAILED', {fieldName: fieldName?.toLowerCase()}), variant: 'error'});
+      enquesnackbar({message: messageStore('POPULATE_WITH_PREVIEW_DATA.FAILED', {fieldName: fieldName?.toLowerCase()}), variant: 'error'});
     }
   }, [enquesnackbar, fieldName, isPreviewRequested, resourceSampleDataStatus]);
 
@@ -114,7 +114,7 @@ export default function PopulateWithPreviewData({
         updateMockOutputContent(previewData);
       }
       dispatch(actions.form.fieldChange(formKey)(fieldId, previewData));
-      enquesnackbar({message: messageStore('POPULATE_WITH_PREVIEW_DATA_SUCCESS', {fieldName, dataType: 'preview data'})});
+      enquesnackbar({message: messageStore('POPULATE_WITH_PREVIEW_DATA.SUCCESS', {fieldName, dataType: 'preview data'})});
     }
   }, [dispatch, enquesnackbar, fieldId, fieldName, formKey, isImport, isPreviewRequested, previewStageDataList, resourceSampleDataStatus, resourceType, updateMockOutputContent]);
 
@@ -127,7 +127,7 @@ export default function PopulateWithPreviewData({
     <div>
       <ButtonWithTooltip
         tooltipProps={{
-          title: isPreviewDisabled ? messageStore('POPULATE_WITH_PREVIEW_DATA_DISABLED') : '',
+          title: isPreviewDisabled ? message.POPULATE_WITH_PREVIEW_DATA.DISABLED : '',
           placement: 'bottom-start'}}>
         <TextButton
           startIcon={isPreviewRequested ? (

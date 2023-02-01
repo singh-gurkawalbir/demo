@@ -52,7 +52,7 @@ describe("test suite for 'Record type' field in Netsuite", () => {
         op: 'remove',
         path: '/netsuite_da/subrecords',
       },
-    ], 'value'));
+    ]));
     expect(screen.getByText('DynaRefreshableSelect')).toBeInTheDocument();
   });
 

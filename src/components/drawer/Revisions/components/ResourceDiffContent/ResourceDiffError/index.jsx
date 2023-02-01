@@ -7,6 +7,7 @@ import { selectors } from '../../../../../../reducers';
 import { REVISION_TYPES } from '../../../../../../constants';
 import { drawerPaths, buildDrawerUrl } from '../../../../../../utils/rightDrawer';
 import NotificationToaster from '../../../../../NotificationToaster';
+import { message } from '../../../../../../utils/messageStore';
 
 const useStyles = makeStyles(theme => ({
   error: {
@@ -38,7 +39,8 @@ export default function ResourceDiffError({ integrationId, type, parentUrl }) {
     return (
       <NotificationToaster variant="error" size="large">
         <Typography variant="body2">
-          Your revert is not allowed. Your operation is already on the same revision you&apos;re trying to revert to.
+          {message.REVERT_NOT_ALLOWED}
+
         </Typography>
       </NotificationToaster>
     );

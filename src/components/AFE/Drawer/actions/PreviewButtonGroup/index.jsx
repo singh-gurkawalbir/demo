@@ -1,11 +1,13 @@
 import React from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { makeStyles } from '@material-ui/core';
 import { selectors } from '../../../../../reducers';
 import actions from '../../../../../actions';
 import DynaCheckbox from '../../../../DynaForm/fields/checkbox/DynaCheckbox';
 import {OutlinedButton} from '../../../../Buttons';
 import ActionGroup from '../../../../ActionGroup';
+import ButtonWithTooltip from '../../../../Buttons/ButtonWithTooltip';
+import { message } from '../../../../../utils/messageStore';
 
 const useStyles = makeStyles(theme => ({
   previewButtonGroup: {
@@ -19,11 +21,11 @@ export default function PreviewButtonGroup({ editorId }) {
   const dispatch = useDispatch();
   const classes = useStyles();
   const autoEvaluate = useSelector(state => selectors.editor(state, editorId).autoEvaluate);
-  const saveInProgress = useSelector(state => {
-    const {saveStatus} = selectors.editor(state, editorId);
+  const {saveInProgress, disablePreview} = useSelector(state => {
+    const {saveStatus, disablePreview} = selectors.editor(state, editorId);
 
-    return saveStatus === 'requested';
-  });
+    return { saveInProgress: saveStatus === 'requested', disablePreview};
+  }, shallowEqual);
 
   const handlePreview = () => dispatch(actions.editor.previewRequest(editorId));
   const handleToggle = () => dispatch(actions.editor.toggleAutoPreview(editorId));
@@ -39,13 +41,16 @@ export default function PreviewButtonGroup({ editorId }) {
         isLoggable
         />
       {!autoEvaluate && (
-        <OutlinedButton
-          color="primary"
-          data-test="previewEditorResult"
-          disabled={saveInProgress}
-          onClick={handlePreview}>
-          Preview
-        </OutlinedButton>
+        <ButtonWithTooltip
+          tooltipProps={{title: disablePreview ? message.AFE_EDITOR_PANELS_INFO.EDITOR_PREVIEW_DISABLED : undefined}}>
+          <OutlinedButton
+            color="primary"
+            data-test="previewEditorResult"
+            disabled={saveInProgress || disablePreview}
+            onClick={handlePreview}>
+            Preview
+          </OutlinedButton>
+        </ButtonWithTooltip>
       )}
     </ActionGroup>
   );
