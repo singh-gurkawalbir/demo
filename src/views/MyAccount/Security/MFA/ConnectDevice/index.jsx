@@ -12,6 +12,7 @@ import actions from '../../../../../actions';
 import DynaForm from '../../../../../components/DynaForm';
 import useFormContext from '../../../../../components/Form/FormContext';
 import OutlinedButton from '../../../../../components/Buttons/OutlinedButton';
+import { message } from '../../../../../utils/messageStore';
 
 const PRIMARY_ACCOUNT_FORM_KEY = 'mfa-primary-account-form';
 
@@ -33,7 +34,7 @@ function TrustDeviceStep({ trustDevice, setTrustDevice }) {
   return (
     <>
       <HeaderWithHelpText helpKey="mfa.trustDevice" title="Trust device">
-        <Typography variant="h5">Trust this device you&apos;ve used to sign into integrator.io</Typography>
+        <Typography variant="h5">{message.SUBSCRIPTION.TRUST_DEVICE}</Typography>
       </HeaderWithHelpText>
       <div>
         <FormControlLabel

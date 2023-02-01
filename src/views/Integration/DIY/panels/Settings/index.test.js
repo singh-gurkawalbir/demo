@@ -147,7 +147,6 @@ describe('SettingsForm UI tests', () => {
             value: { selectApp: 'value2' },
           },
         ],
-        scope: 'value',
         options: { refetchResources: true },
         context: undefined,
         parentContext: undefined,

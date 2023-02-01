@@ -1,6 +1,6 @@
 import { put, select, call } from 'redux-saga/effects';
 import { selectors } from '../../../../reducers';
-import { SCOPES, updateFlowDoc } from '../../../resourceForm';
+import { updateFlowDoc } from '../../../resourceForm';
 import actions from '../../../../actions';
 import {
   getFlowUpdatesFromPatch,
@@ -16,7 +16,6 @@ export function* _updateResponseMapping({ flowId, resourceIndex, routerIndex, br
     selectors.resourceData,
     'flows',
     flowId,
-    SCOPES.VALUE
   ))?.merged || emptyObject;
   const { pageProcessors = [], routers = [] } = flow;
   let updatedResource;
@@ -132,7 +131,6 @@ export function* updateFlowData({ flowId }) {
     selectors.resourceData,
     'flows',
     flowId,
-    SCOPES.VALUE
   );
 
   if (updatedFlow) {

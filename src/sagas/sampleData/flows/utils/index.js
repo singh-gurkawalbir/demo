@@ -3,7 +3,6 @@ import {
   constructResourceFromFormValues,
 } from '../../../utils';
 import { selectors } from '../../../../reducers';
-import { SCOPES } from '../../../resourceForm';
 
 export function* getConstructedResourceObj({ formKey, resourceId, resourceType }) {
   if (!resourceId || !resourceType) return;
@@ -12,7 +11,6 @@ export function* getConstructedResourceObj({ formKey, resourceId, resourceType }
       selectors.resourceData,
       resourceType,
       resourceId,
-      SCOPES.VALUE
     );
 
     if (resource?.oneToMany) {

@@ -11,7 +11,7 @@ import actions from '../../../../../actions';
 import DynaRadioGroup from '../../../../DynaForm/fields/radiogroup/DynaRadioGroup';
 import BranchDrawer from './BranchDrawer';
 import BranchItem from './BranchItem';
-import messageStore from '../../../../../utils/messageStore';
+import { message } from '../../../../../utils/messageStore';
 import Spinner from '../../../../Spinner';
 import DynaText from '../../../../DynaForm/fields/DynaText';
 import NotificationToaster from '../../../../NotificationToaster';
@@ -85,7 +85,7 @@ const BranchName = ({ editorId, isViewMode, name, classes }) => {
       setInfo(null);
       dispatch(actions.editor.patchRule(editorId, val, {rulePath: 'name'}));
     } else {
-      setInfo([messageStore('BRANCH_NAME_LENGTH_INFO')]);
+      setInfo([message.AFE_EDITOR_PANELS_INFO.BRANCH_NAME_LENGTH_INFO]);
     }
   };
 
@@ -214,7 +214,7 @@ export default function RouterPanel({ editorId }) {
         </SortableContainer>
       )}
       {!isViewMode && !isLoading && (
-      <Tooltip key="key" title={maxBranchesLimitReached ? messageStore('MAX_BRANCHES_LIMIT_REACHED') : ''} placement="bottom">
+      <Tooltip key="key" title={maxBranchesLimitReached ? message.AFE_EDITOR_PANELS_INFO.MAX_BRANCHES_LIMIT_REACHED : ''} placement="bottom">
         <span>
           <TextButton data-test="addBranch" disabled={maxBranchesLimitReached} onClick={handleAddBranch}>
             <AddIcon />Add branch

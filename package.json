@@ -5,7 +5,7 @@
   "private": true,
   "license": "",
   "engines": {
-    "node": "18.13.0"
+    "node": "18.12.1"
   },
   "repository": {
     "type": "git",

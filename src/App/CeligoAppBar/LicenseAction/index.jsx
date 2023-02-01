@@ -10,7 +10,7 @@ import { platformLicenseActionDetails } from '../../../utils/license';
 import {PillButton, TextButton} from '../../../components/Buttons';
 import useConfirmDialog from '../../../components/ConfirmDialog';
 import RawHtml from '../../../components/RawHtml';
-import messageStore from '../../../utils/messageStore';
+import messageStore, { message } from '../../../utils/messageStore';
 import { LICENSE_REACTIVATED_MESSAGE, LICENSE_UPGRADE_REQUEST_SUBMITTED_MESSAGE, REQUEST_UPGRADE_SUCCESS_MESSAGE } from '../../../constants';
 
 const useStyles = makeStyles(theme => ({
@@ -125,11 +125,11 @@ function LicenseAction() {
   );
 
   const startFreeTrialDialog = useCallback(() => {
-    const message = messageStore('LICENSE_TRIAL_ISSUED');
+    const messageStartFree = message.SUBSCRIPTION.LICENSE_TRIAL_ISSUED;
 
     confirmDialog({
-      title: 'Congratulations! Your unlimited flows trial starts now.',
-      message: <RawHtml html={message} />,
+      title: message.SUBSCRIPTION.UNLIMITED_FLOWS_START,
+      message: <RawHtml html={messageStartFree} />,
       buttons: [
         { label: 'Close',
         },
@@ -140,7 +140,7 @@ function LicenseAction() {
   const submitUpgradeDialog = useCallback(() => {
     confirmDialog({
       title: 'Request upgrade',
-      message: 'We will contact you to discuss your business needs and recommend an ideal subscription plan.',
+      message: messageStore('SUBSCRIPTION.CONTACT_FOR_BUSINESS_NEEDS', {plan: 'ideal'}),
       buttons: [
         { label: 'Submit request',
           onClick: () => {
@@ -158,7 +158,7 @@ function LicenseAction() {
   const requestUpgradeDialog = useCallback(() => {
     confirmDialog({
       title: 'Upgrade plan',
-      message: 'You cannot enable more than one flow at a time with your current free subscription plan. Upgrade to unlock your data integration potential with more flows.',
+      message: message.FLOWS.YOU_CANNOT_ENABLE_MORE_THAN_ONE_FLOW,
       buttons: [
         { label: 'Request upgrade',
           onClick: () => {
@@ -174,7 +174,7 @@ function LicenseAction() {
 
   const startFreeTrialConfirmationDialog = useCallback(() => {
     confirmDialog({
-      title: 'Try unlimited flows free for 30 days',
+      title: message.SUBSCRIPTION.TRY_UNLIMITED,
       message: <StartFreeTrialConfirmationMessage />,
       buttons: [
         { label: 'Start free trial now',
@@ -235,7 +235,7 @@ function LicenseAction() {
     if (licenseActionDetails.action === 'expired') {
       confirmDialog({
         title: 'Request to renew subscription',
-        message: 'We will contact you to renew your subscription.',
+        message: message.SUBSCRIPTION.CONTACT_TO_RENEW,
         buttons: [
           {
             label: 'Submit request',
@@ -256,7 +256,7 @@ function LicenseAction() {
   const entitlementOfEndpointsDialog = useCallback(() => {
     confirmDialog({
       title: 'Upgrade plan',
-      message: 'You have reached the entitlement of endpoints for your free subscription. Upgrade to unlock your data integration potential with more endpoints.',
+      message: message.SUBSCRIPTION.REACHED_ENTITLEMENT_ENDPOINTS,
       buttons: [
         { label: 'Request upgrade',
           onClick: () => {
@@ -286,13 +286,13 @@ function LicenseAction() {
 
   useEffect(() => {
     if (platformLicenseActionMessage === LICENSE_UPGRADE_REQUEST_SUBMITTED_MESSAGE) {
-      enquesnackbar({message: <RawHtml html={messageStore('LICENSE_UPGRADE_SUCCESS_MESSAGE')} />, variant: 'success'});
+      enquesnackbar({message: <RawHtml html={message.SUBSCRIPTION.LICENSE_UPGRADE_SUCCESS_MESSAGE} />, variant: 'success'});
       dispatch(actions.license.clearActionMessage());
     } else if (platformLicenseActionMessage === LICENSE_REACTIVATED_MESSAGE) {
       enquesnackbar({message: LICENSE_REACTIVATED_MESSAGE});
       dispatch(actions.license.clearActionMessage());
     } else if (platformLicenseActionMessage === REQUEST_UPGRADE_SUCCESS_MESSAGE) {
-      enquesnackbar({message: <RawHtml html={messageStore('REQUEST_UPGRADE_SUCCESS_MESSAGE')} />, variant: 'success'});
+      enquesnackbar({message: <RawHtml html={message.SUBSCRIPTION.REQUEST_UPGRADE_SUCCESS_MESSAGE} />, variant: 'success'});
       dispatch(actions.license.clearActionMessage());
     }
   }, [dispatch, enquesnackbar, platformLicenseActionMessage]);

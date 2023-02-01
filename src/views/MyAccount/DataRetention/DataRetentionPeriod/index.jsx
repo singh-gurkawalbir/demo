@@ -7,7 +7,7 @@ import DynaSubmit from '../../../../components/DynaForm/DynaSubmit';
 import { selectors } from '../../../../reducers';
 import actions from '../../../../actions';
 import useEnqueueSnackbar from '../../../../hooks/enqueueSnackbar';
-import messageStore from '../../../../utils/messageStore';
+import messageStore, { message } from '../../../../utils/messageStore';
 import { ACCOUNT_SETTINGS_DATA_RETENTION_ASYNC_KEY, FORM_SAVE_STATUS } from '../../../../constants';
 import useConfirmDialog from '../../../../components/ConfirmDialog';
 import RawHtml from '../../../../components/RawHtml';
@@ -63,7 +63,7 @@ export default function DataRetentionPeriod() {
     confirmDialog({
       title: 'Confirm save',
       message: <RawHtml
-        html={messageStore('DATA_RETENTION_PERIOD_UPDATE_CONFIRM', {
+        html={messageStore('DATA_RETENTION.PERIOD_UPDATE_CONFIRM', {
           newDataRetentionPeriod: values.dataRetentionPeriod,
           currentDataRetentionPeriod: dataRetentionPeriod})} />,
       buttons: [
@@ -88,7 +88,7 @@ export default function DataRetentionPeriod() {
   useEffect(() => {
     if (areUserAccountSettingsUpdated) {
       enquesnackbar({
-        message: messageStore('DATA_RETENTION_PERIOD_UPDATED'),
+        message: message.DATA_RETENTION.PERIOD_UPDATED,
         variant: 'success',
       });
       dispatch(actions.asyncTask.clear(ACCOUNT_SETTINGS_DATA_RETENTION_ASYNC_KEY));
@@ -100,7 +100,7 @@ export default function DataRetentionPeriod() {
       <DynaForm formKey={formKey} />
       {isPeriodChanged ? (
         <NotificationToaster variant="warning" className={classes.periodChangedNotification} transparent noBorder>
-          <RawHtml html={messageStore('DATA_RETENTION_PERIOD_CHANGE_INFO')} />
+          <RawHtml html={message.DATA_RETENTION.PERIOD_CHANGE_INFO} />
         </NotificationToaster>
       ) : ''}
       <div className={classes.footer}>

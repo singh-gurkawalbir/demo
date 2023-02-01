@@ -85,7 +85,7 @@ export default function DynaWebhookTokenGenerator(props) {
       ];
 
       dispatch(
-        actions.resource.patchStaged(finalResourceId, patchSet, 'value')
+        actions.resource.patchStaged(finalResourceId, patchSet)
       );
     }
   }, [dispatch, finalResourceId, token]);

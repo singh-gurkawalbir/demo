@@ -6,7 +6,7 @@ import rfdc from 'rfdc';
 import CeligoTable from '../../CeligoTable';
 import actions from '../../../actions';
 import { selectors } from '../../../reducers';
-import messageStore from '../../../utils/messageStore';
+import { message } from '../../../utils/messageStore';
 import { drawerPaths, buildDrawerUrl } from '../../../utils/rightDrawer';
 import CancelIcon from '../../icons/CancelIcon';
 import LoadResources from '../../LoadResources';
@@ -154,7 +154,7 @@ function QueuedJobs({ connectionId }) {
         {connectionJobs && connectionJobs.length > 0 ? (
           <CeligoTable data={clone(connectionJobs)} {...metadata} />
         ) : (
-          <Typography variant="body1">{messageStore('NO_PENDING_QUEUED_JOBS')}</Typography>
+          <Typography variant="body1">{message.JOBS.NO_PENDING_QUEUED_JOBS}</Typography>
         )}
       </div>
     </div>

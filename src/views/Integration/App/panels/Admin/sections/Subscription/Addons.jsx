@@ -11,6 +11,7 @@ import useSelectorMemo from '../../../../../../../hooks/selectors/useSelectorMem
 import { selectors } from '../../../../../../../reducers';
 import { useGetTableContext } from '../../../../../../../components/CeligoTable/TableContext';
 import FilledButton from '../../../../../../../components/Buttons/FilledButton';
+import { message } from '../../../../../../../utils/messageStore';
 
 const clone = rfdc({proto: true});
 
@@ -154,8 +155,7 @@ export default function AddOns({integrationId, childId}) {
             Add-ons
           </Typography>
           <Typography className={classes.message}>
-            You don’t have any add-ons yet. Add-ons let you customize
-            subscription to meet your specific business requirements.
+            {message.ADDONS.NOT_EXIST}
           </Typography>
         </div>
         <div>
@@ -176,9 +176,7 @@ export default function AddOns({integrationId, childId}) {
             Add-ons
           </Typography>
           <Typography variant="body2">
-            Add-ons let you customize your subscription to meet your
-            specific business requirements. They will expire when your
-            Integration App subscription expires.
+            {message.ADDONS.CUSTOMIZE}
           </Typography>
         </div>
 

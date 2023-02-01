@@ -8,6 +8,7 @@ import { selectors } from '../../../../../reducers';
 import { REVISION_TYPES } from '../../../../../constants';
 import { getRevisionResourceLevelChanges, hasInvalidRevertResourceDiff } from '../../../../../utils/revisions';
 import NotificationToaster from '../../../../NotificationToaster';
+import { message } from '../../../../../utils/messageStore';
 
 export default function ResourceDiffContent({ integrationId, type, parentUrl }) {
   const revisionResourceDiff = useSelector(state => selectors.revisionResourceDiff(state, integrationId));
@@ -31,7 +32,7 @@ export default function ResourceDiffContent({ integrationId, type, parentUrl }) 
     return (
       <NotificationToaster variant="error" size="large">
         <Typography variant="body2">
-          Your revert is not allowed. Your operation is already on the same revision you&apos;re trying to revert to.
+          {message.REVERT_NOT_ALLOWED}
         </Typography>
       </NotificationToaster>
     );

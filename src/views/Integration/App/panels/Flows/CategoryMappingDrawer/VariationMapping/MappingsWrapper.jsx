@@ -5,6 +5,7 @@ import { selectors } from '../../../../../../../reducers';
 import actions from '../../../../../../../actions';
 import Mappings from './Mappings';
 import Spinner from '../../../../../../../components/Spinner';
+import { message } from '../../../../../../../utils/messageStore';
 
 export default function VariationMappings(props) {
   const {
@@ -35,7 +36,7 @@ export default function VariationMappings(props) {
   }, [variation, depth, sectionId, dispatch, integrationId, flowId, id, isVariationAttributes]);
 
   if (mappingStatus === 'error') {
-    return (<Typography>Failed to load mapping.</Typography>);
+    return (<Typography>{message.MAPPER2.FAILED_TO_LOAD_MAPPING}</Typography>);
   }
   if (mappingStatus !== 'received') {
     return (

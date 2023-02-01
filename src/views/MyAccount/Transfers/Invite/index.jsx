@@ -13,6 +13,7 @@ import useFormInitWithPermissions from '../../../../hooks/useFormInitWithPermiss
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import FilledButton from '../../../../components/Buttons/FilledButton';
 import OutlinedButton from '../../../../components/Buttons/OutlinedButton';
+import { message } from '../../../../utils/messageStore';
 
 const clone = rfdc({proto: true});
 
@@ -129,16 +130,7 @@ export default function Invite(props) {
           Back to transfers
         </OutlinedButton>
         <div className={classes.infoTransfers}>
-          Important! As part of the transfer process, all your currently
-          in-progress flows will be allowed to complete, and new flows will not be
-          started. If there are any webhook based flows, then they will stop
-          accepting new data until the transfer is complete. Once the in-progress
-          flows have finished processing, all the flows will be transferred to the
-          new user. Jobs and related retry data will not be transferred, and this
-          information will be lost for any in-progress jobs that have errors. If
-          you are concerned about this data loss then please first disable the
-          flows manually, and then retry/resolve all open errors, and then
-          initiate the transfer process again.
+          {message.TRANSFERS.INFO_TRANSFERS}
         </div>
         <DynaForm formKey={formKey} />
         <DynaSubmit formKey={formKey} onClick={handleSubmit}>Next</DynaSubmit>

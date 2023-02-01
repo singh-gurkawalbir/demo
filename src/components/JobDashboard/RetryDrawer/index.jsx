@@ -16,6 +16,7 @@ import CodeEditor from '../../CodeEditor';
 import SaveAndCloseButtonGroupAuto from '../../SaveAndCloseButtonGroup/SaveAndCloseButtonGroupAuto';
 import { useFormOnCancel } from '../../FormOnCancelContext';
 import { getAsyncKey } from '../../../utils/saveAndCloseButtons';
+import { message } from '../../../utils/messageStore';
 
 const useStyles = makeStyles(theme => ({
   errorText: {
@@ -80,7 +81,7 @@ function RetryForm({jobId, flowJobId, asyncKey}) {
       setData(value);
       setTouched(true);
     } catch (e) {
-      setError('Your retry data is not a valid JSON object.');
+      setError(message.RETRY.INVALID_JSON);
     }
   }, []);
 
