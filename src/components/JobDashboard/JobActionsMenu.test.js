@@ -5,7 +5,7 @@ import * as reactRedux from 'react-redux';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import JobActionsMenu from './JobActionsMenu';
-import { renderWithProviders } from '../../test/test-utils';
+import { mutateStore, renderWithProviders } from '../../test/test-utils';
 import { ConfirmDialogProvider } from '../ConfirmDialog';
 import actions from '../../actions';
 import { getCreatedStore } from '../../store';
@@ -22,39 +22,44 @@ function initJobActionsMenu({
   isFlowBuilderView,
   networkCommsData,
 }) {
-  initialStore.getState().data.resources.integrations = [{
-    _id: '123',
-    disabled: false,
-  }];
-  initialStore.getState().data.resources.flows = [{
-    _id: '456',
-    disabled: false,
-    _integrationId: '123',
-    pageGenerators: [
-      {
-        _exportId: '789',
-        type: 'export',
-        skipRetries: false,
-      },
-    ],
-    pageProcessors: [
-      {
-        responseMapping: {
-          fields: [],
-          lists: [],
+  const mustateState = draft => {
+    draft.data.resources.integrations = [{
+      _id: '123',
+      disabled: false,
+    }];
+    draft.data.resources.flows = [{
+      _id: '456',
+      disabled: false,
+      _integrationId: '123',
+      pageGenerators: [
+        {
+          _exportId: '789',
+          type: 'export',
+          skipRetries: false,
         },
-        type: 'import',
-        _importId: '9012',
-      },
-    ],
-  }];
-  initialStore.getState().data.resources.exports = [{
-    _id: '789',
-  }];
-  initialStore.getState().data.resources.imports = [{
-    _id: '9012',
-  }];
-  initialStore.getState().comms.networkComms = networkCommsData;
+      ],
+      pageProcessors: [
+        {
+          responseMapping: {
+            fields: [],
+            lists: [],
+          },
+          type: 'import',
+          _importId: '9012',
+        },
+      ],
+    }];
+    draft.data.resources.exports = [{
+      _id: '789',
+    }];
+    draft.data.resources.imports = [{
+      _id: '9012',
+    }];
+    draft.comms.networkComms = networkCommsData;
+  };
+
+  mutateStore(initialStore, mustateState);
+
   const ui = (
     <ConfirmDialogProvider>
       <MemoryRouter>

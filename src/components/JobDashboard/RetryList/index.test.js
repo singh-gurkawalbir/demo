@@ -2,7 +2,7 @@
 import React from 'react';
 import { screen, waitFor} from '@testing-library/react';
 import {MemoryRouter, Route} from 'react-router-dom';
-import {mockGetRequestOnce, reduxStore, renderWithProviders} from '../../../test/test-utils';
+import {mockGetRequestOnce, mutateStore, reduxStore, renderWithProviders} from '../../../test/test-utils';
 import RetryList from '.';
 import { runServer } from '../../../test/api/server';
 import { JOB_STATUS, JOB_TYPES } from '../../../constants';
@@ -53,66 +53,69 @@ function initRetryList({
     name: 'e3',
     _connectionId: 'c3',
   }];
-
-  initialStore.getState().data.resources = {
-    flows,
-    exports,
-  };
-  initialStore.getState().user.preferences = {
-    environment: 'production',
-    defaultAShareId: 'own',
-  };
-  initialStore.getState().user.profile = {
-    allowedToPublish: true,
-    developer: true,
-  };
-  initialStore.getState().user.org = {
-    accounts: [
-      {
-        accessLevel: 'owner',
-        _id: 'own',
-        ownerUser: {
-          licenses: [{
-            type: 'endpoint',
-            _id: 'license_id_1',
-            tier: 'premium',
-            endpoint: {
-              apiManagement: true,
-              production: {
-                numAddOnAgents: 2,
-                numAgents: 2,
+  const mustateState = draft => {
+    draft.data.resources = {
+      flows,
+      exports,
+    };
+    draft.user.preferences = {
+      environment: 'production',
+      defaultAShareId: 'own',
+    };
+    draft.user.profile = {
+      allowedToPublish: true,
+      developer: true,
+    };
+    draft.user.org = {
+      accounts: [
+        {
+          accessLevel: 'owner',
+          _id: 'own',
+          ownerUser: {
+            licenses: [{
+              type: 'endpoint',
+              _id: 'license_id_1',
+              tier: 'premium',
+              endpoint: {
+                apiManagement: true,
+                production: {
+                  numAddOnAgents: 2,
+                  numAgents: 2,
+                },
               },
-            },
-          }],
+            }],
+          },
         },
-      },
-    ],
+      ],
+    };
+    draft.data.integrationAShares = {
+      i1: [
+        {
+          _id: 'as1',
+          accepted: true,
+          accessLevel: 'manage',
+          sharedWithUser: {
+            _id: 'u1',
+            email: 'user1@celigo.com',
+            name: 'User1',
+          },
+        },
+        {
+          _id: 'as2',
+          accepted: true,
+          accessLevel: 'manage',
+          sharedWithUser: {
+            _id: 'u2',
+            email: 'user2@celigo.com',
+            name: 'User2',
+          },
+        },
+      ],
+    };
+    draft.session.filters = filter;
   };
-  initialStore.getState().data.integrationAShares = {
-    i1: [
-      {
-        _id: 'as1',
-        accepted: true,
-        accessLevel: 'manage',
-        sharedWithUser: {
-          _id: 'u1',
-          email: 'user1@celigo.com',
-          name: 'User1',
-        },
-      },
-      {
-        _id: 'as2',
-        accepted: true,
-        accessLevel: 'manage',
-        sharedWithUser: {
-          _id: 'u2',
-          email: 'user2@celigo.com',
-          name: 'User2',
-        },
-      },
-    ],
-  };
-  initialStore.getState().session.filters = filter;
+
+  mutateStore(initialStore, mustateState);
 
   const ui = (
     <MemoryRouter

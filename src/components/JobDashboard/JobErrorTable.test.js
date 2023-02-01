@@ -5,7 +5,7 @@ import { MemoryRouter } from 'react-router-dom';
 import * as reactRedux from 'react-redux';
 import userEvent from '@testing-library/user-event';
 import { getCreatedStore } from '../../store';
-import { renderWithProviders } from '../../test/test-utils';
+import { mutateStore, renderWithProviders } from '../../test/test-utils';
 import JobErrorTable from './JobErrorTable';
 import actions from '../../actions';
 import * as utils from '../../utils/resource';
@@ -23,30 +23,35 @@ function initJobErrorTable({
   onCloseClick,
   jobErrorsPreviewStatus,
 }) {
-  initialStore.getState().session.jobErrorsPreview = {
-    123: {
-      status: jobErrorsPreviewStatus,
-    },
-  };
-  initialStore.getState().data.jobs = {
-    flowJobs: [{
-      _id: '234',
-      status: 'completed',
-      children: [
-        {
-          _id: '123',
-          errorFile: {
-            id: 'somegeneratedID',
+  const mustateState = draft => {
+    draft.session.jobErrorsPreview = {
+      123: {
+        status: jobErrorsPreviewStatus,
+      },
+    };
+    draft.data.jobs = {
+      flowJobs: [{
+        _id: '234',
+        status: 'completed',
+        children: [
+          {
+            _id: '123',
+            errorFile: {
+              id: 'somegeneratedID',
+            },
           },
-        },
-      ],
-    }],
-    bulkRetryJobs: [],
-    paging: {
-      rowsPerPage: 10,
-      currentPage: 0,
-    },
+        ],
+      }],
+      bulkRetryJobs: [],
+      paging: {
+        rowsPerPage: 10,
+        currentPage: 0,
+      },
+    };
   };
+
+  mutateStore(initialStore, mustateState);
+
   const ui = (
     <ConfirmDialogProvider>
       <MemoryRouter>

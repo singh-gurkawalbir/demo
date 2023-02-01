@@ -6,58 +6,62 @@ import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import * as reactRedux from 'react-redux';
 import QueuedJobsDrawer from './QueuedJobsDrawer';
-import { renderWithProviders } from '../../../test/test-utils';
+import { mutateStore, renderWithProviders } from '../../../test/test-utils';
 import { getCreatedStore } from '../../../store';
 
 let initialStore;
 
 function initQueuedJobsDrawer({integrationId, sessionConnectionData, queueSize}) {
-  initialStore.getState().user.preferences = {environment: 'production'};
-  initialStore.getState().data.resources.integrations = [{
-    _id: '12345',
-    name: 'Test integration name',
-  }];
-  initialStore.getState().data.resources.flows = [{
-    _id: '67890',
-    name: 'Test flow name 1',
-    _integrationId: '12345',
-    disabled: false,
-    pageProcessors: [
-      {
-        type: 'import',
-        _importId: 'nxksnn',
-      },
-    ],
-    pageGenerators: [
-      {
-        _exportId: 'xsjxks',
-      },
-    ],
-  }];
-  initialStore.getState().data.resources.connections = [{
-    _id: 'abcde',
-    name: 'Test connection 1',
-    _integrationId: '12345',
-    queueSize,
-  }, {
-    _id: 'fghijk',
-    name: 'Test connection 2',
-    _integrationId: '12345',
-    queueSize,
-  }];
-  initialStore.getState().data.resources.exports = [{
-    _id: 'xsjxks',
-    name: 'Test export',
-    _connectionId: 'abcde',
-    _integrationId: '12345',
-  }];
-  initialStore.getState().data.resources.imports = [{
-    _id: 'nxksnn',
-    name: 'Test import',
-    _connectionId: 'fghijk',
-    _integrationId: '12345',
-  }];
-  initialStore.getState().session.connections = sessionConnectionData;
+  const mustateState = draft => {
+    draft.user.preferences = {environment: 'production'};
+    draft.data.resources.integrations = [{
+      _id: '12345',
+      name: 'Test integration name',
+    }];
+    draft.data.resources.flows = [{
+      _id: '67890',
+      name: 'Test flow name 1',
+      _integrationId: '12345',
+      disabled: false,
+      pageProcessors: [
+        {
+          type: 'import',
+          _importId: 'nxksnn',
+        },
+      ],
+      pageGenerators: [
+        {
+          _exportId: 'xsjxks',
+        },
+      ],
+    }];
+    draft.data.resources.connections = [{
+      _id: 'abcde',
+      name: 'Test connection 1',
+      _integrationId: '12345',
+      queueSize,
+    }, {
+      _id: 'fghijk',
+      name: 'Test connection 2',
+      _integrationId: '12345',
+      queueSize,
+    }];
+    draft.data.resources.exports = [{
+      _id: 'xsjxks',
+      name: 'Test export',
+      _connectionId: 'abcde',
+      _integrationId: '12345',
+    }];
+    draft.data.resources.imports = [{
+      _id: 'nxksnn',
+      name: 'Test import',
+      _connectionId: 'fghijk',
+      _integrationId: '12345',
+    }];
+    draft.session.connections = sessionConnectionData;
+  };
+
+  mutateStore(initialStore, mustateState);
   const ui = (
     <MemoryRouter
       initialEntries={[{pathname: '/dashboard/runningFlows/flows/67890/queuedJobs'}]}

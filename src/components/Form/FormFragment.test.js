@@ -3,7 +3,7 @@
 import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { renderWithProviders } from '../../test/test-utils';
+import { mutateStore, renderWithProviders } from '../../test/test-utils';
 import FormFragment from './FormFragment';
 import { getCreatedStore } from '../../store';
 import { FieldDefinitionException } from '../../utils/form';
@@ -81,17 +81,20 @@ describe('test suite for Form Fragment', () => {
       ],
     };
     const initialStore = getCreatedStore();
-
-    initialStore.getState().session.form[props.formKey] = {
-      fields: {
-        type: {
-          visible: true,
+    const mustateState = draft => {
+      draft.session.form[props.formKey] = {
+        fields: {
+          type: {
+            visible: true,
+          },
+          'rdbms.once.query': {
+            visible: false,
+          },
         },
-        'rdbms.once.query': {
-          visible: false,
-        },
-      },
+      };
     };
+
+    mutateStore(initialStore, mustateState);
 
     renderWithProviders(<FormFragment {...props} />, {initialStore});
     expect(screen.getByText('Export type')).toBeInTheDocument();
@@ -137,13 +140,17 @@ describe('test suite for Form Fragment', () => {
     };
     const initialStore = getCreatedStore();
 
-    initialStore.getState().session.form[props.formKey] = {
-      fields: {
-        type: {
-          visible: true,
+    const mustateState = draft => {
+      draft.session.form[props.formKey] = {
+        fields: {
+          type: {
+            visible: true,
+          },
         },
-      },
+      };
     };
+
+    mutateStore(initialStore, mustateState);
 
     renderWithProviders(<FormFragment {...props} />, {initialStore});
     const bodyEle = document.querySelector('body');
@@ -167,14 +174,17 @@ describe('test suite for Form Fragment', () => {
       ],
     };
     const initialStore = getCreatedStore();
-
-    initialStore.getState().session.form[props.formKey] = {
-      fields: {
-        uri: {
-          visible: true,
+    const mustateState = draft => {
+      draft.session.form[props.formKey] = {
+        fields: {
+          uri: {
+            visible: true,
+          },
         },
-      },
+      };
     };
+
+    mutateStore(initialStore, mustateState);
 
     try {
       renderWithProviders(<FormFragment {...props} />, {initialStore});
@@ -190,10 +200,13 @@ describe('test suite for Form Fragment', () => {
       formKey: 'exports-123',
     };
     const initialStore = getCreatedStore();
-
-    initialStore.getState().session.form[props.formKey] = {
-      fields: { },
+    const mustateState = draft => {
+      draft.session.form[props.formKey] = {
+        fields: { },
+      };
     };
+
+    mutateStore(initialStore, mustateState);
 
     renderWithProviders(<FormFragment {...props} />, {initialStore});
     expect(document.querySelector('body > div')).toBeEmptyDOMElement();

@@ -5,16 +5,20 @@ import { MemoryRouter, Route } from 'react-router-dom';
 import userEvent from '@testing-library/user-event';
 import * as reactRedux from 'react-redux';
 import RetryDrawer from '.';
-import {renderWithProviders} from '../../../test/test-utils';
+import {mutateStore, renderWithProviders} from '../../../test/test-utils';
 import { getCreatedStore } from '../../../store';
 import { runServer } from '../../../test/api/server';
 
 let initialStore;
 
 async function initRetryDawer({height, jobId, flowJobId, retryId, retryData}) {
-  initialStore.getState().data.jobs.retryObjects[retryId] = {
-    retryData,
+  const mustateState = draft => {
+    draft.data.jobs.retryObjects[retryId] = {
+      retryData,
+    };
   };
+
+  mutateStore(initialStore, mustateState);
   const ui = (
     <MemoryRouter
       initialEntries={[{pathname: `/integrations/1234/dashboard/viewErrors/editRetry/${retryId}`}]}

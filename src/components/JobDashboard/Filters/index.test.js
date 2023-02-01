@@ -6,7 +6,7 @@ import { MemoryRouter } from 'react-router-dom';
 import * as reactRedux from 'react-redux';
 import Filters from '.';
 import { getCreatedStore } from '../../../store';
-import {renderWithProviders} from '../../../test/test-utils';
+import {mutateStore, renderWithProviders} from '../../../test/test-utils';
 import { runServer } from '../../../test/api/server';
 
 let initialStore;
@@ -23,7 +23,11 @@ async function initFilters({
   isFlowBuilderView,
   filtersData,
 }) {
-  initialStore.getState().session.filters = filtersData;
+  const mustateState = draft => {
+    draft.session.filters = filtersData;
+  };
+
+  mutateStore(initialStore, mustateState);
   const ui = (
     <MemoryRouter>
       <Filters
