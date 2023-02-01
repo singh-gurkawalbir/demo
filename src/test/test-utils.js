@@ -10,6 +10,8 @@ import server from './api/server';
 import { API } from './api/utils';
 import rootReducer from '../reducers';
 
+const clone = rfdc({proto: true});
+
 const theme = themeProvider();
 export const renderWithProviders = (ui, { initialStore, renderFun = render } = {}) => {
   const reduxStore = initialStore || getCreatedStore();
@@ -28,6 +30,7 @@ export const renderWithProviders = (ui, { initialStore, renderFun = render } = {
     store: reduxStore,
   };
 };
+
 
 const returnReducer = mutationFunction => state => produce(state, mutationFunction);
 
