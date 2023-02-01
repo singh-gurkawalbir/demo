@@ -148,8 +148,6 @@ selectors.resourceFormState = (state, resourceType, resourceId) => {
   return state[key] || emptyObj;
 };
 
-selectors.bundle;
-
 selectors.resourceFormSaveProcessTerminated = (
   state,
   resourceType,

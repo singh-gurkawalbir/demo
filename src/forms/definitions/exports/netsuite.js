@@ -1,3 +1,4 @@
+import { BUNDLE_DEPRICATION_URL } from '../../../constants';
 import { isNewId } from '../../../utils/resource';
 import { safeParse } from '../../../utils/string';
 
@@ -299,7 +300,7 @@ export default {
           items: [
             { label: 'SuiteApp SuiteScript 2.x', value: 'suiteapp2.0', description: 'Recommended'},
             { label: 'SuiteApp SuiteScript 1.0', value: 'suiteapp1.0' },
-            { label: 'SuiteBundle SuiteScript 1.0', value: 'suitebundle', description: 'To be deprecated.<a target="_blank" rel="noreferrer" href="https://docs.celigo.com/hc/en-us/articles/360050643132"><u>Learn more.</u></a>', isWarningMessage: true },
+            { label: 'SuiteBundle SuiteScript 1.0', value: 'suitebundle', description: `To be deprecated.<a target="_blank" rel="noreferrer" href=${BUNDLE_DEPRICATION_URL}><u>Learn more.</u></a>`, isWarningMessage: true },
           ],
         },
       ],
@@ -344,7 +345,7 @@ export default {
           items: [
             { label: 'SuiteApp SuiteScript 2.x', value: 'suiteapp2.0', description: 'Recommended'},
             { label: 'SuiteApp SuiteScript 1.0', value: 'suiteapp1.0' },
-            { label: 'SuiteBundle SuiteScript 1.0', value: 'suitebundle', description: 'To be deprecated.<a target="_blank" rel="noreferrer" href="https://docs.celigo.com/hc/en-us/articles/360050643132"><u>Learn more.</u></a>', isWarningMessage: true },
+            { label: 'SuiteBundle SuiteScript 1.0', value: 'suitebundle', description: `To be deprecated.<a target="_blank" rel="noreferrer" href=${BUNDLE_DEPRICATION_URL}><u>Learn more.</u></a>`, isWarningMessage: true },
           ],
         },
       ],
