@@ -1,5 +1,6 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
+import { useLocation } from 'react-router-dom';
 import { makeStyles, Typography } from '@material-ui/core';
 import SigninForm from './SignInForm';
 import CeligoLogo from '../../../components/CeligoLogo';
@@ -99,6 +100,8 @@ const Title = () => {
 
 export default function Signin(props) {
   const classes = useStyles();
+  const { search } = useLocation();
+  const queryParams = new URLSearchParams(search);
 
   const isSignupCompleted = useSelector(state => selectors.signupStatus(state) === 'done');
   const signupMessage = useSelector(state => selectors.signupMessage(state));
@@ -123,6 +126,7 @@ export default function Signin(props) {
             {...props}
             dialogOpen={false}
             className={classes.signInForm}
+            queryParam={queryParams}
           />
           {ALLOW_SIGNUP && (
           <div className={classes.signupLink}>

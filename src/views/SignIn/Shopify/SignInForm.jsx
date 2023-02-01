@@ -135,7 +135,6 @@ export default function SignIn({ dialogOpen, className, queryParam }) {
 
     return errorMessage;
   });
-  const userEmail = useSelector(state => selectors.userProfileEmail(state));
   const showError = useSelector(state => selectors.showAuthError(state));
 
   const handleOnChangeEmail = useCallback(e => {
@@ -179,7 +178,7 @@ export default function SignIn({ dialogOpen, className, queryParam }) {
           type="email"
           variant="filled"
           placeholder="Email *"
-          value={dialogOpen ? userEmail : email}
+          value={email}
           onChange={handleOnChangeEmail}
           className={classes.textField}
           disabled={dialogOpen}
