@@ -1,11 +1,10 @@
 import React from 'react';
 import { Button, makeStyles, Typography } from '@material-ui/core';
 import { useHistory } from 'react-router-dom';
-import clsx from 'clsx';
 import CeligoLogo from '../../../../components/CeligoLogo';
-import getImageUrl from '../../../../utils/image';
-import ErrorIcon from '../../../../components/icons/ErrorIcon';
 import useQuery from '../../../../hooks/useQuery';
+import ShopifyLandingPageHeader from '../PageHeader';
+import NotificationToaster from '../../../../components/NotificationToaster';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -61,6 +60,11 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing(0, 2),
     borderRadius: '4px',
     marginTop: theme.spacing(2),
+    '& h5': {
+      fontSize: theme.spacing(1.75),
+      margin: '16px 0',
+      height: 15.4,
+    },
   },
   minicard1: {
     background: theme.palette.background.paper,
@@ -91,6 +95,23 @@ const useStyles = makeStyles(theme => ({
     // fontSize: theme.spacing(2),
     marginRight: 5,
   },
+  errorNotification: {
+    border: `1px solid ${theme.palette.secondary.lightest}`,
+    width: '100%',
+    borderRadius: '4px',
+    minWidth: '-webkit-fill-available',
+    borderLeft: 'none',
+    boxShadow: 'none',
+    '& svg': {
+      fill: theme.palette.error.main,
+      width: 36,
+      height: 24,
+      alignSelf: 'center',
+    },
+  },
+  font: {
+    fontSize: theme.spacing(1.75),
+  },
 }));
 
 export default function VerifyApp() {
@@ -107,26 +128,28 @@ export default function VerifyApp() {
 
   return (
     <div className={classes.root}>
-      <div className={classes.headerBorder}>
-        <div className="externalLink" onClick={() => { history.goBack(); }}>
-          <img src={getImageUrl('/images/backToShopify.png')} alt="backToShopify" />
-        </div>
-      </div>
+      <ShopifyLandingPageHeader />
       <div className={classes.shopifyBody}>
         <div className={classes.shopifyContentWrapper}>
           <div className={classes.card}>
             <div className={classes.celigoLogoWrapper}>
               <CeligoLogo />
             </div>
-            <div className={clsx(classes.miniCard, classes.message)}>
+            <NotificationToaster
+              variant="error"
+              className={classes.errorNotification}
+              >
               <Typography
                 data-private
                 component="div"
                 variant="h5"
-                className={classes.alertMsg}>
-                <ErrorIcon /> Error: iClientDoc does not exist for the iClientId provided in the request
+                className={classes.font}
+              >
+                Failed to add app.
+                <br />
+                Error: The APP URL should contain type parameter
               </Typography>
-            </div>
+            </NotificationToaster>
             {/* <div className={classes.minicard1}>
 
               <ErrorIcon className={classes.errorIcon} />
@@ -136,14 +159,28 @@ export default function VerifyApp() {
 
             </div> */}
             <div className={classes.miniCard}>
-              <h5>
-                <Button
-                  variant="text" color="secondary" disableElevation className={classes.externalLink}
-                  onClick={() => history.goBack()}>Return to Shopify
-                </Button> and try again.
-              </h5>
+              <Typography
+                data-private
+                component="h5"
+                variant="h5"
+              >
+                <span>
+                  <Button
+                    variant="text" color="primary" disableElevation
+                    onClick={() => history.goBack()}
+                  >
+                    Return to Shopify
+                  </Button>and try again.
+                </span>
+              </Typography>
               <div className={classes.divider} />
-              <h5>If the error persists, <a className={classes.link} href="https://docs.celigo.com/hc/en-us/requests/new" rel="noreferrer" target="_blank">submit a ticket </a>to our support team.</h5>
+              <Typography
+                data-private
+                component="h5"
+                variant="h5"
+              >
+                If the error persists, <a className={classes.link} href="https://docs.celigo.com/hc/en-us/requests/new" rel="noreferrer" target="_blank">submit a ticket </a>to our support team.
+              </Typography>
             </div>
           </div>
         </div>
