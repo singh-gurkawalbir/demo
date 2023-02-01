@@ -1,3 +1,5 @@
 import rfdc from 'rfdc';
 
-export default rfdc({proto: true});
+const customCloneDeep = rfdc({proto: true});
+
+export default customCloneDeep;
