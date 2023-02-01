@@ -49,7 +49,7 @@ const Content = ({error, timedOut, pastDelay, classes}) => {
   return null;
 };
 
-function Loading({ error, timedOut, pastDelay }) {
+export function Loading({ error, timedOut, pastDelay }) {
   const classes = useStyles();
 
   return (
