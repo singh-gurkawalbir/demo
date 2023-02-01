@@ -3,7 +3,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles, Typography } from '@material-ui/core';
 import { useRouteMatch } from 'react-router-dom';
 import { generateId } from '../../../../../utils/string';
-import rfdc from 'rfdc';
 import { TextButton } from '../../../../../components/Buttons';
 import actions from '../../../../../actions';
 import { selectors } from '../../../../../reducers';
@@ -27,8 +26,7 @@ import CreateSnapshotDrawer from '../../../../../components/drawer/Revisions/Cre
 import LoadResources from '../../../../../components/LoadResources';
 import useOpenRevisionWhenValid from '../../../../../components/drawer/Revisions/hooks/useOpenRevisionWhenValid';
 import infoText from '../infoText';
-
-const clone = rfdc({proto: true});
+import customCloneDeep from '../../../../../utils/customCloneDeep';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -103,7 +101,7 @@ const RevisionsList = ({ integrationId }) => {
       <CeligoTable
         {...revisionsMetadata}
         filterKey={getRevisionFilterKey(integrationId)}
-        data={clone(filteredRevisions)}
+        data={customCloneDeep(filteredRevisions)}
       />
       <NoRevisionsInfo />
     </>

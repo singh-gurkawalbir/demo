@@ -1,6 +1,5 @@
 import React, { useEffect, useCallback, useReducer, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import rfdc from 'rfdc';
 import shallowEqual from 'react-redux/lib/utils/shallowEqual';
 import actions from '../../../../../actions';
 import { selectors } from '../../../../../reducers/index';
@@ -10,8 +9,7 @@ import TestButton, { PingMessage } from './TestButton';
 import useHandleClickWhenValid from '../hooks/useHandleClickWhenValid';
 import { FORM_SAVE_STATUS } from '../../../../../constants';
 import SaveAndCloseResourceForm from '../../../../SaveAndCloseButtonGroup/SaveAndCloseResourceForm';
-
-const clone = rfdc({ proto: true });
+import customCloneDeep from '../../../../../utils/customCloneDeep';
 
 const ConfirmDialog = props => {
   const {
@@ -105,7 +103,7 @@ export function TestSaveAndClose(props) {
 
   const handleSaveForm = useCallback(
     () => {
-      const newValues = clone(values);
+      const newValues = customCloneDeep(values);
 
       if (!newValues['/_borrowConcurrencyFromConnectionId']) {
         newValues['/_borrowConcurrencyFromConnectionId'] = undefined;
@@ -124,7 +122,7 @@ export function TestSaveAndClose(props) {
     [closeAfterSave, dispatch, resourceId, resourceType, values, parentContext]
   );
   const handleTestConnection = useCallback(() => {
-    const newValues = rfdc({ proto: true })(values);
+    const newValues = customCloneDeep(values);
 
     if (!newValues['/_borrowConcurrencyFromConnectionId']) {
       newValues['/_borrowConcurrencyFromConnectionId'] = undefined;

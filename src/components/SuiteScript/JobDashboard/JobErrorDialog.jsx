@@ -1,14 +1,12 @@
 import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { makeStyles } from '@material-ui/core';
-import rfdc from 'rfdc';
 import actions from '../../../actions';
 import { selectors } from '../../../reducers';
 import JobErrorTable from './JobErrorTable';
 import ModalDialog from '../../ModalDialog';
 import Help from '../../Help';
-
-const clone = rfdc({proto: true});
+import customCloneDeep from '../../../utils/customCloneDeep';
 
 const useStyles = makeStyles(theme => ({
   iconButton: {
@@ -119,9 +117,9 @@ export default function JobErrorDialog({
 
       <div>
         <JobErrorTable
-          jobErrors={clone(jobErrors)}
+          jobErrors={customCloneDeep(jobErrors)}
           errorCount={numError}
-          job={clone(job)}
+          job={customCloneDeep(job)}
           onCloseClick={onCloseClick}
           ssLinkedConnectionId={ssLinkedConnectionId}
           integrationId={integrationId}

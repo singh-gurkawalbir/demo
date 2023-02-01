@@ -1,7 +1,6 @@
 import Frame from 'react-frame-component';
 import React, { useEffect, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
-import rfdc from 'rfdc';
 import { selectors } from '../../reducers';
 import actions from '../../actions';
 import { generateLayoutColumns } from './util';
@@ -9,8 +8,7 @@ import Section from './Section';
 import { getDomainUrl } from '../../utils/resource';
 import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
 import Spinner from '../Spinner';
-
-const clone = rfdc({proto: true});
+import customCloneDeep from '../../utils/customCloneDeep';
 
 export default function SalesforceMappingAssistant({
   connectionId,
@@ -36,7 +34,7 @@ export default function SalesforceMappingAssistant({
     }
   }, [dispatch, connectionId, sObjectType, layoutId, commMetaPath]);
 
-  const editLayoutSections = useMemo(() => layout?.editLayoutSections ? generateLayoutColumns(clone(layout.editLayoutSections)) : null, [layout?.editLayoutSections]);
+  const editLayoutSections = useMemo(() => layout?.editLayoutSections ? generateLayoutColumns(customCloneDeep(layout.editLayoutSections)) : null, [layout?.editLayoutSections]);
 
   if (!layoutId) {
     return (

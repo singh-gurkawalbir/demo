@@ -2,7 +2,6 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useHistory, useLocation } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core';
-import rfdc from 'rfdc';
 import { selectors } from '../../../../../reducers';
 import actions from '../../../../../actions';
 import { generateNewId, isTradingPartnerSupported } from '../../../../../utils/resource';
@@ -19,8 +18,7 @@ import { TextButton } from '../../../../../components/Buttons';
 import ActionGroup from '../../../../../components/ActionGroup';
 import { drawerPaths, buildDrawerUrl } from '../../../../../utils/rightDrawer';
 import infoText from '../infoText';
-
-const clone = rfdc({proto: true});
+import customCloneDeep from '../../../../../utils/customCloneDeep';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -179,7 +177,7 @@ export default function ConnectionsPanel({ integrationId, childId }) {
 
       <LoadResources required integrationId={integrationId} resources="connections">
         <CeligoTable
-          data={clone(connections)}
+          data={customCloneDeep(connections)}
           filterKey={filterKey}
           {...metadata}
           actionProps={{ integrationId: _integrationId, resourceType: 'connections', showTradingPartner,

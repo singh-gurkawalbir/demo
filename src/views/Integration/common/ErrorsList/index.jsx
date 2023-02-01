@@ -2,7 +2,6 @@ import React, { useEffect, useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useRouteMatch, useHistory, matchPath, useLocation } from 'react-router-dom';
 import { Typography } from '@material-ui/core';
-import rfdc from 'rfdc';
 import { selectors } from '../../../../reducers';
 import LoadResources from '../../../../components/LoadResources';
 import RightDrawer from '../../../../components/drawer/Right';
@@ -22,8 +21,7 @@ import CeligoTimeAgo from '../../../../components/CeligoTimeAgo';
 import { getTextAfterCount } from '../../../../utils/string';
 import { buildDrawerUrl, drawerPaths } from '../../../../utils/rightDrawer';
 import Status from '../../../../components/Buttons/Status';
-
-const clone = rfdc({proto: true});
+import customCloneDeep from '../../../../utils/customCloneDeep';
 
 const metadata = {
   rowKey: 'id',
@@ -174,7 +172,7 @@ const ErrorsList = ({integrationId, childId}) => {
   }
 
   return (
-    <CeligoTable data={clone(resources)} filterKey={FILTER_KEY} {...metadata} />
+    <CeligoTable data={customCloneDeep(resources)} filterKey={FILTER_KEY} {...metadata} />
   );
 };
 

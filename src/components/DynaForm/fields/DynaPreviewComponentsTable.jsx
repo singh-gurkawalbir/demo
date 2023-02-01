@@ -1,11 +1,9 @@
 import React, { useMemo } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import rfdc from 'rfdc';
 import { RESOURCE_TYPE_LABEL_TO_SINGULAR, RESOURCE_TYPE_SINGULAR_TO_PLURAL } from '../../../constants/resource';
 import DynaCeligoTable from './DynaCeligoTable';
 import { mappingFlowsToFlowGroupings } from '../../../utils/flows';
-
-const clone = rfdc({proto: true});
+import customCloneDeep from '../../../utils/customCloneDeep';
 
 const useStyles = makeStyles(theme => ({
   previewTableWrapper: {
@@ -57,7 +55,7 @@ export default function DynaPreviewComponentsTable({ data: objects, useColumns, 
         title="Flows"
         collapsable
         className={classes.accordianWrapper}
-        data={clone(componentsMap?.Flow)}
+        data={customCloneDeep(componentsMap?.Flow)}
         useColumns={useColumns}
         defaultExpand />
       )}

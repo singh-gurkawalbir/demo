@@ -2,7 +2,6 @@ import React, { useMemo, useEffect } from 'react';
 import { useSelector, shallowEqual, useDispatch } from 'react-redux';
 import { useHistory, useRouteMatch } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
-import rfdc from 'rfdc';
 import lookupUtil from '../../../../utils/lookup';
 import actions from '../../../../actions';
 import { selectors } from '../../../../reducers';
@@ -15,8 +14,7 @@ import * as completers from '../../Editor/panels/Handlebars/autocompleteSetup/co
 import { emptyObject } from '../../../../constants';
 import { drawerPaths, buildDrawerUrl } from '../../../../utils/rightDrawer';
 import OutlinedButton from '../../../Buttons/OutlinedButton';
-
-const clone = rfdc({ proto: true });
+import customCloneDeep from '../../../../utils/customCloneDeep';
 
 const useStyles = makeStyles({
   button: {
@@ -33,7 +31,7 @@ export default function ManageLookup({ editorId }) {
   const tempHandlebarHelperFunction = useSelector(state =>
     selectors.editorHelperFunctions(state), shallowEqual
   );
-  const handlebarHelperFunction = useMemo(() => clone(tempHandlebarHelperFunction), [tempHandlebarHelperFunction]);
+  const handlebarHelperFunction = useMemo(() => customCloneDeep(tempHandlebarHelperFunction), [tempHandlebarHelperFunction]);
 
   const showLookup = useSelector(state => selectors.isEditorLookupSupported(state, editorId));
   const {resourceType, formKey, resourceId, flowId, lastValidData, editorLookups, fieldId} = useSelector(state => {
