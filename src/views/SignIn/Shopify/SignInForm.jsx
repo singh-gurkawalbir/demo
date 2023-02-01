@@ -106,7 +106,7 @@ function ForgotPassworLink({email = ''}) {
   );
 }
 
-export default function SignIn({dialogOpen, className}) {
+export default function SignIn({ dialogOpen, className, queryParam }) {
   const dispatch = useDispatch();
   const location = useLocation();
   const classes = useStyles();
@@ -135,8 +135,6 @@ export default function SignIn({dialogOpen, className}) {
 
     return errorMessage;
   });
-  const userEmail = useSelector(state => selectors.userProfileEmail(state));
-  const userProfileLinkedWithGoogle = useSelector(state => selectors.userProfileLinkedWithGoogle(state));
   const showError = useSelector(state => selectors.showAuthError(state));
 
   const handleOnChangeEmail = useCallback(e => {
@@ -155,11 +153,6 @@ export default function SignIn({dialogOpen, className}) {
     e.preventDefault();
     dispatch(actions.auth.signInWithGoogle(e?.target?.attemptedRoute?.value || e?.target?.elements?.attemptedRoute?.value));
   }, [dispatch]);
-
-  const handleReSignInWithGoogle = useCallback(e => {
-    e.preventDefault();
-    dispatch(actions.auth.reSignInWithGoogle(userEmail));
-  }, [dispatch, userEmail]);
 
   window.signedInWithGoogle = () => {
     reInitializeSession();
@@ -185,7 +178,7 @@ export default function SignIn({dialogOpen, className}) {
           type="email"
           variant="filled"
           placeholder="Email *"
-          value={dialogOpen ? userEmail : email}
+          value={email}
           onChange={handleOnChangeEmail}
           className={classes.textField}
           disabled={dialogOpen}
@@ -246,17 +239,7 @@ export default function SignIn({dialogOpen, className}) {
           </OutlinedButton>
         </form>
         )}
-        {dialogOpen && userEmail && userProfileLinkedWithGoogle && (
-        <form onSubmit={handleReSignInWithGoogle}>
-          <OutlinedButton
-            type="submit"
-            color="secondary"
-            className={classes.googleBtn}>
-            Sign in with Google
-          </OutlinedButton>
-        </form>
-        )}
-        <a className={classes.switchDomain} href="https://eu.integrator.ioundefined">Switch to EU domain</a>
+        {getDomain() !== 'eu.integrator.io' && <a className={classes.switchDomain} href={`https://eu.integrator.io/connection/shopify/oauth2callback?${queryParam}`}>Switch to EU domain</a>}
       </div>
       )}
     </div>

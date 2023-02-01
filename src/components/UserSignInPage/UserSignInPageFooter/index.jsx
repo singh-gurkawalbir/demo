@@ -20,23 +20,20 @@ export default function UserSignInPageFooter({linkLabel, linkText, link}) {
 
   return (
     <div>
-      {
-        // eslint-disable-next-line no-undef
-        ALLOW_SIGNUP === 'true' && (
-          <Typography variant="body2" >
-            {linkLabel}
-            <TextButton
-              data-test="signupOrSigninFooter"
-              className={classes.UserSignInPageFooterLink}
-              color="primary"
-              component={Link}
-              role="link"
-              to={getRoutePath(`/${link}`)}>
-              {linkText}
-            </TextButton>
-          </Typography>
-        )
-      }
+      {ALLOW_SIGNUP === 'true' && (
+      <Typography variant="body2" >
+        {linkLabel}
+        <TextButton
+          data-test="signupOrSigninFooter"
+          className={classes.UserSignInPageFooterLink}
+          color="primary"
+          component={Link}
+          role="link"
+          to={getRoutePath(`/${link}`)}>
+          {linkText}
+        </TextButton>
+      </Typography>
+      )}
     </div>
   );
 }
