@@ -1,6 +1,7 @@
 
 import { useCallback } from 'react';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
+import rfdc from 'rfdc';
 import resourceConstants from '../../../../../forms/constants/connection';
 import actions from '../../../../../actions';
 import { useSelectorMemo } from '../../../../../hooks';
@@ -8,6 +9,8 @@ import { selectors } from '../../../../../reducers';
 import useEnqueueSnackbar from '../../../../../hooks/enqueueSnackbar';
 import { emptyObject } from '../../../../../constants';
 import { useLoadIClientOnce } from '../../../../DynaForm/fields/DynaIclient';
+
+const clone = rfdc({ proto: true });
 
 export default function useHandleSaveAndAuth({formKey, resourceType, resourceId, parentContext}) {
   const resource = useSelectorMemo(
@@ -28,7 +31,7 @@ export default function useHandleSaveAndAuth({formKey, resourceType, resourceId,
   });
   const handleSaveAndAuthorizeConnection = useCallback(
     values => {
-      const newValues = { ...values };
+      const newValues = clone(values);
 
       if (
         resource._connectorId &&

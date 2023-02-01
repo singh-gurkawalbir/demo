@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useRouteMatch } from 'react-router-dom';
 import shallowEqual from 'react-redux/lib/utils/shallowEqual';
+import rfdc from 'rfdc';
 import PingMessageSnackbar from '../../../../PingMessageSnackbar';
 import actions from '../../../../../actions';
 import { selectors } from '../../../../../reducers/index';
@@ -10,6 +11,7 @@ import { PING_STATES } from '../../../../../reducers/comms/ping';
 import { getParentResourceContext } from '../../../../../utils/connections';
 
 const emptyObj = {};
+const clone = rfdc({ proto: true });
 
 export const PingMessage = props => {
   const { resourceId } = props;
@@ -51,7 +53,7 @@ export default function TestButton(props) {
 
   const handleTestConnection = useCallback(
     () => {
-      const newValues = { ...values };
+      const newValues = clone(values);
 
       if (!newValues['/_borrowConcurrencyFromConnectionId']) {
         newValues['/_borrowConcurrencyFromConnectionId'] = undefined;
