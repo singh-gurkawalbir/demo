@@ -375,6 +375,10 @@ export default function ConnectorInstallation() {
       form,
     } = step;
 
+    let NSpackageType = null;
+
+    if (step?.name.startsWith('Integrator Bundle')) { NSpackageType = 'suitebundle'; } else if (step?.name.startsWith('Integrator SuiteApp')) { NSpackageType = 'suiteapp'; }
+
     if (completed) {
       return false;
     }
@@ -461,27 +465,15 @@ export default function ConnectorInstallation() {
         );
 
         if (!_connectorId && step._connId) {
-          if (step.name.startsWith('Integrator SuiteBundle')) {
-            dispatch(
-              actions.integrationApp.templates.installer.verifyBundleOrPackageInstall(
-                integrationId,
-                step._connId,
-                installerFunction,
-                isFrameWork2,
-                'suitebundle'
-              )
-            );
-          } else {
-            dispatch(
-              actions.integrationApp.templates.installer.verifyBundleOrPackageInstall(
-                integrationId,
-                step._connId,
-                installerFunction,
-                isFrameWork2,
-                'suiteapp'
-              )
-            );
-          }
+          dispatch(
+            actions.integrationApp.templates.installer.verifyBundleOrPackageInstall(
+              integrationId,
+              step._connId,
+              installerFunction,
+              isFrameWork2,
+              NSpackageType
+            )
+          );
         } else if (isFrameWork2) {
           dispatch(
             actions.integrationApp.installer.scriptInstallStep(integrationId)

@@ -185,6 +185,10 @@ const UpgradeInstallation = forwardRef(({ parentId, parentUrl }, ref) => {
       form,
     } = step;
 
+    let NSpackageType = null;
+
+    if (step?.name.startsWith('Integrator Bundle')) { NSpackageType = 'suitebundle'; } else if (step?.name.startsWith('Integrator SuiteApp')) { NSpackageType = 'suiteapp'; }
+
     if (completed) {
       return false;
     }
@@ -271,27 +275,15 @@ const UpgradeInstallation = forwardRef(({ parentId, parentUrl }, ref) => {
         );
 
         if (!_connectorId && step._connId) {
-          if (step.name.startsWith('Integrator Bundle')) {
-            dispatch(
-              actions.integrationApp.templates.upgrade.installer.verifyBundleOrPackageInstall(
-                integrationId,
-                step._connId,
-                installerFunction,
-                isFrameWork2,
-                'suitebundle'
-              )
-            );
-          } else {
-            dispatch(
-              actions.integrationApp.templates.upgrade.installer.verifyBundleOrPackageInstall(
-                integrationId,
-                step._connId,
-                installerFunction,
-                isFrameWork2,
-                'suiteapp'
-              )
-            );
-          }
+          dispatch(
+            actions.integrationApp.templates.upgrade.installer.verifyBundleOrPackageInstall(
+              integrationId,
+              step._connId,
+              installerFunction,
+              isFrameWork2,
+              NSpackageType
+            )
+          );
         } else if (isFrameWork2) {
           dispatch(
             actions.integrationApp.upgrade.installer.scriptInstallStep(integrationId)

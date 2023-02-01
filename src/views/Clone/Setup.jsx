@@ -138,6 +138,9 @@ export default function Clone() {
   const handleStepClick = (step, conn) => {
     const { _connectionId, installURL, type, completed } = step;
     let bundleURL = installURL;
+    let NSpackageType = null;
+
+    if (step?.name.startsWith('Integrator Bundle')) { NSpackageType = 'suitebundle'; } else if (step?.name.startsWith('Integrator SuiteApp')) { NSpackageType = 'suiteapp'; }
 
     if (completed) {
       return false;
@@ -199,25 +202,14 @@ export default function Clone() {
             templateId
           )
         );
-        if (step.name.startsWith('Integrator Bundle')) {
-          dispatch(
-            actions.template.verifyBundleOrPackageInstall(
-              step,
-              { _id: step.options._connectionId },
-              templateId,
-              'suitebundle'
-            )
-          );
-        } else {
-          dispatch(
-            actions.template.verifyBundleOrPackageInstall(
-              step,
-              { _id: step.options._connectionId },
-              templateId,
-              'suiteapp'
-            )
-          );
-        }
+        dispatch(
+          actions.template.verifyBundleOrPackageInstall(
+            step,
+            { _id: step.options._connectionId },
+            templateId,
+            NSpackageType
+          )
+        );
       }
     } else if (type === INSTALL_STEP_TYPES.STACK) {
       const newStackId = generateNewId();

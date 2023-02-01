@@ -88,6 +88,9 @@ export default function InstallSteps({ integrationId, revisionId, onClose }) {
 
   const handleStepClick = step => {
     const { type, completed, isTriggered, _connectionId, sourceConnection, url } = step;
+    let NSpackageType = null;
+
+    if (step?.name.startsWith('Integrator Bundle')) { NSpackageType = 'suitebundle'; } else if (step?.name.startsWith('Integrator SuiteApp')) { NSpackageType = 'suiteapp'; }
 
     if (completed) {
       return false;
@@ -133,21 +136,12 @@ export default function InstallSteps({ integrationId, revisionId, onClose }) {
         if (step.connectionId) {
           // Incase of url step, step is expected to have a linked connectionId for which the bundle install is verified
           // If step is already triggered, first verify if package is installed and further install the step else show error
-          if (step.name.startsWith('Integrator Bundle')) {
-            dispatch(actions.integrationLCM.installSteps.verifyBundleOrPackageInstall({
-              integrationId,
-              connectionId: step.connectionId,
-              revisionId,
-              variant: 'suitebundle',
-            }));
-          } else {
-            dispatch(actions.integrationLCM.installSteps.verifyBundleOrPackageInstall({
-              integrationId,
-              connectionId: step.connectionId,
-              revisionId,
-              variant: 'suiteapp',
-            }));
-          }
+          dispatch(actions.integrationLCM.installSteps.verifyBundleOrPackageInstall({
+            integrationId,
+            connectionId: step.connectionId,
+            revisionId,
+            variant: NSpackageType,
+          }));
         }
       }
     } else if (!step.isTriggered) {
