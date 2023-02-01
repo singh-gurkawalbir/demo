@@ -1,5 +1,6 @@
-import { cloneDeep, keyBy } from 'lodash';
+import { keyBy } from 'lodash';
 import { GRAPH_ELEMENTS_TYPE } from '../../constants';
+import { customCloneDeep } from '../customCloneDeep';
 import { generateId } from '../string';
 import {
   getAllRouterPaths,
@@ -969,7 +970,7 @@ describe('addPageProcessors util function', () => {
       };
 
       test('should add at the end when index is -1', () => {
-        const flow1 = cloneDeep(flow);
+        const flow1 = customCloneDeep(flow);
 
         addPageProcessor(flow1, -1, '/routers/0/branches/0');
         expect(flow1).toEqual({
@@ -984,7 +985,7 @@ describe('addPageProcessors util function', () => {
         });
       });
       test('should add at the position when index is given', () => {
-        const flow1 = cloneDeep(flow);
+        const flow1 = customCloneDeep(flow);
 
         addPageProcessor(flow1, 0, '/routers/0/branches/0');
         expect(flow1).toEqual({
@@ -1000,7 +1001,7 @@ describe('addPageProcessors util function', () => {
       });
 
       test('should add at the position when index is given for given router', () => {
-        const flow1 = cloneDeep(flow);
+        const flow1 = customCloneDeep(flow);
 
         addPageProcessor(flow1, 0, '/routers/1/branches/0');
         expect(flow1).toEqual({
@@ -1115,7 +1116,7 @@ describe('deletePGOrPPStepForRouters util function test', () => {
 
   describe('should delete pageGenerators correctly', () => {
     test('should delete the pageGenerator by stepId', () => {
-      const flow = cloneDeep(flow1);
+      const flow = customCloneDeep(flow1);
 
       deletePGOrPPStepForRouters(flow, flow1, '1234', elementsMap);
       expect(flow).toEqual({
@@ -1124,7 +1125,7 @@ describe('deletePGOrPPStepForRouters util function test', () => {
       });
     });
     test('should delete the pageGenerator by stepId1', () => {
-      const flow = cloneDeep(flow1);
+      const flow = customCloneDeep(flow1);
 
       deletePGOrPPStepForRouters(flow, flow1, '5678', elementsMap);
       expect(flow).toEqual({
@@ -1133,13 +1134,13 @@ describe('deletePGOrPPStepForRouters util function test', () => {
       });
     });
     test('should not delete any step when invalid stepId is given', () => {
-      const flow = cloneDeep(flow1);
+      const flow = customCloneDeep(flow1);
 
       deletePGOrPPStepForRouters(flow, flow1, '56789', elementsMap);
       expect(flow).toEqual(flow1);
     });
     test('should add a empty pageGenerator if last pageGenerator is deleted', () => {
-      const flow = cloneDeep(flow1);
+      const flow = customCloneDeep(flow1);
 
       deletePGOrPPStepForRouters(flow, flow, '1234', elementsMap);
       deletePGOrPPStepForRouters(flow, flow, '5678', elementsMap);
@@ -1150,7 +1151,7 @@ describe('deletePGOrPPStepForRouters util function test', () => {
     });
   });
   test('should delete the pageProcessor correctly', () => {
-    const flow = cloneDeep(flow1);
+    const flow = customCloneDeep(flow1);
 
     deletePGOrPPStepForRouters(flow, flow, 'abcd', elementsMap);
     expect(flow).toEqual({
@@ -1159,7 +1160,7 @@ describe('deletePGOrPPStepForRouters util function test', () => {
     });
   });
   test('should not delete the pageProcessor if incorrect step passed', () => {
-    const flow = cloneDeep(flow1);
+    const flow = customCloneDeep(flow1);
 
     deletePGOrPPStepForRouters(flow, flow, 'abcd1', elementsMap);
     expect(flow).toEqual(flow1);
@@ -3105,7 +3106,7 @@ describe('splitPPArray util function test', () => {
 });
 describe('deleteUnUsedRouters function', () => {
   test('deleteUnUsedRouters function test', () => {
-    const flow3Clone = cloneDeep(flow3);
+    const flow3Clone = customCloneDeep(flow3);
 
     deleteUnUsedRouters(flow3Clone);
 

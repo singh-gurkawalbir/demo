@@ -1,8 +1,8 @@
 import produce from 'immer';
 import { isEqual } from 'lodash';
-import deepClone from 'lodash/cloneDeep';
 import { generateId } from '../../../utils/string';
 import actionTypes from '../../../actions/types';
+import { customCloneDeep } from '../../../utils/customCloneDeep';
 
 const emptyObj = {};
 // TODO: Support error message display
@@ -31,7 +31,7 @@ export default function reducer(state = {}, action) {
           resourceId,
           resourceType,
           status: 'received',
-          mappingsCopy: deepClone(mappings),
+          mappingsCopy: customCloneDeep(mappings),
         };
         break;
       case actionTypes.RESPONSE_MAPPING.INIT_FAILED:
@@ -66,7 +66,7 @@ export default function reducer(state = {}, action) {
       case actionTypes.RESPONSE_MAPPING.SAVE_COMPLETE:
         if (draft.mapping) {
           draft.mapping.saveStatus = 'completed';
-          draft.mapping.mappingsCopy = deepClone(draft.mapping.mappings);
+          draft.mapping.mappingsCopy = customCloneDeep(draft.mapping.mappings);
         }
         break;
       case actionTypes.RESPONSE_MAPPING.SAVE_FAILED:

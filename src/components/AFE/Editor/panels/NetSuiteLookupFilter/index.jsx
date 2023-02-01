@@ -12,7 +12,7 @@ import 'jQuery-QueryBuilder';
 import 'jQuery-QueryBuilder/dist/css/query-builder.default.css';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import jQuery from 'jquery';
-import { isEmpty, uniqBy, cloneDeep } from 'lodash';
+import { isEmpty, uniqBy } from 'lodash';
 import config from './config';
 import '../Filter/queryBuilder.css';
 import {
@@ -28,6 +28,7 @@ import actions from '../../../../../actions';
 import { useIsLoggable } from '../../../../IsLoggableContextProvider';
 import Spinner from '../../../../Spinner';
 import { message } from '../../../../../utils/messageStore';
+import { customCloneDeep } from '../../../../../utils/customCloneDeep';
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -75,7 +76,7 @@ export function NetSuiteLookupFilterPanelData({ id, editorId, filters: propFilte
   );
 
   useEffect(() => {
-    const qbRules = convertNetSuiteLookupFilterExpression(cloneDeep(rule), data);
+    const qbRules = convertNetSuiteLookupFilterExpression(customCloneDeep(rule), data);
 
     if (
         qbRules?.rules?.length === 1 &&

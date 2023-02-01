@@ -1,13 +1,13 @@
 import React from 'react';
-import { cloneDeep } from 'lodash';
 import { screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import TableBodyContent from '.';
 import { runServer } from '../../test/api/server';
 import { renderWithProviders, reduxStore, mockGetRequestOnce } from '../../test/test-utils';
+import { customCloneDeep } from '../../utils/customCloneDeep';
 
 async function initTableBodyContent({ props = {}, mappingStatus = 'requested', editorType = '', mappingPreviewType = '', adaptorType = 'NetSuiteImport' } = {}) {
-  const initialStore = cloneDeep(reduxStore);
+  const initialStore = customCloneDeep(reduxStore);
 
   initialStore.getState().session.mapping = {
     mapping: {

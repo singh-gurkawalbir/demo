@@ -1,13 +1,13 @@
 import React from 'react';
 import * as reactRedux from 'react-redux';
 import { MemoryRouter } from 'react-router-dom';
-import { cloneDeep } from 'lodash';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import MappingRow from './MappingRow';
 import actions from '../../actions';
 import { runServer } from '../../test/api/server';
 import { renderWithProviders, reduxStore } from '../../test/test-utils';
+import { customCloneDeep } from '../../utils/customCloneDeep';
 
 async function initMappingRow({
   props = {
@@ -24,7 +24,7 @@ async function initMappingRow({
   validationErrMsg = null,
   startKey,
 } = {}) {
-  const initialStore = cloneDeep(reduxStore);
+  const initialStore = customCloneDeep(reduxStore);
 
   initialStore.getState().session.mapping = {
     mapping: {

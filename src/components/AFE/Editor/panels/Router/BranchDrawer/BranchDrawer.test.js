@@ -3,11 +3,11 @@ import { screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import userEvent from '@testing-library/user-event';
 import * as reactRedux from 'react-redux';
-import { cloneDeep } from 'lodash';
 import { renderWithProviders, reduxStore } from '../../../../../../test/test-utils';
 import BranchDrawer from '.';
 import actions from '../../../../../../actions';
 import actionTypes from '../../../../../../actions/types';
+import { customCloneDeep } from '../../../../../../utils/customCloneDeep';
 
 const mockHistoryPush = jest.fn();
 const mockHistoryGoBack = jest.fn();
@@ -44,7 +44,7 @@ describe('branchDrawer tests', () => {
   let initialStore;
 
   beforeEach(() => {
-    initialStore = cloneDeep(reduxStore);
+    initialStore = customCloneDeep(reduxStore);
     useDispatchSpy = jest.spyOn(reactRedux, 'useDispatch');
     mockDispatchFn = jest.fn(action => {
       switch (action.type) {

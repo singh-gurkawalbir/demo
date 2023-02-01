@@ -3,13 +3,13 @@ import React from 'react';
 import {
   screen,
 } from '@testing-library/react';
-import cloneDeep from 'lodash/cloneDeep';
 import { MemoryRouter } from 'react-router-dom';
 import * as reactRedux from 'react-redux';
 import LoadResources from '.';
 import { runServer } from '../../test/api/server';
 import { renderWithProviders, reduxStore } from '../../test/test-utils';
 import actions from '../../actions';
+import { customCloneDeep } from '../../utils/customCloneDeep';
 
 async function initLoadResources({resources = 'resources', props = {}, children = '', initialStore = reduxStore, defaultAShareId = 'own'} = {}) {
   /* eslint no-param-reassign: "error" */
@@ -36,7 +36,7 @@ describe('loadResources component', () => {
   let useDispatchSpy;
 
   beforeEach(() => {
-    initialStore = cloneDeep(reduxStore);
+    initialStore = customCloneDeep(reduxStore);
     useDispatchSpy = jest.spyOn(reactRedux, 'useDispatch');
     mockDispatchFn = jest.fn(action => {
       switch (action.type) {

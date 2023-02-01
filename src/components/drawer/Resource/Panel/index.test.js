@@ -2,12 +2,12 @@
 import React from 'react';
 import { MemoryRouter, Route } from 'react-router-dom';
 import * as reactRedux from 'react-redux';
-import cloneDeep from 'lodash/cloneDeep';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { renderWithProviders, reduxStore } from '../../../../test/test-utils';
 import Panel, {isNestedDrawer} from '.';
 import actions from '../../../../actions';
+import { customCloneDeep } from '../../../../utils/customCloneDeep';
 
 const mockHistoryReplace = jest.fn();
 const mockClose = jest.fn();
@@ -107,7 +107,7 @@ describe('Panel tests', () => {
   let initialStore;
 
   beforeEach(() => {
-    initialStore = cloneDeep(reduxStore);
+    initialStore = customCloneDeep(reduxStore);
     useDispatchSpy = jest.spyOn(reactRedux, 'useDispatch');
     mockDispatchFn = jest.fn(action => {
       switch (action.type) {

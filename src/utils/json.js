@@ -1,7 +1,7 @@
 import isObject from 'lodash/isObject';
 import set from 'lodash/set';
-import cloneDeep from 'lodash/cloneDeep';
 import jsonPatch from 'fast-json-patch';
+import { customCloneDeep } from './customCloneDeep';
 
 export default {
   /*
@@ -127,7 +127,7 @@ export function getChangesPatchSet(updateFn, ...args) {
   if (!args.length) return [];
   try {
     const [object, ...remainingArgs] = args;
-    const clonedObject = cloneDeep(object);
+    const clonedObject = customCloneDeep(object);
     const observer = jsonPatch.observe(clonedObject);
 
     updateFn.apply(null, [clonedObject, ...remainingArgs]);

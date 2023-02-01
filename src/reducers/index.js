@@ -1,6 +1,5 @@
 /* eslint-disable no-param-reassign */
 import uniqBy from 'lodash/uniqBy';
-import cloneDeep from 'lodash/cloneDeep';
 import { combineReducers } from 'redux';
 import { createSelector } from 'reselect';
 import jsonPatch from 'fast-json-patch';
@@ -119,6 +118,7 @@ import { initializeFlowForReactFlow, getFlowAsyncKey } from '../utils/flows/flow
 import { HTTP_BASED_ADAPTORS } from '../utils/http';
 import { getAuditLogFilterKey } from '../constants/auditLog';
 import { SHOPIFY_APP_STORE_LINKS } from '../constants/urls';
+import { customCloneDeep } from '../utils/customCloneDeep';
 
 const emptyArray = [];
 const emptyObject = {};
@@ -2737,7 +2737,7 @@ selectors.mkGetMediaTypeOptions = () => {
 
       // remove the media type which is set on connection/dependent field , from options
       // cloning options so as to not affect original options
-      const modifiedOptions = cloneDeep(options);
+      const modifiedOptions = customCloneDeep(options);
 
       if (mediaTypeIndex !== -1) modifiedOptions.splice(mediaTypeIndex, 1);
 
@@ -5807,8 +5807,7 @@ selectors.filteredV2TreeData = createSelector(
   (v2TreeData, filter = [], lookups = [], searchKey) => {
     if (isEmpty(v2TreeData) || (!searchKey && (isEmpty(filter) || filter.includes('all')))) return {filteredTreeData: v2TreeData};
 
-    // ToDo: try replacing cloneDeep with something else
-    let filteredTreeData = cloneDeep(v2TreeData);
+    let filteredTreeData = customCloneDeep(v2TreeData);
     let expandedKeys;
     let searchCount;
 
@@ -7227,7 +7226,7 @@ selectors.revisionsFilter = (state, integrationId) => {
 selectors.filteredRevisions = createSelector(
   selectors.revisions,
   selectors.revisionsFilter,
-  (revisionsList, revisionsFilter) => getFilteredRevisions(cloneDeep(revisionsList), revisionsFilter)
+  (revisionsList, revisionsFilter) => getFilteredRevisions(customCloneDeep(revisionsList), revisionsFilter)
 );
 
 selectors.getCurrPageFilteredRevisions = createSelector(

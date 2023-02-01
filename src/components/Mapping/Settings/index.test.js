@@ -1,11 +1,11 @@
 import React from 'react';
-import { cloneDeep } from 'lodash';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter, Route } from 'react-router-dom';
 import SettingsDrawer from '.';
 import { runServer } from '../../../test/api/server';
 import { renderWithProviders, reduxStore } from '../../../test/test-utils';
+import { customCloneDeep } from '../../../utils/customCloneDeep';
 
 async function initSettingsDrawer({
   props = {
@@ -24,7 +24,7 @@ async function initSettingsDrawer({
   },
   lookupName = 'lookup_name_1',
 } = {}) {
-  const initialStore = cloneDeep(reduxStore);
+  const initialStore = customCloneDeep(reduxStore);
 
   initialStore.getState().session.integrationApps.settings = {
     'flow_id-integration_id': {

@@ -1,7 +1,7 @@
 import { original, produce } from 'immer';
 import { differenceWith, isEqual, isEmpty } from 'lodash';
-import deepClone from 'lodash/cloneDeep';
 import actionTypes from '../../../actions/types';
+import { customCloneDeep } from '../../../utils/customCloneDeep';
 import {
   isMappingEqual,
   compareV2Mappings,
@@ -39,7 +39,7 @@ export const expandRow = (draft, key) => {
 // when data type is updated
 export const updateChildrenProps = (children, parentNode, dataType) => {
   if (!children || !children.length) return children;
-  const childrenCopy = deepClone(children);
+  const childrenCopy = customCloneDeep(children);
 
   const {key, extractsArrayHelper} = parentNode;
   const newParentExtract = extractsArrayHelper?.[0]?.extract;
@@ -97,7 +97,7 @@ export const updateSourceDataType = (node, oldSourceDataType, newDataType) => {
 export const updateDestinationDataType = (draft, node, oldDataType, newDataType) => {
   if (!node) return node;
 
-  const newNode = deepClone(node);
+  const newNode = customCloneDeep(node);
   const newRowKey = generateId();
 
   // data type not changed, nothing to do
@@ -324,9 +324,9 @@ export default (state = {}, action) => {
           extractsTree,
           importSampleData,
           isGroupedOutput,
-          mappingsCopy: deepClone(mappings),
-          lookupsCopy: deepClone(lookups),
-          v2TreeDataCopy: deepClone(v2TreeData),
+          mappingsCopy: customCloneDeep(mappings),
+          lookupsCopy: customCloneDeep(lookups),
+          v2TreeDataCopy: customCloneDeep(v2TreeData),
         };
         break;
       }
@@ -477,9 +477,9 @@ export default (state = {}, action) => {
         if (draft.mapping) {
           draft.mapping.saveStatus = 'completed';
           draft.mapping.validationErrMsg = undefined;
-          draft.mapping.mappingsCopy = deepClone(draft.mapping.mappings);
-          draft.mapping.lookupsCopy = deepClone(draft.mapping.lookups);
-          draft.mapping.v2TreeDataCopy = deepClone(draft.mapping.v2TreeData);
+          draft.mapping.mappingsCopy = customCloneDeep(draft.mapping.mappings);
+          draft.mapping.lookupsCopy = customCloneDeep(draft.mapping.lookups);
+          draft.mapping.v2TreeDataCopy = customCloneDeep(draft.mapping.v2TreeData);
         }
         break;
       case actionTypes.MAPPING.SAVE_FAILED:

@@ -2,11 +2,11 @@
 import React from 'react';
 import { screen } from '@testing-library/react';
 import * as reactRedux from 'react-redux';
-import cloneDeep from 'lodash/cloneDeep';
 import userEvent from '@testing-library/user-event';
 import { renderWithProviders, reduxStore } from '../../../../../test/test-utils';
 import TransformPanel from '.';
 import actions from '../../../../../actions';
+import { customCloneDeep } from '../../../../../utils/customCloneDeep';
 
 jest.mock('../../../../DynaForm/fields/DynaKeyValue', () => ({
   __esModule: true,
@@ -40,7 +40,7 @@ describe('transformPanel tests', () => {
   let initialStore;
 
   beforeEach(() => {
-    initialStore = cloneDeep(reduxStore);
+    initialStore = customCloneDeep(reduxStore);
     useDispatchSpy = jest.spyOn(reactRedux, 'useDispatch');
     mockDispatchFn = jest.fn(action => {
       switch (action.type) {

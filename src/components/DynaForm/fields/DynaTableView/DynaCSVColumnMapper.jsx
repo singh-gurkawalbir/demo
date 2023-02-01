@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
-import { cloneDeep } from 'lodash';
 import DynaTableView from './DynaTable';
+import { customCloneDeep } from '../../../../utils/customCloneDeep';
 
 export default function DynaCSVColumnMapper(props) {
   const {
@@ -11,7 +11,7 @@ export default function DynaCSVColumnMapper(props) {
   } = props;
 
   const newValue = value.map(val => {
-    const v = cloneDeep(val);
+    const v = customCloneDeep(val);
 
     // We support both string/number type numbers in Ampersand so adding this translation for backward compatibility.
     v.column = v.column && !Number.isNaN(v.column) ? parseInt(v.column, 10) : v.column;

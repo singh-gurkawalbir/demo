@@ -1,14 +1,14 @@
 
 import React from 'react';
-import { cloneDeep } from 'lodash';
 import { screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import HttpMappingAssistant from './HttpMappingAssistant_afe';
 import { runServer } from '../../../test/api/server';
 import { renderWithProviders, reduxStore, mockPostRequestOnce } from '../../../test/test-utils';
+import { customCloneDeep } from '../../../utils/customCloneDeep';
 
 async function initHttpMappingAssistant({props = {} } = {}) {
-  const initialStore = cloneDeep(reduxStore);
+  const initialStore = customCloneDeep(reduxStore);
 
   initialStore.getState().session.editors = {
     httpPreview: {

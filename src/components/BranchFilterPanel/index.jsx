@@ -6,7 +6,7 @@ import React, {
   useCallback,
   useMemo,
 } from 'react';
-import { isEmpty, cloneDeep } from 'lodash';
+import { isEmpty } from 'lodash';
 import 'jQuery-QueryBuilder';
 import 'jQuery-QueryBuilder/dist/css/query-builder.default.css';
 // eslint-disable-next-line import/no-extraneous-dependencies
@@ -27,6 +27,7 @@ import actions from '../../actions';
 import { selectors } from '../../reducers';
 import getJSONPaths from '../../utils/jsonPaths';
 import { safeParse, isNumber } from '../../utils/string';
+import { customCloneDeep } from '../../utils/customCloneDeep';
 
 const defaultData = {};
 
@@ -589,7 +590,7 @@ export default function BranchFilterPanel({ editorId, position, type, rule, hand
         },
         valueGetter(rule, isTouched) {
           const ruleId = getFilterRuleId(rule);
-          const r = cloneDeep(rulesState[ruleId].data);
+          const r = customCloneDeep(rulesState[ruleId].data);
           let lhsValue = rule.$el
             .find(`.rule-filter-container [name=${rule.id}_filter]`)
             .val();

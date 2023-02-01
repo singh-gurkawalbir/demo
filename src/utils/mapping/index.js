@@ -1,4 +1,3 @@
-import deepClone from 'lodash/cloneDeep';
 import { uniqBy, isEmpty, isEqual, forEach, flattenDeep, uniq } from 'lodash';
 import { adaptorTypeMap, isNetSuiteBatchExport, isFileAdaptor, isAS2Resource} from '../resource';
 // eslint-disable-next-line import/no-self-import
@@ -16,6 +15,7 @@ import {generateCSVFields} from '../file';
 import jsonUtils from '../json';
 import { emptyList, emptyObject, FORM_SAVE_STATUS, MAPPING_SAVE_STATUS } from '../../constants';
 import errorMessageStore from '../errorStore';
+import { customCloneDeep } from '../customCloneDeep';
 
 const isCsvOrXlsxResource = resource => {
   const { file } = resource;
@@ -762,7 +762,7 @@ export const buildExtractsHelperFromExtract = ({
 // mark non active tabs children as hidden
 export const hideOtherTabRows = (node, newTabExtract = '', hidden, useOriginalNode) => {
   // ToDo (Yaser): check if we can remove the deep clone completely
-  const clonedNode = useOriginalNode ? node : deepClone(node);
+  const clonedNode = useOriginalNode ? node : customCloneDeep(node);
 
   if (!clonedNode || !clonedNode.children?.length) return clonedNode;
 
@@ -1176,7 +1176,7 @@ export const buildTreeFromV2Mappings = ({
   const v2Mappings = importResource.mappings || [];
 
   // creating deep copy of mapping object to avoid alteration to resource mapping object
-  const v2MappingsCopy = deepClone(v2Mappings);
+  const v2MappingsCopy = customCloneDeep(v2Mappings);
 
   const treeData = [];
   const emptyRowKey = generateId();
@@ -3191,7 +3191,7 @@ export default {
     }
 
     // creating deep copy of mapping object to avoid alteration to resource mapping object
-    const mappingCopy = deepClone(mappings);
+    const mappingCopy = customCloneDeep(mappings);
 
     if (!mappingCopy.fields) {
       mappingCopy.fields = [];

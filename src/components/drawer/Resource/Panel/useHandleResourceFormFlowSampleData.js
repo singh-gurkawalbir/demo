@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useCallback } from 'react';
-import { cloneDeep, debounce } from 'lodash';
+import { debounce } from 'lodash';
 import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import { selectors } from '../../../../reducers';
 import actions from '../../../../actions';
@@ -12,6 +12,7 @@ import {
   IMPORT_FLOW_DATA_STAGE,
 } from '../../../../utils/flowData';
 import { isNewId } from '../../../../utils/resource';
+import { customCloneDeep } from '../../../../utils/customCloneDeep';
 
 const ELIGIBLE_RESOURCE_TYPES = ['exports', 'imports'];
 const DEBOUNCE_DURATION = 300;
@@ -32,8 +33,8 @@ export default function useHandleResourceFormFlowSampleData(formKey) {
 
   const { formValues, oneToManyValues, formValuesWithoutOneToMany } = useSelector(state => {
     const formContext = selectors.formState(state, formKey) || {};
-    const formValues = cloneDeep(formContext.value || {});
-    const formValuesWithoutOneToMany = cloneDeep(formContext.value || {});
+    const formValues = customCloneDeep(formContext.value || {});
+    const formValuesWithoutOneToMany = customCloneDeep(formContext.value || {});
     const oneToManyValues = formValues['/oneToMany'] + formValues['/pathToMany'];
 
     delete formValuesWithoutOneToMany['/oneToMany'];

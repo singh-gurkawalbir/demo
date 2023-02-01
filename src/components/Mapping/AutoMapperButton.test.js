@@ -1,13 +1,13 @@
 import React from 'react';
 import * as reactRedux from 'react-redux';
 import { MemoryRouter } from 'react-router-dom';
-import { cloneDeep } from 'lodash';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import AutoMapperButton from './AutoMapperButton';
 import actions from '../../actions';
 import { runServer } from '../../test/api/server';
 import { renderWithProviders, reduxStore } from '../../test/test-utils';
+import { customCloneDeep } from '../../utils/customCloneDeep';
 
 async function initAutoMapperButton({
   props = {
@@ -17,7 +17,7 @@ async function initAutoMapperButton({
   failMsg = 'just failed for no reason',
   status = 'received',
 } = {}) {
-  const initialStore = cloneDeep(reduxStore);
+  const initialStore = customCloneDeep(reduxStore);
 
   initialStore.getState().session.mapping = {
     mapping: {

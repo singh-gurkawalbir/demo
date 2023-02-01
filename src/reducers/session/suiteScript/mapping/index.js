@@ -1,7 +1,7 @@
 import produce from 'immer';
 import {differenceWith, isEqual } from 'lodash';
-import deepClone from 'lodash/cloneDeep';
 import actionTypes from '../../../../actions/types';
+import { customCloneDeep } from '../../../../utils/customCloneDeep';
 import { generateId } from '../../../../utils/string';
 import { getSuiteScriptAppType, isMappingObjEqual } from '../../../../utils/suiteScript/mapping';
 
@@ -50,9 +50,9 @@ export default (state = {}, action) => {
 
         draft.mapping = {
           mappings: _mappings,
-          mappingsCopy: deepClone(_mappings),
+          mappingsCopy: customCloneDeep(_mappings),
           lookups,
-          lookupsCopy: deepClone(lookups),
+          lookupsCopy: customCloneDeep(lookups),
           ssLinkedConnectionId,
           integrationId,
           subRecordFields,
@@ -193,8 +193,8 @@ export default (state = {}, action) => {
       case actionTypes.SUITESCRIPT.MAPPING.SAVE_COMPLETE:
         draft.mapping.saveStatus = 'completed';
         draft.mapping.validationErrMsg = undefined;
-        draft.mapping.mappingsCopy = deepClone(draft.mapping.mappings);
-        draft.mapping.lookupsCopy = deepClone(draft.mapping.lookups);
+        draft.mapping.mappingsCopy = customCloneDeep(draft.mapping.mappings);
+        draft.mapping.lookupsCopy = customCloneDeep(draft.mapping.lookups);
         break;
       case actionTypes.SUITESCRIPT.MAPPING.SAVE_FAILED:
         draft.mapping.saveStatus = 'failed';
@@ -209,7 +209,7 @@ export default (state = {}, action) => {
         break;
       }
       case actionTypes.SUITESCRIPT.MAPPING.PATCH_EXTRACT_LIST: {
-        const extractList = deepClone(value);
+        const extractList = customCloneDeep(value);
 
         if (Array.isArray(extractList) && extractList.length) {
           const key = draft.mapping.lastModifiedRowKey;

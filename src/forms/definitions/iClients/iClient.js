@@ -1,6 +1,6 @@
-import { cloneDeep } from 'lodash';
 import { applicationsList } from '../../../constants/applications';
 import { CONNECTORS_TO_IGNORE } from '../../../constants';
+import { customCloneDeep } from '../../../utils/customCloneDeep';
 
 export default {
   init: (fieldMeta, resource, flow, httpConnectorData, application) => {
@@ -20,7 +20,7 @@ export default {
           key === 'oauth2.clientSecret' ||
           key === 'amazonmws.accessKeyId' ||
           key === 'amazonmws.secretKey') {
-          finalFieldMeta.fieldMap[key] = cloneDeep(fieldMeta.fieldMap[key]);
+          finalFieldMeta.fieldMap[key] = customCloneDeep(fieldMeta.fieldMap[key]);
         }
       });
 

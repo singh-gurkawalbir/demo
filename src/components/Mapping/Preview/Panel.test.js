@@ -1,6 +1,5 @@
 
 import React from 'react';
-import { cloneDeep } from 'lodash';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
@@ -9,6 +8,7 @@ import Panel from './Panel';
 import { runServer } from '../../../test/api/server';
 import { renderWithProviders, reduxStore, mockGetRequestOnce } from '../../../test/test-utils';
 import actions from '../../../actions';
+import { customCloneDeep } from '../../../utils/customCloneDeep';
 
 async function initPanel({props = {}, adaptorType = 'SalesforceImport', initialStore, searchLayoutable = true } = {}) {
   // eslint-disable-next-line no-param-reassign
@@ -146,7 +146,7 @@ describe('Panel component test cases', () => {
   let initialStore;
 
   beforeEach(() => {
-    initialStore = cloneDeep(reduxStore);
+    initialStore = customCloneDeep(reduxStore);
     useDispatchSpy = jest.spyOn(reactRedux, 'useDispatch');
     mockDispatchFn = jest.fn(action => {
       switch (action.type) {
