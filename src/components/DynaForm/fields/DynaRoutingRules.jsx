@@ -35,7 +35,7 @@ export default function DynaRoutingRules(props) {
     title,
     resourceId,
     resourceType,
-    isVanLicense = false,
+    isVanConnector = false,
   } = props;
   const [showEditor, setShowEditor] = useState(false);
   const handleEditorClick = useCallback(() => {
@@ -50,7 +50,7 @@ export default function DynaRoutingRules(props) {
   const licenseActionDetails = useSelector(state =>
     selectors.platformLicenseWithMetadata(state)
   );
-  const isVanLicenseAbsent = (isVanLicense && (licenseActionDetails.van === false));
+  const isVanLicenseAbsent = (isVanConnector && (licenseActionDetails.van === false));
 
   const handleClose = useCallback(() => {
     handleEditorClick();

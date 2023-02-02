@@ -78,21 +78,17 @@ export default function ConnectionVanLicenseStatusPanel({ className, resourceTyp
             <br /><b> Request access to VAN to securely exchange EDI messages with your trading partners.</b>
             <br />
             <br />
-            {licenseActionDetails.subscriptionActions.actions.indexOf(
-              'request-upgrade'
-            ) > -1 && (
-              <Tooltip title={upgradeRequested ? 'We have received your request and will be in touch soon.' : ''} placement="bottom-start" >
-                <span>
-                  <FilledButton
-                    onClick={onRequestUpgradeClick}
-                    disabled={upgradeRequested}
-                    id="request-van-upgrade-buttton"
+            <Tooltip title={upgradeRequested ? 'We have received your request and will be in touch soon.' : ''} placement="bottom-start" >
+              <span>
+                <FilledButton
+                  onClick={onRequestUpgradeClick}
+                  disabled={upgradeRequested}
+                  id="request-van-upgrade-buttton"
             >
-                    {!upgradeRequested ? 'Request upgrade' : 'Access Requested'}
-                  </FilledButton>
-                </span>
-              </Tooltip>
-            )}
+                  {!upgradeRequested ? 'Request upgrade' : 'Access Requested'}
+                </FilledButton>
+              </span>
+            </Tooltip>
           </Typography>
         </NotificationToaster>
       ) : vanLicensePresent}

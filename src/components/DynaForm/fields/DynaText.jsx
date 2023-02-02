@@ -89,7 +89,7 @@ function DynaText(props) {
     isLoggable,
     isApplicationPlaceholder = false,
     isLabelUpdate = false,
-    isVanLicense = false,
+    isVanConnector = false,
   } = props;
   const [valueChanged, setValueChanged] = useState(false);
 
@@ -103,7 +103,7 @@ function DynaText(props) {
     }
   }, [id, onFieldChange, options, valueChanged]);
   // eslint-disable-next-line react-hooks/rules-of-hooks
-  const match = isApplicationPlaceholder || isVanLicense ? useRouteMatch() : {};
+  const match = isApplicationPlaceholder || isVanConnector ? useRouteMatch() : {};
   const { id: resourceId, resourceType } = match.params || {};
   let dataResourceType;
   const { merged } =
@@ -130,7 +130,7 @@ function DynaText(props) {
   const licenseActionDetails = useSelector(state =>
     selectors.platformLicenseWithMetadata(state)
   );
-  const isVanLicenseAbsent = (isVanLicense && licenseActionDetails.van === false);
+  const isVanLicenseAbsent = (isVanConnector && licenseActionDetails.van === false);
 
   const handleFieldChange = event => {
     const { value, valueAsNumber } = event.target;
