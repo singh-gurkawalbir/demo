@@ -20,6 +20,8 @@ module.exports = {
   globals: {
     Atomics: 'readonly',
     SharedArrayBuffer: 'readonly',
+    ALLOW_SIGNUP: 'readonly',
+    ALLOW_GOOGLE_SIGNIN: 'readonly'
   },
   parserOptions: {
     ecmaFeatures: {

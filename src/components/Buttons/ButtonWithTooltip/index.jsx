@@ -7,10 +7,13 @@ export default function ButtonWithTooltip({
   className,
 }) {
   return (
-    <Tooltip key={tooltipProps.title} {...tooltipProps} className={className}>
-      <span>
-        {children}
-      </span>
-    </Tooltip>
+    tooltipProps?.title
+      ? (
+        <Tooltip key={tooltipProps.title} {...tooltipProps} className={className}>
+          <span>
+            {children}
+          </span>
+        </Tooltip>
+      ) : <span>{children}</span>
   );
 }

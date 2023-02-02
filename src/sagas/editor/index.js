@@ -373,9 +373,9 @@ export function* save({ id, context }) {
 
 export function* autoEvaluateProcessor({ id }) {
   const editor = yield select(selectors.editor, id);
-  const editorViolations = yield select(selectors.editorViolations, id);
+  const {dataError, ruleError} = (yield select(selectors.editorViolations, id)) || {};
 
-  if (!editor || (editorViolations && editorViolations.length)) {
+  if (!editor || dataError || ruleError) {
     return; // nothing to do...
   }
 

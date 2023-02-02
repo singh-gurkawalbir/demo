@@ -1,13 +1,13 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
+import { useLocation } from 'react-router-dom';
 import { makeStyles, Typography } from '@material-ui/core';
-import { Link } from 'react-router-dom';
 import SigninForm from './SignInForm';
 import CeligoLogo from '../../../components/CeligoLogo';
 import { getDomain } from '../../../utils/resource';
 import { selectors } from '../../../reducers';
-import { TextButton } from '../../../components/Buttons';
-import getImageUrl from '../../../utils/image';
+import UserSignInPageFooter from '../../../components/UserSignInPage/UserSignInPageFooter';
+import ShopifyLandingPageHeader from '../../LandingPages/Shopify/PageHeader';
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
@@ -93,25 +93,22 @@ const Title = () => {
 
   return (
     <Typography variant="h3" className={classes.title}>
-      Sign in
+      {getDomain() !== 'eu.integrator.io' ? 'Sign in' : 'Sign into EU domain'}
     </Typography>
   );
 };
 
 export default function Signin(props) {
   const classes = useStyles();
+  const { search } = useLocation();
+  const queryParams = new URLSearchParams(search);
 
   const isSignupCompleted = useSelector(state => selectors.signupStatus(state) === 'done');
   const signupMessage = useSelector(state => selectors.signupMessage(state));
 
   return (
     <div className={classes.wrapper}>
-      <div className={classes.headerBorder}>
-        <div className={classes.externalLink} onClick={() => { props.history.goBack(); }}>
-          <img src={getImageUrl('/images/backToShopify.png')} alt="backToShopify" />
-        </div>
-      </div>
-
+      <ShopifyLandingPageHeader />
       <div className={classes.signinWrapper}>
         <div className={classes.signinWrapperContent}>
           <div className={classes.logo}>
@@ -129,19 +126,16 @@ export default function Signin(props) {
             {...props}
             dialogOpen={false}
             className={classes.signInForm}
+            queryParam={queryParams}
           />
-          {getDomain() !== 'eu.integrator.io' && (
-          <Typography variant="body2" className={classes.signupLink}>
-            Don&apos;t have an account?
-            <TextButton
-              data-test="signup"
-              color="primary"
-              className={classes.link}
-              component={Link}
-              to="/signup">
-              Sign up
-            </TextButton>
-          </Typography>
+          {ALLOW_SIGNUP === 'true' && (
+          <div className={classes.signupLink}>
+            <UserSignInPageFooter
+              linkLabel="Don't have an account?"
+              linkText="Sign up"
+              link="signup"
+            />
+          </div>
           )}
         </div>
       </div>

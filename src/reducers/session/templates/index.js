@@ -125,7 +125,7 @@ export default function reducer(state = {}, action) {
 
             if (verifyBundleStep) {
               bundleStep = (draft[templateId].installSteps || []).find(
-                s => (s.application === verifyBundleStep && s.completed === false)
+                s => (s.application === verifyBundleStep && s.completed === false && !s.options?._connectionId)
               );
 
               if (bundleStep) {

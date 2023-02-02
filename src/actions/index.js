@@ -1081,22 +1081,24 @@ const integrationApp = {
   },
   templates: {
     installer: {
-      verifyBundleOrPackageInstall: (id, connectionId, installerFunction, isFrameWork2) =>
+      verifyBundleOrPackageInstall: (id, connectionId, installerFunction, isFrameWork2, variant) =>
         action(actionTypes.INTEGRATION_APPS.TEMPLATES.INSTALLER.VERIFY_BUNDLE_INSTALL, {
           id,
           connectionId,
           installerFunction,
           isFrameWork2,
+          variant,
         }),
     },
     upgrade: {
       installer: {
-        verifyBundleOrPackageInstall: (id, connectionId, installerFunction, isFrameWork2) =>
+        verifyBundleOrPackageInstall: (id, connectionId, installerFunction, isFrameWork2, variant) =>
           action(actionTypes.INTEGRATION_APPS.TEMPLATES.INSTALLER.VERIFY_BUNDLE_INSTALL, {
             id,
             connectionId,
             installerFunction,
             isFrameWork2,
+            variant,
           }),
       },
     },
@@ -1322,11 +1324,12 @@ const template = {
     action(actionTypes.TEMPLATE.CLEAR_UPLOADED, { templateId }),
   clearTemplate: templateId =>
     action(actionTypes.TEMPLATE.CLEAR_TEMPLATE, { templateId }),
-  verifyBundleOrPackageInstall: (step, connection, templateId) =>
+  verifyBundleOrPackageInstall: (step, connection, templateId, variant) =>
     action(actionTypes.TEMPLATE.VERIFY_BUNDLE_INSTALL, {
       step,
       connection,
       templateId,
+      variant,
     }),
   publish: {
     request: (templateId, isPublished) =>
@@ -1828,10 +1831,14 @@ const resourceForm = {
     }),
   clear: (resourceType, resourceId) =>
     action(actionTypes.RESOURCE_FORM.CLEAR, { resourceType, resourceId }),
-  showBundleInstallNotification: (bundleVersion, bundleUrl, resourceType, resourceId) =>
-    action(actionTypes.RESOURCE_FORM.SHOW_BUNDLE_INSTALL_NOTIFICATION, { bundleVersion, bundleUrl, resourceType, resourceId }),
+  showBundleInstallNotification: (bundleUrl, resourceType, resourceId) =>
+    action(actionTypes.RESOURCE_FORM.SHOW_BUNDLE_INSTALL_NOTIFICATION, {bundleUrl, resourceType, resourceId }),
   hideBundleInstallNotification: (resourceType, resourceId) =>
     action(actionTypes.RESOURCE_FORM.HIDE_BUNDLE_INSTALL_NOTIFICATION, { resourceType, resourceId }),
+  showSuiteAppInstallNotification: (suiteAppUrl, resourceType, resourceId) =>
+    action(actionTypes.RESOURCE_FORM.SHOW_SUITEAPP_INSTALL_NOTIFICATION, {suiteAppUrl, resourceType, resourceId}),
+  hideSuiteAppInstallNotification: (resourceType, resourceId) =>
+    action(actionTypes.RESOURCE_FORM.HIDE_SUITEAPP_INSTALL_NOTIFICATION, { resourceType, resourceId }),
 };
 const accessToken = {
   displayToken: id => action(actionTypes.ACCESSTOKEN.DISPLAY, { id }),
@@ -2584,11 +2591,12 @@ const integrationLCM = {
         connectionId,
         openOauthConnection,
       }),
-    verifyBundleOrPackageInstall: ({ revisionId, connectionId, integrationId }) =>
+    verifyBundleOrPackageInstall: ({ revisionId, connectionId, integrationId, variant}) =>
       action(actionTypes.INTEGRATION_LCM.INSTALL_STEPS.STEP.VERIFY_BUNDLE_INSTALL, {
         revisionId,
         connectionId,
         integrationId,
+        variant,
       }),
   },
   revisions: {
