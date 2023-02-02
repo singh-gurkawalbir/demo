@@ -150,7 +150,6 @@ export default function VerifyApp() {
               className={classes.errorNotification}
             >
               <Typography
-                data-private
                 component="div"
                 variant="h5"
                 className={classes.font}
@@ -162,7 +161,6 @@ export default function VerifyApp() {
             </NotificationToaster>
             <div className={classes.miniCard}>
               <Typography
-                data-private
                 component="h5"
                 variant="h5"
               >
@@ -180,7 +178,6 @@ export default function VerifyApp() {
               </Typography>
               <div className={classes.divider} />
               <Typography
-                data-private
                 component="h5"
                 variant="h5"
               >
