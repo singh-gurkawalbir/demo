@@ -61,11 +61,9 @@ function initJobTable({
   flowJobsData,
   history,
 }) {
-  const mustateState = draft => {
+  mutateStore(initialStore, draft => {
     draft.data.jobs = flowJobsData;
-  };
-
-  mutateStore(initialStore, mustateState);
+  });
 
   const ui = (
     <Router history={history}>

@@ -12,7 +12,7 @@ import actions from '../../actions';
 const initialStore = reduxStore;
 
 function initInstallation(props = {}) {
-  const mustateState = draft => {
+  mutateStore(initialStore, draft => {
     draft.data.resources.integrations = [{
       _id: '62bd4ab37b94d20de64e9eaa',
       lastModified: '2022-06-30T07:03:15.558Z',
@@ -84,9 +84,7 @@ function initInstallation(props = {}) {
         },
       },
     }];
-  };
-
-  mutateStore(initialStore, mustateState);
+  });
 
   const ui = (<MemoryRouter><InstallationStep {...props} /></MemoryRouter>);
 

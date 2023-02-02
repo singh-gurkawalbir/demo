@@ -16,7 +16,7 @@ function initRetryTableFilters({
   props = {},
   filters,
 } = {}) {
-  const mustateState = draft => {
+  mutateStore(initialStore, draft => {
     draft.session.filters = filters;
     draft.user.preferences = {
       environment: 'production',
@@ -166,9 +166,7 @@ function initRetryTableFilters({
         },
       },
     };
-  };
-
-  mutateStore(initialStore, mustateState);
+  });
 
   const ui = (
     <MemoryRouter>

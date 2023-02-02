@@ -14,7 +14,7 @@ function initMultiSelectUsersFilter({
   props = {},
   filters,
 } = {}) {
-  const mustateState = draft => {
+  mutateStore(initialStore, draft => {
     draft.session.filters = filters;
     draft.user.preferences = {
       environment: 'production',
@@ -164,9 +164,7 @@ function initMultiSelectUsersFilter({
         },
       },
     };
-  };
-
-  mutateStore(initialStore, mustateState);
+  });
 
   const ui = (
     <MemoryRouter>

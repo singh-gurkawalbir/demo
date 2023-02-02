@@ -22,7 +22,7 @@ function initJobActionsMenu({
   isFlowBuilderView,
   networkCommsData,
 }) {
-  const mustateState = draft => {
+  mutateStore(initialStore, draft => {
     draft.data.resources.integrations = [{
       _id: '123',
       disabled: false,
@@ -56,9 +56,7 @@ function initJobActionsMenu({
       _id: '9012',
     }];
     draft.comms.networkComms = networkCommsData;
-  };
-
-  mutateStore(initialStore, mustateState);
+  });
 
   const ui = (
     <ConfirmDialogProvider>

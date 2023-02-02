@@ -23,7 +23,7 @@ function initJobErrorTable({
   onCloseClick,
   jobErrorsPreviewStatus,
 }) {
-  const mustateState = draft => {
+  mutateStore(initialStore, draft => {
     draft.session.jobErrorsPreview = {
       123: {
         status: jobErrorsPreviewStatus,
@@ -48,9 +48,7 @@ function initJobErrorTable({
         currentPage: 0,
       },
     };
-  };
-
-  mutateStore(initialStore, mustateState);
+  });
 
   const ui = (
     <ConfirmDialogProvider>

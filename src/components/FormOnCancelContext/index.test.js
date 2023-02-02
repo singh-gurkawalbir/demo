@@ -37,15 +37,13 @@ async function inituseFormOnCancel() {
   let returnData;
   const initialStore = getCreatedStore();
 
-  const mustateState = draft => {
+  mutateStore(initialStore, draft => {
     draft.session.editors[key] = {
       data: 'abc',
       defaultData: 'def',
     };
     draft.session.asyncTask[key] = { status };
-  };
-
-  mutateStore(initialStore, mustateState);
+  });
 
   const DummyComponent = () => {
     const { cancelTriggeredForAsyncKey } = useFormOnCancelContext(key);

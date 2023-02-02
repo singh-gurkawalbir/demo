@@ -27,11 +27,9 @@ describe('tests for useFormContext hook', () => {
       type: 'csv',
     };
 
-    const mustateState = draft => {
+    mutateStore(initialStore, draft => {
       draft.session.form[formKey] = sampleForm;
-    };
-
-    mutateStore(initialStore, mustateState);
+    });
 
     const formState = initUseFormContext(formKey, initialStore);
 

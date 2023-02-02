@@ -23,11 +23,9 @@ async function initFilters({
   isFlowBuilderView,
   filtersData,
 }) {
-  const mustateState = draft => {
+  mutateStore(initialStore, draft => {
     draft.session.filters = filtersData;
-  };
-
-  mutateStore(initialStore, mustateState);
+  });
   const ui = (
     <MemoryRouter>
       <Filters

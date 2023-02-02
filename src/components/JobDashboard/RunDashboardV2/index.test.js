@@ -9,7 +9,7 @@ import { getCreatedStore } from '../../../store';
 let initialStore;
 
 function initRunDashboardV2({flowId, statusData}) {
-  const mustateState = draft => {
+  mutateStore(initialStore, draft => {
     draft.data.resources.integrations = [{
       _id: '12345',
       name: 'Test integration name',
@@ -50,9 +50,7 @@ function initRunDashboardV2({flowId, statusData}) {
         },
       },
     };
-  };
-
-  mutateStore(initialStore, mustateState);
+  });
   const ui = (
     <RunDashboardV2 flowId={flowId} />
   );

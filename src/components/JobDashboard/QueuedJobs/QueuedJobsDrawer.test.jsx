@@ -12,7 +12,7 @@ import { getCreatedStore } from '../../../store';
 let initialStore;
 
 function initQueuedJobsDrawer({integrationId, sessionConnectionData, queueSize}) {
-  const mustateState = draft => {
+  mutateStore(initialStore, draft => {
     draft.user.preferences = {environment: 'production'};
     draft.data.resources.integrations = [{
       _id: '12345',
@@ -59,9 +59,7 @@ function initQueuedJobsDrawer({integrationId, sessionConnectionData, queueSize})
       _integrationId: '12345',
     }];
     draft.session.connections = sessionConnectionData;
-  };
-
-  mutateStore(initialStore, mustateState);
+  });
   const ui = (
     <MemoryRouter
       initialEntries={[{pathname: '/dashboard/runningFlows/flows/67890/queuedJobs'}]}

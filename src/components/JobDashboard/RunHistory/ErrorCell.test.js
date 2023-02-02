@@ -11,7 +11,7 @@ import { getCreatedStore } from '../../../store';
 let initialStore;
 
 function initErrorCell({job, disabled}) {
-  const mustateState = draft => {
+  mutateStore(initialStore, draft => {
     draft.data.resources.integrations = [{
       _id: '12345',
       name: 'Test integration name',
@@ -43,9 +43,7 @@ function initErrorCell({job, disabled}) {
       name: 'Test import',
       _integrationId: '12345',
     }];
-  };
-
-  mutateStore(initialStore, mustateState);
+  });
   const ui = (
     <MemoryRouter>
       <ErrorCell job={job} disabled={disabled} />

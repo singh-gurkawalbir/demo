@@ -6,18 +6,20 @@ import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import ManageLookup from '.';
 import { runServer } from '../../../test/api/server';
-import { renderWithProviders, reduxStore, mockGetRequestOnce } from '../../../test/test-utils';
+import { renderWithProviders, reduxStore, mockGetRequestOnce, mutateStore } from '../../../test/test-utils';
 
 async function initManageLookup({ props, adaptorType = 'HTTPImport' } = {}) {
   const initialStore = reduxStore;
 
-  initialStore.getState().data.resources = {
-    imports: [{
-      _id: 'resource_id_1',
-      adaptorType,
-      _connectionId: 'connection_id_1',
-    }],
-  };
+  mutateStore(initialStore, draft => {
+    draft.data.resources = {
+      imports: [{
+        _id: 'resource_id_1',
+        adaptorType,
+        _connectionId: 'connection_id_1',
+      }],
+    };
+  });
   const ui = (
     <MemoryRouter>
       <ManageLookup {...props} />

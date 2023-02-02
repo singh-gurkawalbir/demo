@@ -13,7 +13,7 @@ import { mutateStore, renderWithProviders } from '../../../../test/test-utils';
 let initialStore;
 
 async function initFilters({filterKey = 'completedFlows', completedJobs, dataRetentionPeriod, defaultAShareId}) {
-  const mustateState = draft => {
+  mutateStore(initialStore, draft => {
     draft.data.resources.integrations = [
       {
         _id: 'integration1',
@@ -70,9 +70,7 @@ async function initFilters({filterKey = 'completedFlows', completedJobs, dataRet
         },
       },
     ];
-  };
-
-  mutateStore(initialStore, mustateState);
+  });
   const ui = (
     <MemoryRouter
       initialEntries={[{pathname: `/dashboard/${filterKey}`}]}

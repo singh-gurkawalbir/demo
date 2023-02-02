@@ -11,7 +11,7 @@ import { getCreatedStore } from '../../../store';
 let initialStore;
 
 function initRunHistory({flowId, runHistoryData, filterData, dataRetentionPeriod, defaultAShareId}) {
-  const mustateState = draft => {
+  mutateStore(initialStore, draft => {
     draft.session.errorManagement = {
       runHistory: {
         [flowId]: runHistoryData,
@@ -66,9 +66,7 @@ function initRunHistory({flowId, runHistoryData, filterData, dataRetentionPeriod
         },
       },
     ];
-  };
-
-  mutateStore(initialStore, mustateState);
+  });
   const ui = (
     <RunHistory flowId={flowId} />
   );

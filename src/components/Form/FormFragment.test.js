@@ -81,7 +81,8 @@ describe('test suite for Form Fragment', () => {
       ],
     };
     const initialStore = getCreatedStore();
-    const mustateState = draft => {
+
+    mutateStore(initialStore, draft => {
       draft.session.form[props.formKey] = {
         fields: {
           type: {
@@ -92,9 +93,7 @@ describe('test suite for Form Fragment', () => {
           },
         },
       };
-    };
-
-    mutateStore(initialStore, mustateState);
+    });
 
     renderWithProviders(<FormFragment {...props} />, {initialStore});
     expect(screen.getByText('Export type')).toBeInTheDocument();
@@ -140,7 +139,7 @@ describe('test suite for Form Fragment', () => {
     };
     const initialStore = getCreatedStore();
 
-    const mustateState = draft => {
+    mutateStore(initialStore, draft => {
       draft.session.form[props.formKey] = {
         fields: {
           type: {
@@ -148,9 +147,7 @@ describe('test suite for Form Fragment', () => {
           },
         },
       };
-    };
-
-    mutateStore(initialStore, mustateState);
+    });
 
     renderWithProviders(<FormFragment {...props} />, {initialStore});
     const bodyEle = document.querySelector('body');
@@ -174,7 +171,8 @@ describe('test suite for Form Fragment', () => {
       ],
     };
     const initialStore = getCreatedStore();
-    const mustateState = draft => {
+
+    mutateStore(initialStore, draft => {
       draft.session.form[props.formKey] = {
         fields: {
           uri: {
@@ -182,9 +180,7 @@ describe('test suite for Form Fragment', () => {
           },
         },
       };
-    };
-
-    mutateStore(initialStore, mustateState);
+    });
 
     try {
       renderWithProviders(<FormFragment {...props} />, {initialStore});
@@ -200,13 +196,12 @@ describe('test suite for Form Fragment', () => {
       formKey: 'exports-123',
     };
     const initialStore = getCreatedStore();
-    const mustateState = draft => {
+
+    mutateStore(initialStore, draft => {
       draft.session.form[props.formKey] = {
         fields: { },
       };
-    };
-
-    mutateStore(initialStore, mustateState);
+    });
 
     renderWithProviders(<FormFragment {...props} />, {initialStore});
     expect(document.querySelector('body > div')).toBeEmptyDOMElement();

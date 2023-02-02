@@ -6,80 +6,82 @@ import userEvent from '@testing-library/user-event';
 import TopPanel from './TopPanel';
 import actions from '../../actions';
 import { runServer } from '../../test/api/server';
-import { renderWithProviders, reduxStore } from '../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore } from '../../test/test-utils';
 import customCloneDeep from '../../utils/customCloneDeep';
 
 async function initTopPanel({ props = {}, adaptorType = 'HTTPImport' } = {}) {
   const initialStore = customCloneDeep(reduxStore);
 
-  initialStore.getState().data.resources = {
-    imports: [{
-      _id: 'import_id',
-      _connectionId: 'connection_id_1',
-      adaptorType,
-      sampleData: {
-        name: 'name',
-      },
-      mapping: {
-        fields: [{
-          generate: props.subRecordMappingId,
-          subRecordMapping: {
-            recordType: 'inventorydetail',
-            jsonPath: 'mediaitem',
-          },
-        }, {
-          generate: 'generate_2',
-          lookupName: 'lookup_name',
-        }],
-      },
-    }, {
-      _id: 'import_id_2',
-      _connectorId: 'connector_id',
-      _connectionId: 'connection_id_1',
-      adaptorType,
-      sampleData: {
-        name: 'name',
-      },
-      mapping: {
-        fields: [{
-          generate: 'generate_2',
-          lookupName: 'lookup_name',
-        }],
-      },
-    }],
-    flows: [{
-      _id: props.flowId,
-    }],
-    exports: [{
-      _id: 'export_id',
-    }],
-  };
-  initialStore.getState().session.flowData = {
-    flow_id: {
-      pageGenerators: [{
-        type: 'export',
-        _exportId: 'export_id',
-      }],
-      pageProcessors: [{
-        type: 'import',
-        _importId: props.importId,
-        sampleDataStage: {
-          status: 'requested',
+  mutateStore(initialStore, draft => {
+    draft.data.resources = {
+      imports: [{
+        _id: 'import_id',
+        _connectionId: 'connection_id_1',
+        adaptorType,
+        sampleData: {
+          name: 'name',
+        },
+        mapping: {
+          fields: [{
+            generate: props.subRecordMappingId,
+            subRecordMapping: {
+              recordType: 'inventorydetail',
+              jsonPath: 'mediaitem',
+            },
+          }, {
+            generate: 'generate_2',
+            lookupName: 'lookup_name',
+          }],
+        },
+      }, {
+        _id: 'import_id_2',
+        _connectorId: 'connector_id',
+        _connectionId: 'connection_id_1',
+        adaptorType,
+        sampleData: {
+          name: 'name',
+        },
+        mapping: {
+          fields: [{
+            generate: 'generate_2',
+            lookupName: 'lookup_name',
+          }],
         },
       }],
-      pageGeneratorsMap: [],
-      pageProcessorsMap: [],
-    },
-  };
-  initialStore.getState().session.importSampleData = {
-    import_id_2: {
-      status: 'requested',
-      data: {
-        No: '10000',
-        Name: 'Adatum Corporation',
+      flows: [{
+        _id: props.flowId,
+      }],
+      exports: [{
+        _id: 'export_id',
+      }],
+    };
+    draft.session.flowData = {
+      flow_id: {
+        pageGenerators: [{
+          type: 'export',
+          _exportId: 'export_id',
+        }],
+        pageProcessors: [{
+          type: 'import',
+          _importId: props.importId,
+          sampleDataStage: {
+            status: 'requested',
+          },
+        }],
+        pageGeneratorsMap: [],
+        pageProcessorsMap: [],
       },
-    },
-  };
+    };
+    draft.session.importSampleData = {
+      import_id_2: {
+        status: 'requested',
+        data: {
+          No: '10000',
+          Name: 'Adatum Corporation',
+        },
+      },
+    };
+  });
   const ui = (
     <MemoryRouter>
       <TopPanel {...props} />

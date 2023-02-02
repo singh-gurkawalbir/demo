@@ -8,11 +8,9 @@ import {mutateStore, renderWithProviders} from '../../../../test/test-utils';
 let initialStore;
 
 async function initCompletedFlows(data) {
-  const mustateState = draft => {
+  mutateStore(initialStore, draft => {
     draft.data.completedJobs = data;
-  };
-
-  mutateStore(initialStore, mustateState);
+  });
   const ui = (
     <CompletedFlows />
   );

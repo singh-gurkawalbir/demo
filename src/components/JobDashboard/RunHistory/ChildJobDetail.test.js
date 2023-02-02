@@ -9,7 +9,7 @@ import { mutateStore, renderWithProviders } from '../../../test/test-utils';
 let initialStore;
 
 function initChildJobDetail({job}) {
-  const mustateState = draft => {
+  mutateStore(initialStore, draft => {
     draft.data.resources.exports = [
       {
         _id: 12345,
@@ -25,9 +25,7 @@ function initChildJobDetail({job}) {
         _id: 34567,
       },
     ];
-  };
-
-  mutateStore(initialStore, mustateState);
+  });
   const ui = (
     <MemoryRouter>
       <ChildJobDetail job={job} />

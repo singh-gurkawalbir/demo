@@ -25,7 +25,7 @@ async function initErrorDrawer({
   jobErrors,
   jobRetryObjects,
 }) {
-  const mustateState = draft => {
+  mutateStore(initialStore, draft => {
     draft.data.jobs = {
       flowJobs: [
         {
@@ -95,9 +95,7 @@ async function initErrorDrawer({
       numImports: 1,
       disabled: false,
     }];
-  };
-
-  mutateStore(initialStore, mustateState);
+  });
   const ui = (
     <MemoryRouter
       initialEntries={[{pathname: '/integrations/09876/flowBuilder/54321/viewErrors'}]}

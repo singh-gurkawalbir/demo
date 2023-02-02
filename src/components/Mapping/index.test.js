@@ -3,48 +3,50 @@ import { screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import TableBodyContent from '.';
 import { runServer } from '../../test/api/server';
-import { renderWithProviders, reduxStore, mockGetRequestOnce } from '../../test/test-utils';
+import { renderWithProviders, reduxStore, mockGetRequestOnce, mutateStore } from '../../test/test-utils';
 import customCloneDeep from '../../utils/customCloneDeep';
 
 async function initTableBodyContent({ props = {}, mappingStatus = 'requested', editorType = '', mappingPreviewType = '', adaptorType = 'NetSuiteImport' } = {}) {
   const initialStore = customCloneDeep(reduxStore);
 
-  initialStore.getState().session.mapping = {
-    mapping: {
-      status: mappingStatus,
-      mappings: [],
-      subRecordMappingId: props.subRecordMappingId,
-    },
-  };
-  initialStore.getState().data.resources = {
-    imports: [{
-      _id: props.importId,
-      _connectionId: 'connection_id_1',
-      adaptorType,
-      mappings: {
-        fields: [],
-        lists: [{
-          generate: 'item',
-          fields: [{
-            generate: 'celigo_inventorydetail',
-            subRecordMapping: {
-              recordType: 'inventorydetail',
-              jsonPath: 'mediaitem',
-            },
+  mutateStore(initialStore, draft => {
+    draft.session.mapping = {
+      mapping: {
+        status: mappingStatus,
+        mappings: [],
+        subRecordMappingId: props.subRecordMappingId,
+      },
+    };
+    draft.data.resources = {
+      imports: [{
+        _id: props.importId,
+        _connectionId: 'connection_id_1',
+        adaptorType,
+        mappings: {
+          fields: [],
+          lists: [{
+            generate: 'item',
+            fields: [{
+              generate: 'celigo_inventorydetail',
+              subRecordMapping: {
+                recordType: 'inventorydetail',
+                jsonPath: 'mediaitem',
+              },
+            }],
           }],
-        }],
+        },
+        http: {
+          requestMediaType: 'xml',
+        },
+      }],
+    };
+    draft.session.editors = {
+      [`mappings-${props.importId}`]: {
+        editorType,
+        mappingPreviewType,
       },
-      http: {
-        requestMediaType: 'xml',
-      },
-    }],
-  };
-  initialStore.getState().session.editors = {
-    [`mappings-${props.importId}`]: {
-      editorType,
-      mappingPreviewType,
-    },
-  };
+    };
+  });
   const ui = (
     <MemoryRouter>
       <TableBodyContent {...props} />

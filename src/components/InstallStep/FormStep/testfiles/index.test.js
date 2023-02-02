@@ -11,7 +11,8 @@ import {getCreatedStore} from '../../../../store';
 
 function initFormDrawer(props = {}) {
   const initialStore = getCreatedStore();
-  const mustateState = draft => {
+
+  mutateStore(initialStore, draft => {
     draft.data.resources.integrations = [{
       _id: '62beb29aa0f5f2144816f80c',
       lastModified: '2022-07-01T08:39:31.036Z',
@@ -131,9 +132,7 @@ function initFormDrawer(props = {}) {
     }];
     draft.session.form = {'connections-new-w1g0iscy_': {}};
     draft.session.form['connections-new-w1g0iscy_'] = formProps;
-  };
-
-  mutateStore(initialStore, mustateState);
+  });
 
   const ui = (
     <MemoryRouter

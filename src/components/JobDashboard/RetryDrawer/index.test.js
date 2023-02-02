@@ -12,13 +12,11 @@ import { runServer } from '../../../test/api/server';
 let initialStore;
 
 async function initRetryDawer({height, jobId, flowJobId, retryId, retryData}) {
-  const mustateState = draft => {
+  mutateStore(initialStore, draft => {
     draft.data.jobs.retryObjects[retryId] = {
       retryData,
     };
-  };
-
-  mutateStore(initialStore, mustateState);
+  });
   const ui = (
     <MemoryRouter
       initialEntries={[{pathname: `/integrations/1234/dashboard/viewErrors/editRetry/${retryId}`}]}

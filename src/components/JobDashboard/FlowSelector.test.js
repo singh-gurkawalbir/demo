@@ -9,7 +9,7 @@ import { getCreatedStore } from '../../store';
 let initialStore;
 
 function initFlowSelector({integrationId, childId, value, onChange}) {
-  const mustateState = draft => {
+  mutateStore(initialStore, draft => {
     draft.data.resources.integrations = [{
       _id: '12345',
       name: 'Test integration name',
@@ -90,9 +90,7 @@ function initFlowSelector({integrationId, childId, value, onChange}) {
       _integrationId: '67839',
       _connectorId: '328e9',
     }];
-  };
-
-  mutateStore(initialStore, mustateState);
+  });
 
   const ui = (
     <FlowSelector integrationId={integrationId} childId={childId} value={value} onChange={onChange} />

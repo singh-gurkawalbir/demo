@@ -12,7 +12,7 @@ let initialStore;
 
 async function initRunningFlows(dashboardTab, runningJobsStatus, runningJobsData, renderFun, store) {
   if (store) { initialStore = store; } else {
-    const mustateState = draft => {
+    mutateStore(initialStore, draft => {
       draft.data.runningJobs = {runningJobs: runningJobsData, status: runningJobsStatus};
       draft.session.filters = {
         runningFlows: {
@@ -70,9 +70,7 @@ async function initRunningFlows(dashboardTab, runningJobsStatus, runningJobsData
         _connectionId: 'fghijk',
         _integrationId: '12345',
       }];
-    };
-
-    mutateStore(initialStore, mustateState);
+    });
   }
   const ui = (
     <MemoryRouter
@@ -157,11 +155,9 @@ describe('testsuite for Running flows', () => {
     )).toBeInTheDocument();
     utils.unmount();
     expect(mockDispatchFn).toHaveBeenCalledWith({ type: 'JOB_DASHBOARD_RUNNING_CLEAR' });
-    const mustateState = draft => {
+    mutateStore(initialStore, draft => {
       draft.session.filters.runningFlows.isAllSelected = true;
-    };
-
-    mutateStore(initialStore, mustateState);
+    });
     await initRunningFlows('runningFlows', 'success', runningJobsData, utils.rerender, store);
     expect(mockDispatchFn).toHaveBeenCalledWith({
       type: 'JOB_DASHBOARD_RUNNING_REQUEST_COLLECTION',

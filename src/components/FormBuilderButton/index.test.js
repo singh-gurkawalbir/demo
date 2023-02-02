@@ -16,7 +16,8 @@ async function BuilderButton(props = {resourceId: null,
   integrationId: null,
   sectionId: null}) {
   const initialStore = reduxStore;
-  const mustateState = draft => {
+
+  mutateStore(initialStore, draft => {
     draft.data.resources.integrations = [{
       _id: '626bda66987bb423914b486f',
       lastModified: '2022-04-29T12:31:49.587Z',
@@ -84,9 +85,7 @@ async function BuilderButton(props = {resourceId: null,
       authTypeSSO: null,
       emailHash: '087e41a1843139c27bce730b99664a84',
     };
-  };
-
-  mutateStore(initialStore, mustateState);
+  });
 
   const ui = (
     <Router history={history}>

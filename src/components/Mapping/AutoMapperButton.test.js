@@ -6,7 +6,7 @@ import userEvent from '@testing-library/user-event';
 import AutoMapperButton from './AutoMapperButton';
 import actions from '../../actions';
 import { runServer } from '../../test/api/server';
-import { renderWithProviders, reduxStore } from '../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore } from '../../test/test-utils';
 import customCloneDeep from '../../utils/customCloneDeep';
 
 async function initAutoMapperButton({
@@ -19,31 +19,33 @@ async function initAutoMapperButton({
 } = {}) {
   const initialStore = customCloneDeep(reduxStore);
 
-  initialStore.getState().session.mapping = {
-    mapping: {
-      flowId: 'flow_id',
-      status: 'mappingStatus',
-      mappings: [],
-      subRecordMappingId: props.subRecordMappingId,
-      autoMapper: {
-        status,
-        failMsg,
-        failSeverity: '',
+  mutateStore(initialStore, draft => {
+    draft.session.mapping = {
+      mapping: {
+        flowId: 'flow_id',
+        status: 'mappingStatus',
+        mappings: [],
+        subRecordMappingId: props.subRecordMappingId,
+        autoMapper: {
+          status,
+          failMsg,
+          failSeverity: '',
+        },
       },
-    },
-  };
-  initialStore.getState().data.resources = {
-    flows: [{
-      _id: 'flow_id',
-      pageGenerators: [{
-        _exportId: exportId,
+    };
+    draft.data.resources = {
+      flows: [{
+        _id: 'flow_id',
+        pageGenerators: [{
+          _exportId: exportId,
+        }],
       }],
-    }],
-    exports: [{
-      _id: 'export_id',
-      adaptorType: 'HTTPExport',
-    }],
-  };
+      exports: [{
+        _id: 'export_id',
+        adaptorType: 'HTTPExport',
+      }],
+    };
+  });
 
   const ui = (
     <MemoryRouter>

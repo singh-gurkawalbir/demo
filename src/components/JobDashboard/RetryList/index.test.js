@@ -53,7 +53,8 @@ function initRetryList({
     name: 'e3',
     _connectionId: 'c3',
   }];
-  const mustateState = draft => {
+
+  mutateStore(initialStore, draft => {
     draft.data.resources = {
       flows,
       exports,
@@ -113,9 +114,7 @@ function initRetryList({
       ],
     };
     draft.session.filters = filter;
-  };
-
-  mutateStore(initialStore, mustateState);
+  });
 
   const ui = (
     <MemoryRouter
