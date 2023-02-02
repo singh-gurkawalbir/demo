@@ -157,17 +157,10 @@ export default function VerifyApp() {
               >
                 Failed to add app.
                 <br />
-                Error: The APP URL should contain type parameter
+                Error: {paramObj.message}
               </Typography>
             </NotificationToaster>
-            {/* <div className={classes.minicard1}>
 
-              <ErrorIcon className={classes.errorIcon} />
-              <h5><span>Failed to add app.</span><br />
-                <span>Error: iClientDoc does not exist for the iClientId provided in the request</span>
-              </h5>
-
-            </div> */}
             <div className={classes.miniCard}>
               <Typography
                 data-private
