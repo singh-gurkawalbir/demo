@@ -1,12 +1,12 @@
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { screen } from '@testing-library/react';
-import cloneDeep from 'lodash/cloneDeep';
 import * as reactRedux from 'react-redux';
 import { renderWithProviders, reduxStore } from '../../../test/test-utils';
 import LogsTable from './LogsTable';
 import actionTypes from '../../../actions/types';
 import { message } from '../../../utils/messageStore';
+import customCloneDeep from '../../../utils/customCloneDeep';
 
 const props = {
   flowId: 'random_mock_flowId',
@@ -61,7 +61,7 @@ describe('LogsTable tests', () => {
   let initialStore;
 
   beforeEach(() => {
-    initialStore = cloneDeep(reduxStore);
+    initialStore = customCloneDeep(reduxStore);
     useDispatchSpy = jest.spyOn(reactRedux, 'useDispatch');
     mockDispatchFn = jest.fn(action => {
       const {type, resourceId} = action;

@@ -3,11 +3,11 @@ import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { screen } from '@testing-library/react';
 import * as reactRedux from 'react-redux';
-import cloneDeep from 'lodash/cloneDeep';
 import userEvent from '@testing-library/user-event';
 import { renderWithProviders, reduxStore } from '../../../../../test/test-utils';
 import OpenPullDrawer from '.';
 import actionTypes from '../../../../../actions/types';
+import customCloneDeep from '../../../../../utils/customCloneDeep';
 
 const props = {integrationId: '_integrationId'};
 const mockHistoryReplace = jest.fn();
@@ -53,7 +53,7 @@ describe('OpenPullDrawer tests', () => {
   let initialStore;
 
   beforeEach(() => {
-    initialStore = cloneDeep(reduxStore);
+    initialStore = customCloneDeep(reduxStore);
     useDispatchSpy = jest.spyOn(reactRedux, 'useDispatch');
     mockDispatchFn = jest.fn(action => {
       switch (action.type) {

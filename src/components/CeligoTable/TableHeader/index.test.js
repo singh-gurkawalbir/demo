@@ -1,11 +1,11 @@
 
 import React from 'react';
-import cloneDeep from 'lodash/cloneDeep';
 import { screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import TableHeader from '.';
 import { runServer } from '../../../test/api/server';
 import { renderWithProviders, reduxStore } from '../../../test/test-utils';
+import customCloneDeep from '../../../utils/customCloneDeep';
 
 async function initTableHeader(
   {
@@ -14,7 +14,7 @@ async function initTableHeader(
     data = [],
     sort,
   } = {}) {
-  const initialStore = cloneDeep(reduxStore);
+  const initialStore = customCloneDeep(reduxStore);
 
   initialStore.getState().session.filters = {
     filter_key: {

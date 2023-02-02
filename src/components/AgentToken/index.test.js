@@ -1,5 +1,4 @@
 import React from 'react';
-import cloneDeep from 'lodash/cloneDeep';
 import {
   screen,
 } from '@testing-library/react';
@@ -10,6 +9,7 @@ import actions from '../../actions';
 import AgentToken from '.';
 import { runServer } from '../../test/api/server';
 import { renderWithProviders, reduxStore } from '../../test/test-utils';
+import customCloneDeep from '../../utils/customCloneDeep';
 
 async function initAgentToken({ agentId = '', initialStore = reduxStore} = {}) {
   const ui = (
@@ -30,7 +30,7 @@ describe('agentToken component Test cases', () => {
   let useDispatchSpy;
 
   beforeEach(() => {
-    initialStore = cloneDeep(reduxStore);
+    initialStore = customCloneDeep(reduxStore);
     useDispatchSpy = jest.spyOn(reactRedux, 'useDispatch');
     mockDispatchFn = jest.fn(action => {
       switch (action.type) {

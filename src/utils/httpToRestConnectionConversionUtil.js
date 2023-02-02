@@ -1,4 +1,5 @@
 const _ = require('lodash');
+const customCloneDeep = require('./customCloneDeep');
 
 /**
  * Generates rest sub document using http subdocument and
@@ -108,7 +109,7 @@ function generateConnectionRestSubDocFromHttpSubDoc(httpDoc, assistantName) {
   // need to handle media-types
 
   handleAssistantsHTTPtoREST(httpDoc, restDoc, assistantName);
-  restDoc = _.cloneDeep(restDoc);
+  restDoc = customCloneDeep(restDoc);
   replaceHTTPHandlebarExpression(restDoc);
 
   return restDoc;

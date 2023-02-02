@@ -1,19 +1,19 @@
 
 import React from 'react';
-import cloneDeep from 'lodash/cloneDeep';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import AllTableHeaderCells from '.';
 import { runServer } from '../../../../test/api/server';
 import { renderWithProviders, reduxStore } from '../../../../test/test-utils';
+import customCloneDeep from '../../../../utils/customCloneDeep';
 
 async function initAllTableHeaderCells(
   {
     filterKey,
     useColumns = jest.fn().mockReturnValue([]),
   } = {}) {
-  const initialStore = cloneDeep(reduxStore);
+  const initialStore = customCloneDeep(reduxStore);
 
   initialStore.getState().session.filters = {
     filter_key: {

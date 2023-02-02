@@ -1,11 +1,11 @@
 import React from 'react';
-import cloneDeep from 'lodash/cloneDeep';
 import { MemoryRouter, Route } from 'react-router-dom';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import RecycleBin from '.';
 import { runServer } from '../../test/api/server';
 import { renderWithProviders, reduxStore, mockGetRequestOnce } from '../../test/test-utils';
+import customCloneDeep from '../../utils/customCloneDeep';
 
 async function initRecycleBin(
   {
@@ -15,7 +15,7 @@ async function initRecycleBin(
     resources = {},
     filters = {},
   } = {}) {
-  const initialStore = cloneDeep(reduxStore);
+  const initialStore = customCloneDeep(reduxStore);
 
   initialStore.getState().user.preferences = {
     defaultAShareId,

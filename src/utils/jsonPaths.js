@@ -1,4 +1,5 @@
 import * as _ from 'lodash';
+import customCloneDeep from './customCloneDeep';
 import { celigoListCompare } from './sort';
 
 const emptySet = [];
@@ -27,7 +28,7 @@ export function getUnionObject(arr) {
     return arr[0];
   }
 
-  const cloneArr = _.cloneDeep(arr);
+  const cloneArr = customCloneDeep(arr);
 
   cloneArr.length = arr.length > 10 ? 10 : arr.length;
   _.each(cloneArr, obj => {
