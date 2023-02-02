@@ -156,7 +156,7 @@ export default function VerifyApp() {
               >
                 Failed to add app.
                 <br />
-                Error: {paramObj.message}
+                Error: {paramObj.errorMessage}
               </Typography>
             </NotificationToaster>
             <div className={classes.miniCard}>
