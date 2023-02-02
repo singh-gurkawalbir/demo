@@ -4,70 +4,72 @@ import { screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import HttpMappingAssistant from './HttpMappingAssistant_afe';
 import { runServer } from '../../../test/api/server';
-import { renderWithProviders, reduxStore, mockPostRequestOnce } from '../../../test/test-utils';
+import { renderWithProviders, reduxStore, mockPostRequestOnce, mutateStore } from '../../../test/test-utils';
 import customCloneDeep from '../../../utils/customCloneDeep';
 
 async function initHttpMappingAssistant({props = {} } = {}) {
   const initialStore = customCloneDeep(reduxStore);
 
-  initialStore.getState().session.editors = {
-    httpPreview: {
-      data: {
-        data: '',
-        rule: 'rule',
-      },
-      autoEvaluate: false,
-      result: '',
-    },
-  };
-  initialStore.getState().session.mapping = {
-    mapping: {
-      importId: props.importId,
-      preview: {
+  mutateStore(initialStore, draft => {
+    draft.session.editors = {
+      httpPreview: {
         data: {
-          data: [
-            {
-              name: 'name',
-            },
-          ],
-          rule: 'whatRule',
+          data: '',
+          rule: 'rule',
+        },
+        autoEvaluate: false,
+        result: '',
+      },
+    };
+    draft.session.mapping = {
+      mapping: {
+        importId: props.importId,
+        preview: {
+          data: {
+            data: [
+              {
+                name: 'name',
+              },
+            ],
+            rule: 'whatRule',
+          },
         },
       },
-    },
-  };
-  initialStore.getState().data.resources = {
-    imports: [{
-      _id: props.importId,
-      _connectionId: 'connection_id_1',
-      _integrationId: '_integration_id',
-      //   adaptorType,
-      mappings: {
-        fields: [{
-          generate: 'generate_1',
-        }, {
-          generate: 'generate_2',
-          lookupName: 'lookup_name',
-        }],
-        lists: [{
-          generate: 'item',
-          fields: [],
-        }],
-      },
-      salesforce: {
-        sObjectType: 'sObjectType',
-      },
-      http: {
-        requestMediaType: 'xml',
-        body: ['GET'],
-      },
-    }],
-    connections: [{
-      _id: 'connection_id_1',
-      http: {
+    };
+    draft.data.resources = {
+      imports: [{
+        _id: props.importId,
+        _connectionId: 'connection_id_1',
+        _integrationId: '_integration_id',
+        //   adaptorType,
+        mappings: {
+          fields: [{
+            generate: 'generate_1',
+          }, {
+            generate: 'generate_2',
+            lookupName: 'lookup_name',
+          }],
+          lists: [{
+            generate: 'item',
+            fields: [],
+          }],
+        },
+        salesforce: {
+          sObjectType: 'sObjectType',
+        },
+        http: {
+          requestMediaType: 'xml',
+          body: ['GET'],
+        },
+      }],
+      connections: [{
+        _id: 'connection_id_1',
+        http: {
 
-      },
-    }],
-  };
+        },
+      }],
+    };
+  });
   const ui = (
     <MemoryRouter>
       <HttpMappingAssistant {...props} />
