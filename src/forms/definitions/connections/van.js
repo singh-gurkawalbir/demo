@@ -7,7 +7,7 @@ export default {
   },
   fieldMap: {
     name: { fieldId: 'name',
-      isVanLicense: true,
+      isVanConnector: true,
       isApplicationPlaceholder: false },
     'van.as2Id': {
       fieldId: 'van.as2Id',
@@ -23,7 +23,7 @@ export default {
       hookStage: 'contentBasedFlowRouter',
       helpKey: 'connection.van.contentBasedFlowRouter',
       title: 'Choose a script and function name to use for determining VAN message routing',
-      isVanLicense: true,
+      isVanConnector: true,
       preHookData: {
         httpHeaders: {
           'as2-from': 'OpenAS2_appA',
