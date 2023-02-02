@@ -63,7 +63,8 @@ const useStyles = makeStyles(theme => ({
     '& h5': {
       fontSize: theme.spacing(1.75),
       margin: '16px 0',
-      height: 15.4,
+      fontFamily: 'inherit',
+      lineHeight: 1.1,
     },
   },
   minicard1: {
@@ -100,7 +101,7 @@ const useStyles = makeStyles(theme => ({
     width: '100%',
     borderRadius: '4px',
     minWidth: '-webkit-fill-available',
-    borderLeft: 'none',
+    borderLeftWidth: 6,
     boxShadow: 'none',
     '& svg': {
       fill: theme.palette.error.main,
@@ -108,9 +109,18 @@ const useStyles = makeStyles(theme => ({
       height: 24,
       alignSelf: 'center',
     },
+    '&:before': {
+      content: 'none',
+    },
   },
   font: {
     fontSize: theme.spacing(1.75),
+    lineHeight: 1.1,
+    margin: '8px 0',
+    fontFamily: 'inherit',
+  },
+  buttonRef: {
+    padding: 0,
   },
 }));
 
@@ -138,7 +148,7 @@ export default function VerifyApp() {
             <NotificationToaster
               variant="error"
               className={classes.errorNotification}
-              >
+            >
               <Typography
                 data-private
                 component="div"
@@ -166,11 +176,14 @@ export default function VerifyApp() {
               >
                 <span>
                   <Button
-                    variant="text" color="primary" disableElevation
+                    variant="text"
+                    color="primary"
+                    disableElevation
                     onClick={() => history.goBack()}
+                    className={classes.buttonRef}
                   >
                     Return to Shopify
-                  </Button>and try again.
+                  </Button> and try again.
                 </span>
               </Typography>
               <div className={classes.divider} />
