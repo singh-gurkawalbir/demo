@@ -185,6 +185,14 @@ const UpgradeInstallation = forwardRef(({ parentId, parentUrl }, ref) => {
       form,
     } = step;
 
+    let netsuitePackageType = null;
+
+    if (step?.name.startsWith('Integrator Bundle')) {
+      netsuitePackageType = 'suitebundle';
+    } else if (step?.name.startsWith('Integrator SuiteApp')) {
+      netsuitePackageType = 'suiteapp';
+    }
+
     if (completed) {
       return false;
     }
@@ -276,7 +284,8 @@ const UpgradeInstallation = forwardRef(({ parentId, parentUrl }, ref) => {
               integrationId,
               step._connId,
               installerFunction,
-              isFrameWork2
+              isFrameWork2,
+              netsuitePackageType
             )
           );
         } else if (isFrameWork2) {

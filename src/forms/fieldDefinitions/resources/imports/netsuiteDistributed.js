@@ -1,3 +1,4 @@
+import { BUNDLE_DEPRICATION_URL } from '../../../../constants';
 import { isNewId } from '../../../../utils/resource';
 
 export default {
@@ -81,18 +82,26 @@ export default {
       },
     ],
   },
-  'netsuite_da.useSS2Restlets': {
+  'netsuite_da.restletVersion': {
     isLoggable: true,
-    fieldId: 'netsuite_da.useSS2Restlets',
+    fieldId: 'netsuite_da.restletVersion',
     type: 'netsuiteapiversion',
     label: 'NetSuite API version',
-    // eslint-disable-next-line camelcase
-    defaultValue: r => r?.netsuite_da?.useSS2Restlets ? 'true' : 'false',
+    defaultValue: r => {
+      // eslint-disable-next-line camelcase
+      const newFieldValue = r?.netsuite_da?.restletVersion;
+
+      if (newFieldValue) return newFieldValue;
+
+      // eslint-disable-next-line camelcase
+      return r?.netsuite_da?.useSS2Restlets ? 'suiteapp2.0' : 'suitebundle';
+    },
     options: [
       {
         items: [
-          { label: 'SuiteScript 1.0', value: 'false' },
-          { label: 'SuiteScript 2.0', value: 'true' },
+          { label: 'SuiteApp SuiteScript 2.x', value: 'suiteapp2.0', description: 'Recommended'},
+          { label: 'SuiteApp SuiteScript 1.0', value: 'suiteapp1.0' },
+          { label: 'SuiteBundle SuiteScript 1.0', value: 'suitebundle', description: `To be deprecated.<a target="_blank" rel="noreferrer" href=${BUNDLE_DEPRICATION_URL}><u>Learn more.</u></a>`, isWarningMessage: true },
         ],
       },
     ],
