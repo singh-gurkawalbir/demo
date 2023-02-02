@@ -83,6 +83,7 @@ export default function DynaHFAssistantPathParams(props) {
             id={id}
             value={value}
             stage={flowDataStage}
+            placeholder="Please select"
             {...props}
             />
         )
