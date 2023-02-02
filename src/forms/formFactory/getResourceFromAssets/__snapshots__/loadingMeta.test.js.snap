@@ -5431,7 +5431,7 @@ Object {
               "label": "Mock output",
             },
             Object {
-              "collapsed": [Function],
+              "collapsed": false,
               "containers": Array [
                 Object {
                   "fields": Array [
@@ -11814,7 +11814,7 @@ Object {
               "label": "Mock response",
             },
             Object {
-              "collapsed": [Function],
+              "collapsed": false,
               "fields": Array [
                 "netsuite_da.restletVersion",
                 "blobKeyPath",
@@ -12058,7 +12058,7 @@ Object {
               "label": "Mock response",
             },
             Object {
-              "collapsed": [Function],
+              "collapsed": false,
               "fields": Array [
                 "netsuite_da.restletVersion",
                 "blobKeyPath",
