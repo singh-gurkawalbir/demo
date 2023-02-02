@@ -160,7 +160,6 @@ export default function VerifyApp() {
                 Error: {paramObj.message}
               </Typography>
             </NotificationToaster>
-
             <div className={classes.miniCard}>
               <Typography
                 data-private
