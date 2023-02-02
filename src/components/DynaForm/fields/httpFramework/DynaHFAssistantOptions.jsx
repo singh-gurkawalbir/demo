@@ -244,6 +244,15 @@ function DynaAssistantOptions(props) {
           value: versions[0]._id,
         });
       }
+      if (assistantFieldType === 'operation' && versions?.length > 1) {
+        const versionOptionsForEndpoint = selectOptions({assistantFieldType: 'version', assistantData, formContext: {...formContext, operation: value}, resourceType});
+
+        patch.push({
+          op: 'replace',
+          path: '/assistantMetadata/version',
+          value: versionOptionsForEndpoint?.[0]?.value,
+        });
+      }
 
       dispatch(
         actions.resource.patchStaged(

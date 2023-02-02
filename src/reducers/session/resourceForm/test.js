@@ -14,7 +14,7 @@ describe('session.resourceForm form reducers', () => {
   const key = `${resourceType}-${resourceId}`;
   const oldState = { 'new-1234': 'ab123' };
   const bundleUrl = 'https://*******.app.netsuite.com/app/bundler/bundledetails.nl?sourcecompanyid=*****&domain=PRODUCTION&config=F&id=***';
-  const bundleVersion = '1.0';
+  const suiteAppUrl = 'https://*******.app.netsuite.com/app/bundler/suiteappdetails.nl?sourcecompanyid=*****&domain=PRODUCTION&config=F&id=***';
   const formValues = {
     '/type': 'http',
     '/assistant': 'googleshopping',
@@ -163,11 +163,10 @@ describe('session.resourceForm form reducers', () => {
 
       const oldState = { [exportsKey]: {} };
 
-      const state = reducer(oldState, actions.resourceForm.showBundleInstallNotification(bundleVersion, bundleUrl, 'exports', resourceId));
+      const state = reducer(oldState, actions.resourceForm.showBundleInstallNotification(bundleUrl, 'exports', resourceId));
 
       const expected = {
         [exportsKey]: {
-          bundleVersion,
           bundleUrl,
           showBundleInstallNotification: true }};
 
@@ -185,6 +184,37 @@ describe('session.resourceForm form reducers', () => {
       const expected = {
         [exportsKey]: {
           showBundleInstallNotification: false }};
+
+      expect(state).toEqual(expected);
+    });
+  });
+  describe('RESOURCE_FORM.SHOW_SUITEAPP_INSTALL_NOTIFICATION action', () => {
+    test('should store the bundle install notification data', () => {
+      const exportsKey = `exports-${resourceId}`;
+
+      const oldState = { [exportsKey]: {} };
+
+      const state = reducer(oldState, actions.resourceForm.showSuiteAppInstallNotification(suiteAppUrl, 'exports', resourceId));
+
+      const expected = {
+        [exportsKey]: {
+          suiteAppUrl,
+          showSuiteAppInstallNotification: true }};
+
+      expect(state).toEqual(expected);
+    });
+  });
+  describe('RESOURCE_FORM.HIDE_SUITEAPP_INSTALL_NOTIFICATION action', () => {
+    test('should hide bundle install notification data', () => {
+      const exportsKey = `exports-${resourceId}`;
+
+      const oldState = { [exportsKey]: {} };
+
+      const state = reducer(oldState, actions.resourceForm.hideSuiteAppInstallNotification('exports', resourceId));
+
+      const expected = {
+        [exportsKey]: {
+          showSuiteAppInstallNotification: false }};
 
       expect(state).toEqual(expected);
     });
