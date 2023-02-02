@@ -63,7 +63,8 @@ const useStyles = makeStyles(theme => ({
     '& h5': {
       fontSize: theme.spacing(1.75),
       margin: '16px 0',
-      height: 15.4,
+      fontFamily: 'inherit',
+      lineHeight: 1.1,
     },
   },
   minicard1: {
@@ -100,7 +101,7 @@ const useStyles = makeStyles(theme => ({
     width: '100%',
     borderRadius: '4px',
     minWidth: '-webkit-fill-available',
-    borderLeft: 'none',
+    borderLeftWidth: 6,
     boxShadow: 'none',
     '& svg': {
       fill: theme.palette.error.main,
@@ -108,9 +109,18 @@ const useStyles = makeStyles(theme => ({
       height: 24,
       alignSelf: 'center',
     },
+    '&:before': {
+      content: 'none',
+    },
   },
   font: {
     fontSize: theme.spacing(1.75),
+    lineHeight: 1.1,
+    margin: '8px 0',
+    fontFamily: 'inherit',
+  },
+  buttonRef: {
+    padding: 0,
   },
 }));
 
@@ -138,44 +148,36 @@ export default function VerifyApp() {
             <NotificationToaster
               variant="error"
               className={classes.errorNotification}
-              >
+            >
               <Typography
-                data-private
                 component="div"
                 variant="h5"
                 className={classes.font}
               >
                 Failed to add app.
                 <br />
-                Error: The APP URL should contain type parameter
+                Error: {paramObj.errorMessage}
               </Typography>
             </NotificationToaster>
-            {/* <div className={classes.minicard1}>
-
-              <ErrorIcon className={classes.errorIcon} />
-              <h5><span>Failed to add app.</span><br />
-                <span>Error: iClientDoc does not exist for the iClientId provided in the request</span>
-              </h5>
-
-            </div> */}
             <div className={classes.miniCard}>
               <Typography
-                data-private
                 component="h5"
                 variant="h5"
               >
                 <span>
                   <Button
-                    variant="text" color="primary" disableElevation
+                    variant="text"
+                    color="primary"
+                    disableElevation
                     onClick={() => history.goBack()}
+                    className={classes.buttonRef}
                   >
                     Return to Shopify
-                  </Button>and try again.
+                  </Button> and try again.
                 </span>
               </Typography>
               <div className={classes.divider} />
               <Typography
-                data-private
                 component="h5"
                 variant="h5"
               >

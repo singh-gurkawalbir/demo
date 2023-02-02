@@ -128,7 +128,7 @@ export default function Signin(props) {
             className={classes.signInForm}
             queryParam={queryParams}
           />
-          {ALLOW_SIGNUP && (
+          {ALLOW_SIGNUP === 'true' && (
           <div className={classes.signupLink}>
             <UserSignInPageFooter
               linkLabel="Don't have an account?"

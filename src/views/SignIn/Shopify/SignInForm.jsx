@@ -216,28 +216,30 @@ export default function SignIn({ dialogOpen, className, queryParam }) {
             </FilledButton>
           )}
       </form>
-      <div className={classes.or}>
-        <Typography variant="body1">or</Typography>
-      </div>
-      { !isAuthenticating && getDomain() !== 'eu.integrator.io' && (
-      <div>
-        {!dialogOpen && (
-        <form onSubmit={handleSignInWithGoogle}>
-          <TextField
-            data-private
-            type="hidden"
-            id="attemptedRoute"
-            name="attemptedRoute"
-            value={attemptedRoute || getRoutePath('/')}
-          />
 
-          <OutlinedButton
-            type="submit"
-            color="secondary"
-            className={classes.googleBtn}>
-            Sign in with Google
-          </OutlinedButton>
-        </form>
+      {!isAuthenticating && (
+      <div>
+        {!dialogOpen && ALLOW_GOOGLE_SIGNIN === 'true' && (
+          <div>
+            <div className={classes.or}>
+              <Typography variant="body1">or</Typography>
+            </div>
+            <form onSubmit={handleSignInWithGoogle}>
+              <TextField
+                data-private
+                type="hidden"
+                id="attemptedRoute"
+                name="attemptedRoute"
+                value={attemptedRoute || getRoutePath('/')}
+              />
+              <OutlinedButton
+                type="submit"
+                color="secondary"
+                className={classes.googleBtn}>
+                Sign in with Google
+              </OutlinedButton>
+            </form>
+          </div>
         )}
         {getDomain() !== 'eu.integrator.io' && <a className={classes.switchDomain} href={`https://eu.integrator.io/connection/shopify/oauth2callback?${queryParam}`}>Switch to EU domain</a>}
       </div>
