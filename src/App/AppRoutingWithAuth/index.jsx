@@ -5,7 +5,6 @@ import { selectors } from '../../reducers';
 import actions from '../../actions';
 import getRoutePath from '../../utils/routePaths';
 import useQuery from '../../hooks/useQuery';
-import { getDomainUrl } from '../../utils/resource';
 
 export function AppRoutingWithAuth({ children }) {
   const location = useLocation();
@@ -73,7 +72,7 @@ export function AppRoutingWithAuth({ children }) {
       const redirectedTo = (routeState && routeState.attemptedRoute) || getRoutePath('');
 
       if (isShopifySignIn) {
-        window.location.href = `${getDomainUrl()}${redirectedTo}${routeState?.search}`;
+        window.location.href = `${redirectedTo}${routeState?.search}`;
 
         return null;
       }
