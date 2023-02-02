@@ -16,7 +16,7 @@ export default {
       newValues['/netsuite/searches'] = undefined;
       newValues['/netsuite/webservices'] = undefined;
       delete newValues['/netsuite/restlet/criteria'];
-      delete newValues['/netsuite/restlet/useSS2Restlets'];
+      delete newValues['/netsuite/restlet/restletVersion'];
       delete newValues['/netsuite/webservices/criteria'];
       delete newValues['/netsuite/searches/criteria'];
     }
@@ -78,6 +78,7 @@ export default {
       delete newValues['/restlet/once/booleanField'];
       newValues['/netsuite/distributed'] = undefined;
       delete newValues['/netsuite/distributed/executionContext'];
+      delete newValues['/netsuite/distributed/frameworkVersion'];
       delete newValues['/netsuite/distributed/forceReload'];
       delete newValues['/netsuite/distributed/executionType'];
 
@@ -642,7 +643,7 @@ export default {
         fields: ['mockOutput'],
       },
       {
-        collapsed: id => !isNewId(id),
+        collapsed: false,
         label: 'Advanced',
         containers: [
           {

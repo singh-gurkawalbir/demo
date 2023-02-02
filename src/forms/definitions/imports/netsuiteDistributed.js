@@ -1,4 +1,4 @@
-import { isNewId, updateMappingsBasedOnNetSuiteSubrecords } from '../../../utils/resource';
+import { updateMappingsBasedOnNetSuiteSubrecords } from '../../../utils/resource';
 import { safeParse } from '../../../utils/string';
 
 export default {
@@ -193,7 +193,7 @@ export default {
         fields: ['mockResponseSection'],
       },
       {
-        collapsed: r => !isNewId(r._id),
+        collapsed: false,
         label: 'Advanced',
         fields: [
           'netsuite_da.restletVersion', 'blobKeyPath', 'idLockTemplate', 'dataURITemplate', 'netsuite_da.batchSize', 'traceKeyTemplate', 'apiIdentifier', 'deleteAfterImport'],
