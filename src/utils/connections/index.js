@@ -208,6 +208,7 @@ export const KBDocumentation = {
   rest: 'https://docs.celigo.com/hc/en-us/sections/360007479711-REST',
   ftp: 'https://docs.celigo.com/hc/en-us/articles/360045263152-Set-up-an-FTP-connection-',
   as2: 'https://docs.celigo.com/hc/en-us/articles/360029551372-Set-up-an-AS2-connection',
+  van: 'https://docs.celigo.com/hc/en-us/articles/12532496305819-Set-up-a-value-added-network-VAN-connection',
   mongodb: 'https://docs.celigo.com/hc/en-us/articles/360039632032-Set-up-a-connection-to-MongoDB',
   mysql: 'https://docs.celigo.com/hc/en-us/articles/360038611852-Set-up-a-connection-to-MySQL',
   mssql: 'https://docs.celigo.com/hc/en-us/articles/360039003951-Set-up-a-connection-to-Microsoft-SQL',

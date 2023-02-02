@@ -15,6 +15,7 @@ import IconButtonWithTooltip from '../../IconButtonWithTooltip';
 import HelpLink from '../../HelpLink';
 import { selectors } from '../../../reducers';
 import { useSelectorMemo } from '../../../hooks';
+import { emptyObject } from '../../../constants';
 
 const useStyles = makeStyles(theme => ({
   dynaFieldWrapper: {
@@ -88,6 +89,7 @@ function DynaText(props) {
     isLoggable,
     isApplicationPlaceholder = false,
     isLabelUpdate = false,
+    isVanLicense = false,
   } = props;
   const [valueChanged, setValueChanged] = useState(false);
 
@@ -101,7 +103,7 @@ function DynaText(props) {
     }
   }, [id, onFieldChange, options, valueChanged]);
   // eslint-disable-next-line react-hooks/rules-of-hooks
-  const match = isApplicationPlaceholder ? useRouteMatch() : {};
+  const match = isApplicationPlaceholder || isVanLicense ? useRouteMatch() : {};
   const { id: resourceId, resourceType } = match.params || {};
   let dataResourceType;
   const { merged } =
@@ -119,6 +121,16 @@ function DynaText(props) {
   const applicationType = useSelector(state => selectors.applicationType(state, resourceType, resourceId));
   const applicationPlaceholder = isApplicationPlaceholder ? `${applicationType} ${dataResourceType}` : '';
   const updatedLabel = `Name your ${dataResourceType}`;
+  const resource = useSelectorMemo(
+    selectors.makeResourceDataSelector,
+    resourceType,
+    resourceId
+  )?.merged || emptyObject;
+
+  const licenseActionDetails = useSelector(state =>
+    selectors.platformLicenseWithMetadata(state)
+  );
+  const isVanLicenseAbsent = (isVanLicense && licenseActionDetails.van === false);
 
   const handleFieldChange = event => {
     const { value, valueAsNumber } = event.target;
@@ -202,7 +214,7 @@ function DynaText(props) {
         InputProps={InputProps}
         type={inputType}
         placeholder={isApplicationPlaceholder && (merged?.http?._httpConnectorId || merged?.isHttpConnector || merged?._httpConnectorId || merged?.http?._httpConnectorResourceId) ? applicationPlaceholder : placeholder}
-        disabled={disabled || disableText}
+        disabled={resource.type === 'van' ? isVanLicenseAbsent : disabled || disableText}
         multiline={multiline}
         rowsMax={rowsMax}
         required={required}

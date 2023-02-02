@@ -704,14 +704,14 @@ export const updateFinalMetadataWithHttpFramework = (finalFieldMeta, connector, 
           (new RegExp(`{{(.)*(${field})(.)*}}`)).test(baseURIValue) ? baseURIFields.push(field) : authFields.push(field);
         });
         if (baseURIFields.length > 0) {
-              tempFiledMeta?.layout?.containers[1]?.containers[1].containers.splice(0, 1, {fields: baseURIFields});
+              tempFiledMeta?.layout?.containers[1]?.containers[1]?.containers?.splice(0, 1, {fields: baseURIFields});
         } else if (preConfiguredField) {
           preConfiguredField.forEach(field => {
             if (field._conditionIds?.length) {
               const conditionFields = connectionTemplate?.conditions?.filter(field1 => field1._id === field?._conditionIds[0]);
               const dependentField = conditionFields[0]?.condition?.rules[1][1][1];
 
-              tempFiledMeta?.layout?.containers[1]?.containers[1].containers.splice(0, 1, {fields: [dependentField]});
+              tempFiledMeta?.layout?.containers[1]?.containers[1]?.containers?.splice(0, 1, {fields: [dependentField]});
             }
           });
         } else {
@@ -720,8 +720,8 @@ export const updateFinalMetadataWithHttpFramework = (finalFieldMeta, connector, 
         if (tempFiledMeta?.fieldMap['http.auth.type']?.visible === false) {
           delete tempFiledMeta?.layout?.containers[3]?.containers[1]?.type;
         }
-        if (tempFiledMeta?.layout?.containers[1]?.containers[1].containers[0].fields.length > 0) {
-          const baseurlDependentFields = tempFiledMeta?.layout?.containers[1]?.containers[1]?.containers[0].fields;
+        if (tempFiledMeta?.layout?.containers[1]?.containers[1]?.containers[0]?.fields?.length > 0) {
+          const baseurlDependentFields = tempFiledMeta?.layout?.containers[1]?.containers[1]?.containers[0]?.fields;
 
           baseurlDependentFields.forEach(field => {
             const indexcheck = fieldIds.indexOf(field);
@@ -729,7 +729,7 @@ export const updateFinalMetadataWithHttpFramework = (finalFieldMeta, connector, 
             delete fieldIds[indexcheck];
           });
         }
-        tempFiledMeta?.layout?.containers[7].containers?.push({fields: fieldIds});
+        tempFiledMeta?.layout?.containers[7]?.containers?.push({fields: fieldIds});
           tempFiledMeta?.layout?.containers[7]?.containers?.splice(0, 1);
           Object.keys(tempFiledMeta.fieldMap).map(key => {
             const fieldUserMustSet = connectionTemplate.fieldsUserMustSet?.find(field => key === field.path);
