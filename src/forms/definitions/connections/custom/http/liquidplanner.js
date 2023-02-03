@@ -26,6 +26,7 @@ export default {
       required: true,
       type: 'select',
       label: 'Authentication type',
+      isLoggable: true,
       defaultValue: r => r && r.http && r.http.auth && r.http.auth.type,
       helpKey: 'liquidplanner.connection.http.auth.type',
       options: [

@@ -1,14 +1,13 @@
 import React, { useCallback, useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useHistory } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import clsx from 'clsx';
 import TextField from '@material-ui/core/TextField';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import Checkbox from '@material-ui/core/Checkbox';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Link from '@material-ui/core/Link';
 import { makeStyles } from '@material-ui/core/styles';
-import { FilledButton } from '../../components/Buttons';
+import { FilledButton, TextButton } from '../../components/Buttons';
 import Spinner from '../../components/Spinner';
 import actions from '../../actions';
 import { selectors } from '../../reducers';
@@ -16,6 +15,7 @@ import ErrorIcon from '../../components/icons/ErrorIcon';
 import { NUMBER_REGEX } from '../../constants';
 import getRoutePath from '../../utils/routePaths';
 
+/** ***TODO (Azhar): forms CSS Optimization needed*** */
 const useStyles = makeStyles(theme => ({
   submit: {
     width: '100%',
@@ -55,6 +55,7 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     justifyContent: 'space-between',
     marginTop: theme.spacing(1),
+    marginBottom: theme.spacing(2),
   },
   flexRight: {
     flexDirection: 'row-reverse',
@@ -144,9 +145,16 @@ export default function OneTimePassCodeForm() {
           )}
             label="Trust this device" />
           )}
-          <Link href="/mfa/help" className={classes.forgotPass} variant="body2">
+          <TextButton
+            to={getRoutePath('/mfa/help')}
+            data-test="needHelp"
+            color="primary"
+            className={classes.forgotPass}
+            component={Link}
+            role="link"
+          >
             Need help?
-          </Link>
+          </TextButton>
         </div>
 
         { isMFAAuthRequestInProgress ? <Spinner />

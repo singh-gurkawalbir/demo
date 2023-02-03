@@ -23,7 +23,7 @@ import useBottomDrawer from '../../drawers/BottomDrawer/useBottomDrawer';
 import { isNewFlowFn, useHandleExitClick, usePatchFlow, usePushOrReplaceHistory } from '../../hooks';
 import LastRun from '../../LastRun';
 import LineGraphButton from '../../LineGraphButton';
-import messageStore from '../../../../utils/messageStore';
+import { message } from '../../../../utils/messageStore';
 import { getTextAfterCount } from '../../../../utils/string';
 import RetryStatus from '../../RetryStatus';
 
@@ -110,12 +110,8 @@ const CalcPageBarSubtitle = ({flowId}) => {
   );
 };
 
-const tooltipSchedule = {
-  title: 'Schedule',
-  placement: 'bottom',
-};
 const tooltipScheduleFlowIncomplete = {
-  title: messageStore('INCOMPLETE_FLOW_SCHEDULE_TOOLTIP'),
+  title: message.FLOWS.INCOMPLETE_FLOW_SCHEDULE_TOOLTIP,
   placement: 'bottom',
 };
 const tooltipSettings = {
@@ -137,7 +133,23 @@ const pageChildreUseStyles = makeStyles(theme => ({
     },
   },
   chartsIcon: { marginRight: theme.spacing(3) },
-
+  circle: {
+    position: 'relative',
+    '& .MuiButtonBase-root': {
+      '&:before': {
+        content: '""',
+        height: theme.spacing(1),
+        width: theme.spacing(1),
+        borderRadius: '50%',
+        backgroundColor: theme.palette.primary.main,
+        position: 'absolute',
+        top: theme.spacing(1.5),
+        right: theme.spacing(1.5),
+        display: 'block',
+        zIndex: 1,
+      },
+    },
+  },
 }));
 
 const RunFlowButtonWrapper = ({flowId}) => {
@@ -169,6 +181,7 @@ const PageBarChildren = ({integrationId, flowId}) => {
   const isUserInErrMgtTwoDotZero = useSelector(state =>
     selectors.isOwnerUserInErrMgtTwoDotZero(state)
   );
+  const isSetupInProgress = useSelector(state => selectors.isFlowSetupInProgress(state, flowId));
 
   const allowSchedule = useSelectorMemo(selectors.mkFlowAllowsScheduling, flowId);
 
@@ -189,7 +202,6 @@ const PageBarChildren = ({integrationId, flowId}) => {
   );
 
   const flowDetails = useSelectorMemo(selectors.mkFlowDetails, flowId, match.params?.childId);
-  const isSetupInProgress = useSelector(state => selectors.isFlowSetupInProgress(state, flowId));
   const isDataLoaderFlow = useSelector(state => selectors.isDataLoaderFlow(state, flowId));
   const isMonitorLevelAccess = useSelector(state =>
     selectors.isFormAMonitorLevelAccess(state, integrationId)
@@ -198,6 +210,10 @@ const PageBarChildren = ({integrationId, flowId}) => {
   const isIAType = !!flowDetails?._connectorId;
   const handleExitClick = useHandleExitClick();
   const isNewFlow = isNewFlowFn(flowId);
+  const tooltipSchedule = {
+    title: `${flowDetails?.schedule ? 'Edit' : 'Add'} schedule`,
+    placement: 'bottom',
+  };
 
   return (
     <div className={classes.actions}>
@@ -218,14 +234,16 @@ const PageBarChildren = ({integrationId, flowId}) => {
       )}
 
       <RunFlowButtonWrapper flowId={flowId} />
-      {allowSchedule && (
-        <IconButtonWithTooltip
-          tooltipProps={isSetupInProgress ? tooltipScheduleFlowIncomplete : tooltipSchedule}
-          disabled={isNewFlow || isSetupInProgress}
-          data-test="scheduleFlow"
-          onClick={handleDrawerClick(drawerPaths.FLOW_BUILDER.SCHEDULE)}>
-          <CalendarIcon />
-        </IconButtonWithTooltip>
+      {(isNewFlow || isSetupInProgress || allowSchedule) && (
+        <div className={clsx(!!flowDetails.schedule && classes.circle)}>
+          <IconButtonWithTooltip
+            tooltipProps={isSetupInProgress ? tooltipScheduleFlowIncomplete : tooltipSchedule}
+            disabled={isNewFlow || isSetupInProgress}
+            data-test="scheduleFlow"
+            onClick={handleDrawerClick(drawerPaths.FLOW_BUILDER.SCHEDULE)}>
+            <CalendarIcon />
+          </IconButtonWithTooltip>
+        </div>
       )}
       <IconButtonWithTooltip
         tooltipProps={tooltipSettings}

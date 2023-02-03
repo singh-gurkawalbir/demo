@@ -1,9 +1,7 @@
 
 import React from 'react';
 import { MemoryRouter, Route} from 'react-router-dom';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { screen, waitFor, cleanup, waitForElementToBeRemoved } from '@testing-library/react';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import userEvent from '@testing-library/user-event';
 import { renderWithProviders, mockPostRequestOnce, mockPutRequestOnce } from '../../test/test-utils';
 import ProfilePanel from './Profile';

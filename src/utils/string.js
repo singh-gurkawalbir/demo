@@ -1,5 +1,6 @@
+/* eslint-disable no-restricted-globals */
 import stableStringify from 'fast-json-stable-stringify';
-import { customAlphabet, nanoid } from 'nanoid';
+import { customAlphabet } from 'nanoid';
 import { URL_SAFE_CHARACTERS } from '../constants';
 
 export const safeParse = o => {
@@ -13,16 +14,13 @@ export const safeParse = o => {
 };
 export function generateId(num) {
   const length = +num;
-  const nanoidforUrl = customAlphabet(URL_SAFE_CHARACTERS, 10);
+  const nanoidforUrl = customAlphabet(URL_SAFE_CHARACTERS, 11);
 
-  if (num === 24) {
-    // If length is 24, probably needed a mongodb ObjectId, generate one randomly
-    return `${Math.floor(new Date().getTime() / 1000).toString(16)}0000000000000000`;
-  }
-
-  return !Number.isNaN(length) && length < 24 && length > 0 ? nanoidforUrl(length) : nanoidforUrl();
+  return !Number.isNaN(length) && length < 33 && length > 0 ? nanoidforUrl(length) : nanoidforUrl();
 }
-export const shortId = () => generateId(6);
+export const generateUUID = () => generateId(32);
+// generateMongoDBId is time based generator, do not use it to generate multiple id's
+export const generateMongoDBId = () => `${Math.floor(new Date().getTime() / 1000).toString(16)}0000000000000000`;
 
 export const camelCase = (str = '') => {
   if (typeof str === 'string' && str.length) {
@@ -113,10 +111,15 @@ export const escapeSpecialChars = message => {
   return escapedMessage;
 };
 
-export const generateUniqueKey = () => nanoid();
-
 export const hasWhiteSpace = s => {
   const whitespaceChars = [' ', '\t', '\n'];
 
   return whitespaceChars.some(char => s?.includes(char));
+};
+
+export const isNumber = str => {
+  if (typeof str === 'number') return true;
+
+  return !isNaN(str) && // use type coercion to parse the _entirety_ of the string (`parseFloat` alone does not do this)...
+         !isNaN(parseFloat(str)); // ...and ensure strings of whitespace fail
 };

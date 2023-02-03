@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Input, InputLabel } from '@material-ui/core';
-import shortid from 'shortid';
+import { generateId } from '../../utils/string';
 import TrashIcon from '../icons/TrashIcon';
 import ActionButton from '../ActionButton';
 import FieldHelp from '../DynaForm/FieldHelp';
@@ -25,17 +25,17 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const addEmptyLastRowIfNotExist = rows => {
-  if (rows.length === 0) return [{ key: shortid.generate() }];
+  if (rows.length === 0) return [{ key: generateId() }];
 
   const lastRow = rows[rows.length - 1];
 
   if (!lastRow.value) return rows;
 
-  return [...rows, { key: shortid.generate() }];
+  return [...rows, { key: generateId() }];
 };
 
 const getRowsFromValues = values => {
-  const rows = (values || []).map(value => ({value, key: shortid.generate()}));
+  const rows = (values || []).map(value => ({value, key: generateId()}));
 
   return addEmptyLastRowIfNotExist(rows);
 };

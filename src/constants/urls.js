@@ -68,7 +68,7 @@ export const SHOPIFY_OAUTH_CONNECTION_VIEW_INSTRUCTIONS_LINK = 'https://docs.cel
 
 // Shopify store listing urls
 export const SHOPIFY_APP_STORE_LINKS = {
-  NETSUITE_IA_APP: 'https://apps.shopify.com',
+  NETSUITE_IA_APP: 'https://apps.shopify.com/celigo-netsuite-smartconnector',
   DIY_APP: 'https://apps.shopify.com',
 
   // in future when these apps are published, change the URLs
@@ -78,3 +78,5 @@ export const SHOPIFY_APP_STORE_LINKS = {
 
 export const MOCK_OUTPUT_CANONICAL_FORMAT_LINK = 'https://docs.celigo.com/hc/en-us/articles/4473437451163-integrator-io-canonical-format-for-mock-data';
 export const MOCK_RESPONSE_CANONICAL_FORMAT_LINK = 'https://docs.celigo.com/hc/en-us/articles/4473437451163';
+
+export const BUNDLE_DEPRICATION_URL = 'https://docs.celigo.com/hc/en-us/articles/360050643132';

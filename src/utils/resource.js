@@ -1,11 +1,10 @@
 import { values, keyBy, cloneDeep } from 'lodash';
-import shortid from 'shortid';
 import parseLinkHeader from 'parse-link-header';
+import { generateId } from './string';
 import { getAllPageProcessors, isPageGeneratorResource } from './flows';
 import { USER_ACCESS_LEVELS, HELP_CENTER_BASE_URL, INTEGRATION_ACCESS_LEVELS, emptyList, emptyObject } from '../constants';
 import { stringCompare } from './sort';
-import messageStore from './messageStore';
-import errorMessageStore from './errorStore';
+import { message } from './messageStore';
 
 export const MODEL_PLURAL_TO_LABEL = Object.freeze({
   agents: 'Agent',
@@ -429,7 +428,7 @@ export function isFileAdaptor(resource) {
   );
 }
 
-export const generateNewId = () => `new-${shortid.generate()}`;
+export const generateNewId = () => `new-${generateId()}`;
 
 export function isRealTimeOrDistributedResource(
   resource,
@@ -1034,21 +1033,21 @@ export const validateAliasId = (aliasId, previousAliasId, aliases) => {
   if (!aliasId) {
     return {
       isValid: false,
-      message: messageStore('REQUIRED_MESSAGE'),
+      message: message.REQUIRED_MESSAGE,
     };
   }
 
   if (aliasId !== previousAliasId && aliases.some(ra => ra.alias === aliasId)) {
     return {
       isValid: false,
-      message: errorMessageStore('DUPLICATE_ALIAS_ERROR_MESSAGE'),
+      message: message.ALIAS.DUPLICATE_ALIAS_ERROR_MESSAGE,
     };
   }
 
   if (!/^[a-zA-Z0-9-_]+$/.test(aliasId)) {
     return {
       isValid: false,
-      message: errorMessageStore('ALIAS_VALIDATION_ERROR_MESSAGE'),
+      message: message.ALIAS.VALIDATION_ERROR_MESSAGE,
     };
   }
 

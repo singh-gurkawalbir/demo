@@ -7,7 +7,6 @@ import * as matchers from 'redux-saga-test-plan/matchers';
 import actions from '../../../actions';
 import { selectors } from '../../../reducers';
 import { apiCallWithRetry } from '../../index';
-import { SCOPES } from '../../resourceForm';
 import { evaluateExternalProcessor } from '../../editor';
 import { getNetsuiteOrSalesforceMeta } from '../../resources/meta';
 import { exportPreview, pageProcessorPreview } from './previewCalls';
@@ -1049,7 +1048,6 @@ describe('Flow sample data utility sagas', () => {
               selectors.resourceData,
               'flows',
               flowId,
-              SCOPES.VALUE
             ), { merged: flow}],
           ])
           .returns(undefined)
@@ -1072,7 +1070,6 @@ describe('Flow sample data utility sagas', () => {
               selectors.resourceData,
               'flows',
               flowId,
-              SCOPES.VALUE
             ), { merged: flow}],
             [select(
               selectors.isPageGenerator,
@@ -1104,7 +1101,6 @@ describe('Flow sample data utility sagas', () => {
               selectors.resourceData,
               'flows',
               flowId,
-              SCOPES.VALUE
             ), { merged: flow}],
             [select(
               selectors.isPageGenerator,
@@ -1193,7 +1189,6 @@ describe('Flow sample data utility sagas', () => {
               selectors.resourceData,
               'exports',
               '1234',
-              SCOPES.VALUE
             ), { merged: deltaResource}],
           ])
           .run();
@@ -1237,13 +1232,11 @@ describe('Flow sample data utility sagas', () => {
               selectors.resourceData,
               resourceType,
               'export-123',
-              SCOPES.VALUE
             ), { merged: pg1}],
             [select(
               selectors.resourceData,
               resourceType,
               'export-456',
-              SCOPES.VALUE
             ), { merged: pg2}],
             [call(
               getPreviewOptionsForResource,
@@ -1313,19 +1306,16 @@ describe('Flow sample data utility sagas', () => {
               selectors.resourceData,
               'exports',
               'lookup-123',
-              SCOPES.VALUE
             ), { merged: pp1}],
             [select(
               selectors.resourceData,
               'exports',
               'lookup-456',
-              SCOPES.VALUE
             ), { merged: pp2}],
             [select(
               selectors.resourceData,
               'imports',
               'import-123',
-              SCOPES.VALUE
             ), { merged: pp3}],
             [call(
               getPreviewOptionsForResource,
@@ -1394,13 +1384,11 @@ describe('Flow sample data utility sagas', () => {
               selectors.resourceData,
               resourceType,
               'export-123',
-              SCOPES.VALUE
             ), { merged: pg1}],
             [select(
               selectors.resourceData,
               resourceType,
               'export-456',
-              SCOPES.VALUE
             ), { merged: pg2}],
             [call(
               getPreviewOptionsForResource,
@@ -1449,13 +1437,11 @@ describe('Flow sample data utility sagas', () => {
               selectors.resourceData,
               resourceType,
               'export-123',
-              SCOPES.VALUE
             ), { merged: pg1}],
             [select(
               selectors.resourceData,
               resourceType,
               'export-456',
-              SCOPES.VALUE
             ), { merged: pg2}],
             [call(
               getPreviewOptionsForResource,
@@ -1531,13 +1517,11 @@ describe('Flow sample data utility sagas', () => {
               selectors.resourceData,
               resourceType,
               'export-123',
-              SCOPES.VALUE
             ), { merged: pg1}],
             [select(
               selectors.resourceData,
               resourceType,
               'export-456',
-              SCOPES.VALUE
             ), { merged: pg2}],
             [call(
               getPreviewOptionsForResource,
@@ -1626,13 +1610,11 @@ describe('Flow sample data utility sagas', () => {
               selectors.resourceData,
               resourceType,
               'export-123',
-              SCOPES.VALUE
             ), { merged: pg1}],
             [select(
               selectors.resourceData,
               resourceType,
               'export-456',
-              SCOPES.VALUE
             ), { merged: pg2}],
             [call(
               getPreviewOptionsForResource,
@@ -1694,13 +1676,11 @@ describe('Flow sample data utility sagas', () => {
               selectors.resourceData,
               resourceType,
               'export-123',
-              SCOPES.VALUE
             ), { merged: pg1}],
             [select(
               selectors.resourceData,
               resourceType,
               'export-456',
-              SCOPES.VALUE
             ), { merged: pg2}],
           ])
           .returns(flowResourcesMap)
@@ -1749,7 +1729,6 @@ describe('Flow sample data utility sagas', () => {
               selectors.resourceData,
               'imports',
               resourceId,
-              SCOPES.VALUE
             ), { merged: resource}],
           ])
           .put(
@@ -2259,7 +2238,7 @@ describe('Flow sample data utility sagas', () => {
 
         expectSaga(pageProcessorPreview, { flowId, _pageProcessorId, resourceType })
           .provide([
-            [select(selectors.resourceData, 'flows', flowId, SCOPES.VALUE), { merged: flow}],
+            [select(selectors.resourceData, 'flows', flowId), { merged: flow}],
           ])
           .not.call.fn(apiCallWithRetry)
           .returns(undefined)
@@ -2316,7 +2295,7 @@ describe('Flow sample data utility sagas', () => {
 
         expectSaga(pageProcessorPreview, { flowId, _pageProcessorId, resourceType: 'imports' })
           .provide([
-            [select(selectors.resourceData, 'flows', flowId, SCOPES.VALUE), { merged: flow }],
+            [select(selectors.resourceData, 'flows', flowId), { merged: flow }],
             [call(fetchFlowResources, {
               flow,
               type: 'pageGenerators',
@@ -2405,7 +2384,7 @@ describe('Flow sample data utility sagas', () => {
 
         expectSaga(pageProcessorPreview, { flowId, _pageProcessorId, resourceType: 'imports', _pageProcessorDoc })
           .provide([
-            [select(selectors.resourceData, 'flows', flowId, SCOPES.VALUE), { merged: flow }],
+            [select(selectors.resourceData, 'flows', flowId), { merged: flow }],
             [call(fetchFlowResources, {
               flow,
               type: 'pageGenerators',
@@ -2473,7 +2452,7 @@ describe('Flow sample data utility sagas', () => {
 
         expectSaga(pageProcessorPreview, { flowId, _pageProcessorId, resourceType: 'exports', previewType: 'flowInput'})
           .provide([
-            [select(selectors.resourceData, 'flows', flowId, SCOPES.VALUE), { merged: flow }],
+            [select(selectors.resourceData, 'flows', flowId), { merged: flow }],
             [call(fetchFlowResources, {
               flow,
               type: 'pageGenerators',
@@ -2580,7 +2559,7 @@ describe('Flow sample data utility sagas', () => {
 
         expectSaga(pageProcessorPreview, { flowId, _pageProcessorId, resourceType: 'exports' })
           .provide([
-            [select(selectors.resourceData, 'flows', flowId, SCOPES.VALUE), { merged: flow }],
+            [select(selectors.resourceData, 'flows', flowId), { merged: flow }],
             [call(fetchFlowResources, {
               flow,
               type: 'pageGenerators',
@@ -2700,7 +2679,7 @@ describe('Flow sample data utility sagas', () => {
 
         expectSaga(pageProcessorPreview, { flowId, _pageProcessorId, resourceType: 'exports', _pageProcessorDoc })
           .provide([
-            [select(selectors.resourceData, 'flows', flowId, SCOPES.VALUE), { merged: flow }],
+            [select(selectors.resourceData, 'flows', flowId), { merged: flow }],
             [call(fetchFlowResources, {
               flow,
               type: 'pageGenerators',
@@ -2777,7 +2756,7 @@ describe('Flow sample data utility sagas', () => {
 
         expectSaga(pageProcessorPreview, { flowId, _pageProcessorId, resourceType: 'imports', runOffline })
           .provide([
-            [select(selectors.resourceData, 'flows', flowId, SCOPES.VALUE), { merged: flow }],
+            [select(selectors.resourceData, 'flows', flowId), { merged: flow }],
             [call(fetchFlowResources, {
               flow,
               type: 'pageGenerators',
@@ -2850,7 +2829,7 @@ describe('Flow sample data utility sagas', () => {
 
         expectSaga(pageProcessorPreview, { flowId, _pageProcessorId, resourceType: 'imports', refresh, includeStages })
           .provide([
-            [select(selectors.resourceData, 'flows', flowId, SCOPES.VALUE), { merged: flow }],
+            [select(selectors.resourceData, 'flows', flowId), { merged: flow }],
             [call(fetchFlowResources, {
               flow,
               type: 'pageGenerators',
@@ -2923,7 +2902,7 @@ describe('Flow sample data utility sagas', () => {
 
         expectSaga(pageProcessorPreview, { throwOnError: true, flowId, _pageProcessorId, resourceType: 'imports'})
           .provide([
-            [select(selectors.resourceData, 'flows', flowId, SCOPES.VALUE), { merged: flow }],
+            [select(selectors.resourceData, 'flows', flowId), { merged: flow }],
             [call(fetchFlowResources, {
               flow,
               type: 'pageGenerators',
@@ -3004,7 +2983,7 @@ describe('Flow sample data utility sagas', () => {
 
         expectSaga(pageProcessorPreview, {throwOnError, previewType, flowId, _pageProcessorId, resourceType: 'imports', runOffline })
           .provide([
-            [select(selectors.resourceData, 'flows', flowId, SCOPES.VALUE), { merged: flow }],
+            [select(selectors.resourceData, 'flows', flowId), { merged: flow }],
             [call(fetchFlowResources, {
               flow,
               type: 'pageGenerators',
@@ -3132,7 +3111,6 @@ describe('Flow sample data utility sagas', () => {
               selectors.resourceData,
               'exports',
               resourceId,
-              SCOPES.VALUE
             ), { merged: resource }],
             [call(apiCallWithRetry, {
               path,
@@ -3169,7 +3147,6 @@ describe('Flow sample data utility sagas', () => {
               selectors.resourceData,
               'exports',
               resourceId,
-              SCOPES.VALUE
             ), { merged: resource }],
             [call(apiCallWithRetry, {
               path,
@@ -3202,7 +3179,6 @@ describe('Flow sample data utility sagas', () => {
               selectors.resourceData,
               'exports',
               resourceId,
-              SCOPES.VALUE
             ), { merged: resource }],
             [call(apiCallWithRetry, {
               path,
@@ -3246,7 +3222,6 @@ describe('Flow sample data utility sagas', () => {
               selectors.resourceData,
               'exports',
               resourceId,
-              SCOPES.VALUE
             ), { merged: resource }],
             [call(apiCallWithRetry, {
               path,
@@ -3294,7 +3269,6 @@ describe('Flow sample data utility sagas', () => {
               selectors.resourceData,
               'exports',
               resourceId,
-              SCOPES.VALUE
             ), { merged: resource }],
             [select(
               selectors.resource,
@@ -3342,7 +3316,6 @@ describe('Flow sample data utility sagas', () => {
               selectors.resourceData,
               'exports',
               resourceId,
-              SCOPES.VALUE
             ), { merged: resource }],
             [select(
               selectors.resource,
@@ -3382,7 +3355,6 @@ describe('Flow sample data utility sagas', () => {
               selectors.resourceData,
               'exports',
               resourceId,
-              SCOPES.VALUE
             ), { merged: resource }],
             [select(
               selectors.resource,
@@ -3597,8 +3569,8 @@ describe('Flow sample data utility sagas', () => {
       test('should do nothing if there is no resourceId', () => expectSaga(saveTransformationRulesForNewXMLExport, {})
         .not.call.fn(_getXmlFileAdaptorSampleData)
         .not.call.fn(_getXmlHttpAdaptorSampleData)
-        .not.put(actions.resource.patchStaged(undefined, [], SCOPES.VALUE))
-        .not.put(actions.resource.commitStaged('exports', undefined, SCOPES.VALUE))
+        .not.put(actions.resource.patchStaged(undefined, []))
+        .not.put(actions.resource.commitStaged('exports', undefined))
         .run()
       );
       test('should call _getXmlFileAdaptorSampleData saga for FTP XML resource', () => {
@@ -3618,7 +3590,6 @@ describe('Flow sample data utility sagas', () => {
               selectors.resourceData,
               'exports',
               resourceId,
-              SCOPES.VALUE
             ), {merged: ftpXMLExport}],
           ])
           .call.fn(_getXmlFileAdaptorSampleData)
@@ -3643,7 +3614,6 @@ describe('Flow sample data utility sagas', () => {
               selectors.resourceData,
               'exports',
               resourceId,
-              SCOPES.VALUE
             ), {merged: httpXmlExport}],
           ])
           .not.call.fn(_getXmlFileAdaptorSampleData)
@@ -3668,13 +3638,12 @@ describe('Flow sample data utility sagas', () => {
               selectors.resourceData,
               'exports',
               'id-123',
-              SCOPES.VALUE
             ), { merged: httpXmlExport}],
           ])
           .not.call.fn(_getXmlFileAdaptorSampleData)
           .call.fn(_getXmlHttpAdaptorSampleData)
-          .not.put(actions.resource.patchStaged(resourceId, [], SCOPES.VALUE))
-          .not.put(actions.resource.commitStaged('exports', resourceId, SCOPES.VALUE))
+          .not.put(actions.resource.patchStaged(resourceId, []))
+          .not.put(actions.resource.commitStaged('exports', resourceId))
           .run();
       });
 
@@ -3728,7 +3697,6 @@ describe('Flow sample data utility sagas', () => {
               selectors.resourceData,
               'exports',
               'id-123',
-              SCOPES.VALUE
             ), { merged: httpXmlExport}],
             [call(_getXmlHttpAdaptorSampleData, {
               resource: httpXmlExport,
@@ -3737,12 +3705,11 @@ describe('Flow sample data utility sagas', () => {
           ])
           .not.call.fn(_getXmlFileAdaptorSampleData)
           .call.fn(_getXmlHttpAdaptorSampleData)
-          .put(actions.resource.patchStaged(resourceId, patchSet, SCOPES.VALUE))
+          .put(actions.resource.patchStaged(resourceId, patchSet))
           .call(commitStagedChanges,
             {
               resourceType: 'exports',
               id: resourceId,
-              scope: SCOPES.VALUE,
             }
           )
           .run();

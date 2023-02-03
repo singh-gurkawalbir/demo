@@ -1,0 +1,1129 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Testsuite for connection metadata should test connection metadata when isIA is set to false and useNew is set to false 1`] = `
+Object {
+  "actions": Array [
+    Object {
+      "id": "oauthandcancel",
+    },
+  ],
+  "fieldMap": Object {
+    "http.auth.oauth.scope": Object {
+      "defaultValue": Array [
+        "read_content",
+        "write_content",
+        "read_themes",
+        "write_themes",
+        "read_products",
+        "write_products",
+        "read_product_listings",
+        "read_customers",
+        "write_customers",
+        "read_orders",
+        "write_orders",
+        "read_all_orders",
+        "read_draft_orders",
+        "write_draft_orders",
+        "read_inventory",
+        "write_inventory",
+        "read_locations",
+        "read_script_tags",
+        "write_script_tags",
+        "read_fulfillments",
+        "write_fulfillments",
+        "read_shipping",
+        "write_shipping",
+        "read_analytics",
+        "read_checkouts",
+        "write_checkouts",
+        "read_reports",
+        "write_reports",
+        "read_price_rules",
+        "write_price_rules",
+        "read_marketing_events",
+        "write_marketing_events",
+        "read_resource_feedbacks",
+        "write_resource_feedbacks",
+        "read_shopify_payments_payouts",
+        "unauthenticated_read_product_listings",
+        "unauthenticated_write_checkouts",
+        "unauthenticated_write_customers",
+        "unauthenticated_read_content",
+        "read_assigned_fulfillment_orders",
+        "write_assigned_fulfillment_orders",
+        "read_merchant_managed_fulfillment_orders",
+        "write_merchant_managed_fulfillment_orders",
+        "read_third_party_fulfillment_orders",
+        "write_third_party_fulfillment_orders",
+      ],
+      "helpKey": "connection.http.auth.oauth.scope",
+      "id": "http.auth.oauth.scope",
+      "label": "Configure scopes",
+      "name": "/http/auth/oauth/scope",
+      "pathToScopeField": "http.auth.oauth.scope",
+      "refreshOptionsOnChangesTo": Array [
+        "resourceId",
+      ],
+      "required": true,
+      "scopes": Array [
+        Object {
+          "scopes": Array [
+            "read_content",
+            "write_content",
+            "read_themes",
+            "write_themes",
+            "read_products",
+            "write_products",
+            "read_product_listings",
+            "read_customers",
+            "write_customers",
+            "read_orders",
+            "write_orders",
+            "read_all_orders",
+            "read_draft_orders",
+            "write_draft_orders",
+            "read_inventory",
+            "write_inventory",
+            "read_locations",
+            "read_script_tags",
+            "write_script_tags",
+            "read_fulfillments",
+            "write_fulfillments",
+            "read_shipping",
+            "write_shipping",
+            "read_analytics",
+            "read_checkouts",
+            "write_checkouts",
+            "read_reports",
+            "write_reports",
+            "read_price_rules",
+            "write_price_rules",
+            "read_marketing_events",
+            "write_marketing_events",
+            "read_resource_feedbacks",
+            "write_resource_feedbacks",
+            "read_shopify_payments_payouts",
+            "unauthenticated_read_product_listings",
+            "unauthenticated_write_checkouts",
+            "unauthenticated_write_customers",
+            "unauthenticated_read_content",
+            "read_assigned_fulfillment_orders",
+            "write_assigned_fulfillment_orders",
+            "read_merchant_managed_fulfillment_orders",
+            "write_merchant_managed_fulfillment_orders",
+            "read_third_party_fulfillment_orders",
+            "write_third_party_fulfillment_orders",
+          ],
+          "subHeader": "Shopify scopes",
+        },
+        Object {
+          "scopes": Array [
+            "read_users",
+            "write_users",
+            "read_gift_cards",
+            "write_gift_cards",
+          ],
+          "subHeader": "Shopify Plus scopes",
+        },
+      ],
+      "type": "selectscopes",
+      "visible": false,
+      "visibleWhen": Array [
+        Object {
+          "field": "resourceId",
+          "isNot": Array [
+            "",
+          ],
+        },
+      ],
+    },
+    "http.auth.type": Object {
+      "defaultDisabled": true,
+      "defaultValue": "oauth",
+      "helpKey": "shopify.connection.http.auth.type",
+      "id": "http.auth.type",
+      "label": "Auth type",
+      "name": "/http/auth/type",
+      "options": Array [
+        Object {
+          "items": Array [
+            Object {
+              "label": "Basic",
+              "value": "basic",
+            },
+            Object {
+              "label": "OAuth 2.0",
+              "value": "oauth",
+            },
+          ],
+        },
+      ],
+      "required": true,
+      "type": "select",
+      "visible": false,
+    },
+    "http.storeName": Object {
+      "defaultDisabled": true,
+      "defaultValue": "",
+      "helpKey": "shopify.connection.http.storeURL",
+      "id": "http.storeName",
+      "label": "Store name",
+      "name": "/http/storeName",
+      "required": true,
+      "type": "shopifystorename",
+      "validWhen": Object {
+        "matchesRegEx": Object {
+          "message": "not a valid Store name.",
+          "pattern": "^[a-zA-Z0-9][a-zA-Z0-9-]*",
+        },
+      },
+      "visible": false,
+    },
+    "http.unencrypted.version": Object {
+      "defaultValue": "2022-10",
+      "helpKey": "shopify.connection.http.unencrypted.version",
+      "id": "http.unencrypted.version",
+      "label": "API version",
+      "name": "/http/unencrypted/version",
+      "options": Array [
+        Object {
+          "items": Array [
+            Object {
+              "label": "2022-04",
+              "value": "2022-04",
+            },
+            Object {
+              "label": "2022-07",
+              "value": "2022-07",
+            },
+            Object {
+              "label": "2022-10",
+              "value": "2022-10",
+            },
+          ],
+        },
+      ],
+      "required": true,
+      "type": "select",
+      "visible": false,
+    },
+    "resourceId": Object {
+      "appTypeIsStatic": true,
+      "defaultValue": "",
+      "getItemInfo": [Function],
+      "id": "resourceId",
+      "isValueValid": true,
+      "label": "Connection",
+      "name": "/resourceId",
+      "options": Object {
+        "appType": "shopify",
+        "filter": Object {
+          "$and": Array [
+            Object {
+              "$or": Array [
+                Object {
+                  "type": "rest",
+                },
+                Object {
+                  "type": "http",
+                },
+              ],
+            },
+            Object {
+              "_connectorId": Object {
+                "$exists": false,
+              },
+            },
+            Object {
+              "assistant": "shopify",
+            },
+          ],
+        },
+      },
+      "placeholder": "Select",
+      "refreshOptionsOnChangesTo": undefined,
+      "removeHelperText": true,
+      "required": true,
+      "resourceType": "connections",
+      "type": "shopifyconnectionselect",
+      "visible": true,
+      "visibleWhen": undefined,
+    },
+  },
+  "layout": Object {
+    "containers": Array [
+      Object {
+        "containers": Array [
+          Object {
+            "fields": Array [
+              "resourceId",
+              "http.unencrypted.version",
+              "http.storeName",
+              "http.auth.type",
+              "http.auth.oauth.scope",
+            ],
+          },
+        ],
+        "type": "blank",
+      },
+      Object {
+        "containers": Array [
+          Object {
+            "collapsed": true,
+            "fields": Array [],
+            "label": "Advanced",
+          },
+        ],
+        "type": "collapse",
+      },
+    ],
+  },
+  "optionsHandler": [Function],
+  "patchSet": [Function],
+  "preSave": [Function],
+}
+`;
+
+exports[`Testsuite for connection metadata should test connection metadata when isIA is set to false and useNew is set to true 1`] = `
+Object {
+  "actions": Array [
+    Object {
+      "id": "oauthandcancel",
+    },
+  ],
+  "fieldMap": Object {
+    "_borrowConcurrencyFromConnectionId": Object {
+      "defaultValue": "",
+      "filter": [Function],
+      "id": "_borrowConcurrencyFromConnectionId",
+      "isLoggable": true,
+      "label": "Borrow concurrency from",
+      "name": "/_borrowConcurrencyFromConnectionId",
+      "resourceType": "connections",
+      "type": "selectresource",
+      "visible": true,
+    },
+    "http.auth.oauth.scope": Object {
+      "defaultValue": Array [
+        "read_content",
+        "write_content",
+        "read_themes",
+        "write_themes",
+        "read_products",
+        "write_products",
+        "read_product_listings",
+        "read_customers",
+        "write_customers",
+        "read_orders",
+        "write_orders",
+        "read_all_orders",
+        "read_draft_orders",
+        "write_draft_orders",
+        "read_inventory",
+        "write_inventory",
+        "read_locations",
+        "read_script_tags",
+        "write_script_tags",
+        "read_fulfillments",
+        "write_fulfillments",
+        "read_shipping",
+        "write_shipping",
+        "read_analytics",
+        "read_checkouts",
+        "write_checkouts",
+        "read_reports",
+        "write_reports",
+        "read_price_rules",
+        "write_price_rules",
+        "read_marketing_events",
+        "write_marketing_events",
+        "read_resource_feedbacks",
+        "write_resource_feedbacks",
+        "read_shopify_payments_payouts",
+        "unauthenticated_read_product_listings",
+        "unauthenticated_write_checkouts",
+        "unauthenticated_write_customers",
+        "unauthenticated_read_content",
+        "read_assigned_fulfillment_orders",
+        "write_assigned_fulfillment_orders",
+        "read_merchant_managed_fulfillment_orders",
+        "write_merchant_managed_fulfillment_orders",
+        "read_third_party_fulfillment_orders",
+        "write_third_party_fulfillment_orders",
+      ],
+      "helpKey": "connection.http.auth.oauth.scope",
+      "id": "http.auth.oauth.scope",
+      "label": "Configure scopes",
+      "name": "/http/auth/oauth/scope",
+      "pathToScopeField": "http.auth.oauth.scope",
+      "refreshOptionsOnChangesTo": Array [
+        "resourceId",
+      ],
+      "required": true,
+      "scopes": Array [
+        Object {
+          "scopes": Array [
+            "read_content",
+            "write_content",
+            "read_themes",
+            "write_themes",
+            "read_products",
+            "write_products",
+            "read_product_listings",
+            "read_customers",
+            "write_customers",
+            "read_orders",
+            "write_orders",
+            "read_all_orders",
+            "read_draft_orders",
+            "write_draft_orders",
+            "read_inventory",
+            "write_inventory",
+            "read_locations",
+            "read_script_tags",
+            "write_script_tags",
+            "read_fulfillments",
+            "write_fulfillments",
+            "read_shipping",
+            "write_shipping",
+            "read_analytics",
+            "read_checkouts",
+            "write_checkouts",
+            "read_reports",
+            "write_reports",
+            "read_price_rules",
+            "write_price_rules",
+            "read_marketing_events",
+            "write_marketing_events",
+            "read_resource_feedbacks",
+            "write_resource_feedbacks",
+            "read_shopify_payments_payouts",
+            "unauthenticated_read_product_listings",
+            "unauthenticated_write_checkouts",
+            "unauthenticated_write_customers",
+            "unauthenticated_read_content",
+            "read_assigned_fulfillment_orders",
+            "write_assigned_fulfillment_orders",
+            "read_merchant_managed_fulfillment_orders",
+            "write_merchant_managed_fulfillment_orders",
+            "read_third_party_fulfillment_orders",
+            "write_third_party_fulfillment_orders",
+          ],
+          "subHeader": "Shopify scopes",
+        },
+        Object {
+          "scopes": Array [
+            "read_users",
+            "write_users",
+            "read_gift_cards",
+            "write_gift_cards",
+          ],
+          "subHeader": "Shopify Plus scopes",
+        },
+      ],
+      "type": "selectscopes",
+      "visible": false,
+      "visibleWhen": undefined,
+    },
+    "http.auth.type": Object {
+      "defaultDisabled": true,
+      "defaultValue": "oauth",
+      "helpKey": "shopify.connection.http.auth.type",
+      "id": "http.auth.type",
+      "label": "Auth type",
+      "name": "/http/auth/type",
+      "options": Array [
+        Object {
+          "items": Array [
+            Object {
+              "label": "Basic",
+              "value": "basic",
+            },
+            Object {
+              "label": "OAuth 2.0",
+              "value": "oauth",
+            },
+          ],
+        },
+      ],
+      "required": true,
+      "type": "select",
+      "visible": true,
+    },
+    "http.concurrencyLevel": Object {
+      "id": "http.concurrencyLevel",
+      "isLoggable": true,
+      "label": "Concurrency level",
+      "name": "/http/concurrencyLevel",
+      "options": Array [
+        Object {
+          "items": Array [
+            Object {
+              "label": "1",
+              "value": 1,
+            },
+            Object {
+              "label": "2",
+              "value": 2,
+            },
+            Object {
+              "label": "3",
+              "value": 3,
+            },
+            Object {
+              "label": "4",
+              "value": 4,
+            },
+            Object {
+              "label": "5",
+              "value": 5,
+            },
+            Object {
+              "label": "6",
+              "value": 6,
+            },
+            Object {
+              "label": "7",
+              "value": 7,
+            },
+            Object {
+              "label": "8",
+              "value": 8,
+            },
+            Object {
+              "label": "9",
+              "value": 9,
+            },
+            Object {
+              "label": "10",
+              "value": 10,
+            },
+            Object {
+              "label": "11",
+              "value": 11,
+            },
+            Object {
+              "label": "12",
+              "value": 12,
+            },
+            Object {
+              "label": "13",
+              "value": 13,
+            },
+            Object {
+              "label": "14",
+              "value": 14,
+            },
+            Object {
+              "label": "15",
+              "value": 15,
+            },
+            Object {
+              "label": "16",
+              "value": 16,
+            },
+            Object {
+              "label": "17",
+              "value": 17,
+            },
+            Object {
+              "label": "18",
+              "value": 18,
+            },
+            Object {
+              "label": "19",
+              "value": 19,
+            },
+            Object {
+              "label": "20",
+              "value": 20,
+            },
+            Object {
+              "label": "21",
+              "value": 21,
+            },
+            Object {
+              "label": "22",
+              "value": 22,
+            },
+            Object {
+              "label": "23",
+              "value": 23,
+            },
+            Object {
+              "label": "24",
+              "value": 24,
+            },
+            Object {
+              "label": "25",
+              "value": 25,
+            },
+          ],
+        },
+      ],
+      "type": "select",
+      "visible": true,
+      "visibleWhen": Array [
+        Object {
+          "field": "_borrowConcurrencyFromConnectionId",
+          "is": Array [
+            "",
+          ],
+        },
+      ],
+    },
+    "http.storeName": Object {
+      "defaultDisabled": true,
+      "defaultValue": "",
+      "helpKey": "shopify.connection.http.storeURL",
+      "id": "http.storeName",
+      "label": "Store name",
+      "name": "/http/storeName",
+      "required": true,
+      "type": "shopifystorename",
+      "validWhen": Object {
+        "matchesRegEx": Object {
+          "message": "not a valid Store name.",
+          "pattern": "^[a-zA-Z0-9][a-zA-Z0-9-]*",
+        },
+      },
+      "visible": true,
+    },
+    "http.unencrypted.version": Object {
+      "defaultValue": "2022-10",
+      "helpKey": "shopify.connection.http.unencrypted.version",
+      "id": "http.unencrypted.version",
+      "label": "API version",
+      "name": "/http/unencrypted/version",
+      "options": Array [
+        Object {
+          "items": Array [
+            Object {
+              "label": "2022-04",
+              "value": "2022-04",
+            },
+            Object {
+              "label": "2022-07",
+              "value": "2022-07",
+            },
+            Object {
+              "label": "2022-10",
+              "value": "2022-10",
+            },
+          ],
+        },
+      ],
+      "required": true,
+      "type": "select",
+      "visible": true,
+    },
+    "name": Object {
+      "helpKey": "connection.name",
+      "id": "name",
+      "label": "Name your connection",
+      "name": "/name",
+      "placeholder": "e.g., Shopify connection",
+      "required": true,
+      "type": "text",
+      "visible": true,
+    },
+  },
+  "layout": Object {
+    "containers": Array [
+      Object {
+        "containers": Array [
+          Object {
+            "fields": Array [
+              "name",
+              "http.unencrypted.version",
+              "http.storeName",
+              "http.auth.type",
+              "http.auth.oauth.scope",
+            ],
+          },
+        ],
+        "type": "box",
+      },
+      Object {
+        "containers": Array [
+          Object {
+            "collapsed": true,
+            "fields": Array [
+              "_borrowConcurrencyFromConnectionId",
+              "http.concurrencyLevel",
+            ],
+            "label": "Advanced",
+          },
+        ],
+        "type": "collapse",
+      },
+    ],
+  },
+  "optionsHandler": [Function],
+  "patchSet": [Function],
+  "preSave": [Function],
+}
+`;
+
+exports[`Testsuite for connection metadata should test connection metadata when isIA is set to true and useNew is set to false 1`] = `
+Object {
+  "actions": Array [
+    Object {
+      "id": "oauthandcancel",
+    },
+  ],
+  "fieldMap": Object {
+    "_integrationId": Object {
+      "appLabel": "Shopify",
+      "clientId": "clientid",
+      "defaultValue": "",
+      "helpKey": "connection._integrationId",
+      "id": "_integrationId",
+      "label": "IO integration name",
+      "link": "/marketplace/shopify",
+      "name": "/_integrationId",
+      "options": Object {
+        "connectionId": "connid",
+        "useNew": false,
+      },
+      "placeholder": "Select",
+      "refreshOptionsOnChangesTo": Array [
+        "resourceId",
+      ],
+      "required": true,
+      "type": "ianameselect",
+      "visible": true,
+    },
+    "http.auth.type": Object {
+      "defaultDisabled": true,
+      "defaultValue": "oauth",
+      "helpKey": "shopify.connection.http.auth.type",
+      "id": "http.auth.type",
+      "label": "Auth type",
+      "name": "/http/auth/type",
+      "options": Array [
+        Object {
+          "items": Array [
+            Object {
+              "label": "Basic",
+              "value": "basic",
+            },
+            Object {
+              "label": "OAuth 2.0",
+              "value": "oauth",
+            },
+          ],
+        },
+      ],
+      "required": true,
+      "type": "select",
+      "visible": false,
+    },
+    "http.storeName": Object {
+      "defaultDisabled": true,
+      "defaultValue": "",
+      "helpKey": "shopify.connection.http.storeURL",
+      "id": "http.storeName",
+      "label": "Store name",
+      "name": "/http/storeName",
+      "required": true,
+      "type": "shopifystorename",
+      "validWhen": Object {
+        "matchesRegEx": Object {
+          "message": "not a valid Store name.",
+          "pattern": "^[a-zA-Z0-9][a-zA-Z0-9-]*",
+        },
+      },
+      "visible": false,
+    },
+    "http.unencrypted.version": Object {
+      "defaultValue": "2022-10",
+      "helpKey": "shopify.connection.http.unencrypted.version",
+      "id": "http.unencrypted.version",
+      "label": "API version",
+      "name": "/http/unencrypted/version",
+      "options": Array [
+        Object {
+          "items": Array [
+            Object {
+              "label": "2022-04",
+              "value": "2022-04",
+            },
+            Object {
+              "label": "2022-07",
+              "value": "2022-07",
+            },
+            Object {
+              "label": "2022-10",
+              "value": "2022-10",
+            },
+          ],
+        },
+      ],
+      "required": true,
+      "type": "select",
+      "visible": false,
+    },
+    "resourceId": Object {
+      "appTypeIsStatic": false,
+      "defaultValue": "",
+      "getItemInfo": [Function],
+      "id": "resourceId",
+      "isValueValid": true,
+      "label": "Connection",
+      "name": "/resourceId",
+      "options": Object {
+        "appType": "shopify",
+        "filter": Object {
+          "$and": Array [
+            Object {
+              "$or": Array [
+                Object {
+                  "type": "rest",
+                },
+                Object {
+                  "type": "http",
+                },
+              ],
+            },
+            Object {
+              "_connectorId": Object {
+                "$exists": true,
+              },
+            },
+            Object {
+              "assistant": "shopify",
+            },
+          ],
+        },
+      },
+      "placeholder": "Select",
+      "refreshOptionsOnChangesTo": Array [
+        "_integrationId",
+      ],
+      "removeHelperText": true,
+      "required": true,
+      "resourceType": "connections",
+      "type": "shopifyconnectionselect",
+      "visible": true,
+      "visibleWhen": Array [
+        Object {
+          "field": "_integrationId",
+          "isNot": Array [
+            "",
+          ],
+        },
+      ],
+    },
+  },
+  "layout": Object {
+    "containers": Array [
+      Object {
+        "containers": Array [
+          Object {
+            "fields": Array [
+              "_integrationId",
+              "resourceId",
+              "http.unencrypted.version",
+              "http.storeName",
+              "http.auth.type",
+            ],
+          },
+        ],
+        "type": "blank",
+      },
+      Object {
+        "containers": Array [
+          Object {
+            "collapsed": true,
+            "fields": Array [],
+            "label": "Advanced",
+          },
+        ],
+        "type": "collapse",
+      },
+    ],
+  },
+  "optionsHandler": [Function],
+  "patchSet": [Function],
+  "preSave": [Function],
+}
+`;
+
+exports[`Testsuite for connection metadata should test connection metadata when isIA is set to true and useNew is set to true 1`] = `
+Object {
+  "actions": Array [
+    Object {
+      "id": "oauthandcancel",
+    },
+  ],
+  "fieldMap": Object {
+    "_borrowConcurrencyFromConnectionId": Object {
+      "defaultValue": "",
+      "filter": [Function],
+      "id": "_borrowConcurrencyFromConnectionId",
+      "isLoggable": true,
+      "label": "Borrow concurrency from",
+      "name": "/_borrowConcurrencyFromConnectionId",
+      "resourceType": "connections",
+      "type": "selectresource",
+      "visible": true,
+    },
+    "_integrationId": Object {
+      "appLabel": "Shopify",
+      "clientId": "clientid",
+      "defaultValue": "",
+      "helpKey": "connection._integrationId",
+      "id": "_integrationId",
+      "label": "IO integration name",
+      "link": "/marketplace/shopify",
+      "name": "/_integrationId",
+      "options": Object {
+        "connectionId": "connid",
+        "useNew": true,
+      },
+      "placeholder": "Select",
+      "refreshOptionsOnChangesTo": undefined,
+      "required": true,
+      "type": "ianameselect",
+      "visible": true,
+    },
+    "http.auth.type": Object {
+      "defaultDisabled": true,
+      "defaultValue": "oauth",
+      "helpKey": "shopify.connection.http.auth.type",
+      "id": "http.auth.type",
+      "label": "Auth type",
+      "name": "/http/auth/type",
+      "options": Array [
+        Object {
+          "items": Array [
+            Object {
+              "label": "Basic",
+              "value": "basic",
+            },
+            Object {
+              "label": "OAuth 2.0",
+              "value": "oauth",
+            },
+          ],
+        },
+      ],
+      "required": true,
+      "type": "select",
+      "visible": true,
+    },
+    "http.concurrencyLevel": Object {
+      "id": "http.concurrencyLevel",
+      "isLoggable": true,
+      "label": "Concurrency level",
+      "name": "/http/concurrencyLevel",
+      "options": Array [
+        Object {
+          "items": Array [
+            Object {
+              "label": "1",
+              "value": 1,
+            },
+            Object {
+              "label": "2",
+              "value": 2,
+            },
+            Object {
+              "label": "3",
+              "value": 3,
+            },
+            Object {
+              "label": "4",
+              "value": 4,
+            },
+            Object {
+              "label": "5",
+              "value": 5,
+            },
+            Object {
+              "label": "6",
+              "value": 6,
+            },
+            Object {
+              "label": "7",
+              "value": 7,
+            },
+            Object {
+              "label": "8",
+              "value": 8,
+            },
+            Object {
+              "label": "9",
+              "value": 9,
+            },
+            Object {
+              "label": "10",
+              "value": 10,
+            },
+            Object {
+              "label": "11",
+              "value": 11,
+            },
+            Object {
+              "label": "12",
+              "value": 12,
+            },
+            Object {
+              "label": "13",
+              "value": 13,
+            },
+            Object {
+              "label": "14",
+              "value": 14,
+            },
+            Object {
+              "label": "15",
+              "value": 15,
+            },
+            Object {
+              "label": "16",
+              "value": 16,
+            },
+            Object {
+              "label": "17",
+              "value": 17,
+            },
+            Object {
+              "label": "18",
+              "value": 18,
+            },
+            Object {
+              "label": "19",
+              "value": 19,
+            },
+            Object {
+              "label": "20",
+              "value": 20,
+            },
+            Object {
+              "label": "21",
+              "value": 21,
+            },
+            Object {
+              "label": "22",
+              "value": 22,
+            },
+            Object {
+              "label": "23",
+              "value": 23,
+            },
+            Object {
+              "label": "24",
+              "value": 24,
+            },
+            Object {
+              "label": "25",
+              "value": 25,
+            },
+          ],
+        },
+      ],
+      "type": "select",
+      "visible": true,
+      "visibleWhen": Array [
+        Object {
+          "field": "_borrowConcurrencyFromConnectionId",
+          "is": Array [
+            "",
+          ],
+        },
+      ],
+    },
+    "http.storeName": Object {
+      "defaultDisabled": true,
+      "defaultValue": "",
+      "helpKey": "shopify.connection.http.storeURL",
+      "id": "http.storeName",
+      "label": "Store name",
+      "name": "/http/storeName",
+      "required": true,
+      "type": "shopifystorename",
+      "validWhen": Object {
+        "matchesRegEx": Object {
+          "message": "not a valid Store name.",
+          "pattern": "^[a-zA-Z0-9][a-zA-Z0-9-]*",
+        },
+      },
+      "visible": true,
+    },
+    "http.unencrypted.version": Object {
+      "defaultValue": "2022-10",
+      "helpKey": "shopify.connection.http.unencrypted.version",
+      "id": "http.unencrypted.version",
+      "label": "API version",
+      "name": "/http/unencrypted/version",
+      "options": Array [
+        Object {
+          "items": Array [
+            Object {
+              "label": "2022-04",
+              "value": "2022-04",
+            },
+            Object {
+              "label": "2022-07",
+              "value": "2022-07",
+            },
+            Object {
+              "label": "2022-10",
+              "value": "2022-10",
+            },
+          ],
+        },
+      ],
+      "required": true,
+      "type": "select",
+      "visible": false,
+    },
+    "name": Object {
+      "helpKey": "connection.name",
+      "id": "name",
+      "label": "Name your connection",
+      "name": "/name",
+      "placeholder": "e.g., Shopify connection",
+      "required": true,
+      "type": "text",
+      "visible": true,
+    },
+  },
+  "layout": Object {
+    "containers": Array [
+      Object {
+        "containers": Array [
+          Object {
+            "fields": Array [
+              "_integrationId",
+              "name",
+              "http.unencrypted.version",
+              "http.storeName",
+              "http.auth.type",
+            ],
+          },
+        ],
+        "type": "box",
+      },
+      Object {
+        "containers": Array [
+          Object {
+            "collapsed": true,
+            "fields": Array [
+              "_borrowConcurrencyFromConnectionId",
+              "http.concurrencyLevel",
+            ],
+            "label": "Advanced",
+          },
+        ],
+        "type": "collapse",
+      },
+    ],
+  },
+  "optionsHandler": [Function],
+  "patchSet": [Function],
+  "preSave": [Function],
+}
+`;

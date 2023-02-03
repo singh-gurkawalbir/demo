@@ -3,7 +3,6 @@ import { useDispatch, useSelector, shallowEqual } from 'react-redux';
 import actions from '../../../actions';
 import { getAssistantConnectorType, getApp, getHttpConnector} from '../../../constants/applications';
 import { selectors } from '../../../reducers';
-import { SCOPES } from '../../../sagas/resourceForm';
 import useFormContext from '../../Form/FormContext';
 import { useSetInitializeFormData } from './assistant/DynaAssistantOptions';
 import DynaSelect from './DynaSelect';
@@ -124,7 +123,7 @@ export default function FormView(props) {
 
     dispatch(actions.resource.clearStaged(resourceId));
     dispatch(
-      actions.resource.patchStaged(resourceId, allPatches, SCOPES.VALUE)
+      actions.resource.patchStaged(resourceId, allPatches)
     );
 
     let allTouchedFields = Object.values(formContext.fields)

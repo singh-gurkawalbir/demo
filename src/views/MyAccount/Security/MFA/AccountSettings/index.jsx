@@ -9,7 +9,7 @@ import DynaSubmit from '../../../../../components/DynaForm/DynaSubmit';
 import { selectors } from '../../../../../reducers';
 import actions from '../../../../../actions';
 import useEnqueueSnackbar from '../../../../../hooks/enqueueSnackbar';
-import messageStore from '../../../../../utils/messageStore';
+import { message } from '../../../../../utils/messageStore';
 import { MFA_ACCOUNT_SETTINGS_ASYNC_KEY, FORM_SAVE_STATUS } from '../../../../../constants';
 
 const useStyles = makeStyles(theme => ({
@@ -84,7 +84,7 @@ export default function AccountSettings() {
   useEffect(() => {
     if (areAccountSettingsUpdated) {
       enquesnackbar({
-        message: messageStore('MFA_ACCOUNT_SETTINGS_UPDATED'),
+        message: message.MFA.ACCOUNT_SETTINGS_UPDATED,
         variant: 'success',
       });
       dispatch(actions.asyncTask.clear(MFA_ACCOUNT_SETTINGS_ASYNC_KEY));

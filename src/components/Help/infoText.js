@@ -10,5 +10,6 @@ export default {
   AccountUserSSO: 'Enhanced security for integrator.io account access is available through single sign-on (SSO). If you are a part of multiple SSO-enabled accounts, then you must select one account to use for SSO before you authenticate for the first time. This account is also known as the primary SSO account, and you will use it for SSO sign in to integrator.io. <a href="https://docs.celigo.com/hc/en-us/articles/6720519866395-Sign-in-using-single-sign-on-SSO-" target="_blank">Learn more</a>',
   General: 'Describe your integration here so that other users can quickly understand the high-level business problems being solved.',
   Readme: 'Add documentation or links to articles you want other users to reference. <a href="https://docs.celigo.com/hc/en-us/articles/7703422519707-Update-your-integration-Admin-tab" target="_blank">Learn more</a>',
+  Dashboard: 'You can view the flows that have  run or are currently running for each flow in your integration, as well as how long it took and when each job completed. If there are errors, click the number of errors in the Error column to resolve errors. You can edit jobs, and resolve errors directly from this view.',
 };
 

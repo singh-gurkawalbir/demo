@@ -22,7 +22,7 @@ describe('formView tests', () => {
       type: 'http',
       name: 'HTTP connections',
       _httpConnectorId: '_httpConnectorId',
-      http: { formType: 'http', mediaType: 'json' },
+      http: { formType: 'assistant', mediaType: 'json' },
     }],
   };
   initialStore.getState().session.form = {

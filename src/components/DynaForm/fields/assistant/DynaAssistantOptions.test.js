@@ -230,7 +230,6 @@ describe('wrappedContextConsumer UI tests', () => {
     await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith(actions.resource.patchStaged(
       '5bf18b09294767270c62fad9',
       patch,
-      'value'
     )));
     await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith(
       actions.resourceForm.init(
@@ -288,7 +287,6 @@ describe('wrappedContextConsumer UI tests', () => {
     await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith(actions.resource.patchStaged(
       '5bf18b09294767270c62fad9',
       patch,
-      'value'
     )));
     await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith(
       actions.resourceForm.init(

@@ -79,7 +79,6 @@ export default function Integration({ match }) {
           'integrations',
           integrationId,
           [{ op: 'replace', path: '/name', value: title }],
-          'value',
         )
       );
       dispatch(
@@ -88,7 +87,6 @@ export default function Integration({ match }) {
           null,
           'integrations',
           integrationId,
-          'value',
         )
       );
     },

@@ -206,7 +206,7 @@ describe('Testsuite for SelectApplications', () => {
     expect(screen.getByText(/test_label/i)).toBeInTheDocument();
     userEvent.click(screen.getByText('Test Group App'));
     expect(screen.queryByText(/test_label/i)).not.toBeInTheDocument();
-    expect(mockDispatchFn).toHaveBeenCalledWith(actions.resourceForm.submit('connections', 'test_resource_id', {test_id: 'test_groupapp_id'}, {
+    expect(mockDispatchFn).toHaveBeenCalledWith(actions.resourceForm.submit('connections', 'test_resource_id', {name: 'Test Group App', test_id: 'test_groupapp_id'}, {
       isExact: true,
       params: {
         operation: 'add',

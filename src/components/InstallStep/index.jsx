@@ -168,14 +168,25 @@ export default function InstallationStep(props) {
   });
 
   useEffect(() => {
-    if (step && !step.completed && !verified) {
-      if (revisionId && step.isCurrentStep && step.url && step.connectionId) {
+    let netsuitePackageType = null;
+
+    if (step?.name.startsWith('Integrator Bundle')) {
+      netsuitePackageType = 'suitebundle';
+    } else if (step?.name.startsWith('Integrator SuiteApp')) {
+      netsuitePackageType = 'suiteapp';
+    }
+
+    if (step && step.isCurrentStep && !step.completed && !verified) {
+      if (revisionId && step.url && step.connectionId) {
         dispatch(actions.integrationLCM.installSteps.updateStep(revisionId, 'verify'));
+
         dispatch(actions.integrationLCM.installSteps.verifyBundleOrPackageInstall({
           integrationId,
           connectionId: step.connectionId,
           revisionId,
+          variant: netsuitePackageType,
         }));
+
         setVerified(true);
       } else if (
         connection &&
@@ -191,12 +202,12 @@ export default function InstallationStep(props) {
           actions.template.verifyBundleOrPackageInstall(
             step,
             connection,
-            templateId
+            templateId,
+            netsuitePackageType
           )
         );
         setVerified(true);
       } else if (
-        step.isCurrentStep &&
         (step.installURL || step.url) &&
         !isIntegrationApp &&
         step._connId
@@ -213,7 +224,8 @@ export default function InstallationStep(props) {
             integrationId,
             step._connId,
             step.installerFunction,
-            isFrameWork2
+            isFrameWork2,
+            netsuitePackageType
           )
         );
         setVerified(true);
@@ -248,7 +260,7 @@ export default function InstallationStep(props) {
             <Typography className={clsx(classes.stepTextAll, {[classes.stepTextInstall]: (step.isCurrentStep && !step.completed)})}>
               {step.name}
             </Typography>
-            <InfoIconButton info={step.description} className={classes.installInfoBtn} />
+            <InfoIconButton info={step.description} className={classes.installInfoBtn} title={step.name} />
           </div>
         </div>
         <div className={classes.logoWithAction}>

@@ -17,7 +17,6 @@ describe('Suitescript resources testcases', () => {
     const ssLinkedConnectionId = 'connId';
     const resourceType = 'exports';
     const id = '123';
-    const scope = 'value';
     const integrationId = 'intId';
     const patch = [{ path: '/name', value: 'updating name' }];
 
@@ -26,12 +25,11 @@ describe('Suitescript resources testcases', () => {
         name: 'updating exporting from NS',
       };
 
-      expectSaga(commitStagedChanges, { ssLinkedConnectionId, resourceType, id, integrationId, scope })
+      expectSaga(commitStagedChanges, { ssLinkedConnectionId, resourceType, id, integrationId })
         .provide([[
           select(selectors.suiteScriptResourceData, {
             resourceType,
             id,
-            scope,
             ssLinkedConnectionId,
             integrationId,
           }), {
@@ -63,12 +61,11 @@ describe('Suitescript resources testcases', () => {
       const resourceType = 'connections';
       const path = `/suitescript/connections/${ssLinkedConnectionId}/connections/1`;
 
-      expectSaga(commitStagedChanges, { ssLinkedConnectionId, resourceType, id, integrationId, scope })
+      expectSaga(commitStagedChanges, { ssLinkedConnectionId, resourceType, id, integrationId })
         .provide([[
           select(selectors.suiteScriptResourceData, {
             resourceType,
             id,
-            scope,
             ssLinkedConnectionId,
             integrationId,
           }), {
@@ -114,7 +111,6 @@ describe('Suitescript resources testcases', () => {
             ssLinkedConnectionId,
             resourceType,
             id,
-            scope,
           )
         )
         .run();
@@ -131,12 +127,11 @@ describe('Suitescript resources testcases', () => {
 
       const path = `/suitescript/connections/${ssLinkedConnectionId}/integrations/${integrationId}/flows/123`;
 
-      expectSaga(commitStagedChanges, { ssLinkedConnectionId, resourceType: 'exports', id: 're123', integrationId, scope })
+      expectSaga(commitStagedChanges, { ssLinkedConnectionId, resourceType: 'exports', id: 're123', integrationId })
         .provide([[
           select(selectors.suiteScriptResourceData, {
             resourceType,
             id: `re${id}`,
-            scope,
             ssLinkedConnectionId,
             integrationId,
           }), {
@@ -182,7 +177,6 @@ describe('Suitescript resources testcases', () => {
             ssLinkedConnectionId,
             resourceType,
             `re${id}`,
-            scope,
           )
         )
         .run();
@@ -203,12 +197,11 @@ describe('Suitescript resources testcases', () => {
 
       const path = `/suitescript/connections/${ssLinkedConnectionId}/integrations/${integrationId}/flows/123`;
 
-      expectSaga(commitStagedChanges, { ssLinkedConnectionId, resourceType: 'exports', id: 're123', integrationId, scope, options })
+      expectSaga(commitStagedChanges, { ssLinkedConnectionId, resourceType: 'exports', id: 're123', integrationId, options })
         .provide([[
           select(selectors.suiteScriptResourceData, {
             resourceType,
             id: `re${id}`,
-            scope,
             ssLinkedConnectionId,
             integrationId,
           }), {
@@ -254,7 +247,6 @@ describe('Suitescript resources testcases', () => {
             ssLinkedConnectionId,
             resourceType,
             `re${id}`,
-            scope,
           )
         )
         .run();
@@ -272,12 +264,11 @@ describe('Suitescript resources testcases', () => {
       const path = `/suitescript/connections/${ssLinkedConnectionId}/connections/1`;
       const error = { code: 422, message: 'error occured' };
 
-      expectSaga(commitStagedChanges, { ssLinkedConnectionId, resourceType: 'connections', id, integrationId, scope })
+      expectSaga(commitStagedChanges, { ssLinkedConnectionId, resourceType: 'connections', id, integrationId })
         .provide([[
           select(selectors.suiteScriptResourceData, {
             resourceType: 'connections',
             id,
-            scope,
             ssLinkedConnectionId,
             integrationId,
           }), {

@@ -174,6 +174,8 @@ const getAcumaticaEndpointName = connection => {
   switch (acumaticaEndpointName) {
     case 'ecommerce':
       return 'acumaticaecommerce';
+    case 'manufacturing':
+      return 'acumaticamanufacturing';
     default:
   }
 
@@ -296,8 +298,17 @@ export const ICLIENT_DRAWER_PATH = '/:operation(add|edit)/iClients/:iClientId';
 // given a url, this util returns the path params
 // to identify the parent export/import type and id
 // This is used when a connection is opened inside a resource
-export const getParentResourceContext = url => {
+export const getParentResourceContext = (url, resourceType) => {
   if (!url) return {};
+
+  if (resourceType === 'iClients') {
+    return matchPath(url, {
+      path: [
+        `/**${RESOURCE_DRAWER_PATH}${CONN_DRAWER_PATH}${ICLIENT_DRAWER_PATH}`,
+        `/**${CONN_DRAWER_PATH}${ICLIENT_DRAWER_PATH}`,
+      ],
+      exact: true})?.params || {};
+  }
 
   return matchPath(url, {
     path: `/**${RESOURCE_DRAWER_PATH}${CONN_DRAWER_PATH}`,

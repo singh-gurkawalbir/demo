@@ -17,6 +17,7 @@ export default {
     return [
       {
         key: 'time',
+        isLoggable: true,
         HeaderValue: () => {
           const dispatch = useDispatch();
           const handleChange = useCallback(() => {
@@ -45,6 +46,7 @@ export default {
       },
       {
         key: 'method',
+        isLoggable: true,
         HeaderValue: () => {
           const dispatch = useDispatch();
           const handleSave = useCallback(() => {
@@ -87,6 +89,7 @@ export default {
         : []),
       {
         key: 'codes',
+        isLoggable: true,
         HeaderValue: () => {
           const dispatch = useDispatch();
           const handleSave = useCallback(() => {

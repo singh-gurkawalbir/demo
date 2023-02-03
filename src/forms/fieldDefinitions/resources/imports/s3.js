@@ -22,4 +22,11 @@ export default {
     showExtract: false,
     showLookup: false,
   },
+  's3.serverSideEncryptionType': {
+    isLoggable: true,
+    type: 'checkbox',
+    label: 'Use server-side encryption (SSE-S3)',
+    defaultValue: r => !!r.s3?.serverSideEncryptionType,
+    helpKey: () => 'import.s3.serverSideEncryptionType',
+  },
 };

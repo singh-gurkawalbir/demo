@@ -10,7 +10,6 @@ import DynaForm from '../../../..';
 import DynaSubmit from '../../../../DynaSubmit';
 import actions from '../../../../../../actions';
 import { getFormFieldMetadata } from './util';
-import { SCOPES } from '../../../../../../sagas/resourceForm';
 import useFormInitWithPermissions from '../../../../../../hooks/useFormInitWithPermissions';
 import EditorDrawer from '../../../../../AFE/Drawer';
 
@@ -133,7 +132,6 @@ function SubRecordDrawer(props) {
               value: updatedSubrecords,
             },
           ],
-          SCOPES.VALUE
         )
       );
       history.goBack();

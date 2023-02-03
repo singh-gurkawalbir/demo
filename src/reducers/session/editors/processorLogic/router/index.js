@@ -1,6 +1,6 @@
 import { cloneDeep, isEqual, pick } from 'lodash';
 import { hooksToFunctionNamesMap } from '../../../../../utils/hooks';
-import { safeParse } from '../../../../../utils/string';
+import { generateId, safeParse } from '../../../../../utils/string';
 import filter from '../filter';
 import javascript from '../javascript';
 
@@ -54,6 +54,10 @@ export default {
       if (!branch.inputFilter) {
         // eslint-disable-next-line no-param-reassign
         branch.inputFilter = {rules: undefined};
+      }
+      if (!branch.id) {
+        // eslint-disable-next-line no-param-reassign
+        branch.id = generateId();
       }
     });
     const rule = {
@@ -113,6 +117,7 @@ export default {
       return filter.validate({
         data: editor.data?.filter,
         rule: editor.rule,
+        isInvalid: editor.isInvalid,
       });
     }
 
@@ -213,6 +218,7 @@ export default {
       const branchNameIndex = getBranchNameIndex(draft.rule.branches, draft.branchNamingIndex);
 
       draft.rule.branches = [...draft.rule.branches, {
+        id: generateId(),
         name: `Branch ${draft.branchNamingIndex}.${branchNameIndex}`,
         pageProcessors: [{setupInProgress: true}],
       }];

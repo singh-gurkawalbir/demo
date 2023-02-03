@@ -8,7 +8,7 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import { DATA_TYPES_DROPDOWN_OPTIONS, MAPPING_DATA_TYPES } from '../../../../../../../utils/mapping';
 import RawHtml from '../../../../../../RawHtml';
-import messageStore from '../../../../../../../utils/messageStore';
+import { message } from '../../../../../../../utils/messageStore';
 import useConfirmDialog from '../../../../../../ConfirmDialog';
 import actions from '../../../../../../../actions';
 import { TextButton } from '../../../../../../Buttons';
@@ -143,7 +143,7 @@ export default function DestinationDataType({
       newDataType !== MAPPING_DATA_TYPES.OBJECT && newDataType !== MAPPING_DATA_TYPES.OBJECTARRAY) {
       confirmDialog({
         title: 'Confirm data type selection',
-        message: <RawHtml html={messageStore('MAPPER2_DATA_TYPE_WARNING')} />,
+        message: <RawHtml html={message.MAPPER2.DATA_TYPE_WARNING} />,
         buttons: [
           {
             label: 'Confirm',

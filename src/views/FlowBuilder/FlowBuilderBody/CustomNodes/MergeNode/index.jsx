@@ -43,7 +43,7 @@ export default function MergeNode({id, data}) {
       >
       <DefaultHandle type="target" position={Position.Left} />
 
-      <DiamondMergeIcon isDroppable={isDroppable} tooltip={messageStore('MERGE_NODE_TOOLTIP')} />
+      <DiamondMergeIcon isDroppable={isDroppable} tooltip={messageStore('FLOWBUILDER.MERGE_NODE_TOOLTIP')} />
 
       <DefaultHandle type="source" position={Position.Right} />
     </div>

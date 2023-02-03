@@ -3,6 +3,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import { Typography, IconButton, Grid } from '@material-ui/core';
 import DismissIcon from '../../../components/icons/ErrorIcon';
 import AcceptIcon from '../../../components/icons/SuccessIcon';
+import {message as messageStoreMessage} from '../../../utils/messageStore';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -39,7 +40,7 @@ export default function InvitationItem({
         <Typography variant="h4">{name}</Typography>
         <Typography className={classes.email}>{email}</Typography>
         <Typography variant="body2">{message}</Typography>
-        <Typography>Please accept or decline this invitation.</Typography>
+        <Typography>{messageStoreMessage.USER_SIGN_IN.INVITE}</Typography>
       </Grid>
       <Grid className={classes.actions}>
         <IconButton

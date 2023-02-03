@@ -69,12 +69,12 @@ export default function Redirection({children}) {
     }
 
     return () => {
-      dispatch(actions.resource.clearStaged(flowId, 'values'));
+      dispatch(actions.resource.clearStaged(flowId));
     };
   }, [dispatch, flowGroupingId, flowId, match.url, patchNewFlow]);
 
   // NEW FLOW REDIRECTION
-  if (flowId === 'new') {
+  if (flowId === 'new' || flowId === 'new*') {
     const tempId = generateNewId();
 
     history.replace(rewriteUrl(tempId));

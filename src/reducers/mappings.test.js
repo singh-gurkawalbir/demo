@@ -1,7 +1,7 @@
 
 import reducer, { selectors } from '.';
 import actions from '../actions';
-import messageStore from '../utils/messageStore';
+import { message } from '../utils/messageStore';
 import { MAPPING_DATA_TYPES } from '../utils/mapping';
 
 describe('Mappings region selector testcases', () => {
@@ -1027,6 +1027,138 @@ describe('Mappings region selector testcases', () => {
     });
   });
 
+  describe('selectors.flowHasMappings test cases', () => {
+    test('should not throw any exception for invalid arguments', () => {
+      expect(selectors.flowHasMappings()).toBe(false);
+      expect(selectors.flowHasMappings(null, null)).toBe(false);
+    });
+    test('should return false if the flow has neither page processors nor routers', () => {
+      const state = {
+        data: {
+          resources: {
+            flows: [
+              {
+                _id: 'flow-id-1',
+              },
+            ],
+          },
+        },
+      };
+
+      expect(selectors.flowHasMappings(state, 'flow-id-1')).toBe(false);
+    });
+    test('should return false if the flow has page processors without mappings', () => {
+      const state = {
+        data: {
+          resources: {
+            flows: [
+              {
+                _id: 'flow-id-1',
+                pageProcessors: [{ type: 'import', _importId: 'import-id-1'}],
+              },
+            ],
+            imports: [{
+              _id: 'import-id-1',
+              name: 'Test import',
+              mapping: {},
+              mappings: [],
+            }],
+          },
+        },
+      };
+
+      expect(selectors.flowHasMappings(state, 'flow-id-1')).toBe(false);
+    });
+    test('should return true if the flow has page processors with mappings', () => {
+      const state = {
+        data: {
+          resources: {
+            flows: [
+              {
+                _id: 'flow-id-1',
+                pageProcessors: [{ type: 'import', _importId: 'import-id-1'}],
+              },
+            ],
+            imports: [{
+              _id: 'import-id-1',
+              name: 'Test import',
+              mapping: {},
+              mappings: [
+                {extract: '$.name', generate: 'name'},
+                {extract: '$.age', generate: 'age'},
+              ],
+            }],
+          },
+        },
+      };
+
+      expect(selectors.flowHasMappings(state, 'flow-id-1')).toBe(true);
+    });
+    test('should return false if the flow has routers without mappings', () => {
+      const state = {
+        data: {
+          resources: {
+            flows: [
+              {
+                _id: 'flow-id-1',
+                routers: [{
+                  branches: [{
+                    name: 'Branch 1.0',
+                    pageProcessors: [{ type: 'import', _importId: 'import-id-1'}],
+                  }, {
+                    name: 'Branch 1.1',
+                    pageProcessors: [{ type: 'import', _importId: 'import-id-2'}],
+                  }],
+                }],
+              },
+            ],
+            imports: [{
+              _id: 'import-id-1',
+              name: 'Test import',
+              mapping: {},
+              mappings: [],
+            }],
+          },
+        },
+      };
+
+      expect(selectors.flowHasMappings(state, 'flow-id-1')).toBe(false);
+    });
+    test('should return true if the flow has routers with mappings', () => {
+      const state = {
+        data: {
+          resources: {
+            flows: [
+              {
+                _id: 'flow-id-1',
+                routers: [{
+                  branches: [{
+                    name: 'Branch 1.0',
+                    pageProcessors: [{ type: 'import', _importId: 'import-id-1'}],
+                  }, {
+                    name: 'Branch 1.1',
+                    pageProcessors: [{ type: 'import', _importId: 'import-id-2'}],
+                  }],
+                }],
+              },
+            ],
+            imports: [{
+              _id: 'import-id-1',
+              name: 'Test import',
+              mapping: {},
+              mappings: [
+                {extract: '$.name', generate: 'name'},
+                {extract: '$.age', generate: 'age'},
+              ],
+            }],
+          },
+        },
+      };
+
+      expect(selectors.flowHasMappings(state, 'flow-id-1')).toBe(true);
+    });
+  });
+
   describe('selectors.mappingEditorNotification test cases', () => {
     test('should not throw any exception for invalid arguments', () => {
       expect(selectors.mappingEditorNotification()).toEqual({});
@@ -1218,7 +1350,7 @@ describe('Mappings region selector testcases', () => {
       };
 
       expect(selectors.mappingEditorNotification(state, 'mappings')).toEqual({
-        message: messageStore('MAPPER1_REFERENCE_INFO'),
+        message: message.MAPPER2.MAPPER1_REFERENCE_INFO,
         variant: 'info',
       });
     });
@@ -1251,7 +1383,7 @@ describe('Mappings region selector testcases', () => {
       };
 
       expect(selectors.mappingEditorNotification(state, 'mappings')).toEqual({
-        message: messageStore('MAPPER2_BANNER_WARNING'),
+        message: message.MAPPER2.BANNER_WARNING,
         variant: 'warning',
       });
     });

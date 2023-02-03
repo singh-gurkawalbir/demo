@@ -1,4 +1,4 @@
-import shortid from 'shortid';
+import { generateId } from '../../../../utils/string';
 import restMappingSettings from './rest';
 import netsuiteMappingSettings from './netsuite';
 import salesforceMappingSettings from './salesforce';
@@ -14,7 +14,7 @@ const getFormattedLookup = (lookup, formVal) => {
     lookupTmp.name = formVal.name;
   } else {
     // generating random lookup name
-    lookupTmp.name = shortid.generate();
+    lookupTmp.name = generateId();
   }
 
   if (formVal._mode === 'dynamic') {

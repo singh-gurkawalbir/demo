@@ -1,4 +1,4 @@
-import { SHOPIFY_BASIC_AUTH_PASSWORD_HELP_LINK, SHOPIFY_BASIC_AUTH_USERNAME_HELP_LINK } from '../../../../../constants';
+import { SHOPIFY_BASIC_AUTH_PASSWORD_HELP_LINK, SHOPIFY_BASIC_AUTH_USERNAME_HELP_LINK, SHOPIFY_SCOPES } from '../../../../../constants';
 import { isNewId } from '../../../../../utils/resource';
 
 export default {
@@ -51,6 +51,7 @@ export default {
       retValues['/http/auth/basic/password'] = `${
         formValues['/http/auth/basic/password']
       }`;
+      retValues['/http/auth/oauth/scope'] = undefined;
       retValues['/http/auth/oauth/authURI'] = undefined;
       retValues['/http/auth/oauth/tokenURI'] = undefined;
       retValues['/http/auth/token'] = undefined;
@@ -308,17 +309,9 @@ export default {
             'write_gift_cards',
           ]},
       ],
-      visibleWhenAll: r => {
-        if (r?.http?._iClientId) {
-          return [{ field: 'http.auth.type', isNot: ['oauth'] },
-            { field: 'http.auth.type', isNot: ['basic'] },
-            { field: 'http.auth.type', isNot: ['token'] }];
-        }
-
-        return [{ field: 'http.auth.type', is: ['oauth'] }];
-      },
-      required: true,
-      visible: r => r?.http?.auth?.type === 'oauth',
+      visible: false,
+      defaultValue: r =>
+        r?.http?.auth?.oauth?.scope || (r?.http?.auth?.type === 'oauth' && !r?.http?._iClientId ? SHOPIFY_SCOPES : undefined),
     },
     application: {
       fieldId: 'application',

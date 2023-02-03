@@ -68,6 +68,6 @@ describe('test suite for NewValue', () => {
     }];
 
     initImports(data);
-    expect(screen.getByText('Click to view')).toBeInTheDocument();
+    expect(screen.getByText('View')).toBeInTheDocument();
   });
 });

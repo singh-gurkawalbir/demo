@@ -13,6 +13,7 @@ import ActionsRibbon from '../../components/AFE/Drawer/ActionsRibbon';
 import { TextButton } from '../../components/Buttons';
 import { drawerPaths, buildDrawerUrl } from '../../utils/rightDrawer';
 import infoText from '../ResourceList/infoText';
+import { message } from '../../utils/messageStore';
 
 const ExampleMenu = loadable(() =>
   retry(() => import(/* webpackChunkName: 'ExampleMenu' */ './ExampleMenu'))
@@ -113,8 +114,8 @@ export default function Editors() {
             </>
           ) : (
             <Typography variant="h4">
-              <p>Get started by selecting an editor example on the left.</p>
-              <p>Alternatively, use the Integration explorer to drill into your flows to find and manage your resources.</p>
+              <Typography>{message.PLAYGROUND.SELECT_EDITOR}</Typography>
+              <Typography>{message.PLAYGROUND.EXPLORE}</Typography>
             </Typography>
           )}
 

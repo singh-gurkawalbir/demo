@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react';
-import shortid from 'shortid';
 import { shallowEqual, useSelector } from 'react-redux';
+import { generateId } from '../../../../utils/string';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import { selectors } from '../../../../reducers';
 import { emptyObject, FORM_SAVE_STATUS } from '../../../../constants';
@@ -21,7 +21,7 @@ export default function SaveButtonGroup({ value = {}, formKey, onCancel, resourc
     if (isEdit) {
       lookupTmp.name = value.name;
     } else {
-      lookupTmp.name = shortid.generate();
+      lookupTmp.name = generateId();
     }
 
     if (['NetSuiteImport', 'NetSuiteDistributedImport'].includes(resource.adaptorType)) {

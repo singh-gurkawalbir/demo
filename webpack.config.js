@@ -103,6 +103,8 @@ const config = {
       IO_LOGIN_PROMOTION_URL_EU: JSON.stringify(process.env.IO_LOGIN_PROMOTION_URL_EU),
       PORTAL_URL: JSON.stringify(process.env.PORTAL_URL),
       SHOPIFY_USER_IDS: JSON.stringify(process.env.SHOPIFY_USER_IDS),
+      ALLOW_SIGNUP: JSON.stringify(process.env.ALLOW_SIGNUP) || 'true',
+      ALLOW_GOOGLE_SIGNIN: JSON.stringify(process.env.ALLOW_GOOGLE_SIGNIN) || 'true',
     }),
   ],
   output: {
@@ -219,7 +221,7 @@ module.exports = (env, argv) => {
 
     return opts;
   };
-  const isDevServer = argv && argv.$0.endsWith('webpack-dev-server');
+  const isDevServer = argv.mode === 'development';
 
   if (isDevServer) {
     config.output.filename = '[name].js';
@@ -227,11 +229,17 @@ module.exports = (env, argv) => {
 
     config.devServer = {
       hot: true,
-      contentBase: path.join(__dirname, 'build'),
+      allowedHosts: 'all',
       compress: true,
       port: 4000,
-      publicPath: '/',
       host: 'localhost.io',
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+      },
+      static: {
+        directory: path.join(__dirname, 'build'),
+        publicPath: '/',
+      },
       historyApiFallback: {
         index: '/index.html',
       },
@@ -258,8 +266,9 @@ module.exports = (env, argv) => {
         '/api': proxyOpts,
         '/netSuiteWS': proxyOpts,
         '/netsuiteDA': proxyOpts,
-        '/connection/': proxyOpts,
+        '/connection': proxyOpts,
         '/ui': proxyOpts,
+        '/app/shopify/verify': proxyOpts,
       },
     };
   }

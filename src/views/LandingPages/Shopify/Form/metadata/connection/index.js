@@ -1,5 +1,6 @@
 import fieldDefinitions from '../../../../../../forms/fieldDefinitions/resources/connection';
 import metadata from '../../../../../../forms/definitions/connections/custom/http/shopify';
+import { SHOPIFY_SCOPES } from '../../../../../../constants';
 
 export default {
   getMetaData: ({
@@ -29,6 +30,20 @@ export default {
         },
       ],
     };
+
+    let MainlayoutFields = ['http.unencrypted.version', 'http.storeName', 'http.auth.type'];
+
+    if (!useNew) {
+      MainlayoutFields = ['resourceId', ...MainlayoutFields];
+    } else {
+      MainlayoutFields = ['name', ...MainlayoutFields];
+    }
+
+    if (!isIA) {
+      MainlayoutFields = [...MainlayoutFields, 'http.auth.oauth.scope'];
+    } else {
+      MainlayoutFields = ['_integrationId', ...MainlayoutFields];
+    }
     const fieldMeta = {
       preSave: metadata.preSave,
       fieldMap: {
@@ -63,6 +78,7 @@ export default {
             filter: resourceFilter,
             appType: 'shopify',
           },
+          isValueValid: true,
           defaultValue: '',
           appTypeIsStatic: !isIA,
           removeHelperText: true,
@@ -148,7 +164,7 @@ export default {
           scopes: metadata.fieldMap['http.auth.oauth.scope'].scopes,
           helpKey: 'connection.http.auth.oauth.scope',
           required: true,
-          defaultValue: ['read_products'],
+          defaultValue: SHOPIFY_SCOPES,
           pathToScopeField: 'http.auth.oauth.scope',
           refreshOptionsOnChangesTo: ['resourceId'],
           visibleWhen: !isIA && !useNew ? [
@@ -157,7 +173,7 @@ export default {
               isNot: [''],
             },
           ] : undefined,
-          visible: !isIA,
+          visible: false,
         },
         _borrowConcurrencyFromConnectionId: {
           id: '_borrowConcurrencyFromConnectionId',
@@ -179,15 +195,7 @@ export default {
             type: useNew ? 'box' : 'blank',
             containers: [
               {
-                fields: [
-                  '_integrationId',
-                  'name',
-                  'http.unencrypted.version',
-                  'http.storeName',
-                  'http.auth.type',
-                  'resourceId',
-                  'http.auth.oauth.scope',
-                ],
+                fields: MainlayoutFields,
               },
             ],
           },
@@ -197,10 +205,10 @@ export default {
               {
                 collapsed: true,
                 label: 'Advanced',
-                fields: [
+                fields: useNew ? [
                   '_borrowConcurrencyFromConnectionId',
                   'http.concurrencyLevel',
-                ],
+                ] : [],
               },
             ],
           },

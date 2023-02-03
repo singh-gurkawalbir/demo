@@ -3,7 +3,6 @@ import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import MaterialUiSelect from '../DynaSelect';
 import { selectors } from '../../../../reducers/index';
 import actions from '../../../../actions';
-import { SCOPES } from '../../../../sagas/resourceForm';
 import { selectOptions } from './util';
 import useFormContext from '../../../Form/FormContext';
 import { emptyObject } from '../../../../constants';
@@ -151,6 +150,12 @@ function DynaAssistantOptions(props) {
     resourceContext.resourceType,
   ]);
 
+  const {isSkipSort, updatedselectOptionsItems} = useMemo(() => {
+    const isSkipSort = selectOptionsItems?.filter(option => option.value === 'create-update-id').length > 0;
+
+    return {isSkipSort, updatedselectOptionsItems: isSkipSort ? [...selectOptionsItems.slice(0, selectOptionsItems.length - 1).sort((a, b) => a.label.localeCompare(b.label)), selectOptionsItems[selectOptionsItems.length - 1]] : selectOptionsItems};
+  }, [selectOptionsItems]);
+
   useHFSetInitializeFormData(props);
 
   // I have to adjust value when there is no option with the matching value
@@ -239,12 +244,20 @@ function DynaAssistantOptions(props) {
           value: versions[0]._id,
         });
       }
+      if (assistantFieldType === 'operation' && versions?.length > 1) {
+        const versionOptionsForEndpoint = selectOptions({assistantFieldType: 'version', assistantData, formContext: {...formContext, operation: value}, resourceType});
+
+        patch.push({
+          op: 'replace',
+          path: '/assistantMetadata/version',
+          value: versionOptionsForEndpoint?.[0]?.value,
+        });
+      }
 
       dispatch(
         actions.resource.patchStaged(
           resourceContext.resourceId,
           patch,
-          SCOPES.VALUE
         )
       );
 
@@ -299,9 +312,10 @@ function DynaAssistantOptions(props) {
     <MaterialUiSelect
       {...props}
       label={label}
-      options={[{ items: selectOptionsItems }]}
+      options={[{ items: isSkipSort ? updatedselectOptionsItems : selectOptionsItems }]}
       onFieldChange={onFieldChange}
       disabled={disabled || (['createEndpoint', 'updateEndpoint'].includes(assistantFieldType) && selectOptionsItems.length === 1)}
+      skipSort={isSkipSort}
     />
   );
 }

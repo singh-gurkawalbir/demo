@@ -888,6 +888,7 @@ Object {
       "mode": Object {
         "defaultValue": [Function],
         "id": "mode",
+        "isLoggable": true,
         "label": "Mode",
         "options": Array [
           Object {
@@ -1134,6 +1135,7 @@ Object {
       },
       "netsuite.authType": Object {
         "id": "netsuite.authType",
+        "isLoggable": true,
         "label": "Authentication type",
         "required": true,
         "skipSort": true,
@@ -1233,6 +1235,7 @@ Object {
         "defaultDisabled": true,
         "defaultValue": [Function],
         "fieldId": "netsuite.token.auto.roleId",
+        "isLoggable": true,
         "label": "Role",
         "type": "text",
         "visible": [Function],
@@ -1628,6 +1631,7 @@ Object {
       "mode": Object {
         "defaultValue": [Function],
         "id": "mode",
+        "isLoggable": true,
         "label": "Mode",
         "options": Array [
           Object {
@@ -1739,6 +1743,7 @@ Object {
       "mode": Object {
         "defaultValue": [Function],
         "id": "mode",
+        "isLoggable": true,
         "label": "Mode",
         "options": Array [
           Object {
@@ -1869,6 +1874,7 @@ Object {
         "defaultDisabled": true,
         "defaultValue": "onpremise",
         "id": "mode",
+        "isLoggable": true,
         "label": "Mode",
         "options": Array [
           Object {
@@ -2014,6 +2020,7 @@ Object {
       "mode": Object {
         "defaultValue": [Function],
         "id": "mode",
+        "isLoggable": true,
         "label": "Mode",
         "options": Array [
           Object {
@@ -2285,6 +2292,7 @@ Object {
       "mode": Object {
         "defaultValue": [Function],
         "id": "mode",
+        "isLoggable": true,
         "label": "Mode",
         "options": Array [
           Object {
@@ -2396,6 +2404,7 @@ Object {
       "mode": Object {
         "defaultValue": [Function],
         "id": "mode",
+        "isLoggable": true,
         "label": "Mode",
         "options": Array [
           Object {
@@ -2526,6 +2535,7 @@ Object {
         "defaultDisabled": true,
         "defaultValue": "onpremise",
         "id": "mode",
+        "isLoggable": true,
         "label": "Mode",
         "options": Array [
           Object {
@@ -2671,6 +2681,7 @@ Object {
       "mode": Object {
         "defaultValue": [Function],
         "id": "mode",
+        "isLoggable": true,
         "label": "Mode",
         "options": Array [
           Object {
@@ -3474,6 +3485,7 @@ Object {
       "type": Object {
         "defaultValue": [Function],
         "id": "type",
+        "isLoggable": true,
         "label": "Export type",
         "options": Array [
           Object {
@@ -4124,6 +4136,7 @@ Object {
       "once.booleanField": Object {
         "connectionId": [Function],
         "id": "once.booleanField",
+        "isLoggable": true,
         "label": "Boolean field to mark records as exported",
         "type": "textwithconnectioncontext",
         "visibleWhenAll": Array [
@@ -4189,6 +4202,7 @@ Object {
       "type": Object {
         "defaultValue": [Function],
         "id": "type",
+        "isLoggable": true,
         "label": "Export type",
         "options": Array [
           Object {
@@ -4425,6 +4439,7 @@ Object {
       "type": Object {
         "defaultValue": [Function],
         "id": "type",
+        "isLoggable": true,
         "label": "Export type",
         "options": Array [
           Object {
@@ -4706,14 +4721,36 @@ Object {
           },
         ],
       },
-      "netsuite.distributed.skipExportFieldId": Object {
+      "netsuite.distributed.frameworkVersion": Object {
         "connectionId": [Function],
-        "fieldId": "netsuite.distributed.skipExportFieldId",
-        "filterKey": "suitescript-booleanField",
-        "refreshOptionsOnChangesTo": Array [
-          "netsuite.distributed.recordType",
+        "defaultDisabled": [Function],
+        "defaultValue": [Function],
+        "fieldId": "netsuite.distributed.frameworkVersion",
+        "isNew": [Function],
+        "label": "NetSuite API version",
+        "options": Array [
+          Object {
+            "items": Array [
+              Object {
+                "label": "SuiteApp SuiteScript 2.x (Recommended)",
+                "value": "suiteapp2.0",
+              },
+              Object {
+                "label": "SuiteApp SuiteScript 1.0",
+                "value": "suiteapp1.0",
+              },
+              Object {
+                "description": "To be deprecated.<a target=\\"_blank\\" rel=\\"noreferrer\\" href=https://docs.celigo.com/hc/en-us/articles/360050643132><u>Learn more.</u></a>",
+                "isWarningMessage": true,
+                "label": "SuiteBundle SuiteScript 1.0",
+                "value": "suitebundle",
+              },
+            ],
+          },
         ],
-        "type": "refreshableselect",
+        "resourceId": [Function],
+        "resourceType": "exports",
+        "type": "netsuiteapiversion",
         "visibleWhenAll": Array [
           Object {
             "field": "netsuite.execution.type",
@@ -4729,30 +4766,14 @@ Object {
           },
         ],
       },
-      "netsuite.distributed.useSS2Framework": Object {
+      "netsuite.distributed.skipExportFieldId": Object {
         "connectionId": [Function],
-        "defaultDisabled": [Function],
-        "defaultValue": [Function],
-        "fieldId": "netsuite.distributed.useSS2Framework",
-        "isNew": [Function],
-        "label": "NetSuite API version",
-        "options": Array [
-          Object {
-            "items": Array [
-              Object {
-                "label": "SuiteScript 1.0",
-                "value": "false",
-              },
-              Object {
-                "label": "SuiteScript 2.0",
-                "value": "true",
-              },
-            ],
-          },
+        "fieldId": "netsuite.distributed.skipExportFieldId",
+        "filterKey": "suitescript-booleanField",
+        "refreshOptionsOnChangesTo": Array [
+          "netsuite.distributed.recordType",
         ],
-        "resourceId": [Function],
-        "resourceType": "exports",
-        "type": "netsuiteapiversion",
+        "type": "refreshableselect",
         "visibleWhenAll": Array [
           Object {
             "field": "netsuite.execution.type",
@@ -4865,23 +4886,29 @@ Object {
           },
         ],
       },
-      "netsuite.restlet.useSS2Restlets": Object {
+      "netsuite.restlet.restletVersion": Object {
         "connectionId": [Function],
         "defaultDisabled": [Function],
         "defaultValue": [Function],
-        "fieldId": "netsuite.restlet.useSS2Restlets",
+        "fieldId": "netsuite.restlet.restletVersion",
         "isNew": [Function],
         "label": "NetSuite API version",
         "options": Array [
           Object {
             "items": Array [
               Object {
-                "label": "SuiteScript 1.0",
-                "value": "false",
+                "label": "SuiteApp SuiteScript 2.x (Recommended)",
+                "value": "suiteapp2.0",
               },
               Object {
-                "label": "SuiteScript 2.0",
-                "value": "true",
+                "label": "SuiteApp SuiteScript 1.0",
+                "value": "suiteapp1.0",
+              },
+              Object {
+                "description": "To be deprecated.<a target=\\"_blank\\" rel=\\"noreferrer\\" href=https://docs.celigo.com/hc/en-us/articles/360050643132><u>Learn more.</u></a>",
+                "isWarningMessage": true,
+                "label": "SuiteBundle SuiteScript 1.0",
+                "value": "suitebundle",
               },
             ],
           },
@@ -4961,6 +4988,7 @@ Object {
         "connectionId": [Function],
         "filterKey": "webservices-booleanField",
         "id": "once.booleanField",
+        "isLoggable": true,
         "label": "Boolean field to mark records as exported",
         "placeholder": "Please select a boolean field",
         "refreshOptionsOnChangesTo": Array [
@@ -5137,6 +5165,7 @@ Object {
         "filterKey": "suitescript-booleanField",
         "helpKey": "export.once.booleanField",
         "id": "restlet.once.booleanField",
+        "isLoggable": true,
         "label": "Boolean field to mark records as exported",
         "placeholder": "Please select a boolean field",
         "refreshOptionsOnChangesTo": Array [
@@ -5183,7 +5212,8 @@ Object {
         "filterKey": "suitescript-recordTypes",
         "helpKey": "export.type",
         "id": "restlet.type",
-        "label": "Export Type",
+        "isLoggable": true,
+        "label": "Export type",
         "refreshOptionsOnChangesTo": Array [
           "netsuite.restlet.recordType",
         ],
@@ -5259,9 +5289,39 @@ Object {
         "fieldId": "test.limit",
         "visibleWhen": Array [
           Object {
-            "field": "restlet.type",
-            "is": Array [
-              "test",
+            "OR": Array [
+              Object {
+                "AND": Array [
+                  Object {
+                    "field": "netsuite.api.type",
+                    "is": Array [
+                      "search",
+                    ],
+                  },
+                  Object {
+                    "field": "type",
+                    "is": Array [
+                      "test",
+                    ],
+                  },
+                ],
+              },
+              Object {
+                "AND": Array [
+                  Object {
+                    "field": "restlet.type",
+                    "is": Array [
+                      "test",
+                    ],
+                  },
+                  Object {
+                    "field": "netsuite.api.type",
+                    "is": Array [
+                      "restlet",
+                    ],
+                  },
+                ],
+              },
             ],
           },
         ],
@@ -5269,6 +5329,7 @@ Object {
       "type": Object {
         "defaultValue": [Function],
         "id": "type",
+        "isLoggable": true,
         "label": "Export type",
         "options": Array [
           Object {
@@ -5379,7 +5440,7 @@ Object {
                   "containers": Array [
                     Object {
                       "fields": Array [
-                        "netsuite.restlet.useSS2Restlets",
+                        "netsuite.restlet.restletVersion",
                       ],
                     },
                   ],
@@ -5388,7 +5449,7 @@ Object {
                 Object {
                   "fields": Array [
                     "netsuite.blob.purgeFileAfterExport",
-                    "netsuite.distributed.useSS2Framework",
+                    "netsuite.distributed.frameworkVersion",
                     "netsuite.distributed.skipExportFieldId",
                     "netsuite.distributed.forceReload",
                     "netsuite.restlet.batchSize",
@@ -5863,6 +5924,7 @@ Object {
         "filterKey": "salesforce-recordType",
         "helpKey": "export.once.booleanField",
         "id": "once.booleanField",
+        "isLoggable": true,
         "label": "Boolean field to mark records as exported",
         "placeholder": "Please select a boolean field",
         "required": true,
@@ -6026,6 +6088,7 @@ Object {
       "type": Object {
         "defaultValue": [Function],
         "id": "type",
+        "isLoggable": true,
         "label": "Export type",
         "options": Array [
           Object {
@@ -6253,7 +6316,7 @@ Object {
         "maxSize": 104857600,
         "mode": [Function],
         "name": "/uploadFile",
-        "placeholder": "Upload the file to use",
+        "placeholder": "Sample file (that would be parsed)",
         "refreshOptionsOnChangesTo": "file.type",
         "required": [Function],
         "type": "uploadfile",
@@ -6536,6 +6599,7 @@ Object {
       "type": Object {
         "defaultValue": [Function],
         "id": "type",
+        "isLoggable": true,
         "label": "Export type",
         "options": Array [
           Object {
@@ -6866,6 +6930,7 @@ Object {
         "filterKey": "salesforce-recordType",
         "helpKey": "export.once.booleanField",
         "id": "once.booleanField",
+        "isLoggable": true,
         "label": "Boolean field to mark records as exported",
         "placeholder": "Please select a boolean field",
         "required": true,
@@ -7029,6 +7094,7 @@ Object {
       "type": Object {
         "defaultValue": [Function],
         "id": "type",
+        "isLoggable": true,
         "label": "Export type",
         "options": Array [
           Object {
@@ -7204,6 +7270,7 @@ Object {
       "once.booleanField": Object {
         "connectionId": [Function],
         "id": "once.booleanField",
+        "isLoggable": true,
         "label": "Boolean field to mark records as exported",
         "type": "textwithconnectioncontext",
         "visibleWhen": Array [
@@ -7335,6 +7402,7 @@ Object {
       "type": Object {
         "defaultValue": [Function],
         "id": "type",
+        "isLoggable": true,
         "label": "Export type",
         "options": Array [
           Object {
@@ -7705,6 +7773,7 @@ Object {
         "filterKey": "salesforce-recordType",
         "helpKey": "export.once.booleanField",
         "id": "once.booleanField",
+        "isLoggable": true,
         "label": "Boolean field to mark records as exported",
         "placeholder": "Please select a boolean field",
         "required": true,
@@ -7868,6 +7937,7 @@ Object {
       "type": Object {
         "defaultValue": [Function],
         "id": "type",
+        "isLoggable": true,
         "label": "Export type",
         "options": Array [
           Object {
@@ -8027,6 +8097,7 @@ Object {
       "type": Object {
         "defaultValue": [Function],
         "id": "type",
+        "isLoggable": true,
         "label": "Export type",
         "options": Array [
           Object {
@@ -8166,6 +8237,7 @@ Object {
       "type": Object {
         "defaultValue": [Function],
         "id": "type",
+        "isLoggable": true,
         "label": "Export type",
         "options": Array [
           Object {
@@ -8867,6 +8939,9 @@ Object {
       },
       "s3.region": Object {
         "fieldId": "s3.region",
+      },
+      "s3.serverSideEncryptionType": Object {
+        "fieldId": "s3.serverSideEncryptionType",
       },
       "settings": Object {
         "fieldId": "settings",
@@ -10921,6 +10996,9 @@ Object {
       "s3.region": Object {
         "fieldId": "s3.region",
       },
+      "s3.serverSideEncryptionType": Object {
+        "fieldId": "s3.serverSideEncryptionType",
+      },
       "settings": Object {
         "fieldId": "settings",
       },
@@ -10975,6 +11053,7 @@ Object {
                 "file.xml.body",
                 "file.json.body",
                 "file.lookups",
+                "s3.serverSideEncryptionType",
               ],
               "label": "Where would you like the files transferred?",
             },
@@ -11676,14 +11755,14 @@ Object {
       "netsuite_da.recordType": Object {
         "fieldId": "netsuite_da.recordType",
       },
+      "netsuite_da.restletVersion": Object {
+        "fieldId": "netsuite_da.restletVersion",
+      },
       "netsuite_da.subrecords": Object {
         "fieldId": "netsuite_da.subrecords",
         "refreshOptionsOnChangesTo": Array [
           "netsuite_da.recordType",
         ],
-      },
-      "netsuite_da.useSS2Restlets": Object {
-        "fieldId": "netsuite_da.useSS2Restlets",
       },
       "settings": Object {
         "fieldId": "settings",
@@ -11735,7 +11814,7 @@ Object {
             Object {
               "collapsed": true,
               "fields": Array [
-                "netsuite_da.useSS2Restlets",
+                "netsuite_da.restletVersion",
                 "blobKeyPath",
                 "idLockTemplate",
                 "dataURITemplate",
@@ -11920,14 +11999,14 @@ Object {
       "netsuite_da.recordType": Object {
         "fieldId": "netsuite_da.recordType",
       },
+      "netsuite_da.restletVersion": Object {
+        "fieldId": "netsuite_da.restletVersion",
+      },
       "netsuite_da.subrecords": Object {
         "fieldId": "netsuite_da.subrecords",
         "refreshOptionsOnChangesTo": Array [
           "netsuite_da.recordType",
         ],
-      },
-      "netsuite_da.useSS2Restlets": Object {
-        "fieldId": "netsuite_da.useSS2Restlets",
       },
       "settings": Object {
         "fieldId": "settings",
@@ -11979,7 +12058,7 @@ Object {
             Object {
               "collapsed": true,
               "fields": Array [
-                "netsuite_da.useSS2Restlets",
+                "netsuite_da.restletVersion",
                 "blobKeyPath",
                 "idLockTemplate",
                 "dataURITemplate",

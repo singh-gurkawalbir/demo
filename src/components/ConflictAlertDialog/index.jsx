@@ -13,6 +13,7 @@ import TableRow from '@material-ui/core/TableRow';
 import { useSelector } from 'react-redux';
 import { selectors } from '../../reducers';
 import { FilledButton } from '../Buttons';
+import { message } from '../../utils/messageStore';
 
 const useStyles = makeStyles(theme => ({
   table: {
@@ -71,10 +72,7 @@ export default function ConflictAlertDialog() {
       </DialogTitle>
       <DialogContent>
         <Typography variant="body1">
-          The following changes have been made to this resource. We have
-          attempted to automatically merge these changes, but this resolution
-          was not successful. Please click the refresh button to refresh your
-          browser.
+          {message.CHANGES_IN_RESOURCE}
         </Typography>
 
         {allResourceConflicts.map(r => (

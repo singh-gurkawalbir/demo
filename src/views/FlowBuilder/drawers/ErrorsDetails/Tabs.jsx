@@ -2,7 +2,7 @@ import React, { useCallback } from 'react';
 import { useRouteMatch } from 'react-router-dom';
 import { makeStyles, Tabs, Tab } from '@material-ui/core';
 import InfoIconButton from '../../../../components/InfoIconButton';
-import messageStore from '../../../../utils/messageStore';
+import { message } from '../../../../utils/messageStore';
 import { useEditRetryConfirmDialog } from '../../../../components/ErrorList/ErrorTable/hooks/useEditRetryConfirmDialog';
 
 const useStyles = makeStyles(theme => ({
@@ -35,7 +35,7 @@ const RetriesTabLabel = () => {
       <span>Retries</span>
       <InfoIconButton
         className={classes.tabInfoIcon}
-        info={messageStore('RETRIES_TAB_INFO')} size="xs" placement="right-start"
+        info={message.RETRY.RETRIES_TAB_INFO} size="xs" placement="right-start"
         preventOverflow={false} />
     </>
   );

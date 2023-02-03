@@ -1,10 +1,8 @@
-
 import { expectSaga } from 'redux-saga-test-plan';
 import { call, select } from 'redux-saga/effects';
-import shortid from 'shortid';
 import * as matchers from 'redux-saga-test-plan/matchers';
+import * as GenerateMediumId from '../../utils/string';
 import { responseMappingInit, responseMappingSave } from '.';
-import { SCOPES } from '../resourceForm';
 import actions from '../../actions';
 import { selectors } from '../../reducers';
 import responseMappingUtil from '../../utils/responseMapping';
@@ -203,7 +201,7 @@ describe('responseMappingInit saga', () => {
       },
     };
 
-    const mock = jest.spyOn(shortid, 'generate');  // spy on otherFn
+    const mock = jest.spyOn(GenerateMediumId, 'generateId');  // spy on otherFn
 
     mock.mockReturnValue('mock_key');
 
@@ -267,7 +265,7 @@ describe('responseMappingInit saga', () => {
       },
     };
 
-    const mock = jest.spyOn(shortid, 'generate');  // spy on otherFn
+    const mock = jest.spyOn(GenerateMediumId, 'generateId');  // spy on otherFn
 
     mock.mockReturnValue('mock_key');
 
@@ -335,7 +333,7 @@ describe('responseMappingSave saga', () => {
         op: 'replace',
         path: '/pageProcessors/1/responseMapping',
         value: mappingsWithListsAndFields,
-      }], SCOPES.VALUE))
+      }]))
       .run();
   });
 
@@ -361,7 +359,6 @@ describe('responseMappingSave saga', () => {
         [call(commitStagedChanges, {
           resourceType: 'flows',
           id: 'f1',
-          scope: SCOPES.VALUE,
         }), {error: {}}],
       ])
       .put(actions.responseMapping.saveFailed())
@@ -390,7 +387,6 @@ describe('responseMappingSave saga', () => {
         [call(commitStagedChanges, {
           resourceType: 'flows',
           id: 'f1',
-          scope: SCOPES.VALUE,
         }), undefined],
       ])
       .put(actions.responseMapping.saveComplete())

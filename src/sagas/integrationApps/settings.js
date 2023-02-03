@@ -1,5 +1,5 @@
 import { call, put, takeLatest, select, race, take } from 'redux-saga/effects';
-import shortid from 'shortid';
+import { generateId } from '../../utils/string';
 import actions from '../../actions';
 import actionTypes from '../../actions/types';
 import { selectors } from '../../reducers';
@@ -352,7 +352,7 @@ export function* initCategoryMappings({ integrationId, flowId, id, sectionId, de
       {
         mappings: formattedMappings.map(m => ({
           ...m,
-          key: shortid.generate(),
+          key: generateId(),
         })),
         lookups,
         isCategoryMapping: true,

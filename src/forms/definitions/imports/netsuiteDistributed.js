@@ -22,7 +22,7 @@ export default {
 
     const subrecords = newValues['/netsuite_da/subrecords'];
 
-    const useSS2RestletsValue = newValues['/netsuite_da/useSS2Restlets'] === 'true';
+    const useSS2RestletsValue = newValues['/netsuite_da/restletVersion'];
 
     let mapping = newValues['/netsuite_da/mapping'];
 
@@ -42,7 +42,7 @@ export default {
       ...newValues,
       '/netsuite_da/subrecords': undefined,
       '/netsuite_da/mapping': mapping,
-      '/netsuite_da/useSS2Restlets': useSS2RestletsValue,
+      '/netsuite_da/restletVersion': useSS2RestletsValue,
     };
   },
   fieldMap: {
@@ -147,8 +147,8 @@ export default {
         },
       ] },
     settings: { fieldId: 'settings' },
-    'netsuite_da.useSS2Restlets': {
-      fieldId: 'netsuite_da.useSS2Restlets',
+    'netsuite_da.restletVersion': {
+      fieldId: 'netsuite_da.restletVersion',
     },
     traceKeyTemplate: {fieldId: 'traceKeyTemplate'},
     mockResponseSection: { formId: 'mockResponseSection' },
@@ -196,7 +196,7 @@ export default {
         collapsed: true,
         label: 'Advanced',
         fields: [
-          'netsuite_da.useSS2Restlets', 'blobKeyPath', 'idLockTemplate', 'dataURITemplate', 'netsuite_da.batchSize', 'traceKeyTemplate', 'apiIdentifier', 'deleteAfterImport'],
+          'netsuite_da.restletVersion', 'blobKeyPath', 'idLockTemplate', 'dataURITemplate', 'netsuite_da.batchSize', 'traceKeyTemplate', 'apiIdentifier', 'deleteAfterImport'],
       },
     ],
   },

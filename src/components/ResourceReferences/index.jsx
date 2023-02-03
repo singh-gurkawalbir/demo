@@ -10,6 +10,7 @@ import ModalDialog from '../ModalDialog';
 import metadata from './metadata';
 import Loader from '../Loader';
 import { TextButton } from '../Buttons';
+import messageStore, { message } from '../../utils/messageStore';
 
 const useStyles = makeStyles(theme => ({
   referenceLink: {
@@ -51,7 +52,7 @@ export default function ResourceReferences({ onClose, resourceType, resourceId, 
       {resourceReferences && resourceReferences.length === 0 && (
         <Loader open>
           <Typography variant="h4">
-            This resource is not being used anywhere
+            {message.RESOURCE.NOT_USED}
           </Typography>
           <TextButton onClick={onClose}>
             Close
@@ -68,9 +69,7 @@ export default function ResourceReferences({ onClose, resourceType, resourceId, 
           <div>
             <Typography className={classes.message}>
               {title &&
-                `This ${resourceTypeLabel} 
-                is referenced by the resources below. Only resources 
-                that have no references can be deleted.`}
+              messageStore('RESOURCE.DELETED', {resourceTypeLabel})}
             </Typography>
             <CeligoTable actionProps={{ onClose }} data={resourceReferences} {...metadata} />
           </div>

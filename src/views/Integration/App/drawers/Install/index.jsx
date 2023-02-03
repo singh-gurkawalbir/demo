@@ -25,7 +25,6 @@ import ResourceSetupDrawer from '../../../../../components/ResourceSetup/Drawer'
 import InstallationStep from '../../../../../components/InstallStep';
 import useConfirmDialog from '../../../../../components/ConfirmDialog';
 import { getIntegrationAppUrlName } from '../../../../../utils/integrationApps';
-import { SCOPES } from '../../../../../sagas/resourceForm';
 import jsonUtil from '../../../../../utils/json';
 import { INSTALL_STEP_TYPES, emptyObject,
 } from '../../../../../constants';
@@ -38,6 +37,7 @@ import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
 import TrashIcon from '../../../../../components/icons/TrashIcon';
 import { TextButton } from '../../../../../components/Buttons';
 import { buildDrawerUrl, drawerPaths } from '../../../../../utils/rightDrawer';
+import { message } from '../../../../../utils/messageStore';
 
 const useStyles = makeStyles(theme => ({
   installIntegrationWrapper: {
@@ -246,6 +246,7 @@ export default function ConnectorInstallation() {
   useEffect(() => {
     if (isSetupComplete) {
       // redirect to integration Settings
+      // TODO: move this to data layer
       dispatch(actions.resource.request('integrations', integrationId));
       dispatch(actions.resource.requestCollection('flows', undefined, undefined, integrationId));
       dispatch(actions.resource.requestCollection('exports', undefined, undefined, integrationId));
@@ -253,6 +254,7 @@ export default function ConnectorInstallation() {
       dispatch(actions.resource.requestCollection('imports', undefined, undefined, integrationId));
       dispatch(actions.resource.requestCollection('connections', undefined, undefined, integrationId));
       dispatch(actions.resource.requestCollection('asynchelpers', undefined, undefined, integrationId));
+      dispatch(actions.resource.requestCollection('scripts'));
 
       if (mode === 'settings') {
         if (
@@ -307,7 +309,7 @@ export default function ConnectorInstallation() {
     e.preventDefault();
     confirmDialog({
       title: 'Confirm uninstall',
-      message: 'Are you sure you want to uninstall?',
+      message: message.SURE_UNINSTALL,
       buttons: [
         {
           label: 'Uninstall',
@@ -373,6 +375,14 @@ export default function ConnectorInstallation() {
       form,
     } = step;
 
+    let netsuitePackageType = null;
+
+    if (step?.name.startsWith('Integrator Bundle')) {
+      netsuitePackageType = 'suitebundle';
+    } else if (step?.name.startsWith('Integrator SuiteApp')) {
+      netsuitePackageType = 'suiteapp';
+    }
+
     if (completed) {
       return false;
     }
@@ -396,7 +406,6 @@ export default function ConnectorInstallation() {
               _connectorId,
               installStepConnection: true,
             }),
-            SCOPES.VALUE
           )
         );
         setIsResourceStaged(true);
@@ -465,7 +474,8 @@ export default function ConnectorInstallation() {
               integrationId,
               step._connId,
               installerFunction,
-              isFrameWork2
+              isFrameWork2,
+              netsuitePackageType
             )
           );
         } else if (isFrameWork2) {

@@ -8,6 +8,7 @@ import {
   tail,
   filter,
 } from 'lodash';
+import { message } from '../../../../../utils/messageStore';
 
 const operatorsMap = {
   jQueryToIOFilters: {
@@ -107,6 +108,14 @@ export function convertIOFilterExpression(filterExpression = [], context) {
                   dataTypeFound = true;
                 }
               } while (!dataTypeFound);
+
+              if (i === 2 && exp[i][0].toLowerCase() === 'epochtime') {
+                temp.type = 'value';
+                temp.value = exp[i]?.[1];
+                temp.dataType = 'epochtime';
+                // eslint-disable-next-line no-continue
+                continue;
+              }
 
               temp.dataType = tempExp[0].toLowerCase();
               temp.type = 'field';
@@ -266,16 +275,13 @@ export function generateIOFilterExpression(rules, context) {
               lhs = Number.isNaN(parseFloat(rr.data.lhs.value)) ? rr.data.lhs.value : parseFloat(rr.data.lhs.value);
               break;
             case 'boolean':
-              lhs =
-                  lhs &&
-                  lhs.toString() &&
-                  lhs.toString().toLowerCase() === 'true';
+              lhs = !['0', 'false'].includes(lhs?.toString()?.toLowerCase());
               break;
             default:
           }
         } else if (rr.data.lhs.type === 'expression') {
           try {
-            lhs = JSON.parse(rr.data.lhs.expression);
+            lhs = JSON.parse(typeof rr.data.lhs.expression === 'string' ? rr.data.lhs.expression : JSON.stringify(rr.data.lhs.expression));
           } catch (ex) {
             // error in parsing expression
           }
@@ -314,10 +320,10 @@ export function generateIOFilterExpression(rules, context) {
                 rhs = Number.isNaN(parseFloat(rr.data.rhs.value)) ? rr.data.rhs.value : parseFloat(rr.data.rhs.value);
                 break;
               case 'boolean':
-                rhs =
-                    rhs &&
-                    rhs.toString() &&
-                    rhs.toString().toLowerCase() === 'true';
+                rhs = !['0', 'false'].includes(rhs?.toString()?.toLowerCase());
+                break;
+              case 'epochtime':
+                rhs = ['epochtime', rhs];
                 break;
               default:
             }
@@ -381,11 +387,11 @@ export function validateFilterRule(rule) {
 
       if (JSON.parse(r.lhs.expression).length < 2) {
         toReturn.isValid = false;
-        toReturn.error = 'Please enter a valid expression.';
+        toReturn.error = message.FILTER_PANEL.INVALID_EXPRESSION;
       }
     } catch (ex) {
       toReturn.isValid = false;
-      toReturn.error = 'Expression should be a valid JSON.';
+      toReturn.error = message.FILTER_PANEL.INVALID_EXPRESSION_JSON;
     }
 
     if (toReturn.isValid) {
@@ -413,11 +419,11 @@ export function validateFilterRule(rule) {
 
       if (JSON.parse(r.rhs.expression).length < 2) {
         toReturn.isValid = false;
-        toReturn.error = 'Please enter a valid expression.';
+        toReturn.error = message.FILTER_PANEL.INVALID_EXPRESSION;
       }
     } catch (ex) {
       toReturn.isValid = false;
-      toReturn.error = 'Expression should be a valid JSON.';
+      toReturn.error = message.FILTER_PANEL.INVALID_EXPRESSION_JSON;
     }
 
     if (toReturn.isValid) {
@@ -446,7 +452,7 @@ export function validateFilterRule(rule) {
     */
   if (r.lhs.dataType && r.rhs.dataType && r.lhs.dataType !== r.rhs.dataType) {
     toReturn.isValid = false;
-    toReturn.error = 'Data types of both the operands should match.';
+    toReturn.error = message.FILTER_PANEL.INVALID_DATATYPES_OPERANDS;
   }
 
   if (!toReturn.isValid) {
@@ -455,7 +461,7 @@ export function validateFilterRule(rule) {
 
   if (r.lhs.type && !r.lhs[r.lhs.type]) {
     toReturn.isValid = false;
-    toReturn.error = 'Please select left operand.';
+    toReturn.error = message.FILTER_PANEL.SELECT_LEFT_OPERAND;
   }
 
   if (!toReturn.isValid) {
@@ -464,7 +470,7 @@ export function validateFilterRule(rule) {
 
   if (r.rhs.type && !r.rhs[r.rhs.type]) {
     toReturn.isValid = false;
-    toReturn.error = 'Please select right operand.';
+    toReturn.error = message.FILTER_PANEL.SELECT_RIGHT_OPERAND;
   }
 
   if (!toReturn.isValid) {

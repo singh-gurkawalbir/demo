@@ -955,7 +955,6 @@ describe('editor sagas', () => {
             matchers.call(commitStagedChanges, {
               resourceType: 'imports',
               id: '999',
-              scope: 'value',
               context: undefined,
             }),
             undefined,
@@ -964,7 +963,6 @@ describe('editor sagas', () => {
             call(commitStagedChanges, {
               resourceType: 'scripts',
               id: '777',
-              scope: 'value',
               context: undefined,
             }),
             { error: 'some error' },
@@ -1005,7 +1003,6 @@ describe('editor sagas', () => {
             call(commitStagedChanges, {
               resourceType: 'connections',
               id: '111',
-              scope: 'value',
             }),
             { error: 'some error' },
           ],

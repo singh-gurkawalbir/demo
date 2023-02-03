@@ -61,7 +61,7 @@ describe('error Management Purge error UI tests', () => {
     expect(cancelButton).toBeInTheDocument();
     userEvent.click(confirmPurgeButton);
     expect(mockDispatch).toHaveBeenCalledWith(
-      actions.errorManager.flowErrorDetails.purge.request({flowId, resourceId, errors: [errorId]})
+      actions.errorManager.flowErrorDetails.purge.request({flowId, resourceId, errors: [errorId], isRowAction: true})
     );
   });
 });
