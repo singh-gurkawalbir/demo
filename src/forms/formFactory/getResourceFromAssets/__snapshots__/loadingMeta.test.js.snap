@@ -12418,6 +12418,10 @@ Object {
       "rdbms.bulkInsert.tableName": Object {
         "fieldId": "rdbms.bulkInsert.tableName",
       },
+      "rdbms.lookups": Object {
+        "fieldId": "rdbms.lookups",
+        "visible": false,
+      },
       "rdbms.query": Object {
         "arrayIndex": 0,
         "defaultValue": [Function],
@@ -12487,6 +12491,7 @@ Object {
               "collapsed": true,
               "fields": Array [
                 "rdbms.queryType",
+                "rdbms.lookups",
                 "rdbms.bulkInsert.tableName",
                 "rdbms.query",
               ],
@@ -12590,6 +12595,10 @@ Object {
       "rdbms.lookupType": Object {
         "fieldId": "rdbms.lookupType",
       },
+      "rdbms.lookups": Object {
+        "fieldId": "rdbms.lookups",
+        "visible": false,
+      },
       "rdbms.query1": Object {
         "defaultValue": [Function],
         "fieldId": "rdbms.query1",
@@ -12651,6 +12660,7 @@ Object {
                 "rdbms.ignoreExistingLookupName",
                 "rdbms.ignoreMissingLookupName",
                 "rdbms.updateExtract",
+                "rdbms.lookups",
                 "rdbms.query1",
                 "rdbms.query2",
                 "rdbms.queryInsert",

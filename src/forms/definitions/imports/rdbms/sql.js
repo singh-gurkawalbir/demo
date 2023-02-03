@@ -78,6 +78,7 @@ export default {
   fieldMap: {
     common: { formId: 'common' },
     modelMetadata: { fieldId: 'modelMetadata', visible: false },
+    'rdbms.lookups': { fieldId: 'rdbms.lookups', visible: false },
     advancedSettings: { formId: 'advancedSettings' },
     'rdbms.query1': {
       fieldId: 'rdbms.query1',
@@ -203,6 +204,7 @@ export default {
           'rdbms.ignoreExistingLookupName',
           'rdbms.ignoreMissingLookupName',
           'rdbms.updateExtract',
+          'rdbms.lookups',
           'rdbms.query1',
           'rdbms.query2',
           'rdbms.queryInsert',

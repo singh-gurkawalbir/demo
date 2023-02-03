@@ -30,6 +30,7 @@ export default {
   fieldMap: {
     common: { formId: 'common' },
     modelMetadata: { fieldId: 'modelMetadata', visible: false },
+    'rdbms.lookups': { fieldId: 'rdbms.lookups', visible: false },
     'rdbms.bulkInsert.batchSize': {
       id: 'rdbms.bulkInsert.batchSize',
       type: 'text',
@@ -98,6 +99,7 @@ export default {
         label: 'How would you like the records imported?',
         fields: [
           'rdbms.queryType',
+          'rdbms.lookups',
           'rdbms.query',
         ],
       },

@@ -87,6 +87,7 @@ export default {
     helpKey: 'import.rdbms.query',
     label: 'SQL query (for inserts)',
     refreshOptionsOnChangesTo: [
+      'rdbms.lookups',
       'rdbms.queryType',
       'modelMetadata',
     ],
@@ -104,6 +105,7 @@ export default {
     helpKey: 'import.rdbms.query',
     label: 'SQL query (for updates)',
     refreshOptionsOnChangesTo: [
+      'rdbms.lookups',
       'rdbms.queryType',
       'modelMetadata',
     ],
