@@ -190,8 +190,7 @@ export default function App() {
   const dispatch = useDispatch();
   const reloadCount = useSelector(state => selectors.reloadCount(state));
   const preferences = useSelector(state => selectors.userProfilePreferencesProps(state), shallowEqual);
-  const { darkTheme } = preferences;
-  const currentTheme = darkTheme ? 'dark' : 'light';
+  const { colorTheme: currentTheme } = preferences;
   const themeName = useSelector(state =>
     selectors.userPreferences(state).environment === 'sandbox'
       ? 'sandbox'
