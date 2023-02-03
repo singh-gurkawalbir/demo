@@ -4732,8 +4732,7 @@ Object {
           Object {
             "items": Array [
               Object {
-                "description": "Recommended",
-                "label": "SuiteApp SuiteScript 2.x",
+                "label": "SuiteApp SuiteScript 2.x (Recommended)",
                 "value": "suiteapp2.0",
               },
               Object {
@@ -4898,8 +4897,7 @@ Object {
           Object {
             "items": Array [
               Object {
-                "description": "Recommended",
-                "label": "SuiteApp SuiteScript 2.x",
+                "label": "SuiteApp SuiteScript 2.x (Recommended)",
                 "value": "suiteapp2.0",
               },
               Object {
@@ -5431,7 +5429,7 @@ Object {
               "label": "Mock output",
             },
             Object {
-              "collapsed": false,
+              "collapsed": true,
               "containers": Array [
                 Object {
                   "fields": Array [
@@ -11814,7 +11812,7 @@ Object {
               "label": "Mock response",
             },
             Object {
-              "collapsed": false,
+              "collapsed": true,
               "fields": Array [
                 "netsuite_da.restletVersion",
                 "blobKeyPath",
@@ -12058,7 +12056,7 @@ Object {
               "label": "Mock response",
             },
             Object {
-              "collapsed": false,
+              "collapsed": true,
               "fields": Array [
                 "netsuite_da.restletVersion",
                 "blobKeyPath",

@@ -193,7 +193,7 @@ export default {
         fields: ['mockResponseSection'],
       },
       {
-        collapsed: false,
+        collapsed: true,
         label: 'Advanced',
         fields: [
           'netsuite_da.restletVersion', 'blobKeyPath', 'idLockTemplate', 'dataURITemplate', 'netsuite_da.batchSize', 'traceKeyTemplate', 'apiIdentifier', 'deleteAfterImport'],
