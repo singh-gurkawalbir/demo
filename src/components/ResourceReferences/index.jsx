@@ -1,7 +1,6 @@
 import { makeStyles, Typography } from '@material-ui/core';
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import rfdc from 'rfdc';
 import CeligoTable from '../CeligoTable';
 import { selectors } from '../../reducers';
 import actions from '../../actions';
@@ -12,8 +11,7 @@ import metadata from './metadata';
 import Loader from '../Loader';
 import { TextButton } from '../Buttons';
 import messageStore, { message } from '../../utils/messageStore';
-
-const clone = rfdc({proto: true});
+import customCloneDeep from '../../utils/customCloneDeep';
 
 const useStyles = makeStyles(theme => ({
   referenceLink: {
@@ -74,7 +72,7 @@ export default function ResourceReferences({ onClose, resourceType, resourceId, 
               {title &&
               messageStore('RESOURCE.DELETED', {resourceTypeLabel})}
             </Typography>
-            <CeligoTable actionProps={{ onClose }} data={clone(resourceReferences)} {...metadata} />
+            <CeligoTable actionProps={{ onClose }} data={customCloneDeep(resourceReferences)} {...metadata} />
           </div>
         </ModalDialog>
       )}

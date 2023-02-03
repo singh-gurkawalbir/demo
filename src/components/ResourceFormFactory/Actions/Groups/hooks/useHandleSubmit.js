@@ -1,14 +1,12 @@
 import { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import rfdc from 'rfdc';
 import shallowEqual from 'react-redux/lib/utils/shallowEqual';
 import { useRouteMatch } from 'react-router-dom';
 import actions from '../../../../../actions';
 import { selectors } from '../../../../../reducers';
 import { useLoadIClientOnce } from '../../../../DynaForm/fields/DynaIclient';
 import { useSelectorMemo } from '../../../../../hooks';
-
-const clone = rfdc({ proto: true });
+import customCloneDeep from '../../../../../utils/customCloneDeep';
 
 export default function useHandleSubmit({
   resourceType,
@@ -37,7 +35,7 @@ export default function useHandleSubmit({
 
   return useCallback(
     closeAfterSave => {
-      const newValues = clone(values);
+      const newValues = customCloneDeep(values);
 
       if (resource._connectorId &&
           (['shopify'].includes(resource.assistant) && values['/http/auth/type'] === 'oauth')) {

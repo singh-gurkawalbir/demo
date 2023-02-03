@@ -2,15 +2,13 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import { useRouteMatch, useHistory } from 'react-router-dom';
 import {makeStyles} from '@material-ui/core/styles';
-import rfdc from 'rfdc';
 import { selectors } from '../../../../../../reducers';
 import RightDrawer from '../../../../../../components/drawer/Right';
 import DrawerHeader from '../../../../../../components/drawer/Right/DrawerHeader';
 import { drawerPaths } from '../../../../../../utils/rightDrawer';
 import CeligoTable from '../../../../../../components/CeligoTable';
 import metadata from '../../../../../../components/ResourceTable/trustedDevices/metadata';
-
-const clone = rfdc({proto: true});
+import customCloneDeep from '../../../../../../utils/customCloneDeep';
 
 const useStyles = makeStyles(() => ({
   errorTable: {
@@ -30,7 +28,7 @@ function ManageDevicesDrawerContent({ parentUrl }) {
   }
 
   return (
-    <CeligoTable {...metadata} data={clone(trustedDevices)} className={classes.errorTable} />
+    <CeligoTable {...metadata} data={customCloneDeep(trustedDevices)} className={classes.errorTable} />
   );
 }
 

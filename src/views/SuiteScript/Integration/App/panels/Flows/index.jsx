@@ -3,7 +3,6 @@ import { makeStyles } from '@material-ui/core/styles';
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { NavLink, Redirect, Route, useRouteMatch } from 'react-router-dom';
-import rfdc from 'rfdc';
 import CeligoTable from '../../../../../../components/CeligoTable';
 import PanelHeader from '../../../../../../components/PanelHeader';
 import metadata from '../../../../../../components/ResourceTable/suiteScript/flows/metadata';
@@ -13,8 +12,7 @@ import ScheduleDrawer from '../../../../FlowBuilder/drawers/Schedule';
 import SuiteScriptMappingDrawer from '../../../../Mappings/Drawer';
 import { LoadSettingsMetadata } from '../Settings';
 import useSelectorMemo from '../../../../../../hooks/selectors/useSelectorMemo';
-
-const clone = rfdc({proto: true});
+import customCloneDeep from '../../../../../../utils/customCloneDeep';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -69,7 +67,7 @@ function FlowList({ ssLinkedConnectionId, integrationId }) {
         integrationId={integrationId} />
       <PanelHeader title={`${section?.title} flows`} />
       <CeligoTable
-        data={clone(flows)}
+        data={customCloneDeep(flows)}
         filterKey={filterKey}
         {...metadata}
         actionProps={{ ssLinkedConnectionId, integrationId, isConnector: true }}
