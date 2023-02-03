@@ -4,7 +4,7 @@ import { isEmpty, cloneDeep, set, unset, get } from 'lodash';
 import util from '../../utils/array';
 import { isNewId } from '../../utils/resource';
 import { selectors } from '../../reducers';
-import { createFormValuesPatchSet, SCOPES } from '../resourceForm';
+import { createFormValuesPatchSet } from '../resourceForm';
 import { createFormValuesPatchSet as createSuiteScriptFormValuesPatchSet } from '../suiteScript/resourceForm';
 import { AUTHENTICATION_LABELS, emptyObject } from '../../constants';
 
@@ -149,7 +149,7 @@ export const getExportMetadata = (connectorMetadata, connectionVersion) => {
           const supportedExportTypes = fieldsUserMustSet?.find(f => f.path === 'type')?.values;
 
           const queryParameters = httpEndpoint.queryParameters?.map(qp => ({name: qp.name, id: qp.name, description: qp.description, required: qp.required, fieldType: qp.dataType || qp.fieldType || 'textarea', defaultValue: qp.defaultValue, readOnly: qp.readOnly, options: qp.values }));
-          const pathParameters = httpEndpoint.pathParameters?.map(pp => ({name: pp.label, id: pp.name, description: pp.description, required: pp.required !== false, fieldType: pp.fieldType || 'input' }));
+          const pathParameters = httpEndpoint.pathParameters?.map(pp => ({name: pp.label, id: pp.name, description: pp.description, required: pp.required !== false, fieldType: pp.dataType || pp.fieldType || 'input', suggestions: pp.values }));
           let doesNotSupportPaging = false;
 
           if (httpEndpoint.supportedBy.fieldsToUnset?.includes('paging')) {
@@ -262,6 +262,7 @@ export const getImportMetadata = (connectorMetadata, connectionVersion) => {
                       name: pp.name,
                       in: 'path',
                       required: true,
+                      suggestions: pp.values,
                     });
                   });
           }
@@ -892,14 +893,12 @@ export function* constructResourceFromFormValues({
     resourceType,
     resourceId,
     values: formValues,
-    scope: SCOPES.VALUE,
   });
 
   const { merged } = yield select(
     selectors.resourceData,
     resourceType,
     resourceId,
-    SCOPES.VALUE
   );
 
   try {
@@ -921,7 +920,6 @@ export function* constructSuiteScriptResourceFromFormValues({
     resourceType,
     resourceId,
     values: formValues,
-    scope: SCOPES.VALUE,
     ssLinkedConnectionId,
     integrationId,
   });
@@ -931,7 +929,6 @@ export function* constructSuiteScriptResourceFromFormValues({
     id: resourceId,
     ssLinkedConnectionId,
     integrationId,
-    scope: SCOPES.VALUE,
   });
 
   try {

@@ -76,6 +76,7 @@ export const REST_ASSISTANTS = [
   'exacterp',
   'acumatica',
   'acumaticaecommerce',
+  'acumaticamanufacturing',
   'myobessentials',
   'zohomail',
   'bronto',
@@ -118,6 +119,7 @@ export const CONNECTORS_TO_IGNORE = [
   'recurlyv3',
   'loopreturnsv2',
   'acumaticaecommerce',
+  'acumaticamanufacturing',
 ];
 
 export const WEBHOOK_ONLY_APPLICATIONS = ['travis-org', 'helpscout', 'errorception', 'aha', 'mailparser-io', 'travis', 'sapariba'];
@@ -139,6 +141,7 @@ export const MULTIPLE_AUTH_TYPE_ASSISTANTS = [
   'loopreturnsv2',
   'acumatica',
   'acumaticaecommerce',
+  'acumaticamanufacturing',
 ];
 export const CONSTANT_CONTACT_VERSIONS = ['v2', 'v3'];
 export const EBAY_TYPES = ['ebay', 'ebayfinance'];

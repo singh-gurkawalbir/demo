@@ -6,7 +6,6 @@ import actions from '../../../actions';
 import { selectors } from '../../../reducers';
 import { commitStagedChanges } from '../resources';
 import generateFieldAndListMappings, { updateMappingConfigs, validateMappings } from '../../../utils/suiteScript/mapping';
-import { SCOPES } from '../resourceForm';
 import {requestSampleData as requestImportSampleData} from '../sampleData/imports';
 import {requestFlowSampleData} from '../sampleData/flow';
 // check do we need to load if sample data already loaded
@@ -313,13 +312,11 @@ export function* saveMappings() {
       resourceType,
       resourceId,
       patchSet,
-      SCOPES.VALUE,
     )
   );
   const resp = yield call(commitStagedChanges, {
     resourceType,
     id: resourceId,
-    scope: SCOPES.VALUE,
     ssLinkedConnectionId,
     integrationId,
   });

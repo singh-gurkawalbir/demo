@@ -2,10 +2,11 @@ import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
+import clsx from 'clsx';
 import { selectors } from '../../reducers';
 import AppRouting from '../AppRouting';
 import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
-import { NONE_TIER_USER_ERROR } from '../../utils/messageStore';
+import { message } from '../../utils/messageStore';
 import ChatbotWidget from '../../components/ChatbotWidget';
 import Spinner from '../../components/Spinner';
 import Loader from '../../components/Loader';
@@ -31,15 +32,17 @@ export default function PageContent() {
   const isNoneTierLicense = useSelector(state => selectors.platformLicenseWithMetadata(state).isNone);
   const isDefaultAccountSet = useSelector(selectors.isDefaultAccountSet);
   const isMFASetupIncomplete = useSelector(selectors.isMFASetupIncomplete);
+  const agreeTOSAndPPRequired = useSelector(selectors.agreeTOSAndPPRequired);
   const environment = useSelector(state => selectors.userPreferences(state)?.environment);
   const isSandboxAllowed = useSelector(selectors.accountHasSandbox);
+  const isAccountSwitchInProgress = useSelector(state => selectors.isAccountSwitchInProgress(state));
 
   const [enqueueSnackbar] = useEnqueueSnackbar();
 
   useEffect(() => {
     if (!isNoneTierLicense) return;
     enqueueSnackbar({
-      message: NONE_TIER_USER_ERROR,
+      message: message.NONE_TIER_USER_ERROR,
       variant: 'error',
       persist: true,
     });
@@ -55,18 +58,16 @@ export default function PageContent() {
   }, [isDefaultAccountSet, environment, isSandboxAllowed, dispatch, history]);
 
   if (isNoneTierLicense) return null;
-  if (!isDefaultAccountSet && !isMFASetupIncomplete) {
+  if ((!isDefaultAccountSet && !isMFASetupIncomplete) || isAccountSwitchInProgress) {
     return <Loader open>Loading...<Spinner /></Loader>;
   }
 
   return (
     <main className={classes.content}>
       <div
-        className={
-          // This empty div is used to push the scrollable
-          // page content below the app/page bars.
-          classes.toolbar
-        }
+        // This empty div is used to push the scrollable
+        // page content below the app/page bars.
+        className={clsx({[classes.toolbar]: !agreeTOSAndPPRequired })}
       />
       <ChatbotWidget />
       <AppRouting />

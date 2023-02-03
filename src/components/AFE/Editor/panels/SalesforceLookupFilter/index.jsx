@@ -28,6 +28,7 @@ import OperandSettingsDialog from './OperandSettingsDialog';
 import actions from '../../../../../actions';
 import { stringCompare } from '../../../../../utils/sort';
 import Spinner from '../../../../Spinner';
+import { message } from '../../../../../utils/messageStore';
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -216,11 +217,11 @@ export function SalesforceLookupFilterPanelData({
     const r = rule.data;
 
     if (r.lhs.type && !r.lhs[r.lhs.type]) {
-      return { isValid: false, error: 'Please select left operand.' };
+      return { isValid: false, error: message.FILTER_PANEL.SELECT_LEFT_OPERAND };
     }
 
     if (r.rhs.type && !r.rhs[r.rhs.type]) {
-      return { isValid: false, error: 'Please select right operand.' };
+      return { isValid: false, error: message.FILTER_PANEL.SELECT_RIGHT_OPERAND};
     }
 
     return {

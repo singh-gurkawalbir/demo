@@ -478,7 +478,7 @@ export const generateNodesAndEdgesFromBranchedFlow = (flow, isViewMode, isDataLo
     }
   }
   if (isNewDataLoaderFlow) {
-    const emptyNode = generateNewEmptyNode({branch: {infoText: messageStore('DATALOADER_PP_MESSAGE')}});
+    const emptyNode = generateNewEmptyNode({branch: {infoText: messageStore('FLOWBUILDER.DATALOADER_PP_MESSAGE')}});
 
     return [
       {

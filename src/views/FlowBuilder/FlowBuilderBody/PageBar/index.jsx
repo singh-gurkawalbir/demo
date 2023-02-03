@@ -23,7 +23,7 @@ import useBottomDrawer from '../../drawers/BottomDrawer/useBottomDrawer';
 import { isNewFlowFn, useHandleExitClick, usePatchFlow, usePushOrReplaceHistory } from '../../hooks';
 import LastRun from '../../LastRun';
 import LineGraphButton from '../../LineGraphButton';
-import messageStore from '../../../../utils/messageStore';
+import { message } from '../../../../utils/messageStore';
 import { getTextAfterCount } from '../../../../utils/string';
 import RetryStatus from '../../RetryStatus';
 
@@ -111,7 +111,7 @@ const CalcPageBarSubtitle = ({flowId}) => {
 };
 
 const tooltipScheduleFlowIncomplete = {
-  title: messageStore('INCOMPLETE_FLOW_SCHEDULE_TOOLTIP'),
+  title: message.FLOWS.INCOMPLETE_FLOW_SCHEDULE_TOOLTIP,
   placement: 'bottom',
 };
 const tooltipSettings = {

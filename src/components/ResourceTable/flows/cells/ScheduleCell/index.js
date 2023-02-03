@@ -8,7 +8,7 @@ import RemoveMargin from '../RemoveMargin';
 import { selectors } from '../../../../../reducers';
 import IconButtonWithTooltip from '../../../../IconButtonWithTooltip';
 import { buildDrawerUrl, drawerPaths } from '../../../../../utils/rightDrawer';
-import messageStore from '../../../../../utils/messageStore';
+import { message } from '../../../../../utils/messageStore';
 
 const useStyles = makeStyles(theme => ({
   disabled: {
@@ -39,7 +39,7 @@ export default function ScheduleCell({flowId, name, actionProps, schedule}) {
   const { allowSchedule, type } = (actionProps.flowAttributes[flowId] || {});
   const isSetupInProgress = useSelector(state => selectors.isFlowSetupInProgress(state, flowId));
   const tooltipTitle = isSetupInProgress
-    ? messageStore('INCOMPLETE_FLOW_SCHEDULE_TOOLTIP')
+    ? message.FLOWS.INCOMPLETE_FLOW_SCHEDULE_TOOLTIP
     : `${schedule ? 'Edit' : 'Add'} schedule`;
 
   if (!allowSchedule) {

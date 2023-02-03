@@ -10,7 +10,7 @@ import { selectors } from '../../../../../../reducers';
 import actions from '../../../../../../actions';
 import RawHtml from '../../../../../RawHtml';
 import useConfirmDialog from '../../../../../ConfirmDialog';
-import messageStore from '../../../../../../utils/messageStore';
+import { message } from '../../../../../../utils/messageStore';
 import { hasV2MappingsInTreeData, isCsvOrXlsxResourceForMapper2 } from '../../../../../../utils/mapping';
 import { useSelectorMemo } from '../../../../../../hooks';
 
@@ -26,8 +26,8 @@ const getActions = importHasSampleData => [
     label: 'Auto-populate destination fields',
     optionDisabled: !importHasSampleData,
     Icon: <AddIcon />,
-    toolTip: importHasSampleData ? 'Click <b>Learn about Mapper 2.0</b> above for more info on auto-population.'
-      : 'Auto-populate is not available for this connector.<br><br>Click <b>Learn about Mapper 2.0</b> above for more info on auto-population.',
+    toolTip: importHasSampleData ? message.MAPPER2.LEARN_MORE_MAPPER2
+      : message.MAPPER2.AUTO_POPULATE_LEARN_MORE,
   },
   {
     action: 'deleteall',
@@ -65,7 +65,7 @@ export default function MoreActions({importId, disabled}) {
       if (hasV2Mappings) {
         confirmDialog({
           title: 'Confirm auto-populate',
-          message: <RawHtml html={messageStore('MAPPER2_AUTO_CREATE_STRUCTURE')} />,
+          message: <RawHtml html={message.MAPPER2.AUTO_CREATE_STRUCTURE} />,
           buttons: [
             {
               label: 'Auto-populate',

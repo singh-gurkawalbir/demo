@@ -109,7 +109,7 @@ function pathParameterFieldsMeta({ operationParameters = [], values }) {
     const pathParamField = {
       id: `assistantMetadata.pathParams.${pathParam.id}`,
       label: pathParam.label || pathParam.name,
-      type: 'textwithflowsuggestion',
+      type: 'hfpathparams',
       showLookup: false,
       value: values[pathParam.id],
       required: !!pathParam.required,
@@ -117,7 +117,6 @@ function pathParameterFieldsMeta({ operationParameters = [], values }) {
     };
 
     if (pathParam.options && pathParam.options.length > 0) {
-      pathParamField.type = 'select';
       pathParamField.options = [
         {
           items: pathParam.options.map(opt => ({
@@ -129,7 +128,6 @@ function pathParameterFieldsMeta({ operationParameters = [], values }) {
     }
 
     if (pathParam.suggestions && pathParam.suggestions.length > 0) {
-      pathParamField.type = 'autosuggest';
       pathParamField.labelName = 'name';
       pathParamField.valueName = 'value';
       pathParamField.options = {
@@ -381,6 +379,17 @@ export function fieldMeta({ resource, assistantData }) {
     formView: { fieldId: 'formView' },
     skipRetries: { fieldId: 'skipRetries' },
     'test.limit': {fieldId: 'test.limit'},
+    advancedSettings: {
+      formId: 'advancedSettings',
+    },
+    configureAsyncHelper: {
+      fieldId: 'configureAsyncHelper',
+      defaultValue: r => !!(r && r.http && r.http._asyncHelperId),
+      visible: r => !(r && r.statusExport),
+    },
+    'http._asyncHelperId': {
+      fieldId: 'http._asyncHelperId',
+    },
   };
   const fieldIds = [];
   const exportTypeFieldIds = [];
@@ -432,7 +441,9 @@ export function fieldMeta({ resource, assistantData }) {
         {
           collapsed: true,
           label: 'Advanced',
-          fields: ['pageSize', 'skipRetries', 'traceKeyTemplate', 'apiIdentifier'],
+          fields: ['configureAsyncHelper',
+            'http._asyncHelperId',
+            'advancedSettings'],
         },
       ],
     },

@@ -17,6 +17,7 @@ import getRoutePath from '../../../utils/routePaths';
 import TrashIcon from '../../../components/icons/TrashIcon';
 import { TextButton } from '../../../components/Buttons';
 import { stringCompare } from '../../../utils/sort';
+import { message } from '../../../utils/messageStore';
 
 const useStyles = makeStyles(theme => ({
   currentAccount: {
@@ -158,7 +159,7 @@ function AccountList() {
       handleClose();
       confirmDialog({
         title: 'Confirm leave',
-        message: 'Are you sure you want to leave this account? You will no longer have access to the account after you leave.',
+        message: message.USER_SIGN_IN.WANT_TO_LEAVE_ACCOUNT,
         buttons: [
           {
             label: 'Leave',

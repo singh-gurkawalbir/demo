@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { MFA_SETUP_ASYNC_KEY, FORM_SAVE_STATUS } from '../../../../constants';
 import useEnqueueSnackbar from '../../../../hooks/enqueueSnackbar';
-import messageStore from '../../../../utils/messageStore';
+import {message} from '../../../../utils/messageStore';
 import { selectors } from '../../../../reducers';
 import actions from '../../../../actions';
 
@@ -17,19 +17,19 @@ export default function useNotifySetupSuccess() {
     if (setupSuccess) {
       if (setupContext === 'setup') {
         enquesnackbar({
-          message: messageStore('MFA_SETUP_SUCCESS'),
+          message: message.MFA.SETUP_SUCCESS,
           variant: 'success',
         });
       }
       if (setupContext === 'update') {
         enquesnackbar({
-          message: messageStore('MFA_PRIMARY_ACCOUNT_UPDATED'),
+          message: message.MFA.PRIMARY_ACCOUNT_UPDATED,
           variant: 'success',
         });
       }
       if (setupContext === 'switch') {
         enquesnackbar({
-          message: messageStore(mfaEnabled ? 'MFA_ENABLED' : 'MFA_DISABLED'),
+          message: mfaEnabled ? message.MFA.ENABLED : message.MFA.DISABLED,
           variant: 'success',
         });
       }

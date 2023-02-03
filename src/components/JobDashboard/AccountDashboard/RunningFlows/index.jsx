@@ -10,6 +10,7 @@ import { hashCode } from '../../../../utils/string';
 import Spinner from '../../../Spinner';
 import {FILTER_KEYS_AD, getDashboardIntegrationId} from '../../../../utils/accountDashboard';
 import NoResultTypography from '../../../NoResultTypography';
+import messageStore from '../../../../utils/messageStore';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -77,7 +78,7 @@ export default function RunningFlows() {
           </>
         )}
       </div>
-      {!jobs?.length && !isRunningJobsCollectionLoading ? <NoResultTypography className={classes.noResultRunningFlows}>You don&apos;t have any running flows. </NoResultTypography> : ''}
+      {!jobs?.length && !isRunningJobsCollectionLoading ? <NoResultTypography className={classes.noResultRunningFlows}>{messageStore('NO_RESULT', {message: 'running flows'})} </NoResultTypography> : ''}
     </>
   );
 }

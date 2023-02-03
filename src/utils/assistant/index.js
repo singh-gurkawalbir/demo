@@ -1808,12 +1808,12 @@ export function convertFromImport({ importDoc: importDocOrig, assistantData: ass
 
   if (importDoc?.http) {
     if (importDoc.http?._httpConnectorEndpointId || importDoc.http?._httpConnectorEndpointIds || importDoc.http?._httpConnectorResourceId) {
-      if (operation === 'create-update-id' || isArray(operation)) {
+      if (operation === 'create-update-id' || isArray(operation) || importDoc.http._httpConnectorEndpointIds?.length > 1) {
         operation = operation || importDoc.http._httpConnectorEndpointIds;
         resource = resource || importDoc.http._httpConnectorResourceId;
         version = version || importDoc.http._httpConnectorVersionId;
       } else {
-        operation = VALID_MONGO_ID.test(operation) ? operation : importDoc.http?._httpConnectorEndpointId;
+        operation = VALID_MONGO_ID.test(operation) ? operation : importDoc.http?._httpConnectorEndpointId || importDoc.http?._httpConnectorEndpointIds?.[0];
         resource = VALID_MONGO_ID.test(resource) ? resource : importDoc.http?._httpConnectorResourceId;
         version = VALID_MONGO_ID.test(version) ? version : importDoc.http?._httpConnectorVersionId;
       }
@@ -2086,15 +2086,15 @@ export function convertFromImport({ importDoc: importDocOrig, assistantData: ass
           if (
             howToFindIdentifierLookupConfig.id &&
             assistantMetadata &&
-            assistantMetadata.lookups &&
-            assistantMetadata.lookups[pathParams[p.id] || existingLookupName]
+            ((assistantMetadata.lookups &&
+            assistantMetadata.lookups[pathParams[p.id] || existingLookupName]) || importDoc.http?._httpConnectorResourceId)
           ) {
             const luEndpoint = getExportOperationDetails({
               version: assistantMetadata.version,
               resource:
-                assistantMetadata.lookups[pathParams[p.id] || existingLookupName].resource ||
-                assistantMetadata.resource,
-              operation: assistantMetadata.lookups[pathParams[p.id] || existingLookupName].operation,
+                assistantMetadata.lookups?.[pathParams[p.id] || existingLookupName]?.resource || operationDetails.lookupOperationDetails?.resource ||
+                 assistantMetadata.resource,
+              operation: assistantMetadata.lookups?.[pathParams[p.id] || existingLookupName]?.operation || operationDetails.lookupOperationDetails?.id,
               assistantData,
             });
 
@@ -2619,6 +2619,9 @@ export function isLoopReturnsv2Connection(connection) {
 }
 export function isAcumaticaEcommerceConnection(connection) {
   return connection?.assistant === 'acumatica' && connection?.http?.unencrypted?.endpointName === 'ecommerce';
+}
+export function isAcumaticaManufacturingConnection(connection) {
+  return connection?.assistant === 'acumatica' && connection?.http?.unencrypted?.endpointName === 'manufacturing';
 }
 export function isMicrosoftBusinessCentralOdataConnection(connection) {
   return connection?.assistant === 'microsoftbusinesscentral' && connection?.http?.unencrypted?.apiType === 'odata';

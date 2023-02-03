@@ -1,7 +1,7 @@
 
 import reducer, { selectors } from '.';
 import actions from '../actions';
-import messageStore from '../utils/messageStore';
+import { message } from '../utils/messageStore';
 import { MAPPING_DATA_TYPES } from '../utils/mapping';
 
 describe('Mappings region selector testcases', () => {
@@ -1350,7 +1350,7 @@ describe('Mappings region selector testcases', () => {
       };
 
       expect(selectors.mappingEditorNotification(state, 'mappings')).toEqual({
-        message: messageStore('MAPPER1_REFERENCE_INFO'),
+        message: message.MAPPER2.MAPPER1_REFERENCE_INFO,
         variant: 'info',
       });
     });
@@ -1383,7 +1383,7 @@ describe('Mappings region selector testcases', () => {
       };
 
       expect(selectors.mappingEditorNotification(state, 'mappings')).toEqual({
-        message: messageStore('MAPPER2_BANNER_WARNING'),
+        message: message.MAPPER2.BANNER_WARNING,
         variant: 'warning',
       });
     });

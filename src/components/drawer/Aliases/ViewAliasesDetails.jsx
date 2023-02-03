@@ -13,7 +13,7 @@ import DrawerFooter from '../Right/DrawerFooter';
 import DrawerHeader from '../Right/DrawerHeader';
 import { emptyObject } from '../../../constants';
 import { drawerPaths } from '../../../utils/rightDrawer';
-import messageStore from '../../../utils/messageStore';
+import { message } from '../../../utils/messageStore';
 
 const useStyles = makeStyles(theme => ({
   aliasDetailContent: {
@@ -76,7 +76,7 @@ export default function ViewAliasDetailsDrawer({ resourceId, resourceType, heigh
     >
       <DrawerHeader
         title="View details"
-        infoText={messageStore('VIEW_ALIAS_DETAILS_HELPINFO')}
+        infoText={message.ALIAS.VIEW_DETAILS_HELPINFO}
       />
       <DrawerContent>
         <ViewAliasDetails resourceId={resourceId} resourceType={resourceType} />

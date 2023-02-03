@@ -174,6 +174,8 @@ const getAcumaticaEndpointName = connection => {
   switch (acumaticaEndpointName) {
     case 'ecommerce':
       return 'acumaticaecommerce';
+    case 'manufacturing':
+      return 'acumaticamanufacturing';
     default:
   }
 

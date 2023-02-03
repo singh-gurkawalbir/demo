@@ -201,7 +201,7 @@ export default function JavaScriptPanel({ editorId }) {
           )}
         </div>
         {/* hide the script content */}
-        <div className={classes.scriptPanel} data-private>
+        <div className={classes.scriptPanel}>
           {scriptContent === undefined && scriptId ? (
             <Spinner centerAll />
           ) : (
@@ -214,7 +214,7 @@ export default function JavaScriptPanel({ editorId }) {
               onChange={handleCodeChange}
               errorLine={errorLine}
               hasError={hasError}
-              onLoad={handleAceEditorLoad} isLoggable
+              onLoad={handleAceEditorLoad}
             />
           )}
         </div>

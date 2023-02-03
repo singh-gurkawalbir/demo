@@ -4,6 +4,7 @@ import { applicationsList } from '../constants/applications';
 import {
   NETSUITE_BUNDLE_URL,
   SALESFORCE_DA_PACKAGE_URL,
+  NETSUITE_SUITEAPP_URL,
   INSTALL_STEP_TYPES,
 } from '../constants';
 import { rdbmsSubTypeToAppType } from './resource';
@@ -63,6 +64,7 @@ export default {
   getInstallSteps: previewData => {
     const connectionMap = {};
     const netsuiteBundleNeededForConnections = [];
+    const netsuiteSuiteAppNeededForConnections = [];
     const salesforceBundleNeededForConnections = [];
     const installSteps = [];
 
@@ -119,6 +121,22 @@ export default {
       const conn = connections?.find(c => c._id === exp._connectionId);
 
       if (
+        (((exp?.netsuite || {}).type === 'restlet' && exp?.netsuite?.restlet?.recordType &&
+          (['suiteapp1.0', 'suiteapp2.0'].includes(exp?.netsuite?.restlet?.restletVersion) || exp.netsuite.restlet.useSS2Restlets)) ||
+          ((exp?.type === 'distributed' || exp?.netsuite?.type === 'distributed') && exp?.netsuite?.distributed?.recordType && (['suiteapp1.0', 'suiteapp2.0'].includes(exp?.netsuite?.distributed?.frameworkVersion) || exp?.netsuite?.distributed?.useSS2Framework))) &&
+          conn?.type === 'netsuite' &&
+          !netsuiteSuiteAppNeededForConnections.includes(conn)) {
+        netsuiteSuiteAppNeededForConnections.push(conn);
+      }
+      if (
+        (((exp?.netsuite || {}).type === 'restlet' && exp?.netsuite?.restlet?.recordType &&
+          (exp?.netsuite?.restlet?.restletVersion === 'suitebundle' || !exp.netsuite.restlet.useSS2Restlets)) ||
+          ((exp?.type === 'distributed' || exp?.netsuite?.type === 'distributed') && exp?.netsuite?.distributed?.recordType && (exp?.netsuite?.distributed?.frameworkVersion === 'suitebundle' || !exp?.netsuite?.distributed?.useSS2Framework))) &&
+          conn?.type === 'netsuite' &&
+          !netsuiteBundleNeededForConnections.includes(conn)) {
+        netsuiteBundleNeededForConnections.push(conn);
+      }
+      if (
         (((exp?.netsuite || {}).type === 'restlet' &&
           exp?.netsuite?.restlet?.recordType) ||
           (exp?.type === 'distributed' && conn?.type === 'netsuite')) &&
@@ -134,8 +152,10 @@ export default {
     (importDocs || []).forEach(imp => {
       const conn = connections?.find(c => c._id === imp._connectionId);
 
-      if (imp.distributed && conn?.type === 'netsuite' && (!netsuiteBundleNeededForConnections.includes(conn))) {
+      if (conn?.type === 'netsuite' && (imp.netsuite_da?.restletVersion === 'suitebundle' || imp.netsuite_da?.useSS2Restlets === false) && (!netsuiteBundleNeededForConnections.includes(conn))) {
         netsuiteBundleNeededForConnections.push(conn);
+      } else if (conn?.type === 'netsuite' && (['suiteapp1.0', 'suiteapp2.0'].includes(imp.netsuite_da?.restletVersion) || imp.netsuite_da?.useSS2Restlets === true) && (!netsuiteSuiteAppNeededForConnections.includes(conn))) {
+        netsuiteSuiteAppNeededForConnections.push(conn);
       }
     });
 
@@ -147,7 +167,20 @@ export default {
       description: `Please install Integrator bundle in ${
         netsuiteBundleNeededForConnections.length > 1 ? conn.name : 'NetSuite'
       } account`,
-      name: 'Integrator Bundle',
+      name: `Integrator Bundle ${index + 1}`,
+      application: 'netsuite',
+      type: INSTALL_STEP_TYPES.INSTALL_PACKAGE,
+      options: {},
+    }));
+    netsuiteSuiteAppNeededForConnections.forEach((conn, index) => installSteps.push({
+      key: `NetSuite account ${index + 1}`,
+      installURL: NETSUITE_SUITEAPP_URL,
+      imageURL: 'images/company-logos/netsuite.png',
+      completed: false,
+      description: `Please install Integrator suiteapp in ${
+        netsuiteSuiteAppNeededForConnections.length > 1 ? conn.name : 'NetSuite'
+      } account`,
+      name: `Integrator SuiteApp ${index + 1}`,
       application: 'netsuite',
       type: INSTALL_STEP_TYPES.INSTALL_PACKAGE,
       options: {},

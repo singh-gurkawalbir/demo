@@ -10,6 +10,7 @@ import RunHistoryDrawer from '../../RunHistoryDrawer';
 import ErrorsListDrawer from '../../../../views/Integration/common/ErrorsList';
 import {FILTER_KEYS_AD} from '../../../../utils/accountDashboard';
 import NoResultTypography from '../../../NoResultTypography';
+import messageStore from '../../../../utils/messageStore';
 
 const useStyles = makeStyles(theme => ({
   jobTable: {
@@ -67,7 +68,11 @@ export default function CompletedFlows() {
           </>
         )}
       </div>
-      {showEmptyMessage ? <NoResultTypography className={classes.noResultCompletedFlows}>You don&apos;t have any completed flows in the selected date range. </NoResultTypography> : ''}
+      {showEmptyMessage ? (
+        <NoResultTypography className={classes.noResultCompletedFlows}>
+          {messageStore('NO_RESULT', {message: 'completed flows in the selected date range'})}
+        </NoResultTypography>
+      ) : ''}
       <RunHistoryDrawer />
       <ErrorsListDrawer />
     </div>

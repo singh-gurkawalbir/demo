@@ -7,7 +7,7 @@ import actions from '../../actions';
 import { apiCallWithRetry } from '../index';
 import { selectors } from '../../reducers';
 import { getDefinition, getFileDefinitions, saveUserFileDefinition} from '.';
-import { SCOPES, saveResourceWithDefinitionID } from '../resourceForm';
+import { saveResourceWithDefinitionID } from '../resourceForm';
 import { commitStagedChanges } from '../resources';
 
 describe('fileDefinitions sagas', () => {
@@ -150,7 +150,6 @@ describe('fileDefinitions sagas', () => {
         .call(commitStagedChanges, {
           resourceType: 'filedefinitions',
           id: definitionRules.fileDefinition._id,
-          scope: SCOPES.VALUE,
         })
         .call(saveResourceWithDefinitionID, {
           formValues,
@@ -178,7 +177,6 @@ describe('fileDefinitions sagas', () => {
         .call(commitStagedChanges, {
           resourceType: 'filedefinitions',
           id: 'new-123',
-          scope: SCOPES.VALUE,
         })
         .call(saveResourceWithDefinitionID, {
           formValues,
@@ -201,7 +199,6 @@ describe('fileDefinitions sagas', () => {
         .call(commitStagedChanges, {
           resourceType: 'filedefinitions',
           id: 'new-123',
-          scope: SCOPES.VALUE,
         })
         .not.call.fn(saveResourceWithDefinitionID)
         .run();
@@ -240,7 +237,6 @@ describe('fileDefinitions sagas', () => {
         .call(commitStagedChanges, {
           resourceType: 'filedefinitions',
           id: definitionRules._id,
-          scope: SCOPES.VALUE,
         })
         .call(saveResourceWithDefinitionID, {
           formValues,

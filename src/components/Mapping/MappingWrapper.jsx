@@ -14,6 +14,7 @@ import DrawerFooter from '../drawer/Right/DrawerFooter';
 import AutoMapperButton from './AutoMapperButton';
 import MappingRow from './MappingRow';
 import { emptyObject } from '../../constants';
+import { message } from '../../utils/messageStore';
 
 const useStyles = makeStyles(theme => ({
   mappingDrawerContent: {
@@ -112,7 +113,7 @@ export default function MappingWrapper(props) {
   const mappingStatus = useSelector(state => selectors.mapping(state, flowId, importId, subRecordMappingId).status);
 
   if (mappingStatus === 'error') {
-    return (<Typography>Failed to load mapping.</Typography>);
+    return (<Typography>{message.MAPPER2.FAILED_TO_LOAD_MAPPING}</Typography>);
   }
   if (mappingStatus !== 'received') {
     return (

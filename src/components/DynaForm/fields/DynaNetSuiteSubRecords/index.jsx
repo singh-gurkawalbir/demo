@@ -7,7 +7,6 @@ import shallowEqual from 'react-redux/lib/utils/shallowEqual';
 import { selectors } from '../../../../reducers';
 import SubRecordDrawer from './SubRecordDrawer';
 import actions from '../../../../actions';
-import { SCOPES } from '../../../../sagas/resourceForm';
 import EditIcon from '../../../icons/EditIcon';
 import DeleteIcon from '../../../icons/TrashIcon';
 import useConfirmDialog from '../../../ConfirmDialog';
@@ -139,7 +138,7 @@ export default function DynaNetSuiteSubRecords(props) {
       });
 
       dispatch(
-        actions.resource.patchStaged(resourceId, patchSet, SCOPES.VALUE)
+        actions.resource.patchStaged(resourceId, patchSet)
       );
     }
   }, [dispatch, hasNetsuiteDa, resourceId, subrecords, subrecordsFromMappings]);
@@ -181,7 +180,6 @@ export default function DynaNetSuiteSubRecords(props) {
                       value: updatedSubrecords,
                     },
                   ],
-                  SCOPES.VALUE
                 )
               );
             },

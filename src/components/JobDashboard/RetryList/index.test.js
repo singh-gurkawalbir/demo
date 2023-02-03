@@ -6,6 +6,7 @@ import {mockGetRequestOnce, reduxStore, renderWithProviders} from '../../../test
 import RetryList from '.';
 import { runServer } from '../../../test/api/server';
 import { JOB_STATUS, JOB_TYPES } from '../../../constants';
+import messageStore, { message } from '../../../utils/messageStore';
 
 const initialStore = reduxStore;
 
@@ -152,9 +153,9 @@ describe('retryList UI tests', () => {
       props: {flowId: 'f2'},
       resourceId: 'e2',
     });
-
-    await waitFor(() => expect(screen.queryByText(/You don’t have any retries./i)).toBeInTheDocument());
-    await waitFor(() => expect(screen.queryByText(/Errors can be retried from the Open errors and Resolved errors tabs./i)).toBeInTheDocument());
+    await waitFor(() => expect(screen.queryByText(messageStore('NO_RESULT', {message: 'retries'}))).toBeInTheDocument());
+    await waitFor(() => expect(screen.getByText(message.RETRY.ERRORS_RETRIEVE)).toBeInTheDocument());
+    // await waitFor(() => expect(screen.getByText(messageDisplay('RETRY.ERRORS_RETRIEVE'))).toBeInTheDocument());
   });
 
   test('should show a spinner if retries are requested', async () => {

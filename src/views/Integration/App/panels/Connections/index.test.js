@@ -154,7 +154,6 @@ describe('ConnectionsPanel UI tests', () => {
           { op: 'add', path: '/newIA', value: true },
         ],
         id: 'somegeneratedID',
-        scope: 'value',
       }
     );
     expect(mockHistoryPush).toHaveBeenCalledWith('someinitalURL/add/connections/somegeneratedID');
@@ -182,7 +181,6 @@ describe('ConnectionsPanel UI tests', () => {
           { op: 'add', path: '/applications', value: ['acumatica'] },
         ],
         id: 'somegeneratedID',
-        scope: 'value',
       }
     );
     expect(mockHistoryPush).toHaveBeenCalledWith('someinitalURL/add/connections/somegeneratedID');
