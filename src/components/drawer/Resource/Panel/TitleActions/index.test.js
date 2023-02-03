@@ -3,7 +3,7 @@ import React from 'react';
 import { MemoryRouter, Route } from 'react-router-dom';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { renderWithProviders, reduxStore } from '../../../../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore } from '../../../../../test/test-utils';
 import TitleActions from '.';
 import { KBDocumentation } from '../../../../../utils/connections';
 
@@ -12,47 +12,49 @@ const mockHistoryPush = jest.fn();
 async function initTitleActions(props = {}, resourceType = 'exports', _id = '_resourceId', operation = 'add') {
   const initialStore = reduxStore;
 
-  initialStore.getState().data.resources = {
-    imports: [{ _id, _connectionId: '_connectionId', http: { relativeURI: ['/'], method: ['POST'], body: [], formType: 'http' }, adaptorType: 'HTTPImport' }],
-    exports: [
-      {
-        _id: '_exportId',
-        _connectionId: '_connectionId',
-        http: {
-          relativeURI: ['/'],
-          method: ['GET'],
-          body: [],
-          formType: 'http',
+  mutateStore(initialStore, draft => {
+    draft.data.resources = {
+      imports: [{ _id, _connectionId: '_connectionId', http: { relativeURI: ['/'], method: ['POST'], body: [], formType: 'http' }, adaptorType: 'HTTPImport' }],
+      exports: [
+        {
+          _id: '_exportId',
+          _connectionId: '_connectionId',
+          http: {
+            relativeURI: ['/'],
+            method: ['GET'],
+            body: [],
+            formType: 'http',
+          },
+          adaptorType: 'HTTPExport',
         },
-        adaptorType: 'HTTPExport',
-      },
-      {
-        _id,
-        _connectionId: '_connectionId',
-        type: 'test',
-        adaptorType: 'NetSuiteExport',
-      },
-    ],
-    connections: [
-      { _id: '_connectionId',
-        type: 'http',
-        http: {
-          formType: 'http',
-          baseURI: '/mockURI',
-          mediaType: 'json',
+        {
+          _id,
+          _connectionId: '_connectionId',
+          type: 'test',
+          adaptorType: 'NetSuiteExport',
         },
-      },
-      { _id: '_connectionId2',
-        type: 'http',
-        http: {
-          formType: 'http',
-          _httpConnectorId: '_httpConnectorId',
-          baseURI: '/mockURI',
-          mediaType: 'json',
+      ],
+      connections: [
+        { _id: '_connectionId',
+          type: 'http',
+          http: {
+            formType: 'http',
+            baseURI: '/mockURI',
+            mediaType: 'json',
+          },
         },
-      },
-    ],
-  };
+        { _id: '_connectionId2',
+          type: 'http',
+          http: {
+            formType: 'http',
+            _httpConnectorId: '_httpConnectorId',
+            baseURI: '/mockURI',
+            mediaType: 'json',
+          },
+        },
+      ],
+    };
+  });
   const ui = (
     <MemoryRouter initialEntries={[{ pathname: `/${operation}/${resourceType}/${_id}` }]}>
       <Route path="/:operation/:resourceType/:id">

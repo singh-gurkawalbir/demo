@@ -8,8 +8,8 @@ import { MemoryRouter } from 'react-router-dom';
 import actions from '../../actions';
 import AgentToken from '.';
 import { runServer } from '../../test/api/server';
-import { renderWithProviders, reduxStore } from '../../test/test-utils';
 import customCloneDeep from '../../utils/customCloneDeep';
+import { renderWithProviders, reduxStore, mutateStore } from '../../test/test-utils';
 
 async function initAgentToken({ agentId = '', initialStore = reduxStore} = {}) {
   const ui = (
@@ -35,16 +35,18 @@ describe('agentToken component Test cases', () => {
     mockDispatchFn = jest.fn(action => {
       switch (action.type) {
         case 'AGENT_TOKEN_DISPLAY':
-          initialStore.getState().session.agentAccessTokens = [{
-            accessToken: 'token_id',
-            _id: 'agent_id',
-          }];
-          initialStore.getState().comms.networkComms['GET:/agents/agent_id/display-token'] = {
-            status: 'success',
-            hidden: false,
-            refresh: false,
-            method: 'GET',
-          };
+          mutateStore(initialStore, draft => {
+            draft.session.agentAccessTokens = [{
+              accessToken: 'token_id',
+              _id: 'agent_id',
+            }];
+            draft.comms.networkComms['GET:/agents/agent_id/display-token'] = {
+              status: 'success',
+              hidden: false,
+              refresh: false,
+              method: 'GET',
+            };
+          });
           break;
         default:
       }
@@ -67,10 +69,12 @@ describe('agentToken component Test cases', () => {
     });
 
     test('should pass the handleInstallerClick token render', async () => {
-      initialStore.getState().session.agentAccessTokens = [{
-        accessToken: 'token_id',
-        _id: 'agent_id',
-      }];
+      mutateStore(initialStore, draft => {
+        draft.session.agentAccessTokens = [{
+          accessToken: 'token_id',
+          _id: 'agent_id',
+        }];
+      });
       await initAgentToken({agentId: 'agent_id', initialStore});
       const showTokenId = screen.queryByText('token_id');
 

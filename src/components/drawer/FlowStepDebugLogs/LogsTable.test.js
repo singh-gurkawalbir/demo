@@ -2,7 +2,7 @@ import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { screen } from '@testing-library/react';
 import * as reactRedux from 'react-redux';
-import { renderWithProviders, reduxStore } from '../../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore } from '../../../test/test-utils';
 import LogsTable from './LogsTable';
 import actionTypes from '../../../actions/types';
 import { message } from '../../../utils/messageStore';
@@ -24,22 +24,24 @@ async function initLogsTable({props,
   const initialStore = reduxStore;
   const {resourceId, resourceType} = props;
 
-  initialStore.getState().session.logs.flowStep = {
-    random_resource_id_mock: {
-      logsSummary,
-      nextPageURL,
-      fetchStatus,
-      logsStatus,
-      loadMoreStatus: 'received',
-      hasNewLogs: false,
-      activeLogKey: 'randomActiveLogKey',
-    },
-  };
-  initialStore.getState().data.resources[resourceType] = [
-    { _id: resourceId,
-      debugUntil,
-    },
-  ];
+  mutateStore(initialStore, draft => {
+    draft.session.logs.flowStep = {
+      random_resource_id_mock: {
+        logsSummary,
+        nextPageURL,
+        fetchStatus,
+        logsStatus,
+        loadMoreStatus: 'received',
+        hasNewLogs: false,
+        activeLogKey: 'randomActiveLogKey',
+      },
+    };
+    draft.data.resources[resourceType] = [
+      { _id: resourceId,
+        debugUntil,
+      },
+    ];
+  });
 
   const ui = (
     <MemoryRouter>
@@ -68,7 +70,9 @@ describe('LogsTable tests', () => {
 
       switch (type) {
         case actionTypes.LOGS.FLOWSTEP.START_POLL:
-          initialStore.getState().session.logs.flowStep[resourceId].debugOn = true;
+          mutateStore(initialStore, draft => {
+            draft.session.logs.flowStep[resourceId].debugOn = true;
+          });
           break;
         default:
       }

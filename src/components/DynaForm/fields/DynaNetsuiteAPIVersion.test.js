@@ -2,7 +2,7 @@
 import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { renderWithProviders } from '../../../test/test-utils';
+import { mutateStore, renderWithProviders } from '../../../test/test-utils';
 import { getCreatedStore } from '../../../store';
 import actions from '../../../actions';
 import DynaNetsuiteAPIVersion from './DynaNetSuiteAPIVersion';
@@ -98,19 +98,21 @@ describe('test suite for DynaNetsuiteAPIVersion field', () => {
 
     const initialStore = getCreatedStore();
 
-    initialStore.getState().session.metadata.application[props.connectionId] = {
-      [`connections/${props.connectionId}/distributedApps`]: {
-        data: {
-          bundle: {
-            success: true,
+    mutateStore(initialStore, draft => {
+      draft.session.metadata.application[props.connectionId] = {
+        [`connections/${props.connectionId}/distributedApps`]: {
+          data: {
+            bundle: {
+              success: true,
+            },
+            suiteapp: {
+              success: true,
+            },
           },
-          suiteapp: {
-            success: true,
-          },
+          status: 'received',
         },
-        status: 'received',
-      },
-    };
+      };
+    });
     renderWithProviders(<DynaNetsuiteAPIVersion {...props} />, {initialStore});
     expect(onFieldChange).toHaveBeenCalledWith(props.id, 'false');
     const radioGroup = screen.getByRole('radiogroup', {name: props.label});
@@ -161,15 +163,17 @@ describe('test suite for DynaNetsuiteAPIVersion field', () => {
 
     const initialStore = getCreatedStore();
 
-    initialStore.getState().session.metadata.application[props.connectionId] = {
-      [`connections/${props.connectionId}/distributedApps`]: {
-        data: {
-          suiteapp: { URL: 'https://sampleURL.com'},
+    mutateStore(initialStore, draft => {
+      draft.session.metadata.application[props.connectionId] = {
+        [`connections/${props.connectionId}/distributedApps`]: {
+          data: {
+            suiteapp: { URL: 'https://sampleURL.com'},
+          },
+          errorMessage: 'Invalid URL',
+          status: 'received',
         },
-        errorMessage: 'Invalid URL',
-        status: 'received',
-      },
-    };
+      };
+    });
     renderWithProviders(<DynaNetsuiteAPIVersion {...props} />, {initialStore});
     expect(onFieldChange).not.toHaveBeenCalled();
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.resourceForm.showBundleInstallNotification('2.0', 'https://sampleURL.com', props.resourceType, props.resourceId));
@@ -210,19 +214,21 @@ describe('test suite for DynaNetsuiteAPIVersion field', () => {
 
     const initialStore = getCreatedStore();
 
-    initialStore.getState().session.metadata.application[props.connectionId] = {
-      [`connections/${props.connectionId}/distributedApps`]: {
-        data: {
-          bundle: {
-            success: true,
+    mutateStore(initialStore, draft => {
+      draft.session.metadata.application[props.connectionId] = {
+        [`connections/${props.connectionId}/distributedApps`]: {
+          data: {
+            bundle: {
+              success: true,
+            },
+            suiteapp: {
+              success: true,
+            },
           },
-          suiteapp: {
-            success: true,
-          },
+          status: 'received',
         },
-        status: 'received',
-      },
-    };
+      };
+    });
     renderWithProviders(<DynaNetsuiteAPIVersion {...props} />, {initialStore});
     expect(onFieldChange).not.toHaveBeenCalled();
     const apiVersion1 = screen.getByRole('radio', {name: 'SuiteScript 1.0'});

@@ -2,7 +2,7 @@
 import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { renderWithProviders } from '../../../test/test-utils';
+import { mutateStore, renderWithProviders } from '../../../test/test-utils';
 import DynaNSSavedSearch from './DynaNSSavedSearch';
 import { getCreatedStore } from '../../../store';
 
@@ -39,13 +39,15 @@ describe('test suite for netsuite saved search field', () => {
     const domain = 'https://tstdr.netsuite.com';
     const initialStore = getCreatedStore();
 
-    initialStore.getState().data.resources.connections = [{
-      _id: props.connectionId,
-      type: 'netsuite',
-      netsuite: {
-        dataCenterURLs: { systemDomain: domain },
-      },
-    }];
+    mutateStore(initialStore, draft => {
+      draft.data.resources.connections = [{
+        _id: props.connectionId,
+        type: 'netsuite',
+        netsuite: {
+          dataCenterURLs: { systemDomain: domain },
+        },
+      }];
+    });
 
     renderWithProviders(<DynaNSSavedSearch {...props} />, {initialStore});
     expect(document.querySelector('legend')).toHaveTextContent('Saved search type:');
@@ -68,13 +70,15 @@ describe('test suite for netsuite saved search field', () => {
     const domain = 'https://tstdr.netsuite.com';
     const initialStore = getCreatedStore();
 
-    initialStore.getState().data.resources.connections = [{
-      _id: props.connectionId,
-      type: 'netsuite',
-      netsuite: {
-        dataCenterURLs: { systemDomain: domain },
-      },
-    }];
+    mutateStore(initialStore, draft => {
+      draft.data.resources.connections = [{
+        _id: props.connectionId,
+        type: 'netsuite',
+        netsuite: {
+          dataCenterURLs: { systemDomain: domain },
+        },
+      }];
+    });
 
     renderWithProviders(<DynaNSSavedSearch {...props} />, {initialStore});
     const privateSearch = screen.getByRole('radio', {name: 'Private'});
@@ -115,18 +119,20 @@ describe('test suite for netsuite saved search field', () => {
     };
     const initialStore = getCreatedStore();
 
-    initialStore.getState().session.metadata = {
-      application: {
-        [props.connectionId]: {
-          [props.commMetaPath]: {
-            data: [{
-              id: props.defaultValue,
-              name: 'Bin Search',
-            }],
+    mutateStore(initialStore, draft => {
+      draft.session.metadata = {
+        application: {
+          [props.connectionId]: {
+            [props.commMetaPath]: {
+              data: [{
+                id: props.defaultValue,
+                name: 'Bin Search',
+              }],
+            },
           },
         },
-      },
-    };
+      };
+    });
     renderWithProviders(<DynaNSSavedSearch {...props} />, {initialStore});
     expect(screen.getByRole('radio', {name: 'Public'})).toBeChecked();
   });
@@ -140,18 +146,20 @@ describe('test suite for netsuite saved search field', () => {
     };
     const initialStore = getCreatedStore();
 
-    initialStore.getState().session.metadata = {
-      application: {
-        [props.connectionId]: {
-          [props.commMetaPath]: {
-            data: [{
-              id: '7630',
-              name: 'Bin Search',
-            }],
+    mutateStore(initialStore, draft => {
+      draft.session.metadata = {
+        application: {
+          [props.connectionId]: {
+            [props.commMetaPath]: {
+              data: [{
+                id: '7630',
+                name: 'Bin Search',
+              }],
+            },
           },
         },
-      },
-    };
+      };
+    });
     renderWithProviders(<DynaNSSavedSearch {...props} />, {initialStore});
     expect(screen.getByRole('radio', {name: 'Private'})).toBeChecked();
   });

@@ -5,7 +5,7 @@ import {screen} from '@testing-library/react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import userEvent from '@testing-library/user-event';
 import DynaSalesforceLookupFiltersAfe from './DynaSalesforceLookupFilters_afe';
-import { renderWithProviders, reduxStore} from '../../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore} from '../../../test/test-utils';
 import actions from '../../../actions';
 
 const mockDispatch = jest.fn();
@@ -35,9 +35,11 @@ jest.mock('../../AFE/Editor/panels/SalesforceLookupFilter', () => ({
 
 const initialStore = reduxStore;
 
-initialStore.getState().session.metadata = {application: {someconnectionId: {somePath: {
-  data: [{name: 'someName', value: 12, type: 'Type'}],
-}}}};
+mutateStore(initialStore, draft => {
+  draft.session.metadata = {application: {someconnectionId: {somePath: {
+    data: [{name: 'someName', value: 12, type: 'Type'}],
+  }}}};
+});
 
 const mockOnFieldChange = jest.fn();
 
@@ -105,7 +107,9 @@ describe('dynaNetSuiteLookupFiltersafe UI test cases', () => {
     );
   });
   test('should call onFieldChangeButton function when editor is initialised', () => {
-    initialStore.getState().session.editors = {'sf-mappingLookupFilter': {fieldId: 'someFieldID'}};
+    mutateStore(initialStore, draft => {
+      draft.session.editors = {'sf-mappingLookupFilter': {fieldId: 'someFieldID'}};
+    });
     initDynaNetSuiteLookupFiltersafe(true, initialStore);
     expect(screen.getByText('id: salesforce.operation')).toBeInTheDocument();
     expect(screen.getByText('editorId: sf-mappingLookupFilter')).toBeInTheDocument();

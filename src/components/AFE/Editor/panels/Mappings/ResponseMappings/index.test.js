@@ -1,6 +1,6 @@
 import React from 'react';
 import {screen} from '@testing-library/react';
-import {renderWithProviders, reduxStore} from '../../../../../../test/test-utils';
+import {renderWithProviders, reduxStore, mutateStore} from '../../../../../../test/test-utils';
 import ResponseMapping from './index';
 import actions from '../../../../../../actions';
 
@@ -15,51 +15,53 @@ jest.mock('react-redux', () => ({
 function getInitialStore() {
   const initialStore = reduxStore;
 
-  initialStore.getState().session.responseMapping = { mapping: {
-    mappings: [
-      {
-        extract: 'id',
-        generate: 'responseID',
-        key: '54eajgANHf',
-      },
-    ],
-    flowId: '62f0bdfaf8b63672312bbe36',
-    resourceId: '62e6897976ce554057c0f28f',
-    resourceType: 'imports',
-    status: 'received',
-  }};
-
-  initialStore.getState().data.resources.flows = [
-    {
-      _id: '62f0bdfaf8b63672312bbe36',
-      lastModified: '2022-12-05T06:24:06.995Z',
-      name: 'Any NAME',
-      disabled: true,
-      schedule: '? 5 2 ? * 4',
-      _integrationId: '629f0dcfccb94d35de6f436b',
-      skipRetries: false,
-      pageProcessors: [
+  mutateStore(initialStore, draft => {
+    draft.session.responseMapping = { mapping: {
+      mappings: [
         {
-          responseMapping: {
-            fields: [
-              {
-                extract: 'id',
-                generate: 'responseID',
-              },
-            ],
-            lists: [],
-          },
-          type: 'import',
-          _importId: '62e6897976ce554057c0f28f',
+          extract: 'id',
+          generate: 'responseID',
+          key: '54eajgANHf',
         },
       ],
-    },
-  ];
-  initialStore.getState().data.resources.imports = [
-    {
-      _id: '62e6897976ce554057c0f28f',
-    },
-  ];
+      flowId: '62f0bdfaf8b63672312bbe36',
+      resourceId: '62e6897976ce554057c0f28f',
+      resourceType: 'imports',
+      status: 'received',
+    }};
+
+    draft.data.resources.flows = [
+      {
+        _id: '62f0bdfaf8b63672312bbe36',
+        lastModified: '2022-12-05T06:24:06.995Z',
+        name: 'Any NAME',
+        disabled: true,
+        schedule: '? 5 2 ? * 4',
+        _integrationId: '629f0dcfccb94d35de6f436b',
+        skipRetries: false,
+        pageProcessors: [
+          {
+            responseMapping: {
+              fields: [
+                {
+                  extract: 'id',
+                  generate: 'responseID',
+                },
+              ],
+              lists: [],
+            },
+            type: 'import',
+            _importId: '62e6897976ce554057c0f28f',
+          },
+        ],
+      },
+    ];
+    draft.data.resources.imports = [
+      {
+        _id: '62e6897976ce554057c0f28f',
+      },
+    ];
+  });
 
   return initialStore;
 }
@@ -71,7 +73,9 @@ describe('response mappings test cases', () => {
   test('should show the spinner when status of response mapping is requested', () => {
     const initialStore = getInitialStore();
 
-    initialStore.getState().session.responseMapping = { mapping: { status: 'requested' }};
+    mutateStore(initialStore, draft => {
+      draft.session.responseMapping = { mapping: { status: 'requested' }};
+    });
     renderWithProviders(<ResponseMapping />, {initialStore});
 
     expect(screen.getByRole('progressbar')).toBeInTheDocument();
@@ -79,7 +83,9 @@ describe('response mappings test cases', () => {
   test('should show the error message as Failed to load result mapping when status of response mapping is error and resouce type import', () => {
     const initialStore = getInitialStore();
 
-    initialStore.getState().session.responseMapping = { mapping: { status: 'error' }};
+    mutateStore(initialStore, draft => {
+      draft.session.responseMapping = { mapping: { status: 'error' }};
+    });
     const {utils} = renderWithProviders(<ResponseMapping />, {initialStore});
 
     expect(utils.container.textContent).toBe('Failed to load response mapping.');
@@ -87,8 +93,10 @@ describe('response mappings test cases', () => {
   test('should show the error message as Failed to load result mapping when status of response mapping is error and resouce type exports', () => {
     const initialStore = getInitialStore();
 
-    initialStore.getState().session.responseMapping = { mapping: { status: 'error' }};
-    initialStore.getState().session.editors = { someeditorId: { resourceType: 'exports' }};
+    mutateStore(initialStore, draft => {
+      draft.session.responseMapping = { mapping: { status: 'error' }};
+      draft.session.editors = { someeditorId: { resourceType: 'exports' }};
+    });
 
     const {utils} = renderWithProviders(<ResponseMapping editorId="someeditorId" />, {initialStore});
 
@@ -97,7 +105,9 @@ describe('response mappings test cases', () => {
   test('should show the Import response mapping fields', () => {
     const initialStore = getInitialStore();
 
-    initialStore.getState().session.editors = { someeditorId: { resourceType: 'exports', flowId: '62f0bdfaf8b63672312bbe36', resourceId: '62e6897976ce554057c0f28f' }};
+    mutateStore(initialStore, draft => {
+      draft.session.editors = { someeditorId: { resourceType: 'exports', flowId: '62f0bdfaf8b63672312bbe36', resourceId: '62e6897976ce554057c0f28f' }};
+    });
 
     renderWithProviders(<ResponseMapping editorId="someeditorId" />, {initialStore});
 
@@ -140,8 +150,10 @@ describe('response mappings test cases', () => {
   test('should show the Lookup response fields', () => {
     const initialStore = getInitialStore();
 
-    initialStore.getState().session.responseMapping.mapping.resourceType = 'lookup';
-    initialStore.getState().session.editors = { someeditorId: { resourceType: 'exports' }};
+    mutateStore(initialStore, draft => {
+      draft.session.responseMapping.mapping.resourceType = 'lookup';
+      draft.session.editors = { someeditorId: { resourceType: 'exports' }};
+    });
 
     renderWithProviders(<ResponseMapping editorId="someeditorId" />, {initialStore});
 

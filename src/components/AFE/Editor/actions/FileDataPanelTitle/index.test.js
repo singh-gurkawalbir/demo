@@ -2,7 +2,7 @@ import React from 'react';
 import {screen, waitFor} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import * as reactRedux from 'react-redux';
-import {renderWithProviders} from '../../../../../test/test-utils';
+import {mutateStore, renderWithProviders} from '../../../../../test/test-utils';
 import { getCreatedStore } from '../../../../../store';
 
 import FileDataPanelTitle from '.';
@@ -10,34 +10,38 @@ import FileDataPanelTitle from '.';
 const initialStore = getCreatedStore();
 
 function initFileDataPanelTitle(props = {}) {
-  initialStore.getState().session.editors = {
-    filecsv: {
-      fieldId: 'file.csv',
-      formKey: 'imports-5b3c75dd5d3c125c88b5dd20',
-      resourceId: '5b3c75dd5d3c125c88b5dd20',
-      resourceType: 'imports',
-      isSuiteScriptData: true,
-    },
-    filescsv: {
-      resourceId: '5b3c75dd5d3c125c88b5dd21',
-      resourceType: 'exports',
-      isSuiteScriptData: false,
-    },
+  const mustateState = draft => {
+    draft.session.editors = {
+      filecsv: {
+        fieldId: 'file.csv',
+        formKey: 'imports-5b3c75dd5d3c125c88b5dd20',
+        resourceId: '5b3c75dd5d3c125c88b5dd20',
+        resourceType: 'imports',
+        isSuiteScriptData: true,
+      },
+      filescsv: {
+        resourceId: '5b3c75dd5d3c125c88b5dd21',
+        resourceType: 'exports',
+        isSuiteScriptData: false,
+      },
+    };
+
+    draft.data.resources = {imports: [
+      {_id: '5b3c75dd5d3c125c88b5dd20',
+        name: 'import1',
+        adaptorType: 'FTPImport',
+      },
+    ],
+    exports: [
+      {_id: '5b3c75dd5d3c125c88b5dd21',
+        name: 'export1',
+        adaptorType: 'HTTPImport',
+      },
+    ],
+    };
   };
 
-  initialStore.getState().data.resources = {imports: [
-    {_id: '5b3c75dd5d3c125c88b5dd20',
-      name: 'import1',
-      adaptorType: 'FTPImport',
-    },
-  ],
-  exports: [
-    {_id: '5b3c75dd5d3c125c88b5dd21',
-      name: 'export1',
-      adaptorType: 'HTTPImport',
-    },
-  ],
-  };
+  mutateStore(initialStore, mustateState);
 
   return renderWithProviders(<FileDataPanelTitle {...props} />, {initialStore});
 }

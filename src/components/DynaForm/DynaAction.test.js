@@ -3,7 +3,7 @@ import React from 'react';
 import {screen} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import DynaAction from './DynaAction';
-import { renderWithProviders, reduxStore} from '../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore} from '../../test/test-utils';
 import actions from '../../actions';
 
 const mockDispatch = jest.fn();
@@ -16,13 +16,15 @@ jest.mock('react-redux', () => ({
 
 const initialStore = reduxStore;
 
-initialStore.getState().session.form = {
-  firstformKey: {fields: 'someFields'},
-  secondformKey: {fields: {}, value: 'someValue'},
-  thisrdformKey: {fields: {defaultVisible: false}, value: 'someValue'},
-  fourthformKey: {fields: {someField: {value: 'isnotValue'}}, value: 'someValue'},
+mutateStore(initialStore, draft => {
+  draft.session.form = {
+    firstformKey: {fields: 'someFields'},
+    secondformKey: {fields: {}, value: 'someValue'},
+    thisrdformKey: {fields: {defaultVisible: false}, value: 'someValue'},
+    fourthformKey: {fields: {someField: {value: 'isnotValue'}}, value: 'someValue'},
 
-};
+  };
+});
 
 function initDynaAction(props = {}) {
   const ui = (

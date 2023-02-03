@@ -1,6 +1,6 @@
 import React from 'react';
 import { screen } from '@testing-library/react';
-import { renderWithProviders } from '../../../../../test/test-utils';
+import { mutateStore, renderWithProviders } from '../../../../../test/test-utils';
 import ErrorGridItem from '.';
 import { getCreatedStore } from '../../../../../store';
 
@@ -15,33 +15,37 @@ jest.mock('../../panels/Code', () => ({
 }));
 
 function initErrorGridItem(props = {}) {
-  initialStore.getState().session.editors = {
-    javascript1: {
-      editorType: 'javascript',
-      rule: {
-        scriptId: '611cc6a882edfc2c354d6f92',
-        fetchScriptContent: false,
-        code: 'var testPremap = function (opt\n}',
-        _init_code: "var testPremap = function (options) {\n  throw new Error('options::' + JSON.stringify(options))\n  return options.data.map((d) => {\n    return {\n      data: d\n    }\n  })\n}",
+  const mustateState = draft => {
+    draft.session.editors = {
+      javascript1: {
+        editorType: 'javascript',
+        rule: {
+          scriptId: '611cc6a882edfc2c354d6f92',
+          fetchScriptContent: false,
+          code: 'var testPremap = function (opt\n}',
+          _init_code: "var testPremap = function (options) {\n  throw new Error('options::' + JSON.stringify(options))\n  return options.data.map((d) => {\n    return {\n      data: d\n    }\n  })\n}",
+        },
+        data: '{\n}',
+        fieldId: '',
+        autoEvaluate: false,
+        layout: 'compact',
+        originalRule: {
+          fetchScriptContent: true,
+        },
+        sampleDataStatus: props.status,
+        lastValidData: '{\n}',
+        previewStatus: 'error',
+        error: [
+          'Message: SyntaxError: Unexpected identifier',
+          'Location: Line 6',
+          'Stack: SyntaxError: Unexpected identifier',
+        ],
+        errorLine: 5,
       },
-      data: '{\n}',
-      fieldId: '',
-      autoEvaluate: false,
-      layout: 'compact',
-      originalRule: {
-        fetchScriptContent: true,
-      },
-      sampleDataStatus: props.status,
-      lastValidData: '{\n}',
-      previewStatus: 'error',
-      error: [
-        'Message: SyntaxError: Unexpected identifier',
-        'Location: Line 6',
-        'Stack: SyntaxError: Unexpected identifier',
-      ],
-      errorLine: 5,
-    },
+    };
   };
+
+  mutateStore(initialStore, mustateState);
 
   return renderWithProviders(<ErrorGridItem {...props} />, {initialStore});
 }

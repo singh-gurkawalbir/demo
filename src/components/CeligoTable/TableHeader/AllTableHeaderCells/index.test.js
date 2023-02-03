@@ -5,8 +5,8 @@ import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import AllTableHeaderCells from '.';
 import { runServer } from '../../../../test/api/server';
-import { renderWithProviders, reduxStore } from '../../../../test/test-utils';
 import customCloneDeep from '../../../../utils/customCloneDeep';
+import { renderWithProviders, reduxStore, mutateStore } from '../../../../test/test-utils';
 
 async function initAllTableHeaderCells(
   {
@@ -15,17 +15,19 @@ async function initAllTableHeaderCells(
   } = {}) {
   const initialStore = customCloneDeep(reduxStore);
 
-  initialStore.getState().session.filters = {
-    filter_key: {
-      selected: {
-        resource_id: true,
+  mutateStore(initialStore, draft => {
+    draft.session.filters = {
+      filter_key: {
+        selected: {
+          resource_id: true,
+        },
+        sort: {
+          order: 'desc',
+          orderBy: 'name',
+        },
       },
-      sort: {
-        order: 'desc',
-        orderBy: 'name',
-      },
-    },
-  };
+    };
+  });
   const ui = (
     <MemoryRouter>
       <table>
