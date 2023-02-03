@@ -11,7 +11,6 @@ import {
 import FieldMessage from '../FieldMessage';
 import RawHtml from '../../../RawHtml';
 import WarningIcon from '../../../icons/WarningIcon';
-import ThumbsUpIcon from '../../../icons/ThumbsUpIcon';
 import FieldHelp from '../../FieldHelp';
 import isLoggableAttr from '../../../../utils/isLoggableAttr';
 
@@ -28,9 +27,6 @@ const useStyles = makeStyles(theme => ({
   },
   warning: {
     color: theme.palette.warning.main,
-    height: theme.spacing(2),
-  },
-  thumbIcon: {
     height: theme.spacing(2),
   },
   radioGroupWrapperLabel: {
@@ -91,7 +87,7 @@ export default function DynaRadio(props) {
       <div className={classes.label}>
         <RawHtml html={customLabel} options={{allowedTags: ['a', 'u'], escapeUnsecuredDomains: true}} />
         <span className={classes.label} >
-          { item.isWarningMessage ? <WarningIcon data-test="warningIcon" className={classes.warning} /> : <ThumbsUpIcon className={classes.thumbIcon} /> }
+          { item.isWarningMessage && <WarningIcon data-test="warningIcon" className={classes.warning} /> }
           <RawHtml data-test="description" html={item.description} options={{allowedTags: ['a', 'u'], escapeUnsecuredDomains: true}} />
         </span>
       </div>

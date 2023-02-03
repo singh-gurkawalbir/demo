@@ -9,7 +9,7 @@ import actions from '../../actions';
 
 export default function NetSuiteBundleInstallNotification({resourceType, resourceId, className}) {
   const dispatch = useDispatch();
-  const {showBundleInstallNotification, showSuiteAppInstallNotification, bundleUrl} = useSelector(
+  const {showBundleInstallNotification, showSuiteAppInstallNotification, bundleUrl, suiteAppUrl} = useSelector(
     state => selectors.resourceFormState(state, resourceType, resourceId)
   );
 
@@ -32,7 +32,7 @@ export default function NetSuiteBundleInstallNotification({resourceType, resourc
           <a
             target="_blank"
             rel="noreferrer"
-            href={bundleUrl}>
+            href={(showBundleInstallNotification && !showSuiteAppInstallNotification) ? bundleUrl : suiteAppUrl}>
             <u>{(showBundleInstallNotification && !showSuiteAppInstallNotification) ? 'Integrator.io SuiteBundle' : 'Integrator.io SuiteApp'}</u>
           </a>
           {' '}in your NetSuite account {isRealTimeExport ? ' to enable Real-time export capabilities.' : ' to integrate with SuiteScript APIs.'}
