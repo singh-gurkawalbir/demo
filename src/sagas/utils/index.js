@@ -149,7 +149,7 @@ export const getExportMetadata = (connectorMetadata, connectionVersion) => {
           const supportedExportTypes = fieldsUserMustSet?.find(f => f.path === 'type')?.values;
 
           const queryParameters = httpEndpoint.queryParameters?.map(qp => ({name: qp.name, id: qp.name, description: qp.description, required: qp.required, fieldType: qp.dataType || qp.fieldType || 'textarea', defaultValue: qp.defaultValue, readOnly: qp.readOnly, options: qp.values }));
-          const pathParameters = httpEndpoint.pathParameters?.map(pp => ({name: pp.name, id: pp.name, description: pp.description, required: pp.required !== false, fieldType: pp.fieldType || 'input', config: pp.config }));
+          const pathParameters = httpEndpoint.pathParameters?.map(pp => ({name: pp.name, id: pp.name, description: pp.description, required: pp.required !== false, fieldType: pp.dataType || pp.fieldType || 'input', suggestions: pp.values, config: pp.config }));
           let doesNotSupportPaging = false;
 
           if (httpEndpoint.supportedBy.fieldsToUnset?.includes('paging')) {
@@ -263,6 +263,7 @@ export const getImportMetadata = (connectorMetadata, connectionVersion) => {
                       in: 'path',
                       required: true,
                       config: pp.config,
+                      suggestions: pp.values,
                     });
                   });
           }
