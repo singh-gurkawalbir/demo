@@ -148,7 +148,7 @@ export const getExportMetadata = (connectorMetadata, connectionVersion) => {
           const {fieldsUserMustSet} = httpEndpoint.supportedBy;
           const supportedExportTypes = fieldsUserMustSet?.find(f => f.path === 'type')?.values;
 
-          const queryParameters = httpEndpoint.queryParameters?.map(qp => ({name: qp.label, id: qp.name, description: qp.description, required: qp.required, fieldType: qp.dataType || qp.fieldType || 'textarea', defaultValue: qp.defaultValue, readOnly: qp.readOnly, options: qp.values }));
+          const queryParameters = httpEndpoint.queryParameters?.map(qp => ({name: qp.name, id: qp.name, description: qp.description, required: qp.required, fieldType: qp.dataType || qp.fieldType || 'textarea', defaultValue: qp.defaultValue, readOnly: qp.readOnly, options: qp.values }));
           const pathParameters = httpEndpoint.pathParameters?.map(pp => ({name: pp.label, id: pp.name, description: pp.description, required: pp.required !== false, fieldType: pp.fieldType || 'input' }));
           let doesNotSupportPaging = false;
 
