@@ -93,7 +93,6 @@ export default function SettingsDrawer({ ssLinkedConnectionId, integrationId, fl
           'flows',
           flowId,
           patchSet,
-          'value',
         )
       );
       dispatch(
@@ -102,7 +101,6 @@ export default function SettingsDrawer({ ssLinkedConnectionId, integrationId, fl
           flow._integrationId,
           'flows',
           flowId,
-          'value',
         )
       );
       history.goBack();

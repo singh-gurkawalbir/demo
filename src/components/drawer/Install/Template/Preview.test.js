@@ -8,7 +8,7 @@ import { renderWithProviders, reduxStore } from '../../../../test/test-utils';
 import TemplatePreview from './Preview';
 import {ConfirmDialogProvider} from '../../../ConfirmDialog';
 import actions from '../../../../actions';
-import messageStore from '../../../../utils/messageStore';
+import { message } from '../../../../utils/messageStore';
 
 const mockHistoryPush = jest.fn();
 
@@ -126,7 +126,7 @@ describe('TemplatePreview tests', () => {
     expect(installButton).toBeInTheDocument();
     userEvent.click(installButton);
     expect(screen.getByText('Disclaimer')).toBeInTheDocument();
-    expect(screen.getByText(messageStore('THIRD_PARTY_TEMPLATE_DISCLAIMER'))).toBeInTheDocument();
+    expect(screen.getByText(message.DISCLAIMER.THIRD_PARTY_TEMPLATE_DISCLAIMER)).toBeInTheDocument();
     const proceed = screen.getByRole('button', {name: 'Proceed'});
     const cancel = screen.getByRole('button', {name: 'Cancel'});
 
@@ -151,7 +151,7 @@ describe('TemplatePreview tests', () => {
 
     expect(installButton).toBeInTheDocument();
     userEvent.click(installButton);
-    expect(screen.getByText(messageStore('CELIGO_AUTHORED_TEMPLATE_DISCLAIMER'))).toBeInTheDocument();
+    expect(screen.getByText(message.DISCLAIMER.CELIGO_AUTHORED_TEMPLATE_DISCLAIMER)).toBeInTheDocument();
     expect(screen.getByRole('button', {name: 'Proceed'})).toBeInTheDocument();
     expect(screen.getByRole('button', {name: 'Cancel'})).toBeInTheDocument();
   });

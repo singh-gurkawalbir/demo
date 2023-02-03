@@ -24,6 +24,7 @@ import { TextButton } from '../../components/Buttons';
 import ActionGroup from '../../components/ActionGroup';
 import { buildDrawerUrl, drawerPaths } from '../../utils/rightDrawer';
 import NoResultTypography from '../../components/NoResultTypography';
+import messageStore from '../../utils/messageStore';
 
 const useStyles = makeStyles(theme => ({
   actions: {
@@ -291,7 +292,7 @@ export default function Reports() {
             <LoadResources required resources={`${resourceType},integrations,flows`}>
               {list.total === 0 ? (
                 <NoResultTypography>
-                  {'You don\'t have any report results'}
+                  {messageStore('NO_RESULT', {message: 'report results'})}
                 </NoResultTypography>
               ) : (
                 <ResourceTable

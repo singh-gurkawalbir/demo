@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 import { makeStyles, FormHelperText } from '@material-ui/core';
 import DynaSelectResource from '../DynaSelectResource';
 import { selectors } from '../../../../reducers';
-import messageStore from '../../../../utils/messageStore';
+import messageStore, { message } from '../../../../utils/messageStore';
 import InfoIcon from '../../../icons/InfoIcon';
 import { capitalizeFirstLetter } from '../../../../utils/string';
 import { useSelectorMemo } from '../../../../hooks';
@@ -43,10 +43,10 @@ export default function DynaShopifyConnectionSelect(props) {
     const infoMessages = [];
 
     if (resource?.offline) {
-      infoMessages.push(messageStore('OFFLINE_CONNECTION_MESSAGE'));
+      infoMessages.push(message.SHOPIFY_LANDING_PAGE.OFFLINE_CONNECTION_MESSAGE);
     }
     if (resource?.http?.auth?.type && resource?.http?.auth?.type !== 'oauth') {
-      infoMessages.push(messageStore('CONNECTION_TYPE_CHANGE_INFO', {
+      infoMessages.push(messageStore('SHOPIFY_LANDING_PAGE.CONNECTION_TYPE_CHANGE_INFO', {
         type: capitalizeFirstLetter(resource?.http?.auth?.type),
       }));
     }

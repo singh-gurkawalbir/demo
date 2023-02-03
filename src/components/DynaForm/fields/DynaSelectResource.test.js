@@ -704,7 +704,6 @@ describe('Testsuite for Dyna Select Resource', () => {
       { op: 'replace', path: '/integrationId', value: 'integration_id' },
       { op: 'replace', path: '/statusExport', value: true },
     ],
-    'value'
     ));
     expect(mockHistoryPush).toBeCalled();
   });
@@ -772,7 +771,6 @@ describe('Testsuite for Dyna Select Resource', () => {
       { op: 'replace', path: '/http/_asyncHelperId', value: 'mockNewId' },
       { op: 'replace', path: '/statusExport', value: true },
     ],
-    'value'
     ));
     expect(mockHistoryPush).toBeCalled();
   });
@@ -838,7 +836,6 @@ describe('Testsuite for Dyna Select Resource', () => {
       { op: 'replace', path: '/_connectionId', value: undefined },
       { op: 'replace', path: '/http/_asyncHelperId', value: 'mockNewId' },
     ],
-    'value'
     ));
     expect(mockHistoryPush).toBeCalled();
   });

@@ -9,7 +9,6 @@ import { SUITESCRIPT_CONNECTOR_IDS, SUITESCRIPT_CONNECTORS } from '../../../cons
 export function* commitStagedChanges({
   resourceType,
   id,
-  scope,
   options,
   ssLinkedConnectionId,
   integrationId,
@@ -17,7 +16,6 @@ export function* commitStagedChanges({
   const data = yield select(selectors.suiteScriptResourceData, {
     resourceType,
     id,
-    scope,
     ssLinkedConnectionId,
     integrationId,
   });
@@ -111,7 +109,6 @@ export function* commitStagedChanges({
       ssLinkedConnectionId,
       resourceType,
       id,
-      scope,
     )
   );
 }

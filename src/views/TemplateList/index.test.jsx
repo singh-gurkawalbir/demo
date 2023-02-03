@@ -99,7 +99,7 @@ describe('template List', () => {
     const headingNode = screen.getByRole('heading', {name: 'Templates'});
 
     expect(headingNode).toBeInTheDocument();
-    const noTemplatesTextNode = screen.getByText('You don\'t have any templates');
+    const noTemplatesTextNode = screen.getByText("You don't have any templates.");
 
     expect(noTemplatesTextNode).toBeInTheDocument();
   });

@@ -304,7 +304,6 @@ describe('dynaAssistantSearchParams UI tests', () => {
         path: '/assistantMetadata/operationChanged',
         value: false,
       }],
-      'value'
     )));
   });
   test('should make a dispatch call when required prop is true', async () => {

@@ -13,6 +13,7 @@ import DrawerContent from '../../../../components/drawer/Right/DrawerContent';
 import DrawerFooter from '../../../../components/drawer/Right/DrawerFooter';
 import { TextButton } from '../../../../components/Buttons';
 import ActionGroup from '../../../../components/ActionGroup';
+import { message } from '../../../../utils/messageStore';
 
 const emptyObj = {};
 
@@ -62,7 +63,7 @@ export default function ReplaceConnection(props) {
   const replace = useCallback(formVal => {
     confirmDialog({
       title: 'Confirm replace',
-      message: 'Are you sure you want to replace the connection for this flow? Replacing a connection will cancel all jobs currently running.',
+      message: message.CONNECTION.CONFIRM_REPLACE_CONNECTION,
       buttons: [
         {
           label: 'Replace',

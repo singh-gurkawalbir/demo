@@ -899,7 +899,7 @@ describe('script logs', () => {
     expect(fiftyOptionNode).toBeInTheDocument();
     userEvent.click(tenOptionNode);
     await waitFor(() => expect(twentyFiveOptionNode).not.toBeInTheDocument());
-    const noExecutionLogsNode = screen.getByText(/You don’t have any execution logs in the selected time frame./i);
+    const noExecutionLogsNode = screen.getByText("You don't have any execution logs in the selected time frame.");
 
     expect(noExecutionLogsNode).toBeInTheDocument();
   });

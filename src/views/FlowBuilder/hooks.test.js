@@ -117,7 +117,6 @@ describe('FlowBuilder hooks UI tests', () => {
           resourceType: 'flows',
           id: 'newFlowID',
           patch: [{ op: 'replace', path: 'somePath', value: 'someValue' }],
-          scope: 'value',
           options: undefined,
           context: undefined,
           parentContext: undefined,
@@ -133,7 +132,6 @@ describe('FlowBuilder hooks UI tests', () => {
           resourceType: 'flows',
           id: 'oldFlowID',
           patch: [{ op: 'replace', path: 'somePath', value: 'someValue' }],
-          scope: 'value',
           options: undefined,
           context: undefined,
           parentContext: undefined,
@@ -166,7 +164,6 @@ describe('FlowBuilder hooks UI tests', () => {
           resourceType: 'flows',
           id: '5ea16c600e2fab71928a6152',
           patch: [{ op: 'replace', path: '/pageProcessors', value: [{ position: 'first' }, { position: 'third' }]}],
-          scope: 'value',
           options: undefined,
           context: undefined,
           parentContext: undefined,
@@ -194,7 +191,6 @@ describe('FlowBuilder hooks UI tests', () => {
           resourceType: 'flows',
           id: '5ea16c600e2fab71928a6152',
           patch: [{ op: 'replace', path: '/pageGenerators', value: [{ position: 'first' }, { position: 'third' }] }],
-          scope: 'value',
           options: undefined,
           context: undefined,
           parentContext: undefined,
@@ -219,7 +215,6 @@ describe('FlowBuilder hooks UI tests', () => {
           resourceType: 'flows',
           id: '5ea16c600e2fab71928a6152',
           patch: [{ op: 'replace', path: '/pageProcessors', value: [{ position: 'sec' }, { position: 'third' }, { position: 'first' }] }],
-          scope: 'value',
           options: undefined,
           context: undefined,
           parentContext: undefined,
@@ -244,7 +239,6 @@ describe('FlowBuilder hooks UI tests', () => {
           resourceType: 'flows',
           id: '5ea16c600e2fab71928a6152',
           patch: [{ op: 'replace', path: '/pageGenerators', value: [{ position: 'sec' }, { position: 'third' }, { position: 'first' }] }],
-          scope: 'value',
           options: undefined,
           context: undefined,
           parentContext: undefined,
@@ -292,7 +286,6 @@ describe('FlowBuilder hooks UI tests', () => {
             },
           ],
           id: 'SomeNewFlowId',
-          scope: 'value',
         }
       );
     });
@@ -312,7 +305,6 @@ describe('FlowBuilder hooks UI tests', () => {
             { op: 'add', path: '/disabled', value: false },
           ],
           id: 'SomeNewFlowId',
-          scope: 'value',
         }
       );
     });
@@ -337,7 +329,6 @@ describe('FlowBuilder hooks UI tests', () => {
             },
           ],
           id: 'SomeNewFlowId',
-          scope: 'value',
         }
       );
     });

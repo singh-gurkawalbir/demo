@@ -11,6 +11,7 @@ import AppBlock from '../../AppBlock';
 import { useHandleAddProcessor, useHandleDelete, useHandleMovePP } from '../../hooks';
 import itemTypes from '../../itemTypes';
 import PageProcessor from '../../PageProcessor';
+import { message } from '../../../../utils/messageStore';
 
 const useStyles = makeStyles(theme => ({
   processorContainer: {
@@ -121,8 +122,7 @@ export default function PageProcessors({integrationId, flowId}) {
                     isDataLoaderFlow &&
                     pageProcessors.length === 0 && (
                       <Typography variant="h5" className={classes.dataLoaderHelp}>
-                        You can add a destination application once you complete the
-                        configuration of your data loader.
+                        {message.FLOWBUILDER.DATA_LOADER_HELP}
                       </Typography>
       )}
     </div>

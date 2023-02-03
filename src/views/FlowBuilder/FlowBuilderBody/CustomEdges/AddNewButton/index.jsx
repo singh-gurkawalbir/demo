@@ -15,7 +15,7 @@ import AddIcon from '../../../../../components/icons/AddIcon';
 import { useFlowContext } from '../../Context';
 import { useHandleAddNode, useHandleAddNewRouter } from '../../../hooks';
 import { isNodeConnectedToRouter } from '../../lib';
-import messageStore from '../../../../../utils/messageStore';
+import { message } from '../../../../../utils/messageStore';
 import { selectors } from '../../../../../reducers';
 
 const useStyles = makeStyles(theme => ({
@@ -71,7 +71,7 @@ const AddNodeMenuPopper = ({
         ].map(({ Icon, label, onClick, disabled }) => (
           <Tooltip
             key={label}
-            title={disabled ? messageStore('MAX_ROUTERS_LIMIT_REACHED') : ''}
+            title={disabled ? message.FLOWBUILDER.MAX_ROUTERS_LIMIT_REACHED : ''}
             placement="bottom"
           >
             <span>

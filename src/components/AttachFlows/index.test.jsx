@@ -61,7 +61,6 @@ describe('attach Flows', () => {
           value: '62a5b17bd92aff47b2eba399',
         },
       ],
-      scope: 'value',
       options: undefined,
       context: undefined,
       parentContext: undefined,

@@ -8,7 +8,7 @@ import { COMM_STATES } from '../../../../../reducers/comms/networkComms';
 import useEnqueueSnackbar from '../../../../../hooks/enqueueSnackbar';
 import useCommStatus from '../../../../../hooks/useCommStatus';
 import { ACCOUNT_IDS, USER_ACCESS_LEVELS } from '../../../../../constants';
-import messageStore from '../../../../../utils/messageStore';
+import { message } from '../../../../../utils/messageStore';
 
 export default function RequireAccountMFA({ user }) {
   const { accountMFARequired, _id: userId, sharedWithUser = {}, accountSSORequired } = user;
@@ -63,7 +63,7 @@ export default function RequireAccountMFA({ user }) {
 
   if (accountSSORequired) {
     return (
-      <Tooltip placement="bottom" title={messageStore('ACCOUNT_SSO_OR_MFA_REQUIRED_TOOLTIP')}>
+      <Tooltip placement="bottom" title={message.MFA.ACCOUNT_SSO_OR_MFA_REQUIRED_TOOLTIP}>
         <div>
           <CeligoSwitch
             data-test="ssoRequired"

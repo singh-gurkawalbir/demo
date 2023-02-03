@@ -8,6 +8,7 @@ import useFormInitWithPermissions from '../../../../../../hooks/useFormInitWithP
 import { hashCode } from '../../../../../../utils/string';
 import DynaForm from '../../../../../DynaForm';
 import DynaSubmit from '../../../../../DynaForm/DynaSubmit';
+import { message } from '../../../../../../utils/messageStore';
 
 const useStyles = makeStyles(theme => ({
   formPreviewContainer: {
@@ -95,8 +96,7 @@ export default function FormPreviewPanel({ editorId }) {
 
   return (
     <Typography className={classes.message}>
-      A preview of your settings form will appear once you add some valid
-      form metadata or add an init hook.
+      {message.FORM_PREVIEW}
     </Typography>
 
   );
