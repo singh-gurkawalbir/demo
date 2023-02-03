@@ -268,6 +268,7 @@ module.exports = (env, argv) => {
         '/netsuiteDA': proxyOpts,
         '/connection': proxyOpts,
         '/ui': proxyOpts,
+        '/app/shopify/verify': proxyOpts,
       },
     };
   }
