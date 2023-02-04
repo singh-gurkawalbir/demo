@@ -292,7 +292,7 @@ export const amazonSellerCentralBaseUriForMWSConnection = {
 };
 
 export const RESOURCE_DRAWER_PATH = '/:operation(add|edit)/:parentType/:parentId';
-export const CONN_DRAWER_PATH = '/:operation(add|edit)/connections/:connId';
+export const CONN_DRAWER_PATH = '/:operation(add|edit|configure)/connections/:connId';
 export const ICLIENT_DRAWER_PATH = '/:operation(add|edit)/iClients/:iClientId';
 
 // given a url, this util returns the path params

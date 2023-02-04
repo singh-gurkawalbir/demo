@@ -140,6 +140,7 @@ describe('users region selector testcases', () => {
           environment: 'sandbox',
           dateFormat: 'DD/MM/YYYY',
           timeFormat: 'HH:mm',
+          colorTheme: 'light',
         },
       },
     };
@@ -159,6 +160,7 @@ describe('users region selector testcases', () => {
         timeFormat: 'HH:mm',
         _ssoAccountId: '123',
         authTypeSSO: '123',
+        colorTheme: 'light',
       });
     });
   });

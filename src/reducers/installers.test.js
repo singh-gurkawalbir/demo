@@ -357,6 +357,52 @@ describe('installer,uninstaller, clone and template region selector testcases', 
         },
       ]);
     });
+
+    test('should append connectionId to the matching installStep based on sourceConnectionId if present', () => {
+      const newsteps = [];
+
+      newsteps.push({name: 'NS connection', sourceConnection: {_id: 'id1'}, _connectionId: 'connId1'});
+
+      newsteps.push({name: 'Integrator Bundle', type: 'url', sourceConnection: {_id: 'id1'}, url: 'url1'});
+      const integration = {
+        _id: 'i1',
+        install: newsteps,
+      };
+      const newExpected = [];
+
+      newExpected.push({name: 'NS connection', isCurrentStep: true, sourceConnection: {_id: 'id1'}, _connectionId: 'connId1'});
+      newExpected.push({name: 'Integrator Bundle', type: 'url', sourceConnection: {_id: 'id1'}, _connId: 'connId1', url: 'url1'});
+
+      const state = reducer(
+        undefined,
+        actions.resource.received('integrations', integration)
+      );
+
+      expect(selectors.integrationInstallSteps(state, 'i1')).toEqual(newExpected);
+    });
+
+    test('should append connectionId to the matching suiteapp installStep based on sourceConnectionId if present', () => {
+      const newsteps = [];
+
+      newsteps.push({name: 'NS connection', sourceConnection: {_id: 'id1'}, _connectionId: 'connId1'});
+
+      newsteps.push({name: 'Integrator SuiteApp', type: 'url', sourceConnection: {_id: 'id1'}, url: 'url1'});
+      const integration = {
+        _id: 'i1',
+        install: newsteps,
+      };
+      const newExpected = [];
+
+      newExpected.push({name: 'NS connection', isCurrentStep: true, sourceConnection: {_id: 'id1'}, _connectionId: 'connId1'});
+      newExpected.push({name: 'Integrator SuiteApp', type: 'url', sourceConnection: {_id: 'id1'}, _connId: 'connId1', url: 'url1'});
+
+      const state = reducer(
+        undefined,
+        actions.resource.received('integrations', integration)
+      );
+
+      expect(selectors.integrationInstallSteps(state, 'i1')).toEqual(newExpected);
+    });
   });
 
   describe('selectors.integrationUninstallSteps test cases', () => {

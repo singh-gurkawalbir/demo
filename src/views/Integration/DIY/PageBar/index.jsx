@@ -55,7 +55,6 @@ export default function PageBar() {
     supportsChild,
     tag,
     isIAV2,
-    parentId,
   } = useSelector(state => {
     const integration = selectors.resource(
       state,
@@ -78,7 +77,6 @@ export default function PageBar() {
         supportsChild: integration.initChild?.function,
         tag: integration.tag,
         isIAV2: integration._sourceId || integration._parentId,
-        parentId: integration._parentId,
       };
     }
 
@@ -86,7 +84,7 @@ export default function PageBar() {
   }, shallowEqual);
 
   const children = useSelectorMemo(selectors.mkIntegrationChildren, integrationId);
-  const resourcesToLoad = isIntegrationApp && isIAV2 ? `integrations/${parentId || integrationId}/tree/metadata` : emptyList;
+  const resourcesToLoad = isIntegrationApp && isIAV2 ? 'tree/metadata' : emptyList;
 
   const integrations = useSelectorMemo(
     selectors.makeResourceListSelector,
@@ -246,7 +244,7 @@ export default function PageBar() {
             data-test="addNewStore">
             {`Add new ${camelCase(childDisplayName) || 'child'}`}
           </TextButton>
-          <LoadResources required resources={resourcesToLoad}>
+          <LoadResources integrationId={integrationId} required resources={resourcesToLoad}>
             <Select
               displayEmpty
               data-test="select Child"
