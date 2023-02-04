@@ -60,18 +60,13 @@ export default function ConnectionVanLicenseStatusPanel({ className, resourceTyp
       ],
     });
   }, [confirmDialog, dispatch]);
-  const vanLicensePresent = (resourceType === 'connections' && resource.type === 'van' && licenseActionDetails.van === true) ? (
-    <NotificationToaster variant="warning" size="large">
-      <Typography component="div" variant="h6" className={classes.titleStatusPanel}>
-        <b>Additional action required after saving</b>
-        <br />You must contact celigo to gain access to our VAN customer portal to configure and manage your VAN service.After saving this connection, email us at <b>VANsetup@celigo.com</b> and we will reach out with more information.
-      </Typography>
-    </NotificationToaster>
-  ) : (<></>);
+  if (resourceType !== 'connections' && resource.type !== 'van'){
+    return null;
+  };
 
   return (
     <div className={className}>
-      {resourceType === 'connections' && resource.type === 'van' && licenseActionDetails.van === false ? (
+      {licenseActionDetails.van === false ? (
         <NotificationToaster variant="info" size="large">
           <Typography component="div" variant="h6" className={classes.titleStatusPanel}>
             <a href="https://docs.celigo.com/hc/en-us/articles/12532590542107-What-is-a-value-added-network-VAN-connection-" rel="noreferrer" target="_blank">VAN Connector</a>(Value Added Network) is not included in your accounts current subscription plan.
@@ -91,7 +86,12 @@ export default function ConnectionVanLicenseStatusPanel({ className, resourceTyp
             </Tooltip>
           </Typography>
         </NotificationToaster>
-      ) : vanLicensePresent}
+      ) : (<NotificationToaster variant="warning" size="large">
+      <Typography component="div" variant="h6" className={classes.titleStatusPanel}>
+        <b>Additional action required after saving</b>
+        <br />You must contact celigo to gain access to our VAN customer portal to configure and manage your VAN service.After saving this connection, email us at <b>VANsetup@celigo.com</b> and we will reach out with more information.
+      </Typography>
+    </NotificationToaster>)}
     </div>
   );
 }

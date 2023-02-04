@@ -84,7 +84,7 @@ export default function DynaRoutingRules(props) {
           color="secondary"
           className={classes.dynaRoutingRulesBtn}
           onClick={handleEditorClick}
-          disabled={resource.type === 'van' ? isVanLicenseAbsent : false}
+          disabled={resource.type === 'van' && isVanLicenseAbsent}
           >
           Launch
         </OutlinedButton>
