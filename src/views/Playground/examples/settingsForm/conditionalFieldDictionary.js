@@ -266,7 +266,7 @@ const sampleData = {
 export default {
   key: 'form-conditions',
   type: 'settingsForm',
-  name: 'Conditions form',
+  name: 'Conditional field dictionary',
   description: 'Sample form demonstrating all conditions',
   data: JSON.stringify(sampleData, null, 2),
 };
