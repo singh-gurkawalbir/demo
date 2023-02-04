@@ -60,9 +60,10 @@ export default function ConnectionVanLicenseStatusPanel({ className, resourceTyp
       ],
     });
   }, [confirmDialog, dispatch]);
-  if (resourceType !== 'connections' && resource.type !== 'van'){
+
+  if (resourceType !== 'connections' && resource.type !== 'van') {
     return null;
-  };
+  }
 
   return (
     <div className={className}>
@@ -86,12 +87,14 @@ export default function ConnectionVanLicenseStatusPanel({ className, resourceTyp
             </Tooltip>
           </Typography>
         </NotificationToaster>
-      ) : (<NotificationToaster variant="warning" size="large">
-      <Typography component="div" variant="h6" className={classes.titleStatusPanel}>
-        <b>Additional action required after saving</b>
-        <br />You must contact celigo to gain access to our VAN customer portal to configure and manage your VAN service.After saving this connection, email us at <b>VANsetup@celigo.com</b> and we will reach out with more information.
-      </Typography>
-    </NotificationToaster>)}
+      ) : (
+        <NotificationToaster variant="warning" size="large">
+          <Typography component="div" variant="h6" className={classes.titleStatusPanel}>
+            <b>Additional action required after saving</b>
+            <br />You must contact celigo to gain access to our VAN customer portal to configure and manage your VAN service.After saving this connection, email us at <b>VANsetup@celigo.com</b> and we will reach out with more information.
+          </Typography>
+        </NotificationToaster>
+      )}
     </div>
   );
 }
