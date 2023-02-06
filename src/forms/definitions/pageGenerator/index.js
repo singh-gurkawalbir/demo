@@ -234,10 +234,18 @@ export default {
       if (!adaptorTypePrefix) return { filter: { $and: expression }};
 
       if (isWebhook) {
-        expression.push({
-          'webhook.provider':
-            appField.value === 'webhook' ? 'custom' : appField.value,
-        });
+        if (appField.value === 'webhook') {
+          expression.push({
+            'webhook.provider': 'custom',
+          });
+        } else {
+          expression.push({
+            $or: [
+              { 'webhook.provider': appField.value },
+              { $and: [{ 'webhook.provider': 'custom' }, { 'webhook._httpConnectorId': app._httpConnectorId }] },
+            ],
+          });
+        }
       } else {
         if (appType === 'rest') {
           expression.push({

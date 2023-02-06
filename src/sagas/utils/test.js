@@ -643,6 +643,7 @@ describe('getHTTPConnectorMetadata', () => {
         pathParameters: [
           {
             name: 'customerId',
+            label: 'Customer Id',
           },
         ],
         supportedBy: {
@@ -674,6 +675,7 @@ describe('getHTTPConnectorMetadata', () => {
         pathParameters: [
           {
             name: 'customerId',
+            label: 'Customer Id',
           },
         ],
         supportedBy: {
@@ -813,7 +815,7 @@ describe('getHTTPConnectorMetadata', () => {
                 {
                   fieldType: 'input',
                   id: 'customerId',
-                  name: 'customerId',
+                  name: 'Customer Id',
                   required: true,
                 },
               ],
@@ -835,7 +837,7 @@ describe('getHTTPConnectorMetadata', () => {
                 {
                   fieldType: 'input',
                   id: 'customerId',
-                  name: 'customerId',
+                  name: 'Customer Id',
                   required: true,
                 },
               ],
@@ -1082,7 +1084,7 @@ describe('getHTTPConnectorMetadata', () => {
                 {
                   fieldType: 'input',
                   id: 'customerId',
-                  name: 'customerId',
+                  name: 'Customer Id',
                   required: true,
                 },
               ],
@@ -1104,7 +1106,7 @@ describe('getHTTPConnectorMetadata', () => {
                 {
                   fieldType: 'input',
                   id: 'customerId',
-                  name: 'customerId',
+                  name: 'Customer Id',
                   required: true,
                 },
               ],

@@ -37,7 +37,7 @@ export const REVISION_CREATION_STATUS = Object.freeze({
   CREATION_ERROR: 'create_error',
   CREATED: 'created',
 });
-export const INTEGRATION_DEPENDENT_RESOURCES = ['exports', 'imports', 'connections', 'flows'];
+export const INTEGRATION_DEPENDENT_RESOURCES = ['exports', 'imports', 'connections', 'flows', 'tree/metadata'];
 export const TILE_STATUS = Object.freeze({
   IS_PENDING_SETUP: 'is_pending_setup',
   UNINSTALL: 'uninstall',
