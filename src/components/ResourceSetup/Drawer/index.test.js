@@ -6,7 +6,7 @@ import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import ResourceSetupDrawer from '.';
 import { runServer } from '../../../test/api/server';
-import { renderWithProviders, reduxStore } from '../../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore } from '../../../test/test-utils';
 
 async function initResourceSetupDrawer({
   props = {
@@ -20,90 +20,89 @@ async function initResourceSetupDrawer({
 } = {}) {
   const setIsResourceStaged = jest.fn();
 
-  // eslint-disable-next-line no-param-reassign
-  initialStore.getState().session.resource = {
-    connection_id_2: 'connection_id_3',
-  }; // createdConnectionId
-  // eslint-disable-next-line no-param-reassign
-  initialStore.getState().session.oAuthAuthorize = {
-    connection_id_4: {
-      authorized: true,
-    },
-  }; // isAuthorized
-  // eslint-disable-next-line no-param-reassign
-  initialStore.getState().session.templates = {
-    template_id: {},
-  }; // isAuthorized
-
-  // eslint-disable-next-line no-param-reassign
-  initialStore.getState().data.resources = {
-    connections: [{
-      _id: 'id_1',
-      name: 'Name 1',
-      offline: true,
-      netsuite: {},
-    }, {
-      _id: 'connection_id_3',
-      assistant: 'shopify',
-      type: 'http',
-      http: {
-        auth: {
-          type: 'oauth',
-        },
+  mutateStore(initialStore, draft => {
+    draft.session.resource = {
+      connection_id_2: 'connection_id_3',
+    }; // createdConnectionId
+    draft.session.oAuthAuthorize = {
+      connection_id_4: {
+        authorized: true,
       },
-    }], // connectionDoc
-    integrations: [{
-      _id: 'integration_id',
-      mode: 'install',
-      _templateId: 'template_id',
-      installSteps: [{
-        name: 'NetSuite Connection',
-        completed: false,
-        type: 'connection',
-        _connectionId: 'id_1',
-        sourceConnection: {
-          _id: 'id_1',
-          type: 'netsuite',
+    }; // isAuthorized
+
+    draft.session.templates = {
+      template_id: {},
+    }; // isAuthorized
+
+    draft.data.resources = {
+      connections: [{
+        _id: 'id_1',
+        name: 'Name 1',
+        offline: true,
+        netsuite: {},
+      }, {
+        _id: 'connection_id_3',
+        assistant: 'shopify',
+        type: 'http',
+        http: {
+          auth: {
+            type: 'oauth',
+          },
+        },
+      }], // connectionDoc
+      integrations: [{
+        _id: 'integration_id',
+        mode: 'install',
+        _templateId: 'template_id',
+        installSteps: [{
           name: 'NetSuite Connection',
-        },
-      }],
-    }, {
-      _id: 'integration_id_1',
-      mode: 'install',
-      _connectorId: 'connector_id_1',
-      installSteps: [{
-        name: 'HTTP Connection',
-        completed: false,
-        type: 'connection',
-        _connectionId: 'id_1',
-        sourceConnection: {
-          _id: 'id_1',
-          type: 'http',
-          name: 'HTTP Connection',
-          formType: {
-            type: 'http',
+          completed: false,
+          type: 'connection',
+          _connectionId: 'id_1',
+          sourceConnection: {
+            _id: 'id_1',
+            type: 'netsuite',
+            name: 'NetSuite Connection',
           },
-        },
-      }],
-    }, {
-      _id: 'integration_id_3',
-      mode: 'install',
-      installSteps: [{
-        name: 'HTTP Connection',
-        completed: false,
-        type: 'connection',
-        _connectionId: 'id_1',
-        sourceConnection: {
-          _id: 'id_1',
-          type: 'http',
+        }],
+      }, {
+        _id: 'integration_id_1',
+        mode: 'install',
+        _connectorId: 'connector_id_1',
+        installSteps: [{
           name: 'HTTP Connection',
-          formType: {
+          completed: false,
+          type: 'connection',
+          _connectionId: 'id_1',
+          sourceConnection: {
+            _id: 'id_1',
             type: 'http',
+            name: 'HTTP Connection',
+            formType: {
+              type: 'http',
+            },
           },
-        },
-      }],
-    }], // canSelectExistingResources
-  };
+        }],
+      }, {
+        _id: 'integration_id_3',
+        mode: 'install',
+        installSteps: [{
+          name: 'HTTP Connection',
+          completed: false,
+          type: 'connection',
+          _connectionId: 'id_1',
+          sourceConnection: {
+            _id: 'id_1',
+            type: 'http',
+            name: 'HTTP Connection',
+            formType: {
+              type: 'http',
+            },
+          },
+        }],
+      }], // canSelectExistingResources
+    };
+  });
 
   const ui = (
     <MemoryRouter

@@ -3,7 +3,7 @@ import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import {renderWithProviders} from '../../../../test/test-utils';
+import {mutateStore, renderWithProviders} from '../../../../test/test-utils';
 import OAuthAndCancel from './OAuthAndCancel';
 import { getCreatedStore } from '../../../../store';
 
@@ -41,7 +41,9 @@ describe('test suite for OAuthAndCancel', () => {
     const KEY = `${resourceType}-${resourceId}`;
     const initialStore = getCreatedStore();
 
-    initialStore.getState().session.asyncTask[KEY] = { status: 'loading' };
+    mutateStore(initialStore, draft => {
+      draft.session.asyncTask[KEY] = { status: 'loading' };
+    });
     await initOAuthAndCancel({resourceType, resourceId}, initialStore);
     const saveButton = screen.getByRole('button', {name: 'Authorizing...'});
     const closeButton = screen.getByRole('button', {name: 'Close'});
@@ -55,14 +57,16 @@ describe('test suite for OAuthAndCancel', () => {
     const formKey = 'connections-123';
     const initialStore = getCreatedStore();
 
-    initialStore.getState().session.form[formKey] = {
-      isValid: true,
-      fields: {
-        tempField: {
-          value: '123',
+    mutateStore(initialStore, draft => {
+      draft.session.form[formKey] = {
+        isValid: true,
+        fields: {
+          tempField: {
+            value: '123',
+          },
         },
-      },
-    };
+      };
+    });
 
     await initOAuthAndCancel({onCancel, formKey}, initialStore);
     const saveButton = screen.getByRole('button', {name: 'Save & authorize'});
