@@ -1,6 +1,5 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-import rfdc from 'rfdc';
 import Spinner from '../../../../../Spinner';
 import CeligoTable from '../../../../../CeligoTable';
 import metadata from './metadata';
@@ -9,8 +8,7 @@ import { selectors } from '../../../../../../reducers';
 import actions from '../../../../../../actions';
 import useSelectorMemo from '../../../../../../hooks/selectors/useSelectorMemo';
 import { camelCase } from '../../../../../../utils/string';
-
-const clone = rfdc({proto: true});
+import customCloneDeep from '../../../../../../utils/customCloneDeep';
 
 // view only component
 
@@ -53,7 +51,7 @@ export default function DynaSalesUser(props) {
         label="Select Salesforce Profile" />
       )}
       <CeligoTable
-        data={clone(filteredResults)}
+        data={customCloneDeep(filteredResults)}
         {...metadata}
     />
     </>

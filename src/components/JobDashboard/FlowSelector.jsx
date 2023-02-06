@@ -1,6 +1,5 @@
 import { makeStyles, MenuItem } from '@material-ui/core';
 import React, { useMemo } from 'react';
-import rfdc from 'rfdc';
 import { useSelector } from 'react-redux';
 import { selectors } from '../../reducers';
 import { STANDALONE_INTEGRATION } from '../../constants';
@@ -8,8 +7,7 @@ import CeligoSelect from '../CeligoSelect';
 import useSelectorMemo from '../../hooks/selectors/useSelectorMemo';
 import { stringCompare } from '../../utils/sort';
 import { getFlowGroup } from '../../utils/flows';
-
-const clone = rfdc({ proto: true });
+import customCloneDeep from '../../utils/customCloneDeep';
 
 const useStyles = makeStyles(theme => ({
   flow: {
@@ -88,7 +86,7 @@ export default function FlowSelector({
     selectors.makeResourceListSelector,
     flowsFilterConfig
   ).resources;
-  const filteredFlows = useMemo(() => clone(tempFilteredFlows), [tempFilteredFlows]);
+  const filteredFlows = useMemo(() => customCloneDeep(tempFilteredFlows), [tempFilteredFlows]);
 
   return (
     <CeligoSelect

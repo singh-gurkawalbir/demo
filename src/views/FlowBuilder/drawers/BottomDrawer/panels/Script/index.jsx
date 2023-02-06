@@ -1,14 +1,12 @@
 import React, { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core';
-import rfdc from 'rfdc';
 import LoadResources from '../../../../../../components/LoadResources';
 import CeligoTable from '../../../../../../components/CeligoTable';
 import metadata from '../../../../../../components/ResourceTable/scripts/metadata';
 import { selectors } from '../../../../../../reducers';
 import { useSelectorMemo } from '../../../../../../hooks';
-
-const clone = rfdc({proto: true});
+import customCloneDeep from '../../../../../../utils/customCloneDeep';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -33,7 +31,7 @@ export default function ScriptPanel({ flowId }) {
     <div className={classes.root}>
       <LoadResources required resources="scripts">
         <CeligoTable
-          data={clone(flowScripts)}
+          data={customCloneDeep(flowScripts)}
           filterKey={FILTER_KEY}
           {...metadata}
           actionProps={actionProps}
