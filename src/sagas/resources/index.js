@@ -5,7 +5,7 @@ import actions from '../../actions';
 import actionTypes from '../../actions/types';
 import { apiCallWithRetry, apiCallWithPaging } from '../index';
 import { selectors } from '../../reducers';
-import { isNewId, resourceWithoutUIFields, UI_FIELDS, RESOURCES_WITH_UI_FIELDS } from '../../utils/resource';
+import { isNewId, UI_FIELDS, RESOURCES_WITH_UI_FIELDS } from '../../utils/resource';
 import metadataSagas from './meta';
 import getRequestOptions, { pingConnectionParentContext } from '../../utils/requestOptions';
 import { defaultPatchSetConverter } from '../../forms/formFactory/utils';
