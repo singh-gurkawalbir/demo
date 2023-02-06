@@ -387,7 +387,7 @@ export default function ConnectorInstallation() {
       return false;
     }
 
-    if (_connectionId || type === 'connection' || sourceConnection) {
+    if (_connectionId || type === 'connection' || (sourceConnection && !(step.name.startsWith('Integrator Bundle') || step.name.startsWith('Integrator SuiteApp')))) {
       if (step.isTriggered) {
         return false;
       }

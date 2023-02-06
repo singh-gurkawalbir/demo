@@ -119,33 +119,27 @@ export default {
     });
     (exportDocs || []).forEach(exp => {
       const conn = connections?.find(c => c._id === exp._connectionId);
+      const suiteappVersions = ['suiteapp1.0', 'suiteapp2.0'];
 
-      if (
-        (((exp?.netsuite || {}).type === 'restlet' && exp?.netsuite?.restlet?.recordType &&
-          (['suiteapp1.0', 'suiteapp2.0'].includes(exp?.netsuite?.restlet?.restletVersion) || exp.netsuite.restlet.useSS2Restlets)) ||
-          ((exp?.type === 'distributed' || exp?.netsuite?.type === 'distributed') && exp?.netsuite?.distributed?.recordType && (['suiteapp1.0', 'suiteapp2.0'].includes(exp?.netsuite?.distributed?.frameworkVersion) || exp?.netsuite?.distributed?.useSS2Framework))) &&
-          conn?.type === 'netsuite' &&
-          !netsuiteSuiteAppNeededForConnections.includes(conn)) {
-        netsuiteSuiteAppNeededForConnections.push(conn);
-      }
-      if (
-        (((exp?.netsuite || {}).type === 'restlet' && exp?.netsuite?.restlet?.recordType &&
-          (exp?.netsuite?.restlet?.restletVersion === 'suitebundle' || !exp.netsuite.restlet.useSS2Restlets)) ||
-          ((exp?.type === 'distributed' || exp?.netsuite?.type === 'distributed') && exp?.netsuite?.distributed?.recordType && (exp?.netsuite?.distributed?.frameworkVersion === 'suitebundle' || !exp?.netsuite?.distributed?.useSS2Framework))) &&
-          conn?.type === 'netsuite' && !netsuiteSuiteAppNeededForConnections.includes(conn) &&
-          !netsuiteBundleNeededForConnections.includes(conn)) {
-        netsuiteBundleNeededForConnections.push(conn);
-      }
-      if (
-        (((exp?.netsuite || {}).type === 'restlet' &&
-          exp?.netsuite?.restlet?.recordType) ||
-          (exp?.type === 'distributed' && conn?.type === 'netsuite')) &&
-          (!netsuiteBundleNeededForConnections.includes(conn))
-      ) {
-        netsuiteBundleNeededForConnections.push(conn);
-      }
-
-      if (exp?.type === 'distributed' && conn?.type === 'salesforce' && !salesforceBundleNeededForConnections.includes(conn)) {
+      if (conn?.type === 'netsuite') {
+        if (exp?.type === 'distributed') {
+          if (exp?.netsuite?.distributed?.useSS2Framework || suiteappVersions.includes(exp?.netsuite?.distributed.frameworkVersion)) {
+            if (!netsuiteSuiteAppNeededForConnections.includes(conn)) {
+              netsuiteSuiteAppNeededForConnections.push(conn);
+            }
+          } else if (!netsuiteBundleNeededForConnections.includes(conn)) {
+            netsuiteBundleNeededForConnections.push(conn);
+          }
+        } else if (exp?.netsuite?.type === 'restlet' && exp.netsuite.restlet?.recordType) {
+          if (exp?.netsuite?.restlet?.useSS2Restlets || suiteappVersions.includes(exp?.netsuite?.restlet.restletVersion)) {
+            if (!netsuiteSuiteAppNeededForConnections.includes(conn)) {
+              netsuiteSuiteAppNeededForConnections.push(conn);
+            }
+          } else if (!netsuiteBundleNeededForConnections.includes(conn)) {
+            netsuiteBundleNeededForConnections.push(conn);
+          }
+        }
+      } else if (exp?.type === 'distributed' && conn?.type === 'salesforce' && !salesforceBundleNeededForConnections.includes(conn)) {
         salesforceBundleNeededForConnections.push(conn);
       }
     });

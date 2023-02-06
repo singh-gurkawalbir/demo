@@ -1251,6 +1251,7 @@ describe('template util function test', () => {
               lastModified: '2021-08-03T06:14:29.972Z',
               name: 'Netsuite Real Time Export 2',
               _connectionId: '610235735fad2b614b8a549e',
+              type: 'distributed',
               netsuite: {
                 type: 'distributed',
                 distributed: {
@@ -1315,6 +1316,8 @@ describe('template util function test', () => {
         _stackId: null,
       };
       const received = templateUtil.getInstallSteps(previewData);
+
+      console.log(received);
 
       const expectedResult = {
         connectionMap: {
@@ -1631,18 +1634,6 @@ describe('template util function test', () => {
             type: 'Connection',
             completed: false,
             options: {connectionType: 'salesforce'},
-          },
-          {
-            key: 'NetSuite account 1',
-            installURL: '/app/bundler/bundledetails.nl?sourcecompanyid=TSTDRV916910&domain=PRODUCTION&config=F&id=20038',
-            imageURL: 'images/company-logos/netsuite.png',
-            completed: false,
-            description: 'Please install Integrator bundle in NetSuite account',
-            name: 'Integrator Bundle 1',
-            application: 'netsuite',
-            type: 'installPackage',
-            sourceConnId: '610235735fad2b614b8a549e',
-            options: {},
           },
           {
             key: 'NetSuite account 1',
