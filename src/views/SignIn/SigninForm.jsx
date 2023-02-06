@@ -137,19 +137,6 @@ const useStyles = makeStyles(theme => ({
     cursor: 'pointer',
     marginRight: theme.spacing(1),
   },
-  passwordTextField: {
-    '& * >.MuiFilledInput-input': {
-      letterSpacing: '2px',
-      '&::placeholder': {
-        letterSpacing: '1px',
-      },
-    },
-  },
-
-  iconPassword: {
-    cursor: 'pointer',
-    marginRight: theme.spacing(1),
-  },
 }));
 
 export default function SignIn({dialogOpen, className}) {

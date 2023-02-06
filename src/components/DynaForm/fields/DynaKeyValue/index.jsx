@@ -84,7 +84,6 @@ export function KeyValueComponent(props) {
     removeHelperText,
     isEndSearchIcon,
     keyPlaceholder,
-    isHidePagination = false,
   } = props;
 
   const preUpdate = useCallback(val => val.filter(
@@ -226,7 +225,6 @@ export function KeyValueComponent(props) {
             axis="y"
             useDragHandle>
             {values.map((r, index) => (
-              (!isHidePagination || !(/.*{{.*export\.http\.paging.*}}/.test(r.value))) && (
               <SortableItem
                 key={r.key}
                 disabled={!enableSorting || (!r[keyName] && !r[valueName])}
@@ -261,7 +259,6 @@ export function KeyValueComponent(props) {
                />
               )}
               />
-              )
             ))}
           </SortableList>
         </>
@@ -291,4 +288,3 @@ export default function DynaKeyValue(props) {
     </>
   );
 }
-

@@ -224,7 +224,6 @@ export default function DynaHFAssistantSearchParams(props) {
       handleEditorClick={handleEditorClick}
       isEndSearchIcon
       isInlineClose
-      isHidePagination
     />
   );
 }
