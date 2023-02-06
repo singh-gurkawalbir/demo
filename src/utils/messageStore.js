@@ -295,7 +295,6 @@ const ERROR_MANAGEMENT_2 = {
 // #region Edit mock input
 const MOCK_INPUT_REFRESH = {
   SUCCESS: 'Successfully fetched latest input data.',
-  // #region Edit mock input error messages
   FAILED: 'Failed to fetch latest input data.',
   INVALID_JSON: 'Mock input must be valid JSON',
   INVALID_FORMAT: `Mock input must be in integrator.io canonical format. <a href=${MOCK_OUTPUT_CANONICAL_FORMAT_LINK} target="_blank" rel="noreferrer">Learn more.</a>`,

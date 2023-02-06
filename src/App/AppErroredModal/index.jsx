@@ -8,6 +8,7 @@ import actions from '../../actions';
 import getRoutePath from '../../utils/routePaths';
 import { FilledButton } from '../../components/Buttons';
 import { message } from '../../utils/messageStore';
+import RawHtml from '../../components/RawHtml';
 
 function AppErroredModal() {
   const history = useHistory();
@@ -20,7 +21,7 @@ function AppErroredModal() {
         <span>Application errored</span>
       </>
       <Typography>
-        {message.APP_CRASH}
+        <RawHtml html={message.APP_CRASH} />
       </Typography>
       <FilledButton
         data-test="reload"
