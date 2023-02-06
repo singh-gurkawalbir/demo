@@ -2635,6 +2635,12 @@ const accountSettings = {
   received: accountSettings => action(actionTypes.ACCOUNT_SETTINGS.RECEIVED, {accountSettings}),
 };
 
+const uiFields = {
+  requestFlowLevel: flowId => action(actionTypes.UI_FIELDS.FLOW_LEVEL.REQUEST, { flowId }),
+  receivedFlowLevel: (flowId, resources) => action(actionTypes.UI_FIELDS.FLOW_LEVEL.RECEIVED, { flowId, resources }),
+  updateFlowResources: (flowId, resourceIds) => action(actionTypes.UI_FIELDS.FLOW_LEVEL.UPDATE_RESOURCES, { flowId, resourceIds }),
+};
+
 export default {
   asyncTask,
   form,
@@ -2688,4 +2694,5 @@ export default {
   bottomDrawer,
   integrationLCM,
   httpConnectors,
+  uiFields,
 };

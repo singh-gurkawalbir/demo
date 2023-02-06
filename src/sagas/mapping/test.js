@@ -524,6 +524,7 @@ describe('mappingInit saga', () => {
             lists: [],
           },
         }],
+        [select(selectors.hasLoadedAllResourceUIFields, []), true],
         [select(selectors.resource, 'connections', 'conn1'), {assistant: '3dcart'}],
         [select(selectors.firstFlowPageGenerator, flowId), {_id: exportId}],
         [select(selectors.getSampleDataContext, {
@@ -612,6 +613,7 @@ describe('mappingInit saga', () => {
         }],
         [select(selectors.integrationAppMappingMetadata, '_i1'), {mappingMetadata: {}}],
         [select(selectors.firstFlowPageGenerator, flowId), {_id: exportId}],
+        [select(selectors.hasLoadedAllResourceUIFields, []), true],
         [select(selectors.getSampleDataContext, {
           flowId,
           resourceId: importId,
@@ -678,6 +680,7 @@ describe('mappingInit saga', () => {
         }],
         [select(selectors.integrationAppMappingMetadata, '_i1'), {mappingMetadata: {}}],
         [select(selectors.firstFlowPageGenerator, flowId), {_id: exportId}],
+        [select(selectors.hasLoadedAllResourceUIFields, []), true],
         [select(selectors.getSampleDataContext, {
           flowId,
           resourceId: importId,
