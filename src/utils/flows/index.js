@@ -295,8 +295,8 @@ export function getFirstExportFromFlow(flow = {}, exports = []) {
 export function isRealtimeExport(exp) {
   if (!exp) return false;
 
-  // AS2 Exports are real-time.
-  if (exp.adaptorType === 'AS2Export') return true;
+  // AS2 and VAN Exports are real-time.
+  if (exp.adaptorType === ('AS2Export' || 'VANExport')) return true;
 
   // webhook and distributed are realtime.
   if (exp.type && ['distributed', 'webhook'].includes(exp.type)) {

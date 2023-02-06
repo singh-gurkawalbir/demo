@@ -61,6 +61,9 @@ export default function getFormattedSampleData({
   if (_connection?.type === 'as2') {
     data.uuid = 'uuid';
   }
+  if (_connection?.type === 'van') {
+    data.uuid = 'uuid';
+  }
 
   return data;
 }

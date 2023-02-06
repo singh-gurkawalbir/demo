@@ -57,6 +57,7 @@ export const appTypeToAdaptorType = {
   webhook: 'Webhook',
   dynamodb: 'Dynamodb',
   graph_ql: 'GraphQL',
+  van: 'VAN',
 };
 
 // the methods rdbmsSubTypeToAppType and rdbmsAppTypeToSubType are used to find rdbms subtype from the app.type of the application or vice-versa
@@ -116,10 +117,12 @@ export const adaptorTypeMap = {
   MongodbExport: 'mongodb',
   WrapperExport: 'wrapper',
   AS2Export: 'as2',
+  VANExport: 'van',
   MongodbImport: 'mongodb',
   S3Import: 's3',
   WrapperImport: 'wrapper',
   AS2Import: 'as2',
+  VANImport: 'van',
   RDBMSImport: 'rdbms',
   SalesforceImport: 'salesforce',
   SalesforceExport: 'salesforce',

@@ -26,6 +26,9 @@ export default {
       case 'AS2Import':
         lookup = resourceObj.file?.lookups;
         break;
+      case 'VANImport':
+        lookup = resourceObj.file?.lookups;
+        break;
       case 'WrapperImport':
         lookup = resourceObj.wrapper?.lookups;
         break;
@@ -50,6 +53,7 @@ export default {
       case 'NetSuiteImport':
         return '/netsuite/lookups';
       case 'AS2Import':
+      case 'VANImport':
       case 'S3Import':
       case 'FTPImport':
         return '/file/lookups';

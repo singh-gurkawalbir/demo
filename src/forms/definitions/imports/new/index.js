@@ -30,6 +30,7 @@ const appTypeToAdaptorType = {
   webhook: 'Webhook',
   dynamodb: 'Dynamodb',
   graph_ql: 'GraphQL',
+  van: 'VAN',
 };
 
 export default {

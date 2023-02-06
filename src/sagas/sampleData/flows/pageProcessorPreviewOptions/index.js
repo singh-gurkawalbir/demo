@@ -48,6 +48,9 @@ export function* _getUIDataForResource({ resource, connection, flow, refresh }) 
       case 'AS2Export': {
         return yield call(requestFileAdaptorSampleData, { resource });
       }
+      case 'VANExport': {
+        return yield call(requestFileAdaptorSampleData, { resource });
+      }
 
       case 'WebhookExport': {
         // Sample data exists on resource
