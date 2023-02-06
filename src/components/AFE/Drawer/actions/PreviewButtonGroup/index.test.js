@@ -6,23 +6,27 @@ import * as reactRedux from 'react-redux';
 import PreviewButtonGroup from '.';
 import actions from '../../../../../actions';
 import { getCreatedStore } from '../../../../../store';
-import { renderWithProviders } from '../../../../../test/test-utils';
+import { mutateStore, renderWithProviders } from '../../../../../test/test-utils';
 import messageStore from '../../../../../utils/messageStore';
 
 let initialStore;
 
 async function initPreviewButtonGroup(editorId) {
-  initialStore.getState().session.editors = {
-    1: {
-      autoEvaluate: false,
-    },
-    2: {
-      disablePreview: true,
-    },
-    3: {
-      saveStatus: 'requested',
-    },
+  const mustateState = draft => {
+    draft.session.editors = {
+      1: {
+        autoEvaluate: false,
+      },
+      2: {
+        disablePreview: true,
+      },
+      3: {
+        saveStatus: 'requested',
+      },
+    };
   };
+
+  mutateStore(initialStore, mustateState);
 
   return renderWithProviders(
     <PreviewButtonGroup editorId={editorId} />,

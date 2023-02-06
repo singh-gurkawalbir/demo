@@ -4,7 +4,7 @@ import { MemoryRouter } from 'react-router-dom';
 import * as reactRedux from 'react-redux';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { renderWithProviders, reduxStore } from '../../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore } from '../../../test/test-utils';
 import CreateAliasDrawer from './CreateAliases';
 import actions from '../../../actions';
 import actionTypes from '../../../actions/types';
@@ -21,20 +21,22 @@ const mockHistoryReplace = jest.fn();
 async function initCreateAliasDrawer({props = {}, isEdit = true}) {
   const initialStore = reduxStore;
 
-  initialStore.getState().data.resources = {
-    integrations: [
-      {
-        _id: '_integrationId',
-        name: 'mockIntegration',
-        _registeredConnectionIds: ['_connId'],
-        aliases: [{alias: '_aliasId', _connectionId: '_connId', description: 'some description'}],
-      },
-    ],
-    connections: [{
-      _id: '_connId',
-      name: 'RegisteredConnection',
-    }],
-  };
+  mutateStore(initialStore, draft => {
+    draft.data.resources = {
+      integrations: [
+        {
+          _id: '_integrationId',
+          name: 'mockIntegration',
+          _registeredConnectionIds: ['_connId'],
+          aliases: [{alias: '_aliasId', _connectionId: '_connId', description: 'some description'}],
+        },
+      ],
+      connections: [{
+        _id: '_connId',
+        name: 'RegisteredConnection',
+      }],
+    };
+  });
   const ui = (
     <MemoryRouter initialEntries={[{pathname: isEdit ? 'edit/_aliasId' : 'add'}]}>
       <CreateAliasDrawer {...props} />
@@ -63,10 +65,12 @@ describe('CreateAliasDrawer tests', () => {
     mockDispatchFn = jest.fn(action => {
       switch (action.type) {
         case actionTypes.RESOURCE.CREATE_OR_UPDATE_ALIAS:
-          initialStore.getState().session.aliases._integrationId = {
-            aliasId: action.isEdit ? action.aliasId : 'new-alias-id',
-            status: action.isEdit ? 'edit' : 'save',
-          };
+          mutateStore(initialStore, draft => {
+            draft.session.aliases._integrationId = {
+              aliasId: action.isEdit ? action.aliasId : 'new-alias-id',
+              status: action.isEdit ? 'edit' : 'save',
+            };
+          });
           break;
         default: initialStore.dispatch(action);
       }

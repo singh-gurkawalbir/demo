@@ -4,7 +4,7 @@ import { MemoryRouter } from 'react-router-dom';
 import * as reactRedux from 'react-redux';
 import { screen, waitFor} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { renderWithProviders, reduxStore } from '../../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore } from '../../../test/test-utils';
 import FlowgroupDrawer from '.';
 import actions from '../../../actions';
 import { runServer } from '../../../test/api/server';
@@ -21,57 +21,59 @@ const mockHistoryReplace = jest.fn();
 async function initFlowgroupDrawer({props = {}, isEdit = false, addFlow = false}, status = 'Completed') {
   const initialStore = reduxStore;
 
-  initialStore.getState().session.form = {
-    'flow-flowgroup': {
-      disabled: false,
-      fields: {
-        name: {
-          id: 'name',
-          type: 'flowgroupname',
-          label: 'Name',
-          integrationId: props.integrationId,
-          flowIds: [],
-          touched: false,
+  mutateStore(initialStore, draft => {
+    draft.session.form = {
+      'flow-flowgroup': {
+        disabled: false,
+        fields: {
+          name: {
+            id: 'name',
+            type: 'flowgroupname',
+            label: 'Name',
+            integrationId: props.integrationId,
+            flowIds: [],
+            touched: false,
+          },
+          _flowIds: {
+            id: '_flowIds',
+            type: 'flowstiedtointegrations',
+            label: 'Flows',
+            placeholder: 'Add flows',
+            touched: false,
+            integrationId: props.integrationId,
+          },
         },
-        _flowIds: {
-          id: '_flowIds',
-          type: 'flowstiedtointegrations',
-          label: 'Flows',
-          placeholder: 'Add flows',
-          touched: false,
-          integrationId: props.integrationId,
+      },
+    };
+    draft.session.integrations = {
+      _integrationId: {
+        flowGroupStatus: {
+          status,
+          message: '',
         },
       },
-    },
-  };
-  initialStore.getState().session.integrations = {
-    _integrationId: {
-      flowGroupStatus: {
-        status,
-        message: '',
-      },
-    },
-  };
-  initialStore.getState().data.resources = {
-    integrations: [
-      {
-        _id: '_integrationId',
-        name: 'mockIntegration',
-        flowGroupings: [],
-      }],
-    flows: [
-      {
-        _id: '_flowId1',
-        name: 'mockFlow1',
-        _integrationId: addFlow ? '_integrationId' : 'none',
-      },
-      {
-        _id: '_flowId2',
-        name: 'mockFlow2',
-        _integrationId: addFlow ? '_integrationId' : 'none',
-      },
-    ],
-  };
+    };
+    draft.data.resources = {
+      integrations: [
+        {
+          _id: '_integrationId',
+          name: 'mockIntegration',
+          flowGroupings: [],
+        }],
+      flows: [
+        {
+          _id: '_flowId1',
+          name: 'mockFlow1',
+          _integrationId: addFlow ? '_integrationId' : 'none',
+        },
+        {
+          _id: '_flowId2',
+          name: 'mockFlow2',
+          _integrationId: addFlow ? '_integrationId' : 'none',
+        },
+      ],
+    };
+  });
 
   const ui = (
     <MemoryRouter initialEntries={[{pathname: isEdit ? 'flowgroups/edit' : 'flowgroups/add'}]}>
@@ -106,9 +108,11 @@ describe('FlowgroupDrawer tests', () => {
     mockDispatchFn = jest.fn(action => {
       switch (action.type) {
         case types.INTEGRATION.FLOW_GROUPS.CREATE_OR_UPDATE:
-          initialStore.getState().session.asyncTask = {
-            'flow-flowgroup': {status: 'complete'},
-          };
+          mutateStore(initialStore, draft => {
+            draft.session.asyncTask = {
+              'flow-flowgroup': {status: 'complete'},
+            };
+          });
           break;
         default: initialStore.dispatch(action);
       }

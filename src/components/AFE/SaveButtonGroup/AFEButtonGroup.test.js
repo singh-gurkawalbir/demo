@@ -2,7 +2,7 @@ import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import * as reactRedux from 'react-redux';
-import { renderWithProviders, reduxStore } from '../../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore } from '../../../test/test-utils';
 import SaveButtonGroup from './AFEButtonGroup';
 import actions from '../../../actions';
 
@@ -11,15 +11,17 @@ const mockClose = jest.fn();
 async function initSaveButtonGroup(props = {editorId: 'mappings', onClose: mockClose}) {
   const initialStore = reduxStore;
 
-  initialStore.getState().session.editors = {
-    inputFilter: {
-      editorType: 'inputFilter',
-      activeProcessor: 'javascript',
-      data: {javascript: '{}'},
-      rule: {javascript: {_init_code: 'something'}},
-      originalRule: {javascript: {}},
-    },
-  };
+  mutateStore(initialStore, draft => {
+    draft.session.editors = {
+      inputFilter: {
+        editorType: 'inputFilter',
+        activeProcessor: 'javascript',
+        data: {javascript: '{}'},
+        rule: {javascript: {_init_code: 'something'}},
+        originalRule: {javascript: {}},
+      },
+    };
+  });
 
   return renderWithProviders(<SaveButtonGroup {...props} />, { initialStore });
 }
