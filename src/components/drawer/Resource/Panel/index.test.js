@@ -4,7 +4,7 @@ import { MemoryRouter, Route } from 'react-router-dom';
 import * as reactRedux from 'react-redux';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { renderWithProviders, reduxStore } from '../../../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore } from '../../../../test/test-utils';
 import Panel, {isNestedDrawer} from '.';
 import actions from '../../../../actions';
 import customCloneDeep from '../../../../utils/customCloneDeep';
@@ -16,43 +16,45 @@ const props = { flowId: '_flowId', onClose: mockClose, occupyFullWidth: true, in
 async function initPanel(props = {}, initFailed = false, resourceType = 'exports', _id = '_resourceId', operation = 'add') {
   const initialStore = reduxStore;
 
-  initialStore.getState().data.resources = {
-    imports: [{ _id, _connectionId: '_connectionId', http: { relativeURI: ['/'], method: ['POST'], body: [], formType: 'http' }, adaptorType: 'HTTPImport' }],
-    exports: [
-      {
-        _id: '_exportId',
-        _connectionId: '_connectionId',
-        http: {
-          relativeURI: ['/'],
-          method: ['GET'],
-          body: [],
-          formType: 'http',
+  mutateStore(initialStore, draft => {
+    draft.data.resources = {
+      imports: [{ _id, _connectionId: '_connectionId', http: { relativeURI: ['/'], method: ['POST'], body: [], formType: 'http' }, adaptorType: 'HTTPImport' }],
+      exports: [
+        {
+          _id: '_exportId',
+          _connectionId: '_connectionId',
+          http: {
+            relativeURI: ['/'],
+            method: ['GET'],
+            body: [],
+            formType: 'http',
+          },
+          adaptorType: 'HTTPExport',
         },
-        adaptorType: 'HTTPExport',
-      },
-      {
-        _id,
-        _connectionId: '_connectionId',
-        type: 'test',
-        adaptorType: 'NetSuiteExport',
-      },
-    ],
-    connections: [
-      { _id: '_connectionId',
-        type: 'http',
-        http: {
-          formType: 'http',
-          baseURI: '/mockURI',
-          mediaType: 'json',
+        {
+          _id,
+          _connectionId: '_connectionId',
+          type: 'test',
+          adaptorType: 'NetSuiteExport',
         },
+      ],
+      connections: [
+        { _id: '_connectionId',
+          type: 'http',
+          http: {
+            formType: 'http',
+            baseURI: '/mockURI',
+            mediaType: 'json',
+          },
+        },
+      ],
+    };
+    draft.session.resourceForm = {
+      'exports-_resourceId': {
+        initFailed,
       },
-    ],
-  };
-  initialStore.getState().session.resourceForm = {
-    'exports-_resourceId': {
-      initFailed,
-    },
-  };
+    };
+  });
 
   const ui = (
     <MemoryRouter initialEntries={[{ pathname: `/parentURL/${operation}/${resourceType}/${_id}` }]}>

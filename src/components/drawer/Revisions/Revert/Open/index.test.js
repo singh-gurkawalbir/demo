@@ -4,7 +4,7 @@ import { MemoryRouter } from 'react-router-dom';
 import { screen } from '@testing-library/react';
 import * as reactRedux from 'react-redux';
 import userEvent from '@testing-library/user-event';
-import { renderWithProviders, reduxStore } from '../../../../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore } from '../../../../../test/test-utils';
 import OpenRevertDrawer from '.';
 import customCloneDeep from '../../../../../utils/customCloneDeep';
 
@@ -14,13 +14,15 @@ const mockHistoryReplace = jest.fn();
 async function initOpenRevertDrawer(props = {}) {
   const initialStore = reduxStore;
 
-  initialStore.getState().session.lifeCycleManagement = {
-    cloneFamily: {
-      _integrationId: {
-        status: 'completed',
+  mutateStore(initialStore, draft => {
+    draft.session.lifeCycleManagement = {
+      cloneFamily: {
+        _integrationId: {
+          status: 'completed',
+        },
       },
-    },
-  };
+    };
+  });
   const ui = (
     <MemoryRouter initialEntries={[{pathname: 'revert/_tempRevId/open/:revertTo/revision/_revisionId'}]}>
       <OpenRevertDrawer {...props} />

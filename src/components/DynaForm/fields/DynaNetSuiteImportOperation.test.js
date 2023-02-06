@@ -2,7 +2,7 @@
 import React from 'react';
 import {screen} from '@testing-library/react';
 import DynaNetSuiteImportOperation from './DynaNetSuiteImportOperation';
-import { renderWithProviders, reduxStore} from '../../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore} from '../../../test/test-utils';
 
 const initialStore = reduxStore;
 
@@ -16,9 +16,11 @@ const items = [
 const mockOnFieldChange = jest.fn();
 
 function initDynaNetSuiteImportOperation(items = {}, supports) {
-  initialStore.getState().session.metadata = {application: {someconnectionId: {somePath: {
-    data: [{name: 'someName', scriptId: 'once', ...supports}],
-  }}}};
+  mutateStore(initialStore, draft => {
+    draft.session.metadata = {application: {someconnectionId: {somePath: {
+      data: [{name: 'someName', scriptId: 'once', ...supports}],
+    }}}};
+  });
   const ui = (
     <DynaNetSuiteImportOperation
       value="once"

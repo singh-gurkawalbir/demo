@@ -4,7 +4,7 @@ import { MemoryRouter, Route } from 'react-router-dom';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import * as reactRedux from 'react-redux';
-import { renderWithProviders, reduxStore } from '../../../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore } from '../../../../test/test-utils';
 import IntegrationPreview from './Preview';
 import {ConfirmDialogProvider} from '../../../ConfirmDialog';
 import actions from '../../../../actions';
@@ -21,26 +21,28 @@ jest.mock('react-router-dom', () => ({
 function createInitialStore() {
   const initialStore = reduxStore;
 
-  initialStore.getState().session = {
-    templates: {
-      _templateId:
-      {
-        preview: {
-          status: 'success',
-          components: {
-            objects: [],
-            stackRequired: false,
+  mutateStore(initialStore, draft => {
+    draft.session = {
+      templates: {
+        _templateId:
+        {
+          preview: {
+            status: 'success',
+            components: {
+              objects: [],
+              stackRequired: false,
+            },
           },
+          runKey: '_templateId',
         },
-        runKey: '_templateId',
       },
-    },
-    integrationApps: {
-      clone: {
-        _templateId: {isCloned: false, integrationId: '_integrationId'},
+      integrationApps: {
+        clone: {
+          _templateId: {isCloned: false, integrationId: '_integrationId'},
+        },
       },
-    },
-  };
+    };
+  });
 
   return initialStore;
 }
