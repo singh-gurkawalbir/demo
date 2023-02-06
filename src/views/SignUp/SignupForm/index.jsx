@@ -14,13 +14,12 @@ import getRoutePath from '../../../utils/routePaths';
 
 const useStyles = makeStyles(theme => ({
   submit: {
-    width: '100%',
-    borderRadius: 4,
     height: 38,
     fontSize: theme.spacing(2),
     marginTop: theme.spacing(1),
   },
   editableFields: {
+    wordBreak: 'break-word',
     textAlign: 'center',
     width: '100%',
     maxWidth: 500,
@@ -78,18 +77,19 @@ export default function SignUp() {
   return (
     <div className={classes.editableFields}>
       { signupStatus === 'failed' && error && (
-        <Typography
-          data-private
-          color="error"
-          component="div"
-          variant="h5"
-          className={classes.alertMsg}>
-          {error}
-        </Typography>
+      <Typography
+        data-private
+        color="error"
+        component="div"
+        variant="h5"
+        className={classes.alertMsg}>
+        {error}
+      </Typography>
       )}
       <DynaForm formKey={formKey} />
       <DynaSubmit
         className={classes.submit}
+        fullWidth
         formKey={formKey}
         onClick={handleOnSubmit}
         ignoreFormTouchedCheck>

@@ -11,6 +11,7 @@ export default function FormButton({
   className,
   color,
   variant,
+  fullWidth,
   skipDisableButtonForFormTouched = false,
   ...props
 }) {
@@ -50,6 +51,7 @@ export default function FormButton({
       }
       color={color}
       className={className}
+      fullWidth={fullWidth}
       disabled={buttonDisabled}
       onClick={onClickBtn}>
       {children}
