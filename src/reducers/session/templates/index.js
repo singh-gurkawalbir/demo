@@ -125,7 +125,7 @@ export default function reducer(state = {}, action) {
             if (verifyBundleStep) {
               (draft[templateId].installSteps || []).forEach(
                 s => {
-                  if (s.application === verifyBundleStep && s.completed === false && s.sourceConnId === _connectionId) {
+                  if (s?.application === verifyBundleStep && s?.completed === false && s?.sourceConnId === _connectionId) {
                     // eslint-disable-next-line no-param-reassign
                     s.options._connectionId = draft[templateId].cMap[_connectionId];
                   }

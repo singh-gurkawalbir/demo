@@ -242,7 +242,7 @@ export default function InstallationStep(props) {
     handleStepClick(step, connection, index);
   };
 
-  const isNsBundleOrSuiteAppStep = (step.name.startsWith('Integrator Bundle') || step.name.startsWith('Integrator SuiteApp'));
+  const isNsBundleOrSuiteAppStep = (step?.name?.startsWith('Integrator Bundle') || step?.name?.startsWith('Integrator SuiteApp'));
 
   return (
 
