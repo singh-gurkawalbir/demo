@@ -355,4 +355,25 @@ describe('AppRoutingWith authentication redirection behavior', () => {
 
     expect(history.location.pathname).toBe(getRoutePath('/agreeTOSAndPP'));
   });
+  test('should redirect the user to the agreeTOSAndPP route when the user has not agreed to TOS1', () => {
+    const history = createMemoryHistory({
+      initialEntries: [
+        {
+          pathname: getRoutePath('/signin'),
+          search: '?application=shopify&code=123&host=abc',
+        },
+      ],
+    });
+    const store = createStore(reducer, { auth: {authenticated: true} });
+
+    render(
+      reduxRouterWrappedComponent({
+        Component: wrappedHistory,
+        componentProps: loggedOut,
+        history,
+        store,
+      })
+    );
+    expect(window.location.href).toBe(getRoutePath('/connection/shopify/oauth2callback?application=shopify&code=123&host=abc'));
+  });
 });

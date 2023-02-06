@@ -38,6 +38,7 @@ export function normalizeUrlAndOptions(path, opts) {
       path.includes('/netSuiteWS') ||
       path.includes('/netsuiteDA') ||
       /^\/connections.*distributed$/.test(path) ||
+      path.includes('/distributed?type=') ||
       path.includes('/mappingPreview') ||
       path.includes('/unlink/google') ||
       path.includes('/accept-invite-metadata') ||

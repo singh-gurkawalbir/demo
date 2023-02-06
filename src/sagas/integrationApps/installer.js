@@ -252,14 +252,15 @@ export function* verifyBundleOrPackageInstall({
   connectionId,
   installerFunction,
   isFrameWork2,
+  variant,
 }) {
-  const path = `/connections/${connectionId}/distributed`;
+  const path = variant ? `/connections/${connectionId}/distributed?type=${variant}` : `/connections/${connectionId}/distributed`;
   let response;
 
   try {
     response = yield call(apiCallWithRetry, {
       path,
-      message: 'Verifying Bundle/Package Installation...',
+      message: variant ? `Verifying ${variant} Installation...` : 'Verifying Bundle/Package Installation...',
     });
   } catch (error) {
     yield put(
@@ -308,6 +309,7 @@ export function* verifyBundleOrPackageInstall({
     );
   }
 }
+
 export function* installChildStep({ id, installerFunction, formVal }) {
   const path = `/integrations/${id}/installer/${installerFunction}`;
   let stepCompleteResponse;

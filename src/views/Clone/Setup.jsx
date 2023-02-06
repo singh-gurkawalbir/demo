@@ -138,6 +138,13 @@ export default function Clone() {
   const handleStepClick = (step, conn) => {
     const { _connectionId, installURL, type, completed } = step;
     let bundleURL = installURL;
+    let netsuitePackageType = null;
+
+    if (step?.name.startsWith('Integrator Bundle')) {
+      netsuitePackageType = 'suitebundle';
+    } else if (step?.name.startsWith('Integrator SuiteApp')) {
+      netsuitePackageType = 'suiteapp';
+    }
 
     if (completed) {
       return false;
@@ -203,7 +210,8 @@ export default function Clone() {
           actions.template.verifyBundleOrPackageInstall(
             step,
             { _id: step.options._connectionId },
-            templateId
+            templateId,
+            netsuitePackageType
           )
         );
       }

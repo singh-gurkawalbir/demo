@@ -149,7 +149,7 @@ export const getExportMetadata = (connectorMetadata, connectionVersion) => {
           const supportedExportTypes = fieldsUserMustSet?.find(f => f.path === 'type')?.values;
 
           const queryParameters = httpEndpoint.queryParameters?.map(qp => ({name: qp.name, id: qp.name, description: qp.description, required: qp.required, fieldType: qp.dataType || qp.fieldType || 'textarea', defaultValue: qp.defaultValue, readOnly: qp.readOnly, options: qp.values }));
-          const pathParameters = httpEndpoint.pathParameters?.map(pp => ({name: pp.name, id: pp.name, description: pp.description, required: pp.required !== false, fieldType: pp.fieldType || 'input' }));
+          const pathParameters = httpEndpoint.pathParameters?.map(pp => ({name: pp.label, id: pp.name, description: pp.description, required: pp.required !== false, fieldType: pp.dataType || pp.fieldType || 'input', suggestions: pp.values, config: pp.config }));
           let doesNotSupportPaging = false;
 
           if (httpEndpoint.supportedBy.fieldsToUnset?.includes('paging')) {
@@ -262,6 +262,8 @@ export const getImportMetadata = (connectorMetadata, connectionVersion) => {
                       name: pp.name,
                       in: 'path',
                       required: true,
+                      config: pp.config,
+                      suggestions: pp.values,
                     });
                   });
           }
@@ -701,17 +703,17 @@ export const updateFinalMetadataWithHttpFramework = (finalFieldMeta, connector, 
         const baseURIValue = tempFiledMeta?.fieldMap['http.baseURI']?.defaultValue;
 
         fieldIds.forEach(field => {
-          (new RegExp(`{{{(.)*(${field})(.)*}}}`)).test(baseURIValue) ? baseURIFields.push(field) : authFields.push(field);
+          (new RegExp(`{{(.)*(${field})(.)*}}`)).test(baseURIValue) ? baseURIFields.push(field) : authFields.push(field);
         });
         if (baseURIFields.length > 0) {
-              tempFiledMeta?.layout?.containers[1]?.containers[1].containers.splice(0, 1, {fields: baseURIFields});
+              tempFiledMeta?.layout?.containers[1]?.containers[1]?.containers?.splice(0, 1, {fields: baseURIFields});
         } else if (preConfiguredField) {
           preConfiguredField.forEach(field => {
             if (field._conditionIds?.length) {
-              const conditionFields = connectionTemplate.conditions?.filter(field1 => field1._id === field._conditionIds[0]);
-              const dependentField = conditionFields[0].condition.rules[1][1][1];
+              const conditionFields = connectionTemplate?.conditions?.filter(field1 => field1._id === field?._conditionIds[0]);
+              const dependentField = conditionFields[0]?.condition?.rules[1][1][1];
 
-              tempFiledMeta?.layout?.containers[1]?.containers[1].containers.splice(0, 1, {fields: [dependentField]});
+              tempFiledMeta?.layout?.containers[1]?.containers[1]?.containers?.splice(0, 1, {fields: [dependentField]});
             }
           });
         } else {
@@ -720,8 +722,8 @@ export const updateFinalMetadataWithHttpFramework = (finalFieldMeta, connector, 
         if (tempFiledMeta?.fieldMap['http.auth.type']?.visible === false) {
           delete tempFiledMeta?.layout?.containers[3]?.containers[1]?.type;
         }
-        if (tempFiledMeta?.layout?.containers[1]?.containers[1].containers[0].fields.length > 0) {
-          const baseurlDependentFields = tempFiledMeta?.layout?.containers[1]?.containers[1].containers[0].fields;
+        if (tempFiledMeta?.layout?.containers[1]?.containers[1]?.containers[0]?.fields?.length > 0) {
+          const baseurlDependentFields = tempFiledMeta?.layout?.containers[1]?.containers[1]?.containers[0]?.fields;
 
           baseurlDependentFields.forEach(field => {
             const indexcheck = fieldIds.indexOf(field);
@@ -729,7 +731,7 @@ export const updateFinalMetadataWithHttpFramework = (finalFieldMeta, connector, 
             delete fieldIds[indexcheck];
           });
         }
-        tempFiledMeta?.layout?.containers[7].containers?.push({fields: fieldIds});
+        tempFiledMeta?.layout?.containers[7]?.containers?.push({fields: fieldIds});
           tempFiledMeta?.layout?.containers[7]?.containers?.splice(0, 1);
           Object.keys(tempFiledMeta.fieldMap).map(key => {
             const fieldUserMustSet = connectionTemplate.fieldsUserMustSet?.find(field => key === field.path);
