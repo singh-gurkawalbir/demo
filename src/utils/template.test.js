@@ -1317,8 +1317,6 @@ describe('template util function test', () => {
       };
       const received = templateUtil.getInstallSteps(previewData);
 
-      console.log(received);
-
       const expectedResult = {
         connectionMap: {
           '5f90501a6eb5c646194a1d09': {

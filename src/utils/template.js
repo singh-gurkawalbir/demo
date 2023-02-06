@@ -148,7 +148,7 @@ export default {
 
       if (conn?.type === 'netsuite' && (imp.netsuite_da?.restletVersion === 'suitebundle' || imp.netsuite_da?.useSS2Restlets === false) && (!netsuiteBundleNeededForConnections.includes(conn))) {
         netsuiteBundleNeededForConnections.push(conn);
-      } else if (conn?.type === 'netsuite' && (['suiteapp1.0', 'suiteapp2.0'].includes(imp.netsuite_da?.restletVersion) || imp.netsuite_da?.useSS2Restlets === true) && !netsuiteSuiteAppNeededForConnections.includes(conn) && !netsuiteBundleNeededForConnections.includes(conn)) {
+      } else if (conn?.type === 'netsuite' && (['suiteapp1.0', 'suiteapp2.0'].includes(imp.netsuite_da?.restletVersion) || imp.netsuite_da?.useSS2Restlets === true) && !netsuiteSuiteAppNeededForConnections.includes(conn)) {
         netsuiteSuiteAppNeededForConnections.push(conn);
       }
     });
@@ -181,9 +181,6 @@ export default {
       sourceConnId: conn._id,
       options: {},
     }));
-
-    console.log(netsuiteBundleNeededForConnections);
-    console.log(netsuiteSuiteAppNeededForConnections);
 
     salesforceBundleNeededForConnections.forEach((conn, index) => installSteps.push({
       key: `Salesforce account ${index + 1}`,

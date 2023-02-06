@@ -244,10 +244,6 @@ export default function InstallationStep(props) {
 
   const isNsBundleOrSuiteAppStep = (step.name.startsWith('Integrator Bundle') || step.name.startsWith('Integrator SuiteApp'));
 
-  const type = step?.options?.connectionType?.toLowerCase() || (step?.name === 'workday' ? 'workday' : step?.sourceConnection?.http?.formType) || step?.sourceConnection?.type || (isNsBundleOrSuiteAppStep ? 'netsuite' : '');
-
-  console.log({name: step.name, type});
-
   return (
 
     <div className={classes.stepRow}>
