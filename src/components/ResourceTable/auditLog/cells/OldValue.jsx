@@ -5,12 +5,17 @@ import DiffDialog from '../DiffDialog';
 import { TextButton } from '../../../Buttons';
 import { escapeSpecialChars } from '../../../../utils/string';
 
-const useStyles = makeStyles({
+const useStyles = makeStyles(theme => ({
   clickBtn: {
     whiteSpace: 'nowrap',
     padding: 0,
+    minWidth: 'auto',
+    '&:hover': {
+      color: theme.palette.primary.light,
+      textDecoration: 'none',
+    },
   },
-});
+}));
 
 export default function OldValue({ auditLog, oldValue = '', newValue = '' }) {
   const classes = useStyles();

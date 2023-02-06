@@ -143,6 +143,20 @@ const sampleData = {
         { label: 'India', value: 'in' },
       ],
     },
+    datetime: {
+      id: 'datetime',
+      name: 'datetime',
+      type: 'datetime',
+      label: 'Date/time',
+      skipTimezoneConversion: true,
+    },
+    date: {
+      id: 'date',
+      name: 'date',
+      type: 'date',
+      label: 'Date',
+      skipTimezoneConversion: true,
+    },
   },
 };
 

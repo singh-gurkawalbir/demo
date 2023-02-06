@@ -20,12 +20,6 @@ const useStyles = makeStyles(theme => ({
       gridTemplateColumns: '100%',
     },
   },
-  headerBorder: {
-    background: theme.palette.background.paper,
-    borderBottom: `1px solid ${theme.palette.secondary.lightest}`,
-    padding: theme.spacing(2),
-    height: theme.spacing(10),
-  },
   externalLink: {
     cursor: 'pointer',
   },
@@ -35,10 +29,6 @@ const useStyles = makeStyles(theme => ({
     '& > svg': {
       fill: theme.palette.primary.dark,
     },
-  },
-  link: {
-    paddingLeft: 4,
-    color: theme.palette.primary.dark,
   },
   signinWrapper: {
     background: theme.palette.background.paper,
@@ -59,13 +49,6 @@ const useStyles = makeStyles(theme => ({
     fontSize: 30,
     lineHeight: '40px',
   },
-  mfaTitle: {
-    marginBottom: theme.spacing(3),
-    fontSize: 30,
-    lineHeight: '28px',
-    width: 290,
-    textAlign: 'center',
-  },
   signupLink: {
     position: 'absolute',
     bottom: theme.spacing(8),
@@ -78,13 +61,6 @@ const useStyles = makeStyles(theme => ({
     [theme.breakpoints.down('xs')]: {
       maxWidth: '100%',
     },
-  },
-  mfaInfo: {
-    display: 'flex',
-    marginBottom: theme.spacing(1.5),
-  },
-  infoText: {
-    marginLeft: theme.spacing(1),
   },
 }));
 
