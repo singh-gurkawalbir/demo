@@ -775,6 +775,9 @@ export function* getResourceCollection({ resourceType, refresh, integrationId })
       yield call(getResource, {resourceType: 'integrations', id: integrationId});
     }
   }
+  if (resourceType === 'tree/metadata') {
+    path += '?additionalFields=_connectorId,_parentId,sandbox,settings,settingsForm,preSave,changeEditionSteps,flowGroupings,_registeredConnectionIds,uninstallSteps';
+  }
   let updatedResourceType = resourceType;
 
   try {
@@ -818,11 +821,10 @@ export function* getResourceCollection({ resourceType, refresh, integrationId })
       collection = undefined;
     }
 
-    if (resourceType.startsWith('/integrations') && resourceType.endsWith('/tree/metadata')) {
-      const _integrationId = resourceType?.split('/')?.[1];
+    if (resourceType === 'tree/metadata') {
       const newCollection = collection?.childIntegrations || [];
 
-      yield put(actions.resource.receivedCollection('integrations', newCollection, _integrationId));
+      yield put(actions.resource.receivedCollection('integrations', newCollection, integrationId));
     } else {
       yield put(actions.resource.receivedCollection(resourceType, collection, integrationId));
     }

@@ -21,9 +21,6 @@ import useQuery from '../../hooks/useQuery';
 const path = getImageUrl('images/googlelogo.png');
 
 const useStyles = makeStyles(theme => ({
-  snackbar: {
-    margin: theme.spacing(1),
-  },
   submit: {
     width: '100%',
     borderRadius: 4,
@@ -39,9 +36,6 @@ const useStyles = makeStyles(theme => ({
     [theme.breakpoints.down('sm')]: {
       maxWidth: '100%',
     },
-  },
-  relatedContent: {
-    textDecoration: 'none',
   },
   textField: {
     width: '100%',
@@ -130,15 +124,18 @@ const useStyles = makeStyles(theme => ({
       borderColor: theme.palette.secondary.lightest,
     },
   },
-  hidden: {
-    display: 'none',
+  passwordTextField: {
+    '& * >.MuiFilledInput-input': {
+      letterSpacing: '2px',
+      '&::placeholder': {
+        letterSpacing: '1px',
+      },
+    },
   },
-  wrapper: {
-    textAlign: 'left',
-    marginBottom: theme.spacing(2),
-  },
-  label: {
-    display: 'flex',
+
+  iconPassword: {
+    cursor: 'pointer',
+    marginRight: theme.spacing(1),
   },
   passwordTextField: {
     '& * >.MuiFilledInput-input': {

@@ -1,9 +1,9 @@
 import TextField from '@material-ui/core/TextField';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
-import React, { useState, useCallback} from 'react';
-import { Typography} from '@material-ui/core';
-import { useLocation, useHistory} from 'react-router-dom';
+import React, { useState, useCallback, useEffect } from 'react';
+import { Typography, InputAdornment } from '@material-ui/core';
+import { useLocation, Link, useHistory} from 'react-router-dom';
 import clsx from 'clsx';
 import actions from '../../../actions';
 import { selectors } from '../../../reducers';
@@ -12,8 +12,11 @@ import { getDomain } from '../../../utils/resource';
 import { AUTH_FAILURE_MESSAGE } from '../../../constants';
 import getRoutePath from '../../../utils/routePaths';
 import Spinner from '../../../components/Spinner';
-import { FilledButton, OutlinedButton } from '../../../components/Buttons';
+import { FilledButton, OutlinedButton, TextButton } from '../../../components/Buttons';
 import getImageUrl from '../../../utils/image';
+import useQuery from '../../../hooks/useQuery';
+import ShowContentIcon from '../../../components/icons/ShowContentIcon';
+import HideContentIcon from '../../../components/icons/HideContentIcon';
 
 const path = getImageUrl('images/googlelogo.png');
 
@@ -40,8 +43,55 @@ const useStyles = makeStyles(theme => ({
   },
   textField: {
     width: '100%',
-    background: theme.palette.background.paper,
-    marginBottom: 10,
+    minWidth: '100%',
+    marginBottom: theme.spacing(1),
+    position: 'relative',
+    border: '1px solid',
+    borderColor: theme.palette.secondary.lightest,
+    paddingRight: 4,
+    '&:hover': {
+      borderColor: theme.palette.primary.main,
+    },
+    '& >.MuiFilledInput-root': {
+      '& > input': {
+        border: 'none',
+      },
+    },
+  },
+  errorMsg: {
+    fontSize: 16,
+    marginBottom: theme.spacing(2),
+  },
+  link: {
+    paddingLeft: 4,
+    color: theme.palette.primary.dark,
+  },
+  forgotPass: {
+    color: theme.palette.primary.dark,
+    textAlign: 'right',
+    marginBottom: theme.spacing(3),
+  },
+  googleBtn: {
+    borderRadius: 4,
+    width: '100%',
+    background: `url(${path}) 15% center no-repeat`,
+    backgroundSize: theme.spacing(2),
+    height: 38,
+    fontSize: 16,
+    backgroundColor: theme.palette.background.paper,
+  },
+  ssoBtn: {
+    borderRadius: 4,
+    width: '100%',
+    backgroundSize: theme.spacing(2),
+    height: 38,
+    fontSize: 16,
+    margin: theme.spacing(0, 0, 2, 0),
+    backgroundColor: theme.palette.background.paper,
+    display: 'flex',
+    justifyContent: 'space-around',
+    paddingLeft: theme.spacing(5),
+    paddingRight: theme.spacing(16),
   },
   alertMsg: {
     fontSize: 12,
@@ -78,40 +128,29 @@ const useStyles = makeStyles(theme => ({
       borderColor: theme.palette.secondary.lightest,
     },
   },
-  forgotPass: {
-    textAlign: 'right',
-    marginBottom: theme.spacing(3),
+  passwordTextField: {
+    '& * >.MuiFilledInput-input': {
+      letterSpacing: '2px',
+      '&::placeholder': {
+        letterSpacing: '1px',
+      },
+    },
   },
-  googleBtn: {
-    borderRadius: 4,
-    width: '100%',
-    background: `url(${path}) 15% center no-repeat`,
-    backgroundSize: theme.spacing(2),
-    height: 38,
-    fontSize: 16,
-    backgroundColor: theme.palette.background.paper,
-    minWidth: '240px',
-    margin: theme.spacing(0, 0, 2, 0),
+  iconPassword: {
+    cursor: 'pointer',
+    marginRight: theme.spacing(1),
   },
 }));
-
-function ForgotPassworLink({email = ''}) {
-  const classes = useStyles();
-  const fpLink = email ? `/request-reset?application=concur&email=${email}` : '/request-reset?application=concur';
-
-  return (
-    <p className={classes.forgotPass}>
-      <a data-hook="forgot-password-link" href={fpLink}>Forgot Password?</a>
-    </p>
-  );
-}
 
 export default function SignIn({ dialogOpen, className, queryParam }) {
   const dispatch = useDispatch();
   const location = useLocation();
   const classes = useStyles();
   const [email, setEmail] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const history = useHistory();
+  const query = useQuery();
+
   const handleAuthentication = useCallback((email, password) => {
     dispatch(actions.auth.request(email, password, true));
   }, [dispatch]);
@@ -154,6 +193,8 @@ export default function SignIn({ dialogOpen, className, queryParam }) {
     dispatch(actions.auth.signInWithGoogle(e?.target?.attemptedRoute?.value || e?.target?.elements?.attemptedRoute?.value));
   }, [dispatch]);
 
+  const handleShowPassword = () => setShowPassword(showPassword => !showPassword);
+
   window.signedInWithGoogle = () => {
     reInitializeSession();
   };
@@ -161,14 +202,26 @@ export default function SignIn({ dialogOpen, className, queryParam }) {
     reInitializeSession();
   };
 
-  if (isMFAAuthRequired) {
-    history.push(getRoutePath('/mfa/verify'));
-  }
+  useEffect(() => {
+    if (isMFAAuthRequired) {
+      history.push(getRoutePath('/mfa/verify'), location.state);
+    }
+  }, [history, isMFAAuthRequired, location.state]);
   const attemptedRoute = location && location.state && location.state.attemptedRoute;
 
   return (
   // user's email can be listed here ...type passwords is anyways redacted by logrocket
     <div className={clsx(classes.editableFields, className)}>
+      {!isAuthenticating && !showError && query.get('msg') && (
+      <Typography
+        data-private
+        color="error"
+        component="div"
+        variant="h4"
+        className={classes.errorMsg}>
+        {query.get('msg')}
+      </Typography>
+      )}
       <form onSubmit={handleOnSubmit}>
         <TextField
           data-private
@@ -189,13 +242,39 @@ export default function SignIn({ dialogOpen, className, queryParam }) {
           id="password"
           variant="filled"
           required
-          type="password"
+          type={showPassword ? 'text' : 'password'}
           placeholder="Password *"
-          className={classes.textField}
+          className={clsx(classes.textField, classes.passwordTextField)}
+          InputProps={{
+            endAdornment: (true) &&
+              (
+                <InputAdornment position="end">
+                    {showPassword ? (
+                      <ShowContentIcon
+                        className={classes.iconPassword}
+                        onClick={handleShowPassword} />
+                    )
+                      : (
+                        <HideContentIcon
+                          className={classes.iconPassword}
+                          onClick={handleShowPassword} />
+                      )}
+                </InputAdornment>
+              ),
+          }}
         />
 
-        <ForgotPassworLink email={email} />
-        { showError && error && (
+        <div className={classes.forgotPass}>
+          <TextButton
+            data-test="forgotPassword"
+            color="primary"
+            component={Link}
+            role="link"
+            to={email ? getRoutePath(`/request-reset?email=${email}`) : getRoutePath('/request-reset')}>
+            Forgot password?
+          </TextButton>
+        </div>
+        {!isAuthenticating && showError && error && (
           <Typography
             data-private
             color="error"
@@ -210,6 +289,7 @@ export default function SignIn({ dialogOpen, className, queryParam }) {
             <FilledButton
               data-test="submit"
               type="submit"
+              role="button"
               className={classes.submit}
               value="Submit">
               Sign in
@@ -241,7 +321,7 @@ export default function SignIn({ dialogOpen, className, queryParam }) {
             </form>
           </div>
         )}
-        {getDomain() !== 'eu.integrator.io' && <a className={classes.switchDomain} href={`https://eu.integrator.io/connection/shopify/oauth2callback?${queryParam}`}>Switch to EU domain</a>}
+        {getDomain() !== 'eu.integrator.io' && <a data-test="euSignIn" className={classes.switchDomain} href={`https://eu.integrator.io/connection/shopify/oauth2callback?${queryParam}`}>Switch to EU domain</a>}
       </div>
       )}
     </div>

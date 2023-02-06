@@ -134,7 +134,7 @@ function pathParameterFieldsMeta({ operationParameters = [], values }) {
     .map(pathParam => {
       const pathParamField = {
         id: `assistantMetadata.pathParams.${pathParam.id}`,
-        label: pathParam.name,
+        label: pathParam.label || pathParam.name,
         type: 'hfpathparams',
         showLookup: false,
         value: values[pathParam.id],
