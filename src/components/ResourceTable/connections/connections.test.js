@@ -5,7 +5,7 @@ import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import moment from 'moment';
-import { renderWithProviders } from '../../../test/test-utils';
+import { mutateStore, renderWithProviders } from '../../../test/test-utils';
 import CeligoTable from '../../CeligoTable';
 import metadata from './metadata';
 import { ConfirmDialogProvider } from '../../ConfirmDialog';
@@ -154,7 +154,9 @@ describe('test suite for Connections', () => {
     }];
     const initialStore = getCreatedStore();
 
-    initialStore.getState().user.preferences.defaultAShareId = 'own';
+    mutateStore(initialStore, draft => {
+      draft.user.preferences.defaultAShareId = 'own';
+    });
 
     initConnections(data, initialStore);
     const cells = screen.getAllByRole('cell').map(ele => ele.textContent);
@@ -203,7 +205,9 @@ describe('test suite for Connections', () => {
     }];
     const initialStore = getCreatedStore();
 
-    initialStore.getState().user.preferences.defaultAShareId = 'own';
+    mutateStore(initialStore, draft => {
+      draft.user.preferences.defaultAShareId = 'own';
+    });
 
     initConnections(data, initialStore);
     const cells = screen.getAllByRole('cell').map(ele => ele.textContent);
@@ -323,7 +327,9 @@ describe('test suite for Connections', () => {
     }];
     const initialStore = getCreatedStore();
 
-    initialStore.getState().user.preferences.defaultAShareId = 'own';
+    mutateStore(initialStore, draft => {
+      draft.user.preferences.defaultAShareId = 'own';
+    });
     initConnections(data, initialStore);
     const actionButton = screen.getByRole('button', {name: /more/i});
 
@@ -361,7 +367,9 @@ describe('test suite for Connections', () => {
     }];
     const initialStore = getCreatedStore();
 
-    initialStore.getState().user.preferences.defaultAShareId = 'own';
+    mutateStore(initialStore, draft => {
+      draft.user.preferences.defaultAShareId = 'own';
+    });
     initConnections(data, initialStore);
     const actionButton = screen.getByRole('button', {name: /more/i});
 
@@ -400,10 +408,12 @@ describe('test suite for Connections', () => {
       }];
       const initialStore = getCreatedStore();
 
-      initialStore.getState().data.resources.connections = [{
-        _id: 'conn123',
-        offline: false,
-      }];
+      mutateStore(initialStore, draft => {
+        draft.data.resources.connections = [{
+          _id: 'conn123',
+          offline: false,
+        }];
+      });
       initConnections(data, initialStore);
       const actionButton = screen.getByRole('button', {name: /more/i});
 
@@ -442,10 +452,13 @@ describe('test suite for Connections', () => {
       }];
       const initialStore = getCreatedStore();
 
-      initialStore.getState().data.resources.connections = [{
-        _id: 'conn123',
-        offline: false,
-      }];
+      mutateStore(initialStore, draft => {
+        draft.data.resources.connections = [{
+          _id: 'conn123',
+          offline: false,
+        }];
+      });
+
       initConnections(data, initialStore);
       userEvent.click(screen.getByRole('button', {name: /more/i}));
       const refreshMetadata = screen.getByRole('menuitem', {name: 'Refresh metadata'});
@@ -468,10 +481,13 @@ describe('test suite for Connections', () => {
       }];
       const initialStore = getCreatedStore();
 
-      initialStore.getState().data.resources.connections = [{
-        _id: 'conn123',
-        offline: true,
-      }];
+      mutateStore(initialStore, draft => {
+        draft.data.resources.connections = [{
+          _id: 'conn123',
+          offline: true,
+        }];
+      });
+
       initConnections(data, initialStore);
       userEvent.click(screen.getByRole('button', {name: /more/i}));
       const refreshMetadata = screen.getByRole('menuitem', {name: 'Refresh metadata'});
@@ -494,14 +510,17 @@ describe('test suite for Connections', () => {
         lastModified: '1 week ago',
       }];
 
-      globalStore.getState().session.connections.tradingPartnerConnections = {
-        conn123: {
-          connections: [
-            { name: 'conn1' },
-            { name: 'conn2' },
-          ],
-        },
-      };
+      mutateStore(globalStore, draft => {
+        draft.session.connections.tradingPartnerConnections = {
+          conn123: {
+            connections: [
+              { name: 'conn1' },
+              { name: 'conn2' },
+            ],
+          },
+        };
+      });
+
       initConnections(data, globalStore);
       userEvent.click(screen.getByRole('button', {name: /more/i}));
       const actionItems = screen.getAllByRole('menuitem').map(ele => ele.textContent);
