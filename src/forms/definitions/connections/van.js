@@ -52,7 +52,6 @@ export default {
         ],
       },
       {
-        collapsed: true,
         label: 'Application details',
         fields: [
           'van.contentBasedFlowRouter',
