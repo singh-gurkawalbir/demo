@@ -3,7 +3,7 @@ import { fade } from '@material-ui/core/styles/';
 import colors from './colors';
 
 export default {
-  name: 'Celigo Dark Theme',
+  name: 'Celigo Orion Theme',
   appBar: {
     background: colors.celigoNeutral8,
     contrast: colors.celigoWhite,
@@ -17,14 +17,14 @@ export default {
     separator: colors.celigoNeutral6,
   },
   palette: {
-    type: 'dark',
+    type: 'orion',
     background: {
       paper: colors.celigoNeutral9,
       paper2: colors.celigoNeutral5,
       default: colors.celigoNeutral8,
       main: colors.celigoAccent3,
       arrowAfter: colors.celigoNeutral6,
-      drawer: colors.celigoNeutral9,
+      drawer: colors.celigoOrionNeutral1,
       drawer2: colors.celigoNeutral9,
       drawer3: colors.celigoNeutral90,
       drawerActive: colors.celigoAccent1,
