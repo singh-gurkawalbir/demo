@@ -16,6 +16,7 @@ import newImport from './new';
 import dynamodb from './dynamodb';
 import commonfileprovider from './commonfileprovider';
 import graphql from './graphql';
+import van from './van';
 
 export default {
   common,
@@ -36,4 +37,5 @@ export default {
   dynamodb,
   commonfileprovider,
   graphql,
+  van,
 };

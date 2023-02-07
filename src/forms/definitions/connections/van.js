@@ -18,7 +18,7 @@ export default {
       isLoggable: true,
       type: 'routingrules',
       label: 'Routing rules editor',
-      required: true,
+      required: false,
       editorResultMode: 'text',
       hookStage: 'contentBasedFlowRouter',
       helpKey: 'connection.van.contentBasedFlowRouter',
@@ -60,4 +60,9 @@ export default {
       },
     ],
   },
+  actions: [
+    {
+      id: 'saveandclosegroup',
+    },
+  ],
 };

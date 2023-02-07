@@ -3048,6 +3048,8 @@ export default {
         return 'FTP';
       case adaptorTypeMap.AS2Import:
         return 'AS2';
+      case adaptorTypeMap.VANImport:
+        return 'VAN';
       case adaptorTypeMap.S3Import:
         return 'Amazon S3';
       case adaptorTypeMap.SalesforceImport:
@@ -3259,6 +3261,7 @@ export default {
       case adaptorTypeMap.HTTPImport:
       case adaptorTypeMap.RESTImport:
       case adaptorTypeMap.AS2Import:
+      case adaptorTypeMap.VANImport:
       case adaptorTypeMap.S3Import:
       case adaptorTypeMap.XMLImport:
       case adaptorTypeMap.MongodbImport:

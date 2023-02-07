@@ -87,6 +87,7 @@ export default {
         fieldMeta = salesforceMappingSettings.getMetaData(params);
         break;
       case adaptorTypeMap.AS2Import:
+      case adaptorTypeMap.VANImport:
       case adaptorTypeMap.S3Import:
       case adaptorTypeMap.WrapperImport:
       case adaptorTypeMap.FTPImport:
