@@ -39,6 +39,7 @@ const useStyles = makeStyles(theme => ({
   },
   saveBtnProfile: {
     marginLeft: theme.spacing(2),
+    marginBottom: theme.spacing(2),
   },
   profilePanelHeader: {
     padding: theme.spacing(2),
@@ -138,7 +139,7 @@ export default function ProfilePanel() {
           },
           {
             label: 'Orion',
-            value: 'sandbox',
+            value: 'orion',
           },
         ],
       },
