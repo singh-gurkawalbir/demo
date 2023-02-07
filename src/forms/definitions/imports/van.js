@@ -80,7 +80,33 @@ export default {
     compressFiles: { formId: 'compressFiles' },
     'as2.maxRetries': { fieldId: 'as2.maxRetries' },
     'file.lookups': { fieldId: 'file.lookups', visible: false },
-    'file.type': { fieldId: 'file.type' },
+    'file.type': {
+      fieldId: 'file.type',
+      isLoggable: true,
+      type: 'filetypeselect',
+      label: 'File type',
+      required: true,
+      defaultValue: r => r && r.file && r.file.type,
+      options: [
+        {
+          items: [
+            { label: 'EDI X12', value: 'filedefinition' },
+            { label: 'EDIFACT', value: 'delimited/edifact' },
+          ],
+        },
+      ],
+      visibleWhenAll: [
+        {
+          field: 'outputMode',
+          is: ['records'],
+        },
+      ],
+      userDefinitionId: r =>
+        r &&
+        r.file &&
+        r.file.fileDefinition &&
+        r.file.fileDefinition._fileDefinitionId,
+    },
     'edifact.format': { fieldId: 'edifact.format' },
     'fixed.format': { fieldId: 'fixed.format' },
     'edix12.format': { fieldId: 'edix12.format' },

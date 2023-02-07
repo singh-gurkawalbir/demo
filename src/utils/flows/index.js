@@ -296,7 +296,7 @@ export function isRealtimeExport(exp) {
   if (!exp) return false;
 
   // AS2 and VAN Exports are real-time.
-  if (exp.adaptorType === ('AS2Export' || 'VANExport')) return true;
+  if (exp.adaptorType === 'AS2Export' || exp.adaptorType === 'VANExport') return true;
 
   // webhook and distributed are realtime.
   if (exp.type && ['distributed', 'webhook'].includes(exp.type)) {

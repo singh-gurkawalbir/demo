@@ -160,6 +160,7 @@ export default function SignIn({ dialogOpen, className, queryParam }) {
   }, [dispatch]);
 
   const isAuthenticating = useSelector(state => selectors.isAuthenticating(state));
+
   const isMFAAuthRequired = useSelector(state => selectors.isMFAAuthRequired(state));
 
   const error = useSelector(state => {

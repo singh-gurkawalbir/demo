@@ -24,8 +24,6 @@ export default {
       case 'FTPImport':
       case 'S3Import':
       case 'AS2Import':
-        lookup = resourceObj.file?.lookups;
-        break;
       case 'VANImport':
         lookup = resourceObj.file?.lookups;
         break;
