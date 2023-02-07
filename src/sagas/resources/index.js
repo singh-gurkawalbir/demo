@@ -5,7 +5,7 @@ import actions from '../../actions';
 import actionTypes from '../../actions/types';
 import { apiCallWithRetry, apiCallWithPaging } from '../index';
 import { selectors } from '../../reducers';
-import { isNewId } from '../../utils/resource';
+import { isNewId, UI_FIELDS, RESOURCES_WITH_UI_FIELDS } from '../../utils/resource';
 import metadataSagas from './meta';
 import getRequestOptions, { pingConnectionParentContext } from '../../utils/requestOptions';
 import { defaultPatchSetConverter } from '../../forms/formFactory/utils';
@@ -774,6 +774,12 @@ export function* getResourceCollection({ resourceType, refresh, integrationId })
     if (!integration && integrationId !== STANDALONE_INTEGRATION.id) {
       yield call(getResource, {resourceType: 'integrations', id: integrationId});
     }
+  }
+
+  if (RESOURCES_WITH_UI_FIELDS.includes(resourceType)) {
+    const excludePath = `?exclude=${UI_FIELDS.join(',')}`;
+
+    path = `${path}${excludePath}`;
   }
   if (resourceType === 'tree/metadata') {
     path += '?additionalFields=_connectorId,_parentId,sandbox,settings,settingsForm,preSave,changeEditionSteps,flowGroupings,_registeredConnectionIds,uninstallSteps';

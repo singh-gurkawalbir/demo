@@ -57,6 +57,7 @@ import retriesSagas from './errorManagement/retries';
 import accountSettings from './accountSettings';
 import { customSettingsSagas } from './customSettings';
 import lifecycleManagementSagas from './lifecycleManagement';
+import uiFieldsSagas from './uiFields';
 import exportDataSagas from './exportData';
 import {logsSagas} from './logs';
 import ssoSagas from './sso';
@@ -236,6 +237,7 @@ export function* allSagas() {
     ...aliasSagas,
     ...lifecycleManagementSagas,
     ...flowbuildersagas,
+    ...uiFieldsSagas,
   ]);
 }
 

@@ -54,7 +54,6 @@ export default function PageBar() {
     hasIntegration,
     supportsChild,
     tag,
-    isIAV2,
   } = useSelector(state => {
     const integration = selectors.resource(
       state,
@@ -76,15 +75,16 @@ export default function PageBar() {
         uninstallSteps: integration.uninstallSteps,
         supportsChild: integration.initChild?.function,
         tag: integration.tag,
-        isIAV2: integration._sourceId || integration._parentId,
       };
     }
 
     return emptyObj;
   }, shallowEqual);
 
+  const isIntegrationAppV2 = useSelector(state => selectors.isIntegrationAppVersion2(state, integrationId, true));
+
   const children = useSelectorMemo(selectors.mkIntegrationChildren, integrationId);
-  const resourcesToLoad = isIntegrationApp && isIAV2 ? 'tree/metadata' : emptyList;
+  const resourcesToLoad = isIntegrationAppV2 ? 'tree/metadata' : emptyList;
 
   const integrations = useSelectorMemo(
     selectors.makeResourceListSelector,

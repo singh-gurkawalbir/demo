@@ -44,6 +44,7 @@ import lifeCycleManagement, {selectors as fromLifeCycleManagement} from './lifeC
 import loadResources, { selectors as fromLoadResources } from './loadResources';
 import aliases, {selectors as fromAliases} from './aliases';
 import flowbuilder, { selectors as fromFlowbuilder } from './flowbuilder';
+import uiFields, { selectors as fromUIFields } from './uiFields';
 import { genSelectors } from '../util';
 
 export default combineReducers({
@@ -92,6 +93,7 @@ export default combineReducers({
   loadResources,
   aliases,
   flowbuilder,
+  uiFields,
 });
 
 // #region PUBLIC SELECTORS
@@ -142,6 +144,7 @@ const subSelectors = {
   loadResources: fromLoadResources,
   aliases: fromAliases,
   flowbuilder: fromFlowbuilder,
+  uiFields: fromUIFields,
 };
 
 genSelectors(selectors, subSelectors);
