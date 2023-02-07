@@ -1,4 +1,4 @@
-export const FB_SOURCE_COLUMN_WIDTH = 450;
+export const FB_SOURCE_COLUMN_WIDTH = 250;
 export const FLOW_SAVING_STATUS = 'saving';
 export const FLOW_SAVE_ASYNC_KEY = 'flow_save_async_key';
 export const RouterPathRegex = /\/routers\/(-?\d+)/;

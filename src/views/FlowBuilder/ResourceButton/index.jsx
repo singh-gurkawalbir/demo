@@ -23,12 +23,11 @@ const blockMap = {
 };
 export const resourceButtonStyles = makeStyles(theme => ({
   resourceButton: {
-    fontSize: 16,
-    fontFamily: 'source sans pro',
-    marginRight: theme.spacing(1),
+    marginRight: 0,
+    padding: 0,
+    minWidth: 'auto',
     '& >* svg': {
-      marginBottom: 5,
-      fontSize: `${theme.spacing(6)}px !important`,
+      fontSize: `${theme.spacing(3)}px !important`,
     },
     '&:hover': {
       color: theme.palette.secondary.main,
@@ -36,22 +35,39 @@ export const resourceButtonStyles = makeStyles(theme => ({
         color: theme.palette.primary.main,
       },
     },
+    '& .MuiButton-startIcon': {
+      marginBottom: theme.spacing(-1),
+    },
   },
 }));
 
 export default function ResourceButton({ onClick, variant, disabled}) {
   const classes = resourceButtonStyles();
   const block = blockMap[variant];
+  const label = ['newPG', 'newPP', 'newImport'].includes(variant) && block.label;
 
   return (
-    <TextButton
-      data-test={block.label}
-      onClick={onClick}
-      className={classes.resourceButton}
-      vertical
-      disabled={disabled}
-      startIcon={<block.Icon />}>
-      {block.label}
-    </TextButton>
+    label ? (
+      <TextButton
+        data-test={block.label}
+        onClick={onClick}
+        className={classes.resourceButton}
+        vertical
+        disabled={disabled}
+        startIcon={<block.Icon />}>
+        {block.label}
+      </TextButton>
+    )
+
+      : (
+        <TextButton
+          data-test={block.label}
+          onClick={onClick}
+          className={classes.resourceButton}
+          vertical
+          disabled={disabled}
+          startIcon={<block.Icon />} />
+      )
+
   );
 }

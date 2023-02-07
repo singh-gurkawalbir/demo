@@ -12,12 +12,12 @@ export const handleOffset = 4;
 
 export const nodeSize = {
   pp: {
-    width: 275,
-    height: 295,
+    width: 75,
+    height: 95,
   },
   pg: {
-    width: 275,
-    height: 295,
+    width: 75,
+    height: 95,
   },
   router: {
     width: 34,
@@ -43,8 +43,8 @@ const options = {
   // ranker: 'network-simplex', // default
   ranker: 'tight-tree',
   // ranker: 'longest-path', // seems worst
-  ranksep: 200,
-  nodesep: 50,
+  ranksep: 95,
+  nodesep: 30,
   marginx: 50,
   marginy: 50,
 };
@@ -122,8 +122,8 @@ export function layoutElements(elements = [], flow) {
       nodes.push({
         ...el,
         position: {
-          x: node.x - size.width / 2 - offsetX,
-          y: node.y - size.height / 2 - offsetY,
+          x: node.x,
+          y: node.y,
         },
       });
     } else {

@@ -16,25 +16,26 @@ import messageStore from '../../../../utils/messageStore';
 
 const useStyles = makeStyles(theme => ({
   root: {
-    width: 250,
     cursor: 'default',
   },
   contentContainer: {
     display: 'flex',
     alignItems: 'center',
+    position: 'relative',
+    backgroundColor: theme.palette.background.paper,
+    padding: theme.spacing(2),
+    transition: 'ease all 0.3s',
+    boxShadow: '0 0 0 rgba(0,0,0,0)',
+    borderRadius: 6,
+    '&:hover': {
+      boxShadow: '0 3px 10px rgba(0,0,0,0.3)',
+    },
   },
   branchContainer: {
-    padding: theme.spacing(4, 2),
-    height: 150,
-    marginBottom: -90,
-    borderRadius: theme.spacing(2.5, 2.5, 0, 0),
-    overflow: 'hidden',
+    marginTop: theme.spacing(0.5),
     '&:hover': {
       // backgroundColor: theme.palette.background.paper2,
       backgroundColor: theme.palette.background.default,
-      '& > span': {
-        display: 'block !important',
-      },
     },
   },
   firstBranchStep: {
@@ -43,9 +44,9 @@ const useStyles = makeStyles(theme => ({
     },
   },
   branchName: {
-    display: 'none',
     textTransform: 'none',
     color: theme.palette.text.secondary,
+    whiteSpace: 'nowrap',
   },
 }));
 
@@ -98,14 +99,6 @@ export default function PageProcessorNode({ data = {} }) {
 
       <div className={classes.contentContainer} >
         <div>
-          <div className={clsx(classes.branchContainer, {[classes.firstBranchStep]: isFirst})}>
-            {!isVirtual && (
-              <Typography variant="overline" className={classes.branchName}>
-                {branch.name}
-              </Typography>
-            )}
-          </div>
-
           <PageProcessor
             {...data.resource}
             onDelete={showDelete && handleDelete}
@@ -123,6 +116,14 @@ export default function PageProcessorNode({ data = {} }) {
             branchIndex={branchIndex}
             pageProcessorIndex={pageProcessorIndex}
           />
+          <div className={clsx(classes.branchContainer, {[classes.firstBranchStep]: isFirst})}>
+            {!isVirtual && (
+            <Typography variant="overline" className={classes.branchName}>
+              {branch.name}
+            </Typography>
+            )}
+          </div>
+
         </div>
       </div>
 

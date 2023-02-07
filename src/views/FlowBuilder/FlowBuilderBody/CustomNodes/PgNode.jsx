@@ -12,10 +12,9 @@ import { useHandleMovePG } from '../../hooks';
 
 const useStyles = makeStyles(theme => ({
   pgContainer: {
-    paddingTop: 60,
+    paddingTop: 0,
   },
   root: {
-    width: 250,
     margin: theme.spacing(0, -0.5),
     cursor: 'default',
   },
