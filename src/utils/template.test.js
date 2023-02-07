@@ -534,6 +534,7 @@ describe('template util function test', () => {
             imageURL: 'images/company-logos/netsuite.png',
             installURL: '/app/bundler/bundledetails.nl?sourcecompanyid=TSTDRV916910&domain=PRODUCTION&config=F&id=20038',
             name: 'Integrator Bundle 1',
+            sourceConnId: '569f5e778a34de4718a56177',
             options: {},
             type: 'installPackage',
           },
@@ -748,6 +749,7 @@ describe('template util function test', () => {
         _stackId: null,
       };
       const received = templateUtil.getInstallSteps(previewData);
+
       const expectedResult = {
         connectionMap: {
           '5f90501a6eb5c646194a1d09': {
@@ -790,88 +792,82 @@ describe('template util function test', () => {
         },
         installSteps: [
           {
-            _connectionId: '5f90501a6eb5c646194a1d09',
-            completed: false,
-            description: 'Please configure Salesforce connection',
             name: 'Salesforce Connection 1',
-            options: {
-              connectionType: 'salesforce',
-            },
-            type: 'Connection',
-          },
-          {
-            _connectionId: '610235735fad2b614b8a549e',
-            completed: false,
-            description: 'Please configure NetSuite connection',
-            name: 'Netsuite Connection 1',
-            options: {
-              connectionType: 'netsuite',
-            },
-            type: 'Connection',
-          },
-          {
-            _connectionId: '6102379089efa90341ceb6ed',
-            completed: false,
-            description: 'Please configure NetSuite connection',
-            name: 'Netsuite Connection 2',
-            options: {
-              connectionType: 'netsuite',
-            },
-            type: 'Connection',
-          },
-          {
-            _connectionId: '6108d67a5891380354d1dce0',
-            completed: false,
+            _connectionId: '5f90501a6eb5c646194a1d09',
             description: 'Please configure Salesforce connection',
-            name: 'Salesforce Connection 2',
-            options: {
-              connectionType: 'salesforce',
-            },
             type: 'Connection',
+            completed: false,
+            options: {connectionType: 'salesforce'},
+          },
+          {
+            name: 'Netsuite Connection 1',
+            _connectionId: '610235735fad2b614b8a549e',
+            description: 'Please configure NetSuite connection',
+            type: 'Connection',
+            completed: false,
+            options: {connectionType: 'netsuite'},
+          },
+          {
+            name: 'Netsuite Connection 2',
+            _connectionId: '6102379089efa90341ceb6ed',
+            description: 'Please configure NetSuite connection',
+            type: 'Connection',
+            completed: false,
+            options: {connectionType: 'netsuite'},
+          },
+          {
+            name: 'Salesforce Connection 2',
+            _connectionId: '6108d67a5891380354d1dce0',
+            description: 'Please configure Salesforce connection',
+            type: 'Connection',
+            completed: false,
+            options: {connectionType: 'salesforce'},
           },
           {
             key: 'NetSuite account 1',
-            application: 'netsuite',
+            installURL: '/app/bundler/bundledetails.nl?sourcecompanyid=TSTDRV916910&domain=PRODUCTION&config=F&id=20038',
+            imageURL: 'images/company-logos/netsuite.png',
             completed: false,
             description: 'Please install Integrator bundle in Netsuite Connection 1 account',
-            imageURL: 'images/company-logos/netsuite.png',
-            installURL: '/app/bundler/bundledetails.nl?sourcecompanyid=TSTDRV916910&domain=PRODUCTION&config=F&id=20038',
             name: 'Integrator Bundle 1',
-            options: {},
+            application: 'netsuite',
             type: 'installPackage',
+            sourceConnId: '610235735fad2b614b8a549e',
+            options: {},
           },
           {
             key: 'NetSuite account 2',
-            application: 'netsuite',
+            installURL: '/app/bundler/bundledetails.nl?sourcecompanyid=TSTDRV916910&domain=PRODUCTION&config=F&id=20038',
+            imageURL: 'images/company-logos/netsuite.png',
             completed: false,
             description: 'Please install Integrator bundle in Netsuite Connection 2 account',
-            imageURL: 'images/company-logos/netsuite.png',
-            installURL: '/app/bundler/bundledetails.nl?sourcecompanyid=TSTDRV916910&domain=PRODUCTION&config=F&id=20038',
             name: 'Integrator Bundle 2',
-            options: {},
+            application: 'netsuite',
             type: 'installPackage',
+            sourceConnId: '6102379089efa90341ceb6ed',
+            options: {},
           },
           {
             key: 'Salesforce account 1',
-            application: 'salesforce',
-            completed: false,
-            description: 'Please install Integrator bundle in Salesforce Connection 1 account',
             imageURL: 'images/company-logos/salesforce.png',
             installURL: 'https://login.salesforce.com/packaging/installPackage.apexp?p0=04t3m000000Y9kv',
+            completed: false,
+            application: 'salesforce',
+            description: 'Please install Integrator bundle in Salesforce Connection 1 account',
             name: 'Integrator Adaptor Package',
-            options: {},
             type: 'installPackage',
+            options: {},
           },
           {
             key: 'Salesforce account 2',
-            application: 'salesforce',
-            completed: false,
-            description: 'Please install Integrator bundle in Salesforce Connection 2 account',
             imageURL: 'images/company-logos/salesforce.png',
             installURL: 'https://login.salesforce.com/packaging/installPackage.apexp?p0=04t3m000000Y9kv',
+            completed: false,
+            application: 'salesforce',
+            description: 'Please install Integrator bundle in Salesforce Connection 2 account',
             name: 'Integrator Adaptor Package',
-            options: {},
             type: 'installPackage',
+            options: {},
           },
         ],
       };
@@ -1053,6 +1049,7 @@ describe('template util function test', () => {
         _stackId: null,
       };
       const received = templateUtil.getInstallSteps(previewData);
+
       const expectedResult = {
         connectionMap: {
           '5f90501a6eb5c646194a1d09': {
@@ -1100,9 +1097,7 @@ describe('template util function test', () => {
             description: 'Please configure Salesforce connection',
             type: 'Connection',
             completed: false,
-            options: {
-              connectionType: 'salesforce',
-            },
+            options: {connectionType: 'salesforce'},
           },
           {
             name: 'Netsuite Connection 1',
@@ -1110,9 +1105,7 @@ describe('template util function test', () => {
             description: 'Please configure NetSuite connection',
             type: 'Connection',
             completed: false,
-            options: {
-              connectionType: 'netsuite',
-            },
+            options: {connectionType: 'netsuite'},
           },
           {
             name: 'Netsuite Connection 2',
@@ -1120,9 +1113,7 @@ describe('template util function test', () => {
             description: 'Please configure NetSuite connection',
             type: 'Connection',
             completed: false,
-            options: {
-              connectionType: 'netsuite',
-            },
+            options: {connectionType: 'netsuite'},
           },
           {
             name: 'Salesforce Connection 2',
@@ -1130,9 +1121,7 @@ describe('template util function test', () => {
             description: 'Please configure Salesforce connection',
             type: 'Connection',
             completed: false,
-            options: {
-              connectionType: 'salesforce',
-            },
+            options: {connectionType: 'salesforce'},
           },
           {
             key: 'NetSuite account 1',
@@ -1143,6 +1132,7 @@ describe('template util function test', () => {
             name: 'Integrator Bundle 1',
             application: 'netsuite',
             type: 'installPackage',
+            sourceConnId: '6102379089efa90341ceb6ed',
             options: {},
           },
           {
@@ -1154,6 +1144,7 @@ describe('template util function test', () => {
             name: 'Integrator SuiteApp 1',
             application: 'netsuite',
             type: 'installPackage',
+            sourceConnId: '610235735fad2b614b8a549e',
             options: {},
           },
           {
@@ -1260,6 +1251,7 @@ describe('template util function test', () => {
               lastModified: '2021-08-03T06:14:29.972Z',
               name: 'Netsuite Real Time Export 2',
               _connectionId: '610235735fad2b614b8a549e',
+              type: 'distributed',
               netsuite: {
                 type: 'distributed',
                 distributed: {
@@ -1324,6 +1316,7 @@ describe('template util function test', () => {
         _stackId: null,
       };
       const received = templateUtil.getInstallSteps(previewData);
+
       const expectedResult = {
         connectionMap: {
           '5f90501a6eb5c646194a1d09': {
@@ -1371,9 +1364,7 @@ describe('template util function test', () => {
             description: 'Please configure Salesforce connection',
             type: 'Connection',
             completed: false,
-            options: {
-              connectionType: 'salesforce',
-            },
+            options: {connectionType: 'salesforce'},
           },
           {
             name: 'Netsuite Connection 1',
@@ -1381,9 +1372,7 @@ describe('template util function test', () => {
             description: 'Please configure NetSuite connection',
             type: 'Connection',
             completed: false,
-            options: {
-              connectionType: 'netsuite',
-            },
+            options: {connectionType: 'netsuite'},
           },
           {
             name: 'Netsuite Connection 2',
@@ -1391,9 +1380,7 @@ describe('template util function test', () => {
             description: 'Please configure NetSuite connection',
             type: 'Connection',
             completed: false,
-            options: {
-              connectionType: 'netsuite',
-            },
+            options: {connectionType: 'netsuite'},
           },
           {
             name: 'Salesforce Connection 2',
@@ -1401,20 +1388,7 @@ describe('template util function test', () => {
             description: 'Please configure Salesforce connection',
             type: 'Connection',
             completed: false,
-            options: {
-              connectionType: 'salesforce',
-            },
-          },
-          {
-            key: 'NetSuite account 1',
-            installURL: '/app/bundler/bundledetails.nl?sourcecompanyid=TSTDRV916910&domain=PRODUCTION&config=F&id=20038',
-            imageURL: 'images/company-logos/netsuite.png',
-            completed: false,
-            description: 'Please install Integrator bundle in NetSuite account',
-            name: 'Integrator Bundle 1',
-            application: 'netsuite',
-            type: 'installPackage',
-            options: {},
+            options: {connectionType: 'salesforce'},
           },
           {
             key: 'NetSuite account 1',
@@ -1425,6 +1399,7 @@ describe('template util function test', () => {
             name: 'Integrator SuiteApp 1',
             application: 'netsuite',
             type: 'installPackage',
+            sourceConnId: '610235735fad2b614b8a549e',
             options: {},
           },
           {
@@ -1584,6 +1559,7 @@ describe('template util function test', () => {
         _stackId: null,
       };
       const received = templateUtil.getInstallSteps(previewData);
+
       const expectedResult = {
         connectionMap: {
           '5f90501a6eb5c646194a1d09': {
@@ -1631,9 +1607,7 @@ describe('template util function test', () => {
             description: 'Please configure Salesforce connection',
             type: 'Connection',
             completed: false,
-            options: {
-              connectionType: 'salesforce',
-            },
+            options: {connectionType: 'salesforce'},
           },
           {
             name: 'Netsuite Connection 1',
@@ -1641,9 +1615,7 @@ describe('template util function test', () => {
             description: 'Please configure NetSuite connection',
             type: 'Connection',
             completed: false,
-            options: {
-              connectionType: 'netsuite',
-            },
+            options: {connectionType: 'netsuite'},
           },
           {
             name: 'Netsuite Connection 2',
@@ -1651,9 +1623,7 @@ describe('template util function test', () => {
             description: 'Please configure NetSuite connection',
             type: 'Connection',
             completed: false,
-            options: {
-              connectionType: 'netsuite',
-            },
+            options: {connectionType: 'netsuite'},
           },
           {
             name: 'Salesforce Connection 2',
@@ -1661,20 +1631,7 @@ describe('template util function test', () => {
             description: 'Please configure Salesforce connection',
             type: 'Connection',
             completed: false,
-            options: {
-              connectionType: 'salesforce',
-            },
-          },
-          {
-            key: 'NetSuite account 1',
-            installURL: '/app/bundler/bundledetails.nl?sourcecompanyid=TSTDRV916910&domain=PRODUCTION&config=F&id=20038',
-            imageURL: 'images/company-logos/netsuite.png',
-            completed: false,
-            description: 'Please install Integrator bundle in NetSuite account',
-            name: 'Integrator Bundle 1',
-            application: 'netsuite',
-            type: 'installPackage',
-            options: {},
+            options: {connectionType: 'salesforce'},
           },
           {
             key: 'NetSuite account 1',
@@ -1685,6 +1642,7 @@ describe('template util function test', () => {
             name: 'Integrator SuiteApp 1',
             application: 'netsuite',
             type: 'installPackage',
+            sourceConnId: '610235735fad2b614b8a549e',
             options: {},
           },
           {

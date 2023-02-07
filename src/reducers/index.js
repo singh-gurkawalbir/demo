@@ -2178,12 +2178,13 @@ selectors.makeAllResourceStatusSelector = () =>
 selectors.resourceDataModified = (
   resourceIdState,
   stagedIdState,
+  uiFields,
   resourceType,
   id
 ) => {
   if (!resourceType || !id) return emptyObject;
 
-  const master = resourceIdState;
+  const master = resourceIdState ? { ...resourceIdState, ...uiFields } : resourceIdState;
   const { patch, conflict } = stagedIdState || {};
 
   if (!master && !patch) return { merged: emptyObject };
@@ -2255,10 +2256,11 @@ selectors.makeResourceDataSelector = () => {
         state,
         id,
       ),
+    (state, resourceType, id) => selectors.resourceUIFields(state, id),
     (_1, resourceType) => resourceType,
     (_1, _2, id) => id,
 
-    (resourceIdState, stagedIdState, resourceType, id) => selectors.resourceDataModified(resourceIdState, stagedIdState, resourceType, id)
+    (resourceIdState, stagedIdState, uiFields, resourceType, id) => selectors.resourceDataModified(resourceIdState, stagedIdState, uiFields, resourceType, id)
   );
 };
 
@@ -2352,6 +2354,13 @@ selectors.mkFlowResources = () => createSelector(
   (_, flowId) => flowId,
   (flows, exports, imports, flowId) => getFlowResources(flows, exports, imports, flowId)
 );
+
+selectors.flowResourceIds = (state, flowId) => {
+  const flowResources = selectors.mkFlowResources()(state, flowId);
+
+  // extracts import's and export's id from the flowResources
+  return flowResources.filter(r => !!r.type).map(r => r._id);
+};
 
 selectors.mkFlowStepsErrorInfo = () => {
   const flowResources = selectors.mkFlowResources();

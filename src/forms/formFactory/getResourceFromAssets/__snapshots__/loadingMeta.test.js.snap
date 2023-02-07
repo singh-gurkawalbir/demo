@@ -4740,7 +4740,7 @@ Object {
                 "value": "suiteapp1.0",
               },
               Object {
-                "description": "To be deprecated.<a target=\\"_blank\\" rel=\\"noreferrer\\" href=https://docs.celigo.com/hc/en-us/articles/360050643132><u>Learn more.</u></a>",
+                "description": "To be deprecated. <a target=\\"_blank\\" rel=\\"noreferrer\\" href=https://docs.celigo.com/hc/en-us/articles/360050643132>Learn more.</a>",
                 "isWarningMessage": true,
                 "label": "SuiteBundle SuiteScript 1.0",
                 "value": "suitebundle",
@@ -4905,7 +4905,7 @@ Object {
                 "value": "suiteapp1.0",
               },
               Object {
-                "description": "To be deprecated.<a target=\\"_blank\\" rel=\\"noreferrer\\" href=https://docs.celigo.com/hc/en-us/articles/360050643132><u>Learn more.</u></a>",
+                "description": "To be deprecated. <a target=\\"_blank\\" rel=\\"noreferrer\\" href=https://docs.celigo.com/hc/en-us/articles/360050643132>Learn more.</a>",
                 "isWarningMessage": true,
                 "label": "SuiteBundle SuiteScript 1.0",
                 "value": "suitebundle",

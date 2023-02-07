@@ -21,8 +21,8 @@ export default function DynaExportSelect(props) {
   );
   const dispatch = useDispatch();
   const onFetch = useCallback(() => {
-    dispatch(actions.exportData.request({kind, identifier: key, resource: exportResource, resourceContext: resContext}));
-  }, [dispatch, kind, key, exportResource, resContext]);
+    if (!devPlayGroundSpecificField) { dispatch(actions.exportData.request({kind, identifier: key, resource: exportResource, resourceContext: resContext})); }
+  }, [devPlayGroundSpecificField, dispatch, kind, key, exportResource, resContext]);
 
   if (!kind || !key || !exportResource) {
     return (

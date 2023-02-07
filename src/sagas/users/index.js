@@ -262,7 +262,7 @@ export function* leaveAccount({ id }) {
   const userPreferences = yield select(selectors.userPreferences);
 
   if (userPreferences.defaultAShareId === id) {
-    yield put(actions.auth.clearStore());
+    yield put(actions.auth.clearStore({ authenticated: true }));
     yield put(actions.auth.initSession());
   } else {
     yield put(actions.resource.requestCollection('shared/ashares'));
@@ -430,7 +430,7 @@ export function* acceptSharedInvite({ resourceType, id, isAccountTransfer }) {
     resourceType === 'account' &&
     userPreferences.defaultAShareId === ACCOUNT_IDS.OWN
   ) {
-    yield put(actions.auth.clearStore());
+    yield put(actions.auth.clearStore({ authenticated: true }));
     yield put(actions.auth.initSession());
   } else if (resourceType === 'transfer') {
     if (isAccountTransfer) {

@@ -5492,7 +5492,7 @@ describe('resource region selector testcases', () => {
     test('should return correct data if only resource is present', () => {
       const resource = { _id: 1, name: 'test X' };
 
-      expect(selectors.resourceDataModified(resource, null, 'exports', '1')).toEqual(
+      expect(selectors.resourceDataModified(resource, null, {}, 'exports', '1')).toEqual(
         {
           lastChange: undefined,
           master: { _id: 1, name: 'test X' },
@@ -5511,7 +5511,7 @@ describe('resource region selector testcases', () => {
         ],
       };
 
-      expect(selectors.resourceDataModified(null, stagedIdState, 'exports', 'new-0t575NHzJT')).toEqual(
+      expect(selectors.resourceDataModified(null, stagedIdState, {}, 'exports', 'new-0t575NHzJT')).toEqual(
         {
           lastChange: timestamp2,
           master: null,
@@ -5527,7 +5527,7 @@ describe('resource region selector testcases', () => {
         patch: [{ op: 'replace', path: '/name', value: 'patch X', timestamp}],
       };
 
-      expect(selectors.resourceDataModified(resource, stagedIdState, 'exports', '1')).toEqual(
+      expect(selectors.resourceDataModified(resource, stagedIdState, {}, 'exports', '1')).toEqual(
         {
           lastChange: timestamp,
           master: { _id: 1, name: 'test X' },

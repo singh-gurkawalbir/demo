@@ -122,6 +122,7 @@ export const AUTO_MAPPER_ASSISTANTS_SUPPORTING_RECORD_TYPE = Object.freeze(
     'jira',
     'quickbooks',
     'microsoftbusinesscentral',
+    'sapbydesign',
   ]
 );
 export function routeToRegExp(route = '') {
@@ -1196,7 +1197,13 @@ export function convertToExport({ assistantConfig, assistantData, headers = [] }
 
     if (queryPart) {
       [...queryStringObj.entries()].forEach(([key, value]) => {
-        queryObj.set(key, value);
+        const paramType = operationDetails.queryParameters.find(({id}) => id === key)?.fieldType;
+
+        if (paramType && (paramType === 'array' || paramType === 'multiselect')) {
+          queryObj.append(key, value);
+        } else {
+          queryObj.set(key, value);
+        }
       });
       relativeURI = `${pathPart}?${decodeURI(queryObj.toString())}`;
     } else { relativeURI += (relativeURI.includes('?') ? '&' : '?') + finalQueryString; }
@@ -2625,6 +2632,9 @@ export function isAcumaticaManufacturingConnection(connection) {
 }
 export function isMicrosoftBusinessCentralOdataConnection(connection) {
   return connection?.assistant === 'microsoftbusinesscentral' && connection?.http?.unencrypted?.apiType === 'odata';
+}
+export function isSapByDesignSoapConnection(connection) {
+  return connection?.assistant === 'sapbydesign' && connection?.http?.unencrypted?.apiType === 'soap';
 }
 
 export function shouldLoadAssistantFormForImports(resource, connection) {
