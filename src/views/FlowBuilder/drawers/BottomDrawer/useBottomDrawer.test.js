@@ -3,7 +3,7 @@ import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { getCreatedStore } from '../../../../store';
 import { runServer } from '../../../../test/api/server';
-import { renderWithProviders } from '../../../../test/test-utils';
+import { mutateStore, renderWithProviders } from '../../../../test/test-utils';
 import useBottomDrawer from './useBottomDrawer';
 
 async function initUseBottomDrawer(initialStore, renderFun) {
@@ -36,23 +36,25 @@ describe('test suite for useBottomDrawer hook', () => {
   test('should be able to change the height', async () => {
     const initialStore = getCreatedStore();
 
-    initialStore.getState().user = {
-      preferences: {
-        defaultAShareId: '123abc',
-        accounts: {
-          '123abc': {
-            fbBottomDrawerHeight: 443,
+    mutateStore(initialStore, draft => {
+      draft.user = {
+        preferences: {
+          defaultAShareId: '123abc',
+          accounts: {
+            '123abc': {
+              fbBottomDrawerHeight: 443,
+            },
           },
         },
-      },
-      org: {
-        accounts: [
-          {
-            _id: '123abc',
-          },
-        ],
-      },
-    };
+        org: {
+          accounts: [
+            {
+              _id: '123abc',
+            },
+          ],
+        },
+      };
+    });
 
     const { returnData, utils, store } = await initUseBottomDrawer(initialStore);
     const [height, setHeight] = returnData;
