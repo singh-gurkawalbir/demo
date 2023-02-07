@@ -177,8 +177,6 @@ export const SHOPIFY_SCOPES = [
   'read_shipping',
   'write_shipping',
   'read_analytics',
-  'read_checkouts',
-  'write_checkouts',
   'read_reports',
   'write_reports',
   'read_price_rules',
@@ -189,7 +187,6 @@ export const SHOPIFY_SCOPES = [
   'write_resource_feedbacks',
   'read_shopify_payments_payouts',
   'unauthenticated_read_product_listings',
-  'unauthenticated_write_checkouts',
   'unauthenticated_write_customers',
   'unauthenticated_read_content',
   'read_assigned_fulfillment_orders',
@@ -198,4 +195,5 @@ export const SHOPIFY_SCOPES = [
   'write_merchant_managed_fulfillment_orders',
   'read_third_party_fulfillment_orders',
   'write_third_party_fulfillment_orders',
+  'read_shopify_payments_disputes',
 ];
