@@ -212,6 +212,19 @@ export default {
         minHeight: appBarHeight,
       },
     },
+    MuiToggleButtonGroup: {
+      root: {
+        backgroundColor: colors.celigoNeutral3,
+      },
+    },
+    MuiToggleButton: {
+      label: {
+        color: colors.celigoNeutral8,
+        '& .MuiTypography-root': {
+          color: colors.celigoNeutral8,
+        },
+      },
+    },
     MuiList: {
       padding: {
         paddingTop: 0,
