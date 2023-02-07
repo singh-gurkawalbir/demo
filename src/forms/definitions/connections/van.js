@@ -53,7 +53,7 @@ export default {
       },
       {
         collapsed: false,
-        label: 'Application details',
+        label: 'Configure routing for shared connections',
         fields: [
           'van.contentBasedFlowRouter',
         ],
