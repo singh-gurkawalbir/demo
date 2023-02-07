@@ -220,7 +220,8 @@ export default function BranchFilterPanel({ editorId, position, type, rule, hand
       rule.$el
         .find('[name$=_filter]')
         .after(
-          '<img style="display:none;" class="settings-icon" src="https://d142hkd03ds8ug.cloudfront.net/images/icons/icon/gear.png">'
+          // eslint-disable-next-line no-undef
+          `<img style="display:none;" class="settings-icon" src="${CDN_BASE_URI}images/icons/icon/gear.png">`
         );
       rule.$el
         .find('.rule-filter-container img.settings-icon')
@@ -585,7 +586,8 @@ export default function BranchFilterPanel({ editorId, position, type, rule, hand
             rhsValue = rhsValue?.replaceAll('"', '&quot;');
           }
 
-          return `<input class="form-control" name="${name}" value="${rhsValue}"><img style="display:none;" class="settings-icon" src="https://d142hkd03ds8ug.cloudfront.net/images/icons/icon/gear.png">`;
+          // eslint-disable-next-line no-undef
+          return `<input class="form-control" name="${name}" value="${rhsValue}"><img style="display:none;" class="settings-icon" src="${CDN_BASE_URI}images/icons/icon/gear.png">`;
         },
         valueGetter(rule, isTouched) {
           const ruleId = getFilterRuleId(rule);
