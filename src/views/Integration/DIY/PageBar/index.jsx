@@ -11,7 +11,7 @@ import EditableText from '../../../../components/EditableText';
 import AddIcon from '../../../../components/icons/AddIcon';
 import ArrowDownIcon from '../../../../components/icons/ArrowDownIcon';
 import CopyIcon from '../../../../components/icons/CopyIcon';
-import TrashIcon from '../../../../components/icons/TrashIcon';
+import CloseIcon from '../../../../components/icons/CloseIcon';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import { selectors } from '../../../../reducers';
 import { getIntegrationAppUrlName } from '../../../../utils/integrationApps';
@@ -268,10 +268,10 @@ export default function PageBar() {
 
         {canDelete && hasIntegration && !isIntegrationApp && (
         <TextButton
-          startIcon={<TrashIcon />}
+          startIcon={<CloseIcon />}
           data-test="deleteIntegration"
           onClick={handleDelete}>
-          Delete integration
+          Uninstall
         </TextButton>
         )}
       </ActionGroup>
