@@ -45,7 +45,8 @@ export function* _getUIDataForResource({ resource, connection, flow, refresh }) 
         break;
       case 'FTPExport':
       case 'S3Export':
-      case 'AS2Export': {
+      case 'AS2Export':
+      case 'VANExport': {
         return yield call(requestFileAdaptorSampleData, { resource });
       }
 
