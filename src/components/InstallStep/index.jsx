@@ -242,6 +242,8 @@ export default function InstallationStep(props) {
     handleStepClick(step, connection, index);
   };
 
+  const isNsBundleOrSuiteAppStep = (step?.name?.startsWith('Integrator Bundle') || step?.name?.startsWith('Integrator SuiteApp'));
+
   return (
 
     <div className={classes.stepRow}>
@@ -275,7 +277,7 @@ export default function InstallationStep(props) {
             <ApplicationImg
               size="small"
               type={
-                step?.options?.connectionType?.toLowerCase() || (step?.name === 'workday' ? 'workday' : step?.sourceConnection?.http?.formType) || step?.sourceConnection?.type || ''
+                step?.options?.connectionType?.toLowerCase() || (step?.name === 'workday' ? 'workday' : step?.sourceConnection?.http?.formType) || step?.sourceConnection?.type || (isNsBundleOrSuiteAppStep ? 'netsuite' : '')
               }
               assistant={step?.sourceConnection?.assistant || step?.sourceConnection?.rdbms?.type || step?.sourceConnection?.http?._httpConnectorId}
             />
