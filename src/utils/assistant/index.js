@@ -122,6 +122,7 @@ export const AUTO_MAPPER_ASSISTANTS_SUPPORTING_RECORD_TYPE = Object.freeze(
     'jira',
     'quickbooks',
     'microsoftbusinesscentral',
+    'sapbydesign',
   ]
 );
 export function routeToRegExp(route = '') {
@@ -2625,6 +2626,9 @@ export function isAcumaticaManufacturingConnection(connection) {
 }
 export function isMicrosoftBusinessCentralOdataConnection(connection) {
   return connection?.assistant === 'microsoftbusinesscentral' && connection?.http?.unencrypted?.apiType === 'odata';
+}
+export function isSapByDesignSoapConnection(connection) {
+  return connection?.assistant === 'sapbydesign' && connection?.http?.unencrypted?.apiType === 'soap';
 }
 
 export function shouldLoadAssistantFormForImports(resource, connection) {
