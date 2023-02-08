@@ -15,14 +15,11 @@ import {message} from '../../utils/messageStore';
 import RawHtml from '../RawHtml';
 
 const useStyles = makeStyles(theme => ({
-  fixConnectionBtn: {
-    fontSize: 15,
-    lineHeight: '17px',
-    padding: 6,
-  },
   titleStatusPanel: {
-    color: theme.palette.secondary.main,
-    fontFamily: 'Roboto400',
+    marginTop: theme.spacing(0.5),
+  },
+  upgradeButton: {
+    margin: theme.spacing(2, 0),
   },
 }));
 
@@ -90,7 +87,7 @@ export default function ConnectionVanLicenseStatusPanel({ className, resourceTyp
         </NotificationToaster>
       ) : (
         <NotificationToaster variant="warning" size="large">
-          <Typography component="div" variant="h6" className={classes.titleStatusPanel}>
+          <Typography component="div" variant="body2" className={classes.titleStatusPanel}>
             <RawHtml html={message.SUBSCRIPTION.VAN_LICENSE_APPROVED} />
           </Typography>
         </NotificationToaster>

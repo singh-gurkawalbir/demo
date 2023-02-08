@@ -273,7 +273,7 @@ export default function InstallationStep(props) {
               src={getImageUrl(step.imageURL)}
             />
             )}
-            {(step.type === INSTALL_STEP_TYPES.CONNECTION || step?.sourceConnection) && (
+            {(step.type === INSTALL_STEP_TYPES.CONNECTION || step?.sourceConnection || isNsBundleOrSuiteAppStep) && (
             <ApplicationImg
               size="small"
               type={

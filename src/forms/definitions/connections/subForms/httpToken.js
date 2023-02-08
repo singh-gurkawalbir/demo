@@ -28,7 +28,7 @@ export default {
       label: 'Custom auth scheme',
       visibleWhenAll: [
         { field: 'http.auth.token.location', is: ['header'] },
-        { field: 'http.auth.token.scheme', is: ['Custom'] },
+        { field: 'http.auth.token.scheme', isNot: ['Bearer', 'MAC', ' '] },
       ],
       required: true,
       defaultValue: r => {
