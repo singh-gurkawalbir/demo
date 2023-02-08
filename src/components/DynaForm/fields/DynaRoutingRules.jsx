@@ -81,7 +81,7 @@ export default function DynaRoutingRules(props) {
         </div>
         <OutlinedButton
           data-test={id}
-          color="secondary"
+          color="primary"
           className={classes.dynaRoutingRulesBtn}
           onClick={handleEditorClick}
           disabled={resource.type === 'van' && isVanLicenseAbsent}
