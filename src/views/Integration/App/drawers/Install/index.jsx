@@ -24,7 +24,7 @@ import openExternalUrl from '../../../../../utils/window';
 import ResourceSetupDrawer from '../../../../../components/ResourceSetup/Drawer';
 import InstallationStep from '../../../../../components/InstallStep';
 import useConfirmDialog from '../../../../../components/ConfirmDialog';
-import { getIntegrationAppUrlName } from '../../../../../utils/integrationApps';
+import integrationAppsUtil, { getIntegrationAppUrlName } from '../../../../../utils/integrationApps';
 import jsonUtil from '../../../../../utils/json';
 import { INSTALL_STEP_TYPES, emptyObject,
 } from '../../../../../constants';
@@ -383,6 +383,8 @@ export default function ConnectorInstallation() {
       netsuitePackageType = 'suiteapp';
     }
 
+    const isManualVerification = integrationAppsUtil.getStepText(step, 'install') === 'Verify now';
+
     if (completed) {
       return false;
     }
@@ -475,7 +477,8 @@ export default function ConnectorInstallation() {
               step._connId,
               installerFunction,
               isFrameWork2,
-              netsuitePackageType
+              netsuitePackageType,
+              isManualVerification                               // true here sets the isManualVerification flag to true which means the user has triggered the verification
             )
           );
         } else if (isFrameWork2) {

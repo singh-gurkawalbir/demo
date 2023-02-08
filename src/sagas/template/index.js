@@ -102,6 +102,7 @@ export function* verifyBundleOrPackageInstall({
   connection,
   templateId,
   variant,
+  isManualVerification,
 }) {
   const path = variant ? `/connections/${connection._id}/distributed?type=${variant}` : `/connections/${connection._id}/distributed`;
   let response;
@@ -133,7 +134,7 @@ export function* verifyBundleOrPackageInstall({
     if (
       response &&
       !response.success &&
-      !response.bundleURL &&
+      isManualVerification &&
       (response.resBody || response.message)
     ) {
       yield put(

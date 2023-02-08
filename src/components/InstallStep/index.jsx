@@ -185,6 +185,7 @@ export default function InstallationStep(props) {
           connectionId: step.connectionId,
           revisionId,
           variant: netsuitePackageType,
+          isManualVerification: false,
         }));
 
         setVerified(true);
@@ -203,7 +204,8 @@ export default function InstallationStep(props) {
             step,
             connection,
             templateId,
-            netsuitePackageType
+            netsuitePackageType,
+            false           // false here indicates auto verification
           )
         );
         setVerified(true);
@@ -225,7 +227,8 @@ export default function InstallationStep(props) {
             step._connId,
             step.installerFunction,
             isFrameWork2,
-            netsuitePackageType
+            netsuitePackageType,
+            false           // false here indicates auto verification
           )
         );
         setVerified(true);
