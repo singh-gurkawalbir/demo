@@ -7,7 +7,7 @@ import userEvent from '@testing-library/user-event';
 import {MemoryRouter} from 'react-router-dom';
 import Suggestions from './Suggestions';
 import { getCreatedStore } from '../../../../store';
-import { renderWithProviders } from '../../../../test/test-utils';
+import { mutateStore, renderWithProviders } from '../../../../test/test-utils';
 
 const initialStore = getCreatedStore();
 
@@ -18,28 +18,30 @@ jest.mock('../../../../hooks/useEnableButtonOnTouchedForm', () => ({
 }));
 
 function initSuggestions(props = {}) {
-  initialStore.getState().data.resources = {
-    imports: [{
-      _id: '6a3c75dd5d3c125c88b5dd20',
-      _connectionId: '5q3c75dd5d3c125c88b5dd20',
-      name: 'import1',
-      adaptorType: 'HTTPImport',
-    }],
-    flows: [{
-      _id: '5b3c75dd5d3c125c88b5dd20',
-      name: 'flow name 1',
-      _connectionId: '5b3c75dd5d3c125c88b5dd31',
-    }],
-  };
-  initialStore.getState().session.flowData = {'5b3c75dd5d3c125c88b5dd20': {pageProcessorsMap: {'6a3c75dd5d3c125c88b5dd20': {processedFlowInput: {data:
-   {
-     record: {
-       id: 123,
-       name: 'Bob',
-       age: 33,
+  mutateStore(initialStore, draft => {
+    draft.data.resources = {
+      imports: [{
+        _id: '6a3c75dd5d3c125c88b5dd20',
+        _connectionId: '5q3c75dd5d3c125c88b5dd20',
+        name: 'import1',
+        adaptorType: 'HTTPImport',
+      }],
+      flows: [{
+        _id: '5b3c75dd5d3c125c88b5dd20',
+        name: 'flow name 1',
+        _connectionId: '5b3c75dd5d3c125c88b5dd31',
+      }],
+    };
+    draft.session.flowData = {'5b3c75dd5d3c125c88b5dd20': {pageProcessorsMap: {'6a3c75dd5d3c125c88b5dd20': {processedFlowInput: {data:
+     {
+       record: {
+         id: 123,
+         name: 'Bob',
+         age: 33,
+       },
      },
-   },
-  }}}}};
+    }}}}};
+  });
 
   return renderWithProviders(
     <MemoryRouter>

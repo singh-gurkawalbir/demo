@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { renderWithProviders, reduxStore } from '../../../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore } from '../../../../test/test-utils';
 import DynaQueryRadioGroup from './DynaQueryRadioGroup';
 
 const onFieldChange = jest.fn();
@@ -8,11 +8,13 @@ const onFieldChange = jest.fn();
 async function initDynaQueryRadioGroup(props, lastFieldUpdated = '') {
   const initialStore = reduxStore;
 
-  initialStore.getState().session.form = {
-    _formKey: {
-      lastFieldUpdated,
-    },
-  };
+  mutateStore(initialStore, draft => {
+    draft.session.form = {
+      _formKey: {
+        lastFieldUpdated,
+      },
+    };
+  });
 
   return renderWithProviders(<DynaQueryRadioGroup {...props} />, {initialStore});
 }

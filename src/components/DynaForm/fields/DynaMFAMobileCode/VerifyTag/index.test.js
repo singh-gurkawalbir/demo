@@ -3,20 +3,22 @@ import React from 'react';
 import { screen, waitFor} from '@testing-library/react';
 import * as reactRedux from 'react-redux';
 import actions from '../../../../../actions';
-import { renderWithProviders } from '../../../../../test/test-utils';
+import { mutateStore, renderWithProviders } from '../../../../../test/test-utils';
 import VerifyTag from '.';
 import { getCreatedStore } from '../../../../../store';
 
 const initialStore = getCreatedStore();
 
 function initVerifyTag(props = {}) {
-  initialStore.getState().session.mfa = {
-    codes: {
-      mobileCode: {
-        status: props.status,
+  mutateStore(initialStore, draft => {
+    draft.session.mfa = {
+      codes: {
+        mobileCode: {
+          status: props.status,
+        },
       },
-    },
-  };
+    };
+  });
 
   return renderWithProviders(<VerifyTag {...props} />, {initialStore});
 }
