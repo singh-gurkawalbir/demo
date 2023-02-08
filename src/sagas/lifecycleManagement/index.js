@@ -242,6 +242,7 @@ export function* verifyBundleOrPackageInstall({
   } else if (
     response &&
       !response.success &&
+      !response.bundleURL &&
       (response.resBody || response.message)
   ) {
     // TODO @Raghu: Why do we need this condition to be handled?

@@ -290,6 +290,7 @@ export function* verifyBundleOrPackageInstall({
   } else if (
     response &&
       !response.success &&
+      !response.bundleURL &&
       (response.resBody || response.message)
   ) {
     yield put(

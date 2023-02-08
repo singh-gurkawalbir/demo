@@ -133,6 +133,7 @@ export function* verifyBundleOrPackageInstall({
     if (
       response &&
       !response.success &&
+      !response.bundleURL &&
       (response.resBody || response.message)
     ) {
       yield put(
