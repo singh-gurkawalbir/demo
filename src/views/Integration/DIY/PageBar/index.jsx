@@ -83,7 +83,7 @@ export default function PageBar() {
 
   const isIntegrationAppV2 = useSelector(state => selectors.isIntegrationAppVersion2(state, integrationId, true));
 
-  const children = useSelectorMemo(selectors.mkIntegrationChildren, integrationId);
+  const children = useSelectorMemo(selectors.mkIntegrationTreeChildren, integrationId);
   const resourcesToLoad = isIntegrationAppV2 ? 'tree/metadata' : emptyList;
 
   const integrations = useSelectorMemo(

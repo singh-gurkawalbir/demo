@@ -1,19 +1,17 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { selectors } from '../../../../reducers';
-import LoadResources from '../../../../components/LoadResources';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 
 export const IntegrationAppCrumb = ({ integrationId }) => {
   const integrationAppName = useSelector(state =>
     selectors.resource(state, 'integrations', integrationId)?.name || 'Integration app'
   );
-  const isIntegrationAppV2 = useSelector(state => selectors.isIntegrationAppVersion2(state, integrationId, true));
 
   return (
-    <LoadResources integrationId={integrationId} resources={isIntegrationAppV2 ? 'integrations' : ''}>
+    <>
       {integrationAppName}
-    </LoadResources>
+    </>
   );
 };
 
@@ -34,8 +32,8 @@ export const ChildCrumb = ({ integrationId, childId }) => {
   }
 
   return (
-    <LoadResources integrationId={childId} resources={isIntegrationAppV2 ? 'integrations' : ''}>
+    <>
       {child ? child.label : childId}
-    </LoadResources>
+    </>
   );
 };
