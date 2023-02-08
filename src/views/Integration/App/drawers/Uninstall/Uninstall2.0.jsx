@@ -55,7 +55,7 @@ export default function Uninstaller2({ integration, integrationId }) {
   const history = useHistory();
   const match = useRouteMatch();
   const dispatch = useDispatch();
-  const {mode, name} = integration;
+  const {mode, name, _parentId } = integration;
   const { steps: uninstallSteps, isFetched, error, isComplete } = useSelector(state =>
     selectors.integrationUninstallSteps(state, { integrationId, isFrameWork2: true }), shallowEqual
   );
@@ -89,9 +89,10 @@ export default function Uninstaller2({ integration, integrationId }) {
           integrationId
         )
       );
+      dispatch(actions.resource.requestCollection('tree/metadata', undefined, undefined, _parentId || integrationId));
       history.replace(getRoutePath(HOME_PAGE_PATH));
     }
-  }, [dispatch, history, integrationId, isComplete]);
+  }, [_parentId, dispatch, history, integrationId, isComplete]);
 
   const handleStepClick = useCallback(step => {
     const { type, isTriggered, form, url, verifying } = step;
