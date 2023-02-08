@@ -255,7 +255,7 @@ export default function ConnectorInstallation() {
       dispatch(actions.resource.requestCollection('connections', undefined, undefined, integrationId));
       dispatch(actions.resource.requestCollection('asynchelpers', undefined, undefined, integrationId));
       dispatch(actions.resource.requestCollection('scripts'));
-      if (isFrameWork2) {
+      if (isFrameWork2 && initChild?.function) {
         dispatch(actions.resource.requestCollection('tree/metadata', undefined, undefined, integrationId));
       }
 
@@ -302,7 +302,9 @@ export default function ConnectorInstallation() {
     integrationChildAppName,
     initChild,
     parentId,
-    integrationInstallSteps]);
+    integrationInstallSteps,
+    isFrameWork2,
+  ]);
 
   if (!installSteps) {
     return <Typography className={classes.noIntegrationMsg}>No integration found</Typography>;
