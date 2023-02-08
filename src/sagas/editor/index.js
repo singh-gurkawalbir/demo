@@ -492,6 +492,7 @@ export function* requestEditorSampleData({
     parentId,
     mapper2RowKey,
     router,
+    integrationId,
   } = editor;
   // for some fields only v2 data is supported (not v1)
   const editorSupportsOnlyV2Data = yield select(selectors.editorSupportsOnlyV2Data, id);
@@ -614,7 +615,7 @@ export function* requestEditorSampleData({
     }
     const flow = yield select(selectors.resource, 'flows', flowId);
 
-    body.integrationId = flow?._integrationId;
+    body.integrationId = flow?._integrationId || integrationId;
 
     body.fieldPath = fieldId || filterPath;
 
