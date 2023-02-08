@@ -3,7 +3,6 @@ import { useSelector, useDispatch, shallowEqual } from 'react-redux';
 import MaterialUiSelect from '../DynaSelect';
 import { selectors } from '../../../../reducers/index';
 import actions from '../../../../actions';
-import { SCOPES } from '../../../../sagas/resourceForm';
 import { selectOptions } from './util';
 import useFormContext from '../../../Form/FormContext';
 import { emptyObject } from '../../../../constants';
@@ -245,12 +244,20 @@ function DynaAssistantOptions(props) {
           value: versions[0]._id,
         });
       }
+      if (assistantFieldType === 'operation' && versions?.length > 1) {
+        const versionOptionsForEndpoint = selectOptions({assistantFieldType: 'version', assistantData, formContext: {...formContext, operation: value}, resourceType});
+
+        patch.push({
+          op: 'replace',
+          path: '/assistantMetadata/version',
+          value: versionOptionsForEndpoint?.[0]?.value,
+        });
+      }
 
       dispatch(
         actions.resource.patchStaged(
           resourceContext.resourceId,
           patch,
-          SCOPES.VALUE
         )
       );
 

@@ -19,6 +19,7 @@ import { getIntegrationAppUrlName } from '../../../../../utils/integrationApps';
 import Loader from '../../../../../components/Loader';
 import Spinner from '../../../../../components/Spinner';
 import {HOME_PAGE_PATH} from '../../../../../constants';
+import messageStore, { message } from '../../../../../utils/messageStore';
 
 const useStyles = makeStyles(theme => ({
   installIntegrationWrapper: {
@@ -192,8 +193,8 @@ export default function Uninstaller1({ integration, integrationId, childId }) {
         <div className={classes.installIntegrationWrapperContent}>
           <Typography className={classes.message}>
             {childName
-              ? `Complete the below steps to uninstall your integration app child ${childName}`
-              : 'Complete the below steps to uninstall your integration app.'}
+              ? messageStore('INTEGRATION.UNINSTALL_APP_CHILD', {childName})
+              : message.INTEGRATION.UNINSTALL}
           </Typography>
 
           <div className={classes.installIntegrationSteps}>

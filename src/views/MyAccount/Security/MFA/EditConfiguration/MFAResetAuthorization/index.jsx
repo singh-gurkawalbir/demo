@@ -11,7 +11,7 @@ import useForm from '../../../../../../components/Form';
 import { TextButton } from '../../../../../../components/Buttons';
 import ActionGroup from '../../../../../../components/ActionGroup';
 import { MFA_RESET_ASYNC_KEY, FORM_SAVE_STATUS } from '../../../../../../constants';
-import messageStore from '../../../../../../utils/messageStore';
+import { message } from '../../../../../../utils/messageStore';
 import RawHtml from '../../../../../../components/RawHtml';
 
 const useStyles = makeStyles({
@@ -67,7 +67,7 @@ export default function ResetAuthorizationModal({ onClose }) {
   useEffect(() => {
     if (success) {
       enqueueSnackbar({
-        message: <RawHtml html={messageStore('MFA_RESET_SUCCESS')} />,
+        message: <RawHtml html={message.MFA.RESET_SUCCESS} />,
         variant: 'success',
       });
       onClose();
@@ -80,9 +80,8 @@ export default function ResetAuthorizationModal({ onClose }) {
 
   return (
     <ModalDialog show onClose={onClose} className={classes.authModalContainer}>
-      Re-authenticate your account
       <>
-        Enter your account password to confirm if you want to reset MFA.
+        {message.MFA.REAUTHENTICATE_ACCOUNT}
         <div className={classes.container}>
           <DynaForm formKey={formKey} />
         </div>

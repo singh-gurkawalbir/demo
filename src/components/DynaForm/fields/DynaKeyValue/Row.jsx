@@ -1,5 +1,5 @@
 import { makeStyles, TextField, MenuItem } from '@material-ui/core';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import clsx from 'clsx';
 import { isArray } from 'lodash';
 import TrashIcon from '../../../icons/TrashIcon';
@@ -11,6 +11,7 @@ import isLoggableAttr from '../../../../utils/isLoggableAttr';
 import CeligoSelect from '../../../CeligoSelect';
 import AfeIcon from '../../../icons/AfeIcon';
 import CloseIcon from '../../../icons/CloseIcon';
+import FieldHelp from '../../FieldHelp';
 
 const emptySet = {};
 
@@ -83,16 +84,20 @@ export default function KeyValueRow(props) {
       setShowGripper(true);
     }
   }, [enableSorting, isRowDragged]);
-  const closeComponent = isInlineClose ? (
+  const dataFields = useMemo(() => props?.paramMeta?.fields.reduce((dataMap, {id, description}) => ({...dataMap, [id]: description}), {}), [props?.paramMeta?.fields]);
+
+  const RemoveButton = ({icon}) => (
     <ActionButton
       disabled={disabled || (!(r[keyName] || r[valueName]))}
       id={`delete-${index}`}
       data-test={`delete-${index}`}
       tooltip="Delete"
       onClick={handleDelete(r.key)}>
-      <CloseIcon />
+      {icon}
     </ActionButton>
-  ) : undefined;
+  );
+
+  const closeComponent = isInlineClose ? (<RemoveButton icon={<CloseIcon />} />) : undefined;
 
   return (
     <div
@@ -101,9 +106,7 @@ export default function KeyValueRow(props) {
       onMouseEnter={handleOnMouseEnter}
       onMouseLeave={handleOnMouseLeave}
     >
-      {enableSorting && (
-        <SortableHandle isVisible={showGripper} />
-      )}
+      {enableSorting && (<SortableHandle isVisible={showGripper} />)}
       <div className={clsx(classes.rowContainer, rowComponentClasses.textFieldRowContainer, {[rowComponentClasses.rowContainerWrapper]: !suggestKeyConfig && !suggestValueConfig})}>
         {suggestKeyConfig && (
         <AutoSuggest
@@ -122,7 +125,7 @@ export default function KeyValueRow(props) {
           showAllSuggestions={suggestKeyConfig.showAllSuggestions}
           fullWidth
           isEndSearchIcon={isEndSearchIcon}
-          showInlineClose={!r.disableRowKey ? closeComponent : <></>}
+          showInlineClose={!r.disableRowKey ? closeComponent : <ActionButton><FieldHelp title={r.name} helpText={dataFields[r.name]} /></ActionButton>}
           />
 
         )}
@@ -203,16 +206,7 @@ export default function KeyValueRow(props) {
         </CeligoSelect>
         )}
 
-        {showDelete && (
-        <ActionButton
-          disabled={disabled || (!(r[keyName] || r[valueName]))}
-          id={`delete-${index}`}
-          data-test={`delete-${index}`}
-          tooltip="Delete"
-          onClick={handleDelete(r.key)}>
-          <TrashIcon />
-        </ActionButton>
-        )}
+        {showDelete && <RemoveButton icon={<TrashIcon />} />}
         {handleEditorClick && (
           <ActionButton
             id={`handleBar-${index}`}

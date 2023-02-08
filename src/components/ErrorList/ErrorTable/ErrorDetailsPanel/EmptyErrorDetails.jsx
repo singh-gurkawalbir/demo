@@ -1,6 +1,8 @@
 import { makeStyles, Typography } from '@material-ui/core';
 import React from 'react';
+import { message } from '../../../../utils/messageStore';
 import DrawerHeader from '../../../drawer/Right/DrawerHeader';
+import RawHtml from '../../../RawHtml';
 
 const useStyles = makeStyles(() => ({
   emptyErrorDetails: {
@@ -22,8 +24,7 @@ export default function EmptyErrorDetails({ classes, showMessage }) {
       {showMessage ? (
         <div className={styles.emptyErrorDetails}>
           <Typography variant="body2" className={styles.content}>
-            Click an error row to view its details <br />
-            or select the checkboxes for batch actions.
+            <RawHtml html={message.ERROR_MANAGEMENT_2.ERROR_DETAILS} />
           </Typography>
         </div>
       ) : null}

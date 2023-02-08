@@ -2,14 +2,15 @@ import TextField from '@material-ui/core/TextField';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import React, { useState, useCallback, useEffect } from 'react';
-import { Typography} from '@material-ui/core';
+import { Typography, InputAdornment} from '@material-ui/core';
 import { useLocation, Link, useHistory } from 'react-router-dom';
 import clsx from 'clsx';
 import actions from '../../actions';
 import { selectors } from '../../reducers';
 import ErrorIcon from '../../components/icons/ErrorIcon';
+import ShowContentIcon from '../../components/icons/ShowContentIcon';
+import HideContentIcon from '../../components/icons/HideContentIcon';
 import SecurityIcon from '../../components/icons/SecurityIcon';
-import { getDomain } from '../../utils/resource';
 import { AUTH_FAILURE_MESSAGE } from '../../constants';
 import getRoutePath from '../../utils/routePaths';
 import Spinner from '../../components/Spinner';
@@ -20,9 +21,6 @@ import useQuery from '../../hooks/useQuery';
 const path = getImageUrl('images/googlelogo.png');
 
 const useStyles = makeStyles(theme => ({
-  snackbar: {
-    margin: theme.spacing(1),
-  },
   submit: {
     width: '100%',
     borderRadius: 4,
@@ -39,13 +37,22 @@ const useStyles = makeStyles(theme => ({
       maxWidth: '100%',
     },
   },
-  relatedContent: {
-    textDecoration: 'none',
-  },
   textField: {
     width: '100%',
-    background: theme.palette.background.paper,
-    marginBottom: 10,
+    minWidth: '100%',
+    marginBottom: theme.spacing(1),
+    position: 'relative',
+    border: '1px solid',
+    borderColor: theme.palette.secondary.lightest,
+    paddingRight: 4,
+    '&:hover': {
+      borderColor: theme.palette.primary.main,
+    },
+    '& >.MuiFilledInput-root': {
+      '& > input': {
+        border: 'none',
+      },
+    },
   },
   alertMsg: {
     fontSize: 12,
@@ -117,15 +124,18 @@ const useStyles = makeStyles(theme => ({
       borderColor: theme.palette.secondary.lightest,
     },
   },
-  hidden: {
-    display: 'none',
+  passwordTextField: {
+    '& * >.MuiFilledInput-input': {
+      letterSpacing: '2px',
+      '&::placeholder': {
+        letterSpacing: '1px',
+      },
+    },
   },
-  wrapper: {
-    textAlign: 'left',
-    marginBottom: theme.spacing(2),
-  },
-  label: {
-    display: 'flex',
+
+  iconPassword: {
+    cursor: 'pointer',
+    marginRight: theme.spacing(1),
   },
 }));
 
@@ -134,6 +144,7 @@ export default function SignIn({dialogOpen, className}) {
   const location = useLocation();
   const classes = useStyles();
   const [email, setEmail] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const history = useHistory();
   const query = useQuery();
 
@@ -194,6 +205,8 @@ export default function SignIn({dialogOpen, className}) {
     dispatch(actions.auth.reSignInWithSSO());
   };
 
+  const handleShowPassword = () => setShowPassword(showPassword => !showPassword);
+
   window.signedInWithGoogle = () => {
     reInitializeSession();
   };
@@ -239,10 +252,27 @@ export default function SignIn({dialogOpen, className}) {
           data-test="password"
           id="password"
           variant="filled"
-          type="password"
+          type={showPassword ? 'text' : 'password'}
           required
           placeholder="Password*"
-          className={classes.textField}
+          className={clsx(classes.textField, classes.passwordTextField)}
+          InputProps={{
+            endAdornment: (true) &&
+              (
+                <InputAdornment position="end">
+                    {showPassword ? (
+                      <ShowContentIcon
+                        className={classes.iconPassword}
+                        onClick={handleShowPassword} />
+                    )
+                      : (
+                        <HideContentIcon
+                          className={classes.iconPassword}
+                          onClick={handleShowPassword} />
+                      )}
+                </InputAdornment>
+              ),
+          }}
             />
 
         <div className={classes.forgotPass}>
@@ -278,27 +308,29 @@ export default function SignIn({dialogOpen, className}) {
             </FilledButton>
           )}
       </form>
-      { !isAuthenticating && getDomain() !== 'eu.integrator.io' && (
+      { !isAuthenticating && (
       <div>
-        {!dialogOpen && (
-        <form onSubmit={handleSignInWithGoogle}>
-          <TextField
-            data-private
-            type="hidden"
-            id="attemptedRoute"
-            name="attemptedRoute"
-            value={attemptedRoute || getRoutePath('/')}
+        {!dialogOpen &&
+        // eslint-disable-next-line no-undef
+        ALLOW_GOOGLE_SIGNIN === 'true' && (
+          <form onSubmit={handleSignInWithGoogle}>
+            <TextField
+              data-private
+              type="hidden"
+              id="attemptedRoute"
+              name="attemptedRoute"
+              value={attemptedRoute || getRoutePath('/')}
                 />
-          <div className={classes.or}>
-            <Typography variant="body1">or</Typography>
-          </div>
-          <OutlinedButton
-            type="submit"
-            color="secondary"
-            className={classes.googleBtn}>
-            Sign in with Google
-          </OutlinedButton>
-        </form>
+            <div className={classes.or}>
+              <Typography variant="body1">or</Typography>
+            </div>
+            <OutlinedButton
+              type="submit"
+              color="secondary"
+              className={classes.googleBtn}>
+              Sign in with Google
+            </OutlinedButton>
+          </form>
         )}
         {dialogOpen && userHasOtherLoginOptions && (
           <div className={classes.or}>
@@ -316,7 +348,9 @@ export default function SignIn({dialogOpen, className}) {
             </OutlinedButton>
           </form>
         )}
-        {dialogOpen && userEmail && userProfileLinkedWithGoogle && (
+        {dialogOpen && userEmail && userProfileLinkedWithGoogle &&
+        // eslint-disable-next-line no-undef
+        ALLOW_GOOGLE_SIGNIN === 'true' && (
         <form onSubmit={handleReSignInWithGoogle}>
           <OutlinedButton
             type="submit"

@@ -9,6 +9,8 @@ import {
   Radio,
 } from '@material-ui/core';
 import FieldMessage from '../FieldMessage';
+import RawHtml from '../../../RawHtml';
+import WarningIcon from '../../../icons/WarningIcon';
 import FieldHelp from '../../FieldHelp';
 import isLoggableAttr from '../../../../utils/isLoggableAttr';
 
@@ -19,6 +21,19 @@ const useStyles = makeStyles(theme => ({
   radioGroupWrapper: {
     display: 'flex',
     flexDirection: 'column',
+  },
+  warningLabelWrapper: {
+    display: 'flex',
+  },
+  warningLabel: {
+    color: theme.palette.secondary.main,
+    '& a': {
+      color: theme.palette.primary.dark,
+    },
+  },
+  warning: {
+    color: theme.palette.warning.main,
+    height: theme.spacing(2),
   },
   radioGroupWrapperLabel: {
     display: 'flex',
@@ -49,6 +64,8 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
+const HTML_SPACING = '&#160&#160';
+
 export default function DynaRadio(props) {
   const {
     id,
@@ -68,6 +85,21 @@ export default function DynaRadio(props) {
   } = props;
 
   const classes = useStyles();
+
+  const getLabel = item => {
+    const customLabel = `${item.label}${HTML_SPACING}`;
+
+    return (
+      <div className={classes.warningLabelWrapper}>
+        <RawHtml html={customLabel} options={{allowedTags: ['a', 'u'], escapeUnsecuredDomains: true}} />
+        <span className={classes.warningLabelWrapper}>
+          { item.isWarningMessage && <WarningIcon data-test="warningIcon" className={classes.warning} /> }
+          <RawHtml className={classes.warningLabel} data-test="description" html={item.description} options={{allowedTags: ['a', 'u'], escapeUnsecuredDomains: true}} />
+        </span>
+      </div>
+    );
+  };
+
   const items = options.reduce(
     (itemsSoFar, option) =>
       itemsSoFar.concat(
@@ -89,7 +121,7 @@ export default function DynaRadio(props) {
               value={item.value}
               data-test={item.value}
               control={<Radio color="primary" />}
-              label={item.label || item.value}
+              label={item.description ? getLabel(item) : (item.label || item.value)}
             />
           );
         })

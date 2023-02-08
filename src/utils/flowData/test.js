@@ -305,38 +305,31 @@ describe('getFlowUpdatesFromPatch util', () => {
     const addPG = [{
       op: 'add',
       path: '/pageGenerators/0',
-      scope: 'value',
       value: { _exportId: '1234'},
     }];
     const deletePG = [{
       op: 'remove',
       path: '/pageGenerators/0/id',
-      scope: 'value',
     }, {
       op: 'remove',
       path: '/pageGenerators/0/_exportId',
-      scope: 'value',
     }, {
       op: 'add',
       path: '/pageGenerators/0/setupInProgress',
-      scope: 'value',
       value: true,
     }];
     const addPP = [{
       op: 'replace',
       path: '/routers/0/branches/0/pageProcessors/0',
-      scope: 'value',
       value: {type: 'import', _importId: '5de8a7a6bc312979ba242e47'},
     }];
     const deletePP = [{
       op: 'remove',
       path: '/routers/0/branches/0/pageProcessors/0',
-      scope: 'value',
     }];
     const addOldPP = [{
       op: 'add',
       path: '/pageProcessors/0',
-      scope: 'value',
       value: {type: 'import', _importId: '5de8a7a6bc312979ba242e47'},
     }];
 

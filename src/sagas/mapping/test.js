@@ -22,7 +22,6 @@ import {
   getAutoMapperSuggestion,
 } from '.';
 import {requestSampleData as requestFlowSampleData, _getContextSampleData} from '../sampleData/flows';
-import { SCOPES } from '../resourceForm';
 import { commitStagedChanges } from '../resources';
 import { autoEvaluateProcessorWithCancel } from '../editor';
 import {generateId} from '../../utils/string';
@@ -525,6 +524,7 @@ describe('mappingInit saga', () => {
             lists: [],
           },
         }],
+        [select(selectors.hasLoadedAllResourceUIFields, []), true],
         [select(selectors.resource, 'connections', 'conn1'), {assistant: '3dcart'}],
         [select(selectors.firstFlowPageGenerator, flowId), {_id: exportId}],
         [select(selectors.getSampleDataContext, {
@@ -613,6 +613,7 @@ describe('mappingInit saga', () => {
         }],
         [select(selectors.integrationAppMappingMetadata, '_i1'), {mappingMetadata: {}}],
         [select(selectors.firstFlowPageGenerator, flowId), {_id: exportId}],
+        [select(selectors.hasLoadedAllResourceUIFields, []), true],
         [select(selectors.getSampleDataContext, {
           flowId,
           resourceId: importId,
@@ -679,6 +680,7 @@ describe('mappingInit saga', () => {
         }],
         [select(selectors.integrationAppMappingMetadata, '_i1'), {mappingMetadata: {}}],
         [select(selectors.firstFlowPageGenerator, flowId), {_id: exportId}],
+        [select(selectors.hasLoadedAllResourceUIFields, []), true],
         [select(selectors.getSampleDataContext, {
           flowId,
           resourceId: importId,
@@ -941,7 +943,6 @@ describe('saveMappings saga', () => {
       [call(commitStagedChanges, {
         resourceType: 'imports',
         id: importId,
-        scope: SCOPES.VALUE,
         context: { flowId },
       }), {}],
       [select(selectors.getSampleDataContext, {
@@ -963,11 +964,10 @@ describe('saveMappings saga', () => {
         path: '/netsuite_da/lookups',
         value: [{ name: 'lookup2' }],
       },
-    ], SCOPES.VALUE))
+    ]))
     .call(commitStagedChanges, {
       resourceType: 'imports',
       id: importId,
-      scope: SCOPES.VALUE,
       context: { flowId },
     })
     .put(actions.mapping.saveComplete())
@@ -988,7 +988,6 @@ describe('saveMappings saga', () => {
       [call(commitStagedChanges, {
         resourceType: 'imports',
         id: importId,
-        scope: SCOPES.VALUE,
         context: { flowId },
       }), {error: {}}],
       [select(selectors.getSampleDataContext, {
@@ -1010,11 +1009,10 @@ describe('saveMappings saga', () => {
         path: '/netsuite_da/lookups',
         value: [],
       },
-    ], SCOPES.VALUE))
+    ]))
     .call(commitStagedChanges, {
       resourceType: 'imports',
       id: importId,
-      scope: SCOPES.VALUE,
       context: { flowId },
     })
     .put(actions.mapping.saveFailed())
@@ -1068,7 +1066,6 @@ describe('saveMappings saga', () => {
         [call(commitStagedChanges, {
           resourceType: 'imports',
           id: importId,
-          scope: SCOPES.VALUE,
           context: { flowId },
         }), {}],
         [select(selectors.getSampleDataContext, {
@@ -1107,11 +1104,10 @@ describe('saveMappings saga', () => {
               },
             ],
           },
-        }], SCOPES.VALUE))
+        }]))
       .call(commitStagedChanges, {
         resourceType: 'imports',
         id: importId,
-        scope: SCOPES.VALUE,
         context: { flowId },
       })
       .put(actions.mapping.saveComplete())
@@ -1135,7 +1131,6 @@ describe('saveMappings saga', () => {
       [call(commitStagedChanges, {
         resourceType: 'imports',
         id: importId,
-        scope: SCOPES.VALUE,
         context: { flowId },
       }), {}],
       [select(selectors.getSampleDataContext, {
@@ -1176,11 +1171,10 @@ describe('saveMappings saga', () => {
           conditional: {when: undefined},
         }],
       },
-    ], SCOPES.VALUE))
+    ]))
     .call(commitStagedChanges, {
       resourceType: 'imports',
       id: importId,
-      scope: SCOPES.VALUE,
       context: { flowId },
     })
     .put(actions.mapping.saveComplete())
@@ -1203,7 +1197,6 @@ describe('saveMappings saga', () => {
       [call(commitStagedChanges, {
         resourceType: 'imports',
         id: importId,
-        scope: SCOPES.VALUE,
         context: { flowId },
       }), {}],
       [select(selectors.getSampleDataContext, {
@@ -1224,11 +1217,10 @@ describe('saveMappings saga', () => {
         path: '/http/lookups',
         value: [{ name: 'lookup2' }],
       },
-    ], SCOPES.VALUE))
+    ]))
     .call(commitStagedChanges, {
       resourceType: 'imports',
       id: importId,
-      scope: SCOPES.VALUE,
       context: { flowId },
     })
     .put(actions.mapping.saveComplete())

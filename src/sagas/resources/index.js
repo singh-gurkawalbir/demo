@@ -5,7 +5,7 @@ import actions from '../../actions';
 import actionTypes from '../../actions/types';
 import { apiCallWithRetry, apiCallWithPaging } from '../index';
 import { selectors } from '../../reducers';
-import { isNewId } from '../../utils/resource';
+import { isNewId, UI_FIELDS, RESOURCES_WITH_UI_FIELDS } from '../../utils/resource';
 import metadataSagas from './meta';
 import getRequestOptions, { pingConnectionParentContext } from '../../utils/requestOptions';
 import { defaultPatchSetConverter } from '../../forms/formFactory/utils';
@@ -53,7 +53,6 @@ export function* resourceConflictDetermination({
   path,
   merged,
   id,
-  scope,
   resourceType,
   master,
 }) {
@@ -74,7 +73,7 @@ export function* resourceConflictDetermination({
   });
 
   if (conflict) {
-    yield put(actions.resource.commitConflict(id, conflict, scope));
+    yield put(actions.resource.commitConflict(id, conflict));
   }
 
   return { conflict: !!conflict, merged: updatedMerged };
@@ -138,12 +137,12 @@ export function* requestRevoke({ connectionId, hideNetWorkSnackbar = false }) {
   }
 }
 
-export function* commitStagedChanges({ resourceType, id, scope, options, context, parentContext }) {
+export function* commitStagedChanges({ resourceType, id, options, context, parentContext }) {
   const userPreferences = yield select(selectors.userPreferences);
   const isSandbox = userPreferences
     ? userPreferences.environment === 'sandbox'
     : false;
-  const data = yield select(selectors.resourceData, resourceType, id, scope);
+  const data = yield select(selectors.resourceData, resourceType, id);
   const { patch, master } = data;
   let { merged } = data;
   const isNew = isNewId(id);
@@ -167,7 +166,6 @@ export function* commitStagedChanges({ resourceType, id, scope, options, context
       path,
       merged,
       id,
-      scope,
       resourceType,
       master,
     });
@@ -227,7 +225,7 @@ export function* commitStagedChanges({ resourceType, id, scope, options, context
   if (resourceType === 'exports' && merged._rest) {
     delete merged._rest;
   }
-  if (['exports', 'imports'].includes(resourceType) && merged.adaptorType && !merged.adaptorType.includes('AS2')) {
+  if (['exports', 'imports'].includes(resourceType) && merged.adaptorType && !merged.adaptorType.includes('AS2') && !merged.adaptorType.includes('VAN')) {
     // AS2 is special case where backend cannot identify adaptorType on its own
     if (merged.restToHTTPConverted) {
       merged.adaptorType = resourceType === 'exports' ? 'RESTExport' : 'RESTImport';
@@ -304,7 +302,7 @@ export function* commitStagedChanges({ resourceType, id, scope, options, context
     }
     if (resourceType === 'flows') {
       if (options?.revertChangesOnFailure) {
-        yield put(actions.resource.clearStaged(id, scope));
+        yield put(actions.resource.clearStaged(id));
       }
     }
 
@@ -406,7 +404,7 @@ export function* commitStagedChanges({ resourceType, id, scope, options, context
     }
   }
 
-  yield put(actions.resource.clearStaged(id, scope));
+  yield put(actions.resource.clearStaged(id));
 
   yield put(actions.resource.received(resourceType, updated));
 
@@ -777,6 +775,15 @@ export function* getResourceCollection({ resourceType, refresh, integrationId })
       yield call(getResource, {resourceType: 'integrations', id: integrationId});
     }
   }
+
+  if (RESOURCES_WITH_UI_FIELDS.includes(resourceType)) {
+    const excludePath = `?exclude=${UI_FIELDS.join(',')}`;
+
+    path = `${path}${excludePath}`;
+  }
+  if (resourceType === 'tree/metadata') {
+    path += '?additionalFields=_connectorId,_parentId,sandbox,settings,settingsForm,preSave,changeEditionSteps,flowGroupings,_registeredConnectionIds,uninstallSteps,installSteps';
+  }
   let updatedResourceType = resourceType;
 
   try {
@@ -820,7 +827,14 @@ export function* getResourceCollection({ resourceType, refresh, integrationId })
       collection = undefined;
     }
 
-    yield put(actions.resource.receivedCollection(resourceType, collection, integrationId));
+    if (resourceType === 'tree/metadata') {
+      const newCollection = collection?.childIntegrations || [];
+
+      yield put(actions.resource.receivedCollection('integrations', newCollection, integrationId));
+    } else {
+      yield put(actions.resource.receivedCollection(resourceType, collection, integrationId));
+    }
+
     yield put(actions.resource.collectionRequestSucceeded({resourceType: updatedResourceType, integrationId}));
 
     return collection;

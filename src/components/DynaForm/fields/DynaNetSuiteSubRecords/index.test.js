@@ -240,7 +240,7 @@ describe('dynaNetSuiteSubRecords UI tests', () => {
       value: [{value: 'value'}],
     });
     initDynaNetSuiteSubRecords({...props, subrecords: undefined});
-    await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith(actions.resource.patchStaged('633dc83108cc753ca5688d34', patchSet, 'value')));
+    await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith(actions.resource.patchStaged('633dc83108cc753ca5688d34', patchSet)));
   });
   test('should make a dispatch call with different patchset when importdoc does not contain netsuite_da', async () => {
     const patchSet = [];
@@ -256,7 +256,7 @@ describe('dynaNetSuiteSubRecords UI tests', () => {
       value: [],
     });
     initDynaNetSuiteSubRecords({resourceContext: {resourceId: '633dc83108cc753ca5688d45', recordType: 'dummy'}, hasRecord: true, onFieldChange: mockOnFieldChange});
-    await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith(actions.resource.patchStaged('633dc83108cc753ca5688d45', patchSet, 'value')));
+    await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith(actions.resource.patchStaged('633dc83108cc753ca5688d45', patchSet)));
   });
   test('should display the subrecords if the importDoc already has some of them added', async () => {
     initDynaNetSuiteSubRecords({...props});
@@ -288,7 +288,6 @@ describe('dynaNetSuiteSubRecords UI tests', () => {
           value: [{fieldId: 'fieldId2', name: 'subrecord2'}],
         },
       ],
-      'value'
     )));
   });
   test('should render empty DOM when the metadata does not have subrecords', () => {

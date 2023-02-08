@@ -12,13 +12,14 @@ import useConfirmDialog from '../../../ConfirmDialog';
 import { FILTER_KEYS, MAX_ERRORS_TO_RETRY_OR_RESOLVE } from '../../../../utils/errorManagement';
 import Spinner from '../../../Spinner';
 import { useEditRetryConfirmDialog } from '../hooks/useEditRetryConfirmDialog';
-import messageStore from '../../../../utils/messageStore';
+import { message } from '../../../../utils/messageStore';
 
 const useStyles = makeStyles(theme => ({
   flexContainer: {
     display: 'flex',
   },
   actionBtn: {
+    backgroundColor: theme.palette.background.paper,
     borderRadius: theme.spacing(0.5),
     height: theme.spacing(4),
   },
@@ -300,7 +301,7 @@ export default function ErrorActions({ flowId, resourceId, isResolved, className
           isSearchFilterApplied={isSearchFilterApplied}
           disable={disableResolveAction} />
         )}
-        <Tooltip title={isRetryDataChanged ? messageStore('RETRY_ACTION_HOVER_MESSAGE') : ''} placement="bottom" >
+        <Tooltip title={isRetryDataChanged ? message.ERROR_MANAGEMENT_2.RETRY_ACTION_HOVER_MESSAGE : ''} placement="bottom" >
           <div>
             <RetryAction
               onClick={handleRetryAction}

@@ -923,7 +923,6 @@ describe('Suitescript sagas', () => {
             call(commitStagedChanges, {
               resourceType: 'imports',
               id: flowId,
-              scope: 'value',
               ssLinkedConnectionId,
               integrationId,
             }), undefined,
@@ -962,7 +961,6 @@ describe('Suitescript sagas', () => {
                 value: [],
               },
             ],
-            'value',
           )
         )
         .put(
@@ -1023,7 +1021,6 @@ describe('Suitescript sagas', () => {
             call(commitStagedChanges, {
               resourceType: 'imports',
               id: flowId,
-              scope: 'value',
               ssLinkedConnectionId,
               integrationId,
             }), undefined,
@@ -1057,7 +1054,6 @@ describe('Suitescript sagas', () => {
                 ],
               },
             ],
-            'value',
           )
         )
         .put(
@@ -1118,7 +1114,6 @@ describe('Suitescript sagas', () => {
             call(commitStagedChanges, {
               resourceType: 'imports',
               id: flowId,
-              scope: 'value',
               ssLinkedConnectionId,
               integrationId,
             }), undefined,
@@ -1164,7 +1159,6 @@ describe('Suitescript sagas', () => {
                 ],
               },
             ],
-            'value',
           )
         )
         .put(
@@ -1229,7 +1223,6 @@ describe('Suitescript sagas', () => {
             call(commitStagedChanges, {
               resourceType: 'imports',
               id: flowId,
-              scope: 'value',
               ssLinkedConnectionId,
               integrationId,
             }), undefined,
@@ -1270,7 +1263,6 @@ describe('Suitescript sagas', () => {
                 ],
               },
             ],
-            'value',
           )
         )
         .put(
@@ -1335,7 +1327,6 @@ describe('Suitescript sagas', () => {
             call(commitStagedChanges, {
               resourceType: 'imports',
               id: flowId,
-              scope: 'value',
               ssLinkedConnectionId,
               integrationId,
             }), {error: {}},
@@ -1376,7 +1367,6 @@ describe('Suitescript sagas', () => {
                 ],
               },
             ],
-            'value',
           )
         )
         .put(

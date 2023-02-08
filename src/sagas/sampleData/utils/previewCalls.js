@@ -2,7 +2,7 @@ import { select, call } from 'redux-saga/effects';
 import deepClone from 'lodash/cloneDeep';
 import jsonPatch from 'fast-json-patch';
 import { selectors } from '../../../reducers';
-import { getFlowUpdatePatchesForNewPGorPP, SCOPES } from '../../resourceForm';
+import { getFlowUpdatePatchesForNewPGorPP } from '../../resourceForm';
 import { apiCallWithRetry } from '../../index';
 import {
   fetchFlowResources,
@@ -15,6 +15,7 @@ import { EMPTY_RAW_DATA, STANDALONE_INTEGRATION } from '../../../constants';
 import { getConstructedResourceObj } from '../flows/utils';
 import getPreviewOptionsForResource from '../flows/pageProcessorPreviewOptions';
 import { generateMongoDBId } from '../../../utils/string';
+import { getUnionObject } from '../../../utils/jsonPaths';
 
 export function* pageProcessorPreview({
   flowId,
@@ -33,7 +34,7 @@ export function* pageProcessorPreview({
 }) {
   if (!flowId || (!_pageProcessorId && !routerId)) return;
 
-  const { merged } = yield select(selectors.resourceData, 'flows', flowId, SCOPES.VALUE);
+  const { merged } = yield select(selectors.resourceData, 'flows', flowId);
   const { prePatches } = yield select(selectors.editor, editorId);
 
   let flowClone = deepClone(merged);
@@ -183,7 +184,7 @@ export function* pageProcessorPreview({
     });
 
     if (flow.routers?.length && Array.isArray(previewData)) {
-      return previewData[0];
+      return getUnionObject(previewData);
     }
 
     return previewData;

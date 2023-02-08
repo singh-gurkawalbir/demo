@@ -3,12 +3,13 @@ import { makeStyles } from '@material-ui/core/styles';
 import { Typography } from '@material-ui/core';
 import { useDispatch } from 'react-redux';
 import { useHistory, useRouteMatch } from 'react-router-dom';
+import { isArray } from 'lodash';
 import { KeyValueComponent } from '../DynaKeyValue';
 import actions from '../../../../actions';
 import { getValidRelativePath } from '../../../../utils/routePaths';
 import { buildDrawerUrl, drawerPaths } from '../../../../utils/rightDrawer';
 import { isMetaRequiredValuesMet, PARAMETER_LOCATION } from '../../../../utils/assistant';
-import messageStore from '../../../../utils/messageStore';
+import { message } from '../../../../utils/messageStore';
 import { EXPORT_FILTERED_DATA_STAGE, IMPORT_FLOW_DATA_STAGE } from '../../../../utils/flowData';
 
 const useStyles = makeStyles(theme => ({
@@ -143,13 +144,24 @@ export default function DynaHFAssistantSearchParams(props) {
 
       return;
     }
-    dispatch(actions.form.forceFieldState(formKey)(id, {isValid: isMetaValid, errorMessages: messageStore('REQUIRED_MESSAGE')}));
+    dispatch(actions.form.forceFieldState(formKey)(id, {isValid: isMetaValid, errorMessages: message.REQUIRED_MESSAGE}));
   }, [dispatch, formKey, id, isMetaValid, required]);
 
   useEffect(() => () => {
     dispatch(actions.form.clearForceFieldState(formKey)(id));
   }, [dispatch, formKey, id]);
 
+  useEffect(() => {
+    if (requiredFields && requiredFields.length > 0) {
+      const valueKeys = Object.keys(value);
+      const newValues = {};
+
+      requiredFields.filter(field => !valueKeys.includes(field)).forEach(field => {
+        newValues[field] = undefined;
+      });
+      Object.keys(newValues).length > 0 && onFieldChange(id, {...value, ...newValues});
+    }
+  }, [id, onFieldChange, requiredFields, value]);
   /* istanbul ignore next: handleSave not invoked in test script */
   const handleSave = useCallback(editorValues => {
     const newValue = {...value, [Object.keys(value)[editorValues.paramIndex]]: editorValues.rule};
@@ -180,8 +192,13 @@ export default function DynaHFAssistantSearchParams(props) {
       if (!val[keyName]) {
         return fv;
       }
+      let value = val[valueName];
 
-      return { ...fv, [val[keyName]]: val[valueName]};
+      if (value && !isArray(value) && val.valueType === 'array') {
+        value = value.trim().split(',');
+      }
+
+      return { ...fv, [val[keyName]]: value};
     }, {});
 
     onFieldChange(id, finalValue);

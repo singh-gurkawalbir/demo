@@ -117,9 +117,6 @@ export default function reducer(state = {}, action) {
         if (!draft[id]) break;
         // TODO: change evaluate to preview
         draft[id].autoEvaluate = autoPreview ?? !draft[id].autoEvaluate;
-        if (draft[id].autoEvaluate) {
-          draft[id].previewStatus = 'requested';
-        }
         break;
       }
 

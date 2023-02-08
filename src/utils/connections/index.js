@@ -174,6 +174,8 @@ const getAcumaticaEndpointName = connection => {
   switch (acumaticaEndpointName) {
     case 'ecommerce':
       return 'acumaticaecommerce';
+    case 'manufacturing':
+      return 'acumaticamanufacturing';
     default:
   }
 
@@ -208,6 +210,7 @@ export const KBDocumentation = {
   rest: 'https://docs.celigo.com/hc/en-us/sections/360007479711-REST',
   ftp: 'https://docs.celigo.com/hc/en-us/articles/360045263152-Set-up-an-FTP-connection-',
   as2: 'https://docs.celigo.com/hc/en-us/articles/360029551372-Set-up-an-AS2-connection',
+  van: 'https://docs.celigo.com/hc/en-us/articles/12532496305819-Set-up-a-value-added-network-VAN-connection',
   mongodb: 'https://docs.celigo.com/hc/en-us/articles/360039632032-Set-up-a-connection-to-MongoDB',
   mysql: 'https://docs.celigo.com/hc/en-us/articles/360038611852-Set-up-a-connection-to-MySQL',
   mssql: 'https://docs.celigo.com/hc/en-us/articles/360039003951-Set-up-a-connection-to-Microsoft-SQL',
@@ -290,8 +293,9 @@ export const amazonSellerCentralBaseUriForMWSConnection = {
 };
 
 export const RESOURCE_DRAWER_PATH = '/:operation(add|edit)/:parentType/:parentId';
-export const CONN_DRAWER_PATH = '/:operation(add|edit)/connections/:connId';
+export const CONN_DRAWER_PATH = '/:operation(add|edit|configure)/connections/:connId';
 export const ICLIENT_DRAWER_PATH = '/:operation(add|edit)/iClients/:iClientId';
+export const INTEGRATION_DRAWER_PATH = '/integrations/:integrationId/';
 
 // given a url, this util returns the path params
 // to identify the parent export/import type and id
@@ -306,6 +310,14 @@ export const getParentResourceContext = (url, resourceType) => {
         `/**${CONN_DRAWER_PATH}${ICLIENT_DRAWER_PATH}`,
       ],
       exact: true})?.params || {};
+  }
+  if (resourceType === 'integrations') {
+    return matchPath(url, {
+      path: [
+        `${INTEGRATION_DRAWER_PATH}**`,
+      ],
+      exact: true,
+    })?.params || {};
   }
 
   return matchPath(url, {

@@ -1,5 +1,6 @@
 import React from 'react';
 import { makeStyles, TextField, Typography, Button } from '@material-ui/core';
+import clsx from 'clsx';
 import CeligoLogo from '../../CeligoLogo';
 
 const useStyles = makeStyles(theme => ({
@@ -121,7 +122,8 @@ const useStyles = makeStyles(theme => ({
     border: '1px solid',
     borderColor: theme.palette.divider,
     width: '100%',
-    background: 'url(https://d142hkd03ds8ug.cloudfront.net/images/googlelogo.png) 10% center no-repeat',
+    // eslint-disable-next-line no-undef
+    background: `url(${CDN_BASE_URI}images/googlelogo.png) 10% center no-repeat`,
     backgroundSize: theme.spacing(2),
     height: 38,
     fontSize: 16,
@@ -138,6 +140,14 @@ const useStyles = makeStyles(theme => ({
     maxWidth: 500,
     textAlign: 'center',
     marginBottom: 130,
+  },
+  passwordTextField: {
+    '& * >.MuiFilledInput-input': {
+      letterSpacing: '2px',
+      '&::placeholder': {
+        letterSpacing: '1px',
+      },
+    },
   },
   gridImgWrapper: {
     background: `center / contain no-repeat url('https://integrator-staging-ui-resources.s3.amazonaws.com/react/static/images/public-pages.svg'), ${theme.palette.background.default}`,
@@ -168,7 +178,7 @@ export default function LoginForm() {
             name="email"
             className={classes.fieldWrapper} />
           <TextField
-            className={classes.fieldWrapper}
+            className={clsx(classes.fieldWrappe, classes.passwordTextField)}
             htmlFor="password"
             placeholder="Password*"
             variant="filled"

@@ -8,7 +8,6 @@ import DynaForm from '../../components/DynaForm';
 import DynaSubmit from '../../components/DynaForm/DynaSubmit';
 import PanelHeader from '../../components/PanelHeader';
 import dateTimezones from '../../utils/dateTimezones';
-import { getDomain } from '../../utils/resource';
 import getImageUrl from '../../utils/image';
 import getRoutePath from '../../utils/routePaths';
 import useFormInitWithPermissions from '../../hooks/useFormInitWithPermissions';
@@ -40,6 +39,7 @@ const useStyles = makeStyles(theme => ({
   },
   saveBtnProfile: {
     marginLeft: theme.spacing(2),
+    marginBottom: theme.spacing(2),
   },
   profilePanelHeader: {
     padding: theme.spacing(2),
@@ -125,12 +125,33 @@ export default function ProfilePanel() {
     ],
     []
   );
+  const colorThemeList = useMemo(
+    () => [
+      {
+        items: [
+          {
+            label: 'Light',
+            value: 'light',
+          },
+          {
+            label: 'Dark',
+            value: 'dark',
+          },
+          {
+            label: 'Orion',
+            value: 'orion',
+          },
+        ],
+      },
+    ],
+    []
+  );
 
   const dispatch = useDispatch();
   const handleSubmit = useCallback(formVal => {
     const completePayloadCopy = { ...formVal };
-    const { timeFormat, dateFormat, showRelativeDateTime, darkTheme } = completePayloadCopy;
-    const preferencesPayload = { timeFormat, dateFormat, showRelativeDateTime, darkTheme };
+    const { timeFormat, dateFormat, showRelativeDateTime, colorTheme } = completePayloadCopy;
+    const preferencesPayload = { timeFormat, dateFormat, showRelativeDateTime, colorTheme, darkTheme: undefined };
 
     // track event if there is any action for Developer mode
     if (preferences.developer !== completePayloadCopy.developer) {
@@ -148,7 +169,7 @@ export default function ProfilePanel() {
     delete completePayloadCopy.timeFormat;
     delete completePayloadCopy.dateFormat;
     delete completePayloadCopy.showRelativeDateTime;
-    delete completePayloadCopy.darkTheme;
+    delete completePayloadCopy.colorTheme;
 
     dispatch(actions.user.profile.update(completePayloadCopy));
   }, [dispatch, preferences.developer]);
@@ -290,13 +311,15 @@ export default function ProfilePanel() {
         // is this loggable
         isLoggable: true,
       },
-      darkTheme: {
-        id: 'darkTheme',
-        name: 'darkTheme',
-        type: 'checkbox',
-        helpKey: 'myaccount.darkTheme',
-        label: 'Dark mode',
-        defaultValue: preferences && preferences.darkTheme,
+      colorTheme: {
+        id: 'colorTheme',
+        name: 'colorTheme',
+        helpKey: 'myaccount.colorTheme',
+        type: 'select',
+        label: 'Color theme',
+        required: true,
+        options: colorThemeList,
+        defaultValue: preferences && (preferences.colorTheme || 'light'),
         labelSubText: 'For internal testing only',
         visible: !isProduction(),
       },
@@ -314,10 +337,10 @@ export default function ProfilePanel() {
         'timeFormat',
         'showRelativeDateTime',
         'developer',
-        'darkTheme',
+        'colorTheme',
       ],
     },
-  }), [dateFormatList, dateTimeZonesList, preferences, timeFormatList, isUserAllowedOnlySSOSignIn]);
+  }), [preferences, isUserAllowedOnlySSOSignIn, dateTimeZonesList, dateFormatList, timeFormatList, colorThemeList]);
   const [count, setCount] = useState(0);
 
   useEffect(() => {
@@ -342,7 +365,9 @@ export default function ProfilePanel() {
           disabled={disableSave}>
           {defaultLabels.saveLabel}
         </DynaSubmit>
-        {getDomain() !== 'eu.integrator.io' && (
+        {
+        // eslint-disable-next-line no-undef
+        ALLOW_GOOGLE_SIGNIN === 'true' && (
         <div className={classes.googleSignInPanel}>
           <PanelHeader
             title="Sign in via Google"
@@ -377,7 +402,8 @@ export default function ProfilePanel() {
               </InputLabel>
           )}
         </div>
-        )}
+        )
+}
       </LoadResources>
     </div>
   );

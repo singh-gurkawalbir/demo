@@ -91,6 +91,13 @@ const connectors = [
     keywords: 'technology,protocol',
     group: 'tech',
   },
+  {
+    id: 'van',
+    name: 'VAN (Value Added Network)',
+    type: 'van',
+    keywords: 'technology,protocol',
+    group: 'tech',
+  },
   // Database connectors
   {
     id: 'mongodb',
@@ -334,6 +341,7 @@ const newConnections = [
   {id: 'recurlyv3', name: 'Recurly v3', type: 'http', assistant: 'recurlyv3'},
   {id: 'loopreturnsv2', name: 'Loop Returns', type: 'http', assistant: 'loopreturnsv2'},
   {id: 'acumaticaecommerce', name: 'Acumatica', type: 'rest', assistant: 'acumaticaecommerce'},
+  {id: 'acumaticamanufacturing', name: 'Acumatica', type: 'rest', assistant: 'acumaticamanufacturing'},
 ];
 
 connectors.sort(stringCompare('name'));

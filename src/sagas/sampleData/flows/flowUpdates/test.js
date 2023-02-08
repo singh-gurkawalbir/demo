@@ -2,7 +2,7 @@ import { select } from 'redux-saga/effects';
 import { expectSaga } from 'redux-saga-test-plan';
 import actions from '../../../../actions';
 import { selectors } from '../../../../reducers';
-import { updateFlowDoc, SCOPES } from '../../../resourceForm';
+import { updateFlowDoc } from '../../../resourceForm';
 import { updateFlowOnResourceUpdate, updateFlowData, updateFlowsDataForResource, _updateResponseMapping } from '.';
 import { getSubsequentStages } from '../../../../utils/flowData';
 
@@ -142,7 +142,6 @@ describe('flow updates sagas', () => {
       const flowPatchSet = [{
         op: 'replace',
         path: '/routers/0/branches/0/pageProcessors/0',
-        scope: 'value',
         value: {type: 'import', _importId: '5de8a7a6bc312979ba242e47'},
       }];
 
@@ -197,7 +196,6 @@ describe('flow updates sagas', () => {
             selectors.resourceData,
             'flows',
             'flow-123',
-            SCOPES.VALUE
           ), { merged: flow}],
         ])
         .not.put(actions.flowData.updateFlow('flow-123'))
@@ -271,7 +269,6 @@ describe('flow updates sagas', () => {
             selectors.resourceData,
             'flows',
             'flow-123',
-            SCOPES.VALUE
           ), {merged: flow}],
         ])
         .put(actions.flowData.updateResponseMapping('flow-123', 0, updatedResponseMapping))
@@ -317,7 +314,6 @@ describe('flow updates sagas', () => {
             selectors.resourceData,
             'flows',
             'flow-123',
-            SCOPES.VALUE
           ), {merged: flow}],
         ])
         .put(actions.flowData.updateResponseMapping('flow-123', 1, updatedResponseMapping))
@@ -425,7 +421,6 @@ describe('flow updates sagas', () => {
             selectors.resourceData,
             'flows',
             'flow-123',
-            SCOPES.VALUE
           ), {merged: updatedFlow}],
         ])
         .put(actions.flowData.resetFlowSequence('flow-123', updatedFlow))

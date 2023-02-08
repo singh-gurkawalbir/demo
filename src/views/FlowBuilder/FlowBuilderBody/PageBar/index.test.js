@@ -243,13 +243,13 @@ describe('FlowBuilder Body PageBar UI tests', () => {
     const props = {flowId: '62c6f122a2f4a703c3dee3d0', integrationId: '6253af74cddb8a1ba550a010', schedule: '? 5 13 ? * 5'};
 
     initPageBar(props);
-    expect(document.querySelector('div div div div:nth-child(3) div:nth-child(4)').className).toContain('circle');
+    expect(document.querySelector('[class*=makeStyles-circle]')).toBeInTheDocument();
   });
   test('should not show icon indicator if the flow is not scheduled', () => {
     const props = {flowId: '62c6f122a2f4a703c3dee3d0', integrationId: '6253af74cddb8a1ba550a010'};
 
     initPageBar(props);
-    expect(document.querySelector('div div div div:nth-child(3) div:nth-child(4)').className).not.toContain('circle');
+    expect(document.querySelector('[class*=makeStyles-circle]')).not.toBeInTheDocument();
   });
 });
 

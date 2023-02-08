@@ -68,8 +68,17 @@ export default function BranchFilterPanel({ editorId, position, type, rule, hand
   }, [dispatch, type, position, editorId]);
 
   const patchEditorValidation = useCallback(
-    isInvalid => {
-      dispatch(actions.editor.patchFeatures(editorId, { isInvalid }));
+    (isInvalid, error) => {
+      const featurePatch = {
+        isInvalid,
+        error,
+        disablePreview: isInvalid,
+      };
+
+      if (error) {
+        featurePatch.result = undefined;
+      }
+      dispatch(actions.editor.patchFeatures(editorId, featurePatch));
     },
     [dispatch, editorId]
   );
@@ -211,7 +220,8 @@ export default function BranchFilterPanel({ editorId, position, type, rule, hand
       rule.$el
         .find('[name$=_filter]')
         .after(
-          '<img style="display:none;" class="settings-icon" src="https://d142hkd03ds8ug.cloudfront.net/images/icons/icon/gear.png">'
+          // eslint-disable-next-line no-undef
+          `<img style="display:none;" class="settings-icon" src="${CDN_BASE_URI}images/icons/icon/gear.png">`
         );
       rule.$el
         .find('.rule-filter-container img.settings-icon')
@@ -576,7 +586,8 @@ export default function BranchFilterPanel({ editorId, position, type, rule, hand
             rhsValue = rhsValue?.replaceAll('"', '&quot;');
           }
 
-          return `<input class="form-control" name="${name}" value="${rhsValue}"><img style="display:none;" class="settings-icon" src="https://d142hkd03ds8ug.cloudfront.net/images/icons/icon/gear.png">`;
+          // eslint-disable-next-line no-undef
+          return `<input class="form-control" name="${name}" value="${rhsValue}"><img style="display:none;" class="settings-icon" src="${CDN_BASE_URI}images/icons/icon/gear.png">`;
         },
         valueGetter(rule, isTouched) {
           const ruleId = getFilterRuleId(rule);
@@ -753,6 +764,8 @@ export default function BranchFilterPanel({ editorId, position, type, rule, hand
             const vr = validateRule(rule);
 
             if (!vr.isValid) {
+              patchEditorValidation(true, vr.error);
+
               return vr.error;
             }
 
@@ -763,6 +776,7 @@ export default function BranchFilterPanel({ editorId, position, type, rule, hand
             if (lhsValue && rhsValue) {
               return true;
             }
+            patchEditorValidation(true, 'Error');
 
             return 'Error';
           },
@@ -882,6 +896,8 @@ export default function BranchFilterPanel({ editorId, position, type, rule, hand
         }
       });
     }
+    // validate the query builder on initial render
+    isValid();
     // triggering off of filtersMetadata change is key, as it seems to be the last useEffect that runs
     // and thus this effect needs to run AFTER the filtersMetadata changes to persist the removal of empty rules
     // eslint-disable-next-line react-hooks/exhaustive-deps

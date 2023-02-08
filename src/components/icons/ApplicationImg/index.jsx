@@ -39,6 +39,8 @@ function iconMap(type = '') {
 
   if (type.toLowerCase().includes('as2')) return 'as2';
 
+  if (type.toLowerCase().includes('van')) return 'van';
+
   if (type.toLowerCase().includes('wrapper')) return 'wrapper';
 
   if (type.toLowerCase().includes('rdbms')) return 'rdbms';

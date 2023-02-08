@@ -19,7 +19,7 @@ import TooltipContent from '../../components/TooltipContent';
 import CheckMarkIcon from '../../components/icons/CheckmarkIcon';
 import CloseIcon from '../../components/icons/CloseIcon';
 import FieldMessage from '../../components/DynaForm/fields/FieldMessage';
-import messageStore from '../../utils/messageStore';
+import {message} from '../../utils/messageStore';
 
 const useStyles = makeStyles(theme => ({
   submit: {
@@ -113,6 +113,7 @@ const useStyles = makeStyles(theme => ({
   },
   iconPassword: {
     cursor: 'pointer',
+    marginRight: theme.spacing(1),
   },
   forgotPass: {
     color: theme.palette.warning.main,
@@ -239,7 +240,7 @@ export default function ResetPassword() {
               ref: inputFieldRef,
             }}
             />
-          <FieldMessage errorMessages={showError ? messageStore('NEW_PASSWORD_EMPTY') : null} />
+          <FieldMessage errorMessages={showError ? message.MFA.NEW_PASSWORD_EMPTY : null} />
         </div>
         <div className={classes.passwordStrongSteps}>
           <Typography className={clsx(classes.passwordListItem, {[classes.redText]: showErr})}>To help protect your account, choose a password that you haven’t used before.</Typography>

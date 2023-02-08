@@ -17,6 +17,7 @@ import FetchErrorsHook from './hooks/useFetchErrors';
 import { useEditRetryConfirmDialog } from './hooks/useEditRetryConfirmDialog';
 import { NO_RESULT_SEARCH_MESSAGE, OPEN_ERRORS_VIEW_TYPES } from '../../../constants';
 import { buildDrawerUrl, drawerPaths } from '../../../utils/rightDrawer';
+import messageStore from '../../../utils/messageStore';
 
 const useStyles = makeStyles(theme => ({
   hide: {
@@ -236,7 +237,7 @@ const ErrorTableWithPanel = ({
 const EmptyErrorMessage = () => (
   <NoResultTypography>
     <br />
-    You don’t have any open errors.
+    {messageStore('NO_RESULT', {message: 'open errors'})}
     <br />
     <br />
     If <b>Refresh errors</b> is enabled, you can click it to retrieve additional
@@ -247,7 +248,7 @@ const EmptyErrorMessage = () => (
 const NoFiltersMessage = () => (
   <NoResultTypography>
     <br />
-    You don’t have any errors that match the filters you applied.
+    {messageStore('NO_RESULT', {message: 'errors that match the filters you applied.'})}
     <br />
     Clear all filters to see any errors for this step.
   </NoResultTypography>

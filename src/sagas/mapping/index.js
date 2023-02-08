@@ -3,7 +3,6 @@ import { deepClone } from 'fast-json-patch';
 import { uniqBy, isEmpty } from 'lodash';
 import actionTypes from '../../actions/types';
 import actions from '../../actions';
-import { SCOPES } from '../resourceForm';
 import {selectors} from '../../reducers';
 import { commitStagedChanges } from '../resources';
 import mappingUtil, {buildTreeFromV2Mappings, buildV2MappingsFromTree, buildExtractsTree} from '../../utils/mapping';
@@ -421,13 +420,12 @@ export function* saveMappings() {
     });
   }
 
-  yield put(actions.resource.patchStaged(importId, patch, SCOPES.VALUE));
+  yield put(actions.resource.patchStaged(importId, patch));
 
   const { cancelSave, resp } = yield race({
     resp: call(commitStagedChanges, {
       resourceType: 'imports',
       id: importId,
-      scope: SCOPES.VALUE,
       context: { flowId },
     }),
     cancelSave: take(actionTypes.MAPPING.CLEAR),

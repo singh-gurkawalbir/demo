@@ -244,7 +244,7 @@ describe('licenses', () => {
         path: '/type',
         value: 'integrationApp',
       },
-    ], 'value'));
+    ]));
     expect(mockHistoryPush).toHaveBeenCalledTimes(1);
   });
   test('should able to test the back button on license page', async () => {

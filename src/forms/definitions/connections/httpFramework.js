@@ -275,6 +275,18 @@ export default {
         { field: 'http.auth.type', is: ['oauth'] },
       ],
     },
+    'http.auth.oauth.oauth1.signatureMethod': {
+      fieldId: 'http.auth.oauth.oauth1.signatureMethod',
+      visibleWhenAll: [
+        { field: 'http.auth.type', is: ['oauth1'] },
+      ],
+    },
+    httpOAuth1: {
+      formId: 'httpOAuth1',
+      visibleWhenAll: [
+        { field: 'http.auth.type', is: ['oauth1'] },
+      ],
+    },
     httpWsse: {
       formId: 'httpWsse',
       visibleWhenAll: [
@@ -414,6 +426,23 @@ export default {
                 'httpRefreshToken',
                 'httpWsse',
               ],
+              containers: [{
+                fields: [
+                  'http.auth.oauth.oauth1.signatureMethod',
+                ],
+                containers: [
+                  {
+                    type: 'indent',
+                    containers: [
+                      {
+                        fields: [
+                          'httpOAuth1',
+                        ],
+                      },
+                    ],
+                  },
+                ],
+              }],
             }],
           },
           {

@@ -21,8 +21,8 @@ This respository hosts the codebase for the Integrator Frontend.
 
 
 **Prerequisites**
-- ```Node - v18.13.0``` - Cross-platform runtime environment for developing server-side and networking applications.
-   - Link: https://nodejs.org/download/release/v18.13.0/
+- ```Node - v18.12.1``` - Cross-platform runtime environment for developing server-side and networking applications.
+   - Link: https://nodejs.org/download/release/v18.12.1/
 - ```YARN``` - Used to handle packages.
 
 **Dependencies**
@@ -46,7 +46,7 @@ This respository hosts the codebase for the Integrator Frontend.
     - Link: https://brew.sh/
 - Install npm n package
     - run brew install n
-    - run the command to install node 18.13.0 `n 18.13.0`
+    - run the command to install node 18.12.1 `n 18.12.1`
 - For Configuration
     - Please duplicate the `.env.sample` file locally and rename the copy to `.env`.
     - This UI project can be configured to either run against a local instance of the integrator.io API, 

@@ -25,7 +25,6 @@ import ResourceSetupDrawer from '../../../../../components/ResourceSetup/Drawer'
 import InstallationStep from '../../../../../components/InstallStep';
 import useConfirmDialog from '../../../../../components/ConfirmDialog';
 import { getIntegrationAppUrlName } from '../../../../../utils/integrationApps';
-import { SCOPES } from '../../../../../sagas/resourceForm';
 import jsonUtil from '../../../../../utils/json';
 import { INSTALL_STEP_TYPES, emptyObject,
 } from '../../../../../constants';
@@ -38,6 +37,7 @@ import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
 import TrashIcon from '../../../../../components/icons/TrashIcon';
 import { TextButton } from '../../../../../components/Buttons';
 import { buildDrawerUrl, drawerPaths } from '../../../../../utils/rightDrawer';
+import { message } from '../../../../../utils/messageStore';
 
 const useStyles = makeStyles(theme => ({
   installIntegrationWrapper: {
@@ -309,7 +309,7 @@ export default function ConnectorInstallation() {
     e.preventDefault();
     confirmDialog({
       title: 'Confirm uninstall',
-      message: 'Are you sure you want to uninstall?',
+      message: message.SURE_UNINSTALL,
       buttons: [
         {
           label: 'Uninstall',
@@ -375,11 +375,19 @@ export default function ConnectorInstallation() {
       form,
     } = step;
 
+    let netsuitePackageType = null;
+
+    if (step?.name.startsWith('Integrator Bundle')) {
+      netsuitePackageType = 'suitebundle';
+    } else if (step?.name.startsWith('Integrator SuiteApp')) {
+      netsuitePackageType = 'suiteapp';
+    }
+
     if (completed) {
       return false;
     }
 
-    if (_connectionId || type === 'connection' || sourceConnection) {
+    if (_connectionId || type === 'connection' || (sourceConnection && !(step?.name.startsWith('Integrator Bundle') || step?.name.startsWith('Integrator SuiteApp')))) {
       if (step.isTriggered) {
         return false;
       }
@@ -398,7 +406,6 @@ export default function ConnectorInstallation() {
               _connectorId,
               installStepConnection: true,
             }),
-            SCOPES.VALUE
           )
         );
         setIsResourceStaged(true);
@@ -467,7 +474,8 @@ export default function ConnectorInstallation() {
               integrationId,
               step._connId,
               installerFunction,
-              isFrameWork2
+              isFrameWork2,
+              netsuitePackageType
             )
           );
         } else if (isFrameWork2) {

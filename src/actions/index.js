@@ -349,18 +349,17 @@ const resource = {
   removeStage: (id, predicateForPatchFilter) =>
     action(actionTypes.RESOURCE.STAGE_REMOVE, { id, predicateForPatchFilter }),
 
-  clearStaged: (id, scope) =>
-    action(actionTypes.RESOURCE.STAGE_CLEAR, { id, scope }),
+  clearStaged: id =>
+    action(actionTypes.RESOURCE.STAGE_CLEAR, { id }),
 
-  undoStaged: (id, scope) =>
-    action(actionTypes.RESOURCE.STAGE_UNDO, { id, scope }),
+  undoStaged: id =>
+    action(actionTypes.RESOURCE.STAGE_UNDO, { id }),
 
   patchAndCommitStaged: (
     resourceType,
     resourceId,
     patch,
     {
-      scope,
       context,
       asyncKey,
       parentContext,
@@ -369,28 +368,26 @@ const resource = {
     resourceType,
     id: resourceId,
     patch,
-    scope: scope || 'value',
     options,
     context,
     parentContext,
     asyncKey,
   }),
 
-  patchStaged: (id, patch, scope) =>
-    action(actionTypes.RESOURCE.STAGE_PATCH, { patch, id, scope }),
+  patchStaged: (id, patch) =>
+    action(actionTypes.RESOURCE.STAGE_PATCH, { patch, id }),
 
-  commitStaged: (resourceType, id, scope, options, context, asyncKey) =>
+  commitStaged: (resourceType, id, options, context, asyncKey) =>
     action(actionTypes.RESOURCE.STAGE_COMMIT, {
       resourceType,
       id,
-      scope,
       options,
       context,
       asyncKey,
     }),
 
-  commitConflict: (id, conflict, scope) =>
-    action(actionTypes.RESOURCE.STAGE_CONFLICT, { conflict, id, scope }),
+  commitConflict: (id, conflict) =>
+    action(actionTypes.RESOURCE.STAGE_CONFLICT, { conflict, id }),
 
   aliases: {
     requestAll: (id, resourceType) =>
@@ -1084,22 +1081,24 @@ const integrationApp = {
   },
   templates: {
     installer: {
-      verifyBundleOrPackageInstall: (id, connectionId, installerFunction, isFrameWork2) =>
+      verifyBundleOrPackageInstall: (id, connectionId, installerFunction, isFrameWork2, variant) =>
         action(actionTypes.INTEGRATION_APPS.TEMPLATES.INSTALLER.VERIFY_BUNDLE_INSTALL, {
           id,
           connectionId,
           installerFunction,
           isFrameWork2,
+          variant,
         }),
     },
     upgrade: {
       installer: {
-        verifyBundleOrPackageInstall: (id, connectionId, installerFunction, isFrameWork2) =>
+        verifyBundleOrPackageInstall: (id, connectionId, installerFunction, isFrameWork2, variant) =>
           action(actionTypes.INTEGRATION_APPS.TEMPLATES.INSTALLER.VERIFY_BUNDLE_INSTALL, {
             id,
             connectionId,
             installerFunction,
             isFrameWork2,
+            variant,
           }),
       },
     },
@@ -1325,11 +1324,12 @@ const template = {
     action(actionTypes.TEMPLATE.CLEAR_UPLOADED, { templateId }),
   clearTemplate: templateId =>
     action(actionTypes.TEMPLATE.CLEAR_TEMPLATE, { templateId }),
-  verifyBundleOrPackageInstall: (step, connection, templateId) =>
+  verifyBundleOrPackageInstall: (step, connection, templateId, variant) =>
     action(actionTypes.TEMPLATE.VERIFY_BUNDLE_INSTALL, {
       step,
       connection,
       templateId,
+      variant,
     }),
   publish: {
     request: (templateId, isPublished) =>
@@ -1439,6 +1439,7 @@ const user = {
         resource.requestCollection('shared/ashares', undefined, message),
       leave: id => action(actionTypes.USER.ACCOUNT.LEAVE_REQUEST, { id }),
       switchTo: ({ id }) => action(actionTypes.USER.ACCOUNT.SWITCH, { preferences: { defaultAShareId: id, environment: 'production' } }),
+      switchToComplete: () => action(actionTypes.USER.ACCOUNT.SWITCH_COMPLETE),
       addLinkedConnectionId: connectionId =>
         action(actionTypes.USER.ACCOUNT.ADD_SUITESCRIPT_LINKED_CONNECTION, {
           connectionId,
@@ -1830,10 +1831,14 @@ const resourceForm = {
     }),
   clear: (resourceType, resourceId) =>
     action(actionTypes.RESOURCE_FORM.CLEAR, { resourceType, resourceId }),
-  showBundleInstallNotification: (bundleVersion, bundleUrl, resourceType, resourceId) =>
-    action(actionTypes.RESOURCE_FORM.SHOW_BUNDLE_INSTALL_NOTIFICATION, { bundleVersion, bundleUrl, resourceType, resourceId }),
+  showBundleInstallNotification: (bundleUrl, resourceType, resourceId) =>
+    action(actionTypes.RESOURCE_FORM.SHOW_BUNDLE_INSTALL_NOTIFICATION, {bundleUrl, resourceType, resourceId }),
   hideBundleInstallNotification: (resourceType, resourceId) =>
     action(actionTypes.RESOURCE_FORM.HIDE_BUNDLE_INSTALL_NOTIFICATION, { resourceType, resourceId }),
+  showSuiteAppInstallNotification: (suiteAppUrl, resourceType, resourceId) =>
+    action(actionTypes.RESOURCE_FORM.SHOW_SUITEAPP_INSTALL_NOTIFICATION, {suiteAppUrl, resourceType, resourceId}),
+  hideSuiteAppInstallNotification: (resourceType, resourceId) =>
+    action(actionTypes.RESOURCE_FORM.HIDE_SUITEAPP_INSTALL_NOTIFICATION, { resourceType, resourceId }),
 };
 const accessToken = {
   displayToken: id => action(actionTypes.ACCESSTOKEN.DISPLAY, { id }),
@@ -2586,11 +2591,12 @@ const integrationLCM = {
         connectionId,
         openOauthConnection,
       }),
-    verifyBundleOrPackageInstall: ({ revisionId, connectionId, integrationId }) =>
+    verifyBundleOrPackageInstall: ({ revisionId, connectionId, integrationId, variant}) =>
       action(actionTypes.INTEGRATION_LCM.INSTALL_STEPS.STEP.VERIFY_BUNDLE_INSTALL, {
         revisionId,
         connectionId,
         integrationId,
+        variant,
       }),
   },
   revisions: {
@@ -2627,6 +2633,12 @@ const accountSettings = {
   request: () => action(actionTypes.ACCOUNT_SETTINGS.REQUEST),
   update: accountSettings => action(actionTypes.ACCOUNT_SETTINGS.UPDATE, {accountSettings}),
   received: accountSettings => action(actionTypes.ACCOUNT_SETTINGS.RECEIVED, {accountSettings}),
+};
+
+const uiFields = {
+  requestFlowLevel: flowId => action(actionTypes.UI_FIELDS.FLOW_LEVEL.REQUEST, { flowId }),
+  receivedFlowLevel: (flowId, resources) => action(actionTypes.UI_FIELDS.FLOW_LEVEL.RECEIVED, { flowId, resources }),
+  updateFlowResources: (flowId, resourceIds) => action(actionTypes.UI_FIELDS.FLOW_LEVEL.UPDATE_RESOURCES, { flowId, resourceIds }),
 };
 
 export default {
@@ -2682,4 +2694,5 @@ export default {
   bottomDrawer,
   integrationLCM,
   httpConnectors,
+  uiFields,
 };

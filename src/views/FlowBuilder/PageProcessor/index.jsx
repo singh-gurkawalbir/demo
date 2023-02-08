@@ -113,7 +113,7 @@ const PageProcessor = ({
       ];
 
       dispatch(actions.flow.addNewPPStepInfo(flowId, {branchPath: `/routers/${pp.routerIndex}/branches/${pp.branchIndex}`, processorIndex: index}));
-      dispatch(actions.resource.patchStaged(pp.id, patchSet, 'value'));
+      dispatch(actions.resource.patchStaged(pp.id, patchSet));
     }
 
     const to = pending

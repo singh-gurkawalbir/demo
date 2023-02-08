@@ -134,7 +134,7 @@ export default function DynaXmlParse_afe({
 
         }];
 
-      dispatch(actions.resource.patchStaged(resourceId, patch, 'value'));
+      dispatch(actions.resource.patchStaged(resourceId, patch));
     }
   }, [options, dispatch, resourceId]);
 
