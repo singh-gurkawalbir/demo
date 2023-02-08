@@ -255,6 +255,9 @@ export default function ConnectorInstallation() {
       dispatch(actions.resource.requestCollection('connections', undefined, undefined, integrationId));
       dispatch(actions.resource.requestCollection('asynchelpers', undefined, undefined, integrationId));
       dispatch(actions.resource.requestCollection('scripts'));
+      if (isFrameWork2) {
+        dispatch(actions.resource.requestCollection('tree/metadata', undefined, undefined, integrationId));
+      }
 
       if (mode === 'settings') {
         if (
