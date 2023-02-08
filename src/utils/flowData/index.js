@@ -406,6 +406,28 @@ export const getFormattedResourceForPreview = (
   return resource;
 };
 
+// updating correct http resource and endpoint ids for http2.0
+export const updateHTTP2Metadata = (resourceObj, formKey) => {
+  const resource = deepClone(resourceObj || {});
+  const resourceType = formKey.includes('imports') ? 'imports' : 'exports';
+
+  if (['exports', 'imports'].includes(resourceType) &&
+resource?.http?._httpConnectorResourceId && resource?.assistantMetadata
+  ) {
+    if (resource?.http?._httpConnectorResourceId?.includes('+')) {
+      resource.http._httpConnectorResourceId = resource.http._httpConnectorResourceId.split('+')?.[0];
+    }
+    if (resourceType === 'exports' && resource?.http?._httpConnectorEndpointId?.includes('+')) {
+      resource.http._httpConnectorEndpointId = resource.http._httpConnectorEndpointId.split('+')?.[0];
+    }
+    if (resourceType === 'imports' && resource.http._httpConnectorEndpointIds?.[0]?.includes('+')) {
+      resource.http._httpConnectorEndpointIds = [resource.http._httpConnectorEndpointIds[0].split('+')?.[0]];
+    }
+    resource.assistantMetadata = undefined;
+  }
+
+  return resource;
+};
 /**
  * @input patchSet
  * @input resourceType : Default value is exports

@@ -188,6 +188,11 @@ describe('dynaHFAssistantOptions UI tests', () => {
       },
       {
         op: 'replace',
+        path: '/assistantMetadata/resource',
+        value: undefined,
+      },
+      {
+        op: 'replace',
         path: '/assistantMetadata/version',
         value: 'v2',
       },
@@ -226,6 +231,16 @@ describe('dynaHFAssistantOptions UI tests', () => {
         op: 'replace',
         path: '/assistantMetadata/dontConvert',
         value: true,
+      },
+      {
+        op: 'replace',
+        path: '/assistantMetadata/resource',
+        value: undefined,
+      },
+      {
+        op: 'replace',
+        path: '/assistantMetadata/operation',
+        value: undefined,
       },
     ];
 
