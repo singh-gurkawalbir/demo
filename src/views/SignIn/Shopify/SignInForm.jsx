@@ -169,7 +169,7 @@ export default function SignIn({ dialogOpen, className, queryParam }) {
     if (errorMessage === AUTH_FAILURE_MESSAGE) {
       return 'Sign in failed. Please try again.';
     }
-    if (window.signInError) {
+    if (window.signInError && window.signinError !== 'undefined') {
       return window.signInError;
     }
 
