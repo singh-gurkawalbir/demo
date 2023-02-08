@@ -95,9 +95,11 @@ export const getReplaceConnectionExpression = (connection, isFrameWork2, childId
     if (type === 'rest' && connection?.isHTTP === true && connection.http?._httpConnectorId) {
       expression.push({ 'http.formType': 'assistant' });
       expression.push({$or: [{ type: 'rest' }, { type: 'http' }]});
+      expression.push({ isHTTP: { $ne: false } });
     } else if (type === 'http' && connection?.http?._httpConnectorId) {
       expression.push({ 'http.formType': 'assistant' });
       expression.push({$or: [{ type: 'rest' }, { type: 'http' }]});
+      expression.push({ isHTTP: { $ne: false } });
     } else {
       expression.push({ 'http.formType': { $ne: 'rest' } });
       expression.push({ type });

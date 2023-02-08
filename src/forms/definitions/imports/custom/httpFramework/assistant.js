@@ -80,13 +80,6 @@ export default function assistantDefinition(
         importDoc['/http/_httpConnectorResourceId'] = formValues['/assistantMetadata/resource'];
         importDoc['/http/_httpConnectorVersionId'] = formValues['/assistantMetadata/version'];
       }
-      if (importDoc?.['/assistantMetadata'] && importDoc?.['/http/_httpConnectorResourceId']) {
-        importDoc['/assistantMetadata'] = undefined;
-        delete importDoc['/assistantMetadata/resource'];
-        delete importDoc['/assistantMetadata/version'];
-        delete importDoc['/assistantMetadata/operation'];
-        delete importDoc['/assistantMetadata/lookups'];
-      }
 
       return { ...otherFormValues, ...importDoc };
     },
