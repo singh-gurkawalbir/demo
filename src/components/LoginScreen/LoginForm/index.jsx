@@ -122,7 +122,8 @@ const useStyles = makeStyles(theme => ({
     border: '1px solid',
     borderColor: theme.palette.divider,
     width: '100%',
-    background: 'url(https://d142hkd03ds8ug.cloudfront.net/images/googlelogo.png) 10% center no-repeat',
+    // eslint-disable-next-line no-undef
+    background: `url(${CDN_BASE_URI}images/googlelogo.png) 10% center no-repeat`,
     backgroundSize: theme.spacing(2),
     height: 38,
     fontSize: 16,

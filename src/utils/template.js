@@ -158,7 +158,6 @@ export default {
     netsuiteBundleNeededForConnections.forEach((conn, index) => installSteps.push({
       key: `NetSuite account ${index + 1}`,
       installURL: NETSUITE_BUNDLE_URL,
-      imageURL: 'images/company-logos/netsuite.png',
       completed: false,
       description: `Please install Integrator bundle in ${
         netsuiteBundleNeededForConnections.length > 1 ? conn.name : 'NetSuite'
@@ -172,7 +171,6 @@ export default {
     netsuiteSuiteAppNeededForConnections.forEach((conn, index) => installSteps.push({
       key: `NetSuite account ${index + 1}`,
       installURL: NETSUITE_SUITEAPP_URL,
-      imageURL: 'images/company-logos/netsuite.png',
       completed: false,
       description: `Please install Integrator suiteapp in ${
         netsuiteSuiteAppNeededForConnections.length > 1 ? conn.name : 'NetSuite'

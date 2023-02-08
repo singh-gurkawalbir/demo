@@ -1197,7 +1197,13 @@ export function convertToExport({ assistantConfig, assistantData, headers = [] }
 
     if (queryPart) {
       [...queryStringObj.entries()].forEach(([key, value]) => {
-        queryObj.set(key, value);
+        const paramType = operationDetails.queryParameters.find(({id}) => id === key)?.fieldType;
+
+        if (paramType && (paramType === 'array' || paramType === 'multiselect')) {
+          queryObj.append(key, value);
+        } else {
+          queryObj.set(key, value);
+        }
       });
       relativeURI = `${pathPart}?${decodeURI(queryObj.toString())}`;
     } else { relativeURI += (relativeURI.includes('?') ? '&' : '?') + finalQueryString; }

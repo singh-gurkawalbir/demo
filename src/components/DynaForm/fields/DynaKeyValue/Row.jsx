@@ -84,11 +84,7 @@ export default function KeyValueRow(props) {
       setShowGripper(true);
     }
   }, [enableSorting, isRowDragged]);
-  const dataFields = useMemo(() =>
-    props?.paramMeta?.fields.map(({id, description}) => ({
-      id,
-      description,
-    })), [props?.paramMeta?.fields]);
+  const dataFields = useMemo(() => props?.paramMeta?.fields.reduce((dataMap, {id, description}) => ({...dataMap, [id]: description}), {}), [props?.paramMeta?.fields]);
 
   const RemoveButton = ({icon}) => (
     <ActionButton
@@ -129,7 +125,7 @@ export default function KeyValueRow(props) {
           showAllSuggestions={suggestKeyConfig.showAllSuggestions}
           fullWidth
           isEndSearchIcon={isEndSearchIcon}
-          showInlineClose={!r.disableRowKey ? closeComponent : <ActionButton><FieldHelp title={dataFields[index].id} helpText={dataFields[index].description} /></ActionButton>}
+          showInlineClose={!r.disableRowKey ? closeComponent : <ActionButton><FieldHelp title={r.name} helpText={dataFields[r.name]} /></ActionButton>}
           />
 
         )}

@@ -240,6 +240,7 @@ const sampleData = {
       label: 'Omit when hidden',
       defaultValue: 'Hyderabad',
       defaultVisible: false,
+      omitWhenHidden: true,
       options: [
         {
           items: ['Delhi', 'Hyderabad', 'Chennai'],
