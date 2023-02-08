@@ -52,8 +52,8 @@ export default {
         ],
       },
       {
-        collapsed: true,
-        label: 'Application details',
+        collapsed: false,
+        label: 'Configure routing for shared connections',
         fields: [
           'van.contentBasedFlowRouter',
         ],
