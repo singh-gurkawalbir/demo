@@ -165,7 +165,7 @@ export default function SignIn({dialogOpen, className}) {
     if (errorMessage === AUTH_FAILURE_MESSAGE) {
       return 'Sign in failed. Please try again.';
     }
-    if (window.signInError) {
+    if (window.signInError && window.signinError !== 'undefined') {
       return window.signInError;
     }
 

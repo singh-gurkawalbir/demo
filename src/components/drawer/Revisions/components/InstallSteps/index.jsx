@@ -145,6 +145,7 @@ export default function InstallSteps({ integrationId, revisionId, onClose }) {
             connectionId: step.connectionId,
             revisionId,
             variant: netsuitePackageType,
+            isManualVerification: true,                     // true here sets the isManualVerification flag to true which means the user has triggered the verification
           }));
         }
       }
