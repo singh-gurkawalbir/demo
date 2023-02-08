@@ -7,6 +7,13 @@ import { selectors } from '../../reducers';
 export default function LoadResources({ children, resources, required, lazyResources = [], integrationId, spinner }) {
   const dispatch = useDispatch();
   const defaultAShareId = useSelector(state => state?.user?.preferences?.defaultAShareId);
+  const integration = useSelector(state => {
+    if (integrationId) {
+      return selectors.resource(state, 'integrations', integrationId);
+    }
+
+    return null;
+  }, shallowEqual);
 
   const requiredResources = useMemo(() => {
     if (resources) {
@@ -34,7 +41,6 @@ export default function LoadResources({ children, resources, required, lazyResou
   const resourceStatus = useSelectorMemo(selectors.mkResourceStatus, allResources, integrationId);
   const isAllDataReady = !resourceStatus.some(resource => !resource.isReady);
   const isAllRequiredDataReady = !resourceStatus.some(resource => !resource.isReady && !lazyLoadResources.includes(resource.resourceType));
-  const integration = useSelector(state => selectors.resource(state, 'integrations', integrationId), shallowEqual);
 
   useEffect(() => {
     if (!isAllDataReady) {
@@ -45,14 +51,17 @@ export default function LoadResources({ children, resources, required, lazyResou
         }
       });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dispatch, isAllDataReady, resources, defaultAShareId]);
+
+  useEffect(() => {
     // adding this because if all the resources are present and integration is not present we are not making call to get integration
     if (integrationId && !integration) {
       dispatch(actions.resource.request('integrations', integrationId));
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dispatch, isAllDataReady, resources, defaultAShareId, integrationId, integration]);
+  }, [dispatch, integration, integrationId]);
 
-  if (isAllRequiredDataReady || !required) {
+  if (isAllRequiredDataReady || !required || (integrationId && integration)) {
     return children || null;
   }
 

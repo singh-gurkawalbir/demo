@@ -1,6 +1,7 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { selectors } from '../../../../reducers';
+import LoadResources from '../../../../components/LoadResources';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 
 export const IntegrationAppCrumb = ({ integrationId }) => {
@@ -9,9 +10,9 @@ export const IntegrationAppCrumb = ({ integrationId }) => {
   );
 
   return (
-    <>
+    <LoadResources integrationId={integrationId}>
       {integrationAppName}
-    </>
+    </LoadResources>
   );
 };
 
@@ -32,8 +33,8 @@ export const ChildCrumb = ({ integrationId, childId }) => {
   }
 
   return (
-    <>
+    <LoadResources integrationId={childId}>
       {child ? child.label : childId}
-    </>
+    </LoadResources>
   );
 };
