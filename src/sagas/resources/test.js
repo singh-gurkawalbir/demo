@@ -1728,7 +1728,7 @@ describe('getResourceCollection saga', () => {
         }), collection],
       ])
       .put(actions.resource.collectionRequestSent(resourceType, integrationId, refresh))
-      .put(actions.resource.receivedCollection('integrations', [], 'integrationId'))
+      .put(actions.resource.receivedCollection('tree/metadata', [], 'integrationId'))
       .returns(collection)
       .run();
   });
@@ -1750,7 +1750,7 @@ describe('getResourceCollection saga', () => {
         }), collection],
       ])
       .put(actions.resource.collectionRequestSent(resourceType, integrationId, refresh))
-      .put(actions.resource.receivedCollection('integrations', collection.childIntegrations, 'integrationId'))
+      .put(actions.resource.receivedCollection('tree/metadata', collection.childIntegrations, 'integrationId'))
       .returns(collection)
       .run();
   });

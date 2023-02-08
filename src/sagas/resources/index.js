@@ -829,12 +829,9 @@ export function* getResourceCollection({ resourceType, refresh, integrationId })
     }
 
     if (resourceType === 'tree/metadata') {
-      const newCollection = collection?.childIntegrations || [];
-
-      yield put(actions.resource.receivedCollection(resourceType, newCollection, integrationId));
-    } else {
-      yield put(actions.resource.receivedCollection(resourceType, collection, integrationId));
+      collection = collection?.childIntegrations || [];
     }
+    yield put(actions.resource.receivedCollection(resourceType, collection, integrationId));
 
     yield put(actions.resource.collectionRequestSucceeded({resourceType: updatedResourceType, integrationId}));
 
