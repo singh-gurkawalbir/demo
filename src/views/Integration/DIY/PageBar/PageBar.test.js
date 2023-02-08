@@ -150,7 +150,7 @@ describe('PageBar2 UI tests', () => {
     const store = renderFunction();
 
     await prefAndIntegInStore(store);
-    const deletebutton = screen.getByRole('button', {name: 'Delete integration'});
+    const deletebutton = screen.getByRole('button', {name: 'Uninstall'});
 
     userEvent.click(deletebutton);
     await waitFor(() => expect(screen.getByText('Confirm delete')).toBeInTheDocument());
