@@ -16,7 +16,7 @@ export default function IntegrationDIY({integrationId}) {
     <>
       <ResourceDrawer />
       <QueuedJobsDrawer integrationId={integrationId} />
-      <LoadResources required integrationId={childId} resources="published,flows,connections,marketplacetemplates">
+      <LoadResources required integrationId={childId} resources={childId ? 'published,flows,exports,imports,connections,marketplacetemplates' : 'marketplacetemplates'}>
         <TabRedirection>
           <PageBar />
           <IntegrationTabs />

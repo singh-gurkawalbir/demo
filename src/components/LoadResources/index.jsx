@@ -61,7 +61,7 @@ export default function LoadResources({ children, resources, required, lazyResou
     }
   }, [dispatch, integration, integrationId]);
 
-  if (isAllRequiredDataReady || !required || (integrationId && integration)) {
+  if ((isAllRequiredDataReady || !required) && ((integrationId && integration) || !integrationId)) {
     return children || null;
   }
 
