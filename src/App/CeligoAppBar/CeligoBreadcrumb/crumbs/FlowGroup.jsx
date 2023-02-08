@@ -2,7 +2,7 @@ import React from 'react';
 import { selectors } from '../../../../reducers';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import { getFlowGroup } from '../../../../utils/flows';
-import LoadResources from '../../../../components/LoadResources';
+import LoadResource from '../../../../components/LoadResource';
 
 export default function FlowGroupCrumb({ integrationId, childId, sectionId }) {
   const flowGroupings = useSelectorMemo(selectors.mkFlowGroupingsTiedToIntegrations, (childId || integrationId));
@@ -12,8 +12,8 @@ export default function FlowGroupCrumb({ integrationId, childId, sectionId }) {
   const flowGroupName = flowGroupings.length ? getFlowGroup(flowGroupings, '', sectionId)?.name : sectionTitle;
 
   return (
-    <LoadResources integrationId={integrationId}>
+    <LoadResource resourceType="integrations" resourceId={integrationId}>
       {flowGroupName || 'Flow group'}
-    </LoadResources>
+    </LoadResource>
   );
 }
