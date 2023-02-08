@@ -1,19 +1,13 @@
-import { useEffect, useMemo } from 'react';
-import { shallowEqual, useDispatch, useSelector } from 'react-redux';
+import React, { useEffect, useMemo } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import actions from '../../actions';
 import { useSelectorMemo } from '../../hooks';
 import { selectors } from '../../reducers';
+import LoadResource from '../LoadResource';
 
 export default function LoadResources({ children, resources, required, lazyResources = [], integrationId, spinner }) {
   const dispatch = useDispatch();
   const defaultAShareId = useSelector(state => state?.user?.preferences?.defaultAShareId);
-  const integration = useSelector(state => {
-    if (integrationId) {
-      return selectors.resource(state, 'integrations', integrationId);
-    }
-
-    return null;
-  }, shallowEqual);
 
   const requiredResources = useMemo(() => {
     if (resources) {
@@ -54,14 +48,18 @@ export default function LoadResources({ children, resources, required, lazyResou
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch, isAllDataReady, resources, defaultAShareId]);
 
-  useEffect(() => {
-    // adding this because if all the resources are present and integration is not present we are not making call to get integration
-    if (integrationId && !integration) {
-      dispatch(actions.resource.request('integrations', integrationId));
+  if (isAllRequiredDataReady || !required) {
+    if (integrationId) {
+      return (
+        <LoadResource
+          resourceType="integrations"
+          resourceId={integrationId}
+        >
+          {children}
+        </LoadResource>
+      );
     }
-  }, [dispatch, integration, integrationId]);
 
-  if ((isAllRequiredDataReady || !required) && ((integrationId && integration) || !integrationId)) {
     return children || null;
   }
 
