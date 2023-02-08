@@ -60,6 +60,7 @@ export const AMPERSAND_ROUTES = [
 
 export const SHOPIFY_STORE_NAME_FOR_BASIC_AUTH_HELP_LINK = 'https://docs.celigo.com/hc/en-us/articles/360038373892-Set-up-a-basic-auth-connection-to-Shopify#storename';
 export const SHOPIFY_STORE_NAME_FOR_OAUTH_HELP_LINK = 'https://docs.celigo.com/hc/en-us/articles/360038755451-Set-up-an-OAuth-2-0-connection-to-Shopify#storename';
+export const SHOPIFY_STORE_NAME_FOR_TOKEN_HELP_LINK = 'https://docs.celigo.com/hc/en-us/articles/9251883344667-Set-up-a-token-connection-to-Shopify';
 
 export const SHOPIFY_BASIC_AUTH_USERNAME_HELP_LINK = 'https://docs.celigo.com/hc/en-us/articles/360038373892-Set-up-a-basic-auth-connection-to-Shopify#username';
 export const SHOPIFY_BASIC_AUTH_PASSWORD_HELP_LINK = 'https://docs.celigo.com/hc/en-us/articles/360038373892-Set-up-a-basic-auth-connection-to-Shopify#password';
