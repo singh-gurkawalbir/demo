@@ -8,7 +8,7 @@ import clsx from 'clsx';
 import actions from '../../../actions';
 import { selectors } from '../../../reducers';
 import ErrorIcon from '../../../components/icons/ErrorIcon';
-import { getDomain } from '../../../utils/resource';
+import { getDomain, isGoogleSignInAllowed } from '../../../utils/resource';
 import { AUTH_FAILURE_MESSAGE } from '../../../constants';
 import getRoutePath from '../../../utils/routePaths';
 import Spinner from '../../../components/Spinner';
@@ -300,7 +300,7 @@ export default function SignIn({ dialogOpen, className, queryParam }) {
 
       {!isAuthenticating && (
       <div>
-        {!dialogOpen && ALLOW_GOOGLE_SIGNIN === 'true' && (
+        {!dialogOpen && isGoogleSignInAllowed() && (
           <div>
             <div className={classes.or}>
               <Typography variant="body1">or</Typography>
