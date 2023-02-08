@@ -16,6 +16,7 @@ import LoadResources from '../../components/LoadResources';
 import { OutlinedButton } from '../../components/Buttons';
 import infoText from '../../components/Help/infoText';
 import { isProduction } from '../../forms/formFactory/utils';
+import { isGoogleSignInAllowed } from '../../utils/resource';
 
 const useStyles = makeStyles(theme => ({
   googleBtn: {
@@ -366,8 +367,7 @@ export default function ProfilePanel() {
           {defaultLabels.saveLabel}
         </DynaSubmit>
         {
-        // eslint-disable-next-line no-undef
-        ALLOW_GOOGLE_SIGNIN === 'true' && (
+        isGoogleSignInAllowed() && (
         <div className={classes.googleSignInPanel}>
           <PanelHeader
             title="Sign in via Google"

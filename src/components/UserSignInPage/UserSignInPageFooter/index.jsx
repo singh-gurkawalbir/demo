@@ -1,6 +1,7 @@
 import { makeStyles, Typography } from '@material-ui/core';
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { isSignUpAllowed } from '../../../utils/resource';
 import getRoutePath from '../../../utils/routePaths';
 import { TextButton } from '../../Buttons';
 
@@ -20,7 +21,7 @@ export default function UserSignInPageFooter({linkLabel, linkText, link}) {
 
   return (
     <div>
-      {ALLOW_SIGNUP === 'true' && (
+      {isSignUpAllowed() && (
       <Typography variant="body2" >
         {linkLabel}
         <TextButton

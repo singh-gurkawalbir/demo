@@ -303,6 +303,7 @@ export const amazonSellerCentralBaseUriForMWSConnection = {
 export const RESOURCE_DRAWER_PATH = '/:operation(add|edit)/:parentType/:parentId';
 export const CONN_DRAWER_PATH = '/:operation(add|edit|configure)/connections/:connId';
 export const ICLIENT_DRAWER_PATH = '/:operation(add|edit)/iClients/:iClientId';
+export const INTEGRATION_DRAWER_PATH = '/integrations/:integrationId/';
 
 // given a url, this util returns the path params
 // to identify the parent export/import type and id
@@ -317,6 +318,14 @@ export const getParentResourceContext = (url, resourceType) => {
         `/**${CONN_DRAWER_PATH}${ICLIENT_DRAWER_PATH}`,
       ],
       exact: true})?.params || {};
+  }
+  if (resourceType === 'integrations') {
+    return matchPath(url, {
+      path: [
+        `${INTEGRATION_DRAWER_PATH}**`,
+      ],
+      exact: true,
+    })?.params || {};
   }
 
   return matchPath(url, {

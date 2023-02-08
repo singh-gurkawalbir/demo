@@ -4,6 +4,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import ActionGroup from '../../../../components/ActionGroup';
 import BackArrowIcon from '../../../../components/icons/BackArrowIcon';
 import ApplicationImg from '../../../../components/icons/ApplicationImg';
+import { SHOPIFY_APP_URL } from '../../../../constants';
 
 const useStyles = makeStyles(theme => ({
   landingPageHeader: {
@@ -32,12 +33,19 @@ const useStyles = makeStyles(theme => ({
 export default function ShopifyLandingPageHeader() {
   const classes = useStyles();
   const history = useHistory();
+  const handleBackClick = () => {
+    if (history.length > 2) {
+      history.goBack();
+    } else {
+      window.location.href = SHOPIFY_APP_URL;
+    }
+  };
 
   return (
     <div className={classes.landingPageHeader}>
       <ActionGroup className={classes.actionGroup}>
         <div
-          onClick={() => { history.goBack(); }}
+          onClick={handleBackClick}
           className={classes.link}
         >
           <BackArrowIcon />
