@@ -313,7 +313,8 @@ export function SalesforceLookupFilterPanelData({
           return `<input class="form-control" name="${name}" value="${rhsValue}">${
             disabled
               ? ''
-              : '<img style="display:none;" class="settings-icon" src="https://d142hkd03ds8ug.cloudfront.net/images/icons/icon/gear.png">'
+              // eslint-disable-next-line no-undef
+              : `<img style="display:none;" class="settings-icon" src="${CDN_BASE_URI}images/icons/icon/gear.png">`
           }`;
         },
         valueGetter(rule) {

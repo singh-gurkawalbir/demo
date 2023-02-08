@@ -12,8 +12,6 @@ export default function IntegrationDIY({integrationId}) {
   const match = useRouteMatch();
   const { childId } = match.params;
 
-  console.log('11111', childId);
-
   return (
     <>
       <ResourceDrawer />

@@ -1714,7 +1714,7 @@ describe('getResourceCollection saga', () => {
   test('should dispatch received collection action if api call succeeds and resourceType is tree/metadata with empty response', () => {
     const resourceType = 'tree/metadata';
     const refresh = 'true';
-    const path = '/integrations/integrationId/tree/metadata?additionalFields=_connectorId,_parentId,sandbox,settings,settingsForm,preSave,changeEditionSteps,flowGroupings,_registeredConnectionIds,uninstallSteps';
+    const path = '/integrations/integrationId/tree/metadata?additionalFields=createdAt,_parentId';
     const collection = { id: 1 };
     const integrationId = 'integrationId';
 
@@ -1736,7 +1736,7 @@ describe('getResourceCollection saga', () => {
   test('should dispatch received collection action if api call succeeds and resourceType is tree/metadata with proper response', () => {
     const resourceType = 'tree/metadata';
     const refresh = 'true';
-    const path = '/integrations/integrationId/tree/metadata?additionalFields=_connectorId,_parentId,sandbox,settings,settingsForm,preSave,changeEditionSteps,flowGroupings,_registeredConnectionIds,uninstallSteps';
+    const path = '/integrations/integrationId/tree/metadata?additionalFields=createdAt,_parentId';
     const collection = { id: 1, childIntegrations: [{_id: 'child_id_1', name: 'name1'}] };
     const integrationId = 'integrationId';
 
