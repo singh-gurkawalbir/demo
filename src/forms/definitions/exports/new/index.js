@@ -171,6 +171,7 @@ export default {
 
           expression.push({ 'http._httpConnectorId': {$in: allConnectorIds} });
           expression.push({$or: [{ type: 'rest' }, { type: 'http' }]});
+          expression.push({ isHTTP: { $ne: false } });
         } else {
           expression.push({ type: appType });
         }
