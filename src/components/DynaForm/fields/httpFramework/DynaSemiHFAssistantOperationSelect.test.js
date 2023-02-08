@@ -2,7 +2,7 @@
 import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { renderWithProviders } from '../../../../test/test-utils';
+import { mutateStore, renderWithProviders } from '../../../../test/test-utils';
 import { ConfirmDialogProvider } from '../../../ConfirmDialog';
 import DynaSemiHFAssistantOperationSelect from './DynaSemiHFAssistantOperationSelect';
 import { getCreatedStore } from '../../../../store';
@@ -20,75 +20,77 @@ const props = {
 };
 
 function initDynaSemiHFAssistantOperationSelect(props = {}) {
-  initialStore.getState().session.form = {
-    'exports-_exportId': {
-      fields: {
-        'http.fields': [
-          {
-            id: 'assistantMetadata.adaptorType',
-            value: 'rest',
-          },
-          {
-            id: 'assistantMetadata.assistant',
-            value: 'zendesk',
-          },
-          {
-            id: 'assistantMetadata.version',
-            value: 'v2',
-          },
-        ],
-        type: {},
-        'once.once': {},
-        'delta.delta': {},
-        'random.field': {},
+  mutateStore(initialStore, draft => {
+    draft.session.form = {
+      'exports-_exportId': {
+        fields: {
+          'http.fields': [
+            {
+              id: 'assistantMetadata.adaptorType',
+              value: 'rest',
+            },
+            {
+              id: 'assistantMetadata.assistant',
+              value: 'zendesk',
+            },
+            {
+              id: 'assistantMetadata.version',
+              value: 'v2',
+            },
+          ],
+          type: {},
+          'once.once': {},
+          'delta.delta': {},
+          'random.field': {},
+        },
       },
-    },
-  };
-  initialStore.getState().data = {
-    resources: {
-      exports: [
-        { _id: '_exportId', _connectionId: '_connId', assistant: 'http', name: 'export1' },
-      ],
-      connections: [{ _id: '_connId', name: 'connection1', assistant: props.assistant, http: {_httpConnectorId: 'ConnectorId', _httpConnectorVersionId: 'ConnectorVersionId', _httpConnectorApiId: 'ConnectorApiId'} }],
-    },
-    httpConnectors: {
-      httpConnectorMetadata: {
-        ConnectorIdConnectorVersionIdConnectorApiId: {
-          export: {
-            config: {},
-            endpoints: [
-              { id: 'operation1', children: [{ key: 'key1', name: 'child1' }], name: 'increment ticket' },
-              { id: 'operation2', children: [{ key: 'key2', name: 'child2' }], name: 'increment user access' },
-              { id: 'operation3', children: [{ key: 'key3', name: 'child3' }], name: 'increment ticket count' },
-              { key: '' },
-            ],
-            versions: [
-              {
-                resources: [
-                  {
-                    id: 'user_api',
-                    operations: [
-                      { id: 'create_automations', name: 'Create' },
-                      { id: 'update_automations', name: 'Update' },
-                      { id: 'delete_automations', name: 'Delete' },
-                    ],
-                    name: 'resource1',
-                  },
-                  {
-                    id: 'id2',
-                    name: 'resource2',
-                  },
-                ],
-                version: 'v2',
-              }, {
-                resources: [],
-                version: 'v3',
-              }],
+    };
+    draft.data = {
+      resources: {
+        exports: [
+          { _id: '_exportId', _connectionId: '_connId', assistant: 'http', name: 'export1' },
+        ],
+        connections: [{ _id: '_connId', name: 'connection1', assistant: props.assistant, http: {_httpConnectorId: 'ConnectorId', _httpConnectorVersionId: 'ConnectorVersionId', _httpConnectorApiId: 'ConnectorApiId'} }],
+      },
+      httpConnectors: {
+        httpConnectorMetadata: {
+          ConnectorIdConnectorVersionIdConnectorApiId: {
+            export: {
+              config: {},
+              endpoints: [
+                { id: 'operation1', children: [{ key: 'key1', name: 'child1' }], name: 'increment ticket' },
+                { id: 'operation2', children: [{ key: 'key2', name: 'child2' }], name: 'increment user access' },
+                { id: 'operation3', children: [{ key: 'key3', name: 'child3' }], name: 'increment ticket count' },
+                { key: '' },
+              ],
+              versions: [
+                {
+                  resources: [
+                    {
+                      id: 'user_api',
+                      operations: [
+                        { id: 'create_automations', name: 'Create' },
+                        { id: 'update_automations', name: 'Update' },
+                        { id: 'delete_automations', name: 'Delete' },
+                      ],
+                      name: 'resource1',
+                    },
+                    {
+                      id: 'id2',
+                      name: 'resource2',
+                    },
+                  ],
+                  version: 'v2',
+                }, {
+                  resources: [],
+                  version: 'v3',
+                }],
+            },
           },
         },
       },
-    },
-  };
+    };
+  });
 
   return renderWithProviders(<ConfirmDialogProvider><DynaSemiHFAssistantOperationSelect {...props} /></ConfirmDialogProvider>, { initialStore });
 }

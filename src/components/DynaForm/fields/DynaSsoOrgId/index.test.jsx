@@ -4,7 +4,7 @@ import React from 'react';
 import {screen} from '@testing-library/react';
 import DynaSsoOrgId from './index';
 import actions from '../../../../actions';
-import { renderWithProviders, reduxStore } from '../../../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore } from '../../../../test/test-utils';
 
 const initialStore = reduxStore;
 const mockDispatch = jest.fn();
@@ -35,9 +35,11 @@ describe('dynaSsoOrgId UI test cases', () => {
       value: 'somevalue',
     };
 
-    initialStore.getState().session.sso = {
-      status: 'requested',
-    };
+    mutateStore(initialStore, draft => {
+      draft.session.sso = {
+        status: 'requested',
+      };
+    });
     initDynaSsoOrgId(data);
     expect(mockDispatch).toHaveBeenCalledWith(actions.sso.validateOrgId('somevalue'));
     expect(mockDispatch).toHaveBeenCalledWith(actions.form.forceFieldState('formkey')('someid', {isValid: false}));
@@ -55,10 +57,12 @@ describe('dynaSsoOrgId UI test cases', () => {
       value: 'somevalue',
     };
 
-    initialStore.getState().session.sso = {
-      status: 'error',
-      error: 'invalid sso org id',
-    };
+    mutateStore(initialStore, draft => {
+      draft.session.sso = {
+        status: 'error',
+        error: 'invalid sso org id',
+      };
+    });
     initDynaSsoOrgId(data);
     expect(mockDispatch).toHaveBeenCalledWith(actions.form.forceFieldState('formkey')('someid', {isValid: false, errorMessages: 'invalid sso org id' }));
     expect(screen.getByText('someerrormessages')).toBeInTheDocument();
@@ -74,10 +78,12 @@ describe('dynaSsoOrgId UI test cases', () => {
       touched: true,
     };
 
-    initialStore.getState().session.sso = {
-      status: 'error',
-      error: 'invalid sso org id',
-    };
+    mutateStore(initialStore, draft => {
+      draft.session.sso = {
+        status: 'error',
+        error: 'invalid sso org id',
+      };
+    });
     initDynaSsoOrgId(data);
     expect(mockDispatch).toHaveBeenCalledWith(actions.sso.validateOrgId(undefined));
     expect(mockDispatch).toHaveBeenCalledWith(actions.form.forceFieldState('formkey')('someid', {isValid: false, errorMessages: 'A value must be provided'}));
@@ -94,10 +100,12 @@ describe('dynaSsoOrgId UI test cases', () => {
       value: 'somevalue',
     };
 
-    initialStore.getState().session.sso = {
-      status: 'error',
-      error: 'invalid sso org id',
-    };
+    mutateStore(initialStore, draft => {
+      draft.session.sso = {
+        status: 'error',
+        error: 'invalid sso org id',
+      };
+    });
     initDynaSsoOrgId(data);
     expect(mockDispatch).toHaveBeenCalledWith(actions.sso.validateOrgId('somevalue'));
     expect(mockDispatch).toHaveBeenCalledWith(actions.form.forceFieldState('formkey')('someid', {isValid: false, errorMessages: 'invalid sso org id' }));
@@ -112,9 +120,11 @@ describe('dynaSsoOrgId UI test cases', () => {
       formKey: 'formkey',
     };
 
-    initialStore.getState().session.sso = {
-      status: 'success',
-    };
+    mutateStore(initialStore, draft => {
+      draft.session.sso = {
+        status: 'success',
+      };
+    });
     initDynaSsoOrgId(data);
     expect(mockDispatch).toHaveBeenCalledWith(actions.form.forceFieldState('formkey')('someid', {isValid: true}));
   });

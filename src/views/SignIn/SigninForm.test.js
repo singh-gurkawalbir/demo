@@ -2,7 +2,7 @@ import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { fireEvent, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { renderWithProviders, reduxStore } from '../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore } from '../../test/test-utils';
 import Signin from './SigninForm';
 import actions from '../../actions';
 import { getCreatedStore } from '../../store';
@@ -123,7 +123,9 @@ describe('SigninForm UI testcases', () => {
   test('should redirect to mfa  verify URL when mfa is required in the account', () => {
     initialStore = getCreatedStore();
 
-    initialStore.getState().auth = {mfaRequired: true};
+    mutateStore(initialStore, draft => {
+      draft.auth = {mfaRequired: true};
+    });
 
     initfunction(initialStore);
     expect(mockHistoryPush).toHaveBeenCalledWith('/mfa/verify', 'someState');
@@ -132,7 +134,9 @@ describe('SigninForm UI testcases', () => {
     jest.spyOn(useQuery, 'default').mockReturnValue({get: () => 'errorquery'});
     initialStore = getCreatedStore();
 
-    initialStore.getState().auth = {showAuthError: false};
+    mutateStore(initialStore, draft => {
+      draft.auth = {showAuthError: false};
+    });
 
     initfunction(initialStore);
 
@@ -141,7 +145,9 @@ describe('SigninForm UI testcases', () => {
   test('should show sign in fail error when Authentication is failed', () => {
     initialStore = getCreatedStore();
 
-    initialStore.getState().auth = {showAuthError: true, failure: 'Authentication Failure'};
+    mutateStore(initialStore, draft => {
+      draft.auth = {showAuthError: true, failure: 'Authentication Failure'};
+    });
 
     initfunction(initialStore);
 
@@ -150,7 +156,9 @@ describe('SigninForm UI testcases', () => {
   test('should show the required error message when error message is other then Authentication Failure', () => {
     initialStore = getCreatedStore();
 
-    initialStore.getState().auth = {showAuthError: true, failure: 'error message'};
+    mutateStore(initialStore, draft => {
+      draft.auth = {showAuthError: true, failure: 'error message'};
+    });
 
     initfunction(initialStore);
 
@@ -161,7 +169,9 @@ describe('SigninForm UI testcases', () => {
 
     initialStore = getCreatedStore();
 
-    initialStore.getState().auth = {showAuthError: true};
+    mutateStore(initialStore, draft => {
+      draft.auth = {showAuthError: true};
+    });
 
     initfunction(initialStore);
 
@@ -169,9 +179,11 @@ describe('SigninForm UI testcases', () => {
   });
   test('should show the option for SSO sign and google sign in in when account has ssoclients and user has google authentication available', () => {
     initialStore = getCreatedStore();
-    initialStore.getState().user.preferences = {defaultAShareId: 'own'};
-    initialStore.getState().data.resources = {ssoclients: [{type: 'oidc', disabled: false}]};
-    initialStore.getState().user.profile = {email: 'userEmail', auth_type_google: {id: 'someID'}};
+    mutateStore(initialStore, draft => {
+      draft.user.preferences = {defaultAShareId: 'own'};
+      draft.data.resources = {ssoclients: [{type: 'oidc', disabled: false}]};
+      draft.user.profile = {email: 'userEmail', auth_type_google: {id: 'someID'}};
+    });
 
     initfunction(initialStore, true);
 
@@ -188,8 +200,10 @@ describe('SigninForm UI testcases', () => {
   });
   test('should not show the option for google sign in when user doesnot has goog authentication avialable', () => {
     initialStore = getCreatedStore();
-    initialStore.getState().user.preferences = {defaultAShareId: 'own'};
-    initialStore.getState().data.resources = {ssoclients: [{type: 'oidc', disabled: false}]};
+    mutateStore(initialStore, draft => {
+      draft.user.preferences = {defaultAShareId: 'own'};
+      draft.data.resources = {ssoclients: [{type: 'oidc', disabled: false}]};
+    });
 
     initfunction(initialStore, true);
 

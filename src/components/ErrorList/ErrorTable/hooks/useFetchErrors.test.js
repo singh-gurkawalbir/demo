@@ -1,7 +1,7 @@
 
 import React from 'react';
 import FetchErrorsHook from './useFetchErrors';
-import { renderWithProviders } from '../../../../test/test-utils';
+import { mutateStore, renderWithProviders } from '../../../../test/test-utils';
 import actions from '../../../../actions';
 import { getCreatedStore } from '../../../../store';
 
@@ -17,63 +17,64 @@ const initialStore = getCreatedStore();
 
 describe('useFetchErrors UI tests', () => {
   test('should make respective dispatch calls when error status is set to received', () => {
-    initialStore.getState().session.filters = {
-      '63ab65842009e066e35e8af3-someflowjobid-63ab657ebc20f510012c130e': {
-        name: 'somename',
-      },
-      somefilterkey: {
-        paging: {
-          rowsPerPage: 50,
+    mutateStore(initialStore, draft => {
+      draft.session.filters = {
+        '63ab65842009e066e35e8af3-someflowjobid-63ab657ebc20f510012c130e': {
+          name: 'somename',
         },
-      },
-      openErrors: {
-        activeErrorId: '5666371243',
-        name: 'somename',
-      },
-    };
-
-    initialStore.getState().session.errorManagement = {
-      openErrors: {
-        '63ab65842009e066e35e8af3': {
-          data: {
-            '63ab657ebc20f510012c130e': {
-              _expOrImpId: '63ab657ebc20f510012c130e',
-              numError: 1,
-              lastErrorAt: '2022-12-28T06:39:54.065Z',
-            },
+        somefilterkey: {
+          paging: {
+            rowsPerPage: 50,
           },
         },
-      },
-      errorDetails: {
-        '63ab65842009e066e35e8af3': {
-          '63ab657ebc20f510012c130e': {
-            resolved: {
-              status: 'received',
-              outdated: 'somevalue',
-              nextPageURL: 'someurl',
-              errors: [],
-            },
-          },
+        openErrors: {
+          activeErrorId: '5666371243',
+          name: 'somename',
         },
-      },
-      retryData: {
-        retryObjects: {
-          '24e6afe09f6e41f19e6871482c52407d': {
-            status: 'received',
-            userData: {
-              id: 1,
-              data: 'sometext',
-            },
+      };
+      draft.session.errorManagement = {
+        openErrors: {
+          '63ab65842009e066e35e8af3': {
             data: {
-              data: {
-                orderid: 1,
-                customerid: 100,
+              '63ab657ebc20f510012c130e': {
+                _expOrImpId: '63ab657ebc20f510012c130e',
+                numError: 1,
+                lastErrorAt: '2022-12-28T06:39:54.065Z',
               },
             },
           },
         },
-      },
-    };
+        errorDetails: {
+          '63ab65842009e066e35e8af3': {
+            '63ab657ebc20f510012c130e': {
+              resolved: {
+                status: 'received',
+                outdated: 'somevalue',
+                nextPageURL: 'someurl',
+                errors: [],
+              },
+            },
+          },
+        },
+        retryData: {
+          retryObjects: {
+            '24e6afe09f6e41f19e6871482c52407d': {
+              status: 'received',
+              userData: {
+                id: 1,
+                data: 'sometext',
+              },
+              data: {
+                data: {
+                  orderid: 1,
+                  customerid: 100,
+                },
+              },
+            },
+          },
+        },
+      };
+    });
     renderWithProviders(<FetchErrorsHook
       filterKey="somefilterkey"
       flowId="63ab65842009e066e35e8af3"
@@ -89,60 +90,61 @@ describe('useFetchErrors UI tests', () => {
     }));
   });
   test('should make the respective dispatch calls when error status is not available in the store and errors are not resolved', () => {
-    initialStore.getState().session.filters = {
-      '63ab65842009e066e35e8af3-someflowjobid-63ab657ebc20f510012c130e': {
-        name: 'somename',
-        parentStartedAt: '2022-12-01T05:49:01.624Z',
-        endedAt: '2023-01-01T06:47:06.194Z',
-      },
-
-      openErrors: {
-        activeErrorId: '5666371243',
-        name: 'somename',
-      },
-    };
-
-    initialStore.getState().session.errorManagement = {
-      openErrors: {
-        '63ab65842009e066e35e8af3': {
-          data: {
-            '63ab657ebc20f510012c130e': {
-              _expOrImpId: '63ab657ebc20f510012c130e',
-              numError: 1,
-              lastErrorAt: '2022-12-28T06:39:54.065Z',
-            },
-          },
+    mutateStore(initialStore, draft => {
+      draft.session.filters = {
+        '63ab65842009e066e35e8af3-someflowjobid-63ab657ebc20f510012c130e': {
+          name: 'somename',
+          parentStartedAt: '2022-12-01T05:49:01.624Z',
+          endedAt: '2023-01-01T06:47:06.194Z',
         },
-      },
-      errorDetails: {
-        '63ab65842009e066e35e8af3': {
-          '63ab657ebc20f510012c130e': {
-            resolved: {
 
-              outdated: 'somevalue',
-              nextPageURL: 'someurl',
-              errors: [],
-            },
-          },
+        openErrors: {
+          activeErrorId: '5666371243',
+          name: 'somename',
         },
-      },
-      retryData: {
-        retryObjects: {
-          '24e6afe09f6e41f19e6871482c52407d': {
-            userData: {
-              id: 1,
-              data: 'sometext',
-            },
+      };
+      draft.session.errorManagement = {
+        openErrors: {
+          '63ab65842009e066e35e8af3': {
             data: {
-              data: {
-                orderid: 1,
-                customerid: 100,
+              '63ab657ebc20f510012c130e': {
+                _expOrImpId: '63ab657ebc20f510012c130e',
+                numError: 1,
+                lastErrorAt: '2022-12-28T06:39:54.065Z',
               },
             },
           },
         },
-      },
-    };
+        errorDetails: {
+          '63ab65842009e066e35e8af3': {
+            '63ab657ebc20f510012c130e': {
+              resolved: {
+
+                outdated: 'somevalue',
+                nextPageURL: 'someurl',
+                errors: [],
+              },
+            },
+          },
+        },
+        retryData: {
+          retryObjects: {
+            '24e6afe09f6e41f19e6871482c52407d': {
+              userData: {
+                id: 1,
+                data: 'sometext',
+              },
+              data: {
+                data: {
+                  orderid: 1,
+                  customerid: 100,
+                },
+              },
+            },
+          },
+        },
+      };
+    });
     renderWithProviders(<FetchErrorsHook
       filterKey="somefilterkey"
       flowId="63ab65842009e066e35e8af3"
@@ -176,60 +178,61 @@ describe('useFetchErrors UI tests', () => {
     }));
   });
   test('should make the respective dispatch calls when error status is not available in the store and errors are resolved', () => {
-    initialStore.getState().session.filters = {
-      '63ab65842009e066e35e8af3-someflowjobid-63ab657ebc20f510012c130e': {
-        name: 'somename',
-        parentStartedAt: '2022-12-01T05:49:01.624Z',
-        endedAt: '2023-01-01T06:47:06.194Z',
-      },
-
-      openErrors: {
-        activeErrorId: '5666371243',
-        name: 'somename',
-      },
-    };
-
-    initialStore.getState().session.errorManagement = {
-      openErrors: {
-        '63ab65842009e066e35e8af3': {
-          data: {
-            '63ab657ebc20f510012c130e': {
-              _expOrImpId: '63ab657ebc20f510012c130e',
-              numError: 1,
-              lastErrorAt: '2022-12-28T06:39:54.065Z',
-            },
-          },
+    mutateStore(initialStore, draft => {
+      draft.session.filters = {
+        '63ab65842009e066e35e8af3-someflowjobid-63ab657ebc20f510012c130e': {
+          name: 'somename',
+          parentStartedAt: '2022-12-01T05:49:01.624Z',
+          endedAt: '2023-01-01T06:47:06.194Z',
         },
-      },
-      errorDetails: {
-        '63ab65842009e066e35e8af3': {
-          '63ab657ebc20f510012c130e': {
-            resolved: {
 
-              outdated: 'somevalue',
-              nextPageURL: 'someurl',
-              errors: [],
-            },
-          },
+        openErrors: {
+          activeErrorId: '5666371243',
+          name: 'somename',
         },
-      },
-      retryData: {
-        retryObjects: {
-          '24e6afe09f6e41f19e6871482c52407d': {
-            userData: {
-              id: 1,
-              data: 'sometext',
-            },
+      };
+      draft.session.errorManagement = {
+        openErrors: {
+          '63ab65842009e066e35e8af3': {
             data: {
-              data: {
-                orderid: 1,
-                customerid: 100,
+              '63ab657ebc20f510012c130e': {
+                _expOrImpId: '63ab657ebc20f510012c130e',
+                numError: 1,
+                lastErrorAt: '2022-12-28T06:39:54.065Z',
               },
             },
           },
         },
-      },
-    };
+        errorDetails: {
+          '63ab65842009e066e35e8af3': {
+            '63ab657ebc20f510012c130e': {
+              resolved: {
+
+                outdated: 'somevalue',
+                nextPageURL: 'someurl',
+                errors: [],
+              },
+            },
+          },
+        },
+        retryData: {
+          retryObjects: {
+            '24e6afe09f6e41f19e6871482c52407d': {
+              userData: {
+                id: 1,
+                data: 'sometext',
+              },
+              data: {
+                data: {
+                  orderid: 1,
+                  customerid: 100,
+                },
+              },
+            },
+          },
+        },
+      };
+    });
     renderWithProviders(<FetchErrorsHook
       filterKey="somefilterkey"
       flowId="63ab65842009e066e35e8af3"

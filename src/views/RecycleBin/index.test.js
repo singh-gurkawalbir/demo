@@ -4,7 +4,7 @@ import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import RecycleBin from '.';
 import { runServer } from '../../test/api/server';
-import { renderWithProviders, reduxStore, mockGetRequestOnce } from '../../test/test-utils';
+import { renderWithProviders, reduxStore, mockGetRequestOnce, mutateStore } from '../../test/test-utils';
 import customCloneDeep from '../../utils/customCloneDeep';
 
 async function initRecycleBin(
@@ -17,26 +17,28 @@ async function initRecycleBin(
   } = {}) {
   const initialStore = customCloneDeep(reduxStore);
 
-  initialStore.getState().user.preferences = {
-    defaultAShareId,
-    environment: 'production',
-  };
-  initialStore.getState().user.org = {
-    accounts: [{
-      _id: defaultAShareId,
-      accessLevel: defaultAShareId === 'own' ? 'owner' : null,
-    }],
-  };
-  initialStore.getState().session.recycleBin = {
-    status,
-    redirectTo,
-  };
-  initialStore.getState().data.resources = resources;
-  initialStore.getState().auth = {
-    authenticated: true,
-    defaultAccountSet: true,
-  };
-  initialStore.getState().session.filters = filters;
+  mutateStore(initialStore, draft => {
+    draft.user.preferences = {
+      defaultAShareId,
+      environment: 'production',
+    };
+    draft.user.org = {
+      accounts: [{
+        _id: defaultAShareId,
+        accessLevel: defaultAShareId === 'own' ? 'owner' : null,
+      }],
+    };
+    draft.session.recycleBin = {
+      status,
+      redirectTo,
+    };
+    draft.data.resources = resources;
+    draft.auth = {
+      authenticated: true,
+      defaultAccountSet: true,
+    };
+    draft.session.filters = filters;
+  });
   const ui = (
     <MemoryRouter
       initialEntries={[{pathname: '/recycleBin'}]}

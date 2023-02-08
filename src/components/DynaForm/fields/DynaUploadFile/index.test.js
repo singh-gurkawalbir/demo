@@ -4,7 +4,7 @@ import {screen} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import actions from '../../../../actions';
 import DynaUploadFile from './index';
-import { reduxStore, renderWithProviders } from '../../../../test/test-utils';
+import { mutateStore, reduxStore, renderWithProviders } from '../../../../test/test-utils';
 
 const MockOnFieldChange = jest.fn();
 const initialStore = reduxStore;
@@ -30,20 +30,22 @@ describe('dynaupload file UI test cases', () => {
     jest.clearAllMocks();
   });
   test('should make dispatch calls for uploading a file', () => {
-    initialStore.getState().session.fileUpload = {
-      '5ff7c471f08d35214ed1a7a7-uploadFile': { status: 'received',
-        file: {
-          fileName: 'fileA.csv',
-          type: 'csv',
+    mutateStore(initialStore, draft => {
+      draft.session.fileUpload = {
+        '5ff7c471f08d35214ed1a7a7-uploadFile': { status: 'received',
+          file: {
+            fileName: 'fileA.csv',
+            type: 'csv',
+          },
+          name: 'fileA' },
+      };
+      draft.session.integrationApps.utility = {
+        '5df0b6c26dc1ab40a677cf45': {
+          runKey: 'somerunkey',
+          status: 'received',
         },
-        name: 'fileA' },
-    };
-    initialStore.getState().session.integrationApps.utility = {
-      '5df0b6c26dc1ab40a677cf45': {
-        runKey: 'somerunkey',
-        status: 'received',
-      },
-    };
+      };
+    });
     const data = {
       id: 'uploadFile',
       maxSize: '574 bytes',
@@ -86,22 +88,24 @@ describe('dynaupload file UI test cases', () => {
     ));
   });
   test('should test uploading of file with row delimiter', () => {
-    initialStore.getState().session.fileUpload = {
-      '5ff7c471f08d35214ed1a7a7-uploadFile': { status: 'received',
-        file: "{name:file2.csv,size:'50bytes',type:'csv'}\r",
-        rawFile: {
-          name: 'file2.csv',
-          size: '50 bytes',
-          type: 'csv',
+    mutateStore(initialStore, draft => {
+      draft.session.fileUpload = {
+        '5ff7c471f08d35214ed1a7a7-uploadFile': { status: 'received',
+          file: "{name:file2.csv,size:'50bytes',type:'csv'}\r",
+          rawFile: {
+            name: 'file2.csv',
+            size: '50 bytes',
+            type: 'csv',
+          },
+          name: 'fileA' },
+      };
+      draft.session.integrationApps.utility = {
+        '5df0b6c26dc1ab40a677cf45': {
+          runKey: 'somerunkey',
+          status: 'received',
         },
-        name: 'fileA' },
-    };
-    initialStore.getState().session.integrationApps.utility = {
-      '5df0b6c26dc1ab40a677cf45': {
-        runKey: 'somerunkey',
-        status: 'received',
-      },
-    };
+      };
+    });
     const data = {
       id: 'uploadFile',
       maxSize: '574 bytes',
@@ -159,22 +163,24 @@ describe('dynaupload file UI test cases', () => {
     ));
   });
   test('should test uploading of file with row delimiter  with s3 send key', () => {
-    initialStore.getState().session.fileUpload = {
-      '5ff7c471f08d35214ed1a7a7-uploadFile': { status: 'received',
-        file: "{name:file2.csv,size:'50bytes',type:'csv'}\r\n",
-        rawFile: {
-          name: 'file2.csv',
-          size: '50 bytes',
-          type: 'csv',
+    mutateStore(initialStore, draft => {
+      draft.session.fileUpload = {
+        '5ff7c471f08d35214ed1a7a7-uploadFile': { status: 'received',
+          file: "{name:file2.csv,size:'50bytes',type:'csv'}\r\n",
+          rawFile: {
+            name: 'file2.csv',
+            size: '50 bytes',
+            type: 'csv',
+          },
+          name: 'fileA' },
+      };
+      draft.session.integrationApps.utility = {
+        '5df0b6c26dc1ab40a677cf45': {
+          runKey: 'somerunkey',
+          status: 'received',
         },
-        name: 'fileA' },
-    };
-    initialStore.getState().session.integrationApps.utility = {
-      '5df0b6c26dc1ab40a677cf45': {
-        runKey: 'somerunkey',
-        status: 'received',
-      },
-    };
+      };
+    });
     const data = {
       id: 'uploadFile',
       maxSize: '574 bytes',
@@ -230,22 +236,24 @@ describe('dynaupload file UI test cases', () => {
     ));
   });
   test('should test uploading of file with row delimiter  for other applications other than s3', () => {
-    initialStore.getState().session.fileUpload = {
-      '5ff7c471f08d35214ed1a7a7-uploadFile': { status: 'received',
-        file: "{name:file2.csv,size:'50bytes',type:'csv'}\r\n",
-        rawFile: {
-          name: 'file2.csv',
-          size: '50 bytes',
-          type: 'csv',
+    mutateStore(initialStore, draft => {
+      draft.session.fileUpload = {
+        '5ff7c471f08d35214ed1a7a7-uploadFile': { status: 'received',
+          file: "{name:file2.csv,size:'50bytes',type:'csv'}\r\n",
+          rawFile: {
+            name: 'file2.csv',
+            size: '50 bytes',
+            type: 'csv',
+          },
+          name: 'fileA' },
+      };
+      draft.session.integrationApps.utility = {
+        '5df0b6c26dc1ab40a677cf45': {
+          runKey: 'somerunkey',
+          status: 'requested',
         },
-        name: 'fileA' },
-    };
-    initialStore.getState().session.integrationApps.utility = {
-      '5df0b6c26dc1ab40a677cf45': {
-        runKey: 'somerunkey',
-        status: 'requested',
-      },
-    };
+      };
+    });
     const data = {
       id: 'uploadFile',
       maxSize: '574 bytes',
@@ -282,22 +290,24 @@ describe('dynaupload file UI test cases', () => {
     expect(screen.getByRole('progressbar')).toBeInTheDocument();
   });
   test('should test uploading of file is in progress', () => {
-    initialStore.getState().session.fileUpload = {
-      '5ff7c471f08d35214ed1a7a7-uploadFile': { status: 'received',
-        file: "{name:file2.csv,size:'50bytes',type:'csv'}\n",
-        rawFile: {
-          name: 'file2.csv',
-          size: '50 bytes',
-          type: 'csv',
+    mutateStore(initialStore, draft => {
+      draft.session.fileUpload = {
+        '5ff7c471f08d35214ed1a7a7-uploadFile': { status: 'received',
+          file: "{name:file2.csv,size:'50bytes',type:'csv'}\n",
+          rawFile: {
+            name: 'file2.csv',
+            size: '50 bytes',
+            type: 'csv',
+          },
+          name: 'fileA' },
+      };
+      draft.session.integrationApps.utility = {
+        '5df0b6c26dc1ab40a677cf45': {
+          runKey: 'somerunkey',
+          status: 'requested',
         },
-        name: 'fileA' },
-    };
-    initialStore.getState().session.integrationApps.utility = {
-      '5df0b6c26dc1ab40a677cf45': {
-        runKey: 'somerunkey',
-        status: 'requested',
-      },
-    };
+      };
+    });
     const data = {
       id: 'uploadFile',
       maxSize: '574 bytes',

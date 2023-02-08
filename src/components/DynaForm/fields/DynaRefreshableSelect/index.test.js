@@ -3,27 +3,29 @@ import { screen, waitFor } from '@testing-library/react';
 import * as reactRedux from 'react-redux';
 import userEvent from '@testing-library/user-event';
 import actions from '../../../../actions';
-import {renderWithProviders} from '../../../../test/test-utils';
+import {mutateStore, renderWithProviders} from '../../../../test/test-utils';
 import DynaSelectOptionsGenerator from './index';
 import { getCreatedStore } from '../../../../store';
 
 const initialStore = getCreatedStore();
 
 function initDynaSelectOptionsGenerator(props = {}) {
-  initialStore.getState().session.metadata = {application: {'5efd8663a56953365bd28541': {
-    'salesforce/metadata/connections/5efd8663a56953365bd28541/sObjectTypes/Quote': {
-      data: props.data,
-      status: 'success',
-      errorMessage: 'Test Error Message',
+  mutateStore(initialStore, draft => {
+    draft.session.metadata = {application: {'5efd8663a56953365bd28541': {
+      'salesforce/metadata/connections/5efd8663a56953365bd28541/sObjectTypes/Quote': {
+        data: props.data,
+        status: 'success',
+        errorMessage: 'Test Error Message',
+      },
     },
-  },
-  }};
-  initialStore.getState().data.resources = {
-    connections: [{
-      _id: '5efd8663a56953365bd28541',
-      offline: props.offline,
-    }],
-  };
+    }};
+    draft.data.resources = {
+      connections: [{
+        _id: '5efd8663a56953365bd28541',
+        offline: props.offline,
+      }],
+    };
+  });
 
   return renderWithProviders(<DynaSelectOptionsGenerator {...props} />, {initialStore});
 }
