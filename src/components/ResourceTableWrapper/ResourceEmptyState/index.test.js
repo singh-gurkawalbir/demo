@@ -4,7 +4,7 @@ import { MemoryRouter, Route } from 'react-router-dom';
 import { screen } from '@testing-library/react';
 import ResourceList from '.';
 import { runServer } from '../../../test/api/server';
-import { renderWithProviders, reduxStore, mockGetRequestOnce } from '../../../test/test-utils';
+import { renderWithProviders, reduxStore, mockGetRequestOnce, mutateStore } from '../../../test/test-utils';
 
 async function initResourceList({
   props = {
@@ -13,15 +13,17 @@ async function initResourceList({
 } = {}) {
   const initialStore = reduxStore;
 
-  initialStore.getState().session.loadResources = {
-    none: {
+  mutateStore(initialStore, draft => {
+    draft.session.loadResources = {
+      none: {
+        exports: 'received',
+        connections: 'received',
+      },
       exports: 'received',
-      connections: 'received',
-    },
-    exports: 'received',
-    dummy: 'received',
-    tiles: 'received',
-  };
+      dummy: 'received',
+      tiles: 'received',
+    };
+  });
 
   const ui = (
     <MemoryRouter

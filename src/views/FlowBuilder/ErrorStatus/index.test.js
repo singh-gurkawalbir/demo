@@ -3,24 +3,26 @@ import React from 'react';
 import {screen} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import {MemoryRouter} from 'react-router-dom';
-import {reduxStore, renderWithProviders} from '../../../test/test-utils';
+import {mutateStore, reduxStore, renderWithProviders} from '../../../test/test-utils';
 import ErrorStatus from '.';
 
 const initialStore = reduxStore;
 
 function initErrorStatus(props) {
-  initialStore.getState().user.profile.useErrMgtTwoDotZero = true;
-  initialStore.getState().session.errorManagement.latestFlowJobs = {
-    '6253af74cddb8a1ba550a010': {
-      status: 'received',
-      data: [
-        {
-          _id: '62c6f1bcae93a81493321aa1',
-          lastModified: '2022-07-07T14:46:57.191Z',
-        },
-      ],
-    },
-  };
+  mutateStore(initialStore, draft => {
+    draft.user.profile.useErrMgtTwoDotZero = true;
+    draft.session.errorManagement.latestFlowJobs = {
+      '6253af74cddb8a1ba550a010': {
+        status: 'received',
+        data: [
+          {
+            _id: '62c6f1bcae93a81493321aa1',
+            lastModified: '2022-07-07T14:46:57.191Z',
+          },
+        ],
+      },
+    };
+  });
 
   return renderWithProviders(<MemoryRouter><ErrorStatus {...props} /></MemoryRouter>, {initialStore});
 }

@@ -4,18 +4,20 @@ import * as reactRedux from 'react-redux';
 import userEvent from '@testing-library/user-event';
 import TerminalNode from '.';
 import { getCreatedStore } from '../../../../../store';
-import {renderWithProviders} from '../../../../../test/test-utils';
+import {mutateStore, renderWithProviders} from '../../../../../test/test-utils';
 import * as mockContext from '../../Context';
 import actions from '../../../../../actions';
 
 let initialStore;
 
 function initTerminalNode({id, data, asyncStatus}) {
-  initialStore.getState().session.asyncTask = {
-    '234-flow_save_async_key': {
-      status: asyncStatus,
-    },
-  };
+  mutateStore(initialStore, draft => {
+    draft.session.asyncTask = {
+      '234-flow_save_async_key': {
+        status: asyncStatus,
+      },
+    };
+  });
   const ui = (
     <TerminalNode id={id} data={data} />
   );

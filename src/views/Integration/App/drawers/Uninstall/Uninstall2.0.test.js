@@ -4,7 +4,7 @@ import {screen} from '@testing-library/react';
 import * as reactRedux from 'react-redux';
 import userEvent from '@testing-library/user-event';
 import Uninstaller2 from './Uninstall2.0';
-import { renderWithProviders } from '../../../../../test/test-utils';
+import { mutateStore, renderWithProviders } from '../../../../../test/test-utils';
 import { getCreatedStore } from '../../../../../store';
 import actions from '../../../../../actions';
 
@@ -118,8 +118,10 @@ jest.mock('../../../../../utils/rightDrawer', () => ({
 }));
 
 function initUninstaller2({integration, integrationId, uninstaller2Data, integrationsData}) {
-  initialStore.getState().session.integrationApps.uninstaller2 = uninstaller2Data;
-  initialStore.getState().data.resources.integrations = integrationsData;
+  mutateStore(initialStore, draft => {
+    draft.session.integrationApps.uninstaller2 = uninstaller2Data;
+    draft.data.resources.integrations = integrationsData;
+  });
   const ui = (
     <MemoryRouter
       initialEntries={[{pathname: '/test'}]}

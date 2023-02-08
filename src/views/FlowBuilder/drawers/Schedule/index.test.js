@@ -4,7 +4,7 @@ import { MemoryRouter, Route } from 'react-router-dom';
 import { screen } from '@testing-library/react';
 import ScheduleDrawer from '.';
 import { runServer } from '../../../../test/api/server';
-import { renderWithProviders, reduxStore } from '../../../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore } from '../../../../test/test-utils';
 
 function initScheduleDrawer({
   props = {
@@ -14,13 +14,15 @@ function initScheduleDrawer({
 } = {}) {
   const initialStore = reduxStore;
 
-  initialStore.getState().data.resources = {
-    flows: [
-      {
-        _id: 'flow_id',
-      },
-    ],
-  };
+  mutateStore(initialStore, draft => {
+    draft.data.resources = {
+      flows: [
+        {
+          _id: 'flow_id',
+        },
+      ],
+    };
+  });
 
   const ui = (
     <MemoryRouter

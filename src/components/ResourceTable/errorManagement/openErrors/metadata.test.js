@@ -4,7 +4,7 @@ import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
-import { renderWithProviders, reduxStore } from '../../../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore } from '../../../../test/test-utils';
 import metadata from './metadata';
 import CeligoTable from '../../../CeligoTable';
 import { message } from '../../../../utils/messageStore';
@@ -40,12 +40,14 @@ function initFunction(data = {}, actionProps, initialStore = null) {
 
 const initialStore = reduxStore;
 
-initialStore.getState().user.profile = { timezone: 'Asia/Calcutta' };
+mutateStore(initialStore, draft => {
+  draft.user.profile = { timezone: 'Asia/Calcutta' };
 
-initialStore.getState().data.resources.exports = [{
-  _id: '5e5f495a3a9b335b1a007b43',
-  adaptorType: 'NetSuiteExport',
-}];
+  draft.data.resources.exports = [{
+    _id: '5e5f495a3a9b335b1a007b43',
+    adaptorType: 'NetSuiteExport',
+  }];
+});
 
 function indexOfCell(text, role) {
   const cells = screen.getAllByRole(role);
@@ -74,8 +76,9 @@ function expectFunction(header, cell) {
 describe("openErros table's metadata UI tests", () => {
   test('should verify when error is selected', () => {
     window.HTMLElement.prototype.scrollIntoView = jest.fn();
-
-    initialStore.getState().session.filters.openErrors = {activeErrorId: 'someErrorId'};
+    mutateStore(initialStore, draft => {
+      draft.session.filters.openErrors = {activeErrorId: 'someErrorId'};
+    });
 
     initFunction({errorId: 'someErrorId', message: 'first'}, {}, initialStore);
     const rows = screen.getAllByRole('row');

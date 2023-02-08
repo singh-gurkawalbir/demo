@@ -3,26 +3,28 @@ import React from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { screen } from '@testing-library/react';
 import UserName from './UserName';
-import { renderWithProviders, reduxStore } from '../../../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore } from '../../../../test/test-utils';
 
 const initialStore = reduxStore;
 
-initialStore.getState().user = {
-  profile: {
-    _id: '5cadc8b42b10347a2708bf29',
-    name: 'Test',
-    email: 'Test@celigo.com',
-  },
-};
-initialStore.getState().data.resources = {
-  flows: [
-    {
-      _id: 'flow_id_1',
-      _integrationId: 'integration_id_1',
+mutateStore(initialStore, draft => {
+  draft.user = {
+    profile: {
+      _id: '5cadc8b42b10347a2708bf29',
+      name: 'Test',
+      email: 'Test@celigo.com',
     },
-  ],
-  scripts: [],
-};
+  };
+  draft.data.resources = {
+    flows: [
+      {
+        _id: 'flow_id_1',
+        _integrationId: 'integration_id_1',
+      },
+    ],
+    scripts: [],
+  };
+});
 
 describe('uI test cases for username', () => {
   const userId = 'auto';

@@ -4,7 +4,7 @@ import * as reactRedux from 'react-redux';
 import { MemoryRouter } from 'react-router-dom';
 import AuditPanel from '.';
 import { runServer } from '../../../../../../test/api/server';
-import { renderWithProviders, reduxStore} from '../../../../../../test/test-utils';
+import { renderWithProviders, reduxStore, mutateStore} from '../../../../../../test/test-utils';
 
 async function initMarketplace({
   props = {
@@ -13,15 +13,18 @@ async function initMarketplace({
 } = {}) {
   const initialStore = reduxStore;
 
-  initialStore.getState().data.resources = {
-    flows: [
-      {
-        _id: 'flow_id_1',
-        _integrationId: 'integration_id_1',
-      },
-    ],
-    scripts: [],
-  };
+  mutateStore(initialStore, draft => {
+    draft.data.resources = {
+      flows: [
+        {
+          _id: 'flow_id_1',
+          _integrationId: 'integration_id_1',
+        },
+      ],
+      scripts: [],
+    };
+  });
+
   const ui = (
     <MemoryRouter>
       <AuditPanel {...props} />

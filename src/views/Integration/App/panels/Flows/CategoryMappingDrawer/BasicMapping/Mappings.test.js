@@ -3,7 +3,7 @@ import { screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import userEvent from '@testing-library/user-event';
 import * as GenerateMediumId from '../../../../../../../utils/string';
-import { renderWithProviders} from '../../../../../../../test/test-utils';
+import { mutateStore, renderWithProviders} from '../../../../../../../test/test-utils';
 import { getCreatedStore } from '../../../../../../../store';
 import ImportMapping from './Mappings';
 
@@ -19,10 +19,12 @@ describe('Mappings UI tests', () => {
   test('should check the dispatch call when a field is selected', () => {
     const initialStore = getCreatedStore();
 
-    initialStore.getState().session.integrationApps.settings['5ea16c600e2fab71928a6152-5ff579d745ceef7dcd797c15'] = {
-      filters: {attributes: {someattribute: 'someattribute'}},
-      mappings: {editorId: {mappings: [{key: 'key', filterType: 'someattribute', hardCodedValue: 'value', generate: 'generate'}]}},
-    };
+    mutateStore(initialStore, draft => {
+      draft.session.integrationApps.settings['5ea16c600e2fab71928a6152-5ff579d745ceef7dcd797c15'] = {
+        filters: {attributes: {someattribute: 'someattribute'}},
+        mappings: {editorId: {mappings: [{key: 'key', filterType: 'someattribute', hardCodedValue: 'value', generate: 'generate'}]}},
+      };
+    });
 
     renderWithProviders(
       <MemoryRouter>
@@ -51,10 +53,12 @@ describe('Mappings UI tests', () => {
   test('should delete the category mapping', () => {
     const initialStore = getCreatedStore();
 
-    initialStore.getState().session.integrationApps.settings['5ea16c600e2fab71928a6152-5ff579d745ceef7dcd797c15'] = {
-      filters: {attributes: {someattribute: 'someattribute'}},
-      mappings: {editorId: {mappings: [{key: 'key', filterType: 'someattribute', hardCodedValue: 'value', generate: 'generate'}]}},
-    };
+    mutateStore(initialStore, draft => {
+      draft.session.integrationApps.settings['5ea16c600e2fab71928a6152-5ff579d745ceef7dcd797c15'] = {
+        filters: {attributes: {someattribute: 'someattribute'}},
+        mappings: {editorId: {mappings: [{key: 'key', filterType: 'someattribute', hardCodedValue: 'value', generate: 'generate'}]}},
+      };
+    });
 
     renderWithProviders(
       <MemoryRouter>
@@ -83,10 +87,12 @@ describe('Mappings UI tests', () => {
     jest.spyOn(GenerateMediumId, 'generateId').mockReturnValue('someGeneratedId');
     const initialStore = getCreatedStore();
 
-    initialStore.getState().session.integrationApps.settings['5ea16c600e2fab71928a6152-5ff579d745ceef7dcd797c15'] = {
-      filters: {attributes: {someattribute: 'someattribute'}},
-      mappings: {editorId: {mappings: [{key: 'key', filterType: 'preferred', generate: 'generate'}]}},
-    };
+    mutateStore(initialStore, draft => {
+      draft.session.integrationApps.settings['5ea16c600e2fab71928a6152-5ff579d745ceef7dcd797c15'] = {
+        filters: {attributes: {someattribute: 'someattribute'}},
+        mappings: {editorId: {mappings: [{key: 'key', filterType: 'preferred', generate: 'generate'}]}},
+      };
+    });
 
     renderWithProviders(
       <MemoryRouter>
@@ -110,11 +116,13 @@ describe('Mappings UI tests', () => {
 
     const initialStore = getCreatedStore();
 
-    initialStore.getState().session.integrationApps.settings['5ea16c600e2fab71928a6152-5ff579d745ceef7dcd797c15'] = {
-      filters: {attributes: {someattribute: 'someattribute'}},
-      mappings: {editorId: {mappings: [{key: 'key', filterType: 'optional', generate: 'generate'}]}},
-      response: [{operation: 'extractsMetaData', data: [{name: 'extractsMetaData', id: 'extractsMetaData', filterType: 'optional', key: 'somekey'}]}],
-    };
+    mutateStore(initialStore, draft => {
+      draft.session.integrationApps.settings['5ea16c600e2fab71928a6152-5ff579d745ceef7dcd797c15'] = {
+        filters: {attributes: {someattribute: 'someattribute'}},
+        mappings: {editorId: {mappings: [{key: 'key', filterType: 'optional', generate: 'generate'}]}},
+        response: [{operation: 'extractsMetaData', data: [{name: 'extractsMetaData', id: 'extractsMetaData', filterType: 'optional', key: 'somekey'}]}],
+      };
+    });
 
     renderWithProviders(
       <MemoryRouter>
@@ -139,11 +147,13 @@ describe('Mappings UI tests', () => {
 
     const initialStore = getCreatedStore();
 
-    initialStore.getState().session.integrationApps.settings['5ea16c600e2fab71928a6152-5ff579d745ceef7dcd797c15'] = {
-      filters: {attributes: {someattribute: 'someattribute'}},
-      mappings: {editorId: {mappings: [{key: 'key', filterType: 'optional', generate: 'generate'}]}},
-      response: [{operation: 'extractsMetaData', data: [{name: 'extractsMetaData', id: 'extractsMetaData', filterType: 'optional', key: 'somekey'}]}],
-    };
+    mutateStore(initialStore, draft => {
+      draft.session.integrationApps.settings['5ea16c600e2fab71928a6152-5ff579d745ceef7dcd797c15'] = {
+        filters: {attributes: {someattribute: 'someattribute'}},
+        mappings: {editorId: {mappings: [{key: 'key', filterType: 'optional', generate: 'generate'}]}},
+        response: [{operation: 'extractsMetaData', data: [{name: 'extractsMetaData', id: 'extractsMetaData', filterType: 'optional', key: 'somekey'}]}],
+      };
+    });
 
     renderWithProviders(
       <MemoryRouter>
