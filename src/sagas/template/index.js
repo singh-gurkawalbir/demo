@@ -102,7 +102,7 @@ export function* verifyBundleOrPackageInstall({
   connection,
   templateId,
   variant,
-  isManualVerification,
+  isManualVerification = true,
 }) {
   const path = variant ? `/connections/${connection._id}/distributed?type=${variant}` : `/connections/${connection._id}/distributed`;
   let response;

@@ -253,7 +253,7 @@ export function* verifyBundleOrPackageInstall({
   installerFunction,
   isFrameWork2,
   variant,
-  isManualVerification,
+  isManualVerification = true,
 }) {
   const path = variant ? `/connections/${connectionId}/distributed?type=${variant}` : `/connections/${connectionId}/distributed`;
   let response;
