@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 import actions from '../../actions';
 import { selectors } from '../../reducers';
+import { STANDALONE_INTEGRATION } from '../../constants';
 
 export default function LoadResource({ children, resourceType, resourceId, spinner }) {
   const dispatch = useDispatch();
@@ -14,12 +15,12 @@ export default function LoadResource({ children, resourceType, resourceId, spinn
   }, shallowEqual);
 
   useEffect(() => {
-    if (resourceId && !resource) {
+    if (resourceId && !resource && resourceId !== STANDALONE_INTEGRATION.id) {
       dispatch(actions.resource.request('integrations', resourceId));
     }
   }, [dispatch, resource, resourceId]);
 
-  if ((resourceId && resource) || !resourceId) {
+  if ((resourceId && resource) || !resourceId || resourceId === STANDALONE_INTEGRATION.id) {
     return children || null;
   }
 

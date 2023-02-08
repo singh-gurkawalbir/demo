@@ -29,11 +29,15 @@ export const ChildCrumb = ({ integrationId, childId }) => {
   });
 
   if (isIntegrationAppV2) {
-    return childName || childId;
+    return (
+      <LoadResource resourceType="integrations" resourceId={childId}>
+        {childName || childId}
+      </LoadResource>
+    );
   }
 
   return (
-    <LoadResource resourceType="integrations" resourceId={childId}>
+    <LoadResource resourceType="integrations" resourceId={integrationId}>
       {child ? child.label : childId}
     </LoadResource>
   );
