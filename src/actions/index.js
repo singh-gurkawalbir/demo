@@ -322,8 +322,8 @@ const resource = {
       integrationId,
       isNextPageCollection,
     }),
-  clearCollection: resourceType =>
-    action(actionTypes.RESOURCE.CLEAR_COLLECTION, { resourceType }),
+  clearCollection: (resourceType, integrationId) =>
+    action(actionTypes.RESOURCE.CLEAR_COLLECTION, { resourceType, integrationId }),
   patch: (resourceType, id, patchSet, asyncKey) =>
     action(actionTypes.RESOURCE.PATCH, { resourceType, id, patchSet, asyncKey}),
   delete: (resourceType, id) =>
@@ -1140,6 +1140,9 @@ const integrationApp = {
       action(actionTypes.INTEGRATION_APPS.UNINSTALLER2.COMPLETE, {
         id: integrationId,
       }),
+    clearCollection: integrationId => action(actionTypes.INTEGRATION_APPS.UNINSTALLER2.CLEAR_COLLECTION, {
+      integrationId,
+    }),
   },
   child: {
     addNew: integrationId =>

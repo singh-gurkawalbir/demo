@@ -255,9 +255,6 @@ export default function ConnectorInstallation() {
       dispatch(actions.resource.requestCollection('connections', undefined, undefined, integrationId));
       dispatch(actions.resource.requestCollection('asynchelpers', undefined, undefined, integrationId));
       dispatch(actions.resource.requestCollection('scripts'));
-      if (isFrameWork2 && initChild?.function) {
-        dispatch(actions.resource.requestCollection('tree/metadata', undefined, undefined, parentId || integrationId));
-      }
 
       if (mode === 'settings') {
         if (
@@ -270,6 +267,7 @@ export default function ConnectorInstallation() {
             getRoutePath(`/integrationapps/${integrationChildAppName}/${childIntegrationId}/setup`)
           );
         } else if (parentId) {
+          dispatch(actions.resource.requestCollection('tree/metadata', undefined, undefined, parentId));
           history.push(
             getRoutePath(`/integrationapps/${integrationAppName}/${parentId}/child/${integrationId}/flows`)
           );

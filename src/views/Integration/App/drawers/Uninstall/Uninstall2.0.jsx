@@ -89,7 +89,7 @@ export default function Uninstaller2({ integration, integrationId }) {
           integrationId
         )
       );
-      dispatch(actions.resource.requestCollection('tree/metadata', undefined, undefined, _parentId || integrationId));
+      dispatch(actions.integrationApp.uninstaller2.clearCollection(_parentId || integrationId));
       history.replace(getRoutePath(HOME_PAGE_PATH));
     }
   }, [_parentId, dispatch, history, integrationId, isComplete]);
