@@ -31,6 +31,7 @@ export default function DynaUploadFile(props) {
     sendS3Key,
     formKey,
     isIAField,
+    mode,
     placeholder,
     persistData = false,
     _integrationId: integrationId,
@@ -117,12 +118,12 @@ export default function DynaUploadFile(props) {
         {
           fileId,
           file,
-          fileType: options,
+          fileType: isIAField ? mode : options,
           fileProps: { maxSize },
         }
       ));
     },
-    [dispatch, fileId, options, maxSize]
+    [dispatch, fileId, options, maxSize, mode, isIAField]
   );
 
   return (

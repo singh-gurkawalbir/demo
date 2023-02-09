@@ -95,6 +95,7 @@ const sampleData = {
       isLoggable: true,
       type: 'netsuitelookup',
       label: 'Netsuite lookup',
+      disableFetch: true,
     },
     staticMap: {
       id: 'staticMap',
