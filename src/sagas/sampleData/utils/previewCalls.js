@@ -40,7 +40,7 @@ export function* pageProcessorPreview({
   let flowClone = customCloneDeep(merged);
 
   if (prePatches?.length) {
-    flowClone = jsonPatch.applyPatch(flowClone, jsonPatch.customCloneDeep(prePatches)).newDocument;
+    flowClone = jsonPatch.applyPatch(flowClone, jsonPatch.deepClone(prePatches)).newDocument;
   }
 
   let flow = yield call(filterPendingResources, { flow: flowClone });
@@ -87,7 +87,7 @@ export function* pageProcessorPreview({
     );
 
     if (newPatches?.length) {
-      flow = jsonPatch.applyPatch(flowClone, jsonPatch.customCloneDeep(newPatches)).newDocument;
+      flow = jsonPatch.applyPatch(flowClone, jsonPatch.deepClone(newPatches)).newDocument;
     }
 
     // If page processor Doc is supplied , no need of fetching it from the state
