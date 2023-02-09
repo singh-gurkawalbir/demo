@@ -9,7 +9,7 @@ const initialStore = reduxStore;
 const end = new Date();
 const notExpired = new Date();
 
-end.setMonth(end.getMonth() - 2);
+end.setDate(end.getDate() - 2);
 notExpired.setMonth(notExpired.getMonth() + 2);
 
 mutateStore(initialStore, draft => {
@@ -42,12 +42,12 @@ describe('typeCell UI tests', () => {
   test('should show the expiring message when integration expires', () => {
     renderWithProviders(<TypeCell tile={{_connectorId: 'some_connectorId', _integrationId: '1_integrationId'}} />, {initialStore});
     expect(screen.getByText('Integration app')).toBeInTheDocument();
-    expect(screen.getByText('Expired 61 days ago')).toBeInTheDocument();
+    expect(screen.getByText('Expired 2 days ago')).toBeInTheDocument();
   });
   test('should show the expiring message when integration trieal ends', () => {
     renderWithProviders(<TypeCell tile={{_connectorId: 'some_connectorId', _integrationId: '2_integrationId'}} />, {initialStore});
     expect(screen.getByText('Integration app')).toBeInTheDocument();
-    expect(screen.getByText('Expired 61 days ago')).toBeInTheDocument();
+    expect(screen.getByText('Expired 2 days ago')).toBeInTheDocument();
   });
   test('should not show any expired message when App is not expired', () => {
     renderWithProviders(<TypeCell tile={{_connectorId: 'some_connectorId', _integrationId: '3_integrationId'}} />, {initialStore});

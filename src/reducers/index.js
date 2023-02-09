@@ -216,7 +216,7 @@ selectors.userProfilePreferencesProps = createSelector(
       auth_type_google,
       _ssoAccountId,
       authTypeSSO,
-      darkTheme,
+      colorTheme,
     } = { ...profile, ...preferences };
 
     return {
@@ -235,7 +235,7 @@ selectors.userProfilePreferencesProps = createSelector(
       showRelativeDateTime,
       _ssoAccountId,
       authTypeSSO,
-      darkTheme,
+      colorTheme,
     };
   });
 
@@ -371,20 +371,26 @@ selectors.integrationInstallSteps = createSelector(
 
     let netsuiteConnIndex = 0;
     let salesforceConnIndex = 0;
+
+    const useNewImplementationForNetSuiteURLSteps = installSteps.some(installStep => installStep.type === 'url' && (installStep.name.startsWith('Integrator Bundle') || installStep.name.startsWith('Integrator SuiteApp')) && installStep?.sourceConnection?._id);
     // passing connectionId as _connId in case of 'Integrator Bundle' and 'Integrator Adaptor Package'
 
     return installSteps.map(step => {
       if (step.installURL || step.url) {
-        if (
-          step.name.includes('Integrator Bundle')
-        ) {
-          const connectionId = bundleInstallationForNetsuiteConnections[netsuiteConnIndex]?._connectionId;
+        if (step.name.startsWith('Integrator Bundle') || step.name.startsWith('Integrator SuiteApp')) {
+          if (useNewImplementationForNetSuiteURLSteps) {
+            const matchingNetSuiteConnection = installSteps.find(installStep => installStep?.sourceConnection?._id === step?.sourceConnection?._id);
 
-          netsuiteConnIndex += 1;
+            return {
+              ...step,
+              _connId: matchingNetSuiteConnection?._connectionId,
+            };
+          }
 
           return {
             ...step,
-            _connId: connectionId,
+            // eslint-disable-next-line no-plusplus
+            _connId: bundleInstallationForNetsuiteConnections[netsuiteConnIndex++]?._connectionId,
           };
         } if (step.name.includes('Integrator Adaptor Package')) {
           const connectionId = bundleInstallationForSalesforceConnections[salesforceConnIndex]?._connectionId;
@@ -2172,12 +2178,13 @@ selectors.makeAllResourceStatusSelector = () =>
 selectors.resourceDataModified = (
   resourceIdState,
   stagedIdState,
+  uiFields,
   resourceType,
   id
 ) => {
   if (!resourceType || !id) return emptyObject;
 
-  const master = resourceIdState;
+  const master = resourceIdState ? { ...resourceIdState, ...uiFields } : resourceIdState;
   const { patch, conflict } = stagedIdState || {};
 
   if (!master && !patch) return { merged: emptyObject };
@@ -2249,10 +2256,11 @@ selectors.makeResourceDataSelector = () => {
         state,
         id,
       ),
+    (state, resourceType, id) => selectors.resourceUIFields(state, id),
     (_1, resourceType) => resourceType,
     (_1, _2, id) => id,
 
-    (resourceIdState, stagedIdState, resourceType, id) => selectors.resourceDataModified(resourceIdState, stagedIdState, resourceType, id)
+    (resourceIdState, stagedIdState, uiFields, resourceType, id) => selectors.resourceDataModified(resourceIdState, stagedIdState, uiFields, resourceType, id)
   );
 };
 
@@ -2346,6 +2354,13 @@ selectors.mkFlowResources = () => createSelector(
   (_, flowId) => flowId,
   (flows, exports, imports, flowId) => getFlowResources(flows, exports, imports, flowId)
 );
+
+selectors.flowResourceIds = (state, flowId) => {
+  const flowResources = selectors.mkFlowResources()(state, flowId);
+
+  // extracts import's and export's id from the flowResources
+  return flowResources.filter(r => !!r.type).map(r => r._id);
+};
 
 selectors.mkFlowStepsErrorInfo = () => {
   const flowResources = selectors.mkFlowResources();

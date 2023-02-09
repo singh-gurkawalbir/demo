@@ -91,6 +91,7 @@ export function getSupportedHooksForResource(resource) {
       break;
     case 'ftp':
     case 'as2':
+    case 'van':
     case 's3':
       unSupportedHooks = [];
       break;

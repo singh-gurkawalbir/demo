@@ -15,6 +15,7 @@ import { getConstructedResourceObj } from '../flows/utils';
 import getPreviewOptionsForResource from '../flows/pageProcessorPreviewOptions';
 import { generateMongoDBId } from '../../../utils/string';
 import customCloneDeep from '../../../utils/customCloneDeep';
+import { getUnionObject } from '../../../utils/jsonPaths';
 
 export function* pageProcessorPreview({
   flowId,
@@ -183,7 +184,7 @@ export function* pageProcessorPreview({
     });
 
     if (flow.routers?.length && Array.isArray(previewData)) {
-      return previewData[0];
+      return getUnionObject(previewData);
     }
 
     return previewData;

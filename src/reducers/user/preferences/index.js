@@ -15,7 +15,8 @@ const GLOBAL_PREFERENCES = [
   'timeFormat',
   'scheduleShiftForFlowsCreatedAfter',
   'lastLoginAt',
-  'darkTheme',
+  'darkTheme',  // TODO @Lalit: no need for darkMode prop once changes are in Production
+  'colorTheme',
 ];
 
 const getAccountPreferences = draft => {

@@ -20,6 +20,7 @@ import { selectors } from '../../reducers';
 import IsLoggableContextProvider from '../../components/IsLoggableContextProvider';
 import actions from '../../actions';
 import { STANDALONE_INTEGRATION } from '../../constants';
+import useLoadUIFields from '../../hooks/useLoadUIFields';
 
 const FlowBuilderBody = loadable(() =>
   retry(() => import(/* webpackChunkName: 'FlowBuilderBody' */ './FlowBuilderBody'))
@@ -49,6 +50,9 @@ export default function FlowBuilder() {
   const match = useRouteMatch();
   const dispatch = useDispatch();
   const { flowId, integrationId, childId } = match.params;
+
+  // takes care of loading UI fields for the flow resources
+  useLoadUIFields({ flowId });
 
   // Initializes a new flow (patch, no commit)
   // and replaces the url to reflect the new temp flow id.

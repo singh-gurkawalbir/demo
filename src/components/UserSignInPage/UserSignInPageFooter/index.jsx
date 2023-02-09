@@ -1,6 +1,7 @@
 import { makeStyles, Typography } from '@material-ui/core';
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { isSignUpAllowed } from '../../../utils/resource';
 import getRoutePath from '../../../utils/routePaths';
 import { TextButton } from '../../Buttons';
 
@@ -20,23 +21,20 @@ export default function UserSignInPageFooter({linkLabel, linkText, link}) {
 
   return (
     <div>
-      {
-        // eslint-disable-next-line no-undef
-        ALLOW_SIGNUP === 'true' && (
-          <Typography variant="body2" >
-            {linkLabel}
-            <TextButton
-              data-test="signupOrSigninFooter"
-              className={classes.UserSignInPageFooterLink}
-              color="primary"
-              component={Link}
-              role="link"
-              to={getRoutePath(`/${link}`)}>
-              {linkText}
-            </TextButton>
-          </Typography>
-        )
-      }
+      {isSignUpAllowed() && (
+      <Typography variant="body2" >
+        {linkLabel}
+        <TextButton
+          data-test="signupOrSigninFooter"
+          className={classes.UserSignInPageFooterLink}
+          color="primary"
+          component={Link}
+          role="link"
+          to={getRoutePath(`/${link}`)}>
+          {linkText}
+        </TextButton>
+      </Typography>
+      )}
     </div>
   );
 }

@@ -34,7 +34,6 @@ import RawHtml from '../../../../../components/RawHtml';
 import getRoutePath from '../../../../../utils/routePaths';
 import HelpIcon from '../../../../../components/icons/HelpIcon';
 import useSelectorMemo from '../../../../../hooks/selectors/useSelectorMemo';
-import TrashIcon from '../../../../../components/icons/TrashIcon';
 import { TextButton } from '../../../../../components/Buttons';
 import { buildDrawerUrl, drawerPaths } from '../../../../../utils/rightDrawer';
 import { message } from '../../../../../utils/messageStore';
@@ -375,11 +374,19 @@ export default function ConnectorInstallation() {
       form,
     } = step;
 
+    let netsuitePackageType = null;
+
+    if (step?.name.startsWith('Integrator Bundle')) {
+      netsuitePackageType = 'suitebundle';
+    } else if (step?.name.startsWith('Integrator SuiteApp')) {
+      netsuitePackageType = 'suiteapp';
+    }
+
     if (completed) {
       return false;
     }
 
-    if (_connectionId || type === 'connection' || sourceConnection) {
+    if (_connectionId || type === 'connection' || (sourceConnection && !(step?.name.startsWith('Integrator Bundle') || step?.name.startsWith('Integrator SuiteApp')))) {
       if (step.isTriggered) {
         return false;
       }
@@ -466,7 +473,9 @@ export default function ConnectorInstallation() {
               integrationId,
               step._connId,
               installerFunction,
-              isFrameWork2
+              isFrameWork2,
+              netsuitePackageType,
+              true                               // true here sets the isManualVerification flag to true which means the user has triggered the verification
             )
           );
         } else if (isFrameWork2) {
@@ -559,24 +568,15 @@ export default function ConnectorInstallation() {
               View help guide
             </TextButton>
           )}
-          {_connectorId ? (
-            <TextButton
-              data-test="uninstall"
-              component={Link}
-              onClick={handleUninstall}
-              startIcon={<CloseIcon />}
+
+          <TextButton
+            data-test="uninstall"
+            component={Link}
+            onClick={handleUninstall}
+            startIcon={<CloseIcon />}
              >
-              Uninstall
-            </TextButton>
-          )
-            : (
-              <TextButton
-                data-test="deleteIntegration"
-                onClick={handleUninstall}
-                startIcon={<TrashIcon />}>
-                Delete integration
-              </TextButton>
-            )}
+            Uninstall
+          </TextButton>
 
         </div>
       </CeligoPageBar>

@@ -24,6 +24,7 @@ const applicationsWithPreviewPanel = [
   's3',
   'simple',
   'as2',
+  'van',
 ];
 
 const emptyList = [];
@@ -43,7 +44,7 @@ export const getAvailablePreviewStages = (resource, { isDataLoader, isRestCsvExp
   const appType = adaptorTypeMap[adaptorType];
 
   // Handles File based preview stage
-  const fileAdaptorAppTypes = ['ftp', 's3', 'as2'];
+  const fileAdaptorAppTypes = ['ftp', 's3', 'as2', 'van'];
 
   if (isDataLoader || isRestCsvExport || fileAdaptorAppTypes.includes(appType) || FILE_PROVIDER_ASSISTANTS.includes(assistant)) {
     return PREVIEW_STAGE;

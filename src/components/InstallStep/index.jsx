@@ -168,14 +168,26 @@ export default function InstallationStep(props) {
   });
 
   useEffect(() => {
+    let netsuitePackageType = null;
+
+    if (step?.name.startsWith('Integrator Bundle')) {
+      netsuitePackageType = 'suitebundle';
+    } else if (step?.name.startsWith('Integrator SuiteApp')) {
+      netsuitePackageType = 'suiteapp';
+    }
+
     if (step && step.isCurrentStep && !step.completed && !verified) {
       if (revisionId && step.url && step.connectionId) {
         dispatch(actions.integrationLCM.installSteps.updateStep(revisionId, 'verify'));
+
         dispatch(actions.integrationLCM.installSteps.verifyBundleOrPackageInstall({
           integrationId,
           connectionId: step.connectionId,
           revisionId,
+          variant: netsuitePackageType,
+          isManualVerification: false,
         }));
+
         setVerified(true);
       } else if (
         connection &&
@@ -191,7 +203,9 @@ export default function InstallationStep(props) {
           actions.template.verifyBundleOrPackageInstall(
             step,
             connection,
-            templateId
+            templateId,
+            netsuitePackageType,
+            false           // false here indicates auto verification
           )
         );
         setVerified(true);
@@ -212,7 +226,9 @@ export default function InstallationStep(props) {
             integrationId,
             step._connId,
             step.installerFunction,
-            isFrameWork2
+            isFrameWork2,
+            netsuitePackageType,
+            false           // false here indicates auto verification
           )
         );
         setVerified(true);
@@ -228,6 +244,8 @@ export default function InstallationStep(props) {
   const onStepClick = () => {
     handleStepClick(step, connection, index);
   };
+
+  const isNsBundleOrSuiteAppStep = (step?.name?.startsWith('Integrator Bundle') || step?.name?.startsWith('Integrator SuiteApp'));
 
   return (
 
@@ -258,11 +276,11 @@ export default function InstallationStep(props) {
               src={getImageUrl(step.imageURL)}
             />
             )}
-            {(step.type === INSTALL_STEP_TYPES.CONNECTION || step?.sourceConnection) && (
+            {(step.type === INSTALL_STEP_TYPES.CONNECTION || step?.sourceConnection || isNsBundleOrSuiteAppStep) && (
             <ApplicationImg
               size="small"
               type={
-                step?.options?.connectionType?.toLowerCase() || (step?.name === 'workday' ? 'workday' : step?.sourceConnection?.http?.formType) || step?.sourceConnection?.type || ''
+                step?.options?.connectionType?.toLowerCase() || (step?.name === 'workday' ? 'workday' : step?.sourceConnection?.http?.formType) || step?.sourceConnection?.type || (isNsBundleOrSuiteAppStep ? 'netsuite' : '')
               }
               assistant={step?.sourceConnection?.assistant || step?.sourceConnection?.rdbms?.type || step?.sourceConnection?.http?._httpConnectorId}
             />

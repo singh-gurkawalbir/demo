@@ -101,14 +101,16 @@ export function* verifyBundleOrPackageInstall({
   step,
   connection,
   templateId,
+  variant,
+  isManualVerification = true,
 }) {
-  const path = `/connections/${connection._id}/distributed`;
+  const path = variant ? `/connections/${connection._id}/distributed?type=${variant}` : `/connections/${connection._id}/distributed`;
   let response;
 
   try {
     response = yield call(apiCallWithRetry, {
       path,
-      message: 'Verifying Bundle/Package Installation...',
+      message: variant ? `Verifying ${variant} Installation...` : 'Verifying Bundle/Package Installation...',
     });
   } catch (error) {
     yield put(
@@ -132,6 +134,7 @@ export function* verifyBundleOrPackageInstall({
     if (
       response &&
       !response.success &&
+      isManualVerification &&
       (response.resBody || response.message)
     ) {
       yield put(

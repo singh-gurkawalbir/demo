@@ -31,6 +31,7 @@ export default function DynaSelectOptionsGenerator(props) {
     commMetaPath,
     disableFetch,
     isLoggable,
+    devPlayGroundSpecificField,
   } = props;
   const disableOptionsLoad = options.disableFetch || disableFetch;
   const classes = useStyles();
@@ -41,7 +42,7 @@ export default function DynaSelectOptionsGenerator(props) {
     options.filterKey || filterKey);
 
   const onFetch = useCallback(() => {
-    if (!data && !disableOptionsLoad) {
+    if (!devPlayGroundSpecificField && !data && !disableOptionsLoad) {
       dispatch(
         actions.metadata.request(
           connectionId,
@@ -50,21 +51,12 @@ export default function DynaSelectOptionsGenerator(props) {
         )
       );
     }
-  }, [
-    bundlePath,
-    bundleUrlHelp,
-    commMetaPath,
-    connectionId,
-    data,
-    disableOptionsLoad,
-    dispatch,
-    options.commMetaPath,
-  ]);
+  }, [bundlePath, bundleUrlHelp, commMetaPath, connectionId, data, devPlayGroundSpecificField, disableOptionsLoad, dispatch, options.commMetaPath]);
   const isOffline = useSelector(state =>
     selectors.isConnectionOffline(state, connectionId)
   );
   const onRefresh = useCallback(() => {
-    if (disableOptionsLoad) {
+    if (disableOptionsLoad || devPlayGroundSpecificField) {
       return;
     }
     dispatch(
@@ -78,7 +70,26 @@ export default function DynaSelectOptionsGenerator(props) {
         }
       )
     );
-  }, [bundlePath, bundleUrlHelp, commMetaPath, connectionId, disableOptionsLoad, dispatch, options.commMetaPath]);
+  }, [bundlePath, bundleUrlHelp, commMetaPath, connectionId, devPlayGroundSpecificField, disableOptionsLoad, dispatch, options.commMetaPath]);
+
+  if (devPlayGroundSpecificField) {
+    const tempData = [{id: '2', recordType: 'shipitem', label: 'Pick-up at store', value: '2'}, {id: '3', recordType: 'shipitem', label: 'Truck', value: '3'}, {id: '77', recordType: 'shipitem', label: 'UPS Next Day Air', value: '77'}];
+
+    return (
+      <div>
+        <DynaGenericSelect
+          resourceToFetch={options.commMetaPath || commMetaPath}
+          resetValue={options.resetValue}
+          onFetch={onFetch}
+          onRefresh={onRefresh}
+          fieldStatus="received"
+          fieldData={tempData}
+          ignoreValueUnset={ignoreValueUnset}
+          disableOptionsLoad={disableOptionsLoad}
+          {...props} />
+      </div>
+    );
+  }
 
   return (
     <div>

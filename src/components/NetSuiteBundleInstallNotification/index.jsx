@@ -9,7 +9,7 @@ import actions from '../../actions';
 
 export default function NetSuiteBundleInstallNotification({resourceType, resourceId, className}) {
   const dispatch = useDispatch();
-  const {showBundleInstallNotification, bundleUrl, bundleVersion} = useSelector(
+  const {showBundleInstallNotification, showSuiteAppInstallNotification, bundleUrl, suiteAppUrl} = useSelector(
     state => selectors.resourceFormState(state, resourceType, resourceId)
   );
 
@@ -25,21 +25,22 @@ export default function NetSuiteBundleInstallNotification({resourceType, resourc
 
   return (
     <>
-      {showBundleInstallNotification && (
+      {(showBundleInstallNotification || showSuiteAppInstallNotification) && (
       <NotificationToaster className={className} variant="warning" size="large" onClose={handleClose}>
         <Typography variant="h6">
-          Please{' '}
+          Install the{' '}
           <a
             target="_blank"
             rel="noreferrer"
-            href={bundleUrl}>
-            <u>install the integrator.io {bundleVersion === '1.0' ? 'SuiteBundle' : 'SuiteApp'}</u>
+            href={(showBundleInstallNotification && !showSuiteAppInstallNotification) ? bundleUrl : suiteAppUrl}>
+            <u>{(showBundleInstallNotification && !showSuiteAppInstallNotification) ? 'Integrator.io SuiteBundle' : 'Integrator.io SuiteApp'}</u>
           </a>
-          {' '}in your NetSuite account {isRealTimeExport ? ' to enable Real-time export capabilities.' : ` to integrate with SuiteScript ${bundleVersion} APIs.`}
+          {' '}in your NetSuite account {isRealTimeExport ? ' to enable Real-time export capabilities.' : ' to integrate with SuiteScript APIs.'}
 
         </Typography>
       </NotificationToaster>
       )}
+
     </>
   );
 }

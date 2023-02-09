@@ -2,7 +2,7 @@
 import { FormLabel, makeStyles, Typography } from '@material-ui/core';
 import React, { useCallback, useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import subMonths from 'date-fns/subMonths';
+import subDays from 'date-fns/subDays';
 import moment from 'moment';
 import { selectors } from '../../../../reducers';
 import { getSelectedRange } from '../../../../utils/flowMetrics';
@@ -172,7 +172,7 @@ export default function DynaReportDateRange(props) {
           defaultPreset={value}
           selectedRangeConstraint={selectedRangeConstraint}
           onSave={onSave}
-          fromDate={subMonths(new Date(), 1)}
+          fromDate={subDays(new Date(), WINDOW_LIMIT - 1)}
           CustomTextFields={CustomTextFields}
       />
         <FieldMessage {...props} />

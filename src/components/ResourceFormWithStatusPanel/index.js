@@ -1,12 +1,16 @@
 import React, { useState, useCallback } from 'react';
 import { makeStyles } from '@material-ui/core';
 import ReactResizeDetector from 'react-resize-detector';
+import { selectors } from '../../reducers';
 import ConnectionStatusPanel from '../ConnectionStatusPanel';
 import KeyColumnsDeprecationNotification from '../KeyColumnsDeprecationNotification';
 import ResourceForm from '../ResourceFormFactory';
 import GenericAdaptorNotification from '../GenericAdaptorNotification';
 import NetSuiteBundleInstallNotification from '../NetSuiteBundleInstallNotification';
 import IsLoggableContextProvider from '../IsLoggableContextProvider';
+import ConnectionVanLicenseStatusPanel from '../VAN';
+import { useSelectorMemo } from '../../hooks';
+import { emptyObject } from '../../constants';
 
 const useStyles = makeStyles(theme => ({
   form: {
@@ -45,6 +49,11 @@ export default function ResourceFormWithStatusPanel({ isFlowBuilderView, classNa
     ...props,
     notificationPanelHeight,
   });
+  const resource = useSelectorMemo(
+    selectors.makeResourceDataSelector,
+    resourceType,
+    resourceId
+  )?.merged || emptyObject;
   const resize = useCallback((width, height) => {
     setNotificationPanelHeight(height + 16);
   }, []);
@@ -57,6 +66,13 @@ export default function ResourceFormWithStatusPanel({ isFlowBuilderView, classNa
             className={classes.notification}
             resourceType={resourceType}
             isFlowBuilderView={isFlowBuilderView}
+            resourceId={resourceId}
+          />
+        )}
+        { resource.type === 'van' && (
+          <ConnectionVanLicenseStatusPanel
+            className={classes.notification}
+            resourceType={resourceType}
             resourceId={resourceId}
           />
         )}

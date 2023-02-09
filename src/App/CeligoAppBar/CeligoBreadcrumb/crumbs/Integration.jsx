@@ -16,7 +16,7 @@ export default function IntegrationCrumb({ integrationId }) {
   // the UI from appearing slow... just default the name to a const if no
   // integration -yet- exists in the state.
   return (
-    <LoadResources resources="integrations">
+    <LoadResources integrationId={integrationId} resources="integrations">
       {integration ? integration.name : 'Integration'}
     </LoadResources>
   );

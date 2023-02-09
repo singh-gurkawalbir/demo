@@ -71,6 +71,11 @@ jest.mock('../../../LoadResources', () => ({
   ...jest.requireActual('../../../LoadResources'),
   default: ({children}) => children,
 }));
+jest.mock('../../../LoadUIFields', () => ({
+  __esModule: true,
+  ...jest.requireActual('../../../LoadUIFields'),
+  default: ({children}) => children,
+}));
 jest.mock('../../Right/DrawerHeader', () => ({
   __esModule: true,
   ...jest.requireActual('../../Right/DrawerHeader'),
