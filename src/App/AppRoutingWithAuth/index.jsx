@@ -51,7 +51,6 @@ export function AppRoutingWithAuth({ children }) {
         dispatch(actions.auth.validateAndInitSession());
       }
     }
-    console.log('2');
     if (!hasPageReloaded) {
       dispatch(actions.app.clearError());
     }
