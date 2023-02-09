@@ -54,6 +54,7 @@ export default function SignUp() {
       <DynaSubmit
         className={classes.submit}
         formKey={formKey}
+        fullWidth
         onClick={handleOnSubmit}
         ignoreFormTouchedCheck>
         Sign up
