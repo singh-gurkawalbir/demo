@@ -103,7 +103,7 @@ export function TestSaveAndClose(props) {
 
   const handleSaveForm = useCallback(
     () => {
-      const newValues = customCloneDeep(values);
+      const newValues = customCloneDeep({...values});
 
       if (!newValues['/_borrowConcurrencyFromConnectionId']) {
         newValues['/_borrowConcurrencyFromConnectionId'] = undefined;
@@ -122,7 +122,7 @@ export function TestSaveAndClose(props) {
     [closeAfterSave, dispatch, resourceId, resourceType, values, parentContext]
   );
   const handleTestConnection = useCallback(() => {
-    const newValues = customCloneDeep(values);
+    const newValues = customCloneDeep({...values});
 
     if (!newValues['/_borrowConcurrencyFromConnectionId']) {
       newValues['/_borrowConcurrencyFromConnectionId'] = undefined;

@@ -70,7 +70,9 @@ describe('test suite for Connections', () => {
     mockDispatchFn = jest.fn(action => {
       switch (action.type) {
         case 'TRADING_PARTNER_CONNECTIONS_REQUEST': {
-          globalStore.getState().session.connections.tradingPartnerConnections.conn123.status = 'success';
+          mutateStore(globalStore, draft => {
+            draft.session.connections.tradingPartnerConnections.conn123.status = 'success';
+          });
           break;
         }
         default:
