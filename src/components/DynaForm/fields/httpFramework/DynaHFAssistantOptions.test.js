@@ -201,6 +201,44 @@ describe('dynaHFAssistantOptions UI tests', () => {
     mockDispatchFn.mockClear();
   });
   test('should pass the initial render and open the dropdown with options when clicked on it', () => {
+    const extendedPatch = [
+      {
+        op: 'replace',
+        path: '/assistantMetadata/operation',
+        value: 'ep3',
+      },
+      {
+        op: 'replace',
+        path: '/assistantMetadata/exportType',
+        value: '',
+      },
+      {
+        op: 'replace',
+        path: '/assistantMetadata/version',
+        value: '',
+      },
+      {
+        op: 'replace',
+        path: '/assistantMetadata/dontConvert',
+        value: true,
+      },
+      {
+        op: 'replace',
+        path: '/assistantMetadata/operationChanged',
+        value: true,
+      },
+      {
+        op: 'replace',
+        path: '/assistantMetadata/resource',
+        value: undefined,
+      },
+      {
+        op: 'replace',
+        path: '/assistantMetadata/version',
+        value: 'v2',
+      },
+    ];
+
     initDynaHFAssistantOptions({ ...props, id: endpoints[2].id });
     expect(screen.getByText('Form view')).toBeInTheDocument();
 
@@ -213,6 +251,10 @@ describe('dynaHFAssistantOptions UI tests', () => {
     expect(screen.getByRole('menuitem', { name: 'increment user access' })).toBeInTheDocument();
     userEvent.click(screen.getByRole('menuitem', { name: 'increment ticket count' }));
     expect(mockOnFieldChangeFn).toHaveBeenCalledWith('ep3', 'ep3');
+    expect(mockDispatchFn).toHaveBeenNthCalledWith(1, actions.resource.patchStaged(
+      '_exportId',
+      extendedPatch,
+    ));
   });
   test('should display options for versions in the dropdown when assistantFieldType is "version"', () => {
     const patch = [
@@ -230,6 +272,16 @@ describe('dynaHFAssistantOptions UI tests', () => {
         op: 'replace',
         path: '/assistantMetadata/dontConvert',
         value: true,
+      },
+      {
+        op: 'replace',
+        path: '/assistantMetadata/resource',
+        value: undefined,
+      },
+      {
+        op: 'replace',
+        path: '/assistantMetadata/operation',
+        value: undefined,
       },
     ];
 

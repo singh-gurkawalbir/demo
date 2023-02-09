@@ -166,6 +166,16 @@ describe('connections utils test cases', () => {
         parentType: 'imports',
         iClientId: 'i-123',
       });
+
+      const url6 = '/clone/flows/flowId/setup/configure/connections/connId/edit/iClients/iClientId';
+
+      expect(getParentResourceContext(url6, 'iClients')).toEqual({
+        0: 'clone/flows/flowId/setup',
+        1: '',
+        connId: 'connId',
+        operation: 'edit',
+        iClientId: 'iClientId',
+      });
     });
   });
   describe('getFilterExpressionForAssistant test cases', () => {

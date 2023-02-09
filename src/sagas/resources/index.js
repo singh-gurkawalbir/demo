@@ -5,7 +5,7 @@ import actions from '../../actions';
 import actionTypes from '../../actions/types';
 import { apiCallWithRetry, apiCallWithPaging } from '../index';
 import { selectors } from '../../reducers';
-import { isNewId } from '../../utils/resource';
+import { isNewId, UI_FIELDS, RESOURCES_WITH_UI_FIELDS } from '../../utils/resource';
 import metadataSagas from './meta';
 import getRequestOptions, { pingConnectionParentContext } from '../../utils/requestOptions';
 import { defaultPatchSetConverter } from '../../forms/formFactory/utils';
@@ -225,7 +225,22 @@ export function* commitStagedChanges({ resourceType, id, options, context, paren
   if (resourceType === 'exports' && merged._rest) {
     delete merged._rest;
   }
-  if (['exports', 'imports'].includes(resourceType) && merged.adaptorType && !merged.adaptorType.includes('AS2')) {
+  // Added below check for http2.0 when metadata ids are compound
+  if (['exports', 'imports'].includes(resourceType) &&
+    merged?.http?._httpConnectorResourceId && merged?.assistantMetadata
+  ) {
+    if (merged?.http?._httpConnectorResourceId?.includes('+')) {
+      merged.http._httpConnectorResourceId = merged.http._httpConnectorResourceId.split('+')?.[0];
+    }
+    if (resourceType === 'exports' && merged?.http?._httpConnectorEndpointId?.includes('+')) {
+      merged.http._httpConnectorEndpointId = merged.http._httpConnectorEndpointId.split('+')?.[0];
+    }
+    if (resourceType === 'imports' && merged.http._httpConnectorEndpointIds?.[0]?.includes('+')) {
+      merged.http._httpConnectorEndpointIds = [merged.http._httpConnectorEndpointIds[0].split('+')?.[0]];
+    }
+    merged.assistantMetadata = undefined;
+  }
+  if (['exports', 'imports'].includes(resourceType) && merged.adaptorType && !merged.adaptorType.includes('AS2') && !merged.adaptorType.includes('VAN')) {
     // AS2 is special case where backend cannot identify adaptorType on its own
     if (merged.restToHTTPConverted) {
       merged.adaptorType = resourceType === 'exports' ? 'RESTExport' : 'RESTImport';
@@ -775,6 +790,15 @@ export function* getResourceCollection({ resourceType, refresh, integrationId })
       yield call(getResource, {resourceType: 'integrations', id: integrationId});
     }
   }
+
+  if (RESOURCES_WITH_UI_FIELDS.includes(resourceType)) {
+    const excludePath = `?exclude=${UI_FIELDS.join(',')}`;
+
+    path = `${path}${excludePath}`;
+  }
+  if (resourceType === 'tree/metadata') {
+    path += '?additionalFields=_connectorId,_parentId,sandbox,settings,settingsForm,preSave,changeEditionSteps,flowGroupings,_registeredConnectionIds,uninstallSteps,installSteps';
+  }
   let updatedResourceType = resourceType;
 
   try {
@@ -818,11 +842,10 @@ export function* getResourceCollection({ resourceType, refresh, integrationId })
       collection = undefined;
     }
 
-    if (resourceType.startsWith('/integrations') && resourceType.endsWith('/tree/metadata')) {
-      const _integrationId = resourceType?.split('/')?.[1];
+    if (resourceType === 'tree/metadata') {
       const newCollection = collection?.childIntegrations || [];
 
-      yield put(actions.resource.receivedCollection('integrations', newCollection, _integrationId));
+      yield put(actions.resource.receivedCollection('integrations', newCollection, integrationId));
     } else {
       yield put(actions.resource.receivedCollection(resourceType, collection, integrationId));
     }

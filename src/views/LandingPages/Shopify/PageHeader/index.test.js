@@ -1,5 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import React from 'react';
+import { MemoryRouter } from 'react-router-dom';
 import ShopifyLandingPageHeader from '.';
 
 // Mocking Action Group as part of unit testing
@@ -38,16 +39,14 @@ jest.mock('../../../../components/icons/ApplicationImg', () => ({
 describe('Testsuite for ShopifyLandingPageHeader', () => {
   test('should test the shopify landing page header', () => {
     render(
-      <ShopifyLandingPageHeader />
+      <MemoryRouter><ShopifyLandingPageHeader /></MemoryRouter>
+
     );
     expect(screen.getByText(/mocking actiongroup/i)).toBeInTheDocument();
 
     const backArrowIcon = screen.getByText(/mocking back arrow icon/i);
 
     expect(backArrowIcon).toBeInTheDocument();
-    const url = document.querySelector('a');
-
-    expect(url).toHaveAttribute('href', 'https://apps.shopify.com');
     expect(screen.getByText(/back to/i)).toBeInTheDocument();
     expect(screen.getByText(/mocking applicationimg/i)).toBeInTheDocument();
     expect(screen.getByText(/type = shopify/i)).toBeInTheDocument();

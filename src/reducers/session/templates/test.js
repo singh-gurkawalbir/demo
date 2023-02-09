@@ -963,6 +963,7 @@ describe('template test cases', () => {
           installURL: 'connectionId',
           type: INSTALL_STEP_TYPES.INSTALL_PACKAGE,
           application: 'netsuite',
+          sourceConnectionId: 'connectionId',
           completed: false,
           options: {},
         });
@@ -998,7 +999,8 @@ describe('template test cases', () => {
                 installURL: 'connectionId',
                 name: 'installBundle',
                 type: 'installPackage',
-                options: {_connectionId: 'new-conn'},
+                sourceConnectionId: 'connectionId',
+                options: {},
               },
             ],
           },

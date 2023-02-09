@@ -107,7 +107,9 @@ describe('IntegrationPreview tests', () => {
     const {utils, store} = await initIntegrationPreview({});
 
     expect(screen.getByText('Preview')).toBeInTheDocument();
-    store.getState().session.integrationApps.clone._templateId.isCloned = true;
+    mutateStore(store, draft => {
+      draft.session.integrationApps.clone._templateId.isCloned = true;
+    });
     await initIntegrationPreview({renderFn: utils.rerender, initialStore: store});
     await waitFor(() => expect(mockHistoryPush).toHaveBeenCalledWith('/integrations/_integrationId/setup'));
   });

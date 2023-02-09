@@ -50,8 +50,8 @@ describe('netSuiteBundleInstallNotification test cases', () => {
 
   test('should pass the initial render with default value/ exports resource', async () => {
     await initNetSuiteBundleInstallNotification();
-    expect(screen.queryByText(/Please/i)).toBeInTheDocument();
-    expect(screen.queryByText(/install the integrator.io SuiteApp/i)).toBeInTheDocument();
+    expect(screen.queryByText(/install the/i)).toBeInTheDocument();
+    expect(screen.queryByText(/integrator.io SuiteBundle/i)).toBeInTheDocument();
     expect(screen.queryByText(/in your NetSuite account to enable Real-time export capabilities./i)).toBeInTheDocument();
   });
 
@@ -77,15 +77,66 @@ describe('netSuiteBundleInstallNotification test cases', () => {
     const closeButton = screen.getByRole('button');
 
     expect(closeButton).toBeInTheDocument();
-    expect(screen.queryByText(/Please/i)).toBeInTheDocument();
-    expect(screen.queryByText(/install the integrator.io SuiteBundle/i)).toBeInTheDocument();
-    expect(screen.queryByText(/in your NetSuite account to integrate with SuiteScript 1.0 APIs./i)).toBeInTheDocument();
+    expect(screen.queryByText(/install the/i)).toBeInTheDocument();
+    expect(screen.queryByText(/integrator.io SuiteBundle/i)).toBeInTheDocument();
+    expect(screen.queryByText(/in your NetSuite account to integrate with SuiteScript APIs./i)).toBeInTheDocument();
 
     userEvent.click(closeButton);
     expect(utils.container).toBeEmptyDOMElement();
   });
+  test('should displayy suiteApp installation notification for default value/ exports resource', async () => {
+    await initNetSuiteBundleInstallNotification({
+      props: {
+        resourceId: 'resource_id',
+        resourceType: 'exports',
+      },
+      resourceForm: {
+        'exports-resource_id': {
+          showSuiteAppInstallNotification: true,
+          bundleUrl: '/',
+          bundleVersion: '1.0',
+        },
+      },
+      resources: {
+        exports: [{
+          _id: 'resource_id',
+          type: 'distributed',
+        }],
+      },
+    });
+    expect(screen.queryByText(/install the/i)).toBeInTheDocument();
+    expect(screen.queryByText(/integrator.io SuiteApp/i)).toBeInTheDocument();
+    expect(screen.queryByText(/in your NetSuite account to enable Real-time export capabilities./i)).toBeInTheDocument();
+  });
 
-  test('should pass the initial render with showBundleInstallNotification false', async () => {
+  test('should displayy suiteApp installation notification for imports resource', async () => {
+    await initNetSuiteBundleInstallNotification({
+      props: {
+        resourceId: 'resource_id',
+        resourceType: 'imports',
+      },
+      resourceForm: {
+        'imports-resource_id': {
+          showSuiteAppInstallNotification: true,
+          bundleUrl: '/',
+          bundleVersion: '1.0',
+        },
+      },
+      resources: {
+        imports: [{
+          _id: 'resource_id',
+        }],
+      },
+    });
+    const closeButton = screen.getByRole('button');
+
+    expect(closeButton).toBeInTheDocument();
+    expect(screen.queryByText(/install the/i)).toBeInTheDocument();
+    expect(screen.queryByText(/integrator.io SuiteApp/i)).toBeInTheDocument();
+    expect(screen.queryByText(/in your NetSuite account to integrate with SuiteScript APIs./i)).toBeInTheDocument();
+  });
+
+  test('should not render the install notification for suitebundle when showBundleInstallNotification is false', async () => {
     const { utils } = await initNetSuiteBundleInstallNotification({
       resourceForm: {
         'imports-resource_id': {
@@ -97,5 +148,45 @@ describe('netSuiteBundleInstallNotification test cases', () => {
     });
 
     expect(utils.container).toBeEmptyDOMElement();
+  });
+  test('should not show the install notification for suiteapp when showSuiteAppInstallNotification is false', async () => {
+    const { utils } = await initNetSuiteBundleInstallNotification({
+      resourceForm: {
+        'imports-resource_id': {
+          showSuiteAppInstallNotification: false,
+          bundleUrl: '/',
+          bundleVersion: '1.4',
+        },
+      },
+    });
+
+    expect(utils.container).toBeEmptyDOMElement();
+  });
+  test('should only display one of the 2 notifications since only one option can be selected', async () => {
+    await initNetSuiteBundleInstallNotification({
+      props: {
+        resourceId: 'resource_id',
+        resourceType: 'imports',
+      },
+      resourceForm: {
+        'imports-resource_id': {
+          showSuiteAppInstallNotification: true,
+          bundleUrl: '/',
+          bundleVersion: '1.0',
+        },
+      },
+      resources: {
+        imports: [{
+          _id: 'resource_id',
+        }],
+      },
+    });
+    const closeButton = screen.getByRole('button');
+
+    expect(closeButton).toBeInTheDocument();
+    expect(screen.queryByText(/install the/i)).toBeInTheDocument();
+    expect(screen.queryByText(/integrator.io SuiteApp/i)).toBeInTheDocument();
+    expect(screen.queryByText(/in your NetSuite account to integrate with SuiteScript APIs./i)).toBeInTheDocument();
+    expect(screen.queryByText(/in your NetSuite account to integrate with SuiteBundle APIs./i)).toBeNull();
   });
 });

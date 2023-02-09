@@ -7,6 +7,7 @@ import { selectOptions } from './util';
 import useFormContext from '../../../Form/FormContext';
 import { emptyObject } from '../../../../constants';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
+import { getExportOperationDetails } from '../../../../utils/assistant';
 
 const emptyObj = {};
 export const useHFSetInitializeFormData = ({
@@ -244,6 +245,46 @@ function DynaAssistantOptions(props) {
           value: versions[0]._id,
         });
       }
+      if (assistantFieldType === 'operation' && versions?.length > 1) {
+        const versionOptionsForEndpoint = selectOptions({assistantFieldType: 'version', assistantData, formContext: {...formContext, operation: value}, resourceType});
+        const endpointDetails = getExportOperationDetails({...formContext, operation: value, version: versionOptionsForEndpoint?.[0]?.value, assistantData });
+
+        // if (value.includes('+')) {
+        //   patch.push({
+        //     op: 'replace',
+        //     path: '/assistantMetadata/operation',
+        //     value: endpointDetails?.id,
+        //   });
+        // }
+        if (formContext.resource !== endpointDetails?._httpConnectorResourceIds?.[0]) {
+          patch.push({
+            op: 'replace',
+            path: '/assistantMetadata/resource',
+            value: endpointDetails?._httpConnectorResourceIds?.[0],
+          });
+        }
+        patch.push({
+          op: 'replace',
+          path: '/assistantMetadata/version',
+          value: versionOptionsForEndpoint?.[0]?.value,
+        });
+      }
+      // When version is changed corresponding resource and operation/endpoint ids
+      // needs to be updated to get correct operationDetails
+      if (assistantFieldType === 'version') {
+        const endpointDetails = getExportOperationDetails({...formContext, version: value, assistantData });
+
+        patch.push({
+          op: 'replace',
+          path: '/assistantMetadata/resource',
+          value: endpointDetails?._httpConnectorResourceIds?.[0],
+        });
+        patch.push({
+          op: 'replace',
+          path: '/assistantMetadata/operation',
+          value: endpointDetails?.id,
+        });
+      }
 
       dispatch(
         actions.resource.patchStaged(
@@ -319,4 +360,3 @@ export default function WrappedContextConsumer(props) {
 
   return <DynaAssistantOptions {...form} {...props} />;
 }
-

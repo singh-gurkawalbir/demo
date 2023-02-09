@@ -122,6 +122,7 @@ export const AUTO_MAPPER_ASSISTANTS_SUPPORTING_RECORD_TYPE = Object.freeze(
     'jira',
     'quickbooks',
     'microsoftbusinesscentral',
+    'sapbydesign',
   ]
 );
 export function routeToRegExp(route = '') {
@@ -898,9 +899,9 @@ export function convertFromExport({ exportDoc: exportDocOrig, assistantData: ass
   let { version, resource, operation } = exportDoc.assistantMetadata || {};
 
   if (exportDoc?.http && (exportDoc.http?._httpConnectorEndpointId && exportDoc.http?._httpConnectorResourceId)) {
-    operation = VALID_MONGO_ID.test(operation) ? operation : exportDoc.http?._httpConnectorEndpointId;
-    resource = VALID_MONGO_ID.test(resource) ? resource : exportDoc.http?._httpConnectorResourceId;
-    version = VALID_MONGO_ID.test(version) ? version : exportDoc.http?._httpConnectorVersionId;
+    operation = operation || exportDoc.http?._httpConnectorEndpointId;
+    resource = resource || exportDoc.http?._httpConnectorResourceId;
+    version = version || exportDoc.http?._httpConnectorVersionId;
   }
   const { exportType, dontConvert } = exportDoc.assistantMetadata || {};
   const assistantMetadata = {
@@ -1196,7 +1197,13 @@ export function convertToExport({ assistantConfig, assistantData, headers = [] }
 
     if (queryPart) {
       [...queryStringObj.entries()].forEach(([key, value]) => {
-        queryObj.set(key, value);
+        const paramType = operationDetails.queryParameters.find(({id}) => id === key)?.fieldType;
+
+        if (paramType && (paramType === 'array' || paramType === 'multiselect')) {
+          queryObj.append(key, value);
+        } else {
+          queryObj.set(key, value);
+        }
       });
       relativeURI = `${pathPart}?${decodeURI(queryObj.toString())}`;
     } else { relativeURI += (relativeURI.includes('?') ? '&' : '?') + finalQueryString; }
@@ -1813,9 +1820,9 @@ export function convertFromImport({ importDoc: importDocOrig, assistantData: ass
         resource = resource || importDoc.http._httpConnectorResourceId;
         version = version || importDoc.http._httpConnectorVersionId;
       } else {
-        operation = VALID_MONGO_ID.test(operation) ? operation : importDoc.http?._httpConnectorEndpointId || importDoc.http?._httpConnectorEndpointIds?.[0];
-        resource = VALID_MONGO_ID.test(resource) ? resource : importDoc.http?._httpConnectorResourceId;
-        version = VALID_MONGO_ID.test(version) ? version : importDoc.http?._httpConnectorVersionId;
+        operation = operation || importDoc.http?._httpConnectorEndpointId || importDoc.http?._httpConnectorEndpointIds?.[0];
+        resource = resource || importDoc.http?._httpConnectorResourceId;
+        version = version || importDoc.http?._httpConnectorVersionId;
       }
     }
     if (operation !== 'create-update-id' && ((isArray(operation) && operation.length > 1) || (isArray(importDoc.http._httpConnectorEndpointIds) && importDoc.http._httpConnectorEndpointIds.length > 1))) {
@@ -2625,6 +2632,9 @@ export function isAcumaticaManufacturingConnection(connection) {
 }
 export function isMicrosoftBusinessCentralOdataConnection(connection) {
   return connection?.assistant === 'microsoftbusinesscentral' && connection?.http?.unencrypted?.apiType === 'odata';
+}
+export function isSapByDesignSoapConnection(connection) {
+  return connection?.assistant === 'sapbydesign' && connection?.http?.unencrypted?.apiType === 'soap';
 }
 
 export function shouldLoadAssistantFormForImports(resource, connection) {

@@ -11,7 +11,7 @@ import EditableText from '../../../../components/EditableText';
 import AddIcon from '../../../../components/icons/AddIcon';
 import ArrowDownIcon from '../../../../components/icons/ArrowDownIcon';
 import CopyIcon from '../../../../components/icons/CopyIcon';
-import TrashIcon from '../../../../components/icons/TrashIcon';
+import CloseIcon from '../../../../components/icons/CloseIcon';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import { selectors } from '../../../../reducers';
 import { getIntegrationAppUrlName } from '../../../../utils/integrationApps';
@@ -54,8 +54,6 @@ export default function PageBar() {
     hasIntegration,
     supportsChild,
     tag,
-    isIAV2,
-    parentId,
   } = useSelector(state => {
     const integration = selectors.resource(
       state,
@@ -77,16 +75,16 @@ export default function PageBar() {
         uninstallSteps: integration.uninstallSteps,
         supportsChild: integration.initChild?.function,
         tag: integration.tag,
-        isIAV2: integration._sourceId || integration._parentId,
-        parentId: integration._parentId,
       };
     }
 
     return emptyObj;
   }, shallowEqual);
 
+  const isIntegrationAppV2 = useSelector(state => selectors.isIntegrationAppVersion2(state, integrationId, true));
+
   const children = useSelectorMemo(selectors.mkIntegrationChildren, integrationId);
-  const resourcesToLoad = isIntegrationApp && isIAV2 ? `integrations/${parentId || integrationId}/tree/metadata` : emptyList;
+  const resourcesToLoad = isIntegrationAppV2 ? 'tree/metadata' : emptyList;
 
   const integrations = useSelectorMemo(
     selectors.makeResourceListSelector,
@@ -246,7 +244,7 @@ export default function PageBar() {
             data-test="addNewStore">
             {`Add new ${camelCase(childDisplayName) || 'child'}`}
           </TextButton>
-          <LoadResources required resources={resourcesToLoad}>
+          <LoadResources integrationId={integrationId} required resources={resourcesToLoad}>
             <Select
               displayEmpty
               data-test="select Child"
@@ -270,10 +268,10 @@ export default function PageBar() {
 
         {canDelete && hasIntegration && !isIntegrationApp && (
         <TextButton
-          startIcon={<TrashIcon />}
+          startIcon={<CloseIcon />}
           data-test="deleteIntegration"
           onClick={handleDelete}>
-          Delete integration
+          Uninstall
         </TextButton>
         )}
       </ActionGroup>

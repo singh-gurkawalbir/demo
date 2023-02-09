@@ -4,7 +4,7 @@ import formMeta from '../../definitions';
 import { isJsonString } from '../../../utils/string';
 import { FILE_PROVIDER_ASSISTANTS, RDBMS_TYPES, REST_ASSISTANTS} from '../../../constants';
 import { getAssistantFromResource, getResourceSubType, isNewId, rdbmsSubTypeToAppType } from '../../../utils/resource';
-import { isLoopReturnsv2Connection, isAcumaticaEcommerceConnection, isMicrosoftBusinessCentralOdataConnection, shouldLoadAssistantFormForImports, shouldLoadAssistantFormForExports, isEbayFinanceConnection } from '../../../utils/assistant';
+import { isLoopReturnsv2Connection, isAcumaticaEcommerceConnection, isMicrosoftBusinessCentralOdataConnection, isSapByDesignSoapConnection, shouldLoadAssistantFormForImports, shouldLoadAssistantFormForExports, isEbayFinanceConnection } from '../../../utils/assistant';
 import {getHttpConnector} from '../../../constants/applications';
 
 const getAllOptionsHandlerSubForms = (
@@ -304,6 +304,8 @@ const getFormMeta = ({resourceType, isNew, resource, connection, assistantData, 
           meta = meta[type];
         } else if (isMicrosoftBusinessCentralOdataConnection(connection)) {
           meta = meta[type];
+        } else if (isSapByDesignSoapConnection(connection)) {
+          meta = meta[type];
         } else if (shouldLoadAssistantFormForImports(resource, connection)) {
           meta = meta.custom.http.assistantDefinition(
             resource._id,
@@ -338,7 +340,7 @@ const getFormMeta = ({resourceType, isNew, resource, connection, assistantData, 
           } else {
             meta = meta.http;
           }
-        } else if (isMicrosoftBusinessCentralOdataConnection(connection)) {
+        } else if (isMicrosoftBusinessCentralOdataConnection(connection) || isSapByDesignSoapConnection(connection)) {
           if (type === 'http') {
             meta = meta[type];
           } else {

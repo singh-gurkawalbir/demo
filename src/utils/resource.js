@@ -7,6 +7,22 @@ import { stringCompare } from './sort';
 import { message } from './messageStore';
 import customCloneDeep from './customCloneDeep';
 
+export const UI_FIELDS = ['mockOutput', 'mockResponse'];
+export const RESOURCES_WITH_UI_FIELDS = ['exports', 'imports'];
+// accumulates all the UI fields from the resource
+export const fetchUIFields = (resource = {}) =>
+  UI_FIELDS.reduce((uiFields, field) => ({ ...uiFields, [field]: resource[field] }), {});
+
+export const resourceWithoutUIFields = resource => {
+  if (!resource || typeof resource !== 'object') return resource;
+
+  return Object.keys(resource).reduce((acc, key) => {
+    if (!UI_FIELDS.includes(key)) acc[key] = resource[key];
+
+    return acc;
+  }, {});
+};
+
 export const MODEL_PLURAL_TO_LABEL = Object.freeze({
   agents: 'Agent',
   accesstokens: 'API token',
@@ -58,6 +74,7 @@ export const appTypeToAdaptorType = {
   webhook: 'Webhook',
   dynamodb: 'Dynamodb',
   graph_ql: 'GraphQL',
+  van: 'VAN',
 };
 
 // the methods rdbmsSubTypeToAppType and rdbmsAppTypeToSubType are used to find rdbms subtype from the app.type of the application or vice-versa
@@ -117,10 +134,12 @@ export const adaptorTypeMap = {
   MongodbExport: 'mongodb',
   WrapperExport: 'wrapper',
   AS2Export: 'as2',
+  VANExport: 'van',
   MongodbImport: 'mongodb',
   S3Import: 's3',
   WrapperImport: 'wrapper',
   AS2Import: 'as2',
+  VANImport: 'van',
   RDBMSImport: 'rdbms',
   SalesforceImport: 'salesforce',
   SalesforceExport: 'salesforce',
@@ -348,6 +367,9 @@ export const isScriptIdUsedInResource = (resource, scriptId) => {
 
   return !!selectedHooks.find(hook => hook._scriptId === scriptId);
 };
+
+export const isSignUpAllowed = () => (getDomain() === 'eu.integrator.io' ? ALLOW_SIGNUP_EU : ALLOW_SIGNUP) === 'true';
+export const isGoogleSignInAllowed = () => (getDomain() === 'eu.integrator.io' ? ALLOW_GOOGLE_SIGNIN_EU : ALLOW_GOOGLE_SIGNIN) === 'true';
 
 /*
  * Returns Boolean

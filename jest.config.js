@@ -53,5 +53,7 @@ module.exports = {
     SHOPIFY_USER_IDS: '',
     ALLOW_SIGNUP: 'true',
     ALLOW_GOOGLE_SIGNIN: 'true',
+    ALLOW_SIGNUP_EU: 'true',
+    ALLOW_GOOGLE_SIGNIN_EU: 'true',
   },
 };

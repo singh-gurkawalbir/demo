@@ -11,6 +11,7 @@ import ExpandModeEditorDrawer from '../../../DynaForm/fields/DynaEditor/ExpandMo
 import MockOutputDrawer from '../../../DynaForm/fields/DynaMockOutput/MockOutputDrawer';
 import PreviewPanel from '../../../PreviewPanel';
 import LoadResources from '../../../LoadResources';
+import LoadUIFields from '../../../LoadUIFields';
 import ResourceFormWithStatusPanel from '../../../ResourceFormWithStatusPanel';
 import ResourceFormActionsPanel from './ResourceFormActionsPanel';
 import useHandleSubmitCompleteFn from './useHandleSubmitCompleteFn';
@@ -174,38 +175,40 @@ export default function Panel(props) {
       <TitleBar formKey={formKey} flowId={flowId} onClose={onClose} />
       <DrawerContent className={classes.root}>
         <LoadResources required integrationId={integrationId} resources={requiredResources}>
-          <div
-            className={clsx({
-              [classes.baseForm]: resourceType === 'exports',
-            },
-            {[classes.baseFormWithPreview]: showPreviewPanel }
-            )}
+          <LoadUIFields resourceId={id} resourceType={resourceType} flowId={flowId}>
+            <div
+              className={clsx({
+                [classes.baseForm]: resourceType === 'exports',
+              },
+              {[classes.baseFormWithPreview]: showPreviewPanel }
+              )}
           >
-            <ResourceFormWithStatusPanel
-              formKey={formKey}
-              variant={variant}
-              isNew={isNew}
-              resourceType={resourceType}
-              className={clsx({[classes.resourceFormWrapper]: showPreviewPanel })}
-              resourceId={id}
-              flowId={flowId}
-              // All users have access to reports
-              skipMonitorLevelAccessCheck={isReportType}
-              integrationId={integrationId}
-              isFlowBuilderView={!!flowId}
-              onSubmitComplete={handleSubmitComplete}
-              showNotificationToaster={showNotificationToaster}
-              onCloseNotificationToaster={onCloseNotificationToaster}
-          />
-            {showPreviewPanel && (
-              <PreviewPanel
-                resourceId={id}
+              <ResourceFormWithStatusPanel
                 formKey={formKey}
+                variant={variant}
+                isNew={isNew}
                 resourceType={resourceType}
+                className={clsx({[classes.resourceFormWrapper]: showPreviewPanel })}
+                resourceId={id}
                 flowId={flowId}
+              // All users have access to reports
+                skipMonitorLevelAccessCheck={isReportType}
+                integrationId={integrationId}
+                isFlowBuilderView={!!flowId}
+                onSubmitComplete={handleSubmitComplete}
+                showNotificationToaster={showNotificationToaster}
+                onCloseNotificationToaster={onCloseNotificationToaster}
           />
-            )}
-          </div>
+              {showPreviewPanel && (
+                <PreviewPanel
+                  resourceId={id}
+                  formKey={formKey}
+                  resourceType={resourceType}
+                  flowId={flowId}
+          />
+              )}
+            </div>
+          </LoadUIFields>
         </LoadResources>
       </DrawerContent>
       <ResourceFormActionsPanel

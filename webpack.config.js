@@ -103,8 +103,13 @@ const config = {
       IO_LOGIN_PROMOTION_URL_EU: JSON.stringify(process.env.IO_LOGIN_PROMOTION_URL_EU),
       PORTAL_URL: JSON.stringify(process.env.PORTAL_URL),
       SHOPIFY_USER_IDS: JSON.stringify(process.env.SHOPIFY_USER_IDS),
-      ALLOW_SIGNUP: JSON.stringify(process.env.ALLOW_SIGNUP) || 'true',
-      ALLOW_GOOGLE_SIGNIN: JSON.stringify(process.env.ALLOW_GOOGLE_SIGNIN) || 'true',
+      //  Note that because the plugin does a direct text replacement, the value given to it must include actual quotes inside of the string itself.
+      //  Typically, this is done either with alternate quotes, such as '"true"', or by using JSON.stringify('true').
+      //  Reference: https://webpack.js.org/plugins/define-plugin/
+      ALLOW_SIGNUP: JSON.stringify(process.env.ALLOW_SIGNUP || 'true'),
+      ALLOW_GOOGLE_SIGNIN: JSON.stringify(process.env.ALLOW_GOOGLE_SIGNIN || 'true'),
+      ALLOW_SIGNUP_EU: JSON.stringify(process.env.ALLOW_SIGNUP_EU || 'true'),
+      ALLOW_GOOGLE_SIGNIN_EU: JSON.stringify(process.env.ALLOW_GOOGLE_SIGNIN_EU || 'true'),
     }),
   ],
   output: {
@@ -266,8 +271,9 @@ module.exports = (env, argv) => {
         '/api': proxyOpts,
         '/netSuiteWS': proxyOpts,
         '/netsuiteDA': proxyOpts,
-        '/connection/': proxyOpts,
+        '/connection': proxyOpts,
         '/ui': proxyOpts,
+        '/app/shopify/verify': proxyOpts,
       },
     };
   }
