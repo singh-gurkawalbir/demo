@@ -39,7 +39,7 @@ import {
   initCategoryMappings,
 } from './settings';
 import { preUninstall, uninstallIntegration, uninstallStep as uninstallStepGen } from './uninstaller';
-import { initUninstall, uninstallStep, requestSteps } from './uninstaller2.0';
+import { initUninstall, uninstallStep, requestSteps, clearCollection } from './uninstaller2.0';
 import { resumeIntegration } from './resume';
 import openExternalUrl from '../../utils/window';
 import { generateS3Key } from './utility';
@@ -2182,6 +2182,21 @@ describe('uninstaller2.0 saga', () => {
             error.message
           )
         )
+        .run();
+    });
+  });
+
+  describe('clearCollection saga', () => {
+    test('should dispatch clear collection call', () => {
+      expectSaga(clearCollection, { integrationId: '123' })
+        .put(actions.resource.clearCollection('integrations'))
+        .put(actions.resource.clearCollection('asynchelpers'))
+        .put(actions.resource.clearCollection('scripts'))
+        .put(actions.resource.clearCollection('flows', '123'))
+        .put(actions.resource.clearCollection('exports', '123'))
+        .put(actions.resource.clearCollection('imports', '123'))
+        .put(actions.resource.clearCollection('connections', '123'))
+        .put(actions.resource.clearCollection('tree/metadata', '123'))
         .run();
     });
   });

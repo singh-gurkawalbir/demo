@@ -115,10 +115,10 @@ export function* requestSteps({ id }) {
 
 export function* clearCollection({ integrationId }) {
   yield put(actions.resource.clearCollection('integrations'));
-  yield put(actions.resource.clearCollection('flows'));
-  yield put(actions.resource.clearCollection('exports'));
-  yield put(actions.resource.clearCollection('imports'));
-  yield put(actions.resource.clearCollection('connections'));
+  yield put(actions.resource.clearCollection('flows', integrationId));
+  yield put(actions.resource.clearCollection('exports', integrationId));
+  yield put(actions.resource.clearCollection('imports', integrationId));
+  yield put(actions.resource.clearCollection('connections', integrationId));
   yield put(actions.resource.clearCollection('asynchelpers'));
   yield put(actions.resource.clearCollection('scripts'));
   yield put(actions.resource.clearCollection('tree/metadata', integrationId));

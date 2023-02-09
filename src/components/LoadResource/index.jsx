@@ -16,9 +16,9 @@ export default function LoadResource({ children, resourceType, resourceId, spinn
 
   useEffect(() => {
     if (resourceId && !resource && resourceId !== STANDALONE_INTEGRATION.id) {
-      dispatch(actions.resource.request('integrations', resourceId));
+      dispatch(actions.resource.request(resourceType, resourceId));
     }
-  }, [dispatch, resource, resourceId]);
+  }, [dispatch, resource, resourceId, resourceType]);
 
   if ((resourceId && resource) || !resourceId || resourceId === STANDALONE_INTEGRATION.id) {
     return children || null;
