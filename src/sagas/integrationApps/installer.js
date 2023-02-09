@@ -253,6 +253,7 @@ export function* verifyBundleOrPackageInstall({
   installerFunction,
   isFrameWork2,
   variant,
+  isManualVerification = true,
 }) {
   const path = variant ? `/connections/${connectionId}/distributed?type=${variant}` : `/connections/${connectionId}/distributed`;
   let response;
@@ -290,15 +291,9 @@ export function* verifyBundleOrPackageInstall({
   } else if (
     response &&
       !response.success &&
+      isManualVerification &&
       (response.resBody || response.message)
   ) {
-    yield put(
-      actions.integrationApp.installer.updateStep(
-        id,
-        installerFunction,
-        'failed'
-      )
-    );
     yield put(
       actions.api.failure(
         path,
@@ -308,6 +303,13 @@ export function* verifyBundleOrPackageInstall({
       )
     );
   }
+  yield put(
+    actions.integrationApp.installer.updateStep(
+      id,
+      installerFunction,
+      'failed'
+    )
+  );
 }
 
 export function* installChildStep({ id, installerFunction, formVal }) {

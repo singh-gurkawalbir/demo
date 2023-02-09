@@ -531,7 +531,6 @@ describe('template util function test', () => {
             application: 'netsuite',
             completed: false,
             description: 'Please install Integrator bundle in NetSuite account',
-            imageURL: 'images/company-logos/netsuite.png',
             installURL: '/app/bundler/bundledetails.nl?sourcecompanyid=TSTDRV916910&domain=PRODUCTION&config=F&id=20038',
             name: 'Integrator Bundle 1',
             sourceConnId: '569f5e778a34de4718a56177',
@@ -826,7 +825,6 @@ describe('template util function test', () => {
           {
             key: 'NetSuite account 1',
             installURL: '/app/bundler/bundledetails.nl?sourcecompanyid=TSTDRV916910&domain=PRODUCTION&config=F&id=20038',
-            imageURL: 'images/company-logos/netsuite.png',
             completed: false,
             description: 'Please install Integrator bundle in Netsuite Connection 1 account',
             name: 'Integrator Bundle 1',
@@ -838,7 +836,6 @@ describe('template util function test', () => {
           {
             key: 'NetSuite account 2',
             installURL: '/app/bundler/bundledetails.nl?sourcecompanyid=TSTDRV916910&domain=PRODUCTION&config=F&id=20038',
-            imageURL: 'images/company-logos/netsuite.png',
             completed: false,
             description: 'Please install Integrator bundle in Netsuite Connection 2 account',
             name: 'Integrator Bundle 2',
@@ -1126,7 +1123,6 @@ describe('template util function test', () => {
           {
             key: 'NetSuite account 1',
             installURL: '/app/bundler/bundledetails.nl?sourcecompanyid=TSTDRV916910&domain=PRODUCTION&config=F&id=20038',
-            imageURL: 'images/company-logos/netsuite.png',
             completed: false,
             description: 'Please install Integrator bundle in NetSuite account',
             name: 'Integrator Bundle 1',
@@ -1138,7 +1134,6 @@ describe('template util function test', () => {
           {
             key: 'NetSuite account 1',
             installURL: '/suiteapp/ui/marketplace.nl?whence=#/app?id=com.celigo.integratorio',
-            imageURL: 'images/company-logos/netsuite.png',
             completed: false,
             description: 'Please install Integrator suiteapp in NetSuite account',
             name: 'Integrator SuiteApp 1',
@@ -1393,7 +1388,6 @@ describe('template util function test', () => {
           {
             key: 'NetSuite account 1',
             installURL: '/suiteapp/ui/marketplace.nl?whence=#/app?id=com.celigo.integratorio',
-            imageURL: 'images/company-logos/netsuite.png',
             completed: false,
             description: 'Please install Integrator suiteapp in NetSuite account',
             name: 'Integrator SuiteApp 1',
@@ -1636,7 +1630,6 @@ describe('template util function test', () => {
           {
             key: 'NetSuite account 1',
             installURL: '/suiteapp/ui/marketplace.nl?whence=#/app?id=com.celigo.integratorio',
-            imageURL: 'images/company-logos/netsuite.png',
             completed: false,
             description: 'Please install Integrator suiteapp in NetSuite account',
             name: 'Integrator SuiteApp 1',

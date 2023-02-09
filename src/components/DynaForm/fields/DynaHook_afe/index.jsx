@@ -60,6 +60,7 @@ export default function DynaHook_afe({
   helpKey: propsHelpKey,
   isLoggable,
   isValid = true,
+  disablePortal = true,
 }) {
   const classes = useStyles();
   const dispatch = useDispatch();
@@ -144,7 +145,7 @@ export default function DynaHook_afe({
       <div className={classes.inputContainer}>
         <div className={classes.labelWithHelpTextWrapper}>
           <InputLabel>{label}</InputLabel>
-          <FieldHelp label={propsLabel} helpKey={propsHelpKey} />
+          <FieldHelp disablePortal={disablePortal} label={propsLabel} helpKey={propsHelpKey} />
         </div>
         <div className={classes.wrapper}>
           <div className={classes.field}>
@@ -163,7 +164,7 @@ export default function DynaHook_afe({
               value={value.function}
               onFieldChange={handleFieldChange('function')}
               helpKey="api.function"
-            />
+              disablePortal={false} />
           </div>
           {hookType === 'stack' && (
             <StackView

@@ -6,6 +6,7 @@ import LogRocket from 'logrocket';
 import ModalDialog from '../../components/ModalDialog';
 import getRoutePath from '../../utils/routePaths';
 import { FilledButton } from '../../components/Buttons';
+import RawHtml from '../../components/RawHtml';
 import {message} from '../../utils/messageStore';
 
 export default class CrashReporter extends React.Component {
@@ -34,7 +35,7 @@ export default class CrashReporter extends React.Component {
             <span>Application errored</span>
           </>
           <Typography>
-            {message.APP_CRASH}
+            <RawHtml html={message.APP_CRASH} />
           </Typography>
           <FilledButton
             data-test="reload"

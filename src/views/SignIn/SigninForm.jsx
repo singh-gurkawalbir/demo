@@ -17,6 +17,7 @@ import Spinner from '../../components/Spinner';
 import { FilledButton, OutlinedButton, TextButton } from '../../components/Buttons';
 import getImageUrl from '../../utils/image';
 import useQuery from '../../hooks/useQuery';
+import { isGoogleSignInAllowed } from '../../utils/resource';
 
 const path = getImageUrl('images/googlelogo.png');
 
@@ -165,7 +166,7 @@ export default function SignIn({dialogOpen, className}) {
     if (errorMessage === AUTH_FAILURE_MESSAGE) {
       return 'Sign in failed. Please try again.';
     }
-    if (window.signInError) {
+    if (window.signInError && window.signinError !== 'undefined') {
       return window.signInError;
     }
 
@@ -311,8 +312,7 @@ export default function SignIn({dialogOpen, className}) {
       { !isAuthenticating && (
       <div>
         {!dialogOpen &&
-        // eslint-disable-next-line no-undef
-        ALLOW_GOOGLE_SIGNIN === 'true' && (
+        isGoogleSignInAllowed() && (
           <form onSubmit={handleSignInWithGoogle}>
             <TextField
               data-private
@@ -349,8 +349,7 @@ export default function SignIn({dialogOpen, className}) {
           </form>
         )}
         {dialogOpen && userEmail && userProfileLinkedWithGoogle &&
-        // eslint-disable-next-line no-undef
-        ALLOW_GOOGLE_SIGNIN === 'true' && (
+        isGoogleSignInAllowed() && (
         <form onSubmit={handleReSignInWithGoogle}>
           <OutlinedButton
             type="submit"

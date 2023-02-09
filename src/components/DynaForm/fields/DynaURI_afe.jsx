@@ -47,6 +47,7 @@ export default function DynaURI_afe(props) {
   const flowDataStage = stage || (resourceType === 'exports' ? EXPORT_FILTERED_DATA_STAGE : IMPORT_FLOW_DATA_STAGE);
 
   const {parentType, parentId, connId: connectionId} = getParentResourceContext(match.url, resourceType);
+  const { integrationId } = getParentResourceContext(match.url, 'integrations');
 
   const handleSave = useCallback(editorValues => {
     onFieldChange(id, editorValues.rule);
@@ -65,6 +66,7 @@ export default function DynaURI_afe(props) {
       parentId,
       connectionId,
       mapper2RowKey,
+      integrationId,
     }));
 
     history.push(buildDrawerUrl({
@@ -72,7 +74,7 @@ export default function DynaURI_afe(props) {
       baseUrl: match.url,
       params: { editorId },
     }));
-  }, [dispatch, editorId, formKey, flowId, resourceId, resourceType, id, flowDataStage, handleSave, parentType, parentId, connectionId, mapper2RowKey, history, match.url]);
+  }, [dispatch, editorId, formKey, flowId, resourceId, resourceType, id, flowDataStage, handleSave, parentType, parentId, connectionId, mapper2RowKey, integrationId, history, match.url]);
 
   return (
     <>

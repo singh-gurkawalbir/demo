@@ -4,7 +4,7 @@ import { useLocation } from 'react-router-dom';
 import { makeStyles, Typography } from '@material-ui/core';
 import SigninForm from './SignInForm';
 import CeligoLogo from '../../../components/CeligoLogo';
-import { getDomain } from '../../../utils/resource';
+import { getDomain, isSignUpAllowed } from '../../../utils/resource';
 import { selectors } from '../../../reducers';
 import UserSignInPageFooter from '../../../components/UserSignInPage/UserSignInPageFooter';
 import ShopifyLandingPageHeader from '../../LandingPages/Shopify/PageHeader';
@@ -104,7 +104,7 @@ export default function Signin(props) {
             className={classes.signInForm}
             queryParam={queryParams}
           />
-          {ALLOW_SIGNUP === 'true' && (
+          {isSignUpAllowed() && (
           <div className={classes.signupLink}>
             <UserSignInPageFooter
               linkLabel="Don't have an account?"
