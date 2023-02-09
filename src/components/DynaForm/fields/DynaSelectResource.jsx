@@ -338,7 +338,7 @@ export default function DynaSelectResource(props) {
     }),
     [merged]
   );
-  const connection = useSelectorMemo(selectors.makeResourceDataSelector, 'connections', expConnId)?.merged || emptyObj;
+  const connection = useSelectorMemo(selectors.makeResourceDataSelector, 'connections', (resourceType === 'connections' ? value : expConnId))?.merged || emptyObj;
   const _httpConnectorId = getHttpConnector(connection?.http?._httpConnectorId)?._id;
 
   const handleAddNewResourceMemo = useCallback(
