@@ -114,7 +114,7 @@ export default function KeyValueRow(props) {
           value={r[keyName]}
           id={`${keyName}-${index}`}
           data-test={`${keyName}-${index}`}
-                    // autoFocus={r.row === rowInd && isKey}
+          autoFocus={index === rowInd && isKey && dataFields && !dataFields[r[keyName]]}
           placeholder={keyPlaceholder || keyName}
           variant="filled"
           onFieldChange={(_, _value) =>
