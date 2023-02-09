@@ -80,3 +80,6 @@ export const SHOPIFY_APP_STORE_LINKS = {
 export const MOCK_OUTPUT_CANONICAL_FORMAT_LINK = 'https://docs.celigo.com/hc/en-us/articles/4473437451163-integrator-io-canonical-format-for-mock-data';
 export const MOCK_RESPONSE_CANONICAL_FORMAT_LINK = 'https://docs.celigo.com/hc/en-us/articles/4473437451163';
 
+export const BUNDLE_DEPRICATION_URL = 'https://docs.celigo.com/hc/en-us/articles/360050643132';
+// This needs to be updated once integrator app is published in shopify marketplace.
+export const SHOPIFY_APP_URL = 'https://apps.shopify.com';

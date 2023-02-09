@@ -13,6 +13,7 @@ import getRoutePath from '../../../utils/routePaths';
 import Spinner from '../../../components/Spinner';
 import { FilledButton, OutlinedButton } from '../../../components/Buttons';
 import getImageUrl from '../../../utils/image';
+import { isGoogleSignInAllowed } from '../../../utils/resource';
 
 const path = getImageUrl('images/googlelogo.png');
 
@@ -210,8 +211,7 @@ export default function SignIn({dialogOpen, className}) {
           )}
       </form>
       { !isAuthenticating &&
-      // eslint-disable-next-line no-undef
-      ALLOW_GOOGLE_SIGNIN === 'true' && (
+      isGoogleSignInAllowed() && (
       <div>
         {!dialogOpen && (
         <form onSubmit={handleSignInWithGoogle}>
@@ -232,8 +232,7 @@ export default function SignIn({dialogOpen, className}) {
         </form>
         )}
         {dialogOpen && userEmail && userProfileLinkedWithGoogle &&
-         // eslint-disable-next-line no-undef
-         ALLOW_GOOGLE_SIGNIN === 'true' && (
+         isGoogleSignInAllowed() && (
          <form onSubmit={handleReSignInWithGoogle}>
            <OutlinedButton
              type="submit"

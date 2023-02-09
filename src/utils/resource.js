@@ -367,6 +367,9 @@ export const isScriptIdUsedInResource = (resource, scriptId) => {
   return !!selectedHooks.find(hook => hook._scriptId === scriptId);
 };
 
+export const isSignUpAllowed = () => (getDomain() === 'eu.integrator.io' ? ALLOW_SIGNUP_EU : ALLOW_SIGNUP) === 'true';
+export const isGoogleSignInAllowed = () => (getDomain() === 'eu.integrator.io' ? ALLOW_GOOGLE_SIGNIN_EU : ALLOW_GOOGLE_SIGNIN) === 'true';
+
 /*
  * Returns Boolean
  * checks whether passed FileDefinitionID is present in passed Resource (Export/Import))
