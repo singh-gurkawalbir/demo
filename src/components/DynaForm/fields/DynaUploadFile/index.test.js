@@ -115,6 +115,7 @@ describe('dynaupload file UI test cases', () => {
       _integrationId: '5df0b6c26dc1ab40a677cf45',
       childId: 'somechildId',
       options: 'csv',
+      mode: 'csv',
     };
 
     initDynaUploadFile(data);
@@ -188,6 +189,7 @@ describe('dynaupload file UI test cases', () => {
       _integrationId: '5df0b6c26dc1ab40a677cf45',
       childId: 'somechildId',
       options: 'csv',
+      mode: 'csv',
     };
 
     initDynaUploadFile(data);
@@ -259,6 +261,7 @@ describe('dynaupload file UI test cases', () => {
       _integrationId: '5df0b6c26dc1ab40a677cf45',
       childId: 'somechildId',
       options: 'csv',
+      mode: 'csv',
     };
 
     initDynaUploadFile(data);
@@ -310,6 +313,7 @@ describe('dynaupload file UI test cases', () => {
       _integrationId: '5df0b6c26dc1ab40a677cf45',
       childId: 'somechildId',
       options: 'csv',
+      mode: 'csv',
     };
 
     initDynaUploadFile(data);

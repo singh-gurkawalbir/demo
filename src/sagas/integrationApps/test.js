@@ -712,6 +712,7 @@ describe('installer saga', () => {
     const path = `/connections/${connectionId}/distributed?type=suitebundle`;
     const installerFunction = 'Installer_Function';
     const variant = 'suitebundle';
+    const isManualVerification = true;
 
     test('if the api call is successful and the response is success, should dispatch integrationApp script installStep if isFrameWork2 true', () => {
       const args = {
@@ -721,7 +722,7 @@ describe('installer saga', () => {
       const isFrameWork2 = true;
       const response = { success: true };
 
-      expectSaga(verifyBundleOrPackageInstall, { id, connectionId, installerFunction, isFrameWork2, variant})
+      expectSaga(verifyBundleOrPackageInstall, { id, connectionId, installerFunction, isFrameWork2, variant, isManualVerification})
         .provide([[call(apiCallWithRetry, args), response]])
         .call(apiCallWithRetry, args)
         .put(
@@ -751,7 +752,7 @@ describe('installer saga', () => {
       const isFrameWork2 = false;
       const response = { success: true };
 
-      expectSaga(verifyBundleOrPackageInstall, { id, connectionId, installerFunction, isFrameWork2, variant})
+      expectSaga(verifyBundleOrPackageInstall, { id, connectionId, installerFunction, isFrameWork2, variant, isManualVerification})
         .provide([[call(apiCallWithRetry, args), response]])
         .call(apiCallWithRetry, args)
         .not.put(
@@ -773,7 +774,7 @@ describe('installer saga', () => {
         )
         .run();
     });
-    test('if the api call is successful but response is not true, should dispatch update install step and api.failure', () => {
+    test('if the api call is successful but response is not true, should dispatch update install step and api.failure only when user manually clicks for verification', () => {
       const args = {
         path,
         message: 'Verifying suitebundle Installation...',
@@ -784,7 +785,7 @@ describe('installer saga', () => {
         message: 'something',
       };
 
-      expectSaga(verifyBundleOrPackageInstall, { id, connectionId, installerFunction, isFrameWork2})
+      expectSaga(verifyBundleOrPackageInstall, { id, connectionId, installerFunction, isFrameWork2, isManualVerification })
         .provide([[call(apiCallWithRetry, args), response]])
         .call(apiCallWithRetry, args)
         .put(
@@ -795,6 +796,38 @@ describe('installer saga', () => {
           )
         )
         .put(
+          actions.api.failure(
+            path,
+            'GET',
+            response.resBody || response.message,
+            false
+          )
+        )
+        .run();
+    });
+    test('if the api call is successful and is automatic but response is not true, it should not dispatch update install step and api.failure', () => {
+      const args = {
+        path,
+        message: 'Verifying suitebundle Installation...',
+      };
+      const isFrameWork2 = true;
+      const isManualVerification = false;
+      const response = {
+        success: false,
+        message: 'something',
+      };
+
+      expectSaga(verifyBundleOrPackageInstall, { id, connectionId, installerFunction, isFrameWork2, isManualVerification })
+        .provide([[call(apiCallWithRetry, args), response]])
+        .call(apiCallWithRetry, args)
+        .not.put(
+          actions.integrationApp.installer.updateStep(
+            id,
+            installerFunction,
+            'failed'
+          )
+        )
+        .not.put(
           actions.api.failure(
             path,
             'GET',
@@ -815,7 +848,7 @@ describe('installer saga', () => {
         message: 'something',
       };
 
-      expectSaga(verifyBundleOrPackageInstall, { id, connectionId, installerFunction, isFrameWork2})
+      expectSaga(verifyBundleOrPackageInstall, { id, connectionId, installerFunction, isFrameWork2, isManualVerification})
         .provide([[call(apiCallWithRetry, args), throwError(error)]])
         .call(apiCallWithRetry, args)
         .put(
@@ -834,6 +867,7 @@ describe('installer saga', () => {
     const connectionId = '5678';
     const path = `/connections/${connectionId}/distributed?type=suiteapp`;
     const installerFunction = 'Installer_Function';
+    const isManualVerification = true;
     const variant = 'suiteapp';
 
     test('if the api call is successful and the response is success, should dispatch integrationApp script installStep if isFrameWork2 true', () => {
@@ -844,7 +878,7 @@ describe('installer saga', () => {
       const isFrameWork2 = true;
       const response = { success: true };
 
-      expectSaga(verifyBundleOrPackageInstall, { id, connectionId, installerFunction, isFrameWork2, variant})
+      expectSaga(verifyBundleOrPackageInstall, { id, connectionId, installerFunction, isFrameWork2, variant, isManualVerification})
         .provide([[call(apiCallWithRetry, args), response]])
         .call(apiCallWithRetry, args)
         .put(
@@ -874,7 +908,8 @@ describe('installer saga', () => {
       const isFrameWork2 = false;
       const response = { success: true };
 
-      expectSaga(verifyBundleOrPackageInstall, { id, connectionId, installerFunction, isFrameWork2, variant})
+      expectSaga(verifyBundleOrPackageInstall, { id, connectionId, installerFunction, isFrameWork2, variant, isManualVerification,
+      })
         .provide([[call(apiCallWithRetry, args), response]])
         .call(apiCallWithRetry, args)
         .not.put(
@@ -896,7 +931,7 @@ describe('installer saga', () => {
         )
         .run();
     });
-    test('if the api call is successful but response is not true, should dispatch update install step and api.failure', () => {
+    test('if the api call is successful but response is not true, should dispatch update install step and api.failure only when user manually clicks for verification', () => {
       const args = {
         path,
         message: 'Verifying suiteapp Installation...',
@@ -907,7 +942,7 @@ describe('installer saga', () => {
         message: 'something',
       };
 
-      expectSaga(verifyBundleOrPackageInstall, { id, connectionId, installerFunction, isFrameWork2})
+      expectSaga(verifyBundleOrPackageInstall, { id, connectionId, installerFunction, isFrameWork2, isManualVerification})
         .provide([[call(apiCallWithRetry, args), response]])
         .call(apiCallWithRetry, args)
         .put(
@@ -918,6 +953,38 @@ describe('installer saga', () => {
           )
         )
         .put(
+          actions.api.failure(
+            path,
+            'GET',
+            response.resBody || response.message,
+            false
+          )
+        )
+        .run();
+    });
+    test('if the api call is successful and is automatic but response is not true, it should not dispatch update install step and api.failure', () => {
+      const args = {
+        path,
+        message: 'Verifying suiteapp Installation...',
+      };
+      const isFrameWork2 = true;
+      const isManualVerification = false;
+      const response = {
+        success: false,
+        message: 'something',
+      };
+
+      expectSaga(verifyBundleOrPackageInstall, { id, connectionId, installerFunction, isFrameWork2, isManualVerification})
+        .provide([[call(apiCallWithRetry, args), response]])
+        .call(apiCallWithRetry, args)
+        .not.put(
+          actions.integrationApp.installer.updateStep(
+            id,
+            installerFunction,
+            'failed'
+          )
+        )
+        .not.put(
           actions.api.failure(
             path,
             'GET',
@@ -938,7 +1005,7 @@ describe('installer saga', () => {
         message: 'something',
       };
 
-      expectSaga(verifyBundleOrPackageInstall, { id, connectionId, installerFunction, isFrameWork2})
+      expectSaga(verifyBundleOrPackageInstall, { id, connectionId, installerFunction, isFrameWork2, isManualVerification})
         .provide([[call(apiCallWithRetry, args), throwError(error)]])
         .call(apiCallWithRetry, args)
         .put(

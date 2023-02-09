@@ -285,7 +285,8 @@ const UpgradeInstallation = forwardRef(({ parentId, parentUrl }, ref) => {
               step._connId,
               installerFunction,
               isFrameWork2,
-              netsuitePackageType
+              netsuitePackageType,
+              true                                // true here sets the isManualVerification flag to true which means the user has triggered the verification
             )
           );
         } else if (isFrameWork2) {
