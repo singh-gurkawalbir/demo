@@ -29,7 +29,7 @@ export default function useHandleSaveAndAuth({formKey, resourceType, resourceId,
   });
   const handleSaveAndAuthorizeConnection = useCallback(
     values => {
-      const newValues = customCloneDeep(values);
+      const newValues = customCloneDeep({...values});
 
       if (
         resource._connectorId &&

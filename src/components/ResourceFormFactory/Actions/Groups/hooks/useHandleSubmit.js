@@ -35,7 +35,7 @@ export default function useHandleSubmit({
 
   return useCallback(
     closeAfterSave => {
-      const newValues = customCloneDeep(values);
+      const newValues = customCloneDeep({...values});
 
       if (resource._connectorId &&
           (['shopify'].includes(resource.assistant) && values['/http/auth/type'] === 'oauth')) {

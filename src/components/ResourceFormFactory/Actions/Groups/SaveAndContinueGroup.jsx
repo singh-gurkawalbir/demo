@@ -41,7 +41,7 @@ export default function SaveAndContinueGroup(props) {
 
   const handleSaveAndContinue = useCallback(
     () => {
-      const newValues = customCloneDeep(values);
+      const newValues = customCloneDeep({...values});
 
       if (!newValues['/_borrowConcurrencyFromConnectionId']) {
         newValues['/_borrowConcurrencyFromConnectionId'] = undefined;

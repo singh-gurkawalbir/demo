@@ -52,7 +52,7 @@ export default function TestButton(props) {
 
   const handleTestConnection = useCallback(
     () => {
-      const newValues = customCloneDeep(values);
+      const newValues = customCloneDeep({...values});
 
       if (!newValues['/_borrowConcurrencyFromConnectionId']) {
         newValues['/_borrowConcurrencyFromConnectionId'] = undefined;
