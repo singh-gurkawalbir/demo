@@ -11,7 +11,7 @@ import { TextButton } from '../../../components/Buttons';
 
 const blockMap = {
   newPG: { label: 'Add source', Icon: ExportIcon },
-  newPP: { label: 'Add destination / lookup', Icon: ImportIcon },
+  newPP: { label: 'Add PP', Icon: ImportIcon },
   newImport: { label: 'Add destination', Icon: ImportIcon },
   export: { label: 'Export', Icon: ExportIcon },
   import: { label: 'Import', Icon: ImportIcon },

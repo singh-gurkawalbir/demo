@@ -23,12 +23,13 @@ const useStyles = makeStyles(theme => ({
     alignItems: 'center',
     position: 'relative',
     backgroundColor: theme.palette.background.paper,
-    padding: theme.spacing(2),
+    // padding: theme.spacing(2),
+    height: 95,
     transition: 'ease all 0.3s',
-    boxShadow: '0 0 0 rgba(0,0,0,0)',
+    // boxShadow: '0 0 0 rgba(0,0,0,0)',
     borderRadius: 6,
     '&:hover': {
-      boxShadow: '0 3px 10px rgba(0,0,0,0.3)',
+      // boxShadow: '0 3px 10px rgba(0,0,0,0.3)',
     },
   },
   branchContainer: {
