@@ -18,7 +18,8 @@ const attachSuiteScriptHooks = (metadata, resourceType, defaultValues, isNSApiVe
       label: `SuiteScript Hooks (NetSuite ${
         resourceType === 'exports' ? 'Exports' : 'Imports'
       } Only)`,
-      helpText: `“When writing your SuiteScript hooks, make sure to use the scripting language for the SuiteScript version your hook is intended for. For example, if your NetSuite ${resourceType.substring(0, resourceType.length - 1)} is configured to use the SuiteApp SuiteScript 2.x APIs, then your script should be a SuiteScript 2.x script as well. In case your NetSuite ${resourceType.substring(0, resourceType.length - 1)} is configured to use SuiteApp SuiteScript 1.0 API or SuiteBundle SuiteScript 1.0 API, then your script should be SuiteScript 1.0 script. SuiteScript 1.0 and 2.0 are not compatible, so if this is not configured correctly your flows will fail when run.”`,
+      helpText: `When writing your SuiteScript hook, your scripting language must match the SuiteScript version configured in your ${resourceType.substring(0, resourceType.length - 1)}. For example, if your NetSuite ${resourceType.substring(0, resourceType.length - 1)} is configured to use SuiteApp SuiteScript 2.x APIs, then your script also should use only SuiteScript 2.x; or, if your NetSuite ${resourceType.substring(0, resourceType.length - 1)} is configured to use SuiteApp SuiteScript 1.0 API or SuiteBundle SuiteScript 1.0 API, then your script also should use only SuiteScript 1.0. 
+SuiteScript 1.0 and 2.0 are not compatible. If there is a mismatch in the SuiteScript versions used in your hook and ${resourceType.substring(0, resourceType.length - 1)}, your flows will fail when you run them.`,
     },
   };
   const layoutFields = ['suiteScript-header'];
