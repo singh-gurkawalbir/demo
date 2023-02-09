@@ -50,7 +50,9 @@ export default function DynaNetSuiteLookup_afe(props) {
     formKey,
     resourceType,
     isLoggable,
+    disableFetch,
   } = props;
+
   const dispatch = useDispatch();
   const history = useHistory();
   const match = useRouteMatch();
@@ -116,7 +118,7 @@ export default function DynaNetSuiteLookup_afe(props) {
             />
           </div>
           <ActionButton
-            disabled={options?.disableFetch}
+            disabled={options?.disableFetch || disableFetch}
             data-test={id}
             onClick={handleEditorClick}
             tooltip="Define lookup criteria"
