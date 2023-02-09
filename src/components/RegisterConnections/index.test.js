@@ -122,7 +122,6 @@ describe('test suite for RegisterConnections component', () => {
         }];
     });
 
-
     initRegisterConnections({integrationId, onClose}, reduxStore);
 
     const connectionLinks = screen.getAllByRole('link').map(ele => ele.textContent);
