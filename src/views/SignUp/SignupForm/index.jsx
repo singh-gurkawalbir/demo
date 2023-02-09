@@ -1,7 +1,6 @@
 import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import React, { useCallback, useEffect, useMemo} from 'react';
-import { Typography } from '@material-ui/core';
 import { useHistory } from 'react-router-dom';
 import actions from '../../../actions';
 import { selectors } from '../../../reducers';
@@ -11,6 +10,7 @@ import useFormInitWithPermissions from '../../../hooks/useFormInitWithPermission
 import DynaForm from '../../../components/DynaForm';
 import DynaSubmit from '../../../components/DynaForm/DynaSubmit';
 import getRoutePath from '../../../utils/routePaths';
+import ShowErrorMessage from '../../../components/ShowErrorMessage';
 
 const useStyles = makeStyles(theme => ({
   submit: {
@@ -77,14 +77,7 @@ export default function SignUp() {
   return (
     <div className={classes.editableFields}>
       { signupStatus === 'failed' && error && (
-      <Typography
-        data-private
-        color="error"
-        component="div"
-        variant="h5"
-        className={classes.alertMsg}>
-        {error}
-      </Typography>
+      <ShowErrorMessage error={error} />
       )}
       <DynaForm formKey={formKey} />
       <DynaSubmit

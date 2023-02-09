@@ -7,7 +7,6 @@ import { useLocation, Link, useHistory} from 'react-router-dom';
 import clsx from 'clsx';
 import actions from '../../../actions';
 import { selectors } from '../../../reducers';
-import ErrorIcon from '../../../components/icons/ErrorIcon';
 import { getDomain, isGoogleSignInAllowed } from '../../../utils/resource';
 import { AUTH_FAILURE_MESSAGE } from '../../../constants';
 import getRoutePath from '../../../utils/routePaths';
@@ -17,6 +16,7 @@ import getImageUrl from '../../../utils/image';
 import useQuery from '../../../hooks/useQuery';
 import ShowContentIcon from '../../../components/icons/ShowContentIcon';
 import HideContentIcon from '../../../components/icons/HideContentIcon';
+import ShowErrorMessage from '../../../components/ShowErrorMessage';
 
 const path = getImageUrl('images/googlelogo.png');
 
@@ -276,14 +276,7 @@ export default function SignIn({ dialogOpen, className, queryParam }) {
           </TextButton>
         </div>
         {!isAuthenticating && showError && error && (
-          <Typography
-            data-private
-            color="error"
-            component="div"
-            variant="h5"
-            className={classes.alertMsg}>
-            <ErrorIcon /> {error}
-          </Typography>
+          <ShowErrorMessage error={error} />
         )}
         { isAuthenticating ? <Spinner />
           : (

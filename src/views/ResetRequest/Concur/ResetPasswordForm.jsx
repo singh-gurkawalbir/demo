@@ -17,6 +17,7 @@ import ArrowPopper from '../../../components/ArrowPopper';
 import TooltipContent from '../../../components/TooltipContent';
 import CheckmarkIcon from '../../../components/icons/CheckmarkIcon';
 import CloseIcon from '../../../components/icons/CloseIcon';
+import ShowErrorMessage from '../../../components/ShowErrorMessage';
 
 const useStyles = makeStyles(theme => ({
   submit: {
@@ -175,14 +176,7 @@ export default function ResetPassword() {
   return (
     <div className={classes.editableFields}>
       { error && (
-      <Typography
-        data-private
-        color="error"
-        component="div"
-        variant="h5"
-        className={classes.alertMsg}>
-        {error}
-      </Typography>
+      <ShowErrorMessage error={error} />
       )}
       <form onSubmit={handleOnSubmit} className={classes.setPasswordForm}>
         <TextField

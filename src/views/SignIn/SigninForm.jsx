@@ -7,7 +7,6 @@ import { useLocation, Link, useHistory } from 'react-router-dom';
 import clsx from 'clsx';
 import actions from '../../actions';
 import { selectors } from '../../reducers';
-import ErrorIcon from '../../components/icons/ErrorIcon';
 import ShowContentIcon from '../../components/icons/ShowContentIcon';
 import HideContentIcon from '../../components/icons/HideContentIcon';
 import SecurityIcon from '../../components/icons/SecurityIcon';
@@ -18,6 +17,7 @@ import { FilledButton, OutlinedButton, TextButton } from '../../components/Butto
 import getImageUrl from '../../utils/image';
 import useQuery from '../../hooks/useQuery';
 import { isGoogleSignInAllowed } from '../../utils/resource';
+import ShowErrorMessage from '../../components/ShowErrorMessage';
 
 const path = getImageUrl('images/googlelogo.png');
 
@@ -53,22 +53,6 @@ const useStyles = makeStyles(theme => ({
       '& > input': {
         border: 'none',
       },
-    },
-  },
-  alertMsg: {
-    fontSize: 12,
-    textAlign: 'left',
-    marginLeft: 0,
-    width: '100%',
-    display: 'flex',
-    alignItems: 'flex-start',
-    marginTop: theme.spacing(-2),
-    marginBottom: 0,
-    lineHeight: `${theme.spacing(2)}px`,
-    '& > svg': {
-      fill: theme.palette.error.main,
-      fontSize: theme.spacing(2),
-      marginRight: 5,
     },
   },
   errorMsg: {
@@ -287,14 +271,7 @@ export default function SignIn({dialogOpen, className}) {
           </TextButton>
         </div>
         {!isAuthenticating && showError && error && (
-          <Typography
-            data-private
-            color="error"
-            component="div"
-            variant="h5"
-            className={classes.alertMsg}>
-            <ErrorIcon /> {error}
-          </Typography>
+        <ShowErrorMessage error={error} />
         )}
 
         { isAuthenticating ? <Spinner />

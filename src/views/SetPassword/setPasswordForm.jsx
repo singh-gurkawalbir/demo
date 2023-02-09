@@ -13,13 +13,13 @@ import { FilledButton, TextButton } from '../../components/Buttons';
 import ShowContentIcon from '../../components/icons/ShowContentIcon';
 import HideContentIcon from '../../components/icons/HideContentIcon';
 import getRoutePath from '../../utils/routePaths';
-import RawHtml from '../../components/RawHtml';
 import ArrowPopper from '../../components/ArrowPopper';
 import TooltipContent from '../../components/TooltipContent';
 import CloseIcon from '../../components/icons/CloseIcon';
 import CheckMarkIcon from '../../components/icons/CheckmarkIcon';
 import FieldMessage from '../../components/DynaForm/fields/FieldMessage';
 import {message} from '../../utils/messageStore';
+import ShowErrorMessage from '../../components/ShowErrorMessage';
 
 const useStyles = makeStyles(theme => ({
   submit: {
@@ -53,21 +53,6 @@ const useStyles = makeStyles(theme => ({
       '& > input': {
         border: 'none',
       },
-    },
-  },
-  alertMsg: {
-    fontSize: 12,
-    textAlign: 'left',
-    marginLeft: 0,
-    width: '100%',
-    display: 'flex',
-    alignItems: 'flex-start',
-    marginBottom: theme.spacing(2),
-    lineHeight: `${theme.spacing(2)}px`,
-    '& > svg': {
-      fill: theme.palette.error.main,
-      fontSize: theme.spacing(2),
-      marginRight: 5,
     },
   },
 
@@ -186,15 +171,8 @@ export default function SetPassword() {
 
   return (
     <div className={classes.editableFields}>
-      { showErrMsg && error && (
-      <Typography
-        data-private
-        color="error"
-        component="div"
-        variant="h5"
-        className={classes.alertMsg}>
-        <RawHtml html={error} />
-      </Typography>
+      {showErrMsg && error && (
+      <ShowErrorMessage error={error} />
       )}
       <form onSubmit={handleOnSubmit} className={classes.setPasswordForm}>
         <TextField

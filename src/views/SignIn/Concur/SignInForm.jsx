@@ -2,18 +2,17 @@ import TextField from '@material-ui/core/TextField';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import React, { useState, useCallback, useEffect } from 'react';
-import { Typography} from '@material-ui/core';
 import { useLocation, useHistory} from 'react-router-dom';
 import clsx from 'clsx';
 import actions from '../../../actions';
 import { selectors } from '../../../reducers';
-import ErrorIcon from '../../../components/icons/ErrorIcon';
 import { AUTH_FAILURE_MESSAGE } from '../../../constants';
 import getRoutePath from '../../../utils/routePaths';
 import Spinner from '../../../components/Spinner';
 import { FilledButton, OutlinedButton } from '../../../components/Buttons';
 import getImageUrl from '../../../utils/image';
 import { isGoogleSignInAllowed } from '../../../utils/resource';
+import ShowErrorMessage from '../../../components/ShowErrorMessage';
 
 const path = getImageUrl('images/googlelogo.png');
 
@@ -190,14 +189,7 @@ export default function SignIn({dialogOpen, className}) {
 
         <ForgotPassworLink email={email} />
         {!isAuthenticating && showError && error && (
-          <Typography
-            data-private
-            color="error"
-            component="div"
-            variant="h5"
-            className={classes.alertMsg}>
-            <ErrorIcon /> {error}
-          </Typography>
+        <ShowErrorMessage error={error} />
         )}
         { isAuthenticating ? <Spinner />
           : (
