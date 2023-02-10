@@ -109,14 +109,12 @@ const sampleData = {
         {
           id: 'import',
           label: 'Destination field value',
-          required: false,
           type: 'input',
           supportsRefresh: false,
         },
         {
           id: 'export',
           label: 'Source field value',
-          required: false,
           type: 'input',
           supportsRefresh: false,
         },
