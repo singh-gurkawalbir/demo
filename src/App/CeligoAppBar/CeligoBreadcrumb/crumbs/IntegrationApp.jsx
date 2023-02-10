@@ -22,11 +22,7 @@ export const ChildCrumb = ({ integrationId, childId }) => {
   const child = iaSettings?.children?.find(c => c?.value === childId);
 
   const isIntegrationAppV2 = useSelector(state => selectors.isIntegrationAppVersion2(state, integrationId, true));
-  const childName = useSelector(state => {
-    const integration = selectors.resource(state, 'integrations', childId);
-
-    return integration && integration.name;
-  });
+  const childName = useSelector(state => selectors.resource(state, 'integrations', childId)?.name);
 
   if (isIntegrationAppV2) {
     return (

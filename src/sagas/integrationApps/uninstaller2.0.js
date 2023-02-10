@@ -113,18 +113,6 @@ export function* requestSteps({ id }) {
   }
 }
 
-export function* clearCollection({ integrationId }) {
-  yield put(actions.resource.clearCollection('integrations'));
-  yield put(actions.resource.clearCollection('flows', integrationId));
-  yield put(actions.resource.clearCollection('exports', integrationId));
-  yield put(actions.resource.clearCollection('imports', integrationId));
-  yield put(actions.resource.clearCollection('connections', integrationId));
-  yield put(actions.resource.clearCollection('asynchelpers'));
-  yield put(actions.resource.clearCollection('scripts'));
-  yield put(actions.resource.clearCollection('tree/metadata', integrationId));
-  yield put(actions.license.refreshCollection());
-}
-
 export default [
   takeLatest(
     actionTypes.INTEGRATION_APPS.UNINSTALLER2.INIT,
@@ -132,5 +120,4 @@ export default [
   ),
   takeLatest(actionTypes.INTEGRATION_APPS.UNINSTALLER2.REQUEST_STEPS, requestSteps),
   takeEvery(actionTypes.INTEGRATION_APPS.UNINSTALLER2.STEP.UNINSTALL, uninstallStep),
-  takeEvery(actionTypes.INTEGRATION_APPS.UNINSTALLER2.CLEAR_COLLECTION, clearCollection),
 ];

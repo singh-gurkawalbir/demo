@@ -1,12 +1,11 @@
 import React from 'react';
-import { useSelector, shallowEqual } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { selectors } from '../../../../reducers';
 import LoadResource from '../../../../components/LoadResource';
 
 export default function IntegrationCrumb({ integrationId }) {
-  const integration = useSelector(state =>
-    selectors.resource(state, 'integrations', integrationId),
-  shallowEqual
+  const integrationName = useSelector(state =>
+    selectors.resource(state, 'integrations', integrationId)?.name,
   );
 
   if (integrationId === 'none') {
@@ -18,7 +17,7 @@ export default function IntegrationCrumb({ integrationId }) {
   // integration -yet- exists in the state.
   return (
     <LoadResource resourceType="integrations" resourceId={integrationId}>
-      {integration ? integration.name : 'Integration'}
+      {integrationName || 'Integration'}
     </LoadResource>
   );
 }

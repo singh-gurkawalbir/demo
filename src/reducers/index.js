@@ -2985,7 +2985,7 @@ selectors.mkIntegrationTreeChildren = () => createSelector(
   state => state?.data?.resources?.integrations,
   state => state?.data?.resources?.['tree/metadata'],
   (state, integrationId) => integrationId,
-  (integrations = [], treeMetaData = [], integrationId) => {
+  (integrations = emptyArray, treeMetaData = emptyArray, integrationId) => {
     const children = [];
     const integration = integrations.find(int => int._id === integrationId) || {};
     const childIntegrations = treeMetaData.filter(int => int._parentId === integrationId);

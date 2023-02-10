@@ -1,18 +1,12 @@
 import { useEffect } from 'react';
-import { shallowEqual, useDispatch, useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import actions from '../../actions';
 import { selectors } from '../../reducers';
 import { STANDALONE_INTEGRATION } from '../../constants';
 
 export default function LoadResource({ children, resourceType, resourceId, spinner }) {
   const dispatch = useDispatch();
-  const resource = useSelector(state => {
-    if (resourceId) {
-      return selectors.resource(state, resourceType, resourceId);
-    }
-
-    return null;
-  }, shallowEqual);
+  const resource = useSelector(state => !!selectors.resource(state, resourceType, resourceId));
 
   useEffect(() => {
     if (resourceId && !resource && resourceId !== STANDALONE_INTEGRATION.id) {

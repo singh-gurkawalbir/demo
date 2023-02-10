@@ -7,7 +7,7 @@ import { selectors } from '../../../../../reducers';
 import actions from '../../../../../actions';
 import getRoutePath from '../../../../../utils/routePaths';
 import InstallationStep from '../../../../../components/InstallStep';
-import { HOME_PAGE_PATH, UNINSTALL_STEP_TYPES } from '../../../../../constants';
+import { HOME_PAGE_PATH, UNINSTALL_STEP_TYPES, RESOURCE_DEPENDENCIES } from '../../../../../constants';
 import FormStepDrawer from '../../../../../components/InstallStep/FormStep';
 import Spinner from '../../../../../components/Spinner';
 import CeligoPageBar from '../../../../../components/CeligoPageBar';
@@ -89,7 +89,10 @@ export default function Uninstaller2({ integration, integrationId }) {
           integrationId
         )
       );
-      dispatch(actions.integrationApp.uninstaller2.clearCollection(_parentId || integrationId));
+      RESOURCE_DEPENDENCIES.uninstall2.forEach(resourceType => {
+        dispatch(actions.resource.clearCollection(resourceType, _parentId || integrationId));
+      });
+      dispatch(actions.license.refreshCollection());
       history.replace(getRoutePath(HOME_PAGE_PATH));
     }
   }, [_parentId, dispatch, history, integrationId, isComplete]);
