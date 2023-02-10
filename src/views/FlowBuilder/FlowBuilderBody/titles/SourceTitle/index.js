@@ -8,7 +8,7 @@ import { FB_SOURCE_COLUMN_WIDTH } from '../../../../../constants';
 import { useHandleAddGenerator } from '../../../hooks';
 import { selectors } from '../../../../../reducers';
 
-const minTitleWidth = 140;
+const minTitleWidth = 80;
 
 const useStyles = makeStyles(theme => ({
   sourceTitle: {

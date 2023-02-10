@@ -20,8 +20,8 @@ export const nodeSize = {
     height: 95,
   },
   router: {
-    width: 34,
-    height: 34,
+    width: 30,
+    height: 30,
   },
   terminal: {
     width: 20,
@@ -123,7 +123,7 @@ export function layoutElements(elements = [], flow) {
 
       if (el.type === 'pp') {
         position.x = node.x;
-        position.y = node.y - 30;
+        position.y = node.y - 31;
       } else if (el.type === 'terminal') {
         position.x = node.x;
         position.y = node.y + 7;

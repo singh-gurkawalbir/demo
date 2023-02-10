@@ -293,6 +293,8 @@ export default function AppBlock({
     }
   });
 
+  console.log(iconType);
+
   const isDragInProgress = useIsDragInProgress();
 
   const connAssistant = useSelector(state => {
@@ -347,9 +349,9 @@ export default function AppBlock({
   const open = !!anchorEl;
   const handleMouseOver = useCallback(
     isOver => () => {
-      // if (!activeAction) {
-      //   setIsOver(isOver);
-      // }
+      if (!activeAction) {
+        setIsOver(isOver);
+      }
     },
     [activeAction]
   );
@@ -541,7 +543,7 @@ export default function AppBlock({
 
         </div>
         <div className={classes.buttonContainer}>
-          <ResourceButton onClick={handleClick} variant={blockType} disabled={isFlowSaveInProgress} />
+          <ResourceButton onClick={!iconType ? onBlockClick : handleClick} variant={blockType} disabled={isFlowSaveInProgress} />
           <ArrowPopper
             placement="bottom"
             open={open}

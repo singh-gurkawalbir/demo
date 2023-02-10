@@ -13,7 +13,7 @@ const useStyles = makeStyles(theme => ({
     }),
   },
   iconButtonRoot: {
-    padding: theme.spacing(0.5),
+    padding: theme.spacing(0.1),
     marginRight: theme.spacing(1),
     backgroundColor: theme.palette.background.paper,
     '&:hover': {
@@ -25,8 +25,8 @@ const useStyles = makeStyles(theme => ({
   },
   iconButtonLabel: {
     '& svg': {
-      width: 26,
-      height: 26,
+      width: 20,
+      height: 20,
     },
   },
   contained: {
