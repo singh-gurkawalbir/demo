@@ -42,12 +42,11 @@ export const getPPsToReset = (flow, {routerIndex, branchIndex, pageProcessorInde
     const dependentPageProcessors = [];
     const branch = flow.routers[routerIndex]?.branches?.[branchIndex];
     const pps = (branch?.pageProcessors || [])
-      .slice(pageProcessorIndex)
-      .map(pp => pp._exportId || pp._importId);
+      .slice(pageProcessorIndex);
 
     dependentPageProcessors.push(...pps, ...getDependentRoutersAndPPs(flow, branch?.nextRouterId).pps);
 
-    return dependentPageProcessors;
+    return dependentPageProcessors.map(pp => pp._exportId || pp._importId);
   }
 
   return (flow.pageProcessors || [])
@@ -74,11 +73,14 @@ export const clearInvalidPgOrPpStates = (flow, index, isPageGenerator, {routerIn
       if (ppsToReset.includes(ppId)) flow.pageProcessorsMap[ppId] = {};
     });
 
-    if ((routerIndex || routerIndex === 0) && (branchIndex || branchIndex === 0)) {
-      const router = flow.routers[routerIndex]?.id;
+    // Besides resetting PPs, if the PP is in a router, we need to reset the routers followed by this PP
+    if (!Number.isNaN(routerIndex) && !Number.isNaN(branchIndex)) {
+      const currentBranch = flow.routers?.[routerIndex]?.branches?.[branchIndex];
 
-      if (router) {
-        const dependentRouters = getDependentRoutersAndPPs(flow, router.id).routers;
+      // if the current branch has nextRouterId, we should reset the dependent routers
+      if (currentBranch?.nextRouterId) {
+        // fetches all dependent routers
+        const dependentRouters = getDependentRoutersAndPPs(flow, currentBranch.nextRouterId).routers;
         const routerIds = keys(flow.routersMap);
 
         routerIds.forEach(rId => {
@@ -86,6 +88,54 @@ export const clearInvalidPgOrPpStates = (flow, index, isPageGenerator, {routerIn
         });
       }
     }
+  }
+};
+
+export const clearInvalidStatesOnRouterUpdate = (flow, routerId) => {
+  if (!flow || !routerId || !flow.routers?.length) return;
+  const router = flow.routers.find(r => r.id === routerId);
+
+  if (!router) return;
+
+  // fetch page processors in this router
+  const currentRouterPPs = router.branches.reduce((acc, branch) => {
+    acc.push(...branch.pageProcessors);
+
+    return acc;
+  }, []);
+
+  // fetch dependent routers and page processors
+  const { routers: dependentRouters = [], pps: dependentPPs } = router.branches.reduce((acc, branch) => {
+    // goes through all branches and fetches next dependent routers and page processors
+    if (branch.nextRouterId) {
+      const { routers = [], pps = []} = getDependentRoutersAndPPs(flow, branch.nextRouterId);
+
+      return {
+        routers: [...acc.routers, ...routers],
+        pps: [...acc.pps, ...pps],
+      };
+    }
+
+    return acc;
+  }, { routers: [], pps: []});
+
+  // remove router flow data
+  if (flow.routersMap) {
+    const routerIds = keys(flow.routersMap || {});
+
+    routerIds.forEach(rId => {
+      if (dependentRouters.includes(rId)) flow.routersMap[rId] = {};
+    });
+  }
+  // remove page processor flow data
+  if (flow.pageProcessorsMap) {
+    // dependent ppIds are the page processors in the current router and the dependent routers
+    const dependentPPIds = [...currentRouterPPs, ...dependentPPs].map(pp => pp._exportId || pp._importId);
+    const ppIds = keys(flow.pageProcessorsMap || {});
+
+    ppIds.forEach(ppId => {
+      if (dependentPPIds.includes(ppId)) flow.pageProcessorsMap[ppId] = {};
+    });
   }
 };
 
