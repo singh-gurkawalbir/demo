@@ -75,6 +75,24 @@ export function* updateFlowOnResourceUpdate({
 
       yield call(_updateResponseMapping, { flowId: resourceId, resourceIndex, routerIndex, branchIndex });
     }
+    // Handles router update on flow
+    if (flowUpdates.router?.deleted) {
+      // Incase the router deleted, clean the entire flow data state
+      yield put(actions.flowData.clear(resourceId));
+    }
+    if (flowUpdates.router?.updated) {
+      // Incase the router updated, reset the state from the routerId onwards
+      const { routerIndex } = flowUpdates.router;
+      const updatedFlow = (yield select(selectors.resourceData, 'flows', resourceId))?.merged || emptyObject;
+      const routerId = updatedFlow.routers?.[routerIndex]?.id;
+
+      if (routerId) {
+        // Updates added/removed routers on the flow
+        yield put(actions.flowData.init(updatedFlow));
+        // Once updated, resets the flowData state from the routerId onwards
+        yield put(actions.flowData.resetStages(resourceId, routerId));
+      }
+    }
   }
 
   if (['exports', 'imports', 'scripts'].includes(resourceType)) {
