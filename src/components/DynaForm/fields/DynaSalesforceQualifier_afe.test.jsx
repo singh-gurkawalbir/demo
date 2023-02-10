@@ -1,4 +1,4 @@
-/* global describe, test, jest, expect, */
+
 import React from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import {screen} from '@testing-library/react';
@@ -71,7 +71,7 @@ const props = {
     hasSObjectType: 'true' },
 };
 
-describe('DynaSalesforceQualifier_afe UI test cases', () => {
+describe('dynaSalesforceQualifier_afe UI test cases', () => {
   test('should populate the saved values', async () => {
     initDynaSalesforceQualifiersafe(props);
     const label = document.querySelector('label');
@@ -146,6 +146,6 @@ describe('DynaSalesforceQualifier_afe UI test cases', () => {
     const saveBtn = screen.getByRole('button', {name: /save/i});
 
     userEvent.click(saveBtn);
-    expect(mockonFieldChange).toBeCalledWith(props.id, 'SampleRule');
+    expect(mockonFieldChange).toHaveBeenCalledWith(props.id, 'SampleRule');
   });
 });

@@ -1,4 +1,3 @@
-/* global describe, test, expect */
 import React from 'react';
 import {
   screen,
@@ -22,7 +21,7 @@ async function initActionButton({ props = {}, children = ''} = {}) {
   return renderWithProviders(ui);
 }
 
-describe('ActionGroup component Test cases', () => {
+describe('actionGroup component Test cases', () => {
   runServer();
   test('should pass the intial render text child', async () => {
     await initActionButton({children: 'Test child'});

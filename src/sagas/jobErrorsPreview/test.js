@@ -1,4 +1,3 @@
-/* global describe, test */
 
 import { expectSaga } from 'redux-saga-test-plan';
 import { throwError } from 'redux-saga-test-plan/providers';
@@ -15,7 +14,7 @@ describe('requestJobErrorPreview saga', () => {
     const errorFileId = 'ef1';
     const previewData = {numSuccess: 1};
 
-    return expectSaga(requestJobErrorPreview, { jobId, errorFile })
+    expectSaga(requestJobErrorPreview, { jobId, errorFile })
       .provide([[call(uploadRawData, {
         file: errorFile,
         fileType: 'application/csv',
@@ -42,7 +41,7 @@ describe('requestJobErrorPreview saga', () => {
     const previewError = 'Preview error';
     const error = new Error('error');
 
-    return expectSaga(requestJobErrorPreview, { jobId, errorFile })
+    expectSaga(requestJobErrorPreview, { jobId, errorFile })
       .provide([[call(uploadRawData, {
         file: errorFile,
         fileType: 'application/csv',

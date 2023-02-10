@@ -160,7 +160,7 @@ export default {
       id: 'uploadFile',
       name: '/uploadFile',
       type: 'uploadfile',
-      placeholder: 'Upload the file to use',
+      placeholder: 'Sample file (that would be parsed)',
       maxSize: MAX_DATA_LOADER_FILE_SIZE,
       mode: r => r && r.file && r.file.type,
       required: r => !r.rawData,

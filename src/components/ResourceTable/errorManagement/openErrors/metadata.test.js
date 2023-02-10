@@ -1,4 +1,5 @@
-/* global test, expect, describe, jest */
+/* eslint-disable jest/expect-expect */
+
 import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -6,7 +7,7 @@ import { MemoryRouter } from 'react-router-dom';
 import { renderWithProviders, reduxStore } from '../../../../test/test-utils';
 import metadata from './metadata';
 import CeligoTable from '../../../CeligoTable';
-import messageStore from '../../../../utils/messageStore';
+import { message } from '../../../../utils/messageStore';
 
 jest.mock('../cells/SelectAllErrors', () => ({
   __esModule: true,
@@ -70,7 +71,7 @@ function expectFunction(header, cell) {
   expect(cell).toEqual(header);
 }
 
-describe("OpenErros table's metadata UI tests", () => {
+describe("openErros table's metadata UI tests", () => {
   test('should verify when error is selected', () => {
     window.HTMLElement.prototype.scrollIntoView = jest.fn();
 
@@ -88,7 +89,7 @@ describe("OpenErros table's metadata UI tests", () => {
     headerIndex = indexOfCell('MockedSelectAll', 'columnheader');
 
     expect(headerIndex).toBeGreaterThan(-1);
-    expect(screen.getByTitle(messageStore('SELECT_ERROR_HOVER_MESSAGE'))).toBeInTheDocument();
+    expect(screen.getByTitle(message.ERROR_MANAGEMENT_2.SELECT_ERROR_HOVER_MESSAGE)).toBeInTheDocument();
   });
   test('should verify Message cloumn', () => {
     initFunction(props);

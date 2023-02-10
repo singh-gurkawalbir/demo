@@ -1,4 +1,5 @@
-/* global describe, test, expect */
+/* eslint-disable jest/no-conditional-in-test */
+
 import reducer, { selectors } from '.';
 import actions, { availableResources } from '../../../actions';
 import { emptyObject } from '../../../constants';
@@ -643,14 +644,13 @@ describe('integrationAppSettings reducer', () => {
   test('should not throw error for bad params', () => {
     const integrationAppSettings = selectors.mkIntegrationAppSettings();
 
-    expect(integrationAppSettings({}, 'integrationId')).toEqual(null);
-    expect(integrationAppSettings(undefined, undefined)).toEqual(
-      null
+    expect(integrationAppSettings({}, 'integrationId')).toBeNull();
+    expect(integrationAppSettings(undefined, undefined)).toBeNull(
     );
     expect(
       integrationAppSettings(undefined, undefined, undefined)
-    ).toEqual(null);
-    expect(integrationAppSettings()).toEqual(null);
+    ).toBeNull();
+    expect(integrationAppSettings()).toBeNull();
   });
 
   test('should return correct integration App settings for multistore integrationApp', () => {
@@ -1237,7 +1237,7 @@ describe('resources selectors', () => {
 
       expect(selectors.rdbmsConnectionType(state, '0')).toBeUndefined();
       expect(selectors.rdbmsConnectionType(state, '1')).toBeUndefined();
-      expect(selectors.rdbmsConnectionType(state, '2')).toEqual('http');
+      expect(selectors.rdbmsConnectionType(state, '2')).toBe('http');
       expect(selectors.rdbmsConnectionType(state, '3')).toBeUndefined();
     });
   });
@@ -1259,9 +1259,9 @@ describe('resources selectors', () => {
 
         state = reducer(state, actions.resource.receivedCollection('connections', connections));
         expect(selectors.mappingExtractGenerateLabel(state, '1', '1', 'generate'))
-          .toEqual('Destination record field (Google Drive)');
+          .toBe('Destination record field (Google Drive)');
         expect(selectors.mappingExtractGenerateLabel(state, '1', '2', 'generate'))
-          .toEqual('Destination record field (Constant Contact)');
+          .toBe('Destination record field (Constant Contact)');
       });
     });
     describe('when type is extract,', () => {
@@ -1281,13 +1281,13 @@ describe('resources selectors', () => {
       state = reducer(state, actions.resource.receivedCollection('exports', exports));
       test('should return correct label for first page generator in a flow', () => {
         expect(selectors.mappingExtractGenerateLabel(state, '1', '1', 'extract'))
-          .toEqual('Source record field (Google Drive)');
+          .toBe('Source record field (Google Drive)');
         expect(selectors.mappingExtractGenerateLabel(state, '2', '2', 'extract'))
-          .toEqual('Source record field (Constant Contact)');
+          .toBe('Source record field (Constant Contact)');
       });
       test('should return default label if flow does not have page generators', () => {
         expect(selectors.mappingExtractGenerateLabel(state, '3', '2', 'extract'))
-          .toEqual('Source record field');
+          .toBe('Source record field');
       });
     });
     describe('mappingImportSampleDataSupported', () => {
@@ -1331,10 +1331,10 @@ describe('resources selectors', () => {
     const state = reducer(undefined, actions.resource.receivedCollection('flows', flows));
 
     test('should not throw exception for invalid arguments', () => {
-      expect(selectors.redirectUrlToResourceListingPage()).toEqual('/');
-      expect(selectors.redirectUrlToResourceListingPage({})).toEqual('/');
-      expect(selectors.redirectUrlToResourceListingPage({}, '123')).toEqual('/');
-      expect(selectors.redirectUrlToResourceListingPage('123')).toEqual('/');
+      expect(selectors.redirectUrlToResourceListingPage()).toBe('/');
+      expect(selectors.redirectUrlToResourceListingPage({})).toBe('/');
+      expect(selectors.redirectUrlToResourceListingPage({}, '123')).toBe('/');
+      expect(selectors.redirectUrlToResourceListingPage('123')).toBe('/');
     });
     test('should return correct url for integration', () => {
       expect(selectors.redirectUrlToResourceListingPage(undefined, 'integration', '1'))
@@ -1348,7 +1348,7 @@ describe('resources selectors', () => {
       expect(selectors.redirectUrlToResourceListingPage(state, 'flow', '2'))
         .toEqual(getRoutePath('integrations/none/flows'));
       expect(selectors.redirectUrlToResourceListingPage(state, 'flow', '3'))
-        .toEqual('/flows');
+        .toBe('/flows');
     });
   });
   describe('mappingSubRecordAndJSONPath', () => {
@@ -1431,8 +1431,8 @@ describe('resources selectors', () => {
   });
   describe('hasData', () => {
     test('should return false when no data in store for any resource', () => {
-      expect(selectors.hasData(undefined, 'exports')).toEqual(false);
-      expect(selectors.hasData({}, 'exports')).toEqual(false);
+      expect(selectors.hasData(undefined, 'exports')).toBe(false);
+      expect(selectors.hasData({}, 'exports')).toBe(false);
     });
 
     test('should return false when no data found for resourceType', () => {
@@ -1441,7 +1441,7 @@ describe('resources selectors', () => {
         actions.resource.receivedCollection('exports', [])
       );
 
-      expect(selectors.hasData(state, 'imports')).toEqual(false);
+      expect(selectors.hasData(state, 'imports')).toBe(false);
     });
 
     test('should return true when data found for resourceType', () => {
@@ -1450,7 +1450,7 @@ describe('resources selectors', () => {
         actions.resource.receivedCollection('exports', [])
       );
 
-      expect(selectors.hasData(state, 'exports')).toEqual(true);
+      expect(selectors.hasData(state, 'exports')).toBe(true);
     });
   });
 
@@ -1873,8 +1873,8 @@ describe('Connection has as2 routing selector', () => {
   test('should return false when the state is undefined', () => {
     const state = reducer(undefined, 'some action');
 
-    expect(selectors.connectionHasAs2Routing()).toEqual(false);
-    expect(selectors.connectionHasAs2Routing(state)).toEqual(false);
+    expect(selectors.connectionHasAs2Routing()).toBe(false);
+    expect(selectors.connectionHasAs2Routing(state)).toBe(false);
   });
   test('should return true if connection has as2 routing', () => {
     const state = reducer(
@@ -1882,7 +1882,7 @@ describe('Connection has as2 routing selector', () => {
       actions.resource.receivedCollection('connections', connections)
     );
 
-    expect(selectors.connectionHasAs2Routing(state, '1234')).toEqual(true);
+    expect(selectors.connectionHasAs2Routing(state, '1234')).toBe(true);
   });
   test('should return false if connection does not have as2 routing', () => {
     const state = reducer(
@@ -1890,7 +1890,7 @@ describe('Connection has as2 routing selector', () => {
       actions.resource.receivedCollection('connections', connections)
     );
 
-    expect(selectors.connectionHasAs2Routing(state, '12357')).toEqual(false);
+    expect(selectors.connectionHasAs2Routing(state, '12357')).toBe(false);
   });
 });
 describe('mappingNSRecordType selector', () => {
@@ -2008,7 +2008,7 @@ describe('Export needs routing selector', () => {
   test('should return false when the state is undefined', () => {
     const state = reducer(undefined, 'some action');
 
-    expect(selectors.exportNeedsRouting(state)).toEqual(false);
+    expect(selectors.exportNeedsRouting(state)).toBe(false);
   });
   test('should return true if export needs routing', () => {
     const state = reducer(
@@ -2016,7 +2016,7 @@ describe('Export needs routing selector', () => {
       actions.resource.receivedCollection('exports', exports)
     );
 
-    expect(selectors.exportNeedsRouting(state, '1234')).toEqual(true);
+    expect(selectors.exportNeedsRouting(state, '1234')).toBe(true);
   });
   test('should return false if export does not need routing', () => {
     const state = reducer(
@@ -2024,7 +2024,7 @@ describe('Export needs routing selector', () => {
       actions.resource.receivedCollection('exports', exports)
     );
 
-    expect(selectors.exportNeedsRouting(state, '12358')).toEqual(false);
+    expect(selectors.exportNeedsRouting(state, '12358')).toBe(false);
   });
   test('should return false if export does not have connectionId', () => {
     const state = reducer(
@@ -2032,7 +2032,7 @@ describe('Export needs routing selector', () => {
       actions.resource.receivedCollection('exports', exports)
     );
 
-    expect(selectors.exportNeedsRouting(state, '12356')).toEqual(false);
+    expect(selectors.exportNeedsRouting(state, '12356')).toBe(false);
   });
 });
 
@@ -2059,8 +2059,7 @@ describe('mkFlowGroupingsSections', () => {
     );
   });
   test('should get null for non existent integration id', () => {
-    expect(groupingsSelector(state, '2')).toEqual(
-      null
+    expect(groupingsSelector(state, '2')).toBeNull(
     );
   });
 });
@@ -2072,7 +2071,7 @@ const settings = {
   val1: 'something',
 };
 
-describe('mkGetAllCustomFormsForAResource ', () => {
+describe('mkGetAllCustomFormsForAResource', () => {
   const customFormsSelector = selectors.mkGetAllCustomFormsForAResource();
 
   test('should return null for a non existent resource', () => {
@@ -2087,7 +2086,7 @@ describe('mkGetAllCustomFormsForAResource ', () => {
     };
     const received = customFormsSelector(state, 'exports', 'someotherResource');
 
-    expect(received).toEqual(null);
+    expect(received).toBeNull();
   });
 
   test('should just get the root custom form for any non integration as a collection', () => {
@@ -2276,7 +2275,7 @@ describe('mkGetCustomFormPerSectionId', () => {
 
     const received = customFormSelectorPerSectionId(state, 'exports', 'someId', 'someSectionId');
 
-    expect(received).toEqual(null);
+    expect(received).toBeNull();
   });
 
   test('should return the root level settings form when sectionId is general', () => {

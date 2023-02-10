@@ -1,4 +1,4 @@
-/* global describe, test,expect, afterEach, beforeEach jest */
+
 import React from 'react';
 import * as reactRedux from 'react-redux';
 import { waitFor } from '@testing-library/react';
@@ -6,7 +6,7 @@ import { renderWithProviders, reduxStore } from '../../../../test/test-utils';
 import useHandleResourceFormFlowSampleData from './useHandleResourceFormFlowSampleData';
 import actions from '../../../../actions';
 import {
-  LOOKUP_FLOW_DATA_STAGE,
+  EXPORT_FILTERED_DATA_STAGE,
   IMPORT_FLOW_DATA_STAGE,
 } from '../../../../utils/flowData';
 
@@ -75,6 +75,6 @@ describe('useHandleResourceFormFlowSampleData tests', () => {
   test('Should able to test the custom hook with lookup exports', async () => {
     await inituseHandleResourceFormFlowSampleData('exports');
     expect(mockDispatchFn).toHaveBeenNthCalledWith(1, actions.flowData.requestSampleData(
-      '_flowId', '_id', 'exports', LOOKUP_FLOW_DATA_STAGE, undefined, 'formKey'));
+      '_flowId', '_id', 'exports', EXPORT_FILTERED_DATA_STAGE, undefined, 'formKey'));
   });
 });

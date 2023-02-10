@@ -8,6 +8,8 @@ import {
   tail,
   filter,
 } from 'lodash';
+import { message } from '../../../../../utils/messageStore';
+import {isNumber as isNumberString} from '../../../../../utils/string';
 
 const operatorsMap = {
   jQueryToIOFilters: {
@@ -107,6 +109,14 @@ export function convertIOFilterExpression(filterExpression = [], context) {
                   dataTypeFound = true;
                 }
               } while (!dataTypeFound);
+
+              if (i === 2 && exp[i][0].toLowerCase() === 'epochtime') {
+                temp.type = 'value';
+                temp.value = exp[i]?.[1];
+                temp.dataType = 'epochtime';
+                // eslint-disable-next-line no-continue
+                continue;
+              }
 
               temp.dataType = tempExp[0].toLowerCase();
               temp.type = 'field';
@@ -219,6 +229,34 @@ export function generateRulesState(rules) {
   return rulesState;
 }
 
+const validBooleanValues = {
+  TRUE: ['true', 't', '1', 1],
+  FALSE: ['false', 'f', '0', 0],
+};
+
+export const convertBoolean = value => {
+  if (value === true) return true;
+  if (value === false) return false;
+
+  if (value && typeof value === 'string') {
+    // if the value coming has prepended or appended spaces ex: ' false '
+    value = value.trim();
+    value = value.toLowerCase();
+  }
+
+  // Check values against validBooleanValues map.
+  if (validBooleanValues.TRUE.indexOf(value) !== -1) {
+    return true;
+  } if (validBooleanValues.FALSE.indexOf(value) !== -1) {
+    return false;
+  }
+
+  // invalid values: throw error
+  if (isNumberString(value)) return message.FILTER_PANEL.INVALID_BOOLEAN_CONVERSION_FOR_NUMBER;
+
+  return message.FILTER_PANEL.INVALID_BOOLEAN_CONVERSION_FOR_STRING;
+};
+
 export function generateIOFilterExpression(rules, context) {
   function iterate(r) {
     let exp = [];
@@ -265,17 +303,17 @@ export function generateIOFilterExpression(rules, context) {
             case 'number':
               lhs = Number.isNaN(parseFloat(rr.data.lhs.value)) ? rr.data.lhs.value : parseFloat(rr.data.lhs.value);
               break;
-            case 'boolean':
-              lhs =
-                  lhs &&
-                  lhs.toString() &&
-                  lhs.toString().toLowerCase() === 'true';
+            case 'boolean': {
+              const convertedValue = convertBoolean(lhs?.toString()?.toLowerCase());
+
+              lhs = typeof convertedValue === 'boolean' ? convertedValue : lhs;
               break;
+            }
             default:
           }
         } else if (rr.data.lhs.type === 'expression') {
           try {
-            lhs = JSON.parse(rr.data.lhs.expression);
+            lhs = JSON.parse(typeof rr.data.lhs.expression === 'string' ? rr.data.lhs.expression : JSON.stringify(rr.data.lhs.expression));
           } catch (ex) {
             // error in parsing expression
           }
@@ -313,11 +351,14 @@ export function generateIOFilterExpression(rules, context) {
               case 'number':
                 rhs = Number.isNaN(parseFloat(rr.data.rhs.value)) ? rr.data.rhs.value : parseFloat(rr.data.rhs.value);
                 break;
-              case 'boolean':
-                rhs =
-                    rhs &&
-                    rhs.toString() &&
-                    rhs.toString().toLowerCase() === 'true';
+              case 'boolean': {
+                const convertedValue = convertBoolean(rhs?.toString()?.toLowerCase());
+
+                rhs = typeof convertedValue === 'boolean' ? convertedValue : rhs;
+                break;
+              }
+              case 'epochtime':
+                rhs = ['epochtime', rhs];
                 break;
               default:
             }
@@ -381,11 +422,11 @@ export function validateFilterRule(rule) {
 
       if (JSON.parse(r.lhs.expression).length < 2) {
         toReturn.isValid = false;
-        toReturn.error = 'Please enter a valid expression.';
+        toReturn.error = message.FILTER_PANEL.INVALID_EXPRESSION;
       }
     } catch (ex) {
       toReturn.isValid = false;
-      toReturn.error = 'Expression should be a valid JSON.';
+      toReturn.error = message.FILTER_PANEL.INVALID_EXPRESSION_JSON;
     }
 
     if (toReturn.isValid) {
@@ -413,11 +454,11 @@ export function validateFilterRule(rule) {
 
       if (JSON.parse(r.rhs.expression).length < 2) {
         toReturn.isValid = false;
-        toReturn.error = 'Please enter a valid expression.';
+        toReturn.error = message.FILTER_PANEL.INVALID_EXPRESSION;
       }
     } catch (ex) {
       toReturn.isValid = false;
-      toReturn.error = 'Expression should be a valid JSON.';
+      toReturn.error = message.FILTER_PANEL.INVALID_EXPRESSION_JSON;
     }
 
     if (toReturn.isValid) {
@@ -439,6 +480,43 @@ export function validateFilterRule(rule) {
     return toReturn;
   }
 
+  if (r.rhs.type === 'value' || r.lhs.type === 'value') {
+    const {dataType: dataTypeRhs, value: valueRhs, type: typeRhs} = r.rhs;
+    const {dataType: dataTypeLhs, value: valueLhs, type: typeLhs} = r.lhs;
+
+    // skipping check for other data types because
+    // string: value will always be a string
+    // datetime: we don't have validations for datetime
+    if ((typeRhs === 'value' && dataTypeRhs === 'number' && !isNumber(valueRhs)) ||
+        (typeLhs === 'value' && dataTypeLhs === 'number' && !isNumber(valueLhs))) {
+      toReturn.isValid = false;
+      toReturn.error = message.FILTER_PANEL.INVALID_DATATYPE;
+
+      return toReturn;
+    }
+
+    if (typeRhs === 'value' && dataTypeRhs === 'boolean') {
+      const convertedValue = convertBoolean(valueRhs);
+
+      if (typeof convertedValue !== 'boolean') {
+        toReturn.isValid = false;
+        toReturn.error = convertedValue;
+
+        return toReturn;
+      }
+    }
+
+    if (typeLhs === 'value' && dataTypeLhs === 'boolean') {
+      const convertedValue = convertBoolean(valueLhs);
+
+      if (typeof convertedValue !== 'boolean') {
+        toReturn.isValid = false;
+        toReturn.error = convertedValue;
+
+        return toReturn;
+      }
+    }
+  }
   /*
     if (r.lhs.dataType === 'epochtime' || r.rhs.dataType === 'epochtime') {
       r.lhs.dataType = r.rhs.dataType = 'epochtime'
@@ -446,7 +524,7 @@ export function validateFilterRule(rule) {
     */
   if (r.lhs.dataType && r.rhs.dataType && r.lhs.dataType !== r.rhs.dataType) {
     toReturn.isValid = false;
-    toReturn.error = 'Data types of both the operands should match.';
+    toReturn.error = message.FILTER_PANEL.INVALID_DATATYPES_OPERANDS;
   }
 
   if (!toReturn.isValid) {
@@ -455,7 +533,7 @@ export function validateFilterRule(rule) {
 
   if (r.lhs.type && !r.lhs[r.lhs.type]) {
     toReturn.isValid = false;
-    toReturn.error = 'Please select left operand.';
+    toReturn.error = message.FILTER_PANEL.SELECT_LEFT_OPERAND;
   }
 
   if (!toReturn.isValid) {
@@ -464,7 +542,7 @@ export function validateFilterRule(rule) {
 
   if (r.rhs.type && !r.rhs[r.rhs.type]) {
     toReturn.isValid = false;
-    toReturn.error = 'Please select right operand.';
+    toReturn.error = message.FILTER_PANEL.SELECT_RIGHT_OPERAND;
   }
 
   if (!toReturn.isValid) {

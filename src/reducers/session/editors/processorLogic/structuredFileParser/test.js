@@ -1,4 +1,3 @@
-/* global describe, test, expect */
 
 import processorLogic from './index';
 
@@ -52,7 +51,7 @@ describe('structuredFileParser processor logic', () => {
         originalData: 'ISA|SA|850|1239989',
       };
 
-      expect(dirty(editor)).toEqual(true);
+      expect(dirty(editor)).toBe(true);
     });
     test('should return true if original rule does not match new rule', () => {
       const editor = {
@@ -67,7 +66,7 @@ describe('structuredFileParser processor logic', () => {
         originalData: 'ISA|SA|850|1234',
       };
 
-      expect(dirty(editor)).toEqual(true);
+      expect(dirty(editor)).toBe(true);
     });
     test('should return false if both data and rule has not changed', () => {
       const editor = {
@@ -82,7 +81,7 @@ describe('structuredFileParser processor logic', () => {
         originalData: 'ISA|SA|850|1234',
       };
 
-      expect(dirty(editor)).toEqual(false);
+      expect(dirty(editor)).toBe(false);
     });
   });
   describe('requestBody util', () => {

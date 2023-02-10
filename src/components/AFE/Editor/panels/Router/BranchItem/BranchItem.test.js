@@ -1,4 +1,3 @@
-/* global describe, test, expect,beforeEach, afterEach, jest */
 import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -50,7 +49,7 @@ jest.mock('react-router-dom', () => ({
     location: {pathname: '/'},
   }),
 }));
-describe('BranchItem tests', () => {
+describe('branchItem tests', () => {
   let mockDispatchFn;
   let useDispatchSpy;
 
@@ -63,7 +62,7 @@ describe('BranchItem tests', () => {
   afterEach(() => {
     mockDispatchFn.mockClear();
   });
-  test('Should able to test the initial render of branches list item in router afe without branch rule set', async () => {
+  test('should able to test the initial render of branches list item in router afe without branch rule set', async () => {
     await initBranchItem(props);
     expect(screen.getByText('0')).toBeInTheDocument();
     expect(screen.getByText('R1B1')).toBeInTheDocument();
@@ -85,7 +84,7 @@ describe('BranchItem tests', () => {
     expect(mockDispatchFn).toHaveBeenNthCalledWith(2, actions.editor.patchRule('router-abcd', 'R1B1Branch 1 edited inline', {rulePath: `branches[${0}].name`}));
   });
 
-  test('Should able to test branches list item in router afe without branch rule set for position 1', async () => {
+  test('should able to test branches list item in router afe without branch rule set for position 1', async () => {
     await initBranchItem({...props, position: 1});
     expect(screen.getByText('1')).toBeInTheDocument();
     expect(screen.getByText('R1B2')).toBeInTheDocument();
@@ -95,7 +94,7 @@ describe('BranchItem tests', () => {
     expect(dragHandle).toHaveAttribute('style', 'cursor: grab;');
     expect(dragHandle).toBeInTheDocument();
   });
-  test('Should able to test branches item with rule set and without allowing sorting', async () => {
+  test('should able to test branches item with rule set and without allowing sorting', async () => {
     await initBranchItem({...props, allowSorting: false}, ['equals', ['string', ['extract', 'id']], '5214ss']);
     expect(screen.queryByText('No conditions defined.')).not.toBeInTheDocument();
     const isDragHandle = document.querySelector('svg');

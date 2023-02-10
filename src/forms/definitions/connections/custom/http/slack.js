@@ -14,6 +14,7 @@ export default {
       retValues['/http/auth/token/location'] = 'header';
       retValues['/http/auth/token/scheme'] = 'Bearer';
       retValues['/http/auth/token/headerName'] = 'Authorization';
+      retValues['/http/auth/oauth/useIClientFields'] = false;
       retValues['/http/auth/oauth/authURI'] =
         `https://slack.com/oauth/v2/authorize?user_scope=${formValues['/http/unencrypted/userScopes']}`;
       retValues['/http/auth/token/refreshMethod'] = 'POST';
@@ -70,6 +71,7 @@ export default {
       type: 'select',
       helpKey: 'slack.connection.http.auth.type',
       label: 'Authentication Type',
+      isLoggable: true,
       options: [
         {
           items: [
@@ -81,6 +83,7 @@ export default {
     },
     'http.auth.oauth.scope': {
       fieldId: 'http.auth.oauth.scope',
+      helpKey: 'slack.connection.http.auth.oauth.scope',
       required: true,
       scopes: [
         'calls:read',

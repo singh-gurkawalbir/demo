@@ -1,5 +1,6 @@
 import { omitBy } from 'lodash';
 import { convertToImport } from '../../../../../utils/assistant';
+import { safeParse } from '../../../../../utils/string';
 import { fieldMeta } from './util';
 
 export default function assistantDefinition(
@@ -36,6 +37,9 @@ export default function assistantDefinition(
       if (assistantMetadata.assistant === 'recurlyv3') {
         assistantMetadata.assistant = 'recurly';
       }
+      if (assistantMetadata.assistant === 'acumaticamanufacturing') {
+        assistantMetadata.assistant = 'acumatica';
+      }
       const otherFormValues = omitBy(formValues, (v, k) =>
         k.includes('/assistantMetadata/')
       );
@@ -56,6 +60,7 @@ export default function assistantDefinition(
       if (connection?.http?.type === 'Amazon-SP-API') {
         otherFormValues['/unencrypted/apiType'] = 'Amazon-SP-API';
       }
+      otherFormValues['/mockResponse'] = safeParse(otherFormValues['/mockResponse']);
 
       return { ...otherFormValues, ...importDoc };
     },

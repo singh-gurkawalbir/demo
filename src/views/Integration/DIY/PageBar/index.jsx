@@ -11,7 +11,7 @@ import EditableText from '../../../../components/EditableText';
 import AddIcon from '../../../../components/icons/AddIcon';
 import ArrowDownIcon from '../../../../components/icons/ArrowDownIcon';
 import CopyIcon from '../../../../components/icons/CopyIcon';
-import TrashIcon from '../../../../components/icons/TrashIcon';
+import CloseIcon from '../../../../components/icons/CloseIcon';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
 import { selectors } from '../../../../reducers';
 import { getIntegrationAppUrlName } from '../../../../utils/integrationApps';
@@ -19,6 +19,8 @@ import getRoutePath from '../../../../utils/routePaths';
 import { camelCase } from '../../../../utils/string';
 import useHandleDelete from '../../hooks/useHandleDelete';
 import { useAvailableTabs } from '../useAvailableTabs';
+import LoadResources from '../../../../components/LoadResources';
+import { emptyList } from '../../../../constants';
 
 const integrationsFilterConfig = { type: 'integrations' };
 const useStyles = makeStyles(theme => ({
@@ -79,7 +81,10 @@ export default function PageBar() {
     return emptyObj;
   }, shallowEqual);
 
+  const isIntegrationAppV2 = useSelector(state => selectors.isIntegrationAppVersion2(state, integrationId, true));
+
   const children = useSelectorMemo(selectors.mkIntegrationChildren, integrationId);
+  const resourcesToLoad = isIntegrationAppV2 ? 'tree/metadata' : emptyList;
 
   const integrations = useSelectorMemo(
     selectors.makeResourceListSelector,
@@ -239,32 +244,34 @@ export default function PageBar() {
             data-test="addNewStore">
             {`Add new ${camelCase(childDisplayName) || 'child'}`}
           </TextButton>
-          <Select
-            displayEmpty
-            data-test="select Child"
-            className={classes.storeSelect}
-            onChange={handleChildChange}
-            IconComponent={ArrowDownIcon}
-            value={childId}>
-            <MenuItem disabled value="">
-              {`Select ${camelCase(childDisplayName) || 'child'}`}
-            </MenuItem>
-
-            {children.map(s => (
-              <MenuItem key={s.value} value={s.value}>
-                {s.label}
+          <LoadResources integrationId={integrationId} required resources={resourcesToLoad}>
+            <Select
+              displayEmpty
+              data-test="select Child"
+              className={classes.storeSelect}
+              onChange={handleChildChange}
+              IconComponent={ArrowDownIcon}
+              value={childId}>
+              <MenuItem disabled value="">
+                {`Select ${camelCase(childDisplayName) || 'child'}`}
               </MenuItem>
-            ))}
-          </Select>
+
+              {children.map(s => (
+                <MenuItem key={s.value} value={s.value}>
+                  {s.label}
+                </MenuItem>
+              ))}
+            </Select>
+          </LoadResources>
         </>
         )}
 
         {canDelete && hasIntegration && !isIntegrationApp && (
         <TextButton
-          startIcon={<TrashIcon />}
+          startIcon={<CloseIcon />}
           data-test="deleteIntegration"
           onClick={handleDelete}>
-          Delete integration
+          Uninstall
         </TextButton>
         )}
       </ActionGroup>

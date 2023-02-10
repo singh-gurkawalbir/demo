@@ -1,4 +1,3 @@
-/* global describe, test, expect, beforeEach, afterEach, jest */
 import React from 'react';
 import * as reactRedux from 'react-redux';
 import { MemoryRouter } from 'react-router-dom';
@@ -7,7 +6,6 @@ import userEvent from '@testing-library/user-event';
 import Licenses from '.';
 import { runServer } from '../../../test/api/server';
 import actions from '../../../actions';
-import { SCOPES } from '../../../sagas/resourceForm';
 import { buildDrawerUrl, drawerPaths } from '../../../utils/rightDrawer';
 import { renderWithProviders, reduxStore } from '../../../test/test-utils';
 
@@ -73,7 +71,7 @@ jest.mock('../../../utils/resource', () => ({
   generateNewId: () => 'mock_new_id',
 }));
 
-describe('Licenses test cases', () => {
+describe('licenses test cases', () => {
   runServer();
   let mockDispatchFn;
   let useDispatchSpy;
@@ -121,10 +119,10 @@ describe('Licenses test cases', () => {
     expect(screen.queryByText(/You don't have any licenses/)).toBeInTheDocument();
     await userEvent.click(newLicense);
 
-    expect(mockDispatchFn).toBeCalledWith(actions.resource.patchStaged('mock_new_id', [
+    expect(mockDispatchFn).toHaveBeenCalledWith(actions.resource.patchStaged('mock_new_id', [
       { op: 'add', path: '/_connectorId', value: 'connector_id_1' },
       { op: 'add', path: '/type', value: 'integrationApp' },
-    ], SCOPES.VALUE));
+    ]));
     expect(history).toEqual([
       buildDrawerUrl({
         path: drawerPaths.RESOURCE.ADD,
@@ -156,9 +154,9 @@ describe('Licenses test cases', () => {
     expect(screen.queryByText(/You don't have any licenses/)).toBeInTheDocument();
     await userEvent.click(newLicense);
 
-    expect(mockDispatchFn).toBeCalledWith(actions.resource.patchStaged('mock_new_id', [
+    expect(mockDispatchFn).toHaveBeenCalledWith(actions.resource.patchStaged('mock_new_id', [
       { op: 'add', path: '/_connectorId', value: 'connector_id_2' },
-    ], SCOPES.VALUE));
+    ]));
     expect(history).toEqual([
       buildDrawerUrl({
         path: drawerPaths.RESOURCE.ADD,

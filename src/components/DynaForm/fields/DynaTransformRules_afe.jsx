@@ -11,6 +11,7 @@ import CodeEditor from '../../CodeEditor2';
 import { getValidRelativePath } from '../../../utils/routePaths';
 import actions from '../../../actions';
 import { buildDrawerUrl, drawerPaths } from '../../../utils/rightDrawer';
+import { EXPORT_FILTERED_DATA_STAGE, IMPORT_FILTERED_DATA_STAGE } from '../../../utils/flowData';
 
 const useStyles = makeStyles({
   label: {
@@ -81,7 +82,7 @@ export default function DynaTransformRules_afe({
       resourceId,
       resourceType,
       fieldId: id,
-      stage: 'inputFilter',
+      stage: resourceType === 'exports' ? EXPORT_FILTERED_DATA_STAGE : IMPORT_FILTERED_DATA_STAGE,
       onSave: handleSave,
     }));
 

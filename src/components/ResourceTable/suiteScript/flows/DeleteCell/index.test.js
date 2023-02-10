@@ -1,4 +1,4 @@
-/* global test, expect, jest, describe, afterEach */
+
 import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -39,7 +39,7 @@ function renderFunction(isFlowBuilderView = false, initialStore = null) {
     </ConfirmDialogProvider>, {initialStore});
 }
 
-describe('Suite script DeleteCell ui test', () => {
+describe('suite script DeleteCell ui test', () => {
   afterEach(() => {
     jest.clearAllMocks();
   });

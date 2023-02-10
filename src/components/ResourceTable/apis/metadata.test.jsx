@@ -1,4 +1,4 @@
-/* global describe, expect, jest, test */
+
 import React from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { screen } from '@testing-library/react';
@@ -32,7 +32,7 @@ function initImports(data = []) {
 
   renderWithProviders(ui);
 }
-describe('Test suite for apis', () => {
+describe('test suite for apis', () => {
   test('should render the table accordingly', () => {
     const lastModified = new Date().toUTCString();
     const data = [{

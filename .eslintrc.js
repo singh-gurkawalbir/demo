@@ -10,14 +10,20 @@ module.exports = {
   env: {
     browser: true,
     es6: true,
+    "jest/globals": true
   },
   extends: [
     'plugin:react/recommended',
     'airbnb',
+    'plugin:jest/all'
   ],
   globals: {
     Atomics: 'readonly',
     SharedArrayBuffer: 'readonly',
+    ALLOW_SIGNUP: 'readonly',
+    ALLOW_GOOGLE_SIGNIN: 'readonly',
+    ALLOW_SIGNUP_EU: 'readonly',
+    ALLOW_GOOGLE_SIGNIN_EU: 'readonly'
   },
   parserOptions: {
     ecmaFeatures: {
@@ -29,9 +35,25 @@ module.exports = {
   },
   plugins: [
     'react',
-    'react-hooks'
+    'react-hooks',
+    'jest'
   ],
   rules: {
+    // Jest rules
+    'jest/prefer-expect-assertions': 'off',
+    'jest/consistent-test-it':["error", {"fn": "test"}],
+    'jest/no-hooks': 'off',
+    'jest/require-hook': 'off',
+    'jest/no-done-callback': 'off',
+    'jest/prefer-strict-equal': 'off',
+    'jest/require-to-throw-message': 'off',
+    'jest/prefer-lowercase-title': 'off',
+    "jest/max-expects": "off",
+    'jest/no-alias-methods': 'off',
+    'jest/prefer-spy-on': 'off',
+    'jest/prefer-called-with':'off',
+    'jest/expect-expect': ["error", { "assertFunctionNames": ["expect", "expectSaga"] }],
+    'jest/no-conditional-in-test': 'off',
     // Enable anchors with react-router Link
     'jsx-a11y/anchor-is-valid': [
       'error',
@@ -151,8 +173,10 @@ module.exports = {
           'jest/*',
           '**/test/**/*.js',
           '**/test.js',
+          '**/test.jsx',
           '**/test.*.js',
           '**/*.test.js',
+          '**/*.test.jsx',
           '**/*.spec.js'
         ]
       }

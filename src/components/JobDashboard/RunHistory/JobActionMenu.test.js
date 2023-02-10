@@ -1,5 +1,5 @@
 /* eslint-disable react/button-has-type */
-/* global describe, test, beforeEach, jest, expect, afterEach */
+
 import { screen, waitFor } from '@testing-library/react';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
@@ -34,7 +34,7 @@ jest.mock('../JobFilesDownloadDialog', () => ({
       </>
     ),
 }));
-describe('Testsuite for JobActionMenu', () => {
+describe('testsuite for JobActionMenu', () => {
   let mockDispatchFn;
   let useDispatchSpy;
 
@@ -107,7 +107,7 @@ describe('Testsuite for JobActionMenu', () => {
     await waitFor(() => expect(downloadFileButtonNode).not.toBeInTheDocument());
     expect(mockDispatchFn).toHaveBeenCalledWith({fileIds: undefined, fileType: undefined, jobId: '12345', type: 'JOB_DOWNLOAD_FILES'});
   });
-  test('should test the download file button when the file length is not greater than 1', async () => {
+  test('should test the download file button when the file length is not greater than 1 duplicate', async () => {
     const job = {
       _id: '12345',
       files: [
@@ -187,6 +187,6 @@ describe('Testsuite for JobActionMenu', () => {
 
     expect(cancelButtonNode).toBeInTheDocument();
     await userEvent.click(purgeFileConfirmButtonNode);
-    expect(mockDispatchFn).toBeCalledWith(actions.job.purge.request({ jobId: job._id }));
+    expect(mockDispatchFn).toHaveBeenCalledWith(actions.job.purge.request({ jobId: job._id }));
   });
 });

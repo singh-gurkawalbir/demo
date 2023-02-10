@@ -1,4 +1,4 @@
-/* global describe, test, expect, jest */
+
 import React from 'react';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -7,8 +7,8 @@ import DynaCsvHasHeaderRow from './DynaCsvHasHeaderRow';
 
 const onFieldChange = jest.fn();
 
-describe('DynaCsvHasHeaderRow tests', () => {
-  test('Should able to test DynaCsvHasHeaderRow with fieldToReset', async () => {
+describe('dynaCsvHasHeaderRow tests', () => {
+  test('should able to test DynaCsvHasHeaderRow with fieldToReset', async () => {
     const props = {
       onFieldChange,
       fieldResetValue: 'value1',
@@ -19,10 +19,10 @@ describe('DynaCsvHasHeaderRow tests', () => {
     await renderWithProviders(<DynaCsvHasHeaderRow {...props} />);
     expect(screen.getByRole('checkbox')).toBeInTheDocument();
     userEvent.click(screen.getByRole('checkbox'));
-    expect(onFieldChange).toBeCalledWith('_id', true);
-    await waitFor(() => expect(onFieldChange).toBeCalledWith('field1', 'value1'), 1000);
+    expect(onFieldChange).toHaveBeenCalledWith('_id', true);
+    await waitFor(() => expect(onFieldChange).toHaveBeenCalledWith('field1', 'value1'), 1000);
   });
-  test('Should able to test DynaCsvHasHeaderRow without fieldToReset', async () => {
+  test('should able to test DynaCsvHasHeaderRow without fieldToReset', async () => {
     const props = {
       onFieldChange,
     };
@@ -30,6 +30,6 @@ describe('DynaCsvHasHeaderRow tests', () => {
     await onFieldChange.mockClear();
     await renderWithProviders(<DynaCsvHasHeaderRow {...props} />);
     userEvent.click(screen.getByRole('checkbox'));
-    await waitFor(() => expect(onFieldChange).not.toBeCalledWith('field1', 'value1'), 1000);
+    await waitFor(() => expect(onFieldChange).not.toHaveBeenCalledWith('field1', 'value1'), 1000);
   });
 });

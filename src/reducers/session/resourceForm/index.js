@@ -19,7 +19,7 @@ export default function reducer(state = {}, action) {
     skipClose = false,
     initData,
     bundleUrl,
-    bundleVersion,
+    suiteAppUrl,
   } = action;
   const key = `${resourceType}-${resourceId}`;
 
@@ -79,15 +79,28 @@ export default function reducer(state = {}, action) {
           draft[key] = {};
         }
 
-        draft[key].bundleVersion = bundleVersion;
         draft[key].bundleUrl = bundleUrl;
         draft[key].showBundleInstallNotification = true;
+        break;
+      case actionTypes.RESOURCE_FORM.SHOW_SUITEAPP_INSTALL_NOTIFICATION:
+        if (!draft[key]) {
+          draft[key] = {};
+        }
+
+        draft[key].suiteAppUrl = suiteAppUrl;
+        draft[key].showSuiteAppInstallNotification = true;
         break;
       case actionTypes.RESOURCE_FORM.HIDE_BUNDLE_INSTALL_NOTIFICATION:
         if (!draft[key]) {
           draft[key] = {};
         }
         draft[key].showBundleInstallNotification = false;
+        break;
+      case actionTypes.RESOURCE_FORM.HIDE_SUITEAPP_INSTALL_NOTIFICATION:
+        if (!draft[key]) {
+          draft[key] = {};
+        }
+        draft[key].showSuiteAppInstallNotification = false;
         break;
 
       case actionTypes.RESOURCE_FORM.SUBMIT_COMPLETE:

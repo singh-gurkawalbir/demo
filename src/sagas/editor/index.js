@@ -15,7 +15,6 @@ import { selectors } from '../../reducers';
 import { apiCallWithRetry } from '../index';
 import { getResource, commitStagedChanges } from '../resources';
 import processorLogic, { featuresMap } from '../../reducers/session/editors/processorLogic';
-import { SCOPES } from '../resourceForm';
 import { requestSampleData } from '../sampleData/flows';
 import { requestResourceFormSampleData } from '../sampleData/resourceForm';
 import { constructResourceFromFormValues } from '../utils';
@@ -333,12 +332,11 @@ export function* save({ id, context }) {
         yield put(foregroundPatches[index].action);
       } else if (!!patch && !!resourceType && !!resourceId) {
         yield put(
-          actions.resource.patchStaged(resourceId, patch, SCOPES.VALUE)
+          actions.resource.patchStaged(resourceId, patch)
         );
         const error = yield call(commitStagedChanges, {
           resourceType,
           id: resourceId,
-          scope: SCOPES.VALUE,
           context,
         });
 
@@ -375,9 +373,9 @@ export function* save({ id, context }) {
 
 export function* autoEvaluateProcessor({ id }) {
   const editor = yield select(selectors.editor, id);
-  const editorViolations = yield select(selectors.editorViolations, id);
+  const {dataError, ruleError} = (yield select(selectors.editorViolations, id)) || {};
 
-  if (!editor || (editorViolations && editorViolations.length)) {
+  if (!editor || dataError || ruleError) {
     return; // nothing to do...
   }
 
@@ -494,6 +492,7 @@ export function* requestEditorSampleData({
     parentId,
     mapper2RowKey,
     router,
+    integrationId,
   } = editor;
   // for some fields only v2 data is supported (not v1)
   const editorSupportsOnlyV2Data = yield select(selectors.editorSupportsOnlyV2Data, id);
@@ -616,7 +615,7 @@ export function* requestEditorSampleData({
     }
     const flow = yield select(selectors.resource, 'flows', flowId);
 
-    body.integrationId = flow?._integrationId;
+    body.integrationId = flow?._integrationId || integrationId;
 
     body.fieldPath = fieldId || filterPath;
 
@@ -660,8 +659,11 @@ export function* requestEditorSampleData({
       delete body.templateVersion;
     } else if (resourceType === 'iClients') {
       body.type = 'iclient';
-      body.connectionId = editor.connectionId;
       body.iClient = resource || {};
+
+      if (!isNewId(editor.connectionId)) {
+        body.connectionId = editor.connectionId;
+      }
 
       if (parentType) {
         body[parentType === 'exports' ? 'exportId' : 'importId'] = parentId;

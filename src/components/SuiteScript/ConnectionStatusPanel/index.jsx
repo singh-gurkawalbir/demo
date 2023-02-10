@@ -8,6 +8,7 @@ import actions from '../../../actions';
 import NotificationToaster from '../../NotificationToaster';
 import { PING_STATES } from '../../../reducers/comms/ping';
 import { TextButton } from '../../Buttons';
+import { message } from '../../../utils/messageStore';
 // import { isNewId } from '../../../utils/resource';
 
 const useStyles = makeStyles(theme => ({
@@ -31,8 +32,7 @@ const getStatusVariantAndMessage = ({
   if (testStatus === PING_STATES.ERROR) {
     return {
       variant: 'error',
-      message:
-        'Your test was not successful. Check your information and try again',
+      message: message.CONNECTION.PING_STATES_ERROR,
     };
   }
   if (testStatus === PING_STATES.SUCCESS) {
@@ -45,8 +45,8 @@ const getStatusVariantAndMessage = ({
     return {
       variant: 'error',
       message: isConnectionFix
-        ? ' Review and test this form to bring your connections back online.'
-        : 'The connection is currently offline. Review and test this form to bring your connection back online.',
+        ? message.CONNECTION.FIX
+        : message.CONNECTION.NOT_FIXED,
     };
   }
 
@@ -134,8 +134,7 @@ export default function ConnectionStatusPanel(props) {
           <Typography variant="h6">{message}</Typography>
         ) : (
           <Typography component="div" variant="h6">
-            The connection associated with this export is currently offline and
-            configuration is limited,
+            {message.CONNECTION.OFFLINE_LIMITED}
             <TextButton
               data-test="fixConnection"
               size="small"

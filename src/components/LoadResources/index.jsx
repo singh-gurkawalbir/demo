@@ -8,14 +8,27 @@ export default function LoadResources({ children, resources, required, lazyResou
   const dispatch = useDispatch();
   const defaultAShareId = useSelector(state => state?.user?.preferences?.defaultAShareId);
 
-  const requiredResources = useMemo(() => typeof resources === 'string'
-    ? resources.split(',').map(r => r?.trim())
-    : resources,
+  const requiredResources = useMemo(() => {
+    if (resources) {
+      return typeof resources === 'string'
+        ? resources.split(',').map(r => r?.trim())
+        : resources;
+    }
+
+    return [];
+  },
   [resources]);
+
   const lazyLoadResources = useMemo(() => typeof lazyResources === 'string'
     ? lazyResources.split(',').map(r => r?.trim())
     : lazyResources,
   [lazyResources]);
+
+  // at many places, connection info is dependent on its linked iClient
+  // so we need to load iClients as well
+  if (requiredResources.includes('connections') || lazyLoadResources.includes('connections')) {
+    lazyLoadResources.push('iClients');
+  }
   const allResources = useMemo(() => [...requiredResources, ...lazyLoadResources], [requiredResources, lazyLoadResources]);
 
   const resourceStatus = useSelectorMemo(selectors.mkResourceStatus, allResources, integrationId);

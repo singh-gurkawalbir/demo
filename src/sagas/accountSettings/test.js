@@ -1,4 +1,4 @@
-/* global describe, test */
+
 import { call } from 'redux-saga/effects';
 import { expectSaga } from 'redux-saga-test-plan';
 import { throwError } from 'redux-saga-test-plan/providers';
@@ -17,7 +17,7 @@ describe('requestAccountSettings saga', () => {
       dataRetentionPeriod: 90,
     };
 
-    return expectSaga(requestAccountSettings)
+    expectSaga(requestAccountSettings)
       .provide([
         [call(apiCallWithRetry, {
           path,
@@ -38,7 +38,7 @@ describe('requestAccountSettings saga', () => {
   test('should return undefined if api call fails', () => {
     const error = new Error('error');
 
-    return expectSaga(requestAccountSettings)
+    expectSaga(requestAccountSettings)
       .provide([
         [call(apiCallWithRetry, {
           path,
@@ -62,7 +62,7 @@ describe('updateAccountSettings saga', () => {
       dataRetentionPeriod: 60,
     };
 
-    return expectSaga(updateAccountSettings, {accountSettings})
+    expectSaga(updateAccountSettings, {accountSettings})
       .provide([
         [call(apiCallWithRetry, {
           path,
@@ -92,7 +92,7 @@ describe('updateAccountSettings saga', () => {
 
     const error = new Error('error');
 
-    return expectSaga(updateAccountSettings, {accountSettings})
+    expectSaga(updateAccountSettings, {accountSettings})
       .provide([
         [call(apiCallWithRetry, {
           path,

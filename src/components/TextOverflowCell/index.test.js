@@ -1,4 +1,4 @@
-/* global describe, test, expect */
+
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { screen } from '@testing-library/react';
@@ -24,7 +24,7 @@ async function initTextOverflowCell({
   };
 }
 
-describe('TextOverflowCell test cases', () => {
+describe('textOverflowCell test cases', () => {
   runServer();
 
   test('should pass the initial render with default value/ with message', async () => {

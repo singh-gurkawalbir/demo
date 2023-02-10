@@ -1,5 +1,3 @@
-/* global describe, test, expect */
-
 import { filterSubListProperties, getFormattedNSCustomerSampleData, getFormattedNSSalesOrderMetadataData } from './metadata';
 import {emptyList} from '../../constants';
 

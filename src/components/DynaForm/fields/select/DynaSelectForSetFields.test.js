@@ -1,4 +1,4 @@
-/* global describe, test, jest, expect */
+
 import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -7,8 +7,8 @@ import DynaSelectSetFieldValues from './DynaSelectForSetFields';
 
 const mockChange = jest.fn();
 
-describe('DynaSelectSetFieldValues tests', () => {
-  test('Should able to test DynaSelectSetFieldValues', async () => {
+describe('dynaSelectSetFieldValues tests', () => {
+  test('should able to test DynaSelectSetFieldValues', async () => {
     const props = {setFieldIds: ['first'], onFieldChange: mockChange, options: [{items: [{value: 'dynaSelectValue', label: 'DynaSelect label'}]}]};
 
     await renderWithProviders(<DynaSelectSetFieldValues {...props} />);
@@ -19,7 +19,7 @@ describe('DynaSelectSetFieldValues tests', () => {
     expect(mockChange).toHaveBeenNthCalledWith(1, undefined, 'dynaSelectValue');
     expect(mockChange).toHaveBeenNthCalledWith(2, 'first', '', true);
   });
-  test('Should able to test DynaSelectSetFieldValues without setFieldIds', async () => {
+  test('should able to test DynaSelectSetFieldValues without setFieldIds', async () => {
     mockChange.mockClear();
     const props = {onFieldChange: mockChange, options: [{items: [{value: 'dynaSelectValue', label: 'DynaSelect label'}]}]};
 

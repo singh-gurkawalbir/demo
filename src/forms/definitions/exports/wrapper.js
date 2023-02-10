@@ -1,4 +1,5 @@
 import { isNewId } from '../../../utils/resource';
+import { safeParse } from '../../../utils/string';
 
 export default {
   preSave: formValues => {
@@ -17,7 +18,6 @@ export default {
       delete retValues['/delta/dateField'];
       delete retValues['/once/booleanField'];
     } else if (retValues['/type'] === 'test') {
-      retValues['/test/limit'] = 1;
       retValues['/delta'] = undefined;
       retValues['/once'] = undefined;
       delete retValues['/delta/dateField'];
@@ -33,6 +33,7 @@ export default {
       delete retValues['/test/limit'];
       delete retValues['/delta/dateField'];
     }
+    retValues['/mockOutput'] = safeParse(retValues['/mockOutput']);
 
     return {
       ...retValues,
@@ -46,6 +47,7 @@ export default {
       id: 'type',
       type: 'select',
       label: 'Export type',
+      isLoggable: true,
       defaultValue: r => {
         const isNew = isNewId(r._id);
 
@@ -56,17 +58,19 @@ export default {
         return output || 'all';
       },
       required: true,
+      skipSort: true,
       options: [
         {
           items: [
             { label: 'All – always export all data', value: 'all' },
             { label: 'Delta – export only modified data', value: 'delta' },
             { label: 'Once – export records only once', value: 'once' },
-            { label: 'Test – export only 1 record', value: 'test' },
+            { label: 'Limit – export a set number of records', value: 'test' },
           ],
         },
       ],
     },
+    'test.limit': {fieldId: 'test.limit'},
     'delta.dateField': {
       fieldId: 'delta.dateField',
     },
@@ -75,6 +79,7 @@ export default {
     },
     exportOneToMany: { formId: 'exportOneToMany' },
     advancedSettings: { formId: 'advancedSettings' },
+    mockOutput: {fieldId: 'mockOutput'},
   },
   layout: {
     type: 'collapse',
@@ -92,7 +97,13 @@ export default {
       {
         collapsed: true,
         label: 'Configure export type',
-        fields: ['type', 'delta.dateField', 'once.booleanField'],
+        fields: ['type', 'test.limit', 'delta.dateField', 'once.booleanField'],
+      },
+      {
+        collapsed: true,
+        actionId: 'mockOutput',
+        label: 'Mock output',
+        fields: ['mockOutput'],
       },
       { collapsed: true, label: 'Advanced', fields: ['advancedSettings'] },
     ],

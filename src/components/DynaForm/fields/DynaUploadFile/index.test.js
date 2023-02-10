@@ -1,4 +1,4 @@
-/* global describe, test, expect, jest, afterEach */
+
 import React from 'react';
 import {screen} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -25,11 +25,11 @@ jest.mock('react-redux', () => ({
   useDispatch: () => mockDispatch,
 }));
 
-describe('Dynaupload file UI test cases', () => {
+describe('dynaupload file UI test cases', () => {
   afterEach(() => {
     jest.clearAllMocks();
   });
-  test('Should make dispatch calls for uploading a file ', () => {
+  test('should make dispatch calls for uploading a file', () => {
     initialStore.getState().session.fileUpload = {
       '5ff7c471f08d35214ed1a7a7-uploadFile': { status: 'received',
         file: {
@@ -59,9 +59,9 @@ describe('Dynaupload file UI test cases', () => {
     };
 
     initDynaUploadFile(data);
-    expect(MockOnFieldChange).toBeCalledWith('uploadFile', 'somerunkey');
+    expect(MockOnFieldChange).toHaveBeenCalledWith('uploadFile', 'somerunkey');
     expect(mockDispatch).toHaveBeenCalledWith(actions.integrationApp.utility.clearRunKey('5df0b6c26dc1ab40a677cf45'));
-    expect(MockOnFieldChange).toBeCalledWith('uploadFile', {fileName: 'fileA.csv', type: 'csv'});
+    expect(MockOnFieldChange).toHaveBeenCalledWith('uploadFile', {fileName: 'fileA.csv', type: 'csv'});
     expect(mockDispatch).toHaveBeenCalledWith(actions.resourceFormSampleData.request('exports-5ff7c471f08d35214ed1a7a7'));
     expect(screen.getByText('Sample file (that would be parsed)')).toBeInTheDocument();
     expect(screen.getByText('Choose file')).toBeInTheDocument();
@@ -85,7 +85,7 @@ describe('Dynaupload file UI test cases', () => {
         fileType: ''}
     ));
   });
-  test('Should test uploading of file with row delimiter  ', () => {
+  test('should test uploading of file with row delimiter', () => {
     initialStore.getState().session.fileUpload = {
       '5ff7c471f08d35214ed1a7a7-uploadFile': { status: 'received',
         file: "{name:file2.csv,size:'50bytes',type:'csv'}\r",
@@ -115,12 +115,13 @@ describe('Dynaupload file UI test cases', () => {
       _integrationId: '5df0b6c26dc1ab40a677cf45',
       childId: 'somechildId',
       options: 'csv',
+      mode: 'csv',
     };
 
     initDynaUploadFile(data);
-    expect(MockOnFieldChange).toBeCalledWith('uploadFile', 'somerunkey');
+    expect(MockOnFieldChange).toHaveBeenCalledWith('uploadFile', 'somerunkey');
     expect(mockDispatch).toHaveBeenCalledWith(actions.integrationApp.utility.clearRunKey('5df0b6c26dc1ab40a677cf45'));
-    expect(MockOnFieldChange).toBeCalledWith('uploadFile', {
+    expect(MockOnFieldChange).toHaveBeenCalledWith('uploadFile', {
       file: "{name:file2.csv,size:'50bytes',type:'csv'}\r",
       type: 'file',
       rawFile: { name: 'file2.csv', size: '50 bytes', type: 'csv' },
@@ -134,7 +135,7 @@ describe('Dynaupload file UI test cases', () => {
     expect(mockDispatch).toHaveBeenCalledWith(actions.resourceFormSampleData.request('exports-5ff7c471f08d35214ed1a7a7'));
     expect(mockDispatch).toHaveBeenCalledWith(actions.resourceFormSampleData.clear('5ff7c471f08d35214ed1a7a7'));
     expect(mockDispatch).toHaveBeenCalledWith(actions.file.reset('5ff7c471f08d35214ed1a7a7-uploadFile'));
-    expect(MockOnFieldChange).toBeCalledWith('uploadFile', '', true);
+    expect(MockOnFieldChange).toHaveBeenCalledWith('uploadFile', '', true);
 
     expect(screen.getByText('Sample file (that would be parsed)')).toBeInTheDocument();
     expect(screen.getByText('Choose file')).toBeInTheDocument();
@@ -158,7 +159,7 @@ describe('Dynaupload file UI test cases', () => {
         fileType: 'csv'}
     ));
   });
-  test('Should test uploading of file with row delimiter  with s3 send key ', () => {
+  test('should test uploading of file with row delimiter  with s3 send key', () => {
     initialStore.getState().session.fileUpload = {
       '5ff7c471f08d35214ed1a7a7-uploadFile': { status: 'received',
         file: "{name:file2.csv,size:'50bytes',type:'csv'}\r\n",
@@ -188,10 +189,11 @@ describe('Dynaupload file UI test cases', () => {
       _integrationId: '5df0b6c26dc1ab40a677cf45',
       childId: 'somechildId',
       options: 'csv',
+      mode: 'csv',
     };
 
     initDynaUploadFile(data);
-    expect(MockOnFieldChange).toBeCalledWith('uploadFile', 'somerunkey');
+    expect(MockOnFieldChange).toHaveBeenCalledWith('uploadFile', 'somerunkey');
     expect(mockDispatch).toHaveBeenCalledWith(actions.integrationApp.utility.clearRunKey('5df0b6c26dc1ab40a677cf45'));
     expect(mockDispatch).toHaveBeenCalledWith(actions.integrationApp.utility.requestS3Key(
       {
@@ -205,7 +207,7 @@ describe('Dynaupload file UI test cases', () => {
     expect(mockDispatch).toHaveBeenCalledWith(actions.resourceFormSampleData.request('exports-5ff7c471f08d35214ed1a7a7'));
     expect(mockDispatch).toHaveBeenCalledWith(actions.resourceFormSampleData.clear('5ff7c471f08d35214ed1a7a7'));
     expect(mockDispatch).toHaveBeenCalledWith(actions.file.reset('5ff7c471f08d35214ed1a7a7-uploadFile'));
-    expect(MockOnFieldChange).toBeCalledWith('uploadFile', '', true);
+    expect(MockOnFieldChange).toHaveBeenCalledWith('uploadFile', '', true);
 
     expect(screen.getByText('Sample file (that would be parsed)')).toBeInTheDocument();
     expect(screen.getByText('Choose file')).toBeInTheDocument();
@@ -229,7 +231,7 @@ describe('Dynaupload file UI test cases', () => {
         fileType: 'csv'}
     ));
   });
-  test('Should test uploading of file with row delimiter  for other applications other than s3 ', () => {
+  test('should test uploading of file with row delimiter  for other applications other than s3', () => {
     initialStore.getState().session.fileUpload = {
       '5ff7c471f08d35214ed1a7a7-uploadFile': { status: 'received',
         file: "{name:file2.csv,size:'50bytes',type:'csv'}\r\n",
@@ -259,12 +261,13 @@ describe('Dynaupload file UI test cases', () => {
       _integrationId: '5df0b6c26dc1ab40a677cf45',
       childId: 'somechildId',
       options: 'csv',
+      mode: 'csv',
     };
 
     initDynaUploadFile(data);
-    expect(MockOnFieldChange).toBeCalledWith('uploadFile', 'somerunkey');
+    expect(MockOnFieldChange).toHaveBeenCalledWith('uploadFile', 'somerunkey');
     expect(mockDispatch).toHaveBeenCalledWith(actions.integrationApp.utility.clearRunKey('5df0b6c26dc1ab40a677cf45'));
-    expect(MockOnFieldChange).toBeCalledWith('uploadFile', {
+    expect(MockOnFieldChange).toHaveBeenCalledWith('uploadFile', {
       file: "{name:file2.csv,size:'50bytes',type:'csv'}\r\n",
       type: 'file',
       rawFile: { name: 'file2.csv', size: '50 bytes', type: 'csv' },
@@ -278,10 +281,10 @@ describe('Dynaupload file UI test cases', () => {
     expect(mockDispatch).toHaveBeenCalledWith(actions.resourceFormSampleData.request('exports-5ff7c471f08d35214ed1a7a7'));
     expect(mockDispatch).toHaveBeenCalledWith(actions.resourceFormSampleData.clear('5ff7c471f08d35214ed1a7a7'));
     expect(mockDispatch).toHaveBeenCalledWith(actions.file.reset('5ff7c471f08d35214ed1a7a7-uploadFile'));
-    expect(MockOnFieldChange).toBeCalledWith('uploadFile', '', true);
+    expect(MockOnFieldChange).toHaveBeenCalledWith('uploadFile', '', true);
     expect(screen.getByRole('progressbar')).toBeInTheDocument();
   });
-  test('Should test uploading of file is in progress', () => {
+  test('should test uploading of file is in progress', () => {
     initialStore.getState().session.fileUpload = {
       '5ff7c471f08d35214ed1a7a7-uploadFile': { status: 'received',
         file: "{name:file2.csv,size:'50bytes',type:'csv'}\n",
@@ -310,12 +313,13 @@ describe('Dynaupload file UI test cases', () => {
       _integrationId: '5df0b6c26dc1ab40a677cf45',
       childId: 'somechildId',
       options: 'csv',
+      mode: 'csv',
     };
 
     initDynaUploadFile(data);
-    expect(MockOnFieldChange).toBeCalledWith('uploadFile', 'somerunkey');
+    expect(MockOnFieldChange).toHaveBeenCalledWith('uploadFile', 'somerunkey');
     expect(mockDispatch).toHaveBeenCalledWith(actions.integrationApp.utility.clearRunKey('5df0b6c26dc1ab40a677cf45'));
-    expect(MockOnFieldChange).toBeCalledWith('uploadFile', {
+    expect(MockOnFieldChange).toHaveBeenCalledWith('uploadFile', {
       file: "{name:file2.csv,size:'50bytes',type:'csv'}\n",
       type: 'file',
       rawFile: { name: 'file2.csv', size: '50 bytes', type: 'csv' },
@@ -329,7 +333,7 @@ describe('Dynaupload file UI test cases', () => {
     expect(mockDispatch).toHaveBeenCalledWith(actions.resourceFormSampleData.request('exports-5ff7c471f08d35214ed1a7a7'));
     expect(mockDispatch).toHaveBeenCalledWith(actions.resourceFormSampleData.clear('5ff7c471f08d35214ed1a7a7'));
     expect(mockDispatch).toHaveBeenCalledWith(actions.file.reset('5ff7c471f08d35214ed1a7a7-uploadFile'));
-    expect(MockOnFieldChange).toBeCalledWith('uploadFile', '', true);
+    expect(MockOnFieldChange).toHaveBeenCalledWith('uploadFile', '', true);
     expect(screen.getByRole('progressbar')).toBeInTheDocument();
   });
 });

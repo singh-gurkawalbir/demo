@@ -7,7 +7,6 @@ export default {
     const retValues = {...formValues};
 
     retValues['/http/formType'] = 'graph_ql';
-    retValues['/adaptorType'] = 'HTTPExport';
     retValues['/http/mediaType'] = 'json';
 
     retValues['/http/body'] = convertGraphQLQueryToHTTPBody({
@@ -88,6 +87,7 @@ export default {
       id: 'type',
       type: 'selectwithvalidations',
       label: 'Export type',
+      isLoggable: true,
       required: true,
       defaultValue: r => {
         const isNew = isNewId(r._id);
@@ -104,6 +104,7 @@ export default {
           is: ['records'],
         },
       ],
+      skipSort: true,
       options: [
         {
           items: [
@@ -115,11 +116,12 @@ export default {
               helpKey: 'export.delta',
             },
             { label: 'Once – export records only once', value: 'once' },
-            { label: 'Test – export only 1 record', value: 'test' },
+            { label: 'Limit – export a set number of records', value: 'test' },
           ],
         },
       ],
     },
+    'test.limit': {fieldId: 'test.limit'},
     'delta.dateFormat': {
       fieldId: 'delta.dateFormat',
     },
@@ -139,6 +141,7 @@ export default {
       id: 'once.booleanField',
       type: 'textwithconnectioncontext',
       label: 'Boolean field to mark records as exported',
+      isLoggable: true,
       visibleWhenAll: [
         { field: 'type', is: ['once'] },
       ],
@@ -217,6 +220,7 @@ export default {
     semiassistantoperationselect: {fieldId: 'semiassistantoperationselect', visibleWhenAll: [{field: 'formView', isNot: ['true']}]},
     graphql: {formId: 'graphql'},
     pagingGraphql: {formId: 'pagingGraphql' },
+    mockOutput: {fieldId: 'mockOutput'},
   },
 
   layout: {
@@ -237,6 +241,7 @@ export default {
         label: 'Configure export type',
         fields: [
           'type',
+          'test.limit',
           'delta.dateFormat',
           'delta.lagOffset',
           'once.booleanField',
@@ -271,6 +276,12 @@ export default {
         collapsed: true,
         label: 'Non-standard API response patterns',
         fields: ['http.response.resourcePath'],
+      },
+      {
+        collapsed: true,
+        actionId: 'mockOutput',
+        label: 'Mock output',
+        fields: ['mockOutput'],
       },
       {
         collapsed: true,

@@ -16,34 +16,37 @@ import responseMappingUtil from '../responseMapping';
 import arrayUtils from '../array';
 import jsonUtils from '../json';
 import { isIntegrationApp } from '../flows';
-import { isJsonString } from '../string';
+import { getMockOutputFromResource, validateMockOutputField } from '../flowDebugger';
 
 export const BASE_FLOW_INPUT_STAGE = 'flowInput';
-export const LOOKUP_FLOW_DATA_STAGE = 'inputFilter';
 export const IMPORT_FLOW_DATA_STAGE = 'importMappingExtract';
+export const IMPORT_FILTERED_DATA_STAGE = 'preMap';
+export const EXPORT_FILTERED_DATA_STAGE = 'postInputFilter';
+export const IMPORT_POST_MAPPED_DATA_STAGE = 'postMapOutput';
 
-// TODO @RAGHU : Add comments on the different stages and their use cases
+export const STAGES_TO_RESET_FLOW_DATA = ['inputFilter'];
+
 export const sampleDataStage = {
   exports: {
     processedFlowInput: 'flowInput',
     inputFilter: 'processedFlowInput',
+    postInputFilter: 'inputFilter',
     transform: 'raw',
-    preSavePage: 'transform', // preSavePage indicates export hooks
     outputFilter: 'transform',
+    preSavePage: 'outputFilter', // preSavePage indicates export hooks
     responseMappingExtract: 'preSavePage',
     responseMapping: 'responseMappingExtract',
     postResponseMap: 'responseMapping',
     postResponseMapHook: 'postResponseMap',
   },
   /**
-   * flowInput, processedFlowInput, inputFilter
-   * raw, processedFlowInput, transform, preSavePage, responseMappingExtract, responseMapping, postResponseMap, postResponseMapHook
-   * raw, transform, outputFilter
+   * flowInput, processedFlowInput, inputFilter, postInputFilter
+   * raw, transform, outputFilter, preSavePage, responseMappingExtract, responseMapping, postResponseMap, postResponseMapHook
    */
   imports: {
     processedFlowInput: 'flowInput',
     inputFilter: 'processedFlowInput',
-    preMap: 'processedFlowInput',
+    preMap: 'inputFilter',
     importMappingExtract: 'preMap',
     importMapping: 'importMappingExtract',
     responseMappingExtract: 'responseTransform',
@@ -59,8 +62,7 @@ export const sampleDataStage = {
     router: 'router',
   },
   /**
-   * flowInput, processedFlowInput, inputFilter
-   * flowInput, preMap, importMappingExtract, importMapping, postMap,
+   * flowInput, processedFlowInput, inputFilter, preMap, importMappingExtract, importMapping, postMap,
    * sampleResponse, responseTransform, postSubmit
    * sampleResponse, responseTransform, responseMappingExtract, responseMapping, postResponseMap, postResponseMapHook
    */
@@ -141,14 +143,14 @@ export const getCurrentSampleDataStageStatus = (
 // Regex for parsing patchSet paths to listen field specific changes of a resource
 // sample Sequence path:  '/pageProcessors' or '/pageGenerators'
 // sample responseMapping path: '/pageProcessors/${resourceIndex}/responseMapping
-// when added a lookup to the flow path: '/pageProcessors/${resourceIndex}
 const pathRegex = {
   newPPSequence: /(\/routers\/(\d+)\/branches\/(\d+))?\/pageProcessors\/(\d+)$/,
   pgSequence: /(\/pageGenerators\/(\d+))/,
-  oldPPSequence: /(\/pageProcessors\/(\d+))$/,
+  oldPPSequence: /(\/pageProcessors\/(\d+)\/(_importId|_exportId))$/,
   responseMapping: /(\/routers\/(\d+)\/branches\/(\d+))?\/pageProcessors\/(\d+)\/responseMapping/,
   oldResponseMapping: /\/pageProcessors\/(\d+)\/responseMapping/,
   lookupAddition: /\/pageProcessors\/[0-9]+$/,
+  routerUpdate: /\/routers\/(\d+)$/,
 };
 
 export function getPreviewStageData(previewData, previewStage = 'parse') {
@@ -211,15 +213,18 @@ export const getPostDataForDeltaExport = resource => ({
   currentExportDateTime: getCurrentExportDateTime(resource),
 });
 
-export const getAddedLookupIdInFlow = (patchSet = []) => {
-  const pageProcessorsPatch = patchSet.find(
-    patch => pathRegex.lookupAddition.test(patch.path) &&
-      ['add', 'replace'].includes(patch.op)
-  );
+const isRouterRemoved = patchSet => {
+  const removeRouterRegexList = [
+    /\/routers$/, // remove when only 1 router is present
+    /\/routers\/(\d+)$/, // remove first router in multiple routers
+    /\/routers\/(\d+)\/branches\/(\d+)$/, // multiple routers and remove any router other than first
+  ];
 
-  if (pageProcessorsPatch?.value?.type === 'export') {
-    return pageProcessorsPatch.value._exportId;
-  }
+  return removeRouterRegexList.some(regex => {
+    const patch = patchSet.find(patch => patch.path.match(regex));
+
+    return patch && patch.op === 'remove';
+  });
 };
 
 // Goes through patchset changes to decide what is updated
@@ -228,12 +233,21 @@ export const getFlowUpdatesFromPatch = (patchSet = []) => {
   // There is a case when we update flow just to update lastModified property
   // In that case, no need of any update for flowData
   if (patchSet.find(patch => patch.path === '/lastModified')) return {};
-  // Analyse patches and update stages updated
+  // Analyze patches and update stages updated
   const updatedPathsFromPatchSet = patchSet.map(patch => patch.path);
   const updates = {
     sequence: false,
     responseMapping: false,
+    router: false,
   };
+
+  if (isRouterRemoved(patchSet)) {
+    updates.router = {
+      deleted: true,
+    };
+
+    return updates;
+  }
 
   updatedPathsFromPatchSet.forEach(path => {
     //  If the patch matches changes for either PP/PG (Old & New formats),
@@ -273,6 +287,14 @@ export const getFlowUpdatesFromPatch = (patchSet = []) => {
         };
       }
     }
+
+    if (!updates.router && pathRegex.routerUpdate.test(path)) {
+      // Extract routerIndex from the path
+      updates.router = {
+        updated: true,
+        routerIndex: +path.match(/[0-9]/)[0],
+      };
+    }
   });
 
   return updates;
@@ -286,12 +308,16 @@ export const isRawDataPatchSet = (patchSet = []) =>
 /*
  * File adaptor / Real time( NS/ SF/ Webhooks)/ Blob type/ Rest CSV resources need UI Data to be passed in Page processor preview
  */
-export const isUIDataExpectedForResource = (resource, connection) =>
-  isRealTimeOrDistributedResource(resource) ||
-  isFileAdaptor(resource) ||
-  isRestCsvMediaTypeExport(resource, connection) ||
-  isBlobTypeResource(resource) ||
-  isIntegrationApp(resource); // Need to do
+export const isUIDataExpectedForResource = (resource, connection) => {
+  // if mockoutput data is populated on the resource, we don't need to send UI data
+  if (getMockOutputFromResource(resource)) return false;
+
+  return isRealTimeOrDistributedResource(resource) ||
+        isFileAdaptor(resource) ||
+        isRestCsvMediaTypeExport(resource, connection) ||
+        isBlobTypeResource(resource) ||
+        isIntegrationApp(resource);
+};
 
 export const isFileMetaExpectedForResource = resource => isFileAdaptor(resource);
 // Gives sample file data
@@ -399,42 +425,68 @@ export const getFormattedResourceForPreview = (
     resource.postData = getPostDataForDeltaExport(resource);
   }
 
-  // Incase of pp , morph sampleResponseData to support Response Mapping
-  if (flowType === 'pageProcessors') {
-    if (resource.sampleResponseData) {
-      // If there is sampleResponseData, update it to json if not a json
-      // @Raghu Make changes to save it as json in the first place, once ampersand is deprecated
-      if (isJsonString(resource.sampleResponseData)) {
-        resource.sampleResponseData = JSON.parse(resource.sampleResponseData);
-      }
-    } else {
-      // If there is no sampleResponseData, add default fields for lookups/imports
-      resource.sampleResponseData = generateDefaultExtractsObject(resourceType, resource?.adaptorType);
-    }
+  if (resource.mockOutput && validateMockOutputField(resource.mockOutput)) {
+    delete resource.mockOutput;
+  }
+
+  if (flowType === 'pageProcessors' && !resource.mockResponse) {
+    // Incase of pp , morph mockResponse to support Response Mapping
+    // If there is no mockResponse, add default fields for lookups/imports
+    resource.mockResponse = generateDefaultExtractsObject(resourceType, resource?.adaptorType);
   }
 
   return resource;
 };
 
+// updating correct http resource and endpoint ids for http2.0
+export const updateHTTP2Metadata = (resourceObj, formKey) => {
+  const resource = deepClone(resourceObj || {});
+  const resourceType = formKey.includes('imports') ? 'imports' : 'exports';
+
+  if (['exports', 'imports'].includes(resourceType) &&
+resource?.http?._httpConnectorResourceId && resource?.assistantMetadata
+  ) {
+    if (resource?.http?._httpConnectorResourceId?.includes('+')) {
+      resource.http._httpConnectorResourceId = resource.http._httpConnectorResourceId.split('+')?.[0];
+    }
+    if (resourceType === 'exports' && resource?.http?._httpConnectorEndpointId?.includes('+')) {
+      resource.http._httpConnectorEndpointId = resource.http._httpConnectorEndpointId.split('+')?.[0];
+    }
+    if (resourceType === 'imports' && resource.http._httpConnectorEndpointIds?.[0]?.includes('+')) {
+      resource.http._httpConnectorEndpointIds = [resource.http._httpConnectorEndpointIds[0].split('+')?.[0]];
+    }
+    resource.assistantMetadata = undefined;
+  }
+
+  return resource;
+};
 /**
  * @input patchSet
- * @input resourceType
+ * @input resourceType : Default value is exports
  * @outPut stage /  undefined
  * The stage returned is used to determine what parts of resource's stages need to be updated
  * If none of the below paths are matched, returns undefined which implies reset the entire resource's state
  */
-export const getResourceStageUpdatedFromPatch = (patchSet = []) => {
+export const getResourceStageUpdatedFromPatch = (patchSet = [], resourceType = 'exports') => {
   const { path: patchSetPath, value: patchSetValue = {} } = patchSet[0] || {};
 
   if (patchSetPath === '/transform') return 'transform';
-  if (patchSetPath === '/filter') return 'outputFilter';
+  if (patchSetPath === '/filter') {
+    if (resourceType === 'imports') {
+      // Incase of imports, patchSet is filter for inputFilter
+      return 'inputFilter';
+    }
+
+    // Incase of pgs/lookups, patchSet is filter for outputFilter
+    // and inputFilter for inputFilter
+    return 'outputFilter';
+  }
   if (patchSetPath === '/inputFilter') return 'inputFilter';
   if (patchSetPath === '/hooks') {
     if (patchSetValue.preSavePage) return 'preSavePage';
     if (patchSetValue.preMap) return 'preMap';
     if (patchSetValue.postMap) return 'postMap';
   }
-  if (patchSetPath === '/sampleResponseData') return 'sampleResponse';
   if (patchSetPath?.includes('/mapping')) return 'importMapping';
 };
 

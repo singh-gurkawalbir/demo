@@ -1,4 +1,3 @@
-/* global describe, test, expect, jest */
 import React from 'react';
 import {screen} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -91,7 +90,7 @@ const setInputValue = jest.fn();
 const setIsFocused = jest.fn();
 const patchField = jest.fn();
 
-describe('Extract tress Ui test cases', () => {
+describe('extract tress Ui test cases', () => {
   test('should call patch field with new value and the jason path', () => {
     renderWithProviders(<ExtractsTree
       destDataType="string" propValue="propValue" propName="somepropName" setInputValue={setInputValue}
@@ -99,7 +98,7 @@ describe('Extract tress Ui test cases', () => {
       patchField={patchField} />, {initialStore});
     const treeTitle = screen.getByTitle('someTitle');
 
-    expect(treeTitle.textContent).toEqual('namestring');
+    expect(treeTitle.textContent).toBe('namestring');
     userEvent.click(screen.getByText('name'));
     expect(setInputValue).toHaveBeenCalledWith('$.name');
     expect(setIsFocused).toHaveBeenCalledWith(false);

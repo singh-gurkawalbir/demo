@@ -1,4 +1,3 @@
-/* global expect, describe, test */
 
 import {
   getAvailablePreviewStages,
@@ -25,7 +24,7 @@ describe('getAvailablePreviewStages util', () => {
     expect(getAvailablePreviewStages({}, { isRestCsvExport: true })).toBe(PREVIEW_STAGE);
   });
   test('should return PREVIEW_STAGE for file adaptors', () => {
-    const fileAdaptors = ['FTPExport', 'S3Export', 'AS2Export'];
+    const fileAdaptors = ['FTPExport', 'S3Export', 'AS2Export', 'VANExport'];
     const resource = {
       _id: 1,
       adaptorType: fileAdaptors[Math.floor(Math.random() * fileAdaptors.length)],
@@ -229,7 +228,7 @@ describe('getRequestURL util', () => {
     };
     const previewData = { request: sampleWithMultipleRequests };
 
-    expect(getRequestURL(previewData)).toEqual('url3');
+    expect(getRequestURL(previewData)).toBe('url3');
   });
 });
 

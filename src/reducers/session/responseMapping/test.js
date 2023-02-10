@@ -1,4 +1,3 @@
-/* global describe, test, expect */
 
 import reducer, { selectors } from '.';
 import actions from '../../../actions';
@@ -23,7 +22,7 @@ describe('Response mapping', () => {
   test('should set status to recieved on init complete', () => {
     const state = reducer(undefined, actions.responseMapping.initComplete({}));
 
-    expect(state.mapping.status).toEqual('received');
+    expect(state.mapping.status).toBe('received');
   });
   test('should set status to error on init failure', () => {
     const state2 = reducer({}, actions.responseMapping.initFailed({}));

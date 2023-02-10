@@ -1,4 +1,4 @@
-/* global describe, test, expect, jest, beforeEach, afterEach */
+
 import React from 'react';
 import {
   screen, waitFor,
@@ -80,7 +80,7 @@ jest.mock('react-router-dom', () => ({
   }),
 }));
 
-describe('DynaFlowGroupName UI tests', () => {
+describe('dynaFlowGroupName UI tests', () => {
   let mockDispatchFn;
   let useDispatchSpy;
 
@@ -112,30 +112,29 @@ describe('DynaFlowGroupName UI tests', () => {
 
   test('should pass the initial render', () => {
     initDynaFlowGroupName(props);
-    screen.debug(undefined, Infinity);
     expect(screen.getByText('Delete flow group')).toBeInTheDocument();
   });
   test('should make a dispatch call when flowGroupingId passed in props is valid', async () => {
     initDynaFlowGroupName(props);
-    await waitFor(() => expect(mockDispatchFn).toBeCalledWith(actions.form.forceFieldState('formKey')('testId', {isValid: true})));
+    await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith(actions.form.forceFieldState('formKey')('testId', {isValid: true})));
   });
   test('should make a dispatch call when value is unassigned section name', async () => {
     initDynaFlowGroupName({...props, flowGroupId: 'invalid', value: 'Unassigned'});
-    await waitFor(() => expect(mockDispatchFn).toBeCalledWith(actions.form.forceFieldState('formKey')('testId', {
+    await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith(actions.form.forceFieldState('formKey')('testId', {
       isValid: false,
       errorMessages: 'Group name cannot be “Unassigned”.',
     })));
   });
   test('should make an error dispatch call when value is other than unassigned section name', async () => {
     initDynaFlowGroupName({...props, flowGroupId: 'invalid', value: 'random'});
-    await waitFor(() => expect(mockDispatchFn).toBeCalledWith(actions.form.forceFieldState('formKey')('testId', {
+    await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith(actions.form.forceFieldState('formKey')('testId', {
       isValid: false,
       errorMessages: 'A group with this name already exists.',
     })));
   });
   test('should make a dispatch call with different error message when value is not passed in the props', async () => {
     initDynaFlowGroupName({...props, flowGroupId: 'invalid', value: null});
-    await waitFor(() => expect(mockDispatchFn).toBeCalledWith(actions.form.forceFieldState('formKey')('testId', {
+    await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith(actions.form.forceFieldState('formKey')('testId', {
       isValid: false,
       errorMessages: 'A value must be provided',
     })));
@@ -154,7 +153,7 @@ describe('DynaFlowGroupName UI tests', () => {
     userEvent.click(screen.getByText('Delete flow group'));
     expect(screen.getByText('Delete')).toBeInTheDocument();
     userEvent.click(screen.getByText('Delete'));
-    await waitFor(() => expect(mockDispatchFn).toBeCalledWith(actions.resource.integrations.flowGroups.delete('5b3c75dd5d3c125c88b5dd20', 'id1', [])));
-    await waitFor(() => expect(mockHistoryGoBack).toBeCalled());
+    await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith(actions.resource.integrations.flowGroups.delete('5b3c75dd5d3c125c88b5dd20', 'id1', [])));
+    await waitFor(() => expect(mockHistoryGoBack).toHaveBeenCalled());
   });
 });

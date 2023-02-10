@@ -1,4 +1,4 @@
-/* global describe, test, expect */
+
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { screen } from '@testing-library/react';
@@ -31,8 +31,8 @@ describe('PreviewTable tests', () => {
   test('Should able to test the initial render with PreviewTable without Data', async () => {
     await initPreviewTable({templateId: '_templateId'});
     expect(screen.getByRole('button', {name: 'Flows'})).toBeInTheDocument();
-    expect(document.querySelectorAll('th')[0].innerHTML).toEqual('Name');
-    expect(document.querySelectorAll('th')[1].innerHTML).toEqual('Description');
+    expect(document.querySelectorAll('th')[0].innerHTML).toBe('Name');
+    expect(document.querySelectorAll('th')[1].innerHTML).toBe('Description');
   });
 
   test('Should able to test the PreviewTable with normal Data', async () => {

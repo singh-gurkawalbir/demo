@@ -1,4 +1,3 @@
-/* global describe, test, expect, beforeEach, afterEach, jest */
 import React from 'react';
 import * as reactRedux from 'react-redux';
 import { MemoryRouter } from 'react-router-dom';
@@ -166,7 +165,7 @@ describe('RunDashboardActions test cases', () => {
     expect(mockDispatchFn).toBeCalledWith(actions.job.downloadFiles({ jobId: 'job_id_3' }));
   });
 
-  test('should pass the initial render with only completed jobs', async () => {
+  test('should pass the initial render with only completed jobs duplicate', async () => {
     await initMarketplace({
       props: {
         flowId: 'flow_id_3',

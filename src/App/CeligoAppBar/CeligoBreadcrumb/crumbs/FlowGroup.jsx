@@ -14,7 +14,7 @@ export default function FlowGroupCrumb({ integrationId, childId, sectionId }) {
   const isIntegrationAppV2 = useSelector(state => selectors.isIntegrationAppVersion2(state, integrationId, true));
 
   return (
-    <LoadResources resources={isIntegrationAppV2 ? 'integrations' : ''}>
+    <LoadResources integrationId={integrationId} resources={isIntegrationAppV2 ? 'integrations' : ''}>
       {flowGroupName || 'Flow group'}
     </LoadResources>
   );

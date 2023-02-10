@@ -1,5 +1,5 @@
 /* eslint-disable import/no-extraneous-dependencies */
-/* global describe, test, jest, beforeEach, afterEach, expect */
+
 import React from 'react';
 import * as reactRedux from 'react-redux';
 import { Route, Router } from 'react-router-dom';
@@ -107,7 +107,7 @@ jest.mock('./ErrorDrawer', () => ({
   ),
 }));
 
-describe('Testsuite for JobTable', () => {
+describe('testsuite for JobTable', () => {
   let mockDispatchFn;
   let useDispatchSpy;
 

@@ -8,6 +8,7 @@ import { semiAssistantExportOperationOptions, semiAssistantExportConfig } from '
 import useConfirmDialog from '../../../ConfirmDialog';
 import useFormContext from '../../../Form/FormContext';
 import { getAssistantConnectorType } from '../../../../constants/applications';
+import { message } from '../../../../utils/messageStore';
 
 export default function DynaSemiAssistantOperationSelect(props) {
   const { label = 'Select an operation', resourceType, flowId, resourceId, formKey, value, onFieldChange } = props;
@@ -35,12 +36,12 @@ export default function DynaSemiAssistantOperationSelect(props) {
   const onFieldChangeFn = (id, value) => {
     confirmDialog({
       title: 'Confirm',
-      message: 'This will clear some of the http field values and populate them with the default values for the selected operation. Are you sure want to proceed?',
+      message: message.CLEAR_HTTP_FIELDS,
       buttons: [
         {
           label: 'Yes',
           onClick: () => {
-            const assistantConfig = semiAssistantExportConfig(assistantData, value);
+            const assistantConfig = semiAssistantExportConfig(assistantData, value, assistant);
             const flattenedAssistantConfig = flatten(assistantConfig);
 
             onFieldChange(id, value);

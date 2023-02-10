@@ -1,7 +1,7 @@
 import React from 'react';
 import { Redirect } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import shortid from 'shortid';
+import { generateId } from '../../utils/string';
 import { selectors } from '../../reducers';
 import { getIntegrationAppUrlName } from '../../utils/integrationApps';
 import LoadResources from '../../components/LoadResources';
@@ -35,7 +35,7 @@ export default function AmpersandRoutesHandler({ match }) {
     case getRoutePath('/flow-builder/v1_5/create'):
       return (
         <Redirect
-          to={getRoutePath(`/integrations/none/flowBuilder/new-${shortid.generate()}`)}
+          to={getRoutePath(`/integrations/none/flowBuilder/new-${generateId()}`)}
       />
       );
     case getRoutePath('/integrations/create'):
@@ -71,13 +71,13 @@ export default function AmpersandRoutesHandler({ match }) {
     case getRoutePath('/data-loader'):
       return (
         <Redirect
-          to={getRoutePath(`/integrations/none/dataLoader/new-${shortid.generate()}`)}
+          to={getRoutePath(`/integrations/none/dataLoader/new-${generateId()}`)}
       />
       );
     case getRoutePath('/integrations/:integrationId/data-loader'):
       return (
         <Redirect
-          to={getRoutePath(`/integrations/${integrationId}/dataLoader/new-${shortid.generate()}`)}
+          to={getRoutePath(`/integrations/${integrationId}/dataLoader/new-${generateId()}`)}
       />
       );
     case getRoutePath('/integrations/:integrationId/data-loader/:flowId/edit'):
@@ -127,7 +127,7 @@ export default function AmpersandRoutesHandler({ match }) {
     case getRoutePath('/integrations/:integrationId/flow-builder/v1_5/create'):
       return (
         <Redirect
-          to={getRoutePath(`/integrations/${match.params.integrationId}/flowBuilder/new-${shortid.generate()}`)}
+          to={getRoutePath(`/integrations/${match.params.integrationId}/flowBuilder/new-${generateId()}`)}
       />
       );
     case getRoutePath('/connectors/:connectorId/licenses'):

@@ -41,6 +41,14 @@ export default function (state = defaultState, action) {
       case actionTypes.APP.USER_ACCEPTED_ACCOUNT_TRANSFER:
         draft.userAcceptedAccountTransfer = true;
         break;
+      case actionTypes.USER.ACCOUNT.SWITCH:
+        draft.switchAccount = 'inProgress';
+
+        break;
+      case actionTypes.USER.ACCOUNT.SWITCH_COMPLETE:
+        draft.switchAccount = 'completed';
+
+        break;
       default:
         break;
     }
@@ -68,4 +76,5 @@ selectors.initVersion = state => state?.initVersion;
 selectors.version = state => state?.version;
 selectors.isUiVersionDifferent = state => state?.initVersion !== state?.version;
 selectors.isUserAcceptedAccountTransfer = state => !!state?.userAcceptedAccountTransfer;
+selectors.isAccountSwitchInProgress = state => state?.switchAccount === 'inProgress';
 // #endregion

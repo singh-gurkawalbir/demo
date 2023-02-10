@@ -1,4 +1,4 @@
-/* global test, expect */
+
 import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -7,14 +7,17 @@ import { renderWithProviders } from '../../../../test/test-utils';
 
 const options = ['view errors', 'settings', 'dashboard', 'generate zip', 'add flow', 'clone', 'delete'];
 
-test('should render the same text passed into props', async () => {
-  renderWithProviders(<HeaderAction variants={options} />);
-  const x = screen.getByLabelText('more');
+describe('Header action test', () => {
+  test('should render the same text passed into props', async () => {
+    renderWithProviders(<HeaderAction variants={options} />);
+    const x = screen.getByLabelText('more');
 
-  userEvent.click(x);
-  const y = screen.getByText('view errors');
+    userEvent.click(x);
+    const y = screen.getByText('view errors');
 
-  expect(y).toBeVisible();
-  userEvent.click(y);
-  expect(y).not.toBeVisible();
+    expect(y).toBeVisible();
+    userEvent.click(y);
+    expect(y).not.toBeVisible();
+  });
 });
+

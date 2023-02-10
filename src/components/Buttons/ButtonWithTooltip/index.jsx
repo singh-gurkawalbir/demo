@@ -4,12 +4,16 @@ import { Tooltip } from '@material-ui/core';
 export default function ButtonWithTooltip({
   tooltipProps = {},
   children,
+  className,
 }) {
   return (
-    <Tooltip key={tooltipProps.title} {...tooltipProps}>
-      <span>
-        {children}
-      </span>
-    </Tooltip>
+    tooltipProps?.title
+      ? (
+        <Tooltip key={tooltipProps.title} {...tooltipProps} className={className}>
+          <span>
+            {children}
+          </span>
+        </Tooltip>
+      ) : <span>{children}</span>
   );
 }

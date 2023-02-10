@@ -1,4 +1,4 @@
-/* global describe, test, expect */
+
 import { deepClone } from 'fast-json-patch';
 import reducer, { selectors } from '.';
 import actions from '../../../../actions';
@@ -68,7 +68,7 @@ const filledState = {
   },
 };
 
-describe('Flow Open errors info reducers for EM2.0 ', () => {
+describe('Flow Open errors info reducers for EM2.0', () => {
   test('should retain previous state if the action is invalid', () => {
     const currState = reducer(defaultState, { type: 'INVALID_ACTION'});
 
@@ -80,7 +80,7 @@ describe('Flow Open errors info reducers for EM2.0 ', () => {
 
       expect(currState).toBe(filledState);
     });
-    test('should add default state if not existed previously and update status as requested ', () => {
+    test('should add default state if not existed previously and update status as requested', () => {
       const currState = reducer(defaultState, actions.errorManager.openFlowErrors.request({ flowId }));
       const expectedState = {
         [flowId]: {
@@ -203,7 +203,7 @@ describe('Flow Open errors info reducers for EM2.0 ', () => {
 
       expect(currState).toBe(filledState);
     });
-    test('should add default state if not existed previously and update status as requested ', () => {
+    test('should add default state if not existed previously and update status as requested', () => {
       const currState = reducer(defaultState, actions.errorManager.integrationErrors.request({ integrationId }));
       const expectedState = {
         [integrationId]: {
@@ -299,8 +299,8 @@ describe('openErrorsStatus selector', () => {
       },
     };
 
-    expect(selectors.openErrorsStatus(filledState, flowId)).toEqual('received');
-    expect(selectors.openErrorsStatus(requestedState, flowId)).toEqual('requested');
+    expect(selectors.openErrorsStatus(filledState, flowId)).toBe('received');
+    expect(selectors.openErrorsStatus(requestedState, flowId)).toBe('requested');
   });
 });
 

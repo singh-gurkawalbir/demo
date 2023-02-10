@@ -1,4 +1,4 @@
-/* global describe, test, expect */
+
 import reducer, { selectors } from '.';
 import actions from '../../../../actions';
 
@@ -148,7 +148,7 @@ describe('Retry data in EM 2.0 reducers', () => {
 
       expect(currState2).toBe(existingState);
     });
-    test('should update status as received and update retry data ', () => {
+    test('should update status as received and update retry data', () => {
       const prevState = reducer(defaultState, actions.errorManager.retryData.request({
         flowId,
         resourceId,
@@ -203,7 +203,7 @@ describe('Retry data in EM 2.0 reducers', () => {
 
       expect(currState2).toBe(existingState);
     });
-    test('should update status as error and update error ', () => {
+    test('should update status as error and update error', () => {
       const prevState = reducer(defaultState, actions.errorManager.retryData.request({
         flowId,
         resourceId,
@@ -230,7 +230,7 @@ describe('Retry data in EM 2.0 reducers', () => {
 
       expect(currState).toMatchObject(expectedState);
     });
-    test('should update status and error but retain the data if exists in the state previously ', () => {
+    test('should update status and error but retain the data if exists in the state previously', () => {
       const currState = reducer(existingState, actions.errorManager.retryData.receivedError({
         flowId,
         resourceId,
@@ -290,7 +290,7 @@ describe('Retry data in EM 2.0 reducers', () => {
 
       expect(currState2).toBe(existingState);
     });
-    test('should create default state for the passed flowID if there is none previously ', () => {
+    test('should create default state for the passed flowID if there is none previously', () => {
       const currState = reducer(existingState, actions.errorManager.retryStatus.request({
         flowId: 'flow-5678',
         resourceId: 'export-5678',
@@ -388,7 +388,7 @@ describe('retryStatus selector', () => {
     expect(selectors.retryStatus(existingState, '1234', '5678')).toBeUndefined();
   });
   test('should return retry status of the passed flowId and resourceId', () => {
-    expect(selectors.retryStatus(existingState, flowId, resourceId)).toEqual('retrying');
+    expect(selectors.retryStatus(existingState, flowId, resourceId)).toBe('retrying');
   });
 });
 

@@ -123,7 +123,7 @@ export default {
     type: 'text',
     label: 'Override default scope delimiter',
     visibleWhenAll: [
-      { field: 'oauth2.grantType', is: ['authorizecode'] },
+      { field: 'oauth2.grantType', isNot: [''] },
     ],
   },
   'oauth2.token.headers': {
@@ -188,7 +188,7 @@ export default {
     type: 'text',
     label: 'Header name',
     required: true,
-    defaultValue: r => r?.oauth2?.headerName || 'Authorization',
+    defaultValue: r => r?.oauth2?.accessTokenHeaderName || 'Authorization',
   },
   'oauth2.scheme': {
     isLoggable: true,

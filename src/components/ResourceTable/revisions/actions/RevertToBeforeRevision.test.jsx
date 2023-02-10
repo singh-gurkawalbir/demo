@@ -1,8 +1,5 @@
-/* global test, expect, describe, beforeEach, afterEach, jest */
 import React from 'react';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { screen } from '@testing-library/react';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter, Route } from 'react-router-dom';
 import { renderWithProviders, reduxStore } from '../../../../test/test-utils';
@@ -62,9 +59,9 @@ jest.mock('react-router-dom', () => ({
   }),
 }));
 
-jest.mock('nanoid', () => ({
-  ...jest.requireActual('nanoid'),
-  nanoid: () => (
+jest.mock('../../../../utils/string', () => ({
+  ...jest.requireActual('../../../../utils/string'),
+  generateId: () => (
     'randomvalue'
   ),
 }));
@@ -82,7 +79,7 @@ function renderFuntion(data) {
   userEvent.click(screen.getByRole('button', {name: /more/i}));
 }
 
-describe('UI tests for revert to before revision', () => {
+describe('uI tests for revert to before revision', () => {
   beforeEach(() => {
     jest.resetAllMocks();
     jest.spyOn(mockEnqueSnackbar, 'default').mockReturnValue([enqueueSnackbar]);

@@ -269,7 +269,7 @@ export function* downloadErrors({ flowId, resourceId, isResolved, filters }) {
   }
 }
 
-export function* purgeError({ flowId, resourceId, errors }) {
+export function* purgeError({ flowId, resourceId, errors, isRowAction }) {
   const errorIdList = yield select(selectors.selectedErrorIds, { flowId, resourceId, isResolved: true });
 
   try {
@@ -278,7 +278,7 @@ export function* purgeError({ flowId, resourceId, errors }) {
       opts: {
         method: 'DELETE',
         body: {
-          errors: errorIdList?.length ? errorIdList : errors,
+          errors: !isRowAction ? errorIdList : errors,
         },
       },
       hidden: true,
@@ -289,7 +289,7 @@ export function* purgeError({ flowId, resourceId, errors }) {
       actions.errorManager.flowErrorDetails.purge.success({
         flowId,
         resourceId,
-        message: messageStore(errorIdList?.length ? 'MULTIPLE_ERROR_PURGE_SUCCESS_MESSAGE' : 'ERROR_PURGE_SUCCESS_MESSAGE'),
+        message: messageStore(errorIdList?.length ? 'PURGE.MULTIPLE_ERROR_PURGE_SUCCESS_MESSAGE' : 'PURGE.ERROR_PURGE_SUCCESS_MESSAGE'),
       })
     );
   } catch (error) {

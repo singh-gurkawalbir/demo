@@ -1,9 +1,7 @@
-/* global describe, test, expect, beforeEach, afterEach, jest */
+
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import userEvent from '@testing-library/user-event';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { screen, waitFor } from '@testing-library/react';
 import * as reactRedux from 'react-redux';
 import actions from '../../../actions';
@@ -11,6 +9,7 @@ import { renderWithProviders } from '../../../test/test-utils';
 import TileNotification from '.';
 import { ConfirmDialogProvider } from '../../ConfirmDialog';
 import { runServer } from '../../../test/api/server';
+import {message as messageStore} from '../../../utils/messageStore';
 
 const props = {
   content: 'Your subscription expired on 03/31/2022. Contact sales to renew your subscription.',
@@ -26,7 +25,7 @@ const props = {
   accessLevel: 'manage',
 };
 
-describe('Testing Tile Notification Component', () => {
+describe('testing Tile Notification Component', () => {
   runServer();
   let mockDispatchFn;
   let useDispatchSpy;
@@ -48,7 +47,7 @@ describe('Testing Tile Notification Component', () => {
   afterEach(() => {
     useDispatchSpy.mockClear();
   });
-  test('Should able to request to renew with multiple buttons', async () => {
+  test('should able to request to renew with multiple buttons', async () => {
     renderWithProviders(
       <ConfirmDialogProvider>
         <MemoryRouter>
@@ -70,11 +69,11 @@ describe('Testing Tile Notification Component', () => {
 
     expect(submit).toBeInTheDocument();
     userEvent.click(submit);
-    await expect(mockDispatchFn).toBeCalledWith(actions.license.requestUpdate('connectorRenewal', {connectorId: props.connectorId, licenseId: props.licenseId}));
+    await expect(mockDispatchFn).toHaveBeenCalledWith(actions.license.requestUpdate('connectorRenewal', {connectorId: props.connectorId, licenseId: props.licenseId}));
     expect(submit).not.toBeInTheDocument();
   });
 
-  test('Should able to request to reactivate', async () => {
+  test('should able to request to reactivate', async () => {
     renderWithProviders(
       <ConfirmDialogProvider>
         <MemoryRouter>
@@ -101,12 +100,12 @@ describe('Testing Tile Notification Component', () => {
     expect(reactivate).toBeInTheDocument();
 
     userEvent.click(reactivate);
-    const message = screen.getByText('Contact your account owner to reactivate this integration app.');
+    const message = screen.getByText(messageStore.INTEGRATION.CONTACT_OWNER);
 
     expect(message).toBeInTheDocument();
   });
 
-  test('Should able to request to Buy single button', async () => {
+  test('should able to request to Buy single button', async () => {
     const licenseId = '5f5f3541c819d4674ae24404';
 
     renderWithProviders(
@@ -156,11 +155,11 @@ describe('Testing Tile Notification Component', () => {
     expect(submitMessage).toBeInTheDocument();
     userEvent.click(submitMessage);
 
-    await expect(mockDispatchFn).toBeCalledWith(actions.license.requestUpdate('connectorRenewal', {connectorId: props.connectorId, licenseId}));
+    await expect(mockDispatchFn).toHaveBeenCalledWith(actions.license.requestUpdate('connectorRenewal', {connectorId: props.connectorId, licenseId}));
     expect(submitMessage).not.toBeInTheDocument();
   });
 
-  test('Should able to request to Buy with multiple buttons', async () => {
+  test('should able to request to Buy with multiple buttons', async () => {
     const integrationId = '5f5f35863a46da41054e8d55';
 
     renderWithProviders(
@@ -195,10 +194,10 @@ describe('Testing Tile Notification Component', () => {
 
     expect(errorMessage).toBeInTheDocument();
     userEvent.click(message);
-    await expect(mockDispatchFn).toBeCalledWith(actions.integrationApp.license.resume(integrationId));
+    await expect(mockDispatchFn).toHaveBeenCalledWith(actions.integrationApp.license.resume(integrationId));
   });
 
-  test('Should able to request to Renew single button', async () => {
+  test('should able to request to Renew single button', async () => {
     const licenseId = '5cdd11eec6cf5f2ec5ca74b4';
 
     renderWithProviders(
@@ -237,11 +236,11 @@ describe('Testing Tile Notification Component', () => {
 
     expect(cancelButton).toBeInTheDocument();
     userEvent.click(submitButton);
-    await expect(mockDispatchFn).toBeCalledWith(actions.license.requestUpdate('connectorRenewal', {connectorId: props.connectorId, licenseId}));
+    await expect(mockDispatchFn).toHaveBeenCalledWith(actions.license.requestUpdate('connectorRenewal', {connectorId: props.connectorId, licenseId}));
     expect(submitButton).not.toBeInTheDocument();
   });
 
-  test('Should able to request to buy with multiple buttons and it should send a request to buy the subscription', async () => {
+  test('should able to request to buy with multiple buttons and it should send a request to buy the subscription', async () => {
     const licenseId = '5f5f3541c819d4674ae24404';
 
     renderWithProviders(
@@ -285,7 +284,7 @@ describe('Testing Tile Notification Component', () => {
 
     expect(cancelButton).toBeInTheDocument();
     userEvent.click(submitButton);
-    await waitFor(() => expect(mockDispatchFn).toBeCalledWith(actions.license.requestUpdate('connectorRenewal', {connectorId: props.connectorId, licenseId})));
+    await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith(actions.license.requestUpdate('connectorRenewal', {connectorId: props.connectorId, licenseId})));
     expect(submitButton).not.toBeInTheDocument();
     userEvent.click(errorMessage);
     const uninstallMessage = screen.getByText('Contact your account owner to uninstall this integration app.');

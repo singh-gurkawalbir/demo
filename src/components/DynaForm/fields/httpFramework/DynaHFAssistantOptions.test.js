@@ -1,4 +1,5 @@
-/* global describe, test, expect , jest, beforeEach, afterEach */
+/* eslint-disable jest/expect-expect */
+
 import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -140,7 +141,7 @@ function initDynaHFAssistantOptions(props = {}, extraFields = {}) {
   renderWithProviders(<WrappedContextConsumer {...props} />, { initialStore });
 }
 
-describe('DynaHFAssistantOptions UI tests', () => {
+describe('dynaHFAssistantOptions UI tests', () => {
   let mockDispatchFn;
   let useDispatchSpy;
 
@@ -159,6 +160,44 @@ describe('DynaHFAssistantOptions UI tests', () => {
     mockDispatchFn.mockClear();
   });
   test('should pass the initial render and open the dropdown with options when clicked on it', () => {
+    const extendedPatch = [
+      {
+        op: 'replace',
+        path: '/assistantMetadata/operation',
+        value: 'ep3',
+      },
+      {
+        op: 'replace',
+        path: '/assistantMetadata/exportType',
+        value: '',
+      },
+      {
+        op: 'replace',
+        path: '/assistantMetadata/version',
+        value: '',
+      },
+      {
+        op: 'replace',
+        path: '/assistantMetadata/dontConvert',
+        value: true,
+      },
+      {
+        op: 'replace',
+        path: '/assistantMetadata/operationChanged',
+        value: true,
+      },
+      {
+        op: 'replace',
+        path: '/assistantMetadata/resource',
+        value: undefined,
+      },
+      {
+        op: 'replace',
+        path: '/assistantMetadata/version',
+        value: 'v2',
+      },
+    ];
+
     initDynaHFAssistantOptions({ ...props, id: endpoints[2].id });
     expect(screen.getByText('Form view')).toBeInTheDocument();
 
@@ -171,6 +210,10 @@ describe('DynaHFAssistantOptions UI tests', () => {
     expect(screen.getByRole('menuitem', { name: 'increment user access' })).toBeInTheDocument();
     userEvent.click(screen.getByRole('menuitem', { name: 'increment ticket count' }));
     expect(mockOnFieldChangeFn).toHaveBeenCalledWith('ep3', 'ep3');
+    expect(mockDispatchFn).toHaveBeenNthCalledWith(1, actions.resource.patchStaged(
+      '_exportId',
+      extendedPatch,
+    ));
   });
   test('should display options for versions in the dropdown when assistantFieldType is "version"', () => {
     const patch = [
@@ -189,6 +232,16 @@ describe('DynaHFAssistantOptions UI tests', () => {
         path: '/assistantMetadata/dontConvert',
         value: true,
       },
+      {
+        op: 'replace',
+        path: '/assistantMetadata/resource',
+        value: undefined,
+      },
+      {
+        op: 'replace',
+        path: '/assistantMetadata/operation',
+        value: undefined,
+      },
     ];
 
     initDynaHFAssistantOptions({ ...props, assistantFieldType: 'version' });
@@ -201,7 +254,6 @@ describe('DynaHFAssistantOptions UI tests', () => {
     expect(mockDispatchFn).toHaveBeenNthCalledWith(1, actions.resource.patchStaged(
       '_exportId',
       patch,
-      'value'
     ));
   });
   test('should display options for resources in the dropdown when assistantFieldType is "resource"', () => {

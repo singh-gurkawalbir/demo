@@ -11,11 +11,11 @@ import {
 import { deepClone } from 'fast-json-patch';
 import { keys, cloneDeep } from 'lodash';
 import { selectors } from '../../../reducers';
-import { SCOPES } from '../../resourceForm';
 import actionTypes from '../../../actions/types';
 import actions from '../../../actions';
 import { apiCallWithRetry } from '../..';
 import { evaluateExternalProcessor } from '../../editor';
+import processorLogic from '../../../reducers/session/editors/processorLogic';
 import { getResource } from '../../resources';
 import {
   requestSampleDataForExports,
@@ -58,11 +58,13 @@ import {
 import { isIntegrationApp } from '../../../utils/flows';
 import { emptyObject } from '../../../constants';
 import { getConstructedResourceObj } from './utils';
+import { getMockOutputFromResource } from '../../../utils/flowDebugger';
+import { loadFlowResourceUIFields } from '../../uiFields';
 
 const VALID_RESOURCE_TYPES_FOR_FLOW_DATA = ['flows', 'exports', 'imports', 'connections'];
 
 export function* _initFlowData({ flowId, resourceId, resourceType, refresh, formKey }) {
-  const { merged: flow } = yield select(selectors.resourceData, 'flows', flowId, SCOPES.VALUE);
+  const { merged: flow } = yield select(selectors.resourceData, 'flows', flowId);
   const clonedFlow = deepClone(flow || {});
 
   if (isNewId(flowId)) {
@@ -75,7 +77,6 @@ export function* _initFlowData({ flowId, resourceId, resourceType, refresh, form
       selectors.resourceData,
       resourceType,
       resourceId,
-      SCOPES.VALUE
     ))?.merged || emptyObject;
     const isPageGenerator = resourceType === 'exports' && !resource.isLookup;
     const processorType = isPageGenerator ? 'pageGenerators' : 'pageProcessors';
@@ -126,6 +127,8 @@ export function* requestSampleData({
   // isInitialized prop is passed explicitly from internal sagas calling this Saga
   if (!isInitialized) {
     yield call(_initFlowData, { flowId, resourceId, resourceType, refresh, formKey });
+    // loads the UI fields for the resource if not already loaded
+    yield call(loadFlowResourceUIFields, { flowId });
   }
 
   if (refresh) {
@@ -258,13 +261,16 @@ export function* fetchPageGeneratorPreview({ flowId, _pageGeneratorId }) {
     selectors.resourceData,
     'connections',
     resource._connectionId,
-    SCOPES.VALUE
   );
-  const { merged: flow = {} } = yield select(selectors.resourceData, 'flows', flowId, SCOPES.VALUE);
+  const { merged: flow = {} } = yield select(selectors.resourceData, 'flows', flowId);
 
   let previewData;
 
-  if (isBlobTypeResource(resource)) {
+  const mockOutput = getMockOutputFromResource(resource);
+
+  if (mockOutput) {
+    previewData = mockOutput;
+  } else if (isBlobTypeResource(resource)) {
     // Incase of Blob resource, sample data ( Blob type ) is uploaded to S3 in real time
     // So, its key (blobKey) is the sample data
     previewData = getBlobResourceSampleData();
@@ -303,11 +309,9 @@ export function* fetchPageGeneratorPreview({ flowId, _pageGeneratorId }) {
 }
 
 export function* _processData({ flowId, resourceId, processorData, stage }) {
-  const { wrapInArrayProcessedData, removeDataPropFromProcessedData } =
+  const { wrapInArrayProcessedData, removeDataPropFromProcessedData, isFilterScript, sampleData } =
     processorData || {};
-  const processedData = yield call(evaluateExternalProcessor, {
-    processorData,
-  });
+  const processedData = yield call(evaluateExternalProcessor, { processorData });
 
   yield call(updateStateForProcessorData, {
     flowId,
@@ -316,6 +320,8 @@ export function* _processData({ flowId, resourceId, processorData, stage }) {
     processedData,
     wrapInArrayProcessedData,
     removeDataPropFromProcessedData,
+    isFilterScript,
+    sampleData,
   });
 }
 
@@ -364,6 +370,71 @@ export function* _processMappingData({
   );
 }
 
+// response transform only works on _json part of mockResponse
+// after transform is evaluated merge it into _json of mockResponse
+export function* _processResponseTransformData({ flowId, resourceId, resource, processorData, stage, hasNoRulesToProcess }) {
+  const { wrapInArrayProcessedData, removeDataPropFromProcessedData } =
+    processorData || {};
+  const {mockResponse} = resource || {};
+  let processedData;
+
+  if (!hasNoRulesToProcess) {
+    const transformedData = yield call(evaluateExternalProcessor, {
+      processorData,
+    });
+
+    processedData = mockResponse ? {
+      data: [
+        {
+          ...mockResponse[0],
+          _json: transformedData?.data[0] || transformedData?.data || transformedData,
+        },
+      ],
+    } : transformedData;
+  } else {
+    processedData = { data: mockResponse };
+  }
+
+  yield call(updateStateForProcessorData, {
+    flowId,
+    resourceId,
+    stage,
+    processedData,
+    wrapInArrayProcessedData,
+    removeDataPropFromProcessedData,
+  });
+}
+
+export function* _getContextSampleData({ data, editorType, resourceType, resourceId, flowId }) {
+  const fieldPath = (editorType === 'inputFilter' && resourceType === 'exports') ? 'inputFilter' : 'filter';
+  const flow = yield select(selectors.resource, 'flows', flowId);
+  const resource = yield select(selectors.resource, resourceType, resourceId);
+  const body = {
+    sampleData: data,
+    templateVersion: 2,
+    flowId,
+    integrationId: flow?._integrationId,
+    fieldPath,
+  };
+
+  body[resourceType === 'imports' ? 'import' : 'export'] = { ...resource, oneToMany: false };
+
+  try {
+    const response = yield call(apiCallWithRetry, {
+      path: '/processors/handleBar/getContext',
+      opts: {
+        method: 'POST',
+        body,
+      },
+      hidden: true,
+    });
+
+    return response?.context;
+  } catch (e) {
+    return data;
+  }
+}
+
 export function* requestProcessorData({
   flowId,
   resourceId,
@@ -379,7 +450,12 @@ export function* requestProcessorData({
     selectors.resourceData,
     resourceType,
     resourceId,
-    SCOPES.VALUE
+  );
+  const isPageGeneratorExport = yield select(
+    selectors.isPageGenerator,
+    flowId,
+    resourceId,
+    resourceType
   );
 
   let processorData;
@@ -434,6 +510,76 @@ export function* requestProcessorData({
           },
           editorType: 'javascript',
           wrapInArrayProcessedData: true,
+        };
+      } else {
+        hasNoRulesToProcess = true;
+      }
+    } else {
+      hasNoRulesToProcess = true;
+    }
+    if (stage === 'responseTransform') {
+      return yield call(_processResponseTransformData, {
+        flowId,
+        resource,
+        resourceId,
+        processorData,
+        hasNoRulesToProcess,
+        stage,
+      });
+    }
+  } else if (['outputFilter', 'inputFilter'].includes(stage)) {
+    let filterDoc;
+    let editorType;
+
+    if (stage === 'inputFilter') {
+      editorType = 'inputFilter';
+      filterDoc = resource[resourceType === 'exports' ? 'inputFilter' : 'filter'] || {};
+    } else {
+      editorType = isPageGeneratorExport ? 'exportFilter' : 'outputFilter';
+      filterDoc = resource.filter || {};
+    }
+    // call getContext to get canonical sample data
+    const sampleData = yield call(_getContextSampleData, {
+      data: preProcessedSampleData,
+      resourceId,
+      resourceType,
+      flowId,
+      editorType,
+    });
+
+    // use buildData to get filter/js data
+    const buildData = processorLogic.buildData(editorType);
+    const { filter, javascript } = buildData(undefined, sampleData);
+
+    if (filterDoc.type === 'expression') {
+      if (filterDoc.expression?.rules?.length) {
+        processorData = {
+          data: filter,
+          rule: filterDoc.expression.rules,
+          editorType: 'filter',
+        };
+      } else {
+        hasNoRulesToProcess = true;
+      }
+    } else if (filterDoc.type === 'script') {
+      const { _scriptId, function: entryFunction } = filterDoc.script || {};
+
+      if (_scriptId) {
+        const script = !resource._connectorId ? (yield call(getResource, {
+          resourceType: 'scripts',
+          id: _scriptId,
+        })) : {};
+
+        processorData = {
+          data: javascript,
+          rule: {
+            code: script?.content,
+            entryFunction,
+            scriptId: _scriptId,
+          },
+          editorType: 'javascript',
+          isFilterScript: true,
+          sampleData: preProcessedData,
         };
       } else {
         hasNoRulesToProcess = true;

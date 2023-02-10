@@ -1,4 +1,4 @@
-/* global describe, test, expect ,jest, */
+
 import React from 'react';
 import { screen, waitFor } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
@@ -56,7 +56,7 @@ jest.mock('../Buttons/index', () => ({
   ),
 }));
 
-describe('StartDebugEnhanced UI tests', () => {
+describe('startDebugEnhanced UI tests', () => {
   test('should pass the initial render', async () => {
     DebugEnhanced({
       resourceId: '5f084bff6da99c0abdacb731',
@@ -125,7 +125,7 @@ describe('StartDebugEnhanced UI tests', () => {
     userEvent.click(option);
     userEvent.click(screen.getByRole('option', {name: 'Next 30 minutes'}));
     userEvent.click(screen.getByRole('button', {name: 'Apply'}));
-    expect(mockStartHandler).toBeCalledTimes(1);
+    expect(mockStartHandler).toHaveBeenCalledTimes(1);
     expect(mockStartHandler).toHaveBeenCalledWith('30');
   });
   test('should close the popover when clicked on close button', async () => {
@@ -146,7 +146,7 @@ describe('StartDebugEnhanced UI tests', () => {
     expect(screen.getByText(/Start Debug/i)).toBeInTheDocument();
   });
 });
-describe('Use cases where debug date is after current moment', () => {
+describe('use cases where debug date is after current moment', () => {
   test('should call the respective callback function when clicked on Stop Debug button', () => {
     DebugEnhanced({
       resourceId: '5f084bff6da99c0abdacb731',
@@ -158,7 +158,7 @@ describe('Use cases where debug date is after current moment', () => {
     });
     waitFor(() => expect(screen.getByText(/Stop Debug/i)).toBeInTheDocument());
     waitFor(() => userEvent.click(screen.getByText(/Stop Debug/i)));
-    waitFor(() => expect(mockStartHandler).toBeCalledTimes(1));
+    waitFor(() => expect(mockStartHandler).toHaveBeenCalledTimes(1));
   });
   test('should hide the other options when clicked on an option and theen on apply button', async () => {
     const props = {

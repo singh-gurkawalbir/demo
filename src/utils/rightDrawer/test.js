@@ -1,5 +1,3 @@
-/* global expect, describe, test */
-
 import { buildDrawerUrl, drawerPaths } from '.';
 
 describe('buildDrawerUrl testcases', () => {

@@ -101,7 +101,7 @@ export default {
       newValues['/http/auth/token/refreshMediaType'] = undefined;
     }
 
-    if (newValues['/http/auth/type'] === 'token') {
+    if (newValues['/http/auth/type'] === 'token' || newValues['/http/auth/type'] === 'oauth') {
       if (newValues['/http/auth/token/scheme'] === 'Custom') {
         newValues['/http/auth/token/scheme'] = newValues['/http/customAuthScheme'];
       }
@@ -178,6 +178,7 @@ export default {
     name: {
       fieldId: 'name',
       label: 'Name your connection',
+      isApplicationPlaceholder: true,
     },
     'http.type': {
       fieldId: 'http.type',
@@ -191,6 +192,7 @@ export default {
       id: 'mode',
       type: 'radiogroup',
       label: 'Mode',
+      isLoggable: true,
       defaultValue: r => (r && r._agentId ? 'onpremise' : 'cloud'),
       options: [
         {
@@ -271,6 +273,18 @@ export default {
       formId: 'httpOAuth',
       visibleWhenAll: [
         { field: 'http.auth.type', is: ['oauth'] },
+      ],
+    },
+    'http.auth.oauth.oauth1.signatureMethod': {
+      fieldId: 'http.auth.oauth.oauth1.signatureMethod',
+      visibleWhenAll: [
+        { field: 'http.auth.type', is: ['oauth1'] },
+      ],
+    },
+    httpOAuth1: {
+      formId: 'httpOAuth1',
+      visibleWhenAll: [
+        { field: 'http.auth.type', is: ['oauth1'] },
       ],
     },
     httpWsse: {
@@ -412,6 +426,23 @@ export default {
                 'httpRefreshToken',
                 'httpWsse',
               ],
+              containers: [{
+                fields: [
+                  'http.auth.oauth.oauth1.signatureMethod',
+                ],
+                containers: [
+                  {
+                    type: 'indent',
+                    containers: [
+                      {
+                        fields: [
+                          'httpOAuth1',
+                        ],
+                      },
+                    ],
+                  },
+                ],
+              }],
             }],
           },
           {

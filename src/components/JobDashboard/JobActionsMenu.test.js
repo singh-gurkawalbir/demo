@@ -1,4 +1,4 @@
-/* global describe, test, jest, expect, beforeEach, afterEach */
+
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import * as reactRedux from 'react-redux';
@@ -112,7 +112,7 @@ jest.mock('./JobRetriesDialog', () => ({
   ),
 }));
 
-describe('Testsuite for JobActionMenu', () => {
+describe('testsuite for JobActionMenu', () => {
   let mockDispatchFn;
   let useDispatchSpy;
 

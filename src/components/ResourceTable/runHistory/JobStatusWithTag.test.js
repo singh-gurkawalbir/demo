@@ -1,4 +1,4 @@
-/* global test, expect, describe */
+
 import React from 'react';
 import { screen, render } from '@testing-library/react';
 import JobStatusWithTag from './JobStatusWithTag';
@@ -11,7 +11,7 @@ function initJobStatusWithTag(props) {
   return render(ui);
 }
 
-describe('JobStatusWithTag test cases', () => {
+describe('jobStatusWithTag test cases', () => {
   test('should show completed message with errors', () => {
     initJobStatusWithTag({job: {status: 'completedWithErrors'}});
     expect(screen.getByText('Completed')).toBeInTheDocument();
@@ -36,7 +36,7 @@ describe('JobStatusWithTag test cases', () => {
     initJobStatusWithTag({job: {status: 'completed', numOpenError: 1}});
     expect(screen.getByText('Completed')).toBeInTheDocument();
   });
-  test('should show complete with errors and error', () => {
+  test('should show complete with errors and error duplicate', () => {
     initJobStatusWithTag({job: {status: 'completed', numOpenError: 1}});
     expect(screen.getByText('Completed')).toBeInTheDocument();
   });

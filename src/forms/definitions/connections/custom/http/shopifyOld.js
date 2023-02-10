@@ -4,6 +4,7 @@ export default {
 
     if (retValues['/http/auth/type'] === 'oauth') {
       retValues['/http/auth/token/location'] = 'header';
+      retValues['/http/auth/oauth/useIClientFields'] = false;
       retValues['/http/auth/oauth/authURI'] = `https://${
         formValues['/http/storeURL'] || formValues['/http/storeName']
       }.myshopify.com/admin/oauth/authorize`;
@@ -135,6 +136,7 @@ export default {
       id: 'http.auth.type',
       type: 'select',
       label: 'Authentication type',
+      isLoggable: true,
       helpKey: 'shopify.connection.http.auth.type',
       options: [
         {
@@ -148,11 +150,7 @@ export default {
       defaultValue: r => {
         const authType = r && r.http && r.http.auth && r.http.auth.type;
 
-        if (authType === 'oauth') {
-          return 'oauth';
-        }
-
-        return 'basic';
+        return authType || 'basic';
       },
     },
     'http.storeURL': {

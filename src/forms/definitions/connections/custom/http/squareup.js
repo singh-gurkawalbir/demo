@@ -16,18 +16,46 @@ export default {
       '/type': 'http',
       '/assistant': 'squareup',
       '/http/auth/type': 'oauth',
+      '/http/auth/oauth/useIClientFields': false,
       '/http/mediaType': 'json',
       '/http/ping/relativeURI': '/v2/locations',
-      '/http/baseURI': 'https://connect.squareup.com',
-      '/http/auth/oauth/authURI':
-        'https://connect.squareup.com/oauth2/authorize',
-      '/http/auth/oauth/tokenURI': 'https://connect.squareup.com/oauth2/token',
+      '/http/baseURI': `https://connect.${formValues['/accountType'] === 'sandbox' ? 'squareupsandbox' : 'squareup'}.com/`,
+      '/http/auth/oauth/authURI': `https://connect.${formValues['/accountType'] === 'sandbox' ? 'squareupsandbox' : 'squareup'}.com/oauth2/authorize`,
+      '/http/auth/oauth/tokenURI': `https://connect.${formValues['/accountType'] === 'sandbox' ? 'squareupsandbox' : 'squareup'}.com/oauth2/token`,
+      '/http/auth/token/refreshMethod': 'POST',
+      '/http/auth/token/refreshMediaType': 'urlencoded',
       '/http/auth/oauth/scopeDelimiter': ' ',
       '/http/ping/method': 'GET',
     };
   },
   fieldMap: {
     name: { fieldId: 'name' },
+    accountType: {
+      id: 'accountType',
+      type: 'select',
+      label: 'Account type',
+      required: true,
+      options: [
+        {
+          items: [
+            { label: 'Production', value: 'production' },
+            { label: 'Sandbox', value: 'sandbox' },
+          ],
+        },
+      ],
+      helpKey: 'squareup.connection.accountType',
+      defaultValue: r => {
+        const baseUri = r && r.http && r.http.baseURI;
+
+        if (baseUri) {
+          if (baseUri.indexOf('squareupsandbox') !== -1) {
+            return 'sandbox';
+          }
+
+          return 'production';
+        }
+      },
+    },
     'http.auth.oauth.scope': {
       fieldId: 'http.auth.oauth.scope',
       defaultValue: r =>
@@ -73,6 +101,22 @@ export default {
         return [{ field: 'http.auth.type', is: ['oauth'] }];
       },
     },
+    'http._iClientId': {
+      fieldId: 'http._iClientId',
+      required: true,
+      filter: { provider: 'custom_oauth2' },
+      type: 'dynaiclient',
+      connectionId: r => r && r._id,
+      connectorId: r => r && r._connectorId,
+      ignoreEnvironmentFilter: true,
+      helpKey: 'squareup.connection.http._iClientId',
+      visibleWhenAll: [{field: 'accountType', is: ['sandbox']}],
+    },
+    'http.auth.oauth.callbackURL': {
+      fieldId: 'http.auth.oauth.callbackURL',
+      copyToClipboard: true,
+      visibleWhenAll: [{field: 'accountType', is: ['sandbox']}],
+    },
     application: {
       fieldId: 'application',
     },
@@ -84,7 +128,7 @@ export default {
       { collapsed: true, label: 'General', fields: ['name', 'application'] },
       { collapsed: true,
         label: 'Application details',
-        fields: ['http.auth.oauth.scope'] },
+        fields: ['accountType', 'http.auth.oauth.scope', 'http._iClientId', 'http.auth.oauth.callbackURL'] },
       { collapsed: true, label: 'Advanced', fields: ['httpAdvanced'] },
     ],
   },

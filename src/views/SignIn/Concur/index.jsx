@@ -2,7 +2,7 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import { makeStyles, Typography } from '@material-ui/core';
 import SigninForm from './SignInForm';
-import messageStore from '../../../utils/messageStore';
+import messageStore, { message } from '../../../utils/messageStore';
 import { selectors } from '../../../reducers';
 import InfoIcon from '../../../components/icons/InfoIcon';
 import { SIGN_UP_SUCCESS } from '../../../constants';
@@ -10,9 +10,14 @@ import getImageUrl from '../../../utils/image';
 
 const useStyles = makeStyles(theme => ({
   wrapper: {
-    maxWidth: '770px',
     margin: '0 auto',
     position: 'relative',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '100%',
+    height: '100vh',
+    background: theme.palette.background.paper,
   },
   logo: {
     margin: '0 0 40px 0',
@@ -23,17 +28,18 @@ const useStyles = makeStyles(theme => ({
   },
   signinWrapper: {
     background: theme.palette.background.paper,
-    width: '100%',
+    width: '770px',
+    height: '100vh',
     border: '0px none',
-    height: '679px',
     textAlign: 'center',
     position: 'relative',
     zIndex: 1,
     overflow: 'inherit !important',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   signinWrapperContent: {
-    width: '2500px',
-    height: '679px',
     display: 'table-cell',
     verticalAlign: 'middle',
     padding: '10px 0',
@@ -109,9 +115,9 @@ const Title = ({ isMFAAuthRequired }) => {
   let infoMessage;
 
   if (isAccountUser) {
-    infoMessage = messageStore(noOfDays ? 'MFA_USER_OTP_INFO_FOR_TRUSTED_NUMBER_OF_DAYS' : 'MFA_USER_OTP_INFO', { noOfDays });
+    infoMessage = messageStore(noOfDays ? messageStore('MFA.USER_OTP_INFO_FOR_TRUSTED_NUMBER_OF_DAYS', { noOfDays }) : message.MFA.USER_OTP_INFO);
   } else {
-    infoMessage = messageStore('MFA_OWNER_OTP_INFO');
+    infoMessage = message.MFA.OWNER_OTP_INFO;
   }
 
   return (
@@ -148,9 +154,9 @@ export default function Signin(props) {
             </Typography>
             )
           }
-          <p>
-            If you are a new user and do not have an integrator.io account, click&nbsp;<a className="external-link" href="https://concursolutions.com">here.</a>
-          </p>
+          <Typography>
+            {messageStore('USER_SIGN_IN.NEW_USER_IO', {link: '<a className="external-link" href="https://concursolutions.com">here.</a>' })}
+          </Typography>
           <SigninForm
             {...props}
             dialogOpen={false}

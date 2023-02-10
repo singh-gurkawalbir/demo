@@ -1,10 +1,9 @@
-/* global describe, test, expect */
 import React from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import {fireEvent, screen} from '@testing-library/react';
 import { renderWithProviders } from '../../../test/test-utils';
 import ButtonWithTooltip from './index';
-import messageStore from '../../../utils/messageStore';
+import { message } from '../../../utils/messageStore';
 import TextButton from '../TextButton';
 
 import TrashIcon from '../../icons/TrashIcon';
@@ -13,10 +12,10 @@ function handleDeleteFlowGroupClick() {
 
 }
 
-describe('Buttontooltip component test', () => {
-  test('Before hovering over the button the title is displayed', () => {
+describe('buttontooltip component test', () => {
+  test('before hovering over the button the title is displayed', () => {
     renderWithProviders(
-      <ButtonWithTooltip tooltipProps={{title: messageStore('FLOW_GROUP_DELETE_MESSAGE') }}>
+      <ButtonWithTooltip tooltipProps={{title: message.FLOWS.FLOW_GROUP_DELETE_MESSAGE }}>
         <TextButton onClick={handleDeleteFlowGroupClick} startIcon={<TrashIcon />}> Delete flow group </TextButton>
       </ButtonWithTooltip>
     );
@@ -29,9 +28,9 @@ describe('Buttontooltip component test', () => {
     fireEvent.click(ButtonName1);
   });
 
-  test('Whenever hovering over the button then title is disappeared', () => {
+  test('whenever hovering over the button then title is disappeared', () => {
     renderWithProviders(
-      <ButtonWithTooltip tooltipProps={{title: messageStore('FLOW_GROUP_DELETE_MESSAGE') }}>
+      <ButtonWithTooltip tooltipProps={{title: message.FLOWS.FLOW_GROUP_DELETE_MESSAGE }}>
         <TextButton onClick={handleDeleteFlowGroupClick} startIcon={<TrashIcon />}> Delete flow group </TextButton>
       </ButtonWithTooltip>
     );
@@ -47,9 +46,9 @@ describe('Buttontooltip component test', () => {
     expect(Title3).not.toBeInTheDocument();
   });
 
-  test('Whenever hovering over the button then title is disappeared', () => {
+  test('whenever hovering over the button then title is disappeared duplicate', () => {
     renderWithProviders(
-      <ButtonWithTooltip tooltipProps={{title: messageStore('FLOW_GROUP_DELETE_MESSAGE') }}>
+      <ButtonWithTooltip tooltipProps={{title: message.FLOWS.FLOW_GROUP_DELETE_MESSAGE}}>
         <TextButton onClick={handleDeleteFlowGroupClick} startIcon={<TrashIcon />}> Delete flow group </TextButton>
       </ButtonWithTooltip>
     );
@@ -58,7 +57,7 @@ describe('Buttontooltip component test', () => {
     expect(NewFlow1).toBeInTheDocument();
     fireEvent.mouseOver(screen.getByTitle('Only the flow group will be deleted. Its flows will be moved into “Unassigned”.'));
   });
-  test('Whenever no title is passed', () => {
+  test('whenever no title is passed', () => {
     renderWithProviders(
       <ButtonWithTooltip tooltipProps={{title: ''}}>
         <TextButton onClick={handleDeleteFlowGroupClick} startIcon={<TrashIcon />}> Delete flow group </TextButton>
@@ -67,6 +66,5 @@ describe('Buttontooltip component test', () => {
     const NewFlow1 = screen.getByRole('button', {name: /Delete flow group/i});
 
     expect(NewFlow1).toBeInTheDocument();
-    fireEvent.mouseOver(screen.getByTitle(''));
   });
 });

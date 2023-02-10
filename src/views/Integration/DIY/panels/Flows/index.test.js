@@ -1,4 +1,4 @@
-/* global describe, test, expect, jest */
+/* eslint-disable jest/no-export */
 import React from 'react';
 import {screen, waitFor} from '@testing-library/react';
 import { MemoryRouter, Route} from 'react-router-dom';
@@ -281,7 +281,7 @@ describe('Flows Panel UI tests', () => {
     const props = {integrationId: '62d826bf5645756e8300beac', sectionId: '6257b33a722b313acd1df1bf', conn: '5357b33a722b313acd1df1bf'};
 
     initFlowsPanel(props);
-    const element = document.querySelector('[title="Edit mappings"]');
+    const element = document.querySelector('[title="Add mapping"]');
 
     userEvent.click(element);
     expect(screen.getByText('Mapping Drawer')).toBeInTheDocument();       // mocked component//
@@ -290,7 +290,7 @@ describe('Flows Panel UI tests', () => {
     const props = {integrationId: '62d826bf5645756e8300beac', sectionId: '6257b33a722b313acd1df1bf', conn: '5357b33a722b313acd1df1bf'};
 
     initFlowsPanel(props);
-    const element = document.querySelector('[title="Configure all steps to allow scheduling your flow"]');
+    const element = document.querySelector('[title="Remove or configure all unconfigured flow steps to edit the flow schedule"]');
 
     userEvent.click(element);
     expect(screen.getByText('Schedule Drawer')).toBeInTheDocument();       // mocked component//

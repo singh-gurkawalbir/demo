@@ -1,4 +1,4 @@
-/* global describe, test, expect */
+
 import reducer, { selectors } from '.';
 import actions from '../../../actions';
 import {FORM_SAVE_STATUS} from '../../../constants';
@@ -14,7 +14,7 @@ describe('session.resourceForm form reducers', () => {
   const key = `${resourceType}-${resourceId}`;
   const oldState = { 'new-1234': 'ab123' };
   const bundleUrl = 'https://*******.app.netsuite.com/app/bundler/bundledetails.nl?sourcecompanyid=*****&domain=PRODUCTION&config=F&id=***';
-  const bundleVersion = '1.0';
+  const suiteAppUrl = 'https://*******.app.netsuite.com/app/bundler/suiteappdetails.nl?sourcecompanyid=*****&domain=PRODUCTION&config=F&id=***';
   const formValues = {
     '/type': 'http',
     '/assistant': 'googleshopping',
@@ -130,7 +130,7 @@ describe('session.resourceForm form reducers', () => {
 
       const state = reducer(tempState, actions.resourceForm.clearInitData('exports', resourceId));
 
-      expect(state[key].initComplete).toEqual(false);
+      expect(state[key].initComplete).toBe(false);
     });
   });
   describe('RESOURCE_FORM.SUBMIT action', () => {
@@ -163,11 +163,10 @@ describe('session.resourceForm form reducers', () => {
 
       const oldState = { [exportsKey]: {} };
 
-      const state = reducer(oldState, actions.resourceForm.showBundleInstallNotification(bundleVersion, bundleUrl, 'exports', resourceId));
+      const state = reducer(oldState, actions.resourceForm.showBundleInstallNotification(bundleUrl, 'exports', resourceId));
 
       const expected = {
         [exportsKey]: {
-          bundleVersion,
           bundleUrl,
           showBundleInstallNotification: true }};
 
@@ -185,6 +184,37 @@ describe('session.resourceForm form reducers', () => {
       const expected = {
         [exportsKey]: {
           showBundleInstallNotification: false }};
+
+      expect(state).toEqual(expected);
+    });
+  });
+  describe('RESOURCE_FORM.SHOW_SUITEAPP_INSTALL_NOTIFICATION action', () => {
+    test('should store the bundle install notification data', () => {
+      const exportsKey = `exports-${resourceId}`;
+
+      const oldState = { [exportsKey]: {} };
+
+      const state = reducer(oldState, actions.resourceForm.showSuiteAppInstallNotification(suiteAppUrl, 'exports', resourceId));
+
+      const expected = {
+        [exportsKey]: {
+          suiteAppUrl,
+          showSuiteAppInstallNotification: true }};
+
+      expect(state).toEqual(expected);
+    });
+  });
+  describe('RESOURCE_FORM.HIDE_SUITEAPP_INSTALL_NOTIFICATION action', () => {
+    test('should hide bundle install notification data', () => {
+      const exportsKey = `exports-${resourceId}`;
+
+      const oldState = { [exportsKey]: {} };
+
+      const state = reducer(oldState, actions.resourceForm.hideSuiteAppInstallNotification('exports', resourceId));
+
+      const expected = {
+        [exportsKey]: {
+          showSuiteAppInstallNotification: false }};
 
       expect(state).toEqual(expected);
     });
@@ -251,7 +281,7 @@ describe('session.resourceForm form reducers', () => {
   });
   describe('resourceFormSaveProcessTerminated selector', () => {
     test('should return false when state is undefined', () => {
-      expect(selectors.resourceFormSaveProcessTerminated(undefined)).toEqual(false);
+      expect(selectors.resourceFormSaveProcessTerminated(undefined)).toBe(false);
     });
     test('should return valid form state', () => {
       const stateAborted = reducer(undefined, actions.resourceForm.submitAborted(resourceType, resourceId));
@@ -260,10 +290,10 @@ describe('session.resourceForm form reducers', () => {
       const stateCompleted = reducer(undefined, actions.resourceForm.submitComplete(resourceType, resourceId));
       const stateCleared = reducer(undefined, actions.resourceForm.clear(resourceType, resourceId));
 
-      expect(selectors.resourceFormSaveProcessTerminated(stateAborted, resourceType, resourceId)).toEqual(true);
-      expect(selectors.resourceFormSaveProcessTerminated(stateFailed, resourceType, resourceId)).toEqual(true);
-      expect(selectors.resourceFormSaveProcessTerminated(stateCompleted, resourceType, resourceId)).toEqual(true);
-      expect(selectors.resourceFormSaveProcessTerminated(stateCleared, resourceType, resourceId)).toEqual(false);
+      expect(selectors.resourceFormSaveProcessTerminated(stateAborted, resourceType, resourceId)).toBe(true);
+      expect(selectors.resourceFormSaveProcessTerminated(stateFailed, resourceType, resourceId)).toBe(true);
+      expect(selectors.resourceFormSaveProcessTerminated(stateCompleted, resourceType, resourceId)).toBe(true);
+      expect(selectors.resourceFormSaveProcessTerminated(stateCleared, resourceType, resourceId)).toBe(false);
     });
   });
 });

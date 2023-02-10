@@ -1,8 +1,7 @@
 import { call, takeEvery, put, select, takeLatest } from 'redux-saga/effects';
-import shortid from 'shortid';
+import { generateId } from '../../utils/string';
 import actionTypes from '../../actions/types';
 import actions from '../../actions';
-import { SCOPES } from '../resourceForm';
 import { selectors } from '../../reducers';
 import { commitStagedChanges } from '../resources';
 import { requestSampleData } from '../sampleData/flows';
@@ -63,7 +62,7 @@ export function* responseMappingInit({ flowId, resourceId, resourceType }) {
     actions.responseMapping.initComplete({
       mappings: mappings.map(m => ({
         ...m,
-        key: shortid.generate(),
+        key: generateId(),
       })),
       flowId,
       resourceId,
@@ -114,11 +113,10 @@ export function* responseMappingSave() {
     value: mappingsWithListsAndFields,
   });
 
-  yield put(actions.resource.patchStaged(flowId, patchSet, SCOPES.VALUE));
+  yield put(actions.resource.patchStaged(flowId, patchSet));
   const error = yield call(commitStagedChanges, {
     resourceType: 'flows',
     id: flowId,
-    scope: SCOPES.VALUE,
   });
 
   // trigger save failed in case of error

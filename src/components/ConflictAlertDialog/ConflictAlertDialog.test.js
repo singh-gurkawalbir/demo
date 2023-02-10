@@ -1,4 +1,4 @@
-/* global describe, test, expect ,jest, beforeAll, afterAll */
+
 import React from 'react';
 import { screen} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -8,7 +8,7 @@ import actions from '../../actions/index';
 
 const { location } = window;
 
-describe('ConflictAlertDialog testing', () => {
+describe('conflictAlertDialog testing', () => {
   beforeAll(() => {
     delete window.location;
     window.location = { reload: jest.fn() };
@@ -25,7 +25,7 @@ describe('ConflictAlertDialog testing', () => {
   test('should test when some value is present in the store commmit conflict', () => {
     const {store} = renderWithProviders(<ConflictAlertDialog />);
 
-    store.dispatch(actions.resource.commitConflict('1', [{path: '//', value: '12'}], 'scope'));
+    store.dispatch(actions.resource.commitConflict('1', [{path: '//', value: '12'}]));
 
     expect(screen.getByText('Resource conflict for resourceId: 1')).toBeInTheDocument();
     expect(screen.getByText('//')).toBeInTheDocument();
@@ -35,7 +35,7 @@ describe('ConflictAlertDialog testing', () => {
   test('should test for non string value', () => {
     const {store} = renderWithProviders(<ConflictAlertDialog />);
 
-    store.dispatch(actions.resource.commitConflict('1', [{path: '//', value: 12}], 'scope'));
+    store.dispatch(actions.resource.commitConflict('1', [{path: '//', value: 12}]));
 
     expect(screen.getByText('Resource conflict for resourceId: 1')).toBeInTheDocument();
     expect(screen.getByText('//')).toBeInTheDocument();
@@ -45,7 +45,7 @@ describe('ConflictAlertDialog testing', () => {
   test('should click on refresh button', () => {
     const {store} = renderWithProviders(<ConflictAlertDialog />);
 
-    store.dispatch(actions.resource.commitConflict('1', [{path: '//', value: '12'}], 'scope'));
+    store.dispatch(actions.resource.commitConflict('1', [{path: '//', value: '12'}]));
 
     const refresh = screen.getByText('Refresh');
 

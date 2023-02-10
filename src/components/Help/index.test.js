@@ -1,11 +1,11 @@
-/* global describe, test, expect, */
+
 import React from 'react';
 import {screen, waitFor} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import {renderWithProviders} from '../../test/test-utils';
 import Help from '.';
 
-describe('Help UI tests', () => {
+describe('help UI tests', () => {
   test('should render the help icon', () => {
     const props = {
       helpText: 'Sample help text',
@@ -49,8 +49,6 @@ describe('Help UI tests', () => {
 
     expect(thumbsdown).toBeInTheDocument();
     userEvent.click(thumbsdown);
-    screen.debug(undefined, Infinity);
-
     await waitFor(() => expect(screen.getByRole('textbox')).toBeInTheDocument());
     const field = screen.getByPlaceholderText('How can we make this information more helpful?');
 

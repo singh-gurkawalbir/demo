@@ -1,4 +1,4 @@
-/* global describe, expect, test */
+
 import React from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { screen } from '@testing-library/react';
@@ -67,7 +67,7 @@ function initImports(data = []) {
 
   renderWithProviders(ui, {initialStore});
 }
-describe('Test suite for oldValue', () => {
+describe('test suite for oldValue', () => {
   const testDate = new Date('2018-12-24T10:33:30.000+05:30');
 
   test('should render the table and display the old value of auditlog', () => {
@@ -121,7 +121,7 @@ describe('Test suite for oldValue', () => {
     }];
 
     initImports(data);
-    const clickToViewButton = screen.getByText('Click to view');
+    const clickToViewButton = screen.getByText('View');
 
     expect(clickToViewButton).toBeInTheDocument();
 

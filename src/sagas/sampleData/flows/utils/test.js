@@ -1,11 +1,8 @@
 
-/* global describe, test */
-
 import { select, call } from 'redux-saga/effects';
 import { expectSaga } from 'redux-saga-test-plan';
 import { selectors } from '../../../../reducers';
 import { getConstructedResourceObj } from '.';
-import { SCOPES } from '../../../resourceForm';
 import { constructResourceFromFormValues } from '../../../utils';
 
 describe('flow sample data util sagas', () => {
@@ -25,9 +22,9 @@ describe('flow sample data util sagas', () => {
         rest: {},
       };
 
-      return expectSaga(getConstructedResourceObj, { resourceId, resourceType })
+      expectSaga(getConstructedResourceObj, { resourceId, resourceType })
         .provide([
-          [select(selectors.resourceData, resourceType, resourceId, SCOPES.VALUE), { merged: resource }],
+          [select(selectors.resourceData, resourceType, resourceId), { merged: resource }],
         ])
         .returns(resource)
         .run();
@@ -39,7 +36,7 @@ describe('flow sample data util sagas', () => {
         rest: {},
       };
 
-      return expectSaga(getConstructedResourceObj, { resourceId, resourceType, formKey })
+      expectSaga(getConstructedResourceObj, { resourceId, resourceType, formKey })
         .provide([
           [select(selectors.formState, formKey), { value: {} }],
           [call(constructResourceFromFormValues, {formValues: {}, resourceType, resourceId }), resource],
@@ -60,40 +57,38 @@ describe('flow sample data util sagas', () => {
         oneToMany: true,
         rest: {},
       };
-      const testWithFormKey = expectSaga(getConstructedResourceObj, { resourceId, resourceType, formKey })
+
+      expectSaga(getConstructedResourceObj, { resourceId, resourceType, formKey })
         .provide([
           [select(selectors.formState, formKey), { value: {} }],
           [call(constructResourceFromFormValues, {formValues: {}, resourceType, resourceId }), resource],
         ])
         .returns(updatedResource)
         .run();
-      const testWithoutFormKey = expectSaga(getConstructedResourceObj, { resourceId, resourceType })
+      expectSaga(getConstructedResourceObj, { resourceId, resourceType })
         .provide([
-          [select(selectors.resourceData, resourceType, resourceId, SCOPES.VALUE), { merged: resource }],
+          [select(selectors.resourceData, resourceType, resourceId), { merged: resource }],
         ])
         .returns(updatedResource)
         .run();
-
-      return testWithFormKey && testWithoutFormKey;
     });
     test('should return empty object if there is no resource associated with passed resourceId', () => {
       const resource = undefined;
       const resourceId = 'invalid-id';
-      const testWithFormKey = expectSaga(getConstructedResourceObj, { resourceId, resourceType, formKey })
+
+      expectSaga(getConstructedResourceObj, { resourceId, resourceType, formKey })
         .provide([
           [select(selectors.formState, formKey)],
           [call(constructResourceFromFormValues, {formValues: {}, resourceType, resourceId }), resource],
         ])
         .returns({})
         .run();
-      const testWithoutFormKey = expectSaga(getConstructedResourceObj, { resourceId, resourceType })
+      expectSaga(getConstructedResourceObj, { resourceId, resourceType })
         .provide([
-          [select(selectors.resourceData, resourceType, resourceId, SCOPES.VALUE), { merged: resource }],
+          [select(selectors.resourceData, resourceType, resourceId), { merged: resource }],
         ])
         .returns({})
         .run();
-
-      return testWithFormKey && testWithoutFormKey;
     });
   });
 });

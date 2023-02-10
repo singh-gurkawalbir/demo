@@ -10,7 +10,7 @@ import EllipsisHorizontallIcon from '../../icons/EllipsisHorizontalIcon';
 import DownloadIntegrationIcon from '../../icons/DownloadIntegrationIcon';
 import DownloadIcon from '../../icons/DownloadIcon';
 import PurgeIcon from '../../icons/PurgeIcon';
-import messageStore from '../../../utils/messageStore';
+import { message } from '../../../utils/messageStore';
 import useConfirmDialog from '../../ConfirmDialog';
 
 const useStyle = makeStyles({
@@ -42,7 +42,7 @@ export default function JobActionsMenu({
       icon: <DownloadIcon />,
     });
     menuOptions.push({
-      label: `${job.files.length > 1 ? 'Purge files' : 'Purge file'}`,
+      label: 'Purge files',
       action: 'purgeFiles',
       icon: <PurgeIcon />,
     });
@@ -59,7 +59,7 @@ export default function JobActionsMenu({
   const handleClick = useCallback(() => {
     confirmDialog({
       title: 'Confirm purge files',
-      message: messageStore('FILE_PURGE_CONFIRM_MESSAGE'),
+      message: message.PURGE.FILE_PURGE_CONFIRM_MESSAGE,
       buttons: [
         {
           label: 'Purge files',

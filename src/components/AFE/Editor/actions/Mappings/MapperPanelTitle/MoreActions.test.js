@@ -1,4 +1,4 @@
-/* global describe, test, expect, beforeEach, afterEach, jest */
+
 import React from 'react';
 import {screen, waitFor} from '@testing-library/react';
 import * as reactRedux from 'react-redux';
@@ -26,7 +26,7 @@ function initMoreActions(props = {}) {
   return renderWithProviders(<ConfirmDialogProvider><MoreActions {...props} /></ConfirmDialogProvider>, {initialStore});
 }
 
-describe('MoreActions UI tests', () => {
+describe('moreActions UI tests', () => {
   let mockDispatchFn;
   let useDispatchSpy;
 
@@ -68,7 +68,7 @@ describe('MoreActions UI tests', () => {
     userEvent.click(screen.getByText('Auto-populate destination fields'));
     expect(screen.getByText('Auto-populate')).toBeInTheDocument();
     userEvent.click(screen.getByText('Auto-populate'));
-    await waitFor(() => expect(mockDispatchFn).toBeCalledWith(actions.mapping.v2.autoCreateStructure({}, false)));
+    await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith(actions.mapping.v2.autoCreateStructure({}, false)));
   });
   test('should make a dispatch call and should not display the confirm dialog when clicked on autopopulate when mappings are not present', async () => {
     initMoreActions({importId: '5ea16cd30e2fab71928a6166'});
@@ -76,7 +76,7 @@ describe('MoreActions UI tests', () => {
     userEvent.click(screen.getByRole('button'));
     expect(screen.getByText('Auto-populate destination fields')).toBeInTheDocument();
     userEvent.click(screen.getByText('Auto-populate destination fields'));
-    await waitFor(() => expect(mockDispatchFn).toBeCalledWith(actions.mapping.v2.autoCreateStructure({}, false)));
+    await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith(actions.mapping.v2.autoCreateStructure({}, false)));
   });
   test('should make a dispatch call when clicked on Remove all mappings option', async () => {
     initMoreActions({importId: '5ea16cd30e2fab71928a6166'});
@@ -84,6 +84,6 @@ describe('MoreActions UI tests', () => {
     userEvent.click(screen.getByRole('button'));
     expect(screen.getByText('Remove all mappings')).toBeInTheDocument();
     userEvent.click(screen.getByText('Remove all mappings'));
-    await waitFor(() => expect(mockDispatchFn).toBeCalledWith(actions.mapping.v2.deleteAll(false)));
+    await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith(actions.mapping.v2.deleteAll(false)));
   });
 });

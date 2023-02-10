@@ -1,4 +1,5 @@
-/* global expect, test */
+/* eslint-disable jest/require-top-level-describe */
+
 import React from 'react';
 import { renderWithProviders, reduxStore } from '../../../test/test-utils';
 import useClearAsyncStateOnUnmount from './useClearAsyncStateOnUnmount';

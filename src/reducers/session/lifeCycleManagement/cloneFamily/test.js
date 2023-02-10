@@ -1,4 +1,4 @@
-/* global describe, test, expect */
+
 import reducer, { selectors } from '.';
 import actions from '../../../../actions';
 
@@ -39,7 +39,7 @@ describe('lcm cloneFamily reducer', () => {
       {_id: '6234302c363e683052fdb237', name: 'Revision test (change 1)  ( DEV )', sandbox: false},
     ];
 
-    test('should update status to received and also cloneFamily ', () => {
+    test('should update status to received and also cloneFamily', () => {
       const prevState = reducer({}, actions.integrationLCM.cloneFamily.request(integrationId));
       const currentState = {
         [integrationId]: { status: 'received', cloneFamily },
@@ -59,7 +59,7 @@ describe('lcm cloneFamily reducer', () => {
   describe('CLONE_FAMILY.RECEIVED_ERROR action', () => {
     const error = 'invalid intID';
 
-    test('should update status to error and also error passed ', () => {
+    test('should update status to error and also error passed', () => {
       const prevState = reducer({}, actions.integrationLCM.cloneFamily.request(integrationId));
       const currentState = {
         [integrationId]: { status: 'error', error },
@@ -133,7 +133,7 @@ describe('lcm cloneFamily selectors', () => {
       expect(selectors.cloneFamilyFetchError({ [integrationId]: { status: 'received', cloneFamily: [] }}, integrationId)).toBeUndefined();
       expect(selectors.cloneFamilyFetchError({ [integrationId]: { status: 'requested' } }, integrationId)).toBeUndefined();
     });
-    test('should return the error for the passed integrationId ', () => {
+    test('should return the error for the passed integrationId', () => {
       const error = 'invalid ID';
 
       expect(selectors.cloneFamilyFetchError({ [integrationId]: { status: 'error', error } }, integrationId)).toBe(error);

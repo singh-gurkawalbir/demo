@@ -1,4 +1,3 @@
-/* global describe, test, expect */
 import React from 'react';
 import { MemoryRouter, Route } from 'react-router-dom';
 import { screen, waitFor } from '@testing-library/react';
@@ -28,7 +27,7 @@ async function initTransferList() {
   };
 }
 
-describe('Editors test cases', () => {
+describe('editors test cases', () => {
   runServer();
   test('should pass the initial render with default values/ integration test', async () => {
     mockGetRequestOnce('/api/integrations', []);

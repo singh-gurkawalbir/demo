@@ -1,4 +1,4 @@
-/* global describe, test, expect, beforeEach, jest, afterEach */
+
 import React from 'react';
 import { MemoryRouter, Route } from 'react-router-dom';
 import * as reactRedux from 'react-redux';
@@ -217,7 +217,7 @@ jest.mock('react-router-dom', () => ({
   }),
 }));
 
-describe('ResourceSetupDrawer test cases', () => {
+describe('resourceSetupDrawer test cases', () => {
   runServer();
   let mockDispatchFn;
   let useDispatchSpy;
@@ -254,14 +254,14 @@ describe('ResourceSetupDrawer test cases', () => {
     expect(onCloseButton).toBeInTheDocument();
 
     userEvent.click(onSubmitCompleteButton);
-    expect(mockOnSubmitComplete).toBeCalledTimes(1);
-    expect(mockHistoryReplace).toBeCalledTimes(1);
-    expect(mockHistoryReplace).toBeCalledWith('/integrations/integration_id/setup');
+    expect(mockOnSubmitComplete).toHaveBeenCalledTimes(1);
+    expect(mockHistoryReplace).toHaveBeenCalledTimes(1);
+    expect(mockHistoryReplace).toHaveBeenCalledWith('/integrations/integration_id/setup');
 
     userEvent.click(onCloseButton);
-    expect(mockOnClose).toBeCalledTimes(1);
-    expect(mockHistoryReplace).toBeCalledTimes(2);
-    expect(mockHistoryReplace).toBeCalledWith('/integrations/integration_id/setup');
+    expect(mockOnClose).toHaveBeenCalledTimes(1);
+    expect(mockHistoryReplace).toHaveBeenCalledTimes(2);
+    expect(mockHistoryReplace).toHaveBeenCalledWith('/integrations/integration_id/setup');
   });
 
   test('should pass the initial render with mode ss-install', async () => {
@@ -286,13 +286,13 @@ describe('ResourceSetupDrawer test cases', () => {
     expect(onCloseButton).toBeInTheDocument();
 
     userEvent.click(onSubmitCompleteButton);
-    expect(mockOnSubmitComplete).toBeCalledTimes(1);
-    expect(onSubmitComplete).toBeCalledTimes(1);
-    expect(mockHistoryReplace).toBeCalledTimes(0);
+    expect(mockOnSubmitComplete).toHaveBeenCalledTimes(1);
+    expect(onSubmitComplete).toHaveBeenCalledTimes(1);
+    expect(mockHistoryReplace).toHaveBeenCalledTimes(0);
 
     userEvent.click(onCloseButton);
-    expect(mockOnClose).toBeCalledTimes(1);
-    expect(onClose).toBeCalledTimes(1);
+    expect(mockOnClose).toHaveBeenCalledTimes(1);
+    expect(onClose).toHaveBeenCalledTimes(1);
   });
 
   test('should pass the initial render with different resourceType', async () => {
@@ -316,11 +316,11 @@ describe('ResourceSetupDrawer test cases', () => {
     expect(onCloseButton).toBeInTheDocument();
 
     userEvent.click(onSubmitCompleteButton);
-    expect(mockOnSubmitComplete).toBeCalledTimes(1);
-    expect(handleStackSetupDone).toBeCalledTimes(1);
+    expect(mockOnSubmitComplete).toHaveBeenCalledTimes(1);
+    expect(handleStackSetupDone).toHaveBeenCalledTimes(1);
 
     userEvent.click(onCloseButton);
-    expect(handleStackClose).toBeCalledTimes(1);
+    expect(handleStackClose).toHaveBeenCalledTimes(1);
   });
 
   test('should pass the initial render with new connection Id', async () => {
@@ -393,9 +393,9 @@ describe('ResourceSetupDrawer test cases', () => {
     expect(onSubmitCompleteButton).toBeInTheDocument();
     expect(onCloseButton).toBeInTheDocument();
     userEvent.click(onSubmitCompleteButton);
-    expect(mockOnSubmitComplete).toBeCalledTimes(1);
-    expect(mockHistoryReplace).toBeCalledTimes(1);
-    expect(mockHistoryReplace).toBeCalledWith('/integrations/integration_id/setup/configure/connections/connection_id_3');
+    expect(mockOnSubmitComplete).toHaveBeenCalledTimes(1);
+    expect(mockHistoryReplace).toHaveBeenCalledTimes(1);
+    expect(mockHistoryReplace).toHaveBeenCalledWith('/integrations/integration_id/setup/configure/connections/connection_id_3');
   });
 
   test('should pass the initial render with isauth true', async () => {
@@ -415,9 +415,9 @@ describe('ResourceSetupDrawer test cases', () => {
     expect(onSubmitCompleteButton).toBeInTheDocument();
     expect(onCloseButton).toBeInTheDocument();
     userEvent.click(onSubmitCompleteButton);
-    expect(mockOnSubmitComplete).toBeCalledTimes(1);
-    expect(mockHistoryReplace).toBeCalledTimes(2);
-    expect(mockHistoryReplace).toBeCalledWith('/integrations/integration_id/setup');
+    expect(mockOnSubmitComplete).toHaveBeenCalledTimes(1);
+    expect(mockHistoryReplace).toHaveBeenCalledTimes(2);
+    expect(mockHistoryReplace).toHaveBeenCalledWith('/integrations/integration_id/setup');
 
     userEvent.click(onCloseButton);
   });

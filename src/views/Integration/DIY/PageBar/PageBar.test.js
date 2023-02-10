@@ -1,4 +1,3 @@
-/* global describe, test, expect, jest, beforeEach */
 import React from 'react';
 import { screen, waitFor } from '@testing-library/react';
 import { MemoryRouter, Route } from 'react-router-dom';
@@ -136,7 +135,6 @@ describe('PageBar2 UI tests', () => {
       parentContext: undefined,
       patch: [{op: 'replace', path: '/name', value: " AFE 2.0 refactoring for DB'schanged"}],
       resourceType: 'integrations',
-      scope: 'value',
       type: 'RESOURCE_STAGE_PATCH_AND_COMMIT'});
   });
   test('should test clonebutton', async () => {
@@ -152,7 +150,7 @@ describe('PageBar2 UI tests', () => {
     const store = renderFunction();
 
     await prefAndIntegInStore(store);
-    const deletebutton = screen.getByRole('button', {name: 'Delete integration'});
+    const deletebutton = screen.getByRole('button', {name: 'Uninstall'});
 
     userEvent.click(deletebutton);
     await waitFor(() => expect(screen.getByText('Confirm delete')).toBeInTheDocument());
@@ -189,7 +187,7 @@ describe('PageBar2 UI tests', () => {
     userEvent.click(add);
     expect(mockdispatch).toHaveBeenCalledWith({id: '5ff579d745ceef7dcd797c15', type: 'NTEGRATION_APPS_INSTALLER_INIT_CHILD'});
   });
-  test('should test change child where mode is none ', async () => {
+  test('should test change child where mode is none', async () => {
     await renderWithIntegrationsMode(null);
 
     const select = screen.getByText('AFE 2.0 2');
@@ -202,7 +200,7 @@ describe('PageBar2 UI tests', () => {
     await waitFor(() => expect(screen.queryByText('Select child')).not.toBeInTheDocument());
     expect(mockHistoryPush).toHaveBeenCalledWith('/integrationapps/AFE20refactoringforDBs/5ff579d745ceef7dcd797c15/child/5ff579d745ceef7dcd797c15/flows');
   });
-  test('should test change child (mode install) ', async () => {
+  test('should test change child (mode install)', async () => {
     await renderWithIntegrationsMode('install');
 
     const select = screen.getByText('AFE 2.0 2');
@@ -215,7 +213,7 @@ describe('PageBar2 UI tests', () => {
     await waitFor(() => expect(screen.queryByText('Select child')).not.toBeInTheDocument());
     expect(mockHistoryPush).toHaveBeenCalledWith('/integrationapps/AFE203/5ff579d745ceef7dcd797c17/setup');
   });
-  test('should test change child (mode uninstall) ', async () => {
+  test('should test change child (mode uninstall)', async () => {
     await renderWithIntegrationsMode('uninstall');
 
     const select = screen.getByText('AFE 2.0 2');

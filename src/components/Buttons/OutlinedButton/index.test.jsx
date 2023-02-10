@@ -1,4 +1,3 @@
-/* global describe, test, expect */
 import React from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import {screen, render} from '@testing-library/react';
@@ -6,14 +5,11 @@ import { MemoryRouter } from 'react-router-dom';
 import OutlinedButton from './index';
 import {renderWithProviders} from '../../../test/test-utils';
 
-describe('Outlined Button component test', () => {
+describe('outlined Button component test', () => {
   function handleSaveAndCloseClick() {
   }
-  test('should render the component with content onto the screen', () => {
-    renderWithProviders(<OutlinedButton />);
-  });
 
-  test('test passing string', () => {
+  test('passing string', () => {
     const {container} = render(
       <MemoryRouter>
         <OutlinedButton
@@ -28,7 +24,7 @@ describe('Outlined Button component test', () => {
     expect(test1).toBeInTheDocument();
   });
 
-  test('test passing string', () => {
+  test('passing string duplicate', () => {
     renderWithProviders(
       <MemoryRouter>
         <OutlinedButton
@@ -43,7 +39,7 @@ describe('Outlined Button component test', () => {
     expect(test2).toBeInTheDocument();
   });
 
-  test('test passing number', () => {
+  test('passing number', () => {
     renderWithProviders(
       <MemoryRouter>
         <OutlinedButton

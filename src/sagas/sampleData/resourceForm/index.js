@@ -1,4 +1,4 @@
-import { select, takeLatest, call, put, delay } from 'redux-saga/effects';
+import { select, takeLatest, call, put } from 'redux-saga/effects';
 import actionTypes from '../../../actions/types';
 import actions from '../../../actions';
 import { selectors } from '../../../reducers';
@@ -10,7 +10,7 @@ import {
   isFileAdaptor,
   isAS2Resource,
   isNewId } from '../../../utils/resource';
-import { getFormattedResourceForPreview } from '../../../utils/flowData';
+import { getFormattedResourceForPreview, updateHTTP2Metadata } from '../../../utils/flowData';
 import {
   _fetchResourceInfoFromFormKey,
   extractFileSampleDataProps,
@@ -83,6 +83,12 @@ export function* _requestExportPreviewData({ formKey, executeProcessors = false 
   // 'getFormattedResourceForPreview' util removes unnecessary props of resource that should not be sent in preview calls
   const body = getFormattedResourceForPreview(resourceObj);
 
+  // for resource form we should not send the mockOutput in case of exports
+  // else preview call may fail because of validations on mockOutput
+  if (body.mockOutput) {
+    delete body.mockOutput;
+  }
+
   if (!executeProcessors) {
     delete body.transform;
     delete body.hooks;
@@ -110,10 +116,12 @@ export function* _requestExportPreviewData({ formKey, executeProcessors = false 
     body.test = { limit: recordSize };
   }
 
+  const finalBody = updateHTTP2Metadata(body, formKey);
+
   try {
     const previewData = yield call(apiCallWithRetry, {
       path,
-      opts: { method: 'POST', body },
+      opts: { method: 'POST', body: finalBody },
       hidden: true,
     });
 
@@ -318,7 +326,7 @@ export function* _requestLookupSampleData({ formKey, refreshCache = false }) {
   const recordSize = yield select(selectors.sampleDataRecordSize, resourceId);
   // exclude sampleData property if exists on pageProcessor Doc
   // as preview call considers sampleData to show instead of fetching
-  const { transform, filter, hooks, sampleData, ...constructedResourceObj } = resourceObj;
+  const { transform, filter, hooks, sampleData, mockOutput, ...constructedResourceObj } = resourceObj;
 
   let _pageProcessorDoc = constructedResourceObj;
 
@@ -358,7 +366,7 @@ export function* _requestPageProcessorSampleData({ formKey, refreshCache = false
 
   // exclude sampleData property if exists on pageProcessor Doc
   // as preview call considers sampleData to show instead of fetching
-  const { sampleData, ...constructedResourceObj } = resourceObj;
+  const { sampleData, mockResponse, ...constructedResourceObj } = resourceObj;
 
   let _pageProcessorDoc = constructedResourceObj;
 
@@ -425,7 +433,7 @@ export function* _requestImportFileSampleData({ formKey }) {
 
   if (FILE_DEFINITION_TYPES.includes(fileType)) {
     const fieldState = yield select(selectors.fieldState, formKey, 'file.filedefinition.rules');
-    const {userDefinitionId, options: fieldOptions} = fieldState;
+    const {userDefinitionId, options: fieldOptions} = fieldState || {};
     const { format, definitionId } = fieldOptions || {};
 
     const fileDefinitionData = yield select(selectors.fileDefinitionSampleData, {
@@ -475,17 +483,18 @@ export function* requestResourceFormSampleData({ formKey, options = {} }) {
   const { resourceType, resourceId } = yield call(_fetchResourceInfoFromFormKey, { formKey });
 
   if (!resourceId || !VALID_RESOURCE_TYPES_FOR_SAMPLE_DATA.includes(resourceType)) return;
-  yield delay(500);
 
   yield put(actions.resourceFormSampleData.setStatus(resourceId, 'requested'));
-  const { refreshCache, executeProcessors } = options;
+  const { refreshCache, executeProcessors, asyncKey } = options;
 
+  if (asyncKey) { yield put(actions.asyncTask.start(asyncKey)); }
   if (resourceType === 'exports') {
     yield call(_requestExportSampleData, { formKey, refreshCache, executeProcessors });
   }
   if (resourceType === 'imports') {
     yield call(_requestImportSampleData, { formKey, refreshCache });
   }
+  if (asyncKey) { yield put(actions.asyncTask.success(asyncKey)); }
 }
 
 export default [

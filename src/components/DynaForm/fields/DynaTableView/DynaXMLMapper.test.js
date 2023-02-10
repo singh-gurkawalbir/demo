@@ -1,4 +1,3 @@
-/* global describe, test, expect, jest */
 import React from 'react';
 import {
   screen, waitFor,
@@ -7,7 +6,7 @@ import userEvent from '@testing-library/user-event';
 import DynaXMLMapper from './DynaXMLMapper';
 import { renderWithProviders } from '../../../../test/test-utils';
 
-describe('DynaXMLMapper UI tests', () => {
+describe('dynaXMLMapper UI tests', () => {
   const mockonFieldChange = jest.fn();
   const props = {
     onFieldChange: mockonFieldChange,
@@ -25,11 +24,10 @@ describe('DynaXMLMapper UI tests', () => {
     const textFields = screen.getAllByRole('textbox');
 
     expect(textFields).toHaveLength(4);
-    screen.debug();
   });
   test('should call the onFieldChange function passed in props on initial render', async () => {
     renderWithProviders(<DynaXMLMapper {...props} />);
-    await waitFor(() => expect(mockonFieldChange).toBeCalled());
+    await waitFor(() => expect(mockonFieldChange).toHaveBeenCalled());
   });
   test('should not throw any error while attempting to edit the fields', () => {
     renderWithProviders(<DynaXMLMapper {...props} />);

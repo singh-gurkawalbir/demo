@@ -1,4 +1,4 @@
-/* global describe, expect, jest, test, afterEach */
+
 import React from 'react';
 import { screen } from '@testing-library/react';
 import { renderWithProviders } from '../../../test/test-utils';
@@ -52,7 +52,7 @@ describe("test suite for 'Record type' field in Netsuite", () => {
         op: 'remove',
         path: '/netsuite_da/subrecords',
       },
-    ], 'value'));
+    ]));
     expect(screen.getByText('DynaRefreshableSelect')).toBeInTheDocument();
   });
 

@@ -1,4 +1,4 @@
-/* global describe, test, expect, jest, beforeEach, afterEach */
+
 import React from 'react';
 import {
   screen,
@@ -12,6 +12,19 @@ import actions from '../../../../../../../actions';
 import { getCreatedStore } from '../../../../../../../store';
 
 let initialStore = {};
+
+const mockHistoryPush = jest.fn();
+
+jest.mock('react-router-dom', () => ({
+  __esModule: true,
+  ...jest.requireActual('react-router-dom'),
+  useHistory: () => ({
+    push: mockHistoryPush,
+  }),
+  useRouteMatch: () => ({
+    url: 'baseUrl',
+  }),
+}));
 
 async function initChildUpgradeButton(props) {
   initialStore.getState().session.integrationApps.upgrade = {
@@ -33,6 +46,10 @@ async function initChildUpgradeButton(props) {
       showWizard: true,
     },
     childList: ['123', '122'],
+    878: {
+      status: 'error',
+      errMessage: 'some error',
+    },
   };
   const ui = (
     <MemoryRouter>
@@ -62,6 +79,7 @@ describe('ChildUpgradeButton Unit tests', () => {
   afterEach(() => {
     useDispatchSpy.mockClear();
     mockDispatchFn.mockClear();
+    mockHistoryPush.mockClear();
   });
 
   test('Should render TitleHelp button', async () => {
@@ -126,6 +144,7 @@ describe('ChildUpgradeButton Unit tests', () => {
       showWizard: false,
       inQueue: false,
     }));
+    expect(mockDispatchFn).toHaveBeenCalledWith(actions.integrationApp.upgrade.setStatus('successMessageFlags', { showChildLeftMessageFlag: true }));
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.integrationApp.settings.integrationAppV2.upgrade('123'));
     props = {
       resource: {
@@ -138,5 +157,23 @@ describe('ChildUpgradeButton Unit tests', () => {
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.integrationApp.upgrade.setStatus('645', {
       showWizard: false,
     }));
+    expect(mockHistoryPush).toBeCalledWith('baseUrl/changeEditions/child/645');
+    expect(mockDispatchFn).toHaveBeenCalledWith(actions.integrationApp.upgrade.setStatus('successMessageFlags', { showChildLeftMessageFlag: true }));
+  });
+  test('Should render in case of error', async () => {
+    const props = {
+      resource: {
+        id: '878',
+        changeEditionId: '32jn2na9',
+        name: 'Child IA',
+      },
+    };
+
+    await initChildUpgradeButton(props);
+
+    expect(mockDispatchFn).toHaveBeenCalledWith(actions.integrationApp.upgrade.deleteStatus('878'));
+    const errorMessage = screen.getByRole('alert');
+
+    expect(errorMessage).toHaveTextContent('The upgrade for Child IA has failed. some error. Select the active upgrade button when you are ready to continue with your setup.');
   });
 });

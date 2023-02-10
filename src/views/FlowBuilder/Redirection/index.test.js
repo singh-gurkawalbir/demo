@@ -1,4 +1,4 @@
-/* global describe, test, expect, jest, beforeEach, afterEach */
+
 import React from 'react';
 import {screen, waitFor} from '@testing-library/react';
 import {MemoryRouter, Route} from 'react-router-dom';
@@ -111,6 +111,11 @@ jest.mock('react-router-dom', () => ({
   ),
 }));
 
+jest.mock('../../../utils/resource', () => ({
+  ...jest.requireActual('../../../utils/resource'),
+  generateNewId: () => 'new-1234',
+}));
+
 describe('Redirection UI tests', () => {
   let mockDispatchFn;
   let useDispatchSpy;
@@ -203,5 +208,21 @@ describe('Redirection UI tests', () => {
 
     initRedirection(ui, props, true);
     await waitFor(() => expect(mockDispatchFn).toBeCalledWith(actions.user.preferences.update({environment: 'sandbox'})));
+  });
+
+  test('should make history.replace when flowId starts with "new*"', async () => {
+    const props = {children: <ResourceButton variant="import" />};
+    const ui = (
+      <MemoryRouter initialEntries={[{pathname: '/integrations/6253af74cddb8a1ba550a010/flowBuilder/new*'}]} >
+        <Route
+          path="/integrations/:integrationId/flowBuilder/:flowId"
+            >
+          <Redirection {...props} />
+        </Route>
+      </MemoryRouter>
+    );
+
+    initRedirection(ui, props);
+    await waitFor(() => expect(mockHistoryReplace).toBeCalledWith('/integrations/6253af74cddb8a1ba550a010/flowBuilder/new-1234'));
   });
 });

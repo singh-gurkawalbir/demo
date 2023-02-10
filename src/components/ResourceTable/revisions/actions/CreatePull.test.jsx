@@ -1,4 +1,4 @@
-/* global test, expect, describe, beforeEach, jest */
+
 import React from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { screen } from '@testing-library/react';
@@ -58,9 +58,9 @@ jest.mock('react-router-dom', () => ({
   }),
 }));
 
-jest.mock('nanoid', () => ({
-  ...jest.requireActual('nanoid'),
-  nanoid: () => (
+jest.mock('../../../../utils/string', () => ({
+  ...jest.requireActual('../../../../utils/string'),
+  generateId: () => (
     'randomvalue'
   ),
 }));
@@ -78,7 +78,7 @@ function renderFuntion(data) {
   userEvent.click(screen.getByRole('button', {name: /more/i}));
 }
 
-describe('UI test cases for create pull ', () => {
+describe('uI test cases for create pull', () => {
   beforeEach(() => {
     jest.resetAllMocks();
   });

@@ -1,4 +1,3 @@
-/* global describe, test, expect, jest */
 import React from 'react';
 import { screen } from '@testing-library/react';
 import { renderWithProviders, reduxStore } from '../../../../../test/test-utils';
@@ -12,7 +11,7 @@ jest.mock('../Code', () => ({
   ...jest.requireActual('../Code'),
   default: props => <>{props.value}</>,
 }));
-describe('AFE ResultPanel UI tests', () => {
+describe('aFE ResultPanel UI tests', () => {
   test('should pass the initial render with Preview in loading state', () => {
     initialStore.getState().session.editors.httprelativeURI = {editorType: 'handlebars', result: {data: 1011}, previewStatus: 'requested'};
     renderWithProviders(<ResultPanel {...props} />, {initialStore});

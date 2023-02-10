@@ -1,4 +1,4 @@
-/* global describe, expect, test */
+
 import reducer, { selectors } from '.';
 import actions from '../actions';
 
@@ -368,7 +368,7 @@ describe('Notifications region selector testcases', () => {
 
   describe('selectors.isFlowSubscribedForNotification test cases', () => {
     test('should not throw any exception for invalid arguments', () => {
-      expect(selectors.isFlowSubscribedForNotification(undefined, {})).toEqual(false);
+      expect(selectors.isFlowSubscribedForNotification(undefined, {})).toBe(false);
     });
 
     const notifications = [
@@ -423,19 +423,19 @@ describe('Notifications region selector testcases', () => {
     );
 
     test('should return true if flow\'s integration is subscribed for notification', () => {
-      expect(selectors.isFlowSubscribedForNotification(state, 'f3')).toEqual(true);
+      expect(selectors.isFlowSubscribedForNotification(state, 'f3')).toBe(true);
     });
 
     test('should return true if flow is subscribed for notification', () => {
-      expect(selectors.isFlowSubscribedForNotification(state, 'f1')).toEqual(true);
+      expect(selectors.isFlowSubscribedForNotification(state, 'f1')).toBe(true);
     });
 
     test('should return true if stand-alone flow is subscribed for notification', () => {
-      expect(selectors.isFlowSubscribedForNotification(state, 'f4')).toEqual(true);
+      expect(selectors.isFlowSubscribedForNotification(state, 'f4')).toBe(true);
     });
 
     test('should return false if flow is not subscribed for notification', () => {
-      expect(selectors.isFlowSubscribedForNotification(state, 'f2')).toEqual(false);
+      expect(selectors.isFlowSubscribedForNotification(state, 'f2')).toBe(false);
     });
   });
 });

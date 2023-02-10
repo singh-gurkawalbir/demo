@@ -33,24 +33,15 @@ import {getConnector, getConnectorMetadata} from '../resources/httpConnectors';
 import { setObjectValue } from '../../utils/json';
 import { addPageProcessor, getFlowAsyncKey } from '../../utils/flows/flowbuilder';
 
-export const SCOPES = {
-  META: 'meta',
-  VALUE: 'value',
-  SCRIPT: 'script',
-};
-
-Object.freeze(SCOPES);
 export function* createFormValuesPatchSet({
   resourceType,
   resourceId,
   values,
-  scope,
 }) {
   const { merged: resource } = yield select(
     selectors.resourceData,
     resourceType,
     resourceId,
-    scope
   );
   const accountOwner = yield select(selectors.accountOwner);
 
@@ -251,7 +242,6 @@ export function* deleteFormViewAssistantValue({ resourceType, resourceId }) {
     selectors.resourceData,
     resourceType,
     resourceId,
-    SCOPES.VALUE
   );
 
   if (resource?.useParentForm) {
@@ -259,7 +249,6 @@ export function* deleteFormViewAssistantValue({ resourceType, resourceId }) {
       actions.resource.patchStaged(
         resourceId,
         removeAssistantPatch,
-        SCOPES.VALUE
       )
     );
   }
@@ -267,7 +256,6 @@ export function* deleteFormViewAssistantValue({ resourceType, resourceId }) {
     actions.resource.patchStaged(
       resourceId,
       removeParentFormPatch,
-      SCOPES.VALUE
     )
   );
 }
@@ -364,13 +352,12 @@ export function* submitFormValues({
       resourceType,
       resourceId,
       values: formValues,
-      scope: SCOPES.VALUE,
     }));
   } catch (e) {
     return yield put(actions.resourceForm.submitFailed(resourceType, resourceId));
   }
   if (patchSet && patchSet.length > 0) {
-    yield put(actions.resource.patchStaged(resourceId, patchSet, SCOPES.VALUE));
+    yield put(actions.resource.patchStaged(resourceId, patchSet));
   }
 
   const { skipCommit } = yield select(
@@ -396,7 +383,6 @@ export function* submitFormValues({
   const { patch } = (yield select(
     selectors.stagedResource,
     resourceId,
-    SCOPES.VALUE
   )) || {};
   // In most cases there would be no other pending staged changes, since most
   // times a patch is followed by an immediate commit.  If however some
@@ -438,7 +424,6 @@ export function* submitFormValues({
     const resp = yield call(commitStagedChangesWrapper, {
       resourceType: type,
       id: resourceId,
-      scope: SCOPES.VALUE,
       asyncKey: getAsyncKey(type, resourceId),
       parentContext,
     });
@@ -622,13 +607,12 @@ function* updateIAFlowDoc({flow, resource }) {
   if (!shouldUpdateLastModified(flow, resource)) return;
   const patch = flowLastModifiedPatch(flow, resource);
 
-  yield put(actions.resource.patchStaged(flow._id, patch, SCOPES.VALUE));
+  yield put(actions.resource.patchStaged(flow._id, patch));
 
   yield call(commitStagedChangesWrapper, {
     asyncKey: getFlowAsyncKey(flow._id),
     resourceType: 'flows',
     id: flow._id,
-    scope: SCOPES.VALUE,
   });
 }
 
@@ -663,7 +647,7 @@ export function* updateFlowDoc({ flowId, resourceType, resourceId, resourceValue
     flowPatches = yield call(touchFlow, flowId, resourceType, resourceId);
   }
 
-  yield put(actions.resource.patchStaged(flowId, flowPatches, SCOPES.VALUE));
+  yield put(actions.resource.patchStaged(flowId, flowPatches));
 
   const skipRetries = resourceValues['/skipRetries'];
 
@@ -676,14 +660,13 @@ export function* updateFlowDoc({ flowId, resourceType, resourceId, resourceValue
       !!skipRetries
     );
 
-    yield put(actions.resource.patchStaged(flowId, skipRetryPatches, SCOPES.VALUE));
+    yield put(actions.resource.patchStaged(flowId, skipRetryPatches));
   }
 
   yield call(commitStagedChangesWrapper, {
     asyncKey: getFlowAsyncKey(flowId),
     resourceType: 'flows',
     id: flowId,
-    scope: SCOPES.VALUE,
   });
 
   yield put(actions.flowData.updateFlow(flowId));
@@ -825,14 +808,15 @@ export function* initFormValues({
   flowId,
   integrationId,
   fieldMeta: customFieldMeta,
+  parentConnectionId,
 }) {
+  const applicationFieldState = yield select(selectors.fieldState, getAsyncKey('connections', parentConnectionId), 'application');
   const developerMode = yield select(selectors.developerMode);
   const accountOwner = yield select(selectors.accountOwner);
   const resource = (yield select(
     selectors.resourceData,
     resourceType,
     resourceId,
-    SCOPES.VALUE
   ))?.merged || emptyObject;
 
   const flow = (yield select(
@@ -870,7 +854,6 @@ export function* initFormValues({
         actions.resource.patchStaged(
           resourceId,
           [{ op: 'add', path: '/assistantMetadata', value: {} }],
-          SCOPES.VALUE
         )
       );
     }
@@ -939,7 +922,7 @@ export function* initFormValues({
         });
       }
       // standard form init fn...
-      finalFieldMeta = defaultFormAssets.init(fieldMeta, newResource, flow, httpConnectorData);
+      finalFieldMeta = defaultFormAssets.init(fieldMeta, newResource, flow, httpConnectorData, applicationFieldState?.value);
     }
 
     // console.log('finalFieldMeta', finalFieldMeta);

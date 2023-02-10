@@ -91,6 +91,13 @@ const connectors = [
     keywords: 'technology,protocol',
     group: 'tech',
   },
+  {
+    id: 'van',
+    name: 'VAN (Value Added Network)',
+    type: 'van',
+    keywords: 'technology,protocol',
+    group: 'tech',
+  },
   // Database connectors
   {
     id: 'mongodb',
@@ -334,6 +341,7 @@ const newConnections = [
   {id: 'recurlyv3', name: 'Recurly v3', type: 'http', assistant: 'recurlyv3'},
   {id: 'loopreturnsv2', name: 'Loop Returns', type: 'http', assistant: 'loopreturnsv2'},
   {id: 'acumaticaecommerce', name: 'Acumatica', type: 'rest', assistant: 'acumaticaecommerce'},
+  {id: 'acumaticamanufacturing', name: 'Acumatica', type: 'rest', assistant: 'acumaticamanufacturing'},
 ];
 
 connectors.sort(stringCompare('name'));
@@ -418,7 +426,6 @@ export const groupApplications = (
         import: true,
         icon: pc.legacyId || pc.name.toLowerCase().replace(/\.|\s/g, ''),
         assistant: pc.legacyId,
-        application: pc.name.toLowerCase().replace(/\.|\s/g, ''),
         _httpConnectorId: pc._id,
         helpURL: pc.helpURL,
         webhook: pc.supportsWebhook,
@@ -517,7 +524,6 @@ export const applicationsList = () => {
       export: true,
       import: true,
       assistant: pc.legacyId,
-      application: pc.name.toLowerCase().replace(/\.|\s/g, ''),
       _httpConnectorId: pc._id,
       helpURL: pc.helpURL,
       webhook: pc.supportsWebhook,

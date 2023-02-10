@@ -1,4 +1,4 @@
-/* global describe, expect, test */
+
 import { selectors } from '.';
 import { ACCOUNT_IDS } from '../constants';
 
@@ -18,7 +18,7 @@ describe('users region selector testcases', () => {
 
     test('should not throw any exception for invalid arguments', () => {
       expect(selectors.userState()).toBe();
-      expect(selectors.userState(null)).toBe(null);
+      expect(selectors.userState(null)).toBeNull();
       expect(selectors.userState({})).toBe();
     });
 
@@ -78,7 +78,7 @@ describe('users region selector testcases', () => {
     test('should not throw any exception for invalid arguments', () => {
       expect(selectors.developerMode()).toBe();
       expect(selectors.developerMode({})).toBe();
-      expect(selectors.developerMode(null)).toBe(null);
+      expect(selectors.developerMode(null)).toBeNull();
     });
     test('should return correct value for developer mode', () => {
       expect(selectors.developerMode(state)).toBe(true);
@@ -102,7 +102,7 @@ describe('users region selector testcases', () => {
       expect(selectors.currentEnvironment(null)).toBe();
     });
     test('should return correct environment value', () => {
-      expect(selectors.currentEnvironment(state)).toEqual('production');
+      expect(selectors.currentEnvironment(state)).toBe('production');
     });
   });
 
@@ -140,6 +140,7 @@ describe('users region selector testcases', () => {
           environment: 'sandbox',
           dateFormat: 'DD/MM/YYYY',
           timeFormat: 'HH:mm',
+          colorTheme: 'light',
         },
       },
     };
@@ -159,6 +160,7 @@ describe('users region selector testcases', () => {
         timeFormat: 'HH:mm',
         _ssoAccountId: '123',
         authTypeSSO: '123',
+        colorTheme: 'light',
       });
     });
   });
@@ -181,7 +183,7 @@ describe('users region selector testcases', () => {
       expect(selectors.userProfileEmail({})).toEqual();
     });
     test('should return correct value when user profile email exists', () => {
-      expect(selectors.userProfileEmail(state)).toEqual('abc@celigo.com');
+      expect(selectors.userProfileEmail(state)).toBe('abc@celigo.com');
     });
   });
 
@@ -197,12 +199,12 @@ describe('users region selector testcases', () => {
     };
 
     test('should not throw any exception for invalid arguments', () => {
-      expect(selectors.userProfileLinkedWithGoogle()).toEqual(false);
-      expect(selectors.userProfileLinkedWithGoogle(null)).toEqual(false);
-      expect(selectors.userProfileLinkedWithGoogle({})).toEqual(false);
+      expect(selectors.userProfileLinkedWithGoogle()).toBe(false);
+      expect(selectors.userProfileLinkedWithGoogle(null)).toBe(false);
+      expect(selectors.userProfileLinkedWithGoogle({})).toBe(false);
     });
     test('should return true when user profile has google link id', () => {
-      expect(selectors.userProfileLinkedWithGoogle(state)).toEqual(true);
+      expect(selectors.userProfileLinkedWithGoogle(state)).toBe(true);
     });
   });
 
@@ -247,9 +249,9 @@ describe('users region selector testcases', () => {
 
   describe('selectors.hasPreferences test cases', () => {
     test('should not throw any exception for invalid arguments', () => {
-      expect(selectors.hasPreferences()).toEqual(true);
-      expect(selectors.hasPreferences(null)).toEqual(true);
-      expect(selectors.hasPreferences({})).toEqual(true);
+      expect(selectors.hasPreferences()).toBe(true);
+      expect(selectors.hasPreferences(null)).toBe(true);
+      expect(selectors.hasPreferences({})).toBe(true);
     });
 
     test('should return correct value for monitor user', () => {
@@ -271,7 +273,7 @@ describe('users region selector testcases', () => {
         },
       };
 
-      expect(selectors.hasPreferences(state)).toEqual(true);
+      expect(selectors.hasPreferences(state)).toBe(true);
     });
 
     test('should correct value for manage user', () => {
@@ -292,7 +294,7 @@ describe('users region selector testcases', () => {
         },
       };
 
-      expect(selectors.hasPreferences(state)).toEqual(true);
+      expect(selectors.hasPreferences(state)).toBe(true);
     });
     test('should return correct value for org owner', () => {
       const state =
@@ -301,20 +303,20 @@ describe('users region selector testcases', () => {
           preferences: { defaultAShareId: ACCOUNT_IDS.OWN },
         };
 
-      expect(selectors.hasPreferences(state)).toEqual(true);
+      expect(selectors.hasPreferences(state)).toBe(true);
     });
   });
 
   describe('selectors.hasProfile test cases', () => {
     test('should not throw any exception for invalid arguments', () => {
-      expect(selectors.hasProfile()).toEqual(false);
-      expect(selectors.hasProfile(null)).toEqual(false);
-      expect(selectors.hasProfile({})).toEqual(false);
+      expect(selectors.hasProfile()).toBe(false);
+      expect(selectors.hasProfile(null)).toBe(false);
+      expect(selectors.hasProfile({})).toBe(false);
     });
     test('should return correct value for user state', () => {
-      expect(selectors.hasProfile({user: {}})).toEqual(false);
-      expect(selectors.hasProfile({user: {profile: {}}})).toEqual(true);
-      expect(selectors.hasProfile({user: {profile: {name: 'User'}}})).toEqual(true);
+      expect(selectors.hasProfile({user: {}})).toBe(false);
+      expect(selectors.hasProfile({user: {profile: {}}})).toBe(true);
+      expect(selectors.hasProfile({user: {profile: {name: 'User'}}})).toBe(true);
     });
   });
 });

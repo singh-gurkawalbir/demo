@@ -1,4 +1,4 @@
-/* global describe, expect, test, jest, afterEach */
+
 import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -106,7 +106,7 @@ describe('test suite for generate URL field', () => {
 
     userEvent.click(copyButton);
     expect(screen.getByRole('alert')).toHaveTextContent('URL copied to clipboard.');
-    expect(onFieldChange).toBeCalledWith(props.id, 'https://api.localhost/v1/exports/626abc/data', true);
+    expect(onFieldChange).toHaveBeenCalledWith(props.id, 'https://api.localhost/v1/exports/626abc/data', true);
   });
 
   test("should be able to generate URL ( if value doesn't exist )", () => {
@@ -145,7 +145,7 @@ describe('test suite for generate URL field', () => {
     const generateUrlBtn = screen.getAllByRole('button')[1];
 
     userEvent.click(generateUrlBtn);
-    expect(mockDispatchFn).toBeCalledWith(actions.resourceForm.submit(
+    expect(mockDispatchFn).toHaveBeenCalledWith(actions.resourceForm.submit(
       'exports',
       props.resourceId,
       mockFormContext.value,
@@ -195,9 +195,9 @@ describe('test suite for generate URL field', () => {
     const generateUrlBtn = screen.getAllByRole('button')[1];
 
     userEvent.click(generateUrlBtn);
-    expect(mockDispatchFn).not.toBeCalled();
-    expect(onFieldChange).toBeCalledWith('webhook.path', 'valid path');
-    expect(onFieldChange).toBeCalledWith('webhook.username', undefined);
-    expect(onFieldChange).toBeCalledWith('webhook.password', '');
+    expect(mockDispatchFn).not.toHaveBeenCalled();
+    expect(onFieldChange).toHaveBeenCalledWith('webhook.path', 'valid path');
+    expect(onFieldChange).toHaveBeenCalledWith('webhook.username', undefined);
+    expect(onFieldChange).toHaveBeenCalledWith('webhook.password', '');
   });
 });

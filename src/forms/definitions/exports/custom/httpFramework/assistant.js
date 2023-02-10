@@ -1,6 +1,6 @@
 import { omitBy } from 'lodash';
-import { updateExportAndImportFinalMetadata } from '../../../../../sagas/utils';
 import { convertToExport } from '../../../../../utils/assistant';
+import { safeParse } from '../../../../../utils/string';
 import { fieldMeta } from './util';
 
 export default function assistantDefinition(
@@ -9,7 +9,6 @@ export default function assistantDefinition(
   assistantData
 ) {
   return {
-    init: (fieldMeta, resource, flow, httpConnector) => updateExportAndImportFinalMetadata(fieldMeta, httpConnector, resource),
     ...fieldMeta({ resource, assistantData }),
     preSave: formValues => {
       const assistantMetadata = {
@@ -28,6 +27,19 @@ export default function assistantDefinition(
       ].forEach(prop => {
         assistantMetadata[prop] = formValues[`/assistantMetadata/${prop}`];
       });
+
+      if (assistantMetadata.assistant === 'amazonsellingpartner') {
+        assistantMetadata.assistant = 'amazonmws';
+      }
+      if (assistantMetadata.assistant === 'recurlyv3') {
+        assistantMetadata.assistant = 'recurly';
+      }
+      if (assistantMetadata.assistant === 'loopreturnsv2') {
+        assistantMetadata.assistant = 'loopreturns';
+      }
+      if (assistantMetadata.assistant === 'acumaticaecommerce' || assistantMetadata.assistant === 'acumaticamanufacturing') {
+        assistantMetadata.assistant = 'acumatica';
+      }
 
       const otherFormValues = omitBy(formValues, (v, k) =>
         k.includes('/assistantMetadata/')
@@ -51,6 +63,16 @@ export default function assistantDefinition(
       if (exportDoc && !exportDoc['/assistant']) {
         exportDoc['/assistant'] = undefined;
         delete exportDoc['/assistant'];
+      }
+      otherFormValues['/mockOutput'] = safeParse(otherFormValues['/mockOutput']);
+
+      if (formValues['/assistantMetadata/exportType'] !== 'test') {
+        otherFormValues['/test/limit'] = undefined;
+      }
+      if (formValues['/assistantMetadata/operation']) {
+        exportDoc['/http/_httpConnectorEndpointId'] = formValues['/assistantMetadata/operation'];
+        exportDoc['/http/_httpConnectorResourceId'] = formValues['/assistantMetadata/resource'];
+        exportDoc['/http/_httpConnectorVersionId'] = formValues['/assistantMetadata/version'];
       }
 
       return { ...otherFormValues, ...exportDoc };

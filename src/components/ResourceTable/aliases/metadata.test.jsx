@@ -1,4 +1,4 @@
-/* global describe, expect, test */
+
 import React from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { screen } from '@testing-library/react';
@@ -36,7 +36,7 @@ function initImports(actionProps, data = []) {
 
   renderWithProviders(ui, {initialStore});
 }
-describe('UI test cases for metadata', () => {
+describe('uI test cases for metadata', () => {
   test('should render the table accordingly', () => {
     const data = [{
       _id: '5ffad3d156784935214ed200g7',

@@ -1,4 +1,4 @@
-/* global describe, jest, expect, test */
+
 import React from 'react';
 import { screen, render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -38,12 +38,12 @@ describe('test suite for DynaToggle field', () => {
     const toggleCanada = screen.getByRole('button', {name: 'Canada'});
 
     userEvent.click(toggleIndia);
-    expect(onFieldChange).toBeCalledWith(props.id, 'in');
+    expect(onFieldChange).toHaveBeenCalledWith(props.id, 'in');
 
     userEvent.click(toggleUS);
-    expect(onFieldChange).toBeCalledWith(props.id, 'us');
+    expect(onFieldChange).toHaveBeenCalledWith(props.id, 'us');
 
     userEvent.click(toggleCanada);
-    expect(onFieldChange).toBeCalledWith(props.id, 'cdn');
+    expect(onFieldChange).toHaveBeenCalledWith(props.id, 'cdn');
   });
 });

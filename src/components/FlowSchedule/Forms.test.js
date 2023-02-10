@@ -1,4 +1,4 @@
-/* global test, expect, describe, jest */
+
 import React from 'react';
 import { screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';

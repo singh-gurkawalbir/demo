@@ -3,7 +3,8 @@ import React, {useEffect} from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import actions from '../../../actions';
 import { selectors } from '../../../reducers';
-import messageStore from '../../../utils/messageStore';
+import { message } from '../../../utils/messageStore';
+import { EXPORT_FILTERED_DATA_STAGE, IMPORT_FLOW_DATA_STAGE } from '../../../utils/flowData';
 import DynaURI from './DynaURI_afe';
 
 const emptyObj = {};
@@ -39,7 +40,7 @@ export default function DynaRelativeUri_afe(props) {
     let errorMessages = deltaMsg || pagingMsg;
 
     if (required && !value) {
-      errorMessages = messageStore('REQUIRED_MESSAGE');
+      errorMessages = message.REQUIRED_MESSAGE;
     }
 
     // if there are validations error, show the error message
@@ -54,7 +55,7 @@ export default function DynaRelativeUri_afe(props) {
     dispatch(actions.form.clearForceFieldState(formKey)(id));
   }, [dispatch, formKey, id]);
 
-  const flowDataStage = stage || (resourceType === 'exports' ? 'inputFilter' : 'importMappingExtract');
+  const flowDataStage = stage || (resourceType === 'exports' ? EXPORT_FILTERED_DATA_STAGE : IMPORT_FLOW_DATA_STAGE);
 
   return (
     <DynaURI

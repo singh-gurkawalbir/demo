@@ -1,5 +1,3 @@
-/* eslint-disable import/named */
-/* global describe, test, expect, afterAll */
 import React from 'react';
 import {screen} from '@testing-library/react';
 import {renderWithProviders, reduxStore, mockGetRequestOnce} from '../../test/test-utils';
@@ -22,7 +20,7 @@ initialStore.getState().data.resources.flows = [
     }],
   },
 ];
-describe('UI test cases for audit log dialog box', () => {
+describe('uI test cases for audit log dialog box', () => {
   runServer();
   afterAll(async () => {
     // normal cleanup things

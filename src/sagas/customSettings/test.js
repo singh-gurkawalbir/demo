@@ -1,4 +1,3 @@
-/* global describe, test */
 
 import { select } from 'redux-saga/effects';
 import { expectSaga } from 'redux-saga-test-plan';
@@ -22,7 +21,7 @@ describe('initSettingsForm saga', () => {
       fieldMap: { store: { name: 'store', defaultValue: 'test' } },
     };
 
-    return expectSaga(initSettingsForm, { resourceType, resourceId })
+    expectSaga(initSettingsForm, { resourceType, resourceId })
       .provide([
         [select(selectors.getSectionMetadata, resourceType, resourceId, 'general'), resourceState],
       ])
@@ -36,7 +35,7 @@ describe('initSettingsForm saga', () => {
     const resourceState = null;
     const sectionId = 'unknownSectionId';
 
-    return expectSaga(initSettingsForm, { resourceType, resourceId, sectionId})
+    expectSaga(initSettingsForm, { resourceType, resourceId, sectionId})
       .provide([
         // mock for unknown sectionId
         [select(selectors.getSectionMetadata, resourceType, resourceId, sectionId), resourceState],
@@ -108,7 +107,7 @@ describe('initSettingsForm saga', () => {
       },
     };
 
-    return expectSaga(initSettingsForm, { resourceType, resourceId })
+    expectSaga(initSettingsForm, { resourceType, resourceId })
       .provide([
         [select(selectors.getSectionMetadata, resourceType, resourceId, 'general'), resourceState],
         [matchers.call.fn(apiCallWithRetry), initHookMeta],
@@ -134,12 +133,79 @@ describe('initSettingsForm saga', () => {
       settings: { store: 'test', currency: 'us' },
     };
 
-    return expectSaga(initSettingsForm, { resourceType, resourceId })
+    expectSaga(initSettingsForm, { resourceType, resourceId })
       .provide([
         [select(selectors.getSectionMetadata, resourceType, resourceId, 'general'), resourceState],
         [matchers.call.fn(apiCallWithRetry), throwError(error)],
       ])
       .put(actions.customSettings.formError(resourceId, [error.message]))
+      .run();
+  });
+
+  test('should make API call when init hook present and update form meatdata with default value', () => {
+    const resourceState = {
+      settingsForm: {
+        form: { fieldMap: { store: { name: 'store', defaultValue: 'defaultStore' } } },
+        init: { function: 'main'},
+      },
+      settings: { store: '' },
+    };
+    const initHookMeta = {
+      fieldMap: { store: { name: 'store', defaultValue: 'defaultStore' }, currency: { name: 'currency', defaultValue: 'defaultCurrency' } },
+    };
+    const expectedMeta = {
+      fieldMap: {
+        store: { name: 'store', defaultValue: '' },
+        currency: { name: 'currency', defaultValue: 'defaultCurrency' },
+      },
+    };
+
+    expectSaga(initSettingsForm, { resourceType, resourceId })
+      .provide([
+        [select(selectors.getSectionMetadata, resourceType, resourceId, 'general'), resourceState],
+        [matchers.call.fn(apiCallWithRetry), initHookMeta],
+      ])
+      .call.fn(apiCallWithRetry)
+      .put(
+        actions.customSettings.formReceived(
+          resourceId,
+          expectedMeta,
+          resourceState.settingsForm.init._scriptId
+        )
+      )
+      .run();
+  });
+
+  test('should make API call when init hook present and without any resource settings', () => {
+    const resourceState = {
+      settingsForm: {
+        form: { fieldMap: { store: { name: 'store', defaultValue: 'defaultStore' } } },
+        init: { function: 'main'},
+      },
+    };
+    const initHookMeta = {
+      fieldMap: { store: { name: 'store', defaultValue: 'defaultStore' }, currency: { name: 'currency', defaultValue: 'defaultCurrency' } },
+    };
+    const expectedMeta = {
+      fieldMap: {
+        store: { name: 'store', defaultValue: 'defaultStore' },
+        currency: { name: 'currency', defaultValue: 'defaultCurrency' },
+      },
+    };
+
+    expectSaga(initSettingsForm, { resourceType, resourceId })
+      .provide([
+        [select(selectors.getSectionMetadata, resourceType, resourceId, 'general'), resourceState],
+        [matchers.call.fn(apiCallWithRetry), initHookMeta],
+      ])
+      .call.fn(apiCallWithRetry)
+      .put(
+        actions.customSettings.formReceived(
+          resourceId,
+          expectedMeta,
+          resourceState.settingsForm.init._scriptId
+        )
+      )
       .run();
   });
 });

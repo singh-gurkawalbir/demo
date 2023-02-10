@@ -187,6 +187,7 @@ export const EXPORT_FILE_FIELD_MAP = {common: { formId: 'common' },
   's3.keyEndsWith': { fieldId: 's3.keyEndsWith' },
   'file.sortByFields': { fieldId: 'file.sortByFields' },
   'file.groupByFields': { fieldId: 'file.groupByFields' },
+  mockOutput: { fieldId: 'mockOutput' },
 };
 export const IMPORT_FILE_FIELD_MAP = {common: {
   formId: 'common',
@@ -208,7 +209,7 @@ blobKeyPath: {
   label: r => ['googledrive', 'box', 'dropbox'].includes(r?.assistant) ? 'Directory path' : 'Container name',
   required: true,
   type: 'uri',
-  helpKey: r => ['googledrive', 'box', 'dropbox'].includes(r?.assistant) ? `export.${r?.assistant}.directoryPath` : 'export.azure.containerName',
+  helpKey: r => ['googledrive', 'box', 'dropbox'].includes(r?.assistant) ? `import.${r?.assistant}.directoryPath` : 'import.azure.containerName',
 
 },
 'file.fileName': {
@@ -348,7 +349,11 @@ fileApiIdentifier: {
 's3.bucket': {
   fieldId: 's3.bucket',
 },
+'s3.serverSideEncryptionType': {
+  fieldId: 's3.serverSideEncryptionType',
+},
 traceKeyTemplate: {fieldId: 'traceKeyTemplate'},
+mockResponseSection: {formId: 'mockResponseSection'},
 };
 export const updatePGPFormValues = formValues => {
   const newValues = { ...formValues };

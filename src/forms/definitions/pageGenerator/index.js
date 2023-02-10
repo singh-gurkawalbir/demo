@@ -178,10 +178,25 @@ export default {
         expression.push({ $or: [{ 'http.formType': 'rest' }, { type: 'rest' }] });
       } else if (appType === 'graph_ql') {
         expression.push({ 'http.formType': 'graph_ql' });
-      } else if (appType === 'http') {
-        if (app._httpConnectorId) { expression.push({ 'http._httpConnectorId': app._httpConnectorId }); }
+      } else if (appType === 'http' || (appType === 'rest' && app?.isHTTP === true && app._httpConnectorId)) {
+        if (app._httpConnectorId) {
+          // get all possible applications with same type (global and local connectors)
+          const apps = applications.filter(a => a.id === appField.value) || [];
+          const allConnectorIds = [];
+
+          // show all connections with same http connector legacyId
+          apps.forEach(a => {
+            if (a._httpConnectorId) allConnectorIds.push(a._httpConnectorId);
+          });
+
+          expression.push({ 'http._httpConnectorId': {$in: allConnectorIds} });
+          expression.push({$or: [{ type: 'rest' }, { type: 'http' }]});
+          expression.push({ isHTTP: { $ne: false } });
+        } else {
+          expression.push({ type: appType });
+        }
+
         expression.push({ 'http.formType': { $ne: 'rest' } });
-        expression.push({ type: appType });
       } else {
         expression.push({ type: appType });
       }
@@ -222,10 +237,18 @@ export default {
       if (!adaptorTypePrefix) return { filter: { $and: expression }};
 
       if (isWebhook) {
-        expression.push({
-          'webhook.provider':
-            appField.value === 'webhook' ? 'custom' : appField.value,
-        });
+        if (appField.value === 'webhook') {
+          expression.push({
+            'webhook.provider': 'custom',
+          });
+        } else {
+          expression.push({
+            $or: [
+              { 'webhook.provider': appField.value },
+              { $and: [{ 'webhook.provider': 'custom' }, { 'webhook._httpConnectorId': app._httpConnectorId }] },
+            ],
+          });
+        }
       } else {
         if (appType === 'rest') {
           expression.push({

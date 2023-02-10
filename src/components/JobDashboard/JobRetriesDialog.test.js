@@ -1,4 +1,4 @@
-/* global describe, test, jest, expect */
+
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { screen } from '@testing-library/react';
@@ -26,7 +26,7 @@ jest.mock('../DateTimeDisplay', () => ({
   ...jest.requireActual('../DateTimeDisplay'),
   default: jest.fn().mockReturnValue('mockdate'),
 }));
-describe('Testsuite for JobDialog', () => {
+describe('testsuite for JobDialog', () => {
   test('should render the job dialog with the job data', async () => {
     await initJobDialog({
       job: {

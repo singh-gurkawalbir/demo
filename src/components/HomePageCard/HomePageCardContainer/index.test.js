@@ -1,4 +1,4 @@
-/* global describe, test, expect */
+
 import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import HomePageCardContainer from '.';
@@ -9,7 +9,7 @@ const isTileDragged = false;
 const isDrag = true;
 const isTileNotDragged = true;
 
-describe('Testing HomePageCardContainer Component', () => {
+describe('testing HomePageCardContainer Component', () => {
   test('should render the same text passed into props when tile is not in drag in progress and not dragged', async () => {
     const {container} = render(<HomePageCardContainer isDragInProgress={isDragInProgress} isTileDragged={isTileDragged} >{values}</HomePageCardContainer>);
     const value = screen.getByText(values);

@@ -1,4 +1,4 @@
-/* global test, expect, describe, jest */
+
 import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -44,7 +44,7 @@ const props = [
 
 ];
 
-describe('DeleteAlias test cases', () => {
+describe('deleteAlias test cases', () => {
   test('should show modal dialog for delete Alias on clicking Delete alias', () => {
     initHomeTiles(...props);
     userEvent.click(screen.getByText('Delete alias'));

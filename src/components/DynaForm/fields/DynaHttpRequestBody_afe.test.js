@@ -1,9 +1,10 @@
-/* global describe, expect, jest, test, afterEach */
+
 import React from 'react';
 import { screen, render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import actions from '../../../actions';
 import DynaHttpRequestBody from './DynaHttpRequestBody_afe';
+import { EXPORT_FILTERED_DATA_STAGE } from '../../../utils/flowData';
 
 const resourceId = 'import-123';
 let mockSave = jest.fn();
@@ -100,7 +101,7 @@ describe('test suite for DynaTransformRules_afe', () => {
     const openEditorBtn = screen.getByRole('button', {name: 'openEditor'});
 
     userEvent.click(openEditorBtn);
-    expect(mockDispatchFn).toBeCalledWith(actions.editor.init('httpbody', 'handlebars', {
+    expect(mockDispatchFn).toHaveBeenCalledWith(actions.editor.init('httpbody', 'handlebars', {
       formKey: props.formKey,
       flowId: props.flowId,
       resourceId,
@@ -113,7 +114,7 @@ describe('test suite for DynaTransformRules_afe', () => {
       mapper2RowKey: props.mapper2RowKey,
     }));
 
-    expect(mockHistoryPush).toBeCalledWith(`/imports/edit/imports/${resourceId}/editor/httpbody`);
+    expect(mockHistoryPush).toHaveBeenCalledWith(`/imports/edit/imports/${resourceId}/editor/httpbody`);
   });
 
   test('should be able to save the modified code in editor', () => {
@@ -145,23 +146,23 @@ describe('test suite for DynaTransformRules_afe', () => {
     const openEditorBtn = screen.getByRole('button', {name: 'openEditor'});
 
     userEvent.click(openEditorBtn);
-    expect(mockDispatchFn).toBeCalledWith(actions.editor.init('httpbody', 'handlebars', {
+    expect(mockDispatchFn).toHaveBeenCalledWith(actions.editor.init('httpbody', 'handlebars', {
       formKey: props.formKey,
       flowId: props.flowId,
       resourceId,
       resourceType: props.resourceType,
       fieldId: props.id,
-      stage: 'inputFilter',
+      stage: EXPORT_FILTERED_DATA_STAGE,
       onSave: expect.anything(),
       parentType: undefined,
       parentId: undefined,
       mapper2RowKey: props.mapper2RowKey,
     }));
 
-    expect(mockHistoryPush).toBeCalledWith(`/exports/edit/exports/${resourceId}/editor/httpbody`);
+    expect(mockHistoryPush).toHaveBeenCalledWith(`/exports/edit/exports/${resourceId}/editor/httpbody`);
 
     userEvent.click(screen.getByRole('button', {name: 'Save'}));
-    expect(onFieldChange).toBeCalledWith(props.id, 'SampleRule');
+    expect(onFieldChange).toHaveBeenCalledWith(props.id, 'SampleRule');
   });
 
   test('should save the modified code in editor corresponding to the correct list of requests', () => {
@@ -186,6 +187,6 @@ describe('test suite for DynaTransformRules_afe', () => {
 
     userEvent.click(openEditorBtn);
     userEvent.click(saveBtn);
-    expect(onFieldChange).toBeCalledWith(props.id, ['{method: "POST"}', 'SampleRule', '{method: "PUT"}']);
+    expect(onFieldChange).toHaveBeenCalledWith(props.id, ['{method: "POST"}', 'SampleRule', '{method: "PUT"}']);
   });
 });

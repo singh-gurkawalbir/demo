@@ -10,7 +10,6 @@ import DynaForm from '../../../../components/DynaForm';
 import connectionMetaData from './metadata/connection';
 import useFormInitWithPermissions from '../../../../hooks/useFormInitWithPermissions';
 import SaveAndCloseMiniResourceForm from '../../../../components/SaveAndCloseButtonGroup/SaveAndCloseMiniResourceForm';
-import useHandleSaveAndAuth from '../../../../components/ResourceFormFactory/Actions/Groups/hooks/useHandleSaveAndAuth';
 import { getAsyncKey } from '../../../../utils/saveAndCloseButtons';
 import { FORM_SAVE_STATUS } from '../../../../constants';
 import InstallationGuideIcon from '../../../../components/icons/InstallationGuideIcon';
@@ -156,20 +155,11 @@ export default function AddOrSelectForm({
     return () => handleClearResourceForm();
   }, [handleInitForm, handleClearResourceForm]);
 
-  const handleSaveAndAuth = useHandleSaveAndAuth({formKey, resourceType: 'connections', resourceId: connId, parentContext: null});
   const handleSubmit = useHandleSubmit({formKey, resourceType: 'connections', resourceId: connId, parentContext: {queryParams: [`code=${authorizationCode}`]}});
-  let handleSave = handleSubmit;
-
-  const configureScopesFieldValue = useSelector(state => selectors.fieldState(state, formKey, 'http.auth.oauth.scope'))?.value || [];
-
-  // if the user has changed the scopes, get new authorization_code by redirecting the user to shopify grant screen
-  // for IA 1.0 scopes are hardcoded user doesn't need to add them.
-  if ((configureScopesFieldValue?.length > 1 || !configureScopesFieldValue.includes('read_products')) && type !== 'IA') {
-    handleSave = handleSaveAndAuth;
-  }
+  const handleSave = handleSubmit;
 
   useEffect(() => {
-    dispatch(actions.resource.patchStaged(connId, fieldMeta?.patchSet?.(), 'value'));
+    dispatch(actions.resource.patchStaged(connId, fieldMeta?.patchSet?.()));
 
     return () => {
       dispatch(actions.resource.clearStaged(connId));

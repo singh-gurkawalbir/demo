@@ -1,4 +1,4 @@
-/* global describe, jest, expect, test */
+
 import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -50,7 +50,7 @@ describe('test cases for SaveAndCloseMiniButtonGroup', () => {
     const handleClose = jest.fn();
 
     await initSaveAndCloseMiniButtonGroup({isDirty: true, disabled: true, handleClose});
-    expect(screen.getByRole('button', {name: 'Save & close'})).toBeDisabled;
+    expect(screen.getByRole('button', {name: 'Save & close'})).toBeDisabled();
     userEvent.click(screen.getByRole('button', {name: 'Close'}));
     expect(handleClose).toHaveBeenCalledTimes(1);
   });

@@ -1,4 +1,3 @@
-/* global describe, test, expect */
 import React from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import {screen, render} from '@testing-library/react';
@@ -6,15 +5,11 @@ import { MemoryRouter } from 'react-router-dom';
 import FilledButton from './index';
 import {renderWithProviders} from '../../../test/test-utils';
 
-describe('Filled Button component test', () => {
+describe('filled Button component test', () => {
   function handleClose() {
   }
 
-  test('should render the component with content onto the screen', () => {
-    renderWithProviders(<FilledButton />);
-  });
-
-  test('test passing string', () => {
+  test('passing string', () => {
     renderWithProviders(
       <MemoryRouter>
         <FilledButton
@@ -31,7 +26,7 @@ describe('Filled Button component test', () => {
     expect(test1).toBeInTheDocument();
   });
 
-  test('test passing number', () => {
+  test('passing number', () => {
     renderWithProviders(
       <MemoryRouter>
         <FilledButton

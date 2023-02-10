@@ -53,7 +53,7 @@ export const RESOURCE_TYPE_LABEL_TO_SINGULAR = Object.freeze(
   invert(RESOURCE_TYPE_SINGULAR_TO_LABEL)
 );
 
-export const NON_ARRAY_RESOURCE_TYPES = Object.freeze(['ui/assistants']);
+export const NON_ARRAY_RESOURCE_TYPES = Object.freeze(['ui/assistants', 'tree/metadata']);
 
 export const PATHS_DONT_NEED_INTEGRATOR_ASHAREID_HEADER = [
   'licenses',
@@ -104,6 +104,7 @@ export const C_LOCKED_FIELDS = Object.freeze({
     'file.compressionFormat',
     'file.skipDelete',
     'file.csv',
+    'mockOutput',
     'test.limit',
     'delta.dateField',
     'delta.lagOffset',
@@ -132,6 +133,7 @@ export const C_LOCKED_FIELDS = Object.freeze({
     'salesforce.upsert.externalIdField',
     'salesforce.lookups',
     'settings',
+    'mockResponse',
   ],
   flows: [
     '_runNextFlowIds',
@@ -169,7 +171,6 @@ export const NO_ENVIRONMENT_RESOURCE_TYPES = Object.freeze([
   'templates',
   'published',
   'transfers',
-  'apis',
   'connectors',
 ]);
 

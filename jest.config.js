@@ -1,6 +1,7 @@
 module.exports = {
   bail: false,
   testRegex: undefined,
+  testTimeout: 50000,
   roots: [
     '<rootDir>/src',
   ],
@@ -22,6 +23,12 @@ module.exports = {
     'src/reducers/**/*.{js,jsx}',
     'src/sagas/**/*.{js,jsx}',
     'src/utils/**/*.{js,jsx}',
+    'src/components/**/*.{js,jsx}',
+    '!src/components/icons/**/*.{js,jsx}',
+    '!src/components/SuiteScript/**/*.{js,jsx}',
+    '!src/components/DynaForm/fields/SuiteScript/**/*.{js,jsx}',
+    'src/views/**/*.{js,jsx}',
+    '!src/views/SuiteScript/**/*.{js,jsx}',
   ],
   setupFilesAfterEnv: ['<rootDir>/jest/setup.js', 'jest-date-mock', 'core-js', 'jest-canvas-mock'],
   coverageThreshold: {
@@ -44,5 +51,9 @@ module.exports = {
     IO_LOGIN_PROMOTION_URL: 'https://staging.celigo.com/login/display',
     PORTAL_URL: 'https://portal.productboard.com/wcpkv3awtdpkze4x7wwbpog7',
     SHOPIFY_USER_IDS: '',
+    ALLOW_SIGNUP: 'true',
+    ALLOW_GOOGLE_SIGNIN: 'true',
+    ALLOW_SIGNUP_EU: 'true',
+    ALLOW_GOOGLE_SIGNIN_EU: 'true',
   },
 };

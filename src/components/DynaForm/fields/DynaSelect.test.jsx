@@ -1,4 +1,4 @@
-/* global describe, test, expect, jest, afterEach */
+
 import React from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import { fireEvent, screen } from '@testing-library/react';
@@ -18,11 +18,11 @@ function initDynaSelect(props = {}) {
 }
 const mockOnFieldChange = jest.fn();
 
-describe('DynaSelect UI test cases', () => {
+describe('dynaSelect UI test cases', () => {
   afterEach(() => {
     jest.clearAllMocks();
   });
-  test('Connection field is updated after selecting netsuite connection from the dropdown', () => {
+  test('connection field is updated after selecting netsuite connection from the dropdown', () => {
     const data =
     {
       disabled: false,
@@ -53,7 +53,7 @@ describe('DynaSelect UI test cases', () => {
     userEvent.click(screen.getAllByRole('menuitem')[2]);
     expect(mockOnFieldChange).toHaveBeenCalledWith('_connectionId', '62f7a541d07aa55c7643a023');
   });
-  test('Connection field is updated after selecting please select from the dropdown', () => {
+  test('connection field is updated after selecting please select from the dropdown', () => {
     const data =
     {
       disabled: false,
@@ -117,7 +117,7 @@ describe('DynaSelect UI test cases', () => {
     userEvent.click(screen.getByRole('menuitem'));
     expect(mockOnFieldChange).toHaveBeenCalledWith('_connectionId', '');
   });
-  test('Keyboard listener with keycode 40', () => {
+  test('keyboard listener with keycode 40', () => {
     const data =
     {
       disabled: false,
@@ -179,10 +179,10 @@ describe('DynaSelect UI test cases', () => {
     userEvent.keyboard('{arrowdown}');
     userEvent.keyboard('{arrowdown}');
     fireEvent.keyDown(button, {key: 'Enter', code: 'Enter', charCode: 13, keyCode: 13});
-    expect(mockOnFieldChange).toBeCalledWith('_connectionId', '34');
+    expect(mockOnFieldChange).toHaveBeenCalledWith('_connectionId', '34');
   });
 
-  test('Keyboard listener with keycode 38', () => {
+  test('keyboard listener with keycode 38', () => {
     const data =
     {
       disabled: false,
@@ -246,9 +246,9 @@ describe('DynaSelect UI test cases', () => {
 
     userEvent.keyboard('{arrowup}');
     fireEvent.keyDown(button, {key: 'Enter', code: 'Enter', charCode: 13, keyCode: 13});
-    expect(mockOnFieldChange).toBeCalledWith('_connectionId', '134');
+    expect(mockOnFieldChange).toHaveBeenCalledWith('_connectionId', '134');
   });
-  test('Keyboard listener with keycode 13', () => {
+  test('keyboard listener with keycode 13', () => {
     const data =
     {
       disabled: false,
@@ -313,6 +313,6 @@ describe('DynaSelect UI test cases', () => {
     userEvent.keyboard('{arrowup}');
     userEvent.keyboard('{enter}');
     fireEvent.keyDown(button, {key: 'Enter', code: 'Enter', keyCode: 13});
-    expect(mockOnFieldChange).toBeCalledWith('_connectionId', '134');
+    expect(mockOnFieldChange).toHaveBeenCalledWith('_connectionId', '134');
   });
 });

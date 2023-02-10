@@ -1,9 +1,7 @@
-/* global describe, test, expect, jest, beforeEach, afterEach */
+/* eslint-disable jest/max-expects */
 import React from 'react';
 import { MemoryRouter, Route } from 'react-router-dom';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { cleanup, screen, waitFor } from '@testing-library/react';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import userEvent from '@testing-library/user-event';
 import * as reactRedux from 'react-redux';
 import moment from 'moment';
@@ -14,7 +12,7 @@ import { runServer } from '../../test/api/server';
 import { getCreatedStore } from '../../store';
 
 let initialStore;
-export const integrations = [{
+const integrations = [{
   _id: '62e59dbf76ce554057c07abc',
   lastModified: '2022-08-10T14:15:32.569Z',
   name: 'test integration',
@@ -74,7 +72,7 @@ export const integrations = [{
   createdAt: '2022-07-30T21:08:16.091Z',
   _sourceId: '619249e805f85b2022e08abc',
 }];
-export const flows = [
+const flows = [
   {
     _id: '62e59e1176ce554057c07abc',
     lastModified: '2022-08-10T14:16:03.999Z',
@@ -111,7 +109,7 @@ export const flows = [
     autoResolveMatchingTraceKeys: true,
   },
 ];
-export const scripts = [
+const scripts = [
   {
     _id: '62e59df376ce554057c07abc',
     lastModified: '2022-08-10T14:31:47.113Z',
@@ -123,7 +121,7 @@ export const scripts = [
     content: "function preSavePageFunction (options) {\n  var d = options.data;\n   for(var i = 0; i < d.length; i++){\n     var a = d[i].Attachments;\n     for(var j = 0; j < a.length; j++){\n       var n = a[j].Name;\n       var types = n.split(\".\");\n       var ty = types[1];\n       if(ty == 'PNG' || ty == 'png'){\n         a[j].content = \"image/png\";\n       }\n       else if(ty == 'jpg'){\n         a[j].content = \"image/jpeg\";\n       }\n       else if(ty == 'gif'){\n         a[j].content = \"image/gif\";\n       }\n       else if(ty == 'css'){\n         a[j].content = \"text/css\";\n       }\n       else if(ty == 'csv'){\n         a[j].content = \"text/csv\";\n       }\n       else if(ty == 'html'){\n         a[j].content = \"text/html\";\n       }\n       else if(ty == 'txt'){\n         a[j].content = \"text/plain\";\n       }\n       else if(ty == 'mp4'){\n         a[j].content = \"video/mp4\";\n       }\n     }\n   }\n  return {\n    data: options.data,\n    errors: options.errors\n  }\n}",
   },
 ];
-export const exports = [
+const exports = [
   {
     _id: '62e59e0c76ce554057c07abc',
     createdAt: '2022-07-30T21:09:32.545Z',
@@ -264,29 +262,8 @@ export const exports = [
     adaptorType: 'NetSuiteExport',
   },
 ];
-export const imports = [
-  {
-    _id: '5f86981618101578f8aceabc',
-    createdAt: '2020-10-14T06:17:58.418Z',
-    lastModified: '2021-03-23T17:19:54.431Z',
-    name: 'FTP Import',
-    _connectionId: '5d529bfbdb0c7b14a6011abc',
-    distributed: false,
-    apiIdentifier: 'i6fc36de7e',
-    oneToMany: false,
-    sandbox: false,
-    file: {
-      fileName: 'xyz.json',
-      type: 'json',
-    },
-    ftp: {
-      directoryPath: '/Test',
-      fileName: 'xyz.json',
-    },
-    adaptorType: 'FTPImport',
-  },
-];
-export const profile = {
+
+const profile = {
   _id: '5d4010e14cd24a7c77312abc',
   name: 'Test User',
   email: 'testuser@celigo.com',
@@ -328,7 +305,7 @@ async function initScriptLogs(props) {
     utils,
   };
 }
-describe('Script logs', () => {
+describe('script logs', () => {
   runServer();
   let mockDispatchFn;
   let useDispatchSpy;
@@ -360,7 +337,7 @@ describe('Script logs', () => {
     cleanup();
   });
 
-  test('Should able to test the run now button', async () => {
+  test('should able to test the run now button', async () => {
     store({});
     await initScriptLogs({
       flowId: '62e59e1176ce554057c07abc',
@@ -370,7 +347,7 @@ describe('Script logs', () => {
 
     expect(runNode).toBeInTheDocument();
   });
-  test('Should able to test the start debug button', async () => {
+  test('should able to test the start debug button', async () => {
     store({});
     await initScriptLogs({
       flowId: '62e59e1176ce554057c07abc',
@@ -380,7 +357,7 @@ describe('Script logs', () => {
 
     expect(startDebugButton).toBeInTheDocument();
   });
-  test('Should able to test the today date range select button', async () => {
+  test('should able to test the today date range select button', async () => {
     store({});
     await initScriptLogs({
       flowId: '62e59e1176ce554057c07abc',
@@ -418,7 +395,7 @@ describe('Script logs', () => {
     }));
     expect(applyButtonNode).not.toBeInTheDocument();
   }, 30000);
-  test('Should able to test the last 15 minutes date range select button with no execution logs', async () => {
+  test('should able to test the last 15 minutes date range select button with no execution logs', async () => {
     store({});
     await initScriptLogs({
       flowId: '62e59e1176ce554057c07abc',
@@ -452,7 +429,7 @@ describe('Script logs', () => {
     }));
     expect(applyButtonNode).not.toBeInTheDocument();
   }, 30000);
-  test('Should able to test the last 24 hours date range select button', async () => {
+  test('should able to test the last 24 hours date range select button', async () => {
     store({});
     await initScriptLogs({
       flowId: '62e59e1176ce554057c07abc',
@@ -490,7 +467,7 @@ describe('Script logs', () => {
     })));
     expect(applyButtonNode).not.toBeInTheDocument();
   }, 30000);
-  test('Should able to test the last 30 minutes date range select button', async () => {
+  test('should able to test the last 30 minutes date range select button', async () => {
     store({});
     await initScriptLogs({
       flowId: '62e59e1176ce554057c07abc',
@@ -528,7 +505,7 @@ describe('Script logs', () => {
     }));
     expect(applyButtonNode).not.toBeInTheDocument();
   }, 30000);
-  test('Should able to test the last hour date range select button', async () => {
+  test('should able to test the last hour date range select button', async () => {
     store({});
     await initScriptLogs({
       flowId: '62e59e1176ce554057c07abc',
@@ -566,7 +543,7 @@ describe('Script logs', () => {
     }));
     expect(applyButtonNode).not.toBeInTheDocument();
   }, 30000);
-  test('Should able to test the yesterday date range select button', async () => {
+  test('should able to test the yesterday date range select button', async () => {
     store({});
     await initScriptLogs({
       flowId: '62e59e1176ce554057c07abc',
@@ -604,7 +581,7 @@ describe('Script logs', () => {
     }));
     expect(applyButtonNode).not.toBeInTheDocument();
   }, 30000);
-  test('Should able to test the last 4 hours date range select button', async () => {
+  test('should able to test the last 4 hours date range select button', async () => {
     store({});
     await initScriptLogs({
       flowId: '62e59e1176ce554057c07abc',
@@ -643,7 +620,7 @@ describe('Script logs', () => {
     }));
     expect(applyButtonNode).not.toBeInTheDocument();
   }, 30000);
-  test('Should able to test the step button drop-down by selecting a flow', async () => {
+  test('should able to test the step button drop-down by selecting a flow', async () => {
     store({
       connections: {},
       scripts: {
@@ -710,7 +687,7 @@ describe('Script logs', () => {
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.logs.scripts.patchFilter({scriptId: '62e59df376ce554057c07abc', flowId: '62e59e1176ce554057c07abc', field: 'selectedResources', value: [{id: '62e59e0c76ce554057c07abc', name: 'Test Export', type: 'export' }]}));
     expect(applyButtonNode).not.toBeInTheDocument();
   });
-  test('Should able to test the function type button drop-down', async () => {
+  test('should able to test the function type button drop-down', async () => {
     store({});
     await initScriptLogs({
       flowId: '62e59e1176ce554057c07abc',
@@ -766,7 +743,7 @@ describe('Script logs', () => {
 
     expect(preSavePageButtonNode).toBeInTheDocument();
   }, 30000);
-  test('Should able to test the log level button drop-down', async () => {
+  test('should able to test the log level button drop-down', async () => {
     store({});
     await initScriptLogs({
       flowId: '62e59e1176ce554057c07abc',
@@ -800,7 +777,7 @@ describe('Script logs', () => {
 
     expect(debugButtonNode).toBeInTheDocument();
   });
-  test('Should able to test the purge logs action', async () => {
+  test('should able to test the purge logs action', async () => {
     store({
       connections: {},
       scripts: {
@@ -838,9 +815,9 @@ describe('Script logs', () => {
     const purgeLogs = screen.getByText(/Purge all logs of this script/i);
 
     expect(purgeLogs).toBeInTheDocument();
-    expect(purgeLogs.getAttribute('aria-disabled')).toBeFalsy;
+    expect(purgeLogs.getAttribute('aria-disabled')).toBe('false');
   });
-  test('Should able to test the refresh button', async () => {
+  test('should able to test the refresh button', async () => {
     store({
       connections: {},
       scripts: {
@@ -880,7 +857,7 @@ describe('Script logs', () => {
       scriptId: '62e59df376ce554057c07abc',
     }));
   });
-  test('Should able to test the rows button with no execution logs', async () => {
+  test('should able to test the rows button with no execution logs', async () => {
     store({
       connections: {},
       scripts: {
@@ -922,11 +899,11 @@ describe('Script logs', () => {
     expect(fiftyOptionNode).toBeInTheDocument();
     userEvent.click(tenOptionNode);
     await waitFor(() => expect(twentyFiveOptionNode).not.toBeInTheDocument());
-    const noExecutionLogsNode = screen.getByText(/You don’t have any execution logs in the selected time frame./i);
+    const noExecutionLogsNode = screen.getByText("You don't have any execution logs in the selected time frame.");
 
     expect(noExecutionLogsNode).toBeInTheDocument();
   });
-  test('Should able to test the pagination button', async () => {
+  test('should able to test the pagination button', async () => {
     store({
       connections: {},
       scripts: {
@@ -1058,7 +1035,7 @@ describe('Script logs', () => {
 
     expect(pageNode).toBeInTheDocument();
   }, 30000);
-  test('Should able to test the logs when the status is inprogress and clicking on pause and resume button', async () => {
+  test('should able to test the logs when the status is inprogress and clicking on pause and resume button', async () => {
     store({
       connections: {},
       scripts: {
@@ -1096,7 +1073,7 @@ describe('Script logs', () => {
     userEvent.click(resumeButtonNode);
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.logs.scripts.loadMore({scriptId: '62e59df376ce554057c07abc', flowId: '62e59e1176ce554057c07abc', fetchNextPage: true}));
   });
-  test('Should able to test the function type drop-down button when there is no flow id', async () => {
+  test('should able to test the function type drop-down button when there is no flow id', async () => {
     store({});
     await initScriptLogs({
       flowId: '',

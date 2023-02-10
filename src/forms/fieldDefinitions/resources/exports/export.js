@@ -112,12 +112,13 @@ export default {
     isLoggable: true,
     type: 'select',
     label: 'Type',
+    skipSort: true,
     options: [
       {
         items: [
           { label: 'Webhook', value: 'webhook' },
           { label: 'Distributed', value: 'distributed' },
-          { label: 'Test – export only 1 record', value: 'test' },
+          { label: 'Limit – export a set number of records', value: 'test' },
           { label: 'Delta – export only modified data', value: 'delta' },
           { label: 'Once – export records only once', value: 'once' },
           { label: 'Tranlinedelta', value: 'tranlinedelta' },
@@ -266,14 +267,16 @@ export default {
   // #endregion inputFilter
   // #region test
   'test.limit': {
-    isLoggable: true,
     type: 'text',
-    label: 'Test limit',
-    validWhen: [
-      {
-        matchesRegEx: { pattern: '^[\\d]+$', message: 'Only numbers allowed' },
-      },
+    label: 'How many records would you like to export?',
+    required: true,
+    defaultValue: r => r?.test?.limit || 1,
+    visibleWhen: [
+      { field: 'type', is: ['test'] },
     ],
+    validWhen: {
+      fallsWithinNumericalRange: { min: 1, max: 100 },
+    },
   },
   // #endregion test
   // #region delta
@@ -468,5 +471,9 @@ export default {
   settings: {
     type: 'settings',
     defaultValue: r => r && r.settings,
+  },
+  mockOutput: {
+    label: 'Mock output',
+    type: 'mockoutput',
   },
 };

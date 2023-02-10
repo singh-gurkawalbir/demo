@@ -1,4 +1,4 @@
-/* global describe, test, expect, jest */
+
 import React from 'react';
 import {screen, waitFor} from '@testing-library/react';
 import {MemoryRouter, Route} from 'react-router-dom';
@@ -16,6 +16,7 @@ function initPageBar(props = {}) {
     disabled: false,
     _integrationId: '6253af74cddb8a1ba550a010',
     isSimpleImport: true,
+    schedule: props.schedule,
     skipRetries: false,
     _connectorId: props.connId,
     pageProcessors: [
@@ -237,6 +238,18 @@ describe('FlowBuilder Body PageBar UI tests', () => {
 
     initPageBar(props);
     await waitFor(() => expect(screen.getByText('LastRun')).toBeInTheDocument());
+  });
+  test('should show icon indicator if the flow is scheduled', () => {
+    const props = {flowId: '62c6f122a2f4a703c3dee3d0', integrationId: '6253af74cddb8a1ba550a010', schedule: '? 5 13 ? * 5'};
+
+    initPageBar(props);
+    expect(document.querySelector('[class*=makeStyles-circle]')).toBeInTheDocument();
+  });
+  test('should not show icon indicator if the flow is not scheduled', () => {
+    const props = {flowId: '62c6f122a2f4a703c3dee3d0', integrationId: '6253af74cddb8a1ba550a010'};
+
+    initPageBar(props);
+    expect(document.querySelector('[class*=makeStyles-circle]')).not.toBeInTheDocument();
   });
 });
 

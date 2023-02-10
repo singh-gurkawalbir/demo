@@ -1,4 +1,4 @@
-/* global describe, expect, beforeEach, test */
+
 import { selectors } from '.';
 
 describe('Form fields state validation test cases', () => {
@@ -43,7 +43,7 @@ describe('Form fields state validation test cases', () => {
       expect(selectors.httpPagingValidationError(state, formKey, pagingMethodsToValidate, pagingFieldsToValidate)).toBeUndefined();
     });
     test('should return the error message for passed paging method if validation criteria fails', () => {
-      expect(selectors.httpPagingValidationError(state, formKey, pagingMethodsToValidate, pagingFieldsToValidate)).toEqual('The paging method selected must use {{export.http.paging.skip}} in either the relative URI or HTTP request body.');
+      expect(selectors.httpPagingValidationError(state, formKey, pagingMethodsToValidate, pagingFieldsToValidate)).toBe('The paging method selected must use {{export.http.paging.skip}} in either the relative URI or HTTP request body.');
     });
   });
 
@@ -79,7 +79,7 @@ describe('Form fields state validation test cases', () => {
       expect(selectors.httpDeltaValidationError(state, formKey, deltaFieldsToValidate)).toBeUndefined();
     });
     test('should return the error message if validation criteria is not met', () => {
-      expect(selectors.httpDeltaValidationError(state, formKey, deltaFieldsToValidate)).toEqual('Delta exports must use {{lastExportDateTime}} in either the relative URI or HTTP request body.');
+      expect(selectors.httpDeltaValidationError(state, formKey, deltaFieldsToValidate)).toBe('Delta exports must use {{lastExportDateTime}} in either the relative URI or HTTP request body.');
     });
   });
   describe('retryUsersList test cases', () => {

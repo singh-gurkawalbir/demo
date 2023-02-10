@@ -9,6 +9,7 @@ import DynaForm from '../../components/DynaForm';
 import DynaSubmit from '../../components/DynaForm/DynaSubmit';
 import useEnqueueSnackbar from '../../hooks/enqueueSnackbar';
 import useFormInitWithPermissions from '../../hooks/useFormInitWithPermissions';
+import {message as messageStoreMessage} from '../../utils/messageStore';
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -111,8 +112,7 @@ export default function ChangePassword({ show, onClose }) {
         {!success && (
         <div className={classes.container}>
           <Typography variant="body2" className={classes.changePasswordInfo}>
-            {`Please note that clicking 'Change Password' will sign you out of the
-          application, and you will need to sign back in with your new password.`}
+            {messageStoreMessage.USER_SIGN_IN.CHANGE_PASSWORD_INFO}
           </Typography>
 
           <DynaForm formKey={formKey} />

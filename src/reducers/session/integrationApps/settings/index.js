@@ -1,7 +1,7 @@
 import produce from 'immer';
 import { createSelector } from 'reselect';
 import { deepClone } from 'fast-json-patch/lib/core';
-import shortid from 'shortid';
+import { generateId } from '../../../../utils/string';
 import actionTypes from '../../../../actions/types';
 import mappingUtil from '../../../../utils/mapping';
 import { FORM_SAVE_STATUS } from '../../../../constants';
@@ -299,7 +299,7 @@ export default (state = {}, action) => {
             draft[cKey].mappings[id].mappings[index] = mapping;
             draft[cKey].mappings[id].lastModifiedRowKey = mapping.key;
           } else if (value) {
-            const newKey = shortid.generate();
+            const newKey = generateId();
             const newRow = {
               key: newKey,
             };

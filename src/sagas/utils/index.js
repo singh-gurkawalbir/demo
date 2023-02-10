@@ -1,13 +1,18 @@
 import jsonPatch, { deepClone, applyPatch } from 'fast-json-patch';
 import { select, call } from 'redux-saga/effects';
-import { isEmpty, cloneDeep, set, unset } from 'lodash';
+import { isEmpty, cloneDeep, set, unset, get } from 'lodash';
 import util from '../../utils/array';
 import { isNewId } from '../../utils/resource';
 import { selectors } from '../../reducers';
-import { createFormValuesPatchSet, SCOPES } from '../resourceForm';
+import { createFormValuesPatchSet } from '../resourceForm';
 import { createFormValuesPatchSet as createSuiteScriptFormValuesPatchSet } from '../suiteScript/resourceForm';
 import { AUTHENTICATION_LABELS, emptyObject } from '../../constants';
 
+export const getDataTypeDefaultValue = (dataType = 'string') => {
+  const data = {string: 'abc', number: 123, boolean: true, stringarray: ['a', 'b'], numberarray: [1, 2], booleanarray: [true, false], objectarray: [{a: 'b'}, {c: 'd'}], object: {a: 'b'} };
+
+  return data[dataType] || 'abc';
+};
 export const convertResourceFieldstoSampleData = (resourceFields, dataType = 'object') => {
   if (!resourceFields) {
     return '';
@@ -18,7 +23,7 @@ export const convertResourceFieldstoSampleData = (resourceFields, dataType = 'ob
     resourceFields.forEach(rf => {
       if (rf.resourceFields) {
         output[rf.id] = convertResourceFieldstoSampleData(rf.resourceFields, rf.dataType);
-      } else { output[rf.id] = rf.id; }
+      } else { output[rf.id] = getDataTypeDefaultValue(rf.dataType); }
     });
 
     return output;
@@ -29,7 +34,7 @@ export const convertResourceFieldstoSampleData = (resourceFields, dataType = 'ob
     resourceFields.forEach(rf => {
       if (rf.resourceFields) {
         tempOutput[rf.id] = convertResourceFieldstoSampleData(rf.resourceFields, rf.dataType);
-      } else { tempOutput[rf.id] = rf.id; }
+      } else { tempOutput[rf.id] = getDataTypeDefaultValue(rf.dataType); }
     });
 
     return [tempOutput];
@@ -44,7 +49,12 @@ export const getEndpointResourceFields = (endpointFields, resourceFields) => {
 
   if (type === 'inclusion') {
     fields.forEach(field => {
-      returnData = set(returnData, field?.replaceAll('[*]', '[0]'), 'default');
+      const tempField = field?.replaceAll('[*]', '[0]');
+      const value = get(resourceFields, tempField);
+
+      if (value) {
+        returnData = set(returnData, tempField, value);
+      }
     });
   } if (type === 'exclusion') {
     returnData = resourceFields;
@@ -69,7 +79,9 @@ const isPathPresentAndValueDiff = patchArr => patch =>
   patchArr.some(p => p.path === patch.path && p.value !== patch.value);
 
 export const getExportMetadata = (connectorMetadata, connectionVersion) => {
-  const { httpConnectorResources: httpResources, httpConnectorEndpoints: httpEndpoints} = connectorMetadata;
+  const { httpConnectorEndpoints: httpEndpoints} = connectorMetadata;
+  let { httpConnectorResources: httpResources} = connectorMetadata;
+
   const versionLocation = connectorMetadata.versioning?.location;
 
   const exportData = {
@@ -93,11 +105,6 @@ export const getExportMetadata = (connectorMetadata, connectionVersion) => {
 
   let versions = connectorMetadata.versions?.map(v => ({version: v.name, _id: v._id}));
 
-  if (connectionVersion) {
-    versions = versions.filter(v => v.version === connectionVersion);
-  }
-  exportData.versions = cloneDeep(versions);
-
   if (!versions || !versions.length) {
     versions = [
       {
@@ -105,6 +112,11 @@ export const getExportMetadata = (connectorMetadata, connectionVersion) => {
         _id: '_v2id',
       }];
   }
+  if (connectionVersion) {
+    versions = versions.filter(v => v.version === connectionVersion);
+    httpResources = httpResources.filter(r => r._versionIds?.includes(versions[0]._id));
+  }
+  exportData.versions = cloneDeep(versions);
 
   exportData.resources = httpResources.map(httpResource => {
     const exportPreConfiguredFields = cloneDeep(httpResource.supportedBy?.export?.preConfiguredFields);
@@ -137,7 +149,7 @@ export const getExportMetadata = (connectorMetadata, connectionVersion) => {
           const supportedExportTypes = fieldsUserMustSet?.find(f => f.path === 'type')?.values;
 
           const queryParameters = httpEndpoint.queryParameters?.map(qp => ({name: qp.name, id: qp.name, description: qp.description, required: qp.required, fieldType: qp.dataType || qp.fieldType || 'textarea', defaultValue: qp.defaultValue, readOnly: qp.readOnly, options: qp.values }));
-          const pathParameters = httpEndpoint.pathParameters?.map(pp => ({name: pp.name, id: pp.name, description: pp.description, required: pp.required !== false, fieldType: pp.fieldType || 'input' }));
+          const pathParameters = httpEndpoint.pathParameters?.map(pp => ({name: pp.label, id: pp.name, description: pp.description, required: pp.required !== false, fieldType: pp.dataType || pp.fieldType || 'input', suggestions: pp.values, config: pp.config }));
           let doesNotSupportPaging = false;
 
           if (httpEndpoint.supportedBy.fieldsToUnset?.includes('paging')) {
@@ -173,7 +185,8 @@ export const getExportMetadata = (connectorMetadata, connectionVersion) => {
 };
 export const getImportMetadata = (connectorMetadata, connectionVersion) => {
   const versionLocation = connectorMetadata.versioning?.location;
-  const { httpConnectorResources: httpResources, httpConnectorEndpoints: httpEndpoints} = connectorMetadata;
+  const { httpConnectorEndpoints: httpEndpoints} = connectorMetadata;
+  let { httpConnectorResources: httpResources } = connectorMetadata;
   const importData = {
     labels: {
       version: 'API version',
@@ -194,15 +207,17 @@ export const getImportMetadata = (connectorMetadata, connectionVersion) => {
   });
   let versions = connectorMetadata.versions?.map(v => ({version: v.name, _id: v._id}));
 
-  if (connectionVersion) {
-    versions = versions.filter(v => v.version === connectionVersion);
-  }
   if (!versions || !versions.length) {
     versions = [
       {
         version: 'v2',
         _id: '_v2id',
       }];
+  }
+
+  if (connectionVersion) {
+    versions = versions.filter(v => v.version === connectionVersion);
+    httpResources = httpResources.filter(r => r._versionIds?.includes(versions[0]._id));
   }
 
   importData.versions = cloneDeep(versions);
@@ -244,9 +259,11 @@ export const getImportMetadata = (connectorMetadata, connectionVersion) => {
                   httpEndpoint.pathParameters?.forEach(pp => {
                     parameters.push({
                       id: pp.name,
-                      name: pp.name,
+                      name: pp.label,
                       in: 'path',
                       required: true,
+                      config: pp.config,
+                      suggestions: pp.values,
                     });
                   });
           }
@@ -333,7 +350,7 @@ export const getHTTPConnectorMetadata = (connectorMetadata, connectionVersion) =
   let modifiedHttpConnectorResources = httpConnectorResources.map(res => {
     const filteredHttpResources = httpConnectorResources.filter(hRes => res.name === hRes.name);
 
-    if (filteredHttpResources.length > 1) {
+    if (filteredHttpResources.length > 1 && !connectionVersion) {
       if (!resourceNames[res.name]) {
         resourceNames[res.name] = true;
         const ids = filteredHttpResources.map(fRes => fRes._id);
@@ -359,7 +376,7 @@ export const getHTTPConnectorMetadata = (connectorMetadata, connectionVersion) =
   let modifiedHttpConnectorEndpoints = httpConnectorEndpoints.map(res => {
     const filteredHttpEndpoints = httpConnectorEndpoints.filter(hRes => res.name === hRes.name);
 
-    if (filteredHttpEndpoints.length > 1) {
+    if (filteredHttpEndpoints.length > 1 && !connectionVersion) {
       if (!endpointNames[res.name]) {
         endpointNames[res.name] = true;
         const ids = filteredHttpEndpoints.map(fRes => fRes._id);
@@ -490,6 +507,8 @@ export const updateFinalMetadataWithHttpFramework = (finalFieldMeta, connector, 
         tempFiledMeta.fieldMap[key] = {...tempFiledMeta.fieldMap[key], visible: isGenericHTTP || false};
       } else if (key === 'http._iClientId') {
         tempFiledMeta.fieldMap[key] = {...tempFiledMeta.fieldMap[key], required: !!fieldUserMustSet};
+      } else if (key === 'http.auth.token.token' || key === 'http.auth.token.refreshToken') {
+        tempFiledMeta.fieldMap[key] = {...tempFiledMeta.fieldMap[key], visible: false};
       } else if (key === 'http.baseURI') {
         if (!tempFiledMeta.fieldMap[key].defaultValue) { tempFiledMeta.fieldMap[key] = {...tempFiledMeta.fieldMap[key], defaultValue: connector?.baseURIs?.[0]?.replace('/:_version', '') }; } else if (resource.http?.unencrypted?.version) {
           tempFiledMeta.fieldMap[key].defaultValue = tempFiledMeta.fieldMap[key].defaultValue.replace(`/${resource.http?.unencrypted?.version}`, '');
@@ -506,11 +525,6 @@ export const updateFinalMetadataWithHttpFramework = (finalFieldMeta, connector, 
 
           tempFiledMeta.fieldMap[key] = {...tempFiledMeta.fieldMap[key], options, type: 'select'};
         }
-      }
-      if (tempFiledMeta?.fieldMap['name']) {
-        const application = resource?.application;
-
-        tempFiledMeta.fieldMap.name.placeholder = `${application} connection`;
       }
 
       return tempFiledMeta.fieldMap[key];
@@ -677,6 +691,7 @@ export const updateFinalMetadataWithHttpFramework = (finalFieldMeta, connector, 
 
     if (fields) {
       const fieldIds = [];
+      const preConfiguredField = connectionTemplate.preConfiguredFields?.filter(field => field.path === 'http.baseURI');
 
       for (let i = 0; i < fields.length; i += 1) {
         fields[i] = fields[i].field;
@@ -686,22 +701,51 @@ export const updateFinalMetadataWithHttpFramework = (finalFieldMeta, connector, 
       if (isGenericHTTP && isNewId(resource._id)) {
           tempFiledMeta.layout?.containers?.push({fields: fieldIds, label: 'Custom settings'});
       } else if (!isGenericHTTP) {
+        const baseURIFields = []; const authFields = [];
+        const baseURIValue = tempFiledMeta?.fieldMap['http.baseURI']?.defaultValue;
+
+        fieldIds.forEach(field => {
+          (new RegExp(`{{(.)*(${field})(.)*}}`)).test(baseURIValue) ? baseURIFields.push(field) : authFields.push(field);
+        });
+        if (baseURIFields.length > 0) {
+              tempFiledMeta?.layout?.containers[1]?.containers[1]?.containers?.splice(0, 1, {fields: baseURIFields});
+        } else if (preConfiguredField) {
+          preConfiguredField.forEach(field => {
+            if (field._conditionIds?.length) {
+              const conditionFields = connectionTemplate?.conditions?.filter(field1 => field1._id === field?._conditionIds[0]);
+              const dependentField = conditionFields[0]?.condition?.rules[1][1][1];
+
+              tempFiledMeta?.layout?.containers[1]?.containers[1]?.containers?.splice(0, 1, {fields: [dependentField]});
+            }
+          });
+        } else {
+              tempFiledMeta?.layout?.containers[1]?.containers?.splice(1, 1);
+        }
         if (tempFiledMeta?.fieldMap['http.auth.type']?.visible === false) {
           delete tempFiledMeta?.layout?.containers[3]?.containers[1]?.type;
         }
-        tempFiledMeta?.layout?.containers[7].containers?.push({fields: fieldIds});
-        tempFiledMeta?.layout?.containers[7]?.containers?.splice(0, 1);
-        Object.keys(tempFiledMeta.fieldMap).map(key => {
-          const fieldUserMustSet = connectionTemplate.fieldsUserMustSet?.find(field => key === field.path);
+        if (tempFiledMeta?.layout?.containers[1]?.containers[1]?.containers[0]?.fields?.length > 0) {
+          const baseurlDependentFields = tempFiledMeta?.layout?.containers[1]?.containers[1]?.containers[0]?.fields;
 
-          if (fieldUserMustSet && fieldUserMustSet.helpURL) {
-            tempFiledMeta.fieldMap[key].helpLink = `${fieldUserMustSet.helpURL}`;
+          baseurlDependentFields.forEach(field => {
+            const indexcheck = fieldIds.indexOf(field);
+
+            delete fieldIds[indexcheck];
+          });
+        }
+        tempFiledMeta?.layout?.containers[7]?.containers?.push({fields: fieldIds});
+          tempFiledMeta?.layout?.containers[7]?.containers?.splice(0, 1);
+          Object.keys(tempFiledMeta.fieldMap).map(key => {
+            const fieldUserMustSet = connectionTemplate.fieldsUserMustSet?.find(field => key === field.path);
+
+            if (fieldUserMustSet && fieldUserMustSet.helpURL) {
+              tempFiledMeta.fieldMap[key].helpLink = `${fieldUserMustSet.helpURL}`;
+            }
+
+            return tempFiledMeta.fieldMap[key];
           }
 
-          return tempFiledMeta.fieldMap[key];
-        }
-
-        );
+          );
       }
     }
   } else if (!isGenericHTTP) {
@@ -785,19 +829,6 @@ export const updateWebhookFinalMetadataWithHttpFramework = (finalFieldMeta, conn
 
   return tempFiledMeta;
 };
-export const updateExportAndImportFinalMetadata = (finalFieldMeta, connector, resource, isGenericHTTP) => {
-  const tempFiledMeta = cloneDeep(finalFieldMeta);
-
-  if (!isGenericHTTP && tempFiledMeta?.fieldMap['name']) {
-    const dataResourceType = (resource?.isLookup === true) ? 'lookup' : tempFiledMeta?.fieldMap['name']?.resourceType.slice(0, 6);
-    const application = resource?.assistant;
-
-    tempFiledMeta.fieldMap.name.label = `Name your ${dataResourceType}`;
-    tempFiledMeta.fieldMap.name.placeholder = `${application} ${dataResourceType}`;
-  }
-
-  return tempFiledMeta;
-};
 export function resourceConflictResolution({ merged, master, origin }) {
   if (origin?.lastModified === master?.lastModified) {
     // no conflict here
@@ -865,14 +896,12 @@ export function* constructResourceFromFormValues({
     resourceType,
     resourceId,
     values: formValues,
-    scope: SCOPES.VALUE,
   });
 
   const { merged } = yield select(
     selectors.resourceData,
     resourceType,
     resourceId,
-    SCOPES.VALUE
   );
 
   try {
@@ -894,7 +923,6 @@ export function* constructSuiteScriptResourceFromFormValues({
     resourceType,
     resourceId,
     values: formValues,
-    scope: SCOPES.VALUE,
     ssLinkedConnectionId,
     integrationId,
   });
@@ -904,7 +932,6 @@ export function* constructSuiteScriptResourceFromFormValues({
     id: resourceId,
     ssLinkedConnectionId,
     integrationId,
-    scope: SCOPES.VALUE,
   });
 
   try {

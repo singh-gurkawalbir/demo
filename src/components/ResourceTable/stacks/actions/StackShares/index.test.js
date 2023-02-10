@@ -1,4 +1,4 @@
-/* global describe, test, expect,  beforeEach, jest */
+
 import React from 'react';
 import { screen } from '@testing-library/react';
 import { MemoryRouter, Route } from 'react-router-dom';
@@ -33,7 +33,7 @@ function renderFunction() {
   userEvent.click(screen.getByRole('button', {name: /more/i}));
 }
 
-describe('Share stack metadata UI Tests', () => {
+describe('share stack metadata UI Tests', () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });

@@ -108,8 +108,8 @@ function pathParameterFieldsMeta({ operationParameters = [], values }) {
   return operationParameters.map(pathParam => {
     const pathParamField = {
       id: `assistantMetadata.pathParams.${pathParam.id}`,
-      label: pathParam.name,
-      type: 'textwithflowsuggestion',
+      label: pathParam.label || pathParam.name,
+      type: 'hfpathparams',
       showLookup: false,
       value: values[pathParam.id],
       required: !!pathParam.required,
@@ -117,7 +117,6 @@ function pathParameterFieldsMeta({ operationParameters = [], values }) {
     };
 
     if (pathParam.options && pathParam.options.length > 0) {
-      pathParamField.type = 'select';
       pathParamField.options = [
         {
           items: pathParam.options.map(opt => ({
@@ -129,7 +128,6 @@ function pathParameterFieldsMeta({ operationParameters = [], values }) {
     }
 
     if (pathParam.suggestions && pathParam.suggestions.length > 0) {
-      pathParamField.type = 'autosuggest';
       pathParamField.labelName = 'name';
       pathParamField.valueName = 'value';
       pathParamField.options = {
@@ -155,7 +153,7 @@ function exportTypeFieldsMeta({
   }
 
   if (supportedExportTypes.includes('test')) {
-    exportTypeOptions.push({ value: 'test', label: 'Test – export only 1 record' });
+    exportTypeOptions.push({ value: 'test', label: 'Limit – export a set number of records' });
   }
 
   if (exportTypeOptions.length <= 1) {
@@ -174,6 +172,12 @@ function exportTypeFieldsMeta({
       ],
       value: exportType || 'all',
     },
+    {
+      fieldId: 'test.limit',
+      visibleWhen: [
+        {field: 'assistantMetadata.exportType', is: ['test']},
+      ],
+    },
   ];
 }
 
@@ -186,9 +190,23 @@ function searchParameterFieldsMeta({
   operationChanged,
   deltaDefaults = {},
   isDeltaExport,
+  url,
 }) {
   let searchParamsField;
   const defaultValue = {};
+  const filteredValues = value;
+
+  if (url) {
+    const [, queryPart] = url?.split('?');
+    const queryObj = new URLSearchParams(queryPart);
+    const parameterIds = parameters.map(param => param.id);
+
+    if (queryPart) {
+      [...queryObj.entries()].filter(([key]) => !parameterIds.includes(key)).map(([key]) => key).forEach(key => {
+        delete filteredValues[key];
+      });
+    }
+  }
 
   parameters.forEach(p => {
     if (Object.prototype.hasOwnProperty.call(p, 'defaultValue') && operationChanged) {
@@ -213,7 +231,7 @@ function searchParameterFieldsMeta({
           ? 'assistantMetadata.queryParams'
           : 'assistantMetadata.bodyParams',
       label,
-      value: !isEmpty(value) ? value : defaultValue,
+      value: !isEmpty(filteredValues) ? filteredValues : defaultValue,
       keyName: 'name',
       valueName: 'value',
       keyPlaceholder: 'Search, select or add a name',
@@ -319,6 +337,7 @@ export function fieldMeta({ resource, assistantData }) {
             operationDetails.delta.defaults
               ? operationDetails.delta.defaults
               : {},
+          url: operationDetails.url,
         });
       }
       if (
@@ -359,6 +378,18 @@ export function fieldMeta({ resource, assistantData }) {
     pageSize: { fieldId: 'pageSize' },
     formView: { fieldId: 'formView' },
     skipRetries: { fieldId: 'skipRetries' },
+    'test.limit': {fieldId: 'test.limit'},
+    advancedSettings: {
+      formId: 'advancedSettings',
+    },
+    configureAsyncHelper: {
+      fieldId: 'configureAsyncHelper',
+      defaultValue: r => !!(r && r.http && r.http._asyncHelperId),
+      visible: r => !(r && r.statusExport),
+    },
+    'http._asyncHelperId': {
+      fieldId: 'http._asyncHelperId',
+    },
   };
   const fieldIds = [];
   const exportTypeFieldIds = [];
@@ -378,6 +409,8 @@ export function fieldMeta({ resource, assistantData }) {
   fieldMap.traceKeyTemplate = {
     fieldId: 'traceKeyTemplate',
   };
+
+  fieldMap.mockOutput = {fieldId: 'mockOutput'};
 
   return {
     fieldMap,
@@ -401,8 +434,16 @@ export function fieldMeta({ resource, assistantData }) {
         },
         {
           collapsed: true,
+          actionId: 'mockOutput',
+          label: 'Mock output',
+          fields: ['mockOutput'],
+        },
+        {
+          collapsed: true,
           label: 'Advanced',
-          fields: ['pageSize', 'skipRetries', 'traceKeyTemplate', 'apiIdentifier'],
+          fields: ['configureAsyncHelper',
+            'http._asyncHelperId',
+            'advancedSettings'],
         },
       ],
     },

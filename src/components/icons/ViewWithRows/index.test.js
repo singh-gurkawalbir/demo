@@ -1,4 +1,4 @@
-/* global describe, test, expect */
+
 import React from 'react';
 import ViewWithRows from '.';
 import { runServer } from '../../../test/api/server';
@@ -14,7 +14,7 @@ async function initViewWithRows({ props = {}} = {}) {
   return renderWithProviders(ui);
 }
 
-describe('ViewWithRows component Test cases', () => {
+describe('viewWithRows component Test cases', () => {
   runServer();
 
   test('should pass the intial render no props', async () => {

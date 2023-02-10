@@ -1,4 +1,4 @@
-/* global describe, test, expect, jest, beforeEach */
+
 import React from 'react';
 import { screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
@@ -154,7 +154,6 @@ describe('ConnectionsPanel UI tests', () => {
           { op: 'add', path: '/newIA', value: true },
         ],
         id: 'somegeneratedID',
-        scope: 'value',
       }
     );
     expect(mockHistoryPush).toHaveBeenCalledWith('someinitalURL/add/connections/somegeneratedID');
@@ -182,7 +181,6 @@ describe('ConnectionsPanel UI tests', () => {
           { op: 'add', path: '/applications', value: ['acumatica'] },
         ],
         id: 'somegeneratedID',
-        scope: 'value',
       }
     );
     expect(mockHistoryPush).toHaveBeenCalledWith('someinitalURL/add/connections/somegeneratedID');

@@ -1,13 +1,15 @@
-/* global describe, test, expect, beforeEach, afterEach, jest */
-import React from 'react';
+
+import React, { useState } from 'react';
 import {screen} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import * as reactRedux from 'react-redux';
+import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 import {renderWithProviders} from '../../test/test-utils';
 import HelpContent from '.';
+import ArrowPopper from '../ArrowPopper';
 import actions from '../../actions';
 
-describe('HelpContent UI tests', () => {
+describe('helpContent UI tests', () => {
   let mockDispatchFn;
   let useDispatchSpy;
 
@@ -25,19 +27,54 @@ describe('HelpContent UI tests', () => {
     useDispatchSpy.mockClear();
   });
   test('should display the contents of the HelpContent arrowPopper', () => {
-    const props = { children: 'This is the sample text', title: 'Sample title', caption: 'Sample caption' };
+    const TestComponent = props => {
+      const [anchorEl, setAnchorEl] = useState(null);
+      const popperRef = React.useRef(null);
 
-    renderWithProviders(<HelpContent {...props} />);
-    screen.debug();
+      return (
+        <>
+          <ClickAwayListener onClickAway={() => { setAnchorEl(null); }}>
+            <button type="button" onClick={event => { setAnchorEl(event.currentTarget); }}>click</button>
+          </ClickAwayListener>
+          <ArrowPopper
+            placement="right"
+            id="helpBubble"
+            open={!!anchorEl}
+            disablePortal
+            popperRef={popperRef}
+            anchorEl={anchorEl}
+          >
+            <HelpContent {...props} />
+          </ArrowPopper>
+        </>
+
+      );
+    };
+
+    renderWithProviders(
+      <TestComponent
+        title="Sample title"
+        caption="Sample caption"
+      >
+        This is the sample text
+      </TestComponent>
+    );
+    const clickButton = screen.getByRole('button', { name: 'click'});
+
+    userEvent.click(clickButton);
     expect(screen.getByText('This is the sample text')).toBeInTheDocument();
     expect(screen.getByText('Sample title')).toBeInTheDocument();
-    expect(screen.getByText('Sample caption')).toBeInTheDocument();
     expect(screen.getByText(/Was this helpful/i)).toBeInTheDocument();
     const thumbsup = document.querySelector('[data-test="yesContentHelpful"]');
     const thumbsdown = document.querySelector('[data-test="noContentHelpful"]');
 
     expect(thumbsup).toBeInTheDocument();
     expect(thumbsdown).toBeInTheDocument();
+
+    const closeButton = document.querySelector('[data-test="close"]');
+
+    userEvent.click(closeButton);
+    expect(screen.queryByText('This is the sample text')).not.toBeInTheDocument();
   });
   test('should run the respective dipatch function when "yes" is clicked', () => {
     const props = { children: 'This is the sample text', title: 'Sample title', caption: 'Sample caption' };
@@ -46,7 +83,7 @@ describe('HelpContent UI tests', () => {
     const thumbsup = document.querySelector('[data-test="yesContentHelpful"]');
 
     userEvent.click(thumbsup);
-    expect(mockDispatchFn).toBeCalledWith(actions.app.postFeedback(undefined, undefined, true));
+    expect(mockDispatchFn).toHaveBeenCalledWith(actions.app.postFeedback(undefined, undefined, true));
   });
   test('should display the user entry field when clicked "No"', () => {
     const props = { children: 'This is the sample text', title: 'Sample title', caption: 'Sample caption' };
@@ -70,7 +107,7 @@ describe('HelpContent UI tests', () => {
 
     userEvent.type(input, 'sample userInput');
     userEvent.click(screen.getByText(/Submit/i));
-    expect(mockDispatchFn).toBeCalledWith(actions.app.postFeedback(undefined, undefined, false, 'sample userInput'));
+    expect(mockDispatchFn).toHaveBeenCalledWith(actions.app.postFeedback(undefined, undefined, false, 'sample userInput'));
   });
   test('should render the help content with blank heading and content when props are not passed', () => {
     renderWithProviders(<HelpContent />);
@@ -80,5 +117,31 @@ describe('HelpContent UI tests', () => {
 
     expect(thumbsup).toBeInTheDocument();
     expect(thumbsdown).toBeInTheDocument();
+  });
+
+  test('should display the contents of the HelpContent when supportFeedback is false and onClose', () => {
+    const onClose = jest.fn();
+
+    renderWithProviders(
+      <HelpContent
+        title="Sample title"
+        supportFeedback={false}
+        onClose={onClose}
+      >
+        This is the sample text
+      </HelpContent>
+    );
+    expect(screen.getByText('This is the sample text')).toBeInTheDocument();
+    expect(screen.getByText('Sample title')).toBeInTheDocument();
+    expect(screen.queryByText(/Was this helpful/i)).not.toBeInTheDocument();
+    const thumbsup = document.querySelector('[data-test="yesContentHelpful"]');
+    const thumbsdown = document.querySelector('[data-test="noContentHelpful"]');
+
+    expect(thumbsup).not.toBeInTheDocument();
+    expect(thumbsdown).not.toBeInTheDocument();
+    const closeButton = document.querySelector('[data-test="close"]');
+
+    userEvent.click(closeButton);
+    expect(onClose).toBeCalled();
   });
 });

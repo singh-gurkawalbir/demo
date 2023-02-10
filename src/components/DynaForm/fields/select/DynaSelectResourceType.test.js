@@ -1,4 +1,4 @@
-/* global describe, test, expect, jest, afterEach */
+
 import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -32,15 +32,15 @@ async function initDynaSelectResourceType(props = {}) {
 
   return renderWithProviders(<DynaSelectResourceType {...props} />, { initialStore });
 }
-describe('DynaSelectResourceType tests', () => {
+describe('dynaSelectResourceType tests', () => {
   afterEach(() => {
     onFieldChange.mockClear();
   });
-  test('Should test dynaSelect for resourceTypes without options having any application selected', async () => {
+  test('should test dynaSelect for resourceTypes without options having any application selected', async () => {
     await initDynaSelectResourceType(props);
     expect(screen.getByText('Please select')).toBeInTheDocument();
   });
-  test('Should test dynaSelect for resourceTypes with options having selectedApplication as salesforce', async () => {
+  test('should test dynaSelect for resourceTypes with options having selectedApplication as salesforce', async () => {
     await initDynaSelectResourceType({...props, options: {selectedApplication: {assistant: 'salesforce'}}});
     expect(onFieldChange).toHaveBeenCalledWith('resourceType', '', true);
     userEvent.click(screen.getByRole('button'));
@@ -49,7 +49,7 @@ describe('DynaSelectResourceType tests', () => {
     expect(screen.getByText('Look up additional records (per record)')).toBeInTheDocument();
     expect(screen.getByText('Transfer files into destination application')).toBeInTheDocument();
   });
-  test('Should test dynaSelect for resourceTypes with options having selectedApplication as as2', async () => {
+  test('should test dynaSelect for resourceTypes with options having selectedApplication as as2', async () => {
     await initDynaSelectResourceType({...props, options: {selectedApplication: {name: 'as2', _httpConnectorId: '_somId'}}});
     expect(onFieldChange).toHaveBeenCalledWith('resourceType', 'importRecords', true);
     expect(screen.getByText('Please select')).toBeInTheDocument();
@@ -57,20 +57,20 @@ describe('DynaSelectResourceType tests', () => {
     // dynaSelect is disabled, hence no menuitems
     expect(screen.queryByRole('presentation')).not.toBeInTheDocument();
   });
-  test('Should test dynaSelect for resourceTypes with options having selectedApplication as dataLoader', async () => {
+  test('should test dynaSelect for resourceTypes with options having selectedApplication as dataLoader', async () => {
     await initDynaSelectResourceType({...props, flowId: '_flowId2', options: {selectedApplication: {assistant: 'googledrive'}}});
     expect(onFieldChange).toHaveBeenCalledWith('resourceType', 'importRecords', true);
     expect(screen.getByText('Please select')).toBeInTheDocument();
   });
-  test('Should test dynaSelect for resourceTypes with mode source and common export', async () => {
+  test('should test dynaSelect for resourceTypes with mode source and common export', async () => {
     await initDynaSelectResourceType({...props, mode: 'source', options: {selectedApplication: {}}});
     expect(onFieldChange).toHaveBeenCalledWith('resourceType', 'exportRecords', true);
   });
-  test('Should test dynaSelect for resourceTypes with mode source and webhookOnly', async () => {
+  test('should test dynaSelect for resourceTypes with mode source and webhookOnly', async () => {
     await initDynaSelectResourceType({...props, mode: 'source', options: {selectedApplication: {webhookOnly: true}}});
     expect(onFieldChange).toHaveBeenCalledWith('resourceType', 'webhook', true);
   });
-  test('Should test dynaSelect for resourceTypes with mode source and webhook assistant', async () => {
+  test('should test dynaSelect for resourceTypes with mode source and webhook assistant', async () => {
     await initDynaSelectResourceType({...props, mode: 'source', options: {selectedApplication: {webhook: true, assistant: 'webhook1'}}});
     expect(onFieldChange).toHaveBeenCalledWith('resourceType', '', true);
     userEvent.click(screen.getByRole('button'));

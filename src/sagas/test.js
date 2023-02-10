@@ -1,4 +1,6 @@
-/* global describe, test, expect, fail,beforeEach,afterEach, jest, beforeAll, afterAll */
+/* eslint-disable jest/no-jasmine-globals */
+/* eslint-disable jest/no-standalone-expect */
+
 // see: https://medium.com/@alanraison/testing-redux-sagas-e6eaa08d0ee7
 // for good article on testing sagas..
 import {
@@ -32,7 +34,7 @@ describe('netsuiteUserRoles', () => {
   const asyncKey = getAsyncKey('connections', connectionId);
 
   describe('request payload generation', () => {
-    test('should utilize the connection id to retrieve userRoles when no form values provided  ', () => {
+    test('should utilize the connection id to retrieve userRoles when no form values provided', () => {
       const saga = netsuiteUserRoles({ connectionId: '123', values: null });
 
       expect(saga.next().value).toEqual(put(actions.asyncTask.start(asyncKey)));
@@ -44,7 +46,7 @@ describe('netsuiteUserRoles', () => {
         })
       );
     });
-    test('should utilize the form values to retrieve userRoles when form values are provided ', () => {
+    test('should utilize the form values to retrieve userRoles when form values are provided', () => {
       const email = 'some email';
       const password = 'some password';
       const saga = netsuiteUserRoles({
@@ -95,7 +97,7 @@ describe('netsuiteUserRoles', () => {
       });
 
       afterEach(() => {
-        expect(saga.next().done).toEqual(true);
+        expect(saga.next().done).toBe(true);
       });
       test('should check the response for errors on a successful call and subsequently dispatch an error if all the environments fail', () => {
         const failedResp = {
@@ -169,7 +171,7 @@ describe('netsuiteUserRoles', () => {
         expect(saga.next(successResp).value).toEqual(put(actions.asyncTask.success(asyncKey)));
       });
 
-      test('should dispatch an Error action when the api call has failed and an exception is thrown ', () => {
+      test('should dispatch an Error action when the api call has failed and an exception is thrown', () => {
         const errorException = {
           message: JSON.stringify({ errors: [{ message: 'Some error' }] }),
         };
@@ -208,9 +210,9 @@ describe('netsuiteUserRoles', () => {
       });
 
       afterEach(() => {
-        expect(saga.next().done).toEqual(true);
+        expect(saga.next().done).toBe(true);
       });
-      test('should ping the netsuite connection when the netsuiteUser roles has been fetched ', () => {
+      test('should ping the netsuite connection when the netsuiteUser roles has been fetched', () => {
         const successResp = {
           production: { accounts: {}, success: true },
         };
@@ -288,7 +290,7 @@ describe('apiCallWithRetry saga', () => {
   });
 
   describe('non signout requests', () => {
-    test('Any successful non signout request return the response back to the parent saga ', () => {
+    test('Any successful non signout request return the response back to the parent saga', () => {
       const args = { path, opts, hidden: undefined, message: undefined };
       const saga = apiCallWithRetry(args);
       const request = { url: path, args };
@@ -305,11 +307,11 @@ describe('apiCallWithRetry saga', () => {
       expect(saga.next().value).toEqual(raceBetweenApiCallAndTimeoutEffect);
       expect(saga.next(resp).value).toEqual(cancelled());
 
-      expect(saga.next().value).toEqual('some response');
+      expect(saga.next().value).toBe('some response');
       expect(saga.next().done).toBe(true);
     });
 
-    test('Any failed non signout request return should bubble the exception to parent ', () => {
+    test('Any failed non signout request return should bubble the exception to parent', () => {
       const args = { path, opts, hidden: undefined, message: undefined };
       const saga = apiCallWithRetry(args);
       const request = { url: path, args };
@@ -324,8 +326,10 @@ describe('apiCallWithRetry saga', () => {
           raceBetweenApiCallAndTimeoutEffect
         );
         // should not reach statement
+        // eslint-disable-next-line no-undef
         fail('It should throw an exception');
       } catch (e) {
+        // eslint-disable-next-line jest/no-conditional-expect
         expect(e).toEqual(_400Exception);
       }
 
@@ -354,7 +358,7 @@ describe('apiCallWithRetry saga', () => {
 
       expect(saga.next(resp).value).toEqual(cancelled());
 
-      expect(saga.next().value).toEqual(undefined);
+      expect(saga.next().value).toBeUndefined();
 
       expect(saga.next().done).toBe(true);
     });
@@ -378,13 +382,15 @@ describe('apiCallWithRetry saga', () => {
 
       try {
         expect(saga.next().done).toBe(true);
+        // eslint-disable-next-line no-undef
         fail('should have thrown an error');
       } catch (e) {
+        // eslint-disable-next-line jest/no-conditional-expect
         expect(e).toEqual(CANCELLED_REQ);
       }
     });
 
-    describe('apiCallWithRetry saga gets canceled by a parent saga ', () => {
+    describe('apiCallWithRetry saga gets canceled by a parent saga', () => {
       test('should successfully cleanup and complete any incomplete requests when the saga cancels', () => {
         const args = {
           path,
@@ -443,7 +449,7 @@ describe('apiCallWithRetry saga', () => {
     });
   });
   describe('signout request', () => {
-    test('Any successful non signout request return the response back to the parent saga ', () => {
+    test('Any successful non signout request return the response back to the parent saga', () => {
       const logoutPath = apiConsts.logoutParams.path;
       const args = {
         path: logoutPath,
@@ -460,7 +466,7 @@ describe('apiCallWithRetry saga', () => {
       expect(saga.next().value).toEqual(sendRequestEffect);
       expect(saga.next(resp).value).toEqual(cancelled());
 
-      expect(saga.next().value).toEqual('some response');
+      expect(saga.next().value).toBe('some response');
       expect(saga.next().done).toBe(true);
     });
   });
@@ -809,7 +815,7 @@ describe('rootSaga', () => {
 
       expect(saga.next().done).toBe(true);
     });
-    test('should update preferences and subsequently reinitialize session during switching account ', () => {
+    test('should update preferences and subsequently reinitialize session during switching account', () => {
       const forkEffect = fork(allSagas);
 
       expect(saga.next().value).toEqual(
@@ -832,16 +838,11 @@ describe('rootSaga', () => {
         .toEqual(spawn(rootSaga));
       expect(forkEffectRes.cancel).toHaveBeenCalled();
 
-      expect(saga.next().value)
-        .toEqual(put(actions.user.preferences.update({
-          defaultAShareId: account,
-          environment: 'production',
-        })));
       expect(saga.next().value).toEqual(
-        put(actions.auth.clearStore())
+        put(actions.auth.clearStore({ authenticated: true }))
       );
       expect(saga.next().value).toEqual(
-        put(actions.auth.initSession())
+        put(actions.auth.initSession({ switchAcc: true }))
       );
 
       expect(saga.next().done).toBe(true);

@@ -1,10 +1,10 @@
-/* global describe, test, expect */
+
 import React from 'react';
 import { screen } from '@testing-library/react';
 import { renderWithProviders } from '../../../../test/test-utils';
 import DynaMFAMobileCode from '.';
 
-describe('DynaMFAMobileCode UI tests', () => {
+describe('dynaMFAMobileCode UI tests', () => {
   test('should pass the initial render', () => {
     const props = {label: 'demo label'};
 

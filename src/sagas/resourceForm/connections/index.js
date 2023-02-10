@@ -34,7 +34,6 @@ export function* createPayload({ values, resourceId }) {
     selectors.resourceData,
     resourceType,
     resourceId,
-    'value'
   );
   const { patchSet } = yield call(createFormValuesPatchSet, {
     resourceType,

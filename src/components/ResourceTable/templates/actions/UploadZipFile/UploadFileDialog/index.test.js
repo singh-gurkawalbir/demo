@@ -1,4 +1,4 @@
-/* global describe, test, jest, beforeEach, expect, afterEach */
+
 import { screen, waitFor } from '@testing-library/react';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
@@ -24,7 +24,7 @@ function initUploadFileDialog(props) {
   return renderWithProviders(ui, {initialStore});
 }
 
-describe('Testsuite for Upload File Dialog', () => {
+describe('testsuite for Upload File Dialog', () => {
   let mockDispatchFn;
   let useDispatchSpy;
 

@@ -1,4 +1,4 @@
-/* global describe, test */
+
 import { expectSaga } from 'redux-saga-test-plan';
 import { call, select } from 'redux-saga/effects';
 import { throwError } from 'redux-saga-test-plan/providers';
@@ -17,7 +17,6 @@ describe('Suitescript resources testcases', () => {
     const ssLinkedConnectionId = 'connId';
     const resourceType = 'exports';
     const id = '123';
-    const scope = 'value';
     const integrationId = 'intId';
     const patch = [{ path: '/name', value: 'updating name' }];
 
@@ -26,12 +25,11 @@ describe('Suitescript resources testcases', () => {
         name: 'updating exporting from NS',
       };
 
-      return expectSaga(commitStagedChanges, { ssLinkedConnectionId, resourceType, id, integrationId, scope })
+      expectSaga(commitStagedChanges, { ssLinkedConnectionId, resourceType, id, integrationId })
         .provide([[
           select(selectors.suiteScriptResourceData, {
             resourceType,
             id,
-            scope,
             ssLinkedConnectionId,
             integrationId,
           }), {
@@ -63,12 +61,11 @@ describe('Suitescript resources testcases', () => {
       const resourceType = 'connections';
       const path = `/suitescript/connections/${ssLinkedConnectionId}/connections/1`;
 
-      return expectSaga(commitStagedChanges, { ssLinkedConnectionId, resourceType, id, integrationId, scope })
+      expectSaga(commitStagedChanges, { ssLinkedConnectionId, resourceType, id, integrationId })
         .provide([[
           select(selectors.suiteScriptResourceData, {
             resourceType,
             id,
-            scope,
             ssLinkedConnectionId,
             integrationId,
           }), {
@@ -114,7 +111,6 @@ describe('Suitescript resources testcases', () => {
             ssLinkedConnectionId,
             resourceType,
             id,
-            scope,
           )
         )
         .run();
@@ -131,12 +127,11 @@ describe('Suitescript resources testcases', () => {
 
       const path = `/suitescript/connections/${ssLinkedConnectionId}/integrations/${integrationId}/flows/123`;
 
-      return expectSaga(commitStagedChanges, { ssLinkedConnectionId, resourceType: 'exports', id: 're123', integrationId, scope })
+      expectSaga(commitStagedChanges, { ssLinkedConnectionId, resourceType: 'exports', id: 're123', integrationId })
         .provide([[
           select(selectors.suiteScriptResourceData, {
             resourceType,
             id: `re${id}`,
-            scope,
             ssLinkedConnectionId,
             integrationId,
           }), {
@@ -182,7 +177,6 @@ describe('Suitescript resources testcases', () => {
             ssLinkedConnectionId,
             resourceType,
             `re${id}`,
-            scope,
           )
         )
         .run();
@@ -203,12 +197,11 @@ describe('Suitescript resources testcases', () => {
 
       const path = `/suitescript/connections/${ssLinkedConnectionId}/integrations/${integrationId}/flows/123`;
 
-      return expectSaga(commitStagedChanges, { ssLinkedConnectionId, resourceType: 'exports', id: 're123', integrationId, scope, options })
+      expectSaga(commitStagedChanges, { ssLinkedConnectionId, resourceType: 'exports', id: 're123', integrationId, options })
         .provide([[
           select(selectors.suiteScriptResourceData, {
             resourceType,
             id: `re${id}`,
-            scope,
             ssLinkedConnectionId,
             integrationId,
           }), {
@@ -254,7 +247,6 @@ describe('Suitescript resources testcases', () => {
             ssLinkedConnectionId,
             resourceType,
             `re${id}`,
-            scope,
           )
         )
         .run();
@@ -272,12 +264,11 @@ describe('Suitescript resources testcases', () => {
       const path = `/suitescript/connections/${ssLinkedConnectionId}/connections/1`;
       const error = { code: 422, message: 'error occured' };
 
-      return expectSaga(commitStagedChanges, { ssLinkedConnectionId, resourceType: 'connections', id, integrationId, scope })
+      expectSaga(commitStagedChanges, { ssLinkedConnectionId, resourceType: 'connections', id, integrationId })
         .provide([[
           select(selectors.suiteScriptResourceData, {
             resourceType: 'connections',
             id,
-            scope,
             ssLinkedConnectionId,
             integrationId,
           }), {
@@ -318,7 +309,7 @@ describe('Suitescript resources testcases', () => {
     test('should return false if api call returns error', () => {
       const error = { code: 422, message: 'error occured' };
 
-      return expectSaga(requestSuiteScriptMetadata, { ssLinkedConnectionId, resourceType, integrationId})
+      expectSaga(requestSuiteScriptMetadata, { ssLinkedConnectionId, resourceType, integrationId})
         .provide([[
           call(apiCallWithRetry,
             {
@@ -347,7 +338,7 @@ describe('Suitescript resources testcases', () => {
         },
       };
 
-      return expectSaga(requestSuiteScriptMetadata, { ssLinkedConnectionId, resourceType, integrationId})
+      expectSaga(requestSuiteScriptMetadata, { ssLinkedConnectionId, resourceType, integrationId})
         .provide([[
           call(apiCallWithRetry,
             {
@@ -425,7 +416,7 @@ describe('Suitescript resources testcases', () => {
     test('should exit if feature check api call throws error', () => {
       const error = { code: 422, message: 'error occured' };
 
-      return expectSaga(featureCheck, { ssLinkedConnectionId, featureName, integrationId})
+      expectSaga(featureCheck, { ssLinkedConnectionId, featureName, integrationId})
         .provide([[
           call(apiCallWithRetry,
             {
@@ -455,7 +446,7 @@ describe('Suitescript resources testcases', () => {
         success: true,
       };
 
-      return expectSaga(featureCheck, { ssLinkedConnectionId, featureName, integrationId})
+      expectSaga(featureCheck, { ssLinkedConnectionId, featureName, integrationId})
         .provide([[
           call(apiCallWithRetry,
             {
@@ -485,7 +476,7 @@ describe('Suitescript resources testcases', () => {
         ],
       };
 
-      return expectSaga(featureCheck, { ssLinkedConnectionId, featureName, integrationId})
+      expectSaga(featureCheck, { ssLinkedConnectionId, featureName, integrationId})
         .provide([[
           call(apiCallWithRetry,
             {

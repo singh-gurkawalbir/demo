@@ -1,4 +1,4 @@
-/* global test, expect, describe, jest, afterEach */
+
 import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -30,7 +30,7 @@ function initHomeTiles(data = {}, initialStore = null) {
   renderWithProviders(ui, {initialStore});
 }
 
-describe("HomeTile's Download Action UI tests", () => {
+describe("homeTile's Download Action UI tests", () => {
   afterEach(() => {
     jest.clearAllMocks();
   });

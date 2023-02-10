@@ -4,12 +4,15 @@ export default {
     '/type': 'http',
     '/assistant': 'microsoftdynamics365',
     '/http/auth/type': 'oauth',
+    '/http/auth/oauth/useIClientFields': false,
     '/http/mediaType': 'json',
     '/http/auth/token/refreshMethod': 'POST',
     '/http/auth/token/refreshMediaType': 'urlencoded',
     '/http/baseURI': `https://${
       formValues['/http/microsoftDynamics365Subdomain']
     }.dynamics.com`,
+    '/http/ping/relativeURI': '/api/data/v8.2/contacts',
+    '/http/ping/method': 'GET',
     '/http/auth/oauth/authURI':
       'https://login.microsoftonline.com/common/oauth2/authorize',
     '/http/auth/oauth/tokenURI':

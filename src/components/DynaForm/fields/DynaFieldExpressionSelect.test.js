@@ -1,4 +1,4 @@
-/* global describe, test, expect,beforeEach,afterEach, jest */
+
 import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -7,7 +7,7 @@ import { renderWithProviders, reduxStore } from '../../../test/test-utils';
 import DynaFieldExpressionSelect from './DynaFieldExpressionSelect';
 import actions from '../../../actions';
 
-describe('DynaFieldExpressionSelect tests', () => {
+describe('dynaFieldExpressionSelect tests', () => {
   const initialStore = reduxStore;
 
   initialStore.getState().session.editors = {
@@ -32,7 +32,7 @@ describe('DynaFieldExpressionSelect tests', () => {
   afterEach(() => {
     useDispatchSpy.mockClear();
   });
-  test('Should able to test DynaFieldExpressionSelect ', async () => {
+  test('should able to test DynaFieldExpressionSelect', async () => {
     await renderWithProviders(<DynaFieldExpressionSelect />, {initialStore});
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.editor.refreshHelperFunctions());
     userEvent.click(screen.getByRole('button', {name: 'Please select'}));

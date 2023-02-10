@@ -63,10 +63,12 @@ export default {
     {
       key: 'code',
       heading: 'Code',
+      isLoggable: true,
       Value: ({rowData: r}) => <CodeCell message={r.code} />,
     },
     {
       key: 'selectSource',
+      isLoggable: true,
       HeaderValue: () => {
         const tableContext = useGetTableContext();
 

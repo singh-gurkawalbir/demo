@@ -1,4 +1,3 @@
-/* global describe, test, expect, jest, beforeEach */
 import React from 'react';
 import { screen } from '@testing-library/react';
 import { MemoryRouter, Route } from 'react-router-dom';
@@ -181,7 +180,7 @@ describe('VariationMappingDrawerRoute UI tests', () => {
     );
     expect(mockHistoryPush).toHaveBeenCalledWith('/integrations/5ff579d745ceef7dcd797c15');
   });
-  test('should test close when variation atrributes is provided ', () => {
+  test('should test close when variation atrributes is provided', () => {
     initStoreAndRender(
       {
         saveStatus: 'saved',

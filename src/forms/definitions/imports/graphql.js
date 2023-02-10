@@ -756,6 +756,7 @@ export default {
         },
       ],
     },
+    mockResponseSection: {formId: 'mockResponseSection'},
   },
   layout: {
     type: 'collapse',
@@ -850,6 +851,12 @@ export default {
             ],
           },
         ],
+      },
+      {
+        actionId: 'mockResponse',
+        collapsed: true,
+        label: 'Mock response',
+        fields: ['mockResponseSection'],
       },
       {
         collapsed: true,

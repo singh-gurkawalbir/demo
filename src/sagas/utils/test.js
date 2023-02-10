@@ -1,8 +1,8 @@
-/* global describe, test, expect, jest */
+
 import { select } from 'redux-saga/effects';
 import { expectSaga } from 'redux-saga-test-plan';
 import * as matchers from 'redux-saga-test-plan/matchers';
-import { resourceConflictResolution, constructResourceFromFormValues, convertResourceFieldstoSampleData, getHTTPConnectorMetadata, updateFinalMetadataWithHttpFramework, getEndpointResourceFields, updateWebhookFinalMetadataWithHttpFramework } from './index';
+import { getDataTypeDefaultValue, resourceConflictResolution, constructResourceFromFormValues, convertResourceFieldstoSampleData, getHTTPConnectorMetadata, updateFinalMetadataWithHttpFramework, getEndpointResourceFields, updateWebhookFinalMetadataWithHttpFramework } from './index';
 import { createFormValuesPatchSet } from '../resourceForm';
 import { selectors } from '../../reducers';
 import getResourceFormAssets from '../../forms/formFactory/getResourceFromAssets';
@@ -172,7 +172,7 @@ describe('constructResourceFromFormValues saga', () => {
     const resourceType = 'imports';
     const formValues = [];
 
-    return expectSaga(constructResourceFromFormValues, {
+    expectSaga(constructResourceFromFormValues, {
       formValues,
       resourceId,
       resourceType,
@@ -201,13 +201,13 @@ describe('constructResourceFromFormValues saga', () => {
       patchKey: 'patchValue',
     };
 
-    return expectSaga(constructResourceFromFormValues, {
+    expectSaga(constructResourceFromFormValues, {
       formValues,
       resourceId,
       resourceType,
     })
       .provide([
-        [select(selectors.resourceData, 'imports', resourceId, 'value'), { merged }],
+        [select(selectors.resourceData, 'imports', resourceId), { merged }],
         [matchers.call.fn(createFormValuesPatchSet), {patchSet}],
       ])
       .returns(expectedOutput)
@@ -229,13 +229,13 @@ describe('constructResourceFromFormValues saga', () => {
       },
     ];
 
-    return expectSaga(constructResourceFromFormValues, {
+    expectSaga(constructResourceFromFormValues, {
       formValues,
       resourceId,
       resourceType,
     })
       .provide([
-        [select(selectors.resourceData, 'imports', resourceId, 'value'), { merged }],
+        [select(selectors.resourceData, 'imports', resourceId), { merged }],
         [matchers.call.fn(createFormValuesPatchSet), {patchSet}],
       ])
       .returns({})
@@ -246,7 +246,7 @@ describe('constructResourceFromFormValues saga', () => {
     const resourceType = 'imports';
     const formValues = [];
 
-    return expectSaga(constructResourceFromFormValues, {
+    expectSaga(constructResourceFromFormValues, {
       formValues,
       resourceType,
     })
@@ -266,6 +266,31 @@ describe('convertResourceFieldstoSampleData', () => {
         },
         {
           id: 'address2',
+          dataType: 'number',
+        },
+        {
+          id: 'address3',
+          dataType: 'boolean',
+        },
+        {
+          id: 'address4',
+          dataType: 'stringarray',
+        },
+        {
+          id: 'address5',
+          dataType: 'numberarray',
+        },
+        {
+          id: 'address5',
+          dataType: 'booleanarray',
+        },
+        {
+          id: 'address5',
+          dataType: 'objectarray',
+        },
+        {
+          id: 'address5',
+          dataType: 'object',
         },
         {
           id: 'original_shipping_lines',
@@ -285,14 +310,17 @@ describe('convertResourceFieldstoSampleData', () => {
   ];
   const output1 = {
     address: {
-      address1: 'address1',
-      address2: 'address2',
+      address1: 'abc',
+      address2: 123,
+      address3: true,
+      address4: ['a', 'b'],
+      address5: {a: 'b'},
       original_shipping_lines: [
         {
-          code: 'code',
+          code: 'abc',
         },
       ],
-      shipping_lines_override: 'shipping_lines_override',
+      shipping_lines_override: 'abc',
     },
   };
 
@@ -342,16 +370,16 @@ describe('convertResourceFieldstoSampleData', () => {
       {
         addresses: [
           {
-            first_name: 'first_name',
-            id: 'id',
+            first_name: 'abc',
+            id: 123,
           },
         ],
-        admin_graphql_api_id: 'admin_graphql_api_id',
+        admin_graphql_api_id: 'abc',
         default_address: {
-          default: 'default',
+          default: true,
         },
-        id: 'id',
-        note: 'note',
+        id: 123,
+        note: 'abc',
       },
     ],
   };
@@ -369,7 +397,7 @@ describe('convertResourceFieldstoSampleData', () => {
   test('should return empty when there are no resource fields', () => {
     const sampleData = convertResourceFieldstoSampleData();
 
-    expect(sampleData).toEqual('');
+    expect(sampleData).toBe('');
   });
 });
 describe('getHTTPConnectorMetadata', () => {
@@ -615,6 +643,7 @@ describe('getHTTPConnectorMetadata', () => {
         pathParameters: [
           {
             name: 'customerId',
+            label: 'Customer Id',
           },
         ],
         supportedBy: {
@@ -646,6 +675,7 @@ describe('getHTTPConnectorMetadata', () => {
         pathParameters: [
           {
             name: 'customerId',
+            label: 'Customer Id',
           },
         ],
         supportedBy: {
@@ -785,7 +815,7 @@ describe('getHTTPConnectorMetadata', () => {
                 {
                   fieldType: 'input',
                   id: 'customerId',
-                  name: 'customerId',
+                  name: 'Customer Id',
                   required: true,
                 },
               ],
@@ -807,7 +837,7 @@ describe('getHTTPConnectorMetadata', () => {
                 {
                   fieldType: 'input',
                   id: 'customerId',
-                  name: 'customerId',
+                  name: 'Customer Id',
                   required: true,
                 },
               ],
@@ -936,7 +966,7 @@ describe('getHTTPConnectorMetadata', () => {
             customer: [
               {
                 default_address: {
-                  province_code: 'province_code',
+                  province_code: 'abc',
                 },
               },
             ],
@@ -1054,7 +1084,7 @@ describe('getHTTPConnectorMetadata', () => {
                 {
                   fieldType: 'input',
                   id: 'customerId',
-                  name: 'customerId',
+                  name: 'Customer Id',
                   required: true,
                 },
               ],
@@ -1076,7 +1106,7 @@ describe('getHTTPConnectorMetadata', () => {
                 {
                   fieldType: 'input',
                   id: 'customerId',
-                  name: 'customerId',
+                  name: 'Customer Id',
                   required: true,
                 },
               ],
@@ -1204,7 +1234,7 @@ describe('getHTTPConnectorMetadata', () => {
             customer: [
               {
                 default_address: {
-                  province_code: 'province_code',
+                  province_code: 'abc',
                 },
               },
             ],
@@ -1585,7 +1615,7 @@ describe('updateFinalMetadataWithHttpFramework', () => {
   test('should not throw any exception for invalid arguments', () => {
     const metaData = updateFinalMetadataWithHttpFramework();
 
-    expect(metaData).toEqual(undefined);
+    expect(metaData).toBeUndefined();
   });
 });
 
@@ -1603,24 +1633,44 @@ describe('getEndpointResourceFields', () => {
     },
   };
 
+  test('should not set path when path is not available in resourceFields and type is inclusion', () => {
+    const endpointResourceFields = [{type: 'inclusion', fields: ['address.original_shipping_lines[*].code', 'address.a1', 'address1.a2']}];
+
+    const sampleData = getEndpointResourceFields(endpointResourceFields, resourceFields);
+    const expected = {address: {
+      original_shipping_lines: [{code: 'code'}],
+    }};
+
+    expect(sampleData).toEqual(expected);
+  });
   test('should return correct endpoint sample data for resource fields when type is inclusion', () => {
     const endpointResourceFields = [{type: 'inclusion', fields: ['address.shipping_lines_override']}];
 
     const sampleData = getEndpointResourceFields(endpointResourceFields, resourceFields);
     const expected = {address: {
-      shipping_lines_override: 'default',
+      shipping_lines_override: 'shipping_lines_override',
     }};
 
     expect(sampleData).toEqual(expected);
   });
   test('should return correct endpoint sample data for array of objects fields when type is inclusion', () => {
+    const tempResourceFields = {
+      address: [{
+        address1: 'address1',
+        address2: 'address2',
+        original_shipping_lines: [
+          {
+            code: 'code',
+          },
+        ],
+        shipping_lines_override: 'shipping_lines_override',
+      }],
+    };
     const endpointResourceFields = [{type: 'inclusion', fields: ['address[*].shipping_lines_override', 'address[*].shipping_lines', 'address[*].shipping_goods']}];
 
-    const sampleData = getEndpointResourceFields(endpointResourceFields, resourceFields);
+    const sampleData = getEndpointResourceFields(endpointResourceFields, tempResourceFields);
     const expected = {address: [{
-      shipping_lines_override: 'default',
-      shipping_lines: 'default',
-      shipping_goods: 'default',
+      shipping_lines_override: 'shipping_lines_override',
     }]};
 
     expect(sampleData).toEqual(expected);
@@ -1682,7 +1732,7 @@ describe('getEndpointResourceFields', () => {
   test('should not throw any exception for invalid arguments', () => {
     const sampleData = getEndpointResourceFields();
 
-    expect(sampleData).toEqual(undefined);
+    expect(sampleData).toBeUndefined();
   });
   test('should return resourceFields directly if endpoint resource fields are empty', () => {
     const sampleData = getEndpointResourceFields('', resourceFields);
@@ -2255,7 +2305,26 @@ describe('updateWebhookFinalMetadataWithHttpFramework', () => {
   test('should not throw any exception for invalid arguments', () => {
     const metaData = updateWebhookFinalMetadataWithHttpFramework();
 
-    expect(metaData).toEqual(undefined);
+    expect(metaData).toBeUndefined();
+  });
+});
+describe('getDataTypeDefaultValue', () => {
+  test('should verify all default values for given datatype', () => {
+    expect(getDataTypeDefaultValue('string')).toBe('abc');
+    expect(getDataTypeDefaultValue('number')).toBe(123);
+
+    expect(getDataTypeDefaultValue('boolean')).toBe(true);
+
+    expect(getDataTypeDefaultValue('stringarray')).toEqual(['a', 'b']);
+
+    expect(getDataTypeDefaultValue('numberarray')).toEqual([1, 2]);
+
+    expect(getDataTypeDefaultValue('booleanarray')).toEqual([true, false]);
+
+    expect(getDataTypeDefaultValue('objectarray')).toEqual([{a: 'b'}, {c: 'd'}]);
+    expect(getDataTypeDefaultValue('object')).toEqual({a: 'b'});
+    expect(getDataTypeDefaultValue()).toBe('abc');
+    expect(getDataTypeDefaultValue('unknown')).toBe('abc');
   });
 });
 

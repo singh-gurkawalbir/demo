@@ -20,7 +20,7 @@ export default {
         expression.push({ 'rdbms.type': rdbmsAppTypeToSubType(r.type) });
       } else {
         // Should not borrow concurrency for ['ftp', 'as2', 's3']
-        const destinationType = ['ftp', 'as2', 's3'].includes(r.type) ? '' : r.type;
+        const destinationType = ['ftp', 'as2', 's3', 'van'].includes(r.type) ? '' : r.type;
 
         if (r?.http?.formType === 'rest' || r.type === 'rest') {
           expression.push({ $or: [{ 'http.formType': 'rest' }, { type: 'rest' }] });

@@ -1,4 +1,4 @@
-/* global describe, test, expect, jest, beforeEach, afterEach */
+
 import React from 'react';
 import {
   waitFor, screen,
@@ -79,7 +79,7 @@ jest.mock('react-router-dom', () => ({
   }),
 }));
 
-describe('DynaFileDefinitionEditor_afe UI tests', () => {
+describe('dynaFileDefinitionEditor_afe UI tests', () => {
   let mockDispatchFn;
   let useDispatchSpy;
 
@@ -120,7 +120,7 @@ describe('DynaFileDefinitionEditor_afe UI tests', () => {
 
     expect(LaunchButton).toBeInTheDocument();
     userEvent.click(LaunchButton);
-    await waitFor(() => expect(mockDispatchFn).toBeCalled());
-    await (await waitFor(() => expect(mockHistoryPush))).toBeCalledWith('/filecsv/editor/fieldId');
+    await waitFor(() => expect(mockDispatchFn).toHaveBeenCalled());
+    await waitFor(() => expect(mockHistoryPush).toBeCalledWith('/filecsv/editor/fieldId'));
   });
 });

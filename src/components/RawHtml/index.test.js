@@ -1,10 +1,10 @@
-/* global describe, jest, test, expect */
+
 import React from 'react';
 import { screen, render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import RawHtml from '.';
 
-describe('Test suite for RawHtml component', () => {
+describe('test suite for RawHtml component', () => {
   test('tags not allowed should not be applied', () => {
     const options = {allowedTags: ['a']};
     const html = '<a href="https://www.celigo.com/">Hello <p>World</p></a>';
@@ -18,7 +18,7 @@ describe('Test suite for RawHtml component', () => {
     const html = '<a href="https://www.celigo.com/">Hello <p>World</p></a>';
 
     render(<RawHtml html={html} options={options} />);
-    expect(document.querySelector('p').textContent).toEqual('World');
+    expect(document.querySelector('p').textContent).toBe('World');
     expect(screen.getByRole('link')).toHaveTextContent('Hello World');
   });
 

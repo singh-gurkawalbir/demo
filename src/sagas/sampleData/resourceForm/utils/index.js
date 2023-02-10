@@ -103,7 +103,7 @@ export function* extractFileSampleDataProps({ formKey }) {
 
   if (FILE_DEFINITION_TYPES.includes(fileType)) {
     const fieldState = yield select(selectors.fieldState, formKey, 'file.filedefinition.rules');
-    const {userDefinitionId, fileDefinitionResourcePath, value: fieldValue, options: fieldOptions} = fieldState;
+    const {userDefinitionId, fileDefinitionResourcePath, value: fieldValue, options: fieldOptions} = fieldState || {};
     const { format, definitionId } = fieldOptions || {};
     const resourcePath = extractResourcePath(fieldValue, fileDefinitionResourcePath);
 

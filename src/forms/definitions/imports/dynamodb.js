@@ -1,3 +1,5 @@
+import { safeParse } from '../../../utils/string';
+
 export default {
   preSave: formValues => {
     const retValues = {
@@ -12,6 +14,24 @@ export default {
     } else {
       retValues['/dynamodb/itemDocument'] = undefined;
     }
+
+    if (retValues['/dynamodb/expressionAttributeNames']) {
+      try {
+        retValues['/dynamodb/expressionAttributeNames'] = JSON.stringify(JSON.parse(retValues['/dynamodb/expressionAttributeNames']));
+      } catch (ex) {
+        // do nothing
+      }
+    }
+
+    if (retValues['/dynamodb/expressionAttributeValues']) {
+      try {
+        retValues['/dynamodb/expressionAttributeValues'] = JSON.stringify(JSON.parse(retValues['/dynamodb/expressionAttributeValues']));
+      } catch (ex) {
+        // do nothing
+      }
+    }
+
+    retValues['/mockResponse'] = safeParse(retValues['/mockResponse']);
 
     return {
       ...retValues,
@@ -96,6 +116,7 @@ export default {
     },
     dataMappings: { formId: 'dataMappings' },
     advancedSettings: { formId: 'advancedSettings' },
+    mockResponseSection: {formId: 'mockResponseSection'},
   },
   layout: {
     type: 'collapse',
@@ -123,6 +144,12 @@ export default {
           'dynamodb.itemDocument',
           'dynamodb.updateExpression',
         ],
+      },
+      {
+        actionId: 'mockResponse',
+        collapsed: true,
+        label: 'Mock response',
+        fields: ['mockResponseSection'],
       },
       { collapsed: true, label: 'Advanced', fields: ['advancedSettings'] },
     ],

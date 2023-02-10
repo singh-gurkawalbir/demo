@@ -1,4 +1,4 @@
-/* global describe, test, expect, jest */
+
 import React from 'react';
 import {
   screen, waitFor,
@@ -7,7 +7,7 @@ import userEvent from '@testing-library/user-event';
 import DynaTrueFixedWidthColmnMapper from './DynaTrueFixedWidthColumnMapper';
 import { renderWithProviders } from '../../../../test/test-utils';
 
-describe('DynaTrueFixedWidthColmnMapper UI tests', () => {
+describe('dynaTrueFixedWidthColmnMapper UI tests', () => {
   const mockOnFieldChange = jest.fn();
   const props = {
     maxNumberOfColumns: 3,
@@ -93,7 +93,7 @@ describe('DynaTrueFixedWidthColmnMapper UI tests', () => {
     const fields = screen.getAllByRole('textbox');
 
     userEvent.type(fields[0], 'a');
-    await waitFor(() => expect(mockOnFieldChange).toBeCalledWith('testId', newval));
+    await waitFor(() => expect(mockOnFieldChange).toHaveBeenCalledWith('testId', newval));
   });
 });
 

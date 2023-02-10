@@ -237,21 +237,10 @@ export function* changeEmail({ updatedEmail }) {
   }
 }
 
-export function* switchAccount({ id }) {
-  const userPreferences = yield select(selectors.userPreferences);
+export function* switchAccount({ preferences }) {
+  yield call(updatePreferences);
 
-  if (userPreferences.defaultAShareId !== id) {
-    // lazily update preferences when reinitializing with the new session
-    // because abortAllSagasAndReset will kill the preferences call
-    return yield put(actions.auth.abortAllSagasAndSwitchAcc(id));
-  }
-
-  yield put(
-    actions.user.preferences.update({
-      defaultAShareId: id,
-      environment: 'production',
-    })
-  );
+  return yield put(actions.auth.abortAllSagasAndSwitchAcc(preferences?.defaultAShareId));
 }
 
 export function* leaveAccount({ id }) {
@@ -273,7 +262,7 @@ export function* leaveAccount({ id }) {
   const userPreferences = yield select(selectors.userPreferences);
 
   if (userPreferences.defaultAShareId === id) {
-    yield put(actions.auth.clearStore());
+    yield put(actions.auth.clearStore({ authenticated: true }));
     yield put(actions.auth.initSession());
   } else {
     yield put(actions.resource.requestCollection('shared/ashares'));
@@ -441,7 +430,7 @@ export function* acceptSharedInvite({ resourceType, id, isAccountTransfer }) {
     resourceType === 'account' &&
     userPreferences.defaultAShareId === ACCOUNT_IDS.OWN
   ) {
-    yield put(actions.auth.clearStore());
+    yield put(actions.auth.clearStore({ authenticated: true }));
     yield put(actions.auth.initSession());
   } else if (resourceType === 'transfer') {
     if (isAccountTransfer) {

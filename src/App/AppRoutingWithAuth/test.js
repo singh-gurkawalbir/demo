@@ -1,4 +1,4 @@
-/* global describe, test, expect, afterEach ,jest */
+
 import React from 'react';
 // add react-router in package.json as actual dependency breaks test, may be version related
 // eslint-disable-next-line import/no-extraneous-dependencies
@@ -7,8 +7,6 @@ import { createStore } from 'redux';
 import { Provider } from 'react-redux';
 import { Router } from 'react-router-dom';
 import { MuiThemeProvider } from '@material-ui/core';
-// add history in package.json as actual dependency breaks test, may be version related
-// eslint-disable-next-line import/no-extraneous-dependencies
 import { createMemoryHistory } from 'history';
 import { render, cleanup } from '@testing-library/react';
 import { SnackbarProvider } from 'notistack';
@@ -177,7 +175,7 @@ describe('AppRoutingWith authentication redirection behavior', () => {
         getRoutePath(someRoute)
       );
     });
-    test('should redirect the user to attempted route when the user successfully authenticates ', () => {
+    test('should redirect the user to attempted route when the user successfully authenticates', () => {
       const history = createMemoryHistory({
         initialEntries: [
           {
@@ -197,9 +195,9 @@ describe('AppRoutingWith authentication redirection behavior', () => {
         })
       );
       expect(history.location.pathname).toBe(getRoutePath(someRoute));
-      expect(history.location.state).toBe(undefined);
+      expect(history.location.state).toBeUndefined();
     });
-    test('should preserve attempted route state when the user authentication attempts fails  ', () => {
+    test('should preserve attempted route state when the user authentication attempts fails', () => {
       const history = createMemoryHistory({
         initialEntries: [
           {
@@ -245,7 +243,7 @@ describe('AppRoutingWith authentication redirection behavior', () => {
       );
 
       expect(history.location.pathname).toBe(getRoutePath('/mfa/verify'));
-      expect(history.location.state).toBe(undefined);
+      expect(history.location.state).toBeUndefined();
     });
   });
 
@@ -321,7 +319,67 @@ describe('AppRoutingWith authentication redirection behavior', () => {
     );
 
     expect(history.location.pathname).toBe(getRoutePath('signin'));
-    expect(getByPlaceholderText('Email')).toBeTruthy();
-    expect(getByPlaceholderText('Password')).toBeTruthy();
+    expect(getByPlaceholderText('Email*')).toBeTruthy();
+    expect(getByPlaceholderText('Password*')).toBeTruthy();
+  });
+
+  test('should redirect the user to the agreeTOSAndPP route when the user has not agreed to TOS', () => {
+    const history = createMemoryHistory({
+      initialEntries: [
+        {
+          pathname: getRoutePath('/home'),
+        },
+      ],
+    });
+    const sessionState = {
+      mfa: {
+        sessionInfo:
+        {
+          status: 'received',
+          data: {
+            mfaVerified: true, mfaRequired: true, mfaSetupRequired: false, authenticated: true, agreeTOSAndPP: false,
+          },
+        },
+      },
+    };
+    const store = createStore(reducer, { session: sessionState, user: {profile: {agreeTOSAndPP: false}} });
+
+    render(
+      reduxRouterWrappedComponent({
+        Component: wrappedHistory,
+        componentProps: loggedOut,
+        history,
+        store,
+      })
+    );
+
+    expect(history.location.pathname).toBe(getRoutePath('/agreeTOSAndPP'));
+  });
+  test('should redirect the user to the agreeTOSAndPP route when the user has not agreed to TOS1', () => {
+    jest.spyOn(window, 'location', 'get').mockReturnValue({
+      value: {
+        href: '',
+      },
+      writable: true,
+    });
+    const history = createMemoryHistory({
+      initialEntries: [
+        {
+          pathname: getRoutePath('/signin'),
+          search: '?application=shopify&code=123&host=abc',
+        },
+      ],
+    });
+    const store = createStore(reducer, { auth: {authenticated: true} });
+
+    render(
+      reduxRouterWrappedComponent({
+        Component: wrappedHistory,
+        componentProps: loggedOut,
+        history,
+        store,
+      })
+    );
+    expect(window.location.href).toBe(getRoutePath('/connection/shopify/oauth2callback?application=shopify&code=123&host=abc'));
   });
 });

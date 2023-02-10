@@ -1,4 +1,5 @@
-/* global describe, test, expect, jest */
+/* eslint-disable jest/no-conditional-in-test */
+
 import { call, put, select, race, take } from 'redux-saga/effects';
 import { throwError } from 'redux-saga-test-plan/providers';
 import { expectSaga } from 'redux-saga-test-plan';
@@ -37,7 +38,7 @@ describe('ping and update connection saga', () => {
     expect(effect).toEqual(
       put(actions.resource.received('connections', mockConnectionResource))
     );
-    expect(saga.next().done).toEqual(true);
+    expect(saga.next().done).toBe(true);
   });
   test('should handle api error properly', () => {
     const saga = pingAndUpdateConnection({ connectionId });
@@ -50,8 +51,8 @@ describe('ping and update connection saga', () => {
     expect(saga.next().value).toEqual(
       call(apiCallWithRetry, { path: connectionResourcePath, hidden: true })
     );
-    expect(saga.throw(new Error()).value).toEqual(undefined);
-    expect(saga.next().done).toEqual(true);
+    expect(saga.throw(new Error()).value).toBeUndefined();
+    expect(saga.next().done).toBe(true);
   });
 });
 describe('ping connection saga', () => {
@@ -59,11 +60,11 @@ describe('ping connection saga', () => {
 
   const values = {name: 'conn1'};
 
-  test('should be able to ping connection successfully ', () => {
+  test('should be able to ping connection successfully', () => {
     const connectionPayload = { name: 'new Connection' };
     const response = {status: 'success'};
 
-    return expectSaga(pingConnection, { resourceId, values })
+    expectSaga(pingConnection, { resourceId, values })
       .provide([
         [matchers.call.fn(createPayload), connectionPayload],
         [matchers.call.fn(apiCallWithRetry), response],
@@ -88,7 +89,7 @@ describe('ping connection saga', () => {
     };
     const response = {status: 'success'};
 
-    return expectSaga(pingConnection, { resourceId, values, parentContext})
+    expectSaga(pingConnection, { resourceId, values, parentContext})
       .provide([
         [matchers.call.fn(createPayload), connectionPayload],
         [matchers.call.fn(apiCallWithRetry), response],
@@ -117,7 +118,7 @@ describe('ping connection saga', () => {
     const connectionPayload = { name: 'new Connection' };
     const resp = {errors: ['Errors']};
 
-    return expectSaga(pingConnection, { resourceId, values })
+    expectSaga(pingConnection, { resourceId, values })
       .provide([
         [matchers.call.fn(createPayload), connectionPayload],
         [matchers.call.fn(apiCallWithRetry), resp],
@@ -136,7 +137,7 @@ describe('ping connection saga', () => {
     const connectionPayload = { name: 'new Connection' };
     const error = new Error('error');
 
-    return expectSaga(pingConnection, { resourceId, values })
+    expectSaga(pingConnection, { resourceId, values })
       .provide([
         [matchers.call.fn(createPayload), connectionPayload],
         [matchers.call.fn(apiCallWithRetry), throwError(error)],
@@ -178,7 +179,7 @@ describe('request IClients saga', () => {
           method: 'GET',
         } })
     );
-    expect(saga.next().done).toEqual(true);
+    expect(saga.next().done).toBe(true);
   });
   test('should be able to to get IClients correctly if connection has type and does not have assistant', () => {
     const saga = requestIClients({ connectionId });
@@ -199,7 +200,7 @@ describe('request IClients saga', () => {
           method: 'GET',
         } })
     );
-    expect(saga.next().done).toEqual(true);
+    expect(saga.next().done).toBe(true);
   });
   test('should handle api error properly', () => {
     const saga = requestIClients({ connectionId });
@@ -218,8 +219,8 @@ describe('request IClients saga', () => {
           method: 'GET',
         } })
     );
-    expect(saga.throw(new Error()).value).toEqual(undefined);
-    expect(saga.next().done).toEqual(true);
+    expect(saga.throw(new Error()).value).toBeUndefined();
+    expect(saga.next().done).toBe(true);
   });
   test('should handle api error properly if it is assistant connection', () => {
     const saga = requestIClients({ connectionId });
@@ -240,8 +241,8 @@ describe('request IClients saga', () => {
           method: 'GET',
         } })
     );
-    expect(saga.throw(new Error()).value).toEqual(undefined);
-    expect(saga.next().done).toEqual(true);
+    expect(saga.throw(new Error()).value).toBeUndefined();
+    expect(saga.next().done).toBe(true);
   });
   test('should handle api error properly if connection has type and does not have assistant', () => {
     const saga = requestIClients({ connectionId });
@@ -263,8 +264,8 @@ describe('request IClients saga', () => {
         } })
     );
 
-    expect(saga.throw(new Error()).value).toEqual(undefined);
-    expect(saga.next().done).toEqual(true);
+    expect(saga.throw(new Error()).value).toBeUndefined();
+    expect(saga.next().done).toBe(true);
   });
 });
 
@@ -303,7 +304,7 @@ describe('requestTradingPartnerConnections saga tests', () => {
       code: 404,
     };
 
-    return expectSaga(requestTradingPartnerConnections, { connectionId })
+    expectSaga(requestTradingPartnerConnections, { connectionId })
       .provide([
         [call(apiCallWithRetry, {
           path,
@@ -330,7 +331,7 @@ describe('Save and authorize connection saga', () => {
   const resp = {name: 'conn2'};
   const newIAConnDoc = {};
 
-  test('should be able to save and authorize connection successfully ', () => expectSaga(saveAndAuthorizeConnection, { resourceId, values })
+  test('should be able to save and authorize connection successfully', () => expectSaga(saveAndAuthorizeConnection, { resourceId, values })
     .provide([
       [matchers.call.fn(submitFormValues), resp],
       [select(selectors.createdResourceId), '12345'],
@@ -341,7 +342,7 @@ describe('Save and authorize connection saga', () => {
     .call.fn(newIAFrameWorkPayload)
     .call.fn(openOAuthWindowForConnection)
     .run());
-  test('should be able to save and does not authorize connection if there are any conflicts ', () => expectSaga(saveAndAuthorizeConnection, { resourceId, values })
+  test('should be able to save and does not authorize connection if there are any conflicts', () => expectSaga(saveAndAuthorizeConnection, { resourceId, values })
     .provide([
       [matchers.call.fn(submitFormValues), resp],
       [select(selectors.createdResourceId), '12345'],
@@ -354,7 +355,7 @@ describe('Save and authorize connection saga', () => {
   test('should handle api error properly', () => {
     const error = new Error('error');
 
-    return expectSaga(saveAndAuthorizeConnection, { resourceId, values })
+    expectSaga(saveAndAuthorizeConnection, { resourceId, values })
       .provide([
         [matchers.call.fn(submitFormValues), throwError(error)],
       ])
@@ -375,7 +376,7 @@ describe('Save and authorize connection saga', () => {
     const connectionResource = {conn: 'conn1'};
     const newIAConnDoc = {installStepConnection: true};
 
-    return expectSaga(saveAndAuthorizeConnection, { resourceId, values })
+    expectSaga(saveAndAuthorizeConnection, { resourceId, values })
       .provide([
         [matchers.call.fn(submitFormValues), resp],
         [select(selectors.resourceData), connectionResource],
@@ -391,7 +392,7 @@ describe('Save and authorize connection saga', () => {
     const newIAConnDoc = {};
     const error = new Error('error');
 
-    return expectSaga(saveAndAuthorizeConnection, { resourceId, values })
+    expectSaga(saveAndAuthorizeConnection, { resourceId, values })
       .provide([
         [matchers.call.fn(submitFormValues), resp],
         [select(selectors.resourceData), connectionResource],
@@ -421,7 +422,7 @@ describe('Create payload saga', () => {
     ])
     .call.fn(createFormValuesPatchSet)
     .run());
-  test('should be able to check payload calls successfully', () => expectSaga(createPayload, { resourceId, values })
+  test('should be able to check payload calls successfully duplicate', () => expectSaga(createPayload, { resourceId, values })
     .provide([
       [select(selectors.resourceData), undefined],
     ])
@@ -443,7 +444,7 @@ describe('Create payload saga', () => {
     .call.fn(createFormValuesPatchSet)
     .returns({name: 'AmazonMWS', assistant: 'amazonmws', http: {ping: {relativeURI: '/api/v3/users.json'}}})
     .run());
-  test('should be able to verify payload for http assistants successfully', () => expectSaga(createPayload, { resourceId, values })
+  test('should be able to verify payload for http assistants successfully duplicate', () => expectSaga(createPayload, { resourceId, values })
     .provide([
       [select(selectors.resourceData), conn],
       [matchers.call.fn(createFormValuesPatchSet), {patchSet: patchSetAmazonMws}],
@@ -551,7 +552,7 @@ describe('Netsuite user roles saga', () => {
   test('should return directly when there is no connection Id and form values', () => {
     const saga = netsuiteUserRoles({ connectionId: undefined, values: undefined });
 
-    expect(saga.next().done).toEqual(true);
+    expect(saga.next().done).toBe(true);
   });
 });
 
@@ -602,7 +603,7 @@ describe('Request token saga', () => {
     )
     );
   });
-  test('should be able to verify request token successfully', () => {
+  test('should be able to verify request token successfully duplicate', () => {
     const fieldId = 'http.unencrypted.clientId';
     const values = {
       '/application': 'Procurify',

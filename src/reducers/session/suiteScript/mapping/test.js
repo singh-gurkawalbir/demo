@@ -1,4 +1,3 @@
-/* global describe, test, expect */
 
 import { deepClone } from 'fast-json-patch';
 import reducer, {selectors} from '.';
@@ -25,7 +24,7 @@ describe('Suitescript mapping reducers', () => {
       mappings: [],
     }));
 
-    expect(state.mapping.status).toEqual('received');
+    expect(state.mapping.status).toBe('received');
   });
 
   test('should create a duplicate of mapping and lookup on mapping init complete', () => {
@@ -50,7 +49,7 @@ describe('Suitescript mapping reducers', () => {
   test('should set mapping status to error on mapping init failed', () => {
     const state = reducer({mapping: {}}, actions.suiteScript.mapping.initFailed());
 
-    expect(state.mapping.status).toEqual('error');
+    expect(state.mapping.status).toBe('error');
   });
 
   test('should delete mapping correctly', () => {
@@ -654,7 +653,7 @@ describe('Suitescript mapping reducers', () => {
     expect(newState).toEqual(expectedState);
   });
 
-  test('should set saveStatus to requested on mapping save ', () => {
+  test('should set saveStatus to requested on mapping save', () => {
     const initialState = {
       mapping: {
         lookups: {},
@@ -679,7 +678,7 @@ describe('Suitescript mapping reducers', () => {
     expect(newState).toEqual(expectedState);
   });
 
-  test('should set saveStatus to failed on mapping save fail ', () => {
+  test('should set saveStatus to failed on mapping save fail', () => {
     const initialState = {
       mapping: {
         lookups: {},
@@ -852,7 +851,7 @@ describe('Suitescript mapping selectors', () => {
       };
       const newState = reducer(initialState, actions.suiteScript.mapping.shiftOrder('key3', 0));
 
-      expect(selectors.suiteScriptMappingChanged(newState)).toEqual(true);
+      expect(selectors.suiteScriptMappingChanged(newState)).toBe(true);
     });
 
     test('should return true in case mapping is changed', () => {
@@ -874,7 +873,7 @@ describe('Suitescript mapping selectors', () => {
       };
       const newState = reducer(initialState, actions.suiteScript.mapping.patchField('extract', 'k2', 'jh'));
 
-      expect(selectors.suiteScriptMappingChanged(newState)).toEqual(true);
+      expect(selectors.suiteScriptMappingChanged(newState)).toBe(true);
     });
 
     test('should return true in case lookup is changed', () => {
@@ -899,7 +898,7 @@ describe('Suitescript mapping selectors', () => {
         newValue: {name: 'a', m: 'n'},
       }));
 
-      expect(selectors.suiteScriptMappingChanged(newState)).toEqual(true);
+      expect(selectors.suiteScriptMappingChanged(newState)).toBe(true);
     });
 
     test('should return false in case mapping is changed and then undo again', () => {
@@ -923,7 +922,7 @@ describe('Suitescript mapping selectors', () => {
 
       newState = reducer(initialState, actions.suiteScript.mapping.patchField('extract', 'k2', 'd'));
 
-      expect(selectors.suiteScriptMappingChanged(newState)).toEqual(false);
+      expect(selectors.suiteScriptMappingChanged(newState)).toBe(false);
     });
   });
 });

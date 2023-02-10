@@ -3,7 +3,8 @@ import { adaptorTypeMap, isFileAdaptor, isAS2Resource } from '../../../../../../
 import httpMappingSettings from './http';
 import ftpMappingSettings from './ftp';
 import { MAPPING_DATA_TYPES, ARRAY_DATA_TYPES, buildExtractsHelperFromExtract } from '../../../../../../../../utils/mapping';
-import { generateUniqueKey } from '../../../../../../../../utils/string';
+import { generateId } from '../../../../../../../../utils/string';
+import messageStore, { message } from '../../../../../../../../utils/messageStore';
 
 const getFormattedLookup = (lookup, formVal, settings) => {
   const lookupTmp = {};
@@ -12,7 +13,7 @@ const getFormattedLookup = (lookup, formVal, settings) => {
     lookupTmp.name = formVal.name;
   } else {
     // generating random lookup name
-    lookupTmp.name = generateUniqueKey();
+    lookupTmp.name = generateId();
   }
 
   if (formVal._mode === 'dynamic') {
@@ -83,6 +84,7 @@ export default {
         }
         break;
       case adaptorTypeMap.AS2Import:
+      case adaptorTypeMap.VANImport:
       case adaptorTypeMap.S3Import:
       case adaptorTypeMap.FTPImport:
         fieldMeta = ftpMappingSettings.getMetaData(params);
@@ -202,7 +204,7 @@ export default {
         });
 
         if (!atleastOneValMapped) {
-          errorMessage = 'You need to map at least one value.';
+          errorMessage = message.MAPPER2.ATLEAST_MAPPED_ONE_VALUE;
         }
 
         const formattedSourceValues = _mapList
@@ -215,9 +217,7 @@ export default {
           .map(e => formattedSourceValues[e]);
 
         if (duplicateKeys.length) {
-          errorMessage = `You cannot have duplicate source field values: ${duplicateKeys.join(
-            ','
-          )}`;
+          errorMessage = messageStore('MAPPER2.DUPLICATE_SOURCE_FIELD_VALUES', {duplicateKeys: duplicateKeys.join(',')});
         }
 
         if (errorMessage) {

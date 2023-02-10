@@ -1,4 +1,3 @@
-/* global describe, test, expect, beforeEach, afterEach, jest */
 import React from 'react';
 import {screen, waitFor} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -77,7 +76,7 @@ function initJavaScriptPanel(props = {}) {
 
   return renderWithProviders(<JavaScriptPanel {...props} />, {initialStore});
 }
-describe('JavaScriptPanel UI tests', () => {
+describe('javaScriptPanel UI tests', () => {
   let mockDispatchFn;
   let useDispatchSpy;
 
@@ -130,7 +129,7 @@ describe('JavaScriptPanel UI tests', () => {
     userEvent.click(screen.getByText('script 1'));
     expect(screen.getByText('script 2')).toBeInTheDocument();
     userEvent.click(screen.getByText('script 2'));
-    expect(mockDispatchFn).toBeCalledWith(actions.editor.patchRule('filecsv', { scriptId: '5b3c75dd5d3c125c88b5cc01', fetchScriptContent: true }));
+    expect(mockDispatchFn).toHaveBeenCalledWith(actions.editor.patchRule('filecsv', { scriptId: '5b3c75dd5d3c125c88b5cc01', fetchScriptContent: true }));
   });
   test('should make the respective dispatch call when function is changed', async () => {
     initJavaScriptPanel({editorId: 'filecsv', status: 'success'});
@@ -139,7 +138,7 @@ describe('JavaScriptPanel UI tests', () => {
     expect(defaultFunction).toBeInTheDocument();
     userEvent.type(defaultFunction, 'a');
 
-    await waitFor(() => expect(mockDispatchFn).toBeCalledWith(actions.editor.patchRule('filecsv', { entryFunction: 'preSavePagea' })));
+    await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith(actions.editor.patchRule('filecsv', { entryFunction: 'preSavePagea' })));
   });
   test('should close the script dropdpwn when the selected script is changed to a new script from the dropdown', async () => {
     initJavaScriptPanel({editorId: 'filecsv', status: 'success'});
@@ -154,11 +153,11 @@ describe('JavaScriptPanel UI tests', () => {
     initJavaScriptPanel({editorId: 'filecsv', status: 'success'});
     expect(screen.getByText('custom code')).toBeInTheDocument();
     userEvent.click(screen.getByText('Code Panel'));
-    await waitFor(() => expect(mockDispatchFn).toBeCalledWith(actions.editor.patchRule('filecsv', {code: 'new code value'})));
+    await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith(actions.editor.patchRule('filecsv', {code: 'new code value'})));
   });
   test('should make the repective dispatch call when script does not have content', async () => {
     initJavaScriptPanel({editorId: '6b3c75dd5d3c125c88b5dd02', status: 'success'});
 
-    await waitFor(() => expect(mockDispatchFn).toBeCalledWith(actions.resource.request('scripts', '7b3c75dd5d3c125c88b5cc01')));
+    await waitFor(() => expect(mockDispatchFn).toHaveBeenCalledWith(actions.resource.request('scripts', '7b3c75dd5d3c125c88b5cc01')));
   });
 });

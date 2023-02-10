@@ -1,4 +1,3 @@
-/* global describe, test, expect, jest */
 import React from 'react';
 import { screen } from '@testing-library/react';
 import { renderWithProviders } from '../../../../../test/test-utils';
@@ -23,7 +22,7 @@ function initConsoleGridItem(props = {}) {
   return renderWithProviders(<ConsoleGridItem {...props} />, {initialStore});
 }
 
-describe('ConsoleGridItem UI tests', () => {
+describe('consoleGridItem UI tests', () => {
   test('should pass the initial render', () => {
     initConsoleGridItem({editorId: 'file.csv'});
     expect(screen.getByText('result1')).toBeInTheDocument();

@@ -1,4 +1,4 @@
-/* global expect, describe, test */
+/* eslint-disable jest/expect-expect */
 
 import { call, cancel, fork, take } from 'redux-saga/effects';
 import { expectSaga, testSaga } from 'redux-saga-test-plan';
@@ -22,7 +22,7 @@ describe('requestLatestJobs saga', () => {
       },
     ];
 
-    return expectSaga(requestLatestJobs, {integrationId})
+    expectSaga(requestLatestJobs, {integrationId})
       .provide([
         [call(apiCallWithRetry, {path, opts: {method}, hidden: true}), integrationLatestJobs],
       ])
@@ -38,7 +38,7 @@ describe('requestLatestJobs saga', () => {
   test('should dispatch integrationLatestJobs error action if api call fails', () => {
     const error = { message: 'something' };
 
-    return expectSaga(requestLatestJobs, {integrationId})
+    expectSaga(requestLatestJobs, {integrationId})
       .provide([
         [call(apiCallWithRetry, {path, opts: {method}, hidden: true}), throwError(error)],
       ])
@@ -81,6 +81,6 @@ describe('startPollingForLatestJobs saga', () => {
 
     expect(saga.next(watcherTask).value).toEqual(take(actionTypes.ERROR_MANAGER.INTEGRATION_LATEST_JOBS.CANCEL_POLL));
     expect(saga.next().value).toEqual(cancel(watcherTask));
-    expect(saga.next().done).toEqual(true);
+    expect(saga.next().done).toBe(true);
   });
 });

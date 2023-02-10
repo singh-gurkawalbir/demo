@@ -2,7 +2,6 @@ import React, { useCallback, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { useRouteMatch, useHistory } from 'react-router-dom';
 import ManageLookup from '../../../../drawer/Lookup/Manage';
-import EditorDrawer from '../../../../AFE/Drawer';
 import { LOOKUP_FORM_KEY } from '../../../../../constants';
 import DrawerContent from '../../../../drawer/Right/DrawerContent';
 import DrawerFooter from '../../../../drawer/Right/DrawerFooter';
@@ -67,7 +66,6 @@ export default function Lookup({onSave, disabled, importId, flowId, lookups, ...
           formKey={LOOKUP_FORM_KEY}
       />
       </DrawerFooter>
-      <EditorDrawer />
     </>
   );
 }

@@ -1,4 +1,5 @@
 import { isNewId } from '../../../utils/resource';
+import { safeParse } from '../../../utils/string';
 
 export default {
   optionsHandler: (fieldId, fields) => {
@@ -72,7 +73,6 @@ export default {
       delete retValues['/delta/lagOffset'];
       delete retValues['/once/booleanField'];
     } else if (retValues['/type'] === 'test') {
-      retValues['/test/limit'] = 1;
       retValues['/delta'] = undefined;
       retValues['/once'] = undefined;
       delete retValues['/delta/dateField'];
@@ -114,6 +114,7 @@ export default {
     }
 
     delete retValues['/outputMode'];
+    retValues['/mockOutput'] = safeParse(retValues['/mockOutput']);
 
     return {
       ...retValues,
@@ -164,6 +165,7 @@ export default {
       id: 'type',
       type: 'select',
       label: 'Export type',
+      isLoggable: true,
       defaultValue: r => {
         const isNew = isNewId(r._id);
 
@@ -174,13 +176,14 @@ export default {
         return output || 'all';
       },
       required: true,
+      skipSort: true,
       options: [
         {
           items: [
             { label: 'All – always export all data', value: 'all' },
             { label: 'Delta – export only modified data', value: 'delta' },
             { label: 'Once – export records only once', value: 'once' },
-            { label: 'Test – export only 1 record', value: 'test' },
+            { label: 'Limit – export a set number of records', value: 'test' },
           ],
         },
       ],
@@ -189,6 +192,7 @@ export default {
         { field: 'outputMode', is: ['records'] },
       ],
     },
+    'test.limit': {fieldId: 'test.limit'},
     'delta.dateField': {
       id: 'delta.dateField',
       type: 'salesforcerefreshableselect',
@@ -210,6 +214,7 @@ export default {
       id: 'once.booleanField',
       type: 'salesforcerefreshableselect',
       label: 'Boolean field to mark records as exported',
+      isLoggable: true,
       placeholder: 'Please select a boolean field',
       helpKey: 'export.once.booleanField',
       fieldName: 'onceExportBooleanFields',
@@ -286,6 +291,7 @@ export default {
     advancedSettings: {
       formId: 'advancedSettings',
     },
+    mockOutput: {fieldId: 'mockOutput'},
   },
   layout: {
     type: 'collapse',
@@ -308,7 +314,7 @@ export default {
           }
           if (
             r.resourceType === 'realtime' ||
-                r.type === 'distributed'
+                    r.type === 'distributed'
           ) {
             return 'Configure real-time export in source application';
           }
@@ -331,10 +337,17 @@ export default {
         label: 'Configure export type',
         fields: [
           'type',
+          'test.limit',
           'delta.dateField',
           'delta.lagOffset',
           'once.booleanField',
         ],
+      },
+      {
+        collapsed: true,
+        actionId: 'mockOutput',
+        label: 'Mock output',
+        fields: ['mockOutput'],
       },
       {
         collapsed: true,

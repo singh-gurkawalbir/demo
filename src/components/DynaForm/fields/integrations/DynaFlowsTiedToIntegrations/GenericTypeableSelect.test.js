@@ -1,4 +1,4 @@
-/* global describe, test, expect, jest */
+
 import React from 'react';
 import {
   screen,
@@ -97,7 +97,7 @@ function initGenericTypeableSelect(props = {}) {
   return renderWithProviders(<GenericTypeableSelect {...props} />, {initialStore});
 }
 
-describe('GenericTypeableSelect UI tests', () => {
+describe('genericTypeableSelect UI tests', () => {
   const mockonFieldChange = jest.fn();
   const props = {
     formKey: 'formKey',
@@ -135,7 +135,6 @@ describe('GenericTypeableSelect UI tests', () => {
     const dropdown = screen.getByRole('textbox');
 
     expect(dropdown).toBeInTheDocument();
-    screen.debug();
   });
   test('should open the dropdown with options when dropdown field is clicked', () => {
     initGenericTypeableSelect(props);
@@ -146,7 +145,6 @@ describe('GenericTypeableSelect UI tests', () => {
     expect(screen.getByText('integration2')).toBeInTheDocument();
     expect(screen.getByText('integration3')).toBeInTheDocument();
     expect(screen.getByText('integration4')).toBeInTheDocument();
-    screen.debug();
   });
   test('should call the onchange function passed in props when selected option is changed', () => {
     initGenericTypeableSelect(props);
@@ -156,7 +154,6 @@ describe('GenericTypeableSelect UI tests', () => {
     userEvent.click(dropdown);
     expect(screen.getByText('integration2')).toBeInTheDocument();
     userEvent.click(screen.getByText('integration2'));
-    expect(mockonFieldChange).toBeCalled();
-    screen.debug();
+    expect(mockonFieldChange).toHaveBeenCalled();
   });
 });

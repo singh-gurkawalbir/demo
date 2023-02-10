@@ -1,12 +1,11 @@
-/* global describe, test, expect, jest */
 import React from 'react';
 import { screen } from '@testing-library/react';
 import { renderWithProviders } from '../../../test/test-utils';
 import { HTTP_STAGES } from '../../../utils/exportPanel';
 import PreviewBody from './PreviewBody';
 
-describe('Testsuite for PreviewBody', () => {
-  test('Should test the Preview Body with no data', () => {
+describe('testsuite for PreviewBody', () => {
+  test('should test the Preview Body with no data', () => {
     const {utils} = renderWithProviders(<PreviewBody
       resourceSampleData={{}}
       handlePanelViewChange={jest.fn()}
@@ -16,7 +15,7 @@ describe('Testsuite for PreviewBody', () => {
 
     expect(utils.container).toBeEmptyDOMElement();
   });
-  test('Should test the Preview Body with data and with the status requested', () => {
+  test('should test the Preview Body with data and with the status requested', () => {
     renderWithProviders(<PreviewBody
       resourceSampleData={{ status: 'requested' }}
       handlePanelViewChange={jest.fn()}
@@ -25,7 +24,7 @@ describe('Testsuite for PreviewBody', () => {
         />);
     expect(screen.getByRole('progressbar')).toBeInTheDocument();
   });
-  test('Should test the Preview Body with data and with the status received', () => {
+  test('should test the Preview Body with data and with the status received', () => {
     renderWithProviders(<PreviewBody
       resourceSampleData={{ status: 'received' }}
       handlePanelViewChange={jest.fn()}
@@ -38,7 +37,7 @@ describe('Testsuite for PreviewBody', () => {
     expect(screen.getByText('someLabel')).toBeInTheDocument();
     expect(screen.getByText('Other')).toBeInTheDocument();
   });
-  test('Should test the Preview Body with data and with the status error', () => {
+  test('should test the Preview Body with data and with the status error', () => {
     renderWithProviders(<PreviewBody
       resourceSampleData={{ status: 'error' }}
       resourceType="imports"
@@ -49,7 +48,7 @@ describe('Testsuite for PreviewBody', () => {
     expect(screen.getByText('someLabel')).toBeInTheDocument();
     expect(screen.getByText('Other')).toBeInTheDocument();
   });
-  test('Should test the Preview Body with response data', () => {
+  test('should test the Preview Body with response data', () => {
     renderWithProviders(<PreviewBody
       resourceSampleData={{ status: 'received' }}
       resourceType="imports"
@@ -60,7 +59,7 @@ describe('Testsuite for PreviewBody', () => {
     expect(screen.getByText('Headers')).toBeInTheDocument();
     expect(screen.getByText('Other')).toBeInTheDocument();
   });
-  test('Should test the Preview Body with error data and with HTTP stages', () => {
+  test('should test the Preview Body with error data and with HTTP stages', () => {
     renderWithProviders(<PreviewBody
       resourceSampleData={{ status: 'error' }}
       resourceType="exports"

@@ -1,4 +1,5 @@
-/* global describe, test, expect */
+/* eslint-disable jest/no-standalone-expect */
+
 import each from 'jest-each';
 import reducer, {selectors} from '.';
 import actions from '../../../../actions/suiteScript';
@@ -40,8 +41,8 @@ describe('netsuiteAccountHasSuiteScriptIntegrations selectors', () => {
   state = reducer(state, actions.account.receivedHasIntegrations(ssLinkedAccountId2, false));
 
   test('should return state correctly when valid suitescript account id is sent through', () => {
-    expect(selectors.netsuiteAccountHasSuiteScriptIntegrations(state, ssLinkedAccountId1)).toEqual(true);
-    expect(selectors.netsuiteAccountHasSuiteScriptIntegrations(state, ssLinkedAccountId2)).toEqual(false);
+    expect(selectors.netsuiteAccountHasSuiteScriptIntegrations(state, ssLinkedAccountId1)).toBe(true);
+    expect(selectors.netsuiteAccountHasSuiteScriptIntegrations(state, ssLinkedAccountId2)).toBe(false);
   });
 
   const testCases = [
@@ -51,6 +52,6 @@ describe('netsuiteAccountHasSuiteScriptIntegrations selectors', () => {
   ];
 
   each(testCases).test('%s', (name, ssLinkedAccountId) => {
-    expect(selectors.netsuiteAccountHasSuiteScriptIntegrations(state, ssLinkedAccountId)).toEqual(null);
+    expect(selectors.netsuiteAccountHasSuiteScriptIntegrations(state, ssLinkedAccountId)).toBeNull();
   });
 });

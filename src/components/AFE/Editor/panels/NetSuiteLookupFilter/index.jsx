@@ -27,6 +27,7 @@ import OperandSettingsDialog from './OperandSettingsDialog';
 import actions from '../../../../../actions';
 import { useIsLoggable } from '../../../../IsLoggableContextProvider';
 import Spinner from '../../../../Spinner';
+import { message } from '../../../../../utils/messageStore';
 
 const useStyles = makeStyles(theme => ({
   container: {
@@ -277,11 +278,11 @@ export function NetSuiteLookupFilterPanelData({ id, editorId, filters: propFilte
     const r = rule.data;
 
     if (r.lhs.type && !r.lhs[r.lhs.type]) {
-      return { isValid: false, error: 'Please select left operand.' };
+      return { isValid: false, error: message.FILTER_PANEL.SELECT_LEFT_OPERAND};
     }
 
     if (r.rhs.type && !r.rhs[r.rhs.type]) {
-      return { isValid: false, error: 'Please select right operand.' };
+      return { isValid: false, error: message.FILTER_PANEL.SELECT_RIGHT_OPERAND };
     }
 
     return {
@@ -374,7 +375,8 @@ export function NetSuiteLookupFilterPanelData({ id, editorId, filters: propFilte
           return `<input class="form-control" ${isLoggableStr(isLoggable)} name="${name}" value="${rhsValue}">${
             disabled
               ? ''
-              : '<img style="display:none;" class="settings-icon" src="https://d142hkd03ds8ug.cloudfront.net/images/icons/icon/gear.png">'
+              // eslint-disable-next-line no-undef
+              : `<img style="display:none;" class="settings-icon" src="${CDN_BASE_URI}images/icons/icon/gear.png">`
           }`;
         },
         valueGetter(rule) {

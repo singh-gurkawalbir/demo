@@ -1,6 +1,4 @@
-/* global describe, test, expect, jest, afterEach, beforeEach */
 import React from 'react';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import {screen, waitFor, fireEvent, cleanup } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 
@@ -21,12 +19,12 @@ jest.mock('react-redux', () => ({
   ...jest.requireActual('react-redux'),
   useDispatch: () => mockDispatch,
 }));
-describe('Attach Flows', () => {
+describe('attach Flows', () => {
   runServer();
   beforeEach(() => { initialStore = reduxStore; });
   afterEach(() => { mockDispatch.mockClear(); jest.resetAllMocks(); cleanup(); });
 
-  test('Should able to test the Attach flows modal dialog box attach button', async done => {
+  test('should able to test the Attach flows modal dialog box attach button', async done => {
     const {store} = renderWithProviders(<MemoryRouter><AttachFlows integrationId="6248835cd68e2457e3b105ff" flowGroupingId="62a5b17bd92aff47b2eba399" /></MemoryRouter>, {initialStore});
 
     store.dispatch(actions.resource.requestCollection('connections'));
@@ -63,7 +61,6 @@ describe('Attach Flows', () => {
           value: '62a5b17bd92aff47b2eba399',
         },
       ],
-      scope: 'value',
       options: undefined,
       context: undefined,
       parentContext: undefined,
@@ -71,7 +68,7 @@ describe('Attach Flows', () => {
     });
     done();
   });
-  test('Should able to test the Attach flows modal dialog box cancel button', async () => {
+  test('should able to test the Attach flows modal dialog box cancel button', async () => {
     const {store} = renderWithProviders(<MemoryRouter><AttachFlows integrationId="6248835cd68e2457e3b105ff" flowGroupingId="62a5b17bd92aff47b2eba399" /></MemoryRouter>, {initialStore});
 
     store.dispatch(actions.resource.requestCollection('connections'));
@@ -87,7 +84,7 @@ describe('Attach Flows', () => {
     expect(Message4).toBeInTheDocument();
     fireEvent.click(Message4);
   });
-  test('Should able to test the Attach flows Modal dialog box with no flows', () => {
+  test('should able to test the Attach flows Modal dialog box with no flows', () => {
     renderWithProviders(<MemoryRouter><AttachFlows integrationId="6248835cd68e2457e3b105ff" flowGroupingId="62a5b17bd92aff47b2eba399" /></MemoryRouter>);
     const Message5 = screen.getByText('No flows found');
 

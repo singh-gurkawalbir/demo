@@ -134,8 +134,8 @@ function pathParameterFieldsMeta({ operationParameters = [], values }) {
     .map(pathParam => {
       const pathParamField = {
         id: `assistantMetadata.pathParams.${pathParam.id}`,
-        label: pathParam.name,
-        type: 'textwithflowsuggestion',
+        label: pathParam.label || pathParam.name,
+        type: 'hfpathparams',
         showLookup: false,
         value: values[pathParam.id],
         required: !!pathParam.required,
@@ -143,7 +143,6 @@ function pathParameterFieldsMeta({ operationParameters = [], values }) {
       };
 
       if (pathParam.options && pathParam.options.length > 0) {
-        pathParamField.type = 'select';
         pathParamField.options = [
           {
             items: pathParam.options.map(opt => ({
@@ -155,7 +154,6 @@ function pathParameterFieldsMeta({ operationParameters = [], values }) {
       }
 
       if (pathParam.suggestions && pathParam.suggestions.length > 0) {
-        pathParamField.type = 'autosuggest';
         pathParamField.labelName = 'name';
         pathParamField.valueName = 'value';
         pathParamField.options = {
@@ -396,8 +394,12 @@ export function fieldMeta({ resource, assistantData }) {
     },
     formView: { fieldId: 'formView' },
     dataMappings: { formId: 'dataMappings' },
-    apiIdentifier: { fieldId: 'apiIdentifier' },
-    traceKeyTemplate: { fieldId: 'traceKeyTemplate' },
+    'http.ignoreEmptyNodes': { fieldId: 'http.ignoreEmptyNodes' },
+    advancedSettings: {
+      formId: 'advancedSettings',
+    },
+    'http.configureAsyncHelper': { fieldId: 'http.configureAsyncHelper' },
+    'http._asyncHelperId': { fieldId: 'http._asyncHelperId' },
   };
   const fieldIds = [];
 
@@ -410,6 +412,8 @@ export function fieldMeta({ resource, assistantData }) {
     fieldId: 'settings',
   };
   const createEndpointIndex = fieldIds.indexOf('assistantMetadata.createEndpoint');
+
+  fieldMap.mockResponseSection = {formId: 'mockResponseSection'};
 
   return {
     fieldMap,
@@ -440,9 +444,18 @@ export function fieldMeta({ resource, assistantData }) {
           ],
         },
         {
+          actionId: 'mockResponse',
+          collapsed: true,
+          label: 'Mock response',
+          fields: ['mockResponseSection'],
+        },
+        {
           collapsed: true,
           label: 'Advanced',
-          fields: ['traceKeyTemplate', 'apiIdentifier'],
+          fields: ['http.ignoreEmptyNodes',
+            'advancedSettings',
+            'http.configureAsyncHelper',
+            'http._asyncHelperId'],
         },
       ],
     },

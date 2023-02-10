@@ -1,4 +1,3 @@
-/* global describe, test, expect */
 import { getReplaceConnectionExpression, getParentResourceContext, getFilterExpressionForAssistant, getConstantContactVersion, getAssistantFromConnection } from './index';
 
 describe('connections utils test cases', () => {
@@ -121,6 +120,63 @@ describe('connections utils test cases', () => {
 
       expect(getParentResourceContext(url)).toEqual(returnValue);
     });
+    test('should correctly return the parent params if passed url contains parent context for iClients', () => {
+      const url1 = '/iClients/edit/iClients/i-123';
+
+      expect(getParentResourceContext(url1, 'iClients')).toEqual({});
+
+      const url2 = '/connections/edit/connections/999/edit/iClients/i-123';
+
+      expect(getParentResourceContext(url2, 'iClients')).toEqual({
+        0: 'connections',
+        1: '',
+        connId: '999',
+        operation: 'edit',
+        iClientId: 'i-123',
+      });
+
+      const url3 = '/integrations/123/connections/sections/777/edit/connections/999/edit/iClients/i-123';
+
+      expect(getParentResourceContext(url3, 'iClients')).toEqual({
+        0: 'integrations/123/connections/sections/777',
+        1: '',
+        connId: '999',
+        operation: 'edit',
+        iClientId: 'i-123',
+      });
+
+      const url4 = '/integrations/123/flows/sections/777/flowBuilder/456/edit/connections/999/edit/iClients/i-123';
+
+      expect(getParentResourceContext(url4, 'iClients')).toEqual({
+        0: 'integrations/123/flows/sections/777/flowBuilder/456',
+        1: '',
+        connId: '999',
+        operation: 'edit',
+        iClientId: 'i-123',
+      });
+
+      const url5 = '/integrations/123/flowBuilder/456/edit/imports/789/edit/connections/999/edit/iClients/i-123';
+
+      expect(getParentResourceContext(url5, 'iClients')).toEqual({
+        0: 'integrations/123/flowBuilder/456',
+        1: '',
+        connId: '999',
+        operation: 'edit',
+        parentId: '789',
+        parentType: 'imports',
+        iClientId: 'i-123',
+      });
+
+      const url6 = '/clone/flows/flowId/setup/configure/connections/connId/edit/iClients/iClientId';
+
+      expect(getParentResourceContext(url6, 'iClients')).toEqual({
+        0: 'clone/flows/flowId/setup',
+        1: '',
+        connId: 'connId',
+        operation: 'edit',
+        iClientId: 'iClientId',
+      });
+    });
   });
   describe('getFilterExpressionForAssistant test cases', () => {
     test('should return correct filter expression if assistant is not constant contact', () => {
@@ -152,7 +208,7 @@ describe('connections utils test cases', () => {
   });
   describe('getConstantContactVersion test cases', () => {
     test('should return constantcontactv2 if base uri is not of constantcontactv3', () => {
-      expect(getConstantContactVersion()).toEqual('constantcontactv2');
+      expect(getConstantContactVersion()).toBe('constantcontactv2');
     });
     test('should return constantcontactv3 if base uri is of constantcontactv3', () => {
       const connection = {
@@ -161,7 +217,7 @@ describe('connections utils test cases', () => {
         },
       };
 
-      expect(getConstantContactVersion(connection)).toEqual('constantcontactv3');
+      expect(getConstantContactVersion(connection)).toBe('constantcontactv3');
     });
   });
   describe('getAssistantFromConnection test cases', () => {
@@ -169,9 +225,9 @@ describe('connections utils test cases', () => {
       expect(getAssistantFromConnection()).toBeUndefined();
     });
     test('should return the same assistant if it is not multiple auth type', () => {
-      expect(getAssistantFromConnection('square')).toEqual('square');
-      expect(getAssistantFromConnection('hubspot', {id: 123})).toEqual('hubspot');
-      expect(getAssistantFromConnection('zoom', {id: 234})).toEqual('zoom');
+      expect(getAssistantFromConnection('square')).toBe('square');
+      expect(getAssistantFromConnection('hubspot', {id: 123})).toBe('hubspot');
+      expect(getAssistantFromConnection('zoom', {id: 234})).toBe('zoom');
     });
     test('should return correct constant contact version based on connection', () => {
       const connection = {
@@ -180,22 +236,22 @@ describe('connections utils test cases', () => {
         },
       };
 
-      expect(getAssistantFromConnection('constantcontact', connection)).toEqual('constantcontactv3');
+      expect(getAssistantFromConnection('constantcontact', connection)).toBe('constantcontactv3');
     });
-    test('should return correct constant contact version based on connection', () => {
+    test('should return correct constant contact version based on connection1', () => {
       const connection = {
         http: {
           baseURI: 'https://api.constantcontact.com/',
         },
       };
 
-      expect(getAssistantFromConnection('constantcontact', connection)).toEqual('constantcontactv2');
+      expect(getAssistantFromConnection('constantcontact', connection)).toBe('constantcontactv2');
     });
     test('should return amazonmws if assistant is amazonmws', () => {
-      expect(getAssistantFromConnection('amazonmws')).toEqual('amazonmws');
+      expect(getAssistantFromConnection('amazonmws')).toBe('amazonmws');
     });
     test('should return zoom if assistant is zoom', () => {
-      expect(getAssistantFromConnection('zoom')).toEqual('zoom');
+      expect(getAssistantFromConnection('zoom')).toBe('zoom');
     });
   });
 });

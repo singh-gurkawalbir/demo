@@ -8,7 +8,7 @@ import { COMM_STATES } from '../../../../../reducers/comms/networkComms';
 import useEnqueueSnackbar from '../../../../../hooks/enqueueSnackbar';
 import useCommStatus from '../../../../../hooks/useCommStatus';
 import { ACCOUNT_IDS, ACCOUNT_SSO_STATUS, USER_ACCESS_LEVELS } from '../../../../../constants';
-import messageStore from '../../../../../utils/messageStore';
+import { message } from '../../../../../utils/messageStore';
 
 export default function RequireAccountSSO({ user }) {
   const { accountSSORequired, _id: userId, sharedWithUser = {}, accountMFARequired } = user;
@@ -64,7 +64,7 @@ export default function RequireAccountSSO({ user }) {
   }
 
   if (disableSwitch || accountMFARequired) {
-    const tooltip = disableSwitch ? messageStore('SSO_LINKED_TO_ANOTHER_ACCOUNT_TOOLTIP') : messageStore('ACCOUNT_SSO_OR_MFA_REQUIRED_TOOLTIP');
+    const tooltip = disableSwitch ? message.MFA.SSO_LINKED_TO_ANOTHER_ACCOUNT_TOOLTIP : message.MFA.ACCOUNT_SSO_OR_MFA_REQUIRED_TOOLTIP;
 
     return (
       <Tooltip placement="bottom" title={tooltip}>

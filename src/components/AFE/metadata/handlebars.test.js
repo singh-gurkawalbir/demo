@@ -1,4 +1,4 @@
-/* global describe, test, expect */
+
 import metadata from './handlebars';
 import DataPanel from '../Editor/panels/Data';
 import ResultPanel from '../Editor/panels/Result';
@@ -8,10 +8,10 @@ describe('handlebars metadata test cases', () => {
   test('should pass the test case for each field', () => {
     const {type, fieldId, description, label, panels} = metadata;
 
-    expect(type).toEqual('handlebars');
-    expect(fieldId).toEqual(undefined);
-    expect(description).toEqual('Constructs JSON or XML template against raw data');
-    expect(label).toEqual('Handlebars editor');
+    expect(type).toBe('handlebars');
+    expect(fieldId).toBeUndefined();
+    expect(description).toBe('Constructs JSON or XML template against raw data');
+    expect(label).toBe('Handlebars editor');
 
     let handlebarsPanels = panels({}); // without auto-evaluate
     const handlebarsPanel = handlebarsPanels.find(p => p.title === 'Type your handlebars template here');
@@ -24,6 +24,6 @@ describe('handlebars metadata test cases', () => {
 
     handlebarsPanels = panels({autoEvaluate: true, resultMode: 'mode'}); // with auto-evaluate true
     resultPanel = handlebarsPanels.find(p => p.title === 'Evaluated handlebars template');
-    expect(resultPanel.props.mode).toEqual('mode');
+    expect(resultPanel.props.mode).toBe('mode');
   });
 });

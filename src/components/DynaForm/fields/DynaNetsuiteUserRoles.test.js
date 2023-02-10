@@ -1,4 +1,4 @@
-/* global describe, expect, jest, test, afterEach */
+
 import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
@@ -73,11 +73,11 @@ describe('tests for netsuiteUserRoles in netsuite connection', () => {
     ]);
 
     userEvent.click(screen.getByRole('menuitem', {name: 'beta'}));
-    expect(onFieldChange).toBeCalledWith(props.id, 'beta');
+    expect(onFieldChange).toHaveBeenCalledWith(props.id, 'beta');
 
     //  should reset account and role fields if environment is changed
-    expect(onFieldChange).toBeCalledWith('netsuite.account', '', true);
-    expect(onFieldChange).toBeCalledWith('netsuite.roleId', '', true);
+    expect(onFieldChange).toHaveBeenCalledWith('netsuite.account', '', true);
+    expect(onFieldChange).toHaveBeenCalledWith('netsuite.roleId', '', true);
   });
 
   test('should set itself to other environment if the only other one is beta', () => {
@@ -122,7 +122,7 @@ describe('tests for netsuiteUserRoles in netsuite connection', () => {
       'beta...',
       'sandbox...',
     ]);
-    expect(onFieldChange).toBeCalledWith(props.id, 'sandbox', true);
+    expect(onFieldChange).toHaveBeenCalledWith(props.id, 'sandbox', true);
   });
 
   test('should default to the only option when selecting environment', () => {
@@ -162,7 +162,7 @@ describe('tests for netsuiteUserRoles in netsuite connection', () => {
       'Please select...',
       'production...',
     ]);
-    expect(onFieldChange).toBeCalledWith(props.id, 'production', true);
+    expect(onFieldChange).toHaveBeenCalledWith(props.id, 'production', true);
   });
 
   test('should default to the only option when selecting account', () => {
@@ -214,7 +214,7 @@ describe('tests for netsuiteUserRoles in netsuite connection', () => {
       'Please select...',
       'Celigo Epicenter...',
     ]);
-    expect(onFieldChange).toBeCalledWith(props.id, 'TSTDRV12345', true);
+    expect(onFieldChange).toHaveBeenCalledWith(props.id, 'TSTDRV12345', true);
   });
 
   test('should default to the only option when selecting role', () => {
@@ -270,6 +270,6 @@ describe('tests for netsuiteUserRoles in netsuite connection', () => {
       'Please select...',
       'Administrator...',
     ]);
-    expect(onFieldChange).toBeCalledWith(props.id, '1074', true);
+    expect(onFieldChange).toHaveBeenCalledWith(props.id, '1074', true);
   });
 });

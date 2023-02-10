@@ -1,4 +1,4 @@
-/* global describe, test, expect, jest */
+
 import { screen } from '@testing-library/react';
 import React from 'react';
 import JobTable from './JobTable';
@@ -18,7 +18,7 @@ jest.mock('../../../utils/errorManagement', () => ({
   getJobDuration: jest.fn().mockReturnValue('testing duration'),
 }));
 
-describe('Testsuite for JobTable', () => {
+describe('testsuite for JobTable', () => {
   test('should render the Jobtable', () => {
     const jobsInCurrentPage = [
       {

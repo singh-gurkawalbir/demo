@@ -1,4 +1,4 @@
-/* global describe, test, beforeEach, expect, afterEach, jest */
+
 import { cleanup, screen } from '@testing-library/react';
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
@@ -44,7 +44,7 @@ jest.mock('../../../utils/errorManagement', () => ({
   ...jest.requireActual('../../../utils/errorManagement'),
   getJobDuration: jest.fn().mockReturnValue('testing duration'),
 }));
-describe('Testsuite for ChildJobDetail', () => {
+describe('testsuite for ChildJobDetail', () => {
   beforeEach(() => {
     initialStore = getCreatedStore();
   });

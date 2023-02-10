@@ -1,4 +1,4 @@
-/* global describe, test,  expect */
+/* eslint-disable jest/no-standalone-expect */
 import each from 'jest-each';
 import { deepClone } from 'fast-json-patch';
 import util, {
@@ -1715,7 +1715,7 @@ describe('Field-list mapping to UI mapping utils', () => {
     expect(util.getMappingFromResource(inputObj)).toEqual(formattedMapping);
   });
 
-  test('should flatten Netsuite Import Mapping in case of grouped flow sample data', () => {
+  test('should flatten Netsuite Import Mapping in case of grouped flow sample data duplicate', () => {
     const inputObj = {
       importResource: {
         _connectionId: '5f6afce137d65b2db44b7040',
@@ -3130,15 +3130,15 @@ describe('mapping utils', () => {
     expect(checkExtractPathFoundInSampledata('abc.a', {
       abc: { a: 1},
       b: 'c',
-    }, false)).toEqual(true);
+    }, false)).toBe(true);
     expect(checkExtractPathFoundInSampledata('abc[*].a', {
       abc: [{ a: 1}],
       b: 'c',
-    }, false)).toEqual(true);
+    }, false)).toBe(true);
     expect(checkExtractPathFoundInSampledata('abc[*].b', {
       abc: [{ a: 1}],
       b: 'c',
-    }, false)).toEqual(false);
+    }, false)).toBe(false);
   });
   test('isCsvOrXlsxResource util', () => {
     expect(util.isCsvOrXlsxResource({
@@ -3146,16 +3146,16 @@ describe('mapping utils', () => {
       file: {
         type: 'csv',
       },
-    })).toEqual(true);
+    })).toBe(true);
     expect(util.isCsvOrXlsxResource({
       adaptorType: 'S3Import',
       file: {
         type: 'xlsx',
       },
-    })).toEqual(true);
+    })).toBe(true);
     expect(util.isCsvOrXlsxResource({
       adaptorType: 'S3Import',
-    })).toEqual(false);
+    })).toBe(false);
   });
   test('unwrapTextForSpecialChars util', () => {
     const testCases = [
@@ -3233,9 +3233,7 @@ describe('mapping utils', () => {
     });
   });
   // TODO (Sravan)
-  test('setCategoryMappingData util', () => {
-
-  });
+  test.todo('setCategoryMappingData util');
   test('getFieldMappingType util', () => {
     const testCases = [
       {input: {lookupName: 'abc'}, output: 'lookup'},

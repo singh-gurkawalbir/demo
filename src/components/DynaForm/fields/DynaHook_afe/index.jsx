@@ -10,7 +10,7 @@ import FieldHelp from '../../FieldHelp';
 import { selectors } from '../../../../reducers';
 import actions from '../../../../actions';
 import LoadResources from '../../../LoadResources';
-import messageStore from '../../../../utils/messageStore';
+import { message } from '../../../../utils/messageStore';
 import { drawerPaths, buildDrawerUrl } from '../../../../utils/rightDrawer';
 
 import StackView from './StackView';
@@ -60,6 +60,7 @@ export default function DynaHook_afe({
   helpKey: propsHelpKey,
   isLoggable,
   isValid = true,
+  disablePortal = true,
 }) {
   const classes = useStyles();
   const dispatch = useDispatch();
@@ -98,7 +99,7 @@ export default function DynaHook_afe({
       if (isValid) {
         dispatch(actions.form.forceFieldState(formKey)(id, {isValid: true}));
       } else {
-        dispatch(actions.form.forceFieldState(formKey)(id, {isValid: false, errorMessages: messageStore('REQUIRED_MESSAGE')}));
+        dispatch(actions.form.forceFieldState(formKey)(id, {isValid: false, errorMessages: message.REQUIRED_MESSAGE}));
       }
     }
   }, [id, dispatch, formKey, value, resourceType]);
@@ -144,7 +145,7 @@ export default function DynaHook_afe({
       <div className={classes.inputContainer}>
         <div className={classes.labelWithHelpTextWrapper}>
           <InputLabel>{label}</InputLabel>
-          <FieldHelp label={propsLabel} helpKey={propsHelpKey} />
+          <FieldHelp disablePortal={disablePortal} label={propsLabel} helpKey={propsHelpKey} />
         </div>
         <div className={classes.wrapper}>
           <div className={classes.field}>
@@ -163,7 +164,7 @@ export default function DynaHook_afe({
               value={value.function}
               onFieldChange={handleFieldChange('function')}
               helpKey="api.function"
-            />
+              disablePortal={false} />
           </div>
           {hookType === 'stack' && (
             <StackView

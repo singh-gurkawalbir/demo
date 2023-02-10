@@ -4,6 +4,7 @@ export default {
     '/type': 'http',
     '/assistant': 'eventbrite',
     '/http/auth/type': 'oauth',
+    '/http/auth/oauth/useIClientFields': false,
     '/http/mediaType': 'json',
     '/http/ping/relativeURI': '/v3/users/me/',
     '/http/ping/method': 'GET',

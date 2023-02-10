@@ -1,4 +1,4 @@
-/* global describe, test, expect, jest, beforeEach, afterEach */
+
 import { screen } from '@testing-library/react';
 import React from 'react';
 import { MemoryRouter, Route } from 'react-router-dom';
@@ -50,7 +50,7 @@ jest.mock('../RunHistory', () => ({
   ),
 }));
 
-describe('Testsuite for Run History Drawer', () => {
+describe('testsuite for Run History Drawer', () => {
   let mockDispatchFn;
   let useDispatchSpy;
 
@@ -78,7 +78,7 @@ describe('Testsuite for Run History Drawer', () => {
     userEvent.click(closeButtonNode);
     expect(mockHistoryPush).toHaveBeenCalledWith('/dashboard/completedFlows');
   });
-  test('Should test the patch filter action on mount and test the filter action when flow id is modified', () => {
+  test('should test the patch filter action on mount and test the filter action when flow id is modified', () => {
     const {utils, store} = initRunHistoryDrawer({
       range: {
         range: {
@@ -105,7 +105,7 @@ describe('Testsuite for Run History Drawer', () => {
       endDate: moment(new Date()).endOf('day').toDate(),
     }}));
   });
-  test('Should test the clear filter action on unmount', async () => {
+  test('should test the clear filter action on unmount', async () => {
     const { utils } = initRunHistoryDrawer({
       range: '',
       filterKey: 'completedFlows',

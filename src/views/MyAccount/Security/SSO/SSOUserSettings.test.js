@@ -1,4 +1,3 @@
-/* global describe, test, expect, beforeEach, jest, afterEach */
 import React from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { screen } from '@testing-library/react';
@@ -42,7 +41,7 @@ async function initSSOUserSettings() {
   return renderWithProviders(ui, {initialStore});
 }
 
-describe('Testsuite for SSOUserSettings', () => {
+describe('testsuite for SSOUserSettings', () => {
   runServer();
 
   let mockDispatchFn;
@@ -74,7 +73,7 @@ describe('Testsuite for SSOUserSettings', () => {
     // checking help text for use this account for SSO
     expect(screen.getByText(/choose the account that you would like to use for sso\. every time you sign in via sso, integrator\.io will verify that the sso provider is linked to this specific account\./i)).toBeInTheDocument();
     expect(screen.getByText(/was this helpful\?/i)).toBeInTheDocument();
-    const helpTextYesButtonNode = document.querySelector('button[data-test="yesContentHelpful"]');
+    const helpTextYesButtonNode = document.querySelector('button[data-test="yesContentHelpful"] *');
 
     expect(helpTextYesButtonNode).toBeInTheDocument();
     userEvent.click(helpTextYesButtonNode);
@@ -84,7 +83,6 @@ describe('Testsuite for SSOUserSettings', () => {
 
     expect(helpTextNoButtonNode).toBeInTheDocument();
     await userEvent.click(helpTextNoButtonNode);
-    screen.debug(null, Infinity);
   }, 30000);
 });
 

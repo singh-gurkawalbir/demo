@@ -1,4 +1,4 @@
-/* global describe, test, expect */
+
 import { call, put, delay } from 'redux-saga/effects';
 import actions, { availableOSTypes } from '../../actions';
 import actionTypes from '../../actions/types';
@@ -46,7 +46,7 @@ describe('agent tokens sagas', () => {
           })
         )
       );
-      expect(saga.next().done).toEqual(true);
+      expect(saga.next().done).toBe(true);
     });
     test('should handle api error properly while displaying token', () => {
       const tokenId = 'something';
@@ -65,8 +65,8 @@ describe('agent tokens sagas', () => {
           message: 'Getting Agent Token',
         })
       );
-      expect(saga.throw(new Error()).value).toEqual(true);
-      expect(saga.next().done).toEqual(true);
+      expect(saga.throw(new Error()).value).toBe(true);
+      expect(saga.next().done).toBe(true);
     });
   });
   describe('changeToken saga', () => {
@@ -105,7 +105,7 @@ describe('agent tokens sagas', () => {
           })
         )
       );
-      expect(saga.next().done).toEqual(true);
+      expect(saga.next().done).toBe(true);
     });
     test('should handle api error properly while changing token', () => {
       const tokenId = 'something';
@@ -121,8 +121,8 @@ describe('agent tokens sagas', () => {
           message: 'Changing Agent Token',
         })
       );
-      expect(saga.throw(new Error()).value).toEqual(true);
-      expect(saga.next().done).toEqual(true);
+      expect(saga.throw(new Error()).value).toBe(true);
+      expect(saga.next().done).toBe(true);
     });
   });
 });
@@ -175,8 +175,8 @@ availableOSTypes.forEach(osType => {
           message: 'Download Installer',
         })
       );
-      expect(saga.throw(new Error()).value).toEqual(true);
-      expect(saga.next().done).toEqual(true);
+      expect(saga.throw(new Error()).value).toBe(true);
+      expect(saga.next().done).toBe(true);
     });
   });
 });

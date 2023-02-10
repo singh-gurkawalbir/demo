@@ -1,6 +1,7 @@
 import url from 'url';
 import qs from 'query-string';
 import { isNewId } from '../../../../utils/resource';
+import { safeParse } from '../../../../utils/string';
 
 function isValidArray(value) {
   if (Array.isArray(value) && value[0]) {
@@ -51,7 +52,6 @@ const restPreSave = formValues => {
     delete retValues['/rest/once/postBody'];
     delete retValues['/rest/once/method'];
   } else if (retValues['/type'] === 'test') {
-    retValues['/test/limit'] = 1;
     retValues['/delta'] = undefined;
     retValues['/once'] = undefined;
     retValues['/rest/once'] = undefined;
@@ -157,6 +157,7 @@ const restPreSave = formValues => {
   retValues['/rest/nextPageTokenPath'] = undefined;
 
   retValues['/http'] = undefined;
+  retValues['/mockOutput'] = safeParse(retValues['/mockOutput']);
 
   return {
     ...retValues,
@@ -187,7 +188,6 @@ export default {
       delete retValues['/rest/once/postBody'];
       delete retValues['/rest/once/method'];
     } else if (retValues['/type'] === 'test') {
-      retValues['/test/limit'] = 1;
       retValues['/delta'] = undefined;
       retValues['/once'] = undefined;
       retValues['/http/once'] = undefined;
@@ -539,6 +539,7 @@ export default {
       id: 'type',
       type: 'selectwithvalidations',
       label: 'Export type',
+      isLoggable: true,
       defaultValue: r => {
         const isNew = isNewId(r._id);
 
@@ -555,6 +556,7 @@ export default {
         },
       ],
       required: true,
+      skipSort: true,
       options: [
         {
           items: [
@@ -567,11 +569,12 @@ export default {
               fieldsToValidate: ['rest.relativeURI', 'rest.postBody'] },
 
             { label: 'Once – export records only once', value: 'once' },
-            { label: 'Test – export only 1 record', value: 'test' },
+            { label: 'Limit – export a set number of records', value: 'test' },
           ],
         },
       ],
     },
+    'test.limit': {fieldId: 'test.limit'},
     'delta.dateFormat': {
       fieldId: 'delta.dateFormat',
     },
@@ -582,6 +585,7 @@ export default {
       id: 'once.booleanField',
       type: 'textwithconnectioncontext',
       label: 'Boolean field to mark records as exported',
+      isLoggable: true,
       visibleWhen: [{ field: 'type', is: ['once'] }],
       connectionId: r => r?._connectionId,
     },
@@ -653,6 +657,7 @@ export default {
       formId: 'advancedSettings',
     },
     formView: { fieldId: 'formView' },
+    mockOutput: {fieldId: 'mockOutput'},
   },
   layout: {
     type: 'collapse',
@@ -679,6 +684,7 @@ export default {
         label: 'Configure export type',
         fields: [
           'type',
+          'test.limit',
           'delta.dateFormat',
           'delta.lagOffset',
           'once.booleanField',
@@ -715,6 +721,12 @@ export default {
           'http.response.successPath',
           'http.response.successValues',
         ],
+      },
+      {
+        collapsed: true,
+        actionId: 'mockOutput',
+        label: 'Mock output',
+        fields: ['mockOutput'],
       },
       {
         collapsed: 'true',

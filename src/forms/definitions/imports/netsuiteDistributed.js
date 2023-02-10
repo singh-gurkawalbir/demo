@@ -1,4 +1,5 @@
 import { updateMappingsBasedOnNetSuiteSubrecords } from '../../../utils/resource';
+import { safeParse } from '../../../utils/string';
 
 export default {
   preSave: formValues => {
@@ -21,7 +22,7 @@ export default {
 
     const subrecords = newValues['/netsuite_da/subrecords'];
 
-    const useSS2RestletsValue = newValues['/netsuite_da/useSS2Restlets'] === 'true';
+    const useSS2RestletsValue = newValues['/netsuite_da/restletVersion'];
 
     let mapping = newValues['/netsuite_da/mapping'];
 
@@ -35,12 +36,13 @@ export default {
     if (newValues['/oneToMany'] === 'false') {
       newValues['/pathToMany'] = undefined;
     }
+    newValues['/mockResponse'] = safeParse(newValues['/mockResponse']);
 
     return {
       ...newValues,
       '/netsuite_da/subrecords': undefined,
       '/netsuite_da/mapping': mapping,
-      '/netsuite_da/useSS2Restlets': useSS2RestletsValue,
+      '/netsuite_da/restletVersion': useSS2RestletsValue,
     };
   },
   fieldMap: {
@@ -145,10 +147,11 @@ export default {
         },
       ] },
     settings: { fieldId: 'settings' },
-    'netsuite_da.useSS2Restlets': {
-      fieldId: 'netsuite_da.useSS2Restlets',
+    'netsuite_da.restletVersion': {
+      fieldId: 'netsuite_da.restletVersion',
     },
     traceKeyTemplate: {fieldId: 'traceKeyTemplate'},
+    mockResponseSection: { formId: 'mockResponseSection' },
   },
   layout: {
     type: 'collapse',
@@ -184,10 +187,16 @@ export default {
         ],
       },
       {
+        actionId: 'mockResponse',
+        collapsed: true,
+        label: 'Mock response',
+        fields: ['mockResponseSection'],
+      },
+      {
         collapsed: true,
         label: 'Advanced',
         fields: [
-          'netsuite_da.useSS2Restlets', 'blobKeyPath', 'idLockTemplate', 'dataURITemplate', 'netsuite_da.batchSize', 'traceKeyTemplate', 'apiIdentifier', 'deleteAfterImport'],
+          'netsuite_da.restletVersion', 'blobKeyPath', 'idLockTemplate', 'dataURITemplate', 'netsuite_da.batchSize', 'traceKeyTemplate', 'apiIdentifier', 'deleteAfterImport'],
       },
     ],
   },

@@ -1,4 +1,3 @@
-/* global describe, test, beforeEach,jest, expect  */
 
 import React from 'react';
 // eslint-disable-next-line import/no-extraneous-dependencies
@@ -29,7 +28,7 @@ jest.mock('react-redux', () => ({
   useDispatch: () => mockDispatch,
 }));
 
-describe('UI test cases for selectallerrors', () => {
+describe('uI test cases for selectallerrors', () => {
   beforeEach(() => {
     jest.resetAllMocks();
   });

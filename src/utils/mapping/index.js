@@ -10,7 +10,7 @@ import getJSONPaths, {
   getUnionObject,
 } from '../jsonPaths';
 import { getRecordTypeForAutoMapper } from '../assistant';
-import { isJsonString, generateUniqueKey } from '../string';
+import { isJsonString, generateId } from '../string';
 import {applicationsList} from '../../constants/applications';
 import {generateCSVFields} from '../file';
 import jsonUtils from '../json';
@@ -749,7 +749,8 @@ export const buildExtractsHelperFromExtract = ({
         sourceDataType: getSelectedExtractDataTypes({extractsTree, selectedValue: e, selectedExtractJsonPath})[0] || MAPPING_DATA_TYPES.STRING});
     } else {
       // add extract
-      toReturn.push(formKey ? newExtractObj : {extract: uniqueExtract,
+      toReturn.push(formKey ? newExtractObj : {
+        extract: uniqueExtract,
         sourceDataType: oldSourceDataType || getSelectedExtractDataTypes({extractsTree, selectedValue: e, selectedExtractJsonPath})[0] || MAPPING_DATA_TYPES.STRING});
     }
   });
@@ -842,10 +843,10 @@ export const getFirstActiveTab = node => {
 
 const getNewNode = (defaultProps = {}) => {
   const { key, generate, jsonPath, dataType = MAPPING_DATA_TYPES.STRING, parentKey, parentExtract, children: defaultChildren } = defaultProps;
-  const newKey = key || generateUniqueKey();
+  const newKey = key || generateId();
   const needEmptyChildNode = [MAPPING_DATA_TYPES.OBJECTARRAY, MAPPING_DATA_TYPES.OBJECT].includes(defaultProps.dataType);
   const newChildNode = {
-    key: generateUniqueKey(),
+    key: generateId(),
     title: '',
     parentKey: newKey,
     parentExtract: '',
@@ -880,7 +881,7 @@ export const constructNodeWithEmptySource = node => {
   if (!node) return getNewNode();
   const { children, dataType, jsonPath, generate, parentKey, parentExtract } = node;
   const defaultProps = { generate, jsonPath, dataType, parentKey, parentExtract };
-  const newKey = generateUniqueKey();
+  const newKey = generateId();
 
   if (!children) {
     // node is a non object/objectarray type
@@ -912,7 +913,7 @@ export const rebuildObjectArrayNode = (node, extract = '', prevActiveExtract, ex
     return (childNode.parentExtract || '') === previousFirstExtract;
   }) || [];
 
-  clonedNode.extractsArrayHelper = buildExtractsHelperFromExtract({existingExtractsArray: clonedNode.extractsArrayHelper, sourceField: extract, extractsTree, selectedExtractJsonPath});
+  clonedNode.extractsArrayHelper = buildExtractsHelperFromExtract({existingExtractsArray: clonedNode.extractsArrayHelper, sourceField: extract, extractsTree, selectedExtractJsonPath, oldSourceDataType: clonedNode.sourceDataType});
   const hasNoExtract = isEmpty(clonedNode.extractsArrayHelper);
 
   const {activeTab, activeExtract} = getFirstActiveTab(clonedNode);
@@ -985,7 +986,7 @@ export const rebuildObjectArrayNode = (node, extract = '', prevActiveExtract, ex
 
       if (childNodesWithEmptySources.length) {
         // if the child refs are present from prev extracts, map them with this extract
-        childrenForCurrentExtract = childNodesWithEmptySources.map(c => ({ ...c, parentExtract: extract, key: generateUniqueKey()}));
+        childrenForCurrentExtract = childNodesWithEmptySources.map(c => ({ ...c, parentExtract: extract, key: generateId()}));
       }
       clonedNode.children = [...clonedNode.children, ...childrenForCurrentExtract];
     });
@@ -1002,7 +1003,7 @@ export const rebuildObjectArrayNode = (node, extract = '', prevActiveExtract, ex
   } else if (clonedNode.extractsArrayHelper.length > 1 && !clonedNode.children[0]?.isTabNode) {
     // add tab node
     clonedNode.children.unshift({
-      key: generateUniqueKey(),
+      key: generateId(),
       parentKey,
       title: '',
       isTabNode: true,
@@ -1017,7 +1018,7 @@ function recursivelyBuildTreeFromV2Mappings({mappings = [], treeData, parentKey,
   mappings.forEach(m => {
     const {dataType, mappings: objMappings, buildArrayHelper, extract: currNodeExtract, generate, sourceDataType} = m;
     const children = [];
-    const currNodeKey = generateUniqueKey();
+    const currNodeKey = generateId();
     const jsonPath = `${parentJsonPath ? `${parentJsonPath}.` : ''}${generate || ''}`;
 
     const isRequired = requiredMappings.includes(jsonPath);
@@ -1131,7 +1132,7 @@ function recursivelyBuildTreeFromV2Mappings({mappings = [], treeData, parentKey,
           // found more than 1 extracts, insert a tab node if not already added
           if (!children?.[0]?.isTabNode) {
             children.unshift({
-              key: generateUniqueKey(),
+              key: generateId(),
               parentKey: currNodeKey,
               title: '',
               isTabNode: true,
@@ -1178,7 +1179,7 @@ export const buildTreeFromV2Mappings = ({
   const v2MappingsCopy = deepClone(v2Mappings);
 
   const treeData = [];
-  const emptyRowKey = generateUniqueKey();
+  const emptyRowKey = generateId();
 
   // we need empty title to be passed here
   // for each node as the parent Tree is handling the titleRender for all
@@ -1202,7 +1203,7 @@ export const buildTreeFromV2Mappings = ({
       disabled,
       children: [
         {
-          key: generateUniqueKey(),
+          key: generateId(),
           title: '',
           dataType: MAPPING_DATA_TYPES.STRING,
           disabled,
@@ -1718,7 +1719,7 @@ function recursivelyCreateDestinationStructure({dataObj, treeData, parentJsonPat
 
     const jsonPath = `${parentJsonPath ? `${parentJsonPath}.` : ''}${propName}`;
 
-    const key = generateUniqueKey();
+    const key = generateId();
 
     const isRequired = requiredMappings.includes(jsonPath);
 
@@ -1755,7 +1756,7 @@ function recursivelyCreateDestinationStructure({dataObj, treeData, parentJsonPat
       // push empty row
       if (isEmpty(nodeToPush.children)) {
         nodeToPush.children.push({
-          key: generateUniqueKey(),
+          key: generateId(),
           title: '',
           dataType: MAPPING_DATA_TYPES.STRING,
           isEmptyRow: true,
@@ -1775,7 +1776,7 @@ function recursivelyCreateDestinationStructure({dataObj, treeData, parentJsonPat
         nodeToPush.isRequired = isRequired;
         nodeToPush.dataType = MAPPING_DATA_TYPES.OBJECTARRAY;
         nodeToPush.children = [{
-          key: generateUniqueKey(),
+          key: generateId(),
           title: '',
           dataType: MAPPING_DATA_TYPES.STRING,
           isEmptyRow: true,
@@ -1797,7 +1798,7 @@ function recursivelyCreateDestinationStructure({dataObj, treeData, parentJsonPat
         // push empty row
         if (isEmpty(nodeToPush.children)) {
           nodeToPush.children.push({
-            key: generateUniqueKey(),
+            key: generateId(),
             title: '',
             dataType: MAPPING_DATA_TYPES.STRING,
             isEmptyRow: true,
@@ -1820,7 +1821,7 @@ export const autoCreateDestinationStructure = (importSampleData, requiredMapping
   let treeData = [];
 
   if (!importSampleData) return treeData;
-  const parentKey = generateUniqueKey();
+  const parentKey = generateId();
 
   if (isCSVOrXLSX) {
     treeData = [{
@@ -1862,7 +1863,7 @@ function recursivelyBuildExtractsTree({dataObj, treeData, parentKey, parentJsonP
   Object.keys(dataObj).forEach(propName => {
     const v = dataObj[propName];
     const type = Object.prototype.toString.apply(v);
-    const key = generateUniqueKey();
+    const key = generateId();
     const jsonPath = `${parentJsonPath ? `${parentJsonPath}.` : ''}${propName}`;
 
     const nodeToPush = {
@@ -1933,7 +1934,7 @@ export const buildExtractsTree = sampleData => {
 
   if (!dataObj) return treeData;
 
-  const key = generateUniqueKey();
+  const key = generateId();
 
   // add first default $ path
   treeData.push({
@@ -2002,9 +2003,18 @@ export const findNearestParentExtractForNode = (treeData, nodeKey) => {
   return findNearestParentExtractForNode(treeData, node.parentKey);
 };
 
+const getCursorPositionWord = (value, cursorPosition) => {
+  const wordAfterPosition = value.substring(cursorPosition).match(/^[^,]+/);
+  const wordBeforePosition = value.substring(0, cursorPosition).match(/[^,]+$/);
+
+  if (!wordBeforePosition && !wordAfterPosition) return '';
+
+  return (wordBeforePosition || '') + (wordAfterPosition || '');
+};
+
 // this util handles the comma separated values use-case
 // and returns the final input after user selects a node
-export const getFinalSelectedExtracts = (node, inputValue = '', isArrayType, isGroupedSampleData, nodeKey, treeData) => {
+export const getFinalSelectedExtracts = (node, inputValue = '', isArrayType, isGroupedSampleData, nodeKey, treeData, cursorPosition) => {
   const prefix = getDefaultExtractPath(isGroupedSampleData);
   const {jsonPath = ''} = node || {};
   let fullJsonPath = jsonPath ? `${prefix}.${jsonPath}` : prefix;
@@ -2048,8 +2058,17 @@ export const getFinalSelectedExtracts = (node, inputValue = '', isArrayType, isG
     if (lastChar === ',') {
       newValue = inputValue + fullJsonPath;
     } else {
-      splitInput[valuesLen - 1] = fullJsonPath;
-      newValue = splitInput.join(',');
+      // handle edge case when user don't click on last position
+      if (!cursorPosition) {
+        splitInput[valuesLen - 1] = fullJsonPath;
+        newValue = splitInput.join(',');
+
+        return newValue;
+      }
+      const word = getCursorPositionWord(inputValue, cursorPosition);
+      const updatedValue = inputValue.replace(word, fullJsonPath);
+
+      newValue = updatedValue;
     }
   }
 
@@ -3029,6 +3048,8 @@ export default {
         return 'FTP';
       case adaptorTypeMap.AS2Import:
         return 'AS2';
+      case adaptorTypeMap.VANImport:
+        return 'VAN';
       case adaptorTypeMap.S3Import:
         return 'Amazon S3';
       case adaptorTypeMap.SalesforceImport:
@@ -3240,6 +3261,7 @@ export default {
       case adaptorTypeMap.HTTPImport:
       case adaptorTypeMap.RESTImport:
       case adaptorTypeMap.AS2Import:
+      case adaptorTypeMap.VANImport:
       case adaptorTypeMap.S3Import:
       case adaptorTypeMap.XMLImport:
       case adaptorTypeMap.MongodbImport:

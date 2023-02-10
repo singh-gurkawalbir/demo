@@ -4,6 +4,8 @@ import { BrowserRouter, Switch, Route, useLocation } from 'react-router-dom';
 import { MuiThemeProvider, makeStyles } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import { SnackbarProvider } from 'notistack';
+import { DndProvider } from 'react-dnd';
+import { HTML5Backend } from 'react-dnd-html5-backend';
 import themeProvider from '../theme/themeProvider';
 import useKeyboardShortcut from '../hooks/useKeyboardShortcut';
 import FontStager from '../components/FontStager';
@@ -27,6 +29,7 @@ import colors from '../theme/colors';
 import AppErroredModal from './AppErroredModal';
 import WithAuth from './AppRoutingWithAuth';
 import CrashReporter from './CrashReporter';
+import ShopifyError from '../views/LandingPages/Shopify/Error';
 import LoadingNotification from './LoadingNotification';
 import ErrorNotifications from './ErrorNotifications';
 import CeligoAppBar from './CeligoAppBar';
@@ -37,6 +40,8 @@ import UserActivityMonitor from './UserActivityMonitor';
 import * as pendo from '../utils/analytics/pendo';
 import MfaHelp from '../views/MFAHelp';
 import ConcurConnect from '../views/ConcurConnect';
+import Spinner from '../components/Spinner';
+import Loader from '../components/Loader';
 
 // The makeStyles function below does not have access to the theme.
 // We can only use the theme in components that are children of
@@ -45,6 +50,7 @@ import ConcurConnect from '../views/ConcurConnect';
 const useStyles = makeStyles({
   root: {
     display: 'flex',
+    alignItems: 'flex-start',
   },
 });
 
@@ -90,17 +96,22 @@ export const useSnackbarStyles = makeStyles({
     display: 'grid',
     gridTemplateColumns: 'auto 1fr',
     wordBreak: 'break-word',
+    paddingTop: '6px',
     '& > svg': {
       position: 'fixed',
       left: 16,
-      top: '47%',
-      transform: 'translateY(-47%)',
+      top: 16,
     },
   },
 
 });
 
 function NonSigninHeaderComponents() {
+  const isAuthInitialized = useSelector(selectors.isAuthInitialized);
+  const isUserAuthenticated = useSelector(state => selectors.sessionInfo(state)?.authenticated);
+
+  if (!isAuthInitialized && !isUserAuthenticated) return <Loader open>Loading...<Spinner /></Loader>;
+
   return (
     <>
       <CeligoAppBar />
@@ -121,6 +132,7 @@ const PUBLIC_ROUTES = [
   'signin',
   'signup',
   'mfa',
+  'shopify',
 ];
 
 const pageContentPaths = [getRoutePath('/*'), getRoutePath('/')];
@@ -138,6 +150,7 @@ export const PageContentComponents = () => (
         getRoutePath('/request-reset?email'),
         getRoutePath('/request-reset'),
       ]} component={ForgotPassword} />
+    <Route path={getRoutePath('/shopify/error')} component={ShopifyError} />
     <Route path={getRoutePath('/request-reset-sent')} component={ForgotPassword} />
     <Route path={getRoutePath('/accept-invite/:token')} component={AcceptInvite} />
     <Route path={getRoutePath('/concurconnect/:module')} component={ConcurConnect} />
@@ -152,8 +165,9 @@ const Headers = () => {
   const isMFAVerifyPage = location.pathname === '/mfa/verify';
   const isPublicPage = PUBLIC_ROUTES.includes(location.pathname?.split('/')?.[1]);
   const isLandingPage = location.pathname.startsWith('/landing');
+  const isAgreeTOSAndPPPage = location.pathname.startsWith('/agreeTOSAndPP');
 
-  if (isConcurLandingPage || isPublicPage || isMFAVerifyPage || isLandingPage) return null;
+  if (isConcurLandingPage || isPublicPage || isMFAVerifyPage || isLandingPage || isAgreeTOSAndPPPage) return null;
 
   return <NonSigninHeaderComponents />;
 };
@@ -176,8 +190,7 @@ export default function App() {
   const dispatch = useDispatch();
   const reloadCount = useSelector(state => selectors.reloadCount(state));
   const preferences = useSelector(state => selectors.userProfilePreferencesProps(state), shallowEqual);
-  const { darkTheme } = preferences;
-  const currentTheme = darkTheme ? 'dark' : 'light';
+  const { colorTheme: currentTheme } = preferences;
   const themeName = useSelector(state =>
     selectors.userPreferences(state).environment === 'sandbox'
       ? 'sandbox'
@@ -211,34 +224,36 @@ export default function App() {
   return (
     <MuiThemeProvider theme={theme}>
       <CrashReporter>
-        <Fragment key={reloadCount}>
-          <ConfirmDialogProvider>
-            <FormOnCancelProvider>
-              <SnackbarProvider
-                classes={snackbarClasses} maxSnack={3} ContentProps={{
-                  classes: { root: classes.root },
-                }}>
-                <FontStager />
-                <CssBaseline />
-                {/* Define empty call back for getUserConfirmation to not let Prompt
+        <DndProvider backend={HTML5Backend}>
+          <Fragment key={reloadCount}>
+            <ConfirmDialogProvider>
+              <FormOnCancelProvider>
+                <SnackbarProvider
+                  classes={snackbarClasses} maxSnack={3} ContentProps={{
+                    classes: { root: classes.root },
+                  }}>
+                  <FontStager />
+                  <CssBaseline />
+                  {/* Define empty call back for getUserConfirmation to not let Prompt
                 * get triggered when history.block is defined in any specific component
                 * Ref: https://github.com/remix-run/history/blob/main/docs/blocking-transitions.md
                 */}
-                <BrowserRouter getUserConfirmation={() => {}}>
-                  <div className={classes.root}>
-                    <LoadingNotification />
-                    <ErrorNotifications />
-                    {/* Headers */}
-                    <Headers />
-                    {/* page content */}
-                    <PageContentWrapper />
-                  </div>
-                </BrowserRouter>
-                <ConflictAlertDialog />
-              </SnackbarProvider>
-            </FormOnCancelProvider>
-          </ConfirmDialogProvider>
-        </Fragment>
+                  <BrowserRouter getUserConfirmation={() => {}}>
+                    <div className={classes.root}>
+                      <LoadingNotification />
+                      <ErrorNotifications />
+                      {/* Headers */}
+                      <Headers />
+                      {/* page content */}
+                      <PageContentWrapper />
+                    </div>
+                  </BrowserRouter>
+                  <ConflictAlertDialog />
+                </SnackbarProvider>
+              </FormOnCancelProvider>
+            </ConfirmDialogProvider>
+          </Fragment>
+        </DndProvider>
       </CrashReporter>
     </MuiThemeProvider>
   );
