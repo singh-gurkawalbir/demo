@@ -241,7 +241,7 @@ describe('settingsForm processor logic', () => {
         data: { fieldMap: {}, layout: { fields: [] } },
         rule: {
           script: {
-            entryFunction: 'main',
+            entryFunction: 'formInit',
             fetchScriptContent: true,
           },
         },
@@ -306,7 +306,7 @@ describe('settingsForm processor logic', () => {
         data: { fieldMap: {}, layout: { fields: [] } },
         rule: {
           script: {
-            entryFunction: 'main',
+            entryFunction: 'formInit',
             fetchScriptContent: true,
           },
         },
