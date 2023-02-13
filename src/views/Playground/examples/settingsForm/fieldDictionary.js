@@ -148,7 +148,7 @@ const sampleData = {
       name: 'datetime',
       type: 'datetime',
       label: 'Date/time',
-      setMaxDate: true,
+      doNotAllowFutureDates: true,
       skipTimezoneConversion: true,
     },
     date: {
@@ -156,7 +156,7 @@ const sampleData = {
       name: 'date',
       type: 'date',
       label: 'Date',
-      setMaxDate: true,
+      doNotAllowFutureDates: true,
       skipTimezoneConversion: true,
     },
   },

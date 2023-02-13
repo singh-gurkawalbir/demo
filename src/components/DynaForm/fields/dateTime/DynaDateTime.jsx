@@ -91,7 +91,7 @@ const useTimePickerProps = removePickerDialog => {
 };
 export default function DateTimePicker(props) {
   const classes = useStyles();
-  const { id, label, timeLabel, dateLabel, required, formKey, onFieldChange, value = '', disabled, removePickerDialog, resourceContext, ssLinkedConnectionId, skipTimezoneConversion, isLoggable, setMaxDate} = props;
+  const { id, label, timeLabel, dateLabel, required, formKey, onFieldChange, value = '', disabled, removePickerDialog, resourceContext, ssLinkedConnectionId, skipTimezoneConversion, isLoggable, doNotAllowFutureDates} = props;
   const resourceType = resourceContext?.resourceType;
   const resourceId = resourceContext?.resourceId;
   const [dateValue, setDateValue] = useState(value || null);
@@ -154,7 +154,7 @@ export default function DateTimePicker(props) {
     const dataTimeValueFormatted = moment();
 
     // eslint-disable-next-line no-bitwise
-    setMaxDate && (dateValue ^ timeValue) && setComponentMounted(true);
+    doNotAllowFutureDates && (dateValue ^ timeValue) && setComponentMounted(true);
     if (!dateValue || !timeValue) {
       onFieldChange(id, '', !componentMounted);
 
@@ -225,7 +225,7 @@ export default function DateTimePicker(props) {
               fullWidth
               InputProps={{ className: classes.inputDateTime, readOnly: true}}
               {...datePickerProps}
-              maxDate={setMaxDate && moment()}
+              maxDate={doNotAllowFutureDates && moment()}
       />
           </div>
           <div className={classes.fieldWrapper}>
