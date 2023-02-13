@@ -55,7 +55,7 @@ const useStyles = makeStyles(theme => ({
 }));
 export default function DynaDate(props) {
   const classes = useStyles();
-  const { id, label, onFieldChange, value = '', disabled, resourceContext, ssLinkedConnectionId, closeOnSelect, isLoggable } = props;
+  const { id, label, onFieldChange, value = '', disabled, resourceContext, ssLinkedConnectionId, closeOnSelect, isLoggable, setMaxDate } = props;
   const resourceType = resourceContext?.resourceType;
   const resourceId = resourceContext?.resourceId;
   const [dateValue, setDateValue] = useState(value || null);
@@ -131,6 +131,7 @@ export default function DynaDate(props) {
           disableFuture={props.disableFuture}
           InputProps={{ className: classes.inputDate }}
           keyboardIcon={<CalendarIcon className={classes.iconWrapper} />}
+          maxDate={setMaxDate && moment()}
           />
         <FieldMessage {...props} />
       </MuiPickersUtilsProvider>
