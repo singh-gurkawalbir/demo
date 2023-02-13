@@ -16,7 +16,6 @@ import { NUMBER_REGEX } from '../../constants';
 import getRoutePath from '../../utils/routePaths';
 import LoginFormWrapper from '../../components/LoginScreen/LoginFormWrapper';
 
-/** ***TODO (Azhar): forms CSS Optimization needed*** */
 const useStyles = makeStyles(theme => ({
   message: {
     position: 'relative',

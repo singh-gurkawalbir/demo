@@ -5,6 +5,7 @@ import clsx from 'clsx';
 const useStyles = makeStyles(theme => ({
   loginFormWrapper: {
     textAlign: 'center',
+    wordBreak: 'break-word',
     width: '100%',
     maxWidth: 500,
     marginBottom: 112,
