@@ -31,10 +31,16 @@ export function AppRoutingWithAuth({ children }) {
   useEffect(() => {
     if (!isAuthInitialized && !hasPageReloaded) {
       if (!isSignInRoute) {
-        history.replace({
-          search,
-          state: { attemptedRoute: currentRoute, search },
-        });
+        try {
+          history.replace({
+            search,
+            state: { attemptedRoute: currentRoute, search },
+          });
+        } catch (e) {
+          // In case of incorrect formatted urls like `https://integrator.io///[https://integrator.io/home]` redirect user back to default page.
+          history.replace(getRoutePath('/'));
+        }
+
         dispatch(actions.auth.initSession());
       } else if (isShopifySignIn) {
         history.replace({
@@ -45,7 +51,6 @@ export function AppRoutingWithAuth({ children }) {
         dispatch(actions.auth.validateAndInitSession());
       }
     }
-
     if (!hasPageReloaded) {
       dispatch(actions.app.clearError());
     }

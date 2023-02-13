@@ -21,6 +21,7 @@ import {
   generateRulesState,
   generateIOFilterExpression,
   getFilterRuleId,
+  convertBoolean,
 } from '../AFE/Editor/panels/Filter/util';
 import OperandSettingsDialog from '../AFE/Editor/panels/Filter/OperandSettingsDialog';
 import actions from '../../actions';
@@ -28,6 +29,7 @@ import { selectors } from '../../reducers';
 import getJSONPaths from '../../utils/jsonPaths';
 import { safeParse, isNumber } from '../../utils/string';
 import customCloneDeep from '../../utils/customCloneDeep';
+import { message } from '../../utils/messageStore';
 
 const defaultData = {};
 
@@ -354,6 +356,17 @@ export default function BranchFilterPanel({ editorId, position, type, rule, hand
   };
 
   const validateRule = rule => {
+    const arithmeticOperators = [
+      'add',
+      'subtract',
+      'divide',
+      'multiply',
+      'modulo',
+      'ceiling',
+      'floor',
+      'number',
+      'abs',
+    ];
     const r = rule.data;
     const toReturn = {
       isValid: true,
@@ -367,29 +380,17 @@ export default function BranchFilterPanel({ editorId, position, type, rule, hand
 
         if (!parsedExp.length || parsedExp.length < 2) {
           toReturn.isValid = false;
-          toReturn.error = 'Please enter a valid expression.';
+          toReturn.error = message.FILTER_PANEL.INVALID_EXPRESSION;
         }
       } catch (ex) {
         toReturn.isValid = false;
-        toReturn.error = 'Expression should be a valid JSON.';
+        toReturn.error = message.FILTER_PANEL.INVALID_EXPRESSION_JSON;
       }
 
       if (toReturn.isValid) {
         [op] = JSON.parse(r.lhs.expression);
 
-        if (
-          [
-            'add',
-            'subtract',
-            'divide',
-            'multiply',
-            'modulo',
-            'ceiling',
-            'floor',
-            'number',
-            'abs',
-          ].includes(op)
-        ) {
+        if (arithmeticOperators.includes(op)) {
           r.lhs.dataType = 'number';
         } else if (op === 'epochtime') {
           r.lhs.dataType = 'epochtime';
@@ -411,29 +412,17 @@ export default function BranchFilterPanel({ editorId, position, type, rule, hand
 
         if (!parsedExp.length || parsedExp.length < 2) {
           toReturn.isValid = false;
-          toReturn.error = 'Please enter a valid expression.';
+          toReturn.error = message.FILTER_PANEL.INVALID_EXPRESSION;
         }
       } catch (ex) {
         toReturn.isValid = false;
-        toReturn.error = 'Expression should be a valid JSON.';
+        toReturn.error = message.FILTER_PANEL.INVALID_EXPRESSION_JSON;
       }
 
       if (toReturn.isValid) {
         [op] = JSON.parse(r.rhs.expression);
 
-        if (
-          [
-            'add',
-            'subtract',
-            'divide',
-            'multiply',
-            'modulo',
-            'ceiling',
-            'floor',
-            'number',
-            'abs',
-          ].includes(op)
-        ) {
+        if (arithmeticOperators.includes(op)) {
           r.rhs.dataType = 'number';
         } else if (op === 'epochtime') {
           r.rhs.dataType = 'epochtime';
@@ -460,12 +449,33 @@ export default function BranchFilterPanel({ editorId, position, type, rule, hand
       if ((typeRhs === 'value' && dataTypeRhs === 'number' && !isNumber(valueRhs)) ||
           (typeLhs === 'value' && dataTypeLhs === 'number' && !isNumber(valueLhs))) {
         toReturn.isValid = false;
-        toReturn.error = 'Value should have correct data type';
+        toReturn.error = message.FILTER_PANEL.INVALID_DATATYPE;
 
         return toReturn;
       }
-    }
 
+      if (typeRhs === 'value' && dataTypeRhs === 'boolean') {
+        const convertedValue = convertBoolean(valueRhs);
+
+        if (typeof convertedValue !== 'boolean') {
+          toReturn.isValid = false;
+          toReturn.error = convertedValue;
+
+          return toReturn;
+        }
+      }
+
+      if (typeLhs === 'value' && dataTypeLhs === 'boolean') {
+        const convertedValue = convertBoolean(valueLhs);
+
+        if (typeof convertedValue !== 'boolean') {
+          toReturn.isValid = false;
+          toReturn.error = convertedValue;
+
+          return toReturn;
+        }
+      }
+    }
     /*
       if (r.lhs.dataType === 'epochtime' || r.rhs.dataType === 'epochtime') {
         r.lhs.dataType = r.rhs.dataType = 'epochtime'
@@ -473,7 +483,7 @@ export default function BranchFilterPanel({ editorId, position, type, rule, hand
       */
     if (r.lhs.dataType && r.rhs.dataType && r.lhs.dataType !== r.rhs.dataType) {
       toReturn.isValid = false;
-      toReturn.error = 'Data types of both the operands should match.';
+      toReturn.error = message.FILTER_PANEL.INVALID_DATATYPES_OPERANDS;
     }
 
     if (!toReturn.isValid) {
@@ -482,7 +492,7 @@ export default function BranchFilterPanel({ editorId, position, type, rule, hand
 
     if (r.lhs.type && !r.lhs[r.lhs.type]) {
       toReturn.isValid = false;
-      toReturn.error = 'Please select left operand.';
+      toReturn.error = message.FILTER_PANEL.SELECT_LEFT_OPERAND;
     }
 
     if (!toReturn.isValid) {
@@ -491,7 +501,7 @@ export default function BranchFilterPanel({ editorId, position, type, rule, hand
 
     if (r.rhs.type && !r.rhs[r.rhs.type]) {
       toReturn.isValid = false;
-      toReturn.error = 'Please select right operand.';
+      toReturn.error = message.FILTER_PANEL.SELECT_RIGHT_OPERAND;
     }
 
     if (!toReturn.isValid) {
@@ -888,7 +898,7 @@ export default function BranchFilterPanel({ editorId, position, type, rule, hand
         // eslint-disable-next-line camelcase
           const isSingleInputOperator = !state.rule?.operator?.nb_inputs;
 
-          if (state.data.rhs.type !== 'value' || state.data.rhs.value || state.data.rhs.value === 0 || isSingleInputOperator) return;
+          if (state.data.rhs.type !== 'value' || state.data.rhs.value !== undefined || state.data.rhs.value === 0 || isSingleInputOperator) return;
 
           const $emptyRule = state.rule;
 

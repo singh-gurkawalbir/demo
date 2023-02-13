@@ -158,6 +158,8 @@ export default {
   'squareup.connection.http.auth.type': 'Please select Authentication Type.',
   'squareup.connection.http.auth.token.token':
 'Enter your access token for Square here.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your access token safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
+  'squareup.connection.accountType': 'Select the Square account environment type you are connecting to, either <b>Production</b> or <b>Sandbox</b>.',
+  'squareup.connection.http._iClientId': 'Save your client ID and client secret in iClient for an added layer of security. For more information, see <a href=https://developer.squareup.com/docs/devtools/sandbox/overview#create-a-sandbox-test-account/>Square Sandbox</a>.',
   'connection.http.encrypted.serverToken':
 'Please enter your Server Token here. Used for requests that require server level privileges. This token can be found on the Credentials tab under your Postmark server.<br>Multiple layers of protection, including AES 256 encryption, are in place to keep your Server token safe. When editing this connection, you must re-enter this value each time; it is stored only when the connection is saved and never displayed as text.',
   'connection.http.encrypted.accountToken':
