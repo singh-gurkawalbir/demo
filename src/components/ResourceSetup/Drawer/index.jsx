@@ -28,6 +28,19 @@ const oAuthApplications = [
   'amazonmws-oauth',
 ];
 
+const useResourceFormRedirectionToParentRoute = (resourceType, id, redirectFunction) => {
+  const history = useHistory();
+  const initFailed = useSelector(state =>
+    selectors.resourceFormState(state, resourceType, id)?.initFailed
+  );
+
+  useEffect(() => {
+    if (initFailed) {
+      typeof redirectFunction === 'function' && redirectFunction();
+    }
+  }, [history, initFailed, redirectFunction]);
+};
+
 function ResourceSetupDrawerContent({
   integrationId,
   templateId,
@@ -184,6 +197,7 @@ function ResourceSetupDrawerContent({
     }
   }, [resourceType, onClose, handleStackClose, goBackToParentUrl, mode]);
 
+  useResourceFormRedirectionToParentRoute(resourceType, resourceId, goBackToParentUrl);
   useEffect(() => {
     // This is for oAuth connections
     // When oAuth connections are saved and user logs in successfully, isAuthorized returns true
