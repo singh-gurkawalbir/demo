@@ -75,7 +75,7 @@ export default function ResetPassword() {
       )}
       <form onSubmit={handleOnSubmit}>
         <div>
-          <DynaPassword placeholder="Enter new password*" onFieldChange={onFieldChange} />
+          <DynaPassword onFieldChange={onFieldChange} />
           <FieldMessage errorMessages={showError ? message.MFA.NEW_PASSWORD_EMPTY : null} />
         </div>
         { isAuthenticating ? <Spinner />

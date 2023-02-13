@@ -1,24 +1,16 @@
-import TextField from '@material-ui/core/TextField';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
-import React, { useState, useCallback, useRef, useEffect} from 'react';
-import { Typography, InputAdornment} from '@material-ui/core';
+import React, { useState, useCallback, useEffect} from 'react';
 import { useParams, useHistory, Link} from 'react-router-dom';
-import clsx from 'clsx';
 import actions from '../../../actions';
 import { selectors } from '../../../reducers';
 import { AUTH_FAILURE_MESSAGE } from '../../../constants';
 import Spinner from '../../../components/Spinner';
 import { FilledButton, TextButton } from '../../../components/Buttons';
-import ShowContentIcon from '../../../components/icons/ShowContentIcon';
-import HideContentIcon from '../../../components/icons/HideContentIcon';
 import getRoutePath from '../../../utils/routePaths';
-import ArrowPopper from '../../../components/ArrowPopper';
-import TooltipContent from '../../../components/TooltipContent';
-import CheckmarkIcon from '../../../components/icons/CheckmarkIcon';
-import CloseIcon from '../../../components/icons/CloseIcon';
 import ShowErrorMessage from '../../../components/ShowErrorMessage';
 import LoginFormWrapper from '../../../components/LoginScreen/LoginFormWrapper';
+import DynaPassword from '../../../components/DynaForm/fields/DynaPassword';
 
 const useStyles = makeStyles(theme => ({
   submit: {
@@ -98,19 +90,11 @@ const useStyles = makeStyles(theme => ({
 
 export default function ResetPassword() {
   const {token} = useParams();
-  const inputFieldRef = useRef();
   const dispatch = useDispatch();
   const history = useHistory();
   const classes = useStyles();
-  const [showErr, setShowErr] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
-  const [containDigits, setContainDigits] = useState(false);
-  const [containCapitalLetter, setContainCapitalLetter] = useState(false);
-  const [validLength, setValidLength] = useState(false);
-  const [anchorEl, setAnchorEl] = useState(null);
-  const open = !!anchorEl;
-  const handleClickShowPassword = () => setShowPassword(!showPassword);
-  const handleMouseDownPassword = () => setShowPassword(!showPassword);
+  const [showError, setShowError] = useState(false);
+  const [passwordVal, setPasswordVal] = useState('');
   const handleResetPassword = useCallback(password => {
     dispatch(actions.auth.resetPasswordRequest(password, token));
   }, [dispatch, token]);
@@ -136,29 +120,17 @@ export default function ResetPassword() {
     return errorMessage;
   });
 
-  const handleFocusIn = e => {
-    setAnchorEl(e.currentTarget);
+  const handleOnSubmit = useCallback(() => {
+    if (!passwordVal) {
+      setShowError(true);
+    } else if (!showError) {
+      handleResetPassword(passwordVal);
+    }
+  }, [handleResetPassword, passwordVal, showError]);
+
+  const onFieldChange = (id, password) => {
+    setPasswordVal(password);
   };
-  const handleFocusOut = () => {
-    setAnchorEl(null);
-  };
-
-  const handleOnChangePassword = useCallback(e => {
-    const password = e.target.value;
-    const isValid = /[A-Z]/.test(password) && /\d/.test(password) && password.length > 9 && password.length < 256;
-
-    setContainCapitalLetter(/[A-Z]/.test(password));
-    setContainDigits(/\d/.test(password));
-    setValidLength(password.length > 9 && password.length < 256);
-    setShowErr(!isValid);
-  }, []);
-
-  const handleOnSubmit = useCallback(e => {
-    e.preventDefault();
-    const password = e?.target?.password?.value || e?.target?.elements?.password?.value;
-
-    handleResetPassword(password);
-  }, [handleResetPassword]);
 
   return (
     <LoginFormWrapper>
@@ -166,83 +138,7 @@ export default function ResetPassword() {
       <ShowErrorMessage error={error} />
       )}
       <form onSubmit={handleOnSubmit} className={classes.setPasswordForm}>
-        <TextField
-          data-private
-          data-test="password"
-          id="password"
-          variant="filled"
-          type={showPassword ? 'text' : 'password'}
-          placeholder="Enter new password*"
-          onChange={handleOnChangePassword}
-          onFocus={handleFocusIn}
-          onBlur={handleFocusOut}
-          className={classes.textField}
-          InputProps={{
-            endAdornment: (true) &&
-              (
-                <InputAdornment position="end">
-                    {showPassword ? (
-                      <ShowContentIcon
-                        onClick={handleClickShowPassword}
-                        onMouseDown={handleMouseDownPassword} />
-                    )
-                      : (
-                        <HideContentIcon
-                          onClick={handleClickShowPassword}
-                          onMouseDown={handleMouseDownPassword} />
-                      )}
-
-                </InputAdornment>
-              ),
-            ref: inputFieldRef,
-          }}
-            />
-        <div className={classes.passwordStrongSteps}>
-          <Typography className={clsx(classes.passwordListItem, {[classes.redText]: showErr})}>To help protect your account, choose a password that you haven’t used before.</Typography>
-          <Typography className={classes.passwordListItem} >Make sure your password:</Typography>
-          <div className={classes.passwordListItem}>
-            {containCapitalLetter ? <CheckmarkIcon className={clsx(classes.icon, classes.successIcon)} />
-              : <CloseIcon className={clsx(classes.icon, classes.errorIcon)} />}
-            <Typography className={clsx(classes.passwordListItemText, {[classes.passwordListItemTextError]: !containCapitalLetter})}>Contains at least one capital letter</Typography>
-          </div>
-          <div className={classes.passwordListItem}>
-            {containDigits ? <CheckmarkIcon className={clsx(classes.icon, classes.successIcon)} />
-              : <CloseIcon className={clsx(classes.icon, classes.errorIcon)} />}
-            <Typography className={clsx(classes.passwordListItemText, {[classes.passwordListItemTextError]: !containDigits})}>Contains at least one number</Typography>
-          </div>
-          <div className={classes.passwordListItem}>
-            {validLength ? <CheckmarkIcon className={clsx(classes.icon, classes.successIcon)} />
-              : <CloseIcon className={clsx(classes.icon, classes.errorIcon)} />}
-            <Typography className={clsx(classes.passwordListItemText, {[classes.passwordListItemTextError]: !validLength})}>Is at least 10 characters long and not greater than 256 characters.</Typography>
-          </div>
-        </div>
-        <ArrowPopper
-          id="pageInfo"
-          open={open}
-          anchorEl={anchorEl}
-          placement="right"
-          classes={{ popper: classes.arrowPopperPassword }}
-          preventOverflow>
-          <TooltipContent className={classes.infoText}>
-            <Typography className={clsx(classes.passwordListItem, {[classes.redText]: showErr})}>To help protect your account, choose a password that you haven’t used before.</Typography>
-            <Typography className={classes.passwordListItem} >Make sure your password:</Typography>
-            <div className={classes.passwordListItem}>
-              {containCapitalLetter ? <CheckmarkIcon className={clsx(classes.icon, classes.successIcon)} />
-                : <CloseIcon className={clsx(classes.icon, classes.errorIcon)} />}
-              <Typography className={clsx(classes.passwordListItemText, {[classes.passwordListItemTextError]: !containCapitalLetter})}>Contains at least one capital letter</Typography>
-            </div>
-            <div className={classes.passwordListItem}>
-              {containDigits ? <CheckmarkIcon className={clsx(classes.icon, classes.successIcon)} />
-                : <CloseIcon className={clsx(classes.icon, classes.errorIcon)} />}
-              <Typography className={clsx(classes.passwordListItemText, {[classes.passwordListItemTextError]: !containDigits})}>Contains at least one number</Typography>
-            </div>
-            <div className={classes.passwordListItem}>
-              {validLength ? <CheckmarkIcon className={clsx(classes.icon, classes.successIcon)} />
-                : <CloseIcon className={clsx(classes.icon, classes.errorIcon)} />}
-              <Typography className={clsx(classes.passwordListItemText, {[classes.passwordListItemTextError]: !validLength})}>Is at least 10 characters long and not greater than 256 characters.</Typography>
-            </div>
-          </TooltipContent>
-        </ArrowPopper>
+        <DynaPassword onFieldChange={onFieldChange} />
         { isAuthenticating ? <Spinner />
           : (
             <FilledButton

@@ -2,13 +2,10 @@ import TextField from '@material-ui/core/TextField';
 import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/core/styles';
 import React, { useState, useCallback, useEffect } from 'react';
-import { Typography, InputAdornment} from '@material-ui/core';
+import { Typography} from '@material-ui/core';
 import { useLocation, Link, useHistory } from 'react-router-dom';
-import clsx from 'clsx';
 import actions from '../../actions';
 import { selectors } from '../../reducers';
-import ShowContentIcon from '../../components/icons/ShowContentIcon';
-import HideContentIcon from '../../components/icons/HideContentIcon';
 import SecurityIcon from '../../components/icons/SecurityIcon';
 import { AUTH_FAILURE_MESSAGE } from '../../constants';
 import getRoutePath from '../../utils/routePaths';
@@ -97,7 +94,7 @@ export default function SignIn({dialogOpen, className}) {
   const location = useLocation();
   const classes = useStyles();
   const [email, setEmail] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
+  const [passwordVal, setPasswordVal] = useState('');
   const history = useHistory();
   const query = useQuery();
 
@@ -138,10 +135,13 @@ export default function SignIn({dialogOpen, className}) {
   const handleOnSubmit = useCallback(e => {
     e.preventDefault();
     const email = e?.target?.email?.value || e?.target?.elements?.email?.value;
-    const password = e?.target?.password?.value || e?.target?.elements?.password?.value;
 
-    handleAuthentication(email, password);
-  }, [handleAuthentication]);
+    handleAuthentication(email, passwordVal);
+  }, [handleAuthentication, passwordVal]);
+
+  const onFieldChange = (id, password) => {
+    setPasswordVal(password);
+  };
 
   const handleSignInWithGoogle = useCallback(e => {
     e.preventDefault();
@@ -157,8 +157,6 @@ export default function SignIn({dialogOpen, className}) {
     e.preventDefault();
     dispatch(actions.auth.reSignInWithSSO());
   };
-
-  const handleShowPassword = () => setShowPassword(showPassword => !showPassword);
 
   window.signedInWithGoogle = () => {
     reInitializeSession();
@@ -202,35 +200,7 @@ export default function SignIn({dialogOpen, className}) {
           disabled={dialogOpen}
             />
 
-        <DynaPassword />
-
-        <TextField
-          data-private
-          data-test="password"
-          id="password"
-          variant="filled"
-          type={showPassword ? 'text' : 'password'}
-          required
-          placeholder="Password*"
-          className={clsx(classes.textField, classes.passwordTextField)}
-          InputProps={{
-            endAdornment: (true) &&
-              (
-                <InputAdornment position="end">
-                    {showPassword ? (
-                      <ShowContentIcon
-                        className={classes.iconPassword}
-                        onClick={handleShowPassword} />
-                    )
-                      : (
-                        <HideContentIcon
-                          className={classes.iconPassword}
-                          onClick={handleShowPassword} />
-                      )}
-                </InputAdornment>
-              ),
-          }}
-            />
+        <DynaPassword placeholder="Password" onFieldChange={onFieldChange} />
 
         <div className={classes.forgotPass}>
           <TextButton

@@ -32,6 +32,9 @@ const useStyles = makeStyles(theme => ({
       borderColor: theme.palette.error.dark,
     },
   },
+  forgotPasswordSpinner: {
+    marginTop: theme.spacing(1),
+  },
 }));
 export default function ForgotPassword({setShowError, email}) {
   const dispatch = useDispatch();
@@ -95,7 +98,7 @@ export default function ForgotPassword({setShowError, email}) {
         />
         <FieldMessage errorMessages={showErr || showInvalidEmailError ? showErrorMsg : ''} />
 
-        { isAuthenticating ? <Spinner />
+        { isAuthenticating ? <Spinner className={classes.forgotPasswordSpinner} />
           : (
             <FilledButton
               data-test="submit"

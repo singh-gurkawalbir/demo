@@ -583,7 +583,7 @@ export default {
     },
     MuiTextField: {
       root: {
-        background: colors.celigoWarning,
+        background: colors.celigoWhite,
         border: '1px solid',
         borderColor: colors.celigoNeutral2,
 

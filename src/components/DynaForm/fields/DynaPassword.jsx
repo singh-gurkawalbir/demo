@@ -146,7 +146,7 @@ export default function DynaPassword(props) {
           id={id}
           data-test="password"
           type={showPassword ? 'text' : 'password'}
-          placeholder={placeholder}
+          placeholder={placeholder || 'Enter new password*'}
           className={classes.textField}
           onChange={handleOnChangePassword}
           variant="filled"
