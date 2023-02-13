@@ -145,7 +145,6 @@ export default function DynaPassword(props) {
           {...isLoggableAttr(isLoggable)}
           id={id}
           data-test="password"
-          required
           type={showPassword ? 'text' : 'password'}
           placeholder={placeholder}
           className={classes.textField}

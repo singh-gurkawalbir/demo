@@ -10,12 +10,9 @@ import { AUTH_FAILURE_MESSAGE } from '../../../constants';
 import getRoutePath from '../../../utils/routePaths';
 import Spinner from '../../../components/Spinner';
 import { FilledButton, OutlinedButton } from '../../../components/Buttons';
-import getImageUrl from '../../../utils/image';
 import { isGoogleSignInAllowed } from '../../../utils/resource';
 import ShowErrorMessage from '../../../components/ShowErrorMessage';
 import LoginFormWrapper from '../../../components/LoginScreen/LoginFormWrapper';
-
-const path = getImageUrl('images/googlelogo.png');
 
 const useStyles = makeStyles(theme => ({
   submit: {
@@ -47,13 +44,6 @@ const useStyles = makeStyles(theme => ({
     marginBottom: theme.spacing(3),
   },
   googleBtn: {
-    borderRadius: 4,
-    width: '100%',
-    background: `url(${path}) 15% center no-repeat`,
-    backgroundSize: theme.spacing(2),
-    height: 38,
-    fontSize: 16,
-    backgroundColor: theme.palette.background.paper,
     minWidth: '240px',
     margin: theme.spacing(0, 0, 2, 0),
   },
@@ -207,7 +197,8 @@ export default function SignIn({dialogOpen, className}) {
           <OutlinedButton
             type="submit"
             color="secondary"
-            className={classes.googleBtn}>
+            className={classes.googleBtn}
+            googleBtn>
             Sign in with Google
           </OutlinedButton>
         </form>
@@ -218,7 +209,8 @@ export default function SignIn({dialogOpen, className}) {
            <OutlinedButton
              type="submit"
              color="secondary"
-             className={classes.googleBtn}>
+             className={classes.googleBtn}
+             googleBtn>
              Sign in with Google
            </OutlinedButton>
          </form>

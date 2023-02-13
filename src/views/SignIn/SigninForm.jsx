@@ -14,26 +14,18 @@ import { AUTH_FAILURE_MESSAGE } from '../../constants';
 import getRoutePath from '../../utils/routePaths';
 import Spinner from '../../components/Spinner';
 import { FilledButton, OutlinedButton, TextButton } from '../../components/Buttons';
-import getImageUrl from '../../utils/image';
 import useQuery from '../../hooks/useQuery';
 import { isGoogleSignInAllowed } from '../../utils/resource';
 import ShowErrorMessage from '../../components/ShowErrorMessage';
 import LoginFormWrapper from '../../components/LoginScreen/LoginFormWrapper';
-
-const path = getImageUrl('images/googlelogo.png');
+import DynaPassword from '../../components/DynaForm/fields/DynaPassword';
 
 const useStyles = makeStyles(theme => ({
   textField: {
-    width: '100%',
     minWidth: '100%',
     marginBottom: theme.spacing(1),
     position: 'relative',
-    border: '1px solid',
-    borderColor: theme.palette.secondary.lightest,
     paddingRight: 4,
-    '&:hover': {
-      borderColor: theme.palette.primary.main,
-    },
     '& >.MuiFilledInput-root': {
       '& > input': {
         border: 'none',
@@ -52,15 +44,6 @@ const useStyles = makeStyles(theme => ({
     color: theme.palette.primary.dark,
     textAlign: 'right',
     marginBottom: theme.spacing(3),
-  },
-  googleBtn: {
-    borderRadius: 4,
-    width: '100%',
-    background: `url(${path}) 15% center no-repeat`,
-    backgroundSize: theme.spacing(2),
-    height: 38,
-    fontSize: 16,
-    backgroundColor: theme.palette.background.paper,
   },
   ssoBtn: {
     borderRadius: 4,
@@ -212,11 +195,15 @@ export default function SignIn({dialogOpen, className}) {
           variant="filled"
           placeholder="Email*"
           required
+          fullWidth
+          className={classes.textField}
           value={dialogOpen ? userEmail : email}
           onChange={handleOnChangeEmail}
-          className={classes.textField}
           disabled={dialogOpen}
             />
+
+        <DynaPassword />
+
         <TextField
           data-private
           data-test="password"
@@ -289,7 +276,7 @@ export default function SignIn({dialogOpen, className}) {
             <OutlinedButton
               type="submit"
               color="secondary"
-              className={classes.googleBtn}>
+              googleBtn>
               Sign in with Google
             </OutlinedButton>
           </form>
@@ -316,7 +303,7 @@ export default function SignIn({dialogOpen, className}) {
           <OutlinedButton
             type="submit"
             color="secondary"
-            className={classes.googleBtn}>
+            googleBtn>
             Sign in with Google
           </OutlinedButton>
         </form>

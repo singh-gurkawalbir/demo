@@ -12,14 +12,11 @@ import { AUTH_FAILURE_MESSAGE } from '../../../constants';
 import getRoutePath from '../../../utils/routePaths';
 import Spinner from '../../../components/Spinner';
 import { FilledButton, OutlinedButton, TextButton } from '../../../components/Buttons';
-import getImageUrl from '../../../utils/image';
 import useQuery from '../../../hooks/useQuery';
 import ShowContentIcon from '../../../components/icons/ShowContentIcon';
 import HideContentIcon from '../../../components/icons/HideContentIcon';
 import ShowErrorMessage from '../../../components/ShowErrorMessage';
 import LoginFormWrapper from '../../../components/LoginScreen/LoginFormWrapper';
-
-const path = getImageUrl('images/googlelogo.png');
 
 const useStyles = makeStyles(theme => ({
   submit: {
@@ -58,15 +55,6 @@ const useStyles = makeStyles(theme => ({
     color: theme.palette.primary.dark,
     textAlign: 'right',
     marginBottom: theme.spacing(3),
-  },
-  googleBtn: {
-    borderRadius: 4,
-    width: '100%',
-    background: `url(${path}) 15% center no-repeat`,
-    backgroundSize: theme.spacing(2),
-    height: 38,
-    fontSize: 16,
-    backgroundColor: theme.palette.background.paper,
   },
   ssoBtn: {
     borderRadius: 4,
@@ -282,7 +270,7 @@ export default function SignIn({ dialogOpen, className, queryParam }) {
               <OutlinedButton
                 type="submit"
                 color="secondary"
-                className={classes.googleBtn}>
+                googleBtn>
                 Sign in with Google
               </OutlinedButton>
             </form>
