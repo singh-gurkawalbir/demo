@@ -897,7 +897,7 @@ export default function BranchFilterPanel({ editorId, position, type, rule, hand
         // eslint-disable-next-line camelcase
           const isSingleInputOperator = !state.rule?.operator?.nb_inputs;
 
-          if (state.data.rhs.type !== 'value' || state.data.rhs.value || state.data.rhs.value === 0 || isSingleInputOperator) return;
+          if (state.data.rhs.type !== 'value' || state.data.rhs.value !== undefined || state.data.rhs.value === 0 || isSingleInputOperator) return;
 
           const $emptyRule = state.rule;
 
