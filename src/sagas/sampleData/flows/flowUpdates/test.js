@@ -220,6 +220,86 @@ describe('flow updates sagas', () => {
         .put(actions.flowData.updateFlowsForResource('export-123', 'exports', stagesToReset))
         .run();
     });
+    test('should dispatch clear flow action when there is a router removal patchSet', () => {
+      const removeRouterPatchSet = [
+        {op: 'remove', path: '/routers'},
+        {op: 'add', path: '/pageProcessors', value: {}},
+      ];
+
+      expectSaga(updateFlowOnResourceUpdate, {
+        resourceId: 'flow-123',
+        resourceType: 'flows',
+        patch: removeRouterPatchSet,
+      })
+        .not.put(actions.flowData.updateFlow('flow-123'))
+        .not.call.fn(_updateResponseMapping)
+        .put(actions.flowData.clear('flow-123', 'flows'))
+        .run();
+    });
+    test('should dispatch init and resetStages action with the updated routerId when  a router is updated', () => {
+      const updateRouterPatchSet = [
+        {op: 'remove', path: '/pageProcessors'},
+        {op: 'add', path: '/routers', value: {}},
+        {op: 'remove', path: '/pageProcessors'},
+        {op: 'replace', path: '/routers/0', value: {} },
+      ];
+      const flowId = 'flow-123';
+      const updatedFlow = {
+        _id: flowId,
+        name: 'test-flow',
+        routers: [{
+          id: 'router-123',
+          name: 'test',
+        }],
+      };
+
+      expectSaga(updateFlowOnResourceUpdate, {
+        resourceId: flowId,
+        resourceType: 'flows',
+        patch: updateRouterPatchSet,
+      })
+        .provide([
+          [select(selectors.resourceData, 'flows', flowId), { merged: updatedFlow }],
+        ])
+        .not.put(actions.flowData.updateFlow(flowId))
+        .not.call.fn(_updateResponseMapping)
+        .not.put(actions.flowData.clear(flowId, 'flows'))
+        .put(actions.flowData.init(updatedFlow))
+        .put(actions.flowData.resetStages(flowId, 'router-123'))
+        .run();
+    });
+    test('should not dispatch init and resetStages action when the route is updated but routerIndex is invalid', () => {
+      const updateRouterPatchSet = [
+        {op: 'remove', path: '/pageProcessors'},
+        {op: 'add', path: '/routers', value: {}},
+        {op: 'remove', path: '/pageProcessors'},
+        {op: 'replace', path: '/routers/1', value: {} },
+      ];
+      const flowId = 'flow-123';
+      const updatedFlow = {
+        _id: flowId,
+        name: 'test-flow',
+        routers: [{
+          id: 'router-123',
+          name: 'test',
+        }],
+      };
+
+      expectSaga(updateFlowOnResourceUpdate, {
+        resourceId: flowId,
+        resourceType: 'flows',
+        patch: updateRouterPatchSet,
+      })
+        .provide([
+          [select(selectors.resourceData, 'flows', flowId), { merged: updatedFlow }],
+        ])
+        .not.put(actions.flowData.updateFlow(flowId))
+        .not.call.fn(_updateResponseMapping)
+        .not.put(actions.flowData.clear(flowId, 'flows'))
+        .not.put(actions.flowData.init(updatedFlow))
+        .not.put(actions.flowData.resetStages(flowId, undefined))
+        .run();
+    });
   });
   describe('_updateResponseMapping saga', () => {
     test('should not dispatch updateResponseMapping, resetStages action incase of invalid flowId/resourceIndex', () => expectSaga(_updateResponseMapping, { flowId: 'INVALID_FLOW_ID' })

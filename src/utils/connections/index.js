@@ -82,18 +82,28 @@ export const getReplaceConnectionExpression = (connection, isFrameWork2, childId
   if (type === 'rdbms' && RDBMS_TYPES.includes(rdbmsSubTypeToAppType(connection?.rdbms?.type))) {
     // rdbms subtype is required to filter the connections
     expression.push({ 'rdbms.type': connection.rdbms.type });
-  } else if (type === 'rest' || (type === 'http' && connection?.http?.formType === 'rest')) {
+  } else if ((type === 'rest' && connection?.isHTTP !== true) || (type === 'http' && connection?.http?.formType === 'rest')) {
     expression.push({ $or: [{ 'http.formType': 'rest' }, { type: 'rest' }] });
   } else if (type === 'graph_ql' || (type === 'http' && connection?.http?.formType === 'graph_ql')) {
     expression.push({ $or: [{ 'http.formType': 'graph_ql' }] });
-  } else if (type === 'http') {
+  } else if (type === 'http' || (type === 'rest' && connection?.isHTTP === true && connection.http?._httpConnectorId)) {
     if (getHttpConnector(connection?.http?._httpConnectorId)) {
       if (connection.http?._httpConnectorId) {
         expression.push({ 'http._httpConnectorId': connection.http._httpConnectorId });
       }
     }
-    expression.push({ 'http.formType': { $ne: 'rest' } });
-    expression.push({ type });
+    if (type === 'rest' && connection?.isHTTP === true && connection.http?._httpConnectorId) {
+      expression.push({ 'http.formType': 'assistant' });
+      expression.push({$or: [{ type: 'rest' }, { type: 'http' }]});
+      expression.push({ isHTTP: { $ne: false } });
+    } else if (type === 'http' && connection?.http?._httpConnectorId) {
+      expression.push({ 'http.formType': 'assistant' });
+      expression.push({$or: [{ type: 'rest' }, { type: 'http' }]});
+      expression.push({ isHTTP: { $ne: false } });
+    } else {
+      expression.push({ 'http.formType': { $ne: 'rest' } });
+      expression.push({ type });
+    }
   } else {
     expression.push({ type });
   }

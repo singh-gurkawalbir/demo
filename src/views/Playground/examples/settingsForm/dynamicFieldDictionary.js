@@ -95,6 +95,7 @@ const sampleData = {
       isLoggable: true,
       type: 'netsuitelookup',
       label: 'Netsuite lookup',
+      disableFetch: true,
     },
     staticMap: {
       id: 'staticMap',
@@ -109,14 +110,12 @@ const sampleData = {
         {
           id: 'import',
           label: 'Destination field value',
-          required: false,
           type: 'input',
           supportsRefresh: false,
         },
         {
           id: 'export',
           label: 'Source field value',
-          required: false,
           type: 'input',
           supportsRefresh: false,
         },
