@@ -79,13 +79,8 @@ export function flowBuilderLoading({ error, timedOut, pastDelay }) {
   return null;
 }
 
-export const customLoader = (loader, customLoading = Loading) => Loadable({
-  loader,
-  loading: customLoading,
-});
-
-export default loader =>
+export default (loader, customLoading = Loading) =>
   Loadable({
     loader,
-    loading: Loading,
+    loading: customLoading,
   });

@@ -1,7 +1,7 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { Switch, Route } from 'react-router-dom';
-import loadable, {customLoader, flowBuilderLoading} from '../../utils/loadable';
+import loadable, {flowBuilderLoading} from '../../utils/loadable';
 import ClonePreview from '../../views/Clone/Preview';
 import CloneSetup from '../../views/Clone/Setup';
 import getRoutePath from '../../utils/routePaths';
@@ -53,7 +53,7 @@ const Reports = loadable(() =>
 const Playground = loadable(() =>
   retry(() => import(/* webpackChunkName: 'Playground' */ '../../views/Playground'))
 );
-const FlowBuilder = customLoader(() =>
+const FlowBuilder = loadable(() =>
   retry(() => import(/* webpackChunkName: 'FlowBuilder' */ '../../views/FlowBuilder')), flowBuilderLoading,
 );
 const ResourceList = loadable(() =>
