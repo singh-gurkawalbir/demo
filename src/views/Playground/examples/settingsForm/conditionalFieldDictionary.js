@@ -94,7 +94,7 @@ const sampleData = {
       name: 'defaultVisible',
       type: 'select',
       label: 'Default Visible',
-      defaultVisible: 'false',
+      defaultVisible: false,
       options: [
         {
           items: ['Delhi', 'Hyderabad', 'Chennai'],
