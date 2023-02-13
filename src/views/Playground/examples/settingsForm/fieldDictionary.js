@@ -157,7 +157,6 @@ const sampleData = {
       type: 'date',
       label: 'Date',
       doNotAllowFutureDates: true,
-      skipTimezoneConversion: true,
     },
   },
 };
