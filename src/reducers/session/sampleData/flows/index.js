@@ -3,7 +3,7 @@ import { createSelector } from 'reselect';
 import actionTypes from '../../../../actions/types';
 import { getSampleDataStage } from '../../../../utils/flowData';
 import { isPageGeneratorResource } from '../../../../utils/flows';
-import { clearInvalidPgOrPpStates, clearInvalidStagesForPgOrPp, getFirstOutOfOrderIndex } from './utils';
+import { clearInvalidPgOrPpStates, clearInvalidStagesForPgOrPp, clearInvalidStatesOnRouterUpdate, getFirstOutOfOrderIndex } from './utils';
 
 const getResource = (flow, resourceId, previewType) => {
   let resource = 'pageProcessorsMap';
@@ -215,9 +215,13 @@ export default function (state = {}, action) {
             clearInvalidPgOrPpStates(flow, pageProcessorIndexToReset + 1, false, {routerIndex, branchIndex});
           }
         }
+        if (flow.routers?.length) {
+          const routerIndex = flow.routers.findIndex(r => r.id === resourceId);
 
-        if (flow.routers?.length && flow.routers.find(r => r.id === resourceId)) {
-          clearInvalidPgOrPpStates(flow, 0, false, {routerIndex: flow.routers.findIndex(r => r.id === resourceId), branchIndex: 0});
+          if (!Number.isNaN(routerIndex)) {
+            // If the passed resource is a router, reset all the branches and their page processors
+            clearInvalidStatesOnRouterUpdate(flow, resourceId);
+          }
         }
 
         break;
@@ -257,6 +261,12 @@ export default function (state = {}, action) {
 
         break;
       }
+
+      case actionTypes.FLOW_DATA.CLEAR:
+        if (flowId && draft[flowId]) {
+          delete draft[flowId];
+        }
+        break;
 
       default:
     }

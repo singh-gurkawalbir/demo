@@ -25,12 +25,6 @@ const useStyles = makeStyles(theme => ({
   warningLabelWrapper: {
     display: 'flex',
   },
-  warningLabel: {
-    color: theme.palette.secondary.main,
-    '& a': {
-      color: theme.palette.primary.dark,
-    },
-  },
   warning: {
     color: theme.palette.warning.main,
     height: theme.spacing(2),
@@ -94,7 +88,7 @@ export default function DynaRadio(props) {
         <RawHtml html={customLabel} options={{allowedTags: ['a', 'u'], escapeUnsecuredDomains: true}} />
         <span className={classes.warningLabelWrapper}>
           { item.isWarningMessage && <WarningIcon data-test="warningIcon" className={classes.warning} /> }
-          <RawHtml className={classes.warningLabel} data-test="description" html={item.description} options={{allowedTags: ['a', 'u'], escapeUnsecuredDomains: true}} />
+          <RawHtml data-test="description" html={item.description} options={{allowedTags: ['a', 'u'], escapeUnsecuredDomains: true}} />
         </span>
       </div>
     );

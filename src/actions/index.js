@@ -1580,6 +1580,7 @@ const flowData = {
       branchIndex,
       responseMapping,
     }),
+  clear: flowId => action(actionTypes.FLOW_DATA.CLEAR, { flowId }),
 };
 const resourceFormSampleData = {
   request: (formKey, options) => action(actionTypes.RESOURCE_FORM_SAMPLE_DATA.REQUEST, { formKey, options }),
