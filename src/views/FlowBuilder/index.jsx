@@ -19,9 +19,9 @@ import IsLoggableContextProvider from '../../components/IsLoggableContextProvide
 import actions from '../../actions';
 import { STANDALONE_INTEGRATION } from '../../constants';
 import useLoadUIFields from '../../hooks/useLoadUIFields';
-import Spinner from '../../components/Spinner';
 import FlowBuilderBody from './FlowBuilderBody';
 import Redirection from './Redirection';
+import LoadingNotification from '../../App/LoadingNotification';
 
 function FBComponent({flowId, integrationId, childId}) {
   return (
@@ -40,7 +40,7 @@ function FBComponent({flowId, integrationId, childId}) {
   );
 }
 
-const spinner = <Spinner centerAll />;
+const spinner = <LoadingNotification message="Loading" />;
 
 export default function FlowBuilder() {
   const match = useRouteMatch();

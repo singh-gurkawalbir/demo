@@ -4,7 +4,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Typography from '@material-ui/core/Typography';
 import Loader from '../components/Loader';
-import Spinner from '../components/Spinner';
+import LoadingNotification from '../App/LoadingNotification';
 
 const useStyles = makeStyles(theme => ({
   view: {
@@ -72,7 +72,7 @@ export function flowBuilderLoading({ error, timedOut, pastDelay }) {
     throw error;
   } else if (timedOut || pastDelay) {
     return (
-      <Spinner centerAll />
+      <LoadingNotification message="Loading" />
     );
   }
 
