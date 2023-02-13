@@ -18,24 +18,11 @@ import TooltipContent from '../../../components/TooltipContent';
 import CheckmarkIcon from '../../../components/icons/CheckmarkIcon';
 import CloseIcon from '../../../components/icons/CloseIcon';
 import ShowErrorMessage from '../../../components/ShowErrorMessage';
+import LoginFormWrapper from '../../../components/LoginScreen/LoginFormWrapper';
 
 const useStyles = makeStyles(theme => ({
   submit: {
-    width: '100%',
-    borderRadius: 4,
-    height: 38,
-    fontSize: theme.spacing(2),
-    marginTop: theme.spacing(1),
     color: theme.palette.warning.main,
-  },
-  editableFields: {
-    textAlign: 'center',
-    width: '100%',
-    maxWidth: 500,
-    marginBottom: 112,
-    [theme.breakpoints.down('sm')]: {
-      maxWidth: '100%',
-    },
   },
   textField: {
     width: '100%',
@@ -174,7 +161,7 @@ export default function ResetPassword() {
   }, [handleResetPassword]);
 
   return (
-    <div className={classes.editableFields}>
+    <LoginFormWrapper>
       { error && (
       <ShowErrorMessage error={error} />
       )}
@@ -262,6 +249,7 @@ export default function ResetPassword() {
               data-test="submit"
               type="submit"
               className={classes.submit}
+              submit
               value="Submit">
               Save
             </FilledButton>
@@ -269,6 +257,7 @@ export default function ResetPassword() {
         <TextButton
           data-test="cancelResetPassword"
           className={classes.submit}
+          submit
           to={getRoutePath('/signin')}
           component={Link}
           role="link"
@@ -276,7 +265,7 @@ export default function ResetPassword() {
           Cancel
         </TextButton>
       </form>
-    </div>
+    </LoginFormWrapper>
   );
 }
 

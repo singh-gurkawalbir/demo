@@ -17,25 +17,13 @@ import useQuery from '../../../hooks/useQuery';
 import ShowContentIcon from '../../../components/icons/ShowContentIcon';
 import HideContentIcon from '../../../components/icons/HideContentIcon';
 import ShowErrorMessage from '../../../components/ShowErrorMessage';
+import LoginFormWrapper from '../../../components/LoginScreen/LoginFormWrapper';
 
 const path = getImageUrl('images/googlelogo.png');
 
 const useStyles = makeStyles(theme => ({
   submit: {
-    width: '100%',
-    borderRadius: 4,
-    height: 38,
-    fontSize: theme.spacing(2),
     margin: theme.spacing(1, 0, 2, 0),
-  },
-  editableFields: {
-    textAlign: 'center',
-    width: '100%',
-    maxWidth: 500,
-    marginBottom: 112,
-    [theme.breakpoints.down('sm')]: {
-      maxWidth: '100%',
-    },
   },
   switchDomain: {
     margin: theme.spacing(5, 0, 3),
@@ -212,7 +200,7 @@ export default function SignIn({ dialogOpen, className, queryParam }) {
 
   return (
   // user's email can be listed here ...type passwords is anyways redacted by logrocket
-    <div className={clsx(classes.editableFields, className)}>
+    <LoginFormWrapper className={className}>
       {!isAuthenticating && !showError && query.get('msg') && (
       <Typography
         data-private
@@ -285,6 +273,7 @@ export default function SignIn({ dialogOpen, className, queryParam }) {
               type="submit"
               role="button"
               className={classes.submit}
+              submit
               value="Submit">
               Sign in
             </FilledButton>
@@ -318,6 +307,6 @@ export default function SignIn({ dialogOpen, className, queryParam }) {
         {getDomain() !== 'eu.integrator.io' && <a data-test="euSignIn" className={classes.switchDomain} href={`https://eu.integrator.io/connection/shopify/oauth2callback?${queryParam}`}>Switch to EU domain</a>}
       </div>
       )}
-    </div>
+    </LoginFormWrapper>
   );
 }

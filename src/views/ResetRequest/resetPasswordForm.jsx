@@ -20,23 +20,11 @@ import CloseIcon from '../../components/icons/CloseIcon';
 import FieldMessage from '../../components/DynaForm/fields/FieldMessage';
 import {message} from '../../utils/messageStore';
 import ShowErrorMessage from '../../components/ShowErrorMessage';
+import LoginFormWrapper from '../../components/LoginScreen/LoginFormWrapper';
 
 const useStyles = makeStyles(theme => ({
   submit: {
-    width: '100%',
-    borderRadius: 4,
-    height: 38,
-    fontSize: theme.spacing(2),
     marginTop: 30,
-  },
-  editableFields: {
-    textAlign: 'center',
-    width: '100%',
-    maxWidth: 500,
-    marginBottom: 112,
-    [theme.breakpoints.down('sm')]: {
-      maxWidth: '100%',
-    },
   },
   textField: {
     width: '100%',
@@ -179,7 +167,7 @@ export default function ResetPassword() {
   }, [handleResetPassword, showErr]);
 
   return (
-    <div className={classes.editableFields}>
+    <LoginFormWrapper>
       { showErrMsg && error && (
       <ShowErrorMessage error={error} />
       )}
@@ -272,6 +260,7 @@ export default function ResetPassword() {
               data-test="submit"
               type="submit"
               className={classes.submit}
+              submit
               value="Submit">
               Save
             </FilledButton>
@@ -283,11 +272,12 @@ export default function ResetPassword() {
           component={Link}
           role="link"
           className={classes.submit}
+          submit
         >
           Cancel
         </TextButton>
       </form>
-    </div>
+    </LoginFormWrapper>
   );
 }
 

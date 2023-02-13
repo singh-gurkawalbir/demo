@@ -12,6 +12,7 @@ import FieldMessage from '../../components/DynaForm/fields/FieldMessage';
 import Spinner from '../../components/Spinner';
 import { EMAIL_REGEX } from '../../constants';
 import getRoutePath from '../../utils/routePaths';
+import LoginFormWrapper from '../../components/LoginScreen/LoginFormWrapper';
 
 const path = getImageUrl('images/googlelogo.png');
 
@@ -20,20 +21,7 @@ const useStyles = makeStyles(theme => ({
     margin: theme.spacing(1),
   },
   submit: {
-    width: '100%',
-    borderRadius: 4,
-    height: 38,
-    fontSize: theme.spacing(2),
     marginTop: theme.spacing(4),
-  },
-  editableFields: {
-    textAlign: 'center',
-    width: '100%',
-    maxWidth: 500,
-    marginBottom: 112,
-    [theme.breakpoints.down('sm')]: {
-      maxWidth: '100%',
-    },
   },
   relatedContent: {
     textDecoration: 'none',
@@ -143,7 +131,7 @@ export default function ForgotPassword({setShowError, email}) {
   }, []);
 
   return (
-    <div className={classes.editableFields}>
+    <LoginFormWrapper>
       <form onSubmit={handleOnSubmit}>
         <TextField
           data-private
@@ -163,6 +151,7 @@ export default function ForgotPassword({setShowError, email}) {
               data-test="submit"
               type="submit"
               className={classes.submit}
+              submit
               value="Submit">
               Submit
             </FilledButton>
@@ -174,12 +163,13 @@ export default function ForgotPassword({setShowError, email}) {
           component={Link}
           role="link"
           type="cancel"
+          submit
           className={classes.submit}
         >
           Cancel
         </TextButton>
       </form>
-    </div>
+    </LoginFormWrapper>
   );
 }
 

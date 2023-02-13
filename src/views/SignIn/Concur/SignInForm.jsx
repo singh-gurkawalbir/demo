@@ -13,25 +13,13 @@ import { FilledButton, OutlinedButton } from '../../../components/Buttons';
 import getImageUrl from '../../../utils/image';
 import { isGoogleSignInAllowed } from '../../../utils/resource';
 import ShowErrorMessage from '../../../components/ShowErrorMessage';
+import LoginFormWrapper from '../../../components/LoginScreen/LoginFormWrapper';
 
 const path = getImageUrl('images/googlelogo.png');
 
 const useStyles = makeStyles(theme => ({
   submit: {
-    width: '100%',
-    borderRadius: 4,
-    height: 38,
-    fontSize: theme.spacing(2),
     margin: theme.spacing(1, 0, 2, 0),
-  },
-  editableFields: {
-    textAlign: 'center',
-    width: '100%',
-    maxWidth: 500,
-    marginBottom: 112,
-    [theme.breakpoints.down('sm')]: {
-      maxWidth: '100%',
-    },
   },
   textField: {
     width: '100%',
@@ -161,7 +149,7 @@ export default function SignIn({dialogOpen, className}) {
 
   return (
   // user's email can be listed here ...type passwords is anyways redacted by logrocket
-    <div className={clsx(classes.editableFields, className)}>
+    <LoginFormWrapper className={className}>
       <form onSubmit={handleOnSubmit}>
         <TextField
           data-private
@@ -197,6 +185,7 @@ export default function SignIn({dialogOpen, className}) {
               data-test="submit"
               type="submit"
               className={classes.submit}
+              submit
               value="Submit">
               Sign in and connect
             </FilledButton>
@@ -236,7 +225,7 @@ export default function SignIn({dialogOpen, className}) {
         )}
       </div>
       )}
-    </div>
+    </LoginFormWrapper>
   );
 }
 
