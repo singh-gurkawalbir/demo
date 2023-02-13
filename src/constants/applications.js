@@ -91,13 +91,14 @@ const connectors = [
     keywords: 'technology,protocol',
     group: 'tech',
   },
-  {
-    id: 'van',
-    name: 'VAN (Value Added Network)',
-    type: 'van',
-    keywords: 'technology,protocol',
-    group: 'tech',
-  },
+  // Removed it as of now we can enable it when VAN is going to be shown in UI.
+  // {
+  //   id: 'van',
+  //   name: 'VAN (Value Added Network)',
+  //   type: 'van',
+  //   keywords: 'technology,protocol',
+  //   group: 'tech',
+  // },
   // Database connectors
   {
     id: 'mongodb',
