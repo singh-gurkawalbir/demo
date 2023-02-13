@@ -38,7 +38,7 @@ export default function FilledButton(props) {
   return (
     <Button
       variant="contained"
-      className={clsx(classes.root, {[classes.error]: error}, {[classes.submitBtn]: submit === 'submit'}, className)}
+      className={clsx(classes.root, {[classes.error]: error}, {[classes.submitBtn]: submit}, className)}
       {...rest} />
   );
 }

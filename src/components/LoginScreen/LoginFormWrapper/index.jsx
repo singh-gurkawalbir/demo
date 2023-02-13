@@ -13,10 +13,10 @@ const useStyles = makeStyles(theme => ({
     },
   },
 }));
-export default function LoginFormWrapper({className}) {
+export default function LoginFormWrapper({children, className}) {
   const classes = useStyles();
 
   return (
-    <div className={clsx(classes.loginFormWrapper, className)} />
+    <div className={clsx(classes.loginFormWrapper, className)}>{children}</div>
   );
 }
