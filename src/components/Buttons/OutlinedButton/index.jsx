@@ -3,7 +3,6 @@ import clsx from 'clsx';
 import Button from '@material-ui/core/Button';
 import {makeStyles} from '@material-ui/core/styles';
 import PropTypes from 'prop-types';
-import { propTypes } from 'react-json-pretty';
 
 const useStyles = makeStyles(theme => ({
   error: {
@@ -52,7 +51,7 @@ OutlinedButton.propTypes = {
   size: PropTypes.oneOf(['small', 'medium', 'large']),
   error: PropTypes.bool,
   color: PropTypes.oneOf(['primary', 'secondary']),
-  googleBtn: propTypes.bool,
+  googleBtn: PropTypes.bool,
 };
 
 OutlinedButton.defaultProps = {
