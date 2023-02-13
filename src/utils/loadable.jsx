@@ -4,6 +4,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Typography from '@material-ui/core/Typography';
 import Loader from '../components/Loader';
+import Spinner from '../components/Spinner';
 
 const useStyles = makeStyles(theme => ({
   view: {
@@ -65,6 +66,23 @@ export function Loading({ error, timedOut, pastDelay }) {
     </div>
   );
 }
+
+export function flowBuilderLoading({ error, timedOut, pastDelay }) {
+  if (error) {
+    throw error;
+  } else if (timedOut || pastDelay) {
+    return (
+      <Spinner centerAll />
+    );
+  }
+
+  return null;
+}
+
+export const customLoader = (loader, customLoading = Loading) => Loadable({
+  loader,
+  loading: customLoading,
+});
 
 export default loader =>
   Loadable({

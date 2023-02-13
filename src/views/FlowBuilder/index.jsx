@@ -14,21 +14,14 @@ import ReplaceConnectionDrawer from './drawers/ReplaceConnection';
 import ScheduleDrawer from './drawers/Schedule';
 import SettingsDrawer from './drawers/Settings';
 import EditorDrawer from '../../components/AFE/Drawer';
-import loadable from '../../utils/loadable';
-import retry from '../../utils/retry';
 import { selectors } from '../../reducers';
 import IsLoggableContextProvider from '../../components/IsLoggableContextProvider';
 import actions from '../../actions';
 import { STANDALONE_INTEGRATION } from '../../constants';
 import useLoadUIFields from '../../hooks/useLoadUIFields';
-
-const FlowBuilderBody = loadable(() =>
-  retry(() => import(/* webpackChunkName: 'FlowBuilderBody' */ './FlowBuilderBody'))
-);
-
-const Redirection = loadable(() =>
-  retry(() => import(/* webpackChunkName: 'FlowBuilderRedirection' */ './Redirection'))
-);
+import Spinner from '../../components/Spinner';
+import FlowBuilderBody from './FlowBuilderBody';
+import Redirection from './Redirection';
 
 function FBComponent({flowId, integrationId, childId}) {
   return (
@@ -46,6 +39,9 @@ function FBComponent({flowId, integrationId, childId}) {
     </>
   );
 }
+
+const spinner = <Spinner centerAll />;
+
 export default function FlowBuilder() {
   const match = useRouteMatch();
   const dispatch = useDispatch();
@@ -79,7 +75,7 @@ export default function FlowBuilder() {
   if (!integrationLoaded) return null;
 
   return (
-    <LoadResources integrationId={__integrationId} required resources="connections,imports,exports,flows,scripts">
+    <LoadResources integrationId={__integrationId} required resources="connections,imports,exports,flows,scripts" spinner={spinner} >
       <Redirection>
         <ResourceDrawer flowId={flowId} integrationId={integrationId} />
         <ConfigConnectionDebugger />
