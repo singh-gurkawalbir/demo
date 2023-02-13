@@ -957,24 +957,7 @@ describe('template test cases', () => {
           verifyBundleStep: 'netsuite',
         };
 
-        installSteps = [
-          {
-            name: 'installStep',
-            description: 'something',
-            type: 'Stack',
-          },
-          {
-            name: 'installStep',
-            description: 'something',
-            _connectionId: 'connectionId',
-            type: INSTALL_STEP_TYPES.CONNECTION,
-          },
-          {
-            name: 'installUrl',
-            description: 'something',
-            installURL: 'connectionId',
-            type: INSTALL_STEP_TYPES.INSTALL_PACKAGE,
-          },
+        installSteps = [...installSteps,
           {
             name: 'installBundle',
             description: 'something',
