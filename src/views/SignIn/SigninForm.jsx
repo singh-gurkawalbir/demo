@@ -200,7 +200,7 @@ export default function SignIn({dialogOpen, className}) {
           disabled={dialogOpen}
             />
 
-        <DynaPassword placeholder="Password" onFieldChange={onFieldChange} />
+        <DynaPassword placeholder="Password*" onFieldChange={onFieldChange} />
 
         <div className={classes.forgotPass}>
           <TextButton
