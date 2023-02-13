@@ -81,22 +81,6 @@ const useStyles = makeStyles(theme => ({
     paddingLeft: theme.spacing(5),
     paddingRight: theme.spacing(16),
   },
-  alertMsg: {
-    fontSize: 12,
-    textAlign: 'left',
-    marginLeft: 0,
-    width: '100%',
-    display: 'flex',
-    alignItems: 'flex-start',
-    marginTop: theme.spacing(-2),
-    marginBottom: 0,
-    lineHeight: `${theme.spacing(2)}px`,
-    '& > svg': {
-      fill: theme.palette.error.main,
-      fontSize: theme.spacing(2),
-      marginRight: 5,
-    },
-  },
   or: {
     display: 'flex',
     alignItems: 'center',
