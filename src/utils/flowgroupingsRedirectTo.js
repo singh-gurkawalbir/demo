@@ -37,7 +37,7 @@ export default function flowgroupingsRedirectTo(match, flowGroupings, defaultSec
 }
 
 export const redirectToFirstFlowGrouping = (flowGroupingsSections, match, hasUnassignedSection) => {
-  const flowGroupingsWithUnassignedSec = hasUnassignedSection ? [...flowGroupingsSections, {sectionId: UNASSIGNED_SECTION_ID}] : flowGroupingsSections;
+  const flowGroupingsWithUnassignedSec = hasUnassignedSection ? [...(flowGroupingsSections || []), {sectionId: UNASSIGNED_SECTION_ID}] : flowGroupingsSections;
 
   const firstFlowGroupingSectionId = flowGroupingsWithUnassignedSec?.[0]?.sectionId;
 
