@@ -180,7 +180,7 @@ Object {
       "visible": false,
     },
     "http.unencrypted.version": Object {
-      "defaultValue": "2022-10",
+      "defaultValue": "2023-01",
       "helpKey": "shopify.connection.http.unencrypted.version",
       "id": "http.unencrypted.version",
       "label": "API version",
@@ -189,16 +189,16 @@ Object {
         Object {
           "items": Array [
             Object {
-              "label": "2022-04",
-              "value": "2022-04",
-            },
-            Object {
               "label": "2022-07",
               "value": "2022-07",
             },
             Object {
               "label": "2022-10",
               "value": "2022-10",
+            },
+            Object {
+              "label": "2023-01",
+              "value": "2023-01",
             },
           ],
         },
@@ -590,7 +590,7 @@ Object {
       "visible": true,
     },
     "http.unencrypted.version": Object {
-      "defaultValue": "2022-10",
+      "defaultValue": "2023-01",
       "helpKey": "shopify.connection.http.unencrypted.version",
       "id": "http.unencrypted.version",
       "label": "API version",
@@ -599,16 +599,16 @@ Object {
         Object {
           "items": Array [
             Object {
-              "label": "2022-04",
-              "value": "2022-04",
-            },
-            Object {
               "label": "2022-07",
               "value": "2022-07",
             },
             Object {
               "label": "2022-10",
               "value": "2022-10",
+            },
+            Object {
+              "label": "2023-01",
+              "value": "2023-01",
             },
           ],
         },
@@ -737,7 +737,7 @@ Object {
       "visible": false,
     },
     "http.unencrypted.version": Object {
-      "defaultValue": "2022-10",
+      "defaultValue": "2023-01",
       "helpKey": "shopify.connection.http.unencrypted.version",
       "id": "http.unencrypted.version",
       "label": "API version",
@@ -746,16 +746,16 @@ Object {
         Object {
           "items": Array [
             Object {
-              "label": "2022-04",
-              "value": "2022-04",
-            },
-            Object {
               "label": "2022-07",
               "value": "2022-07",
             },
             Object {
               "label": "2022-10",
               "value": "2022-10",
+            },
+            Object {
+              "label": "2023-01",
+              "value": "2023-01",
             },
           ],
         },
@@ -1053,7 +1053,7 @@ Object {
       "visible": true,
     },
     "http.unencrypted.version": Object {
-      "defaultValue": "2022-10",
+      "defaultValue": "2023-01",
       "helpKey": "shopify.connection.http.unencrypted.version",
       "id": "http.unencrypted.version",
       "label": "API version",
@@ -1062,16 +1062,16 @@ Object {
         Object {
           "items": Array [
             Object {
-              "label": "2022-04",
-              "value": "2022-04",
-            },
-            Object {
               "label": "2022-07",
               "value": "2022-07",
             },
             Object {
               "label": "2022-10",
               "value": "2022-10",
+            },
+            Object {
+              "label": "2023-01",
+              "value": "2023-01",
             },
           ],
         },

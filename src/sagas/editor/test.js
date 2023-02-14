@@ -2075,13 +2075,13 @@ describe('editor sagas', () => {
         },
         rule: {
           script: {
-            entryFunction: 'main',
+            entryFunction: 'formInit',
             fetchScriptContent: true,
           },
         },
         originalRule: {
           script: {
-            entryFunction: 'main',
+            entryFunction: 'formInit',
             fetchScriptContent: true,
           },
         },
@@ -2156,13 +2156,13 @@ describe('editor sagas', () => {
         },
         rule: {
           script: {
-            entryFunction: 'main',
+            entryFunction: 'formInit',
             fetchScriptContent: true,
           },
         },
         originalRule: {
           script: {
-            entryFunction: 'main',
+            entryFunction: 'formInit',
             fetchScriptContent: true,
           },
         },
@@ -2257,14 +2257,14 @@ describe('editor sagas', () => {
         originalData: JSON.stringify(expectedData, null, 2),
         rule: {
           script: {
-            entryFunction: 'main',
+            entryFunction: 'formInit',
             fetchScriptContent: true,
             scriptId: '888',
           },
         },
         originalRule: {
           script: {
-            entryFunction: 'main',
+            entryFunction: 'formInit',
             fetchScriptContent: true,
             scriptId: '888',
           },

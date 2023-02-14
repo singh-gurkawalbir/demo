@@ -420,5 +420,30 @@ describe('resourceSetupDrawer test cases', () => {
 
     userEvent.click(onCloseButton);
   });
+  test('should redirect to parentUrl if resource form init fails', async () => {
+    initialStore.getState().session.resourceForm = {
+      'connections-resource_id': {
+        initFailed: true,
+      },
+    };
+
+    await initResourceSetupDrawer({
+      props: {
+        mode: 'install',
+        integrationId: 'integration_id_1',
+      },
+      initialStore,
+    });
+
+    expect(screen.queryByText(/Set up connection/i)).toBeInTheDocument();
+    const onSubmitCompleteButton = screen.getByRole('button', {name: 'Mock onSubmitComplete'});
+    const onCloseButton = screen.getByRole('button', {name: 'Mock onCancel'});
+
+    expect(onSubmitCompleteButton).toBeInTheDocument();
+    expect(onCloseButton).toBeInTheDocument();
+
+    expect(mockHistoryReplace).toHaveBeenCalledTimes(1);
+    expect(mockHistoryReplace).toHaveBeenCalledWith('/integrations/integration_id/setup');
+  });
 });
 
