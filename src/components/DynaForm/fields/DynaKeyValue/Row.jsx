@@ -97,7 +97,12 @@ export default function KeyValueRow(props) {
   }, [enableSorting, isRowDragged]);
   const dataFields = useMemo(() => props?.paramMeta?.fields.reduce((dataMap, {id, description}) => ({...dataMap, [id]: description}), {}), [props?.paramMeta?.fields]);
 
-  const closeComponent = isInlineClose ? (<RemoveButton icon={<CloseIcon />} />) : undefined;
+  const closeComponent = isInlineClose ? (
+    <RemoveButton
+      icon={<CloseIcon />} index={index} disabled={disabled} r={r}
+      keyName={keyName}
+      valueName={valueName} handleDelete={handleDelete} />
+  ) : undefined;
 
   return (
     <div
