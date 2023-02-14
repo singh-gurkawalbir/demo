@@ -252,6 +252,7 @@ export default function DynaSelectResource(props) {
   const dispatch = useDispatch();
   const history = useHistory();
   const [newResourceId, setNewResourceId] = useState(generateNewId());
+
   const optionRef = useRef(options);
 
   useEffect(() => {
@@ -268,6 +269,8 @@ export default function DynaSelectResource(props) {
   );
 
   const hasResourceTypeLoaded = useSelector(state => selectors.hasResourcesLoaded(state, resourceType));
+
+  const isHTTPVersionUpdated = useSelector(state => selectors.isHTTPConnectionVersionModified(state));
   const { resources = emptyArray } = useSelectorMemo(
     selectors.makeResourceListSelector,
     filterConfig
@@ -428,6 +431,13 @@ export default function DynaSelectResource(props) {
       itemInfo: i.itemInfo,
     }));
 
+  useEffect(() => {
+    if (isHTTPVersionUpdated && _httpConnectorId) {
+      onFieldChange(value, value);
+      dispatch(actions.connection.clearUpdatedVersion());
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isHTTPVersionUpdated]);
   useEffect(() => {
     if (!appTypeIsStatic && value && !Array.isArray(value) && isValueValid) {
       const isValuePresentInOption = resourceItems.find(eachItem => eachItem.value === value);
