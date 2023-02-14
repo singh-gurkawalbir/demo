@@ -1081,24 +1081,26 @@ const integrationApp = {
   },
   templates: {
     installer: {
-      verifyBundleOrPackageInstall: (id, connectionId, installerFunction, isFrameWork2, variant) =>
+      verifyBundleOrPackageInstall: (id, connectionId, installerFunction, isFrameWork2, variant, isManualVerification) =>
         action(actionTypes.INTEGRATION_APPS.TEMPLATES.INSTALLER.VERIFY_BUNDLE_INSTALL, {
           id,
           connectionId,
           installerFunction,
           isFrameWork2,
           variant,
+          isManualVerification,
         }),
     },
     upgrade: {
       installer: {
-        verifyBundleOrPackageInstall: (id, connectionId, installerFunction, isFrameWork2, variant) =>
+        verifyBundleOrPackageInstall: (id, connectionId, installerFunction, isFrameWork2, variant, isManualVerification) =>
           action(actionTypes.INTEGRATION_APPS.TEMPLATES.INSTALLER.VERIFY_BUNDLE_INSTALL, {
             id,
             connectionId,
             installerFunction,
             isFrameWork2,
             variant,
+            isManualVerification,
           }),
       },
     },
@@ -1324,12 +1326,13 @@ const template = {
     action(actionTypes.TEMPLATE.CLEAR_UPLOADED, { templateId }),
   clearTemplate: templateId =>
     action(actionTypes.TEMPLATE.CLEAR_TEMPLATE, { templateId }),
-  verifyBundleOrPackageInstall: (step, connection, templateId, variant) =>
+  verifyBundleOrPackageInstall: (step, connection, templateId, variant, isManualVerification) =>
     action(actionTypes.TEMPLATE.VERIFY_BUNDLE_INSTALL, {
       step,
       connection,
       templateId,
       variant,
+      isManualVerification,
     }),
   publish: {
     request: (templateId, isPublished) =>
@@ -1577,6 +1580,7 @@ const flowData = {
       branchIndex,
       responseMapping,
     }),
+  clear: flowId => action(actionTypes.FLOW_DATA.CLEAR, { flowId }),
 };
 const resourceFormSampleData = {
   request: (formKey, options) => action(actionTypes.RESOURCE_FORM_SAMPLE_DATA.REQUEST, { formKey, options }),
@@ -2591,12 +2595,13 @@ const integrationLCM = {
         connectionId,
         openOauthConnection,
       }),
-    verifyBundleOrPackageInstall: ({ revisionId, connectionId, integrationId, variant}) =>
+    verifyBundleOrPackageInstall: ({ revisionId, connectionId, integrationId, variant, isManualVerification}) =>
       action(actionTypes.INTEGRATION_LCM.INSTALL_STEPS.STEP.VERIFY_BUNDLE_INSTALL, {
         revisionId,
         connectionId,
         integrationId,
         variant,
+        isManualVerification,
       }),
   },
   revisions: {

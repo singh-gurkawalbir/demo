@@ -89,9 +89,11 @@ export function getPathParams({
   // relativePath ex: "/applicants:_name:_city:_fromapplydate/:_bar/page/:_page/Delivery:_deliveryId";
   // relativePathWithPrefixAndSuffix ex: "/applicants/name/:_name/from_apply_date/:_fromapplydate/:_bar/page/:_page/Delivery(:_deliveryId)"
   const actualPathWithoutQueryParams = actualPath?.split('?')?.[0];
+  const relativePathWithoutDefaultQueryParams = relativePath?.split('?')?.[0];
+
   const relativePathWithPrefixAndSuffix = getRelativeURLWithPrefixAndSuffix(
     pathParametersInfo,
-    relativePath,
+    relativePathWithoutDefaultQueryParams,
     actualPathWithoutQueryParams
   );
 

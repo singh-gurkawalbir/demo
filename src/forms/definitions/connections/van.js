@@ -22,6 +22,7 @@ export default {
       editorResultMode: 'text',
       hookStage: 'contentBasedFlowRouter',
       helpKey: 'connection.van.contentBasedFlowRouter',
+      disablePortal: false,
       title: 'Choose a script and function name to use for determining VAN message routing',
       isVanConnector: true,
       preHookData: {
@@ -52,8 +53,8 @@ export default {
         ],
       },
       {
-        collapsed: true,
-        label: 'Application details',
+        collapsed: false,
+        label: 'Configure routing for shared connections',
         fields: [
           'van.contentBasedFlowRouter',
         ],

@@ -225,6 +225,21 @@ export function* commitStagedChanges({ resourceType, id, options, context, paren
   if (resourceType === 'exports' && merged._rest) {
     delete merged._rest;
   }
+  // Added below check for http2.0 when metadata ids are compound
+  if (['exports', 'imports'].includes(resourceType) &&
+    merged?.http?._httpConnectorResourceId && merged?.assistantMetadata
+  ) {
+    if (merged?.http?._httpConnectorResourceId?.includes('+')) {
+      merged.http._httpConnectorResourceId = merged.http._httpConnectorResourceId.split('+')?.[0];
+    }
+    if (resourceType === 'exports' && merged?.http?._httpConnectorEndpointId?.includes('+')) {
+      merged.http._httpConnectorEndpointId = merged.http._httpConnectorEndpointId.split('+')?.[0];
+    }
+    if (resourceType === 'imports' && merged.http._httpConnectorEndpointIds?.[0]?.includes('+')) {
+      merged.http._httpConnectorEndpointIds = [merged.http._httpConnectorEndpointIds[0].split('+')?.[0]];
+    }
+    merged.assistantMetadata = undefined;
+  }
   if (['exports', 'imports'].includes(resourceType) && merged.adaptorType && !merged.adaptorType.includes('AS2') && !merged.adaptorType.includes('VAN')) {
     // AS2 is special case where backend cannot identify adaptorType on its own
     if (merged.restToHTTPConverted) {

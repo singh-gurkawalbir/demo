@@ -329,6 +329,9 @@ const FILTER_PANEL = {
   INVALID_DATATYPES_OPERANDS: 'Data types of both the operands should match.',
   SELECT_LEFT_OPERAND: 'Please select left operand.',
   SELECT_RIGHT_OPERAND: 'Please select right operand.',
+  INVALID_DATATYPE: 'Value should have correct data type.',
+  INVALID_BOOLEAN_CONVERSION_FOR_NUMBER: 'Number must be 0 or 1.',
+  INVALID_BOOLEAN_CONVERSION_FOR_STRING: 'String must be ["true", "t", "1","false", "f", "0"] one of these.',
 };
 
 // #endregion

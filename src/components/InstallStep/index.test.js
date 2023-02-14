@@ -197,7 +197,8 @@ describe('installationStep UI tests', () => {
       props.step,
       initialStore.getState().data.resources.connections[0],
       undefined,
-      'suitebundle'
+      'suitebundle',
+      false
     ));
   });
   test('should make a dispatch call for suiteapp verification for templates when the Installation step name starts with "Integrator SuiteApp"', () => {
@@ -234,7 +235,8 @@ describe('installationStep UI tests', () => {
       props.step,
       initialStore.getState().data.resources.connections[0],
       undefined,
-      'suiteapp'
+      'suiteapp',
+      false
     ));
   });
   test('should make the respective dispatch calls when revisionId,step.isCurrentStep,step.url,step.connectionId are defined', () => {
@@ -272,6 +274,7 @@ describe('installationStep UI tests', () => {
       connectionId: '62bd43c87b94d20de64e9ab3',
       revisionId: '123456789abcdefgh',
       variant: 'suitebundle',
+      isManualVerification: false,
     }));
   });
   test('should make dispatch call to verify suiteApp installation for integration LCM when step name starts with "Integration SuiteApp"', () => {
@@ -309,6 +312,7 @@ describe('installationStep UI tests', () => {
       connectionId: '62bd43c87b94d20de64e9ab3',
       revisionId: '123456789abcdefgh',
       variant: 'suiteapp',
+      isManualVerification: false,
     }));
   });
   test('should make the respective dispatch calls when currentStep,connectionId,installURL, are defined and it is not an integration App', () => {
@@ -350,7 +354,8 @@ describe('installationStep UI tests', () => {
       '987654321abcdefgh',
       undefined,
       3,
-      'suitebundle'
+      'suitebundle',
+      false
     ));
   });
   test('should make the dispatch calls for suiteapp verification for integrationApp when installStep name starts with "Integrator SuiteApp"', () => {
@@ -392,7 +397,8 @@ describe('installationStep UI tests', () => {
       '987654321abcdefgh',
       undefined,
       true,
-      'suiteapp'
+      'suiteapp',
+      false
     ));
   });
   test('should render empty DOM when improper props are provided', () => {

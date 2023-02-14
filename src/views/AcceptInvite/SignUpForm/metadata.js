@@ -105,9 +105,9 @@ export default function getFieldMeta({email, token, _csrf, skipPassword} = {}) {
         name: '_csrf',
         value: _csrf,
       },
-      consent: {
-        id: 'consent',
-        name: 'consent',
+      agreeTOSAndPP: {
+        id: 'agreeTOSAndPP',
+        name: 'agreeTOSAndPP',
         type: 'signupconsent',
         required: true,
         label: 'Changes required',
@@ -121,7 +121,7 @@ export default function getFieldMeta({email, token, _csrf, skipPassword} = {}) {
         'role',
         'phone',
         ...(!skipPassword ? ['password', 'confirmPassword'] : []),
-        'consent',
+        'agreeTOSAndPP',
       ],
     },
   };

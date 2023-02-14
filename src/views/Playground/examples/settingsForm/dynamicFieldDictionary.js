@@ -81,6 +81,7 @@ const sampleData = {
     },
     refreshableselect: {
       id: 'refreshableselect',
+      name: 'refreshableselect',
       label: 'Refreshable select',
       type: 'refreshableselect',
       devPlayGroundSpecificField: 'It is dev form specific field and should not be used anywhere. Actual dynamic calls will not work here. it will show dummy data here.',
@@ -95,6 +96,7 @@ const sampleData = {
       isLoggable: true,
       type: 'netsuitelookup',
       label: 'Netsuite lookup',
+      disableFetch: true,
     },
     staticMap: {
       id: 'staticMap',
@@ -109,14 +111,12 @@ const sampleData = {
         {
           id: 'import',
           label: 'Destination field value',
-          required: false,
           type: 'input',
           supportsRefresh: false,
         },
         {
           id: 'export',
           label: 'Source field value',
-          required: false,
           type: 'input',
           supportsRefresh: false,
         },

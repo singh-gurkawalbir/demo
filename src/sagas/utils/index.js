@@ -259,7 +259,7 @@ export const getImportMetadata = (connectorMetadata, connectionVersion) => {
                   httpEndpoint.pathParameters?.forEach(pp => {
                     parameters.push({
                       id: pp.name,
-                      name: pp.name,
+                      name: pp.label,
                       in: 'path',
                       required: true,
                       config: pp.config,

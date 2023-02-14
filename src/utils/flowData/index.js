@@ -150,6 +150,7 @@ const pathRegex = {
   responseMapping: /(\/routers\/(\d+)\/branches\/(\d+))?\/pageProcessors\/(\d+)\/responseMapping/,
   oldResponseMapping: /\/pageProcessors\/(\d+)\/responseMapping/,
   lookupAddition: /\/pageProcessors\/[0-9]+$/,
+  routerUpdate: /\/routers\/(\d+)$/,
 };
 
 export function getPreviewStageData(previewData, previewStage = 'parse') {
@@ -212,18 +213,41 @@ export const getPostDataForDeltaExport = resource => ({
   currentExportDateTime: getCurrentExportDateTime(resource),
 });
 
+const isRouterRemoved = patchSet => {
+  const removeRouterRegexList = [
+    /\/routers$/, // remove when only 1 router is present
+    /\/routers\/(\d+)$/, // remove first router in multiple routers
+    /\/routers\/(\d+)\/branches\/(\d+)$/, // multiple routers and remove any router other than first
+  ];
+
+  return removeRouterRegexList.some(regex => {
+    const patch = patchSet.find(patch => patch.path.match(regex));
+
+    return patch && patch.op === 'remove';
+  });
+};
+
 // Goes through patchset changes to decide what is updated
 export const getFlowUpdatesFromPatch = (patchSet = []) => {
   if (!patchSet.length) return {};
   // There is a case when we update flow just to update lastModified property
   // In that case, no need of any update for flowData
   if (patchSet.find(patch => patch.path === '/lastModified')) return {};
-  // Analyse patches and update stages updated
+  // Analyze patches and update stages updated
   const updatedPathsFromPatchSet = patchSet.map(patch => patch.path);
   const updates = {
     sequence: false,
     responseMapping: false,
+    router: false,
   };
+
+  if (isRouterRemoved(patchSet)) {
+    updates.router = {
+      deleted: true,
+    };
+
+    return updates;
+  }
 
   updatedPathsFromPatchSet.forEach(path => {
     //  If the patch matches changes for either PP/PG (Old & New formats),
@@ -262,6 +286,14 @@ export const getFlowUpdatesFromPatch = (patchSet = []) => {
           resourceIndex: parseInt(resourceIndex, 10),
         };
       }
+    }
+
+    if (!updates.router && pathRegex.routerUpdate.test(path)) {
+      // Extract routerIndex from the path
+      updates.router = {
+        updated: true,
+        routerIndex: +path.match(/[0-9]/)[0],
+      };
     }
   });
 
@@ -406,6 +438,28 @@ export const getFormattedResourceForPreview = (
   return resource;
 };
 
+// updating correct http resource and endpoint ids for http2.0
+export const updateHTTP2Metadata = (resourceObj, formKey) => {
+  const resource = deepClone(resourceObj || {});
+  const resourceType = formKey.includes('imports') ? 'imports' : 'exports';
+
+  if (['exports', 'imports'].includes(resourceType) &&
+resource?.http?._httpConnectorResourceId && resource?.assistantMetadata
+  ) {
+    if (resource?.http?._httpConnectorResourceId?.includes('+')) {
+      resource.http._httpConnectorResourceId = resource.http._httpConnectorResourceId.split('+')?.[0];
+    }
+    if (resourceType === 'exports' && resource?.http?._httpConnectorEndpointId?.includes('+')) {
+      resource.http._httpConnectorEndpointId = resource.http._httpConnectorEndpointId.split('+')?.[0];
+    }
+    if (resourceType === 'imports' && resource.http._httpConnectorEndpointIds?.[0]?.includes('+')) {
+      resource.http._httpConnectorEndpointIds = [resource.http._httpConnectorEndpointIds[0].split('+')?.[0]];
+    }
+    resource.assistantMetadata = undefined;
+  }
+
+  return resource;
+};
 /**
  * @input patchSet
  * @input resourceType : Default value is exports

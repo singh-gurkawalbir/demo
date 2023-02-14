@@ -336,6 +336,7 @@ describe('getFlowUpdatesFromPatch util', () => {
     const expectedOutput = {
       sequence: true,
       responseMapping: false,
+      router: false,
     };
 
     expect(getFlowUpdatesFromPatch(addPG)).toEqual(expectedOutput);
@@ -419,6 +420,7 @@ describe('getFlowUpdatesFromPatch util', () => {
     const expectedOutput = {
       sequence: true,
       responseMapping: false,
+      router: false,
     };
 
     expect(getFlowUpdatesFromPatch(ppOrderChange)).toEqual(expectedOutput);
@@ -444,6 +446,7 @@ describe('getFlowUpdatesFromPatch util', () => {
         resourceIndex: 2,
       },
       sequence: false,
+      router: false,
     });
   });
   test('should return responseMapping with resourceIndex if the patchSet has responseMapping for new flow format', () => {
@@ -465,7 +468,93 @@ describe('getFlowUpdatesFromPatch util', () => {
         routerIndex: 0,
       },
       sequence: false,
+      router: false,
     });
+  });
+  test('should return router with deleted true when the patch has delete router patch', () => {
+    const removeRouterPatch1 = [
+      {op: 'remove', path: '/routers'},
+      {op: 'add', path: '/pageProcessors', value: {}},
+    ];
+
+    const removeRouterPatch2 = [
+      {op: 'remove', path: '/routers/0/branches/1'},
+      {op: 'remove', path: '/routers/0/routeRecordsTo'},
+      {op: 'remove', path: '/routers/0/routeRecordsUsing'},
+    ];
+    const removeRouterPatch3 = [
+      {op: 'replace', path: '/routers/0/branches/0/pageProcessors', value: {}},
+      {op: 'replace', path: '/routers/0/branches/0/nextRouterId', value: 'ecQ3RZiQFOy'},
+      {op: 'remove', path: '/routers/1'},
+    ];
+
+    const expectedOutput = {
+      sequence: false,
+      responseMapping: false,
+      router: {
+        deleted: true,
+      },
+    };
+
+    expect(getFlowUpdatesFromPatch(removeRouterPatch1)).toEqual(expectedOutput);
+    expect(getFlowUpdatesFromPatch(removeRouterPatch2)).toEqual(expectedOutput);
+    expect(getFlowUpdatesFromPatch(removeRouterPatch3)).toEqual(expectedOutput);
+  });
+  test('should return router with updated true and respective router index updated when the patch has update router patch', () => {
+    const updateRouterPatch1 = [
+      {op: 'remove', path: '/pageProcessors'},
+      {op: 'replace', path: '/routers/0', value: {} },
+    ];
+    const updateRouterPatch2 = [
+      {op: 'remove', path: '/pageProcessors'},
+      {op: 'add', path: '/routers', value: {}},
+      {op: 'remove', path: '/pageProcessors'},
+      {op: 'replace', path: '/routers/0', value: {} },
+    ];
+
+    const expectedOutput = {
+      sequence: false,
+      responseMapping: false,
+      router: {
+        updated: true,
+        routerIndex: 0,
+      },
+    };
+
+    expect(getFlowUpdatesFromPatch(updateRouterPatch1)).toEqual(expectedOutput);
+    expect(getFlowUpdatesFromPatch(updateRouterPatch2)).toEqual(expectedOutput);
+  });
+  test('should return router with updated true and respective router index updated when the router is added to the flow', () => {
+    const addRouterPatch1 = [
+      {op: 'remove', path: '/pageProcessors'},
+      {op: 'add', path: '/routers', value: [{id: 'qUjQUKZpX8T'}]},
+      {op: 'remove', path: '/pageProcessors'},
+      {op: 'replace', path: '/routers/0', value: {}},
+    ];
+    const addRouterPatch2 = [
+      {op: 'remove', path: '/routers/0/script/function'},
+      {op: 'add', path: '/routers/0/branches/0/pageProcessors/0/id', value: '639a9d31a6ed283567403f40'},
+      {op: 'remove', path: '/routers/0/branches/0/name'},
+      {op: 'add', path: '/routers/0/branches/1'},
+      {op: 'replace', path: '/routers/0/id', value: 'zErvJOswDVO'},
+      {op: 'remove', path: '/routers/0/name'},
+      {op: 'add', path: '/routers/0/routeRecordsTo', value: 'first_matching_branch'},
+      {op: 'add', path: '/routers/0/routeRecordsUsing', value: 'input_filters'},
+      {op: 'remove', path: '/pageProcessors'},
+      {op: 'replace', path: '/routers/0', value: { branches: [], script: {function: 'branching'}}},
+    ];
+
+    const expectedOutput = {
+      sequence: false,
+      responseMapping: false,
+      router: {
+        updated: true,
+        routerIndex: 0,
+      },
+    };
+
+    expect(getFlowUpdatesFromPatch(addRouterPatch1)).toEqual(expectedOutput);
+    expect(getFlowUpdatesFromPatch(addRouterPatch2)).toEqual(expectedOutput);
   });
 });
 describe('isRawDataPatchSet util', () => {

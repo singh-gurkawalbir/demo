@@ -117,7 +117,8 @@ export default function ScriptView({
             isValid={isValidHookField('_scriptId')}
             onFieldChange={handleFieldChange('_scriptId')}
             options={options}
-            helpKey="api.scripts" />
+            helpKey="api.scripts"
+            disablePortal={false} />
         </FormControl>
       </div>
       <IconButtonWithTooltip
