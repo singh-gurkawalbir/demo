@@ -421,11 +421,13 @@ describe('resourceSetupDrawer test cases', () => {
     userEvent.click(onCloseButton);
   });
   test('should redirect to parentUrl if resource form init fails', async () => {
-    initialStore.getState().session.resourceForm = {
-      'connections-resource_id': {
-        initFailed: true,
-      },
-    };
+    mutateStore(initialStore, draft => {
+      draft.session.resourceForm = {
+        'connections-resource_id': {
+          initFailed: true,
+        },
+      };
+    });
 
     await initResourceSetupDrawer({
       props: {
