@@ -10,7 +10,7 @@ const _ = require('lodash');
  * @param {object} conn - connection plain json object
  * @returns {object} - connection plain json object
  */
-function convertConnJSONObjHTTPtoREST(conn) {
+export function convertConnJSONObjHTTPtoREST(conn) {
   if (!_.isEmpty(conn.http)) {
     /* eslint-disable no-param-reassign */
     /* eslint-disable no-use-before-define */
@@ -248,5 +248,3 @@ function replaceHTTPrefWithCorrespondingREST(str) {
 
   return str;
 }
-
-exports.convertConnJSONObjHTTPtoREST = convertConnJSONObjHTTPtoREST;
