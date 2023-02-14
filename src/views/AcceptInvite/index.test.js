@@ -1,6 +1,5 @@
 import { screen } from '@testing-library/react';
 import React from 'react';
-import { MemoryRouter, Route } from 'react-router-dom';
 import * as ReactRedux from 'react-redux';
 import AcceptInvite from '.';
 import { getCreatedStore } from '../../store';
@@ -13,16 +12,7 @@ const mockHistoryPush = jest.fn();
 function initAcceptInvite({acceptInviteData}) {
   initialStore.getState().auth.acceptInvite = acceptInviteData;
   const ui = (
-    <MemoryRouter
-      initialEntries={[{pathname: '/test/test_token'}]}
-    >
-      <Route
-        path="/test/:token"
-        params={{token: 'test_token'}}
-      >
-        <AcceptInvite {...{test: 'test1'}} />
-      </Route>
-    </MemoryRouter>
+    <AcceptInvite {...{test: 'test1'}} />
   );
 
   return renderWithProviders(ui, {initialStore});
@@ -34,6 +24,9 @@ jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
   useHistory: () => ({
     push: mockHistoryPush,
+  }),
+  useRouteMatch: () => ({
+    params: {token: 'test_token'},
   }),
 }));
 
@@ -144,7 +137,7 @@ describe('Testsuite from AcceptInvite', () => {
   });
   test('should test the error message when the type is equal to error and has an error when there is redirect url', () => {
     initAcceptInvite({acceptInviteData: {message: ['Hey, here is the error'], type: 'error', redirectUrl: '/redirectUrl'}});
-    expect.anything();
+
     expect(screen.getByText(/mock usersigninpage/i)).toBeInTheDocument();
     expect(screen.getByText(/alertmessage =/i)).toBeInTheDocument();
     expect(screen.getByText(/mock rawhtml/i)).toBeInTheDocument();
@@ -155,7 +148,7 @@ describe('Testsuite from AcceptInvite', () => {
   });
   test('should test the mock user signin page when there is no errors when the skip password is set to false', () => {
     initAcceptInvite({acceptInviteData: {redirectUrl: '/redirectUrl'}});
-    expect.anything();
+
     expect(screen.getByText(/mock usersigninpage/i)).toBeInTheDocument();
     expect(screen.getByText(/pagetitle = sign up/i)).toBeInTheDocument();
     expect(screen.getByText(/footerlinklabel = already have an account\?/i)).toBeInTheDocument();
@@ -166,7 +159,7 @@ describe('Testsuite from AcceptInvite', () => {
   });
   test('should test the mock user signin page when there is no errors when the skip password is set to true', () => {
     initAcceptInvite({acceptInviteData: {skipPassword: true }});
-    expect.anything();
+
     expect(screen.getByText(/mock usersigninpage/i)).toBeInTheDocument();
     expect(screen.getByText(/pagetitle = sign up/i)).toBeInTheDocument();
     expect(screen.getByText(/footerlinklabel = already have an account\?/i)).toBeInTheDocument();
@@ -184,7 +177,7 @@ describe('Testsuite from AcceptInvite', () => {
   });
   test('should test the loader when the status is requested', () => {
     initAcceptInvite({acceptInviteData: {status: 'requested'}});
-    expect.anything();
+
     expect(screen.getByText(/mock loader/i)).toBeInTheDocument();
     expect(screen.getByText(/open =/i)).toBeInTheDocument();
     expect(screen.getByText(/loading\.\.\./i)).toBeInTheDocument();
@@ -192,7 +185,7 @@ describe('Testsuite from AcceptInvite', () => {
   });
   test('should test the accept invite when there is no data from the store', () => {
     initAcceptInvite({acceptInviteData: undefined});
-    expect.anything();
+
     expect(screen.getByText(/mock usersigninpage/i)).toBeInTheDocument();
     expect(screen.getByText(/pagetitle = sign up/i)).toBeInTheDocument();
     expect(screen.getByText(/footerlinklabel = already have an account\?/i)).toBeInTheDocument();

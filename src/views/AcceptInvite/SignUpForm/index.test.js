@@ -85,7 +85,6 @@ describe('Testsuite for SignUp', () => {
         skipPassword: true,
       },
     });
-    expect.anything();
     expect(screen.getByText(/mocking dynaform/i)).toBeInTheDocument();
     expect(screen.getByText(/mocking dyna submit/i)).toBeInTheDocument();
     expect(screen.getByText(/ignoreformtouchedcheck =/i)).toBeInTheDocument();
@@ -102,7 +101,27 @@ describe('Testsuite for SignUp', () => {
     initSignUp({
       acceptInviteData: undefined,
     });
-    expect.anything();
+    expect(screen.getByText(/mocking dynaform/i)).toBeInTheDocument();
+    expect(screen.getByText(/mocking dyna submit/i)).toBeInTheDocument();
+    expect(screen.getByText(/ignoreformtouchedcheck =/i)).toBeInTheDocument();
+
+    const signUpButton = screen.getByRole('button', {
+      name: /sign up/i,
+    });
+
+    expect(signUpButton).toBeInTheDocument();
+    userEvent.click(signUpButton);
+    expect(mockDispatchFn).toHaveBeenCalledWith(actions.auth.acceptInvite.submit('dummy values'));
+  });
+  test('should render signup and should test the signup button when there is no email and no token', () => {
+    initSignUp({
+      acceptInviteData: {
+        email: '',
+        token: '',
+        _csrf: 'test_csrf',
+        skipPassword: true,
+      },
+    });
     expect(screen.getByText(/mocking dynaform/i)).toBeInTheDocument();
     expect(screen.getByText(/mocking dyna submit/i)).toBeInTheDocument();
     expect(screen.getByText(/ignoreformtouchedcheck =/i)).toBeInTheDocument();

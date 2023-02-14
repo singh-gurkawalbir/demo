@@ -1,6 +1,5 @@
 import { screen } from '@testing-library/react';
 import React from 'react';
-import { MemoryRouter, Route } from 'react-router-dom';
 import * as ReactRedux from 'react-redux';
 import userEvent from '@testing-library/user-event';
 import Aliases from '.';
@@ -17,15 +16,7 @@ function initAliases({integrationId, childId, integrationsData, preferencesData,
   initialStore.getState().user.org.accounts = accountsData;
   initialStore.getState().session.aliases = aliasesStatusData;
   const ui = (
-    <MemoryRouter
-      initialEntries={[{pathname: '/test'}]}
-    >
-      <Route
-        path="/test"
-      >
-        <Aliases integrationId={integrationId} childId={childId} />
-      </Route>
-    </MemoryRouter>
+    <Aliases integrationId={integrationId} childId={childId} />
   );
 
   return renderWithProviders(ui, {initialStore});
@@ -36,6 +27,9 @@ jest.mock('react-router-dom', () => ({
   ...jest.requireActual('react-router-dom'),
   useHistory: () => ({
     push: mockHistoryPush,
+  }),
+  useRouteMatch: () => ({
+    url: '/test',
   }),
 }));
 
@@ -328,7 +322,13 @@ describe('Testsuite for Aliases', () => {
     );
     expect(screen.getByText(/mock add icon/i)).toBeInTheDocument();
     expect(screen.getByText(/mock alias save message/i)).toBeInTheDocument();
+    const buttonNode = screen.getByRole('button', {
+      name: /create alias/i,
+    });
+
+    expect(buttonNode).toBeInTheDocument();
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.resource.aliases.clear('12345'));
+    screen.debug();
   });
   test('should test Aliases when there are no aliases data and when the integration is not of type v2 and has owner access and allias status is delete', () => {
     initAliases(
@@ -356,6 +356,11 @@ describe('Testsuite for Aliases', () => {
     );
     expect(screen.getByText(/mock add icon/i)).toBeInTheDocument();
     expect(screen.getByText(/mock alias delete message/i)).toBeInTheDocument();
+    const buttonNode = screen.getByRole('button', {
+      name: /create alias/i,
+    });
+
+    expect(buttonNode).toBeInTheDocument();
     expect(mockDispatchFn).toHaveBeenCalledWith(actions.resource.aliases.clear('12345'));
   });
   test('should test Aliases when there are aliases data and when the integration is not of type v2 and has owner access and allias status is save', () => {
