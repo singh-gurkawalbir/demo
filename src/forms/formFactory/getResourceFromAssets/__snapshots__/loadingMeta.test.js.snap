@@ -11487,9 +11487,6 @@ Object {
       },
       "salesforce.idLookup.whereClause": Object {
         "fieldId": "salesforce.idLookup.whereClause",
-        "refreshOptionsOnChangesTo": Array [
-          "salesforce.sObjectType",
-        ],
       },
       "salesforce.lookups": Object {
         "fieldId": "salesforce.lookups",
@@ -11739,18 +11736,12 @@ Object {
       },
       "netsuite_da.internalIdLookup.expression": Object {
         "fieldId": "netsuite_da.internalIdLookup.expression",
-        "refreshOptionsOnChangesTo": Array [
-          "netsuite_da.recordType",
-        ],
       },
       "netsuite_da.mapping": Object {
         "fieldId": "netsuite_da.mapping",
       },
       "netsuite_da.operation": Object {
         "fieldId": "netsuite_da.operation",
-        "refreshOptionsOnChangesTo": Array [
-          "netsuite_da.recordType",
-        ],
       },
       "netsuite_da.recordType": Object {
         "fieldId": "netsuite_da.recordType",
@@ -11760,9 +11751,6 @@ Object {
       },
       "netsuite_da.subrecords": Object {
         "fieldId": "netsuite_da.subrecords",
-        "refreshOptionsOnChangesTo": Array [
-          "netsuite_da.recordType",
-        ],
       },
       "settings": Object {
         "fieldId": "settings",
@@ -11983,18 +11971,12 @@ Object {
       },
       "netsuite_da.internalIdLookup.expression": Object {
         "fieldId": "netsuite_da.internalIdLookup.expression",
-        "refreshOptionsOnChangesTo": Array [
-          "netsuite_da.recordType",
-        ],
       },
       "netsuite_da.mapping": Object {
         "fieldId": "netsuite_da.mapping",
       },
       "netsuite_da.operation": Object {
         "fieldId": "netsuite_da.operation",
-        "refreshOptionsOnChangesTo": Array [
-          "netsuite_da.recordType",
-        ],
       },
       "netsuite_da.recordType": Object {
         "fieldId": "netsuite_da.recordType",
@@ -12004,9 +11986,6 @@ Object {
       },
       "netsuite_da.subrecords": Object {
         "fieldId": "netsuite_da.subrecords",
-        "refreshOptionsOnChangesTo": Array [
-          "netsuite_da.recordType",
-        ],
       },
       "settings": Object {
         "fieldId": "settings",
@@ -12263,9 +12242,6 @@ Object {
       },
       "salesforce.idLookup.whereClause": Object {
         "fieldId": "salesforce.idLookup.whereClause",
-        "refreshOptionsOnChangesTo": Array [
-          "salesforce.sObjectType",
-        ],
       },
       "salesforce.lookups": Object {
         "fieldId": "salesforce.lookups",

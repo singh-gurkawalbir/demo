@@ -1,13 +1,11 @@
-
 import React from 'react';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import {screen} from '@testing-library/react';
 import { MemoryRouter, Route } from 'react-router-dom';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import userEvent from '@testing-library/user-event';
 import DynaSalesforceLookupsafe from './DynaSalesforceLookup_afe';
 import { renderWithProviders } from '../../../test/test-utils';
 import actions from '../../../actions';
+import { getCreatedStore } from '../../../store';
 
 const mockonFieldChange = jest.fn();
 let mockSave = jest.fn();
@@ -36,6 +34,13 @@ jest.mock('react-redux', () => ({
 }));
 
 function initDynaSalesforceLookupsafe(props = {}) {
+  const initialStore = getCreatedStore();
+
+  initialStore.getState().session.form[props.formKey] = {
+    fields: {
+      'salesforce.sObjectType': { value: 'Account', connectionId: 'connection-123' },
+    },
+  };
   const ui = (
     <MemoryRouter
       initialEntries={[{pathname: '/integrations/6387a6877045c4017f06f9d3/flowBuilder/63947b4ffc58924d43aec619/edit/imports/6368996d667fdb7984b49949'}]}>
@@ -49,7 +54,7 @@ function initDynaSalesforceLookupsafe(props = {}) {
     </MemoryRouter>
   );
 
-  return renderWithProviders(ui);
+  return renderWithProviders(ui, {initialStore});
 }
 const props = {
   errorMessages: '',
@@ -66,9 +71,6 @@ const props = {
   label: 'How can we find existing records?',
   multiline: true,
   formKey: 'imports-6368996d667fdb7984b49949',
-  options: {commMetaPath: 'salesforce/metadata/connections/6322ff72b5c15b058122871e/sObjectTypes/Account',
-    disableFetch: false,
-    resetValue: [] },
 };
 
 describe('dynaSalesforceLookup_afe UI test cases', () => {
@@ -90,7 +92,7 @@ describe('dynaSalesforceLookup_afe UI test cases', () => {
       fieldId: 'salesforce.idLookup.whereClause',
       stage: 'importMappingExtract',
       onSave: expect.anything(),
-      customOptions: {commMetaPath: 'salesforce/metadata/connections/6322ff72b5c15b058122871e/sObjectTypes/Account',
+      customOptions: {commMetaPath: 'salesforce/metadata/connections/connection-123/sObjectTypes/Account',
         disableFetch: false,
         resetValue: [] },
     }));

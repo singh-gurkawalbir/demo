@@ -1,10 +1,10 @@
-
 import React from 'react';
 import {screen} from '@testing-library/react';
 import DynaNetSuiteImportOperation from './DynaNetSuiteImportOperation';
-import { renderWithProviders, reduxStore} from '../../../test/test-utils';
+import { renderWithProviders } from '../../../test/test-utils';
+import { getCreatedStore } from '../../../store';
 
-const initialStore = reduxStore;
+let initialStore = getCreatedStore();
 
 const items = [
   {name: 'name1', value: 'add'},
@@ -15,10 +15,7 @@ const items = [
 ];
 const mockOnFieldChange = jest.fn();
 
-function initDynaNetSuiteImportOperation(items = {}, supports) {
-  initialStore.getState().session.metadata = {application: {someconnectionId: {somePath: {
-    data: [{name: 'someName', scriptId: 'once', ...supports}],
-  }}}};
+function initDynaNetSuiteImportOperation(items = {}) {
   const ui = (
     <DynaNetSuiteImportOperation
       value="once"
@@ -27,7 +24,7 @@ function initDynaNetSuiteImportOperation(items = {}, supports) {
       onFieldChange={mockOnFieldChange}
       connectionId="someconnectionId"
       selectOptions={[{items}]}
-      options={{commMetaPath: 'somePath', recordType: 'once'}}
+      formKey="form-123"
       filterKey="suitescript-recordTypes"
   />
   );
@@ -38,11 +35,30 @@ function initDynaNetSuiteImportOperation(items = {}, supports) {
 describe('dynaNetSuiteImportOperation UI test cases', () => {
   afterEach(() => {
     jest.clearAllMocks();
+    initialStore = getCreatedStore();
   });
   test('should not show value add,addupdate and delete options when search delete and create is not supported', () => {
-    initDynaNetSuiteImportOperation(items, {
-      doesNotSupportCreate: true, doesNotSupportSearch: true, doesNotSupportDelete: true,
-    });
+    initialStore.getState().session.form['form-123'] = {
+      fields: {
+        'netsuite_da.recordType': { value: 'once' },
+      },
+    };
+    initialStore.getState().session.metadata = {
+      application: {
+        someconnectionId: {
+          'netsuite/metadata/suitescript/connections/someconnectionId/recordTypes': {
+            data: [{
+              name: 'someName',
+              scriptId: 'once',
+              doesNotSupportCreate: true,
+              doesNotSupportSearch: true,
+              doesNotSupportDelete: true,
+            }],
+          },
+        },
+      },
+    };
+    initDynaNetSuiteImportOperation(items);
 
     const radioButtons = screen.getAllByRole('radio');
 
@@ -50,9 +66,27 @@ describe('dynaNetSuiteImportOperation UI test cases', () => {
     expect(screen.getByText('someLabel')).toBeInTheDocument();
   });
   test('should show add and delete option when create is not suported', () => {
-    initDynaNetSuiteImportOperation(items, {
-      doesNotSupportCreate: true, doesNotSupportSearch: false, doesNotSupportDelete: false,
-    });
+    initialStore.getState().session.form['form-123'] = {
+      fields: {
+        'netsuite_da.recordType': { value: 'once' },
+      },
+    };
+    initialStore.getState().session.metadata = {
+      application: {
+        someconnectionId: {
+          'netsuite/metadata/suitescript/connections/someconnectionId/recordTypes': {
+            data: [{
+              name: 'someName',
+              scriptId: 'once',
+              doesNotSupportCreate: true,
+              doesNotSupportSearch: false,
+              doesNotSupportDelete: false,
+            }],
+          },
+        },
+      },
+    };
+    initDynaNetSuiteImportOperation(items);
     const radioButtons = screen.getAllByRole('radio');
 
     expect(radioButtons).toHaveLength(3);
@@ -61,9 +95,27 @@ describe('dynaNetSuiteImportOperation UI test cases', () => {
     expect(screen.getByText('update')).toBeInTheDocument();
   });
   test('should show add and delete option when search is not suported', () => {
-    initDynaNetSuiteImportOperation(items, {
-      doesNotSupportCreate: false, doesNotSupportSearch: true, doesNotSupportDelete: false,
-    });
+    initialStore.getState().session.form['form-123'] = {
+      fields: {
+        'netsuite_da.recordType': { value: 'once' },
+      },
+    };
+    initialStore.getState().session.metadata = {
+      application: {
+        someconnectionId: {
+          'netsuite/metadata/suitescript/connections/someconnectionId/recordTypes': {
+            data: [{
+              name: 'someName',
+              scriptId: 'once',
+              doesNotSupportCreate: false,
+              doesNotSupportSearch: true,
+              doesNotSupportDelete: false,
+            }],
+          },
+        },
+      },
+    };
+    initDynaNetSuiteImportOperation(items);
 
     const radioButtons = screen.getAllByRole('radio');
 
