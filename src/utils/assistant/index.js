@@ -1204,7 +1204,9 @@ export function convertToExport({ assistantConfig, assistantData, headers = [] }
           queryObj.set(key, value);
         }
       });
-      relativeURI = `${pathPart}?${decodeURI(queryObj.toString())}`;
+      const queryString = qs.stringify(Array.from(queryObj.entries()).reduce((acc, [key, value]) => ({...acc, [key]: value}), {}), {encode: false, indices: false });
+
+      relativeURI = `${pathPart}?${queryString}`;
     } else { relativeURI += (relativeURI.includes('?') ? '&' : '?') + finalQueryString; }
     if (pagingRelativeURI) {
       pagingRelativeURI += (pagingRelativeURI.includes('?') ? '&' : '?') + finalQueryString;

@@ -488,6 +488,7 @@ export function* auth({ email, password }) {
     if (apiAuthentications?.succes && apiAuthentications.mfaRequired) {
       // Once login is success, incase of mfaRequired, user has to enter OTP to successfully authenticate
       // So , we redirect him to OTP (/mfa/verify) page
+      yield call(setCSRFToken, apiAuthentications._csrf);
 
       return yield put(actions.auth.mfaRequired(apiAuthentications));
     }
