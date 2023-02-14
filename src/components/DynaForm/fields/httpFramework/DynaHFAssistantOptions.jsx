@@ -199,7 +199,6 @@ function DynaAssistantOptions(props) {
           },
           imports: {
             resource: ['version', 'operation', 'updateEndpoint', 'createEndpoint'],
-            operation: ['version'],
           },
         };
       }
