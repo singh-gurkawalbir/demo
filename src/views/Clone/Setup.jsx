@@ -64,7 +64,7 @@ export default function Clone() {
 
   useEffect(() => {
     if (!installSteps.length) {
-      history.push(`/clone/flows/${resourceId}/preview`);
+      history.push(`/clone/${resourceType}/${resourceId}/preview`);
     }
   });
 
