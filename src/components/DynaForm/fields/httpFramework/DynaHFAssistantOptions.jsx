@@ -194,7 +194,7 @@ function DynaAssistantOptions(props) {
         fieldDependencyMap = {
           exports: {
             resource: ['operation', 'version', 'exportType'],
-            operation: ['exportType', 'version'],
+            operation: ['exportType'],
             version: ['exportType'],
           },
           imports: {
@@ -249,13 +249,6 @@ function DynaAssistantOptions(props) {
         const versionOptionsForEndpoint = selectOptions({assistantFieldType: 'version', assistantData, formContext: {...formContext, operation: value}, resourceType});
         const endpointDetails = getExportOperationDetails({...formContext, operation: value, version: versionOptionsForEndpoint?.[0]?.value, assistantData });
 
-        // if (value.includes('+')) {
-        //   patch.push({
-        //     op: 'replace',
-        //     path: '/assistantMetadata/operation',
-        //     value: endpointDetails?.id,
-        //   });
-        // }
         if (formContext.resource !== endpointDetails?._httpConnectorResourceIds?.[0]) {
           patch.push({
             op: 'replace',
@@ -311,7 +304,9 @@ function DynaAssistantOptions(props) {
         .map(field => ({ id: field.id, value: field.value }));
 
       allTouchedFields.push({ id, value });
-
+      if (id === 'assistantMetadata.operation') {
+        allTouchedFields.push({id: 'assistantMetadata.version', value: patch.find(({path}) => path === '/assistantMetadata/version')?.value || versions?.[0]._id });
+      }
       if (id === 'assistantMetadata.exportType') {
         if (value === 'delta') {
           setDefaultValuesForDelta('queryParams', queryParamsMeta, queryParams, allTouchedFields);
