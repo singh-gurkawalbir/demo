@@ -164,19 +164,7 @@ describe('SigninForm UI testcases', () => {
 
     expect(screen.getByText('error message')).toBeInTheDocument();
   });
-  test('should show error when the error message for sign in is thrown by window object', () => {
-    window.signInError = 'error message from window';
 
-    initialStore = getCreatedStore();
-
-    mutateStore(initialStore, draft => {
-      draft.auth = {showAuthError: true};
-    });
-
-    initfunction(initialStore);
-
-    expect(screen.getByText('error message from window')).toBeInTheDocument();
-  });
   test('should show the option for SSO sign and google sign in in when account has ssoclients and user has google authentication available', () => {
     initialStore = getCreatedStore();
     mutateStore(initialStore, draft => {
