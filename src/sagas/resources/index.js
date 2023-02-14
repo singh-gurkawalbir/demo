@@ -797,7 +797,7 @@ export function* getResourceCollection({ resourceType, refresh, integrationId })
     path = `${path}${excludePath}`;
   }
   if (resourceType === 'tree/metadata') {
-    path += '?additionalFields=_connectorId,_parentId,sandbox,settings,settingsForm,preSave,changeEditionSteps,flowGroupings,_registeredConnectionIds,uninstallSteps,installSteps,createdAt';
+    path += '?additionalFields=_parentId,settings,settingsForm,preSave,changeEditionSteps,flowGroupings,_registeredConnectionIds,uninstallSteps,installSteps,createdAt,lastModified,description,readme,aliases,update,childDisplayName,pendingLicense';
   }
   let updatedResourceType = resourceType;
 
