@@ -7,7 +7,7 @@ import { selectOptions } from './util';
 import useFormContext from '../../../Form/FormContext';
 import { emptyObject } from '../../../../constants';
 import useSelectorMemo from '../../../../hooks/selectors/useSelectorMemo';
-import { getExportOperationDetails } from '../../../../utils/assistant';
+import { getExportOperationDetails, getImportOperationDetails } from '../../../../utils/assistant';
 
 const emptyObj = {};
 export const useHFSetInitializeFormData = ({
@@ -247,7 +247,7 @@ function DynaAssistantOptions(props) {
       }
       if (assistantFieldType === 'operation' && versions?.length > 1) {
         const versionOptionsForEndpoint = selectOptions({assistantFieldType: 'version', assistantData, formContext: {...formContext, operation: value}, resourceType});
-        const endpointDetails = getExportOperationDetails({...formContext, operation: value, version: versionOptionsForEndpoint?.[0]?.value, assistantData });
+        const endpointDetails = resourceType === 'imports' ? getImportOperationDetails({...formContext, operation: value, version: versionOptionsForEndpoint?.[0]?.value, assistantData }) : getExportOperationDetails({...formContext, operation: value, version: versionOptionsForEndpoint?.[0]?.value, assistantData });
 
         // if (value.includes('+')) {
         //   patch.push({
@@ -272,7 +272,7 @@ function DynaAssistantOptions(props) {
       // When version is changed corresponding resource and operation/endpoint ids
       // needs to be updated to get correct operationDetails
       if (assistantFieldType === 'version') {
-        const endpointDetails = getExportOperationDetails({...formContext, version: value, assistantData });
+        const endpointDetails = resourceType === 'imports' ? getImportOperationDetails({...formContext, version: value, assistantData }) : getExportOperationDetails({...formContext, version: value, assistantData });
 
         patch.push({
           op: 'replace',
