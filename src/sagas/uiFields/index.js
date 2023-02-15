@@ -81,8 +81,8 @@ export function* onFlowUpdate({
           const resource = Array.isArray(value) ? value[0] : value;
 
           // fetch the resourceId just added to the flow
-          resourceId = resource._exportId || resource._importId;
-          resourceType = resource._exportId ? 'exports' : 'imports';
+          resourceId = resource?._exportId || resource?._importId;
+          resourceType = resource?._exportId ? 'exports' : 'imports';
         }
 
         // load the UI fields for the resource if it is not loaded already
